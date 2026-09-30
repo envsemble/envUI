@@ -55,3 +55,9 @@ Only base colors are authorable. `styles/Tokens.css` owns all state parameters; 
 - Focus changes only the ring. Disabled controls never hover or press; filled buttons, selects, dismiss controls, and selected navigation use 48% opacity, while outlined controls and quiet navigation derive their disabled label from caption lightness (+8 points in light, −8 in dark).
 
 Do not add literal colors to state selectors, per-color state swatches, or independent state overrides. For a new component, reuse an existing profile or explicitly document a new profile in the numeric rules. Derived CSS aliases are formulas, not additional palette entries. Relative HSL uses the browser’s CSS color engine and works in the offline build.
+
+Primary buttons use the strong-text palette color as their fill and the canvas color for their label in both themes. Hover changes lightness by +15 in light mode and −15 in dark mode; pressed uses 1.5 times that change. Toast actions continue to derive from their own parent fill.
+
+Circular icon buttons use a 2.5 rem circle and a centered 1.5 rem Material Symbols Rounded icon. Use the row fill and neutral control icon color, with no border. Their hover/pressed fills reuse the soft-fill HSL profile; focus and disabled states reuse the shared button rules. Include an accessible action name. The table uses a chevron as the example.
+
+Dropdown selection uses a content-fit tonal trigger (row fill, pill corners, no border) and a pane containing grouped options: 1.75 rem outer corners, 0.5 rem inner corners, 0.125 rem row gap, and 0.5 rem pane inset. Options reuse circular-button soft-fill states; selected options reuse selected-navigation states. Both theme values stay synchronized. The native select remains the fallback and value source; the enhanced list supports arrow keys, Home/End, Enter/Space, typing an initial, Escape, and dismissal outside the menu.
