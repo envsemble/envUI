@@ -561,59 +561,6 @@
 				font: 400 calc(0.875rem * var(--scale, 1))/1.4 var(--font-family);
 				white-space: nowrap;
 			}
-			.demo-button.primary {
-				background: var(--color-primary-action);
-				border: 0;
-				color: var(--color-on-primary-action);
-			}
-			.demo-button.primary.hover {
-				background: var(--color-primary-action-hover);
-				border: 0;
-			}
-			.demo-button.secondary {
-				background: var(--color-subtle-action);
-				border-color: var(--color-border-strong);
-				color: var(--color-control-text);
-			}
-			.demo-button.secondary.hover {
-				background: var(--color-subtle-action-hover);
-				border-color: var(--color-border-hover);
-			}
-			.demo-button.outlined {
-				border-radius: 100vmax;
-				background: var(--color-subtle-action);
-				border-color: var(--color-border-strong);
-				color: var(--color-link);
-			}
-			.demo-button.outlined.hover {
-				background: var(--color-subtle-action-hover);
-				border-color: var(--color-link);
-				color: var(--color-link-hover);
-			}
-			.demo-button.danger {
-				background: var(--color-destructive-action);
-				color: var(--color-on-destructive-action);
-			}
-			.demo-button.danger.hover {
-				background: var(--color-destructive-action-hover);
-			}
-			.demo-button.focus,
-			.demo-button:focus-visible {
-				outline: 0.125rem solid var(--color-focus-ring);
-				outline-offset: 0.125rem;
-			}
-			.demo-button.outlined.focus {
-				outline-color: var(--color-outlined-focus);
-				outline-offset: 0.0625rem;
-			}
-			.demo-button:disabled {
-				opacity: 0.48;
-				cursor: default;
-			}
-			.demo-button.outlined:disabled {
-				opacity: 1;
-				color: var(--color-text-subtle);
-			}
 			.usage-strip {
 				display: grid;
 				grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -754,14 +701,6 @@
 			.skeleton-demo span:last-child {
 				width: 72%;
 				background: var(--color-skeleton-highlight);
-			}
-			.badge {
-				margin-left: 0.5rem;
-				padding: 0.2rem 0.45rem;
-				font-size: 0.7rem;
-				color: var(--color-link);
-				background: var(--color-surface-muted);
-				border-radius: var(--radius-standard);
 			}
 			.icon-grid {
 				display: grid;
@@ -1044,7 +983,7 @@
 
 /* The two appearances divide the entire content area. */
 .gallery-main {
-    background: linear-gradient(to right, var(--color-canvas) 50%, hsl(0.000 0.000% 12.157%) 50%);
+    background: linear-gradient(to right, var(--color-canvas) 50%, var(--color-canvas-dark) 50%);
 }
 .theme-comparison { gap: 0; }
 .theme-preview { border-radius: 0; }
@@ -1083,26 +1022,6 @@
     color: var(--color-text-primary);
 }
 .section > .button-sizing-note { margin-top: 0.75rem; }
-
-.demo-button.emphasis {
-    border-radius: calc(var(--radius-standard) * var(--scale, 1));
-    border: 0;
-    background: var(--color-accent);
-    color: var(--color-on-accent);
-}
-.demo-button.emphasis:hover { background: var(--color-accent-dark); }
-
-
-.demo-nav.hover, .demo-nav:hover:not(:disabled) { background: var(--color-surface-muted); }
-.demo-nav.active.hover, .demo-nav.active:hover:not(:disabled) {
-    background: var(--color-navigation-hover);
-}
-.demo-nav:focus-visible { outline: 0.125rem solid var(--color-focus-ring); outline-offset: -0.125rem; }
-.demo-nav.active:disabled { color: var(--color-text-subtle); opacity: 0.45; }
-.demo-button.primary:hover:not(:disabled):not(.hover) { background: var(--color-primary-action-hover); }
-.demo-button.secondary:hover:not(:disabled), .demo-button.outlined:hover:not(:disabled) { background: var(--color-subtle-action-hover); }
-.demo-button.outlined:hover:not(:disabled) { border-color: var(--color-link); color: var(--color-link-hover); }
-.demo-button.danger:hover:not(:disabled) { background: var(--color-destructive-action-hover); }
 
 .selection-example { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; font: var(--type-body-small); color: var(--color-text-muted); }
 
@@ -1254,3 +1173,17 @@
 .corner-rules > div { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; }
 .corner-rules dt { color: var(--color-text-muted); }
 .corner-rules dd { margin: 0; color: var(--color-text-primary); }
+
+.chip-example { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+
+.toast-examples { display: grid; justify-items: start; gap: 0.5rem; }
+.toast-examples > h4 { margin: 1rem 0 0; }
+.toast-reference > .caption { margin: 0 0 1rem; }
+.toast-reset { margin-top: 1rem; }
+
+.color-rule-reference { min-width: 0; }
+.color-rule-table { width: 100%; border-collapse: collapse; font: var(--type-body-small); text-align: left; }
+.color-rule-table th { font-weight: 400; color: var(--color-text-muted); }
+.color-rule-table th, .color-rule-table td { padding: 0.5rem 0.75rem 0.5rem 0; vertical-align: top; }
+.color-rule-table td:not(:first-child) { white-space: nowrap; }
+.color-rule-reference .caption { margin: 0; }

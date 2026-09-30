@@ -39,6 +39,19 @@ Define foundations first, then controls, then compositions. The button table inc
 
 Inter is embedded in the HTML; its license is in `licenses/Inter-LICENSE.txt`. Material Symbols are Google assets distributed under Apache 2.0.
 
-Colors are defined and displayed in HSL. The palette includes base colors, button-label colors, and derived interaction fills. Typography is ordered by emphasis, with relative sizes and palette-linked colors.
+Colors are defined and displayed in HSL. The palette contains only base colors. Hover, pressed, focus, navigation tints, toast actions, and card strips are derived from those bases and the numeric rules in `styles/Tokens.css`. Typography is ordered by emphasis, with relative sizes and palette-linked colors.
 
 Background panes group content with a faint gray in light mode and the raised surface fill in dark mode. Use 1.75 rem corners without a border; rows retain their distinct row fill.
+
+## Deterministic color rules
+
+Only base colors are authorable. `styles/Tokens.css` owns all state parameters; `styles/SharedComponents.css` applies them to real controls and table samples. The document reads its rule values from these tokens.
+
+- HSL lightness shifts preserve hue/saturation: `Lstate = clamp(0, Lbase + delta, 100)`. Delta uses percentage points, not a percentage of L. Pressed uses 1.5 × the hover delta, always from the base.
+- Hover profiles (light / dark): neutral primary +15 / −15; secondary/select fill −3 / +6; interactive text −8 / +8; neutral outline −25 / +25. Destructive −5 and purple −10 in both themes.
+- Toast action L = parent toast L × (0.78 − 0.13 × state), where state is 0 default, 1 hover, 2 pressed. Hue/saturation and white labels stay unchanged. The dismiss control uses the default action fill on hover and pressed action fill on press.
+- Selected navigation mixes blue with the alternate fill in sRGB: blue share = 13% + 7% × state. Quiet navigation uses the row fill on hover and the soft-fill lightness delta on press.
+- Card strips mix 35% row fill with 65% alternate fill in sRGB. Loading highlight adds 4 lightness points in light and 8 in dark.
+- Focus changes only the ring. Disabled controls never hover or press; filled buttons, selects, dismiss controls, and selected navigation use 48% opacity, while outlined controls and quiet navigation derive their disabled label from caption lightness (+8 points in light, −8 in dark).
+
+Do not add literal colors to state selectors, per-color state swatches, or independent state overrides. For a new component, reuse an existing profile or explicitly document a new profile in the numeric rules. Derived CSS aliases are formulas, not additional palette entries. Relative HSL uses the browser’s CSS color engine and works in the offline build.

@@ -20,42 +20,6 @@ a {
 	overflow-wrap: anywhere;
 }
 
-.button-primary {
-	border: 0;
-	background: var(--color-primary-action);
-	color: var(--color-on-primary-action);
-	transition:
-		border-color var(--motion-duration-fast) var(--motion-ease-standard),
-		background-color var(--motion-duration-fast) var(--motion-ease-standard);
-}
-
-.button-primary:hover:not(:disabled) {
-	border: 0;
-	background: var(--color-primary-action-hover);
-}
-
-.button-secondary {
-	border-color: var(--color-border-strong);
-	background: var(--color-subtle-action);
-	color: var(--color-control-text);
-	transition:
-		border-color var(--motion-duration-fast) var(--motion-ease-standard),
-		background-color var(--motion-duration-fast) var(--motion-ease-standard);
-}
-
-.button-secondary:hover:not(:disabled) {
-	border-color: var(--color-border-hover);
-	background: var(--color-subtle-action-hover);
-}
-
-.rt-BaseButton:where(.rt-variant-surface):not(:disabled, [data-disabled]):hover {
-	box-shadow: inset 0 0 0 0.09375rem var(--color-border-hover);
-}
-
-.button:disabled {
-	opacity: 0.48;
-}
-
 .centered {
 	min-inline-size: 0;
 	min-height: 100dvh;
@@ -66,23 +30,6 @@ a {
 	padding: var(--space-5);
 	color: var(--color-text-muted);
 	overflow-wrap: anywhere;
-}
-
-.notice {
-	padding: var(--space-3);
-	margin: var(--space-4) 0;
-	border-radius: var(--radius-surface);
-	font: var(--type-body-small);
-}
-
-.notice-error {
-	border: 0;
-	background: var(--color-danger-surface);
-	color: var(--color-danger);
-}
-
-.muted {
-	color: var(--color-text-muted);
 }
 
 .surface-card {
@@ -125,3 +72,115 @@ a {
 .disclosure-note[open] > summary::before { transform: rotate(90deg); }
 .disclosure-note > summary:focus-visible { outline: 0.125rem solid var(--color-focus-ring); outline-offset: 0.25rem; }
 .disclosure-note > p { margin: 0.5rem 0 0 1rem; color: inherit; font: inherit; }
+
+/* Short, non-interactive metadata beside a label. */
+.info-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.2rem 0.45rem;
+    font: 400 0.7rem/1.4 var(--font-family);
+    white-space: nowrap;
+    color: var(--color-link);
+    background: var(--color-surface-muted);
+    border: 0;
+    border-radius: var(--radius-standard);
+}
+
+.toast {
+    display: inline-flex;
+    width: max-content;
+    max-width: 100%;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    min-width: 0;
+    min-height: 3rem;
+    border: 0;
+    border-radius: var(--radius-standard);
+    font: var(--type-body-small);
+    color: var(--color-on-toast);
+    overflow-wrap: anywhere;
+}
+.toast-dismiss {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 2rem;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: 0;
+    border-radius: 100vmax;
+    background: transparent;
+    color: inherit;
+}
+.toast-dismiss .symbol { width: 1.125rem; height: 1.125rem; }
+.toast-dismiss:focus-visible { outline: 0.125rem solid var(--color-focus-ring); outline-offset: 0.125rem; }
+
+.toast-neutral { background: var(--color-toast-neutral); }
+.toast-success { background: var(--color-toast-success); }
+.toast-info { background: var(--color-toast-info); }
+.toast-error { background: var(--color-toast-error); }
+.toast-message { flex: 0 1 auto; min-width: 0; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.toast-status-icon { flex: 0 0 1.125rem; width: 1.125rem; height: 1.125rem; }
+.toast .toast-action { flex: 0 0 auto; white-space: nowrap; }
+.toast-dismiss:focus-visible { outline-color: var(--color-on-toast); }
+.toast { flex-wrap: nowrap; overflow: visible; }
+
+/* A toast inherits the primary button shape, with local derived color values. */
+.toast {
+    --color-primary-action: hsl(from var(--toast-fill) h s calc(l * var(--state-toast-action-factor)));
+    --color-primary-action-hover: hsl(from var(--toast-fill) h s calc(l * (var(--state-toast-action-factor) - var(--state-toast-action-step))));
+    --color-primary-action-pressed: hsl(from var(--toast-fill) h s calc(l * (var(--state-toast-action-factor) - 2 * var(--state-toast-action-step))));
+    --color-on-primary-action: var(--color-on-toast);
+    --color-focus-ring: var(--color-on-toast);
+}
+.toast-neutral { --toast-fill: var(--color-toast-neutral); }
+.toast-success { --toast-fill: var(--color-toast-success); }
+.toast-info { --toast-fill: var(--color-toast-info); }
+.toast-error { --toast-fill: var(--color-toast-error); }
+.toast .toast-dismiss:is(.hover, :hover):not(:disabled) { background: var(--color-primary-action); }
+.toast .toast-dismiss:is(.pressed, :active):not(:disabled) { background: var(--color-primary-action-pressed); }
+
+/* These rules render both real interactions and the reference table samples. */
+:is(.demo-button.primary, .button-primary) { background: var(--color-primary-action); color: var(--color-on-primary-action); border: 0; }
+:is(.demo-button.primary, .button-primary):is(.hover, :hover):not(:disabled) { background: var(--color-primary-action-hover); }
+:is(.demo-button.primary, .button-primary):is(.pressed, :active):not(:disabled) { background: var(--color-primary-action-pressed); }
+:is(.demo-button.secondary, .button-secondary) { background: var(--color-subtle-action); color: var(--color-control-text); border-color: var(--color-border-strong); }
+:is(.demo-button.secondary, .button-secondary):is(.hover, :hover):not(:disabled) { background: var(--color-subtle-action-hover); border-color: var(--color-border-hover); }
+:is(.demo-button.secondary, .button-secondary):is(.pressed, :active):not(:disabled) { background: var(--color-subtle-action-pressed); border-color: var(--color-border-pressed); }
+:is(.demo-button.outlined, .outlined-action) { background: var(--color-subtle-action); color: var(--color-link); border-color: var(--color-border-strong); }
+:is(.demo-button.outlined, .outlined-action):is(.hover, :hover):not(:disabled) { background: var(--color-subtle-action-hover); border-color: var(--color-link); color: var(--color-link-hover); }
+:is(.demo-button.outlined, .outlined-action):is(.pressed, :active):not(:disabled) { background: var(--color-subtle-action-pressed); border-color: var(--color-link); color: var(--color-link-pressed); }
+.demo-button.danger { background: var(--color-destructive-action); color: var(--color-on-destructive-action); border: 0; }
+.demo-button.danger:is(.hover, :hover):not(:disabled) { background: var(--color-destructive-action-hover); }
+.demo-button.danger:is(.pressed, :active):not(:disabled) { background: var(--color-destructive-action-pressed); }
+.demo-button.emphasis { background: var(--color-accent); color: var(--color-on-accent); border: 0; }
+.demo-button.emphasis:is(.hover, :hover):not(:disabled) { background: var(--color-accent-hover); }
+.demo-button.emphasis:is(.pressed, :active):not(:disabled) { background: var(--color-accent-pressed); }
+
+.demo-button.emphasis { border-radius: calc(var(--radius-standard) * var(--scale, 1)); }
+:is(.demo-button, .button, .outlined-action):is(.focus, :focus-visible) { outline: 0.125rem solid var(--color-focus-ring); outline-offset: 0.125rem; }
+:is(.demo-button.outlined, .outlined-action):is(.focus, :focus-visible) { outline-color: var(--color-outlined-focus); outline-offset: 0.0625rem; }
+:is(.demo-button, .button):disabled { opacity: var(--state-disabled-opacity); cursor: default; }
+:is(.demo-button.outlined, .outlined-action):disabled { opacity: 1; color: var(--color-text-subtle); cursor: default; }
+.demo-nav:is(.hover, :hover):not(:disabled) { background: var(--color-surface-muted); }
+.demo-nav:is(.pressed, :active):not(:disabled) { background: var(--color-navigation-quiet-pressed); }
+.demo-nav.active:is(.hover, :hover):not(:disabled) { background: var(--color-navigation-hover); }
+.demo-nav.active:is(.pressed, :active):not(:disabled) { background: var(--color-navigation-pressed); }
+.demo-nav:is(.focus, :focus-visible) { outline: 0.125rem solid var(--color-focus-ring); outline-offset: -0.125rem; }
+.demo-nav:disabled { color: var(--color-text-subtle); cursor: default; }
+.demo-nav:disabled .symbol { color: inherit; }
+.demo-nav.active:disabled { opacity: var(--state-disabled-opacity); }
+:is(.demo-button, .button, .outlined-action, .demo-nav, .toast-dismiss) { transition: background-color var(--motion-duration-fast) var(--motion-ease), color var(--motion-duration-fast) var(--motion-ease), border-color var(--motion-duration-fast) var(--motion-ease); }
+@media (prefers-reduced-motion: reduce) { :is(.demo-button, .button, .outlined-action, .demo-nav, .toast-dismiss) { transition: none; } }
+
+/* Other interactive controls reuse the existing fill/text profiles. */
+.demo-select:is(.hover, :hover):not(:disabled) { background: var(--color-subtle-action-hover); border-color: var(--color-border-hover); }
+.demo-select:is(.pressed, :active):not(:disabled) { background: var(--color-subtle-action-pressed); border-color: var(--color-border-pressed); }
+.demo-select:focus-visible { outline: 0.125rem solid var(--color-focus-ring); outline-offset: 0.125rem; }
+:is(.demo-select, .toast-dismiss):disabled { opacity: var(--state-disabled-opacity); cursor: default; }
+.disclosure-note > summary:hover { color: var(--color-quiet-label-hover); }
+.disclosure-note > summary:active { color: var(--color-quiet-label-pressed); }

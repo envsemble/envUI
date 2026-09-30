@@ -20,20 +20,3 @@
 		background-color var(--motion-duration-fast) var(--motion-ease-standard),
 		color var(--motion-duration-fast) var(--motion-ease-standard);
 }
-
-.outlined-action:not(:disabled):hover {
-	border-color: var(--color-link);
-	background: var(--color-surface-hover);
-	color: var(--color-link-hover);
-}
-
-.outlined-action:focus-visible {
-	outline: 0.125rem solid var(--color-outlined-focus);
-	outline-offset: 0.0625rem;
-}
-
-.outlined-action:disabled {
-	color: var(--color-text-subtle);
-	cursor: default;
-	opacity: 1;
-}
