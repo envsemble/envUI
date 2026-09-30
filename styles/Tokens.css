@@ -71,55 +71,51 @@
 	--md-sys-shape-corner-large: 1rem;
 	--md-sys-shape-corner-extra-large: 1.75rem;
 	--md-sys-shape-corner-full: 100vmax;
-    /* State profiles: signed changes to HSL lightness, in percentage points.
-       Pressed always starts from the base, never from the hover result. */
-    --state-pressed-strength: 1.5;
-    --state-neutral-hover-delta: 15;
-    --state-color-hover-delta: -5;
-    --state-emphasis-hover-delta: -10;
-    --state-soft-hover-delta: -3;
-    --state-link-hover-delta: -8;
-    --state-control-blue-hover-delta: -8;
-    --state-border-hover-delta: -25;
-    --state-loading-highlight-delta: 4;
+    /* Color-based interaction rule, identical in both themes.
+       Below 50% lightness: +shift; at/above 50%: -shift.
+       The direction expression uses the source color channel l inside relative HSL. */
+    --state-lightness-threshold: 50;
+    --state-hover-shift: 10;
+    --state-pressed-shift: 20;
+    --state-lightness-direction: calc(1 - 2 * clamp(0, calc(sign(l - var(--state-lightness-threshold)) + 1), 1));
     --state-disabled-opacity: 0.48;
-    --state-disabled-label-delta: 8;
-    --state-outlined-focus-opacity: 0.55;
     --state-selected-base-weight: 13%;
-    --state-selected-step: 7%;
     --state-card-strip-weight: 35%;
     --state-toast-action-factor: 0.78;
-    --state-toast-action-step: 0.13;
+    --state-dialog-overlay-opacity: 0.55;
 
     /* Derived values: no independent state colors may be authored here. */
-    --color-control-blue-hover: hsl(from var(--color-control-blue) h s clamp(0, calc(l + var(--state-control-blue-hover-delta)), 100));
-    --color-control-blue-pressed: hsl(from var(--color-control-blue) h s clamp(0, calc(l + var(--state-control-blue-hover-delta) * var(--state-pressed-strength)), 100));
-    --color-primary-action-hover: hsl(from var(--color-primary-action) h s clamp(0, calc(l + var(--state-neutral-hover-delta) * 1), 100));
-    --color-primary-action-pressed: hsl(from var(--color-primary-action) h s clamp(0, calc(l + var(--state-neutral-hover-delta) * var(--state-pressed-strength)), 100));
+    --color-checkbox-ring-hover: hsl(from var(--color-icon) h s clamp(0, calc(l + var(--state-hover-shift) * var(--state-lightness-direction)), 100));
+    --color-checkbox-ring-pressed: hsl(from var(--color-icon) h s clamp(0, calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)), 100));
+    --color-control-blue-hover: hsl(from var(--color-control-blue) h s clamp(0, calc(l + var(--state-hover-shift) * var(--state-lightness-direction)), 100));
+    --color-control-blue-pressed: hsl(from var(--color-control-blue) h s clamp(0, calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)), 100));
+    --color-primary-action-hover: hsl(from var(--color-primary-action) h s clamp(0, calc(l + var(--state-hover-shift) * var(--state-lightness-direction)), 100));
+    --color-primary-action-pressed: hsl(from var(--color-primary-action) h s clamp(0, calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)), 100));
     --color-icon-button: var(--color-surface-muted);
-    --color-icon-button-hover: hsl(from var(--color-icon-button) h s clamp(0, calc(l + var(--state-soft-hover-delta)), 100));
-    --color-icon-button-pressed: hsl(from var(--color-icon-button) h s clamp(0, calc(l + var(--state-soft-hover-delta) * var(--state-pressed-strength)), 100));
-    --color-subtle-action-hover: hsl(from var(--color-subtle-action) h s clamp(0, calc(l + var(--state-soft-hover-delta) * 1), 100));
-    --color-subtle-action-pressed: hsl(from var(--color-subtle-action) h s clamp(0, calc(l + var(--state-soft-hover-delta) * var(--state-pressed-strength)), 100));
-    --color-link-hover: hsl(from var(--color-link) h s clamp(0, calc(l + var(--state-link-hover-delta) * 1), 100));
-    --color-link-pressed: hsl(from var(--color-link) h s clamp(0, calc(l + var(--state-link-hover-delta) * var(--state-pressed-strength)), 100));
-    --color-border-hover: hsl(from var(--color-border-strong) h s clamp(0, calc(l + var(--state-border-hover-delta) * 1), 100));
-    --color-border-pressed: hsl(from var(--color-border-strong) h s clamp(0, calc(l + var(--state-border-hover-delta) * var(--state-pressed-strength)), 100));
-    --color-accent-hover: hsl(from var(--color-accent) h s clamp(0, calc(l + var(--state-emphasis-hover-delta) * 1), 100));
-    --color-accent-pressed: hsl(from var(--color-accent) h s clamp(0, calc(l + var(--state-emphasis-hover-delta) * var(--state-pressed-strength)), 100));
-    --color-destructive-action-hover: hsl(from var(--color-destructive-action) h s clamp(0, calc(l + var(--state-color-hover-delta) * 1), 100));
-    --color-destructive-action-pressed: hsl(from var(--color-destructive-action) h s clamp(0, calc(l + var(--state-color-hover-delta) * var(--state-pressed-strength)), 100));
-    --color-text-subtle: hsl(from var(--color-text-quiet) h s clamp(0, calc(l + var(--state-disabled-label-delta)), 100));
-    --color-quiet-label-hover: hsl(from var(--color-text-muted) h s clamp(0, calc(l + var(--state-link-hover-delta)), 100));
-    --color-quiet-label-pressed: hsl(from var(--color-text-muted) h s clamp(0, calc(l + var(--state-link-hover-delta) * var(--state-pressed-strength)), 100));
+    --color-icon-button-hover: hsl(from var(--color-icon-button) h s clamp(0, calc(l + var(--state-hover-shift) * var(--state-lightness-direction)), 100));
+    --color-icon-button-pressed: hsl(from var(--color-icon-button) h s clamp(0, calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)), 100));
+    --color-subtle-action-hover: hsl(from var(--color-subtle-action) h s clamp(0, calc(l + var(--state-hover-shift) * var(--state-lightness-direction)), 100));
+    --color-subtle-action-pressed: hsl(from var(--color-subtle-action) h s clamp(0, calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)), 100));
+    --color-link-hover: hsl(from var(--color-link) h s clamp(0, calc(l + var(--state-hover-shift) * var(--state-lightness-direction)), 100));
+    --color-link-pressed: hsl(from var(--color-link) h s clamp(0, calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)), 100));
+    --color-border-hover: hsl(from var(--color-border-strong) h s clamp(0, calc(l + var(--state-hover-shift) * var(--state-lightness-direction)), 100));
+    --color-border-pressed: hsl(from var(--color-border-strong) h s clamp(0, calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)), 100));
+    --color-accent-hover: hsl(from var(--color-accent) h s clamp(0, calc(l + var(--state-hover-shift) * var(--state-lightness-direction)), 100));
+    --color-accent-pressed: hsl(from var(--color-accent) h s clamp(0, calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)), 100));
+    --color-destructive-action-hover: hsl(from var(--color-destructive-action) h s clamp(0, calc(l + var(--state-hover-shift) * var(--state-lightness-direction)), 100));
+    --color-destructive-action-pressed: hsl(from var(--color-destructive-action) h s clamp(0, calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)), 100));
+    --color-text-subtle: var(--color-text-quiet);
+    --color-quiet-label-hover: hsl(from var(--color-text-muted) h s clamp(0, calc(l + var(--state-hover-shift) * var(--state-lightness-direction)), 100));
+    --color-quiet-label-pressed: hsl(from var(--color-text-muted) h s clamp(0, calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)), 100));
     --color-focus-ring: var(--color-text-primary);
-    --color-outlined-focus: hsl(from var(--color-link) h s l / var(--state-outlined-focus-opacity));
+    --color-outlined-focus: var(--color-focus-ring);
     --color-navigation-selected: color-mix(in srgb, var(--color-link) var(--state-selected-base-weight), var(--color-surface));
-    --color-navigation-hover: color-mix(in srgb, var(--color-link) calc(var(--state-selected-base-weight) + var(--state-selected-step)), var(--color-surface));
-    --color-navigation-pressed: color-mix(in srgb, var(--color-link) calc(var(--state-selected-base-weight) + 2 * var(--state-selected-step)), var(--color-surface));
-    --color-navigation-quiet-pressed: hsl(from var(--color-surface-muted) h s clamp(0, calc(l + var(--state-soft-hover-delta)), 100));
+    --color-navigation-hover: hsl(from var(--color-navigation-selected) h s clamp(0, calc(l + var(--state-hover-shift) * var(--state-lightness-direction)), 100));
+    --color-navigation-pressed: hsl(from var(--color-navigation-selected) h s clamp(0, calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)), 100));
+    --color-navigation-quiet-hover: hsl(from var(--color-surface-muted) h s clamp(0, calc(l + var(--state-hover-shift) * var(--state-lightness-direction)), 100));
+    --color-navigation-quiet-pressed: hsl(from var(--color-surface-muted) h s clamp(0, calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)), 100));
     --color-action-strip: color-mix(in srgb, var(--color-surface-muted) var(--state-card-strip-weight), var(--color-surface));
-    --color-skeleton-highlight: hsl(from var(--color-skeleton-base) h s clamp(0, calc(l + var(--state-loading-highlight-delta)), 100));
+    --color-skeleton-highlight: hsl(from var(--color-skeleton-base) h s clamp(0, calc(l + var(--state-hover-shift) * var(--state-lightness-direction)), 100));
 	--color-primary-action: var(--color-text-strong);
 	--color-on-primary-action: var(--color-canvas);
 	--color-subtle-action: var(--color-surface);
@@ -138,13 +134,7 @@
 :root[data-theme="dark"],
 .theme-preview[data-theme="dark"] {
 	color-scheme: dark;
-    --state-neutral-hover-delta: -15;
-    --state-soft-hover-delta: 6;
-    --state-link-hover-delta: 8;
-    --state-border-hover-delta: 25;
-    --state-loading-highlight-delta: 8;
-    --state-disabled-label-delta: -8;
-    --color-focus-ring: var(--color-link-hover);
+    --color-focus-ring: var(--color-link);
 	--color-subtle-action: var(--color-surface);
 	--color-primary-action: var(--color-text-strong);
 	--color-on-primary-action: var(--color-canvas);

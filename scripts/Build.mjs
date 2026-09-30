@@ -26,6 +26,10 @@ html = await replaceAsync(html, /<link rel="stylesheet" href="([^"]+)"\s*\/>/g, 
 });
 html = await replaceAsync(html, /assets\/(?:brand|material-symbols-rounded)\/[\w-]+\.svg/g,
   async ([path]) => await dataUrl(resolve(root, path)));
+html = await replaceAsync(html, /<script src="([^"]+)"><\/script>/g, async ([, path]) => {
+  const source = await readFile(resolve(root, path), 'utf8');
+  return `<script>\n${source.replaceAll('</script', '<\\/script')}\n</script>`;
+});
 const licenses = await Promise.all(['Inter-LICENSE.txt', 'Material-Symbols-LICENSE.txt'].map(name => readFile(resolve(root, 'licenses', name), 'utf8')));
 html = html.replace('</head>', `<!-- Embedded asset licenses\n${licenses.join('\n\n').replaceAll('--', '—')}\n-->\n</head>`);
 await mkdir(resolve(root, 'dist'), { recursive: true });

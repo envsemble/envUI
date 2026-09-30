@@ -1,44 +1,81 @@
+/* Canonical control geometry, shared by live controls and specimens. */
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: calc(0.4375rem * var(--scale, 1));
+    min-height: calc(2rem * var(--scale, 1));
+    padding: calc(0.25rem * var(--scale, 1)) calc(0.75rem * var(--scale, 1));
+    border: 0.0625rem solid transparent;
+    border-radius: 100vmax;
+    font: 400 calc(0.875rem * var(--scale, 1))/1.4 var(--font-family);
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-align: center;
+    text-decoration: none;
+    max-inline-size: 100%;
+    min-inline-size: 0;
+}
+.navigation-control {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(0.5rem * var(--scale, 1));
+    padding: calc(0.25rem * var(--scale, 1)) calc(0.75rem * var(--scale, 1));
+    min-height: calc(2.5rem * var(--scale, 1));
+    border: 0;
+    border-radius: 100vmax;
+    background: transparent;
+    color: var(--color-text-strong);
+    font: 400 calc(0.9375rem * var(--scale, 1))/1.4 var(--font-family);
+}
+.navigation-control.active {
+    color: var(--color-link);
+    background: var(--color-navigation-selected);
+}
+.navigation-control:disabled {
+    opacity: var(--state-disabled-opacity);
+}
+.navigation-control .symbol {
+    width: calc(1.125rem * var(--scale, 1));
+    height: calc(1.125rem * var(--scale, 1));
+}
+.symbol {
+    display: inline-block;
+    width: calc(1rem * var(--scale, 1));
+    height: calc(1rem * var(--scale, 1));
+    fill: currentColor;
+    flex-shrink: 0;
+}
+.symbol svg { display: block; width: 100%; height: 100%; fill: currentColor; }
+.navigation-control:not(.active):not(:disabled) .symbol { color: var(--color-text-quiet); }
+.navigation-control.active .symbol { color: inherit; }
+.button, .navigation-control { margin: 0; box-sizing: border-box; }
+
 a {
-	color: inherit;
+    color: inherit;
 }
 
-.button {
-	min-inline-size: 0;
-	max-inline-size: 100%;
-	min-height: var(--control-height-small);
-	padding: var(--space-1) var(--space-3);
-	border: 0.0625rem solid transparent;
-	border-radius: 100vmax;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	gap: 0.4375rem;
-	font: var(--type-body-small);
-	text-decoration: none;
-	text-align: center;
-	white-space: normal;
-	overflow-wrap: anywhere;
-}
+
 
 .centered {
-	min-inline-size: 0;
-	min-height: 100dvh;
-	display: grid;
-	place-items: center;
-	align-content: center;
-	gap: var(--space-3);
-	padding: var(--space-5);
-	color: var(--color-text-muted);
-	overflow-wrap: anywhere;
+    min-inline-size: 0;
+    min-height: 100dvh;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    color: var(--color-text-muted);
+    overflow-wrap: anywhere;
 }
 
 .surface-card {
-	min-inline-size: 0;
-	--surface-card-padding: clamp(1rem, 3vw, 1.5rem);
-	padding: var(--surface-card-padding);
-	border: 0;
-	border-radius: var(--radius-surface);
-	background: var(--color-surface-muted);
+    min-inline-size: 0;
+    --surface-card-padding: clamp(1rem, 3vw, 1.5rem);
+    padding: var(--surface-card-padding);
+    border: 0;
+    border-radius: var(--radius-surface);
+    background: var(--color-surface-muted);
 }
 
 .surface-card > h3 {
@@ -132,8 +169,8 @@ a {
 /* A toast inherits the primary button shape, with local derived color values. */
 .toast {
     --color-primary-action: hsl(from var(--toast-fill) h s calc(l * var(--state-toast-action-factor)));
-    --color-primary-action-hover: hsl(from var(--toast-fill) h s calc(l * (var(--state-toast-action-factor) - var(--state-toast-action-step))));
-    --color-primary-action-pressed: hsl(from var(--toast-fill) h s calc(l * (var(--state-toast-action-factor) - 2 * var(--state-toast-action-step))));
+    --color-primary-action-hover: hsl(from var(--color-primary-action) h s clamp(0, calc(l + var(--state-hover-shift) * var(--state-lightness-direction)), 100));
+    --color-primary-action-pressed: hsl(from var(--color-primary-action) h s clamp(0, calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)), 100));
     --color-on-primary-action: var(--color-on-toast);
     --color-focus-ring: var(--color-on-toast);
 }
@@ -141,52 +178,52 @@ a {
 .toast-success { --toast-fill: var(--color-toast-success); }
 .toast-info { --toast-fill: var(--color-toast-info); }
 .toast-error { --toast-fill: var(--color-toast-error); }
-.toast .toast-dismiss:is(.hover, :hover):not(:disabled) { background: var(--color-primary-action); }
+.toast .toast-dismiss:is(.hover, :hover):not(:disabled) { background: var(--color-primary-action-hover); }
 .toast .toast-dismiss:is(.pressed, :active):not(:disabled) { background: var(--color-primary-action-pressed); }
 
 /* These rules render both real interactions and the reference table samples. */
-:is(.demo-button.primary, .button-primary) { background: var(--color-primary-action); color: var(--color-on-primary-action); border: 0; }
-:is(.demo-button.primary, .button-primary):is(.hover, :hover):not(:disabled) { background: var(--color-primary-action-hover); }
-:is(.demo-button.primary, .button-primary):is(.pressed, :active):not(:disabled) { background: var(--color-primary-action-pressed); }
-:is(.demo-button.secondary, .button-secondary) { background: var(--color-subtle-action); color: var(--color-control-text); border-color: var(--color-border-strong); }
-:is(.demo-button.secondary, .button-secondary):is(.hover, :hover):not(:disabled) { background: var(--color-subtle-action-hover); border-color: var(--color-border-hover); }
-:is(.demo-button.secondary, .button-secondary):is(.pressed, :active):not(:disabled) { background: var(--color-subtle-action-pressed); border-color: var(--color-border-pressed); }
-:is(.demo-button.outlined, .outlined-action) { background: var(--color-subtle-action); color: var(--color-link); border-color: var(--color-border-strong); }
-:is(.demo-button.outlined, .outlined-action):is(.hover, :hover):not(:disabled) { background: var(--color-subtle-action-hover); border-color: var(--color-link); color: var(--color-link-hover); }
-:is(.demo-button.outlined, .outlined-action):is(.pressed, :active):not(:disabled) { background: var(--color-subtle-action-pressed); border-color: var(--color-link); color: var(--color-link-pressed); }
-.demo-button.danger { background: var(--color-destructive-action); color: var(--color-on-destructive-action); border: 0; }
-.demo-button.danger:is(.hover, :hover):not(:disabled) { background: var(--color-destructive-action-hover); }
-.demo-button.danger:is(.pressed, :active):not(:disabled) { background: var(--color-destructive-action-pressed); }
-.demo-button.emphasis { background: var(--color-accent); color: var(--color-on-accent); border: 0; }
-.demo-button.emphasis:is(.hover, :hover):not(:disabled) { background: var(--color-accent-hover); }
-.demo-button.emphasis:is(.pressed, :active):not(:disabled) { background: var(--color-accent-pressed); }
+:is(.button.primary, .button-primary) { background: var(--color-primary-action); color: var(--color-on-primary-action); border: 0; }
+:is(.button.primary, .button-primary):is(.hover, :hover):not(:disabled) { background: var(--color-primary-action-hover); }
+:is(.button.primary, .button-primary):is(.pressed, :active):not(:disabled) { background: var(--color-primary-action-pressed); }
+:is(.button.secondary, .button-secondary) { background: var(--color-subtle-action); color: var(--color-control-text); border-color: var(--color-border-strong); }
+:is(.button.secondary, .button-secondary):is(.hover, :hover):not(:disabled) { background: var(--color-subtle-action-hover); border-color: var(--color-border-hover); }
+:is(.button.secondary, .button-secondary):is(.pressed, :active):not(:disabled) { background: var(--color-subtle-action-pressed); border-color: var(--color-border-pressed); }
+:is(.button.outlined, .outlined-action) { background: var(--color-subtle-action); color: var(--color-link); border-color: var(--color-border-strong); }
+:is(.button.outlined, .outlined-action):is(.hover, :hover):not(:disabled) { background: var(--color-subtle-action-hover); border-color: var(--color-border-hover); }
+:is(.button.outlined, .outlined-action):is(.pressed, :active):not(:disabled) { background: var(--color-subtle-action-pressed); border-color: var(--color-border-pressed); }
+.button.danger { background: var(--color-destructive-action); color: var(--color-on-destructive-action); border: 0; }
+.button.danger:is(.hover, :hover):not(:disabled) { background: var(--color-destructive-action-hover); }
+.button.danger:is(.pressed, :active):not(:disabled) { background: var(--color-destructive-action-pressed); }
+.button.emphasis { background: var(--color-accent); color: var(--color-on-accent); border: 0; }
+.button.emphasis:is(.hover, :hover):not(:disabled) { background: var(--color-accent-hover); }
+.button.emphasis:is(.pressed, :active):not(:disabled) { background: var(--color-accent-pressed); }
 
-.demo-button.emphasis { border-radius: calc(var(--radius-standard) * var(--scale, 1)); }
-:is(.demo-button, .button, .outlined-action):is(.focus, :focus-visible) { outline: 0.125rem solid var(--color-focus-ring); outline-offset: 0.125rem; }
-:is(.demo-button.outlined, .outlined-action):is(.focus, :focus-visible) { outline-color: var(--color-outlined-focus); outline-offset: 0.0625rem; }
-:is(.demo-button, .button):disabled { opacity: var(--state-disabled-opacity); cursor: default; }
-:is(.demo-button.outlined, .outlined-action):disabled { opacity: 1; color: var(--color-text-subtle); cursor: default; }
-.demo-nav:is(.hover, :hover):not(:disabled) { background: var(--color-surface-muted); }
-.demo-nav:is(.pressed, :active):not(:disabled) { background: var(--color-navigation-quiet-pressed); }
-.demo-nav.active:is(.hover, :hover):not(:disabled) { background: var(--color-navigation-hover); }
-.demo-nav.active:is(.pressed, :active):not(:disabled) { background: var(--color-navigation-pressed); }
-.demo-nav:is(.focus, :focus-visible) { outline: 0.125rem solid var(--color-focus-ring); outline-offset: -0.125rem; }
-.demo-nav:disabled { color: var(--color-text-subtle); cursor: default; }
-.demo-nav:disabled .symbol { color: inherit; }
-.demo-nav.active:disabled { opacity: var(--state-disabled-opacity); }
-:is(.demo-button, .button, .outlined-action, .demo-nav, .toast-dismiss) { transition: background-color var(--motion-duration-fast) var(--motion-ease), color var(--motion-duration-fast) var(--motion-ease), border-color var(--motion-duration-fast) var(--motion-ease); }
-@media (prefers-reduced-motion: reduce) { :is(.demo-button, .button, .outlined-action, .demo-nav, .toast-dismiss) { transition: none; } }
+.button.emphasis { border-radius: calc(var(--radius-standard) * var(--scale, 1)); }
+:is(.button, .outlined-action):is(.focus, :focus-visible) { outline: 0.125rem solid var(--color-focus-ring); outline-offset: 0.125rem; }
+:is(.button.outlined, .outlined-action):is(.focus, :focus-visible) { outline-color: var(--color-outlined-focus); outline-offset: 0.0625rem; }
+.button:disabled { opacity: var(--state-disabled-opacity); cursor: default; }
+:is(.button.outlined, .outlined-action):disabled { opacity: var(--state-disabled-opacity); cursor: default; }
+.navigation-control:is(.hover, :hover):not(:disabled) { background: var(--color-navigation-quiet-hover); }
+.navigation-control:is(.pressed, :active):not(:disabled) { background: var(--color-navigation-quiet-pressed); }
+.navigation-control.active:is(.hover, :hover):not(:disabled) { background: var(--color-navigation-hover); }
+.navigation-control.active:is(.pressed, :active):not(:disabled) { background: var(--color-navigation-pressed); }
+.navigation-control:is(.focus, :focus-visible) { outline: 0.125rem solid var(--color-focus-ring); outline-offset: -0.125rem; }
+.navigation-control:disabled { opacity: var(--state-disabled-opacity); cursor: default; }
+.navigation-control:disabled .symbol { color: inherit; }
+.navigation-control.active:disabled { opacity: var(--state-disabled-opacity); }
+:is(.button, .outlined-action, .navigation-control, .toast-dismiss) { transition: background-color var(--motion-duration-fast) var(--motion-ease), color var(--motion-duration-fast) var(--motion-ease), border-color var(--motion-duration-fast) var(--motion-ease); }
+@media (prefers-reduced-motion: reduce) { :is(.button, .outlined-action, .navigation-control, .toast-dismiss) { transition: none; } }
 
 /* Other interactive controls reuse the existing fill/text profiles. */
-.demo-select:is(.hover, :hover):not(:disabled) { background: var(--color-subtle-action-hover); border-color: var(--color-border-hover); }
-.demo-select:is(.pressed, :active):not(:disabled) { background: var(--color-subtle-action-pressed); border-color: var(--color-border-pressed); }
-.demo-select:focus-visible { outline: 0.125rem solid var(--color-focus-ring); outline-offset: 0.125rem; }
-:is(.demo-select, .toast-dismiss):disabled { opacity: var(--state-disabled-opacity); cursor: default; }
+.select-control:is(.hover, :hover):not(:disabled) { background: var(--color-subtle-action-hover); border-color: var(--color-border-hover); }
+.select-control:is(.pressed, :active):not(:disabled) { background: var(--color-subtle-action-pressed); border-color: var(--color-border-pressed); }
+.select-control:focus-visible { outline: 0.125rem solid var(--color-focus-ring); outline-offset: 0.125rem; }
+:is(.select-control, .toast-dismiss):disabled { opacity: var(--state-disabled-opacity); cursor: default; }
 .disclosure-note > summary:hover { color: var(--color-quiet-label-hover); }
 .disclosure-note > summary:active { color: var(--color-quiet-label-pressed); }
 
-/* Tonal circular icon action: shared geometry, palette, and soft-fill states. */
-.demo-button.icon-button {
+/* Tonal circular icon action: shared geometry, palette, and shared states. */
+.button.icon-button {
     width: calc(var(--icon-button-size) * var(--scale, 1));
     height: calc(var(--icon-button-size) * var(--scale, 1));
     min-height: calc(var(--icon-button-size) * var(--scale, 1));
@@ -197,105 +234,9 @@ a {
     background: var(--color-icon-button);
     color: var(--color-control-text);
 }
-.demo-button.icon-button .symbol {
+.button.icon-button .symbol {
     width: calc(var(--icon-button-icon-size) * var(--scale, 1));
     height: calc(var(--icon-button-icon-size) * var(--scale, 1));
 }
-.demo-button.icon-button:is(.hover, :hover):not(:disabled) { background: var(--color-icon-button-hover); }
-.demo-button.icon-button:is(.pressed, :active):not(:disabled) { background: var(--color-icon-button-pressed); }
-
-/* Selection reuses tonal controls and the grouped-row corner pattern. */
-.dropdown-control { position: relative; display: inline-flex; max-width: 100%; color: var(--color-text-primary); }
-.demo-button.dropdown-trigger { background: var(--color-surface-muted); color: var(--color-control-text); border: 0; gap: 0.5rem; }
-.demo-button.dropdown-trigger:hover:not(:disabled) { background: var(--color-icon-button-hover); }
-.demo-button.dropdown-trigger:active:not(:disabled) { background: var(--color-icon-button-pressed); }
-.dropdown-trigger .symbol { width: 1.125rem; height: 1.125rem; color: var(--color-text-quiet); transform: rotate(90deg); }
-.dropdown-trigger[aria-expanded="true"] .symbol { transform: rotate(-90deg); }
-.dropdown-options { position: absolute; inset-block-start: calc(100% + 0.5rem); inset-inline-start: 0; z-index: 10; display: grid; gap: 0.125rem; padding: 0.5rem; width: max-content; min-width: 100%; max-width: min(24rem, 80vw); border-radius: var(--radius-row-outer); background: var(--color-pane); }
-.dropdown-options[hidden] { display: none; }
-.dropdown-option { display: block; margin: 0; min-height: 2.5rem; padding: 0.5rem 1rem; border: 0; border-radius: var(--radius-row-inner); background: var(--color-surface-muted); color: var(--color-control-text); text-align: start; font: var(--type-body-small); cursor: pointer; }
-.dropdown-option:first-child { border-start-start-radius: var(--radius-row-outer); border-start-end-radius: var(--radius-row-outer); }
-.dropdown-option:last-child { border-end-start-radius: var(--radius-row-outer); border-end-end-radius: var(--radius-row-outer); }
-.dropdown-option:hover:not(:disabled) { background: var(--color-icon-button-hover); }
-.dropdown-option:active:not(:disabled) { background: var(--color-icon-button-pressed); }
-.dropdown-option[aria-selected="true"] { background: var(--color-navigation-selected); color: var(--color-link); }
-.dropdown-option[aria-selected="true"]:hover { background: var(--color-navigation-hover); }
-.dropdown-option[aria-selected="true"]:active { background: var(--color-navigation-pressed); }
-.dropdown-option:focus-visible { outline: 0.125rem solid var(--color-focus-ring); outline-offset: -0.125rem; }
-.dropdown-option:disabled { opacity: var(--state-disabled-opacity); cursor: default; }
-
-/* Platform's native radio and selectable-row layout, with shared state formulas. */
-.choice-states { display: flex; flex-wrap: wrap; gap: 1rem 2rem; }
-.choice-control { display: inline-flex; align-items: center; gap: 0.75rem; font: var(--type-body-small); color: var(--color-text-primary); cursor: pointer; }
-.radio-options { display: grid; gap: 0.125rem; min-width: 0; margin: 0; padding: 0; border: 0; }
-.radio-options legend { margin-bottom: 1rem; padding: 0; }
-.radio-option { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; min-width: 0; padding: 0.75rem 1rem; background: var(--color-surface-muted); border-radius: var(--radius-row-inner); font: var(--type-body-small); color: var(--color-text-primary); cursor: pointer; }
-.radio-option:first-of-type { border-start-start-radius: var(--radius-row-outer); border-start-end-radius: var(--radius-row-outer); }
-.radio-option:last-of-type { border-end-start-radius: var(--radius-row-outer); border-end-end-radius: var(--radius-row-outer); }
-.radio-option:only-of-type { border-radius: var(--radius-row-single); }
-.radio-option:has(input:checked), .radio-option:hover:not(:has(input:disabled)) { background: var(--color-icon-button-hover); }
-.radio-option:active:not(:has(input:disabled)) { background: var(--color-icon-button-pressed); }
-.radio-option:has(input:focus-visible) { outline: 0.125rem solid var(--color-focus-ring); outline-offset: -0.125rem; }
-.demo-radio { width: 1rem; height: 1rem; flex: 0 0 auto; margin: 0; accent-color: var(--color-link); cursor: inherit; }
-.demo-radio:disabled { opacity: var(--state-disabled-opacity); }
-.radio-option:has(input:disabled), .choice-control:has(input:disabled) { cursor: default; color: var(--color-text-quiet); }
-
-/* Switch: row-fill off state and existing blue on state; no new palette colors. */
-.demo-switch { appearance: none; box-sizing: border-box; flex: 0 0 auto; width: 2.5rem; height: 1.5rem; margin: 0; padding: 0.25rem; border: 0; border-radius: 100vmax; background: var(--color-surface-muted); cursor: inherit; transition: background-color var(--motion-duration-fast) var(--motion-ease); }
-.demo-switch::before { content: ""; display: block; width: 1rem; height: 1rem; border-radius: 50%; background: var(--color-control-text); transition: transform var(--motion-duration-fast) var(--motion-ease); }
-.demo-switch:checked { background: var(--color-control-blue); }
-.demo-switch:checked::before { transform: translateX(1rem); background: var(--color-white); }
-.demo-switch:hover:not(:disabled) { background: var(--color-icon-button-hover); }
-.demo-switch:active:not(:disabled) { background: var(--color-icon-button-pressed); }
-.demo-switch:checked:hover:not(:disabled) { background: var(--color-control-blue-hover); }
-.demo-switch:checked:active:not(:disabled) { background: var(--color-control-blue-pressed); }
-.demo-switch:focus-visible { outline: 0.125rem solid var(--color-focus-ring); outline-offset: 0.125rem; }
-.demo-switch:disabled { opacity: var(--state-disabled-opacity); }
-@media (prefers-reduced-motion: reduce) { .demo-switch, .demo-switch::before { transition: none; } }
-
-/* Form fields: shared row fill and pane radius, with semantic focus/validation. */
-.field-examples { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: 1.5rem; }
-.form-field { display: grid; align-content: start; gap: 0.5rem; min-width: 0; font: var(--type-body-small); color: var(--color-text-primary); }
-.field-wide { grid-column: 1 / -1; }
-.form-field small { font: var(--type-body-small); color: var(--color-text-muted); }
-.form-field:has([aria-invalid="true"]) small { color: var(--color-text-primary); }
-.demo-input { box-sizing: border-box; width: 100%; min-width: 0; min-height: 2.5rem; margin: 0; padding: 0.5rem 1rem; border: 0; border-radius: var(--radius-surface); background: var(--color-surface-muted); color: var(--color-text-primary); font: var(--type-body); }
-.demo-input::placeholder { color: var(--color-text-quiet); opacity: 1; }
-.demo-input:is(.focus, :focus-visible) { outline: 0.125rem solid var(--color-focus-ring); outline-offset: 0.125rem; }
-.demo-input[aria-invalid="true"] { outline: 0.125rem solid var(--color-destructive-action); outline-offset: 0; }
-.demo-input[aria-invalid="true"]:focus-visible { outline-offset: 0.125rem; }
-.demo-input:disabled { opacity: var(--state-disabled-opacity); cursor: default; }
-textarea.demo-input { min-height: 6rem; resize: vertical; }
-
-/* Checkbox geometry is distinct from radio; input retains native semantics. */
-.checkbox-examples { display: flex; flex-wrap: wrap; gap: var(--space-4) var(--space-6); }
-.checkbox-box { position: relative; display: inline-flex; width: 1.125rem; height: 1.125rem; flex: 0 0 auto; }
-.demo-checkbox { appearance: none; box-sizing: border-box; width: 100%; height: 100%; margin: 0; border: 0.0625rem solid var(--color-icon); border-radius: 0.25rem; background: transparent; cursor: inherit; }
-.checkbox-mark.symbol { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0.125rem; color: var(--color-white); pointer-events: none; visibility: hidden; }
-.demo-checkbox:is(:checked, :indeterminate) { border-color: transparent; background: var(--color-control-blue); }
-.demo-checkbox:checked + .checkbox-mark { visibility: visible; }
-.demo-checkbox:indeterminate + .checkbox-mark { visibility: visible; }
-.demo-checkbox:indeterminate + .checkbox-mark svg { display: none; }
-.demo-checkbox:indeterminate + .checkbox-mark::before { content: ""; position: absolute; inset-inline: 0.25rem; inset-block-start: 0.5rem; height: 0.125rem; background: currentColor; }
-.demo-checkbox:hover:not(:disabled) { border-color: var(--color-border-hover); }
-.demo-checkbox:active:not(:disabled) { border-color: var(--color-border-pressed); }
-.demo-checkbox:is(:checked, :indeterminate):hover:not(:disabled) { background: var(--color-control-blue-hover); border-color: transparent; }
-.demo-checkbox:is(:checked, :indeterminate):active:not(:disabled) { background: var(--color-control-blue-pressed); border-color: transparent; }
-.demo-checkbox:focus-visible { outline: 0.125rem solid var(--color-focus-ring); outline-offset: 0.125rem; }
-.checkbox-box:has(:disabled) { opacity: var(--state-disabled-opacity); }
-
-
-/* Dialogs compose existing fields and buttons; the native dialog owns focus. */
-.dialog-specimen, .demo-modal { padding: var(--space-5); border: 0; border-radius: var(--radius-surface); background: var(--color-pane); color: var(--color-text-primary); font: var(--type-body); }
-.dialog-specimen, .dialog-content { display: grid; gap: var(--space-5); min-width: 0; }
-:is(.dialog-specimen, .dialog-content) > :is(h4, p) { margin: 0; }
-:is(.dialog-specimen, .dialog-content) h4 { font: var(--type-h1); }
-:is(.dialog-specimen, .dialog-content) p { font: var(--type-body-small); color: var(--color-text-muted); }
-.dialog-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: var(--space-4); }
-.demo-modal { width: min(28rem, calc(100% - 2rem)); max-height: calc(100dvh - 2rem); margin: auto; overflow-y: auto; }
-.demo-modal::backdrop { background: hsl(from var(--color-canvas-dark) h s l / 0.55); }
-.empty-state { display: grid; justify-items: start; align-content: start; min-width: 0; padding: var(--space-5); gap: var(--space-4); }
-.empty-copy { display: grid; gap: var(--space-2); }
-.empty-copy > :is(h4, p) { margin: 0; }
-.empty-state h4 { font: var(--type-h2); }
-.empty-state p { font: var(--type-body-small); color: var(--color-text-muted); }
+.button.icon-button:is(.hover, :hover):not(:disabled) { background: var(--color-icon-button-hover); }
+.button.icon-button:is(.pressed, :active):not(:disabled) { background: var(--color-icon-button-pressed); }

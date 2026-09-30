@@ -13,7 +13,7 @@
 	color: var(--color-icon);
 }
 
-.feature-card__icon .material-symbol {
+.feature-card__icon .symbol {
 	width: 1.5rem;
 	height: 1.5rem;
 	font-size: 1.5rem;
@@ -30,9 +30,7 @@
 
 .feature-card__copy h2 {
 	color: var(--color-text-primary);
-	font: var(--type-h2);
-	font-size: 1.125rem;
-	line-height: 1.35;
+	font: var(--type-h1);
 }
 
 .feature-card__copy p {
