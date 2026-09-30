@@ -1,0 +1,63 @@
+.feature-card {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	align-items: center;
+	gap: var(--space-4);
+}
+
+.feature-card__icon {
+	width: 2.75rem;
+	height: 2.75rem;
+	display: grid;
+	place-items: center;
+	color: var(--color-icon);
+}
+
+.feature-card__icon .material-symbol {
+	width: 1.5rem;
+	height: 1.5rem;
+	font-size: 1.5rem;
+}
+
+.feature-card__copy {
+	min-width: 0;
+}
+
+.feature-card__copy h2,
+.feature-card__copy p {
+	margin: 0;
+}
+
+.feature-card__copy h2 {
+	color: var(--color-text-primary);
+	font: var(--type-h2);
+	font-size: 1.125rem;
+	line-height: 1.35;
+}
+
+.feature-card__copy p {
+	margin-top: var(--space-1);
+	color: var(--color-text-muted);
+	font: var(--type-body-small);
+}
+
+.feature-card__action {
+	min-inline-size: 0;
+	max-inline-size: 100%;
+	justify-self: end;
+}
+
+@container (max-width: 38rem) {
+	.feature-card {
+		grid-template-columns: auto minmax(0, 1fr);
+	}
+
+	.feature-card__action {
+		grid-column: 1 / -1;
+		justify-self: stretch;
+	}
+
+	.feature-card__action > :is(a, button) {
+		width: 100%;
+	}
+}

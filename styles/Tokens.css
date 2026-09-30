@@ -1,0 +1,137 @@
+:root,
+.theme-preview {
+	--font-family: "Inter Variable", "Inter", sans-serif;
+	--body-font-weight: 400;
+	--font-size-body-small: 0.875rem;
+	--font-size-body: 0.9375rem;
+	--font-size-heading-small: 1rem;
+	--font-size-heading: 1.125rem;
+	--type-h1: 500 var(--font-size-heading)/1.4em var(--font-family);
+	--type-h2: 500 var(--font-size-heading-small)/1.4em var(--font-family);
+	--type-body: var(--body-font-weight) var(--font-size-body)/1.4em var(--font-family);
+	--type-body-small: var(--body-font-weight) var(--font-size-body-small)/1.4em var(--font-family);
+	--member-identity-avatar-size: 2rem;
+	--member-identity-gap: var(--space-3);
+	--member-identity-copy-height: 2.5rem;
+	--member-identity-name-size: var(--font-size-body);
+	--member-identity-name-line-height: 1.25rem;
+	--member-identity-email-size: var(--font-size-body-small);
+	--member-identity-email-line-height: 1.25rem;
+	--control-height-small: 2rem;
+	--control-height: 2.5rem;
+	--control-height-touch: 2.75rem;
+	--control-font-size: var(--font-size-body);
+	--viewport-gutter: clamp(0.75rem, 2vw, 1rem);
+	--topbar-height: 3.25rem;
+	--color-platform-error-copy: #5e635f;
+	--color-link: #006be6;
+	--color-link-hover: #0057bd;
+	--motion-duration-fast: 0.12s;
+	--motion-duration-medium: 0.16s;
+	--motion-ease: cubic-bezier(0.45, 0, 0.2, 1);
+	--motion-ease-standard: var(--motion-ease);
+	color-scheme: light;
+	font-family: var(--font-family);
+	font-weight: 400;
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+
+	--color-accent: #9b4ab8;
+	--color-accent-dark: #7d3798;
+	--color-text-primary: #17181a;
+	--color-focus-ring: #17181a;
+	--color-text-muted: #5f6368;
+	--color-border: #e0e3e7;
+	--color-border-strong: #cdd2d8;
+	--color-canvas: #ffffff;
+	--color-surface-base: #ffffff;
+	--color-surface: var(--color-surface-base);
+	--color-on-accent: #ffffff;
+	--color-surface-muted: #f1f2f4;
+	--color-surface-hover: color-mix(in srgb, var(--color-surface-muted) 68%, white);
+	--color-surface-muted-hover: color-mix(in srgb, var(--color-surface-muted) 97%, black);
+	--color-danger-zone-surface: #fbece9;
+	--color-skeleton-base: #eceef1;
+	--color-skeleton-highlight: #f7f8fa;
+	--color-border-hover: #8b8b8b;
+	--color-danger: #b42318;
+	--color-on-danger: #ffffff;
+	--color-danger-border: #e3aaa5;
+	--color-danger-surface: #fff7f6;
+	--color-product-mark-surface: var(--color-surface-muted);
+	--color-text-strong: #34383e;
+	--color-control-text: #444a52;
+	--color-icon: #4f565f;
+	--color-text-quiet: #747b84;
+	--color-text-subtle: #8b9199;
+	/* Material 3 shape tokens are global so components can use the shared corner scale directly. */
+	--md-sys-shape-corner-none: 0;
+	--md-sys-shape-corner-extra-small: 0.25rem;
+	--md-sys-shape-corner-small: 0.5rem;
+	--md-sys-shape-corner-medium: 0.75rem;
+	--md-sys-shape-corner-large: 1rem;
+	--md-sys-shape-corner-extra-large: 1.75rem;
+	--md-sys-shape-corner-full: 100vmax;
+	--radius-surface: var(--md-sys-shape-corner-small);
+	--radius-row-outer: 1.25rem;
+	--radius-row-inner: 0.25rem;
+	--radius-row-single: 100vmax;
+	background: var(--color-canvas);
+	color: var(--color-text-primary);
+}
+
+:root[data-theme="dark"],
+.theme-preview[data-theme="dark"] {
+	color-scheme: dark;
+	--color-platform-error-copy: #bdc1c6;
+	--color-link: #a8c7fa;
+	--color-link-hover: #d3e3fd;
+	--color-text-primary: #e8eaed;
+	--color-focus-ring: #d3e3fd;
+	--color-text-muted: #bdc1c6;
+	--color-border: #444746;
+	--color-border-strong: #5f6368;
+	--color-canvas: #1f1f1f;
+	--color-surface-base: #28292b;
+	--color-surface-muted: #36383b;
+	--color-surface-hover: #35373a;
+	--color-surface-muted-hover: #424448;
+	--color-border-hover: #9aa0a6;
+	--color-danger: #ffb4ab;
+	--color-on-danger: #2f1110;
+	--color-danger-border: #8c4a46;
+	--color-danger-surface: #4a2928;
+	--color-danger-zone-surface: #3c2929;
+	--color-product-mark-surface: var(--color-surface-muted);
+	--color-text-strong: #e1e3e6;
+	--color-control-text: #d1d5da;
+	--color-icon: #c1c7ce;
+	--color-text-quiet: #aeb4bb;
+	--color-text-subtle: #9aa0a6;
+	--color-skeleton-base: #36383b;
+	--color-skeleton-highlight: #494b4f;
+}
+
+/* Radix declares its own spacing on each theme, including portals. Keep the
+   same relative scale in native controls and nested vendor themes. */
+:root,
+.radix-themes {
+	--space-1: 0.25rem;
+	--space-2: 0.5rem;
+	--space-3: 0.75rem;
+	--space-4: 1rem;
+	--space-5: 1.5rem;
+	--space-6: 2rem;
+	--space-7: 2.5rem;
+	--space-8: 3rem;
+	--space-9: 4rem;
+}
+
+@media (pointer: coarse) {
+	:root {
+		--control-height-small: var(--control-height-touch);
+		--control-height: var(--control-height-touch);
+		--control-font-size: 1rem;
+	}
+}

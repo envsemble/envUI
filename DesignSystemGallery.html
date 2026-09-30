@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>envsemble · Component library</title>
+		<link rel="stylesheet" href="styles/Tokens.css" />
+		<link rel="stylesheet" href="styles/SharedComponents.css" />
+		<link rel="stylesheet" href="components/OutlinedAction.css" />
+		<link rel="stylesheet" href="components/FeatureCard.css" />
+		<link rel="stylesheet" href="styles/Gallery.css" />
+	</head>
+	<body>
+<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="0" height="0" style="position:absolute;overflow:hidden"><defs><symbol id="icon-add_24px" viewBox="0 -960 960 960"><path d="M440-440H240q-17 0-28.5-11.5T200-480q0-17 11.5-28.5T240-520h200v-200q0-17 11.5-28.5T480-760q17 0 28.5 11.5T520-720v200h200q17 0 28.5 11.5T760-480q0 17-11.5 28.5T720-440H520v200q0 17-11.5 28.5T480-200q-17 0-28.5-11.5T440-240v-200Z"/></symbol><symbol id="icon-add_fill1_24px" viewBox="0 -960 960 960"><path d="M440-440H240q-17 0-28.5-11.5T200-480q0-17 11.5-28.5T240-520h200v-200q0-17 11.5-28.5T480-760q17 0 28.5 11.5T520-720v200h200q17 0 28.5 11.5T760-480q0 17-11.5 28.5T720-440H520v200q0 17-11.5 28.5T480-200q-17 0-28.5-11.5T440-240v-200Z"/></symbol><symbol id="icon-category_24px" viewBox="0 -960 960 960"><path d="m297-581 149-243q6-10 15-14.5t19-4.5q10 0 19 4.5t15 14.5l149 243q6 10 6 21t-5 20q-5 9-14 14.5t-21 5.5H331q-12 0-21-5.5T296-540q-5-9-5-20t6-21ZM700-80q-75 0-127.5-52.5T520-260q0-75 52.5-127.5T700-440q75 0 127.5 52.5T880-260q0 75-52.5 127.5T700-80Zm-580-60v-240q0-17 11.5-28.5T160-420h240q17 0 28.5 11.5T440-380v240q0 17-11.5 28.5T400-100H160q-17 0-28.5-11.5T120-140Zm580-20q42 0 71-29t29-71q0-42-29-71t-71-29q-42 0-71 29t-29 71q0 42 29 71t71 29Zm-500-20h160v-160H200v160Zm202-420h156l-78-126-78 126Zm78 0ZM360-340Zm340 80Z"/></symbol><symbol id="icon-category_fill1_24px" viewBox="0 -960 960 960"><path d="m297-581 149-243q6-10 15-14.5t19-4.5q10 0 19 4.5t15 14.5l149 243q6 10 6 21t-5 20q-5 9-14 14.5t-21 5.5H331q-12 0-21-5.5T296-540q-5-9-5-20t6-21ZM700-80q-75 0-127.5-52.5T520-260q0-75 52.5-127.5T700-440q75 0 127.5 52.5T880-260q0 75-52.5 127.5T700-80Zm-580-60v-240q0-17 11.5-28.5T160-420h240q17 0 28.5 11.5T440-380v240q0 17-11.5 28.5T400-100H160q-17 0-28.5-11.5T120-140Z"/></symbol><symbol id="icon-check_24px" viewBox="0 -960 960 960"><path d="m382-354 339-339q12-12 28-12t28 12q12 12 12 28.5T777-636L410-268q-12 12-28 12t-28-12L182-440q-12-12-11.5-28.5T183-497q12-12 28.5-12t28.5 12l142 143Z"/></symbol><symbol id="icon-check_fill1_24px" viewBox="0 -960 960 960"><path d="m382-354 339-339q12-12 28-12t28 12q12 12 12 28.5T777-636L410-268q-12 12-28 12t-28-12L182-440q-12-12-11.5-28.5T183-497q12-12 28.5-12t28.5 12l142 143Z"/></symbol><symbol id="icon-close_24px" viewBox="0 -960 960 960"><path d="M480-424 284-228q-11 11-28 11t-28-11q-11-11-11-28t11-28l196-196-196-196q-11-11-11-28t11-28q11-11 28-11t28 11l196 196 196-196q11-11 28-11t28 11q11 11 11 28t-11 28L536-480l196 196q11 11 11 28t-11 28q-11 11-28 11t-28-11L480-424Z"/></symbol><symbol id="icon-close_fill1_24px" viewBox="0 -960 960 960"><path d="M480-424 284-228q-11 11-28 11t-28-11q-11-11-11-28t11-28l196-196-196-196q-11-11-11-28t11-28q11-11 28-11t28 11l196 196 196-196q11-11 28-11t28 11q11 11 11 28t-11 28L536-480l196 196q11 11 11 28t-11 28q-11 11-28 11t-28-11L480-424Z"/></symbol><symbol id="icon-groups_3_24px" viewBox="0 -960 960 960"><path d="m160-419 101-101-101-101L59-520l101 101Zm540-21 100-160 100 160H700Zm-220-40q-50 0-85-35t-35-85q0-51 35-85.5t85-34.5q51 0 85.5 34.5T600-600q0 50-34.5 85T480-480Zm0-160q-17 0-28.5 11.5T440-600q0 17 11.5 28.5T480-560q17 0 28.5-11.5T520-600q0-17-11.5-28.5T480-640Zm0 40ZM0-280v-23q0-44 44.5-70.5T160-400q13 0 25 .5t23 2.5q-14 20-21 43t-7 49v65H40q-17 0-28.5-11.5T0-280Zm240 0v-25q0-65 66.5-105T480-450q108 0 174 40t66 105v25q0 17-11.5 28.5T680-240H280q-17 0-28.5-11.5T240-280Zm560-120q72 0 116 26.5t44 70.5v23q0 17-11.5 28.5T920-240H780v-65q0-26-6.5-49T754-397q11-2 22.5-2.5t23.5-.5Zm-320 30q-57 0-102 15t-53 35h311q-9-20-53.5-35T480-370Zm0 50Z"/></symbol><symbol id="icon-groups_3_fill1_24px" viewBox="0 -960 960 960"><path d="m160-419 101-101-101-101L59-520l101 101Zm540-21 100-160 100 160H700Zm-220-40q-50 0-85-35t-35-85q0-51 35-85.5t85-34.5q51 0 85.5 34.5T600-600q0 50-34.5 85T480-480ZM0-280v-23q0-44 44.5-70.5T160-400q13 0 25 .5t23 2.5q-14 20-21 43t-7 49v65H40q-17 0-28.5-11.5T0-280Zm240 0v-25q0-65 66.5-105T480-450q108 0 174 40t66 105v25q0 17-11.5 28.5T680-240H280q-17 0-28.5-11.5T240-280Zm560-120q72 0 116 26.5t44 70.5v23q0 17-11.5 28.5T920-240H780v-65q0-26-6.5-49T754-397q11-2 22.5-2.5t23.5-.5Z"/></symbol><symbol id="icon-home_24px" viewBox="0 -960 960 960"><path d="M240-200h120v-200q0-17 11.5-28.5T400-440h160q17 0 28.5 11.5T600-400v200h120v-360L480-740 240-560v360Zm-80 0v-360q0-19 8.5-36t23.5-28l240-180q21-16 48-16t48 16l240 180q15 11 23.5 28t8.5 36v360q0 33-23.5 56.5T720-120H560q-17 0-28.5-11.5T520-160v-200h-80v200q0 17-11.5 28.5T400-120H240q-33 0-56.5-23.5T160-200Zm320-270Z"/></symbol><symbol id="icon-home_fill1_24px" viewBox="0 -960 960 960"><path d="M160-200v-360q0-19 8.5-36t23.5-28l240-180q21-16 48-16t48 16l240 180q15 11 23.5 28t8.5 36v360q0 33-23.5 56.5T720-120H600q-17 0-28.5-11.5T560-160v-200q0-17-11.5-28.5T520-400h-80q-17 0-28.5 11.5T400-360v200q0 17-11.5 28.5T360-120H240q-33 0-56.5-23.5T160-200Z"/></symbol><symbol id="icon-search_24px" viewBox="0 -960 960 960"><path d="M380-320q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l224 224q11 11 11 28t-11 28q-11 11-28 11t-28-11L532-372q-30 24-69 38t-83 14Zm0-80q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></symbol><symbol id="icon-search_fill1_24px" viewBox="0 -960 960 960"><path d="M380-320q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l224 224q11 11 11 28t-11 28q-11 11-28 11t-28-11L532-372q-30 24-69 38t-83 14Zm0-80q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></symbol><symbol id="icon-settings_24px" viewBox="0 -960 960 960"><path d="M433-80q-27 0-46.5-18T363-142l-9-66q-13-5-24.5-12T307-235l-62 26q-25 11-50 2t-39-32l-47-82q-14-23-8-49t27-43l53-40q-1-7-1-13.5v-27q0-6.5 1-13.5l-53-40q-21-17-27-43t8-49l47-82q14-23 39-32t50 2l62 26q11-8 23-15t24-12l9-66q4-26 23.5-44t46.5-18h94q27 0 46.5 18t23.5 44l9 66q13 5 24.5 12t22.5 15l62-26q25-11 50-2t39 32l47 82q14 23 8 49t-27 43l-53 40q1 7 1 13.5v27q0 6.5-2 13.5l53 40q21 17 27 43t-8 49l-48 82q-14 23-39 32t-50-2l-60-26q-11 8-23 15t-24 12l-9 66q-4 26-23.5 44T527-80h-94Zm7-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/></symbol><symbol id="icon-settings_fill1_24px" viewBox="0 -960 960 960"><path d="M433-80q-27 0-46.5-18T363-142l-9-66q-13-5-24.5-12T307-235l-62 26q-25 11-50 2t-39-32l-47-82q-14-23-8-49t27-43l53-40q-1-7-1-13.5v-27q0-6.5 1-13.5l-53-40q-21-17-27-43t8-49l47-82q14-23 39-32t50 2l62 26q11-8 23-15t24-12l9-66q4-26 23.5-44t46.5-18h94q27 0 46.5 18t23.5 44l9 66q13 5 24.5 12t22.5 15l62-26q25-11 50-2t39 32l47 82q14 23 8 49t-27 43l-53 40q1 7 1 13.5v27q0 6.5-2 13.5l53 40q21 17 27 43t-8 49l-48 82q-14 23-39 32t-50-2l-60-26q-11 8-23 15t-24 12l-9 66q-4 26-23.5 44T527-80h-94Zm49-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Z"/></symbol></defs></svg>
+		<div class="gallery-shell">
+			<nav class="gallery-nav" aria-label="Design system sections">
+				<img src="assets/brand/envsemble-lockup-black.svg" alt="envsemble" />
+				<small class="nav-heading">Components</small><a href="#buttons">Buttons</a
+				><a href="#anatomy">Anatomy & options</a><a href="#navigation">Navigation</a><a href="#rows">Grouped rows</a
+				><a href="#feedback">Feedback & cards</a> <small class="nav-heading">Foundations</small
+				><a href="#scale">Desktop & mobile</a><a href="#colors">Color palette</a><a href="#typography">Typography</a
+				><a href="#layout">Spacing & shape</a><a href="#icons">Iconography</a>
+			</nav>
+			<main class="gallery-main">
+				<header class="hero" id="overview">
+					<div>
+												<h1>Design System</h1>
+											</div>
+					
+				</header>
+				<section class="section catalogue" id="buttons" aria-labelledby="buttons-title">
+					<div class="section-heading">
+						<div>
+							<h2 id="buttons-title">Buttons</h2>
+							<p>Choose emphasis by purpose. Each row shows one variant through its interaction states.</p>
+						</div>
+						<div class="scale-switch" aria-label="Component scale">
+							<button type="button" data-scale="1" aria-pressed="true">Desktop · 1×</button
+							><button type="button" data-scale="1.25" aria-pressed="false">Mobile · 1.25×</button>
+						</div>
+					</div>
+					<div class="matrix-scroll" tabindex="0" aria-label="Button variants and states">
+						<table class="state-matrix">
+							<thead>
+								<tr>
+									<th>Variant</th>
+									<th>Default</th>
+									<th>Hover</th>
+									<th>Keyboard focus</th>
+									<th>Disabled</th>
+								</tr>
+							</thead>
+							<tbody id="button-matrix"></tbody>
+						</table>
+					</div>
+					<div class="usage-strip">
+						<p><strong>Primary</strong> Main action in a flow.</p>
+						<p><strong>Secondary</strong> Supporting or cancel action.</p>
+						<p><strong>Outlined</strong> Navigate or manage.</p>
+						<p><strong>Destructive</strong> Irreversible removal.</p>
+					</div>
+				</section>
+				<section class="section catalogue" id="anatomy" aria-labelledby="anatomy-title">
+					<h2 id="anatomy-title">Anatomy & options</h2>
+					<p>A compact shape, readable label, and optional icon. Keep the same intent across sizes.</p>
+					<div class="specimen-grid">
+						<div class="board">
+							<h3>Anatomy</h3>
+							<div class="anatomy-demo">
+								<span class="callout">1</span
+								><button class="demo-button primary" type="button">
+									<span class="symbol" aria-hidden="true"><svg><use href="#icon-add_24px"></use></svg></span>Create project</button
+								><span class="callout">2</span>
+							</div>
+							<p class="caption">1 · Container & optional icon &nbsp; 2 · Action label</p>
+							<p class="caption">6 px corners · 12 px horizontal padding · 14 px label · 32 px minimum height</p>
+						</div>
+						<div class="board">
+							<h3>Content options</h3>
+							<div class="option-row">
+								<button class="demo-button primary" type="button">Create project</button
+								><button class="demo-button primary" type="button">
+									<span class="symbol" aria-hidden="true"><svg><use href="#icon-add_24px"></use></svg></span>Create project</button
+								><button class="demo-button secondary icon-only" type="button" aria-label="Add project">
+									<span class="symbol" aria-hidden="true"><svg><use href="#icon-add_24px"></use></svg></span>
+								</button>
+							</div>
+							<p class="caption">Label · Icon + label · Icon only</p>
+							<p class="caption">Icon-only controls need an accessible name.</p>
+						</div>
+					</div>
+					<div class="board full-board">
+						<h3>Action groups</h3>
+						<div class="group-examples">
+							<div>
+								<div class="option-row">
+									<button class="demo-button secondary" type="button">Cancel</button
+									><button class="demo-button primary" type="button">Save changes</button>
+								</div>
+								<p class="caption">One primary action per group</p>
+							</div>
+							<div class="stacked-actions">
+								<button class="demo-button primary" type="button">Save changes</button
+								><button class="demo-button secondary" type="button">Cancel</button>
+								<p class="caption">Stack when space is limited</p>
+							</div>
+						</div>
+					</div>
+				</section>
+				<section class="section catalogue" id="navigation" aria-labelledby="navigation-title">
+					<h2 id="navigation-title">Navigation</h2>
+					<p>Use blue for the active destination. Filled icons reinforce selection.</p>
+					<div class="navigation-grid" id="navigation-grid"></div>
+					<p class="caption">40 px desktop height · 50 px at mobile scale · pill corners · 8 px icon gap</p>
+				</section>
+				<section class="section" id="rows" aria-labelledby="rows-title">
+					<h2 id="rows-title">Grouped rows</h2>
+					<p>
+						Related rows form one rounded group. The exposed outer corners are soft; the corners between rows are tight.
+						The rounding follows each row’s position in the group.
+					</p>
+					<p class="row-color-rule">
+						<strong>Two colors define the pattern: page background and row fill.</strong> Place rows directly on the
+						page background. Keep the same row fill across single rows, grouped lists, settings, and member rows. The
+						number of rows changes the corners, not the color. Additional card backgrounds and alternating row colors
+						are not part of this pattern.
+					</p>
+					<div class="row-specimens">
+						<div class="board">
+							<h3>One row</h3>
+							<ul class="grouped-rows">
+								<li>
+									<span>Single row<small>Fully rounded ends</small></span>
+								</li>
+							</ul>
+							<p class="caption">All four corners are pill-shaped.</p>
+						</div>
+						<div class="board">
+							<h3>Two rows</h3>
+							<ul class="grouped-rows">
+								<li>
+									<span>First row<small>Top 20 px · bottom 4 px</small></span>
+								</li>
+								<li>
+									<span>Last row<small>Top 4 px · bottom 20 px</small></span>
+								</li>
+							</ul>
+							<p class="caption">20 px around the group’s outside. 4 px where the rows meet.</p>
+						</div>
+						<div class="board">
+							<h3>Three or more rows</h3>
+							<ul class="grouped-rows">
+								<li>
+									<span>First row<small>Top 20 px · bottom 4 px</small></span>
+								</li>
+								<li>
+									<span>Middle row<small>All corners 4 px</small></span>
+								</li>
+								<li>
+									<span>Middle row<small>All corners 4 px</small></span>
+								</li>
+								<li>
+									<span>Last row<small>Top 4 px · bottom 20 px</small></span>
+								</li>
+							</ul>
+							<p class="caption">Every additional middle row keeps the same 4 px corners.</p>
+						</div>
+					</div>
+					<div class="row-rules">
+						<p><strong>Outer · 20 px</strong>The top of the first row and bottom of the last row define the group.</p>
+						<p><strong>Inner · 4 px</strong>Use on every corner between neighboring rows, with a 2 px gap.</p>
+						<p><strong>Single · full</strong>When only one row remains, both ends become fully rounded.</p>
+					</div>
+					<div class="board full-board">
+						<div class="row-demo-toolbar">
+							<h3>Workspace settings</h3>
+							<label for="row-count"
+								>Number of rows<select id="row-count">
+									<option value="1">1 row</option>
+									<option value="2">2 rows</option>
+									<option value="3" selected>3 rows</option>
+									<option value="4">4 rows</option>
+									<option value="5">5 rows</option>
+								</select></label
+							>
+						</div>
+						<ul class="grouped-rows" id="row-demo"></ul>
+						<p class="caption">
+							Change the count to see the corners adapt. Use this pattern for settings, member lists, product seats, and
+							billing groups. Treat each separate group independently.
+						</p>
+					</div>
+					<p class="caption">
+						For narrow, multiline account and member rows, use 12 px outer and single-row corners; keep the inner
+						corners at 4 px.
+					</p>
+					<div class="row-inversion">
+						<h3>Avatar dropdown exception</h3>
+						<p class="caption">
+							The dropdown uses the usual row color as its background. Its rows use the surface color, creating the
+							intentional inversion.
+						</p>
+						<div class="avatar-menu-example">
+							<ul class="grouped-rows">
+								<li>
+									<span>Alex Morgan<small>Personal account</small></span>
+								</li>
+								<li><span>Manage account</span></li>
+							</ul>
+							<ul class="grouped-rows">
+								<li><span>Sign out</span></li>
+							</ul>
+						</div>
+						<p class="caption">Only invert this relationship for a specific component exception.</p>
+					</div>
+				</section>
+				<section class="section" id="feedback" aria-labelledby="feedback-title">
+					<h2 id="feedback-title">Feedback & cards</h2>
+					<p>Group related content with muted surfaces. Reserve red for errors and destructive actions.</p>
+					<div class="specimen-grid">
+						<div class="board">
+							<h3>Error notice</h3>
+							<div class="notice notice-error">We couldn’t save your changes. Try again.</div>
+							<p class="caption">Danger text on a danger surface</p>
+						</div>
+						<div class="board">
+							<h3>Loading</h3>
+							<div class="skeleton-demo" aria-label="Loading placeholder"><span></span><span></span><span></span></div>
+							<p class="caption">Non-interactive placeholders; announce one loading status.</p>
+						</div>
+						<div class="board">
+							<h3>Surface card</h3>
+							<div class="surface-card">
+								<h3>Workspace settings</h3>
+								<p class="muted">Manage the details your team shares.</p>
+								<button class="outlined-action" type="button">Manage workspace</button>
+							</div>
+							<p class="caption">16 px corners · 16–24 px responsive padding</p>
+						</div>
+						<div class="board">
+							<h3>Feature card</h3>
+							<div class="surface-card feature-card">
+								<div class="feature-card__icon">
+									<span class="symbol" aria-hidden="true"><svg><use href="#icon-category_24px"></use></svg></span>
+								</div>
+								<div class="feature-card__copy">
+									<h2>Products</h2>
+									<p>Tools for your team.</p>
+								</div>
+								<div class="feature-card__action"><button class="outlined-action" type="button">Explore</button></div>
+							</div>
+							<p class="caption">Icon · title & description · action</p>
+						</div>
+					</div>
+				</section>
+				<section class="section" id="scale" aria-labelledby="scale-title">
+					<h2 id="scale-title">Desktop & mobile</h2>
+					<p>
+						<strong>Mobile counterparts use a 1.25× visual scale.</strong> Enlarge the component’s text, icon, spacing,
+						and dimensions together. Adapt the page layout separately.
+					</p>
+					<div class="specimen-grid">
+						<div class="board">
+							<h3>Desktop <span class="badge">1×</span></h3>
+							<div class="scale-example" style="--scale: 1">
+								<button class="demo-button primary" type="button">Continue</button
+								><button class="demo-button outlined" type="button">Manage</button>
+								<div class="demo-nav active">Overview</div>
+							</div>
+							<p class="caption">Button 32 px · label 14 px · navigation 40 px</p>
+						</div>
+						<div class="board">
+							<h3>Mobile <span class="badge">1.25×</span></h3>
+							<div class="scale-example" style="--scale: 1.25">
+								<button class="demo-button primary" type="button">Continue</button
+								><button class="demo-button outlined" type="button">Manage</button>
+								<div class="demo-nav active">Overview</div>
+							</div>
+							<p class="caption">Button 40 px · label 17.5 px · navigation 50 px</p>
+						</div>
+					</div>
+					<details class="documentation-note">
+						<summary>Touch targets</summary>
+						<p>Keep touch targets at least 44 px, even when the visible button is 40 px at the 1.25× scale.</p>
+					</details>
+				</section>
+
+				<section class="section" id="colors" aria-labelledby="colors-title">
+					<h2 id="colors-title">Color palette</h2>
+					<p>31 semantic colors, shown side by side in light and dark.</p>
+					<div class="palette-table" id="palette-table">
+						<div class="palette-header"><span>Semantic role</span><span>Light</span><span>Dark</span></div>
+					</div>
+				</section>
+				<section class="section" id="typography" aria-labelledby="typography-title">
+					<h2 id="typography-title">Typography</h2>
+					<p>
+						Inter Variable is the preferred family. Start from one of four global presets and override only the specific
+						difference needed.
+					</p>
+					<div class="specimen-grid">
+						<div class="specimen">
+							<h3>H1</h3>
+							<div class="type-h1">A clear page heading</div>
+							<div class="meta"><code>--type-h1</code> · 18 / 25.2 · Medium</div>
+						</div>
+						<div class="specimen">
+							<h3>H2</h3>
+							<div class="type-h2">Section heading</div>
+							<div class="meta"><code>--type-h2</code> · 16 / 22.4 · Medium</div>
+						</div>
+						<div class="specimen">
+							<h3>Body</h3>
+							<div class="type-body">Clear instructions help people move through the product with confidence.</div>
+							<div class="meta"><code>--type-body</code> · 15 / 21 · Regular</div>
+						</div>
+						<div class="specimen">
+							<h3>Body small</h3>
+							<div class="type-small">Supporting information stays readable and quiet.</div>
+							<div class="meta"><code>--type-body-small</code> · 14 / 19.6 · Regular</div>
+						</div>
+					</div>
+				</section>
+				<section class="section" id="layout" aria-labelledby="layout-title">
+					<h2 id="layout-title">Spacing, shape & motion</h2>
+					<p>
+						The spacing scale works in native controls and nested Radix themes. Radius values support calm cards and
+						pill-shaped actions.
+					</p>
+					<div class="component-grid">
+						<div class="component-panel">
+							<h3>Spacing scale</h3>
+							<p>CSS <code>--space-1</code> to <code>--space-9</code>.</p>
+							<div class="measure-list" id="spacing-list"></div>
+						</div>
+						<div class="component-panel">
+							<h3>Control sizing</h3>
+							<p>Touch devices raise small and standard controls to the touch height.</p>
+							<div class="measure-list">
+								<div class="measure">
+									<code>compact</code><span>32 px</span>
+									<div class="measure-bar" style="width: 2rem"></div>
+								</div>
+								<div class="measure">
+									<code>standard</code><span>40 px</span>
+									<div class="measure-bar" style="width: 2.5rem"></div>
+								</div>
+								<div class="measure">
+									<code>touch</code><span>44 px</span>
+									<div class="measure-bar" style="width: 2.75rem"></div>
+								</div>
+								<div class="measure">
+									<code>topbar</code><span>52 px</span>
+									<div class="measure-bar" style="width: 3.25rem"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<h3>Corner scale</h3>
+					<div class="shape-grid" id="shape-grid"></div>
+					<p style="margin-top: 2rem">
+						<strong>Motion:</strong> 120 ms fast, 160 ms medium; <code>cubic-bezier(0.45, 0, 0.2, 1)</code>. Use state
+						changes sparingly and respect reduced motion preferences.
+					</p>
+				</section>
+
+				<section class="section" id="icons">
+					<h2>Iconography</h2>
+					<p>
+						Material Symbols Rounded · weight 400 · grade 0 · optical size 24. Use the filled counterpart for selected
+						states.
+					</p>
+					<div class="icon-grid" id="icon-library"></div>
+				</section>
+			</main>
+		</div>
+		<script>
+function iconMarkup(name) { return `<span class="symbol" aria-hidden="true"><svg><use href="#icon-${name.replace(".svg", "")}"></use></svg></span>`; }
+			const colorGroups = [
+				["Brand & interaction", ["accent", "accent-dark", "on-accent", "link", "link-hover", "focus-ring"]],
+				[
+					"Text & icons",
+					[
+						"text-primary",
+						"text-strong",
+						"text-muted",
+						"control-text",
+						"icon",
+						"text-quiet",
+						"text-subtle",
+						"platform-error-copy",
+					],
+				],
+				[
+					"Surfaces",
+					[
+						"canvas",
+						"surface-base",
+						"surface",
+						"surface-muted",
+						"surface-hover",
+						"surface-muted-hover",
+						"product-mark-surface",
+					],
+				],
+				["Borders", ["border", "border-strong", "border-hover"]],
+				["Feedback", ["danger", "on-danger", "danger-border", "danger-surface", "danger-zone-surface"]],
+				["Loading", ["skeleton-base", "skeleton-highlight"]],
+			];
+			const root = document.documentElement;
+			const probe = document.createElement("span");
+			probe.style.position = "absolute";
+			probe.style.visibility = "hidden";
+			document.body.append(probe);
+			function colorValue(token) {
+				probe.style.backgroundColor = `var(--color-${token})`;
+				return getComputedStyle(probe).backgroundColor;
+			}
+			function hex(value) {
+				const rgb = value.match(/^rgba?\(([^)]+)\)/);
+				if (rgb)
+					return `#${rgb[1]
+						.split(/[ ,/]+/)
+						.slice(0, 3)
+						.map((x) => Math.round(Number(x)).toString(16).padStart(2, "0"))
+						.join("")}`.toUpperCase();
+				const srgb = value.match(/^color\(srgb\s+([^)]+)\)/);
+				if (srgb)
+					return `#${srgb[1]
+						.split(/[ ,/]+/)
+						.slice(0, 3)
+						.map((x) =>
+							Math.round(Number(x) * 255)
+								.toString(16)
+								.padStart(2, "0"),
+						)
+						.join("")}`.toUpperCase();
+				return value;
+			}
+			function readPalette(theme) {
+				root.dataset.theme = theme;
+				const colors = {};
+				for (const [, names] of colorGroups) for (const name of names) colors[name] = colorValue(name);
+				return colors;
+			}
+			const light = readPalette("light");
+			const dark = readPalette("dark");
+			root.dataset.theme = "light";
+			const table = document.getElementById("palette-table");
+			for (const [group, names] of colorGroups) {
+				const heading = document.createElement("div");
+				heading.className = "palette-group";
+				heading.textContent = group;
+				table.append(heading);
+				for (const name of names) {
+					const row = document.createElement("div");
+					row.className = "palette-row";
+					const token = document.createElement("code");
+					token.textContent = `--color-${name}`;
+					row.append(token);
+					for (const palette of [light, dark]) {
+						const cell = document.createElement("div");
+						cell.className = "swatch-value";
+						cell.style.backgroundColor = palette[name];
+						const resolvedHex = hex(palette[name]);
+						const channels = resolvedHex
+							.slice(1)
+							.match(/.{2}/g)
+							.map((channel) => {
+								const value = parseInt(channel, 16) / 255;
+								return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+							});
+						const luminance = channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722;
+						cell.style.color = luminance > 0.179 ? "#000000" : "#ffffff";
+						const value = document.createElement("code");
+						value.textContent = resolvedHex;
+						cell.append(value);
+						row.append(cell);
+					}
+					table.append(row);
+				}
+			}
+			const spacing = [4, 8, 12, 16, 24, 32, 40, 48, 64];
+			document.getElementById("spacing-list").innerHTML = spacing
+				.map(
+					(size, index) =>
+						`<div class="measure"><code>--space-${index + 1}</code><span>${size} px</span><div class="measure-bar" style="width:${size / 16}rem"></div></div>`,
+				)
+				.join("");
+			const shapes = [
+				["none", 0],
+				["extra small", 4],
+				["small", 8],
+				["medium", 12],
+				["large", 16],
+				["extra large", 28],
+				["full", 9999],
+			];
+			document.getElementById("shape-grid").innerHTML = shapes
+				.map(
+					([name, radius]) =>
+						`<div class="shape-item" style="border-radius:${radius / 16}rem"><span><strong>${name}</strong><br>${radius === 9999 ? "pill" : `${radius} px`}</span></div>`,
+				)
+				.join("");
+
+			const rowExamples = [
+				["Workspace name", "Design team"],
+				["Member access", "Invite and manage people"],
+				["Product seats", "Manage assigned seats"],
+				["Billing", "Plan and payment details"],
+				["Security", "Sign-in and active sessions"],
+			];
+			function renderGroupedRows() {
+				const count = Number(document.getElementById("row-count").value);
+				document.getElementById("row-demo").innerHTML = rowExamples
+					.slice(0, count)
+					.map(
+						([name, description]) =>
+							`<li><span>${name}<small>${description}</small></span><button class="outlined-action" type="button" aria-label="Manage ${name.toLowerCase()}">Manage</button></li>`,
+					)
+					.join("");
+			}
+			document.getElementById("row-count").addEventListener("change", renderGroupedRows);
+			renderGroupedRows();
+			const variants = [
+				["primary", "Primary", "Brand purple", "Continue"],
+				["secondary", "Secondary", "Neutral surface", "Cancel"],
+				["outlined", "Outlined", "Link blue", "Manage"],
+				["danger", "Destructive", "Danger red", "Delete"],
+			];
+			document.getElementById("button-matrix").innerHTML = variants
+				.map(
+					([variant, title, color, label]) =>
+						`<tr><td>${title}<small>${color}</small></td>${["default", "hover", "focus", "disabled"].map((state) => `<td><button type="button" class="demo-button ${variant} ${state}" ${state === "disabled" ? "disabled" : ""}>${label}</button></td>`).join("")}</tr>`,
+				)
+				.join("");
+			document.querySelectorAll("[data-scale]").forEach((button) =>
+				button.addEventListener("click", () => {
+					document
+						.querySelectorAll(".catalogue")
+						.forEach((section) => section.style.setProperty("--scale", button.dataset.scale));
+					document
+						.querySelectorAll("[data-scale]")
+						.forEach((other) => other.setAttribute("aria-pressed", String(other.dataset.scale === button.dataset.scale)));
+				}),
+			);
+			document.getElementById("navigation-grid").innerHTML = [
+				["Default", ""],
+				["Selected", "active"],
+				["Focus", "focus"],
+				["Disabled", "disabled"],
+			]
+				.map(
+					([label, state]) =>
+						`<div class="board"><h3>${label}</h3><button class="demo-nav ${state}" type="button" ${state === "disabled" ? "disabled" : ""}>${iconMarkup(`home${state === "active" ? "_fill1" : ""}_24px.svg`)}Home</button></div>`,
+				)
+				.join("");
+			document.getElementById("icon-library").innerHTML = [
+				"home",
+				"category",
+				"search",
+				"settings",
+				"add",
+				"close",
+				"check",
+				"groups_3",
+			]
+				.map(
+					(name) =>
+						`<div class="icon-pair"><div>${iconMarkup(`${name}_24px.svg`)}${iconMarkup(`${name}_fill1_24px.svg`)}</div><p class="caption">${name.replaceAll("_", " ")}<br>Regular / Filled</p></div>`,
+				)
+				.join("");
+
+            const main = document.querySelector(".gallery-main");
+            const comparison = document.createElement("div");
+            comparison.className = "theme-comparison";
+            const lightPreview = document.createElement("div");
+            lightPreview.className = "theme-preview";
+            lightPreview.dataset.theme = "light";
+            lightPreview.innerHTML = '<p class="theme-label">Light</p>';
+            for (const section of [...main.querySelectorAll(":scope > section")]) lightPreview.append(section);
+            const darkPreview = lightPreview.cloneNode(true);
+            darkPreview.dataset.theme = "dark";
+            darkPreview.querySelector(".theme-label").textContent = "Dark";
+            for (const element of darkPreview.querySelectorAll("[id]")) element.id += "-dark";
+            for (const element of darkPreview.querySelectorAll("[for]")) element.htmlFor += "-dark";
+            for (const element of darkPreview.querySelectorAll("[aria-labelledby]")) {
+                element.setAttribute("aria-labelledby", element.getAttribute("aria-labelledby").split(" ").map(id => id + "-dark").join(" "));
+            }
+            comparison.append(lightPreview, darkPreview);
+            main.append(comparison);
+            for (const button of darkPreview.querySelectorAll("[data-scale]")) {
+                button.addEventListener("click", () => {
+                    document.querySelectorAll(".catalogue").forEach(section => section.style.setProperty("--scale", button.dataset.scale));
+                    document.querySelectorAll("[data-scale]").forEach(other => other.setAttribute("aria-pressed", String(other.dataset.scale === button.dataset.scale)));
+                });
+            }
+            const darkRowCount = document.getElementById("row-count-dark");
+            darkRowCount?.addEventListener("change", () => {
+                document.getElementById("row-demo-dark").innerHTML = rowExamples.slice(0, Number(darkRowCount.value)).map(([name, description]) =>
+                    `<li><span>${name}<small>${description}</small></span><button class="outlined-action" type="button" aria-label="Manage ${name.toLowerCase()}">Manage</button></li>`).join("");
+            });
+			const sectionObserver = new IntersectionObserver(
+				(entries) => {
+					for (const entry of entries)
+						if (entry.isIntersecting)
+							document.querySelectorAll(".gallery-nav a").forEach((link) => {
+								if (link.hash === "#" + entry.target.id) link.setAttribute("aria-current", "location");
+								else link.removeAttribute("aria-current");
+							});
+				},
+				{ rootMargin: "-5% 0px -70% 0px" },
+			);
+			lightPreview.querySelectorAll("section[id]").forEach((section) => sectionObserver.observe(section));
+		</script>
+	</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "name": "envsemble-design-system",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/Dev.mjs",
+    "build": "node scripts/Build.mjs"
+  }
+}
