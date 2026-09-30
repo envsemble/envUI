@@ -8,7 +8,7 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	background: var(--color-surface);
+	background: var(--color-subtle-action);
 	color: var(--color-link);
 	font: var(--type-body-small);
 	text-decoration: none;
@@ -28,7 +28,7 @@
 }
 
 .outlined-action:focus-visible {
-	outline: 0.125rem solid color-mix(in srgb, var(--color-link) 55%, transparent);
+	outline: 0.125rem solid var(--color-outlined-focus);
 	outline-offset: 0.0625rem;
 }
 

@@ -8,7 +8,7 @@ a {
 	min-height: var(--control-height-small);
 	padding: var(--space-1) var(--space-3);
 	border: 0.0625rem solid transparent;
-	border-radius: 0.375rem;
+	border-radius: 100vmax;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -22,21 +22,21 @@ a {
 
 .button-primary {
 	border: 0;
-	background: var(--color-accent);
-	color: var(--color-on-accent);
+	background: var(--color-primary-action);
+	color: var(--color-on-primary-action);
 	transition:
 		border-color var(--motion-duration-fast) var(--motion-ease-standard),
 		background-color var(--motion-duration-fast) var(--motion-ease-standard);
 }
 
 .button-primary:hover:not(:disabled) {
-	border-color: var(--color-accent-dark);
-	background: var(--color-accent-dark);
+	border: 0;
+	background: var(--color-primary-action-hover);
 }
 
 .button-secondary {
 	border-color: var(--color-border-strong);
-	background: var(--color-surface);
+	background: var(--color-subtle-action);
 	color: var(--color-control-text);
 	transition:
 		border-color var(--motion-duration-fast) var(--motion-ease-standard),
@@ -45,7 +45,7 @@ a {
 
 .button-secondary:hover:not(:disabled) {
 	border-color: var(--color-border-hover);
-	background: var(--color-surface-hover);
+	background: var(--color-subtle-action-hover);
 }
 
 .rt-BaseButton:where(.rt-variant-surface):not(:disabled, [data-disabled]):hover {
@@ -90,6 +90,38 @@ a {
 	--surface-card-padding: clamp(1rem, 3vw, 1.5rem);
 	padding: var(--surface-card-padding);
 	border: 0;
-	border-radius: 1rem;
+	border-radius: var(--radius-surface);
 	background: var(--color-surface-muted);
 }
+
+.surface-card > h3 {
+    margin: 0 0 0.75rem;
+    font: var(--type-h2);
+    color: var(--color-text-primary);
+}
+
+/* Optional supporting guidance, shared by apps and the reference document. */
+.disclosure-note {
+    margin: 1rem 0 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-text-muted);
+    font: var(--type-body-small);
+}
+.disclosure-note > summary {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    list-style: none;
+    white-space: nowrap;
+    overflow-wrap: normal;
+    cursor: pointer;
+    width: fit-content;
+    max-width: 100%;
+}
+.disclosure-note > summary::-webkit-details-marker { display: none; }
+.disclosure-note > summary::before { content: "›"; flex: 0 0 0.5rem; text-align: center; }
+.disclosure-note[open] > summary::before { transform: rotate(90deg); }
+.disclosure-note > summary:focus-visible { outline: 0.125rem solid var(--color-focus-ring); outline-offset: 0.25rem; }
+.disclosure-note > p { margin: 0.5rem 0 0 1rem; color: inherit; font: inherit; }
