@@ -101,6 +101,50 @@
 							<p class="caption">Label · Icon + label · Circular icon</p>
 							
 						</div><div class="board full-board">
+<h3>Text inputs</h3>
+<div class="field-examples">
+<div class="form-field"><label for="input-empty">Default</label><input class="demo-input" id="input-empty" placeholder="Enter a name" aria-describedby="input-empty-help" data-paired-text="empty"><small id="input-empty-help">A short, descriptive name.</small></div>
+<div class="form-field"><label for="input-filled">Filled</label><input class="demo-input" id="input-filled" value="Example name" data-paired-text="filled"></div>
+<div class="form-field"><label for="input-focus">Focus</label><input class="demo-input focus" id="input-focus" value="Ready to edit" data-paired-text="focus"></div>
+<div class="form-field"><label for="input-disabled">Disabled</label><input class="demo-input" id="input-disabled" value="Unavailable" disabled></div>
+<div class="form-field"><label for="input-invalid">Invalid</label><input class="demo-input" id="input-invalid" value="" placeholder="Enter a name" aria-invalid="true" aria-describedby="input-error" required data-paired-text="invalid"><small id="input-error">Enter a name to continue.</small></div>
+<div class="form-field"><label for="input-readonly">Read only</label><input class="demo-input" id="input-readonly" value="You can copy this value" readonly></div>
+<div class="form-field field-wide"><label for="input-description">Textarea</label><textarea class="demo-input" id="input-description" rows="3" placeholder="Add a description" data-paired-text="description"></textarea></div>
+</div>
+<details class="disclosure-note"><summary>Layout &amp; behavior</summary><p>Label above; 0.5 rem gaps. Row fill, 1.75 rem corners, no default border. Single-line minimum: 2.5 rem; padding: 0.5 rem × 1 rem. Body text; supporting text for hints. Width follows the layout; textarea grows vertically.</p><p>Focus: shared 0.125 rem ring. Invalid: error-color ring plus a message beside the field. Disabled: 48% opacity. Read-only values remain selectable. Placeholder supplements the label; it never replaces it.</p></details>
+</div>
+<div class="board full-board checkbox-reference">
+<h3>Checkboxes</h3>
+<div class="checkbox-examples">
+<label class="choice-control"><span class="checkbox-box"><input class="demo-checkbox" type="checkbox" data-paired-control="checkbox-empty"><span class="symbol checkbox-mark" aria-hidden="true"><svg><use href="#icon-check_24px"></use></svg></span></span>Option one</label>
+<label class="choice-control"><span class="checkbox-box"><input class="demo-checkbox" type="checkbox" data-paired-control="checkbox-checked" checked><span class="symbol checkbox-mark" aria-hidden="true"><svg><use href="#icon-check_24px"></use></svg></span></span>Option two</label>
+<label class="choice-control"><span class="checkbox-box"><input class="demo-checkbox" type="checkbox" data-paired-control="checkbox-mixed" data-indeterminate><span class="symbol checkbox-mark" aria-hidden="true"><svg><use href="#icon-check_24px"></use></svg></span></span>Partly selected</label>
+<label class="choice-control"><span class="checkbox-box"><input class="demo-checkbox" type="checkbox" disabled><span class="symbol checkbox-mark" aria-hidden="true"><svg><use href="#icon-check_24px"></use></svg></span></span>Unavailable</label>
+<label class="choice-control"><span class="checkbox-box"><input class="demo-checkbox" type="checkbox" checked disabled><span class="symbol checkbox-mark" aria-hidden="true"><svg><use href="#icon-check_24px"></use></svg></span></span>Selected, unavailable</label>
+</div>
+<button class="demo-button secondary checkbox-reset" type="button">Restore partial selection</button>
+<details class="disclosure-note"><summary>Size &amp; behavior</summary><p>1.125 rem square; 0.25 rem corners distinguish it from the radio. Ring: Icons color, 0.0625 rem. Checked or partial: shared control blue with a white mark in both themes. Blue fill: −8 lightness points on hover, −12 on press. Unchecked rings use the outline shifts. Label gap: 0.75 rem.</p><p>Choose any number of independent options. Space toggles. A partial selection means some child options are checked; the app sets it, and clicking clears it. Use Restore partial selection to replay this example. Reuse selectable rows when options need supporting details.</p></details>
+</div>
+<div class="board full-board">
+<h3>Toggle</h3>
+<div class="choice-states">
+<label class="choice-control"><input class="demo-switch" type="checkbox" role="switch" data-paired-control="toggle-off">Enable option</label>
+<label class="choice-control"><input class="demo-switch" type="checkbox" role="switch" data-paired-control="toggle-on" checked>Enabled option</label>
+<label class="choice-control"><input class="demo-switch" type="checkbox" role="switch" disabled>Unavailable</label>
+<label class="choice-control"><input class="demo-switch" type="checkbox" role="switch" checked disabled>Enabled, unavailable</label>
+</div>
+<details class="disclosure-note"><summary>Size &amp; behavior</summary><p>Track: 2.5 × 1.5 rem. Thumb: 1 rem; inset: 0.25 rem. Off: row fill. On: control blue, identical in both themes. Off states use the soft-fill lightness shift; on states reduce lightness by 8 points on hover and 12 on press. Space toggles; apply the change immediately.</p></details>
+</div>
+<div class="board full-board">
+<h3>Radio selection</h3>
+<fieldset class="radio-options"><legend class="caption">Choose one option</legend>
+<label class="radio-option"><span>Option one</span><input class="demo-radio" type="radio" name="basic-radio" value="one" data-paired-control="radio-one" checked></label>
+<label class="radio-option"><span>Option two</span><input class="demo-radio" type="radio" name="basic-radio" value="two" data-paired-control="radio-two"></label>
+<label class="radio-option"><span>Unavailable</span><input class="demo-radio" type="radio" name="basic-radio" value="three" disabled></label>
+</fieldset>
+<details class="disclosure-note"><summary>Size &amp; behavior</summary><p>Platform radio: 1 rem, native control, theme-specific link-blue accent. Rows use 0.75 rem vertical and 1 rem horizontal padding, with the shared grouped corners. Choose exactly one option; arrow keys move between choices.</p></details>
+</div>
+<div class="board full-board">
 <h3>Dropdown selection</h3>
 <label class="selection-example">Choose an option <select class="demo-select"><option>Option one</option><option>Option two</option></select></label>
 <p class="caption">Content-fit trigger · grouped options · blue marks the selection</p>
@@ -244,6 +288,19 @@
                                 <p>Keep titles short and on one line. Chevron: 0.5 rem gap. Content: 1 rem indent, 0.5 rem below the label. Start collapsed; use native details and summary for keyboard access.</p>
                             </details>
                         </div>
+<div class="board full-board dialog-reference">
+<h3>Dialogs</h3>
+<div class="dialog-examples">
+<div class="dialog-example"><div class="dialog-specimen" data-dialog-kind="confirmation"><h4>Remove this item?</h4><p>This action cannot be undone.</p><div class="dialog-actions"><span class="demo-button secondary" data-dialog-action="cancel">Cancel</span><span class="demo-button danger" data-dialog-action="confirm">Delete</span></div></div><button class="demo-button secondary dialog-launch" type="button">Open confirmation</button></div>
+<div class="dialog-example"><div class="dialog-specimen" data-dialog-kind="form"><h4>Edit details</h4><label class="form-field">Name<input class="demo-input" value="Example name" data-paired-text="dialog-name"></label><div class="dialog-actions"><span class="demo-button secondary" data-dialog-action="cancel">Cancel</span><span class="demo-button primary" data-dialog-action="confirm">Save changes</span></div></div><button class="demo-button secondary dialog-launch" type="button">Open form dialog</button></div>
+</div>
+<details class="disclosure-note"><summary>Layout &amp; behavior</summary><p>Pane fill; 1.75 rem corners; 1.5 rem padding and content gaps. Actions: 1 rem gap, aligned to the end; wrap when needed. Width: up to 28 rem, leaving 1 rem around the viewport. Scroll the dialog when content exceeds the available height.</p><p>Overlay: dark canvas at 55% opacity in both themes. Focus starts on Cancel for destructive confirmation, or the first field for a form. Tab stays inside; Escape or Cancel closes; focus returns to the opener. Outside click closes confirmation; form dialogs keep edits until Save or Cancel.</p></details>
+</div>
+<div class="board full-board empty-reference">
+<h3>Empty states</h3>
+<div class="empty-examples"><div class="empty-state"><div class="empty-copy"><h4>No items yet</h4><p>Create an item to get started.</p></div><button class="demo-button primary" type="button">Create item</button></div><div class="empty-state"><div class="empty-copy"><h4>No matching items</h4><p>Try a different search.</p></div><button class="demo-button secondary" type="button">Clear filters</button></div></div>
+<details class="disclosure-note"><summary>Layout &amp; usage</summary><p>1.5 rem padding; 0.5 rem title-to-message gap; 1 rem before the optional action. Use the surrounding background. Distinguish no content from no results; keep the message short and offer one useful action.</p></details>
+</div>
 <div class="board toast-reference"><h3>Toasts</h3><p class="caption">Neutral · success · info · error</p><div class="toast-examples"><h4>Neutral</h4><div class="toast toast-neutral" data-toast="neutral-0" role="status"><span class="toast-message">All files archived.</span></div><div class="toast toast-neutral" data-toast="neutral-1" role="status"><span class="toast-message">All files archived.</span><button class="demo-button primary toast-action" type="button">Undo</button><button class="toast-dismiss" type="button" aria-label="Dismiss neutral notification"><span class="symbol" aria-hidden="true"><svg><use href="#icon-close_24px"></use></svg></span></button></div><h4>Success</h4><div class="toast toast-success" data-toast="success-0" role="status"><span class="symbol toast-status-icon" aria-hidden="true"><svg><use href="#icon-check_circle_24px"></use></svg></span><span class="toast-message">Changes saved.</span></div><div class="toast toast-success" data-toast="success-1" role="status"><span class="symbol toast-status-icon" aria-hidden="true"><svg><use href="#icon-check_circle_24px"></use></svg></span><span class="toast-message">Changes saved.</span><button class="demo-button primary toast-action" type="button">View</button><button class="toast-dismiss" type="button" aria-label="Dismiss success notification"><span class="symbol" aria-hidden="true"><svg><use href="#icon-close_24px"></use></svg></span></button></div><h4>Info</h4><div class="toast toast-info" data-toast="info-0" role="status"><span class="symbol toast-status-icon" aria-hidden="true"><svg><use href="#icon-info_24px"></use></svg></span><span class="toast-message">An update is available.</span></div><div class="toast toast-info" data-toast="info-1" role="status"><span class="symbol toast-status-icon" aria-hidden="true"><svg><use href="#icon-info_24px"></use></svg></span><span class="toast-message">An update is available.</span><button class="demo-button primary toast-action" type="button">Update</button><button class="toast-dismiss" type="button" aria-label="Dismiss info notification"><span class="symbol" aria-hidden="true"><svg><use href="#icon-close_24px"></use></svg></span></button></div><h4>Error</h4><div class="toast toast-error" data-toast="error-0" role="alert"><span class="symbol toast-status-icon" aria-hidden="true"><svg><use href="#icon-warning_24px"></use></svg></span><span class="toast-message">We couldn’t save your changes.</span></div><div class="toast toast-error" data-toast="error-1" role="alert"><span class="symbol toast-status-icon" aria-hidden="true"><svg><use href="#icon-warning_24px"></use></svg></span><span class="toast-message">We couldn’t save your changes.</span><button class="demo-button primary toast-action" type="button">Retry</button><button class="toast-dismiss" type="button" aria-label="Dismiss error notification"><span class="symbol" aria-hidden="true"><svg><use href="#icon-close_24px"></use></svg></span></button></div></div><button class="demo-button secondary toast-reset" type="button">Restore examples</button>
 <details class="disclosure-note"><summary>Usage & spacing</summary>
 <p>Neutral: general feedback. Success: completed. Info: update. Error: failed.</p>
@@ -333,7 +390,7 @@
                         <h3>Color behavior</h3>
                         <p class="caption">Keep hue and saturation. Change lightness from the base; clamp to 0–100%.</p>
                         <p class="caption"><code>L = base L + ΔL</code> · Pressed = <span data-color-rule="--state-pressed-strength"></span> × hover shift. ΔL is percentage points.</p>
-                        <table class="color-rule-table"><thead><tr><th>Usage</th><th>Hover ΔL</th><th>Pressed ΔL</th></tr></thead><tbody><tr><td>Primary fill</td><td><span data-state-delta="neutral" data-state-strength="1"></span></td><td><span data-state-delta="neutral" data-state-strength="pressed"></span></td></tr><tr><td>Destructive fill</td><td><span data-state-delta="color" data-state-strength="1"></span></td><td><span data-state-delta="color" data-state-strength="pressed"></span></td></tr><tr><td>Purple fill</td><td><span data-state-delta="emphasis" data-state-strength="1"></span></td><td><span data-state-delta="emphasis" data-state-strength="pressed"></span></td></tr><tr><td>Secondary / outlined / select / circular fill</td><td><span data-state-delta="soft" data-state-strength="1"></span></td><td><span data-state-delta="soft" data-state-strength="pressed"></span></td></tr><tr><td>Links & disclosure labels</td><td><span data-state-delta="link" data-state-strength="1"></span></td><td><span data-state-delta="link" data-state-strength="pressed"></span></td></tr><tr><td>Neutral outlines</td><td><span data-state-delta="border" data-state-strength="1"></span></td><td><span data-state-delta="border" data-state-strength="pressed"></span></td></tr></tbody></table>
+                        <table class="color-rule-table"><thead><tr><th>Usage</th><th>Hover ΔL</th><th>Pressed ΔL</th></tr></thead><tbody><tr><td>Primary fill</td><td><span data-state-delta="neutral" data-state-strength="1"></span></td><td><span data-state-delta="neutral" data-state-strength="pressed"></span></td></tr><tr><td>Destructive fill</td><td><span data-state-delta="color" data-state-strength="1"></span></td><td><span data-state-delta="color" data-state-strength="pressed"></span></td></tr><tr><td>Purple fill</td><td><span data-state-delta="emphasis" data-state-strength="1"></span></td><td><span data-state-delta="emphasis" data-state-strength="pressed"></span></td></tr><tr><td>Secondary / outlined / select / circular fill</td><td><span data-state-delta="soft" data-state-strength="1"></span></td><td><span data-state-delta="soft" data-state-strength="pressed"></span></td></tr><tr><td>Toggle & checkbox fill</td><td><span data-state-delta="control-blue" data-state-strength="1"></span></td><td><span data-state-delta="control-blue" data-state-strength="pressed"></span></td></tr><tr><td>Links & disclosure labels</td><td><span data-state-delta="link" data-state-strength="1"></span></td><td><span data-state-delta="link" data-state-strength="pressed"></span></td></tr><tr><td>Neutral outlines</td><td><span data-state-delta="border" data-state-strength="1"></span></td><td><span data-state-delta="border" data-state-strength="pressed"></span></td></tr></tbody></table>
                         <details class="disclosure-note">
                             <summary>Toast actions</summary>
                             <p>Keep the toast’s hue and saturation. Action lightness = toast lightness × <span data-toast-factor="0"></span>; hover × <span data-toast-factor="1"></span>; pressed × <span data-toast-factor="2"></span>. Same rule in both themes.</p>
@@ -387,6 +444,18 @@
 						</div>
 					</div>
                     <div class="foundation-group">
+                        <h3>Applying spacing</h3>
+                        <dl class="spacing-usage">
+                            <div><dt>Label, hint &amp; tight content</dt><dd>0.5 rem</dd></div>
+                            <div><dt>Icon to label</dt><dd>0.75 rem; buttons use their defined gap</dd></div>
+                            <div><dt>Related controls</dt><dd>1 rem; stacked buttons: 0.5 rem</dd></div>
+                            <div><dt>Card padding &amp; content groups</dt><dd>1.5 rem; compact cards may use 1 rem</dd></div>
+                            <div><dt>Separate sections</dt><dd>2–3 rem</dd></div>
+                            <div><dt>Page gutters</dt><dd>clamp(1 rem, 3vw, 3 rem)</dd></div>
+                        </dl>
+                        <p>Use parent gap for siblings, padding inside containers. Component-specific values take precedence; preserve the same spacing in both themes.</p>
+                    </div>
+                    <div class="foundation-group">
                         <h3>Corner shapes</h3>
                         <div class="corner-reference">
                             <div class="shape-item" style="border-radius:var(--radius-surface)"><span>Panes & outer rows<br>1.75 rem</span></div>
@@ -413,6 +482,7 @@
 					<div class="icon-grid" id="icon-library"></div>
 				</section>
 			</main>
+			<footer class="gallery-footer">&copy; 2026 envsemble</footer>
 		</div>
 		<script>
 function iconMarkup(name) { return `<span class="symbol" aria-hidden="true"><svg><use href="#icon-${name.replace(".svg", "")}"></use></svg></span>`; }
@@ -420,7 +490,7 @@ function iconMarkup(name) { return `<span class="symbol" aria-hidden="true"><svg
             const colorGroups = [
                 ["Backgrounds", ["canvas", "pane", "surface-muted", "surface"]],
                 ["Text & icons", ["text-primary", "text-strong", "text-muted", "control-text", "icon", "text-quiet"]],
-                ["Controls", ["border-strong", "neutral-fill", "link", "accent"]],
+                ["Controls", ["border-strong", "neutral-fill", "link", "control-blue", "accent"]],
                 ["Feedback", ["destructive-action", "toast-success", "toast-info", "white"]],
                 ["Loading", ["skeleton-base"]],
             ];
@@ -436,7 +506,8 @@ function iconMarkup(name) { return `<span class="symbol" aria-hidden="true"><svg
                 "icon": "Icons",
                 "text-quiet": "Captions",
                 "border-strong": "Control outlines",
-                "link": "Links & selected navigation",
+                "link": "Links, navigation & radio selection",
+                "control-blue": "Enabled toggles & checkboxes",
                 "accent": "Important emphasis",
                 "destructive-action": "Delete button & error toast fill",
                 "neutral-fill": "Neutral toast fill",
@@ -637,6 +708,10 @@ function iconMarkup(name) { return `<span class="symbol" aria-hidden="true"><svg
             darkPreview.querySelector(".theme-label").textContent = "Dark";
             for (const element of darkPreview.querySelectorAll("[id]")) element.id += "-dark";
             for (const element of darkPreview.querySelectorAll("[for]")) element.htmlFor += "-dark";
+            for (const input of darkPreview.querySelectorAll("input[type=radio][name]")) input.name += "-dark";
+            for (const element of darkPreview.querySelectorAll("[aria-describedby]")) {
+                element.setAttribute("aria-describedby", element.getAttribute("aria-describedby").split(" ").map(id => id + "-dark").join(" "));
+            }
             for (const element of darkPreview.querySelectorAll("[aria-labelledby]")) {
                 element.setAttribute("aria-labelledby", element.getAttribute("aria-labelledby").split(" ").map(id => id + "-dark").join(" "));
             }
@@ -788,6 +863,80 @@ function iconMarkup(name) { return `<span class="symbol" aria-hidden="true"><svg
             document.addEventListener("pointerdown", event => dropdowns.forEach(dropdown => {
                 if (!dropdown.wrapper.contains(event.target)) dropdown.close();
             }));
+            for (const [index, example] of [...comparison.querySelectorAll(".dialog-example")].entries()) {
+                const specimen = example.querySelector(".dialog-specimen");
+                const dialog = document.createElement("dialog");
+                dialog.className = "demo-modal";
+                const content = specimen.cloneNode(true);
+                content.classList.remove("dialog-specimen");
+                content.classList.add("dialog-content");
+                const heading = content.querySelector("h4");
+                heading.id = `modal-title-${index}`;
+                dialog.setAttribute("aria-labelledby", heading.id);
+                const description = content.querySelector("p");
+                if (description) {
+                    description.id = `modal-description-${index}`;
+                    dialog.setAttribute("aria-describedby", description.id);
+                }
+                // Modal edits are separate from the illustrative paired field values.
+                content.querySelectorAll("[data-paired-text]").forEach(input => input.removeAttribute("data-paired-text"));
+                for (const action of content.querySelectorAll("[data-dialog-action]")) {
+                    const button = document.createElement("button");
+                    button.className = action.className;
+                    button.textContent = action.textContent;
+                    button.type = "button";
+                    button.dataset.dialogAction = action.dataset.dialogAction;
+                    button.addEventListener("click", () => dialog.close(button.dataset.dialogAction));
+                    action.replaceWith(button);
+                }
+                dialog.append(content);
+                example.append(dialog);
+                const launch = example.querySelector(".dialog-launch");
+                launch.addEventListener("click", () => {
+                    dialog.showModal();
+                    const focusTarget = content.querySelector("input") || content.querySelector('[data-dialog-action="cancel"]');
+                    focusTarget.focus();
+                });
+                dialog.addEventListener("close", () => launch.focus());
+                if (specimen.dataset.dialogKind === "confirmation") {
+                    dialog.addEventListener("click", event => {
+                        if (event.target !== dialog) return;
+                        const rect = dialog.getBoundingClientRect();
+                        if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) dialog.close("cancel");
+                    });
+                }
+            }
+            for (const input of comparison.querySelectorAll("[data-indeterminate]")) input.indeterminate = true;
+            for (const reset of comparison.querySelectorAll(".checkbox-reset")) {
+                reset.addEventListener("click", () => {
+                    for (const input of comparison.querySelectorAll("[data-indeterminate]")) {
+                        input.checked = false;
+                        input.indeterminate = true;
+                    }
+                });
+            }
+
+            for (const input of comparison.querySelectorAll("[data-paired-text]")) {
+                input.addEventListener("input", () => {
+                    comparison.querySelectorAll(`[data-paired-text="${input.dataset.pairedText}"]`).forEach(counterpart => {
+                        counterpart.value = input.value;
+                    });
+                });
+            }
+            for (const input of comparison.querySelectorAll("[data-paired-control]")) {
+                input.addEventListener("change", () => {
+                    const preview = input.closest(".theme-preview");
+                    const sources = input.type === "radio"
+                        ? [...preview.querySelectorAll("input[type=radio]")].filter(candidate => candidate.name === input.name)
+                        : [input];
+                    for (const source of sources) {
+                        for (const counterpart of comparison.querySelectorAll(`[data-paired-control="${source.dataset.pairedControl}"]`)) {
+                            counterpart.checked = source.checked;
+                            counterpart.indeterminate = source.indeterminate;
+                        }
+                    }
+                });
+            }
             const leftNotes = [...lightPreview.querySelectorAll("details")];
             const rightNotes = [...darkPreview.querySelectorAll("details")];
             leftNotes.forEach((left, index) => {
