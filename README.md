@@ -27,6 +27,7 @@ Edit the root HTML and the CSS/assets folders during development, then rebuild t
 - Separate sections and panes with spacing and background fills, without horizontal rules or container borders. Reserve outlines for relevant controls and keyboard focus.
 
 - Use Platform as the visual source of truth.
+- Document dimensions in relative units and use responsive layouts; never prescribe fixed pixel sizes.
 - Mobile counterparts use a 1.25× visual scale.
 - Use normal or medium text weights, never bold. Emphasize with size and contrast.
 - Keep documentation neutral and sentence case; reserve theme colors for specimens and palettes.

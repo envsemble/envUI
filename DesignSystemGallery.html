@@ -73,7 +73,7 @@
 								><span class="callout">2</span>
 							</div>
 							<p class="caption">1 · Container & optional icon &nbsp; 2 · Action label</p>
-							<p class="caption">6 px corners · 12 px horizontal padding · 14 px label · 32 px minimum height</p>
+							<p class="caption">0.375 rem corners · 0.75 rem horizontal padding · 0.875 rem label · 2 rem minimum height</p>
 						</div>
 						<div class="board">
 							<h3>Content options</h3>
@@ -111,7 +111,7 @@
 					<h2 id="navigation-title">Navigation</h2>
 					<p>Use blue for the active destination. Filled icons reinforce selection.</p>
 					<div class="navigation-grid" id="navigation-grid"></div>
-					<p class="caption">40 px desktop height · 50 px at mobile scale · pill corners · 8 px icon gap</p>
+					<p class="caption">2.5 rem desktop height · 3.125 rem at mobile scale · pill corners · 0.5 rem icon gap</p>
 				</section>
 				<section class="section" id="rows" aria-labelledby="rows-title">
 					<h2 id="rows-title">Grouped rows</h2>
@@ -139,36 +139,36 @@
 							<h3>Two rows</h3>
 							<ul class="grouped-rows">
 								<li>
-									<span>First row<small>Top 20 px · bottom 4 px</small></span>
+									<span>First row<small>Top 1.25 rem · bottom 0.25 rem</small></span>
 								</li>
 								<li>
-									<span>Last row<small>Top 4 px · bottom 20 px</small></span>
+									<span>Last row<small>Top 0.25 rem · bottom 1.25 rem</small></span>
 								</li>
 							</ul>
-							<p class="caption">20 px around the group’s outside. 4 px where the rows meet.</p>
+							<p class="caption">1.25 rem around the group’s outside. 0.25 rem where the rows meet.</p>
 						</div>
 						<div class="board">
 							<h3>Three or more rows</h3>
 							<ul class="grouped-rows">
 								<li>
-									<span>First row<small>Top 20 px · bottom 4 px</small></span>
+									<span>First row<small>Top 1.25 rem · bottom 0.25 rem</small></span>
 								</li>
 								<li>
-									<span>Middle row<small>All corners 4 px</small></span>
+									<span>Middle row<small>All corners 0.25 rem</small></span>
 								</li>
 								<li>
-									<span>Middle row<small>All corners 4 px</small></span>
+									<span>Middle row<small>All corners 0.25 rem</small></span>
 								</li>
 								<li>
-									<span>Last row<small>Top 4 px · bottom 20 px</small></span>
+									<span>Last row<small>Top 0.25 rem · bottom 1.25 rem</small></span>
 								</li>
 							</ul>
-							<p class="caption">Every additional middle row keeps the same 4 px corners.</p>
+							<p class="caption">Every additional middle row keeps the same 0.25 rem corners.</p>
 						</div>
 					</div>
 					<div class="row-rules">
-						<p><strong>Outer · 20 px</strong>The top of the first row and bottom of the last row define the group.</p>
-						<p><strong>Inner · 4 px</strong>Use on every corner between neighboring rows, with a 2 px gap.</p>
+						<p><strong>Outer · 1.25 rem</strong>The top of the first row and bottom of the last row define the group.</p>
+						<p><strong>Inner · 0.25 rem</strong>Use on every corner between neighboring rows, with a 0.125 rem gap.</p>
 						<p><strong>Single · full</strong>When only one row remains, both ends become fully rounded.</p>
 					</div>
 					<div class="board full-board">
@@ -191,8 +191,8 @@
 						</p>
 					</div>
 					<p class="caption">
-						For narrow, multiline account and member rows, use 12 px outer and single-row corners; keep the inner
-						corners at 4 px.
+						For narrow, multiline account and member rows, use 0.75 rem outer and single-row corners; keep the inner
+						corners at 0.25 rem.
 					</p>
 					<div class="row-inversion">
 						<h3>Avatar dropdown exception</h3>
@@ -235,7 +235,7 @@
 								<p class="muted">Manage the details your team shares.</p>
 								<button class="outlined-action" type="button">Manage workspace</button>
 							</div>
-							<p class="caption">16 px corners · 16–24 px responsive padding</p>
+							<p class="caption">1 rem corners · 1–1.5 rem responsive padding</p>
 						</div>
 						<div class="board">
 							<h3>Feature card</h3>
@@ -267,7 +267,7 @@
 								><button class="demo-button outlined" type="button">Manage</button>
 								<div class="demo-nav active">Overview</div>
 							</div>
-							<p class="caption">Button 32 px · label 14 px · navigation 40 px</p>
+							<p class="caption">Button 2 rem · label 0.875 rem · navigation 2.5 rem</p>
 						</div>
 						<div class="board">
 							<h3>Mobile <span class="badge">1.25×</span></h3>
@@ -276,12 +276,12 @@
 								><button class="demo-button outlined" type="button">Manage</button>
 								<div class="demo-nav active">Overview</div>
 							</div>
-							<p class="caption">Button 40 px · label 17.5 px · navigation 50 px</p>
+							<p class="caption">Button 2.5 rem · label 1.09375 rem · navigation 3.125 rem</p>
 						</div>
 					</div>
 					<details class="documentation-note">
 						<summary>Touch targets</summary>
-						<p>Keep touch targets at least 44 px, even when the visible button is 40 px at the 1.25× scale.</p>
+						<p>Use a minimum touch target of 2.75 rem. Let targets grow with text and content; the 1.25× mobile scale is a starting proportion, not a fixed height.</p>
 					</details>
 				</section>
 
@@ -302,22 +302,22 @@
 						<div class="specimen">
 							<h3>H1</h3>
 							<div class="type-h1">A clear page heading</div>
-							<div class="meta"><code>--type-h1</code> · 18 / 25.2 · Medium</div>
+							<div class="meta"><code>--type-h1</code> · 1.125 rem · 1.4 line height · Medium</div>
 						</div>
 						<div class="specimen">
 							<h3>H2</h3>
 							<div class="type-h2">Section heading</div>
-							<div class="meta"><code>--type-h2</code> · 16 / 22.4 · Medium</div>
+							<div class="meta"><code>--type-h2</code> · 1 rem · 1.4 line height · Medium</div>
 						</div>
 						<div class="specimen">
 							<h3>Body</h3>
 							<div class="type-body">Clear instructions help people move through the product with confidence.</div>
-							<div class="meta"><code>--type-body</code> · 15 / 21 · Regular</div>
+							<div class="meta"><code>--type-body</code> · 0.9375 rem · 1.4 line height · Regular</div>
 						</div>
 						<div class="specimen">
 							<h3>Body small</h3>
 							<div class="type-small">Supporting information stays readable and quiet.</div>
-							<div class="meta"><code>--type-body-small</code> · 14 / 19.6 · Regular</div>
+							<div class="meta"><code>--type-body-small</code> · 0.875 rem · 1.4 line height · Regular</div>
 						</div>
 					</div>
 				</section>
@@ -334,23 +334,23 @@
 							<div class="measure-list" id="spacing-list"></div>
 						</div>
 						<div class="component-panel">
-							<h3>Control sizing</h3>
+							<h3>Minimum control sizing</h3>
 							<p>Touch devices raise small and standard controls to the touch height.</p>
 							<div class="measure-list">
 								<div class="measure">
-									<code>compact</code><span>32 px</span>
+									<code>compact</code><span>2 rem</span>
 									<div class="measure-bar" style="width: 2rem"></div>
 								</div>
 								<div class="measure">
-									<code>standard</code><span>40 px</span>
+									<code>standard</code><span>2.5 rem</span>
 									<div class="measure-bar" style="width: 2.5rem"></div>
 								</div>
 								<div class="measure">
-									<code>touch</code><span>44 px</span>
+									<code>touch</code><span>2.75 rem</span>
 									<div class="measure-bar" style="width: 2.75rem"></div>
 								</div>
 								<div class="measure">
-									<code>topbar</code><span>52 px</span>
+									<code>topbar</code><span>3.25 rem</span>
 									<div class="measure-bar" style="width: 3.25rem"></div>
 								</div>
 							</div>
@@ -480,28 +480,20 @@ function iconMarkup(name) { return `<span class="symbol" aria-hidden="true"><svg
 					table.append(row);
 				}
 			}
-			const spacing = [4, 8, 12, 16, 24, 32, 40, 48, 64];
-			document.getElementById("spacing-list").innerHTML = spacing
-				.map(
-					(size, index) =>
-						`<div class="measure"><code>--space-${index + 1}</code><span>${size} px</span><div class="measure-bar" style="width:${size / 16}rem"></div></div>`,
-				)
-				.join("");
-			const shapes = [
-				["none", 0],
-				["extra small", 4],
-				["small", 8],
-				["medium", 12],
-				["large", 16],
-				["extra large", 28],
-				["full", 9999],
-			];
-			document.getElementById("shape-grid").innerHTML = shapes
-				.map(
-					([name, radius]) =>
-						`<div class="shape-item" style="border-radius:${radius / 16}rem"><span><strong>${name}</strong><br>${radius === 9999 ? "pill" : `${radius} px`}</span></div>`,
-				)
-				.join("");
+            const spacing = [0.25, 0.5, 0.75, 1, 1.5, 2, 2.5, 3, 4];
+            document.getElementById("spacing-list").innerHTML = spacing.map((size, index) =>
+                `<div class="measure"><code>--space-${index + 1}</code><span>${size} rem</span><div class="measure-bar" style="width:var(--space-${index + 1})"></div></div>`).join("");
+            const shapes = [
+                ["none", "none", "0"],
+                ["extra small", "extra-small", "0.25 rem"],
+                ["small", "small", "0.5 rem"],
+                ["medium", "medium", "0.75 rem"],
+                ["large", "large", "1 rem"],
+                ["extra large", "extra-large", "1.75 rem"],
+                ["full", "full", "100vmax · pill"],
+            ];
+            document.getElementById("shape-grid").innerHTML = shapes.map(([name, token, label]) =>
+                `<div class="shape-item" style="border-radius:var(--md-sys-shape-corner-${token})"><span><strong>${name}</strong><br>${label}</span></div>`).join("");
 
 			const rowExamples = [
 				["Workspace name", "Design team"],

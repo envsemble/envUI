@@ -119,7 +119,7 @@
 				font-size: 2rem;
 				color: var(--color-text-primary);
 			}
-			.section > p {
+			.section > p:not(.caption):not(.row-color-rule) {
 				max-width: 75ch;
 				margin: 0 0 2rem;
 				color: var(--color-text-muted);
@@ -171,7 +171,7 @@
 				padding: 0.9rem 1rem;
 			}
 			.palette-header {
-				background: var(--color-surface-muted);
+				background: transparent;
 				color: var(--color-text-quiet);
 				font: var(--type-body-small);
 				letter-spacing: 0;
@@ -550,7 +550,7 @@
 				font-size: 0.7rem;
 				font-weight: 500;
 				color: var(--color-text-muted);
-				background: var(--color-surface-muted);
+				background: transparent;
 				padding: 1rem 1.25rem;
 			}
 			.state-matrix td {
@@ -1096,3 +1096,16 @@
         padding-inline: calc(clamp(1rem, 2vw, 2rem) + clamp(1rem, 1.5vw, 2rem));
     }
 }
+
+/* Captions follow examples; introductions lead them. */
+.section > .caption {
+    margin: 1.25rem 0 0;
+    font: var(--type-body-small);
+    line-height: 1.6;
+    color: var(--color-text-muted);
+}
+.section > .caption + .caption { margin-top: 0.5rem; }
+.theme-preview .navigation-grid { row-gap: 1.75rem; }
+.theme-preview .navigation-grid .board > h3 { margin-bottom: 1rem; }
+.section > .caption + .row-inversion { margin-top: 2rem; }
+.section > p + p:not(.caption) { margin-top: 1rem; }
