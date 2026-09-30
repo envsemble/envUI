@@ -1,0 +1,7 @@
+// Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
+// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+import { Icon, type MaterialSymbolProps } from '../Icon.js';
+
+export function CommentBank({ filled = false, ...props }: MaterialSymbolProps) {
+  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="m240-240-92 92q-19 19-43.5 8.5T80-177v-623q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H240Zm260-560v245q0 12 10 17.5t20-.5l55-33q8-5 15-5t15 5l55 33q10 6 20 .5t10-17.5v-245H500Z" /> : <path d="m240-240-92 92q-19 19-43.5 8.5T80-177v-623q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H240Zm560-80v-480H700v245q0 12-10 17.5t-20-.5l-55-33q-8-5-15-5t-15 5l-55 33q-10 6-20 .5T500-555v-245H160v525l46-45h594Zm-640 0v-480 480Z" />}</Icon>;
+}

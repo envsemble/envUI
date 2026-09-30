@@ -1,0 +1,7 @@
+// Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
+// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+import { Icon, type MaterialSymbolProps } from '../Icon.js';
+
+export function TableRowsNarrow({ filled = false, ...props }: MaterialSymbolProps) {
+  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M160-340q-17 0-28.5-11.5T120-380v-20q0-17 11.5-28.5T160-440h640q17 0 28.5 11.5T840-400v20q0 17-11.5 28.5T800-340H160Zm0-180q-17 0-28.5-11.5T120-560v-20q0-17 11.5-28.5T160-620h640q17 0 28.5 11.5T840-580v20q0 17-11.5 28.5T800-520H160Zm0-180q-17 0-28.5-11.5T120-740v-20q0-17 11.5-28.5T160-800h640q17 0 28.5 11.5T840-760v20q0 17-11.5 28.5T800-700H160Zm0 540q-17 0-28.5-11.5T120-200v-20q0-17 11.5-28.5T160-260h640q17 0 28.5 11.5T840-220v20q0 17-11.5 28.5T800-160H160Z" /> : <path d="M760-360v-80H200v80h560Zm0-160v-80H200v80h560Zm0-160v-80H200v80h560ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm560-80v-80H200v80h560Z" />}</Icon>;
+}

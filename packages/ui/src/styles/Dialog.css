@@ -1,0 +1,50 @@
+/* Modal composition preserves the catalogue pane, text, and action geometry. */
+.env-modal-pane {
+  box-sizing: border-box;
+  padding: var(--space-5);
+  border: 0;
+  border-radius: var(--radius-surface);
+  background: var(--color-pane);
+  color: var(--color-text-primary);
+  font: var(--type-body);
+  width: min(28rem, 100%);
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  pointer-events: auto;
+}
+.env-dialog-content {
+  display: grid;
+  gap: var(--space-5);
+  min-width: 0;
+}
+.env-dialog-content > :is(h2, h4, p) {
+  margin: 0;
+}
+.env-dialog-content :is(.env-dialog-title, h4) {
+  font: var(--type-h1);
+}
+.env-dialog-content p {
+  font: var(--type-body-small);
+  color: var(--color-text-muted);
+}
+.env-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+.env-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: hsl(from var(--color-canvas-dark) h s l / var(--state-dialog-overlay-opacity));
+}
+.env-dialog-positioner {
+  position: fixed;
+  inset: 0;
+  z-index: 101;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  pointer-events: none;
+}

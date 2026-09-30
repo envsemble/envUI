@@ -1,0 +1,7 @@
+// Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
+// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+import { Icon, type MaterialSymbolProps } from '../Icon.js';
+
+export function ChessRook({ filled = false, ...props }: MaterialSymbolProps) {
+  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M240-80q-33 0-56.5-23.5T160-160v-85q0-17 7-32t20-26q68-62 103-131t50-126h-20q-33 0-56.5-23.5T240-640v-200q0-17 11.5-28.5T280-880h120q17 0 28.5 11.5T440-840v80h80v-80q0-17 11.5-28.5T560-880h120q17 0 28.5 11.5T720-840v200q0 33-23.5 56.5T640-560h-21q16 57 51 126t103 131q13 11 20 26.5t7 32.5v84q0 33-23.5 56.5T720-80H240Z" /> : <path d="M240-80q-33 0-56.5-23.5T160-160v-85q0-17 7-32t20-26q68-62 103-131t50-126h-20q-33 0-56.5-23.5T240-640v-200q0-17 11.5-28.5T280-880h120q17 0 28.5 11.5T440-840v80h80v-80q0-17 11.5-28.5T560-880h120q17 0 28.5 11.5T720-840v200q0 33-23.5 56.5T640-560h-21q16 57 51 126t103 131q13 11 20 26.5t7 32.5v84q0 33-23.5 56.5T720-80H240Zm0-80h480v-83q-86-78-126.5-163.5T536-560H423q-16 68-57 153.5T240-243v83Zm80-480h320v-160h-40v120H360v-120h-40v160Zm0 0h320-320Zm160 480Z" />}</Icon>;
+}

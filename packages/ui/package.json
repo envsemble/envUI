@@ -1,0 +1,58 @@
+{
+  "name": "@envsemble/ui",
+  "version": "0.1.0",
+  "description": "The internal envsemble React design system",
+  "type": "module",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/envsemble/design-system.git",
+    "directory": "packages/ui"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "USAGE.md",
+    "CHANGELOG.md",
+    "THIRD_PARTY_NOTICES.md",
+    "licenses",
+    "icon-manifest.json"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    ".": {
+      "envsemble-source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./styles.css": {
+      "envsemble-source": "./src/styles/index.css",
+      "default": "./dist/styles.css"
+    },
+    "./icons": {
+      "envsemble-source": "./src/icons/index.ts",
+      "types": "./dist/icons/index.d.ts",
+      "import": "./dist/icons/index.js"
+    },
+    "./icons/*": {
+      "envsemble-source": "./src/icons/*.tsx",
+      "types": "./dist/icons/*.d.ts",
+      "import": "./dist/icons/*.js"
+    },
+    "./assets/*": "./dist/assets/*",
+    "./package.json": "./package.json"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "dependencies": {
+    "@base-ui/react": "1.8.0"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  }
+}

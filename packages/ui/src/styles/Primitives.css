@@ -1,0 +1,489 @@
+/* Typography belongs to the explicit boundary, never the host document. */
+.env-theme {
+  font: var(--type-body);
+}
+.env-theme :where(h1) {
+  margin: 0;
+  font: var(--type-h1);
+}
+.env-theme :where(h2, h3, h4, h5, h6) {
+  margin: 0;
+  font: var(--type-h2);
+}
+.env-theme :where(p) {
+  margin: 0;
+  font: var(--type-body);
+}
+.env-theme :where(a) {
+  color: inherit;
+}
+
+/* Canonical control geometry ported from SharedComponents.css. */
+.env-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(0.4375rem * var(--scale, 1));
+  min-height: calc(2rem * var(--scale, 1));
+  padding: calc(0.25rem * var(--scale, 1)) calc(0.75rem * var(--scale, 1));
+  border: 0.0625rem solid transparent;
+  border-radius: 100vmax;
+  font: 400 calc(0.875rem * var(--scale, 1)) / 1.4 var(--font-family);
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
+  text-decoration: none;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+}
+.env-navigation-item {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(0.5rem * var(--scale, 1));
+  padding: calc(0.25rem * var(--scale, 1)) calc(0.75rem * var(--scale, 1));
+  min-height: calc(2.5rem * var(--scale, 1));
+  border: 0;
+  border-radius: 100vmax;
+  background: transparent;
+  color: var(--color-text-strong);
+  font: 400 calc(0.9375rem * var(--scale, 1)) / 1.4 var(--font-family);
+  text-decoration: none;
+}
+.env-navigation-selected {
+  color: var(--color-link);
+  background: var(--color-navigation-selected);
+}
+.env-symbol {
+  display: inline-block;
+  width: calc(1rem * var(--scale, 1));
+  height: calc(1rem * var(--scale, 1));
+  fill: currentColor;
+  flex-shrink: 0;
+}
+.env-symbol svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+.env-navigation-item .env-symbol {
+  width: calc(1.125rem * var(--scale, 1));
+  height: calc(1.125rem * var(--scale, 1));
+}
+.env-navigation-item:not(.env-navigation-selected):not(:disabled):not([aria-disabled='true'])
+  .env-symbol {
+  color: var(--color-text-quiet);
+}
+.env-navigation-selected .env-symbol {
+  color: inherit;
+}
+.env-button,
+.env-navigation-item {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.env-button-primary {
+  background: var(--color-primary-action);
+  color: var(--color-on-primary-action);
+  border: 0;
+}
+.env-button-primary:hover:not(:disabled) {
+  background: var(--color-primary-action-hover);
+}
+.env-button-primary:active:not(:disabled) {
+  background: var(--color-primary-action-pressed);
+}
+.env-button-secondary {
+  background: var(--color-subtle-action);
+  color: var(--color-control-text);
+  border-color: var(--color-border-strong);
+}
+.env-button-secondary:hover:not(:disabled) {
+  background: var(--color-subtle-action-hover);
+  border-color: var(--color-border-hover);
+}
+.env-button-secondary:active:not(:disabled) {
+  background: var(--color-subtle-action-pressed);
+  border-color: var(--color-border-pressed);
+}
+.env-button-outlined {
+  background: var(--color-subtle-action);
+  color: var(--color-link);
+  border-color: var(--color-border-strong);
+}
+.env-button-outlined:hover:not(:disabled) {
+  background: var(--color-subtle-action-hover);
+  border-color: var(--color-border-hover);
+}
+.env-button-outlined:active:not(:disabled) {
+  background: var(--color-subtle-action-pressed);
+  border-color: var(--color-border-pressed);
+}
+.env-button-destructive {
+  background: var(--color-destructive-action);
+  color: var(--color-on-destructive-action);
+  border: 0;
+}
+.env-button-destructive:hover:not(:disabled) {
+  background: var(--color-destructive-action-hover);
+}
+.env-button-destructive:active:not(:disabled) {
+  background: var(--color-destructive-action-pressed);
+}
+.env-button-important {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  border: 0;
+  border-radius: calc(var(--radius-standard) * var(--scale, 1));
+}
+.env-button-important:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+.env-button-important:active:not(:disabled) {
+  background: var(--color-accent-pressed);
+}
+.env-button:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: 0.125rem;
+}
+.env-button-outlined:focus-visible {
+  outline-color: var(--color-outlined-focus);
+  outline-offset: 0.0625rem;
+}
+.env-button:disabled {
+  opacity: var(--state-disabled-opacity);
+  cursor: default;
+}
+.env-navigation-item:hover:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-navigation-quiet-hover);
+}
+.env-navigation-item:active:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-navigation-quiet-pressed);
+}
+.env-navigation-selected:hover:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-navigation-hover);
+}
+.env-navigation-selected:active:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-navigation-pressed);
+}
+.env-navigation-item:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: -0.125rem;
+}
+.env-navigation-item:is(:disabled, [aria-disabled='true']) {
+  opacity: var(--state-disabled-opacity);
+  cursor: default;
+}
+.env-navigation-item:is(:disabled, [aria-disabled='true']) .env-symbol {
+  color: inherit;
+}
+.env-button,
+.env-navigation-item {
+  transition:
+    background-color var(--motion-duration-fast) var(--motion-ease),
+    color var(--motion-duration-fast) var(--motion-ease),
+    border-color var(--motion-duration-fast) var(--motion-ease);
+}
+@media (prefers-reduced-motion: reduce) {
+  .env-button,
+  .env-navigation-item {
+    transition: none;
+  }
+}
+
+.env-button.env-icon-button {
+  width: calc(var(--icon-button-size) * var(--scale, 1));
+  height: calc(var(--icon-button-size) * var(--scale, 1));
+  min-height: calc(var(--icon-button-size) * var(--scale, 1));
+  flex-shrink: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 100vmax;
+  background: var(--color-icon-button);
+  color: var(--color-control-text);
+}
+.env-icon-button .env-symbol {
+  width: calc(var(--icon-button-icon-size) * var(--scale, 1));
+  height: calc(var(--icon-button-icon-size) * var(--scale, 1));
+}
+.env-button.env-icon-button:hover:not(:disabled) {
+  background: var(--color-icon-button-hover);
+}
+.env-button.env-icon-button:active:not(:disabled) {
+  background: var(--color-icon-button-pressed);
+}
+
+.env-card {
+  box-sizing: border-box;
+  min-inline-size: 0;
+  --surface-card-padding: clamp(1rem, 3vw, 1.5rem);
+  padding: var(--surface-card-padding);
+  border: 0;
+  border-radius: var(--radius-surface);
+  background: var(--color-surface-muted);
+}
+.env-card-pane {
+  background: var(--color-pane);
+}
+.env-card > h3 {
+  margin: 0 0 0.75rem;
+  font: var(--type-h2);
+  color: var(--color-text-primary);
+}
+
+.env-disclosure-note {
+  margin: 1rem 0 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-text-muted);
+  font: var(--type-body-small);
+}
+.env-disclosure-note > summary {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  list-style: none;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  cursor: pointer;
+  width: fit-content;
+  max-width: 100%;
+}
+.env-disclosure-note > summary::-webkit-details-marker {
+  display: none;
+}
+.env-disclosure-note > summary::before {
+  content: '›';
+  flex: 0 0 0.5rem;
+  text-align: center;
+}
+.env-disclosure-note[open] > summary::before {
+  transform: rotate(90deg);
+}
+.env-disclosure-note > summary:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: 0.25rem;
+}
+.env-disclosure-note > summary:hover {
+  color: var(--color-quiet-label-hover);
+}
+.env-disclosure-note > summary:active {
+  color: var(--color-quiet-label-pressed);
+}
+.env-disclosure-content {
+  margin: 0.5rem 0 0 1rem;
+  color: inherit;
+  font: inherit;
+}
+.env-disclosure-content > p {
+  color: inherit;
+  font: inherit;
+}
+.env-disclosure-content > p + p {
+  margin-top: 0.5rem;
+}
+
+.env-info-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2rem 0.45rem;
+  font: 400 0.7rem/1.4 var(--font-family);
+  white-space: nowrap;
+  color: var(--color-link);
+  background: var(--color-surface-muted);
+  border: 0;
+  border-radius: var(--radius-standard);
+}
+
+/* Grouped-row geometry is shared with selectable rows and select options. */
+.env-grouped-rows {
+  display: grid;
+  gap: 0.125rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.env-grouped-rows > .env-row {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  min-height: 3.5rem;
+  padding: var(--space-3) var(--space-4);
+  font: var(--type-body-small);
+  border-radius: var(--radius-row-inner);
+  background: var(--color-surface-muted);
+  color: var(--color-text-primary);
+}
+.env-grouped-rows > .env-row:first-child {
+  border-top-left-radius: var(--radius-row-outer);
+  border-top-right-radius: var(--radius-row-outer);
+}
+.env-grouped-rows > .env-row:last-child {
+  border-bottom-left-radius: var(--radius-row-outer);
+  border-bottom-right-radius: var(--radius-row-outer);
+}
+.env-grouped-rows > .env-row:only-child {
+  border-radius: var(--radius-row-single);
+}
+.env-grouped-rows small {
+  display: block;
+  color: var(--color-text-muted);
+  font: var(--type-body-small);
+}
+.env-contrast-row-pane {
+  padding: 0.75rem;
+  border-radius: var(--radius-surface);
+  background: var(--color-surface-muted);
+}
+.env-contrast-row-pane .env-grouped-rows > .env-row {
+  background: var(--color-surface);
+}
+.env-contrast-row-pane .env-grouped-rows + .env-grouped-rows {
+  margin-top: 0.75rem;
+}
+
+.env-action-card {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-surface);
+  background: var(--color-surface-muted);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.env-action-card-body {
+  padding: var(--surface-card-padding);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.env-action-card-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.env-action-card-heading h3 {
+  margin: 0;
+  font: var(--type-h2);
+}
+.env-action-card-meta {
+  margin-left: auto;
+  color: var(--color-text-muted);
+  font: var(--type-body-small);
+}
+.env-action-card-body p {
+  margin: 0;
+  max-width: 32ch;
+  font: var(--type-body);
+  color: var(--color-text-muted);
+  overflow-wrap: anywhere;
+}
+.env-action-card-actions {
+  margin-top: auto;
+  padding: var(--space-3) var(--surface-card-padding);
+  background: var(--color-action-strip);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-4);
+}
+
+.env-feature-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-4);
+}
+.env-feature-card-icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  display: grid;
+  place-items: center;
+  color: var(--color-icon);
+}
+.env-feature-card-icon .env-symbol {
+  width: 1.5rem;
+  height: 1.5rem;
+  font-size: 1.5rem;
+}
+.env-feature-card-copy {
+  min-width: 0;
+  grid-column: 2;
+}
+.env-feature-card-copy h2,
+.env-feature-card-copy p {
+  margin: 0;
+}
+.env-feature-card-copy h2 {
+  color: var(--color-text-primary);
+  font: var(--type-h1);
+}
+.env-feature-card-copy p {
+  margin-top: var(--space-1);
+  color: var(--color-text-muted);
+  font: var(--type-body-small);
+}
+.env-feature-card-action {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  justify-self: end;
+  grid-column: 3;
+}
+@container (max-width: 38rem) {
+  .env-feature-card {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .env-feature-card-action {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+  }
+  .env-feature-card-action > :is(a, button) {
+    width: 100%;
+  }
+}
+
+.env-empty-state {
+  display: grid;
+  justify-items: start;
+  align-content: start;
+  min-width: 0;
+  padding: var(--space-5);
+  gap: var(--space-4);
+}
+.env-empty-copy {
+  display: grid;
+  gap: var(--space-2);
+}
+.env-empty-copy > :is(h4, p) {
+  margin: 0;
+}
+.env-empty-state h4 {
+  font: var(--type-h2);
+}
+.env-empty-state p {
+  font: var(--type-body-small);
+  color: var(--color-text-muted);
+}
+.env-loading-state {
+  display: grid;
+  gap: var(--space-2);
+  padding: 1rem 0;
+}
+.env-skeleton {
+  display: block;
+  height: 0.8rem;
+  border-radius: var(--radius-standard);
+  background: var(--color-skeleton-base);
+}
+.env-skeleton-highlight {
+  background: var(--color-skeleton-highlight);
+}

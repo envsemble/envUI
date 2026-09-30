@@ -1,0 +1,8 @@
+packages/ui/src/icons
+packages/ui/src/assets
+packages/ui/icon-manifest.json
+packages/ui/USAGE.md
+**/dist
+node_modules
+.cache
+test-results

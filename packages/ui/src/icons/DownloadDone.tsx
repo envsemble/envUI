@@ -1,0 +1,7 @@
+// Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
+// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+import { Icon, type MaterialSymbolProps } from '../Icon.js';
+
+export function DownloadDone({ filled: _filled = false, ...props }: MaterialSymbolProps) {
+  return <Icon viewBox="0 -960 960 960" {...props}><path d="m382-434 338-338q12-12 28.5-12t28.5 12q12 12 12 28.5T777-715L410-348q-12 12-28 12t-28-12L183-519q-12-12-11.5-28.5T184-576q12-12 28.5-12t28.5 12l141 142ZM240-160q-17 0-28.5-11.5T200-200q0-17 11.5-28.5T240-240h480q17 0 28.5 11.5T760-200q0 17-11.5 28.5T720-160H240Z" /></Icon>;
+}

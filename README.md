@@ -1,16 +1,17 @@
 # envsemble design system
 
-A visual reference derived from Platform. The catalogue defines foundations, reusable controls, and compositions in both themes.
+Private React 19 component library, with a separate documentation app that consumes its public API. Existing product integration is deferred.
 
 ## Develop
 
-Requires Node.js; no dependency installation is needed.
+Requires Node.js 24 or newer.
 
 ```sh
+npm ci
 npm run dev
 ```
 
-Open http://127.0.0.1:8765. Saving HTML, CSS, JavaScript, or assets reloads the browser. Press Ctrl+C to stop.
+Open http://127.0.0.1:8770. Library components and CSS update live through the workspace connection. See [local development](docs/LocalDevelopment.md) for adding components and temporarily connecting a future product.
 
 ## Build and share
 
@@ -18,37 +19,44 @@ Open http://127.0.0.1:8765. Saving HTML, CSS, JavaScript, or assets reloads the 
 npm run build
 ```
 
-Send `dist/DesignSystemGallery.html` on its own. Styles, component behaviors, font, icons, and licenses are embedded; recipients can open it offline.
+`packages/ui/dist` contains the ESM library, declarations, scoped CSS and assets. Send `dist/DesignSystemGallery.html` on its own: runtime, font, icons and licenses are embedded, and hash navigation works offline.
 
-## Component ownership
+## Consume
 
-| Source | Responsibility |
+```tsx
+import { Theme, Button } from '@envsemble/ui';
+import { Add } from '@envsemble/ui/icons/Add';
+import '@envsemble/ui/styles.css';
+
+export function App() {
+  return <Theme theme="light">
+    <Button startIcon={<Add />}>Create item</Button>
+  </Theme>;
+}
+```
+
+See the [package setup](packages/ui/README.md), generated [agent usage guide](packages/ui/USAGE.md) and [private release workflow](docs/Releases.md).
+
+## Ownership
+
+| Source | Purpose |
 | --- | --- |
-| `styles/Tokens.css` | Base palette, typography, spacing, corner tokens, and deterministic state formulas |
-| `styles/SharedComponents.css` | Buttons, navigation, icons, chips, disclosure notes, and toasts |
-| `components/FormControls.css` | Fields, checkbox, radio, switch, dropdown and selectable options |
-| `components/Rows.css` | Grouped rows and alternate-background composition |
-| `components/ContentStates.css` | Dialogs, empty states, and loading placeholders |
-| `components/FeatureCard.css`, `components/ActionCard.css` | Card compositions |
-| `components/Controls.js` | Dropdown, dialog, toast, and paired-input behaviors |
-| `scripts/Gallery.js` | Catalogue rendering, theme comparison, reference values, and sidebar state |
-| `styles/Gallery.css` | Document layout and specimen spacing |
+| `packages/ui/src/styles/Tokens.css` | Central HSL base palette, interaction rule, typography and spacing |
+| `packages/ui/src` | Public React components and scoped styles |
+| `packages/ui/src/icons` | Generated wrappers from pinned official Google SVGs |
+| `apps/docs/src` | Showcase pages and paired specimen state |
+| `apps/docs/src/Reference.ts` | Shared documentation/agent guidance source |
+| `tests` | Packed consumer, SSR, browser and offline acceptance |
 
-Component styles own their geometry and states; they do not depend on Gallery.css. Consumers need Tokens.css and SharedComponents.css plus the relevant component stylesheet. Call `initializeDropdowns(container)`, `initializeDialogs(container)`, or `initializeToasts(container)` for the corresponding markup. Dropdowns retain native selects as their value source; dialogs use native modal focus and Escape behavior. `initializePairedInputs(container)` is the catalogue comparison helper.
+Keep palette entries as base colors. Hover and pressed lightness use one color-based rule from Tokens.css, in both themes. Use regular/medium typography, relative units, shared spacing and existing rounding. Purple remains rare emphasis; everyday actions are neutral. The application owns routing, validation and theme preference.
 
-## Rules
+## Verify
 
-- Platform is the visual reference. Catalogue changes do not modify the application.
-- Use relative units, regular or medium typography, palette colors, and the shared spacing scale.
-- Row, card, and pane outer corners use the shared outer-radius token. Exceptions are documented under Spacing & shape and beside their components.
-- Purple is rare emphasis. Everyday primary actions are neutral.
-- Palette entries are base colors only. Every control uses one color-based HSL rule in both themes: if default lightness is below 50%, add the central hover/pressed shifts below the threshold; otherwise subtract them. The threshold, direction, and shift magnitudes are defined only in Tokens.css; the catalogue reads their values dynamically. Calculate both states directly from the default color. At exactly 50%, subtract. Preserve hue and saturation and clamp to 0–100%. Focus adds a ring; disabled controls use shared opacity. Never author independent state colors.
-- Strong control blue is shared by switches and checkboxes. Radios, links, and navigation use theme-specific link blue.
-- Keep labels and required instructions visible. Optional guidance uses the shared disclosure note.
-- Examples use the same components and spacing rules as applications. Light and dark values are synchronized; their section alignment is based on the actual section count.
+```sh
+npx playwright install chromium firefox webkit
+npm run verify
+```
 
-The HTML catalogue is the reference for dimensions and usage; numeric color behavior is read from the tokens. Avoid copying those values into another documentation source.
+CI runs the same gates plus Betterleaks. The browser checks cover all three engines, native form behavior, portal themes, notification lifecycle, linked previews and the standalone HTML with networking blocked. Package checks install a tarball in an isolated consumer and validate types, SSR, assets and unused-icon exclusion.
 
-Dialog actions demonstrate dismissal; they do not save or delete data. Native radio geometry and unchecked rings remain browser-controlled, as in Platform; checked accent colors use the shared default, hover, and pressed tokens. Text-field fills also follow the shared interaction rule. Checkboxes use native semantics with an authored mark; partial selection is set through the input's `indeterminate` property.
-
-Inter and Material Symbols Rounded assets are embedded with their licenses from `licenses/`. No drop shadows, pane outlines, or additional theme colors are introduced by the catalogue.
+The previous plain HTML gallery remains available through `npm run legacy:dev` and `npm run legacy:build` as the visual migration baseline.

@@ -1,0 +1,28 @@
+.fixture-main {
+  display: grid;
+  gap: 2rem;
+  padding: 1.5rem;
+  max-width: 60rem;
+  margin-inline: auto;
+}
+.fixture-section {
+  display: grid;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: var(--color-canvas);
+  color: var(--color-text-primary);
+  border-radius: var(--radius-surface);
+}
+.fixture-section form {
+  display: grid;
+  gap: 1rem;
+}
+.fixture-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.fixture-section output {
+  display: block;
+  overflow-wrap: anywhere;
+}
