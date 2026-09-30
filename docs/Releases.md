@@ -2,7 +2,7 @@
 
 ## Prepare
 
-Update `packages/ui/package.json`, the documentation's exact dependency version in `apps/docs/package.json`, their lockfile, the displayed docs version, and `packages/ui/CHANGELOG.md`. Run `npm run verify` and review the PR before merging.
+Update `packages/ui/package.json`, the documentation's exact dependency version in `apps/docs/package.json`, their lockfile, and `packages/ui/CHANGELOG.md`. The displayed documentation version is derived from the package metadata. Run `npm run verify` and review the PR before merging.
 
 The package is scoped to envsemble's private GitHub Packages registry. Configure package read permissions for the organization/products that will consume it. Developers use a classic token with `read:packages`; product CI uses an allowed repository's `GITHUB_TOKEN` or a narrowly scoped secret. Authentication remains outside source files.
 
