@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { version } from '@envsemble/ui/package.json';
 import {
   Theme,
   BrandLogo,
@@ -377,7 +378,7 @@ export default function App() {
             })}
           </nav>
           <p className="docs-sidebar-footer">
-            envsemble ui · 0.1.0
+            envsemble ui · {version}
             <br />
             Internal offline reference
           </p>

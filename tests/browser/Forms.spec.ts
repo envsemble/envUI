@@ -150,12 +150,25 @@ test('Select supports keyboard commit, typeahead, Escape, and native form reset'
 });
 
 test('a required Select participates in native constraint validation', async ({ page }) => {
+  const nativeInput = page.getByTestId('required-form').locator('input[name="requiredChoice"]');
+  await expect
+    .poll(() => nativeInput.evaluate((input: HTMLInputElement) => input.validity.valueMissing))
+    .toBe(true);
   await page.getByRole('button', { name: 'Submit required choice', exact: true }).click();
   await expect(page.getByTestId('required-submissions')).toHaveText('0');
   const required = page.getByRole('combobox', { name: 'Required choice', exact: true });
   await expect(required).toHaveAttribute('aria-required', 'true');
-  await required.click();
+  await expect(required).toBeFocused();
+  // Dismiss native validation chrome before interacting with the custom popup.
+  // Firefox on Linux consumes the first outside click while that chrome is open.
+  await page.keyboard.press('Escape');
+  await required.press('ArrowDown');
+  await expect(page.getByRole('listbox')).toBeVisible();
   await page.getByRole('option', { name: 'Atlas', exact: true }).click();
+  await expect(nativeInput).toHaveValue('atlas');
+  await expect
+    .poll(() => nativeInput.evaluate((input: HTMLInputElement) => input.validity.valid))
+    .toBe(true);
   await page.getByRole('button', { name: 'Submit required choice', exact: true }).click();
   await expect(page.getByTestId('required-submissions')).toHaveText('1');
 });

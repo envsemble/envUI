@@ -208,17 +208,19 @@ export function FeatureCard({
 }: FeatureCardProps) {
   return (
     <div {...props} className={classes('env-card', 'env-feature-card', className)}>
-      {icon != null && (
-        <div className="env-feature-card-icon">
-          <DecorativeIcon>{icon}</DecorativeIcon>
+      <div className="env-feature-card-layout">
+        {icon != null && (
+          <div className="env-feature-card-icon">
+            <DecorativeIcon>{icon}</DecorativeIcon>
+          </div>
+        )}
+        <div className="env-feature-card-copy">
+          <h2>{title}</h2>
+          {description != null && <p>{description}</p>}
+          {children}
         </div>
-      )}
-      <div className="env-feature-card-copy">
-        <h2>{title}</h2>
-        {description != null && <p>{description}</p>}
-        {children}
+        {action != null && <div className="env-feature-card-action">{action}</div>}
       </div>
-      {action != null && <div className="env-feature-card-action">{action}</div>}
     </div>
   );
 }

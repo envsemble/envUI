@@ -1,8 +1,10 @@
 import { test, expect } from '@playwright/test';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { readFileSync } from 'node:fs';
 
 const offline = pathToFileURL(resolve('dist/DesignSystemGallery.html')).href;
+const version = JSON.parse(readFileSync('packages/ui/package.json', 'utf8')).version;
 const components = [
   'buttons',
   'icon-buttons',
@@ -36,6 +38,7 @@ test('offline reference loads every view without network or script errors', asyn
   });
   await page.goto(`${offline}#/overview`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Design system');
+  await expect(page.locator('.docs-sidebar-footer')).toContainText(`envsemble ui · ${version}`);
   for (const id of components) {
     for (const view of ['preview', 'guidelines', 'usage']) {
       await page.evaluate((hash) => {

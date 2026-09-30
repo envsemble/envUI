@@ -3,6 +3,7 @@ import {
   Button,
   Checkbox,
   Dialog,
+  FeatureCard,
   IconButton,
   Input,
   NavigationItem,
@@ -329,6 +330,20 @@ export default function App() {
           <ManualToastFixture />
           <ColorControls theme="light" />
           <ColorControls theme="dark" />
+          <section className="fixture-section">
+            <h2>Standalone responsive cards</h2>
+            {[true, false].map((withIcon) => (
+              <FeatureCard
+                key={String(withIcon)}
+                data-testid={`standalone-feature-${withIcon ? 'icon' : 'plain'}`}
+                icon={withIcon ? <ChevronRight /> : undefined}
+                title="Connected workspace"
+                description="Supporting details"
+                action={<Button>Open workspace</Button>}
+                style={{ width: '100%' }}
+              />
+            ))}
+          </section>
           <Button onClick={() => setStress(true)}>Mount strict toast provider</Button>
           {stress && (
             <ToastProvider>

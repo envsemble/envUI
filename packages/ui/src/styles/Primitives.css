@@ -398,10 +398,16 @@
 }
 
 .env-feature-card {
+  container: env-feature-card / inline-size;
+}
+.env-feature-card-layout {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: var(--space-4);
+}
+.env-feature-card-layout:has(> .env-feature-card-icon) {
+  grid-template-columns: auto minmax(0, 1fr) auto;
 }
 .env-feature-card-icon {
   width: 2.75rem;
@@ -417,7 +423,6 @@
 }
 .env-feature-card-copy {
   min-width: 0;
-  grid-column: 2;
 }
 .env-feature-card-copy h2,
 .env-feature-card-copy p {
@@ -436,10 +441,12 @@
   min-inline-size: 0;
   max-inline-size: 100%;
   justify-self: end;
-  grid-column: 3;
 }
-@container (max-width: 38rem) {
-  .env-feature-card {
+@container env-feature-card (max-width: 38rem) {
+  .env-feature-card-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .env-feature-card-layout:has(> .env-feature-card-icon) {
     grid-template-columns: auto minmax(0, 1fr);
   }
   .env-feature-card-action {
