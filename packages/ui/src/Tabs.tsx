@@ -3,6 +3,7 @@ import { useRender } from '@base-ui/react/use-render';
 import { cloneElement, type ComponentPropsWithRef, type ReactElement, type ReactNode } from 'react';
 import { NavigationItem, type NavigationItemProps } from './Primitives.js';
 import { NavigationIconState } from './MaterialSymbolState.js';
+import { Surface } from './Surface.js';
 
 export interface TabsItem {
   /** Unique, stable identifier shared by the tab and its panel. */
@@ -100,6 +101,7 @@ export function Tabs({
       orientation={orientation}
     >
       <BaseTabs.List
+        render={<Surface padding={1} corners="pill" />}
         aria-label={label}
         className={['env-tabs-list', listClassName].filter(Boolean).join(' ')}
         activateOnFocus={activation === 'automatic'}

@@ -41,10 +41,11 @@ The stylesheet bundles Inter and scopes styling to explicit light/dark theme bou
 
 ## Composition
 
-- Use `Stack` for related blocks and `ActionGroup` for actions. Their `as` prop preserves semantic container tags.
+- Use `Stack` for related blocks and `ActionGroup` for actions. Their `as` prop preserves semantic container tags. Stack also supports `render` to compose layout onto another root.
+- Use `Surface` for a plain background pane. It owns a palette tone, padding and corners; layout and behavior stay with the contents. `render={<Stack />}` combines them without an extra wrapper.
 - Use `Text` for the shared typography variants and semantic colors. It adds no outer margins.
 - `Button href` renders a native link; omit `href` for a native button.
-- `Card` owns its surface and spacing. Use `href` for a destination, `as="button"` for an action, or `heading`, `meta` and `actions` for content with an action strip. `ClickableCard` and `ActionCard` remain compatibility wrappers.
+- `Card` builds on Surface and Stack. Use `href` for a destination, `as="button"` for an action, or `heading`, `meta` and `actions` for content with an action strip. `ClickableCard` and `ActionCard` remain compatibility wrappers; FeatureCard adds its specific layout.
 - `Input`, `Textarea` and `Select` share visible labels and accessible hints/errors. Validation stays in the application.
 
 ## Icons and assets

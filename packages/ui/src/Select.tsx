@@ -2,6 +2,7 @@ import { forwardRef, useEffect, useRef, useState } from 'react';
 import type { ButtonHTMLAttributes } from 'react';
 import { Select as BaseSelect } from '@base-ui/react/select';
 import { Theme, useTheme } from './Theme.js';
+import { Surface } from './Surface.js';
 import { ChevronRight } from './icons/ChevronRight.js';
 import { FieldFrame, useFieldMetadata, type FieldProps } from './FieldFrame.js';
 import { setRef, subscribeFormReset } from './FormUtilities.js';
@@ -122,7 +123,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
               align="start"
               sideOffset={popupOffset}
             >
-              <BaseSelect.Popup className="env-dropdown-options">
+              <BaseSelect.Popup className="env-dropdown-options" render={<Surface padding={2} />}>
                 <BaseSelect.List className="env-dropdown-list env-connected-rows">
                   {options.map((option) => (
                     <BaseSelect.Item

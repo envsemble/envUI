@@ -5,16 +5,12 @@
   min-inline-size: 0;
 }
 .env-tabs-list {
-  box-sizing: border-box;
   display: flex;
   align-items: center;
   gap: var(--space-1);
-  padding: var(--space-1);
   inline-size: fit-content;
   max-inline-size: 100%;
   min-inline-size: 0;
-  border-radius: 100vmax;
-  background: var(--color-pane);
   /* Inset focus rings remain visible when a long list needs scrolling. */
   overflow: auto;
   scrollbar-width: thin;
@@ -22,7 +18,7 @@
 .env-tabs-list[data-orientation='vertical'] {
   flex-direction: column;
   align-items: stretch;
-  border-radius: var(--radius-surface);
+  --env-surface-radius: var(--radius-surface);
 }
 .env-tabs-list > .env-tab {
   flex-shrink: 0;

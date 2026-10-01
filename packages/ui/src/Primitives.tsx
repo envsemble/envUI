@@ -1,6 +1,7 @@
 import type { ComponentPropsWithRef, CSSProperties, ReactNode } from 'react';
-import { Stack, ActionGroup, type SpaceStep } from './Layout.js';
+import { Stack, ActionGroup } from './Layout.js';
 import { Text } from './Text.js';
+import { Surface, type SurfaceAppearanceProps } from './Surface.js';
 import { NavigationIconState } from './MaterialSymbolState.js';
 import { ActionElement, type ActionElementProps } from './ActionElement.js';
 
@@ -130,12 +131,9 @@ export function DisclosureNote({ title, className, children, ...props }: Disclos
   );
 }
 
-interface CardAppearanceProps {
-  /** Shared row, pane or canvas surface color. */
-  tone?: 'row' | 'pane' | 'canvas';
-  /** Optional fixed spacing step; omitted uses responsive card padding. */
-  padding?: SpaceStep;
-}
+type CardAppearanceProps = Pick<SurfaceAppearanceProps, 'padding'> & {
+  tone?: Exclude<SurfaceAppearanceProps['tone'], 'alternate'>;
+};
 interface CardContentProps {
   heading?: ReactNode;
   meta?: ReactNode;
@@ -184,19 +182,6 @@ export function Card({
     actionLayout && 'env-action-card',
     className,
   );
-  const cardStyle = {
-    ...(padding !== undefined
-      ? { '--surface-card-padding': padding === 0 ? '0' : `var(--space-${padding})` }
-      : {}),
-    ...style,
-  } as CSSProperties;
-  if (interactive) {
-    return (
-      <ActionElement {...(props as ActionElementProps)} className={cardClass} style={cardStyle}>
-        {children}
-      </ActionElement>
-    );
-  }
   const content = (
     <>
       {(heading != null || meta != null) && (
@@ -216,16 +201,29 @@ export function Card({
       {children}
     </>
   );
-  const Container = as === 'article' ? 'article' : 'div';
-  return (
-    <Container
-      {...(props as ComponentPropsWithRef<'div'> & ComponentPropsWithRef<'article'>)}
+  const root = interactive ? (
+    <Stack
+      gap={4}
+      render={<ActionElement {...(props as ActionElementProps)} />}
       className={cardClass}
-      style={cardStyle}
-    >
-      {actionLayout ? (
+      style={style}
+    />
+  ) : (
+    <Stack
+      {...(props as ComponentPropsWithRef<'div'> & ComponentPropsWithRef<'article'>)}
+      as={as === 'article' ? 'article' : 'div'}
+      gap={actionLayout ? 0 : 4}
+      className={cardClass}
+      style={style}
+    />
+  );
+  return (
+    <Surface tone={tone} padding={padding} render={root}>
+      {interactive ? (
+        children
+      ) : actionLayout ? (
         <>
-          <div className="env-action-card-body">{content}</div>
+          <Stack className="env-action-card-body">{content}</Stack>
           {actions != null && (
             <ActionGroup as="footer" align="end" className="env-action-card-actions">
               {actions}
@@ -235,7 +233,7 @@ export function Card({
       ) : (
         content
       )}
-    </Container>
+    </Surface>
   );
 }
 
@@ -304,17 +302,19 @@ export function FeatureCard({
             <DecorativeIcon>{icon}</DecorativeIcon>
           </div>
         )}
-        <div className="env-feature-card-copy">
-          <Text as="h2" variant="page-heading">
-            {title}
-          </Text>
-          {description != null && (
-            <Text variant="supporting" className="env-feature-card-description">
-              {description}
+        <Stack className="env-feature-card-copy">
+          <Stack gap={1}>
+            <Text as="h2" variant="page-heading">
+              {title}
             </Text>
-          )}
+            {description != null && (
+              <Text variant="supporting" className="env-feature-card-description">
+                {description}
+              </Text>
+            )}
+          </Stack>
           {children != null && <Stack className="env-feature-card-extra">{children}</Stack>}
-        </div>
+        </Stack>
         {action != null && <div className="env-feature-card-action">{action}</div>}
       </div>
     </Card>
@@ -329,7 +329,13 @@ export function GroupedRows({ contrast = false, className, ...props }: GroupedRo
   const rows = (
     <ul {...props} className={classes('env-grouped-rows', 'env-connected-rows', className)} />
   );
-  return contrast ? <div className="env-contrast-row-pane">{rows}</div> : rows;
+  return contrast ? (
+    <Surface tone="row" padding={3} className="env-contrast-row-pane">
+      {rows}
+    </Surface>
+  ) : (
+    rows
+  );
 }
 
 export interface RowProps extends Omit<ComponentPropsWithRef<'li'>, 'title'> {

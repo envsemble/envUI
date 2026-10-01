@@ -5,6 +5,7 @@ import { Button } from './Primitives.js';
 import type { ButtonProps } from './Primitives.js';
 import { Theme, useTheme } from './Theme.js';
 import { Stack, ActionGroup } from './Layout.js';
+import { Surface } from './Surface.js';
 
 export interface DialogProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title' | 'children'> {
   open?: boolean;
@@ -62,6 +63,7 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
           <BaseDialog.Backdrop className="env-dialog-backdrop" />
           <div className="env-dialog-positioner">
             <BaseDialog.Popup
+              render={<Surface tone="pane" padding={5} />}
               {...popupProps}
               ref={ref}
               className={['env-modal-pane', className].filter(Boolean).join(' ')}

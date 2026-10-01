@@ -27,17 +27,15 @@
   transform: rotate(-90deg);
 }
 .env-dropdown-options {
-  box-sizing: border-box;
+  --env-surface-radius: var(--radius-row-outer);
+  --env-surface-scale: var(--scale, 1);
   display: grid;
   gap: calc(0.125rem * var(--scale, 1));
-  padding: calc(0.5rem * var(--scale, 1));
   width: max-content;
   min-width: var(--anchor-width);
   max-width: min(calc(24rem * var(--scale, 1)), 80vw, var(--available-width));
   max-height: var(--available-height);
   overflow: hidden;
-  border-radius: calc(var(--radius-row-outer) * var(--scale, 1));
-  background: var(--color-pane);
 }
 .env-dropdown-options[hidden] {
   display: none;

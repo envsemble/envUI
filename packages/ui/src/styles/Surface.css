@@ -1,0 +1,35 @@
+/* Background geometry is independent of content layout and interactive behavior. */
+.env-surface {
+  box-sizing: border-box;
+  min-inline-size: 0;
+  --env-surface-color: var(--color-pane);
+  --env-surface-padding: clamp(1rem, 3vw, 1.5rem);
+  --env-surface-radius: var(--radius-surface);
+  /* Controls can opt into their input-aware scale without changing ordinary panes. */
+  --env-surface-scale: 1;
+  --env-surface-inset: calc(var(--env-surface-padding) * var(--env-surface-scale));
+  --env-surface-hover: hsl(from var(--env-surface-color) h s var(--state-hover-lightness));
+  --env-surface-pressed: hsl(from var(--env-surface-color) h s var(--state-pressed-lightness));
+  padding: var(--env-surface-inset);
+  border: 0;
+  border-radius: calc(var(--env-surface-radius) * var(--env-surface-scale));
+  background: var(--env-surface-color);
+}
+.env-surface-row {
+  --env-surface-color: var(--color-surface-muted);
+}
+.env-surface-canvas {
+  --env-surface-color: var(--color-canvas);
+}
+.env-surface-alternate {
+  --env-surface-color: var(--color-surface);
+}
+.env-surface-corners-standard {
+  --env-surface-radius: var(--radius-standard);
+}
+.env-surface-corners-pill {
+  --env-surface-radius: var(--md-sys-shape-corner-full);
+}
+.env-surface-corners-none {
+  --env-surface-radius: 0rem;
+}

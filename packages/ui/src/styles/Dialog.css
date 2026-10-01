@@ -1,10 +1,5 @@
 /* Modal composition preserves the catalogue pane, text, and action geometry. */
 .env-modal-pane {
-  box-sizing: border-box;
-  padding: var(--space-5);
-  border: 0;
-  border-radius: var(--radius-surface);
-  background: var(--color-pane);
   color: var(--color-text-primary);
   font: var(--type-body);
   width: min(28rem, 100%);

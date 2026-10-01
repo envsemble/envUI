@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add Surface for palette backgrounds, padding and corners; compose Card from Surface and Stack without extra root wrappers. Reuse Surface for dialogs, dropdown popups, tab rails and contrast row panes.
 - Unify plain, interactive and action-strip cards through Card props; keep ClickableCard and ActionCard as compatibility wrappers.
 - Add native links to Button, semantic tags to Stack/ActionGroup, token-based Text and compact NavigationItem labels.
 - Share labels, hints and errors across Input, Textarea and Select; centralize native form reset handling.

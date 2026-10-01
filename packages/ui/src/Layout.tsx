@@ -1,4 +1,10 @@
-import { createElement, type ComponentPropsWithRef, type CSSProperties } from 'react';
+import {
+  createElement,
+  type ComponentPropsWithRef,
+  type CSSProperties,
+  type ReactElement,
+} from 'react';
+import { useRender } from '@base-ui/react/use-render';
 
 /** A step in the shared spacing scale; 0 removes the gap. */
 export type SpaceStep = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
@@ -18,25 +24,32 @@ interface StackOptions {
 }
 export type StackProps<Element extends StackElement = 'div'> = StackOptions & {
   as?: Element;
-} & Omit<ComponentPropsWithRef<Element>, keyof StackOptions | 'as'>;
+  /** Compose layout onto another component without adding a wrapper. */
+  render?: ReactElement;
+} & Omit<ComponentPropsWithRef<Element>, keyof StackOptions | 'as' | 'render'>;
 
 /** Vertical composition. The parent owns spacing between its direct children. */
 export function Stack<Element extends StackElement = 'div'>({
   as,
+  render,
   gap = 4,
   align = 'stretch',
   className,
   style,
   ...props
 }: StackProps<Element>) {
-  return createElement(as ?? 'div', {
-    ...props,
-    className: ['env-stack', className].filter(Boolean).join(' '),
-    'data-align': align,
-    style: {
-      '--env-stack-gap': gap === 0 ? '0' : `var(--space-${gap})`,
-      ...style,
-    } as CSSProperties,
+  return useRender({
+    defaultTagName: as ?? 'div',
+    render,
+    props: {
+      ...props,
+      className: ['env-stack', className].filter(Boolean).join(' '),
+      'data-align': align,
+      style: {
+        '--env-stack-gap': gap === 0 ? '0' : `var(--space-${gap})`,
+        ...style,
+      } as CSSProperties,
+    },
   });
 }
 
