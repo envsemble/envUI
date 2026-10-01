@@ -49,6 +49,7 @@
   min-height: calc(2.5rem * var(--scale, 1));
   padding: calc(0.5rem * var(--scale, 1)) calc(1rem * var(--scale, 1));
   border: 0;
+  outline: none;
   border-radius: calc(var(--radius-row-inner) * var(--scale, 1));
   background: var(--color-surface-muted);
   color: var(--color-control-text);
@@ -80,7 +81,8 @@
 .env-dropdown-option[aria-selected='true']:active:not(:disabled) {
   background: var(--color-navigation-pressed);
 }
-.env-dropdown-option[data-highlighted] {
+/* Highlight includes pointer interaction; only keyboard focus needs a ring. */
+.env-dropdown-option:focus-visible {
   outline: calc(0.125rem * var(--scale, 1)) solid var(--color-focus-ring);
   outline-offset: -0.125rem;
 }
