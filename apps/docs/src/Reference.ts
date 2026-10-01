@@ -27,7 +27,8 @@ export type Reference = {
   id: string;
   title: string;
   group: ComponentGroup | 'Foundations';
-  summary: string;
+  /** Include only when it adds a useful choice or behavior beyond the title. */
+  summary?: string;
   example: string;
   props: [string, string][];
   guidelines: string[];
@@ -39,7 +40,6 @@ export const foundations: Reference[] = [
     id: 'colors',
     title: 'Colors & themes',
     group: 'Foundations',
-    summary: 'The base palette, explicit themes and deterministic interaction colors.',
     example: `import { Theme, Button, useTheme } from '@envsemble/envui';
 import '@envsemble/envui/styles.css';
 
@@ -68,7 +68,6 @@ function SaveButton() {
     id: 'typography',
     title: 'Typography',
     group: 'Foundations',
-    summary: 'The type hierarchy and its React implementation through Text.',
     example: `import { Text, Stack } from '@envsemble/envui';
 
 <Stack>
@@ -94,7 +93,6 @@ function SaveButton() {
     id: 'spacing',
     title: 'Spacing & shape',
     group: 'Foundations',
-    summary: 'Shared spacing tokens, padding and corner shapes.',
     example: `import { Surface, Stack, Text } from '@envsemble/envui';
 
 <Surface padding={5} render={<Stack gap={4} />}>
@@ -123,7 +121,6 @@ function SaveButton() {
     id: 'icons',
     title: 'Icons & assets',
     group: 'Foundations',
-    summary: 'Official Material Symbols Rounded and bundled envUI/envsemble branding.',
     example: `import { Icon, EnvUILogo, BrandLogo, IconButton, Stack } from '@envsemble/envui';
 import { ChevronRight, Home } from '@envsemble/envui/icons';
 
@@ -162,7 +159,6 @@ import { ChevronRight, Home } from '@envsemble/envui/icons';
     id: 'responsive',
     title: 'Responsive layout',
     group: 'Foundations',
-    summary: 'Content-driven layouts and input-aware sizing across available space.',
     example: `import { Card, Text, ActionGroup, Button } from '@envsemble/envui';
 
 <Card>
@@ -199,7 +195,6 @@ import { ChevronRight, Home } from '@envsemble/envui/icons';
     id: 'motion',
     title: 'Motion & accessibility',
     group: 'Foundations',
-    summary: 'Shared transition timing, visible focus and accessible composition.',
     example: `import { Stack, Input, IconButton } from '@envsemble/envui';
 import { ChevronRight } from '@envsemble/envui/icons';
 
@@ -233,7 +228,7 @@ const componentReferences: Reference[] = [
     id: 'layout',
     title: 'Stacks & action groups',
     group: 'Layout & surfaces',
-    summary: 'Shared spacing for text, fields and grouped actions.',
+    summary: 'Use Stack for related content and ActionGroup for buttons.',
     example: `import { Card, Stack, ActionGroup, Input, Button, Text } from '@envsemble/envui';
 
 <Card>
@@ -281,7 +276,7 @@ const componentReferences: Reference[] = [
     id: 'surface',
     title: 'Surface',
     group: 'Layout & surfaces',
-    summary: 'Shared backgrounds, padding and corners for panes and cards.',
+    summary: 'A background pane without automatic spacing between children.',
     example: `import { Surface, Stack, Text } from '@envsemble/envui';
 
 <Surface tone="pane" padding={5} render={<Stack as="section" gap={5} />}>
@@ -308,7 +303,6 @@ const componentReferences: Reference[] = [
     id: 'buttons',
     title: 'Buttons',
     group: 'Actions',
-    summary: 'Clear actions with a shared size, spacing and state treatment.',
     example: `import { Button } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons';
 
@@ -339,7 +333,6 @@ import { Add } from '@envsemble/envui/icons';
     id: 'icon-buttons',
     title: 'Icon buttons',
     group: 'Actions',
-    summary: 'Compact circular actions with a clear accessible name.',
     example: `import { IconButton } from '@envsemble/envui';
 import { ChevronRight } from '@envsemble/envui/icons';
 
@@ -359,7 +352,6 @@ import { ChevronRight } from '@envsemble/envui/icons';
     id: 'input',
     title: 'Text inputs',
     group: 'Forms & selection',
-    summary: 'Single-line entry with visible labels and connected help.',
     example: `import { Input } from '@envsemble/envui';
 
 <Input label="Project name" name="project" value={name}
@@ -382,7 +374,6 @@ import { ChevronRight } from '@envsemble/envui/icons';
     id: 'textarea',
     title: 'Textareas',
     group: 'Forms & selection',
-    summary: 'Longer entry using the same label, hint and error treatment.',
     example: `import { Textarea } from '@envsemble/envui';
 
 <Textarea label="Description" name="description" rows={4}
@@ -404,7 +395,7 @@ import { ChevronRight } from '@envsemble/envui/icons';
     id: 'checkbox',
     title: 'Checkboxes',
     group: 'Forms & selection',
-    summary: 'Independent choices, including partial group selection.',
+    summary: 'Independent choices; partial selection represents a group.',
     example: `import { Checkbox } from '@envsemble/envui';
 
 <Checkbox label="Include archived items" name="archived"
@@ -424,7 +415,7 @@ import { ChevronRight } from '@envsemble/envui/icons';
     id: 'switch',
     title: 'Switches',
     group: 'Forms & selection',
-    summary: 'A binary setting that can be understood as on or off.',
+    summary: 'Use for an on/off setting that applies immediately.',
     example: `import { Switch } from '@envsemble/envui';
 
 <Switch label="Enable notifications" name="notifications"
@@ -444,7 +435,7 @@ import { ChevronRight } from '@envsemble/envui/icons';
     id: 'radio',
     title: 'Radio groups',
     group: 'Forms & selection',
-    summary: 'One selection from a visible set of alternatives.',
+    summary: 'Choose one option from a visible set.',
     example: `import { RadioGroup, Radio } from '@envsemble/envui';
 
 <RadioGroup label="Access" name="access" value={access}
@@ -467,7 +458,7 @@ import { ChevronRight } from '@envsemble/envui/icons';
     id: 'select',
     title: 'Selects',
     group: 'Forms & selection',
-    summary: 'A compact choice with a tonal trigger and grouped option rows.',
+    summary: 'Choose one option while keeping alternatives collapsed.',
     example: `import { Select } from '@envsemble/envui';
 
 <Select label="Visibility" name="visibility" value={visibility}
@@ -497,7 +488,7 @@ import { ChevronRight } from '@envsemble/envui/icons';
     id: 'navigation',
     title: 'Navigation items',
     group: 'Navigation',
-    summary: 'Quiet destinations and a clear selected location.',
+    summary: 'Links to another destination; routing stays with the app.',
     example: `import { NavigationItem } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons';
 
@@ -528,7 +519,7 @@ import { Home } from '@envsemble/envui/icons';
     id: 'tabs',
     title: 'Tabs',
     group: 'Navigation',
-    summary: 'One selection, a quiet rail and animated content panels.',
+    summary: 'Switches between content panels in the same view.',
     example: `import { Tabs, Button, Card } from '@envsemble/envui';
 
 <Tabs aria-label="Project views" defaultValue="preview" keepMounted
@@ -556,10 +547,12 @@ import { Home } from '@envsemble/envui/icons';
         'Preserve inactive content state; default false unmounts it after transition',
       ],
       ['listClassName / panelClassName', 'Optional layout classes for the list and panels'],
+      ['renderList', 'Wraps the supplied tab list in a custom layout; render the list once'],
       ['Native div props', 'className, style, ref and accessible attributes on the root'],
     ],
     guidelines: [
       'Use tabs for related views in one place. Tabs owns selection, linked panels and keyboard behavior; your application owns any URL synchronization.',
+      'Use renderList to place the tab list alongside a heading or other content inside a Card. Keep panels outside that wrapper and render the supplied list once.',
       'Supply Button, IconButton, NavigationItem without href, or a custom component that forwards native button props and ref. Do not nest another control inside a tab. Icon-only tabs need an accessible name.',
       'The rail uses the pane color with 0.25 rem padding and gaps. Only the selected tab shows its supplied button fill; its hover and pressed colors follow the existing button rules. Official icons fill automatically when selected.',
       'Arrow keys move between enabled tabs; Home and End reach the ends. Use manual activation for content that takes time to load. Disabled tabs are skipped.',
@@ -571,8 +564,7 @@ import { Home } from '@envsemble/envui/icons';
     id: 'direction-links',
     title: 'Direction links',
     group: 'Navigation',
-    summary:
-      'Previous and up-next destinations with consistent direction, text and optional icons.',
+    summary: 'Previous and next destinations in an ordered sequence.',
     example: `import { DirectionLink, ActionGroup } from '@envsemble/envui';
 import { ArrowBack, ArrowForward } from '@envsemble/envui/icons';
 
@@ -608,7 +600,7 @@ import { ArrowBack, ArrowForward } from '@envsemble/envui/icons';
     id: 'rows',
     title: 'Grouped rows',
     group: 'Layout & surfaces',
-    summary: 'Connected content with generous outer corners and compact inner joins.',
+    summary: 'Group related items with shared outer corners.',
     example: `import { GroupedRows, Row, Button } from '@envsemble/envui';
 
 <GroupedRows>
@@ -632,7 +624,7 @@ import { ArrowBack, ArrowForward } from '@envsemble/envui/icons';
     id: 'cards',
     title: 'Cards',
     group: 'Layout & surfaces',
-    summary: 'Rounded surfaces for related content and familiar action compositions.',
+    summary: 'A content surface with automatic spacing and optional actions.',
     example: `import { Card, FeatureCard, Button, Text } from '@envsemble/envui';
 import { Apps } from '@envsemble/envui/icons';
 
@@ -680,7 +672,7 @@ import { Apps } from '@envsemble/envui/icons';
     id: 'chips',
     title: 'Info chips',
     group: 'Content & guidance',
-    summary: 'Compact, noninteractive metadata beside related content.',
+    summary: 'Read-only metadata beside related content.',
     example: `import { InfoChip, ActionGroup } from '@envsemble/envui';
 
 <ActionGroup>
@@ -698,7 +690,7 @@ import { Apps } from '@envsemble/envui/icons';
     id: 'disclosures',
     title: 'Disclosure notes',
     group: 'Content & guidance',
-    summary: 'Secondary guidance that expands without interrupting the task.',
+    summary: 'Keep optional details collapsed until needed.',
     example: `import { DisclosureNote, Text } from '@envsemble/envui';
 
 <DisclosureNote title="How visibility works">
@@ -719,7 +711,6 @@ import { Apps } from '@envsemble/envui/icons';
     id: 'empty-state',
     title: 'Empty states',
     group: 'Feedback & overlays',
-    summary: 'Explain missing content and offer a relevant next action.',
     example: `import { EmptyState, Button } from '@envsemble/envui';
 import { Search } from '@envsemble/envui/icons';
 
@@ -740,7 +731,7 @@ import { Search } from '@envsemble/envui/icons';
     id: 'loading',
     title: 'Loading',
     group: 'Feedback & overlays',
-    summary: 'Show content geometry while announcing that work is in progress.',
+    summary: 'Announces loading and reserves space for incoming content.',
     example: `import { LoadingState, Skeleton } from '@envsemble/envui';
 
 <LoadingState label="Loading project">
@@ -762,7 +753,7 @@ import { Search } from '@envsemble/envui/icons';
     id: 'toasts',
     title: 'Toasts',
     group: 'Feedback & overlays',
-    summary: 'Brief feedback with optional recovery and explicit dismissal.',
+    summary: 'Brief feedback; errors and notices with actions stay until dismissed.',
     example: `import { Theme, Button, ToastProvider, useToast } from '@envsemble/envui';
 
 function SaveButton() {
@@ -803,7 +794,7 @@ function SaveButton() {
     id: 'dialogs',
     title: 'Dialogs',
     group: 'Feedback & overlays',
-    summary: 'Focused confirmation or entry with a modal boundary and return focus.',
+    summary: 'Use for a focused confirmation or a short form.',
     example: `import { Dialog, Button, Input } from '@envsemble/envui';
 
 <Dialog trigger={<Button>Create project</Button>} title="Create project"
@@ -859,7 +850,7 @@ export function renderUsageMarkdown(): string {
                   .replace(/ /g, '-');
                 return [`[${item.title}](#${anchor})`];
               });
-              return `\n### ${ref.title}\n\n${ref.summary}\n\n${'```tsx'}\n${ref.example}\n${'```'}\n\n#### Props & contracts\n\n${ref.props.map(([name, value]) => `- ${name}: ${value}`).join('\n')}\n\n#### Guidelines\n\n${ref.guidelines.map((text) => `- ${text}`).join('\n')}\n${related.length ? `\nRelated: ${related.join(', ')}.\n` : ''}`;
+              return `\n### ${ref.title}\n\n${ref.summary ? `${ref.summary}\n\n` : ''}${'```tsx'}\n${ref.example}\n${'```'}\n\n#### Props & contracts\n\n${ref.props.map(([name, value]) => `- ${name}: ${value}`).join('\n')}\n\n#### Guidelines\n\n${ref.guidelines.map((text) => `- ${text}`).join('\n')}\n${related.length ? `\nRelated: ${related.join(', ')}.\n` : ''}`;
             })
             .join(''),
       )

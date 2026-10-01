@@ -218,36 +218,9 @@ export function ComponentPreview({ id }: { id: string }) {
   const [expanded, setExpanded] = useState(false);
   const [dismissed, setDismissed] = useState<string[]>([]);
   const [dialogTheme, setDialogTheme] = useState<Appearance | null>(null);
-  const [resetVersion, setResetVersion] = useState(0);
   const [confirmation, setConfirmation] = useState('');
-  const reset = () => {
-    setResetVersion((value) => value + 1);
-    setEmpty('');
-    setName('Autumn release');
-    setDescription('Shared plans for the next release.');
-    setChecked(false);
-    setMixed('mixed');
-    setEnabled(true);
-    setAccess('team');
-    setCount('3');
-    setSelected('Home');
-    setTabView('preview');
-    setTabStyle('secondary');
-    setTabIcon('home');
-    setTabNavigation('home');
-    setExpanded(false);
-    setDismissed([]);
-    setDialogTheme(null);
-    setConfirmation('');
-  };
   return (
     <>
-      <div className="docs-preview-toolbar">
-        <span>Examples share their state across both themes.</span>
-        <Button variant="secondary" onClick={reset}>
-          Reset examples
-        </Button>
-      </div>
       <Paired>
         {(theme) => {
           switch (id) {
@@ -1141,7 +1114,7 @@ export function ComponentPreview({ id }: { id: string }) {
           }
         }}
       </Paired>
-      {id === 'toasts' && <ManagedToastExample key={resetVersion} />}
+      {id === 'toasts' && <ManagedToastExample />}
     </>
   );
 }

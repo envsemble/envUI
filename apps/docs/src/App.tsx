@@ -48,6 +48,7 @@ import {
 } from './Documentation';
 import { ReferenceContent } from './ReferencePage';
 import { Code } from './Code';
+import { PageHeader } from './PageHeader';
 function GettingStarted() {
   return (
     <div className="docs-article">
@@ -180,7 +181,7 @@ function Catalogue({ nested = false }: { nested?: boolean }) {
                     key={ref.id}
                     href={`#/components/${ref.id}/preview`}
                     aria-labelledby={`catalogue-${ref.id}-title`}
-                    aria-describedby={`catalogue-${ref.id}-description`}
+                    aria-describedby={ref.summary ? `catalogue-${ref.id}-description` : undefined}
                   >
                     <Stack align="center" className="docs-catalogue-content">
                       <Icon width="1.5rem" height="1.5rem" aria-hidden="true" />
@@ -188,13 +189,15 @@ function Catalogue({ nested = false }: { nested?: boolean }) {
                         <Text as={Heading} variant="page-heading" id={`catalogue-${ref.id}-title`}>
                           {ref.title}
                         </Text>
-                        <Text
-                          variant="caption"
-                          id={`catalogue-${ref.id}-description`}
-                          className="docs-caption"
-                        >
-                          {ref.summary}
-                        </Text>
+                        {ref.summary && (
+                          <Text
+                            variant="caption"
+                            id={`catalogue-${ref.id}-description`}
+                            className="docs-caption"
+                          >
+                            {ref.summary}
+                          </Text>
+                        )}
                       </Stack>
                     </Stack>
                   </Card>
@@ -215,9 +218,6 @@ function Overview() {
           <EnvUILogo className="docs-overview-logo" />
           <Text as="h1" variant="page-heading">
             React components for envsemble
-          </Text>
-          <Text tone="muted">
-            Shared components, themes and assets for consistent product interfaces.
           </Text>
           <ActionGroup align="center">
             <Button href="#/getting-started" variant="outlined" startIcon={<Add />}>
@@ -291,6 +291,7 @@ function PageNavigation({
 export default function App() {
   const [route, setRoute] = useState(readRoute);
   const [appearance, setAppearance] = useState<'light' | 'dark'>('light');
+  const [resetVersion, setResetVersion] = useState(0);
   const main = useRef<HTMLElement>(null);
   useEffect(() => {
     const onHash = () => setRoute(readRoute());
@@ -314,13 +315,6 @@ export default function App() {
         : routePath === 'overview'
           ? 'envUI'
           : 'Page not found');
-  const summary =
-    ref?.summary ??
-    (routePath === 'components'
-      ? 'The full catalogue, built for consistent composition in React.'
-      : routePath === 'getting-started'
-        ? 'Browse the reference, install the package and make your first component.'
-        : 'Choose a destination from the navigation to continue.');
   const contentRoute = page?.path ?? route;
   useEffect(() => {
     document.title = title === 'envUI' ? 'envUI' : `${title} · envUI`;
@@ -330,7 +324,10 @@ export default function App() {
     else window.scrollTo({ top: 0 });
   }, [contentRoute, title]);
   let content: ReactNode;
-  if (page) content = <ReferenceContent key={page.path} page={page} view={tab} />;
+  if (page)
+    content = (
+      <ReferenceContent key={page.path} page={page} view={tab} resetVersion={resetVersion} />
+    );
   else if (routePath === 'getting-started') content = <GettingStarted />;
   else if (routePath === 'components')
     content = (
@@ -441,34 +438,27 @@ export default function App() {
           tabIndex={-1}
           className={`docs-main${comparison ? ' docs-comparison' : ''}`}
         >
-          <header className={isOverview ? 'docs-overview-controls' : 'docs-page-header'}>
-            {!isOverview && (
-              <Stack gap={3} className="docs-page-header-copy">
-                <Text variant="caption">
-                  {page
-                    ? page.section === 'Foundations'
-                      ? 'Foundations'
-                      : `Components / ${ref?.group}`
-                    : 'envUI'}
-                </Text>
-                <Text as="h1" variant="page-heading">
-                  {title}
-                </Text>
-                <Text tone="muted">{summary}</Text>
-              </Stack>
-            )}
-            <Theme
-              theme={comparison ? oppositeAppearance : appearance}
-              className="docs-theme-toggle"
-            >
-              <IconButton
-                icon={appearance === 'light' ? <DarkMode /> : <LightMode />}
-                aria-label={`Switch to ${oppositeAppearance} theme`}
-                title={`Switch to ${oppositeAppearance} theme`}
-                onClick={() => setAppearance(oppositeAppearance)}
-              />
+          <div className="docs-page-controls">
+            <Theme theme={comparison ? oppositeAppearance : appearance}>
+              <ActionGroup align="end">
+                {page?.section === 'Components' && tab === 'preview' && (
+                  <Button
+                    variant="secondary"
+                    onClick={() => setResetVersion((version) => version + 1)}
+                  >
+                    Reset examples
+                  </Button>
+                )}
+                <IconButton
+                  icon={appearance === 'light' ? <DarkMode /> : <LightMode />}
+                  aria-label={`Switch to ${oppositeAppearance} theme`}
+                  title={`Switch to ${oppositeAppearance} theme`}
+                  onClick={() => setAppearance(oppositeAppearance)}
+                />
+              </ActionGroup>
             </Theme>
-          </header>
+          </div>
+          {!isOverview && !page && <PageHeader title={title} breadcrumb="envUI" />}
           {content}
           <PageNavigation
             path={page?.path ?? routePath}

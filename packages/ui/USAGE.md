@@ -36,8 +36,6 @@ Use Theme theme="light" or theme="dark". Inter, tokens and assets are included. 
 
 ### Colors & themes
 
-The base palette, explicit themes and deterministic interaction colors.
-
 ```tsx
 import { Theme, Button, useTheme } from '@envsemble/envui';
 import '@envsemble/envui/styles.css';
@@ -69,8 +67,6 @@ Related: [Surface](#surface), [Buttons](#buttons), [Navigation items](#navigatio
 
 ### Typography
 
-The type hierarchy and its React implementation through Text.
-
 ```tsx
 import { Text, Stack } from '@envsemble/envui';
 
@@ -99,8 +95,6 @@ Related: [Colors & themes](#colors--themes), [Stacks & action groups](#stacks--a
 
 ### Spacing & shape
 
-Shared spacing tokens, padding and corner shapes.
-
 ```tsx
 import { Surface, Stack, Text } from '@envsemble/envui';
 
@@ -128,8 +122,6 @@ import { Surface, Stack, Text } from '@envsemble/envui';
 Related: [Stacks & action groups](#stacks--action-groups), [Surface](#surface), [Cards](#cards), [Grouped rows](#grouped-rows), [Responsive layout](#responsive-layout).
 
 ### Icons & assets
-
-Official Material Symbols Rounded and bundled envUI/envsemble branding.
 
 ```tsx
 import { Icon, EnvUILogo, BrandLogo, IconButton, Stack } from '@envsemble/envui';
@@ -166,8 +158,6 @@ Related: [Icon buttons](#icon-buttons), [Navigation items](#navigation-items), [
 
 ### Responsive layout
 
-Content-driven layouts and input-aware sizing across available space.
-
 ```tsx
 import { Card, Text, ActionGroup, Button } from '@envsemble/envui';
 
@@ -197,8 +187,6 @@ import { Card, Text, ActionGroup, Button } from '@envsemble/envui';
 Related: [Stacks & action groups](#stacks--action-groups), [Cards](#cards), [Text inputs](#text-inputs), [Spacing & shape](#spacing--shape).
 
 ### Motion & accessibility
-
-Shared transition timing, visible focus and accessible composition.
 
 ```tsx
 import { Stack, Input, IconButton } from '@envsemble/envui';
@@ -232,7 +220,7 @@ Related: [Text inputs](#text-inputs), [Selects](#selects), [Tabs](#tabs), [Dialo
 
 ### Stacks & action groups
 
-Shared spacing for text, fields and grouped actions.
+Use Stack for related content and ActionGroup for buttons.
 
 ```tsx
 import { Card, Stack, ActionGroup, Input, Button, Text } from '@envsemble/envui';
@@ -278,7 +266,7 @@ Related: [Spacing & shape](#spacing--shape), [Surface](#surface), [Cards](#cards
 
 ### Surface
 
-Shared backgrounds, padding and corners for panes and cards.
+A background pane without automatic spacing between children.
 
 ```tsx
 import { Surface, Stack, Text } from '@envsemble/envui';
@@ -309,7 +297,7 @@ Related: [Spacing & shape](#spacing--shape), [Stacks & action groups](#stacks--a
 
 ### Grouped rows
 
-Connected content with generous outer corners and compact inner joins.
+Group related items with shared outer corners.
 
 ```tsx
 import { GroupedRows, Row, Button } from '@envsemble/envui';
@@ -337,7 +325,7 @@ Related: [Surface](#surface), [Cards](#cards), [Radio groups](#radio-groups), [S
 
 ### Cards
 
-Rounded surfaces for related content and familiar action compositions.
+A content surface with automatic spacing and optional actions.
 
 ```tsx
 import { Card, FeatureCard, Button, Text } from '@envsemble/envui';
@@ -388,8 +376,6 @@ Related: [Surface](#surface), [Stacks & action groups](#stacks--action-groups), 
 
 ### Buttons
 
-Clear actions with a shared size, spacing and state treatment.
-
 ```tsx
 import { Button } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons';
@@ -420,8 +406,6 @@ Related: [Icon buttons](#icon-buttons), [Stacks & action groups](#stacks--action
 
 ### Icon buttons
 
-Compact circular actions with a clear accessible name.
-
 ```tsx
 import { IconButton } from '@envsemble/envui';
 import { ChevronRight } from '@envsemble/envui/icons';
@@ -446,8 +430,6 @@ Related: [Buttons](#buttons), [Icons & assets](#icons--assets), [Motion & access
 
 ### Text inputs
 
-Single-line entry with visible labels and connected help.
-
 ```tsx
 import { Input } from '@envsemble/envui';
 
@@ -470,8 +452,6 @@ Related: [Textareas](#textareas), [Selects](#selects), [Stacks & action groups](
 
 ### Textareas
 
-Longer entry using the same label, hint and error treatment.
-
 ```tsx
 import { Textarea } from '@envsemble/envui';
 
@@ -493,7 +473,7 @@ Related: [Text inputs](#text-inputs), [Stacks & action groups](#stacks--action-g
 
 ### Checkboxes
 
-Independent choices, including partial group selection.
+Independent choices; partial selection represents a group.
 
 ```tsx
 import { Checkbox } from '@envsemble/envui';
@@ -517,7 +497,7 @@ Related: [Radio groups](#radio-groups), [Switches](#switches), [Motion & accessi
 
 ### Switches
 
-A binary setting that can be understood as on or off.
+Use for an on/off setting that applies immediately.
 
 ```tsx
 import { Switch } from '@envsemble/envui';
@@ -541,7 +521,7 @@ Related: [Checkboxes](#checkboxes), [Colors & themes](#colors--themes), [Motion 
 
 ### Radio groups
 
-One selection from a visible set of alternatives.
+Choose one option from a visible set.
 
 ```tsx
 import { RadioGroup, Radio } from '@envsemble/envui';
@@ -568,7 +548,7 @@ Related: [Selects](#selects), [Checkboxes](#checkboxes), [Grouped rows](#grouped
 
 ### Selects
 
-A compact choice with a tonal trigger and grouped option rows.
+Choose one option while keeping alternatives collapsed.
 
 ```tsx
 import { Select } from '@envsemble/envui';
@@ -601,7 +581,7 @@ Related: [Radio groups](#radio-groups), [Text inputs](#text-inputs), [Grouped ro
 
 ### Navigation items
 
-Quiet destinations and a clear selected location.
+Links to another destination; routing stays with the app.
 
 ```tsx
 import { NavigationItem } from '@envsemble/envui';
@@ -633,7 +613,7 @@ Related: [Tabs](#tabs), [Direction links](#direction-links), [Icons & assets](#i
 
 ### Tabs
 
-One selection, a quiet rail and animated content panels.
+Switches between content panels in the same view.
 
 ```tsx
 import { Tabs, Button, Card } from '@envsemble/envui';
@@ -660,11 +640,13 @@ import { Tabs, Button, Card } from '@envsemble/envui';
 - orientation: horizontal (default) or vertical; keyboard arrows follow the orientation
 - keepMounted: Preserve inactive content state; default false unmounts it after transition
 - listClassName / panelClassName: Optional layout classes for the list and panels
+- renderList: Wraps the supplied tab list in a custom layout; render the list once
 - Native div props: className, style, ref and accessible attributes on the root
 
 #### Guidelines
 
 - Use tabs for related views in one place. Tabs owns selection, linked panels and keyboard behavior; your application owns any URL synchronization.
+- Use renderList to place the tab list alongside a heading or other content inside a Card. Keep panels outside that wrapper and render the supplied list once.
 - Supply Button, IconButton, NavigationItem without href, or a custom component that forwards native button props and ref. Do not nest another control inside a tab. Icon-only tabs need an accessible name.
 - The rail uses the pane color with 0.25 rem padding and gaps. Only the selected tab shows its supplied button fill; its hover and pressed colors follow the existing button rules. Official icons fill automatically when selected.
 - Arrow keys move between enabled tabs; Home and End reach the ends. Use manual activation for content that takes time to load. Disabled tabs are skipped.
@@ -674,7 +656,7 @@ Related: [Navigation items](#navigation-items), [Buttons](#buttons), [Icons & as
 
 ### Direction links
 
-Previous and up-next destinations with consistent direction, text and optional icons.
+Previous and next destinations in an ordered sequence.
 
 ```tsx
 import { DirectionLink, ActionGroup } from '@envsemble/envui';
@@ -716,7 +698,7 @@ Related: [Navigation items](#navigation-items), [Stacks & action groups](#stacks
 
 ### Info chips
 
-Compact, noninteractive metadata beside related content.
+Read-only metadata beside related content.
 
 ```tsx
 import { InfoChip, ActionGroup } from '@envsemble/envui';
@@ -740,7 +722,7 @@ Related: [Cards](#cards), [Typography](#typography), [Disclosure notes](#disclos
 
 ### Disclosure notes
 
-Secondary guidance that expands without interrupting the task.
+Keep optional details collapsed until needed.
 
 ```tsx
 import { DisclosureNote, Text } from '@envsemble/envui';
@@ -767,8 +749,6 @@ Related: [Info chips](#info-chips), [Typography](#typography), [Text inputs](#te
 
 ### Empty states
 
-Explain missing content and offer a relevant next action.
-
 ```tsx
 import { EmptyState, Button } from '@envsemble/envui';
 import { Search } from '@envsemble/envui/icons';
@@ -792,7 +772,7 @@ Related: [Loading](#loading), [Cards](#cards), [Buttons](#buttons).
 
 ### Loading
 
-Show content geometry while announcing that work is in progress.
+Announces loading and reserves space for incoming content.
 
 ```tsx
 import { LoadingState, Skeleton } from '@envsemble/envui';
@@ -818,7 +798,7 @@ Related: [Empty states](#empty-states), [Cards](#cards), [Motion & accessibility
 
 ### Toasts
 
-Brief feedback with optional recovery and explicit dismissal.
+Brief feedback; errors and notices with actions stay until dismissed.
 
 ```tsx
 import { Theme, Button, ToastProvider, useToast } from '@envsemble/envui';
@@ -854,7 +834,7 @@ Related: [Dialogs](#dialogs), [Buttons](#buttons), [Colors & themes](#colors--th
 
 ### Dialogs
 
-Focused confirmation or entry with a modal boundary and return focus.
+Use for a focused confirmation or a short form.
 
 ```tsx
 import { Dialog, Button, Input } from '@envsemble/envui';

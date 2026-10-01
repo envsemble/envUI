@@ -8,6 +8,7 @@ import {
 } from './Documentation';
 import { FoundationPreview } from './Foundations';
 import { ComponentPreview } from './Previews';
+import { PageHeader } from './PageHeader';
 
 function RelatedTopics({ page }: { page: ReferencePage }) {
   const related = (page.reference.related ?? []).flatMap((id) => {
@@ -32,14 +33,32 @@ function RelatedTopics({ page }: { page: ReferencePage }) {
 }
 
 /** The same reference structure serves foundations and components. */
-export function ReferenceContent({ page, view }: { page: ReferencePage; view: ReferenceView }) {
+export function ReferenceContent({
+  page,
+  view,
+  resetVersion,
+}: {
+  page: ReferencePage;
+  view: ReferenceView;
+  resetVersion: number;
+}) {
   const { reference } = page;
   return (
     <Tabs
       key={page.path}
       aria-label={`${reference.title} reference views`}
       className="docs-reference-tabs"
-      listClassName="docs-tabs"
+      renderList={(list) => (
+        <PageHeader
+          title={reference.title}
+          breadcrumb={
+            page.section === 'Foundations' ? 'Foundations' : `Components / ${reference.group}`
+          }
+          summary={reference.summary}
+        >
+          {list}
+        </PageHeader>
+      )}
       value={view}
       onValueChange={(value) => {
         if (value) location.hash = `/${page.path}/${value}`;
@@ -52,7 +71,7 @@ export function ReferenceContent({ page, view }: { page: ReferencePage; view: Re
             page.section === 'Foundations' ? (
               <FoundationPreview id={reference.id} />
             ) : (
-              <ComponentPreview id={reference.id} />
+              <ComponentPreview key={resetVersion} id={reference.id} />
             )
           ) : item.id === 'guidelines' ? (
             <div className="docs-article">
