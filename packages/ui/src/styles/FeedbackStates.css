@@ -1,0 +1,21 @@
+.env-empty-state {
+  display: grid;
+  justify-items: start;
+  align-content: start;
+  min-width: 0;
+  padding: var(--space-5);
+  gap: var(--space-4);
+}
+.env-loading-state {
+  display: grid;
+  gap: var(--space-2);
+}
+.env-skeleton {
+  display: block;
+  height: 0.8rem;
+  border-radius: var(--radius-standard);
+  background: var(--color-skeleton-base);
+}
+.env-skeleton-highlight {
+  background: var(--color-skeleton-highlight);
+}

@@ -1,5 +1,6 @@
 import type { ComponentPropsWithRef, CSSProperties, ReactElement } from 'react';
 import { useRender } from '@base-ui/react/use-render';
+import { classNames } from '../internal/classNames.js';
 import type { SpaceStep, StackElement } from './Layout.js';
 
 export type SurfaceTone = 'pane' | 'row' | 'canvas' | 'alternate';
@@ -34,9 +35,12 @@ export function Surface<Element extends StackElement = 'div'>({
     render,
     props: {
       ...props,
-      className: ['env-surface', `env-surface-${tone}`, `env-surface-corners-${corners}`, className]
-        .filter(Boolean)
-        .join(' '),
+      className: classNames(
+        'env-surface',
+        `env-surface-${tone}`,
+        `env-surface-corners-${corners}`,
+        className,
+      ),
       style: {
         ...(padding !== undefined
           ? { '--env-surface-padding': padding === 0 ? '0rem' : `var(--space-${padding})` }

@@ -1,11 +1,12 @@
 import { forwardRef } from 'react';
 import type { HTMLAttributes, ReactElement, ReactNode, RefObject } from 'react';
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
-import { Button } from './Primitives.js';
-import type { ButtonProps } from './Primitives.js';
-import { Theme, useTheme } from './Theme.js';
-import { Stack, ActionGroup } from './Layout.js';
-import { Surface } from './Surface.js';
+import { classNames } from '../internal/classNames.js';
+import { Button } from '../actions/Button.js';
+import type { ButtonProps } from '../actions/Button.js';
+import { Theme, useTheme } from '../foundations/Theme.js';
+import { Stack, ActionGroup } from '../foundations/Layout.js';
+import { Surface } from '../foundations/Surface.js';
 
 export interface DialogProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title' | 'children'> {
   open?: boolean;
@@ -66,7 +67,7 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
               render={<Surface tone="pane" padding={5} />}
               {...popupProps}
               ref={ref}
-              className={['env-modal-pane', className].filter(Boolean).join(' ')}
+              className={classNames('env-modal-pane', className)}
               initialFocus={initialFocus}
               finalFocus={finalFocus}
             >

@@ -1,11 +1,13 @@
 import { forwardRef, useEffect, useRef, useState } from 'react';
 import type { ButtonHTMLAttributes } from 'react';
 import { Select as BaseSelect } from '@base-ui/react/select';
-import { Theme, useTheme } from './Theme.js';
-import { Surface } from './Surface.js';
-import { ChevronRight } from './icons/ChevronRight.js';
-import { FieldFrame, useFieldMetadata, type FieldProps } from './FieldFrame.js';
-import { setRef, subscribeFormReset } from './FormUtilities.js';
+import { classNames } from '../internal/classNames.js';
+import { Theme, useTheme } from '../foundations/Theme.js';
+import { Surface } from '../foundations/Surface.js';
+import { ChevronRight } from '../icons/ChevronRight.js';
+import { FieldFrame, useFieldMetadata, type FieldProps } from './internal/FieldFrame.js';
+import { setRef } from '../internal/setRef.js';
+import { subscribeFormReset } from './internal/subscribeFormReset.js';
 
 export interface SelectOption {
   value: string;
@@ -57,8 +59,8 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
   const theme = useTheme();
   const triggerRef = useRef<HTMLButtonElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [uncontrolled, setUncontrolled] = useState(defaultValue ?? null);
-  const selected = value === undefined ? uncontrolled : value;
+  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue ?? null);
+  const selectedValue = value === undefined ? uncontrolledValue : value;
   useEffect(
     function subscribeToFormReset() {
       const input = inputRef.current;
@@ -66,26 +68,28 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
       if (!input || !ownerForm) return;
       return subscribeFormReset(ownerForm, function applyReset() {
         const resetValue = value === undefined ? (defaultValue ?? null) : value;
-        if (value === undefined) setUncontrolled(resetValue);
+        if (value === undefined) setUncontrolledValue(resetValue);
         input.value = resetValue ?? '';
       });
     },
     [value, defaultValue, form],
   );
-  function change(next: string | null) {
-    if (value === undefined) setUncontrolled(next);
-    onValueChange?.(next);
+  function handleValueChange(nextValue: string | null) {
+    if (value === undefined) setUncontrolledValue(nextValue);
+    onValueChange?.(nextValue);
   }
-  function popupOffset() {
+  function getPopupOffset() {
     const trigger = triggerRef.current;
-    const view = trigger?.ownerDocument.defaultView;
-    return trigger && view ? Number.parseFloat(view.getComputedStyle(trigger).columnGap) || 0 : 0;
+    const ownerWindow = trigger?.ownerDocument.defaultView;
+    return trigger && ownerWindow
+      ? Number.parseFloat(ownerWindow.getComputedStyle(trigger).columnGap) || 0
+      : 0;
   }
   return (
     <BaseSelect.Root<string>
       items={options}
-      value={selected}
-      onValueChange={change}
+      value={selectedValue}
+      onValueChange={handleValueChange}
       name={name}
       required={required}
       disabled={disabled}
@@ -107,7 +111,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
             triggerRef.current = node;
             setRef(ref, node);
           }}
-          className={['env-button', 'env-dropdown-trigger', className].filter(Boolean).join(' ')}
+          className={classNames('env-button', 'env-dropdown-trigger', className)}
         >
           <BaseSelect.Value placeholder={placeholder} />
           <BaseSelect.Icon className="env-symbol">
@@ -121,7 +125,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
               alignItemWithTrigger={false}
               side="bottom"
               align="start"
-              sideOffset={popupOffset}
+              sideOffset={getPopupOffset}
             >
               <BaseSelect.Popup className="env-dropdown-options" render={<Surface padding={2} />}>
                 <BaseSelect.List className="env-dropdown-list env-connected-rows">

@@ -1,0 +1,57 @@
+import type { ComponentPropsWithRef, ReactNode } from 'react';
+import type { Toast as BaseToast } from '@base-ui/react/toast';
+
+export type ToastVariant = 'neutral' | 'success' | 'info' | 'error';
+export type ToastPlacement = 'bottom-right' | 'top-center';
+export interface ToastAction {
+  label: string;
+  onClick: () => void;
+}
+export interface ToastProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
+  message: string;
+  variant?: ToastVariant;
+  action?: ToastAction;
+  onDismiss?: () => void;
+  dismissLabel?: string;
+  /** Disable announcements for static examples; defaults to true for app feedback. */
+  announce?: boolean;
+}
+
+export interface ToastNotification {
+  message: string;
+  variant?: ToastVariant;
+  action?: ToastAction;
+  placement?: ToastPlacement;
+  dismissible?: boolean;
+  /** Auto-dismiss milliseconds for non-error notices without actions. Zero persists. */
+  duration?: number;
+}
+export interface ToastManager {
+  show: (notification: ToastNotification) => string;
+  dismiss: (id: string) => void;
+  clear: () => void;
+}
+export interface ToastProviderProps {
+  children: ReactNode;
+  defaultPlacement?: ToastPlacement;
+  /** Capacity for each placement; queued notices begin their timer when displayed. */
+  visibleLimit?: number;
+}
+
+export type ToastEntry = ToastNotification & {
+  id: string;
+  variant: ToastVariant;
+  placement: ToastPlacement;
+};
+export type ToastDelivery = Pick<
+  ReturnType<typeof BaseToast.useToastManager<ToastEntry>>,
+  'add' | 'close'
+>;
+export type ToastTimer = {
+  remainingMs: number;
+  startedAt: number;
+  handle?: ReturnType<typeof setTimeout>;
+  pauseReasons: Set<string>;
+};
+
+export const toastPlacements: readonly ToastPlacement[] = ['bottom-right', 'top-center'];

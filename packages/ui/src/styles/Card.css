@@ -1,0 +1,111 @@
+.env-card {
+  --surface-card-padding: var(--env-surface-inset);
+}
+
+.env-clickable-card {
+  inline-size: 100%;
+  margin: 0;
+  color: var(--color-text-primary);
+  font: inherit;
+  text-align: start;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+}
+.env-clickable-card:hover:not(:disabled):not([aria-disabled='true']) {
+  background: var(--env-surface-hover);
+}
+.env-clickable-card:active:not(:disabled):not([aria-disabled='true']) {
+  background: var(--env-surface-pressed);
+}
+.env-clickable-card:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: 0.125rem;
+}
+.env-clickable-card:is(:disabled, [aria-disabled='true']) {
+  opacity: var(--state-disabled-opacity);
+  cursor: default;
+}
+@media (prefers-reduced-motion: reduce) {
+  .env-clickable-card {
+    transition: none;
+  }
+}
+
+.env-action-card {
+  padding: 0;
+  overflow: hidden;
+}
+.env-action-card-body {
+  padding: var(--surface-card-padding);
+}
+.env-action-card-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.env-action-card-meta {
+  margin-left: auto;
+}
+.env-action-card-body > :where(p:not(.env-text)) {
+  margin: 0;
+  max-width: 32ch;
+  font: var(--type-body);
+  color: var(--color-text-muted);
+  overflow-wrap: anywhere;
+}
+.env-action-card > .env-action-card-actions {
+  margin-top: auto;
+  padding: var(--space-3) var(--surface-card-padding);
+  background: var(--color-action-strip);
+}
+
+.env-feature-card {
+  container: env-feature-card / inline-size;
+}
+.env-feature-card-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-4);
+}
+.env-feature-card-layout:has(> .env-feature-card-icon) {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+.env-feature-card-icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  display: grid;
+  place-items: center;
+  color: var(--color-icon);
+}
+.env-feature-card-icon .env-symbol {
+  width: 1.5rem;
+  height: 1.5rem;
+  font-size: 1.5rem;
+}
+.env-feature-card-copy {
+  min-width: 0;
+}
+.env-feature-card-action {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  justify-self: end;
+}
+@container env-feature-card (max-width: 38rem) {
+  .env-feature-card-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .env-feature-card-layout:has(> .env-feature-card-icon) {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .env-feature-card-action {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+  }
+  .env-feature-card-action > :is(a, button) {
+    width: 100%;
+  }
+}

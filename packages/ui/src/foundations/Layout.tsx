@@ -5,6 +5,7 @@ import {
   type ReactElement,
 } from 'react';
 import { useRender } from '@base-ui/react/use-render';
+import { classNames } from '../internal/classNames.js';
 
 /** A step in the shared spacing scale; 0 removes the gap. */
 export type SpaceStep = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
@@ -43,7 +44,7 @@ export function Stack<Element extends StackElement = 'div'>({
     render,
     props: {
       ...props,
-      className: ['env-stack', className].filter(Boolean).join(' '),
+      className: classNames('env-stack', className),
       'data-align': align,
       style: {
         '--env-stack-gap': gap === 0 ? '0' : `var(--space-${gap})`,
@@ -71,7 +72,7 @@ export function ActionGroup<Element extends StackElement = 'div'>({
 }: ActionGroupProps<Element>) {
   return createElement(as ?? 'div', {
     ...props,
-    className: ['env-action-group', className].filter(Boolean).join(' '),
+    className: classNames('env-action-group', className),
     'data-stacked': stacked || undefined,
     'data-align': align,
   });

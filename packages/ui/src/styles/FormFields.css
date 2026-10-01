@@ -1,0 +1,73 @@
+/* Form fields: shared row fill and pane radius, with semantic focus/validation. */
+.env-form-field {
+  display: grid;
+  align-content: start;
+  gap: calc(0.5rem * var(--scale, 1));
+  min-width: 0;
+  font: var(--type-body-small);
+  color: var(--color-text-primary);
+}
+.env-form-field small {
+  font: var(--type-body-small);
+  color: var(--color-text-muted);
+}
+.env-form-field:has([aria-invalid='true']) small {
+  color: var(--color-text-primary);
+}
+.env-text-input {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: calc(var(--control-height) * var(--scale, 1));
+  margin: 0;
+  padding: calc(0.5rem * var(--scale, 1)) calc(1rem * var(--scale, 1));
+  border: 0;
+  border-radius: calc(var(--radius-surface) * var(--scale, 1));
+  background: var(--color-surface-muted);
+  color: var(--color-text-primary);
+  font: var(--type-body);
+}
+.env-text-input:hover:not(:disabled) {
+  background: var(--color-icon-button-hover);
+}
+.env-text-input:active:not(:disabled) {
+  background: var(--color-icon-button-pressed);
+}
+.env-text-input::placeholder {
+  color: var(--color-text-quiet);
+  opacity: 1;
+}
+.env-text-input:focus-visible {
+  outline: calc(0.125rem * var(--scale, 1)) solid var(--color-focus-ring);
+  outline-offset: calc(0.125rem * var(--scale, 1));
+}
+.env-text-input[aria-invalid='true'],
+.env-dropdown-trigger[aria-invalid='true'] {
+  outline: calc(0.125rem * var(--scale, 1)) solid var(--color-destructive-action);
+  outline-offset: 0;
+}
+.env-text-input[aria-invalid='true']:focus-visible,
+.env-dropdown-trigger[aria-invalid='true']:focus-visible {
+  outline-offset: calc(0.125rem * var(--scale, 1));
+}
+.env-text-input:disabled {
+  opacity: var(--state-disabled-opacity);
+  cursor: default;
+}
+textarea.env-text-input {
+  min-height: calc(6rem * var(--scale, 1));
+  resize: vertical;
+}
+
+.env-choice-control,
+.env-radio-option,
+.env-form-field {
+  font-size: calc(var(--font-size-body-small) * var(--scale, 1));
+}
+.env-text-input {
+  font-size: calc(var(--font-size-body) * var(--scale, 1));
+}
+
+.env-form-field small {
+  font-size: calc(var(--font-size-body-small) * var(--scale, 1));
+}

@@ -1,4 +1,5 @@
 import { createElement, type ComponentPropsWithRef } from 'react';
+import { classNames } from '../internal/classNames.js';
 
 export type TextElement =
   | 'p'
@@ -31,8 +32,11 @@ export function Text<Element extends TextElement = 'p'>({
 }: TextProps<Element>) {
   return createElement(as ?? 'p', {
     ...props,
-    className: ['env-text', `env-text-${variant}`, tone && `env-text-tone-${tone}`, className]
-      .filter(Boolean)
-      .join(' '),
+    className: classNames(
+      'env-text',
+      `env-text-${variant}`,
+      tone && `env-text-tone-${tone}`,
+      className,
+    ),
   });
 }

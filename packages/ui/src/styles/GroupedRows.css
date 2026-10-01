@@ -1,0 +1,32 @@
+/* Grouped-row geometry is shared with selectable rows and select options. */
+.env-grouped-rows {
+  display: grid;
+  gap: 0.125rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.env-grouped-rows > .env-row {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  min-height: 3.5rem;
+  padding: var(--space-3) var(--space-4);
+  font: var(--type-body-small);
+  background: var(--color-surface-muted);
+  color: var(--color-text-primary);
+}
+.env-grouped-rows small {
+  display: block;
+  color: var(--color-text-muted);
+  font: var(--type-body-small);
+}
+.env-contrast-row-pane .env-grouped-rows > .env-row {
+  background: var(--color-surface);
+}
+.env-contrast-row-pane .env-grouped-rows + .env-grouped-rows {
+  margin-top: 0.75rem;
+}

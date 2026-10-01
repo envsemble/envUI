@@ -1,4 +1,6 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
+import { DecorativeIcon } from '../internal/DecorativeIcon.js';
+import { classNames } from '../internal/classNames.js';
 
 export interface DirectionLinkProps extends Omit<ComponentPropsWithRef<'a'>, 'children'> {
   direction: 'previous' | 'next';
@@ -16,28 +18,21 @@ export function DirectionLink({
   rel,
   ...props
 }: DirectionLinkProps) {
-  const previous = direction === 'previous';
-  const symbol =
-    icon != null ? (
-      <span className="env-symbol" aria-hidden="true">
-        {icon}
-      </span>
-    ) : null;
+  const isPrevious = direction === 'previous';
+  const symbol = icon != null ? <DecorativeIcon>{icon}</DecorativeIcon> : null;
 
   return (
     <a
       {...props}
-      rel={rel ?? (previous ? 'prev' : 'next')}
-      className={['env-direction-link', `env-direction-link-${direction}`, className]
-        .filter(Boolean)
-        .join(' ')}
+      rel={rel ?? (isPrevious ? 'prev' : 'next')}
+      className={classNames('env-direction-link', `env-direction-link-${direction}`, className)}
     >
-      {previous && symbol}
+      {isPrevious && symbol}
       <span className="env-direction-link-copy">
-        <span className="env-direction-link-label">{previous ? 'Previous' : 'Up next'}</span>
+        <span className="env-direction-link-label">{isPrevious ? 'Previous' : 'Up next'}</span>
         <span className="env-direction-link-title">{children}</span>
       </span>
-      {!previous && symbol}
+      {!isPrevious && symbol}
     </a>
   );
 }

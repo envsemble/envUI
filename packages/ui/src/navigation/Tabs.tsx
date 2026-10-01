@@ -1,9 +1,10 @@
 import { Tabs as BaseTabs } from '@base-ui/react/tabs';
 import { useRender } from '@base-ui/react/use-render';
 import { cloneElement, type ComponentPropsWithRef, type ReactElement, type ReactNode } from 'react';
-import { NavigationItem, type NavigationItemProps } from './Primitives.js';
-import { NavigationIconState } from './MaterialSymbolState.js';
-import { Surface } from './Surface.js';
+import { classNames } from '../internal/classNames.js';
+import { NavigationItem, type NavigationItemProps } from './NavigationItem.js';
+import { NavigationIconState } from '../MaterialSymbolState.js';
+import { Surface } from '../foundations/Surface.js';
 
 export interface TabsItem {
   /** Unique, stable identifier shared by the tab and its panel. */
@@ -98,7 +99,7 @@ export function Tabs({
     <BaseTabs.List
       render={<Surface padding={1} corners="pill" />}
       aria-label={label}
-      className={['env-tabs-list', listClassName].filter(Boolean).join(' ')}
+      className={classNames('env-tabs-list', listClassName)}
       activateOnFocus={activation === 'automatic'}
     >
       {items.map((item) => (
@@ -122,7 +123,7 @@ export function Tabs({
   return (
     <BaseTabs.Root
       {...props}
-      className={['env-tabs', className].filter(Boolean).join(' ')}
+      className={classNames('env-tabs', className)}
       value={value}
       defaultValue={initialValue}
       onValueChange={onValueChange}
@@ -135,7 +136,7 @@ export function Tabs({
             key={item.value}
             value={item.value}
             keepMounted={keepMounted}
-            className={['env-tab-panel', panelClassName].filter(Boolean).join(' ')}
+            className={classNames('env-tab-panel', panelClassName)}
           >
             {item.content}
           </BaseTabs.Panel>

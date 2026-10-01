@@ -1,0 +1,19 @@
+/* Typography belongs to the explicit boundary, never the host document. */
+.env-theme {
+  font: var(--type-body);
+}
+.env-theme :where(h1) {
+  margin: 0;
+  font: var(--type-h1);
+}
+.env-theme :where(h2, h3, h4, h5, h6) {
+  margin: 0;
+  font: var(--type-h2);
+}
+.env-theme :where(p) {
+  margin: 0;
+  font: var(--type-body);
+}
+.env-theme :where(a) {
+  color: inherit;
+}

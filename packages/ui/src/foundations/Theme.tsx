@@ -1,4 +1,5 @@
 import { createContext, useContext, type ComponentPropsWithRef } from 'react';
+import { classNames } from '../internal/classNames.js';
 
 export type ThemeValue = 'light' | 'dark';
 
@@ -12,11 +13,7 @@ const ThemeContext = createContext<ThemeValue>('light');
 export function Theme({ theme, className, children, ...props }: ThemeProps) {
   return (
     <ThemeContext value={theme}>
-      <div
-        {...props}
-        className={['env-theme', className].filter(Boolean).join(' ')}
-        data-env-theme={theme}
-      >
+      <div {...props} className={classNames('env-theme', className)} data-env-theme={theme}>
         {children}
       </div>
     </ThemeContext>
