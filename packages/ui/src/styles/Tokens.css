@@ -212,6 +212,7 @@
   .env-theme {
     --control-height-small: var(--control-height-touch);
     --control-height: var(--control-height-touch);
+    --icon-button-size: var(--control-height-touch);
     --control-font-size: 1rem;
   }
 }

@@ -1,4 +1,11 @@
 /* Selection reuses tonal controls and the grouped-row corner pattern. */
+@media (pointer: coarse) {
+  .env-choice-control,
+  .env-radio-option {
+    min-height: calc(var(--control-height-touch) * var(--scale, 1));
+  }
+}
+
 .env-dropdown-control {
   position: relative;
   display: inline-flex;
@@ -44,7 +51,7 @@
   box-sizing: border-box;
   display: block;
   margin: 0;
-  min-height: calc(2.5rem * var(--scale, 1));
+  min-height: calc(var(--control-height) * var(--scale, 1));
   padding: calc(0.5rem * var(--scale, 1)) calc(1rem * var(--scale, 1));
   border: 0;
   outline: none;
@@ -224,7 +231,7 @@
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
-  min-height: calc(2.5rem * var(--scale, 1));
+  min-height: calc(var(--control-height) * var(--scale, 1));
   margin: 0;
   padding: calc(0.5rem * var(--scale, 1)) calc(1rem * var(--scale, 1));
   border: 0;

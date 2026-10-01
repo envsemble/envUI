@@ -61,7 +61,7 @@ function SaveButton() {
 
 - Use palette base colors. Derive states centrally; do not add separate hover or pressed palette entries.
 - Below 50% HSL lightness, add lightness; otherwise subtract it. Hover shifts 10 points, press shifts 20, and results clamp to 0–100%. Disabled opacity is 0.48.
-- Matching colors share a hue across themes. Saturation and lightness may differ; distinct semantic exceptions retain their own hues.
+- Matching colors share a hue across themes. Saturation and lightness may differ; distinct semantic exceptions retain their own hues. Focus uses text color in light and link color in dark.
 - Selected navigation mixes 13% link color with its surface. Card action strips mix 35% muted surface with the parent surface.
 - Scope content with Theme. Nested boundaries and portaled components retain the originating theme.
 
@@ -184,7 +184,7 @@ import { Card, Text, ActionGroup, Button } from '@envsemble/envui';
 #### Props & contracts
 
 - ActionGroup stacked: Stacks label buttons at full group width; circular icons retain their size
-- Control minimums: 2 rem action buttons; 2.5 rem field and navigation controls
+- Control minimums: 2 rem action buttons and select triggers; 2.5 rem text inputs and navigation
 - Coarse pointers: Shared 2.75 rem touch minimum; controls can grow with content
 - Layout breakpoints: Chosen by the application; no separate mobile theme or component set
 
