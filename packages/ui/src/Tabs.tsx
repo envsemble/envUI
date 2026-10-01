@@ -30,6 +30,8 @@ export interface TabsProps
   orientation?: 'horizontal' | 'vertical';
   /** Preserve local panel state while inactive. Hidden panels are inert. */
   keepMounted?: boolean;
+  /** Wrap the supplied list in a custom layout, such as a Card with a heading. Render it once. */
+  renderList?: (list: ReactElement) => ReactNode;
   listClassName?: string;
   panelClassName?: string;
 }
@@ -82,6 +84,7 @@ export function Tabs({
   activation = 'automatic',
   orientation = 'horizontal',
   keepMounted = false,
+  renderList,
   className,
   listClassName,
   panelClassName,
@@ -91,6 +94,31 @@ export function Tabs({
     defaultValue === undefined
       ? (items.find((item) => !isDisabled(item))?.value ?? null)
       : defaultValue;
+  const list = (
+    <BaseTabs.List
+      render={<Surface padding={1} corners="pill" />}
+      aria-label={label}
+      className={['env-tabs-list', listClassName].filter(Boolean).join(' ')}
+      activateOnFocus={activation === 'automatic'}
+    >
+      {items.map((item) => (
+        <BaseTabs.Tab
+          key={item.value}
+          value={item.value}
+          disabled={isDisabled(item)}
+          className="env-tab"
+          render={(tabProps, state) => (
+            <TabButton
+              {...tabProps}
+              button={item.button}
+              active={state.active}
+              disabled={state.disabled}
+            />
+          )}
+        />
+      ))}
+    </BaseTabs.List>
+  );
   return (
     <BaseTabs.Root
       {...props}
@@ -100,29 +128,7 @@ export function Tabs({
       onValueChange={onValueChange}
       orientation={orientation}
     >
-      <BaseTabs.List
-        render={<Surface padding={1} corners="pill" />}
-        aria-label={label}
-        className={['env-tabs-list', listClassName].filter(Boolean).join(' ')}
-        activateOnFocus={activation === 'automatic'}
-      >
-        {items.map((item) => (
-          <BaseTabs.Tab
-            key={item.value}
-            value={item.value}
-            disabled={isDisabled(item)}
-            className="env-tab"
-            render={(tabProps, state) => (
-              <TabButton
-                {...tabProps}
-                button={item.button}
-                active={state.active}
-                disabled={state.disabled}
-              />
-            )}
-          />
-        ))}
-      </BaseTabs.List>
+      {renderList ? renderList(list) : list}
       <div className="env-tabs-panels">
         {items.map((item) => (
           <BaseTabs.Panel

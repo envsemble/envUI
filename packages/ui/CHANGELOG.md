@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Allow Tabs renderList to compose its existing list inside a card or other layout while retaining selection, keyboard behavior and linked panels.
 - Wire existing coarse-pointer height tokens into controls, icon circles, selection labels, disclosure summaries and toast dismissal so the documented 2.75 rem touch minimum applies without consumer overrides.
 - Add Surface for palette backgrounds, padding and corners; compose Card from Surface and Stack without extra root wrappers. Reuse Surface for dialogs, dropdown popups, tab rails and contrast row panes.
 - Unify plain, interactive and action-strip cards through Card props; keep ClickableCard and ActionCard as compatibility wrappers.

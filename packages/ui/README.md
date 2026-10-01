@@ -47,6 +47,7 @@ The stylesheet bundles Inter and scopes styling to explicit light/dark theme bou
 - `Button href` renders a native link; omit `href` for a native button.
 - `Card` builds on Surface and Stack. Use `href` for a destination, `as="button"` for an action, or `heading`, `meta` and `actions` for content with an action strip. `ClickableCard` and `ActionCard` remain compatibility wrappers; FeatureCard adds its specific layout.
 - `Input`, `Textarea` and `Select` share visible labels and accessible hints/errors. Validation stays in the application.
+- `Tabs renderList` wraps the supplied tab list in a custom layout, such as a Card with a heading. Render the list once; panels remain outside that wrapper.
 
 ## Icons and assets
 
