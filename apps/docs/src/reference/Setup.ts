@@ -1,5 +1,5 @@
 export const setupCode = `import { Theme, Button } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons';
+import { Add } from '@envsemble/envui/icons/Add';
 import '@envsemble/envui/styles.css';
 
 export function App() {

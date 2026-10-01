@@ -6,7 +6,7 @@ export const actionsReferences: Reference[] = [
     title: 'Buttons',
     group: 'Actions',
     example: `import { Button } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons';
+import { Add } from '@envsemble/envui/icons/Add';
 
 <Button variant="primary" startIcon={<Add />} onClick={createItem}>
   Create item
@@ -36,7 +36,7 @@ import { Add } from '@envsemble/envui/icons';
     title: 'Icon buttons',
     group: 'Actions',
     example: `import { IconButton } from '@envsemble/envui';
-import { ChevronRight } from '@envsemble/envui/icons';
+import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 
 <IconButton icon={<ChevronRight />} aria-label="Next item" onClick={next} />`,
     props: [

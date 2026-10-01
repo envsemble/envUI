@@ -51,7 +51,7 @@ The stylesheet bundles Inter and scopes styling to explicit light/dark theme bou
 
 ## Icons and assets
 
-Explicit imports from `@envsemble/envui/icons` or individual icon paths support the complete pinned official Material Symbols Rounded catalogue. NavigationItem and Tabs automatically fill selected symbols and outline unselected ones. Standalone symbols accept `filled`; NavigationItem accepts an optional `selectedIcon` for custom React icons. No remote font or SVG loader is needed.
+Prefer individual icon paths such as `@envsemble/envui/icons/Add` so development tooling loads only the symbols you use. Explicit imports from the `@envsemble/envui/icons` barrel remain supported and production bundles exclude unused icons. Both cover the complete pinned official Material Symbols Rounded catalogue. NavigationItem and Tabs automatically fill selected symbols and outline unselected ones. Standalone symbols accept `filled`; NavigationItem accepts an optional `selectedIcon` for custom React icons. No remote font or SVG loader is needed.
 
 `EnvUILogo` renders the envUI lockup; `BrandLogo` renders the shared envsemble lockup. Both inherit their context color. Raw envUI logos and favicons are exported under `@envsemble/envui/assets/envUI/`; the common envsemble SVG and Inter font remain at `@envsemble/envui/assets/envsemble-lockup-black.svg` and `@envsemble/envui/assets/Inter.woff2`.
 

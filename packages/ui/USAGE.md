@@ -20,7 +20,7 @@ npm install @envsemble/envui react@^19 react-dom@^19
 
 ```tsx
 import { Theme, Button } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons';
+import { Add } from '@envsemble/envui/icons/Add';
 import '@envsemble/envui/styles.css';
 
 export function App() {
@@ -30,7 +30,7 @@ export function App() {
 }
 ```
 
-Use Theme theme="light" or theme="dark". Inter, tokens and assets are included. Imports from @envsemble/envui/icons are explicit, and icons accept filled, width, height and accessible SVG attributes. Components accept custom React icon content.
+Use Theme theme="light" or theme="dark". Inter, tokens and assets are included. Prefer explicit per-icon imports such as @envsemble/envui/icons/Add to keep development tooling from loading the complete catalogue; the @envsemble/envui/icons barrel remains supported. Icons accept filled, width, height and accessible SVG attributes. Components accept custom React icon content.
 
 ## Foundations
 
@@ -125,7 +125,7 @@ Related: [Stacks & action groups](#stacks--action-groups), [Surface](#surface), 
 
 ```tsx
 import { Icon, EnvUILogo, BrandLogo, Stack } from '@envsemble/envui';
-import { Home } from '@envsemble/envui/icons';
+import { Home } from '@envsemble/envui/icons/Home';
 
 <Stack>
   <EnvUILogo />
@@ -189,7 +189,7 @@ Related: [Stacks & action groups](#stacks--action-groups), [Cards](#cards), [Tex
 
 ```tsx
 import { Stack, Input, IconButton } from '@envsemble/envui';
-import { ChevronRight } from '@envsemble/envui/icons';
+import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 
 <Stack>
   <Input label="Project name" hint="Visible labels stay available while typing." />
@@ -328,7 +328,7 @@ A content surface with automatic spacing and optional actions.
 
 ```tsx
 import { Card, FeatureCard, Button, Text } from '@envsemble/envui';
-import { Apps } from '@envsemble/envui/icons';
+import { Apps } from '@envsemble/envui/icons/Apps';
 
 <Card href="/projects" aria-labelledby="projects-title">
   <Text as="h3" variant="section-heading" id="projects-title">Projects</Text>
@@ -377,7 +377,7 @@ Related: [Surface](#surface), [Stacks & action groups](#stacks--action-groups), 
 
 ```tsx
 import { Button } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons';
+import { Add } from '@envsemble/envui/icons/Add';
 
 <Button variant="primary" startIcon={<Add />} onClick={createItem}>
   Create item
@@ -407,7 +407,7 @@ Related: [Icon buttons](#icon-buttons), [Stacks & action groups](#stacks--action
 
 ```tsx
 import { IconButton } from '@envsemble/envui';
-import { ChevronRight } from '@envsemble/envui/icons';
+import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 
 <IconButton icon={<ChevronRight />} aria-label="Next item" onClick={next} />
 ```
@@ -584,7 +584,7 @@ Links to another destination; routing stays with the app.
 
 ```tsx
 import { NavigationItem } from '@envsemble/envui';
-import { Home } from '@envsemble/envui/icons';
+import { Home } from '@envsemble/envui/icons/Home';
 
 <NavigationItem href="#/home" selected={page === 'home'}
   icon={<Home />}>
@@ -659,7 +659,8 @@ Previous and next destinations in an ordered sequence.
 
 ```tsx
 import { DirectionLink, ActionGroup } from '@envsemble/envui';
-import { ArrowBack, ArrowForward } from '@envsemble/envui/icons';
+import { ArrowBack } from '@envsemble/envui/icons/ArrowBack';
+import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
 
 <ActionGroup>
   <DirectionLink direction="previous" href="/typography" icon={<ArrowBack />}>
@@ -750,7 +751,7 @@ Related: [Info chips](#info-chips), [Typography](#typography), [Text inputs](#te
 
 ```tsx
 import { EmptyState, Button } from '@envsemble/envui';
-import { Search } from '@envsemble/envui/icons';
+import { Search } from '@envsemble/envui/icons/Search';
 
 <EmptyState icon={<Search />} title="No results"
   description="Try a different name or clear the filters."

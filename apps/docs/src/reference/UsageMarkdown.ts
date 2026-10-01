@@ -26,7 +26,7 @@ ${'```tsx'}
 ${setupCode}
 ${'```'}
 
-Use Theme theme="light" or theme="dark". Inter, tokens and assets are included. Imports from @envsemble/envui/icons are explicit, and icons accept filled, width, height and accessible SVG attributes. Components accept custom React icon content.
+Use Theme theme="light" or theme="dark". Inter, tokens and assets are included. Prefer explicit per-icon imports such as @envsemble/envui/icons/Add to keep development tooling from loading the complete catalogue; the @envsemble/envui/icons barrel remains supported. Icons accept filled, width, height and accessible SVG attributes. Components accept custom React icon content.
 `;
   return (
     head +

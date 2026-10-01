@@ -106,7 +106,7 @@ export const layoutReferences: Reference[] = [
     group: 'Layout & surfaces',
     summary: 'A content surface with automatic spacing and optional actions.',
     example: `import { Card, FeatureCard, Button, Text } from '@envsemble/envui';
-import { Apps } from '@envsemble/envui/icons';
+import { Apps } from '@envsemble/envui/icons/Apps';
 
 <Card href="/projects" aria-labelledby="projects-title">
   <Text as="h3" variant="section-heading" id="projects-title">Projects</Text>

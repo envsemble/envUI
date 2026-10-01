@@ -7,7 +7,7 @@ export const navigationReferences: Reference[] = [
     group: 'Navigation',
     summary: 'Links to another destination; routing stays with the app.',
     example: `import { NavigationItem } from '@envsemble/envui';
-import { Home } from '@envsemble/envui/icons';
+import { Home } from '@envsemble/envui/icons/Home';
 
 <NavigationItem href="#/home" selected={page === 'home'}
   icon={<Home />}>
@@ -83,7 +83,8 @@ import { Home } from '@envsemble/envui/icons';
     group: 'Navigation',
     summary: 'Previous and next destinations in an ordered sequence.',
     example: `import { DirectionLink, ActionGroup } from '@envsemble/envui';
-import { ArrowBack, ArrowForward } from '@envsemble/envui/icons';
+import { ArrowBack } from '@envsemble/envui/icons/ArrowBack';
+import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
 
 <ActionGroup>
   <DirectionLink direction="previous" href="/typography" icon={<ArrowBack />}>

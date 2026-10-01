@@ -87,7 +87,7 @@ function SaveButton() {
     title: 'Icons & assets',
     group: 'Foundations',
     example: `import { Icon, EnvUILogo, BrandLogo, Stack } from '@envsemble/envui';
-import { Home } from '@envsemble/envui/icons';
+import { Home } from '@envsemble/envui/icons/Home';
 
 <Stack>
   <EnvUILogo />
@@ -160,7 +160,7 @@ import { Home } from '@envsemble/envui/icons';
     title: 'Motion & accessibility',
     group: 'Foundations',
     example: `import { Stack, Input, IconButton } from '@envsemble/envui';
-import { ChevronRight } from '@envsemble/envui/icons';
+import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 
 <Stack>
   <Input label="Project name" hint="Visible labels stay available while typing." />

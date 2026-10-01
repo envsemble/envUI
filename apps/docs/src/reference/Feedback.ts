@@ -6,7 +6,7 @@ export const feedbackReferences: Reference[] = [
     title: 'Empty states',
     group: 'Feedback & overlays',
     example: `import { EmptyState, Button } from '@envsemble/envui';
-import { Search } from '@envsemble/envui/icons';
+import { Search } from '@envsemble/envui/icons/Search';
 
 <EmptyState icon={<Search />} title="No results"
   description="Try a different name or clear the filters."

@@ -46,7 +46,7 @@ export function GettingStarted() {
         <Text variant="body" tone="muted">
           Use <code>theme="light"</code> or <code>theme="dark"</code>. Your application owns the
           theme preference, persistence and routing. Import symbols explicitly from{' '}
-          <code>@envsemble/envui/icons</code>; components also accept custom React icons.
+          <code>@envsemble/envui/icons/Name</code>; components also accept custom React icons.
         </Text>
       </Stack>
       <Stack as="section" id="local-development">
