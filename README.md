@@ -44,17 +44,21 @@ See the [package setup](packages/ui/README.md), generated [agent usage guide](pa
 | Source                              | Purpose                                                                                |
 | ----------------------------------- | -------------------------------------------------------------------------------------- |
 | `packages/ui/src/styles/Tokens.css` | Central HSL base palette, interaction rule, typography and spacing                     |
-| `packages/ui/src`                   | Public React components and scoped styles                                              |
+| `packages/ui/src`                   | Components grouped by purpose; public exports stay in `index.ts`                       |
 | `packages/ui/src/icons`             | Generated wrappers from pinned official Google SVGs                                    |
 | `assets/brand/envUI`                | Official envUI logos and favicons; build generates EnvUILogo and bundles the originals |
-| `apps/docs/src`                     | Showcase pages and paired specimen state                                               |
-| `apps/docs/src/Reference.ts`        | Shared documentation/agent guidance source                                             |
+| `apps/docs/src/pages`               | Overview, component catalogue and Getting started                                      |
+| `apps/docs/src/previews`            | Component/foundation demonstrations and paired specimen state                          |
+| `apps/docs/src/reference`           | Maintained design guidance, usage examples and API contracts                           |
+| `apps/docs/src/Reference.ts`        | Stable entry for shared guidance and generated package `USAGE.md`                      |
 | `apps/docs/src/Documentation.ts`    | Topic routes, reading order and legacy link aliases                                    |
 | `tests`                             | Packed consumer, SSR, browser and offline acceptance                                   |
 
 Keep palette entries as base colors. Hover and pressed lightness use one color-based rule from Tokens.css, in both themes. Use regular/medium typography, relative units, shared spacing and existing rounding. Purple remains rare emphasis; everyday actions are neutral. The application owns routing, validation and theme preference.
 
 Reusable UI belongs in the library. Documentation uses its public components for controls, surfaces, typography and composition. Documentation owns routes, paired preview state, page grids, token swatches, code/prop tables and artificial interaction specimens. Extend the shared API before adding component styling overrides to the documentation.
+
+See the [library source map](packages/ui/src/README.md) and [documentation source map](apps/docs/README.md) before adding a component or topic. Keep implementation in its existing family; add shared helpers only when they serve multiple components.
 
 Surface owns background geometry; Stack and ActionGroup own layout. Card composes Surface and Stack, and specialized cards build on Card. Compose through `render` when these layers should share a single root element.
 

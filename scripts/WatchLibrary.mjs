@@ -1,37 +1,44 @@
 import { watch } from 'node:fs';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-const root = fileURLToPath(new URL('../', import.meta.url));
-let running = false;
-let pending = false;
-let timer;
-function rebuild() {
-  if (running) {
-    pending = true;
+const repositoryRoot = fileURLToPath(new URL('../', import.meta.url));
+const buildScript = new URL('./BuildLibrary.mjs', import.meta.url);
+let buildInProgress = false;
+let rebuildPending = false;
+let debounceTimer;
+
+function rebuildLibrary() {
+  if (buildInProgress) {
+    rebuildPending = true;
     return;
   }
-  running = true;
-  const child = spawn(process.execPath, ['scripts/BuildLibrary.mjs'], {
-    cwd: root,
+  buildInProgress = true;
+  const buildProcess = spawn(process.execPath, [fileURLToPath(buildScript)], {
+    cwd: repositoryRoot,
     stdio: 'inherit',
   });
-  child.on('exit', () => {
-    running = false;
-    if (pending) {
-      pending = false;
-      rebuild();
+  buildProcess.on('exit', () => {
+    buildInProgress = false;
+    if (rebuildPending) {
+      rebuildPending = false;
+      rebuildLibrary();
     }
   });
 }
-watch(new URL('../packages/ui/src/', import.meta.url), { recursive: true }, () => {
-  clearTimeout(timer);
-  timer = setTimeout(rebuild, 150);
-});
-watch(new URL('../apps/docs/src/Reference.ts', import.meta.url), () => {
-  clearTimeout(timer);
-  timer = setTimeout(rebuild, 150);
-});
-rebuild();
+function scheduleRebuild() {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(rebuildLibrary, 150);
+}
+
+for (const directory of [
+  '../packages/ui/src/',
+  '../apps/docs/src/reference/',
+  '../assets/brand/envUI/',
+]) {
+  watch(new URL(directory, import.meta.url), { recursive: true }, scheduleRebuild);
+}
+watch(new URL('../apps/docs/src/Reference.ts', import.meta.url), scheduleRebuild);
+rebuildLibrary();
 console.log(
   'Watching public library builds for external local consumers. Docs read source directly for Fast Refresh.',
 );

@@ -25,6 +25,6 @@ The temporary local dependency is a development choice. Before delivering a prod
 
 ## Add a shared component
 
-Add a PascalCase source file with a named export under `packages/ui/src`, use the existing scoped tokens/primitives, and export it from `src/index.ts`. Add its concise reference to `apps/docs/src/Reference.ts` and a public-API preview in `Previews.tsx`. Add acceptance coverage, then run `npm run verify`.
+Add a PascalCase source file with a named export in the appropriate family under `packages/ui/src`, use the existing scoped tokens/components, and export it from `src/index.ts`. The [source map](../packages/ui/src/README.md) describes each folder. Add its concise reference under `apps/docs/src/reference`, register it through the stable `Reference.ts` entry, and add a public-API preview to the matching family under `apps/docs/src/previews`. Register the preview in `Previews.tsx`. Add acceptance coverage, then run `npm run verify`.
 
-The component reference also generates packaged `USAGE.md`; edit the maintained reference rather than the generated guide. Custom application icons can be passed to icon slots. To refresh the official catalogue intentionally, pin a Google commit with `npm run icons:sync -- --revision <commit>`, regenerate and review the manifest/license changes.
+The component reference also generates packaged `USAGE.md`; edit the maintained reference rather than the generated guide. `dev:library` watches the library, reference files and supplied brand assets. Custom application icons can be passed to icon slots. To refresh the official catalogue intentionally, pin a Google commit with `npm run icons:sync -- --revision <commit>`, regenerate and review the manifest/license changes.

@@ -5,12 +5,12 @@ import { resolve } from 'node:path';
 test('public component, stylesheet and new export update live without version changes', async ({
   page,
 }) => {
-  const primitives = resolve('packages/ui/src/Primitives.tsx');
-  const stylesheet = resolve('packages/ui/src/styles/Primitives.css');
+  const buttonSource = resolve('packages/ui/src/actions/Button.tsx');
+  const stylesheet = resolve('packages/ui/src/styles/Button.css');
   const index = resolve('packages/ui/src/index.ts');
-  const preview = resolve('apps/docs/src/Previews.tsx');
+  const preview = resolve('apps/docs/src/previews/Forms.tsx');
   const newComponent = resolve('packages/ui/src/LiveAcceptance.tsx');
-  const paths = [primitives, stylesheet, index, preview];
+  const paths = [buttonSource, stylesheet, index, preview];
   const originals = await Promise.all(paths.map((path) => readFile(path, 'utf8')));
   const version = await readFile('packages/ui/package.json', 'utf8');
   try {
@@ -21,11 +21,16 @@ test('public component, stylesheet and new export update live without version ch
     await page
       .locator('.docs-preview')
       .first()
+      .locator('.docs-example')
+      .first()
       .getByRole('textbox', { name: 'Project name', exact: true })
       .fill('Preserved draft');
     await writeFile(
-      primitives,
-      originals[0].replace('type={type}', 'data-env-live="updated" type={type}'),
+      buttonSource,
+      originals[0].replace(
+        '<ActionElement {...props}',
+        '<ActionElement {...props} data-env-live="updated"',
+      ),
     );
     await expect(page.getByRole('button', { name: 'Reset examples' })).toHaveAttribute(
       'data-env-live',
@@ -40,6 +45,8 @@ test('public component, stylesheet and new export update live without version ch
       page
         .locator('.docs-preview')
         .last()
+        .locator('.docs-example')
+        .first()
         .getByRole('textbox', { name: 'Project name', exact: true }),
     ).toHaveValue('Preserved draft');
     expect(await page.evaluate(() => (window as unknown as { liveProof: string }).liveProof)).toBe(
@@ -58,8 +65,8 @@ test('public component, stylesheet and new export update live without version ch
       preview,
       `import { LiveAcceptance } from '@envsemble/envui';\n` +
         originals[3].replace(
-          '<span>Examples share their state across both themes.</span>',
-          '<span><LiveAcceptance /></span>',
+          '<Example title="Interactive field" size="field">',
+          '<Example title="Interactive field" size="field">{theme === "light" && <LiveAcceptance />}',
         ),
     );
     await expect(page.getByTestId('live-new-component')).toHaveText('New shared component');

@@ -4,9 +4,9 @@ This React application consumes only the public `@envsemble/envui`, `@envsemble/
 
 Run `npm run dev` from the repository root for local live development. `npm run build` produces the library and one self-contained offline documentation HTML file. All pages use hash routes, including `#/getting-started` and `#/components/buttons/preview`; the release needs no server or sibling assets.
 
-`src/Reference.ts` owns the topic hierarchy, guidelines, usage examples, public contracts and the package's generated `USAGE.md`. Foundations document the shared rules and their APIs: Typography owns Text, Colors & themes owns Theme, and Icons & assets owns icon/brand usage. Component groups follow purpose, from layout and surfaces through actions, forms, navigation, content and feedback.
+`src/Reference.ts` is the stable entry shared by the application and package build. Maintained reference content lives in `src/reference/`, with one file per component family, foundation content, setup snippets, shared types and `UsageMarkdown.ts` for the package's generated `USAGE.md`. Foundations document the shared rules and their APIs: Typography owns Text, Colors & themes owns Theme, and Icons & assets owns icon/brand usage. Component groups follow purpose, from layout and surfaces through actions, forms, navigation, content and feedback.
 
-Overview is a centered hub with a component catalogue grouped by purpose. Foundation and component Preview pages compare both themes; Guidelines and Usage use the current appearance.
+`src/App.tsx` owns the documentation shell, appearance and example reset controls. `src/pages/` holds Overview, Getting started and the component Catalogue; `src/navigation/` holds the sidebar, topic icons, previous/next links and the hash route subscription. Overview is a centered hub with a component catalogue grouped by purpose. Foundation and component Preview pages compare both themes; Guidelines and Usage use the current appearance.
 
 Every reference topic uses the same `ReferenceContent` renderer and public Tabs component for Preview, Guidelines and Usage. `src/Documentation.ts` owns routes, legacy aliases and the reading order. Previous/next links move between topics and retain the current view. Old Text and combined notes links still resolve; Text now belongs to Typography and chips/notes have separate pages.
 
@@ -14,7 +14,7 @@ Keep shared rules in foundations and component behavior on its own page. Related
 
 `src/Documentation.css` owns documentation layout and artificial state specimens only. Theme, typography, colors, controls, cards and feedback are supplied by the package. Paired previews use one React state model, distinct form names and the same geometry in both appearances.
 
-`Example` is a private specimen frame composed from public Stack and Text. The catalogue uses Card links, the overview uses Button links, and managed-toast appearance uses Tabs. Content cards, field guidance and compact navigation use public props rather than selectors into component internals.
+`src/previews/` groups live examples by component family. Each topic component owns its interaction state above `PairedThemes`, so edits and actions stay synchronized across appearances. Foundation demonstrations live in `src/previews/foundations/`; token values are read from the public theme boundary. `Example` is a private specimen frame composed from public Stack and Text. The catalogue uses Card links, the overview uses Button links, and managed-toast appearance uses Tabs. Content cards, field guidance and compact navigation use public props rather than selectors into component internals.
 
 Keep routes, paired previews, token measurements, code blocks and prop tables here. Reusable interaction, visual variants and spacing contracts belong in `packages/ui`; do not recreate them in the documentation.
 

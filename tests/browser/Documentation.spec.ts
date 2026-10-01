@@ -48,9 +48,9 @@ test('offline reference loads every view without network or script errors', asyn
       await page.evaluate((hash) => {
         location.hash = hash;
       }, `/components/${id}/${view}`);
-      await expect(page.locator('.docs-tabs [aria-selected="true"]')).toHaveText(
-        view[0].toUpperCase() + view.slice(1),
-      );
+      await expect(
+        page.locator('.docs-page-header').getByRole('tab', { selected: true }),
+      ).toHaveText(view[0].toUpperCase() + view.slice(1));
       if (view === 'preview') await expect(page.locator('.docs-preview')).toHaveCount(2);
     }
   }
@@ -101,8 +101,10 @@ test('paired examples retain matching geometry and linked state', async ({ page 
   await page.evaluate(() => {
     location.hash = '/components/checkbox/preview';
   });
-  await light.getByRole('checkbox', { name: 'Include archived items' }).check();
-  await expect(dark.getByRole('checkbox', { name: 'Include archived items' })).toBeChecked();
+  await light.getByRole('checkbox', { name: 'Include archived items' }).first().check();
+  await expect(
+    dark.getByRole('checkbox', { name: 'Include archived items' }).first(),
+  ).toBeChecked();
   await page.evaluate(() => {
     location.hash = '/components/notes/preview';
   });
@@ -116,9 +118,13 @@ test('offline hashes support direct links and back/forward navigation', async ({
   await page.getByRole('tab', { name: 'Guidelines', exact: true }).click();
   await page.getByRole('tab', { name: 'Preview', exact: true }).click();
   await page.goBack();
-  await expect(page.locator('.docs-tabs [aria-selected="true"]')).toHaveText('Guidelines');
+  await expect(page.locator('.docs-page-header').getByRole('tab', { selected: true })).toHaveText(
+    'Guidelines',
+  );
   await page.goForward();
-  await expect(page.locator('.docs-tabs [aria-selected="true"]')).toHaveText('Preview');
+  await expect(page.locator('.docs-page-header').getByRole('tab', { selected: true })).toHaveText(
+    'Preview',
+  );
 });
 
 test('offline theme toggle inverts both panes and keeps the comparison canvas full height', async ({
@@ -128,13 +134,15 @@ test('offline theme toggle inverts both panes and keeps the comparison canvas fu
   await page.goto(`${offline}#/components/checkbox/preview`);
   const app = page.locator('.docs-app');
   const panes = page.locator('.docs-preview');
-  await panes.first().getByRole('checkbox', { name: 'Include archived items' }).check();
+  await panes.first().getByRole('checkbox', { name: 'Include archived items' }).first().check();
   await page.getByRole('button', { name: 'Switch to dark theme' }).click();
   await expect(app).toHaveAttribute('data-env-theme', 'dark');
   await expect(panes.first()).toHaveAttribute('data-env-theme', 'dark');
   await expect(panes.last()).toHaveAttribute('data-env-theme', 'light');
   for (const pane of await panes.all())
-    await expect(pane.getByRole('checkbox', { name: 'Include archived items' })).toBeChecked();
+    await expect(
+      pane.getByRole('checkbox', { name: 'Include archived items' }).first(),
+    ).toBeChecked();
   await expect(page.locator('.docs-theme-label')).toHaveCount(0);
 
   for (const width of [1920, 960, 390]) {
