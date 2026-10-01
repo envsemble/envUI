@@ -7,3 +7,4 @@ export * from './Dialog.js';
 export * from './Toast.js';
 export * from './Icon.js';
 export * from './BrandLogo.js';
+export * from './DirectionLink.js';
