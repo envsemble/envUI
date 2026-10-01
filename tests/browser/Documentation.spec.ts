@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { readFileSync } from 'node:fs';
 
-const offline = pathToFileURL(resolve('dist/DesignSystemGallery.html')).href;
+const offline = pathToFileURL(resolve('dist/envUI.html')).href;
 const version = JSON.parse(readFileSync('packages/ui/package.json', 'utf8')).version;
 const components = [
   'layout',
@@ -16,6 +16,7 @@ const components = [
   'radio',
   'select',
   'navigation',
+  'direction-links',
   'rows',
   'cards',
   'notes',
@@ -38,14 +39,16 @@ test('offline reference loads every view without network or script errors', asyn
     return route.abort();
   });
   await page.goto(`${offline}#/overview`);
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Design system');
-  await expect(page.locator('.docs-sidebar-footer')).toContainText(`envsemble ui · ${version}`);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+    'React components for envsemble',
+  );
+  await expect(page.locator('.docs-sidebar-footer')).toContainText(`envUI · ${version}`);
   for (const id of components) {
     for (const view of ['preview', 'guidelines', 'usage']) {
       await page.evaluate((hash) => {
         location.hash = hash;
       }, `/components/${id}/${view}`);
-      await expect(page.locator('.docs-tabs [aria-current="page"]')).toHaveText(
+      await expect(page.locator('.docs-tabs [aria-selected="true"]')).toHaveText(
         view[0].toUpperCase() + view.slice(1),
       );
       if (view === 'preview') await expect(page.locator('.docs-preview')).toHaveCount(2);
@@ -64,7 +67,7 @@ test('offline reference loads every view without network or script errors', asyn
   await expect(page.locator('.docs-code').first()).toContainText('@envsemble:registry');
   expect(errors).toEqual([]);
   expect(requests).toEqual([]);
-  expect(await page.evaluate(() => document.fonts.check('1rem "Envsemble Inter"'))).toBe(true);
+  expect(await page.evaluate(() => document.fonts.check('1rem "envUI Inter"'))).toBe(true);
 });
 
 test('paired examples retain matching geometry and linked state', async ({ page }) => {
@@ -110,12 +113,12 @@ test('paired examples retain matching geometry and linked state', async ({ page 
 test('offline hashes support direct links and back/forward navigation', async ({ page }) => {
   await page.goto(`${offline}#/components/select/usage`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Selects');
-  await page.getByRole('link', { name: 'Guidelines', exact: true }).click();
-  await page.getByRole('link', { name: 'Preview', exact: true }).click();
+  await page.getByRole('tab', { name: 'Guidelines', exact: true }).click();
+  await page.getByRole('tab', { name: 'Preview', exact: true }).click();
   await page.goBack();
-  await expect(page.locator('.docs-tabs [aria-current="page"]')).toHaveText('Guidelines');
+  await expect(page.locator('.docs-tabs [aria-selected="true"]')).toHaveText('Guidelines');
   await page.goForward();
-  await expect(page.locator('.docs-tabs [aria-current="page"]')).toHaveText('Preview');
+  await expect(page.locator('.docs-tabs [aria-selected="true"]')).toHaveText('Preview');
 });
 
 test('offline theme toggle inverts both panes and keeps the comparison canvas full height', async ({

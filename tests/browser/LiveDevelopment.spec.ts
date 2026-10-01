@@ -56,7 +56,7 @@ test('public component, stylesheet and new export update live without version ch
     );
     await writeFile(
       preview,
-      `import { LiveAcceptance } from '@envsemble/ui';\n` +
+      `import { LiveAcceptance } from '@envsemble/envui';\n` +
         originals[3].replace(
           '<span>Examples share their state across both themes.</span>',
           '<span><LiveAcceptance /></span>',

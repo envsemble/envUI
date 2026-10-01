@@ -93,14 +93,14 @@ before(
     ]) {
       dependencies[name] = manifest.devDependencies[name];
     }
-    dependencies['@envsemble/ui'] = `file:../packed/${packed[0].filename}`;
+    dependencies['@envsemble/envui'] = `file:../packed/${packed[0].filename}`;
     await writeFile(
       join(consumerDirectory, 'package.json'),
       JSON.stringify({ private: true, type: 'module', dependencies }, null, 2),
     );
     run(npmCli(), ['install', '--ignore-scripts', '--no-audit', '--no-fund', '--loglevel=error']);
     consumerRequire = createRequire(join(consumerDirectory, 'package.json'));
-    installedDirectory = dirname(consumerRequire.resolve('@envsemble/ui/package.json'));
+    installedDirectory = dirname(consumerRequire.resolve('@envsemble/envui/package.json'));
     isolationHook = join(consumerDirectory, 'IsolationHook.mjs');
     await writeFile(
       isolationHook,
@@ -124,9 +124,9 @@ before(
       `
     import { createElement as h } from 'react';
     import { renderToString } from 'react-dom/server';
-    import * as ui from '@envsemble/ui';
-    import { Home } from '@envsemble/ui/icons/Home';
-    import { Home as BarrelHome } from '@envsemble/ui/icons';
+    import * as ui from '@envsemble/envui';
+    import { Home } from '@envsemble/envui/icons/Home';
+    import { Home as BarrelHome } from '@envsemble/envui/icons';
     if (typeof document !== 'undefined' || typeof window !== 'undefined') throw new Error('DOM globals must be absent');
     function ThemeProbe() { return h('span', { 'data-originating-theme': ui.useTheme() }); }
     const custom = h(ui.Icon, { label: 'Custom star', viewBox: '0 0 8 8' }, h('path', { d: 'M0 0L8 8' }));
@@ -134,6 +134,8 @@ before(
       h(ThemeProbe),
       h(ui.Button, { startIcon: h(Home) }, 'Create'),
       h(ui.IconButton, { icon: custom, 'aria-label': 'Open item' }),
+      h(ui.DirectionLink, { direction: 'previous', href: '/previous-guide' }, 'Earlier guide'),
+      h(ui.DirectionLink, { direction: 'next', href: '/next-guide', icon: custom }, 'Following guide'),
       h(ui.Input, { name: 'title', label: 'Title', hint: 'One line', defaultValue: 'Example' }),
       h(ui.Textarea, { name: 'description', label: 'Description', defaultValue: 'Content' }),
       h(ui.Checkbox, { name: 'enabled', label: 'Enabled', defaultChecked: true }),
@@ -149,12 +151,14 @@ before(
       exports: Object.keys(ui), html,
       defaultIcon: renderToString(h(Home)), filledIcon: renderToString(h(Home, { filled: true, label: 'Home' })),
       barrelIcon: renderToString(h(BarrelHome)), customIcon: renderToString(custom),
-      module: import.meta.resolve('@envsemble/ui'), iconsModule: import.meta.resolve('@envsemble/ui/icons'),
-      homeModule: import.meta.resolve('@envsemble/ui/icons/Home'),
+      selectedNavigation: renderToString(h(ui.NavigationItem, { selected: true, icon: h(Home, { filled: false }) }, 'Home')),
+      unselectedNavigation: renderToString(h(ui.NavigationItem, { icon: h(Home, { filled: true }) }, 'Home')),
+      module: import.meta.resolve('@envsemble/envui'), iconsModule: import.meta.resolve('@envsemble/envui/icons'),
+      homeModule: import.meta.resolve('@envsemble/envui/icons/Home'),
       reactModule: import.meta.resolve('react'),
-      css: import.meta.resolve('@envsemble/ui/styles.css'),
-      font: import.meta.resolve('@envsemble/ui/assets/Inter.woff2'),
-      logo: import.meta.resolve('@envsemble/ui/assets/envsemble-lockup-black.svg')
+      css: import.meta.resolve('@envsemble/envui/styles.css'),
+      font: import.meta.resolve('@envsemble/envui/assets/Inter.woff2'),
+      logo: import.meta.resolve('@envsemble/envui/assets/envsemble-lockup-black.svg')
     }));
   `,
     );
@@ -174,7 +178,7 @@ after(async function removeConsumerFixture() {
 
 test('a packed consumer resolves compiled public exports and its own React installation', async function () {
   assert.equal((await lstat(installedDirectory)).isSymbolicLink(), false);
-  assert.match(ssr.module, /\/node_modules\/@envsemble\/ui\/dist\/index\.js$/);
+  assert.match(ssr.module, /\/node_modules\/@envsemble\/envui\/dist\/index\.js$/);
   assert.match(ssr.iconsModule, /\/dist\/icons\/index\.js$/);
   assert.match(ssr.homeModule, /\/dist\/icons\/Home\.js$/);
   assert.match(ssr.reactModule, /\/consumer\/node_modules\/react\/index\.js$/);
@@ -185,7 +189,9 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'Button',
     'IconButton',
     'NavigationItem',
+    'DirectionLink',
     'Card',
+    'ClickableCard',
     'Stack',
     'ActionGroup',
     'ActionCard',
@@ -229,13 +235,14 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     join(consumerDirectory, 'Consumer.tsx'),
     `
     import { createRef } from 'react';
-    import { Theme, Button, IconButton, NavigationItem, Icon, BrandLogo, Input, Textarea, Checkbox, Switch, Stack, ActionGroup,
+    import { Theme, Button, IconButton, NavigationItem, DirectionLink, Icon, BrandLogo, Input, Textarea, Checkbox, Switch, Stack, ActionGroup,
       RadioGroup, Radio, Select, Dialog, DialogClose, Toast, ToastProvider, useToast,
-      type ThemeValue, type ButtonProps, type SelectOption, type ToastManager } from '@envsemble/ui';
-    import { Home } from '@envsemble/ui/icons/Home';
-    import { Home as BarrelHome } from '@envsemble/ui/icons';
-    import '@envsemble/ui/styles.css';
+      type ThemeValue, type ButtonProps, type DirectionLinkProps, type SelectOption, type ToastManager } from '@envsemble/envui';
+    import { Home } from '@envsemble/envui/icons/Home';
+    import { Home as BarrelHome } from '@envsemble/envui/icons';
+    import '@envsemble/envui/styles.css';
     const buttonProps: ButtonProps = { variant: 'important', ref: createRef<HTMLButtonElement>(), startIcon: <Home /> };
+    const directionLinkProps: DirectionLinkProps = { direction: 'next', href: '/guide', children: 'Read the guide', ref: createRef<HTMLAnchorElement>(), icon: <Home /> };
     const options: SelectOption[] = [{ value: 'one', label: 'One' }];
     const theme: ThemeValue = 'dark';
     function NotificationAction() { const manager: ToastManager = useToast(); return <Button onClick={() => manager.show({ message: 'Saved' })}>Save</Button>; }
@@ -245,6 +252,8 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       <ActionGroup stacked ref={createRef<HTMLDivElement>()}><Button>Save</Button><Button variant="secondary">Cancel</Button></ActionGroup>
       <NavigationItem href="/" ref={createRef<HTMLAnchorElement>()}>Home</NavigationItem>
       <NavigationItem ref={createRef<HTMLButtonElement>()}>Change view</NavigationItem>
+      <DirectionLink {...directionLinkProps} target="_blank" rel="noopener" />
+      <DirectionLink direction="previous" href="/previous">Previous guide</DirectionLink>
       <Icon label="Custom" viewBox="0 0 1 1"><path d="M0 0L1 1" /></Icon><BrandLogo /><BarrelHome />
       <Input name="title" label="Title" required ref={createRef<HTMLInputElement>()} />
       <Textarea label="Notes" ref={createRef<HTMLTextAreaElement>()} />
@@ -262,7 +271,11 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     const unknownButton = <Button variant="custom">Example</Button>;
     // @ts-expect-error Layout gap must use the defined spacing scale.
     const unknownGap = <Stack gap={10} />;
-    void [unnamedIconButton, unknownTheme, unknownButton, unknownGap];
+    // @ts-expect-error Direction links have exactly two supported directions.
+    const unknownDirection = <DirectionLink direction="up" href="/guide">Guide</DirectionLink>;
+    // @ts-expect-error A direction link requires a destination URL.
+    const missingDestination = <DirectionLink direction="next">Guide</DirectionLink>;
+    void [unnamedIconButton, unknownTheme, unknownButton, unknownGap, unknownDirection, missingDestination];
   `,
   );
   await writeFile(
@@ -302,6 +315,9 @@ test('public components import and render on a server with no DOM globals', func
   assert.match(ssr.html, /data-env-theme="dark"/);
   assert.match(ssr.html, /data-originating-theme="dark"/);
   assert.match(ssr.html, /class="env-button env-button-primary"/);
+  assert.match(ssr.html, /<a href="\/previous-guide" rel="prev"/);
+  assert.match(ssr.html, /<a href="\/next-guide" rel="next"/);
+  assert.match(ssr.html, /Up next/);
   assert.match(ssr.html, /name="title"/);
   assert.match(ssr.html, /role="switch"/);
   assert.match(ssr.html, /name="mode"/);
@@ -339,7 +355,7 @@ test('the package includes scoped CSS, local fonts, branding and license notices
     'Preserve the shared HSL direction rule.',
   );
   assert.ok(
-    /@font-face\s*\{[^}]*font-family:\s*["']Envsemble Inter["']/.test(css),
+    /@font-face\s*\{[^}]*font-family:\s*["']envUI Inter["']/.test(css),
     'Missing owned font family.',
   );
   assert.ok(
@@ -399,6 +415,8 @@ test('explicit official icons preserve filled geometry and accept custom SVG con
   assert.doesNotMatch(ssr.filledIcon, /aria-hidden="true"/);
   assert.notEqual(ssr.defaultIcon, ssr.filledIcon);
   assert.equal(ssr.defaultIcon, ssr.barrelIcon);
+  assert.match(ssr.selectedNavigation, /d="M160-200v-360/);
+  assert.match(ssr.unselectedNavigation, /d="M240-200h120v-200/);
   assert.match(ssr.customIcon, /viewBox="0 0 8 8"/);
   assert.match(ssr.customIcon, /aria-label="Custom star"/);
   assert.match(ssr.customIcon, /d="M0 0L8 8"/);
@@ -414,7 +432,7 @@ test('a small independent bundle excludes unused icons and Base UI', async funct
     `
     import { build } from 'esbuild';
     const result = await build({
-      stdin: { contents: "export { Theme, Button, Icon } from '@envsemble/ui'; export { Home } from '@envsemble/ui/icons/Home';", resolveDir: process.cwd(), sourcefile: 'consumer.js' },
+      stdin: { contents: "export { Theme, Button, Icon } from '@envsemble/envui'; export { Home } from '@envsemble/envui/icons/Home';", resolveDir: process.cwd(), sourcefile: 'consumer.js' },
       bundle: true, write: false, format: 'esm', platform: 'browser', treeShaking: true,
       outfile: 'consumer.js', metafile: true, logLevel: 'silent',
       external: ['react', 'react/*', 'react-dom', 'react-dom/*', '@base-ui/react', '@base-ui/react/*']

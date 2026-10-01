@@ -79,7 +79,7 @@ test('styles leave unrelated host content alone and dimensions remain responsive
     const css = getComputedStyle(element);
     return { family: css.fontFamily, margin: css.marginBlockStart };
   });
-  expect(host.family).not.toContain('Envsemble Inter');
+  expect(host.family).not.toContain('envUI Inter');
   expect(host.margin).not.toBe('0px');
   const control = page.getByTestId('light-button-primary');
   const before = await control.boundingBox();

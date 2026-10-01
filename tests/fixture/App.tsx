@@ -5,6 +5,7 @@ import {
   Dialog,
   FeatureCard,
   Card,
+  ClickableCard,
   ActionCard,
   Stack,
   ActionGroup,
@@ -12,6 +13,7 @@ import {
   DisclosureNote,
   IconButton,
   Input,
+  Icon,
   NavigationItem,
   Radio,
   RadioGroup,
@@ -22,10 +24,12 @@ import {
   Toast,
   ToastProvider,
   useToast,
-} from '@envsemble/ui';
-import type { ButtonVariant, CheckboxState, SelectOption, ThemeValue } from '@envsemble/ui';
-import { ChevronRight } from '@envsemble/ui/icons/ChevronRight';
-import '@envsemble/ui/styles.css';
+} from '@envsemble/envui';
+import type { ButtonVariant, CheckboxState, SelectOption, ThemeValue } from '@envsemble/envui';
+import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
+import { Home } from '@envsemble/envui/icons/Home';
+import { Settings } from '@envsemble/envui/icons/Settings';
+import '@envsemble/envui/styles.css';
 import './Fixture.css';
 
 const plans: readonly SelectOption[] = [
@@ -321,8 +325,62 @@ function ColorControls({ theme }: { theme: ThemeValue }) {
   );
 }
 
+function NavigationFixture({ theme }: { theme: ThemeValue }) {
+  const [selected, setSelected] = useState('home');
+  return (
+    <Theme theme={theme} data-testid={`navigation-icons-${theme}`} className="fixture-section">
+      <ActionGroup>
+        <Home data-testid="home-outline" />
+        <Home filled data-testid="home-filled" />
+        <Settings data-testid="settings-outline" />
+        <Settings filled data-testid="settings-filled" />
+      </ActionGroup>
+      <Stack>
+        <NavigationItem
+          data-testid="home-navigation"
+          icon={<Home filled={false} />}
+          selected={selected === 'home'}
+          onClick={() => setSelected('home')}
+        >
+          Home destination
+        </NavigationItem>
+        <NavigationItem
+          data-testid="settings-navigation"
+          icon={
+            <span>
+              <Settings filled />
+            </span>
+          }
+          selected={selected === 'settings'}
+          onClick={() => setSelected('settings')}
+        >
+          Settings destination
+        </NavigationItem>
+        <NavigationItem
+          data-testid="custom-navigation"
+          icon={
+            <Icon viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="8" />
+            </Icon>
+          }
+          selectedIcon={
+            <Icon viewBox="0 0 24 24">
+              <rect x="4" y="4" width="16" height="16" />
+            </Icon>
+          }
+          selected={selected === 'custom'}
+          onClick={() => setSelected('custom')}
+        >
+          Custom destination
+        </NavigationItem>
+      </Stack>
+    </Theme>
+  );
+}
+
 export default function App() {
   const [stress, setStress] = useState(false);
+  const [cardActivations, setCardActivations] = useState(0);
   return (
     <>
       <p data-testid="host-marker">Host document marker</p>
@@ -336,6 +394,8 @@ export default function App() {
           <ManualToastFixture />
           <ColorControls theme="light" />
           <ColorControls theme="dark" />
+          <NavigationFixture theme="light" />
+          <NavigationFixture theme="dark" />
           {(['light', 'dark'] as const).map((theme) => (
             <Theme
               key={theme}
@@ -377,6 +437,38 @@ export default function App() {
               >
                 <p>Keep the action rail attached.</p>
               </ActionCard>
+              <form
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  throw new Error('Card submitted a form');
+                }}
+              >
+                <ClickableCard
+                  data-testid="clickable-action"
+                  onClick={() => setCardActivations((value) => value + 1)}
+                >
+                  <span>Activate card</span>
+                  <span data-testid="card-activations">{cardActivations}</span>
+                </ClickableCard>
+              </form>
+              <ClickableCard href="#destination" data-testid="clickable-link">
+                Open destination
+              </ClickableCard>
+              <ClickableCard
+                disabled
+                data-testid="disabled-card"
+                onClick={() => setCardActivations((value) => value + 1)}
+              >
+                Unavailable action
+              </ClickableCard>
+              <ClickableCard
+                href="#blocked"
+                disabled
+                data-testid="disabled-card-link"
+                onClick={() => setCardActivations((value) => value + 1)}
+              >
+                Unavailable destination
+              </ClickableCard>
               <FeatureCard
                 title="Additional content"
                 description="Supporting context"
