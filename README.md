@@ -53,6 +53,8 @@ See the [package setup](packages/ui/README.md), generated [agent usage guide](pa
 
 Keep palette entries as base colors. Hover and pressed lightness use one color-based rule from Tokens.css, in both themes. Use regular/medium typography, relative units, shared spacing and existing rounding. Purple remains rare emphasis; everyday actions are neutral. The application owns routing, validation and theme preference.
 
+Reusable UI belongs in the library. Documentation uses its public components for controls, surfaces, typography and composition. Documentation owns routes, paired preview state, page grids, token swatches, code/prop tables and artificial interaction specimens. Extend the shared API before adding component styling overrides to the documentation.
+
 ## Verify
 
 ```sh
@@ -61,4 +63,3 @@ npm run verify
 ```
 
 CI runs the same gates plus Betterleaks. The browser checks cover all three engines, native form behavior, portal themes, notification lifecycle, linked previews and the standalone HTML with networking blocked. Package checks install a tarball in an isolated consumer and validate types, SSR, assets and unused-icon exclusion.
-

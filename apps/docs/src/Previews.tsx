@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import {
+  Text,
   Theme,
   Button,
   IconButton,
@@ -8,8 +9,6 @@ import {
   InfoChip,
   DisclosureNote,
   Card,
-  ClickableCard,
-  ActionCard,
   FeatureCard,
   GroupedRows,
   Row,
@@ -42,6 +41,7 @@ import {
   ArrowBack,
   ArrowForward,
 } from '@envsemble/envui/icons';
+import { Example } from './Example';
 
 type Appearance = 'light' | 'dark';
 export function Paired({ children }: { children: (theme: Appearance) => ReactNode }) {
@@ -71,23 +71,6 @@ export function Paired({ children }: { children: (theme: Appearance) => ReactNod
         </Theme>
       ))}
     </div>
-  );
-}
-function Example({
-  title,
-  children,
-  caption,
-}: {
-  title: string;
-  children: ReactNode;
-  caption?: string;
-}) {
-  return (
-    <section className="docs-example">
-      <h2>{title}</h2>
-      {children}
-      {caption && <p className="docs-caption">{caption}</p>}
-    </section>
   );
 }
 const variants = ['primary', 'important', 'secondary', 'outlined', 'destructive'] as const;
@@ -187,37 +170,33 @@ function ManagedControls() {
           Clear notices
         </Button>
       </ActionGroup>
-      <p className="docs-caption">
+      <Text variant="caption" className="docs-caption">
         Show several notices to explore the queue. Hover or focus a notice to pause its timer.
-      </p>
+      </Text>
     </Stack>
   );
 }
 function ManagedToastExample() {
-  const [theme, setTheme] = useState<Appearance>('light');
   return (
-    <section className="docs-managed-toast">
-      <h2>Managed delivery</h2>
-      <ActionGroup>
-        <Button
-          variant={theme === 'light' ? 'primary' : 'secondary'}
-          onClick={() => setTheme('light')}
-        >
-          Light appearance
-        </Button>
-        <Button
-          variant={theme === 'dark' ? 'primary' : 'secondary'}
-          onClick={() => setTheme('dark')}
-        >
-          Dark appearance
-        </Button>
-      </ActionGroup>
-      <Theme theme={theme} className="docs-managed-pane">
-        <ToastProvider key={theme} defaultPlacement="bottom-right">
-          <ManagedControls />
-        </ToastProvider>
-      </Theme>
-    </section>
+    <Example title="Managed delivery" className="docs-managed-toast" gap={5}>
+      <Tabs
+        aria-label="Notification appearance"
+        defaultValue="light"
+        items={(['light', 'dark'] as const).map((theme) => ({
+          value: theme,
+          button: <Button>{theme === 'light' ? 'Light' : 'Dark'} appearance</Button>,
+          content: (
+            <Theme theme={theme}>
+              <Card tone="canvas" padding={5}>
+                <ToastProvider defaultPlacement="bottom-right">
+                  <ManagedControls />
+                </ToastProvider>
+              </Card>
+            </Theme>
+          ),
+        }))}
+      />
+    </Example>
   );
 }
 
@@ -271,6 +250,37 @@ export function ComponentPreview({ id }: { id: string }) {
       <Paired>
         {(theme) => {
           switch (id) {
+            case 'text':
+              return (
+                <>
+                  <Example title="Typography scale">
+                    <Stack>
+                      <Text as="h3" variant="page-heading">
+                        Page heading
+                      </Text>
+                      <Text as="h4" variant="section-heading">
+                        Section heading
+                      </Text>
+                      <Text>Body text for the main content.</Text>
+                      <Text variant="supporting">Supporting text adds context.</Text>
+                      <Text variant="caption">A caption describes the specimen.</Text>
+                    </Stack>
+                  </Example>
+                  <Example title="Color and semantics">
+                    <Stack>
+                      <Text tone="muted">Body text with muted color.</Text>
+                      <Text tone="quiet">Body text with quiet color.</Text>
+                      <Text>
+                        Native inline{' '}
+                        <Text as="span" tone="muted">
+                          supporting context
+                        </Text>{' '}
+                        keeps its surrounding paragraph semantics.
+                      </Text>
+                    </Stack>
+                  </Example>
+                </>
+              );
             case 'layout':
               return (
                 <>
@@ -326,6 +336,16 @@ export function ComponentPreview({ id }: { id: string }) {
                       <Button endIcon={<ChevronRight />}>Continue</Button>
                     </ActionGroup>
                   </Example>
+                  <Example title="Destinations">
+                    <ActionGroup>
+                      <Button href="#/components/cards/preview" variant="outlined">
+                        Explore cards
+                      </Button>
+                      <Button href="#/components/cards/preview" variant="outlined" disabled>
+                        Unavailable destination
+                      </Button>
+                    </ActionGroup>
+                  </Example>
                   <Example title="Grouped actions">
                     <ActionGroup>
                       <Button variant="secondary" onClick={() => setConfirmation('Cancelled')}>
@@ -337,9 +357,9 @@ export function ComponentPreview({ id }: { id: string }) {
                       <Button onClick={() => setConfirmation('Changes saved')}>Save changes</Button>
                       <Button variant="secondary">Cancel</Button>
                     </ActionGroup>
-                    <p className="docs-caption" aria-live="polite">
+                    <Text variant="caption" className="docs-caption" aria-live="polite">
                       {confirmation || 'One primary action per group'}
-                    </p>
+                    </Text>
                   </Example>
                 </>
               );
@@ -359,9 +379,9 @@ export function ComponentPreview({ id }: { id: string }) {
                       />
                       <IconButton icon={<Settings />} aria-label="Settings" />
                     </ActionGroup>
-                    <p className="docs-caption" aria-live="polite">
+                    <Text variant="caption" className="docs-caption" aria-live="polite">
                       {confirmation}
-                    </p>
+                    </Text>
                   </Example>
                 </>
               );
@@ -562,6 +582,7 @@ export function ComponentPreview({ id }: { id: string }) {
                   <Example title="Interactive selection">
                     <Select
                       label="Visibility"
+                      hint="Choose who can open the project."
                       name={`visibility-${theme}`}
                       value={access}
                       onValueChange={(v) => setAccess(v ?? 'team')}
@@ -569,6 +590,20 @@ export function ComponentPreview({ id }: { id: string }) {
                         { value: 'team', label: 'Team' },
                         { value: 'private', label: 'Private' },
                         { value: 'public', label: 'Public (unavailable)', disabled: true },
+                      ]}
+                    />
+                  </Example>
+                  <Example title="Field validation">
+                    <Select
+                      label="Project owner"
+                      name={`owner-${theme}`}
+                      placeholder="Choose an owner"
+                      value={empty || null}
+                      onValueChange={(value) => setEmpty(value ?? '')}
+                      error={!empty ? 'Choose an owner to continue.' : undefined}
+                      options={[
+                        { value: 'you', label: 'You' },
+                        { value: 'team', label: 'Team' },
                       ]}
                     />
                   </Example>
@@ -812,9 +847,9 @@ export function ComponentPreview({ id }: { id: string }) {
                         ))}
                       </GroupedRows>
                     </>
-                    <p className="docs-caption" aria-live="polite">
+                    <Text variant="caption" className="docs-caption" aria-live="polite">
                       {confirmation}
-                    </p>
+                    </Text>
                   </Example>
                   <Example title="Alternate background">
                     <Card>
@@ -849,25 +884,29 @@ export function ComponentPreview({ id }: { id: string }) {
               return (
                 <>
                   <Example title="Clickable destination">
-                    <ClickableCard href="#/overview">
+                    <Card href="#/overview">
                       <h3>Component overview</h3>
                       <p>Open the catalogue from anywhere on this card.</p>
-                    </ClickableCard>
+                    </Card>
                   </Example>
                   <Example title="Clickable action">
-                    <ClickableCard onClick={() => setExpanded(!expanded)} aria-expanded={expanded}>
+                    <Card
+                      as="button"
+                      onClick={() => setExpanded(!expanded)}
+                      aria-expanded={expanded}
+                    >
                       <span>{expanded ? 'Hide details' : 'Show details'}</span>
                       <span>
                         {expanded
                           ? 'Your team and tools share one workspace.'
                           : 'Activate this card to reveal more context.'}
                       </span>
-                    </ClickableCard>
+                    </Card>
                   </Example>
                   <Example title="Disabled card">
-                    <ClickableCard disabled>
+                    <Card as="button" disabled>
                       <span>Workspace unavailable</span>
-                    </ClickableCard>
+                    </Card>
                   </Example>
                   <Example title="General surface">
                     <Card>
@@ -877,8 +916,10 @@ export function ComponentPreview({ id }: { id: string }) {
                     </Card>
                   </Example>
                   <Example title="Action strip">
-                    <ActionCard
-                      title="Autumn release"
+                    <Card
+                      as="article"
+                      layout="action"
+                      heading="Autumn release"
                       meta="Updated today"
                       actions={
                         <>
@@ -888,7 +929,7 @@ export function ComponentPreview({ id }: { id: string }) {
                       }
                     >
                       Shared context for the next release.
-                    </ActionCard>
+                    </Card>
                   </Example>
                   <Example title="Feature composition">
                     <FeatureCard
@@ -904,11 +945,11 @@ export function ComponentPreview({ id }: { id: string }) {
               return (
                 <>
                   <Example title="Metadata">
-                    <div className="docs-inline">
+                    <ActionGroup>
                       <InfoChip>Optional</InfoChip>
                       <InfoChip>Read only</InfoChip>
                       <InfoChip>3 members</InfoChip>
-                    </div>
+                    </ActionGroup>
                   </Example>
                   <Example title="Optional guidance">
                     <DisclosureNote
@@ -956,9 +997,9 @@ export function ComponentPreview({ id }: { id: string }) {
                         </Button>
                       }
                     />
-                    <p className="docs-caption" aria-live="polite">
+                    <Text variant="caption" className="docs-caption" aria-live="polite">
                       {confirmation}
-                    </p>
+                    </Text>
                   </Example>
                 </>
               );
@@ -1022,9 +1063,9 @@ export function ComponentPreview({ id }: { id: string }) {
                       <Button variant="secondary" onClick={() => setDismissed([])}>
                         Restore examples
                       </Button>
-                      <p className="docs-caption" aria-live="polite">
+                      <Text variant="caption" className="docs-caption" aria-live="polite">
                         {confirmation}
-                      </p>
+                      </Text>
                     </Stack>
                   </Example>
                 </>
@@ -1069,9 +1110,9 @@ export function ComponentPreview({ id }: { id: string }) {
                         onChange={(e) => setName(e.target.value)}
                       />
                     </Dialog>
-                    <p className="docs-caption" aria-live="polite">
+                    <Text variant="caption" className="docs-caption" aria-live="polite">
                       {confirmation || 'Open a live dialog to explore focus, dismissal and theme.'}
-                    </p>
+                    </Text>
                   </Example>
                 </>
               );

@@ -11,3 +11,7 @@ Overview is a centered hub with the full component catalogue. Foundation and com
 Component reference pages use the public Tabs component for Preview, Guidelines and Usage. The app synchronizes selection with hash routes; the library supplies button composition, keyboard behavior and panel transitions.
 
 `src/Documentation.css` owns documentation layout and artificial state specimens only. Theme, typography, colors, controls, cards and feedback are supplied by the package. Paired previews use one React state model, distinct form names and the same geometry in both appearances.
+
+`Example` is a private specimen frame composed from public Stack and Text. The catalogue uses Card links, the overview uses Button links, and managed-toast appearance uses Tabs. Content cards, field guidance and compact navigation use public props rather than selectors into component internals.
+
+Keep routes, paired previews, token measurements, code blocks and prop tables here. Reusable interaction, visual variants and spacing contracts belong in `packages/ui`; do not recreate them in the documentation.

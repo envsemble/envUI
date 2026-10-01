@@ -50,14 +50,43 @@ export const references: Reference[] = [
     props: [
       ['Stack gap', 'Spacing step 0–9; default 4 (1 rem); 0 removes the gap'],
       ['Stack align', 'start, center, end or stretch (default)'],
+      [
+        'Stack as',
+        'Semantic container tag; div (default), section, article, nav, main, aside, header or footer',
+      ],
       ['ActionGroup stacked', 'Wrapped row by default; stacked label buttons fill the group'],
       ['ActionGroup align', 'Row alignment: start (default), center or end'],
-      ['Native div props', 'children, className, style, ref and accessible attributes'],
+      ['ActionGroup as', 'Semantic container tag; div by default, footer for card or form actions'],
+      ['Native element props', 'children, className, style, ref and accessible attributes'],
     ],
     guidelines: [
       'The parent owns space between components; components own their internal padding. Avoid individual child margins.',
       'Stack uses the shared spacing scale. Step 4 is 1 rem; step 2 is 0.5 rem. Cards already space direct children by 1 rem.',
       'ActionGroup uses 1 rem gaps in wrapped rows and 0.5 rem when stacked. Circular icon buttons keep their size.',
+    ],
+  },
+  {
+    id: 'text',
+    title: 'Text',
+    group: 'Layout',
+    summary: 'Shared typography and semantic text colors without custom CSS.',
+    example: `import { Text, Stack } from '@envsemble/envui';
+
+<Stack>
+  <Text as="h1" variant="page-heading">Project overview</Text>
+  <Text tone="muted">Shared context for your team.</Text>
+  <Text variant="caption">Updated today</Text>
+</Stack>`,
+    props: [
+      ['variant', 'body (default), page-heading, section-heading, supporting or caption'],
+      ['tone', 'Optional primary, muted or quiet override of the variant’s default color'],
+      ['as', 'Native text tag; p (default), span, small, strong or h1–h6'],
+      ['Native element props', 'children, ref, className and accessible attributes'],
+    ],
+    guidelines: [
+      'Choose the semantic element separately from its visual emphasis. Use actual headings for document structure.',
+      'Text uses the shared Inter scale and palette. Supporting text is small and muted; captions are small and quiet.',
+      'Text adds no outer spacing. Use Stack or the surrounding component for gaps.',
     ],
   },
   {
@@ -70,17 +99,24 @@ import { Add } from '@envsemble/envui/icons';
 
 <Button variant="primary" startIcon={<Add />} onClick={createItem}>
   Create item
-</Button>`,
+</Button>
+
+<Button href="/projects" variant="outlined">Open projects</Button>`,
     props: [
       ['variant', 'primary (default), important, secondary, outlined, destructive'],
       ['startIcon / endIcon', 'Optional React content beside the label'],
-      ['Native button props', 'disabled, type, onClick, name, ref and accessible attributes'],
+      ['href', 'Render a native link with the same button appearance; omit for a native button'],
+      [
+        'Native action props',
+        'disabled, type/onClick or anchor attributes, ref and accessible attributes',
+      ],
     ],
     guidelines: [
       'Use one primary action in an action group. Reserve important emphasis for rare, consequential actions.',
       'Action buttons fit their content: 2 rem minimum height, 0.875 rem text, 0.25 rem vertical and 0.75 rem horizontal padding. Labels wrap when space is limited.',
       'Use fully rounded corners; important actions use 0.5 rem corners. ActionGroup provides 1 rem row gaps or 0.5 rem stacked gaps.',
       'Interaction colors follow the central HSL lightness rule described in Colors & themes. State colors and disabled opacity come from the shared stylesheet.',
+      'Use href for destinations and onClick for actions. Disabled links have no destination and cannot activate.',
     ],
   },
   {
@@ -221,12 +257,17 @@ import { ChevronRight } from '@envsemble/envui/icons';
       ['options', 'Array of { value, label, disabled? }'],
       ['value / defaultValue', 'Selected string, or null'],
       ['onValueChange', 'Receives selected string or null'],
-      ['label / native participation', 'label, name, disabled, required'],
+      [
+        'label / hint / error',
+        'Visible label and linked guidance or validation, shared with text fields',
+      ],
+      ['Native participation', 'name, disabled, required and form'],
     ],
     guidelines: [
       'Use a select to save space when a single choice has several alternatives.',
       'Use the tonal trigger, selected indication and grouped option geometry. Keyboard navigation, typeahead and dismissal come from the component.',
       'Option focus rings appear for keyboard interaction, not pointer opening or hover.',
+      'Label, hint and error use the same field structure as Input and Textarea. The application owns validation.',
     ],
   },
   {
@@ -244,6 +285,7 @@ import { Home } from '@envsemble/envui/icons';
     props: [
       ['href', 'Renders a link; omit for a button action'],
       ['selected / disabled', 'Current destination and unavailable state'],
+      ['size', 'standard (default) or compact labels; both keep the navigation minimum height'],
       [
         'icon',
         'Material Symbols fill automatically when selected; custom React icons are supported',
@@ -364,40 +406,43 @@ import { ArrowBack, ArrowForward } from '@envsemble/envui/icons';
     title: 'Cards',
     group: 'Rows & cards',
     summary: 'Rounded surfaces for related content and familiar action compositions.',
-    example: `import { Card, ClickableCard, ActionCard, FeatureCard, Button } from '@envsemble/envui';
+    example: `import { Card, FeatureCard, Button } from '@envsemble/envui';
 import { Apps } from '@envsemble/envui/icons';
 
-<ClickableCard href="/projects" aria-labelledby="projects-title">
+<Card href="/projects" aria-labelledby="projects-title">
   <h3 id="projects-title">Projects</h3>
   <p>Open your shared workspace.</p>
-</ClickableCard>
+</Card>
 
-<ClickableCard onClick={openProject}>
+<Card as="button" onClick={openProject}>
   <span>Open project</span>
-</ClickableCard>
+</Card>
 
 <FeatureCard icon={<Apps />} title="Connected workspace"
   description="Bring your team and tools together."
   action={<Button>Explore</Button>} />
 
-<ActionCard title="Project overview" meta="Updated today"
+<Card as="article" heading="Project overview" meta="Updated today"
   actions={<Button variant="outlined">Open project</Button>}>
   Shared context for the next release.
-</ActionCard>`,
+</Card>`,
     props: [
-      ['Card', 'children, tone (row or pane) and native div props'],
+      ['Card tone / padding', 'row (default), pane or canvas; optional fixed spacing step 0–9'],
+      ['Card as / href', 'div (default), article or button; href renders a native link'],
+      ['Card heading / meta / actions', 'Content-card slots; actions adds a footer strip'],
+      ['Card layout', 'content (default) or action; actions automatically selects action layout'],
       [
         'ClickableCard',
-        'children, href (renders a link), disabled and native anchor/button props; defaults to type="button"',
+        'Compatibility wrapper for Card href / Card as="button"; native action props and disabled',
       ],
-      ['ActionCard', 'title, meta, children, actions'],
+      ['ActionCard', 'Compatibility wrapper for Card action layout; title maps to heading'],
       ['FeatureCard', 'icon, title, description, action'],
     ],
     guidelines: [
       'Use 1.75 rem corners. Row tone is the standalone card fill; pane tone groups content in a quieter background.',
       'Cards space direct children by 1 rem. FeatureCard keeps compact title/description spacing and separates additional content by 1 rem.',
-      'Use ClickableCard for a single destination or action. The whole surface is the control; do not nest buttons, links or other interactive content inside it. Use phrasing content such as spans in the button version.',
-      'ClickableCard shares the standalone card fill and radius, with hover, pressed, keyboard focus and disabled states. Use href for navigation; omit it for a native button. Label rich cards with aria-labelledby and connect supporting text with aria-describedby.',
+      'Use Card href for a single destination or Card as="button" for an action. Do not nest controls inside an interactive card. Use phrasing content such as spans in button cards.',
+      'Interactive cards share the same surface, padding and corners. Hover and pressed derive from the chosen tone; keyboard focus and disabled behavior are shared. Label rich links with aria-labelledby and connect descriptions with aria-describedby.',
       'The action strip derives its fill from the parent surface. Compose actions from the shared controls.',
       'Titles, metadata and product data remain application content.',
     ],

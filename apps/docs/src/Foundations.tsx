@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import {
+  Text,
   Button,
   BrandLogo,
   EnvUILogo,
@@ -25,6 +26,7 @@ import {
   Devices,
 } from '@envsemble/envui/icons';
 import { Paired } from './Previews';
+import { Example } from './Example';
 
 export const foundations = [
   {
@@ -197,7 +199,7 @@ function InteractionColors({
   ];
 
   return (
-    <section className="docs-example docs-interaction-colors">
+    <Stack as="section" className="docs-example docs-interaction-colors">
       <DisclosureNote
         title="How colors are derived"
         open={detailsOpen}
@@ -241,17 +243,17 @@ function InteractionColors({
           </dl>
         </Stack>
       </DisclosureNote>
-    </section>
+    </Stack>
   );
 }
 
 const types = [
-  ['Page heading', '--type-h1', '--color-text-primary', '1.125 rem · 500'],
-  ['Section heading', '--type-h2', '--color-text-primary', '1 rem · 500'],
-  ['Body text', '--type-body', '--color-text-primary', '0.9375 rem · 400'],
-  ['Supporting text', '--type-body-small', '--color-text-muted', '0.875 rem · 400'],
-  ['Caption', '--type-body-small', '--color-text-quiet', '0.875 rem · 400'],
-];
+  ['Page heading', 'page-heading', '--color-text-primary', '1.125 rem · 500'],
+  ['Section heading', 'section-heading', '--color-text-primary', '1 rem · 500'],
+  ['Body text', 'body', '--color-text-primary', '0.9375 rem · 400'],
+  ['Supporting text', 'supporting', '--color-text-muted', '0.875 rem · 400'],
+  ['Caption', 'caption', '--color-text-quiet', '0.875 rem · 400'],
+] as const;
 const iconList = [
   ['Home', Home],
   ['Category', Category],
@@ -293,16 +295,13 @@ export function FoundationPreview({ id }: { id: string }) {
           case 'typography':
             return (
               <>
-                <Card tone="pane" className="docs-type-card">
+                <Card tone="pane" padding={5}>
                   <ol className="docs-type-list">
-                    {types.map(([title, font, color, meta]) => (
+                    {types.map(([title, variant, color, meta]) => (
                       <li key={title}>
-                        <p
-                          className="docs-fox"
-                          style={{ font: `var(${font})`, color: `var(${color})` }}
-                        >
+                        <Text className="docs-fox" variant={variant}>
                           The quick brown fox jumps over the lazy dog.
-                        </p>
+                        </Text>
                         <div className="docs-type-meta">
                           <span>
                             {title} · {meta}
@@ -320,8 +319,7 @@ export function FoundationPreview({ id }: { id: string }) {
           case 'spacing':
             return (
               <>
-                <section className="docs-example">
-                  <h2>Spacing scale</h2>
+                <Example title="Spacing scale">
                   <div className="docs-spacing-list">
                     {[0.25, 0.5, 0.75, 1, 1.5, 2, 2.5, 3, 4].map((size, i) => (
                       <div className="docs-measure" key={size}>
@@ -334,9 +332,8 @@ export function FoundationPreview({ id }: { id: string }) {
                       </div>
                     ))}
                   </div>
-                </section>
-                <section className="docs-example">
-                  <h2>Corner scale</h2>
+                </Example>
+                <Example title="Corner scale">
                   <div className="docs-shapes">
                     {[
                       ['1.75rem', 'Panes & outer rows'],
@@ -364,9 +361,8 @@ export function FoundationPreview({ id }: { id: string }) {
                       </div>
                     ))}
                   </div>
-                </section>
-                <section className="docs-example">
-                  <h2>Content spacing</h2>
+                </Example>
+                <Example title="Content spacing">
                   <p>
                     Use Stack for related blocks and ActionGroup for controls. Cards already space
                     their content.
@@ -379,21 +375,19 @@ export function FoundationPreview({ id }: { id: string }) {
                       <Button>Continue</Button>
                     </ActionGroup>
                   </Card>
-                </section>
-                <section className="docs-example">
-                  <h2>Connected geometry</h2>
+                </Example>
+                <Example title="Connected geometry">
                   <GroupedRows>
                     <Row title="Large outer corners" detail="1.75 rem around the whole group" />
                     <Row title="Compact inner corners" detail="0.5 rem corners · 0.125 rem gap" />
                   </GroupedRows>
-                </section>
+                </Example>
               </>
             );
           case 'icons':
             return (
               <>
-                <section className="docs-example">
-                  <h2>Rounded symbols</h2>
+                <Example title="Rounded symbols">
                   <div className="docs-icon-grid">
                     {iconList.map(([label, Icon]) => (
                       <Card key={label}>
@@ -401,31 +395,35 @@ export function FoundationPreview({ id }: { id: string }) {
                           <Icon width="1.5rem" height="1.5rem" />
                           <Icon filled width="1.5rem" height="1.5rem" />
                         </div>
-                        <p className="docs-caption">
+                        <Text variant="caption" className="docs-caption">
                           {label}
                           <br />
                           Outline / filled
-                        </p>
+                        </Text>
                       </Card>
                     ))}
                   </div>
-                </section>
-                <section className="docs-example">
-                  <h2>Brand identity</h2>
+                </Example>
+                <Example title="Brand identity">
                   <div className="docs-icon-grid">
                     <Card>
                       <EnvUILogo className="docs-brand-specimen" />
-                      <p className="docs-caption">envUI</p>
+                      <Text variant="caption" className="docs-caption">
+                        envUI
+                      </Text>
                     </Card>
                     <Card>
                       <BrandLogo className="docs-brand-specimen" />
-                      <p className="docs-caption">envsemble</p>
+                      <Text variant="caption" className="docs-caption">
+                        envsemble
+                      </Text>
                     </Card>
                   </div>
-                  <p className="docs-caption">Bundled lockups inherit the theme’s text color.</p>
-                </section>
-                <section className="docs-example">
-                  <h2>Icon composition</h2>
+                  <Text variant="caption" className="docs-caption">
+                    Bundled lockups inherit the theme’s text color.
+                  </Text>
+                </Example>
+                <Example title="Icon composition">
                   <ActionGroup>
                     <NavigationItem icon={<Home />} selected>
                       Home
@@ -433,19 +431,18 @@ export function FoundationPreview({ id }: { id: string }) {
                     <Button startIcon={<Add />}>Create item</Button>
                     <IconButton icon={<ChevronRight />} aria-label="Next item" />
                   </ActionGroup>
-                  <p className="docs-caption">
+                  <Text variant="caption" className="docs-caption">
                     Icons inherit their context color. Decorative icons stay hidden from assistive
                     technology; icon-only actions need an accessible name.
-                  </p>
-                </section>
+                  </Text>
+                </Example>
               </>
             );
           case 'responsive':
             return (
               <>
-                <section className="docs-example">
-                  <h2>Desktop composition</h2>
-                  <div className="docs-device-frame">
+                <Example title="Desktop composition">
+                  <Stack className="docs-device-frame">
                     <NavigationItem icon={<Home />} selected>
                       Workspace
                     </NavigationItem>
@@ -457,11 +454,10 @@ export function FoundationPreview({ id }: { id: string }) {
                         <Button>Save changes</Button>
                       </ActionGroup>
                     </Card>
-                  </div>
-                </section>
-                <section className="docs-example">
-                  <h2>Compact composition</h2>
-                  <div className="docs-device-frame docs-device-mobile">
+                  </Stack>
+                </Example>
+                <Example title="Compact composition">
+                  <Stack className="docs-device-frame docs-device-mobile">
                     <NavigationItem icon={<Devices />} selected>
                       Workspace
                     </NavigationItem>
@@ -473,10 +469,9 @@ export function FoundationPreview({ id }: { id: string }) {
                         <Button variant="secondary">Cancel</Button>
                       </ActionGroup>
                     </Card>
-                  </div>
-                </section>
-                <section className="docs-example">
-                  <h2>Input-aware sizing</h2>
+                  </Stack>
+                </Example>
+                <Example title="Input-aware sizing">
                   <p>
                     Use relative units and content-driven layout. Standard field and navigation
                     controls are 2.5 rem tall; action buttons start at 2 rem. Coarse pointers use
@@ -486,14 +481,13 @@ export function FoundationPreview({ id }: { id: string }) {
                     The application chooses layout breakpoints. Feature cards adapt within their
                     containing block.
                   </p>
-                </section>
+                </Example>
               </>
             );
           case 'motion':
             return (
               <>
-                <section className="docs-example">
-                  <h2>Interaction timing</h2>
+                <Example title="Interaction timing">
                   <Card>
                     <div className="docs-facts">
                       <p>
@@ -516,12 +510,11 @@ export function FoundationPreview({ id }: { id: string }) {
                       </p>
                     </div>
                   </Card>
-                  <p className="docs-caption">
+                  <Text variant="caption" className="docs-caption">
                     Motion supports a state change. Keep it brief and respect reduced motion.
-                  </p>
-                </section>
-                <section className="docs-example">
-                  <h2>Keyboard focus</h2>
+                  </Text>
+                </Example>
+                <Example title="Keyboard focus">
                   <ActionGroup>
                     <Button className="docs-force-3">Visible focus</Button>
                     <IconButton
@@ -534,9 +527,8 @@ export function FoundationPreview({ id }: { id: string }) {
                     Use the shared 0.125 rem focus ring. Keep keyboard order aligned with the
                     visible layout.
                   </p>
-                </section>
-                <section className="docs-example">
-                  <h2>Accessible composition</h2>
+                </Example>
+                <Example title="Accessible composition">
                   <p>
                     Give controls visible labels and icon actions accessible names. Link hints and
                     errors to their fields. Preserve native form behavior and disabled states.
@@ -550,7 +542,7 @@ export function FoundationPreview({ id }: { id: string }) {
                     Use semantic headings and meaningful links. Validate content and contrast in
                     both supported themes.
                   </p>
-                </section>
+                </Example>
               </>
             );
           default:
