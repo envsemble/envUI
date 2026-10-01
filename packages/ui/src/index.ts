@@ -10,3 +10,4 @@ export * from './Toast.js';
 export * from './Icon.js';
 export * from './BrandLogo.js';
 export * from './EnvUILogo.js';
+export * from './Text.js';

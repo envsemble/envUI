@@ -12,26 +12,16 @@
   overflow-y: auto;
   pointer-events: auto;
 }
-.env-dialog-content {
-  display: grid;
-  gap: var(--space-5);
-  min-width: 0;
-}
-.env-dialog-content > :is(h2, h4, p) {
+.env-dialog-title,
+.env-dialog-description {
   margin: 0;
 }
-.env-dialog-content :is(.env-dialog-title, h4) {
+.env-dialog-title {
   font: var(--type-h1);
 }
-.env-dialog-content p {
+.env-dialog-description {
   font: var(--type-body-small);
   color: var(--color-text-muted);
-}
-.env-dialog-actions {
-  display: flex;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-  gap: var(--space-4);
 }
 .env-dialog-backdrop {
   position: fixed;

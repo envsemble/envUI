@@ -4,6 +4,7 @@ import { Dialog as BaseDialog } from '@base-ui/react/dialog';
 import { Button } from './Primitives.js';
 import type { ButtonProps } from './Primitives.js';
 import { Theme, useTheme } from './Theme.js';
+import { Stack, ActionGroup } from './Layout.js';
 
 export interface DialogProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title' | 'children'> {
   open?: boolean;
@@ -18,7 +19,7 @@ export interface DialogProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title
   initialFocus?: RefObject<HTMLElement | null>;
   finalFocus?: RefObject<HTMLElement | null>;
 }
-export interface DialogCloseProps extends ButtonProps {}
+export type DialogCloseProps = Extract<ButtonProps, { href?: undefined }>;
 
 /** Use within Dialog when additional actions should dismiss its modal. */
 export const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(function DialogClose(
@@ -67,7 +68,7 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
               initialFocus={initialFocus}
               finalFocus={finalFocus}
             >
-              <div className="env-dialog-content">
+              <Stack gap={5} className="env-dialog-content">
                 <BaseDialog.Title className="env-dialog-title">{title}</BaseDialog.Title>
                 {description != null && (
                   <BaseDialog.Description className="env-dialog-description">
@@ -75,11 +76,11 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
                   </BaseDialog.Description>
                 )}
                 {children}
-                <div className="env-dialog-actions">
+                <ActionGroup align="end" className="env-dialog-actions">
                   <DialogClose>{closeLabel}</DialogClose>
                   {actions}
-                </div>
-              </div>
+                </ActionGroup>
+              </Stack>
             </BaseDialog.Popup>
           </div>
         </Theme>

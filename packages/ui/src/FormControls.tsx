@@ -4,50 +4,14 @@ import type {
   FieldsetHTMLAttributes,
   InputHTMLAttributes,
   ReactNode,
-  Ref,
   TextareaHTMLAttributes,
 } from 'react';
 import { Check } from './icons/Check.js';
+import { FieldFrame, useFieldMetadata, type FieldProps } from './FieldFrame.js';
+import { setRef, subscribeFormReset } from './FormUtilities.js';
 
 function classes(...values: Array<string | undefined>) {
   return values.filter(Boolean).join(' ');
-}
-function setRef<T>(ref: Ref<T> | undefined, value: T | null) {
-  if (typeof ref === 'function') ref(value);
-  else if (ref) ref.current = value;
-}
-function descriptionIds(
-  existing: string | undefined,
-  hint: ReactNode,
-  error: ReactNode,
-  id: string,
-) {
-  return (
-    [existing, hint != null ? `${id}-hint` : undefined, error != null ? `${id}-error` : undefined]
-      .filter(Boolean)
-      .join(' ') || undefined
-  );
-}
-/** The browser resets native input properties after dispatching the reset event. */
-function subscribeFormReset(form: HTMLFormElement, apply: () => void) {
-  const timers = new Set<ReturnType<typeof setTimeout>>();
-  function reset(event: Event) {
-    const timer = setTimeout(function applyReset() {
-      timers.delete(timer);
-      if (!event.defaultPrevented) apply();
-    }, 0);
-    timers.add(timer);
-  }
-  form.addEventListener('reset', reset);
-  return function unsubscribe() {
-    form.removeEventListener('reset', reset);
-    timers.forEach((timer) => clearTimeout(timer));
-  };
-}
-interface FieldProps {
-  label?: ReactNode;
-  hint?: ReactNode;
-  error?: ReactNode;
 }
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement>, FieldProps {}
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
@@ -63,22 +27,17 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   },
   ref,
 ) {
-  const generatedId = useId();
-  const id = suppliedId ?? generatedId;
+  const metadata = useFieldMetadata(suppliedId, hint, error, describedBy, invalid);
+  const { id } = metadata;
   return (
-    <div className="env-form-field">
-      {label != null && <label htmlFor={id}>{label}</label>}
-      <input
-        {...props}
-        ref={ref}
-        id={id}
-        className={classes('env-text-input', className)}
-        aria-describedby={descriptionIds(describedBy, hint, error, id)}
-        aria-invalid={error != null ? true : invalid}
-      />
-      {hint != null && <small id={`${id}-hint`}>{hint}</small>}
-      {error != null && <small id={`${id}-error`}>{error}</small>}
-    </div>
+    <FieldFrame
+      id={id}
+      label={label != null ? <label htmlFor={id}>{label}</label> : null}
+      hint={hint}
+      error={error}
+    >
+      <input {...props} ref={ref} {...metadata} className={classes('env-text-input', className)} />
+    </FieldFrame>
   );
 });
 export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement>, FieldProps {}
@@ -95,22 +54,22 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
   },
   ref,
 ) {
-  const generatedId = useId();
-  const id = suppliedId ?? generatedId;
+  const metadata = useFieldMetadata(suppliedId, hint, error, describedBy, invalid);
+  const { id } = metadata;
   return (
-    <div className="env-form-field">
-      {label != null && <label htmlFor={id}>{label}</label>}
+    <FieldFrame
+      id={id}
+      label={label != null ? <label htmlFor={id}>{label}</label> : null}
+      hint={hint}
+      error={error}
+    >
       <textarea
         {...props}
         ref={ref}
-        id={id}
+        {...metadata}
         className={classes('env-text-input', className)}
-        aria-describedby={descriptionIds(describedBy, hint, error, id)}
-        aria-invalid={error != null ? true : invalid}
       />
-      {hint != null && <small id={`${id}-hint`}>{hint}</small>}
-      {error != null && <small id={`${id}-error`}>{error}</small>}
-    </div>
+    </FieldFrame>
   );
 });
 
@@ -316,6 +275,7 @@ export const RadioGroup = forwardRef<HTMLFieldSetElement, RadioGroupProps>(funct
         disabled={disabled}
         className={classes(
           'env-radio-options',
+          variant === 'rows' ? 'env-connected-rows' : undefined,
           variant === 'inline' ? 'env-radio-inline' : undefined,
           className,
         )}
@@ -379,7 +339,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
     </span>
   );
   return group.variant === 'rows' ? (
-    <label className="env-radio-option">
+    <label className="env-radio-option env-connected-row">
       {copy}
       {control}
     </label>

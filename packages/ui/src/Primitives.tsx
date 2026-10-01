@@ -1,6 +1,8 @@
 import type { ComponentPropsWithRef, CSSProperties, ReactNode } from 'react';
-import { Stack } from './Layout.js';
+import { Stack, ActionGroup, type SpaceStep } from './Layout.js';
+import { Text } from './Text.js';
 import { NavigationIconState } from './MaterialSymbolState.js';
+import { ActionElement, type ActionElementProps } from './ActionElement.js';
 
 function classes(...values: Array<string | undefined | false>) {
   return values.filter(Boolean).join(' ');
@@ -16,31 +18,27 @@ function DecorativeIcon({ children }: { children: ReactNode }) {
 
 export type ButtonVariant = 'primary' | 'important' | 'secondary' | 'outlined' | 'destructive';
 
-export interface ButtonProps extends ComponentPropsWithRef<'button'> {
+export interface ButtonAppearanceProps {
   variant?: ButtonVariant;
   startIcon?: ReactNode;
   endIcon?: ReactNode;
 }
+export type ButtonProps = ButtonAppearanceProps & ActionElementProps;
 
 export function Button({
   variant = 'primary',
   startIcon,
   endIcon,
-  type = 'button',
   className,
   children,
   ...props
 }: ButtonProps) {
   return (
-    <button
-      {...props}
-      type={type}
-      className={classes('env-button', `env-button-${variant}`, className)}
-    >
+    <ActionElement {...props} className={classes('env-button', `env-button-${variant}`, className)}>
       {startIcon != null && <DecorativeIcon>{startIcon}</DecorativeIcon>}
       {children}
       {endIcon != null && <DecorativeIcon>{endIcon}</DecorativeIcon>}
-    </button>
+    </ActionElement>
   );
 }
 
@@ -50,15 +48,16 @@ export interface IconButtonProps
   'aria-label': string;
 }
 
-export function IconButton({ icon, type = 'button', className, ...props }: IconButtonProps) {
+export function IconButton({ icon, className, ...props }: IconButtonProps) {
   return (
-    <button {...props} type={type} className={classes('env-button', 'env-icon-button', className)}>
+    <Button {...props} className={classes('env-icon-button', className)}>
       <DecorativeIcon>{icon}</DecorativeIcon>
-    </button>
+    </Button>
   );
 }
 
 interface NavigationItemSharedProps {
+  size?: 'standard' | 'compact';
   selected?: boolean;
   disabled?: boolean;
   /** Official Material Symbols automatically follow the selected state. */
@@ -67,15 +66,12 @@ interface NavigationItemSharedProps {
   selectedIcon?: ReactNode;
 }
 
-export type NavigationItemProps = NavigationItemSharedProps &
-  (
-    | (ComponentPropsWithRef<'a'> & { href: string })
-    | (ComponentPropsWithRef<'button'> & { href?: undefined })
-  );
+export type NavigationItemProps = NavigationItemSharedProps & ActionElementProps;
 
 export function NavigationItem(props: NavigationItemProps) {
   const {
     selected = false,
+    size = 'standard',
     disabled = false,
     icon,
     selectedIcon,
@@ -97,41 +93,19 @@ export function NavigationItem(props: NavigationItemProps) {
   const itemClass = classes(
     'env-navigation-item',
     selected && 'env-navigation-selected',
+    size === 'compact' && 'env-navigation-compact',
     className,
   );
 
-  if (nativeProps.href !== undefined) {
-    const { href, onClick, tabIndex, ...anchorProps } = nativeProps as ComponentPropsWithRef<'a'>;
-    return (
-      <a
-        {...anchorProps}
-        href={disabled ? undefined : href}
-        className={itemClass}
-        role={anchorProps.role ?? (disabled ? 'link' : undefined)}
-        aria-current={props['aria-current'] ?? (selected ? 'page' : undefined)}
-        aria-disabled={disabled || undefined}
-        tabIndex={disabled ? -1 : tabIndex}
-        onClick={function handleClick(event) {
-          if (disabled) event.preventDefault();
-          else onClick?.(event);
-        }}
-      >
-        {content}
-      </a>
-    );
-  }
-
-  const { type = 'button', ...buttonProps } = nativeProps as ComponentPropsWithRef<'button'>;
   return (
-    <button
-      {...buttonProps}
-      type={type}
+    <ActionElement
+      {...nativeProps}
       disabled={disabled}
       className={itemClass}
       aria-current={props['aria-current'] ?? (selected ? 'page' : undefined)}
     >
       {content}
-    </button>
+    </ActionElement>
   );
 }
 
@@ -149,27 +123,119 @@ export function DisclosureNote({ title, className, children, ...props }: Disclos
   return (
     <details {...props} className={classes('env-disclosure-note', className)}>
       <summary>{title}</summary>
-      <div className="env-disclosure-content">{children}</div>
+      <Stack gap={2} className="env-disclosure-content">
+        {children}
+      </Stack>
     </details>
   );
 }
 
-export interface CardProps extends ComponentPropsWithRef<'div'> {
-  /** Row tone for standalone cards; pane tone for grouped content areas. */
-  tone?: 'row' | 'pane';
+interface CardAppearanceProps {
+  /** Shared row, pane or canvas surface color. */
+  tone?: 'row' | 'pane' | 'canvas';
+  /** Optional fixed spacing step; omitted uses responsive card padding. */
+  padding?: SpaceStep;
 }
+interface CardContentProps {
+  heading?: ReactNode;
+  meta?: ReactNode;
+  actions?: ReactNode;
+  /** An action strip implies action layout; explicit layout also works without actions. */
+  layout?: 'content' | 'action';
+}
+interface InteractiveCardContentProps {
+  heading?: never;
+  meta?: never;
+  actions?: never;
+  layout?: never;
+}
+export type CardProps = CardAppearanceProps &
+  (
+    | (ComponentPropsWithRef<'div'> & CardContentProps & { as?: 'div'; href?: undefined })
+    | (ComponentPropsWithRef<'article'> & CardContentProps & { as: 'article'; href?: undefined })
+    | (ComponentPropsWithRef<'button'> &
+        InteractiveCardContentProps & { as: 'button'; href?: undefined })
+    | (ComponentPropsWithRef<'a'> &
+        InteractiveCardContentProps & { as?: 'a'; href: string; disabled?: boolean })
+  );
 
-export function Card({ tone = 'row', className, ...props }: CardProps) {
-  return (
-    <div
-      {...props}
-      className={classes(
-        'env-card',
-        'env-card-content',
-        tone === 'pane' && 'env-card-pane',
-        className,
+/** Shared card surface, optionally a native action or a content card with an action strip. */
+export function Card({
+  as,
+  tone = 'row',
+  padding,
+  heading,
+  meta,
+  actions,
+  layout = 'content',
+  className,
+  style,
+  children,
+  ...props
+}: CardProps) {
+  const interactive = props.href !== undefined || as === 'button';
+  const actionLayout = layout === 'action' || actions != null;
+  const cardClass = classes(
+    'env-card',
+    'env-card-content',
+    tone === 'pane' && 'env-card-pane',
+    tone === 'canvas' && 'env-card-canvas',
+    interactive && 'env-clickable-card',
+    actionLayout && 'env-action-card',
+    className,
+  );
+  const cardStyle = {
+    ...(padding !== undefined
+      ? { '--surface-card-padding': padding === 0 ? '0' : `var(--space-${padding})` }
+      : {}),
+    ...style,
+  } as CSSProperties;
+  if (interactive) {
+    return (
+      <ActionElement {...(props as ActionElementProps)} className={cardClass} style={cardStyle}>
+        {children}
+      </ActionElement>
+    );
+  }
+  const content = (
+    <>
+      {(heading != null || meta != null) && (
+        <div className="env-action-card-heading">
+          {heading != null && (
+            <Text as="h3" variant="section-heading">
+              {heading}
+            </Text>
+          )}
+          {meta != null && (
+            <Text as="span" variant="supporting" className="env-action-card-meta">
+              {meta}
+            </Text>
+          )}
+        </div>
       )}
-    />
+      {children}
+    </>
+  );
+  const Container = as === 'article' ? 'article' : 'div';
+  return (
+    <Container
+      {...(props as ComponentPropsWithRef<'div'> & ComponentPropsWithRef<'article'>)}
+      className={cardClass}
+      style={cardStyle}
+    >
+      {actionLayout ? (
+        <>
+          <div className="env-action-card-body">{content}</div>
+          {actions != null && (
+            <ActionGroup as="footer" align="end" className="env-action-card-actions">
+              {actions}
+            </ActionGroup>
+          )}
+        </>
+      ) : (
+        content
+      )}
+    </Container>
   );
 }
 
@@ -178,27 +244,11 @@ export type ClickableCardProps =
   | (ComponentPropsWithRef<'a'> & { href: string; disabled?: boolean });
 
 /** A single interactive surface. Do not nest links or controls inside it. */
-export function ClickableCard({ className, disabled = false, ...props }: ClickableCardProps) {
-  const cardClass = classes('env-card', 'env-card-content', 'env-clickable-card', className);
+export function ClickableCard(props: ClickableCardProps) {
   if (props.href !== undefined) {
-    const { href, onClick, tabIndex, ...anchorProps } = props as ComponentPropsWithRef<'a'>;
-    return (
-      <a
-        {...anchorProps}
-        href={disabled ? undefined : href}
-        className={cardClass}
-        role={anchorProps.role ?? (disabled ? 'link' : undefined)}
-        aria-disabled={disabled || undefined}
-        tabIndex={disabled ? -1 : tabIndex}
-        onClick={(event) => {
-          if (disabled) event.preventDefault();
-          else onClick?.(event);
-        }}
-      />
-    );
+    return <Card {...props} />;
   }
-  const { type = 'button', ...buttonProps } = props as ComponentPropsWithRef<'button'>;
-  return <button {...buttonProps} type={type} disabled={disabled} className={cardClass} />;
+  return <Card {...props} as="button" />;
 }
 
 export interface ActionCardProps extends Omit<ComponentPropsWithRef<'article'>, 'title'> {
@@ -216,18 +266,17 @@ export function ActionCard({
   ...props
 }: ActionCardProps) {
   return (
-    <article {...props} className={classes('env-card', 'env-action-card', className)}>
-      <div className="env-action-card-body">
-        {(title != null || meta != null) && (
-          <div className="env-action-card-heading">
-            {title != null && <h3>{title}</h3>}
-            {meta != null && <span className="env-action-card-meta">{meta}</span>}
-          </div>
-        )}
-        {children}
-      </div>
-      {actions != null && <footer className="env-action-card-actions">{actions}</footer>}
-    </article>
+    <Card
+      {...props}
+      as="article"
+      layout="action"
+      heading={title}
+      meta={meta}
+      actions={actions}
+      className={className}
+    >
+      {children}
+    </Card>
   );
 }
 
@@ -248,7 +297,7 @@ export function FeatureCard({
   ...props
 }: FeatureCardProps) {
   return (
-    <div {...props} className={classes('env-card', 'env-feature-card', className)}>
+    <Card {...props} className={classes('env-feature-card', className)}>
       <div className="env-feature-card-layout">
         {icon != null && (
           <div className="env-feature-card-icon">
@@ -256,13 +305,19 @@ export function FeatureCard({
           </div>
         )}
         <div className="env-feature-card-copy">
-          <h2>{title}</h2>
-          {description != null && <p>{description}</p>}
+          <Text as="h2" variant="page-heading">
+            {title}
+          </Text>
+          {description != null && (
+            <Text variant="supporting" className="env-feature-card-description">
+              {description}
+            </Text>
+          )}
           {children != null && <Stack className="env-feature-card-extra">{children}</Stack>}
         </div>
         {action != null && <div className="env-feature-card-action">{action}</div>}
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -271,7 +326,9 @@ export interface GroupedRowsProps extends ComponentPropsWithRef<'ul'> {
 }
 
 export function GroupedRows({ contrast = false, className, ...props }: GroupedRowsProps) {
-  const rows = <ul {...props} className={classes('env-grouped-rows', className)} />;
+  const rows = (
+    <ul {...props} className={classes('env-grouped-rows', 'env-connected-rows', className)} />
+  );
   return contrast ? <div className="env-contrast-row-pane">{rows}</div> : rows;
 }
 
@@ -283,7 +340,7 @@ export interface RowProps extends Omit<ComponentPropsWithRef<'li'>, 'title'> {
 
 export function Row({ title, detail, action, children, className, ...props }: RowProps) {
   return (
-    <li {...props} className={classes('env-row', className)}>
+    <li {...props} className={classes('env-row', 'env-connected-row', className)}>
       <div>
         {title}
         {detail != null && <small>{detail}</small>}
@@ -313,11 +370,13 @@ export function EmptyState({
   return (
     <div {...props} className={classes('env-empty-state', className)}>
       {icon != null && <DecorativeIcon>{icon}</DecorativeIcon>}
-      <div className="env-empty-copy">
-        <h4>{title}</h4>
-        {description != null && <p>{description}</p>}
+      <Stack gap={2} className="env-empty-copy">
+        <Text as="h4" variant="section-heading">
+          {title}
+        </Text>
+        {description != null && <Text variant="supporting">{description}</Text>}
         {children}
-      </div>
+      </Stack>
       {action}
     </div>
   );

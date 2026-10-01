@@ -1,9 +1,11 @@
 @import './Tokens.css';
 @import './Primitives.css';
+@import './Text.css';
 @import './DirectionLink.css';
 @import './Tabs.css';
 @import './Layout.css';
 @import './FormControls.css';
+@import './Rows.css';
 @import './Dialog.css';
 @import './Toast.css';
 @font-face {

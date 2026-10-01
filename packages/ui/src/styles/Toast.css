@@ -16,12 +16,10 @@
     from var(--toast-fill) h s calc(l * var(--state-toast-action-factor))
   );
   --color-primary-action-hover: hsl(
-    from var(--color-primary-action) h s
-      clamp(0, calc(l + var(--state-hover-shift) * var(--state-lightness-direction)), 100)
+    from var(--color-primary-action) h s var(--state-hover-lightness)
   );
   --color-primary-action-pressed: hsl(
-    from var(--color-primary-action) h s
-      clamp(0, calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)), 100)
+    from var(--color-primary-action) h s var(--state-pressed-lightness)
   );
   --color-on-primary-action: var(--color-on-toast);
   --color-focus-ring: var(--color-on-toast);

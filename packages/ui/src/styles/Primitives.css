@@ -18,7 +18,7 @@
   color: inherit;
 }
 
-/* Canonical control geometry ported from SharedComponents.css. */
+/* Canonical control geometry shared by native buttons and button links. */
 .env-button {
   inline-size: fit-content;
   display: inline-flex;
@@ -55,6 +55,9 @@
   color: var(--color-link);
   background: var(--color-navigation-selected);
 }
+.env-navigation-compact {
+  font-size: calc(var(--font-size-body-small) * var(--scale, 1));
+}
 .env-symbol {
   display: inline-block;
   width: calc(1rem * var(--scale, 1));
@@ -90,10 +93,10 @@
   color: var(--color-on-primary-action);
   border: 0;
 }
-.env-button-primary:hover:not(:disabled) {
+.env-button-primary:hover:not(:disabled):not([aria-disabled='true']) {
   background: var(--color-primary-action-hover);
 }
-.env-button-primary:active:not(:disabled) {
+.env-button-primary:active:not(:disabled):not([aria-disabled='true']) {
   background: var(--color-primary-action-pressed);
 }
 .env-button-secondary {
@@ -101,11 +104,11 @@
   color: var(--color-control-text);
   border-color: var(--color-border-strong);
 }
-.env-button-secondary:hover:not(:disabled) {
+.env-button-secondary:hover:not(:disabled):not([aria-disabled='true']) {
   background: var(--color-subtle-action-hover);
   border-color: var(--color-border-hover);
 }
-.env-button-secondary:active:not(:disabled) {
+.env-button-secondary:active:not(:disabled):not([aria-disabled='true']) {
   background: var(--color-subtle-action-pressed);
   border-color: var(--color-border-pressed);
 }
@@ -114,11 +117,11 @@
   color: var(--color-link);
   border-color: var(--color-border-strong);
 }
-.env-button-outlined:hover:not(:disabled) {
+.env-button-outlined:hover:not(:disabled):not([aria-disabled='true']) {
   background: var(--color-subtle-action-hover);
   border-color: var(--color-border-hover);
 }
-.env-button-outlined:active:not(:disabled) {
+.env-button-outlined:active:not(:disabled):not([aria-disabled='true']) {
   background: var(--color-subtle-action-pressed);
   border-color: var(--color-border-pressed);
 }
@@ -127,10 +130,10 @@
   color: var(--color-on-destructive-action);
   border: 0;
 }
-.env-button-destructive:hover:not(:disabled) {
+.env-button-destructive:hover:not(:disabled):not([aria-disabled='true']) {
   background: var(--color-destructive-action-hover);
 }
-.env-button-destructive:active:not(:disabled) {
+.env-button-destructive:active:not(:disabled):not([aria-disabled='true']) {
   background: var(--color-destructive-action-pressed);
 }
 .env-button-important {
@@ -139,10 +142,10 @@
   border: 0;
   border-radius: calc(var(--radius-standard) * var(--scale, 1));
 }
-.env-button-important:hover:not(:disabled) {
+.env-button-important:hover:not(:disabled):not([aria-disabled='true']) {
   background: var(--color-accent-hover);
 }
-.env-button-important:active:not(:disabled) {
+.env-button-important:active:not(:disabled):not([aria-disabled='true']) {
   background: var(--color-accent-pressed);
 }
 .env-button:focus-visible {
@@ -153,7 +156,7 @@
   outline-color: var(--color-outlined-focus);
   outline-offset: 0.0625rem;
 }
-.env-button:disabled {
+.env-button:is(:disabled, [aria-disabled='true']) {
   opacity: var(--state-disabled-opacity);
   cursor: default;
 }
@@ -209,10 +212,10 @@
   width: calc(var(--icon-button-icon-size) * var(--scale, 1));
   height: calc(var(--icon-button-icon-size) * var(--scale, 1));
 }
-.env-button.env-icon-button:hover:not(:disabled) {
+.env-button.env-icon-button:hover:not(:disabled):not([aria-disabled='true']) {
   background: var(--color-icon-button-hover);
 }
-.env-button.env-icon-button:active:not(:disabled) {
+.env-button.env-icon-button:active:not(:disabled):not([aria-disabled='true']) {
   background: var(--color-icon-button-pressed);
 }
 
@@ -220,20 +223,28 @@
   box-sizing: border-box;
   min-inline-size: 0;
   --surface-card-padding: clamp(1rem, 3vw, 1.5rem);
+  --env-card-color: var(--color-surface-muted);
+  --env-card-hover: hsl(from var(--env-card-color) h s var(--state-hover-lightness));
+  --env-card-pressed: hsl(from var(--env-card-color) h s var(--state-pressed-lightness));
   padding: var(--surface-card-padding);
   border: 0;
   border-radius: var(--radius-surface);
-  background: var(--color-surface-muted);
+  background: var(--env-card-color);
 }
 .env-card-pane {
-  background: var(--color-pane);
+  --env-card-color: var(--color-pane);
 }
-.env-card-content {
+.env-card-canvas {
+  --env-card-color: var(--color-canvas);
+}
+.env-card-content,
+.env-action-card-body {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
 }
-.env-card-content > * {
+.env-card-content > *,
+.env-action-card-body > * {
   margin-block: 0;
 }
 
@@ -249,10 +260,10 @@
   transition: background-color var(--motion-duration-fast) var(--motion-ease);
 }
 .env-clickable-card:hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--color-navigation-quiet-hover);
+  background: var(--env-card-hover);
 }
 .env-clickable-card:active:not(:disabled):not([aria-disabled='true']) {
-  background: var(--color-navigation-quiet-pressed);
+  background: var(--env-card-pressed);
 }
 .env-clickable-card:focus-visible {
   outline: 0.125rem solid var(--color-focus-ring);
@@ -309,19 +320,13 @@
   color: var(--color-quiet-label-pressed);
 }
 .env-disclosure-content {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
   margin: var(--space-2) 0 0 var(--space-4);
   color: inherit;
   font: inherit;
 }
-.env-disclosure-content > p {
+.env-disclosure-content > :where(p:not(.env-text)) {
   color: inherit;
   font: inherit;
-}
-.env-disclosure-content > * {
-  margin-block: 0;
 }
 .env-disclosure-content > :is(ul, ol) {
   padding-inline-start: var(--space-5);
@@ -359,20 +364,8 @@
   min-height: 3.5rem;
   padding: var(--space-3) var(--space-4);
   font: var(--type-body-small);
-  border-radius: var(--radius-row-inner);
   background: var(--color-surface-muted);
   color: var(--color-text-primary);
-}
-.env-grouped-rows > .env-row:first-child {
-  border-top-left-radius: var(--radius-row-outer);
-  border-top-right-radius: var(--radius-row-outer);
-}
-.env-grouped-rows > .env-row:last-child {
-  border-bottom-left-radius: var(--radius-row-outer);
-  border-bottom-right-radius: var(--radius-row-outer);
-}
-.env-grouped-rows > .env-row:only-child {
-  border-radius: var(--radius-row-single);
 }
 .env-grouped-rows small {
   display: block;
@@ -396,16 +389,14 @@
   padding: 0;
   border: 0;
   border-radius: var(--radius-surface);
-  background: var(--color-surface-muted);
+  background: var(--env-card-color);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  gap: 0;
 }
 .env-action-card-body {
   padding: var(--surface-card-padding);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
 }
 .env-action-card-heading {
   display: flex;
@@ -413,16 +404,10 @@
   flex-wrap: wrap;
   gap: var(--space-3);
 }
-.env-action-card-heading h3 {
-  margin: 0;
-  font: var(--type-h2);
-}
 .env-action-card-meta {
   margin-left: auto;
-  color: var(--color-text-muted);
-  font: var(--type-body-small);
 }
-.env-action-card-body p {
+.env-action-card-body > :where(p:not(.env-text)) {
   margin: 0;
   max-width: 32ch;
   font: var(--type-body);
@@ -433,11 +418,6 @@
   margin-top: auto;
   padding: var(--space-3) var(--surface-card-padding);
   background: var(--color-action-strip);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--space-4);
 }
 
 .env-feature-card {
@@ -470,18 +450,8 @@
 .env-feature-card-extra {
   margin-block-start: var(--space-4);
 }
-.env-feature-card-copy > h2,
-.env-feature-card-copy > p {
-  margin: 0;
-}
-.env-feature-card-copy > h2 {
-  color: var(--color-text-primary);
-  font: var(--type-h1);
-}
-.env-feature-card-copy > p {
+.env-feature-card-description {
   margin-top: var(--space-1);
-  color: var(--color-text-muted);
-  font: var(--type-body-small);
 }
 .env-feature-card-action {
   min-inline-size: 0;
@@ -511,20 +481,6 @@
   min-width: 0;
   padding: var(--space-5);
   gap: var(--space-4);
-}
-.env-empty-copy {
-  display: grid;
-  gap: var(--space-2);
-}
-.env-empty-copy > :is(h4, p) {
-  margin: 0;
-}
-.env-empty-state h4 {
-  font: var(--type-h2);
-}
-.env-empty-state p {
-  font: var(--type-body-small);
-  color: var(--color-text-muted);
 }
 .env-loading-state {
   display: grid;

@@ -20,7 +20,7 @@ npm install @envsemble/envui react@^19 react-dom@^19
 ## Use
 
 ```tsx
-import { Theme, Button, IconButton } from '@envsemble/envui';
+import { Theme, Button, IconButton, ActionGroup } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 import '@envsemble/envui/styles.css';
@@ -28,14 +28,24 @@ import '@envsemble/envui/styles.css';
 export function App() {
   return (
     <Theme theme="light">
-      <Button startIcon={<Add />}>Create item</Button>
-      <IconButton icon={<ChevronRight />} aria-label="Next item" />
+      <ActionGroup>
+        <Button startIcon={<Add />}>Create item</Button>
+        <IconButton icon={<ChevronRight />} aria-label="Next item" />
+      </ActionGroup>
     </Theme>
   );
 }
 ```
 
 The stylesheet bundles Inter and scopes styling to explicit light/dark theme boundaries. Your app owns theme preference, routing, data and validation. Dialogs, selects and managed notifications retain their originating theme through portals.
+
+## Composition
+
+- Use `Stack` for related blocks and `ActionGroup` for actions. Their `as` prop preserves semantic container tags.
+- Use `Text` for the shared typography variants and semantic colors. It adds no outer margins.
+- `Button href` renders a native link; omit `href` for a native button.
+- `Card` owns its surface and spacing. Use `href` for a destination, `as="button"` for an action, or `heading`, `meta` and `actions` for content with an action strip. `ClickableCard` and `ActionCard` remain compatibility wrappers.
+- `Input`, `Textarea` and `Select` share visible labels and accessible hints/errors. Validation stays in the application.
 
 ## Icons and assets
 

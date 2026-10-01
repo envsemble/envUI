@@ -50,20 +50,11 @@
   padding: calc(0.5rem * var(--scale, 1)) calc(1rem * var(--scale, 1));
   border: 0;
   outline: none;
-  border-radius: calc(var(--radius-row-inner) * var(--scale, 1));
   background: var(--color-surface-muted);
   color: var(--color-control-text);
   text-align: start;
   font: var(--type-body-small);
   cursor: pointer;
-}
-.env-dropdown-option:first-child {
-  border-start-start-radius: calc(var(--radius-row-outer) * var(--scale, 1));
-  border-start-end-radius: calc(var(--radius-row-outer) * var(--scale, 1));
-}
-.env-dropdown-option:last-child {
-  border-end-start-radius: calc(var(--radius-row-outer) * var(--scale, 1));
-  border-end-end-radius: calc(var(--radius-row-outer) * var(--scale, 1));
 }
 .env-dropdown-option:hover:not(:disabled) {
   background: var(--color-icon-button-hover);
@@ -120,21 +111,9 @@
   min-width: 0;
   padding: calc(0.75rem * var(--scale, 1)) calc(1rem * var(--scale, 1));
   background: var(--color-surface-muted);
-  border-radius: calc(var(--radius-row-inner) * var(--scale, 1));
   font: var(--type-body-small);
   color: var(--color-text-primary);
   cursor: pointer;
-}
-.env-radio-option:first-of-type {
-  border-start-start-radius: calc(var(--radius-row-outer) * var(--scale, 1));
-  border-start-end-radius: calc(var(--radius-row-outer) * var(--scale, 1));
-}
-.env-radio-option:last-of-type {
-  border-end-start-radius: calc(var(--radius-row-outer) * var(--scale, 1));
-  border-end-end-radius: calc(var(--radius-row-outer) * var(--scale, 1));
-}
-.env-radio-option:only-of-type {
-  border-radius: calc(var(--radius-row-single) * var(--scale, 1));
 }
 .env-radio-option:has(input:checked),
 .env-radio-option:hover:not(:has(input:disabled)) {
@@ -270,11 +249,13 @@
   outline: calc(0.125rem * var(--scale, 1)) solid var(--color-focus-ring);
   outline-offset: calc(0.125rem * var(--scale, 1));
 }
-.env-text-input[aria-invalid='true'] {
+.env-text-input[aria-invalid='true'],
+.env-dropdown-trigger[aria-invalid='true'] {
   outline: calc(0.125rem * var(--scale, 1)) solid var(--color-destructive-action);
   outline-offset: 0;
 }
-.env-text-input[aria-invalid='true']:focus-visible {
+.env-text-input[aria-invalid='true']:focus-visible,
+.env-dropdown-trigger[aria-invalid='true']:focus-visible {
   outline-offset: calc(0.125rem * var(--scale, 1));
 }
 .env-text-input:disabled {

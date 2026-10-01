@@ -79,6 +79,16 @@
   --state-lightness-direction: calc(
     1 - 2 * clamp(0, calc(sign(l - var(--state-lightness-threshold)) + 1), 1)
   );
+  --state-hover-lightness: clamp(
+    0,
+    calc(l + var(--state-hover-shift) * var(--state-lightness-direction)),
+    100
+  );
+  --state-pressed-lightness: clamp(
+    0,
+    calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)),
+    100
+  );
   --state-disabled-opacity: 0.48;
   --state-selected-base-weight: 13%;
   --state-card-strip-weight: 35%;
@@ -86,88 +96,44 @@
   --state-dialog-overlay-opacity: 0.55;
 
   /* Derived values: no independent state colors may be authored here. */
-  --color-checkbox-ring-hover: hsl(
-    from var(--color-icon) h s
-      clamp(0, calc(l + var(--state-hover-shift) * var(--state-lightness-direction)), 100)
-  );
-  --color-checkbox-ring-pressed: hsl(
-    from var(--color-icon) h s
-      clamp(0, calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)), 100)
-  );
-  --color-control-blue-hover: hsl(
-    from var(--color-control-blue) h s
-      clamp(0, calc(l + var(--state-hover-shift) * var(--state-lightness-direction)), 100)
-  );
+  --color-checkbox-ring-hover: hsl(from var(--color-icon) h s var(--state-hover-lightness));
+  --color-checkbox-ring-pressed: hsl(from var(--color-icon) h s var(--state-pressed-lightness));
+  --color-control-blue-hover: hsl(from var(--color-control-blue) h s var(--state-hover-lightness));
   --color-control-blue-pressed: hsl(
-    from var(--color-control-blue) h s
-      clamp(0, calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)), 100)
+    from var(--color-control-blue) h s var(--state-pressed-lightness)
   );
   --color-primary-action-hover: hsl(
-    from var(--color-primary-action) h s
-      clamp(0, calc(l + var(--state-hover-shift) * var(--state-lightness-direction)), 100)
+    from var(--color-primary-action) h s var(--state-hover-lightness)
   );
   --color-primary-action-pressed: hsl(
-    from var(--color-primary-action) h s
-      clamp(0, calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)), 100)
+    from var(--color-primary-action) h s var(--state-pressed-lightness)
   );
   --color-icon-button: var(--color-surface-muted);
-  --color-icon-button-hover: hsl(
-    from var(--color-icon-button) h s
-      clamp(0, calc(l + var(--state-hover-shift) * var(--state-lightness-direction)), 100)
-  );
+  --color-icon-button-hover: hsl(from var(--color-icon-button) h s var(--state-hover-lightness));
   --color-icon-button-pressed: hsl(
-    from var(--color-icon-button) h s
-      clamp(0, calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)), 100)
+    from var(--color-icon-button) h s var(--state-pressed-lightness)
   );
   --color-subtle-action-hover: hsl(
-    from var(--color-subtle-action) h s
-      clamp(0, calc(l + var(--state-hover-shift) * var(--state-lightness-direction)), 100)
+    from var(--color-subtle-action) h s var(--state-hover-lightness)
   );
   --color-subtle-action-pressed: hsl(
-    from var(--color-subtle-action) h s
-      clamp(0, calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)), 100)
+    from var(--color-subtle-action) h s var(--state-pressed-lightness)
   );
-  --color-link-hover: hsl(
-    from var(--color-link) h s
-      clamp(0, calc(l + var(--state-hover-shift) * var(--state-lightness-direction)), 100)
-  );
-  --color-link-pressed: hsl(
-    from var(--color-link) h s
-      clamp(0, calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)), 100)
-  );
-  --color-border-hover: hsl(
-    from var(--color-border-strong) h s
-      clamp(0, calc(l + var(--state-hover-shift) * var(--state-lightness-direction)), 100)
-  );
-  --color-border-pressed: hsl(
-    from var(--color-border-strong) h s
-      clamp(0, calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)), 100)
-  );
-  --color-accent-hover: hsl(
-    from var(--color-accent) h s
-      clamp(0, calc(l + var(--state-hover-shift) * var(--state-lightness-direction)), 100)
-  );
-  --color-accent-pressed: hsl(
-    from var(--color-accent) h s
-      clamp(0, calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)), 100)
-  );
+  --color-link-hover: hsl(from var(--color-link) h s var(--state-hover-lightness));
+  --color-link-pressed: hsl(from var(--color-link) h s var(--state-pressed-lightness));
+  --color-border-hover: hsl(from var(--color-border-strong) h s var(--state-hover-lightness));
+  --color-border-pressed: hsl(from var(--color-border-strong) h s var(--state-pressed-lightness));
+  --color-accent-hover: hsl(from var(--color-accent) h s var(--state-hover-lightness));
+  --color-accent-pressed: hsl(from var(--color-accent) h s var(--state-pressed-lightness));
   --color-destructive-action-hover: hsl(
-    from var(--color-destructive-action) h s
-      clamp(0, calc(l + var(--state-hover-shift) * var(--state-lightness-direction)), 100)
+    from var(--color-destructive-action) h s var(--state-hover-lightness)
   );
   --color-destructive-action-pressed: hsl(
-    from var(--color-destructive-action) h s
-      clamp(0, calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)), 100)
+    from var(--color-destructive-action) h s var(--state-pressed-lightness)
   );
   --color-text-subtle: var(--color-text-quiet);
-  --color-quiet-label-hover: hsl(
-    from var(--color-text-muted) h s
-      clamp(0, calc(l + var(--state-hover-shift) * var(--state-lightness-direction)), 100)
-  );
-  --color-quiet-label-pressed: hsl(
-    from var(--color-text-muted) h s
-      clamp(0, calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)), 100)
-  );
+  --color-quiet-label-hover: hsl(from var(--color-text-muted) h s var(--state-hover-lightness));
+  --color-quiet-label-pressed: hsl(from var(--color-text-muted) h s var(--state-pressed-lightness));
   --color-focus-ring: var(--color-text-primary);
   --color-outlined-focus: var(--color-focus-ring);
   --color-navigation-selected: color-mix(
@@ -176,30 +142,23 @@
     var(--color-surface)
   );
   --color-navigation-hover: hsl(
-    from var(--color-navigation-selected) h s
-      clamp(0, calc(l + var(--state-hover-shift) * var(--state-lightness-direction)), 100)
+    from var(--color-navigation-selected) h s var(--state-hover-lightness)
   );
   --color-navigation-pressed: hsl(
-    from var(--color-navigation-selected) h s
-      clamp(0, calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)), 100)
+    from var(--color-navigation-selected) h s var(--state-pressed-lightness)
   );
   --color-navigation-quiet-hover: hsl(
-    from var(--color-surface-muted) h s
-      clamp(0, calc(l + var(--state-hover-shift) * var(--state-lightness-direction)), 100)
+    from var(--color-surface-muted) h s var(--state-hover-lightness)
   );
   --color-navigation-quiet-pressed: hsl(
-    from var(--color-surface-muted) h s
-      clamp(0, calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)), 100)
+    from var(--color-surface-muted) h s var(--state-pressed-lightness)
   );
   --color-action-strip: color-mix(
     in srgb,
     var(--color-surface-muted) var(--state-card-strip-weight),
     var(--color-surface)
   );
-  --color-skeleton-highlight: hsl(
-    from var(--color-skeleton-base) h s
-      clamp(0, calc(l + var(--state-hover-shift) * var(--state-lightness-direction)), 100)
-  );
+  --color-skeleton-highlight: hsl(from var(--color-skeleton-base) h s var(--state-hover-lightness));
   --color-primary-action: var(--color-text-strong);
   --color-on-primary-action: var(--color-canvas);
   --color-subtle-action: var(--color-surface);

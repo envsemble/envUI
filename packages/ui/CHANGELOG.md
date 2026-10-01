@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Unify plain, interactive and action-strip cards through Card props; keep ClickableCard and ActionCard as compatibility wrappers.
+- Add native links to Button, semantic tags to Stack/ActionGroup, token-based Text and compact NavigationItem labels.
+- Share labels, hints and errors across Input, Textarea and Select; centralize native form reset handling.
+- Share connected-row corners across grouped rows, radio choices and select options, and centralize HSL lightness expressions.
+- Compose the documentation from public library controls, surfaces, typography and layouts; remove the retired standalone gallery.
 - Add Tabs with composed button styles, accessible keyboard selection and animated panels; use it for documentation reference views.
 - Add ClickableCard with native link/button semantics and shared hover, pressed, focus and disabled states.
 - Use whole-card links in the documentation catalogue, replacing separate Explore controls.

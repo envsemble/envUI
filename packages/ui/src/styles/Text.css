@@ -1,0 +1,28 @@
+.env-text {
+  margin: 0;
+  font: var(--type-body);
+  color: var(--color-text-primary);
+}
+.env-text-page-heading {
+  font: var(--type-h1);
+}
+.env-text-section-heading {
+  font: var(--type-h2);
+}
+.env-text-supporting {
+  font: var(--type-body-small);
+  color: var(--color-text-muted);
+}
+.env-text-caption {
+  font: var(--type-body-small);
+  color: var(--color-text-quiet);
+}
+.env-text-tone-primary {
+  color: var(--color-text-primary);
+}
+.env-text-tone-muted {
+  color: var(--color-text-muted);
+}
+.env-text-tone-quiet {
+  color: var(--color-text-quiet);
+}
