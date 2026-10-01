@@ -237,6 +237,37 @@
   margin-block: 0;
 }
 
+.env-clickable-card {
+  inline-size: 100%;
+  margin: 0;
+  color: var(--color-text-primary);
+  font: inherit;
+  text-align: start;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+}
+.env-clickable-card:hover:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-navigation-quiet-hover);
+}
+.env-clickable-card:active:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-navigation-quiet-pressed);
+}
+.env-clickable-card:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: 0.125rem;
+}
+.env-clickable-card:is(:disabled, [aria-disabled='true']) {
+  opacity: var(--state-disabled-opacity);
+  cursor: default;
+}
+@media (prefers-reduced-motion: reduce) {
+  .env-clickable-card {
+    transition: none;
+  }
+}
+
 .env-disclosure-note {
   margin: 0;
   padding: 0;

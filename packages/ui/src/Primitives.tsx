@@ -173,6 +173,34 @@ export function Card({ tone = 'row', className, ...props }: CardProps) {
   );
 }
 
+export type ClickableCardProps =
+  | (ComponentPropsWithRef<'button'> & { href?: never })
+  | (ComponentPropsWithRef<'a'> & { href: string; disabled?: boolean });
+
+/** A single interactive surface. Do not nest links or controls inside it. */
+export function ClickableCard({ className, disabled = false, ...props }: ClickableCardProps) {
+  const cardClass = classes('env-card', 'env-card-content', 'env-clickable-card', className);
+  if (props.href !== undefined) {
+    const { href, onClick, tabIndex, ...anchorProps } = props as ComponentPropsWithRef<'a'>;
+    return (
+      <a
+        {...anchorProps}
+        href={disabled ? undefined : href}
+        className={cardClass}
+        role={anchorProps.role ?? (disabled ? 'link' : undefined)}
+        aria-disabled={disabled || undefined}
+        tabIndex={disabled ? -1 : tabIndex}
+        onClick={(event) => {
+          if (disabled) event.preventDefault();
+          else onClick?.(event);
+        }}
+      />
+    );
+  }
+  const { type = 'button', ...buttonProps } = props as ComponentPropsWithRef<'button'>;
+  return <button {...buttonProps} type={type} disabled={disabled} className={cardClass} />;
+}
+
 export interface ActionCardProps extends Omit<ComponentPropsWithRef<'article'>, 'title'> {
   title?: ReactNode;
   meta?: ReactNode;
