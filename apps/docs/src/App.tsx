@@ -323,10 +323,33 @@ export default function App() {
     if (section) document.getElementById(section)?.scrollIntoView();
     else window.scrollTo({ top: 0 });
   }, [contentRoute, title]);
+  const controls = (
+    <Theme theme={comparison ? oppositeAppearance : appearance} className="docs-page-controls">
+      <ActionGroup align="end">
+        {page?.section === 'Components' && tab === 'preview' && (
+          <Button variant="secondary" onClick={() => setResetVersion((version) => version + 1)}>
+            Reset examples
+          </Button>
+        )}
+        <IconButton
+          icon={appearance === 'light' ? <DarkMode /> : <LightMode />}
+          aria-label={`Switch to ${oppositeAppearance} theme`}
+          title={`Switch to ${oppositeAppearance} theme`}
+          onClick={() => setAppearance(oppositeAppearance)}
+        />
+      </ActionGroup>
+    </Theme>
+  );
   let content: ReactNode;
   if (page)
     content = (
-      <ReferenceContent key={page.path} page={page} view={tab} resetVersion={resetVersion} />
+      <ReferenceContent
+        key={page.path}
+        page={page}
+        view={tab}
+        resetVersion={resetVersion}
+        actions={controls}
+      />
     );
   else if (routePath === 'getting-started') content = <GettingStarted />;
   else if (routePath === 'components')
@@ -438,27 +461,10 @@ export default function App() {
           tabIndex={-1}
           className={`docs-main${comparison ? ' docs-comparison' : ''}`}
         >
-          <div className="docs-page-controls">
-            <Theme theme={comparison ? oppositeAppearance : appearance}>
-              <ActionGroup align="end">
-                {page?.section === 'Components' && tab === 'preview' && (
-                  <Button
-                    variant="secondary"
-                    onClick={() => setResetVersion((version) => version + 1)}
-                  >
-                    Reset examples
-                  </Button>
-                )}
-                <IconButton
-                  icon={appearance === 'light' ? <DarkMode /> : <LightMode />}
-                  aria-label={`Switch to ${oppositeAppearance} theme`}
-                  title={`Switch to ${oppositeAppearance} theme`}
-                  onClick={() => setAppearance(oppositeAppearance)}
-                />
-              </ActionGroup>
-            </Theme>
-          </div>
-          {!isOverview && !page && <PageHeader title={title} breadcrumb="envUI" />}
+          {isOverview && <div className="docs-overview-controls">{controls}</div>}
+          {!isOverview && !page && (
+            <PageHeader title={title} breadcrumb="envUI" actions={controls} />
+          )}
           {content}
           <PageNavigation
             path={page?.path ?? routePath}

@@ -7,15 +7,17 @@ export function PageHeader({
   breadcrumb,
   summary,
   children,
+  actions,
 }: {
   title: string;
   breadcrumb?: string;
   summary?: string;
   children?: ReactNode;
+  actions?: ReactNode;
 }) {
   return (
     <header className="docs-page-header">
-      <Card>
+      <Card className="docs-page-header-card">
         <Stack gap={3}>
           {breadcrumb && <Text variant="caption">{breadcrumb}</Text>}
           <Text as="h1" variant="page-heading">
@@ -25,6 +27,7 @@ export function PageHeader({
         </Stack>
         {children}
       </Card>
+      {actions}
     </header>
   );
 }

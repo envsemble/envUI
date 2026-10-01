@@ -1,4 +1,5 @@
 import { Button, Stack, Tabs, Text } from '@envsemble/envui';
+import type { ReactNode } from 'react';
 import { Code } from './Code';
 import {
   referencePages,
@@ -37,10 +38,12 @@ export function ReferenceContent({
   page,
   view,
   resetVersion,
+  actions,
 }: {
   page: ReferencePage;
   view: ReferenceView;
   resetVersion: number;
+  actions: ReactNode;
 }) {
   const { reference } = page;
   return (
@@ -55,6 +58,7 @@ export function ReferenceContent({
             page.section === 'Foundations' ? 'Foundations' : `Components / ${reference.group}`
           }
           summary={reference.summary}
+          actions={actions}
         >
           {list}
         </PageHeader>

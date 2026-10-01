@@ -75,7 +75,16 @@ body {
   max-width: 100%;
 }
 .docs-page-header {
-  padding-inline: clamp(1.25rem, 3vw, 3rem);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  padding: var(--space-5) clamp(1.25rem, 3vw, 3rem) var(--space-4);
+}
+.docs-page-header-card {
+  inline-size: fit-content;
+  max-inline-size: min(100%, 28rem);
 }
 .docs-main > .docs-page-header {
   margin-block-end: var(--space-6);
@@ -84,6 +93,11 @@ body {
   max-width: 65ch;
 }
 .docs-page-controls {
+  margin-inline-start: auto;
+  flex-shrink: 0;
+  max-inline-size: 100%;
+}
+.docs-overview-controls {
   display: flex;
   justify-content: flex-end;
   padding: var(--space-5) clamp(1.25rem, 3vw, 3rem) var(--space-4);
