@@ -4,9 +4,11 @@ import {
   Button,
   IconButton,
   NavigationItem,
+  DirectionLink,
   InfoChip,
   DisclosureNote,
   Card,
+  ClickableCard,
   ActionCard,
   FeatureCard,
   GroupedRows,
@@ -21,6 +23,7 @@ import {
   RadioGroup,
   Radio,
   Select,
+  Tabs,
   Dialog,
   Toast,
   ToastProvider,
@@ -28,8 +31,17 @@ import {
   Stack,
   ActionGroup,
   useTheme,
-} from '@envsemble/ui';
-import { Add, ChevronRight, Home, Search, Apps, Settings } from '@envsemble/ui/icons';
+} from '@envsemble/envui';
+import {
+  Add,
+  ChevronRight,
+  Home,
+  Search,
+  Apps,
+  Settings,
+  ArrowBack,
+  ArrowForward,
+} from '@envsemble/envui/icons';
 
 type Appearance = 'light' | 'dark';
 export function Paired({ children }: { children: (theme: Appearance) => ReactNode }) {
@@ -219,6 +231,10 @@ export function ComponentPreview({ id }: { id: string }) {
   const [access, setAccess] = useState('team');
   const [count, setCount] = useState('3');
   const [selected, setSelected] = useState('Home');
+  const [tabView, setTabView] = useState<string | null>('preview');
+  const [tabStyle, setTabStyle] = useState<string | null>('secondary');
+  const [tabIcon, setTabIcon] = useState<string | null>('home');
+  const [tabNavigation, setTabNavigation] = useState<string | null>('home');
   const [expanded, setExpanded] = useState(false);
   const [dismissed, setDismissed] = useState<string[]>([]);
   const [dialogTheme, setDialogTheme] = useState<Appearance | null>(null);
@@ -235,6 +251,10 @@ export function ComponentPreview({ id }: { id: string }) {
     setAccess('team');
     setCount('3');
     setSelected('Home');
+    setTabView('preview');
+    setTabStyle('secondary');
+    setTabIcon('home');
+    setTabNavigation('home');
     setExpanded(false);
     setDismissed([]);
     setDialogTheme(null);
@@ -576,15 +596,6 @@ export function ComponentPreview({ id }: { id: string }) {
                           selected={selected === label}
                           onClick={() => setSelected(label)}
                           icon={i === 0 ? <Home /> : i === 1 ? <Apps /> : <Settings />}
-                          selectedIcon={
-                            i === 0 ? (
-                              <Home filled />
-                            ) : i === 1 ? (
-                              <Apps filled />
-                            ) : (
-                              <Settings filled />
-                            )
-                          }
                         >
                           {label}
                         </NavigationItem>
@@ -594,7 +605,7 @@ export function ComponentPreview({ id }: { id: string }) {
                   <Example title="States">
                     <Stack>
                       <NavigationItem icon={<Home />}>Home</NavigationItem>
-                      <NavigationItem icon={<Home />} selectedIcon={<Home filled />} selected>
+                      <NavigationItem icon={<Home />} selected>
                         Selected destination
                       </NavigationItem>
                       <NavigationItem icon={<Home />} className="docs-force-1">
@@ -610,6 +621,162 @@ export function ComponentPreview({ id }: { id: string }) {
                         Disabled destination
                       </NavigationItem>
                     </Stack>
+                  </Example>
+                </>
+              );
+            case 'tabs':
+              return (
+                <>
+                  <Example title="Content views">
+                    <Tabs
+                      aria-label="Example reference views"
+                      value={tabView}
+                      onValueChange={setTabView}
+                      keepMounted
+                      items={[
+                        {
+                          value: 'preview',
+                          button: <Button>Preview</Button>,
+                          content: (
+                            <Card>
+                              <h3>Live preview</h3>
+                              <p>Explore the component in use.</p>
+                            </Card>
+                          ),
+                        },
+                        {
+                          value: 'guidelines',
+                          button: <Button>Guidelines</Button>,
+                          content: (
+                            <Card>
+                              <h3>Design guidelines</h3>
+                              <p>Use the shared colors, spacing and motion.</p>
+                            </Card>
+                          ),
+                        },
+                        {
+                          value: 'usage',
+                          button: <Button>Usage</Button>,
+                          content: (
+                            <Card>
+                              <h3>React usage</h3>
+                              <p>Import Tabs and supply buttons with their content.</p>
+                            </Card>
+                          ),
+                        },
+                      ]}
+                    />
+                  </Example>
+                  <Example title="Button styles" caption="The selected tab keeps its button style.">
+                    <Tabs
+                      aria-label="Button style examples"
+                      value={tabStyle}
+                      onValueChange={setTabStyle}
+                      items={[
+                        {
+                          value: 'secondary',
+                          button: <Button variant="secondary">Secondary</Button>,
+                          content: <Card>Secondary button fill and border.</Card>,
+                        },
+                        {
+                          value: 'outlined',
+                          button: <Button variant="outlined">Outlined</Button>,
+                          content: <Card>Outlined button fill, label and border.</Card>,
+                        },
+                        {
+                          value: 'important',
+                          button: <Button variant="important">Important</Button>,
+                          content: <Card>Important button color and standard corners.</Card>,
+                        },
+                        {
+                          value: 'unavailable',
+                          button: <Button disabled>Unavailable</Button>,
+                          content: null,
+                        },
+                      ]}
+                    />
+                  </Example>
+                  <Example title="Icon buttons" caption="Accessible names identify each view.">
+                    <Tabs
+                      aria-label="Icon views"
+                      value={tabIcon}
+                      onValueChange={setTabIcon}
+                      items={[
+                        {
+                          value: 'home',
+                          button: <IconButton icon={<Home />} aria-label="Home view" />,
+                          content: <Card>Home content</Card>,
+                        },
+                        {
+                          value: 'search',
+                          button: <IconButton icon={<Search />} aria-label="Search view" />,
+                          content: <Card>Search content</Card>,
+                        },
+                        {
+                          value: 'settings',
+                          button: <IconButton icon={<Settings />} aria-label="Settings view" />,
+                          content: <Card>Settings content</Card>,
+                        },
+                      ]}
+                    />
+                  </Example>
+                  <Example title="Navigation buttons" caption="Tabs owns selection and icon fill.">
+                    <Tabs
+                      aria-label="Workspace views"
+                      value={tabNavigation}
+                      onValueChange={setTabNavigation}
+                      items={[
+                        {
+                          value: 'home',
+                          button: <NavigationItem icon={<Home />}>Home</NavigationItem>,
+                          content: <Card>Workspace overview</Card>,
+                        },
+                        {
+                          value: 'projects',
+                          button: <NavigationItem icon={<Apps />}>Projects</NavigationItem>,
+                          content: <Card>Workspace projects</Card>,
+                        },
+                      ]}
+                    />
+                  </Example>
+                </>
+              );
+            case 'direction-links':
+              return (
+                <>
+                  <Example title="Previous & up next">
+                    <ActionGroup>
+                      <DirectionLink
+                        direction="previous"
+                        href="#/foundations/typography"
+                        icon={<ArrowBack />}
+                      >
+                        Typography
+                      </DirectionLink>
+                      <DirectionLink
+                        direction="next"
+                        href="#/foundations/spacing"
+                        icon={<ArrowForward />}
+                      >
+                        Spacing & shape
+                      </DirectionLink>
+                    </ActionGroup>
+                  </Example>
+                  <Example title="Without an icon">
+                    <DirectionLink direction="next" href="#/getting-started">
+                      Getting started
+                    </DirectionLink>
+                  </Example>
+                  <Example title="Long destination text">
+                    <div className="docs-narrow-actions">
+                      <DirectionLink
+                        direction="next"
+                        href="#/foundations/motion"
+                        icon={<ArrowForward />}
+                      >
+                        Motion & accessibility across the component library
+                      </DirectionLink>
+                    </div>
                   </Example>
                 </>
               );
@@ -681,6 +848,27 @@ export function ComponentPreview({ id }: { id: string }) {
             case 'cards':
               return (
                 <>
+                  <Example title="Clickable destination">
+                    <ClickableCard href="#/overview">
+                      <h3>Component overview</h3>
+                      <p>Open the catalogue from anywhere on this card.</p>
+                    </ClickableCard>
+                  </Example>
+                  <Example title="Clickable action">
+                    <ClickableCard onClick={() => setExpanded(!expanded)} aria-expanded={expanded}>
+                      <span>{expanded ? 'Hide details' : 'Show details'}</span>
+                      <span>
+                        {expanded
+                          ? 'Your team and tools share one workspace.'
+                          : 'Activate this card to reveal more context.'}
+                      </span>
+                    </ClickableCard>
+                  </Example>
+                  <Example title="Disabled card">
+                    <ClickableCard disabled>
+                      <span>Workspace unavailable</span>
+                    </ClickableCard>
+                  </Example>
                   <Example title="General surface">
                     <Card>
                       <h3>Project overview</h3>
@@ -894,92 +1082,5 @@ export function ComponentPreview({ id }: { id: string }) {
       </Paired>
       {id === 'toasts' && <ManagedToastExample key={resetVersion} />}
     </>
-  );
-}
-
-export function OverviewPreview() {
-  const [notifications, setNotifications] = useState(true);
-  const [visibility, setVisibility] = useState('team');
-  const [note, setNote] = useState(false);
-  return (
-    <Paired>
-      {(theme) => (
-        <>
-          <Example title="A connected workspace">
-            <FeatureCard
-              icon={<Apps />}
-              title="Bring your next release together"
-              description="Projects, people and shared decisions in one workspace."
-              action={
-                <Button
-                  startIcon={<Add />}
-                  onClick={() => {
-                    location.hash = '/components/buttons/preview';
-                  }}
-                >
-                  Create project
-                </Button>
-              }
-            />
-          </Example>
-          <Example title="Project settings">
-            <GroupedRows>
-              <Row title="Project" detail="Autumn release" action={<InfoChip>Active</InfoChip>} />
-              <Row
-                title="Notifications"
-                detail="Keep everyone up to date"
-                action={
-                  <Switch
-                    label="Enable notifications"
-                    checked={notifications}
-                    onCheckedChange={setNotifications}
-                  />
-                }
-              />
-            </GroupedRows>
-            <>
-              <Select
-                label="Visibility"
-                name={`overview-visibility-${theme}`}
-                value={visibility}
-                onValueChange={(v) => setVisibility(v ?? 'team')}
-                options={[
-                  { value: 'team', label: 'Team' },
-                  { value: 'private', label: 'Private' },
-                ]}
-              />
-            </>
-            <DisclosureNote
-              title="How visibility works"
-              open={note}
-              onToggle={(e) => setNote(e.currentTarget.open)}
-            >
-              <p>Choose who can see the project. The application owns your selection.</p>
-            </DisclosureNote>
-          </Example>
-          <Example title="Related actions">
-            <ActionCard
-              title="Autumn release"
-              meta="Updated today"
-              actions={
-                <>
-                  <Button variant="secondary">Share</Button>
-                  <Button
-                    variant="outlined"
-                    onClick={() => {
-                      location.hash = '/components/cards/preview';
-                    }}
-                  >
-                    View project
-                  </Button>
-                </>
-              }
-            >
-              A composed example using the public library components.
-            </ActionCard>
-          </Example>
-        </>
-      )}
-    </Paired>
   );
 }

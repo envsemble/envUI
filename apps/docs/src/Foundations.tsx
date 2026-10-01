@@ -2,13 +2,16 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import {
   Button,
   BrandLogo,
+  EnvUILogo,
   Card,
   GroupedRows,
   Row,
   IconButton,
   NavigationItem,
+  Stack,
   ActionGroup,
-} from '@envsemble/ui';
+  DisclosureNote,
+} from '@envsemble/envui';
 import {
   Home,
   Category,
@@ -20,7 +23,7 @@ import {
   Groups3,
   ChevronRight,
   Devices,
-} from '@envsemble/ui/icons';
+} from '@envsemble/envui/icons';
 import { Paired } from './Previews';
 
 export const foundations = [
@@ -42,7 +45,7 @@ export const foundations = [
   {
     id: 'icons',
     title: 'Icons & assets',
-    summary: 'Official Material Symbols Rounded and the envsemble identity.',
+    summary: 'Official Material Symbols Rounded, envUI and shared envsemble assets.',
   },
   {
     id: 'responsive',
@@ -60,7 +63,7 @@ const colorGroups: [string, [string, string][]][] = [
     'Backgrounds',
     [
       ['canvas', 'Page background'],
-      ['pane', 'Background panes · grouped content'],
+      ['pane', 'Background panes · grouped content & tab rails'],
       ['surface-muted', 'Rows, cards & circular buttons'],
       ['surface', 'Alternate row fill & secondary buttons'],
     ],
@@ -151,6 +154,97 @@ function Palette() {
     </div>
   );
 }
+
+function InteractionColors({
+  detailsOpen,
+  onDetailsToggle,
+}: {
+  detailsOpen: boolean;
+  onDetailsToggle: (open: boolean) => void;
+}) {
+  const states = [
+    { label: 'Default', detail: 'Base color', className: undefined, disabled: false },
+    {
+      label: 'Hover',
+      detail: (
+        <>
+          <TokenValue token="--state-hover-shift" /> point shift
+        </>
+      ),
+      className: 'docs-force-1',
+      disabled: false,
+    },
+    {
+      label: 'Pressed',
+      detail: (
+        <>
+          <TokenValue token="--state-pressed-shift" /> point shift
+        </>
+      ),
+      className: 'docs-force-2',
+      disabled: false,
+    },
+    {
+      label: 'Disabled',
+      detail: (
+        <>
+          <TokenValue token="--state-disabled-opacity" /> opacity
+        </>
+      ),
+      className: undefined,
+      disabled: true,
+    },
+  ];
+
+  return (
+    <section className="docs-example docs-interaction-colors">
+      <DisclosureNote
+        title="How colors are derived"
+        open={detailsOpen}
+        onToggle={(event) => onDetailsToggle(event.currentTarget.open)}
+      >
+        <Stack gap={5} className="docs-interaction-content">
+          <GroupedRows className="docs-interaction-rows" aria-label="Interaction color states">
+            {states.map((state) => (
+              <Row
+                key={state.label}
+                title={state.label}
+                detail={state.detail}
+                action={
+                  <Button className={state.className} disabled={state.disabled}>
+                    Save
+                  </Button>
+                }
+              />
+            ))}
+          </GroupedRows>
+          <p>
+            Below <TokenValue token="--state-lightness-threshold" />% HSL lightness, colors get
+            lighter on hover and press. At or above that threshold, they get darker. Lightness stays
+            within 0–100%.
+          </p>
+          <dl className="docs-interaction-recipes">
+            <div>
+              <dt>Selected navigation</dt>
+              <dd>
+                <TokenValue token="--state-selected-base-weight" /> link color mixed with its
+                surface
+              </dd>
+            </div>
+            <div>
+              <dt>Card action strip</dt>
+              <dd>
+                <TokenValue token="--state-card-strip-weight" /> muted surface mixed with its parent
+                surface
+              </dd>
+            </div>
+          </dl>
+        </Stack>
+      </DisclosureNote>
+    </section>
+  );
+}
+
 const types = [
   ['Page heading', '--type-h1', '--color-text-primary', '1.125 rem · 500'],
   ['Section heading', '--type-h2', '--color-text-primary', '1 rem · 500'],
@@ -170,6 +264,8 @@ const iconList = [
 ] as const;
 
 export function FoundationPreview({ id }: { id: string }) {
+  const [colorDetailsOpen, setColorDetailsOpen] = useState(false);
+  const [themeHuesOpen, setThemeHuesOpen] = useState(false);
   return (
     <Paired>
       {() => {
@@ -178,34 +274,25 @@ export function FoundationPreview({ id }: { id: string }) {
             return (
               <>
                 <Palette />
-                <section className="docs-example">
-                  <h2>Interaction color rule</h2>
+                <DisclosureNote
+                  title="Theme hues"
+                  open={themeHuesOpen}
+                  onToggle={(event) => setThemeHuesOpen(event.currentTarget.open)}
+                >
                   <p>
-                    Below <TokenValue token="--state-lightness-threshold" />% HSL lightness, add
-                    lightness; at or above that threshold, subtract it. Hover shifts{' '}
-                    <TokenValue token="--state-hover-shift" /> points and pressed shifts{' '}
-                    <TokenValue token="--state-pressed-shift" /> points. Values clamp to 0–100%.
+                    Matching colors share a hue across themes; saturation and lightness can differ.
+                    Focus rings use neutral text in light mode and link blue in dark mode.
                   </p>
-                  <p>
-                    Selected navigation mixes <TokenValue token="--state-selected-base-weight" />{' '}
-                    link color with its surface. The card action strip mixes{' '}
-                    <TokenValue token="--state-card-strip-weight" /> muted surface with its parent
-                    surface. Disabled opacity is <TokenValue token="--state-disabled-opacity" />.
-                  </p>
-                  <ActionGroup>
-                    <Button>Primary action</Button>
-                    <Button variant="important">Important action</Button>
-                    <Button variant="outlined">Outlined action</Button>
-                  </ActionGroup>
-                </section>
+                </DisclosureNote>
+                <InteractionColors
+                  detailsOpen={colorDetailsOpen}
+                  onDetailsToggle={setColorDetailsOpen}
+                />
               </>
             );
           case 'typography':
             return (
               <>
-                <p className="docs-caption docs-type-intro">
-                  Inter Variable · line height 1.4 · regular 400 / medium 500 · ordered by emphasis
-                </p>
                 <Card tone="pane" className="docs-type-card">
                   <ol className="docs-type-list">
                     {types.map(([title, font, color, meta]) => (
@@ -325,18 +412,22 @@ export function FoundationPreview({ id }: { id: string }) {
                 </section>
                 <section className="docs-example">
                   <h2>Brand identity</h2>
-                  <Card>
-                    <BrandLogo className="docs-brand-specimen" />
-                  </Card>
-                  <p className="docs-caption">
-                    Use the bundled envsemble lockup. Theme selection determines the appropriate
-                    visible color.
-                  </p>
+                  <div className="docs-icon-grid">
+                    <Card>
+                      <EnvUILogo className="docs-brand-specimen" />
+                      <p className="docs-caption">envUI</p>
+                    </Card>
+                    <Card>
+                      <BrandLogo className="docs-brand-specimen" />
+                      <p className="docs-caption">envsemble</p>
+                    </Card>
+                  </div>
+                  <p className="docs-caption">Bundled lockups inherit the theme’s text color.</p>
                 </section>
                 <section className="docs-example">
                   <h2>Icon composition</h2>
                   <ActionGroup>
-                    <NavigationItem icon={<Home />} selectedIcon={<Home filled />} selected>
+                    <NavigationItem icon={<Home />} selected>
                       Home
                     </NavigationItem>
                     <Button startIcon={<Add />}>Create item</Button>

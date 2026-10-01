@@ -1,4 +1,4 @@
-# @envsemble/ui usage
+# @envsemble/envui usage
 
 React 19 components for current browsers. Import the public package API and one stylesheet. Theme preference, routing, validation and product data belong to the application.
 
@@ -13,15 +13,15 @@ Configure private GitHub Packages access using an environment token with read:pa
 ```
 
 ```sh
-npm install @envsemble/ui react@^19 react-dom@^19
+npm install @envsemble/envui react@^19 react-dom@^19
 ```
 
 ## First component
 
 ```tsx
-import { Theme, Button } from '@envsemble/ui';
-import { Add } from '@envsemble/ui/icons';
-import '@envsemble/ui/styles.css';
+import { Theme, Button } from '@envsemble/envui';
+import { Add } from '@envsemble/envui/icons';
+import '@envsemble/envui/styles.css';
 
 export function App() {
   return <Theme theme="light">
@@ -30,14 +30,14 @@ export function App() {
 }
 ```
 
-Use Theme theme="light" or theme="dark". Inter, tokens and assets are included. Imports from @envsemble/ui/icons are explicit, and icons accept filled, width, height and accessible SVG attributes. Components accept custom React icon content.
+Use Theme theme="light" or theme="dark". Inter, tokens and assets are included. Imports from @envsemble/envui/icons are explicit, and icons accept filled, width, height and accessible SVG attributes. Components accept custom React icon content.
 
 ## Content & action layout
 
 Shared spacing for text, fields and grouped actions.
 
 ```tsx
-import { Card, Stack, ActionGroup, Input, Button } from '@envsemble/ui';
+import { Card, Stack, ActionGroup, Input, Button } from '@envsemble/envui';
 
 <Card>
   <h3>Project details</h3>
@@ -75,8 +75,8 @@ ActionGroup uses 1 rem gaps in wrapped rows and 0.5 rem when stacked. Circular i
 Clear actions with a shared size, spacing and state treatment.
 
 ```tsx
-import { Button } from '@envsemble/ui';
-import { Add } from '@envsemble/ui/icons';
+import { Button } from '@envsemble/envui';
+import { Add } from '@envsemble/envui/icons';
 
 <Button variant="primary" startIcon={<Add />} onClick={createItem}>
   Create item
@@ -100,8 +100,8 @@ Interaction colors follow the central HSL lightness rule described in Colors & t
 Compact circular actions with a clear accessible name.
 
 ```tsx
-import { IconButton } from '@envsemble/ui';
-import { ChevronRight } from '@envsemble/ui/icons';
+import { IconButton } from '@envsemble/envui';
+import { ChevronRight } from '@envsemble/envui/icons';
 
 <IconButton icon={<ChevronRight />} aria-label="Next item" onClick={next} />
 ```
@@ -119,7 +119,7 @@ Use the tonal row fill and neutral icon. Name the action, rather than describing
 Single-line entry with visible labels and connected help.
 
 ```tsx
-import { Input } from '@envsemble/ui';
+import { Input } from '@envsemble/envui';
 
 <Input label="Project name" name="project" value={name}
   onChange={event => setName(event.target.value)}
@@ -138,7 +138,7 @@ Inputs support empty, filled, focus, invalid, disabled and read-only states. Kee
 Longer entry using the same label, hint and error treatment.
 
 ```tsx
-import { Textarea } from '@envsemble/ui';
+import { Textarea } from '@envsemble/envui';
 
 <Textarea label="Description" name="description" rows={4}
   value={description} onChange={e => setDescription(e.target.value)} />
@@ -156,7 +156,7 @@ Allow resizing and preserve the same state treatment as single-line fields.
 Independent choices, including partial group selection.
 
 ```tsx
-import { Checkbox } from '@envsemble/ui';
+import { Checkbox } from '@envsemble/envui';
 
 <Checkbox label="Include archived items" name="archived"
   checked={included} onCheckedChange={setIncluded} />
@@ -175,7 +175,7 @@ Keep a visible label and retain native form participation. The application compu
 A binary setting that can be understood as on or off.
 
 ```tsx
-import { Switch } from '@envsemble/ui';
+import { Switch } from '@envsemble/envui';
 
 <Switch label="Enable notifications" name="notifications"
   checked={enabled} onCheckedChange={setEnabled} />
@@ -194,7 +194,7 @@ Use checkbox semantics when the choice is part of a submitted selection.
 One selection from a visible set of alternatives.
 
 ```tsx
-import { RadioGroup, Radio } from '@envsemble/ui';
+import { RadioGroup, Radio } from '@envsemble/envui';
 
 <RadioGroup label="Access" name="access" value={access}
   onValueChange={setAccess} variant="rows">
@@ -216,7 +216,7 @@ Selectable rows reuse the grouped-row geometry. Use a unique group name for each
 A compact choice with a tonal trigger and grouped option rows.
 
 ```tsx
-import { Select } from '@envsemble/ui';
+import { Select } from '@envsemble/envui';
 
 <Select label="Visibility" name="visibility" value={visibility}
   onValueChange={setVisibility} options={[
@@ -234,35 +234,119 @@ Use a select to save space when a single choice has several alternatives.
 
 Use the tonal trigger, selected indication and grouped option geometry. Keyboard navigation, typeahead and dismissal come from the component.
 
+Option focus rings appear for keyboard interaction, not pointer opening or hover.
+
 ## Navigation
 
 Quiet destinations and a clear selected location.
 
 ```tsx
-import { NavigationItem } from '@envsemble/ui';
-import { Home } from '@envsemble/ui/icons';
+import { NavigationItem } from '@envsemble/envui';
+import { Home } from '@envsemble/envui/icons';
 
 <NavigationItem href="#/home" selected={page === 'home'}
-  icon={<Home />} selectedIcon={<Home filled />}>
+  icon={<Home />}>
   Home
 </NavigationItem>
 ```
 
 - href: Renders a link; omit for a button action
 - selected / disabled: Current destination and unavailable state
-- icon / selectedIcon: Optional ordinary and selected icon content
+- icon: Material Symbols fill automatically when selected; custom React icons are supported
+- selectedIcon: Optional selected variant for custom icons
 - children / native props: Destination label and link/button attributes
 
 The application owns routing and the selected destination. Use a meaningful destination label.
 
+Pass one Material Symbol. Navigation renders its filled variant when selected and its outline otherwise, including icons inside wrappers.
+
 Unselected icons use the caption color; selected icon and label use the link color. Navigation fits its content with a 2.5 rem minimum height.
+
+Selection keeps the gray/blue styling. Hover and pressed preserve the base hue and saturation and use the central lightness rule.
+
+## Tabs
+
+One selection, a quiet rail and animated content panels.
+
+```tsx
+import { Tabs, Button, Card } from '@envsemble/envui';
+
+<Tabs aria-label="Project views" defaultValue="preview" keepMounted
+  items={[
+    { value: 'preview', button: <Button>Preview</Button>,
+      content: <Card>Live preview</Card> },
+    { value: 'guidelines', button: <Button>Guidelines</Button>,
+      content: <Card>Design guidelines</Card> },
+    { value: 'usage', button: <Button>Usage</Button>,
+      content: <Card>React usage</Card> },
+  ]}
+/>
+```
+
+- items: Unique string value, button element, content and optional disabled for each tab
+- aria-label: Required name for the tab list
+- value / defaultValue: Controlled or initial selection; defaults to the first enabled item
+- onValueChange: Receives the selected string, or null when no selection remains
+- activation: automatic (default) selects on focus; manual requires Enter or Space
+- orientation: horizontal (default) or vertical; keyboard arrows follow the orientation
+- keepMounted: Preserve inactive content state; default false unmounts it after transition
+- listClassName / panelClassName: Optional layout classes for the list and panels
+- Native div props: className, style, ref and accessible attributes on the root
+
+Use tabs for related views in one place. Tabs owns selection, linked panels and keyboard behavior; your application owns any URL synchronization.
+
+Supply Button, IconButton, NavigationItem without href, or a custom component that forwards native button props and ref. Do not nest another control inside a tab. Icon-only tabs need an accessible name.
+
+The rail uses the pane color with 0.25 rem padding and gaps. Only the selected tab shows its supplied button fill; its hover and pressed colors follow the existing button rules. Official icons fill automatically when selected.
+
+Arrow keys move between enabled tabs; Home and End reach the ends. Use manual activation for content that takes time to load. Disabled tabs are skipped.
+
+Selection and panels transition over 0.16 s with shared easing. Reduced motion removes transitions. Inactive panels are hidden and inert; keepMounted preserves their local state.
+
+## Direction links
+
+Previous and up-next destinations with consistent direction, text and optional icons.
+
+```tsx
+import { DirectionLink, ActionGroup } from '@envsemble/envui';
+import { ArrowBack, ArrowForward } from '@envsemble/envui/icons';
+
+<ActionGroup>
+  <DirectionLink direction="previous" href="/typography" icon={<ArrowBack />}>
+    Typography
+  </DirectionLink>
+  <DirectionLink direction="next" href="/spacing" icon={<ArrowForward />}>
+    Spacing & shape
+  </DirectionLink>
+</ActionGroup>
+
+<DirectionLink direction="next" href="/getting-started">
+  Getting started
+</DirectionLink>
+```
+
+- direction: Required: previous or next; sets the direction label and icon placement
+- children: Destination text; wraps when space is limited
+- href: Required destination URL; renders a native link
+- icon: Optional decorative React content; no icon is inserted by default
+- Native link props: ref, onClick, target, rel, className and accessible attributes
+
+Use for previous and next destinations in ordered content. The component supplies Previous or Up next; the application supplies the destination text and routing.
+
+The destination is the main text. Its supporting direction label sits above it inside a compact outlined rectangle with standard rounding.
+
+Optional icons appear before previous destinations and after next destinations. Choose an appropriate arrow; icons are decorative and the text provides the accessible name.
+
+Show only destinations that exist. Arrange links using an existing layout component; DirectionLink represents one destination.
+
+Hover and pressed use the shared subtle-action and border colors. Keyboard focus has a visible outline, and text wraps without growing beyond its container.
 
 ## Grouped rows
 
 Connected content with generous outer corners and compact inner joins.
 
 ```tsx
-import { GroupedRows, Row, Button } from '@envsemble/ui';
+import { GroupedRows, Row, Button } from '@envsemble/envui';
 
 <GroupedRows>
   <Row title="Notifications" detail="Delivery preferences"
@@ -286,8 +370,17 @@ Keep actions short and let long titles and details wrap.
 Rounded surfaces for related content and familiar action compositions.
 
 ```tsx
-import { Card, ActionCard, FeatureCard, Button } from '@envsemble/ui';
-import { Apps } from '@envsemble/ui/icons';
+import { Card, ClickableCard, ActionCard, FeatureCard, Button } from '@envsemble/envui';
+import { Apps } from '@envsemble/envui/icons';
+
+<ClickableCard href="/projects" aria-labelledby="projects-title">
+  <h3 id="projects-title">Projects</h3>
+  <p>Open your shared workspace.</p>
+</ClickableCard>
+
+<ClickableCard onClick={openProject}>
+  <span>Open project</span>
+</ClickableCard>
 
 <FeatureCard icon={<Apps />} title="Connected workspace"
   description="Bring your team and tools together."
@@ -300,12 +393,17 @@ import { Apps } from '@envsemble/ui/icons';
 ```
 
 - Card: children, tone (row or pane) and native div props
+- ClickableCard: children, href (renders a link), disabled and native anchor/button props; defaults to type="button"
 - ActionCard: title, meta, children, actions
 - FeatureCard: icon, title, description, action
 
 Use 1.75 rem corners. Row tone is the standalone card fill; pane tone groups content in a quieter background.
 
 Cards space direct children by 1 rem. FeatureCard keeps compact title/description spacing and separates additional content by 1 rem.
+
+Use ClickableCard for a single destination or action. The whole surface is the control; do not nest buttons, links or other interactive content inside it. Use phrasing content such as spans in the button version.
+
+ClickableCard shares the standalone card fill and radius, with hover, pressed, keyboard focus and disabled states. Use href for navigation; omit it for a native button. Label rich cards with aria-labelledby and connect supporting text with aria-describedby.
 
 The action strip derives its fill from the parent surface. Compose actions from the shared controls.
 
@@ -316,7 +414,7 @@ Titles, metadata and product data remain application content.
 Metadata stays compact; optional guidance expands when needed.
 
 ```tsx
-import { InfoChip, DisclosureNote } from '@envsemble/ui';
+import { InfoChip, DisclosureNote } from '@envsemble/envui';
 
 <InfoChip>Optional</InfoChip>
 <DisclosureNote title="How visibility works">
@@ -337,8 +435,8 @@ Keep a disclosure title on one line. Put secondary guidance behind the disclosur
 Explain missing content and offer a relevant next action.
 
 ```tsx
-import { EmptyState, Button } from '@envsemble/ui';
-import { Search } from '@envsemble/ui/icons';
+import { EmptyState, Button } from '@envsemble/envui';
+import { Search } from '@envsemble/envui/icons';
 
 <EmptyState icon={<Search />} title="No results"
   description="Try a different name or clear the filters."
@@ -357,7 +455,7 @@ Offer an action that resolves the situation. Keep the content aligned to the sta
 Show content geometry while announcing that work is in progress.
 
 ```tsx
-import { LoadingState, Skeleton } from '@envsemble/ui';
+import { LoadingState, Skeleton } from '@envsemble/envui';
 
 <LoadingState label="Loading project">
   <Skeleton width="38%" height="1.25rem" />
@@ -378,7 +476,7 @@ Announce loading once per region. Respect the operating system reduced motion pr
 Brief feedback with optional recovery and explicit dismissal.
 
 ```tsx
-import { Theme, Button, ToastProvider, useToast } from '@envsemble/ui';
+import { Theme, Button, ToastProvider, useToast } from '@envsemble/envui';
 
 function SaveButton() {
   const toast = useToast();
@@ -410,7 +508,7 @@ Keep messages and actions short. Messages stay single-line and truncate to avail
 Focused confirmation or entry with a modal boundary and return focus.
 
 ```tsx
-import { Dialog, Button, Input } from '@envsemble/ui';
+import { Dialog, Button, Input } from '@envsemble/envui';
 
 <Dialog trigger={<Button>Create project</Button>} title="Create project"
   description="Choose a name your team will recognize."
@@ -434,4 +532,4 @@ The application owns validation, saving, async work and whether completion close
 
 ## Local edits and upgrades
 
-In the design-system repository, run npm install and npm run dev. The documentation workspace consumes the public package through the local workspace. Changes appear during development without publishing or changing the package version. A future product can use the same workspace connection; product integration is separate work. Adopt a published version intentionally with npm install @envsemble/ui@<version>, review CHANGELOG.md, and validate the consumer before release. Every release has a matching offline documentation HTML.
+In the design-system repository, run npm install and npm run dev. The documentation workspace consumes the public package through the local workspace. Changes appear during development without publishing or changing the package version. A future product can use the same workspace connection; product integration is separate work. Adopt a published version intentionally with npm install @envsemble/envui@<version>, review CHANGELOG.md, and validate the consumer before release. Every release has a matching offline documentation HTML.
