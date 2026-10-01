@@ -26,7 +26,7 @@ import {
   Devices,
 } from '@envsemble/envui/icons';
 import { Paired } from './Previews';
-import { Example } from './Example';
+import { Example, SpecimenGrid } from './Example';
 
 const colorGroups: [string, [string, string][]][] = [
   [
@@ -202,7 +202,7 @@ function TextSpecimen({ sample, children }: { sample: ReactNode; children: React
 function TypographyPreview() {
   return (
     <>
-      <Example title="Text variants">
+      <Example title="Text variants" size="wide">
         <Card tone="pane">
           <ol className="docs-type-list">
             {types.map(([title, variant, color, meta]) => (
@@ -223,7 +223,7 @@ function TypographyPreview() {
           </ol>
         </Card>
       </Example>
-      <Example title="Text component">
+      <Example title="Text component" size="wide">
         <Text variant="supporting">
           variant sets the style, tone sets the color, and as chooses the HTML element. Stack
           supplies spacing.
@@ -300,7 +300,7 @@ export function FoundationPreview({ id }: { id: string }) {
           case 'spacing':
             return (
               <>
-                <Example title="Spacing scale">
+                <Example title="Spacing scale" size="compact">
                   <div className="docs-spacing-list">
                     {[0.25, 0.5, 0.75, 1, 1.5, 2, 2.5, 3, 4].map((size, i) => (
                       <div className="docs-measure" key={size}>
@@ -314,8 +314,8 @@ export function FoundationPreview({ id }: { id: string }) {
                     ))}
                   </div>
                 </Example>
-                <Example title="Corner scale">
-                  <div className="docs-shapes">
+                <Example title="Corner scale" size="wide">
+                  <SpecimenGrid size="compact">
                     {[
                       ['1.75rem', 'Panes & outer rows'],
                       ['0.5rem', 'Inner rows & important actions'],
@@ -341,15 +341,15 @@ export function FoundationPreview({ id }: { id: string }) {
                         </span>
                       </div>
                     ))}
-                  </div>
+                  </SpecimenGrid>
                 </Example>
               </>
             );
           case 'icons':
             return (
               <>
-                <Example title="Rounded symbols">
-                  <div className="docs-icon-grid">
+                <Example title="Rounded symbols" size="collection">
+                  <SpecimenGrid size="compact">
                     {iconList.map(([label, Icon]) => (
                       <Card key={label}>
                         <div className="docs-icon-pair">
@@ -363,10 +363,10 @@ export function FoundationPreview({ id }: { id: string }) {
                         </Text>
                       </Card>
                     ))}
-                  </div>
+                  </SpecimenGrid>
                 </Example>
                 <Example title="Brand identity">
-                  <div className="docs-icon-grid">
+                  <SpecimenGrid size="compact">
                     <Card>
                       <EnvUILogo className="docs-brand-specimen" />
                       <Text variant="caption" className="docs-caption">
@@ -379,7 +379,7 @@ export function FoundationPreview({ id }: { id: string }) {
                         envsemble
                       </Text>
                     </Card>
-                  </div>
+                  </SpecimenGrid>
                   <Text variant="caption" className="docs-caption">
                     Bundled lockups inherit the theme’s text color.
                   </Text>
@@ -389,14 +389,16 @@ export function FoundationPreview({ id }: { id: string }) {
           case 'responsive':
             return (
               <>
-                <Example title="Desktop composition">
-                  <Stack className="docs-device-frame">
+                <Example title="Regular composition">
+                  <Stack>
                     <NavigationItem icon={<Home />} selected>
                       Workspace
                     </NavigationItem>
                     <Card>
-                      <h3>Autumn release</h3>
-                      <p>Content wraps naturally as the available space changes.</p>
+                      <Text as="h3" variant="section-heading">
+                        Autumn release
+                      </Text>
+                      <Text>Content wraps naturally as the available space changes.</Text>
                       <ActionGroup>
                         <Button variant="secondary">Cancel</Button>
                         <Button>Save changes</Button>
@@ -404,14 +406,16 @@ export function FoundationPreview({ id }: { id: string }) {
                     </Card>
                   </Stack>
                 </Example>
-                <Example title="Compact composition">
-                  <Stack className="docs-device-frame docs-device-mobile">
+                <Example title="Compact composition" size="compact">
+                  <Stack className="docs-narrow-actions">
                     <NavigationItem icon={<Devices />} selected>
                       Workspace
                     </NavigationItem>
                     <Card>
-                      <h3>Autumn release</h3>
-                      <p>Use stacked actions when the content needs more space.</p>
+                      <Text as="h3" variant="section-heading">
+                        Autumn release
+                      </Text>
+                      <Text>Use stacked actions when the content needs more space.</Text>
                       <ActionGroup stacked>
                         <Button>Save changes</Button>
                         <Button variant="secondary">Cancel</Button>
@@ -427,24 +431,24 @@ export function FoundationPreview({ id }: { id: string }) {
                 <Example title="Interaction timing">
                   <Surface tone="row">
                     <div className="docs-facts">
-                      <p>
+                      <Text variant="supporting">
                         Fast transitions{' '}
                         <code>
                           <TokenValue token="--motion-duration-fast" />
                         </code>
-                      </p>
-                      <p>
+                      </Text>
+                      <Text variant="supporting">
                         Medium transitions{' '}
                         <code>
                           <TokenValue token="--motion-duration-medium" />
                         </code>
-                      </p>
-                      <p>
+                      </Text>
+                      <Text variant="supporting">
                         Shared easing{' '}
                         <code>
                           <TokenValue token="--motion-ease" />
                         </code>
-                      </p>
+                      </Text>
                     </div>
                   </Surface>
                   <Text variant="caption" className="docs-caption">
@@ -460,10 +464,10 @@ export function FoundationPreview({ id }: { id: string }) {
                       aria-label="Next item"
                     />
                   </ActionGroup>
-                  <p>
+                  <Text>
                     Use the shared 0.125 rem focus ring. Keep keyboard order aligned with the
                     visible layout.
-                  </p>
+                  </Text>
                 </Example>
               </>
             );

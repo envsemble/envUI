@@ -42,7 +42,7 @@ import {
   ArrowBack,
   ArrowForward,
 } from '@envsemble/envui/icons';
-import { Example } from './Example';
+import { Example, Specimen, SpecimenGrid } from './Example';
 
 type Appearance = 'light' | 'dark';
 export function Paired({ children }: { children: (theme: Appearance) => ReactNode }) {
@@ -217,7 +217,9 @@ export function ComponentPreview({ id }: { id: string }) {
   const [tabNavigation, setTabNavigation] = useState<string | null>('home');
   const [expanded, setExpanded] = useState(false);
   const [dismissed, setDismissed] = useState<string[]>([]);
-  const [dialogTheme, setDialogTheme] = useState<Appearance | null>(null);
+  const [dialog, setDialog] = useState<{ theme: Appearance; kind: 'create' | 'delete' } | null>(
+    null,
+  );
   const [confirmation, setConfirmation] = useState('');
   return (
     <>
@@ -244,9 +246,10 @@ export function ComponentPreview({ id }: { id: string }) {
                   </Example>
                   <Example
                     title="Surface and Card"
-                    caption="A plain Surface leaves direct children in normal flow; Card adds its standard content layout."
+                    caption="Surface sets appearance; Card also spaces its contents."
+                    size="collection"
                   >
-                    <Stack>
+                    <SpecimenGrid size="card">
                       <Surface tone="row">
                         <Text as="h3" variant="section-heading">
                           Plain surface
@@ -259,17 +262,20 @@ export function ComponentPreview({ id }: { id: string }) {
                         </Text>
                         <Text tone="muted">The card spaces its direct children.</Text>
                       </Card>
-                    </Stack>
+                    </SpecimenGrid>
                   </Example>
-                  <Example title="Tones and corners">
-                    <Stack>
-                      <Surface tone="canvas" padding={4} corners="standard">
-                        <Text>Canvas with standard corners</Text>
+                  <Example title="Tones and corners" size="collection">
+                    <SpecimenGrid size="compact">
+                      <Surface tone="pane" padding={4}>
+                        <Text>Pane · outer corners</Text>
                       </Surface>
-                      <Surface tone="alternate" padding={4} corners="pill">
-                        <Text>Alternate surface with pill corners</Text>
+                      <Surface tone="alternate" padding={4} corners="standard">
+                        <Text>Alternate · standard corners</Text>
                       </Surface>
-                    </Stack>
+                      <Surface tone="row" padding={4} corners="pill">
+                        <Text>Row · pill corners</Text>
+                      </Surface>
+                    </SpecimenGrid>
                   </Example>
                 </>
               );
@@ -279,6 +285,7 @@ export function ComponentPreview({ id }: { id: string }) {
                   <Example
                     title="Content spacing"
                     caption="Stack uses 1 rem between related blocks."
+                    size="field"
                   >
                     <Stack>
                       <Input
@@ -292,7 +299,7 @@ export function ComponentPreview({ id }: { id: string }) {
                         onChange={(e) => setDescription(e.target.value)}
                       />
                       <DisclosureNote title="Optional guidance">
-                        <p>Keep external spacing in the parent layout.</p>
+                        <Text>Keep external spacing in the parent layout.</Text>
                       </DisclosureNote>
                     </Stack>
                   </Example>
@@ -316,7 +323,7 @@ export function ComponentPreview({ id }: { id: string }) {
             case 'buttons':
               return (
                 <>
-                  <Example title="Variants & states">
+                  <Example title="Variants & states" size="wide">
                     <ButtonMatrix />
                   </Example>
                   <Example title="Labels & icons">
@@ -358,7 +365,7 @@ export function ComponentPreview({ id }: { id: string }) {
             case 'icon-buttons':
               return (
                 <>
-                  <Example title="Circular control & states">
+                  <Example title="Circular control & states" size="wide">
                     <ButtonMatrix iconOnly />
                   </Example>
                   <Example title="With related actions">
@@ -380,7 +387,7 @@ export function ComponentPreview({ id }: { id: string }) {
             case 'input':
               return (
                 <>
-                  <Example title="Interactive field">
+                  <Example title="Interactive field" size="field">
                     <Input
                       label="Project name"
                       name={`project-${theme}`}
@@ -389,45 +396,57 @@ export function ComponentPreview({ id }: { id: string }) {
                       hint="A name your team will recognize."
                     />
                   </Example>
-                  <Example title="Empty & filled">
-                    <Stack>
-                      <Input
-                        label="Empty field"
-                        placeholder="Enter a name"
-                        value={empty}
-                        onChange={(e) => setEmpty(e.target.value)}
-                      />
-                      <Input
-                        label="Filled field"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                      />
-                      <Input
-                        label="Keyboard focus"
-                        className="docs-force-3"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                      />
-                    </Stack>
+                  <Example title="Empty, filled & focus" size="collection">
+                    <SpecimenGrid>
+                      <Specimen title="Empty">
+                        <Input
+                          label="Project name"
+                          placeholder="Enter a name"
+                          value={empty}
+                          onChange={(e) => setEmpty(e.target.value)}
+                        />
+                      </Specimen>
+                      <Specimen title="Filled">
+                        <Input
+                          label="Project name"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                        />
+                      </Specimen>
+                      <Specimen title="Keyboard focus">
+                        <Input
+                          label="Project name"
+                          className="docs-force-3"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                        />
+                      </Specimen>
+                    </SpecimenGrid>
                   </Example>
-                  <Example title="Validation & availability">
-                    <Stack>
-                      <Input
-                        label="Invalid field"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        error="Choose a unique project name."
-                      />
-                      <Input label="Read-only field" value="Workspace default" readOnly />
-                      <Input label="Disabled field" value="Unavailable" disabled />
-                    </Stack>
+                  <Example title="Validation & availability" size="collection">
+                    <SpecimenGrid>
+                      <Specimen title="Invalid">
+                        <Input
+                          label="Project name"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          error="Choose a unique project name."
+                        />
+                      </Specimen>
+                      <Specimen title="Read only" caption="readOnly">
+                        <Input label="Project name" value="Workspace default" readOnly />
+                      </Specimen>
+                      <Specimen title="Disabled" caption="disabled">
+                        <Input label="Project name" value="Unavailable" disabled />
+                      </Specimen>
+                    </SpecimenGrid>
                   </Example>
                 </>
               );
             case 'textarea':
               return (
                 <>
-                  <Example title="Interactive description">
+                  <Example title="Interactive description" size="field">
                     <Textarea
                       label="Description"
                       rows={4}
@@ -436,64 +455,77 @@ export function ComponentPreview({ id }: { id: string }) {
                       hint="Explain what this project is for."
                     />
                   </Example>
-                  <Example title="Validation & availability">
-                    <Stack>
-                      <Textarea
-                        label="Empty description"
-                        rows={2}
-                        value={empty}
-                        onChange={(e) => setEmpty(e.target.value)}
-                      />
-                      <Textarea
-                        label="Keyboard focus"
-                        className="docs-force-3"
-                        rows={2}
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                      />
-                      <Textarea
-                        label="Invalid description"
-                        rows={3}
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        error="Add the intended outcome."
-                      />
-                      <Textarea
-                        label="Read-only description"
-                        rows={2}
-                        readOnly
-                        value="Provided by the workspace."
-                      />
-                      <Textarea
-                        label="Disabled description"
-                        rows={2}
-                        disabled
-                        value="Unavailable"
-                      />
-                    </Stack>
+                  <Example title="States & validation" size="collection">
+                    <SpecimenGrid>
+                      <Specimen title="Empty">
+                        <Textarea
+                          label="Description"
+                          rows={2}
+                          value={empty}
+                          onChange={(e) => setEmpty(e.target.value)}
+                        />
+                      </Specimen>
+                      <Specimen title="Keyboard focus">
+                        <Textarea
+                          label="Description"
+                          className="docs-force-3"
+                          rows={2}
+                          value={description}
+                          onChange={(e) => setDescription(e.target.value)}
+                        />
+                      </Specimen>
+                      <Specimen title="Invalid">
+                        <Textarea
+                          label="Description"
+                          rows={3}
+                          value={description}
+                          onChange={(e) => setDescription(e.target.value)}
+                          error="Add the intended outcome."
+                        />
+                      </Specimen>
+                      <Specimen title="Read only" caption="readOnly">
+                        <Textarea
+                          label="Description"
+                          rows={2}
+                          readOnly
+                          value="Provided by the workspace."
+                        />
+                      </Specimen>
+                      <Specimen title="Disabled" caption="disabled">
+                        <Textarea label="Description" rows={2} disabled value="Unavailable" />
+                      </Specimen>
+                    </SpecimenGrid>
                   </Example>
                 </>
               );
             case 'checkbox':
               return (
                 <>
-                  <Example title="Independent selection">
-                    <Stack>
-                      <Checkbox
-                        label="Include archived items"
-                        checked={checked}
-                        onCheckedChange={setChecked}
-                      />
-                      <Checkbox
-                        label="Selected choice"
-                        checked={!checked}
-                        onCheckedChange={(next) => setChecked(!next)}
-                      />
-                      <Checkbox label="Disabled choice" disabled />
-                      <Checkbox label="Disabled selected choice" checked disabled />
-                    </Stack>
+                  <Example title="Independent selection" size="collection">
+                    <SpecimenGrid size="compact">
+                      <Specimen title="Interactive choices">
+                        <Stack>
+                          <Checkbox
+                            label="Include archived items"
+                            checked={checked}
+                            onCheckedChange={setChecked}
+                          />
+                          <Checkbox
+                            label="Selected choice"
+                            checked={!checked}
+                            onCheckedChange={(next) => setChecked(!next)}
+                          />
+                        </Stack>
+                      </Specimen>
+                      <Specimen title="Disabled choices">
+                        <Stack>
+                          <Checkbox label="Include archived items" disabled />
+                          <Checkbox label="Include completed items" checked disabled />
+                        </Stack>
+                      </Specimen>
+                    </SpecimenGrid>
                   </Example>
-                  <Example title="Partial selection">
+                  <Example title="Partial selection" size="compact">
                     <Stack>
                       <Checkbox label="All projects" checked={mixed} onCheckedChange={setMixed} />
                       <Button variant="secondary" onClick={() => setMixed('mixed')}>
@@ -505,27 +537,35 @@ export function ComponentPreview({ id }: { id: string }) {
               );
             case 'switch':
               return (
-                <Example title="On, off & disabled">
-                  <Stack>
-                    <Switch
-                      label="Enable notifications"
-                      checked={enabled}
-                      onCheckedChange={setEnabled}
-                    />
-                    <Switch
-                      label="Enable summaries"
-                      checked={!enabled}
-                      onCheckedChange={(next) => setEnabled(!next)}
-                    />
-                    <Switch label="Disabled setting" disabled />
-                    <Switch label="Disabled enabled setting" checked disabled />
-                  </Stack>
+                <Example title="On, off & disabled" size="collection">
+                  <SpecimenGrid size="compact">
+                    <Specimen title="Interactive settings">
+                      <Stack>
+                        <Switch
+                          label="Enable notifications"
+                          checked={enabled}
+                          onCheckedChange={setEnabled}
+                        />
+                        <Switch
+                          label="Enable summaries"
+                          checked={!enabled}
+                          onCheckedChange={(next) => setEnabled(!next)}
+                        />
+                      </Stack>
+                    </Specimen>
+                    <Specimen title="Disabled settings">
+                      <Stack>
+                        <Switch label="Enable notifications" disabled />
+                        <Switch label="Enable summaries" checked disabled />
+                      </Stack>
+                    </Specimen>
+                  </SpecimenGrid>
                 </Example>
               );
             case 'radio':
               return (
                 <>
-                  <Example title="Inline choices">
+                  <Example title="Inline choices" size="field">
                     <RadioGroup
                       label="Access"
                       name={`access-inline-${theme}`}
@@ -555,7 +595,7 @@ export function ComponentPreview({ id }: { id: string }) {
                       />
                     </RadioGroup>
                   </Example>
-                  <Example title="Disabled group">
+                  <Example title="Disabled group" size="field">
                     <RadioGroup
                       label="Inherited access"
                       name={`access-disabled-${theme}`}
@@ -570,52 +610,55 @@ export function ComponentPreview({ id }: { id: string }) {
               );
             case 'select':
               return (
-                <>
-                  <Example title="Interactive selection">
-                    <Select
-                      label="Visibility"
-                      hint="Choose who can open the project."
-                      name={`visibility-${theme}`}
-                      value={access}
-                      onValueChange={(v) => setAccess(v ?? 'team')}
-                      options={[
-                        { value: 'team', label: 'Team' },
-                        { value: 'private', label: 'Private' },
-                        { value: 'public', label: 'Public (unavailable)', disabled: true },
-                      ]}
-                    />
-                  </Example>
-                  <Example title="Field validation">
-                    <Select
-                      label="Project owner"
-                      name={`owner-${theme}`}
-                      placeholder="Choose an owner"
-                      value={empty || null}
-                      onValueChange={(value) => setEmpty(value ?? '')}
-                      error={!empty ? 'Choose an owner to continue.' : undefined}
-                      options={[
-                        { value: 'you', label: 'You' },
-                        { value: 'team', label: 'Team' },
-                      ]}
-                    />
-                  </Example>
-                  <Example title="Disabled selection">
-                    <Select
-                      label="Inherited visibility"
-                      value="team"
-                      disabled
-                      options={[
-                        { value: 'team', label: 'Team' },
-                        { value: 'private', label: 'Private' },
-                      ]}
-                    />
-                  </Example>
-                </>
+                <Example title="Selection, validation & availability" size="collection">
+                  <SpecimenGrid>
+                    <Specimen title="Interactive">
+                      <Select
+                        label="Visibility"
+                        hint="Choose who can open the project."
+                        name={`visibility-${theme}`}
+                        value={access}
+                        onValueChange={(v) => setAccess(v ?? 'team')}
+                        options={[
+                          { value: 'team', label: 'Team' },
+                          { value: 'private', label: 'Private' },
+                          { value: 'public', label: 'Public (unavailable)', disabled: true },
+                        ]}
+                      />
+                    </Specimen>
+                    <Specimen title="Required choice">
+                      <Select
+                        label="Project owner"
+                        required
+                        name={`owner-${theme}`}
+                        placeholder="Choose an owner"
+                        value={empty || null}
+                        onValueChange={(value) => setEmpty(value ?? '')}
+                        error={!empty ? 'Choose an owner to continue.' : undefined}
+                        options={[
+                          { value: 'you', label: 'You' },
+                          { value: 'team', label: 'Team' },
+                        ]}
+                      />
+                    </Specimen>
+                    <Specimen title="Disabled" caption="disabled">
+                      <Select
+                        label="Inherited visibility"
+                        value="team"
+                        disabled
+                        options={[
+                          { value: 'team', label: 'Team' },
+                          { value: 'private', label: 'Private' },
+                        ]}
+                      />
+                    </Specimen>
+                  </SpecimenGrid>
+                </Example>
               );
             case 'navigation':
               return (
                 <>
-                  <Example title="Destination selection">
+                  <Example title="Destination selection" size="compact">
                     <Stack>
                       {['Home', 'Projects', 'Settings'].map((label, i) => (
                         <NavigationItem
@@ -629,32 +672,44 @@ export function ComponentPreview({ id }: { id: string }) {
                       ))}
                     </Stack>
                   </Example>
-                  <Example title="States">
-                    <Stack>
-                      <NavigationItem icon={<Home />}>Home</NavigationItem>
-                      <NavigationItem icon={<Home />} selected>
-                        Selected destination
-                      </NavigationItem>
-                      <NavigationItem icon={<Home />} className="docs-force-1">
-                        Hover
-                      </NavigationItem>
-                      <NavigationItem icon={<Home />} className="docs-force-2">
-                        Pressed
-                      </NavigationItem>
-                      <NavigationItem icon={<Home />} className="docs-force-3">
-                        Keyboard focus
-                      </NavigationItem>
-                      <NavigationItem icon={<Home />} disabled>
-                        Disabled destination
-                      </NavigationItem>
-                    </Stack>
+                  <Example title="States" size="collection">
+                    <SpecimenGrid size="compact">
+                      <Specimen title="Default">
+                        <NavigationItem icon={<Home />}>Home</NavigationItem>
+                      </Specimen>
+                      <Specimen title="Selected">
+                        <NavigationItem icon={<Home />} selected>
+                          Home
+                        </NavigationItem>
+                      </Specimen>
+                      <Specimen title="Hover">
+                        <NavigationItem icon={<Home />} className="docs-force-1">
+                          Home
+                        </NavigationItem>
+                      </Specimen>
+                      <Specimen title="Pressed">
+                        <NavigationItem icon={<Home />} className="docs-force-2">
+                          Home
+                        </NavigationItem>
+                      </Specimen>
+                      <Specimen title="Keyboard focus">
+                        <NavigationItem icon={<Home />} className="docs-force-3">
+                          Home
+                        </NavigationItem>
+                      </Specimen>
+                      <Specimen title="Disabled">
+                        <NavigationItem icon={<Home />} disabled>
+                          Home
+                        </NavigationItem>
+                      </Specimen>
+                    </SpecimenGrid>
                   </Example>
                 </>
               );
             case 'tabs':
               return (
                 <>
-                  <Example title="Content views">
+                  <Example title="Content views" size="content">
                     <Tabs
                       aria-label="Example reference views"
                       value={tabView}
@@ -666,8 +721,10 @@ export function ComponentPreview({ id }: { id: string }) {
                           button: <Button>Preview</Button>,
                           content: (
                             <Card>
-                              <h3>Live preview</h3>
-                              <p>Explore the component in use.</p>
+                              <Text as="h3" variant="section-heading">
+                                Live preview
+                              </Text>
+                              <Text>Explore the component in use.</Text>
                             </Card>
                           ),
                         },
@@ -676,8 +733,10 @@ export function ComponentPreview({ id }: { id: string }) {
                           button: <Button>Guidelines</Button>,
                           content: (
                             <Card>
-                              <h3>Design guidelines</h3>
-                              <p>Use the shared colors, spacing and motion.</p>
+                              <Text as="h3" variant="section-heading">
+                                Design guidelines
+                              </Text>
+                              <Text>Use the shared colors, spacing and motion.</Text>
                             </Card>
                           ),
                         },
@@ -686,8 +745,10 @@ export function ComponentPreview({ id }: { id: string }) {
                           button: <Button>Usage</Button>,
                           content: (
                             <Card>
-                              <h3>React usage</h3>
-                              <p>Import Tabs and supply buttons with their content.</p>
+                              <Text as="h3" variant="section-heading">
+                                React usage
+                              </Text>
+                              <Text>Import Tabs and supply buttons with their content.</Text>
                             </Card>
                           ),
                         },
@@ -820,110 +881,128 @@ export function ComponentPreview({ id }: { id: string }) {
                         label: `${value} ${value === '1' ? 'row' : 'rows'}`,
                       }))}
                     />
-                    <>
-                      <GroupedRows>
-                        {Array.from({ length: Number(count) }, (_, i) => (
-                          <Row
-                            key={i}
-                            title={`Setting ${i + 1}`}
-                            detail="Supporting detail"
-                            action={
-                              <Button
-                                variant="outlined"
-                                onClick={() => setConfirmation(`Managing setting ${i + 1}`)}
-                              >
-                                Manage
-                              </Button>
-                            }
-                          />
-                        ))}
-                      </GroupedRows>
-                    </>
+                    <GroupedRows>
+                      {Array.from({ length: Number(count) }, (_, i) => (
+                        <Row
+                          key={i}
+                          title={`Setting ${i + 1}`}
+                          detail="Supporting detail"
+                          action={
+                            <Button
+                              variant="outlined"
+                              onClick={() => setConfirmation(`Managing setting ${i + 1}`)}
+                            >
+                              Manage
+                            </Button>
+                          }
+                        />
+                      ))}
+                    </GroupedRows>
                     <Text variant="caption" className="docs-caption" aria-live="polite">
                       {confirmation}
                     </Text>
                   </Example>
                   <Example title="Alternate background">
-                    <Surface tone="row">
-                      <GroupedRows contrast>
-                        <Row
-                          title="Notifications"
-                          detail="Delivery preferences"
-                          action={
-                            <Switch
-                              label="Enable notifications"
-                              checked={enabled}
-                              onCheckedChange={setEnabled}
-                            />
-                          }
-                        />
-                        <Row
-                          title="Workspace access"
-                          detail="People and permissions"
-                          action={
-                            <IconButton
-                              icon={<ChevronRight />}
-                              aria-label="Manage workspace access"
-                            />
-                          }
-                        />
-                      </GroupedRows>
-                    </Surface>
+                    <GroupedRows contrast>
+                      <Row
+                        title="Notifications"
+                        detail="Delivery preferences"
+                        action={
+                          <Switch
+                            label="Enable notifications"
+                            checked={enabled}
+                            onCheckedChange={setEnabled}
+                          />
+                        }
+                      />
+                      <Row
+                        title="Workspace access"
+                        detail="People and permissions"
+                        action={
+                          <IconButton
+                            icon={<ChevronRight />}
+                            aria-label="Manage workspace access"
+                          />
+                        }
+                      />
+                    </GroupedRows>
                   </Example>
                 </>
               );
             case 'cards':
               return (
                 <>
-                  <Example title="Clickable destination">
-                    <Card href="#/overview">
-                      <h3>Component overview</h3>
-                      <p>Open the catalogue from anywhere on this card.</p>
-                    </Card>
+                  <Example title="Content & actions" size="collection">
+                    <SpecimenGrid size="card">
+                      <Specimen title="Content card">
+                        <Card>
+                          <Text as="h3" variant="section-heading">
+                            Project overview
+                          </Text>
+                          <Text tone="muted">Planning and progress for the autumn release.</Text>
+                          <InfoChip>Updated today</InfoChip>
+                        </Card>
+                      </Specimen>
+                      <Specimen title="Action strip">
+                        <Card
+                          as="article"
+                          layout="action"
+                          heading="Autumn release"
+                          meta="Updated today"
+                          actions={
+                            <>
+                              <Button variant="secondary">Share</Button>
+                              <Button variant="outlined">Open project</Button>
+                            </>
+                          }
+                        >
+                          <Text tone="muted">Shared context for the next release.</Text>
+                        </Card>
+                      </Specimen>
+                    </SpecimenGrid>
                   </Example>
-                  <Example title="Clickable action">
-                    <Card
-                      as="button"
-                      onClick={() => setExpanded(!expanded)}
-                      aria-expanded={expanded}
-                    >
-                      <span>{expanded ? 'Hide details' : 'Show details'}</span>
-                      <span>
-                        {expanded
-                          ? 'Your team and tools share one workspace.'
-                          : 'Activate this card to reveal more context.'}
-                      </span>
-                    </Card>
+                  <Example title="Interactive cards" size="collection">
+                    <SpecimenGrid size="card">
+                      <Specimen title="Destination">
+                        <Card href="#/overview">
+                          <Text as="h3" variant="section-heading">
+                            Component overview
+                          </Text>
+                          <Text tone="muted">Browse the component catalogue.</Text>
+                        </Card>
+                      </Specimen>
+                      <Specimen title="Action">
+                        <Card
+                          as="button"
+                          onClick={() => setExpanded(!expanded)}
+                          aria-expanded={expanded}
+                        >
+                          <Text as="span" variant="section-heading">
+                            {expanded ? 'Hide details' : 'Show details'}
+                          </Text>
+                          <Text as="span" tone="muted">
+                            {expanded
+                              ? 'Your team and tools share one workspace.'
+                              : 'Project details are available.'}
+                          </Text>
+                        </Card>
+                      </Specimen>
+                      <Specimen title="Disabled">
+                        <Card as="button" disabled>
+                          <Text as="span">Workspace unavailable</Text>
+                        </Card>
+                      </Specimen>
+                    </SpecimenGrid>
                   </Example>
-                  <Example title="Disabled card">
-                    <Card as="button" disabled>
-                      <span>Workspace unavailable</span>
-                    </Card>
+                  <Example title="Feature composition" size="wide">
+                    <FeatureCard
+                      icon={<Apps />}
+                      title="Connected workspace"
+                      description="Bring your team and tools together."
+                      action={<Button>Explore</Button>}
+                    />
                   </Example>
-                  <Example title="Content card">
-                    <Card>
-                      <h3>Project overview</h3>
-                      <p>Related information lives together in a rounded surface.</p>
-                      <InfoChip>Updated today</InfoChip>
-                    </Card>
-                  </Example>
-                  <Example title="Action strip">
-                    <Card
-                      as="article"
-                      layout="action"
-                      heading="Autumn release"
-                      meta="Updated today"
-                      actions={
-                        <>
-                          <Button variant="secondary">Share</Button>
-                          <Button variant="outlined">Open project</Button>
-                        </>
-                      }
-                    >
-                      Shared context for the next release.
-                    </Card>
-                  </Example>
-                  <Example title="Feature composition">
+                  <Example title="Compact feature" size="field">
                     <FeatureCard
                       icon={<Apps />}
                       title="Connected workspace"
@@ -951,75 +1030,79 @@ export function ComponentPreview({ id }: { id: string }) {
                     open={expanded}
                     onToggle={(e) => setExpanded(e.currentTarget.open)}
                   >
-                    <p>
+                    <Text>
                       Team projects are available to every workspace member. Private projects are
                       visible only to invited people.
-                    </p>
+                    </Text>
                   </DisclosureNote>
                 </Example>
               );
             case 'empty-state':
               return (
-                <>
-                  <Example title="First project">
-                    <EmptyState
-                      icon={<Apps />}
-                      title="No projects yet"
-                      description="Create a project to bring plans and people together."
-                      action={
-                        <Button
-                          startIcon={<Add />}
-                          onClick={() => setConfirmation('Project creation started')}
-                        >
-                          Create project
-                        </Button>
-                      }
-                    />
-                  </Example>
-                  <Example title="No search results">
-                    <EmptyState
-                      icon={<Search />}
-                      title="No matching projects"
-                      description="Try another name or clear the filters."
-                      action={
-                        <Button
-                          variant="secondary"
-                          onClick={() => setConfirmation('Filters cleared')}
-                        >
-                          Clear filters
-                        </Button>
-                      }
-                    />
-                    <Text variant="caption" className="docs-caption" aria-live="polite">
-                      {confirmation}
-                    </Text>
-                  </Example>
-                </>
+                <Example title="Empty content" size="collection">
+                  <SpecimenGrid size="card">
+                    <Specimen title="First project">
+                      <EmptyState
+                        icon={<Apps />}
+                        title="No projects yet"
+                        description="Create a project to bring plans and people together."
+                        action={
+                          <Button
+                            startIcon={<Add />}
+                            onClick={() => setConfirmation('Project creation started')}
+                          >
+                            Create project
+                          </Button>
+                        }
+                      />
+                    </Specimen>
+                    <Specimen title="No search results">
+                      <EmptyState
+                        icon={<Search />}
+                        title="No matching projects"
+                        description="Try another name or clear the filters."
+                        action={
+                          <Button
+                            variant="secondary"
+                            onClick={() => setConfirmation('Filters cleared')}
+                          >
+                            Clear filters
+                          </Button>
+                        }
+                      />
+                    </Specimen>
+                  </SpecimenGrid>
+                  <Text variant="caption" className="docs-caption" aria-live="polite">
+                    {confirmation}
+                  </Text>
+                </Example>
               );
             case 'loading':
               return (
-                <>
-                  <Example title="Content placeholders">
-                    <Card>
-                      <LoadingState label="Loading project">
-                        <Stack gap={2}>
-                          <Skeleton width="38%" height="1.25rem" />
-                          <Skeleton width="100%" height="0.8rem" />
-                          <Skeleton width="72%" height="0.8rem" />
+                <Example title="Loading placeholders" size="collection">
+                  <SpecimenGrid size="card">
+                    <Specimen title="Content card">
+                      <Card>
+                        <LoadingState label="Loading project">
+                          <Stack gap={2}>
+                            <Skeleton width="38%" height="1.25rem" />
+                            <Skeleton width="100%" height="0.8rem" />
+                            <Skeleton width="72%" height="0.8rem" />
+                          </Stack>
+                        </LoadingState>
+                      </Card>
+                    </Specimen>
+                    <Specimen title="Rows">
+                      <LoadingState label="Loading settings">
+                        <Stack>
+                          {[1, 2, 3].map((i) => (
+                            <Skeleton key={i} width="100%" height="3.5rem" />
+                          ))}
                         </Stack>
                       </LoadingState>
-                    </Card>
-                  </Example>
-                  <Example title="Row placeholders">
-                    <LoadingState label="Loading settings">
-                      <Stack>
-                        {[1, 2, 3].map((i) => (
-                          <Skeleton key={i} width="100%" height="3.5rem" />
-                        ))}
-                      </Stack>
-                    </LoadingState>
-                  </Example>
-                </>
+                    </Specimen>
+                  </SpecimenGrid>
+                </Example>
               );
             case 'toasts':
               return (
@@ -1065,49 +1148,60 @@ export function ComponentPreview({ id }: { id: string }) {
               );
             case 'dialogs':
               return (
-                <>
-                  <Example title="Confirmation composition">
-                    <Card>
-                      <Stack gap={5}>
-                        <h3>Delete project?</h3>
-                        <p>This removes the project for everyone in the workspace.</p>
-                        <ActionGroup align="end">
-                          <Button variant="secondary">Cancel</Button>
-                          <Button variant="destructive">Delete project</Button>
-                        </ActionGroup>
-                      </Stack>
-                    </Card>
-                  </Example>
-                  <Example title="Interactive form">
-                    <Dialog
-                      open={dialogTheme === theme}
-                      onOpenChange={(open) => setDialogTheme(open ? theme : null)}
-                      trigger={<Button startIcon={<Add />}>Create project</Button>}
-                      title="Create project"
-                      description="Choose a name your team will recognize."
-                      closeLabel="Cancel"
-                      actions={
-                        <Button
-                          onClick={() => {
-                            setDialogTheme(null);
-                            setConfirmation(`Created ${name || 'project'}`);
-                          }}
-                        >
-                          Create
-                        </Button>
-                      }
-                    >
-                      <Input
-                        label="Project name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
+                <Example title="Modal dialogs" size="collection">
+                  <SpecimenGrid size="compact">
+                    <Specimen title="Confirmation">
+                      <Dialog
+                        open={dialog?.theme === theme && dialog.kind === 'delete'}
+                        onOpenChange={(open) => setDialog(open ? { theme, kind: 'delete' } : null)}
+                        trigger={<Button variant="destructive">Delete project</Button>}
+                        title="Delete project?"
+                        description="This removes the project for everyone in the workspace."
+                        closeLabel="Cancel"
+                        actions={
+                          <Button
+                            variant="destructive"
+                            onClick={() => {
+                              setDialog(null);
+                              setConfirmation('Project deleted');
+                            }}
+                          >
+                            Delete project
+                          </Button>
+                        }
                       />
-                    </Dialog>
-                    <Text variant="caption" className="docs-caption" aria-live="polite">
-                      {confirmation || 'Open a live dialog to explore focus, dismissal and theme.'}
-                    </Text>
-                  </Example>
-                </>
+                    </Specimen>
+                    <Specimen title="Form">
+                      <Dialog
+                        open={dialog?.theme === theme && dialog.kind === 'create'}
+                        onOpenChange={(open) => setDialog(open ? { theme, kind: 'create' } : null)}
+                        trigger={<Button startIcon={<Add />}>Create project</Button>}
+                        title="Create project"
+                        description="Choose a name your team will recognize."
+                        closeLabel="Cancel"
+                        actions={
+                          <Button
+                            onClick={() => {
+                              setDialog(null);
+                              setConfirmation(`Created ${name || 'project'}`);
+                            }}
+                          >
+                            Create
+                          </Button>
+                        }
+                      >
+                        <Input
+                          label="Project name"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                        />
+                      </Dialog>
+                    </Specimen>
+                  </SpecimenGrid>
+                  <Text variant="caption" className="docs-caption" aria-live="polite">
+                    {confirmation}
+                  </Text>
+                </Example>
               );
             default:
               return null;
