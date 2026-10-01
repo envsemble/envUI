@@ -328,27 +328,10 @@ body {
 .docs-interaction-colors {
   margin-top: var(--space-5);
 }
-.docs-interaction-content {
-  padding-block-start: var(--space-2);
-}
-.docs-interaction-content > p {
-  font: inherit;
-}
 .docs-interaction-rows {
   inline-size: fit-content;
   max-inline-size: 100%;
   align-self: flex-start;
-}
-.docs-interaction-recipes {
-  display: grid;
-  gap: var(--space-4);
-}
-.docs-interaction-recipes dt {
-  color: var(--color-text-primary);
-  font-weight: 500;
-}
-.docs-interaction-recipes dd {
-  margin: var(--space-1) 0 0;
 }
 .docs-type-list {
   display: grid;

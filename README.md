@@ -49,6 +49,7 @@ See the [package setup](packages/ui/README.md), generated [agent usage guide](pa
 | `assets/brand/envUI`                | Official envUI logos and favicons; build generates EnvUILogo and bundles the originals |
 | `apps/docs/src`                     | Showcase pages and paired specimen state                                               |
 | `apps/docs/src/Reference.ts`        | Shared documentation/agent guidance source                                             |
+| `apps/docs/src/Documentation.ts`    | Topic routes, reading order and legacy link aliases                                    |
 | `tests`                             | Packed consumer, SSR, browser and offline acceptance                                   |
 
 Keep palette entries as base colors. Hover and pressed lightness use one color-based rule from Tokens.css, in both themes. Use regular/medium typography, relative units, shared spacing and existing rounding. Purple remains rare emphasis; everyday actions are neutral. The application owns routing, validation and theme preference.

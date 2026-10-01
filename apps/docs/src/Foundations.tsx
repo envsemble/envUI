@@ -12,7 +12,6 @@ import {
   NavigationItem,
   Stack,
   ActionGroup,
-  DisclosureNote,
 } from '@envsemble/envui';
 import {
   Home,
@@ -29,38 +28,6 @@ import {
 import { Paired } from './Previews';
 import { Example } from './Example';
 
-export const foundations = [
-  {
-    id: 'colors',
-    title: 'Colors & themes',
-    summary: 'Semantic colors and one shared rule for interaction states.',
-  },
-  {
-    id: 'typography',
-    title: 'Typography',
-    summary: 'Inter with a compact, consistent scale and semantic text colors.',
-  },
-  {
-    id: 'spacing',
-    title: 'Spacing & shape',
-    summary: 'Relative spacing and familiar geometry across the catalogue.',
-  },
-  {
-    id: 'icons',
-    title: 'Icons & assets',
-    summary: 'Official Material Symbols Rounded, envUI and shared envsemble assets.',
-  },
-  {
-    id: 'responsive',
-    title: 'Desktop & mobile',
-    summary: 'The same components adapt to their content, space and input device.',
-  },
-  {
-    id: 'motion',
-    title: 'Motion & accessibility',
-    summary: 'Predictable feedback, visible focus and accessible interaction.',
-  },
-];
 const colorGroups: [string, [string, string][]][] = [
   [
     'Backgrounds',
@@ -86,7 +53,6 @@ const colorGroups: [string, [string, string][]][] = [
     'Controls',
     [
       ['border-strong', 'Control outlines'],
-      ['neutral-fill', 'Neutral toast fill'],
       ['link', 'Links, navigation & radio selection'],
       ['control-blue', 'Enabled toggles & checkboxes'],
       ['accent', 'Important emphasis'],
@@ -95,6 +61,7 @@ const colorGroups: [string, [string, string][]][] = [
   [
     'Feedback',
     [
+      ['neutral-fill', 'Neutral toast fill'],
       ['destructive-action', 'Delete button & error toast fill'],
       ['toast-success', 'Success toast fill'],
       ['toast-info', 'Info toast fill'],
@@ -158,13 +125,7 @@ function Palette() {
   );
 }
 
-function InteractionColors({
-  detailsOpen,
-  onDetailsToggle,
-}: {
-  detailsOpen: boolean;
-  onDetailsToggle: (open: boolean) => void;
-}) {
+function InteractionColors() {
   const states = [
     { label: 'Default', detail: 'Base color', className: undefined, disabled: false },
     {
@@ -200,51 +161,22 @@ function InteractionColors({
   ];
 
   return (
-    <Stack as="section" className="docs-example docs-interaction-colors">
-      <DisclosureNote
-        title="How colors are derived"
-        open={detailsOpen}
-        onToggle={(event) => onDetailsToggle(event.currentTarget.open)}
-      >
-        <Stack gap={5} className="docs-interaction-content">
-          <GroupedRows className="docs-interaction-rows" aria-label="Interaction color states">
-            {states.map((state) => (
-              <Row
-                key={state.label}
-                title={state.label}
-                detail={state.detail}
-                action={
-                  <Button className={state.className} disabled={state.disabled}>
-                    Save
-                  </Button>
-                }
-              />
-            ))}
-          </GroupedRows>
-          <p>
-            Below <TokenValue token="--state-lightness-threshold" />% HSL lightness, colors get
-            lighter on hover and press. At or above that threshold, they get darker. Lightness stays
-            within 0–100%.
-          </p>
-          <dl className="docs-interaction-recipes">
-            <div>
-              <dt>Selected navigation</dt>
-              <dd>
-                <TokenValue token="--state-selected-base-weight" /> link color mixed with its
-                surface
-              </dd>
-            </div>
-            <div>
-              <dt>Card action strip</dt>
-              <dd>
-                <TokenValue token="--state-card-strip-weight" /> muted surface mixed with its parent
-                surface
-              </dd>
-            </div>
-          </dl>
-        </Stack>
-      </DisclosureNote>
-    </Stack>
+    <Example title="Interaction states" className="docs-interaction-colors">
+      <GroupedRows className="docs-interaction-rows" aria-label="Interaction color states">
+        {states.map((state) => (
+          <Row
+            key={state.label}
+            title={state.label}
+            detail={state.detail}
+            action={
+              <Button className={state.className} disabled={state.disabled}>
+                Save
+              </Button>
+            }
+          />
+        ))}
+      </GroupedRows>
+    </Example>
   );
 }
 
@@ -267,8 +199,6 @@ const iconList = [
 ] as const;
 
 export function FoundationPreview({ id }: { id: string }) {
-  const [colorDetailsOpen, setColorDetailsOpen] = useState(false);
-  const [themeHuesOpen, setThemeHuesOpen] = useState(false);
   return (
     <Paired>
       {() => {
@@ -277,20 +207,7 @@ export function FoundationPreview({ id }: { id: string }) {
             return (
               <>
                 <Palette />
-                <DisclosureNote
-                  title="Theme hues"
-                  open={themeHuesOpen}
-                  onToggle={(event) => setThemeHuesOpen(event.currentTarget.open)}
-                >
-                  <p>
-                    Matching colors share a hue across themes; saturation and lightness can differ.
-                    Focus rings use neutral text in light mode and link blue in dark mode.
-                  </p>
-                </DisclosureNote>
-                <InteractionColors
-                  detailsOpen={colorDetailsOpen}
-                  onDetailsToggle={setColorDetailsOpen}
-                />
+                <InteractionColors />
               </>
             );
           case 'typography':
@@ -315,6 +232,22 @@ export function FoundationPreview({ id }: { id: string }) {
                     ))}
                   </ol>
                 </Surface>
+                <Example title="Color and semantics">
+                  <Stack>
+                    <Text as="h3" variant="page-heading">
+                      A heading with page emphasis
+                    </Text>
+                    <Text tone="muted">Body text with supporting color.</Text>
+                    <Text tone="quiet">Body text with quiet color.</Text>
+                    <Text>
+                      Native inline{' '}
+                      <Text as="span" tone="muted">
+                        supporting context
+                      </Text>{' '}
+                      keeps its surrounding paragraph semantics.
+                    </Text>
+                  </Stack>
+                </Example>
               </>
             );
           case 'spacing':
@@ -362,26 +295,6 @@ export function FoundationPreview({ id }: { id: string }) {
                       </div>
                     ))}
                   </div>
-                </Example>
-                <Example title="Content spacing">
-                  <p>
-                    Use Stack for related blocks and ActionGroup for controls. Cards already space
-                    their content.
-                  </p>
-                  <Card>
-                    <h3>Shared layout</h3>
-                    <p>Keep gaps in the parent, padding inside each component.</p>
-                    <ActionGroup>
-                      <Button variant="secondary">Cancel</Button>
-                      <Button>Continue</Button>
-                    </ActionGroup>
-                  </Card>
-                </Example>
-                <Example title="Connected geometry">
-                  <GroupedRows>
-                    <Row title="Large outer corners" detail="1.75 rem around the whole group" />
-                    <Row title="Compact inner corners" detail="0.5 rem corners · 0.125 rem gap" />
-                  </GroupedRows>
                 </Example>
               </>
             );
@@ -472,17 +385,6 @@ export function FoundationPreview({ id }: { id: string }) {
                     </Card>
                   </Stack>
                 </Example>
-                <Example title="Input-aware sizing">
-                  <p>
-                    Use relative units and content-driven layout. Standard field and navigation
-                    controls are 2.5 rem tall; action buttons start at 2 rem. Coarse pointers use
-                    the shared 2.75 rem touch minimum.
-                  </p>
-                  <p>
-                    The application chooses layout breakpoints. Feature cards adapt within their
-                    containing block.
-                  </p>
-                </Example>
               </>
             );
           case 'motion':
@@ -527,21 +429,6 @@ export function FoundationPreview({ id }: { id: string }) {
                   <p>
                     Use the shared 0.125 rem focus ring. Keep keyboard order aligned with the
                     visible layout.
-                  </p>
-                </Example>
-                <Example title="Accessible composition">
-                  <p>
-                    Give controls visible labels and icon actions accessible names. Link hints and
-                    errors to their fields. Preserve native form behavior and disabled states.
-                  </p>
-                  <p>
-                    Dialogs trap and restore focus. Selects support arrow keys and typeahead. Toasts
-                    announce feedback, pause timers on hover or focus, and provide persistent
-                    recovery actions when needed.
-                  </p>
-                  <p>
-                    Use semantic headings and meaningful links. Validate content and contrast in
-                    both supported themes.
                   </p>
                 </Example>
               </>

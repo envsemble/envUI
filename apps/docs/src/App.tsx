@@ -12,7 +12,6 @@ import {
   ActionGroup,
   IconButton,
   Button,
-  Tabs,
   DisclosureNote,
 } from '@envsemble/envui';
 import {
@@ -31,36 +30,38 @@ import {
   ArrowBack,
   ArrowForward,
 } from '@envsemble/envui/icons';
-import { references, setupCode, registryCode, installCode } from './Reference';
-import { foundations, FoundationPreview } from './Foundations';
-import { ComponentPreview } from './Previews';
-
-function Code({ children, language = 'tsx' }: { children: string; language?: string }) {
-  return (
-    <pre className="docs-code" aria-label={`${language} example`}>
-      <code>{children}</code>
-    </pre>
-  );
-}
+import {
+  references,
+  foundations,
+  componentGroups,
+  setupCode,
+  registryCode,
+  installCode,
+  type Reference,
+} from './Reference';
+import {
+  documentationPages,
+  findReferencePage,
+  normalizeRoute,
+  referenceViews,
+  type ReferenceView,
+} from './Documentation';
+import { ReferenceContent } from './ReferencePage';
+import { Code } from './Code';
 function GettingStarted() {
   return (
     <div className="docs-article">
       <Stack as="section">
         <Text as="h2" variant="page-heading">
-          Explore the system
+          Using this reference
         </Text>
         <Text variant="body" tone="muted">
-          Compare actual components in light and dark appearances. Preview pages show variants and
-          interactive examples; Guidelines describe the design rules; Usage covers imports, props
-          and state ownership.
+          Preview compares both themes. Guidelines explain design and behavior. Usage covers React
+          imports, props and state ownership. The downloaded reference works offline.
         </Text>
         <Text variant="body" tone="muted">
           <a href="#/getting-started?section=local-development">Local live development</a> ·{' '}
           <a href="#/getting-started?section=upgrading">Version updates</a>
-        </Text>
-        <Text variant="body" tone="muted">
-          This downloaded reference works offline. Hash links support direct destinations and
-          browser history inside the same file.
         </Text>
       </Stack>
       <Stack as="section">
@@ -138,53 +139,71 @@ function GettingStarted() {
   );
 }
 
-const foundationIcons = [Palette, TextFields, ViewList, Category, Devices, TouchApp];
-function componentIcon(group: string) {
-  return group === 'Actions'
-    ? TouchApp
-    : group === 'Forms & selection'
-      ? TextFields
-      : group === 'Rows & cards' || group === 'Layout'
-        ? ViewList
-        : group === 'Feedback'
-          ? Info
-          : group === 'Navigation'
-            ? Home
-            : Apps;
+const foundationIcons: Record<string, typeof Palette> = {
+  colors: Palette,
+  typography: TextFields,
+  spacing: ViewList,
+  icons: Category,
+  responsive: Devices,
+  motion: TouchApp,
+};
+const groupIcons = {
+  Foundations: Category,
+  'Layout & surfaces': ViewList,
+  Actions: TouchApp,
+  'Forms & selection': TextFields,
+  Navigation: Home,
+  'Content & guidance': Category,
+  'Feedback & overlays': Info,
+} satisfies Record<Reference['group'], typeof Apps>;
+function componentIcon(group: Reference['group']) {
+  return groupIcons[group];
 }
 
 function Catalogue({ nested = false }: { nested?: boolean }) {
-  const Heading = nested ? 'h3' : 'h2';
+  const GroupHeading = nested ? 'h3' : 'h2';
+  const Heading = nested ? 'h4' : 'h3';
   return (
-    <div className="docs-catalogue-grid">
-      {references.map((ref) => {
-        const Icon = componentIcon(ref.group);
-        return (
-          <Card
-            key={ref.id}
-            href={`#/components/${ref.id}/preview`}
-            aria-labelledby={`catalogue-${ref.id}-title`}
-            aria-describedby={`catalogue-${ref.id}-description`}
-          >
-            <Stack align="center" className="docs-catalogue-content">
-              <Icon width="1.5rem" height="1.5rem" aria-hidden="true" />
-              <Stack gap={2} align="center">
-                <Text as={Heading} variant="page-heading" id={`catalogue-${ref.id}-title`}>
-                  {ref.title}
-                </Text>
-                <Text
-                  variant="caption"
-                  id={`catalogue-${ref.id}-description`}
-                  className="docs-caption"
-                >
-                  {ref.summary}
-                </Text>
-              </Stack>
-            </Stack>
-          </Card>
-        );
-      })}
-    </div>
+    <Stack gap={7}>
+      {componentGroups.map((group) => (
+        <Stack as="section" gap={5} key={group}>
+          <Text as={GroupHeading} variant="section-heading">
+            {group}
+          </Text>
+          <div className="docs-catalogue-grid">
+            {references
+              .filter((ref) => ref.group === group)
+              .map((ref) => {
+                const Icon = componentIcon(ref.group);
+                return (
+                  <Card
+                    key={ref.id}
+                    href={`#/components/${ref.id}/preview`}
+                    aria-labelledby={`catalogue-${ref.id}-title`}
+                    aria-describedby={`catalogue-${ref.id}-description`}
+                  >
+                    <Stack align="center" className="docs-catalogue-content">
+                      <Icon width="1.5rem" height="1.5rem" aria-hidden="true" />
+                      <Stack gap={2} align="center">
+                        <Text as={Heading} variant="page-heading" id={`catalogue-${ref.id}-title`}>
+                          {ref.title}
+                        </Text>
+                        <Text
+                          variant="caption"
+                          id={`catalogue-${ref.id}-description`}
+                          className="docs-caption"
+                        >
+                          {ref.summary}
+                        </Text>
+                      </Stack>
+                    </Stack>
+                  </Card>
+                );
+              })}
+          </div>
+        </Stack>
+      ))}
+    </Stack>
   );
 }
 
@@ -196,6 +215,9 @@ function Overview() {
           <EnvUILogo className="docs-overview-logo" />
           <Text as="h1" variant="page-heading">
             React components for envsemble
+          </Text>
+          <Text tone="muted">
+            Shared components, themes and assets for consistent product interfaces.
           </Text>
           <ActionGroup align="center">
             <Button href="#/getting-started" variant="outlined" startIcon={<Add />}>
@@ -218,53 +240,46 @@ function Overview() {
 }
 
 function readRoute() {
-  return location.hash.replace(/^#\/?/, '') || 'overview';
+  return normalizeRoute(location.hash.replace(/^#\/?/, '') || 'overview');
 }
-
-const referenceViews = [
-  { id: 'preview', title: 'Preview' },
-  { id: 'guidelines', title: 'Guidelines' },
-  { id: 'usage', title: 'Usage' },
-];
-const documentationPages = [
-  { path: 'overview', title: 'Overview' },
-  { path: 'getting-started', title: 'Getting started' },
-  ...foundations.map((item) => ({ path: `foundations/${item.id}`, title: item.title })),
-  { path: 'components', title: 'Components' },
-  ...references.flatMap((item) =>
-    referenceViews.map((view) => ({
-      path: `components/${item.id}/${view.id}`,
-      title: `${item.title} · ${view.title}`,
-    })),
-  ),
-];
 
 function PageNavigation({
   path,
   appearance,
   comparison,
+  view,
 }: {
   path: string;
   appearance: 'light' | 'dark';
   comparison: boolean;
+  view: ReferenceView;
 }) {
   const index = documentationPages.findIndex((page) => page.path === path);
   if (index === -1) return null;
   const previous = documentationPages[index - 1];
   const next = documentationPages[index + 1];
   const nextAppearance = comparison ? (appearance === 'light' ? 'dark' : 'light') : appearance;
+  const destination = (path: string) => (findReferencePage(path) ? `${path}/${view}` : path);
   return (
     <nav className="docs-page-navigation" aria-label="Previous and next content">
       <Theme theme={appearance} className="docs-page-navigation-side docs-page-navigation-previous">
         {previous && (
-          <DirectionLink href={`#/${previous.path}`} direction="previous" icon={<ArrowBack />}>
+          <DirectionLink
+            href={`#/${destination(previous.path)}`}
+            direction="previous"
+            icon={<ArrowBack />}
+          >
             {previous.title}
           </DirectionLink>
         )}
       </Theme>
       <Theme theme={nextAppearance} className="docs-page-navigation-side">
         {next && (
-          <DirectionLink href={`#/${next.path}`} direction="next" icon={<ArrowForward />}>
+          <DirectionLink
+            href={`#/${destination(next.path)}`}
+            direction="next"
+            icon={<ArrowForward />}
+          >
             {next.title}
           </DirectionLink>
         )}
@@ -284,17 +299,14 @@ export default function App() {
   }, []);
   const routePath = route.split('?')[0];
   const parts = routePath.split('/');
-  const ref =
-    parts[0] === 'components' ? references.find((item) => item.id === parts[1]) : undefined;
-  const foundation =
-    parts[0] === 'foundations' ? foundations.find((item) => item.id === parts[1]) : undefined;
-  const tab = referenceViews.some((view) => view.id === parts[2]) ? parts[2] : 'preview';
+  const page = findReferencePage(routePath);
+  const ref = page?.reference;
+  const tab = referenceViews.find((view) => view.id === parts[2])?.id ?? 'preview';
   const isOverview = routePath === 'overview';
-  const comparison = Boolean(foundation) || Boolean(ref && tab === 'preview');
+  const comparison = Boolean(page && tab === 'preview');
   const oppositeAppearance = appearance === 'light' ? 'dark' : 'light';
   const title =
     ref?.title ??
-    foundation?.title ??
     (routePath === 'getting-started'
       ? 'Getting started'
       : routePath === 'components'
@@ -304,13 +316,12 @@ export default function App() {
           : 'Page not found');
   const summary =
     ref?.summary ??
-    foundation?.summary ??
     (routePath === 'components'
       ? 'The full catalogue, built for consistent composition in React.'
       : routePath === 'getting-started'
         ? 'Browse the reference, install the package and make your first component.'
         : 'Choose a destination from the navigation to continue.');
-  const contentRoute = ref ? `components/${ref.id}` : route;
+  const contentRoute = page?.path ?? route;
   useEffect(() => {
     document.title = title === 'envUI' ? 'envUI' : `${title} · envUI`;
     main.current?.focus({ preventScroll: true });
@@ -319,88 +330,7 @@ export default function App() {
     else window.scrollTo({ top: 0 });
   }, [contentRoute, title]);
   let content: ReactNode;
-  if (ref)
-    content = (
-      <Tabs
-        key={ref.id}
-        aria-label={`${ref.title} reference views`}
-        className="docs-reference-tabs"
-        listClassName="docs-tabs"
-        value={tab}
-        onValueChange={(value) => {
-          if (value) location.hash = `/components/${ref.id}/${value}`;
-        }}
-        items={referenceViews.map((view) => ({
-          value: view.id,
-          button: <Button>{view.title}</Button>,
-          content:
-            view.id === 'preview' ? (
-              <ComponentPreview key={ref.id} id={ref.id} />
-            ) : view.id === 'guidelines' ? (
-              <div className="docs-article">
-                <Stack as="section">
-                  <Text as="h2" variant="page-heading">
-                    Design & behavior
-                  </Text>
-                  {ref.guidelines.map((text) => (
-                    <Text key={text} tone="muted">
-                      {text}
-                    </Text>
-                  ))}
-                </Stack>
-                <Stack as="section">
-                  <Text as="h2" variant="page-heading">
-                    Shared foundations
-                  </Text>
-                  <Text variant="body" tone="muted">
-                    <a href="#/foundations/colors">Interaction colors</a>,{' '}
-                    <a href="#/foundations/typography">typography</a> and{' '}
-                    <a href="#/foundations/motion">accessible interaction</a> apply across the
-                    catalogue.
-                  </Text>
-                </Stack>
-              </div>
-            ) : (
-              <div className="docs-article">
-                <Stack as="section">
-                  <Text as="h2" variant="page-heading">
-                    React composition
-                  </Text>
-                  <Code>{ref.example}</Code>
-                </Stack>
-                <Stack as="section">
-                  <Text as="h2" variant="page-heading">
-                    Relevant props
-                  </Text>
-                  <table className="docs-props">
-                    <thead>
-                      <tr>
-                        <th>Prop</th>
-                        <th>Contract</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {ref.props.map(([name, value]) => (
-                        <tr key={name}>
-                          <th>{name}</th>
-                          <td>{value}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                  <Text variant="caption" className="docs-caption">
-                    TypeScript declarations provide the complete public contract.
-                  </Text>
-                </Stack>
-                <Text variant="body" tone="muted">
-                  <a href="#/getting-started">Setup, local edits and version updates</a>
-                </Text>
-              </div>
-            ),
-        }))}
-      />
-    );
-  else if (foundation) content = <FoundationPreview key={foundation.id} id={foundation.id} />;
+  if (page) content = <ReferenceContent key={page.path} page={page} view={tab} />;
   else if (routePath === 'getting-started') content = <GettingStarted />;
   else if (routePath === 'components')
     content = (
@@ -458,14 +388,14 @@ export default function App() {
             <Text variant="caption" className="docs-nav-heading">
               Foundations
             </Text>
-            {foundations.map((item, i) => {
-              const Icon = foundationIcons[i];
+            {foundations.map((item) => {
+              const Icon = foundationIcons[item.id] ?? Category;
               return (
                 <NavigationItem
                   size="compact"
                   key={item.id}
                   href={`#/foundations/${item.id}`}
-                  selected={foundation?.id === item.id}
+                  selected={page?.section === 'Foundations' && ref?.id === item.id}
                   icon={<Icon />}
                 >
                   {item.title}
@@ -475,27 +405,29 @@ export default function App() {
             <Text variant="caption" className="docs-nav-heading">
               <a href="#/components">Components</a>
             </Text>
-            {references.map((item, i) => {
-              const Icon = componentIcon(item.group);
-              const showGroup = i === 0 || references[i - 1].group !== item.group;
-              return (
-                <div key={item.id}>
-                  {showGroup && (
-                    <Text variant="caption" className="docs-nav-subheading">
-                      {item.group}
-                    </Text>
-                  )}
-                  <NavigationItem
-                    size="compact"
-                    href={`#/components/${item.id}/preview`}
-                    selected={ref?.id === item.id}
-                    icon={<Icon />}
-                  >
-                    {item.title}
-                  </NavigationItem>
-                </div>
-              );
-            })}
+            {componentGroups.map((group) => (
+              <Stack key={group} gap={0} align="start" className="docs-sidebar-navigation">
+                <Text variant="caption" className="docs-nav-subheading">
+                  {group}
+                </Text>
+                {references
+                  .filter((item) => item.group === group)
+                  .map((item) => {
+                    const Icon = componentIcon(item.group);
+                    return (
+                      <NavigationItem
+                        key={item.id}
+                        size="compact"
+                        href={`#/components/${item.id}/preview`}
+                        selected={ref?.id === item.id}
+                        icon={<Icon />}
+                      >
+                        {item.title}
+                      </NavigationItem>
+                    );
+                  })}
+              </Stack>
+            ))}
           </Stack>
           <Text variant="caption" className="docs-sidebar-footer">
             envUI · {version}
@@ -513,7 +445,11 @@ export default function App() {
             {!isOverview && (
               <Stack gap={3} className="docs-page-header-copy">
                 <Text variant="caption">
-                  {ref ? `Components / ${ref.group}` : foundation ? 'Foundations' : 'envUI'}
+                  {page
+                    ? page.section === 'Foundations'
+                      ? 'Foundations'
+                      : `Components / ${ref?.group}`
+                    : 'envUI'}
                 </Text>
                 <Text as="h1" variant="page-heading">
                   {title}
@@ -535,9 +471,10 @@ export default function App() {
           </header>
           {content}
           <PageNavigation
-            path={ref ? `components/${ref.id}/${tab}` : routePath}
+            path={page?.path ?? routePath}
             appearance={appearance}
             comparison={comparison}
+            view={tab}
           />
         </main>
       </div>

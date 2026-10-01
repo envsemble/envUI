@@ -4,11 +4,13 @@ This React application consumes only the public `@envsemble/envui`, `@envsemble/
 
 Run `npm run dev` from the repository root for local live development. `npm run build` produces the library and one self-contained offline documentation HTML file. All pages use hash routes, including `#/getting-started` and `#/components/buttons/preview`; the release needs no server or sibling assets.
 
-`src/Reference.ts` is the maintained source for component usage examples, public prop summaries and the package's generated `USAGE.md`. Update it when changing public APIs. The Preview and Guidelines views show visual behavior and design rules; implementation examples appear in Usage.
+`src/Reference.ts` owns the topic hierarchy, guidelines, usage examples, public contracts and the package's generated `USAGE.md`. Foundations document the shared rules and their APIs: Typography owns Text, Colors & themes owns Theme, and Icons & assets owns icon/brand usage. Component groups follow purpose, from layout and surfaces through actions, forms, navigation, content and feedback.
 
-Overview is a centered hub with the full component catalogue. Foundation and component preview pages compare both themes.
+Overview is a centered hub with a component catalogue grouped by purpose. Foundation and component Preview pages compare both themes; Guidelines and Usage use the current appearance.
 
-Component reference pages use the public Tabs component for Preview, Guidelines and Usage. The app synchronizes selection with hash routes; the library supplies button composition, keyboard behavior and panel transitions.
+Every reference topic uses the same `ReferenceContent` renderer and public Tabs component for Preview, Guidelines and Usage. `src/Documentation.ts` owns routes, legacy aliases and the reading order. Previous/next links move between topics and retain the current view. Old Text and combined notes links still resolve; Text now belongs to Typography and chips/notes have separate pages.
+
+Keep shared rules in foundations and component behavior on its own page. Related-topic links connect them without repeating demonstrations: spacing shows tokens, layout shows Stack/ActionGroup, and grouped rows show connected geometry.
 
 `src/Documentation.css` owns documentation layout and artificial state specimens only. Theme, typography, colors, controls, cards and feedback are supplied by the package. Paired previews use one React state model, distinct form names and the same geometry in both appearances.
 

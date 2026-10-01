@@ -13,26 +13,229 @@ export const registryCode = `# Project .npmrc
 //npm.pkg.github.com/:_authToken=\${NODE_AUTH_TOKEN}`;
 export const installCode = `npm install @envsemble/envui react@^19 react-dom@^19`;
 
+export const componentGroups = [
+  'Layout & surfaces',
+  'Actions',
+  'Forms & selection',
+  'Navigation',
+  'Content & guidance',
+  'Feedback & overlays',
+] as const;
+
+export type ComponentGroup = (typeof componentGroups)[number];
 export type Reference = {
   id: string;
   title: string;
-  group: string;
+  group: ComponentGroup | 'Foundations';
   summary: string;
   example: string;
   props: [string, string][];
   guidelines: string[];
+  related?: string[];
 };
-export const references: Reference[] = [
+
+export const foundations: Reference[] = [
   {
-    id: 'layout',
-    title: 'Content & action layout',
-    group: 'Layout',
-    summary: 'Shared spacing for text, fields and grouped actions.',
-    example: `import { Card, Stack, ActionGroup, Input, Button } from '@envsemble/envui';
+    id: 'colors',
+    title: 'Colors & themes',
+    group: 'Foundations',
+    summary: 'The base palette, explicit themes and deterministic interaction colors.',
+    example: `import { Theme, Button, useTheme } from '@envsemble/envui';
+import '@envsemble/envui/styles.css';
+
+function SaveButton() {
+  const theme = useTheme();
+  return <Button>Save in {theme} theme</Button>;
+}
+
+<Theme theme="dark"><SaveButton /></Theme>`,
+    props: [
+      ['Theme theme', 'Required: light or dark; scopes tokens and provides React theme context'],
+      ['Theme native props', 'children, ref, className, style and native div attributes'],
+      ['useTheme()', 'Returns the current theme, including across library portals'],
+      ['Theme preference', 'The application owns selection, persistence and system preference'],
+    ],
+    guidelines: [
+      'Use palette base colors. Derive states centrally; do not add separate hover or pressed palette entries.',
+      'Below 50% HSL lightness, add lightness; otherwise subtract it. Hover shifts 10 points, press shifts 20, and results clamp to 0–100%. Disabled opacity is 0.48.',
+      'Matching colors share a hue across themes. Saturation and lightness may differ; distinct semantic exceptions retain their own hues.',
+      'Selected navigation mixes 13% link color with its surface. Card action strips mix 35% muted surface with the parent surface.',
+      'Scope content with Theme. Nested boundaries and portaled components retain the originating theme.',
+    ],
+    related: ['surface', 'buttons', 'navigation', 'motion'],
+  },
+  {
+    id: 'typography',
+    title: 'Typography',
+    group: 'Foundations',
+    summary: 'The type hierarchy and its React implementation through Text.',
+    example: `import { Text, Stack } from '@envsemble/envui';
+
+<Stack>
+  <Text as="h1" variant="page-heading">Project overview</Text>
+  <Text tone="muted">Shared context for your team.</Text>
+  <Text variant="caption">Updated today</Text>
+</Stack>`,
+    props: [
+      ['Text variant', 'body (default), page-heading, section-heading, supporting or caption'],
+      ['Text tone', 'Optional primary, muted or quiet override of the variant’s default color'],
+      ['Text as', 'Native text tag; p (default), span, small, strong or h1–h6'],
+      ['Native element props', 'children, ref, className and accessible attributes'],
+    ],
+    guidelines: [
+      'Use Inter at regular (400) or medium (500) weight, with 1.4 line height. The preview orders styles by emphasis.',
+      'Choose the semantic element separately from its visual style. Use actual headings for document structure.',
+      'Text applies the shared scale and palette. Supporting text is small and muted; captions are small and quiet.',
+      'Text adds no outer spacing. Stack or the containing component owns the gaps.',
+    ],
+    related: ['colors', 'layout', 'cards'],
+  },
+  {
+    id: 'spacing',
+    title: 'Spacing & shape',
+    group: 'Foundations',
+    summary: 'Shared spacing tokens, padding and corner shapes.',
+    example: `import { Surface, Stack, Text } from '@envsemble/envui';
+
+<Surface padding={5} render={<Stack gap={4} />}>
+  <Text as="h2" variant="section-heading">Workspace</Text>
+  <Text>Padding is inside the surface; gap is between its children.</Text>
+</Surface>`,
+    props: [
+      ['Spacing steps 1–9', '0.25, 0.5, 0.75, 1, 1.5, 2, 2.5, 3 and 4 rem'],
+      ['Step 0', 'Removes padding or gap where the component supports it'],
+      ['Outer corners', '1.75 rem for panes, cards and the outside of a row group'],
+      ['Standard corners', '0.5 rem for inner rows, important actions, toasts and chips'],
+      [
+        'Other shapes',
+        'Fully rounded actions/navigation; circles for icon buttons; 0.25 rem checkboxes',
+      ],
+    ],
+    guidelines: [
+      'Use relative units and the shared spacing scale. The parent owns gaps; each component owns its internal padding.',
+      'Text has no outer margins. Cards already space direct children; Stack and ActionGroup supply other layouts.',
+      'Use component defaults for geometry. Choose Surface for a plain pane and Card for a content surface.',
+      'Grouped rows keep large outside corners and compact inside joins. Their component page owns the complete row behavior.',
+    ],
+    related: ['layout', 'surface', 'cards', 'rows', 'responsive'],
+  },
+  {
+    id: 'icons',
+    title: 'Icons & assets',
+    group: 'Foundations',
+    summary: 'Official Material Symbols Rounded and bundled envUI/envsemble branding.',
+    example: `import { Icon, EnvUILogo, BrandLogo, IconButton, Stack } from '@envsemble/envui';
+import { ChevronRight, Home } from '@envsemble/envui/icons';
+
+<Stack>
+  <EnvUILogo />
+  <BrandLogo />
+  <Home filled label="Home" />
+  <IconButton icon={<ChevronRight />} aria-label="Next item" />
+  <Icon viewBox="0 0 24 24" label="Custom mark">
+    <path d="M12 2 22 12 12 22 2 12Z" />
+  </Icon>
+</Stack>`,
+    props: [
+      ['Material symbols', 'Explicit imports from @envsemble/envui/icons or individual icon paths'],
+      [
+        'filled',
+        'Standalone symbols choose outline or filled; navigation and tabs manage selection fill',
+      ],
+      ['Icon label', 'Accessible name for a meaningful standalone SVG; omit for decoration'],
+      ['SVG props', 'width, height, viewBox, ref and accessible SVG attributes'],
+      ['EnvUILogo / BrandLogo', 'Bundled lockups; inherit context color and accept SVG props'],
+      [
+        'Custom icons',
+        'Controls accept React icon content; Icon supplies optional shared SVG defaults',
+      ],
+    ],
+    guidelines: [
+      'Use the bundled official Material Symbols Rounded. Symbols load locally; no remote icon font or SVG loader is required.',
+      'Icons inherit their context color. Navigation and tabs choose selected fill automatically.',
+      'Decorative icons stay hidden from assistive technology. Standalone meaningful icons need labels; icon-only controls need accessible action names.',
+      'Use bundled brand assets rather than recreating the marks.',
+    ],
+    related: ['icon-buttons', 'navigation', 'tabs', 'motion'],
+  },
+  {
+    id: 'responsive',
+    title: 'Responsive layout',
+    group: 'Foundations',
+    summary: 'Content-driven layouts and input-aware sizing across available space.',
+    example: `import { Card, Text, ActionGroup, Button } from '@envsemble/envui';
 
 <Card>
-  <h3>Project details</h3>
-  <p>Cards space their direct children automatically.</p>
+  <Text as="h2" variant="section-heading">Autumn release</Text>
+  <Text>Let content wrap within the available space.</Text>
+  <ActionGroup stacked>
+    <Button>Save changes</Button>
+    <Button variant="secondary">Cancel</Button>
+  </ActionGroup>
+</Card>`,
+    props: [
+      [
+        'ActionGroup stacked',
+        'Stacks label buttons at full group width; circular icons retain their size',
+      ],
+      ['Control minimums', '2 rem action buttons; 2.5 rem field and navigation controls'],
+      ['Coarse pointers', 'Shared 2.75 rem touch minimum; controls can grow with content'],
+      [
+        'Layout breakpoints',
+        'Chosen by the application; no separate mobile theme or component set',
+      ],
+    ],
+    guidelines: [
+      'Reflow the layout, wrap text and let controls grow with content. Use relative units.',
+      'Use wrapped action rows when space permits and stacked actions when labels need more room.',
+      'The library adapts touch targets to input capability. The application chooses layout breakpoints; feature cards adapt to their containing block.',
+    ],
+    related: ['layout', 'cards', 'input', 'spacing'],
+  },
+  {
+    id: 'motion',
+    title: 'Motion & accessibility',
+    group: 'Foundations',
+    summary: 'Shared transition timing, visible focus and accessible composition.',
+    example: `import { Stack, Input, IconButton } from '@envsemble/envui';
+import { ChevronRight } from '@envsemble/envui/icons';
+
+<Stack>
+  <Input label="Project name" hint="Visible labels stay available while typing." />
+  <IconButton icon={<ChevronRight />} aria-label="Next project" />
+</Stack>`,
+    props: [
+      ['Transition tokens', '--motion-duration-fast (0.12 s), --motion-duration-medium (0.16 s)'],
+      ['Shared easing', '--motion-ease: cubic-bezier(0.45, 0, 0.2, 1)'],
+      ['Focus ring', 'Shared 0.125 rem outline; keyboard order follows the visible layout'],
+      ['Reduced motion', 'Library transitions respect prefers-reduced-motion automatically'],
+      [
+        'Content semantics',
+        'The application supplies meaningful labels, headings and link destinations',
+      ],
+    ],
+    guidelines: [
+      'Keep motion brief and tied to a state change. Respect reduced motion in any application animations too.',
+      'Give controls visible labels and icon actions accessible names. Preserve native form behavior and disabled states.',
+      'Use semantic headings, meaningful links and a keyboard order that follows the visible layout.',
+      'Library components handle their focus, keyboard and announcement behavior. Their own pages document those contracts.',
+      'Validate product content and contrast in both supported themes.',
+    ],
+    related: ['input', 'select', 'tabs', 'dialogs', 'toasts'],
+  },
+];
+
+const componentReferences: Reference[] = [
+  {
+    id: 'layout',
+    title: 'Stacks & action groups',
+    group: 'Layout & surfaces',
+    summary: 'Shared spacing for text, fields and grouped actions.',
+    example: `import { Card, Stack, ActionGroup, Input, Button, Text } from '@envsemble/envui';
+
+<Card>
+  <Text as="h3" variant="section-heading">Project details</Text>
+  <Text>Cards space their direct children automatically.</Text>
   <Stack gap={4}>
     <Input label="Name" name="name" />
     <Input label="Description" name="description" />
@@ -54,7 +257,10 @@ export const references: Reference[] = [
         'Stack as',
         'Semantic container tag; div (default), section, article, nav, main, aside, header or footer',
       ],
-      ['Stack render', 'Compose layout onto another root element or component without a wrapper'],
+      [
+        'Stack render',
+        'Compose layout onto another root; set the semantic tag on the supplied element instead of as',
+      ],
       ['ActionGroup stacked', 'Wrapped row by default; stacked label buttons fill the group'],
       ['ActionGroup align', 'Row alignment: start (default), center or end'],
       ['ActionGroup as', 'Semantic container tag; div by default, footer for card or form actions'],
@@ -64,12 +270,14 @@ export const references: Reference[] = [
       'The parent owns space between components; components own their internal padding. Avoid individual child margins.',
       'Stack uses the shared spacing scale. Step 4 is 1 rem; step 2 is 0.5 rem. Cards already space direct children by 1 rem.',
       'ActionGroup uses 1 rem gaps in wrapped rows and 0.5 rem when stacked. Circular icon buttons keep their size.',
+      'With Stack render, put the semantic tag on the supplied element. Custom components must forward native props and refs.',
     ],
+    related: ['spacing', 'surface', 'cards', 'responsive'],
   },
   {
     id: 'surface',
     title: 'Surface',
-    group: 'Layout',
+    group: 'Layout & surfaces',
     summary: 'Shared backgrounds, padding and corners for panes and cards.',
     example: `import { Surface, Stack, Text } from '@envsemble/envui';
 
@@ -91,30 +299,7 @@ export const references: Reference[] = [
       'Stack and ActionGroup own layout. Compose Stack through render when the surface itself should arrange its content.',
       'Use surface corners for ordinary panes; standard and pill shapes serve the documented compact controls and rails. Custom render components must forward native props and refs.',
     ],
-  },
-  {
-    id: 'text',
-    title: 'Text',
-    group: 'Layout',
-    summary: 'Shared typography and semantic text colors without custom CSS.',
-    example: `import { Text, Stack } from '@envsemble/envui';
-
-<Stack>
-  <Text as="h1" variant="page-heading">Project overview</Text>
-  <Text tone="muted">Shared context for your team.</Text>
-  <Text variant="caption">Updated today</Text>
-</Stack>`,
-    props: [
-      ['variant', 'body (default), page-heading, section-heading, supporting or caption'],
-      ['tone', 'Optional primary, muted or quiet override of the variant’s default color'],
-      ['as', 'Native text tag; p (default), span, small, strong or h1–h6'],
-      ['Native element props', 'children, ref, className and accessible attributes'],
-    ],
-    guidelines: [
-      'Choose the semantic element separately from its visual emphasis. Use actual headings for document structure.',
-      'Text uses the shared Inter scale and palette. Supporting text is small and muted; captions are small and quiet.',
-      'Text adds no outer spacing. Use Stack or the surrounding component for gaps.',
-    ],
+    related: ['spacing', 'layout', 'cards', 'colors'],
   },
   {
     id: 'buttons',
@@ -145,6 +330,7 @@ import { Add } from '@envsemble/envui/icons';
       'Interaction colors follow the central HSL lightness rule described in Colors & themes. State colors and disabled opacity come from the shared stylesheet.',
       'Use href for destinations and onClick for actions. Disabled links have no destination and cannot activate.',
     ],
+    related: ['icon-buttons', 'layout', 'colors', 'icons'],
   },
   {
     id: 'icon-buttons',
@@ -164,6 +350,7 @@ import { ChevronRight } from '@envsemble/envui/icons';
       'Use a 2.5 rem circle with a centered 1.5 rem icon and 0.5 rem inset.',
       'Use the tonal row fill and neutral icon. Name the action, rather than describing the icon shape.',
     ],
+    related: ['buttons', 'icons', 'motion'],
   },
   {
     id: 'input',
@@ -186,6 +373,7 @@ import { ChevronRight } from '@envsemble/envui/icons';
       'Keep the label visible. Use hints for instructions and errors for a specific recovery step.',
       'Inputs support empty, filled, focus, invalid, disabled and read-only states. Keep form validation and draft state in the application.',
     ],
+    related: ['textarea', 'select', 'layout', 'motion'],
   },
   {
     id: 'textarea',
@@ -207,6 +395,7 @@ import { ChevronRight } from '@envsemble/envui/icons';
       'Use for content that needs multiple lines. Set rows to reflect the expected amount of entry.',
       'Allow resizing and preserve the same state treatment as single-line fields.',
     ],
+    related: ['input', 'layout', 'motion'],
   },
   {
     id: 'checkbox',
@@ -226,6 +415,7 @@ import { ChevronRight } from '@envsemble/envui/icons';
       'Use for choices that can be selected independently. Use mixed for a partially selected parent group.',
       'Keep a visible label and retain native form participation. The application computes aggregate selection.',
     ],
+    related: ['radio', 'switch', 'motion'],
   },
   {
     id: 'switch',
@@ -245,6 +435,7 @@ import { ChevronRight } from '@envsemble/envui/icons';
       'Use for a binary setting. Label the setting consistently in either state.',
       'Use checkbox semantics when the choice is part of a submitted selection.',
     ],
+    related: ['checkbox', 'colors', 'motion'],
   },
   {
     id: 'radio',
@@ -264,9 +455,10 @@ import { ChevronRight } from '@envsemble/envui/icons';
       ['Radio', 'value, label, detail, disabled and native input props'],
     ],
     guidelines: [
-      'Use radios when alternatives benefit from being visible together. Keep the existing native radio treatment.',
+      'Use radios when one alternative must be selected and the choices benefit from being visible together.',
       'Selectable rows reuse the grouped-row geometry. Use a unique group name for each form.',
     ],
+    related: ['select', 'checkbox', 'rows'],
   },
   {
     id: 'select',
@@ -296,10 +488,11 @@ import { ChevronRight } from '@envsemble/envui/icons';
       'Option focus rings appear for keyboard interaction, not pointer opening or hover.',
       'Label, hint and error use the same field structure as Input and Textarea. The application owns validation.',
     ],
+    related: ['radio', 'input', 'rows', 'motion'],
   },
   {
     id: 'navigation',
-    title: 'Navigation',
+    title: 'Navigation items',
     group: 'Navigation',
     summary: 'Quiet destinations and a clear selected location.',
     example: `import { NavigationItem } from '@envsemble/envui';
@@ -326,6 +519,7 @@ import { Home } from '@envsemble/envui/icons';
       'Unselected icons use the caption color; selected icon and label use the link color. Navigation fits its content with a 2.5 rem minimum height.',
       'Selection keeps the gray/blue styling. Hover and pressed preserve the base hue and saturation and use the central lightness rule.',
     ],
+    related: ['tabs', 'direction-links', 'icons', 'colors'],
   },
   {
     id: 'tabs',
@@ -368,6 +562,7 @@ import { Home } from '@envsemble/envui/icons';
       'Arrow keys move between enabled tabs; Home and End reach the ends. Use manual activation for content that takes time to load. Disabled tabs are skipped.',
       'Selection and panels transition over 0.16 s with shared easing. Reduced motion removes transitions. Inactive panels are hidden and inert; keepMounted preserves their local state.',
     ],
+    related: ['navigation', 'buttons', 'icons', 'motion'],
   },
   {
     id: 'direction-links',
@@ -404,11 +599,12 @@ import { ArrowBack, ArrowForward } from '@envsemble/envui/icons';
       'Show only destinations that exist. Arrange links using an existing layout component; DirectionLink represents one destination.',
       'Hover and pressed use the shared subtle-action and border colors. Keyboard focus has a visible outline, and text wraps without growing beyond its container.',
     ],
+    related: ['navigation', 'layout', 'typography'],
   },
   {
     id: 'rows',
     title: 'Grouped rows',
-    group: 'Rows & cards',
+    group: 'Layout & surfaces',
     summary: 'Connected content with generous outer corners and compact inner joins.',
     example: `import { GroupedRows, Row, Button } from '@envsemble/envui';
 
@@ -427,18 +623,19 @@ import { ArrowBack, ArrowForward } from '@envsemble/envui/icons';
       'Rows have a 3.5 rem minimum height and a 0.125 rem gap. In a muted pane, use contrast fill to distinguish the rows.',
       'Keep actions short and let long titles and details wrap.',
     ],
+    related: ['surface', 'cards', 'radio', 'select', 'spacing'],
   },
   {
     id: 'cards',
     title: 'Cards',
-    group: 'Rows & cards',
+    group: 'Layout & surfaces',
     summary: 'Rounded surfaces for related content and familiar action compositions.',
-    example: `import { Card, FeatureCard, Button } from '@envsemble/envui';
+    example: `import { Card, FeatureCard, Button, Text } from '@envsemble/envui';
 import { Apps } from '@envsemble/envui/icons';
 
 <Card href="/projects" aria-labelledby="projects-title">
-  <h3 id="projects-title">Projects</h3>
-  <p>Open your shared workspace.</p>
+  <Text as="h3" variant="section-heading" id="projects-title">Projects</Text>
+  <Text>Open your shared workspace.</Text>
 </Card>
 
 <Card as="button" onClick={openProject}>
@@ -474,32 +671,51 @@ import { Apps } from '@envsemble/envui/icons';
       'The action strip derives its fill from the parent surface. Compose actions from the shared controls.',
       'Titles, metadata and product data remain application content.',
     ],
+    related: ['surface', 'layout', 'rows', 'typography'],
   },
   {
-    id: 'notes',
-    title: 'Chips & notes',
-    group: 'Notes & chips',
-    summary: 'Metadata stays compact; optional guidance expands when needed.',
-    example: `import { InfoChip, DisclosureNote } from '@envsemble/envui';
+    id: 'chips',
+    title: 'Info chips',
+    group: 'Content & guidance',
+    summary: 'Compact, noninteractive metadata beside related content.',
+    example: `import { InfoChip, ActionGroup } from '@envsemble/envui';
 
-<InfoChip>Optional</InfoChip>
+<ActionGroup>
+  <InfoChip>Optional</InfoChip>
+  <InfoChip>3 members</InfoChip>
+</ActionGroup>`,
+    props: [['InfoChip', 'children and native span attributes']],
+    guidelines: [
+      'Use chips for short metadata. They have no hover, focus, filtering or selected state.',
+      'Place metadata beside the content it describes. Use a button for an action or a selection control for a choice.',
+    ],
+    related: ['cards', 'typography', 'disclosures'],
+  },
+  {
+    id: 'disclosures',
+    title: 'Disclosure notes',
+    group: 'Content & guidance',
+    summary: 'Secondary guidance that expands without interrupting the task.',
+    example: `import { DisclosureNote, Text } from '@envsemble/envui';
+
 <DisclosureNote title="How visibility works">
-  <p>Team projects are available to every workspace member.</p>
+  <Text>Team projects are available to every workspace member.</Text>
 </DisclosureNote>`,
     props: [
-      ['InfoChip children', 'Noninteractive metadata; span attributes'],
       ['DisclosureNote title / children', 'One-line summary and optional detail'],
       ['open / onToggle', 'Native details state and event for controlled specimen state'],
+      ['Native details props', 'ref, className and accessible attributes'],
     ],
     guidelines: [
-      'Info chips describe content and have no hover, focus, filtering or selected state.',
       'Keep a disclosure title on one line. Put secondary guidance behind the disclosure and essential instructions beside the task.',
+      'Use the native disclosure interaction. Keep labels short enough for the available width.',
     ],
+    related: ['chips', 'typography', 'input'],
   },
   {
     id: 'empty-state',
     title: 'Empty states',
-    group: 'Feedback',
+    group: 'Feedback & overlays',
     summary: 'Explain missing content and offer a relevant next action.',
     example: `import { EmptyState, Button } from '@envsemble/envui';
 import { Search } from '@envsemble/envui/icons';
@@ -515,11 +731,12 @@ import { Search } from '@envsemble/envui/icons';
       'Distinguish first-use emptiness from a search with no results.',
       'Offer an action that resolves the situation. Keep the content aligned to the start.',
     ],
+    related: ['loading', 'cards', 'buttons'],
   },
   {
     id: 'loading',
     title: 'Loading',
-    group: 'Feedback',
+    group: 'Feedback & overlays',
     summary: 'Show content geometry while announcing that work is in progress.',
     example: `import { LoadingState, Skeleton } from '@envsemble/envui';
 
@@ -536,11 +753,12 @@ import { Search } from '@envsemble/envui/icons';
       'Match placeholders to expected content without implying a precise completion time.',
       'Announce loading once per region. Respect the operating system reduced motion preference.',
     ],
+    related: ['empty-state', 'cards', 'motion'],
   },
   {
     id: 'toasts',
     title: 'Toasts',
-    group: 'Feedback',
+    group: 'Feedback & overlays',
     summary: 'Brief feedback with optional recovery and explicit dismissal.',
     example: `import { Theme, Button, ToastProvider, useToast } from '@envsemble/envui';
 
@@ -576,11 +794,12 @@ function SaveButton() {
       'Timers pause during hover, keyboard focus or an inactive window. Each placement shows three notices; queued lifetimes start on display.',
       'Keep messages and actions short. Messages stay single-line and truncate to available space. Manual Toast shares the presentation; the consumer owns its lifetime.',
     ],
+    related: ['dialogs', 'buttons', 'colors', 'motion'],
   },
   {
     id: 'dialogs',
     title: 'Dialogs',
-    group: 'Dialogs',
+    group: 'Feedback & overlays',
     summary: 'Focused confirmation or entry with a modal boundary and return focus.',
     example: `import { Dialog, Button, Input } from '@envsemble/envui';
 
@@ -602,17 +821,44 @@ function SaveButton() {
       'The dialog traps focus, handles Escape and returns focus to the trigger. Portals preserve the originating theme.',
       'The application owns validation, saving, async work and whether completion closes the dialog.',
     ],
+    related: ['toasts', 'input', 'layout', 'motion'],
   },
 ];
+
+export const references = componentReferences.sort(
+  (a, b) =>
+    componentGroups.indexOf(a.group as ComponentGroup) -
+    componentGroups.indexOf(b.group as ComponentGroup),
+);
 
 export function renderUsageMarkdown(): string {
   const head = `# @envsemble/envui usage\n\nReact 19 components for current browsers. Import the public package API and one stylesheet. Theme preference, routing, validation and product data belong to the application.\n\n## Install\n\nConfigure private GitHub Packages access using an environment token with read:packages and package access. Keep credentials outside committed files.\n\n\`\`\`ini\n${registryCode}\n\`\`\`\n\n\`\`\`sh\n${installCode}\n\`\`\`\n\n## First component\n\n${'```tsx'}\n${setupCode}\n${'```'}\n\nUse Theme theme="light" or theme="dark". Inter, tokens and assets are included. Imports from @envsemble/envui/icons are explicit, and icons accept filled, width, height and accessible SVG attributes. Components accept custom React icon content.\n`;
   return (
     head +
-    references
+    [
+      { title: 'Foundations', items: foundations },
+      ...componentGroups.map((title) => ({
+        title,
+        items: references.filter((ref) => ref.group === title),
+      })),
+    ]
       .map(
-        (ref) =>
-          `\n## ${ref.title}\n\n${ref.summary}\n\n${'```tsx'}\n${ref.example}\n${'```'}\n\n${ref.props.map(([name, value]) => `- ${name}: ${value}`).join('\n')}\n\n${ref.guidelines.join('\n\n')}\n`,
+        ({ title, items }) =>
+          `\n## ${title}\n` +
+          items
+            .map((ref) => {
+              const related = (ref.related ?? []).flatMap((id) => {
+                const item = [...foundations, ...references].find((entry) => entry.id === id);
+                if (!item) return [];
+                const anchor = item.title
+                  .toLowerCase()
+                  .replace(/[^\p{L}\p{N} -]/gu, '')
+                  .replace(/ /g, '-');
+                return [`[${item.title}](#${anchor})`];
+              });
+              return `\n### ${ref.title}\n\n${ref.summary}\n\n${'```tsx'}\n${ref.example}\n${'```'}\n\n#### Props & contracts\n\n${ref.props.map(([name, value]) => `- ${name}: ${value}`).join('\n')}\n\n#### Guidelines\n\n${ref.guidelines.map((text) => `- ${text}`).join('\n')}\n${related.length ? `\nRelated: ${related.join(', ')}.\n` : ''}`;
+            })
+            .join(''),
       )
       .join('') +
     '\n## Local edits and upgrades\n\nIn the design-system repository, run npm install and npm run dev. The documentation workspace consumes the public package through the local workspace. Changes appear during development without publishing or changing the package version. A future product can use the same workspace connection; product integration is separate work. Adopt a published version intentionally with npm install @envsemble/envui@<version>, review CHANGELOG.md, and validate the consumer before release. Every release has a matching offline documentation HTML.\n'

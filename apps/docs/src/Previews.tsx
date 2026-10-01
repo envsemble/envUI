@@ -300,37 +300,6 @@ export function ComponentPreview({ id }: { id: string }) {
                   </Example>
                 </>
               );
-            case 'text':
-              return (
-                <>
-                  <Example title="Typography scale">
-                    <Stack>
-                      <Text as="h3" variant="page-heading">
-                        Page heading
-                      </Text>
-                      <Text as="h4" variant="section-heading">
-                        Section heading
-                      </Text>
-                      <Text>Body text for the main content.</Text>
-                      <Text variant="supporting">Supporting text adds context.</Text>
-                      <Text variant="caption">A caption describes the specimen.</Text>
-                    </Stack>
-                  </Example>
-                  <Example title="Color and semantics">
-                    <Stack>
-                      <Text tone="muted">Body text with muted color.</Text>
-                      <Text tone="quiet">Body text with quiet color.</Text>
-                      <Text>
-                        Native inline{' '}
-                        <Text as="span" tone="muted">
-                          supporting context
-                        </Text>{' '}
-                        keeps its surrounding paragraph semantics.
-                      </Text>
-                    </Stack>
-                  </Example>
-                </>
-              );
             case 'layout':
               return (
                 <>
@@ -958,7 +927,7 @@ export function ComponentPreview({ id }: { id: string }) {
                       <span>Workspace unavailable</span>
                     </Card>
                   </Example>
-                  <Example title="General surface">
+                  <Example title="Content card">
                     <Card>
                       <h3>Project overview</h3>
                       <p>Related information lives together in a rounded surface.</p>
@@ -991,29 +960,30 @@ export function ComponentPreview({ id }: { id: string }) {
                   </Example>
                 </>
               );
-            case 'notes':
+            case 'chips':
               return (
-                <>
-                  <Example title="Metadata">
-                    <ActionGroup>
-                      <InfoChip>Optional</InfoChip>
-                      <InfoChip>Read only</InfoChip>
-                      <InfoChip>3 members</InfoChip>
-                    </ActionGroup>
-                  </Example>
-                  <Example title="Optional guidance">
-                    <DisclosureNote
-                      title="How visibility works"
-                      open={expanded}
-                      onToggle={(e) => setExpanded(e.currentTarget.open)}
-                    >
-                      <p>
-                        Team projects are available to every workspace member. Private projects are
-                        visible only to invited people.
-                      </p>
-                    </DisclosureNote>
-                  </Example>
-                </>
+                <Example title="Metadata">
+                  <ActionGroup>
+                    <InfoChip>Optional</InfoChip>
+                    <InfoChip>Read only</InfoChip>
+                    <InfoChip>3 members</InfoChip>
+                  </ActionGroup>
+                </Example>
+              );
+            case 'disclosures':
+              return (
+                <Example title="Optional guidance">
+                  <DisclosureNote
+                    title="How visibility works"
+                    open={expanded}
+                    onToggle={(e) => setExpanded(e.currentTarget.open)}
+                  >
+                    <p>
+                      Team projects are available to every workspace member. Private projects are
+                      visible only to invited people.
+                    </p>
+                  </DisclosureNote>
+                </Example>
               );
             case 'empty-state':
               return (
