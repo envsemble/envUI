@@ -1,7 +1,9 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
 // Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
 import { Icon, type MaterialSymbolProps } from '../Icon.js';
+import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
 
-export function Dresser({ filled = false, ...props }: MaterialSymbolProps) {
+export function Dresser({ filled: requestedFill, ...props }: MaterialSymbolProps) {
+  const filled = useMaterialSymbolFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M160-120v-640q0-33 23.5-56.5T240-840h480q33 0 56.5 23.5T800-760v640h-80v-80H240v80h-80Zm80-400h200v-240H240v240Zm280-160h200v-80H520v80Zm0 160h200v-80H520v80ZM400-320h160v-80H400v80Z" /> : <path d="M160-120v-640q0-33 23.5-56.5T240-840h480q33 0 56.5 23.5T800-760v640h-80v-80H240v80h-80Zm80-400h200v-240H240v240Zm280-160h200v-80H520v80Zm0 160h200v-80H520v80ZM400-320h160v-80H400v80ZM240-440v160h480v-160H240Zm0 0v160-160Z" />}</Icon>;
 }

@@ -1,7 +1,9 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
 // Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
 import { Icon, type MaterialSymbolProps } from '../Icon.js';
+import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
 
-export function SirenCheck({ filled = false, ...props }: MaterialSymbolProps) {
+export function SirenCheck({ filled: requestedFill, ...props }: MaterialSymbolProps) {
+  const filled = useMaterialSymbolFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="m691-235-18-18q-9-9-21-8.5t-21 9.5q-9 9-9 21t9 21l32 32q12 12 28 12t28-12l90-89q9-9 9-21t-9-21q-9-9-21-8.5t-21 8.5l-76 74Zm29 195q-83 0-141.5-58.5T520-240q0-83 58.5-141.5T720-440q83 0 141.5 58.5T920-240q0 83-58.5 141.5T720-40ZM400-560q0-33 23.5-56.5T480-640q17 0 28.5-11.5T520-680q0-17-11.5-28.5T480-720q-66 0-113 47t-47 113v80q0 17 11.5 28.5T360-440q17 0 28.5-11.5T400-480v-80ZM160-120q-33 0-56.5-23.5T80-200v-80q0-33 23.5-56.5T160-360h40v-200q0-117 81.5-198.5T480-840q117 0 198.5 81.5T760-560v14q0 11-8.5 19t-20.5 7q-58-2-112.5 19T522-438q-38 38-60 88.5T440-240q0 19 2.5 37t7.5 36q5 17-5.5 32T417-120H160Z" /> : <path d="m691-235-18-18q-9-9-21-8.5t-21 9.5q-9 9-9 21t9 21l32 32q12 12 28 12t28-12l90-89q9-9 9-21t-9-21q-9-9-21-8.5t-21 8.5l-76 74ZM467-360Zm-24 80ZM160-120q-33 0-56.5-23.5T80-200v-80q0-33 23.5-56.5T160-360h40v-200q0-117 81.5-198.5T480-840q117 0 198.5 81.5T760-560v3q0 17-11.5 28.5T720-517q-17 0-28.5-11.5T680-557v-3q0-83-58.5-141.5T480-760q-83 0-141.5 58.5T280-560v200h147q17 0 28.5 11.5T467-320q0 17-11.5 28.5T427-280H160v80h267q17 0 28.5 11.5T467-160q0 17-11.5 28.5T427-120H160Zm560 80q-83 0-141.5-58.5T520-240q0-83 58.5-141.5T720-440q83 0 141.5 58.5T920-240q0 83-58.5 141.5T720-40ZM400-560q0-33 23.5-56.5T480-640q17 0 28.5-11.5T520-680q0-17-11.5-28.5T480-720q-66 0-113 47t-47 113v80q0 17 11.5 28.5T360-440q17 0 28.5-11.5T400-480v-80Z" />}</Icon>;
 }

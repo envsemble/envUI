@@ -6,7 +6,7 @@ export interface IconProps extends SVGProps<SVGSVGElement> {
 }
 
 export interface MaterialSymbolProps extends Omit<IconProps, 'children'> {
-  /** Select the official fill=1 geometry. All other Material Symbols axes are fixed. */
+  /** Select fill=1 geometry outside navigation; NavigationItem owns its icon fill. */
   filled?: boolean;
 }
 

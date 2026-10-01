@@ -72,7 +72,8 @@ for (const icon of manifest.icons) {
       : `<>${paths.map((path) => `<path d=${JSON.stringify(path)} />`).join('')}</>`;
   const identical = JSON.stringify(unfilled.paths) === JSON.stringify(filled.paths);
   const sameViewBox = unfilled.viewBox === filled.viewBox;
-  const source = `// Generated from Google Material Symbols (${manifest.upstream.revision}); Apache-2.0.\n// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.\nimport { Icon, type MaterialSymbolProps } from '../Icon.js';\n\nexport function ${name}({ filled${identical && sameViewBox ? ': _filled' : ''} = false, ...props }: MaterialSymbolProps) {\n  return <Icon viewBox=${sameViewBox ? JSON.stringify(unfilled.viewBox) : `{filled ? ${JSON.stringify(filled.viewBox)} : ${JSON.stringify(unfilled.viewBox)}}`} {...props}>${identical ? render(unfilled.paths) : `{filled ? ${render(filled.paths)} : ${render(unfilled.paths)}}`}</Icon>;\n}\n`;
+  const hasFillVariant = !identical || !sameViewBox;
+  const source = `// Generated from Google Material Symbols (${manifest.upstream.revision}); Apache-2.0.\n// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.\nimport { Icon, type MaterialSymbolProps } from '../Icon.js';\n${hasFillVariant ? "import { useMaterialSymbolFill } from '../MaterialSymbolState.js';\n" : ''}\nexport function ${name}({ filled: ${hasFillVariant ? 'requestedFill' : '_filled = false'}, ...props }: MaterialSymbolProps) {\n${hasFillVariant ? '  const filled = useMaterialSymbolFill(requestedFill);\n' : ''}  return <Icon viewBox=${sameViewBox ? JSON.stringify(unfilled.viewBox) : `{filled ? ${JSON.stringify(filled.viewBox)} : ${JSON.stringify(unfilled.viewBox)}}`} {...props}>${identical ? render(unfilled.paths) : `{filled ? ${render(filled.paths)} : ${render(unfilled.paths)}}`}</Icon>;\n}\n`;
   await writeModule(resolve(output, name + '.tsx'), source);
   generated.add(name + '.tsx');
 }

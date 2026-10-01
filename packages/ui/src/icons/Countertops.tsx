@@ -1,7 +1,9 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
 // Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
 import { Icon, type MaterialSymbolProps } from '../Icon.js';
+import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
 
-export function Countertops({ filled = false, ...props }: MaterialSymbolProps) {
+export function Countertops({ filled: requestedFill, ...props }: MaterialSymbolProps) {
+  const filled = useMaterialSymbolFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M520-640q-17 0-28.5-11.5T480-680q0-50 35-85t85-35q50 0 85 35t35 85v120h120q17 0 28.5 11.5T880-520q0 17-11.5 28.5T840-480h-40v240q0 33-23.5 56.5T720-160H240q-33 0-56.5-23.5T160-240v-240h-40q-17 0-28.5-11.5T80-520q0-17 11.5-28.5T120-560h120q-33 0-56.5-23.5T160-640v-120q0-17 11.5-28.5T200-800h160q17 0 28.5 11.5T400-760v120q0 33-23.5 56.5T320-560h320v-120q0-17-11.5-28.5T600-720q-17 0-28.5 11.5T560-680t-11.5 28.5Q537-640 520-640Zm-80 400h80v-240h-80v240Z" /> : <path d="M240-640h80v-80h-80v80Zm0 400h200v-240H240v240Zm280 0h200v-240H520v240Zm-280 0h480v-240H240v240Zm280-400q-17 0-28.5-11.5T480-680q0-50 35-85t85-35q50 0 85 35t35 85v120h120q17 0 28.5 11.5T880-520q0 17-11.5 28.5T840-480h-40v240q0 33-23.5 56.5T720-160H240q-33 0-56.5-23.5T160-240v-240h-40q-17 0-28.5-11.5T80-520q0-17 11.5-28.5T120-560h120q-33 0-56.5-23.5T160-640v-120q0-17 11.5-28.5T200-800h160q17 0 28.5 11.5T400-760v120q0 33-23.5 56.5T320-560h320v-120q0-17-11.5-28.5T600-720q-17 0-28.5 11.5T560-680t-11.5 28.5Q537-640 520-640Zm-280 0h80-80Z" />}</Icon>;
 }

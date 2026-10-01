@@ -1,5 +1,6 @@
 import type { ComponentPropsWithRef, CSSProperties, ReactNode } from 'react';
 import { Stack } from './Layout.js';
+import { NavigationIconState } from './MaterialSymbolState.js';
 
 function classes(...values: Array<string | undefined | false>) {
   return values.filter(Boolean).join(' ');
@@ -60,7 +61,9 @@ export function IconButton({ icon, type = 'button', className, ...props }: IconB
 interface NavigationItemSharedProps {
   selected?: boolean;
   disabled?: boolean;
+  /** Official Material Symbols automatically follow the selected state. */
   icon?: ReactNode;
+  /** Optional alternate content for custom icons when selected. */
   selectedIcon?: ReactNode;
 }
 
@@ -83,7 +86,11 @@ export function NavigationItem(props: NavigationItemProps) {
   const iconContent = selected && selectedIcon != null ? selectedIcon : icon;
   const content = (
     <>
-      {iconContent != null && <DecorativeIcon>{iconContent}</DecorativeIcon>}
+      {iconContent != null && (
+        <NavigationIconState selected={selected}>
+          <DecorativeIcon>{iconContent}</DecorativeIcon>
+        </NavigationIconState>
+      )}
       {children}
     </>
   );
