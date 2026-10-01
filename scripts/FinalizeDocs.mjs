@@ -1,17 +1,18 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
-const root = fileURLToPath(new URL('../', import.meta.url));
-let html = await readFile(resolve(root, 'dist/docs/index.html'), 'utf8');
+const repositoryRoot = fileURLToPath(new URL('../', import.meta.url));
+const docsOutputDirectory = resolve(repositoryRoot, 'dist/docs');
+let html = await readFile(resolve(docsOutputDirectory, 'index.html'), 'utf8');
 // Vite keeps favicon links as files even when other assets are inlined.
 for (const match of html.matchAll(/<link\b[^>]*\brel="icon"[^>]*>/g)) {
   const href = match[0].match(/\bhref="([^"]+)"/)?.[1];
   if (!href || href.startsWith('data:')) continue;
-  const asset = await readFile(resolve(root, 'dist/docs', href.replace(/^\//, '')));
+  const asset = await readFile(resolve(docsOutputDirectory, href.replace(/^\//, '')));
   const dataUrl = `data:image/x-icon;base64,${asset.toString('base64')}`;
   html = html.replace(match[0], match[0].replace(href, dataUrl));
 }
-const names = [
+const dependencyLicensePaths = [
   'react/LICENSE',
   'react-dom/LICENSE',
   '@base-ui/react/LICENSE',
@@ -21,22 +22,23 @@ const names = [
   'use-sync-external-store/LICENSE',
   '@babel/runtime/LICENSE',
 ];
-const notices = await Promise.all(
-  names.map(
-    async (name) => `${name}\n${await readFile(resolve(root, 'node_modules', name), 'utf8')}`,
+const licenseNotices = await Promise.all(
+  dependencyLicensePaths.map(
+    async (licensePath) =>
+      `${licensePath}\n${await readFile(resolve(repositoryRoot, 'node_modules', licensePath), 'utf8')}`,
   ),
 );
-notices.push(
-  await readFile(resolve(root, 'licenses/Inter-LICENSE.txt'), 'utf8'),
-  await readFile(resolve(root, 'licenses/Material-Symbols-LICENSE.txt'), 'utf8'),
+licenseNotices.push(
+  await readFile(resolve(repositoryRoot, 'licenses/Inter-LICENSE.txt'), 'utf8'),
+  await readFile(resolve(repositoryRoot, 'licenses/Material-Symbols-LICENSE.txt'), 'utf8'),
 );
 const version = JSON.parse(
-  await readFile(resolve(root, 'packages/ui/package.json'), 'utf8'),
+  await readFile(resolve(repositoryRoot, 'packages/ui/package.json'), 'utf8'),
 ).version;
 html = html.replace(
   '</head>',
-  `<!-- @envsemble/envui ${version}\nEmbedded third-party notices\n${notices.join('\n\n').replaceAll('--', '—')} -->\n</head>`,
+  `<!-- @envsemble/envui ${version}\nEmbedded third-party notices\n${licenseNotices.join('\n\n').replaceAll('--', '—')} -->\n</head>`,
 );
-await mkdir(resolve(root, 'dist'), { recursive: true });
-await writeFile(resolve(root, 'dist/envUI.html'), html);
+await mkdir(resolve(repositoryRoot, 'dist'), { recursive: true });
+await writeFile(resolve(repositoryRoot, 'dist/envUI.html'), html);
 console.log(`Built dist/envUI.html for @envsemble/envui ${version}; opens offline on its own.`);
