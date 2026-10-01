@@ -64,7 +64,7 @@ test('public composition owns spacing and content-fit sizing without documentati
       const rail = (await actionCard.locator('.env-action-card-actions').boundingBox())!;
       expect(Math.abs(rail.y - body.y - body.height)).toBeLessThan(1);
       const extra = scope.getByTestId('feature-extra');
-      const description = (await extra.locator('.env-feature-card-copy > p').boundingBox())!;
+      const description = (await extra.locator('.env-feature-card-description').boundingBox())!;
       const extraContent = (await extra.locator('.env-feature-card-extra').boundingBox())!;
       expect(extraContent.y - description.y - description.height).toBeGreaterThanOrEqual(15);
       for (const [selector, step] of [

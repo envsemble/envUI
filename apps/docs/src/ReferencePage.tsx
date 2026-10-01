@@ -18,7 +18,7 @@ function RelatedTopics({ page }: { page: ReferencePage }) {
   });
   if (!related.length) return null;
   return (
-    <Stack as="section" gap={3}>
+    <Stack as="section">
       <Text as="h2" variant="page-heading">
         Related topics
       </Text>
