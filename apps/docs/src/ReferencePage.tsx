@@ -57,7 +57,6 @@ export function ReferenceContent({
           breadcrumb={
             page.section === 'Foundations' ? 'Foundations' : `Components / ${reference.group}`
           }
-          summary={reference.summary}
           actions={actions}
         >
           {list}

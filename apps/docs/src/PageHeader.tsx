@@ -5,13 +5,11 @@ import { Card, Stack, Text } from '@envsemble/envui';
 export function PageHeader({
   title,
   breadcrumb,
-  summary,
   children,
   actions,
 }: {
   title: string;
   breadcrumb?: string;
-  summary?: string;
   children?: ReactNode;
   actions?: ReactNode;
 }) {
@@ -23,7 +21,6 @@ export function PageHeader({
           <Text as="h1" variant="page-heading">
             {title}
           </Text>
-          {summary && <Text tone="muted">{summary}</Text>}
         </Stack>
         {children}
       </Card>

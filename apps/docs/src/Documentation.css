@@ -89,9 +89,6 @@ body {
 .docs-main > .docs-page-header {
   margin-block-end: var(--space-6);
 }
-.docs-page-header p {
-  max-width: 65ch;
-}
 .docs-page-controls {
   margin-inline-start: auto;
   flex-shrink: 0;
