@@ -22,9 +22,7 @@
     "brand:generate": "node scripts/GenerateBrandAssets.mjs",
     "icons:sync": "node scripts/SyncIcons.mjs",
     "icons:generate": "node scripts/GenerateIcons.mjs",
-    "icons:check": "node scripts/GenerateIcons.mjs --check",
-    "legacy:dev": "node scripts/Dev.mjs",
-    "legacy:build": "node scripts/Build.mjs"
+    "icons:check": "node scripts/GenerateIcons.mjs --check"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",

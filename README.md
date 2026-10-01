@@ -62,4 +62,3 @@ npm run verify
 
 CI runs the same gates plus Betterleaks. The browser checks cover all three engines, native form behavior, portal themes, notification lifecycle, linked previews and the standalone HTML with networking blocked. Package checks install a tarball in an isolated consumer and validate types, SSR, assets and unused-icon exclusion.
 
-The previous plain HTML gallery remains available through `npm run legacy:dev` and `npm run legacy:build` as the visual migration baseline.
