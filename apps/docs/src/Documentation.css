@@ -71,7 +71,7 @@ body {
   );
 }
 .docs-comparison .docs-managed-toast {
-  width: var(--docs-split);
+  width: min(var(--docs-split), var(--docs-example-width, 28rem));
   max-width: 100%;
 }
 .docs-page-header {
@@ -133,8 +133,38 @@ body {
   grid-template-rows: subgrid;
 }
 .docs-example {
+  inline-size: min(100%, var(--docs-example-width, 28rem));
+  align-self: start;
   margin: 0 0 var(--space-7);
   min-width: 0;
+}
+.docs-example[data-size='compact'] {
+  --docs-example-width: 18rem;
+}
+.docs-example[data-size='field'] {
+  --docs-example-width: 24rem;
+}
+.docs-example[data-size='wide'] {
+  --docs-example-width: 48rem;
+}
+.docs-example[data-size='collection'] {
+  --docs-example-width: 56rem;
+}
+.docs-specimen-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--docs-specimen-min, 16rem)), 1fr));
+  gap: var(--space-6);
+  align-items: start;
+  min-inline-size: 0;
+}
+.docs-specimen-grid[data-size='compact'] {
+  --docs-specimen-min: 12rem;
+}
+.docs-specimen-grid[data-size='card'] {
+  --docs-specimen-min: 18rem;
+}
+.docs-specimen-grid > * {
+  min-inline-size: 0;
 }
 .docs-example:last-child {
   margin-bottom: 0;
@@ -357,11 +387,6 @@ body {
   background: var(--color-text-muted);
   border-radius: var(--radius-standard);
 }
-.docs-shapes {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
-}
 .docs-shape {
   background: var(--color-surface-muted);
   height: 6rem;
@@ -374,11 +399,6 @@ body {
 .docs-shape code {
   font-size: 0.75rem;
 }
-.docs-icon-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
-}
 .docs-icon-pair {
   display: flex;
   gap: 1.5rem;
@@ -388,14 +408,6 @@ body {
   width: 10rem;
   height: auto;
   max-width: 100%;
-}
-.docs-device-frame {
-  border: 0.0625rem solid var(--color-border-strong);
-  border-radius: var(--radius-surface);
-  padding: var(--space-4);
-}
-.docs-device-mobile {
-  width: min(100%, 20rem);
 }
 .docs-facts p {
   display: flex;
