@@ -54,6 +54,7 @@ export const references: Reference[] = [
         'Stack as',
         'Semantic container tag; div (default), section, article, nav, main, aside, header or footer',
       ],
+      ['Stack render', 'Compose layout onto another root element or component without a wrapper'],
       ['ActionGroup stacked', 'Wrapped row by default; stacked label buttons fill the group'],
       ['ActionGroup align', 'Row alignment: start (default), center or end'],
       ['ActionGroup as', 'Semantic container tag; div by default, footer for card or form actions'],
@@ -63,6 +64,32 @@ export const references: Reference[] = [
       'The parent owns space between components; components own their internal padding. Avoid individual child margins.',
       'Stack uses the shared spacing scale. Step 4 is 1 rem; step 2 is 0.5 rem. Cards already space direct children by 1 rem.',
       'ActionGroup uses 1 rem gaps in wrapped rows and 0.5 rem when stacked. Circular icon buttons keep their size.',
+    ],
+  },
+  {
+    id: 'surface',
+    title: 'Surface',
+    group: 'Layout',
+    summary: 'Shared backgrounds, padding and corners for panes and cards.',
+    example: `import { Surface, Stack, Text } from '@envsemble/envui';
+
+<Surface tone="pane" padding={5} render={<Stack as="section" gap={5} />}>
+  <Text as="h2" variant="section-heading">Workspace pane</Text>
+  <Text tone="muted">Stack supplies the content layout on the same root.</Text>
+</Surface>`,
+    props: [
+      ['tone', 'pane (default), row, canvas or alternate'],
+      ['padding', 'Spacing step 0–9; omitted uses responsive 1–1.5 rem padding'],
+      ['corners', 'surface (default, 1.75 rem), standard (0.5 rem), pill or none'],
+      ['as', 'Native container tag; div by default, with the semantic tags supported by Stack'],
+      ['render', 'Optional root composition; set the tag on the supplied element instead of as'],
+      ['Native element props', 'children, ref, className, style and accessible attributes'],
+    ],
+    guidelines: [
+      'Surface supplies fill, padding and corners without layout, gaps, margins or interaction.',
+      'Use Surface for plain panes, Card for content surfaces with standard layout, and specialized cards for their specific composition. Card builds on Surface.',
+      'Stack and ActionGroup own layout. Compose Stack through render when the surface itself should arrange its content.',
+      'Use surface corners for ordinary panes; standard and pill shapes serve the documented compact controls and rails. Custom render components must forward native props and refs.',
     ],
   },
   {
@@ -441,6 +468,7 @@ import { Apps } from '@envsemble/envui/icons';
     guidelines: [
       'Use 1.75 rem corners. Row tone is the standalone card fill; pane tone groups content in a quieter background.',
       'Cards space direct children by 1 rem. FeatureCard keeps compact title/description spacing and separates additional content by 1 rem.',
+      'Card composes Surface and Stack on one root. FeatureCard, ActionCard and ClickableCard reuse that card implementation.',
       'Use Card href for a single destination or Card as="button" for an action. Do not nest controls inside an interactive card. Use phrasing content such as spans in button cards.',
       'Interactive cards share the same surface, padding and corners. Hover and pressed derive from the chosen tone; keyboard focus and disabled behavior are shared. Label rich links with aria-labelledby and connect descriptions with aria-describedby.',
       'The action strip derives its fill from the parent surface. Compose actions from the shared controls.',

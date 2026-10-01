@@ -15,3 +15,5 @@ Component reference pages use the public Tabs component for Preview, Guidelines 
 `Example` is a private specimen frame composed from public Stack and Text. The catalogue uses Card links, the overview uses Button links, and managed-toast appearance uses Tabs. Content cards, field guidance and compact navigation use public props rather than selectors into component internals.
 
 Keep routes, paired previews, token measurements, code blocks and prop tables here. Reusable interaction, visual variants and spacing contracts belong in `packages/ui`; do not recreate them in the documentation.
+
+Surface is the visual base for background fill, padding and corners. Card builds on Surface with standard content layout; specialized cards add their own composition. Stack and ActionGroup own layout. Use Surface for plain panes and compose an existing layout element through `render` when both belong on the same root. The overview hero, typography specimen and managed toast pane consume Surface; actual content cards continue to use Card.

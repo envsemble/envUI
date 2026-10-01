@@ -9,6 +9,7 @@ import {
   InfoChip,
   DisclosureNote,
   Card,
+  Surface,
   FeatureCard,
   GroupedRows,
   Row,
@@ -187,11 +188,11 @@ function ManagedToastExample() {
           button: <Button>{theme === 'light' ? 'Light' : 'Dark'} appearance</Button>,
           content: (
             <Theme theme={theme}>
-              <Card tone="canvas" padding={5}>
+              <Surface tone="canvas" padding={5}>
                 <ToastProvider defaultPlacement="bottom-right">
                   <ManagedControls />
                 </ToastProvider>
-              </Card>
+              </Surface>
             </Theme>
           ),
         }))}
@@ -250,6 +251,55 @@ export function ComponentPreview({ id }: { id: string }) {
       <Paired>
         {(theme) => {
           switch (id) {
+            case 'surface':
+              return (
+                <>
+                  <Example
+                    title="Surface with explicit layout"
+                    caption="Surface owns fill, padding and corners; Stack owns the gap."
+                  >
+                    <Surface tone="pane" padding={5} render={<Stack gap={5} />}>
+                      <Text as="h3" variant="section-heading">
+                        Workspace pane
+                      </Text>
+                      <Text tone="muted">Compose content with the spacing it needs.</Text>
+                      <ActionGroup>
+                        <Button>Continue</Button>
+                        <Button variant="secondary">Cancel</Button>
+                      </ActionGroup>
+                    </Surface>
+                  </Example>
+                  <Example
+                    title="Surface and Card"
+                    caption="A plain Surface leaves direct children in normal flow; Card adds its standard content layout."
+                  >
+                    <Stack>
+                      <Surface tone="row">
+                        <Text as="h3" variant="section-heading">
+                          Plain surface
+                        </Text>
+                        <Text tone="muted">No automatic gap between these blocks.</Text>
+                      </Surface>
+                      <Card>
+                        <Text as="h3" variant="section-heading">
+                          Content card
+                        </Text>
+                        <Text tone="muted">The card spaces its direct children.</Text>
+                      </Card>
+                    </Stack>
+                  </Example>
+                  <Example title="Tones and corners">
+                    <Stack>
+                      <Surface tone="canvas" padding={4} corners="standard">
+                        <Text>Canvas with standard corners</Text>
+                      </Surface>
+                      <Surface tone="alternate" padding={4} corners="pill">
+                        <Text>Alternate surface with pill corners</Text>
+                      </Surface>
+                    </Stack>
+                  </Example>
+                </>
+              );
             case 'text':
               return (
                 <>
@@ -852,7 +902,7 @@ export function ComponentPreview({ id }: { id: string }) {
                     </Text>
                   </Example>
                   <Example title="Alternate background">
-                    <Card>
+                    <Surface tone="row">
                       <GroupedRows contrast>
                         <Row
                           title="Notifications"
@@ -876,7 +926,7 @@ export function ComponentPreview({ id }: { id: string }) {
                           }
                         />
                       </GroupedRows>
-                    </Card>
+                    </Surface>
                   </Example>
                 </>
               );

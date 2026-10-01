@@ -5,6 +5,7 @@ import {
   BrandLogo,
   EnvUILogo,
   Card,
+  Surface,
   GroupedRows,
   Row,
   IconButton,
@@ -295,7 +296,7 @@ export function FoundationPreview({ id }: { id: string }) {
           case 'typography':
             return (
               <>
-                <Card tone="pane" padding={5}>
+                <Surface tone="pane" padding={5}>
                   <ol className="docs-type-list">
                     {types.map(([title, variant, color, meta]) => (
                       <li key={title}>
@@ -313,7 +314,7 @@ export function FoundationPreview({ id }: { id: string }) {
                       </li>
                     ))}
                   </ol>
-                </Card>
+                </Surface>
               </>
             );
           case 'spacing':
@@ -488,7 +489,7 @@ export function FoundationPreview({ id }: { id: string }) {
             return (
               <>
                 <Example title="Interaction timing">
-                  <Card>
+                  <Surface tone="row">
                     <div className="docs-facts">
                       <p>
                         Fast transitions{' '}
@@ -509,7 +510,7 @@ export function FoundationPreview({ id }: { id: string }) {
                         </code>
                       </p>
                     </div>
-                  </Card>
+                  </Surface>
                   <Text variant="caption" className="docs-caption">
                     Motion supports a state change. Keep it brief and respect reduced motion.
                   </Text>

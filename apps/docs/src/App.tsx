@@ -7,6 +7,7 @@ import {
   NavigationItem,
   DirectionLink,
   Card,
+  Surface,
   Stack,
   ActionGroup,
   IconButton,
@@ -190,7 +191,7 @@ function Catalogue({ nested = false }: { nested?: boolean }) {
 function Overview() {
   return (
     <Stack gap={8} className="docs-overview">
-      <Card tone="pane" className="docs-overview-hero">
+      <Surface tone="pane" render={<Stack gap={0} />} className="docs-overview-hero">
         <Stack gap={6} align="center">
           <EnvUILogo className="docs-overview-logo" />
           <Text as="h1" variant="page-heading">
@@ -205,7 +206,7 @@ function Overview() {
             </Button>
           </ActionGroup>
         </Stack>
-      </Card>
+      </Surface>
       <Stack as="section" gap={5} aria-labelledby="overview-components">
         <Text as="h2" variant="page-heading" id="overview-components">
           Components

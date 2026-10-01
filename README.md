@@ -55,6 +55,8 @@ Keep palette entries as base colors. Hover and pressed lightness use one color-b
 
 Reusable UI belongs in the library. Documentation uses its public components for controls, surfaces, typography and composition. Documentation owns routes, paired preview state, page grids, token swatches, code/prop tables and artificial interaction specimens. Extend the shared API before adding component styling overrides to the documentation.
 
+Surface owns background geometry; Stack and ActionGroup own layout. Card composes Surface and Stack, and specialized cards build on Card. Compose through `render` when these layers should share a single root element.
+
 ## Verify
 
 ```sh
