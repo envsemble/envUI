@@ -50,7 +50,7 @@ export function Card({
   const hasActionLayout = layout === 'action' || actions != null;
   const cardClassName = classNames(
     'env-card',
-    'env-card-content',
+    !hasActionLayout && 'env-card-content',
     tone === 'pane' && 'env-card-pane',
     tone === 'canvas' && 'env-card-canvas',
     isInteractive && 'env-clickable-card',
@@ -98,7 +98,7 @@ export function Card({
         children
       ) : hasActionLayout ? (
         <>
-          <Stack className="env-action-card-body">{content}</Stack>
+          <Stack className="env-card-content env-action-card-body">{content}</Stack>
           {actions != null && (
             <ActionGroup as="footer" align="end" className="env-action-card-actions">
               {actions}
