@@ -81,7 +81,6 @@ body {
   flex-wrap: wrap;
   gap: var(--space-4);
   padding: var(--space-5) clamp(1.25rem, 3vw, 3rem) var(--space-4);
-  border-block-end: 0.0625rem solid var(--color-border-strong);
 }
 .docs-page-header-card {
   inline-size: fit-content;
