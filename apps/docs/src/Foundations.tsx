@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import {
   Text,
   Button,
@@ -187,6 +187,91 @@ const types = [
   ['Supporting text', 'supporting', '--color-text-muted', '0.875 rem · 400'],
   ['Caption', 'caption', '--color-text-quiet', '0.875 rem · 400'],
 ] as const;
+
+function TextSpecimen({ sample, children }: { sample: ReactNode; children: ReactNode }) {
+  return (
+    <li>
+      {sample}
+      <Stack gap={1} className="docs-type-meta">
+        {children}
+      </Stack>
+    </li>
+  );
+}
+
+function TypographyPreview() {
+  return (
+    <>
+      <Example title="Text variants">
+        <Card tone="pane">
+          <ol className="docs-type-list">
+            {types.map(([title, variant, color, meta]) => (
+              <TextSpecimen
+                key={variant}
+                sample={<Text variant={variant}>The quick brown fox jumps over the lazy dog.</Text>}
+              >
+                <Text as="span" variant="caption">
+                  {title} · {meta}
+                </Text>
+                <Text as="span" variant="caption">
+                  <code>
+                    <TokenValue token={color} />
+                  </code>
+                </Text>
+              </TextSpecimen>
+            ))}
+          </ol>
+        </Card>
+      </Example>
+      <Example title="Text component">
+        <Text variant="supporting">
+          variant sets the style, tone sets the color, and as chooses the HTML element. Stack
+          supplies spacing.
+        </Text>
+        <Card tone="pane">
+          <ol className="docs-type-list">
+            <TextSpecimen
+              sample={
+                <Text as="h3" variant="page-heading">
+                  Project overview
+                </Text>
+              }
+            >
+              <Text as="span" variant="caption">
+                <code>{'<Text as="h3" variant="page-heading">'}</code>
+              </Text>
+            </TextSpecimen>
+            <TextSpecimen sample={<Text tone="muted">Shared project context.</Text>}>
+              <Text as="span" variant="caption">
+                <code>{'<Text tone="muted">'}</code>
+              </Text>
+            </TextSpecimen>
+            <TextSpecimen sample={<Text tone="quiet">Updated today.</Text>}>
+              <Text as="span" variant="caption">
+                <code>{'<Text tone="quiet">'}</code>
+              </Text>
+            </TextSpecimen>
+            <TextSpecimen
+              sample={
+                <Text>
+                  Project status:{' '}
+                  <Text as="span" tone="muted">
+                    Draft
+                  </Text>
+                </Text>
+              }
+            >
+              <Text as="span" variant="caption">
+                <code>{'<Text as="span" tone="muted">'}</code>
+              </Text>
+            </TextSpecimen>
+          </ol>
+        </Card>
+      </Example>
+    </>
+  );
+}
+
 const iconList = [
   ['Home', Home],
   ['Category', Category],
@@ -211,45 +296,7 @@ export function FoundationPreview({ id }: { id: string }) {
               </>
             );
           case 'typography':
-            return (
-              <>
-                <Surface tone="pane" padding={5}>
-                  <ol className="docs-type-list">
-                    {types.map(([title, variant, color, meta]) => (
-                      <li key={title}>
-                        <Text className="docs-fox" variant={variant}>
-                          The quick brown fox jumps over the lazy dog.
-                        </Text>
-                        <div className="docs-type-meta">
-                          <span>
-                            {title} · {meta}
-                          </span>
-                          <code>
-                            <TokenValue token={color} />
-                          </code>
-                        </div>
-                      </li>
-                    ))}
-                  </ol>
-                </Surface>
-                <Example title="Color and semantics">
-                  <Stack>
-                    <Text as="h3" variant="page-heading">
-                      A heading with page emphasis
-                    </Text>
-                    <Text tone="muted">Body text with supporting color.</Text>
-                    <Text tone="quiet">Body text with quiet color.</Text>
-                    <Text>
-                      Native inline{' '}
-                      <Text as="span" tone="muted">
-                        supporting context
-                      </Text>{' '}
-                      keeps its surrounding paragraph semantics.
-                    </Text>
-                  </Stack>
-                </Example>
-              </>
-            );
+            return <TypographyPreview />;
           case 'spacing':
             return (
               <>
@@ -335,19 +382,6 @@ export function FoundationPreview({ id }: { id: string }) {
                   </div>
                   <Text variant="caption" className="docs-caption">
                     Bundled lockups inherit the theme’s text color.
-                  </Text>
-                </Example>
-                <Example title="Icon composition">
-                  <ActionGroup>
-                    <NavigationItem icon={<Home />} selected>
-                      Home
-                    </NavigationItem>
-                    <Button startIcon={<Add />}>Create item</Button>
-                    <IconButton icon={<ChevronRight />} aria-label="Next item" />
-                  </ActionGroup>
-                  <Text variant="caption" className="docs-caption">
-                    Icons inherit their context color. Decorative icons stay hidden from assistive
-                    technology; icon-only actions need an accessible name.
                   </Text>
                 </Example>
               </>

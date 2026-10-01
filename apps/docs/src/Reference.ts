@@ -121,14 +121,13 @@ function SaveButton() {
     id: 'icons',
     title: 'Icons & assets',
     group: 'Foundations',
-    example: `import { Icon, EnvUILogo, BrandLogo, IconButton, Stack } from '@envsemble/envui';
-import { ChevronRight, Home } from '@envsemble/envui/icons';
+    example: `import { Icon, EnvUILogo, BrandLogo, Stack } from '@envsemble/envui';
+import { Home } from '@envsemble/envui/icons';
 
 <Stack>
   <EnvUILogo />
   <BrandLogo />
   <Home filled label="Home" />
-  <IconButton icon={<ChevronRight />} aria-label="Next item" />
   <Icon viewBox="0 0 24 24" label="Custom mark">
     <path d="M12 2 22 12 12 22 2 12Z" />
   </Icon>
