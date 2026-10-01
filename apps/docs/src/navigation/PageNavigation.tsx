@@ -1,5 +1,6 @@
 import { Theme, DirectionLink } from '@envsemble/envui';
-import { ArrowBack, ArrowForward } from '@envsemble/envui/icons';
+import { ArrowBack } from '@envsemble/envui/icons/ArrowBack';
+import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { documentationPages, findReferencePage, type ReferenceView } from '../Documentation';
 
 export function PageNavigation({

@@ -1,5 +1,6 @@
 import { Text, EnvUILogo, Surface, Stack, ActionGroup, Button } from '@envsemble/envui';
-import { Palette, Add } from '@envsemble/envui/icons';
+import { Palette } from '@envsemble/envui/icons/Palette';
+import { Add } from '@envsemble/envui/icons/Add';
 
 import { Catalogue } from './Catalogue';
 

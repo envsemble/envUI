@@ -28,8 +28,8 @@ test('public component, stylesheet and new export update live without version ch
     await writeFile(
       buttonSource,
       originals[0].replace(
-        '<ActionElement {...props}',
-        '<ActionElement {...props} data-env-live="updated"',
+        /<ActionElement(\s+)\{\.\.\.props\}/,
+        '<ActionElement$1{...props} data-env-live="updated"',
       ),
     );
     await expect(page.getByRole('button', { name: 'Reset examples' })).toHaveAttribute(

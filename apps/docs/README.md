@@ -1,6 +1,6 @@
 # Documentation application
 
-This React application consumes only the public `@envsemble/envui`, `@envsemble/envui/icons` and `@envsemble/envui/styles.css` exports. It has no private library imports or duplicated component styles.
+This React application consumes only the public `@envsemble/envui`, per-icon `@envsemble/envui/icons/Name` and `@envsemble/envui/styles.css` exports. Per-icon imports keep development/build tooling from loading the complete catalogue. It has no private library imports or duplicated component styles.
 
 Run `npm run dev` from the repository root for local live development. `npm run build` produces the library and one self-contained offline documentation HTML file. All pages use hash routes, including `#/getting-started` and `#/components/buttons/preview`; the release needs no server or sibling assets.
 

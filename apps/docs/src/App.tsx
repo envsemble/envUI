@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Theme, NavigationItem, ActionGroup, IconButton, Button } from '@envsemble/envui';
-import { DarkMode, LightMode } from '@envsemble/envui/icons';
+import { DarkMode } from '@envsemble/envui/icons/DarkMode';
+import { LightMode } from '@envsemble/envui/icons/LightMode';
 import { findReferencePage, referenceViews } from './Documentation';
 import { ReferenceContent } from './ReferencePage';
 import { PageHeader } from './PageHeader';

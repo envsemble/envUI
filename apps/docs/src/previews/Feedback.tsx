@@ -17,7 +17,9 @@ import {
   Stack,
   ActionGroup,
 } from '@envsemble/envui';
-import { Add, Search, Apps } from '@envsemble/envui/icons';
+import { Add } from '@envsemble/envui/icons/Add';
+import { Search } from '@envsemble/envui/icons/Search';
+import { Apps } from '@envsemble/envui/icons/Apps';
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { PairedThemes, type Appearance } from './PairedThemes';
 

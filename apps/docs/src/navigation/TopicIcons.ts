@@ -1,14 +1,12 @@
-import {
-  Home,
-  Apps,
-  Palette,
-  TextFields,
-  ViewList,
-  Devices,
-  TouchApp,
-  Info,
-  Category,
-} from '@envsemble/envui/icons';
+import { Home } from '@envsemble/envui/icons/Home';
+import { Apps } from '@envsemble/envui/icons/Apps';
+import { Palette } from '@envsemble/envui/icons/Palette';
+import { TextFields } from '@envsemble/envui/icons/TextFields';
+import { ViewList } from '@envsemble/envui/icons/ViewList';
+import { Devices } from '@envsemble/envui/icons/Devices';
+import { TouchApp } from '@envsemble/envui/icons/TouchApp';
+import { Info } from '@envsemble/envui/icons/Info';
+import { Category } from '@envsemble/envui/icons/Category';
 import { type Reference } from '../Reference';
 
 export const foundationIcons: Record<string, typeof Palette> = {

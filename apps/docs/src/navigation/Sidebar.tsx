@@ -1,6 +1,8 @@
 import { version } from '@envsemble/envui/package.json';
 import { Text, EnvUILogo, NavigationItem, Stack } from '@envsemble/envui';
-import { Home, Add, Category } from '@envsemble/envui/icons';
+import { Home } from '@envsemble/envui/icons/Home';
+import { Add } from '@envsemble/envui/icons/Add';
+import { Category } from '@envsemble/envui/icons/Category';
 import { references, foundations, componentGroups } from '../Reference';
 import type { ReferencePage } from '../Documentation';
 import { foundationIcons, getComponentIcon } from './TopicIcons';

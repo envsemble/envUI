@@ -10,7 +10,12 @@ import {
   Stack,
   ActionGroup,
 } from '@envsemble/envui';
-import { Home, Search, Apps, Settings, ArrowBack, ArrowForward } from '@envsemble/envui/icons';
+import { Home } from '@envsemble/envui/icons/Home';
+import { Search } from '@envsemble/envui/icons/Search';
+import { Apps } from '@envsemble/envui/icons/Apps';
+import { Settings } from '@envsemble/envui/icons/Settings';
+import { ArrowBack } from '@envsemble/envui/icons/ArrowBack';
+import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { PairedThemes } from './PairedThemes';
 

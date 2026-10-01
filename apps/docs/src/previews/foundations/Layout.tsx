@@ -1,5 +1,6 @@
 import { Text, Button, Card, NavigationItem, Stack, ActionGroup } from '@envsemble/envui';
-import { Home, Devices } from '@envsemble/envui/icons';
+import { Home } from '@envsemble/envui/icons/Home';
+import { Devices } from '@envsemble/envui/icons/Devices';
 import { Example, SpecimenGrid } from '../Example';
 
 export function SpacingPreview() {

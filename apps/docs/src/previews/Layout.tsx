@@ -16,7 +16,8 @@ import {
   Stack,
   ActionGroup,
 } from '@envsemble/envui';
-import { ChevronRight, Apps } from '@envsemble/envui/icons';
+import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
+import { Apps } from '@envsemble/envui/icons/Apps';
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { PairedThemes } from './PairedThemes';
 

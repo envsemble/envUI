@@ -19,10 +19,14 @@ if (process.argv.slice(2).some((argument) => argument !== '--check'))
   throw new Error('Usage: GenerateIcons.mjs [--check]');
 await mkdir(outputDirectory, { recursive: true });
 async function writeModule(path, source) {
-  if (checkOnly) {
-    if ((await readFile(path, 'utf8').catch(() => null)) !== source)
-      throw new Error(`Generated icon is stale: ${path}`);
-  } else await writeFile(path, source);
+  const existingSource = await readFile(path, 'utf8').catch((error) => {
+    if (error.code === 'ENOENT') return null;
+    throw error;
+  });
+  if (existingSource === source) return;
+  if (checkOnly) throw new Error(`Generated icon is stale: ${path}`);
+  // Preserve timestamps for unchanged modules so local consumers avoid needless rebuilds.
+  await writeFile(path, source);
 }
 const hash = (bytes) => createHash('sha256').update(bytes).digest('hex');
 if (
@@ -87,18 +91,30 @@ function renderIconModule(name, unfilled, filled) {
 
 const generatedFiles = new Set(['index.ts', 'Typography.tsx']);
 const componentNames = new Set();
-for (const icon of manifest.icons) {
+const iconEntries = manifest.icons.map((icon) => {
   const name = toComponentName(icon.name);
   if (componentNames.has(name)) throw new Error(`Component name collision: ${name}`);
   componentNames.add(name);
-  const unfilled = await readVerifiedGeometry(icon.variants['0']);
-  const filled = await readVerifiedGeometry(icon.variants['1']);
-  await writeModule(
-    resolve(outputDirectory, name + '.tsx'),
-    renderIconModule(name, unfilled, filled),
-  );
   generatedFiles.add(name + '.tsx');
+  return { name, icon };
+});
+
+// Bound I/O concurrency; export order still follows the manifest's preflight above.
+let nextIconIndex = 0;
+async function generateIconModules() {
+  while (nextIconIndex < iconEntries.length) {
+    const { name, icon } = iconEntries[nextIconIndex++];
+    const [unfilled, filled] = await Promise.all([
+      readVerifiedGeometry(icon.variants['0']),
+      readVerifiedGeometry(icon.variants['1']),
+    ]);
+    await writeModule(
+      resolve(outputDirectory, name + '.tsx'),
+      renderIconModule(name, unfilled, filled),
+    );
+  }
 }
+await Promise.all(Array.from({ length: 8 }, () => generateIconModules()));
 if (!componentNames.has('TextFields'))
   throw new Error('Typography alias requires official text_fields');
 await writeModule(

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Text, Button, IconButton, ActionGroup } from '@envsemble/envui';
-import { Add, ChevronRight, Settings } from '@envsemble/envui/icons';
+import { Add } from '@envsemble/envui/icons/Add';
+import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
+import { Settings } from '@envsemble/envui/icons/Settings';
 import { Example } from './Example';
 import { PairedThemes } from './PairedThemes';
 

@@ -1,14 +1,12 @@
 import { Text, BrandLogo, EnvUILogo, Card } from '@envsemble/envui';
-import {
-  Home,
-  Category,
-  Search,
-  Settings,
-  Add,
-  Close,
-  Check,
-  Groups3,
-} from '@envsemble/envui/icons';
+import { Home } from '@envsemble/envui/icons/Home';
+import { Category } from '@envsemble/envui/icons/Category';
+import { Search } from '@envsemble/envui/icons/Search';
+import { Settings } from '@envsemble/envui/icons/Settings';
+import { Add } from '@envsemble/envui/icons/Add';
+import { Close } from '@envsemble/envui/icons/Close';
+import { Check } from '@envsemble/envui/icons/Check';
+import { Groups3 } from '@envsemble/envui/icons/Groups3';
 import { Example, SpecimenGrid } from '../Example';
 
 const iconList = [

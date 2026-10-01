@@ -1,5 +1,5 @@
 import { Text, Button, Surface, IconButton, ActionGroup } from '@envsemble/envui';
-import { ChevronRight } from '@envsemble/envui/icons';
+import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 import { TokenValue } from './TokenValue';
 import { Example } from '../Example';
 
