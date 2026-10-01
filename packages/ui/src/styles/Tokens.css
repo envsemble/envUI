@@ -25,7 +25,7 @@
   --viewport-gutter: clamp(0.75rem, 2vw, 1rem);
   --topbar-height: 3.25rem;
   --color-control-blue: hsl(212.087 100% 45.098%);
-  --color-link: var(--color-control-blue);
+  --color-link: hsl(217.317 100% 45.098%);
 
   --motion-duration-fast: 0.12s;
   --motion-duration-medium: 0.16s;
@@ -39,13 +39,13 @@
   -webkit-font-smoothing: antialiased;
 
   --color-accent: hsl(284.182 43.651% 50.588%);
-  --color-text-primary: hsl(220 6.122% 9.608%);
+  --color-text-primary: hsl(216 6.122% 9.608%);
   --color-text-muted: hsl(213.333 4.523% 39.02%);
-  --color-border-strong: hsl(212.727 12.36% 82.549%);
+  --color-border-strong: hsl(213.333 12.36% 82.549%);
   --color-canvas: hsl(0 0% 100%);
   --color-canvas-dark: hsl(0 0% 12.157%);
-  --color-surface-base: hsl(0 0% 100%);
-  --color-pane: hsl(220 23.077% 97.451%);
+  --color-surface-base: hsl(220 12% 97%);
+  --color-pane: hsl(220 23.077% 94%);
   --color-surface: var(--color-surface-base);
   --color-neutral-fill: hsl(0 0% 28%);
   --color-toast-neutral: var(--color-neutral-fill);
@@ -56,12 +56,12 @@
 
   --color-white: hsl(0 0% 100%);
   --color-on-accent: var(--color-white);
-  --color-surface-muted: hsl(220 12% 95.098%);
+  --color-surface-muted: hsl(216 12% 90%);
   --color-skeleton-base: hsl(216 15.152% 93.529%);
   --color-text-strong: hsl(216 8.772% 22.353%);
-  --color-control-text: hsl(214.286 9.333% 29.412%);
-  --color-icon: hsl(213.75 9.195% 34.118%);
-  --color-text-quiet: hsl(213.75 6.452% 48.627%);
+  --color-control-text: hsl(213.333 9.333% 29.412%);
+  --color-icon: hsl(212.308 9.195% 34.118%);
+  --color-text-quiet: hsl(212.308 6.452% 48.627%);
   /* Components share the Material 3 corner scale inside each theme boundary. */
   --md-sys-shape-corner-none: 0;
   --md-sys-shape-corner-extra-small: 0.25rem;
