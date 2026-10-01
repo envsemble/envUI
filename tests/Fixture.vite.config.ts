@@ -6,7 +6,7 @@ export default defineConfig({
   root: fileURLToPath(new URL('./fixture', import.meta.url)),
   plugins: [react()],
   resolve: {
-    conditions: ['envsemble-source', 'module', 'browser', 'development|production'],
+    conditions: ['envui-source', 'module', 'browser', 'development|production'],
     dedupe: ['react', 'react-dom'],
   },
   server: { strictPort: true },

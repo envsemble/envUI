@@ -14,7 +14,7 @@ the upstream catalogue tree hash. Source SVGs are retained unchanged in the
 repository at `src/assets/material-symbols-rounded`; generated adapters add React props,
 relative dimensions, accessible SVG defaults, and `currentColor`.
 
-`Typography` is an envsemble alias for the official `text_fields` symbol.
+`Typography` is an envUI alias for the official `text_fields` symbol.
 Numeric leading upstream names receive an `Icon` prefix in their React export,
 for example `10k` becomes `Icon10k`. Other snake case names become PascalCase.
 
@@ -26,7 +26,7 @@ pin. No install lifecycle script downloads or selects a floating catalogue.
 
 ## Inter
 
-The bundled Inter font comes from the existing envsemble design-system assets.
+The bundled Inter font is included locally by envUI.
 Copyright 2016 The Inter Project Authors (https://github.com/rsms/inter).
 Licensed under the SIL Open Font License, Version 1.1. The complete license is
 included in `licenses/Inter-LICENSE.txt`.
@@ -38,9 +38,11 @@ as its interaction foundation. Copyright (c) 2019 Material-UI SAS. Licensed unde
 MIT license. The complete license is included in `licenses/Base-UI-LICENSE.txt`.
 The package's dependency and lockfile record the installed version.
 
-## envsemble brand
+## Brand artwork
 
-`BrandLogo` and `src/assets/brand/envsemble-lockup-black.svg` reproduce the
-existing official envsemble lockup. The React wrapper changes its monochrome
-paint to `currentColor` so it follows the containing theme. This brand artwork
+`EnvUILogo` reproduces the supplied envUI lockup from `assets/brand/envUI`.
+`BrandLogo` reproduces the shared official envsemble lockup. Both React wrappers
+use `currentColor` so the monochrome artwork follows the containing theme.
+Raw envUI logos and favicons are bundled under `dist/assets/envUI`; the envsemble
+lockup is bundled as `dist/assets/envsemble-lockup-black.svg`. This artwork
 belongs to envsemble and is not covered by Google's or Inter's licenses.

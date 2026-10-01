@@ -16,6 +16,6 @@ This implementation prepares publishing; it does not automatically tag, merge or
 
 ## Adopt changes
 
-Consumers update intentionally with `npm install @envsemble/ui@<version>`. Include compatible additions/fixes in release notes. Document migration steps for breaking prop, behavior or theme changes; treat breaking changes during `0.x` as a new minor version. After `1.0`, use a new major version for breaking changes. Use prereleases for experiments that should not become the default install.
+Consumers update intentionally with `npm install @envsemble/envui@<version>`. Include compatible additions/fixes in release notes. Document migration steps for breaking prop, behavior or theme changes; treat breaking changes during `0.x` as a new minor version. After `1.0`, use a new major version for breaking changes. Use prereleases for experiments that should not become the default install.
 
 Every package release has a reference HTML built from the same commit and version. Documentation has no hosting requirement.

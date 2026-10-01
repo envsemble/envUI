@@ -1,15 +1,15 @@
 @import './Tokens.css';
 @import './Primitives.css';
+@import './DirectionLink.css';
+@import './Tabs.css';
 @import './Layout.css';
 @import './FormControls.css';
 @import './Dialog.css';
 @import './Toast.css';
 @font-face {
-  font-family: 'Envsemble Inter';
+  font-family: 'envUI Inter';
   src: url('../assets/fonts/Inter.woff2') format('woff2');
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
-@import './DirectionLink.css';
-@import './Tabs.css';

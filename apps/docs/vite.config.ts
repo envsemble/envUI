@@ -3,8 +3,9 @@ import react from '@vitejs/plugin-react';
 import { viteSingleFile } from 'vite-plugin-singlefile';
 export default defineConfig({
   plugins: [react(), viteSingleFile()],
+  publicDir: '../../assets/brand/envUI',
   resolve: {
-    conditions: ['envsemble-source', 'module', 'browser', 'development|production'],
+    conditions: ['envui-source', 'module', 'browser', 'development|production'],
     dedupe: ['react', 'react-dom'],
   },
   build: {

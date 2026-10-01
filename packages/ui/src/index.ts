@@ -1,5 +1,7 @@
 export * from './Theme.js';
 export * from './Primitives.js';
+export * from './DirectionLink.js';
+export * from './Tabs.js';
 export * from './Layout.js';
 export * from './FormControls.js';
 export * from './Select.js';
@@ -7,5 +9,4 @@ export * from './Dialog.js';
 export * from './Toast.js';
 export * from './Icon.js';
 export * from './BrandLogo.js';
-export * from './DirectionLink.js';
-export * from './Tabs.js';
+export * from './EnvUILogo.js';

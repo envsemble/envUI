@@ -8,7 +8,7 @@ import {
   Button,
   ToastProvider,
   useToast,
-} from '@envsemble/ui';
+} from '@envsemble/envui';
 
 function NotificationTrigger() {
   const toast = useToast();

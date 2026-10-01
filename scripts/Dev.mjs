@@ -17,7 +17,7 @@ const server = createServer(async (request, response) => {
     return;
   }
   try {
-    const file = resolve(root, '.' + decodeURIComponent(pathname === '/' ? '/DesignSystemGallery.html' : pathname));
+    const file = resolve(root, '.' + decodeURIComponent(pathname === '/' ? '/envUI.html' : pathname));
     if (!file.startsWith(root.endsWith(sep) ? root : root + sep) || file.includes(`${sep}.git${sep}`)) {
       response.writeHead(403).end();
       return;

@@ -1,5 +1,5 @@
 {
-  "name": "envsemble-design-system",
+  "name": "envui",
   "private": true,
   "type": "module",
   "workspaces": [
@@ -10,15 +10,16 @@
     "node": ">=24"
   },
   "scripts": {
-    "dev": "npm run dev --workspace @envsemble/docs",
+    "dev": "npm run dev --workspace @envsemble/envui-docs",
     "dev:library": "node scripts/WatchLibrary.mjs",
     "build": "npm run build:library && npm run build:docs",
     "build:library": "node scripts/BuildLibrary.mjs",
-    "build:docs": "npm run build --workspace @envsemble/docs && node scripts/FinalizeDocs.mjs",
+    "build:docs": "npm run build --workspace @envsemble/envui-docs && node scripts/FinalizeDocs.mjs",
     "typecheck": "tsc -p packages/ui/tsconfig.json --noEmit && tsc -p apps/docs/tsconfig.json --noEmit",
     "test": "node --test tests/*.test.mjs",
     "test:browser": "playwright test",
     "verify": "npm run icons:check && npm run typecheck && npm run build && npm test && npm run test:browser",
+    "brand:generate": "node scripts/GenerateBrandAssets.mjs",
     "icons:sync": "node scripts/SyncIcons.mjs",
     "icons:generate": "node scripts/GenerateIcons.mjs",
     "icons:check": "node scripts/GenerateIcons.mjs --check",

@@ -1,5 +1,5 @@
 {
-  "name": "@envsemble/docs",
+  "name": "@envsemble/envui-docs",
   "private": true,
   "type": "module",
   "scripts": {
@@ -7,7 +7,7 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@envsemble/ui": "0.1.0",
+    "@envsemble/envui": "0.1.0",
     "react": "19.3.0",
     "react-dom": "19.3.0"
   }

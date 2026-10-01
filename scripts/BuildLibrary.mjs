@@ -3,8 +3,10 @@ import { readdir, mkdir, writeFile, cp, rm } from 'node:fs/promises';
 import { resolve, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
+import { generateBrandAssets } from './GenerateBrandAssets.mjs';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const pkg = resolve(root, 'packages/ui');
+await generateBrandAssets();
 async function sourceFiles(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
   const files = await Promise.all(
@@ -55,6 +57,9 @@ await cp(
   resolve(pkg, 'src/assets/brand/envsemble-lockup-black.svg'),
   resolve(pkg, 'dist/assets/envsemble-lockup-black.svg'),
 );
+await cp(resolve(root, 'assets/brand/envUI'), resolve(pkg, 'dist/assets/envUI'), {
+  recursive: true,
+});
 const guideBundle = await build({
   entryPoints: [resolve(root, 'apps/docs/src/Reference.ts')],
   bundle: true,
@@ -67,5 +72,5 @@ const guide = await import(
 );
 await writeFile(resolve(pkg, 'USAGE.md'), guide.renderUsageMarkdown());
 console.log(
-  `Built @envsemble/ui: ${entries.length} ESM modules, types, CSS, assets, and usage guide.`,
+  `Built @envsemble/envui: ${entries.length} ESM modules, types, CSS, assets, and usage guide.`,
 );

@@ -1,7 +1,7 @@
 {
-  "name": "@envsemble/ui",
+  "name": "@envsemble/envui",
   "version": "0.1.0",
-  "description": "The internal envsemble React design system",
+  "description": "envUI: the internal envsemble React component library",
   "type": "module",
   "license": "UNLICENSED",
   "repository": {
@@ -23,21 +23,21 @@
   ],
   "exports": {
     ".": {
-      "envsemble-source": "./src/index.ts",
+      "envui-source": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
     "./styles.css": {
-      "envsemble-source": "./src/styles/index.css",
+      "envui-source": "./src/styles/index.css",
       "default": "./dist/styles.css"
     },
     "./icons": {
-      "envsemble-source": "./src/icons/index.ts",
+      "envui-source": "./src/icons/index.ts",
       "types": "./dist/icons/index.d.ts",
       "import": "./dist/icons/index.js"
     },
     "./icons/*": {
-      "envsemble-source": "./src/icons/*.tsx",
+      "envui-source": "./src/icons/*.tsx",
       "types": "./dist/icons/*.d.ts",
       "import": "./dist/icons/*.js"
     },

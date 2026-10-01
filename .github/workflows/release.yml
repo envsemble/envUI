@@ -45,8 +45,8 @@ jobs:
       - name: Publish immutable package
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm publish --workspace @envsemble/ui --tag "$(node scripts/ValidateRelease.mjs --dist-tag)"
+        run: npm publish --workspace @envsemble/envui --tag "$(node scripts/ValidateRelease.mjs --dist-tag)"
       - name: Create matching release download
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release create "$GITHUB_REF_NAME" dist/DesignSystemGallery.html --verify-tag --title "envsemble ui $GITHUB_REF_NAME" --notes-file packages/ui/CHANGELOG.md $(node scripts/ValidateRelease.mjs --release-flag)
+        run: gh release create "$GITHUB_REF_NAME" dist/envUI.html --verify-tag --title "envUI $GITHUB_REF_NAME" --notes-file packages/ui/CHANGELOG.md $(node scripts/ValidateRelease.mjs --release-flag)

@@ -10,7 +10,7 @@
     "skipLibCheck": true,
     "verbatimModuleSyntax": true,
     "noEmit": true,
-    "customConditions": ["envsemble-source"]
+    "customConditions": ["envui-source"]
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"]
 }

@@ -1,4 +1,4 @@
-# envsemble design system
+# envUI
 
 Private React 19 component library, with a separate documentation app that consumes its public API. Existing product integration is deferred.
 
@@ -19,19 +19,21 @@ Open http://127.0.0.1:8770. Library components and CSS update live through the w
 npm run build
 ```
 
-`packages/ui/dist` contains the ESM library, declarations, scoped CSS and assets. Send `dist/DesignSystemGallery.html` on its own: runtime, font, icons and licenses are embedded, and hash navigation works offline.
+`packages/ui/dist` contains the ESM library, declarations, scoped CSS and assets. Send `dist/envUI.html` on its own: runtime, font, icons and licenses are embedded, and hash navigation works offline.
 
 ## Consume
 
 ```tsx
-import { Theme, Button } from '@envsemble/ui';
-import { Add } from '@envsemble/ui/icons/Add';
-import '@envsemble/ui/styles.css';
+import { Theme, Button } from '@envsemble/envui';
+import { Add } from '@envsemble/envui/icons/Add';
+import '@envsemble/envui/styles.css';
 
 export function App() {
-  return <Theme theme="light">
-    <Button startIcon={<Add />}>Create item</Button>
-  </Theme>;
+  return (
+    <Theme theme="light">
+      <Button startIcon={<Add />}>Create item</Button>
+    </Theme>
+  );
 }
 ```
 
@@ -39,14 +41,15 @@ See the [package setup](packages/ui/README.md), generated [agent usage guide](pa
 
 ## Ownership
 
-| Source | Purpose |
-| --- | --- |
-| `packages/ui/src/styles/Tokens.css` | Central HSL base palette, interaction rule, typography and spacing |
-| `packages/ui/src` | Public React components and scoped styles |
-| `packages/ui/src/icons` | Generated wrappers from pinned official Google SVGs |
-| `apps/docs/src` | Showcase pages and paired specimen state |
-| `apps/docs/src/Reference.ts` | Shared documentation/agent guidance source |
-| `tests` | Packed consumer, SSR, browser and offline acceptance |
+| Source                              | Purpose                                                                                |
+| ----------------------------------- | -------------------------------------------------------------------------------------- |
+| `packages/ui/src/styles/Tokens.css` | Central HSL base palette, interaction rule, typography and spacing                     |
+| `packages/ui/src`                   | Public React components and scoped styles                                              |
+| `packages/ui/src/icons`             | Generated wrappers from pinned official Google SVGs                                    |
+| `assets/brand/envUI`                | Official envUI logos and favicons; build generates EnvUILogo and bundles the originals |
+| `apps/docs/src`                     | Showcase pages and paired specimen state                                               |
+| `apps/docs/src/Reference.ts`        | Shared documentation/agent guidance source                                             |
+| `tests`                             | Packed consumer, SSR, browser and offline acceptance                                   |
 
 Keep palette entries as base colors. Hover and pressed lightness use one color-based rule from Tokens.css, in both themes. Use regular/medium typography, relative units, shared spacing and existing rounding. Purple remains rare emphasis; everyday actions are neutral. The application owns routing, validation and theme preference.
 

@@ -5,7 +5,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: design-system-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: envui-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 jobs:
   check:
@@ -26,8 +26,8 @@ jobs:
       - name: Save offline reference
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
-          name: design-system-reference
-          path: dist/DesignSystemGallery.html
+          name: envui-reference
+          path: dist/envUI.html
           if-no-files-found: error
       - name: Save browser failure traces
         if: failure()

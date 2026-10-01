@@ -29,7 +29,7 @@ async function download(url) {
   for (let attempt = 0; attempt < 5; attempt++) {
     try {
       const response = await fetch(url, {
-        headers: { 'User-Agent': 'envsemble-official-icon-sync' },
+        headers: { 'User-Agent': 'envui-official-icon-sync' },
         signal: AbortSignal.timeout(45_000),
       });
       if (!response.ok) throw new Error(`${response.status} ${url}`);

@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import '@envsemble/ui/styles.css';
+import '@envsemble/envui/styles.css';
 import './Documentation.css';
 import App from './App';
 
