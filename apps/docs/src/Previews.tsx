@@ -27,11 +27,14 @@ import {
   useToast,
   Stack,
   ActionGroup,
+  useTheme,
 } from '@envsemble/ui';
 import { Add, ChevronRight, Home, Search, Apps, Settings } from '@envsemble/ui/icons';
 
 type Appearance = 'light' | 'dark';
 export function Paired({ children }: { children: (theme: Appearance) => ReactNode }) {
+  const appearance = useTheme();
+  const themes: Appearance[] = appearance === 'light' ? ['light', 'dark'] : ['dark', 'light'];
   const paneRef = useRef<HTMLDivElement>(null);
   const [rows, setRows] = useState(1);
   useLayoutEffect(() => {
@@ -44,14 +47,14 @@ export function Paired({ children }: { children: (theme: Appearance) => ReactNod
       className="docs-paired"
       style={{ gridTemplateRows: `repeat(${rows}, auto)` }}
     >
-      {(['light', 'dark'] as const).map((theme) => (
+      {themes.map((theme, index) => (
         <Theme
           key={theme}
           theme={theme}
           className="docs-preview"
-          style={{ gridRow: `1 / span ${rows}`, gridColumn: theme === 'light' ? 1 : 2 }}
+          data-side={index === 0 ? 'left' : 'right'}
+          style={{ gridRow: `1 / span ${rows}`, gridColumn: index + 1 }}
         >
-          <p className="docs-theme-label">{theme === 'light' ? 'Light' : 'Dark'}</p>
           {children(theme)}
         </Theme>
       ))}

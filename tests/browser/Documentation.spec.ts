@@ -117,3 +117,75 @@ test('offline hashes support direct links and back/forward navigation', async ({
   await page.goForward();
   await expect(page.locator('.docs-tabs [aria-current="page"]')).toHaveText('Preview');
 });
+
+test('offline theme toggle inverts both panes and keeps the comparison canvas full height', async ({
+  page,
+}, testInfo) => {
+  await page.setViewportSize({ width: 1920, height: 1400 });
+  await page.goto(`${offline}#/components/checkbox/preview`);
+  const app = page.locator('.docs-app');
+  const panes = page.locator('.docs-preview');
+  await panes.first().getByRole('checkbox', { name: 'Include archived items' }).check();
+  await page.getByRole('button', { name: 'Switch to dark theme' }).click();
+  await expect(app).toHaveAttribute('data-env-theme', 'dark');
+  await expect(panes.first()).toHaveAttribute('data-env-theme', 'dark');
+  await expect(panes.last()).toHaveAttribute('data-env-theme', 'light');
+  for (const pane of await panes.all())
+    await expect(pane.getByRole('checkbox', { name: 'Include archived items' })).toBeChecked();
+  await expect(page.locator('.docs-theme-label')).toHaveCount(0);
+
+  for (const width of [1920, 960, 390]) {
+    await page.setViewportSize({ width, height: 1400 });
+    const canvas = await page.locator('.docs-main').evaluate((main) => {
+      const rect = main.getBoundingClientRect();
+      return {
+        height: rect.height,
+        bottom: rect.bottom + window.scrollY,
+        documentHeight: document.documentElement.scrollHeight,
+        background: getComputedStyle(main).backgroundImage,
+      };
+    });
+    expect(canvas.height).toBeGreaterThanOrEqual(1400);
+    expect(Math.abs(canvas.bottom - canvas.documentHeight)).toBeLessThan(1);
+    expect(canvas.background).toContain('linear-gradient');
+  }
+
+  await page.setViewportSize({ width: 1920, height: 1000 });
+  await page.evaluate(() => {
+    location.hash = '/foundations/colors';
+  });
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Colors & themes');
+  await expect(panes.first()).toHaveAttribute('data-env-theme', 'dark');
+  await expect(panes.first().locator('.docs-swatch code').first()).toContainText('hsl(');
+  const swatches = await panes.evaluateAll((columns) =>
+    columns.map((column) => {
+      const label = column.querySelector('.docs-palette-label')!.getBoundingClientRect();
+      const swatch = column.querySelector('.docs-swatch')!.getBoundingClientRect();
+      return { label: label.x, swatch: swatch.x, left: swatch.left, right: swatch.right };
+    }),
+  );
+  expect(swatches[0].swatch).toBeGreaterThan(swatches[0].label);
+  expect(swatches[1].swatch).toBeLessThan(swatches[1].label);
+  expect(Math.abs(swatches[0].right - swatches[1].left)).toBeLessThan(1);
+  await page.getByRole('button', { name: 'Switch to light theme' }).click();
+  await expect(app).toHaveAttribute('data-env-theme', 'light');
+  await expect(panes.first()).toHaveAttribute('data-env-theme', 'light');
+  await expect(panes.last()).toHaveAttribute('data-env-theme', 'dark');
+  await page.screenshot({
+    path: testInfo.outputPath('offline-theme-light.png'),
+    fullPage: true,
+    animations: 'disabled',
+  });
+  await page.getByRole('button', { name: 'Switch to dark theme' }).click();
+  await page.screenshot({
+    path: testInfo.outputPath('offline-theme-dark.png'),
+    fullPage: true,
+    animations: 'disabled',
+  });
+  await page.evaluate(() => {
+    location.hash = '/getting-started';
+  });
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Getting started');
+  await expect(app).toHaveAttribute('data-env-theme', 'dark');
+  await expect(panes).toHaveCount(0);
+});

@@ -6,6 +6,7 @@ import {
   NavigationItem,
   Card,
   Button,
+  IconButton,
   DisclosureNote,
   FeatureCard,
 } from '@envsemble/ui';
@@ -21,6 +22,8 @@ import {
   Add,
   Info,
   Category,
+  DarkMode,
+  LightMode,
 } from '@envsemble/ui/icons';
 import { references, setupCode, registryCode, installCode } from './Reference';
 import { foundations, FoundationPreview } from './Foundations';
@@ -162,6 +165,7 @@ function readRoute() {
 }
 export default function App() {
   const [route, setRoute] = useState(readRoute);
+  const [appearance, setAppearance] = useState<'light' | 'dark'>('light');
   const main = useRef<HTMLElement>(null);
   useEffect(() => {
     const onHash = () => setRoute(readRoute());
@@ -175,6 +179,9 @@ export default function App() {
   const foundation =
     parts[0] === 'foundations' ? foundations.find((item) => item.id === parts[1]) : undefined;
   const tab = ['preview', 'guidelines', 'usage'].includes(parts[2]) ? parts[2] : 'preview';
+  const comparison =
+    Boolean(foundation) || Boolean(ref && tab === 'preview') || routePath === 'overview';
+  const oppositeAppearance = appearance === 'light' ? 'dark' : 'light';
   const title =
     ref?.title ??
     foundation?.title ??
@@ -307,7 +314,7 @@ export default function App() {
       </div>
     );
   return (
-    <Theme theme="light" className="docs-app">
+    <Theme theme={appearance} className="docs-app">
       <a
         className="docs-skip"
         href="#docs-main"
@@ -383,13 +390,31 @@ export default function App() {
             Internal offline reference
           </p>
         </aside>
-        <main id="docs-main" ref={main} tabIndex={-1} className="docs-main">
+        <main
+          id="docs-main"
+          ref={main}
+          tabIndex={-1}
+          className={`docs-main${comparison ? ' docs-comparison' : ''}`}
+        >
           <header className="docs-page-header">
-            <p className="docs-eyebrow">
-              {ref ? `Components / ${ref.group}` : foundation ? 'Foundations' : 'envsemble ui'}
-            </p>
-            <h1>{title}</h1>
-            <p>{summary}</p>
+            <div className="docs-page-header-copy">
+              <p className="docs-eyebrow">
+                {ref ? `Components / ${ref.group}` : foundation ? 'Foundations' : 'envsemble ui'}
+              </p>
+              <h1>{title}</h1>
+              <p>{summary}</p>
+            </div>
+            <Theme
+              theme={comparison ? oppositeAppearance : appearance}
+              className="docs-theme-toggle"
+            >
+              <IconButton
+                icon={appearance === 'light' ? <DarkMode /> : <LightMode />}
+                aria-label={`Switch to ${oppositeAppearance} theme`}
+                title={`Switch to ${oppositeAppearance} theme`}
+                onClick={() => setAppearance(oppositeAppearance)}
+              />
+            </Theme>
           </header>
           {content}
         </main>

@@ -13,5 +13,7 @@ export default defineConfig({
     target: 'es2022',
     assetsInlineLimit: () => true,
     cssCodeSplit: false,
+    // The offline token reference reads the authored HSL channels from CSS.
+    cssMinify: false,
   },
 });
