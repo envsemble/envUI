@@ -6,6 +6,7 @@ import { readFileSync } from 'node:fs';
 const offline = pathToFileURL(resolve('dist/DesignSystemGallery.html')).href;
 const version = JSON.parse(readFileSync('packages/ui/package.json', 'utf8')).version;
 const components = [
+  'layout',
   'buttons',
   'icon-buttons',
   'input',

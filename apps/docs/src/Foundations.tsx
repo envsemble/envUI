@@ -7,6 +7,7 @@ import {
   Row,
   IconButton,
   NavigationItem,
+  ActionGroup,
 } from '@envsemble/ui';
 import {
   Home,
@@ -191,11 +192,11 @@ export function FoundationPreview({ id }: { id: string }) {
                     <TokenValue token="--state-card-strip-weight" /> muted surface with its parent
                     surface. Disabled opacity is <TokenValue token="--state-disabled-opacity" />.
                   </p>
-                  <div className="docs-actions">
+                  <ActionGroup>
                     <Button>Primary action</Button>
                     <Button variant="important">Important action</Button>
                     <Button variant="outlined">Outlined action</Button>
-                  </div>
+                  </ActionGroup>
                 </section>
               </>
             );
@@ -278,6 +279,21 @@ export function FoundationPreview({ id }: { id: string }) {
                   </div>
                 </section>
                 <section className="docs-example">
+                  <h2>Content spacing</h2>
+                  <p>
+                    Use Stack for related blocks and ActionGroup for controls. Cards already space
+                    their content.
+                  </p>
+                  <Card>
+                    <h3>Shared layout</h3>
+                    <p>Keep gaps in the parent, padding inside each component.</p>
+                    <ActionGroup>
+                      <Button variant="secondary">Cancel</Button>
+                      <Button>Continue</Button>
+                    </ActionGroup>
+                  </Card>
+                </section>
+                <section className="docs-example">
                   <h2>Connected geometry</h2>
                   <GroupedRows>
                     <Row title="Large outer corners" detail="1.75 rem around the whole group" />
@@ -319,13 +335,13 @@ export function FoundationPreview({ id }: { id: string }) {
                 </section>
                 <section className="docs-example">
                   <h2>Icon composition</h2>
-                  <div className="docs-actions">
+                  <ActionGroup>
                     <NavigationItem icon={<Home />} selectedIcon={<Home filled />} selected>
                       Home
                     </NavigationItem>
                     <Button startIcon={<Add />}>Create item</Button>
                     <IconButton icon={<ChevronRight />} aria-label="Next item" />
-                  </div>
+                  </ActionGroup>
                   <p className="docs-caption">
                     Icons inherit their context color. Decorative icons stay hidden from assistive
                     technology; icon-only actions need an accessible name.
@@ -345,10 +361,10 @@ export function FoundationPreview({ id }: { id: string }) {
                     <Card>
                       <h3>Autumn release</h3>
                       <p>Content wraps naturally as the available space changes.</p>
-                      <div className="docs-actions">
+                      <ActionGroup>
                         <Button variant="secondary">Cancel</Button>
                         <Button>Save changes</Button>
-                      </div>
+                      </ActionGroup>
                     </Card>
                   </div>
                 </section>
@@ -361,10 +377,10 @@ export function FoundationPreview({ id }: { id: string }) {
                     <Card>
                       <h3>Autumn release</h3>
                       <p>Use stacked actions when the content needs more space.</p>
-                      <div className="docs-stack docs-mobile-actions">
+                      <ActionGroup stacked>
                         <Button>Save changes</Button>
                         <Button variant="secondary">Cancel</Button>
-                      </div>
+                      </ActionGroup>
                     </Card>
                   </div>
                 </section>
@@ -415,14 +431,14 @@ export function FoundationPreview({ id }: { id: string }) {
                 </section>
                 <section className="docs-example">
                   <h2>Keyboard focus</h2>
-                  <div className="docs-actions">
+                  <ActionGroup>
                     <Button className="docs-force-3">Visible focus</Button>
                     <IconButton
                       className="docs-force-3"
                       icon={<ChevronRight />}
                       aria-label="Next item"
                     />
-                  </div>
+                  </ActionGroup>
                   <p>
                     Use the shared 0.125 rem focus ring. Keep keyboard order aligned with the
                     visible layout.

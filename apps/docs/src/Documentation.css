@@ -53,7 +53,7 @@ body {
   text-decoration: none;
 }
 .docs-nav-subheading {
-  margin: 0.9rem 0.75rem 0.3rem;
+  margin: var(--space-4) var(--space-3) var(--space-1);
   color: var(--color-text-quiet);
   font-size: 0.75rem;
 }
@@ -117,47 +117,35 @@ body {
   font: var(--type-h1);
 }
 .docs-example {
-  margin: 0 0 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: 0 0 var(--space-7);
   min-width: 0;
 }
 .docs-example:last-child {
   margin-bottom: 0;
 }
 .docs-example > h2 {
-  margin: 0 0 1.25rem;
+  margin: 0 0 var(--space-2);
   font: var(--type-h1);
 }
 .docs-example p {
   max-width: 65ch;
 }
 .docs-caption {
-  margin: 1rem 0 0;
+  margin: 0;
   font: var(--type-body-small);
   color: var(--color-text-quiet);
 }
-.docs-actions {
+.docs-inline {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: var(--space-4);
 }
-.docs-stack {
-  display: grid;
-  gap: 1rem;
-}
-.docs-stacked-actions {
+.docs-narrow-actions {
   width: min(100%, 16rem);
-  gap: 0.5rem;
-  margin-top: 1.5rem;
-}
-.docs-align-end {
-  justify-content: flex-end;
-}
-.docs-gap {
-  margin-top: 1.5rem;
-}
-.docs-preview .docs-stack > .env-navigation-item {
-  justify-self: start;
 }
 .docs-matrix-scroll {
   overflow-x: auto;
@@ -184,39 +172,32 @@ body {
 .docs-matrix td {
   padding: 1rem 0.75rem;
 }
-.docs-dialog-anatomy {
-  display: grid;
-  gap: 1.5rem;
-}
-.docs-dialog-anatomy > h3,
-.docs-dialog-anatomy > p {
-  margin: 0;
-}
 .docs-managed-toast {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
   padding: 2rem clamp(1.25rem, 3vw, 3rem) 3rem;
 }
 .docs-managed-toast > h2 {
-  margin: 0 0 1.25rem;
+  margin: 0;
   font: var(--type-h1);
 }
 .docs-managed-pane {
-  padding: 1.5rem;
-  margin-top: 1.5rem;
+  padding: var(--space-5);
   border-radius: var(--radius-surface);
-}
-.docs-skeletons {
-  gap: 0.5rem;
-  padding-block: 1rem;
 }
 .docs-article {
   padding: 0 clamp(1.25rem, 3vw, 3rem) 3rem;
   max-width: 68rem;
 }
 .docs-article > section {
-  margin-bottom: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-bottom: var(--space-7);
 }
 .docs-article h2 {
-  margin: 0 0 1rem;
+  margin: 0;
   font: var(--type-h1);
 }
 .docs-article p {
@@ -227,6 +208,7 @@ body {
   color: var(--color-link);
 }
 .docs-code {
+  margin: 0;
   padding: 1.5rem;
   background: var(--color-pane);
   border-radius: var(--radius-surface);
@@ -262,10 +244,14 @@ body {
   padding: 0 clamp(1.25rem, 3vw, 3rem) 2rem;
 }
 .docs-overview-footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
   max-width: 65ch;
   padding: 2rem clamp(1.25rem, 3vw, 3rem) 3rem;
 }
 .docs-overview-footer > h2 {
+  margin: 0;
   font: var(--type-h1);
 }
 .docs-overview-footer > p {
@@ -348,11 +334,7 @@ body {
   margin: 0 0 1.25rem;
 }
 .docs-type-card {
-  padding: 1.25rem;
-}
-.docs-type-card h2 {
-  margin: 0 0 0.75rem;
-  font: var(--type-h2);
+  padding: var(--space-5);
 }
 .docs-fox {
   margin: 0;
@@ -425,19 +407,16 @@ body {
 }
 .docs-device-frame {
   display: grid;
-  gap: 1rem;
+  gap: var(--space-4);
   border: 0.0625rem solid var(--color-border-strong);
   border-radius: var(--radius-surface);
-  padding: 1rem;
+  padding: var(--space-4);
 }
 .docs-device-frame > .env-navigation-item {
   justify-self: start;
 }
 .docs-device-mobile {
   width: min(100%, 20rem);
-}
-.docs-mobile-actions {
-  gap: 0.5rem;
 }
 .docs-facts p {
   display: flex;

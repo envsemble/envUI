@@ -25,6 +25,8 @@ import {
   Toast,
   ToastProvider,
   useToast,
+  Stack,
+  ActionGroup,
 } from '@envsemble/ui';
 import { Add, ChevronRight, Home, Search, Apps, Settings } from '@envsemble/ui/icons';
 
@@ -130,8 +132,8 @@ function ButtonMatrix({ iconOnly = false }: { iconOnly?: boolean }) {
 function ManagedControls() {
   const toast = useToast();
   return (
-    <>
-      <div className="docs-actions">
+    <Stack>
+      <ActionGroup>
         <Button
           onClick={() =>
             toast.show({ variant: 'success', message: 'Changes saved', placement: 'bottom-right' })
@@ -169,11 +171,11 @@ function ManagedControls() {
         <Button variant="secondary" onClick={() => toast.clear()}>
           Clear notices
         </Button>
-      </div>
+      </ActionGroup>
       <p className="docs-caption">
         Show several notices to explore the queue. Hover or focus a notice to pause its timer.
       </p>
-    </>
+    </Stack>
   );
 }
 function ManagedToastExample() {
@@ -181,7 +183,7 @@ function ManagedToastExample() {
   return (
     <section className="docs-managed-toast">
       <h2>Managed delivery</h2>
-      <div className="docs-actions">
+      <ActionGroup>
         <Button
           variant={theme === 'light' ? 'primary' : 'secondary'}
           onClick={() => setTheme('light')}
@@ -194,7 +196,7 @@ function ManagedToastExample() {
         >
           Dark appearance
         </Button>
-      </div>
+      </ActionGroup>
       <Theme theme={theme} className="docs-managed-pane">
         <ToastProvider key={theme} defaultPlacement="bottom-right">
           <ManagedControls />
@@ -246,6 +248,46 @@ export function ComponentPreview({ id }: { id: string }) {
       <Paired>
         {(theme) => {
           switch (id) {
+            case 'layout':
+              return (
+                <>
+                  <Example
+                    title="Content spacing"
+                    caption="Stack uses 1 rem between related blocks."
+                  >
+                    <Stack>
+                      <Input
+                        label="Project name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                      />
+                      <Input
+                        label="Supporting detail"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                      />
+                      <DisclosureNote title="Optional guidance">
+                        <p>Keep external spacing in the parent layout.</p>
+                      </DisclosureNote>
+                    </Stack>
+                  </Example>
+                  <Example title="Action rows" caption="1 rem gap; actions wrap when needed.">
+                    <ActionGroup>
+                      <Button variant="secondary">Cancel</Button>
+                      <Button>Save changes</Button>
+                    </ActionGroup>
+                  </Example>
+                  <Example
+                    title="Stacked actions"
+                    caption="0.5 rem gap; label buttons fill the group."
+                  >
+                    <ActionGroup stacked className="docs-narrow-actions">
+                      <Button>Save changes</Button>
+                      <Button variant="secondary">Cancel</Button>
+                    </ActionGroup>
+                  </Example>
+                </>
+              );
             case 'buttons':
               return (
                 <>
@@ -253,25 +295,25 @@ export function ComponentPreview({ id }: { id: string }) {
                     <ButtonMatrix />
                   </Example>
                   <Example title="Labels & icons">
-                    <div className="docs-actions">
+                    <ActionGroup>
                       <Button onClick={() => setConfirmation('Item created')}>Create item</Button>
                       <Button startIcon={<Add />} onClick={() => setConfirmation('Item created')}>
                         Create item
                       </Button>
                       <Button endIcon={<ChevronRight />}>Continue</Button>
-                    </div>
+                    </ActionGroup>
                   </Example>
                   <Example title="Grouped actions">
-                    <div className="docs-actions">
+                    <ActionGroup>
                       <Button variant="secondary" onClick={() => setConfirmation('Cancelled')}>
                         Cancel
                       </Button>
                       <Button onClick={() => setConfirmation('Changes saved')}>Save changes</Button>
-                    </div>
-                    <div className="docs-stack docs-stacked-actions">
+                    </ActionGroup>
+                    <ActionGroup stacked className="docs-narrow-actions">
                       <Button onClick={() => setConfirmation('Changes saved')}>Save changes</Button>
                       <Button variant="secondary">Cancel</Button>
-                    </div>
+                    </ActionGroup>
                     <p className="docs-caption" aria-live="polite">
                       {confirmation || 'One primary action per group'}
                     </p>
@@ -285,7 +327,7 @@ export function ComponentPreview({ id }: { id: string }) {
                     <ButtonMatrix iconOnly />
                   </Example>
                   <Example title="With related actions">
-                    <div className="docs-actions">
+                    <ActionGroup>
                       <Button startIcon={<Add />}>Create item</Button>
                       <IconButton
                         icon={<ChevronRight />}
@@ -293,7 +335,7 @@ export function ComponentPreview({ id }: { id: string }) {
                         onClick={() => setConfirmation('Moved to next item')}
                       />
                       <IconButton icon={<Settings />} aria-label="Settings" />
-                    </div>
+                    </ActionGroup>
                     <p className="docs-caption" aria-live="polite">
                       {confirmation}
                     </p>
@@ -313,7 +355,7 @@ export function ComponentPreview({ id }: { id: string }) {
                     />
                   </Example>
                   <Example title="Empty & filled">
-                    <div className="docs-stack">
+                    <Stack>
                       <Input
                         label="Empty field"
                         placeholder="Enter a name"
@@ -331,10 +373,10 @@ export function ComponentPreview({ id }: { id: string }) {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                       />
-                    </div>
+                    </Stack>
                   </Example>
                   <Example title="Validation & availability">
-                    <div className="docs-stack">
+                    <Stack>
                       <Input
                         label="Invalid field"
                         value={name}
@@ -343,7 +385,7 @@ export function ComponentPreview({ id }: { id: string }) {
                       />
                       <Input label="Read-only field" value="Workspace default" readOnly />
                       <Input label="Disabled field" value="Unavailable" disabled />
-                    </div>
+                    </Stack>
                   </Example>
                 </>
               );
@@ -360,7 +402,7 @@ export function ComponentPreview({ id }: { id: string }) {
                     />
                   </Example>
                   <Example title="Validation & availability">
-                    <div className="docs-stack">
+                    <Stack>
                       <Textarea
                         label="Empty description"
                         rows={2}
@@ -393,7 +435,7 @@ export function ComponentPreview({ id }: { id: string }) {
                         disabled
                         value="Unavailable"
                       />
-                    </div>
+                    </Stack>
                   </Example>
                 </>
               );
@@ -401,7 +443,7 @@ export function ComponentPreview({ id }: { id: string }) {
               return (
                 <>
                   <Example title="Independent selection">
-                    <div className="docs-stack">
+                    <Stack>
                       <Checkbox
                         label="Include archived items"
                         checked={checked}
@@ -414,22 +456,22 @@ export function ComponentPreview({ id }: { id: string }) {
                       />
                       <Checkbox label="Disabled choice" disabled />
                       <Checkbox label="Disabled selected choice" checked disabled />
-                    </div>
+                    </Stack>
                   </Example>
                   <Example title="Partial selection">
-                    <div className="docs-stack">
+                    <Stack>
                       <Checkbox label="All projects" checked={mixed} onCheckedChange={setMixed} />
                       <Button variant="secondary" onClick={() => setMixed('mixed')}>
                         Restore partial selection
                       </Button>
-                    </div>
+                    </Stack>
                   </Example>
                 </>
               );
             case 'switch':
               return (
                 <Example title="On, off & disabled">
-                  <div className="docs-stack">
+                  <Stack>
                     <Switch
                       label="Enable notifications"
                       checked={enabled}
@@ -442,7 +484,7 @@ export function ComponentPreview({ id }: { id: string }) {
                     />
                     <Switch label="Disabled setting" disabled />
                     <Switch label="Disabled enabled setting" checked disabled />
-                  </div>
+                  </Stack>
                 </Example>
               );
             case 'radio':
@@ -524,7 +566,7 @@ export function ComponentPreview({ id }: { id: string }) {
               return (
                 <>
                   <Example title="Destination selection">
-                    <div className="docs-stack">
+                    <Stack>
                       {['Home', 'Projects', 'Settings'].map((label, i) => (
                         <NavigationItem
                           key={label}
@@ -544,10 +586,10 @@ export function ComponentPreview({ id }: { id: string }) {
                           {label}
                         </NavigationItem>
                       ))}
-                    </div>
+                    </Stack>
                   </Example>
                   <Example title="States">
-                    <div className="docs-stack">
+                    <Stack>
                       <NavigationItem icon={<Home />}>Home</NavigationItem>
                       <NavigationItem icon={<Home />} selectedIcon={<Home filled />} selected>
                         Selected destination
@@ -564,7 +606,7 @@ export function ComponentPreview({ id }: { id: string }) {
                       <NavigationItem icon={<Home />} disabled>
                         Disabled destination
                       </NavigationItem>
-                    </div>
+                    </Stack>
                   </Example>
                 </>
               );
@@ -581,7 +623,7 @@ export function ComponentPreview({ id }: { id: string }) {
                         label: `${value} ${value === '1' ? 'row' : 'rows'}`,
                       }))}
                     />
-                    <div className="docs-gap">
+                    <>
                       <GroupedRows>
                         {Array.from({ length: Number(count) }, (_, i) => (
                           <Row
@@ -599,7 +641,7 @@ export function ComponentPreview({ id }: { id: string }) {
                           />
                         ))}
                       </GroupedRows>
-                    </div>
+                    </>
                     <p className="docs-caption" aria-live="polite">
                       {confirmation}
                     </p>
@@ -671,7 +713,7 @@ export function ComponentPreview({ id }: { id: string }) {
               return (
                 <>
                   <Example title="Metadata">
-                    <div className="docs-actions">
+                    <div className="docs-inline">
                       <InfoChip>Optional</InfoChip>
                       <InfoChip>Read only</InfoChip>
                       <InfoChip>3 members</InfoChip>
@@ -695,21 +737,19 @@ export function ComponentPreview({ id }: { id: string }) {
               return (
                 <>
                   <Example title="First project">
-                    <Card>
-                      <EmptyState
-                        icon={<Apps />}
-                        title="No projects yet"
-                        description="Create a project to bring plans and people together."
-                        action={
-                          <Button
-                            startIcon={<Add />}
-                            onClick={() => setConfirmation('Project creation started')}
-                          >
-                            Create project
-                          </Button>
-                        }
-                      />
-                    </Card>
+                    <EmptyState
+                      icon={<Apps />}
+                      title="No projects yet"
+                      description="Create a project to bring plans and people together."
+                      action={
+                        <Button
+                          startIcon={<Add />}
+                          onClick={() => setConfirmation('Project creation started')}
+                        >
+                          Create project
+                        </Button>
+                      }
+                    />
                   </Example>
                   <Example title="No search results">
                     <EmptyState
@@ -737,21 +777,21 @@ export function ComponentPreview({ id }: { id: string }) {
                   <Example title="Content placeholders">
                     <Card>
                       <LoadingState label="Loading project">
-                        <div className="docs-stack docs-skeletons">
+                        <Stack gap={2}>
                           <Skeleton width="38%" height="1.25rem" />
                           <Skeleton width="100%" height="0.8rem" />
                           <Skeleton width="72%" height="0.8rem" />
-                        </div>
+                        </Stack>
                       </LoadingState>
                     </Card>
                   </Example>
                   <Example title="Row placeholders">
                     <LoadingState label="Loading settings">
-                      <div className="docs-stack">
+                      <Stack>
                         {[1, 2, 3].map((i) => (
                           <Skeleton key={i} width="100%" height="3.5rem" />
                         ))}
-                      </div>
+                      </Stack>
                     </LoadingState>
                   </Example>
                 </>
@@ -760,7 +800,7 @@ export function ComponentPreview({ id }: { id: string }) {
               return (
                 <>
                   <Example title="Manual notices">
-                    <div className="docs-stack">
+                    <Stack>
                       {(['neutral', 'success', 'info', 'error'] as const)
                         .filter((v) => !dismissed.includes(v))
                         .map((v) => (
@@ -794,7 +834,7 @@ export function ComponentPreview({ id }: { id: string }) {
                       <p className="docs-caption" aria-live="polite">
                         {confirmation}
                       </p>
-                    </div>
+                    </Stack>
                   </Example>
                 </>
               );
@@ -803,14 +843,14 @@ export function ComponentPreview({ id }: { id: string }) {
                 <>
                   <Example title="Confirmation composition">
                     <Card>
-                      <div className="docs-dialog-anatomy">
+                      <Stack gap={5}>
                         <h3>Delete project?</h3>
                         <p>This removes the project for everyone in the workspace.</p>
-                        <div className="docs-actions docs-align-end">
+                        <ActionGroup align="end">
                           <Button variant="secondary">Cancel</Button>
                           <Button variant="destructive">Delete project</Button>
-                        </div>
-                      </div>
+                        </ActionGroup>
+                      </Stack>
                     </Card>
                   </Example>
                   <Example title="Interactive form">
@@ -894,7 +934,7 @@ export function OverviewPreview() {
                 }
               />
             </GroupedRows>
-            <div className="docs-gap">
+            <>
               <Select
                 label="Visibility"
                 name={`overview-visibility-${theme}`}
@@ -905,7 +945,7 @@ export function OverviewPreview() {
                   { value: 'private', label: 'Private' },
                 ]}
               />
-            </div>
+            </>
             <DisclosureNote
               title="How visibility works"
               open={note}

@@ -20,6 +20,7 @@
 
 /* Canonical control geometry ported from SharedComponents.css. */
 .env-button {
+  inline-size: fit-content;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -37,6 +38,7 @@
   min-inline-size: 0;
 }
 .env-navigation-item {
+  inline-size: fit-content;
   display: inline-flex;
   align-items: center;
   gap: calc(0.5rem * var(--scale, 1));
@@ -226,14 +228,17 @@
 .env-card-pane {
   background: var(--color-pane);
 }
-.env-card > h3 {
-  margin: 0 0 0.75rem;
-  font: var(--type-h2);
-  color: var(--color-text-primary);
+.env-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.env-card-content > * {
+  margin-block: 0;
 }
 
 .env-disclosure-note {
-  margin: 1rem 0 0;
+  margin: 0;
   padding: 0;
   border: 0;
   background: none;
@@ -273,7 +278,10 @@
   color: var(--color-quiet-label-pressed);
 }
 .env-disclosure-content {
-  margin: 0.5rem 0 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: var(--space-2) 0 0 var(--space-4);
   color: inherit;
   font: inherit;
 }
@@ -281,11 +289,15 @@
   color: inherit;
   font: inherit;
 }
-.env-disclosure-content > p + p {
-  margin-top: 0.5rem;
+.env-disclosure-content > * {
+  margin-block: 0;
+}
+.env-disclosure-content > :is(ul, ol) {
+  padding-inline-start: var(--space-5);
 }
 
 .env-info-chip {
+  inline-size: fit-content;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -424,15 +436,18 @@
 .env-feature-card-copy {
   min-width: 0;
 }
-.env-feature-card-copy h2,
-.env-feature-card-copy p {
+.env-feature-card-extra {
+  margin-block-start: var(--space-4);
+}
+.env-feature-card-copy > h2,
+.env-feature-card-copy > p {
   margin: 0;
 }
-.env-feature-card-copy h2 {
+.env-feature-card-copy > h2 {
   color: var(--color-text-primary);
   font: var(--type-h1);
 }
-.env-feature-card-copy p {
+.env-feature-card-copy > p {
   margin-top: var(--space-1);
   color: var(--color-text-muted);
   font: var(--type-body-small);
@@ -483,7 +498,6 @@
 .env-loading-state {
   display: grid;
   gap: var(--space-2);
-  padding: 1rem 0;
 }
 .env-skeleton {
   display: block;

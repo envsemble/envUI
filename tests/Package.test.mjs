@@ -186,6 +186,8 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'IconButton',
     'NavigationItem',
     'Card',
+    'Stack',
+    'ActionGroup',
     'ActionCard',
     'FeatureCard',
     'GroupedRows',
@@ -227,7 +229,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     join(consumerDirectory, 'Consumer.tsx'),
     `
     import { createRef } from 'react';
-    import { Theme, Button, IconButton, NavigationItem, Icon, BrandLogo, Input, Textarea, Checkbox, Switch,
+    import { Theme, Button, IconButton, NavigationItem, Icon, BrandLogo, Input, Textarea, Checkbox, Switch, Stack, ActionGroup,
       RadioGroup, Radio, Select, Dialog, DialogClose, Toast, ToastProvider, useToast,
       type ThemeValue, type ButtonProps, type SelectOption, type ToastManager } from '@envsemble/ui';
     import { Home } from '@envsemble/ui/icons/Home';
@@ -239,6 +241,8 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     function NotificationAction() { const manager: ToastManager = useToast(); return <Button onClick={() => manager.show({ message: 'Saved' })}>Save</Button>; }
     export const consumer = <Theme theme={theme} ref={createRef<HTMLDivElement>()}>
       <Button {...buttonProps}>Create</Button><IconButton aria-label="Open" icon={<Home filled />} />
+      <Stack gap={3} ref={createRef<HTMLDivElement>()}><Input label="First" /><Input label="Second" /></Stack>
+      <ActionGroup stacked ref={createRef<HTMLDivElement>()}><Button>Save</Button><Button variant="secondary">Cancel</Button></ActionGroup>
       <NavigationItem href="/" ref={createRef<HTMLAnchorElement>()}>Home</NavigationItem>
       <NavigationItem ref={createRef<HTMLButtonElement>()}>Change view</NavigationItem>
       <Icon label="Custom" viewBox="0 0 1 1"><path d="M0 0L1 1" /></Icon><BrandLogo /><BarrelHome />
@@ -256,7 +260,9 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     const unknownTheme = <Theme theme="system" />;
     // @ts-expect-error Button variants are the explicit public contract.
     const unknownButton = <Button variant="custom">Example</Button>;
-    void [unnamedIconButton, unknownTheme, unknownButton];
+    // @ts-expect-error Layout gap must use the defined spacing scale.
+    const unknownGap = <Stack gap={10} />;
+    void [unnamedIconButton, unknownTheme, unknownButton, unknownGap];
   `,
   );
   await writeFile(

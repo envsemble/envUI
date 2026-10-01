@@ -24,6 +24,43 @@ export type Reference = {
 };
 export const references: Reference[] = [
   {
+    id: 'layout',
+    title: 'Content & action layout',
+    group: 'Layout',
+    summary: 'Shared spacing for text, fields and grouped actions.',
+    example: `import { Card, Stack, ActionGroup, Input, Button } from '@envsemble/ui';
+
+<Card>
+  <h3>Project details</h3>
+  <p>Cards space their direct children automatically.</p>
+  <Stack gap={4}>
+    <Input label="Name" name="name" />
+    <Input label="Description" name="description" />
+  </Stack>
+  <ActionGroup>
+    <Button variant="secondary">Cancel</Button>
+    <Button>Save changes</Button>
+  </ActionGroup>
+</Card>
+
+<ActionGroup stacked>
+  <Button>Continue</Button>
+  <Button variant="secondary">Cancel</Button>
+</ActionGroup>`,
+    props: [
+      ['Stack gap', 'Spacing step 0–9; default 4 (1 rem); 0 removes the gap'],
+      ['Stack align', 'start, center, end or stretch (default)'],
+      ['ActionGroup stacked', 'Wrapped row by default; stacked label buttons fill the group'],
+      ['ActionGroup align', 'Row alignment: start (default), center or end'],
+      ['Native div props', 'children, className, style, ref and accessible attributes'],
+    ],
+    guidelines: [
+      'The parent owns space between components; components own their internal padding. Avoid individual child margins.',
+      'Stack uses the shared spacing scale. Step 4 is 1 rem; step 2 is 0.5 rem. Cards already space direct children by 1 rem.',
+      'ActionGroup uses 1 rem gaps in wrapped rows and 0.5 rem when stacked. Circular icon buttons keep their size.',
+    ],
+  },
+  {
     id: 'buttons',
     title: 'Buttons',
     group: 'Actions',
@@ -42,7 +79,7 @@ import { Add } from '@envsemble/ui/icons';
     guidelines: [
       'Use one primary action in an action group. Reserve important emphasis for rare, consequential actions.',
       'Action buttons fit their content: 2 rem minimum height, 0.875 rem text, 0.25 rem vertical and 0.75 rem horizontal padding. Labels wrap when space is limited.',
-      'Use fully rounded corners; important actions use 0.5 rem corners. Arrange controls with a 1 rem horizontal or 0.5 rem stacked gap.',
+      'Use fully rounded corners; important actions use 0.5 rem corners. ActionGroup provides 1 rem row gaps or 0.5 rem stacked gaps.',
       'Interaction colors follow the central HSL lightness rule described in Colors & themes. State colors and disabled opacity come from the shared stylesheet.',
     ],
   },
@@ -260,6 +297,7 @@ import { Apps } from '@envsemble/ui/icons';
     ],
     guidelines: [
       'Use 1.75 rem corners. Row tone is the standalone card fill; pane tone groups content in a quieter background.',
+      'Cards space direct children by 1 rem. FeatureCard keeps compact title/description spacing and separates additional content by 1 rem.',
       'The action strip derives its fill from the parent surface. Compose actions from the shared controls.',
       'Titles, metadata and product data remain application content.',
     ],

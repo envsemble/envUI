@@ -1,4 +1,5 @@
 import type { ComponentPropsWithRef, CSSProperties, ReactNode } from 'react';
+import { Stack } from './Layout.js';
 
 function classes(...values: Array<string | undefined | false>) {
   return values.filter(Boolean).join(' ');
@@ -155,7 +156,12 @@ export function Card({ tone = 'row', className, ...props }: CardProps) {
   return (
     <div
       {...props}
-      className={classes('env-card', tone === 'pane' && 'env-card-pane', className)}
+      className={classes(
+        'env-card',
+        'env-card-content',
+        tone === 'pane' && 'env-card-pane',
+        className,
+      )}
     />
   );
 }
@@ -217,7 +223,7 @@ export function FeatureCard({
         <div className="env-feature-card-copy">
           <h2>{title}</h2>
           {description != null && <p>{description}</p>}
-          {children}
+          {children != null && <Stack className="env-feature-card-extra">{children}</Stack>}
         </div>
         {action != null && <div className="env-feature-card-action">{action}</div>}
       </div>

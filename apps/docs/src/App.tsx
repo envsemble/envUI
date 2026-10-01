@@ -125,7 +125,7 @@ function componentIcon(group: string) {
     ? TouchApp
     : group === 'Forms & selection'
       ? TextFields
-      : group === 'Rows & cards'
+      : group === 'Rows & cards' || group === 'Layout'
         ? ViewList
         : group === 'Feedback'
           ? Info
