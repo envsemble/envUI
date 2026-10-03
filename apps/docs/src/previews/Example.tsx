@@ -43,7 +43,7 @@ export function SpecimenGrid({
   size = 'field',
 }: {
   children: ReactNode;
-  size?: 'compact' | 'field' | 'card';
+  size?: 'compact' | 'field' | 'card' | 'wide';
 }) {
   return (
     <div className="docs-specimen-grid" data-size={size}>
@@ -62,7 +62,7 @@ export function Specimen({
   caption?: string;
 }) {
   return (
-    <Stack as="section" gap={3}>
+    <Stack as="section" gap={3} className="docs-specimen">
       <Text as="h3" variant="section-heading">
         {title}
       </Text>

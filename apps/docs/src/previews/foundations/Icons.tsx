@@ -1,4 +1,4 @@
-import { Text, BrandLogo, EnvUILogo, Card } from '@envsemble/envui';
+import { Text, BrandLogo, EnvUILogo, Stack } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Category } from '@envsemble/envui/icons/Category';
 import { Search } from '@envsemble/envui/icons/Search';
@@ -26,7 +26,7 @@ export function IconsPreview() {
       <Example title="Rounded symbols" size="collection">
         <SpecimenGrid size="compact">
           {iconList.map(([label, Icon]) => (
-            <Card key={label}>
+            <Stack key={label} gap={3}>
               <div className="docs-icon-pair">
                 <Icon width="1.5rem" height="1.5rem" />
                 <Icon filled width="1.5rem" height="1.5rem" />
@@ -36,24 +36,24 @@ export function IconsPreview() {
                 <br />
                 Outline / filled
               </Text>
-            </Card>
+            </Stack>
           ))}
         </SpecimenGrid>
       </Example>
       <Example title="Brand identity">
         <SpecimenGrid size="compact">
-          <Card>
+          <Stack gap={3}>
             <EnvUILogo className="docs-brand-specimen" />
             <Text variant="caption" className="docs-caption">
               envUI
             </Text>
-          </Card>
-          <Card>
+          </Stack>
+          <Stack gap={3}>
             <BrandLogo className="docs-brand-specimen" />
             <Text variant="caption" className="docs-caption">
               envsemble
             </Text>
-          </Card>
+          </Stack>
         </SpecimenGrid>
         <Text variant="caption" className="docs-caption">
           Bundled lockups inherit the theme’s text color.

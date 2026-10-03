@@ -37,16 +37,16 @@ import { Home } from '@envsemble/envui/icons/Home';
     title: 'Tabs',
     group: 'Navigation',
     summary: 'Switches between content panels in the same view.',
-    example: `import { Tabs, Button, Card } from '@envsemble/envui';
+    example: `import { Tabs, Button, Text } from '@envsemble/envui';
 
 <Tabs aria-label="Project views" defaultValue="preview" keepMounted
   items={[
     { value: 'preview', button: <Button>Preview</Button>,
-      content: <Card>Live preview</Card> },
+      content: <Text>Live preview</Text> },
     { value: 'guidelines', button: <Button>Guidelines</Button>,
-      content: <Card>Design guidelines</Card> },
+      content: <Text>Design guidelines</Text> },
     { value: 'usage', button: <Button>Usage</Button>,
-      content: <Card>React usage</Card> },
+      content: <Text>React usage</Text> },
   ]}
 />`,
     props: [

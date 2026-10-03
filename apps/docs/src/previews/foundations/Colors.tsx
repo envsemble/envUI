@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from 'react';
-import { Button, GroupedRows, Row, useTheme } from '@envsemble/envui';
+import { Text, useTheme } from '@envsemble/envui';
 import { TokenValue } from './TokenValue';
-import { Example } from '../Example';
+import { Example, Specimen, SpecimenGrid } from '../Example';
 
 const colorGroups: [string, [string, string][]][] = [
   [
@@ -95,55 +95,44 @@ function ColorPalette() {
 
 function InteractionColors() {
   const states = [
-    { label: 'Default', detail: 'Base color', className: undefined, disabled: false },
-    {
-      label: 'Hover',
-      detail: (
-        <>
-          <TokenValue token="--state-hover-shift" /> point shift
-        </>
-      ),
-      className: 'docs-force-1',
-      disabled: false,
-    },
-    {
-      label: 'Pressed',
-      detail: (
-        <>
-          <TokenValue token="--state-pressed-shift" /> point shift
-        </>
-      ),
-      className: 'docs-force-2',
-      disabled: false,
-    },
-    {
-      label: 'Disabled',
-      detail: (
-        <>
-          <TokenValue token="--state-disabled-opacity" /> opacity
-        </>
-      ),
-      className: undefined,
-      disabled: true,
-    },
+    { label: 'Default', token: '--color-primary-action', shift: null },
+    { label: 'Hover', token: '--color-primary-action-hover', shift: '--state-hover-shift' },
+    { label: 'Pressed', token: '--color-primary-action-pressed', shift: '--state-pressed-shift' },
+    { label: 'Disabled', token: '--color-primary-action', shift: null },
   ];
 
   return (
-    <Example title="Interaction states" className="docs-interaction-colors">
-      <GroupedRows className="docs-interaction-rows" aria-label="Interaction color states">
-        {states.map((state) => (
-          <Row
-            key={state.label}
-            title={state.label}
-            detail={state.detail}
-            action={
-              <Button className={state.className} disabled={state.disabled}>
-                Save
-              </Button>
-            }
-          />
+    <Example title="Derived interaction colors" size="collection">
+      <Text tone="muted">
+        Below 50% HSL lightness, add lightness; otherwise subtract it. Clamp to 0�100%.
+      </Text>
+      <SpecimenGrid size="compact">
+        {states.map(({ label, token, shift }) => (
+          <Specimen key={label} title={label}>
+            <div
+              className="docs-color-state"
+              aria-hidden="true"
+              style={{
+                background: `var(${token})`,
+                opacity: label === 'Disabled' ? 'var(--state-disabled-opacity)' : undefined,
+              }}
+            />
+            <Text variant="caption">
+              {shift ? (
+                <>
+                  <TokenValue token={shift} /> point shift
+                </>
+              ) : label === 'Disabled' ? (
+                <>
+                  <TokenValue token="--state-disabled-opacity" /> opacity
+                </>
+              ) : (
+                'Primary action base color'
+              )}
+            </Text>
+          </Specimen>
         ))}
-      </GroupedRows>
+      </SpecimenGrid>
     </Example>
   );
 }

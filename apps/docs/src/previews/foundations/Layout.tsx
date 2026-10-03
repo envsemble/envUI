@@ -1,7 +1,5 @@
-import { Text, Button, Card, NavigationItem, Stack, ActionGroup } from '@envsemble/envui';
-import { Home } from '@envsemble/envui/icons/Home';
-import { Devices } from '@envsemble/envui/icons/Devices';
-import { Example, SpecimenGrid } from '../Example';
+import { Text, Stack } from '@envsemble/envui';
+import { Example, Specimen, SpecimenGrid } from '../Example';
 
 export function SpacingPreview() {
   return (
@@ -32,7 +30,7 @@ export function SpacingPreview() {
               className="docs-shape"
               style={{
                 borderRadius: radius,
-                ...(label === 'Circular icons' ? { width: '6rem', justifySelf: 'center' } : {}),
+                ...(label === 'Circular icons' ? { width: '6rem' } : {}),
               }}
             >
               <span>
@@ -51,38 +49,32 @@ export function SpacingPreview() {
 export function ResponsivePreview() {
   return (
     <>
-      <Example title="Regular composition">
-        <Stack>
-          <NavigationItem icon={<Home />} selected>
-            Workspace
-          </NavigationItem>
-          <Card>
-            <Text as="h3" variant="section-heading">
-              Autumn release
-            </Text>
-            <Text>Content wraps naturally as the available space changes.</Text>
-            <ActionGroup>
-              <Button variant="secondary">Cancel</Button>
-              <Button>Save changes</Button>
-            </ActionGroup>
-          </Card>
-        </Stack>
+      <Example title="Reflowing content" size="collection">
+        <Text tone="muted">
+          These columns stack when space is limited. Text wraps within each column; no separate
+          mobile component is needed.
+        </Text>
+        <SpecimenGrid>
+          <Specimen title="Project overview">
+            <Text>Shared plans for the autumn release, with milestones and responsibilities.</Text>
+          </Specimen>
+          <Specimen title="Release notes">
+            <Text>Recent changes and upcoming work remain readable as the column narrows.</Text>
+          </Specimen>
+          <Specimen title="Team updates">
+            <Text>Keep related information together and use consistent gaps between blocks.</Text>
+          </Specimen>
+        </SpecimenGrid>
       </Example>
-      <Example title="Compact composition" size="compact">
-        <Stack className="docs-narrow-actions">
-          <NavigationItem icon={<Devices />} selected>
-            Workspace
-          </NavigationItem>
-          <Card>
-            <Text as="h3" variant="section-heading">
-              Autumn release
-            </Text>
-            <Text>Use stacked actions when the content needs more space.</Text>
-            <ActionGroup stacked>
-              <Button>Save changes</Button>
-              <Button variant="secondary">Cancel</Button>
-            </ActionGroup>
-          </Card>
+      <Example title="Content in a narrow column" size="field">
+        <Stack>
+          <Text as="h3" variant="section-heading">
+            Autumn release
+          </Text>
+          <Text>
+            Longer content wraps naturally. Let its height grow instead of fixing a height or
+            clipping text.
+          </Text>
         </Stack>
       </Example>
     </>

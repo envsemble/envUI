@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react';
-import { Text, Card, Stack } from '@envsemble/envui';
+import { Text, Stack } from '@envsemble/envui';
 import { TokenValue } from './TokenValue';
 import { Example } from '../Example';
 
@@ -26,70 +26,66 @@ export function TypographyPreview() {
   return (
     <>
       <Example title="Text variants" size="wide">
-        <Card tone="pane">
-          <ol className="docs-type-list">
-            {textVariants.map(([title, variant, color, meta]) => (
-              <TextSpecimen
-                key={variant}
-                sample={<Text variant={variant}>The quick brown fox jumps over the lazy dog.</Text>}
-              >
-                <Text as="span" variant="caption">
-                  {title} · {meta}
-                </Text>
-                <Text as="span" variant="caption">
-                  <code>
-                    <TokenValue token={color} />
-                  </code>
-                </Text>
-              </TextSpecimen>
-            ))}
-          </ol>
-        </Card>
+        <ol className="docs-type-list">
+          {textVariants.map(([title, variant, color, meta]) => (
+            <TextSpecimen
+              key={variant}
+              sample={<Text variant={variant}>The quick brown fox jumps over the lazy dog.</Text>}
+            >
+              <Text as="span" variant="caption">
+                {title} · {meta}
+              </Text>
+              <Text as="span" variant="caption">
+                <code>
+                  <TokenValue token={color} />
+                </code>
+              </Text>
+            </TextSpecimen>
+          ))}
+        </ol>
       </Example>
       <Example title="Text component" size="wide">
         <Text variant="supporting">
           variant sets the style, tone sets the color, and as chooses the HTML element. Stack
           supplies spacing.
         </Text>
-        <Card tone="pane">
-          <ol className="docs-type-list">
-            <TextSpecimen
-              sample={
-                <Text as="h3" variant="page-heading">
-                  Project overview
+        <ol className="docs-type-list">
+          <TextSpecimen
+            sample={
+              <Text as="h3" variant="page-heading">
+                Project overview
+              </Text>
+            }
+          >
+            <Text as="span" variant="caption">
+              <code>{'<Text as="h3" variant="page-heading">'}</code>
+            </Text>
+          </TextSpecimen>
+          <TextSpecimen sample={<Text tone="muted">Shared project context.</Text>}>
+            <Text as="span" variant="caption">
+              <code>{'<Text tone="muted">'}</code>
+            </Text>
+          </TextSpecimen>
+          <TextSpecimen sample={<Text tone="quiet">Updated today.</Text>}>
+            <Text as="span" variant="caption">
+              <code>{'<Text tone="quiet">'}</code>
+            </Text>
+          </TextSpecimen>
+          <TextSpecimen
+            sample={
+              <Text>
+                Project status:{' '}
+                <Text as="span" tone="muted">
+                  Draft
                 </Text>
-              }
-            >
-              <Text as="span" variant="caption">
-                <code>{'<Text as="h3" variant="page-heading">'}</code>
               </Text>
-            </TextSpecimen>
-            <TextSpecimen sample={<Text tone="muted">Shared project context.</Text>}>
-              <Text as="span" variant="caption">
-                <code>{'<Text tone="muted">'}</code>
-              </Text>
-            </TextSpecimen>
-            <TextSpecimen sample={<Text tone="quiet">Updated today.</Text>}>
-              <Text as="span" variant="caption">
-                <code>{'<Text tone="quiet">'}</code>
-              </Text>
-            </TextSpecimen>
-            <TextSpecimen
-              sample={
-                <Text>
-                  Project status:{' '}
-                  <Text as="span" tone="muted">
-                    Draft
-                  </Text>
-                </Text>
-              }
-            >
-              <Text as="span" variant="caption">
-                <code>{'<Text as="span" tone="muted">'}</code>
-              </Text>
-            </TextSpecimen>
-          </ol>
-        </Card>
+            }
+          >
+            <Text as="span" variant="caption">
+              <code>{'<Text as="span" tone="muted">'}</code>
+            </Text>
+          </TextSpecimen>
+        </ol>
       </Example>
     </>
   );

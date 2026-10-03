@@ -1,4 +1,4 @@
-import { Text, Stack, DisclosureNote } from '@envsemble/envui';
+import { Text, Stack } from '@envsemble/envui';
 import { setupCode, registryCode, installCode } from '../Reference';
 import { Code } from '../Code';
 
@@ -84,12 +84,15 @@ export function GettingStarted() {
           offline reference matching the package version.
         </Text>
       </Stack>
-      <DisclosureNote title="For coding agents">
+      <Stack as="section">
+        <Text as="h2" variant="page-heading">
+          For coding agents
+        </Text>
         <Text variant="body" tone="muted">
           The package includes <code>USAGE.md</code>, generated from the same maintained reference
           as these Usage pages. Read it alongside the TypeScript declarations and release notes.
         </Text>
-      </DisclosureNote>
+      </Stack>
     </div>
   );
 }
