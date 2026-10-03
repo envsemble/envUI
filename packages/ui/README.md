@@ -20,7 +20,7 @@ npm install @envsemble/envui react@^19 react-dom@^19
 ## Use
 
 ```tsx
-import { Theme, Button, IconButton, ActionGroup } from '@envsemble/envui';
+import { Theme, Button, ActionGroup } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 import '@envsemble/envui/styles.css';
@@ -30,7 +30,7 @@ export function App() {
     <Theme theme="light">
       <ActionGroup>
         <Button startIcon={<Add />}>Create item</Button>
-        <IconButton icon={<ChevronRight />} aria-label="Next item" />
+        <Button variant="secondary" iconOnly icon={<ChevronRight />} aria-label="Next item" />
       </ActionGroup>
     </Theme>
   );
@@ -45,6 +45,7 @@ The stylesheet bundles Inter and scopes styling to explicit light/dark theme bou
 - Use `Surface` for a plain background pane. It owns a palette tone, padding and corners; layout and behavior stay with the contents. `render={<Stack />}` combines them without an extra wrapper.
 - Use `Text` for the shared typography variants and semantic colors. It adds no outer margins.
 - `Button href` renders a native link; omit `href` for a native button.
+- Every Button variant supports `iconOnly` with `icon` and a required `aria-label`. `IconButton` is a shorthand with secondary as its default variant.
 - `Card` builds on Surface and Stack. Use `href` for a destination, `as="button"` for an action, or `heading`, `meta` and `actions` for content with an action strip. `ClickableCard` and `ActionCard` remain compatibility wrappers; FeatureCard adds its specific layout.
 - `Input`, `Textarea` and `Select` share visible labels and accessible hints/errors. Validation stays in the application.
 - `Tabs renderList` wraps the supplied tab list in a custom layout, such as a Card with a heading. Render the list once; panels remain outside that wrapper.

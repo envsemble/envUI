@@ -33,21 +33,17 @@
   background: var(--color-primary-action-pressed);
 }
 
-/* Secondary and circular actions share the same neutral tonal treatment. */
-.env-button-secondary,
-.env-button.env-icon-button {
+.env-button-secondary {
   background: var(--color-icon-button);
   color: var(--color-control-text);
   border: 0;
 }
 
-.env-button-secondary:hover:not(:disabled):not([aria-disabled='true']),
-.env-button.env-icon-button:hover:not(:disabled):not([aria-disabled='true']) {
+.env-button-secondary:hover:not(:disabled):not([aria-disabled='true']) {
   background: var(--color-icon-button-hover);
 }
 
-.env-button-secondary:active:not(:disabled):not([aria-disabled='true']),
-.env-button.env-icon-button:active:not(:disabled):not([aria-disabled='true']) {
+.env-button-secondary:active:not(:disabled):not([aria-disabled='true']) {
   background: var(--color-icon-button-pressed);
 }
 

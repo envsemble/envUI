@@ -488,12 +488,6 @@ body {
   background: var(--color-subtle-action-pressed);
   border-color: var(--color-border-pressed);
 }
-.docs-preview .docs-force-1.env-icon-button {
-  background: var(--color-icon-button-hover);
-}
-.docs-preview .docs-force-2.env-icon-button {
-  background: var(--color-icon-button-pressed);
-}
 .docs-preview .docs-force-1.env-navigation-item {
   background: var(--color-navigation-quiet-hover);
 }
@@ -509,6 +503,10 @@ body {
 .docs-preview .docs-force-3 {
   outline: 0.125rem solid var(--color-focus-ring);
   outline-offset: 0.125rem;
+}
+.docs-preview .docs-force-3.env-button-outlined {
+  outline-color: var(--color-outlined-focus);
+  outline-offset: 0.0625rem;
 }
 .docs-preview .docs-force-3.env-navigation-item {
   outline-offset: -0.125rem;

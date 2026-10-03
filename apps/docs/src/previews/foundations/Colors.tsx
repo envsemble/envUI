@@ -9,7 +9,7 @@ const colorGroups: [string, [string, string][]][] = [
     [
       ['canvas', 'Page background'],
       ['pane', 'Background panes · grouped content'],
-      ['surface-muted', 'Rows, cards, secondary/icon buttons & tab rails'],
+      ['surface-muted', 'Rows, cards, secondary buttons & tab rails'],
       ['surface', 'Alternate rows & outlined buttons'],
     ],
   ],
@@ -19,7 +19,7 @@ const colorGroups: [string, [string, string][]][] = [
       ['text-primary', 'Headings & main text · light focus ring'],
       ['text-strong', 'Strong text & primary button fill'],
       ['text-muted', 'Supporting text'],
-      ['control-text', 'Secondary labels & circular icons'],
+      ['control-text', 'Secondary button labels & icons'],
       ['icon', 'Icons'],
       ['text-quiet', 'Captions'],
     ],

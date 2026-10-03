@@ -426,11 +426,15 @@ import { Add } from '@envsemble/envui/icons/Add';
   Create item
 </Button>
 
+<Button iconOnly icon={<Add />} aria-label="Create item" onClick={createItem} />
+
 <Button href="/projects" variant="outlined">Open projects</Button>
 ```
 
 - variant: primary (default), important, secondary, outlined, destructive
 - startIcon / endIcon: Optional React content beside the label
+- iconOnly / icon: Use a circular button containing only the supplied icon; works with every variant
+- aria-label: Required accessible action name when iconOnly is true
 - href: Render a native link with the same button appearance; omit for a native button
 - Native action props: disabled, type/onClick or anchor attributes, ref and accessible attributes
 
@@ -444,6 +448,7 @@ import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 ```
 
 - icon: React icon content
+- variant: Same variants as Button; secondary by default
 - aria-label: Required accessible action name
 - Native button props: disabled, type, onClick and ref
 
@@ -452,10 +457,11 @@ import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 - Use one primary action in an action group. Reserve important emphasis for rare, consequential actions.
 - Action buttons fit their content: 2 rem minimum height, 0.875 rem text, 0.25 rem vertical and 0.75 rem horizontal padding. Labels wrap when space is limited.
 - Use fully rounded corners; important actions use 0.5 rem corners. ActionGroup provides 1 rem row gaps or 0.5 rem stacked gaps.
-- Secondary and icon buttons share the neutral row fill and label color, without a border. Outlined buttons retain their border and link color.
+- Secondary buttons use the neutral row fill and label color, without a border. Outlined buttons retain their border and link color.
 - Interaction colors follow the central HSL lightness rule described in Colors & themes. State colors and disabled opacity come from the shared stylesheet.
 - Use href for destinations and onClick for actions. Disabled links have no destination and cannot activate.
-- Icon buttons use a 2.5 rem circle with a centered 1.5 rem icon and 0.5 rem inset. Name the action, rather than the icon shape.
+- Every variant supports iconOnly: a 2.5 rem circle with a centered 1.5 rem icon. Its colors, borders and interaction states follow the chosen variant. Name the action, rather than the icon shape.
+- IconButton is a shorthand for Button with iconOnly enabled and variant="secondary" by default.
 
 Related: [Stacks & action groups](#stacks--action-groups), [Colors & themes](#colors--themes), [Icons & assets](#icons--assets), [Accessibility](#accessibility).
 

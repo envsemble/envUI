@@ -10,10 +10,24 @@ export interface ButtonAppearanceProps {
   startIcon?: ReactNode;
   endIcon?: ReactNode;
 }
-export type ButtonProps = ButtonAppearanceProps & ActionElementProps;
+export type ButtonProps = ButtonAppearanceProps &
+  ActionElementProps &
+  (
+    | { iconOnly?: false; icon?: never }
+    | {
+        iconOnly: true;
+        icon: ReactNode;
+        'aria-label': string;
+        children?: never;
+        startIcon?: never;
+        endIcon?: never;
+      }
+  );
 
 export function Button({
   variant = 'primary',
+  iconOnly = false,
+  icon,
   startIcon,
   endIcon,
   className,
@@ -23,11 +37,22 @@ export function Button({
   return (
     <ActionElement
       {...props}
-      className={classNames('env-button', `env-button-${variant}`, className)}
+      className={classNames(
+        'env-button',
+        `env-button-${variant}`,
+        iconOnly && 'env-icon-button',
+        className,
+      )}
     >
-      {startIcon != null && <DecorativeIcon>{startIcon}</DecorativeIcon>}
-      {children}
-      {endIcon != null && <DecorativeIcon>{endIcon}</DecorativeIcon>}
+      {iconOnly ? (
+        <DecorativeIcon>{icon}</DecorativeIcon>
+      ) : (
+        <>
+          {startIcon != null && <DecorativeIcon>{startIcon}</DecorativeIcon>}
+          {children}
+          {endIcon != null && <DecorativeIcon>{endIcon}</DecorativeIcon>}
+        </>
+      )}
     </ActionElement>
   );
 }
@@ -36,12 +61,10 @@ export interface IconButtonProps
   extends Omit<ComponentPropsWithRef<'button'>, 'children' | 'aria-label'> {
   icon: ReactNode;
   'aria-label': string;
+  variant?: ButtonVariant;
 }
 
-export function IconButton({ icon, className, ...props }: IconButtonProps) {
-  return (
-    <Button {...props} className={classNames('env-icon-button', className)}>
-      <DecorativeIcon>{icon}</DecorativeIcon>
-    </Button>
-  );
+/** Shorthand for Button's icon-only mode, using the neutral secondary variant by default. */
+export function IconButton({ variant = 'secondary', ...props }: IconButtonProps) {
+  return <Button {...props} variant={variant} iconOnly />;
 }
