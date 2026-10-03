@@ -97,7 +97,7 @@ export function Tabs({
       : defaultValue;
   const list = (
     <BaseTabs.List
-      render={<Surface padding={1} corners="pill" />}
+      render={<Surface tone="row" padding={1} corners="pill" />}
       aria-label={label}
       className={classNames('env-tabs-list', listClassName)}
       activateOnFocus={activation === 'automatic'}

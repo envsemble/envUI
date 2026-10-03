@@ -8,8 +8,8 @@ const colorGroups: [string, [string, string][]][] = [
     'Backgrounds',
     [
       ['canvas', 'Page background'],
-      ['pane', 'Background panes · grouped content & tab rails'],
-      ['surface-muted', 'Rows, cards & circular buttons'],
+      ['pane', 'Background panes · grouped content'],
+      ['surface-muted', 'Rows, cards, circular buttons & tab rails'],
       ['surface', 'Alternate row fill & secondary buttons'],
     ],
   ],
