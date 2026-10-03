@@ -156,6 +156,7 @@ export function RowsPreview() {
 
 export function CardsPreview() {
   const [guidanceExpanded, setGuidanceExpanded] = useState(false);
+  const [destinationSelected, setDestinationSelected] = useState(false);
   return (
     <Preview>
       <Example title="Content & actions" size="collection">
@@ -190,12 +191,15 @@ export function CardsPreview() {
       <Example title="Interactive cards" size="collection">
         <SpecimenGrid size="card">
           <Specimen title="Destination">
-            <Card href="#/overview">
+            <Card href={location.href} onClick={() => setDestinationSelected(true)}>
               <Text as="h3" variant="section-heading">
-                Component overview
+                Autumn release
               </Text>
-              <Text tone="muted">Browse the component catalogue.</Text>
+              <Text tone="muted">Open the project details.</Text>
             </Card>
+            <Text variant="caption" aria-live="polite">
+              {destinationSelected ? 'Project link selected.' : ''}
+            </Text>
           </Specimen>
           <Specimen title="Action">
             <Card

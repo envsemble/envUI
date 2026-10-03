@@ -206,29 +206,62 @@ export function TabsPreview() {
 }
 
 export function DirectionLinksPreview() {
+  const [selectedDestination, setSelectedDestination] = useState('');
   return (
     <Preview>
       <Example title="Previous & up next">
         <ActionGroup>
-          <DirectionLink direction="previous" href="#/foundations/typography" icon={<ArrowBack />}>
+          <DirectionLink
+            direction="previous"
+            href={location.href}
+            icon={<ArrowBack />}
+            onClick={() => setSelectedDestination('Typography')}
+          >
             Typography
           </DirectionLink>
-          <DirectionLink direction="next" href="#/foundations/spacing" icon={<ArrowForward />}>
+          <DirectionLink
+            direction="next"
+            href={location.href}
+            icon={<ArrowForward />}
+            onClick={() => setSelectedDestination('Spacing & shape')}
+          >
             Spacing & shape
           </DirectionLink>
         </ActionGroup>
+        <Text variant="caption" aria-live="polite">
+          {['Typography', 'Spacing & shape'].includes(selectedDestination)
+            ? `${selectedDestination} link selected.`
+            : ''}
+        </Text>
       </Example>
       <Example title="Without an icon">
-        <DirectionLink direction="next" href="#/getting-started">
+        <DirectionLink
+          direction="next"
+          href={location.href}
+          onClick={() => setSelectedDestination('Getting started')}
+        >
           Getting started
         </DirectionLink>
+        <Text variant="caption" aria-live="polite">
+          {selectedDestination === 'Getting started' ? 'Getting started link selected.' : ''}
+        </Text>
       </Example>
       <Example title="Long destination text">
         <div className="docs-narrow-actions">
-          <DirectionLink direction="next" href="#/foundations/motion" icon={<ArrowForward />}>
+          <DirectionLink
+            direction="next"
+            href={location.href}
+            icon={<ArrowForward />}
+            onClick={() => setSelectedDestination('Motion & accessibility')}
+          >
             Motion & accessibility across the component library
           </DirectionLink>
         </div>
+        <Text variant="caption" aria-live="polite">
+          {selectedDestination === 'Motion & accessibility'
+            ? 'Motion & accessibility link selected.'
+            : ''}
+        </Text>
       </Example>
     </Preview>
   );

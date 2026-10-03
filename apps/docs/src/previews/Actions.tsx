@@ -70,6 +70,7 @@ function ButtonMatrix({ iconOnly = false }: { iconOnly?: boolean }) {
 
 export function ButtonsPreview() {
   const [actionResult, setActionResult] = useState('');
+  const [destinationResult, setDestinationResult] = useState('');
   return (
     <Preview>
       <Example title="Variants & states" size="wide">
@@ -86,13 +87,20 @@ export function ButtonsPreview() {
       </Example>
       <Example title="Destinations">
         <ActionGroup>
-          <Button href="#/components/cards/preview" variant="outlined">
-            Explore cards
+          <Button
+            href={location.href}
+            variant="outlined"
+            onClick={() => setDestinationResult('Project link selected.')}
+          >
+            Open project
           </Button>
-          <Button href="#/components/cards/preview" variant="outlined" disabled>
+          <Button href={location.href} variant="outlined" disabled>
             Unavailable destination
           </Button>
         </ActionGroup>
+        <Text variant="caption" aria-live="polite">
+          {destinationResult}
+        </Text>
       </Example>
       <Example title="Grouped actions">
         <ActionGroup>
