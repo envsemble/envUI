@@ -33,14 +33,16 @@ function ButtonSample({
   form,
   className,
   disabled,
+  inert,
 }: {
   example: (typeof buttonVariants)[number];
   form: (typeof buttonForms)[number]['value'];
   className?: string;
   disabled?: boolean;
+  inert?: boolean;
 }) {
   const icon = <example.icon />;
-  const props = { variant: example.variant, className, disabled };
+  const props = { variant: example.variant, className, disabled, inert };
   if (form === 'icon') {
     return <Button {...props} iconOnly icon={icon} aria-label={example.label} />;
   }
@@ -92,10 +94,6 @@ function ButtonVariants() {
 }
 
 function ButtonStates() {
-  const examples = buttonVariants.flatMap((example) => [
-    { ...example, form: 'label' as const },
-    { ...example, form: 'icon' as const },
-  ]);
   return (
     <div
       className="docs-matrix-scroll"
@@ -115,19 +113,17 @@ function ButtonStates() {
           </tr>
         </thead>
         <tbody>
-          {examples.map((example) => (
-            <tr key={`${example.variant}-${example.form}`}>
-              <th scope="row">
-                {example.variant}
-                {example.form === 'icon' && ' icon'}
-              </th>
+          {buttonVariants.map((example) => (
+            <tr key={example.variant}>
+              <th scope="row">{example.variant}</th>
               {controlStates.map((state) => (
                 <td key={state.title}>
                   <ButtonSample
                     example={example}
-                    form={example.form}
+                    form="label"
                     className={state.className}
                     disabled={state.disabled}
+                    inert
                   />
                 </td>
               ))}
