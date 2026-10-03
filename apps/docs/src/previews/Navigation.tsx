@@ -4,7 +4,7 @@ import {
   Button,
   IconButton,
   NavigationItem,
-  DirectionLink,
+  DirectionLinks,
   Tabs,
   Stack,
   ActionGroup,
@@ -270,62 +270,44 @@ export function TabsPreview() {
 
 export function DirectionLinksPreview() {
   const [selectedDestination, setSelectedDestination] = useState('');
+  const destination = (title: string) => ({
+    href: location.href,
+    children: title,
+    onClick: () => setSelectedDestination(title),
+  });
   return (
     <Preview>
       <Example title="Previous & up next">
-        <ActionGroup>
-          <DirectionLink
-            direction="previous"
-            href={location.href}
-            icon={<ArrowBack />}
-            onClick={() => setSelectedDestination('Typography')}
-          >
-            Typography
-          </DirectionLink>
-          <DirectionLink
-            direction="next"
-            href={location.href}
-            icon={<ArrowForward />}
-            onClick={() => setSelectedDestination('Spacing & shape')}
-          >
-            Spacing & shape
-          </DirectionLink>
-        </ActionGroup>
-        <Text variant="caption" aria-live="polite">
-          {['Typography', 'Spacing & shape'].includes(selectedDestination)
-            ? `${selectedDestination} link selected.`
-            : ''}
-        </Text>
+        <DirectionLinks
+          aria-label="Paired destinations example"
+          previous={{ ...destination('Typography'), icon: <ArrowBack /> }}
+          next={{ ...destination('Spacing & shape'), icon: <ArrowForward /> }}
+        />
       </Example>
-      <Example title="Without an icon">
-        <DirectionLink
-          direction="next"
-          href={location.href}
-          onClick={() => setSelectedDestination('Getting started')}
-        >
-          Getting started
-        </DirectionLink>
-        <Text variant="caption" aria-live="polite">
-          {selectedDestination === 'Getting started' ? 'Getting started link selected.' : ''}
-        </Text>
+      <Example title="Next only, without an icon">
+        <DirectionLinks aria-label="Next-only example" next={destination('Getting started')} />
       </Example>
-      <Example title="Long destination text">
+      <Example title="Previous only">
+        <DirectionLinks
+          aria-label="Previous-only example"
+          previous={{ ...destination('Typography'), icon: <ArrowBack /> }}
+        />
+      </Example>
+      <Example title="Long destinations in a narrow container">
         <div className="docs-narrow-actions">
-          <DirectionLink
-            direction="next"
-            href={location.href}
-            icon={<ArrowForward />}
-            onClick={() => setSelectedDestination('Motion & accessibility')}
-          >
-            Motion & accessibility across the component library
-          </DirectionLink>
+          <DirectionLinks
+            aria-label="Long destinations example"
+            previous={{ ...destination('Typography & readable content'), icon: <ArrowBack /> }}
+            next={{
+              ...destination('Motion & accessibility across the component library'),
+              icon: <ArrowForward />,
+            }}
+          />
         </div>
-        <Text variant="caption" aria-live="polite">
-          {selectedDestination === 'Motion & accessibility'
-            ? 'Motion & accessibility link selected.'
-            : ''}
-        </Text>
       </Example>
+      <Text variant="caption" aria-live="polite">
+        {selectedDestination ? `${selectedDestination} link selected.` : ''}
+      </Text>
     </Preview>
   );
 }

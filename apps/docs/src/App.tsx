@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { Theme, NavigationItem, ActionGroup, IconButton } from '@envsemble/envui';
+import { Theme, NavigationItem, IconButton } from '@envsemble/envui';
 import { DarkMode } from '@envsemble/envui/icons/DarkMode';
 import { LightMode } from '@envsemble/envui/icons/LightMode';
 import { findReferencePage, referenceViews } from './Documentation';
@@ -39,21 +39,10 @@ export default function App() {
     if (section) document.getElementById(section)?.scrollIntoView();
     else window.scrollTo({ top: 0 });
   }, [contentRoute, title]);
-  const controls = (
-    <ActionGroup align="end" className="docs-page-controls">
-      <IconButton
-        icon={appearance === 'light' ? <DarkMode /> : <LightMode />}
-        aria-label={`Switch to ${oppositeAppearance} theme`}
-        title={`Switch to ${oppositeAppearance} theme`}
-        onClick={() => setAppearance(oppositeAppearance)}
-      />
-    </ActionGroup>
-  );
   let content: ReactNode;
-  if (page)
-    content = <ReferenceContent key={page.path} page={page} view={view} actions={controls} />;
+  if (page) content = <ReferenceContent key={page.path} page={page} view={view} />;
   else if (routePath === 'getting-started') content = <GettingStarted />;
-  else if (isOverview) content = <Overview actions={controls} />;
+  else if (isOverview) content = <Overview />;
   else
     content = (
       <div className="docs-article">
@@ -72,12 +61,18 @@ export default function App() {
       >
         Skip to content
       </a>
+      <div className="docs-theme-toggle">
+        <IconButton
+          icon={appearance === 'light' ? <DarkMode /> : <LightMode />}
+          aria-label={`Switch to ${oppositeAppearance} theme`}
+          title={`Switch to ${oppositeAppearance} theme`}
+          onClick={() => setAppearance(oppositeAppearance)}
+        />
+      </div>
       <div className="docs-shell">
         <Sidebar routePath={routePath} page={page} />
         <main id="docs-main" ref={mainElement} tabIndex={-1} className="docs-main">
-          {!isOverview && !page && (
-            <PageHeader title={title} breadcrumb="envUI" actions={controls} />
-          )}
+          {!isOverview && !page && <PageHeader title={title} breadcrumb="envUI" />}
           {content}
           <PageNavigation path={page?.path ?? routePath} view={view} />
         </main>

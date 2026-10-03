@@ -26,6 +26,107 @@ const components = [
 ];
 const foundations = ['colors', 'typography', 'spacing', 'composition', 'icons', 'accessibility'];
 
+test('direction link groups center pairs and single destinations at every page width', async ({
+  page,
+}) => {
+  await page.goto(`${offline}#/components/direction-links/preview`);
+  const groups = page.locator('.env-direction-links');
+  await expect(groups).toHaveCount(5);
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 1000 });
+    for (const group of await groups.all()) {
+      const geometry = await group.evaluate((nav) => {
+        const rect = nav.getBoundingClientRect();
+        const css = getComputedStyle(nav);
+        const links = Array.from(nav.querySelectorAll('a')).map((link) => {
+          const box = link.getBoundingClientRect();
+          return { left: box.left, right: box.right, top: box.top, bottom: box.bottom };
+        });
+        return {
+          left: rect.left + parseFloat(css.paddingLeft),
+          right: rect.right - parseFloat(css.paddingRight),
+          gap: parseFloat(css.columnGap),
+          links,
+        };
+      });
+      const first = geometry.links[0];
+      const last = geometry.links.at(-1)!;
+      for (const link of geometry.links) {
+        expect(link.left).toBeGreaterThanOrEqual(geometry.left - 1);
+        expect(link.right).toBeLessThanOrEqual(geometry.right + 1);
+      }
+      const sameRow = Math.abs(first.top - last.top) < 1;
+      const rows = sameRow ? [{ left: first.left, right: last.right }] : geometry.links;
+      for (const row of rows) {
+        expect(
+          Math.abs((row.left + row.right) / 2 - (geometry.left + geometry.right) / 2),
+        ).toBeLessThan(1);
+      }
+      if (geometry.links.length === 2 && sameRow) {
+        expect(Math.abs(last.left - first.right - geometry.gap)).toBeLessThan(1);
+      } else if (geometry.links.length === 2) {
+        expect(Math.abs(last.top - first.bottom - geometry.gap)).toBeLessThan(1);
+      }
+    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+      true,
+    );
+  }
+  const longDestinations = page.getByRole('navigation', { name: 'Long destinations example' });
+  const fragmentedWords = await longDestinations.evaluate((nav) => {
+    const fragments: string[] = [];
+    for (const title of nav.querySelectorAll('.env-direction-link-title')) {
+      const text = title.firstChild!;
+      for (const word of text.textContent!.matchAll(/\S+/g)) {
+        const range = document.createRange();
+        range.setStart(text, word.index!);
+        range.setEnd(text, word.index! + word[0].length);
+        if (range.getClientRects().length > 1) fragments.push(word[0]);
+      }
+    }
+    return fragments;
+  });
+  expect(fragmentedWords).toEqual([]);
+  const footer = page.locator('.docs-page-navigation');
+  const nextDestination = await footer.getByRole('link').last().getAttribute('href');
+  await footer.getByRole('link').last().click();
+  await expect.poll(() => page.evaluate(() => location.hash)).toBe(nextDestination);
+  await page.evaluate(() => {
+    location.hash = '/components/radio/usage';
+  });
+  await expect(footer.getByRole('link').last()).toHaveAttribute(
+    'href',
+    '#/components/select/usage',
+  );
+  await footer.getByRole('link').last().click();
+  await expect(page.locator('.docs-page-header').getByRole('tab', { selected: true })).toHaveText(
+    'Usage',
+  );
+  await page.evaluate(() => {
+    location.hash = '/overview';
+  });
+  await expect(footer.getByRole('link')).toHaveCount(1);
+  await expect(footer.getByRole('link')).toHaveAttribute('rel', 'next');
+  const centerError = () =>
+    footer.evaluate((nav) => {
+      const outer = nav.getBoundingClientRect();
+      const link = nav.querySelector('a')!.getBoundingClientRect();
+      return Math.abs((outer.left + outer.right) / 2 - (link.left + link.right) / 2);
+    });
+  expect(await centerError()).toBeLessThan(1);
+  const finalDestination = await page
+    .locator('.docs-sidebar')
+    .getByRole('link')
+    .last()
+    .getAttribute('href');
+  await page.evaluate((hash) => {
+    location.hash = hash!;
+  }, finalDestination);
+  await expect(footer.getByRole('link')).toHaveCount(1);
+  await expect(footer.getByRole('link')).toHaveAttribute('rel', 'prev');
+  expect(await centerError()).toBeLessThan(1);
+});
+
 test('offline reference loads every view without network or script errors', async ({
   page,
   context,

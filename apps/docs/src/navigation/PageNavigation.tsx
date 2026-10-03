@@ -1,4 +1,4 @@
-import { DirectionLink } from '@envsemble/envui';
+import { DirectionLinks } from '@envsemble/envui';
 import { ArrowBack } from '@envsemble/envui/icons/ArrowBack';
 import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { documentationPages, findReferencePage, type ReferenceView } from '../Documentation';
@@ -13,29 +13,22 @@ export function PageNavigation({ path, view }: { path: string; view: ReferenceVi
     return page && !page.reference.presentation ? `${path}/${view}` : path;
   };
   return (
-    <nav className="docs-page-navigation" aria-label="Previous and next content">
-      <div className="docs-page-navigation-side docs-page-navigation-previous">
-        {previous && (
-          <DirectionLink
-            href={`#/${destination(previous.path)}`}
-            direction="previous"
-            icon={<ArrowBack />}
-          >
-            {previous.title}
-          </DirectionLink>
-        )}
-      </div>
-      <div className="docs-page-navigation-side">
-        {next && (
-          <DirectionLink
-            href={`#/${destination(next.path)}`}
-            direction="next"
-            icon={<ArrowForward />}
-          >
-            {next.title}
-          </DirectionLink>
-        )}
-      </div>
-    </nav>
+    <DirectionLinks
+      className="docs-page-navigation"
+      previous={
+        previous && {
+          href: `#/${destination(previous.path)}`,
+          children: previous.title,
+          icon: <ArrowBack />,
+        }
+      }
+      next={
+        next && {
+          href: `#/${destination(next.path)}`,
+          children: next.title,
+          icon: <ArrowForward />,
+        }
+      }
+    />
   );
 }

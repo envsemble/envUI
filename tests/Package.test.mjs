@@ -149,6 +149,12 @@ before(
     ));
     console.log(JSON.stringify({
       exports: Object.keys(ui), html,
+      emptyDirectionLinks: renderToString(h(ui.DirectionLinks, { previous: null, next: null })),
+      pairedDirectionLinks: renderToString(h(ui.DirectionLinks, {
+        'aria-label': 'Guide sequence',
+        previous: { href: '/before', children: 'Before', target: '_blank', rel: 'noopener' },
+        next: { href: '/after', children: 'After' },
+      })),
       defaultIcon: renderToString(h(Home)), filledIcon: renderToString(h(Home, { filled: true, label: 'Home' })),
       barrelIcon: renderToString(h(BarrelHome)), customIcon: renderToString(custom),
       selectedNavigation: renderToString(h(ui.NavigationItem, { selected: true, icon: h(Home, { filled: false }) }, 'Home')),
@@ -176,6 +182,14 @@ after(async function removeConsumerFixture() {
   await rm(fixtureDirectory, { recursive: true, force: true });
 });
 
+test('direction link groups omit empty navigation and preserve destination attributes', () => {
+  assert.equal(ssr.emptyDirectionLinks, '');
+  assert.match(ssr.pairedDirectionLinks, /<nav aria-label="Guide sequence"/);
+  assert.match(ssr.pairedDirectionLinks, /href="\/before" target="_blank" rel="noopener"/);
+  assert.match(ssr.pairedDirectionLinks, /href="\/after" rel="next"/);
+  assert.ok(ssr.pairedDirectionLinks.indexOf('Before') < ssr.pairedDirectionLinks.indexOf('After'));
+});
+
 test('a packed consumer resolves compiled public exports and its own React installation', async function () {
   assert.equal((await lstat(installedDirectory)).isSymbolicLink(), false);
   assert.match(ssr.module, /\/node_modules\/@envsemble\/envui\/dist\/index\.js$/);
@@ -190,6 +204,7 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'IconButton',
     'NavigationItem',
     'DirectionLink',
+    'DirectionLinks',
     'Card',
     'ClickableCard',
     'Stack',

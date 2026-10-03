@@ -5,6 +5,7 @@ export * from './foundations/Surface.js';
 export * from './actions/Button.js';
 export * from './navigation/NavigationItem.js';
 export * from './navigation/DirectionLink.js';
+export * from './navigation/DirectionLinks.js';
 export * from './navigation/Tabs.js';
 export * from './content/Card.js';
 export * from './content/Rows.js';

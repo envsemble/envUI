@@ -14,7 +14,7 @@ Keep shared rules in foundations and component behavior on its own page. Buttons
 
 `src/Documentation.css` owns documentation layout and artificial state specimens only. Theme, typography, colors, controls, cards and feedback are supplied by the package. Each preview renders once and retains its interaction state when the theme changes.
 
-Headers, previews, articles, catalogues and page navigation share one centered content frame with equal side gutters. Text and specimens keep their own alignment inside that frame.
+Headers, previews, articles, catalogues and page navigation share one centered content frame with equal side gutters. Text and specimens keep their own alignment inside that frame. PageNavigation uses the public DirectionLinks component to center adjacent previous/next destinations, including a single destination at either end of the reading order. Documentation owns bottom placement and outer spacing; the library owns the link grouping.
 
 `PageHeader` composes a page banner from Card, Stack and Text, with view tabs. Overview uses its existing logo surface as the banner. The shared theme control switches the entire application.
 
