@@ -33,20 +33,22 @@
   background: var(--color-primary-action-pressed);
 }
 
-.env-button-secondary {
-  background: var(--color-subtle-action);
+/* Secondary and circular actions share the same neutral tonal treatment. */
+.env-button-secondary,
+.env-button.env-icon-button {
+  background: var(--color-icon-button);
   color: var(--color-control-text);
-  border-color: var(--color-border-strong);
+  border: 0;
 }
 
-.env-button-secondary:hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--color-subtle-action-hover);
-  border-color: var(--color-border-hover);
+.env-button-secondary:hover:not(:disabled):not([aria-disabled='true']),
+.env-button.env-icon-button:hover:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-icon-button-hover);
 }
 
-.env-button-secondary:active:not(:disabled):not([aria-disabled='true']) {
-  background: var(--color-subtle-action-pressed);
-  border-color: var(--color-border-pressed);
+.env-button-secondary:active:not(:disabled):not([aria-disabled='true']),
+.env-button.env-icon-button:active:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-icon-button-pressed);
 }
 
 .env-button-outlined {
@@ -115,18 +117,7 @@
   min-height: calc(var(--icon-button-size) * var(--scale, 1));
   flex-shrink: 0;
   padding: 0;
-  border: 0;
   border-radius: 100vmax;
-  background: var(--color-icon-button);
-  color: var(--color-control-text);
-}
-
-.env-button.env-icon-button:hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--color-icon-button-hover);
-}
-
-.env-button.env-icon-button:active:not(:disabled):not([aria-disabled='true']) {
-  background: var(--color-icon-button-pressed);
 }
 
 .env-icon-button .env-symbol {

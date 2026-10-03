@@ -8,7 +8,7 @@ test.beforeEach(async ({ page }) => {
 const sources: Record<string, string> = {
   'button-primary': '--color-primary-action',
   'button-important': '--color-accent',
-  'button-secondary': '--color-subtle-action',
+  'button-secondary': '--color-icon-button',
   'button-outlined': '--color-subtle-action',
   'button-destructive': '--color-destructive-action',
   'icon-button': '--color-icon-button',

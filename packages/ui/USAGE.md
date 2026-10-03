@@ -452,10 +452,10 @@ import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 - Use one primary action in an action group. Reserve important emphasis for rare, consequential actions.
 - Action buttons fit their content: 2 rem minimum height, 0.875 rem text, 0.25 rem vertical and 0.75 rem horizontal padding. Labels wrap when space is limited.
 - Use fully rounded corners; important actions use 0.5 rem corners. ActionGroup provides 1 rem row gaps or 0.5 rem stacked gaps.
+- Secondary and icon buttons share the neutral row fill and label color, without a border. Outlined buttons retain their border and link color.
 - Interaction colors follow the central HSL lightness rule described in Colors & themes. State colors and disabled opacity come from the shared stylesheet.
 - Use href for destinations and onClick for actions. Disabled links have no destination and cannot activate.
-- Use a 2.5 rem circle with a centered 1.5 rem icon and 0.5 rem inset.
-- Use the tonal row fill and neutral icon. Name the action, rather than describing the icon shape.
+- Icon buttons use a 2.5 rem circle with a centered 1.5 rem icon and 0.5 rem inset. Name the action, rather than the icon shape.
 
 Related: [Stacks & action groups](#stacks--action-groups), [Colors & themes](#colors--themes), [Icons & assets](#icons--assets), [Accessibility](#accessibility).
 

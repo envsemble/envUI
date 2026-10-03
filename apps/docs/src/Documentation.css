@@ -475,12 +475,10 @@ body {
   background: var(--color-destructive-action-pressed);
 }
 .docs-preview .docs-force-1.env-button-secondary {
-  background: var(--color-subtle-action-hover);
-  border-color: var(--color-border-hover);
+  background: var(--color-icon-button-hover);
 }
 .docs-preview .docs-force-2.env-button-secondary {
-  background: var(--color-subtle-action-pressed);
-  border-color: var(--color-border-pressed);
+  background: var(--color-icon-button-pressed);
 }
 .docs-preview .docs-force-1.env-button-outlined {
   background: var(--color-subtle-action-hover);
