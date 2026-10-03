@@ -3,7 +3,7 @@ import { TypographyPreview } from './previews/foundations/Typography';
 import { SpacingPreview, ResponsivePreview } from './previews/foundations/Layout';
 import { IconsPreview } from './previews/foundations/Icons';
 import { MotionPreview } from './previews/foundations/Motion';
-import { PairedThemes } from './previews/PairedThemes';
+import { Preview } from './previews/Preview';
 
 function FoundationTopic({ id }: { id: string }) {
   switch (id) {
@@ -25,5 +25,9 @@ function FoundationTopic({ id }: { id: string }) {
 }
 
 export function FoundationPreview({ id }: { id: string }) {
-  return <PairedThemes>{() => <FoundationTopic id={id} />}</PairedThemes>;
+  return (
+    <Preview>
+      <FoundationTopic id={id} />
+    </Preview>
+  );
 }

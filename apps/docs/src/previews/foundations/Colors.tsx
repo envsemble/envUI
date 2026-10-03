@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState } from 'react';
-import { Button, GroupedRows, Row } from '@envsemble/envui';
+import { Button, GroupedRows, Row, useTheme } from '@envsemble/envui';
 import { TokenValue } from './TokenValue';
 import { Example } from '../Example';
 
@@ -47,6 +47,7 @@ const colorGroups: [string, [string, string][]][] = [
 ];
 
 function ColorPalette() {
+  const theme = useTheme();
   const paletteElement = useRef<HTMLDivElement>(null);
   const [colorValues, setColorValues] = useState<Record<string, string>>({});
   useLayoutEffect(() => {
@@ -59,7 +60,7 @@ function ColorPalette() {
       }),
     );
     setColorValues(measuredColors);
-  }, []);
+  }, [theme]);
   return (
     <div ref={paletteElement} className="docs-palette">
       {colorGroups.map(([group, tokens]) => (

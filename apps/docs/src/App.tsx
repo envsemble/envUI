@@ -23,7 +23,6 @@ export default function App() {
   const reference = page?.reference;
   const view = referenceViews.find((view) => view.id === routeSegments[2])?.id ?? 'preview';
   const isOverview = routePath === 'overview';
-  const comparison = Boolean(page && view === 'preview');
   const oppositeAppearance = appearance === 'light' ? 'dark' : 'light';
   const title =
     reference?.title ??
@@ -43,24 +42,22 @@ export default function App() {
     else window.scrollTo({ top: 0 });
   }, [contentRoute, title]);
   const controls = (
-    <Theme theme={comparison ? oppositeAppearance : appearance} className="docs-page-controls">
-      <ActionGroup align="end">
-        {page?.section === 'Components' && view === 'preview' && (
-          <Button
-            variant="secondary"
-            onClick={() => setResetVersion((currentVersion) => currentVersion + 1)}
-          >
-            Reset examples
-          </Button>
-        )}
-        <IconButton
-          icon={appearance === 'light' ? <DarkMode /> : <LightMode />}
-          aria-label={`Switch to ${oppositeAppearance} theme`}
-          title={`Switch to ${oppositeAppearance} theme`}
-          onClick={() => setAppearance(oppositeAppearance)}
-        />
-      </ActionGroup>
-    </Theme>
+    <ActionGroup align="end" className="docs-page-controls">
+      {page?.section === 'Components' && view === 'preview' && (
+        <Button
+          variant="secondary"
+          onClick={() => setResetVersion((currentVersion) => currentVersion + 1)}
+        >
+          Reset examples
+        </Button>
+      )}
+      <IconButton
+        icon={appearance === 'light' ? <DarkMode /> : <LightMode />}
+        aria-label={`Switch to ${oppositeAppearance} theme`}
+        title={`Switch to ${oppositeAppearance} theme`}
+        onClick={() => setAppearance(oppositeAppearance)}
+      />
+    </ActionGroup>
   );
   let content: ReactNode;
   if (page)
@@ -101,23 +98,13 @@ export default function App() {
       </a>
       <div className="docs-shell">
         <Sidebar routePath={routePath} page={page} />
-        <main
-          id="docs-main"
-          ref={mainElement}
-          tabIndex={-1}
-          className={`docs-main${comparison ? ' docs-comparison' : ''}`}
-        >
+        <main id="docs-main" ref={mainElement} tabIndex={-1} className="docs-main">
           {isOverview && <div className="docs-overview-controls">{controls}</div>}
           {!isOverview && !page && (
             <PageHeader title={title} breadcrumb="envUI" actions={controls} />
           )}
           {content}
-          <PageNavigation
-            path={page?.path ?? routePath}
-            appearance={appearance}
-            comparison={comparison}
-            view={view}
-          />
+          <PageNavigation path={page?.path ?? routePath} view={view} />
         </main>
       </div>
     </Theme>

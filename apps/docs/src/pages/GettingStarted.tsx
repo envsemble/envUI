@@ -10,8 +10,9 @@ export function GettingStarted() {
           Using this reference
         </Text>
         <Text variant="body" tone="muted">
-          Preview compares both themes. Guidelines explain design and behavior. Usage covers React
-          imports, props and state ownership. The downloaded reference works offline.
+          Preview shows interactive examples; the theme button switches their appearance. Guidelines
+          explain design and behavior. Usage covers React imports, props and state ownership. The
+          downloaded reference works offline.
         </Text>
         <Text variant="body" tone="muted">
           <a href="#/getting-started?section=local-development">Local live development</a> ·{' '}

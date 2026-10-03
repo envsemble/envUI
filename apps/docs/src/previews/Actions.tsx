@@ -4,7 +4,7 @@ import { Add } from '@envsemble/envui/icons/Add';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 import { Settings } from '@envsemble/envui/icons/Settings';
 import { Example } from './Example';
-import { PairedThemes } from './PairedThemes';
+import { Preview } from './Preview';
 
 const buttonVariants = [
   { variant: 'primary', label: 'Continue' },
@@ -71,77 +71,69 @@ function ButtonMatrix({ iconOnly = false }: { iconOnly?: boolean }) {
 export function ButtonsPreview() {
   const [actionResult, setActionResult] = useState('');
   return (
-    <PairedThemes>
-      {() => (
-        <>
-          <Example title="Variants & states" size="wide">
-            <ButtonMatrix />
-          </Example>
-          <Example title="Labels & icons">
-            <ActionGroup>
-              <Button onClick={() => setActionResult('Item created')}>Create item</Button>
-              <Button startIcon={<Add />} onClick={() => setActionResult('Item created')}>
-                Create item
-              </Button>
-              <Button endIcon={<ChevronRight />}>Continue</Button>
-            </ActionGroup>
-          </Example>
-          <Example title="Destinations">
-            <ActionGroup>
-              <Button href="#/components/cards/preview" variant="outlined">
-                Explore cards
-              </Button>
-              <Button href="#/components/cards/preview" variant="outlined" disabled>
-                Unavailable destination
-              </Button>
-            </ActionGroup>
-          </Example>
-          <Example title="Grouped actions">
-            <ActionGroup>
-              <Button variant="secondary" onClick={() => setActionResult('Cancelled')}>
-                Cancel
-              </Button>
-              <Button onClick={() => setActionResult('Changes saved')}>Save changes</Button>
-            </ActionGroup>
-            <ActionGroup stacked className="docs-narrow-actions">
-              <Button onClick={() => setActionResult('Changes saved')}>Save changes</Button>
-              <Button variant="secondary">Cancel</Button>
-            </ActionGroup>
-            <Text variant="caption" className="docs-caption" aria-live="polite">
-              {actionResult || 'One primary action per group'}
-            </Text>
-          </Example>
-        </>
-      )}
-    </PairedThemes>
+    <Preview>
+      <Example title="Variants & states" size="wide">
+        <ButtonMatrix />
+      </Example>
+      <Example title="Labels & icons">
+        <ActionGroup>
+          <Button onClick={() => setActionResult('Item created')}>Create item</Button>
+          <Button startIcon={<Add />} onClick={() => setActionResult('Item created')}>
+            Create item
+          </Button>
+          <Button endIcon={<ChevronRight />}>Continue</Button>
+        </ActionGroup>
+      </Example>
+      <Example title="Destinations">
+        <ActionGroup>
+          <Button href="#/components/cards/preview" variant="outlined">
+            Explore cards
+          </Button>
+          <Button href="#/components/cards/preview" variant="outlined" disabled>
+            Unavailable destination
+          </Button>
+        </ActionGroup>
+      </Example>
+      <Example title="Grouped actions">
+        <ActionGroup>
+          <Button variant="secondary" onClick={() => setActionResult('Cancelled')}>
+            Cancel
+          </Button>
+          <Button onClick={() => setActionResult('Changes saved')}>Save changes</Button>
+        </ActionGroup>
+        <ActionGroup stacked className="docs-narrow-actions">
+          <Button onClick={() => setActionResult('Changes saved')}>Save changes</Button>
+          <Button variant="secondary">Cancel</Button>
+        </ActionGroup>
+        <Text variant="caption" className="docs-caption" aria-live="polite">
+          {actionResult || 'One primary action per group'}
+        </Text>
+      </Example>
+    </Preview>
   );
 }
 
 export function IconButtonsPreview() {
   const [actionResult, setActionResult] = useState('');
   return (
-    <PairedThemes>
-      {() => (
-        <>
-          <Example title="Circular control & states" size="wide">
-            <ButtonMatrix iconOnly />
-          </Example>
-          <Example title="With related actions">
-            <ActionGroup>
-              <Button startIcon={<Add />}>Create item</Button>
-              <IconButton
-                icon={<ChevronRight />}
-                aria-label="Next item"
-                onClick={() => setActionResult('Moved to next item')}
-              />
-              <IconButton icon={<Settings />} aria-label="Settings" />
-            </ActionGroup>
-            <Text variant="caption" className="docs-caption" aria-live="polite">
-              {actionResult}
-            </Text>
-          </Example>
-        </>
-      )}
-    </PairedThemes>
+    <Preview>
+      <Example title="Circular control & states" size="wide">
+        <ButtonMatrix iconOnly />
+      </Example>
+      <Example title="With related actions">
+        <ActionGroup>
+          <Button startIcon={<Add />}>Create item</Button>
+          <IconButton
+            icon={<ChevronRight />}
+            aria-label="Next item"
+            onClick={() => setActionResult('Moved to next item')}
+          />
+          <IconButton icon={<Settings />} aria-label="Settings" />
+        </ActionGroup>
+        <Text variant="caption" className="docs-caption" aria-live="polite">
+          {actionResult}
+        </Text>
+      </Example>
+    </Preview>
   );
 }

@@ -48,7 +48,7 @@ See the [package setup](packages/ui/README.md), generated [agent usage guide](pa
 | `packages/ui/src/icons`             | Generated wrappers from pinned official Google SVGs                                    |
 | `assets/brand/envUI`                | Official envUI logos and favicons; build generates EnvUILogo and bundles the originals |
 | `apps/docs/src/pages`               | Overview, component catalogue and Getting started                                      |
-| `apps/docs/src/previews`            | Component/foundation demonstrations and paired specimen state                          |
+| `apps/docs/src/previews`            | Component/foundation demonstrations and interactive specimen state                     |
 | `apps/docs/src/reference`           | Maintained design guidance, usage examples and API contracts                           |
 | `apps/docs/src/Reference.ts`        | Stable entry for shared guidance and generated package `USAGE.md`                      |
 | `apps/docs/src/Documentation.ts`    | Topic routes, reading order and legacy link aliases                                    |
@@ -56,7 +56,7 @@ See the [package setup](packages/ui/README.md), generated [agent usage guide](pa
 
 Keep palette entries as base colors. Hover and pressed lightness use one color-based rule from Tokens.css, in both themes. Use regular/medium typography, relative units, shared spacing and existing rounding. Purple remains rare emphasis; everyday actions are neutral. The application owns routing, validation and theme preference.
 
-Reusable UI belongs in the library. Documentation uses its public components for controls, surfaces, typography and composition. Documentation owns routes, paired preview state, page grids, token swatches, code/prop tables and artificial interaction specimens. Extend the shared API before adding component styling overrides to the documentation.
+Reusable UI belongs in the library. Documentation uses its public components for controls, surfaces, typography and composition. Documentation owns routes, preview state, page grids, token swatches, code/prop tables and artificial interaction specimens. Extend the shared API before adding component styling overrides to the documentation.
 
 See the [library source map](packages/ui/src/README.md) and [documentation source map](apps/docs/README.md) before adding a component or topic. Keep implementation in its existing family; add shared helpers only when they serve multiple components.
 

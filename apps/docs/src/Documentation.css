@@ -6,12 +6,9 @@ body {
   margin: 0;
 }
 .docs-app {
-  --docs-pane-min: 22rem;
-  --docs-opposite-canvas: var(--color-canvas-dark);
+  --docs-content-width: 72rem;
+  --docs-gutter: clamp(1.25rem, 3vw, 3rem);
   min-height: 100dvh;
-}
-.docs-app[data-env-theme='dark'] {
-  --docs-opposite-canvas: var(--color-white);
 }
 .docs-app *,
 .docs-app *::before,
@@ -62,17 +59,15 @@ body {
   min-height: 100dvh;
   outline: none;
 }
-.docs-comparison {
-  --docs-split: max(50%, var(--docs-pane-min));
-  background: linear-gradient(
-    to right,
-    var(--color-canvas) 0 var(--docs-split),
-    var(--docs-opposite-canvas) var(--docs-split) 100%
-  );
-}
-.docs-comparison .docs-managed-toast {
-  width: min(var(--docs-split), var(--docs-example-width, 28rem));
-  max-width: 100%;
+.docs-page-header,
+.docs-overview-controls,
+.docs-preview,
+.docs-article,
+.docs-overview,
+.docs-catalogue-page,
+.docs-page-navigation {
+  inline-size: min(100%, var(--docs-content-width));
+  margin-inline: auto;
 }
 .docs-page-header {
   display: flex;
@@ -80,7 +75,7 @@ body {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: var(--space-4);
-  padding: var(--space-5) clamp(1.25rem, 3vw, 3rem) var(--space-4);
+  padding: var(--space-5) var(--docs-gutter) var(--space-4);
 }
 .docs-page-header-card {
   inline-size: fit-content;
@@ -97,7 +92,7 @@ body {
 .docs-overview-controls {
   display: flex;
   justify-content: flex-end;
-  padding: var(--space-5) clamp(1.25rem, 3vw, 3rem) var(--space-4);
+  padding: var(--space-5) var(--docs-gutter) var(--space-4);
 }
 .docs-page-navigation {
   display: grid;
@@ -105,32 +100,21 @@ body {
   gap: 0;
   margin-top: auto;
 }
-.docs-comparison .docs-page-navigation {
-  grid-template-columns: repeat(2, minmax(var(--docs-pane-min), 1fr));
-  overflow-x: auto;
-}
 .docs-page-navigation-side {
   display: flex;
   align-items: flex-start;
   min-width: 0;
-  padding: 2rem clamp(1.25rem, 2.5vw, 2.5rem) 3rem;
+  padding: 2rem var(--docs-gutter) 3rem;
 }
 .docs-page-navigation-previous {
   justify-content: flex-end;
 }
-.docs-paired {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(var(--docs-pane-min), 1fr));
-  gap: 0;
-  align-items: stretch;
-  overflow-x: auto;
-}
 .docs-preview {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
-  padding: 2rem clamp(1.25rem, 2.5vw, 2.5rem) 3rem;
+  padding: 2rem var(--docs-gutter) 3rem;
   container-type: inline-size;
-  display: grid;
-  grid-template-rows: subgrid;
 }
 .docs-example {
   inline-size: min(100%, var(--docs-example-width, 28rem));
@@ -200,13 +184,8 @@ body {
 .docs-matrix td {
   padding: 1rem 0.75rem;
 }
-.docs-managed-toast {
-  margin-bottom: 0;
-  padding: 2rem clamp(1.25rem, 3vw, 3rem) 3rem;
-}
 .docs-article {
-  padding: 0 clamp(1.25rem, 3vw, 3rem) 3rem;
-  max-width: 68rem;
+  padding: 0 var(--docs-gutter) 3rem;
 }
 .docs-article > section {
   margin-bottom: var(--space-7);
@@ -249,9 +228,7 @@ body {
 }
 .docs-overview,
 .docs-catalogue-page {
-  width: min(100%, 72rem);
-  margin-inline: auto;
-  padding: 0 clamp(1.25rem, 3vw, 3rem) var(--space-8);
+  padding: 0 var(--docs-gutter) var(--space-8);
 }
 .docs-overview {
   text-align: center;
@@ -317,25 +294,6 @@ body {
     Consolas,
     monospace;
   overflow-wrap: anywhere;
-}
-.docs-preview[data-side='left'] .docs-palette {
-  margin-right: calc(-1 * clamp(1.25rem, 2.5vw, 2.5rem));
-}
-.docs-preview[data-side='right'] .docs-palette {
-  margin-left: calc(-1 * clamp(1.25rem, 2.5vw, 2.5rem));
-}
-.docs-preview[data-side='right'] .docs-palette-label {
-  grid-column: 2;
-  grid-row: 1;
-  padding: 1rem 0 1rem 0.75rem;
-  text-align: right;
-}
-.docs-preview[data-side='right'] .docs-swatch {
-  grid-column: 1;
-  grid-row: 1;
-}
-.docs-preview[data-side='right'] .docs-palette h2 {
-  text-align: right;
 }
 .docs-interaction-colors {
   margin-top: var(--space-5);
@@ -534,10 +492,6 @@ body {
   }
   .docs-shell {
     display: block;
-  }
-  .docs-paired {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    overflow: visible;
   }
   .docs-preview {
     padding-inline: 1rem;
