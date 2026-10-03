@@ -7,15 +7,15 @@ import { Catalogue } from './Catalogue';
 
 export function Overview({ actions }: { actions?: ReactNode }) {
   return (
-    <Stack gap={8} className="docs-overview">
+    <Stack gap={9} className="docs-overview">
       <Surface
         tone="pane"
         padding={6}
-        render={<Stack as="header" />}
+        render={<Stack as="header" gap={6} />}
         className="docs-overview-hero"
       >
         {actions}
-        <Stack gap={6} align="center" className="docs-overview-intro">
+        <Stack gap={7} align="center" className="docs-overview-intro">
           <EnvUILogo className="docs-overview-logo" />
           <Text as="h1" variant="page-heading">
             React components for envsemble

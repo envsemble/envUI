@@ -70,6 +70,11 @@ body {
 }
 .docs-page-header {
   padding: var(--space-5) var(--docs-gutter) var(--space-4);
+  margin-block-end: var(--space-8);
+}
+.docs-page-banner,
+.docs-overview-hero {
+  padding-block: var(--space-9);
 }
 .docs-page-banner-heading {
   display: flex;
@@ -77,9 +82,6 @@ body {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: var(--space-4);
-}
-.docs-main > .docs-page-header {
-  margin-block-end: var(--space-6);
 }
 .docs-page-controls {
   margin-inline-start: auto;
