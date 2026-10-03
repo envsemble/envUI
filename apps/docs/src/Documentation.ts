@@ -28,7 +28,6 @@ export const documentationPages = [
   ...referencePages
     .filter((page) => page.section === 'Foundations')
     .map((page) => ({ path: page.path, title: page.reference.title })),
-  { path: 'components', title: 'Components' },
   ...referencePages
     .filter((page) => page.section === 'Components')
     .map((page) => ({ path: page.path, title: page.reference.title })),

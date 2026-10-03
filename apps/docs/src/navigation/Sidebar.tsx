@@ -54,9 +54,6 @@ export function Sidebar({ routePath, page }: { routePath: string; page?: Referen
             </NavigationItem>
           );
         })}
-        <Text variant="caption" className="docs-nav-heading">
-          <a href="#/components">Components</a>
-        </Text>
         {componentGroups.map((group) => (
           <Stack key={group} gap={0} align="start" className="docs-sidebar-navigation">
             <Text variant="caption" className="docs-nav-subheading">
