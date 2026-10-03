@@ -216,6 +216,13 @@ body {
     monospace;
   tab-size: 2;
 }
+.docs-code[data-appearance='plain'] {
+  padding: 0;
+  background: none;
+  border-radius: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
 .docs-props {
   width: 100%;
   table-layout: fixed;
@@ -380,7 +387,16 @@ body {
   max-inline-size: 42rem;
 }
 .docs-icon-detail-preview {
-  padding-block: var(--space-6);
+  display: grid;
+  place-items: center;
+  padding-block: var(--space-4);
+}
+.docs-icon-detail-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
 }
 .docs-icon-catalogue {
   display: grid;

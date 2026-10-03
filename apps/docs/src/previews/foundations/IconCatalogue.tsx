@@ -77,21 +77,25 @@ function IconDetails({ name, filled }: { name: keyof typeof symbols; filled: boo
   }
 
   return (
-    <Stack gap={6}>
-      <Stack align="center" className="docs-icon-detail-preview">
-        <Symbol filled={filled} width="4rem" height="4rem" />
+    <Stack gap={5}>
+      <Stack gap={3}>
         <Text variant="caption">Material Symbols Rounded · {filled ? 'Filled' : 'Outline'}</Text>
+        <div className="docs-icon-detail-preview">
+          <Symbol filled={filled} width="4rem" height="4rem" />
+        </div>
       </Stack>
       <Stack gap={3} as="section">
-        <Text as="h3" variant="section-heading">
-          React import
-        </Text>
-        <div ref={importElement}>
-          <Code>{importCode}</Code>
+        <div className="docs-icon-detail-heading">
+          <Text as="h3" variant="section-heading">
+            React import
+          </Text>
+          <Button variant="secondary" onClick={copyImport}>
+            Copy import
+          </Button>
         </div>
-        <Button variant="secondary" onClick={copyImport}>
-          Copy import
-        </Button>
+        <div ref={importElement}>
+          <Code appearance="plain">{importCode}</Code>
+        </div>
         {copyMessage && (
           <Text variant="caption" role="status">
             {copyMessage}
@@ -102,8 +106,8 @@ function IconDetails({ name, filled }: { name: keyof typeof symbols; filled: boo
         <Text as="h3" variant="section-heading">
           Usage
         </Text>
-        <Code>{`<${name}${filled ? ' filled' : ''} />`}</Code>
-        <Text variant="caption">Icons inherit text color. Use filled for the filled variant.</Text>
+        <Code appearance="plain">{`<${name}${filled ? ' filled' : ''} />`}</Code>
+        <Text variant="caption">Inherits the surrounding text color.</Text>
       </Stack>
     </Stack>
   );
