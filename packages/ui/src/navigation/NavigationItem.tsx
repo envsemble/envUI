@@ -14,13 +14,24 @@ interface NavigationItemSharedProps {
   selectedIcon?: ReactNode;
 }
 
-export type NavigationItemProps = NavigationItemSharedProps & ActionElementProps;
+export type NavigationItemProps = NavigationItemSharedProps &
+  ActionElementProps &
+  (
+    | { iconOnly?: false }
+    | {
+        /** Hide the visible label when a sidebar is collapsed. */
+        iconOnly: boolean;
+        icon: ReactNode;
+        'aria-label': string;
+      }
+  );
 
 export function NavigationItem(props: NavigationItemProps) {
   const {
     selected = false,
     size = 'standard',
     disabled = false,
+    iconOnly = false,
     icon,
     selectedIcon,
     className,
@@ -35,11 +46,12 @@ export function NavigationItem(props: NavigationItemProps) {
           <DecorativeIcon>{iconContent}</DecorativeIcon>
         </NavigationIconState>
       )}
-      {children}
+      {!iconOnly && children}
     </>
   );
   const navigationClassName = classNames(
     'env-navigation-item',
+    iconOnly && 'env-navigation-icon-only',
     selected && 'env-navigation-selected',
     size === 'compact' && 'env-navigation-compact',
     className,

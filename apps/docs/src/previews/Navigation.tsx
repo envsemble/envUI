@@ -23,6 +23,7 @@ const navigationSizes = ['standard', 'compact'] as const;
 const navigationForms = [
   { value: 'label', title: 'Label' },
   { value: 'icon', title: 'Icon + label' },
+  { value: 'icon-only', title: 'Icon only' },
 ] as const;
 const navigationDestinations = [
   { label: 'Home', icon: Home },
@@ -101,17 +102,30 @@ export function NavigationPreview() {
                   {navigationForms.map((form) => (
                     <td key={form.value}>
                       <ActionGroup>
-                        {navigationDestinations.map((destination) => (
-                          <NavigationItem
-                            key={destination.label}
-                            size={size}
-                            selected={selectedDestination === destination.label}
-                            onClick={() => setSelectedDestination(destination.label)}
-                            icon={form.value === 'icon' ? <destination.icon /> : undefined}
-                          >
-                            {destination.label}
-                          </NavigationItem>
-                        ))}
+                        {navigationDestinations.map((destination) => {
+                          const props = {
+                            size,
+                            selected: selectedDestination === destination.label,
+                            onClick: () => setSelectedDestination(destination.label),
+                          };
+                          return form.value === 'icon-only' ? (
+                            <NavigationItem
+                              {...props}
+                              key={destination.label}
+                              iconOnly
+                              icon={<destination.icon />}
+                              aria-label={destination.label}
+                            />
+                          ) : (
+                            <NavigationItem
+                              {...props}
+                              key={destination.label}
+                              icon={form.value === 'icon' ? <destination.icon /> : undefined}
+                            >
+                              {destination.label}
+                            </NavigationItem>
+                          );
+                        })}
                       </ActionGroup>
                     </td>
                   ))}

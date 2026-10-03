@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add NavigationItem iconOnly mode for collapsed sidebars, requiring an icon and accessible destination name while retaining native navigation and selection behavior.
 - Unify labeled buttons, icon-only buttons and navigation items with one shared 1 rem control icon size, including important buttons.
 - Let DirectionLinks wrap into centered rows when destinations cannot fit side by side, preventing narrow groups from squeezing titles into word fragments.
 - Add DirectionLinks to bundle optional previous and next destinations in a centered pair, including single-destination pages; document and use it for page navigation.

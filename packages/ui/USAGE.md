@@ -628,11 +628,19 @@ import { Home } from '@envsemble/envui/icons/Home';
   icon={<Home />}>
   Home
 </NavigationItem>
+
+// Keep the same item when the sidebar is collapsed or expanded.
+<NavigationItem href="#/home" selected={page === 'home'}
+  icon={<Home />} iconOnly={collapsed} aria-label="Home">
+  Home
+</NavigationItem>
 ```
 
 - href: Renders a link; omit for a button action
 - selected / disabled: Current destination and unavailable state
 - size: standard (default) or compact labels; both keep the navigation minimum height
+- iconOnly: Hide the visible label and center the icon in a circular control; accepts sidebar collapse state
+- aria-label: Required accessible destination name when iconOnly is enabled; icon is also required
 - icon: Material Symbols fill automatically when selected; custom React icons are supported
 - selectedIcon: Optional selected variant for custom icons
 - children / native props: Destination label and link/button attributes
@@ -643,6 +651,7 @@ import { Home } from '@envsemble/envui/icons/Home';
 - Pass one Material Symbol. Navigation renders its filled variant when selected and its outline otherwise, including icons inside wrappers.
 - Unselected icons use the caption color; selected icon and label use the link color. Navigation fits its content with a 2.5 rem minimum height.
 - Both label sizes use the shared 1 rem control icon size, matching labeled and icon-only buttons.
+- Use iconOnly for a collapsed sidebar. Supply icon and aria-label; children can remain in place for the expanded label. The circle matches the navigation height and keeps selection, automatic icon fill, focus and disabled behavior.
 - Selection keeps the gray/blue styling. Hover and pressed preserve the base hue and saturation and use the central lightness rule.
 
 Related: [Tabs](#tabs), [Direction links](#direction-links), [Icons & assets](#icons--assets), [Colors & themes](#colors--themes).
