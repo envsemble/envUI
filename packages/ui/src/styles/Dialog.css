@@ -1,4 +1,4 @@
-/* Modal composition preserves the catalogue pane, text, and action geometry. */
+/* Centered dialogs and edge panels share surface, text, and action geometry. */
 .env-modal-pane {
   color: var(--color-text-primary);
   font: var(--type-body);
@@ -10,6 +10,22 @@
 .env-dialog-title,
 .env-dialog-description {
   margin: 0;
+}
+.env-dialog-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+.env-dialog-title {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+.env-modal-pane[data-placement='right'] {
+  inline-size: min(24rem, 100%);
+  block-size: 100dvh;
+  max-block-size: none;
+  border-inline-start: 0.0625rem solid var(--color-border-strong);
 }
 .env-dialog-title {
   font: var(--type-h1);
@@ -32,4 +48,8 @@
   place-items: center;
   padding: 1rem;
   pointer-events: none;
+}
+.env-dialog-positioner[data-placement='right'] {
+  place-items: stretch end;
+  padding: 0;
 }

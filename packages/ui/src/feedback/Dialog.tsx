@@ -2,8 +2,9 @@ import { forwardRef } from 'react';
 import type { HTMLAttributes, ReactElement, ReactNode, RefObject } from 'react';
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
 import { classNames } from '../internal/classNames.js';
-import { Button } from '../actions/Button.js';
+import { Button, IconButton } from '../actions/Button.js';
 import type { ButtonProps } from '../actions/Button.js';
+import { Close } from '../icons/Close.js';
 import { Theme, useTheme } from '../foundations/Theme.js';
 import { Stack, ActionGroup } from '../foundations/Layout.js';
 import { Surface } from '../foundations/Surface.js';
@@ -18,12 +19,18 @@ export interface DialogProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title
   children?: ReactNode;
   actions?: ReactNode;
   closeLabel?: string;
+  /** Centered modal or a full-height panel at the right edge. */
+  placement?: 'center' | 'right';
+  /** Non-modal panels allow interaction with the surrounding page. */
+  modal?: boolean;
+  /** Keep a non-modal inspector open while interacting with its source content. */
+  disablePointerDismissal?: boolean;
   initialFocus?: RefObject<HTMLElement | null>;
   finalFocus?: RefObject<HTMLElement | null>;
 }
 export type DialogCloseProps = Extract<ButtonProps, { href?: undefined }>;
 
-/** Use within Dialog when additional actions should dismiss its modal. */
+/** Use within Dialog when additional actions should dismiss it. */
 export const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(function DialogClose(
   { variant = 'secondary', ...props },
   ref,
@@ -31,7 +38,7 @@ export const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(funct
   return <BaseDialog.Close ref={ref} render={<Button {...props} variant={variant} />} />;
 });
 
-/** A modal shell; Base UI owns dismissal, trapped focus, and focus restoration. */
+/** Dialog and inspector shell; Base UI owns dismissal and modal-aware focus behavior. */
 export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
   {
     open,
@@ -43,6 +50,9 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
     children,
     actions,
     closeLabel = 'Close',
+    placement = 'center',
+    modal = true,
+    disablePointerDismissal = false,
     initialFocus,
     finalFocus,
     className,
@@ -56,33 +66,50 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
       open={open}
       defaultOpen={defaultOpen}
       onOpenChange={(next) => onOpenChange?.(next)}
-      modal
+      modal={modal}
+      disablePointerDismissal={disablePointerDismissal}
     >
       {trigger && <BaseDialog.Trigger render={trigger} />}
       <BaseDialog.Portal>
         <Theme theme={theme}>
-          <BaseDialog.Backdrop className="env-dialog-backdrop" />
-          <div className="env-dialog-positioner">
+          {modal && <BaseDialog.Backdrop className="env-dialog-backdrop" />}
+          <div className="env-dialog-positioner" data-placement={placement}>
             <BaseDialog.Popup
-              render={<Surface tone="pane" padding={5} />}
+              render={
+                <Surface
+                  tone="pane"
+                  padding={5}
+                  corners={placement === 'right' ? 'none' : 'surface'}
+                />
+              }
               {...popupProps}
               ref={ref}
               className={classNames('env-modal-pane', className)}
+              data-placement={placement}
               initialFocus={initialFocus}
               finalFocus={finalFocus}
             >
               <Stack gap={5} className="env-dialog-content">
-                <BaseDialog.Title className="env-dialog-title">{title}</BaseDialog.Title>
+                <div className="env-dialog-heading">
+                  <BaseDialog.Title className="env-dialog-title">{title}</BaseDialog.Title>
+                  {placement === 'right' && (
+                    <BaseDialog.Close
+                      render={<IconButton icon={<Close />} aria-label={closeLabel} />}
+                    />
+                  )}
+                </div>
                 {description != null && (
                   <BaseDialog.Description className="env-dialog-description">
                     {description}
                   </BaseDialog.Description>
                 )}
                 {children}
-                <ActionGroup align="end" className="env-dialog-actions">
-                  <DialogClose>{closeLabel}</DialogClose>
-                  {actions}
-                </ActionGroup>
+                {(placement === 'center' || actions != null) && (
+                  <ActionGroup align="end" className="env-dialog-actions">
+                    {placement === 'center' && <DialogClose>{closeLabel}</DialogClose>}
+                    {actions}
+                  </ActionGroup>
+                )}
               </Stack>
             </BaseDialog.Popup>
           </div>

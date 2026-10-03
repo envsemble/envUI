@@ -88,24 +88,42 @@ function SaveButton() {
     id: 'dialogs',
     title: 'Dialogs',
     group: 'Feedback & overlays',
-    summary: 'Use for a focused confirmation or a short form.',
+    summary: 'Centered modals and side panels share focus and dismissal behavior.',
     example: `import { Dialog, Button, Text } from '@envsemble/envui';
 
 <Dialog trigger={<Button variant="secondary">View release</Button>}
   title="Autumn release" description="Project details" closeLabel="Close">
   <Text>Shared plans, milestones and responsibilities for the next release.</Text>
+</Dialog>
+
+<Dialog trigger={<Button variant="secondary">Inspect release</Button>}
+  title="Release details" placement="right" modal={false} disablePointerDismissal>
+  <Text>The page remains interactive while this inspector is open.</Text>
 </Dialog>`,
     props: [
       ['trigger / title / description', 'Launch control and accessible modal labeling'],
       ['children / actions', 'General content and shared controls'],
       ['closeLabel', 'Built-in dismissal label; defaults to Close'],
+      [
+        'placement',
+        'center (default) or right; right is a full-height side panel with a header close button',
+      ],
+      [
+        'modal',
+        'true (default) traps focus, blocks outside interaction and locks page scroll; false permits interaction with the page',
+      ],
+      [
+        'disablePointerDismissal',
+        'false by default; true keeps an inspector open on outside presses or focus changes',
+      ],
       ['open / defaultOpen / onOpenChange', 'Controlled or uncontrolled visibility'],
       ['DialogClose', 'Additional dismissal action; shared button props'],
       ['initialFocus / finalFocus', 'Optional focus refs'],
     ],
     guidelines: [
-      'Use a modal for a focused confirmation or a short form. The footer always provides a dismissal action.',
-      'The dialog traps focus, handles Escape and returns focus to the trigger. Portals preserve the originating theme.',
+      'Use a centered modal for a focused confirmation or short form. Use a right panel to inspect content; set modal=false when its source page should remain interactive.',
+      'Centered dialogs include a footer dismissal; right panels include a header close button. Escape closes either placement and focus returns to the trigger or finalFocus ref.',
+      'Modal dialogs trap focus; non-modal panels do not. Portals preserve the originating theme.',
       'The application owns validation, saving, async work and whether completion closes the dialog.',
     ],
     related: ['toasts', 'fields', 'layout', 'accessibility'],

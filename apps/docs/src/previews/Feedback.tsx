@@ -196,7 +196,7 @@ export function ToastsPreview() {
 }
 
 export function DialogsPreview() {
-  const [activeDialog, setActiveDialog] = useState<'details' | 'delete' | null>(null);
+  const [activeDialog, setActiveDialog] = useState<'details' | 'delete' | 'inspector' | null>(null);
   const [actionResult, setActionResult] = useState('');
   return (
     <Preview>
@@ -239,6 +239,19 @@ export function DialogsPreview() {
         <Text variant="caption" className="docs-caption" aria-live="polite">
           {actionResult}
         </Text>
+      </Example>
+      <Example title="Side panel">
+        <Dialog
+          open={activeDialog === 'inspector'}
+          onOpenChange={(open) => setActiveDialog(open ? 'inspector' : null)}
+          trigger={<Button variant="secondary">Inspect release</Button>}
+          title="Release details"
+          placement="right"
+          modal={false}
+          disablePointerDismissal
+        >
+          <Text>The page remains interactive while this inspector is open.</Text>
+        </Dialog>
       </Example>
     </Preview>
   );
