@@ -57,7 +57,7 @@ export const actionsReferences: Reference[] = [
       'Secondary buttons use the neutral row fill and label color, without a border. Outlined buttons retain their border and link color.',
       'Interaction colors follow the central HSL lightness rule described in Colors & themes. State colors and disabled opacity come from the shared stylesheet.',
       'Use href for destinations and onClick for actions. Disabled links have no destination and cannot activate.',
-      'Every variant supports iconOnly: a 2.5 rem square with a centered 1.5 rem icon. Corners, colors, borders and interaction states follow the chosen variant: important is a rounded square; the others are circles. Name the action, rather than the icon shape.',
+      'Every variant supports iconOnly: a square matching the regular button height (2 rem), with a centered 1.25 rem icon. Corners, colors, borders and interaction states follow the chosen variant: important is a rounded square; the others are circles. Name the action, rather than the icon shape.',
       'IconButton is a shorthand for Button with iconOnly enabled and variant="secondary" by default.',
     ],
     related: ['layout', 'colors', 'icons', 'accessibility'],
