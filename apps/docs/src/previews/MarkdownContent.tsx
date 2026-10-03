@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Markdown, Text } from '@envsemble/envui';
+import { Text } from '@envsemble/envui';
+import { Markdown } from '@envsemble/envui/content';
 import { Example } from './Example';
 import { Preview } from './Preview';
 

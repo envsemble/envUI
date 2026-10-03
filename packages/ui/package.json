@@ -27,6 +27,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
+    "./content": {
+      "envui-source": "./src/content.ts",
+      "types": "./dist/content.d.ts",
+      "import": "./dist/content.js"
+    },
     "./styles.css": {
       "envui-source": "./src/styles/index.css",
       "default": "./dist/styles.css"

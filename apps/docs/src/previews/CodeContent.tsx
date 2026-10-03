@@ -1,4 +1,5 @@
-import { Code, CodeBlock, Text } from '@envsemble/envui';
+import { Text } from '@envsemble/envui';
+import { Code, CodeBlock } from '@envsemble/envui/content';
 import { Example } from './Example';
 import { Preview } from './Preview';
 

@@ -84,9 +84,9 @@
   padding-inline-start: 0;
   list-style: none;
 }
-.env-markdown .task-list-item > input {
-  margin: 0 var(--space-2) 0 0;
-  accent-color: var(--color-control-blue);
+.env-markdown .task-list-item .env-choice-control {
+  margin-inline-end: var(--space-2);
+  vertical-align: middle;
 }
 .env-markdown .footnotes {
   font: var(--type-body-small);

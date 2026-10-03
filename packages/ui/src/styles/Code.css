@@ -39,11 +39,6 @@
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
-.env-code-block[data-appearance='plain'] {
-  padding: 0;
-  border-radius: 0;
-  background: transparent;
-}
 .env-code-block-heading {
   display: flex;
   align-items: center;

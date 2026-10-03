@@ -11,6 +11,7 @@ import { SurfacePreview, LayoutPreview, RowsPreview, CardsPreview } from './prev
 import { ChipsPreview, DisclosuresPreview } from './previews/Content';
 import { CodePreview } from './previews/CodeContent';
 import { MarkdownPreview } from './previews/MarkdownContent';
+import { MarkdownEditorPreview } from './previews/MarkdownEditing';
 import {
   EmptyStatePreview,
   LoadingPreview,
@@ -53,6 +54,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <CodePreview />;
     case 'markdown':
       return <MarkdownPreview />;
+    case 'markdown-editor':
+      return <MarkdownEditorPreview />;
     case 'disclosures':
       return <DisclosuresPreview />;
     case 'empty-state':

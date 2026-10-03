@@ -23,7 +23,6 @@ export interface CodeBlockProps extends Omit<ComponentPropsWithRef<'div'>, 'chil
   wrap?: boolean;
   /** VS Code Light+ or Dark+; follows the surrounding Theme by default. */
   theme?: ThemeValue;
-  appearance?: 'surface' | 'plain';
 }
 
 /** Source display with unmodified VS Code colors; copy always uses the original string. */
@@ -34,7 +33,6 @@ export function CodeBlock({
   copyable = false,
   wrap = false,
   theme: suppliedTheme,
-  appearance = 'surface',
   className,
   style,
   ...props
@@ -73,7 +71,6 @@ export function CodeBlock({
     <div
       {...props}
       className={classNames('env-code-block', className)}
-      data-appearance={appearance}
       data-wrap={wrap || undefined}
       style={
         {
@@ -128,7 +125,7 @@ function tokenStyle({ color, fontStyle = 0 }: CodeTokenStyle): CSSProperties {
   return {
     color,
     fontStyle: fontStyle & 1 ? 'italic' : undefined,
-    fontWeight: fontStyle & 2 ? 500 : undefined,
+    fontWeight: fontStyle & 2 ? 700 : undefined,
     textDecoration:
       [fontStyle & 4 ? 'underline' : '', fontStyle & 8 ? 'line-through' : '']
         .filter(Boolean)

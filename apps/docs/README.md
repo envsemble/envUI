@@ -22,11 +22,15 @@ Headers, previews, articles, catalogues and page navigation share one centered c
 
 Keep routes, previews, token measurements and prop tables here. Code display and copying use the public CodeBlock; there is no documentation-only highlighter or copy implementation. Reusable interaction, visual variants and spacing contracts belong in `packages/ui`; do not recreate them in the documentation.
 
+Code, Markdown and MarkdownEditor are imported from the public `@envsemble/envui/content` entry. Basic controls remain on the main entry so consumers using only UI controls exclude parsing and highlighting code.
+
 Surface is the visual base for background fill, padding and corners. Card builds on Surface with standard content layout; specialized cards add their own composition. Stack and ActionGroup own layout. Use Surface for plain panes and compose an existing layout element through `render` when both belong on the same root. The overview hero consumes Surface; content card specimens use Card.
 
 Keep previews focused on the subject. Use Text and invisible layout containers for headings, descriptions and tab panels. Do not add decorative Cards, Surfaces, rows, chips or disclosure notes to another component's demonstration. Other visible controls are appropriate only when they demonstrate a required feature, such as tab buttons, action slots, modal triggers or toast delivery. The banner, catalogue navigation and previous/next links are documentation navigation, not specimens.
 
 Markdown previews use the public Markdown renderer with shared prose typography and CodeBlock. Application link examples report a local destination rather than navigating away. The renderer owns no resource resolution, product routes or custom reference tokens.
+
+Markdown editor previews consume MarkdownEditor for formatting, selection, undo and preview. The application picker example owns its sample resource choices and dialog state, returning ordinary labels and URLs through onRequestLink. Editor formatting and source-control styles remain in the library.
 
 Example sections share the content frame. Size limits belong to the demonstrated content: compact controls, fields and card specimens have bounded widths; comparison grids use the available column width and reflow as space narrows. Avoid fixed grid column counts, centered individual specimens and arbitrary offsets. Related variants use plain Specimen labels and consistent gaps.
 

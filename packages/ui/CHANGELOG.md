@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add MarkdownEditor with native textarea selection, formatting, shared undo/redo, Write/Preview, standard link insertion and an application picker callback.
+
+- Keep code/Markdown rendering and editing on the optional @envsemble/envui/content entry so basic UI consumers exclude parsing and highlighting chunks.
+
 - Add Markdown rendering with react-markdown/remark-gfm, envUI prose typography, shared CodeBlock, semantic heading offsets and application-owned link rendering.
 
 - Add Code and CodeBlock with shared source display, optional copying and lazy Shiki highlighting using standard VS Code Light+ and Dark+ themes.

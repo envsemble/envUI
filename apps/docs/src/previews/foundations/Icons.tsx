@@ -1,4 +1,5 @@
-import { CodeBlock, Text, BrandLogo, EnvUILogo, Stack } from '@envsemble/envui';
+import { Text, BrandLogo, EnvUILogo, Stack } from '@envsemble/envui';
+import { CodeBlock } from '@envsemble/envui/content';
 import { Example, SpecimenGrid } from '../Example';
 import { IconCatalogue } from './IconCatalogue';
 

@@ -5,7 +5,7 @@ export const contentReferences: Reference[] = [
     id: 'markdown',
     title: 'Markdown',
     group: 'Content & guidance',
-    example: `import { Markdown } from '@envsemble/envui';
+    example: `import { Markdown } from '@envsemble/envui/content';
 
 <Markdown headingOffset={1} codeCopyable>{description}</Markdown>`,
     props: [
@@ -18,7 +18,7 @@ export const contentReferences: Reference[] = [
     usage: [
       {
         title: 'Render content',
-        example: `import { Markdown } from '@envsemble/envui';
+        example: `import { Markdown } from '@envsemble/envui/content';
 
 <Markdown headingOffset={1} codeCopyable>{description}</Markdown>`,
         props: [
@@ -28,7 +28,7 @@ export const contentReferences: Reference[] = [
       },
       {
         title: 'Application navigation',
-        example: `import { Markdown } from '@envsemble/envui';
+        example: `import { Markdown } from '@envsemble/envui/content';
 
 <Markdown renderLink={({ href, children, ...props }) => (
   <a {...props} href={href} onClick={event => {
@@ -56,13 +56,14 @@ export const contentReferences: Reference[] = [
       'Tables and code scroll within their own regions. Images keep their aspect ratio and fit the available width; image loading follows the supplied URL.',
       'Choose headingOffset to place a document below the surrounding page heading. Native semantic levels are retained, capped at h6.',
     ],
-    related: ['code', 'typography', 'accessibility'],
+    related: ['markdown-editor', 'code', 'typography', 'accessibility'],
   },
   {
     id: 'code',
     title: 'Code',
     group: 'Content & guidance',
-    example: `import { Code, CodeBlock, Text } from '@envsemble/envui';
+    example: `import { Text } from '@envsemble/envui';
+import { Code, CodeBlock } from '@envsemble/envui/content';
 
 <Text>Use <Code>npm run build</Code> to build the application.</Text>
 <CodeBlock language="tsx" copyable>{source}</CodeBlock>`,
@@ -76,7 +77,6 @@ export const contentReferences: Reference[] = [
       ['copyable / label', 'Optional copy control and source label'],
       ['wrap', 'Wrap long lines; otherwise scroll inside the block'],
       ['theme', 'VS Code Light+ or Dark+; follows Theme unless explicitly set'],
-      ['appearance', 'surface (default) or plain without padding/background'],
       ['Native div props', 'Root ref, className, style and accessible attributes'],
     ],
     guidelines: [
@@ -86,7 +86,7 @@ export const contentReferences: Reference[] = [
       'Blocks above 50,000 characters or with a line above 2,000 characters stay plain text to avoid expensive highlighting.',
       'Copy uses the original source. If clipboard access is unavailable, the code is selected for manual copying.',
     ],
-    related: ['typography', 'accessibility'],
+    related: ['markdown', 'markdown-editor', 'typography', 'accessibility'],
   },
   {
     id: 'chips',

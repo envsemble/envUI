@@ -1,15 +1,6 @@
 import { useId, useMemo, useRef, useState } from 'react';
-import {
-  CodeBlock,
-  ActionGroup,
-  Button,
-  Card,
-  Dialog,
-  Input,
-  Stack,
-  Switch,
-  Text,
-} from '@envsemble/envui';
+import { ActionGroup, Button, Card, Dialog, Input, Stack, Switch, Text } from '@envsemble/envui';
+import { CodeBlock } from '@envsemble/envui/content';
 // This offline browser consumes the full public catalogue. Products use per-icon imports.
 import * as symbols from '@envsemble/envui/icons';
 import { Example } from '../Example';
@@ -63,7 +54,7 @@ const pageSize = 72;
 
 function IconDetails({ name, filled }: { name: keyof typeof symbols; filled: boolean }) {
   const Symbol = symbols[name];
-  const importCode = `import { CodeBlock, ${name} }\n  from '@envsemble/envui/icons/${name}';`;
+  const importCode = `import { ${name} }\n  from '@envsemble/envui/icons/${name}';`;
 
   return (
     <Stack gap={5}>
@@ -74,7 +65,7 @@ function IconDetails({ name, filled }: { name: keyof typeof symbols; filled: boo
         </div>
       </Stack>
       <Stack gap={3} as="section">
-        <CodeBlock language="tsx" appearance="plain" wrap label="React import" copyable>
+        <CodeBlock language="tsx" wrap label="React import" copyable>
           {importCode}
         </CodeBlock>
       </Stack>
@@ -82,11 +73,7 @@ function IconDetails({ name, filled }: { name: keyof typeof symbols; filled: boo
         <Text as="h3" variant="section-heading">
           Usage
         </Text>
-        <CodeBlock
-          language="tsx"
-          appearance="plain"
-          wrap
-        >{`<${name}${filled ? ' filled' : ''} />`}</CodeBlock>
+        <CodeBlock language="tsx" wrap>{`<${name}${filled ? ' filled' : ''} />`}</CodeBlock>
         <Text variant="caption">Inherits the surrounding text color.</Text>
       </Stack>
     </Stack>

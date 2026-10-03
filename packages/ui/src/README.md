@@ -1,15 +1,17 @@
 # Component source
 
-Public components and types are exported through `index.ts`. Keep application imports on
-`@envsemble/envui`; the folders below organize implementation rather than new package entry points.
+Basic components and types are exported through `index.ts`; optional code/Markdown rendering
+and editing use `content.ts`. Keep application imports on `@envsemble/envui` and
+`@envsemble/envui/content`; folders below organize implementation rather than package entry points.
 
 - `foundations/`: theme boundaries, layout, surfaces, and typography.
 - `actions/`: native button/link behavior and button appearance.
 - `navigation/`: navigation items, directional links, and tabs.
 - `content/`: cards, grouped rows, disclosures, information chips, code and Markdown rendering.
   Its `internal/` folder owns lazy highlighting and the standard VS Code themes.
-- `forms/`: input, textarea, checkbox, switch, radio, and select components. Their
-  `internal/` folder owns field metadata, checked state, and native form reset handling.
+- `forms/`: input, textarea, Markdown editing, checkbox, switch, radio, and select components.
+  Their `internal/` folder owns field metadata, checked state, native form reset handling,
+  Markdown formatting, shared editing history, and the standard link dialog/toolbar.
 - `feedback/`: dialogs, empty/loading states, skeletons, and notifications. The `toast/`
   folder separates presentation, region rendering, and notification lifecycle management.
 - `internal/`: small shared helpers for CSS classes, decorative icons, and forwarded refs.

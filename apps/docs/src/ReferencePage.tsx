@@ -1,4 +1,5 @@
-import { CodeBlock, Button, Stack, Tabs, Text } from '@envsemble/envui';
+import { Button, Stack, Tabs, Text } from '@envsemble/envui';
+import { CodeBlock } from '@envsemble/envui/content';
 import type { ReactNode } from 'react';
 import {
   referencePages,

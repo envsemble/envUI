@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 import type { TextareaHTMLAttributes } from 'react';
-import { classNames } from '../internal/classNames.js';
+import { TextareaControl } from './internal/TextareaControl.js';
 import { FieldFrame, useFieldMetadata, type FieldProps } from './internal/FieldFrame.js';
 
 export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement>, FieldProps {}
@@ -26,12 +26,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
       hint={hint}
       error={error}
     >
-      <textarea
-        {...props}
-        ref={ref}
-        {...metadata}
-        className={classNames('env-text-input', className)}
-      />
+      <TextareaControl {...props} ref={ref} {...metadata} className={className} />
     </FieldFrame>
   );
 });

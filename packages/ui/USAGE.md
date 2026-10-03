@@ -503,7 +503,58 @@ import { Textarea } from '@envsemble/envui';
 - Keep the label visible. Use hints for instructions and errors for a specific recovery step.
 - Both support empty, filled, focus, invalid, disabled and read-only states. Validation and draft state belong to the application.
 
-Related: [Selects](#selects), [Stacks & action groups](#stacks--action-groups), [Accessibility](#accessibility).
+Related: [Markdown editor](#markdown-editor), [Selects](#selects), [Stacks & action groups](#stacks--action-groups), [Accessibility](#accessibility).
+
+### Markdown editor
+
+#### Edit and preview
+
+```tsx
+import { MarkdownEditor } from '@envsemble/envui/content';
+
+<MarkdownEditor label="Description" name="description"
+  value={description} onValueChange={setDescription}
+  previewProps={{ headingOffset: 1, codeCopyable: true }} />
+```
+
+- value / onValueChange: The application owns the draft and saving
+- defaultValue: Use instead of value for an uncontrolled native form field
+- previewProps: The same heading, link rendering and code-copy options as Markdown
+
+#### Application link picker
+
+```tsx
+import { MarkdownEditor, type MarkdownLink } from '@envsemble/envui/content';
+
+// The application supplies its search and picker. Resolve null to cancel.
+async function requestLink({ selectedText }: { selectedText: string }):
+  Promise<MarkdownLink | null> {
+  const resource = await openResourcePicker();
+  return resource ? {
+    label: selectedText || resource.name,
+    href: resource.url,
+  } : null;
+}
+
+<MarkdownEditor label="Description"
+  value={description} onValueChange={setDescription}
+  onRequestLink={requestLink} />
+```
+
+- onRequestLink: Receives selectedText; use any application-owned picker
+- Without a callback: The editor opens its standard text-and-URL link dialog
+
+#### Guidelines
+
+- Use MarkdownEditor for formatted prose, Textarea for plain text. The stored value remains an ordinary Markdown string; syntax stays visible while editing.
+- Preview uses Markdown with envUI prose typography and standard VS Code code-block colors. The source control reuses Textarea geometry, labels and states.
+- Formatting and typing share bounded undo/redo history. Ctrl/Cmd+B, I and K apply enabled bold, italic and link commands. Ctrl/Cmd+Z undoes; Shift+Z or Y redoes. Toolbar arrow keys move between actions.
+- The editor retains native selection, paste and composition. Formatting waits until composition ends; toolbar actions restore the selection to the source.
+- Native forms submit the source even while Preview is visible. Uncontrolled form reset restores defaultValue; controlled reset retains value, so the application resets its own draft. Replacing the controlled document clears its editing history.
+- maxLength constrains typing and formatting. disabled and readOnly prevent edits; validation, persistence and save/cancel actions belong to the application.
+- Link insertion escapes saved labels and destinations. If the source changes while a picker is open, the insertion is rejected rather than overwriting newer text. Search, permissions and routes remain application responsibilities.
+
+Related: [Markdown](#markdown), [Code](#code), [Text fields](#text-fields), [Accessibility](#accessibility).
 
 ### Checkboxes
 
@@ -754,7 +805,7 @@ Related: [Navigation items](#navigation-items), [Stacks & action groups](#stacks
 #### Render content
 
 ```tsx
-import { Markdown } from '@envsemble/envui';
+import { Markdown } from '@envsemble/envui/content';
 
 <Markdown headingOffset={1} codeCopyable>{description}</Markdown>
 ```
@@ -765,7 +816,7 @@ import { Markdown } from '@envsemble/envui';
 #### Application navigation
 
 ```tsx
-import { Markdown } from '@envsemble/envui';
+import { Markdown } from '@envsemble/envui/content';
 
 <Markdown renderLink={({ href, children, ...props }) => (
   <a {...props} href={href} onClick={event => {
@@ -790,14 +841,15 @@ import { Markdown } from '@envsemble/envui';
 - Tables and code scroll within their own regions. Images keep their aspect ratio and fit the available width; image loading follows the supplied URL.
 - Choose headingOffset to place a document below the surrounding page heading. Native semantic levels are retained, capped at h6.
 
-Related: [Code](#code), [Typography](#typography), [Accessibility](#accessibility).
+Related: [Markdown editor](#markdown-editor), [Code](#code), [Typography](#typography), [Accessibility](#accessibility).
 
 ### Code
 
 #### React usage
 
 ```tsx
-import { Code, CodeBlock, Text } from '@envsemble/envui';
+import { Text } from '@envsemble/envui';
+import { Code, CodeBlock } from '@envsemble/envui/content';
 
 <Text>Use <Code>npm run build</Code> to build the application.</Text>
 <CodeBlock language="tsx" copyable>{source}</CodeBlock>
@@ -809,7 +861,6 @@ import { Code, CodeBlock, Text } from '@envsemble/envui';
 - copyable / label: Optional copy control and source label
 - wrap: Wrap long lines; otherwise scroll inside the block
 - theme: VS Code Light+ or Dark+; follows Theme unless explicitly set
-- appearance: surface (default) or plain without padding/background
 - Native div props: Root ref, className, style and accessible attributes
 
 #### Guidelines
@@ -820,7 +871,7 @@ import { Code, CodeBlock, Text } from '@envsemble/envui';
 - Blocks above 50,000 characters or with a line above 2,000 characters stay plain text to avoid expensive highlighting.
 - Copy uses the original source. If clipboard access is unavailable, the code is selected for manual copying.
 
-Related: [Typography](#typography), [Accessibility](#accessibility).
+Related: [Markdown](#markdown), [Markdown editor](#markdown-editor), [Typography](#typography), [Accessibility](#accessibility).
 
 ### Info chips
 

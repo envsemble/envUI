@@ -39,6 +39,14 @@ export function App() {
 
 The stylesheet bundles Inter and scopes styling to explicit light/dark theme boundaries. Your app owns theme preference, routing, data and validation. Dialogs, selects and managed notifications retain their originating theme through portals.
 
+Code and Markdown use the optional content entry, with the same stylesheet:
+
+```tsx
+import { Code, CodeBlock, Markdown, MarkdownEditor } from '@envsemble/envui/content';
+```
+
+Basic UI imports exclude parsing and highlighting dependencies. Content highlighting starts lazily; code colors use the unmodified VS Code Light+ and Dark+ themes.
+
 ## Composition
 
 - Use `Stack` for related blocks and `ActionGroup` for actions. Their `as` prop preserves semantic container tags. Stack also supports `render` to compose layout onto another root.
@@ -48,6 +56,8 @@ The stylesheet bundles Inter and scopes styling to explicit light/dark theme bou
 - Every Button variant supports `iconOnly` with `icon` and a required `aria-label`. `IconButton` is a shorthand with secondary as its default variant.
 - `Card` builds on Surface and Stack. Use `href` for a destination, `as="button"` for an action, or `heading`, `meta` and `actions` for content with an action strip. `ClickableCard` and `ActionCard` remain compatibility wrappers; FeatureCard adds its specific layout.
 - `Input`, `Textarea` and `Select` share visible labels and accessible hints/errors. Validation stays in the application.
+- `Markdown` renders CommonMark/GFM with shared prose typography. `Code` handles inline source; `CodeBlock` uses standard VS Code Light+/Dark+ themes with optional copying. Highlighting is lazy and bundled for offline use.
+- `MarkdownEditor` adds formatting, shared undo/redo and Write/Preview to the native textarea. Applications own drafts, saving and resource pickers; inserted references remain ordinary Markdown links.
 - `Tabs renderList` wraps the supplied tab list in a custom layout, such as a Card with a heading. Render the list once; panels remain outside that wrapper.
 
 ## Icons and assets

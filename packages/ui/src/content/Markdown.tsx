@@ -8,6 +8,7 @@ import {
 import ReactMarkdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { classNames } from '../internal/classNames.js';
+import { Checkbox } from '../forms/Checkbox.js';
 import { Code } from './Code.js';
 import { CodeBlock } from './CodeBlock.js';
 
@@ -72,6 +73,13 @@ export function Markdown({
         <div className="env-markdown-table" tabIndex={0} role="region" aria-label="Table">
           <table {...tableProps} />
         </div>
+      ),
+      input: ({ checked }) => (
+        <Checkbox
+          checked={Boolean(checked)}
+          disabled
+          aria-label={checked ? 'Completed task' : 'Incomplete task'}
+        />
       ),
       img: ({ node: _node, src, ...imageProps }) =>
         src ? <img {...imageProps} src={src} loading="lazy" /> : <span>{imageProps.alt}</span>,
