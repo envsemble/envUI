@@ -87,7 +87,7 @@ test('public composition owns spacing and content-fit sizing without documentati
   }
 });
 
-test('all documentation views retain explicit content gaps and paired section alignment', async ({
+test('all documentation views retain explicit content gaps and a single preview', async ({
   page,
 }, testInfo) => {
   test.setTimeout(90_000);
@@ -135,18 +135,7 @@ test('all documentation views retain explicit content gaps and paired section al
               faults.push(`${parent.className}: missing standard gap`);
           });
         const panes = [...document.querySelectorAll('.docs-preview')];
-        if (panes.length === 2) {
-          [...panes[0].children].forEach((child, i) => {
-            const counterpart = panes[1].children[i];
-            if (
-              counterpart &&
-              Math.abs(
-                child.getBoundingClientRect().top - counterpart.getBoundingClientRect().top,
-              ) > 1
-            )
-              faults.push('Light/dark section alignment');
-          });
-        }
+        if (panes.length > 1) faults.push('Duplicate preview');
         return faults;
       });
       expect(result, `${width}: ${route}`).toEqual([]);
@@ -155,7 +144,7 @@ test('all documentation views retain explicit content gaps and paired section al
         ['foundations/motion', 'foundations/responsive', 'foundations/colors'].includes(route)
       ) {
         await page
-          .locator('.docs-paired')
+          .locator('.docs-preview')
           .screenshot({ path: testInfo.outputPath(`${route.split('/')[1]}-spacing.png`) });
       }
     }

@@ -66,7 +66,7 @@ test('public component, stylesheet and new export update live without version ch
       `import { LiveAcceptance } from '@envsemble/envui';\n` +
         originals[3].replace(
           '<Example title="Interactive field" size="field">',
-          '<Example title="Interactive field" size="field">{theme === "light" && <LiveAcceptance />}',
+          '<Example title="Interactive field" size="field"><LiveAcceptance />',
         ),
     );
     await expect(page.getByTestId('live-new-component')).toHaveText('New shared component');
