@@ -63,6 +63,7 @@ export const formsReferences: Reference[] = [
     ],
     guidelines: [
       'Use for choices that can be selected independently. Use mixed for a partially selected parent group.',
+      'A Select all checkbox selects or clears its children. Derive mixed from those children; changing an individual choice restores partial selection.',
       'Keep a visible label and retain native form participation. The application computes aggregate selection.',
     ],
     related: ['radio', 'switch', 'accessibility'],

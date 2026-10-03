@@ -177,28 +177,32 @@ export function CheckboxPreview() {
         </SpecimenGrid>
       </Example>
       <Example
-        title="Partial selection"
+        title="Select all"
         size="compact"
-        caption="Select one project to make All projects partly selected."
+        caption="Changing individual projects updates All projects, including its partly selected state."
       >
         <Stack>
           <Checkbox
             label="All projects"
             checked={projectSelection}
-            onCheckedChange={(checked) => setSelectedProjects([Boolean(checked), Boolean(checked)])}
+            onCheckedChange={(checked) =>
+              setSelectedProjects((current) => current.map(() => checked))
+            }
           />
-          {['Autumn release', 'Winter release'].map((label, index) => (
-            <Checkbox
-              key={label}
-              label={label}
-              checked={selectedProjects[index]}
-              onCheckedChange={(checked) =>
-                setSelectedProjects((current) =>
-                  current.map((selected, i) => (i === index ? checked : selected)),
-                )
-              }
-            />
-          ))}
+          <Stack gap={3} className="docs-selection-children">
+            {['Autumn release', 'Winter release'].map((label, index) => (
+              <Checkbox
+                key={label}
+                label={label}
+                checked={selectedProjects[index]}
+                onCheckedChange={(checked) =>
+                  setSelectedProjects((current) =>
+                    current.map((selected, i) => (i === index ? checked : selected)),
+                  )
+                }
+              />
+            ))}
+          </Stack>
         </Stack>
       </Example>
     </Preview>
