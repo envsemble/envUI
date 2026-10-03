@@ -28,7 +28,7 @@ import { Home } from '@envsemble/envui/icons/Home';
       'The application owns routing and the selected destination. Use a meaningful destination label.',
       'Pass one Material Symbol. Navigation renders its filled variant when selected and its outline otherwise, including icons inside wrappers.',
       'Unselected icons use the caption color; selected icon and label use the link color. Navigation fits its content with a 2.5 rem minimum height.',
-      'Both label sizes use the shared 1.5 rem control icon size, matching labeled and icon-only buttons.',
+      'Both label sizes use the shared 1 rem control icon size, matching labeled and icon-only buttons.',
       'Selection keeps the gray/blue styling. Hover and pressed preserve the base hue and saturation and use the central lightness rule.',
     ],
     related: ['tabs', 'direction-links', 'icons', 'colors'],
