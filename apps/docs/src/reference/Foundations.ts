@@ -73,7 +73,7 @@ function ThemeLabel() {
       ['Standard corners', '0.5 rem for inner rows, important actions, toasts and chips'],
       [
         'Other shapes',
-        'Fully rounded actions/navigation; circles for icon buttons; 0.25 rem checkboxes',
+        'Fully rounded actions/navigation; icon-only actions keep their variant corners; 0.25 rem checkboxes',
       ],
     ],
     guidelines: [

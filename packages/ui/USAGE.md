@@ -111,7 +111,7 @@ import { Surface, Stack, Text } from '@envsemble/envui';
 - Touch minimum: 2.75 rem for coarse pointers; controls can grow with content
 - Outer corners: 1.75 rem for panes, cards and the outside of a row group
 - Standard corners: 0.5 rem for inner rows, important actions, toasts and chips
-- Other shapes: Fully rounded actions/navigation; circles for icon buttons; 0.25 rem checkboxes
+- Other shapes: Fully rounded actions/navigation; icon-only actions keep their variant corners; 0.25 rem checkboxes
 
 #### Guidelines
 
@@ -298,7 +298,7 @@ import { Stack, ActionGroup, Button, Text } from '@envsemble/envui';
 
 - The parent owns space between components; components own their internal padding. Avoid individual child margins.
 - Stack uses the shared spacing scale. Step 4 is 1 rem; step 2 is 0.5 rem. Cards already space direct children by 1 rem.
-- ActionGroup uses 1 rem gaps in wrapped rows and 0.5 rem when stacked. Circular icon buttons keep their size.
+- ActionGroup uses 1 rem gaps in wrapped rows and 0.5 rem when stacked. Icon-only buttons keep their size.
 - Use wrapped action rows when space permits and stacked actions when labels need more room. The application chooses when to switch layouts.
 - With Stack render, put the semantic tag on the supplied element. Custom components must forward native props and refs.
 
@@ -433,7 +433,7 @@ import { Add } from '@envsemble/envui/icons/Add';
 
 - variant: primary (default), important, secondary, outlined, destructive
 - startIcon / endIcon: Optional React content beside the label
-- iconOnly / icon: Use a circular button containing only the supplied icon; works with every variant
+- iconOnly / icon: Show only the supplied icon; size is square and corners follow the chosen variant
 - aria-label: Required accessible action name when iconOnly is true
 - href: Render a native link with the same button appearance; omit for a native button
 - Native action props: disabled, type/onClick or anchor attributes, ref and accessible attributes
@@ -460,7 +460,7 @@ import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 - Secondary buttons use the neutral row fill and label color, without a border. Outlined buttons retain their border and link color.
 - Interaction colors follow the central HSL lightness rule described in Colors & themes. State colors and disabled opacity come from the shared stylesheet.
 - Use href for destinations and onClick for actions. Disabled links have no destination and cannot activate.
-- Every variant supports iconOnly: a 2.5 rem circle with a centered 1.5 rem icon. Its colors, borders and interaction states follow the chosen variant. Name the action, rather than the icon shape.
+- Every variant supports iconOnly: a 2.5 rem square with a centered 1.5 rem icon. Corners, colors, borders and interaction states follow the chosen variant: important is a rounded square; the others are circles. Name the action, rather than the icon shape.
 - IconButton is a shorthand for Button with iconOnly enabled and variant="secondary" by default.
 
 Related: [Stacks & action groups](#stacks--action-groups), [Colors & themes](#colors--themes), [Icons & assets](#icons--assets), [Accessibility](#accessibility).
