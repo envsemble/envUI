@@ -455,12 +455,12 @@ import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 #### Guidelines
 
 - Use one primary action in an action group. Reserve important emphasis for rare, consequential actions.
-- Action buttons fit their content: 2 rem minimum height, 0.875 rem text, 0.25 rem vertical and 0.75 rem horizontal padding. Labels wrap when space is limited.
+- Action buttons fit their content: 2.5 rem minimum height, 0.875 rem text, 0.25 rem vertical and 0.75 rem horizontal padding. Labels wrap when space is limited.
 - Use fully rounded corners; important actions use 0.5 rem corners. ActionGroup provides 1 rem row gaps or 0.5 rem stacked gaps.
 - Secondary buttons use the neutral row fill and label color, without a border. Outlined buttons retain their border and link color.
 - Interaction colors follow the central HSL lightness rule described in Colors & themes. State colors and disabled opacity come from the shared stylesheet.
 - Use href for destinations and onClick for actions. Disabled links have no destination and cannot activate.
-- Every variant supports iconOnly: a square matching the regular button height (2 rem), with a centered 1.25 rem icon. Corners, colors, borders and interaction states follow the chosen variant: important is a rounded square; the others are circles. Name the action, rather than the icon shape.
+- Every variant supports iconOnly: a square matching the regular button height (2.5 rem), with a centered 1.5 rem icon. Corners, colors, borders and interaction states follow the chosen variant: important is a rounded square; the others are circles. Name the action, rather than the icon shape.
 - IconButton is a shorthand for Button with iconOnly enabled and variant="secondary" by default.
 
 Related: [Stacks & action groups](#stacks--action-groups), [Colors & themes](#colors--themes), [Icons & assets](#icons--assets), [Accessibility](#accessibility).

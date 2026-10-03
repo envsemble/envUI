@@ -16,10 +16,10 @@
   --member-identity-name-line-height: 1.25rem;
   --member-identity-email-size: var(--font-size-body-small);
   --member-identity-email-line-height: 1.25rem;
-  --control-height-small: 2rem;
+  --control-height-small: var(--control-height);
   --control-height: 2.5rem;
   --icon-button-size: var(--control-height-small);
-  --icon-button-icon-size: 1.25rem;
+  --icon-button-icon-size: 1.5rem;
   --control-height-touch: 2.75rem;
   --control-font-size: var(--font-size-body);
   --viewport-gutter: clamp(0.75rem, 2vw, 1rem);
@@ -210,7 +210,6 @@
 
 @media (pointer: coarse) {
   .env-theme {
-    --control-height-small: var(--control-height-touch);
     --control-height: var(--control-height-touch);
     --control-font-size: 1rem;
   }
