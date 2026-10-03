@@ -74,7 +74,7 @@ export function NavigationPreview() {
 
 export function TabsPreview() {
   const [referenceView, setReferenceView] = useState<string | null>('preview');
-  const [buttonStyle, setButtonStyle] = useState<string | null>('secondary');
+  const [buttonStyle, setButtonStyle] = useState<string | null>('primary');
   const [iconView, setIconView] = useState<string | null>('home');
   const [workspaceView, setWorkspaceView] = useState<string | null>('home');
   return (
@@ -134,9 +134,9 @@ export function TabsPreview() {
               onValueChange={setButtonStyle}
               items={[
                 {
-                  value: 'secondary',
-                  button: <Button variant="secondary">Secondary</Button>,
-                  content: <Text>Secondary button fill and border.</Text>,
+                  value: 'primary',
+                  button: <Button variant="primary">Primary</Button>,
+                  content: <Text>Primary button fill and label.</Text>,
                 },
                 {
                   value: 'outlined',
