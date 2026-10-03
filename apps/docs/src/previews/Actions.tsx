@@ -1,6 +1,4 @@
-import { useState } from 'react';
-import { Text, Button, IconButton, ActionGroup } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons/Add';
+import { Button } from '@envsemble/envui';
 import { Check } from '@envsemble/envui/icons/Check';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 import { Close } from '@envsemble/envui/icons/Close';
@@ -16,6 +14,12 @@ const buttonVariants = [
   { variant: 'outlined', label: 'Manage', icon: Settings },
   { variant: 'destructive', label: 'Delete', icon: Delete },
 ] as const;
+const buttonForms = [
+  { value: 'label', title: 'Label' },
+  { value: 'leading', title: 'Leading icon' },
+  { value: 'trailing', title: 'Trailing icon' },
+  { value: 'icon', title: 'Icon only' },
+] as const;
 const controlStates = [
   { title: 'Default', className: 'docs-force-0', disabled: false },
   { title: 'Hover', className: 'docs-force-1', disabled: false },
@@ -24,13 +28,81 @@ const controlStates = [
   { title: 'Disabled', className: 'docs-force-4', disabled: true },
 ];
 
-function ButtonMatrix() {
+function ButtonSample({
+  example,
+  form,
+  className,
+  disabled,
+}: {
+  example: (typeof buttonVariants)[number];
+  form: (typeof buttonForms)[number]['value'];
+  className?: string;
+  disabled?: boolean;
+}) {
+  const icon = <example.icon />;
+  const props = { variant: example.variant, className, disabled };
+  if (form === 'icon') {
+    return <Button {...props} iconOnly icon={icon} aria-label={example.label} />;
+  }
+  return (
+    <Button
+      {...props}
+      startIcon={form === 'leading' ? icon : undefined}
+      endIcon={form === 'trailing' ? icon : undefined}
+    >
+      {example.label}
+    </Button>
+  );
+}
+
+function ButtonVariants() {
+  return (
+    <div
+      className="docs-matrix-scroll"
+      tabIndex={0}
+      role="region"
+      aria-label="Button variants and icon placement"
+    >
+      <table className="docs-matrix">
+        <thead>
+          <tr>
+            <th scope="col">Variant</th>
+            {buttonForms.map((form) => (
+              <th scope="col" key={form.value}>
+                {form.title}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {buttonVariants.map((example) => (
+            <tr key={example.variant}>
+              <th scope="row">{example.variant}</th>
+              {buttonForms.map((form) => (
+                <td key={form.value}>
+                  <ButtonSample example={example} form={form.value} />
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function ButtonStates() {
   const examples = buttonVariants.flatMap((example) => [
-    { ...example, iconOnly: false },
-    { ...example, iconOnly: true },
+    { ...example, form: 'label' as const },
+    { ...example, form: 'icon' as const },
   ]);
   return (
-    <div className="docs-matrix-scroll" tabIndex={0} aria-label="Control state comparison">
+    <div
+      className="docs-matrix-scroll"
+      tabIndex={0}
+      role="region"
+      aria-label="Button interaction states"
+    >
       <table className="docs-matrix">
         <thead>
           <tr>
@@ -44,31 +116,19 @@ function ButtonMatrix() {
         </thead>
         <tbody>
           {examples.map((example) => (
-            <tr key={`${example.variant}-${example.iconOnly}`}>
+            <tr key={`${example.variant}-${example.form}`}>
               <th scope="row">
                 {example.variant}
-                {example.iconOnly && ' icon'}
+                {example.form === 'icon' && ' icon'}
               </th>
               {controlStates.map((state) => (
                 <td key={state.title}>
-                  {example.iconOnly ? (
-                    <Button
-                      variant={example.variant}
-                      iconOnly
-                      className={state.className}
-                      disabled={state.disabled}
-                      aria-label={example.label}
-                      icon={<example.icon />}
-                    />
-                  ) : (
-                    <Button
-                      variant={example.variant}
-                      className={state.className}
-                      disabled={state.disabled}
-                    >
-                      {example.label}
-                    </Button>
-                  )}
+                  <ButtonSample
+                    example={example}
+                    form={example.form}
+                    className={state.className}
+                    disabled={state.disabled}
+                  />
                 </td>
               ))}
             </tr>
@@ -80,82 +140,17 @@ function ButtonMatrix() {
 }
 
 export function ButtonsPreview() {
-  const [actionResult, setActionResult] = useState('');
-  const [destinationResult, setDestinationResult] = useState('');
   return (
     <Preview>
-      <Example title="Variants & states" size="wide">
-        <ButtonMatrix />
+      <Example title="Variants" size="wide">
+        <ButtonVariants />
       </Example>
-      <Example title="Labels & icons">
-        <ActionGroup>
-          <Button onClick={() => setActionResult('Item created')}>Create item</Button>
-          <Button startIcon={<Add />} onClick={() => setActionResult('Item created')}>
-            Create item
-          </Button>
-          <Button
-            iconOnly
-            icon={<Add />}
-            aria-label="Create item"
-            onClick={() => setActionResult('Item created')}
-          />
-          <Button endIcon={<ChevronRight />}>Continue</Button>
-        </ActionGroup>
+      <Example size="wide">
+        <details className="docs-button-states">
+          <summary>Interaction states</summary>
+          <ButtonStates />
+        </details>
       </Example>
-      <Example title="Destinations">
-        <ActionGroup>
-          <Button
-            href={location.href}
-            variant="outlined"
-            onClick={() => setDestinationResult('Project link selected.')}
-          >
-            Open project
-          </Button>
-          <Button href={location.href} variant="outlined" disabled>
-            Unavailable destination
-          </Button>
-        </ActionGroup>
-        <Text variant="caption" aria-live="polite">
-          {destinationResult}
-        </Text>
-      </Example>
-      <Example title="Grouped actions">
-        <ActionGroup>
-          <Button variant="secondary" onClick={() => setActionResult('Cancelled')}>
-            Cancel
-          </Button>
-          <Button onClick={() => setActionResult('Changes saved')}>Save changes</Button>
-        </ActionGroup>
-        <ActionGroup stacked className="docs-narrow-actions">
-          <Button onClick={() => setActionResult('Changes saved')}>Save changes</Button>
-          <Button variant="secondary">Cancel</Button>
-        </ActionGroup>
-        <Text variant="caption" className="docs-caption" aria-live="polite">
-          {actionResult || 'One primary action per group'}
-        </Text>
-      </Example>
-      <IconButtonExamples />
     </Preview>
-  );
-}
-
-function IconButtonExamples() {
-  const [actionResult, setActionResult] = useState('');
-  return (
-    <Example title="Icon-only actions">
-      <ActionGroup>
-        <Button
-          variant="secondary"
-          iconOnly
-          icon={<ChevronRight />}
-          aria-label="Next item"
-          onClick={() => setActionResult('Moved to next item')}
-        />
-        <IconButton icon={<Settings />} aria-label="Settings" />
-      </ActionGroup>
-      <Text variant="caption" className="docs-caption" aria-live="polite">
-        {actionResult}
-      </Text>
-    </Example>
   );
 }
