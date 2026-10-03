@@ -77,7 +77,7 @@ export default function App() {
         <Catalogue />
       </div>
     );
-  else if (isOverview) content = <Overview />;
+  else if (isOverview) content = <Overview actions={controls} />;
   else
     content = (
       <div className="docs-article">
@@ -99,7 +99,6 @@ export default function App() {
       <div className="docs-shell">
         <Sidebar routePath={routePath} page={page} />
         <main id="docs-main" ref={mainElement} tabIndex={-1} className="docs-main">
-          {isOverview && <div className="docs-overview-controls">{controls}</div>}
           {!isOverview && !page && (
             <PageHeader title={title} breadcrumb="envUI" actions={controls} />
           )}

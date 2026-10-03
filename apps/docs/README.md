@@ -16,6 +16,8 @@ Keep shared rules in foundations and component behavior on its own page. Related
 
 Headers, previews, articles, catalogues and page navigation share one centered content frame with equal side gutters. Text and specimens keep their own alignment inside that frame.
 
+`PageHeader` composes a page banner from Card, Stack and Text, with view tabs and page controls inside it. Overview uses its existing logo surface as the banner and includes the same theme control.
+
 `src/previews/` groups live examples by component family. Each topic owns its interaction state; `Preview` supplies one specimen area using the current theme. Foundation demonstrations live in `src/previews/foundations/`; measured token values refresh when the theme changes. `Example` is a private specimen frame composed from public Stack and Text. The catalogue uses Card links and the overview uses Button links. Managed toasts inherit the same theme as their controls. Content cards, field guidance and compact navigation use public props rather than selectors into component internals.
 
 Keep routes, previews, token measurements, code blocks and prop tables here. Reusable interaction, visual variants and spacing contracts belong in `packages/ui`; do not recreate them in the documentation.

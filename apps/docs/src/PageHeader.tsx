@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Card, Stack, Text } from '@envsemble/envui';
 
-/** Documentation composition; card geometry and text styles come from the library. */
+/** Documentation banner composed from the library's card, text and layout primitives. */
 export function PageHeader({
   title,
   breadcrumb,
@@ -15,16 +15,18 @@ export function PageHeader({
 }) {
   return (
     <header className="docs-page-header">
-      <Card className="docs-page-header-card">
-        <Stack gap={3}>
-          {breadcrumb && <Text variant="caption">{breadcrumb}</Text>}
-          <Text as="h1" variant="page-heading">
-            {title}
-          </Text>
-        </Stack>
+      <Card tone="pane" padding={6} className="docs-page-banner">
+        <div className="docs-page-banner-heading">
+          <Stack gap={3}>
+            {breadcrumb && <Text variant="caption">{breadcrumb}</Text>}
+            <Text as="h1" variant="page-heading">
+              {title}
+            </Text>
+          </Stack>
+          {actions}
+        </div>
         {children}
       </Card>
-      {actions}
     </header>
   );
 }

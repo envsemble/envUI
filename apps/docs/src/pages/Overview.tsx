@@ -1,14 +1,21 @@
+import type { ReactNode } from 'react';
 import { Text, EnvUILogo, Surface, Stack, ActionGroup, Button } from '@envsemble/envui';
 import { Palette } from '@envsemble/envui/icons/Palette';
 import { Add } from '@envsemble/envui/icons/Add';
 
 import { Catalogue } from './Catalogue';
 
-export function Overview() {
+export function Overview({ actions }: { actions?: ReactNode }) {
   return (
     <Stack gap={8} className="docs-overview">
-      <Surface tone="pane" render={<Stack gap={0} />} className="docs-overview-hero">
-        <Stack gap={6} align="center">
+      <Surface
+        tone="pane"
+        padding={6}
+        render={<Stack as="header" />}
+        className="docs-overview-hero"
+      >
+        {actions}
+        <Stack gap={6} align="center" className="docs-overview-intro">
           <EnvUILogo className="docs-overview-logo" />
           <Text as="h1" variant="page-heading">
             React components for envsemble
