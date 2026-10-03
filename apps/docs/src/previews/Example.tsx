@@ -10,7 +10,7 @@ export function Example({
   gap = 4,
   size = 'content',
 }: {
-  title: string;
+  title?: string;
   children: ReactNode;
   caption?: string;
   className?: string;
@@ -24,9 +24,11 @@ export function Example({
       data-size={size}
       className={['docs-example', className].filter(Boolean).join(' ')}
     >
-      <Text as="h2" variant="page-heading">
-        {title}
-      </Text>
+      {title && (
+        <Text as="h2" variant="page-heading">
+          {title}
+        </Text>
+      )}
       {children}
       {caption && (
         <Text variant="caption" className="docs-caption">

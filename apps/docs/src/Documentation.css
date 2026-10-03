@@ -376,15 +376,15 @@ body {
   font-size: 0.75rem;
 }
 .docs-icon-toolbar {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: end;
   gap: var(--space-5);
 }
-.docs-icon-search {
-  flex: 1 1 20rem;
-  min-inline-size: 0;
-  max-inline-size: 42rem;
+@container (max-width: 30rem) {
+  .docs-icon-toolbar {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 .docs-icon-detail-preview {
   display: grid;

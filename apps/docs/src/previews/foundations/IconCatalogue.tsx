@@ -128,14 +128,13 @@ export function IconCatalogue() {
   const visibleSymbols = matches.slice(page * pageSize, (page + 1) * pageSize);
 
   return (
-    <Example title="Material Symbols Rounded" size="collection">
+    <Example size="collection">
       <div className="docs-icon-toolbar">
         <Input
-          className="docs-icon-search"
           label="Search icons"
           type="search"
           value={query}
-          placeholder="Name, such as arrow_back or ArrowBack"
+          placeholder="Icon name"
           onChange={(event) => {
             setQuery(event.target.value);
             setPage(0);
@@ -143,9 +142,6 @@ export function IconCatalogue() {
         />
         <Switch label="Filled icons" checked={filled} onCheckedChange={setFilled} />
       </div>
-      <Text variant="caption" role="status">
-        {matches.length} icons{query.trim() ? ' found' : ' · common icons first'}
-      </Text>
       {matches.length ? (
         <ul className="docs-icon-catalogue" aria-label="Icon catalogue">
           {visibleSymbols.map(({ name, label, Symbol }) => (
