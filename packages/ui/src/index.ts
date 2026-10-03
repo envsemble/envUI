@@ -13,6 +13,7 @@ export * from './content/DisclosureNote.js';
 export * from './content/InfoChip.js';
 export * from './content/Code.js';
 export * from './content/CodeBlock.js';
+export * from './content/Markdown.js';
 export * from './forms/Input.js';
 export * from './forms/Textarea.js';
 export * from './forms/Checkbox.js';

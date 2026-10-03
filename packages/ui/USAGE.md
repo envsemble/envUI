@@ -749,6 +749,49 @@ Related: [Navigation items](#navigation-items), [Stacks & action groups](#stacks
 
 ## Content & guidance
 
+### Markdown
+
+#### Render content
+
+```tsx
+import { Markdown } from '@envsemble/envui';
+
+<Markdown headingOffset={1} codeCopyable>{description}</Markdown>
+```
+
+- children: Markdown string
+- headingOffset / codeCopyable: Heading semantics and code-copy controls
+
+#### Application navigation
+
+```tsx
+import { Markdown } from '@envsemble/envui';
+
+<Markdown renderLink={({ href, children, ...props }) => (
+  <a {...props} href={href} onClick={event => {
+    if (!event.defaultPrevented && event.button === 0 &&
+        !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey &&
+        href.startsWith('/devices/')) {
+      event.preventDefault();
+      openDevicePanel(href);
+    }
+  }}>{children}</a>
+)}>{description}</Markdown>
+```
+
+- renderLink: Keep real hrefs and preserve modified clicks; the application decides which routes open panels
+
+#### Guidelines
+
+- Paragraphs, headings, lists, quotes and tables use envUI typography and spacing. Code blocks reuse CodeBlock with standard VS Code colors.
+- Supports CommonMark plus GFM tables, strikethrough, task lists, automatic links and footnotes. Single source newlines follow standard paragraph behavior.
+- Raw HTML is ignored and URLs retain the renderer’s safe protocol handling. Markdown is content, not executable components.
+- Resource references are ordinary links with stable destination URLs. Labels are saved text; resource resolution, permissions and missing destinations belong to the application.
+- Tables and code scroll within their own regions. Images keep their aspect ratio and fit the available width; image loading follows the supplied URL.
+- Choose headingOffset to place a document below the surrounding page heading. Native semantic levels are retained, capped at h6.
+
+Related: [Code](#code), [Typography](#typography), [Accessibility](#accessibility).
+
 ### Code
 
 #### React usage

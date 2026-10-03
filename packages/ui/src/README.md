@@ -6,7 +6,7 @@ Public components and types are exported through `index.ts`. Keep application im
 - `foundations/`: theme boundaries, layout, surfaces, and typography.
 - `actions/`: native button/link behavior and button appearance.
 - `navigation/`: navigation items, directional links, and tabs.
-- `content/`: cards, grouped rows, disclosures, information chips, inline code and code blocks.
+- `content/`: cards, grouped rows, disclosures, information chips, code and Markdown rendering.
   Its `internal/` folder owns lazy highlighting and the standard VS Code themes.
 - `forms/`: input, textarea, checkbox, switch, radio, and select components. Their
   `internal/` folder owns field metadata, checked state, and native form reset handling.

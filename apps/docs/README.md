@@ -26,6 +26,8 @@ Surface is the visual base for background fill, padding and corners. Card builds
 
 Keep previews focused on the subject. Use Text and invisible layout containers for headings, descriptions and tab panels. Do not add decorative Cards, Surfaces, rows, chips or disclosure notes to another component's demonstration. Other visible controls are appropriate only when they demonstrate a required feature, such as tab buttons, action slots, modal triggers or toast delivery. The banner, catalogue navigation and previous/next links are documentation navigation, not specimens.
 
+Markdown previews use the public Markdown renderer with shared prose typography and CodeBlock. Application link examples report a local destination rather than navigating away. The renderer owns no resource resolution, product routes or custom reference tokens.
+
 Example sections share the content frame. Size limits belong to the demonstrated content: compact controls, fields and card specimens have bounded widths; comparison grids use the available column width and reflow as space narrows. Avoid fixed grid column counts, centered individual specimens and arbitrary offsets. Related variants use plain Specimen labels and consistent gaps.
 
 Example links use the current document URL and simulate their destination locally. Preview prevents default link activation, including modified clicks and auxiliary clicks, without stopping component handlers. Keep this behavior in the documentation; product links retain normal navigation. Sidebar, banner views, catalogue links and previous/next page navigation are outside the preview boundary.

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add Markdown rendering with react-markdown/remark-gfm, envUI prose typography, shared CodeBlock, semantic heading offsets and application-owned link rendering.
+
 - Add Code and CodeBlock with shared source display, optional copying and lazy Shiki highlighting using standard VS Code Light+ and Dark+ themes.
 
 - Add NavigationItem iconOnly mode for collapsed sidebars, requiring an icon and accessible destination name while retaining native navigation and selection behavior.

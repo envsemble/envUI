@@ -2,6 +2,63 @@ import type { Reference } from './Types';
 
 export const contentReferences: Reference[] = [
   {
+    id: 'markdown',
+    title: 'Markdown',
+    group: 'Content & guidance',
+    example: `import { Markdown } from '@envsemble/envui';
+
+<Markdown headingOffset={1} codeCopyable>{description}</Markdown>`,
+    props: [
+      ['children', 'A CommonMark/GFM Markdown string'],
+      ['headingOffset', '0–5 added to semantic heading levels, capped at h6'],
+      ['codeCopyable', 'Offer copying on rendered code blocks'],
+      ['renderLink', 'Render safe hrefs using native anchor props and application routing'],
+      ['Native div props', 'ref, className, style and accessible attributes'],
+    ],
+    usage: [
+      {
+        title: 'Render content',
+        example: `import { Markdown } from '@envsemble/envui';
+
+<Markdown headingOffset={1} codeCopyable>{description}</Markdown>`,
+        props: [
+          ['children', 'Markdown string'],
+          ['headingOffset / codeCopyable', 'Heading semantics and code-copy controls'],
+        ],
+      },
+      {
+        title: 'Application navigation',
+        example: `import { Markdown } from '@envsemble/envui';
+
+<Markdown renderLink={({ href, children, ...props }) => (
+  <a {...props} href={href} onClick={event => {
+    if (!event.defaultPrevented && event.button === 0 &&
+        !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey &&
+        href.startsWith('/devices/')) {
+      event.preventDefault();
+      openDevicePanel(href);
+    }
+  }}>{children}</a>
+)}>{description}</Markdown>`,
+        props: [
+          [
+            'renderLink',
+            'Keep real hrefs and preserve modified clicks; the application decides which routes open panels',
+          ],
+        ],
+      },
+    ],
+    guidelines: [
+      'Paragraphs, headings, lists, quotes and tables use envUI typography and spacing. Code blocks reuse CodeBlock with standard VS Code colors.',
+      'Supports CommonMark plus GFM tables, strikethrough, task lists, automatic links and footnotes. Single source newlines follow standard paragraph behavior.',
+      'Raw HTML is ignored and URLs retain the renderer’s safe protocol handling. Markdown is content, not executable components.',
+      'Resource references are ordinary links with stable destination URLs. Labels are saved text; resource resolution, permissions and missing destinations belong to the application.',
+      'Tables and code scroll within their own regions. Images keep their aspect ratio and fit the available width; image loading follows the supplied URL.',
+      'Choose headingOffset to place a document below the surrounding page heading. Native semantic levels are retained, capped at h6.',
+    ],
+    related: ['code', 'typography', 'accessibility'],
+  },
+  {
     id: 'code',
     title: 'Code',
     group: 'Content & guidance',
