@@ -11,6 +11,8 @@ export * from './content/Card.js';
 export * from './content/Rows.js';
 export * from './content/DisclosureNote.js';
 export * from './content/InfoChip.js';
+export * from './content/Code.js';
+export * from './content/CodeBlock.js';
 export * from './forms/Input.js';
 export * from './forms/Textarea.js';
 export * from './forms/Checkbox.js';

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add Code and CodeBlock with shared source display, optional copying and lazy Shiki highlighting using standard VS Code Light+ and Dark+ themes.
+
 - Add NavigationItem iconOnly mode for collapsed sidebars, requiring an icon and accessible destination name while retaining native navigation and selection behavior.
 - Unify labeled buttons, icon-only buttons and navigation items with one shared 1 rem control icon size, including important buttons.
 - Let DirectionLinks wrap into centered rows when destinations cannot fit side by side, preventing narrow groups from squeezing titles into word fragments.

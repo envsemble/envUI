@@ -226,25 +226,6 @@ body {
 .docs-article a {
   color: var(--color-link);
 }
-.docs-code {
-  margin: 0;
-  padding: 1.5rem;
-  background: var(--color-pane);
-  border-radius: var(--radius-surface);
-  overflow: auto;
-  font:
-    0.8125rem/1.7 ui-monospace,
-    Consolas,
-    monospace;
-  tab-size: 2;
-}
-.docs-code[data-appearance='plain'] {
-  padding: 0;
-  background: none;
-  border-radius: 0;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
 .docs-props {
   width: 100%;
   table-layout: fixed;
@@ -412,13 +393,6 @@ body {
   display: grid;
   place-items: center;
   padding-block: var(--space-4);
-}
-.docs-icon-detail-heading {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
 }
 .docs-icon-catalogue {
   display: grid;

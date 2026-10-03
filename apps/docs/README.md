@@ -20,7 +20,7 @@ Headers, previews, articles, catalogues and page navigation share one centered c
 
 `src/previews/` groups live examples by component family. Each topic owns its interaction state. Only examples with otherwise irreversible changes offer a local restore control; manual toast specimens can be restored after dismissal. Reversible controls need no reset button; `Preview` supplies one specimen area using the current theme. Foundation demonstrations live in `src/previews/foundations/`; measured token values refresh when the theme changes. `Example` is a private specimen frame composed from public Stack and Text. The catalogue uses Card links and the overview uses Button links. Managed toasts inherit the same theme as their controls. Examples use public props rather than selectors into component internals.
 
-Keep routes, previews, token measurements, code blocks and prop tables here. Reusable interaction, visual variants and spacing contracts belong in `packages/ui`; do not recreate them in the documentation.
+Keep routes, previews, token measurements and prop tables here. Code display and copying use the public CodeBlock; there is no documentation-only highlighter or copy implementation. Reusable interaction, visual variants and spacing contracts belong in `packages/ui`; do not recreate them in the documentation.
 
 Surface is the visual base for background fill, padding and corners. Card builds on Surface with standard content layout; specialized cards add their own composition. Stack and ActionGroup own layout. Use Surface for plain panes and compose an existing layout element through `render` when both belong on the same root. The overview hero consumes Surface; content card specimens use Card.
 

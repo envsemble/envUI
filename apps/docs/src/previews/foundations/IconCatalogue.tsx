@@ -1,8 +1,17 @@
 import { useId, useMemo, useRef, useState } from 'react';
-import { ActionGroup, Button, Card, Dialog, Input, Stack, Switch, Text } from '@envsemble/envui';
+import {
+  CodeBlock,
+  ActionGroup,
+  Button,
+  Card,
+  Dialog,
+  Input,
+  Stack,
+  Switch,
+  Text,
+} from '@envsemble/envui';
 // This offline browser consumes the full public catalogue. Products use per-icon imports.
 import * as symbols from '@envsemble/envui/icons';
-import { Code } from '../../Code';
 import { Example } from '../Example';
 
 const normalizeName = (name: string) => name.toLowerCase().replace(/[\s_-]/g, '');
@@ -53,28 +62,8 @@ const catalogue = Object.entries(symbols)
 const pageSize = 72;
 
 function IconDetails({ name, filled }: { name: keyof typeof symbols; filled: boolean }) {
-  const [copyMessage, setCopyMessage] = useState('');
-  const importElement = useRef<HTMLDivElement>(null);
   const Symbol = symbols[name];
-  const importCode = `import { ${name} }\n  from '@envsemble/envui/icons/${name}';`;
-
-  async function copyImport() {
-    try {
-      await navigator.clipboard.writeText(importCode);
-      setCopyMessage('Import copied.');
-    } catch {
-      // Downloaded files may not have clipboard access; leave selectable source available.
-      const code = importElement.current?.querySelector('code');
-      const selection = window.getSelection();
-      if (code && selection) {
-        const range = document.createRange();
-        range.selectNodeContents(code);
-        selection.removeAllRanges();
-        selection.addRange(range);
-      }
-      setCopyMessage('Select and copy the import manually.');
-    }
-  }
+  const importCode = `import { CodeBlock, ${name} }\n  from '@envsemble/envui/icons/${name}';`;
 
   return (
     <Stack gap={5}>
@@ -85,28 +74,19 @@ function IconDetails({ name, filled }: { name: keyof typeof symbols; filled: boo
         </div>
       </Stack>
       <Stack gap={3} as="section">
-        <div className="docs-icon-detail-heading">
-          <Text as="h3" variant="section-heading">
-            React import
-          </Text>
-          <Button variant="secondary" onClick={copyImport}>
-            Copy import
-          </Button>
-        </div>
-        <div ref={importElement}>
-          <Code appearance="plain">{importCode}</Code>
-        </div>
-        {copyMessage && (
-          <Text variant="caption" role="status">
-            {copyMessage}
-          </Text>
-        )}
+        <CodeBlock language="tsx" appearance="plain" wrap label="React import" copyable>
+          {importCode}
+        </CodeBlock>
       </Stack>
       <Stack gap={3} as="section">
         <Text as="h3" variant="section-heading">
           Usage
         </Text>
-        <Code appearance="plain">{`<${name}${filled ? ' filled' : ''} />`}</Code>
+        <CodeBlock
+          language="tsx"
+          appearance="plain"
+          wrap
+        >{`<${name}${filled ? ' filled' : ''} />`}</CodeBlock>
         <Text variant="caption">Inherits the surrounding text color.</Text>
       </Stack>
     </Stack>

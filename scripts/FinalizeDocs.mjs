@@ -1,6 +1,7 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
+import { collectDependencyNotices } from './DependencyNotices.mjs';
 const repositoryRoot = fileURLToPath(new URL('../', import.meta.url));
 const docsOutputDirectory = resolve(repositoryRoot, 'dist/docs');
 let html = await readFile(resolve(docsOutputDirectory, 'index.html'), 'utf8');
@@ -12,22 +13,7 @@ for (const match of html.matchAll(/<link\b[^>]*\brel="icon"[^>]*>/g)) {
   const dataUrl = `data:image/x-icon;base64,${asset.toString('base64')}`;
   html = html.replace(match[0], match[0].replace(href, dataUrl));
 }
-const dependencyLicensePaths = [
-  'react/LICENSE',
-  'react-dom/LICENSE',
-  '@base-ui/react/LICENSE',
-  '@base-ui/utils/LICENSE',
-  '@floating-ui/react-dom/LICENSE',
-  '@floating-ui/utils/LICENSE',
-  'use-sync-external-store/LICENSE',
-  '@babel/runtime/LICENSE',
-];
-const licenseNotices = await Promise.all(
-  dependencyLicensePaths.map(
-    async (licensePath) =>
-      `${licensePath}\n${await readFile(resolve(repositoryRoot, 'node_modules', licensePath), 'utf8')}`,
-  ),
-);
+const licenseNotices = [await collectDependencyNotices(repositoryRoot)];
 licenseNotices.push(
   await readFile(resolve(repositoryRoot, 'licenses/Inter-LICENSE.txt'), 'utf8'),
   await readFile(resolve(repositoryRoot, 'licenses/Material-Symbols-LICENSE.txt'), 'utf8'),

@@ -4,6 +4,7 @@ import { resolve, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { generateBrandAssets } from './GenerateBrandAssets.mjs';
+import { collectDependencyNotices } from './DependencyNotices.mjs';
 const repositoryRoot = fileURLToPath(new URL('../', import.meta.url));
 const libraryDirectory = resolve(repositoryRoot, 'packages/ui');
 const sourceDirectory = resolve(libraryDirectory, 'src');
@@ -23,6 +24,10 @@ async function findTypeScriptFiles(directory) {
   return files.flat();
 }
 await generateBrandAssets();
+await writeFile(
+  resolve(libraryDirectory, 'licenses/Runtime-Dependencies-LICENSE.txt'),
+  await collectDependencyNotices(repositoryRoot),
+);
 
 // A release build replaces only the package's own generated output.
 if (relative(libraryDirectory, outputDirectory) !== 'dist')

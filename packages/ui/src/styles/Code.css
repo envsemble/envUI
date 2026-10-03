@@ -1,0 +1,64 @@
+.env-theme {
+  --font-family-code: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  --font-size-code: 0.8125rem;
+}
+.env-code {
+  padding: 0.125em 0.375em;
+  border-radius: var(--radius-standard);
+  background: var(--color-surface-muted);
+  color: inherit;
+  font: 0.9em/1.4 var(--font-family-code);
+  overflow-wrap: anywhere;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+.env-code-block {
+  box-sizing: border-box;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  padding: var(--space-5);
+  border-radius: var(--radius-standard);
+  background: var(--env-code-background);
+  color: var(--env-code-foreground);
+  font: var(--font-size-code) / 1.7 var(--font-family-code);
+}
+.env-code-block pre {
+  margin: 0;
+  overflow: auto;
+  font: inherit;
+  tab-size: 2;
+}
+.env-code-block code {
+  font: inherit;
+}
+.env-code-block pre:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: var(--space-1);
+}
+.env-code-block[data-wrap] pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.env-code-block[data-appearance='plain'] {
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.env-code-block-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-block-end: var(--space-3);
+}
+.env-code-block-heading > span {
+  font: var(--type-body-small);
+}
+.env-code-copy-status {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+}

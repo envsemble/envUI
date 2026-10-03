@@ -9,6 +9,7 @@ import {
 import { NavigationPreview, TabsPreview, DirectionLinksPreview } from './previews/Navigation';
 import { SurfacePreview, LayoutPreview, RowsPreview, CardsPreview } from './previews/Layout';
 import { ChipsPreview, DisclosuresPreview } from './previews/Content';
+import { CodePreview } from './previews/CodeContent';
 import {
   EmptyStatePreview,
   LoadingPreview,
@@ -47,6 +48,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <CardsPreview />;
     case 'chips':
       return <ChipsPreview />;
+    case 'code':
+      return <CodePreview />;
     case 'disclosures':
       return <DisclosuresPreview />;
     case 'empty-state':

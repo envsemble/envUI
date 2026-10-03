@@ -1,5 +1,4 @@
-import { Text, BrandLogo, EnvUILogo, Stack } from '@envsemble/envui';
-import { Code } from '../../Code';
+import { CodeBlock, Text, BrandLogo, EnvUILogo, Stack } from '@envsemble/envui';
 import { Example, SpecimenGrid } from '../Example';
 import { IconCatalogue } from './IconCatalogue';
 
@@ -21,8 +20,8 @@ export function IconsPreview() {
         <Text tone="muted">
           React lockups inherit the theme's text color. Raw SVGs and favicons use fixed colors.
         </Text>
-        <Code>{`import logoUrl from '@envsemble/envui/assets/envUI/envUI-lockup-black.svg';
-import faviconUrl from '@envsemble/envui/assets/envUI/envUI-favicon.ico';`}</Code>
+        <CodeBlock language="tsx">{`import logoUrl from '@envsemble/envui/assets/envUI/envUI-lockup-black.svg';
+import faviconUrl from '@envsemble/envui/assets/envUI/envUI-favicon.ico';`}</CodeBlock>
         <Text variant="caption">
           White versions: envUI-lockup-white.svg and envUI-favicon-white.ico in the same folder. The
           raw envsemble logo is exported at @envsemble/envui/assets/envsemble-lockup-black.svg.

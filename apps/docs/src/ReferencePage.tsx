@@ -1,6 +1,5 @@
-import { Button, Stack, Tabs, Text } from '@envsemble/envui';
+import { CodeBlock, Button, Stack, Tabs, Text } from '@envsemble/envui';
 import type { ReactNode } from 'react';
-import { Code } from './Code';
 import {
   referencePages,
   referenceViews,
@@ -38,7 +37,7 @@ function Usage({ reference }: { reference: Reference }) {
           <Text as="h2" variant="page-heading">
             {section.title}
           </Text>
-          <Code>{section.example}</Code>
+          <CodeBlock language="tsx">{section.example}</CodeBlock>
           <Text as="h3" variant="section-heading">
             Props & contracts
           </Text>
@@ -119,7 +118,7 @@ export function ReferenceContent({
                     {text}
                   </Text>
                 ))}
-                {section.example && <Code>{section.example}</Code>}
+                {section.example && <CodeBlock language="tsx">{section.example}</CodeBlock>}
               </Stack>
             ))
           ) : (
