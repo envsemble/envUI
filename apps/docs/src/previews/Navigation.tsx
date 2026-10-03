@@ -127,7 +127,7 @@ export function TabsPreview() {
       </Example>
       <Example title="Tab controls" size="collection">
         <SpecimenGrid size="wide">
-          <Specimen title="Button styles" caption="The selected tab keeps its button style.">
+          <Specimen title="Button styles">
             <Tabs
               aria-label="Button style examples"
               value={buttonStyle}
@@ -156,7 +156,7 @@ export function TabsPreview() {
               ]}
             />
           </Specimen>
-          <Specimen title="Icon buttons" caption="Accessible names identify each view.">
+          <Specimen title="Icon buttons">
             <Tabs
               aria-label="Icon views"
               value={iconView}
@@ -164,23 +164,27 @@ export function TabsPreview() {
               items={[
                 {
                   value: 'home',
-                  button: <IconButton icon={<Home />} aria-label="Home view" />,
+                  button: <IconButton variant="primary" icon={<Home />} aria-label="Home view" />,
                   content: <Text>Home content</Text>,
                 },
                 {
                   value: 'search',
-                  button: <IconButton icon={<Search />} aria-label="Search view" />,
+                  button: (
+                    <IconButton variant="primary" icon={<Search />} aria-label="Search view" />
+                  ),
                   content: <Text>Search content</Text>,
                 },
                 {
                   value: 'settings',
-                  button: <IconButton icon={<Settings />} aria-label="Settings view" />,
+                  button: (
+                    <IconButton variant="primary" icon={<Settings />} aria-label="Settings view" />
+                  ),
                   content: <Text>Settings content</Text>,
                 },
               ]}
             />
           </Specimen>
-          <Specimen title="Navigation buttons" caption="Tabs owns selection and icon fill.">
+          <Specimen title="Navigation buttons">
             <Tabs
               aria-label="Workspace views"
               value={workspaceView}
