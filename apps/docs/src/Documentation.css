@@ -373,6 +373,23 @@ body {
   gap: 1.5rem;
   color: var(--color-icon);
 }
+.docs-icon-search {
+  inline-size: min(100%, 28rem);
+}
+.docs-icon-import {
+  inline-size: min(100%, 42rem);
+}
+.docs-icon-catalogue {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: var(--space-3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.docs-icon-catalogue li {
+  min-inline-size: 0;
+}
 .docs-brand-specimen {
   width: 10rem;
   height: auto;
