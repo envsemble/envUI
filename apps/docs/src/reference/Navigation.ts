@@ -75,7 +75,7 @@ import { Home } from '@envsemble/envui/icons/Home';
       'Arrow keys move between enabled tabs; Home and End reach the ends. Use manual activation for content that takes time to load. Disabled tabs are skipped.',
       'Selection and panels transition over 0.16 s with shared easing. Reduced motion removes transitions. Inactive panels are hidden and inert; keepMounted preserves their local state.',
     ],
-    related: ['navigation', 'buttons', 'icons', 'motion'],
+    related: ['navigation', 'buttons', 'icons', 'accessibility'],
   },
   {
     id: 'direction-links',

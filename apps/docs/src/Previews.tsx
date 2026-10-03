@@ -1,7 +1,6 @@
-import { ButtonsPreview, IconButtonsPreview } from './previews/Actions';
+import { ButtonsPreview } from './previews/Actions';
 import {
-  InputPreview,
-  TextareaPreview,
+  TextFieldsPreview,
   CheckboxPreview,
   SwitchPreview,
   RadioPreview,
@@ -22,12 +21,8 @@ export function ComponentPreview({ id }: { id: string }) {
   switch (id) {
     case 'buttons':
       return <ButtonsPreview />;
-    case 'icon-buttons':
-      return <IconButtonsPreview />;
-    case 'input':
-      return <InputPreview />;
-    case 'textarea':
-      return <TextareaPreview />;
+    case 'fields':
+      return <TextFieldsPreview />;
     case 'checkbox':
       return <CheckboxPreview />;
     case 'switch':

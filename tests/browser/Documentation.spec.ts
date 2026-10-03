@@ -8,9 +8,7 @@ const version = JSON.parse(readFileSync('packages/ui/package.json', 'utf8')).ver
 const components = [
   'layout',
   'buttons',
-  'icon-buttons',
-  'input',
-  'textarea',
+  'fields',
   'checkbox',
   'switch',
   'radio',
@@ -19,13 +17,14 @@ const components = [
   'direction-links',
   'rows',
   'cards',
-  'notes',
+  'chips',
+  'disclosures',
   'empty-state',
   'loading',
   'toasts',
   'dialogs',
 ];
-const foundations = ['colors', 'typography', 'spacing', 'icons', 'responsive', 'motion'];
+const foundations = ['colors', 'typography', 'spacing', 'composition', 'icons', 'accessibility'];
 
 test('offline reference loads every view without network or script errors', async ({
   page,
@@ -48,9 +47,13 @@ test('offline reference loads every view without network or script errors', asyn
       await page.evaluate((hash) => {
         location.hash = hash;
       }, `/components/${id}/${view}`);
-      await expect(
-        page.locator('.docs-page-header').getByRole('tab', { selected: true }),
-      ).toHaveText(view[0].toUpperCase() + view.slice(1));
+      if (['chips', 'disclosures'].includes(id)) {
+        await expect(page.locator('.docs-page-header').getByRole('tab')).toHaveCount(0);
+      } else {
+        await expect(
+          page.locator('.docs-page-header').getByRole('tab', { selected: true }),
+        ).toHaveText(view[0].toUpperCase() + view.slice(1));
+      }
       if (view === 'preview') await expect(page.locator('.docs-preview')).toHaveCount(1);
     }
   }
@@ -58,7 +61,7 @@ test('offline reference loads every view without network or script errors', asyn
     await page.evaluate((hash) => {
       location.hash = hash;
     }, `/foundations/${id}`);
-    await expect(page.locator('.docs-preview')).toHaveCount(1);
+    await expect(page.locator('.docs-preview')).toHaveCount(id === 'composition' ? 0 : 1);
   }
   await page.evaluate(() => {
     location.hash = '/getting-started';

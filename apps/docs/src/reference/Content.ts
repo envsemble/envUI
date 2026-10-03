@@ -3,6 +3,7 @@ import type { Reference } from './Types';
 export const contentReferences: Reference[] = [
   {
     id: 'chips',
+    presentation: 'compact',
     title: 'Info chips',
     group: 'Content & guidance',
     summary: 'Read-only metadata beside related content.',
@@ -21,6 +22,7 @@ export const contentReferences: Reference[] = [
   },
   {
     id: 'disclosures',
+    presentation: 'compact',
     title: 'Disclosure notes',
     group: 'Content & guidance',
     summary: 'Keep optional details collapsed until needed.',
@@ -38,6 +40,6 @@ export const contentReferences: Reference[] = [
       'Keep a disclosure title on one line. Put secondary guidance behind the disclosure and essential instructions beside the task.',
       'Use the native disclosure interaction. Keep labels short enough for the available width.',
     ],
-    related: ['chips', 'typography', 'input'],
+    related: ['chips', 'typography', 'fields'],
   },
 ];

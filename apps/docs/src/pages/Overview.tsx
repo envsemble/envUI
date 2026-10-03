@@ -34,7 +34,7 @@ export function Overview({ actions }: { actions?: ReactNode }) {
         <Text as="h2" variant="page-heading" id="overview-components">
           Components
         </Text>
-        <Catalogue nested />
+        <Catalogue />
       </Stack>
     </Stack>
   );

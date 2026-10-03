@@ -8,7 +8,10 @@ export function PageNavigation({ path, view }: { path: string; view: ReferenceVi
   if (index === -1) return null;
   const previous = documentationPages[index - 1];
   const next = documentationPages[index + 1];
-  const destination = (path: string) => (findReferencePage(path) ? `${path}/${view}` : path);
+  const destination = (path: string) => {
+    const page = findReferencePage(path);
+    return page && !page.reference.presentation ? `${path}/${view}` : path;
+  };
   return (
     <nav className="docs-page-navigation" aria-label="Previous and next content">
       <div className="docs-page-navigation-side docs-page-navigation-previous">

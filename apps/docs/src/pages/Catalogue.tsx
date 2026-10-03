@@ -2,14 +2,12 @@ import { Text, Card, Stack } from '@envsemble/envui';
 import { references, componentGroups } from '../Reference';
 import { getComponentIcon } from '../navigation/TopicIcons';
 
-export function Catalogue({ nested = false }: { nested?: boolean }) {
-  const GroupHeading = nested ? 'h3' : 'h2';
-  const Heading = nested ? 'h4' : 'h3';
+export function Catalogue() {
   return (
     <Stack gap={7}>
       {componentGroups.map((group) => (
         <Stack as="section" gap={5} key={group}>
-          <Text as={GroupHeading} variant="section-heading">
+          <Text as="h3" variant="section-heading">
             {group}
           </Text>
           <div className="docs-catalogue-grid">
@@ -20,14 +18,14 @@ export function Catalogue({ nested = false }: { nested?: boolean }) {
                 return (
                   <Card
                     key={ref.id}
-                    href={`#/components/${ref.id}/preview`}
+                    href={`#/components/${ref.id}${ref.presentation ? '' : '/preview'}`}
                     aria-labelledby={`catalogue-${ref.id}-title`}
                     aria-describedby={ref.summary ? `catalogue-${ref.id}-description` : undefined}
                   >
                     <Stack align="center" className="docs-catalogue-content">
                       <Icon width="1.5rem" height="1.5rem" aria-hidden="true" />
                       <Stack gap={2} align="center">
-                        <Text as={Heading} variant="page-heading" id={`catalogue-${ref.id}-title`}>
+                        <Text as="h4" variant="page-heading" id={`catalogue-${ref.id}-title`}>
                           {ref.title}
                         </Text>
                         {ref.summary && (

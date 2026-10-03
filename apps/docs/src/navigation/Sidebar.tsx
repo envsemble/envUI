@@ -67,7 +67,7 @@ export function Sidebar({ routePath, page }: { routePath: string; page?: Referen
                   <NavigationItem
                     key={item.id}
                     size="compact"
-                    href={`#/components/${item.id}/preview`}
+                    href={`#/components/${item.id}${item.presentation ? '' : '/preview'}`}
                     selected={reference?.id === item.id}
                     icon={<Icon />}
                   >

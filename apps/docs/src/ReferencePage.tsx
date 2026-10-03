@@ -10,6 +10,60 @@ import {
 import { FoundationPreview } from './Foundations';
 import { ComponentPreview } from './Previews';
 import { PageHeader } from './PageHeader';
+import type { Reference } from './Reference';
+
+function Guidelines({ reference }: { reference: Reference }) {
+  return (
+    <Stack as="section">
+      <Text as="h2" variant="page-heading">
+        Design & behavior
+      </Text>
+      {reference.guidelines.map((text) => (
+        <Text key={text} tone="muted">
+          {text}
+        </Text>
+      ))}
+    </Stack>
+  );
+}
+
+function Usage({ reference }: { reference: Reference }) {
+  const sections = reference.usage ?? [
+    { title: 'React usage', example: reference.example, props: reference.props },
+  ];
+  return (
+    <>
+      {sections.map((section) => (
+        <Stack as="section" key={section.title}>
+          <Text as="h2" variant="page-heading">
+            {section.title}
+          </Text>
+          <Code>{section.example}</Code>
+          <Text as="h3" variant="section-heading">
+            Props & contracts
+          </Text>
+          <table className="docs-props">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Contract</th>
+              </tr>
+            </thead>
+            <tbody>
+              {section.props.map(([name, contract]) => (
+                <tr key={name}>
+                  <th>{name}</th>
+                  <td>{contract}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Stack>
+      ))}
+      <Text variant="caption">TypeScript declarations provide the complete public API.</Text>
+    </>
+  );
+}
 
 function RelatedTopics({ page }: { page: ReferencePage }) {
   const related = (page.reference.related ?? []).flatMap((id) => {
@@ -25,7 +79,9 @@ function RelatedTopics({ page }: { page: ReferencePage }) {
       <Stack gap={2}>
         {related.map((item) => (
           <Text key={item.path}>
-            <a href={`#/${item.path}/guidelines`}>{item.reference.title}</a>
+            <a href={`#/${item.path}${item.reference.presentation ? '' : '/guidelines'}`}>
+              {item.reference.title}
+            </a>
           </Text>
         ))}
       </Stack>
@@ -46,19 +102,48 @@ export function ReferenceContent({
   actions: ReactNode;
 }) {
   const { reference } = page;
+  const breadcrumb =
+    page.section === 'Foundations' ? 'Foundations' : `Components / ${reference.group}`;
+  if (reference.presentation) {
+    return (
+      <>
+        <PageHeader title={reference.title} breadcrumb={breadcrumb} actions={actions} />
+        {reference.presentation === 'compact' && (
+          <ComponentPreview key={resetVersion} id={reference.id} />
+        )}
+        <div className="docs-article">
+          {reference.presentation === 'guide' ? (
+            reference.sections?.map((section) => (
+              <Stack as="section" key={section.title}>
+                <Text as="h2" variant="page-heading">
+                  {section.title}
+                </Text>
+                {section.paragraphs.map((text) => (
+                  <Text key={text} tone="muted">
+                    {text}
+                  </Text>
+                ))}
+                {section.example && <Code>{section.example}</Code>}
+              </Stack>
+            ))
+          ) : (
+            <>
+              <Guidelines reference={reference} />
+              <Usage reference={reference} />
+            </>
+          )}
+          <RelatedTopics page={page} />
+        </div>
+      </>
+    );
+  }
   return (
     <Tabs
       key={page.path}
       aria-label={`${reference.title} reference views`}
       className="docs-reference-tabs"
       renderList={(list) => (
-        <PageHeader
-          title={reference.title}
-          breadcrumb={
-            page.section === 'Foundations' ? 'Foundations' : `Components / ${reference.group}`
-          }
-          actions={actions}
-        >
+        <PageHeader title={reference.title} breadcrumb={breadcrumb} actions={actions}>
           {list}
         </PageHeader>
       )}
@@ -78,50 +163,12 @@ export function ReferenceContent({
             )
           ) : item.id === 'guidelines' ? (
             <div className="docs-article">
-              <Stack as="section">
-                <Text as="h2" variant="page-heading">
-                  Design & behavior
-                </Text>
-                {reference.guidelines.map((text) => (
-                  <Text key={text} tone="muted">
-                    {text}
-                  </Text>
-                ))}
-              </Stack>
+              <Guidelines reference={reference} />
               <RelatedTopics page={page} />
             </div>
           ) : (
             <div className="docs-article">
-              <Stack as="section">
-                <Text as="h2" variant="page-heading">
-                  React usage
-                </Text>
-                <Code>{reference.example}</Code>
-              </Stack>
-              <Stack as="section">
-                <Text as="h2" variant="page-heading">
-                  Props & contracts
-                </Text>
-                <table className="docs-props">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Contract</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {reference.props.map(([name, contract]) => (
-                      <tr key={name}>
-                        <th>{name}</th>
-                        <td>{contract}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <Text variant="caption">
-                  TypeScript declarations provide the complete public API.
-                </Text>
-              </Stack>
+              <Usage reference={reference} />
               <RelatedTopics page={page} />
               <Text tone="muted">
                 <a href="#/getting-started">Setup, local edits and version updates</a>

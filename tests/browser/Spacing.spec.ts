@@ -3,9 +3,7 @@ import { test, expect } from '@playwright/test';
 const components = [
   'layout',
   'buttons',
-  'icon-buttons',
-  'input',
-  'textarea',
+  'fields',
   'checkbox',
   'switch',
   'radio',
@@ -13,13 +11,14 @@ const components = [
   'navigation',
   'rows',
   'cards',
-  'notes',
+  'chips',
+  'disclosures',
   'empty-state',
   'loading',
   'toasts',
   'dialogs',
 ];
-const foundations = ['colors', 'typography', 'spacing', 'icons', 'responsive', 'motion'];
+const foundations = ['colors', 'typography', 'spacing', 'composition', 'icons', 'accessibility'];
 
 test('public composition owns spacing and content-fit sizing without documentation CSS', async ({
   page,
@@ -97,7 +96,9 @@ test('all documentation views retain explicit content gaps and a single preview'
     'components',
     ...foundations.map((id) => `foundations/${id}`),
     ...components.flatMap((id) =>
-      ['preview', 'guidelines', 'usage'].map((view) => `components/${id}/${view}`),
+      ['chips', 'disclosures'].includes(id)
+        ? [`components/${id}`]
+        : ['preview', 'guidelines', 'usage'].map((view) => `components/${id}/${view}`),
     ),
   ];
   for (const width of [1920, 960]) {
@@ -141,7 +142,7 @@ test('all documentation views retain explicit content gaps and a single preview'
       expect(result, `${width}: ${route}`).toEqual([]);
       if (
         width === 1920 &&
-        ['foundations/motion', 'foundations/responsive', 'foundations/colors'].includes(route)
+        ['foundations/accessibility', 'foundations/spacing', 'foundations/colors'].includes(route)
       ) {
         await page
           .locator('.docs-preview')

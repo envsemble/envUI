@@ -13,12 +13,12 @@ import {
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
 
-export function InputPreview() {
+function InputExamples() {
   const [emptyProjectName, setEmptyProjectName] = useState('');
   const [projectName, setProjectName] = useState('Autumn release');
   return (
-    <Preview>
-      <Example title="Interactive field" size="field">
+    <>
+      <Example title="Single-line input" size="field">
         <Input
           label="Project name"
           name="project"
@@ -72,18 +72,18 @@ export function InputPreview() {
           </Specimen>
         </SpecimenGrid>
       </Example>
-    </Preview>
+    </>
   );
 }
 
-export function TextareaPreview() {
+function TextareaExamples() {
   const [emptyDescription, setEmptyDescription] = useState('');
   const [projectDescription, setProjectDescription] = useState(
     'Shared plans for the next release.',
   );
   return (
-    <Preview>
-      <Example title="Interactive description" size="field">
+    <>
+      <Example title="Multiline textarea" size="field">
         <Textarea
           label="Description"
           rows={4}
@@ -128,6 +128,15 @@ export function TextareaPreview() {
           </Specimen>
         </SpecimenGrid>
       </Example>
+    </>
+  );
+}
+
+export function TextFieldsPreview() {
+  return (
+    <Preview>
+      <InputExamples />
+      <TextareaExamples />
     </Preview>
   );
 }

@@ -19,4 +19,16 @@ export type Reference = {
   props: [string, string][];
   guidelines: string[];
   related?: string[];
+  /** Small contracts stay on one page; guides use prose and complete examples. */
+  presentation?: 'compact' | 'guide';
+  usage?: {
+    title: string;
+    example: string;
+    props: [string, string][];
+  }[];
+  sections?: {
+    title: string;
+    paragraphs: string[];
+    example?: string;
+  }[];
 };

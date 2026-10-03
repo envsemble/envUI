@@ -21,10 +21,8 @@ const controlStates = [
   { title: 'Disabled', className: 'docs-force-4', disabled: true },
 ];
 
-function ButtonMatrix({ iconOnly = false }: { iconOnly?: boolean }) {
-  const examples = iconOnly
-    ? [{ variant: 'primary', label: 'Circular icon' } as const]
-    : buttonVariants;
+function ButtonMatrix() {
+  const examples = [...buttonVariants, { variant: 'icon', label: 'Icon button' } as const];
   return (
     <div className="docs-matrix-scroll" tabIndex={0} aria-label="Control state comparison">
       <table className="docs-matrix">
@@ -39,10 +37,10 @@ function ButtonMatrix({ iconOnly = false }: { iconOnly?: boolean }) {
         <tbody>
           {examples.map((example) => (
             <tr key={example.variant}>
-              <th>{iconOnly ? example.label : example.variant}</th>
+              <th>{example.variant === 'icon' ? example.label : example.variant}</th>
               {controlStates.map((state) => (
                 <td key={state.title}>
-                  {iconOnly ? (
+                  {example.variant === 'icon' ? (
                     <IconButton
                       className={state.className}
                       disabled={state.disabled}
@@ -117,30 +115,26 @@ export function ButtonsPreview() {
           {actionResult || 'One primary action per group'}
         </Text>
       </Example>
+      <IconButtonExamples />
     </Preview>
   );
 }
 
-export function IconButtonsPreview() {
+function IconButtonExamples() {
   const [actionResult, setActionResult] = useState('');
   return (
-    <Preview>
-      <Example title="Circular control & states" size="wide">
-        <ButtonMatrix iconOnly />
-      </Example>
-      <Example title="Icon actions">
-        <ActionGroup>
-          <IconButton
-            icon={<ChevronRight />}
-            aria-label="Next item"
-            onClick={() => setActionResult('Moved to next item')}
-          />
-          <IconButton icon={<Settings />} aria-label="Settings" />
-        </ActionGroup>
-        <Text variant="caption" className="docs-caption" aria-live="polite">
-          {actionResult}
-        </Text>
-      </Example>
-    </Preview>
+    <Example title="Icon buttons" caption="2.5 rem circle, neutral fill and a named action.">
+      <ActionGroup>
+        <IconButton
+          icon={<ChevronRight />}
+          aria-label="Next item"
+          onClick={() => setActionResult('Moved to next item')}
+        />
+        <IconButton icon={<Settings />} aria-label="Settings" />
+      </ActionGroup>
+      <Text variant="caption" className="docs-caption" aria-live="polite">
+        {actionResult}
+      </Text>
+    </Example>
   );
 }

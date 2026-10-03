@@ -41,7 +41,7 @@ import { Search } from '@envsemble/envui/icons/Search';
       'Match placeholders to expected content without implying a precise completion time.',
       'Announce loading once per region. Respect the operating system reduced motion preference.',
     ],
-    related: ['empty-state', 'cards', 'motion'],
+    related: ['empty-state', 'cards', 'accessibility'],
   },
   {
     id: 'toasts',
@@ -82,7 +82,7 @@ function SaveButton() {
       'Timers pause during hover, keyboard focus or an inactive window. Each placement shows three notices; queued lifetimes start on display.',
       'Keep messages and actions short. Messages stay single-line and truncate to available space. Manual Toast shares the presentation; the consumer owns its lifetime.',
     ],
-    related: ['dialogs', 'buttons', 'colors', 'motion'],
+    related: ['dialogs', 'buttons', 'colors', 'accessibility'],
   },
   {
     id: 'dialogs',
@@ -108,6 +108,6 @@ function SaveButton() {
       'The dialog traps focus, handles Escape and returns focus to the trigger. Portals preserve the originating theme.',
       'The application owns validation, saving, async work and whether completion closes the dialog.',
     ],
-    related: ['toasts', 'input', 'layout', 'motion'],
+    related: ['toasts', 'fields', 'layout', 'accessibility'],
   },
 ];

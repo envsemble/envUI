@@ -1,5 +1,4 @@
-import { Text, Stack } from '@envsemble/envui';
-import { Example, Specimen, SpecimenGrid } from '../Example';
+import { Example, SpecimenGrid } from '../Example';
 
 export function SpacingPreview() {
   return (
@@ -41,41 +40,6 @@ export function SpacingPreview() {
             </div>
           ))}
         </SpecimenGrid>
-      </Example>
-    </>
-  );
-}
-
-export function ResponsivePreview() {
-  return (
-    <>
-      <Example title="Reflowing content" size="collection">
-        <Text tone="muted">
-          These columns stack when space is limited. Text wraps within each column; no separate
-          mobile component is needed.
-        </Text>
-        <SpecimenGrid>
-          <Specimen title="Project overview">
-            <Text>Shared plans for the autumn release, with milestones and responsibilities.</Text>
-          </Specimen>
-          <Specimen title="Release notes">
-            <Text>Recent changes and upcoming work remain readable as the column narrows.</Text>
-          </Specimen>
-          <Specimen title="Team updates">
-            <Text>Keep related information together and use consistent gaps between blocks.</Text>
-          </Specimen>
-        </SpecimenGrid>
-      </Example>
-      <Example title="Content in a narrow column" size="field">
-        <Stack>
-          <Text as="h3" variant="section-heading">
-            Autumn release
-          </Text>
-          <Text>
-            Longer content wraps naturally. Let its height grow instead of fixing a height or
-            clipping text.
-          </Text>
-        </Stack>
       </Example>
     </>
   );

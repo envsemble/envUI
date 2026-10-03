@@ -36,6 +36,8 @@ Use Theme theme="light" or theme="dark". Inter, tokens and assets are included. 
 
 ### Colors & themes
 
+#### React usage
+
 ```tsx
 import { Theme, Text, useTheme } from '@envsemble/envui';
 import '@envsemble/envui/styles.css';
@@ -47,8 +49,6 @@ function ThemeLabel() {
 
 <Theme theme="dark"><ThemeLabel /></Theme>
 ```
-
-#### Props & contracts
 
 - Theme theme: Required: light or dark; scopes tokens and provides React theme context
 - Theme native props: children, ref, className, style and native div attributes
@@ -63,9 +63,11 @@ function ThemeLabel() {
 - Selected navigation mixes 13% link color with its surface. Card action strips mix 35% muted surface with the parent surface.
 - Scope content with Theme. Nested boundaries and portaled components retain the originating theme.
 
-Related: [Surface](#surface), [Buttons](#buttons), [Navigation items](#navigation-items), [Motion & accessibility](#motion--accessibility).
+Related: [Surface](#surface), [Buttons](#buttons), [Navigation items](#navigation-items), [Accessibility](#accessibility).
 
 ### Typography
+
+#### React usage
 
 ```tsx
 import { Text, Stack } from '@envsemble/envui';
@@ -76,8 +78,6 @@ import { Text, Stack } from '@envsemble/envui';
   <Text variant="caption">Updated today</Text>
 </Stack>
 ```
-
-#### Props & contracts
 
 - Text variant: body (default), page-heading, section-heading, supporting or caption
 - Text tone: Optional primary, muted or quiet override of the variant’s default color
@@ -95,6 +95,8 @@ Related: [Colors & themes](#colors--themes), [Stacks & action groups](#stacks--a
 
 ### Spacing & shape
 
+#### React usage
+
 ```tsx
 import { Surface, Stack, Text } from '@envsemble/envui';
 
@@ -104,10 +106,9 @@ import { Surface, Stack, Text } from '@envsemble/envui';
 </Surface>
 ```
 
-#### Props & contracts
-
 - Spacing steps 1–9: 0.25, 0.5, 0.75, 1, 1.5, 2, 2.5, 3 and 4 rem
 - Step 0: Removes padding or gap where the component supports it
+- Touch minimum: 2.75 rem for coarse pointers; controls can grow with content
 - Outer corners: 1.75 rem for panes, cards and the outside of a row group
 - Standard corners: 0.5 rem for inner rows, important actions, toasts and chips
 - Other shapes: Fully rounded actions/navigation; circles for icon buttons; 0.25 rem checkboxes
@@ -115,17 +116,84 @@ import { Surface, Stack, Text } from '@envsemble/envui';
 #### Guidelines
 
 - Use relative units and the shared spacing scale. The parent owns gaps; each component owns its internal padding.
+- Let text wrap and controls grow with content. The application chooses layout breakpoints; there is no separate mobile theme or component set.
 - Text has no outer margins. Cards already space direct children; Stack and ActionGroup supply other layouts.
 - Use component defaults for geometry. Choose Surface for a plain pane and Card for a content surface.
 - Grouped rows keep large outside corners and compact inside joins. Their component page owns the complete row behavior.
 
-Related: [Stacks & action groups](#stacks--action-groups), [Surface](#surface), [Cards](#cards), [Grouped rows](#grouped-rows), [Responsive layout](#responsive-layout).
+Related: [Stacks & action groups](#stacks--action-groups), [Surface](#surface), [Cards](#cards), [Grouped rows](#grouped-rows), [Composition & extension](#composition--extension).
+
+### Composition & extension
+
+#### Build from existing primitives
+
+Surface supplies fill, padding and corners. Stack supplies layout. Card combines those layers with standard content spacing. Specialized cards reuse Card.
+
+Use component props and slots for variations. Keep product data, routing and validation in the application.
+
+#### Compose one root
+
+render lets Surface and Stack share one element. Put the semantic tag on the supplied element. A custom render component must pass native props, className, style, children and ref to its root.
+
+This example produces one section with both surface and layout behavior. Place it inside the application’s Theme boundary.
+
+```tsx
+import { Surface, Stack, Text } from '@envsemble/envui';
+
+export function WorkspacePane() {
+  return (
+    <Surface tone="pane" padding={5} render={<Stack as="section" gap={4} />}>
+      <Text as="h2" variant="section-heading">Workspace</Text>
+      <Text>Shared plans for the next release.</Text>
+    </Surface>
+  );
+}
+```
+
+#### Create a product component
+
+Wrap public components to attach product meaning. Forward native props and refs so consumers retain accessible attributes and ordinary element behavior. React 19 passes ref as a prop.
+
+ProjectSummary adds product content while Card continues to own its appearance and spacing.
+
+```tsx
+import type { ComponentPropsWithRef } from 'react';
+import { Card, Text } from '@envsemble/envui';
+
+type ProjectSummaryProps = Omit<ComponentPropsWithRef<'article'>, 'title' | 'children'> & {
+  title: string;
+  description: string;
+};
+
+export function ProjectSummary({ title, description, ...props }: ProjectSummaryProps) {
+  return (
+    <Card as="article" {...props}>
+      <Text as="h3" variant="section-heading">{title}</Text>
+      <Text tone="muted">{description}</Text>
+    </Card>
+  );
+}
+```
+
+#### Extend the shared library
+
+When the same visual behavior is needed across products, add a shared variant, slot or component to envUI. Build on its existing primitives and central tokens, and document the public API.
+
+Application CSS can arrange components in a page. Changes to control appearance or interaction belong in the library. Avoid targeting private envUI markup or copying its component styles.
+
+Use the existing light and dark themes. Add intentional base colors centrally; interaction colors continue to follow the shared rule.
+
+Related: [Surface](#surface), [Stacks & action groups](#stacks--action-groups), [Cards](#cards), [Spacing & shape](#spacing--shape), [Colors & themes](#colors--themes).
 
 ### Icons & assets
+
+#### React usage
 
 ```tsx
 import { Icon, EnvUILogo, BrandLogo, Stack } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
+import logoUrl from '@envsemble/envui/assets/envUI/envUI-lockup-black.svg';
+import faviconUrl from '@envsemble/envui/assets/envUI/envUI-favicon.ico';
 
 <Stack>
   <EnvUILogo />
@@ -137,61 +205,28 @@ import { Home } from '@envsemble/envui/icons/Home';
 </Stack>
 ```
 
-#### Props & contracts
-
 - Material symbols: Explicit imports from @envsemble/envui/icons or individual icon paths
 - filled: Standalone symbols choose outline or filled; navigation and tabs manage selection fill
 - Icon label: Accessible name for a meaningful standalone SVG; omit for decoration
 - SVG props: width, height, viewBox, ref and accessible SVG attributes
 - EnvUILogo / BrandLogo: Bundled lockups; inherit context color and accept SVG props
+- Raw assets: Bundler imports from @envsemble/envui/assets/*; fixed-color SVGs and ICO favicons
 - Custom icons: Controls accept React icon content; Icon supplies optional shared SVG defaults
 
 #### Guidelines
 
 - Use the bundled official Material Symbols Rounded. Symbols load locally; no remote icon font or SVG loader is required.
+- Search the offline catalogue by name and copy its exact per-icon import. Individual imports avoid loading the full catalogue in product development.
 - Icons inherit their context color. Navigation and tabs choose selected fill automatically.
 - Decorative icons stay hidden from assistive technology. Standalone meaningful icons need labels; icon-only controls need accessible action names.
 - Use bundled brand assets rather than recreating the marks.
+- Raw envUI assets include envUI-lockup-black.svg, envUI-lockup-white.svg, envUI-favicon.ico and envUI-favicon-white.ico in assets/envUI/. The raw envsemble logo is assets/envsemble-lockup-black.svg.
 
-Related: [Icon buttons](#icon-buttons), [Navigation items](#navigation-items), [Tabs](#tabs), [Motion & accessibility](#motion--accessibility).
+Related: [Buttons](#buttons), [Navigation items](#navigation-items), [Tabs](#tabs), [Accessibility](#accessibility).
 
-### Responsive layout
+### Accessibility
 
-```tsx
-import { Stack, Text } from '@envsemble/envui';
-
-<div style={{
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 18rem), 1fr))',
-  gap: 'var(--space-6)',
-}}>
-  <Stack>
-    <Text as="h2" variant="section-heading">Project overview</Text>
-    <Text>Let content wrap within the available space.</Text>
-  </Stack>
-  <Stack>
-    <Text as="h2" variant="section-heading">Release notes</Text>
-    <Text>The application chooses when these columns stack.</Text>
-  </Stack>
-</div>
-```
-
-#### Props & contracts
-
-- ActionGroup stacked: Stacks label buttons at full group width; circular icons retain their size
-- Control minimums: 2 rem action buttons and select triggers; 2.5 rem text inputs and navigation
-- Coarse pointers: Shared 2.75 rem touch minimum; controls can grow with content
-- Layout breakpoints: Chosen by the application; no separate mobile theme or component set
-
-#### Guidelines
-
-- Reflow the layout, wrap text and let controls grow with content. Use relative units.
-- Use wrapped action rows when space permits and stacked actions when labels need more room.
-- The library adapts touch targets to input capability. The application chooses layout breakpoints; feature cards adapt to their containing block.
-
-Related: [Stacks & action groups](#stacks--action-groups), [Cards](#cards), [Text inputs](#text-inputs), [Spacing & shape](#spacing--shape).
-
-### Motion & accessibility
+#### React usage
 
 ```tsx
 import { Stack, Input, IconButton } from '@envsemble/envui';
@@ -203,29 +238,32 @@ import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 </Stack>
 ```
 
-#### Props & contracts
-
+- Library ownership: Native control semantics, connected field guidance, keyboard behavior, modal focus and toast announcements
+- Application ownership: Labels, heading structure, reading order, product validation and recovery actions
+- Keyboard: Tab / Shift+Tab move focus; Enter activates links; Enter / Space activate buttons
+- Focus ring: Shared 0.125 rem outline; preserve visible focus and logical keyboard order
+- Reduced motion: Library transitions respect prefers-reduced-motion automatically
 - Transition tokens: --motion-duration-fast (0.12 s), --motion-duration-medium (0.16 s)
 - Shared easing: --motion-ease: cubic-bezier(0.45, 0, 0.2, 1)
-- Focus ring: Shared 0.125 rem outline; keyboard order follows the visible layout
-- Reduced motion: Library transitions respect prefers-reduced-motion automatically
-- Content semantics: The application supplies meaningful labels, headings and link destinations
 
 #### Guidelines
 
-- Keep motion brief and tied to a state change. Respect reduced motion in any application animations too.
+- Use Tab and Shift+Tab to move focus. Keep a visible focus outline and a keyboard order matching the layout. Specific arrow-key and Escape behavior belongs to each component.
+- Keep motion brief and tied to a state change. Respect reduced motion in application animations too.
 - Give controls visible labels and icon actions accessible names. Preserve native form behavior and disabled states.
 - Use semantic headings, meaningful links and a keyboard order that follows the visible layout.
 - Library components handle their focus, keyboard and announcement behavior. Their own pages document those contracts.
 - Validate product content and contrast in both supported themes.
 
-Related: [Text inputs](#text-inputs), [Selects](#selects), [Tabs](#tabs), [Dialogs](#dialogs), [Toasts](#toasts).
+Related: [Text fields](#text-fields), [Selects](#selects), [Tabs](#tabs), [Dialogs](#dialogs), [Toasts](#toasts).
 
 ## Layout & surfaces
 
 ### Stacks & action groups
 
 Use Stack for related content and ActionGroup for buttons.
+
+#### React usage
 
 ```tsx
 import { Stack, ActionGroup, Button, Text } from '@envsemble/envui';
@@ -247,8 +285,6 @@ import { Stack, ActionGroup, Button, Text } from '@envsemble/envui';
 </ActionGroup>
 ```
 
-#### Props & contracts
-
 - Stack gap: Spacing step 0–9; default 4 (1 rem); 0 removes the gap
 - Stack align: start, center, end or stretch (default)
 - Stack as: Semantic container tag; div (default), section, article, nav, main, aside, header or footer
@@ -263,13 +299,16 @@ import { Stack, ActionGroup, Button, Text } from '@envsemble/envui';
 - The parent owns space between components; components own their internal padding. Avoid individual child margins.
 - Stack uses the shared spacing scale. Step 4 is 1 rem; step 2 is 0.5 rem. Cards already space direct children by 1 rem.
 - ActionGroup uses 1 rem gaps in wrapped rows and 0.5 rem when stacked. Circular icon buttons keep their size.
+- Use wrapped action rows when space permits and stacked actions when labels need more room. The application chooses when to switch layouts.
 - With Stack render, put the semantic tag on the supplied element. Custom components must forward native props and refs.
 
-Related: [Spacing & shape](#spacing--shape), [Surface](#surface), [Cards](#cards), [Responsive layout](#responsive-layout).
+Related: [Spacing & shape](#spacing--shape), [Surface](#surface), [Cards](#cards).
 
 ### Surface
 
 A background pane without automatic spacing between children.
+
+#### React usage
 
 ```tsx
 import { Surface, Stack, Text } from '@envsemble/envui';
@@ -279,8 +318,6 @@ import { Surface, Stack, Text } from '@envsemble/envui';
   <Text tone="muted">Stack supplies the content layout on the same root.</Text>
 </Surface>
 ```
-
-#### Props & contracts
 
 - tone: pane (default), row, canvas or alternate
 - padding: Spacing step 0–9; omitted uses responsive 1–1.5 rem padding
@@ -302,6 +339,8 @@ Related: [Spacing & shape](#spacing--shape), [Stacks & action groups](#stacks--a
 
 Group related items with shared outer corners.
 
+#### React usage
+
 ```tsx
 import { GroupedRows, Row, Button } from '@envsemble/envui';
 
@@ -311,8 +350,6 @@ import { GroupedRows, Row, Button } from '@envsemble/envui';
   <Row title="Members" detail="Workspace access" />
 </GroupedRows>
 ```
-
-#### Props & contracts
 
 - GroupedRows contrast: Use alternate fill inside a muted pane
 - Row title / detail / action: General React content
@@ -329,6 +366,8 @@ Related: [Surface](#surface), [Cards](#cards), [Radio groups](#radio-groups), [S
 ### Cards
 
 A content surface with automatic spacing and optional actions.
+
+#### React usage
 
 ```tsx
 import { Card, FeatureCard, Button, Text } from '@envsemble/envui';
@@ -352,8 +391,6 @@ import { Apps } from '@envsemble/envui/icons/Apps';
   Shared context for the next release.
 </Card>
 ```
-
-#### Props & contracts
 
 - Card tone / padding: row (default), pane or canvas; optional fixed spacing step 0–9
 - Card as / href: div (default), article or button; href renders a native link
@@ -379,6 +416,8 @@ Related: [Surface](#surface), [Stacks & action groups](#stacks--action-groups), 
 
 ### Buttons
 
+#### Button
+
 ```tsx
 import { Button } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
@@ -390,24 +429,12 @@ import { Add } from '@envsemble/envui/icons/Add';
 <Button href="/projects" variant="outlined">Open projects</Button>
 ```
 
-#### Props & contracts
-
 - variant: primary (default), important, secondary, outlined, destructive
 - startIcon / endIcon: Optional React content beside the label
 - href: Render a native link with the same button appearance; omit for a native button
 - Native action props: disabled, type/onClick or anchor attributes, ref and accessible attributes
 
-#### Guidelines
-
-- Use one primary action in an action group. Reserve important emphasis for rare, consequential actions.
-- Action buttons fit their content: 2 rem minimum height, 0.875 rem text, 0.25 rem vertical and 0.75 rem horizontal padding. Labels wrap when space is limited.
-- Use fully rounded corners; important actions use 0.5 rem corners. ActionGroup provides 1 rem row gaps or 0.5 rem stacked gaps.
-- Interaction colors follow the central HSL lightness rule described in Colors & themes. State colors and disabled opacity come from the shared stylesheet.
-- Use href for destinations and onClick for actions. Disabled links have no destination and cannot activate.
-
-Related: [Icon buttons](#icon-buttons), [Stacks & action groups](#stacks--action-groups), [Colors & themes](#colors--themes), [Icons & assets](#icons--assets).
-
-### Icon buttons
+#### IconButton
 
 ```tsx
 import { IconButton } from '@envsemble/envui';
@@ -416,22 +443,29 @@ import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 <IconButton icon={<ChevronRight />} aria-label="Next item" onClick={next} />
 ```
 
-#### Props & contracts
-
 - icon: React icon content
 - aria-label: Required accessible action name
 - Native button props: disabled, type, onClick and ref
 
 #### Guidelines
 
+- Use one primary action in an action group. Reserve important emphasis for rare, consequential actions.
+- Action buttons fit their content: 2 rem minimum height, 0.875 rem text, 0.25 rem vertical and 0.75 rem horizontal padding. Labels wrap when space is limited.
+- Use fully rounded corners; important actions use 0.5 rem corners. ActionGroup provides 1 rem row gaps or 0.5 rem stacked gaps.
+- Interaction colors follow the central HSL lightness rule described in Colors & themes. State colors and disabled opacity come from the shared stylesheet.
+- Use href for destinations and onClick for actions. Disabled links have no destination and cannot activate.
 - Use a 2.5 rem circle with a centered 1.5 rem icon and 0.5 rem inset.
 - Use the tonal row fill and neutral icon. Name the action, rather than describing the icon shape.
 
-Related: [Buttons](#buttons), [Icons & assets](#icons--assets), [Motion & accessibility](#motion--accessibility).
+Related: [Stacks & action groups](#stacks--action-groups), [Colors & themes](#colors--themes), [Icons & assets](#icons--assets), [Accessibility](#accessibility).
 
 ## Forms & selection
 
-### Text inputs
+### Text fields
+
+Single-line inputs and multiline textareas share labels, guidance and states.
+
+#### Input
 
 ```tsx
 import { Input } from '@envsemble/envui';
@@ -441,19 +475,10 @@ import { Input } from '@envsemble/envui';
   hint="A name your team will recognize." required />
 ```
 
-#### Props & contracts
-
 - label / hint / error: React content; hint and error are linked to the control
 - Native input props: value/defaultValue, onChange, name, type, required, disabled, readOnly, ref
 
-#### Guidelines
-
-- Keep the label visible. Use hints for instructions and errors for a specific recovery step.
-- Inputs support empty, filled, focus, invalid, disabled and read-only states. Keep form validation and draft state in the application.
-
-Related: [Textareas](#textareas), [Selects](#selects), [Stacks & action groups](#stacks--action-groups), [Motion & accessibility](#motion--accessibility).
-
-### Textareas
+#### Textarea
 
 ```tsx
 import { Textarea } from '@envsemble/envui';
@@ -462,21 +487,22 @@ import { Textarea } from '@envsemble/envui';
   value={description} onChange={e => setDescription(e.target.value)} />
 ```
 
-#### Props & contracts
-
 - label / hint / error: React content with accessible connections
 - Native textarea props: rows, value/defaultValue, onChange, name, required, disabled, readOnly, ref
 
 #### Guidelines
 
-- Use for content that needs multiple lines. Set rows to reflect the expected amount of entry.
-- Allow resizing and preserve the same state treatment as single-line fields.
+- Use Input for one line and Textarea for multiline content. Set rows to reflect the expected amount of entry and allow resizing.
+- Keep the label visible. Use hints for instructions and errors for a specific recovery step.
+- Both support empty, filled, focus, invalid, disabled and read-only states. Validation and draft state belong to the application.
 
-Related: [Text inputs](#text-inputs), [Stacks & action groups](#stacks--action-groups), [Motion & accessibility](#motion--accessibility).
+Related: [Selects](#selects), [Stacks & action groups](#stacks--action-groups), [Accessibility](#accessibility).
 
 ### Checkboxes
 
 Independent choices; partial selection represents a group.
+
+#### React usage
 
 ```tsx
 import { Checkbox } from '@envsemble/envui';
@@ -484,8 +510,6 @@ import { Checkbox } from '@envsemble/envui';
 <Checkbox label="Include archived items" name="archived"
   checked={included} onCheckedChange={setIncluded} />
 ```
-
-#### Props & contracts
 
 - checked / defaultChecked: boolean or "mixed"
 - onCheckedChange: Receives the next boolean selection
@@ -496,11 +520,13 @@ import { Checkbox } from '@envsemble/envui';
 - Use for choices that can be selected independently. Use mixed for a partially selected parent group.
 - Keep a visible label and retain native form participation. The application computes aggregate selection.
 
-Related: [Radio groups](#radio-groups), [Switches](#switches), [Motion & accessibility](#motion--accessibility).
+Related: [Radio groups](#radio-groups), [Switches](#switches), [Accessibility](#accessibility).
 
 ### Switches
 
 Use for an on/off setting that applies immediately.
+
+#### React usage
 
 ```tsx
 import { Switch } from '@envsemble/envui';
@@ -508,8 +534,6 @@ import { Switch } from '@envsemble/envui';
 <Switch label="Enable notifications" name="notifications"
   checked={enabled} onCheckedChange={setEnabled} />
 ```
-
-#### Props & contracts
 
 - checked / defaultChecked: boolean
 - onCheckedChange: Receives the next boolean
@@ -520,11 +544,13 @@ import { Switch } from '@envsemble/envui';
 - Use for a binary setting. Label the setting consistently in either state.
 - Use checkbox semantics when the choice is part of a submitted selection.
 
-Related: [Checkboxes](#checkboxes), [Colors & themes](#colors--themes), [Motion & accessibility](#motion--accessibility).
+Related: [Checkboxes](#checkboxes), [Colors & themes](#colors--themes), [Accessibility](#accessibility).
 
 ### Radio groups
 
 Choose one option from a visible set.
+
+#### React usage
 
 ```tsx
 import { RadioGroup, Radio } from '@envsemble/envui';
@@ -535,8 +561,6 @@ import { RadioGroup, Radio } from '@envsemble/envui';
   <Radio value="private" label="Private" detail="Only invited people" />
 </RadioGroup>
 ```
-
-#### Props & contracts
 
 - RadioGroup: label, name, value/defaultValue, onValueChange, required, disabled
 - variant: inline (default) or rows
@@ -553,6 +577,8 @@ Related: [Selects](#selects), [Checkboxes](#checkboxes), [Grouped rows](#grouped
 
 Choose one option while keeping alternatives collapsed.
 
+#### React usage
+
 ```tsx
 import { Select } from '@envsemble/envui';
 
@@ -562,8 +588,6 @@ import { Select } from '@envsemble/envui';
     { value: 'private', label: 'Private' },
   ]} />
 ```
-
-#### Props & contracts
 
 - options: Array of { value, label, disabled? }
 - value / defaultValue: Selected string, or null
@@ -578,13 +602,15 @@ import { Select } from '@envsemble/envui';
 - Option focus rings appear for keyboard interaction, not pointer opening or hover.
 - Label, hint and error use the same field structure as Input and Textarea. The application owns validation.
 
-Related: [Radio groups](#radio-groups), [Text inputs](#text-inputs), [Grouped rows](#grouped-rows), [Motion & accessibility](#motion--accessibility).
+Related: [Radio groups](#radio-groups), [Text fields](#text-fields), [Grouped rows](#grouped-rows), [Accessibility](#accessibility).
 
 ## Navigation
 
 ### Navigation items
 
 Links to another destination; routing stays with the app.
+
+#### React usage
 
 ```tsx
 import { NavigationItem } from '@envsemble/envui';
@@ -595,8 +621,6 @@ import { Home } from '@envsemble/envui/icons/Home';
   Home
 </NavigationItem>
 ```
-
-#### Props & contracts
 
 - href: Renders a link; omit for a button action
 - selected / disabled: Current destination and unavailable state
@@ -618,6 +642,8 @@ Related: [Tabs](#tabs), [Direction links](#direction-links), [Icons & assets](#i
 
 Switches between content panels in the same view.
 
+#### React usage
+
 ```tsx
 import { Tabs, Button, Text } from '@envsemble/envui';
 
@@ -632,8 +658,6 @@ import { Tabs, Button, Text } from '@envsemble/envui';
   ]}
 />
 ```
-
-#### Props & contracts
 
 - items: Unique string value, button element, content and optional disabled for each tab
 - aria-label: Required name for the tab list
@@ -655,11 +679,13 @@ import { Tabs, Button, Text } from '@envsemble/envui';
 - Arrow keys move between enabled tabs; Home and End reach the ends. Use manual activation for content that takes time to load. Disabled tabs are skipped.
 - Selection and panels transition over 0.16 s with shared easing. Reduced motion removes transitions. Inactive panels are hidden and inert; keepMounted preserves their local state.
 
-Related: [Navigation items](#navigation-items), [Buttons](#buttons), [Icons & assets](#icons--assets), [Motion & accessibility](#motion--accessibility).
+Related: [Navigation items](#navigation-items), [Buttons](#buttons), [Icons & assets](#icons--assets), [Accessibility](#accessibility).
 
 ### Direction links
 
 Previous and next destinations in an ordered sequence.
+
+#### React usage
 
 ```tsx
 import { DirectionLink, ActionGroup } from '@envsemble/envui';
@@ -679,8 +705,6 @@ import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
   Getting started
 </DirectionLink>
 ```
-
-#### Props & contracts
 
 - direction: Required: previous or next; sets the direction label and icon placement
 - children: Destination text; wraps when space is limited
@@ -704,6 +728,8 @@ Related: [Navigation items](#navigation-items), [Stacks & action groups](#stacks
 
 Read-only metadata beside related content.
 
+#### React usage
+
 ```tsx
 import { InfoChip, ActionGroup } from '@envsemble/envui';
 
@@ -712,8 +738,6 @@ import { InfoChip, ActionGroup } from '@envsemble/envui';
   <InfoChip>3 members</InfoChip>
 </ActionGroup>
 ```
-
-#### Props & contracts
 
 - InfoChip: children and native span attributes
 
@@ -728,6 +752,8 @@ Related: [Cards](#cards), [Typography](#typography), [Disclosure notes](#disclos
 
 Keep optional details collapsed until needed.
 
+#### React usage
+
 ```tsx
 import { DisclosureNote, Text } from '@envsemble/envui';
 
@@ -735,8 +761,6 @@ import { DisclosureNote, Text } from '@envsemble/envui';
   <Text>Team projects are available to every workspace member.</Text>
 </DisclosureNote>
 ```
-
-#### Props & contracts
 
 - DisclosureNote title / children: One-line summary and optional detail
 - open / onToggle: Native details state and event for controlled specimen state
@@ -747,11 +771,13 @@ import { DisclosureNote, Text } from '@envsemble/envui';
 - Keep a disclosure title on one line. Put secondary guidance behind the disclosure and essential instructions beside the task.
 - Use the native disclosure interaction. Keep labels short enough for the available width.
 
-Related: [Info chips](#info-chips), [Typography](#typography), [Text inputs](#text-inputs).
+Related: [Info chips](#info-chips), [Typography](#typography), [Text fields](#text-fields).
 
 ## Feedback & overlays
 
 ### Empty states
+
+#### React usage
 
 ```tsx
 import { EmptyState, Button } from '@envsemble/envui';
@@ -761,8 +787,6 @@ import { Search } from '@envsemble/envui/icons/Search';
   description="Try a different name or clear the filters."
   action={<Button variant="secondary" onClick={clearFilters}>Clear filters</Button>} />
 ```
-
-#### Props & contracts
 
 - title / description: Heading and concise explanation
 - icon / action: Optional React content
@@ -778,6 +802,8 @@ Related: [Loading](#loading), [Cards](#cards), [Buttons](#buttons).
 
 Announces loading and reserves space for incoming content.
 
+#### React usage
+
 ```tsx
 import { LoadingState, Skeleton } from '@envsemble/envui';
 
@@ -788,8 +814,6 @@ import { LoadingState, Skeleton } from '@envsemble/envui';
 </LoadingState>
 ```
 
-#### Props & contracts
-
 - Skeleton width / height: CSS dimensions appropriate for anticipated content
 - LoadingState label / children: Accessible loading announcement and visual placeholders
 
@@ -798,11 +822,13 @@ import { LoadingState, Skeleton } from '@envsemble/envui';
 - Match placeholders to expected content without implying a precise completion time.
 - Announce loading once per region. Respect the operating system reduced motion preference.
 
-Related: [Empty states](#empty-states), [Cards](#cards), [Motion & accessibility](#motion--accessibility).
+Related: [Empty states](#empty-states), [Cards](#cards), [Accessibility](#accessibility).
 
 ### Toasts
 
 Brief feedback; errors and notices with actions stay until dismissed.
+
+#### React usage
 
 ```tsx
 import { Theme, Button, ToastProvider, useToast } from '@envsemble/envui';
@@ -819,8 +845,6 @@ function SaveButton() {
 </Theme>
 ```
 
-#### Props & contracts
-
 - Toast: variant: neutral, success, info, error; message; action {label,onClick}; onDismiss
 - ToastProvider defaultPlacement: bottom-right (upward) or top-center (downward)
 - ToastProvider visibleLimit: Three visible notices per placement by default; FIFO overflow
@@ -834,11 +858,13 @@ function SaveButton() {
 - Timers pause during hover, keyboard focus or an inactive window. Each placement shows three notices; queued lifetimes start on display.
 - Keep messages and actions short. Messages stay single-line and truncate to available space. Manual Toast shares the presentation; the consumer owns its lifetime.
 
-Related: [Dialogs](#dialogs), [Buttons](#buttons), [Colors & themes](#colors--themes), [Motion & accessibility](#motion--accessibility).
+Related: [Dialogs](#dialogs), [Buttons](#buttons), [Colors & themes](#colors--themes), [Accessibility](#accessibility).
 
 ### Dialogs
 
 Use for a focused confirmation or a short form.
+
+#### React usage
 
 ```tsx
 import { Dialog, Button, Text } from '@envsemble/envui';
@@ -848,8 +874,6 @@ import { Dialog, Button, Text } from '@envsemble/envui';
   <Text>Shared plans, milestones and responsibilities for the next release.</Text>
 </Dialog>
 ```
-
-#### Props & contracts
 
 - trigger / title / description: Launch control and accessible modal labeling
 - children / actions: General content and shared controls
@@ -864,7 +888,7 @@ import { Dialog, Button, Text } from '@envsemble/envui';
 - The dialog traps focus, handles Escape and returns focus to the trigger. Portals preserve the originating theme.
 - The application owns validation, saving, async work and whether completion closes the dialog.
 
-Related: [Toasts](#toasts), [Text inputs](#text-inputs), [Stacks & action groups](#stacks--action-groups), [Motion & accessibility](#motion--accessibility).
+Related: [Toasts](#toasts), [Text fields](#text-fields), [Stacks & action groups](#stacks--action-groups), [Accessibility](#accessibility).
 
 ## Local edits and upgrades
 

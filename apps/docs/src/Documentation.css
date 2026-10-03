@@ -63,7 +63,6 @@ body {
 .docs-preview,
 .docs-article,
 .docs-overview,
-.docs-catalogue-page,
 .docs-page-navigation {
   inline-size: min(100%, var(--docs-content-width));
   margin-inline: auto;
@@ -191,10 +190,13 @@ body {
   padding: 1rem 0.75rem;
 }
 .docs-article {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
   padding: 0 var(--docs-gutter) 3rem;
 }
 .docs-article > section {
-  margin-bottom: var(--space-7);
+  margin: 0;
 }
 .docs-article p {
   max-width: 75ch;
@@ -237,8 +239,7 @@ body {
 .docs-props td {
   color: var(--color-text-muted);
 }
-.docs-overview,
-.docs-catalogue-page {
+.docs-overview {
   padding: 0 var(--docs-gutter) var(--space-8);
 }
 .docs-overview {

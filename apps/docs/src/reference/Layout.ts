@@ -43,9 +43,10 @@ export const layoutReferences: Reference[] = [
       'The parent owns space between components; components own their internal padding. Avoid individual child margins.',
       'Stack uses the shared spacing scale. Step 4 is 1 rem; step 2 is 0.5 rem. Cards already space direct children by 1 rem.',
       'ActionGroup uses 1 rem gaps in wrapped rows and 0.5 rem when stacked. Circular icon buttons keep their size.',
+      'Use wrapped action rows when space permits and stacked actions when labels need more room. The application chooses when to switch layouts.',
       'With Stack render, put the semantic tag on the supplied element. Custom components must forward native props and refs.',
     ],
-    related: ['spacing', 'surface', 'cards', 'responsive'],
+    related: ['spacing', 'surface', 'cards'],
   },
   {
     id: 'surface',

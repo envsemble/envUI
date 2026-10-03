@@ -1,4 +1,5 @@
 import type { Reference } from './Types';
+import { compositionReference } from './Composition';
 
 export const foundations: Reference[] = [
   {
@@ -27,7 +28,7 @@ function ThemeLabel() {
       'Selected navigation mixes 13% link color with its surface. Card action strips mix 35% muted surface with the parent surface.',
       'Scope content with Theme. Nested boundaries and portaled components retain the originating theme.',
     ],
-    related: ['surface', 'buttons', 'navigation', 'motion'],
+    related: ['surface', 'buttons', 'navigation', 'accessibility'],
   },
   {
     id: 'typography',
@@ -67,6 +68,7 @@ function ThemeLabel() {
     props: [
       ['Spacing steps 1–9', '0.25, 0.5, 0.75, 1, 1.5, 2, 2.5, 3 and 4 rem'],
       ['Step 0', 'Removes padding or gap where the component supports it'],
+      ['Touch minimum', '2.75 rem for coarse pointers; controls can grow with content'],
       ['Outer corners', '1.75 rem for panes, cards and the outside of a row group'],
       ['Standard corners', '0.5 rem for inner rows, important actions, toasts and chips'],
       [
@@ -76,18 +78,22 @@ function ThemeLabel() {
     ],
     guidelines: [
       'Use relative units and the shared spacing scale. The parent owns gaps; each component owns its internal padding.',
+      'Let text wrap and controls grow with content. The application chooses layout breakpoints; there is no separate mobile theme or component set.',
       'Text has no outer margins. Cards already space direct children; Stack and ActionGroup supply other layouts.',
       'Use component defaults for geometry. Choose Surface for a plain pane and Card for a content surface.',
       'Grouped rows keep large outside corners and compact inside joins. Their component page owns the complete row behavior.',
     ],
-    related: ['layout', 'surface', 'cards', 'rows', 'responsive'],
+    related: ['layout', 'surface', 'cards', 'rows', 'composition'],
   },
+  compositionReference,
   {
     id: 'icons',
     title: 'Icons & assets',
     group: 'Foundations',
     example: `import { Icon, EnvUILogo, BrandLogo, Stack } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
+import logoUrl from '@envsemble/envui/assets/envUI/envUI-lockup-black.svg';
+import faviconUrl from '@envsemble/envui/assets/envUI/envUI-favicon.ico';
 
 <Stack>
   <EnvUILogo />
@@ -107,63 +113,27 @@ import { Home } from '@envsemble/envui/icons/Home';
       ['SVG props', 'width, height, viewBox, ref and accessible SVG attributes'],
       ['EnvUILogo / BrandLogo', 'Bundled lockups; inherit context color and accept SVG props'],
       [
+        'Raw assets',
+        'Bundler imports from @envsemble/envui/assets/*; fixed-color SVGs and ICO favicons',
+      ],
+      [
         'Custom icons',
         'Controls accept React icon content; Icon supplies optional shared SVG defaults',
       ],
     ],
     guidelines: [
       'Use the bundled official Material Symbols Rounded. Symbols load locally; no remote icon font or SVG loader is required.',
+      'Search the offline catalogue by name and copy its exact per-icon import. Individual imports avoid loading the full catalogue in product development.',
       'Icons inherit their context color. Navigation and tabs choose selected fill automatically.',
       'Decorative icons stay hidden from assistive technology. Standalone meaningful icons need labels; icon-only controls need accessible action names.',
       'Use bundled brand assets rather than recreating the marks.',
+      'Raw envUI assets include envUI-lockup-black.svg, envUI-lockup-white.svg, envUI-favicon.ico and envUI-favicon-white.ico in assets/envUI/. The raw envsemble logo is assets/envsemble-lockup-black.svg.',
     ],
-    related: ['icon-buttons', 'navigation', 'tabs', 'motion'],
+    related: ['buttons', 'navigation', 'tabs', 'accessibility'],
   },
   {
-    id: 'responsive',
-    title: 'Responsive layout',
-    group: 'Foundations',
-    example: `import { Stack, Text } from '@envsemble/envui';
-
-<div style={{
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 18rem), 1fr))',
-  gap: 'var(--space-6)',
-}}>
-  <Stack>
-    <Text as="h2" variant="section-heading">Project overview</Text>
-    <Text>Let content wrap within the available space.</Text>
-  </Stack>
-  <Stack>
-    <Text as="h2" variant="section-heading">Release notes</Text>
-    <Text>The application chooses when these columns stack.</Text>
-  </Stack>
-</div>`,
-    props: [
-      [
-        'ActionGroup stacked',
-        'Stacks label buttons at full group width; circular icons retain their size',
-      ],
-      [
-        'Control minimums',
-        '2 rem action buttons and select triggers; 2.5 rem text inputs and navigation',
-      ],
-      ['Coarse pointers', 'Shared 2.75 rem touch minimum; controls can grow with content'],
-      [
-        'Layout breakpoints',
-        'Chosen by the application; no separate mobile theme or component set',
-      ],
-    ],
-    guidelines: [
-      'Reflow the layout, wrap text and let controls grow with content. Use relative units.',
-      'Use wrapped action rows when space permits and stacked actions when labels need more room.',
-      'The library adapts touch targets to input capability. The application chooses layout breakpoints; feature cards adapt to their containing block.',
-    ],
-    related: ['layout', 'cards', 'input', 'spacing'],
-  },
-  {
-    id: 'motion',
-    title: 'Motion & accessibility',
+    id: 'accessibility',
+    title: 'Accessibility',
     group: 'Foundations',
     example: `import { Stack, Input, IconButton } from '@envsemble/envui';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
@@ -173,22 +143,31 @@ import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
   <IconButton icon={<ChevronRight />} aria-label="Next project" />
 </Stack>`,
     props: [
+      [
+        'Library ownership',
+        'Native control semantics, connected field guidance, keyboard behavior, modal focus and toast announcements',
+      ],
+      [
+        'Application ownership',
+        'Labels, heading structure, reading order, product validation and recovery actions',
+      ],
+      [
+        'Keyboard',
+        'Tab / Shift+Tab move focus; Enter activates links; Enter / Space activate buttons',
+      ],
+      ['Focus ring', 'Shared 0.125 rem outline; preserve visible focus and logical keyboard order'],
+      ['Reduced motion', 'Library transitions respect prefers-reduced-motion automatically'],
       ['Transition tokens', '--motion-duration-fast (0.12 s), --motion-duration-medium (0.16 s)'],
       ['Shared easing', '--motion-ease: cubic-bezier(0.45, 0, 0.2, 1)'],
-      ['Focus ring', 'Shared 0.125 rem outline; keyboard order follows the visible layout'],
-      ['Reduced motion', 'Library transitions respect prefers-reduced-motion automatically'],
-      [
-        'Content semantics',
-        'The application supplies meaningful labels, headings and link destinations',
-      ],
     ],
     guidelines: [
-      'Keep motion brief and tied to a state change. Respect reduced motion in any application animations too.',
+      'Use Tab and Shift+Tab to move focus. Keep a visible focus outline and a keyboard order matching the layout. Specific arrow-key and Escape behavior belongs to each component.',
+      'Keep motion brief and tied to a state change. Respect reduced motion in application animations too.',
       'Give controls visible labels and icon actions accessible names. Preserve native form behavior and disabled states.',
       'Use semantic headings, meaningful links and a keyboard order that follows the visible layout.',
       'Library components handle their focus, keyboard and announcement behavior. Their own pages document those contracts.',
       'Validate product content and contrast in both supported themes.',
     ],
-    related: ['input', 'select', 'tabs', 'dialogs', 'toasts'],
+    related: ['fields', 'select', 'tabs', 'dialogs', 'toasts'],
   },
 ];

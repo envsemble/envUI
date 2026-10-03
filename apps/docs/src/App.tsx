@@ -5,7 +5,6 @@ import { LightMode } from '@envsemble/envui/icons/LightMode';
 import { findReferencePage, referenceViews } from './Documentation';
 import { ReferenceContent } from './ReferencePage';
 import { PageHeader } from './PageHeader';
-import { Catalogue } from './pages/Catalogue';
 import { GettingStarted } from './pages/GettingStarted';
 import { Overview } from './pages/Overview';
 import { Sidebar } from './navigation/Sidebar';
@@ -28,12 +27,12 @@ export default function App() {
     reference?.title ??
     (routePath === 'getting-started'
       ? 'Getting started'
-      : routePath === 'components'
-        ? 'Components'
-        : routePath === 'overview'
-          ? 'envUI'
-          : 'Page not found');
-  const contentRoute = page?.path ?? route;
+      : routePath === 'overview'
+        ? 'envUI'
+        : 'Page not found');
+  const contentRoute = page
+    ? `${page.path}${route.includes('?') ? `?${route.split('?')[1]}` : ''}`
+    : route;
   useEffect(() => {
     document.title = title === 'envUI' ? 'envUI' : `${title} · envUI`;
     mainElement.current?.focus({ preventScroll: true });
@@ -71,12 +70,6 @@ export default function App() {
       />
     );
   else if (routePath === 'getting-started') content = <GettingStarted />;
-  else if (routePath === 'components')
-    content = (
-      <div className="docs-catalogue-page">
-        <Catalogue />
-      </div>
-    );
   else if (isOverview) content = <Overview actions={controls} />;
   else
     content = (

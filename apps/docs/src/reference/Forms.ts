@@ -1,48 +1,51 @@
 import type { Reference } from './Types';
 
-export const formsReferences: Reference[] = [
-  {
-    id: 'input',
-    title: 'Text inputs',
-    group: 'Forms & selection',
-    example: `import { Input } from '@envsemble/envui';
+const inputUsage = {
+  title: 'Input',
+  example: `import { Input } from '@envsemble/envui';
 
 <Input label="Project name" name="project" value={name}
   onChange={event => setName(event.target.value)}
   hint="A name your team will recognize." required />`,
-    props: [
-      ['label / hint / error', 'React content; hint and error are linked to the control'],
-      [
-        'Native input props',
-        'value/defaultValue, onChange, name, type, required, disabled, readOnly, ref',
-      ],
+  props: [
+    ['label / hint / error', 'React content; hint and error are linked to the control'],
+    [
+      'Native input props',
+      'value/defaultValue, onChange, name, type, required, disabled, readOnly, ref',
     ],
-    guidelines: [
-      'Keep the label visible. Use hints for instructions and errors for a specific recovery step.',
-      'Inputs support empty, filled, focus, invalid, disabled and read-only states. Keep form validation and draft state in the application.',
-    ],
-    related: ['textarea', 'select', 'layout', 'motion'],
-  },
-  {
-    id: 'textarea',
-    title: 'Textareas',
-    group: 'Forms & selection',
-    example: `import { Textarea } from '@envsemble/envui';
+  ],
+} satisfies NonNullable<Reference['usage']>[number];
+
+const textareaUsage = {
+  title: 'Textarea',
+  example: `import { Textarea } from '@envsemble/envui';
 
 <Textarea label="Description" name="description" rows={4}
   value={description} onChange={e => setDescription(e.target.value)} />`,
-    props: [
-      ['label / hint / error', 'React content with accessible connections'],
-      [
-        'Native textarea props',
-        'rows, value/defaultValue, onChange, name, required, disabled, readOnly, ref',
-      ],
+  props: [
+    ['label / hint / error', 'React content with accessible connections'],
+    [
+      'Native textarea props',
+      'rows, value/defaultValue, onChange, name, required, disabled, readOnly, ref',
     ],
+  ],
+} satisfies NonNullable<Reference['usage']>[number];
+
+export const formsReferences: Reference[] = [
+  {
+    id: 'fields',
+    title: 'Text fields',
+    group: 'Forms & selection',
+    summary: 'Single-line inputs and multiline textareas share labels, guidance and states.',
+    example: inputUsage.example,
+    props: inputUsage.props,
+    usage: [inputUsage, textareaUsage],
     guidelines: [
-      'Use for content that needs multiple lines. Set rows to reflect the expected amount of entry.',
-      'Allow resizing and preserve the same state treatment as single-line fields.',
+      'Use Input for one line and Textarea for multiline content. Set rows to reflect the expected amount of entry and allow resizing.',
+      'Keep the label visible. Use hints for instructions and errors for a specific recovery step.',
+      'Both support empty, filled, focus, invalid, disabled and read-only states. Validation and draft state belong to the application.',
     ],
-    related: ['input', 'layout', 'motion'],
+    related: ['select', 'layout', 'accessibility'],
   },
   {
     id: 'checkbox',
@@ -62,7 +65,7 @@ export const formsReferences: Reference[] = [
       'Use for choices that can be selected independently. Use mixed for a partially selected parent group.',
       'Keep a visible label and retain native form participation. The application computes aggregate selection.',
     ],
-    related: ['radio', 'switch', 'motion'],
+    related: ['radio', 'switch', 'accessibility'],
   },
   {
     id: 'switch',
@@ -82,7 +85,7 @@ export const formsReferences: Reference[] = [
       'Use for a binary setting. Label the setting consistently in either state.',
       'Use checkbox semantics when the choice is part of a submitted selection.',
     ],
-    related: ['checkbox', 'colors', 'motion'],
+    related: ['checkbox', 'colors', 'accessibility'],
   },
   {
     id: 'radio',
@@ -135,6 +138,6 @@ export const formsReferences: Reference[] = [
       'Option focus rings appear for keyboard interaction, not pointer opening or hover.',
       'Label, hint and error use the same field structure as Input and Textarea. The application owns validation.',
     ],
-    related: ['radio', 'input', 'rows', 'motion'],
+    related: ['radio', 'fields', 'rows', 'accessibility'],
   },
 ];

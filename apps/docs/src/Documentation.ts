@@ -40,11 +40,23 @@ export function findReferencePage(path: string) {
 /** Keep downloaded references and old bookmarks working after topic consolidation. */
 export function normalizeRoute(route: string): string {
   const [originalPath, ...query] = route.split('?');
+  if (originalPath === 'components') {
+    return `overview?section=overview-components${query.length ? `&${query.join('?')}` : ''}`;
+  }
   const path = originalPath
     .replace(/^components\/text(?=\/|$)/, 'foundations/typography')
-    .replace(/^components\/notes(?=\/|$)/, 'components/disclosures');
+    .replace(/^components\/notes(?=\/|$)/, 'components/disclosures')
+    .replace(/^components\/icon-buttons(?=\/|$)/, 'components/buttons')
+    .replace(/^components\/(input|textarea)(?=\/|$)/, 'components/fields')
+    .replace(/^foundations\/responsive(?=\/|$)/, 'foundations/spacing')
+    .replace(/^foundations\/motion(?=\/|$)/, 'foundations/accessibility');
   const page = findReferencePage(path);
   const requestedView = path.split('/')[2];
   const view = referenceViews.some((item) => item.id === requestedView) ? requestedView : 'preview';
-  return `${page ? `${page.path}/${view}` : path}${query.length ? `?${query.join('?')}` : ''}`;
+  const destination = page
+    ? page.reference.presentation
+      ? page.path
+      : `${page.path}/${view}`
+    : path;
+  return `${destination}${query.length ? `?${query.join('?')}` : ''}`;
 }

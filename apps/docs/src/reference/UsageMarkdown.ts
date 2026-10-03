@@ -2,6 +2,27 @@ import { setupCode, registryCode, installCode } from './Setup';
 import { componentGroups } from './Types';
 import { foundations } from './Foundations';
 import { references } from './Components';
+import type { Reference } from './Types';
+
+function renderReferenceContent(ref: Reference): string {
+  if (ref.presentation === 'guide') {
+    return (ref.sections ?? [])
+      .map(
+        ({ title, paragraphs, example }) =>
+          `#### ${title}\n\n${paragraphs.join('\n\n')}\n${example ? `\n\`\`\`tsx\n${example}\n\`\`\`\n` : ''}`,
+      )
+      .join('\n');
+  }
+  const usage = ref.usage ?? [{ title: 'React usage', example: ref.example, props: ref.props }];
+  return (
+    usage
+      .map(
+        ({ title, example, props }) =>
+          `#### ${title}\n\n\`\`\`tsx\n${example}\n\`\`\`\n\n${props.map(([name, value]) => `- ${name}: ${value}`).join('\n')}\n`,
+      )
+      .join('\n') + `\n#### Guidelines\n\n${ref.guidelines.map((text) => `- ${text}`).join('\n')}\n`
+  );
+}
 
 export function renderUsageMarkdown(): string {
   const head = `# @envsemble/envui usage
@@ -51,7 +72,7 @@ Use Theme theme="light" or theme="dark". Inter, tokens and assets are included. 
                   .replace(/ /g, '-');
                 return [`[${item.title}](#${anchor})`];
               });
-              return `\n### ${ref.title}\n\n${ref.summary ? `${ref.summary}\n\n` : ''}${'```tsx'}\n${ref.example}\n${'```'}\n\n#### Props & contracts\n\n${ref.props.map(([name, value]) => `- ${name}: ${value}`).join('\n')}\n\n#### Guidelines\n\n${ref.guidelines.map((text) => `- ${text}`).join('\n')}\n${related.length ? `\nRelated: ${related.join(', ')}.\n` : ''}`;
+              return `\n### ${ref.title}\n\n${ref.summary ? `${ref.summary}\n\n` : ''}${renderReferenceContent(ref)}${related.length ? `\nRelated: ${related.join(', ')}.\n` : ''}`;
             })
             .join(''),
       )
