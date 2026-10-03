@@ -47,7 +47,7 @@ export function MarkdownLinkDialog({
           label="URL or path"
           value={href}
           error={error || undefined}
-          placeholder="https://example.com or /devices/router-a"
+          placeholder="https://example.com or /documents/example"
           onChange={(event) => {
             setHref(event.target.value);
             setError('');
