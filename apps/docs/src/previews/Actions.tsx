@@ -6,6 +6,7 @@ import { Delete } from '@envsemble/envui/icons/Delete';
 import { Settings } from '@envsemble/envui/icons/Settings';
 import { Example } from './Example';
 import { Preview } from './Preview';
+import { controlStates } from './InteractionStates';
 
 const buttonVariants = [
   { variant: 'primary', label: 'Continue', icon: ChevronRight },
@@ -20,13 +21,6 @@ const buttonForms = [
   { value: 'trailing', title: 'Trailing icon' },
   { value: 'icon', title: 'Icon only' },
 ] as const;
-const controlStates = [
-  { title: 'Default', className: 'docs-force-0', disabled: false },
-  { title: 'Hover', className: 'docs-force-1', disabled: false },
-  { title: 'Pressed', className: 'docs-force-2', disabled: false },
-  { title: 'Keyboard focus', className: 'docs-force-3', disabled: false },
-  { title: 'Disabled', className: 'docs-force-4', disabled: true },
-];
 
 function ButtonSample({
   example,
@@ -142,7 +136,7 @@ export function ButtonsPreview() {
         <ButtonVariants />
       </Example>
       <Example size="wide">
-        <details className="docs-button-states">
+        <details className="docs-interaction-states">
           <summary>Interaction states</summary>
           <ButtonStates />
         </details>

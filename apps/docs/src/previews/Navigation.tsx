@@ -17,56 +17,115 @@ import { ArrowBack } from '@envsemble/envui/icons/ArrowBack';
 import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
+import { controlStates } from './InteractionStates';
+
+const navigationSizes = ['standard', 'compact'] as const;
+const navigationForms = [
+  { value: 'label', title: 'Label' },
+  { value: 'icon', title: 'Icon + label' },
+] as const;
+const navigationDestinations = [
+  { label: 'Home', icon: Home },
+  { label: 'Projects', icon: Apps },
+] as const;
+
+function NavigationStates() {
+  return (
+    <div
+      className="docs-matrix-scroll"
+      tabIndex={0}
+      role="region"
+      aria-label="Navigation item interaction states"
+    >
+      <table className="docs-matrix">
+        <thead>
+          <tr>
+            <th scope="col">Selection</th>
+            {controlStates.map((state) => (
+              <th scope="col" key={state.title}>
+                {state.title}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {[false, true].map((selected) => (
+            <tr key={String(selected)}>
+              <th scope="row">{selected ? 'Selected' : 'Unselected'}</th>
+              {controlStates.map((state) => (
+                <td key={state.title}>
+                  <NavigationItem
+                    selected={selected}
+                    disabled={state.disabled}
+                    className={state.className}
+                    inert
+                  >
+                    Home
+                  </NavigationItem>
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
 
 export function NavigationPreview() {
   const [selectedDestination, setSelectedDestination] = useState('Home');
   return (
     <Preview>
-      <Example title="Destination selection" size="compact">
-        <Stack>
-          {['Home', 'Projects', 'Settings'].map((label, i) => (
-            <NavigationItem
-              key={label}
-              selected={selectedDestination === label}
-              onClick={() => setSelectedDestination(label)}
-              icon={i === 0 ? <Home /> : i === 1 ? <Apps /> : <Settings />}
-            >
-              {label}
-            </NavigationItem>
-          ))}
-        </Stack>
+      <Example title="Variants" size="wide">
+        <div
+          className="docs-matrix-scroll"
+          tabIndex={0}
+          role="region"
+          aria-label="Navigation item sizes and icons"
+        >
+          <table className="docs-matrix">
+            <thead>
+              <tr>
+                <th scope="col">Size</th>
+                {navigationForms.map((form) => (
+                  <th scope="col" key={form.value}>
+                    {form.title}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {navigationSizes.map((size) => (
+                <tr key={size}>
+                  <th scope="row">{size}</th>
+                  {navigationForms.map((form) => (
+                    <td key={form.value}>
+                      <ActionGroup>
+                        {navigationDestinations.map((destination) => (
+                          <NavigationItem
+                            key={destination.label}
+                            size={size}
+                            selected={selectedDestination === destination.label}
+                            onClick={() => setSelectedDestination(destination.label)}
+                            icon={form.value === 'icon' ? <destination.icon /> : undefined}
+                          >
+                            {destination.label}
+                          </NavigationItem>
+                        ))}
+                      </ActionGroup>
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </Example>
-      <Example title="States" size="collection">
-        <SpecimenGrid size="compact">
-          <Specimen title="Default">
-            <NavigationItem icon={<Home />}>Home</NavigationItem>
-          </Specimen>
-          <Specimen title="Selected">
-            <NavigationItem icon={<Home />} selected>
-              Home
-            </NavigationItem>
-          </Specimen>
-          <Specimen title="Hover">
-            <NavigationItem icon={<Home />} className="docs-force-1">
-              Home
-            </NavigationItem>
-          </Specimen>
-          <Specimen title="Pressed">
-            <NavigationItem icon={<Home />} className="docs-force-2">
-              Home
-            </NavigationItem>
-          </Specimen>
-          <Specimen title="Keyboard focus">
-            <NavigationItem icon={<Home />} className="docs-force-3">
-              Home
-            </NavigationItem>
-          </Specimen>
-          <Specimen title="Disabled">
-            <NavigationItem icon={<Home />} disabled>
-              Home
-            </NavigationItem>
-          </Specimen>
-        </SpecimenGrid>
+      <Example size="wide">
+        <details className="docs-interaction-states">
+          <summary>Interaction states</summary>
+          <NavigationStates />
+        </details>
       </Example>
     </Preview>
   );
