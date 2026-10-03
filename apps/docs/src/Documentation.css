@@ -368,27 +368,43 @@ body {
 .docs-shape code {
   font-size: 0.75rem;
 }
-.docs-icon-pair {
+.docs-icon-toolbar {
   display: flex;
-  gap: 1.5rem;
-  color: var(--color-icon);
+  flex-wrap: wrap;
+  align-items: end;
+  gap: var(--space-5);
 }
 .docs-icon-search {
-  inline-size: min(100%, 28rem);
+  flex: 1 1 20rem;
+  min-inline-size: 0;
+  max-inline-size: 42rem;
 }
-.docs-icon-import {
-  inline-size: min(100%, 42rem);
+.docs-icon-detail-preview {
+  padding-block: var(--space-6);
 }
 .docs-icon-catalogue {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
-  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 6.5rem), 1fr));
+  gap: var(--space-2);
   list-style: none;
   margin: 0;
   padding: 0;
 }
 .docs-icon-catalogue li {
   min-inline-size: 0;
+}
+.docs-icon-tile {
+  block-size: 100%;
+  min-block-size: 7rem;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+/* Leave the source grid usable beside its non-modal inspector on desktop. */
+@media (min-width: 76rem) {
+  body:has(.docs-icon-details) .docs-main {
+    padding-inline-end: 24rem;
+  }
 }
 .docs-brand-specimen {
   width: 10rem;

@@ -1,6 +1,6 @@
 # Documentation application
 
-This React application consumes only public envUI exports. Ordinary examples use per-icon `@envsemble/envui/icons/Name` imports. The offline Icons & assets catalogue intentionally imports the full public icon barrel, renders 24 results per page, and supplies exact per-icon imports for products. Search accepts PascalCase and snake_case names. Copy falls back to selecting the import text when clipboard access is unavailable. It has no private library imports or duplicated component styles.
+This React application consumes only public envUI exports. Ordinary examples use per-icon `@envsemble/envui/icons/Name` imports. The offline Icons & assets catalogue intentionally imports the full public icon barrel, renders 72 results per page, and supplies exact per-icon imports for products. A compact icon grid puts the symbol above its label, with common icons first and an outline/filled switch. Selection opens a public Dialog with right placement and non-modal behavior; focus and dismissal remain library responsibilities. Search accepts PascalCase and snake_case names. Copy falls back to selecting the import text when clipboard access is unavailable. It has no private library imports or duplicated component styles.
 
 Run `npm run dev` from the repository root for local live development. `npm run build` produces the library and one self-contained offline documentation HTML file. All pages use hash routes, including `#/getting-started` and `#/components/buttons/preview`; the release needs no server or sibling assets.
 
