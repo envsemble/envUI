@@ -157,7 +157,9 @@ export function IconCatalogue() {
                 aria-controls={selectedName === name ? detailsId : undefined}
                 onClick={(event) => {
                   selectedButton.current = event.currentTarget;
-                  setSelectedName(name as keyof typeof symbols);
+                  setSelectedName((current) =>
+                    current === name ? null : (name as keyof typeof symbols),
+                  );
                 }}
               >
                 <Symbol filled={filled} width="2rem" height="2rem" />
