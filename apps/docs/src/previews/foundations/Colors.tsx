@@ -65,7 +65,9 @@ function ColorPalette() {
     <div ref={paletteElement} className="docs-palette">
       {colorGroups.map(([group, tokens]) => (
         <section key={group}>
-          <h2>{group}</h2>
+          <Text as="h2" variant="page-heading">
+            {group}
+          </Text>
           {tokens.map(([token, label]) => {
             const hsl = colorValues[token] || '';
             const lightness = Number(hsl.match(/([\d.]+)%\s*\)$/)?.[1] ?? 50);
@@ -104,7 +106,7 @@ function InteractionColors() {
   return (
     <Example title="Derived interaction colors" size="collection">
       <Text tone="muted">
-        Below 50% HSL lightness, add lightness; otherwise subtract it. Clamp to 0�100%.
+        Below 50% HSL lightness, add lightness; otherwise subtract it. Clamp to 0–100%.
       </Text>
       <SpecimenGrid size="compact">
         {states.map(({ label, token, shift }) => (

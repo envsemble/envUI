@@ -71,14 +71,13 @@ test('offline reference loads every view without network or script errors', asyn
 });
 
 test('single previews retain state when the theme changes and examples reset', async ({ page }) => {
-  await page.goto(`${offline}#/components/rows/preview`);
+  await page.goto(`${offline}#/components/input/preview`);
   const preview = page.locator('.docs-preview');
-  await preview.getByRole('combobox', { name: 'Row count' }).click();
-  await page.getByRole('option', { name: '5 rows', exact: true }).click();
+  const projectName = preview.getByRole('textbox', { name: 'Project name' }).first();
+  await projectName.fill('Winter release');
   await page.getByRole('button', { name: 'Switch to dark theme' }).click();
   await expect(preview).toHaveAttribute('data-env-theme', 'dark');
-  await expect(preview.getByRole('combobox', { name: 'Row count' })).toContainText('5 rows');
-  await expect(preview.locator('.docs-example').first().locator('.env-row')).toHaveCount(5);
+  await expect(projectName).toHaveValue('Winter release');
   for (const width of [1920, 1440, 960, 390]) {
     await page.setViewportSize({ width, height: 1000 });
     await expect(preview).toHaveCount(1);
@@ -87,7 +86,7 @@ test('single previews retain state when the theme changes and examples reset', a
     );
   }
   await page.getByRole('button', { name: 'Reset examples' }).click();
-  await expect(preview.getByRole('combobox', { name: 'Row count' })).toContainText('3 rows');
+  await expect(projectName).toHaveValue('Autumn release');
   await page.evaluate(() => {
     location.hash = '/components/checkbox/preview';
   });

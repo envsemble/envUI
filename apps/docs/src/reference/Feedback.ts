@@ -89,12 +89,11 @@ function SaveButton() {
     title: 'Dialogs',
     group: 'Feedback & overlays',
     summary: 'Use for a focused confirmation or a short form.',
-    example: `import { Dialog, Button, Input } from '@envsemble/envui';
+    example: `import { Dialog, Button, Text } from '@envsemble/envui';
 
-<Dialog trigger={<Button>Create project</Button>} title="Create project"
-  description="Choose a name your team will recognize."
-  closeLabel="Cancel" actions={<Button onClick={save}>Create</Button>}>
-  <Input label="Project name" value={name} onChange={e => setName(e.target.value)} />
+<Dialog trigger={<Button variant="secondary">View release</Button>}
+  title="Autumn release" description="Project details" closeLabel="Close">
+  <Text>Shared plans, milestones and responsibilities for the next release.</Text>
 </Dialog>`,
     props: [
       ['trigger / title / description', 'Launch control and accessible modal labeling'],

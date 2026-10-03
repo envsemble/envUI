@@ -17,7 +17,7 @@ import {
   DialogsPreview,
 } from './previews/Feedback';
 
-/** Select a topic; each preview owns the state shared by its two themes. */
+/** Select a topic; each preview retains its state across theme changes. */
 export function ComponentPreview({ id }: { id: string }) {
   switch (id) {
     case 'buttons':

@@ -5,15 +5,15 @@ export const foundations: Reference[] = [
     id: 'colors',
     title: 'Colors & themes',
     group: 'Foundations',
-    example: `import { Theme, Button, useTheme } from '@envsemble/envui';
+    example: `import { Theme, Text, useTheme } from '@envsemble/envui';
 import '@envsemble/envui/styles.css';
 
-function SaveButton() {
+function ThemeLabel() {
   const theme = useTheme();
-  return <Button>Save in {theme} theme</Button>;
+  return <Text>Current theme: {theme}</Text>;
 }
 
-<Theme theme="dark"><SaveButton /></Theme>`,
+<Theme theme="dark"><ThemeLabel /></Theme>`,
     props: [
       ['Theme theme', 'Required: light or dark; scopes tokens and provides React theme context'],
       ['Theme native props', 'children, ref, className, style and native div attributes'],
@@ -123,16 +123,22 @@ import { Home } from '@envsemble/envui/icons/Home';
     id: 'responsive',
     title: 'Responsive layout',
     group: 'Foundations',
-    example: `import { Card, Text, ActionGroup, Button } from '@envsemble/envui';
+    example: `import { Stack, Text } from '@envsemble/envui';
 
-<Card>
-  <Text as="h2" variant="section-heading">Autumn release</Text>
-  <Text>Let content wrap within the available space.</Text>
-  <ActionGroup stacked>
-    <Button>Save changes</Button>
-    <Button variant="secondary">Cancel</Button>
-  </ActionGroup>
-</Card>`,
+<div style={{
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 18rem), 1fr))',
+  gap: 'var(--space-6)',
+}}>
+  <Stack>
+    <Text as="h2" variant="section-heading">Project overview</Text>
+    <Text>Let content wrap within the available space.</Text>
+  </Stack>
+  <Stack>
+    <Text as="h2" variant="section-heading">Release notes</Text>
+    <Text>The application chooses when these columns stack.</Text>
+  </Stack>
+</div>`,
     props: [
       [
         'ActionGroup stacked',

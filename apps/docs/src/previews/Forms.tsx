@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import {
-  Button,
   Input,
   Textarea,
   Checkbox,
@@ -135,7 +134,13 @@ export function TextareaPreview() {
 
 export function CheckboxPreview() {
   const [includeArchived, setIncludeArchived] = useState(false);
-  const [projectSelection, setProjectSelection] = useState<boolean | 'mixed'>('mixed');
+  const [selectedChoice, setSelectedChoice] = useState(true);
+  const [selectedProjects, setSelectedProjects] = useState([true, false]);
+  const projectSelection = selectedProjects.every(Boolean)
+    ? true
+    : selectedProjects.some(Boolean)
+      ? 'mixed'
+      : false;
   return (
     <Preview>
       <Example title="Independent selection" size="collection">
@@ -149,8 +154,8 @@ export function CheckboxPreview() {
               />
               <Checkbox
                 label="Selected choice"
-                checked={!includeArchived}
-                onCheckedChange={(next) => setIncludeArchived(!next)}
+                checked={selectedChoice}
+                onCheckedChange={setSelectedChoice}
               />
             </Stack>
           </Specimen>
@@ -162,16 +167,29 @@ export function CheckboxPreview() {
           </Specimen>
         </SpecimenGrid>
       </Example>
-      <Example title="Partial selection" size="compact">
+      <Example
+        title="Partial selection"
+        size="compact"
+        caption="Select one project to make All projects partly selected."
+      >
         <Stack>
           <Checkbox
             label="All projects"
             checked={projectSelection}
-            onCheckedChange={setProjectSelection}
+            onCheckedChange={(checked) => setSelectedProjects([Boolean(checked), Boolean(checked)])}
           />
-          <Button variant="secondary" onClick={() => setProjectSelection('mixed')}>
-            Restore partial selection
-          </Button>
+          {['Autumn release', 'Winter release'].map((label, index) => (
+            <Checkbox
+              key={label}
+              label={label}
+              checked={selectedProjects[index]}
+              onCheckedChange={(checked) =>
+                setSelectedProjects((current) =>
+                  current.map((selected, i) => (i === index ? checked : selected)),
+                )
+              }
+            />
+          ))}
         </Stack>
       </Example>
     </Preview>
@@ -180,6 +198,7 @@ export function CheckboxPreview() {
 
 export function SwitchPreview() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [summariesEnabled, setSummariesEnabled] = useState(false);
   return (
     <Preview>
       <Example title="On, off & disabled" size="collection">
@@ -193,8 +212,8 @@ export function SwitchPreview() {
               />
               <Switch
                 label="Enable summaries"
-                checked={!notificationsEnabled}
-                onCheckedChange={(next) => setNotificationsEnabled(!next)}
+                checked={summariesEnabled}
+                onCheckedChange={setSummariesEnabled}
               />
             </Stack>
           </Specimen>

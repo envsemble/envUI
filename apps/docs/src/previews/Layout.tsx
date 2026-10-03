@@ -2,21 +2,14 @@ import { useState } from 'react';
 import {
   Text,
   Button,
-  IconButton,
-  InfoChip,
-  DisclosureNote,
   Card,
   Surface,
   FeatureCard,
   GroupedRows,
   Row,
-  Input,
-  Switch,
-  Select,
   Stack,
   ActionGroup,
 } from '@envsemble/envui';
-import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 import { Apps } from '@envsemble/envui/icons/Apps';
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
@@ -24,52 +17,43 @@ import { Preview } from './Preview';
 export function SurfacePreview() {
   return (
     <Preview>
-      <Example
-        title="Surface with explicit layout"
-        caption="Surface owns fill, padding and corners; Stack owns the gap."
-      >
-        <Surface tone="pane" padding={5} render={<Stack gap={5} />}>
-          <Text as="h3" variant="section-heading">
-            Workspace pane
-          </Text>
-          <Text tone="muted">Compose content with the spacing it needs.</Text>
-          <ActionGroup>
-            <Button>Continue</Button>
-            <Button variant="secondary">Cancel</Button>
-          </ActionGroup>
-        </Surface>
-      </Example>
-      <Example
-        title="Surface and Card"
-        caption="Surface sets appearance; Card also spaces its contents."
-        size="collection"
-      >
+      <Example title="Content layout" size="collection">
         <SpecimenGrid size="card">
-          <Surface tone="row">
-            <Text as="h3" variant="section-heading">
-              Plain surface
-            </Text>
-            <Text tone="muted">No automatic gap between these blocks.</Text>
-          </Surface>
-          <Card>
-            <Text as="h3" variant="section-heading">
-              Content card
-            </Text>
-            <Text tone="muted">The card spaces its direct children.</Text>
-          </Card>
+          <Specimen
+            title="Plain surface"
+            caption="Fill, padding and corners; no automatic content gaps."
+          >
+            <Surface tone="pane" padding={5}>
+              <Text>Shared workspace context.</Text>
+            </Surface>
+          </Specimen>
+          <Specimen title="With Stack" caption="Stack supplies the gap on the same root.">
+            <Surface tone="pane" padding={5} render={<Stack gap={5} />}>
+              <Text as="h3" variant="section-heading">
+                Workspace pane
+              </Text>
+              <Text tone="muted">Compose content with the spacing it needs.</Text>
+            </Surface>
+          </Specimen>
         </SpecimenGrid>
       </Example>
       <Example title="Tones and corners" size="collection">
         <SpecimenGrid size="compact">
-          <Surface tone="pane" padding={4}>
-            <Text>Pane · outer corners</Text>
-          </Surface>
-          <Surface tone="alternate" padding={4} corners="standard">
-            <Text>Alternate · standard corners</Text>
-          </Surface>
-          <Surface tone="row" padding={4} corners="pill">
-            <Text>Row · pill corners</Text>
-          </Surface>
+          <Specimen title="Pane" caption="Outer corners">
+            <Surface tone="pane" padding={4}>
+              <Text>Grouped content</Text>
+            </Surface>
+          </Specimen>
+          <Specimen title="Alternate" caption="Standard corners">
+            <Surface tone="alternate" padding={4} corners="standard">
+              <Text>Alternate fill</Text>
+            </Surface>
+          </Specimen>
+          <Specimen title="Row" caption="Pill corners">
+            <Surface tone="row" padding={4} corners="pill">
+              <Text>Muted fill</Text>
+            </Surface>
+          </Specimen>
         </SpecimenGrid>
       </Example>
     </Preview>
@@ -77,106 +61,94 @@ export function SurfacePreview() {
 }
 
 export function LayoutPreview() {
-  const [projectName, setProjectName] = useState('Autumn release');
-  const [projectDescription, setProjectDescription] = useState(
-    'Shared plans for the next release.',
-  );
   return (
     <Preview>
-      <Example
-        title="Content spacing"
-        caption="Stack uses 1 rem between related blocks."
-        size="field"
-      >
-        <Stack>
-          <Input
-            label="Project name"
-            value={projectName}
-            onChange={(e) => setProjectName(e.target.value)}
-          />
-          <Input
-            label="Supporting detail"
-            value={projectDescription}
-            onChange={(e) => setProjectDescription(e.target.value)}
-          />
-          <DisclosureNote title="Optional guidance">
-            <Text>Keep external spacing in the parent layout.</Text>
-          </DisclosureNote>
-        </Stack>
+      <Example title="Content spacing" size="collection">
+        <SpecimenGrid>
+          <Specimen title="Default gap" caption="Step 4 · 1 rem between blocks">
+            <Stack>
+              <Text as="h3" variant="section-heading">
+                Autumn release
+              </Text>
+              <Text>Shared plans for the next release.</Text>
+              <Text variant="caption">Updated today</Text>
+            </Stack>
+          </Specimen>
+          <Specimen title="Compact gap" caption="Step 2 · 0.5 rem between blocks">
+            <Stack gap={2}>
+              <Text as="h3" variant="section-heading">
+                Autumn release
+              </Text>
+              <Text>Shared plans for the next release.</Text>
+              <Text variant="caption">Updated today</Text>
+            </Stack>
+          </Specimen>
+        </SpecimenGrid>
       </Example>
-      <Example title="Action rows" caption="1 rem gap; actions wrap when needed.">
-        <ActionGroup>
-          <Button variant="secondary">Cancel</Button>
-          <Button>Save changes</Button>
-        </ActionGroup>
-      </Example>
-      <Example title="Stacked actions" caption="0.5 rem gap; label buttons fill the group.">
-        <ActionGroup stacked className="docs-narrow-actions">
-          <Button>Save changes</Button>
-          <Button variant="secondary">Cancel</Button>
-        </ActionGroup>
+      <Example title="Action groups" size="collection">
+        <SpecimenGrid>
+          <Specimen title="Wrapped row" caption="1 rem gap; actions wrap when needed.">
+            <ActionGroup>
+              <Button variant="secondary">Cancel</Button>
+              <Button>Save changes</Button>
+            </ActionGroup>
+          </Specimen>
+          <Specimen title="Stacked" caption="0.5 rem gap; label buttons fill the group.">
+            <ActionGroup stacked className="docs-narrow-actions">
+              <Button>Save changes</Button>
+              <Button variant="secondary">Cancel</Button>
+            </ActionGroup>
+          </Specimen>
+        </SpecimenGrid>
       </Example>
     </Preview>
   );
 }
 
 export function RowsPreview() {
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-
-  const [rowCount, setRowCount] = useState('3');
   const [actionResult, setActionResult] = useState('');
   return (
     <Preview>
-      <Example title="One to five rows">
-        <Select
-          label="Row count"
-          value={rowCount}
-          onValueChange={(v) => setRowCount(v ?? '3')}
-          options={['1', '2', '3', '4', '5'].map((value) => ({
-            value,
-            label: `${value} ${value === '1' ? 'row' : 'rows'}`,
-          }))}
-        />
-        <GroupedRows>
-          {Array.from({ length: Number(rowCount) }, (_, i) => (
-            <Row
-              key={i}
-              title={`Setting ${i + 1}`}
-              detail="Supporting detail"
-              action={
-                <Button
-                  variant="outlined"
-                  onClick={() => setActionResult(`Managing setting ${i + 1}`)}
-                >
-                  Manage
-                </Button>
-              }
-            />
-          ))}
-        </GroupedRows>
-        <Text variant="caption" className="docs-caption" aria-live="polite">
-          {actionResult}
-        </Text>
+      <Example title="Single and connected rows" size="collection">
+        <SpecimenGrid size="card">
+          <Specimen title="Single row" caption="Large corners on all sides">
+            <GroupedRows>
+              <Row title="Notifications" detail="Delivery preferences" />
+            </GroupedRows>
+          </Specimen>
+          <Specimen title="Connected rows" caption="Large outside corners; compact inner joins">
+            <GroupedRows>
+              <Row title="Notifications" detail="Delivery preferences" />
+              <Row title="Workspace access" detail="People and permissions" />
+              <Row title="Appearance" detail="Theme preference" />
+            </GroupedRows>
+          </Specimen>
+        </SpecimenGrid>
       </Example>
-      <Example title="Alternate background">
+      <Example title="Alternate fill">
         <GroupedRows contrast>
-          <Row
-            title="Notifications"
-            detail="Delivery preferences"
-            action={
-              <Switch
-                label="Enable notifications"
-                checked={notificationsEnabled}
-                onCheckedChange={setNotificationsEnabled}
-              />
-            }
-          />
+          <Row title="Notifications" detail="Delivery preferences" />
+          <Row title="Workspace access" detail="People and permissions" />
+        </GroupedRows>
+      </Example>
+      <Example title="Action slot">
+        <GroupedRows>
           <Row
             title="Workspace access"
             detail="People and permissions"
-            action={<IconButton icon={<ChevronRight />} aria-label="Manage workspace access" />}
+            action={
+              <Button
+                variant="outlined"
+                onClick={() => setActionResult('Managing workspace access')}
+              >
+                Manage
+              </Button>
+            }
           />
         </GroupedRows>
+        <Text variant="caption" aria-live="polite">
+          {actionResult}
+        </Text>
       </Example>
     </Preview>
   );
@@ -194,7 +166,7 @@ export function CardsPreview() {
                 Project overview
               </Text>
               <Text tone="muted">Planning and progress for the autumn release.</Text>
-              <InfoChip>Updated today</InfoChip>
+              <Text variant="caption">Updated today</Text>
             </Card>
           </Specimen>
           <Specimen title="Action strip">
@@ -248,21 +220,27 @@ export function CardsPreview() {
           </Specimen>
         </SpecimenGrid>
       </Example>
-      <Example title="Feature composition" size="wide">
-        <FeatureCard
-          icon={<Apps />}
-          title="Connected workspace"
-          description="Bring your team and tools together."
-          action={<Button>Explore</Button>}
-        />
-      </Example>
-      <Example title="Compact feature" size="field">
-        <FeatureCard
-          icon={<Apps />}
-          title="Connected workspace"
-          description="Bring your team and tools together."
-          action={<Button>Explore</Button>}
-        />
+      <Example title="Feature cards" size="collection">
+        <SpecimenGrid size="wide">
+          <Specimen title="Regular composition">
+            <FeatureCard
+              icon={<Apps />}
+              title="Connected workspace"
+              description="Bring your team and tools together."
+              action={<Button>Explore</Button>}
+            />
+          </Specimen>
+          <Specimen title="Compact composition">
+            <div className="docs-compact-feature">
+              <FeatureCard
+                icon={<Apps />}
+                title="Connected workspace"
+                description="Bring your team and tools together."
+                action={<Button>Explore</Button>}
+              />
+            </div>
+          </Specimen>
+        </SpecimenGrid>
       </Example>
     </Preview>
   );

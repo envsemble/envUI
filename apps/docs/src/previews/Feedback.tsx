@@ -2,12 +2,9 @@ import { useState } from 'react';
 import {
   Text,
   Button,
-  Card,
-  Surface,
   EmptyState,
   Skeleton,
   LoadingState,
-  Input,
   Dialog,
   Toast,
   ToastProvider,
@@ -27,6 +24,7 @@ function ManagedControls() {
     <Stack>
       <ActionGroup>
         <Button
+          variant="secondary"
           onClick={() =>
             toast.show({ variant: 'success', message: 'Changes saved', placement: 'bottom-right' })
           }
@@ -46,7 +44,7 @@ function ManagedControls() {
           Top center notice
         </Button>
         <Button
-          variant="destructive"
+          variant="secondary"
           onClick={() =>
             toast.show({
               variant: 'error',
@@ -74,11 +72,9 @@ function ManagedControls() {
 function ManagedToastExample() {
   return (
     <Example title="Managed delivery" gap={5}>
-      <Surface tone="canvas" padding={5}>
-        <ToastProvider defaultPlacement="bottom-right">
-          <ManagedControls />
-        </ToastProvider>
-      </Surface>
+      <ToastProvider defaultPlacement="bottom-right">
+        <ManagedControls />
+      </ToastProvider>
     </Example>
   );
 }
@@ -130,16 +126,14 @@ export function LoadingPreview() {
     <Preview>
       <Example title="Loading placeholders" size="collection">
         <SpecimenGrid size="card">
-          <Specimen title="Content card">
-            <Card>
-              <LoadingState label="Loading project">
-                <Stack gap={2}>
-                  <Skeleton width="38%" height="1.25rem" />
-                  <Skeleton width="100%" height="0.8rem" />
-                  <Skeleton width="72%" height="0.8rem" />
-                </Stack>
-              </LoadingState>
-            </Card>
+          <Specimen title="Text placeholders">
+            <LoadingState label="Loading project">
+              <Stack gap={2}>
+                <Skeleton width="38%" height="1.25rem" />
+                <Skeleton width="100%" height="0.8rem" />
+                <Skeleton width="72%" height="0.8rem" />
+              </Stack>
+            </LoadingState>
           </Specimen>
           <Specimen title="Rows">
             <LoadingState label="Loading settings">
@@ -191,9 +185,6 @@ export function ToastsPreview() {
                 }
               />
             ))}
-          <Button variant="secondary" onClick={() => setDismissedVariants([])}>
-            Restore examples
-          </Button>
           <Text variant="caption" className="docs-caption" aria-live="polite">
             {actionResult}
           </Text>
@@ -205,9 +196,7 @@ export function ToastsPreview() {
 }
 
 export function DialogsPreview() {
-  const [projectName, setProjectName] = useState('Autumn release');
-
-  const [activeDialog, setActiveDialog] = useState<'create' | 'delete' | null>(null);
+  const [activeDialog, setActiveDialog] = useState<'details' | 'delete' | null>(null);
   const [actionResult, setActionResult] = useState('');
   return (
     <Preview>
@@ -217,7 +206,7 @@ export function DialogsPreview() {
             <Dialog
               open={activeDialog === 'delete'}
               onOpenChange={(open) => setActiveDialog(open ? 'delete' : null)}
-              trigger={<Button variant="destructive">Delete project</Button>}
+              trigger={<Button variant="secondary">Delete project</Button>}
               title="Delete project?"
               description="This removes the project for everyone in the workspace."
               closeLabel="Cancel"
@@ -234,30 +223,16 @@ export function DialogsPreview() {
               }
             />
           </Specimen>
-          <Specimen title="Form">
+          <Specimen title="Content dialog">
             <Dialog
-              open={activeDialog === 'create'}
-              onOpenChange={(open) => setActiveDialog(open ? 'create' : null)}
-              trigger={<Button startIcon={<Add />}>Create project</Button>}
-              title="Create project"
-              description="Choose a name your team will recognize."
-              closeLabel="Cancel"
-              actions={
-                <Button
-                  onClick={() => {
-                    setActiveDialog(null);
-                    setActionResult(`Created ${projectName || 'project'}`);
-                  }}
-                >
-                  Create
-                </Button>
-              }
+              open={activeDialog === 'details'}
+              onOpenChange={(open) => setActiveDialog(open ? 'details' : null)}
+              trigger={<Button variant="secondary">View release</Button>}
+              title="Autumn release"
+              description="Project details"
+              closeLabel="Close"
             >
-              <Input
-                label="Project name"
-                value={projectName}
-                onChange={(e) => setProjectName(e.target.value)}
-              />
+              <Text>Shared plans, milestones and responsibilities for the next release.</Text>
             </Dialog>
           </Specimen>
         </SpecimenGrid>

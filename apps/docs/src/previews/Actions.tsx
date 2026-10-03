@@ -120,9 +120,8 @@ export function IconButtonsPreview() {
       <Example title="Circular control & states" size="wide">
         <ButtonMatrix iconOnly />
       </Example>
-      <Example title="With related actions">
+      <Example title="Icon actions">
         <ActionGroup>
-          <Button startIcon={<Add />}>Create item</Button>
           <IconButton
             icon={<ChevronRight />}
             aria-label="Next item"

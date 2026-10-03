@@ -37,15 +37,15 @@ Use Theme theme="light" or theme="dark". Inter, tokens and assets are included. 
 ### Colors & themes
 
 ```tsx
-import { Theme, Button, useTheme } from '@envsemble/envui';
+import { Theme, Text, useTheme } from '@envsemble/envui';
 import '@envsemble/envui/styles.css';
 
-function SaveButton() {
+function ThemeLabel() {
   const theme = useTheme();
-  return <Button>Save in {theme} theme</Button>;
+  return <Text>Current theme: {theme}</Text>;
 }
 
-<Theme theme="dark"><SaveButton /></Theme>
+<Theme theme="dark"><ThemeLabel /></Theme>
 ```
 
 #### Props & contracts
@@ -158,16 +158,22 @@ Related: [Icon buttons](#icon-buttons), [Navigation items](#navigation-items), [
 ### Responsive layout
 
 ```tsx
-import { Card, Text, ActionGroup, Button } from '@envsemble/envui';
+import { Stack, Text } from '@envsemble/envui';
 
-<Card>
-  <Text as="h2" variant="section-heading">Autumn release</Text>
-  <Text>Let content wrap within the available space.</Text>
-  <ActionGroup stacked>
-    <Button>Save changes</Button>
-    <Button variant="secondary">Cancel</Button>
-  </ActionGroup>
-</Card>
+<div style={{
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 18rem), 1fr))',
+  gap: 'var(--space-6)',
+}}>
+  <Stack>
+    <Text as="h2" variant="section-heading">Project overview</Text>
+    <Text>Let content wrap within the available space.</Text>
+  </Stack>
+  <Stack>
+    <Text as="h2" variant="section-heading">Release notes</Text>
+    <Text>The application chooses when these columns stack.</Text>
+  </Stack>
+</div>
 ```
 
 #### Props & contracts
@@ -222,20 +228,18 @@ Related: [Text inputs](#text-inputs), [Selects](#selects), [Tabs](#tabs), [Dialo
 Use Stack for related content and ActionGroup for buttons.
 
 ```tsx
-import { Card, Stack, ActionGroup, Input, Button, Text } from '@envsemble/envui';
+import { Stack, ActionGroup, Button, Text } from '@envsemble/envui';
 
-<Card>
+<Stack gap={4}>
   <Text as="h3" variant="section-heading">Project details</Text>
-  <Text>Cards space their direct children automatically.</Text>
-  <Stack gap={4}>
-    <Input label="Name" name="name" />
-    <Input label="Description" name="description" />
-  </Stack>
-  <ActionGroup>
-    <Button variant="secondary">Cancel</Button>
-    <Button>Save changes</Button>
-  </ActionGroup>
-</Card>
+  <Text>Shared plans for the next release.</Text>
+  <Text variant="caption">Updated today</Text>
+</Stack>
+
+<ActionGroup>
+  <Button variant="secondary">Cancel</Button>
+  <Button>Save changes</Button>
+</ActionGroup>
 
 <ActionGroup stacked>
   <Button>Continue</Button>
@@ -615,16 +619,16 @@ Related: [Tabs](#tabs), [Direction links](#direction-links), [Icons & assets](#i
 Switches between content panels in the same view.
 
 ```tsx
-import { Tabs, Button, Card } from '@envsemble/envui';
+import { Tabs, Button, Text } from '@envsemble/envui';
 
 <Tabs aria-label="Project views" defaultValue="preview" keepMounted
   items={[
     { value: 'preview', button: <Button>Preview</Button>,
-      content: <Card>Live preview</Card> },
+      content: <Text>Live preview</Text> },
     { value: 'guidelines', button: <Button>Guidelines</Button>,
-      content: <Card>Design guidelines</Card> },
+      content: <Text>Design guidelines</Text> },
     { value: 'usage', button: <Button>Usage</Button>,
-      content: <Card>React usage</Card> },
+      content: <Text>React usage</Text> },
   ]}
 />
 ```
@@ -837,12 +841,11 @@ Related: [Dialogs](#dialogs), [Buttons](#buttons), [Colors & themes](#colors--th
 Use for a focused confirmation or a short form.
 
 ```tsx
-import { Dialog, Button, Input } from '@envsemble/envui';
+import { Dialog, Button, Text } from '@envsemble/envui';
 
-<Dialog trigger={<Button>Create project</Button>} title="Create project"
-  description="Choose a name your team will recognize."
-  closeLabel="Cancel" actions={<Button onClick={save}>Create</Button>}>
-  <Input label="Project name" value={name} onChange={e => setName(e.target.value)} />
+<Dialog trigger={<Button variant="secondary">View release</Button>}
+  title="Autumn release" description="Project details" closeLabel="Close">
+  <Text>Shared plans, milestones and responsibilities for the next release.</Text>
 </Dialog>
 ```
 

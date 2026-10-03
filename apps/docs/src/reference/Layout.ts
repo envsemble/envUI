@@ -6,20 +6,18 @@ export const layoutReferences: Reference[] = [
     title: 'Stacks & action groups',
     group: 'Layout & surfaces',
     summary: 'Use Stack for related content and ActionGroup for buttons.',
-    example: `import { Card, Stack, ActionGroup, Input, Button, Text } from '@envsemble/envui';
+    example: `import { Stack, ActionGroup, Button, Text } from '@envsemble/envui';
 
-<Card>
+<Stack gap={4}>
   <Text as="h3" variant="section-heading">Project details</Text>
-  <Text>Cards space their direct children automatically.</Text>
-  <Stack gap={4}>
-    <Input label="Name" name="name" />
-    <Input label="Description" name="description" />
-  </Stack>
-  <ActionGroup>
-    <Button variant="secondary">Cancel</Button>
-    <Button>Save changes</Button>
-  </ActionGroup>
-</Card>
+  <Text>Shared plans for the next release.</Text>
+  <Text variant="caption">Updated today</Text>
+</Stack>
+
+<ActionGroup>
+  <Button variant="secondary">Cancel</Button>
+  <Button>Save changes</Button>
+</ActionGroup>
 
 <ActionGroup stacked>
   <Button>Continue</Button>
