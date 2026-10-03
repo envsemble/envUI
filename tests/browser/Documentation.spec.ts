@@ -73,7 +73,7 @@ test('offline reference loads every view without network or script errors', asyn
   expect(await page.evaluate(() => document.fonts.check('1rem "envUI Inter"'))).toBe(true);
 });
 
-test('single previews retain state when the theme changes and examples reset', async ({ page }) => {
+test('single previews retain state when the theme changes', async ({ page }) => {
   await page.goto(`${offline}#/components/input/preview`);
   const preview = page.locator('.docs-preview');
   const projectName = preview.getByRole('textbox', { name: 'Project name' }).first();
@@ -88,8 +88,7 @@ test('single previews retain state when the theme changes and examples reset', a
       true,
     );
   }
-  await page.getByRole('button', { name: 'Reset examples' }).click();
-  await expect(projectName).toHaveValue('Autumn release');
+  await expect(projectName).toHaveValue('Winter release');
   await page.evaluate(() => {
     location.hash = '/components/checkbox/preview';
   });

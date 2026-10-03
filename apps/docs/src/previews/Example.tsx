@@ -4,6 +4,7 @@ import { Stack, Text, type SpaceStep } from '@envsemble/envui';
 /** Documentation specimen framing; product UI is composed from public envUI components. */
 export function Example({
   title,
+  actions,
   children,
   caption,
   className,
@@ -11,6 +12,7 @@ export function Example({
   size = 'content',
 }: {
   title?: string;
+  actions?: ReactNode;
   children: ReactNode;
   caption?: string;
   className?: string;
@@ -24,11 +26,18 @@ export function Example({
       data-size={size}
       className={['docs-example', className].filter(Boolean).join(' ')}
     >
-      {title && (
+      {title && actions ? (
+        <div className="docs-example-heading">
+          <Text as="h2" variant="page-heading">
+            {title}
+          </Text>
+          {actions}
+        </div>
+      ) : title ? (
         <Text as="h2" variant="page-heading">
           {title}
         </Text>
-      )}
+      ) : null}
       {children}
       {caption && (
         <Text variant="caption" className="docs-caption">

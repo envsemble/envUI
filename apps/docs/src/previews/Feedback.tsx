@@ -162,7 +162,21 @@ export function ToastsPreview() {
   const [actionResult, setActionResult] = useState('');
   return (
     <Preview>
-      <Example title="Manual notices">
+      <Example
+        title="Manual notices"
+        actions={
+          <Button
+            variant="secondary"
+            disabled={dismissedVariants.length === 0}
+            onClick={() => {
+              setDismissedVariants([]);
+              setActionResult('');
+            }}
+          >
+            Restore notices
+          </Button>
+        }
+      >
         <Stack>
           {toastExamples
             .filter(({ variant }) => !dismissedVariants.includes(variant))

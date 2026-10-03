@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { Theme, NavigationItem, ActionGroup, IconButton, Button } from '@envsemble/envui';
+import { Theme, NavigationItem, ActionGroup, IconButton } from '@envsemble/envui';
 import { DarkMode } from '@envsemble/envui/icons/DarkMode';
 import { LightMode } from '@envsemble/envui/icons/LightMode';
 import { findReferencePage, referenceViews } from './Documentation';
@@ -14,7 +14,6 @@ import { useDocumentationRoute } from './navigation/useDocumentationRoute';
 export default function App() {
   const route = useDocumentationRoute();
   const [appearance, setAppearance] = useState<'light' | 'dark'>('light');
-  const [resetVersion, setResetVersion] = useState(0);
   const mainElement = useRef<HTMLElement>(null);
   const routePath = route.split('?')[0];
   const routeSegments = routePath.split('/');
@@ -42,14 +41,6 @@ export default function App() {
   }, [contentRoute, title]);
   const controls = (
     <ActionGroup align="end" className="docs-page-controls">
-      {page?.section === 'Components' && view === 'preview' && (
-        <Button
-          variant="secondary"
-          onClick={() => setResetVersion((currentVersion) => currentVersion + 1)}
-        >
-          Reset examples
-        </Button>
-      )}
       <IconButton
         icon={appearance === 'light' ? <DarkMode /> : <LightMode />}
         aria-label={`Switch to ${oppositeAppearance} theme`}
@@ -60,15 +51,7 @@ export default function App() {
   );
   let content: ReactNode;
   if (page)
-    content = (
-      <ReferenceContent
-        key={page.path}
-        page={page}
-        view={view}
-        resetVersion={resetVersion}
-        actions={controls}
-      />
-    );
+    content = <ReferenceContent key={page.path} page={page} view={view} actions={controls} />;
   else if (routePath === 'getting-started') content = <GettingStarted />;
   else if (isOverview) content = <Overview actions={controls} />;
   else

@@ -93,13 +93,11 @@ function RelatedTopics({ page }: { page: ReferencePage }) {
 export function ReferenceContent({
   page,
   view,
-  resetVersion,
   actions,
 }: {
   page: ReferencePage;
   view: ReferenceView;
-  resetVersion: number;
-  actions: ReactNode;
+  actions?: ReactNode;
 }) {
   const { reference } = page;
   const breadcrumb =
@@ -108,9 +106,7 @@ export function ReferenceContent({
     return (
       <>
         <PageHeader title={reference.title} breadcrumb={breadcrumb} actions={actions} />
-        {reference.presentation === 'compact' && (
-          <ComponentPreview key={resetVersion} id={reference.id} />
-        )}
+        {reference.presentation === 'compact' && <ComponentPreview id={reference.id} />}
         <div className="docs-article">
           {reference.presentation === 'guide' ? (
             reference.sections?.map((section) => (
@@ -159,7 +155,7 @@ export function ReferenceContent({
             page.section === 'Foundations' ? (
               <FoundationPreview id={reference.id} />
             ) : (
-              <ComponentPreview key={resetVersion} id={reference.id} />
+              <ComponentPreview id={reference.id} />
             )
           ) : item.id === 'guidelines' ? (
             <div className="docs-article">

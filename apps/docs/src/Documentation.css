@@ -155,6 +155,14 @@ body {
 .docs-example:last-child {
   margin-bottom: 0;
 }
+.docs-example-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  inline-size: fit-content;
+  min-block-size: var(--control-height);
+}
 .docs-example p {
   max-width: 65ch;
 }
