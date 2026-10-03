@@ -4,24 +4,24 @@ import { MarkdownEditor, type MarkdownLink } from '@envsemble/envui/content';
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
 
-const editorSample = `## Release checklist
+const editorSample = `## Project checklist
 
-Prepare **Router A** for the autumn release.
+Prepare the **sample project** for review.
 
-- Review [job #42](/jobs/42).
-- Confirm the backup before restarting the service.
+- Review the [draft document](/documents/draft).
+- Confirm the outline before sharing the project.
 
-Use \`release-ready\` as the status label.`;
+Use ready-for-review as the status label.`;
 
 const resources = [
-  { label: 'Router A', href: '/devices/router-a' },
-  { label: 'Job #42', href: '/jobs/42' },
-  { label: 'Release checklist', href: '/documents/release-checklist' },
+  { label: 'Sample project', href: '/projects/sample' },
+  { label: 'Draft document', href: '/documents/draft' },
+  { label: 'Project checklist', href: '/documents/checklist' },
 ] satisfies MarkdownLink[];
 
 /** Resource choices and picker state belong to the consumer, not the editor. */
 function ResourceLinkEditor() {
-  const [value, setValue] = useState('Review the device before starting the job.');
+  const [value, setValue] = useState('Review the draft before sharing the project.');
   const [selectedText, setSelectedText] = useState<string | null>(null);
   const resolvePicker = useRef<((link: MarkdownLink | null) => void) | null>(null);
   useEffect(() => () => resolvePicker.current?.(null), []);
@@ -88,7 +88,7 @@ export function MarkdownEditorPreview() {
           <Specimen title="Read-only">
             <MarkdownEditor
               label="Published description"
-              defaultValue="The backup is **complete**."
+              defaultValue="The review is **complete**."
               rows={3}
               readOnly
               toolbar={false}
@@ -98,7 +98,7 @@ export function MarkdownEditorPreview() {
           <Specimen title="Disabled">
             <MarkdownEditor
               label="Archived description"
-              defaultValue="This device has been archived."
+              defaultValue="This document has been archived."
               rows={3}
               disabled
               toolbar={false}

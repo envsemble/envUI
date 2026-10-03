@@ -24,7 +24,7 @@ export function Sidebar({ routePath, page }: { routePath: string; page?: Referen
         <NavigationItem
           size="compact"
           href="#/overview"
-          selected={routePath === 'overview'}
+          selected={routePath.split('/')[0] === 'overview'}
           icon={<Home />}
         >
           Overview
@@ -32,7 +32,7 @@ export function Sidebar({ routePath, page }: { routePath: string; page?: Referen
         <NavigationItem
           size="compact"
           href="#/getting-started"
-          selected={routePath === 'getting-started'}
+          selected={routePath.split('/')[0] === 'getting-started'}
           icon={<Add />}
         >
           Getting started
@@ -67,7 +67,7 @@ export function Sidebar({ routePath, page }: { routePath: string; page?: Referen
                   <NavigationItem
                     key={item.id}
                     size="compact"
-                    href={`#/components/${item.id}${item.presentation ? '' : '/preview'}`}
+                    href={`#/components/${item.id}/preview`}
                     selected={reference?.id === item.id}
                     icon={<Icon />}
                   >

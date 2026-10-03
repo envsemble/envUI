@@ -6,7 +6,7 @@ export function WorkspacePane() {
   return (
     <Surface tone="pane" padding={5} render={<Stack as="section" gap={4} />}>
       <Text as="h2" variant="section-heading">Workspace</Text>
-      <Text>Shared plans for the next release.</Text>
+      <Text>Shared plans and notes for the project.</Text>
     </Surface>
   );
 }`;
@@ -32,7 +32,6 @@ export const compositionReference: Reference = {
   id: 'composition',
   title: 'Composition & extension',
   group: 'Foundations',
-  presentation: 'guide',
   example: paneExample,
   props: [],
   guidelines: [],
@@ -48,7 +47,7 @@ export const compositionReference: Reference = {
       title: 'Compose one root',
       paragraphs: [
         'render lets Surface and Stack share one element. Put the semantic tag on the supplied element. A custom render component must pass native props, className, style, children and ref to its root.',
-        'This example produces one section with both surface and layout behavior. Place it inside the application’s Theme boundary.',
+        'Compose surface and layout behavior on one section. Place it inside the application’s Theme boundary.',
       ],
       example: paneExample,
     },

@@ -19,19 +19,18 @@ export default function App() {
   const routeSegments = routePath.split('/');
   const page = findReferencePage(routePath);
   const reference = page?.reference;
-  const view = referenceViews.find((view) => view.id === routeSegments[2])?.id ?? 'preview';
-  const isOverview = routePath === 'overview';
+  const root = routeSegments[0];
+  const view =
+    referenceViews.find((view) => view.id === routeSegments[page ? 2 : 1])?.id ?? 'preview';
+  const isOverview = root === 'overview';
+  const isGettingStarted = root === 'getting-started';
   const oppositeAppearance = appearance === 'light' ? 'dark' : 'light';
   const title =
     reference?.title ??
-    (routePath === 'getting-started'
-      ? 'Getting started'
-      : routePath === 'overview'
-        ? 'envUI'
-        : 'Page not found');
-  const contentRoute = page
-    ? `${page.path}${route.includes('?') ? `?${route.split('?')[1]}` : ''}`
-    : route;
+    (isGettingStarted ? 'Getting started' : isOverview ? 'envUI' : 'Page not found');
+  const search = route.split('?')[1];
+  const contentPath = page?.path ?? root;
+  const contentRoute = `${contentPath}${search ? `?${search}` : ''}`;
   useEffect(() => {
     document.title = title === 'envUI' ? 'envUI' : `${title} · envUI`;
     mainElement.current?.focus({ preventScroll: true });
@@ -40,9 +39,9 @@ export default function App() {
     else window.scrollTo({ top: 0 });
   }, [contentRoute, title]);
   let content: ReactNode;
-  if (page) content = <ReferenceContent key={page.path} page={page} view={view} />;
-  else if (routePath === 'getting-started') content = <GettingStarted />;
-  else if (isOverview) content = <Overview />;
+  if (page) content = <ReferenceContent key={page.path} page={page} view={view} search={search} />;
+  else if (isGettingStarted) content = <GettingStarted view={view} />;
+  else if (isOverview) content = <Overview view={view} />;
   else
     content = (
       <div className="docs-article">
@@ -71,9 +70,11 @@ export default function App() {
       <div className="docs-shell">
         <Sidebar routePath={routePath} page={page} />
         <main id="docs-main" ref={mainElement} tabIndex={-1} className="docs-main">
-          {!isOverview && !page && <PageHeader title={title} breadcrumb="envUI" />}
+          {!isOverview && !isGettingStarted && !page && (
+            <PageHeader title={title} breadcrumb="envUI" />
+          )}
           {content}
-          <PageNavigation path={page?.path ?? routePath} view={view} />
+          <PageNavigation path={contentPath} view={view} />
         </main>
       </div>
     </Theme>

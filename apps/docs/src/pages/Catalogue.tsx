@@ -18,7 +18,7 @@ export function Catalogue() {
                 return (
                   <Card
                     key={ref.id}
-                    href={`#/components/${ref.id}${ref.presentation ? '' : '/preview'}`}
+                    href={`#/components/${ref.id}/preview`}
                     aria-labelledby={`catalogue-${ref.id}-title`}
                     aria-describedby={ref.summary ? `catalogue-${ref.id}-description` : undefined}
                   >

@@ -38,8 +38,17 @@ function ThemeLabel() {
 
 <Stack>
   <Text as="h1" variant="page-heading">Project overview</Text>
-  <Text tone="muted">Shared context for your team.</Text>
+  <Text as="h2" variant="section-heading">Project details</Text>
+  <Text>Shared context for your team.</Text>
+  <Text variant="supporting">Notes for the project.</Text>
   <Text variant="caption">Updated today</Text>
+</Stack>
+
+<Stack>
+  <Text as="h3" variant="page-heading">Project overview</Text>
+  <Text tone="muted">Shared project context.</Text>
+  <Text tone="quiet">Updated today.</Text>
+  <Text>Project status: <Text as="span" tone="muted">Draft</Text></Text>
 </Stack>`,
     props: [
       ['Text variant', 'body (default), page-heading, section-heading, supporting or caption'],

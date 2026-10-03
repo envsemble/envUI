@@ -1,24 +1,61 @@
-import { Text, Stack } from '@envsemble/envui';
+import { useState } from 'react';
+import { Button, Text, Stack } from '@envsemble/envui';
+import { Add } from '@envsemble/envui/icons/Add';
 import { Code, CodeBlock } from '@envsemble/envui/content';
 import { setupCode, registryCode, installCode } from '../Reference';
+import { PageViews } from '../PageViews';
+import type { ReferenceView } from '../Documentation';
+import { Preview } from '../previews/Preview';
+import { Example } from '../previews/Example';
 
-export function GettingStarted() {
+function GettingStartedGuidelines() {
   return (
     <div className="docs-article">
       <Stack as="section">
         <Text as="h2" variant="page-heading">
           Using this reference
         </Text>
-        <Text variant="body" tone="muted">
-          Preview shows interactive examples; the theme button switches their appearance. Guidelines
-          explain design and behavior. Usage covers React imports, props and state ownership. The
-          downloaded reference works offline.
-        </Text>
-        <Text variant="body" tone="muted">
-          <a href="#/getting-started?section=local-development">Local live development</a> ·{' '}
-          <a href="#/getting-started?section=upgrading">Version updates</a>
+        <Text tone="muted">
+          Preview shows interactive examples. Guidelines explain design and behavior. Usage contains
+          imports, code examples, props and state ownership. The theme button switches the entire
+          reference.
         </Text>
       </Stack>
+      <Stack as="section">
+        <Text as="h2" variant="page-heading">
+          Application setup
+        </Text>
+        <Text tone="muted">
+          Use React 19 and a current browser. Import the stylesheet once and place the application
+          inside an explicit Theme boundary. The application owns theme preference, persistence and
+          routing.
+        </Text>
+        <Text tone="muted">
+          Configure private GitHub Packages access with a token that has permission to read the
+          package. Keep credentials in shell, user configuration or CI secrets.
+        </Text>
+      </Stack>
+      <Stack as="section">
+        <Text as="h2" variant="page-heading">
+          Updates and local development
+        </Text>
+        <Text tone="muted">
+          The local documentation consumes the public library source and updates as it changes.
+          Published versions are immutable; adopt updates intentionally and review the consumer
+          before release.
+        </Text>
+        <Text>
+          <a href="#/getting-started/usage?section=local-development">Local development commands</a>{' '}
+          · <a href="#/getting-started/usage?section=upgrading">Version updates</a>
+        </Text>
+      </Stack>
+    </div>
+  );
+}
+
+function GettingStartedUsage() {
+  return (
+    <div className="docs-article">
       <Stack as="section">
         <Text as="h2" variant="page-heading">
           Install the private package
@@ -94,5 +131,37 @@ export function GettingStarted() {
         </Text>
       </Stack>
     </div>
+  );
+}
+
+function GettingStartedPreview() {
+  const [created, setCreated] = useState(0);
+  return (
+    <Preview>
+      <Example title="Your first component">
+        <Button startIcon={<Add />} onClick={() => setCreated((count) => count + 1)}>
+          Create item
+        </Button>
+        {created > 0 && (
+          <Text variant="caption" role="status">
+            Created {created} example {created === 1 ? 'item' : 'items'}.
+          </Text>
+        )}
+      </Example>
+    </Preview>
+  );
+}
+
+export function GettingStarted({ view }: { view: ReferenceView }) {
+  return (
+    <PageViews
+      path="getting-started"
+      title="Getting started"
+      breadcrumb="envUI"
+      view={view}
+      preview={<GettingStartedPreview />}
+      guidelines={<GettingStartedGuidelines />}
+      usage={<GettingStartedUsage />}
+    />
   );
 }

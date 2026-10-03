@@ -41,7 +41,7 @@ export function findReferencePage(path: string) {
 export function normalizeRoute(route: string): string {
   const [originalPath, ...query] = route.split('?');
   if (originalPath === 'components') {
-    return `overview?section=overview-components${query.length ? `&${query.join('?')}` : ''}`;
+    return `overview/preview?section=overview-components${query.length ? `&${query.join('?')}` : ''}`;
   }
   const path = originalPath
     .replace(/^components\/text(?=\/|$)/, 'foundations/typography')
@@ -51,12 +51,16 @@ export function normalizeRoute(route: string): string {
     .replace(/^foundations\/responsive(?=\/|$)/, 'foundations/spacing')
     .replace(/^foundations\/motion(?=\/|$)/, 'foundations/accessibility');
   const page = findReferencePage(path);
-  const requestedView = path.split('/')[2];
-  const view = referenceViews.some((item) => item.id === requestedView) ? requestedView : 'preview';
-  const destination = page
-    ? page.reference.presentation
-      ? page.path
-      : `${page.path}/${view}`
-    : path;
+  const root = path.split('/')[0];
+  const isLandingPage = root === 'overview' || root === 'getting-started';
+  const requestedView = path.split('/')[page ? 2 : 1];
+  const defaultView =
+    root === 'getting-started' && new URLSearchParams(query.join('?')).has('section')
+      ? 'usage'
+      : 'preview';
+  const view = referenceViews.some((item) => item.id === requestedView)
+    ? requestedView
+    : defaultView;
+  const destination = page ? `${page.path}/${view}` : isLandingPage ? `${root}/${view}` : path;
   return `${destination}${query.length ? `?${query.join('?')}` : ''}`;
 }

@@ -1,6 +1,5 @@
 import { useId, useMemo, useRef, useState } from 'react';
 import { ActionGroup, Button, Card, Dialog, Input, Stack, Switch, Text } from '@envsemble/envui';
-import { CodeBlock } from '@envsemble/envui/content';
 // This offline browser consumes the full public catalogue. Products use per-icon imports.
 import * as symbols from '@envsemble/envui/icons';
 import { Example } from '../Example';
@@ -52,9 +51,16 @@ const catalogue = Object.entries(symbols)
   }));
 const pageSize = 72;
 
-function IconDetails({ name, filled }: { name: keyof typeof symbols; filled: boolean }) {
+function IconDetails({
+  name,
+  filled,
+  onRequestUsage,
+}: {
+  name: keyof typeof symbols;
+  filled: boolean;
+  onRequestUsage?: (name: string, filled: boolean) => void;
+}) {
   const Symbol = symbols[name];
-  const importCode = `import { ${name} }\n  from '@envsemble/envui/icons/${name}';`;
 
   return (
     <Stack gap={5}>
@@ -64,23 +70,21 @@ function IconDetails({ name, filled }: { name: keyof typeof symbols; filled: boo
           <Symbol filled={filled} width="4rem" height="4rem" />
         </div>
       </Stack>
-      <Stack gap={3} as="section">
-        <CodeBlock language="tsx" wrap label="React import" copyable>
-          {importCode}
-        </CodeBlock>
-      </Stack>
-      <Stack gap={3} as="section">
-        <Text as="h3" variant="section-heading">
-          Usage
-        </Text>
-        <CodeBlock language="tsx" wrap>{`<${name}${filled ? ' filled' : ''} />`}</CodeBlock>
-        <Text variant="caption">Inherits the surrounding text color.</Text>
-      </Stack>
+      <Text variant="caption">Inherits the surrounding text color.</Text>
+      {onRequestUsage && (
+        <Button variant="secondary" onClick={() => onRequestUsage(name, filled)}>
+          View usage
+        </Button>
+      )}
     </Stack>
   );
 }
 
-export function IconCatalogue() {
+export function IconCatalogue({
+  onRequestUsage,
+}: {
+  onRequestUsage?: (name: string, filled: boolean) => void;
+}) {
   const [query, setQuery] = useState('');
   const [page, setPage] = useState(0);
   const [filled, setFilled] = useState(false);
@@ -171,7 +175,14 @@ export function IconCatalogue() {
         closeLabel="Close icon details"
         finalFocus={selectedButton}
       >
-        {selectedName && <IconDetails key={selectedName} name={selectedName} filled={filled} />}
+        {selectedName && (
+          <IconDetails
+            key={selectedName}
+            name={selectedName}
+            filled={filled}
+            onRequestUsage={onRequestUsage}
+          />
+        )}
       </Dialog>
     </Example>
   );

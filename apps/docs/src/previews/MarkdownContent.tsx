@@ -4,45 +4,34 @@ import { Markdown } from '@envsemble/envui/content';
 import { Example } from './Example';
 import { Preview } from './Preview';
 
-export const markdownSample = `## Release checklist
+const markdownSample = `## Project checklist
 
-Prepare **Router A** for the autumn release. Use \`release-ready\` as the status label.
+Prepare the **sample project** for review.
 
-- Confirm the device configuration.
-- Review [job #42](/jobs/42) before restarting the service.
-  - Keep the existing configuration as a backup.
+- Confirm the project details.
+- Review the [draft document](/documents/draft) before sharing it.
+  - Keep a copy of the original notes.
 
-> Schedule the restart after the backup completes.
+> Share the project after the review is complete.
 
 ### Progress
 
 | Task | Status |
 | --- | --- |
-| Configuration | Ready |
-| Backup | In progress |
+| Outline | Ready |
+| Review | In progress |
 
-- [x] Configuration reviewed
-- [ ] Restart scheduled
+- [x] Outline completed
+- [ ] Review scheduled
 
-### Configuration
-
-\`\`\`json
-{
-  "device": "Router A",
-  "enabled": true,
-  "retries": 3
-}
-\`\`\`
 `;
 
 export function MarkdownPreview() {
   const [selectedLink, setSelectedLink] = useState('');
   return (
     <Preview>
-      <Example title="Prose and code">
-        <Markdown headingOffset={1} codeCopyable>
-          {markdownSample}
-        </Markdown>
+      <Example title="Prose and formatting">
+        <Markdown headingOffset={1}>{markdownSample}</Markdown>
       </Example>
       <Example title="Application links">
         <Markdown
@@ -59,7 +48,9 @@ export function MarkdownPreview() {
             </a>
           )}
         >
-          {'Inspect [Router A](/devices/router-a), then review [job #42](/jobs/42).'}
+          {
+            'Open the [sample project](/projects/sample), then review the [draft document](/documents/draft).'
+          }
         </Markdown>
         {selectedLink && (
           <Text variant="caption" role="status">

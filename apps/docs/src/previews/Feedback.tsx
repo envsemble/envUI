@@ -241,12 +241,12 @@ export function DialogsPreview() {
             <Dialog
               open={activeDialog === 'details'}
               onOpenChange={(open) => setActiveDialog(open ? 'details' : null)}
-              trigger={<Button variant="secondary">View release</Button>}
-              title="Autumn release"
+              trigger={<Button variant="secondary">View project</Button>}
+              title="Sample project"
               description="Project details"
               closeLabel="Close"
             >
-              <Text>Shared plans, milestones and responsibilities for the next release.</Text>
+              <Text>Shared plans, milestones and responsibilities for the project.</Text>
             </Dialog>
           </Specimen>
         </SpecimenGrid>
@@ -258,8 +258,8 @@ export function DialogsPreview() {
         <Dialog
           open={activeDialog === 'inspector'}
           onOpenChange={(open) => setActiveDialog(open ? 'inspector' : null)}
-          trigger={<Button variant="secondary">Inspect release</Button>}
-          title="Release details"
+          trigger={<Button variant="secondary">Inspect project</Button>}
+          title="Project details"
           placement="right"
           modal={false}
           disablePointerDismissal

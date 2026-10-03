@@ -1,17 +1,14 @@
 import { DirectionLinks } from '@envsemble/envui';
 import { ArrowBack } from '@envsemble/envui/icons/ArrowBack';
 import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
-import { documentationPages, findReferencePage, type ReferenceView } from '../Documentation';
+import { documentationPages, type ReferenceView } from '../Documentation';
 
 export function PageNavigation({ path, view }: { path: string; view: ReferenceView }) {
   const index = documentationPages.findIndex((page) => page.path === path);
   if (index === -1) return null;
   const previous = documentationPages[index - 1];
   const next = documentationPages[index + 1];
-  const destination = (path: string) => {
-    const page = findReferencePage(path);
-    return page && !page.reference.presentation ? `${path}/${view}` : path;
-  };
+  const destination = (path: string) => `${path}/${view}`;
   return (
     <DirectionLinks
       className="docs-page-navigation"

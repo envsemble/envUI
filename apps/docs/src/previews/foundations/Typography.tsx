@@ -45,10 +45,6 @@ export function TypographyPreview() {
         </ol>
       </Example>
       <Example title="Text component" size="wide">
-        <Text variant="supporting">
-          variant sets the style, tone sets the color, and as chooses the HTML element. Stack
-          supplies spacing.
-        </Text>
         <ol className="docs-type-list">
           <TextSpecimen
             sample={
@@ -58,17 +54,17 @@ export function TypographyPreview() {
             }
           >
             <Text as="span" variant="caption">
-              <code>{'<Text as="h3" variant="page-heading">'}</code>
+              Page emphasis · semantic heading
             </Text>
           </TextSpecimen>
           <TextSpecimen sample={<Text tone="muted">Shared project context.</Text>}>
             <Text as="span" variant="caption">
-              <code>{'<Text tone="muted">'}</code>
+              Body size · supporting color
             </Text>
           </TextSpecimen>
           <TextSpecimen sample={<Text tone="quiet">Updated today.</Text>}>
             <Text as="span" variant="caption">
-              <code>{'<Text tone="quiet">'}</code>
+              Body size · quiet color
             </Text>
           </TextSpecimen>
           <TextSpecimen
@@ -82,7 +78,7 @@ export function TypographyPreview() {
             }
           >
             <Text as="span" variant="caption">
-              <code>{'<Text as="span" tone="muted">'}</code>
+              Inline supporting text
             </Text>
           </TextSpecimen>
         </ol>

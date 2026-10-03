@@ -15,7 +15,7 @@ import { Preview } from './Preview';
 
 function InputExamples() {
   const [emptyProjectName, setEmptyProjectName] = useState('');
-  const [projectName, setProjectName] = useState('Autumn release');
+  const [projectName, setProjectName] = useState('Sample project');
   return (
     <>
       <Example title="Single-line input" size="field">
@@ -79,7 +79,7 @@ function InputExamples() {
 function TextareaExamples() {
   const [emptyDescription, setEmptyDescription] = useState('');
   const [projectDescription, setProjectDescription] = useState(
-    'Shared plans for the next release.',
+    'Shared plans and notes for the project.',
   );
   return (
     <>
@@ -190,7 +190,7 @@ export function CheckboxPreview() {
             }
           />
           <Stack gap={3} className="docs-selection-children">
-            {['Autumn release', 'Winter release'].map((label, index) => (
+            {['Project one', 'Project two'].map((label, index) => (
               <Checkbox
                 key={label}
                 label={label}

@@ -68,18 +68,18 @@ export function LayoutPreview() {
           <Specimen title="Default gap" caption="Step 4 · 1 rem between blocks">
             <Stack>
               <Text as="h3" variant="section-heading">
-                Autumn release
+                Sample project
               </Text>
-              <Text>Shared plans for the next release.</Text>
+              <Text>Shared plans and notes for the project.</Text>
               <Text variant="caption">Updated today</Text>
             </Stack>
           </Specimen>
           <Specimen title="Compact gap" caption="Step 2 · 0.5 rem between blocks">
             <Stack gap={2}>
               <Text as="h3" variant="section-heading">
-                Autumn release
+                Sample project
               </Text>
-              <Text>Shared plans for the next release.</Text>
+              <Text>Shared plans and notes for the project.</Text>
               <Text variant="caption">Updated today</Text>
             </Stack>
           </Specimen>
@@ -166,7 +166,7 @@ export function CardsPreview() {
               <Text as="h3" variant="section-heading">
                 Project overview
               </Text>
-              <Text tone="muted">Planning and progress for the autumn release.</Text>
+              <Text tone="muted">Planning and progress for a sample project.</Text>
               <Text variant="caption">Updated today</Text>
             </Card>
           </Specimen>
@@ -174,7 +174,7 @@ export function CardsPreview() {
             <Card
               as="article"
               layout="action"
-              heading="Autumn release"
+              heading="Sample project"
               meta="Updated today"
               actions={
                 <>
@@ -183,7 +183,7 @@ export function CardsPreview() {
                 </>
               }
             >
-              <Text tone="muted">Shared context for the next release.</Text>
+              <Text tone="muted">Shared project context.</Text>
             </Card>
           </Specimen>
         </SpecimenGrid>
@@ -193,7 +193,7 @@ export function CardsPreview() {
           <Specimen title="Destination">
             <Card href={location.href} onClick={() => setDestinationSelected(true)}>
               <Text as="h3" variant="section-heading">
-                Autumn release
+                Sample project
               </Text>
               <Text tone="muted">Open the project details.</Text>
             </Card>

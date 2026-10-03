@@ -74,8 +74,17 @@ import { Text, Stack } from '@envsemble/envui';
 
 <Stack>
   <Text as="h1" variant="page-heading">Project overview</Text>
-  <Text tone="muted">Shared context for your team.</Text>
+  <Text as="h2" variant="section-heading">Project details</Text>
+  <Text>Shared context for your team.</Text>
+  <Text variant="supporting">Notes for the project.</Text>
   <Text variant="caption">Updated today</Text>
+</Stack>
+
+<Stack>
+  <Text as="h3" variant="page-heading">Project overview</Text>
+  <Text tone="muted">Shared project context.</Text>
+  <Text tone="quiet">Updated today.</Text>
+  <Text>Project status: <Text as="span" tone="muted">Draft</Text></Text>
 </Stack>
 ```
 
@@ -135,7 +144,7 @@ Use component props and slots for variations. Keep product data, routing and val
 
 render lets Surface and Stack share one element. Put the semantic tag on the supplied element. A custom render component must pass native props, className, style, children and ref to its root.
 
-This example produces one section with both surface and layout behavior. Place it inside the application’s Theme boundary.
+Compose surface and layout behavior on one section. Place it inside the application’s Theme boundary.
 
 ```tsx
 import { Surface, Stack, Text } from '@envsemble/envui';
@@ -144,7 +153,7 @@ export function WorkspacePane() {
   return (
     <Surface tone="pane" padding={5} render={<Stack as="section" gap={4} />}>
       <Text as="h2" variant="section-heading">Workspace</Text>
-      <Text>Shared plans for the next release.</Text>
+      <Text>Shared plans and notes for the project.</Text>
     </Surface>
   );
 }
@@ -270,7 +279,7 @@ import { Stack, ActionGroup, Button, Text } from '@envsemble/envui';
 
 <Stack gap={4}>
   <Text as="h3" variant="section-heading">Project details</Text>
-  <Text>Shared plans for the next release.</Text>
+  <Text>Shared plans and notes for the project.</Text>
   <Text variant="caption">Updated today</Text>
 </Stack>
 
@@ -388,7 +397,7 @@ import { Apps } from '@envsemble/envui/icons/Apps';
 
 <Card as="article" heading="Project overview" meta="Updated today"
   actions={<Button variant="outlined">Open project</Button>}>
-  Shared context for the next release.
+  Shared project context.
 </Card>
 ```
 
@@ -813,6 +822,28 @@ import { Markdown } from '@envsemble/envui/content';
 - children: Markdown string
 - headingOffset / codeCopyable: Heading semantics and code-copy controls
 
+#### Markdown source
+
+```tsx
+import { Markdown } from '@envsemble/envui/content';
+
+const description = [
+  '## Project checklist',
+  '',
+  'Prepare the **sample project** for review.',
+  '- Review the [draft document](/documents/draft).',
+  '',
+  '```json',
+  '{ "enabled": true, "retries": 3 }',
+  '```',
+].join('\n');
+
+<Markdown headingOffset={1} codeCopyable>{description}</Markdown>
+```
+
+- Code fences: Supply a language after the opening fence; code reuses the VS Code-themed CodeBlock
+- Inline code: Single backticks mark inline source within prose
+
 #### Application navigation
 
 ```tsx
@@ -822,9 +853,9 @@ import { Markdown } from '@envsemble/envui/content';
   <a {...props} href={href} onClick={event => {
     if (!event.defaultPrevented && event.button === 0 &&
         !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey &&
-        href.startsWith('/devices/')) {
+        href.startsWith('/documents/')) {
       event.preventDefault();
-      openDevicePanel(href);
+      openDocumentPanel(href);
     }
   }}>{children}</a>
 )}>{description}</Markdown>
@@ -1018,13 +1049,13 @@ Centered modals and side panels share focus and dismissal behavior.
 ```tsx
 import { Dialog, Button, Text } from '@envsemble/envui';
 
-<Dialog trigger={<Button variant="secondary">View release</Button>}
-  title="Autumn release" description="Project details" closeLabel="Close">
-  <Text>Shared plans, milestones and responsibilities for the next release.</Text>
+<Dialog trigger={<Button variant="secondary">View project</Button>}
+  title="Sample project" description="Project details" closeLabel="Close">
+  <Text>Shared plans, milestones and responsibilities for the project.</Text>
 </Dialog>
 
-<Dialog trigger={<Button variant="secondary">Inspect release</Button>}
-  title="Release details" placement="right" modal={false} disablePointerDismissal>
+<Dialog trigger={<Button variant="secondary">Inspect project</Button>}
+  title="Project details" placement="right" modal={false} disablePointerDismissal>
   <Text>The page remains interactive while this inspector is open.</Text>
 </Dialog>
 ```

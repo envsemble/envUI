@@ -5,7 +5,7 @@ import { references } from './Components';
 import type { Reference } from './Types';
 
 function renderReferenceContent(ref: Reference): string {
-  if (ref.presentation === 'guide') {
+  if (ref.sections) {
     return (ref.sections ?? [])
       .map(
         ({ title, paragraphs, example }) =>

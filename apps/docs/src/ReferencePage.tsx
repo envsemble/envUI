@@ -1,18 +1,26 @@
-import { Button, Stack, Tabs, Text } from '@envsemble/envui';
+import { Stack, Text } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/content';
-import type { ReactNode } from 'react';
-import {
-  referencePages,
-  referenceViews,
-  type ReferencePage,
-  type ReferenceView,
-} from './Documentation';
+import { referencePages, type ReferencePage, type ReferenceView } from './Documentation';
 import { FoundationPreview } from './Foundations';
 import { ComponentPreview } from './Previews';
-import { PageHeader } from './PageHeader';
+import { PageViews } from './PageViews';
+import { IconUsageDetails } from './usage/IconUsage';
 import type { Reference } from './Reference';
 
 function Guidelines({ reference }: { reference: Reference }) {
+  if (reference.sections)
+    return reference.sections.map((section) => (
+      <Stack as="section" key={section.title}>
+        <Text as="h2" variant="page-heading">
+          {section.title}
+        </Text>
+        {section.paragraphs.map((text) => (
+          <Text key={text} tone="muted">
+            {text}
+          </Text>
+        ))}
+      </Stack>
+    ));
   return (
     <Stack as="section">
       <Text as="h2" variant="page-heading">
@@ -27,37 +35,48 @@ function Guidelines({ reference }: { reference: Reference }) {
   );
 }
 
-function Usage({ reference }: { reference: Reference }) {
-  const sections = reference.usage ?? [
-    { title: 'React usage', example: reference.example, props: reference.props },
-  ];
+function Usage({ reference, search }: { reference: Reference; search?: string }) {
+  const query = new URLSearchParams(search);
+  const sections = reference.usage ??
+    reference.sections?.flatMap((section) =>
+      section.example
+        ? [{ title: section.title, example: section.example, props: reference.props }]
+        : [],
+    ) ?? [{ title: 'React usage', example: reference.example, props: reference.props }];
   return (
     <>
+      {reference.id === 'icons' && (
+        <IconUsageDetails name={query.get('icon')} filled={query.get('filled') === 'true'} />
+      )}
       {sections.map((section) => (
         <Stack as="section" key={section.title}>
           <Text as="h2" variant="page-heading">
             {section.title}
           </Text>
           <CodeBlock language="tsx">{section.example}</CodeBlock>
-          <Text as="h3" variant="section-heading">
-            Props & contracts
-          </Text>
-          <table className="docs-props">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Contract</th>
-              </tr>
-            </thead>
-            <tbody>
-              {section.props.map(([name, contract]) => (
-                <tr key={name}>
-                  <th>{name}</th>
-                  <td>{contract}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          {section.props.length > 0 && (
+            <>
+              <Text as="h3" variant="section-heading">
+                Props & contracts
+              </Text>
+              <table className="docs-props">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Contract</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {section.props.map(([name, contract]) => (
+                    <tr key={name}>
+                      <th>{name}</th>
+                      <td>{contract}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
         </Stack>
       ))}
       <Text variant="caption">TypeScript declarations provide the complete public API.</Text>
@@ -79,9 +98,7 @@ function RelatedTopics({ page }: { page: ReferencePage }) {
       <Stack gap={2}>
         {related.map((item) => (
           <Text key={item.path}>
-            <a href={`#/${item.path}${item.reference.presentation ? '' : '/guidelines'}`}>
-              {item.reference.title}
-            </a>
+            <a href={`#/${item.path}/guidelines`}>{item.reference.title}</a>
           </Text>
         ))}
       </Stack>
@@ -93,85 +110,48 @@ function RelatedTopics({ page }: { page: ReferencePage }) {
 export function ReferenceContent({
   page,
   view,
-  actions,
+  search,
 }: {
   page: ReferencePage;
   view: ReferenceView;
-  actions?: ReactNode;
+  search?: string;
 }) {
   const { reference } = page;
   const breadcrumb =
     page.section === 'Foundations' ? 'Foundations' : `Components / ${reference.group}`;
-  if (reference.presentation) {
-    return (
-      <>
-        <PageHeader title={reference.title} breadcrumb={breadcrumb} actions={actions} />
-        {reference.presentation === 'compact' && <ComponentPreview id={reference.id} />}
+  return (
+    <PageViews
+      path={page.path}
+      title={reference.title}
+      breadcrumb={breadcrumb}
+      view={view}
+      preview={
+        page.section === 'Foundations' ? (
+          <FoundationPreview
+            id={reference.id}
+            onIconUsage={(name, filled) => {
+              location.hash = `/${page.path}/usage?${new URLSearchParams({ icon: name, filled: String(filled) })}`;
+            }}
+          />
+        ) : (
+          <ComponentPreview id={reference.id} />
+        )
+      }
+      guidelines={
         <div className="docs-article">
-          {reference.presentation === 'guide' ? (
-            reference.sections?.map((section) => (
-              <Stack as="section" key={section.title}>
-                <Text as="h2" variant="page-heading">
-                  {section.title}
-                </Text>
-                {section.paragraphs.map((text) => (
-                  <Text key={text} tone="muted">
-                    {text}
-                  </Text>
-                ))}
-                {section.example && <CodeBlock language="tsx">{section.example}</CodeBlock>}
-              </Stack>
-            ))
-          ) : (
-            <>
-              <Guidelines reference={reference} />
-              <Usage reference={reference} />
-            </>
-          )}
+          <Guidelines reference={reference} />
           <RelatedTopics page={page} />
         </div>
-      </>
-    );
-  }
-  return (
-    <Tabs
-      key={page.path}
-      aria-label={`${reference.title} reference views`}
-      className="docs-reference-tabs"
-      renderList={(list) => (
-        <PageHeader title={reference.title} breadcrumb={breadcrumb} actions={actions}>
-          {list}
-        </PageHeader>
-      )}
-      value={view}
-      onValueChange={(value) => {
-        if (value) location.hash = `/${page.path}/${value}`;
-      }}
-      items={referenceViews.map((item) => ({
-        value: item.id,
-        button: <Button>{item.title}</Button>,
-        content:
-          item.id === 'preview' ? (
-            page.section === 'Foundations' ? (
-              <FoundationPreview id={reference.id} />
-            ) : (
-              <ComponentPreview id={reference.id} />
-            )
-          ) : item.id === 'guidelines' ? (
-            <div className="docs-article">
-              <Guidelines reference={reference} />
-              <RelatedTopics page={page} />
-            </div>
-          ) : (
-            <div className="docs-article">
-              <Usage reference={reference} />
-              <RelatedTopics page={page} />
-              <Text tone="muted">
-                <a href="#/getting-started">Setup, local edits and version updates</a>
-              </Text>
-            </div>
-          ),
-      }))}
+      }
+      usage={
+        <div className="docs-article">
+          <Usage reference={reference} search={search} />
+          <RelatedTopics page={page} />
+          <Text tone="muted">
+            <a href="#/getting-started/usage">Setup, local edits and version updates</a>
+          </Text>
+        </div>
+      }
     />
   );
 }

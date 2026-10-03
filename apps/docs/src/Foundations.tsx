@@ -3,9 +3,15 @@ import { TypographyPreview } from './previews/foundations/Typography';
 import { SpacingPreview } from './previews/foundations/Layout';
 import { IconsPreview } from './previews/foundations/Icons';
 import { AccessibilityPreview } from './previews/foundations/Accessibility';
+import { CompositionPreview } from './previews/foundations/Composition';
 import { Preview } from './previews/Preview';
 
-function FoundationTopic({ id }: { id: string }) {
+interface FoundationPreviewProps {
+  id: string;
+  onIconUsage?: (name: string, filled: boolean) => void;
+}
+
+function FoundationTopic({ id, onIconUsage }: FoundationPreviewProps) {
   switch (id) {
     case 'colors':
       return <ColorsPreview />;
@@ -14,7 +20,9 @@ function FoundationTopic({ id }: { id: string }) {
     case 'spacing':
       return <SpacingPreview />;
     case 'icons':
-      return <IconsPreview />;
+      return <IconsPreview onRequestUsage={onIconUsage} />;
+    case 'composition':
+      return <CompositionPreview />;
     case 'accessibility':
       return <AccessibilityPreview />;
     default:
@@ -22,10 +30,10 @@ function FoundationTopic({ id }: { id: string }) {
   }
 }
 
-export function FoundationPreview({ id }: { id: string }) {
+export function FoundationPreview(props: FoundationPreviewProps) {
   return (
     <Preview>
-      <FoundationTopic id={id} />
+      <FoundationTopic {...props} />
     </Preview>
   );
 }

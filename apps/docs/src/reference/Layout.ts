@@ -10,7 +10,7 @@ export const layoutReferences: Reference[] = [
 
 <Stack gap={4}>
   <Text as="h3" variant="section-heading">Project details</Text>
-  <Text>Shared plans for the next release.</Text>
+  <Text>Shared plans and notes for the project.</Text>
   <Text variant="caption">Updated today</Text>
 </Stack>
 
@@ -122,7 +122,7 @@ import { Apps } from '@envsemble/envui/icons/Apps';
 
 <Card as="article" heading="Project overview" meta="Updated today"
   actions={<Button variant="outlined">Open project</Button>}>
-  Shared context for the next release.
+  Shared project context.
 </Card>`,
     props: [
       ['Card tone / padding', 'row (default), pane or canvas; optional fixed spacing step 0–9'],

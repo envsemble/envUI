@@ -91,13 +91,13 @@ function SaveButton() {
     summary: 'Centered modals and side panels share focus and dismissal behavior.',
     example: `import { Dialog, Button, Text } from '@envsemble/envui';
 
-<Dialog trigger={<Button variant="secondary">View release</Button>}
-  title="Autumn release" description="Project details" closeLabel="Close">
-  <Text>Shared plans, milestones and responsibilities for the next release.</Text>
+<Dialog trigger={<Button variant="secondary">View project</Button>}
+  title="Sample project" description="Project details" closeLabel="Close">
+  <Text>Shared plans, milestones and responsibilities for the project.</Text>
 </Dialog>
 
-<Dialog trigger={<Button variant="secondary">Inspect release</Button>}
-  title="Release details" placement="right" modal={false} disablePointerDismissal>
+<Dialog trigger={<Button variant="secondary">Inspect project</Button>}
+  title="Project details" placement="right" modal={false} disablePointerDismissal>
   <Text>The page remains interactive while this inspector is open.</Text>
 </Dialog>`,
     props: [
