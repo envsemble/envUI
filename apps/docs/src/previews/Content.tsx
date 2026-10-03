@@ -6,7 +6,7 @@ import { Preview } from './Preview';
 export function ChipsPreview() {
   return (
     <Preview>
-      <Example title="Metadata">
+      <Example title="Metadata" caption="Read-only metadata. Use a Button for actions.">
         <ActionGroup>
           <InfoChip>Optional</InfoChip>
           <InfoChip>Read only</InfoChip>
@@ -21,7 +21,10 @@ export function DisclosuresPreview() {
   const [guidanceExpanded, setGuidanceExpanded] = useState(false);
   return (
     <Preview>
-      <Example title="Optional guidance">
+      <Example
+        title="Optional guidance"
+        caption="Keep required information and validation errors visible."
+      >
         <DisclosureNote
           title="How visibility works"
           open={guidanceExpanded}

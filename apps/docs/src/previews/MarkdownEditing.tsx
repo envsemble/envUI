@@ -80,7 +80,10 @@ export function MarkdownEditorPreview() {
           previewProps={{ headingOffset: 1, codeCopyable: true }}
         />
       </Example>
-      <Example title="Application link picker">
+      <Example
+        title="Application link picker"
+        caption="The application supplies the picker; the editor inserts an ordinary Markdown link."
+      >
         <ResourceLinkEditor />
       </Example>
       <Example title="Field states" size="collection">

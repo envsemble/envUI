@@ -98,7 +98,7 @@ function SaveButton() {
 
 <Dialog trigger={<Button variant="secondary">Inspect project</Button>}
   title="Project details" placement="right" modal={false} disablePointerDismissal>
-  <Text>The page remains interactive while this inspector is open.</Text>
+  <Text>Shared plans and people for the sample project.</Text>
 </Dialog>`,
     props: [
       ['trigger / title / description', 'Launch control and accessible modal labeling'],

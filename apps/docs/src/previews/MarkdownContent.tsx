@@ -30,10 +30,16 @@ export function MarkdownPreview() {
   const [selectedLink, setSelectedLink] = useState('');
   return (
     <Preview>
-      <Example title="Prose and formatting">
+      <Example
+        title="Prose and formatting"
+        caption="Task-list checkboxes are read-only; use Checkbox for interactive selection."
+      >
         <Markdown headingOffset={1}>{markdownSample}</Markdown>
       </Example>
-      <Example title="Application links">
+      <Example
+        title="Application links"
+        caption="Links remain ordinary URLs; the application decides how to open them."
+      >
         <Markdown
           renderLink={({ href, children, ...props }) => (
             <a

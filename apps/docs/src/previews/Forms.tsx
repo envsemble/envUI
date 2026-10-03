@@ -64,10 +64,10 @@ function InputExamples() {
               error="Choose a unique project name."
             />
           </Specimen>
-          <Specimen title="Read only" caption="readOnly">
+          <Specimen title="Read only" caption="Can still be focused and copied.">
             <Input label="Project name" value="Workspace default" readOnly />
           </Specimen>
-          <Specimen title="Disabled" caption="disabled">
+          <Specimen title="Disabled" caption="Unavailable and excluded from form submission.">
             <Input label="Project name" value="Unavailable" disabled />
           </Specimen>
         </SpecimenGrid>
@@ -120,10 +120,10 @@ function TextareaExamples() {
               error="Add the intended outcome."
             />
           </Specimen>
-          <Specimen title="Read only" caption="readOnly">
+          <Specimen title="Read only">
             <Textarea label="Description" rows={2} readOnly value="Provided by the workspace." />
           </Specimen>
-          <Specimen title="Disabled" caption="disabled">
+          <Specimen title="Disabled">
             <Textarea label="Description" rows={2} disabled value="Unavailable" />
           </Specimen>
         </SpecimenGrid>
@@ -179,7 +179,7 @@ export function CheckboxPreview() {
       <Example
         title="Select all"
         size="compact"
-        caption="Changing individual projects updates All projects, including its partly selected state."
+        caption="Derive the parent's partial selection from the child choices."
       >
         <Stack>
           <Checkbox
@@ -214,7 +214,11 @@ export function SwitchPreview() {
   const [summariesEnabled, setSummariesEnabled] = useState(false);
   return (
     <Preview>
-      <Example title="On, off & disabled" size="collection">
+      <Example
+        title="On, off & disabled"
+        size="collection"
+        caption="Use switches for settings that apply immediately; use checkboxes for choices saved with a form."
+      >
         <SpecimenGrid size="compact">
           <Specimen title="Interactive settings">
             <Stack>
@@ -323,7 +327,7 @@ export function SelectPreview() {
               ]}
             />
           </Specimen>
-          <Specimen title="Disabled" caption="disabled">
+          <Specimen title="Disabled">
             <Select
               label="Inherited visibility"
               value="team"

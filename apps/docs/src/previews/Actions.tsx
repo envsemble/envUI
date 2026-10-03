@@ -132,7 +132,11 @@ function ButtonStates() {
 export function ButtonsPreview() {
   return (
     <Preview>
-      <Example title="Variants" size="wide">
+      <Example
+        title="Variants"
+        size="wide"
+        caption="Use one primary action per group. Reserve Important for rare, consequential actions."
+      >
         <ButtonVariants />
       </Example>
       <Example size="wide">

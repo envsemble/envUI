@@ -77,7 +77,11 @@ export function NavigationPreview() {
   const [selectedDestination, setSelectedDestination] = useState('Home');
   return (
     <Preview>
-      <Example title="Variants" size="wide">
+      <Example
+        title="Variants"
+        size="wide"
+        caption="Selected items fill their Material icon automatically."
+      >
         <div
           className="docs-matrix-scroll"
           tabIndex={0}
@@ -146,52 +150,56 @@ export function NavigationPreview() {
 }
 
 export function TabsPreview() {
-  const [referenceView, setReferenceView] = useState<string | null>('preview');
+  const [projectView, setProjectView] = useState<string | null>('summary');
   const [buttonStyle, setButtonStyle] = useState<string | null>('primary');
   const [iconView, setIconView] = useState<string | null>('home');
   const [workspaceView, setWorkspaceView] = useState<string | null>('home');
   return (
     <Preview>
-      <Example title="Content views" size="content">
+      <Example
+        title="Project views"
+        size="content"
+        caption="Arrow keys switch views; disabled tabs are skipped."
+      >
         <Tabs
-          aria-label="Example reference views"
-          value={referenceView}
-          onValueChange={setReferenceView}
+          aria-label="Example project views"
+          value={projectView}
+          onValueChange={setProjectView}
           keepMounted
           items={[
             {
-              value: 'preview',
-              button: <Button>Preview</Button>,
+              value: 'summary',
+              button: <Button>Summary</Button>,
               content: (
                 <Stack gap={2}>
                   <Text as="h3" variant="section-heading">
-                    Live preview
+                    Project summary
                   </Text>
-                  <Text>Explore the component in use.</Text>
+                  <Text>A shared space for project plans and notes.</Text>
                 </Stack>
               ),
             },
             {
-              value: 'guidelines',
-              button: <Button>Guidelines</Button>,
+              value: 'details',
+              button: <Button>Details</Button>,
               content: (
                 <Stack gap={2}>
                   <Text as="h3" variant="section-heading">
-                    Design guidelines
+                    Project details
                   </Text>
-                  <Text>Use the shared colors, spacing and motion.</Text>
+                  <Text>The project is ready for review.</Text>
                 </Stack>
               ),
             },
             {
-              value: 'usage',
-              button: <Button>Usage</Button>,
+              value: 'activity',
+              button: <Button>Activity</Button>,
               content: (
                 <Stack gap={2}>
                   <Text as="h3" variant="section-heading">
-                    React usage
+                    Recent activity
                   </Text>
-                  <Text>Import Tabs and supply buttons with their content.</Text>
+                  <Text>The draft was updated today.</Text>
                 </Stack>
               ),
             },

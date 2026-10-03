@@ -2,7 +2,6 @@ import { foundations, references } from './Reference';
 
 export const referenceViews = [
   { id: 'preview', title: 'Preview' },
-  { id: 'guidelines', title: 'Guidelines' },
   { id: 'usage', title: 'Usage' },
 ] as const;
 export type ReferenceView = (typeof referenceViews)[number]['id'];
@@ -40,8 +39,10 @@ export function findReferencePage(path: string) {
 /** Keep downloaded references and old bookmarks working after topic consolidation. */
 export function normalizeRoute(route: string): string {
   const [originalPath, ...query] = route.split('?');
+  const search = new URLSearchParams(query.join('?'));
   if (originalPath === 'components') {
-    return `overview/preview?section=overview-components${query.length ? `&${query.join('?')}` : ''}`;
+    search.set('section', 'overview-components');
+    return `overview/preview?${search}`;
   }
   const path = originalPath
     .replace(/^components\/text(?=\/|$)/, 'foundations/typography')
@@ -54,13 +55,13 @@ export function normalizeRoute(route: string): string {
   const root = path.split('/')[0];
   const isLandingPage = root === 'overview' || root === 'getting-started';
   const requestedView = path.split('/')[page ? 2 : 1];
-  const defaultView =
-    root === 'getting-started' && new URLSearchParams(query.join('?')).has('section')
-      ? 'usage'
-      : 'preview';
-  const view = referenceViews.some((item) => item.id === requestedView)
-    ? requestedView
-    : defaultView;
+  const defaultView = root === 'getting-started' && search.has('section') ? 'usage' : 'preview';
+  const view =
+    requestedView === 'guidelines'
+      ? 'preview'
+      : referenceViews.some((item) => item.id === requestedView)
+        ? requestedView
+        : defaultView;
   const destination = page ? `${page.path}/${view}` : isLandingPage ? `${root}/${view}` : path;
-  return `${destination}${query.length ? `?${query.join('?')}` : ''}`;
+  return `${destination}${search.size ? `?${search}` : ''}`;
 }

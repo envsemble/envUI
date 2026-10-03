@@ -11,7 +11,10 @@ export function CodePreview() {
           Set <Code>theme="dark"</Code> on the surrounding <Code>Theme</Code> component.
         </Text>
       </Example>
-      <Example title="Highlighted source">
+      <Example
+        title="Highlighted source"
+        caption="Uses VS Code Light+ and Dark+ colors. Copying preserves the original source."
+      >
         <CodeBlock
           language="tsx"
           label="A React component"

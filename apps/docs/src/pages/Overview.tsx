@@ -42,6 +42,15 @@ export function Overview({ view }: { view: ReferenceView }) {
       renderBanner={(tabs) => <OverviewBanner tabs={tabs} />}
       preview={
         <Stack gap={9} className="docs-overview">
+          <Stack gap={4} align="center">
+            <Text tone="muted">
+              Shared React 19 components with light and dark themes, Inter and official Material
+              Symbols. Applications own data, routing and validation.
+            </Text>
+            <Text>
+              <a href="#/foundations/composition/preview">Composition and extension</a>
+            </Text>
+          </Stack>
           <Stack as="section" gap={5} aria-labelledby="overview-components">
             <Text as="h2" variant="page-heading" id="overview-components">
               Components
@@ -49,35 +58,6 @@ export function Overview({ view }: { view: ReferenceView }) {
             <Catalogue />
           </Stack>
         </Stack>
-      }
-      guidelines={
-        <div className="docs-article">
-          <Stack as="section">
-            <Text as="h2" variant="page-heading">
-              Library and application
-            </Text>
-            <Text tone="muted">
-              envUI owns shared appearance, spacing, keyboard interaction and accessibility
-              behavior. Applications own data, routing, validation and saving.
-            </Text>
-            <Text tone="muted">
-              Build product components from the public primitives. Repeated visual behavior belongs
-              in the library so products receive it through package updates.
-            </Text>
-          </Stack>
-          <Stack as="section">
-            <Text as="h2" variant="page-heading">
-              Supported foundation
-            </Text>
-            <Text tone="muted">
-              Use React 19 and the centrally maintained light and dark themes. Inter, envsemble
-              assets and official Material Symbols Rounded are bundled with the library.
-            </Text>
-            <Text>
-              <a href="#/foundations/composition/guidelines">Composition and extension</a>
-            </Text>
-          </Stack>
-        </div>
       }
       usage={
         <div className="docs-article">

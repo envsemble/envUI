@@ -95,11 +95,7 @@ test('all documentation views retain explicit content gaps and a single preview'
     'getting-started',
     'components',
     ...foundations.map((id) => `foundations/${id}`),
-    ...components.flatMap((id) =>
-      ['chips', 'disclosures'].includes(id)
-        ? [`components/${id}`]
-        : ['preview', 'guidelines', 'usage'].map((view) => `components/${id}/${view}`),
-    ),
+    ...components.flatMap((id) => ['preview', 'usage'].map((view) => `components/${id}/${view}`)),
   ];
   for (const width of [1920, 960]) {
     await page.setViewportSize({ width, height: 1000 });

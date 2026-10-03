@@ -85,7 +85,11 @@ export function LayoutPreview() {
           </Specimen>
         </SpecimenGrid>
       </Example>
-      <Example title="Action groups" size="collection">
+      <Example
+        title="Action groups"
+        size="collection"
+        caption="Switch to stacked actions when the labels need more room; the application chooses when."
+      >
         <SpecimenGrid>
           <Specimen title="Wrapped row" caption="1 rem gap; actions wrap when needed.">
             <ActionGroup>
@@ -125,7 +129,7 @@ export function RowsPreview() {
           </Specimen>
         </SpecimenGrid>
       </Example>
-      <Example title="Alternate fill">
+      <Example title="Alternate fill" caption="Use alternate fill when rows sit on a muted pane.">
         <GroupedRows contrast>
           <Row title="Notifications" detail="Delivery preferences" />
           <Row title="Workspace access" detail="People and permissions" />
@@ -188,7 +192,11 @@ export function CardsPreview() {
           </Specimen>
         </SpecimenGrid>
       </Example>
-      <Example title="Interactive cards" size="collection">
+      <Example
+        title="Interactive cards"
+        size="collection"
+        caption="Do not nest buttons or other controls inside a clickable card. Use an action strip instead."
+      >
         <SpecimenGrid size="card">
           <Specimen title="Destination">
             <Card href={location.href} onClick={() => setDestinationSelected(true)}>

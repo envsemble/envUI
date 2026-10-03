@@ -725,14 +725,14 @@ Switches between content panels in the same view.
 ```tsx
 import { Tabs, Button, Text } from '@envsemble/envui';
 
-<Tabs aria-label="Project views" defaultValue="preview" keepMounted
+<Tabs aria-label="Project views" defaultValue="summary" keepMounted
   items={[
-    { value: 'preview', button: <Button>Preview</Button>,
-      content: <Text>Live preview</Text> },
-    { value: 'guidelines', button: <Button>Guidelines</Button>,
-      content: <Text>Design guidelines</Text> },
-    { value: 'usage', button: <Button>Usage</Button>,
-      content: <Text>React usage</Text> },
+    { value: 'summary', button: <Button>Summary</Button>,
+      content: <Text>A shared space for project plans and notes.</Text> },
+    { value: 'details', button: <Button>Details</Button>,
+      content: <Text>The project is ready for review.</Text> },
+    { value: 'activity', button: <Button>Activity</Button>,
+      content: <Text>The draft was updated today.</Text> },
   ]}
 />
 ```
@@ -1056,7 +1056,7 @@ import { Dialog, Button, Text } from '@envsemble/envui';
 
 <Dialog trigger={<Button variant="secondary">Inspect project</Button>}
   title="Project details" placement="right" modal={false} disablePointerDismissal>
-  <Text>The page remains interactive while this inspector is open.</Text>
+  <Text>Shared plans and people for the sample project.</Text>
 </Dialog>
 ```
 

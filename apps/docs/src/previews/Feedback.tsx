@@ -63,7 +63,8 @@ function ManagedControls() {
         </Button>
       </ActionGroup>
       <Text variant="caption" className="docs-caption">
-        Show several notices to explore the queue. Hover or focus a notice to pause its timer.
+        Notices expire after five seconds; errors and notices with actions persist. Hover or focus
+        pauses timers.
       </Text>
     </Stack>
   );
@@ -124,7 +125,11 @@ export function EmptyStatePreview() {
 export function LoadingPreview() {
   return (
     <Preview>
-      <Example title="Loading placeholders" size="collection">
+      <Example
+        title="Loading placeholders"
+        size="collection"
+        caption="Match the expected content size to reduce layout shifts. One loading announcement per region."
+      >
         <SpecimenGrid size="card">
           <Specimen title="Text placeholders">
             <LoadingState label="Loading project">
@@ -164,6 +169,7 @@ export function ToastsPreview() {
     <Preview>
       <Example
         title="Manual notices"
+        caption="Manual notices have no timer; the application controls their lifetime."
         actions={
           <Button
             variant="secondary"
@@ -214,7 +220,11 @@ export function DialogsPreview() {
   const [actionResult, setActionResult] = useState('');
   return (
     <Preview>
-      <Example title="Modal dialogs" size="collection">
+      <Example
+        title="Modal dialogs"
+        size="collection"
+        caption="Modals block page interaction and trap focus. Escape closes the dialog and returns focus to its trigger."
+      >
         <SpecimenGrid size="compact">
           <Specimen title="Confirmation">
             <Dialog
@@ -254,7 +264,10 @@ export function DialogsPreview() {
           {actionResult}
         </Text>
       </Example>
-      <Example title="Side panel">
+      <Example
+        title="Side panel"
+        caption="This non-modal panel leaves the page interactive. Outside clicks keep it open; Escape or Close dismisses it."
+      >
         <Dialog
           open={activeDialog === 'inspector'}
           onOpenChange={(open) => setActiveDialog(open ? 'inspector' : null)}
@@ -264,7 +277,7 @@ export function DialogsPreview() {
           modal={false}
           disablePointerDismissal
         >
-          <Text>The page remains interactive while this inspector is open.</Text>
+          <Text>Shared plans and people for the sample project.</Text>
         </Dialog>
       </Example>
     </Preview>

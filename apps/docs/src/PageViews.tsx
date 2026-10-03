@@ -11,7 +11,6 @@ export function PageViews({
   breadcrumb,
   view,
   preview,
-  guidelines,
   usage,
   renderBanner,
 }: {
@@ -20,11 +19,10 @@ export function PageViews({
   breadcrumb?: string;
   view: ReferenceView;
   preview: ReactNode;
-  guidelines: ReactNode;
   usage: ReactNode;
   renderBanner?: (tabs: ReactElement) => ReactNode;
 }) {
-  const content = { preview, guidelines, usage };
+  const content = { preview, usage };
   return (
     <Tabs
       aria-label={`${title} reference views`}

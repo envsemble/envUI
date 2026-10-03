@@ -7,34 +7,6 @@ import { PageViews } from './PageViews';
 import { IconUsageDetails } from './usage/IconUsage';
 import type { Reference } from './Reference';
 
-function Guidelines({ reference }: { reference: Reference }) {
-  if (reference.sections)
-    return reference.sections.map((section) => (
-      <Stack as="section" key={section.title}>
-        <Text as="h2" variant="page-heading">
-          {section.title}
-        </Text>
-        {section.paragraphs.map((text) => (
-          <Text key={text} tone="muted">
-            {text}
-          </Text>
-        ))}
-      </Stack>
-    ));
-  return (
-    <Stack as="section">
-      <Text as="h2" variant="page-heading">
-        Design & behavior
-      </Text>
-      {reference.guidelines.map((text) => (
-        <Text key={text} tone="muted">
-          {text}
-        </Text>
-      ))}
-    </Stack>
-  );
-}
-
 function Usage({ reference, search }: { reference: Reference; search?: string }) {
   const query = new URLSearchParams(search);
   const sections = reference.usage ??
@@ -98,7 +70,7 @@ function RelatedTopics({ page }: { page: ReferencePage }) {
       <Stack gap={2}>
         {related.map((item) => (
           <Text key={item.path}>
-            <a href={`#/${item.path}/guidelines`}>{item.reference.title}</a>
+            <a href={`#/${item.path}/preview`}>{item.reference.title}</a>
           </Text>
         ))}
       </Stack>
@@ -126,22 +98,21 @@ export function ReferenceContent({
       breadcrumb={breadcrumb}
       view={view}
       preview={
-        page.section === 'Foundations' ? (
-          <FoundationPreview
-            id={reference.id}
-            onIconUsage={(name, filled) => {
-              location.hash = `/${page.path}/usage?${new URLSearchParams({ icon: name, filled: String(filled) })}`;
-            }}
-          />
-        ) : (
-          <ComponentPreview id={reference.id} />
-        )
-      }
-      guidelines={
-        <div className="docs-article">
-          <Guidelines reference={reference} />
-          <RelatedTopics page={page} />
-        </div>
+        <>
+          {page.section === 'Foundations' ? (
+            <FoundationPreview
+              id={reference.id}
+              onIconUsage={(name, filled) => {
+                location.hash = `/${page.path}/usage?${new URLSearchParams({ icon: name, filled: String(filled) })}`;
+              }}
+            />
+          ) : (
+            <ComponentPreview id={reference.id} />
+          )}
+          <div className="docs-article">
+            <RelatedTopics page={page} />
+          </div>
+        </>
       }
       usage={
         <div className="docs-article">

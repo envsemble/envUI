@@ -25,7 +25,11 @@ function TextSpecimen({ sample, children }: { sample: ReactNode; children: React
 export function TypographyPreview() {
   return (
     <>
-      <Example title="Text variants" size="wide">
+      <Example
+        title="Text variants"
+        size="wide"
+        caption="Text adds no outer margins; the container supplies spacing."
+      >
         <ol className="docs-type-list">
           {textVariants.map(([title, variant, color, meta]) => (
             <TextSpecimen
@@ -44,7 +48,11 @@ export function TypographyPreview() {
           ))}
         </ol>
       </Example>
-      <Example title="Text component" size="wide">
+      <Example
+        title="Text component"
+        size="wide"
+        caption="Visual emphasis and HTML heading level are independent."
+      >
         <ol className="docs-type-list">
           <TextSpecimen
             sample={

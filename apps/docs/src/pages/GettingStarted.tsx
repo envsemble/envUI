@@ -8,51 +8,6 @@ import type { ReferenceView } from '../Documentation';
 import { Preview } from '../previews/Preview';
 import { Example } from '../previews/Example';
 
-function GettingStartedGuidelines() {
-  return (
-    <div className="docs-article">
-      <Stack as="section">
-        <Text as="h2" variant="page-heading">
-          Using this reference
-        </Text>
-        <Text tone="muted">
-          Preview shows interactive examples. Guidelines explain design and behavior. Usage contains
-          imports, code examples, props and state ownership. The theme button switches the entire
-          reference.
-        </Text>
-      </Stack>
-      <Stack as="section">
-        <Text as="h2" variant="page-heading">
-          Application setup
-        </Text>
-        <Text tone="muted">
-          Use React 19 and a current browser. Import the stylesheet once and place the application
-          inside an explicit Theme boundary. The application owns theme preference, persistence and
-          routing.
-        </Text>
-        <Text tone="muted">
-          Configure private GitHub Packages access with a token that has permission to read the
-          package. Keep credentials in shell, user configuration or CI secrets.
-        </Text>
-      </Stack>
-      <Stack as="section">
-        <Text as="h2" variant="page-heading">
-          Updates and local development
-        </Text>
-        <Text tone="muted">
-          The local documentation consumes the public library source and updates as it changes.
-          Published versions are immutable; adopt updates intentionally and review the consumer
-          before release.
-        </Text>
-        <Text>
-          <a href="#/getting-started/usage?section=local-development">Local development commands</a>{' '}
-          · <a href="#/getting-started/usage?section=upgrading">Version updates</a>
-        </Text>
-      </Stack>
-    </div>
-  );
-}
-
 function GettingStartedUsage() {
   return (
     <div className="docs-article">
@@ -138,7 +93,10 @@ function GettingStartedPreview() {
   const [created, setCreated] = useState(0);
   return (
     <Preview>
-      <Example title="Your first component">
+      <Example
+        title="Your first component"
+        caption="Requires React 19. Import the stylesheet once and wrap application content in a Theme boundary."
+      >
         <Button startIcon={<Add />} onClick={() => setCreated((count) => count + 1)}>
           Create item
         </Button>
@@ -160,7 +118,6 @@ export function GettingStarted({ view }: { view: ReferenceView }) {
       breadcrumb="envUI"
       view={view}
       preview={<GettingStartedPreview />}
-      guidelines={<GettingStartedGuidelines />}
       usage={<GettingStartedUsage />}
     />
   );
