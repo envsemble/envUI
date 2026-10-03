@@ -92,8 +92,6 @@ body {
   top: max(var(--space-4), env(safe-area-inset-top));
   right: max(var(--space-4), env(safe-area-inset-right));
   z-index: 90;
-  background: var(--color-surface);
-  border-radius: var(--radius-standard);
 }
 .docs-page-navigation {
   padding: var(--space-6) var(--docs-gutter) var(--space-8);

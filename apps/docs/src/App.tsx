@@ -61,14 +61,13 @@ export default function App() {
       >
         Skip to content
       </a>
-      <div className="docs-theme-toggle">
-        <IconButton
-          icon={appearance === 'light' ? <DarkMode /> : <LightMode />}
-          aria-label={`Switch to ${oppositeAppearance} theme`}
-          title={`Switch to ${oppositeAppearance} theme`}
-          onClick={() => setAppearance(oppositeAppearance)}
-        />
-      </div>
+      <IconButton
+        className="docs-theme-toggle"
+        icon={appearance === 'light' ? <DarkMode /> : <LightMode />}
+        aria-label={`Switch to ${oppositeAppearance} theme`}
+        title={`Switch to ${oppositeAppearance} theme`}
+        onClick={() => setAppearance(oppositeAppearance)}
+      />
       <div className="docs-shell">
         <Sidebar routePath={routePath} page={page} />
         <main id="docs-main" ref={mainElement} tabIndex={-1} className="docs-main">
