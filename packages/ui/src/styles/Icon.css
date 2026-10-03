@@ -12,3 +12,9 @@
   height: 100%;
   fill: currentColor;
 }
+
+.env-button .env-symbol,
+.env-navigation-item .env-symbol {
+  width: calc(var(--control-icon-size) * var(--scale, 1));
+  height: calc(var(--control-icon-size) * var(--scale, 1));
+}

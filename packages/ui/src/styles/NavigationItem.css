@@ -22,11 +22,6 @@
   font-size: calc(var(--font-size-body-small) * var(--scale, 1));
 }
 
-.env-navigation-item .env-symbol {
-  width: calc(1.125rem * var(--scale, 1));
-  height: calc(1.125rem * var(--scale, 1));
-}
-
 .env-navigation-item:not(.env-navigation-selected):not(:disabled):not([aria-disabled='true'])
   .env-symbol {
   color: var(--color-text-quiet);

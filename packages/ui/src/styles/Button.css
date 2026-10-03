@@ -79,7 +79,6 @@
 
 .env-button-important {
   --icon-button-size: var(--control-height-compact);
-  --icon-button-icon-size: 1.25rem;
   min-height: calc(var(--control-height-compact) * var(--scale, 1));
   background: var(--color-accent);
   color: var(--color-on-accent);
@@ -116,9 +115,4 @@
   min-height: calc(var(--icon-button-size) * var(--scale, 1));
   flex-shrink: 0;
   padding: 0;
-}
-
-.env-icon-button .env-symbol {
-  width: calc(var(--icon-button-icon-size) * var(--scale, 1));
-  height: calc(var(--icon-button-icon-size) * var(--scale, 1));
 }

@@ -460,7 +460,8 @@ import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 - Secondary buttons use the neutral row fill and label color, without a border. Outlined buttons retain their border and link color.
 - Interaction colors follow the central HSL lightness rule described in Colors & themes. State colors and disabled opacity come from the shared stylesheet.
 - Use href for destinations and onClick for actions. Disabled links have no destination and cannot activate.
-- Every variant supports iconOnly: a square matching its regular button height. Important uses 2 rem with a 1.25 rem icon; the others use 2.5 rem with a 1.5 rem icon. Corners, colors, borders and interaction states follow the chosen variant: important is a rounded square; the others are circles. Name the action, rather than the icon shape.
+- Labeled and icon-only buttons share the 1.5 rem control icon size used by NavigationItem. Leading and trailing icons follow the same rule, including important buttons.
+- Every variant supports iconOnly: a square matching its regular button height (2 rem for important; 2.5 rem for the others). Corners, colors, borders and interaction states follow the chosen variant: important is a rounded square; the others are circles. Name the action, rather than the icon shape.
 - IconButton is a shorthand for Button with iconOnly enabled and variant="secondary" by default.
 
 Related: [Stacks & action groups](#stacks--action-groups), [Colors & themes](#colors--themes), [Icons & assets](#icons--assets), [Accessibility](#accessibility).
@@ -641,6 +642,7 @@ import { Home } from '@envsemble/envui/icons/Home';
 - The application owns routing and the selected destination. Use a meaningful destination label.
 - Pass one Material Symbol. Navigation renders its filled variant when selected and its outline otherwise, including icons inside wrappers.
 - Unselected icons use the caption color; selected icon and label use the link color. Navigation fits its content with a 2.5 rem minimum height.
+- Both label sizes use the shared 1.5 rem control icon size, matching labeled and icon-only buttons.
 - Selection keeps the gray/blue styling. Hover and pressed preserve the base hue and saturation and use the central lightness rule.
 
 Related: [Tabs](#tabs), [Direction links](#direction-links), [Icons & assets](#icons--assets), [Colors & themes](#colors--themes).
