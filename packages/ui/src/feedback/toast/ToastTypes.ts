@@ -23,7 +23,10 @@ export interface ToastNotification {
   action?: ToastAction;
   placement?: ToastPlacement;
   dismissible?: boolean;
-  /** Auto-dismiss milliseconds for non-error notices without actions. Zero persists. */
+  /**
+   * Auto-dismiss milliseconds. Infinity (or 0) persists until dismissed.
+   * Defaults to 5000, or Infinity for errors and notices with actions.
+   */
   duration?: number;
 }
 export interface ToastManager {
@@ -34,7 +37,7 @@ export interface ToastManager {
 export interface ToastProviderProps {
   children: ReactNode;
   defaultPlacement?: ToastPlacement;
-  /** Capacity for each placement; queued notices begin their timer when displayed. */
+  /** Maximum visible per placement (default 3). Excess notices queue with a count above the stack. */
   visibleLimit?: number;
 }
 

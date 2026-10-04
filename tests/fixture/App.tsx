@@ -216,7 +216,7 @@ function ToastTriggers() {
         <Button
           data-testid="toast-error"
           onClick={() =>
-            toast.show({ message: 'Persistent error notice', variant: 'error', duration: 50 })
+            toast.show({ message: 'Persistent error notice', variant: 'error' })
           }
         >
           Show error notice
@@ -227,7 +227,6 @@ function ToastTriggers() {
             toast.show({
               message: 'Persistent action notice',
               variant: 'info',
-              duration: 50,
               action: { label: 'Undo notice', onClick: () => setActionCount((count) => count + 1) },
             })
           }

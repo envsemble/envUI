@@ -1,6 +1,7 @@
-import { useLayoutEffect } from 'react';
+import { useLayoutEffect, useSyncExternalStore } from 'react';
 import { Toast as BaseToast } from '@base-ui/react/toast';
 import { Button } from '../../actions/Button.js';
+import { InfoChip } from '../../content/InfoChip.js';
 import { Theme, useTheme } from '../../foundations/Theme.js';
 import { Close } from '../../icons/Close.js';
 import { ToastBody } from './ToastBody.js';
@@ -16,6 +17,11 @@ export function ToastRegion({
 }) {
   const toastStore = BaseToast.useToastManager<ToastEntry>();
   const theme = useTheme();
+  const queuedCount = useSyncExternalStore(
+    controller.subscribeToQueue,
+    () => controller.getQueuedCount(placement),
+    () => 0,
+  );
   useLayoutEffect(
     () =>
       controller.registerPlacementStore(placement, {
@@ -38,6 +44,15 @@ export function ToastRegion({
               controller.setPlacementFocused(placement, false);
           }}
         >
+          {queuedCount > 0 && (
+            <InfoChip
+              className="env-toast-queued-count"
+              role="status"
+              aria-label={`${queuedCount} more notification${queuedCount === 1 ? '' : 's'} queued`}
+            >
+              +{queuedCount}
+            </InfoChip>
+          )}
           {toastStore.toasts.map((toast) => {
             const entry = toast.data!;
             return (

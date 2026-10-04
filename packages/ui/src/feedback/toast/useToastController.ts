@@ -24,6 +24,31 @@ export function useToastController(defaultPlacement: ToastPlacement, visibleLimi
   const currentVisibleLimit = useRef(visibleLimit);
   currentVisibleLimit.current = visibleLimit;
   const controller = useMemo(() => {
+    const queueListeners = new Set<() => void>();
+    const queuedCounts: Record<ToastPlacement, number> = { 'bottom-right': 0, 'top-center': 0 };
+
+    function notifyQueueChanges() {
+      let changed = false;
+      for (const placement of toastPlacements) {
+        const count = queuedNotifications.current.filter(
+          (entry) => entry.placement === placement,
+        ).length;
+        if (queuedCounts[placement] !== count) {
+          queuedCounts[placement] = count;
+          changed = true;
+        }
+      }
+      if (changed) queueListeners.forEach((listener) => listener());
+    }
+    function subscribeToQueue(listener: () => void) {
+      queueListeners.add(listener);
+      return () => {
+        queueListeners.delete(listener);
+      };
+    }
+    function getQueuedCount(placement: ToastPlacement) {
+      return queuedCounts[placement];
+    }
     function cancelTimer(id: string) {
       clearTimeout(dismissalTimers.current.get(id)?.handle);
       dismissalTimers.current.delete(id);
@@ -31,7 +56,16 @@ export function useToastController(defaultPlacement: ToastPlacement, visibleLimi
     function scheduleDismissal(id: string, timer: ToastTimer) {
       if (timer.pauseReasons.size || !isMounted.current) return;
       timer.startedAt = Date.now();
-      timer.handle = setTimeout(() => dismiss(id), timer.remainingMs);
+      // Browsers clamp longer delays to a signed 32-bit integer. Schedule long
+      // finite durations in chunks rather than accidentally dismissing immediately.
+      timer.handle = setTimeout(
+        () => {
+          timer.remainingMs = Math.max(0, timer.remainingMs - (Date.now() - timer.startedAt));
+          if (timer.remainingMs > 0) scheduleDismissal(id, timer);
+          else dismiss(id);
+        },
+        Math.min(timer.remainingMs, 2_147_483_647),
+      );
     }
     function pause(id: string, reason: string) {
       const timer = dismissalTimers.current.get(id);
@@ -79,8 +113,8 @@ export function useToastController(defaultPlacement: ToastPlacement, visibleLimi
             },
           });
           const durationMs =
-            entry.variant === 'error' || entry.action ? 0 : (entry.duration ?? 5000);
-          if (durationMs) {
+            entry.duration ?? (entry.variant === 'error' || entry.action ? Infinity : 5000);
+          if (durationMs > 0 && Number.isFinite(durationMs)) {
             const initialPauseReasons = [
               ...(isWindowPaused.current ? ['window'] : []),
               ...(focusedRegions.current.has(placement) ? ['viewport'] : []),
@@ -95,13 +129,15 @@ export function useToastController(defaultPlacement: ToastPlacement, visibleLimi
           }
         }
       }
+      notifyQueueChanges();
     }
     function show(notification: ToastNotification) {
       if (
         notification.duration != null &&
+        notification.duration !== Infinity &&
         (!Number.isFinite(notification.duration) || notification.duration < 0)
       )
-        throw new RangeError('Toast duration must be a nonnegative number.');
+        throw new RangeError('Toast duration must be a nonnegative number or Infinity.');
       const placement = notification.placement ?? currentDefaultPlacement.current;
       if (!toastPlacements.includes(placement))
         throw new RangeError('Unsupported toast placement.');
@@ -117,12 +153,14 @@ export function useToastController(defaultPlacement: ToastPlacement, visibleLimi
     }
     function dismiss(id: string) {
       queuedNotifications.current = queuedNotifications.current.filter((entry) => entry.id !== id);
+      notifyQueueChanges();
       cancelTimer(id);
       const entry = visibleNotifications.current.get(id);
       if (entry) placementStores.current.get(entry.placement)?.close(id);
     }
     function clear() {
       queuedNotifications.current = [];
+      notifyQueueChanges();
       for (const id of visibleNotifications.current.keys()) dismiss(id);
     }
     function registerPlacementStore(placement: ToastPlacement, delivery: ToastDelivery) {
@@ -145,6 +183,8 @@ export function useToastController(defaultPlacement: ToastPlacement, visibleLimi
     }
     return {
       manager: { show, dismiss, clear },
+      subscribeToQueue,
+      getQueuedCount,
       registerPlacementStore,
       showQueuedNotifications,
       pause,

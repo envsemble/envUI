@@ -106,6 +106,9 @@
   pointer-events: auto;
   box-sizing: border-box;
 }
+.env-toast-queued-count {
+  order: -1;
+}
 .env-toast-viewport-bottom-right {
   inset-inline-end: max(var(--space-4), env(safe-area-inset-right));
   inset-block-end: max(var(--space-4), env(safe-area-inset-bottom));
@@ -118,6 +121,9 @@
   inset-block-start: max(var(--space-4), env(safe-area-inset-top));
   flex-direction: column-reverse;
   align-items: center;
+}
+.env-toast-viewport-top-center > .env-toast-queued-count {
+  order: 1;
 }
 .env-toast[data-starting-style],
 .env-toast[data-ending-style] {

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Support explicit dismissal durations for every managed toast, including `Infinity` for persistence. Show a per-placement queued count above stacks that exceed `visibleLimit`; preserve FIFO delivery and pause-aware timers.
+
 - Preserve hover and pressed feedback on focused invalid text fields and plain error underlines. Make the textarea resize edge inherit the field’s hover, focus, error and dragging colors. Add matching red-border interactions to invalid Select controls; all shades follow the shared HSL rule without changing backgrounds.
 
 - Make text field hover visible with a single blue border or a plain-field underline. Derive interaction shades from link blue or the validation red using the shared HSL rule, without changing the background or adding a focus ring.
