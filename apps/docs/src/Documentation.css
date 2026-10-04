@@ -342,6 +342,21 @@ body {
   display: flex;
   align-items: center;
   padding: 1rem;
+  border: 0;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.docs-swatch:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: 0.125rem;
+}
+.docs-palette-dialog {
+  width: min(22rem, 100%);
+}
+.docs-palette-dialog .docs-palette-picker {
+  inline-size: 100%;
+  block-size: 14rem;
 }
 .docs-swatch code {
   font:
@@ -411,7 +426,7 @@ body {
 .docs-icon-toolbar {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  align-items: end;
+  align-items: center;
   gap: var(--space-5);
 }
 @container (max-width: 30rem) {
@@ -438,7 +453,7 @@ body {
 .docs-icon-tile {
   block-size: 100%;
   min-block-size: 7rem;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   text-align: center;
 }

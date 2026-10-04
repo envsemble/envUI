@@ -1,66 +1,89 @@
 import { useLayoutEffect, useRef, useState } from 'react';
-import { Text, useTheme } from '@envsemble/envui';
+import { Dialog, Text, useTheme } from '@envsemble/envui';
 import { TokenValue } from './TokenValue';
 import { Example, Specimen, SpecimenGrid } from '../Example';
+import { colorGroups, colorVariable } from '../../theme/Palette';
+import { usePaletteCustomization } from '../../theme/PaletteCustomization';
+import { ColorPicker } from '../../theme/ColorPicker';
 
-const colorGroups: [string, [string, string][]][] = [
-  [
-    'Backgrounds',
-    [
-      ['canvas', 'Page background'],
-      ['pane', 'Background panes · grouped content'],
-      ['surface-muted', 'Rows, cards, secondary buttons & tab rails'],
-      ['surface', 'Alternate rows & outlined buttons'],
-    ],
-  ],
-  [
-    'Text & icons',
-    [
-      ['text-primary', 'Headings & main text · light focus ring'],
-      ['text-strong', 'Strong text & primary button fill'],
-      ['text-muted', 'Supporting text'],
-      ['control-text', 'Secondary button labels & icons'],
-      ['icon', 'Icons'],
-      ['text-quiet', 'Captions'],
-    ],
-  ],
-  [
-    'Controls',
-    [
-      ['border-strong', 'Control outlines'],
-      ['link', 'Links, navigation & radio selection'],
-      ['control-blue', 'Enabled toggles & checkboxes'],
-      ['accent', 'Important emphasis'],
-    ],
-  ],
-  [
-    'Feedback',
-    [
-      ['neutral-fill', 'Neutral toast fill'],
-      ['destructive-action', 'Delete button & error toast fill'],
-      ['toast-success', 'Success toast fill'],
-      ['toast-info', 'Info toast fill'],
-      ['white', 'Text & icons on colored fills'],
-    ],
-  ],
-  ['Loading', [['skeleton-base', 'Loading placeholders']]],
-];
+interface MeasuredColor {
+  css: string;
+  hex: string;
+  lightness: number;
+}
+
+function ColorSwatch({
+  token,
+  value,
+  label,
+}: {
+  token: string;
+  value?: MeasuredColor;
+  label: string;
+}) {
+  const theme = useTheme();
+  const { setValue } = usePaletteCustomization();
+  return (
+    <Dialog
+      title={label}
+      className="docs-palette-dialog"
+      closeLabel="Done"
+      trigger={
+        <button
+          type="button"
+          className="docs-swatch"
+          aria-label={`Pick ${label.toLowerCase()} color`}
+          title="Choose a color"
+          style={{
+            background: `var(--color-${token})`,
+            color:
+              (value?.lightness ?? 50) > 55 ? 'var(--color-canvas-dark)' : 'var(--color-white)',
+          }}
+        >
+          <code>{value?.css ?? ''}</code>
+        </button>
+      }
+    >
+      <ColorPicker
+        color={value?.hex ?? '#000000'}
+        onChange={(color) => setValue(theme, colorVariable(token), color)}
+      />
+    </Dialog>
+  );
+}
 
 function ColorPalette() {
   const theme = useTheme();
+  const { palettes } = usePaletteCustomization();
   const paletteElement = useRef<HTMLDivElement>(null);
-  const [colorValues, setColorValues] = useState<Record<string, string>>({});
+  const [colorValues, setColorValues] = useState<Record<string, MeasuredColor>>({});
   useLayoutEffect(() => {
     if (!paletteElement.current) return;
     const computedStyle = getComputedStyle(paletteElement.current);
-    const measuredColors: Record<string, string> = {};
+    const context = document
+      .createElement('canvas')
+      .getContext('2d', { willReadFrequently: true })!;
+    const measuredColors: Record<string, MeasuredColor> = {};
     colorGroups.forEach(([, tokens]) =>
       tokens.forEach(([token]) => {
-        measuredColors[token] = computedStyle.getPropertyValue(`--color-${token}`).trim();
+        const probe = document.createElement('span');
+        probe.style.color = `var(--color-${token})`;
+        probe.hidden = true;
+        paletteElement.current!.append(probe);
+        context.clearRect(0, 0, 1, 1);
+        context.fillStyle = getComputedStyle(probe).color;
+        context.fillRect(0, 0, 1, 1);
+        const rgb = [...context.getImageData(0, 0, 1, 1).data].slice(0, 3);
+        probe.remove();
+        measuredColors[token] = {
+          css: computedStyle.getPropertyValue(`--color-${token}`).trim(),
+          hex: '#' + rgb.map((channel) => channel.toString(16).padStart(2, '0')).join(''),
+          lightness: ((Math.max(...rgb) + Math.min(...rgb)) / 255) * 50,
+        };
       }),
     );
     setColorValues(measuredColors);
-  }, [theme]);
+  }, [theme, palettes]);
   return (
     <div ref={paletteElement} className="docs-palette">
       {colorGroups.map(([group, tokens]) => (
@@ -68,27 +91,15 @@ function ColorPalette() {
           <Text as="h2" variant="page-heading">
             {group}
           </Text>
-          {tokens.map(([token, label]) => {
-            const hsl = colorValues[token] || '';
-            const lightness = Number(hsl.match(/([\d.]+)%\s*\)$/)?.[1] ?? 50);
-            return (
-              <div className="docs-palette-row" key={token}>
-                <div className="docs-palette-label">
-                  <span>{label}</span>
-                  <code>--color-{token}</code>
-                </div>
-                <div
-                  className="docs-swatch"
-                  style={{
-                    background: `var(--color-${token})`,
-                    color: lightness > 55 ? 'var(--color-canvas-dark)' : 'var(--color-white)',
-                  }}
-                >
-                  <code>{hsl}</code>
-                </div>
+          {tokens.map(([token, label]) => (
+            <div className="docs-palette-row" key={token}>
+              <div className="docs-palette-label">
+                <span>{label}</span>
+                <code>--color-{token}</code>
               </div>
-            );
-          })}
+              <ColorSwatch token={token} label={label} value={colorValues[token]} />
+            </div>
+          ))}
         </section>
       ))}
     </div>
