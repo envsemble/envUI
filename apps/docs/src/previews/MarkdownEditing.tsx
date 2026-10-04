@@ -36,7 +36,6 @@ function ResourceLinkEditor() {
       <MarkdownEditor
         variant="plain"
         label="Description"
-        hint="Use Insert link to choose a resource from the application."
         rows={4}
         value={value}
         onValueChange={setValue}
@@ -82,10 +81,7 @@ export function MarkdownEditorPreview() {
           previewProps={{ headingOffset: 1, codeCopyable: true }}
         />
       </Example>
-      <Example
-        title="Application link picker"
-        caption="The application supplies the picker; the editor inserts an ordinary Markdown link."
-      >
+      <Example title="Application link picker">
         <ResourceLinkEditor />
       </Example>
       <Example title="Field states" size="collection">
