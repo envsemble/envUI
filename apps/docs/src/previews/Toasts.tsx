@@ -1,96 +1,91 @@
-import type { ReactNode } from 'react';
-import { Button, Stack, Text, Toast, ToastProvider, useToast } from '@envsemble/envui';
-import { Example } from './Example';
+import { Button, Text, Toast, ToastProvider, useToast } from '@envsemble/envui';
 import { Preview } from './Preview';
 
 const toastVariants = [
-  { variant: 'neutral', title: 'Neutral', message: 'Files archived.' },
-  { variant: 'success', title: 'Success', message: 'Changes saved.' },
-  { variant: 'info', title: 'Info', message: 'An update is available.' },
-  { variant: 'error', title: 'Error', message: 'Changes couldn’t be saved.' },
+  {
+    variant: 'neutral',
+    title: 'Neutral',
+    meaning: 'Routine status without urgency.',
+    message: 'Files archived.',
+  },
+  {
+    variant: 'success',
+    title: 'Success',
+    meaning: 'Confirms a completed action.',
+    message: 'Changes saved.',
+  },
+  {
+    variant: 'info',
+    title: 'Info',
+    meaning: 'Information that may need attention.',
+    message: 'An update is available.',
+  },
+  {
+    variant: 'error',
+    title: 'Error',
+    meaning: 'An action failed and needs recovery.',
+    message: 'Changes couldn’t be saved.',
+  },
 ] as const;
 
-function ToastExample({
-  title,
-  children,
-  onTry,
-}: {
-  title: string;
-  children: ReactNode;
-  onTry: () => void;
-}) {
-  return (
-    <>
-      <Text as="h3" variant="section-heading" className="docs-toast-example-title">
-        {title}
-      </Text>
-      {children}
-      <Button variant="text" onClick={onTry} aria-label={`Try it now: ${title}`}>
-        Try it now
-      </Button>
-    </>
-  );
-}
+const previewPlacements = [
+  { placement: 'top-center', label: 'Top center' },
+  { placement: 'bottom-right', label: 'Bottom right' },
+] as const;
 
 function NotificationExamples() {
   const toast = useToast();
 
-  function queueNotifications() {
-    for (let index = 1; index <= 5; index++) {
-      toast.show({
-        variant: 'info',
-        message: `Upload ${index} complete.`,
-        duration: 3000,
-      });
-    }
-  }
-
   return (
     <Preview>
-      <Example
-        title="Variants"
-        caption="Notifications appear at the bottom right. Timed messages last three seconds; errors stay until dismissed. Hovering pauses the timer."
-      >
-        <div className="docs-toast-examples">
-          {toastVariants.map(({ variant, title, message }) => (
-            <ToastExample
-              key={variant}
-              title={title}
-              onTry={() =>
-                toast.show({ variant, message, duration: variant === 'error' ? Infinity : 3000 })
-              }
-            >
-              <Toast announce={false} variant={variant} message={message} />
-            </ToastExample>
-          ))}
-        </div>
-      </Example>
-      <Example
-        title="Placement & stacking"
-        caption="Bottom-right stacks grow upward; top-center stacks grow downward. Each stack shows at most two toasts, with the queued count above it."
-      >
-        <div className="docs-toast-examples">
-          <ToastExample
-            title="Top center"
-            onTry={() =>
-              toast.show({
-                variant: 'info',
-                message: 'An update is available.',
-                placement: 'top-center',
-                duration: 3000,
-              })
-            }
-          >
-            <Toast announce={false} variant="info" message="An update is available." />
-          </ToastExample>
-          <ToastExample title="Queue five notifications" onTry={queueNotifications}>
-            <Stack gap={2}>
-              <Toast announce={false} variant="info" message="Upload 1 complete." />
-              <Toast announce={false} variant="info" message="Upload 2 complete." />
-            </Stack>
-          </ToastExample>
-        </div>
-      </Example>
+      <div className="docs-toast-table-scroll">
+        <table className="docs-toast-table" aria-label="Toast meanings and placement examples">
+          <thead>
+            <tr>
+              <th scope="col">Meaning</th>
+              <th scope="col">Toast</th>
+              {previewPlacements.map(({ placement, label }) => (
+                <th key={placement} scope="col">
+                  {label}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {toastVariants.map(({ variant, title, meaning, message }) => (
+              <tr key={variant}>
+                <th scope="row" className="docs-toast-meaning">
+                  <Text as="strong" variant="section-heading">
+                    {title}
+                  </Text>
+                  <Text variant="supporting">{meaning}</Text>
+                </th>
+                <td>
+                  <Toast announce={false} variant={variant} message={message} />
+                </td>
+                {previewPlacements.map(({ placement, label }) => (
+                  <td key={placement}>
+                    <Button
+                      variant="text"
+                      aria-label={`Try it now: ${title.toLowerCase()} toast, ${label.toLowerCase()}`}
+                      onClick={() =>
+                        toast.show({
+                          variant,
+                          message,
+                          placement,
+                          duration: variant === 'error' ? Infinity : 3000,
+                        })
+                      }
+                    >
+                      Try it now
+                    </Button>
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </Preview>
   );
 }

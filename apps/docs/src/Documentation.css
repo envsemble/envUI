@@ -147,19 +147,40 @@ body {
   min-inline-size: 0;
   max-inline-size: var(--docs-specimen-width);
 }
-.docs-toast-examples {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) max-content;
-  gap: var(--space-3) var(--space-6);
-  align-items: center;
+.docs-toast-table-scroll {
   inline-size: 100%;
   min-inline-size: 0;
+  overflow-x: auto;
 }
-.docs-toast-example-title {
-  grid-column: 1 / -1;
+.docs-toast-table {
+  inline-size: 100%;
+  min-inline-size: 44rem;
+  border-collapse: collapse;
+  text-align: start;
 }
-.docs-toast-example-title:not(:first-child) {
-  margin-block-start: var(--space-5);
+.docs-toast-table th,
+.docs-toast-table td {
+  padding: var(--space-5) var(--space-4);
+  vertical-align: middle;
+  text-align: start;
+}
+.docs-toast-table tr > :first-child {
+  padding-inline-start: 0;
+}
+.docs-toast-table tr > :last-child {
+  padding-inline-end: 0;
+}
+.docs-toast-table thead th {
+  font: var(--type-body-small);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+.docs-toast-meaning {
+  inline-size: 28%;
+}
+.docs-toast-meaning > strong {
+  display: block;
+  margin-block-end: var(--space-2);
 }
 .docs-example:last-child {
   margin-bottom: 0;
