@@ -11,6 +11,7 @@ import {
 } from '@envsemble/envui';
 
 import { Example, Specimen, SpecimenGrid } from './Example';
+import { FieldDesignProposals } from './FieldDesignProposals';
 import { Preview } from './Preview';
 
 function InputExamples() {
@@ -135,8 +136,12 @@ function TextareaExamples() {
 export function TextFieldsPreview() {
   return (
     <Preview>
-      <InputExamples />
-      <TextareaExamples />
+      <FieldDesignProposals />
+      <details className="docs-field-current">
+        <summary>Current library fields</summary>
+        <InputExamples />
+        <TextareaExamples />
+      </details>
     </Preview>
   );
 }

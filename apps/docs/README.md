@@ -22,6 +22,8 @@ Headers, previews, articles, catalogues and page navigation share one centered c
 
 Keep routes, previews, token measurements and prop tables here. Code display and copying use the public CodeBlock; there is no documentation-only highlighter or copy implementation. Reusable interaction, visual variants and spacing contracts belong in `packages/ui`; do not recreate them in the documentation.
 
+Text fields temporarily opens with five design proposals in `previews/FieldDesignProposals.tsx` and its scoped stylesheet. These native input/textarea prototypes explore label placement and restrained error feedback in both themes. They are private documentation experiments, not public variants or replacements for Input/Textarea. The current library examples remain under “Current library fields”; Usage continues to document the published components. Remove the experiment when a design is selected and implemented in the library.
+
 Code, Markdown and MarkdownEditor are imported from the public `@envsemble/envui/content` entry. Basic controls remain on the main entry so consumers using only UI controls exclude parsing and highlighting code.
 
 Surface is the visual base for background fill, padding and corners. Card builds on Surface with standard content layout; specialized cards add their own composition. Stack and ActionGroup own layout. Use Surface for plain panes and compose an existing layout element through `render` when both belong on the same root. The overview hero consumes Surface; content card specimens use Card.
