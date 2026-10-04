@@ -129,7 +129,7 @@ textarea.env-text-input {
   field-sizing: fixed;
   overflow-y: auto;
   scrollbar-width: thin;
-  resize: vertical;
+  resize: none;
 }
 textarea.env-text-input[data-sizing='content'] {
   field-sizing: content;
@@ -138,14 +138,69 @@ textarea.env-text-input[data-sizing='content'] {
     calc(var(--env-textarea-rows, 2) * 1lh + var(--space-6) * var(--scale, 1))
   );
 }
-/* Older browsers retain a resizable scrolling field when native growth is unavailable. */
+.env-textarea-resize-edge {
+  --env-resize-edge-color: var(--color-border-strong);
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: calc(-0.0625rem * var(--scale, 1));
+  block-size: calc(var(--space-3) * var(--scale, 1));
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  color: var(--env-resize-edge-color);
+  cursor: ns-resize;
+  touch-action: none;
+  user-select: none;
+  transition: color var(--motion-duration-medium) var(--motion-ease);
+}
+.env-textarea-resize-edge::after {
+  content: '';
+  position: absolute;
+  inset-inline: calc(var(--md-sys-shape-corner-large) * var(--scale, 1));
+  inset-block-end: 0;
+  block-size: calc(0.125rem * var(--scale, 1));
+  border-radius: var(--md-sys-shape-corner-full);
+  background: currentColor;
+  pointer-events: none;
+}
+.env-text-field-well:focus-within > .env-textarea-resize-edge {
+  --env-resize-edge-color: var(--color-link);
+}
+.env-text-field-well:has(> textarea[aria-invalid='true']) > .env-textarea-resize-edge {
+  --env-resize-edge-color: var(--env-field-error-color);
+}
+.env-textarea-resize-edge:hover {
+  color: hsl(from var(--env-resize-edge-color) h s var(--state-hover-lightness));
+}
+.env-textarea-resize-edge[data-resizing] {
+  color: hsl(from var(--env-resize-edge-color) h s var(--state-pressed-lightness));
+}
+.env-textarea-resize-edge:focus-visible {
+  outline: calc(0.125rem * var(--scale, 1)) solid var(--color-focus-ring);
+  outline-offset: calc(-0.125rem * var(--scale, 1));
+}
+/* Older browsers retain the shared edge when native content sizing is unavailable. */
 @supports (field-sizing: content) {
-  textarea.env-text-input[data-sizing='content'] {
-    resize: none;
+  textarea.env-text-input[data-sizing='content'] + .env-textarea-resize-edge {
+    display: none;
   }
 }
-textarea.env-text-input:disabled {
-  resize: none;
+textarea.env-text-input:disabled + .env-textarea-resize-edge {
+  display: none;
+}
+@media (pointer: coarse) {
+  .env-textarea-resize-edge {
+    block-size: calc(var(--control-height-touch) * var(--scale, 1));
+  }
+  textarea.env-text-input:not(:disabled):has(+ .env-textarea-resize-edge) {
+    padding-block-end: calc(var(--control-height-touch) * var(--scale, 1));
+  }
+  @supports (field-sizing: content) {
+    textarea.env-text-input[data-sizing='content']:not(:disabled) {
+      padding-block-end: calc(var(--space-4) * var(--scale, 1));
+    }
+  }
 }
 .env-dropdown-trigger[aria-invalid='true'] {
   outline: calc(0.125rem * var(--scale, 1)) solid var(--color-destructive-action);
@@ -161,7 +216,8 @@ textarea.env-text-input:disabled {
 }
 @media (prefers-reduced-motion: reduce) {
   .env-text-field-well,
-  .env-text-field-well > label {
+  .env-text-field-well > label,
+  .env-textarea-resize-edge {
     transition: none;
   }
 }

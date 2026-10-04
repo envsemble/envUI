@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Add fixed scrolling with vertical resizing and automatic content sizing, shared by Textarea and MarkdownEditor, with the same 1 rem corners as Input and a minimum row count.
+- Add fixed scrolling with bottom-edge pointer and keyboard resizing and automatic content sizing, shared by Textarea and MarkdownEditor, with the same 1 rem corners as Input and a minimum row count. Replace the native corner grip with a subtle full-width resize edge.
 
 - Adopt outlined Input/Textarea fields with floating labels, original 1 rem corners and bottom-edge validation. Reuse the outlined textarea in MarkdownEditor; preserve native values, form reset, refs and accessible field metadata.
 

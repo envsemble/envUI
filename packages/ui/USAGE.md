@@ -506,14 +506,15 @@ import { Textarea } from '@envsemble/envui';
   value={description} onChange={e => setDescription(e.target.value)} />
 ```
 
-- sizing: "fixed" (default) scrolls and resizes vertically; "content" grows and shrinks to fit
+- sizing: "fixed" (default) scrolls and resizes from the bottom edge; "content" grows and shrinks to fit
 - rows: Visible rows in fixed mode; minimum rows in content mode
 - label / hint / error: Floating label; hint and bottom-edge error are linked to the control
 - Native textarea props: rows, value/defaultValue, onChange, name, required, disabled, readOnly, ref
 
 #### Guidelines
 
-- Use Input for one line and Textarea for multiline content. Both share the same corner radius. Fixed sizing scrolls and allows vertical resizing; content sizing grows and shrinks automatically. Set rows for the initial or minimum height.
+- Use Input for one line and Textarea for multiline content. Both share the same corner radius. Fixed sizing scrolls and resizes from the full bottom edge; content sizing grows and shrinks automatically. Set rows for the initial or minimum height.
+- Focus the resize edge and use Up/Down arrows to change height by one line, or Shift+Up/Down for five lines. Home restores the minimum height. Disabled fields cannot resize.
 - Labels move onto the outline when focused or filled. Placeholders appear while focused; use hints for lasting instructions and errors for a specific recovery step.
 - Both support empty, filled, focus, invalid, disabled and read-only states. Validation and draft state belong to the application.
 
@@ -533,7 +534,7 @@ import { MarkdownEditor } from '@envsemble/envui/content';
 
 - value / onValueChange: The application owns the draft and saving
 - defaultValue: Use instead of value for an uncontrolled native form field
-- sizing / rows: Scrolling with vertical resize (default) or growth with minimum rows
+- sizing / rows: Scrolling with bottom-edge resize (default) or growth with minimum rows
 - previewProps: The same heading, link rendering and code-copy options as Markdown
 
 #### Application link picker

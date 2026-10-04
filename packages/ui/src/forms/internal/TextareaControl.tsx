@@ -1,26 +1,50 @@
-import { forwardRef, type CSSProperties, type TextareaHTMLAttributes } from 'react';
+import {
+  forwardRef,
+  useCallback,
+  useRef,
+  type CSSProperties,
+  type TextareaHTMLAttributes,
+} from 'react';
 import { classNames } from '../../internal/classNames.js';
+import { setRef } from '../../internal/setRef.js';
+import { TextareaResizeEdge } from './TextareaResizeEdge.js';
 
 export interface TextareaControlProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
-  /** Scroll and resize vertically (default), or grow and shrink to fit the content. */
+  /** Scroll and resize from the bottom edge (default), or grow and shrink with content. */
   sizing?: 'fixed' | 'content';
 }
 
 /** Shared native control; field composition stays with Textarea and MarkdownEditor. */
 export const TextareaControl = forwardRef<HTMLTextAreaElement, TextareaControlProps>(
   function TextareaControl({ className, sizing = 'fixed', rows = 2, style, ...props }, ref) {
+    const inputRef = useRef<HTMLTextAreaElement>(null);
+    const attachInput = useCallback(
+      (input: HTMLTextAreaElement | null) => {
+        inputRef.current = input;
+        setRef(ref, input);
+      },
+      [ref],
+    );
     // Native content sizing ignores rows, so preserve it as the minimum line count in CSS.
     const sizingStyle =
       sizing === 'content' ? ({ '--env-textarea-rows': rows, ...style } as CSSProperties) : style;
     return (
-      <textarea
-        {...props}
-        ref={ref}
-        rows={rows}
-        data-sizing={sizing}
-        style={sizingStyle}
-        className={classNames('env-text-input', className)}
-      />
+      <>
+        <textarea
+          {...props}
+          ref={attachInput}
+          rows={rows}
+          data-sizing={sizing}
+          style={sizingStyle}
+          className={classNames('env-text-input', className)}
+        />
+        <TextareaResizeEdge
+          inputRef={inputRef}
+          inputId={props.id}
+          sizing={sizing}
+          disabled={props.disabled}
+        />
+      </>
     );
   },
 );
