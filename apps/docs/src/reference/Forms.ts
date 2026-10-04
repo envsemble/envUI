@@ -6,8 +6,11 @@ const inputUsage = {
 
 <Input label="Project name" name="project" value={name}
   onChange={event => setName(event.target.value)}
-  hint="A name your team will recognize." required />`,
+  hint="A name your team will recognize." required />
+
+<Input variant="plain" label="Title" name="title" />`,
   props: [
+    ['variant', '"outlined" (default) or "plain": transparent, with an underline on focus'],
     [
       'label / hint / error',
       'Floating label; hint and bottom-edge error are linked to the control',
@@ -27,8 +30,11 @@ const textareaUsage = {
   value={notes} onChange={e => setNotes(e.target.value)} />
 
 <Textarea label="Description" name="description" rows={4} sizing="content"
-  value={description} onChange={e => setDescription(e.target.value)} />`,
+  value={description} onChange={e => setDescription(e.target.value)} />
+
+<Textarea variant="plain" label="Notes" sizing="content" rows={3} />`,
   props: [
+    ['variant', '"outlined" (default) or "plain": transparent, with an underline on focus'],
     [
       'sizing',
       '"fixed" (default) scrolls and resizes from the bottom edge; "content" grows and shrinks to fit',
@@ -57,7 +63,8 @@ export const formsReferences: Reference[] = [
     guidelines: [
       'Use Input for one line and Textarea for multiline content. Both share the same corner radius. Fixed sizing scrolls and resizes from the full bottom edge; content sizing grows and shrinks automatically. Set rows for the initial or minimum height.',
       'Focus the resize edge and use Up/Down arrows to change height by one line, or Shift+Up/Down for five lines. Home restores the minimum height. Disabled fields cannot resize.',
-      'Labels move onto the outline when focused or filled. Placeholders appear while focused; use hints for lasting instructions and errors for a specific recovery step.',
+      'Labels move above the text when focused or filled. Plain fields have no border or fill at rest and show an underline on focus. Both variants retain the bottom-edge error and linked recovery text.',
+      'Placeholders appear while focused; use hints for lasting instructions and errors for a specific recovery step.',
       'Both support empty, filled, focus, invalid, disabled and read-only states. Validation and draft state belong to the application.',
     ],
     related: ['markdown-editor', 'select', 'layout', 'accessibility'],
@@ -74,6 +81,7 @@ export const formsReferences: Reference[] = [
     props: [
       ['value / defaultValue', 'Controlled or initial Markdown source string'],
       ['onValueChange', 'Receives the complete updated source after typing, formatting or undo'],
+      ['variant', 'Source field appearance: "outlined" (default) or "plain"'],
       [
         'sizing / rows',
         'Shared textarea sizing: fixed (default) scrolls and resizes from the bottom edge; content grows and shrinks',
@@ -101,6 +109,7 @@ export const formsReferences: Reference[] = [
         props: [
           ['value / onValueChange', 'The application owns the draft and saving'],
           ['defaultValue', 'Use instead of value for an uncontrolled native form field'],
+          ['variant', 'The same outlined (default) and plain appearances as Textarea'],
           [
             'sizing / rows',
             'Scrolling with bottom-edge resize (default) or growth with minimum rows',

@@ -7,6 +7,11 @@ export interface FieldProps {
   error?: ReactNode;
 }
 
+export interface TextFieldAppearanceProps {
+  /** Outlined by default; plain shows an underline on focus without a border or fill. */
+  variant?: 'outlined' | 'plain';
+}
+
 /** Keep accessible field metadata identical across native and composed controls. */
 export function useFieldMetadata(
   suppliedId: string | undefined,
@@ -39,11 +44,13 @@ export function FieldFrame({
   error,
   children,
   floatingLabel = false,
-}: FieldProps & { id: string; children: ReactNode; floatingLabel?: boolean }) {
+  variant = 'outlined',
+}: FieldProps &
+  TextFieldAppearanceProps & { id: string; children: ReactNode; floatingLabel?: boolean }) {
   return (
     <div className={floatingLabel ? 'env-form-field env-text-field' : 'env-form-field'}>
       {floatingLabel ? (
-        <div className="env-text-field-well">
+        <div className="env-text-field-well" data-variant={variant}>
           {children}
           {label}
         </div>

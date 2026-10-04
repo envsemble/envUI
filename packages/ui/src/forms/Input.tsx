@@ -1,14 +1,23 @@
 import { forwardRef } from 'react';
 import type { InputHTMLAttributes } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { FieldFrame, useFieldMetadata, type FieldProps } from './internal/FieldFrame.js';
+import {
+  FieldFrame,
+  useFieldMetadata,
+  type FieldProps,
+  type TextFieldAppearanceProps,
+} from './internal/FieldFrame.js';
 
-export interface InputProps extends InputHTMLAttributes<HTMLInputElement>, FieldProps {}
+export interface InputProps
+  extends InputHTMLAttributes<HTMLInputElement>,
+    FieldProps,
+    TextFieldAppearanceProps {}
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   {
     label,
     hint,
     error,
+    variant,
     id: suppliedId,
     className,
     placeholder,
@@ -27,6 +36,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       hint={hint}
       error={error}
       floatingLabel
+      variant={variant}
     >
       <input
         {...props}

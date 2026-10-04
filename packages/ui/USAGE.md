@@ -489,8 +489,11 @@ import { Input } from '@envsemble/envui';
 <Input label="Project name" name="project" value={name}
   onChange={event => setName(event.target.value)}
   hint="A name your team will recognize." required />
+
+<Input variant="plain" label="Title" name="title" />
 ```
 
+- variant: "outlined" (default) or "plain": transparent, with an underline on focus
 - label / hint / error: Floating label; hint and bottom-edge error are linked to the control
 - Native input props: value/defaultValue, onChange, name, type, required, disabled, readOnly, ref
 
@@ -504,8 +507,11 @@ import { Textarea } from '@envsemble/envui';
 
 <Textarea label="Description" name="description" rows={4} sizing="content"
   value={description} onChange={e => setDescription(e.target.value)} />
+
+<Textarea variant="plain" label="Notes" sizing="content" rows={3} />
 ```
 
+- variant: "outlined" (default) or "plain": transparent, with an underline on focus
 - sizing: "fixed" (default) scrolls and resizes from the bottom edge; "content" grows and shrinks to fit
 - rows: Visible rows in fixed mode; minimum rows in content mode
 - label / hint / error: Floating label; hint and bottom-edge error are linked to the control
@@ -515,7 +521,8 @@ import { Textarea } from '@envsemble/envui';
 
 - Use Input for one line and Textarea for multiline content. Both share the same corner radius. Fixed sizing scrolls and resizes from the full bottom edge; content sizing grows and shrinks automatically. Set rows for the initial or minimum height.
 - Focus the resize edge and use Up/Down arrows to change height by one line, or Shift+Up/Down for five lines. Home restores the minimum height. Disabled fields cannot resize.
-- Labels move onto the outline when focused or filled. Placeholders appear while focused; use hints for lasting instructions and errors for a specific recovery step.
+- Labels move above the text when focused or filled. Plain fields have no border or fill at rest and show an underline on focus. Both variants retain the bottom-edge error and linked recovery text.
+- Placeholders appear while focused; use hints for lasting instructions and errors for a specific recovery step.
 - Both support empty, filled, focus, invalid, disabled and read-only states. Validation and draft state belong to the application.
 
 Related: [Markdown editor](#markdown-editor), [Selects](#selects), [Stacks & action groups](#stacks--action-groups), [Accessibility](#accessibility).
@@ -534,6 +541,7 @@ import { MarkdownEditor } from '@envsemble/envui/content';
 
 - value / onValueChange: The application owns the draft and saving
 - defaultValue: Use instead of value for an uncontrolled native form field
+- variant: The same outlined (default) and plain appearances as Textarea
 - sizing / rows: Scrolling with bottom-edge resize (default) or growth with minimum rows
 - previewProps: The same heading, link rendering and code-copy options as Markdown
 

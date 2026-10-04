@@ -22,14 +22,32 @@ function InputExamples() {
     : 'Use lowercase letters, numbers and hyphens.';
   return (
     <>
-      <Example title="Single-line input" size="field">
-        <Input
-          label="Project name"
-          name="project"
-          value={projectName}
-          onChange={(e) => setProjectName(e.target.value)}
-          hint="A name your team will recognize."
-        />
+      <Example
+        title="Input appearance"
+        size="collection"
+        caption="Focus the plain field to reveal its underline."
+      >
+        <SpecimenGrid>
+          <Specimen title="Outlined">
+            <Input
+              label="Project name"
+              name="project"
+              value={projectName}
+              onChange={(e) => setProjectName(e.target.value)}
+              hint="A name your team will recognize."
+            />
+          </Specimen>
+          <Specimen title="Plain">
+            <Input
+              variant="plain"
+              label="Project name"
+              name="plainProject"
+              value={projectName}
+              onChange={(e) => setProjectName(e.target.value)}
+              hint="A name your team will recognize."
+            />
+          </Specimen>
+        </SpecimenGrid>
       </Example>
       <Example
         title="Empty & filled"
@@ -85,9 +103,9 @@ function TextareaExamples() {
   return (
     <>
       <Example
-        title="Textarea sizing"
+        title="Textarea appearance & sizing"
         size="collection"
-        caption="Drag the fixed field’s bottom edge to resize it, or focus that edge and use Up/Down arrows. The other field grows with its content."
+        caption="Drag the fixed field’s bottom edge to resize it, or focus that edge and use Up/Down arrows. The growing fields follow their content."
       >
         <SpecimenGrid>
           <Specimen title="Scroll & resize">
@@ -106,6 +124,15 @@ function TextareaExamples() {
               sizing="content"
               value={projectDescription}
               onChange={(e) => setProjectDescription(e.target.value)}
+            />
+          </Specimen>
+          <Specimen title="Plain, grow with content">
+            <Textarea
+              variant="plain"
+              label="Notes"
+              rows={3}
+              sizing="content"
+              defaultValue="Capture notes and ideas."
             />
           </Specimen>
         </SpecimenGrid>

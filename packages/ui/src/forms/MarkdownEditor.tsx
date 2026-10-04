@@ -57,6 +57,7 @@ export const MarkdownEditor = forwardRef<HTMLTextAreaElement, MarkdownEditorProp
       label,
       hint,
       error,
+      variant,
       id: suppliedId,
       'aria-describedby': describedBy,
       'aria-invalid': invalid,
@@ -157,7 +158,7 @@ export const MarkdownEditor = forwardRef<HTMLTextAreaElement, MarkdownEditorProp
             onRedo={() => editing.moveHistory(1)}
           />
         )}
-        <FieldFrame id={metadata.id} floatingLabel>
+        <FieldFrame id={metadata.id} floatingLabel variant={variant}>
           <TextareaControl
             {...nativeProps}
             {...metadata}
