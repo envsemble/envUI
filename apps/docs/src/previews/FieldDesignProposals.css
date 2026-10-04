@@ -92,29 +92,15 @@ textarea.docs-proposal-control {
   color: var(--proposal-error-color);
 }
 
-/* 01: The upper-edge caption belongs to a fully rounded, outlined well. */
+/* 01: The upper-edge caption belongs to a bordered, neutral well. */
 .docs-proposal-field[data-design='edge'] {
   --proposal-fill: var(--color-canvas);
-}
-.docs-proposal-field[data-design='edge'] .docs-proposal-well {
-  border-radius: var(--md-sys-shape-corner-full);
-}
-.docs-proposal-field[data-design='edge'] .docs-proposal-control {
-  padding-inline: var(--space-6);
-}
-.docs-proposal-field[data-design='edge'] .docs-proposal-label {
-  inset-inline-start: var(--space-6);
 }
 .docs-proposal-field[data-design='edge']:is([data-filled], :focus-within) .docs-proposal-label {
   inset-block-start: -0.625rem;
   padding-inline: var(--space-1);
   margin-inline-start: -0.25rem;
   background: var(--proposal-fill);
-}
-.docs-proposal-field[data-design='edge']:is([data-filled], :focus-within)
-  .docs-proposal-well:has(textarea)
-  .docs-proposal-label {
-  inset-inline-start: var(--space-9);
 }
 .docs-proposal-field[data-design='edge'][data-invalid] .docs-proposal-well {
   border-block-end-color: var(--proposal-error-color);
