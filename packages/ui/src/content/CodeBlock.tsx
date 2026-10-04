@@ -21,11 +21,11 @@ export interface CodeBlockProps extends Omit<ComponentPropsWithRef<'div'>, 'chil
   label?: string;
   copyable?: boolean;
   wrap?: boolean;
-  /** VS Code Light+ or Dark+; follows the surrounding Theme by default. */
+  /** Solarized Light or Dark; follows the surrounding Theme by default. */
   theme?: ThemeValue;
 }
 
-/** Source display with unmodified VS Code colors; copy always uses the original string. */
+/** Source display with unmodified Solarized colors; copy always uses the original string. */
 export function CodeBlock({
   children: source,
   language,

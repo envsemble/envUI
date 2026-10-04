@@ -45,7 +45,7 @@ const description = [
         props: [
           [
             'Code fences',
-            'Supply a language after the opening fence; code reuses the VS Code-themed CodeBlock',
+            'Supply a language after the opening fence; code reuses the Solarized-themed CodeBlock',
           ],
           ['Inline code', 'Single backticks mark inline source within prose'],
         ],
@@ -73,7 +73,7 @@ const description = [
       },
     ],
     guidelines: [
-      'Paragraphs, headings, lists, quotes and tables use envUI typography and spacing. Code blocks reuse CodeBlock with standard VS Code colors.',
+      'Paragraphs, headings, lists, quotes and tables use envUI typography and spacing. Code blocks reuse CodeBlock with standard Solarized colors.',
       'Supports CommonMark plus GFM tables, strikethrough, task lists, automatic links and footnotes. Single source newlines follow standard paragraph behavior.',
       'Raw HTML is ignored and URLs retain the renderer’s safe protocol handling. Markdown is content, not executable components.',
       'Resource references are ordinary links with stable destination URLs. Labels are saved text; resource resolution, permissions and missing destinations belong to the application.',
@@ -100,12 +100,12 @@ import { Code, CodeBlock } from '@envsemble/envui/content';
       ],
       ['copyable / label', 'Optional copy control and source label'],
       ['wrap', 'Wrap long lines; otherwise scroll inside the block'],
-      ['theme', 'VS Code Light+ or Dark+; follows Theme unless explicitly set'],
+      ['theme', 'Solarized Light or Dark; follows Theme unless explicitly set'],
       ['Native div props', 'Root ref, className, style and accessible attributes'],
     ],
     guidelines: [
       'Use Code inside prose and CodeBlock for multiline source. Source is selectable and never executed.',
-      'Code blocks use the standard VS Code Light+ and Dark+ themes. Prose and controls retain envUI typography and spacing.',
+      'Code blocks use the standard Solarized Light and Dark themes. Prose and controls retain envUI typography and spacing.',
       'Highlighting starts after the initial render and shares one runtime. Theme changes reuse the tokens. Unsupported languages remain plain text.',
       'Blocks above 50,000 characters or with a line above 2,000 characters stay plain text to avoid expensive highlighting.',
       'Copy uses the original source. If clipboard access is unavailable, the code is selected for manual copying.',

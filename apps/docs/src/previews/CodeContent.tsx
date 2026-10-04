@@ -15,7 +15,7 @@ export function CodePreview() {
       </Example>
       <Example
         title="Highlighted source"
-        caption="Uses VS Code Light+ and Dark+ colors. Copying preserves the original source."
+        caption="Uses Solarized Light and Dark colors. Copying preserves the original source."
       >
         <Card>
           <CodeBlock

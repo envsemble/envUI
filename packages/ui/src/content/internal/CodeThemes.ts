@@ -1,5 +1,5 @@
-import lightPlus from '@shikijs/themes/light-plus';
-import darkPlus from '@shikijs/themes/dark-plus';
+import solarizedLight from '@shikijs/themes/solarized-light';
+import solarizedDark from '@shikijs/themes/solarized-dark';
 
-/** Keep the published VS Code themes intact, independently of the envUI palette. */
-export const codeThemes = { light: lightPlus, dark: darkPlus };
+/** Keep the published Solarized themes intact, independently of the envUI palette. */
+export const codeThemes = { light: solarizedLight, dark: solarizedDark };

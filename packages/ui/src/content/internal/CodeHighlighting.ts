@@ -57,7 +57,7 @@ export async function highlightCode(source: string, language: string): Promise<C
   const tokens = runtime
     .codeToTokensWithThemes(source, {
       lang: language,
-      themes: { light: 'light-plus', dark: 'dark-plus' },
+      themes: { light: codeThemes.light.name, dark: codeThemes.dark.name },
     })
     .map((line) =>
       line.map((token) => ({
