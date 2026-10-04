@@ -1,17 +1,17 @@
 import { Toolbar } from '@base-ui/react/toolbar';
-import { IconButton } from '../../actions/Button.js';
-import { ButtonGroup } from '../../actions/ButtonGroup.js';
-import { Title } from '../../icons/Title.js';
-import { FormatBold } from '../../icons/FormatBold.js';
-import { FormatItalic } from '../../icons/FormatItalic.js';
-import { FormatListBulleted } from '../../icons/FormatListBulleted.js';
-import { FormatListNumbered } from '../../icons/FormatListNumbered.js';
-import { FormatQuote } from '../../icons/FormatQuote.js';
-import { Code } from '../../icons/Code.js';
-import { CodeBlocks } from '../../icons/CodeBlocks.js';
-import { Link } from '../../icons/Link.js';
-import { Undo } from '../../icons/Undo.js';
-import { Redo } from '../../icons/Redo.js';
+import { IconButton } from '../../../actions/Button.js';
+import { ButtonGroup } from '../../../actions/ButtonGroup.js';
+import { Title } from '../../../icons/Title.js';
+import { FormatBold } from '../../../icons/FormatBold.js';
+import { FormatItalic } from '../../../icons/FormatItalic.js';
+import { FormatListBulleted } from '../../../icons/FormatListBulleted.js';
+import { FormatListNumbered } from '../../../icons/FormatListNumbered.js';
+import { FormatQuote } from '../../../icons/FormatQuote.js';
+import { Code } from '../../../icons/Code.js';
+import { CodeBlocks } from '../../../icons/CodeBlocks.js';
+import { Link } from '../../../icons/Link.js';
+import { Undo } from '../../../icons/Undo.js';
+import { Redo } from '../../../icons/Redo.js';
 import type { MarkdownCommand } from './MarkdownFormatting.js';
 
 const tools = [

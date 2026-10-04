@@ -1,5 +1,4 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
-import type { Toast as BaseToast } from '@base-ui/react/toast';
 
 export type ToastVariant = 'neutral' | 'success' | 'info' | 'error';
 export type ToastPlacement = 'bottom-right' | 'top-center';
@@ -41,22 +40,3 @@ export interface ToastProviderProps {
   /** Maximum visible per placement (default 3). Newest notices stay visible; older ones hide behind a count. */
   visibleLimit?: number;
 }
-
-export type ToastEntry = ToastNotification & {
-  id: string;
-  variant: ToastVariant;
-  placement: ToastPlacement;
-};
-export type ToastDelivery = Pick<
-  ReturnType<typeof BaseToast.useToastManager<ToastEntry>>,
-  'add' | 'close'
->;
-export type ToastTimer = {
-  durationMs: number;
-  remainingMs: number;
-  startedAt: number;
-  handle?: ReturnType<typeof setTimeout>;
-  pauseReasons: Set<string>;
-};
-
-export const toastPlacements: readonly ToastPlacement[] = ['bottom-right', 'top-center'];

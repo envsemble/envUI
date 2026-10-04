@@ -3,7 +3,7 @@ import { Text, EnvUILogo, Surface, Stack, Button, Tabs } from '@envsemble/envui'
 
 import { Catalogue } from './Catalogue';
 import { GettingStarted } from './GettingStarted';
-import { overviewViews, type OverviewView } from '../Documentation';
+import { overviewViews, type OverviewView } from '../navigation/DocumentationRoutes';
 
 function OverviewBanner({ tabs }: { tabs: ReactElement }) {
   return (

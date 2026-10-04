@@ -1,4 +1,5 @@
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
+import { useFieldMetadata } from './internal/useFieldMetadata.js';
 import { flushSync } from 'react-dom';
 import { Button } from '../actions/Button.js';
 import { Markdown } from '../content/Markdown.js';
@@ -7,20 +8,20 @@ import { Text } from '../foundations/Text.js';
 import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/setRef.js';
 import type { TextareaProps } from './Textarea.js';
-import { FieldFrame, useFieldMetadata } from './internal/FieldFrame.js';
+import { FieldFrame } from './internal/FieldFrame.js';
 import { TextareaControl } from './internal/TextareaControl.js';
-import { MarkdownToolbar, defaultMarkdownCommands } from './internal/MarkdownToolbar.js';
-import { MarkdownLinkDialog } from './internal/MarkdownLinkDialog.js';
-import { useMarkdownEditing } from './internal/useMarkdownEditing.js';
+import { MarkdownToolbar, defaultMarkdownCommands } from './internal/markdown/MarkdownToolbar.js';
+import { MarkdownLinkDialog } from './internal/markdown/MarkdownLinkDialog.js';
+import { useMarkdownEditing } from './internal/markdown/useMarkdownEditing.js';
 import {
   formatMarkdown,
   insertMarkdownLink,
   type MarkdownCommand,
   type MarkdownLink,
   type MarkdownSelection,
-} from './internal/MarkdownFormatting.js';
+} from './internal/markdown/MarkdownFormatting.js';
 
-export type { MarkdownCommand, MarkdownLink } from './internal/MarkdownFormatting.js';
+export type { MarkdownCommand, MarkdownLink } from './internal/markdown/MarkdownFormatting.js';
 export interface MarkdownLinkRequest {
   selectedText: string;
 }

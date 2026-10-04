@@ -1,12 +1,16 @@
 import { Link, Stack, Text } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/content';
-import { referencePages, type ReferencePage, type ReferenceView } from './Documentation';
-import { FoundationPreview } from './Foundations';
-import { ComponentPreview } from './Previews';
-import { PageViews } from './PageViews';
-import { IconUsageDetails } from './usage/IconUsage';
-import type { Reference } from './Reference';
-import { getReferenceIcon } from './navigation/TopicIcons';
+import {
+  referencePages,
+  type ReferencePage,
+  type ReferenceView,
+} from '../navigation/DocumentationRoutes';
+import { FoundationPreview } from '../previews/FoundationPreview';
+import { ComponentPreview } from '../previews/ComponentPreview';
+import { PageViews } from '../layout/PageViews';
+import { IconUsageDetails } from '../usage/IconUsage';
+import type { Reference } from '../Reference';
+import { getReferenceIcon } from '../navigation/TopicIcons';
 
 function Usage({ reference, search }: { reference: Reference; search?: string }) {
   const query = new URLSearchParams(search);

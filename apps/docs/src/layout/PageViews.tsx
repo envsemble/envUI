@@ -1,7 +1,7 @@
 import { Button, Tabs } from '@envsemble/envui';
 import { Code } from '@envsemble/envui/icons/Code';
 import type { ReactElement, ReactNode } from 'react';
-import { referenceViews, type ReferenceView } from './Documentation';
+import { referenceViews, type ReferenceView } from '../navigation/DocumentationRoutes';
 import { PageHeader } from './PageHeader';
 
 /** Foundation and component pages share Preview and Usage banner views. */

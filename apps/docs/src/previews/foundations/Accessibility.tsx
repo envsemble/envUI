@@ -8,7 +8,7 @@ export function AccessibilityPreview() {
     <>
       <Example title="Keyboard focus">
         <ActionGroup>
-          <Button className="docs-force-3">Visible focus</Button>
+          <Button className="docs-force-focus">Visible focus</Button>
           <IconButton icon={<ChevronRight />} aria-label="Next item" />
         </ActionGroup>
         <Text tone="muted">

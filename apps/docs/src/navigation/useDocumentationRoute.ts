@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { normalizeRoute } from '../Documentation';
+import { normalizeRoute } from './DocumentationRoutes';
 
 function readRoute() {
   return normalizeRoute(location.hash.replace(/^#\/?/, '') || 'overview');

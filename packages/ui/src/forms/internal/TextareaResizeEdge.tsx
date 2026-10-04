@@ -1,15 +1,17 @@
 import { useLayoutEffect, useRef, useState, type PointerEvent, type RefObject } from 'react';
 import type { TextareaControlProps } from './TextareaControl.js';
 
-function measure(input: HTMLTextAreaElement) {
+function measureTextarea(input: HTMLTextAreaElement) {
   const styles = input.ownerDocument.defaultView!.getComputedStyle(input);
-  const min = Number.parseFloat(styles.minHeight) || 0;
-  const max = Number.parseFloat(styles.maxHeight);
+  const minimumHeight = Number.parseFloat(styles.minHeight) || 0;
+  const maximumHeight = Number.parseFloat(styles.maxHeight);
   return {
     height: input.offsetHeight,
-    min,
-    max: Number.isFinite(max) ? Math.max(min, max) : Infinity,
-    step: Number.parseFloat(styles.lineHeight) || 16,
+    minimumHeight,
+    maximumHeight: Number.isFinite(maximumHeight)
+      ? Math.max(minimumHeight, maximumHeight)
+      : Infinity,
+    lineHeight: Number.parseFloat(styles.lineHeight) || 16,
   };
 }
 
@@ -28,10 +30,10 @@ export function TextareaResizeEdge({
   const [resizing, setResizing] = useState(false);
   const edgeRef = useRef<HTMLButtonElement>(null);
   const drag = useRef<
-    | (ReturnType<typeof measure> & {
+    | (ReturnType<typeof measureTextarea> & {
         pointerId: number;
-        y: number;
-        scale: number;
+        startY: number;
+        verticalScale: number;
       })
     | null
   >(null);
@@ -59,10 +61,10 @@ export function TextareaResizeEdge({
     }
   }, [inputRef, sizing, disabled]);
 
-  function resizeTo(height: number, limits: ReturnType<typeof measure>) {
+  function resizeTo(height: number, limits: ReturnType<typeof measureTextarea>) {
     const input = inputRef.current;
     if (!input || input.disabled) return;
-    const nextHeight = `${Math.round(Math.min(limits.max, Math.max(limits.min, height)))}px`;
+    const nextHeight = `${Math.round(Math.min(limits.maximumHeight, Math.max(limits.minimumHeight, height)))}px`;
     if (!manualHeight.current || input.style.height !== manualHeight.current.applied) {
       manualHeight.current = { original: input.style.height, applied: nextHeight };
     }
@@ -93,12 +95,12 @@ export function TextareaResizeEdge({
         const input = inputRef.current;
         if (!input || input.disabled || !event.isPrimary || event.button !== 0) return;
         event.preventDefault();
-        const bounds = measure(input);
+        const bounds = measureTextarea(input);
         drag.current = {
           ...bounds,
           pointerId: event.pointerId,
-          y: event.clientY,
-          scale: input.getBoundingClientRect().height / bounds.height || 1,
+          startY: event.clientY,
+          verticalScale: input.getBoundingClientRect().height / bounds.height || 1,
         };
         event.currentTarget.setPointerCapture(event.pointerId);
         setResizing(true);
@@ -110,7 +112,10 @@ export function TextareaResizeEdge({
           finishDrag(event);
           return;
         }
-        resizeTo(current.height + (event.clientY - current.y) / current.scale, current);
+        resizeTo(
+          current.height + (event.clientY - current.startY) / current.verticalScale,
+          current,
+        );
       }}
       onPointerUp={finishDrag}
       onPointerCancel={finishDrag}
@@ -120,12 +125,12 @@ export function TextareaResizeEdge({
         if (!input || input.disabled || event.altKey || event.ctrlKey || event.metaKey) return;
         if (!['ArrowUp', 'ArrowDown', 'Home'].includes(event.key)) return;
         event.preventDefault();
-        const bounds = measure(input);
-        const step = bounds.step * (event.shiftKey ? 5 : 1);
+        const bounds = measureTextarea(input);
+        const heightStep = bounds.lineHeight * (event.shiftKey ? 5 : 1);
         resizeTo(
           event.key === 'Home'
-            ? bounds.min
-            : bounds.height + (event.key === 'ArrowUp' ? -step : step),
+            ? bounds.minimumHeight
+            : bounds.height + (event.key === 'ArrowUp' ? -heightStep : heightStep),
           bounds,
         );
       }}
@@ -133,8 +138,8 @@ export function TextareaResizeEdge({
         // Keyboard and assistive activation grow one line; dragging never adds a click step.
         const input = inputRef.current;
         if (!input || input.disabled || event.detail !== 0) return;
-        const bounds = measure(input);
-        resizeTo(bounds.height + bounds.step, bounds);
+        const bounds = measureTextarea(input);
+        resizeTo(bounds.height + bounds.lineHeight, bounds);
       }}
     />
   );

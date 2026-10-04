@@ -30,7 +30,7 @@ export default defineConfig({
     },
     {
       command:
-        'node node_modules/vite/bin/vite.js --config tests/Fixture.vite.config.ts --host 127.0.0.1 --port 8766 --strictPort',
+        'node node_modules/vite/bin/vite.js --config tests/fixture/vite.config.ts --host 127.0.0.1 --port 8766 --strictPort',
       url: 'http://127.0.0.1:8766',
       reuseExistingServer: !process.env.CI,
     },

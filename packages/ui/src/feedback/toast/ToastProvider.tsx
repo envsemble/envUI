@@ -2,7 +2,7 @@ import { createContext, useContext } from 'react';
 import { Toast as BaseToast } from '@base-ui/react/toast';
 import { ToastRegion } from './ToastRegion.js';
 import { useToastController } from './useToastController.js';
-import { toastPlacements } from './ToastTypes.js';
+import { toastPlacements } from './ToastInternals.js';
 import type { ToastManager, ToastProviderProps } from './ToastTypes.js';
 
 const ManagerContext = createContext<ToastManager | null>(null);

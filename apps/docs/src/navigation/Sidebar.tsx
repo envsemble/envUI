@@ -3,7 +3,7 @@ import { Text, EnvUILogo, NavigationItem, Stack, Link } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Category } from '@envsemble/envui/icons/Category';
 import { references, foundations, componentGroups } from '../Reference';
-import type { ReferencePage } from '../Documentation';
+import type { ReferencePage } from './DocumentationRoutes';
 import { foundationIcons, getComponentIcon } from './TopicIcons';
 
 export function Sidebar({ routePath, page }: { routePath: string; page?: ReferencePage }) {

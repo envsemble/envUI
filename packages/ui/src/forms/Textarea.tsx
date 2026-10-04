@@ -1,8 +1,8 @@
 import { forwardRef } from 'react';
+import { useFieldMetadata } from './internal/useFieldMetadata.js';
 import { TextareaControl, type TextareaControlProps } from './internal/TextareaControl.js';
 import {
   FieldFrame,
-  useFieldMetadata,
   type FieldProps,
   type TextFieldAppearanceProps,
 } from './internal/FieldFrame.js';

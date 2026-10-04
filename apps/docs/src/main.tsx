@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import '@envsemble/envui/styles.css';
-import './Documentation.css';
+import './styles/index.css';
 import App from './App';
 import { PaletteCustomizationProvider } from './theme/PaletteCustomization';
 

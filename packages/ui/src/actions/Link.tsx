@@ -1,5 +1,5 @@
 import { classNames } from '../internal/classNames.js';
-import type { ActionElementProps } from './ActionElement.js';
+import type { ActionElementProps } from '../internal/ActionElement.js';
 import { Button, type ButtonAppearanceProps } from './Button.js';
 
 export type LinkProps = Extract<ActionElementProps, { href: string }> &

@@ -1,8 +1,8 @@
 import { useRef, useState, type RefObject } from 'react';
-import { Dialog } from '../../feedback/Dialog.js';
-import { Button } from '../../actions/Button.js';
-import { Stack } from '../../foundations/Layout.js';
-import { Input } from '../Input.js';
+import { Dialog } from '../../../feedback/Dialog.js';
+import { Button } from '../../../actions/Button.js';
+import { Stack } from '../../../foundations/Layout.js';
+import { Input } from '../../Input.js';
 import { insertMarkdownLink, type MarkdownLink } from './MarkdownFormatting.js';
 
 export function MarkdownLinkDialog({

@@ -1,11 +1,12 @@
 import { forwardRef, useEffect, useRef, useState } from 'react';
+import { useFieldMetadata } from './internal/useFieldMetadata.js';
 import type { ButtonHTMLAttributes } from 'react';
 import { Select as BaseSelect } from '@base-ui/react/select';
 import { classNames } from '../internal/classNames.js';
 import { Theme, useTheme } from '../foundations/Theme.js';
 import { Surface } from '../foundations/Surface.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
-import { FieldFrame, useFieldMetadata, type FieldProps } from './internal/FieldFrame.js';
+import { FieldFrame, type FieldProps } from './internal/FieldFrame.js';
 import { setRef } from '../internal/setRef.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
 

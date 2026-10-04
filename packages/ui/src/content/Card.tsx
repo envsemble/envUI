@@ -1,10 +1,9 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { Text } from '../foundations/Text.js';
 import { Stack, ActionGroup } from '../foundations/Layout.js';
 import { Surface, type SurfaceAppearanceProps } from '../foundations/Surface.js';
-import { ActionElement, type ActionElementProps } from '../actions/ActionElement.js';
+import { ActionElement, type ActionElementProps } from '../internal/ActionElement.js';
 
 type CardAppearanceProps = Pick<SurfaceAppearanceProps, 'padding'> & {
   tone?: Exclude<SurfaceAppearanceProps['tone'], 'alternate'>;
@@ -107,89 +106,5 @@ export function Card({
         content
       )}
     </Surface>
-  );
-}
-
-export type ClickableCardProps =
-  | (ComponentPropsWithRef<'button'> & { href?: never })
-  | (ComponentPropsWithRef<'a'> & { href: string; disabled?: boolean });
-
-/** A single interactive surface. Do not nest links or controls inside it. */
-export function ClickableCard(props: ClickableCardProps) {
-  if (props.href !== undefined) {
-    return <Card {...props} />;
-  }
-  return <Card {...props} as="button" />;
-}
-
-export interface ActionCardProps extends Omit<ComponentPropsWithRef<'article'>, 'title'> {
-  title?: ReactNode;
-  meta?: ReactNode;
-  actions?: ReactNode;
-}
-
-export function ActionCard({
-  title,
-  meta,
-  actions,
-  className,
-  children,
-  ...props
-}: ActionCardProps) {
-  return (
-    <Card
-      {...props}
-      as="article"
-      layout="action"
-      heading={title}
-      meta={meta}
-      actions={actions}
-      className={className}
-    >
-      {children}
-    </Card>
-  );
-}
-
-export interface FeatureCardProps extends Omit<ComponentPropsWithRef<'div'>, 'title'> {
-  icon?: ReactNode;
-  title: ReactNode;
-  description?: ReactNode;
-  action?: ReactNode;
-}
-
-export function FeatureCard({
-  icon,
-  title,
-  description,
-  action,
-  className,
-  children,
-  ...props
-}: FeatureCardProps) {
-  return (
-    <Card {...props} className={classNames('env-feature-card', className)}>
-      <div className="env-feature-card-layout">
-        {icon != null && (
-          <div className="env-feature-card-icon">
-            <DecorativeIcon>{icon}</DecorativeIcon>
-          </div>
-        )}
-        <Stack className="env-feature-card-copy">
-          <Stack gap={1}>
-            <Text as="h2" variant="page-heading">
-              {title}
-            </Text>
-            {description != null && (
-              <Text variant="supporting" className="env-feature-card-description">
-                {description}
-              </Text>
-            )}
-          </Stack>
-          {children != null && <Stack className="env-feature-card-extra">{children}</Stack>}
-        </Stack>
-        {action != null && <div className="env-feature-card-action">{action}</div>}
-      </div>
-    </Card>
   );
 }

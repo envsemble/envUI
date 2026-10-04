@@ -1,7 +1,7 @@
 import { DirectionLinks } from '@envsemble/envui';
 import { ArrowBack } from '@envsemble/envui/icons/ArrowBack';
 import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
-import { documentationPages, type ReferenceView } from '../Documentation';
+import { documentationPages, type ReferenceView } from './DocumentationRoutes';
 
 export function PageNavigation({ path, view }: { path: string; view: ReferenceView }) {
   const index = documentationPages.findIndex((page) => page.path === path);

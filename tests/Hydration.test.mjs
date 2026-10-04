@@ -9,7 +9,7 @@ import { renderToString } from 'react-dom/server';
 
 test('prepare compiled-public-API hydration acceptance fixture', async () => {
   await mkdir('.cache', { recursive: true });
-  const fixture = resolve('tests/HydrationApp.tsx');
+  const fixture = resolve('tests/fixture/hydration/HydrationApp.tsx');
   const server = resolve('.cache/HydrationServer.mjs');
   await build({
     entryPoints: [fixture],
@@ -25,7 +25,7 @@ test('prepare compiled-public-API hydration acceptance fixture', async () => {
   assert.match(markup, /Server value/);
   const client = await build({
     stdin: {
-      contents: `import {hydrateRoot} from 'react-dom/client';import {createElement} from 'react';import {HydrationApp} from './tests/HydrationApp.tsx';hydrateRoot(document.getElementById('root'),createElement(HydrationApp),{onRecoverableError:error=>{window.hydrationErrors.push(error.message)}});window.hydrationReady=true;`,
+      contents: `import {hydrateRoot} from 'react-dom/client';import {createElement} from 'react';import {HydrationApp} from './tests/fixture/hydration/HydrationApp.tsx';hydrateRoot(document.getElementById('root'),createElement(HydrationApp),{onRecoverableError:error=>{window.hydrationErrors.push(error.message)}});window.hydrationReady=true;`,
       resolveDir: process.cwd(),
     },
     jsx: 'automatic',

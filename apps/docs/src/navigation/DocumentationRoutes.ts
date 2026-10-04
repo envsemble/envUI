@@ -1,4 +1,4 @@
-import { foundations, references } from './Reference';
+import { foundations, references } from '../Reference';
 
 export const referenceViews = [
   { id: 'preview', title: 'Preview' },

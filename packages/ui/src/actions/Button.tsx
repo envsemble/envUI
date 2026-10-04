@@ -1,7 +1,7 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
-import { ActionElement, type ActionElementProps } from './ActionElement.js';
+import { ActionElement, type ActionElementProps } from '../internal/ActionElement.js';
 
 export type ButtonVariant =
   | 'primary'

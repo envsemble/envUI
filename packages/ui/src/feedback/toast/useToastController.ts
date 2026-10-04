@@ -1,12 +1,11 @@
 import { useEffect, useId, useMemo, useRef } from 'react';
-import { toastPlacements } from './ToastTypes.js';
-import type {
-  ToastDelivery,
-  ToastEntry,
-  ToastNotification,
-  ToastPlacement,
-  ToastTimer,
-} from './ToastTypes.js';
+import {
+  toastPlacements,
+  type ToastDelivery,
+  type ToastEntry,
+  type ToastTimer,
+} from './ToastInternals.js';
+import type { ToastNotification, ToastPlacement } from './ToastTypes.js';
 
 /** Delivers notifications immediately and tracks pause-aware visible lifetimes. */
 export function useToastController(defaultPlacement: ToastPlacement) {

@@ -1,10 +1,10 @@
-import { ColorsPreview } from './previews/foundations/Colors';
-import { TypographyPreview } from './previews/foundations/Typography';
-import { SpacingPreview } from './previews/foundations/Layout';
-import { IconsPreview } from './previews/foundations/Icons';
-import { AccessibilityPreview } from './previews/foundations/Accessibility';
-import { CompositionPreview } from './previews/foundations/Composition';
-import { Preview } from './previews/Preview';
+import { ColorsPreview } from './foundations/Colors';
+import { TypographyPreview } from './foundations/Typography';
+import { SpacingPreview } from './foundations/Spacing';
+import { IconsPreview } from './foundations/Icons';
+import { AccessibilityPreview } from './foundations/Accessibility';
+import { CompositionPreview } from './foundations/Composition';
+import { Preview } from './Preview';
 
 interface FoundationPreviewProps {
   id: string;

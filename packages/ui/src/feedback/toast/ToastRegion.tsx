@@ -6,7 +6,8 @@ import { Theme, useTheme } from '../../foundations/Theme.js';
 import { Close } from '../../icons/Close.js';
 import { ToastBody } from './ToastBody.js';
 import type { ToastController } from './useToastController.js';
-import type { ToastEntry, ToastPlacement } from './ToastTypes.js';
+import type { ToastEntry } from './ToastInternals.js';
+import type { ToastPlacement } from './ToastTypes.js';
 
 export function ToastRegion({
   placement,

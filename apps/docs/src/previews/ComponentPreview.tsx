@@ -1,19 +1,19 @@
-import { ButtonsPreview } from './previews/Actions';
+import { ButtonsPreview } from './Actions';
 import {
   TextFieldsPreview,
   CheckboxPreview,
   SwitchPreview,
   RadioPreview,
   SelectPreview,
-} from './previews/Forms';
-import { NavigationPreview, TabsPreview, DirectionLinksPreview } from './previews/Navigation';
-import { SurfacePreview, LayoutPreview, RowsPreview, CardsPreview } from './previews/Layout';
-import { ChipsPreview, DisclosuresPreview } from './previews/Content';
-import { CodePreview } from './previews/CodeContent';
-import { MarkdownPreview } from './previews/MarkdownContent';
-import { MarkdownEditorPreview } from './previews/MarkdownEditing';
-import { EmptyStatePreview, LoadingPreview, DialogsPreview } from './previews/Feedback';
-import { ToastsPreview } from './previews/Toasts';
+} from './Forms';
+import { NavigationPreview, TabsPreview, DirectionLinksPreview } from './Navigation';
+import { SurfacePreview, LayoutPreview, RowsPreview, CardsPreview } from './Layout';
+import { ChipsPreview, DisclosuresPreview } from './Content';
+import { CodePreview } from './CodeContent';
+import { MarkdownPreview } from './MarkdownContent';
+import { MarkdownEditorPreview } from './MarkdownEditing';
+import { EmptyStatePreview, LoadingPreview, DialogsPreview } from './Feedback';
+import { ToastsPreview } from './Toasts';
 
 /** Select a topic; each preview retains its state across theme changes. */
 export function ComponentPreview({ id }: { id: string }) {

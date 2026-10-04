@@ -1,9 +1,9 @@
 import { forwardRef } from 'react';
+import { useFieldMetadata } from './internal/useFieldMetadata.js';
 import type { InputHTMLAttributes } from 'react';
 import { classNames } from '../internal/classNames.js';
 import {
   FieldFrame,
-  useFieldMetadata,
   type FieldProps,
   type TextFieldAppearanceProps,
 } from './internal/FieldFrame.js';

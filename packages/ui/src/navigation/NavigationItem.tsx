@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { NavigationIconState } from '../MaterialSymbolState.js';
-import { ActionElement, type ActionElementProps } from '../actions/ActionElement.js';
+import { ActionElement, type ActionElementProps } from '../internal/ActionElement.js';
 
 interface NavigationItemSharedProps {
   size?: 'standard' | 'compact';

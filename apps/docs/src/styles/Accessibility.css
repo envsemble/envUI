@@ -1,0 +1,10 @@
+.docs-skip {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  transform: translateY(-200%);
+  z-index: 1000;
+}
+.docs-skip:focus {
+  transform: none;
+}
