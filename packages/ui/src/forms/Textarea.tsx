@@ -11,6 +11,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
     error,
     id: suppliedId,
     className,
+    placeholder,
     'aria-describedby': describedBy,
     'aria-invalid': invalid,
     ...props
@@ -25,8 +26,15 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
       label={label != null ? <label htmlFor={id}>{label}</label> : null}
       hint={hint}
       error={error}
+      floatingLabel
     >
-      <TextareaControl {...props} ref={ref} {...metadata} className={className} />
+      <TextareaControl
+        {...props}
+        ref={ref}
+        {...metadata}
+        placeholder={label != null ? placeholder || ' ' : placeholder}
+        className={className}
+      />
     </FieldFrame>
   );
 });

@@ -156,58 +156,60 @@ export const MarkdownEditor = forwardRef<HTMLTextAreaElement, MarkdownEditorProp
             onRedo={() => editing.moveHistory(1)}
           />
         )}
-        <TextareaControl
-          {...nativeProps}
-          {...metadata}
-          ref={attachInput}
-          className={classNames('env-markdown-source', className)}
-          rows={rows}
-          disabled={disabled}
-          readOnly={readOnly}
-          maxLength={maxLength}
-          form={form}
-          value={editing.content}
-          onChange={(event) => {
-            setStatus('');
-            editing.handleChange(event);
-          }}
-          onCompositionStart={(event) => {
-            editing.composing.current = true;
-            onCompositionStart?.(event);
-          }}
-          onCompositionEnd={(event) => {
-            editing.composing.current = false;
-            onCompositionEnd?.(event);
-          }}
-          onInvalid={(event) => {
-            onInvalid?.(event);
-            // Reveal the native field before the browser focuses an invalid control.
-            if (!event.defaultPrevented && mode !== 'write') flushSync(() => setMode('write'));
-          }}
-          onKeyDown={(event) => {
-            onKeyDown?.(event);
-            if (
-              event.defaultPrevented ||
-              event.nativeEvent.isComposing ||
-              disabled ||
-              readOnly ||
-              event.altKey
-            )
-              return;
-            if (!event.metaKey && !event.ctrlKey) return;
-            const key = event.key.toLowerCase();
-            if (key === 'z' || key === 'y') {
-              event.preventDefault();
-              editing.moveHistory(key === 'y' || event.shiftKey ? 1 : -1);
-            } else if (toolbar !== false && (key === 'b' || key === 'i' || key === 'k')) {
-              const command = key === 'b' ? 'bold' : key === 'i' ? 'italic' : 'link';
-              if (toolbar.includes(command)) {
+        <FieldFrame id={metadata.id} floatingLabel>
+          <TextareaControl
+            {...nativeProps}
+            {...metadata}
+            ref={attachInput}
+            className={classNames('env-markdown-source', className)}
+            rows={rows}
+            disabled={disabled}
+            readOnly={readOnly}
+            maxLength={maxLength}
+            form={form}
+            value={editing.content}
+            onChange={(event) => {
+              setStatus('');
+              editing.handleChange(event);
+            }}
+            onCompositionStart={(event) => {
+              editing.composing.current = true;
+              onCompositionStart?.(event);
+            }}
+            onCompositionEnd={(event) => {
+              editing.composing.current = false;
+              onCompositionEnd?.(event);
+            }}
+            onInvalid={(event) => {
+              onInvalid?.(event);
+              // Reveal the native field before the browser focuses an invalid control.
+              if (!event.defaultPrevented && mode !== 'write') flushSync(() => setMode('write'));
+            }}
+            onKeyDown={(event) => {
+              onKeyDown?.(event);
+              if (
+                event.defaultPrevented ||
+                event.nativeEvent.isComposing ||
+                disabled ||
+                readOnly ||
+                event.altKey
+              )
+                return;
+              if (!event.metaKey && !event.ctrlKey) return;
+              const key = event.key.toLowerCase();
+              if (key === 'z' || key === 'y') {
                 event.preventDefault();
-                runCommand(command);
+                editing.moveHistory(key === 'y' || event.shiftKey ? 1 : -1);
+              } else if (toolbar !== false && (key === 'b' || key === 'i' || key === 'k')) {
+                const command = key === 'b' ? 'bold' : key === 'i' ? 'italic' : 'link';
+                if (toolbar.includes(command)) {
+                  event.preventDefault();
+                  runCommand(command);
+                }
               }
-            }
-          }}
-        />
+            }}
+          />
+        </FieldFrame>
       </div>
     );
     return (

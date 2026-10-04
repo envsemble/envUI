@@ -11,6 +11,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     error,
     id: suppliedId,
     className,
+    placeholder,
     'aria-describedby': describedBy,
     'aria-invalid': invalid,
     ...props
@@ -25,11 +26,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       label={label != null ? <label htmlFor={id}>{label}</label> : null}
       hint={hint}
       error={error}
+      floatingLabel
     >
       <input
         {...props}
         ref={ref}
         {...metadata}
+        placeholder={label != null ? placeholder || ' ' : placeholder}
         className={classNames('env-text-input', className)}
       />
     </FieldFrame>
