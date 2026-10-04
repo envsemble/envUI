@@ -14,26 +14,26 @@ const notice = (
     .locator('.env-toast')
     .filter({ has: page.locator('.env-toast-message', { hasText: message }) });
 
-test('queue promotion preserves every other notice and placements are independent', async ({
+test('newest notices stay visible and older notices return independently per placement', async ({
   page,
 }) => {
   await page.getByTestId('toast-queue-bottom').click();
   await page.getByTestId('toast-queue-top').click();
-  await expect(region(page).locator('.env-toast')).toHaveCount(3);
-  await expect(region(page, 'top-center').locator('.env-toast')).toHaveCount(3);
+  await expect(region(page).locator('.env-toast:not([data-limited])')).toHaveCount(3);
+  await expect(region(page, 'top-center').locator('.env-toast:not([data-limited])')).toHaveCount(3);
+  await expect(notice(page, 'Bottom queue 1')).toBeHidden();
+  await notice(page, 'Bottom queue 4')
+    .getByRole('button', { name: 'Dismiss notification' })
+    .click();
   await expect(notice(page, 'Bottom queue 4')).toHaveCount(0);
-  await notice(page, 'Bottom queue 1')
+  for (const index of [1, 2, 3]) await expect(notice(page, `Bottom queue ${index}`)).toBeVisible();
+  await expect(region(page, 'top-center').locator('.env-toast:not([data-limited])')).toHaveCount(3);
+  await notice(page, 'Top queue 4', 'top-center')
     .getByRole('button', { name: 'Dismiss notification' })
     .click();
-  await expect(notice(page, 'Bottom queue 1')).toHaveCount(0);
-  for (const index of [2, 3, 4]) await expect(notice(page, `Bottom queue ${index}`)).toHaveCount(1);
-  await expect(region(page, 'top-center').locator('.env-toast')).toHaveCount(3);
-  await notice(page, 'Top queue 2', 'top-center')
-    .getByRole('button', { name: 'Dismiss notification' })
-    .click();
-  await expect(notice(page, 'Top queue 2', 'top-center')).toHaveCount(0);
-  for (const index of [1, 3, 4])
-    await expect(notice(page, `Top queue ${index}`, 'top-center')).toHaveCount(1);
+  await expect(notice(page, 'Top queue 4', 'top-center')).toHaveCount(0);
+  for (const index of [1, 2, 3])
+    await expect(notice(page, `Top queue ${index}`, 'top-center')).toBeVisible();
   await page.getByTestId('toast-clear').click();
   await expect(page.locator('.env-toast-viewport .env-toast')).toHaveCount(0);
 });
@@ -97,13 +97,13 @@ test('viewport focus pauses existing and newly displayed timers', async ({ page 
 test('Strict Mode mount effects preserve capacity after effect replay', async ({ page }) => {
   await page.getByRole('button', { name: 'Mount strict toast provider' }).click();
   const active = page.locator(
-    '.env-toast-viewport-bottom-right .env-toast:not([data-ending-style])',
+    '.env-toast-viewport-bottom-right .env-toast:not([data-ending-style]):not([data-limited])',
   );
   await expect(active).toHaveCount(1);
   await page.getByRole('button', { name: 'Add strict notices' }).click();
   await expect(active).toHaveCount(3);
   await page.waitForTimeout(350);
-  await expect(page.locator('.env-toast-viewport-bottom-right .env-toast')).toHaveCount(3);
+  await expect(active).toHaveCount(3);
 });
 
 test('placement stacks, keyboard access, single-line sizing and contextual action states', async ({
@@ -111,10 +111,10 @@ test('placement stacks, keyboard access, single-line sizing and contextual actio
 }) => {
   await page.getByTestId('toast-queue-bottom').click();
   const boxes = await region(page)
-    .locator('.env-toast')
+    .locator('.env-toast:not([data-limited])')
     .evaluateAll((elements) => elements.map((element) => element.getBoundingClientRect().y));
-  expect(boxes[0]).toBeLessThan(boxes[1]);
-  expect(boxes[1]).toBeLessThan(boxes[2]);
+  expect(boxes[0]).toBeGreaterThan(boxes[1]);
+  expect(boxes[1]).toBeGreaterThan(boxes[2]);
   await page.keyboard.press('F6');
   await expect(region(page)).toBeFocused();
   await page.getByTestId('toast-clear').click();

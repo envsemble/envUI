@@ -35,12 +35,12 @@ function ManagedToastRegions({
   defaultPlacement,
   visibleLimit,
 }: Required<ToastProviderProps>) {
-  const controller = useToastController(defaultPlacement, visibleLimit);
+  const controller = useToastController(defaultPlacement);
   return (
     <ManagerContext value={controller.manager}>
       {children}
       {toastPlacements.map((placement) => (
-        <BaseToast.Provider key={placement} timeout={0} limit={Number.MAX_SAFE_INTEGER}>
+        <BaseToast.Provider key={placement} timeout={0} limit={visibleLimit}>
           <ToastRegion placement={placement} controller={controller} />
         </BaseToast.Provider>
       ))}

@@ -37,7 +37,7 @@ export interface ToastManager {
 export interface ToastProviderProps {
   children: ReactNode;
   defaultPlacement?: ToastPlacement;
-  /** Maximum visible per placement (default 3). Excess notices queue with a count above the stack. */
+  /** Maximum visible per placement (default 3). Newest notices stay visible; older ones hide behind a count. */
   visibleLimit?: number;
 }
 

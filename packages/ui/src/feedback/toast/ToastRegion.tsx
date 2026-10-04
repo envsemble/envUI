@@ -1,4 +1,4 @@
-import { useLayoutEffect, useSyncExternalStore } from 'react';
+import { useLayoutEffect } from 'react';
 import { Toast as BaseToast } from '@base-ui/react/toast';
 import { Button } from '../../actions/Button.js';
 import { InfoChip } from '../../content/InfoChip.js';
@@ -17,11 +17,9 @@ export function ToastRegion({
 }) {
   const toastStore = BaseToast.useToastManager<ToastEntry>();
   const theme = useTheme();
-  const queuedCount = useSyncExternalStore(
-    controller.subscribeToQueue,
-    () => controller.getQueuedCount(placement),
-    () => 0,
-  );
+  const hiddenCount = toastStore.toasts.filter(
+    (toast) => toast.limited && toast.transitionStatus !== 'ending',
+  ).length;
   useLayoutEffect(
     () =>
       controller.registerPlacementStore(placement, {
@@ -30,6 +28,14 @@ export function ToastRegion({
       }),
     [controller, placement, toastStore.add, toastStore.close],
   );
+  useLayoutEffect(() => {
+    const visibleIds = new Set(
+      toastStore.toasts
+        .filter((toast) => !toast.limited && toast.transitionStatus !== 'ending')
+        .map((toast) => toast.id),
+    );
+    controller.setVisibleNotifications(placement, visibleIds);
+  }, [controller, placement, toastStore.toasts]);
   return (
     <BaseToast.Portal>
       <Theme theme={theme} className="env-toast-portal-theme">
@@ -44,13 +50,13 @@ export function ToastRegion({
               controller.setPlacementFocused(placement, false);
           }}
         >
-          {queuedCount > 0 && (
+          {hiddenCount > 0 && (
             <InfoChip
               className="env-toast-queued-count"
               role="status"
-              aria-label={`${queuedCount} more notification${queuedCount === 1 ? '' : 's'} queued`}
+              aria-label={`${hiddenCount} older notification${hiddenCount === 1 ? '' : 's'} hidden`}
             >
-              +{queuedCount}
+              +{hiddenCount}
             </InfoChip>
           )}
           {toastStore.toasts.map((toast) => {

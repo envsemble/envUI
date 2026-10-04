@@ -1059,13 +1059,13 @@ function NotificationButtons() {
 ```
 
 - defaultPlacement: bottom-right stacks upward; top-center stacks downward
-- visibleLimit: Positive integer, default 3 per placement; excess notices queue with a count above the stack
+- visibleLimit: Positive integer, default 3 per placement; newest notices stay visible, with an older-notice count above the stack
 - useToast().show(options): Returns the notification ID; accepts variant and message
 - options.placement: Override the provider’s default for a particular notification
 - options.action: {label, onClick}; notices with actions persist unless duration is set
 - options.dismissible: true by default; adds a close button
 - options.duration: Milliseconds for any variant; Infinity or 0 persists. Defaults to 5000, or persistent for errors/actions
-- useToast().dismiss(id) / clear(): Dismiss one notification or clear the entire queue
+- useToast().dismiss(id) / clear(): Dismiss one notification or clear all notifications
 
 #### Inline toast
 
@@ -1096,7 +1096,8 @@ function ArchiveNotice({ undoArchive }: { undoArchive: () => void }) {
 #### Guidelines
 
 - By default, neutral, success and info notices without actions expire after five seconds. Errors and notices with actions persist. Set duration in milliseconds to override either default, or Infinity to keep a notice until dismissed.
-- Timers pause during hover, keyboard focus or an inactive window. Set visibleLimit to cap each placement; the queued count appears above the stack. Queued lifetimes start on display.
+- New notices appear immediately at the bottom of the bottom-right stack or the top of the top-center stack. Set visibleLimit to cap each placement; older notices hide behind the count above it and reappear as newer notices close.
+- Timers pause while hidden, during hover, keyboard focus or an inactive window. Each notice receives its configured amount of visible time, resuming the remaining duration when it reappears.
 - Keep messages and actions short. Messages stay single-line and truncate to available space. Manual Toast shares the presentation; the consumer owns its lifetime.
 
 Related: [Dialogs](#dialogs), [Buttons](#buttons), [Colors & themes](#colors--themes), [Accessibility](#accessibility).

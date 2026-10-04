@@ -8,12 +8,12 @@ import type {
   ToastTimer,
 } from './ToastTypes.js';
 
-/** Owns notification queues, delivery stores, and pause-aware dismissal timers. */
-export function useToastController(defaultPlacement: ToastPlacement, visibleLimit: number) {
+/** Delivers notifications immediately and tracks pause-aware visible lifetimes. */
+export function useToastController(defaultPlacement: ToastPlacement) {
   const notificationIdPrefix = useId();
   const notificationSequence = useRef(0);
-  const visibleNotifications = useRef(new Map<string, ToastEntry>());
-  const queuedNotifications = useRef<ToastEntry[]>([]);
+  const notifications = useRef(new Map<string, ToastEntry>());
+  const pendingNotifications = useRef<ToastEntry[]>([]);
   const placementStores = useRef(new Map<ToastPlacement, ToastDelivery>());
   const dismissalTimers = useRef(new Map<string, ToastTimer>());
   const focusedRegions = useRef(new Set<ToastPlacement>());
@@ -21,34 +21,7 @@ export function useToastController(defaultPlacement: ToastPlacement, visibleLimi
   const currentDefaultPlacement = useRef(defaultPlacement);
   currentDefaultPlacement.current = defaultPlacement;
   const isMounted = useRef(true);
-  const currentVisibleLimit = useRef(visibleLimit);
-  currentVisibleLimit.current = visibleLimit;
   const controller = useMemo(() => {
-    const queueListeners = new Set<() => void>();
-    const queuedCounts: Record<ToastPlacement, number> = { 'bottom-right': 0, 'top-center': 0 };
-
-    function notifyQueueChanges() {
-      let changed = false;
-      for (const placement of toastPlacements) {
-        const count = queuedNotifications.current.filter(
-          (entry) => entry.placement === placement,
-        ).length;
-        if (queuedCounts[placement] !== count) {
-          queuedCounts[placement] = count;
-          changed = true;
-        }
-      }
-      if (changed) queueListeners.forEach((listener) => listener());
-    }
-    function subscribeToQueue(listener: () => void) {
-      queueListeners.add(listener);
-      return () => {
-        queueListeners.delete(listener);
-      };
-    }
-    function getQueuedCount(placement: ToastPlacement) {
-      return queuedCounts[placement];
-    }
     function cancelTimer(id: string) {
       clearTimeout(dismissalTimers.current.get(id)?.handle);
       dismissalTimers.current.delete(id);
@@ -82,54 +55,51 @@ export function useToastController(defaultPlacement: ToastPlacement, visibleLimi
       if (timer?.pauseReasons.delete(reason) && !timer.pauseReasons.size)
         scheduleDismissal(id, timer);
     }
-    function showQueuedNotifications() {
+    function deliverPendingNotifications() {
       if (!isMounted.current) return;
-      for (const placement of toastPlacements) {
-        const delivery = placementStores.current.get(placement);
-        if (!delivery) continue;
-        let visibleCount = [...visibleNotifications.current.values()].filter(
-          (entry) => entry.placement === placement,
-        ).length;
-        while (visibleCount < currentVisibleLimit.current) {
-          const queuedIndex = queuedNotifications.current.findIndex(
-            (entry) => entry.placement === placement,
-          );
-          if (queuedIndex < 0) break;
-          const [entry] = queuedNotifications.current.splice(queuedIndex, 1);
-          visibleNotifications.current.set(entry.id, entry);
-          visibleCount++;
-          delivery.add({
-            id: entry.id,
-            title: entry.message,
-            type: entry.variant,
-            data: entry,
-            priority: entry.variant === 'error' ? 'high' : 'low',
-            timeout: 0,
-            onRemove() {
-              visibleNotifications.current.delete(entry.id);
-              cancelTimer(entry.id);
-              // Base UI removes the old item after this callback. Refill afterward.
-              queueMicrotask(showQueuedNotifications);
-            },
-          });
-          const durationMs =
-            entry.duration ?? (entry.variant === 'error' || entry.action ? Infinity : 5000);
-          if (durationMs > 0 && Number.isFinite(durationMs)) {
-            const initialPauseReasons = [
+      pendingNotifications.current = pendingNotifications.current.filter((entry) => {
+        const delivery = placementStores.current.get(entry.placement);
+        if (!delivery) return true;
+        const durationMs =
+          entry.duration ?? (entry.variant === 'error' || entry.action ? Infinity : 5000);
+        if (durationMs > 0 && Number.isFinite(durationMs)) {
+          dismissalTimers.current.set(entry.id, {
+            remainingMs: durationMs,
+            startedAt: Date.now(),
+            pauseReasons: new Set([
+              'hidden',
               ...(isWindowPaused.current ? ['window'] : []),
-              ...(focusedRegions.current.has(placement) ? ['viewport'] : []),
-            ];
-            const timer: ToastTimer = {
-              remainingMs: durationMs,
-              startedAt: Date.now(),
-              pauseReasons: new Set(initialPauseReasons),
-            };
-            dismissalTimers.current.set(entry.id, timer);
-            scheduleDismissal(entry.id, timer);
-          }
+              ...(focusedRegions.current.has(entry.placement) ? ['viewport'] : []),
+            ]),
+          });
+        }
+        delivery.add({
+          id: entry.id,
+          title: entry.message,
+          type: entry.variant,
+          data: entry,
+          priority: entry.variant === 'error' ? 'high' : 'low',
+          timeout: 0,
+          onClose() {
+            notifications.current.delete(entry.id);
+            cancelTimer(entry.id);
+          },
+        });
+        return false;
+      });
+    }
+    function setVisibleNotifications(placement: ToastPlacement, visibleIds: ReadonlySet<string>) {
+      for (const entry of notifications.current.values()) {
+        if (entry.placement !== placement) continue;
+        if (visibleIds.has(entry.id)) resume(entry.id, 'hidden');
+        else {
+          pause(entry.id, 'hidden');
+          // Hidden roots cannot retain pointer or keyboard interaction pauses.
+          const timer = dismissalTimers.current.get(entry.id);
+          timer?.pauseReasons.delete('hover');
+          timer?.pauseReasons.delete('focus');
         }
       }
-      notifyQueueChanges();
     }
     function show(notification: ToastNotification) {
       if (
@@ -142,37 +112,39 @@ export function useToastController(defaultPlacement: ToastPlacement, visibleLimi
       if (!toastPlacements.includes(placement))
         throw new RangeError('Unsupported toast placement.');
       const id = `${notificationIdPrefix}-toast-${++notificationSequence.current}`;
-      queuedNotifications.current.push({
+      const entry: ToastEntry = {
         ...notification,
         id,
         placement,
         variant: notification.variant ?? 'neutral',
-      });
-      showQueuedNotifications();
+      };
+      notifications.current.set(id, entry);
+      pendingNotifications.current.push(entry);
+      deliverPendingNotifications();
       return id;
     }
     function dismiss(id: string) {
-      queuedNotifications.current = queuedNotifications.current.filter((entry) => entry.id !== id);
-      notifyQueueChanges();
+      pendingNotifications.current = pendingNotifications.current.filter(
+        (entry) => entry.id !== id,
+      );
       cancelTimer(id);
-      const entry = visibleNotifications.current.get(id);
+      const entry = notifications.current.get(id);
+      notifications.current.delete(id);
       if (entry) placementStores.current.get(entry.placement)?.close(id);
     }
     function clear() {
-      queuedNotifications.current = [];
-      notifyQueueChanges();
-      for (const id of visibleNotifications.current.keys()) dismiss(id);
+      for (const id of notifications.current.keys()) dismiss(id);
     }
     function registerPlacementStore(placement: ToastPlacement, delivery: ToastDelivery) {
       placementStores.current.set(placement, delivery);
-      showQueuedNotifications();
+      deliverPendingNotifications();
       // Retain the delivery through layout cleanup so passive cleanup can close
       // its store during Strict Mode replay. The controller owns both regions.
     }
     function setPlacementFocused(placement: ToastPlacement, focused: boolean) {
       if (focused) focusedRegions.current.add(placement);
       else focusedRegions.current.delete(placement);
-      for (const entry of visibleNotifications.current.values())
+      for (const entry of notifications.current.values())
         if (entry.placement === placement)
           focused ? pause(entry.id, 'viewport') : resume(entry.id, 'viewport');
     }
@@ -183,10 +155,9 @@ export function useToastController(defaultPlacement: ToastPlacement, visibleLimi
     }
     return {
       manager: { show, dismiss, clear },
-      subscribeToQueue,
-      getQueuedCount,
       registerPlacementStore,
-      showQueuedNotifications,
+      deliverPendingNotifications,
+      setVisibleNotifications,
       pause,
       resume,
       setPlacementFocused,
@@ -196,7 +167,7 @@ export function useToastController(defaultPlacement: ToastPlacement, visibleLimi
   }, [notificationIdPrefix]);
   useEffect(() => {
     isMounted.current = true;
-    controller.showQueuedNotifications();
+    controller.deliverPendingNotifications();
     const blur = () => controller.setWindowPaused(true);
     const focus = () => controller.setWindowPaused(document.visibilityState === 'hidden');
     window.addEventListener('blur', blur);
@@ -209,13 +180,12 @@ export function useToastController(defaultPlacement: ToastPlacement, visibleLimi
       window.removeEventListener('focus', focus);
       document.removeEventListener('visibilitychange', focus);
       controller.manager.clear();
-      queuedNotifications.current = [];
-      visibleNotifications.current.clear();
+      pendingNotifications.current = [];
+      notifications.current.clear();
       focusedRegions.current.clear();
       for (const id of dismissalTimers.current.keys()) controller.cancelTimer(id);
     };
   }, [controller]);
-  useEffect(controller.showQueuedNotifications, [controller, visibleLimit]);
 
   return controller;
 }
