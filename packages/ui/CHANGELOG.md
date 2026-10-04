@@ -8,7 +8,7 @@
 
 - Add Markdown rendering with react-markdown/remark-gfm, envUI prose typography, shared CodeBlock, semantic heading offsets and application-owned link rendering.
 
-- Add Code and CodeBlock with shared source display, optional copying and lazy Shiki highlighting using standard GitHub Light Default and GitHub Dark Default themes.
+- Add Code and CodeBlock with shared source display, optional copying and lazy Shiki highlighting using standard GitHub Light Default and GitHub Dark themes.
 
 - Add NavigationItem iconOnly mode for collapsed sidebars, requiring an icon and accessible destination name while retaining native navigation and selection behavior.
 - Unify labeled buttons, icon-only buttons and navigation items with one shared 1 rem control icon size, including important buttons.

@@ -1,5 +1,5 @@
 import githubLightDefault from '@shikijs/themes/github-light-default';
-import githubDarkDefault from '@shikijs/themes/github-dark-default';
+import githubDark from '@shikijs/themes/github-dark';
 
-/** Keep the published GitHub Default themes intact, independently of the envUI palette. */
-export const codeThemes = { light: githubLightDefault, dark: githubDarkDefault };
+/** Keep the published GitHub themes intact, independently of the envUI palette. */
+export const codeThemes = { light: githubLightDefault, dark: githubDark };

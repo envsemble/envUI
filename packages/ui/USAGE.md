@@ -556,7 +556,7 @@ async function requestLink({ selectedText }: { selectedText: string }):
 #### Guidelines
 
 - Use MarkdownEditor for formatted prose, Textarea for plain text. The stored value remains an ordinary Markdown string; syntax stays visible while editing.
-- Preview uses Markdown with envUI prose typography and standard GitHub Default code-block colors. The source control reuses Textarea geometry, labels and states.
+- Preview uses Markdown with envUI prose typography and standard GitHub code-block colors. The source control reuses Textarea geometry, labels and states.
 - Formatting and typing share bounded undo/redo history. Ctrl/Cmd+B, I and K apply enabled bold, italic and link commands. Ctrl/Cmd+Z undoes; Shift+Z or Y redoes. Toolbar arrow keys move between actions.
 - The editor retains native selection, paste and composition. Formatting waits until composition ends; toolbar actions restore the selection to the source.
 - Native forms submit the source even while Preview is visible. Uncontrolled form reset restores defaultValue; controlled reset retains value, so the application resets its own draft. Replacing the controlled document clears its editing history.
@@ -865,7 +865,7 @@ import { Markdown } from '@envsemble/envui/content';
 
 #### Guidelines
 
-- Paragraphs, headings, lists, quotes and tables use envUI typography and spacing. Code blocks reuse CodeBlock with standard GitHub Default colors.
+- Paragraphs, headings, lists, quotes and tables use envUI typography and spacing. Code blocks reuse CodeBlock with standard GitHub colors.
 - Supports CommonMark plus GFM tables, strikethrough, task lists, automatic links and footnotes. Single source newlines follow standard paragraph behavior.
 - Raw HTML is ignored and URLs retain the renderer’s safe protocol handling. Markdown is content, not executable components.
 - Resource references are ordinary links with stable destination URLs. Labels are saved text; resource resolution, permissions and missing destinations belong to the application.
@@ -891,13 +891,13 @@ import { Code, CodeBlock } from '@envsemble/envui/content';
 - language: JS/JSX, TS/TSX, Java, JSON, HTML, CSS, SQL, shell, YAML, Markdown, INI; aliases are supported
 - copyable / label: Optional copy control and source label
 - wrap: Wrap long lines; otherwise scroll inside the block
-- theme: GitHub Light Default or GitHub Dark Default; follows Theme unless explicitly set
+- theme: GitHub Light Default or GitHub Dark; follows Theme unless explicitly set
 - Native div props: Root ref, className, style and accessible attributes
 
 #### Guidelines
 
 - Use Code inside prose and CodeBlock for multiline source. Source is selectable and never executed.
-- Code blocks use the standard GitHub Light Default and GitHub Dark Default themes. Prose and controls retain envUI typography and spacing.
+- Code blocks use the standard GitHub Light Default and GitHub Dark themes. Prose and controls retain envUI typography and spacing.
 - Highlighting starts after the initial render and shares one runtime. Theme changes reuse the tokens. Unsupported languages remain plain text.
 - Blocks above 50,000 characters or with a line above 2,000 characters stay plain text to avoid expensive highlighting.
 - Copy uses the original source. If clipboard access is unavailable, the code is selected for manual copying.

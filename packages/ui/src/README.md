@@ -8,7 +8,7 @@ and editing use `content.ts`. Keep application imports on `@envsemble/envui` and
 - `actions/`: native button/link behavior and button appearance.
 - `navigation/`: navigation items, directional links, and tabs.
 - `content/`: cards, grouped rows, disclosures, information chips, code and Markdown rendering.
-  Its `internal/` folder owns lazy highlighting and the standard GitHub Default themes.
+  Its `internal/` folder owns lazy highlighting and the standard GitHub themes.
 - `forms/`: input, textarea, Markdown editing, checkbox, switch, radio, and select components.
   Their `internal/` folder owns field metadata, checked state, native form reset handling,
   Markdown formatting, shared editing history, and the standard link dialog/toolbar.

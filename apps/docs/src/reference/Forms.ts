@@ -110,7 +110,7 @@ async function requestLink({ selectedText }: { selectedText: string }):
     ],
     guidelines: [
       'Use MarkdownEditor for formatted prose, Textarea for plain text. The stored value remains an ordinary Markdown string; syntax stays visible while editing.',
-      'Preview uses Markdown with envUI prose typography and standard GitHub Default code-block colors. The source control reuses Textarea geometry, labels and states.',
+      'Preview uses Markdown with envUI prose typography and standard GitHub code-block colors. The source control reuses Textarea geometry, labels and states.',
       'Formatting and typing share bounded undo/redo history. Ctrl/Cmd+B, I and K apply enabled bold, italic and link commands. Ctrl/Cmd+Z undoes; Shift+Z or Y redoes. Toolbar arrow keys move between actions.',
       'The editor retains native selection, paste and composition. Formatting waits until composition ends; toolbar actions restore the selection to the source.',
       'Native forms submit the source even while Preview is visible. Uncontrolled form reset restores defaultValue; controlled reset retains value, so the application resets its own draft. Replacing the controlled document clears its editing history.',

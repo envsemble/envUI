@@ -15,7 +15,7 @@ export function CodePreview() {
       </Example>
       <Example
         title="Highlighted source"
-        caption="Uses GitHub Light Default and GitHub Dark Default colors. Copying preserves the original source."
+        caption="Uses GitHub Light Default and GitHub Dark colors. Copying preserves the original source."
       >
         <Card>
           <CodeBlock
