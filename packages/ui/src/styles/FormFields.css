@@ -46,18 +46,22 @@
   transition: border-color var(--motion-duration-medium) var(--motion-ease);
 }
 @media (hover: hover) {
-  .env-text-field-well:hover:not(:focus-within):not(:has(> .env-text-input:disabled)) {
+  .env-text-field-well:hover:not(:has(> .env-text-input:disabled)) {
     --env-field-border-color: hsl(
       from var(--env-field-interaction-color) h s var(--state-hover-lightness)
     );
   }
-  .env-text-field-well[data-variant='plain']:hover:not(:focus-within):not(
-      :has(> .env-text-input:disabled)
-    ) {
+  .env-text-field-well[data-variant='plain']:hover:not(:has(> .env-text-input:disabled)) {
     border-block-end-color: var(--env-field-border-color);
   }
+  .env-text-field-well[data-variant='plain']:hover:not(:has(> .env-text-input:disabled))
+    > .env-textarea-resize-edge::after {
+    opacity: 1;
+  }
 }
-.env-text-field-well:active:not(:focus-within):not(:has(> .env-text-input:disabled)) {
+.env-text-field-well:is(:active, :has(> .env-textarea-resize-edge[data-resizing])):not(
+    :has(> .env-text-input:disabled)
+  ) {
   --env-field-border-color: hsl(
     from var(--env-field-interaction-color) h s var(--state-pressed-lightness)
   );
@@ -132,8 +136,8 @@
   max-width: 100%;
 }
 .env-text-field-well[data-variant='plain']:focus-within {
-  border-block-end-color: var(--color-link);
-  box-shadow: 0 calc(0.0625rem * var(--scale, 1)) 0 var(--color-link);
+  border-block-end-color: var(--env-field-border-color);
+  box-shadow: 0 calc(0.0625rem * var(--scale, 1)) 0 var(--env-field-border-color);
 }
 /* Invalid outlined controls recolor their existing border; plain controls use an underline. */
 :is(
@@ -142,9 +146,6 @@
 ) {
   --env-field-border-base: var(--env-field-error-color);
   --env-field-interaction-color: var(--env-field-error-color);
-}
-.env-text-field-well:focus-within:has(> .env-text-input[aria-invalid='true']) {
-  --env-field-border-color: hsl(from var(--env-field-border-base) h s var(--state-hover-lightness));
 }
 .env-text-field-well[data-variant='plain']:has(> .env-text-input[aria-invalid='true'])::after {
   content: '';
@@ -155,6 +156,7 @@
   border-radius: var(--md-sys-shape-corner-full);
   background: var(--env-field-border-color);
   pointer-events: none;
+  transition: background-color var(--motion-duration-medium) var(--motion-ease);
 }
 .env-text-field-well[data-variant='plain']:has(> .env-text-input[aria-invalid='true']) {
   border-block-end-color: transparent;
@@ -189,7 +191,6 @@ textarea.env-text-input[data-sizing='content'] {
   );
 }
 .env-textarea-resize-edge {
-  --env-resize-edge-color: var(--color-border-strong);
   position: absolute;
   inset-inline: 0;
   inset-block-end: calc(-0.0625rem * var(--scale, 1));
@@ -199,7 +200,7 @@ textarea.env-text-input[data-sizing='content'] {
   border: 0;
   outline: none;
   background: transparent;
-  color: var(--env-resize-edge-color);
+  color: var(--env-field-border-color);
   cursor: ns-resize;
   touch-action: none;
   user-select: none;
@@ -214,18 +215,6 @@ textarea.env-text-input[data-sizing='content'] {
   border-radius: var(--md-sys-shape-corner-full);
   background: currentColor;
   pointer-events: none;
-}
-.env-text-field-well:focus-within > .env-textarea-resize-edge {
-  --env-resize-edge-color: var(--color-link);
-}
-.env-text-field-well:has(> textarea[aria-invalid='true']) > .env-textarea-resize-edge {
-  --env-resize-edge-color: var(--env-field-error-color);
-}
-.env-textarea-resize-edge:hover {
-  color: hsl(from var(--env-resize-edge-color) h s var(--state-hover-lightness));
-}
-.env-textarea-resize-edge[data-resizing] {
-  color: hsl(from var(--env-resize-edge-color) h s var(--state-pressed-lightness));
 }
 .env-text-field-well[data-variant='plain'] > .env-textarea-resize-edge::after {
   inset-inline: 0;
@@ -265,6 +254,7 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
 }
 @media (prefers-reduced-motion: reduce) {
   .env-text-field-well,
+  .env-text-field-well::after,
   .env-text-field-well > label,
   .env-textarea-resize-edge {
     transition: none;

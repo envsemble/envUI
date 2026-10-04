@@ -17,6 +17,17 @@
 .env-button.env-dropdown-trigger:active:not(:disabled) {
   background: var(--color-icon-button-pressed);
 }
+.env-button.env-dropdown-trigger[aria-invalid='true']:is(:hover, :active):not(:disabled) {
+  background: var(--color-surface-muted);
+}
+@media (hover: hover) {
+  .env-button.env-dropdown-trigger[aria-invalid='true']:hover:not(:disabled) {
+    border-color: hsl(from var(--env-field-border-base) h s var(--state-hover-lightness));
+  }
+}
+.env-button.env-dropdown-trigger[aria-invalid='true']:active:not(:disabled) {
+  border-color: hsl(from var(--env-field-border-base) h s var(--state-pressed-lightness));
+}
 .env-dropdown-trigger .env-symbol {
   width: calc(1.125rem * var(--scale, 1));
   height: calc(1.125rem * var(--scale, 1));
