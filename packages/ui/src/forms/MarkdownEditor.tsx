@@ -66,6 +66,7 @@ export const MarkdownEditor = forwardRef<HTMLTextAreaElement, MarkdownEditorProp
       form,
       className,
       rows = 8,
+      sizing = 'fixed',
       onKeyDown,
       onCompositionStart,
       onCompositionEnd,
@@ -163,6 +164,7 @@ export const MarkdownEditor = forwardRef<HTMLTextAreaElement, MarkdownEditorProp
             ref={attachInput}
             className={classNames('env-markdown-source', className)}
             rows={rows}
+            sizing={sizing}
             disabled={disabled}
             readOnly={readOnly}
             maxLength={maxLength}

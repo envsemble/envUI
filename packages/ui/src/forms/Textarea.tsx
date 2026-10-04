@@ -1,9 +1,8 @@
 import { forwardRef } from 'react';
-import type { TextareaHTMLAttributes } from 'react';
-import { TextareaControl } from './internal/TextareaControl.js';
+import { TextareaControl, type TextareaControlProps } from './internal/TextareaControl.js';
 import { FieldFrame, useFieldMetadata, type FieldProps } from './internal/FieldFrame.js';
 
-export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement>, FieldProps {}
+export interface TextareaProps extends TextareaControlProps, FieldProps {}
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function Textarea(
   {
     label,

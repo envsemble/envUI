@@ -1,10 +1,26 @@
-import { forwardRef, type TextareaHTMLAttributes } from 'react';
+import { forwardRef, type CSSProperties, type TextareaHTMLAttributes } from 'react';
 import { classNames } from '../../internal/classNames.js';
 
+export interface TextareaControlProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
+  /** Fixed height with scrolling (default), or grow and shrink to fit the content. */
+  sizing?: 'fixed' | 'content';
+}
+
 /** Shared native control; field composition stays with Textarea and MarkdownEditor. */
-export const TextareaControl = forwardRef<
-  HTMLTextAreaElement,
-  TextareaHTMLAttributes<HTMLTextAreaElement>
->(function TextareaControl({ className, ...props }, ref) {
-  return <textarea {...props} ref={ref} className={classNames('env-text-input', className)} />;
-});
+export const TextareaControl = forwardRef<HTMLTextAreaElement, TextareaControlProps>(
+  function TextareaControl({ className, sizing = 'fixed', rows = 2, style, ...props }, ref) {
+    // Native content sizing ignores rows, so preserve it as the minimum line count in CSS.
+    const sizingStyle =
+      sizing === 'content' ? ({ '--env-textarea-rows': rows, ...style } as CSSProperties) : style;
+    return (
+      <textarea
+        {...props}
+        ref={ref}
+        rows={rows}
+        data-sizing={sizing}
+        style={sizingStyle}
+        className={classNames('env-text-input', className)}
+      />
+    );
+  },
+);

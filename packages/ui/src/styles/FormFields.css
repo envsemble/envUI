@@ -126,7 +126,20 @@
 }
 textarea.env-text-input {
   min-height: calc(7.5rem * var(--scale, 1));
-  resize: vertical;
+  field-sizing: fixed;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  resize: none;
+}
+.env-text-field-well:has(> textarea.env-text-input) {
+  border-radius: calc(var(--md-sys-shape-corner-extra-small) * var(--scale, 1));
+}
+textarea.env-text-input[data-sizing='content'] {
+  field-sizing: content;
+  min-height: max(
+    calc(7.5rem * var(--scale, 1)),
+    calc(var(--env-textarea-rows, 2) * 1lh + var(--space-6) * var(--scale, 1))
+  );
 }
 .env-dropdown-trigger[aria-invalid='true'] {
   outline: calc(0.125rem * var(--scale, 1)) solid var(--color-destructive-action);
