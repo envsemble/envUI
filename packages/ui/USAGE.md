@@ -499,16 +499,21 @@ import { Input } from '@envsemble/envui';
 ```tsx
 import { Textarea } from '@envsemble/envui';
 
-<Textarea label="Description" name="description" rows={4}
+<Textarea label="Notes" name="notes" rows={4} sizing="fixed"
+  value={notes} onChange={e => setNotes(e.target.value)} />
+
+<Textarea label="Description" name="description" rows={4} sizing="content"
   value={description} onChange={e => setDescription(e.target.value)} />
 ```
 
+- sizing: "fixed" (default) scrolls within the field; "content" grows and shrinks to fit
+- rows: Visible rows in fixed mode; minimum rows in content mode
 - label / hint / error: Floating label; hint and bottom-edge error are linked to the control
 - Native textarea props: rows, value/defaultValue, onChange, name, required, disabled, readOnly, ref
 
 #### Guidelines
 
-- Use Input for one line and Textarea for multiline content. Set rows to reflect the expected amount of entry and allow resizing.
+- Use Input for one line and Textarea for multiline content. Textareas have small corners and no resize handle. Fixed sizing scrolls inside the field; content sizing grows and shrinks. Set rows for the initial or minimum height.
 - Labels move onto the outline when focused or filled. Placeholders appear while focused; use hints for lasting instructions and errors for a specific recovery step.
 - Both support empty, filled, focus, invalid, disabled and read-only states. Validation and draft state belong to the application.
 
@@ -528,6 +533,7 @@ import { MarkdownEditor } from '@envsemble/envui/content';
 
 - value / onValueChange: The application owns the draft and saving
 - defaultValue: Use instead of value for an uncontrolled native form field
+- sizing / rows: Fixed scrolling (default) or content growth with a minimum row count
 - previewProps: The same heading, link rendering and code-copy options as Markdown
 
 #### Application link picker
@@ -556,7 +562,7 @@ async function requestLink({ selectedText }: { selectedText: string }):
 #### Guidelines
 
 - Use MarkdownEditor for formatted prose, Textarea for plain text. The stored value remains an ordinary Markdown string; syntax stays visible while editing.
-- Preview uses Markdown with envUI prose typography and standard GitHub code-block colors. The source control reuses Textarea geometry, labels and states.
+- Preview uses Markdown with envUI prose typography and standard GitHub code-block colors. The source control reuses Textarea geometry and states, including fixed or content sizing.
 - Formatting and typing share bounded undo/redo history. Ctrl/Cmd+B, I and K apply enabled bold, italic and link commands. Ctrl/Cmd+Z undoes; Shift+Z or Y redoes. Toolbar arrow keys move between actions.
 - The editor retains native selection, paste and composition. Formatting waits until composition ends; toolbar actions restore the selection to the source.
 - Native forms submit the source even while Preview is visible. Uncontrolled form reset restores defaultValue; controlled reset retains value, so the application resets its own draft. Replacing the controlled document clears its editing history.

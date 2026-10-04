@@ -79,19 +79,36 @@ function InputExamples() {
 function TextareaExamples() {
   const [emptyDescription, setEmptyDescription] = useState('');
   const [projectDescription, setProjectDescription] = useState(
-    'Shared plans and notes for the project.',
+    'Project notes\n\nDescribe the goal.\nList the planned work.\nRecord key decisions.\nAdd links to useful documents.\nNote what is still open.\nKeep the summary up to date.',
   );
   const [summary, setSummary] = useState('');
   return (
     <>
-      <Example title="Multiline textarea" size="field">
-        <Textarea
-          label="Description"
-          rows={4}
-          value={projectDescription}
-          onChange={(e) => setProjectDescription(e.target.value)}
-          hint="Explain what this project is for."
-        />
+      <Example
+        title="Textarea sizing"
+        size="collection"
+        caption="Edit either field to compare both modes with the same content."
+      >
+        <SpecimenGrid>
+          <Specimen title="Scroll within the field">
+            <Textarea
+              label="Description"
+              rows={4}
+              sizing="fixed"
+              value={projectDescription}
+              onChange={(e) => setProjectDescription(e.target.value)}
+            />
+          </Specimen>
+          <Specimen title="Grow with content">
+            <Textarea
+              label="Description"
+              rows={4}
+              sizing="content"
+              value={projectDescription}
+              onChange={(e) => setProjectDescription(e.target.value)}
+            />
+          </Specimen>
+        </SpecimenGrid>
       </Example>
       <Example title="States & validation" size="collection">
         <SpecimenGrid>
