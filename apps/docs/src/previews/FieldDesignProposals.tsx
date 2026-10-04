@@ -9,7 +9,7 @@ const designs = [
     id: 'edge',
     title: '01 · Edge caption',
     description:
-      'An attached caption tab on a filled field. A short edge marker shows focus or errors.',
+      'An outlined caption tab joins the continuous field border. Errors use a short edge marker.',
   },
   {
     id: 'inset',

@@ -69,6 +69,8 @@ textarea.docs-proposal-control {
     inset-inline-start var(--motion-duration-medium) var(--motion-ease),
     font-size var(--motion-duration-medium) var(--motion-ease),
     color var(--motion-duration-medium) var(--motion-ease),
+    border-color var(--motion-duration-medium) var(--motion-ease),
+    transform var(--motion-duration-medium) var(--motion-ease),
     padding var(--motion-duration-medium) var(--motion-ease);
 }
 .docs-proposal-field:is([data-filled], :focus-within) .docs-proposal-label {
@@ -93,21 +95,23 @@ textarea.docs-proposal-control {
   color: var(--proposal-error-color);
 }
 
-/* 01: The caption becomes an attached tab, sharing the filled field's silhouette. */
+/* 01: A separate outlined caption tab meets the field's continuous upper border. */
 .docs-proposal-field[data-design='edge'] {
-  --proposal-fill: var(--color-surface-muted);
-  --proposal-border: transparent;
-  padding-block-start: var(--space-4);
+  --proposal-fill: var(--color-canvas);
+  padding-block-start: var(--space-6);
 }
-.docs-proposal-field[data-design='edge'] .docs-proposal-well:focus-within {
-  --proposal-border: transparent;
+.docs-proposal-field[data-design='edge'] .docs-proposal-label {
+  border: 0.0625rem solid transparent;
+  border-block-end: 0;
 }
 .docs-proposal-field[data-design='edge']:is([data-filled], :focus-within) .docs-proposal-label {
-  inset-block-start: calc(-1 * var(--space-4));
+  inset-block-start: 0;
   inset-inline-start: var(--space-2);
   padding: var(--space-1) var(--space-2);
+  border-color: var(--proposal-border);
   border-radius: var(--radius-standard) var(--radius-standard) 0 0;
   background: var(--proposal-fill);
+  transform: translateY(-100%);
 }
 .docs-proposal-field[data-design='edge'] .docs-proposal-well::after {
   content: '';
