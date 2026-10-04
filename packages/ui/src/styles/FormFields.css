@@ -1,4 +1,4 @@
-/* Native text controls share their floating caption, geometry and validation edge. */
+/* Native text controls share their floating caption, geometry and validation colors. */
 .env-form-field {
   --env-field-error-color: light-dark(
     var(--color-destructive-action),
@@ -35,28 +35,26 @@
   padding-block-start: calc(var(--space-2) * var(--scale, 1));
 }
 .env-text-field-well {
-  --env-field-border-color: var(--color-border-strong);
+  --env-field-border-base: var(--color-border-strong);
+  --env-field-border-color: var(--env-field-border-base);
   position: relative;
   min-width: 0;
   border: calc(0.0625rem * var(--scale, 1)) solid var(--env-field-border-color);
   border-radius: calc(var(--md-sys-shape-corner-large) * var(--scale, 1));
   background: var(--color-canvas);
-  transition:
-    border-color var(--motion-duration-medium) var(--motion-ease),
-    background-color var(--motion-duration-medium) var(--motion-ease);
+  transition: border-color var(--motion-duration-medium) var(--motion-ease);
 }
 @media (hover: hover) {
   .env-text-field-well:hover:not(:focus-within):not(:has(> .env-text-input:disabled)) {
-    --env-field-border-color: var(--color-border-hover);
-  }
-  .env-text-field-well:not([data-variant='plain']):hover:not(:focus-within):not(
-      :has(> .env-text-input:disabled)
-    ) {
-    background-color: hsl(from var(--color-canvas) h s var(--state-hover-lightness));
+    --env-field-border-color: hsl(
+      from var(--env-field-border-base) h s var(--state-hover-lightness)
+    );
   }
 }
 .env-text-field-well:active:not(:focus-within):not(:has(> .env-text-input:disabled)) {
-  --env-field-border-color: var(--color-border-pressed);
+  --env-field-border-color: hsl(
+    from var(--env-field-border-base) h s var(--state-pressed-lightness)
+  );
 }
 .env-text-field-well:focus-within {
   --env-field-border-color: var(--color-link);
@@ -116,7 +114,6 @@
   color: var(--color-link);
 }
 .env-text-field-well[data-variant='plain'] {
-  --env-field-edge-inset: 0;
   border-color: transparent;
   border-radius: 0;
   background: transparent;
@@ -132,17 +129,20 @@
   border-block-end-color: var(--color-link);
   box-shadow: 0 calc(0.0625rem * var(--scale, 1)) 0 var(--color-link);
 }
-/* Validation adds one lower-edge accent; keyboard focus keeps its own treatment. */
+/* Invalid outlined controls recolor their existing border; plain controls use an underline. */
 :is(
   .env-text-field-well:has(> .env-text-input[aria-invalid='true']),
   .env-dropdown-trigger[aria-invalid='true']
-)::after {
+) {
+  --env-field-border-base: var(--env-field-error-color);
+}
+.env-text-field-well:focus-within:has(> .env-text-input[aria-invalid='true']) {
+  --env-field-border-color: hsl(from var(--env-field-border-base) h s var(--state-hover-lightness));
+}
+.env-text-field-well[data-variant='plain']:has(> .env-text-input[aria-invalid='true'])::after {
   content: '';
   position: absolute;
-  inset-inline: var(
-    --env-field-edge-inset,
-    calc(var(--md-sys-shape-corner-large) * var(--scale, 1))
-  );
+  inset-inline: 0;
   inset-block-end: 0;
   block-size: calc(0.125rem * var(--scale, 1));
   border-radius: var(--md-sys-shape-corner-full);

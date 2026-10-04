@@ -5,11 +5,10 @@
   color: var(--color-text-primary);
 }
 .env-button.env-dropdown-trigger {
-  --env-field-edge-inset: calc(var(--control-height-small) * var(--scale, 1) / 2);
   position: relative;
   background: var(--color-surface-muted);
   color: var(--color-control-text);
-  border: 0;
+  border: calc(0.0625rem * var(--scale, 1)) solid var(--env-field-border-base, transparent);
   gap: calc(0.5rem * var(--scale, 1));
 }
 .env-button.env-dropdown-trigger:hover:not(:disabled) {

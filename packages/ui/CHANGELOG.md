@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Remove the text field hover fill and keep border-only hover feedback. Invalid outlined Input/Textarea, MarkdownEditor and Select controls use a full thin red border; plain fields retain their red underline.
+
 - Add an animated neutral hover fill to outlined Input/Textarea fields using the shared HSL lightness rule. Keep the single blue focus border, suppress hover changes on disabled fields and respect reduced motion.
 
 - Keep a single thin blue border on focused Input/Textarea fields in both themes. Remove the extra focus outline from the shared text field and textarea resize edge, including MarkdownEditor source fields.

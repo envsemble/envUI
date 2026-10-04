@@ -494,7 +494,7 @@ import { Input } from '@envsemble/envui';
 ```
 
 - variant: "outlined" (default) or "plain": transparent, with an underline on focus
-- label / hint / error: Floating label; hint and bottom-edge error are linked to the control
+- label / hint / error: Floating label; hint and error message are linked to the control
 - Native input props: value/defaultValue, onChange, name, type, required, disabled, readOnly, ref
 
 #### Textarea
@@ -514,15 +514,15 @@ import { Textarea } from '@envsemble/envui';
 - variant: "outlined" (default) or "plain": transparent, with an underline on focus
 - sizing: "fixed" (default) scrolls and resizes from the bottom edge; "content" grows and shrinks to fit
 - rows: Visible rows in fixed mode; minimum rows in content mode
-- label / hint / error: Floating label; hint and bottom-edge error are linked to the control
+- label / hint / error: Floating label; hint and error message are linked to the control
 - Native textarea props: rows, value/defaultValue, onChange, name, required, disabled, readOnly, ref
 
 #### Guidelines
 
 - Use Input for one line and Textarea for multiline content. Both share the same corner radius. Fixed sizing scrolls and resizes from the full bottom edge; content sizing grows and shrinks automatically. Set rows for the initial or minimum height.
 - Focus the resize edge and use Up/Down arrows to change height by one line, or Shift+Up/Down for five lines. Home restores the minimum height. Disabled fields cannot resize.
-- Outlined fields respond to hover with a neutral fill and border change derived from the shared HSL rule. Focus restores the resting fill and turns the single thin border blue in both themes, without an additional outline.
-- Labels move above the text when focused or filled. Plain fields have no border or fill at rest and show an underline on focus. Both variants retain the bottom-edge error and linked recovery text.
+- Outlined fields change only their border color on hover, following the shared HSL rule. Focus turns the single thin border blue in both themes, without an additional outline. Invalid fields use a red border, including while focused.
+- Labels move above the text when focused or filled. Plain fields have no border or fill at rest and show an underline on focus; invalid plain fields use a red underline. Both variants retain linked recovery text.
 - Placeholders appear while focused; use hints for lasting instructions and errors for a specific recovery step.
 - Both support empty, filled, focus, invalid, disabled and read-only states. Validation and draft state belong to the application.
 
@@ -684,7 +684,7 @@ import { Select } from '@envsemble/envui';
 - Use a select to save space when a single choice has several alternatives.
 - Use the tonal trigger, selected indication and grouped option geometry. Keyboard navigation, typeahead and dismissal come from the component.
 - Option focus rings appear for keyboard interaction, not pointer opening or hover.
-- Label, hint and error use the same field structure as Input and Textarea. Invalid controls use the shared bottom-edge accent and retain the standard keyboard focus ring. The application owns validation.
+- Label, hint and error use the same field structure as Input and Textarea. Invalid controls use the shared red border and retain the standard keyboard focus ring. The application owns validation.
 
 Related: [Radio groups](#radio-groups), [Text fields](#text-fields), [Grouped rows](#grouped-rows), [Accessibility](#accessibility).
 
