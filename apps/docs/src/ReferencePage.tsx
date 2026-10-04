@@ -6,6 +6,7 @@ import { ComponentPreview } from './Previews';
 import { PageViews } from './PageViews';
 import { IconUsageDetails } from './usage/IconUsage';
 import type { Reference } from './Reference';
+import { getReferenceIcon } from './navigation/TopicIcons';
 
 function Usage({ reference, search }: { reference: Reference; search?: string }) {
   const query = new URLSearchParams(search);
@@ -25,7 +26,9 @@ function Usage({ reference, search }: { reference: Reference; search?: string })
           <Text as="h2" variant="page-heading">
             {section.title}
           </Text>
-          <CodeBlock language="tsx">{section.example}</CodeBlock>
+          <CodeBlock language="tsx" copyable>
+            {section.example}
+          </CodeBlock>
           {section.props.length > 0 && (
             <>
               <Text as="h3" variant="section-heading">
@@ -89,6 +92,7 @@ export function ReferenceContent({
   search?: string;
 }) {
   const { reference } = page;
+  const BannerIcon = getReferenceIcon(reference.id, reference.group);
   const breadcrumb =
     page.section === 'Foundations' ? 'Foundations' : `Components / ${reference.group}`;
   return (
@@ -96,6 +100,8 @@ export function ReferenceContent({
       path={page.path}
       title={reference.title}
       breadcrumb={breadcrumb}
+      description={reference.summary}
+      symbol={<BannerIcon />}
       view={view}
       preview={
         <>

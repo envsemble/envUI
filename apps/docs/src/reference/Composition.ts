@@ -31,6 +31,7 @@ export function ProjectSummary({ title, description, ...props }: ProjectSummaryP
 export const compositionReference: Reference = {
   id: 'composition',
   title: 'Composition & extension',
+  summary: 'Build product interfaces from shared primitives and existing components.',
   group: 'Foundations',
   example: paneExample,
   props: [],

@@ -36,6 +36,8 @@ Use Theme theme="light" or theme="dark". Inter, tokens and assets are included. 
 
 ### Colors & themes
 
+Semantic colors that carry the same purpose across light and dark themes.
+
 #### React usage
 
 ```tsx
@@ -69,6 +71,8 @@ function ThemeLabel() {
 Related: [Surface](#surface), [Buttons](#buttons), [Navigation items](#navigation-items), [Accessibility](#accessibility).
 
 ### Typography
+
+Shared styles for headings, body copy and supporting text.
 
 #### React usage
 
@@ -107,6 +111,8 @@ Related: [Colors & themes](#colors--themes), [Stacks & action groups](#stacks--a
 
 ### Spacing & shape
 
+A shared scale for space, corners and controls that grow with content.
+
 #### React usage
 
 ```tsx
@@ -136,6 +142,8 @@ import { Surface, Stack, Text } from '@envsemble/envui';
 Related: [Stacks & action groups](#stacks--action-groups), [Surface](#surface), [Cards](#cards), [Grouped rows](#grouped-rows), [Composition & extension](#composition--extension).
 
 ### Composition & extension
+
+Build product interfaces from shared primitives and existing components.
 
 #### Build from existing primitives
 
@@ -199,6 +207,8 @@ Related: [Surface](#surface), [Stacks & action groups](#stacks--action-groups), 
 
 ### Icons & assets
 
+Local Material Symbols and official brand assets, ready to use.
+
 #### React usage
 
 ```tsx
@@ -237,6 +247,8 @@ import faviconUrl from '@envsemble/envui/assets/envUI/envUI-favicon.ico';
 Related: [Buttons](#buttons), [Navigation items](#navigation-items), [Tabs](#tabs), [Accessibility](#accessibility).
 
 ### Accessibility
+
+Keyboard access, visible focus and clear guidance across shared controls.
 
 #### React usage
 

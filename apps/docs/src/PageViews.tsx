@@ -9,6 +9,8 @@ export function PageViews({
   path,
   title,
   breadcrumb,
+  description,
+  symbol,
   view,
   preview,
   usage,
@@ -17,6 +19,8 @@ export function PageViews({
   path: string;
   title: string;
   breadcrumb?: string;
+  description?: string;
+  symbol?: ReactNode;
   view: ReferenceView;
   preview: ReactNode;
   usage: ReactNode;
@@ -37,7 +41,12 @@ export function PageViews({
       renderList={
         renderBanner ??
         ((tabs) => (
-          <PageHeader title={title} breadcrumb={breadcrumb}>
+          <PageHeader
+            title={title}
+            breadcrumb={breadcrumb}
+            description={description}
+            symbol={symbol}
+          >
             {tabs}
           </PageHeader>
         ))

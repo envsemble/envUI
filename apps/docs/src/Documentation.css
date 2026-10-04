@@ -75,10 +75,52 @@ body {
 }
 .docs-page-banner-heading {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: center;
   flex-wrap: wrap;
   gap: var(--space-4);
+  max-inline-size: 100%;
+}
+.docs-page-banner {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  container-type: inline-size;
+  padding-block: clamp(2.5rem, 5vw, 4rem);
+}
+.docs-page-banner-content {
+  position: relative;
+  z-index: 1;
+  inline-size: 100%;
+  text-align: center;
+}
+.docs-page-banner-title {
+  max-inline-size: 22ch;
+  font-size: clamp(1.875rem, calc(1.125rem + 4cqi), 3.5rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+.docs-page-banner-description {
+  max-inline-size: 42ch;
+  text-wrap: balance;
+}
+.docs-page-banner-symbol {
+  position: absolute;
+  inset-inline-end: -1rem;
+  inset-block-start: 50%;
+  inline-size: clamp(10rem, 28cqi, 18rem);
+  aspect-ratio: 1;
+  transform: translateY(-50%) rotate(-12deg);
+  color: var(--color-text-muted);
+  opacity: 0.1;
+  pointer-events: none;
+}
+.docs-page-banner-symbol > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 .docs-page-controls {
   margin-inline-start: auto;

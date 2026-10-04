@@ -6,6 +6,7 @@ export const foundations: Reference[] = [
     id: 'colors',
     title: 'Colors & themes',
     group: 'Foundations',
+    summary: 'Semantic colors that carry the same purpose across light and dark themes.',
     example: `import { Theme, Text, useTheme } from '@envsemble/envui';
 import '@envsemble/envui/styles.css';
 
@@ -37,6 +38,7 @@ function ThemeLabel() {
     id: 'typography',
     title: 'Typography',
     group: 'Foundations',
+    summary: 'Shared styles for headings, body copy and supporting text.',
     example: `import { Text, Stack } from '@envsemble/envui';
 
 <Stack>
@@ -71,6 +73,7 @@ function ThemeLabel() {
     id: 'spacing',
     title: 'Spacing & shape',
     group: 'Foundations',
+    summary: 'A shared scale for space, corners and controls that grow with content.',
     example: `import { Surface, Stack, Text } from '@envsemble/envui';
 
 <Surface padding={5} render={<Stack gap={4} />}>
@@ -102,6 +105,7 @@ function ThemeLabel() {
     id: 'icons',
     title: 'Icons & assets',
     group: 'Foundations',
+    summary: 'Local Material Symbols and official brand assets, ready to use.',
     example: `import { Icon, EnvUILogo, BrandLogo, Stack } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
 import logoUrl from '@envsemble/envui/assets/envUI/envUI-lockup-black.svg';
@@ -147,6 +151,7 @@ import faviconUrl from '@envsemble/envui/assets/envUI/envUI-favicon.ico';
     id: 'accessibility',
     title: 'Accessibility',
     group: 'Foundations',
+    summary: 'Keyboard access, visible focus and clear guidance across shared controls.',
     example: `import { Stack, Input, IconButton } from '@envsemble/envui';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 
