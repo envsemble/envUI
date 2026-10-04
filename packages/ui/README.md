@@ -55,7 +55,7 @@ Basic UI imports exclude parsing and highlighting dependencies. Content highligh
 - `Button href` renders a native link; omit `href` for a native button.
 - Every Button variant supports `iconOnly` with `icon` and a required `aria-label`. `IconButton` is a shorthand with secondary as its default variant.
 - `Card` builds on Surface and Stack. Use `href` for a destination, `as="button"` for an action, or `heading`, `meta` and `actions` for content with an action strip. `ClickableCard` and `ActionCard` remain compatibility wrappers; FeatureCard adds its specific layout.
-- `Input`, `Textarea` and `Select` share visible labels and accessible hints/errors. Validation stays in the application.
+- `Input` and `Textarea` use outlined fields with labels that move onto the upper edge when focused or filled. Errors mark the bottom edge and include linked recovery text. `Select` shares accessible hints/errors. Validation stays in the application.
 - `Markdown` renders CommonMark/GFM with shared prose typography. `Code` handles inline source; `CodeBlock` uses standard GitHub Light Default and GitHub Dark Default themes with optional copying. Highlighting is lazy and bundled for offline use.
 - `MarkdownEditor` adds formatting, shared undo/redo and Write/Preview to the native textarea. Applications own drafts, saving and resource pickers; inserted references remain ordinary Markdown links.
 - `Tabs renderList` wraps the supplied tab list in a custom layout, such as a Card with a heading. Render the list once; panels remain outside that wrapper.

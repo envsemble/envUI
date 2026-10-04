@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Adopt outlined Input/Textarea fields with floating labels, original 1 rem corners and bottom-edge validation. Reuse the outlined textarea in MarkdownEditor; preserve native values, form reset, refs and accessible field metadata.
+
 - Add MarkdownEditor with native textarea selection, formatting, shared undo/redo, Write/Preview, standard link insertion and an application picker callback.
 
 - Keep code/Markdown rendering and editing on the optional @envsemble/envui/content entry so basic UI consumers exclude parsing and highlighting chunks.

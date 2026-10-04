@@ -11,12 +11,15 @@ import {
 } from '@envsemble/envui';
 
 import { Example, Specimen, SpecimenGrid } from './Example';
-import { FieldDesignProposals } from './FieldDesignProposals';
 import { Preview } from './Preview';
 
 function InputExamples() {
   const [emptyProjectName, setEmptyProjectName] = useState('');
   const [projectName, setProjectName] = useState('Sample project');
+  const [projectHandle, setProjectHandle] = useState('my project');
+  const handleError = /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(projectHandle)
+    ? undefined
+    : 'Use lowercase letters, numbers and hyphens.';
   return (
     <>
       <Example title="Single-line input" size="field">
@@ -28,7 +31,11 @@ function InputExamples() {
           hint="A name your team will recognize."
         />
       </Example>
-      <Example title="Empty, filled & focus" size="collection">
+      <Example
+        title="Empty & filled"
+        size="collection"
+        caption="Focus either field to move its label onto the outline."
+      >
         <SpecimenGrid>
           <Specimen title="Empty">
             <Input
@@ -45,24 +52,16 @@ function InputExamples() {
               onChange={(e) => setProjectName(e.target.value)}
             />
           </Specimen>
-          <Specimen title="Keyboard focus">
-            <Input
-              label="Project name"
-              className="docs-force-3"
-              value={projectName}
-              onChange={(e) => setProjectName(e.target.value)}
-            />
-          </Specimen>
         </SpecimenGrid>
       </Example>
       <Example title="Validation & availability" size="collection">
         <SpecimenGrid>
           <Specimen title="Invalid">
             <Input
-              label="Project name"
-              value={projectName}
-              onChange={(e) => setProjectName(e.target.value)}
-              error="Choose a unique project name."
+              label="Project handle"
+              value={projectHandle}
+              onChange={(e) => setProjectHandle(e.target.value)}
+              error={handleError}
             />
           </Specimen>
           <Specimen title="Read only" caption="Can still be focused and copied.">
@@ -82,6 +81,7 @@ function TextareaExamples() {
   const [projectDescription, setProjectDescription] = useState(
     'Shared plans and notes for the project.',
   );
+  const [summary, setSummary] = useState('');
   return (
     <>
       <Example title="Multiline textarea" size="field">
@@ -103,22 +103,13 @@ function TextareaExamples() {
               onChange={(e) => setEmptyDescription(e.target.value)}
             />
           </Specimen>
-          <Specimen title="Keyboard focus">
-            <Textarea
-              label="Description"
-              className="docs-force-3"
-              rows={2}
-              value={projectDescription}
-              onChange={(e) => setProjectDescription(e.target.value)}
-            />
-          </Specimen>
           <Specimen title="Invalid">
             <Textarea
-              label="Description"
+              label="Summary"
               rows={3}
-              value={projectDescription}
-              onChange={(e) => setProjectDescription(e.target.value)}
-              error="Add the intended outcome."
+              value={summary}
+              onChange={(e) => setSummary(e.target.value)}
+              error={summary.trim().length < 20 ? 'Add at least 20 characters.' : undefined}
             />
           </Specimen>
           <Specimen title="Read only">
@@ -136,12 +127,8 @@ function TextareaExamples() {
 export function TextFieldsPreview() {
   return (
     <Preview>
-      <FieldDesignProposals />
-      <details className="docs-field-current">
-        <summary>Current library fields</summary>
-        <InputExamples />
-        <TextareaExamples />
-      </details>
+      <InputExamples />
+      <TextareaExamples />
     </Preview>
   );
 }

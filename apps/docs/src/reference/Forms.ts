@@ -8,7 +8,10 @@ const inputUsage = {
   onChange={event => setName(event.target.value)}
   hint="A name your team will recognize." required />`,
   props: [
-    ['label / hint / error', 'React content; hint and error are linked to the control'],
+    [
+      'label / hint / error',
+      'Floating label; hint and bottom-edge error are linked to the control',
+    ],
     [
       'Native input props',
       'value/defaultValue, onChange, name, type, required, disabled, readOnly, ref',
@@ -23,7 +26,10 @@ const textareaUsage = {
 <Textarea label="Description" name="description" rows={4}
   value={description} onChange={e => setDescription(e.target.value)} />`,
   props: [
-    ['label / hint / error', 'React content with accessible connections'],
+    [
+      'label / hint / error',
+      'Floating label; hint and bottom-edge error are linked to the control',
+    ],
     [
       'Native textarea props',
       'rows, value/defaultValue, onChange, name, required, disabled, readOnly, ref',
@@ -42,7 +48,7 @@ export const formsReferences: Reference[] = [
     usage: [inputUsage, textareaUsage],
     guidelines: [
       'Use Input for one line and Textarea for multiline content. Set rows to reflect the expected amount of entry and allow resizing.',
-      'Keep the label visible. Use hints for instructions and errors for a specific recovery step.',
+      'Labels move onto the outline when focused or filled. Placeholders appear while focused; use hints for lasting instructions and errors for a specific recovery step.',
       'Both support empty, filled, focus, invalid, disabled and read-only states. Validation and draft state belong to the application.',
     ],
     related: ['markdown-editor', 'select', 'layout', 'accessibility'],
