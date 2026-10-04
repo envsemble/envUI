@@ -40,6 +40,7 @@ function ResourceLinkEditor() {
         value={value}
         onValueChange={setValue}
         toolbar={['bold', 'italic', 'link']}
+        previewProps={{ codeCopyable: true }}
         onRequestLink={({ selectedText: selection }) => {
           setSelectedText(selection);
           return new Promise((resolve) => {

@@ -35,7 +35,9 @@ export function MarkdownPreview() {
         caption="Task-list checkboxes are read-only; use Checkbox for interactive selection."
       >
         <Card>
-          <Markdown headingOffset={1}>{markdownSample}</Markdown>
+          <Markdown headingOffset={1} codeCopyable>
+            {markdownSample}
+          </Markdown>
         </Card>
       </Example>
       <Example
@@ -44,6 +46,7 @@ export function MarkdownPreview() {
       >
         <Card>
           <Markdown
+            codeCopyable
             renderLink={({ href, children, ...props }) => (
               <Link
                 {...props}
