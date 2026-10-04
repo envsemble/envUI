@@ -1,10 +1,10 @@
-import { Button } from '@envsemble/envui';
+import { Button, ButtonGroup } from '@envsemble/envui';
 import { Check } from '@envsemble/envui/icons/Check';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 import { Close } from '@envsemble/envui/icons/Close';
 import { Delete } from '@envsemble/envui/icons/Delete';
 import { Settings } from '@envsemble/envui/icons/Settings';
-import { Example } from './Example';
+import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
 import { controlStates } from './InteractionStates';
 
@@ -145,6 +145,86 @@ export function ButtonsPreview() {
         <Button variant="text" underline>
           With underline
         </Button>
+      </Example>
+      <Example
+        title="Connected rows"
+        size="collection"
+        caption="Use the same button style for related actions."
+      >
+        <SpecimenGrid size="compact">
+          <Specimen title="Text only">
+            <ButtonGroup aria-label="Project actions">
+              <Button>Open</Button>
+              <Button>Edit</Button>
+              <Button>Share</Button>
+            </ButtonGroup>
+          </Specimen>
+          <Specimen title="With icons">
+            <ButtonGroup aria-label="Outlined row actions">
+              <Button variant="outlined" startIcon={<Settings />}>
+                Settings
+              </Button>
+              <Button variant="outlined" startIcon={<ChevronRight />}>
+                Open
+              </Button>
+              <Button variant="outlined" startIcon={<Close />}>
+                Close
+              </Button>
+            </ButtonGroup>
+          </Specimen>
+          <Specimen title="Important">
+            <ButtonGroup aria-label="Important row actions">
+              <Button variant="important">Apply</Button>
+              <Button variant="important">Confirm</Button>
+              <Button variant="important">Finish</Button>
+            </ButtonGroup>
+          </Specimen>
+        </SpecimenGrid>
+      </Example>
+      <Example
+        title="Connected columns"
+        size="collection"
+        caption="Columns share a width and keep each end button’s outer corners."
+      >
+        <SpecimenGrid size="compact">
+          <Specimen title="Text only">
+            <ButtonGroup orientation="vertical" aria-label="Item actions">
+              <Button variant="secondary">Open</Button>
+              <Button variant="secondary">Edit</Button>
+              <Button variant="secondary">Share</Button>
+            </ButtonGroup>
+          </Specimen>
+          <Specimen title="With icons">
+            <ButtonGroup orientation="vertical" aria-label="Outlined column actions">
+              <Button variant="outlined" startIcon={<Settings />}>
+                Settings
+              </Button>
+              <Button variant="outlined" startIcon={<ChevronRight />}>
+                Open
+              </Button>
+              <Button variant="outlined" startIcon={<Close />}>
+                Close
+              </Button>
+            </ButtonGroup>
+          </Specimen>
+          <Specimen title="Icon only">
+            <ButtonGroup orientation="vertical" aria-label="Quick actions">
+              <Button variant="secondary" iconOnly icon={<Settings />} aria-label="Settings" />
+              <Button variant="secondary" iconOnly icon={<Check />} aria-label="Confirm" />
+              <Button variant="secondary" iconOnly icon={<Close />} aria-label="Close" />
+            </ButtonGroup>
+          </Specimen>
+        </SpecimenGrid>
+      </Example>
+      <Example title="Mixed styles" caption="Different button styles can also share one group.">
+        <ButtonGroup aria-label="Mixed actions">
+          <Button startIcon={<ChevronRight />}>Continue</Button>
+          <Button variant="outlined">Manage</Button>
+          <Button variant="secondary" iconOnly icon={<Settings />} aria-label="Settings" />
+          <Button variant="important" endIcon={<Check />}>
+            Confirm
+          </Button>
+        </ButtonGroup>
       </Example>
       <Example size="wide">
         <details className="docs-interaction-states">

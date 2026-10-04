@@ -469,11 +469,39 @@ import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 - aria-label: Required accessible action name
 - Native button props: disabled, type, onClick and ref
 
+#### ButtonGroup
+
+```tsx
+import { Button, ButtonGroup, IconButton } from '@envsemble/envui';
+import { Settings } from '@envsemble/envui/icons/Settings';
+
+<ButtonGroup aria-label="Project actions">
+  <Button variant="secondary">Open</Button>
+  <IconButton icon={<Settings />} aria-label="Settings" />
+  <Button variant="secondary">Close</Button>
+</ButtonGroup>
+
+<ButtonGroup orientation="vertical" aria-label="Item actions">
+  <Button startIcon={<Settings />} variant="outlined">Manage</Button>
+  <Button href="/projects" variant="outlined">Open projects</Button>
+  <Button variant="outlined">Settings</Button>
+</ButtonGroup>
+```
+
+- orientation: horizontal (default) or vertical
+- children: Direct Button or IconButton children; all variants and native button links can mix
+- aria-label / aria-labelledby: Accessible name for the related actions
+- Native div props: ref, className, style, role and accessible attributes; role defaults to group
+
 #### Guidelines
 
 - Use one primary action in an action group. Reserve important emphasis for rare, consequential actions.
 - Action buttons fit their content: 2.5 rem minimum height (2 rem for important), 0.875 rem text, 0.25 rem vertical and 0.75 rem horizontal padding. Labels wrap when space is limited.
 - Use fully rounded corners; important actions use 0.5 rem corners. ActionGroup provides 1 rem row gaps or 0.5 rem stacked gaps.
+- Use ButtonGroup for connected rows or columns: the gap is 0.125 rem and adjoining corners use the shared 0.5 rem row inner radius. Each end keeps its button variant’s outer corners; a single button keeps all its normal corners.
+- Prefer the same button variant within a connected group. Mix variants when related actions need different emphasis.
+- ButtonGroup accepts any mixture of labeled, icon-only, leading/trailing icon and native link buttons. Horizontal buttons share a height; vertical buttons fill the group width. Labels can wrap, and horizontal groups stay on one row. Hidden buttons do not determine the end corners.
+- Give related actions an accessible group name. ButtonGroup retains ordinary Tab navigation and each button’s native activation, focus and disabled behavior.
 - Secondary buttons use the neutral row fill and label color, without a border. Outlined buttons retain their border and link color.
 - Text buttons use link blue with no fill, border or horizontal inset. Set underline to show an underline. Hover and pressed states change only the text color using the shared HSL rule. Use onClick for actions and href for navigation; keyboard focus and disabled behavior remain shared with Button.
 - Interaction colors follow the central HSL lightness rule described in Colors & themes. State colors and disabled opacity come from the shared stylesheet.

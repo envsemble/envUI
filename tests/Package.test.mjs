@@ -134,6 +134,10 @@ before(
       h(ThemeProbe),
       h(ui.Button, { startIcon: h(Home) }, 'Create'),
       h(ui.IconButton, { icon: custom, 'aria-label': 'Open item' }),
+      h(ui.ButtonGroup, { orientation: 'vertical', 'aria-label': 'Connected actions' },
+        h(ui.Button, { startIcon: h(Home) }, 'Continue'),
+        h(ui.IconButton, { icon: custom, 'aria-label': 'Settings' }),
+        h(ui.Button, { variant: 'important', href: '/confirm' }, 'Confirm')),
       h(ui.DirectionLink, { direction: 'previous', href: '/previous-guide' }, 'Earlier guide'),
       h(ui.DirectionLink, { direction: 'next', href: '/next-guide', icon: custom }, 'Following guide'),
       h(ui.Input, { name: 'title', label: 'Title', hint: 'One line', defaultValue: 'Example' }),
@@ -201,6 +205,7 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'Theme',
     'useTheme',
     'Button',
+    'ButtonGroup',
     'IconButton',
     'NavigationItem',
     'DirectionLink',
@@ -250,19 +255,21 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     join(consumerDirectory, 'Consumer.tsx'),
     `
     import { createRef } from 'react';
-    import { Theme, Button, IconButton, NavigationItem, DirectionLink, Icon, BrandLogo, Input, Textarea, Checkbox, Switch, Stack, ActionGroup,
+    import { Theme, Button, ButtonGroup, IconButton, NavigationItem, DirectionLink, Icon, BrandLogo, Input, Textarea, Checkbox, Switch, Stack, ActionGroup,
       RadioGroup, Radio, Select, Dialog, DialogClose, Toast, ToastProvider, useToast,
-      type ThemeValue, type ButtonProps, type DirectionLinkProps, type SelectOption, type ToastManager } from '@envsemble/envui';
+      type ThemeValue, type ButtonProps, type ButtonGroupProps, type DirectionLinkProps, type SelectOption, type ToastManager } from '@envsemble/envui';
     import { Home } from '@envsemble/envui/icons/Home';
     import { Home as BarrelHome } from '@envsemble/envui/icons';
     import '@envsemble/envui/styles.css';
     const buttonProps: ButtonProps = { variant: 'important', ref: createRef<HTMLButtonElement>(), startIcon: <Home /> };
+    const buttonGroupProps: ButtonGroupProps = { orientation: 'vertical', ref: createRef<HTMLDivElement>(), 'aria-label': 'Actions' };
     const directionLinkProps: DirectionLinkProps = { direction: 'next', href: '/guide', children: 'Read the guide', ref: createRef<HTMLAnchorElement>(), icon: <Home /> };
     const options: SelectOption[] = [{ value: 'one', label: 'One' }];
     const theme: ThemeValue = 'dark';
     function NotificationAction() { const manager: ToastManager = useToast(); return <Button onClick={() => manager.show({ message: 'Saved' })}>Save</Button>; }
     export const consumer = <Theme theme={theme} ref={createRef<HTMLDivElement>()}>
       <Button {...buttonProps}>Create</Button><IconButton aria-label="Open" icon={<Home filled />} />
+      <ButtonGroup {...buttonGroupProps}><Button href="/">Home</Button><IconButton aria-label="Options" icon={<Home />} /><Button variant="important">Confirm</Button></ButtonGroup>
       <Stack gap={3} ref={createRef<HTMLDivElement>()}><Input label="First" /><Input label="Second" /></Stack>
       <ActionGroup stacked ref={createRef<HTMLDivElement>()}><Button>Save</Button><Button variant="secondary">Cancel</Button></ActionGroup>
       <NavigationItem href="/" ref={createRef<HTMLAnchorElement>()}>Home</NavigationItem>
@@ -284,13 +291,15 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     const unknownTheme = <Theme theme="system" />;
     // @ts-expect-error Button variants are the explicit public contract.
     const unknownButton = <Button variant="custom">Example</Button>;
+    // @ts-expect-error Connected buttons support rows or columns.
+    const unknownOrientation = <ButtonGroup orientation="diagonal" />;
     // @ts-expect-error Layout gap must use the defined spacing scale.
     const unknownGap = <Stack gap={10} />;
     // @ts-expect-error Direction links have exactly two supported directions.
     const unknownDirection = <DirectionLink direction="up" href="/guide">Guide</DirectionLink>;
     // @ts-expect-error A direction link requires a destination URL.
     const missingDestination = <DirectionLink direction="next">Guide</DirectionLink>;
-    void [unnamedIconButton, unknownTheme, unknownButton, unknownGap, unknownDirection, missingDestination];
+    void [unnamedIconButton, unknownTheme, unknownButton, unknownOrientation, unknownGap, unknownDirection, missingDestination];
   `,
   );
   await writeFile(
@@ -330,6 +339,10 @@ test('public components import and render on a server with no DOM globals', func
   assert.match(ssr.html, /data-env-theme="dark"/);
   assert.match(ssr.html, /data-originating-theme="dark"/);
   assert.match(ssr.html, /class="env-button env-button-primary"/);
+  assert.match(
+    ssr.html,
+    /aria-label="Connected actions" role="group" class="env-button-group" data-orientation="vertical"/,
+  );
   assert.match(ssr.html, /<a href="\/previous-guide" rel="prev"/);
   assert.match(ssr.html, /<a href="\/next-guide" rel="next"/);
   assert.match(ssr.html, /Up next/);

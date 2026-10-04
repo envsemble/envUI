@@ -31,6 +31,7 @@ import { Home } from '@envsemble/envui/icons/Home';
 import { Settings } from '@envsemble/envui/icons/Settings';
 import '@envsemble/envui/styles.css';
 import './Fixture.css';
+import { ButtonGroupsFixture } from './ButtonGroups';
 
 const plans: readonly SelectOption[] = [
   { value: 'starter', label: 'Starter' },
@@ -395,6 +396,8 @@ export default function App() {
           <ColorControls theme="dark" />
           <NavigationFixture theme="light" />
           <NavigationFixture theme="dark" />
+          <ButtonGroupsFixture theme="light" />
+          <ButtonGroupsFixture theme="dark" />
           {(['light', 'dark'] as const).map((theme) => (
             <Theme
               key={theme}
