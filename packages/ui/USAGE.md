@@ -250,14 +250,14 @@ import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 - Library ownership: Native control semantics, connected field guidance, keyboard behavior, modal focus and toast announcements
 - Application ownership: Labels, heading structure, reading order, product validation and recovery actions
 - Keyboard: Tab / Shift+Tab move focus; Enter activates links; Enter / Space activate buttons
-- Focus ring: Shared 0.125 rem outline; preserve visible focus and logical keyboard order
+- Focus: Text fields recolor their thin border or underline; other controls use the shared 0.125 rem focus ring
 - Reduced motion: Library transitions respect prefers-reduced-motion automatically
 - Transition tokens: --motion-duration-fast (0.12 s), --motion-duration-medium (0.16 s)
 - Shared easing: --motion-ease: cubic-bezier(0.45, 0, 0.2, 1)
 
 #### Guidelines
 
-- Use Tab and Shift+Tab to move focus. Keep a visible focus outline and a keyboard order matching the layout. Specific arrow-key and Escape behavior belongs to each component.
+- Use Tab and Shift+Tab to move focus. Keep a visible focus indicator and a keyboard order matching the layout. Specific arrow-key and Escape behavior belongs to each component.
 - Keep motion brief and tied to a state change. Respect reduced motion in application animations too.
 - Give controls visible labels and icon actions accessible names. Preserve native form behavior and disabled states.
 - Use semantic headings, meaningful links and a keyboard order that follows the visible layout.
@@ -521,6 +521,7 @@ import { Textarea } from '@envsemble/envui';
 
 - Use Input for one line and Textarea for multiline content. Both share the same corner radius. Fixed sizing scrolls and resizes from the full bottom edge; content sizing grows and shrinks automatically. Set rows for the initial or minimum height.
 - Focus the resize edge and use Up/Down arrows to change height by one line, or Shift+Up/Down for five lines. Home restores the minimum height. Disabled fields cannot resize.
+- Outlined fields keep one thin border that turns blue on focus in both themes, without an additional focus outline.
 - Labels move above the text when focused or filled. Plain fields have no border or fill at rest and show an underline on focus. Both variants retain the bottom-edge error and linked recovery text.
 - Placeholders appear while focused; use hints for lasting instructions and errors for a specific recovery step.
 - Both support empty, filled, focus, invalid, disabled and read-only states. Validation and draft state belong to the application.

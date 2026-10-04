@@ -26,8 +26,8 @@ export function AccessibilityPreview() {
       <Example title="Application responsibilities">
         <Text tone="muted">
           Supply visible labels, meaningful icon action names, semantic headings and a sensible
-          reading order. Write errors that explain how to recover. Keep the shared focus ring
-          visible.
+          reading order. Write errors that explain how to recover. Keep the component’s focus
+          indicator visible.
         </Text>
       </Example>
       <Example title="Motion defaults">

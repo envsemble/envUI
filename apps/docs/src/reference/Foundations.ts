@@ -164,13 +164,16 @@ import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
         'Keyboard',
         'Tab / Shift+Tab move focus; Enter activates links; Enter / Space activate buttons',
       ],
-      ['Focus ring', 'Shared 0.125 rem outline; preserve visible focus and logical keyboard order'],
+      [
+        'Focus',
+        'Text fields recolor their thin border or underline; other controls use the shared 0.125 rem focus ring',
+      ],
       ['Reduced motion', 'Library transitions respect prefers-reduced-motion automatically'],
       ['Transition tokens', '--motion-duration-fast (0.12 s), --motion-duration-medium (0.16 s)'],
       ['Shared easing', '--motion-ease: cubic-bezier(0.45, 0, 0.2, 1)'],
     ],
     guidelines: [
-      'Use Tab and Shift+Tab to move focus. Keep a visible focus outline and a keyboard order matching the layout. Specific arrow-key and Escape behavior belongs to each component.',
+      'Use Tab and Shift+Tab to move focus. Keep a visible focus indicator and a keyboard order matching the layout. Specific arrow-key and Escape behavior belongs to each component.',
       'Keep motion brief and tied to a state change. Respect reduced motion in application animations too.',
       'Give controls visible labels and icon actions accessible names. Preserve native form behavior and disabled states.',
       'Use semantic headings, meaningful links and a keyboard order that follows the visible layout.',

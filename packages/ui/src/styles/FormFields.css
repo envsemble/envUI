@@ -52,10 +52,6 @@
 .env-text-field-well:focus-within {
   --env-field-border-color: var(--color-link);
 }
-.env-text-field-well:not([data-variant='plain']):has(> .env-text-input:focus-visible) {
-  outline: calc(0.125rem * var(--scale, 1)) solid var(--color-focus-ring);
-  outline-offset: calc(0.125rem * var(--scale, 1));
-}
 .env-text-input {
   box-sizing: border-box;
   display: block;
@@ -185,6 +181,7 @@ textarea.env-text-input[data-sizing='content'] {
   padding: 0;
   margin: 0;
   border: 0;
+  outline: none;
   background: transparent;
   color: var(--env-resize-edge-color);
   cursor: ns-resize;
@@ -214,10 +211,6 @@ textarea.env-text-input[data-sizing='content'] {
 .env-textarea-resize-edge[data-resizing] {
   color: hsl(from var(--env-resize-edge-color) h s var(--state-pressed-lightness));
 }
-.env-textarea-resize-edge:focus-visible {
-  outline: calc(0.125rem * var(--scale, 1)) solid var(--color-focus-ring);
-  outline-offset: calc(-0.125rem * var(--scale, 1));
-}
 .env-text-field-well[data-variant='plain'] > .env-textarea-resize-edge::after {
   inset-inline: 0;
   block-size: calc(0.0625rem * var(--scale, 1));
@@ -226,9 +219,6 @@ textarea.env-text-input[data-sizing='content'] {
 .env-text-field-well[data-variant='plain']:focus-within > .env-textarea-resize-edge::after,
 .env-text-field-well[data-variant='plain'] > .env-textarea-resize-edge[data-resizing]::after {
   opacity: 1;
-}
-.env-text-field-well[data-variant='plain'] > .env-textarea-resize-edge:focus-visible {
-  outline: none;
 }
 /* Older browsers retain the shared edge when native content sizing is unavailable. */
 @supports (field-sizing: content) {

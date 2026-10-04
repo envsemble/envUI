@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Keep a single thin blue border on focused Input/Textarea fields in both themes. Remove the extra focus outline from the shared text field and textarea resize edge, including MarkdownEditor source fields.
+
 - Replace Select’s full red validation outline with a shared bottom-edge accent across Select, Input, Textarea and MarkdownEditor. Keep error colors, recovery messages and keyboard focus styling consistent.
 
 - Add a plain Input/Textarea appearance with a transparent background, no outline and an underline on focus. Share labels, validation and sizing with the outlined default, including MarkdownEditor source fields.
