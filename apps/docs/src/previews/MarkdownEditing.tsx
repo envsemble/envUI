@@ -34,6 +34,7 @@ function ResourceLinkEditor() {
   return (
     <>
       <MarkdownEditor
+        variant="plain"
         label="Description"
         hint="Use Insert link to choose a resource from the application."
         rows={4}
@@ -75,6 +76,7 @@ export function MarkdownEditorPreview() {
     <Preview>
       <Example title="Formatting and preview">
         <MarkdownEditor
+          variant="plain"
           label="Description"
           defaultValue={editorSample}
           previewProps={{ headingOffset: 1, codeCopyable: true }}
@@ -90,6 +92,7 @@ export function MarkdownEditorPreview() {
         <SpecimenGrid>
           <Specimen title="Read-only">
             <MarkdownEditor
+              variant="plain"
               label="Published description"
               defaultValue="The review is **complete**."
               rows={3}
@@ -100,6 +103,7 @@ export function MarkdownEditorPreview() {
           </Specimen>
           <Specimen title="Disabled">
             <MarkdownEditor
+              variant="plain"
               label="Archived description"
               defaultValue="This document has been archived."
               rows={3}

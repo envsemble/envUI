@@ -75,7 +75,7 @@ export const formsReferences: Reference[] = [
     group: 'Forms & selection',
     example: `import { MarkdownEditor } from '@envsemble/envui/content';
 
-<MarkdownEditor label="Description" name="description"
+<MarkdownEditor variant="plain" label="Description" name="description"
   value={description} onValueChange={setDescription}
   previewProps={{ headingOffset: 1, codeCopyable: true }} />`,
     props: [
@@ -103,7 +103,7 @@ export const formsReferences: Reference[] = [
         title: 'Edit and preview',
         example: `import { MarkdownEditor } from '@envsemble/envui/content';
 
-<MarkdownEditor label="Description" name="description"
+<MarkdownEditor variant="plain" label="Description" name="description"
   value={description} onValueChange={setDescription}
   previewProps={{ headingOffset: 1, codeCopyable: true }} />`,
         props: [
@@ -131,7 +131,7 @@ async function requestLink({ selectedText }: { selectedText: string }):
   } : null;
 }
 
-<MarkdownEditor label="Description"
+<MarkdownEditor variant="plain" label="Description"
   value={description} onValueChange={setDescription}
   onRequestLink={requestLink} />`,
         props: [

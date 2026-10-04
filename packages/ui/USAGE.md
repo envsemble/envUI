@@ -534,7 +534,7 @@ Related: [Markdown editor](#markdown-editor), [Selects](#selects), [Stacks & act
 ```tsx
 import { MarkdownEditor } from '@envsemble/envui/content';
 
-<MarkdownEditor label="Description" name="description"
+<MarkdownEditor variant="plain" label="Description" name="description"
   value={description} onValueChange={setDescription}
   previewProps={{ headingOffset: 1, codeCopyable: true }} />
 ```
@@ -560,7 +560,7 @@ async function requestLink({ selectedText }: { selectedText: string }):
   } : null;
 }
 
-<MarkdownEditor label="Description"
+<MarkdownEditor variant="plain" label="Description"
   value={description} onValueChange={setDescription}
   onRequestLink={requestLink} />
 ```
