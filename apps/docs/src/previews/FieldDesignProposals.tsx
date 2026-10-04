@@ -8,8 +8,7 @@ const designs = [
   {
     id: 'edge',
     title: '01 · Edge caption',
-    description:
-      'An outlined caption tab joins the continuous field border. Errors use a short edge marker.',
+    description: 'A caption on the upper edge. Errors mark only the bottom edge.',
   },
   {
     id: 'inset',
