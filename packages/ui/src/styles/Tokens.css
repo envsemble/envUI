@@ -25,8 +25,8 @@
   --control-font-size: var(--font-size-body);
   --viewport-gutter: clamp(0.75rem, 2vw, 1rem);
   --topbar-height: 3.25rem;
-  --color-control-blue: hsl(212.087 100% 45.098%);
-  --color-link: hsl(217.317 100% 45.098%);
+  --color-control-blue: hsl(214.07767 81.746032% 50.588235%);
+  --color-link: hsl(214.07767 81.746032% 50.588235%);
 
   --motion-duration-fast: 0.12s;
   --motion-duration-medium: 0.16s;
@@ -40,29 +40,81 @@
   -webkit-font-smoothing: antialiased;
 
   --color-accent: hsl(284.182 43.651% 50.588%);
-  --color-text-primary: hsl(216 6.122% 9.608%);
-  --color-text-muted: hsl(213.333 4.523% 39.02%);
-  --color-border-strong: hsl(213.333 12.36% 82.549%);
+  --color-text-primary: hsl(225 5.882353% 13.333333%);
+  --color-text-muted: hsl(213.333333 4.522613% 39.019608%);
+  --color-border-strong: hsl(220 8.823529% 86.666667%);
+  /* Google reference palette: white canvas, cool panes, pale gray surfaces and blue actions. */
   --color-canvas: hsl(0 0% 100%);
   --color-canvas-dark: hsl(0 0% 12.157%);
-  --color-surface-base: hsl(220 12% 97%);
-  --color-pane: hsl(220 23.077% 94%);
-  --color-surface: var(--color-surface-base);
+  --color-surface-base: hsl(0 0% 100%);
+  --color-pane: hsl(213.333333 42.857143% 95.882353%);
+  --color-surface-raised: hsl(220 0% 100%);
+  --color-surface: hsl(0 0% 100%);
   --color-neutral-fill: hsl(0 0% 28%);
-  --color-toast-neutral: var(--color-neutral-fill);
+  --color-toast-neutral: hsl(0 0% 28%);
   --color-toast-success: hsl(158 48% 30%);
   --color-toast-info: hsl(214 60% 40%);
-  --color-toast-error: var(--color-destructive-action);
-  --color-on-toast: var(--color-white);
+  --color-toast-error: hsl(4.231 76.471% 40%);
+  --color-on-toast: hsl(0 0% 100%);
 
   --color-white: hsl(0 0% 100%);
-  --color-on-accent: var(--color-white);
-  --color-surface-muted: hsl(216 12% 90%);
-  --color-skeleton-base: hsl(216 15.152% 93.529%);
-  --color-text-strong: hsl(216 8.772% 22.353%);
-  --color-control-text: hsl(213.333 9.333% 29.412%);
-  --color-icon: hsl(212.308 9.195% 34.118%);
-  --color-text-quiet: hsl(212.308 6.452% 48.627%);
+  --color-on-accent: hsl(0 0% 100%);
+  --color-surface-muted: hsl(210 16.666667% 97.647059%);
+  --color-skeleton-base: hsl(200 12% 95.098039%);
+  --color-text-strong: hsl(205.714286 5.511811% 24.901961%);
+  --color-control-text: hsl(205.714286 5.511811% 24.901961%);
+  --color-icon: hsl(213.333333 4.522613% 39.019608%);
+  --color-text-quiet: hsl(213.333333 4.522613% 39.019608%);
+  /* Primitive roles are distinct; composed components reuse these values. */
+  --color-disabled-text: hsl(213.333333 4.522613% 39.019608%);
+  --color-row: hsl(200 12% 95.098039%);
+  --color-row-alternate: hsl(0 0% 100%);
+  --color-row-text: hsl(225 5.882353% 13.333333%);
+  --color-row-detail: hsl(213.333333 4.522613% 39.019608%);
+  --color-secondary-action: hsl(200 12% 95.098039%);
+  --color-on-secondary-action: hsl(205.714286 5.511811% 24.901961%);
+  --color-on-subtle-action: hsl(214.07767 81.746032% 50.588235%);
+  --color-subtle-action-border: hsl(220 8.823529% 86.666667%);
+  --color-navigation-text: hsl(205.714286 5.511811% 24.901961%);
+  --color-navigation-icon: hsl(213.333333 4.522613% 39.019608%);
+  --color-navigation-quiet: hsl(213.333333 42.857143% 95.882353%);
+  --color-on-navigation-selected: hsl(216.852792 89.954338% 42.941176%);
+  --color-direction-link: hsl(0 0% 100%);
+  --color-direction-link-text: hsl(225 5.882353% 13.333333%);
+  --color-direction-link-label: hsl(213.333333 4.522613% 39.019608%);
+  --color-direction-link-icon: hsl(216.852792 89.954338% 42.941176%);
+  --color-direction-link-border: hsl(220 8.823529% 86.666667%);
+  --color-field: hsl(0 0% 100%);
+  --color-field-text: hsl(225 5.882353% 13.333333%);
+  --color-field-label: hsl(213.333333 4.522613% 39.019608%);
+  --color-field-hint: hsl(213.333333 4.522613% 39.019608%);
+  --color-field-placeholder: hsl(213.333333 4.522613% 39.019608%);
+  --color-field-border: hsl(220 8.823529% 86.666667%);
+  --color-field-active: hsl(214.07767 81.746032% 50.588235%);
+  --color-field-error: hsl(4.231 76.471% 40%);
+  --color-select-option: hsl(210 16.666667% 97.647059%);
+  --color-select-option-text: hsl(213.333 9.333% 29.412%);
+  --color-select-selected: hsl(218.181818 91.666667% 95.294118%);
+  --color-on-select-selected: hsl(216.852792 89.954338% 42.941176%);
+  --color-radio: hsl(214.07767 81.746032% 50.588235%);
+  --color-radio-row: hsl(210 16.666667% 97.647059%);
+  --color-radio-text: hsl(225 5.882353% 13.333333%);
+  --color-radio-detail: hsl(213.333333 4.522613% 39.019608%);
+  --color-checkbox: hsl(214.07767 81.746032% 50.588235%);
+  --color-on-checkbox: hsl(0 0% 100%);
+  --color-checkbox-border: hsl(213.333333 4.522613% 39.019608%);
+  --color-checkbox-text: hsl(225 5.882353% 13.333333%);
+  --color-switch-off: hsl(200 12% 95.098039%);
+  --color-switch-on: hsl(214.07767 81.746032% 50.588235%);
+  --color-switch-thumb: hsl(205.714286 5.511811% 24.901961%);
+  --color-switch-thumb-on: hsl(0 0% 100%);
+  --color-switch-text: hsl(225 5.882353% 13.333333%);
+  --color-chip: hsl(200 12% 95.098039%);
+  --color-chip-text: hsl(216.852792 89.954338% 42.941176%);
+  --color-disclosure-text: hsl(213.333333 4.522613% 39.019608%);
+  --color-dialog-overlay: hsl(0 0% 12.157%);
+  --color-markdown-border: hsl(220 8.823529% 86.666667%);
+
   /* Components share the Material 3 corner scale inside each theme boundary. */
   --md-sys-shape-corner-none: 0;
   --md-sys-shape-corner-extra-small: 0.25rem;
@@ -77,6 +129,8 @@
   --state-lightness-threshold: 50;
   --state-hover-shift: 10;
   --state-pressed-shift: 20;
+  --state-surface-hover-shift: 2;
+  --state-surface-pressed-shift: 4;
   --state-lightness-direction: calc(
     1 - 2 * clamp(0, calc(sign(l - var(--state-lightness-threshold)) + 1), 1)
   );
@@ -90,15 +144,73 @@
     calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)),
     100
   );
+  --state-surface-hover-lightness: clamp(
+    0,
+    calc(l + var(--state-surface-hover-shift) * var(--state-lightness-direction)),
+    100
+  );
+  --state-surface-pressed-lightness: clamp(
+    0,
+    calc(l + var(--state-surface-pressed-shift) * var(--state-lightness-direction)),
+    100
+  );
   --state-disabled-opacity: 0.48;
   --state-selected-base-weight: 13%;
   --state-card-strip-weight: 35%;
-  --state-toast-action-factor: 0.78;
   --state-dialog-overlay-opacity: 0.55;
 
+  --color-secondary-action-hover: hsl(
+    from var(--color-secondary-action) h s var(--state-hover-lightness)
+  );
+  --color-secondary-action-pressed: hsl(
+    from var(--color-secondary-action) h s var(--state-pressed-lightness)
+  );
+  --color-subtle-action-border-hover: hsl(
+    from var(--color-subtle-action-border) h s var(--state-hover-lightness)
+  );
+  --color-subtle-action-border-pressed: hsl(
+    from var(--color-subtle-action-border) h s var(--state-pressed-lightness)
+  );
+  --color-radio-hover: hsl(from var(--color-radio) h s var(--state-hover-lightness));
+  --color-radio-pressed: hsl(from var(--color-radio) h s var(--state-pressed-lightness));
+  --color-radio-row-hover: hsl(
+    from var(--color-radio-row) h s var(--state-surface-hover-lightness)
+  );
+  --color-radio-row-pressed: hsl(
+    from var(--color-radio-row) h s var(--state-surface-pressed-lightness)
+  );
+  --color-switch-off-hover: hsl(from var(--color-switch-off) h s var(--state-hover-lightness));
+  --color-switch-off-pressed: hsl(from var(--color-switch-off) h s var(--state-pressed-lightness));
+  --color-switch-on-hover: hsl(from var(--color-switch-on) h s var(--state-hover-lightness));
+  --color-switch-on-pressed: hsl(from var(--color-switch-on) h s var(--state-pressed-lightness));
+  --color-checkbox-hover: hsl(from var(--color-checkbox) h s var(--state-hover-lightness));
+  --color-checkbox-pressed: hsl(from var(--color-checkbox) h s var(--state-pressed-lightness));
+  --color-select-option-hover: hsl(
+    from var(--color-select-option) h s var(--state-surface-hover-lightness)
+  );
+  --color-select-option-pressed: hsl(
+    from var(--color-select-option) h s var(--state-surface-pressed-lightness)
+  );
+  --color-select-selected-hover: hsl(
+    from var(--color-select-selected) h s var(--state-surface-hover-lightness)
+  );
+  --color-select-selected-pressed: hsl(
+    from var(--color-select-selected) h s var(--state-surface-pressed-lightness)
+  );
+  --color-direction-link-border-hover: hsl(
+    from var(--color-direction-link-border) h s var(--state-hover-lightness)
+  );
+  --color-direction-link-border-pressed: hsl(
+    from var(--color-direction-link-border) h s var(--state-pressed-lightness)
+  );
+
   /* Derived values: no independent state colors may be authored here. */
-  --color-checkbox-ring-hover: hsl(from var(--color-icon) h s var(--state-hover-lightness));
-  --color-checkbox-ring-pressed: hsl(from var(--color-icon) h s var(--state-pressed-lightness));
+  --color-checkbox-ring-hover: hsl(
+    from var(--color-checkbox-border) h s var(--state-hover-lightness)
+  );
+  --color-checkbox-ring-pressed: hsl(
+    from var(--color-checkbox-border) h s var(--state-pressed-lightness)
+  );
   --color-control-blue-hover: hsl(from var(--color-control-blue) h s var(--state-hover-lightness));
   --color-control-blue-pressed: hsl(
     from var(--color-control-blue) h s var(--state-pressed-lightness)
@@ -109,11 +221,8 @@
   --color-primary-action-pressed: hsl(
     from var(--color-primary-action) h s var(--state-pressed-lightness)
   );
-  --color-icon-button: var(--color-surface-muted);
-  --color-icon-button-hover: hsl(from var(--color-icon-button) h s var(--state-hover-lightness));
-  --color-icon-button-pressed: hsl(
-    from var(--color-icon-button) h s var(--state-pressed-lightness)
-  );
+  --color-row-hover: hsl(from var(--color-row) h s var(--state-surface-hover-lightness));
+  --color-row-pressed: hsl(from var(--color-row) h s var(--state-surface-pressed-lightness));
   --color-subtle-action-hover: hsl(
     from var(--color-subtle-action) h s var(--state-hover-lightness)
   );
@@ -133,14 +242,20 @@
     from var(--color-destructive-action) h s var(--state-pressed-lightness)
   );
   --color-text-subtle: var(--color-text-quiet);
-  --color-quiet-label-hover: hsl(from var(--color-text-muted) h s var(--state-hover-lightness));
-  --color-quiet-label-pressed: hsl(from var(--color-text-muted) h s var(--state-pressed-lightness));
-  --color-focus-ring: var(--color-text-primary);
+  --color-quiet-label-hover: hsl(
+    from var(--color-disclosure-text) h s var(--state-hover-lightness)
+  );
+  --color-quiet-label-pressed: hsl(
+    from var(--color-disclosure-text) h s var(--state-pressed-lightness)
+  );
+  --color-focus-ring: hsl(214.07767 81.746032% 50.588235%);
   --color-outlined-focus: var(--color-focus-ring);
-  --color-navigation-selected: color-mix(
-    in srgb,
-    var(--color-link) var(--state-selected-base-weight),
-    var(--color-surface)
+  --color-navigation-selected: hsl(218.181818 91.666667% 95.294118%);
+  --color-row-selected-hover: hsl(
+    from var(--color-navigation-selected) h s var(--state-surface-hover-lightness)
+  );
+  --color-row-selected-pressed: hsl(
+    from var(--color-navigation-selected) h s var(--state-surface-pressed-lightness)
   );
   --color-navigation-hover: hsl(
     from var(--color-navigation-selected) h s var(--state-hover-lightness)
@@ -149,22 +264,18 @@
     from var(--color-navigation-selected) h s var(--state-pressed-lightness)
   );
   --color-navigation-quiet-hover: hsl(
-    from var(--color-surface-muted) h s var(--state-hover-lightness)
+    from var(--color-navigation-quiet) h s var(--state-hover-lightness)
   );
   --color-navigation-quiet-pressed: hsl(
-    from var(--color-surface-muted) h s var(--state-pressed-lightness)
+    from var(--color-navigation-quiet) h s var(--state-pressed-lightness)
   );
-  --color-action-strip: color-mix(
-    in srgb,
-    var(--color-surface-muted) var(--state-card-strip-weight),
-    var(--color-surface)
-  );
+  --color-action-strip: hsl(200 12% 95.098039%);
   --color-skeleton-highlight: hsl(from var(--color-skeleton-base) h s var(--state-hover-lightness));
-  --color-primary-action: var(--color-text-strong);
-  --color-on-primary-action: var(--color-canvas);
-  --color-subtle-action: var(--color-surface);
+  --color-primary-action: hsl(214.07767 81.746032% 50.588235%);
+  --color-on-primary-action: hsl(0 0% 100%);
+  --color-subtle-action: hsl(0 0% 100%);
   --color-destructive-action: hsl(4.231 76.471% 40%);
-  --color-on-destructive-action: var(--color-white);
+  --color-on-destructive-action: hsl(0 0% 100%);
 
   --radius-standard: 0.5rem;
   --radius-surface: 1.75rem;
@@ -176,24 +287,78 @@
 }
 
 .env-theme[data-env-theme='dark'] {
+  /* Keep dark defaults independent of changes to the light palette. */
+  --color-control-blue: hsl(212.087 100% 45.098%);
   color-scheme: dark;
-  --color-focus-ring: var(--color-link);
-  --color-subtle-action: var(--color-surface);
-  --color-primary-action: var(--color-text-strong);
-  --color-on-primary-action: var(--color-canvas);
+  --color-focus-ring: hsl(217.317 89.13% 81.961%);
+  --color-subtle-action: hsl(220 3.614% 16.275%);
+  --color-primary-action: hsl(216 9.091% 89.216%);
+  --color-on-primary-action: hsl(0 0% 12.157%);
   --color-link: hsl(217.317 89.13% 81.961%);
   --color-text-primary: hsl(216 12.195% 91.961%);
   --color-text-muted: hsl(213.333 7.317% 75.882%);
   --color-border-strong: hsl(213.333 4.523% 39.02%);
-  --color-canvas: var(--color-canvas-dark);
+  --color-canvas: hsl(0 0% 12.157%);
   --color-surface-base: hsl(220 3.614% 16.275%);
-  --color-pane: var(--color-surface-base);
+  --color-pane: hsl(220 3.614% 16.275%);
+  --color-surface-raised: hsl(220 3.614% 16.275%);
   --color-surface-muted: hsl(216 4.425% 22.157%);
   --color-text-strong: hsl(216 9.091% 89.216%);
   --color-control-text: hsl(213.333 10.843% 83.725%);
   --color-icon: hsl(212.308 11.712% 78.235%);
   --color-text-quiet: hsl(212.308 8.725% 70.784%);
   --color-skeleton-base: hsl(216 4.425% 22.157%);
+  --color-surface: hsl(220 3.614% 16.275%);
+  --color-action-strip: hsl(218.107956 3.957044% 18.3337%);
+  --color-navigation-selected: hsl(217.84467 10.485441% 24.81418%);
+  --color-disabled-text: hsl(212.308 8.725% 70.784%);
+  --color-row: hsl(216 4.425% 22.157%);
+  --color-row-alternate: hsl(220 3.614% 16.275%);
+  --color-row-text: hsl(216 12.195% 91.961%);
+  --color-row-detail: hsl(213.333 7.317% 75.882%);
+  --color-secondary-action: hsl(216 4.425% 22.157%);
+  --color-on-secondary-action: hsl(213.333 10.843% 83.725%);
+  --color-on-subtle-action: hsl(217.317 89.13% 81.961%);
+  --color-subtle-action-border: hsl(213.333 4.523% 39.02%);
+  --color-navigation-text: hsl(216 9.091% 89.216%);
+  --color-navigation-icon: hsl(212.308 8.725% 70.784%);
+  --color-navigation-quiet: hsl(216 4.425% 22.157%);
+  --color-on-navigation-selected: hsl(217.317 89.13% 81.961%);
+  --color-direction-link: hsl(220 3.614% 16.275%);
+  --color-direction-link-text: hsl(216 12.195% 91.961%);
+  --color-direction-link-label: hsl(213.333 7.317% 75.882%);
+  --color-direction-link-icon: hsl(217.317 89.13% 81.961%);
+  --color-direction-link-border: hsl(213.333 4.523% 39.02%);
+  --color-field: hsl(0 0% 12.157%);
+  --color-field-text: hsl(216 12.195% 91.961%);
+  --color-field-label: hsl(213.333 7.317% 75.882%);
+  --color-field-hint: hsl(213.333 7.317% 75.882%);
+  --color-field-placeholder: hsl(212.308 8.725% 70.784%);
+  --color-field-border: hsl(213.333 4.523% 39.02%);
+  --color-field-active: hsl(217.317 89.13% 81.961%);
+  --color-field-error: hsl(4.231 76.471% 75%);
+  --color-select-option: hsl(216 4.425% 22.157%);
+  --color-select-option-text: hsl(213.333 10.843% 83.725%);
+  --color-select-selected: hsl(217.84467 10.485441% 24.81418%);
+  --color-on-select-selected: hsl(217.317 89.13% 81.961%);
+  --color-radio: hsl(217.317 89.13% 81.961%);
+  --color-radio-row: hsl(216 4.425% 22.157%);
+  --color-radio-text: hsl(216 12.195% 91.961%);
+  --color-radio-detail: hsl(213.333 7.317% 75.882%);
+  --color-checkbox: hsl(212.087 100% 45.098%);
+  --color-on-checkbox: hsl(0 0% 100%);
+  --color-checkbox-border: hsl(212.308 11.712% 78.235%);
+  --color-checkbox-text: hsl(216 12.195% 91.961%);
+  --color-switch-off: hsl(216 4.425% 22.157%);
+  --color-switch-on: hsl(212.087 100% 45.098%);
+  --color-switch-thumb: hsl(213.333 10.843% 83.725%);
+  --color-switch-thumb-on: hsl(0 0% 100%);
+  --color-switch-text: hsl(216 12.195% 91.961%);
+  --color-chip: hsl(216 4.425% 22.157%);
+  --color-chip-text: hsl(217.317 89.13% 81.961%);
+  --color-disclosure-text: hsl(213.333 7.317% 75.882%);
+  --color-dialog-overlay: hsl(0 0% 12.157%);
+  --color-markdown-border: hsl(213.333 4.523% 39.02%);
 }
 
 /* Relative spacing is reset at every explicit theme boundary, including portals. */

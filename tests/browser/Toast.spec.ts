@@ -64,6 +64,8 @@ test('visible timers pause for focus and hover together and resume after both le
   await page.getByTestId('toast-short').click();
   const toast = notice(page, 'Short notice');
   const close = toast.getByRole('button', { name: 'Dismiss notification' });
+  // Timer pauses follow keyboard-visible focus; establish keyboard interaction first.
+  await page.keyboard.press('Tab');
   await close.focus();
   await toast.hover();
   await page.mouse.move(1, 1);

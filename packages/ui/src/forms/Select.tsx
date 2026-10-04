@@ -111,7 +111,12 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
             triggerRef.current = node;
             setRef(ref, node);
           }}
-          className={classNames('env-button', 'env-dropdown-trigger', className)}
+          className={classNames(
+            'env-button',
+            'env-button-secondary',
+            'env-dropdown-trigger',
+            className,
+          )}
         >
           <BaseSelect.Value placeholder={placeholder} />
           <BaseSelect.Icon className="env-symbol">

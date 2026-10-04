@@ -29,7 +29,7 @@
     color var(--motion-duration-medium) var(--motion-ease),
     border-color var(--motion-duration-medium) var(--motion-ease);
 }
-/* The supplied button's fill and interaction colors belong only to the active tab. */
+/* Only the active tab uses its variant's fill and interaction colors. */
 .env-tabs-list > .env-tab:not([data-active]),
 .env-tabs-list > .env-tab:not([data-active]):is(:hover, :active) {
   background: transparent;

@@ -75,7 +75,7 @@ function TabButton({
   return <NavigationIconState selected={active}>{element}</NavigationIconState>;
 }
 
-/** A complete tab list and its linked content panels, styled by the supplied buttons. */
+/** Linked tab panels; supplied buttons retain their own colors, geometry and behavior. */
 export function Tabs({
   items,
   'aria-label': label,

@@ -12,17 +12,6 @@
   font: var(--type-body-small);
   color: var(--color-on-toast);
   flex-wrap: nowrap;
-  --color-primary-action: hsl(
-    from var(--toast-fill) h s calc(l * var(--state-toast-action-factor))
-  );
-  --color-primary-action-hover: hsl(
-    from var(--color-primary-action) h s var(--state-hover-lightness)
-  );
-  --color-primary-action-pressed: hsl(
-    from var(--color-primary-action) h s var(--state-pressed-lightness)
-  );
-  --color-on-primary-action: var(--color-on-toast);
-  --color-focus-ring: var(--color-on-toast);
 }
 .env-toast-neutral {
   --toast-fill: var(--color-toast-neutral);
@@ -77,13 +66,13 @@
   height: 1.125rem;
 }
 .env-toast-dismiss:hover {
-  background: var(--color-primary-action-hover);
+  background: hsl(from var(--toast-fill) h s var(--state-hover-lightness));
 }
 .env-toast-dismiss:active {
-  background: var(--color-primary-action-pressed);
+  background: hsl(from var(--toast-fill) h s var(--state-pressed-lightness));
 }
 .env-toast-dismiss:focus-visible {
-  outline: 0.125rem solid var(--color-focus-ring);
+  outline: 0.125rem solid var(--color-on-toast);
   outline-offset: 0.125rem;
 }
 .env-toast-portal-theme {

@@ -8,12 +8,15 @@ test.beforeEach(async ({ page }) => {
 const sources: Record<string, string> = {
   'button-primary': '--color-primary-action',
   'button-important': '--color-accent',
-  'button-secondary': '--color-icon-button',
+  'button-secondary': '--color-secondary-action',
   'button-outlined': '--color-subtle-action',
   'button-destructive': '--color-destructive-action',
-  'icon-button': '--color-icon-button',
-  navigation: '--color-surface-muted',
+  'icon-button': '--color-secondary-action',
+  navigation: '--color-navigation-quiet',
   'navigation-selected': '--color-navigation-selected',
+  'tab-primary': '--color-primary-action',
+  'tab-secondary': '--color-secondary-action',
+  'tab-navigation': '--color-navigation-selected',
 };
 
 async function lightness(control: import('@playwright/test').Locator, token?: string) {
@@ -41,6 +44,7 @@ test('all action and navigation fills derive hover/pressed from their base color
   for (const theme of ['light', 'dark']) {
     for (const [name, token] of Object.entries(sources)) {
       const control = page.getByTestId(`${theme}-${name}`);
+      if (name.startsWith('tab-')) await control.press('Enter');
       const base = await lightness(control, token);
       const direction = base < 50 ? 1 : -1;
       await control.hover();
@@ -69,6 +73,151 @@ test('the central threshold uses subtraction at 50 and clamps the extremes', asy
     await page.mouse.down();
     expect(await lightness(control)).toBeCloseTo(base + (base < 50 ? 20 : -20), 0);
     await page.mouse.up();
+  }
+});
+
+test('compositions reuse primitive colors while unrelated roles stay independent', async ({
+  page,
+}) => {
+  for (const theme of ['light', 'dark']) {
+    const boundary = page.getByTestId(`color-controls-${theme}`);
+    const selectors = {
+      canvas: ':scope',
+      primary: `[data-testid="${theme}-button-primary"]`,
+      secondary: `[data-testid="${theme}-button-secondary"]`,
+      icon: `[data-testid="${theme}-icon-button"]`,
+      destructive: `[data-testid="${theme}-button-destructive"]`,
+      surface: `[data-testid="${theme}-color-surface"]`,
+      pane: `[data-testid="${theme}-color-pane"]`,
+      card: `[data-testid="${theme}-color-card"]`,
+      paneCard: `[data-testid="${theme}-color-pane-card"]`,
+      canvasCard: `[data-testid="${theme}-color-canvas-card"]`,
+      row: `[data-testid="${theme}-color-row"]`,
+      contrastPane: `.env-contrast-row-pane:has([data-testid="${theme}-color-contrast-rows"])`,
+      tabRail: `[data-testid="${theme}-color-tabs"] .env-tabs-list`,
+      tab: `[data-testid="${theme}-color-tabs"] [role="tab"][aria-selected="true"]`,
+      tabIcon: `[data-testid="${theme}-color-tabs"] .env-navigation-item .env-symbol`,
+      link: `[data-testid="${theme}-color-link"]`,
+      textButton: `[data-testid="${theme}-color-text-button"]`,
+      navigation: `[data-testid="${theme}-navigation-selected"]`,
+      navigationIcon: `[data-testid="${theme}-navigation"] .env-symbol`,
+      direction: `[data-testid="${theme}-color-direction"]`,
+      field: `[data-testid="${theme}-color-field"]`,
+      fieldWell: `.env-text-field-well:has([data-testid="${theme}-color-field"])`,
+      fieldError: `.env-text-field-well:has([data-testid="${theme}-color-error-field"])`,
+      select: `[data-testid="${theme}-color-select"]`,
+      selectLabel: `.env-form-field:has(> [data-testid="${theme}-color-select"])`,
+      selectHint: `.env-form-field:has(> [data-testid="${theme}-color-select"]) > .env-field-hint`,
+      selectError: `[data-testid="${theme}-color-select-error"]`,
+      radioRow: `[data-testid="${theme}-color-radio-row"] .env-radio-option`,
+      radio: `[data-testid="${theme}-color-radio"]`,
+      checkbox: `[data-testid="${theme}-color-checkbox"]`,
+      switch: `[data-testid="${theme}-color-switch"]`,
+      chip: `[data-testid="${theme}-color-chip"]`,
+      skeleton: `[data-testid="${theme}-color-skeleton"]`,
+      errorToast: `[data-testid="${theme}-color-error-toast"]`,
+      toastAction: `[data-testid="${theme}-color-error-toast"] .env-toast-action`,
+    };
+    async function snapshot() {
+      return boundary.evaluate(
+        (root, probes) =>
+          Object.fromEntries(
+            Object.entries(probes).map(([name, selector]) => {
+              const element = selector === ':scope' ? root : root.querySelector(selector)!;
+              if (!element) throw new Error(`Missing color probe: ${name}`);
+              const css = getComputedStyle(element);
+              return [
+                name,
+                {
+                  fill: css.backgroundColor,
+                  text: css.color,
+                  border: css.borderColor,
+                  accent: css.accentColor,
+                },
+              ];
+            }),
+          ),
+        selectors,
+      );
+    }
+    const cases = [
+      ['--color-canvas', ['canvas', 'canvasCard']],
+      ['--color-pane', ['pane', 'paneCard']],
+      ['--color-surface-muted', ['surface', 'card', 'tabRail', 'contrastPane']],
+      ['--color-row', ['row']],
+      ['--color-secondary-action', ['secondary', 'icon', 'select', 'selectError']],
+      ['--color-on-secondary-action', ['secondary', 'icon', 'select', 'selectError']],
+      ['--color-link', ['link', 'textButton']],
+      ['--color-primary-action', ['primary', 'tab', 'toastAction']],
+      ['--color-on-primary-action', ['primary', 'tab', 'toastAction']],
+      ['--color-navigation-selected', ['navigation']],
+      ['--color-navigation-icon', ['navigationIcon', 'tabIcon']],
+      ['--color-direction-link', ['direction']],
+      ['--color-field', ['fieldWell', 'fieldError']],
+      ['--color-field-active', ['fieldWell']],
+      ['--color-field-error', ['fieldError', 'selectError']],
+      ['--color-field-text', ['field', 'fieldWell', 'fieldError', 'selectLabel']],
+      ['--color-field-hint', ['selectHint']],
+      ['--color-destructive-action', ['destructive']],
+      ['--color-toast-error', ['errorToast']],
+      ['--color-radio-row', ['radioRow']],
+      ['--color-radio', ['radio']],
+      ['--color-checkbox', ['checkbox']],
+      ['--color-switch-on', ['switch']],
+      ['--color-chip', ['chip']],
+      ['--color-skeleton-base', ['skeleton']],
+    ] as const;
+    for (const [token, targets] of cases) {
+      if (token === '--color-field-active') await page.getByTestId(`${theme}-color-field`).focus();
+      const before = await snapshot();
+      await boundary.evaluate(
+        (root, name) => (root as HTMLElement).style.setProperty(name, '#d02780'),
+        token,
+      );
+      const after = await snapshot();
+      for (const name of Object.keys(selectors)) {
+        if ((targets as readonly string[]).includes(name))
+          expect(after[name], `${theme}/${token} must update ${name}`).not.toEqual(before[name]);
+        else
+          expect(after[name], `${theme}/${token} must leave ${name} alone`).toEqual(before[name]);
+      }
+      await boundary.evaluate(
+        (root, name) => (root as HTMLElement).style.removeProperty(name),
+        token,
+      );
+      if (token === '--color-field-active')
+        await page
+          .getByTestId(`${theme}-color-field`)
+          .evaluate((input) => (input as HTMLElement).blur());
+    }
+    for (const [label, primitiveId, color] of [
+      ['First tab', `${theme}-button-primary`, '--color-primary-action'],
+      ['Second tab', `${theme}-button-secondary`, '--color-secondary-action'],
+      ['Third tab', `${theme}-navigation-selected`, '--color-navigation-selected'],
+    ]) {
+      const tab = boundary.getByRole('tab', { name: label });
+      await tab.press('Enter');
+      await expect(tab).toHaveAttribute('aria-selected', 'true');
+      const before = await tab.evaluate((element) => getComputedStyle(element).backgroundColor);
+      const primitive = page.getByTestId(primitiveId);
+      expect(before).toBe(
+        await primitive.evaluate((element) => getComputedStyle(element).backgroundColor),
+      );
+      await boundary.evaluate(
+        (root, token) => (root as HTMLElement).style.setProperty(token, '#d02780'),
+        color,
+      );
+      expect(await tab.evaluate((element) => getComputedStyle(element).backgroundColor)).not.toBe(
+        before,
+      );
+      expect(await tab.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe(
+        await primitive.evaluate((element) => getComputedStyle(element).backgroundColor),
+      );
+      await boundary.evaluate(
+        (root, token) => (root as HTMLElement).style.removeProperty(token),
+        color,
+      );
+    }
   }
 });
 

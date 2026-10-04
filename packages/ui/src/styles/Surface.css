@@ -8,8 +8,10 @@
   /* Controls can opt into their input-aware scale without changing ordinary panes. */
   --env-surface-scale: 1;
   --env-surface-inset: calc(var(--env-surface-padding) * var(--env-surface-scale));
-  --env-surface-hover: hsl(from var(--env-surface-color) h s var(--state-hover-lightness));
-  --env-surface-pressed: hsl(from var(--env-surface-color) h s var(--state-pressed-lightness));
+  --env-surface-hover: hsl(from var(--env-surface-color) h s var(--state-surface-hover-lightness));
+  --env-surface-pressed: hsl(
+    from var(--env-surface-color) h s var(--state-surface-pressed-lightness)
+  );
   padding: var(--env-surface-inset);
   border: 0;
   border-radius: calc(var(--env-surface-radius) * var(--env-surface-scale));

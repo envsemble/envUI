@@ -5,7 +5,7 @@ import { Button, type ButtonAppearanceProps } from './Button.js';
 export type LinkProps = Extract<ActionElementProps, { href: string }> &
   Pick<ButtonAppearanceProps, 'underline'>;
 
-/** Inline navigation shares text-button colors, focus and disabled behavior. */
+/** Inline navigation reuses text-button colors, geometry and behavior. */
 export function Link({ underline = true, className, ...props }: LinkProps) {
   return (
     <Button

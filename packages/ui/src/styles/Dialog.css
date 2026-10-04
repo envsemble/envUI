@@ -38,7 +38,7 @@
   position: fixed;
   inset: 0;
   z-index: 100;
-  background: hsl(from var(--color-canvas-dark) h s l / var(--state-dialog-overlay-opacity));
+  background: hsl(from var(--color-dialog-overlay) h s l / var(--state-dialog-overlay-opacity));
 }
 .env-dialog-positioner {
   position: fixed;

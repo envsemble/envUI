@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+- Adopt sampled Chrome Web Store and Google Ads colors for the light palette: white canvas, cool pale panes, gray surfaces, Google blue actions and selection, charcoal text and soft gray borders.
+
+- Separate color roles by primitive purpose for surfaces, rows, button variants, navigation, direction links, form controls, feedback and loading placeholders. Composed components reuse their primitives: tabs, icon buttons, links and toast actions share Button colors; cards, tab rails, dialog shells and menus share Surface colors; Select shares secondary Button and field colors. Derive interaction shades from each primitive's base in both themes.
+
+- Give light-theme rows and cards a more defined default fill. Use gentle 2-point hover and 4-point pressed lightness shifts for cards and selectable rows in both themes, derived from each surface's base color.
+
+- Give DirectionLink the raised surface background role in both themes, with white light-theme fills and hover/pressed states derived from the same surface color.
+
+- Refine light theme backgrounds with a cool page canvas, softly tinted panes and lighter neutral rows and controls. Align loading placeholders with the row fill and strengthen caption contrast.
+
 - Restart a timed toast's full visible duration when it returns from overflow. Scope keyboard-focus pauses to the individual notice, preserving F6 viewport access; persistent notices no longer pause unrelated timers.
 
 - Keep newest managed toasts visible immediately, pushing older notices behind the count indicator. Enter from the top at top-center and the bottom at bottom-right. Use Base UI's visibility limit, pause hidden timers and restart the visible duration when older notices reappear.

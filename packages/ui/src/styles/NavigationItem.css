@@ -8,13 +8,13 @@
   border: 0;
   border-radius: 100vmax;
   background: transparent;
-  color: var(--color-text-strong);
+  color: var(--color-navigation-text);
   font: 400 calc(0.9375rem * var(--scale, 1)) / 1.4 var(--font-family);
   text-decoration: none;
 }
 
 .env-navigation-selected {
-  color: var(--color-link);
+  color: var(--color-on-navigation-selected);
   background: var(--color-navigation-selected);
 }
 
@@ -33,7 +33,7 @@
 
 .env-navigation-item:not(.env-navigation-selected):not(:disabled):not([aria-disabled='true'])
   .env-symbol {
-  color: var(--color-text-quiet);
+  color: var(--color-navigation-icon);
 }
 
 .env-navigation-selected .env-symbol {

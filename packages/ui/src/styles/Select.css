@@ -6,19 +6,11 @@
 }
 .env-button.env-dropdown-trigger {
   position: relative;
-  background: var(--color-surface-muted);
-  color: var(--color-control-text);
   border: calc(0.0625rem * var(--scale, 1)) solid var(--env-field-border-base, transparent);
   gap: calc(0.5rem * var(--scale, 1));
 }
-.env-button.env-dropdown-trigger:hover:not(:disabled) {
-  background: var(--color-icon-button-hover);
-}
-.env-button.env-dropdown-trigger:active:not(:disabled) {
-  background: var(--color-icon-button-pressed);
-}
 .env-button.env-dropdown-trigger[aria-invalid='true']:is(:hover, :active):not(:disabled) {
-  background: var(--color-surface-muted);
+  background: var(--color-secondary-action);
 }
 @media (hover: hover) {
   .env-button.env-dropdown-trigger[aria-invalid='true']:hover:not(:disabled) {
@@ -31,7 +23,6 @@
 .env-dropdown-trigger .env-symbol {
   width: calc(1.125rem * var(--scale, 1));
   height: calc(1.125rem * var(--scale, 1));
-  color: var(--color-text-quiet);
   transform: rotate(90deg);
 }
 .env-dropdown-trigger[aria-expanded='true'] .env-symbol {
@@ -59,27 +50,27 @@
   padding: calc(0.5rem * var(--scale, 1)) calc(1rem * var(--scale, 1));
   border: 0;
   outline: none;
-  background: var(--color-surface-muted);
-  color: var(--color-control-text);
+  background: var(--color-select-option);
+  color: var(--color-select-option-text);
   text-align: start;
   font: var(--type-body-small);
   cursor: pointer;
 }
 .env-dropdown-option:hover:not(:disabled) {
-  background: var(--color-icon-button-hover);
+  background: var(--color-select-option-hover);
 }
 .env-dropdown-option:active:not(:disabled) {
-  background: var(--color-icon-button-pressed);
+  background: var(--color-select-option-pressed);
 }
 .env-dropdown-option[aria-selected='true'] {
-  background: var(--color-navigation-selected);
-  color: var(--color-link);
+  background: var(--color-select-selected);
+  color: var(--color-on-select-selected);
 }
 .env-dropdown-option[aria-selected='true']:hover:not(:disabled) {
-  background: var(--color-navigation-hover);
+  background: var(--color-select-selected-hover);
 }
 .env-dropdown-option[aria-selected='true']:active:not(:disabled) {
-  background: var(--color-navigation-pressed);
+  background: var(--color-select-selected-pressed);
 }
 /* Highlight includes pointer interaction; only keyboard focus needs a ring. */
 .env-dropdown-option:focus-visible {
@@ -110,12 +101,12 @@
   pointer-events: none;
 }
 .env-dropdown-option[data-selected] {
-  background: var(--color-navigation-selected);
-  color: var(--color-link);
+  background: var(--color-select-selected);
+  color: var(--color-on-select-selected);
 }
 .env-dropdown-option[data-selected]:hover:not([data-disabled]) {
-  background: var(--color-navigation-hover);
+  background: var(--color-select-selected-hover);
 }
 .env-dropdown-option[data-selected]:active:not([data-disabled]) {
-  background: var(--color-navigation-pressed);
+  background: var(--color-select-selected-pressed);
 }

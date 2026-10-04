@@ -12,7 +12,7 @@
   align-items: center;
   gap: calc(0.75rem * var(--scale, 1));
   font: var(--type-body-small);
-  color: var(--color-text-primary);
+  color: var(--color-radio-text);
   cursor: pointer;
 }
 .env-radio-options {
@@ -34,17 +34,17 @@
   gap: calc(0.75rem * var(--scale, 1));
   min-width: 0;
   padding: calc(0.75rem * var(--scale, 1)) calc(1rem * var(--scale, 1));
-  background: var(--color-surface-muted);
+  background: var(--color-radio-row);
   font: var(--type-body-small);
-  color: var(--color-text-primary);
+  color: var(--color-radio-text);
   cursor: pointer;
 }
 .env-radio-option:has(input:checked),
 .env-radio-option:hover:not(:has(input:disabled)) {
-  background: var(--color-icon-button-hover);
+  background: var(--color-radio-row-hover);
 }
 .env-radio-option:active:not(:has(input:disabled)) {
-  background: var(--color-icon-button-pressed);
+  background: var(--color-radio-row-pressed);
 }
 .env-radio-option:has(input:focus-visible) {
   outline: calc(0.125rem * var(--scale, 1)) solid var(--color-focus-ring);
@@ -55,14 +55,14 @@
   height: calc(1rem * var(--scale, 1));
   flex: 0 0 auto;
   margin: 0;
-  accent-color: var(--color-link);
+  accent-color: var(--color-radio);
   cursor: inherit;
 }
 .env-radio-control:hover:not(:disabled) {
-  accent-color: var(--color-link-hover);
+  accent-color: var(--color-radio-hover);
 }
 .env-radio-control:active:not(:disabled) {
-  accent-color: var(--color-link-pressed);
+  accent-color: var(--color-radio-pressed);
 }
 .env-radio-control:disabled {
   opacity: var(--state-disabled-opacity);
@@ -70,10 +70,10 @@
 .env-radio-option:has(input:disabled),
 .env-choice-control:has(input:disabled) {
   cursor: default;
-  color: var(--color-text-quiet);
+  color: var(--color-disabled-text);
 }
 
-/* Switch: row-fill off state and existing blue on state; no new palette colors. */
+/* Switch track, thumb, and label have independent palette roles. */
 .env-switch-control {
   appearance: none;
   box-sizing: border-box;
@@ -84,7 +84,7 @@
   padding: calc(0.25rem * var(--scale, 1));
   border: 0;
   border-radius: 100vmax;
-  background: var(--color-surface-muted);
+  background: var(--color-switch-off);
   cursor: inherit;
   transition: background-color var(--motion-duration-fast) var(--motion-ease);
 }
@@ -94,27 +94,27 @@
   width: calc(1rem * var(--scale, 1));
   height: calc(1rem * var(--scale, 1));
   border-radius: 50%;
-  background: var(--color-control-text);
+  background: var(--color-switch-thumb);
   transition: transform var(--motion-duration-fast) var(--motion-ease);
 }
 .env-switch-control:checked {
-  background: var(--color-control-blue);
+  background: var(--color-switch-on);
 }
 .env-switch-control:checked::before {
   transform: translateX(calc(1rem * var(--scale, 1)));
-  background: var(--color-white);
+  background: var(--color-switch-thumb-on);
 }
 .env-switch-control:hover:not(:disabled) {
-  background: var(--color-icon-button-hover);
+  background: var(--color-switch-off-hover);
 }
 .env-switch-control:active:not(:disabled) {
-  background: var(--color-icon-button-pressed);
+  background: var(--color-switch-off-pressed);
 }
 .env-switch-control:checked:hover:not(:disabled) {
-  background: var(--color-control-blue-hover);
+  background: var(--color-switch-on-hover);
 }
 .env-switch-control:checked:active:not(:disabled) {
-  background: var(--color-control-blue-pressed);
+  background: var(--color-switch-on-pressed);
 }
 .env-switch-control:focus-visible {
   outline: calc(0.125rem * var(--scale, 1)) solid var(--color-focus-ring);
@@ -144,7 +144,7 @@
   width: 100%;
   height: 100%;
   margin: 0;
-  border: calc(0.0625rem * var(--scale, 1)) solid var(--color-icon);
+  border: calc(0.0625rem * var(--scale, 1)) solid var(--color-checkbox-border);
   border-radius: calc(0.25rem * var(--scale, 1));
   background: transparent;
   cursor: inherit;
@@ -155,13 +155,13 @@
   width: 100%;
   height: 100%;
   padding: calc(0.125rem * var(--scale, 1));
-  color: var(--color-white);
+  color: var(--color-on-checkbox);
   pointer-events: none;
   visibility: hidden;
 }
 .env-checkbox-control:is(:checked, :indeterminate) {
   border-color: transparent;
-  background: var(--color-control-blue);
+  background: var(--color-checkbox);
 }
 .env-checkbox-control:checked + .env-checkbox-mark {
   visibility: visible;
@@ -187,11 +187,11 @@
   border-color: var(--color-checkbox-ring-pressed);
 }
 .env-checkbox-control:is(:checked, :indeterminate):hover:not(:disabled) {
-  background: var(--color-control-blue-hover);
+  background: var(--color-checkbox-hover);
   border-color: transparent;
 }
 .env-checkbox-control:is(:checked, :indeterminate):active:not(:disabled) {
-  background: var(--color-control-blue-pressed);
+  background: var(--color-checkbox-pressed);
   border-color: transparent;
 }
 .env-checkbox-control:focus-visible {
@@ -212,9 +212,22 @@
 }
 .env-radio-detail {
   display: block;
-  color: var(--color-text-muted);
+  color: var(--color-radio-detail);
   font: var(--type-body-small);
 }
 .env-checkbox-mark {
   box-sizing: border-box;
+}
+
+.env-choice-control:has(.env-checkbox-control) {
+  color: var(--color-checkbox-text);
+}
+.env-choice-control:has(.env-switch-control) {
+  color: var(--color-switch-text);
+}
+.env-choice-control:has(.env-radio-control) {
+  color: var(--color-radio-text);
+}
+.env-choice-control:has(input:disabled) {
+  color: var(--color-disabled-text);
 }

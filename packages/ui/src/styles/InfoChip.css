@@ -6,8 +6,8 @@
   padding: 0.2rem 0.45rem;
   font: 400 0.7rem/1.4 var(--font-family);
   white-space: nowrap;
-  color: var(--color-link);
-  background: var(--color-surface-muted);
+  color: var(--color-chip-text);
+  background: var(--color-chip);
   border: 0;
   border-radius: var(--radius-standard);
 }

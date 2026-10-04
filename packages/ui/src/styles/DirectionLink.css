@@ -22,10 +22,10 @@
   min-block-size: var(--control-height-touch);
   margin: 0;
   padding: var(--space-3) var(--space-4);
-  border: 0.0625rem solid var(--color-border-strong);
+  border: 0.0625rem solid var(--color-direction-link-border);
   border-radius: var(--radius-standard);
-  background: var(--color-subtle-action);
-  color: var(--color-text-primary);
+  background: var(--color-direction-link);
+  color: var(--color-direction-link-text);
   font: var(--type-body);
   text-align: start;
   text-decoration: none;
@@ -41,7 +41,7 @@
   overflow-wrap: anywhere;
 }
 .env-direction-link-label {
-  color: var(--color-text-muted);
+  color: var(--color-direction-link-label);
   font: var(--type-body-small);
 }
 .env-direction-link-title {
@@ -50,15 +50,15 @@
 .env-direction-link .env-symbol {
   inline-size: 1.25rem;
   block-size: 1.25rem;
-  color: var(--color-link);
+  color: var(--color-direction-link-icon);
 }
 .env-direction-link:hover {
-  background: var(--color-subtle-action-hover);
-  border-color: var(--color-border-hover);
+  background: hsl(from var(--color-direction-link) h s var(--state-hover-lightness));
+  border-color: var(--color-direction-link-border-hover);
 }
 .env-direction-link:active {
-  background: var(--color-subtle-action-pressed);
-  border-color: var(--color-border-pressed);
+  background: hsl(from var(--color-direction-link) h s var(--state-pressed-lightness));
+  border-color: var(--color-direction-link-border-pressed);
 }
 .env-direction-link:focus-visible {
   outline: 0.125rem solid var(--color-focus-ring);

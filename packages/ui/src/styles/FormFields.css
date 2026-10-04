@@ -1,15 +1,12 @@
 /* Native text controls share their floating caption, geometry and validation colors. */
 .env-form-field {
-  --env-field-error-color: light-dark(
-    var(--color-destructive-action),
-    hsl(from var(--color-destructive-action) h s 75)
-  );
+  --env-field-error-color: var(--color-field-error);
   display: grid;
   align-content: start;
   gap: calc(var(--space-3) * var(--scale, 1));
   min-width: 0;
   font: var(--type-body-small);
-  color: var(--color-text-primary);
+  color: var(--color-field-text);
 }
 .env-field-hint,
 .env-field-error {
@@ -17,7 +14,7 @@
   font-size: calc(var(--font-size-body-small) * var(--scale, 1));
 }
 .env-field-hint {
-  color: var(--color-text-muted);
+  color: var(--color-field-hint);
 }
 .env-field-error {
   display: flex;
@@ -35,14 +32,14 @@
   padding-block-start: calc(var(--space-2) * var(--scale, 1));
 }
 .env-text-field-well {
-  --env-field-border-base: var(--color-border-strong);
-  --env-field-interaction-color: var(--color-link);
+  --env-field-border-base: var(--color-field-border);
+  --env-field-interaction-color: var(--color-field-active);
   --env-field-border-color: var(--env-field-border-base);
   position: relative;
   min-width: 0;
   border: calc(0.0625rem * var(--scale, 1)) solid var(--env-field-border-color);
   border-radius: calc(var(--md-sys-shape-corner-large) * var(--scale, 1));
-  background: var(--color-canvas);
+  background: var(--color-field);
   transition: border-color var(--motion-duration-medium) var(--motion-ease);
 }
 @media (hover: hover) {
@@ -81,13 +78,13 @@
   border-radius: inherit;
   outline: none;
   background: transparent;
-  color: var(--color-text-primary);
+  color: var(--color-field-text);
   font: var(--type-body);
   font-size: calc(var(--font-size-body) * var(--scale, 1));
-  caret-color: var(--color-link);
+  caret-color: var(--color-field-active);
 }
 .env-text-input::placeholder {
-  color: var(--color-text-quiet);
+  color: var(--color-field-placeholder);
   opacity: 1;
 }
 .env-text-field-well > label {
@@ -96,7 +93,7 @@
   inset-inline-start: calc(var(--space-4) * var(--scale, 1));
   max-width: calc(100% - var(--space-6) * var(--scale, 1));
   overflow: hidden;
-  color: var(--color-text-muted);
+  color: var(--color-field-label);
   font: var(--type-body);
   font-size: calc(var(--font-size-body) * var(--scale, 1));
   white-space: nowrap;
@@ -121,7 +118,7 @@
   color: transparent;
 }
 .env-text-field-well:focus-within > label {
-  color: var(--color-link);
+  color: var(--color-field-active);
 }
 .env-text-field-well[data-variant='plain'] {
   border-color: transparent;
@@ -140,10 +137,8 @@
   box-shadow: 0 calc(0.0625rem * var(--scale, 1)) 0 var(--env-field-border-color);
 }
 /* Invalid outlined controls recolor their existing border; plain controls use an underline. */
-:is(
-  .env-text-field-well:has(> .env-text-input[aria-invalid='true']),
-  .env-dropdown-trigger[aria-invalid='true']
-) {
+.env-text-field-well:has(> .env-text-input[aria-invalid='true']),
+.env-dropdown-trigger[aria-invalid='true'] {
   --env-field-border-base: var(--env-field-error-color);
   --env-field-interaction-color: var(--env-field-error-color);
 }

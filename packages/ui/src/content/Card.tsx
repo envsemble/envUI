@@ -51,8 +51,6 @@ export function Card({
   const cardClassName = classNames(
     'env-card',
     !hasActionLayout && 'env-card-content',
-    tone === 'pane' && 'env-card-pane',
-    tone === 'canvas' && 'env-card-canvas',
     isInteractive && 'env-clickable-card',
     hasActionLayout && 'env-action-card',
     className,

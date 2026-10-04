@@ -57,10 +57,13 @@ function ThemeLabel() {
 
 #### Guidelines
 
-- Use palette base colors. Derive states centrally; do not add separate hover or pressed palette entries.
-- Below 50% HSL lightness, add lightness; otherwise subtract it. Hover shifts 10 points, press shifts 20, and results clamp to 0–100%. Disabled opacity is 0.48.
-- Matching colors share a hue across themes. Saturation and lightness may differ; distinct semantic exceptions retain their own hues. Focus uses text color in light and link color in dark.
-- Selected navigation mixes 13% link color with its surface. Card action strips mix 35% muted surface with the parent surface.
+- Use separate semantic color roles for distinct primitive purposes, such as surfaces, rows, buttons, fields, navigation and feedback. Composed components reuse their underlying primitives’ colors. Derive hover and pressed states from each primitive’s base centrally.
+- Light theme uses colors sampled from Chrome Web Store and Google Ads: a white page canvas, cool pale panes, soft gray cards and rows, white direction links, and blue actions and selection.
+- Use the same semantic color role for a component in both themes. Change the theme palette values rather than switching which role the component uses.
+- Below 50% HSL lightness, add lightness; otherwise subtract it. Controls shift 10 points on hover and 20 on press; cards and selectable rows use gentler 2-point hover and 4-point pressed shifts. Results clamp to 0–100%. Disabled opacity is 0.48.
+- Each role keeps the same purpose across themes. Its hue, saturation and lightness can differ between palettes. Focus has its own role, with blue defaults in both themes.
+- Tabs reuse the supplied Button or NavigationItem colors, and their rail uses Surface. Cards, dialog shells and menus reuse Surface tones. IconButton and inline Link reuse Button variants; Select shares secondary Button and field colors.
+- Navigation selection, radio selection and selected Select options have separate roles. Card action strips, dialog backdrops, field validation and toast fills also have their own purposes; composed action buttons retain Button colors.
 - Scope content with Theme. Nested boundaries and portaled components retain the originating theme.
 
 Related: [Surface](#surface), [Buttons](#buttons), [Navigation items](#navigation-items), [Accessibility](#accessibility).
@@ -413,9 +416,9 @@ import { Apps } from '@envsemble/envui/icons/Apps';
 
 - Use 1.75 rem corners. Row tone is the standalone card fill; pane tone groups content in a quieter background.
 - Cards space direct children by 1 rem. FeatureCard keeps compact title/description spacing and separates additional content by 1 rem.
-- Card composes Surface and Stack on one root. FeatureCard, ActionCard and ClickableCard reuse that card implementation.
+- Card composes Surface and Stack on one root and shares the selected Surface tone’s colors. FeatureCard, ActionCard and ClickableCard reuse that card implementation; child controls retain their Button colors.
 - Use Card href for a single destination or Card as="button" for an action. Do not nest controls inside an interactive card. Use phrasing content such as spans in button cards.
-- Interactive cards share the same surface, padding and corners. Hover and pressed derive from the chosen tone; keyboard focus and disabled behavior are shared. Label rich links with aria-labelledby and connect descriptions with aria-describedby.
+- Interactive cards share the same surface, padding and corners. Hover and pressed derive from the chosen tone using gentle 2- and 4-point lightness shifts in both themes; keyboard focus and disabled behavior are shared. Label rich links with aria-labelledby and connect descriptions with aria-describedby.
 - The action strip derives its fill from the parent surface. Compose actions from the shared controls.
 - Titles, metadata and product data remain application content.
 
@@ -719,9 +722,9 @@ import { Select } from '@envsemble/envui';
 #### Guidelines
 
 - Use a select to save space when a single choice has several alternatives.
-- Use the tonal trigger, selected indication and grouped option geometry. Keyboard navigation, typeahead and dismissal come from the component.
+- The trigger shares secondary Button colors, and the menu shares the pane Surface tone. Options have their own selection roles and grouped geometry. Keyboard navigation, typeahead and dismissal come from the component.
 - Option focus rings appear for keyboard interaction, not pointer opening or hover.
-- Label, hint and error use the same field structure as Input and Textarea. Invalid controls use the shared red border with HSL hover and pressed shades, without background changes, and retain the standard keyboard focus ring. The application owns validation.
+- Label, hint and error use the same field structure and colors as Input and Textarea. Invalid controls use the shared red border with HSL hover and pressed shades, without background changes, and retain the standard keyboard focus ring. The application owns validation.
 
 Related: [Radio groups](#radio-groups), [Text fields](#text-fields), [Grouped rows](#grouped-rows), [Accessibility](#accessibility).
 
@@ -762,7 +765,7 @@ import { Home } from '@envsemble/envui/icons/Home';
 
 - The application owns routing and the selected destination. Use a meaningful destination label.
 - Pass one Material Symbol. Navigation renders its filled variant when selected and its outline otherwise, including icons inside wrappers.
-- Unselected icons use the caption color; selected icon and label use the link color. Navigation fits its content with a 2.5 rem minimum height.
+- Navigation labels, unselected icons and selected labels have independent color roles. Their defaults align with strong text, captions and link blue. Navigation fits its content with a 2.5 rem minimum height.
 - Both label sizes use the shared 1 rem control icon size, matching labeled and icon-only buttons.
 - Use iconOnly for a collapsed sidebar. Supply icon and aria-label; children can remain in place for the expanded label. The circle matches the navigation height and keeps selection, automatic icon fill, focus and disabled behavior.
 - Selection keeps the gray/blue styling. Hover and pressed preserve the base hue and saturation and use the central lightness rule.
@@ -806,7 +809,7 @@ import { Tabs, Button, Text } from '@envsemble/envui';
 - Use tabs for related views in one place. Tabs owns selection, linked panels and keyboard behavior; your application owns any URL synchronization.
 - Use renderList to place the tab list alongside a heading or other content inside a Card. Keep panels outside that wrapper and render the supplied list once.
 - Supply Button, IconButton, NavigationItem without href, or a custom component that forwards native button props and ref. Do not nest another control inside a tab. Icon-only tabs need an accessible name.
-- The rail uses the muted surface color to stand apart from background panes, with 0.25 rem padding and gaps. Only the selected tab shows its supplied button fill; its hover and pressed colors follow the existing button rules. Official icons fill automatically when selected.
+- The rail uses the filled Surface tone, with 0.25 rem padding and gaps. The selected tab retains its supplied Button or NavigationItem colors, including hover and pressed shades. Inactive tabs have a transparent fill and muted labels. Official icons fill automatically when selected.
 - Arrow keys move between enabled tabs; Home and End reach the ends. Use manual activation for content that takes time to load. Disabled tabs are skipped.
 - Selection and panels transition over 0.16 s with shared easing. Reduced motion removes transitions. Inactive panels are hidden and inert; keepMounted preserves their local state.
 
@@ -856,7 +859,7 @@ import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
 - Supply previous, next or both. A single destination stays centered without an empty placeholder; omitting both renders nothing. Previous always precedes next in reading and keyboard order.
 - DirectionLinks renders a named navigation landmark and preserves native link behavior. Override aria-label when several groups need distinct names. Each destination accepts the same link props as DirectionLink except direction, which the group supplies.
 - Links stay side by side when they fit and wrap onto centered rows in narrow containers, keeping destination text readable. Titles wrap at word boundaries; unbroken text can wrap within a word to avoid overflow. DirectionLink remains available for standalone links with application-owned placement.
-- Hover and pressed use the shared subtle-action and border colors. Keyboard focus has a visible outline, and text wraps without growing beyond its container.
+- Direction links have independent background, border, title, caption and icon roles in both themes. The background defaults to white in light and a raised dark surface in dark. Hover and pressed shades derive from their own background and border colors. Keyboard focus has a visible outline, and text wraps without growing beyond its container.
 
 Related: [Navigation items](#navigation-items), [Stacks & action groups](#stacks--action-groups), [Typography](#typography).
 

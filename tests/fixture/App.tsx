@@ -21,6 +21,13 @@ import {
   Switch,
   Textarea,
   Theme,
+  Surface,
+  GroupedRows,
+  Row,
+  Tabs,
+  Link,
+  Skeleton,
+  DirectionLink,
   Toast,
   ToastProvider,
   useToast,
@@ -216,9 +223,7 @@ function ToastTriggers() {
         </Button>
         <Button
           data-testid="toast-error"
-          onClick={() =>
-            toast.show({ message: 'Persistent error notice', variant: 'error' })
-          }
+          onClick={() => toast.show({ message: 'Persistent error notice', variant: 'error' })}
         >
           Show error notice
         </Button>
@@ -317,10 +322,115 @@ function ColorControls({ theme }: { theme: ThemeValue }) {
         aria-label={`${theme} chevron`}
         data-testid={`${theme}-icon-button`}
       />
-      <NavigationItem data-testid={`${theme}-navigation`}>{theme} navigation</NavigationItem>
+      <NavigationItem icon={<Home />} data-testid={`${theme}-navigation`}>
+        {theme} navigation
+      </NavigationItem>
       <NavigationItem selected data-testid={`${theme}-navigation-selected`}>
         {theme} selected navigation
       </NavigationItem>
+      <Stack gap={3}>
+        <Surface tone="row" data-testid={`${theme}-color-surface`}>
+          Surface
+        </Surface>
+        <Surface data-testid={`${theme}-color-pane`}>Pane</Surface>
+        <Card data-testid={`${theme}-color-card`}>Card</Card>
+        <Card tone="pane" data-testid={`${theme}-color-pane-card`}>
+          Pane card
+        </Card>
+        <Card tone="canvas" data-testid={`${theme}-color-canvas-card`}>
+          Canvas card
+        </Card>
+        <GroupedRows>
+          <Row title="Row" data-testid={`${theme}-color-row`} />
+        </GroupedRows>
+        <GroupedRows contrast data-testid={`${theme}-color-contrast-rows`}>
+          <Row title="Contrast row" />
+        </GroupedRows>
+        <Tabs
+          aria-label={`${theme} color isolation tabs`}
+          data-testid={`${theme}-color-tabs`}
+          items={[
+            {
+              value: 'primary',
+              button: <Button data-testid={`${theme}-tab-primary`}>First tab</Button>,
+              content: 'First panel',
+            },
+            {
+              value: 'secondary',
+              button: (
+                <Button variant="secondary" data-testid={`${theme}-tab-secondary`}>
+                  Second tab
+                </Button>
+              ),
+              content: 'Second panel',
+            },
+            {
+              value: 'navigation',
+              button: (
+                <NavigationItem icon={<Home />} data-testid={`${theme}-tab-navigation`}>
+                  Third tab
+                </NavigationItem>
+              ),
+              content: 'Third panel',
+            },
+          ]}
+        />
+        <Link href="#" data-testid={`${theme}-color-link`}>
+          Inline link
+        </Link>
+        <Button variant="text" data-testid={`${theme}-color-text-button`}>
+          Text button
+        </Button>
+        <DirectionLink direction="next" href="#" data-testid={`${theme}-color-direction`}>
+          Next page
+        </DirectionLink>
+        <Input label={`${theme} isolated field`} data-testid={`${theme}-color-field`} />
+        <Input
+          label={`${theme} isolated error`}
+          error="Validation error"
+          data-testid={`${theme}-color-error-field`}
+        />
+        <Select
+          label={`${theme} isolated select`}
+          hint="Select hint"
+          options={plans}
+          defaultValue="starter"
+          data-testid={`${theme}-color-select`}
+        />
+        <Select
+          label={`${theme} isolated select error`}
+          error="Select validation error"
+          options={plans}
+          defaultValue="starter"
+          data-testid={`${theme}-color-select-error`}
+        />
+        <RadioGroup variant="rows" data-testid={`${theme}-color-radio-row`}>
+          <Radio
+            value="sample"
+            label={`${theme} isolated radio`}
+            data-testid={`${theme}-color-radio`}
+          />
+        </RadioGroup>
+        <Checkbox
+          label={`${theme} isolated checkbox`}
+          defaultChecked
+          data-testid={`${theme}-color-checkbox`}
+        />
+        <Switch
+          label={`${theme} isolated switch`}
+          defaultChecked
+          data-testid={`${theme}-color-switch`}
+        />
+        <InfoChip data-testid={`${theme}-color-chip`}>Info</InfoChip>
+        <Skeleton data-testid={`${theme}-color-skeleton`} />
+        <Toast
+          variant="error"
+          message="Error preview"
+          action={{ label: 'Toast action', onClick: () => {} }}
+          announce={false}
+          data-testid={`${theme}-color-error-toast`}
+        />
+      </Stack>
     </Theme>
   );
 }

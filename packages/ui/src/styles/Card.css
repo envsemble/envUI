@@ -79,7 +79,7 @@
   height: 2.75rem;
   display: grid;
   place-items: center;
-  color: var(--color-icon);
+  color: var(--color-text-muted);
 }
 .env-feature-card-icon .env-symbol {
   width: 1.5rem;
