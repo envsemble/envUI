@@ -2,7 +2,6 @@ import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import { useFieldMetadata } from './internal/useFieldMetadata.js';
 import { flushSync } from 'react-dom';
 import { Button } from '../actions/Button.js';
-import { Markdown } from '../content/Markdown.js';
 import { Tabs } from '../navigation/Tabs.js';
 import { Text } from '../foundations/Text.js';
 import { classNames } from '../internal/classNames.js';
@@ -12,6 +11,7 @@ import { FieldFrame } from './internal/FieldFrame.js';
 import { TextareaControl } from './internal/TextareaControl.js';
 import { MarkdownToolbar, defaultMarkdownCommands } from './internal/markdown/MarkdownToolbar.js';
 import { MarkdownLinkDialog } from './internal/markdown/MarkdownLinkDialog.js';
+import { MarkdownPreview } from './internal/markdown/MarkdownPreview.js';
 import { useMarkdownEditing } from './internal/markdown/useMarkdownEditing.js';
 import {
   formatMarkdown,
@@ -249,10 +249,12 @@ export const MarkdownEditor = forwardRef<HTMLTextAreaElement, MarkdownEditorProp
                   {
                     value: 'preview',
                     button: <Button>Preview</Button>,
-                    content: editing.content.trim() ? (
-                      <Markdown {...previewProps}>{editing.content}</Markdown>
-                    ) : (
-                      <Text tone="muted">Nothing to preview.</Text>
+                    content: (
+                      <MarkdownPreview
+                        {...previewProps}
+                        active={mode === 'preview'}
+                        source={editing.content}
+                      />
                     ),
                   },
                 ]}

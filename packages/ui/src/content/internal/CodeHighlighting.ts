@@ -54,6 +54,9 @@ export async function highlightCode(source: string, language: string): Promise<C
     ],
   });
   const runtime = await highlighter;
+  // Another consumer may have filled the cache while this shared runtime initialized.
+  const initialized = cache.get(key);
+  if (initialized) return initialized;
   const tokens = runtime
     .codeToTokensWithThemes(source, {
       lang: language,
@@ -66,11 +69,8 @@ export async function highlightCode(source: string, language: string): Promise<C
         dark: token.variants.dark,
       })),
     );
-  // Concurrent consumers can finish the same request; count an entry only once.
-  if (!cache.has(key)) {
-    cache.set(key, tokens);
-    cachedCharacters += key.length;
-  }
+  cache.set(key, tokens);
+  cachedCharacters += key.length;
   while (cache.size > 40 || cachedCharacters > 500_000) {
     const oldest = cache.keys().next().value;
     if (oldest === undefined) break;

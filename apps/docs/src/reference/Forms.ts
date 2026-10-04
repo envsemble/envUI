@@ -183,6 +183,7 @@ async function requestLink({ selectedText }: { selectedText: string }):
       'Formatting and typing share bounded undo/redo history. Ctrl/Cmd+B, I and K apply enabled bold, italic and link commands. Ctrl/Cmd+Z undoes; Shift+Z or Y redoes. Toolbar arrow keys move between actions.',
       'The editor retains native selection, paste and composition. Formatting waits until composition ends; toolbar actions restore the selection to the source.',
       'Native forms submit the source even while Preview is visible. Uncontrolled form reset restores defaultValue; controlled reset retains value, so the application resets its own draft. Replacing the controlled document clears its editing history.',
+      'Preview renders when first opened, then retains its mounted state while inactive. Write edits are parsed on the next preview activation; visible previews reflect current source and rendering options.',
       'maxLength constrains typing and formatting. disabled and readOnly prevent edits; validation, persistence and save/cancel actions belong to the application.',
       'Link insertion escapes saved labels and destinations. If the source changes while a picker is open, the insertion is rejected rather than overwriting newer text. Search, permissions and routes remain application responsibilities.',
     ],

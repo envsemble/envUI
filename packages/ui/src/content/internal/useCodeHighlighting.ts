@@ -41,9 +41,9 @@ export function useCodeHighlighting(source: string, language?: string) {
     if (!eligible || !resolvedLanguage) return;
     let current = true;
     import('./CodeHighlighting.js')
-      .then(({ highlightCode }) => highlightCode(source, resolvedLanguage))
+      .then(({ highlightCode }) => (current ? highlightCode(source, resolvedLanguage) : null))
       .then((tokens) => {
-        if (current) setResult({ source, language: resolvedLanguage, tokens });
+        if (current && tokens) setResult({ source, language: resolvedLanguage, tokens });
       })
       .catch(() => {
         /* The original source stays visible if highlighting is unavailable. */
