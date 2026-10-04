@@ -1,84 +1,10 @@
 import { useState } from 'react';
-import {
-  Text,
-  Button,
-  EmptyState,
-  Skeleton,
-  LoadingState,
-  Dialog,
-  Toast,
-  ToastProvider,
-  useToast,
-  Stack,
-  ActionGroup,
-} from '@envsemble/envui';
+import { Text, Button, EmptyState, Skeleton, LoadingState, Dialog, Stack } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { Search } from '@envsemble/envui/icons/Search';
 import { Apps } from '@envsemble/envui/icons/Apps';
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
-
-function ManagedControls() {
-  const toast = useToast();
-  return (
-    <Stack>
-      <ActionGroup>
-        <Button
-          variant="secondary"
-          onClick={() =>
-            toast.show({ variant: 'success', message: 'Changes saved', placement: 'bottom-right' })
-          }
-        >
-          Bottom right notice
-        </Button>
-        <Button
-          variant="secondary"
-          onClick={() =>
-            toast.show({
-              variant: 'info',
-              message: 'A new version is available',
-              placement: 'top-center',
-            })
-          }
-        >
-          Top center notice
-        </Button>
-        <Button
-          variant="secondary"
-          onClick={() =>
-            toast.show({
-              variant: 'error',
-              message: 'Could not save changes',
-              action: {
-                label: 'Retry',
-                onClick: () => toast.show({ variant: 'success', message: 'Changes saved' }),
-              },
-            })
-          }
-        >
-          Persistent error
-        </Button>
-        <Button variant="secondary" onClick={() => toast.clear()}>
-          Clear notices
-        </Button>
-      </ActionGroup>
-      <Text variant="caption" className="docs-caption">
-        Notices expire after five seconds; errors and notices with actions persist. Hover or focus
-        pauses timers.
-      </Text>
-    </Stack>
-  );
-}
-
-function ManagedToastExample() {
-  return (
-    <Example title="Managed delivery" gap={5}>
-      <ToastProvider defaultPlacement="bottom-right">
-        <ManagedControls />
-      </ToastProvider>
-    </Example>
-  );
-}
 
 export function EmptyStatePreview() {
   const [actionResult, setActionResult] = useState('');
@@ -151,66 +77,6 @@ export function LoadingPreview() {
           </Specimen>
         </SpecimenGrid>
       </Example>
-    </Preview>
-  );
-}
-
-const toastExamples = [
-  { variant: 'neutral', message: 'Changes saved' },
-  { variant: 'success', message: 'Project created' },
-  { variant: 'info', message: 'A new version is available' },
-  { variant: 'error', message: 'Could not save changes' },
-] as const;
-
-export function ToastsPreview() {
-  const [dismissedVariants, setDismissedVariants] = useState<string[]>([]);
-  const [actionResult, setActionResult] = useState('');
-  return (
-    <Preview>
-      <Example
-        title="Manual notices"
-        caption="Manual notices have no timer; the application controls their lifetime."
-        actions={
-          <Button
-            variant="secondary"
-            disabled={dismissedVariants.length === 0}
-            onClick={() => {
-              setDismissedVariants([]);
-              setActionResult('');
-            }}
-          >
-            Restore notices
-          </Button>
-        }
-      >
-        <Stack>
-          {toastExamples
-            .filter(({ variant }) => !dismissedVariants.includes(variant))
-            .map(({ variant, message }) => (
-              <Toast
-                key={variant}
-                announce={false}
-                variant={variant}
-                message={message}
-                action={
-                  variant === 'error'
-                    ? {
-                        label: 'Retry',
-                        onClick: () => setActionResult('Retry requested'),
-                      }
-                    : undefined
-                }
-                onDismiss={() =>
-                  setDismissedVariants((currentVariants) => [...currentVariants, variant])
-                }
-              />
-            ))}
-          <Text variant="caption" className="docs-caption" aria-live="polite">
-            {actionResult}
-          </Text>
-        </Stack>
-      </Example>
-      <ManagedToastExample />
     </Preview>
   );
 }

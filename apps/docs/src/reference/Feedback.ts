@@ -1,5 +1,59 @@
 import type { Reference } from './Types';
 
+const managedToastUsage = {
+  title: 'Managed notifications',
+  example: `import { Theme, Button, ToastProvider, useToast } from '@envsemble/envui';
+
+function SaveButton() {
+  const toast = useToast();
+  return <Button onClick={() => toast.show({
+    variant: 'success', message: 'Changes saved.',
+  })}>Save changes</Button>;
+}
+
+<Theme theme="light">
+  <ToastProvider defaultPlacement="bottom-right">
+    <SaveButton />
+  </ToastProvider>
+</Theme>`,
+  props: [
+    ['defaultPlacement', 'bottom-right stacks upward; top-center stacks downward'],
+    ['visibleLimit', 'Three visible notifications per placement by default; others queue'],
+    ['useToast().show(options)', 'Returns the notification ID; accepts variant and message'],
+    ['options.placement', 'Override the provider’s default for a particular notification'],
+    ['options.action', '{label, onClick}; actions and errors persist until dismissed'],
+    ['options.dismissible', 'true by default; adds a close button'],
+    ['options.duration', 'Milliseconds; defaults to 5000 for notices without errors or actions'],
+    ['useToast().dismiss(id) / clear()', 'Dismiss one notification or clear the entire queue'],
+  ],
+} satisfies NonNullable<Reference['usage']>[number];
+
+const inlineToastUsage = {
+  title: 'Inline toast',
+  example: `import { useState } from 'react';
+import { Toast } from '@envsemble/envui';
+
+function ArchiveNotice({ undoArchive }: { undoArchive: () => void }) {
+  const [visible, setVisible] = useState(true);
+  if (!visible) return null;
+
+  return <Toast variant="neutral" message="Files archived."
+    action={{ label: 'Undo', onClick: () => {
+      undoArchive();
+      setVisible(false);
+    } }}
+    onDismiss={() => setVisible(false)} />;
+}`,
+  props: [
+    ['variant', 'neutral (default), success, info or error'],
+    ['message', 'Single-line message; long text truncates to the available width'],
+    ['action', 'Optional {label, onClick}; the application handles the result'],
+    ['onDismiss / dismissLabel', 'Adds a close button and its accessible name'],
+    ['announce', 'true by default; false for static examples'],
+    ['Lifetime', 'No provider or timer; the application owns visibility and placement'],
+  ],
+} satisfies NonNullable<Reference['usage']>[number];
+
 export const feedbackReferences: Reference[] = [
   {
     id: 'empty-state',
@@ -48,35 +102,9 @@ import { Search } from '@envsemble/envui/icons/Search';
     title: 'Toasts',
     group: 'Feedback & overlays',
     summary: 'Brief feedback; errors and notices with actions stay until dismissed.',
-    example: `import { Theme, Button, ToastProvider, useToast } from '@envsemble/envui';
-
-function SaveButton() {
-  const toast = useToast();
-  return <Button onClick={() => toast.show({
-    variant: 'success', message: 'Changes saved',
-  })}>Save</Button>;
-}
-
-<Theme theme="light">
-  <ToastProvider defaultPlacement="bottom-right"><SaveButton /></ToastProvider>
-</Theme>`,
-    props: [
-      [
-        'Toast',
-        'variant: neutral, success, info, error; message; action {label,onClick}; onDismiss',
-      ],
-      ['ToastProvider defaultPlacement', 'bottom-right (upward) or top-center (downward)'],
-      [
-        'ToastProvider visibleLimit',
-        'Three visible notices per placement by default; FIFO overflow',
-      ],
-      ['useToast()', 'show(options) returns ID; dismiss(id) removes a notice; clear() removes all'],
-      [
-        'Notification options',
-        'placement override, dismissible and duration; errors/actions persist',
-      ],
-      ['Manual Toast announce', 'true by default; false for static specimens'],
-    ],
+    example: managedToastUsage.example,
+    props: managedToastUsage.props,
+    usage: [managedToastUsage, inlineToastUsage],
     guidelines: [
       'Neutral, success and info notices without actions expire after five seconds. Errors and notices with actions persist until dismissed.',
       'Timers pause during hover, keyboard focus or an inactive window. Each placement shows three notices; queued lifetimes start on display.',

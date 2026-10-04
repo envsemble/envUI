@@ -12,12 +12,8 @@ import { ChipsPreview, DisclosuresPreview } from './previews/Content';
 import { CodePreview } from './previews/CodeContent';
 import { MarkdownPreview } from './previews/MarkdownContent';
 import { MarkdownEditorPreview } from './previews/MarkdownEditing';
-import {
-  EmptyStatePreview,
-  LoadingPreview,
-  ToastsPreview,
-  DialogsPreview,
-} from './previews/Feedback';
+import { EmptyStatePreview, LoadingPreview, DialogsPreview } from './previews/Feedback';
+import { ToastsPreview } from './previews/Toasts';
 
 /** Select a topic; each preview retains its state across theme changes. */
 export function ComponentPreview({ id }: { id: string }) {
