@@ -92,7 +92,7 @@ test('all documentation views retain explicit content gaps and a single preview'
   test.setTimeout(90_000);
   const routes = [
     'overview',
-    'getting-started',
+    'overview/get-started',
     'components',
     ...foundations.map((id) => `foundations/${id}`),
     ...components.flatMap((id) => ['preview', 'usage'].map((view) => `components/${id}/${view}`)),

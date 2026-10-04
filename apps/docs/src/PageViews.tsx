@@ -4,7 +4,7 @@ import type { ReactElement, ReactNode } from 'react';
 import { referenceViews, type ReferenceView } from './Documentation';
 import { PageHeader } from './PageHeader';
 
-/** Every documentation destination shares the same banner views and route behavior. */
+/** Foundation and component pages share Preview and Usage banner views. */
 export function PageViews({
   path,
   title,

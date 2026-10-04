@@ -287,15 +287,16 @@ body {
   text-align: center;
 }
 .docs-overview-hero {
-  min-height: 20rem;
+  text-align: center;
 }
-.docs-overview-intro {
-  flex: 1;
-  justify-content: center;
+.docs-overview-title {
+  inline-size: min(20rem, 100%);
 }
 .docs-overview-logo {
-  width: min(20rem, 100%);
+  display: block;
+  width: 100%;
   height: auto;
+  color: var(--color-text-strong);
 }
 .docs-catalogue-content {
   height: 100%;

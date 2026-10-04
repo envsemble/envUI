@@ -8,7 +8,10 @@ export function PageNavigation({ path, view }: { path: string; view: ReferenceVi
   if (index === -1) return null;
   const previous = documentationPages[index - 1];
   const next = documentationPages[index + 1];
-  const destination = (path: string) => `${path}/${view}`;
+  const destination = (path: string) =>
+    path === 'overview'
+      ? `overview/${view === 'usage' ? 'get-started' : 'components'}`
+      : `${path}/${view}`;
   return (
     <DirectionLinks
       className="docs-page-navigation"

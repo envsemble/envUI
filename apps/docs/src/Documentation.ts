@@ -6,6 +6,12 @@ export const referenceViews = [
 ] as const;
 export type ReferenceView = (typeof referenceViews)[number]['id'];
 
+export const overviewViews = [
+  { id: 'components', title: 'Components' },
+  { id: 'get-started', title: 'Get started' },
+] as const;
+export type OverviewView = (typeof overviewViews)[number]['id'];
+
 export const referencePages = [
   ...foundations.map((reference) => ({
     reference,
@@ -23,7 +29,6 @@ export type ReferencePage = (typeof referencePages)[number];
 /** The reading order follows topics; reference tabs do not create extra destinations. */
 export const documentationPages = [
   { path: 'overview', title: 'Overview' },
-  { path: 'getting-started', title: 'Getting started' },
   ...referencePages
     .filter((page) => page.section === 'Foundations')
     .map((page) => ({ path: page.path, title: page.reference.title })),
@@ -42,7 +47,16 @@ export function normalizeRoute(route: string): string {
   const search = new URLSearchParams(query.join('?'));
   if (originalPath === 'components') {
     search.set('section', 'overview-components');
-    return `overview/preview?${search}`;
+    return `overview/components?${search}`;
+  }
+  if (/^getting-started(?:\/|$)/.test(originalPath)) {
+    return `overview/get-started${search.size ? `?${search}` : ''}`;
+  }
+  if (/^overview(?:\/|$)/.test(originalPath)) {
+    const requestedView = originalPath.split('/')[1];
+    const view =
+      requestedView === 'get-started' || requestedView === 'usage' ? 'get-started' : 'components';
+    return `overview/${view}${search.size ? `?${search}` : ''}`;
   }
   const path = originalPath
     .replace(/^components\/text(?=\/|$)/, 'foundations/typography')
@@ -52,16 +66,13 @@ export function normalizeRoute(route: string): string {
     .replace(/^foundations\/responsive(?=\/|$)/, 'foundations/spacing')
     .replace(/^foundations\/motion(?=\/|$)/, 'foundations/accessibility');
   const page = findReferencePage(path);
-  const root = path.split('/')[0];
-  const isLandingPage = root === 'overview' || root === 'getting-started';
-  const requestedView = path.split('/')[page ? 2 : 1];
-  const defaultView = root === 'getting-started' && search.has('section') ? 'usage' : 'preview';
+  const requestedView = path.split('/')[2];
   const view =
     requestedView === 'guidelines'
       ? 'preview'
       : referenceViews.some((item) => item.id === requestedView)
         ? requestedView
-        : defaultView;
-  const destination = page ? `${page.path}/${view}` : isLandingPage ? `${root}/${view}` : path;
+        : 'preview';
+  const destination = page ? `${page.path}/${view}` : path;
   return `${destination}${search.size ? `?${search}` : ''}`;
 }

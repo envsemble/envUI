@@ -139,9 +139,7 @@ test('offline reference loads every view without network or script errors', asyn
     return route.abort();
   });
   await page.goto(`${offline}#/overview`);
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-    'React components for envsemble',
-  );
+  await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI');
   await expect(page.locator('.docs-sidebar-footer')).toContainText(`envUI · ${version}`);
   for (const id of components) {
     for (const view of ['preview', 'usage']) {
@@ -163,7 +161,8 @@ test('offline reference loads every view without network or script errors', asyn
   await page.evaluate(() => {
     location.hash = '/getting-started/usage';
   });
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Getting started');
+  await expect(page.getByRole('tab', { name: 'Get started', selected: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Install the private package' })).toBeVisible();
   await expect(page.locator('.env-code-block').first()).toContainText('@envsemble:registry');
   expect(errors).toEqual([]);
   expect(requests).toEqual([]);
@@ -215,6 +214,62 @@ test('offline hashes support direct links and back/forward navigation', async ({
   await expect(page.locator('.docs-page-header').getByRole('tab', { selected: true })).toHaveText(
     'Usage',
   );
+});
+
+test('overview centers its banner and switches between components and setup without a separate page', async ({
+  page,
+}) => {
+  await page.goto(`${offline}#/overview`);
+  const banner = page.locator('.docs-overview-hero');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI');
+  await expect(page.getByRole('tab', { name: 'Components', selected: true })).toBeVisible();
+  await expect(page.locator('.docs-catalogue-grid').first()).toBeVisible();
+  await expect(banner.getByRole('link')).toHaveCount(0);
+  await expect(page.getByText('React components for envsemble')).toHaveCount(0);
+  await expect(
+    page.locator('.docs-sidebar').getByRole('link', { name: 'Getting started' }),
+  ).toHaveCount(0);
+  for (const width of [1440, 960, 390]) {
+    await page.setViewportSize({ width, height: 1000 });
+    const geometry = await banner.evaluate((element) => {
+      const rect = element.getBoundingClientRect();
+      const tabs = element.querySelector('[role="tablist"]')!.getBoundingClientRect();
+      const logo = element.querySelector('.docs-overview-logo')!.getBoundingClientRect();
+      return {
+        center: (rect.left + rect.right) / 2,
+        tabsCenter: (tabs.left + tabs.right) / 2,
+        logoCenter: (logo.left + logo.right) / 2,
+        tabsTop: tabs.top,
+        logoBottom: logo.bottom,
+      };
+    });
+    expect(Math.abs(geometry.tabsCenter - geometry.center)).toBeLessThan(1);
+    expect(Math.abs(geometry.logoCenter - geometry.center)).toBeLessThan(1);
+    expect(geometry.logoBottom).toBeLessThan(geometry.tabsTop);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+      true,
+    );
+  }
+  await page.getByRole('tab', { name: 'Get started' }).click();
+  await expect(page).toHaveURL(/#\/overview\/get-started$/);
+  await expect(page.getByRole('heading', { name: 'Install the private package' })).toBeVisible();
+  await expect(page.locator('.docs-catalogue-grid')).toHaveCount(0);
+  await page.goBack();
+  await expect(page.getByRole('tab', { name: 'Components', selected: true })).toBeVisible();
+  await page.goForward();
+  await expect(page.getByRole('tab', { name: 'Get started', selected: true })).toBeVisible();
+  await page.goto(`${offline}#/getting-started/usage?section=local-development`);
+  await expect(page.getByRole('tab', { name: 'Get started', selected: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Local live development' })).toBeInViewport();
+  await expect(page.locator('.docs-page-navigation').getByRole('link')).toHaveAttribute(
+    'href',
+    '#/foundations/colors/usage',
+  );
+  await page.locator('.docs-page-navigation').getByRole('link').click();
+  await expect(page.getByRole('tab', { name: 'Usage', selected: true })).toBeVisible();
+  await expect(
+    page.locator('.docs-page-navigation').getByRole('link', { name: 'Previous Overview' }),
+  ).toHaveAttribute('href', '#/overview/get-started');
 });
 
 test('offline theme toggle switches the whole page and keeps the canvas full height', async ({
@@ -286,7 +341,8 @@ test('offline theme toggle switches the whole page and keeps the canvas full hei
   await page.evaluate(() => {
     location.hash = '/getting-started';
   });
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Getting started');
+  await expect(page.getByRole('tab', { name: 'Get started', selected: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Install the private package' })).toBeVisible();
   await expect(app).toHaveAttribute('data-env-theme', 'dark');
-  await expect(panes).toHaveCount(1);
+  await expect(panes).toHaveCount(0);
 });

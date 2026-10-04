@@ -1,7 +1,6 @@
 import { version } from '@envsemble/envui/package.json';
 import { Text, EnvUILogo, NavigationItem, Stack, Link } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
-import { Add } from '@envsemble/envui/icons/Add';
 import { Category } from '@envsemble/envui/icons/Category';
 import { references, foundations, componentGroups } from '../Reference';
 import type { ReferencePage } from '../Documentation';
@@ -33,14 +32,6 @@ export function Sidebar({ routePath, page }: { routePath: string; page?: Referen
           icon={<Home />}
         >
           Overview
-        </NavigationItem>
-        <NavigationItem
-          size="compact"
-          href="#/getting-started"
-          selected={routePath.split('/')[0] === 'getting-started'}
-          icon={<Add />}
-        >
-          Getting started
         </NavigationItem>
         <Text variant="caption" className="docs-nav-heading">
           Foundations

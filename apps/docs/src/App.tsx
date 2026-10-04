@@ -2,10 +2,9 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Theme, NavigationItem, IconButton, Button } from '@envsemble/envui';
 import { DarkMode } from '@envsemble/envui/icons/DarkMode';
 import { LightMode } from '@envsemble/envui/icons/LightMode';
-import { findReferencePage, referenceViews } from './Documentation';
+import { findReferencePage, referenceViews, overviewViews } from './Documentation';
 import { ReferenceContent } from './ReferencePage';
 import { PageHeader } from './PageHeader';
-import { GettingStarted } from './pages/GettingStarted';
 import { Overview } from './pages/Overview';
 import { Sidebar } from './navigation/Sidebar';
 import { PageNavigation } from './navigation/PageNavigation';
@@ -23,11 +22,10 @@ export default function App() {
   const view =
     referenceViews.find((view) => view.id === routeSegments[page ? 2 : 1])?.id ?? 'preview';
   const isOverview = root === 'overview';
-  const isGettingStarted = root === 'getting-started';
+  const overviewView =
+    overviewViews.find((view) => view.id === routeSegments[1])?.id ?? 'components';
   const oppositeAppearance = appearance === 'light' ? 'dark' : 'light';
-  const title =
-    reference?.title ??
-    (isGettingStarted ? 'Getting started' : isOverview ? 'envUI' : 'Page not found');
+  const title = reference?.title ?? (isOverview ? 'envUI' : 'Page not found');
   const search = route.split('?')[1];
   const contentPath = page?.path ?? root;
   const contentRoute = `${contentPath}${search ? `?${search}` : ''}`;
@@ -40,8 +38,7 @@ export default function App() {
   }, [contentRoute, title]);
   let content: ReactNode;
   if (page) content = <ReferenceContent key={page.path} page={page} view={view} search={search} />;
-  else if (isGettingStarted) content = <GettingStarted view={view} />;
-  else if (isOverview) content = <Overview view={view} />;
+  else if (isOverview) content = <Overview view={overviewView} />;
   else
     content = (
       <div className="docs-article">
@@ -71,11 +68,12 @@ export default function App() {
       <div className="docs-shell">
         <Sidebar routePath={routePath} page={page} />
         <main id="docs-main" ref={mainElement} tabIndex={-1} className="docs-main">
-          {!isOverview && !isGettingStarted && !page && (
-            <PageHeader title={title} breadcrumb="envUI" />
-          )}
+          {!isOverview && !page && <PageHeader title={title} breadcrumb="envUI" />}
           {content}
-          <PageNavigation path={contentPath} view={view} />
+          <PageNavigation
+            path={contentPath}
+            view={isOverview ? (overviewView === 'get-started' ? 'usage' : 'preview') : view}
+          />
         </main>
       </div>
     </Theme>

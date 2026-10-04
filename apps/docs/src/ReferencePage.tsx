@@ -119,7 +119,7 @@ export function ReferenceContent({
           <Usage reference={reference} search={search} />
           <RelatedTopics page={page} />
           <Text tone="muted">
-            <Link href="#/getting-started/usage">Setup, local edits and version updates</Link>
+            <Link href="#/overview/get-started">Setup, local edits and version updates</Link>
           </Text>
         </div>
       }
