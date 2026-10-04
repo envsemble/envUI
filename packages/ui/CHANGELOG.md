@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Make text field hover visible with a single blue border or a plain-field underline. Derive interaction shades from link blue or the validation red using the shared HSL rule, without changing the background or adding a focus ring.
+
 - Remove the text field hover fill and keep border-only hover feedback. Invalid outlined Input/Textarea, MarkdownEditor and Select controls use a full thin red border; plain fields retain their red underline.
 
 - Add an animated neutral hover fill to outlined Input/Textarea fields using the shared HSL lightness rule. Keep the single blue focus border, suppress hover changes on disabled fields and respect reduced motion.

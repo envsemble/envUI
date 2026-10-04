@@ -8,7 +8,7 @@ export interface FieldProps {
 }
 
 export interface TextFieldAppearanceProps {
-  /** Outlined by default; plain shows an underline on focus without a border or fill. */
+  /** Outlined by default; plain shows an underline on hover or focus without a border or fill. */
   variant?: 'outlined' | 'plain';
 }
 
