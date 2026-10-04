@@ -9,6 +9,7 @@ import { NavigationFixture } from './Navigation.js';
 import { ButtonGroupsFixture } from './ButtonGroups.js';
 import { LayoutFixture } from './Layout.js';
 import { FeatureCardsFixture } from './FeatureCards.js';
+import { ColorPickerFixture } from './ColorPicker.js';
 
 export default function App() {
   return (
@@ -30,6 +31,8 @@ export default function App() {
           <ButtonGroupsFixture theme="dark" />
           <LayoutFixture />
           <FeatureCardsFixture />
+          <ColorPickerFixture theme="light" />
+          <ColorPickerFixture theme="dark" />
           <StrictToastFixture />
         </main>
       </Theme>

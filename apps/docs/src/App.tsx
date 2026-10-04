@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { Theme, NavigationItem, IconButton, Button } from '@envsemble/envui';
+import { Theme, NavigationItem, IconButton, Button, Stack } from '@envsemble/envui';
 import { DarkMode } from '@envsemble/envui/icons/DarkMode';
 import { LightMode } from '@envsemble/envui/icons/LightMode';
 import { findReferencePage, referenceViews, overviewViews } from './navigation/DocumentationRoutes';
@@ -41,9 +41,9 @@ export default function App() {
   else if (isOverview) content = <Overview view={overviewView} />;
   else
     content = (
-      <div className="docs-article">
+      <Stack gap={7} className="docs-article">
         <NavigationItem href="#/overview">Return to overview</NavigationItem>
-      </div>
+      </Stack>
     );
   return (
     <Theme theme={appearance} className="docs-app">

@@ -14,7 +14,7 @@ test('public component, stylesheet and new export update live without version ch
   const originals = await Promise.all(paths.map((path) => readFile(path, 'utf8')));
   const version = await readFile('packages/ui/package.json', 'utf8');
   try {
-    await page.goto('http://127.0.0.1:8770/#/components/input/preview');
+    await page.goto('http://127.0.0.1:8770/#/components/fields/preview');
     await page.evaluate(() => {
       (window as unknown as { liveProof: string }).liveProof = 'same-document';
     });
@@ -24,6 +24,7 @@ test('public component, stylesheet and new export update live without version ch
       .locator('.docs-example')
       .first()
       .getByRole('textbox', { name: 'Project name', exact: true })
+      .and(page.locator('[name="project"]'))
       .fill('Preserved draft');
     await writeFile(
       buttonSource,
@@ -32,12 +33,12 @@ test('public component, stylesheet and new export update live without version ch
         '<ActionElement$1{...props} data-env-live="updated"',
       ),
     );
-    await expect(page.getByRole('button', { name: 'Reset examples' })).toHaveAttribute(
+    await expect(page.getByRole('tab', { name: 'Preview', exact: true })).toHaveAttribute(
       'data-env-live',
       'updated',
     );
     await writeFile(stylesheet, `${originals[1]}\n.env-button { padding-inline-start: 1.5rem; }\n`);
-    await expect(page.getByRole('button', { name: 'Reset examples' })).toHaveCSS(
+    await expect(page.getByRole('tab', { name: 'Preview', exact: true })).toHaveCSS(
       'padding-left',
       '24px',
     );
@@ -47,7 +48,8 @@ test('public component, stylesheet and new export update live without version ch
         .last()
         .locator('.docs-example')
         .first()
-        .getByRole('textbox', { name: 'Project name', exact: true }),
+        .getByRole('textbox', { name: 'Project name', exact: true })
+        .and(page.locator('[name="project"]')),
     ).toHaveValue('Preserved draft');
     expect(await page.evaluate(() => (window as unknown as { liveProof: string }).liveProof)).toBe(
       'same-document',
@@ -64,10 +66,7 @@ test('public component, stylesheet and new export update live without version ch
     await writeFile(
       preview,
       `import { LiveAcceptance } from '@envsemble/envui';\n` +
-        originals[3].replace(
-          '<Example title="Interactive field" size="field">',
-          '<Example title="Interactive field" size="field"><LiveAcceptance />',
-        ),
+        originals[3].replace('<InputExamples />', '<LiveAcceptance /><InputExamples />'),
     );
     await expect(page.getByTestId('live-new-component')).toHaveText('New shared component');
     expect(await readFile('packages/ui/package.json', 'utf8')).toBe(version);

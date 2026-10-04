@@ -119,19 +119,19 @@ export function ReferenceContent({
           ) : (
             <ComponentPreview id={reference.id} />
           )}
-          <div className="docs-article">
+          <Stack gap={7} className="docs-article">
             <RelatedTopics page={page} />
-          </div>
+          </Stack>
         </>
       }
       usage={
-        <div className="docs-article">
+        <Stack gap={7} className="docs-article">
           <Usage reference={reference} search={search} />
           <RelatedTopics page={page} />
           <Text tone="muted">
             <Link href="#/overview/get-started">Setup, local edits and version updates</Link>
           </Text>
-        </div>
+        </Stack>
       }
     />
   );

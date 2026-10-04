@@ -38,6 +38,12 @@ as its interaction foundation. Copyright (c) 2019 Material-UI SAS. Licensed unde
 MIT license. The complete license is included in `licenses/Base-UI-LICENSE.txt`.
 The package's dependency and lockfile record the installed version.
 
+## Color picking
+
+ColorPicker uses [react-colorful](https://github.com/omgovich/react-colorful) for its
+color area and hue interaction. Licensed under MIT; its locked copyright and
+license notice is included in `licenses/Runtime-Dependencies-LICENSE.txt`.
+
 ## Markdown and syntax highlighting
 
 Markdown uses [react-markdown](https://github.com/remarkjs/react-markdown) and

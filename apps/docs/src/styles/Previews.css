@@ -1,7 +1,4 @@
 .docs-preview {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
   padding: 2rem var(--docs-gutter) 3rem;
   container-type: inline-size;
 }
@@ -132,18 +129,4 @@
 }
 .docs-matrix td {
   padding: 1rem 0.75rem;
-}
-.docs-interaction-states > summary {
-  inline-size: fit-content;
-  padding-block: var(--space-2);
-  font: var(--type-h2);
-  color: var(--color-text-muted);
-  cursor: pointer;
-}
-.docs-interaction-states > summary:focus-visible {
-  outline: 0.125rem solid var(--color-focus-ring);
-  outline-offset: 0.125rem;
-}
-.docs-interaction-states[open] > .docs-matrix-scroll {
-  margin-block-start: var(--space-5);
 }

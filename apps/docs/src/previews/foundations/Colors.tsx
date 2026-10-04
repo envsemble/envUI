@@ -1,10 +1,9 @@
 import { useLayoutEffect, useRef, useState } from 'react';
-import { Dialog, Text, useTheme } from '@envsemble/envui';
+import { Button, ColorPicker, Dialog, Stack, Text, useTheme } from '@envsemble/envui';
 import { TokenValue } from './TokenValue';
 import { Example, Specimen, SpecimenGrid } from '../Example';
 import { colorGroups, colorVariable } from '../../theme/Palette';
 import { usePaletteCustomization } from '../../theme/PaletteCustomization';
-import { ColorPicker } from '../../theme/ColorPicker';
 
 interface MeasuredColor {
   css: string;
@@ -29,8 +28,8 @@ function ColorSwatch({
       className="docs-palette-dialog"
       closeLabel="Done"
       trigger={
-        <button
-          type="button"
+        <Button
+          variant="secondary"
           className="docs-swatch"
           aria-label={`Pick ${label.toLowerCase()} color`}
           title="Choose a color"
@@ -41,12 +40,13 @@ function ColorSwatch({
           }}
         >
           <code>{value?.css ?? ''}</code>
-        </button>
+        </Button>
       }
     >
       <ColorPicker
-        color={value?.hex ?? '#000000'}
-        onChange={(color) => setValue(theme, colorVariable(token), color)}
+        label={label}
+        value={value?.hex ?? '#000000'}
+        onValueChange={(color) => setValue(theme, colorVariable(token), color)}
       />
     </Dialog>
   );
@@ -85,24 +85,28 @@ function ColorPalette() {
     setColorValues(measuredColors);
   }, [theme, palettes]);
   return (
-    <div ref={paletteElement} className="docs-palette">
+    <Stack ref={paletteElement} gap={9} className="docs-palette">
       {colorGroups.map(([group, tokens]) => (
-        <section key={group}>
+        <Stack as="section" key={group}>
           <Text as="h2" variant="page-heading">
             {group}
           </Text>
-          {tokens.map(([token, label]) => (
-            <div className="docs-palette-row" key={token}>
-              <div className="docs-palette-label">
-                <span>{label}</span>
-                <code>--color-{token}</code>
+          <Stack gap={0}>
+            {tokens.map(([token, label]) => (
+              <div className="docs-palette-row" key={token}>
+                <div className="docs-palette-label">
+                  <Text as="span" variant="supporting">
+                    {label}
+                  </Text>
+                  <code>--color-{token}</code>
+                </div>
+                <ColorSwatch token={token} label={label} value={colorValues[token]} />
               </div>
-              <ColorSwatch token={token} label={label} value={colorValues[token]} />
-            </div>
-          ))}
-        </section>
+            ))}
+          </Stack>
+        </Stack>
       ))}
-    </div>
+    </Stack>
   );
 }
 

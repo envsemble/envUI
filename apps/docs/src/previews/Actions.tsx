@@ -1,4 +1,5 @@
-import { Button, ButtonGroup } from '@envsemble/envui';
+import { useState } from 'react';
+import { ActionGroup, Button, ButtonGroup, DisclosureNote, Link, Text } from '@envsemble/envui';
 import { Check } from '@envsemble/envui/icons/Check';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 import { Close } from '@envsemble/envui/icons/Close';
@@ -131,6 +132,7 @@ function ButtonStates() {
 }
 
 export function ButtonsPreview() {
+  const [selectedLink, setSelectedLink] = useState('');
   return (
     <Preview>
       <Example
@@ -145,6 +147,34 @@ export function ButtonsPreview() {
         <Button variant="text" underline>
           With underline
         </Button>
+      </Example>
+      <Example title="Links" caption="Use href for a destination and onClick for an action.">
+        <ActionGroup>
+          <Button href={location.href} onClick={() => setSelectedLink('Projects')}>
+            Open projects
+          </Button>
+          <Button variant="text" href={location.href} onClick={() => setSelectedLink('Help')}>
+            Read help
+          </Button>
+          <Button
+            variant="text"
+            underline
+            href={location.href}
+            onClick={() => setSelectedLink('Guide')}
+          >
+            Read guide
+          </Button>
+        </ActionGroup>
+        <Text>
+          Read the{' '}
+          <Link href={location.href} onClick={() => setSelectedLink('Project guide')}>
+            project guide
+          </Link>{' '}
+          for details.
+        </Text>
+        <Text variant="caption" role="status">
+          {selectedLink && `Selected destination: ${selectedLink}`}
+        </Text>
       </Example>
       <Example
         title="Connected rows"
@@ -227,10 +257,9 @@ export function ButtonsPreview() {
         </ButtonGroup>
       </Example>
       <Example size="wide">
-        <details className="docs-interaction-states">
-          <summary>Interaction states</summary>
+        <DisclosureNote title="Interaction states">
           <ButtonStates />
-        </details>
+        </DisclosureNote>
       </Example>
     </Preview>
   );

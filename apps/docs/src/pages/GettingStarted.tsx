@@ -5,7 +5,7 @@ import { setupCode, registryCode, installCode } from '../Reference';
 /** Setup content for the overview's Get started tab. */
 export function GettingStarted() {
   return (
-    <div className="docs-article">
+    <Stack gap={7} className="docs-article">
       <Stack as="section">
         <Text as="h2" variant="page-heading">
           Install the private package
@@ -90,6 +90,6 @@ export function GettingStarted() {
           as these Usage pages. Read it alongside the TypeScript declarations and release notes.
         </Text>
       </Stack>
-    </div>
+    </Stack>
   );
 }

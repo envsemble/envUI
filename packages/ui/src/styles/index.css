@@ -19,6 +19,7 @@
 @import './Layout.css';
 @import './ChoiceControls.css';
 @import './FormFields.css';
+@import './ColorPicker.css';
 @import './MarkdownEditor.css';
 @import './Select.css';
 @import './ConnectedRows.css';

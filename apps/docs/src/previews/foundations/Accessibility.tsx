@@ -1,4 +1,4 @@
-import { Text, Button, IconButton, ActionGroup } from '@envsemble/envui';
+import { Text, Button, IconButton, ActionGroup, Stack } from '@envsemble/envui';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 import { TokenValue } from './TokenValue';
 import { Example } from '../Example';
@@ -31,7 +31,7 @@ export function AccessibilityPreview() {
         </Text>
       </Example>
       <Example title="Motion defaults">
-        <div className="docs-facts">
+        <Stack className="docs-facts">
           <Text variant="supporting">
             Fast transitions{' '}
             <code>
@@ -50,7 +50,7 @@ export function AccessibilityPreview() {
               <TokenValue token="--motion-ease" />
             </code>
           </Text>
-        </div>
+        </Stack>
         <Text variant="caption" className="docs-caption">
           Motion supports a state change. Keep it brief and respect reduced motion.
         </Text>

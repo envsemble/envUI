@@ -10,7 +10,7 @@ and editing use `content.ts`. Keep application imports on `@envsemble/envui` and
 - `content/`: Card and its separate ActionCard, ClickableCard and FeatureCard compositions,
   GroupedRows, disclosures, information chips, code and Markdown rendering.
   Its `internal/` folder owns lazy highlighting and the standard GitHub themes.
-- `forms/`: input, textarea, Markdown editing, checkbox, switch, radio, and select components.
+- `forms/`: input, textarea, color picking, Markdown editing, checkbox, switch, radio, and select components.
   Their `internal/` folder owns field metadata, checked state and native form reset handling.
   Its `markdown/` folder groups formatting, shared editing history and the standard link dialog/toolbar.
 - `feedback/`: dialogs, empty/loading states, skeletons, and notifications. The `toast/`

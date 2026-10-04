@@ -68,6 +68,7 @@ const referenceIcons: Record<string, typeof Palette> = {
   switch: ToggleOn,
   radio: RadioButtonChecked,
   select: ArrowDropDownCircle,
+  'color-picker': Palette,
   navigation: Explore,
   tabs: WebAsset,
   'direction-links': ArrowForward,

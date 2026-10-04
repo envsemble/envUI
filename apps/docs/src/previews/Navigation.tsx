@@ -8,6 +8,7 @@ import {
   Tabs,
   Stack,
   ActionGroup,
+  DisclosureNote,
 } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Search } from '@envsemble/envui/icons/Search';
@@ -140,10 +141,9 @@ export function NavigationPreview() {
         </div>
       </Example>
       <Example size="wide">
-        <details className="docs-interaction-states">
-          <summary>Interaction states</summary>
+        <DisclosureNote title="Interaction states">
           <NavigationStates />
-        </details>
+        </DisclosureNote>
       </Example>
     </Preview>
   );

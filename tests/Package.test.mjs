@@ -141,6 +141,7 @@ before(
       h(ui.DirectionLink, { direction: 'previous', href: '/previous-guide' }, 'Earlier guide'),
       h(ui.DirectionLink, { direction: 'next', href: '/next-guide', icon: custom }, 'Following guide'),
       h(ui.Input, { name: 'title', label: 'Title', hint: 'One line', defaultValue: 'Example' }),
+      h(ui.ColorPicker, { name: 'accent', label: 'Accent color', defaultValue: 'ABCDEF' }),
       h(ui.Textarea, { name: 'description', label: 'Description', defaultValue: 'Content' }),
       h(ui.Checkbox, { name: 'enabled', label: 'Enabled', defaultChecked: true }),
       h(ui.Switch, { name: 'alerts', label: 'Alerts' }),
@@ -166,6 +167,7 @@ before(
       module: import.meta.resolve('@envsemble/envui'), iconsModule: import.meta.resolve('@envsemble/envui/icons'),
       homeModule: import.meta.resolve('@envsemble/envui/icons/Home'),
       reactModule: import.meta.resolve('react'),
+      colorPickerModule: import.meta.resolve('react-colorful'),
       css: import.meta.resolve('@envsemble/envui/styles.css'),
       font: import.meta.resolve('@envsemble/envui/assets/Inter.woff2'),
       logo: import.meta.resolve('@envsemble/envui/assets/envsemble-lockup-black.svg')
@@ -224,6 +226,7 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'Skeleton',
     'LoadingState',
     'Input',
+    'ColorPicker',
     'Textarea',
     'Checkbox',
     'Switch',
@@ -244,6 +247,8 @@ test('a packed consumer resolves compiled public exports and its own React insta
     await readFile(join(installedDirectory, 'package.json'), 'utf8'),
   );
   assert.match(installedManifest.peerDependencies.react, /19/);
+  assert.equal(installedManifest.dependencies['react-colorful'], '5.8.1');
+  assert.match(ssr.colorPickerModule, /\/consumer\/node_modules\/react-colorful\//);
   assert.match(
     JSON.parse(await readFile(consumerRequire.resolve('react/package.json'), 'utf8')).version,
     /^19\./,
@@ -255,7 +260,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     join(consumerDirectory, 'Consumer.tsx'),
     `
     import { createRef } from 'react';
-    import { Theme, Button, ButtonGroup, IconButton, NavigationItem, DirectionLink, Icon, BrandLogo, Input, Textarea, Checkbox, Switch, Stack, ActionGroup,
+    import { Theme, Button, ButtonGroup, IconButton, NavigationItem, DirectionLink, Icon, BrandLogo, Input, ColorPicker, Textarea, Checkbox, Switch, Stack, ActionGroup,
       RadioGroup, Radio, Select, Dialog, DialogClose, Toast, ToastProvider, useToast,
       type ThemeValue, type ButtonProps, type ButtonGroupProps, type DirectionLinkProps, type SelectOption, type ToastManager } from '@envsemble/envui';
     import { Home } from '@envsemble/envui/icons/Home';
@@ -278,6 +283,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       <DirectionLink direction="previous" href="/previous">Previous guide</DirectionLink>
       <Icon label="Custom" viewBox="0 0 1 1"><path d="M0 0L1 1" /></Icon><BrandLogo /><BarrelHome />
       <Input name="title" label="Title" required ref={createRef<HTMLInputElement>()} />
+      <ColorPicker label="Accent color" name="accent" defaultValue="#abcdef" ref={createRef<HTMLInputElement>()} onValueChange={value => { const typed: string = value; void typed; }} />
       <Textarea label="Notes" ref={createRef<HTMLTextAreaElement>()} />
       <Checkbox label="Enabled" checked="mixed" onCheckedChange={value => { const typed: boolean = value; void typed; }} />
       <Switch label="Alerts" defaultChecked /><RadioGroup name="mode"><Radio value="one" label="One" /></RadioGroup>
@@ -299,6 +305,9 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     const unknownDirection = <DirectionLink direction="up" href="/guide">Guide</DirectionLink>;
     // @ts-expect-error A direction link requires a destination URL.
     const missingDestination = <DirectionLink direction="next">Guide</DirectionLink>;
+    // @ts-expect-error A color picker requires a visible label.
+    const unnamedColorPicker = <ColorPicker defaultValue="#abcdef" />;
+    void unnamedColorPicker;
     void [unnamedIconButton, unknownTheme, unknownButton, unknownOrientation, unknownGap, unknownDirection, missingDestination];
   `,
   );
@@ -336,6 +345,8 @@ test('installed declarations typecheck a React 19 consumer without source aliase
 });
 
 test('public components import and render on a server with no DOM globals', function () {
+  assert.match(ssr.html, /aria-label="Accent color HEX"/);
+  assert.match(ssr.html, /name="accent"[^>]*value="#abcdef"/);
   assert.match(ssr.html, /data-env-theme="dark"/);
   assert.match(ssr.html, /data-originating-theme="dark"/);
   assert.match(ssr.html, /class="env-button env-button-primary"/);
@@ -424,6 +435,10 @@ test('the package includes scoped CSS, local fonts, branding and license notices
       `Missing packaged guidance: ${filename}`,
     );
   }
+  assert.match(
+    await readFile(join(installedDirectory, 'licenses/Runtime-Dependencies-LICENSE.txt'), 'utf8'),
+    /react-colorful@5\.8\.1/,
+  );
   for (const filename of [
     'Base-UI-LICENSE.txt',
     'Inter-LICENSE.txt',
@@ -480,6 +495,10 @@ test('a small independent bundle excludes unused icons and Base UI', async funct
   assert.match(iconInputs[0], /\/Home\.js$/);
   assert.ok(result.bytes < 12000, `Small consumer unexpectedly emitted ${result.bytes} bytes.`);
   assert.doesNotMatch(result.code, /@base-ui\/react|CheckCircle|ChevronRight|Warning|BrandLogo/);
+  assert.ok(
+    result.emittedInputs.every((path) => !path.includes('/react-colorful/')),
+    'Unused color picking must stay out of basic control bundles.',
+  );
   assert.ok(
     result.emittedInputs.every((path) => !path.includes('/src/')),
     'The release consumer must not resolve the development source condition.',

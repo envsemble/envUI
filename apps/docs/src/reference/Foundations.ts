@@ -32,7 +32,7 @@ function ThemeLabel() {
       'Navigation selection, radio selection and selected Select options have separate roles. Card action strips, dialog backdrops, field validation and toast fills also have their own purposes; composed action buttons retain Button colors.',
       'Scope content with Theme. Nested boundaries and portaled components retain the originating theme.',
     ],
-    related: ['surface', 'buttons', 'navigation', 'accessibility'],
+    related: ['surface', 'buttons', 'navigation', 'color-picker', 'accessibility'],
   },
   {
     id: 'typography',

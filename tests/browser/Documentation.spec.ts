@@ -2,29 +2,67 @@ import { test, expect } from '@playwright/test';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { readFileSync } from 'node:fs';
+import { references, foundations as foundationReferences } from '../../apps/docs/src/Reference';
 
 const offline = pathToFileURL(resolve('dist/envUI.html')).href;
 const version = JSON.parse(readFileSync('packages/ui/package.json', 'utf8')).version;
-const components = [
-  'layout',
-  'buttons',
-  'fields',
-  'checkbox',
-  'switch',
-  'radio',
-  'select',
-  'navigation',
-  'direction-links',
-  'rows',
-  'cards',
-  'chips',
-  'disclosures',
-  'empty-state',
-  'loading',
-  'toasts',
-  'dialogs',
-];
-const foundations = ['colors', 'typography', 'spacing', 'composition', 'icons', 'accessibility'];
+const components = references.map(({ id }) => id);
+const foundations = foundationReferences.map(({ id }) => id);
+
+test('palette editing uses public controls and remains temporary and independent between themes', async ({
+  page,
+}) => {
+  await page.goto(`${offline}#/foundations/colors/preview`);
+  const app = page.locator('.docs-app');
+  const canvasValue = () =>
+    app.evaluate((element) => getComputedStyle(element).getPropertyValue('--color-canvas').trim());
+  const initialLight = await canvasValue();
+  const swatch = page.getByRole('button', { name: 'Pick page background color', exact: true });
+  await expect(swatch).toHaveClass(/env-button/);
+  await swatch.click();
+  const dialog = page.getByRole('dialog', { name: 'Page background', exact: true });
+  await expect(dialog.locator('.env-color-picker')).toBeVisible();
+  await dialog.getByRole('textbox', { name: 'Page background HEX' }).fill('123456');
+  await expect.poll(canvasValue).toBe('#123456');
+  await dialog.getByRole('button', { name: 'Done', exact: true }).click();
+  await page.getByRole('button', { name: 'Switch to dark theme' }).click();
+  expect(await canvasValue()).not.toBe('#123456');
+  await swatch.click();
+  await dialog.getByRole('textbox', { name: 'Page background HEX' }).fill('#abcdef');
+  await expect.poll(canvasValue).toBe('#abcdef');
+  await dialog.getByRole('button', { name: 'Done', exact: true }).click();
+  await page.getByRole('button', { name: 'Switch to light theme' }).click();
+  await expect.poll(canvasValue).toBe('#123456');
+  await page.reload();
+  await expect.poll(canvasValue).toBe(initialLight);
+});
+
+test('button link specimens and optional interaction matrices consume public controls', async ({
+  page,
+}) => {
+  await page.goto(`${offline}#/components/buttons/preview`);
+  const hash = await page.evaluate(() => location.hash);
+  const preview = page.locator('.docs-preview');
+  await preview.getByRole('link', { name: 'Read guide', exact: true }).press('Enter');
+  await expect(preview.getByRole('status')).toHaveText('Selected destination: Guide');
+  expect(await page.evaluate(() => location.hash)).toBe(hash);
+  await preview
+    .getByRole('link', { name: 'project guide', exact: true })
+    .click({ modifiers: ['Control'] });
+  await expect(preview.getByRole('status')).toHaveText('Selected destination: Project guide');
+  expect(await page.evaluate(() => location.hash)).toBe(hash);
+  const disclosure = preview.locator('details.env-disclosure-note');
+  await disclosure.locator('summary').focus();
+  await disclosure.locator('summary').press('Enter');
+  await expect(disclosure).toHaveAttribute('open', '');
+  await expect(disclosure.getByRole('region', { name: 'Button interaction states' })).toBeVisible();
+  await page.goto(`${offline}#/components/navigation/preview`);
+  const navigationDisclosure = page.locator('.docs-preview details.env-disclosure-note');
+  await navigationDisclosure.locator('summary').click();
+  await expect(
+    navigationDisclosure.getByRole('region', { name: 'Navigation item interaction states' }),
+  ).toBeVisible();
+});
 
 test('direction link groups center pairs and single destinations at every page width', async ({
   page,
@@ -153,10 +191,15 @@ test('offline reference loads every view without network or script errors', asyn
     }
   }
   for (const id of foundations) {
-    await page.evaluate((hash) => {
-      location.hash = hash;
-    }, `/foundations/${id}`);
-    await expect(page.locator('.docs-preview')).toHaveCount(1);
+    for (const view of ['preview', 'usage']) {
+      await page.evaluate((hash) => {
+        location.hash = hash;
+      }, `/foundations/${id}/${view}`);
+      await expect(
+        page.locator('.docs-page-header').getByRole('tab', { selected: true }),
+      ).toHaveText(view[0].toUpperCase() + view.slice(1));
+      if (view === 'preview') await expect(page.locator('.docs-preview')).toHaveCount(1);
+    }
   }
   await page.evaluate(() => {
     location.hash = '/getting-started/usage';

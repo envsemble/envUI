@@ -2,6 +2,7 @@ import { useState } from 'react';
 import {
   Theme,
   Input,
+  ColorPicker,
   Checkbox,
   Select,
   Dialog,
@@ -27,6 +28,7 @@ export function HydrationApp() {
           onChange={(event) => setName(event.target.value)}
         />
         <Checkbox label="Hydrated choice" checked={checked} onCheckedChange={setChecked} />
+        <ColorPicker label="Hydrated color" defaultValue="#1a73e8" />
         <Select
           label="Hydrated select"
           defaultValue="one"

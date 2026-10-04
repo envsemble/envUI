@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add ColorPicker with a labeled color area, hue slider and native HEX field. Share validation, normalization, disabled/read-only behavior, keyboard focus and form reset through the public API; documentation palette editing consumes the library control.
+
+- Compose documentation color swatches, state disclosures, link demonstrations and vertical layouts from existing Button, Link, DisclosureNote and Stack components.
+
 - Use GitHub Dark Default for code blocks and inline code in both application themes, including Markdown. Preserve CodeBlock's explicit theme override, syntax highlighting, source text and copying.
 
 - Adopt sampled Chrome Web Store and Google Ads colors for the light palette: white canvas, cool pale panes, gray surfaces, Google blue actions and selection, charcoal text and soft gray borders.

@@ -14,6 +14,7 @@ import { MarkdownPreview } from './MarkdownContent';
 import { MarkdownEditorPreview } from './MarkdownEditing';
 import { EmptyStatePreview, LoadingPreview, DialogsPreview } from './Feedback';
 import { ToastsPreview } from './Toasts';
+import { ColorPickerPreview } from './ColorPicking';
 
 /** Select a topic; each preview retains its state across theme changes. */
 export function ComponentPreview({ id }: { id: string }) {
@@ -30,6 +31,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <RadioPreview />;
     case 'select':
       return <SelectPreview />;
+    case 'color-picker':
+      return <ColorPickerPreview />;
     case 'navigation':
       return <NavigationPreview />;
     case 'tabs':

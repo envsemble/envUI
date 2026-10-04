@@ -17,6 +17,7 @@ export * from './content/GroupedRows.js';
 export * from './content/DisclosureNote.js';
 export * from './content/InfoChip.js';
 export * from './forms/Input.js';
+export * from './forms/ColorPicker.js';
 export * from './forms/Textarea.js';
 export * from './forms/Checkbox.js';
 export * from './forms/Switch.js';

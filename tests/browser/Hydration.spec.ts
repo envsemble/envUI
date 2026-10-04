@@ -9,6 +9,10 @@ test('public components hydrate server output without recoverable errors', async
   await expect(page.getByRole('textbox', { name: 'Hydrated input' })).toHaveValue('Server value');
   await page.getByRole('textbox', { name: 'Hydrated input' }).fill('Client value');
   await expect(page.locator('output')).toHaveText('Client value');
+  const color = page.getByRole('textbox', { name: 'Hydrated color HEX' });
+  await expect(color).toHaveValue('#1a73e8');
+  await color.fill('ABCDEF');
+  await expect(color).toHaveValue('#abcdef');
   await expect(page.getByRole('checkbox', { name: 'Hydrated choice' })).toHaveJSProperty(
     'indeterminate',
     true,
