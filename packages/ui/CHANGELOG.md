@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add an animated neutral hover fill to outlined Input/Textarea fields using the shared HSL lightness rule. Keep the single blue focus border, suppress hover changes on disabled fields and respect reduced motion.
+
 - Keep a single thin blue border on focused Input/Textarea fields in both themes. Remove the extra focus outline from the shared text field and textarea resize edge, including MarkdownEditor source fields.
 
 - Replace Select’s full red validation outline with a shared bottom-edge accent across Select, Input, Textarea and MarkdownEditor. Keep error colors, recovery messages and keyboard focus styling consistent.

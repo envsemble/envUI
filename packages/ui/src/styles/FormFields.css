@@ -41,10 +41,19 @@
   border: calc(0.0625rem * var(--scale, 1)) solid var(--env-field-border-color);
   border-radius: calc(var(--md-sys-shape-corner-large) * var(--scale, 1));
   background: var(--color-canvas);
-  transition: border-color var(--motion-duration-medium) var(--motion-ease);
+  transition:
+    border-color var(--motion-duration-medium) var(--motion-ease),
+    background-color var(--motion-duration-medium) var(--motion-ease);
 }
-.env-text-field-well:hover:not(:focus-within):not(:has(> .env-text-input:disabled)) {
-  --env-field-border-color: var(--color-border-hover);
+@media (hover: hover) {
+  .env-text-field-well:hover:not(:focus-within):not(:has(> .env-text-input:disabled)) {
+    --env-field-border-color: var(--color-border-hover);
+  }
+  .env-text-field-well:not([data-variant='plain']):hover:not(:focus-within):not(
+      :has(> .env-text-input:disabled)
+    ) {
+    background-color: hsl(from var(--color-canvas) h s var(--state-hover-lightness));
+  }
 }
 .env-text-field-well:active:not(:focus-within):not(:has(> .env-text-input:disabled)) {
   --env-field-border-color: var(--color-border-pressed);

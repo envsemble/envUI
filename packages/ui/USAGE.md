@@ -521,7 +521,7 @@ import { Textarea } from '@envsemble/envui';
 
 - Use Input for one line and Textarea for multiline content. Both share the same corner radius. Fixed sizing scrolls and resizes from the full bottom edge; content sizing grows and shrinks automatically. Set rows for the initial or minimum height.
 - Focus the resize edge and use Up/Down arrows to change height by one line, or Shift+Up/Down for five lines. Home restores the minimum height. Disabled fields cannot resize.
-- Outlined fields keep one thin border that turns blue on focus in both themes, without an additional focus outline.
+- Outlined fields respond to hover with a neutral fill and border change derived from the shared HSL rule. Focus restores the resting fill and turns the single thin border blue in both themes, without an additional outline.
 - Labels move above the text when focused or filled. Plain fields have no border or fill at rest and show an underline on focus. Both variants retain the bottom-edge error and linked recovery text.
 - Placeholders appear while focused; use hints for lasting instructions and errors for a specific recovery step.
 - Both support empty, filled, focus, invalid, disabled and read-only states. Validation and draft state belong to the application.
