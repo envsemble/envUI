@@ -891,13 +891,13 @@ import { Code, CodeBlock } from '@envsemble/envui/content';
 - language: JS/JSX, TS/TSX, Java, JSON, HTML, CSS, SQL, shell, YAML, Markdown, INI; aliases are supported
 - copyable / label: Optional copy control and source label
 - wrap: Wrap long lines; otherwise scroll inside the block
-- theme: GitHub Light Default or GitHub Dark; follows Theme unless explicitly set
+- theme: GitHub Light Default or GitHub Dark Default; follows Theme unless explicitly set
 - Native div props: Root ref, className, style and accessible attributes
 
 #### Guidelines
 
 - Use Code inside prose and CodeBlock for multiline source. Source is selectable and never executed.
-- Code blocks use the standard GitHub Light Default and GitHub Dark themes. Prose and controls retain envUI typography and spacing.
+- Code blocks use the standard GitHub Light Default and GitHub Dark Default themes. Prose and controls retain envUI typography and spacing.
 - Highlighting starts after the initial render and shares one runtime. Theme changes reuse the tokens. Unsupported languages remain plain text.
 - Blocks above 50,000 characters or with a line above 2,000 characters stay plain text to avoid expensive highlighting.
 - Copy uses the original source. If clipboard access is unavailable, the code is selected for manual copying.

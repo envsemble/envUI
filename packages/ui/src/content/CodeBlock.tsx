@@ -21,7 +21,7 @@ export interface CodeBlockProps extends Omit<ComponentPropsWithRef<'div'>, 'chil
   label?: string;
   copyable?: boolean;
   wrap?: boolean;
-  /** GitHub Light Default or GitHub Dark; follows the surrounding Theme by default. */
+  /** GitHub Light Default or GitHub Dark Default; follows the surrounding Theme by default. */
   theme?: ThemeValue;
 }
 
