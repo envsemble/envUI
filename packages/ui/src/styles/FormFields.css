@@ -111,6 +111,7 @@
   color: var(--color-link);
 }
 .env-text-field-well[data-variant='plain'] {
+  --env-field-edge-inset: 0;
   border-color: transparent;
   border-radius: 0;
   background: transparent;
@@ -126,9 +127,30 @@
   border-block-end-color: var(--color-link);
   box-shadow: 0 calc(0.0625rem * var(--scale, 1)) 0 var(--color-link);
 }
-.env-text-field-well:has(> .env-text-input[aria-invalid='true']) {
-  border-block-end-color: var(--env-field-error-color);
-  box-shadow: 0 calc(0.0625rem * var(--scale, 1)) 0 var(--env-field-error-color);
+/* Validation adds one lower-edge accent; keyboard focus keeps its own treatment. */
+:is(
+  .env-text-field-well:has(> .env-text-input[aria-invalid='true']),
+  .env-dropdown-trigger[aria-invalid='true']
+)::after {
+  content: '';
+  position: absolute;
+  inset-inline: var(
+    --env-field-edge-inset,
+    calc(var(--md-sys-shape-corner-large) * var(--scale, 1))
+  );
+  inset-block-end: 0;
+  block-size: calc(0.125rem * var(--scale, 1));
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--env-field-error-color);
+  pointer-events: none;
+}
+.env-text-field-well[data-variant='plain']:has(> .env-text-input[aria-invalid='true']) {
+  border-block-end-color: transparent;
+  box-shadow: none;
+}
+/* Invalid plain fields still need a visible change when reached by keyboard. */
+.env-text-field-well[data-variant='plain']:has(> :focus-visible)::after {
+  block-size: calc(0.25rem * var(--scale, 1));
 }
 .env-text-field-well:has(> .env-text-input[aria-invalid='true']) > label {
   color: var(--env-field-error-color);
@@ -229,13 +251,6 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
       padding-block-end: calc(var(--space-4) * var(--scale, 1));
     }
   }
-}
-.env-dropdown-trigger[aria-invalid='true'] {
-  outline: calc(0.125rem * var(--scale, 1)) solid var(--color-destructive-action);
-  outline-offset: 0;
-}
-.env-dropdown-trigger[aria-invalid='true']:focus-visible {
-  outline-offset: calc(0.125rem * var(--scale, 1));
 }
 .env-choice-control,
 .env-radio-option,

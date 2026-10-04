@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Replace Select’s full red validation outline with a shared bottom-edge accent across Select, Input, Textarea and MarkdownEditor. Keep error colors, recovery messages and keyboard focus styling consistent.
+
 - Add a plain Input/Textarea appearance with a transparent background, no outline and an underline on focus. Share labels, validation and sizing with the outlined default, including MarkdownEditor source fields.
 
 - Add fixed scrolling with bottom-edge pointer and keyboard resizing and automatic content sizing, shared by Textarea and MarkdownEditor, with the same 1 rem corners as Input and a minimum row count. Replace the native corner grip with a subtle full-width resize edge.

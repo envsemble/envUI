@@ -241,7 +241,7 @@ async function requestLink({ selectedText }: { selectedText: string }):
       'Use a select to save space when a single choice has several alternatives.',
       'Use the tonal trigger, selected indication and grouped option geometry. Keyboard navigation, typeahead and dismissal come from the component.',
       'Option focus rings appear for keyboard interaction, not pointer opening or hover.',
-      'Label, hint and error use the same field structure as Input and Textarea. The application owns validation.',
+      'Label, hint and error use the same field structure as Input and Textarea. Invalid controls use the shared bottom-edge accent and retain the standard keyboard focus ring. The application owns validation.',
     ],
     related: ['radio', 'fields', 'rows', 'accessibility'],
   },
