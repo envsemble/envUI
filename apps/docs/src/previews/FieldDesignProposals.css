@@ -66,6 +66,7 @@ textarea.docs-proposal-control {
   cursor: text;
   transition:
     inset-block-start var(--motion-duration-medium) var(--motion-ease),
+    inset-inline-start var(--motion-duration-medium) var(--motion-ease),
     font-size var(--motion-duration-medium) var(--motion-ease),
     color var(--motion-duration-medium) var(--motion-ease),
     padding var(--motion-duration-medium) var(--motion-ease);
@@ -92,19 +93,46 @@ textarea.docs-proposal-control {
   color: var(--proposal-error-color);
 }
 
-/* 01: The upper-edge caption belongs to a bordered, neutral well. */
+/* 01: The caption becomes an attached tab, sharing the filled field's silhouette. */
 .docs-proposal-field[data-design='edge'] {
-  --proposal-fill: var(--color-canvas);
+  --proposal-fill: var(--color-surface-muted);
+  --proposal-border: transparent;
+  padding-block-start: var(--space-4);
+}
+.docs-proposal-field[data-design='edge'] .docs-proposal-well:focus-within {
+  --proposal-border: transparent;
 }
 .docs-proposal-field[data-design='edge']:is([data-filled], :focus-within) .docs-proposal-label {
-  inset-block-start: -0.625rem;
-  padding-inline: var(--space-1);
-  margin-inline-start: -0.25rem;
+  inset-block-start: calc(-1 * var(--space-4));
+  inset-inline-start: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-standard) var(--radius-standard) 0 0;
   background: var(--proposal-fill);
 }
-.docs-proposal-field[data-design='edge'][data-invalid] .docs-proposal-well {
-  border-block-end-color: var(--proposal-error-color);
-  box-shadow: 0 0.0625rem 0 var(--proposal-error-color);
+.docs-proposal-field[data-design='edge'] .docs-proposal-well::after {
+  content: '';
+  position: absolute;
+  inset-inline-start: var(--space-4);
+  inset-block-end: var(--space-2);
+  inline-size: var(--space-6);
+  block-size: 0.125rem;
+  border-radius: var(--radius-standard);
+  background: var(--color-link);
+  opacity: 0;
+  transform: scaleX(0.5);
+  transform-origin: left;
+  pointer-events: none;
+  transition:
+    opacity var(--motion-duration-medium) var(--motion-ease),
+    transform var(--motion-duration-medium) var(--motion-ease);
+}
+.docs-proposal-field[data-design='edge'] .docs-proposal-well:focus-within::after,
+.docs-proposal-field[data-design='edge'][data-invalid] .docs-proposal-well::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+.docs-proposal-field[data-design='edge'][data-invalid] .docs-proposal-well::after {
+  background: var(--proposal-error-color);
 }
 
 /* 02: Both the label and value live inside the filled field, on separate lines. */
@@ -225,6 +253,7 @@ textarea.docs-proposal-control {
 }
 @media (prefers-reduced-motion: reduce) {
   .docs-proposal-well,
+  .docs-proposal-well::after,
   .docs-proposal-label {
     transition: none;
   }

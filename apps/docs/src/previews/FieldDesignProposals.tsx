@@ -8,7 +8,8 @@ const designs = [
   {
     id: 'edge',
     title: '01 · Edge caption',
-    description: 'A caption on the upper edge. Errors mark only the bottom edge.',
+    description:
+      'An attached caption tab on a filled field. A short edge marker shows focus or errors.',
   },
   {
     id: 'inset',
