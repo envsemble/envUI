@@ -52,17 +52,18 @@ const description = [
       },
       {
         title: 'Application navigation',
-        example: `import { Markdown } from '@envsemble/envui/content';
+        example: `import { Link } from '@envsemble/envui';
+import { Markdown } from '@envsemble/envui/content';
 
 <Markdown renderLink={({ href, children, ...props }) => (
-  <a {...props} href={href} onClick={event => {
+  <Link {...props} href={href} onClick={event => {
     if (!event.defaultPrevented && event.button === 0 &&
         !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey &&
         href.startsWith('/documents/')) {
       event.preventDefault();
       openDocumentPanel(href);
     }
-  }}>{children}</a>
+  }}>{children}</Link>
 )}>{description}</Markdown>`,
         props: [
           [

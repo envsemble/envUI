@@ -428,7 +428,7 @@ Related: [Surface](#surface), [Stacks & action groups](#stacks--action-groups), 
 #### Button
 
 ```tsx
-import { Button } from '@envsemble/envui';
+import { Button, Link } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 
 <Button variant="primary" startIcon={<Add />} onClick={createItem}>
@@ -438,9 +438,17 @@ import { Add } from '@envsemble/envui/icons/Add';
 <Button iconOnly icon={<Add />} aria-label="Create item" onClick={createItem} />
 
 <Button href="/projects" variant="outlined">Open projects</Button>
+
+<Button variant="text" onClick={showDetails}>View details</Button>
+<Button variant="text" href="/help" underline>Read help</Button>
+
+<Link href="/help">Read help within a paragraph</Link>
+<Link href="/help" underline={false}>Read help without an underline</Link>
 ```
 
-- variant: primary (default), important, secondary, outlined, destructive
+- variant: primary (default), important, secondary, outlined, destructive, text
+- underline: Optional underline for text buttons and links; false by default
+- Link: Inline native link with inherited typography; underline defaults to true
 - startIcon / endIcon: Optional React content beside the label
 - iconOnly / icon: Show only the supplied icon; size is square and corners follow the chosen variant
 - aria-label: Required accessible action name when iconOnly is true
@@ -467,6 +475,7 @@ import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 - Action buttons fit their content: 2.5 rem minimum height (2 rem for important), 0.875 rem text, 0.25 rem vertical and 0.75 rem horizontal padding. Labels wrap when space is limited.
 - Use fully rounded corners; important actions use 0.5 rem corners. ActionGroup provides 1 rem row gaps or 0.5 rem stacked gaps.
 - Secondary buttons use the neutral row fill and label color, without a border. Outlined buttons retain their border and link color.
+- Text buttons use link blue with no fill, border or horizontal inset. Set underline to show an underline. Hover and pressed states change only the text color using the shared HSL rule. Use onClick for actions and href for navigation; keyboard focus and disabled behavior remain shared with Button.
 - Interaction colors follow the central HSL lightness rule described in Colors & themes. State colors and disabled opacity come from the shared stylesheet.
 - Use href for destinations and onClick for actions. Disabled links have no destination and cannot activate.
 - Labeled and icon-only buttons share the 1 rem control icon size used by NavigationItem. Leading and trailing icons follow the same rule, including important buttons.
@@ -863,17 +872,18 @@ const description = [
 #### Application navigation
 
 ```tsx
+import { Link } from '@envsemble/envui';
 import { Markdown } from '@envsemble/envui/content';
 
 <Markdown renderLink={({ href, children, ...props }) => (
-  <a {...props} href={href} onClick={event => {
+  <Link {...props} href={href} onClick={event => {
     if (!event.defaultPrevented && event.button === 0 &&
         !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey &&
         href.startsWith('/documents/')) {
       event.preventDefault();
       openDocumentPanel(href);
     }
-  }}>{children}</a>
+  }}>{children}</Link>
 )}>{description}</Markdown>
 ```
 

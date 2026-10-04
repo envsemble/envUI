@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Card, Text } from '@envsemble/envui';
+import { Card, Link, Text } from '@envsemble/envui';
 import { Markdown } from '@envsemble/envui/content';
 import { Example } from './Example';
 import { Preview } from './Preview';
@@ -45,7 +45,7 @@ export function MarkdownPreview() {
         <Card>
           <Markdown
             renderLink={({ href, children, ...props }) => (
-              <a
+              <Link
                 {...props}
                 href={href}
                 onClick={(event) => {
@@ -54,7 +54,7 @@ export function MarkdownPreview() {
                 }}
               >
                 {children}
-              </a>
+              </Link>
             )}
           >
             {

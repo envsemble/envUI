@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { Theme, NavigationItem, IconButton } from '@envsemble/envui';
+import { Theme, NavigationItem, IconButton, Button } from '@envsemble/envui';
 import { DarkMode } from '@envsemble/envui/icons/DarkMode';
 import { LightMode } from '@envsemble/envui/icons/LightMode';
 import { findReferencePage, referenceViews } from './Documentation';
@@ -50,7 +50,8 @@ export default function App() {
     );
   return (
     <Theme theme={appearance} className="docs-app">
-      <a
+      <Button
+        variant="outlined"
         className="docs-skip"
         href="#docs-main"
         onClick={(e) => {
@@ -59,7 +60,7 @@ export default function App() {
         }}
       >
         Skip to content
-      </a>
+      </Button>
       <IconButton
         className="docs-theme-toggle"
         icon={appearance === 'light' ? <DarkMode /> : <LightMode />}

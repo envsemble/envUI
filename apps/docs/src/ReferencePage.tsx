@@ -1,4 +1,4 @@
-import { Stack, Text } from '@envsemble/envui';
+import { Link, Stack, Text } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/content';
 import { referencePages, type ReferencePage, type ReferenceView } from './Documentation';
 import { FoundationPreview } from './Foundations';
@@ -70,7 +70,7 @@ function RelatedTopics({ page }: { page: ReferencePage }) {
       <Stack gap={2}>
         {related.map((item) => (
           <Text key={item.path}>
-            <a href={`#/${item.path}/preview`}>{item.reference.title}</a>
+            <Link href={`#/${item.path}/preview`}>{item.reference.title}</Link>
           </Text>
         ))}
       </Stack>
@@ -119,7 +119,7 @@ export function ReferenceContent({
           <Usage reference={reference} search={search} />
           <RelatedTopics page={page} />
           <Text tone="muted">
-            <a href="#/getting-started/usage">Setup, local edits and version updates</a>
+            <Link href="#/getting-started/usage">Setup, local edits and version updates</Link>
           </Text>
         </div>
       }

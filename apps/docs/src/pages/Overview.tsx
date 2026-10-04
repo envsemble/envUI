@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import { Text, EnvUILogo, Surface, Stack, ActionGroup, Button } from '@envsemble/envui';
+import { Text, EnvUILogo, Surface, Stack, ActionGroup, Button, Link } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/content';
 import { Palette } from '@envsemble/envui/icons/Palette';
 import { Add } from '@envsemble/envui/icons/Add';
@@ -48,7 +48,7 @@ export function Overview({ view }: { view: ReferenceView }) {
               Symbols. Applications own data, routing and validation.
             </Text>
             <Text>
-              <a href="#/foundations/composition/preview">Composition and extension</a>
+              <Link href="#/foundations/composition/preview">Composition and extension</Link>
             </Text>
           </Stack>
           <Stack as="section" gap={5} aria-labelledby="overview-components">
@@ -67,9 +67,9 @@ export function Overview({ view }: { view: ReferenceView }) {
             </Text>
             <CodeBlock language="tsx">{setupCode}</CodeBlock>
             <Text>
-              <a href="#/getting-started/usage">
+              <Link href="#/getting-started/usage">
                 Installation, local development and version updates
-              </a>
+              </Link>
             </Text>
           </Stack>
         </div>

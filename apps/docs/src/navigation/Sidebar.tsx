@@ -1,5 +1,5 @@
 import { version } from '@envsemble/envui/package.json';
-import { Text, EnvUILogo, NavigationItem, Stack } from '@envsemble/envui';
+import { Text, EnvUILogo, NavigationItem, Stack, Link } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Add } from '@envsemble/envui/icons/Add';
 import { Category } from '@envsemble/envui/icons/Category';
@@ -11,9 +11,14 @@ export function Sidebar({ routePath, page }: { routePath: string; page?: Referen
   const reference = page?.reference;
   return (
     <aside className="docs-sidebar">
-      <a href="#/overview" className="docs-brand-link" aria-label="envUI overview">
+      <Link
+        href="#/overview"
+        underline={false}
+        className="docs-brand-link"
+        aria-label="envUI overview"
+      >
         <EnvUILogo />
-      </a>
+      </Link>
       <Stack
         as="nav"
         gap={0}

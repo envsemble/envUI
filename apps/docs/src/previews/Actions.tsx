@@ -14,6 +14,7 @@ const buttonVariants = [
   { variant: 'secondary', label: 'Cancel', icon: Close },
   { variant: 'outlined', label: 'Manage', icon: Settings },
   { variant: 'destructive', label: 'Delete', icon: Delete },
+  { variant: 'text', label: 'Learn more', icon: ChevronRight },
 ] as const;
 const buttonForms = [
   { value: 'label', title: 'Label' },
@@ -138,6 +139,12 @@ export function ButtonsPreview() {
         caption="Use one primary action per group. Reserve Important for rare, consequential actions."
       >
         <ButtonVariants />
+      </Example>
+      <Example title="Text buttons">
+        <Button variant="text">Without underline</Button>
+        <Button variant="text" underline>
+          With underline
+        </Button>
       </Example>
       <Example size="wide">
         <details className="docs-interaction-states">
