@@ -13,7 +13,7 @@ export function CodePreview() {
       </Example>
       <Example
         title="Highlighted source"
-        caption="Uses GitHub Light Default and GitHub Dark Default colors. Copying preserves the original source."
+        caption="Uses GitHub Dark Default in both app themes. Copying preserves the original source."
       >
         <CodeBlock
           language="tsx"
@@ -26,13 +26,13 @@ export function SaveAction({ onSave }: { onSave: () => void }) {
 }`}</CodeBlock>
       </Example>
       <Example title="Wrapped source">
-        <CodeBlock language="json" wrap>{`{
+        <CodeBlock language="json" wrap copyable>{`{
   "description": "Long lines can wrap when readability matters more than preserving the source layout. The copied text retains its original line breaks.",
   "enabled": true
 }`}</CodeBlock>
       </Example>
       <Example title="Plain text">
-        <CodeBlock>{`Build completed.
+        <CodeBlock copyable>{`Build completed.
 3 files updated.
 No remote assets are required.`}</CodeBlock>
       </Example>

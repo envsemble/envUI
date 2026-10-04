@@ -5,8 +5,8 @@
 .env-code {
   padding: 0.125em 0.375em;
   border-radius: var(--radius-standard);
-  background: var(--color-surface-muted);
-  color: inherit;
+  background: var(--env-code-background);
+  color: var(--env-code-foreground);
   font: 0.9em/1.4 var(--font-family-code);
   overflow-wrap: anywhere;
   box-decoration-break: clone;

@@ -9,9 +9,9 @@ import {
 import { IconButton } from '../actions/Button.js';
 import { ContentCopy } from '../icons/ContentCopy.js';
 import { Check } from '../icons/Check.js';
-import { useTheme, type ThemeValue } from '../foundations/Theme.js';
+import type { ThemeValue } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
-import { codeThemes } from './internal/CodeThemes.js';
+import { codeThemeStyle } from './internal/CodeThemes.js';
 import { useCodeHighlighting } from './internal/useCodeHighlighting.js';
 import type { CodeTokenStyle } from './internal/CodeHighlighting.js';
 
@@ -21,7 +21,7 @@ export interface CodeBlockProps extends Omit<ComponentPropsWithRef<'div'>, 'chil
   label?: string;
   copyable?: boolean;
   wrap?: boolean;
-  /** GitHub Light Default or GitHub Dark Default; follows the surrounding Theme by default. */
+  /** GitHub Dark Default in both app themes; optionally override with light or dark. */
   theme?: ThemeValue;
 }
 
@@ -32,13 +32,11 @@ export function CodeBlock({
   label,
   copyable = false,
   wrap = false,
-  theme: suppliedTheme,
+  theme = 'dark',
   className,
   style,
   ...props
 }: CodeBlockProps) {
-  const inheritedTheme = useTheme();
-  const theme = suppliedTheme ?? inheritedTheme;
   const tokens = useCodeHighlighting(source, language);
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'unavailable'>('idle');
   const preRef = useRef<HTMLPreElement>(null);
@@ -66,19 +64,12 @@ export function CodeBlock({
     }
   }
   const lineEndings = source.match(/\r\n|\r|\n/g) ?? [];
-  const colors = codeThemes[theme].colors;
   return (
     <div
       {...props}
       className={classNames('env-code-block', className)}
       data-wrap={wrap || undefined}
-      style={
-        {
-          '--env-code-background': colors?.['editor.background'],
-          '--env-code-foreground': colors?.['editor.foreground'],
-          ...style,
-        } as CSSProperties
-      }
+      style={{ ...codeThemeStyle(theme), ...style }}
     >
       {(label || copyable) && (
         <div className="env-code-block-heading">

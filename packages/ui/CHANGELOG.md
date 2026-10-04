@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Use GitHub Dark Default for code blocks and inline code in both application themes, including Markdown. Preserve CodeBlock's explicit theme override, syntax highlighting, source text and copying.
+
 - Adopt sampled Chrome Web Store and Google Ads colors for the light palette: white canvas, cool pale panes, gray surfaces, Google blue actions and selection, charcoal text and soft gray borders.
 
 - Separate color roles by primitive purpose for surfaces, rows, button variants, navigation, direction links, form controls, feedback and loading placeholders. Composed components reuse their primitives: tabs, icon buttons, links and toast actions share Button colors; cards, tab rails, dialog shells and menus share Surface colors; Select shares secondary Button and field colors. Derive interaction shades from each primitive's base in both themes.
