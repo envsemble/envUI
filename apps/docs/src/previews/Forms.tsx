@@ -87,10 +87,10 @@ function TextareaExamples() {
       <Example
         title="Textarea sizing"
         size="collection"
-        caption="Edit either field to compare both modes with the same content."
+        caption="Edit either field to compare the modes. Drag the fixed field’s corner to resize it."
       >
         <SpecimenGrid>
-          <Specimen title="Scroll within the field">
+          <Specimen title="Scroll & resize">
             <Textarea
               label="Description"
               rows={4}

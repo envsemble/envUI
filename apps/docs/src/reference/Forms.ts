@@ -29,7 +29,10 @@ const textareaUsage = {
 <Textarea label="Description" name="description" rows={4} sizing="content"
   value={description} onChange={e => setDescription(e.target.value)} />`,
   props: [
-    ['sizing', '"fixed" (default) scrolls within the field; "content" grows and shrinks to fit'],
+    [
+      'sizing',
+      '"fixed" (default) scrolls and resizes vertically; "content" grows and shrinks to fit',
+    ],
     ['rows', 'Visible rows in fixed mode; minimum rows in content mode'],
     [
       'label / hint / error',
@@ -52,7 +55,7 @@ export const formsReferences: Reference[] = [
     props: inputUsage.props,
     usage: [inputUsage, textareaUsage],
     guidelines: [
-      'Use Input for one line and Textarea for multiline content. Textareas have small corners and no resize handle. Fixed sizing scrolls inside the field; content sizing grows and shrinks. Set rows for the initial or minimum height.',
+      'Use Input for one line and Textarea for multiline content. Both share the same corner radius. Fixed sizing scrolls and allows vertical resizing; content sizing grows and shrinks automatically. Set rows for the initial or minimum height.',
       'Labels move onto the outline when focused or filled. Placeholders appear while focused; use hints for lasting instructions and errors for a specific recovery step.',
       'Both support empty, filled, focus, invalid, disabled and read-only states. Validation and draft state belong to the application.',
     ],
@@ -72,7 +75,7 @@ export const formsReferences: Reference[] = [
       ['onValueChange', 'Receives the complete updated source after typing, formatting or undo'],
       [
         'sizing / rows',
-        'Shared textarea sizing: fixed (default) scrolls; content grows and shrinks',
+        'Shared textarea sizing: fixed (default) scrolls and resizes; content grows and shrinks',
       ],
       ['toolbar', 'Heading, bold, italic, lists, quote, code and link commands; false hides it'],
       [
@@ -97,7 +100,7 @@ export const formsReferences: Reference[] = [
         props: [
           ['value / onValueChange', 'The application owns the draft and saving'],
           ['defaultValue', 'Use instead of value for an uncontrolled native form field'],
-          ['sizing / rows', 'Fixed scrolling (default) or content growth with a minimum row count'],
+          ['sizing / rows', 'Scrolling with vertical resize (default) or growth with minimum rows'],
           ['previewProps', 'The same heading, link rendering and code-copy options as Markdown'],
         ],
       },

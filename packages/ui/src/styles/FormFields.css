@@ -129,10 +129,7 @@ textarea.env-text-input {
   field-sizing: fixed;
   overflow-y: auto;
   scrollbar-width: thin;
-  resize: none;
-}
-.env-text-field-well:has(> textarea.env-text-input) {
-  border-radius: calc(var(--md-sys-shape-corner-extra-small) * var(--scale, 1));
+  resize: vertical;
 }
 textarea.env-text-input[data-sizing='content'] {
   field-sizing: content;
@@ -140,6 +137,15 @@ textarea.env-text-input[data-sizing='content'] {
     calc(7.5rem * var(--scale, 1)),
     calc(var(--env-textarea-rows, 2) * 1lh + var(--space-6) * var(--scale, 1))
   );
+}
+/* Older browsers retain a resizable scrolling field when native growth is unavailable. */
+@supports (field-sizing: content) {
+  textarea.env-text-input[data-sizing='content'] {
+    resize: none;
+  }
+}
+textarea.env-text-input:disabled {
+  resize: none;
 }
 .env-dropdown-trigger[aria-invalid='true'] {
   outline: calc(0.125rem * var(--scale, 1)) solid var(--color-destructive-action);

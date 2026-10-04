@@ -2,7 +2,7 @@ import { forwardRef, type CSSProperties, type TextareaHTMLAttributes } from 'rea
 import { classNames } from '../../internal/classNames.js';
 
 export interface TextareaControlProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
-  /** Fixed height with scrolling (default), or grow and shrink to fit the content. */
+  /** Scroll and resize vertically (default), or grow and shrink to fit the content. */
   sizing?: 'fixed' | 'content';
 }
 
