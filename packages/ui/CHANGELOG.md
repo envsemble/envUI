@@ -2,7 +2,9 @@
 
 ## Unreleased
 
-- Keep newest managed toasts visible immediately, pushing older notices behind the count indicator. Enter from the top at top-center and the bottom at bottom-right. Use Base UI's visibility limit, pause hidden timers and restore remaining visible time when older notices reappear.
+- Restart a timed toast's full visible duration when it returns from overflow. Scope keyboard-focus pauses to the individual notice, preserving F6 viewport access; persistent notices no longer pause unrelated timers.
+
+- Keep newest managed toasts visible immediately, pushing older notices behind the count indicator. Enter from the top at top-center and the bottom at bottom-right. Use Base UI's visibility limit, pause hidden timers and restart the visible duration when older notices reappear.
 
 - Add a text Button variant with no fill or border, an optional underline and shared blue link interaction colors. Build inline Link on the same implementation, with inherited typography and an underline by default. Use Link for Markdown rendering; retain native action/link semantics, keyboard focus and disabled behavior.
 

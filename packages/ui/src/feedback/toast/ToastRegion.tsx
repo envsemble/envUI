@@ -44,10 +44,19 @@ export function ToastRegion({
           aria-label={
             placement === 'bottom-right' ? 'Bottom right notifications' : 'Top center notifications'
           }
-          onFocusCapture={() => controller.setPlacementFocused(placement, true)}
+          onFocusCapture={(event) => {
+            // F6 focuses the viewport itself. Focus inside a toast pauses only that toast.
+            controller.setViewportFocused(
+              placement,
+              event.target === event.currentTarget && event.currentTarget.matches(':focus-visible'),
+            );
+          }}
           onBlurCapture={(event) => {
-            if (!event.currentTarget.contains(event.relatedTarget))
-              controller.setPlacementFocused(placement, false);
+            if (
+              event.target === event.currentTarget ||
+              !event.currentTarget.contains(event.relatedTarget)
+            )
+              controller.setViewportFocused(placement, false);
           }}
         >
           {hiddenCount > 0 && (
@@ -68,7 +77,11 @@ export function ToastRegion({
                 className={`env-toast env-toast-${entry.variant}`}
                 onMouseEnter={() => controller.pause(toast.id, 'hover')}
                 onMouseLeave={() => controller.resume(toast.id, 'hover')}
-                onFocusCapture={() => controller.pause(toast.id, 'focus')}
+                onFocusCapture={(event) => {
+                  if (event.target instanceof Element && event.target.matches(':focus-visible'))
+                    controller.pause(toast.id, 'focus');
+                  else controller.resume(toast.id, 'focus');
+                }}
                 onBlurCapture={(event) => {
                   if (!event.currentTarget.contains(event.relatedTarget))
                     controller.resume(toast.id, 'focus');

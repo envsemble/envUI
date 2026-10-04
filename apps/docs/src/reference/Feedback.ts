@@ -33,7 +33,7 @@ function NotificationButtons() {
     ['options.dismissible', 'true by default; adds a close button'],
     [
       'options.duration',
-      'Milliseconds for any variant; Infinity or 0 persists. Defaults to 5000, or persistent for errors/actions',
+      'Visible milliseconds; restarts after overflow. Infinity or 0 persists. Defaults to 5000, or persistent for errors/actions',
     ],
     ['useToast().dismiss(id) / clear()', 'Dismiss one notification or clear all notifications'],
   ],
@@ -119,7 +119,7 @@ import { Search } from '@envsemble/envui/icons/Search';
     guidelines: [
       'By default, neutral, success and info notices without actions expire after five seconds. Errors and notices with actions persist. Set duration in milliseconds to override either default, or Infinity to keep a notice until dismissed.',
       'New notices appear immediately at the bottom of the bottom-right stack or the top of the top-center stack. Set visibleLimit to cap each placement; older notices hide behind the count above it and reappear as newer notices close.',
-      'Timers pause while hidden, during hover, keyboard focus or an inactive window. Each notice receives its configured amount of visible time, resuming the remaining duration when it reappears.',
+      'A notice gets its full duration each time it returns from overflow. Hover or keyboard focus pauses only that notice; focusing the viewport with F6 or leaving the window pauses its visible timers. A persistent notice does not pause other notices.',
       'Keep messages and actions short. Messages stay single-line and truncate to available space. Manual Toast shares the presentation; the consumer owns its lifetime.',
     ],
     related: ['dialogs', 'buttons', 'colors', 'accessibility'],

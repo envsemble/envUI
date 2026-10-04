@@ -24,7 +24,8 @@ export interface ToastNotification {
   placement?: ToastPlacement;
   dismissible?: boolean;
   /**
-   * Auto-dismiss milliseconds. Infinity (or 0) persists until dismissed.
+   * Visible milliseconds before dismissal. Returning from overflow restarts the full duration.
+   * Infinity (or 0) persists until dismissed.
    * Defaults to 5000, or Infinity for errors and notices with actions.
    */
   duration?: number;
@@ -51,6 +52,7 @@ export type ToastDelivery = Pick<
   'add' | 'close'
 >;
 export type ToastTimer = {
+  durationMs: number;
   remainingMs: number;
   startedAt: number;
   handle?: ReturnType<typeof setTimeout>;

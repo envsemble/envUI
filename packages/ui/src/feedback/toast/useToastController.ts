@@ -16,7 +16,7 @@ export function useToastController(defaultPlacement: ToastPlacement) {
   const pendingNotifications = useRef<ToastEntry[]>([]);
   const placementStores = useRef(new Map<ToastPlacement, ToastDelivery>());
   const dismissalTimers = useRef(new Map<string, ToastTimer>());
-  const focusedRegions = useRef(new Set<ToastPlacement>());
+  const focusedViewports = useRef(new Set<ToastPlacement>());
   const isWindowPaused = useRef(false);
   const currentDefaultPlacement = useRef(defaultPlacement);
   currentDefaultPlacement.current = defaultPlacement;
@@ -64,12 +64,13 @@ export function useToastController(defaultPlacement: ToastPlacement) {
           entry.duration ?? (entry.variant === 'error' || entry.action ? Infinity : 5000);
         if (durationMs > 0 && Number.isFinite(durationMs)) {
           dismissalTimers.current.set(entry.id, {
+            durationMs,
             remainingMs: durationMs,
             startedAt: Date.now(),
             pauseReasons: new Set([
               'hidden',
               ...(isWindowPaused.current ? ['window'] : []),
-              ...(focusedRegions.current.has(entry.placement) ? ['viewport'] : []),
+              ...(focusedViewports.current.has(entry.placement) ? ['viewport'] : []),
             ]),
           });
         }
@@ -91,13 +92,16 @@ export function useToastController(defaultPlacement: ToastPlacement) {
     function setVisibleNotifications(placement: ToastPlacement, visibleIds: ReadonlySet<string>) {
       for (const entry of notifications.current.values()) {
         if (entry.placement !== placement) continue;
-        if (visibleIds.has(entry.id)) resume(entry.id, 'hidden');
-        else {
+        const timer = dismissalTimers.current.get(entry.id);
+        if (!timer) continue;
+        if (visibleIds.has(entry.id)) {
+          if (timer.pauseReasons.has('hidden')) timer.remainingMs = timer.durationMs;
+          resume(entry.id, 'hidden');
+        } else {
           pause(entry.id, 'hidden');
           // Hidden roots cannot retain pointer or keyboard interaction pauses.
-          const timer = dismissalTimers.current.get(entry.id);
-          timer?.pauseReasons.delete('hover');
-          timer?.pauseReasons.delete('focus');
+          timer.pauseReasons.delete('hover');
+          timer.pauseReasons.delete('focus');
         }
       }
     }
@@ -141,9 +145,9 @@ export function useToastController(defaultPlacement: ToastPlacement) {
       // Retain the delivery through layout cleanup so passive cleanup can close
       // its store during Strict Mode replay. The controller owns both regions.
     }
-    function setPlacementFocused(placement: ToastPlacement, focused: boolean) {
-      if (focused) focusedRegions.current.add(placement);
-      else focusedRegions.current.delete(placement);
+    function setViewportFocused(placement: ToastPlacement, focused: boolean) {
+      if (focused) focusedViewports.current.add(placement);
+      else focusedViewports.current.delete(placement);
       for (const entry of notifications.current.values())
         if (entry.placement === placement)
           focused ? pause(entry.id, 'viewport') : resume(entry.id, 'viewport');
@@ -160,7 +164,7 @@ export function useToastController(defaultPlacement: ToastPlacement) {
       setVisibleNotifications,
       pause,
       resume,
-      setPlacementFocused,
+      setViewportFocused,
       setWindowPaused,
       cancelTimer,
     };
@@ -182,7 +186,7 @@ export function useToastController(defaultPlacement: ToastPlacement) {
       controller.manager.clear();
       pendingNotifications.current = [];
       notifications.current.clear();
-      focusedRegions.current.clear();
+      focusedViewports.current.clear();
       for (const id of dismissalTimers.current.keys()) controller.cancelTimer(id);
     };
   }, [controller]);
