@@ -3,10 +3,18 @@ import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { ActionElement, type ActionElementProps } from './ActionElement.js';
 
-export type ButtonVariant = 'primary' | 'important' | 'secondary' | 'outlined' | 'destructive';
+export type ButtonVariant =
+  | 'primary'
+  | 'important'
+  | 'secondary'
+  | 'outlined'
+  | 'destructive'
+  | 'text';
 
 export interface ButtonAppearanceProps {
   variant?: ButtonVariant;
+  /** Show an underline for the text variant; defaults to false. */
+  underline?: boolean;
   startIcon?: ReactNode;
   endIcon?: ReactNode;
 }
@@ -26,6 +34,7 @@ export type ButtonProps = ButtonAppearanceProps &
 
 export function Button({
   variant = 'primary',
+  underline = false,
   iconOnly = false,
   icon,
   startIcon,
@@ -40,6 +49,7 @@ export function Button({
       className={classNames(
         'env-button',
         `env-button-${variant}`,
+        variant === 'text' && underline && 'env-button-underlined',
         iconOnly && 'env-icon-button',
         className,
       )}

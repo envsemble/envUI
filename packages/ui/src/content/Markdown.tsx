@@ -9,6 +9,7 @@ import ReactMarkdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { classNames } from '../internal/classNames.js';
 import { Checkbox } from '../forms/Checkbox.js';
+import { Link } from '../actions/Link.js';
 import { Code } from './Code.js';
 import { CodeBlock } from './CodeBlock.js';
 
@@ -48,7 +49,7 @@ export function Markdown({
           renderLink ? (
             renderLink({ ...linkProps, href })
           ) : (
-            <a {...linkProps} href={href} />
+            <Link {...linkProps} href={href} />
           )
         ) : (
           <span>{linkProps.children}</span>

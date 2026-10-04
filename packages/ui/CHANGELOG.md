@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add a text Button variant with no fill or border, an optional underline and shared blue link interaction colors. Build inline Link on the same implementation, with inherited typography and an underline by default. Use Link for Markdown rendering; retain native action/link semantics, keyboard focus and disabled behavior.
+
 - Support explicit dismissal durations for every managed toast, including `Infinity` for persistence. Show a per-placement queued count above stacks that exceed `visibleLimit`; preserve FIFO delivery and pause-aware timers.
 
 - Preserve hover and pressed feedback on focused invalid text fields and plain error underlines. Make the textarea resize edge inherit the field’s hover, focus, error and dragging colors. Add matching red-border interactions to invalid Select controls; all shades follow the shared HSL rule without changing backgrounds.

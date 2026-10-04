@@ -40,18 +40,7 @@
   border-inline-start: 0.125rem solid var(--color-border-strong);
   color: var(--color-text-muted);
 }
-.env-markdown a {
-  color: var(--color-link);
-  text-decoration: underline;
-  text-underline-offset: 0.15em;
-}
-.env-markdown a:hover {
-  color: var(--color-link-hover);
-}
-.env-markdown a:active {
-  color: var(--color-link-pressed);
-}
-.env-markdown :where(a, .env-markdown-table):focus-visible {
+.env-markdown .env-markdown-table:focus-visible {
   outline: 0.125rem solid var(--color-focus-ring);
   outline-offset: var(--space-1);
 }

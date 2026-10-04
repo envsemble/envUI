@@ -63,6 +63,36 @@
   border-color: var(--color-border-pressed);
 }
 
+.env-button-text {
+  padding-inline: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-link);
+  cursor: pointer;
+}
+
+.env-button-text.env-button-underlined {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.env-button-text:hover:not(:disabled):not([aria-disabled='true']) {
+  color: var(--color-link-hover);
+}
+
+.env-button-text:active:not(:disabled):not([aria-disabled='true']) {
+  color: var(--color-link-pressed);
+}
+
+.env-link {
+  display: inline;
+  min-height: 0;
+  padding: 0;
+  border-radius: var(--radius-standard);
+  font: inherit;
+  text-align: inherit;
+}
+
 .env-button-destructive {
   background: var(--color-destructive-action);
   color: var(--color-on-destructive-action);
