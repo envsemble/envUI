@@ -7,7 +7,15 @@
   min-inline-size: 0;
 }
 .env-markdown-toolbar {
-  gap: var(--space-2);
+  min-inline-size: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  /* Let focus rings stay visible while keeping the buttons aligned with the field. */
+  padding: var(--space-2);
+  margin: calc(-1 * var(--space-2));
+}
+.env-markdown-toolbar > .env-button-group {
+  max-inline-size: none;
 }
 .env-markdown-source {
   font-family: var(--font-family-code);

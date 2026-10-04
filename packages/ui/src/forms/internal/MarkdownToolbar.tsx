@@ -1,6 +1,6 @@
 import { Toolbar } from '@base-ui/react/toolbar';
 import { IconButton } from '../../actions/Button.js';
-import { ActionGroup } from '../../foundations/Layout.js';
+import { ButtonGroup } from '../../actions/ButtonGroup.js';
 import { Title } from '../../icons/Title.js';
 import { FormatBold } from '../../icons/FormatBold.js';
 import { FormatItalic } from '../../icons/FormatItalic.js';
@@ -44,38 +44,35 @@ export function MarkdownToolbar({
   onRedo: () => void;
 }) {
   return (
-    <Toolbar.Root
-      render={<ActionGroup />}
-      aria-label="Markdown formatting"
-      className="env-markdown-toolbar"
-      disabled={disabled}
-    >
-      {tools
-        .filter((tool) => commands.includes(tool.command))
-        .map(({ command, label, Icon }) => (
-          <Toolbar.Button
-            key={command}
-            focusableWhenDisabled={false}
-            render={<IconButton icon={<Icon />} aria-label={label} title={label} />}
-            onMouseDown={(event) => event.preventDefault()}
-            onClick={() => onCommand(command)}
-          />
-        ))}
-      <Toolbar.Button
-        disabled={!canUndo}
-        focusableWhenDisabled={false}
-        render={<IconButton icon={<Undo />} aria-label="Undo" title="Undo" />}
-        onMouseDown={(event) => event.preventDefault()}
-        onClick={onUndo}
-      />
-      <Toolbar.Button
-        disabled={!canRedo}
-        focusableWhenDisabled={false}
-        render={<IconButton icon={<Redo />} aria-label="Redo" title="Redo" />}
-        onMouseDown={(event) => event.preventDefault()}
-        onClick={onRedo}
-      />
-    </Toolbar.Root>
+    <div className="env-markdown-toolbar">
+      <Toolbar.Root render={<ButtonGroup />} aria-label="Markdown formatting" disabled={disabled}>
+        {tools
+          .filter((tool) => commands.includes(tool.command))
+          .map(({ command, label, Icon }) => (
+            <Toolbar.Button
+              key={command}
+              focusableWhenDisabled={false}
+              render={<IconButton icon={<Icon />} aria-label={label} title={label} />}
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => onCommand(command)}
+            />
+          ))}
+        <Toolbar.Button
+          disabled={!canUndo}
+          focusableWhenDisabled={false}
+          render={<IconButton icon={<Undo />} aria-label="Undo" title="Undo" />}
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={onUndo}
+        />
+        <Toolbar.Button
+          disabled={!canRedo}
+          focusableWhenDisabled={false}
+          render={<IconButton icon={<Redo />} aria-label="Redo" title="Redo" />}
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={onRedo}
+        />
+      </Toolbar.Root>
+    </div>
   );
 }
 
