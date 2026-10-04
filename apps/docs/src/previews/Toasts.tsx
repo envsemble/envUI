@@ -25,7 +25,7 @@ function NotificationExamples() {
   const toast = useToast();
 
   function showSuccess(placement: ToastPlacement) {
-    toast.show({ variant: 'success', message: 'Changes saved.', placement });
+    toast.show({ variant: 'success', message: 'Changes saved.', placement, duration: 3000 });
   }
 
   function showError(placement: ToastPlacement) {
@@ -33,6 +33,7 @@ function NotificationExamples() {
       variant: 'error',
       message: 'Changes couldn’t be saved.',
       placement,
+      duration: Infinity,
       action: {
         label: 'Retry',
         onClick: () => {
@@ -43,14 +44,28 @@ function NotificationExamples() {
     });
   }
 
+  function queueNotifications(placement: ToastPlacement) {
+    for (let index = 1; index <= 5; index++) {
+      toast.show({
+        variant: 'info',
+        message: `Upload ${index} complete.`,
+        placement,
+        duration: 3000,
+      });
+    }
+  }
+
   return (
     <SpecimenGrid size="wide">
       {toastPlacements.map(({ placement, title, caption }) => (
         <Specimen key={placement} title={title} caption={caption}>
           <ActionGroup>
-            <Button onClick={() => showSuccess(placement)}>Show success</Button>
+            <Button onClick={() => showSuccess(placement)}>3-second toast</Button>
             <Button variant="secondary" onClick={() => showError(placement)}>
-              Show error
+              Persistent error
+            </Button>
+            <Button variant="secondary" onClick={() => queueNotifications(placement)}>
+              Queue 5
             </Button>
           </ActionGroup>
         </Specimen>
@@ -74,9 +89,9 @@ export function ToastsPreview() {
       <Example
         title="Try notifications"
         size="collection"
-        caption="Success messages close after five seconds; hovering pauses the timer. Errors stay until closed or retried. Trigger several notifications to see how they stack."
+        caption="Timed messages last three seconds; hovering pauses the timer. Errors stay until closed or retried. Each stack shows at most two toasts, with the queued count above it."
       >
-        <ToastProvider>
+        <ToastProvider visibleLimit={2}>
           <NotificationExamples />
         </ToastProvider>
       </Example>

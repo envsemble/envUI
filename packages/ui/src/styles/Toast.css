@@ -106,8 +106,10 @@
   pointer-events: auto;
   box-sizing: border-box;
 }
-.env-toast-queued-count {
+.env-toast-viewport > .env-toast-queued-count {
   order: -1;
+  background: var(--color-toast-neutral);
+  color: var(--color-on-toast);
 }
 .env-toast-viewport-bottom-right {
   inset-inline-end: max(var(--space-4), env(safe-area-inset-right));

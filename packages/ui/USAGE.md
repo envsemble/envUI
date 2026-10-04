@@ -1022,34 +1022,39 @@ Related: [Empty states](#empty-states), [Cards](#cards), [Accessibility](#access
 
 ### Toasts
 
-Brief feedback; errors and notices with actions stay until dismissed.
+Managed feedback with configurable duration, placement and stack capacity.
 
 #### Managed notifications
 
 ```tsx
-import { Theme, Button, ToastProvider, useToast } from '@envsemble/envui';
+import { Theme, Button, ActionGroup, ToastProvider, useToast } from '@envsemble/envui';
 
-function SaveButton() {
+function NotificationButtons() {
   const toast = useToast();
-  return <Button onClick={() => toast.show({
-    variant: 'success', message: 'Changes saved.',
-  })}>Save changes</Button>;
+  return <ActionGroup>
+    <Button onClick={() => toast.show({
+      variant: 'success', message: 'Changes saved.', duration: 3000,
+    })}>Show timed toast</Button>
+    <Button variant="secondary" onClick={() => toast.show({
+      variant: 'info', message: 'Export is ready.', duration: Infinity,
+    })}>Show persistent toast</Button>
+  </ActionGroup>;
 }
 
 <Theme theme="light">
-  <ToastProvider defaultPlacement="bottom-right">
-    <SaveButton />
+  <ToastProvider defaultPlacement="bottom-right" visibleLimit={2}>
+    <NotificationButtons />
   </ToastProvider>
 </Theme>
 ```
 
 - defaultPlacement: bottom-right stacks upward; top-center stacks downward
-- visibleLimit: Three visible notifications per placement by default; others queue
+- visibleLimit: Positive integer, default 3 per placement; excess notices queue with a count above the stack
 - useToast().show(options): Returns the notification ID; accepts variant and message
 - options.placement: Override the provider’s default for a particular notification
-- options.action: {label, onClick}; actions and errors persist until dismissed
+- options.action: {label, onClick}; notices with actions persist unless duration is set
 - options.dismissible: true by default; adds a close button
-- options.duration: Milliseconds; defaults to 5000 for notices without errors or actions
+- options.duration: Milliseconds for any variant; Infinity or 0 persists. Defaults to 5000, or persistent for errors/actions
 - useToast().dismiss(id) / clear(): Dismiss one notification or clear the entire queue
 
 #### Inline toast
@@ -1080,8 +1085,8 @@ function ArchiveNotice({ undoArchive }: { undoArchive: () => void }) {
 
 #### Guidelines
 
-- Neutral, success and info notices without actions expire after five seconds. Errors and notices with actions persist until dismissed.
-- Timers pause during hover, keyboard focus or an inactive window. Each placement shows three notices; queued lifetimes start on display.
+- By default, neutral, success and info notices without actions expire after five seconds. Errors and notices with actions persist. Set duration in milliseconds to override either default, or Infinity to keep a notice until dismissed.
+- Timers pause during hover, keyboard focus or an inactive window. Set visibleLimit to cap each placement; the queued count appears above the stack. Queued lifetimes start on display.
 - Keep messages and actions short. Messages stay single-line and truncate to available space. Manual Toast shares the presentation; the consumer owns its lifetime.
 
 Related: [Dialogs](#dialogs), [Buttons](#buttons), [Colors & themes](#colors--themes), [Accessibility](#accessibility).
