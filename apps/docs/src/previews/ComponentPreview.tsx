@@ -11,6 +11,7 @@ import { SurfacePreview, LayoutPreview, RowsPreview, CardsPreview } from './Layo
 import { ChipsPreview, DisclosuresPreview } from './Content';
 import { CodePreview } from './CodeContent';
 import { MarkdownPreview } from './MarkdownContent';
+import { RichTextPreview } from './RichTextContent';
 import { EmptyStatePreview, LoadingPreview, DialogsPreview } from './Feedback';
 import { ToastsPreview } from './Toasts';
 import { ColorPickerPreview } from './ColorPicking';
@@ -52,6 +53,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <CodePreview />;
     case 'markdown':
       return <MarkdownPreview />;
+    case 'rich-text':
+      return <RichTextPreview />;
     case 'disclosures':
       return <DisclosuresPreview />;
     case 'empty-state':

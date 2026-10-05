@@ -14,7 +14,7 @@ export function MarkdownLinkDialog({
   selectedText: string;
   onInsert: (link: MarkdownLink) => void;
   onCancel: () => void;
-  finalFocus: RefObject<HTMLTextAreaElement | null>;
+  finalFocus: RefObject<HTMLElement | null>;
 }) {
   const [label, setLabel] = useState(selectedText);
   const [href, setHref] = useState('');

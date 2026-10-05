@@ -47,6 +47,19 @@ import { Code, CodeBlock, Markdown, MarkdownEditor } from '@envsemble/envui/cont
 
 Basic UI imports exclude parsing and highlighting dependencies. Content highlighting starts lazily; inline code and code blocks use unmodified GitHub Dark Default colors in both app themes. CodeBlock supports an explicit light or dark override.
 
+Rich editing uses a separate optional Tiptap entry, with the same stylesheet:
+
+```tsx
+import { RichTextEditor, RichText, createRichTextExtensions } from '@envsemble/envui/rich-text';
+
+<RichTextEditor label="Notes" value={notes} onValueChange={setNotes} />
+<RichText>{notes}</RichText>
+```
+
+RichTextEditor edits formatted content directly and emits Markdown; RichText uses the same Tiptap schema for read-only rendering. Configurable references carry stable IDs through Markdown round trips. The library owns editing, suggestion interaction and serialization; your application supplies reference lookup, navigation, uploads and saving. Markdown support follows Tiptap's supported formatting subset and normalizes source. Keep MarkdownEditor when literal Markdown source editing is required.
+
+The beta Markdown integration treats raw HTML as literal text and supports ordinary GFM tables. Merged cells and tables with block content requiring HTML are outside that subset. Custom extensions need matching Markdown parsing and serialization in both the editor and viewer.
+
 ## Composition
 
 - Use `Stack` for related blocks and `ActionGroup` for actions. Their `as` prop preserves semantic container tags. Stack also supports `render` to compose layout onto another root.

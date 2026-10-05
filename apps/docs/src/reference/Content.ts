@@ -1,4 +1,5 @@
 import type { Reference } from './Types';
+import { richTextReference } from './RichText';
 
 const markdownEditorReference = {
   usage: [
@@ -66,6 +67,7 @@ async function requestLink({ selectedText }: { selectedText: string }):
 } satisfies Pick<Reference, 'usage' | 'guidelines'>;
 
 export const contentReferences: Reference[] = [
+  richTextReference,
   {
     id: 'markdown',
     title: 'Markdown',

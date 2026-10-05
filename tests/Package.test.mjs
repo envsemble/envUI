@@ -266,11 +266,15 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     import { Home } from '@envsemble/envui/icons/Home';
     import { Home as BarrelHome } from '@envsemble/envui/icons';
     import '@envsemble/envui/styles.css';
+    import { RichText, RichTextEditor, type RichTextEditorHandle, type RichTextReferenceSource } from '@envsemble/envui/rich-text';
     const buttonProps: ButtonProps = { variant: 'important', ref: createRef<HTMLButtonElement>(), startIcon: <Home /> };
     const buttonGroupProps: ButtonGroupProps = { orientation: 'vertical', ref: createRef<HTMLDivElement>(), 'aria-label': 'Actions' };
     const directionLinkProps: DirectionLinkProps = { direction: 'next', href: '/guide', children: 'Read the guide', ref: createRef<HTMLAnchorElement>(), icon: <Home /> };
     const options: SelectOption[] = [{ value: 'one', label: 'One' }];
     const theme: ThemeValue = 'dark';
+    const referenceSources: RichTextReferenceSource[] = [{ char: '@', items: async ({ query, signal }) => signal.aborted ? [] : [{ id: query, label: query }] }];
+    const richTextConsumer = <><RichTextEditor ref={createRef<RichTextEditorHandle>()} value="Notes" references={referenceSources} onValueChange={markdown => { const typed: string = markdown; void typed; }} onUpload={async (file, { signal }) => signal.aborted ? null : ({ url: '/uploads/example', label: file.name, id: 'stable-file-id', kind: 'file' })} /><RichText onReferenceClick={(reference, event) => { event.preventDefault(); void reference.id; }}>Notes</RichText></>;
+    void richTextConsumer;
     function NotificationAction() { const manager: ToastManager = useToast(); return <Button onClick={() => manager.show({ message: 'Saved' })}>Save</Button>; }
     export const consumer = <Theme theme={theme} ref={createRef<HTMLDivElement>()}>
       <Button {...buttonProps}>Create</Button><IconButton aria-label="Open" icon={<Home filled />} />
@@ -500,7 +504,58 @@ test('a small independent bundle excludes unused icons and Base UI', async funct
     'Unused color picking must stay out of basic control bundles.',
   );
   assert.ok(
+    result.emittedInputs.every((path) => !path.includes('/@tiptap/')),
+    'Optional Tiptap must stay out of core bundles.',
+  );
+  assert.ok(
     result.emittedInputs.every((path) => !path.includes('/src/')),
     'The release consumer must not resolve the development source condition.',
   );
+});
+
+test('packed rich text statically renders the shared Markdown schema and reference marks', async function () {
+  const formattedSource =
+    '## Heading\n\n**Bold** *italic* ~~strike~~ `code` [guide](/guide)\n\n- [x] Done\n- [ ] Open\n\n> Quote\n\n| Name | State |\n| --- | --- |\n| One | Ready |\n\n```js\nconst value = 1;\n```';
+  const result = await runConsumer(
+    'RichTextConsumer.mjs',
+    `
+    import { createElement as h } from 'react';
+    import { renderToStaticMarkup } from 'react-dom/server';
+    import { RichText, RichTextEditor, createRichTextExtensions } from '@envsemble/envui/rich-text';
+    import { MarkdownManager } from '@tiptap/markdown';
+    const extensions = createRichTextExtensions();
+    const manager = new MarkdownManager({ extensions, marked: extensions.find(extension => extension.name === 'markdown').options.marked });
+    const formatted = manager.parse(${JSON.stringify(formattedSource)});
+    const formattedRoundtrip = manager.parse(manager.serialize(formatted));
+    const attrs = { id: 'file:[stable] "id" 🗂', label: 'Brackets [and] "quotes" & 🗂', href: '/files/stable', kind: 'arbitrary', mentionSuggestionChar: '#' };
+    const document = { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Before ' }, { type: 'envReference', attrs, marks: [{ type: 'bold' }] }, { type: 'text', text: ' after' }] }] };
+    const markdown = manager.serialize(document);
+    const roundtrip = manager.parse(markdown);
+    const html = renderToStaticMarkup(h(RichText, { onReferenceClick: () => {} }, markdown));
+    const unsafe = renderToStaticMarkup(h(RichText, {}, '[Unsafe](javascript:alert(1)) ![No](data:image/svg+xml,bad)'));
+    const literalHtml = renderToStaticMarkup(h(RichText, {}, '<strong>raw HTML</strong>'));
+    const unknown = renderToStaticMarkup(h(RichText, {}, '[reference id="ok" label="Usable" marks="%5B%7B%22type%22%3A%22unknown%22%7D%5D"]'));
+    const task = renderToStaticMarkup(h(RichText, {}, '- [x] Complete task'));
+    const editor = renderToStaticMarkup(h(RichTextEditor, { label: 'SSR editor', defaultValue: markdown, name: 'source' }));
+    console.log(JSON.stringify({ markdown, roundtrip, html, unsafe, literalHtml, unknown, task, editor, formatted, formattedRoundtrip, module: import.meta.resolve('@envsemble/envui/rich-text') }));
+  `,
+  );
+  const atom = result.roundtrip.content[0].content.find((node) => node.type === 'envReference');
+  assert.equal(atom.attrs.id, 'file:[stable] "id" 🗂');
+  assert.equal(atom.attrs.label, 'Brackets [and] "quotes" & 🗂');
+  assert.equal(atom.attrs.kind, 'arbitrary');
+  assert.equal(atom.attrs.mentionSuggestionChar, '#');
+  assert.deepEqual(atom.marks, [{ type: 'bold' }]);
+  assert.deepEqual(
+    result.formattedRoundtrip,
+    result.formatted,
+    'Supported headings/marks/tasklists/quotes/tables/code must retain their schema on Markdown roundtrip.',
+  );
+  assert.match(result.html, /<strong><a[^>]*href="\/files\/stable"/);
+  assert.doesNotMatch(result.unsafe, /href="javascript:|src="data:/);
+  assert.match(result.literalHtml, /&lt;strong&gt;raw HTML&lt;\/strong&gt;/);
+  assert.match(result.unknown, /Usable/);
+  assert.match(result.task, /disabled/);
+  assert.match(result.editor, /name="source"/);
+  assert.match(result.module, /\/dist\/rich-text\.js$/);
 });

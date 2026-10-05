@@ -11,6 +11,7 @@ import { LayoutFixture } from './Layout.js';
 import { FeatureCardsFixture } from './FeatureCards.js';
 import { ColorPickerFixture } from './ColorPicker.js';
 import { MarkdownEditingFixture } from './MarkdownEditing.js';
+import { RichTextEditingFixture } from './RichTextEditing.js';
 
 export default function App() {
   return (
@@ -36,6 +37,7 @@ export default function App() {
           <ColorPickerFixture theme="dark" />
           <StrictToastFixture />
           <MarkdownEditingFixture />
+          <RichTextEditingFixture />
         </main>
       </Theme>
     </>

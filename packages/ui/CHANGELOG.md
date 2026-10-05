@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add an optional Tiptap rich-text entry with RichTextEditor, the matching read-only RichText viewer and a shared extension factory. Keep Markdown values, configurable reference lookup with stable IDs, slash commands and application-owned upload/navigation callbacks generic; retain MarkdownEditor for source editing.
+
 - Add ColorPicker with a labeled color area, hue slider and native HEX field. Share validation, normalization, disabled/read-only behavior, keyboard focus and form reset through the public API; documentation palette editing consumes the library control.
 
 - Compose documentation color swatches, state disclosures, link demonstrations and vertical layouts from existing Button, Link, DisclosureNote and Stack components.

@@ -71,6 +71,7 @@ const referenceIcons: Record<string, typeof Palette> = {
   tabs: WebAsset,
   'direction-links': ArrowForward,
   markdown: Article,
+  'rich-text': Article,
   code: Code,
   chips: Label,
   disclosures: Notes,
