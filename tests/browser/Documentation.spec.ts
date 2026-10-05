@@ -264,9 +264,18 @@ test('single previews retain state when the theme changes', async ({ page }) => 
     );
   }
   await expect(projectName).toHaveValue('Winter release');
-  await page.getByRole('button', { name: 'Open navigation' }).click();
+  const navigationTrigger = page.getByRole('button', { name: 'Open navigation' });
+  await navigationTrigger.click();
   const mobileNavigation = page.getByRole('dialog', { name: 'Documentation', exact: true });
   await expect(mobileNavigation).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(mobileNavigation).toHaveCount(0);
+  await expect(navigationTrigger).toBeFocused();
+  await navigationTrigger.click();
+  await mobileNavigation.getByRole('button', { name: 'Close', exact: true }).click();
+  await expect(mobileNavigation).toHaveCount(0);
+  await expect(navigationTrigger).toBeFocused();
+  await navigationTrigger.click();
   await mobileNavigation.getByRole('link', { name: 'Text fields', exact: true }).click();
   await expect(mobileNavigation).toHaveCount(0);
   await expect

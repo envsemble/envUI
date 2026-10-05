@@ -24,6 +24,7 @@ export default function App() {
   const route = useDocumentationRoute();
   const [appearance, setAppearance] = useState<'light' | 'dark'>('light');
   const [navigationOpen, setNavigationOpen] = useState(false);
+  const [focusContentOnClose, setFocusContentOnClose] = useState(false);
   const mainElement = useRef<HTMLElement>(null);
   const routePath = route.split('?')[0];
   const routeSegments = routePath.split('/');
@@ -43,7 +44,10 @@ export default function App() {
   useEffect(() => {
     const desktop = window.matchMedia('(min-width: 48rem)');
     const closeOnDesktop = () => {
-      if (desktop.matches) setNavigationOpen(false);
+      if (desktop.matches) {
+        setFocusContentOnClose(true);
+        setNavigationOpen(false);
+      }
     };
     desktop.addEventListener('change', closeOnDesktop);
     return () => desktop.removeEventListener('change', closeOnDesktop);
@@ -95,10 +99,13 @@ export default function App() {
         </Link>
         <Dialog
           open={navigationOpen}
-          onOpenChange={setNavigationOpen}
+          onOpenChange={(open) => {
+            if (open) setFocusContentOnClose(false);
+            setNavigationOpen(open);
+          }}
           title="Documentation"
           placement="right"
-          finalFocus={mainElement}
+          finalFocus={focusContentOnClose ? mainElement : undefined}
           trigger={
             <Button variant="secondary" startIcon={<Menu />}>
               Open navigation
@@ -109,7 +116,10 @@ export default function App() {
             routePath={routePath}
             page={page}
             panel
-            onNavigate={() => setNavigationOpen(false)}
+            onNavigate={() => {
+              setFocusContentOnClose(true);
+              setNavigationOpen(false);
+            }}
           />
         </Dialog>
       </header>
