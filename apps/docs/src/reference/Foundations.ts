@@ -93,6 +93,9 @@ function ThemeLabel() {
     ],
     guidelines: [
       'Use relative units and the shared spacing scale. The parent owns gaps; each component owns its internal padding.',
+      'Theme supplies scoped border-box sizing. Text, controls and layout children shrink to their container; long labels wrap. Rem and em dimensions follow browser text settings without shrinking the whole interface on a phone.',
+      'FeatureCard responds to its own width. Dialogs, selects and notification stacks fit the viewport; code, tables, toolbars and crowded connected controls scroll within their own regions.',
+      'Applications own page grids, breakpoints and custom content. Use minmax(0, 1fr) for grid tracks, min-inline-size: 0 for flex children and max-inline-size: 100% for media. Avoid fixed pixel widths and heights; retain content-driven height and a viewport meta tag.',
       'Let text wrap and controls grow with content. The application chooses layout breakpoints; there is no separate mobile theme or component set.',
       'Text has no outer margins. Cards already space direct children; Stack and ActionGroup supply other layouts.',
       'Use component defaults for geometry. Choose Surface for a plain pane and Card for a content surface.',

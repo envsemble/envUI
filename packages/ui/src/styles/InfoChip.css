@@ -1,11 +1,15 @@
 .env-info-chip {
   inline-size: fit-content;
+  min-inline-size: 0;
+  max-inline-size: 100%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0.2rem 0.45rem;
   font: 400 0.7rem/1.4 var(--font-family);
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
   color: var(--color-chip-text);
   background: var(--color-chip);
   border: 0;

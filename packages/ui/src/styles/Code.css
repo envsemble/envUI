@@ -45,14 +45,19 @@
   justify-content: space-between;
   gap: var(--space-4);
   margin-block-end: var(--space-3);
+  min-inline-size: 0;
+  flex-wrap: wrap;
 }
 .env-code-block-heading > span {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
   font: var(--type-body-small);
 }
 .env-code-copy-status {
   position: absolute;
-  inline-size: 1px;
-  block-size: 1px;
+  inline-size: 0.0625rem;
+  block-size: 0.0625rem;
   clip-path: inset(50%);
   overflow: hidden;
   white-space: nowrap;

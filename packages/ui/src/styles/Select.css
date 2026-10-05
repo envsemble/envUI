@@ -34,8 +34,8 @@
   display: grid;
   gap: calc(0.125rem * var(--scale, 1));
   width: max-content;
-  min-width: var(--anchor-width);
-  max-width: min(calc(24rem * var(--scale, 1)), 80vw, var(--available-width));
+  min-width: min(var(--anchor-width), var(--available-width));
+  max-width: min(calc(24rem * var(--scale, 1)), var(--available-width));
   max-height: var(--available-height);
   overflow: hidden;
 }
@@ -43,6 +43,9 @@
   display: none;
 }
 .env-dropdown-option {
+  min-inline-size: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
   box-sizing: border-box;
   display: block;
   margin: 0;
@@ -91,8 +94,11 @@
 }
 .env-dropdown-list {
   display: grid;
+  grid-auto-rows: minmax(min-content, auto);
+  align-content: start;
   gap: calc(0.125rem * var(--scale, 1));
   min-height: 0;
+  min-inline-size: 0;
   max-height: calc(var(--available-height) - calc(1rem * var(--scale, 1)));
   overflow-y: auto;
   overscroll-behavior: contain;

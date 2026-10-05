@@ -190,7 +190,7 @@ test('direction link groups center pairs and single destinations at every page w
   expect(await centerError()).toBeLessThan(1);
   const finalDestination = await page
     .locator('.docs-sidebar')
-    .getByRole('link')
+    .getByRole('link', { includeHidden: true })
     .last()
     .getAttribute('href');
   await page.evaluate((hash) => {
@@ -264,6 +264,30 @@ test('single previews retain state when the theme changes', async ({ page }) => 
     );
   }
   await expect(projectName).toHaveValue('Winter release');
+  const navigationTrigger = page.getByRole('button', { name: 'Open navigation' });
+  await navigationTrigger.click();
+  const mobileNavigation = page.getByRole('dialog', { name: 'Documentation', exact: true });
+  await expect(mobileNavigation).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(mobileNavigation).toHaveCount(0);
+  await expect(navigationTrigger).toBeFocused();
+  await navigationTrigger.click();
+  await mobileNavigation.getByRole('button', { name: 'Close', exact: true }).click();
+  await expect(mobileNavigation).toHaveCount(0);
+  await expect(navigationTrigger).toBeFocused();
+  await navigationTrigger.click();
+  await mobileNavigation.getByRole('link', { name: 'Text fields', exact: true }).click();
+  await expect(mobileNavigation).toHaveCount(0);
+  await expect
+    .poll(() =>
+      page.locator('#docs-main').evaluate((main) => main.contains(document.activeElement)),
+    )
+    .toBe(true);
+  await expect(projectName).toHaveValue('Winter release');
+  await page.getByRole('button', { name: 'Open navigation' }).click();
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await expect(mobileNavigation).toHaveCount(0);
+  await expect(page.locator('.docs-sidebar')).toBeVisible();
   await page.evaluate(() => {
     location.hash = '/components/checkbox/preview';
   });

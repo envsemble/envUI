@@ -39,6 +39,10 @@ export function App() {
 
 The stylesheet bundles Inter and scopes styling to explicit light/dark theme boundaries. Your app owns theme preference, routing, data and validation. Dialogs, selects and managed notifications retain their originating theme through portals.
 
+Components use relative dimensions, content-driven heights and scoped border-box sizing. Labels wrap and shared layouts shrink to their container. FeatureCard responds to its own width; popups and notification stacks stay within the viewport. Tables, code, toolbars and crowded connected controls scroll locally. Manually resized textareas retain font-relative heights.
+
+Your application owns its page grids and layout breakpoints. Include `<meta name="viewport" content="width=device-width, initial-scale=1">`, use `minmax(0, 1fr)` grid tracks and `min-inline-size: 0` flex children, and bound custom media with `max-inline-size: 100%`. Prefer percentages for available space, rem/em for typography and spacing, and content-driven heights. Verify narrow containers and enlarged browser text as well as screen width.
+
 Code and Markdown use the optional content entry, with the same stylesheet:
 
 ```tsx

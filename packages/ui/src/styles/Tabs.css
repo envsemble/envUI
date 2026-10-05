@@ -22,8 +22,8 @@
 }
 .env-tabs-list > .env-tab {
   flex-shrink: 0;
-  white-space: nowrap;
-  overflow-wrap: normal;
+  white-space: normal;
+  overflow-wrap: anywhere;
   transition:
     background-color var(--motion-duration-medium) var(--motion-ease),
     color var(--motion-duration-medium) var(--motion-ease),

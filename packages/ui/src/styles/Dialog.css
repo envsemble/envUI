@@ -3,8 +3,10 @@
   color: var(--color-text-primary);
   font: var(--type-body);
   width: min(28rem, 100%);
-  max-height: calc(100dvh - 2rem);
+  max-height: 100%;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  overflow-wrap: anywhere;
   pointer-events: auto;
 }
 .env-dialog-title,
@@ -23,7 +25,7 @@
 }
 .env-modal-pane[data-placement='right'] {
   inline-size: min(24rem, 100%);
-  block-size: 100dvh;
+  block-size: 100%;
   max-block-size: none;
   border-inline-start: 0.0625rem solid var(--color-border-strong);
 }
@@ -41,15 +43,27 @@
   background: hsl(from var(--color-dialog-overlay) h s l / var(--state-dialog-overlay-opacity));
 }
 .env-dialog-positioner {
+  box-sizing: border-box;
+  min-inline-size: 0;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   position: fixed;
   inset: 0;
   z-index: 101;
   display: grid;
   place-items: center;
-  padding: 1rem;
+  padding: max(var(--viewport-gutter), env(safe-area-inset-top))
+    max(var(--viewport-gutter), env(safe-area-inset-right))
+    max(var(--viewport-gutter), env(safe-area-inset-bottom))
+    max(var(--viewport-gutter), env(safe-area-inset-left));
   pointer-events: none;
 }
 .env-dialog-positioner[data-placement='right'] {
   place-items: stretch end;
   padding: 0;
+}
+.env-modal-pane[data-placement='right'] {
+  padding-block-start: max(var(--space-5), env(safe-area-inset-top));
+  padding-block-end: max(var(--space-5), env(safe-area-inset-bottom));
+  padding-inline-end: max(var(--space-5), env(safe-area-inset-right));
 }

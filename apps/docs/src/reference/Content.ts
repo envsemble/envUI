@@ -223,7 +223,7 @@ import { Code, CodeBlock } from '@envsemble/envui/content';
     ],
     guidelines: [
       'Keep a disclosure title on one line. Put secondary guidance behind the disclosure and essential instructions beside the task.',
-      'Use the native disclosure interaction. Keep labels short enough for the available width.',
+      'Use the native disclosure interaction. Labels and details wrap within the available width.',
     ],
     related: ['chips', 'typography', 'fields'],
   },

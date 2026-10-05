@@ -147,6 +147,31 @@ test('Select supports keyboard commit, typeahead, Escape, and native form reset'
     .toBe('team');
   await page.getByRole('button', { name: 'Reset form', exact: true }).click();
   await expect(trigger).toHaveText('Starter');
+  await page.setViewportSize({ width: 320, height: 480 });
+  await page.evaluate(() => {
+    document.documentElement.style.fontSize = '200%';
+  });
+  await trigger.click();
+  const list = page.getByRole('listbox');
+  await expect(list).toBeVisible();
+  const wrappedOptions = await list.getByRole('option').evaluateAll((options) => {
+    for (const option of options)
+      option.firstElementChild!.textContent = 'Long workspace configuration label '.repeat(3);
+    return options.map((option) => ({ height: option.clientHeight, content: option.scrollHeight }));
+  });
+  for (const option of wrappedOptions)
+    expect(option.content).toBeLessThanOrEqual(option.height + 1);
+  const popup = await page.locator('.env-dropdown-options').boundingBox();
+  expect(popup!.x).toBeGreaterThanOrEqual(0);
+  expect(popup!.x + popup!.width).toBeLessThanOrEqual(321);
+  expect(popup!.y + popup!.height).toBeLessThanOrEqual(481);
+  const scroll = await list.evaluate((element) => ({
+    height: element.clientHeight,
+    content: element.scrollHeight,
+  }));
+  expect(scroll.content).toBeGreaterThan(scroll.height);
+  await page.keyboard.press('Escape');
+  await expect(trigger).toBeFocused();
 });
 
 test('a required Select participates in native constraint validation', async ({ page }) => {

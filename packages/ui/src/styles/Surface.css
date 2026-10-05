@@ -2,6 +2,7 @@
 .env-surface {
   box-sizing: border-box;
   min-inline-size: 0;
+  max-inline-size: 100%;
   --env-surface-color: var(--color-pane);
   --env-surface-padding: clamp(1rem, 3vw, 1.5rem);
   --env-surface-radius: var(--radius-surface);

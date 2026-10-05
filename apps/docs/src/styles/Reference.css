@@ -13,7 +13,7 @@
 }
 .docs-props th,
 .docs-props td {
-  padding: 1rem;
+  padding: clamp(0.5rem, 2vw, 1rem);
   border-bottom: 0.0625rem solid var(--color-border-strong);
   vertical-align: top;
   overflow-wrap: anywhere;
