@@ -11,8 +11,23 @@ import { Extension } from '@tiptap/core';
 import { EditorContent, useEditor, useEditorState } from '@tiptap/react';
 import { Suggestion, exitSuggestion } from '@tiptap/suggestion';
 import { Toolbar } from '@base-ui/react/toolbar';
-import { Button } from '../actions/Button.js';
+import { IconButton } from '../actions/Button.js';
 import { ButtonGroup } from '../actions/ButtonGroup.js';
+import { Title } from '../icons/Title.js';
+import { FormatBold } from '../icons/FormatBold.js';
+import { FormatItalic } from '../icons/FormatItalic.js';
+import { FormatStrikethrough } from '../icons/FormatStrikethrough.js';
+import { FormatListBulleted } from '../icons/FormatListBulleted.js';
+import { FormatListNumbered } from '../icons/FormatListNumbered.js';
+import { Checklist } from '../icons/Checklist.js';
+import { FormatQuote } from '../icons/FormatQuote.js';
+import { Code } from '../icons/Code.js';
+import { CodeBlocks } from '../icons/CodeBlocks.js';
+import { Link } from '../icons/Link.js';
+import { Table } from '../icons/Table.js';
+import { Undo } from '../icons/Undo.js';
+import { Redo } from '../icons/Redo.js';
+import { AttachFile } from '../icons/AttachFile.js';
 import { FieldFrame } from '../forms/internal/FieldFrame.js';
 import { useFieldMetadata } from '../forms/internal/useFieldMetadata.js';
 import { MarkdownLinkDialog } from '../forms/internal/markdown/MarkdownLinkDialog.js';
@@ -33,6 +48,20 @@ import type { RichTextEditorHandle, RichTextEditorProps, RichTextSlashCommand } 
 
 const emptySources: NonNullable<RichTextEditorProps['references']> = [];
 const emptyExtensions: NonNullable<RichTextEditorProps['extensions']> = [];
+const commandIcons = {
+  heading: Title,
+  bold: FormatBold,
+  italic: FormatItalic,
+  strike: FormatStrikethrough,
+  'bullet-list': FormatListBulleted,
+  'numbered-list': FormatListNumbered,
+  'task-list': Checklist,
+  quote: FormatQuote,
+  'inline-code': Code,
+  'code-block': CodeBlocks,
+  link: Link,
+  table: Table,
+};
 
 /** Markdown IO with Tiptap owning document editing, history, and selection. */
 export const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(
@@ -417,44 +446,50 @@ export const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorPro
                 aria-label="Rich text formatting"
                 disabled={!editor || disabled || readOnly || busy}
               >
-                {toolbar.map((command) => (
-                  <Toolbar.Button
-                    key={command}
-                    render={<Button variant="secondary" />}
-                    aria-pressed={state?.active.includes(command)}
-                    onMouseDown={(event) => event.preventDefault()}
-                    onClick={() => {
-                      if (command === 'link') requestLink();
-                      else if (editor) runRichTextCommand(editor, command);
-                    }}
-                  >
-                    {richTextCommandLabels[command]}
-                  </Toolbar.Button>
-                ))}
+                {toolbar.map((command) => {
+                  const Icon = commandIcons[command];
+                  const label = richTextCommandLabels[command];
+                  return (
+                    <Toolbar.Button
+                      key={command}
+                      focusableWhenDisabled={false}
+                      render={<IconButton icon={<Icon />} aria-label={label} title={label} />}
+                      aria-pressed={state?.active.includes(command)}
+                      onMouseDown={(event) => event.preventDefault()}
+                      onClick={() => {
+                        if (command === 'link') requestLink();
+                        else if (editor) runRichTextCommand(editor, command);
+                      }}
+                    />
+                  );
+                })}
                 <Toolbar.Button
-                  render={<Button variant="secondary" />}
+                  render={<IconButton icon={<Undo />} aria-label="Undo" title="Undo" />}
+                  focusableWhenDisabled={false}
                   disabled={!state?.undo}
                   onMouseDown={(event) => event.preventDefault()}
                   onClick={() => editor?.chain().focus().undo().run()}
-                >
-                  Undo
-                </Toolbar.Button>
+                />
                 <Toolbar.Button
-                  render={<Button variant="secondary" />}
+                  render={<IconButton icon={<Redo />} aria-label="Redo" title="Redo" />}
+                  focusableWhenDisabled={false}
                   disabled={!state?.redo}
                   onMouseDown={(event) => event.preventDefault()}
                   onClick={() => editor?.chain().focus().redo().run()}
-                >
-                  Redo
-                </Toolbar.Button>
+                />
                 {onUpload && (
                   <Toolbar.Button
-                    render={<Button variant="secondary" />}
+                    render={
+                      <IconButton
+                        icon={<AttachFile />}
+                        aria-label="Attach files"
+                        title="Attach files"
+                      />
+                    }
+                    focusableWhenDisabled={false}
                     onMouseDown={(event) => event.preventDefault()}
                     onClick={() => input.current?.click()}
-                  >
-                    Attach files
-                  </Toolbar.Button>
+                  />
                 )}
               </Toolbar.Root>
             </div>

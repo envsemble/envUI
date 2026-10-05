@@ -54,6 +54,70 @@ test.beforeEach(async ({ page }) => {
   await page.goto(fixtureUrl);
 });
 
+test('formatting toolbar uses named SVG icon buttons and stays compact at narrow widths', async ({
+  page,
+}, testInfo) => {
+  const scope = page.getByTestId('rich-text-upload');
+  const toolbar = scope.getByRole('toolbar', { name: 'Rich text formatting' });
+  const labels = [
+    'Heading',
+    'Bold',
+    'Italic',
+    'Strikethrough',
+    'Bulleted list',
+    'Numbered list',
+    'Task list',
+    'Quote',
+    'Inline code',
+    'Code block',
+    'Insert link',
+    'Insert table',
+    'Undo',
+    'Redo',
+    'Attach files',
+  ];
+  for (const width of [1200, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    await expect(toolbar).toBeVisible();
+    await expect(toolbar.getByRole('button')).toHaveCount(labels.length);
+    for (const label of labels) {
+      const button = toolbar.getByRole('button', { name: label, exact: true });
+      await expect(button).toHaveAttribute('title', label);
+      await expect(button.locator('svg[aria-hidden="true"] path')).not.toHaveCount(0);
+    }
+    const geometry = await toolbar.evaluate((root) => {
+      const bounds = root.getBoundingClientRect();
+      const buttons = Array.from(root.querySelectorAll('button')).map((button) => ({
+        text: button.textContent,
+        bounds: button.getBoundingClientRect().toJSON(),
+      }));
+      const viewport = root.parentElement!;
+      return {
+        height: bounds.height,
+        buttons,
+        viewportWidth: viewport.clientWidth,
+        viewportRight: viewport.getBoundingClientRect().right,
+        scrollWidth: viewport.scrollWidth,
+      };
+    });
+    expect(geometry.height).toBeLessThanOrEqual(48);
+    expect(geometry.viewportRight).toBeLessThanOrEqual(width);
+    for (const button of geometry.buttons) {
+      expect(button.text).toBe('');
+      expect(button.bounds.width).toBeGreaterThanOrEqual(32);
+      expect(button.bounds.height).toBeLessThanOrEqual(48);
+      expect(button.bounds.top).toBe(geometry.buttons[0].bounds.top);
+    }
+    if (width === 390) expect(geometry.scrollWidth).toBeGreaterThan(geometry.viewportWidth);
+    await toolbar.getByRole('button', { name: 'Heading', exact: true }).focus();
+    await page.keyboard.press('ArrowRight');
+    await expect(toolbar.getByRole('button', { name: 'Bold', exact: true })).toBeFocused();
+    await scope.locator('.env-markdown-toolbar').screenshot({
+      path: testInfo.outputPath(`rich-text-toolbar-${width}.png`),
+    });
+  }
+});
+
 test('theme and renderer changes preserve uncontrolled content, history and keyboard reference actions', async ({
   page,
 }) => {
