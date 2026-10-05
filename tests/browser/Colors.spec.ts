@@ -118,26 +118,35 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       errorToast: `[data-testid="${theme}-color-error-toast"]`,
       toastAction: `[data-testid="${theme}-color-error-toast"] .env-toast-action`,
     };
-    async function snapshot() {
+    async function compareToken(token: string) {
       return boundary.evaluate(
-        (root, probes) =>
-          Object.fromEntries(
-            Object.entries(probes).map(([name, selector]) => {
-              const element = selector === ':scope' ? root : root.querySelector(selector)!;
-              if (!element) throw new Error(`Missing color probe: ${name}`);
-              const css = getComputedStyle(element);
-              return [
-                name,
-                {
-                  fill: css.backgroundColor,
-                  text: css.color,
-                  border: css.borderColor,
-                  accent: css.accentColor,
-                },
-              ];
-            }),
-          ),
-        selectors,
+        (root, { probes, token }) => {
+          const snapshot = () =>
+            Object.fromEntries(
+              Object.entries(probes).map(([name, selector]) => {
+                const element = selector === ':scope' ? root : root.querySelector(selector)!;
+                if (!element) throw new Error(`Missing color probe: ${name}`);
+                const css = getComputedStyle(element);
+                return [
+                  name,
+                  {
+                    fill: css.backgroundColor,
+                    text: css.color,
+                    border: css.borderColor,
+                    accent: css.accentColor,
+                  },
+                ];
+              }),
+            );
+          const before = snapshot();
+          (root as HTMLElement).style.setProperty(token, '#d02780');
+          try {
+            return { before, after: snapshot() };
+          } finally {
+            (root as HTMLElement).style.removeProperty(token);
+          }
+        },
+        { probes: selectors, token },
       );
     }
     const cases = [
@@ -169,22 +178,13 @@ test('compositions reuse primitive colors while unrelated roles stay independent
     ] as const;
     for (const [token, targets] of cases) {
       if (token === '--color-field-active') await page.getByTestId(`${theme}-color-field`).focus();
-      const before = await snapshot();
-      await boundary.evaluate(
-        (root, name) => (root as HTMLElement).style.setProperty(name, '#d02780'),
-        token,
-      );
-      const after = await snapshot();
+      const { before, after } = await compareToken(token);
       for (const name of Object.keys(selectors)) {
         if ((targets as readonly string[]).includes(name))
           expect(after[name], `${theme}/${token} must update ${name}`).not.toEqual(before[name]);
         else
           expect(after[name], `${theme}/${token} must leave ${name} alone`).toEqual(before[name]);
       }
-      await boundary.evaluate(
-        (root, name) => (root as HTMLElement).style.removeProperty(name),
-        token,
-      );
       if (token === '--color-field-active')
         await page
           .getByTestId(`${theme}-color-field`)

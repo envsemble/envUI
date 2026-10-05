@@ -1,6 +1,6 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
-const fixtureUrl = 'http://127.0.0.1:8766';
+const fixtureUrl = 'http://127.0.0.1:8766/rich-text.html';
 const referenceId = 'record/"42"[a]';
 const referenceLabel = 'River [east] "quote", slash/ amp&!';
 

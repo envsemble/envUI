@@ -1,10 +1,15 @@
 import { ColorsPreview } from './foundations/Colors';
 import { TypographyPreview } from './foundations/Typography';
 import { SpacingPreview } from './foundations/Spacing';
-import { IconsPreview } from './foundations/Icons';
+import { lazy, Suspense } from 'react';
+import { Text } from '@envsemble/envui';
 import { AccessibilityPreview } from './foundations/Accessibility';
 import { CompositionPreview } from './foundations/Composition';
 import { Preview } from './Preview';
+
+const IconsPreview = lazy(() =>
+  import('./foundations/Icons').then(({ IconsPreview }) => ({ default: IconsPreview })),
+);
 
 interface FoundationPreviewProps {
   id: string;
@@ -20,7 +25,11 @@ function FoundationTopic({ id, onIconUsage }: FoundationPreviewProps) {
     case 'spacing':
       return <SpacingPreview />;
     case 'icons':
-      return <IconsPreview onRequestUsage={onIconUsage} />;
+      return (
+        <Suspense fallback={<Text role="status">Loading icons…</Text>}>
+          <IconsPreview onRequestUsage={onIconUsage} />
+        </Suspense>
+      );
     case 'composition':
       return <CompositionPreview />;
     case 'accessibility':

@@ -11,10 +11,15 @@ import { SurfacePreview, LayoutPreview, RowsPreview, CardsPreview } from './Layo
 import { ChipsPreview, DisclosuresPreview } from './Content';
 import { CodePreview } from './CodeContent';
 import { MarkdownPreview } from './MarkdownContent';
-import { RichTextPreview } from './RichTextContent';
+import { lazy, Suspense } from 'react';
+import { Text } from '@envsemble/envui';
 import { EmptyStatePreview, LoadingPreview, DialogsPreview } from './Feedback';
 import { ToastsPreview } from './Toasts';
 import { ColorPickerPreview } from './ColorPicking';
+
+const RichTextPreview = lazy(() =>
+  import('./RichTextContent').then(({ RichTextPreview }) => ({ default: RichTextPreview })),
+);
 
 /** Select a topic; each preview retains its state across theme changes. */
 export function ComponentPreview({ id }: { id: string }) {
@@ -54,7 +59,11 @@ export function ComponentPreview({ id }: { id: string }) {
     case 'markdown':
       return <MarkdownPreview />;
     case 'rich-text':
-      return <RichTextPreview />;
+      return (
+        <Suspense fallback={<Text role="status">Loading rich text…</Text>}>
+          <RichTextPreview />
+        </Suspense>
+      );
     case 'disclosures':
       return <DisclosuresPreview />;
     case 'empty-state':

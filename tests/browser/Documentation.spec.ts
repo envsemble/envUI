@@ -408,13 +408,11 @@ test('offline theme toggle switches the whole page and keeps the canvas full hei
   await expect(panes.locator('.docs-swatch code').first()).not.toHaveText(darkColor!);
   await page.screenshot({
     path: testInfo.outputPath('offline-theme-light.png'),
-    fullPage: true,
     animations: 'disabled',
   });
   await page.getByRole('button', { name: 'Switch to dark theme' }).click();
   await page.screenshot({
     path: testInfo.outputPath('offline-theme-dark.png'),
-    fullPage: true,
     animations: 'disabled',
   });
   await page.evaluate(() => {

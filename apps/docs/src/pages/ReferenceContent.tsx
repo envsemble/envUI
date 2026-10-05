@@ -8,9 +8,13 @@ import {
 import { FoundationPreview } from '../previews/FoundationPreview';
 import { ComponentPreview } from '../previews/ComponentPreview';
 import { PageViews } from '../layout/PageViews';
-import { IconUsageDetails } from '../usage/IconUsage';
+import { lazy, Suspense } from 'react';
 import type { Reference } from '../Reference';
 import { getReferenceIcon } from '../navigation/TopicIcons';
+
+const IconUsageDetails = lazy(() =>
+  import('../usage/IconUsage').then(({ IconUsageDetails }) => ({ default: IconUsageDetails })),
+);
 
 function Usage({ reference, search }: { reference: Reference; search?: string }) {
   const query = new URLSearchParams(search);
@@ -23,7 +27,9 @@ function Usage({ reference, search }: { reference: Reference; search?: string })
   return (
     <>
       {reference.id === 'icons' && (
-        <IconUsageDetails name={query.get('icon')} filled={query.get('filled') === 'true'} />
+        <Suspense fallback={<Text role="status">Loading icon usage…</Text>}>
+          <IconUsageDetails name={query.get('icon')} filled={query.get('filled') === 'true'} />
+        </Suspense>
       )}
       {sections.map((section) => (
         <Stack as="section" key={section.title}>
