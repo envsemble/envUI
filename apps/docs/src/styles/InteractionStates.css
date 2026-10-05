@@ -1,0 +1,62 @@
+/* Artificial state examples are intentionally private to this application. */
+.docs-preview .docs-force-hover.env-button-primary {
+  background: var(--color-primary-action-hover);
+}
+.docs-preview .docs-force-pressed.env-button-primary {
+  background: var(--color-primary-action-pressed);
+}
+.docs-preview .docs-force-hover.env-button-important {
+  background: var(--color-accent-hover);
+}
+.docs-preview .docs-force-pressed.env-button-important {
+  background: var(--color-accent-pressed);
+}
+.docs-preview .docs-force-hover.env-button-destructive {
+  background: var(--color-destructive-action-hover);
+}
+.docs-preview .docs-force-pressed.env-button-destructive {
+  background: var(--color-destructive-action-pressed);
+}
+.docs-preview .docs-force-hover.env-button-secondary {
+  background: var(--color-secondary-action-hover);
+}
+.docs-preview .docs-force-pressed.env-button-secondary {
+  background: var(--color-secondary-action-pressed);
+}
+.docs-preview .docs-force-hover.env-button-outlined {
+  background: var(--color-subtle-action-hover);
+  border-color: var(--color-subtle-action-border-hover);
+}
+.docs-preview .docs-force-pressed.env-button-outlined {
+  background: var(--color-subtle-action-pressed);
+  border-color: var(--color-subtle-action-border-pressed);
+}
+.docs-preview .docs-force-hover.env-button-text {
+  color: var(--color-link-hover);
+}
+.docs-preview .docs-force-pressed.env-button-text {
+  color: var(--color-link-pressed);
+}
+.docs-preview .docs-force-hover.env-navigation-item {
+  background: var(--color-navigation-quiet-hover);
+}
+.docs-preview .docs-force-pressed.env-navigation-item {
+  background: var(--color-navigation-quiet-pressed);
+}
+.docs-preview .docs-force-hover.env-navigation-selected {
+  background: var(--color-navigation-hover);
+}
+.docs-preview .docs-force-pressed.env-navigation-selected {
+  background: var(--color-navigation-pressed);
+}
+.docs-preview .docs-force-focus {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: 0.125rem;
+}
+.docs-preview .docs-force-focus.env-button-outlined {
+  outline-color: var(--color-outlined-focus);
+  outline-offset: 0.0625rem;
+}
+.docs-preview .docs-force-focus.env-navigation-item {
+  outline-offset: -0.125rem;
+}

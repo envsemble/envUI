@@ -1,0 +1,126 @@
+import { useLayoutEffect } from 'react';
+import { Toast as BaseToast } from '@base-ui/react/toast';
+import { Button } from '../../actions/Button.js';
+import { InfoChip } from '../../content/InfoChip.js';
+import { Theme, useTheme } from '../../foundations/Theme.js';
+import { Close } from '../../icons/Close.js';
+import { ToastBody } from './ToastBody.js';
+import type { ToastController } from './useToastController.js';
+import type { ToastEntry } from './ToastInternals.js';
+import type { ToastPlacement } from './ToastTypes.js';
+
+export function ToastRegion({
+  placement,
+  controller,
+}: {
+  placement: ToastPlacement;
+  controller: ToastController;
+}) {
+  const toastStore = BaseToast.useToastManager<ToastEntry>();
+  const theme = useTheme();
+  const hiddenCount = toastStore.toasts.filter(
+    (toast) => toast.limited && toast.transitionStatus !== 'ending',
+  ).length;
+  useLayoutEffect(
+    () =>
+      controller.registerPlacementStore(placement, {
+        add: toastStore.add,
+        close: toastStore.close,
+      }),
+    [controller, placement, toastStore.add, toastStore.close],
+  );
+  useLayoutEffect(() => {
+    const visibleIds = new Set(
+      toastStore.toasts
+        .filter((toast) => !toast.limited && toast.transitionStatus !== 'ending')
+        .map((toast) => toast.id),
+    );
+    controller.setVisibleNotifications(placement, visibleIds);
+  }, [controller, placement, toastStore.toasts]);
+  return (
+    <BaseToast.Portal>
+      <Theme theme={theme} className="env-toast-portal-theme">
+        <BaseToast.Viewport
+          className={`env-toast-viewport env-toast-viewport-${placement}`}
+          aria-label={
+            placement === 'bottom-right' ? 'Bottom right notifications' : 'Top center notifications'
+          }
+          onFocusCapture={(event) => {
+            // F6 focuses the viewport itself. Focus inside a toast pauses only that toast.
+            controller.setViewportFocused(
+              placement,
+              event.target === event.currentTarget && event.currentTarget.matches(':focus-visible'),
+            );
+          }}
+          onBlurCapture={(event) => {
+            if (
+              event.target === event.currentTarget ||
+              !event.currentTarget.contains(event.relatedTarget)
+            )
+              controller.setViewportFocused(placement, false);
+          }}
+        >
+          {hiddenCount > 0 && (
+            <InfoChip
+              className="env-toast-queued-count"
+              role="status"
+              aria-label={`${hiddenCount} older notification${hiddenCount === 1 ? '' : 's'} hidden`}
+            >
+              +{hiddenCount}
+            </InfoChip>
+          )}
+          {toastStore.toasts.map((toast) => {
+            const entry = toast.data!;
+            return (
+              <BaseToast.Root
+                key={toast.id}
+                toast={toast}
+                className={`env-toast env-toast-${entry.variant}`}
+                onMouseEnter={() => controller.pause(toast.id, 'hover')}
+                onMouseLeave={() => controller.resume(toast.id, 'hover')}
+                onFocusCapture={(event) => {
+                  if (event.target instanceof Element && event.target.matches(':focus-visible'))
+                    controller.pause(toast.id, 'focus');
+                  else controller.resume(toast.id, 'focus');
+                }}
+                onBlurCapture={(event) => {
+                  if (!event.currentTarget.contains(event.relatedTarget))
+                    controller.resume(toast.id, 'focus');
+                }}
+              >
+                <ToastBody
+                  variant={entry.variant}
+                  message={<BaseToast.Title className="env-toast-message" title={entry.message} />}
+                  action={
+                    entry.action && (
+                      <BaseToast.Action
+                        render={
+                          <Button className="env-toast-action" onClick={entry.action.onClick} />
+                        }
+                      >
+                        {entry.action.label}
+                      </BaseToast.Action>
+                    )
+                  }
+                  dismiss={
+                    entry.dismissible !== false && (
+                      <BaseToast.Close
+                        className="env-toast-dismiss"
+                        aria-hidden={false}
+                        aria-label="Dismiss notification"
+                      >
+                        <span className="env-symbol">
+                          <Close />
+                        </span>
+                      </BaseToast.Close>
+                    )
+                  }
+                />
+              </BaseToast.Root>
+            );
+          })}
+        </BaseToast.Viewport>
+      </Theme>
+    </BaseToast.Portal>
+  );
+}

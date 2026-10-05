@@ -5,7 +5,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: design-system-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: envui-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 jobs:
   check:
@@ -19,8 +19,23 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 24
-      - name: Build the committed gallery
-        run: npm run build
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium firefox webkit
+      - name: Validate package and offline documentation
+        run: npm run verify
+      - name: Save offline reference
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: envui-reference
+          path: dist/envUI.html
+          if-no-files-found: error
+      - name: Save browser failure traces
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: browser-failure-traces
+          path: test-results
+          if-no-files-found: ignore
   betterleaks:
     name: Betterleaks
     runs-on: ubuntu-latest

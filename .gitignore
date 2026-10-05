@@ -1,3 +1,7 @@
 dist/
 node_modules/
 .playwright-cli/
+test-results/
+playwright-report/
+.cache/
+*.tgz

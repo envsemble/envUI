@@ -1,0 +1,257 @@
+/* Native text controls share their floating caption, geometry and validation colors. */
+.env-form-field {
+  --env-field-error-color: var(--color-field-error);
+  display: grid;
+  align-content: start;
+  gap: calc(var(--space-3) * var(--scale, 1));
+  min-width: 0;
+  font: var(--type-body-small);
+  color: var(--color-field-text);
+}
+.env-field-hint,
+.env-field-error {
+  font: var(--type-body-small);
+  font-size: calc(var(--font-size-body-small) * var(--scale, 1));
+}
+.env-field-hint {
+  color: var(--color-field-hint);
+}
+.env-field-error {
+  display: flex;
+  align-items: flex-start;
+  gap: calc(var(--space-2) * var(--scale, 1));
+  color: var(--env-field-error-color);
+}
+.env-field-error > svg {
+  flex-shrink: 0;
+  width: calc(var(--control-icon-size) * var(--scale, 1));
+  height: calc(var(--control-icon-size) * var(--scale, 1));
+  margin-block-start: calc(0.125rem * var(--scale, 1));
+}
+.env-text-field:has(> .env-text-field-well > label) {
+  padding-block-start: calc(var(--space-2) * var(--scale, 1));
+}
+.env-text-field-well {
+  --env-field-border-base: var(--color-field-border);
+  --env-field-interaction-color: var(--color-field-active);
+  --env-field-border-color: var(--env-field-border-base);
+  position: relative;
+  min-width: 0;
+  border: calc(0.0625rem * var(--scale, 1)) solid var(--env-field-border-color);
+  border-radius: calc(var(--md-sys-shape-corner-large) * var(--scale, 1));
+  background: var(--color-field);
+  transition: border-color var(--motion-duration-medium) var(--motion-ease);
+}
+@media (hover: hover) {
+  .env-text-field-well:hover:not(:has(> .env-text-input:disabled)) {
+    --env-field-border-color: hsl(
+      from var(--env-field-interaction-color) h s var(--state-hover-lightness)
+    );
+  }
+  .env-text-field-well[data-variant='plain']:hover:not(:has(> .env-text-input:disabled)) {
+    border-block-end-color: var(--env-field-border-color);
+  }
+  .env-text-field-well[data-variant='plain']:hover:not(:has(> .env-text-input:disabled))
+    > .env-textarea-resize-edge::after {
+    opacity: 1;
+  }
+}
+.env-text-field-well:is(:active, :has(> .env-textarea-resize-edge[data-resizing])):not(
+    :has(> .env-text-input:disabled)
+  ) {
+  --env-field-border-color: hsl(
+    from var(--env-field-interaction-color) h s var(--state-pressed-lightness)
+  );
+}
+.env-text-field-well:focus-within {
+  --env-field-border-color: var(--env-field-interaction-color);
+}
+.env-text-input {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: calc(3.5rem * var(--scale, 1));
+  margin: 0;
+  padding: calc(var(--space-4) * var(--scale, 1));
+  border: 0;
+  border-radius: inherit;
+  outline: none;
+  background: transparent;
+  color: var(--color-field-text);
+  font: var(--type-body);
+  font-size: calc(var(--font-size-body) * var(--scale, 1));
+  caret-color: var(--color-field-active);
+}
+.env-text-input::placeholder {
+  color: var(--color-field-placeholder);
+  opacity: 1;
+}
+.env-text-field-well > label {
+  position: absolute;
+  inset-block-start: calc(1.0625rem * var(--scale, 1));
+  inset-inline-start: calc(var(--space-4) * var(--scale, 1));
+  max-width: calc(100% - var(--space-6) * var(--scale, 1));
+  overflow: hidden;
+  color: var(--color-field-label);
+  font: var(--type-body);
+  font-size: calc(var(--font-size-body) * var(--scale, 1));
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: text;
+  transition:
+    inset-block-start var(--motion-duration-medium) var(--motion-ease),
+    font-size var(--motion-duration-medium) var(--motion-ease),
+    color var(--motion-duration-medium) var(--motion-ease),
+    padding var(--motion-duration-medium) var(--motion-ease);
+}
+/* Native placeholder state tracks controlled values, autofill and form reset without JS. */
+.env-text-field-well:has(> .env-text-input:focus, > .env-text-input:not(:placeholder-shown))
+  > label {
+  inset-block-start: calc(-0.625rem * var(--scale, 1));
+  padding-inline: calc(var(--space-1) * var(--scale, 1));
+  margin-inline-start: calc(-0.25rem * var(--scale, 1));
+  background: inherit;
+  font-size: calc(var(--font-size-body-small) * var(--scale, 1));
+}
+.env-text-field-well:has(> label) > .env-text-input:not(:focus)::placeholder {
+  color: transparent;
+}
+.env-text-field-well:focus-within > label {
+  color: var(--color-field-active);
+}
+.env-text-field-well[data-variant='plain'] {
+  border-color: transparent;
+  border-radius: 0;
+  background: transparent;
+}
+.env-text-field-well[data-variant='plain'] > .env-text-input {
+  padding-inline: 0;
+}
+.env-text-field-well[data-variant='plain'] > label {
+  inset-inline-start: 0;
+  max-width: 100%;
+}
+.env-text-field-well[data-variant='plain']:focus-within {
+  border-block-end-color: var(--env-field-border-color);
+  box-shadow: 0 calc(0.0625rem * var(--scale, 1)) 0 var(--env-field-border-color);
+}
+/* Invalid outlined controls recolor their existing border; plain controls use an underline. */
+.env-text-field-well:has(> .env-text-input[aria-invalid='true']),
+.env-dropdown-trigger[aria-invalid='true'] {
+  --env-field-border-base: var(--env-field-error-color);
+  --env-field-interaction-color: var(--env-field-error-color);
+}
+.env-text-field-well[data-variant='plain']:has(> .env-text-input[aria-invalid='true'])::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  block-size: calc(0.125rem * var(--scale, 1));
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--env-field-border-color);
+  pointer-events: none;
+  transition: background-color var(--motion-duration-medium) var(--motion-ease);
+}
+.env-text-field-well[data-variant='plain']:has(> .env-text-input[aria-invalid='true']) {
+  border-block-end-color: transparent;
+  box-shadow: none;
+}
+/* Invalid plain fields still need a visible change when reached by keyboard. */
+.env-text-field-well[data-variant='plain']:has(> :focus-visible)::after {
+  block-size: calc(0.25rem * var(--scale, 1));
+}
+.env-text-field-well:has(> .env-text-input[aria-invalid='true']) > label {
+  color: var(--env-field-error-color);
+}
+.env-text-field-well:has(> .env-text-input:disabled) {
+  opacity: var(--state-disabled-opacity);
+}
+.env-text-input:disabled,
+.env-text-field-well:has(> .env-text-input:disabled) > label {
+  cursor: default;
+}
+textarea.env-text-input {
+  min-height: calc(7.5rem * var(--scale, 1));
+  field-sizing: fixed;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  resize: none;
+}
+textarea.env-text-input[data-sizing='content'] {
+  field-sizing: content;
+  min-height: max(
+    calc(7.5rem * var(--scale, 1)),
+    calc(var(--env-textarea-rows, 2) * 1lh + var(--space-6) * var(--scale, 1))
+  );
+}
+.env-textarea-resize-edge {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: calc(-0.0625rem * var(--scale, 1));
+  block-size: calc(var(--space-3) * var(--scale, 1));
+  padding: 0;
+  margin: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--env-field-border-color);
+  cursor: ns-resize;
+  touch-action: none;
+  user-select: none;
+  transition: color var(--motion-duration-medium) var(--motion-ease);
+}
+.env-textarea-resize-edge::after {
+  content: '';
+  position: absolute;
+  inset-inline: calc(var(--md-sys-shape-corner-large) * var(--scale, 1));
+  inset-block-end: 0;
+  block-size: calc(0.125rem * var(--scale, 1));
+  border-radius: var(--md-sys-shape-corner-full);
+  background: currentColor;
+  pointer-events: none;
+}
+.env-text-field-well[data-variant='plain'] > .env-textarea-resize-edge::after {
+  inset-inline: 0;
+  block-size: calc(0.0625rem * var(--scale, 1));
+  opacity: 0;
+}
+.env-text-field-well[data-variant='plain']:focus-within > .env-textarea-resize-edge::after,
+.env-text-field-well[data-variant='plain'] > .env-textarea-resize-edge[data-resizing]::after {
+  opacity: 1;
+}
+/* Older browsers retain the shared edge when native content sizing is unavailable. */
+@supports (field-sizing: content) {
+  textarea.env-text-input[data-sizing='content'] + .env-textarea-resize-edge {
+    display: none;
+  }
+}
+textarea.env-text-input:disabled + .env-textarea-resize-edge {
+  display: none;
+}
+@media (pointer: coarse) {
+  .env-textarea-resize-edge {
+    block-size: calc(var(--control-height-touch) * var(--scale, 1));
+  }
+  textarea.env-text-input:not(:disabled):has(+ .env-textarea-resize-edge) {
+    padding-block-end: calc(var(--control-height-touch) * var(--scale, 1));
+  }
+  @supports (field-sizing: content) {
+    textarea.env-text-input[data-sizing='content']:not(:disabled) {
+      padding-block-end: calc(var(--space-4) * var(--scale, 1));
+    }
+  }
+}
+.env-choice-control,
+.env-radio-option,
+.env-form-field {
+  font-size: calc(var(--font-size-body-small) * var(--scale, 1));
+}
+@media (prefers-reduced-motion: reduce) {
+  .env-text-field-well,
+  .env-text-field-well::after,
+  .env-text-field-well > label,
+  .env-textarea-resize-edge {
+    transition: none;
+  }
+}

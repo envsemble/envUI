@@ -1,0 +1,55 @@
+/* Centered dialogs and edge panels share surface, text, and action geometry. */
+.env-modal-pane {
+  color: var(--color-text-primary);
+  font: var(--type-body);
+  width: min(28rem, 100%);
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  pointer-events: auto;
+}
+.env-dialog-title,
+.env-dialog-description {
+  margin: 0;
+}
+.env-dialog-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+.env-dialog-title {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+.env-modal-pane[data-placement='right'] {
+  inline-size: min(24rem, 100%);
+  block-size: 100dvh;
+  max-block-size: none;
+  border-inline-start: 0.0625rem solid var(--color-border-strong);
+}
+.env-dialog-title {
+  font: var(--type-h1);
+}
+.env-dialog-description {
+  font: var(--type-body-small);
+  color: var(--color-text-muted);
+}
+.env-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: hsl(from var(--color-dialog-overlay) h s l / var(--state-dialog-overlay-opacity));
+}
+.env-dialog-positioner {
+  position: fixed;
+  inset: 0;
+  z-index: 101;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  pointer-events: none;
+}
+.env-dialog-positioner[data-placement='right'] {
+  place-items: stretch end;
+  padding: 0;
+}

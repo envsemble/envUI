@@ -1,0 +1,22 @@
+/* Private connected-row geometry shared across list, radio and select semantics. */
+.env-connected-rows {
+  --env-connected-row-scale: var(--scale, 1);
+}
+.env-grouped-rows.env-connected-rows {
+  --env-connected-row-scale: 1;
+}
+.env-connected-rows > .env-connected-row {
+  border-radius: calc(var(--radius-row-inner) * var(--env-connected-row-scale));
+}
+.env-connected-rows > .env-connected-row:nth-child(1 of .env-connected-row) {
+  border-start-start-radius: calc(var(--radius-row-outer) * var(--env-connected-row-scale));
+  border-start-end-radius: calc(var(--radius-row-outer) * var(--env-connected-row-scale));
+}
+.env-connected-rows > .env-connected-row:nth-last-child(1 of .env-connected-row) {
+  border-end-start-radius: calc(var(--radius-row-outer) * var(--env-connected-row-scale));
+  border-end-end-radius: calc(var(--radius-row-outer) * var(--env-connected-row-scale));
+}
+.env-connected-rows
+  > .env-connected-row:nth-child(1 of .env-connected-row):nth-last-child(1 of .env-connected-row) {
+  border-radius: calc(var(--radius-row-single) * var(--env-connected-row-scale));
+}

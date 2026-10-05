@@ -1,6 +1,0 @@
-Material Symbols Rounded SVG assets are from Google's material-design-icons repository:
-https://github.com/google/material-design-icons
-
-These assets use the 24px optical size, weight 400, grade 0, and fill 0 or 1.
-They are licensed under the Apache License, Version 2.0. See
-src/client/assets/material-symbols-license.txt.

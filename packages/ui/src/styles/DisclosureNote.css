@@ -1,0 +1,58 @@
+.env-disclosure-note {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-disclosure-text);
+  font: var(--type-body-small);
+}
+.env-disclosure-note > summary {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  list-style: none;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  cursor: pointer;
+  width: fit-content;
+  max-width: 100%;
+}
+.env-disclosure-note > summary::-webkit-details-marker {
+  display: none;
+}
+.env-disclosure-note > summary::before {
+  content: '›';
+  flex: 0 0 0.5rem;
+  text-align: center;
+}
+.env-disclosure-note[open] > summary::before {
+  transform: rotate(90deg);
+}
+.env-disclosure-note > summary:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: 0.25rem;
+}
+.env-disclosure-note > summary:hover {
+  color: var(--color-quiet-label-hover);
+}
+.env-disclosure-note > summary:active {
+  color: var(--color-quiet-label-pressed);
+}
+@media (pointer: coarse) {
+  .env-disclosure-note > summary {
+    min-block-size: var(--control-height-touch);
+    align-items: center;
+  }
+}
+.env-disclosure-content {
+  margin: var(--space-2) 0 0 var(--space-4);
+  color: inherit;
+  font: inherit;
+}
+.env-disclosure-content > :where(p:not(.env-text)) {
+  color: inherit;
+  font: inherit;
+}
+.env-disclosure-content > :is(ul, ol) {
+  padding-inline-start: var(--space-5);
+}

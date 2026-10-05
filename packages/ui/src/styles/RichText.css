@@ -1,0 +1,100 @@
+.env-rich-text-editor {
+  min-inline-size: 0;
+}
+.env-rich-text-editor > .env-form-field {
+  gap: var(--space-3);
+}
+.env-rich-text-document {
+  min-block-size: 10rem;
+  padding: var(--space-4);
+  border: 0.0625rem solid var(--color-markdown-border);
+  border-radius: 0.25rem;
+  background: var(--color-field);
+}
+.env-rich-text-editor[data-variant='plain'] .env-rich-text-document {
+  border-color: transparent;
+  background: transparent;
+}
+.env-rich-text-document:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: 0.125rem;
+}
+.env-rich-text-document[aria-invalid='true'] {
+  border-color: var(--color-field-error);
+}
+.env-rich-text-editor[data-disabled] {
+  opacity: 0.55;
+}
+.env-rich-text-document p.is-editor-empty:first-child::before {
+  color: var(--color-text-muted);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+.env-rich-text :where(ul[data-type='taskList']),
+.env-rich-text-document :where(ul[data-type='taskList']) {
+  list-style: none;
+  padding-inline-start: 0;
+}
+.env-rich-text :where(li[data-type='taskItem']),
+.env-rich-text-document :where(li[data-type='taskItem']) {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+.env-rich-text :where(li[data-type='taskItem'] > div),
+.env-rich-text-document :where(li[data-type='taskItem'] > div) {
+  flex: 1;
+}
+.env-rich-text-document pre {
+  padding: var(--space-4);
+  background: var(--color-field);
+  overflow: auto;
+  white-space: pre;
+}
+.env-rich-text-document .tableWrapper {
+  overflow-x: auto;
+}
+.env-rich-text-document td,
+.env-rich-text-document th {
+  min-inline-size: 3rem;
+  position: relative;
+}
+.env-rich-text-document .selectedCell {
+  background: var(--color-field);
+}
+.env-rich-text-reference {
+  display: inline;
+  padding: 0 var(--space-1);
+  border-radius: 0.25rem;
+  background: var(--color-field);
+  color: var(--color-text-primary);
+  text-decoration: none;
+  box-decoration-break: clone;
+}
+.env-rich-text-reference:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+}
+.env-rich-text-suggestions {
+  display: grid;
+  gap: var(--space-1);
+  min-inline-size: 12rem;
+  max-inline-size: min(24rem, 90vw);
+  max-block-size: 18rem;
+  overflow: auto;
+  padding: var(--space-2);
+  border: 0.0625rem solid var(--color-markdown-border);
+  border-radius: 0.25rem;
+  background: var(--color-field);
+  color: var(--color-text-primary);
+  box-shadow: 0 0.25rem 1rem #0002;
+  z-index: 100;
+}
+.env-rich-text-suggestions .env-button {
+  justify-content: start;
+}
+.env-rich-text-suggestions [aria-selected='true'] {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: -0.125rem;
+}

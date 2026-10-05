@@ -1,0 +1,48 @@
+import { ColorsPreview } from './foundations/Colors';
+import { TypographyPreview } from './foundations/Typography';
+import { SpacingPreview } from './foundations/Spacing';
+import { lazy, Suspense } from 'react';
+import { Text } from '@envsemble/envui';
+import { AccessibilityPreview } from './foundations/Accessibility';
+import { CompositionPreview } from './foundations/Composition';
+import { Preview } from './Preview';
+
+const IconsPreview = lazy(() =>
+  import('./foundations/Icons').then(({ IconsPreview }) => ({ default: IconsPreview })),
+);
+
+interface FoundationPreviewProps {
+  id: string;
+  onIconUsage?: (name: string, filled: boolean) => void;
+}
+
+function FoundationTopic({ id, onIconUsage }: FoundationPreviewProps) {
+  switch (id) {
+    case 'colors':
+      return <ColorsPreview />;
+    case 'typography':
+      return <TypographyPreview />;
+    case 'spacing':
+      return <SpacingPreview />;
+    case 'icons':
+      return (
+        <Suspense fallback={<Text role="status">Loading icons…</Text>}>
+          <IconsPreview onRequestUsage={onIconUsage} />
+        </Suspense>
+      );
+    case 'composition':
+      return <CompositionPreview />;
+    case 'accessibility':
+      return <AccessibilityPreview />;
+    default:
+      return null;
+  }
+}
+
+export function FoundationPreview(props: FoundationPreviewProps) {
+  return (
+    <Preview>
+      <FoundationTopic {...props} />
+    </Preview>
+  );
+}

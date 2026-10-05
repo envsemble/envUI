@@ -1,0 +1,9 @@
+// Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
+// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+import { Icon, type MaterialSymbolProps } from '../Icon.js';
+import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+
+export function BackgroundGridSmall({ filled: requestedFill, ...props }: MaterialSymbolProps) {
+  const filled = useMaterialSymbolFill(requestedFill);
+  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M200-120h40v-120H120v40q0 33 23.5 56.5T200-120Zm120 0h120v-120H320v120Zm200 0h120v-120H520v120Zm200 0h40q33 0 56.5-23.5T840-200v-40H720v120ZM120-720h120v-120h-40q-33 0-56.5 23.5T120-760v40Zm0 200h120v-120H120v120Zm0 200h120v-120H120v120Zm200-400h120v-120H320v120Zm0 200h120v-120H320v120Zm0 200h120v-120H320v120Zm200-400h120v-120H520v120Zm0 200h120v-120H520v120Zm0 200h120v-120H520v120Zm200-400h120v-40q0-33-23.5-56.5T760-840h-40v120Zm0 200h120v-120H720v120Zm0 200h120v-120H720v120Z" /> : <path d="M200-200h80v-80h-80v80Zm160 0h80v-80h-80v80Zm160 0h80v-80h-80v80Zm160 0h80v-80h-80v80ZM200-680h80v-80h-80v80Zm0 160h80v-80h-80v80Zm0 160h80v-80h-80v80Zm160-320h80v-80h-80v80Zm0 160h80v-80h-80v80Zm0 160h80v-80h-80v80Zm160-320h80v-80h-80v80Zm0 160h80v-80h-80v80Zm0 160h80v-80h-80v80Zm160-320h80v-80h-80v80Zm0 160h80v-80h-80v80Zm0 160h80v-80h-80v80ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Z" />}</Icon>;
+}

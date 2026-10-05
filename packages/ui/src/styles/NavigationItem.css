@@ -1,0 +1,71 @@
+.env-navigation-item {
+  inline-size: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: calc(0.5rem * var(--scale, 1));
+  padding: calc(0.25rem * var(--scale, 1)) calc(0.75rem * var(--scale, 1));
+  min-height: calc(var(--control-height) * var(--scale, 1));
+  border: 0;
+  border-radius: 100vmax;
+  background: transparent;
+  color: var(--color-navigation-text);
+  font: 400 calc(0.9375rem * var(--scale, 1)) / 1.4 var(--font-family);
+  text-decoration: none;
+}
+
+.env-navigation-selected {
+  color: var(--color-on-navigation-selected);
+  background: var(--color-navigation-selected);
+}
+
+.env-navigation-compact {
+  font-size: calc(var(--font-size-body-small) * var(--scale, 1));
+}
+
+.env-navigation-icon-only {
+  inline-size: calc(var(--control-height) * var(--scale, 1));
+  block-size: calc(var(--control-height) * var(--scale, 1));
+  min-inline-size: calc(var(--control-height) * var(--scale, 1));
+  flex-shrink: 0;
+  justify-content: center;
+  padding: 0;
+}
+
+.env-navigation-item:not(.env-navigation-selected):not(:disabled):not([aria-disabled='true'])
+  .env-symbol {
+  color: var(--color-navigation-icon);
+}
+
+.env-navigation-selected .env-symbol {
+  color: inherit;
+}
+
+.env-navigation-item:hover:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-navigation-quiet-hover);
+}
+
+.env-navigation-item:active:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-navigation-quiet-pressed);
+}
+
+.env-navigation-selected:hover:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-navigation-hover);
+}
+
+.env-navigation-selected:active:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-navigation-pressed);
+}
+
+.env-navigation-item:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: -0.125rem;
+}
+
+.env-navigation-item:is(:disabled, [aria-disabled='true']) {
+  opacity: var(--state-disabled-opacity);
+  cursor: default;
+}
+
+.env-navigation-item:is(:disabled, [aria-disabled='true']) .env-symbol {
+  color: inherit;
+}

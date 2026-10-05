@@ -1,0 +1,87 @@
+{
+  "name": "@envsemble/envui",
+  "version": "0.1.0",
+  "description": "envUI: the internal envsemble React component library",
+  "type": "module",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/envsemble/design-system.git",
+    "directory": "packages/ui"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "USAGE.md",
+    "CHANGELOG.md",
+    "THIRD_PARTY_NOTICES.md",
+    "licenses",
+    "icon-manifest.json"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    ".": {
+      "envui-source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./rich-text": {
+      "envui-source": "./src/rich-text.ts",
+      "types": "./dist/rich-text.d.ts",
+      "import": "./dist/rich-text.js"
+    },
+    "./content": {
+      "envui-source": "./src/content.ts",
+      "types": "./dist/content.d.ts",
+      "import": "./dist/content.js"
+    },
+    "./styles.css": {
+      "envui-source": "./src/styles/index.css",
+      "default": "./dist/styles.css"
+    },
+    "./icons": {
+      "envui-source": "./src/icons/index.ts",
+      "types": "./dist/icons/index.d.ts",
+      "import": "./dist/icons/index.js"
+    },
+    "./icons/*": {
+      "envui-source": "./src/icons/*.tsx",
+      "types": "./dist/icons/*.d.ts",
+      "import": "./dist/icons/*.js"
+    },
+    "./assets/*": "./dist/assets/*",
+    "./package.json": "./package.json"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "dependencies": {
+    "@base-ui/react": "1.8.0",
+    "@shikijs/langs": "4.5.0",
+    "@shikijs/themes": "4.5.0",
+    "@tiptap/core": "3.31.4",
+    "@tiptap/extension-image": "3.31.4",
+    "@tiptap/extension-list": "3.31.4",
+    "@tiptap/extension-mention": "3.31.4",
+    "@tiptap/extension-placeholder": "3.31.4",
+    "@tiptap/extension-table": "3.31.4",
+    "@tiptap/markdown": "3.31.4",
+    "@tiptap/pm": "3.31.4",
+    "@tiptap/react": "3.31.4",
+    "@tiptap/starter-kit": "3.31.4",
+    "@tiptap/static-renderer": "3.31.4",
+    "@tiptap/suggestion": "3.31.4",
+    "marked": "17.0.6",
+    "react-colorful": "5.8.1",
+    "react-markdown": "10.1.0",
+    "remark-gfm": "4.0.1",
+    "shiki": "4.5.0"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  }
+}

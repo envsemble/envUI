@@ -1,0 +1,148 @@
+/* Canonical control geometry shared by native buttons and button links. */
+
+.env-button {
+  inline-size: fit-content;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(0.4375rem * var(--scale, 1));
+  min-height: calc(var(--control-height-small) * var(--scale, 1));
+  padding: calc(0.25rem * var(--scale, 1)) calc(0.75rem * var(--scale, 1));
+  border: 0.0625rem solid transparent;
+  border-radius: 100vmax;
+  font: 400 calc(0.875rem * var(--scale, 1)) / 1.4 var(--font-family);
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
+  text-decoration: none;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+}
+
+.env-button-primary {
+  background: var(--color-primary-action);
+  color: var(--color-on-primary-action);
+  border: 0;
+}
+
+.env-button-primary:hover:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-primary-action-hover);
+}
+
+.env-button-primary:active:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-primary-action-pressed);
+}
+
+.env-button-secondary {
+  background: var(--color-secondary-action);
+  color: var(--color-on-secondary-action);
+  border: 0;
+}
+
+.env-button-secondary:hover:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-secondary-action-hover);
+}
+
+.env-button-secondary:active:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-secondary-action-pressed);
+}
+
+.env-button-outlined {
+  background: var(--color-subtle-action);
+  color: var(--color-on-subtle-action);
+  border-color: var(--color-subtle-action-border);
+}
+
+.env-button-outlined:hover:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-subtle-action-hover);
+  border-color: var(--color-subtle-action-border-hover);
+}
+
+.env-button-outlined:active:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-subtle-action-pressed);
+  border-color: var(--color-subtle-action-border-pressed);
+}
+
+.env-button-text {
+  padding-inline: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-link);
+  cursor: pointer;
+}
+
+.env-button-text.env-button-underlined {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.env-button-text:hover:not(:disabled):not([aria-disabled='true']) {
+  color: var(--color-link-hover);
+}
+
+.env-button-text:active:not(:disabled):not([aria-disabled='true']) {
+  color: var(--color-link-pressed);
+}
+
+.env-link {
+  display: inline;
+  min-height: 0;
+  padding: 0;
+  border-radius: var(--radius-standard);
+  font: inherit;
+  text-align: inherit;
+}
+
+.env-button-destructive {
+  background: var(--color-destructive-action);
+  color: var(--color-on-destructive-action);
+  border: 0;
+}
+
+.env-button-destructive:hover:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-destructive-action-hover);
+}
+
+.env-button-destructive:active:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-destructive-action-pressed);
+}
+
+.env-button-important {
+  --icon-button-size: var(--control-height-compact);
+  min-height: calc(var(--control-height-compact) * var(--scale, 1));
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  border: 0;
+  border-radius: calc(var(--radius-standard) * var(--scale, 1));
+}
+
+.env-button-important:hover:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-accent-hover);
+}
+
+.env-button-important:active:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-accent-pressed);
+}
+
+.env-button:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: 0.125rem;
+}
+
+.env-button-outlined:focus-visible {
+  outline-color: var(--color-outlined-focus);
+  outline-offset: 0.0625rem;
+}
+
+.env-button:is(:disabled, [aria-disabled='true']) {
+  opacity: var(--state-disabled-opacity);
+  cursor: default;
+}
+
+.env-button.env-icon-button {
+  width: calc(var(--icon-button-size) * var(--scale, 1));
+  height: calc(var(--icon-button-size) * var(--scale, 1));
+  min-height: calc(var(--icon-button-size) * var(--scale, 1));
+  flex-shrink: 0;
+  padding: 0;
+}
