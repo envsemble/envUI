@@ -9,6 +9,42 @@ const version = JSON.parse(readFileSync('packages/ui/package.json', 'utf8')).ver
 const components = references.map(({ id }) => id);
 const foundations = foundationReferences.map(({ id }) => id);
 
+test('Markdown combines rendering and one editor demo, including old editor bookmarks', async ({
+  page,
+}) => {
+  await page.goto(`${offline}#/components/markdown-editor/preview`);
+  await expect(
+    page.getByRole('heading', { name: 'Markdown', exact: true, level: 1 }),
+  ).toBeVisible();
+  const preview = page.locator('.docs-preview');
+  await expect(
+    preview.getByRole('heading', { name: 'Rendered markdown', exact: true }),
+  ).toBeVisible();
+  await expect(
+    preview.getByRole('heading', { name: 'Markdown editor demo', exact: true }),
+  ).toBeVisible();
+  await expect(preview.getByText(/This demo is not saved/)).toBeVisible();
+  await expect(preview.locator('.env-markdown-editor')).toHaveCount(1);
+  const source = preview.getByRole('textbox', { name: 'Markdown input' });
+  await source.fill('## Edited demo\n\nA **new** draft.');
+  const editor = preview.locator('.env-card').last();
+  await editor.getByRole('tab', { name: 'Output', exact: true }).click();
+  await expect(editor.getByRole('heading', { name: 'Edited demo' })).toBeVisible();
+  await editor.getByRole('tab', { name: 'Input', exact: true }).click();
+  await expect(source).toHaveValue('## Edited demo\n\nA **new** draft.');
+  await expect(preview.getByText('Demo markdown source', { exact: true })).toHaveCount(0);
+  const renderer = preview.locator('.env-card').first();
+  await renderer.getByRole('tab', { name: 'Input', exact: true }).click();
+  await expect(renderer.locator('code')).toContainText('## Project checklist');
+  await renderer.getByRole('tab', { name: 'Output', exact: true }).click();
+  await expect(renderer.getByRole('heading', { name: 'Project checklist' })).toBeVisible();
+  await page.goto(`${offline}#/components/markdown-editor/usage`);
+  await expect(page.getByRole('heading', { name: 'Render content', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Edit and preview', exact: true })).toBeVisible();
+  expect(references.filter(({ id }) => id === 'markdown')).toHaveLength(1);
+  expect(references.some(({ id }) => id === 'markdown-editor')).toBe(false);
+});
+
 test('palette editing uses public controls and remains temporary and independent between themes', async ({
   page,
 }) => {

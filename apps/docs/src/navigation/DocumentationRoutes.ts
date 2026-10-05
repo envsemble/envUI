@@ -62,6 +62,7 @@ export function normalizeRoute(route: string): string {
     .replace(/^components\/text(?=\/|$)/, 'foundations/typography')
     .replace(/^components\/notes(?=\/|$)/, 'components/disclosures')
     .replace(/^components\/icon-buttons(?=\/|$)/, 'components/buttons')
+    .replace(/^components\/markdown-editor(?=\/|$)/, 'components/markdown')
     .replace(/^components\/(input|textarea)(?=\/|$)/, 'components/fields')
     .replace(/^foundations\/responsive(?=\/|$)/, 'foundations/spacing')
     .replace(/^foundations\/motion(?=\/|$)/, 'foundations/accessibility');

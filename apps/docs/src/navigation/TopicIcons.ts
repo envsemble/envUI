@@ -14,7 +14,6 @@ import { CheckBox } from '@envsemble/envui/icons/CheckBox';
 import { Code } from '@envsemble/envui/icons/Code';
 import { CropSquare } from '@envsemble/envui/icons/CropSquare';
 import { Dashboard } from '@envsemble/envui/icons/Dashboard';
-import { EditNote } from '@envsemble/envui/icons/EditNote';
 import { Explore } from '@envsemble/envui/icons/Explore';
 import { Extension } from '@envsemble/envui/icons/Extension';
 import { FormatLineSpacing } from '@envsemble/envui/icons/FormatLineSpacing';
@@ -63,7 +62,6 @@ const referenceIcons: Record<string, typeof Palette> = {
   cards: Dashboard,
   buttons: TouchApp,
   fields: TextFields,
-  'markdown-editor': EditNote,
   checkbox: CheckBox,
   switch: ToggleOn,
   radio: RadioButtonChecked,

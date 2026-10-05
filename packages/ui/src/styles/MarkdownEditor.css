@@ -18,9 +18,7 @@
   max-inline-size: none;
 }
 .env-markdown-source {
-  font-family: var(--font-family-code);
-  font-size: var(--font-size-code);
-  line-height: 1.7;
+  caret-color: light-dark(var(--color-field-text), var(--color-white));
   tab-size: 2;
 }
 .env-markdown-editor-status:empty {
