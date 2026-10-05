@@ -99,6 +99,12 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
               ),
               content: 'Third panel',
             },
+            {
+              value: 'unavailable',
+              button: <Button data-testid={`${theme}-tab-disabled`}>Unavailable tab</Button>,
+              content: 'Unavailable panel',
+              disabled: true,
+            },
           ]}
         />
         <Link href="#" data-testid={`${theme}-color-link`}>

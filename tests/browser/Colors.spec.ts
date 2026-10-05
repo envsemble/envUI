@@ -218,6 +218,29 @@ test('compositions reuse primitive colors while unrelated roles stay independent
         color,
       );
     }
+    const selected = boundary.getByRole('tab', { name: 'Third tab' });
+    const selectedFill = await selected.evaluate(
+      (element) => getComputedStyle(element).backgroundColor,
+    );
+    const rail = boundary.locator('.env-tabs-list');
+    const railLightness = await lightness(rail);
+    for (const id of ['tab-primary', 'tab-secondary']) {
+      const inactive = page.getByTestId(`${theme}-${id}`);
+      await expect(inactive).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+      await inactive.hover();
+      expect(await lightness(inactive)).toBeCloseTo(
+        railLightness + (railLightness < 50 ? 2 : -2),
+        0,
+      );
+      await expect(inactive).toHaveAttribute('aria-selected', 'false');
+      await expect(selected).toHaveCSS('background-color', selectedFill);
+      await page.mouse.move(0, 0);
+    }
+    const disabled = page.getByTestId(`${theme}-tab-disabled`);
+    await disabled.hover();
+    await expect(disabled).toBeDisabled();
+    await expect(disabled).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+    await expect(selected).toHaveAttribute('aria-selected', 'true');
   }
 });
 
