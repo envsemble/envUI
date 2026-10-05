@@ -2,7 +2,8 @@ import { expect, test } from '@playwright/test';
 
 const optionalImplementation =
   /\/(?:RichTextContent|RichTextEditing)\.tsx|\/rich-text(?:\.ts|\/)|\/@tiptap/;
-const iconCatalogue = /\/(?:IconCatalogue|IconUsage)\.tsx|\/icons\/index\.ts/;
+const iconCatalogue =
+  /\/(?:IconCatalogue|IconUsage)\.tsx|\/icons\/index\.ts|\/@envsemble_envui_icons\.js/;
 
 test('unrelated documentation routes load optional features only when requested', async ({
   page,

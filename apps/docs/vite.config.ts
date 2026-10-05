@@ -8,6 +8,8 @@ export default defineConfig({
     conditions: ['envui-source', 'module', 'browser', 'development|production'],
     dedupe: ['react', 'react-dom'],
   },
+  // The linked catalogue has thousands of modules; serve it as one lazy dependency in dev.
+  optimizeDeps: { include: ['@envsemble/envui/icons'] },
   build: {
     outDir: '../../dist/docs',
     emptyOutDir: true,
