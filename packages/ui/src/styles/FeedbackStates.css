@@ -7,10 +7,12 @@
   gap: var(--space-4);
 }
 .env-loading-state {
+  min-inline-size: 0;
   display: grid;
   gap: var(--space-2);
 }
 .env-skeleton {
+  max-inline-size: 100%;
   display: block;
   height: 0.8rem;
   border-radius: var(--radius-standard);

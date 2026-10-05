@@ -1,4 +1,7 @@
 .env-disclosure-note {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
   margin: 0;
   padding: 0;
   border: 0;
@@ -11,8 +14,8 @@
   align-items: baseline;
   gap: 0.5rem;
   list-style: none;
-  white-space: nowrap;
-  overflow-wrap: normal;
+  white-space: normal;
+  overflow-wrap: anywhere;
   cursor: pointer;
   width: fit-content;
   max-width: 100%;

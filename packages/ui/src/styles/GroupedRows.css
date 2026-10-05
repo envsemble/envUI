@@ -1,5 +1,7 @@
 /* Grouped-row geometry is shared with selectable rows and select options. */
 .env-grouped-rows {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
   display: grid;
   gap: 0.125rem;
   margin: 0;
@@ -18,6 +20,10 @@
   font: var(--type-body-small);
   background: var(--color-row);
   color: var(--color-row-text);
+}
+.env-grouped-rows > .env-row > * {
+  min-inline-size: 0;
+  max-inline-size: 100%;
 }
 .env-grouped-rows small {
   display: block;

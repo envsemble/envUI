@@ -140,4 +140,30 @@ test('placement stacks, keyboard access, single-line sizing and contextual actio
   expect(geometry.scroll).toBeLessThanOrEqual(geometry.width);
   expect(geometry.whiteSpace).toBe('nowrap');
   expect(geometry.height).toBeLessThan(75);
+  await page.getByTestId('toast-clear').click();
+  await page.getByTestId('toast-queue-actions').click();
+  await page.setViewportSize({ width: 320, height: 160 });
+  const stack = await region(page).evaluate((viewport) => ({
+    scroll: viewport.scrollHeight,
+    height: viewport.clientHeight,
+    rows: Array.from(viewport.querySelectorAll('.env-toast'))
+      .map((element) => {
+        const row = element.getBoundingClientRect();
+        const action = element.querySelector('.env-toast-action')!.getBoundingClientRect();
+        return {
+          top: row.top,
+          bottom: row.bottom,
+          actionTop: action.top,
+          actionBottom: action.bottom,
+        };
+      })
+      .sort((a, b) => a.top - b.top),
+  }));
+  expect(stack.scroll).toBeGreaterThan(stack.height);
+  expect(stack.rows).toHaveLength(3);
+  stack.rows.forEach((row, index) => {
+    expect(row.actionTop).toBeGreaterThanOrEqual(row.top);
+    expect(row.actionBottom).toBeLessThanOrEqual(row.bottom);
+    if (index) expect(row.top).toBeGreaterThanOrEqual(stack.rows[index - 1].bottom);
+  });
 });

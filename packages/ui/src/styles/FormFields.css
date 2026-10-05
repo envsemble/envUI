@@ -5,6 +5,8 @@
   align-content: start;
   gap: calc(var(--space-3) * var(--scale, 1));
   min-width: 0;
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
   font: var(--type-body-small);
   color: var(--color-field-text);
 }

@@ -1,5 +1,10 @@
 .env-navigation-item {
   inline-size: fit-content;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: start;
   display: inline-flex;
   align-items: center;
   gap: calc(0.5rem * var(--scale, 1));

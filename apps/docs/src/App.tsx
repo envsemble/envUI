@@ -1,5 +1,15 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { Theme, NavigationItem, IconButton, Button, Stack } from '@envsemble/envui';
+import {
+  Theme,
+  NavigationItem,
+  IconButton,
+  Button,
+  Stack,
+  Dialog,
+  Link,
+  EnvUILogo,
+} from '@envsemble/envui';
+import { Menu } from '@envsemble/envui/icons/Menu';
 import { DarkMode } from '@envsemble/envui/icons/DarkMode';
 import { LightMode } from '@envsemble/envui/icons/LightMode';
 import { findReferencePage, referenceViews, overviewViews } from './navigation/DocumentationRoutes';
@@ -13,6 +23,7 @@ import { useDocumentationRoute } from './navigation/useDocumentationRoute';
 export default function App() {
   const route = useDocumentationRoute();
   const [appearance, setAppearance] = useState<'light' | 'dark'>('light');
+  const [navigationOpen, setNavigationOpen] = useState(false);
   const mainElement = useRef<HTMLElement>(null);
   const routePath = route.split('?')[0];
   const routeSegments = routePath.split('/');
@@ -29,6 +40,14 @@ export default function App() {
   const search = route.split('?')[1];
   const contentPath = page?.path ?? root;
   const contentRoute = `${contentPath}${search ? `?${search}` : ''}`;
+  useEffect(() => {
+    const desktop = window.matchMedia('(min-width: 48rem)');
+    const closeOnDesktop = () => {
+      if (desktop.matches) setNavigationOpen(false);
+    };
+    desktop.addEventListener('change', closeOnDesktop);
+    return () => desktop.removeEventListener('change', closeOnDesktop);
+  }, []);
   useEffect(() => {
     document.title = title === 'envUI' ? 'envUI' : `${title} · envUI`;
     mainElement.current?.focus({ preventScroll: true });
@@ -65,6 +84,35 @@ export default function App() {
         title={`Switch to ${oppositeAppearance} theme`}
         onClick={() => setAppearance(oppositeAppearance)}
       />
+      <header className="docs-mobile-header">
+        <Link
+          href="#/overview"
+          underline={false}
+          className="docs-mobile-brand"
+          aria-label="envUI overview"
+        >
+          <EnvUILogo />
+        </Link>
+        <Dialog
+          open={navigationOpen}
+          onOpenChange={setNavigationOpen}
+          title="Documentation"
+          placement="right"
+          finalFocus={mainElement}
+          trigger={
+            <Button variant="secondary" startIcon={<Menu />}>
+              Open navigation
+            </Button>
+          }
+        >
+          <Sidebar
+            routePath={routePath}
+            page={page}
+            panel
+            onNavigate={() => setNavigationOpen(false)}
+          />
+        </Dialog>
+      </header>
       <div className="docs-shell">
         <Sidebar routePath={routePath} page={page} />
         <main id="docs-main" ref={mainElement} tabIndex={-1} className="docs-main">

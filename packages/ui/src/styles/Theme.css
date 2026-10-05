@@ -1,6 +1,15 @@
 /* Typography belongs to the explicit boundary, never the host document. */
 .env-theme {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
   font: var(--type-body);
+}
+/* Keep component geometry independent of a consuming application's reset. */
+.env-theme,
+.env-theme :where(*),
+.env-theme :where(*)::before,
+.env-theme :where(*)::after {
+  box-sizing: border-box;
 }
 .env-theme :where(h1) {
   margin: 0;

@@ -86,6 +86,7 @@
   margin-bottom: 0;
 }
 .docs-example-heading {
+  max-inline-size: 100%;
   display: flex;
   align-items: center;
   flex-wrap: wrap;

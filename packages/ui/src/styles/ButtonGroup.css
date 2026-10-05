@@ -5,6 +5,12 @@
   inline-size: fit-content;
   max-inline-size: 100%;
   min-inline-size: 0;
+  /* Connected buttons retain their corners and remain reachable in narrow containers. */
+  overflow: auto;
+  scrollbar-width: thin;
+}
+.env-button-group > .env-button:focus-visible {
+  outline-offset: -0.125rem;
 }
 
 .env-button-group > .env-button {

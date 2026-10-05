@@ -8,6 +8,9 @@
 
 /* Platform's native radio and selectable-row layout, with shared state formulas. */
 .env-choice-control {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
   display: inline-flex;
   align-items: center;
   gap: calc(0.75rem * var(--scale, 1));
@@ -16,6 +19,7 @@
   cursor: pointer;
 }
 .env-radio-options {
+  overflow-wrap: anywhere;
   display: grid;
   gap: calc(0.125rem * var(--scale, 1));
   min-width: 0;
@@ -24,6 +28,7 @@
   border: 0;
 }
 .env-radio-options legend {
+  max-inline-size: 100%;
   margin-bottom: calc(1rem * var(--scale, 1));
   padding: 0;
 }
@@ -38,6 +43,10 @@
   font: var(--type-body-small);
   color: var(--color-radio-text);
   cursor: pointer;
+}
+.env-choice-control > span,
+.env-radio-option > span {
+  min-inline-size: 0;
 }
 .env-radio-option:has(input:checked),
 .env-radio-option:hover:not(:has(input:disabled)) {

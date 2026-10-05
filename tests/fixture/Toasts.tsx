@@ -80,6 +80,22 @@ export function ToastTriggers() {
         >
           Queue top notices
         </Button>
+        <Button
+          data-testid="toast-queue-actions"
+          onClick={() => {
+            for (let index = 1; index <= 3; index++)
+              toast.show({
+                message: `Action notice ${index}`,
+                duration: 0,
+                action: {
+                  label: 'Restore previous version',
+                  onClick: () => setActionCount((count) => count + 1),
+                },
+              });
+          }}
+        >
+          Queue action notices
+        </Button>
         <Button data-testid="toast-clear" variant="secondary" onClick={toast.clear}>
           Clear managed notices
         </Button>

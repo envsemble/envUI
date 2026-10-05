@@ -7,7 +7,7 @@ body {
 }
 .docs-app {
   --docs-content-width: 72rem;
-  --docs-gutter: clamp(1.25rem, 3vw, 3rem);
+  --docs-gutter: clamp(0.75rem, 3vw, 3rem);
   min-height: 100dvh;
 }
 .docs-app *,
@@ -17,15 +17,30 @@ body {
 }
 .docs-shell {
   display: grid;
-  grid-template-columns: 15rem minmax(0, 1fr);
+  grid-template-columns: clamp(12rem, 18vw, 17rem) minmax(0, 1fr);
   min-height: 100dvh;
 }
 .docs-sidebar {
+  min-inline-size: 0;
   position: sticky;
   top: 0;
   height: 100dvh;
   overflow-y: auto;
   padding: 2rem 1rem;
+}
+.docs-mobile-header {
+  display: none;
+}
+.docs-mobile-brand {
+  inline-size: min(5rem, 25%);
+}
+.docs-mobile-brand svg {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+}
+.docs-navigation-panel {
+  min-inline-size: 0;
 }
 .docs-brand-link {
   display: block;

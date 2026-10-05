@@ -17,6 +17,7 @@
 .env-stack > * {
   margin-block: 0;
   min-inline-size: 0;
+  max-inline-size: 100%;
 }
 .env-action-group {
   display: flex;
@@ -34,6 +35,8 @@
 }
 .env-action-group > * {
   margin: 0;
+  min-inline-size: 0;
+  max-inline-size: 100%;
 }
 .env-action-group[data-stacked] {
   flex-direction: column;

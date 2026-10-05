@@ -12,6 +12,7 @@ function measureTextarea(input: HTMLTextAreaElement) {
       ? Math.max(minimumHeight, maximumHeight)
       : Infinity,
     lineHeight: Number.parseFloat(styles.lineHeight) || 16,
+    fontSize: Number.parseFloat(styles.fontSize) || 16,
   };
 }
 
@@ -64,12 +65,12 @@ export function TextareaResizeEdge({
   function resizeTo(height: number, limits: ReturnType<typeof measureTextarea>) {
     const input = inputRef.current;
     if (!input || input.disabled) return;
-    const nextHeight = `${Math.round(Math.min(limits.maximumHeight, Math.max(limits.minimumHeight, height)))}px`;
+    const nextHeight = `${Math.min(limits.maximumHeight, Math.max(limits.minimumHeight, height)) / limits.fontSize}em`;
     if (!manualHeight.current || input.style.height !== manualHeight.current.applied) {
       manualHeight.current = { original: input.style.height, applied: nextHeight };
     }
-    manualHeight.current.applied = nextHeight;
     input.style.height = nextHeight;
+    manualHeight.current.applied = input.style.height;
   }
 
   function finishDrag(event: PointerEvent<HTMLButtonElement>) {

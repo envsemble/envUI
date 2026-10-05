@@ -134,6 +134,9 @@ import { Surface, Stack, Text } from '@envsemble/envui';
 #### Guidelines
 
 - Use relative units and the shared spacing scale. The parent owns gaps; each component owns its internal padding.
+- Theme supplies scoped border-box sizing. Text, controls and layout children shrink to their container; long labels wrap. Rem and em dimensions follow browser text settings without shrinking the whole interface on a phone.
+- FeatureCard responds to its own width. Dialogs, selects and notification stacks fit the viewport; code, tables, toolbars and crowded connected controls scroll within their own regions.
+- Applications own page grids, breakpoints and custom content. Use minmax(0, 1fr) for grid tracks, min-inline-size: 0 for flex children and max-inline-size: 100% for media. Avoid fixed pixel widths and heights; retain content-driven height and a viewport meta tag.
 - Let text wrap and controls grow with content. The application chooses layout breakpoints; there is no separate mobile theme or component set.
 - Text has no outer margins. Cards already space direct children; Stack and ActionGroup supply other layouts.
 - Use component defaults for geometry. Choose Surface for a plain pane and Card for a content surface.
@@ -515,7 +518,7 @@ import { Settings } from '@envsemble/envui/icons/Settings';
 - Use fully rounded corners; important actions use 0.5 rem corners. ActionGroup provides 1 rem row gaps or 0.5 rem stacked gaps.
 - Use ButtonGroup for connected rows or columns: the gap is 0.125 rem and adjoining corners use the shared 0.5 rem row inner radius. Each end keeps its button variant’s outer corners; a single button keeps all its normal corners.
 - Prefer the same button variant within a connected group. Mix variants when related actions need different emphasis.
-- ButtonGroup accepts any mixture of labeled, icon-only, leading/trailing icon and native link buttons. Horizontal buttons share a height; vertical buttons fill the group width. Labels can wrap, and horizontal groups stay on one row. Hidden buttons do not determine the end corners.
+- ButtonGroup accepts any mixture of labeled, icon-only, leading/trailing icon and native link buttons. Horizontal buttons share a height; vertical buttons fill the group width. Labels wrap, and groups scroll locally if their controls cannot fit. Hidden buttons do not determine the end corners.
 - Give related actions an accessible group name. ButtonGroup retains ordinary Tab navigation and each button’s native activation, focus and disabled behavior.
 - Secondary buttons use the neutral row fill and label color, without a border. Outlined buttons retain their border and link color.
 - Text buttons use link blue with no fill, border or horizontal inset. Set underline to show an underline. Hover and pressed states change only the text color using the shared HSL rule. Use onClick for actions and href for navigation; keyboard focus and disabled behavior remain shared with Button.
@@ -1183,7 +1186,7 @@ import { DisclosureNote, Text } from '@envsemble/envui';
 #### Guidelines
 
 - Keep a disclosure title on one line. Put secondary guidance behind the disclosure and essential instructions beside the task.
-- Use the native disclosure interaction. Keep labels short enough for the available width.
+- Use the native disclosure interaction. Labels and details wrap within the available width.
 
 Related: [Info chips](#info-chips), [Typography](#typography), [Text fields](#text-fields).
 

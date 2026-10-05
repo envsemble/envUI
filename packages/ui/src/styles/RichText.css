@@ -5,6 +5,8 @@
   gap: var(--space-3);
 }
 .env-rich-text-document {
+  min-inline-size: 0;
+  max-inline-size: 100%;
   min-block-size: 10rem;
   padding: var(--space-4);
   border: 0.0625rem solid var(--color-markdown-border);
@@ -45,6 +47,7 @@
 }
 .env-rich-text :where(li[data-type='taskItem'] > div),
 .env-rich-text-document :where(li[data-type='taskItem'] > div) {
+  min-inline-size: 0;
   flex: 1;
 }
 .env-rich-text-document pre {
@@ -77,11 +80,14 @@
   outline: 0.125rem solid var(--color-focus-ring);
 }
 .env-rich-text-suggestions {
+  box-sizing: border-box;
   display: grid;
+  grid-auto-rows: minmax(min-content, auto);
+  align-content: start;
   gap: var(--space-1);
-  min-inline-size: 12rem;
-  max-inline-size: min(24rem, 90vw);
-  max-block-size: 18rem;
+  min-inline-size: min(12rem, calc(100dvw - 2 * var(--viewport-gutter)));
+  max-inline-size: min(24rem, calc(100dvw - 2 * var(--viewport-gutter)));
+  max-block-size: min(18rem, calc(100dvh - 2 * var(--viewport-gutter)));
   overflow: auto;
   padding: var(--space-2);
   border: 0.0625rem solid var(--color-markdown-border);

@@ -6,10 +6,25 @@ import { references, foundations, componentGroups } from '../Reference';
 import type { ReferencePage } from './DocumentationRoutes';
 import { foundationIcons, getComponentIcon } from './TopicIcons';
 
-export function Sidebar({ routePath, page }: { routePath: string; page?: ReferencePage }) {
+export function Sidebar({
+  routePath,
+  page,
+  panel = false,
+  onNavigate,
+}: {
+  routePath: string;
+  page?: ReferencePage;
+  panel?: boolean;
+  onNavigate?: () => void;
+}) {
   const reference = page?.reference;
   return (
-    <aside className="docs-sidebar">
+    <aside
+      className={panel ? 'docs-navigation-panel' : 'docs-sidebar'}
+      onClick={(event) => {
+        if ((event.target as Element).closest('a[href]')) onNavigate?.();
+      }}
+    >
       <Link
         href="#/overview"
         underline={false}
