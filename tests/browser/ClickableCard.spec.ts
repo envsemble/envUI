@@ -5,7 +5,7 @@ test('cards provide native keyboard activation, focus and disabled behavior in b
 }) => {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
-  await page.goto('http://127.0.0.1:8766');
+  await page.goto('http://127.0.0.1:8766/?fixture=layout');
   let activations = 0;
   for (const theme of ['light', 'dark']) {
     const scope = page.getByTestId(`layout-${theme}`);

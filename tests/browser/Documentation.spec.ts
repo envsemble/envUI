@@ -377,7 +377,7 @@ test('overview centers its banner and switches between components and setup with
 
 test('offline theme toggle switches the whole page and keeps the canvas full height', async ({
   page,
-}, testInfo) => {
+}) => {
   await page.setViewportSize({ width: 1920, height: 1400 });
   await page.goto(`${offline}#/components/checkbox/preview`);
   const app = page.locator('.docs-app');
@@ -430,15 +430,8 @@ test('offline theme toggle switches the whole page and keeps the canvas full hei
   await expect(app).toHaveAttribute('data-env-theme', 'light');
   await expect(panes.first()).toHaveAttribute('data-env-theme', 'light');
   await expect(panes.locator('.docs-swatch code').first()).not.toHaveText(darkColor!);
-  await page.screenshot({
-    path: testInfo.outputPath('offline-theme-light.png'),
-    animations: 'disabled',
-  });
   await page.getByRole('button', { name: 'Switch to dark theme' }).click();
-  await page.screenshot({
-    path: testInfo.outputPath('offline-theme-dark.png'),
-    animations: 'disabled',
-  });
+  await expect(app).toHaveAttribute('data-env-theme', 'dark');
   await page.evaluate(() => {
     location.hash = '/getting-started';
   });

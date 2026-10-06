@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('http://127.0.0.1:8766');
+  await page.clock.install();
+  await page.goto('http://127.0.0.1:8766/?fixture=toast');
 });
 const region = (page: import('@playwright/test').Page, placement = 'bottom-right') =>
   page.locator(`.env-toast-viewport-${placement}`);
@@ -48,7 +49,7 @@ test('manual rendering works without a provider and errors/actions persist', asy
   await expect(page.getByTestId('manual-toast')).toHaveCount(0);
   await page.getByTestId('toast-error').click();
   await page.getByTestId('toast-action').click();
-  await page.waitForTimeout(800);
+  await page.clock.fastForward(6_000);
   await expect(notice(page, 'Persistent error notice')).toHaveCount(1);
   await expect(notice(page, 'Persistent action notice')).toHaveCount(1);
   await expect(page.getByRole('alert')).toHaveCount(1);
@@ -69,10 +70,11 @@ test('visible timers pause for focus and hover together and resume after both le
   await close.focus();
   await toast.hover();
   await page.mouse.move(1, 1);
-  await page.waitForTimeout(800);
+  await page.clock.fastForward(800);
   await expect(toast).toHaveCount(1);
   await expect(close).toBeFocused();
   await page.getByTestId('toast-clear').focus();
+  await page.clock.fastForward(500);
   await expect(toast).toHaveCount(0);
 });
 
@@ -80,19 +82,23 @@ test('ordinary notices expire after the default five seconds', async ({ page }) 
   await page.getByTestId('toast-neutral').click();
   await expect(notice(page, 'Neutral notice')).toHaveCount(1);
   await page.mouse.move(1, 1);
-  await expect(notice(page, 'Neutral notice')).toHaveCount(0, { timeout: 7000 });
+  await page.clock.fastForward(4_000);
+  await expect(notice(page, 'Neutral notice')).toHaveCount(1);
+  await page.clock.fastForward(1_100);
+  await expect(notice(page, 'Neutral notice')).toHaveCount(0);
 });
 
 test('viewport focus pauses existing and newly displayed timers', async ({ page }) => {
   await page.getByTestId('toast-short').click();
   await page.keyboard.press('F6');
   await expect(region(page)).toBeFocused();
-  await page.waitForTimeout(800);
+  await page.clock.fastForward(800);
   await expect(notice(page, 'Short notice')).toHaveCount(1);
   await page.getByTestId('toast-short').dispatchEvent('click');
-  await page.waitForTimeout(800);
+  await page.clock.fastForward(800);
   await expect(notice(page, 'Short notice')).toHaveCount(2);
   await page.getByTestId('toast-clear').focus();
+  await page.clock.fastForward(500);
   await expect(notice(page, 'Short notice')).toHaveCount(0);
 });
 
@@ -104,7 +110,7 @@ test('Strict Mode mount effects preserve capacity after effect replay', async ({
   await expect(active).toHaveCount(1);
   await page.getByRole('button', { name: 'Add strict notices' }).click();
   await expect(active).toHaveCount(3);
-  await page.waitForTimeout(350);
+  await page.clock.fastForward(350);
   await expect(active).toHaveCount(3);
 });
 

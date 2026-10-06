@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('FeatureCard responds to its own width without consumer containment CSS', async ({ page }) => {
-  await page.goto('http://127.0.0.1:8766');
+  await page.goto('http://127.0.0.1:8766/?fixture=feature-cards');
   for (const name of ['icon', 'plain']) {
     const card = page.getByTestId(`standalone-feature-${name}`);
     const copy = card.locator('.env-feature-card-copy');
