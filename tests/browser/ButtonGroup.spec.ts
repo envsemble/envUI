@@ -32,6 +32,8 @@ async function geometry(group: Locator) {
 }
 
 test('mixed buttons connect in rows and columns with variant outer corners', async ({ page }) => {
+  // This composition check retains the shared host's intrinsic grid sizing.
+  // The focused fixture is used below for independent interaction checks.
   await page.goto('http://127.0.0.1:8766');
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: 1000 });
@@ -91,7 +93,7 @@ test('mixed buttons connect in rows and columns with variant outer corners', asy
 test('single, hidden and removed buttons retain normal corners and RTL follows the row', async ({
   page,
 }) => {
-  await page.goto('http://127.0.0.1:8766');
+  await page.goto('http://127.0.0.1:8766/?fixture=button-groups');
   const scope = page.getByTestId('button-groups-light');
   const standaloneRadius = await scope
     .getByTestId('standalone')
@@ -130,7 +132,7 @@ test('grouped actions preserve native focus, activation, links and disabled beha
 }) => {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
-  await page.goto('http://127.0.0.1:8766');
+  await page.goto('http://127.0.0.1:8766/?fixture=button-groups');
   const scope = page.getByTestId('button-groups-light');
   const action = scope.getByRole('button', { name: 'Native action' });
   await action.focus();
@@ -159,7 +161,7 @@ test('grouped actions preserve native focus, activation, links and disabled beha
 test('narrow groups wrap labels and scale their shared corners with text size', async ({
   page,
 }) => {
-  await page.goto('http://127.0.0.1:8766');
+  await page.goto('http://127.0.0.1:8766/?fixture=button-groups');
   const scope = page.getByTestId('button-groups-light');
   const row = scope.getByTestId('horizontal');
   await page.evaluate(() => {
@@ -180,14 +182,9 @@ test('narrow groups wrap labels and scale their shared corners with text size', 
   expect(column.buttons[0].corners).toEqual([30, 30, 12, 12]);
 });
 
-test('documentation demonstrates connected buttons through the public API', async ({
-  page,
-}, testInfo) => {
+test('documentation demonstrates connected buttons through the public API', async ({ page }) => {
   await page.goto('http://127.0.0.1:8770/#/components/buttons/preview');
   await expect(page.getByRole('group', { name: 'Project actions' })).toBeVisible();
   await expect(page.getByRole('group', { name: 'Item actions' })).toBeVisible();
   await expect(page.getByRole('group', { name: 'Quick actions' })).toBeVisible();
-  await page
-    .locator('.docs-preview')
-    .screenshot({ path: testInfo.outputPath('button-groups.png') });
 });

@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('http://127.0.0.1:8766');
+  await page.goto('http://127.0.0.1:8766/?fixture=forms');
 });
 
 test('fields associate labels, hints, and validation messages', async ({ page }) => {
@@ -161,10 +161,13 @@ test('Select supports keyboard commit, typeahead, Escape, and native form reset'
   });
   for (const option of wrappedOptions)
     expect(option.content).toBeLessThanOrEqual(option.height + 1);
-  const popup = await page.locator('.env-dropdown-options').boundingBox();
-  expect(popup!.x).toBeGreaterThanOrEqual(0);
-  expect(popup!.x + popup!.width).toBeLessThanOrEqual(321);
-  expect(popup!.y + popup!.height).toBeLessThanOrEqual(481);
+  // Changing option content invalidates Floating UI's previous measurements.
+  await expect(async () => {
+    const popup = await page.locator('.env-dropdown-options').boundingBox();
+    expect(popup!.x).toBeGreaterThanOrEqual(0);
+    expect(popup!.x + popup!.width).toBeLessThanOrEqual(321);
+    expect(popup!.y + popup!.height).toBeLessThanOrEqual(481);
+  }).toPass({ timeout: 8_000 });
   const scroll = await list.evaluate((element) => ({
     height: element.clientHeight,
     content: element.scrollHeight,

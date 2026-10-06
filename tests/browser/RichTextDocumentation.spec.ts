@@ -52,14 +52,17 @@ test('rich text documentation demonstrates controlled updates, uploads and theme
   const editor = page.getByRole('textbox', { name: 'Rich text notes', exact: true });
   await expect(editor).toContainText('Another draft');
   await expect(editor).toContainText('#Accessibility');
-  await editor.evaluate((element) => {
-    element.focus();
+  await editor.focus();
+  await editor.evaluate(async (element) => {
+    // Let the editor process focus before moving its native selection.
+    await new Promise(requestAnimationFrame);
     const range = document.createRange();
     range.selectNodeContents(element);
     range.collapse(false);
     const selection = window.getSelection();
     selection?.removeAllRanges();
     selection?.addRange(range);
+    await new Promise(requestAnimationFrame);
   });
   await editor.press('Enter');
   await editor.press('Shift+Digit3');
