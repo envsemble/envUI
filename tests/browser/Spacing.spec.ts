@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import {
   findReferencePage,
   normalizeRoute,
-} from '../../apps/docs/src/navigation/DocumentationRoutes';
+} from '../../apps/catalogue/src/navigation/DocumentationRoutes';
 
 const components = [
   'layout',

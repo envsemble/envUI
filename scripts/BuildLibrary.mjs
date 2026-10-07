@@ -67,7 +67,7 @@ for (const output of stylesheetBuild.outputFiles) {
   await writeFile(output.path, output.contents);
 }
 await cp(
-  resolve(sourceDirectory, 'assets/brand/envsemble-lockup-black.svg'),
+  resolve(repositoryRoot, 'assets/brand/envsemble/envsemble-lockup-black.svg'),
   resolve(outputDirectory, 'assets/envsemble-lockup-black.svg'),
 );
 await cp(resolve(repositoryRoot, 'assets/brand/envUI'), resolve(outputDirectory, 'assets/envUI'), {

@@ -66,7 +66,7 @@ Choose MarkdownEditor for literal Markdown source and RichTextEditor for formatt
 
 Inspect composition and public slots first. Product-specific wrappers can attach business meaning while shared components own appearance. If behavior needs a reusable API/variant, identify the gap and implement it in envUI when that is within the task; otherwise report the concrete gap and preserve unrelated product behavior. Avoid private-DOM selectors, copied library CSS and parallel implementations presented as envUI components.
 
-Inside envUI, keep authored components in their existing family under `packages/ui/src`, exports in `index.ts`, `content.ts` or `rich-text.ts`, and styles in `src/styles`. Use PascalCase files, named React exports and shared primitive composition. Update this skill's relevant reference and the public-API specimen under `apps/docs/src/previews` together; register new topics when needed. Icons/brand wrappers are generated from existing pinned inputs. The catalogue owns routes, page grids, specimen state and token measurement; reusable UI behavior belongs in the package.
+Inside envUI, keep authored components in their existing family under `packages/ui/src`, exports in `index.ts`, `content.ts` or `rich-text.ts`, and styles in `src/styles`. Use PascalCase files, named React exports and shared primitive composition. Update this skill's relevant reference and the public-API specimen under `apps/catalogue/src/previews` together; register new topics when needed. Icons/brand wrappers are generated from existing pinned inputs. The catalogue owns routes, page grids, specimen state and token measurement; reusable UI behavior belongs in the package.
 
 ## Verify
 

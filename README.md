@@ -41,7 +41,7 @@ Verification checks icons, types, builds, isolated package consumers and browser
 
 ## Release
 
-Align the version in `packages/ui/package.json`, `apps/docs/package.json` and the lockfile; update `packages/ui/CHANGELOG.md`. After verification, review and merge, push the matching `v<version>` tag. The Release workflow publishes privately to GitHub Packages and attaches the matching offline HTML. Prereleases use `next`; ordinary releases use `latest`. Published versions are immutable. If only the HTML upload fails, recover it from the same tag without republishing the package.
+Align the version in `packages/ui/package.json`, `apps/catalogue/package.json` and the lockfile; update `packages/ui/CHANGELOG.md`. After verification, review and merge, push the matching `v<version>` tag. The Release workflow publishes privately to GitHub Packages and attaches the matching offline HTML. Prereleases use `next`; ordinary releases use `latest`. Published versions are immutable. If only the HTML upload fails, recover it from the same tag without republishing the package.
 
 Grant consuming repositories package Read access for their GitHub Actions workflows. During `0.x`, breaking changes require a new minor version and migration notes; after `1.0`, a new major version.
 

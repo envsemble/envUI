@@ -24,7 +24,7 @@ jobs:
       - run: npx playwright install --with-deps chromium firefox webkit
       - run: npm run verify
   publish:
-    name: Publish package and offline reference
+    name: Publish package and offline catalogue
     needs: validate
     runs-on: ubuntu-latest
     timeout-minutes: 15

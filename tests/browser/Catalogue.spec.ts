@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs';
 import {
   references,
   foundations as foundationReferences,
-} from '../../apps/docs/src/Reference';
+} from '../../apps/catalogue/src/Reference';
 
 const offline = pathToFileURL(resolve('dist/envUI.html')).href;
 const version = JSON.parse(readFileSync('packages/ui/package.json', 'utf8')).version;

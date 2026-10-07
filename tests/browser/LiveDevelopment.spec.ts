@@ -8,7 +8,7 @@ test('public component, stylesheet and new export update live without version ch
   const buttonSource = resolve('packages/ui/src/actions/Button.tsx');
   const stylesheet = resolve('packages/ui/src/styles/Button.css');
   const index = resolve('packages/ui/src/index.ts');
-  const preview = resolve('apps/docs/src/previews/Forms.tsx');
+  const preview = resolve('apps/catalogue/src/previews/Forms.tsx');
   const newComponent = resolve('packages/ui/src/LiveAcceptance.tsx');
   const paths = [buttonSource, stylesheet, index, preview];
   const originals = await Promise.all(paths.map((path) => readFile(path, 'utf8')));

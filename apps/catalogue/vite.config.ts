@@ -11,7 +11,7 @@ export default defineConfig({
   // The linked catalogue has thousands of modules; serve it as one lazy dependency in dev.
   optimizeDeps: { include: ['@envsemble/envui/icons'] },
   build: {
-    outDir: '../../dist/docs',
+    outDir: '../../dist/catalogue',
     emptyOutDir: true,
     target: 'es2022',
     assetsInlineLimit: () => true,

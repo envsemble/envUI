@@ -26,13 +26,13 @@ jobs:
         run: npm run icons:check
       - name: Check TypeScript
         run: npm run typecheck
-      - name: Build package and offline documentation
+      - name: Build package and offline catalogue
         run: npm run build
       - name: Test package contracts
         run: npm test
       - name: Test browser behavior
         run: npm run test:browser
-      - name: Save offline reference
+      - name: Save offline catalogue
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: envui-reference
