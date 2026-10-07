@@ -73,6 +73,9 @@ await cp(
 await cp(resolve(repositoryRoot, 'assets/brand/envUI'), resolve(outputDirectory, 'assets/envUI'), {
   recursive: true,
 });
+await cp(resolve(repositoryRoot, 'assets/readme'), resolve(outputDirectory, 'assets/readme'), {
+  recursive: true,
+});
 const skillsOutputDirectory = resolve(libraryDirectory, 'skills');
 if (relative(libraryDirectory, skillsOutputDirectory) !== 'skills')
   throw new Error('Packaged skills must remain within packages/ui/skills.');
@@ -83,6 +86,11 @@ await writeFile(
   resolve(libraryDirectory, 'README.md'),
   readme
     .replaceAll('](.agents/skills/', '](skills/')
+    .replaceAll('](packages/ui/CHANGELOG.md)', '](CHANGELOG.md)')
+    .replaceAll('src="assets/brand/envUI/', 'src="dist/assets/envUI/')
+    .replaceAll('srcset="assets/brand/envUI/', 'srcset="dist/assets/envUI/')
+    .replaceAll('src="assets/readme/', 'src="dist/assets/readme/')
+    .replaceAll('srcset="assets/readme/', 'srcset="dist/assets/readme/')
     .replaceAll('packages/ui/THIRD_PARTY_NOTICES.md', 'THIRD_PARTY_NOTICES.md')
     .replaceAll('packages/ui/licenses/', 'licenses/'),
 );

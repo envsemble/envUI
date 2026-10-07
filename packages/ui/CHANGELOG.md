@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Replace separate agent guides with the packaged envui-use and envui-migrate skills. The catalogue reads their maintained component references and renders the same skill instructions; the basic README owns setup and release commands.
+- Rename the visual app to `apps/catalogue` with matching workspace, build and test names. Refresh the README with theme-aware branding, catalogue captures, examples and a repository map; use canonical brand and license assets in both builds.
 
 - Add an optional Tiptap rich-text entry with RichTextEditor, the matching read-only RichText viewer and a shared extension factory. Keep Markdown values, configurable reference lookup with stable IDs, slash commands and application-owned upload/navigation callbacks generic; retain MarkdownEditor for source editing.
 

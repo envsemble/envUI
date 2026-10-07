@@ -479,6 +479,20 @@ test('packed skills contain their references and match the release sources', asy
   const packagedReadme = await readFile(join(installedDirectory, 'README.md'), 'utf8');
   assert.match(packagedReadme, /\]\(skills\/envui-use\/SKILL\.md\)/);
   assert.doesNotMatch(packagedReadme, /\]\(\.agents\/skills\//);
+  const readmeResources = [
+    ...[...packagedReadme.matchAll(/\[[^\]]+\]\(([^)]+)\)/g)].map((match) => match[1]),
+    ...[...packagedReadme.matchAll(/\b(?:src|srcset)="([^"]+)"/g)].map((match) => match[1]),
+  ];
+  for (const target of readmeResources) {
+    if (/^https?:\/\//.test(target)) continue;
+    const resource = resolve(installedDirectory, target);
+    const contained = relative(installedDirectory, resource);
+    assert.ok(!contained.startsWith('..') && !isAbsolute(contained));
+    assert.ok(
+      existsSync(resource),
+      `README resource is absent from the installed package: ${target}`,
+    );
+  }
   const skillNames = await readdir(join(installedDirectory, 'skills'));
   assert.deepEqual(skillNames.sort(), ['envui-migrate', 'envui-use']);
   for (const skillName of skillNames) {
