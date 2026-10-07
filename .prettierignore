@@ -3,6 +3,8 @@ packages/ui/src/assets
 packages/ui/icon-manifest.json
 packages/ui/README.md
 packages/ui/skills
+packages/ui/docs
+apps/catalogue/src/generated
 packages/ui/src/EnvUILogo.tsx
 packages/ui/licenses/Runtime-Dependencies-LICENSE.txt
 **/dist

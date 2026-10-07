@@ -6,6 +6,7 @@ import { readFile, writeFile, mkdir, mkdtemp, rm, lstat, readdir } from 'node:fs
 import { dirname, join, resolve, relative, isAbsolute, delimiter } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
+import { readDocumentation } from '../scripts/GenerateDocumentation.mjs';
 
 const repository = fileURLToPath(new URL('../', import.meta.url));
 const cacheDirectory = join(repository, '.cache');
@@ -474,7 +475,7 @@ test('explicit official icons preserve filled geometry and accept custom SVG con
   );
 });
 
-test('packed skills contain their references and match the release sources', async function () {
+test('packed skills locate separate versioned documentation and match the release sources', async function () {
   assert.equal(existsSync(join(installedDirectory, 'USAGE.md')), false);
   const packagedReadme = await readFile(join(installedDirectory, 'README.md'), 'utf8');
   assert.match(packagedReadme, /\]\(skills\/envui-use\/SKILL\.md\)/);
@@ -498,6 +499,7 @@ test('packed skills contain their references and match the release sources', asy
   for (const skillName of skillNames) {
     const skillFile = join(installedDirectory, 'skills', skillName, 'SKILL.md');
     const source = await readFile(skillFile, 'utf8');
+    assert.deepEqual(await readdir(dirname(skillFile)), ['SKILL.md']);
     assert.equal(
       source,
       await readFile(join(repository, '.agents/skills', skillName, 'SKILL.md'), 'utf8'),
@@ -515,6 +517,17 @@ test('packed skills contain their references and match the release sources', asy
         `Packaged skill resource differs from its maintained source: ${target}`,
       );
     }
+  }
+  const packagedDocumentation = readDocumentation(join(installedDirectory, 'docs'));
+  assert.deepEqual(packagedDocumentation, readDocumentation());
+  assert.ok(packagedDocumentation.some((document) => document.path === 'components/dialogs.md'));
+  assert.ok(packagedDocumentation.some((document) => document.path === 'components/rich-text.md'));
+  for (const { path } of packagedDocumentation) {
+    assert.equal(
+      await readFile(join(installedDirectory, 'docs', path), 'utf8'),
+      await readFile(join(repository, 'docs', path), 'utf8'),
+      `Packaged documentation differs from its release source: ${path}`,
+    );
   }
 });
 

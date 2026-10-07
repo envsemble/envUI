@@ -4,29 +4,6 @@
 .docs-article p {
   max-width: 75ch;
 }
-.docs-props {
-  width: 100%;
-  table-layout: fixed;
-  border-collapse: collapse;
-  text-align: left;
-  font: var(--type-body-small);
-}
-.docs-props th,
-.docs-props td {
-  padding: clamp(0.5rem, 2vw, 1rem);
-  border-bottom: 0.0625rem solid var(--color-border-strong);
-  vertical-align: top;
-  overflow-wrap: anywhere;
-}
-.docs-props tr > :first-child {
-  width: 30%;
-}
-.docs-props th {
-  font-weight: 500;
-}
-.docs-props td {
-  color: var(--color-text-muted);
-}
 .docs-overview {
   padding: 0 var(--docs-gutter) var(--space-8);
 }

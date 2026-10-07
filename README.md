@@ -31,7 +31,7 @@ _Actual envUI components in the local catalogue. The preview follows your light 
 
 ## Start using envUI
 
-Requires React and React DOM 19, plus access to the private `@envsemble` GitHub Packages registry. See the [usage skill](.agents/skills/envui-use/SKILL.md) for registry setup and the installed version’s API.
+Requires React and React DOM 19, plus access to the private `@envsemble` GitHub Packages registry. See [setup](docs/setup.md) for registry access and the [documentation index](docs/index.md) for examples matching the installed version.
 
 ```sh
 npm install --save-exact @envsemble/envui@<version>
@@ -100,9 +100,11 @@ There are two guides:
 | [envui-use](.agents/skills/envui-use/SKILL.md)         | Build interfaces, choose and compose components, handle themes and extend the library |
 | [envui-migrate](.agents/skills/envui-migrate/SKILL.md) | Adopt envUI in existing projects while preserving routes, forms, data and behavior    |
 
-The usage skill owns the component references; the catalogue renders those same references. Public TypeScript declarations define the exact API for each installed version. Improve guidance in these skills as integrations reveal gaps.
+The skills are short entry points. The [documentation index](docs/index.md) directs agents to focused Markdown pages with examples and behavior; they read only the topics needed for the task. The catalogue renders those same pages in its Usage tabs. Public TypeScript declarations define the exact API for each installed version.
 
 Both skill folders ship under `skills/` in the npm package. Install or copy them from `node_modules/@envsemble/envui/skills` into your project’s `.agents/skills`, keeping them together and aligned with the package version. Installing the npm package does not register the skills automatically.
+
+Documentation ships separately under `node_modules/@envsemble/envui/docs/`, so copied skills can consult the installed version without loading unrelated topics. Edit the maintained pages under `docs/`; improve the relevant page as integrations reveal gaps.
 
 ## Explore and develop
 
@@ -136,7 +138,8 @@ Build outputs are `packages/ui/dist/` and `dist/envUI.html`. CI retains the offl
 ## Repository map
 
 ```text
-.agents/skills/       The two agent skills and canonical component references
+.agents/skills/       Two small entry points for agents
+docs/                Canonical Markdown documentation and discovery index
 apps/catalogue/      Live previews and the offline catalogue application
 packages/ui/         The publishable @envsemble/envui package
   src/               Components by family, styles and public entry points
@@ -148,7 +151,7 @@ tests/               Package contract tests, browser specs and React fixtures
 .github/workflows/   CI and tagged package releases
 ```
 
-React components and scripts use PascalCase filenames; hooks and helpers use camelCase. Keep standard tool filenames such as `package.json`, `index.ts` and `vite.config.ts`. Generated icons, manifests, builds and packaged copies of the README and skills have explicit sources; edit the source and regenerate.
+React components and scripts use PascalCase filenames; hooks and helpers use camelCase. Documentation uses lowercase filenames. Keep standard tool filenames such as `package.json`, `index.ts` and `vite.config.ts`. Generated icons, manifests, catalogue data, builds and packaged copies of the README, skills and documentation have explicit sources; edit the source and regenerate.
 
 ## Releases
 

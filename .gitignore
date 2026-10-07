@@ -8,3 +8,5 @@ output/playwright/
 *.tgz
 /packages/ui/README.md
 /packages/ui/skills/
+/packages/ui/docs/
+/apps/catalogue/src/generated/

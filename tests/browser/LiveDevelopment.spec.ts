@@ -2,15 +2,16 @@ import { test, expect } from '@playwright/test';
 import { readFile, writeFile, unlink } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
-test('public component, stylesheet and new export update live without version changes', async ({
+test('public component, stylesheet, new export and Markdown documentation update live', async ({
   page,
 }) => {
   const buttonSource = resolve('packages/ui/src/actions/Button.tsx');
   const stylesheet = resolve('packages/ui/src/styles/Button.css');
   const index = resolve('packages/ui/src/index.ts');
   const preview = resolve('apps/catalogue/src/previews/Forms.tsx');
+  const documentation = resolve('docs/components/fields.md');
   const newComponent = resolve('packages/ui/src/LiveAcceptance.tsx');
-  const paths = [buttonSource, stylesheet, index, preview];
+  const paths = [buttonSource, stylesheet, index, preview, documentation];
   const originals = await Promise.all(paths.map((path) => readFile(path, 'utf8')));
   const version = await readFile('packages/ui/package.json', 'utf8');
   try {
@@ -69,6 +70,15 @@ test('public component, stylesheet and new export update live without version ch
         originals[3].replace('<InputExamples />', '<LiveAcceptance /><InputExamples />'),
     );
     await expect(page.getByTestId('live-new-component')).toHaveText('New shared component');
+    await writeFile(documentation, `${originals[4]}\nLive documentation acceptance.\n`);
+    await page
+      .locator('.docs-page-header')
+      .getByRole('tab', { name: 'Usage', exact: true })
+      .click();
+    await expect(page.getByText('Live documentation acceptance.', { exact: true })).toBeVisible();
+    expect(await page.evaluate(() => (window as unknown as { liveProof: string }).liveProof)).toBe(
+      'same-document',
+    );
     expect(await readFile('packages/ui/package.json', 'utf8')).toBe(version);
   } finally {
     await Promise.all(paths.map((path, index) => writeFile(path, originals[index])));

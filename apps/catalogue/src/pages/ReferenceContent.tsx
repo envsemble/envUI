@@ -1,5 +1,5 @@
 import { Link, Stack, Text } from '@envsemble/envui';
-import { CodeBlock } from '@envsemble/envui/content';
+import { Documentation } from './Documentation';
 import {
   referencePages,
   type ReferencePage,
@@ -18,12 +18,6 @@ const IconUsageDetails = lazy(() =>
 
 function Usage({ reference, search }: { reference: Reference; search?: string }) {
   const query = new URLSearchParams(search);
-  const sections = reference.usage ??
-    reference.sections?.flatMap((section) =>
-      section.example
-        ? [{ title: section.title, example: section.example, props: reference.props }]
-        : [],
-    ) ?? [{ title: 'React usage', example: reference.example, props: reference.props }];
   return (
     <>
       {reference.id === 'icons' && (
@@ -31,40 +25,7 @@ function Usage({ reference, search }: { reference: Reference; search?: string })
           <IconUsageDetails name={query.get('icon')} filled={query.get('filled') === 'true'} />
         </Suspense>
       )}
-      {sections.map((section) => (
-        <Stack as="section" key={section.title}>
-          <Text as="h2" variant="page-heading">
-            {section.title}
-          </Text>
-          <CodeBlock language="tsx" copyable>
-            {section.example}
-          </CodeBlock>
-          {section.props.length > 0 && (
-            <>
-              <Text as="h3" variant="section-heading">
-                Props & contracts
-              </Text>
-              <table className="docs-props">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Contract</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {section.props.map(([name, contract]) => (
-                    <tr key={name}>
-                      <th>{name}</th>
-                      <td>{contract}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </>
-          )}
-        </Stack>
-      ))}
-      <Text variant="caption">TypeScript declarations provide the complete public API.</Text>
+      <Documentation document={reference} />
     </>
   );
 }
@@ -133,7 +94,6 @@ export function ReferenceContent({
       usage={
         <Stack gap={7} className="docs-article">
           <Usage reference={reference} search={search} />
-          <RelatedTopics page={page} />
           <Text tone="muted">
             <Link href="#/overview/get-started">Setup, local edits and version updates</Link>
           </Text>

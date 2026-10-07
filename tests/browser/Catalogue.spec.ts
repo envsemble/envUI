@@ -12,6 +12,34 @@ const version = JSON.parse(readFileSync('packages/ui/package.json', 'utf8')).ver
 const components = references.map(({ id }) => id);
 const foundations = foundationReferences.map(({ id }) => id);
 
+test('offline usage renders shared Markdown guidance and follows relative topic links', async ({
+  page,
+}) => {
+  await page.goto(`${offline}#/foundations/composition/usage`);
+  await expect(
+    page.getByRole('heading', { name: 'Build from existing primitives', exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText('Surface supplies fill, padding and corners.', { exact: false }),
+  ).toBeVisible();
+  await page.locator('.docs-article').getByRole('link', { name: 'Surface', exact: true }).click();
+  await expect(page).toHaveURL(/#\/components\/surface\/usage$/);
+  await expect(page.getByRole('heading', { name: 'Guidelines', exact: true })).toBeVisible();
+
+  await page.goto(`${offline}#/overview/get-started`);
+  await page
+    .locator('#documentation')
+    .getByRole('link', { name: 'Develop envUI locally', exact: true })
+    .click();
+  await expect(page).toHaveURL(/document=local-development/);
+  await expect(
+    page
+      .locator('#documentation')
+      .getByRole('heading', { name: 'Develop envUI locally', exact: true }),
+  ).toBeVisible();
+  await expect(page.locator('#documentation')).toContainText('npm run dev:library');
+});
+
 test('Markdown combines rendering and one editor demo, including old editor bookmarks', async ({
   page,
 }) => {
@@ -371,7 +399,10 @@ test('overview centers its banner and switches between components and setup with
   await expect(page.getByRole('heading', { name: 'Migrate an interface to envUI' })).toBeVisible();
   await page.getByRole('link', { name: 'envui-use', exact: true }).click();
   await expect(page.getByRole('tab', { name: 'Use envUI', selected: true })).toBeVisible();
-  await page.getByRole('link', { name: 'Forms.ts', exact: true }).click();
+  await page
+    .locator('#documentation')
+    .getByRole('link', { name: 'Text fields', exact: true })
+    .click();
   await expect(page).toHaveURL(/#\/components\/fields\/usage$/);
   await page.goto(`${offline}#/overview/get-started`);
   await expect(page.getByRole('heading', { name: 'Install the private package' })).toBeVisible();

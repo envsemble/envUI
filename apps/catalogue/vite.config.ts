@@ -1,8 +1,39 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { viteSingleFile } from 'vite-plugin-singlefile';
+import { isAbsolute, relative } from 'node:path';
+import {
+  documentationDirectory,
+  generateDocumentation,
+} from '../../scripts/GenerateDocumentation.mjs';
 export default defineConfig({
-  plugins: [react(), viteSingleFile()],
+  plugins: [
+    {
+      name: 'envui-documentation',
+      buildStart() {
+        generateDocumentation();
+      },
+      configureServer(server) {
+        server.watcher.add(documentationDirectory);
+        server.watcher.on('all', (event, path) => {
+          const contained = relative(documentationDirectory, path);
+          if (
+            contained.startsWith('..') ||
+            isAbsolute(contained) ||
+            !['add', 'change', 'unlink'].includes(event)
+          )
+            return;
+          try {
+            generateDocumentation();
+          } catch (error) {
+            server.config.logger.error(String(error));
+          }
+        });
+      },
+    },
+    react(),
+    viteSingleFile(),
+  ],
   publicDir: '../../assets/brand/envUI',
   resolve: {
     conditions: ['envui-source', 'module', 'browser', 'development|production'],
