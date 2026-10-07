@@ -2,7 +2,10 @@ import { test, expect } from '@playwright/test';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { readFileSync } from 'node:fs';
-import { references, foundations as foundationReferences } from '../../apps/docs/src/Reference';
+import {
+  references,
+  foundations as foundationReferences,
+} from '../../apps/docs/src/Reference';
 
 const offline = pathToFileURL(resolve('dist/envUI.html')).href;
 const version = JSON.parse(readFileSync('packages/ui/package.json', 'utf8')).version;
@@ -363,12 +366,20 @@ test('overview centers its banner and switches between components and setup with
   await expect(page.getByRole('tab', { name: 'Get started', selected: true })).toBeVisible();
   await page.goto(`${offline}#/getting-started/usage?section=local-development`);
   await expect(page.getByRole('tab', { name: 'Get started', selected: true })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Local live development' })).toBeInViewport();
-  await expect(page.locator('.docs-page-navigation').getByRole('link')).toHaveAttribute(
-    'href',
-    '#/foundations/colors/usage',
-  );
-  await page.locator('.docs-page-navigation').getByRole('link').click();
+  await expect(page.getByRole('heading', { name: 'Agent guidance', exact: true })).toBeInViewport();
+  await expect(page.getByRole('tab', { name: 'Migrate to envUI', selected: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Migrate an interface to envUI' })).toBeVisible();
+  await page.getByRole('link', { name: 'envui-use', exact: true }).click();
+  await expect(page.getByRole('tab', { name: 'Use envUI', selected: true })).toBeVisible();
+  await page.getByRole('link', { name: 'Forms.ts', exact: true }).click();
+  await expect(page).toHaveURL(/#\/components\/fields\/usage$/);
+  await page.goto(`${offline}#/overview/get-started`);
+  await expect(page.getByRole('heading', { name: 'Install the private package' })).toBeVisible();
+  const overviewNext = page
+    .locator('.docs-page-navigation')
+    .getByRole('link', { name: 'Up next Colors & themes' });
+  await expect(overviewNext).toHaveAttribute('href', '#/foundations/colors/usage');
+  await overviewNext.click();
   await expect(page.getByRole('tab', { name: 'Usage', selected: true })).toBeVisible();
   await expect(
     page.locator('.docs-page-navigation').getByRole('link', { name: 'Previous Overview' }),

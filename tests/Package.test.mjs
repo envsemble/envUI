@@ -430,7 +430,8 @@ test('the package includes scoped CSS, local fonts, branding and license notices
   assert.match(await readFile(fileURLToPath(ssr.logo), 'utf8'), /<svg/);
   for (const filename of [
     'README.md',
-    'USAGE.md',
+    'skills/envui-use/SKILL.md',
+    'skills/envui-migrate/SKILL.md',
     'THIRD_PARTY_NOTICES.md',
     'icon-manifest.json',
   ]) {
@@ -471,6 +472,36 @@ test('explicit official icons preserve filled geometry and accept custom SVG con
     (await readdir(join(installedDirectory, 'dist/icons'))).length > 100,
     'The package contains the generated catalogue.',
   );
+});
+
+test('packed skills contain their references and match the release sources', async function () {
+  assert.equal(existsSync(join(installedDirectory, 'USAGE.md')), false);
+  const packagedReadme = await readFile(join(installedDirectory, 'README.md'), 'utf8');
+  assert.match(packagedReadme, /\]\(skills\/envui-use\/SKILL\.md\)/);
+  assert.doesNotMatch(packagedReadme, /\]\(\.agents\/skills\//);
+  const skillNames = await readdir(join(installedDirectory, 'skills'));
+  assert.deepEqual(skillNames.sort(), ['envui-migrate', 'envui-use']);
+  for (const skillName of skillNames) {
+    const skillFile = join(installedDirectory, 'skills', skillName, 'SKILL.md');
+    const source = await readFile(skillFile, 'utf8');
+    assert.equal(
+      source,
+      await readFile(join(repository, '.agents/skills', skillName, 'SKILL.md'), 'utf8'),
+    );
+    for (const [, target] of source.matchAll(/\[[^\]]+\]\(([^)]+)\)/g)) {
+      const resource = resolve(dirname(skillFile), target);
+      const contained = relative(join(installedDirectory, 'skills'), resource);
+      assert.ok(
+        !contained.startsWith('..') && !isAbsolute(contained),
+        `Skill resource escapes its package: ${target}`,
+      );
+      assert.equal(
+        await readFile(resource, 'utf8'),
+        await readFile(join(repository, '.agents/skills', contained), 'utf8'),
+        `Packaged skill resource differs from its maintained source: ${target}`,
+      );
+    }
+  }
 });
 
 test('a small independent bundle excludes unused icons and Base UI', async function () {

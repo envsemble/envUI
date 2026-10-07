@@ -12,4 +12,4 @@ export const registryCode = `# Project .npmrc
 @envsemble:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=\${NODE_AUTH_TOKEN}`;
 
-export const installCode = `npm install @envsemble/envui react@^19 react-dom@^19`;
+export const installCode = `npm install --save-exact @envsemble/envui@<version>`;

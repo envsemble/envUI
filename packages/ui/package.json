@@ -6,13 +6,13 @@
   "license": "UNLICENSED",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/envsemble/design-system.git",
+    "url": "git+https://github.com/envsemble/envUI.git",
     "directory": "packages/ui"
   },
   "files": [
     "dist",
     "README.md",
-    "USAGE.md",
+    "skills",
     "CHANGELOG.md",
     "THIRD_PARTY_NOTICES.md",
     "licenses",

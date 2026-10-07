@@ -1,7 +1,8 @@
 packages/ui/src/icons
 packages/ui/src/assets
 packages/ui/icon-manifest.json
-packages/ui/USAGE.md
+packages/ui/README.md
+packages/ui/skills
 **/dist
 node_modules
 .cache

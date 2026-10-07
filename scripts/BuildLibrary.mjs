@@ -1,5 +1,5 @@
 import { build } from 'esbuild';
-import { readdir, mkdir, writeFile, cp, rm } from 'node:fs/promises';
+import { readdir, readFile, mkdir, writeFile, cp, rm } from 'node:fs/promises';
 import { resolve, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
@@ -73,17 +73,19 @@ await cp(
 await cp(resolve(repositoryRoot, 'assets/brand/envUI'), resolve(outputDirectory, 'assets/envUI'), {
   recursive: true,
 });
-const usageGuideBuild = await build({
-  entryPoints: [resolve(repositoryRoot, 'apps/docs/src/Reference.ts')],
-  bundle: true,
-  platform: 'node',
-  format: 'esm',
-  write: false,
-});
-const referenceModule = await import(
-  `data:text/javascript;base64,${Buffer.from(usageGuideBuild.outputFiles[0].contents).toString('base64')}`
+const skillsOutputDirectory = resolve(libraryDirectory, 'skills');
+if (relative(libraryDirectory, skillsOutputDirectory) !== 'skills')
+  throw new Error('Packaged skills must remain within packages/ui/skills.');
+await rm(skillsOutputDirectory, { recursive: true, force: true });
+await cp(resolve(repositoryRoot, '.agents/skills'), skillsOutputDirectory, { recursive: true });
+const readme = await readFile(resolve(repositoryRoot, 'README.md'), 'utf8');
+await writeFile(
+  resolve(libraryDirectory, 'README.md'),
+  readme
+    .replaceAll('](.agents/skills/', '](skills/')
+    .replaceAll('packages/ui/THIRD_PARTY_NOTICES.md', 'THIRD_PARTY_NOTICES.md')
+    .replaceAll('packages/ui/licenses/', 'licenses/'),
 );
-await writeFile(resolve(libraryDirectory, 'USAGE.md'), referenceModule.renderUsageMarkdown());
 console.log(
-  `Built @envsemble/envui: ${sourceEntryPoints.length} ESM modules, types, CSS, assets, and usage guide.`,
+  `Built @envsemble/envui: ${sourceEntryPoints.length} ESM modules, types, CSS, assets, and two agent skills.`,
 );

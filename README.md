@@ -1,72 +1,48 @@
 # envUI
 
-Private React 19 component library, with a separate documentation app that consumes its public API. Existing product integration is deferred.
+Private React 19 component library for envsemble. Includes ESM, TypeScript declarations, scoped light/dark styles, Inter, icons and branding.
 
-## Develop
+## Agent skills
 
-Requires Node.js 24 or newer.
+- [envui-use](.agents/skills/envui-use/SKILL.md): build and modify interfaces with envUI, including component selection, composition and library extensions.
+- [envui-migrate](.agents/skills/envui-migrate/SKILL.md): migrate existing React interfaces while preserving application behavior.
+
+These skills own the implementation guidance. The visual catalogue consumes the usage skill's component references. Public TypeScript declarations define the exact API for the installed version.
+
+The npm package includes both skills under `skills/`. Install their folders into the consuming project's `.agents/skills` using your agent's skill installer, or copy them from `node_modules/@envsemble/envui/skills`. Update both folders from the same package version when upgrading. Skill installation is explicit; npm installation does not register them automatically.
+
+## Install
+
+Configure private GitHub Packages access for the `@envsemble` scope, then install the chosen release:
+
+```sh
+npm install --save-exact @envsemble/envui@<version>
+```
+
+React and React DOM 19 are peer dependencies. Registry configuration, the first component and public entry points are in `envui-use`.
+
+## Develop and verify
+
+Requires Node.js 24 or newer. From the repository root:
 
 ```sh
 npm ci
 npm run dev
 ```
 
-Open http://127.0.0.1:8770. Library components and CSS update live through the workspace connection. See [local development](docs/LocalDevelopment.md) for adding components and temporarily connecting a future product.
-
-## Build and share
-
-```sh
-npm run build
-```
-
-`packages/ui/dist` contains the ESM library, declarations, scoped CSS and assets. Send `dist/envUI.html` on its own: runtime, font, icons and licenses are embedded, and hash navigation works offline.
-
-## Consume
-
-```tsx
-import { Theme, Button } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons/Add';
-import '@envsemble/envui/styles.css';
-
-export function App() {
-  return (
-    <Theme theme="light">
-      <Button startIcon={<Add />}>Create item</Button>
-    </Theme>
-  );
-}
-```
-
-See the [package setup](packages/ui/README.md), generated [agent usage guide](packages/ui/USAGE.md) and [private release workflow](docs/Releases.md).
-
-## Ownership
-
-| Source                                            | Purpose                                                                                |
-| ------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `packages/ui/src/styles/Tokens.css`               | Central HSL base palette, interaction rule, typography and spacing                     |
-| `packages/ui/src`                                 | Components grouped by purpose; public exports stay in `index.ts`                       |
-| `packages/ui/src/icons`                           | Generated wrappers from pinned official Google SVGs                                    |
-| `assets/brand/envUI`                              | Official envUI logos and favicons; build generates EnvUILogo and bundles the originals |
-| `apps/docs/src/pages`                             | Overview, component catalogue and Getting started                                      |
-| `apps/docs/src/previews`                          | Component/foundation demonstrations and interactive specimen state                     |
-| `apps/docs/src/reference`                         | Maintained design guidance, usage examples and API contracts                           |
-| `apps/docs/src/Reference.ts`                      | Stable entry for shared guidance and generated package `USAGE.md`                      |
-| `apps/docs/src/navigation/DocumentationRoutes.ts` | Topic routes, reading order and legacy link aliases                                    |
-| `tests`                                           | Packed consumer, SSR, browser and offline acceptance                                   |
-
-Keep palette entries as base colors. Hover and pressed lightness use one color-based rule from Tokens.css, in both themes. Use regular/medium typography, relative units, shared spacing and existing rounding. Purple remains rare emphasis; everyday actions are neutral. The application owns routing, validation and theme preference.
-
-Reusable UI belongs in the library. Documentation uses its public components for controls, surfaces, typography and composition. Documentation owns routes, preview state, page grids, token swatches, code/prop tables and artificial interaction specimens. Extend the shared API before adding component styling overrides to the documentation.
-
-See the [library source map](packages/ui/src/README.md) and [documentation source map](apps/docs/README.md) before adding a component or topic. Keep implementation in its existing family; add shared helpers only when they serve multiple components.
-
-Surface owns background geometry; Stack and ActionGroup own layout. Card composes Surface and Stack, and specialized cards build on Card. Compose through `render` when these layers should share a single root element.
-
-## Verify
+The visual catalogue opens at http://127.0.0.1:8770 and consumes the live library. `npm run dev:library` watches compiled exports for a linked external application.
 
 ```sh
 npx playwright install chromium firefox webkit
 npm run verify
 ```
 
-CI runs the same gates plus Betterleaks. The browser checks cover all three engines, native form behavior, portal themes, notification lifecycle, linked previews and the standalone HTML with networking blocked. Package checks install a tarball in an isolated consumer and validate types, SSR, assets and unused-icon exclusion.
+Verification checks icons, types, builds, isolated package consumers and browser behavior. `npm run build` produces `packages/ui/dist` and the self-contained offline catalogue at `dist/envUI.html`.
+
+## Release
+
+Align the version in `packages/ui/package.json`, `apps/docs/package.json` and the lockfile; update `packages/ui/CHANGELOG.md`. After verification, review and merge, push the matching `v<version>` tag. The Release workflow publishes privately to GitHub Packages and attaches the matching offline HTML. Prereleases use `next`; ordinary releases use `latest`. Published versions are immutable. If only the HTML upload fails, recover it from the same tag without republishing the package.
+
+Grant consuming repositories package Read access for their GitHub Actions workflows. During `0.x`, breaking changes require a new minor version and migration notes; after `1.0`, a new major version.
+
+Third-party notices and licenses are retained in `packages/ui/THIRD_PARTY_NOTICES.md` and `packages/ui/licenses/`.

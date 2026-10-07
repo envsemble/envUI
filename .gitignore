@@ -6,3 +6,5 @@ playwright-report/
 output/playwright/
 .cache/
 *.tgz
+/packages/ui/README.md
+/packages/ui/skills/

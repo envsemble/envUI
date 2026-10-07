@@ -1,6 +1,13 @@
-/** Stable entry shared by the documentation app and package USAGE.md generation. */
-export { setupCode, registryCode, installCode } from './reference/Setup';
-export { componentGroups, type ComponentGroup, type Reference } from './reference/Types';
-export { foundations } from './reference/Foundations';
-export { references } from './reference/Components';
-export { renderUsageMarkdown } from './reference/UsageMarkdown';
+/** The catalogue reads the same maintained references shipped with the usage skill. */
+export {
+  setupCode,
+  registryCode,
+  installCode,
+} from '../../../.agents/skills/envui-use/references/Setup';
+export {
+  componentGroups,
+  type ComponentGroup,
+  type Reference,
+} from '../../../.agents/skills/envui-use/references/Types';
+export { foundations } from '../../../.agents/skills/envui-use/references/Foundations';
+export { references } from '../../../.agents/skills/envui-use/references/Components';
