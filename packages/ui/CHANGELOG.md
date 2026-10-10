@@ -1,92 +1,71 @@
 # Changelog
 
-## Unreleased
+## 0.1.0 — 2026-10-10
 
-- Replace separate agent guides with the packaged envui-use and envui-migrate skills. The catalogue reads their maintained component references and renders the same skill instructions; the basic README owns setup and release commands.
-- Rename the visual app to `apps/catalogue` with matching workspace, build and test names. Refresh the README with theme-aware branding, catalogue captures, examples and a repository map; use canonical brand and license assets in both builds.
+The first published release of envUI: a private React 19 component library with light and dark themes, an offline catalogue and packaged agent skills.
 
-- Add an optional Tiptap rich-text entry with RichTextEditor, the matching read-only RichText viewer and a shared extension factory. Keep Markdown values, configurable reference lookup with stable IDs, slash commands and application-owned upload/navigation callbacks generic; retain MarkdownEditor for source editing.
+### Foundations
 
-- Add ColorPicker with a labeled color area, hue slider and native HEX field. Share validation, normalization, disabled/read-only behavior, keyboard focus and form reset through the public API; documentation palette editing consumes the library control.
+- `Theme` and `useTheme` for scoped light and dark themes. The design tokens give each component family its own color roles: surfaces, rows, buttons, navigation, form controls and feedback. Hover and pressed shades are derived from each base color.
+- Local Inter, the official Material Symbols Rounded icons as React wrappers, and envUI branding (`EnvUILogo`, `BrandLogo`, lockups and favicons).
+- Responsive layouts, and a 2.75 rem minimum touch target on coarse pointers with no consumer overrides.
+- Layout and text: `Stack`, `ActionGroup` (both with semantic tags), token-based `Text`, and `Surface` for backgrounds, padding and corners.
 
-- Compose documentation color swatches, state disclosures, link demonstrations and vertical layouts from existing Button, Link, DisclosureNote and Stack components.
+### Actions and navigation
 
-- Use GitHub Dark Default for code blocks and inline code in both application themes, including Markdown. Preserve CodeBlock's explicit theme override, syntax highlighting, source text and copying.
+- `Button`:
+  - variants, including a borderless `text` variant;
+  - native links through `href`;
+  - one shared control icon size.
+- `IconButton`.
+- `Link`: an inline link built on `Button`, underlined by default.
+- `ButtonGroup`: connected horizontal or vertical button rows.
+- `NavigationItem`:
+  - selected and unselected icon variants;
+  - `compact` labels;
+  - `iconOnly` for collapsed sidebars.
+- `DirectionLink` and `DirectionLinks`: previous/next destinations that wrap on narrow screens.
+- `Tabs`: keyboard selection, animated panels, and `renderList` to place the tab list inside other layouts.
 
-- Adopt sampled Chrome Web Store and Google Ads colors for the light palette: white canvas, cool pale panes, gray surfaces, Google blue actions and selection, charcoal text and soft gray borders.
+### Content
 
-- Separate color roles by primitive purpose for surfaces, rows, button variants, navigation, direction links, form controls, feedback and loading placeholders. Composed components reuse their primitives: tabs, icon buttons, links and toast actions share Button colors; cards, tab rails, dialog shells and menus share Surface colors; Select shares secondary Button and field colors. Derive interaction shades from each primitive's base in both themes.
+- `Card` covers plain, interactive and action-strip cards. `ClickableCard` and `ActionCard` remain as wrappers for compatibility.
+- `FeatureCard`, `GroupedRows`/`Row` with connected corners, `DisclosureNote` and `InfoChip`.
 
-- Give light-theme rows and cards a more defined default fill. Use gentle 2-point hover and 4-point pressed lightness shifts for cards and selectable rows in both themes, derived from each surface's base color.
+### Forms
 
-- Give DirectionLink the raised surface background role in both themes, with white light-theme fills and hover/pressed states derived from the same surface color.
+- `Input` and `Textarea` come in two appearances:
+  - outlined, with floating labels;
+  - plain, with an underline.
+- They share labels, hints and errors. Validation shows as a red border, or a red underline on plain fields. Focus shows as a single blue border.
+- `Textarea` sizes itself to its content, scrolls when fixed, and has a subtle full-width resize edge.
+- `Select`, `Checkbox`, `Switch`, `Radio` and `RadioGroup`.
+- `ColorPicker`: a color area, a hue slider and a HEX field.
+- Form controls reset with their native form.
 
-- Refine light theme backgrounds with a cool page canvas, softly tinted panes and lighter neutral rows and controls. Align loading placeholders with the row fill and strengthen caption contrast.
+### Feedback
 
-- Restart a timed toast's full visible duration when it returns from overflow. Scope keyboard-focus pauses to the individual notice, preserving F6 viewport access; persistent notices no longer pause unrelated timers.
+- `Dialog` and `DialogClose`.
+- Managed toasts through `ToastProvider` and `useToast`:
+  - top-center and bottom-right placements;
+  - the newest notices stay visible, and older ones hide behind a count;
+  - explicit durations, including `Infinity`;
+  - timers pause while hidden and while focused.
+- Independent manual `Toast`.
+- `EmptyState`, `Skeleton` and `LoadingState`.
 
-- Keep newest managed toasts visible immediately, pushing older notices behind the count indicator. Enter from the top at top-center and the bottom at bottom-right. Use Base UI's visibility limit, pause hidden timers and restart the visible duration when older notices reappear.
+### Optional entries
 
-- Add a text Button variant with no fill or border, an optional underline and shared blue link interaction colors. Build inline Link on the same implementation, with inherited typography and an underline by default. Use Link for Markdown rendering; retain native action/link semantics, keyboard focus and disabled behavior.
+- `@envsemble/envui/content`:
+  - `Code` and `CodeBlock`, with lazy Shiki highlighting using GitHub Dark Default in both themes; `CodeBlock` accepts an explicit theme;
+  - `Markdown`, with GitHub-flavored Markdown, envUI prose and application-owned links;
+  - `MarkdownEditor`, with Write/Preview, formatting, shared undo/redo and link insertion through an application picker.
+- `@envsemble/envui/rich-text`: `RichTextEditor`, the read-only `RichText` and `createRichTextExtensions`.
+  - Built on Tiptap, with Markdown values and configurable reference lookup.
+  - Includes slash commands, with uploads and navigation handled by the application.
+- Content and rich text are separate entry points, so applications that use only the basic components don't load parsing or highlighting code.
 
-- Support explicit dismissal durations for every managed toast, including `Infinity` for persistence. Show a per-placement older-notice count above stacks that exceed `visibleLimit`; preserve pause-aware timers.
+### Documentation
 
-- Preserve hover and pressed feedback on focused invalid text fields and plain error underlines. Make the textarea resize edge inherit the field’s hover, focus, error and dragging colors. Add matching red-border interactions to invalid Select controls; all shades follow the shared HSL rule without changing backgrounds.
-
-- Make text field hover visible with a single blue border or a plain-field underline. Derive interaction shades from link blue or the validation red using the shared HSL rule, without changing the background or adding a focus ring.
-
-- Remove the text field hover fill and keep border-only hover feedback. Invalid outlined Input/Textarea, MarkdownEditor and Select controls use a full thin red border; plain fields retain their red underline.
-
-- Add an animated neutral hover fill to outlined Input/Textarea fields using the shared HSL lightness rule. Keep the single blue focus border, suppress hover changes on disabled fields and respect reduced motion.
-
-- Keep a single thin blue border on focused Input/Textarea fields in both themes. Remove the extra focus outline from the shared text field and textarea resize edge, including MarkdownEditor source fields.
-
-- Replace Select’s full red validation outline with a shared bottom-edge accent across Select, Input, Textarea and MarkdownEditor. Keep error colors, recovery messages and keyboard focus styling consistent.
-
-- Add a plain Input/Textarea appearance with a transparent background, no outline and an underline on focus. Share labels, validation and sizing with the outlined default, including MarkdownEditor source fields.
-
-- Add fixed scrolling with bottom-edge pointer and keyboard resizing and automatic content sizing, shared by Textarea and MarkdownEditor, with the same 1 rem corners as Input and a minimum row count. Replace the native corner grip with a subtle full-width resize edge.
-
-- Adopt outlined Input/Textarea fields with floating labels, original 1 rem corners and bottom-edge validation. Reuse the outlined textarea in MarkdownEditor; preserve native values, form reset, refs and accessible field metadata.
-
-- Add ButtonGroup for connected horizontal rows and vertical columns, with mixed button variants, shared row inner corners and each end button’s normal outer corners.
-
-- Add MarkdownEditor with native textarea selection, formatting, shared undo/redo, Write/Preview, standard link insertion and an application picker callback.
-
-- Keep code/Markdown rendering and editing on the optional @envsemble/envui/content entry so basic UI consumers exclude parsing and highlighting chunks.
-
-- Add Markdown rendering with react-markdown/remark-gfm, envUI prose typography, shared CodeBlock, semantic heading offsets and application-owned link rendering.
-
-- Add Code and CodeBlock with shared source display, optional copying and lazy Shiki highlighting using standard GitHub Light Default and GitHub Dark Default themes.
-
-- Add NavigationItem iconOnly mode for collapsed sidebars, requiring an icon and accessible destination name while retaining native navigation and selection behavior.
-- Unify labeled buttons, icon-only buttons and navigation items with one shared 1 rem control icon size, including important buttons.
-- Let DirectionLinks wrap into centered rows when destinations cannot fit side by side, preventing narrow groups from squeezing titles into word fragments.
-- Add DirectionLinks to bundle optional previous and next destinations in a centered pair, including single-destination pages; document and use it for page navigation.
-- Allow Tabs renderList to compose its existing list inside a card or other layout while retaining selection, keyboard behavior and linked panels.
-- Wire existing coarse-pointer height tokens into controls, icon circles, selection labels, disclosure summaries and toast dismissal so the documented 2.75 rem touch minimum applies without consumer overrides.
-- Add Surface for palette backgrounds, padding and corners; compose Card from Surface and Stack without extra root wrappers. Reuse Surface for dialogs, dropdown popups, tab rails and contrast row panes.
-- Unify plain, interactive and action-strip cards through Card props; keep ClickableCard and ActionCard as compatibility wrappers.
-- Add native links to Button, semantic tags to Stack/ActionGroup, token-based Text and compact NavigationItem labels.
-- Share labels, hints and errors across Input, Textarea and Select; centralize native form reset handling.
-- Share connected-row corners across grouped rows, radio choices and select options, and centralize HSL lightness expressions.
-- Compose the documentation from public library controls, surfaces, typography and layouts; remove the retired standalone gallery.
-- Add Tabs with composed button styles, accessible keyboard selection and animated panels; use it for documentation reference views.
-- Add ClickableCard with native link/button semantics and shared hover, pressed, focus and disabled states.
-- Use whole-card links in the documentation catalogue, replacing separate Explore controls.
-
-## 0.1.0
-
-Initial envUI React 19 component library and offline documentation consumer.
-
-- Shared light/dark themes, Inter, branding and official Material Symbols Rounded wrappers.
-- envUI branding, theme-aware EnvUILogo, bundled lockups/favicons and envUI.html offline reference.
-- Buttons, icon buttons, navigation, rows, cards, chips and optional notes.
-- DirectionLink for previous/up-next destinations, with custom text and an optional icon.
-- Navigation automatically selects official filled/outline icon geometry from its selected state.
-- Shared Stack and ActionGroup composition; cards own their content spacing.
-- Native fields, checkboxes, switches and radio groups; accessible selects and dialogs.
-- Managed notifications with two placements, FIFO queues and paused timers; independent manual toasts.
-- Loading and empty states, public TypeScript APIs and shared agent guidance.
-
-No existing product migration is included. Consumers should review the initial API before adopting it.
+- An offline catalogue (`envUI.html`), built from the library's own components, is attached to each release.
+- The packaged `envui-use` and `envui-migrate` agent skills.
