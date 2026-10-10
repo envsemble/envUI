@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.2.0 — 2026-10-11
+
+Foundations found missing while adopting envUI in Platform, the first product to use it.
+
+### Breaking changes
+
+- The content and rich-text dependencies (Shiki, react-markdown, remark-gfm, marked and Tiptap) are optional peer dependencies. Applications that import `@envsemble/envui/content` or `@envsemble/envui/rich-text` install them; applications using only the main entry no longer download them.
+- Secondary buttons on row fills (grouped rows, row-tone cards and card action strips) shift from the fill by the control lightness rule instead of using the row color, so they stay visible.
+- Toast messages wrap to three lines within 28 rem instead of truncating to one line.
+
+### Added
+
+- `ThemePreferenceProvider`, `useThemePreference` and `ThemeToggle`: a stored light, dark or system preference that themes the document root, so the page background, native controls and other libraries' portals match.
+- `createThemeBootstrapScript` from the new `@envsemble/envui/theme-bootstrap` entry: an inline startup script that applies the saved theme before the first paint.
+- `LinkProvider`: Button, Link, NavigationItem, Card and DirectionLink destinations render through the application's router link, without a router dependency in envUI.
+- `Input` `startIcon`, `endAction` and `compact`; compact fields match the button height for toolbars.
+- `SearchField`: a compact search input with a search icon and a clear action; Escape also clears.
+- `Dialog` `pending`: Escape, outside presses and the built-in close button cannot dismiss the dialog while work is in progress.
+- `EmptyState` `tone="error"` for content that failed to load.
+- `Text` `variant="display"` for page heroes.
+- `Tooltip`, `Avatar` (with initials fallback and `getInitials`), `Meter` and `Progress`.
+
+### Documentation
+
+- New pages for tooltips, avatars, and meters and progress; theme preference, router links and optional dependencies in setup; source mode and checks while linked in local development.
+
 ## 0.1.0 — 2026-10-10
 
 The first published release of envUI: a private React 19 component library with light and dark themes, an offline catalogue and packaged agent skills.

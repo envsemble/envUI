@@ -35,7 +35,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 ## Forms & selection
 
 - [Color picker](components/color-picker.md) — A color area, hue slider and HEX field for opaque colors.
-- [Text fields](components/fields.md) — Single-line inputs and multiline textareas share labels, guidance and states.
+- [Text fields](components/fields.md) — Single-line inputs, search fields and multiline textareas share labels, guidance and states.
 - [Checkboxes](components/checkbox.md) — Independent choices; partial selection represents a group.
 - [Switches](components/switch.md) — Use for an on/off setting that applies immediately.
 - [Radio groups](components/radio.md) — Choose one option from a visible set.
@@ -54,6 +54,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Code](components/code.md) — Render inline code and highlighted code blocks.
 - [Info chips](components/chips.md) — Read-only metadata beside related content.
 - [Disclosure notes](components/disclosures.md) — Keep optional details collapsed until needed.
+- [Avatars](components/avatar.md) — A picture of a person or organization with an initials fallback.
 
 ## Feedback & overlays
 
@@ -61,3 +62,5 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Loading](components/loading.md) — Announces loading and reserves space for incoming content.
 - [Toasts](components/toasts.md) — Managed feedback with configurable duration, placement and stack capacity.
 - [Dialogs](components/dialogs.md) — Centered modals and side panels share focus and dismissal behavior.
+- [Tooltips](components/tooltip.md) — Short hints on hover and keyboard focus.
+- [Meters & progress](components/meters.md) — Quantities within a range and task completion.

@@ -1,6 +1,6 @@
 {
   "name": "@envsemble/envui",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "envUI: the internal envsemble React component library",
   "homepage": "https://github.com/envsemble/envUI#readme",
   "bugs": {
@@ -49,6 +49,11 @@
       "types": "./dist/content.d.ts",
       "import": "./dist/content.js"
     },
+    "./theme-bootstrap": {
+      "envui-source": "./src/theme-bootstrap.ts",
+      "types": "./dist/theme-bootstrap.d.ts",
+      "import": "./dist/theme-bootstrap.js"
+    },
     "./styles.css": {
       "envui-source": "./src/styles/index.css",
       "default": "./dist/styles.css"
@@ -68,10 +73,91 @@
   },
   "peerDependencies": {
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "@shikijs/langs": "^4.5.0",
+    "@shikijs/themes": "^4.5.0",
+    "@tiptap/core": "^3.31.4",
+    "@tiptap/extension-image": "^3.31.4",
+    "@tiptap/extension-list": "^3.31.4",
+    "@tiptap/extension-mention": "^3.31.4",
+    "@tiptap/extension-placeholder": "^3.31.4",
+    "@tiptap/extension-table": "^3.31.4",
+    "@tiptap/markdown": "^3.31.4",
+    "@tiptap/pm": "^3.31.4",
+    "@tiptap/react": "^3.31.4",
+    "@tiptap/starter-kit": "^3.31.4",
+    "@tiptap/static-renderer": "^3.31.4",
+    "@tiptap/suggestion": "^3.31.4",
+    "marked": "^17.0.6",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
+    "shiki": "^4.5.0"
+  },
+  "peerDependenciesMeta": {
+    "@shikijs/langs": {
+      "optional": true
+    },
+    "@shikijs/themes": {
+      "optional": true
+    },
+    "@tiptap/core": {
+      "optional": true
+    },
+    "@tiptap/extension-image": {
+      "optional": true
+    },
+    "@tiptap/extension-list": {
+      "optional": true
+    },
+    "@tiptap/extension-mention": {
+      "optional": true
+    },
+    "@tiptap/extension-placeholder": {
+      "optional": true
+    },
+    "@tiptap/extension-table": {
+      "optional": true
+    },
+    "@tiptap/markdown": {
+      "optional": true
+    },
+    "@tiptap/pm": {
+      "optional": true
+    },
+    "@tiptap/react": {
+      "optional": true
+    },
+    "@tiptap/starter-kit": {
+      "optional": true
+    },
+    "@tiptap/static-renderer": {
+      "optional": true
+    },
+    "@tiptap/suggestion": {
+      "optional": true
+    },
+    "marked": {
+      "optional": true
+    },
+    "react-markdown": {
+      "optional": true
+    },
+    "remark-gfm": {
+      "optional": true
+    },
+    "shiki": {
+      "optional": true
+    }
   },
   "dependencies": {
     "@base-ui/react": "1.8.0",
+    "react-colorful": "5.8.1"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "devDependencies": {
     "@shikijs/langs": "4.5.0",
     "@shikijs/themes": "4.5.0",
     "@tiptap/core": "3.31.4",
@@ -87,13 +173,8 @@
     "@tiptap/static-renderer": "3.31.4",
     "@tiptap/suggestion": "3.31.4",
     "marked": "17.0.6",
-    "react-colorful": "5.8.1",
     "react-markdown": "10.1.0",
     "remark-gfm": "4.0.1",
     "shiki": "4.5.0"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com",
-    "access": "restricted"
   }
 }

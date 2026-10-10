@@ -1,6 +1,7 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { classNames } from '../internal/classNames.js';
+import { useLinkComponent } from './LinkProvider.js';
 
 export interface DirectionLinkProps extends Omit<ComponentPropsWithRef<'a'>, 'children'> {
   direction: 'previous' | 'next';
@@ -18,11 +19,12 @@ export function DirectionLink({
   rel,
   ...props
 }: DirectionLinkProps) {
+  const LinkComponent = useLinkComponent();
   const isPrevious = direction === 'previous';
   const symbol = icon != null ? <DecorativeIcon>{icon}</DecorativeIcon> : null;
 
   return (
-    <a
+    <LinkComponent
       {...props}
       rel={rel ?? (isPrevious ? 'prev' : 'next')}
       className={classNames('env-direction-link', `env-direction-link-${direction}`, className)}
@@ -33,6 +35,6 @@ export function DirectionLink({
         <span className="env-direction-link-title">{children}</span>
       </span>
       {!isPrevious && symbol}
-    </a>
+    </LinkComponent>
   );
 }

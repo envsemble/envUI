@@ -88,7 +88,7 @@ function ArchiveNotice({ undoArchive }: { undoArchive: () => void }) {
 | Name                     | Contract                                                            |
 | ------------------------ | ------------------------------------------------------------------- |
 | variant                  | neutral (default), success, info or error                           |
-| message                  | Single-line message; long text truncates to the available width     |
+| message                  | Wraps to at most three lines within 28 rem; longer text is clipped  |
 | action                   | Optional {label, onClick}; the application handles the result       |
 | onDismiss / dismissLabel | Adds a close button and its accessible name                         |
 | announce                 | true by default; false for static examples                          |
@@ -99,7 +99,7 @@ function ArchiveNotice({ undoArchive }: { undoArchive: () => void }) {
 - By default, neutral, success and info notices without actions expire after five seconds. Errors and notices with actions persist. Set duration in milliseconds to override either default, or Infinity to keep a notice until dismissed.
 - New notices appear immediately at the bottom of the bottom-right stack or the top of the top-center stack. Set visibleLimit to cap each placement; older notices hide behind the count above it and reappear as newer notices close.
 - A notice gets its full duration each time it returns from overflow. Hover or keyboard focus pauses only that notice; focusing the viewport with F6 or leaving the window pauses its visible timers. A persistent notice does not pause other notices.
-- Keep messages and actions short. Messages stay single-line and truncate to available space. Manual Toast shares the presentation; the consumer owns its lifetime.
+- Keep messages and actions short. Messages wrap to three lines; the full text stays in the title and the announcement. Manual Toast shares the presentation; the consumer owns its lifetime.
 
 TypeScript declarations provide the complete public API.
 

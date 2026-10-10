@@ -24,7 +24,8 @@ const toastVariants = [
     variant: 'error',
     title: 'Error',
     meaning: 'An action failed and needs recovery.',
-    message: 'Changes couldn’t be saved.',
+    message:
+      'Changes couldn’t be saved. All seats are assigned; choose a larger plan or remove an assignment before adding another member.',
   },
 ] as const;
 

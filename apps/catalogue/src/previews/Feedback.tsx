@@ -3,6 +3,7 @@ import { Text, Button, EmptyState, Skeleton, LoadingState, Dialog, Stack } from 
 import { Add } from '@envsemble/envui/icons/Add';
 import { Search } from '@envsemble/envui/icons/Search';
 import { Apps } from '@envsemble/envui/icons/Apps';
+import { Refresh } from '@envsemble/envui/icons/Refresh';
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
 
@@ -23,6 +24,22 @@ export function EmptyStatePreview() {
                   onClick={() => setActionResult('Project creation started')}
                 >
                   Create project
+                </Button>
+              }
+            />
+          </Specimen>
+          <Specimen title="Failed to load">
+            <EmptyState
+              tone="error"
+              title="Projects couldn’t load"
+              description="Something went wrong. Please try again."
+              action={
+                <Button
+                  variant="secondary"
+                  startIcon={<Refresh />}
+                  onClick={() => setActionResult('Retrying')}
+                >
+                  Try again
                 </Button>
               }
             />
@@ -82,7 +99,10 @@ export function LoadingPreview() {
 }
 
 export function DialogsPreview() {
-  const [activeDialog, setActiveDialog] = useState<'details' | 'delete' | 'inspector' | null>(null);
+  const [activeDialog, setActiveDialog] = useState<
+    'details' | 'delete' | 'inspector' | 'pending' | null
+  >(null);
+  const [saving, setSaving] = useState(false);
   const [actionResult, setActionResult] = useState('');
   return (
     <Preview>
@@ -109,6 +129,32 @@ export function DialogsPreview() {
                   }}
                 >
                   Delete project
+                </Button>
+              }
+            />
+          </Specimen>
+          <Specimen title="Pending work">
+            <Dialog
+              open={activeDialog === 'pending'}
+              onOpenChange={(open) => setActiveDialog(open ? 'pending' : null)}
+              trigger={<Button variant="secondary">Rename project</Button>}
+              title="Rename project"
+              description="Saving keeps the dialog open; Cancel and Escape wait until it finishes."
+              closeLabel="Cancel"
+              pending={saving}
+              actions={
+                <Button
+                  disabled={saving}
+                  onClick={() => {
+                    setSaving(true);
+                    window.setTimeout(() => {
+                      setSaving(false);
+                      setActiveDialog(null);
+                      setActionResult('Project renamed');
+                    }, 2000);
+                  }}
+                >
+                  {saving ? 'Saving…' : 'Save'}
                 </Button>
               }
             />

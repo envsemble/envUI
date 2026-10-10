@@ -131,3 +131,15 @@
 .docs-matrix td {
   padding: 1rem 0.75rem;
 }
+
+.docs-inline-row {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.docs-field-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+}

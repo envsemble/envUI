@@ -94,6 +94,13 @@ before(
     ]) {
       dependencies[name] = manifest.devDependencies[name];
     }
+    // This consumer uses the content and rich-text entries, so it installs their optional peers.
+    const libraryManifest = JSON.parse(
+      await readFile(join(repository, 'packages/ui/package.json'), 'utf8'),
+    );
+    for (const name of Object.keys(libraryManifest.peerDependenciesMeta ?? {})) {
+      dependencies[name] = libraryManifest.devDependencies[name];
+    }
     dependencies['@envsemble/envui'] = `file:../packed/${packed[0].filename}`;
     await writeFile(
       join(consumerDirectory, 'package.json'),
@@ -249,6 +256,11 @@ test('a packed consumer resolves compiled public exports and its own React insta
   );
   assert.match(installedManifest.peerDependencies.react, /19/);
   assert.equal(installedManifest.dependencies['react-colorful'], '5.8.1');
+  // Basic UI installs without the content and rich-text stacks; apps using those entries add them.
+  for (const name of ['shiki', 'react-markdown', 'remark-gfm', 'marked', '@tiptap/react']) {
+    assert.equal(installedManifest.dependencies[name], undefined);
+    assert.equal(installedManifest.peerDependenciesMeta[name]?.optional, true);
+  }
   assert.match(ssr.colorPickerModule, /\/consumer\/node_modules\/react-colorful\//);
   assert.match(
     JSON.parse(await readFile(consumerRequire.resolve('react/package.json'), 'utf8')).version,
@@ -413,6 +425,8 @@ test('the package includes scoped CSS, local fonts, branding and license notices
   assert.ok(ruleHeaders.length > 50, 'Inspect the full component stylesheet.');
   for (const header of ruleHeaders) {
     if (header.startsWith('@')) continue;
+    // Keyframe steps inside @keyframes are offsets, not element selectors.
+    if (/^(?:from|to|\d+(?:\.\d+)?%)(?:\s*,\s*(?:from|to|\d+(?:\.\d+)?%))*$/.test(header)) continue;
     for (const selector of splitSelectors(header)) {
       assert.match(selector, /^(?:[a-zA-Z][\w-]*)?\.env-/, `Unscoped CSS selector: ${selector}`);
     }

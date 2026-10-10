@@ -28,6 +28,9 @@ import { ToggleOn } from '@envsemble/envui/icons/ToggleOn';
 import { ViewModule } from '@envsemble/envui/icons/ViewModule';
 import { WebAsset } from '@envsemble/envui/icons/WebAsset';
 import { Widgets } from '@envsemble/envui/icons/Widgets';
+import { ChatBubble } from '@envsemble/envui/icons/ChatBubble';
+import { AccountCircle } from '@envsemble/envui/icons/AccountCircle';
+import { Speed } from '@envsemble/envui/icons/Speed';
 import { type Reference } from '../Reference';
 
 export const foundationIcons: Record<string, typeof Palette> = {
@@ -79,6 +82,9 @@ const referenceIcons: Record<string, typeof Palette> = {
   loading: HourglassEmpty,
   toasts: Notifications,
   dialogs: WebAsset,
+  tooltip: ChatBubble,
+  avatar: AccountCircle,
+  meters: Speed,
 };
 
 /** A decorative symbol for the individual reference topic. */

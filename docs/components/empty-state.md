@@ -20,14 +20,16 @@ import { Search } from '@envsemble/envui/icons/Search';
 
 ### Props & contracts
 
-| Name                | Contract                        |
-| ------------------- | ------------------------------- |
-| title / description | Heading and concise explanation |
-| icon / action       | Optional React content          |
+| Name                | Contract                                                                 |
+| ------------------- | ------------------------------------------------------------------------ |
+| title / description | Heading and concise explanation                                          |
+| icon / action       | Optional React content                                                   |
+| tone                | neutral (default) or error: error icon by default, announced as an alert |
 
 ## Guidelines
 
 - Distinguish first-use emptiness from a search with no results.
+- Use the error tone when content failed to load, with a retry action. Report failed actions with an error toast instead.
 - Offer an action that resolves the situation. Keep the content aligned to the start.
 
 TypeScript declarations provide the complete public API.

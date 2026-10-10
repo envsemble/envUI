@@ -41,3 +41,9 @@ export type {
 export * from './Icon.js';
 export * from './BrandLogo.js';
 export * from './EnvUILogo.js';
+export * from './navigation/LinkProvider.js';
+export * from './forms/SearchField.js';
+export * from './feedback/Tooltip.js';
+export * from './feedback/Meter.js';
+export * from './content/Avatar.js';
+export * from './foundations/ThemePreference.js';

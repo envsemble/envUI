@@ -26,6 +26,7 @@
 @import './ConnectedRows.css';
 @import './Dialog.css';
 @import './Toast.css';
+@import './Indicators.css';
 @font-face {
   font-family: 'envUI Inter';
   src: url('../assets/fonts/Inter.woff2') format('woff2');

@@ -89,7 +89,7 @@ import { Settings } from '@envsemble/envui/icons/Settings';
 - Prefer the same button variant within a connected group. Mix variants when related actions need different emphasis.
 - ButtonGroup accepts any mixture of labeled, icon-only, leading/trailing icon and native link buttons. Horizontal buttons share a height; vertical buttons fill the group width. Labels wrap, and groups scroll locally if their controls cannot fit. Hidden buttons do not determine the end corners.
 - Give related actions an accessible group name. ButtonGroup retains ordinary Tab navigation and each button’s native activation, focus and disabled behavior.
-- Secondary buttons use the neutral row fill and label color, without a border. Outlined buttons retain their border and link color.
+- Secondary buttons use the neutral row fill and label color, without a border. On row fills (grouped rows, row-tone cards and card action strips) they shift from that fill by the control lightness rule, so they stay visible. Outlined buttons retain their border and link color.
 - Text buttons use link blue with no fill, border or horizontal inset. Set underline to show an underline. Hover and pressed states change only the text color using the shared HSL rule. Use onClick for actions and href for navigation; keyboard focus and disabled behavior remain shared with Button.
 - Interaction colors follow the central HSL lightness rule described in Colors & themes. State colors and disabled opacity come from the shared stylesheet.
 - Use href for destinations and onClick for actions. Disabled links have no destination and cannot activate.
