@@ -1,4 +1,8 @@
 import { test, expect } from '@playwright/test';
+import {
+  findReferencePage,
+  normalizeRoute,
+} from '../../apps/catalogue/src/navigation/DocumentationRoutes';
 
 const components = [
   'layout',
@@ -23,7 +27,7 @@ const foundations = ['colors', 'typography', 'spacing', 'composition', 'icons', 
 test('public composition owns spacing and content-fit sizing without documentation CSS', async ({
   page,
 }) => {
-  await page.goto('http://127.0.0.1:8766');
+  await page.goto('http://127.0.0.1:8766/?fixture=layout');
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: 1000 });
     for (const theme of ['light', 'dark']) {
@@ -88,7 +92,7 @@ test('public composition owns spacing and content-fit sizing without documentati
 
 test('all documentation views retain explicit content gaps and a single preview', async ({
   page,
-}, testInfo) => {
+}) => {
   test.setTimeout(90_000);
   const routes = [
     'overview',
@@ -97,11 +101,31 @@ test('all documentation views retain explicit content gaps and a single preview'
     ...foundations.map((id) => `foundations/${id}`),
     ...components.flatMap((id) => ['preview', 'usage'].map((view) => `components/${id}/${view}`)),
   ];
+  await page.goto('http://127.0.0.1:8770/#/overview');
   for (const width of [1920, 960]) {
     await page.setViewportSize({ width, height: 1000 });
     for (const route of routes) {
-      await page.goto(`http://127.0.0.1:8770/#/${route}`);
+      await page.evaluate((route) => {
+        location.hash = `/${route}`;
+      }, route);
+      const destination = normalizeRoute(route);
+      const reference = findReferencePage(destination);
+      const view = reference
+        ? destination.endsWith('/usage')
+          ? 'Usage'
+          : 'Preview'
+        : destination.startsWith('overview/get-started')
+          ? 'Get started'
+          : 'Components';
       await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+      // Wait for React to commit this route and view before measuring its layout.
+      await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName(
+        reference?.reference.title ?? 'envUI',
+      );
+      await expect(
+        page.locator('.docs-page-header').getByRole('tab', { selected: true }),
+      ).toHaveText(view);
+      await expect(page.getByText(/^Loading (?:icons|icon usage|rich text)…$/)).toHaveCount(0);
       const result = await page.evaluate(() => {
         const faults: string[] = [];
         const root = parseFloat(getComputedStyle(document.documentElement).fontSize);
@@ -136,14 +160,6 @@ test('all documentation views retain explicit content gaps and a single preview'
         return faults;
       });
       expect(result, `${width}: ${route}`).toEqual([]);
-      if (
-        width === 1920 &&
-        ['foundations/accessibility', 'foundations/spacing', 'foundations/colors'].includes(route)
-      ) {
-        await page
-          .locator('.docs-preview')
-          .screenshot({ path: testInfo.outputPath(`${route.split('/')[1]}-spacing.png`) });
-      }
     }
   }
 });

@@ -8,7 +8,7 @@ test('navigation owns official icon fill without a second icon, including wrappe
   page.on('console', (message) => {
     if (message.type() === 'error') errors.push(message.text());
   });
-  await page.goto('http://127.0.0.1:8766');
+  await page.goto('http://127.0.0.1:8766/?fixture=navigation');
   for (const theme of ['light', 'dark']) {
     const scope = page.getByTestId(`navigation-icons-${theme}`);
     const geometry = async (id: string) =>

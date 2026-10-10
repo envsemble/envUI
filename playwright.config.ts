@@ -8,8 +8,14 @@ export default defineConfig({
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
   workers: 3,
-  reporter: process.env.CI ? 'github' : 'list',
-  use: { trace: 'retain-on-failure', viewport: { width: 1440, height: 1000 } },
+  reporter: process.env.CI
+    ? [['github'], ['json', { outputFile: 'test-results/results.json' }]]
+    : 'list',
+  use: {
+    trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
+    viewport: { width: 1440, height: 1000 },
+  },
   projects: [
     { name: 'chromium', testIgnore: /LiveDevelopment/, use: { ...devices['Desktop Chrome'] } },
     { name: 'firefox', testIgnore: /LiveDevelopment/, use: { ...devices['Desktop Firefox'] } },
@@ -24,7 +30,7 @@ export default defineConfig({
   webServer: [
     {
       command: 'node ../../node_modules/vite/bin/vite.js --host 127.0.0.1 --port 8770 --strictPort',
-      cwd: 'apps/docs',
+      cwd: 'apps/catalogue',
       url: 'http://127.0.0.1:8770',
       reuseExistingServer: !process.env.CI,
     },

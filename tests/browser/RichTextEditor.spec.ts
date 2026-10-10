@@ -50,13 +50,10 @@ async function uploadIndex(page: Page, file: string) {
   );
 }
 
-test.beforeEach(async ({ page }) => {
-  await page.goto(fixtureUrl);
-});
-
 test('formatting toolbar uses named SVG icon buttons and stays compact at narrow widths', async ({
   page,
-}, testInfo) => {
+}) => {
+  await page.goto(`${fixtureUrl}?fixture=upload`);
   const scope = page.getByTestId('rich-text-upload');
   const toolbar = scope.getByRole('toolbar', { name: 'Rich text formatting' });
   const labels = [
@@ -112,15 +109,13 @@ test('formatting toolbar uses named SVG icon buttons and stays compact at narrow
     await toolbar.getByRole('button', { name: 'Heading', exact: true }).focus();
     await page.keyboard.press('ArrowRight');
     await expect(toolbar.getByRole('button', { name: 'Bold', exact: true })).toBeFocused();
-    await scope.locator('.env-markdown-toolbar').screenshot({
-      path: testInfo.outputPath(`rich-text-toolbar-${width}.png`),
-    });
   }
 });
 
 test('theme and renderer changes preserve uncontrolled content, history and keyboard reference actions', async ({
   page,
 }) => {
+  await page.goto(`${fixtureUrl}?fixture=themed`);
   const scope = page.getByTestId('rich-text-themed');
   const editor = scope.getByRole('textbox');
   await replace(editor, '@');
@@ -155,6 +150,7 @@ test('theme and renderer changes preserve uncontrolled content, history and keyb
 test('formatting, native history, form submission and reset use Markdown values', async ({
   page,
 }) => {
+  await page.goto(`${fixtureUrl}?fixture=form`);
   const form = page.getByTestId('rich-text-form');
   const editor = form.getByRole('textbox', { name: 'Rich source', exact: true });
   await editor.focus();
@@ -180,6 +176,7 @@ test('formatting, native history, form submission and reset use Markdown values'
 test('references preserve punctuation and stable identities through editor and shared view Markdown roundtrips', async ({
   page,
 }) => {
+  await page.goto(`${fixtureUrl}?fixture=form`);
   const editor = page
     .getByTestId('rich-text-form')
     .getByRole('textbox', { name: 'Rich source', exact: true });
@@ -209,6 +206,7 @@ test('references preserve punctuation and stable identities through editor and s
 test('generic at, hash and slash sources support arrow selection, Escape and IME Enter', async ({
   page,
 }) => {
+  await page.goto(`${fixtureUrl}?fixture=form`);
   const editor = page
     .getByTestId('rich-text-form')
     .getByRole('textbox', { name: 'Rich source', exact: true });
@@ -264,6 +262,7 @@ test('generic at, hash and slash sources support arrow selection, Escape and IME
 });
 
 test('slash commands execute standard Tiptap blocks and application actions', async ({ page }) => {
+  await page.goto(`${fixtureUrl}?fixture=commands`);
   const editor = page.getByTestId('rich-text-commands').getByRole('textbox');
   await replace(editor, '/heading');
   await page.getByRole('option', { name: 'Heading', exact: true }).click();
@@ -278,6 +277,7 @@ test('slash commands execute standard Tiptap blocks and application actions', as
 test('async sources handle loading, stale resolutions, empty results, failures and cancellation', async ({
   page,
 }) => {
+  await page.goto(`${fixtureUrl}?fixture=remote`);
   const scope = page.getByTestId('rich-text-remote');
   const editor = scope.getByRole('textbox');
   await replace(editor, '@old');
@@ -325,6 +325,7 @@ test('async sources handle loading, stale resolutions, empty results, failures a
 test('controlled replacements and rejected edits stay authoritative, and links use host callbacks', async ({
   page,
 }) => {
+  await page.goto(`${fixtureUrl}?fixture=controlled&fixture=form`);
   const scope = page.getByTestId('rich-text-controlled');
   const editor = scope.getByRole('textbox');
   await replace(editor, 'accepted edit');
@@ -357,6 +358,7 @@ test('controlled replacements and rejected edits stay authoritative, and links u
 test('upload hooks insert safe images and file references, accept host cancellation and reject unsafe URLs', async ({
   page,
 }) => {
+  await page.goto(`${fixtureUrl}?fixture=upload`);
   const scope = page.getByTestId('rich-text-upload');
   const files = scope.locator('input[type=file]');
   await files.setInputFiles({
@@ -430,6 +432,7 @@ test('upload hooks insert safe images and file references, accept host cancellat
 test('pending uploads cancel on read-only changes and refuse to insert into changed documents', async ({
   page,
 }) => {
+  await page.goto(`${fixtureUrl}?fixture=upload`);
   const scope = page.getByTestId('rich-text-upload');
   const files = scope.locator('input[type=file]');
   await files.setInputFiles({

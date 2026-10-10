@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('http://127.0.0.1:8766');
+  await page.goto('http://127.0.0.1:8766/?fixture=colors');
   await page.emulateMedia({ reducedMotion: 'reduce' });
 });
 

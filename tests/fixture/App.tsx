@@ -13,29 +13,57 @@ import { ColorPickerFixture } from './ColorPicker.js';
 import { MarkdownEditingFixture } from './MarkdownEditing.js';
 
 export default function App() {
+  // Keep the full fixture available for integration checks; focused tests mount
+  // only their own controls, so unrelated editors and portals do no work.
+  const fixture = new URLSearchParams(location.search).get('fixture');
+  const includes = (name: string) => fixture === null || fixture === name;
   return (
     <>
       <p data-testid="host-marker">Host document marker</p>
       <Theme theme="light">
         <main className="fixture-main">
-          <FormsFixture />
-          <DialogFixture />
-          <ToastProvider>
-            <ToastTriggers />
-          </ToastProvider>
-          <ManualToastFixture />
-          <ColorControls theme="light" />
-          <ColorControls theme="dark" />
-          <NavigationFixture theme="light" />
-          <NavigationFixture theme="dark" />
-          <ButtonGroupsFixture theme="light" />
-          <ButtonGroupsFixture theme="dark" />
-          <LayoutFixture />
-          <FeatureCardsFixture />
-          <ColorPickerFixture theme="light" />
-          <ColorPickerFixture theme="dark" />
-          <StrictToastFixture />
-          <MarkdownEditingFixture />
+          {includes('forms') && (
+            <>
+              <FormsFixture />
+              <DialogFixture />
+            </>
+          )}
+          {includes('toast') && (
+            <>
+              <ToastProvider>
+                <ToastTriggers />
+              </ToastProvider>
+              <ManualToastFixture />
+              <StrictToastFixture />
+            </>
+          )}
+          {includes('colors') && (
+            <>
+              <ColorControls theme="light" />
+              <ColorControls theme="dark" />
+            </>
+          )}
+          {includes('navigation') && (
+            <>
+              <NavigationFixture theme="light" />
+              <NavigationFixture theme="dark" />
+            </>
+          )}
+          {includes('button-groups') && (
+            <>
+              <ButtonGroupsFixture theme="light" />
+              <ButtonGroupsFixture theme="dark" />
+            </>
+          )}
+          {includes('layout') && <LayoutFixture />}
+          {includes('feature-cards') && <FeatureCardsFixture />}
+          {includes('color-picker') && (
+            <>
+              <ColorPickerFixture theme="light" />
+              <ColorPickerFixture theme="dark" />
+            </>
+          )}
+          {includes('markdown') && <MarkdownEditingFixture />}
         </main>
       </Theme>
     </>

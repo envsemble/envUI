@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-const fixtureUrl = 'http://127.0.0.1:8766';
+const fixtureUrl = 'http://127.0.0.1:8766/?fixture=markdown';
 
 test('inactive preview avoids rendering and highlighting work while retaining custom link state', async ({
   page,
@@ -122,6 +122,10 @@ test('submitting an empty preview reveals and focuses the required native source
   const form = page.getByTestId('required-markdown');
   await form.getByRole('tab', { name: 'Preview', exact: true }).click();
   await expect(form.getByText('Nothing to preview.')).toBeVisible();
+  // Finish closing Write before native validation opens it again.
+  await expect(
+    form.getByRole('tabpanel', { name: 'Write', exact: true, includeHidden: true }),
+  ).toBeHidden();
   await form.getByRole('button', { name: 'Submit required Markdown' }).click();
   await expect(form.getByRole('tab', { name: 'Write', exact: true })).toHaveAttribute(
     'aria-selected',

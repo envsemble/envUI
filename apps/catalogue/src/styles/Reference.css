@@ -1,0 +1,39 @@
+.docs-article {
+  padding: 0 var(--docs-gutter) 3rem;
+}
+.docs-article p {
+  max-width: 75ch;
+}
+.docs-overview {
+  padding: 0 var(--docs-gutter) var(--space-8);
+}
+.docs-overview {
+  padding-block-start: var(--space-5);
+  text-align: center;
+}
+.docs-overview-hero {
+  text-align: center;
+}
+.docs-overview-title {
+  inline-size: min(20rem, 100%);
+}
+.docs-overview-logo {
+  display: block;
+  width: 100%;
+  height: auto;
+  color: var(--color-text-strong);
+}
+.docs-catalogue-content {
+  height: 100%;
+  text-align: center;
+}
+.docs-catalogue-content > svg {
+  flex-shrink: 0;
+  color: var(--color-icon);
+}
+.docs-catalogue-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: var(--space-5);
+  container-type: inline-size;
+}

@@ -6,6 +6,7 @@ import { readFile, writeFile, mkdir, mkdtemp, rm, lstat, readdir } from 'node:fs
 import { dirname, join, resolve, relative, isAbsolute, delimiter } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
+import { readDocumentation } from '../scripts/GenerateDocumentation.mjs';
 
 const repository = fileURLToPath(new URL('../', import.meta.url));
 const cacheDirectory = join(repository, '.cache');
@@ -430,7 +431,8 @@ test('the package includes scoped CSS, local fonts, branding and license notices
   assert.match(await readFile(fileURLToPath(ssr.logo), 'utf8'), /<svg/);
   for (const filename of [
     'README.md',
-    'USAGE.md',
+    'skills/envui-use/SKILL.md',
+    'skills/envui-migrate/SKILL.md',
     'THIRD_PARTY_NOTICES.md',
     'icon-manifest.json',
   ]) {
@@ -471,6 +473,62 @@ test('explicit official icons preserve filled geometry and accept custom SVG con
     (await readdir(join(installedDirectory, 'dist/icons'))).length > 100,
     'The package contains the generated catalogue.',
   );
+});
+
+test('packed skills locate separate versioned documentation and match the release sources', async function () {
+  assert.equal(existsSync(join(installedDirectory, 'USAGE.md')), false);
+  const packagedReadme = await readFile(join(installedDirectory, 'README.md'), 'utf8');
+  assert.match(packagedReadme, /\]\(skills\/envui-use\/SKILL\.md\)/);
+  assert.doesNotMatch(packagedReadme, /\]\(\.agents\/skills\//);
+  const readmeResources = [
+    ...[...packagedReadme.matchAll(/\[[^\]]+\]\(([^)]+)\)/g)].map((match) => match[1]),
+    ...[...packagedReadme.matchAll(/\b(?:src|srcset)="([^"]+)"/g)].map((match) => match[1]),
+  ];
+  for (const target of readmeResources) {
+    if (/^https?:\/\//.test(target)) continue;
+    const resource = resolve(installedDirectory, target);
+    const contained = relative(installedDirectory, resource);
+    assert.ok(!contained.startsWith('..') && !isAbsolute(contained));
+    assert.ok(
+      existsSync(resource),
+      `README resource is absent from the installed package: ${target}`,
+    );
+  }
+  const skillNames = await readdir(join(installedDirectory, 'skills'));
+  assert.deepEqual(skillNames.sort(), ['envui-migrate', 'envui-use']);
+  for (const skillName of skillNames) {
+    const skillFile = join(installedDirectory, 'skills', skillName, 'SKILL.md');
+    const source = await readFile(skillFile, 'utf8');
+    assert.deepEqual(await readdir(dirname(skillFile)), ['SKILL.md']);
+    assert.equal(
+      source,
+      await readFile(join(repository, '.agents/skills', skillName, 'SKILL.md'), 'utf8'),
+    );
+    for (const [, target] of source.matchAll(/\[[^\]]+\]\(([^)]+)\)/g)) {
+      const resource = resolve(dirname(skillFile), target);
+      const contained = relative(join(installedDirectory, 'skills'), resource);
+      assert.ok(
+        !contained.startsWith('..') && !isAbsolute(contained),
+        `Skill resource escapes its package: ${target}`,
+      );
+      assert.equal(
+        await readFile(resource, 'utf8'),
+        await readFile(join(repository, '.agents/skills', contained), 'utf8'),
+        `Packaged skill resource differs from its maintained source: ${target}`,
+      );
+    }
+  }
+  const packagedDocumentation = readDocumentation(join(installedDirectory, 'docs'));
+  assert.deepEqual(packagedDocumentation, readDocumentation());
+  assert.ok(packagedDocumentation.some((document) => document.path === 'components/dialogs.md'));
+  assert.ok(packagedDocumentation.some((document) => document.path === 'components/rich-text.md'));
+  for (const { path } of packagedDocumentation) {
+    assert.equal(
+      await readFile(join(installedDirectory, 'docs', path), 'utf8'),
+      await readFile(join(repository, 'docs', path), 'utf8'),
+      `Packaged documentation differs from its release source: ${path}`,
+    );
+  }
 });
 
 test('a small independent bundle excludes unused icons and Base UI', async function () {

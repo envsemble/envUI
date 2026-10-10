@@ -1,0 +1,22 @@
+import { documents } from './generated/Documentation';
+
+export { documents };
+export const componentGroups = [
+  'Layout & surfaces',
+  'Actions',
+  'Forms & selection',
+  'Navigation',
+  'Content & guidance',
+  'Feedback & overlays',
+] as const;
+export type ComponentGroup = (typeof componentGroups)[number];
+export type Documentation = (typeof documents)[number];
+export type Reference = Omit<Documentation, 'group'> & {
+  group: ComponentGroup | 'Foundations';
+};
+export const foundations = documents.filter(
+  (document): document is Reference => document.group === 'Foundations',
+);
+export const references = documents.filter((document): document is Reference =>
+  componentGroups.some((group) => group === document.group),
+);
