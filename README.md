@@ -10,7 +10,7 @@
 ![Node.js 24+](https://img.shields.io/badge/Node.js-24%2B-417e38)
 ![Private package](https://img.shields.io/badge/GitHub_Packages-private-6e40c9)
 
-envUI brings consistent themes, composition and interaction to React applications: from a button or a native form to dialogs, notifications and rich text. It ships as a private ESM package with TypeScript declarations, local fonts, icons and two versioned agent skills. The first official private release is being prepared.
+envUI brings consistent themes, composition and interaction to React applications: from a button or a native form to dialogs, notifications and rich text. It ships as a private ESM package with TypeScript declarations, local fonts, icons and two versioned agent skills.
 
 [Use envUI](.agents/skills/envui-use/SKILL.md) · [Migrate an app](.agents/skills/envui-migrate/SKILL.md) · [Changelog](packages/ui/CHANGELOG.md) · [CI](https://github.com/envsemble/envUI/actions/workflows/ci.yml)
 
@@ -155,7 +155,14 @@ React components and scripts use PascalCase filenames; hooks and helpers use cam
 
 ## Releases
 
-The [Release workflow](https://github.com/envsemble/envUI/actions/workflows/release.yml) verifies a version tag, publishes privately to GitHub Packages and attaches the matching offline HTML. Prereleases use `next`; stable releases use `latest`.
+Releases are cut from `main`. Merge `dev` into `main` through a pull request, then push a `v<version>` tag on `main`. The [Release workflow](https://github.com/envsemble/envUI/actions/workflows/release.yml) then:
+
+- rejects tags that are not on `main`;
+- verifies the tag matches the package version;
+- publishes privately to GitHub Packages;
+- creates a GitHub release with that version's CHANGELOG section and the matching offline HTML.
+
+Prereleases use `next`; stable releases use `latest`.
 
 Align `packages/ui/package.json`, the dependency in `apps/catalogue/package.json` and the lockfile, then update the [changelog](packages/ui/CHANGELOG.md). Verify, review and merge before pushing `v<version>`. Published versions are immutable. During `0.x`, breaking changes require a new minor version and migration notes; after `1.0`, a new major version.
 
