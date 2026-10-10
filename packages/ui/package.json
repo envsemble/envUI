@@ -2,17 +2,29 @@
   "name": "@envsemble/envui",
   "version": "0.1.0",
   "description": "envUI: the internal envsemble React component library",
+  "homepage": "https://github.com/envsemble/envUI#readme",
+  "bugs": {
+    "url": "https://github.com/envsemble/envUI/issues"
+  },
+  "keywords": [
+    "react",
+    "typescript",
+    "design-system",
+    "component-library",
+    "envsemble"
+  ],
   "type": "module",
   "license": "UNLICENSED",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/envsemble/design-system.git",
+    "url": "git+https://github.com/envsemble/envUI.git",
     "directory": "packages/ui"
   },
   "files": [
     "dist",
     "README.md",
-    "USAGE.md",
+    "skills",
+    "docs",
     "CHANGELOG.md",
     "THIRD_PARTY_NOTICES.md",
     "licenses",

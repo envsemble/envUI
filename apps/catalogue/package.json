@@ -1,0 +1,14 @@
+{
+  "name": "@envsemble/envui-catalogue",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 8770 --strictPort",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@envsemble/envui": "0.1.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  }
+}

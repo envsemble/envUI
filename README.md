@@ -1,72 +1,164 @@
-# envUI
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/brand/envUI/envUI-lockup-white.svg">
+  <img src="assets/brand/envUI/envUI-lockup-black.svg" alt="envUI" width="240">
+</picture>
 
-Private React 19 component library, with a separate documentation app that consumes its public API. Existing product integration is deferred.
+**The shared interface library for envsemble.**
 
-## Develop
+[![CI](https://github.com/envsemble/envUI/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/envsemble/envUI/actions/workflows/ci.yml)
+![React 19](https://img.shields.io/badge/React-19-149eca)
+![Node.js 24+](https://img.shields.io/badge/Node.js-24%2B-417e38)
+![Private package](https://img.shields.io/badge/GitHub_Packages-private-6e40c9)
 
-Requires Node.js 24 or newer.
+envUI brings consistent themes, composition and interaction to React applications: from a button or a native form to dialogs, notifications and rich text. It ships as a private ESM package with TypeScript declarations, local fonts, icons and two versioned agent skills. The first official private release is being prepared.
+
+[Use envUI](.agents/skills/envui-use/SKILL.md) · [Migrate an app](.agents/skills/envui-migrate/SKILL.md) · [Changelog](packages/ui/CHANGELOG.md) · [CI](https://github.com/envsemble/envUI/actions/workflows/ci.yml)
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/readme/catalogue-dark.png">
+  <img src="assets/readme/catalogue-light.png" alt="The envUI catalogue showing buttons, icons and navigation in the light theme" width="1440">
+</picture>
+
+_Actual envUI components in the local catalogue. The preview follows your light or dark appearance._
+
+## What’s inside
+
+- **Shared foundations:** scoped light/dark themes, design tokens, Inter, typography, surfaces and layout primitives.
+- **Everyday interactions:** actions, navigation, native form controls, selection, color picking, dialogs and toasts, with Base UI underpinning complex interactions.
+- **Content tools:** Markdown, code highlighting and Tiptap rich text on separate entry points.
+- **Local assets:** official Material Symbols Rounded icons and envsemble branding, with no font or icon CDN required.
+- **A visual catalogue:** live component previews plus a self-contained HTML build that opens offline.
+
+## Start using envUI
+
+Requires React and React DOM 19, plus access to the private `@envsemble` GitHub Packages registry. See [setup](docs/setup.md) for registry access and the [documentation index](docs/index.md) for examples matching the installed version.
 
 ```sh
-npm ci
-npm run dev
+npm install --save-exact @envsemble/envui@<version>
 ```
 
-Open http://127.0.0.1:8770. Library components and CSS update live through the workspace connection. See [local development](docs/LocalDevelopment.md) for adding components and temporarily connecting a future product.
-
-## Build and share
-
-```sh
-npm run build
-```
-
-`packages/ui/dist` contains the ESM library, declarations, scoped CSS and assets. Send `dist/envUI.html` on its own: runtime, font, icons and licenses are embedded, and hash navigation works offline.
-
-## Consume
+Import the stylesheet once at your application entry point, then compose public components:
 
 ```tsx
-import { Theme, Button } from '@envsemble/envui';
+import { Button, Card, Stack, Text, Theme } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import '@envsemble/envui/styles.css';
 
 export function App() {
   return (
     <Theme theme="light">
-      <Button startIcon={<Add />}>Create item</Button>
+      <Card as="article">
+        <Stack gap={3}>
+          <Text as="h1" variant="page-heading">
+            Projects
+          </Text>
+          <Text tone="muted">A shared space for your team’s work.</Text>
+        </Stack>
+        <Button startIcon={<Add />}>Create project</Button>
+      </Card>
     </Theme>
   );
 }
 ```
 
-See the [package setup](packages/ui/README.md), generated [agent usage guide](packages/ui/USAGE.md) and [private release workflow](docs/Releases.md).
+Native form behavior stays familiar. Render this inside your application’s theme:
 
-## Ownership
+```tsx
+import { ActionGroup, Button, Input, Stack } from '@envsemble/envui';
 
-| Source                                            | Purpose                                                                                |
-| ------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `packages/ui/src/styles/Tokens.css`               | Central HSL base palette, interaction rule, typography and spacing                     |
-| `packages/ui/src`                                 | Components grouped by purpose; public exports stay in `index.ts`                       |
-| `packages/ui/src/icons`                           | Generated wrappers from pinned official Google SVGs                                    |
-| `assets/brand/envUI`                              | Official envUI logos and favicons; build generates EnvUILogo and bundles the originals |
-| `apps/docs/src/pages`                             | Overview, component catalogue and Getting started                                      |
-| `apps/docs/src/previews`                          | Component/foundation demonstrations and interactive specimen state                     |
-| `apps/docs/src/reference`                         | Maintained design guidance, usage examples and API contracts                           |
-| `apps/docs/src/Reference.ts`                      | Stable entry for shared guidance and generated package `USAGE.md`                      |
-| `apps/docs/src/navigation/DocumentationRoutes.ts` | Topic routes, reading order and legacy link aliases                                    |
-| `tests`                                           | Packed consumer, SSR, browser and offline acceptance                                   |
+export function ProjectForm() {
+  return (
+    <form>
+      <Stack gap={4}>
+        <Input name="projectName" label="Project name" required />
+        <ActionGroup>
+          <Button type="submit">Create project</Button>
+          <Button type="reset" variant="secondary">
+            Reset
+          </Button>
+        </ActionGroup>
+      </Stack>
+    </form>
+  );
+}
+```
 
-Keep palette entries as base colors. Hover and pressed lightness use one color-based rule from Tokens.css, in both themes. Use regular/medium typography, relative units, shared spacing and existing rounding. Purple remains rare emphasis; everyday actions are neutral. The application owns routing, validation and theme preference.
+| Entry point                   | Use it for                          |
+| ----------------------------- | ----------------------------------- |
+| `@envsemble/envui`            | Foundations and everyday components |
+| `@envsemble/envui/icons/Name` | Individual icon imports             |
+| `@envsemble/envui/content`    | Markdown, code and Markdown editing |
+| `@envsemble/envui/rich-text`  | Rich-text rendering and editing     |
+| `@envsemble/envui/styles.css` | Shared styles and local font        |
 
-Reusable UI belongs in the library. Documentation uses its public components for controls, surfaces, typography and composition. Documentation owns routes, preview state, page grids, token swatches, code/prop tables and artificial interaction specimens. Extend the shared API before adding component styling overrides to the documentation.
+## Working with agents
 
-See the [library source map](packages/ui/src/README.md) and [documentation source map](apps/docs/README.md) before adding a component or topic. Keep implementation in its existing family; add shared helpers only when they serve multiple components.
+There are two guides:
 
-Surface owns background geometry; Stack and ActionGroup own layout. Card composes Surface and Stack, and specialized cards build on Card. Compose through `render` when these layers should share a single root element.
+| Skill                                                  | Responsibility                                                                        |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------- |
+| [envui-use](.agents/skills/envui-use/SKILL.md)         | Build interfaces, choose and compose components, handle themes and extend the library |
+| [envui-migrate](.agents/skills/envui-migrate/SKILL.md) | Adopt envUI in existing projects while preserving routes, forms, data and behavior    |
 
-## Verify
+The skills are short entry points. The [documentation index](docs/index.md) directs agents to focused Markdown pages with examples and behavior; they read only the topics needed for the task. The catalogue renders those same pages in its Usage tabs. Public TypeScript declarations define the exact API for each installed version.
+
+Both skill folders ship under `skills/` in the npm package. Install or copy them from `node_modules/@envsemble/envui/skills` into your project’s `.agents/skills`, keeping them together and aligned with the package version. Installing the npm package does not register the skills automatically.
+
+Documentation ships separately under `node_modules/@envsemble/envui/docs/`, so copied skills can consult the installed version without loading unrelated topics. Edit the maintained pages under `docs/`; improve the relevant page as integrations reveal gaps.
+
+## Explore and develop
+
+Requires Node.js 24 or newer. Run commands from the repository root:
+
+```sh
+npm ci
+npm run dev
+```
+
+Open the catalogue at [localhost:8770](http://127.0.0.1:8770). It consumes library source directly and updates as you edit.
+
+| Command                | Purpose                                            |
+| ---------------------- | -------------------------------------------------- |
+| `npm run dev:library`  | Watch compiled exports for a linked external app   |
+| `npm run typecheck`    | Check the library and catalogue                    |
+| `npm run build`        | Build the package and offline catalogue            |
+| `npm test`             | Test package consumers, SSR and hydration          |
+| `npm run test:browser` | Check interactions in Chromium, Firefox and WebKit |
+| `npm run verify`       | Run the complete CI verification sequence          |
+
+Install browser engines before running the full checks:
 
 ```sh
 npx playwright install chromium firefox webkit
 npm run verify
 ```
 
-CI runs the same gates plus Betterleaks. The browser checks cover all three engines, native form behavior, portal themes, notification lifecycle, linked previews and the standalone HTML with networking blocked. Package checks install a tarball in an isolated consumer and validate types, SSR, assets and unused-icon exclusion.
+Build outputs are `packages/ui/dist/` and `dist/envUI.html`. CI retains the offline catalogue and browser diagnostics as artifacts.
+
+## Repository map
+
+```text
+.agents/skills/       Two small entry points for agents
+docs/                Canonical Markdown documentation and discovery index
+apps/catalogue/      Live previews and the offline catalogue application
+packages/ui/         The publishable @envsemble/envui package
+  src/               Components by family, styles and public entry points
+  licenses/          Third-party license texts
+assets/brand/        Original envUI and envsemble artwork
+assets/readme/       Light/dark captures of the catalogue for this README
+scripts/             Builds, asset generation, local watching and release validation
+tests/               Package contract tests, browser specs and React fixtures
+.github/workflows/   CI and tagged package releases
+```
+
+React components and scripts use PascalCase filenames; hooks and helpers use camelCase. Documentation uses lowercase filenames. Keep standard tool filenames such as `package.json`, `index.ts` and `vite.config.ts`. Generated icons, manifests, catalogue data, builds and packaged copies of the README, skills and documentation have explicit sources; edit the source and regenerate.
+
+## Releases
+
+The [Release workflow](https://github.com/envsemble/envUI/actions/workflows/release.yml) verifies a version tag, publishes privately to GitHub Packages and attaches the matching offline HTML. Prereleases use `next`; stable releases use `latest`.
+
+Align `packages/ui/package.json`, the dependency in `apps/catalogue/package.json` and the lockfile, then update the [changelog](packages/ui/CHANGELOG.md). Verify, review and merge before pushing `v<version>`. Published versions are immutable. During `0.x`, breaking changes require a new minor version and migration notes; after `1.0`, a new major version.
+
+Grant consuming repositories package Read access for their GitHub Actions workflows. If only the HTML upload fails, recover it from the same tag without republishing the package.
+
+envUI is proprietary and distributed privately. Bundled third-party assets and dependencies retain their [notices](packages/ui/THIRD_PARTY_NOTICES.md) and [licenses](packages/ui/licenses/).

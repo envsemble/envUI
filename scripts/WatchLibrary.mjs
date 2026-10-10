@@ -30,15 +30,11 @@ function scheduleRebuild() {
   debounceTimer = setTimeout(rebuildLibrary, 150);
 }
 
-for (const directory of [
-  '../packages/ui/src/',
-  '../apps/docs/src/reference/',
-  '../assets/brand/envUI/',
-]) {
+for (const directory of ['../packages/ui/src/', '../.agents/skills/', '../docs/', '../assets/']) {
   watch(new URL(directory, import.meta.url), { recursive: true }, scheduleRebuild);
 }
-watch(new URL('../apps/docs/src/Reference.ts', import.meta.url), scheduleRebuild);
+watch(new URL('../README.md', import.meta.url), scheduleRebuild);
 rebuildLibrary();
 console.log(
-  'Watching public library builds for external local consumers. Docs read source directly for Fast Refresh.',
+  'Watching public library builds for external local consumers. The catalogue reads source directly for Fast Refresh.',
 );

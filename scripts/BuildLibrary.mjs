@@ -1,10 +1,11 @@
 import { build } from 'esbuild';
-import { readdir, mkdir, writeFile, cp, rm } from 'node:fs/promises';
+import { readdir, readFile, mkdir, writeFile, cp, rm } from 'node:fs/promises';
 import { resolve, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { generateBrandAssets } from './GenerateBrandAssets.mjs';
 import { collectDependencyNotices } from './DependencyNotices.mjs';
+import { generateDocumentation } from './GenerateDocumentation.mjs';
 const repositoryRoot = fileURLToPath(new URL('../', import.meta.url));
 const libraryDirectory = resolve(repositoryRoot, 'packages/ui');
 const sourceDirectory = resolve(libraryDirectory, 'src');
@@ -23,6 +24,7 @@ async function findTypeScriptFiles(directory) {
   );
   return files.flat();
 }
+generateDocumentation();
 await generateBrandAssets();
 await writeFile(
   resolve(libraryDirectory, 'licenses/Runtime-Dependencies-LICENSE.txt'),
@@ -67,23 +69,38 @@ for (const output of stylesheetBuild.outputFiles) {
   await writeFile(output.path, output.contents);
 }
 await cp(
-  resolve(sourceDirectory, 'assets/brand/envsemble-lockup-black.svg'),
+  resolve(repositoryRoot, 'assets/brand/envsemble/envsemble-lockup-black.svg'),
   resolve(outputDirectory, 'assets/envsemble-lockup-black.svg'),
 );
 await cp(resolve(repositoryRoot, 'assets/brand/envUI'), resolve(outputDirectory, 'assets/envUI'), {
   recursive: true,
 });
-const usageGuideBuild = await build({
-  entryPoints: [resolve(repositoryRoot, 'apps/docs/src/Reference.ts')],
-  bundle: true,
-  platform: 'node',
-  format: 'esm',
-  write: false,
+await cp(resolve(repositoryRoot, 'assets/readme'), resolve(outputDirectory, 'assets/readme'), {
+  recursive: true,
 });
-const referenceModule = await import(
-  `data:text/javascript;base64,${Buffer.from(usageGuideBuild.outputFiles[0].contents).toString('base64')}`
+const skillsOutputDirectory = resolve(libraryDirectory, 'skills');
+if (relative(libraryDirectory, skillsOutputDirectory) !== 'skills')
+  throw new Error('Packaged skills must remain within packages/ui/skills.');
+await rm(skillsOutputDirectory, { recursive: true, force: true });
+await cp(resolve(repositoryRoot, '.agents/skills'), skillsOutputDirectory, { recursive: true });
+const documentationOutputDirectory = resolve(libraryDirectory, 'docs');
+if (relative(libraryDirectory, documentationOutputDirectory) !== 'docs')
+  throw new Error('Packaged documentation must remain within packages/ui/docs.');
+await rm(documentationOutputDirectory, { recursive: true, force: true });
+await cp(resolve(repositoryRoot, 'docs'), documentationOutputDirectory, { recursive: true });
+const readme = await readFile(resolve(repositoryRoot, 'README.md'), 'utf8');
+await writeFile(
+  resolve(libraryDirectory, 'README.md'),
+  readme
+    .replaceAll('](.agents/skills/', '](skills/')
+    .replaceAll('](packages/ui/CHANGELOG.md)', '](CHANGELOG.md)')
+    .replaceAll('src="assets/brand/envUI/', 'src="dist/assets/envUI/')
+    .replaceAll('srcset="assets/brand/envUI/', 'srcset="dist/assets/envUI/')
+    .replaceAll('src="assets/readme/', 'src="dist/assets/readme/')
+    .replaceAll('srcset="assets/readme/', 'srcset="dist/assets/readme/')
+    .replaceAll('packages/ui/THIRD_PARTY_NOTICES.md', 'THIRD_PARTY_NOTICES.md')
+    .replaceAll('packages/ui/licenses/', 'licenses/'),
 );
-await writeFile(resolve(libraryDirectory, 'USAGE.md'), referenceModule.renderUsageMarkdown());
 console.log(
-  `Built @envsemble/envui: ${sourceEntryPoints.length} ESM modules, types, CSS, assets, and usage guide.`,
+  `Built @envsemble/envui: ${sourceEntryPoints.length} ESM modules, types, CSS, assets, Markdown documentation and two agent skills.`,
 );
