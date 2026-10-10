@@ -137,6 +137,41 @@
   padding: 1rem 0.75rem;
 }
 
+/* Application shell specimens: a transform contains the shell's fixed topbar and sidebar. */
+.docs-shell-frame {
+  position: relative;
+  block-size: 30rem;
+  overflow: hidden;
+  border: 0.0625rem solid var(--color-border-strong);
+  border-radius: var(--radius-surface);
+  transform: translateZ(0);
+}
+.docs-shell-frame > .env-app-shell,
+.docs-shell-frame > .env-app-shell-skeleton > .env-app-shell {
+  min-block-size: 30rem;
+}
+.docs-shell-frame .env-app-content {
+  block-size: 30rem;
+  overflow-y: auto;
+}
+.docs-shell-page {
+  padding: var(--space-6);
+}
+.docs-avatar-trigger {
+  display: grid;
+  place-items: center;
+  inline-size: var(--control-height);
+  block-size: var(--control-height);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+.docs-avatar-trigger:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: 0.125rem;
+}
 .docs-inline-row {
   flex-direction: row;
   flex-wrap: wrap;

@@ -1,0 +1,231 @@
+/* Application frame: a fixed topbar, a collapsible sidebar and the scrolling content area.
+   State attributes come from AppShell; the layout below only reads them. */
+.env-app-shell {
+  --env-sidebar-expanded-width: 16rem;
+  --env-sidebar-collapsed-width: 4.25rem;
+  --env-sidebar-width: var(--env-sidebar-expanded-width);
+  --env-sidebar-inset: var(--space-3);
+  --env-app-divider: 0.0625rem solid var(--color-border-strong);
+  min-block-size: 100dvh;
+  background: var(--color-canvas);
+}
+.env-app-shell:not([data-dividers]) {
+  --env-app-divider: 0 solid transparent;
+}
+.env-app-shell[data-collapsed] {
+  --env-sidebar-width: var(--env-sidebar-collapsed-width);
+}
+.env-app-shell[data-narrow] {
+  --env-sidebar-width: 0rem;
+}
+
+.env-app-topbar {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 25;
+  block-size: var(--topbar-height);
+  display: grid;
+  grid-template-columns: var(--env-sidebar-width) minmax(0, 1fr);
+  border-block-end: var(--env-app-divider);
+  background: var(--color-canvas);
+  transition: grid-template-columns var(--motion-duration-medium) var(--motion-ease-standard);
+}
+.env-app-topbar-context {
+  min-inline-size: 0;
+  padding-inline: var(--env-sidebar-inset);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  border-inline-end: var(--env-app-divider);
+}
+.env-app-context {
+  min-inline-size: 0;
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+}
+.env-app-topbar-page {
+  min-inline-size: 0;
+  padding-inline: var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+.env-app-title {
+  min-inline-size: 0;
+  overflow: hidden;
+  color: var(--color-text-primary);
+  font: var(--type-body);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.env-app-actions {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* The brand mark doubles as the sidebar toggle; the toggle icon shows while the region is hovered. */
+.env-app-sidebar-toggle {
+  inline-size: var(--control-height);
+  block-size: var(--control-height);
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-text-primary);
+  cursor: pointer;
+}
+button.env-app-sidebar-toggle:hover {
+  background: var(--color-navigation-quiet-hover);
+}
+.env-app-sidebar-toggle:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: 0.125rem;
+}
+.env-app-brand,
+.env-app-toggle-icon {
+  grid-area: 1 / 1;
+  display: grid;
+  place-items: center;
+}
+.env-app-brand > :is(img, svg) {
+  display: block;
+  inline-size: 1.5rem;
+  block-size: auto;
+  max-block-size: 1.5rem;
+}
+.env-app-toggle-icon {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  visibility: hidden;
+}
+.env-app-shell:is([data-region-hovered], [data-narrow]) .env-app-sidebar-toggle .env-app-brand,
+.env-app-sidebar-toggle:focus-visible .env-app-brand {
+  visibility: hidden;
+}
+.env-app-shell:is([data-region-hovered], [data-narrow])
+  .env-app-sidebar-toggle
+  .env-app-toggle-icon,
+.env-app-sidebar-toggle:focus-visible .env-app-toggle-icon {
+  visibility: visible;
+}
+@media (hover: none), (pointer: coarse) {
+  .env-app-sidebar-toggle .env-app-brand {
+    visibility: hidden;
+  }
+  .env-app-sidebar-toggle .env-app-toggle-icon {
+    visibility: visible;
+  }
+}
+
+.env-app-sidebar {
+  position: fixed;
+  inset: var(--topbar-height) auto 0 0;
+  z-index: 20;
+  inline-size: var(--env-sidebar-width);
+  display: flex;
+  flex-direction: column;
+  border-inline-end: var(--env-app-divider);
+  background: var(--color-canvas);
+  transition: inline-size var(--motion-duration-medium) var(--motion-ease-standard);
+}
+.env-app-sidebar[hidden] {
+  display: none;
+}
+.env-app-navigation {
+  padding: var(--space-5) var(--env-sidebar-inset) var(--env-sidebar-inset);
+  display: grid;
+  justify-items: start;
+  align-content: start;
+  gap: var(--space-1);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.env-app-navigation .env-navigation-item:not(.env-navigation-icon-only) {
+  white-space: nowrap;
+}
+
+/* A collapsed sidebar shows icons; hover or focus expands it over the content, together with the
+   context area above it. */
+.env-app-shell[data-compact] .env-app-context {
+  display: none;
+}
+.env-app-shell[data-compact] .env-app-topbar-context {
+  justify-content: center;
+}
+.env-app-shell[data-expanded-overlay] .env-app-sidebar {
+  inline-size: var(--env-sidebar-expanded-width);
+}
+.env-app-shell[data-expanded-overlay] .env-app-topbar {
+  grid-template-columns: var(--env-sidebar-expanded-width) minmax(0, 1fr);
+}
+
+.env-app-content {
+  min-inline-size: 0;
+  padding-block-start: var(--topbar-height);
+  padding-inline-start: var(--env-sidebar-width);
+  container-type: inline-size;
+  outline: none;
+  transition: padding-inline-start var(--motion-duration-medium) var(--motion-ease-standard);
+}
+/* Hover expansion overlays the content instead of moving it. */
+.env-app-shell[data-expanded-overlay] .env-app-content {
+  padding-inline-start: var(--env-sidebar-collapsed-width);
+}
+
+/* Narrow viewports: the sidebar opens over the content and the page title is hidden. */
+.env-app-shell[data-narrow] .env-app-topbar {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.env-app-shell[data-narrow] .env-app-topbar-context {
+  border-inline-end: 0;
+}
+.env-app-shell[data-narrow] .env-app-context {
+  max-inline-size: 16rem;
+}
+.env-app-shell[data-narrow] .env-app-title {
+  display: none;
+}
+.env-app-shell[data-narrow] .env-app-topbar-page {
+  padding-inline: 0 var(--space-3);
+}
+.env-app-shell[data-narrow] .env-app-sidebar {
+  inline-size: min(16rem, calc(100vw - var(--space-5)));
+  z-index: 30;
+}
+.env-app-sidebar-backdrop {
+  position: fixed;
+  inset: var(--topbar-height) 0 0 0;
+  z-index: 29;
+  background: hsl(from var(--color-dialog-overlay) h s l / 0.3);
+}
+
+/* The loading frame mirrors the shell geometry. */
+.env-app-shell-skeleton {
+  display: block;
+  pointer-events: none;
+}
+.env-app-navigation-placeholder {
+  min-block-size: var(--control-height);
+  padding: var(--space-1) var(--space-3);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.env-app-shell[data-compact] .env-app-navigation-placeholder-label {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .env-app-topbar,
+  .env-app-sidebar,
+  .env-app-content {
+    transition: none;
+  }
+}

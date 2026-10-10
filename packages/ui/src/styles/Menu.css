@@ -1,0 +1,105 @@
+/* Menus are a pane of grouped rows: separators split groups, which keep large outer corners. */
+.env-menu-theme {
+  display: contents;
+}
+.env-menu-positioner {
+  z-index: 110;
+  outline: none;
+}
+.env-menu {
+  box-sizing: border-box;
+  display: grid;
+  gap: 0.125rem;
+  inline-size: min(19rem, calc(100vw - 2rem));
+  max-block-size: var(--available-height, 80vh);
+  overflow-y: auto;
+  padding: var(--space-2);
+  border-radius: var(--radius-surface);
+  background: var(--color-pane);
+  outline: none;
+  transform-origin: var(--transform-origin);
+  transition:
+    opacity var(--motion-duration-fast) var(--motion-ease),
+    transform var(--motion-duration-fast) var(--motion-ease);
+}
+.env-menu[data-starting-style],
+.env-menu[data-ending-style] {
+  opacity: 0;
+  transform: scale(0.98);
+}
+.env-menu-header,
+.env-menu-item {
+  box-sizing: border-box;
+  min-inline-size: 0;
+  border-radius: var(--radius-row-inner);
+  /* Rows on the pane use the alternate fill, as grouped rows do inside a muted pane. */
+  background: var(--color-row-alternate);
+  color: var(--color-row-text);
+}
+.env-menu-header {
+  padding: var(--space-4);
+}
+.env-menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-block-size: 3rem;
+  padding: var(--space-2) var(--space-4);
+  font: var(--type-body);
+  text-decoration: none;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+}
+.env-menu-item .env-symbol {
+  width: calc(var(--control-icon-size) * 1.25);
+  height: calc(var(--control-icon-size) * 1.25);
+  color: var(--color-icon);
+}
+.env-menu-item-label {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+.env-menu-item[data-highlighted] {
+  background: hsl(from var(--color-row-alternate) h s var(--state-surface-pressed-lightness));
+}
+.env-menu-item:active {
+  background: hsl(
+    from var(--color-row-alternate) h s
+      clamp(0, calc(l + 8 * var(--state-lightness-direction)), 100)
+  );
+}
+.env-menu-item:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: -0.125rem;
+}
+.env-menu-item:is([data-disabled], [aria-disabled='true']) {
+  opacity: var(--state-disabled-opacity);
+  cursor: default;
+}
+.env-menu-separator {
+  block-size: var(--space-1);
+  border: 0;
+  margin: 0;
+}
+.env-menu > :is(.env-menu-header, .env-menu-item):first-child,
+.env-menu > .env-menu-separator + :is(.env-menu-header, .env-menu-item) {
+  border-start-start-radius: var(--radius-row-outer);
+  border-start-end-radius: var(--radius-row-outer);
+}
+.env-menu > :is(.env-menu-header, .env-menu-item):last-child,
+.env-menu > :is(.env-menu-header, .env-menu-item):has(+ .env-menu-separator) {
+  border-end-start-radius: var(--radius-row-outer);
+  border-end-end-radius: var(--radius-row-outer);
+}
+@media (pointer: coarse) {
+  .env-menu-item {
+    min-block-size: var(--control-height-touch);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .env-menu {
+    transition: none;
+  }
+}

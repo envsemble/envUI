@@ -3,6 +3,7 @@ import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { NavigationIconState } from '../MaterialSymbolState.js';
 import { ActionElement, type ActionElementProps } from '../internal/ActionElement.js';
+import { useSidebarCompact } from './AppShell.js';
 
 interface NavigationItemSharedProps {
   size?: 'standard' | 'compact';
@@ -27,17 +28,22 @@ export type NavigationItemProps = NavigationItemSharedProps &
   );
 
 export function NavigationItem(props: NavigationItemProps) {
+  const sidebarCompact = useSidebarCompact();
   const {
     selected = false,
     size = 'standard',
     disabled = false,
-    iconOnly = false,
+    iconOnly: requestedIconOnly = false,
     icon,
     selectedIcon,
     className,
     children,
     ...nativeProps
   } = props;
+  // Inside a compact AppShell sidebar, items with an icon show only the icon.
+  const iconOnly = requestedIconOnly || (sidebarCompact && icon != null);
+  const accessibleLabel =
+    props['aria-label'] ?? (iconOnly && typeof children === 'string' ? children : undefined);
   const iconContent = selected && selectedIcon != null ? selectedIcon : icon;
   const content = (
     <>
@@ -62,6 +68,8 @@ export function NavigationItem(props: NavigationItemProps) {
       {...nativeProps}
       disabled={disabled}
       className={navigationClassName}
+      aria-label={accessibleLabel}
+      title={iconOnly ? (nativeProps.title ?? accessibleLabel) : nativeProps.title}
       aria-current={props['aria-current'] ?? (selected ? 'page' : undefined)}
     >
       {content}

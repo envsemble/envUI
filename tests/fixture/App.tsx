@@ -11,13 +11,20 @@ import { LayoutFixture } from './Layout.js';
 import { FeatureCardsFixture } from './FeatureCards.js';
 import { ColorPickerFixture } from './ColorPicker.js';
 import { MarkdownEditingFixture } from './MarkdownEditing.js';
-import { AdoptionFixture } from './Adoption.js';
+import { AdoptionFixture, ShellFixture } from './Adoption.js';
 
 export default function App() {
   // Keep the full fixture available for integration checks; focused tests mount
   // only their own controls, so unrelated editors and portals do no work.
   const fixture = new URLSearchParams(location.search).get('fixture');
   const includes = (name: string) => fixture === null || fixture === name;
+  // The shell fills the viewport, so it is only mounted on its own.
+  if (fixture === 'shell')
+    return (
+      <Theme theme="light">
+        <ShellFixture />
+      </Theme>
+    );
   return (
     <>
       <p data-testid="host-marker">Host document marker</p>

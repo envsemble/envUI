@@ -1,6 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 
 const fixture = 'http://127.0.0.1:8766/?fixture=adoption';
+const shellFixture = 'http://127.0.0.1:8766/?fixture=shell';
 
 function collectErrors(page: Page) {
   const errors: string[] = [];
@@ -97,6 +98,32 @@ test('a pending Dialog cannot be dismissed until the work finishes', async ({ pa
   await expect(dialog).toHaveCount(0);
 });
 
+test('Menu supports keyboard navigation, actions and routed destinations', async ({ page }) => {
+  const errors = collectErrors(page);
+  await page.goto(fixture);
+  const trigger = page.getByRole('button', { name: 'Open account menu' });
+  await trigger.focus();
+  await page.keyboard.press('Enter');
+  const menu = page.getByRole('menu', { name: 'Account' });
+  await expect(menu).toBeVisible();
+  await expect(menu.getByRole('menuitem')).toHaveCount(2);
+  // Opening from the keyboard highlights the first item.
+  await expect(menu.getByRole('menuitem', { name: 'Account settings' })).toBeFocused();
+  await page.keyboard.press('ArrowDown');
+  await expect(menu.getByRole('menuitem', { name: 'Sign out' })).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page.getByTestId('menu-action')).toHaveText('Signed out');
+  await expect(menu).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+
+  await trigger.click();
+  const link = page.getByRole('menuitem', { name: 'Account settings' });
+  await expect(link).toHaveAttribute('data-router-link', '');
+  await link.click();
+  await expect(page.locator('body')).toHaveAttribute('data-navigated-to', '/account');
+  expect(errors).toEqual([]);
+});
+
 test('Tooltip describes a disabled control on keyboard focus', async ({ page }) => {
   await page.goto(fixture);
   const target = page.locator('.env-tooltip-disabled-target');
@@ -116,6 +143,74 @@ test('error states, meters and avatars expose their semantics', async ({ page })
   await expect(broken.locator('svg.env-avatar-person')).toBeVisible();
   await expect(broken).not.toContainText('BP');
   await expect(page.getByRole('img', { name: 'Organization Name' })).toContainText('ON');
+});
+
+test.describe('AppShell', () => {
+  test('collapses, persists its preference and expands on hover', async ({ page }) => {
+    const errors = collectErrors(page);
+    await page.goto(shellFixture);
+    const shell = page.locator('.env-app-shell');
+    const sidebar = page.locator('.env-app-sidebar');
+    await expect(page.getByRole('link', { name: 'Home' })).toHaveText('Home');
+    await page.getByRole('button', { name: 'Collapse sidebar' }).click();
+    await expect(shell).toHaveAttribute('data-compact', '');
+    expect(await page.evaluate(() => localStorage.getItem('fixture-sidebar'))).toBe('true');
+    // The pointer stays over the toggle, so the collapsed sidebar does not reopen at once.
+    await expect(page.getByRole('link', { name: 'Home' })).toHaveText('');
+    await expect.poll(async () => (await sidebar.boundingBox())!.width).toBeLessThan(80);
+
+    await page.mouse.move(700, 500);
+    await page.getByRole('link', { name: 'Products' }).hover();
+    await expect(shell).toHaveAttribute('data-expanded-overlay', '');
+    await expect(page.getByRole('link', { name: 'Products' })).toHaveText('Products');
+    await expect.poll(async () => (await sidebar.boundingBox())!.width).toBeGreaterThan(200);
+    await page.mouse.move(700, 500);
+    await expect(shell).toHaveAttribute('data-compact', '');
+
+    await page.reload();
+    await expect(shell).toHaveAttribute('data-collapsed', '');
+    await page.getByRole('button', { name: 'Expand sidebar' }).click();
+    await expect(shell).not.toHaveAttribute('data-collapsed');
+    expect(errors).toEqual([]);
+  });
+
+  test('an open popup from the context area keeps the sidebar expanded', async ({ page }) => {
+    await page.goto(shellFixture);
+    await page.evaluate(() => localStorage.setItem('fixture-sidebar', 'true'));
+    await page.reload();
+    const shell = page.locator('.env-app-shell');
+    await expect(shell).toHaveAttribute('data-compact', '');
+    await page.getByRole('button', { name: 'Expand sidebar' }).hover();
+    await expect(shell).toHaveAttribute('data-expanded-overlay', '');
+    await page
+      .getByTestId('context-trigger')
+      .evaluate((trigger) => trigger.setAttribute('aria-expanded', 'true'));
+    await page.mouse.move(700, 500);
+    await expect(shell).toHaveAttribute('data-expanded-overlay', '');
+    await page
+      .getByTestId('context-trigger')
+      .evaluate((trigger) => trigger.setAttribute('aria-expanded', 'false'));
+    await expect(shell).toHaveAttribute('data-compact', '');
+  });
+
+  test('narrow viewports open the sidebar over the content and close it after navigation', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(shellFixture);
+    const sidebar = page.locator('.env-app-sidebar');
+    await expect(sidebar).toBeHidden();
+    await expect(page.locator('.env-app-title')).toBeHidden();
+    await page.getByRole('button', { name: 'Expand sidebar' }).click();
+    await expect(sidebar).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Products' })).toHaveText('Products');
+    await page.getByRole('link', { name: 'Products' }).click();
+    await expect(sidebar).toBeHidden();
+    await expect(page.locator('body')).toHaveAttribute('data-navigated-to', '/products');
+    await page.getByRole('button', { name: 'Expand sidebar' }).click();
+    await page.keyboard.press('Escape');
+    await expect(sidebar).toBeHidden();
+  });
 });
 
 test('secondary buttons stay distinguishable on row fills', async ({ page }) => {

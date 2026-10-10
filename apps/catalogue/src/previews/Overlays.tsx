@@ -1,16 +1,83 @@
+import { useState } from 'react';
 import {
   Avatar,
   Button,
   IconButton,
   Meter,
+  Menu,
+  MenuHeader,
+  MenuItem,
+  MenuSeparator,
   Progress,
   Stack,
   Text,
   Tooltip,
 } from '@envsemble/envui';
 import { Refresh } from '@envsemble/envui/icons/Refresh';
+import { ManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
+import { Logout } from '@envsemble/envui/icons/Logout';
+import { Settings } from '@envsemble/envui/icons/Settings';
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
+
+export function MenuPreview() {
+  const [lastAction, setLastAction] = useState('');
+  return (
+    <Preview>
+      <Example title="Account menu" size="collection">
+        <SpecimenGrid>
+          <Specimen title="Header, destinations and actions">
+            <Menu
+              aria-label="Account"
+              trigger={
+                <button
+                  type="button"
+                  className="docs-avatar-trigger"
+                  aria-label="Open account menu"
+                >
+                  <Avatar name="Alex Morgan" />
+                </button>
+              }
+              align="start"
+            >
+              <MenuHeader>
+                <Stack gap={1} align="center">
+                  <Avatar name="Alex Morgan" size="large" />
+                  <Text>Alex Morgan</Text>
+                  <Text variant="supporting">alex@example.com</Text>
+                </Stack>
+              </MenuHeader>
+              <MenuItem href="#/account" icon={<ManageAccounts />}>
+                Account settings
+              </MenuItem>
+              <MenuItem icon={<Settings />} onClick={() => setLastAction('Preferences opened')}>
+                Preferences
+              </MenuItem>
+              <MenuSeparator />
+              <MenuItem icon={<Logout />} onClick={() => setLastAction('Signed out')}>
+                Sign out
+              </MenuItem>
+            </Menu>
+          </Specimen>
+          <Specimen title="Button trigger">
+            <Menu
+              aria-label="Project actions"
+              trigger={<Button variant="secondary">Actions</Button>}
+              align="start"
+            >
+              <MenuItem onClick={() => setLastAction('Renamed')}>Rename</MenuItem>
+              <MenuItem onClick={() => setLastAction('Duplicated')}>Duplicate</MenuItem>
+              <MenuItem disabled>Archive</MenuItem>
+            </Menu>
+          </Specimen>
+        </SpecimenGrid>
+        <Text variant="caption" className="docs-caption" aria-live="polite">
+          {lastAction}
+        </Text>
+      </Example>
+    </Preview>
+  );
+}
 
 export function TooltipPreview() {
   return (

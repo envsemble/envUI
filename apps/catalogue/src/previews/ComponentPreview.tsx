@@ -16,7 +16,8 @@ import { Text } from '@envsemble/envui';
 import { EmptyStatePreview, LoadingPreview, DialogsPreview } from './Feedback';
 import { ToastsPreview } from './Toasts';
 import { ColorPickerPreview } from './ColorPicking';
-import { TooltipPreview, AvatarPreview, MetersPreview } from './Overlays';
+import { MenuPreview, TooltipPreview, AvatarPreview, MetersPreview } from './Overlays';
+import { AppShellPreview } from './Shell';
 
 const RichTextPreview = lazy(() =>
   import('./RichTextContent').then(({ RichTextPreview }) => ({ default: RichTextPreview })),
@@ -75,12 +76,16 @@ export function ComponentPreview({ id }: { id: string }) {
       return <ToastsPreview />;
     case 'dialogs':
       return <DialogsPreview />;
+    case 'menu':
+      return <MenuPreview />;
     case 'tooltip':
       return <TooltipPreview />;
     case 'avatar':
       return <AvatarPreview />;
     case 'meters':
       return <MetersPreview />;
+    case 'app-shell':
+      return <AppShellPreview />;
     default:
       return null;
   }

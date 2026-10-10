@@ -27,6 +27,8 @@
 @import './Dialog.css';
 @import './Toast.css';
 @import './Indicators.css';
+@import './Menu.css';
+@import './AppShell.css';
 @font-face {
   font-family: 'envUI Inter';
   src: url('../assets/fonts/Inter.woff2') format('woff2');

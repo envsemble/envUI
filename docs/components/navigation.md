@@ -11,7 +11,8 @@ import { Home } from '@envsemble/envui/icons/Home';
   Home
 </NavigationItem>
 
-// Keep the same item when the sidebar is collapsed or expanded.
+// Inside AppShell, items follow the collapsed sidebar automatically.
+// Elsewhere, set iconOnly yourself.
 <NavigationItem href="#/home" selected={page === 'home'}
   icon={<Home />} iconOnly={collapsed} aria-label="Home">
   Home
