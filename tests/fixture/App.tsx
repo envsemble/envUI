@@ -11,6 +11,7 @@ import { LayoutFixture } from './Layout.js';
 import { FeatureCardsFixture } from './FeatureCards.js';
 import { ColorPickerFixture } from './ColorPicker.js';
 import { MarkdownEditingFixture } from './MarkdownEditing.js';
+import { AdoptionFixture } from './Adoption.js';
 
 export default function App() {
   // Keep the full fixture available for integration checks; focused tests mount
@@ -64,6 +65,8 @@ export default function App() {
             </>
           )}
           {includes('markdown') && <MarkdownEditingFixture />}
+          {/* Root theming would change the host document, so adoption mounts only on its own. */}
+          {fixture === 'adoption' && <AdoptionFixture />}
         </main>
       </Theme>
     </>

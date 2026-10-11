@@ -1,0 +1,127 @@
+/* Avatars, tooltips and bars reuse the shared palette and corner scale. */
+.env-avatar {
+  --env-avatar-size: 2rem;
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  inline-size: var(--env-avatar-size);
+  block-size: var(--env-avatar-size);
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--color-row);
+  color: var(--color-row-detail);
+  font: 500 calc(var(--env-avatar-size) * 0.4) / 1 var(--font-family);
+  user-select: none;
+}
+.env-avatar-small {
+  --env-avatar-size: 1.5rem;
+}
+.env-avatar-large {
+  --env-avatar-size: 3rem;
+}
+.env-avatar-display {
+  --env-avatar-size: 5.5rem;
+}
+.env-avatar-fallback {
+  display: contents;
+}
+.env-avatar:has(.env-avatar-fallback-person) {
+  background: none;
+}
+.env-avatar-person {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+.env-avatar-image {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+.env-tooltip-theme {
+  display: contents;
+}
+.env-tooltip-positioner {
+  z-index: 130;
+}
+.env-tooltip {
+  max-inline-size: min(18rem, calc(100vw - 2rem));
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-standard);
+  background: var(--color-toast-neutral);
+  color: var(--color-on-toast);
+  font: var(--type-body-small);
+  overflow-wrap: anywhere;
+  transition: opacity var(--motion-duration-fast) var(--motion-ease);
+}
+.env-tooltip[data-starting-style],
+.env-tooltip[data-ending-style] {
+  opacity: 0;
+}
+.env-tooltip-disabled-target {
+  display: inline-flex;
+  max-inline-size: 100%;
+  border-radius: 100vmax;
+}
+.env-tooltip-disabled-target:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: 0.125rem;
+}
+
+.env-bar {
+  display: grid;
+  gap: var(--space-2);
+  min-inline-size: 0;
+}
+.env-bar-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font: var(--type-body-small);
+}
+.env-bar-label {
+  color: var(--color-text-muted);
+}
+.env-bar-value {
+  color: var(--color-text-strong);
+  font-weight: 500;
+}
+.env-bar-track {
+  block-size: 0.625rem;
+  overflow: hidden;
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--color-row);
+}
+.env-bar-indicator {
+  block-size: 100%;
+  border-radius: inherit;
+  background: var(--color-control-blue);
+  transition: inline-size var(--motion-duration-medium) var(--motion-ease);
+}
+.env-bar[data-indeterminate] .env-bar-indicator {
+  inline-size: 40%;
+  animation: env-bar-indeterminate 1.2s var(--motion-ease) infinite;
+}
+@keyframes env-bar-indeterminate {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(250%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .env-tooltip,
+  .env-bar-indicator {
+    transition: none;
+  }
+  .env-bar[data-indeterminate] .env-bar-indicator {
+    animation: none;
+  }
+}

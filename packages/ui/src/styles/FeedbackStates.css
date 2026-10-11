@@ -21,3 +21,6 @@
 .env-skeleton-highlight {
   background: var(--color-skeleton-highlight);
 }
+.env-empty-state-error > .env-symbol {
+  color: var(--color-field-error);
+}

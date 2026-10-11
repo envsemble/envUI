@@ -6,18 +6,23 @@ import {
   FieldFrame,
   type FieldProps,
   type TextFieldAppearanceProps,
+  type TextFieldDecorationProps,
 } from './internal/FieldFrame.js';
 
 export interface InputProps
   extends InputHTMLAttributes<HTMLInputElement>,
     FieldProps,
-    TextFieldAppearanceProps {}
+    TextFieldAppearanceProps,
+    TextFieldDecorationProps {}
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   {
     label,
     hint,
     error,
     variant,
+    startIcon,
+    endAction,
+    compact = false,
     id: suppliedId,
     className,
     placeholder,
@@ -29,6 +34,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
 ) {
   const metadata = useFieldMetadata(suppliedId, hint, error, describedBy, invalid);
   const { id } = metadata;
+  // A floating label needs a blank placeholder to detect the empty state; compact fields show theirs.
+  const fieldPlaceholder = label != null && !compact ? placeholder || ' ' : placeholder;
   return (
     <FieldFrame
       id={id}
@@ -37,12 +44,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       error={error}
       floatingLabel
       variant={variant}
+      startIcon={startIcon}
+      endAction={endAction}
+      compact={compact}
     >
       <input
         {...props}
         ref={ref}
         {...metadata}
-        placeholder={label != null ? placeholder || ' ' : placeholder}
+        placeholder={fieldPlaceholder}
         className={classNames('env-text-input', className)}
       />
     </FieldFrame>

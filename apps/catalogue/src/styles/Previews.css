@@ -54,7 +54,7 @@
 }
 .docs-toast-table {
   inline-size: 100%;
-  min-inline-size: 44rem;
+  min-inline-size: 40rem;
   border-collapse: collapse;
   text-align: start;
 }
@@ -76,7 +76,12 @@
   white-space: nowrap;
 }
 .docs-toast-meaning {
-  inline-size: 28%;
+  inline-size: 12rem;
+  overflow-wrap: normal;
+}
+.docs-toast-table td:not(:nth-child(2)) {
+  inline-size: 1%;
+  white-space: nowrap;
 }
 .docs-toast-meaning > strong {
   display: block;
@@ -130,4 +135,16 @@
 }
 .docs-matrix td {
   padding: 1rem 0.75rem;
+}
+
+.docs-inline-row {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.docs-field-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
 }

@@ -23,17 +23,18 @@ import { Text, Stack } from '@envsemble/envui';
 
 ### Props & contracts
 
-| Name                 | Contract                                                                 |
-| -------------------- | ------------------------------------------------------------------------ |
-| Text variant         | body (default), page-heading, section-heading, supporting or caption     |
-| Text tone            | Optional primary, muted or quiet override of the variant’s default color |
-| Text as              | Native text tag; p (default), span, small, strong or h1–h6               |
-| Native element props | children, ref, className and accessible attributes                       |
+| Name                 | Contract                                                                      |
+| -------------------- | ----------------------------------------------------------------------------- |
+| Text variant         | display, body (default), page-heading, section-heading, supporting or caption |
+| Text tone            | Optional primary, muted or quiet override of the variant’s default color      |
+| Text as              | Native text tag; p (default), span, small, strong or h1–h6                    |
+| Native element props | children, ref, className and accessible attributes                            |
 
 ## Guidelines
 
 - Use Inter at regular (400) or medium (500) weight, with 1.4 line height. The preview orders styles by emphasis.
 - Choose the semantic element separately from its visual style. Use actual headings for document structure.
+- Use display for a page hero or welcome: it scales from 1.75 to 2.75 rem with the viewport and balances its lines. Use at most one display text per view.
 - Text applies the shared scale and palette. Supporting text is small and muted; captions are small and quiet.
 - Text adds no outer spacing. Stack or the containing component owns the gaps.
 

@@ -22,7 +22,7 @@ import { Home } from '@envsemble/envui/icons/Home';
 
 | Name                    | Contract                                                                                         |
 | ----------------------- | ------------------------------------------------------------------------------------------------ |
-| href                    | Renders a link; omit for a button action                                                         |
+| href                    | Renders a link through LinkProvider; omit for a button action                                    |
 | selected / disabled     | Current destination and unavailable state                                                        |
 | size                    | standard (default) or compact labels; both keep the navigation minimum height                    |
 | iconOnly                | Hide the visible label and center the icon in a circular control; accepts sidebar collapse state |

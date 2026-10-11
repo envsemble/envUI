@@ -182,7 +182,7 @@ export function CardsPreview() {
               meta="Updated today"
               actions={
                 <>
-                  <Button variant="secondary">Share</Button>
+                  <Button>Share</Button>
                   <Button variant="outlined">Open project</Button>
                 </>
               }

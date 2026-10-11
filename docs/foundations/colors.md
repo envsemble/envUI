@@ -18,12 +18,14 @@ function ThemeLabel() {
 
 ### Props & contracts
 
-| Name               | Contract                                                                |
-| ------------------ | ----------------------------------------------------------------------- |
-| Theme theme        | Required: light or dark; scopes tokens and provides React theme context |
-| Theme native props | children, ref, className, style and native div attributes               |
-| useTheme()         | Returns the current theme, including across library portals             |
-| Theme preference   | The application owns selection, persistence and system preference       |
+| Name                    | Contract                                                                                |
+| ----------------------- | --------------------------------------------------------------------------------------- |
+| Theme theme             | Required: light or dark; scopes tokens and provides React theme context                 |
+| Theme native props      | children, ref, className, style and native div attributes                               |
+| useTheme()              | Returns the current theme, including across library portals                             |
+| ThemePreferenceProvider | Stores the preference, follows the system theme and themes the document root; see setup |
+| useThemePreference()    | preference (light, dark or system), resolved theme, setPreference and toggleTheme       |
+| ThemeToggle             | IconButton that switches between light and dark                                         |
 
 ## Guidelines
 

@@ -18,7 +18,33 @@ import { Input } from '@envsemble/envui';
 | -------------------- | --------------------------------------------------------------------------------- |
 | variant              | "outlined" (default) or "plain": transparent, with an underline on hover or focus |
 | label / hint / error | Floating label; hint and error message are linked to the control                  |
+| startIcon            | Decorative icon at the start of the field                                         |
+| endAction            | A control at the end of the field, such as a clear IconButton                     |
+| compact              | Match the button height; the label stays accessible and the placeholder is shown  |
 | Native input props   | value/defaultValue, onChange, name, type, required, disabled, readOnly, ref       |
+
+## SearchField
+
+```tsx
+import { SearchField, Button } from '@envsemble/envui';
+
+<SearchField
+  label="Search members"
+  placeholder="Search by name or e-mail"
+  value={query}
+  onValueChange={setQuery}
+/>;
+```
+
+### Props & contracts
+
+| Name                                 | Contract                                                                  |
+| ------------------------------------ | ------------------------------------------------------------------------- |
+| label                                | Required accessible name; shown as a floating label only when not compact |
+| value / defaultValue / onValueChange | Controlled or uncontrolled query; cleared queries report an empty string  |
+| compact                              | true by default, so the field matches buttons beside it                   |
+| clearLabel                           | Accessible name of the clear action; "Clear search" by default            |
+| Native input props                   | name, placeholder, disabled, autoFocus, ref and other input attributes    |
 
 ## Textarea
 
@@ -46,6 +72,8 @@ import { Textarea } from '@envsemble/envui';
 
 ## Guidelines
 
+- Use compact fields in toolbars and beside buttons: they share the 2.5 rem control height and pill shape. Use the default floating-label size in forms.
+- SearchField shows a search icon and, while it has a query, a clear button inside the field. Escape also clears the query and keeps an enclosing dialog open.
 - Use Input for one line and Textarea for multiline content. Both share the same corner radius. Fixed sizing scrolls and resizes from the full bottom edge; content sizing grows and shrinks automatically. Set rows for the initial or minimum height.
 - The resize edge follows the field’s border color on hover, focus and error, and uses the pressed shade while dragging. Focus the edge and use Up/Down arrows to change height by one line, or Shift+Up/Down for five lines. Home restores the minimum height. Disabled fields cannot resize.
 - Outlined fields turn their single thin border blue on hover and focus in both themes, without changing the background or adding an outline. Hover and pressed colors follow the shared HSL rule, including while focused. Invalid borders and plain-field error underlines stay red and change shade on hover or press.

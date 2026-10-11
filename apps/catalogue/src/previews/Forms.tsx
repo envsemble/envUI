@@ -8,7 +8,12 @@ import {
   Radio,
   Select,
   Stack,
+  SearchField,
+  Button,
+  IconButton,
 } from '@envsemble/envui';
+import { Mail } from '@envsemble/envui/icons/Mail';
+import { ContentCopy } from '@envsemble/envui/icons/ContentCopy';
 
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
@@ -168,10 +173,47 @@ function TextareaExamples() {
   );
 }
 
+function CompactFieldExamples() {
+  const [query, setQuery] = useState('');
+  return (
+    <Example
+      title="Compact fields & search"
+      size="collection"
+      caption="Compact fields share the button height. Type to reveal the clear action; Escape also clears."
+    >
+      <SpecimenGrid>
+        <Specimen title="Search beside an action">
+          <div className="docs-field-toolbar">
+            <SearchField
+              label="Search members"
+              placeholder="Search by name or e-mail"
+              value={query}
+              onValueChange={setQuery}
+            />
+            <Button>Assign seat</Button>
+          </div>
+        </Specimen>
+        <Specimen title="Icon and end action">
+          <Input
+            label="Invite address"
+            name="invite"
+            defaultValue="team@example.com"
+            startIcon={<Mail />}
+            endAction={
+              <IconButton variant="text" icon={<ContentCopy />} aria-label="Copy address" />
+            }
+          />
+        </Specimen>
+      </SpecimenGrid>
+    </Example>
+  );
+}
+
 export function TextFieldsPreview() {
   return (
     <Preview>
       <InputExamples />
+      <CompactFieldExamples />
       <TextareaExamples />
     </Preview>
   );

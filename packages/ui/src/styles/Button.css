@@ -47,6 +47,20 @@
   background: var(--color-secondary-action-pressed);
 }
 
+/* On row, muted-surface and action-strip fills the neutral fill would disappear, so secondary
+   actions shift from the fill they sit on by the shared control lightness rule. */
+/* Tab rails also use the row tone, but their selected tab keeps the supplied button's colors. */
+.env-row,
+.env-connected-row,
+.env-surface-row:not(.env-tabs-list),
+.env-action-card-actions {
+  --color-secondary-action: hsl(from var(--color-row) h s var(--state-hover-lightness));
+  --color-secondary-action-hover: hsl(from var(--color-row) h s var(--state-pressed-lightness));
+  --color-secondary-action-pressed: hsl(
+    from var(--color-row) h s clamp(0, calc(l + 30 * var(--state-lightness-direction)), 100)
+  );
+}
+
 .env-button-outlined {
   background: var(--color-subtle-action);
   color: var(--color-on-subtle-action);

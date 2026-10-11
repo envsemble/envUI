@@ -29,6 +29,7 @@ import { Dialog, Button, Text } from '@envsemble/envui';
 | open / defaultOpen / onOpenChange | Controlled or uncontrolled visibility                                                                                 |
 | DialogClose                       | Additional dismissal action; shared button props                                                                      |
 | initialFocus / finalFocus         | Optional focus refs                                                                                                   |
+| pending                           | Work is in progress: Escape, outside presses and the built-in close button cannot dismiss the dialog                  |
 
 ## Guidelines
 
@@ -36,7 +37,7 @@ import { Dialog, Button, Text } from '@envsemble/envui';
 - Centered dialogs include a footer dismissal; right panels include a header close button. Escape closes either placement and focus returns to the trigger or finalFocus ref.
 - Modal dialogs trap focus; non-modal panels do not. Portals preserve the originating theme.
 - The application owns validation, saving, async work and whether completion closes the dialog.
-- While async work is pending, preserve the application's dismissal rules through controlled open/onOpenChange and disabled actions. Restore focus to the intended trigger or finalFocus target.
+- While async work is pending, set pending so the dialog cannot be dismissed, and disable the application's own actions. Restore focus to the intended trigger or finalFocus target.
 
 TypeScript declarations provide the complete public API.
 

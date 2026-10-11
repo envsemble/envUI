@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react';
 import { Error as ErrorIcon } from '../../icons/Error.js';
+import { DecorativeIcon } from '../../internal/DecorativeIcon.js';
 
 export interface FieldProps {
   label?: ReactNode;
@@ -12,6 +13,18 @@ export interface TextFieldAppearanceProps {
   variant?: 'outlined' | 'plain';
 }
 
+export interface TextFieldDecorationProps {
+  /** Decorative icon at the start of the well. */
+  startIcon?: ReactNode;
+  /** A control at the end of the well, such as a clear IconButton. */
+  endAction?: ReactNode;
+  /**
+   * Match the shared control height so the field can sit beside buttons. The label stays
+   * available to assistive technology but is not shown; use a placeholder for visible guidance.
+   */
+  compact?: boolean;
+}
+
 /** Text controls place their label on the well; composite controls keep a separate label. */
 export function FieldFrame({
   id,
@@ -21,14 +34,32 @@ export function FieldFrame({
   children,
   floatingLabel = false,
   variant = 'outlined',
+  startIcon,
+  endAction,
+  compact = false,
 }: FieldProps &
-  TextFieldAppearanceProps & { id: string; children: ReactNode; floatingLabel?: boolean }) {
+  TextFieldAppearanceProps &
+  TextFieldDecorationProps & { id: string; children: ReactNode; floatingLabel?: boolean }) {
   return (
-    <div className={floatingLabel ? 'env-form-field env-text-field' : 'env-form-field'}>
+    <div
+      className={floatingLabel ? 'env-form-field env-text-field' : 'env-form-field'}
+      data-compact={compact || undefined}
+    >
       {floatingLabel ? (
-        <div className="env-text-field-well" data-variant={variant}>
+        <div
+          className="env-text-field-well"
+          data-variant={variant}
+          data-start-icon={startIcon != null || undefined}
+          data-end-action={endAction != null || undefined}
+        >
           {children}
           {label}
+          {startIcon != null && (
+            <span className="env-text-field-start">
+              <DecorativeIcon>{startIcon}</DecorativeIcon>
+            </span>
+          )}
+          {endAction != null && <span className="env-text-field-end">{endAction}</span>}
         </div>
       ) : (
         <>

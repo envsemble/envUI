@@ -114,7 +114,7 @@ test('Strict Mode mount effects preserve capacity after effect replay', async ({
   await expect(active).toHaveCount(3);
 });
 
-test('placement stacks, keyboard access, single-line sizing and contextual action states', async ({
+test('placement stacks, keyboard access, wrapped sizing and contextual action states', async ({
   page,
 }) => {
   await page.getByTestId('toast-queue-bottom').click();
@@ -144,7 +144,7 @@ test('placement stacks, keyboard access, single-line sizing and contextual actio
     whiteSpace: getComputedStyle(element.querySelector('.env-toast-message')!).whiteSpace,
   }));
   expect(geometry.scroll).toBeLessThanOrEqual(geometry.width);
-  expect(geometry.whiteSpace).toBe('nowrap');
+  expect(geometry.whiteSpace).toBe('normal');
   expect(geometry.height).toBeLessThan(75);
   await page.getByTestId('toast-clear').click();
   await page.getByTestId('toast-queue-actions').click();

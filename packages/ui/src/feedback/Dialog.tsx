@@ -27,6 +27,11 @@ export interface DialogProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title
   disablePointerDismissal?: boolean;
   initialFocus?: RefObject<HTMLElement | null>;
   finalFocus?: RefObject<HTMLElement | null>;
+  /**
+   * Work started from the dialog is in progress. Escape, outside presses and the built-in close
+   * button cannot dismiss it until pending returns to false.
+   */
+  pending?: boolean;
 }
 export type DialogCloseProps = Extract<ButtonProps, { href?: undefined }>;
 
@@ -55,6 +60,7 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
     disablePointerDismissal = false,
     initialFocus,
     finalFocus,
+    pending = false,
     className,
     ...popupProps
   },
@@ -65,7 +71,13 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
     <BaseDialog.Root
       open={open}
       defaultOpen={defaultOpen}
-      onOpenChange={(next) => onOpenChange?.(next)}
+      onOpenChange={(next, eventDetails) => {
+        if (!next && pending) {
+          eventDetails.cancel();
+          return;
+        }
+        onOpenChange?.(next);
+      }}
       modal={modal}
       disablePointerDismissal={disablePointerDismissal}
     >
@@ -86,6 +98,7 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
               ref={ref}
               className={classNames('env-modal-pane', className)}
               data-placement={placement}
+              aria-busy={pending || undefined}
               initialFocus={initialFocus}
               finalFocus={finalFocus}
             >
@@ -94,7 +107,9 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
                   <BaseDialog.Title className="env-dialog-title">{title}</BaseDialog.Title>
                   {placement === 'right' && (
                     <BaseDialog.Close
-                      render={<IconButton icon={<Close />} aria-label={closeLabel} />}
+                      render={
+                        <IconButton icon={<Close />} aria-label={closeLabel} disabled={pending} />
+                      }
                     />
                   )}
                 </div>
@@ -106,7 +121,9 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
                 {children}
                 {(placement === 'center' || actions != null) && (
                   <ActionGroup align="end" className="env-dialog-actions">
-                    {placement === 'center' && <DialogClose>{closeLabel}</DialogClose>}
+                    {placement === 'center' && (
+                      <DialogClose disabled={pending}>{closeLabel}</DialogClose>
+                    )}
                     {actions}
                   </ActionGroup>
                 )}
