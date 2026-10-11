@@ -34,4 +34,5 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
+- [Menus](../components/menu.md)
 - [Grouped rows](../components/rows.md)

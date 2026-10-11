@@ -56,11 +56,6 @@
   color: var(--color-on-toast);
   font: var(--type-body-small);
   overflow-wrap: anywhere;
-  transition: opacity var(--motion-duration-fast) var(--motion-ease);
-}
-.env-tooltip[data-starting-style],
-.env-tooltip[data-ending-style] {
-  opacity: 0;
 }
 .env-tooltip-disabled-target {
   display: inline-flex;
@@ -117,7 +112,6 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .env-tooltip,
   .env-bar-indicator {
     transition: none;
   }

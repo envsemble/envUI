@@ -1,0 +1,137 @@
+/* Subtle motion that confirms input and eases elements in and out. It stays brief and small and never
+   delays an action. Opacity fades always apply; movement only without a reduced-motion preference. */
+
+/* Fades: dialogs, popups and toasts appear and leave gradually. */
+.env-dialog-backdrop {
+  transition: opacity var(--motion-duration-slow) var(--motion-ease-enter);
+}
+.env-dialog-backdrop[data-starting-style],
+.env-dialog-backdrop[data-ending-style],
+.env-modal-pane[data-starting-style],
+.env-modal-pane[data-ending-style],
+.env-menu[data-starting-style],
+.env-menu[data-ending-style],
+.env-dropdown-options[data-starting-style],
+.env-dropdown-options[data-ending-style],
+.env-tooltip[data-starting-style],
+.env-tooltip[data-ending-style] {
+  opacity: 0;
+}
+.env-modal-pane,
+.env-menu,
+.env-dropdown-options,
+.env-tooltip,
+.env-toast-viewport > .env-toast {
+  transform-origin: var(--transform-origin);
+  transition: opacity var(--motion-duration-medium) var(--motion-ease);
+}
+.env-dialog-backdrop[data-ending-style],
+.env-modal-pane[data-ending-style],
+.env-menu[data-ending-style],
+.env-dropdown-options[data-ending-style],
+.env-tooltip[data-ending-style],
+.env-toast-viewport > .env-toast[data-ending-style] {
+  transition-duration: var(--motion-duration-fast);
+  transition-timing-function: var(--motion-ease-exit);
+}
+.env-disclosure-note[open] > .env-disclosure-content,
+.env-avatar-image {
+  animation: env-motion-fade-in var(--motion-duration-slow) var(--motion-ease-enter);
+}
+@keyframes env-motion-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Presses: controls settle slightly while held. */
+  .env-button:not(.env-dropdown-trigger),
+  .env-navigation-item,
+  .env-organization-trigger,
+  .env-clickable-card {
+    transition-property: background-color, color, border-color, transform;
+    transition-duration: var(--motion-duration-fast);
+    transition-timing-function: var(--motion-ease);
+  }
+  .env-button:not(.env-dropdown-trigger):active:not(:disabled):not([aria-disabled='true']),
+  .env-navigation-item:active:not(:disabled):not([aria-disabled='true']),
+  .env-organization-trigger:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+  .env-clickable-card:active:not(:disabled):not([aria-disabled='true']) {
+    transform: scale(0.99);
+  }
+
+  /* Dialogs rise into place, side panels slide in, popups grow from their trigger and toasts arrive
+     from their screen edge. */
+  .env-modal-pane,
+  .env-menu,
+  .env-dropdown-options,
+  .env-tooltip,
+  .env-toast-viewport > .env-toast {
+    transition:
+      opacity var(--motion-duration-medium) var(--motion-ease),
+      transform var(--motion-duration-slow) var(--motion-ease-enter);
+  }
+  .env-modal-pane[data-starting-style],
+  .env-modal-pane[data-ending-style] {
+    transform: translateY(0.75rem) scale(0.98);
+  }
+  .env-modal-pane[data-placement='right'][data-starting-style],
+  .env-modal-pane[data-placement='right'][data-ending-style] {
+    transform: translateX(2rem);
+  }
+  .env-menu[data-starting-style],
+  .env-menu[data-ending-style],
+  .env-dropdown-options[data-starting-style],
+  .env-dropdown-options[data-ending-style] {
+    transform: scale(0.96);
+  }
+  .env-tooltip[data-starting-style],
+  .env-tooltip[data-ending-style] {
+    transform: scale(0.94);
+  }
+  .env-toast-viewport-bottom-right > .env-toast[data-starting-style],
+  .env-toast-viewport-bottom-right > .env-toast[data-ending-style] {
+    transform: translateY(0.75rem) scale(0.98);
+  }
+  .env-toast-viewport-top-center > .env-toast[data-starting-style],
+  .env-toast-viewport-top-center > .env-toast[data-ending-style] {
+    transform: translateY(-0.75rem) scale(0.98);
+  }
+  .env-modal-pane[data-ending-style],
+  .env-menu[data-ending-style],
+  .env-dropdown-options[data-ending-style],
+  .env-tooltip[data-ending-style],
+  .env-toast-viewport > .env-toast[data-ending-style] {
+    transition-duration: var(--motion-duration-fast);
+    transition-timing-function: var(--motion-ease-exit);
+  }
+
+  /* Indicators turn, marks and small actions settle into size, and skeletons pulse. */
+  .env-dropdown-trigger .env-symbol,
+  .env-disclosure-note > summary::before {
+    transition: transform var(--motion-duration-medium) var(--motion-ease);
+  }
+  .env-checkbox-control:is(:checked, :indeterminate) + .env-checkbox-mark,
+  .env-organization-menu-radio-dot,
+  .env-text-field-end > *,
+  .env-theme-toggle .env-symbol > svg {
+    animation: env-motion-pop-in var(--motion-duration-medium) var(--motion-ease-enter);
+  }
+  .env-skeleton {
+    animation: env-motion-pulse 1.6s ease-in-out infinite alternate;
+  }
+}
+@keyframes env-motion-pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+@keyframes env-motion-pulse {
+  to {
+    opacity: 0.55;
+  }
+}

@@ -35,4 +35,5 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Buttons](../components/buttons.md)
+- [Menus](../components/menu.md)
 - [Accessibility](../foundations/accessibility.md)

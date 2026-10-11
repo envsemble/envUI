@@ -1,0 +1,226 @@
+/* Menus are a pane of grouped rows: separators split groups, which keep large outer corners. */
+.env-menu-theme {
+  display: contents;
+}
+.env-menu-positioner {
+  z-index: 110;
+  outline: none;
+}
+.env-menu {
+  box-sizing: border-box;
+  display: grid;
+  gap: 0.125rem;
+  inline-size: min(19rem, calc(100vw - 2rem));
+  max-block-size: var(--available-height, 80vh);
+  overflow-y: auto;
+  padding: var(--space-2);
+  border-radius: var(--radius-surface);
+  background: var(--color-pane);
+  outline: none;
+}
+.env-menu-header,
+.env-menu-item {
+  box-sizing: border-box;
+  min-inline-size: 0;
+  border-radius: var(--radius-row-inner);
+  /* Rows stand out from the pane in both themes. */
+  background: var(--color-menu-row);
+  color: var(--color-row-text);
+}
+.env-menu-header {
+  padding: var(--space-4);
+}
+.env-menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-block-size: 3rem;
+  padding: var(--space-2) var(--space-4);
+  font: var(--type-body);
+  text-decoration: none;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+}
+.env-menu-item .env-symbol {
+  width: calc(var(--control-icon-size) * 1.25);
+  height: calc(var(--control-icon-size) * 1.25);
+  color: var(--color-icon);
+}
+.env-menu-item-label {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+.env-menu-item[data-highlighted] {
+  background: hsl(from var(--color-menu-row) h s var(--state-surface-pressed-lightness));
+}
+.env-menu-item:active {
+  background: hsl(
+    from var(--color-menu-row) h s clamp(0, calc(l + 8 * var(--state-lightness-direction)), 100)
+  );
+}
+.env-menu-item:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: -0.125rem;
+}
+.env-menu-item:is([data-disabled], [aria-disabled='true']) {
+  opacity: var(--state-disabled-opacity);
+  cursor: default;
+}
+.env-menu-separator {
+  block-size: var(--space-1);
+  border: 0;
+  margin: 0;
+}
+.env-menu > :is(.env-menu-header, .env-menu-item):first-child,
+.env-menu > .env-menu-separator + :is(.env-menu-header, .env-menu-item) {
+  border-start-start-radius: var(--radius-row-outer);
+  border-start-end-radius: var(--radius-row-outer);
+}
+.env-menu > :is(.env-menu-header, .env-menu-item):last-child,
+.env-menu > :is(.env-menu-header, .env-menu-item):has(+ .env-menu-separator) {
+  border-end-start-radius: var(--radius-row-outer);
+  border-end-end-radius: var(--radius-row-outer);
+}
+/* Organization menu: a quiet trigger in the shell's context area and a pane of radio rows. */
+.env-organization-trigger {
+  box-sizing: border-box;
+  inline-size: 100%;
+  block-size: var(--control-height);
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: 100vmax;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  background: transparent;
+  color: var(--color-navigation-text);
+  font: var(--type-body);
+  text-align: start;
+  cursor: pointer;
+  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+}
+.env-organization-trigger:is(:hover, [aria-expanded='true']):not(:disabled) {
+  background: var(--color-navigation-quiet-hover);
+}
+.env-organization-trigger:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: -0.125rem;
+}
+.env-organization-trigger:disabled {
+  opacity: var(--state-disabled-opacity);
+  cursor: default;
+}
+.env-organization-trigger[data-create] {
+  justify-content: flex-start;
+}
+.env-organization-trigger-label {
+  min-inline-size: 0;
+  overflow: hidden;
+  color: var(--color-text-primary);
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.env-organization-trigger .env-symbol {
+  flex: 0 0 auto;
+  color: var(--color-navigation-icon);
+}
+.env-organization-menu-header {
+  box-sizing: border-box;
+  min-block-size: 7.25rem;
+  padding: var(--space-5) var(--space-3);
+  border-radius: var(--radius-row-outer) var(--radius-row-outer) var(--radius-row-inner)
+    var(--radius-row-inner);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  background: var(--color-menu-row);
+  color: var(--color-row-text);
+  text-align: center;
+}
+.env-organization-menu-header .env-symbol {
+  inline-size: 2rem;
+  block-size: 2rem;
+}
+.env-organization-menu-heading {
+  font: var(--type-h1);
+}
+.env-organization-menu-options {
+  display: grid;
+  gap: 0.125rem;
+}
+.env-organization-menu-options > .env-menu-item:last-child {
+  border-end-start-radius: var(--radius-row-outer);
+  border-end-end-radius: var(--radius-row-outer);
+}
+.env-organization-menu-option[data-checked] {
+  font-weight: 500;
+}
+/* The selection indicator follows the radio control. */
+.env-organization-menu-radio {
+  box-sizing: border-box;
+  inline-size: 1.125rem;
+  block-size: 1.125rem;
+  flex: 0 0 1.125rem;
+  border: 0.125rem solid var(--color-checkbox-border);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  transition: border-color var(--motion-duration-fast) var(--motion-ease);
+}
+.env-organization-menu-option[data-checked] .env-organization-menu-radio {
+  border-color: var(--color-radio);
+}
+.env-organization-menu-radio-dot {
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  border-radius: 50%;
+  background: var(--color-radio);
+}
+.env-organization-menu-create {
+  box-sizing: border-box;
+  min-block-size: var(--control-height);
+  margin-block-start: var(--space-2);
+  padding: var(--space-1) var(--space-4);
+  border-radius: 100vmax;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  /* A pill on the pane's row fill, separate from the organization rows above it. */
+  background: var(--color-menu-row);
+  color: var(--color-row-text);
+  font: var(--type-body);
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+}
+.env-organization-menu-create .env-symbol {
+  inline-size: var(--control-icon-size);
+  block-size: var(--control-icon-size);
+}
+.env-organization-menu-create[data-highlighted] {
+  background: hsl(from var(--color-menu-row) h s var(--state-surface-pressed-lightness));
+}
+.env-organization-menu-create:active {
+  background: hsl(
+    from var(--color-menu-row) h s clamp(0, calc(l + 8 * var(--state-lightness-direction)), 100)
+  );
+}
+.env-organization-menu-create:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: 0.125rem;
+}
+@media (pointer: coarse) {
+  .env-menu-item {
+    min-block-size: var(--control-height-touch);
+  }
+}

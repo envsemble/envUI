@@ -20,9 +20,10 @@ import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 | Application ownership | Labels, heading structure, reading order, product validation and recovery actions                          |
 | Keyboard              | Tab / Shift+Tab move focus; Enter activates links; Enter / Space activate buttons                          |
 | Focus                 | Text fields recolor their thin border or underline; other controls use the shared 0.125 rem focus ring     |
-| Reduced motion        | Library transitions respect prefers-reduced-motion automatically                                           |
-| Transition tokens     | --motion-duration-fast (0.12 s), --motion-duration-medium (0.16 s)                                         |
-| Shared easing         | --motion-ease: cubic-bezier(0.45, 0, 0.2, 1)                                                               |
+| Motion                | Presses, popups, dialogs, toasts and new content use brief transitions under a quarter second              |
+| Reduced motion        | prefers-reduced-motion removes movement and keeps only opacity changes                                     |
+| Transition tokens     | --motion-duration-fast (0.12 s), --motion-duration-medium (0.16 s), --motion-duration-slow (0.24 s)        |
+| Shared easing         | --motion-ease for state changes; --motion-ease-enter and --motion-ease-exit for elements entering/leaving  |
 
 ## Guidelines
 

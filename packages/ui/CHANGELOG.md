@@ -1,5 +1,34 @@
 # Changelog
 
+## 0.3.0 — 2026-10-11
+
+The application frame and menus, so products share one sidebar and navigation.
+
+### Added
+
+- `AppShell`: a topbar and a collapsible navigation sidebar for a whole application.
+  - The brand mark doubles as the sidebar toggle and shows the toggle icon while the sidebar area is hovered.
+  - The collapsed preference persists through `storageKey`, or can be controlled.
+  - A collapsed sidebar expands over the content on hover, on keyboard focus and while a popup opened from it is open.
+  - Narrow viewports open the sidebar over the content; it closes after navigation, on Escape and on the backdrop.
+  - `context` for an organization switcher, `title`, `actions`, and `dividers` for the separator lines.
+  - `useAppShell()` and `AppShellSkeleton`, the matching loading frame.
+- `NavigationItem` follows a compact `AppShell` sidebar automatically, showing its icon with the label as accessible name.
+- `Menu`, `MenuHeader`, `MenuItem` (actions and LinkProvider destinations) and `MenuSeparator`.
+- `OrganizationMenu`: the active organization in the shell's context area, switching between organizations and offering to create one; shared by every product.
+- Subtle motion across the library:
+  - controls settle slightly while pressed;
+  - dialogs and side panels rise or slide in over a fading backdrop;
+  - menus, select options and tooltips grow from their trigger;
+  - toasts arrive from their screen edge;
+  - disclosure content, avatar pictures, checkbox marks and field end actions ease in;
+  - skeletons pulse.
+- `--motion-duration-slow`, `--motion-ease-enter` and `--motion-ease-exit` tokens. Reduced-motion preferences keep only opacity changes.
+
+### Documentation
+
+- New pages for the application shell and menus, with catalogue previews.
+
 ## 0.2.0 — 2026-10-11
 
 Foundations found missing while adopting envUI in Platform, the first product to use it.
