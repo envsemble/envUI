@@ -149,6 +149,8 @@ test('placement stacks, keyboard access, wrapped sizing and contextual action st
   await page.getByTestId('toast-clear').click();
   await page.getByTestId('toast-queue-actions').click();
   await page.setViewportSize({ width: 320, height: 160 });
+  // Cleared toasts finish their exit transition before the stack is measured.
+  await expect(region(page).locator('.env-toast[data-ending-style]')).toHaveCount(0);
   const stack = await region(page).evaluate((viewport) => ({
     scroll: viewport.scrollHeight,
     height: viewport.clientHeight,

@@ -17,23 +17,14 @@
   border-radius: var(--radius-surface);
   background: var(--color-pane);
   outline: none;
-  transform-origin: var(--transform-origin);
-  transition:
-    opacity var(--motion-duration-fast) var(--motion-ease),
-    transform var(--motion-duration-fast) var(--motion-ease);
-}
-.env-menu[data-starting-style],
-.env-menu[data-ending-style] {
-  opacity: 0;
-  transform: scale(0.98);
 }
 .env-menu-header,
 .env-menu-item {
   box-sizing: border-box;
   min-inline-size: 0;
   border-radius: var(--radius-row-inner);
-  /* Rows on the pane use the alternate fill, as grouped rows do inside a muted pane. */
-  background: var(--color-row-alternate);
+  /* Rows stand out from the pane in both themes. */
+  background: var(--color-menu-row);
   color: var(--color-row-text);
 }
 .env-menu-header {
@@ -62,12 +53,11 @@
   overflow-wrap: anywhere;
 }
 .env-menu-item[data-highlighted] {
-  background: hsl(from var(--color-row-alternate) h s var(--state-surface-pressed-lightness));
+  background: hsl(from var(--color-menu-row) h s var(--state-surface-pressed-lightness));
 }
 .env-menu-item:active {
   background: hsl(
-    from var(--color-row-alternate) h s
-      clamp(0, calc(l + 8 * var(--state-lightness-direction)), 100)
+    from var(--color-menu-row) h s clamp(0, calc(l + 8 * var(--state-lightness-direction)), 100)
   );
 }
 .env-menu-item:focus-visible {
@@ -93,13 +83,144 @@
   border-end-start-radius: var(--radius-row-outer);
   border-end-end-radius: var(--radius-row-outer);
 }
+/* Organization menu: a quiet trigger in the shell's context area and a pane of radio rows. */
+.env-organization-trigger {
+  box-sizing: border-box;
+  inline-size: 100%;
+  block-size: var(--control-height);
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: 100vmax;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  background: transparent;
+  color: var(--color-navigation-text);
+  font: var(--type-body);
+  text-align: start;
+  cursor: pointer;
+  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+}
+.env-organization-trigger:is(:hover, [aria-expanded='true']):not(:disabled) {
+  background: var(--color-navigation-quiet-hover);
+}
+.env-organization-trigger:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: -0.125rem;
+}
+.env-organization-trigger:disabled {
+  opacity: var(--state-disabled-opacity);
+  cursor: default;
+}
+.env-organization-trigger[data-create] {
+  justify-content: flex-start;
+}
+.env-organization-trigger-label {
+  min-inline-size: 0;
+  overflow: hidden;
+  color: var(--color-text-primary);
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.env-organization-trigger .env-symbol {
+  flex: 0 0 auto;
+  color: var(--color-navigation-icon);
+}
+.env-organization-menu-header {
+  box-sizing: border-box;
+  min-block-size: 7.25rem;
+  padding: var(--space-5) var(--space-3);
+  border-radius: var(--radius-row-outer) var(--radius-row-outer) var(--radius-row-inner)
+    var(--radius-row-inner);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  background: var(--color-menu-row);
+  color: var(--color-row-text);
+  text-align: center;
+}
+.env-organization-menu-header .env-symbol {
+  inline-size: 2rem;
+  block-size: 2rem;
+}
+.env-organization-menu-heading {
+  font: var(--type-h1);
+}
+.env-organization-menu-options {
+  display: grid;
+  gap: 0.125rem;
+}
+.env-organization-menu-options > .env-menu-item:last-child {
+  border-end-start-radius: var(--radius-row-outer);
+  border-end-end-radius: var(--radius-row-outer);
+}
+.env-organization-menu-option[data-checked] {
+  font-weight: 500;
+}
+/* The selection indicator follows the radio control. */
+.env-organization-menu-radio {
+  box-sizing: border-box;
+  inline-size: 1.125rem;
+  block-size: 1.125rem;
+  flex: 0 0 1.125rem;
+  border: 0.125rem solid var(--color-checkbox-border);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  transition: border-color var(--motion-duration-fast) var(--motion-ease);
+}
+.env-organization-menu-option[data-checked] .env-organization-menu-radio {
+  border-color: var(--color-radio);
+}
+.env-organization-menu-radio-dot {
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  border-radius: 50%;
+  background: var(--color-radio);
+}
+.env-organization-menu-create {
+  box-sizing: border-box;
+  min-block-size: var(--control-height);
+  margin-block-start: var(--space-2);
+  padding: var(--space-1) var(--space-4);
+  border-radius: 100vmax;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  /* A pill on the pane's row fill, separate from the organization rows above it. */
+  background: var(--color-menu-row);
+  color: var(--color-row-text);
+  font: var(--type-body);
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+}
+.env-organization-menu-create .env-symbol {
+  inline-size: var(--control-icon-size);
+  block-size: var(--control-icon-size);
+}
+.env-organization-menu-create[data-highlighted] {
+  background: hsl(from var(--color-menu-row) h s var(--state-surface-pressed-lightness));
+}
+.env-organization-menu-create:active {
+  background: hsl(
+    from var(--color-menu-row) h s clamp(0, calc(l + 8 * var(--state-lightness-direction)), 100)
+  );
+}
+.env-organization-menu-create:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: 0.125rem;
+}
 @media (pointer: coarse) {
   .env-menu-item {
     min-block-size: var(--control-height-touch);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .env-menu {
-    transition: none;
   }
 }

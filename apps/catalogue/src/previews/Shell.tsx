@@ -7,6 +7,7 @@ import {
   Menu,
   MenuItem,
   NavigationItem,
+  OrganizationMenu,
   Skeleton,
   Stack,
   Text,
@@ -19,6 +20,11 @@ import { Logout } from '@envsemble/envui/icons/Logout';
 import { Example } from './Example';
 import { Preview } from './Preview';
 
+const organizations = [
+  { id: 'northwind', name: 'Northwind Labs' },
+  { id: 'contoso', name: 'Contoso' },
+];
+
 const pages = [
   { id: 'home', label: 'Home', icon: <Home /> },
   { id: 'products', label: 'Products', icon: <Category /> },
@@ -29,6 +35,7 @@ const pages = [
 export function AppShellPreview() {
   const [page, setPage] = useState<(typeof pages)[number]['id']>('home');
   const [dividers, setDividers] = useState(true);
+  const [organizationId, setOrganizationId] = useState('northwind');
   const current = pages.find((candidate) => candidate.id === page) ?? pages[0];
   return (
     <Preview>
@@ -46,9 +53,12 @@ export function AppShellPreview() {
           <AppShell
             brand={<Apps />}
             context={
-              <Button variant="text" className="docs-shell-context">
-                Sample organization
-              </Button>
+              <OrganizationMenu
+                organizations={organizations}
+                currentOrganizationId={organizationId}
+                onSelect={setOrganizationId}
+                onCreate={() => undefined}
+              />
             }
             title={current.label}
             actions={

@@ -183,3 +183,7 @@
   align-items: center;
   gap: var(--space-3);
 }
+/* The organization menu fills the shell's context area; the specimen gives it the same width. */
+.docs-organization-slot {
+  inline-size: min(100%, 14rem);
+}

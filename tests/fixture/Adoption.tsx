@@ -14,7 +14,9 @@ import {
   MenuSeparator,
   Meter,
   NavigationItem,
+  OrganizationMenu,
   SearchField,
+  Skeleton,
   ThemePreferenceProvider,
   ThemeToggle,
   createThemeBootstrapScript,
@@ -48,6 +50,7 @@ export function AdoptionFixture() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const [action, setAction] = useState('');
+  const [organizationId, setOrganizationId] = useState('northwind');
   return (
     <ThemePreferenceProvider storageKey="fixture-theme" className="fixture-adoption">
       <LinkProvider component={RecordingLink}>
@@ -93,6 +96,27 @@ export function AdoptionFixture() {
             </MenuItem>
           </Menu>
           <output data-testid="menu-action">{action}</output>
+          <OrganizationMenu
+            organizations={[
+              { id: 'northwind', name: 'Northwind Labs' },
+              { id: 'contoso', name: 'Contoso' },
+            ]}
+            currentOrganizationId={organizationId}
+            onSelect={(id) => {
+              setOrganizationId(id);
+              setAction(`Selected ${id}`);
+            }}
+            onCreate={() => setAction('Create organization')}
+          />
+          <div data-testid="no-organization">
+            <OrganizationMenu
+              organizations={[]}
+              currentOrganizationId={null}
+              onSelect={() => undefined}
+              onCreate={() => setAction('Create first organization')}
+            />
+          </div>
+          <Skeleton width="4rem" />
           <output hidden data-testid="bootstrap-script">
             {createThemeBootstrapScript({ storageKey: 'bootstrap-theme' })}
           </output>

@@ -7,6 +7,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { classNames } from '../internal/classNames.js';
 import { Theme, type ThemeValue } from './Theme.js';
 import { IconButton, type IconButtonProps } from '../actions/Button.js';
 import { DarkMode } from '../icons/DarkMode.js';
@@ -142,12 +143,13 @@ export function useThemePreference(): ThemePreferenceValue {
 export type ThemeToggleProps = Omit<IconButtonProps, 'icon' | 'aria-label' | 'onClick'>;
 
 /** Switches between the light and dark themes and stores the choice. */
-export function ThemeToggle({ title, ...props }: ThemeToggleProps) {
+export function ThemeToggle({ title, className, ...props }: ThemeToggleProps) {
   const { theme, toggleTheme } = useThemePreference();
   const label = `Switch to ${theme === 'light' ? 'dark' : 'light'} theme`;
   return (
     <IconButton
       {...props}
+      className={classNames('env-theme-toggle', className)}
       icon={theme === 'light' ? <DarkMode /> : <LightMode />}
       aria-label={label}
       title={title ?? label}

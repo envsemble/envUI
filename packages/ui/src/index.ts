@@ -48,4 +48,5 @@ export * from './feedback/Meter.js';
 export * from './content/Avatar.js';
 export * from './foundations/ThemePreference.js';
 export * from './navigation/Menu.js';
+export * from './navigation/OrganizationMenu.js';
 export * from './navigation/AppShell.js';

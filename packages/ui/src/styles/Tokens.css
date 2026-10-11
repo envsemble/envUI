@@ -32,6 +32,10 @@
   --motion-duration-medium: 0.16s;
   --motion-ease: cubic-bezier(0.45, 0, 0.2, 1);
   --motion-ease-standard: var(--motion-ease);
+  --motion-duration-slow: 0.24s;
+  /* Elements entering decelerate into place; leaving ones accelerate away. */
+  --motion-ease-enter: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --motion-ease-exit: cubic-bezier(0.3, 0, 0.8, 0.15);
   color-scheme: light;
   font-family: var(--font-family);
   font-weight: 400;
@@ -69,6 +73,8 @@
   --color-disabled-text: hsl(213.333333 4.522613% 39.019608%);
   --color-row: hsl(200 12% 95.098039%);
   --color-row-alternate: hsl(0 0% 100%);
+  /* Rows on a menu pane: white in light, raised from the pane in dark. */
+  --color-menu-row: var(--color-row-alternate);
   --color-row-text: hsl(225 5.882353% 13.333333%);
   --color-row-detail: hsl(213.333333 4.522613% 39.019608%);
   --color-secondary-action: hsl(200 12% 95.098039%);
@@ -314,6 +320,7 @@
   --color-disabled-text: hsl(212.308 8.725% 70.784%);
   --color-row: hsl(216 4.425% 22.157%);
   --color-row-alternate: hsl(220 3.614% 16.275%);
+  --color-menu-row: var(--color-row);
   --color-row-text: hsl(216 12.195% 91.961%);
   --color-row-detail: hsl(213.333 7.317% 75.882%);
   --color-secondary-action: hsl(216 4.425% 22.157%);

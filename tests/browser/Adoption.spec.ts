@@ -104,7 +104,7 @@ test('Menu supports keyboard navigation, actions and routed destinations', async
   const trigger = page.getByRole('button', { name: 'Open account menu' });
   await trigger.focus();
   await page.keyboard.press('Enter');
-  const menu = page.getByRole('menu', { name: 'Account' });
+  const menu = page.getByRole('menu', { name: 'Account', exact: true });
   await expect(menu).toBeVisible();
   await expect(menu.getByRole('menuitem')).toHaveCount(2);
   // Opening from the keyboard highlights the first item.
@@ -143,6 +143,58 @@ test('error states, meters and avatars expose their semantics', async ({ page })
   await expect(broken.locator('svg.env-avatar-person')).toBeVisible();
   await expect(broken).not.toContainText('BP');
   await expect(page.getByRole('img', { name: 'Organization Name' })).toContainText('ON');
+});
+
+test('OrganizationMenu switches organizations and offers creating one', async ({ page }) => {
+  const errors = collectErrors(page);
+  await page.goto(fixture);
+  const trigger = page.getByRole('button', { name: 'Northwind Labs' });
+  await trigger.click();
+  const menu = page.getByRole('menu', { name: 'Organizations', exact: true });
+  await expect(menu).toContainText('Organizations');
+  await expect(menu.getByRole('menuitemradio', { name: 'Northwind Labs' })).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
+  // Choosing the active organization again does not switch.
+  await menu.getByRole('menuitemradio', { name: 'Northwind Labs' }).click();
+  await expect(menu).toBeHidden();
+  await expect(page.getByTestId('menu-action')).toHaveText('');
+
+  await trigger.click();
+  await page.keyboard.press('ArrowDown');
+  await page.getByRole('menuitemradio', { name: 'Contoso' }).click();
+  await expect(page.getByTestId('menu-action')).toHaveText('Selected contoso');
+  await expect(page.getByRole('button', { name: 'Contoso' })).toBeFocused();
+
+  await page.getByRole('button', { name: 'Contoso' }).click();
+  await page.getByRole('menuitem', { name: 'Create organization' }).click();
+  await expect(page.getByTestId('menu-action')).toHaveText('Create organization');
+
+  await page
+    .getByTestId('no-organization')
+    .getByRole('button', { name: 'Create organization' })
+    .click();
+  await expect(page.getByTestId('menu-action')).toHaveText('Create first organization');
+  expect(errors).toEqual([]);
+});
+
+test('motion settles presses and respects reduced motion', async ({ page }) => {
+  await page.goto(fixture);
+  const skeleton = page.locator('.env-skeleton').first();
+  await expect(skeleton).toHaveCSS('animation-name', 'env-motion-pulse');
+  const button = page.getByTestId('router-button');
+  await button.hover();
+  await page.mouse.down();
+  await expect(button).not.toHaveCSS('transform', 'none');
+  await page.mouse.up();
+
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(skeleton).toHaveCSS('animation-name', 'none');
+  await button.hover();
+  await page.mouse.down();
+  await expect(button).toHaveCSS('transform', 'none');
+  await page.mouse.up();
 });
 
 test.describe('AppShell', () => {

@@ -15,6 +15,15 @@ The application frame and menus, so products share one sidebar and navigation.
   - `useAppShell()` and `AppShellSkeleton`, the matching loading frame.
 - `NavigationItem` follows a compact `AppShell` sidebar automatically, showing its icon with the label as accessible name.
 - `Menu`, `MenuHeader`, `MenuItem` (actions and LinkProvider destinations) and `MenuSeparator`.
+- `OrganizationMenu`: the active organization in the shell's context area, switching between organizations and offering to create one; shared by every product.
+- Subtle motion across the library:
+  - controls settle slightly while pressed;
+  - dialogs and side panels rise or slide in over a fading backdrop;
+  - menus, select options and tooltips grow from their trigger;
+  - toasts arrive from their screen edge;
+  - disclosure content, avatar pictures, checkbox marks and field end actions ease in;
+  - skeletons pulse.
+- `--motion-duration-slow`, `--motion-ease-enter` and `--motion-ease-exit` tokens. Reduced-motion preferences keep only opacity changes.
 
 ### Documentation
 

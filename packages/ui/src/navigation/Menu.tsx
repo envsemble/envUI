@@ -48,7 +48,11 @@ export function Menu({
             sideOffset={8}
             className="env-menu-positioner"
           >
-            <BaseMenu.Popup aria-label={label} className={classNames('env-menu', className)}>
+            <BaseMenu.Popup
+              className={classNames('env-menu', className)}
+              // Base UI names the menu after its trigger; the menu's own label replaces that name.
+              render={(props) => <div {...props} aria-labelledby={undefined} aria-label={label} />}
+            >
               {children}
             </BaseMenu.Popup>
           </BaseMenu.Positioner>

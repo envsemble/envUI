@@ -8,6 +8,7 @@ import {
   MenuHeader,
   MenuItem,
   MenuSeparator,
+  OrganizationMenu,
   Progress,
   Stack,
   Text,
@@ -20,10 +21,50 @@ import { Settings } from '@envsemble/envui/icons/Settings';
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
 
+const sampleOrganizations = [
+  { id: 'northwind', name: 'Northwind Labs' },
+  { id: 'contoso', name: 'Contoso' },
+  { id: 'fabrikam', name: 'Fabrikam Research and Development' },
+];
+
 export function MenuPreview() {
   const [lastAction, setLastAction] = useState('');
+  const [organizationId, setOrganizationId] = useState('northwind');
   return (
     <Preview>
+      <Example
+        title="Organization menu"
+        size="collection"
+        caption="Shared by every product in the shell's context area. Choosing an organization calls onSelect; the application switches and reports progress."
+      >
+        <SpecimenGrid>
+          <Specimen title="Active organization">
+            <div className="docs-organization-slot">
+              <OrganizationMenu
+                organizations={sampleOrganizations}
+                currentOrganizationId={organizationId}
+                onSelect={(id) => {
+                  setOrganizationId(id);
+                  setLastAction(
+                    `Switched to ${sampleOrganizations.find((item) => item.id === id)?.name}`,
+                  );
+                }}
+                onCreate={() => setLastAction('Create organization opened')}
+              />
+            </div>
+          </Specimen>
+          <Specimen title="No organization yet">
+            <div className="docs-organization-slot">
+              <OrganizationMenu
+                organizations={[]}
+                currentOrganizationId={null}
+                onSelect={() => undefined}
+                onCreate={() => setLastAction('Create organization opened')}
+              />
+            </div>
+          </Specimen>
+        </SpecimenGrid>
+      </Example>
       <Example title="Account menu" size="collection">
         <SpecimenGrid>
           <Specimen title="Header, destinations and actions">
