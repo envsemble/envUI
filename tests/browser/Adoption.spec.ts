@@ -194,6 +194,8 @@ test('compact fields can float their label into the outline and keep the button 
   const wellBox = (await well.boundingBox())!;
   expect(resting.y).toBeGreaterThan(wellBox.y);
   await field.fill('Northwind');
+  // Floated onto the outline, the label hides only the line, not a box of field color above it.
+  await expect(label).toHaveCSS('background-image', /linear-gradient/);
   await expect.poll(async () => (await label.boundingBox())!.y).toBeLessThan(wellBox.y + 2);
   const button = page.getByTestId('compact-label-toolbar').getByRole('button', { name: 'Apply' });
   expect(Math.round(wellBox.height)).toBe(Math.round((await button.boundingBox())!.height));

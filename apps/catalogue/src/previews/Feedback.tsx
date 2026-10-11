@@ -5,6 +5,10 @@ import {
   Button,
   EmptyState,
   IconButton,
+  Input,
+  Radio,
+  RadioGroup,
+  Select,
   Skeleton,
   LoadingBar,
   LoadingState,
@@ -215,7 +219,7 @@ export function DialogsPreview() {
               pending={saving}
               actions={
                 <Button
-                  disabled={saving}
+                  pending={saving}
                   onClick={() => {
                     setSaving(true);
                     window.setTimeout(() => {
@@ -225,7 +229,7 @@ export function DialogsPreview() {
                     }, 2000);
                   }}
                 >
-                  {saving ? 'Saving…' : 'Save'}
+                  Save
                 </Button>
               }
             />
@@ -247,6 +251,7 @@ export function DialogsPreview() {
           {actionResult}
         </Text>
       </Example>
+      <FormDialogExamples />
       <Example
         title="Side panel"
         caption="This non-modal panel leaves the page interactive. Outside clicks keep it open; Escape or Close dismisses it."
@@ -264,5 +269,142 @@ export function DialogsPreview() {
         </Dialog>
       </Example>
     </Preview>
+  );
+}
+
+const roleOptions = [
+  { value: 'member', label: 'Member' },
+  { value: 'admin', label: 'Admin' },
+] as const;
+
+/** Dialogs that collect input: fields, a choice and a typed confirmation. */
+function FormDialogExamples() {
+  const [activeDialog, setActiveDialog] = useState<'invite' | 'role' | 'remove' | null>(null);
+  const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState<string>();
+  const [inviting, setInviting] = useState(false);
+  const [role, setRole] = useState('member');
+  const [confirmation, setConfirmation] = useState('');
+  const [result, setResult] = useState('');
+  function open(dialog: 'invite' | 'role' | 'remove' | null) {
+    setActiveDialog(dialog);
+    setEmail('');
+    setEmailError(undefined);
+    setConfirmation('');
+  }
+  function invite() {
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      setEmailError('Enter an e-mail address such as name@example.com.');
+      return;
+    }
+    setInviting(true);
+    window.setTimeout(() => {
+      setInviting(false);
+      setActiveDialog(null);
+      setResult(`Invitation sent to ${email}`);
+    }, 1500);
+  }
+  return (
+    <Example
+      title="Dialogs with forms"
+      size="collection"
+      caption="Fields keep their floating labels and validation inside the dialog. The primary action stays pending while the work runs, and Cancel waits for it."
+    >
+      <SpecimenGrid size="compact">
+        <Specimen title="Fields and validation">
+          <Dialog
+            open={activeDialog === 'invite'}
+            onOpenChange={(next) => open(next ? 'invite' : null)}
+            trigger={<Button variant="secondary">Invite member</Button>}
+            title="Invite member"
+            description="We'll send an invitation with a link to join the workspace."
+            closeLabel="Cancel"
+            pending={inviting}
+            actions={
+              <Button pending={inviting} onClick={invite}>
+                Send invitation
+              </Button>
+            }
+          >
+            <Stack gap={4}>
+              <Input
+                label="E-mail address"
+                type="email"
+                autoComplete="off"
+                value={email}
+                error={emailError}
+                onChange={(event) => {
+                  setEmail(event.target.value);
+                  setEmailError(undefined);
+                }}
+              />
+              <Select
+                label="Role"
+                hint="Admins also manage members and billing."
+                options={roleOptions}
+                defaultValue="member"
+              />
+            </Stack>
+          </Dialog>
+        </Specimen>
+        <Specimen title="A choice">
+          <Dialog
+            open={activeDialog === 'role'}
+            onOpenChange={(next) => open(next ? 'role' : null)}
+            trigger={<Button variant="secondary">Change role</Button>}
+            title="Change role"
+            description="Alex Morgan keeps access to the projects they already have."
+            closeLabel="Cancel"
+            actions={
+              <Button
+                onClick={() => {
+                  setActiveDialog(null);
+                  setResult(`Role changed to ${role}`);
+                }}
+              >
+                Save
+              </Button>
+            }
+          >
+            <RadioGroup variant="rows" label="Role" value={role} onValueChange={setRole}>
+              <Radio value="member" label="Member" detail="Uses the products assigned to them." />
+              <Radio value="admin" label="Admin" detail="Also manages members and billing." />
+            </RadioGroup>
+          </Dialog>
+        </Specimen>
+        <Specimen title="Typed confirmation">
+          <Dialog
+            open={activeDialog === 'remove'}
+            onOpenChange={(next) => open(next ? 'remove' : null)}
+            trigger={<Button variant="secondary">Remove workspace</Button>}
+            title="Remove workspace?"
+            description="This deletes Northwind and its projects for everyone. It cannot be undone."
+            closeLabel="Cancel"
+            actions={
+              <Button
+                variant="destructive"
+                disabled={confirmation !== 'Northwind'}
+                onClick={() => {
+                  setActiveDialog(null);
+                  setResult('Workspace removed');
+                }}
+              >
+                Remove workspace
+              </Button>
+            }
+          >
+            <Input
+              label="Workspace name"
+              hint="Type Northwind to confirm."
+              value={confirmation}
+              onChange={(event) => setConfirmation(event.target.value)}
+            />
+          </Dialog>
+        </Specimen>
+      </SpecimenGrid>
+      <Text variant="caption" className="docs-caption" aria-live="polite">
+        {result}
+      </Text>
+    </Example>
   );
 }

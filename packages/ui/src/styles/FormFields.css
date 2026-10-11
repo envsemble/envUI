@@ -116,6 +116,18 @@
   background: inherit;
   font-size: calc(var(--font-size-body-small) * var(--scale, 1));
 }
+/* On an outline, the label hides only the line behind it; its upper half shows whatever surface the
+   field sits on, such as a dialog pane. */
+.env-text-field-well:not([data-variant='plain']):has(
+    > .env-text-input:focus,
+    > .env-text-input:not(:placeholder-shown)
+  )
+  > label {
+  background: linear-gradient(
+    transparent calc(50% - 0.0625rem * var(--scale, 1)),
+    var(--color-field) 0
+  );
+}
 .env-text-field-well:has(> label) > .env-text-input:not(:focus)::placeholder {
   color: transparent;
 }

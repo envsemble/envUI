@@ -11,6 +11,7 @@ Clearer contrast in both themes, more ways to show loading, and refinements from
   - Secondary buttons in dialogs and side panels, tab rails on panes, and chips and switches on rows no longer blend into their surface.
   - The 0.2.0 rule that shifted secondary buttons on row fills is replaced by the translucent fill.
 - Hover and press on cards, rows, select options, radio rows and menu items shift 6 and 10 points of lightness, up from 2 and 4.
+- A floated field label hides only the outline behind it, so it no longer shows the field color as a box above the outline on panes and dialogs.
 - `CodeBlock`'s heading follows the code theme, so its copy action uses that theme's colors and stays visible on the dark code background in a light application.
 - Inactive tabs show translucent hover and press layers, visible on their rail in both themes.
 - Icon-only text buttons, such as a field's clear action, show the same state layers instead of only a faint color change. Inside a field they use its quiet icon color rather than the link blue.
@@ -38,6 +39,7 @@ Clearer contrast in both themes, more ways to show loading, and refinements from
 
 - The loading page covers page progress, spinners, pending buttons and placeholders, with guidance on when to use each.
 - The catalogue's icon search uses `SearchField`, and the compact field examples show the floating label and end action.
+- The dialogs page shows dialogs with forms (fields and validation, a choice, a typed confirmation), and its pending example uses a pending button.
 
 ## 0.3.0 — 2026-10-11
 
