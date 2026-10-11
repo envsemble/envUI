@@ -174,7 +174,8 @@ export function AppShell({
   const sidebarRegion = useRef<HTMLElement>(null);
   const shell = useRef<HTMLDivElement>(null);
   const navigationRegion = useRef<HTMLElement>(null);
-  const [contentWidth, setContentWidth] = useState(() => readStoredWidth(storageKey));
+  const [contentWidth, setContentWidth] = useState<number>();
+  const measuredWidth = useRef<number>(undefined);
   // Transitions start after the first paint, so the measured width never animates in on load.
   const [ready, setReady] = useState(false);
 
@@ -192,6 +193,13 @@ export function AppShell({
     return () => cancelAnimationFrame(frame);
   }, []);
 
+  // The stored width applies after mount, so server-rendered markup and the first client render
+  // agree; it still arrives before the first paint.
+  useLayoutEffect(() => {
+    const stored = readStoredWidth(storageKey);
+    if (stored !== undefined) setContentWidth((current) => current ?? stored);
+  }, [storageKey]);
+
   // The expanded sidebar fits its widest content: the navigation or the context beside the toggle.
   // Both are measured at their natural width, which only shows while labels are visible.
   const measureSidebar = useCallback(() => {
@@ -206,7 +214,10 @@ export function AppShell({
       Math.max(navigation.getBoundingClientRect().width, context.getBoundingClientRect().width),
     );
     frame.removeAttribute('data-measuring');
-    setContentWidth((current) => (current === width ? current : width));
+    // A shell inside a hidden ancestor measures nothing; unchanged widths need no update.
+    if (width === 0 || width === measuredWidth.current) return;
+    measuredWidth.current = width;
+    setContentWidth(width);
     writeStored(widthKey(storageKey), String(width));
   }, [storageKey]);
 
@@ -219,11 +230,15 @@ export function AppShell({
       (region): region is HTMLElement => region !== null,
     );
     const observer = new MutationObserver(measureSidebar);
-    for (const region of regions)
+    for (const region of regions) {
       observer.observe(region, { subtree: true, childList: true, characterData: true });
+      // Images, such as an organization logo, change the width when they load.
+      region.addEventListener('load', measureSidebar, true);
+    }
     document.fonts?.addEventListener('loadingdone', measureSidebar);
     return () => {
       observer.disconnect();
+      for (const region of regions) region.removeEventListener('load', measureSidebar, true);
       document.fonts?.removeEventListener('loadingdone', measureSidebar);
     };
   }, [measureSidebar]);
@@ -403,7 +418,9 @@ export function AppShellSkeleton({
 }: AppShellSkeletonProps) {
   const isNarrow = useMedia(narrowQuery);
   const [collapsed] = useState(() => readStoredCollapsed(storageKey, defaultCollapsed));
-  const [contentWidth] = useState(() => readStoredWidth(storageKey));
+  const [contentWidth, setContentWidth] = useState<number>();
+  // Applied after mount, like AppShell's, so server-rendered markup matches the first render.
+  useLayoutEffect(() => setContentWidth(readStoredWidth(storageKey)), [storageKey]);
   return (
     <LoadingState label={label} className={classNames('env-app-shell-skeleton', className)}>
       <div

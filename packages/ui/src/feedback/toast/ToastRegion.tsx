@@ -53,19 +53,20 @@ export function ToastRegion({
     if (!element) return;
     const glide = !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     const next = new Map<string, number>();
+    // Layout positions on the page: the viewport grows from its anchored edge, so offsets within
+    // it are not enough. offsetTop ignores transforms, entrance motion and running glides alike.
+    const origin = element.getBoundingClientRect().top;
     for (const item of element.querySelectorAll<HTMLElement>(':scope > [data-toast-id]')) {
       const id = item.dataset.toastId!;
-      // Page positions, because the viewport itself grows from its anchored edge. The layout
-      // position excludes a glide that is still running.
-      const drawn = item.getBoundingClientRect().top;
-      const top = drawn - glideOffset(item);
+      const top = origin + item.offsetTop;
+      const offset = glideOffset(item);
       const previous = positions.current.get(id);
       next.set(id, top);
       if (!glide || previous === undefined || Math.abs(previous - top) < 1) continue;
-      // Starting from where the notice is drawn lets an interrupted glide continue smoothly.
+      // Start where the notice was drawn before this change, including an interrupted glide.
       for (const animation of item.getAnimations())
         if (animation.id === glideId) animation.cancel();
-      item.animate([{ translate: `0 ${drawn - top}px` }, { translate: '0 0' }], {
+      item.animate([{ translate: `0 ${previous + offset - top}px` }, { translate: '0 0' }], {
         id: glideId,
         duration: 240,
         easing: 'cubic-bezier(0.05, 0.7, 0.1, 1)',

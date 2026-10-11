@@ -148,7 +148,7 @@
   padding: 0;
 }
 
-/* Pending: the hidden label keeps the button's size while a spinner shows the work. */
+/* Pending: the transparent label keeps the button's size and name while a spinner shows the work. */
 .env-button[data-pending] {
   position: relative;
   cursor: progress;
@@ -159,8 +159,12 @@
 .env-button-content {
   display: contents;
 }
+/* Transparent rather than hidden, so the label stays the button's accessible name. */
 .env-button[data-pending] > .env-button-content {
-  visibility: hidden;
+  color: transparent;
+}
+.env-button[data-pending] > .env-button-content > * {
+  opacity: 0;
 }
 .env-button-spinner.env-spinner {
   position: absolute;

@@ -205,27 +205,37 @@ test('the hidden count sits beyond the stack: above at the bottom right, below a
   }
 });
 
-test('existing notices glide to their new place when another arrives', async ({ page }) => {
+test('existing notices glide from their previous place when another arrives', async ({ page }) => {
   await page.getByTestId('toast-error').click();
   const first = notice(page, 'Persistent error notice');
   await expect(first).toBeVisible();
   await expect(region(page).locator('.env-toast[data-starting-style]')).toHaveCount(0);
-  const glides = () =>
-    first.evaluate((element) =>
-      element
-        .getAnimations()
-        .some((animation) =>
-          (animation.effect as KeyframeEffect).getKeyframes().some((frame) => 'translate' in frame),
-        ),
-    );
+  // Let the entrance transition finish, so only the glide moves the notice.
+  await first.evaluate((element) =>
+    Promise.all(element.getAnimations().map((animation) => animation.finished)),
+  );
+  const before = (await first.boundingBox())!.y;
   await page.getByTestId('toast-action').click();
-  expect(await glides()).toBe(true);
+  // Frozen at its start, the glide draws the notice where it was before the new one arrived.
+  const start = await first.evaluate((element) => {
+    const glide = element.getAnimations().find((animation) => animation.id === 'env-toast-glide');
+    if (!glide) return null;
+    glide.pause();
+    glide.currentTime = 0;
+    const drawn = element.getBoundingClientRect().y;
+    glide.finish();
+    return drawn;
+  });
+  expect(start).not.toBeNull();
+  expect(Math.abs(start! - before)).toBeLessThan(1);
+  const after = (await first.boundingBox())!.y;
+  expect(Math.abs(after - before)).toBeGreaterThan(20);
 
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.getByTestId('toast-success').click();
-  await first.evaluate((element) =>
-    element.getAnimations().forEach((animation) => animation.finish()),
-  );
   await page.getByTestId('toast-info').click();
-  expect(await glides()).toBe(false);
+  expect(
+    await first.evaluate((element) =>
+      element.getAnimations().some((animation) => animation.id === 'env-toast-glide'),
+    ),
+  ).toBe(false);
 });

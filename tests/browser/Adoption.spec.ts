@@ -185,32 +185,61 @@ test('compact fields can float their label into the outline and keep the button 
   expect(Math.round(wellBox.height)).toBe(Math.round((await button.boundingBox())!.height));
 });
 
-test('a pending button keeps its size, reports busy and ignores presses', async ({ page }) => {
+test('a pending button keeps its size and name, reports busy and ignores presses', async ({
+  page,
+  browserName,
+}) => {
   await page.goto(fixture);
   const button = page.getByTestId('pending-button');
   await expect(button).toHaveAttribute('aria-busy', 'true');
   await expect(button.locator('.env-spinner')).toBeVisible();
-  await expect(button.locator('.env-button-content')).toHaveCSS('visibility', 'hidden');
+  await expect(button.locator('.env-button-content')).toHaveCSS('color', 'rgba(0, 0, 0, 0)');
   await button.click({ force: true });
   await expect(page.getByTestId('pending-presses')).toHaveText('0');
   await expect(page.getByRole('progressbar', { name: 'Refreshing seats' })).toBeVisible();
+  if (browserName === 'chromium') {
+    // The browser's own accessibility tree, which drops visually hidden text, still names it.
+    const session = await page.context().newCDPSession(page);
+    const { root } = await session.send('DOM.getDocument', { depth: -1 });
+    const { nodeId } = await session.send('DOM.querySelector', {
+      nodeId: root.nodeId,
+      selector: '[data-testid="pending-button"]',
+    });
+    const { nodes } = await session.send('Accessibility.getPartialAXTree', {
+      nodeId,
+      fetchRelatives: false,
+    });
+    expect(nodes[0].name?.value).toBe('Save changes');
+  }
 });
 
 test('LoadingBar waits before appearing, then completes and leaves', async ({ page }) => {
   await page.goto(fixture);
   const toggle = page.getByRole('button', { name: 'Toggle loading' });
   const bar = page.getByRole('progressbar', { name: 'Loading next page' });
+  // Record every state the bar renders, so short-lived states cannot slip between assertions.
+  await page.evaluate(() => {
+    const states: string[] = [];
+    (window as unknown as { barStates: string[] }).barStates = states;
+    new MutationObserver(() => {
+      const element = document.querySelector('[aria-label="Loading next page"]');
+      // After the bar has shown, its absence is recorded as "none".
+      const state = element ? element.getAttribute('data-state')! : states.length ? 'none' : null;
+      if (state && states.at(-1) !== state) states.push(state);
+    }).observe(document.body, { subtree: true, childList: true, attributes: true });
+  });
+  const states = () =>
+    page.evaluate(() => (window as unknown as { barStates: string[] }).barStates);
   // Quick work never shows the bar.
   await toggle.click();
   await toggle.click();
   await page.waitForTimeout(400);
-  await expect(bar).toHaveCount(0);
+  expect(await states()).toEqual([]);
   await toggle.click();
-  await expect(bar).toBeVisible();
   await expect(bar).toHaveAttribute('data-state', 'running');
   await toggle.click();
-  await expect(bar).toHaveAttribute('data-state', 'finishing');
   await expect(bar).toHaveCount(0);
+  expect(await states()).toEqual(['running', 'finishing', 'none']);
 });
 
 test('OrganizationMenu switches organizations and offers creating one', async ({ page }) => {

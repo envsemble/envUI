@@ -30,7 +30,7 @@
   height: calc(var(--control-icon-size) * var(--scale, 1));
   margin-block-start: calc(0.125rem * var(--scale, 1));
 }
-.env-text-field:not([data-compact]):has(> .env-text-field-well > label) {
+.env-text-field:not([data-compact], [data-label-hidden]):has(> .env-text-field-well > label) {
   padding-block-start: calc(var(--space-2) * var(--scale, 1));
 }
 .env-text-field-well {
