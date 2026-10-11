@@ -85,6 +85,22 @@
   color: var(--color-link-pressed);
 }
 
+/* Without a label, a color change alone is too faint; icon-only text buttons such as a field's clear
+   action also show a translucent state layer on hover and press. */
+.env-button-text.env-icon-button {
+  transition-property: background-color, color;
+  transition-duration: var(--motion-duration-fast);
+  transition-timing-function: var(--motion-ease);
+}
+
+.env-button-text.env-icon-button:hover:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-state-layer-hover);
+}
+
+.env-button-text.env-icon-button:active:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-state-layer-pressed);
+}
+
 .env-link {
   display: inline;
   min-height: 0;

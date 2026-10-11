@@ -75,6 +75,7 @@ import { Textarea } from '@envsemble/envui';
 
 - Use compact fields in toolbars and beside buttons: they share the 2.5 rem control height and pill shape. Use the default floating-label size in forms.
 - A compact field shows its placeholder, or with showLabel a label that rests inside and floats into the outline without adding height, so the field stays aligned with buttons.
+- Use a text IconButton as endAction. Inside the field it takes the field's quiet icon color and shows a state layer on hover and press.
 - SearchField shows a search icon and, while it has a query, a clear button inside the field. Escape also clears the query and keeps an enclosing dialog open.
 - Use Input for one line and Textarea for multiline content. Both share the same corner radius. Fixed sizing scrolls and resizes from the full bottom edge; content sizing grows and shrinks automatically. Set rows for the initial or minimum height.
 - The resize edge follows the field’s border color on hover, focus and error, and uses the pressed shade while dragging. Focus the edge and use Up/Down arrows to change height by one line, or Shift+Up/Down for five lines. Home restores the minimum height. Disabled fields cannot resize.

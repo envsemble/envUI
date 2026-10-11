@@ -66,7 +66,21 @@ test('SearchField clears with its button and with Escape inside a dialog', async
   await expect(search).toHaveAttribute('placeholder', 'Search by name');
   await expect(page.getByRole('button', { name: 'Clear search' })).toHaveCount(0);
   await search.fill('alex');
-  await page.getByRole('button', { name: 'Clear search' }).click();
+  // The clear action uses the field's quiet icon color and shows a state layer on hover.
+  const clear = page.getByRole('button', { name: 'Clear search' });
+  await expect(clear).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  const fieldIconColor = await clear.evaluate((element) => {
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--color-field-label)';
+    element.append(probe);
+    const color = getComputedStyle(probe).color;
+    probe.remove();
+    return color;
+  });
+  await expect(clear).toHaveCSS('color', fieldIconColor);
+  await clear.hover();
+  await expect(clear).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await clear.click();
   await expect(search).toHaveValue('');
   await expect(search).toBeFocused();
   const button = page.getByRole('button', { name: 'Open pending dialog' });
