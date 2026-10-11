@@ -21,6 +21,7 @@ Clearer contrast in both themes, more ways to show loading, and refinements from
 - Rows, radio rows, select options and menu items keep 1.5 rem inline padding (`--row-padding-inline`), up from 1 rem, so text clears the large corners on single and connected rows alike. Surfaces keep at least 1.25 rem padding.
 - `AppShell`'s expanded sidebar fits its widest content (the navigation or the context beside the toggle) between 12 and 20 rem instead of a fixed 16 rem, and stores the width with `storageKey` so `AppShellSkeleton` matches it. The collapsed sidebar is one control plus its insets wide, so the toggle lines up with the navigation icons.
 - The `OrganizationMenu` trigger is a secondary `Button` with the up and down arrows, instead of its own style.
+- The `AppShell` sidebar toggle becomes a secondary icon button while its toggle icon shows, instead of using the navigation hover tint; at rest it remains the brand mark.
 - `Avatar` initials use the avatar blue of the default person picture (`--color-avatar`, `--color-on-avatar`).
 - Toasts glide to their new place when another notice arrives or leaves. The hidden-notice count of the top-center placement sits below the stack, centered.
 

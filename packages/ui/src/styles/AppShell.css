@@ -96,8 +96,19 @@
   color: var(--color-text-primary);
   cursor: pointer;
 }
-button.env-app-sidebar-toggle:hover {
-  background: var(--color-navigation-quiet-hover);
+/* While the toggle icon shows, the toggle is a secondary icon button like the other circular
+   actions; at rest it is only the brand mark. */
+.env-app-shell:is([data-region-hovered], [data-narrow]) button.env-app-sidebar-toggle,
+button.env-app-sidebar-toggle:focus-visible {
+  background: var(--color-secondary-action);
+  color: var(--color-on-secondary-action);
+}
+.env-app-shell button.env-app-sidebar-toggle:hover {
+  background: var(--color-secondary-action-hover);
+  color: var(--color-on-secondary-action);
+}
+.env-app-shell button.env-app-sidebar-toggle:active {
+  background: var(--color-secondary-action-pressed);
 }
 .env-app-sidebar-toggle:focus-visible {
   outline: 0.125rem solid var(--color-focus-ring);
@@ -136,6 +147,10 @@ button.env-app-sidebar-toggle:hover {
   }
   .env-app-sidebar-toggle .env-app-toggle-icon {
     visibility: visible;
+  }
+  button.env-app-sidebar-toggle {
+    background: var(--color-secondary-action);
+    color: var(--color-on-secondary-action);
   }
 }
 

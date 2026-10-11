@@ -358,6 +358,27 @@ test.describe('AppShell', () => {
     await expect(shell).toHaveAttribute('data-compact', '');
   });
 
+  test('the sidebar toggle is a secondary icon button while its icon shows', async ({ page }) => {
+    await page.goto(shellFixture);
+    const toggle = page.getByRole('button', { name: 'Collapse sidebar' });
+    const token = (name: string) =>
+      toggle.evaluate((element, variable) => {
+        const probe = document.createElement('span');
+        probe.style.backgroundColor = `var(${variable})`;
+        element.append(probe);
+        const color = getComputedStyle(probe).backgroundColor;
+        probe.remove();
+        return color;
+      }, name);
+    await page.mouse.move(700, 500);
+    await expect(toggle).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+    await toggle.hover();
+    await expect(toggle).toHaveCSS(
+      'background-color',
+      await token('--color-secondary-action-hover'),
+    );
+  });
+
   test('the expanded sidebar fits its content within its bounds and remembers the width', async ({
     page,
   }) => {
