@@ -44,6 +44,7 @@
   outline-offset: -0.125rem;
 }
 .env-tabs-panels {
+  position: relative;
   display: grid;
   min-inline-size: 0;
 }
@@ -62,7 +63,12 @@
   opacity: 0;
   transform: translateY(var(--space-1));
 }
+/* The outgoing panel fades out of flow, so content after the tabs settles when the tab changes
+   instead of jumping when the fade ends. */
 .env-tab-panel[data-ending-style] {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
   opacity: 0;
   transform: translateY(calc(-1 * var(--space-1)));
   pointer-events: none;
