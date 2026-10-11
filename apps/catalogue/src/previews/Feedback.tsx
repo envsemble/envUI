@@ -1,5 +1,18 @@
-import { useState } from 'react';
-import { Text, Button, EmptyState, Skeleton, LoadingState, Dialog, Stack } from '@envsemble/envui';
+import { useEffect, useState } from 'react';
+import {
+  ActionGroup,
+  Text,
+  Button,
+  EmptyState,
+  IconButton,
+  Skeleton,
+  LoadingBar,
+  LoadingState,
+  Dialog,
+  Spinner,
+  Stack,
+  Surface,
+} from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { Search } from '@envsemble/envui/icons/Search';
 import { Apps } from '@envsemble/envui/icons/Apps';
@@ -65,9 +78,67 @@ export function EmptyStatePreview() {
   );
 }
 
+/** Simulates work that ends after a short while. */
+function useSimulatedWork(duration: number) {
+  const [working, setWorking] = useState(false);
+  useEffect(() => {
+    if (!working) return;
+    const timer = setTimeout(() => setWorking(false), duration);
+    return () => clearTimeout(timer);
+  }, [working, duration]);
+  return [working, () => setWorking(true)] as const;
+}
+
 export function LoadingPreview() {
+  const [pageLoading, loadPage] = useSimulatedWork(2400);
+  const [saving, save] = useSimulatedWork(1800);
+  const [refreshing, refresh] = useSimulatedWork(1800);
   return (
     <Preview>
+      <Example
+        title="Page progress"
+        size="collection"
+        caption="Appears only when loading takes longer than 200 ms, creeps forward while it continues and completes when it ends. AppShell shows it under the topbar through its loading prop."
+      >
+        <Surface tone="row" padding={5} className="docs-loading-frame">
+          <LoadingBar active={pageLoading} contained label="Loading next page" />
+          <Stack gap={3}>
+            <Text variant="section-heading">Projects</Text>
+            <Text tone="muted">Open the next page to see the bar along the top edge.</Text>
+            <Button variant="secondary" onClick={loadPage}>
+              Open next page
+            </Button>
+          </Stack>
+        </Surface>
+      </Example>
+      <Example
+        title="Work in place"
+        size="collection"
+        caption="A spinner shows work of unknown length in a small area. A pending button keeps its size and ignores repeated presses."
+      >
+        <SpecimenGrid>
+          <Specimen title="Spinner sizes">
+            <div className="docs-spinner-row">
+              <Spinner size="small" label="Loading" />
+              <Spinner label="Loading" />
+              <Spinner size="large" label="Loading" />
+            </div>
+          </Specimen>
+          <Specimen title="Pending actions">
+            <ActionGroup>
+              <Button pending={saving} onClick={save}>
+                Save changes
+              </Button>
+              <IconButton
+                icon={<Refresh />}
+                aria-label="Refresh"
+                pending={refreshing}
+                onClick={refresh}
+              />
+            </ActionGroup>
+          </Specimen>
+        </SpecimenGrid>
+      </Example>
       <Example
         title="Loading placeholders"
         size="collection"

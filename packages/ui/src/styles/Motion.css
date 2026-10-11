@@ -48,7 +48,7 @@
   /* Presses: controls settle slightly while held. */
   .env-button:not(.env-dropdown-trigger),
   .env-navigation-item,
-  .env-organization-trigger,
+  .env-avatar-button,
   .env-clickable-card {
     transition-property: background-color, color, border-color, transform;
     transition-duration: var(--motion-duration-fast);
@@ -56,7 +56,7 @@
   }
   .env-button:not(.env-dropdown-trigger):active:not(:disabled):not([aria-disabled='true']),
   .env-navigation-item:active:not(:disabled):not([aria-disabled='true']),
-  .env-organization-trigger:active:not(:disabled) {
+  .env-avatar-button:active:not(:disabled) {
     transform: scale(0.97);
   }
   .env-clickable-card:active:not(:disabled):not([aria-disabled='true']) {

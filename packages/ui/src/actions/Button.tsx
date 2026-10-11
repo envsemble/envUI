@@ -1,7 +1,8 @@
-import type { ComponentPropsWithRef, ReactNode } from 'react';
+import type { ComponentPropsWithRef, MouseEvent, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { ActionElement, type ActionElementProps } from '../internal/ActionElement.js';
+import { Spinner } from '../feedback/Spinner.js';
 
 export type ButtonVariant =
   | 'primary'
@@ -17,6 +18,11 @@ export interface ButtonAppearanceProps {
   underline?: boolean;
   startIcon?: ReactNode;
   endIcon?: ReactNode;
+  /**
+   * Work started by this button is running: a spinner replaces the content without changing the
+   * button's size, and the button reports busy and ignores activation until pending ends.
+   */
+  pending?: boolean;
 }
 export type ButtonProps = ButtonAppearanceProps &
   ActionElementProps &
@@ -39,13 +45,30 @@ export function Button({
   icon,
   startIcon,
   endIcon,
+  pending = false,
   className,
   children,
   ...props
 }: ButtonProps) {
+  const content = iconOnly ? (
+    <DecorativeIcon>{icon}</DecorativeIcon>
+  ) : (
+    <>
+      {startIcon != null && <DecorativeIcon>{startIcon}</DecorativeIcon>}
+      {children}
+      {endIcon != null && <DecorativeIcon>{endIcon}</DecorativeIcon>}
+    </>
+  );
   return (
     <ActionElement
       {...props}
+      {...(pending && {
+        'aria-busy': true,
+        'aria-disabled': true,
+        'data-pending': '',
+        // Pending blocks activation, including form submission and navigation.
+        onClick: (event: MouseEvent<HTMLElement>) => event.preventDefault(),
+      })}
       className={classNames(
         'env-button',
         `env-button-${variant}`,
@@ -54,14 +77,13 @@ export function Button({
         className,
       )}
     >
-      {iconOnly ? (
-        <DecorativeIcon>{icon}</DecorativeIcon>
-      ) : (
+      {pending ? (
         <>
-          {startIcon != null && <DecorativeIcon>{startIcon}</DecorativeIcon>}
-          {children}
-          {endIcon != null && <DecorativeIcon>{endIcon}</DecorativeIcon>}
+          <span className="env-button-content">{content}</span>
+          <Spinner size="small" className="env-button-spinner" />
         </>
+      ) : (
+        content
       )}
     </ActionElement>
   );
@@ -72,6 +94,7 @@ export interface IconButtonProps
   icon: ReactNode;
   'aria-label': string;
   variant?: ButtonVariant;
+  pending?: boolean;
 }
 
 /** Shorthand for Button's icon-only mode, using the neutral secondary variant by default. */

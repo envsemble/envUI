@@ -5,6 +5,7 @@ export * from './foundations/Surface.js';
 export * from './actions/Button.js';
 export * from './actions/Link.js';
 export * from './actions/ButtonGroup.js';
+export * from './actions/AvatarButton.js';
 export * from './navigation/NavigationItem.js';
 export * from './navigation/DirectionLink.js';
 export * from './navigation/DirectionLinks.js';
@@ -27,6 +28,8 @@ export * from './feedback/Dialog.js';
 export * from './feedback/EmptyState.js';
 export * from './feedback/Skeleton.js';
 export * from './feedback/LoadingState.js';
+export * from './feedback/LoadingBar.js';
+export * from './feedback/Spinner.js';
 export * from './feedback/toast/Toast.js';
 export * from './feedback/toast/ToastProvider.js';
 export type {

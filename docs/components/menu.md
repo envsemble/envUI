@@ -3,16 +3,19 @@
 ## React usage
 
 ```tsx
-import { Menu, MenuHeader, MenuItem, MenuSeparator, Avatar, Text } from '@envsemble/envui';
+import { AvatarButton, Menu, MenuHeader, MenuItem, MenuSeparator, Text } from '@envsemble/envui';
 import { ManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
 import { Logout } from '@envsemble/envui/icons/Logout';
 
 <Menu
   aria-label="Account"
   trigger={
-    <button type="button" aria-label="Open account menu">
-      <Avatar name="Alex Morgan" src={pictureUrl} size="small" />
-    </button>
+    <AvatarButton
+      name="Alex Morgan"
+      detail="alex@example.com"
+      src={pictureUrl}
+      aria-label="Open account menu"
+    />
   }
 >
   <MenuHeader>
@@ -44,7 +47,7 @@ import { Logout } from '@envsemble/envui/icons/Logout';
 
 ### Organization menu
 
-Every product shows the active organization in the application shell's context area with the same menu.
+Every product shows the active organization in the application shell's context area with the same menu. Its trigger is a secondary Button with the organization name and up and down arrows; long names truncate.
 
 ```tsx
 import { AppShell, OrganizationMenu } from '@envsemble/envui';

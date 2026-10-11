@@ -137,9 +137,8 @@
   flex-direction: column;
   align-items: center;
 }
-.env-toast-viewport-top-center > .env-toast-queued-count {
-  order: -1;
-}
+/* The count of hidden notices sits beyond the stack: above it at the bottom right, and below it,
+   centered, at the top center, where notices arrive from above. */
 .env-toast[data-starting-style],
 .env-toast[data-ending-style] {
   opacity: 0;

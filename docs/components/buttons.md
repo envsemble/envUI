@@ -30,6 +30,7 @@ import { Add } from '@envsemble/envui/icons/Add';
 | Link                | Inline native link with inherited typography; underline defaults to true          |
 | startIcon / endIcon | Optional React content beside the label                                           |
 | iconOnly / icon     | Show only the supplied icon; size is square and corners follow the chosen variant |
+| pending             | A spinner replaces the content at the same size; busy, and activation is ignored  |
 | aria-label          | Required accessible action name when iconOnly is true                             |
 | href                | Render a native link with the same button appearance; omit for a native button    |
 | Native action props | disabled, type/onClick or anchor attributes, ref and accessible attributes        |
@@ -49,6 +50,7 @@ import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 | ------------------- | --------------------------------------------- |
 | icon                | React icon content                            |
 | variant             | Same variants as Button; secondary by default |
+| pending             | A spinner replaces the icon while work runs   |
 | aria-label          | Required accessible action name               |
 | Native button props | disabled, type, onClick and ref               |
 

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import {
   Avatar,
+  AvatarButton,
   Button,
   IconButton,
   Meter,
@@ -71,13 +72,11 @@ export function MenuPreview() {
             <Menu
               aria-label="Account"
               trigger={
-                <button
-                  type="button"
-                  className="docs-avatar-trigger"
+                <AvatarButton
+                  name="Alex Morgan"
+                  detail="alex@example.com"
                   aria-label="Open account menu"
-                >
-                  <Avatar name="Alex Morgan" />
-                </button>
+                />
               }
               align="start"
             >

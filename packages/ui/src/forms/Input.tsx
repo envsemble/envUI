@@ -4,6 +4,7 @@ import type { InputHTMLAttributes } from 'react';
 import { classNames } from '../internal/classNames.js';
 import {
   FieldFrame,
+  isLabelShown,
   type FieldProps,
   type TextFieldAppearanceProps,
   type TextFieldDecorationProps,
@@ -23,6 +24,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     startIcon,
     endAction,
     compact = false,
+    showLabel,
     id: suppliedId,
     className,
     placeholder,
@@ -34,8 +36,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
 ) {
   const metadata = useFieldMetadata(suppliedId, hint, error, describedBy, invalid);
   const { id } = metadata;
-  // A floating label needs a blank placeholder to detect the empty state; compact fields show theirs.
-  const fieldPlaceholder = label != null && !compact ? placeholder || ' ' : placeholder;
+  // A floating label needs a blank placeholder to detect the empty state; hidden labels leave it.
+  const fieldPlaceholder =
+    label != null && isLabelShown({ compact, showLabel }) ? placeholder || ' ' : placeholder;
   return (
     <FieldFrame
       id={id}
@@ -47,6 +50,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       startIcon={startIcon}
       endAction={endAction}
       compact={compact}
+      showLabel={showLabel}
     >
       <input
         {...props}

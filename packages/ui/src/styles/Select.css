@@ -50,7 +50,7 @@
   display: block;
   margin: 0;
   min-height: calc(var(--control-height) * var(--scale, 1));
-  padding: calc(0.5rem * var(--scale, 1)) calc(1rem * var(--scale, 1));
+  padding: calc(0.5rem * var(--scale, 1)) calc(var(--row-padding-inline) * var(--scale, 1));
   border: 0;
   outline: none;
   background: var(--color-select-option);

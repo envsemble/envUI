@@ -157,21 +157,6 @@
 .docs-shell-page {
   padding: var(--space-6);
 }
-.docs-avatar-trigger {
-  display: grid;
-  place-items: center;
-  inline-size: var(--control-height);
-  block-size: var(--control-height);
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  cursor: pointer;
-}
-.docs-avatar-trigger:focus-visible {
-  outline: 0.125rem solid var(--color-focus-ring);
-  outline-offset: 0.125rem;
-}
 .docs-inline-row {
   flex-direction: row;
   flex-wrap: wrap;
@@ -186,4 +171,13 @@
 /* The organization menu fills the shell's context area; the specimen gives it the same width. */
 .docs-organization-slot {
   inline-size: min(100%, 14rem);
+}
+.docs-loading-frame {
+  position: relative;
+  overflow: hidden;
+}
+.docs-spinner-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
 }

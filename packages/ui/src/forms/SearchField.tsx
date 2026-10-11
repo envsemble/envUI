@@ -10,7 +10,7 @@ export interface SearchFieldProps
     InputProps,
     'type' | 'startIcon' | 'endAction' | 'label' | 'value' | 'defaultValue'
   > {
-  /** Accessible name; shown as a floating label unless the field is compact. */
+  /** Accessible name; shown as a floating label when the field is not compact or sets showLabel. */
   label: string;
   value?: string;
   defaultValue?: string;

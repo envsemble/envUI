@@ -9,8 +9,8 @@
   block-size: var(--env-avatar-size);
   overflow: hidden;
   border-radius: 50%;
-  background: var(--color-row);
-  color: var(--color-row-detail);
+  background: var(--color-avatar);
+  color: var(--color-on-avatar);
   font: 500 calc(var(--env-avatar-size) * 0.4) / 1 var(--font-family);
   user-select: none;
 }
@@ -33,6 +33,12 @@
   display: block;
   inline-size: 100%;
   block-size: 100%;
+}
+.env-avatar-person-background {
+  fill: var(--color-avatar);
+}
+.env-avatar-person-figure {
+  fill: var(--color-avatar-figure);
 }
 .env-avatar-image {
   position: absolute;
@@ -91,7 +97,7 @@
   block-size: 0.625rem;
   overflow: hidden;
   border-radius: var(--md-sys-shape-corner-full);
-  background: var(--color-row);
+  background: var(--color-fill);
 }
 .env-bar-indicator {
   block-size: 100%;

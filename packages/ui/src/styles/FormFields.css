@@ -310,10 +310,18 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
   min-height: 0;
   padding-block: calc(var(--space-1) * var(--scale, 1));
 }
-.env-text-field[data-compact] .env-text-field-well > .env-text-input:not(:focus)::placeholder {
+/* A compact label rests at the vertical center and floats into the outline like the standard one,
+   without reserving space above the field, so the field still lines up with adjacent buttons. */
+.env-text-field:where([data-compact]) .env-text-field-well > label {
+  inset-block-start: calc(
+    (var(--control-height) * var(--scale, 1) - 1lh) / 2 - 0.0625rem * var(--scale, 1)
+  );
+}
+/* A hidden label stays available to assistive technology; the placeholder gives visible guidance. */
+.env-text-field[data-label-hidden] .env-text-field-well > .env-text-input:not(:focus)::placeholder {
   color: var(--color-field-placeholder);
 }
-.env-text-field[data-compact] .env-text-field-well > label {
+.env-text-field[data-label-hidden] .env-text-field-well > label {
   position: absolute;
   width: 0.0625rem;
   height: 0.0625rem;

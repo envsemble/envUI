@@ -1,5 +1,37 @@
 # Changelog
 
+## 0.4.0 — 2026-10-11
+
+Clearer contrast in both themes, more ways to show loading, and refinements from reviewing the catalogue and Platform.
+
+### Changed
+
+- Fills are translucent layers of the text color instead of fixed grays, so they stay distinct on panes, rows, cards and dialogs while keeping their tone on the canvas.
+  - `--color-secondary-action`, `--color-chip`, `--color-switch-off`, `--color-skeleton-base` and meter tracks use the new `--color-fill` (6% in light, 12.5% in dark), with `--color-fill-hover` and `--color-fill-pressed`.
+  - Secondary buttons in dialogs and side panels, tab rails on panes, and chips and switches on rows no longer blend into their surface.
+  - The 0.2.0 rule that shifted secondary buttons on row fills is replaced by the translucent fill.
+- Hover and press on cards, rows, select options, radio rows and menu items shift 6 and 10 points of lightness, up from 2 and 4.
+- Inactive tabs show translucent hover and press layers, visible on their rail in both themes.
+- Rows, radio rows, select options and menu items keep 1.5 rem inline padding (`--row-padding-inline`), up from 1 rem, so text clears the large corners on single and connected rows alike. Surfaces keep at least 1.25 rem padding.
+- `AppShell`'s expanded sidebar fits its widest content (the navigation or the context beside the toggle) between 12 and 20 rem instead of a fixed 16 rem, and stores the width with `storageKey` so `AppShellSkeleton` matches it. The collapsed sidebar is one control plus its insets wide, so the toggle lines up with the navigation icons.
+- The `OrganizationMenu` trigger is a secondary `Button` with the up and down arrows, instead of its own style.
+- `Avatar` initials use the avatar blue of the default person picture (`--color-avatar`, `--color-on-avatar`).
+- Toasts glide to their new place when another notice arrives or leaves. The hidden-notice count of the top-center placement sits below the stack, centered.
+
+### Added
+
+- `AvatarButton`: a person's avatar as a button, typically the account menu trigger. A halo shows hover, press and an open menu, and the tooltip shows the name and an optional detail such as the e-mail address.
+- `LoadingBar`: page-level progress that appears after a short delay, creeps forward while work continues, then completes and fades out. `AppShell`'s `loading` prop shows it along the topbar's bottom edge.
+- `Spinner`: work of unknown length in a small area, in small, standard and large sizes.
+- `pending` on `Button` and `IconButton`: a spinner replaces the content at the same size, and the button reports busy and ignores activation.
+- `showLabel` on text fields: compact fields can show a label that rests inside and floats into the outline, without changing their height.
+- `--color-state-layer-hover`, `--color-state-layer-pressed` and `--row-padding-inline` tokens.
+
+### Documentation
+
+- The loading page covers page progress, spinners, pending buttons and placeholders, with guidance on when to use each.
+- The catalogue's icon search uses `SearchField`, and the compact field examples show the floating label and end action.
+
 ## 0.3.0 — 2026-10-11
 
 The application frame and menus, so products share one sidebar and navigation.

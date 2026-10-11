@@ -179,7 +179,7 @@ function CompactFieldExamples() {
     <Example
       title="Compact fields & search"
       size="collection"
-      caption="Compact fields share the button height. Type to reveal the clear action; Escape also clears."
+      caption="Compact fields share the button height and can show a floating label. Type to reveal the clear action; Escape also clears."
     >
       <SpecimenGrid>
         <Specimen title="Search beside an action">
@@ -192,6 +192,25 @@ function CompactFieldExamples() {
             />
             <Button>Assign seat</Button>
           </div>
+        </Specimen>
+        <Specimen title="Floating label">
+          <div className="docs-field-toolbar">
+            <SearchField label="Filter projects" showLabel />
+            <Button variant="secondary">New project</Button>
+          </div>
+        </Specimen>
+        <Specimen title="Floating label, icon and end action">
+          <Input
+            compact
+            showLabel
+            label="Invite address"
+            name="compact-invite"
+            defaultValue="team@example.com"
+            startIcon={<Mail />}
+            endAction={
+              <IconButton variant="text" icon={<ContentCopy />} aria-label="Copy address" />
+            }
+          />
         </Specimen>
         <Specimen title="Icon and end action">
           <Input

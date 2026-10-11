@@ -30,9 +30,16 @@ export function getInitials(name: string) {
 function PersonPicture() {
   return (
     <svg className="env-avatar-person" viewBox="0 0 104.15 104.15" aria-hidden="true">
-      <circle cx="52.07" cy="52.07" r="52.07" fill="#a0c3ff" />
-      <circle cx="52.07" cy="41.35" r="19.08" fill="#4374e0" />
+      <circle
+        className="env-avatar-person-background"
+        cx="52.07"
+        cy="52.07"
+        r="52.07"
+        fill="#a0c3ff"
+      />
+      <circle className="env-avatar-person-figure" cx="52.07" cy="41.35" r="19.08" fill="#4374e0" />
       <path
+        className="env-avatar-person-figure"
         d="M52.44,67.48c-11.36-.23-19.72,3.35-25.18,6.92-4.93,3.21-7.85,8.73-7.85,14.61v3.61c8.93,7.21,20.29,11.53,32.67,11.53s23.73-4.32,32.67-11.53v-3.72c0-6.15-3.2-11.88-8.49-15.01s-13.14-6.19-23.8-6.41Z"
         fill="#4374e0"
       />

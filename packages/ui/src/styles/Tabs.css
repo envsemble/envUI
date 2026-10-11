@@ -15,6 +15,10 @@
   overflow: auto;
   scrollbar-width: thin;
 }
+/* The rail is a translucent fill, so it stands out from the canvas, panes and rows alike. */
+.env-tabs-list.env-surface {
+  --env-surface-color: var(--color-fill);
+}
 .env-tabs-list[data-orientation='vertical'] {
   flex-direction: column;
   align-items: stretch;
@@ -37,7 +41,10 @@
   color: var(--color-text-muted);
 }
 .env-tabs-list > .env-tab:not([data-active]):hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-surface-hover);
+  background: var(--color-state-layer-hover);
+}
+.env-tabs-list > .env-tab:not([data-active]):active:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-state-layer-pressed);
 }
 .env-tabs-list > .env-tab:focus-visible {
   outline: 0.125rem solid var(--color-focus-ring);

@@ -33,6 +33,7 @@
   background: var(--color-primary-action-pressed);
 }
 
+/* The secondary fill is a translucent layer, so it stays visible on rows, panes and dialogs. */
 .env-button-secondary {
   background: var(--color-secondary-action);
   color: var(--color-on-secondary-action);
@@ -45,20 +46,6 @@
 
 .env-button-secondary:active:not(:disabled):not([aria-disabled='true']) {
   background: var(--color-secondary-action-pressed);
-}
-
-/* On row, muted-surface and action-strip fills the neutral fill would disappear, so secondary
-   actions shift from the fill they sit on by the shared control lightness rule. */
-/* Tab rails also use the row tone, but their selected tab keeps the supplied button's colors. */
-.env-row,
-.env-connected-row,
-.env-surface-row:not(.env-tabs-list),
-.env-action-card-actions {
-  --color-secondary-action: hsl(from var(--color-row) h s var(--state-hover-lightness));
-  --color-secondary-action-hover: hsl(from var(--color-row) h s var(--state-pressed-lightness));
-  --color-secondary-action-pressed: hsl(
-    from var(--color-row) h s clamp(0, calc(l + 30 * var(--state-lightness-direction)), 100)
-  );
 }
 
 .env-button-outlined {
@@ -159,4 +146,61 @@
   min-height: calc(var(--icon-button-size) * var(--scale, 1));
   flex-shrink: 0;
   padding: 0;
+}
+
+/* Pending: the hidden label keeps the button's size while a spinner shows the work. */
+.env-button[data-pending] {
+  position: relative;
+  cursor: progress;
+}
+.env-button[data-pending]:is(:disabled, [aria-disabled='true']) {
+  opacity: 1;
+}
+.env-button-content {
+  display: contents;
+}
+.env-button[data-pending] > .env-button-content {
+  visibility: hidden;
+}
+.env-button-spinner.env-spinner {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  color: inherit;
+}
+
+/* A person's avatar as a control. The halo is a state layer, so it shows on any surface. */
+.env-avatar-button {
+  flex: 0 0 auto;
+  inline-size: fit-content;
+  block-size: fit-content;
+  display: inline-grid;
+  place-items: center;
+  padding: 0.25rem;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+}
+.env-avatar-button:hover:not(:disabled) {
+  background: var(--color-state-layer-hover);
+}
+/* The halo stays while the button's menu is open. */
+.env-avatar-button:is(:active, [aria-expanded='true']):not(:disabled) {
+  background: var(--color-state-layer-pressed);
+}
+.env-avatar-button:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: 0.125rem;
+}
+.env-avatar-button:disabled {
+  opacity: var(--state-disabled-opacity);
+  cursor: default;
+}
+.env-avatar-button-tooltip {
+  display: grid;
+}
+.env-avatar-button-tooltip > :last-child {
+  opacity: 0.8;
 }

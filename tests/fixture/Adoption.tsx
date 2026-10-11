@@ -2,12 +2,15 @@ import { useState } from 'react';
 import {
   AppShell,
   Avatar,
+  AvatarButton,
   Button,
   Dialog,
   EmptyState,
   GroupedRows,
+  Input,
   Row,
   LinkProvider,
+  LoadingBar,
   Menu,
   MenuHeader,
   MenuItem,
@@ -17,6 +20,7 @@ import {
   OrganizationMenu,
   SearchField,
   Skeleton,
+  Spinner,
   ThemePreferenceProvider,
   ThemeToggle,
   createThemeBootstrapScript,
@@ -51,6 +55,8 @@ export function AdoptionFixture() {
   const [pending, setPending] = useState(false);
   const [action, setAction] = useState('');
   const [organizationId, setOrganizationId] = useState('northwind');
+  const [presses, setPresses] = useState(0);
+  const [loading, setLoading] = useState(false);
   return (
     <ThemePreferenceProvider storageKey="fixture-theme" className="fixture-adoption">
       <LinkProvider component={RecordingLink}>
@@ -83,9 +89,11 @@ export function AdoptionFixture() {
           <Menu
             aria-label="Account"
             trigger={
-              <button type="button" aria-label="Open account menu">
-                <Avatar name="Alex Morgan" size="small" />
-              </button>
+              <AvatarButton
+                name="Alex Morgan"
+                detail="alex@example.com"
+                aria-label="Open account menu"
+              />
             }
           >
             <MenuHeader>Alex Morgan</MenuHeader>
@@ -117,6 +125,21 @@ export function AdoptionFixture() {
             />
           </div>
           <Skeleton width="4rem" />
+          <div className="fixture-toolbar" data-testid="compact-label-toolbar">
+            <Input compact showLabel label="Project filter" data-testid="compact-label" />
+            <Button>Apply</Button>
+          </div>
+          <Button
+            pending
+            data-testid="pending-button"
+            onClick={() => setPresses((count) => count + 1)}
+          >
+            Save changes
+          </Button>
+          <output data-testid="pending-presses">{presses}</output>
+          <Spinner label="Refreshing seats" />
+          <Button onClick={() => setLoading((value) => !value)}>Toggle loading</Button>
+          <LoadingBar active={loading} label="Loading next page" />
           <output hidden data-testid="bootstrap-script">
             {createThemeBootstrapScript({ storageKey: 'bootstrap-theme' })}
           </output>
@@ -143,6 +166,7 @@ export function AdoptionFixture() {
 /** A full-page AppShell, mounted with ?fixture=shell. */
 export function ShellFixture() {
   const [page, setPage] = useState('home');
+  const [loading, setLoading] = useState(false);
   return (
     <LinkProvider component={RecordingLink}>
       <AppShell
@@ -175,8 +199,12 @@ export function ShellFixture() {
           </>
         }
         storageKey="fixture-sidebar"
+        loading={loading}
       >
         <p data-testid="shell-content">Content</p>
+        <button type="button" onClick={() => setLoading((value) => !value)}>
+          Toggle page loading
+        </button>
       </AppShell>
     </LinkProvider>
   );

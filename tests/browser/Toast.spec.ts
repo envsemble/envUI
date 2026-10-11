@@ -175,3 +175,57 @@ test('placement stacks, keyboard access, wrapped sizing and contextual action st
     if (index) expect(row.top).toBeGreaterThanOrEqual(stack.rows[index - 1].bottom);
   });
 });
+
+test('the hidden count sits beyond the stack: above at the bottom right, below and centered at the top center', async ({
+  page,
+}) => {
+  await page.getByTestId('toast-queue-bottom').click();
+  await page.getByTestId('toast-queue-top').click();
+  for (const placement of ['bottom-right', 'top-center']) {
+    const viewport = region(page, placement);
+    await expect(viewport.locator('.env-toast-queued-count')).toHaveText('+1');
+    // Entrances and glides move the notices for a moment; poll until they settle.
+    await expect
+      .poll(() =>
+        viewport.evaluate((element) => {
+          const count = element.querySelector('.env-toast-queued-count')!.getBoundingClientRect();
+          const notices = Array.from(
+            element.querySelectorAll('.env-toast:not([data-limited])'),
+            (notice) => notice.getBoundingClientRect(),
+          );
+          const top = Math.min(...notices.map((notice) => notice.top));
+          const bottom = Math.max(...notices.map((notice) => notice.bottom));
+          const center = (notice: DOMRect) => notice.left + notice.width / 2;
+          return element.classList.contains('env-toast-viewport-bottom-right')
+            ? count.bottom <= top
+            : count.top >= bottom && Math.abs(center(count) - center(notices[0])) < 1;
+        }),
+      )
+      .toBe(true);
+  }
+});
+
+test('existing notices glide to their new place when another arrives', async ({ page }) => {
+  await page.getByTestId('toast-error').click();
+  const first = notice(page, 'Persistent error notice');
+  await expect(first).toBeVisible();
+  await expect(region(page).locator('.env-toast[data-starting-style]')).toHaveCount(0);
+  const glides = () =>
+    first.evaluate((element) =>
+      element
+        .getAnimations()
+        .some((animation) =>
+          (animation.effect as KeyframeEffect).getKeyframes().some((frame) => 'translate' in frame),
+        ),
+    );
+  await page.getByTestId('toast-action').click();
+  expect(await glides()).toBe(true);
+
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.getByTestId('toast-success').click();
+  await first.evaluate((element) =>
+    element.getAnimations().forEach((animation) => animation.finish()),
+  );
+  await page.getByTestId('toast-info').click();
+  expect(await glides()).toBe(false);
+});

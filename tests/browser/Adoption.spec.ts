@@ -142,7 +142,75 @@ test('error states, meters and avatars expose their semantics', async ({ page })
   const broken = page.getByRole('img', { name: 'Broken Picture' });
   await expect(broken.locator('svg.env-avatar-person')).toBeVisible();
   await expect(broken).not.toContainText('BP');
-  await expect(page.getByRole('img', { name: 'Organization Name' })).toContainText('ON');
+  const initials = page.getByRole('img', { name: 'Organization Name' });
+  await expect(initials).toContainText('ON');
+  // Initials share the blue of the default person picture.
+  const fill = await page
+    .locator('.env-avatar-person-background')
+    .first()
+    .evaluate((element) => getComputedStyle(element).fill);
+  await expect(initials).toHaveCSS('background-color', fill);
+});
+
+test('AvatarButton shows a halo on hover and while its menu is open, and names the account', async ({
+  page,
+}) => {
+  await page.goto(fixture);
+  const trigger = page.getByRole('button', { name: 'Open account menu' });
+  await expect(trigger).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await trigger.hover();
+  await expect(trigger).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect(page.locator('.env-tooltip')).toContainText('alex@example.com');
+  await trigger.click();
+  await expect(page.getByRole('menu', { name: 'Account', exact: true })).toBeVisible();
+  await page.mouse.move(1, 1);
+  await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+  await expect(trigger).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+});
+
+test('compact fields can float their label into the outline and keep the button height', async ({
+  page,
+}) => {
+  await page.goto(fixture);
+  const field = page.getByTestId('compact-label');
+  const well = field.locator('xpath=..');
+  const label = well.locator('label');
+  await expect(label).toBeVisible();
+  const resting = (await label.boundingBox())!;
+  const wellBox = (await well.boundingBox())!;
+  expect(resting.y).toBeGreaterThan(wellBox.y);
+  await field.fill('Northwind');
+  await expect.poll(async () => (await label.boundingBox())!.y).toBeLessThan(wellBox.y + 2);
+  const button = page.getByTestId('compact-label-toolbar').getByRole('button', { name: 'Apply' });
+  expect(Math.round(wellBox.height)).toBe(Math.round((await button.boundingBox())!.height));
+});
+
+test('a pending button keeps its size, reports busy and ignores presses', async ({ page }) => {
+  await page.goto(fixture);
+  const button = page.getByTestId('pending-button');
+  await expect(button).toHaveAttribute('aria-busy', 'true');
+  await expect(button.locator('.env-spinner')).toBeVisible();
+  await expect(button.locator('.env-button-content')).toHaveCSS('visibility', 'hidden');
+  await button.click({ force: true });
+  await expect(page.getByTestId('pending-presses')).toHaveText('0');
+  await expect(page.getByRole('progressbar', { name: 'Refreshing seats' })).toBeVisible();
+});
+
+test('LoadingBar waits before appearing, then completes and leaves', async ({ page }) => {
+  await page.goto(fixture);
+  const toggle = page.getByRole('button', { name: 'Toggle loading' });
+  const bar = page.getByRole('progressbar', { name: 'Loading next page' });
+  // Quick work never shows the bar.
+  await toggle.click();
+  await toggle.click();
+  await page.waitForTimeout(400);
+  await expect(bar).toHaveCount(0);
+  await toggle.click();
+  await expect(bar).toBeVisible();
+  await expect(bar).toHaveAttribute('data-state', 'running');
+  await toggle.click();
+  await expect(bar).toHaveAttribute('data-state', 'finishing');
+  await expect(bar).toHaveCount(0);
 });
 
 test('OrganizationMenu switches organizations and offers creating one', async ({ page }) => {
@@ -171,6 +239,8 @@ test('OrganizationMenu switches organizations and offers creating one', async ({
   await page.getByRole('menuitem', { name: 'Create organization' }).click();
   await expect(page.getByTestId('menu-action')).toHaveText('Create organization');
 
+  // The trigger is an ordinary secondary button.
+  await expect(page.getByRole('button', { name: 'Contoso' })).toHaveClass(/env-button-secondary/);
   await page
     .getByTestId('no-organization')
     .getByRole('button', { name: 'Create organization' })
@@ -215,7 +285,7 @@ test.describe('AppShell', () => {
     await page.getByRole('link', { name: 'Products' }).hover();
     await expect(shell).toHaveAttribute('data-expanded-overlay', '');
     await expect(page.getByRole('link', { name: 'Products' })).toHaveText('Products');
-    await expect.poll(async () => (await sidebar.boundingBox())!.width).toBeGreaterThan(200);
+    await expect.poll(async () => (await sidebar.boundingBox())!.width).toBeGreaterThan(150);
     await page.mouse.move(700, 500);
     await expect(shell).toHaveAttribute('data-compact', '');
 
@@ -245,6 +315,45 @@ test.describe('AppShell', () => {
     await expect(shell).toHaveAttribute('data-compact', '');
   });
 
+  test('the expanded sidebar fits its content within its bounds and remembers the width', async ({
+    page,
+  }) => {
+    await page.goto(shellFixture);
+    const shell = page.locator('.env-app-shell');
+    const sidebar = page.locator('.env-app-sidebar');
+    const measured = async () =>
+      Number(
+        (
+          await shell.evaluate((element) =>
+            element.style.getPropertyValue('--env-sidebar-content-width'),
+          )
+        ).replace('px', ''),
+      );
+    await expect.poll(measured).toBeGreaterThan(0);
+    const width = (await sidebar.boundingBox())!.width;
+    expect(width).toBeCloseTo(Math.min(Math.max(await measured(), 192), 320), 0);
+    expect(await page.evaluate(() => localStorage.getItem('fixture-sidebar-width'))).toBe(
+      String(await measured()),
+    );
+    // Longer context content widens the sidebar up to its maximum.
+    await page
+      .getByTestId('context-trigger')
+      .evaluate((element) => (element.textContent = 'Northwind Laboratories International'));
+    await expect.poll(async () => (await sidebar.boundingBox())!.width).toBeGreaterThan(width);
+    await expect.poll(async () => (await sidebar.boundingBox())!.width).toBeLessThanOrEqual(320);
+  });
+
+  test('the loading bar runs along the bottom edge of the topbar', async ({ page }) => {
+    await page.goto(shellFixture);
+    await page.getByRole('button', { name: 'Toggle page loading' }).click();
+    const bar = page.getByRole('progressbar', { name: 'Loading page' });
+    await expect(bar).toBeVisible();
+    const topbar = (await page.locator('.env-app-topbar').boundingBox())!;
+    const box = (await bar.boundingBox())!;
+    expect(Math.abs(box.y - (topbar.y + topbar.height - 1))).toBeLessThanOrEqual(1);
+    expect(box.width).toBeCloseTo(topbar.width, 0);
+  });
+
   test('narrow viewports open the sidebar over the content and close it after navigation', async ({
     page,
   }) => {
@@ -265,12 +374,49 @@ test.describe('AppShell', () => {
   });
 });
 
-test('secondary buttons stay distinguishable on row fills', async ({ page }) => {
+/** Contrast between a control's fill and the surface under it, composited as the browser paints it. */
+async function fillContrast(control: import('@playwright/test').Locator, surface: string) {
+  return control.evaluate((element, surfaceSelector) => {
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = 1;
+    const context = canvas.getContext('2d', { willReadFrequently: true })!;
+    const paint = (colors: string[]) => {
+      context.clearRect(0, 0, 1, 1);
+      for (const color of colors) {
+        context.fillStyle = color;
+        context.fillRect(0, 0, 1, 1);
+      }
+      const [red, green, blue] = context.getImageData(0, 0, 1, 1).data;
+      const linear = (value: number) => {
+        const channel = value / 255;
+        return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+      };
+      return 0.2126 * linear(red) + 0.7152 * linear(green) + 0.0722 * linear(blue);
+    };
+    const base = getComputedStyle(element.closest(surfaceSelector)!).backgroundColor;
+    const fill = getComputedStyle(element).backgroundColor;
+    const [lighter, darker] = [paint([base]), paint([base, fill])].sort((a, b) => b - a);
+    return (lighter + 0.05) / (darker + 0.05);
+  }, surface);
+}
+
+test('secondary buttons stay distinct on the canvas, rows and dialog panes in both themes', async ({
+  page,
+}) => {
   await page.goto(fixture);
-  const row = page.getByTestId('secondary-row');
-  const colors = await row.evaluate((element) => ({
-    row: getComputedStyle(element).backgroundColor,
-    button: getComputedStyle(element.querySelector('button')!).backgroundColor,
-  }));
-  expect(colors.button).not.toBe(colors.row);
+  for (const theme of ['light', 'dark']) {
+    if (theme === 'dark') await page.getByTestId('theme-toggle').click();
+    await page.keyboard.press('Escape');
+    const row = page.getByTestId('secondary-row');
+    // Colors transition after the theme changes; poll until they settle.
+    await expect
+      .poll(() => fillContrast(row.getByRole('button', { name: 'Remove' }), '.env-row'))
+      .toBeGreaterThan(1.08);
+    await page.getByRole('button', { name: 'Open pending dialog' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Save project' });
+    const cancel = dialog.getByRole('button', { name: 'Cancel' }).last();
+    await expect.poll(() => fillContrast(cancel, '.env-modal-pane')).toBeGreaterThan(1.08);
+    await cancel.click();
+    await expect(dialog).toBeHidden();
+  }
 });
