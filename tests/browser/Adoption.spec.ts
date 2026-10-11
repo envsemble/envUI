@@ -69,7 +69,8 @@ test('SearchField clears with its button and with Escape inside a dialog', async
   await expect(search).toHaveValue('');
   await expect(search).toBeFocused();
   const button = page.getByRole('button', { name: 'Open pending dialog' });
-  const field = await search.locator('xpath=..').boundingBox();
+  // The whole field, not only its well, lines up with an adjacent button.
+  const field = await search.locator('xpath=../..').boundingBox();
   const action = await button.boundingBox();
   expect(Math.round(field!.height)).toBe(Math.round(action!.height));
 
@@ -110,7 +111,11 @@ test('error states, meters and avatars expose their semantics', async ({ page })
   await expect(page.getByRole('alert')).toContainText('Products couldn’t load');
   const meter = page.getByRole('meter', { name: 'Seats assigned' });
   await expect(meter).toHaveAttribute('aria-valuenow', '5');
-  await expect(page.getByRole('img', { name: 'Broken Picture' })).toContainText('BP');
+  // A failed picture shows the default person picture; initials are opt-in.
+  const broken = page.getByRole('img', { name: 'Broken Picture' });
+  await expect(broken.locator('svg.env-avatar-person')).toBeVisible();
+  await expect(broken).not.toContainText('BP');
+  await expect(page.getByRole('img', { name: 'Organization Name' })).toContainText('ON');
 });
 
 test('secondary buttons stay distinguishable on row fills', async ({ page }) => {

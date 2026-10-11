@@ -54,7 +54,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Code](components/code.md) — Render inline code and highlighted code blocks.
 - [Info chips](components/chips.md) — Read-only metadata beside related content.
 - [Disclosure notes](components/disclosures.md) — Keep optional details collapsed until needed.
-- [Avatars](components/avatar.md) — A picture of a person or organization with an initials fallback.
+- [Avatars](components/avatar.md) — A picture of a person or organization with a default picture or initials as fallback.
 
 ## Feedback & overlays
 

@@ -23,6 +23,17 @@
 .env-avatar-display {
   --env-avatar-size: 5.5rem;
 }
+.env-avatar-fallback {
+  display: contents;
+}
+.env-avatar:has(.env-avatar-fallback-person) {
+  background: none;
+}
+.env-avatar-person {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
 .env-avatar-image {
   position: absolute;
   inset: 0;

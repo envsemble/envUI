@@ -3,10 +3,12 @@ import type { ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
 
 export interface AvatarProps extends Omit<ComponentPropsWithRef<'span'>, 'children'> {
-  /** Person or organization name; supplies the initials fallback and, with label, the accessible name. */
+  /** Person or organization name; the accessible name with label, and the initials fallback. */
   name: string;
-  /** Picture URL. Initials show while it loads and when it is missing or fails. */
+  /** Picture URL. The fallback shows while it loads and when it is missing or fails. */
   src?: string | null;
+  /** Shown without a picture: the default person picture, or initials (for example, for an organization). */
+  fallback?: 'person' | 'initials';
   /** small 1.5 rem, standard 2 rem (default), large 3 rem, display 5.5 rem. */
   size?: 'small' | 'standard' | 'large' | 'display';
   /** Announce the name; omit when adjacent text already names the person. */
@@ -24,10 +26,25 @@ export function getInitials(name: string) {
   return initials.toLocaleUpperCase();
 }
 
-/** A round picture of a person or organization, with an initials fallback. */
+/** The envsemble default account picture. */
+function PersonPicture() {
+  return (
+    <svg className="env-avatar-person" viewBox="0 0 104.15 104.15" aria-hidden="true">
+      <circle cx="52.07" cy="52.07" r="52.07" fill="#a0c3ff" />
+      <circle cx="52.07" cy="41.35" r="19.08" fill="#4374e0" />
+      <path
+        d="M52.44,67.48c-11.36-.23-19.72,3.35-25.18,6.92-4.93,3.21-7.85,8.73-7.85,14.61v3.61c8.93,7.21,20.29,11.53,32.67,11.53s23.73-4.32,32.67-11.53v-3.72c0-6.15-3.2-11.88-8.49-15.01s-13.14-6.19-23.8-6.41Z"
+        fill="#4374e0"
+      />
+    </svg>
+  );
+}
+
+/** A round picture of a person or organization, with the default person picture or initials as fallback. */
 export function Avatar({
   name,
   src,
+  fallback = 'person',
   size = 'standard',
   label = false,
   className,
@@ -50,7 +67,11 @@ export function Avatar({
           referrerPolicy="no-referrer"
         />
       ) : null}
-      <BaseAvatar.Fallback className="env-avatar-fallback">{getInitials(name)}</BaseAvatar.Fallback>
+      <BaseAvatar.Fallback
+        className={classNames('env-avatar-fallback', `env-avatar-fallback-${fallback}`)}
+      >
+        {fallback === 'person' ? <PersonPicture /> : getInitials(name)}
+      </BaseAvatar.Fallback>
     </BaseAvatar.Root>
   );
 }

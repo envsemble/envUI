@@ -212,8 +212,8 @@ function CompactFieldExamples() {
 export function TextFieldsPreview() {
   return (
     <Preview>
-      <CompactFieldExamples />
       <InputExamples />
+      <CompactFieldExamples />
       <TextareaExamples />
     </Preview>
   );

@@ -38,7 +38,7 @@ export function AvatarPreview() {
     <Preview>
       <Example title="Sizes and fallbacks" size="collection">
         <SpecimenGrid>
-          <Specimen title="Initials">
+          <Specimen title="Default picture">
             <Stack gap={3} className="docs-inline-row">
               <Avatar name="Alex Morgan" size="small" />
               <Avatar name="Alex Morgan" />
@@ -46,8 +46,14 @@ export function AvatarPreview() {
               <Avatar name="Alex Morgan" size="display" label />
             </Stack>
           </Specimen>
-          <Specimen title="Failed picture" caption="A missing or broken picture shows initials.">
+          <Specimen title="Failed picture" caption="A missing or broken picture shows the default.">
             <Avatar name="Sam" src="data:image/png;base64,invalid" size="large" label />
+          </Specimen>
+          <Specimen title="Initials" caption="For organizations and other non-person entities.">
+            <Stack gap={3} className="docs-inline-row">
+              <Avatar name="Northwind Labs" fallback="initials" />
+              <Avatar name="Northwind Labs" fallback="initials" size="large" label />
+            </Stack>
           </Specimen>
         </SpecimenGrid>
       </Example>

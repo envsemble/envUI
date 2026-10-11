@@ -30,7 +30,7 @@
   height: calc(var(--control-icon-size) * var(--scale, 1));
   margin-block-start: calc(0.125rem * var(--scale, 1));
 }
-.env-text-field:has(> .env-text-field-well > label) {
+.env-text-field:not([data-compact]):has(> .env-text-field-well > label) {
   padding-block-start: calc(var(--space-2) * var(--scale, 1));
 }
 .env-text-field-well {
@@ -298,9 +298,6 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
   appearance: none;
 }
 /* Compact fields share the button height and pill shape so they align in toolbars. */
-.env-text-field[data-compact] {
-  padding-block-start: 0;
-}
 .env-text-field[data-compact] .env-text-field-well {
   box-sizing: border-box;
   display: flex;

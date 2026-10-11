@@ -20,7 +20,7 @@ Foundations found missing while adopting envUI in Platform, the first product to
 - `Dialog` `pending`: Escape, outside presses and the built-in close button cannot dismiss the dialog while work is in progress.
 - `EmptyState` `tone="error"` for content that failed to load.
 - `Text` `variant="display"` for page heroes.
-- `Tooltip`, `Avatar` (with initials fallback and `getInitials`), `Meter` and `Progress`.
+- `Tooltip`, `Avatar` (with the default person picture or initials as fallback, and `getInitials`), `Meter` and `Progress`.
 
 ### Documentation
 

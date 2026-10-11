@@ -83,6 +83,7 @@ export function AdoptionFixture() {
           <EmptyState tone="error" title="Products couldn’t load" description="Try again." />
           <Meter label="Seats assigned" value={7} max={5} valueText="5 of 5" />
           <Avatar name="Broken Picture" src="data:image/png;base64,invalid" label />
+          <Avatar name="Organization Name" fallback="initials" label />
         </section>
       </LinkProvider>
     </ThemePreferenceProvider>

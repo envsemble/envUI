@@ -34,6 +34,9 @@
 .env-toast-message {
   flex: 0 1 auto;
   min-width: 0;
+  /* A fixed measure also bounds the toast's intrinsic width, which percentages cannot do in auto-sized
+     layouts such as tables. */
+  max-inline-size: 24rem;
   padding-block: var(--space-1);
   /* Up to three lines; the full message remains in the title and the announcement. */
   display: -webkit-box;

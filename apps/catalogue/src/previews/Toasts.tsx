@@ -1,4 +1,5 @@
 import { Button, Text, Toast, ToastProvider, useToast } from '@envsemble/envui';
+import { Example } from './Example';
 import { Preview } from './Preview';
 
 const toastVariants = [
@@ -39,54 +40,60 @@ function NotificationExamples() {
 
   return (
     <Preview>
-      <div className="docs-toast-table-scroll">
-        <table className="docs-toast-table" aria-label="Toast meanings and placement examples">
-          <thead>
-            <tr>
-              <th scope="col">Meaning</th>
-              <th scope="col">Toast</th>
-              {previewPlacements.map(({ placement, label }) => (
-                <th key={placement} scope="col">
-                  {label}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {toastVariants.map(({ variant, title, meaning, message }) => (
-              <tr key={variant}>
-                <th scope="row" className="docs-toast-meaning">
-                  <Text as="strong" variant="section-heading">
-                    {title}
-                  </Text>
-                  <Text variant="supporting">{meaning}</Text>
-                </th>
-                <td>
-                  <Toast announce={false} variant={variant} message={message} />
-                </td>
+      <Example
+        title="Meanings & placements"
+        size="collection"
+        caption="Errors stay until dismissed; other toasts close after three seconds."
+      >
+        <div className="docs-toast-table-scroll">
+          <table className="docs-toast-table" aria-label="Toast meanings and placement examples">
+            <thead>
+              <tr>
+                <th scope="col">Meaning</th>
+                <th scope="col">Toast</th>
                 {previewPlacements.map(({ placement, label }) => (
-                  <td key={placement}>
-                    <Button
-                      variant="text"
-                      aria-label={`Try it now: ${title.toLowerCase()} toast, ${label.toLowerCase()}`}
-                      onClick={() =>
-                        toast.show({
-                          variant,
-                          message,
-                          placement,
-                          duration: variant === 'error' ? Infinity : 3000,
-                        })
-                      }
-                    >
-                      Try it now
-                    </Button>
-                  </td>
+                  <th key={placement} scope="col">
+                    {label}
+                  </th>
                 ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {toastVariants.map(({ variant, title, meaning, message }) => (
+                <tr key={variant}>
+                  <th scope="row" className="docs-toast-meaning">
+                    <Text as="strong" variant="section-heading">
+                      {title}
+                    </Text>
+                    <Text variant="supporting">{meaning}</Text>
+                  </th>
+                  <td>
+                    <Toast announce={false} variant={variant} message={message} />
+                  </td>
+                  {previewPlacements.map(({ placement, label }) => (
+                    <td key={placement}>
+                      <Button
+                        variant="text"
+                        aria-label={`Try it now: ${title.toLowerCase()} toast, ${label.toLowerCase()}`}
+                        onClick={() =>
+                          toast.show({
+                            variant,
+                            message,
+                            placement,
+                            duration: variant === 'error' ? Infinity : 3000,
+                          })
+                        }
+                      >
+                        Try it now
+                      </Button>
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Example>
     </Preview>
   );
 }
