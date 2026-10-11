@@ -45,22 +45,38 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  /* Presses: controls settle slightly while held. */
-  .env-button:not(.env-dropdown-trigger),
+  /* Presses: compact controls settle slightly while held, larger surfaces less, and small choice
+     controls more, whether the control or its label is pressed. */
+  .env-button,
   .env-navigation-item,
   .env-avatar-button,
-  .env-clickable-card {
+  .env-app-sidebar-toggle,
+  .env-toast-dismiss,
+  .env-clickable-card,
+  .env-direction-link,
+  .env-radio-option,
+  .env-checkbox-box,
+  .env-radio-control,
+  .env-switch-control {
     transition-property: background-color, color, border-color, transform;
     transition-duration: var(--motion-duration-fast);
     transition-timing-function: var(--motion-ease);
   }
-  .env-button:not(.env-dropdown-trigger):active:not(:disabled):not([aria-disabled='true']),
+  .env-button:active:not(:disabled):not([aria-disabled='true']),
   .env-navigation-item:active:not(:disabled):not([aria-disabled='true']),
-  .env-avatar-button:active:not(:disabled) {
+  .env-avatar-button:active:not(:disabled),
+  .env-app-sidebar-toggle:active,
+  .env-toast-dismiss:active {
     transform: scale(0.97);
   }
-  .env-clickable-card:active:not(:disabled):not([aria-disabled='true']) {
+  .env-clickable-card:active:not(:disabled):not([aria-disabled='true']),
+  .env-direction-link:active:not([aria-disabled='true']),
+  .env-radio-option:active:not(:has(input:disabled)) {
     transform: scale(0.99);
+  }
+  .env-choice-control:active:not(:has(input:disabled))
+    :is(.env-checkbox-box, .env-radio-control, .env-switch-control) {
+    transform: scale(0.9);
   }
 
   /* Dialogs rise into place, side panels slide in, popups grow from their trigger and toasts arrive

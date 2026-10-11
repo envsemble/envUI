@@ -463,3 +463,37 @@ test('secondary buttons stay distinct on the canvas, rows and dialog panes in bo
     await expect(dialog).toBeHidden();
   }
 });
+
+test('direction links, radio rows and choice controls settle while pressed', async ({ page }) => {
+  await page.goto('http://127.0.0.1:8766/?fixture=colors');
+  // The choice controls shrink, not their labels, whether the control or its text is pressed.
+  const targets = [
+    {
+      press: page.getByTestId('light-color-direction'),
+      moves: page.getByTestId('light-color-direction'),
+    },
+    {
+      press: page.getByTestId('light-color-radio-row').locator('.env-radio-option'),
+      moves: page.getByTestId('light-color-radio-row').locator('.env-radio-option'),
+    },
+    {
+      press: page.getByText('light isolated checkbox'),
+      moves: page.getByTestId('light-color-checkbox').locator('xpath=..'),
+    },
+    {
+      press: page.getByText('light isolated switch'),
+      moves: page.getByTestId('light-color-switch'),
+    },
+  ];
+  for (const reducedMotion of ['no-preference', 'reduce'] as const) {
+    await page.emulateMedia({ reducedMotion });
+    for (const { press, moves } of targets) {
+      await press.hover();
+      await page.mouse.down();
+      if (reducedMotion === 'reduce') await expect(moves).toHaveCSS('transform', 'none');
+      else await expect(moves).not.toHaveCSS('transform', 'none');
+      await page.mouse.up();
+      await page.mouse.move(0, 0);
+    }
+  }
+});

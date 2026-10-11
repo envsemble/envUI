@@ -13,6 +13,10 @@ Clearer contrast in both themes, more ways to show loading, and refinements from
 - Hover and press on cards, rows, select options, radio rows and menu items shift 6 and 10 points of lightness, up from 2 and 4.
 - Inactive tabs show translucent hover and press layers, visible on their rail in both themes.
 - Icon-only text buttons, such as a field's clear action, show the same state layers instead of only a faint color change. Inside a field they use its quiet icon color rather than the link blue.
+- Press feedback reaches every control:
+  - Select triggers, the sidebar toggle and toast dismiss settle like buttons.
+  - Direction links and radio rows settle like clickable cards.
+  - Checkboxes, radios and switches shrink slightly whether the control or its label is pressed.
 - Rows, radio rows, select options and menu items keep 1.5 rem inline padding (`--row-padding-inline`), up from 1 rem, so text clears the large corners on single and connected rows alike. Surfaces keep at least 1.25 rem padding.
 - `AppShell`'s expanded sidebar fits its widest content (the navigation or the context beside the toggle) between 12 and 20 rem instead of a fixed 16 rem, and stores the width with `storageKey` so `AppShellSkeleton` matches it. The collapsed sidebar is one control plus its insets wide, so the toggle lines up with the navigation icons.
 - The `OrganizationMenu` trigger is a secondary `Button` with the up and down arrows, instead of its own style.
