@@ -25,6 +25,11 @@ The application frame and menus, so products share one sidebar and navigation.
   - skeletons pulse.
 - `--motion-duration-slow`, `--motion-ease-enter` and `--motion-ease-exit` tokens. Reduced-motion preferences keep only opacity changes.
 
+### Fixed
+
+- A quick click on the `AppShell` sidebar toggle is no longer lost while a collapsed sidebar expands. The topbar keeps a fixed row, so context content squeezed by the animation cannot grow the row and move the toggle away from the pointer.
+- Content after `Tabs` moves once when the tab changes, instead of jumping when the outgoing panel's fade ends. The outgoing panel fades out of flow, so a click right after switching tabs lands where it was aimed.
+
 ### Documentation
 
 - New pages for the application shell and menus, with catalogue previews.

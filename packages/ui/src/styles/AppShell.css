@@ -26,6 +26,9 @@
   block-size: var(--topbar-height);
   display: grid;
   grid-template-columns: var(--env-sidebar-width) minmax(0, 1fr);
+  /* A fixed row: content squeezed while the sidebar column animates must not grow the row and move
+     the toggle away from the pointer. */
+  grid-template-rows: minmax(0, 1fr);
   border-block-end: var(--env-app-divider);
   background: var(--color-canvas);
   transition: grid-template-columns var(--motion-duration-medium) var(--motion-ease-standard);
