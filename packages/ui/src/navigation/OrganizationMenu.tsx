@@ -1,4 +1,5 @@
 import { Menu as BaseMenu } from '@base-ui/react/menu';
+import { Button } from '../actions/Button.js';
 import { Add } from '../icons/Add.js';
 import { Groups3 } from '../icons/Groups3.js';
 import { UnfoldMore } from '../icons/UnfoldMore.js';
@@ -9,6 +10,8 @@ import { Menu } from './Menu.js';
 export interface OrganizationMenuOrganization {
   id: string;
   name: string;
+  /** A short muted note after the name, such as the person's role in the organization. */
+  detail?: string;
 }
 
 export interface OrganizationMenuProps {
@@ -48,18 +51,15 @@ export function OrganizationMenu({
 }: OrganizationMenuProps) {
   if (organizations.length === 0) {
     return onCreate ? (
-      <button
-        type="button"
+      <Button
+        variant="secondary"
+        startIcon={<Add />}
         className={classNames('env-organization-trigger', className)}
         onClick={onCreate}
         disabled={disabled}
-        data-create=""
       >
-        <DecorativeIcon>
-          <Add />
-        </DecorativeIcon>
         <span className="env-organization-trigger-label">{createLabel}</span>
-      </button>
+      </Button>
     ) : null;
   }
 
@@ -70,16 +70,14 @@ export function OrganizationMenu({
       align="start"
       className="env-organization-menu"
       trigger={
-        <button
-          type="button"
+        <Button
+          variant="secondary"
+          endIcon={<UnfoldMore />}
           className={classNames('env-organization-trigger', className)}
           disabled={disabled}
         >
           <span className="env-organization-trigger-label">{current?.name ?? placeholder}</span>
-          <DecorativeIcon>
-            <UnfoldMore />
-          </DecorativeIcon>
-        </button>
+        </Button>
       }
     >
       <div role="presentation" className="env-organization-menu-header">
@@ -106,6 +104,13 @@ export function OrganizationMenu({
               <BaseMenu.RadioItemIndicator className="env-organization-menu-radio-dot" />
             </span>
             <span className="env-menu-item-label">{organization.name}</span>
+            {/* The space keeps the detail a separate word in the item's accessible name. */}
+            {organization.detail && (
+              <>
+                {' '}
+                <span className="env-organization-menu-detail">{organization.detail}</span>
+              </>
+            )}
           </BaseMenu.RadioItem>
         ))}
       </BaseMenu.RadioGroup>

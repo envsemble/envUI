@@ -30,7 +30,7 @@
   height: calc(var(--control-icon-size) * var(--scale, 1));
   margin-block-start: calc(0.125rem * var(--scale, 1));
 }
-.env-text-field:not([data-compact]):has(> .env-text-field-well > label) {
+.env-text-field:not([data-compact], [data-label-hidden]):has(> .env-text-field-well > label) {
   padding-block-start: calc(var(--space-2) * var(--scale, 1));
 }
 .env-text-field-well {
@@ -115,6 +115,18 @@
   margin-inline-start: calc(-0.25rem * var(--scale, 1));
   background: inherit;
   font-size: calc(var(--font-size-body-small) * var(--scale, 1));
+}
+/* On an outline, the label hides only the line behind it; its upper half shows whatever surface the
+   field sits on, such as a dialog pane. */
+.env-text-field-well:not([data-variant='plain']):has(
+    > .env-text-input:focus,
+    > .env-text-input:not(:placeholder-shown)
+  )
+  > label {
+  background: linear-gradient(
+    transparent calc(50% - 0.0625rem * var(--scale, 1)),
+    var(--color-field) 0
+  );
 }
 .env-text-field-well:has(> label) > .env-text-input:not(:focus)::placeholder {
   color: transparent;
@@ -293,6 +305,15 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
 .env-text-field-well:focus-within > .env-text-field-start {
   color: var(--color-field-active);
 }
+/* Icon actions inside a field, such as the clear action, take the field's quiet icon color rather
+   than the link blue of text buttons, and darken to the field text on hover and press. */
+.env-text-field-end .env-button-text.env-icon-button {
+  color: var(--color-field-label);
+}
+.env-text-field-end
+  .env-button-text.env-icon-button:is(:hover, :active):not(:disabled):not([aria-disabled='true']) {
+  color: var(--color-field-text);
+}
 /* Search inputs supply their own clear action. */
 .env-text-input[type='search']::-webkit-search-cancel-button {
   appearance: none;
@@ -310,10 +331,18 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
   min-height: 0;
   padding-block: calc(var(--space-1) * var(--scale, 1));
 }
-.env-text-field[data-compact] .env-text-field-well > .env-text-input:not(:focus)::placeholder {
+/* A compact label rests at the vertical center and floats into the outline like the standard one,
+   without reserving space above the field, so the field still lines up with adjacent buttons. */
+.env-text-field:where([data-compact]) .env-text-field-well > label {
+  inset-block-start: calc(
+    (var(--control-height) * var(--scale, 1) - 1lh) / 2 - 0.0625rem * var(--scale, 1)
+  );
+}
+/* A hidden label stays available to assistive technology; the placeholder gives visible guidance. */
+.env-text-field[data-label-hidden] .env-text-field-well > .env-text-input:not(:focus)::placeholder {
   color: var(--color-field-placeholder);
 }
-.env-text-field[data-compact] .env-text-field-well > label {
+.env-text-field[data-label-hidden] .env-text-field-well > label {
   position: absolute;
   width: 0.0625rem;
   height: 0.0625rem;

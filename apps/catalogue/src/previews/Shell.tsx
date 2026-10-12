@@ -2,7 +2,7 @@ import { useState } from 'react';
 import {
   AppShell,
   AppShellSkeleton,
-  Avatar,
+  AvatarButton,
   Button,
   Menu,
   MenuItem,
@@ -21,8 +21,8 @@ import { Example } from './Example';
 import { Preview } from './Preview';
 
 const organizations = [
-  { id: 'northwind', name: 'Northwind Labs' },
-  { id: 'contoso', name: 'Contoso' },
+  { id: 'northwind', name: 'Northwind Labs', detail: 'Admin' },
+  { id: 'contoso', name: 'Contoso', detail: 'Member' },
 ];
 
 const pages = [
@@ -65,13 +65,11 @@ export function AppShellPreview() {
               <Menu
                 aria-label="Account"
                 trigger={
-                  <button
-                    type="button"
-                    className="docs-avatar-trigger"
+                  <AvatarButton
+                    name="Alex Morgan"
+                    detail="alex@example.com"
                     aria-label="Open account menu"
-                  >
-                    <Avatar name="Alex Morgan" size="small" />
-                  </button>
+                  />
                 }
               >
                 <MenuItem icon={<ManageAccounts />}>Account settings</MenuItem>

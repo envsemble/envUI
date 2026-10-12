@@ -11,6 +11,9 @@ import {
   SearchField,
   Button,
   IconButton,
+  Surface,
+  GroupedRows,
+  Row,
 } from '@envsemble/envui';
 import { Mail } from '@envsemble/envui/icons/Mail';
 import { ContentCopy } from '@envsemble/envui/icons/ContentCopy';
@@ -179,7 +182,7 @@ function CompactFieldExamples() {
     <Example
       title="Compact fields & search"
       size="collection"
-      caption="Compact fields share the button height. Type to reveal the clear action; Escape also clears."
+      caption="Compact fields share the button height and can show a floating label. Type to reveal the clear action; Escape also clears."
     >
       <SpecimenGrid>
         <Specimen title="Search beside an action">
@@ -192,6 +195,25 @@ function CompactFieldExamples() {
             />
             <Button>Assign seat</Button>
           </div>
+        </Specimen>
+        <Specimen title="Floating label">
+          <div className="docs-field-toolbar">
+            <SearchField label="Filter projects" showLabel />
+            <Button variant="secondary">New project</Button>
+          </div>
+        </Specimen>
+        <Specimen title="Floating label, icon and end action">
+          <Input
+            compact
+            showLabel
+            label="Invite address"
+            name="compact-invite"
+            defaultValue="team@example.com"
+            startIcon={<Mail />}
+            endAction={
+              <IconButton variant="text" icon={<ContentCopy />} aria-label="Copy address" />
+            }
+          />
         </Specimen>
         <Specimen title="Icon and end action">
           <Input
@@ -374,6 +396,56 @@ export function SelectPreview() {
   const [projectAccess, setProjectAccess] = useState('team');
   return (
     <Preview>
+      <Example
+        title="Variants"
+        size="collection"
+        caption="Choose the trigger for its surroundings. The open list is a raised popup with a border, so it stands apart from any background."
+      >
+        <SpecimenGrid>
+          <Specimen title="Secondary, on the page">
+            <Select label="Sort by" options={sortOptions} defaultValue="recent" />
+          </Specimen>
+          <Specimen title="Outlined, on a pane">
+            <Surface padding={4}>
+              <Select
+                variant="outlined"
+                label="Sort by"
+                options={sortOptions}
+                defaultValue="recent"
+              />
+            </Surface>
+          </Specimen>
+          <Specimen title="Outlined, in a row">
+            <GroupedRows aria-label="Notification settings">
+              <Row
+                title="E-mail digest"
+                action={
+                  <Select
+                    variant="outlined"
+                    aria-label="E-mail digest"
+                    options={digestOptions}
+                    defaultValue="weekly"
+                  />
+                }
+              />
+            </GroupedRows>
+          </Specimen>
+          <Specimen title="Outlined, in a form on a pane">
+            <Surface padding={4}>
+              <Stack gap={4}>
+                <Input label="E-mail address" type="email" />
+                <Select
+                  variant="outlined"
+                  label="Role"
+                  hint="Admins also manage members and billing."
+                  options={roleOptions}
+                  defaultValue="member"
+                />
+              </Stack>
+            </Surface>
+          </Specimen>
+        </SpecimenGrid>
+      </Example>
       <Example title="Selection, validation & availability" size="collection">
         <SpecimenGrid>
           <Specimen title="Interactive">
@@ -421,3 +493,18 @@ export function SelectPreview() {
     </Preview>
   );
 }
+
+const sortOptions = [
+  { value: 'recent', label: 'Most recent' },
+  { value: 'name', label: 'Name' },
+  { value: 'size', label: 'Size' },
+];
+const digestOptions = [
+  { value: 'daily', label: 'Daily' },
+  { value: 'weekly', label: 'Weekly' },
+  { value: 'never', label: 'Never' },
+];
+const roleOptions = [
+  { value: 'member', label: 'Member' },
+  { value: 'admin', label: 'Admin' },
+];

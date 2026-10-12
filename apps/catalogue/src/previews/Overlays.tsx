@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import {
   Avatar,
+  AvatarButton,
   Button,
   IconButton,
   Meter,
@@ -22,9 +23,9 @@ import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
 
 const sampleOrganizations = [
-  { id: 'northwind', name: 'Northwind Labs' },
-  { id: 'contoso', name: 'Contoso' },
-  { id: 'fabrikam', name: 'Fabrikam Research and Development' },
+  { id: 'northwind', name: 'Northwind Labs', detail: 'Admin' },
+  { id: 'contoso', name: 'Contoso', detail: 'Member' },
+  { id: 'fabrikam', name: 'Fabrikam Research and Development', detail: 'Member' },
 ];
 
 export function MenuPreview() {
@@ -71,13 +72,11 @@ export function MenuPreview() {
             <Menu
               aria-label="Account"
               trigger={
-                <button
-                  type="button"
-                  className="docs-avatar-trigger"
+                <AvatarButton
+                  name="Alex Morgan"
+                  detail="alex@example.com"
                   aria-label="Open account menu"
-                >
-                  <Avatar name="Alex Morgan" />
-                </button>
+                />
               }
               align="start"
             >

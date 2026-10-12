@@ -27,6 +27,7 @@ import { GroupedRows, Row, Button } from '@envsemble/envui';
 
 - One row uses the full 1.75 rem outer radius. Multiple rows keep large outer corners and 0.5 rem inner corners.
 - Rows have a 3.5 rem minimum height and a 0.125 rem gap. In a muted pane, use contrast fill to distinguish the rows.
+- Text keeps 1.5 rem from the row's edges, clear of the large corners, whether a row stands alone or is connected. Radio rows, select options and menu items share it.
 - Keep actions short and let long titles and details wrap.
 
 TypeScript declarations provide the complete public API.

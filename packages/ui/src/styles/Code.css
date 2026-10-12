@@ -48,6 +48,10 @@
   min-inline-size: 0;
   flex-wrap: wrap;
 }
+.env-code-block-heading.env-theme {
+  background: none;
+  color: inherit;
+}
 .env-code-block-heading > span {
   min-inline-size: 0;
   max-inline-size: 100%;

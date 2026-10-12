@@ -8,7 +8,7 @@ import {
 } from './Forms';
 import { NavigationPreview, TabsPreview, DirectionLinksPreview } from './Navigation';
 import { SurfacePreview, LayoutPreview, RowsPreview, CardsPreview } from './Layout';
-import { ChipsPreview, DisclosuresPreview } from './Content';
+import { AnimatedNumberPreview, ChipsPreview, DisclosuresPreview } from './Content';
 import { CodePreview } from './CodeContent';
 import { MarkdownPreview } from './MarkdownContent';
 import { lazy, Suspense } from 'react';
@@ -56,6 +56,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <CardsPreview />;
     case 'chips':
       return <ChipsPreview />;
+    case 'animated-number':
+      return <AnimatedNumberPreview />;
     case 'code':
       return <CodePreview />;
     case 'markdown':

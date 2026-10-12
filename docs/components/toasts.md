@@ -48,7 +48,7 @@ function NotificationButtons() {
 | Name                             | Contract                                                                                                                  |
 | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | defaultPlacement                 | bottom-right stacks upward; top-center stacks downward                                                                    |
-| visibleLimit                     | Positive integer, default 3 per placement; newest notices stay visible, with an older-notice count above the stack        |
+| visibleLimit                     | Positive integer, default 3 per placement; newest notices stay visible, with an older-notice count beyond the stack       |
 | useToast().show(options)         | Returns the notification ID; accepts variant and message                                                                  |
 | options.placement                | Override the provider’s default for a particular notification                                                             |
 | options.action                   | {label, onClick}; notices with actions persist unless duration is set                                                     |
@@ -97,7 +97,8 @@ function ArchiveNotice({ undoArchive }: { undoArchive: () => void }) {
 ## Guidelines
 
 - By default, neutral, success and info notices without actions expire after five seconds. Errors and notices with actions persist. Set duration in milliseconds to override either default, or Infinity to keep a notice until dismissed.
-- New notices appear immediately at the bottom of the bottom-right stack or the top of the top-center stack. Set visibleLimit to cap each placement; older notices hide behind the count above it and reappear as newer notices close.
+- New notices appear immediately at the bottom of the bottom-right stack or the top of the top-center stack. Set visibleLimit to cap each placement; older notices hide behind a count beyond the stack (above it at the bottom right, below it and centered at the top center) and reappear as newer notices close.
+- When notices arrive or leave, the others glide to their new place. With reduced motion they move at once.
 - A notice gets its full duration each time it returns from overflow. Hover or keyboard focus pauses only that notice; focusing the viewport with F6 or leaving the window pauses its visible timers. A persistent notice does not pause other notices.
 - Keep messages and actions short. Messages wrap to three lines; the full text stays in the title and the announcement. Manual Toast shares the presentation; the consumer owns its lifetime.
 

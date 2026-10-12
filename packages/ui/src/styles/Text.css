@@ -35,3 +35,14 @@
 .env-text-tone-quiet {
   color: var(--color-text-quiet);
 }
+
+/* An animated number keeps the line box of the text around it; the rolling value is clipped to it. */
+.env-animated-number {
+  display: inline-flex;
+  overflow: clip;
+  vertical-align: bottom;
+  font-variant-numeric: tabular-nums;
+}
+.env-animated-number-value {
+  display: inline-block;
+}

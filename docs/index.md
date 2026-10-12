@@ -54,13 +54,14 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Markdown](components/markdown.md) — Render Markdown strings with Markdown, or edit them with MarkdownEditor and its shared preview.
 - [Code](components/code.md) — Render inline code and highlighted code blocks.
 - [Info chips](components/chips.md) — Read-only metadata beside related content.
+- [Animated numbers](components/animated-number.md) — Counts that roll to their new value, so a change is noticed.
 - [Disclosure notes](components/disclosures.md) — Keep optional details collapsed until needed.
-- [Avatars](components/avatar.md) — A picture of a person or organization with a default picture or initials as fallback.
+- [Avatars](components/avatar.md) — A picture of a person or organization with a default picture or initials as fallback, and the avatar button.
 
 ## Feedback & overlays
 
 - [Empty states](components/empty-state.md) — Explain missing content and offer the next action.
-- [Loading](components/loading.md) — Announces loading and reserves space for incoming content.
+- [Loading](components/loading.md) — Page progress, spinners, pending buttons and placeholders for incoming content.
 - [Toasts](components/toasts.md) — Managed feedback with configurable duration, placement and stack capacity.
 - [Dialogs](components/dialogs.md) — Centered modals and side panels share focus and dismissal behavior.
 - [Menus](components/menu.md) — Actions, destinations and the shared organization menu, opened from a trigger.

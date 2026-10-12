@@ -1,13 +1,18 @@
 import { useState } from 'react';
 import {
+  AnimatedNumber,
   AppShell,
   Avatar,
+  AvatarButton,
   Button,
+  ConfirmButton,
   Dialog,
   EmptyState,
   GroupedRows,
+  Input,
   Row,
   LinkProvider,
+  LoadingBar,
   Menu,
   MenuHeader,
   MenuItem,
@@ -17,6 +22,7 @@ import {
   OrganizationMenu,
   SearchField,
   Skeleton,
+  Spinner,
   ThemePreferenceProvider,
   ThemeToggle,
   createThemeBootstrapScript,
@@ -51,6 +57,10 @@ export function AdoptionFixture() {
   const [pending, setPending] = useState(false);
   const [action, setAction] = useState('');
   const [organizationId, setOrganizationId] = useState('northwind');
+  const [presses, setPresses] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [confirmed, setConfirmed] = useState(0);
+  const [homes, setHomes] = useState(3);
   return (
     <ThemePreferenceProvider storageKey="fixture-theme" className="fixture-adoption">
       <LinkProvider component={RecordingLink}>
@@ -83,9 +93,11 @@ export function AdoptionFixture() {
           <Menu
             aria-label="Account"
             trigger={
-              <button type="button" aria-label="Open account menu">
-                <Avatar name="Alex Morgan" size="small" />
-              </button>
+              <AvatarButton
+                name="Alex Morgan"
+                detail="alex@example.com"
+                aria-label="Open account menu"
+              />
             }
           >
             <MenuHeader>Alex Morgan</MenuHeader>
@@ -98,8 +110,8 @@ export function AdoptionFixture() {
           <output data-testid="menu-action">{action}</output>
           <OrganizationMenu
             organizations={[
-              { id: 'northwind', name: 'Northwind Labs' },
-              { id: 'contoso', name: 'Contoso' },
+              { id: 'northwind', name: 'Northwind Labs', detail: 'Admin' },
+              { id: 'contoso', name: 'Contoso', detail: 'Member' },
             ]}
             currentOrganizationId={organizationId}
             onSelect={(id) => {
@@ -117,6 +129,35 @@ export function AdoptionFixture() {
             />
           </div>
           <Skeleton width="4rem" />
+          <div className="fixture-toolbar" data-testid="compact-label-toolbar">
+            <Input compact showLabel label="Project filter" data-testid="compact-label" />
+            <Button>Apply</Button>
+          </div>
+          <Button
+            pending
+            data-testid="pending-button"
+            onClick={() => setPresses((count) => count + 1)}
+          >
+            Save changes
+          </Button>
+          <output data-testid="pending-presses">{presses}</output>
+          <Spinner label="Refreshing seats" />
+          <ConfirmButton
+            confirmLabel="Remove Morgan?"
+            armedDuration={800}
+            onConfirm={() => setConfirmed((count) => count + 1)}
+            data-testid="confirm-button"
+          >
+            Remove
+          </ConfirmButton>
+          <output data-testid="confirmed">{confirmed}</output>
+          <Button onClick={() => setHomes((count) => count + 1)}>More homes</Button>
+          <Button onClick={() => setHomes((count) => count - 1)}>Fewer homes</Button>
+          <Button>
+            Show <AnimatedNumber value={homes} data-testid="animated-number" /> homes
+          </Button>
+          <Button onClick={() => setLoading((value) => !value)}>Toggle loading</Button>
+          <LoadingBar active={loading} label="Loading next page" />
           <output hidden data-testid="bootstrap-script">
             {createThemeBootstrapScript({ storageKey: 'bootstrap-theme' })}
           </output>
@@ -131,6 +172,7 @@ export function AdoptionFixture() {
             />
           </GroupedRows>
           <EmptyState tone="error" title="Products couldn’t load" description="Try again." />
+          <EmptyState headingLevel={1} title="Nothing here yet" />
           <Meter label="Seats assigned" value={7} max={5} valueText="5 of 5" />
           <Avatar name="Broken Picture" src="data:image/png;base64,invalid" label />
           <Avatar name="Organization Name" fallback="initials" label />
@@ -143,6 +185,7 @@ export function AdoptionFixture() {
 /** A full-page AppShell, mounted with ?fixture=shell. */
 export function ShellFixture() {
   const [page, setPage] = useState('home');
+  const [loading, setLoading] = useState(false);
   return (
     <LinkProvider component={RecordingLink}>
       <AppShell
@@ -175,8 +218,12 @@ export function ShellFixture() {
           </>
         }
         storageKey="fixture-sidebar"
+        loading={loading}
       >
         <p data-testid="shell-content">Content</p>
+        <button type="button" onClick={() => setLoading((value) => !value)}>
+          Toggle page loading
+        </button>
       </AppShell>
     </LinkProvider>
   );

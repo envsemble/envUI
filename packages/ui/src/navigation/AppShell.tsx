@@ -3,8 +3,10 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
+  type CSSProperties,
   type MouseEvent,
   type ReactNode,
 } from 'react';
@@ -12,6 +14,7 @@ import { classNames } from '../internal/classNames.js';
 import { DockToRight } from '../icons/DockToRight.js';
 import { Skeleton } from '../feedback/Skeleton.js';
 import { LoadingState } from '../feedback/LoadingState.js';
+import { LoadingBar } from '../feedback/LoadingBar.js';
 
 /** Viewports where the sidebar becomes an overlay opened from the topbar. */
 const narrowQuery = '(max-width: 40rem), (max-height: 32rem) and (max-width: 54rem)';
@@ -56,14 +59,43 @@ function useMedia(query: string) {
   return matches;
 }
 
-function readStoredCollapsed(storageKey: string | undefined, fallback: boolean) {
-  if (!storageKey || typeof window === 'undefined') return fallback;
+function readStored(key: string | undefined) {
+  if (!key || typeof window === 'undefined') return null;
   try {
-    const stored = window.localStorage.getItem(storageKey);
-    return stored === null ? fallback : stored === 'true';
+    return window.localStorage.getItem(key);
   } catch {
-    return fallback;
+    return null;
   }
+}
+
+function writeStored(key: string | undefined, value: string) {
+  if (!key) return;
+  try {
+    window.localStorage.setItem(key, value);
+  } catch {
+    // The shell still works when browser storage is unavailable.
+  }
+}
+
+function readStoredCollapsed(storageKey: string | undefined, fallback: boolean) {
+  const stored = readStored(storageKey);
+  return stored === null ? fallback : stored === 'true';
+}
+
+/** The measured sidebar content width is kept beside the collapsed preference. */
+function widthKey(storageKey: string | undefined) {
+  return storageKey && `${storageKey}-width`;
+}
+
+function readStoredWidth(storageKey: string | undefined) {
+  const width = Number(readStored(widthKey(storageKey)));
+  return Number.isFinite(width) && width > 0 ? width : undefined;
+}
+
+function sidebarWidthStyle(width: number | undefined) {
+  return width === undefined
+    ? undefined
+    : ({ '--env-sidebar-content-width': `${width}px` } as CSSProperties);
 }
 
 interface AppShellFrameProps {
@@ -87,6 +119,10 @@ export interface AppShellProps extends AppShellFrameProps {
   navigationLabel: string;
   /** Page content. */
   children: ReactNode;
+  /** Shows a loading bar along the bottom of the topbar, for example while the next page loads. */
+  loading?: boolean;
+  /** Accessible name of the loading bar. */
+  loadingLabel?: string;
   /** Persist the collapsed preference under this localStorage key. */
   storageKey?: string;
   defaultCollapsed?: boolean;
@@ -113,6 +149,8 @@ export function AppShell({
   navigation,
   navigationLabel,
   children,
+  loading = false,
+  loadingLabel = 'Loading page',
   storageKey,
   defaultCollapsed = false,
   collapsed: controlledCollapsed,
@@ -134,6 +172,12 @@ export function AppShell({
   const [popupOpen, setPopupOpen] = useState(false);
   const contextRegion = useRef<HTMLDivElement>(null);
   const sidebarRegion = useRef<HTMLElement>(null);
+  const shell = useRef<HTMLDivElement>(null);
+  const navigationRegion = useRef<HTMLElement>(null);
+  const [contentWidth, setContentWidth] = useState<number>();
+  const measuredWidth = useRef<number>(undefined);
+  // Transitions start after the first paint, so the measured width never animates in on load.
+  const [ready, setReady] = useState(false);
 
   const hoverExpanded =
     collapsed &&
@@ -142,6 +186,62 @@ export function AppShell({
     ((canHover && regionHovered) || focusWithin || popupOpen);
   const compact = !isNarrow && collapsed && !hoverExpanded;
   const sidebarVisible = !isNarrow || narrowOpen;
+  const measurable = !compact && sidebarVisible;
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setReady(true));
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  // The stored width applies after mount, so server-rendered markup and the first client render
+  // agree; it still arrives before the first paint.
+  useLayoutEffect(() => {
+    const stored = readStoredWidth(storageKey);
+    if (stored !== undefined) setContentWidth((current) => current ?? stored);
+  }, [storageKey]);
+
+  // The expanded sidebar fits its widest content: the navigation or the context beside the toggle.
+  // Both are measured at their natural width, which only shows while labels are visible.
+  const measureSidebar = useCallback(() => {
+    const frame = shell.current;
+    const navigation = navigationRegion.current;
+    const context = contextRegion.current;
+    // Compact and hidden sidebars show no labels to measure; the last width stays.
+    if (!frame || !navigation || !context) return;
+    if (frame.hasAttribute('data-compact') || sidebarRegion.current?.hidden) return;
+    frame.setAttribute('data-measuring', '');
+    const width = Math.ceil(
+      Math.max(navigation.getBoundingClientRect().width, context.getBoundingClientRect().width),
+    );
+    frame.removeAttribute('data-measuring');
+    // A shell inside a hidden ancestor measures nothing; unchanged widths need no update.
+    if (width === 0 || width === measuredWidth.current) return;
+    measuredWidth.current = width;
+    setContentWidth(width);
+    writeStored(widthKey(storageKey), String(width));
+  }, [storageKey]);
+
+  useLayoutEffect(() => {
+    if (measurable) measureSidebar();
+  }, [measurable, measureSidebar]);
+
+  useEffect(() => {
+    const regions = [navigationRegion.current, contextRegion.current].filter(
+      (region): region is HTMLElement => region !== null,
+    );
+    const observer = new MutationObserver(measureSidebar);
+    for (const region of regions) {
+      observer.observe(region, { subtree: true, childList: true, characterData: true });
+      // Images, such as an organization logo, change the width when they load.
+      region.addEventListener('load', measureSidebar, true);
+    }
+    document.fonts?.addEventListener('loadingdone', measureSidebar);
+    return () => {
+      observer.disconnect();
+      for (const region of regions) region.removeEventListener('load', measureSidebar, true);
+      document.fonts?.removeEventListener('loadingdone', measureSidebar);
+    };
+  }, [measureSidebar]);
 
   useEffect(() => setNarrowOpen(false), [isNarrow]);
 
@@ -171,12 +271,7 @@ export function AppShell({
     (next: boolean) => {
       if (controlledCollapsed === undefined) setStoredCollapsed(next);
       onCollapsedChange?.(next);
-      if (!storageKey) return;
-      try {
-        window.localStorage.setItem(storageKey, String(next));
-      } catch {
-        // The shell still works when browser storage is unavailable.
-      }
+      writeStored(storageKey, String(next));
     },
     [controlledCollapsed, onCollapsedChange, storageKey],
   );
@@ -224,7 +319,10 @@ export function AppShell({
   return (
     <AppShellContext value={{ closeNarrowSidebar }}>
       <div
+        ref={shell}
         className={classNames('env-app-shell', className)}
+        style={sidebarWidthStyle(contentWidth)}
+        data-ready={ready ? '' : undefined}
         data-collapsed={collapsed && !isNarrow ? '' : undefined}
         data-compact={compact ? '' : undefined}
         data-expanded-overlay={hoverExpanded ? '' : undefined}
@@ -256,6 +354,12 @@ export function AppShell({
             <span className="env-app-title">{title}</span>
             {actions != null && <div className="env-app-actions">{actions}</div>}
           </div>
+          <LoadingBar
+            active={loading}
+            label={loadingLabel}
+            contained
+            className="env-app-loading-bar"
+          />
         </header>
         <aside
           className="env-app-sidebar"
@@ -269,7 +373,7 @@ export function AppShell({
           onClick={closeAfterNavigation}
           {...regionHandlers}
         >
-          <nav className="env-app-navigation" aria-label={navigationLabel}>
+          <nav className="env-app-navigation" aria-label={navigationLabel} ref={navigationRegion}>
             <SidebarCompactContext value={compact}>{navigation}</SidebarCompactContext>
           </nav>
         </aside>
@@ -314,10 +418,14 @@ export function AppShellSkeleton({
 }: AppShellSkeletonProps) {
   const isNarrow = useMedia(narrowQuery);
   const [collapsed] = useState(() => readStoredCollapsed(storageKey, defaultCollapsed));
+  const [contentWidth, setContentWidth] = useState<number>();
+  // Applied after mount, like AppShell's, so server-rendered markup matches the first render.
+  useLayoutEffect(() => setContentWidth(readStoredWidth(storageKey)), [storageKey]);
   return (
     <LoadingState label={label} className={classNames('env-app-shell-skeleton', className)}>
       <div
         className="env-app-shell"
+        style={sidebarWidthStyle(contentWidth)}
         aria-hidden="true"
         data-collapsed={collapsed && !isNarrow ? '' : undefined}
         data-compact={collapsed && !isNarrow ? '' : undefined}

@@ -19,10 +19,20 @@ export interface TextFieldDecorationProps {
   /** A control at the end of the well, such as a clear IconButton. */
   endAction?: ReactNode;
   /**
-   * Match the shared control height so the field can sit beside buttons. The label stays
-   * available to assistive technology but is not shown; use a placeholder for visible guidance.
+   * Match the shared control height so the field can sit beside buttons. The label is hidden
+   * unless showLabel is set; it stays available to assistive technology either way.
    */
   compact?: boolean;
+  /**
+   * Show the label inside the field, where it floats into the outline while the field has focus or
+   * a value. Defaults to true, and to false for compact fields, which can use a placeholder instead.
+   */
+  showLabel?: boolean;
+}
+
+/** Whether a text field shows its label: always by default, and only on request when compact. */
+export function isLabelShown({ compact = false, showLabel }: TextFieldDecorationProps) {
+  return showLabel ?? !compact;
 }
 
 /** Text controls place their label on the well; composite controls keep a separate label. */
@@ -37,6 +47,7 @@ export function FieldFrame({
   startIcon,
   endAction,
   compact = false,
+  showLabel,
 }: FieldProps &
   TextFieldAppearanceProps &
   TextFieldDecorationProps & { id: string; children: ReactNode; floatingLabel?: boolean }) {
@@ -44,6 +55,7 @@ export function FieldFrame({
     <div
       className={floatingLabel ? 'env-form-field env-text-field' : 'env-form-field'}
       data-compact={compact || undefined}
+      data-label-hidden={(floatingLabel && !isLabelShown({ compact, showLabel })) || undefined}
     >
       {floatingLabel ? (
         <div

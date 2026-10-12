@@ -32,7 +32,10 @@ function ThemeLabel() {
 - Use separate semantic color roles for distinct primitive purposes, such as surfaces, rows, buttons, fields, navigation and feedback. Composed components reuse their underlying primitives’ colors. Derive hover and pressed states from each primitive’s base centrally.
 - Light theme uses colors sampled from Chrome Web Store and Google Ads: a white page canvas, cool pale panes, soft gray cards and rows, white direction links, and blue actions and selection.
 - Use the same semantic color role for a component in both themes. Change the theme palette values rather than switching which role the component uses.
-- Below 50% HSL lightness, add lightness; otherwise subtract it. Controls shift 10 points on hover and 20 on press; cards and selectable rows use gentler 2-point hover and 4-point pressed shifts. Results clamp to 0–100%. Disabled opacity is 0.48.
+- Below 50% HSL lightness, add lightness; otherwise subtract it. Controls shift 10 points on hover and 20 on press; cards and selectable rows use gentler 6-point hover and 10-point pressed shifts. Results clamp to 0–100%. Disabled opacity is 0.48.
+- Surfaces (canvas, panes, rows and cards) are opaque. Fills drawn on them are translucent layers of the text color, so they keep their tone on the canvas and stay distinct on every other surface:
+  - Secondary buttons, tab rails, chips, switch tracks, meter tracks and skeletons use `--color-fill`: 6% in light and 12.5% in dark, with 17% and 29% (25% and 37.5% in dark) for hover and press.
+  - Controls without a fill, such as inactive tabs and the avatar button, show `--color-state-layer-hover` (8%) and `--color-state-layer-pressed` (12%) layers.
 - Each role keeps the same purpose across themes. Its hue, saturation and lightness can differ between palettes. Focus has its own role, with blue defaults in both themes.
 - Tabs reuse the supplied Button or NavigationItem colors, and their rail uses Surface. Cards, dialog shells and menus reuse Surface tones. IconButton and inline Link reuse Button variants; Select shares secondary Button and field colors.
 - Navigation selection, radio selection and selected Select options have separate roles. Card action strips, dialog backdrops, field validation and toast fills also have their own purposes; composed action buttons retain Button colors.

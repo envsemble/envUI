@@ -20,6 +20,21 @@
 .env-button.env-dropdown-trigger[aria-invalid='true']:active:not(:disabled) {
   border-color: hsl(from var(--env-field-border-base) h s var(--state-pressed-lightness));
 }
+/* Outlined: a bordered pill without a fill, for panes, dialogs, rows and toolbars. */
+.env-button.env-dropdown-trigger[data-variant='outlined'] {
+  --env-field-border-base: var(--color-border-strong);
+  background: transparent;
+  color: var(--color-text-primary);
+}
+.env-button.env-dropdown-trigger[data-variant='outlined']:is(:hover, [aria-expanded='true']):not(
+    :disabled
+  ) {
+  background: var(--color-state-layer-hover);
+}
+.env-button.env-dropdown-trigger[data-variant='outlined']:active:not(:disabled) {
+  background: var(--color-state-layer-pressed);
+}
+
 .env-dropdown-trigger .env-symbol {
   width: calc(1.125rem * var(--scale, 1));
   height: calc(1.125rem * var(--scale, 1));
@@ -28,9 +43,14 @@
 .env-dropdown-trigger[aria-expanded='true'] .env-symbol {
   transform: rotate(-90deg);
 }
-.env-dropdown-options {
-  --env-surface-radius: var(--radius-row-outer);
+/* The open list is a raised popup: its own color and a hairline border keep it apart from whatever
+   it opens over, including a dialog of the pane tone. */
+.env-surface.env-dropdown-options {
+  /* Compact corners: options are short rows, so large surface corners would look bubbly. */
+  --env-surface-radius: var(--md-sys-shape-corner-large);
   --env-surface-scale: var(--scale, 1);
+  border: calc(0.0625rem * var(--scale, 1)) solid var(--color-popup-border);
+  background: var(--color-popup);
   display: grid;
   gap: calc(0.125rem * var(--scale, 1));
   width: max-content;
@@ -42,7 +62,9 @@
 .env-dropdown-options[hidden] {
   display: none;
 }
+/* Every option takes the small row corner, concentric with the popup's corner and padding. */
 .env-dropdown-option {
+  border-radius: calc(var(--radius-row-inner) * var(--scale, 1));
   min-inline-size: 0;
   white-space: normal;
   overflow-wrap: anywhere;
@@ -50,7 +72,7 @@
   display: block;
   margin: 0;
   min-height: calc(var(--control-height) * var(--scale, 1));
-  padding: calc(0.5rem * var(--scale, 1)) calc(1rem * var(--scale, 1));
+  padding: calc(0.5rem * var(--scale, 1)) calc(var(--row-padding-inline) * var(--scale, 1));
   border: 0;
   outline: none;
   background: var(--color-select-option);

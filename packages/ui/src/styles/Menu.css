@@ -28,14 +28,14 @@
   color: var(--color-row-text);
 }
 .env-menu-header {
-  padding: var(--space-4);
+  padding: var(--space-4) var(--row-padding-inline);
 }
 .env-menu-item {
   display: flex;
   align-items: center;
   gap: var(--space-3);
   min-block-size: 3rem;
-  padding: var(--space-2) var(--space-4);
+  padding: var(--space-2) var(--row-padding-inline);
   font: var(--type-body);
   text-decoration: none;
   cursor: pointer;
@@ -53,12 +53,10 @@
   overflow-wrap: anywhere;
 }
 .env-menu-item[data-highlighted] {
-  background: hsl(from var(--color-menu-row) h s var(--state-surface-pressed-lightness));
+  background: hsl(from var(--color-menu-row) h s var(--state-surface-hover-lightness));
 }
 .env-menu-item:active {
-  background: hsl(
-    from var(--color-menu-row) h s clamp(0, calc(l + 8 * var(--state-lightness-direction)), 100)
-  );
+  background: hsl(from var(--color-menu-row) h s var(--state-surface-pressed-lightness));
 }
 .env-menu-item:focus-visible {
   outline: 0.125rem solid var(--color-focus-ring);
@@ -83,52 +81,16 @@
   border-end-start-radius: var(--radius-row-outer);
   border-end-end-radius: var(--radius-row-outer);
 }
-/* Organization menu: a quiet trigger in the shell's context area and a pane of radio rows. */
+/* Organization menu: a secondary button in the shell's context area and a pane of radio rows. Long
+   organization names truncate inside the button. */
 .env-organization-trigger {
-  box-sizing: border-box;
-  inline-size: 100%;
-  block-size: var(--control-height);
-  min-inline-size: 0;
-  margin: 0;
-  padding: 0 var(--space-3);
-  border: 0;
-  border-radius: 100vmax;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2);
-  background: transparent;
-  color: var(--color-navigation-text);
-  font: var(--type-body);
-  text-align: start;
-  cursor: pointer;
-  transition: background-color var(--motion-duration-fast) var(--motion-ease);
-}
-.env-organization-trigger:is(:hover, [aria-expanded='true']):not(:disabled) {
-  background: var(--color-navigation-quiet-hover);
-}
-.env-organization-trigger:focus-visible {
-  outline: 0.125rem solid var(--color-focus-ring);
-  outline-offset: -0.125rem;
-}
-.env-organization-trigger:disabled {
-  opacity: var(--state-disabled-opacity);
-  cursor: default;
-}
-.env-organization-trigger[data-create] {
-  justify-content: flex-start;
+  max-inline-size: 100%;
 }
 .env-organization-trigger-label {
   min-inline-size: 0;
   overflow: hidden;
-  color: var(--color-text-primary);
-  font-weight: 500;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-.env-organization-trigger .env-symbol {
-  flex: 0 0 auto;
-  color: var(--color-navigation-icon);
 }
 .env-organization-menu-header {
   box-sizing: border-box;
@@ -162,6 +124,12 @@
 }
 .env-organization-menu-option[data-checked] {
   font-weight: 500;
+}
+.env-organization-menu-detail {
+  margin-inline-start: auto;
+  flex: 0 0 auto;
+  color: var(--color-text-muted);
+  font: var(--type-body-small);
 }
 /* The selection indicator follows the radio control. */
 .env-organization-menu-radio {
@@ -208,12 +176,10 @@
   block-size: var(--control-icon-size);
 }
 .env-organization-menu-create[data-highlighted] {
-  background: hsl(from var(--color-menu-row) h s var(--state-surface-pressed-lightness));
+  background: hsl(from var(--color-menu-row) h s var(--state-surface-hover-lightness));
 }
 .env-organization-menu-create:active {
-  background: hsl(
-    from var(--color-menu-row) h s clamp(0, calc(l + 8 * var(--state-lightness-direction)), 100)
-  );
+  background: hsl(from var(--color-menu-row) h s var(--state-surface-pressed-lightness));
 }
 .env-organization-menu-create:focus-visible {
   outline: 0.125rem solid var(--color-focus-ring);

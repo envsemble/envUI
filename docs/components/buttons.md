@@ -30,6 +30,7 @@ import { Add } from '@envsemble/envui/icons/Add';
 | Link                | Inline native link with inherited typography; underline defaults to true          |
 | startIcon / endIcon | Optional React content beside the label                                           |
 | iconOnly / icon     | Show only the supplied icon; size is square and corners follow the chosen variant |
+| pending             | A spinner replaces the content at the same size; busy, and activation is ignored  |
 | aria-label          | Required accessible action name when iconOnly is true                             |
 | href                | Render a native link with the same button appearance; omit for a native button    |
 | Native action props | disabled, type/onClick or anchor attributes, ref and accessible attributes        |
@@ -49,8 +50,39 @@ import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 | ------------------- | --------------------------------------------- |
 | icon                | React icon content                            |
 | variant             | Same variants as Button; secondary by default |
+| pending             | A spinner replaces the icon while work runs   |
 | aria-label          | Required accessible action name               |
 | Native button props | disabled, type, onClick and ref               |
+
+## ConfirmButton
+
+```tsx
+import { ConfirmButton } from '@envsemble/envui';
+
+<ConfirmButton confirmLabel="Remove Morgan?" onConfirm={() => removeSeat(morgan)}>
+  Remove
+</ConfirmButton>
+
+<ConfirmButton
+  variant="destructive"
+  confirmLabel="Cancel plan · 3 lose access"
+  pending={cancelling}
+  onConfirm={cancelPlan}
+>
+  Cancel plan
+</ConfirmButton>
+```
+
+### Props & contracts
+
+| Name                | Contract                                                                            |
+| ------------------- | ----------------------------------------------------------------------------------- |
+| confirmLabel        | The label while armed, naming what a second press does                              |
+| onConfirm           | Runs on the second press                                                            |
+| variant             | outlined (default), secondary, destructive or text at rest; armed it is destructive |
+| armedDuration       | Milliseconds the button stays armed without a second press; 4000 by default         |
+| pending / disabled  | End an arming; pending shows the spinner as on Button                               |
+| Native button props | ref, onBlur, onKeyDown and accessible attributes                                    |
 
 ## ButtonGroup
 
@@ -82,6 +114,8 @@ import { Settings } from '@envsemble/envui/icons/Settings';
 
 ## Guidelines
 
+- Say what an action will do before it is taken. When the outcome is known, put it in the label, such as “Show 128 homes”, “Switch to Team · +5 seats” or “Assign to Morgan”. Use AnimatedNumber for a count that changes while choices are made.
+- Use ConfirmButton for an action that takes effect at once and cannot be undone, such as removing someone's access. The first press names the consequence in place and announces it; a double click only arms it; Escape, leaving the button and four seconds disarm it. Use a Dialog when the person must choose or type something first.
 - Use one primary action in an action group. Reserve important emphasis for rare, consequential actions.
 - Action buttons fit their content: 2.5 rem minimum height (2 rem for important), 0.875 rem text, 0.25 rem vertical and 0.75 rem horizontal padding. Labels wrap when space is limited.
 - Use fully rounded corners; important actions use 0.5 rem corners. ActionGroup provides 1 rem row gaps or 0.5 rem stacked gaps.
@@ -102,6 +136,7 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Stacks & action groups](../components/layout.md)
+- [Animated numbers](../components/animated-number.md)
 - [Colors & themes](../foundations/colors.md)
 - [Icons & assets](../foundations/icons.md)
 - [Accessibility](../foundations/accessibility.md)

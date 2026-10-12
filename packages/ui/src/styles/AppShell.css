@@ -1,10 +1,18 @@
 /* Application frame: a fixed topbar, a collapsible sidebar and the scrolling content area.
    State attributes come from AppShell; the layout below only reads them. */
 .env-app-shell {
-  --env-sidebar-expanded-width: 16rem;
-  --env-sidebar-collapsed-width: 4.25rem;
-  --env-sidebar-width: var(--env-sidebar-expanded-width);
   --env-sidebar-inset: var(--space-3);
+  /* Expanded, the sidebar fits its widest content (measured by AppShell) within these bounds. */
+  --env-sidebar-min-width: 12rem;
+  --env-sidebar-max-width: 20rem;
+  --env-sidebar-expanded-width: clamp(
+    var(--env-sidebar-min-width),
+    var(--env-sidebar-content-width, 0px),
+    var(--env-sidebar-max-width)
+  );
+  /* Collapsed, it holds one control and its insets, so the toggle and icons share a center line. */
+  --env-sidebar-collapsed-width: calc(var(--control-height) + 2 * var(--env-sidebar-inset));
+  --env-sidebar-width: var(--env-sidebar-expanded-width);
   --env-app-divider: 0.0625rem solid var(--color-border-strong);
   min-block-size: 100dvh;
   background: var(--color-canvas);
@@ -32,6 +40,10 @@
   border-block-end: var(--env-app-divider);
   background: var(--color-canvas);
   transition: grid-template-columns var(--motion-duration-medium) var(--motion-ease-standard);
+}
+/* The loading bar runs along the topbar's bottom edge, over the divider. */
+.env-app-topbar > .env-app-loading-bar {
+  inset: 100% 0 auto 0;
 }
 .env-app-topbar-context {
   min-inline-size: 0;
@@ -84,8 +96,19 @@
   color: var(--color-text-primary);
   cursor: pointer;
 }
-button.env-app-sidebar-toggle:hover {
-  background: var(--color-navigation-quiet-hover);
+/* While the toggle icon shows, the toggle is a secondary icon button like the other circular
+   actions; at rest it is only the brand mark. */
+.env-app-shell:is([data-region-hovered], [data-narrow]) button.env-app-sidebar-toggle,
+button.env-app-sidebar-toggle:focus-visible {
+  background: var(--color-secondary-action);
+  color: var(--color-on-secondary-action);
+}
+.env-app-shell button.env-app-sidebar-toggle:hover {
+  background: var(--color-secondary-action-hover);
+  color: var(--color-on-secondary-action);
+}
+.env-app-shell button.env-app-sidebar-toggle:active {
+  background: var(--color-secondary-action-pressed);
 }
 .env-app-sidebar-toggle:focus-visible {
   outline: 0.125rem solid var(--color-focus-ring);
@@ -125,6 +148,10 @@ button.env-app-sidebar-toggle:hover {
   .env-app-sidebar-toggle .env-app-toggle-icon {
     visibility: visible;
   }
+  button.env-app-sidebar-toggle {
+    background: var(--color-secondary-action);
+    color: var(--color-on-secondary-action);
+  }
 }
 
 .env-app-sidebar {
@@ -158,9 +185,6 @@ button.env-app-sidebar-toggle:hover {
    context area above it. */
 .env-app-shell[data-compact] .env-app-context {
   display: none;
-}
-.env-app-shell[data-compact] .env-app-topbar-context {
-  justify-content: center;
 }
 .env-app-shell[data-expanded-overlay] .env-app-sidebar {
   inline-size: var(--env-sidebar-expanded-width);
@@ -199,7 +223,7 @@ button.env-app-sidebar-toggle:hover {
   padding-inline: 0 var(--space-3);
 }
 .env-app-shell[data-narrow] .env-app-sidebar {
-  inline-size: min(16rem, calc(100vw - var(--space-5)));
+  inline-size: min(var(--env-sidebar-expanded-width), calc(100vw - var(--space-5)));
   z-index: 30;
 }
 .env-app-sidebar-backdrop {
@@ -223,6 +247,18 @@ button.env-app-sidebar-toggle:hover {
 }
 .env-app-shell[data-compact] .env-app-navigation-placeholder-label {
   display: none;
+}
+
+/* AppShell reads the natural width of the sidebar content with these rules applied for a moment. */
+.env-app-shell[data-measuring] :is(.env-app-navigation, .env-app-topbar-context) {
+  inline-size: max-content;
+}
+.env-app-shell[data-measuring] .env-app-context {
+  flex: none;
+}
+/* Nothing animates before the first paint, including the measured width. */
+.env-app-shell:not([data-ready]) :is(.env-app-topbar, .env-app-sidebar, .env-app-content) {
+  transition: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

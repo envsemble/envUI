@@ -9,7 +9,7 @@ import {
 import { IconButton } from '../actions/Button.js';
 import { ContentCopy } from '../icons/ContentCopy.js';
 import { Check } from '../icons/Check.js';
-import type { ThemeValue } from '../foundations/Theme.js';
+import { Theme, type ThemeValue } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
 import { codeThemeStyle } from './internal/CodeThemes.js';
 import { useCodeHighlighting } from './internal/useCodeHighlighting.js';
@@ -72,7 +72,9 @@ export function CodeBlock({
       style={{ ...codeThemeStyle(theme), ...style }}
     >
       {(label || copyable) && (
-        <div className="env-code-block-heading">
+        // The heading follows the code theme, so the copy action uses that theme's colors
+        // whatever the surrounding application theme is.
+        <Theme theme={theme} className="env-code-block-heading">
           <span>{label ?? language ?? 'Code'}</span>
           {copyable && (
             <IconButton
@@ -81,7 +83,7 @@ export function CodeBlock({
               onClick={copy}
             />
           )}
-        </div>
+        </Theme>
       )}
       <pre ref={preRef} tabIndex={0} aria-label={label ?? `${language ?? 'Plain text'} code`}>
         <code>

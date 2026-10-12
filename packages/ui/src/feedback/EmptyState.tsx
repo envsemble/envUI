@@ -15,6 +15,8 @@ export interface EmptyStateProps extends Omit<ComponentPropsWithRef<'div'>, 'tit
    * are announced as an alert. Pair them with a retry action.
    */
   tone?: 'neutral' | 'error';
+  /** The title's heading level in the page outline; 4 by default. The appearance stays the same. */
+  headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
 }
 
 export function EmptyState({
@@ -23,6 +25,7 @@ export function EmptyState({
   icon,
   action,
   tone = 'neutral',
+  headingLevel = 4,
   className,
   children,
   ...props
@@ -40,7 +43,7 @@ export function EmptyState({
     >
       {stateIcon != null && <DecorativeIcon>{stateIcon}</DecorativeIcon>}
       <Stack gap={2} className="env-empty-copy">
-        <Text as="h4" variant="section-heading">
+        <Text as={`h${headingLevel}`} variant="section-heading">
           {title}
         </Text>
         {description != null && <Text variant="supporting">{description}</Text>}
