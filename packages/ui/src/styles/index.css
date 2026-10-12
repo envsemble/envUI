@@ -28,6 +28,8 @@
 @import './ConnectedRows.css';
 @import './Dialog.css';
 @import './Toast.css';
+@import './Notice.css';
+@import './Popover.css';
 @import './Indicators.css';
 @import './Menu.css';
 @import './Tree.css';

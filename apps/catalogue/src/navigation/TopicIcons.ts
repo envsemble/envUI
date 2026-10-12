@@ -38,6 +38,8 @@ import { Tab } from '@envsemble/envui/icons/Tab';
 import { KeyboardCommandKey } from '@envsemble/envui/icons/KeyboardCommandKey';
 import { ViewWeek } from '@envsemble/envui/icons/ViewWeek';
 import { Sell } from '@envsemble/envui/icons/Sell';
+import { Campaign } from '@envsemble/envui/icons/Campaign';
+import { Chat } from '@envsemble/envui/icons/Chat';
 import { type Reference } from '../Reference';
 
 export const foundationIcons: Record<string, typeof Palette> = {
@@ -99,6 +101,8 @@ const referenceIcons: Record<string, typeof Palette> = {
   'command-palette': KeyboardCommandKey,
   'segmented-control': ViewWeek,
   badges: Sell,
+  notices: Campaign,
+  popover: Chat,
 };
 
 /** A decorative symbol for the individual reference topic. */

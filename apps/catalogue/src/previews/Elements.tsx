@@ -2,14 +2,20 @@ import { useState } from 'react';
 import {
   ActionGroup,
   Badge,
+  Button,
   Counter,
+  Input,
   NavigationItem,
+  Notice,
+  Popover,
   SegmentedControl,
   Stack,
   Text,
 } from '@envsemble/envui';
 import { CheckCircle } from '@envsemble/envui/icons/CheckCircle';
 import { Description } from '@envsemble/envui/icons/Description';
+import { Edit } from '@envsemble/envui/icons/Edit';
+import { Info } from '@envsemble/envui/icons/Info';
 import { Folder } from '@envsemble/envui/icons/Folder';
 import { Inbox } from '@envsemble/envui/icons/Inbox';
 import { TaskAlt } from '@envsemble/envui/icons/TaskAlt';
@@ -160,6 +166,102 @@ export function BadgesPreview() {
             </span>
           ))}
         </ActionGroup>
+      </Example>
+    </Preview>
+  );
+}
+
+export function NoticesPreview() {
+  const [dismissed, setDismissed] = useState(false);
+  return (
+    <Preview>
+      <Example title="Tones" size="wide">
+        <Stack gap={3}>
+          <Notice title="Sync paused">Changes are saved on this device until you reconnect.</Notice>
+          <Notice tone="success">The plan was published to the team.</Notice>
+          <Notice
+            tone="warning"
+            title="Two decisions are blocked"
+            action={
+              <Button variant="secondary" onClick={() => undefined}>
+                Review blockers
+              </Button>
+            }
+          >
+            The release cannot start until both are resolved.
+          </Notice>
+          {dismissed ? (
+            <Button variant="secondary" onClick={() => setDismissed(false)}>
+              Show the error again
+            </Button>
+          ) : (
+            <Notice
+              tone="error"
+              title="The index could not load"
+              onDismiss={() => setDismissed(true)}
+            >
+              The planning repository is unavailable. Your open documents are still here.
+            </Notice>
+          )}
+        </Stack>
+      </Example>
+    </Preview>
+  );
+}
+
+export function PopoverPreview() {
+  const [name, setName] = useState('Roadmap.md');
+  return (
+    <Preview>
+      <Example
+        title="Popovers"
+        size="collection"
+        caption="Escape or a press outside closes the popover and focus returns to its trigger."
+      >
+        <ActionGroup>
+          <Popover
+            title="Roadmap.md"
+            trigger={
+              <Button variant="secondary" startIcon={<Info />}>
+                Details
+              </Button>
+            }
+          >
+            <Text tone="muted">Changed today by Alex. 3 open decisions, 1 blocked.</Text>
+          </Popover>
+          <Popover
+            aria-label="Rename document"
+            width="wide"
+            trigger={
+              <Button variant="secondary" startIcon={<Edit />}>
+                Rename
+              </Button>
+            }
+          >
+            {(close) => (
+              <form
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  setName(String(new FormData(event.currentTarget).get('name')));
+                  close();
+                }}
+              >
+                <Stack gap={3}>
+                  <Input label="Name" name="name" defaultValue={name} />
+                  <ActionGroup align="end">
+                    <Button variant="secondary" onClick={close}>
+                      Cancel
+                    </Button>
+                    <Button type="submit">Rename</Button>
+                  </ActionGroup>
+                </Stack>
+              </form>
+            )}
+          </Popover>
+        </ActionGroup>
+        <Text variant="caption" className="docs-caption">
+          Current name: {name}
+        </Text>
       </Example>
     </Preview>
   );

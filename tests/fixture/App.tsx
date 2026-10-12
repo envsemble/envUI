@@ -20,6 +20,7 @@ import { DocumentTabsFixture } from './Tabs.js';
 import { CommandPaletteFixture } from './Palette.js';
 import { SegmentedControlFixture } from './Segments.js';
 import { BadgesFixture } from './Badges.js';
+import { NoticesFixture, PopoverFixture } from './Overlays.js';
 
 /** Fixtures that fill the viewport are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
@@ -114,6 +115,18 @@ export default function App() {
             <>
               <BadgesFixture theme="light" />
               <BadgesFixture theme="dark" />
+            </>
+          )}
+          {includes('notices') && (
+            <>
+              <NoticesFixture theme="light" />
+              <NoticesFixture theme="dark" />
+            </>
+          )}
+          {includes('popover') && (
+            <>
+              <PopoverFixture theme="light" />
+              <PopoverFixture theme="dark" />
             </>
           )}
           {includes('menus') && (
