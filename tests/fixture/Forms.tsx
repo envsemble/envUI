@@ -127,7 +127,7 @@ export function FormsFixture() {
       <output data-testid="required-submissions">{requiredSubmissions}</output>
       <Surface padding={4} data-testid="select-pane">
         <Select variant="outlined" label="Pane sort" options={planOptions} defaultValue="starter" />
-        <Select variant="field" label="Pane role" options={dialogOptions} defaultValue="atlas" />
+        <Select variant="outlined" label="Pane role" options={dialogOptions} defaultValue="atlas" />
       </Surface>
     </section>
   );

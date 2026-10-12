@@ -30,11 +30,10 @@ export interface SelectProps
   placeholder?: string;
   autoComplete?: string;
   /**
-   * The trigger's look, to suit its surroundings: secondary (default) is a filled pill for the page
-   * canvas, outlined a bordered pill for panes, rows and toolbars, and field an outlined field with
-   * its label on the outline, matching text fields in a form.
+   * The trigger's button style, to suit its surroundings: secondary (default) is a filled pill for
+   * the page canvas, outlined a bordered pill for panes, dialogs, rows and toolbars.
    */
-  variant?: 'secondary' | 'outlined' | 'field';
+  variant?: 'secondary' | 'outlined';
 }
 
 /** A single selection with native form participation and a themed popup. */
@@ -108,18 +107,9 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
     >
       <FieldFrame
         id={id}
-        label={
-          label != null ? (
-            <BaseSelect.Label
-              className={variant === 'field' ? 'env-select-field-label' : undefined}
-            >
-              {label}
-            </BaseSelect.Label>
-          ) : null
-        }
+        label={label != null ? <BaseSelect.Label>{label}</BaseSelect.Label> : null}
         hint={hint}
         error={error}
-        floatingLabel={variant === 'field'}
       >
         <BaseSelect.Trigger
           {...triggerProps}
@@ -130,7 +120,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
           }}
           data-variant={variant}
           className={classNames(
-            variant === 'field' ? 'env-select-field-trigger' : 'env-button',
+            'env-button',
             variant === 'secondary' && 'env-button-secondary',
             'env-dropdown-trigger',
             className,

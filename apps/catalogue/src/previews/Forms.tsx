@@ -430,17 +430,19 @@ export function SelectPreview() {
               />
             </GroupedRows>
           </Specimen>
-          <Specimen title="Field, in a form">
-            <Stack gap={4}>
-              <Input label="E-mail address" type="email" />
-              <Select
-                variant="field"
-                label="Role"
-                hint="Admins also manage members and billing."
-                options={roleOptions}
-                defaultValue="member"
-              />
-            </Stack>
+          <Specimen title="Outlined, in a form on a pane">
+            <Surface padding={4}>
+              <Stack gap={4}>
+                <Input label="E-mail address" type="email" />
+                <Select
+                  variant="outlined"
+                  label="Role"
+                  hint="Admins also manage members and billing."
+                  options={roleOptions}
+                  defaultValue="member"
+                />
+              </Stack>
+            </Surface>
           </Specimen>
         </SpecimenGrid>
       </Example>

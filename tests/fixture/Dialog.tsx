@@ -20,7 +20,7 @@ export function DialogFixture() {
       >
         <Input ref={firstField} label="Dialog first field" defaultValue="Dialog value" />
         <Select
-          variant="field"
+          variant="outlined"
           label="Dialog choice"
           options={dialogOptions}
           defaultValue="atlas"

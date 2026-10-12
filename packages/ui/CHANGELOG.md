@@ -39,10 +39,7 @@ Clearer contrast in both themes, more ways to show loading, and refinements from
 - `AnimatedNumber`: a count rolls up as it grows and down as it shrinks, and fades with reduced motion.
 - `OrganizationMenu` organizations accept a `detail`, such as the person's role, shown muted after the name.
 - `headingLevel` on `EmptyState`, for an empty or error state that is the whole page.
-- `variant` on `Select`, to suit the surroundings:
-  - secondary (default) is the filled pill;
-  - outlined is a bordered pill for panes, rows and toolbars;
-  - field is an outlined field with its label on the outline, matching text fields in a form.
+- `variant` on `Select`: secondary (default) is the filled pill, and outlined a bordered pill for panes, dialogs, rows and toolbars.
 
 ### Documentation
 
