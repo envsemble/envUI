@@ -244,6 +244,7 @@ export function AppShell({
   const [popupOpen, setPopupOpen] = useState(false);
   const contextRegion = useRef<HTMLDivElement>(null);
   const sidebarRegion = useRef<HTMLElement>(null);
+  const sidebarContentRegion = useRef<HTMLDivElement>(null);
   const shell = useRef<HTMLDivElement>(null);
   const navigationRegion = useRef<HTMLElement>(null);
   const [contentWidth, setContentWidth] = useState<number>();
@@ -258,6 +259,8 @@ export function AppShell({
     pointerId: number;
     startX: number;
     startWidth: number;
+    /** The chosen width before the drag; undefined while the measured width applied. */
+    startChosen: number | undefined;
     direction: number;
   }>(null);
   const widthChosen = resizable && (controlledWidth !== undefined || chosenWidth !== undefined);
@@ -274,6 +277,20 @@ export function AppShell({
     !hoverSuppressed &&
     ((canHover && regionHovered) || focusWithin || popupOpen);
   const compact = !isNarrow && collapsed && !hoverExpanded;
+
+  // Collapsing, by the toggle, an application shortcut or the collapsed prop, compacts the sidebar
+  // even while it holds focus: focus already there does not hold it open, though focus moving
+  // within it afterwards does. Content the compact sidebar hides lets go of focus.
+  const wasCollapsed = useRef(collapsed);
+  useLayoutEffect(() => {
+    const collapsing = collapsed && !wasCollapsed.current;
+    wasCollapsed.current = collapsed;
+    if (!collapsing || isNarrow) return;
+    setFocusWithin(false);
+    const focused = sidebarContentRegion.current?.ownerDocument.activeElement;
+    if (focused instanceof HTMLElement && sidebarContentRegion.current?.contains(focused))
+      focused.blur();
+  }, [collapsed, isNarrow]);
   const sidebarVisible = !isNarrow || narrowOpen;
   const measurable = !compact && sidebarVisible;
 
@@ -403,6 +420,7 @@ export function AppShell({
       pointerId: event.pointerId,
       startX: event.clientX,
       startWidth: resizableWidth,
+      startChosen: chosenWidth,
       direction: inlineDirection(event.currentTarget),
     };
     setResizing(true);
@@ -421,10 +439,14 @@ export function AppShell({
     setResizing(false);
     if (event.currentTarget.hasPointerCapture(event.pointerId))
       event.currentTarget.releasePointerCapture(event.pointerId);
-    // A cancelled drag, such as one the browser took over for scrolling, keeps the width it began with.
-    if (event.type === 'pointercancel') changeWidth(current.startWidth, false);
-    else
+    if (event.type !== 'pointercancel') {
       changeWidth(current.startWidth + (event.clientX - current.startX) * current.direction, true);
+      return;
+    }
+    // A cancelled drag, such as one the browser took over for scrolling, returns to where it began,
+    // including following the measured width when nothing was chosen yet.
+    if (controlledWidth === undefined) setChosenWidth(current.startChosen);
+    if (current.startWidth !== resizableWidth) onSidebarWidthChange?.(current.startWidth);
   }
 
   function resizeWithKeyboard(event: ReactKeyboardEvent<HTMLDivElement>) {
@@ -533,7 +555,9 @@ export function AppShell({
             <SidebarCompactContext value={compact}>{navigation}</SidebarCompactContext>
           </nav>
           {sidebarContent != null && (
-            <div className="env-app-sidebar-content">{sidebarContent}</div>
+            <div className="env-app-sidebar-content" ref={sidebarContentRegion}>
+              {sidebarContent}
+            </div>
           )}
           {resizable && !collapsed && !isNarrow && (
             <div
@@ -602,12 +626,16 @@ export function AppShellSkeleton({
   const isNarrow = useMedia(narrowQuery);
   const [collapsed] = useState(() => readStoredCollapsed(storageKey, defaultCollapsed));
   const [contentWidth, setContentWidth] = useState<number>();
-  const { bounds } = useWidthBounds(sidebarMinWidth, sidebarMaxWidth);
-  // Applied after mount, like AppShell's, so server-rendered markup matches the first render.
+  const { bounds, rem } = useWidthBounds(sidebarMinWidth, sidebarMaxWidth);
+  // Applied after mount, like AppShell's, so server-rendered markup matches the first render. A
+  // resizable shell starts, like AppShell, at the chosen width, else at the measured width up to
+  // 20 rem.
   useLayoutEffect(() => {
     const { chosen, measured } = readStartWidth(storageKey, resizable);
-    setContentWidth(chosen ?? measured);
-  }, [storageKey, resizable]);
+    const capped =
+      resizable && measured !== undefined ? Math.min(measured, measuredMaxRem * rem) : measured;
+    setContentWidth(chosen ?? capped);
+  }, [storageKey, resizable, rem]);
   return (
     <LoadingState label={label} className={classNames('env-app-shell-skeleton', className)}>
       <div

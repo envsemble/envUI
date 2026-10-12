@@ -33,7 +33,7 @@ import { Description } from '@envsemble/envui/icons/Description';
 | items         | Open documents as `{ id, label, icon?, title?, preview? }`, in tab order                        |
 | value         | The active tab id, or null                                                                      |
 | onValueChange | Called on click and when the arrow keys, Home or End reach a tab                                |
-| onClose       | Called from the tab's close button and from a middle click                                      |
+| onClose       | Called from the tab's close button, a middle click and Delete on the focused tab                |
 | onPin         | Optional; called on double click, typically to keep a preview tab                               |
 | aria-label    | Required accessible name of the tab strip                                                       |
 | panelId       | Optional id of the panel the application renders; the active tab points aria-controls at it     |

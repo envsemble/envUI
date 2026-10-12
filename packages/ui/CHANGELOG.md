@@ -11,7 +11,7 @@ Components for document-centred desktop applications such as Atlas: a file tree,
 - `ContextMenu`: actions for an area on right click, long press, the context-menu key and Shift+F10, with the target element passed to its content; `open`, `onOpenChange` and `anchorPoint` open it programmatically.
 - `MenuItem` `description`, `shortcut` and `trailing`; `MenuGroup`, `MenuRadioGroup`, `MenuRadioItem` and `MenuCheckboxItem`.
 - `Tree`: a virtualized WAI-ARIA tree for thousands of rows, with keyboard navigation, type-ahead, preview and open callbacks, a context menu and two densities.
-- `DocumentTabs`: closable editor-style tabs with preview tabs, pinning, closing with Delete or a middle click, and a strip that scrolls sideways. Focus follows to the next tab however the focused one closes.
+- `DocumentTabs`: closable editor-style tabs with preview tabs, pinning, closing with Delete or a middle click, and a strip that scrolls sideways. However the focused tab closes, focus moves to the tab that becomes active.
 - `CommandPalette`: a quick-open dialog near the top of the window with grouped options, keyboard highlight and modifier selection.
 - `SegmentedControl`: one choice among a few options on a pill rail, with counts and icons.
 - `Badge` in six tones and three variants, `Counter`, and `NavigationItem` `trailing` content (a dot while icon-only).

@@ -28,7 +28,7 @@ export interface DocumentTabsProps {
   value: string | null;
   /** Called when a tab is clicked or reached with the arrow keys, Home or End. */
   onValueChange: (id: string) => void;
-  /** Called from a tab's close button and from a middle click. */
+  /** Called from a tab's close button, a middle click and Delete on the focused tab. */
   onClose: (id: string) => void;
   /** Called when a tab is double-clicked, typically to keep a preview tab open. */
   onPin?: (id: string) => void;
@@ -42,6 +42,8 @@ export interface DocumentTabsProps {
 }
 
 const defaultCloseLabel = (label: string) => `Close ${label}`;
+const hasModifier = (event: KeyboardEvent) =>
+  event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
 
 /** Editor-style closable tabs for open documents; the application renders the active document. */
 export function DocumentTabs({
@@ -79,12 +81,11 @@ export function DocumentTabs({
   // Closing the focused tab moves focus to the tab that becomes active, however it closed: its
   // button, Delete, or the application's own shortcut such as Ctrl+W. Read before the update is
   // committed, while the closing tab still holds focus.
-  const focusWasInside =
-    typeof document !== 'undefined' && Boolean(list.current?.contains(document.activeElement));
+  const focusWasInside = Boolean(list.current?.contains(list.current.ownerDocument.activeElement));
   useLayoutEffect(() => {
     if (!focusWasInside) return;
-    const active = document.activeElement;
-    if (active && active !== document.body && active.isConnected) return;
+    const active = list.current?.ownerDocument.activeElement;
+    if (active && active !== active.ownerDocument.body && active.isConnected) return;
     tabElement(focusable)?.focus();
   }, [items, focusable, focusWasInside]);
 
@@ -122,7 +123,8 @@ export function DocumentTabs({
     else if (event.key === 'Home') select(0);
     else if (event.key === 'End') select(items.length - 1);
     else if (event.key === 'Enter' || event.key === ' ') select(index);
-    else if (event.key === 'Delete' && items[index]) onClose(items[index].id);
+    else if (event.key === 'Delete' && !hasModifier(event) && items[index])
+      onClose(items[index].id);
     else return;
     event.preventDefault();
   }

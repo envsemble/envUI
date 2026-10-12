@@ -88,6 +88,35 @@ test.describe('Resizable AppShell', () => {
     expect(errors).toEqual([]);
   });
 
+  test('an application shortcut compacts the sidebar even while it holds focus', async ({
+    page,
+  }) => {
+    const errors = collectErrors(page);
+    await page.goto(resizableShell);
+    const shell = page.locator('.env-app-shell');
+    const handle = page.getByRole('separator', { name: 'Resize sidebar' });
+    await page.mouse.move(900, 500);
+
+    // From the resize handle, which a compact sidebar removes.
+    await handle.focus();
+    await page.keyboard.press('Alt+KeyB');
+    await expect(shell).toHaveAttribute('data-compact', '');
+    await expect(handle).toHaveCount(0);
+
+    // From a navigation item, which keeps focus on its icon.
+    await page.keyboard.press('Alt+KeyB');
+    await expect(shell).not.toHaveAttribute('data-compact');
+    const documents = page.getByRole('button', { name: 'Documents' });
+    await documents.focus();
+    await page.keyboard.press('Alt+KeyB');
+    await expect(shell).toHaveAttribute('data-compact', '');
+    await expect(documents).toBeFocused();
+    // Focus moving within the sidebar afterwards expands it again.
+    await page.getByRole('button', { name: 'Search' }).focus();
+    await expect(shell).not.toHaveAttribute('data-compact');
+    expect(errors).toEqual([]);
+  });
+
   test('sidebar content fills the height below the navigation and scrolls on its own', async ({
     page,
   }) => {

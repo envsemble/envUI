@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AppShell, NavigationItem } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Search } from '@envsemble/envui/icons/Search';
@@ -9,8 +9,21 @@ const files = Array.from({ length: 200 }, (_, index) => `Document ${index + 1}.m
 export function ResizableShellFixture() {
   const [page, setPage] = useState('documents');
   const [widths, setWidths] = useState<number[]>([]);
+  const [collapsed, setCollapsed] = useState(false);
+  // The application's own collapse shortcut, like Ctrl+B in a desktop app.
+  useEffect(() => {
+    const toggle = (event: KeyboardEvent) => {
+      if (!event.altKey || event.code !== 'KeyB') return;
+      event.preventDefault();
+      setCollapsed((current) => !current);
+    };
+    window.addEventListener('keydown', toggle);
+    return () => window.removeEventListener('keydown', toggle);
+  }, []);
   return (
     <AppShell
+      collapsed={collapsed}
+      onCollapsedChange={setCollapsed}
       brand={<span data-testid="brand">B</span>}
       title="Documents"
       navigationLabel="Resizable navigation"
