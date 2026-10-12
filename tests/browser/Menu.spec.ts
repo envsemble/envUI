@@ -151,6 +151,9 @@ test('menu groups, radio and checkbox items keep their choice', async ({ page })
   const sequence = menu.getByRole('menuitem', { name: 'Keyboard shortcuts' });
   await expect(sequence).not.toHaveAttribute('aria-keyshortcuts');
   await expect(sequence.locator('kbd.env-kbd')).toHaveText(['Ctrl', 'K', 'Ctrl', 'S']);
+  const plusSequence = menu.getByRole('menuitem', { name: 'Zoom sequence' });
+  await expect(plusSequence).not.toHaveAttribute('aria-keyshortcuts');
+  await expect(plusSequence.locator('kbd.env-kbd')).toHaveText(['Ctrl', 'Shift', '+', 'Ctrl', 'K']);
   await page.keyboard.press('Escape');
   await expect(menu).toBeHidden();
 });

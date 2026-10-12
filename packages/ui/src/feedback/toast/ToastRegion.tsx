@@ -99,9 +99,13 @@ export function ToastRegion({
     const pins = items
       .filter((item) => leavingIds.has(item.dataset.toastId!) && !item.hasAttribute('data-leaving'))
       .map((item) => {
+        // The computed size is fractional, unlike offsetWidth: a notice is max-content wide, so a
+        // rounded-down width would wrap its message while it fades.
+        const size = getComputedStyle(item);
         const left = before.left + item.offsetLeft;
         const top = before.top + item.offsetTop + glideOffset(item);
-        return { item, left, top, right: left + item.offsetWidth, bottom: top + item.offsetHeight };
+        const right = left + Number.parseFloat(size.width);
+        return { item, left, top, right, bottom: top + Number.parseFloat(size.height) };
       });
     for (const { item, left, right } of pins) {
       for (const animation of item.getAnimations())

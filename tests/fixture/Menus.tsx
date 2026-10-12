@@ -78,6 +78,9 @@ export function MenusFixture({ theme }: { theme: ThemeValue }) {
           <MenuItem shortcut="Ctrl+K Ctrl+S" onClick={() => setLog('Keyboard shortcuts')}>
             Keyboard shortcuts
           </MenuItem>
+          <MenuItem shortcut="Ctrl+Shift++ Ctrl+K" onClick={() => setLog('Zoom sequence')}>
+            Zoom sequence
+          </MenuItem>
         </MenuGroup>
       </Menu>
       <ContextMenu

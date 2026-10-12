@@ -290,12 +290,17 @@ const keyNames: Record<string, string> = {
  * each chord. Spaces around + join a chord.
  */
 function shortcutChords(shortcut: string) {
-  return shortcut
-    .trim()
-    .replace(/\s*\+\s*(?=\S)/g, '+')
-    .split(/\s+/)
-    .filter(Boolean)
-    .map((chord) => chord.split(/\+(?=.)/).filter(Boolean));
+  return (
+    shortcut
+      .trim()
+      // A spaced + between two keys joins them; a + that is itself the key stays.
+      .replace(/(\S)\s+\+\s+(?=\S)/g, '$1+')
+      .split(/\s+/)
+      .filter(Boolean)
+      // Each key is followed by a + or the end; a + right after a separator is the key itself.
+      .map((chord) => Array.from(chord.matchAll(/([^+]+|\+)(?:\+|$)/g), (match) => match[1]!))
+      .filter((keys) => keys.length > 0)
+  );
 }
 
 /**

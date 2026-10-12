@@ -254,8 +254,10 @@ for (const motion of ['reduce', 'no-preference'] as const)
     }) => {
       await page.emulateMedia({ reducedMotion: motion });
       // A long exit keeps the leaving notices in view while the stack is measured.
+      // Letter spacing gives the messages fractional widths, which a pinned notice must keep.
       await page.addStyleTag({
-        content: '.env-toast-viewport > .env-toast[data-ending-style] { transition-duration: 4s; }',
+        content:
+          '.env-toast-viewport > .env-toast[data-ending-style] { transition-duration: 4s; } .env-toast-message { letter-spacing: 0.0137em; }',
       });
       const top = placement === 'top-center';
       await page.getByTestId(top ? 'toast-queue-top' : 'toast-queue-bottom').click();
@@ -271,6 +273,8 @@ for (const motion of ['reduce', 'no-preference'] as const)
       // Two in a row: each steps out at once while the hidden notice takes its turn.
       await first.getByRole('button', { name: 'Dismiss notification' }).click();
       await expect(first).toHaveAttribute('data-leaving', '');
+      // Its message keeps its lines while it fades.
+      expect(Math.abs((await first.boundingBox())!.height - drawn.height)).toBeLessThan(1);
       if (motion === 'reduce') {
         const pinned = (await first.boundingBox())!;
         expect(Math.abs(pinned.x - drawn.x)).toBeLessThan(1);
@@ -291,9 +295,7 @@ for (const motion of ['reduce', 'no-preference'] as const)
       await expect(stack).toHaveCSS('overflow-y', 'auto');
     });
 
-test('a stack taller than the window keeps scrolling and its place while a notice leaves', async ({
-  page,
-}) => {
+test('a stack taller than the window keeps scrolling while a notice leaves', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 160 });
   await page.getByTestId('toast-queue-actions').click();
   const stack = region(page);
