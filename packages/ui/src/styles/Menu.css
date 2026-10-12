@@ -48,9 +48,49 @@
   height: calc(var(--control-icon-size) * 1.25);
   color: var(--color-icon);
 }
+/* The label and its optional muted description share the flexible column; trailing content and the
+   shortcut hint sit at the end. */
+.env-menu-item-text {
+  min-inline-size: 0;
+  flex: 1 1 auto;
+  display: grid;
+}
 .env-menu-item-label {
   min-inline-size: 0;
   overflow-wrap: anywhere;
+}
+.env-menu-item-description {
+  min-inline-size: 0;
+  color: var(--color-row-detail);
+  font: var(--type-body-small);
+  overflow-wrap: anywhere;
+}
+.env-menu-item-trailing {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.env-menu-item-shortcut {
+  flex: 0 0 auto;
+  color: var(--color-row-detail);
+  font: var(--type-body-small);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+/* Radio and checkbox items keep a check-mark slot, so their labels align whether checked or not. */
+.env-menu-item-check {
+  inline-size: calc(var(--control-icon-size) * 1.25);
+  block-size: calc(var(--control-icon-size) * 1.25);
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+}
+.env-menu-item .env-menu-item-check-mark {
+  color: var(--color-radio);
+}
+.env-menu-choice[data-checked] .env-menu-item-label {
+  font-weight: 500;
 }
 .env-menu-item[data-highlighted] {
   background: hsl(from var(--color-menu-row) h s var(--state-surface-hover-lightness));
@@ -72,14 +112,31 @@
   margin: 0;
 }
 .env-menu > :is(.env-menu-header, .env-menu-item):first-child,
-.env-menu > .env-menu-separator + :is(.env-menu-header, .env-menu-item) {
+.env-menu > :is(.env-menu-separator, .env-menu-group) + :is(.env-menu-header, .env-menu-item),
+.env-menu-group > .env-menu-item:nth-child(1 of .env-menu-item) {
   border-start-start-radius: var(--radius-row-outer);
   border-start-end-radius: var(--radius-row-outer);
 }
 .env-menu > :is(.env-menu-header, .env-menu-item):last-child,
-.env-menu > :is(.env-menu-header, .env-menu-item):has(+ .env-menu-separator) {
+.env-menu > :is(.env-menu-header, .env-menu-item):has(+ :is(.env-menu-separator, .env-menu-group)),
+.env-menu-group > .env-menu-item:nth-last-child(1 of .env-menu-item) {
   border-end-start-radius: var(--radius-row-outer);
   border-end-end-radius: var(--radius-row-outer);
+}
+/* A group is its own set of rows below a small heading on the pane. */
+.env-menu-group {
+  display: grid;
+  gap: 0.125rem;
+}
+.env-menu > .env-menu-group:not(:first-child) {
+  margin-block-start: var(--space-1);
+}
+.env-menu-group-label {
+  padding: var(--space-2) var(--row-padding-inline) var(--space-1);
+  color: var(--color-text-muted);
+  font: var(--type-body-small);
+  font-weight: 500;
+  overflow-wrap: anywhere;
 }
 /* Organization menu: a secondary button in the shell's context area and a pane of radio rows. Long
    organization names truncate inside the button. */

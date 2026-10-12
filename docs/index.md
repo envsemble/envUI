@@ -64,6 +64,6 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Loading](components/loading.md) — Page progress, spinners, pending buttons and placeholders for incoming content.
 - [Toasts](components/toasts.md) — Managed feedback with configurable duration, placement and stack capacity.
 - [Dialogs](components/dialogs.md) — Centered modals and side panels share focus and dismissal behavior.
-- [Menus](components/menu.md) — Actions, destinations and the shared organization menu, opened from a trigger.
+- [Menus](components/menu.md) — Actions, destinations and the shared organization menu, opened from a trigger or a right click.
 - [Tooltips](components/tooltip.md) — Short hints on hover and keyboard focus.
 - [Meters & progress](components/meters.md) — Quantities within a range and task completion.

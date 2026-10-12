@@ -55,3 +55,11 @@ body:has(.fixture-resizable-shell) {
 .fixture-tall-page {
   padding: 1.5rem;
 }
+.fixture-context-area {
+  display: grid;
+  justify-items: start;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 0.0625rem dashed var(--color-border-strong);
+  border-radius: var(--radius-standard);
+}

@@ -3,15 +3,21 @@ import {
   Avatar,
   AvatarButton,
   Button,
+  ContextMenu,
   IconButton,
   Meter,
   Menu,
   MenuHeader,
+  MenuCheckboxItem,
+  MenuGroup,
   MenuItem,
+  MenuRadioGroup,
+  MenuRadioItem,
   MenuSeparator,
   OrganizationMenu,
   Progress,
   Stack,
+  Surface,
   Text,
   Tooltip,
 } from '@envsemble/envui';
@@ -19,6 +25,11 @@ import { Refresh } from '@envsemble/envui/icons/Refresh';
 import { ManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
 import { Logout } from '@envsemble/envui/icons/Logout';
 import { Settings } from '@envsemble/envui/icons/Settings';
+import { Add } from '@envsemble/envui/icons/Add';
+import { Delete } from '@envsemble/envui/icons/Delete';
+import { Edit } from '@envsemble/envui/icons/Edit';
+import { OpenInNew } from '@envsemble/envui/icons/OpenInNew';
+import { Search } from '@envsemble/envui/icons/Search';
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
 
@@ -115,7 +126,103 @@ export function MenuPreview() {
           {lastAction}
         </Text>
       </Example>
+      <MenuChoicesExample onAction={setLastAction} />
+      <ContextMenuExample />
     </Preview>
+  );
+}
+
+function MenuChoicesExample({ onAction }: { onAction: (action: string) => void }) {
+  const [sort, setSort] = useState('name');
+  const [hidden, setHidden] = useState(false);
+  return (
+    <Example
+      title="Groups, choices and shortcuts"
+      size="collection"
+      caption="Radio items check one choice, checkbox items toggle and keep the menu open. Shortcut hints only describe keys the application already handles."
+    >
+      <Menu
+        aria-label="View options"
+        trigger={<Button variant="secondary">View options</Button>}
+        align="start"
+      >
+        <MenuRadioGroup label="Sort by" value={sort} onValueChange={setSort}>
+          <MenuRadioItem value="name">Name</MenuRadioItem>
+          <MenuRadioItem value="date" description="Most recently changed first">
+            Date changed
+          </MenuRadioItem>
+        </MenuRadioGroup>
+        <MenuGroup label="Display">
+          <MenuCheckboxItem checked={hidden} onCheckedChange={setHidden}>
+            Show archived plans
+          </MenuCheckboxItem>
+          <MenuItem
+            icon={<Search />}
+            shortcut="Ctrl+P"
+            onClick={() => onAction('Quick open started')}
+          >
+            Quick open
+          </MenuItem>
+        </MenuGroup>
+      </Menu>
+    </Example>
+  );
+}
+
+const contextDocuments = ['Roadmap.md', 'Decisions.md', 'Retrospective.md'];
+
+function ContextMenuExample() {
+  const [lastAction, setLastAction] = useState('');
+  return (
+    <Example
+      title="Context menu"
+      size="collection"
+      caption="Right-click a document or the empty area, or focus a document and press Shift+F10 or the context-menu key. Offer the same actions through visible controls too."
+    >
+      <ContextMenu
+        aria-label="Document actions"
+        content={(target) => {
+          const name = target?.closest<HTMLElement>('[data-document]')?.dataset.document;
+          return name ? (
+            <>
+              <MenuItem
+                icon={<Edit />}
+                shortcut="F2"
+                onClick={() => setLastAction(`Rename ${name}`)}
+              >
+                Rename
+              </MenuItem>
+              <MenuItem
+                icon={<OpenInNew />}
+                description="Beside the current document"
+                onClick={() => setLastAction(`${name} opened to the side`)}
+              >
+                Open to the side
+              </MenuItem>
+              <MenuSeparator />
+              <MenuItem icon={<Delete />} onClick={() => setLastAction(`${name} deleted`)}>
+                Delete
+              </MenuItem>
+            </>
+          ) : (
+            <MenuItem icon={<Add />} onClick={() => setLastAction('New document started')}>
+              New document
+            </MenuItem>
+          );
+        }}
+      >
+        <Surface tone="row" padding={4} className="docs-context-area">
+          {contextDocuments.map((name) => (
+            <Button key={name} variant="text" data-document={name}>
+              {name}
+            </Button>
+          ))}
+        </Surface>
+      </ContextMenu>
+      <Text variant="caption" className="docs-caption" aria-live="polite">
+        {lastAction}
+      </Text>
+    </Example>
   );
 }
 
