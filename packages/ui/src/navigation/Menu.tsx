@@ -66,9 +66,15 @@ export function Menu({
           >
             <BaseMenu.Popup
               className={classNames('env-menu', className)}
-              data-density={density === 'compact' ? 'compact' : undefined}
               // Base UI names the menu after its trigger; the menu's own label replaces that name.
-              render={(props) => <div {...props} aria-labelledby={undefined} aria-label={label} />}
+              render={(props) => (
+                <div
+                  {...props}
+                  aria-labelledby={undefined}
+                  aria-label={label}
+                  data-density={density === 'compact' ? 'compact' : undefined}
+                />
+              )}
             >
               {children}
             </BaseMenu.Popup>
@@ -206,8 +212,14 @@ export function ContextMenu({
           >
             <BaseContextMenu.Popup
               className={classNames('env-menu', className)}
-              data-density={density === 'compact' ? 'compact' : undefined}
-              render={(props) => <div {...props} aria-labelledby={undefined} aria-label={label} />}
+              render={(props) => (
+                <div
+                  {...props}
+                  aria-labelledby={undefined}
+                  aria-label={label}
+                  data-density={density === 'compact' ? 'compact' : undefined}
+                />
+              )}
             >
               {typeof content === 'function' ? content(target) : content}
             </BaseContextMenu.Popup>
