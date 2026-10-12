@@ -209,12 +209,8 @@ export function NoticesPreview() {
               Show the error again
             </Button>
           ) : (
-            <Notice
-              tone="error"
-              title="The index could not load"
-              onDismiss={() => setDismissed(true)}
-            >
-              The planning repository is unavailable. Your open documents are still here.
+            <Notice tone="error" title="Search is unavailable" onDismiss={() => setDismissed(true)}>
+              The search service did not respond. Your open documents are still here.
             </Notice>
           )}
         </Stack>

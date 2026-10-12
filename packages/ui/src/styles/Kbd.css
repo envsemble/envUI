@@ -1,4 +1,5 @@
-/* Keyboard keys: small key caps with a heavier bottom edge. */
+/* Keyboard keys: small key caps with a heavier bottom edge. Their label sits on the surrounding
+   text's baseline, so keys line up in prose whatever glyphs they show. */
 .env-kbd {
   box-sizing: border-box;
   min-inline-size: 1.375rem;
@@ -14,18 +15,18 @@
   color: var(--color-text-primary);
   font: 500 0.75rem / 1 var(--font-family);
   white-space: nowrap;
-  vertical-align: middle;
+  vertical-align: baseline;
 }
 .env-kbd-combination {
   display: inline-flex;
-  align-items: center;
+  align-items: baseline;
   font: inherit;
   white-space: nowrap;
-  vertical-align: middle;
+  vertical-align: baseline;
 }
 .env-kbd-part {
   display: inline-flex;
-  align-items: center;
+  align-items: baseline;
 }
 .env-kbd-separator {
   padding-inline: 0.1875rem;

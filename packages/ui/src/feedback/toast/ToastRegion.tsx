@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from 'react';
+import { useCallback, useLayoutEffect, useRef } from 'react';
 import { Toast as BaseToast } from '@base-ui/react/toast';
 import { Button } from '../../actions/Button.js';
 import { Counter } from '../../content/Badge.js';
@@ -28,7 +28,7 @@ export function ToastRegion({
 }) {
   const toastStore = BaseToast.useToastManager<ToastEntry>();
   const theme = useTheme();
-  const viewport = useRef<HTMLDivElement>(null);
+  const viewport = useRef<HTMLDivElement | null>(null);
   const positions = useRef(new Map<string, number>());
   const hiddenCount = toastStore.toasts.filter(
     (toast) => toast.limited && toast.transitionStatus !== 'ending',
@@ -50,6 +50,36 @@ export function ToastRegion({
     controller.setVisibleNotifications(placement, visibleIds);
   }, [controller, placement, toastStore.toasts]);
   const hiddenIds = useRef(new Set<string>());
+  // While notices move, appear or leave they may reach past the stack's box for a moment. A stack
+  // that fits stops scrolling then, so no scrollbar flashes and nothing shifts sideways; a stack
+  // taller than the window keeps scrolling, and its scroll position, throughout.
+  const settle = useCallback(() => {
+    const element = viewport.current;
+    if (!element) return;
+    const moving = Array.from(
+      element.querySelectorAll<HTMLElement>(':scope > [data-toast-id]'),
+    ).some(
+      (item) =>
+        item.hasAttribute('data-leaving') ||
+        item.getAnimations().some((animation) => animation.playState === 'running'),
+    );
+    const limit = Number.parseFloat(getComputedStyle(element).maxBlockSize);
+    const overflowing =
+      !element.hasAttribute('data-settling') &&
+      element.scrollHeight > element.clientHeight + 1 &&
+      element.getBoundingClientRect().height >= limit - 1;
+    element.toggleAttribute('data-settling', moving && !overflowing);
+  }, []);
+  // The viewport mounts in a portal, so its transition listeners follow the element itself.
+  const attachViewport = useCallback(
+    (element: HTMLDivElement | null) => {
+      const events = ['transitionrun', 'transitionend', 'transitioncancel'];
+      for (const event of events) viewport.current?.removeEventListener(event, settle);
+      viewport.current = element;
+      for (const event of events) element?.addEventListener(event, settle);
+    },
+    [settle],
+  );
   // When notices arrive or leave, the others glide from their previous position instead of jumping.
   useLayoutEffect(() => {
     const element = viewport.current;
@@ -63,24 +93,31 @@ export function ToastRegion({
     const items = Array.from(element.querySelectorAll<HTMLElement>(':scope > [data-toast-id]'));
     // A leaving notice steps out of the stack at once and fades where it was drawn. The others then
     // move into its place in a single glide, and a notice revealed from the hidden ones takes its
-    // turn, instead of the stack growing while the notice fades and shrinking after.
+    // turn, instead of the stack growing while the notice fades and shrinking after. Its layout box
+    // is pinned, so a running entrance or exit transform carries on from where it is.
+    const before = element.getBoundingClientRect();
     const pins = items
       .filter((item) => leavingIds.has(item.dataset.toastId!) && !item.hasAttribute('data-leaving'))
-      .map((item) => ({ item, drawn: item.getBoundingClientRect() }));
-    for (const { item, drawn } of pins) {
+      .map((item) => {
+        const left = before.left + item.offsetLeft;
+        const top = before.top + item.offsetTop + glideOffset(item);
+        return { item, left, top, right: left + item.offsetWidth, bottom: top + item.offsetHeight };
+      });
+    for (const { item, left, right } of pins) {
       for (const animation of item.getAnimations())
         if (animation.id === glideId) animation.cancel();
-      item.style.inlineSize = `${drawn.width}px`;
+      item.style.width = `${right - left}px`;
       item.setAttribute('data-leaving', '');
     }
     const box = element.getBoundingClientRect();
-    for (const { item, drawn } of pins) {
+    for (const pin of pins) {
+      // Physical sides: the measurements are physical, whatever the writing direction.
       if (placement === 'bottom-right') {
-        item.style.insetBlockEnd = `${box.bottom - drawn.bottom}px`;
-        item.style.insetInlineEnd = `${box.right - drawn.right}px`;
+        pin.item.style.bottom = `${box.bottom - pin.bottom}px`;
+        pin.item.style.right = `${box.right - pin.right}px`;
       } else {
-        item.style.insetBlockStart = `${drawn.top - box.top}px`;
-        item.style.insetInlineStart = `${drawn.left - box.left}px`;
+        pin.item.style.top = `${pin.top - box.top}px`;
+        pin.item.style.left = `${pin.left - box.left}px`;
       }
     }
     const next = new Map<string, number>();
@@ -100,11 +137,13 @@ export function ToastRegion({
       if (previous === undefined) {
         // Revealed from the hidden ones, the notice fades in; new notices have their own entrance.
         if (hiddenIds.current.has(id))
-          item.animate([{ opacity: 0 }, { opacity: 1 }], {
-            id: revealId,
-            duration: 200,
-            easing: glideEasing,
-          });
+          item
+            .animate([{ opacity: 0 }, { opacity: 1 }], {
+              id: revealId,
+              duration: 200,
+              easing: glideEasing,
+            })
+            .finished.then(settle, settle);
         continue;
       }
       if (!glide || Math.abs(previous - top) < 1) continue;
@@ -123,27 +162,12 @@ export function ToastRegion({
     positions.current = next;
     hiddenIds.current = hidden;
     settle();
-    // While notices glide or leave they may reach past the stack's box for a moment; the stack
-    // stops scrolling then, so no scrollbar flashes and nothing shifts sideways.
-    function settle() {
-      if (!element) return;
-      const busy = Array.from(
-        element.querySelectorAll<HTMLElement>(':scope > [data-toast-id]'),
-      ).some(
-        (item) =>
-          item.hasAttribute('data-leaving') ||
-          item
-            .getAnimations()
-            .some((animation) => animation.id === glideId && animation.playState === 'running'),
-      );
-      element.toggleAttribute('data-settling', busy);
-    }
-  }, [toastStore.toasts, hiddenCount, placement]);
+  }, [toastStore.toasts, hiddenCount, placement, settle]);
   return (
     <BaseToast.Portal>
       <Theme theme={theme} className="env-toast-portal-theme">
         <BaseToast.Viewport
-          ref={viewport}
+          ref={attachViewport}
           className={`env-toast-viewport env-toast-viewport-${placement}`}
           aria-label={
             placement === 'bottom-right' ? 'Bottom right notifications' : 'Top center notifications'

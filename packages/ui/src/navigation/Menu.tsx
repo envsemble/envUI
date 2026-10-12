@@ -285,26 +285,28 @@ const keyNames: Record<string, string> = {
   space: 'Space',
 };
 
-/** Converts a displayed hint such as Ctrl+Shift+P to aria-keyshortcuts syntax. */
-function keyShortcuts(shortcut: string) {
-  return shortcut
-    .split(/\s+/)
-    .map((chord) =>
-      chord
-        .split('+')
-        .filter(Boolean)
-        .map((key) => keyNames[key.toLowerCase()] ?? key)
-        .join('+'),
-    )
-    .join(' ');
-}
-
-/** A displayed hint such as Ctrl+Shift+P, or a sequence such as Ctrl+K Ctrl+S, as keys per chord. */
+/**
+ * A displayed hint such as Ctrl+Shift+P, Ctrl++ or a sequence such as Ctrl+K Ctrl+S, as the keys of
+ * each chord. Spaces around + join a chord.
+ */
 function shortcutChords(shortcut: string) {
   return shortcut
     .trim()
+    .replace(/\s*\+\s*(?=\S)/g, '+')
     .split(/\s+/)
-    .map((chord) => chord.split(/\+(?=.)/));
+    .filter(Boolean)
+    .map((chord) => chord.split(/\+(?=.)/).filter(Boolean));
+}
+
+/**
+ * aria-keyshortcuts for a single chord, such as Control+Shift+P or Control+Plus. ARIA lists
+ * alternative shortcuts, not sequences, so a sequence shows its keys without the attribute.
+ */
+function keyShortcuts(chords: string[][]) {
+  if (chords.length !== 1) return undefined;
+  return chords[0]!
+    .map((key) => (key === '+' ? 'Plus' : (keyNames[key.toLowerCase()] ?? key)))
+    .join('+');
 }
 
 /** Shared item layout: indicator, icon, label with optional description, trailing content, shortcut. */
@@ -313,6 +315,7 @@ function useMenuItemContent(
   indicator?: ReactNode,
 ) {
   const descriptionId = useId();
+  const chords = shortcut ? shortcutChords(shortcut) : [];
   const content = (
     <>
       {indicator}
@@ -327,10 +330,10 @@ function useMenuItemContent(
         )}
       </span>
       {trailing != null && <span className="env-menu-item-trailing">{trailing}</span>}
-      {shortcut && (
+      {chords.length > 0 && (
         // aria-keyshortcuts announces the shortcut; the keys show it.
         <span className="env-menu-item-shortcut" aria-hidden="true">
-          {shortcutChords(shortcut).map((keys, index) => (
+          {chords.map((keys, index) => (
             <Kbd key={index} keys={keys} />
           ))}
         </span>
@@ -341,7 +344,7 @@ function useMenuItemContent(
     content,
     accessibility: {
       'aria-describedby': description != null ? descriptionId : undefined,
-      'aria-keyshortcuts': shortcut ? keyShortcuts(shortcut) : undefined,
+      'aria-keyshortcuts': keyShortcuts(chords),
     },
   };
 }

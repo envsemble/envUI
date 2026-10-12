@@ -128,7 +128,7 @@ const extensions = createRichTextExtensions();
 | Name                              | Contract                                                                                                |
 | --------------------------------- | ------------------------------------------------------------------------------------------------------- |
 | slashCommands                     | true enables standard block commands; an array adds { id, label, run(editor) } application commands     |
-| Slash trigger                     | Use / for a reference source or slash commands in a given editor; do not configure both                 |
+| Slash trigger                     | Use <kbd>/</kbd> for a reference source or slash commands in a given editor; do not configure both      |
 | ref.editor                        | The public Tiptap Editor, or null before mount; use its commands/chains for application updates         |
 | extensions                        | Stable additional Tiptap extensions, shared with RichText; implement Markdown parsing and serialization |
 | createRichTextExtensions(options) | Build the same base schema for other Tiptap integrations; extensions append to the base set             |
@@ -143,7 +143,7 @@ const extensions = createRichTextExtensions();
 - References save a stable ID and label in generic inline Markdown syntax. The library does not resolve IDs to product records or routes; the application supplies reference items and rendering or activation callbacks.
 - RichText uses the same extensions and reference rendering as RichTextEditor, with editing disabled. Keep the same extension configuration when displaying saved content.
 - Suggestion menus use <kbd>↑</kbd> and <kbd>↓</kbd> to move, <kbd>Enter</kbd> to select and <kbd>Esc</kbd> to dismiss. Loading, empty and failure states stay in the library; source callbacks return application data and may use the supplied AbortSignal.
-- Use / as either a reference trigger or the optional slash command trigger in each editor. Keep reference source and extension arrays stable so React updates retain the editing session.
+- Use <kbd>/</kbd> as either a reference trigger or the optional slash command trigger in each editor. Keep reference source and extension arrays stable so React updates retain the editing session.
 
 TypeScript declarations provide the complete public API.
 

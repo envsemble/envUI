@@ -272,7 +272,9 @@ export function CommandPalette({
                       <span>{hint.label}</span>
                     </span>
                   ))}
-                  {footer}
+                  {footer != null && (
+                    <span className="env-command-palette-footer-content">{footer}</span>
+                  )}
                 </div>
               )}
             </BaseDialog.Popup>

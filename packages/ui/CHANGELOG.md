@@ -9,10 +9,10 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 - `AppShell` `sidebarContent`: the application's own content below the navigation, which fills the remaining sidebar height and scrolls itself; hidden while the sidebar is compact.
 - `AppShell` `resizable`: the expanded sidebar's edge becomes a resize handle for the pointer and the keyboard (<kbd>←</kbd> and <kbd>→</kbd> by 16 px, 48 px with <kbd>Shift</kbd>, <kbd>Home</kbd> and <kbd>End</kbd>), between `sidebarMinWidth` and `sidebarMaxWidth` (12 and 32 rem by default). `sidebarWidth` and `onSidebarWidthChange` control the width; otherwise it persists under `storageKey`. `AppShellSkeleton` accepts the same `resizable` and bounds.
 - `ContextMenu`: actions for an area on right click, long press, the <kbd>Menu</kbd> key and <kbd>Shift</kbd>+<kbd>F10</kbd>, with the target element passed to its content; `open`, `onOpenChange` and `anchorPoint` open it programmatically.
-- `MenuItem` `description`, `shortcut` and `trailing`; `MenuGroup`, `MenuRadioGroup`, `MenuRadioItem` and `MenuCheckboxItem`.
+- `MenuItem` `description`, `shortcut` (shown as `Kbd` keys) and `trailing`; `MenuGroup`, `MenuRadioGroup`, `MenuRadioItem` and `MenuCheckboxItem`.
 - `Tree`: a virtualized WAI-ARIA tree for thousands of rows, with keyboard navigation, type-ahead, preview and open callbacks, a context menu and two densities.
 - `DocumentTabs`: closable editor-style tabs with preview tabs, pinning, closing with <kbd>Delete</kbd> or a middle click, and a strip that scrolls sideways. However the focused tab closes, focus moves to the tab that becomes active.
-- `CommandPalette`: a quick-open dialog near the top of the window with grouped options, keyboard highlight, modifier selection and key `hints` shown as `Kbd` keys.
+- `CommandPalette`: a quick-open dialog near the top of the window, on the dialog surface, with grouped options rounded like `Select` options, keyboard highlight, modifier selection and key `hints` shown as `Kbd` keys.
 - `SegmentedControl`: one choice among a few options on a pill rail, with counts and icons.
 - `Badge` in six tones and three variants, `Counter`, and `NavigationItem` `trailing` content (a dot while icon-only).
 - Status tone tokens `--color-tone-neutral`, `--color-tone-accent`, `--color-tone-success`, `--color-tone-warning`, `--color-tone-danger`, `--color-tone-done` and `--color-on-tone`, with at least 4.5:1 contrast on the canvas, panes and rows in both themes.
@@ -31,9 +31,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 
 - `ThemePreferenceProvider` follows theme changes made in other windows and tabs of the same origin.
 - `Select`'s outlined trigger is the outlined `Button` style. The open list takes the `Popover` surface corners, with rounded options inset by its padding.
-- `Dialog` shares the `Popover` surface: the raised popup color, a hairline border and the surface corners. In the dark theme dialogs keep the pane color, through the new `--color-dialog` token. The title and description sit together above the content.
-- `CommandPalette` shares the dialog surface and corners; its options are rounded like `Select` options.
-- `MenuItem` shortcuts show as `Kbd` keys.
+- `Dialog` shares the `Popover` look: the raised popup color and a hairline border. In the dark theme dialogs keep the pane color, through the new `--color-dialog` token. The title and description sit together above the content.
 - The toast stack's count of hidden notices is a `Counter`. A dismissed notice steps out of the stack at once and fades where it was, so dismissing several in a row moves the stack once each, without jerking or flashing a scrollbar; a notice revealed from the hidden ones fades in.
 - A collapsed `AppShell` sidebar no longer treats expanded tree rows as open popups, and stays expanded while a context menu opened from it is open.
 

@@ -152,11 +152,16 @@ export function RichTextPreview() {
       </Example>
       <Example
         title="Optional slash commands"
-        caption="Use / for block commands or a reference source in a given editor. The application can also supply custom Tiptap commands."
+        caption={
+          <>
+            Use <Kbd>/</Kbd> for block commands or a reference source in a given editor. The
+            application can also supply custom Tiptap commands.
+          </>
+        }
       >
         <Text>
-          Type / on a new paragraph to choose a standard formatting command with the same keyboard
-          menu. This editor enables the built-in slash commands through one public prop.
+          Type <Kbd>/</Kbd> on a new paragraph to choose a standard formatting command with the same
+          keyboard menu. This editor enables the built-in slash commands through one public prop.
         </Text>
         <RichTextEditor
           label="Slash command notes"

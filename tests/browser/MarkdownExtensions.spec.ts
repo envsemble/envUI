@@ -20,6 +20,8 @@ test('Markdown accepts component overrides and remark and rehype plugins', async
   await expect(scope).not.toContainText('<span>');
   // Keys are the one exception: <kbd> around plain text renders as Kbd, and nothing else.
   await expect(scope.locator('.env-markdown kbd.env-kbd')).toHaveText(['Ctrl', 'P']);
-  await expect(scope.getByText(/^Press/)).toHaveText(/^Press Ctrl\+P or (F1)?\.$/);
+  await expect(scope.getByText(/^Press/)).toHaveText('Press Ctrl+P or F1.');
+  await expect(scope.getByText(/^Not keys/)).toHaveText('Not keys: A B');
+  await expect(scope.locator('.env-markdown [onclick], .env-markdown kbd.x')).toHaveCount(0);
   await expect(scope.locator('.env-markdown b')).toHaveCount(0);
 });

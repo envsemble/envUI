@@ -24,7 +24,7 @@ export function NoticesFixture({ theme }: { theme: ThemeValue }) {
       </Notice>
       {!dismissed && (
         <Notice tone="error" title="Could not load the index" onDismiss={() => setDismissed(true)}>
-          The planning repository is unavailable.
+          The search service did not respond.
         </Notice>
       )}
       <Notice tone="info" icon={false}>

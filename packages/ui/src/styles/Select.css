@@ -13,10 +13,10 @@
 .env-button-secondary.env-dropdown-trigger {
   border: calc(0.0625rem * var(--scale, 1)) solid var(--env-field-border-base, transparent);
 }
-.env-button-secondary.env-dropdown-trigger[aria-expanded='true']:not(:disabled) {
+.env-button-secondary.env-dropdown-trigger[aria-expanded='true']:not(:disabled, :active) {
   background: var(--color-secondary-action-hover);
 }
-.env-button-outlined.env-dropdown-trigger[aria-expanded='true']:not(:disabled) {
+.env-button-outlined.env-dropdown-trigger[aria-expanded='true']:not(:disabled, :active) {
   background: var(--color-subtle-action-hover);
   border-color: var(--color-subtle-action-border-hover);
 }

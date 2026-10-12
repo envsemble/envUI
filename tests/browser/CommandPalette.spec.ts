@@ -98,6 +98,20 @@ test.describe('CommandPalette', () => {
       'data-env-theme',
       'dark',
     );
+    // The application's footer content flows as text after the hints, keys included.
+    const content = dialog.locator('.env-command-palette-footer-content');
+    await expect(content).toHaveText('Press Esc to close');
+    await expect(content.locator('kbd.env-kbd')).toHaveText('Esc');
+    // Words and keys keep ordinary spacing instead of becoming separate, gapped flex items.
+    const spacing = await content.evaluate((element) => {
+      const range = document.createRange();
+      range.selectNodeContents(element.firstChild!);
+      return (
+        element.querySelector('kbd')!.getBoundingClientRect().left -
+        range.getBoundingClientRect().right
+      );
+    });
+    expect(spacing).toBeLessThan(8);
     await page.keyboard.press('Control+Enter');
     await expect(page.getByTestId('palette-log-dark')).toHaveText('side recent/Roadmap.md');
 

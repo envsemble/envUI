@@ -54,6 +54,7 @@ import { Category } from '@envsemble/envui/icons/Category';
 | sidebarWidth / onSidebarWidthChange              | Controlled width in pixels; uncontrolled widths persist under storageKey                                     |
 | sidebarMinWidth / sidebarMaxWidth                | Resize bounds in pixels; 12 rem and 32 rem by default                                                        |
 | resizeLabel                                      | Accessible name of the handle; Resize sidebar by default                                                     |
+| AppShellSkeleton resizable                       | With the same storageKey and bounds, the loading frame starts at the chosen width                            |
 
 ## Guidelines
 

@@ -72,6 +72,12 @@ export function MenusFixture({ theme }: { theme: ThemeValue }) {
           <MenuItem shortcut="Ctrl+Shift+P" onClick={() => setLog('Command palette')}>
             Command palette
           </MenuItem>
+          <MenuItem shortcut="Ctrl + +" onClick={() => setLog('Zoom in')}>
+            Zoom in
+          </MenuItem>
+          <MenuItem shortcut="Ctrl+K Ctrl+S" onClick={() => setLog('Keyboard shortcuts')}>
+            Keyboard shortcuts
+          </MenuItem>
         </MenuGroup>
       </Menu>
       <ContextMenu

@@ -144,6 +144,13 @@ test('menu groups, radio and checkbox items keep their choice', async ({ page })
       .getByRole('menuitem', { name: 'Command palette' })
       .locator('.env-menu-item-shortcut kbd.env-kbd'),
   ).toHaveText(['Ctrl', 'Shift', 'P']);
+  // The plus key keeps its name, and a sequence shows its keys without claiming a single shortcut.
+  const zoom = menu.getByRole('menuitem', { name: 'Zoom in' });
+  await expect(zoom).toHaveAttribute('aria-keyshortcuts', 'Control+Plus');
+  await expect(zoom.locator('kbd.env-kbd')).toHaveText(['Ctrl', '+']);
+  const sequence = menu.getByRole('menuitem', { name: 'Keyboard shortcuts' });
+  await expect(sequence).not.toHaveAttribute('aria-keyshortcuts');
+  await expect(sequence.locator('kbd.env-kbd')).toHaveText(['Ctrl', 'K', 'Ctrl', 'S']);
   await page.keyboard.press('Escape');
   await expect(menu).toBeHidden();
 });

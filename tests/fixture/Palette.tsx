@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { CommandPalette, Theme, type ThemeValue } from '@envsemble/envui';
+import { CommandPalette, Kbd, Theme, type ThemeValue } from '@envsemble/envui';
 import { Description } from '@envsemble/envui/icons/Description';
 
 const recent = ['Roadmap.md', 'Decisions.md'];
@@ -50,6 +50,13 @@ export function CommandPaletteFixture({ theme }: { theme: ThemeValue }) {
           { keys: ['Enter'], label: 'Open' },
           { keys: ['Ctrl', 'Enter'], label: 'Open to the side' },
         ]}
+        footer={
+          theme === 'dark' ? (
+            <>
+              Press <Kbd>Esc</Kbd> to close
+            </>
+          ) : undefined
+        }
       />
       <output data-testid={`palette-log-${theme}`}>{log}</output>
     </Theme>

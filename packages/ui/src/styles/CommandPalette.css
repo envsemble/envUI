@@ -160,6 +160,10 @@
   color: var(--color-text-muted);
   font: var(--type-body-small);
 }
+/* The application's own footer content flows as text after the hints. */
+.env-command-palette-footer-content {
+  min-inline-size: 0;
+}
 /* Each hint is its keys followed by what they do. */
 .env-command-palette-hint {
   display: inline-flex;
