@@ -22,6 +22,8 @@ The two skills contain routing and workflow instructions. Move conditional compo
 
 Run `npm run verify` at the envUI root. It checks generated icons, types, documentation links, package and offline-catalogue builds, isolated tarball consumers, SSR and browser acceptance.
 
+The browser suite starts or reuses the catalogue on port 8770 and the test fixture on 8766. To run it beside another checkout’s servers, choose free ports, for example `ENVUI_CATALOGUE_PORT=8772 ENVUI_FIXTURE_PORT=8767 npm run test:browser`; a reused server on the default ports would otherwise serve the other checkout’s code.
+
 Exercise meaningful interaction changes in both themes, with keyboard focus and dismissal, native form submit/reset, narrow containers and enlarged text. Check portals, wrapping and local scrolling where affected. Inspect bundle boundaries when optional content or icon imports change.
 
 Validate both skill folders with the available skill validator after editing them. Report changes, checks and remaining gaps.

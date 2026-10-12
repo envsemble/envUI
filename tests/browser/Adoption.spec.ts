@@ -1,7 +1,8 @@
 import { test, expect, type Page } from '@playwright/test';
+import { fixtureUrl } from './Servers';
 
-const fixture = 'http://127.0.0.1:8766/?fixture=adoption';
-const shellFixture = 'http://127.0.0.1:8766/?fixture=shell';
+const fixture = `${fixtureUrl}/?fixture=adoption`;
+const shellFixture = `${fixtureUrl}/?fixture=shell`;
 
 function collectErrors(page: Page) {
   const errors: string[] = [];
@@ -564,7 +565,7 @@ test('secondary buttons stay distinct on the canvas, rows and dialog panes in bo
 });
 
 test('direction links, radio rows and choice controls settle while pressed', async ({ page }) => {
-  await page.goto('http://127.0.0.1:8766/?fixture=colors');
+  await page.goto(`${fixtureUrl}/?fixture=colors`);
   // The choice controls shrink, not their labels, whether the control or its text is pressed.
   const targets = [
     {

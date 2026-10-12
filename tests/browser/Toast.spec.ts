@@ -1,8 +1,9 @@
 import { test, expect } from '@playwright/test';
+import { fixtureUrl } from './Servers';
 
 test.beforeEach(async ({ page }) => {
   await page.clock.install();
-  await page.goto('http://127.0.0.1:8766/?fixture=toast');
+  await page.goto(`${fixtureUrl}/?fixture=toast`);
 });
 const region = (page: import('@playwright/test').Page, placement = 'bottom-right') =>
   page.locator(`.env-toast-viewport-${placement}`);

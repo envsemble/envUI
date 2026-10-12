@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import { catalogueUrl, cataloguePort, fixtureUrl, fixturePort } from './tests/browser/Servers';
 
 export default defineConfig({
   testDir: './tests/browser',
@@ -29,15 +30,14 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: 'node ../../node_modules/vite/bin/vite.js --host 127.0.0.1 --port 8770 --strictPort',
+      command: `node ../../node_modules/vite/bin/vite.js --host 127.0.0.1 --port ${cataloguePort} --strictPort`,
       cwd: 'apps/catalogue',
-      url: 'http://127.0.0.1:8770',
+      url: catalogueUrl,
       reuseExistingServer: !process.env.CI,
     },
     {
-      command:
-        'node node_modules/vite/bin/vite.js --config tests/fixture/vite.config.ts --host 127.0.0.1 --port 8766 --strictPort',
-      url: 'http://127.0.0.1:8766',
+      command: `node node_modules/vite/bin/vite.js --config tests/fixture/vite.config.ts --host 127.0.0.1 --port ${fixturePort} --strictPort`,
+      url: fixtureUrl,
       reuseExistingServer: !process.env.CI,
     },
   ],

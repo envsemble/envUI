@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { fixtureUrl } from './Servers';
 
 /** Contrast between two opaque CSS colors, as WCAG computes it. */
 function contrastRatio(first: string, second: string) {
@@ -30,7 +31,7 @@ async function popupSeparation(page: Page, surfaceSelector: string) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('http://127.0.0.1:8766/?fixture=forms');
+  await page.goto(`${fixtureUrl}/?fixture=forms`);
 });
 
 test('fields associate labels, hints, and validation messages', async ({ page }) => {

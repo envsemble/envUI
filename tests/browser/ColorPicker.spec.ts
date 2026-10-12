@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test';
+import { fixtureUrl } from './Servers';
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('http://127.0.0.1:8766/?fixture=color-picker');
+  await page.goto(`${fixtureUrl}/?fixture=color-picker`);
 });
 
 test('HEX drafts validate, normalize and recover without committing invalid colors', async ({
