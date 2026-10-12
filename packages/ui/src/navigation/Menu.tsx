@@ -15,6 +15,7 @@ import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { Theme, useTheme } from '../foundations/Theme.js';
 import { Check } from '../icons/Check.js';
+import { Kbd } from '../content/Kbd.js';
 import { useLinkComponent } from './LinkProvider.js';
 
 export interface MenuProps {
@@ -257,7 +258,10 @@ interface MenuItemContentProps {
   children: ReactNode;
   /** A second, muted line; announced as the item's description. */
   description?: ReactNode;
-  /** Keyboard hint at the end, such as Ctrl+P. The application handles the shortcut itself. */
+  /**
+   * Keyboard hint at the end, such as Ctrl+P, shown as Kbd keys. The application handles the
+   * shortcut itself.
+   */
   shortcut?: string;
   /** End content, such as a Badge or Counter. */
   trailing?: ReactNode;
@@ -295,6 +299,14 @@ function keyShortcuts(shortcut: string) {
     .join(' ');
 }
 
+/** A displayed hint such as Ctrl+Shift+P, or a sequence such as Ctrl+K Ctrl+S, as keys per chord. */
+function shortcutChords(shortcut: string) {
+  return shortcut
+    .trim()
+    .split(/\s+/)
+    .map((chord) => chord.split(/\+(?=.)/));
+}
+
 /** Shared item layout: indicator, icon, label with optional description, trailing content, shortcut. */
 function useMenuItemContent(
   { icon, children, description, shortcut, trailing }: MenuItemContentProps,
@@ -316,8 +328,11 @@ function useMenuItemContent(
       </span>
       {trailing != null && <span className="env-menu-item-trailing">{trailing}</span>}
       {shortcut && (
+        // aria-keyshortcuts announces the shortcut; the keys show it.
         <span className="env-menu-item-shortcut" aria-hidden="true">
-          {shortcut}
+          {shortcutChords(shortcut).map((keys, index) => (
+            <Kbd key={index} keys={keys} />
+          ))}
         </span>
       )}
     </>

@@ -49,68 +49,22 @@ import { Category } from '@envsemble/envui/icons/Category';
 | expandLabel / collapseLabel                      | Accessible names of the toggle                                                                               |
 | useAppShell().closeNarrowSidebar                 | Close the overlay sidebar from content                                                                       |
 | AppShellSkeleton                                 | The same frame with placeholders for the first load; pass the same storageKey and brand                      |
-
-## Resizable sidebar with content
-
-```tsx
-import { AppShell, Tree } from '@envsemble/envui';
-
-<AppShell
-  brand={<img src={markUrl} alt="" />}
-  title={document.title}
-  navigationLabel="Planning"
-  navigation={navigationItems}
-  sidebarContent={
-    <Tree
-      aria-label="Files"
-      items={visibleRows}
-      onOpen={openFile}
-      onExpandedChange={toggleFolder}
-    />
-  }
-  resizable
-  storageKey="planning-sidebar"
->
-  <header className="document-header">{document.title}</header>
-  <DocumentView document={document} />
-</AppShell>;
-```
-
-```css
-/* The document scrolls, so a header can stick below the fixed topbar. */
-.document-header {
-  position: sticky;
-  inset-block-start: var(--topbar-height);
-  z-index: 1;
-  background: var(--color-canvas);
-}
-/* A child can fill the remaining viewport height, for example an editor with its own scrolling. */
-.document-editor {
-  block-size: calc(100dvh - var(--topbar-height));
-}
-```
-
-### Props & contracts
-
-| Name                                | Contract                                                                                                  |
-| ----------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| sidebarContent                      | Content below the navigation; fills the remaining sidebar height and scrolls itself; hidden while compact |
-| resizable                           | The sidebar edge becomes a resize handle for the expanded width                                           |
-| sidebarWidth / onSidebarWidthChange | Controlled width in pixels; uncontrolled widths persist under storageKey                                  |
-| sidebarMinWidth / sidebarMaxWidth   | Resize bounds in pixels; 12 rem and 32 rem by default                                                     |
-| resizeLabel                         | Accessible name of the handle; Resize sidebar by default                                                  |
-| AppShellSkeleton resizable          | With the same storageKey and bounds, the loading frame starts at the chosen width                         |
+| sidebarContent                                   | The application's own content below the navigation; hidden while compact                                     |
+| resizable                                        | The sidebar edge becomes a resize handle for the expanded width                                              |
+| sidebarWidth / onSidebarWidthChange              | Controlled width in pixels; uncontrolled widths persist under storageKey                                     |
+| sidebarMinWidth / sidebarMaxWidth                | Resize bounds in pixels; 12 rem and 32 rem by default                                                        |
+| resizeLabel                                      | Accessible name of the handle; Resize sidebar by default                                                     |
 
 ## Guidelines
 
 - Expanded, the sidebar fits its widest content (the navigation or the context beside the toggle) between 12 and 20 rem. AppShell measures it while labels show; with storageKey, AppShellSkeleton starts at the same width.
 - Collapsed, the sidebar is one control plus its insets wide, so the toggle and the navigation icons share a center line. NavigationItems inside a collapsed sidebar show only their icons and use their text as accessible name and title.
 - A collapsed sidebar expands over the content while the pointer is over the sidebar or the area above it, while it holds keyboard focus, and while a popup opened from it, such as an organization switcher, is open. After the toggle collapses it, it stays compact until the pointer leaves. Collapsing it in any way, including an application shortcut or the collapsed prop, compacts it even while it holds focus or the pointer, which expands it again after leaving; focus in the sidebar content, which the compact sidebar hides, is released.
-- On narrow viewports (40 rem wide, or 54 rem wide and 32 rem tall) the sidebar opens over the content from the toggle and closes after navigation, on Escape and on the backdrop. The page title is hidden there.
-- The application owns routing, the selected destination and the page layout inside the content area. Use LinkProvider so navigation stays on the client.
-- sidebarContent sits below the navigation, which keeps its natural height and scrolls only when it alone overflows. Give the content block-size: 100% and its own scrolling, as Tree does. It shows while the sidebar is expanded, including hover expansion, and hides while compact.
-- With resizable, drag the sidebar’s inline-end edge or focus it: Arrow Left and Right change the width by 16 px, 48 px with Shift, and Home and End reach the bounds. The topbar’s context column follows. Until someone resizes it, the sidebar starts at the measured width; the chosen width then replaces it and is kept across reloads. A cancelled drag keeps the width it began with. A collapsed or narrow sidebar has no handle.
-- The document scrolls, not the content area, so page content can stick below the topbar with position: sticky and inset-block-start: var(--topbar-height), and a child can fill the remaining height with block-size: calc(100dvh - var(--topbar-height)).
+- On narrow viewports (40 rem wide, or 54 rem wide and 32 rem tall) the sidebar opens over the content from the toggle and closes after navigation, on <kbd>Esc</kbd> and on the backdrop. The page title is hidden there.
+- AppShell is the frame: topbar, sidebar and content area. The application owns what goes inside them: routing, the selected destination, the page layout and any content below the navigation. Use LinkProvider so navigation stays on the client.
+- sidebarContent sits below the navigation, which keeps its natural height and scrolls only when it alone overflows. The content fills the remaining height, so give it block-size: 100% and its own scrolling. It shows while the sidebar is expanded, including hover expansion, and hides while compact.
+- With resizable, drag the sidebar’s inline-end edge or focus it: <kbd>←</kbd> and <kbd>→</kbd> change the width by 16 px, 48 px with <kbd>Shift</kbd>, and <kbd>Home</kbd> and <kbd>End</kbd> reach the bounds. The topbar’s context column follows. Until someone resizes it, the sidebar starts at the measured width; the chosen width then replaces it and is kept across reloads. A cancelled drag keeps the width it began with. A collapsed or narrow sidebar has no handle.
+- The document scrolls, not the content area. --topbar-height is the topbar's height, for content that sticks below it or fills the rest of the window.
 
 TypeScript declarations provide the complete public API.
 
@@ -118,6 +72,5 @@ TypeScript declarations provide the complete public API.
 
 - [Navigation items](../components/navigation.md)
 - [Menus](../components/menu.md)
-- [Tree](../components/tree.md)
 - [Colors & themes](../foundations/colors.md)
 - [Install the private package](../setup.md)

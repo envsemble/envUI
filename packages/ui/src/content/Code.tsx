@@ -4,8 +4,8 @@ import { codeThemeStyle } from './internal/CodeThemes.js';
 
 export interface CodeProps extends ComponentPropsWithRef<'code'> {
   /**
-   * dark (default) uses GitHub Dark in both app themes. subtle follows the theme with a quiet chip,
-   * for prose dense with identifiers, paths and hashes.
+   * dark (default) uses the dark code theme in both app themes. subtle follows the theme with a
+   * quiet chip, for prose dense with identifiers, paths and hashes.
    */
   appearance?: 'dark' | 'subtle';
 }

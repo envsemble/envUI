@@ -184,7 +184,11 @@ test('the hidden count sits beyond the stack: above at the bottom right, below a
   await page.getByTestId('toast-queue-top').click();
   for (const placement of ['bottom-right', 'top-center']) {
     const viewport = region(page, placement);
-    await expect(viewport.locator('.env-toast-queued-count')).toHaveText('+1');
+    const count = viewport.locator('.env-toast-queued-count');
+    await expect(count).toHaveClass(/env-counter/);
+    // The status announces the full meaning; the counter shows the number.
+    await expect(count).toContainText('1 older notification hidden');
+    await expect(count.locator('[aria-hidden="true"]')).toHaveText('+1');
     // Entrances and glides move the notices for a moment; poll until they settle.
     await expect
       .poll(() =>
@@ -239,4 +243,36 @@ test('existing notices glide from their previous place when another arrives', as
       element.getAnimations().some((animation) => animation.id === 'env-toast-glide'),
     ),
   ).toBe(false);
+});
+
+test('a dismissed notice steps out at once, so the stack neither grows, scrolls nor jumps', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  // A long exit keeps the leaving notice in view while the stack is measured.
+  await page.addStyleTag({
+    content: '.env-toast-viewport > .env-toast[data-ending-style] { transition-duration: 4s; }',
+  });
+  await page.getByTestId('toast-queue-bottom').click();
+  const stack = region(page);
+  await expect(stack.locator('.env-toast:not([data-limited])')).toHaveCount(3);
+  await expect(stack.locator('.env-toast[data-starting-style]')).toHaveCount(0);
+  const height = await stack.evaluate((element) => element.getBoundingClientRect().height);
+  const leaving = notice(page, 'Bottom queue 4');
+  const drawn = (await leaving.boundingBox())!;
+  await leaving.getByRole('button', { name: 'Dismiss notification' }).click();
+  await expect(leaving).toHaveAttribute('data-leaving', '');
+  // It fades where it was drawn, out of the stack, while the hidden notice takes its turn.
+  const pinned = (await leaving.boundingBox())!;
+  expect(Math.abs(pinned.x - drawn.x)).toBeLessThan(1);
+  expect(Math.abs(pinned.y - drawn.y)).toBeLessThan(1);
+  await expect(notice(page, 'Bottom queue 1')).toBeVisible();
+  expect(await stack.evaluate((element) => element.getBoundingClientRect().height)).toBeLessThan(
+    height + 1,
+  );
+  // Meanwhile the stack does not scroll, so no scrollbar flashes.
+  await expect(stack).toHaveCSS('overflow-y', 'visible');
+  await expect(leaving).toHaveCount(0, { timeout: 8_000 });
+  await expect(stack).not.toHaveAttribute('data-settling');
+  await expect(stack).toHaveCSS('overflow-y', 'auto');
 });

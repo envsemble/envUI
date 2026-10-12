@@ -45,7 +45,7 @@ import { Button, Notice } from '@envsemble/envui';
 - Use a notice for a message about a page or section that stays until it no longer applies, such as a paused sync or a blocked release. Use a toast for brief feedback about an action, and an empty state when there is no content at all.
 - Info and success notices are polite status messages. Warning and error notices have no live role by default, because a notice present when the page loads should not interrupt; set announce when one appears because of something that just happened, such as a failed save.
 - Text stays in the primary color on a light tint of the tone; the icon carries the tone. Keep the message understandable without color.
-- Place the notice above the content it concerns. Offer one clear action when there is a next step, and onDismiss only when the message can safely be hidden.
+- Place the notice above the content it concerns. Offer one clear action when there is a next step, and onDismiss only when the message can safely be hidden. The dismiss button is a small circle in the notice's tone.
 
 TypeScript declarations provide the complete public API.
 

@@ -187,7 +187,7 @@ export function MarkdownExtensionsFixture() {
         }}
       >
         {
-          '# Project plan\n\n> A quoted decision\n\nTODO\n\n| A | B |\n| - | - |\n| 1 | 2 |\n\nSome <span>inline</span> HTML\n\n<div>A block</div>'
+          '# Project plan\n\n> A quoted decision\n\nTODO\n\n| A | B |\n| - | - |\n| 1 | 2 |\n\nSome <span>inline</span> HTML\n\n<div>A block</div>\n\nPress <kbd>Ctrl</kbd>+<kbd>P</kbd> or <kbd><b>F1</b></kbd>.'
         }
       </Markdown>
     </section>

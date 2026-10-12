@@ -28,16 +28,16 @@ import { Select } from '@envsemble/envui';
 | onValueChange        | Receives selected string or null                                         |
 | label / hint / error | Visible label and linked guidance or validation, shared with text fields |
 | Native participation | name, disabled, required and form                                        |
-| variant              | secondary (default) or outlined; the trigger's button style, see below   |
+| variant              | secondary (default) or outlined; the trigger's Button style, see below   |
 
 ## Guidelines
 
 - Use a select to save space when a single choice has several alternatives.
-- The trigger is a button, not a field. Choose its style for the surroundings:
-  - secondary, a filled pill sharing secondary Button colors, sits on the page canvas;
-  - outlined, a bordered pill without a fill, sits on panes, dialogs, rows and toolbars, where a fill would blend with the surface.
+- The trigger is a Button, not a field, in one of the Button styles. Choose it for the surroundings:
+  - secondary sits on the page canvas;
+  - outlined sits on panes, dialogs, rows and toolbars, where a fill would blend with the surface.
 - In a form, the label sits above the trigger, which fits its content beside full-width text fields.
-- The open list is a raised popup in its own color with a hairline border, so it stands apart from the page, panes, rows and dialogs alike. Options show only hover, press and selection. Keyboard navigation, typeahead and dismissal come from the component.
+- The open list is a raised popup like Popover: its own color, a hairline border and the surface corners, so it stands apart from the page, panes, rows and dialogs alike. Options are rounded rows whose corners follow the popup's, inset by its padding. They show only hover, press and selection. Keyboard navigation, typeahead and dismissal come from the component.
 - Option focus rings appear for keyboard interaction, not pointer opening or hover.
 - Label, hint and error use the same field structure and colors as Input and Textarea. Invalid controls use the shared red border with HSL hover and pressed shades, without background changes, and retain the standard keyboard focus ring. The application owns validation.
 

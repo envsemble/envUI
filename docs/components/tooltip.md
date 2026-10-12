@@ -27,7 +27,7 @@ import { Refresh } from '@envsemble/envui/icons/Refresh';
 ## Guidelines
 
 - Use tooltips for supplementary hints, such as the full name of an icon-only action or why a control is disabled. Never place the only copy of essential information in a tooltip.
-- Tooltips open on hover and keyboard focus and close with Escape. Portals keep the originating theme.
+- Tooltips open on hover and keyboard focus and close with <kbd>Esc</kbd>. Portals keep the originating theme.
 - An icon-only control still needs its own accessible name; the tooltip repeats it visually.
 
 TypeScript declarations provide the complete public API.

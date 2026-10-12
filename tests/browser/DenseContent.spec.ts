@@ -6,18 +6,18 @@ import { catalogueUrl } from './Servers';
 
 test('a compact menu has shorter rows on one pane than a standard menu', async ({ page }) => {
   await page.goto(`${catalogueUrl}/#/components/menu/preview`);
-  await page.getByRole('button', { name: 'View options' }).click();
-  const standard = page.getByRole('menu', { name: 'View options' });
-  const standardRow = await standard.getByRole('menuitemradio', { name: 'Name' }).boundingBox();
+  await page.getByRole('button', { name: 'Open account menu' }).click();
+  const standard = page.getByRole('menu', { name: 'Account', exact: true });
+  const standardRow = await standard.getByRole('menuitem', { name: 'Preferences' }).boundingBox();
   await page.keyboard.press('Escape');
-  await page.getByRole('button', { name: 'File actions' }).click();
-  const compact = page.getByRole('menu', { name: 'File actions' });
+  await page.getByRole('button', { name: 'Open compact account menu' }).click();
+  const compact = page.getByRole('menu', { name: 'Compact account' });
   await expect(compact).toHaveAttribute('data-density', 'compact');
-  const compactRow = await compact.getByRole('menuitem', { name: 'Open' }).boundingBox();
+  const compactRow = await compact.getByRole('menuitem', { name: 'Preferences' }).boundingBox();
   expect(compactRow!.height).toBeLessThanOrEqual(34);
   expect(compactRow!.height).toBeLessThan(standardRow!.height);
   await expect(compact.getByRole('separator')).toHaveCount(1);
-  await compact.getByRole('menuitem', { name: 'Rename' }).click();
+  await compact.getByRole('menuitem', { name: 'Preferences' }).click();
   await expect(compact).toBeHidden();
 });
 

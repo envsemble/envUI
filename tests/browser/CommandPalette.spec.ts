@@ -41,6 +41,12 @@ test.describe('CommandPalette', () => {
     );
     const input = dialog.getByRole('combobox', { name: 'Go to document' });
     await expect(input).toBeFocused();
+    // Key hints show their keys as Kbd.
+    await expect(dialog.locator('.env-command-palette-hint kbd.env-kbd')).toHaveText([
+      'Enter',
+      'Ctrl',
+      'Enter',
+    ]);
     const list = dialog.getByRole('listbox', { name: 'Go to document' });
     await expect(input).toHaveAttribute('aria-controls', (await list.getAttribute('id'))!);
     await expect(dialog.getByRole('group', { name: 'Recently opened' })).toBeVisible();

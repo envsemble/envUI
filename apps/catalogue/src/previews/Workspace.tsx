@@ -10,6 +10,7 @@ import {
   Tree,
   type DocumentTab,
   type TreeItem,
+  Kbd,
 } from '@envsemble/envui';
 import { Description } from '@envsemble/envui/icons/Description';
 import { Folder } from '@envsemble/envui/icons/Folder';
@@ -51,7 +52,7 @@ export interface SampleRow extends TreeItem {
 }
 
 /** Sample expansion and selection, owned by the application as Tree expects. */
-export function useSampleTree() {
+function useSampleTree() {
   const tree = useMemo(sampleTree, []);
   const [expanded, setExpanded] = useState(() => new Set(['Plans', 'Plans/Search']));
   const [selectedId, setSelectedId] = useState<string | null>('Plans/Search/2');
@@ -112,7 +113,13 @@ export function TreePreview() {
       <Example
         title="File tree"
         size="wide"
-        caption="Arrow keys move, Right and Left expand and collapse, Enter opens and Space previews. Right-click a row, or press Shift+F10, for its actions."
+        caption={
+          <>
+            <Kbd>↑</Kbd> and <Kbd>↓</Kbd> move, <Kbd>→</Kbd> and <Kbd>←</Kbd> expand and collapse,{' '}
+            <Kbd>Enter</Kbd> opens and <Kbd>Space</Kbd> previews. Right-click a row, or press{' '}
+            <Kbd keys={['Shift', 'F10']} />, for its actions.
+          </>
+        }
       >
         <div className="docs-tree-frame">
           <Tree
@@ -172,7 +179,12 @@ export function DocumentTabsPreview() {
       <Example
         title="Open documents"
         size="wide"
-        caption="Click or use the arrow keys to switch, double-click the italic preview tab to keep it, and close with the button or a middle click."
+        caption={
+          <>
+            Click or use <Kbd>←</Kbd> and <Kbd>→</Kbd> to switch, double-click the italic preview
+            tab to keep it, and close with the button, a middle click or <Kbd>Delete</Kbd>.
+          </>
+        }
       >
         <Surface tone="pane" padding={0} className="docs-document-tabs">
           <DocumentTabs
@@ -244,7 +256,13 @@ export function CommandPalettePreview() {
       <Example
         title="Quick open"
         size="collection"
-        caption="The application filters and ranks the items; the palette moves the highlight, selects with Enter or a click, and reports Ctrl or Cmd as a modifier."
+        caption={
+          <>
+            The application filters and ranks the items; the palette moves the highlight with{' '}
+            <Kbd>↑</Kbd> and <Kbd>↓</Kbd>, selects with <Kbd>Enter</Kbd> or a click, and reports{' '}
+            <Kbd>Ctrl</Kbd> or <Kbd>Cmd</Kbd> as a modifier.
+          </>
+        }
       >
         <Button variant="secondary" startIcon={<Search />} onClick={() => setOpen(true)}>
           Go to document
@@ -264,7 +282,11 @@ export function CommandPalettePreview() {
             setLastAction(`${modifier ? 'Opened to the side' : 'Opened'} ${item.id}`)
           }
           emptyLabel="No matching documents"
-          footer="Enter opens · Ctrl+Enter opens to the side · Esc closes"
+          hints={[
+            { keys: ['Enter'], label: 'Open' },
+            { keys: ['Ctrl', 'Enter'], label: 'Open to the side' },
+            { keys: ['Esc'], label: 'Close' },
+          ]}
         />
         <Text variant="caption" className="docs-caption" aria-live="polite">
           {lastAction}

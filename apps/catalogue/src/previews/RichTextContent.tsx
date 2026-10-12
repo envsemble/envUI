@@ -1,5 +1,5 @@
 import { useCallback, useState, type MouseEvent } from 'react';
-import { ActionGroup, Button, Card, Tabs, Text } from '@envsemble/envui';
+import { ActionGroup, Button, Card, Tabs, Text, Kbd } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/content';
 import {
   RichText,
@@ -96,9 +96,10 @@ export function RichTextPreview() {
         caption="This draft exists only in this example. Markdown is normalized when edited; reference IDs remain in the saved source."
       >
         <Text>
-          Format the draft directly. Type @ for contacts, # for topics or / for files, then use
-          Up/Down and Enter to choose a result; Escape dismisses the menu. These small collections
-          stand in for application searches.
+          Format the draft directly. Type <Kbd>@</Kbd> for contacts, <Kbd>#</Kbd> for topics or{' '}
+          <Kbd>/</Kbd> for files, then use <Kbd>↑</Kbd> <Kbd>↓</Kbd> and <Kbd>Enter</Kbd> to choose
+          a result; <Kbd>Esc</Kbd> dismisses the menu. These small collections stand in for
+          application searches.
         </Text>
         <Text>
           Read-only uses the same document schema and references. Attach files delegates to a sample

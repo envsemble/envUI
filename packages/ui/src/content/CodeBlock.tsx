@@ -21,11 +21,11 @@ export interface CodeBlockProps extends Omit<ComponentPropsWithRef<'div'>, 'chil
   label?: string;
   copyable?: boolean;
   wrap?: boolean;
-  /** GitHub Dark Default in both app themes; optionally override with light or dark. */
+  /** The dark code theme in both app themes by default; optionally override with light or dark. */
   theme?: ThemeValue;
 }
 
-/** Source display with unmodified GitHub colors; copy always uses the original string. */
+/** Source display with the code theme's own colors; copy always uses the original string. */
 export function CodeBlock({
   children: source,
   language,

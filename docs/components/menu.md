@@ -78,15 +78,15 @@ import { Search } from '@envsemble/envui/icons/Search';
 </Menu>;
 ```
 
-| Name                                       | Contract                                                                                 |
-| ------------------------------------------ | ---------------------------------------------------------------------------------------- |
-| MenuItem description                       | A second, muted line; announced as the item’s description                                |
-| MenuItem shortcut                          | Key hint at the end, such as Ctrl+P, also exposed as aria-keyshortcuts; the app binds it |
-| MenuItem trailing                          | End content such as a Badge or Counter                                                   |
-| MenuGroup label                            | A labelled group with a small heading; its rows keep large outer corners                 |
-| MenuRadioGroup value / onValueChange       | One checked choice among its MenuRadioItems; optional label like MenuGroup               |
-| MenuRadioItem value / description / icon   | A choice with a check mark while checked; closeOnClick is true by default                |
-| MenuCheckboxItem checked / onCheckedChange | An on/off option with a check mark; the menu stays open unless closeOnClick is set       |
+| Name                                       | Contract                                                                                                       |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
+| MenuItem description                       | A second, muted line; announced as the item’s description                                                      |
+| MenuItem shortcut                          | Key hint at the end, such as <kbd>Ctrl</kbd>+<kbd>P</kbd>, also exposed as aria-keyshortcuts; the app binds it |
+| MenuItem trailing                          | End content such as a Badge or Counter                                                                         |
+| MenuGroup label                            | A labelled group with a small heading; its rows keep large outer corners                                       |
+| MenuRadioGroup value / onValueChange       | One checked choice among its MenuRadioItems; optional label like MenuGroup                                     |
+| MenuRadioItem value / description / icon   | A choice with a check mark while checked; closeOnClick is true by default                                      |
+| MenuCheckboxItem checked / onCheckedChange | An on/off option with a check mark; the menu stays open unless closeOnClick is set                             |
 
 ### Context menu
 
@@ -155,10 +155,11 @@ import { AppShell, OrganizationMenu } from '@envsemble/envui';
 ## Guidelines
 
 - Use a menu for a short list of actions or destinations behind one trigger. Use Select to choose a value and Tabs to switch views.
-- A context menu opens on right click and long press at the pointer, and with the context-menu key or Shift+F10 below the focused element. For a widget with aria-activedescendant, such as Tree, the target is its active descendant. Focus returns to where it was when the menu closes.
+- envUI provides two menus: OrganizationMenu, and the account menu composed from AvatarButton, MenuHeader and items. Every other menu is the application's own, built from MenuItem, MenuGroup, MenuRadioGroup, MenuCheckboxItem and MenuSeparator, in standard or compact density.
+- A context menu opens on right click and long press at the pointer, and with the <kbd>Menu</kbd> key or <kbd>Shift</kbd>+<kbd>F10</kbd> below the focused element. For a widget with aria-activedescendant, such as Tree, the target is its active descendant. Focus returns to where it was when the menu closes.
 - A context menu supplements visible controls: offer the same actions elsewhere, for people who cannot right click.
-- Shortcut hints describe keys the application already handles; the menu does not bind them.
-- Arrow keys move between items, typing jumps to a matching item, Enter or Space activates, and Escape closes and returns focus to the trigger.
+- Shortcut hints show as Kbd keys and describe keys the application already handles; the menu does not bind them.
+- <kbd>↑</kbd> and <kbd>↓</kbd> move between items, typing jumps to a matching item, <kbd>Enter</kbd> or <kbd>Space</kbd> activates, and <kbd>Esc</kbd> closes and returns focus to the trigger.
 - The menu is a pane of grouped rows. Keep labels short; one icon per item at most.
 - Organizations are radio items: the active one is checked, and choosing it again does nothing.
 - Use an organization's detail for a short fact that matters before switching, such as the person's role there.

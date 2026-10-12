@@ -138,6 +138,12 @@ test('menu groups, radio and checkbox items keep their choice', async ({ page })
     'aria-keyshortcuts',
     'Control+Shift+P',
   );
+  // The hint shows as keys.
+  await expect(
+    menu
+      .getByRole('menuitem', { name: 'Command palette' })
+      .locator('.env-menu-item-shortcut kbd.env-kbd'),
+  ).toHaveText(['Ctrl', 'Shift', 'P']);
   await page.keyboard.press('Escape');
   await expect(menu).toBeHidden();
 });

@@ -9,6 +9,7 @@ import {
   Stack,
   ActionGroup,
   DisclosureNote,
+  Kbd,
 } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Search } from '@envsemble/envui/icons/Search';
@@ -159,7 +160,11 @@ export function TabsPreview() {
       <Example
         title="Project views"
         size="content"
-        caption="Arrow keys switch views; disabled tabs are skipped."
+        caption={
+          <>
+            <Kbd>←</Kbd> and <Kbd>→</Kbd> switch views; disabled tabs are skipped.
+          </>
+        }
       >
         <Tabs
           aria-label="Example project views"

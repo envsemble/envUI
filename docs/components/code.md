@@ -20,13 +20,13 @@ import { Code, CodeBlock } from '@envsemble/envui/content';
 | language           | JS/JSX, TS/TSX, Java, JSON, HTML, CSS, SQL, shell, YAML, Markdown, INI; aliases are supported |
 | copyable / label   | Optional copy control and source label                                                        |
 | wrap               | Wrap long lines; otherwise scroll inside the block                                            |
-| theme              | Defaults to GitHub Dark Default in both app themes; optional light or dark override           |
+| theme              | Defaults to the dark code theme in both app themes; optional light or dark override           |
 | Native div props   | Root ref, className, style and accessible attributes                                          |
 
 ## Guidelines
 
 - Use Code inside prose and CodeBlock for multiline source. Source is selectable and never executed.
-- Inline code and code blocks use GitHub Dark Default in both app themes. CodeBlock accepts an explicit light or dark override. Prose and controls retain envUI typography and spacing.
+- Inline code and code blocks use the same dark code theme in both app themes. CodeBlock accepts an explicit light or dark override. Prose and controls retain envUI typography and spacing.
 - In prose dense with identifiers, paths and hashes, such as planning records, dark chips dominate the light theme; use `appearance="subtle"` (Markdown `inlineCode="subtle"`) there.
 - Highlighting starts after the initial render and shares one runtime. App theme changes leave code colors unchanged; explicit code theme overrides reuse the tokens. Unsupported languages remain plain text.
 - Blocks above 50,000 characters or with a line above 2,000 characters stay plain text to avoid expensive highlighting.

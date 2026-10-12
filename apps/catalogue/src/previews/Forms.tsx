@@ -14,6 +14,7 @@ import {
   Surface,
   GroupedRows,
   Row,
+  Kbd,
 } from '@envsemble/envui';
 import { Mail } from '@envsemble/envui/icons/Mail';
 import { ContentCopy } from '@envsemble/envui/icons/ContentCopy';
@@ -182,7 +183,12 @@ function CompactFieldExamples() {
     <Example
       title="Compact fields & search"
       size="collection"
-      caption="Compact fields share the button height and can show a floating label. Type to reveal the clear action; Escape also clears."
+      caption={
+        <>
+          Compact fields share the button height and can show a floating label. Type to reveal the
+          clear action; <Kbd>Esc</Kbd> also clears.
+        </>
+      }
     >
       <SpecimenGrid>
         <Specimen title="Search beside an action">

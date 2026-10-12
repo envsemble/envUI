@@ -16,14 +16,14 @@ export function CodePreview() {
         caption="For prose dense with identifiers, paths and hashes, the subtle appearance follows the app theme."
       >
         <Text>
-          The ledger pins revision <Code appearance="subtle">c9f60ee</Code> of{' '}
-          <Code appearance="subtle">active/0013-envui-redesign/plan.md</Code> on branch{' '}
-          <Code appearance="subtle">atlas-port</Code>.
+          Commit <Code appearance="subtle">c9f60ee</Code> moves{' '}
+          <Code appearance="subtle">src/config/defaults.ts</Code> to the{' '}
+          <Code appearance="subtle">release-2.4</Code> branch.
         </Text>
       </Example>
       <Example
         title="Highlighted source"
-        caption="Uses GitHub Dark Default in both app themes. Copying preserves the original source."
+        caption="Uses the same dark code theme in both app themes. Copying preserves the original source."
       >
         <CodeBlock
           language="tsx"

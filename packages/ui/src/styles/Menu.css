@@ -73,9 +73,11 @@
 }
 .env-menu-item-shortcut {
   flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
   color: var(--color-row-detail);
   font: var(--type-body-small);
-  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 /* Radio and checkbox items keep a check-mark slot, so their labels align whether checked or not. */

@@ -142,7 +142,7 @@ const extensions = createRichTextExtensions();
 - Raw HTML in Markdown is displayed as literal text consistently on the server and in the browser. Ordinary GFM tables are supported; merged cells and tables with block content requiring HTML are outside the Markdown subset.
 - References save a stable ID and label in generic inline Markdown syntax. The library does not resolve IDs to product records or routes; the application supplies reference items and rendering or activation callbacks.
 - RichText uses the same extensions and reference rendering as RichTextEditor, with editing disabled. Keep the same extension configuration when displaying saved content.
-- Suggestion menus use Up/Down to move, Enter to select and Escape to dismiss. Loading, empty and failure states stay in the library; source callbacks return application data and may use the supplied AbortSignal.
+- Suggestion menus use <kbd>↑</kbd> and <kbd>↓</kbd> to move, <kbd>Enter</kbd> to select and <kbd>Esc</kbd> to dismiss. Loading, empty and failure states stay in the library; source callbacks return application data and may use the supplied AbortSignal.
 - Use / as either a reference trigger or the optional slash command trigger in each editor. Keep reference source and extension arrays stable so React updates retain the editing session.
 
 TypeScript declarations provide the complete public API.

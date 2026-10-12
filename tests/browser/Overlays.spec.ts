@@ -89,3 +89,47 @@ test('dialogs open wide for heavy content and near the top for search-like tasks
     .toBeLessThan(Math.min(viewport.height * 0.12, 96) + 8);
   await expect.poll(async () => (await top.boundingBox())!.width).toBeCloseTo(28 * 16, 0);
 });
+
+test('a notice dismiss button is a circle tinted with the notice tone', async ({ page }) => {
+  await page.goto(`${fixtureUrl}/?fixture=notices`);
+  const notice = page
+    .getByTestId('notices-light')
+    .locator('.env-notice')
+    .filter({ has: page.getByRole('button', { name: 'Dismiss' }) });
+  const dismiss = notice.getByRole('button', { name: 'Dismiss' });
+  const box = (await dismiss.boundingBox())!;
+  expect(Math.abs(box.width - box.height)).toBeLessThan(0.5);
+  await expect(dismiss).toHaveCSS('border-top-left-radius', '50%');
+  const tone = await notice.evaluate(
+    (element) => getComputedStyle(element.querySelector('.env-notice-icon')!).color,
+  );
+  await expect(dismiss).toHaveCSS('color', tone);
+  await dismiss.hover();
+  await expect(dismiss).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect(dismiss).toHaveCSS('color', tone);
+});
+
+test('dialogs, the command palette and popovers share one raised surface', async ({ page }) => {
+  const surface = (locator: import('@playwright/test').Locator) =>
+    locator.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return {
+        background: style.backgroundColor,
+        border: `${style.borderTopWidth} ${style.borderTopStyle} ${style.borderTopColor}`,
+        radius: style.borderTopLeftRadius,
+      };
+    });
+  await page.goto(`${fixtureUrl}/?fixture=dialog-variants`);
+  await page.getByRole('button', { name: 'Open wide dialog' }).click();
+  const dialog = await surface(page.getByRole('dialog', { name: 'Wide details' }));
+  expect(dialog.border).not.toMatch(/^0px/);
+
+  await page.goto(`${fixtureUrl}/?fixture=popover`);
+  await page.getByRole('button', { name: 'Details light' }).click();
+  expect(await surface(page.getByRole('dialog', { name: 'Document details' }))).toEqual(dialog);
+
+  await page.goto(`${fixtureUrl}/?fixture=palette`);
+  await page.getByRole('button', { name: 'Quick open light' }).focus();
+  await page.keyboard.press('Enter');
+  expect(await surface(page.getByRole('dialog', { name: 'Go to document' }))).toEqual(dialog);
+});

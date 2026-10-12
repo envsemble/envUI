@@ -47,7 +47,7 @@
   --color-text-primary: hsl(225 5.882353% 13.333333%);
   --color-text-muted: hsl(213.333333 4.522613% 39.019608%);
   --color-border-strong: hsl(220 8.823529% 86.666667%);
-  /* Google reference palette: white canvas, cool panes, pale gray surfaces and blue actions. */
+  /* Light palette: white canvas, cool panes, pale gray surfaces and blue actions. */
   --color-canvas: hsl(0 0% 100%);
   --color-canvas-dark: hsl(0 0% 12.157%);
   --color-surface-base: hsl(0 0% 100%);
@@ -101,6 +101,9 @@
   /* Popups raised over the page, such as the open list of a Select. */
   --color-popup: hsl(0 0% 100%);
   --color-popup-border: var(--color-border-strong);
+  /* Dialogs and the command palette: the popup surface, which in the dark theme stays the pane color
+     so rows and fields inside keep their contrast. */
+  --color-dialog: var(--color-popup);
   --color-select-option: var(--color-popup);
   --color-select-option-text: hsl(213.333 9.333% 29.412%);
   --color-select-selected: hsl(218.181818 91.666667% 95.294118%);
@@ -395,6 +398,7 @@
   --color-field-error: hsl(4.231 76.471% 75%);
   --color-popup: hsl(216 4.425% 22.157%);
   --color-popup-border: hsl(216 4.425% 30%);
+  --color-dialog: var(--color-pane);
   --color-select-option: var(--color-popup);
   --color-select-option-text: hsl(213.333 10.843% 83.725%);
   --color-select-selected: hsl(216 30% 30%);

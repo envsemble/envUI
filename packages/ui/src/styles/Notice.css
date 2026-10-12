@@ -57,9 +57,24 @@
   flex-wrap: wrap;
   gap: var(--space-2);
 }
+/* The dismiss button is a small circle in the notice's tone, centered on the first line. */
 .env-notice-dismiss.env-button {
   grid-column: 3;
-  margin-block: calc(-1 * var(--space-2));
+  inline-size: var(--control-height-compact);
+  max-inline-size: none;
+  block-size: var(--control-height-compact);
+  min-block-size: var(--control-height-compact);
+  margin-block: calc((1.4 * var(--font-size-heading-small) - var(--control-height-compact)) / 2);
   margin-inline-end: calc(-1 * var(--space-2));
-  color: var(--color-icon);
+  border-radius: 50%;
+  color: var(--env-notice-tone);
+}
+/* Hover and press tint the circle with the tone instead of the text button's link colors. */
+.env-notice-dismiss.env-button.env-icon-button:hover:not(:disabled):not([aria-disabled='true']) {
+  background: color-mix(in srgb, var(--env-notice-tone) 14%, transparent);
+  color: var(--env-notice-tone);
+}
+.env-notice-dismiss.env-button.env-icon-button:active:not(:disabled):not([aria-disabled='true']) {
+  background: color-mix(in srgb, var(--env-notice-tone) 22%, transparent);
+  color: var(--env-notice-tone);
 }

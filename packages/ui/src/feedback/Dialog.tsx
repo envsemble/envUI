@@ -110,21 +110,23 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
               finalFocus={finalFocus}
             >
               <Stack gap={5} className="env-dialog-content">
-                <div className="env-dialog-heading">
-                  <BaseDialog.Title className="env-dialog-title">{title}</BaseDialog.Title>
-                  {placement === 'right' && (
-                    <BaseDialog.Close
-                      render={
-                        <IconButton icon={<Close />} aria-label={closeLabel} disabled={pending} />
-                      }
-                    />
+                <div className="env-dialog-header">
+                  <div className="env-dialog-heading">
+                    <BaseDialog.Title className="env-dialog-title">{title}</BaseDialog.Title>
+                    {placement === 'right' && (
+                      <BaseDialog.Close
+                        render={
+                          <IconButton icon={<Close />} aria-label={closeLabel} disabled={pending} />
+                        }
+                      />
+                    )}
+                  </div>
+                  {description != null && (
+                    <BaseDialog.Description className="env-dialog-description">
+                      {description}
+                    </BaseDialog.Description>
                   )}
                 </div>
-                {description != null && (
-                  <BaseDialog.Description className="env-dialog-description">
-                    {description}
-                  </BaseDialog.Description>
-                )}
                 {children}
                 {(placement !== 'right' || actions != null) && (
                   <ActionGroup align="end" className="env-dialog-actions">

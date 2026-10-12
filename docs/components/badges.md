@@ -9,7 +9,7 @@ import { TaskAlt } from '@envsemble/envui/icons/TaskAlt';
 
 <Badge tone="warning">Blocked</Badge>
 <Badge tone="done" icon={<TaskAlt />}>Completed</Badge>
-<Badge variant="outline">envsemble/atlas</Badge>
+<Badge variant="outline">Shared drafts</Badge>
 
 <NavigationItem
   href="/inbox"

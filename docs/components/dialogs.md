@@ -30,13 +30,14 @@ import { Dialog, Button, Text } from '@envsemble/envui';
 | open / defaultOpen / onOpenChange | Controlled or uncontrolled visibility                                                                                              |
 | DialogClose                       | Additional dismissal action; shared button props                                                                                   |
 | initialFocus / finalFocus         | Optional focus refs                                                                                                                |
-| pending                           | Work is in progress: Escape, outside presses and the built-in close button cannot dismiss the dialog                               |
+| pending                           | Work is in progress: <kbd>Esc</kbd>, outside presses and the built-in close button cannot dismiss the dialog                       |
 
 ## Guidelines
 
 - Use a centered modal for a focused confirmation or short form. Use a right panel to inspect content; set modal=false when its source page should remain interactive.
 - Use placement top for search-like dialogs, so results can grow downward without moving the field, and size wide for tables, comparisons and longer forms. For quick open, use CommandPalette.
-- Centered dialogs include a footer dismissal; right panels include a header close button. Escape closes either placement and focus returns to the trigger or finalFocus ref.
+- Centered dialogs include a footer dismissal; right panels include a header close button. <kbd>Esc</kbd> closes either placement and focus returns to the trigger or finalFocus ref.
+- Every dialog has the same surface as Popover and CommandPalette: the raised popup color, a hairline border and the surface corners. In the dark theme, dialogs keep the pane color, so rows and fields inside keep their contrast. The title and its description sit together above the content, and the actions close the dialog at the end.
 - Modal dialogs trap focus; non-modal panels do not. Portals preserve the originating theme.
 - The application owns validation, saving, async work and whether completion closes the dialog.
 - While async work is pending, set pending so the dialog cannot be dismissed, and set pending on the action that started it. Restore focus to the intended trigger or finalFocus target.

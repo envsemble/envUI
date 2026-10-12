@@ -26,7 +26,7 @@ import { ColorPicker } from '@envsemble/envui';
 ## Guidelines
 
 - Use for opaque colors. Supply six hexadecimal digits, optionally prefixed by #. Short HEX, alpha and other color formats are outside this API.
-- The color area and hue slider support pointer interaction and arrow keys. They use the theme’s visible focus ring; the HEX field uses the shared Input geometry and validation.
+- The color area supports pointer interaction and <kbd>←</kbd> <kbd>→</kbd> <kbd>↑</kbd> <kbd>↓</kbd>; the hue slider supports pointer interaction and <kbd>←</kbd> <kbd>→</kbd>. They use the theme’s visible focus ring; the HEX field uses the shared Input geometry and validation.
 - Partial or invalid HEX drafts do not call onValueChange. Recovery text is linked to the field and announced; leaving an invalid draft restores the previous valid color. Valid input is normalized to lowercase #rrggbb.
 - Applications own the selected color and its meaning. Palette tokens, theme customization, persistence and dialogs belong to the consumer.
 - Uncontrolled native form reset restores defaultValue without emitting onValueChange. Controlled reset retains value; the application resets its own state. Canceling the reset event preserves the draft.

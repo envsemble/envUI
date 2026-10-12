@@ -12,6 +12,7 @@ import { Checkbox } from '../forms/Checkbox.js';
 import { Link } from '../actions/Link.js';
 import { Code } from './Code.js';
 import { CodeBlock } from './CodeBlock.js';
+import { Kbd } from './Kbd.js';
 
 export interface MarkdownLinkProps extends ComponentPropsWithoutRef<'a'> {
   href: string;
@@ -38,17 +39,42 @@ export interface MarkdownProps extends Omit<ComponentPropsWithRef<'div'>, 'child
 
 interface MarkdownNode {
   type: string;
+  value?: string;
+  data?: { hName?: string };
   children?: MarkdownNode[];
+}
+
+const keyOpen = /^<kbd>$/i;
+const keyClose = /^<\/kbd>$/i;
+
+/** <kbd>Ctrl</kbd> becomes a key: the one raw HTML element kept, around plain text only. */
+function keepKeys(children: MarkdownNode[]) {
+  const kept: MarkdownNode[] = [];
+  for (let index = 0; index < children.length; index++) {
+    const [open, text, close] = children.slice(index, index + 3);
+    if (
+      open?.type === 'html' &&
+      keyOpen.test(open.value ?? '') &&
+      text?.type === 'text' &&
+      close?.type === 'html' &&
+      keyClose.test(close.value ?? '')
+    ) {
+      kept.push({ type: 'key', data: { hName: 'kbd' }, children: [text] });
+      index += 2;
+    } else kept.push(children[index]!);
+  }
+  return kept;
 }
 
 /**
  * Raw HTML leaves the Markdown tree before it becomes HTML, after every remark plugin, so no
  * rehype plugin (rehype-raw, say) can render it; skipHtml alone acts after the rehype plugins.
+ * Keys written as <kbd>Ctrl</kbd> stay, and render as Kbd.
  */
 function remarkDropHtml() {
   const drop = (node: MarkdownNode) => {
     if (!node.children) return;
-    node.children = node.children.filter((child) => child.type !== 'html');
+    node.children = keepKeys(node.children).filter((child) => child.type !== 'html');
     node.children.forEach(drop);
   };
   return drop;
@@ -88,6 +114,7 @@ export function Markdown({
           <span>{linkProps.children}</span>
         ),
       code: ({ node: _node, ...codeProps }) => <Code appearance={inlineCode} {...codeProps} />,
+      kbd: ({ node: _node, ...keyProps }) => <Kbd {...keyProps} />,
       pre: ({ node, children: preChildren }) => {
         const code = node?.children.find(
           (child) => child.type === 'element' && child.tagName === 'code',

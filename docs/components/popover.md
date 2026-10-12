@@ -37,7 +37,7 @@ import { Button, Input, Popover, Stack, Text } from '@envsemble/envui';
 ## Guidelines
 
 - Use a popover for details or a small form beside the control that opened it. Use Tooltip for a short hint, Menu for a list of actions and Dialog for a task that needs the whole window.
-- Escape and a press outside close the popover and return focus to the trigger. Focus moves into the popover when it opens; Tab moves through its content.
+- <kbd>Esc</kbd> and a press outside close the popover and return focus to the trigger. Focus moves into the popover when it opens; <kbd>Tab</kbd> moves through its content.
 - The panel uses the raised popup colors with a hairline border and the menu's corners, and keeps the originating theme in its portal.
 - Close the popover from inside with the close function once its action completes.
 

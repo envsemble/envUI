@@ -30,8 +30,8 @@ export interface SelectProps
   placeholder?: string;
   autoComplete?: string;
   /**
-   * The trigger's button style, to suit its surroundings: secondary (default) is a filled pill for
-   * the page canvas, outlined a bordered pill for panes, dialogs, rows and toolbars.
+   * The trigger's Button style, to suit its surroundings: secondary (default) for the page canvas,
+   * outlined for panes, dialogs, rows and toolbars.
    */
   variant?: 'secondary' | 'outlined';
 }
@@ -121,7 +121,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
           data-variant={variant}
           className={classNames(
             'env-button',
-            variant === 'secondary' && 'env-button-secondary',
+            variant === 'outlined' ? 'env-button-outlined' : 'env-button-secondary',
             'env-dropdown-trigger',
             className,
           )}

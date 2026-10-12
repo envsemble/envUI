@@ -14,7 +14,7 @@ export function Example({
   title?: string;
   actions?: ReactNode;
   children: ReactNode;
-  caption?: string;
+  caption?: ReactNode;
   className?: string;
   gap?: SpaceStep;
   size?: 'compact' | 'field' | 'content' | 'wide' | 'collection';
@@ -70,7 +70,7 @@ export function Specimen({
 }: {
   title: string;
   children: ReactNode;
-  caption?: string;
+  caption?: ReactNode;
 }) {
   return (
     <Stack as="section" gap={3} className="docs-specimen">

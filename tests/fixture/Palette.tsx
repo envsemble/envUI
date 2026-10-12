@@ -46,7 +46,10 @@ export function CommandPaletteFixture({ theme }: { theme: ThemeValue }) {
         items={items}
         onSelect={(item, { modifier }) => setLog(`${modifier ? 'side' : 'open'} ${item.id}`)}
         emptyLabel="No matching documents"
-        footer="Enter opens · Ctrl+Enter opens to the side"
+        hints={[
+          { keys: ['Enter'], label: 'Open' },
+          { keys: ['Ctrl', 'Enter'], label: 'Open to the side' },
+        ]}
       />
       <output data-testid={`palette-log-${theme}`}>{log}</output>
     </Theme>

@@ -31,7 +31,7 @@ import { SegmentedControl } from '@envsemble/envui';
 ## Guidelines
 
 - Use a segmented control to switch between a few views or filters of the same content, such as open, blocked and done items. Use Tabs when each option has its own panel, RadioGroup for a form choice, and Select for longer lists.
-- It is a radio group: one tab stop, and Arrow keys move to the next option and choose it, skipping disabled options.
+- It is a radio group: one tab stop, and <kbd>←</kbd> <kbd>→</kbd> <kbd>↑</kbd> <kbd>↓</kbd> move to the previous or next option and choose it, skipping disabled options.
 - The rail is the translucent fill, like the tab rail, and the chosen option takes the primary button colors, so it stays clear on the canvas, panes and rows in both themes.
 - Keep labels short. A long set of options scrolls within its rail on narrow screens.
 

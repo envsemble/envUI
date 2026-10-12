@@ -13,6 +13,7 @@ import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { Theme, useTheme } from '../foundations/Theme.js';
 import { Search } from '../icons/Search.js';
+import { Kbd } from '../content/Kbd.js';
 
 export interface CommandPaletteItem {
   /** Stable identifier; options carry it as data-item-id. */
@@ -27,6 +28,13 @@ export interface CommandPaletteItem {
   group?: string;
   /** End content, such as a Kbd shortcut or a Badge. */
   trailing?: ReactNode;
+}
+
+/** A key hint in the footer: the keys as Kbd, then what they do. */
+export interface CommandPaletteHint {
+  /** One key or a combination, such as ['Ctrl', 'Enter']. */
+  keys: readonly string[];
+  label: ReactNode;
 }
 
 export interface CommandPaletteSelectOptions {
@@ -50,7 +58,9 @@ export interface CommandPaletteProps {
   placeholder?: string;
   /** Shown when there are no items. */
   emptyLabel?: ReactNode;
-  /** Content below the list, such as key hints. */
+  /** Key hints below the list, such as { keys: ['Enter'], label: 'Open' }. */
+  hints?: readonly CommandPaletteHint[];
+  /** Other content below the list, after the hints. */
   footer?: ReactNode;
   className?: string;
 }
@@ -94,6 +104,7 @@ export function CommandPalette({
   closeOnSelect = true,
   placeholder,
   emptyLabel = 'No results',
+  hints,
   footer,
   className,
 }: CommandPaletteProps) {
@@ -253,7 +264,17 @@ export function CommandPalette({
                   {emptyLabel}
                 </div>
               )}
-              {footer != null && <div className="env-command-palette-footer">{footer}</div>}
+              {(Boolean(hints?.length) || footer != null) && (
+                <div className="env-command-palette-footer">
+                  {hints?.map((hint, hintIndex) => (
+                    <span key={hintIndex} className="env-command-palette-hint">
+                      <Kbd keys={hint.keys} />
+                      <span>{hint.label}</span>
+                    </span>
+                  ))}
+                  {footer}
+                </div>
+              )}
             </BaseDialog.Popup>
           </div>
         </Theme>

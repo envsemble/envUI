@@ -212,13 +212,21 @@ test('Select triggers are button styles, and the open list stands apart from a p
 }) => {
   const outlined = page.getByRole('combobox', { name: 'Pane sort', exact: true });
   await expect(outlined).toHaveAttribute('data-variant', 'outlined');
-  await expect(outlined).toHaveClass(/env-button/);
-  await expect(outlined).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-  expect(
-    Number.parseFloat(
-      await outlined.evaluate((element) => getComputedStyle(element).borderTopWidth),
-    ),
-  ).toBeGreaterThan(0);
+  // The outlined trigger looks like an outlined Button beside it.
+  const looks = await outlined.evaluate((element) => {
+    const button = document.createElement('button');
+    button.className = 'env-button env-button-outlined';
+    element.parentElement!.append(button);
+    const read = (target: Element) => {
+      const style = getComputedStyle(target);
+      return [style.backgroundColor, style.color, style.borderTopColor, style.borderTopWidth];
+    };
+    const result = { trigger: read(element), button: read(button) };
+    button.remove();
+    return result;
+  });
+  expect(looks.trigger).toEqual(looks.button);
+  expect(Number.parseFloat(looks.trigger[3]!)).toBeGreaterThan(0);
   // The label sits above a trigger that fits its content, as for every select.
   const role = page.getByRole('combobox', { name: 'Pane role', exact: true });
   const [roleBox, labelBox, paneBox] = await Promise.all([
@@ -234,6 +242,19 @@ test('Select triggers are button styles, and the open list stands apart from a p
   const separation = await popupSeparation(page, '[data-testid="select-pane"]');
   expect(separation.contrast).toBeGreaterThanOrEqual(1.08);
   expect(separation.border).toBeGreaterThan(0);
+  // The popup takes the surface corners, and its options the same corners inset by its padding.
+  const corners = await page.locator('.env-dropdown-options').evaluate((popup) => {
+    const option = popup.querySelector('.env-dropdown-option')!;
+    const radius = (element: Element) =>
+      Number.parseFloat(getComputedStyle(element).borderTopLeftRadius);
+    return {
+      popup: radius(popup),
+      option: radius(option),
+      padding: Number.parseFloat(getComputedStyle(popup).paddingTop),
+    };
+  });
+  expect(corners.popup).toBeGreaterThanOrEqual(24);
+  expect(Math.abs(corners.option - (corners.popup - corners.padding))).toBeLessThan(1);
   await page.getByRole('option', { name: 'Boreal', exact: true }).click();
   await expect(role).toHaveText('Boreal');
 });

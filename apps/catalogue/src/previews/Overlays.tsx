@@ -5,6 +5,7 @@ import {
   Button,
   ContextMenu,
   IconButton,
+  Kbd,
   Meter,
   Menu,
   MenuHeader,
@@ -29,7 +30,6 @@ import { Add } from '@envsemble/envui/icons/Add';
 import { Delete } from '@envsemble/envui/icons/Delete';
 import { Edit } from '@envsemble/envui/icons/Edit';
 import { OpenInNew } from '@envsemble/envui/icons/OpenInNew';
-import { Search } from '@envsemble/envui/icons/Search';
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
 
@@ -47,7 +47,7 @@ export function MenuPreview() {
       <Example
         title="Organization menu"
         size="collection"
-        caption="Shared by every product in the shell's context area. Choosing an organization calls onSelect; the application switches and reports progress."
+        caption="Sits in the shell's context area. Choosing an organization calls onSelect; the application switches and reports progress."
       >
         <SpecimenGrid>
           <Specimen title="Active organization">
@@ -77,177 +77,154 @@ export function MenuPreview() {
           </Specimen>
         </SpecimenGrid>
       </Example>
-      <Example title="Account menu" size="collection">
+      <Example
+        title="Account menu"
+        size="collection"
+        caption="Opens from the avatar at the end of the topbar: who is signed in, account destinations and signing out. Compact density suits dense desktop applications."
+      >
         <SpecimenGrid>
-          <Specimen title="Header, destinations and actions">
-            <Menu
-              aria-label="Account"
-              trigger={
-                <AvatarButton
-                  name="Alex Morgan"
-                  detail="alex@example.com"
-                  aria-label="Open account menu"
-                />
-              }
-              align="start"
-            >
-              <MenuHeader>
-                <Stack gap={1} align="center">
-                  <Avatar name="Alex Morgan" size="large" />
-                  <Text>Alex Morgan</Text>
-                  <Text variant="supporting">alex@example.com</Text>
-                </Stack>
-              </MenuHeader>
-              <MenuItem href="#/account" icon={<ManageAccounts />}>
-                Account settings
-              </MenuItem>
-              <MenuItem icon={<Settings />} onClick={() => setLastAction('Preferences opened')}>
-                Preferences
-              </MenuItem>
-              <MenuSeparator />
-              <MenuItem icon={<Logout />} onClick={() => setLastAction('Signed out')}>
-                Sign out
-              </MenuItem>
-            </Menu>
+          <Specimen title="Standard">
+            <AccountMenu label="Account" onAction={setLastAction} />
           </Specimen>
-          <Specimen title="Button trigger">
-            <Menu
-              aria-label="Project actions"
-              trigger={<Button variant="secondary">Actions</Button>}
-              align="start"
-            >
-              <MenuItem onClick={() => setLastAction('Renamed')}>Rename</MenuItem>
-              <MenuItem onClick={() => setLastAction('Duplicated')}>Duplicate</MenuItem>
-              <MenuItem disabled>Archive</MenuItem>
-            </Menu>
+          <Specimen title="Compact">
+            <AccountMenu label="Compact account" density="compact" onAction={setLastAction} />
           </Specimen>
         </SpecimenGrid>
         <Text variant="caption" className="docs-caption" aria-live="polite">
           {lastAction}
         </Text>
       </Example>
-      <MenuChoicesExample onAction={setLastAction} />
-      <CompactMenuExample onAction={setLastAction} />
-      <ContextMenuExample />
+      <MenuPartsExample />
     </Preview>
   );
 }
 
-function MenuChoicesExample({ onAction }: { onAction: (action: string) => void }) {
+function AccountMenu({
+  label,
+  density,
+  onAction,
+}: {
+  label: string;
+  density?: 'compact';
+  onAction: (action: string) => void;
+}) {
+  return (
+    <Menu
+      aria-label={label}
+      density={density}
+      trigger={
+        <AvatarButton
+          name="Alex Morgan"
+          detail="alex@example.com"
+          aria-label={`Open ${label.toLowerCase()} menu`}
+        />
+      }
+      align="start"
+    >
+      <MenuHeader>
+        <Stack gap={1} align="center">
+          <Avatar name="Alex Morgan" size={density ? 'standard' : 'large'} />
+          <Text>Alex Morgan</Text>
+          <Text variant="supporting">alex@example.com</Text>
+        </Stack>
+      </MenuHeader>
+      <MenuItem href="#/account" icon={<ManageAccounts />}>
+        Account settings
+      </MenuItem>
+      <MenuItem icon={<Settings />} onClick={() => onAction('Preferences opened')}>
+        Preferences
+      </MenuItem>
+      <MenuSeparator />
+      <MenuItem icon={<Logout />} onClick={() => onAction('Signed out')}>
+        Sign out
+      </MenuItem>
+    </Menu>
+  );
+}
+
+const sampleItems = ['Quarterly report', 'Meeting notes', 'Budget'];
+
+/** Other menus are the application's: the parts, from a button or at the pointer. */
+function MenuPartsExample() {
+  const [lastAction, setLastAction] = useState('');
   const [sort, setSort] = useState('name');
   const [hidden, setHidden] = useState(false);
   return (
     <Example
-      title="Groups, choices and shortcuts"
+      title="Building blocks"
       size="collection"
-      caption="Radio items check one choice, checkbox items toggle and keep the menu open. Shortcut hints only describe keys the application already handles."
+      caption={
+        <>
+          Every other menu is the application&rsquo;s own, built from these parts in either density.
+          Radio items check one choice; checkbox items toggle and keep the menu open. Shortcuts show
+          as keys the application already handles. Right-click an item, or focus it and press{' '}
+          <Kbd keys={['Shift', 'F10']} />, to open a menu at the pointer.
+        </>
+      }
     >
-      <Menu
-        aria-label="View options"
-        trigger={<Button variant="secondary">View options</Button>}
-        align="start"
-      >
-        <MenuRadioGroup label="Sort by" value={sort} onValueChange={setSort}>
-          <MenuRadioItem value="name">Name</MenuRadioItem>
-          <MenuRadioItem value="date" description="Most recently changed first">
-            Date changed
-          </MenuRadioItem>
-        </MenuRadioGroup>
-        <MenuGroup label="Display">
-          <MenuCheckboxItem checked={hidden} onCheckedChange={setHidden}>
-            Show archived plans
-          </MenuCheckboxItem>
-          <MenuItem
-            icon={<Search />}
-            shortcut="Ctrl+P"
-            onClick={() => onAction('Quick open started')}
+      <SpecimenGrid>
+        <Specimen title="Groups and choices, from a button">
+          <Menu
+            aria-label="Sample options"
+            trigger={<Button variant="secondary">Options</Button>}
+            align="start"
           >
-            Quick open
-          </MenuItem>
-        </MenuGroup>
-      </Menu>
-    </Example>
-  );
-}
-
-function CompactMenuExample({ onAction }: { onAction: (action: string) => void }) {
-  return (
-    <Example
-      title="Compact menus"
-      size="collection"
-      caption="Dense desktop surfaces, such as a file tree, use 2 rem rows on one pane with hairline separators. A compact Tree opens a compact context menu."
-    >
-      <Menu
-        aria-label="File actions"
-        density="compact"
-        align="start"
-        trigger={<Button variant="secondary">File actions</Button>}
-      >
-        <MenuItem icon={<OpenInNew />} onClick={() => onAction('Opened')}>
-          Open
-        </MenuItem>
-        <MenuItem icon={<Edit />} shortcut="F2" onClick={() => onAction('Rename started')}>
-          Rename
-        </MenuItem>
-        <MenuSeparator />
-        <MenuItem icon={<Delete />} onClick={() => onAction('Deleted')}>
-          Delete
-        </MenuItem>
-      </Menu>
-    </Example>
-  );
-}
-
-const contextDocuments = ['Roadmap.md', 'Decisions.md', 'Retrospective.md'];
-
-function ContextMenuExample() {
-  const [lastAction, setLastAction] = useState('');
-  return (
-    <Example
-      title="Context menu"
-      size="collection"
-      caption="Right-click a document or the empty area, or focus a document and press Shift+F10 or the context-menu key. Offer the same actions through visible controls too."
-    >
-      <ContextMenu
-        aria-label="Document actions"
-        content={(target) => {
-          const name = target?.closest<HTMLElement>('[data-document]')?.dataset.document;
-          return name ? (
-            <>
-              <MenuItem
-                icon={<Edit />}
-                shortcut="F2"
-                onClick={() => setLastAction(`Rename ${name}`)}
-              >
-                Rename
+            <MenuRadioGroup label="Sort by" value={sort} onValueChange={setSort}>
+              <MenuRadioItem value="name">Name</MenuRadioItem>
+              <MenuRadioItem value="date" description="Most recently changed first">
+                Date changed
+              </MenuRadioItem>
+            </MenuRadioGroup>
+            <MenuGroup label="Display">
+              <MenuCheckboxItem checked={hidden} onCheckedChange={setHidden}>
+                Show hidden items
+              </MenuCheckboxItem>
+              <MenuItem icon={<Refresh />} shortcut="F5" onClick={() => setLastAction('Refreshed')}>
+                Refresh
               </MenuItem>
-              <MenuItem
-                icon={<OpenInNew />}
-                description="Beside the current document"
-                onClick={() => setLastAction(`${name} opened to the side`)}
-              >
-                Open to the side
-              </MenuItem>
-              <MenuSeparator />
-              <MenuItem icon={<Delete />} onClick={() => setLastAction(`${name} deleted`)}>
-                Delete
-              </MenuItem>
-            </>
-          ) : (
-            <MenuItem icon={<Add />} onClick={() => setLastAction('New document started')}>
-              New document
-            </MenuItem>
-          );
-        }}
-      >
-        <Surface tone="row" padding={4} className="docs-context-area">
-          {contextDocuments.map((name) => (
-            <Button key={name} variant="text" data-document={name}>
-              {name}
-            </Button>
-          ))}
-        </Surface>
-      </ContextMenu>
+            </MenuGroup>
+          </Menu>
+        </Specimen>
+        <Specimen title="Compact, at the pointer">
+          <ContextMenu
+            aria-label="Sample item actions"
+            density="compact"
+            content={(target) => {
+              const name = target?.closest<HTMLElement>('[data-item]')?.dataset.item;
+              return name ? (
+                <>
+                  <MenuItem icon={<OpenInNew />} onClick={() => setLastAction(`Opened ${name}`)}>
+                    Open
+                  </MenuItem>
+                  <MenuItem
+                    icon={<Edit />}
+                    shortcut="F2"
+                    onClick={() => setLastAction(`Rename ${name}`)}
+                  >
+                    Rename
+                  </MenuItem>
+                  <MenuSeparator />
+                  <MenuItem icon={<Delete />} onClick={() => setLastAction(`Deleted ${name}`)}>
+                    Delete
+                  </MenuItem>
+                </>
+              ) : (
+                <MenuItem icon={<Add />} onClick={() => setLastAction('New item started')}>
+                  New item
+                </MenuItem>
+              );
+            }}
+          >
+            <Surface tone="row" padding={4} className="docs-context-area">
+              {sampleItems.map((name) => (
+                <Button key={name} variant="text" data-item={name}>
+                  {name}
+                </Button>
+              ))}
+            </Surface>
+          </ContextMenu>
+        </Specimen>
+      </SpecimenGrid>
       <Text variant="caption" className="docs-caption" aria-live="polite">
         {lastAction}
       </Text>

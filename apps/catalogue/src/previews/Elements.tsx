@@ -41,7 +41,12 @@ export function SegmentedControlPreview() {
       <Example
         title="One choice among a few"
         size="collection"
-        caption="Arrow keys move between options and choose them. Counts follow the label in a smaller, muted number."
+        caption={
+          <>
+            <Kbd>←</Kbd> and <Kbd>→</Kbd> move between options and choose them. Counts follow the
+            label in a smaller, muted number.
+          </>
+        }
       >
         <SpecimenGrid>
           <Specimen title="With counts">
@@ -108,12 +113,12 @@ export function BadgesPreview() {
           <Specimen title="With an icon">
             <ActionGroup>
               <Badge tone="success" icon={<CheckCircle />}>
-                Merged
+                Approved
               </Badge>
               <Badge tone="done" icon={<TaskAlt />}>
                 Done
               </Badge>
-              <Badge icon={<Folder />}>envsemble/atlas</Badge>
+              <Badge icon={<Folder />}>Shared drafts</Badge>
             </ActionGroup>
           </Specimen>
         </SpecimenGrid>
@@ -225,7 +230,11 @@ export function PopoverPreview() {
       <Example
         title="Popovers"
         size="collection"
-        caption="Escape or a press outside closes the popover and focus returns to its trigger."
+        caption={
+          <>
+            <Kbd>Esc</Kbd> or a press outside closes the popover and focus returns to its trigger.
+          </>
+        }
       >
         <ActionGroup>
           <Popover
