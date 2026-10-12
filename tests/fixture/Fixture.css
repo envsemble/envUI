@@ -72,3 +72,12 @@ body:has(.fixture-resizable-shell) {
 .fixture-section output[data-testid^='tree-log'] {
   white-space: pre-line;
 }
+.fixture-tabs-frame {
+  inline-size: min(100%, 36rem);
+}
+.fixture-tab-panel {
+  padding: 1rem;
+}
+.fixture-section output[data-testid^='document-tabs-log'] {
+  white-space: pre-line;
+}

@@ -1,5 +1,15 @@
 import { useMemo, useState } from 'react';
-import { MenuItem, MenuSeparator, Text, Tree, type TreeItem } from '@envsemble/envui';
+import {
+  Button,
+  DocumentTabs,
+  MenuItem,
+  MenuSeparator,
+  Surface,
+  Text,
+  Tree,
+  type DocumentTab,
+  type TreeItem,
+} from '@envsemble/envui';
 import { Description } from '@envsemble/envui/icons/Description';
 import { Folder } from '@envsemble/envui/icons/Folder';
 import { FolderOpen } from '@envsemble/envui/icons/FolderOpen';
@@ -138,6 +148,66 @@ export function TreePreview() {
         <Text variant="caption" className="docs-caption" aria-live="polite">
           {lastAction || `${sample.items.length} visible rows`}
         </Text>
+      </Example>
+    </Preview>
+  );
+}
+
+const openDocuments: DocumentTab[] = [
+  { id: 'plans/search/roadmap.md', label: 'Roadmap.md' },
+  { id: 'plans/search/decisions.md', label: 'Decisions.md' },
+  { id: 'research/sync/interviews.md', label: 'Interviews.md', preview: true },
+  { id: 'releases/2026-10.md', label: 'October release notes and follow-ups.md' },
+  { id: 'specifications/sharing.md', label: 'Sharing.md' },
+].map((tab) => ({ ...tab, icon: <Description />, title: tab.id }));
+
+export function DocumentTabsPreview() {
+  const [tabs, setTabs] = useState(openDocuments);
+  const [value, setValue] = useState<string | null>(openDocuments[0]!.id);
+  const active = tabs.find((tab) => tab.id === value);
+  return (
+    <Preview>
+      <Example
+        title="Open documents"
+        size="wide"
+        caption="Click or use the arrow keys to switch, double-click the italic preview tab to keep it, and close with the button or a middle click."
+      >
+        <Surface tone="pane" padding={0} className="docs-document-tabs">
+          <DocumentTabs
+            aria-label="Open documents"
+            items={tabs}
+            value={value}
+            panelId="docs-document-panel"
+            onValueChange={setValue}
+            onClose={(id) => {
+              const index = tabs.findIndex((tab) => tab.id === id);
+              const remaining = tabs.filter((tab) => tab.id !== id);
+              setTabs(remaining);
+              if (id === value)
+                setValue(remaining[Math.min(index, remaining.length - 1)]?.id ?? null);
+            }}
+            onPin={(id) =>
+              setTabs((current) =>
+                current.map((tab) => (tab.id === id ? { ...tab, preview: false } : tab)),
+              )
+            }
+          />
+          <div id="docs-document-panel" role="tabpanel" className="docs-document-panel">
+            {active ? (
+              <Text tone="muted">{active.title}</Text>
+            ) : (
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setTabs(openDocuments);
+                  setValue(openDocuments[0]!.id);
+                }}
+              >
+                Reopen the sample documents
+              </Button>
+            )}
+          </div>
+        </Surface>
       </Example>
     </Preview>
   );

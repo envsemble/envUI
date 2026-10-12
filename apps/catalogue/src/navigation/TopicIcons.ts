@@ -34,6 +34,7 @@ import { AccountCircle } from '@envsemble/envui/icons/AccountCircle';
 import { Speed } from '@envsemble/envui/icons/Speed';
 import { SpaceDashboard } from '@envsemble/envui/icons/SpaceDashboard';
 import { AccountTree } from '@envsemble/envui/icons/AccountTree';
+import { Tab } from '@envsemble/envui/icons/Tab';
 import { type Reference } from '../Reference';
 
 export const foundationIcons: Record<string, typeof Palette> = {
@@ -91,6 +92,7 @@ const referenceIcons: Record<string, typeof Palette> = {
   meters: Speed,
   'app-shell': SpaceDashboard,
   tree: AccountTree,
+  'document-tabs': Tab,
 };
 
 /** A decorative symbol for the individual reference topic. */

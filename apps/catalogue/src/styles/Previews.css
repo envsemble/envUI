@@ -206,3 +206,14 @@
   border-radius: var(--radius-surface);
   overflow: hidden;
 }
+.docs-document-tabs {
+  padding-block-start: var(--space-2);
+  overflow: hidden;
+}
+.docs-document-tabs > .env-document-tabs {
+  padding-inline: var(--space-5);
+}
+.docs-document-panel {
+  min-block-size: 8rem;
+  padding: var(--space-5);
+}

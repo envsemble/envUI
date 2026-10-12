@@ -48,6 +48,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Direction links](components/direction-links.md) — Centered previous and next destinations, together or individually.
 - [Application shell](components/app-shell.md) — Topbar and collapsible navigation sidebar for a whole application.
 - [Tree](components/tree.md) — A virtualized tree of rows for large hierarchies, such as file trees.
+- [Document tabs](components/document-tabs.md) — Closable editor-style tabs for open documents.
 
 ## Content & guidance
 

@@ -56,3 +56,4 @@ export * from './navigation/Menu.js';
 export * from './navigation/OrganizationMenu.js';
 export * from './navigation/AppShell.js';
 export * from './navigation/Tree.js';
+export * from './navigation/DocumentTabs.js';

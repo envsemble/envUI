@@ -18,7 +18,7 @@ import { ToastsPreview } from './Toasts';
 import { ColorPickerPreview } from './ColorPicking';
 import { MenuPreview, TooltipPreview, AvatarPreview, MetersPreview } from './Overlays';
 import { AppShellPreview } from './Shell';
-import { TreePreview } from './Workspace';
+import { DocumentTabsPreview, TreePreview } from './Workspace';
 
 const RichTextPreview = lazy(() =>
   import('./RichTextContent').then(({ RichTextPreview }) => ({ default: RichTextPreview })),
@@ -91,6 +91,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <AppShellPreview />;
     case 'tree':
       return <TreePreview />;
+    case 'document-tabs':
+      return <DocumentTabsPreview />;
     default:
       return null;
   }

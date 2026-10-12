@@ -16,6 +16,7 @@ import { AdoptionFixture, ShellFixture } from './Adoption.js';
 import { ResizableShellFixture } from './ResizableShell.js';
 import { MenusFixture } from './Menus.js';
 import { TreeFixture } from './TreeView.js';
+import { DocumentTabsFixture } from './Tabs.js';
 
 /** Fixtures that fill the viewport are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
@@ -86,6 +87,12 @@ export default function App() {
             <>
               <TreeFixture theme="light" />
               <TreeFixture theme="dark" />
+            </>
+          )}
+          {includes('document-tabs') && (
+            <>
+              <DocumentTabsFixture theme="light" />
+              <DocumentTabsFixture theme="dark" />
             </>
           )}
           {includes('menus') && (
