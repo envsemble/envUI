@@ -27,6 +27,26 @@ function ThemeLabel() {
 | useThemePreference()    | preference (light, dark or system), resolved theme, setPreference and toggleTheme       |
 | ThemeToggle             | IconButton that switches between light and dark                                         |
 
+### Status tones
+
+Status icons, short status text and badges share these tokens. Each keeps at least 4.5:1 contrast on the canvas, panes and rows in both themes, also over a badge’s subtle fill.
+
+| Token                | Meaning                                             |
+| -------------------- | --------------------------------------------------- |
+| --color-tone-neutral | No particular state, such as archived               |
+| --color-tone-accent  | The current or highlighted state, such as in review |
+| --color-tone-success | Healthy or ready                                    |
+| --color-tone-warning | Needs attention, such as blocked                    |
+| --color-tone-danger  | Failed or destructive                               |
+| --color-tone-done    | Completed work, in purple                           |
+| --color-on-tone      | Text and icons on a solid tone fill                 |
+
+```css
+.work-status[data-status='blocked'] {
+  color: var(--color-tone-warning);
+}
+```
+
 ## Guidelines
 
 - Use separate semantic color roles for distinct primitive purposes, such as surfaces, rows, buttons, fields, navigation and feedback. Composed components reuse their underlying primitives’ colors. Derive hover and pressed states from each primitive’s base centrally.
@@ -50,3 +70,4 @@ TypeScript declarations provide the complete public API.
 - [Navigation items](../components/navigation.md)
 - [Color picker](../components/color-picker.md)
 - [Accessibility](../foundations/accessibility.md)
+- [Badges & counters](../components/badges.md)

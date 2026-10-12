@@ -13,6 +13,8 @@ interface NavigationItemSharedProps {
   icon?: ReactNode;
   /** Optional alternate content for custom icons when selected. */
   selectedIcon?: ReactNode;
+  /** End content, such as a Counter; icon-only items show a small dot instead. */
+  trailing?: ReactNode;
 }
 
 export type NavigationItemProps = NavigationItemSharedProps &
@@ -36,6 +38,7 @@ export function NavigationItem(props: NavigationItemProps) {
     iconOnly: requestedIconOnly = false,
     icon,
     selectedIcon,
+    trailing,
     className,
     children,
     ...nativeProps
@@ -53,6 +56,12 @@ export function NavigationItem(props: NavigationItemProps) {
         </NavigationIconState>
       )}
       {!iconOnly && children}
+      {trailing != null &&
+        (iconOnly ? (
+          <span className="env-navigation-dot" aria-hidden="true" />
+        ) : (
+          <span className="env-navigation-trailing">{trailing}</span>
+        ))}
     </>
   );
   const navigationClassName = classNames(

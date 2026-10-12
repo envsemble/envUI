@@ -1,0 +1,65 @@
+import {
+  Badge,
+  Counter,
+  NavigationItem,
+  Stack,
+  Surface,
+  Theme,
+  type BadgeTone,
+  type ThemeValue,
+} from '@envsemble/envui';
+import { Inbox } from '@envsemble/envui/icons/Inbox';
+
+const tones: BadgeTone[] = ['neutral', 'accent', 'success', 'warning', 'danger', 'done'];
+
+export function BadgesFixture({ theme }: { theme: ThemeValue }) {
+  return (
+    <Theme theme={theme} data-testid={`badges-${theme}`} className="fixture-section">
+      {(['canvas', 'pane', 'row'] as const).map((surface) => (
+        <Surface
+          key={surface}
+          tone={surface === 'canvas' ? 'canvas' : surface}
+          padding={4}
+          data-surface={surface}
+        >
+          <Stack gap={2}>
+            {(['subtle', 'solid', 'outline'] as const).map((variant) => (
+              <div key={variant} className="fixture-actions">
+                {tones.map((tone) => (
+                  <Badge key={tone} tone={tone} variant={variant} data-testid="badge">
+                    {tone} {variant}
+                  </Badge>
+                ))}
+              </div>
+            ))}
+            <div className="fixture-actions">
+              {tones.map((tone) => (
+                <span
+                  key={tone}
+                  data-testid="tone-text"
+                  style={{ color: `var(--color-tone-${tone})` }}
+                >
+                  {tone}
+                </span>
+              ))}
+            </div>
+          </Stack>
+        </Surface>
+      ))}
+      <NavigationItem
+        icon={<Inbox />}
+        trailing={<Counter value={12} aria-label="12 unread" tone="accent" />}
+      >
+        Inbox
+      </NavigationItem>
+      <NavigationItem
+        icon={<Inbox />}
+        iconOnly
+        aria-label="Inbox with unread"
+        trailing={<Counter value={12} />}
+      >
+        Inbox
+      </NavigationItem>
+    </Theme>
+  );
+}

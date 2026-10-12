@@ -19,6 +19,7 @@ export * from './content/FeatureCard.js';
 export * from './content/GroupedRows.js';
 export * from './content/DisclosureNote.js';
 export * from './content/InfoChip.js';
+export * from './content/Badge.js';
 export * from './forms/Input.js';
 export * from './forms/ColorPicker.js';
 export * from './forms/Textarea.js';

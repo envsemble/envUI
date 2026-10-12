@@ -19,6 +19,7 @@ import { TreeFixture } from './TreeView.js';
 import { DocumentTabsFixture } from './Tabs.js';
 import { CommandPaletteFixture } from './Palette.js';
 import { SegmentedControlFixture } from './Segments.js';
+import { BadgesFixture } from './Badges.js';
 
 /** Fixtures that fill the viewport are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
@@ -107,6 +108,12 @@ export default function App() {
             <>
               <SegmentedControlFixture theme="light" />
               <SegmentedControlFixture theme="dark" />
+            </>
+          )}
+          {includes('badges') && (
+            <>
+              <BadgesFixture theme="light" />
+              <BadgesFixture theme="dark" />
             </>
           )}
           {includes('menus') && (

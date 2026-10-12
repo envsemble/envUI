@@ -19,7 +19,7 @@ import { ColorPickerPreview } from './ColorPicking';
 import { MenuPreview, TooltipPreview, AvatarPreview, MetersPreview } from './Overlays';
 import { AppShellPreview } from './Shell';
 import { CommandPalettePreview, DocumentTabsPreview, TreePreview } from './Workspace';
-import { SegmentedControlPreview } from './Elements';
+import { BadgesPreview, SegmentedControlPreview } from './Elements';
 
 const RichTextPreview = lazy(() =>
   import('./RichTextContent').then(({ RichTextPreview }) => ({ default: RichTextPreview })),
@@ -60,6 +60,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <CardsPreview />;
     case 'chips':
       return <ChipsPreview />;
+    case 'badges':
+      return <BadgesPreview />;
     case 'animated-number':
       return <AnimatedNumberPreview />;
     case 'code':

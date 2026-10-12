@@ -128,6 +128,17 @@
   --color-avatar-figure: hsl(221.3 71.7% 57.1%);
   /* Initials use a deeper shade of the figure blue: 5:1 on the avatar fill. */
   --color-on-avatar: hsl(221.3 71.7% 36%);
+  /* Status tones for small text, icons and badges. Each keeps at least 4.5:1 on the canvas, panes and
+     rows, also over its own subtle badge fill. Solid badges put --color-on-tone on the tone. */
+  --color-tone-neutral: hsl(213.333 4.523% 39.02%);
+  --color-tone-accent: hsl(216.853 89.954% 42.941%);
+  --color-tone-success: hsl(140 64% 27%);
+  --color-tone-warning: hsl(36 100% 26%);
+  --color-tone-danger: hsl(4.231 76.471% 40%);
+  /* Completed work, such as a merged or closed-as-done item. */
+  --color-tone-done: hsl(266 55% 50%);
+  --color-on-tone: hsl(0 0% 100%);
+  --state-tone-subtle-opacity: 12%;
 
   /* Components share the Material 3 corner scale inside each theme boundary. */
   --md-sys-shape-corner-none: 0;
@@ -404,6 +415,14 @@
   --color-disclosure-text: hsl(213.333 7.317% 75.882%);
   --color-dialog-overlay: hsl(0 0% 12.157%);
   --color-markdown-border: hsl(213.333 4.523% 39.02%);
+  --color-tone-neutral: hsl(213.333 7.317% 75.882%);
+  --color-tone-accent: hsl(217.317 89.13% 81.961%);
+  --color-tone-success: hsl(140 50% 66%);
+  --color-tone-warning: hsl(40 85% 64%);
+  --color-tone-danger: hsl(4.231 80% 80%);
+  --color-tone-done: hsl(268 80% 83%);
+  --color-on-tone: hsl(0 0% 12.157%);
+  --state-tone-subtle-opacity: 14%;
 }
 
 /* Relative spacing is reset at every explicit theme boundary, including portals. */

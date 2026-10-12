@@ -57,6 +57,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Markdown](components/markdown.md) — Render Markdown strings with Markdown, or edit them with MarkdownEditor and its shared preview.
 - [Code](components/code.md) — Render inline code and highlighted code blocks.
 - [Info chips](components/chips.md) — Read-only metadata beside related content.
+- [Badges & counters](components/badges.md) — Small pills that name a state in its tone, and compact counts.
 - [Animated numbers](components/animated-number.md) — Counts that roll to their new value, so a change is noticed.
 - [Disclosure notes](components/disclosures.md) — Keep optional details collapsed until needed.
 - [Avatars](components/avatar.md) — A picture of a person or organization with a default picture or initials as fallback, and the avatar button.
