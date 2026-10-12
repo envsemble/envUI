@@ -339,6 +339,7 @@ function FormDialogExamples() {
                 }}
               />
               <Select
+                variant="field"
                 label="Role"
                 hint="Admins also manage members and billing."
                 options={roleOptions}

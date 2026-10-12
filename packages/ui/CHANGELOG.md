@@ -25,6 +25,7 @@ Clearer contrast in both themes, more ways to show loading, and refinements from
 - The `AppShell` sidebar toggle becomes a secondary icon button while its toggle icon shows, instead of using the navigation hover tint; at rest it remains the brand mark.
 - `Avatar` initials use the avatar blue of the default person picture (`--color-avatar`, `--color-on-avatar`).
 - Toasts glide to their new place when another notice arrives or leaves. The hidden-notice count of the top-center placement sits below the stack, centered.
+- A Select's open list is a raised popup in its own color (`--color-popup`) with a hairline border (`--color-popup-border`). It no longer blends with dialogs and panes of the same tone. Options show only hover, press and selection; in dark, the selected option has a blue tint.
 
 ### Added
 
@@ -38,6 +39,10 @@ Clearer contrast in both themes, more ways to show loading, and refinements from
 - `AnimatedNumber`: a count rolls up as it grows and down as it shrinks, and fades with reduced motion.
 - `OrganizationMenu` organizations accept a `detail`, such as the person's role, shown muted after the name.
 - `headingLevel` on `EmptyState`, for an empty or error state that is the whole page.
+- `variant` on `Select`, to suit the surroundings:
+  - secondary (default) is the filled pill;
+  - outlined is a bordered pill for panes, rows and toolbars;
+  - field is an outlined field with its label on the outline, matching text fields in a form.
 
 ### Documentation
 

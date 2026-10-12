@@ -98,7 +98,10 @@
   --color-field-border: hsl(220 8.823529% 86.666667%);
   --color-field-active: hsl(214.07767 81.746032% 50.588235%);
   --color-field-error: hsl(4.231 76.471% 40%);
-  --color-select-option: hsl(210 16.666667% 97.647059%);
+  /* Popups raised over the page, such as the open list of a Select. */
+  --color-popup: hsl(0 0% 100%);
+  --color-popup-border: var(--color-border-strong);
+  --color-select-option: var(--color-popup);
   --color-select-option-text: hsl(213.333 9.333% 29.412%);
   --color-select-selected: hsl(218.181818 91.666667% 95.294118%);
   --color-on-select-selected: hsl(216.852792 89.954338% 42.941176%);
@@ -379,9 +382,11 @@
   --color-field-border: hsl(213.333 4.523% 39.02%);
   --color-field-active: hsl(217.317 89.13% 81.961%);
   --color-field-error: hsl(4.231 76.471% 75%);
-  --color-select-option: hsl(216 4.425% 22.157%);
+  --color-popup: hsl(216 4.425% 22.157%);
+  --color-popup-border: hsl(216 4.425% 30%);
+  --color-select-option: var(--color-popup);
   --color-select-option-text: hsl(213.333 10.843% 83.725%);
-  --color-select-selected: hsl(217.84467 10.485441% 24.81418%);
+  --color-select-selected: hsl(216 30% 30%);
   --color-on-select-selected: hsl(217.317 89.13% 81.961%);
   --color-radio: hsl(217.317 89.13% 81.961%);
   --color-radio-row: hsl(216 4.425% 22.157%);

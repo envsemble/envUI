@@ -20,6 +20,93 @@
 .env-button.env-dropdown-trigger[aria-invalid='true']:active:not(:disabled) {
   border-color: hsl(from var(--env-field-border-base) h s var(--state-pressed-lightness));
 }
+/* Outlined: a bordered pill without a fill, for panes, rows and toolbars. */
+.env-button.env-dropdown-trigger[data-variant='outlined'] {
+  --env-field-border-base: var(--color-border-strong);
+  background: transparent;
+  color: var(--color-text-primary);
+}
+.env-button.env-dropdown-trigger[data-variant='outlined']:is(:hover, [aria-expanded='true']):not(
+    :disabled
+  ) {
+  background: var(--color-state-layer-hover);
+}
+.env-button.env-dropdown-trigger[data-variant='outlined']:active:not(:disabled) {
+  background: var(--color-state-layer-pressed);
+}
+
+/* Field: the trigger fills an outlined field well like a text field. A select always shows a value
+   or a placeholder, so its label always rests on the outline. */
+.env-text-field:has(> .env-text-field-well > .env-select-field-label) {
+  padding-block-start: calc(var(--space-2) * var(--scale, 1));
+}
+.env-select-field-trigger {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--space-2) * var(--scale, 1));
+  width: 100%;
+  min-width: 0;
+  min-height: calc(3.5rem * var(--scale, 1));
+  margin: 0;
+  padding: 0 calc(var(--space-4) * var(--scale, 1));
+  border: 0;
+  border-radius: inherit;
+  outline: none;
+  background: transparent;
+  color: var(--color-field-text);
+  font: var(--type-body);
+  font-size: calc(var(--font-size-body) * var(--scale, 1));
+  text-align: start;
+  cursor: pointer;
+}
+.env-select-field-trigger > .env-symbol {
+  flex: none;
+  color: var(--color-field-label);
+}
+.env-select-field-trigger:disabled {
+  cursor: default;
+}
+.env-select-field-label {
+  position: absolute;
+  inset-block-start: calc(-0.625rem * var(--scale, 1));
+  inset-inline-start: calc(var(--space-4) * var(--scale, 1));
+  max-width: calc(100% - var(--space-6) * var(--scale, 1));
+  margin-inline-start: calc(-0.25rem * var(--scale, 1));
+  padding-inline: calc(var(--space-1) * var(--scale, 1));
+  overflow: hidden;
+  /* Like a floated text field label, it hides only the outline behind it. */
+  background: linear-gradient(
+    transparent calc(50% - 0.0625rem * var(--scale, 1)),
+    var(--color-field) 0
+  );
+  color: var(--color-field-label);
+  font: var(--type-body);
+  font-size: calc(var(--font-size-body-small) * var(--scale, 1));
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: color var(--motion-duration-medium) var(--motion-ease);
+}
+.env-text-field-well:has(> .env-select-field-trigger[aria-expanded='true']) {
+  --env-field-border-color: var(--env-field-interaction-color);
+}
+.env-text-field-well:is(:focus-within, :has(> .env-select-field-trigger[aria-expanded='true']))
+  > .env-select-field-label {
+  color: var(--env-field-interaction-color);
+}
+.env-text-field-well:has(> .env-select-field-trigger[aria-invalid='true']) {
+  --env-field-border-base: var(--env-field-error-color);
+  --env-field-interaction-color: var(--env-field-error-color);
+}
+.env-text-field-well:has(> .env-select-field-trigger[aria-invalid='true'])
+  > .env-select-field-label {
+  color: var(--env-field-error-color);
+}
+.env-text-field-well:has(> .env-select-field-trigger:disabled) {
+  opacity: var(--state-disabled-opacity);
+}
+
 .env-dropdown-trigger .env-symbol {
   width: calc(1.125rem * var(--scale, 1));
   height: calc(1.125rem * var(--scale, 1));
@@ -28,9 +115,13 @@
 .env-dropdown-trigger[aria-expanded='true'] .env-symbol {
   transform: rotate(-90deg);
 }
-.env-dropdown-options {
+/* The open list is a raised popup: its own color and a hairline border keep it apart from whatever
+   it opens over, including a dialog of the pane tone. */
+.env-surface.env-dropdown-options {
   --env-surface-radius: var(--radius-row-outer);
   --env-surface-scale: var(--scale, 1);
+  border: calc(0.0625rem * var(--scale, 1)) solid var(--color-popup-border);
+  background: var(--color-popup);
   display: grid;
   gap: calc(0.125rem * var(--scale, 1));
   width: max-content;

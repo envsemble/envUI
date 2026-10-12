@@ -1,4 +1,33 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
+
+/** Contrast between two opaque CSS colors, as WCAG computes it. */
+function contrastRatio(first: string, second: string) {
+  const luminance = (color: string) => {
+    const [r, g, b] = color
+      .match(/[\d.]+/g)!
+      .slice(0, 3)
+      .map((channel) => {
+        const value = Number(channel) / 255;
+        return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+      });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  const [lighter, darker] = [luminance(first), luminance(second)].sort((a, b) => b - a);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+/** The open Select list against the surface it opens over: its color and its border. */
+async function popupSeparation(page: Page, surfaceSelector: string) {
+  const [surface, popup, border] = await page.evaluate((selector) => {
+    const popupElement = document.querySelector('.env-dropdown-options')!;
+    return [
+      getComputedStyle(document.querySelector(selector)!).backgroundColor,
+      getComputedStyle(popupElement).backgroundColor,
+      getComputedStyle(popupElement).borderTopWidth,
+    ];
+  }, surfaceSelector);
+  return { contrast: contrastRatio(surface, popup), border: Number.parseFloat(border) };
+}
 
 test.beforeEach(async ({ page }) => {
   await page.goto('http://127.0.0.1:8766/?fixture=forms');
@@ -177,6 +206,54 @@ test('Select supports keyboard commit, typeahead, Escape, and native form reset'
   await expect(trigger).toBeFocused();
 });
 
+test('Select variants suit their surroundings, and the open list stands apart from a pane', async ({
+  page,
+}) => {
+  const outlined = page.getByRole('combobox', { name: 'Pane sort', exact: true });
+  await expect(outlined).toHaveAttribute('data-variant', 'outlined');
+  await expect(outlined).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  expect(
+    Number.parseFloat(
+      await outlined.evaluate((element) => getComputedStyle(element).borderTopWidth),
+    ),
+  ).toBeGreaterThan(0);
+
+  // A field select fills its outlined well, with the label resting on the outline.
+  const field = page.getByRole('combobox', { name: 'Pane role', exact: true });
+  const well = page.locator('.env-text-field-well', { has: field });
+  const label = well.locator('.env-select-field-label');
+  const [fieldBox, wellBox, labelBox] = await Promise.all([
+    field.boundingBox(),
+    well.boundingBox(),
+    label.boundingBox(),
+  ]);
+  expect(fieldBox!.width).toBeGreaterThan(wellBox!.width - 4);
+  expect(fieldBox!.height).toBeGreaterThanOrEqual(52);
+  expect(labelBox!.y).toBeLessThan(wellBox!.y);
+  expect(labelBox!.y + labelBox!.height).toBeGreaterThan(wellBox!.y);
+
+  await field.click();
+  await expect(page.getByRole('option', { name: 'Boreal', exact: true })).toBeVisible();
+  // While open, the outline and the label take the active field color once the pointer leaves the
+  // field, as text fields do while focused.
+  await page.mouse.move(0, 0);
+  const activeColor = await page.evaluate(() => {
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--color-field-active)';
+    document.querySelector('[data-testid="select-pane"]')!.append(probe);
+    const color = getComputedStyle(probe).color;
+    probe.remove();
+    return color;
+  });
+  await expect(label).toHaveCSS('color', activeColor);
+  await expect(well).toHaveCSS('border-top-color', activeColor);
+  const separation = await popupSeparation(page, '[data-testid="select-pane"]');
+  expect(separation.contrast).toBeGreaterThanOrEqual(1.08);
+  expect(separation.border).toBeGreaterThan(0);
+  await page.getByRole('option', { name: 'Boreal', exact: true }).click();
+  await expect(field).toHaveText('Boreal');
+});
+
 test('a required Select participates in native constraint validation', async ({ page }) => {
   const nativeInput = page.getByTestId('required-form').locator('input[name="requiredChoice"]');
   await expect
@@ -227,6 +304,10 @@ test('Dialog traps and restores focus and its nested Select retains the dark the
   await select.click();
   const option = page.getByRole('option', { name: 'Boreal', exact: true });
   await expect(option).toBeVisible();
+  // The open list stands apart from the dark dialog it opens over.
+  const separation = await popupSeparation(page, '.env-modal-pane');
+  expect(separation.contrast).toBeGreaterThanOrEqual(1.08);
+  expect(separation.border).toBeGreaterThan(0);
   await expect
     .poll(() =>
       option.evaluate((element) =>

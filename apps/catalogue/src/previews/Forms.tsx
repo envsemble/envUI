@@ -11,6 +11,9 @@ import {
   SearchField,
   Button,
   IconButton,
+  Surface,
+  GroupedRows,
+  Row,
 } from '@envsemble/envui';
 import { Mail } from '@envsemble/envui/icons/Mail';
 import { ContentCopy } from '@envsemble/envui/icons/ContentCopy';
@@ -393,6 +396,54 @@ export function SelectPreview() {
   const [projectAccess, setProjectAccess] = useState('team');
   return (
     <Preview>
+      <Example
+        title="Variants"
+        size="collection"
+        caption="Choose the trigger for its surroundings. The open list is a raised popup with a border, so it stands apart from any background."
+      >
+        <SpecimenGrid>
+          <Specimen title="Secondary, on the page">
+            <Select label="Sort by" options={sortOptions} defaultValue="recent" />
+          </Specimen>
+          <Specimen title="Outlined, on a pane">
+            <Surface padding={4}>
+              <Select
+                variant="outlined"
+                label="Sort by"
+                options={sortOptions}
+                defaultValue="recent"
+              />
+            </Surface>
+          </Specimen>
+          <Specimen title="Outlined, in a row">
+            <GroupedRows aria-label="Notification settings">
+              <Row
+                title="E-mail digest"
+                action={
+                  <Select
+                    variant="outlined"
+                    aria-label="E-mail digest"
+                    options={digestOptions}
+                    defaultValue="weekly"
+                  />
+                }
+              />
+            </GroupedRows>
+          </Specimen>
+          <Specimen title="Field, in a form">
+            <Stack gap={4}>
+              <Input label="E-mail address" type="email" />
+              <Select
+                variant="field"
+                label="Role"
+                hint="Admins also manage members and billing."
+                options={roleOptions}
+                defaultValue="member"
+              />
+            </Stack>
+          </Specimen>
+        </SpecimenGrid>
+      </Example>
       <Example title="Selection, validation & availability" size="collection">
         <SpecimenGrid>
           <Specimen title="Interactive">
@@ -440,3 +491,18 @@ export function SelectPreview() {
     </Preview>
   );
 }
+
+const sortOptions = [
+  { value: 'recent', label: 'Most recent' },
+  { value: 'name', label: 'Name' },
+  { value: 'size', label: 'Size' },
+];
+const digestOptions = [
+  { value: 'daily', label: 'Daily' },
+  { value: 'weekly', label: 'Weekly' },
+  { value: 'never', label: 'Never' },
+];
+const roleOptions = [
+  { value: 'member', label: 'Member' },
+  { value: 'admin', label: 'Admin' },
+];
