@@ -57,7 +57,7 @@ export interface TreeProps<T extends TreeItem> {
   contextMenu?: (item: T | null) => ReactNode;
   /** Accessible name of the context menu. */
   contextMenuLabel?: string;
-  /** compact (default) rows are about 1.75 rem tall; standard rows about 2.25 rem. */
+  /** compact (default) rows are about 1.75 rem tall, with a compact context menu; standard rows about 2.25 rem. */
   density?: 'compact' | 'standard';
   className?: string;
 }
@@ -420,6 +420,7 @@ export function Tree<T extends TreeItem>({
   return (
     <ContextMenu
       aria-label={contextMenuLabel}
+      density={density}
       content={(target) => {
         const id = target?.closest<HTMLElement>('.env-tree-row')?.dataset.id;
         const index = id === undefined ? undefined : indexById.get(id);

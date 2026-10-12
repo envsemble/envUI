@@ -22,6 +22,8 @@ Components for document-centred desktop applications such as Atlas: a file tree,
 - `Breadcrumbs` and `Kbd`.
 - `Markdown` `components`, `remarkPlugins` and `rehypePlugins`; application overrides win and attributes such as heading ids reach the elements.
 - `Dialog` `size="wide"` (about 44 rem) and `placement="top"`.
+- `Menu` and `ContextMenu` `density="compact"`: 2 rem rows on one pane with hairline separators, for dense desktop surfaces; a compact `Tree` opens a compact context menu.
+- `Code` `appearance="subtle"` and `Markdown` `inlineCode="subtle"`: inline code that follows the app theme as a quiet chip, for prose dense with identifiers.
 
 ### Changed
 

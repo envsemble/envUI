@@ -138,6 +138,47 @@
   font-weight: 500;
   overflow-wrap: anywhere;
 }
+/* Compact menus suit dense desktop surfaces, such as a compact tree's context menu: shorter rows on
+   one pane that highlight on hover, and separators drawn as hairlines. */
+.env-menu[data-density='compact'] {
+  gap: 0;
+  inline-size: max-content;
+  min-inline-size: 12rem;
+  max-inline-size: min(22rem, calc(100vw - 2rem));
+  padding: var(--space-1);
+  border-radius: calc(var(--radius-standard) + var(--space-1));
+}
+.env-menu[data-density='compact'] :is(.env-menu-item, .env-menu-header) {
+  min-block-size: 2rem;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-standard);
+  background: transparent;
+  font: var(--type-body-small);
+}
+.env-menu[data-density='compact'] .env-menu-item[data-highlighted] {
+  background: var(--color-menu-row);
+}
+.env-menu[data-density='compact'] .env-menu-item:active {
+  background: hsl(from var(--color-menu-row) h s var(--state-surface-hover-lightness));
+}
+.env-menu[data-density='compact'] .env-menu-item .env-symbol,
+.env-menu[data-density='compact'] .env-menu-item-check {
+  inline-size: var(--control-icon-size);
+  block-size: var(--control-icon-size);
+}
+.env-menu[data-density='compact'] .env-menu-separator {
+  block-size: 0.0625rem;
+  margin: var(--space-1) var(--space-2);
+  background: var(--color-border-strong);
+}
+.env-menu[data-density='compact'] .env-menu-group {
+  gap: 0;
+}
+.env-menu[data-density='compact'] .env-menu-group-label {
+  padding: var(--space-1) var(--space-3) 0;
+}
+
 /* Organization menu: a secondary button in the shell's context area and a pane of radio rows. Long
    organization names truncate inside the button. */
 .env-organization-trigger {

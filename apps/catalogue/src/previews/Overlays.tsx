@@ -127,6 +127,7 @@ export function MenuPreview() {
         </Text>
       </Example>
       <MenuChoicesExample onAction={setLastAction} />
+      <CompactMenuExample onAction={setLastAction} />
       <ContextMenuExample />
     </Preview>
   );
@@ -164,6 +165,34 @@ function MenuChoicesExample({ onAction }: { onAction: (action: string) => void }
             Quick open
           </MenuItem>
         </MenuGroup>
+      </Menu>
+    </Example>
+  );
+}
+
+function CompactMenuExample({ onAction }: { onAction: (action: string) => void }) {
+  return (
+    <Example
+      title="Compact menus"
+      size="collection"
+      caption="Dense desktop surfaces, such as a file tree, use 2 rem rows on one pane with hairline separators. A compact Tree opens a compact context menu."
+    >
+      <Menu
+        aria-label="File actions"
+        density="compact"
+        align="start"
+        trigger={<Button variant="secondary">File actions</Button>}
+      >
+        <MenuItem icon={<OpenInNew />} onClick={() => onAction('Opened')}>
+          Open
+        </MenuItem>
+        <MenuItem icon={<Edit />} shortcut="F2" onClick={() => onAction('Rename started')}>
+          Rename
+        </MenuItem>
+        <MenuSeparator />
+        <MenuItem icon={<Delete />} onClick={() => onAction('Deleted')}>
+          Delete
+        </MenuItem>
       </Menu>
     </Example>
   );

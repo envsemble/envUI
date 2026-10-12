@@ -44,6 +44,7 @@ import { Logout } from '@envsemble/envui/icons/Logout';
 | MenuItem onClick         | An action; the menu closes after it runs                           |
 | MenuItem icon / disabled | Optional leading icon and unavailable state                        |
 | MenuSeparator            | Splits items into groups; each group keeps large outer corners     |
+| density                  | compact: 2 rem rows on one pane with hairline separators           |
 
 ### Groups, choices and shortcuts
 

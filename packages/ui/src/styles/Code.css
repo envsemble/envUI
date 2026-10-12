@@ -12,6 +12,11 @@
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }
+/* Subtle inline code follows the theme as a quiet chip. */
+.env-code-subtle {
+  --env-code-background: var(--color-chip);
+  --env-code-foreground: var(--color-chip-text);
+}
 .env-code-block {
   box-sizing: border-box;
   min-inline-size: 0;

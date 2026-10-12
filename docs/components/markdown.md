@@ -16,6 +16,7 @@ import { Markdown } from '@envsemble/envui/content';
 | ---------------------------- | ---------------------------------------- |
 | children                     | Markdown string                          |
 | headingOffset / codeCopyable | Heading semantics and code-copy controls |
+| inlineCode                   | dark (default) or subtle inline code     |
 
 ## Markdown source
 

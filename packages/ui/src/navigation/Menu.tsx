@@ -28,8 +28,12 @@ export interface MenuProps {
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  /** compact suits dense desktop surfaces: shorter rows on one pane, separated by hairlines. */
+  density?: MenuDensity;
   className?: string;
 }
+
+export type MenuDensity = 'standard' | 'compact';
 
 /** A list of actions and destinations that opens from a trigger; keyboard and focus follow the menu pattern. */
 export function Menu({
@@ -41,6 +45,7 @@ export function Menu({
   open,
   defaultOpen,
   onOpenChange,
+  density = 'standard',
   className,
 }: MenuProps) {
   const theme = useTheme();
@@ -61,6 +66,7 @@ export function Menu({
           >
             <BaseMenu.Popup
               className={classNames('env-menu', className)}
+              data-density={density === 'compact' ? 'compact' : undefined}
               // Base UI names the menu after its trigger; the menu's own label replaces that name.
               render={(props) => <div {...props} aria-labelledby={undefined} aria-label={label} />}
             >
@@ -96,6 +102,8 @@ export interface ContextMenuProps {
   onOpenChange?: (open: boolean) => void;
   /** Viewport point to open at while controlled; otherwise the menu opens at the pointer. */
   anchorPoint?: ContextMenuPoint;
+  /** compact suits dense surfaces such as a compact Tree; see Menu. */
+  density?: MenuDensity;
   className?: string;
 }
 
@@ -137,6 +145,7 @@ export function ContextMenu({
   open: controlledOpen,
   onOpenChange,
   anchorPoint,
+  density = 'standard',
   className,
 }: ContextMenuProps) {
   const theme = useTheme();
@@ -197,6 +206,7 @@ export function ContextMenu({
           >
             <BaseContextMenu.Popup
               className={classNames('env-menu', className)}
+              data-density={density === 'compact' ? 'compact' : undefined}
               render={(props) => <div {...props} aria-labelledby={undefined} aria-label={label} />}
             >
               {typeof content === 'function' ? content(target) : content}

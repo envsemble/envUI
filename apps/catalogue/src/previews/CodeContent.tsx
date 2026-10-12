@@ -12,6 +12,16 @@ export function CodePreview() {
         </Text>
       </Example>
       <Example
+        title="Subtle inline code"
+        caption="For prose dense with identifiers, paths and hashes, the subtle appearance follows the app theme."
+      >
+        <Text>
+          The ledger pins revision <Code appearance="subtle">c9f60ee</Code> of{' '}
+          <Code appearance="subtle">active/0013-envui-redesign/plan.md</Code> on branch{' '}
+          <Code appearance="subtle">atlas-port</Code>.
+        </Text>
+      </Example>
+      <Example
         title="Highlighted source"
         caption="Uses GitHub Dark Default in both app themes. Copying preserves the original source."
       >
