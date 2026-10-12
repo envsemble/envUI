@@ -9,12 +9,14 @@ import {
   MenuRadioGroup,
   MenuRadioItem,
   MenuSeparator,
+  MenuSubmenu,
   Theme,
   type ThemeValue,
 } from '@envsemble/envui';
 import { Edit } from '@envsemble/envui/icons/Edit';
 import { Delete } from '@envsemble/envui/icons/Delete';
 import { Add } from '@envsemble/envui/icons/Add';
+import { History } from '@envsemble/envui/icons/History';
 
 const documents = ['Alpha', 'Beta', 'Gamma'];
 
@@ -23,6 +25,8 @@ export function MenusFixture({ theme }: { theme: ThemeValue }) {
   const [sort, setSort] = useState('name');
   const [hidden, setHidden] = useState(false);
   const [wrap, setWrap] = useState(true);
+  const [appearance, setAppearance] = useState('system');
+  const [recentLoads, setRecentLoads] = useState(0);
   const [programmatic, setProgrammatic] = useState<{ x: number; y: number } | null>(null);
   return (
     <Theme theme={theme} data-testid={`menus-${theme}`} className="fixture-section">
@@ -84,6 +88,9 @@ export function MenusFixture({ theme }: { theme: ThemeValue }) {
             Zoom sequence
           </MenuItem>
         </MenuGroup>
+        <MenuSubmenu label="More views">
+          <MenuItem onClick={() => setLog('Split right')}>Split right</MenuItem>
+        </MenuSubmenu>
       </Menu>
       <Menu
         aria-label="Compact options"
@@ -99,10 +106,36 @@ export function MenusFixture({ theme }: { theme: ThemeValue }) {
             Save
           </MenuItem>
         </MenuGroup>
+        <MenuSubmenu
+          label="Open recent"
+          icon={<History />}
+          onOpenChange={(open) => {
+            if (open) setRecentLoads((count) => count + 1);
+          }}
+        >
+          <MenuItem onClick={() => setLog('Open Quarterly report')}>Quarterly report</MenuItem>
+          <MenuItem onClick={() => setLog('Open Meeting notes')}>Meeting notes</MenuItem>
+          <MenuSubmenu label="More documents">
+            <MenuItem onClick={() => setLog('Open Budget')}>Budget</MenuItem>
+            <MenuItem onClick={() => setLog('Open Roadmap')}>Roadmap</MenuItem>
+          </MenuSubmenu>
+          <MenuSeparator />
+          <MenuItem onClick={() => setLog('Clear recent')}>Clear recent</MenuItem>
+        </MenuSubmenu>
+        <MenuSubmenu label="Unavailable documents" disabled>
+          <MenuItem onClick={() => setLog('Unavailable')}>Nothing here</MenuItem>
+        </MenuSubmenu>
         <MenuSeparator />
         <MenuCheckboxItem checked={wrap} onCheckedChange={setWrap}>
           Word wrap
         </MenuCheckboxItem>
+        <MenuSubmenu label="Appearance">
+          <MenuRadioGroup value={appearance} onValueChange={setAppearance}>
+            <MenuRadioItem value="light">Light</MenuRadioItem>
+            <MenuRadioItem value="dark">Dark</MenuRadioItem>
+            <MenuRadioItem value="system">System</MenuRadioItem>
+          </MenuRadioGroup>
+        </MenuSubmenu>
         <MenuItem
           description="Opens beside the current document"
           onClick={() => setLog('Open to the side')}
@@ -117,8 +150,14 @@ export function MenusFixture({ theme }: { theme: ThemeValue }) {
           if (!open) setProgrammatic(null);
         }}
         anchorPoint={programmatic ?? undefined}
+        density="compact"
         content={
-          <MenuItem onClick={() => setLog('Programmatic action')}>Programmatic action</MenuItem>
+          <>
+            <MenuItem onClick={() => setLog('Programmatic action')}>Programmatic action</MenuItem>
+            <MenuSubmenu label="Share">
+              <MenuItem onClick={() => setLog('Copy link')}>Copy link</MenuItem>
+            </MenuSubmenu>
+          </>
         }
       >
         <div className="fixture-context-area">
@@ -136,6 +175,9 @@ export function MenusFixture({ theme }: { theme: ThemeValue }) {
       <output data-testid={`menu-log-${theme}`}>{log}</output>
       <output data-testid={`menu-state-${theme}`}>
         {sort} {hidden ? 'hidden shown' : 'hidden concealed'}
+      </output>
+      <output data-testid={`submenu-state-${theme}`}>
+        {appearance} {recentLoads}
       </output>
     </Theme>
   );

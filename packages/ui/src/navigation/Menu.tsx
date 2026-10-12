@@ -1,6 +1,7 @@
 import { ContextMenu as BaseContextMenu } from '@base-ui/react/context-menu';
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import {
+  useContext,
   useId,
   useRef,
   useState,
@@ -15,16 +16,25 @@ import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { Theme, useTheme } from '../foundations/Theme.js';
 import { Check } from '../icons/Check.js';
+import { ChevronRight } from '../icons/ChevronRight.js';
 import { Kbd } from '../content/Kbd.js';
 import { useLinkComponent } from './LinkProvider.js';
-import { MenuDensityContext, renderMenuPopup } from './internal/MenuPopup.js';
+import {
+  MenuDensityContext,
+  menuPopupInlineInset,
+  menuPopupInset,
+  renderMenuPopup,
+} from './internal/MenuPopup.js';
 
 export interface MenuProps {
   /** The control that opens the menu; it receives the menu button semantics and ref. */
   trigger: ReactElement;
   /** Accessible name of the menu. */
   'aria-label': string;
-  /** MenuHeader, MenuItem, MenuGroup, MenuRadioGroup, MenuCheckboxItem and MenuSeparator elements. */
+  /**
+   * MenuHeader, MenuItem, MenuGroup, MenuRadioGroup, MenuCheckboxItem, MenuSubmenu and MenuSeparator
+   * elements.
+   */
   children: ReactNode;
   side?: 'top' | 'bottom' | 'left' | 'right';
   align?: 'start' | 'center' | 'end';
@@ -404,6 +414,93 @@ export function MenuItem({
 /** Separates groups of menu items. */
 export function MenuSeparator() {
   return <BaseMenu.Separator className="env-menu-separator" />;
+}
+
+export interface MenuSubmenuProps
+  extends Omit<MenuItemContentProps, 'children' | 'shortcut' | 'trailing'> {
+  /** The row that opens the submenu. */
+  label: ReactNode;
+  /** The submenu's items: MenuItem, MenuGroup, MenuSeparator and the other parts, nested submenus too. */
+  children: ReactNode;
+  /** Accessible name of the submenu; by default the label, when it is a string. */
+  'aria-label'?: string;
+  disabled?: boolean;
+  /** Controlled visibility; onOpenChange also suits loading the items as the submenu opens. */
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** Class of the submenu popup. */
+  className?: string;
+}
+
+/** Gap between a submenu and the edge of the menu it opens from, in pixels. */
+const submenuGap = 2;
+
+/**
+ * A row that opens a nested menu beside it, on hover or with the keyboard. The submenu opens in the
+ * density and theme of its menu, and lines its first row up with the row that opened it.
+ */
+export function MenuSubmenu({
+  label,
+  icon,
+  description,
+  children,
+  'aria-label': ariaLabel,
+  disabled,
+  open,
+  defaultOpen,
+  onOpenChange,
+  className,
+}: MenuSubmenuProps) {
+  const theme = useTheme();
+  const density = useContext(MenuDensityContext);
+  const trigger = useRef<HTMLDivElement>(null);
+  const popup = useRef<HTMLDivElement>(null);
+  const { content, accessibility } = useMenuItemContent({ icon, children: label, description });
+  const textLabel = typeof label === 'string' ? label : undefined;
+  return (
+    <BaseMenu.SubmenuRoot
+      open={open}
+      defaultOpen={defaultOpen}
+      onOpenChange={(next) => onOpenChange?.(next)}
+    >
+      <BaseMenu.SubmenuTrigger
+        ref={trigger}
+        className="env-menu-item env-menu-submenu-trigger"
+        disabled={disabled}
+        label={textLabel}
+        {...accessibility}
+      >
+        {content}
+        <span className="env-symbol env-menu-submenu-chevron" aria-hidden="true">
+          <ChevronRight />
+        </span>
+      </BaseMenu.SubmenuTrigger>
+      <BaseMenu.Portal>
+        <Theme theme={theme} className="env-menu-theme">
+          <BaseMenu.Positioner
+            className="env-menu-positioner"
+            side="inline-end"
+            align="start"
+            // The submenu clears the edge of its menu by a small gap, and its first row lines up
+            // with the row that opened it. Collisions flip it to the other side.
+            sideOffset={() =>
+              menuPopupInlineInset(trigger.current?.closest('.env-menu')) + submenuGap
+            }
+            alignOffset={() => -menuPopupInset(popup.current)}
+          >
+            <BaseMenu.Popup
+              ref={popup}
+              className={classNames('env-menu', className)}
+              render={renderMenuPopup(ariaLabel ?? textLabel, density)}
+            >
+              <MenuDensityContext value={density}>{children}</MenuDensityContext>
+            </BaseMenu.Popup>
+          </BaseMenu.Positioner>
+        </Theme>
+      </BaseMenu.Portal>
+    </BaseMenu.SubmenuRoot>
+  );
 }
 
 export interface MenuGroupProps {

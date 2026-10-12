@@ -94,8 +94,13 @@
 .env-menu-choice[data-checked] .env-menu-item-label {
   font-weight: 500;
 }
-.env-menu-item[data-highlighted] {
+/* A row that opened a submenu stays highlighted while the submenu is open. */
+.env-menu-item:is([data-highlighted], [data-popup-open]) {
   background: hsl(from var(--color-menu-row) h s var(--state-surface-hover-lightness));
+}
+/* A submenu row ends in a chevron that points to the side the submenu opens on. */
+.env-menu-submenu-chevron:dir(rtl) {
+  transform: scaleX(-1);
 }
 .env-menu-item:active {
   background: hsl(from var(--color-menu-row) h s var(--state-surface-pressed-lightness));
@@ -194,7 +199,7 @@
   background: transparent;
   font: var(--type-body-small);
 }
-.env-menu[data-density='compact'] .env-menu-item[data-highlighted] {
+.env-menu[data-density='compact'] .env-menu-item:is([data-highlighted], [data-popup-open]) {
   background: hsl(from var(--color-popup) h s var(--state-surface-hover-lightness));
 }
 .env-menu[data-density='compact'] .env-menu-item:active {
