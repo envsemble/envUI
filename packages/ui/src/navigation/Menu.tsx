@@ -151,13 +151,14 @@ export function ContextMenu({
   const keyboardOpenedAt = useRef(Number.NEGATIVE_INFINITY);
 
   function setOpen(next: boolean) {
+    if (!next) keyboardOpenedAt.current = Number.NEGATIVE_INFINITY;
     if (controlledOpen === undefined) setUncontrolledOpen(next);
     onOpenChange?.(next);
   }
 
   function openAtPointer(event: MouseEvent<Element> & { preventBaseUIHandler?: () => void }) {
     if (disabled) return;
-    if (performance.now() - keyboardOpenedAt.current < 1000) {
+    if (performance.now() - keyboardOpenedAt.current < 500) {
       event.preventDefault();
       event.preventBaseUIHandler?.();
       return;

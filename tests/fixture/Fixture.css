@@ -63,3 +63,12 @@ body:has(.fixture-resizable-shell) {
   border: 0.0625rem dashed var(--color-border-strong);
   border-radius: var(--radius-standard);
 }
+.fixture-tree-frame {
+  block-size: 20rem;
+  inline-size: min(100%, 18rem);
+  border: 0.0625rem solid var(--color-border-strong);
+  border-radius: var(--radius-standard);
+}
+.fixture-section output[data-testid^='tree-log'] {
+  white-space: pre-line;
+}

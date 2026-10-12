@@ -118,5 +118,6 @@ TypeScript declarations provide the complete public API.
 
 - [Navigation items](../components/navigation.md)
 - [Menus](../components/menu.md)
+- [Tree](../components/tree.md)
 - [Colors & themes](../foundations/colors.md)
 - [Install the private package](../setup.md)

@@ -11,6 +11,7 @@ import {
   Skeleton,
   Stack,
   Text,
+  Tree,
 } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Apps } from '@envsemble/envui/icons/Apps';
@@ -19,6 +20,7 @@ import { ManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
 import { Logout } from '@envsemble/envui/icons/Logout';
 import { Example } from './Example';
 import { Preview } from './Preview';
+import { useSampleTree } from './Workspace';
 
 const organizations = [
   { id: 'northwind', name: 'Northwind Labs', detail: 'Admin' },
@@ -114,16 +116,15 @@ export function AppShellPreview() {
   );
 }
 
-const sampleFiles = Array.from({ length: 80 }, (_, index) => `Plan ${index + 1}.md`);
-
 /** A resizable sidebar with its own scrolling content below the navigation. */
 function ResizableShellExample() {
   const [page, setPage] = useState<(typeof pages)[number]['id']>('home');
+  const sample = useSampleTree();
   return (
     <Example
       title="Resizable sidebar with content"
       size="wide"
-      caption="Drag the sidebar edge or focus it and use the arrow keys. The file list fills the sidebar below the navigation and scrolls on its own; the page header sticks below the topbar."
+      caption="Drag the sidebar edge or focus it and use the arrow keys. The file tree fills the sidebar below the navigation and scrolls on its own; the page header sticks below the topbar."
     >
       <div className="docs-shell-frame">
         <AppShell
@@ -141,11 +142,13 @@ function ResizableShellExample() {
             </NavigationItem>
           ))}
           sidebarContent={
-            <ul className="docs-shell-files" aria-label="Plans">
-              {sampleFiles.map((file) => (
-                <li key={file}>{file}</li>
-              ))}
-            </ul>
+            <Tree
+              aria-label="Planning documents"
+              items={sample.items}
+              selectedId={sample.selectedId}
+              onOpen={sample.onOpen}
+              onExpandedChange={sample.onExpandedChange}
+            />
           }
           resizable
           storageKey="envui-catalogue-resizable-shell"

@@ -47,6 +47,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Tabs](components/tabs.md) — Switches between content panels in the same view.
 - [Direction links](components/direction-links.md) — Centered previous and next destinations, together or individually.
 - [Application shell](components/app-shell.md) — Topbar and collapsible navigation sidebar for a whole application.
+- [Tree](components/tree.md) — A virtualized tree of rows for large hierarchies, such as file trees.
 
 ## Content & guidance
 

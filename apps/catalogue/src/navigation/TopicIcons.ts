@@ -33,6 +33,7 @@ import { ChatBubble } from '@envsemble/envui/icons/ChatBubble';
 import { AccountCircle } from '@envsemble/envui/icons/AccountCircle';
 import { Speed } from '@envsemble/envui/icons/Speed';
 import { SpaceDashboard } from '@envsemble/envui/icons/SpaceDashboard';
+import { AccountTree } from '@envsemble/envui/icons/AccountTree';
 import { type Reference } from '../Reference';
 
 export const foundationIcons: Record<string, typeof Palette> = {
@@ -89,6 +90,7 @@ const referenceIcons: Record<string, typeof Palette> = {
   avatar: AccountCircle,
   meters: Speed,
   'app-shell': SpaceDashboard,
+  tree: AccountTree,
 };
 
 /** A decorative symbol for the individual reference topic. */
