@@ -57,6 +57,7 @@
   /* Presses: compact controls settle slightly while held, larger surfaces less, and small choice
      controls more, whether the control or its label is pressed. */
   .env-button,
+  .env-segment,
   .env-navigation-item,
   .env-avatar-button,
   .env-app-sidebar-toggle,
@@ -72,6 +73,7 @@
     transition-timing-function: var(--motion-ease);
   }
   .env-button:active:not(:disabled):not([aria-disabled='true']),
+  .env-segment:active:not([data-disabled]),
   .env-navigation-item:active:not(:disabled):not([aria-disabled='true']),
   .env-avatar-button:active:not(:disabled),
   .env-app-sidebar-toggle:active,

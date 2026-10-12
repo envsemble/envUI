@@ -7,6 +7,7 @@ export * from './actions/Link.js';
 export * from './actions/ButtonGroup.js';
 export * from './actions/AvatarButton.js';
 export * from './actions/ConfirmButton.js';
+export * from './actions/SegmentedControl.js';
 export * from './navigation/NavigationItem.js';
 export * from './navigation/DirectionLink.js';
 export * from './navigation/DirectionLinks.js';

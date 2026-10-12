@@ -18,6 +18,7 @@ import { MenusFixture } from './Menus.js';
 import { TreeFixture } from './TreeView.js';
 import { DocumentTabsFixture } from './Tabs.js';
 import { CommandPaletteFixture } from './Palette.js';
+import { SegmentedControlFixture } from './Segments.js';
 
 /** Fixtures that fill the viewport are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
@@ -100,6 +101,12 @@ export default function App() {
             <>
               <CommandPaletteFixture theme="light" />
               <CommandPaletteFixture theme="dark" />
+            </>
+          )}
+          {includes('segments') && (
+            <>
+              <SegmentedControlFixture theme="light" />
+              <SegmentedControlFixture theme="dark" />
             </>
           )}
           {includes('menus') && (

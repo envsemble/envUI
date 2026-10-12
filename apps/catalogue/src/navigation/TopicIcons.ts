@@ -36,6 +36,7 @@ import { SpaceDashboard } from '@envsemble/envui/icons/SpaceDashboard';
 import { AccountTree } from '@envsemble/envui/icons/AccountTree';
 import { Tab } from '@envsemble/envui/icons/Tab';
 import { KeyboardCommandKey } from '@envsemble/envui/icons/KeyboardCommandKey';
+import { ViewWeek } from '@envsemble/envui/icons/ViewWeek';
 import { type Reference } from '../Reference';
 
 export const foundationIcons: Record<string, typeof Palette> = {
@@ -95,6 +96,7 @@ const referenceIcons: Record<string, typeof Palette> = {
   tree: AccountTree,
   'document-tabs': Tab,
   'command-palette': KeyboardCommandKey,
+  'segmented-control': ViewWeek,
 };
 
 /** A decorative symbol for the individual reference topic. */
