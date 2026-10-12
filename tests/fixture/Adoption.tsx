@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import {
+  AnimatedNumber,
   AppShell,
   Avatar,
   AvatarButton,
   Button,
+  ConfirmButton,
   Dialog,
   EmptyState,
   GroupedRows,
@@ -57,6 +59,8 @@ export function AdoptionFixture() {
   const [organizationId, setOrganizationId] = useState('northwind');
   const [presses, setPresses] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [confirmed, setConfirmed] = useState(0);
+  const [homes, setHomes] = useState(3);
   return (
     <ThemePreferenceProvider storageKey="fixture-theme" className="fixture-adoption">
       <LinkProvider component={RecordingLink}>
@@ -106,8 +110,8 @@ export function AdoptionFixture() {
           <output data-testid="menu-action">{action}</output>
           <OrganizationMenu
             organizations={[
-              { id: 'northwind', name: 'Northwind Labs' },
-              { id: 'contoso', name: 'Contoso' },
+              { id: 'northwind', name: 'Northwind Labs', detail: 'Admin' },
+              { id: 'contoso', name: 'Contoso', detail: 'Member' },
             ]}
             currentOrganizationId={organizationId}
             onSelect={(id) => {
@@ -138,6 +142,20 @@ export function AdoptionFixture() {
           </Button>
           <output data-testid="pending-presses">{presses}</output>
           <Spinner label="Refreshing seats" />
+          <ConfirmButton
+            confirmLabel="Remove Morgan?"
+            armedDuration={800}
+            onConfirm={() => setConfirmed((count) => count + 1)}
+            data-testid="confirm-button"
+          >
+            Remove
+          </ConfirmButton>
+          <output data-testid="confirmed">{confirmed}</output>
+          <Button onClick={() => setHomes((count) => count + 1)}>More homes</Button>
+          <Button onClick={() => setHomes((count) => count - 1)}>Fewer homes</Button>
+          <Button>
+            Show <AnimatedNumber value={homes} data-testid="animated-number" /> homes
+          </Button>
           <Button onClick={() => setLoading((value) => !value)}>Toggle loading</Button>
           <LoadingBar active={loading} label="Loading next page" />
           <output hidden data-testid="bootstrap-script">

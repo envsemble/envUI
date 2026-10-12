@@ -182,6 +182,16 @@
 .env-button[data-pending] > .env-button-content > * {
   opacity: 0;
 }
+/* ConfirmButton announces its armed state from a visually hidden status beside the button. */
+.env-confirm-button-status {
+  position: absolute;
+  inline-size: 0.0625rem;
+  block-size: 0.0625rem;
+  margin: -0.0625rem;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 .env-button-spinner.env-spinner {
   position: absolute;
   inset: 0;

@@ -269,6 +269,9 @@ test('OrganizationMenu switches organizations and offers creating one', async ({
     'aria-checked',
     'true',
   );
+  // A detail, such as the person's role, follows each name.
+  await expect(menu.getByRole('menuitemradio', { name: 'Contoso' })).toContainText('Member');
+  await expect(menu.locator('.env-organization-menu-detail').first()).toHaveText('Admin');
   // Choosing the active organization again does not switch.
   await menu.getByRole('menuitemradio', { name: 'Northwind Labs' }).click();
   await expect(menu).toBeHidden();
@@ -292,6 +295,71 @@ test('OrganizationMenu switches organizations and offers creating one', async ({
     .click();
   await expect(page.getByTestId('menu-action')).toHaveText('Create first organization');
   expect(errors).toEqual([]);
+});
+
+test('ConfirmButton names the consequence and runs only on a deliberate second press', async ({
+  page,
+}) => {
+  const errors = collectErrors(page);
+  await page.goto(fixture);
+  const button = page.getByTestId('confirm-button');
+  const confirmed = page.getByTestId('confirmed');
+  const status = page.locator('.env-confirm-button-status');
+  await expect(button).toHaveText('Remove');
+  await expect(button).toHaveClass(/env-button-outlined/);
+
+  await button.click();
+  await expect(button).toHaveText('Remove Morgan?');
+  await expect(button).toHaveClass(/env-button-destructive/);
+  await expect(status).toHaveText('Remove Morgan? Press again to confirm.');
+  await page.waitForTimeout(450);
+  await button.click();
+  await expect(confirmed).toHaveText('1');
+  await expect(button).toHaveText('Remove');
+  await expect(status).toHaveText('');
+
+  // A double click only arms it.
+  await button.dblclick();
+  await expect(button).toHaveText('Remove Morgan?');
+  await expect(confirmed).toHaveText('1');
+  // Escape, leaving the button and waiting all disarm it.
+  await button.press('Escape');
+  await expect(button).toHaveText('Remove');
+  await button.focus();
+  await page.keyboard.press('Enter');
+  await expect(button).toHaveText('Remove Morgan?');
+  await page.keyboard.press('Tab');
+  await expect(button).toHaveText('Remove');
+  await button.focus();
+  await page.keyboard.press('Enter');
+  await expect(button).toHaveText('Remove Morgan?');
+  await expect(button).toHaveText('Remove', { timeout: 3000 });
+  await expect(confirmed).toHaveText('1');
+  expect(errors).toEqual([]);
+});
+
+test('AnimatedNumber rolls up when a count grows and down when it shrinks', async ({ page }) => {
+  await page.goto(fixture);
+  const number = page.getByTestId('animated-number');
+  const value = number.locator('.env-animated-number-value');
+  await expect(number).toHaveText('3');
+  await expect(value).not.toHaveAttribute('data-direction');
+  await expect(page.getByRole('button', { name: 'Show 3 homes' })).toBeVisible();
+
+  await page.getByRole('button', { name: 'More homes' }).click();
+  await expect(number).toHaveText('4');
+  await expect(value).toHaveAttribute('data-direction', 'up');
+  await expect(value).toHaveCSS('animation-name', 'env-motion-roll-up');
+  await page.getByRole('button', { name: 'Fewer homes' }).click();
+  await page.getByRole('button', { name: 'Fewer homes' }).click();
+  await expect(number).toHaveText('2');
+  await expect(value).toHaveAttribute('data-direction', 'down');
+  await expect(value).toHaveCSS('animation-name', 'env-motion-roll-down');
+
+  // With reduced motion the new value only fades in.
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.getByRole('button', { name: 'More homes' }).click();
+  await expect(value).toHaveCSS('animation-name', 'env-motion-fade-in');
 });
 
 test('motion settles presses and respects reduced motion', async ({ page }) => {

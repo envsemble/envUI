@@ -10,6 +10,8 @@ import { Menu } from './Menu.js';
 export interface OrganizationMenuOrganization {
   id: string;
   name: string;
+  /** A short muted note after the name, such as the person's role in the organization. */
+  detail?: string;
 }
 
 export interface OrganizationMenuProps {
@@ -102,6 +104,9 @@ export function OrganizationMenu({
               <BaseMenu.RadioItemIndicator className="env-organization-menu-radio-dot" />
             </span>
             <span className="env-menu-item-label">{organization.name}</span>
+            {organization.detail && (
+              <span className="env-organization-menu-detail">{organization.detail}</span>
+            )}
           </BaseMenu.RadioItem>
         ))}
       </BaseMenu.RadioGroup>

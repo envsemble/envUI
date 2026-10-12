@@ -44,6 +44,11 @@
   }
 }
 
+/* A changed number fades in; without a reduced-motion preference it also rolls (below). */
+.env-animated-number-value[data-direction] {
+  animation: env-motion-fade-in var(--motion-duration-medium) var(--motion-ease);
+}
+
 @media (prefers-reduced-motion: no-preference) {
   /* Presses: compact controls settle slightly while held, larger surfaces less, and small choice
      controls more, whether the control or its label is pressed. */
@@ -125,6 +130,17 @@
     transition-timing-function: var(--motion-ease-exit);
   }
 
+  /* A changed number rolls in from below when it grows and from above when it shrinks. */
+  .env-animated-number-value[data-direction] {
+    animation: var(--motion-duration-slow) var(--motion-ease-enter) both;
+  }
+  .env-animated-number-value[data-direction='up'] {
+    animation-name: env-motion-roll-up;
+  }
+  .env-animated-number-value[data-direction='down'] {
+    animation-name: env-motion-roll-down;
+  }
+
   /* Indicators turn, marks and small actions settle into size, and skeletons pulse. */
   .env-dropdown-trigger .env-symbol,
   .env-disclosure-note > summary::before {
@@ -149,5 +165,17 @@
 @keyframes env-motion-pulse {
   to {
     opacity: 0.55;
+  }
+}
+@keyframes env-motion-roll-up {
+  from {
+    opacity: 0;
+    transform: translateY(0.6em);
+  }
+}
+@keyframes env-motion-roll-down {
+  from {
+    opacity: 0;
+    transform: translateY(-0.6em);
   }
 }

@@ -65,15 +65,15 @@ import { AppShell, OrganizationMenu } from '@envsemble/envui';
 />;
 ```
 
-| Name                  | Contract                                                                             |
-| --------------------- | ------------------------------------------------------------------------------------ |
-| organizations         | The person's organizations as `{ id, name }`, in display order                       |
-| currentOrganizationId | The active organization, or null; the trigger then shows the placeholder             |
-| onSelect              | Called with another organization's id; the application switches and shows progress   |
-| onCreate              | Optional; adds the create action, which is the only control without any organization |
-| heading / createLabel | Menu heading (Organizations) and create label (Create organization)                  |
-| placeholder           | Trigger text without an active organization (Choose organization)                    |
-| disabled              | Prevents opening, for example while a switch is in progress                          |
+| Name                  | Contract                                                                                                               |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| organizations         | The person's organizations as `{ id, name, detail? }`, in display order; detail is a short muted note such as the role |
+| currentOrganizationId | The active organization, or null; the trigger then shows the placeholder                                               |
+| onSelect              | Called with another organization's id; the application switches and shows progress                                     |
+| onCreate              | Optional; adds the create action, which is the only control without any organization                                   |
+| heading / createLabel | Menu heading (Organizations) and create label (Create organization)                                                    |
+| placeholder           | Trigger text without an active organization (Choose organization)                                                      |
+| disabled              | Prevents opening, for example while a switch is in progress                                                            |
 
 ## Guidelines
 
@@ -81,6 +81,7 @@ import { AppShell, OrganizationMenu } from '@envsemble/envui';
 - Arrow keys move between items, typing jumps to a matching item, Enter or Space activates, and Escape closes and returns focus to the trigger.
 - The menu is a pane of grouped rows. Keep labels short; one icon per item at most.
 - Organizations are radio items: the active one is checked, and choosing it again does nothing.
+- Use an organization's detail for a short fact that matters before switching, such as the person's role there.
 
 TypeScript declarations provide the complete public API.
 

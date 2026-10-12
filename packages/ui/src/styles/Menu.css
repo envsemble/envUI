@@ -125,6 +125,12 @@
 .env-organization-menu-option[data-checked] {
   font-weight: 500;
 }
+.env-organization-menu-detail {
+  margin-inline-start: auto;
+  flex: 0 0 auto;
+  color: var(--color-text-muted);
+  font: var(--type-body-small);
+}
 /* The selection indicator follows the radio control. */
 .env-organization-menu-radio {
   box-sizing: border-box;

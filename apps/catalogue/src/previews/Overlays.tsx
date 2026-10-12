@@ -23,9 +23,9 @@ import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
 
 const sampleOrganizations = [
-  { id: 'northwind', name: 'Northwind Labs' },
-  { id: 'contoso', name: 'Contoso' },
-  { id: 'fabrikam', name: 'Fabrikam Research and Development' },
+  { id: 'northwind', name: 'Northwind Labs', detail: 'Admin' },
+  { id: 'contoso', name: 'Contoso', detail: 'Member' },
+  { id: 'fabrikam', name: 'Fabrikam Research and Development', detail: 'Member' },
 ];
 
 export function MenuPreview() {

@@ -34,12 +34,16 @@ Clearer contrast in both themes, more ways to show loading, and refinements from
 - `pending` on `Button` and `IconButton`: a spinner replaces the content at the same size, and the button reports busy and ignores activation.
 - `showLabel` on text fields: compact fields can show a label that rests inside and floats into the outline, without changing their height.
 - `--color-state-layer-hover`, `--color-state-layer-pressed` and `--row-padding-inline` tokens.
+- `ConfirmButton`: an action that takes effect at once is confirmed in place. The first press arms the button and names the consequence, and the second press runs it. A double click only arms it, and the arming ends after a few seconds, when focus leaves and on Escape.
+- `AnimatedNumber`: a count rolls up as it grows and down as it shrinks, and fades with reduced motion.
+- `OrganizationMenu` organizations accept a `detail`, such as the person's role, shown muted after the name.
 
 ### Documentation
 
 - The loading page covers page progress, spinners, pending buttons and placeholders, with guidance on when to use each.
 - The catalogue's icon search uses `SearchField`, and the compact field examples show the floating label and end action.
 - The dialogs page shows dialogs with forms (fields and validation, a choice, a typed confirmation), and its pending example uses a pending button.
+- The buttons page asks labels to say what will happen, with examples of a live count and confirming in place. A new page covers animated numbers.
 
 ## 0.3.0 — 2026-10-11
 

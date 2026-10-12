@@ -54,6 +54,36 @@ import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 | aria-label          | Required accessible action name               |
 | Native button props | disabled, type, onClick and ref               |
 
+## ConfirmButton
+
+```tsx
+import { ConfirmButton } from '@envsemble/envui';
+
+<ConfirmButton confirmLabel="Remove Morgan?" onConfirm={() => removeSeat(morgan)}>
+  Remove
+</ConfirmButton>
+
+<ConfirmButton
+  variant="destructive"
+  confirmLabel="Cancel plan · 3 lose access"
+  pending={cancelling}
+  onConfirm={cancelPlan}
+>
+  Cancel plan
+</ConfirmButton>
+```
+
+### Props & contracts
+
+| Name                | Contract                                                                            |
+| ------------------- | ----------------------------------------------------------------------------------- |
+| confirmLabel        | The label while armed, naming what a second press does                              |
+| onConfirm           | Runs on the second press                                                            |
+| variant             | outlined (default), secondary, destructive or text at rest; armed it is destructive |
+| armedDuration       | Milliseconds the button stays armed without a second press; 4000 by default         |
+| pending / disabled  | End an arming; pending shows the spinner as on Button                               |
+| Native button props | ref, onBlur, onKeyDown and accessible attributes                                    |
+
 ## ButtonGroup
 
 ```tsx
@@ -84,6 +114,8 @@ import { Settings } from '@envsemble/envui/icons/Settings';
 
 ## Guidelines
 
+- Say what an action will do before it is taken. When the outcome is known, put it in the label, such as “Show 128 homes”, “Switch to Team · +5 seats” or “Assign to Morgan”. Use AnimatedNumber for a count that changes while choices are made.
+- Use ConfirmButton for an action that takes effect at once and cannot be undone, such as removing someone's access. The first press names the consequence in place and announces it; a double click only arms it; Escape, leaving the button and four seconds disarm it. Use a Dialog when the person must choose or type something first.
 - Use one primary action in an action group. Reserve important emphasis for rare, consequential actions.
 - Action buttons fit their content: 2.5 rem minimum height (2 rem for important), 0.875 rem text, 0.25 rem vertical and 0.75 rem horizontal padding. Labels wrap when space is limited.
 - Use fully rounded corners; important actions use 0.5 rem corners. ActionGroup provides 1 rem row gaps or 0.5 rem stacked gaps.
@@ -104,6 +136,7 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Stacks & action groups](../components/layout.md)
+- [Animated numbers](../components/animated-number.md)
 - [Colors & themes](../foundations/colors.md)
 - [Icons & assets](../foundations/icons.md)
 - [Accessibility](../foundations/accessibility.md)

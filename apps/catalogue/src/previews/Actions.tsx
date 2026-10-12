@@ -1,5 +1,18 @@
 import { useState } from 'react';
-import { ActionGroup, Button, ButtonGroup, DisclosureNote, Link, Text } from '@envsemble/envui';
+import {
+  ActionGroup,
+  AnimatedNumber,
+  Button,
+  ButtonGroup,
+  Checkbox,
+  ConfirmButton,
+  DisclosureNote,
+  GroupedRows,
+  Link,
+  Row,
+  Stack,
+  Text,
+} from '@envsemble/envui';
 import { Check } from '@envsemble/envui/icons/Check';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 import { Close } from '@envsemble/envui/icons/Close';
@@ -246,6 +259,7 @@ export function ButtonsPreview() {
           </Specimen>
         </SpecimenGrid>
       </Example>
+      <OutcomeExamples />
       <Example title="Mixed styles" caption="Different button styles can also share one group.">
         <ButtonGroup aria-label="Mixed actions">
           <Button startIcon={<ChevronRight />}>Continue</Button>
@@ -262,5 +276,101 @@ export function ButtonsPreview() {
         </DisclosureNote>
       </Example>
     </Preview>
+  );
+}
+
+const homeFilters = [
+  { id: 'garden', label: 'Garden', matching: 0.4 },
+  { id: 'parking', label: 'Parking', matching: 0.6 },
+  { id: 'pets', label: 'Pets allowed', matching: 0.5 },
+] as const;
+
+/** Labels that say what an action will do, before it is taken. */
+function OutcomeExamples() {
+  const [filters, setFilters] = useState<string[]>([]);
+  const [members, setMembers] = useState(['Alex Morgan', 'Sam Lee', 'Priya Shah']);
+  const [cancelled, setCancelled] = useState(false);
+  const homes = homeFilters.reduce(
+    (count, filter) => (filters.includes(filter.id) ? Math.round(count * filter.matching) : count),
+    1280,
+  );
+  return (
+    <>
+      <Example
+        title="Say what will happen"
+        caption="Put the outcome in the label when it is known. AnimatedNumber rolls a count that changes while choices are made."
+      >
+        <Stack gap={3}>
+          {homeFilters.map((filter) => (
+            <Checkbox
+              key={filter.id}
+              label={filter.label}
+              checked={filters.includes(filter.id)}
+              onCheckedChange={(checked) =>
+                setFilters((current) =>
+                  checked ? [...current, filter.id] : current.filter((id) => id !== filter.id),
+                )
+              }
+            />
+          ))}
+        </Stack>
+        <ActionGroup>
+          <Button>
+            Show <AnimatedNumber value={homes} /> homes
+          </Button>
+        </ActionGroup>
+      </Example>
+      <Example
+        title="Confirm in place"
+        size="collection"
+        caption="ConfirmButton names the consequence on the first press and acts on the second. It disarms after a few seconds, when focus leaves and on Escape."
+      >
+        <SpecimenGrid size="compact">
+          <Specimen title="Remove from a row">
+            <GroupedRows aria-label="Members with access">
+              {members.map((name) => (
+                <Row
+                  key={name}
+                  title={name}
+                  action={
+                    <ConfirmButton
+                      confirmLabel={`Remove ${name.split(' ')[0]}?`}
+                      onConfirm={() =>
+                        setMembers((current) => current.filter((member) => member !== name))
+                      }
+                    >
+                      Remove
+                    </ConfirmButton>
+                  }
+                />
+              ))}
+            </GroupedRows>
+            {members.length === 0 && (
+              <Button
+                variant="text"
+                onClick={() => setMembers(['Alex Morgan', 'Sam Lee', 'Priya Shah'])}
+              >
+                Restore members
+              </Button>
+            )}
+          </Specimen>
+          <Specimen title="Destructive">
+            {cancelled ? (
+              <Button variant="text" onClick={() => setCancelled(false)}>
+                Plan cancelled. Restore
+              </Button>
+            ) : (
+              <ConfirmButton
+                variant="destructive"
+                confirmLabel="Cancel plan · 3 lose access"
+                onConfirm={() => setCancelled(true)}
+              >
+                Cancel plan
+              </ConfirmButton>
+            )}
+          </Specimen>
+        </SpecimenGrid>
+      </Example>
+    </>
   );
 }

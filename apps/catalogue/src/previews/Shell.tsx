@@ -21,8 +21,8 @@ import { Example } from './Example';
 import { Preview } from './Preview';
 
 const organizations = [
-  { id: 'northwind', name: 'Northwind Labs' },
-  { id: 'contoso', name: 'Contoso' },
+  { id: 'northwind', name: 'Northwind Labs', detail: 'Admin' },
+  { id: 'contoso', name: 'Contoso', detail: 'Member' },
 ];
 
 const pages = [
