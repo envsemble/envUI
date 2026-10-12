@@ -113,15 +113,22 @@
   border: 0;
   margin: 0;
 }
-.env-menu > :is(.env-menu-header, .env-menu-item):first-child,
-.env-menu > :is(.env-menu-separator, .env-menu-group) + :is(.env-menu-header, .env-menu-item),
-.env-menu-group > .env-menu-item:nth-child(1 of .env-menu-item) {
+.env-menu:not([data-density='compact']) > :is(.env-menu-header, .env-menu-item):first-child,
+.env-menu:not([data-density='compact'])
+  > :is(.env-menu-separator, .env-menu-group)
+  + :is(.env-menu-header, .env-menu-item),
+.env-menu:not([data-density='compact'])
+  .env-menu-group
+  > .env-menu-item:nth-child(1 of .env-menu-item) {
   border-start-start-radius: var(--radius-row-outer);
   border-start-end-radius: var(--radius-row-outer);
 }
-.env-menu > :is(.env-menu-header, .env-menu-item):last-child,
-.env-menu > :is(.env-menu-header, .env-menu-item):has(+ :is(.env-menu-separator, .env-menu-group)),
-.env-menu-group > .env-menu-item:nth-last-child(1 of .env-menu-item) {
+.env-menu:not([data-density='compact']) > :is(.env-menu-header, .env-menu-item):last-child,
+.env-menu:not([data-density='compact'])
+  > :is(.env-menu-header, .env-menu-item):has(+ :is(.env-menu-separator, .env-menu-group)),
+.env-menu:not([data-density='compact'])
+  .env-menu-group
+  > .env-menu-item:nth-last-child(1 of .env-menu-item) {
   border-end-start-radius: var(--radius-row-outer);
   border-end-end-radius: var(--radius-row-outer);
 }
@@ -140,45 +147,96 @@
   font-weight: 500;
   overflow-wrap: anywhere;
 }
-/* Compact menus suit dense desktop surfaces, such as a compact tree's context menu: shorter rows on
-   one pane that highlight on hover, and separators drawn as hairlines. */
+/* Compact menus are the desktop dropdown for dense surfaces: the raised popup of Popover and Select
+   with small corners and concentric 1.75 rem rows that highlight on hover and keyboard focus,
+   hairline separators, small muted group labels, and shortcuts as small muted keys at the end. */
 .env-menu[data-density='compact'] {
+  /* One leading slot holds a check mark or an icon. */
+  --env-menu-slot: calc(var(--control-icon-size) + var(--space-2));
+  --env-menu-leading: 0rem;
   gap: 0;
   inline-size: max-content;
   min-inline-size: 12rem;
   max-inline-size: min(22rem, calc(100vw - 2rem));
   padding: var(--space-1);
+  border: 0.0625rem solid var(--color-popup-border);
   border-radius: calc(var(--radius-standard) + var(--space-1));
+  background: var(--color-popup);
 }
-.env-menu[data-density='compact'] :is(.env-menu-item, .env-menu-header) {
-  min-block-size: 2rem;
+/* Labels line up across rows: once a row has a leading check mark or icon, the others keep its place. */
+.env-menu[data-density='compact']:has(
+    .env-menu-item > :is(.env-menu-item-check, .env-symbol):first-child
+  ) {
+  --env-menu-leading: var(--env-menu-slot);
+}
+.env-menu[data-density='compact']:has(.env-menu-item > .env-menu-item-check + .env-symbol) {
+  --env-menu-leading: calc(2 * var(--env-menu-slot));
+}
+.env-menu[data-density='compact'] .env-menu-item {
+  min-block-size: 1.75rem;
   gap: var(--space-2);
-  padding: var(--space-1) var(--space-3);
+  padding-block: var(--space-1);
+  padding-inline: calc(var(--space-2) + var(--env-menu-leading)) var(--space-2);
+  border-radius: var(--radius-standard);
+  background: transparent;
+  font: var(--type-body-small);
+}
+.env-menu[data-density='compact']
+  .env-menu-item:has(> :is(.env-menu-item-check, .env-symbol):first-child) {
+  padding-inline-start: calc(var(--space-2) + var(--env-menu-leading) - var(--env-menu-slot));
+}
+.env-menu[data-density='compact'] .env-menu-item:has(> .env-menu-item-check + .env-symbol) {
+  padding-inline-start: calc(var(--space-2) + var(--env-menu-leading) - 2 * var(--env-menu-slot));
+}
+.env-menu[data-density='compact'] .env-menu-header {
+  padding: var(--space-3) var(--space-2);
   border-radius: var(--radius-standard);
   background: transparent;
   font: var(--type-body-small);
 }
 .env-menu[data-density='compact'] .env-menu-item[data-highlighted] {
-  background: var(--color-menu-row);
+  background: hsl(from var(--color-popup) h s var(--state-surface-hover-lightness));
 }
 .env-menu[data-density='compact'] .env-menu-item:active {
-  background: hsl(from var(--color-menu-row) h s var(--state-surface-hover-lightness));
+  background: hsl(from var(--color-popup) h s var(--state-surface-pressed-lightness));
 }
 .env-menu[data-density='compact'] .env-menu-item .env-symbol,
 .env-menu[data-density='compact'] .env-menu-item-check {
   inline-size: var(--control-icon-size);
   block-size: var(--control-icon-size);
 }
+.env-menu[data-density='compact'] .env-menu-item-description {
+  font-size: 0.75rem;
+}
+/* Shortcut keys stay key caps, small enough to keep the row height, and muted like the hint they are. */
+.env-menu[data-density='compact'] .env-menu-item-shortcut {
+  margin-inline-start: var(--space-3);
+  gap: 0.125rem;
+}
+.env-menu[data-density='compact'] .env-menu-item-shortcut .env-kbd {
+  min-inline-size: 1.125rem;
+  block-size: 1.125rem;
+  padding-inline: 0.25rem;
+  border-radius: 0.25rem;
+  color: var(--color-text-muted);
+  font-size: 0.6875rem;
+}
+.env-menu[data-density='compact'] .env-menu-item-shortcut .env-kbd-separator {
+  padding-inline: 0.125rem;
+  font: 0.6875rem / 1 var(--font-family);
+}
 .env-menu[data-density='compact'] .env-menu-separator {
   block-size: 0.0625rem;
-  margin: var(--space-1) var(--space-2);
-  background: var(--color-border-strong);
+  margin: var(--space-1) 0;
+  background: var(--color-popup-border);
 }
 .env-menu[data-density='compact'] .env-menu-group {
   gap: 0;
 }
 .env-menu[data-density='compact'] .env-menu-group-label {
-  padding: var(--space-1) var(--space-3) 0;
+  padding-block: var(--space-1) 0.125rem;
+  padding-inline: calc(var(--space-2) + var(--env-menu-leading)) var(--space-2);
+  font: 500 0.75rem / 1.4 var(--font-family);
 }
 
 /* Organization menu: a secondary button in the shell's context area and a pane of radio rows. Long
@@ -285,8 +343,10 @@
   outline: 0.125rem solid var(--color-focus-ring);
   outline-offset: 0.125rem;
 }
+/* Coarse pointers keep the touch height in both densities. */
 @media (pointer: coarse) {
-  .env-menu-item {
+  .env-menu-item,
+  .env-menu[data-density='compact'] .env-menu-item {
     min-block-size: var(--control-height-touch);
   }
 }

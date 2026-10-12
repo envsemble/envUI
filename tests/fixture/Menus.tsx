@@ -14,6 +14,7 @@ import {
 } from '@envsemble/envui';
 import { Edit } from '@envsemble/envui/icons/Edit';
 import { Delete } from '@envsemble/envui/icons/Delete';
+import { Add } from '@envsemble/envui/icons/Add';
 
 const documents = ['Alpha', 'Beta', 'Gamma'];
 
@@ -21,6 +22,7 @@ export function MenusFixture({ theme }: { theme: ThemeValue }) {
   const [log, setLog] = useState('');
   const [sort, setSort] = useState('name');
   const [hidden, setHidden] = useState(false);
+  const [wrap, setWrap] = useState(true);
   const [programmatic, setProgrammatic] = useState<{ x: number; y: number } | null>(null);
   return (
     <Theme theme={theme} data-testid={`menus-${theme}`} className="fixture-section">
@@ -82,6 +84,31 @@ export function MenusFixture({ theme }: { theme: ThemeValue }) {
             Zoom sequence
           </MenuItem>
         </MenuGroup>
+      </Menu>
+      <Menu
+        aria-label="Compact options"
+        density="compact"
+        align="start"
+        trigger={<Button variant="secondary">Compact options</Button>}
+      >
+        <MenuGroup label="Document">
+          <MenuItem icon={<Add />} shortcut="Ctrl+Shift+N" onClick={() => setLog('New window')}>
+            New window
+          </MenuItem>
+          <MenuItem shortcut="Ctrl+S" onClick={() => setLog('Save')}>
+            Save
+          </MenuItem>
+        </MenuGroup>
+        <MenuSeparator />
+        <MenuCheckboxItem checked={wrap} onCheckedChange={setWrap}>
+          Word wrap
+        </MenuCheckboxItem>
+        <MenuItem
+          description="Opens beside the current document"
+          onClick={() => setLog('Open to the side')}
+        >
+          Open to the side
+        </MenuItem>
       </Menu>
       <ContextMenu
         aria-label="Programmatic actions"

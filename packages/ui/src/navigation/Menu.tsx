@@ -17,6 +17,7 @@ import { Theme, useTheme } from '../foundations/Theme.js';
 import { Check } from '../icons/Check.js';
 import { Kbd } from '../content/Kbd.js';
 import { useLinkComponent } from './LinkProvider.js';
+import { MenuDensityContext, renderMenuPopup } from './internal/MenuPopup.js';
 
 export interface MenuProps {
   /** The control that opens the menu; it receives the menu button semantics and ref. */
@@ -30,7 +31,10 @@ export interface MenuProps {
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
-  /** compact suits dense desktop surfaces: shorter rows on one pane, separated by hairlines. */
+  /**
+   * compact is the desktop dropdown for dense surfaces: a raised popup with 1.75 rem rows, hairline
+   * separators and small keys for shortcuts. Submenus open in the same density.
+   */
   density?: MenuDensity;
   className?: string;
 }
@@ -69,16 +73,9 @@ export function Menu({
             <BaseMenu.Popup
               className={classNames('env-menu', className)}
               // Base UI names the menu after its trigger; the menu's own label replaces that name.
-              render={(props) => (
-                <div
-                  {...props}
-                  aria-labelledby={undefined}
-                  aria-label={label}
-                  data-density={density === 'compact' ? 'compact' : undefined}
-                />
-              )}
+              render={renderMenuPopup(label, density)}
             >
-              {children}
+              <MenuDensityContext value={density}>{children}</MenuDensityContext>
             </BaseMenu.Popup>
           </BaseMenu.Positioner>
         </Theme>
@@ -223,16 +220,11 @@ export function ContextMenu({
           >
             <BaseContextMenu.Popup
               className={classNames('env-menu', className)}
-              render={(props) => (
-                <div
-                  {...props}
-                  aria-labelledby={undefined}
-                  aria-label={label}
-                  data-density={density === 'compact' ? 'compact' : undefined}
-                />
-              )}
+              render={renderMenuPopup(label, density)}
             >
-              {typeof content === 'function' ? content(target) : content}
+              <MenuDensityContext value={density}>
+                {typeof content === 'function' ? content(target) : content}
+              </MenuDensityContext>
             </BaseContextMenu.Popup>
           </BaseContextMenu.Positioner>
         </Theme>

@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect, type Locator, type Page } from '@playwright/test';
 import { fixtureUrl } from './Servers';
 
 const menusFixture = `${fixtureUrl}/?fixture=menus`;
@@ -11,6 +11,156 @@ function collectErrors(page: Page) {
   });
   return errors;
 }
+
+/** Computed colors of theme tokens, read beside an element so they resolve in its theme. */
+async function tokenColors(locator: Locator, tokens: string[]) {
+  return locator.evaluate((element, names) => {
+    const probe = document.createElement('div');
+    element.parentElement!.append(probe);
+    const colors = names.map((name) => {
+      probe.style.backgroundColor = `var(${name})`;
+      return getComputedStyle(probe).backgroundColor;
+    });
+    probe.remove();
+    return colors;
+  }, tokens);
+}
+
+/** Waits until a popup has finished growing in, so its boxes have their final size. */
+async function settled(locator: Locator) {
+  await expect(locator).not.toHaveAttribute('data-starting-style');
+  await locator.evaluate(async (element) => {
+    // The transition starts in the frame after the starting style is removed.
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    await Promise.allSettled(
+      element.getAnimations({ subtree: true }).map(({ finished }) => finished),
+    );
+  });
+}
+
+/** The menu popup's own surface: fill, border and corners. */
+async function popupSurface(menu: Locator) {
+  return menu.evaluate((element) => {
+    const style = getComputedStyle(element);
+    return {
+      background: style.backgroundColor,
+      borderColor: style.borderTopColor,
+      borderWidth: Number.parseFloat(style.borderTopWidth),
+      radius: Number.parseFloat(style.borderTopLeftRadius),
+      padding: Number.parseFloat(style.paddingTop),
+    };
+  });
+}
+
+test.describe('Compact menus', () => {
+  for (const theme of ['light', 'dark']) {
+    test(`a compact menu is a raised popup with 28 px rows in the ${theme} theme`, async ({
+      page,
+      browserName,
+    }) => {
+      const errors = collectErrors(page);
+      await page.goto(menusFixture);
+      await page
+        .getByTestId(`menus-${theme}`)
+        .getByRole('button', { name: 'Compact options' })
+        .click();
+      const menu = page.getByRole('menu', { name: 'Compact options' });
+      await expect(menu).toBeVisible();
+      await expect(menu).toHaveAttribute('data-density', 'compact');
+      await settled(menu);
+      // The popup takes the raised popup surface, like Popover and Select, with small corners.
+      const [popup, border] = await tokenColors(menu, ['--color-popup', '--color-popup-border']);
+      const surface = await popupSurface(menu);
+      expect(surface.background).toBe(popup);
+      expect(surface.borderColor).toBe(border);
+      expect(surface.borderWidth).toBeGreaterThanOrEqual(1);
+      expect(surface.radius).toBeCloseTo(12, 0);
+      expect(surface.padding).toBeCloseTo(4, 0);
+
+      const rows = ['New window', 'Save'].map((name) => menu.getByRole('menuitem', { name }));
+      rows.push(menu.getByRole('menuitemcheckbox', { name: 'Word wrap' }));
+      for (const row of rows) {
+        const box = (await row.boundingBox())!;
+        expect(box.height).toBeGreaterThanOrEqual(27.5);
+        expect(box.height).toBeLessThanOrEqual(28.5);
+        expect(await row.evaluate((element) => getComputedStyle(element).borderTopLeftRadius)).toBe(
+          '8px',
+        );
+      }
+      // Labels line up whether a row has an icon, a check mark slot or neither.
+      const labelStarts = await Promise.all(
+        rows.map(async (row) => (await row.locator('.env-menu-item-label').boundingBox())!.x),
+      );
+      for (const start of labelStarts) expect(start).toBeCloseTo(labelStarts[0]!, 0);
+      // Shortcuts are small muted keys at the end of the row.
+      for (const row of rows.slice(0, 2)) {
+        const rowBox = (await row.boundingBox())!;
+        const keys = row.locator('.env-menu-item-shortcut');
+        const keysBox = (await keys.boundingBox())!;
+        expect(rowBox.x + rowBox.width - (keysBox.x + keysBox.width)).toBeCloseTo(8, 0);
+        for (const key of await row.locator('kbd.env-kbd').all())
+          expect((await key.boundingBox())!.height).toBeLessThanOrEqual(19);
+      }
+      const [muted] = await tokenColors(menu, ['--color-text-muted']);
+      expect(
+        await rows[0]!
+          .locator('kbd.env-kbd')
+          .first()
+          .evaluate((key) => getComputedStyle(key).color),
+      ).toBe(muted);
+      const groupLabel = menu.getByText('Document', { exact: true });
+      expect(await groupLabel.evaluate((label) => getComputedStyle(label).color)).toBe(muted);
+      expect(
+        await groupLabel.evaluate((label) => Number.parseFloat(getComputedStyle(label).fontSize)),
+      ).toBeLessThan(14);
+      // A hairline separator in the popup border color.
+      const separator = menu.getByRole('separator');
+      expect((await separator.boundingBox())!.height).toBeCloseTo(1, 0);
+      expect(await separator.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe(
+        border,
+      );
+      // A description wraps below the label and grows its row.
+      const described = menu.getByRole('menuitem', { name: 'Open to the side' });
+      await expect(described).toHaveAccessibleDescription('Opens beside the current document');
+      expect((await described.boundingBox())!.height).toBeGreaterThan(28.5);
+
+      // Hover and keyboard highlight fill the row. Base UI ignores WebKit pointer moves without
+      // movement, which is all the automated WebKit pointer reports, so WebKit checks the keyboard.
+      if (browserName !== 'webkit') {
+        await rows[1]!.hover();
+        await expect(rows[1]!).toHaveAttribute('data-highlighted', '');
+        expect(
+          await rows[1]!.evaluate((element) => getComputedStyle(element).backgroundColor),
+        ).not.toBe(popup);
+      } else {
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+        await expect(rows[1]!).toHaveAttribute('data-highlighted', '');
+      }
+      await page.keyboard.press('ArrowDown');
+      await expect(rows[2]!).toHaveAttribute('data-highlighted', '');
+      expect(
+        await rows[2]!.evaluate((element) => getComputedStyle(element).backgroundColor),
+      ).not.toBe(popup);
+      await page.keyboard.press('Escape');
+      await expect(menu).toBeHidden();
+      expect(errors).toEqual([]);
+    });
+  }
+
+  test('a standard menu keeps its pane and tall rows', async ({ page }) => {
+    await page.goto(menusFixture);
+    await page.getByTestId('menus-light').getByRole('button', { name: 'View options' }).click();
+    const menu = page.getByRole('menu', { name: 'View options' });
+    await expect(menu).toBeVisible();
+    await expect(menu).not.toHaveAttribute('data-density');
+    await settled(menu);
+    const [pane] = await tokenColors(menu, ['--color-pane']);
+    expect((await popupSurface(menu)).background).toBe(pane);
+    const row = (await menu.getByRole('menuitemradio', { name: 'Name' }).boundingBox())!;
+    expect(row.height).toBeGreaterThanOrEqual(47);
+  });
+});
 
 test.describe('ContextMenu', () => {
   for (const theme of ['light', 'dark']) {
