@@ -5,7 +5,7 @@
 
 **The shared interface library for envsemble.**
 
-[![CI](https://github.com/envsemble/envUI/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/envsemble/envUI/actions/workflows/ci.yml)
+[![CI](https://github.com/envsemble/envUI/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/envsemble/envUI/actions/workflows/ci.yml)
 ![React 19](https://img.shields.io/badge/React-19-149eca)
 ![Node.js 24+](https://img.shields.io/badge/Node.js-24%2B-417e38)
 ![Private package](https://img.shields.io/badge/GitHub_Packages-private-6e40c9)
@@ -133,7 +133,7 @@ npx playwright install chromium firefox webkit
 npm run verify
 ```
 
-Build outputs are `packages/ui/dist/` and `dist/envUI.html`. CI retains the offline catalogue and browser diagnostics as artifacts.
+Build outputs are `packages/ui/dist/` and `dist/envUI.html`. CI retains the offline catalogue and browser diagnostics as artifacts. CI runs for pull requests into `main` and pushes to `main` only, so run `npm run verify` before pushing a branch or merging into `dev`.
 
 ## Repository map
 
