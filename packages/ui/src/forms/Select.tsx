@@ -141,14 +141,14 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
               sideOffset={getPopupOffset}
             >
               <BaseSelect.Popup className="env-dropdown-options" render={<Surface padding={2} />}>
-                <BaseSelect.List className="env-dropdown-list env-connected-rows">
+                <BaseSelect.List className="env-dropdown-list">
                   {options.map((option) => (
                     <BaseSelect.Item
                       key={option.value}
                       value={option.value}
                       label={option.label}
                       disabled={option.disabled}
-                      className="env-dropdown-option env-connected-row"
+                      className="env-dropdown-option"
                     >
                       <BaseSelect.ItemText>{option.label}</BaseSelect.ItemText>
                     </BaseSelect.Item>

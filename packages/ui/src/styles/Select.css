@@ -46,7 +46,8 @@
 /* The open list is a raised popup: its own color and a hairline border keep it apart from whatever
    it opens over, including a dialog of the pane tone. */
 .env-surface.env-dropdown-options {
-  --env-surface-radius: var(--radius-row-outer);
+  /* Compact corners: options are short rows, so large surface corners would look bubbly. */
+  --env-surface-radius: var(--md-sys-shape-corner-large);
   --env-surface-scale: var(--scale, 1);
   border: calc(0.0625rem * var(--scale, 1)) solid var(--color-popup-border);
   background: var(--color-popup);
@@ -61,7 +62,9 @@
 .env-dropdown-options[hidden] {
   display: none;
 }
+/* Every option takes the small row corner, concentric with the popup's corner and padding. */
 .env-dropdown-option {
+  border-radius: calc(var(--radius-row-inner) * var(--scale, 1));
   min-inline-size: 0;
   white-space: normal;
   overflow-wrap: anywhere;
