@@ -36,6 +36,24 @@ export interface MarkdownProps extends Omit<ComponentPropsWithRef<'div'>, 'child
   rehypePlugins?: Options['rehypePlugins'];
 }
 
+interface MarkdownNode {
+  type: string;
+  children?: MarkdownNode[];
+}
+
+/**
+ * Raw HTML leaves the Markdown tree before it becomes HTML, after every remark plugin, so no
+ * rehype plugin (rehype-raw, say) can render it; skipHtml alone acts after the rehype plugins.
+ */
+function remarkDropHtml() {
+  const drop = (node: MarkdownNode) => {
+    if (!node.children) return;
+    node.children = node.children.filter((child) => child.type !== 'html');
+    node.children.forEach(drop);
+  };
+  return drop;
+}
+
 const markdownPlugins = [remarkGfm];
 
 /** CommonMark and GFM prose composed with envUI typography and code components. */
@@ -106,7 +124,7 @@ export function Markdown({
     [components, componentOverrides],
   );
   const mergedRemarkPlugins = useMemo(
-    () => (remarkPlugins?.length ? [...markdownPlugins, ...remarkPlugins] : markdownPlugins),
+    () => [...markdownPlugins, ...(remarkPlugins ?? []), remarkDropHtml],
     [remarkPlugins],
   );
   return (

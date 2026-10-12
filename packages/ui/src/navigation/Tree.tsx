@@ -70,7 +70,7 @@ const rowRem = { compact: 1.75, standard: 2.25 };
 /** A row id safe for id references, whatever characters the item id contains. */
 function rowElementId(treeId: string, itemId: string) {
   return `${treeId}-row-${itemId.replace(
-    /[^A-Za-z0-9_-]/g,
+    /[^A-Za-z0-9-]/g,
     (character) => `_${character.codePointAt(0)!.toString(16)}_`,
   )}`;
 }
@@ -117,7 +117,7 @@ export function Tree<T extends TreeItem>({
   density = 'compact',
   className,
 }: TreeProps<T>) {
-  const treeId = useId().replace(/[^A-Za-z0-9_-]/g, '');
+  const treeId = useId().replace(/[^A-Za-z0-9-]/g, '');
   const container = useRef<HTMLDivElement>(null);
   const [scrollTop, setScrollTop] = useState(0);
   const [viewportHeight, setViewportHeight] = useState(0);
@@ -155,7 +155,9 @@ export function Tree<T extends TreeItem>({
     const measure = () => {
       setViewportHeight(element.clientHeight);
       const row = element.querySelector<HTMLElement>('.env-tree-row');
-      const height = row?.getBoundingClientRect().height;
+      // The layout height, exact and unaffected by transforms such as a dialog scaling in, which
+      // getBoundingClientRect would include. Rows are border-box with a fixed block size.
+      const height = row ? parseFloat(getComputedStyle(row).blockSize) : 0;
       if (height) setRowHeight(height);
       else {
         const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;

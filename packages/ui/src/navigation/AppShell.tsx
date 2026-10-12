@@ -89,9 +89,20 @@ function widthKey(storageKey: string | undefined) {
   return storageKey && `${storageKey}-width`;
 }
 
-function readStoredWidth(storageKey: string | undefined) {
-  const width = Number(readStored(widthKey(storageKey)));
+/** A width chosen by resizing has its own key, so a later measurement never replaces it. */
+function chosenWidthKey(storageKey: string | undefined) {
+  return storageKey && `${storageKey}-chosen-width`;
+}
+
+function readStoredWidth(key: string | undefined) {
+  const width = Number(readStored(key));
   return Number.isFinite(width) && width > 0 ? width : undefined;
+}
+
+/** The width a shell starts at: a resizable one's chosen width, else the measured width. */
+function readStartWidth(storageKey: string | undefined, resizable: boolean) {
+  const chosen = resizable ? readStoredWidth(chosenWidthKey(storageKey)) : undefined;
+  return { chosen, measured: readStoredWidth(widthKey(storageKey)) };
 }
 
 /** Without a stored or chosen width, a resizable sidebar starts at the measured width, up to 20 rem. */
@@ -271,14 +282,12 @@ export function AppShell({
     return () => cancelAnimationFrame(frame);
   }, []);
 
-  // The stored width applies after mount, so server-rendered markup and the first client render
-  // agree; it still arrives before the first paint.
-  // While resizable, the stored width is the chosen one.
+  // The stored widths apply after mount, so server-rendered markup and the first client render
+  // agree; they still arrive before the first paint.
   useLayoutEffect(() => {
-    const stored = readStoredWidth(storageKey);
-    if (stored === undefined) return;
-    if (resizable) setChosenWidth((current) => current ?? stored);
-    else setContentWidth((current) => current ?? stored);
+    const { chosen, measured } = readStartWidth(storageKey, resizable);
+    if (chosen !== undefined) setChosenWidth((current) => current ?? chosen);
+    if (measured !== undefined) setContentWidth((current) => current ?? measured);
   }, [storageKey, resizable]);
 
   // The expanded sidebar fits its widest content: the navigation or the context beside the toggle.
@@ -376,7 +385,7 @@ export function AppShell({
     const width = clampWidth(next, bounds);
     if (controlledWidth === undefined) {
       setChosenWidth(width);
-      if (persist) writeStored(widthKey(storageKey), String(width));
+      if (persist) writeStored(chosenWidthKey(storageKey), String(width));
     }
     if (width !== resizableWidth) onSidebarWidthChange?.(width);
   }
@@ -412,7 +421,10 @@ export function AppShell({
     setResizing(false);
     if (event.currentTarget.hasPointerCapture(event.pointerId))
       event.currentTarget.releasePointerCapture(event.pointerId);
-    changeWidth(current.startWidth + (event.clientX - current.startX) * current.direction, true);
+    // A cancelled drag, such as one the browser took over for scrolling, keeps the width it began with.
+    if (event.type === 'pointercancel') changeWidth(current.startWidth, false);
+    else
+      changeWidth(current.startWidth + (event.clientX - current.startX) * current.direction, true);
   }
 
   function resizeWithKeyboard(event: ReactKeyboardEvent<HTMLDivElement>) {
@@ -592,7 +604,10 @@ export function AppShellSkeleton({
   const [contentWidth, setContentWidth] = useState<number>();
   const { bounds } = useWidthBounds(sidebarMinWidth, sidebarMaxWidth);
   // Applied after mount, like AppShell's, so server-rendered markup matches the first render.
-  useLayoutEffect(() => setContentWidth(readStoredWidth(storageKey)), [storageKey]);
+  useLayoutEffect(() => {
+    const { chosen, measured } = readStartWidth(storageKey, resizable);
+    setContentWidth(chosen ?? measured);
+  }, [storageKey, resizable]);
   return (
     <LoadingState label={label} className={classNames('env-app-shell-skeleton', className)}>
       <div

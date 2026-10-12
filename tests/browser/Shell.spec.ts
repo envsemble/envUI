@@ -37,9 +37,9 @@ test.describe('Resizable AppShell', () => {
     await expect(handle).toHaveAttribute('aria-valuenow', String(start + 60));
     await expect.poll(async () => (await sidebar.boundingBox())!.width).toBeCloseTo(start + 60, 0);
     await expect.poll(async () => (await context.boundingBox())!.width).toBeCloseTo(start + 60, 0);
-    expect(await page.evaluate(() => localStorage.getItem('fixture-resizable-sidebar-width'))).toBe(
-      String(start + 60),
-    );
+    expect(
+      await page.evaluate(() => localStorage.getItem('fixture-resizable-sidebar-chosen-width')),
+    ).toBe(String(start + 60));
     await expect(page.getByTestId('width-changes')).toContainText(String(start + 60));
 
     await handle.focus();
@@ -71,6 +71,12 @@ test.describe('Resizable AppShell', () => {
       '240',
     );
     await expect.poll(async () => (await sidebar.boundingBox())!.width).toBeCloseTo(240, 0);
+    // Measuring the content after a reload never replaces the chosen width.
+    await page.reload();
+    await expect(page.getByRole('separator', { name: 'Resize sidebar' })).toHaveAttribute(
+      'aria-valuenow',
+      '240',
+    );
 
     // A collapsed sidebar cannot be resized and hides the sidebar content.
     await page.getByRole('button', { name: 'Collapse sidebar' }).click();

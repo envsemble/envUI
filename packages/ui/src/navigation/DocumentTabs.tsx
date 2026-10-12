@@ -56,8 +56,6 @@ export function DocumentTabs({
   className,
 }: DocumentTabsProps) {
   const list = useRef<HTMLDivElement>(null);
-  // Closing the focused tab moves focus to the tab that becomes active.
-  const restoreFocus = useRef(false);
   const focusable = items.some((item) => item.id === value) ? value : (items[0]?.id ?? null);
 
   function tabElement(id: string | null) {
@@ -78,11 +76,17 @@ export function DocumentTabs({
     else if (tabBox.right > stripBox.right) strip.scrollLeft += tabBox.right - stripBox.right;
   }, [value, items]);
 
-  useEffect(() => {
-    if (!restoreFocus.current) return;
-    restoreFocus.current = false;
+  // Closing the focused tab moves focus to the tab that becomes active, however it closed: its
+  // button, Delete, or the application's own shortcut such as Ctrl+W. Read before the update is
+  // committed, while the closing tab still holds focus.
+  const focusWasInside =
+    typeof document !== 'undefined' && Boolean(list.current?.contains(document.activeElement));
+  useLayoutEffect(() => {
+    if (!focusWasInside) return;
+    const active = document.activeElement;
+    if (active && active !== document.body && active.isConnected) return;
     tabElement(focusable)?.focus();
-  }, [items, focusable]);
+  }, [items, focusable, focusWasInside]);
 
   // A vertical wheel scrolls an overflowing strip sideways.
   useEffect(() => {
@@ -101,12 +105,6 @@ export function DocumentTabs({
     return () => strip.removeEventListener('wheel', onWheel);
   }, []);
 
-  function close(id: string) {
-    const tab = tabElement(id);
-    if (tab && tab.contains(document.activeElement)) restoreFocus.current = true;
-    onClose(id);
-  }
-
   function select(index: number) {
     const item = items[index];
     if (!item) return;
@@ -124,13 +122,14 @@ export function DocumentTabs({
     else if (event.key === 'Home') select(0);
     else if (event.key === 'End') select(items.length - 1);
     else if (event.key === 'Enter' || event.key === ' ') select(index);
+    else if (event.key === 'Delete' && items[index]) onClose(items[index].id);
     else return;
     event.preventDefault();
   }
 
   function onCloseClick(event: MouseEvent<HTMLButtonElement>, id: string) {
     event.stopPropagation();
-    close(id);
+    onClose(id);
   }
 
   return (
@@ -168,7 +167,7 @@ export function DocumentTabs({
             onAuxClick={(event) => {
               if (event.button !== 1) return;
               event.preventDefault();
-              close(item.id);
+              onClose(item.id);
             }}
             onKeyDown={(event) => onKeyDown(event, index)}
           >

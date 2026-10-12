@@ -13,4 +13,9 @@ test('Markdown accepts component overrides and remark and rehype plugins', async
   // The remark plugin runs after GFM, which still renders tables.
   await expect(scope.locator('em')).toHaveText('TODO');
   await expect(scope.getByRole('table')).toBeVisible();
+  // Raw HTML stays ignored, even with a rehype plugin that would render it.
+  await expect(scope.getByText('Some inline HTML')).toBeVisible();
+  await expect(scope.locator('.env-markdown [data-raw]')).toHaveCount(0);
+  await expect(scope).not.toContainText('A block');
+  await expect(scope).not.toContainText('<span>');
 });

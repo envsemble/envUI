@@ -62,6 +62,8 @@
   outline-offset: -0.125rem;
 }
 .env-command-palette-list {
+  /* The options' offset parent, so the highlight scrolls into view by their offsets. */
+  position: relative;
   flex: 0 1 auto;
   min-block-size: 0;
   max-block-size: 60vh;

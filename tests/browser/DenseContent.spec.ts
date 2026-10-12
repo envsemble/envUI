@@ -43,3 +43,20 @@ test('filling tabs give the selected panel the height left below the list', asyn
   expect(box!.y).toBeGreaterThan(list!.y + list!.height - 1);
   expect(box!.height).toBeGreaterThan(100);
 });
+
+test('a compact surface gives its controls the compact height', async ({ page }) => {
+  await page.goto(`${catalogueUrl}/#/components/surface/preview`);
+  const height = async (toolbar: string, name: string) =>
+    (await page.getByRole('group', { name: toolbar }).getByRole('button', { name }).boundingBox())!
+      .height;
+  expect(await height('Compact toolbar', 'Fit')).toBeLessThan(
+    await height('Standard toolbar', 'Fit'),
+  );
+  expect(await height('Compact toolbar', 'Views')).toBeLessThan(
+    await height('Standard toolbar', 'Views'),
+  );
+  await expect(page.getByRole('group', { name: 'Compact toolbar' })).toHaveAttribute(
+    'data-density',
+    'compact',
+  );
+});

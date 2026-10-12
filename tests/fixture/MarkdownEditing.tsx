@@ -133,6 +133,26 @@ function headingIds() {
   };
 }
 
+/** Stands in for rehype-raw: raw HTML that reaches the HTML tree would show as marked text. */
+function renderRaw() {
+  return (tree: HastNode) => {
+    const visit = (node: HastNode) => {
+      node.children = node.children?.map((child) =>
+        child.type === 'raw'
+          ? {
+              type: 'element',
+              tagName: 'mark',
+              properties: { 'data-raw': '' },
+              children: [{ type: 'text', value: child.value }],
+            }
+          : child,
+      );
+      node.children?.forEach(visit);
+    };
+    visit(tree);
+  };
+}
+
 /** A small remark plugin: the text "TODO" becomes emphasized. */
 function emphasizeTodo() {
   interface MdastNode {
@@ -160,13 +180,15 @@ export function MarkdownExtensionsFixture() {
       <Markdown
         headingOffset={1}
         className="fixture-markdown"
-        rehypePlugins={[headingIds]}
+        rehypePlugins={[headingIds, renderRaw]}
         remarkPlugins={[emphasizeTodo]}
         components={{
           blockquote: ({ node: _node, ...props }) => <blockquote {...props} data-custom-quote="" />,
         }}
       >
-        {'# Project plan\n\n> A quoted decision\n\nTODO\n\n| A | B |\n| - | - |\n| 1 | 2 |'}
+        {
+          '# Project plan\n\n> A quoted decision\n\nTODO\n\n| A | B |\n| - | - |\n| 1 | 2 |\n\nSome <span>inline</span> HTML\n\n<div>A block</div>'
+        }
       </Markdown>
     </section>
   );

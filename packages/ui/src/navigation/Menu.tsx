@@ -7,6 +7,7 @@ import {
   type ComponentPropsWithRef,
   type KeyboardEvent,
   type MouseEvent,
+  type PointerEvent,
   type ReactElement,
   type ReactNode,
 } from 'react';
@@ -182,6 +183,14 @@ export function ContextMenu({
     setKeyboardAnchor(null);
   }
 
+  // A touch long press can open the menu through Base UI without a contextmenu event, so the
+  // pressed element is taken as the press starts.
+  function notePress(event: PointerEvent<Element>) {
+    if (disabled || event.pointerType === 'mouse') return;
+    setTarget(event.target instanceof Element ? event.target : null);
+    setKeyboardAnchor(null);
+  }
+
   function openFromKeyboard(event: KeyboardEvent<Element>) {
     if (disabled || !isContextMenuKey(event)) return;
     event.preventDefault();
@@ -202,6 +211,7 @@ export function ContextMenu({
       <BaseContextMenu.Trigger
         render={children}
         onContextMenu={openAtPointer}
+        onPointerDown={notePress}
         onKeyDown={openFromKeyboard}
       />
       <BaseContextMenu.Portal>

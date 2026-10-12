@@ -11,7 +11,7 @@ Components for document-centred desktop applications such as Atlas: a file tree,
 - `ContextMenu`: actions for an area on right click, long press, the context-menu key and Shift+F10, with the target element passed to its content; `open`, `onOpenChange` and `anchorPoint` open it programmatically.
 - `MenuItem` `description`, `shortcut` and `trailing`; `MenuGroup`, `MenuRadioGroup`, `MenuRadioItem` and `MenuCheckboxItem`.
 - `Tree`: a virtualized WAI-ARIA tree for thousands of rows, with keyboard navigation, type-ahead, preview and open callbacks, a context menu and two densities.
-- `DocumentTabs`: closable editor-style tabs with preview tabs, pinning, middle-click closing and a strip that scrolls sideways.
+- `DocumentTabs`: closable editor-style tabs with preview tabs, pinning, closing with Delete or a middle click, and a strip that scrolls sideways. Focus follows to the next tab however the focused one closes.
 - `CommandPalette`: a quick-open dialog near the top of the window with grouped options, keyboard highlight and modifier selection.
 - `SegmentedControl`: one choice among a few options on a pill rail, with counts and icons.
 - `Badge` in six tones and three variants, `Counter`, and `NavigationItem` `trailing` content (a dot while icon-only).
@@ -20,10 +20,11 @@ Components for document-centred desktop applications such as Atlas: a file tree,
 - `Popover`: a floating panel with a title, two widths and a close function for its content.
 - `Table` with `TableHead`, `TableBody`, `TableRow`, `TableHeaderCell` and `TableCell`: density, sticky headers, numeric cells and a focusable scroll region.
 - `Breadcrumbs` and `Kbd`.
-- `Markdown` `components`, `remarkPlugins` and `rehypePlugins`; application overrides win and attributes such as heading ids reach the elements.
+- `Markdown` `components`, `remarkPlugins` and `rehypePlugins`; application overrides win and attributes such as heading ids reach the elements. Raw HTML is dropped before any rehype plugin runs, so it stays ignored.
 - `Dialog` `size="wide"` (about 44 rem) and `placement="top"`.
 - `Menu` and `ContextMenu` `density="compact"`: 2 rem rows on one pane with hairline separators, for dense desktop surfaces; a compact `Tree` opens a compact context menu.
 - `Tabs` `fill`: the selected panel takes the height left below the list, for content that fills a region such as a diagram canvas.
+- `Surface` `density="compact"`: the controls inside take the compact control height, for toolbars over dense content.
 - `Code` `appearance="subtle"` and `Markdown` `inlineCode="subtle"`: inline code that follows the app theme as a quiet chip, for prose dense with identifiers.
 
 ### Changed

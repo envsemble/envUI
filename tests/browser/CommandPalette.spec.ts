@@ -13,6 +13,17 @@ function highlighted(page: Page) {
     );
 }
 
+/** Whether the highlighted option shows whole inside the list's scrolled area. */
+async function highlightInList(page: Page) {
+  return page.getByRole('combobox', { name: 'Go to document' }).evaluate((input) => {
+    const option = document.getElementById(input.getAttribute('aria-activedescendant') ?? '');
+    const list = document.getElementById(input.getAttribute('aria-controls') ?? '');
+    if (!option || !list) return false;
+    const [inner, outer] = [option.getBoundingClientRect(), list.getBoundingClientRect()];
+    return inner.top >= outer.top - 1 && inner.bottom <= outer.bottom + 1;
+  });
+}
+
 test.describe('CommandPalette', () => {
   test('typing filters, arrows move the highlight and Enter selects', async ({ page }) => {
     const errors: string[] = [];
@@ -49,6 +60,11 @@ test.describe('CommandPalette', () => {
     expect(await highlighted(page)).not.toBe('recent/Roadmap.md');
     await page.keyboard.press('End');
     await expect.poll(() => highlighted(page)).toBe('documents/Document 60.md');
+    await expect.poll(() => highlightInList(page)).toBe(true);
+    // Moving up from the end scrolls back far enough to show the option whole.
+    for (let step = 0; step < 12; step++) await page.keyboard.press('ArrowUp');
+    await expect.poll(() => highlighted(page)).toBe('documents/Document 48.md');
+    await expect.poll(() => highlightInList(page)).toBe(true);
 
     // A new query highlights the first match again.
     await input.fill('document 1');

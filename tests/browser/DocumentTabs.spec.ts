@@ -51,24 +51,36 @@ test.describe('DocumentTabs', () => {
     await expect(last).toBeInViewport({ ratio: 0.9 });
     await page.keyboard.press('Home');
     await expect(roadmap).toBeFocused();
-    // Delete belongs to the application.
+    // Delete closes the focused tab, and focus moves to the tab that becomes active.
     await page.keyboard.press('Delete');
-    await expect(roadmap).toBeVisible();
-
-    // The close button closes, and focus moves to the tab that becomes active.
-    const closeRoadmap = roadmap.getByRole('button', { name: 'Close Roadmap.md' });
-    await expect(closeRoadmap).toHaveAttribute('tabindex', '-1');
-    await closeRoadmap.click();
     await expect.poll(() => lastLog(page)).toBe('close plans/roadmap.md');
     await expect(roadmap).toHaveCount(0);
     await expect(decisions).toHaveAttribute('aria-selected', 'true');
     await expect(decisions).toBeFocused();
 
+    // So does the close button.
+    const closeDecisions = decisions.getByRole('button', { name: 'Close Decisions.md' });
+    await expect(closeDecisions).toHaveAttribute('tabindex', '-1');
+    await closeDecisions.click();
+    await expect.poll(() => lastLog(page)).toBe('close plans/decisions.md');
+    await expect(decisions).toHaveCount(0);
+    await expect(retrospective).toHaveAttribute('aria-selected', 'true');
+    await retrospective.focus();
+
     // A middle click closes a tab without activating it.
-    await retrospective.click({ button: 'middle' });
+    const firstNote = strip.getByRole('tab', { name: /number 1\.md/ });
+    await firstNote.click({ button: 'middle' });
+    await expect.poll(() => lastLog(page)).toBe('close notes/note-1.md');
+    await expect(firstNote).toHaveCount(0);
+    await expect(retrospective).toHaveAttribute('aria-selected', 'true');
+
+    // The application's own shortcut closes the focused tab, and focus still follows.
+    await retrospective.focus();
+    await page.keyboard.press('Alt+KeyW');
     await expect.poll(() => lastLog(page)).toBe('close plans/retrospective.md');
-    await expect(retrospective).toHaveCount(0);
-    await expect(decisions).toHaveAttribute('aria-selected', 'true');
+    const secondNote = strip.getByRole('tab', { name: /number 2\.md/ });
+    await expect(secondNote).toHaveAttribute('aria-selected', 'true');
+    await expect(secondNote).toBeFocused();
     expect(errors).toEqual([]);
   });
 

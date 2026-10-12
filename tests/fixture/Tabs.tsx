@@ -17,8 +17,26 @@ export function DocumentTabsFixture({ theme }: { theme: ThemeValue }) {
   const [value, setValue] = useState<string | null>('plans/roadmap.md');
   const [log, setLog] = useState<string[]>([]);
   const record = (entry: string) => setLog((current) => [...current.slice(-4), entry]);
+  const close = (id: string) => {
+    const index = tabs.findIndex((tab) => tab.id === id);
+    const remaining = tabs.filter((tab) => tab.id !== id);
+    setTabs(remaining);
+    if (id === value) setValue(remaining[Math.min(index, remaining.length - 1)]?.id ?? null);
+    record(`close ${id}`);
+  };
   return (
-    <Theme theme={theme} data-testid={`document-tabs-${theme}`} className="fixture-section">
+    <Theme
+      theme={theme}
+      data-testid={`document-tabs-${theme}`}
+      className="fixture-section"
+      onKeyDown={(event) => {
+        // The application's own close shortcut, like Ctrl+W in a desktop app.
+        if (event.altKey && event.code === 'KeyW' && value) {
+          event.preventDefault();
+          close(value);
+        }
+      }}
+    >
       <div className="fixture-tabs-frame">
         <DocumentTabs
           aria-label={`Open documents ${theme}`}
@@ -29,14 +47,7 @@ export function DocumentTabsFixture({ theme }: { theme: ThemeValue }) {
             setValue(id);
             record(`select ${id}`);
           }}
-          onClose={(id) => {
-            const index = tabs.findIndex((tab) => tab.id === id);
-            const remaining = tabs.filter((tab) => tab.id !== id);
-            setTabs(remaining);
-            if (id === value)
-              setValue(remaining[Math.min(index, remaining.length - 1)]?.id ?? null);
-            record(`close ${id}`);
-          }}
+          onClose={close}
           onPin={(id) => {
             setTabs((current) =>
               current.map((tab) => (tab.id === id ? { ...tab, preview: false } : tab)),

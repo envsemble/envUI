@@ -3,6 +3,7 @@ import {
   Text,
   Button,
   Card,
+  IconButton,
   Surface,
   FeatureCard,
   GroupedRows,
@@ -52,6 +53,37 @@ export function SurfacePreview() {
           <Specimen title="Row" caption="Pill corners">
             <Surface tone="row" padding={4} corners="pill">
               <Text>Muted fill</Text>
+            </Surface>
+          </Specimen>
+        </SpecimenGrid>
+      </Example>
+      <Example title="Density" size="collection">
+        <SpecimenGrid size="compact">
+          <Specimen title="Standard" caption="Standard control height">
+            <Surface
+              tone="pane"
+              padding={1}
+              corners="pill"
+              role="group"
+              aria-label="Standard toolbar"
+              render={<ActionGroup />}
+            >
+              <Button variant="secondary">Fit</Button>
+              <IconButton variant="text" icon={<Apps />} aria-label="Views" />
+            </Surface>
+          </Specimen>
+          <Specimen title="Compact" caption="For toolbars over dense content">
+            <Surface
+              tone="pane"
+              padding={1}
+              corners="pill"
+              density="compact"
+              role="group"
+              aria-label="Compact toolbar"
+              render={<ActionGroup />}
+            >
+              <Button variant="secondary">Fit</Button>
+              <IconButton variant="text" icon={<Apps />} aria-label="Views" />
             </Surface>
           </Specimen>
         </SpecimenGrid>

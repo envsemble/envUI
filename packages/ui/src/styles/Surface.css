@@ -36,3 +36,9 @@
 .env-surface-corners-none {
   --env-surface-radius: 0rem;
 }
+/* Compact controls for toolbars over dense content; the compact height still grows for touch. */
+.env-surface[data-density='compact'] {
+  --control-height-small: var(--control-height-compact);
+  --control-height: var(--control-height-compact);
+  --icon-button-size: var(--control-height-compact);
+}

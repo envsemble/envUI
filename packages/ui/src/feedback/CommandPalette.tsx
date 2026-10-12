@@ -74,7 +74,7 @@ function groupItems(items: readonly CommandPaletteItem[]) {
 
 function optionElementId(listId: string, itemId: string) {
   return `${listId}-option-${itemId.replace(
-    /[^A-Za-z0-9_-]/g,
+    /[^A-Za-z0-9-]/g,
     (character) => `_${character.codePointAt(0)!.toString(16)}_`,
   )}`;
 }
@@ -98,7 +98,7 @@ export function CommandPalette({
   className,
 }: CommandPaletteProps) {
   const theme = useTheme();
-  const listId = `${useId().replace(/[^A-Za-z0-9_-]/g, '')}-list`;
+  const listId = `${useId().replace(/[^A-Za-z0-9-]/g, '')}-list`;
   const input = useRef<HTMLInputElement>(null);
   const list = useRef<HTMLDivElement>(null);
   const [highlighted, setHighlighted] = useState(0);
@@ -113,6 +113,8 @@ export function CommandPalette({
     if (!open || !container || !active) return;
     const option = container.ownerDocument.getElementById(optionElementId(listId, active.id));
     if (!option) return;
+    // Layout offsets within the list, which is the options' offset parent: unlike client
+    // rectangles, they ignore the dialog's scale while it opens.
     const top = option.offsetTop;
     const bottom = top + option.offsetHeight;
     if (top < container.scrollTop) container.scrollTop = top;

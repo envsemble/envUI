@@ -151,6 +151,27 @@ test.describe('Tree', () => {
     expect(await count()).toBeLessThan(60);
   });
 
+  test('rows keep their layout height while an ancestor is scaled', async ({ page }) => {
+    await page.goto(treeFixture);
+    const tree = page.getByRole('tree', { name: 'Files light' });
+    await expect(tree.getByRole('treeitem').first()).toBeVisible();
+    // Scaled down, as inside a dialog that scales in; a resize makes the tree measure again.
+    await tree.evaluate((element) => {
+      element.parentElement!.style.transform = 'scale(0.5)';
+      element.style.blockSize = `${element.clientHeight - 20}px`;
+    });
+    const steps = await tree.evaluate(async (element) => {
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      const rows = [...element.querySelectorAll<HTMLElement>('[role="treeitem"]')].slice(0, 3);
+      const offset = (row: HTMLElement) => new DOMMatrix(getComputedStyle(row).transform).m42;
+      return {
+        height: parseFloat(getComputedStyle(rows[0]!).blockSize),
+        steps: [offset(rows[1]!) - offset(rows[0]!), offset(rows[2]!) - offset(rows[1]!)],
+      };
+    });
+    expect(steps.steps).toEqual([steps.height, steps.height]);
+  });
+
   test('the context menu opens for a row, the active row and the empty area', async ({ page }) => {
     await page.goto(treeFixture);
     const tree = page.getByRole('tree', { name: 'Files light' });
