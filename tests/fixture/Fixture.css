@@ -32,3 +32,26 @@
   align-items: center;
   gap: 0.75rem;
 }
+
+/* The resizable shell fixture fills the viewport; the host document margin would offset it. */
+body:has(.fixture-resizable-shell) {
+  margin: 0;
+}
+.fixture-sidebar-list {
+  block-size: 100%;
+  margin: 0;
+  padding: 0 0.75rem;
+  overflow-y: auto;
+  list-style: none;
+}
+.fixture-sticky-header {
+  position: sticky;
+  inset-block-start: var(--topbar-height);
+  z-index: 1;
+  padding: 0.75rem 1.5rem;
+  background: var(--color-canvas);
+  border-block-end: 0.0625rem solid var(--color-border-strong);
+}
+.fixture-tall-page {
+  padding: 1.5rem;
+}

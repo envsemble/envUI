@@ -7,7 +7,9 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type KeyboardEvent as ReactKeyboardEvent,
   type MouseEvent,
+  type PointerEvent as ReactPointerEvent,
   type ReactNode,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
@@ -92,10 +94,45 @@ function readStoredWidth(storageKey: string | undefined) {
   return Number.isFinite(width) && width > 0 ? width : undefined;
 }
 
-function sidebarWidthStyle(width: number | undefined) {
-  return width === undefined
-    ? undefined
-    : ({ '--env-sidebar-content-width': `${width}px` } as CSSProperties);
+/** Without a stored or chosen width, a resizable sidebar starts at the measured width, up to 20 rem. */
+const measuredMaxRem = 20;
+const resizeStep = 16;
+const resizeLargeStep = 48;
+
+interface WidthBounds {
+  min: number;
+  max: number;
+}
+
+function sidebarWidthStyle(width: number | undefined, bounds?: WidthBounds) {
+  const style: Record<string, string> = {};
+  if (width !== undefined) style['--env-sidebar-content-width'] = `${width}px`;
+  if (bounds) {
+    style['--env-sidebar-min-width'] = `${bounds.min}px`;
+    style['--env-sidebar-max-width'] = `${bounds.max}px`;
+  }
+  return Object.keys(style).length > 0 ? (style as CSSProperties) : undefined;
+}
+
+function clampWidth(width: number, bounds: WidthBounds) {
+  return Math.round(Math.min(bounds.max, Math.max(bounds.min, width)));
+}
+
+/** Pixels per rem, read after mount so server-rendered markup and the first render agree. */
+function useRemPixels() {
+  const [pixels, setPixels] = useState(16);
+  useLayoutEffect(() => {
+    const size = parseFloat(getComputedStyle(document.documentElement).fontSize);
+    if (Number.isFinite(size) && size > 0) setPixels(size);
+  }, []);
+  return pixels;
+}
+
+/** Resize bounds in pixels: 12 rem and 32 rem unless the application supplies its own. */
+function useWidthBounds(minWidth: number | undefined, maxWidth: number | undefined) {
+  const rem = useRemPixels();
+  const min = minWidth ?? 12 * rem;
+  return { bounds: { min, max: Math.max(min, maxWidth ?? 32 * rem) }, rem };
 }
 
 interface AppShellFrameProps {
@@ -132,6 +169,23 @@ export interface AppShellProps extends AppShellFrameProps {
   /** Labels for the sidebar toggle. */
   expandLabel?: string;
   collapseLabel?: string;
+  /**
+   * Content below the navigation, such as a Tree. It fills the remaining sidebar height and scrolls
+   * itself; hidden while the sidebar shows icons only.
+   */
+  sidebarContent?: ReactNode;
+  /** Let people adjust the expanded sidebar width by dragging its edge or with the arrow keys. */
+  resizable?: boolean;
+  /** Controlled expanded width in pixels while resizable. */
+  sidebarWidth?: number;
+  /** Called with the new width in pixels while the sidebar is resized. */
+  onSidebarWidthChange?: (width: number) => void;
+  /** Smallest resizable width in pixels; 12 rem by default. */
+  sidebarMinWidth?: number;
+  /** Largest resizable width in pixels; 32 rem by default. */
+  sidebarMaxWidth?: number;
+  /** Accessible name of the resize handle. */
+  resizeLabel?: string;
 }
 
 /**
@@ -157,6 +211,13 @@ export function AppShell({
   onCollapsedChange,
   expandLabel = 'Expand sidebar',
   collapseLabel = 'Collapse sidebar',
+  sidebarContent,
+  resizable = false,
+  sidebarWidth: controlledWidth,
+  onSidebarWidthChange,
+  sidebarMinWidth,
+  sidebarMaxWidth,
+  resizeLabel = 'Resize sidebar',
 }: AppShellProps) {
   const isNarrow = useMedia(narrowQuery);
   const canHover = useMedia(hoverQuery);
@@ -178,6 +239,23 @@ export function AppShell({
   const measuredWidth = useRef<number>(undefined);
   // Transitions start after the first paint, so the measured width never animates in on load.
   const [ready, setReady] = useState(false);
+  const { bounds, rem } = useWidthBounds(sidebarMinWidth, sidebarMaxWidth);
+  // A width chosen by resizing replaces the measured width; until then the measured width applies.
+  const [chosenWidth, setChosenWidth] = useState<number>();
+  const [resizing, setResizing] = useState(false);
+  const drag = useRef<{
+    pointerId: number;
+    startX: number;
+    startWidth: number;
+    direction: number;
+  }>(null);
+  const widthChosen = resizable && (controlledWidth !== undefined || chosenWidth !== undefined);
+  const widthChosenRef = useRef(widthChosen);
+  widthChosenRef.current = widthChosen;
+  const resizableWidth = clampWidth(
+    controlledWidth ?? chosenWidth ?? Math.min(contentWidth ?? bounds.min, measuredMaxRem * rem),
+    bounds,
+  );
 
   const hoverExpanded =
     collapsed &&
@@ -195,10 +273,13 @@ export function AppShell({
 
   // The stored width applies after mount, so server-rendered markup and the first client render
   // agree; it still arrives before the first paint.
+  // While resizable, the stored width is the chosen one.
   useLayoutEffect(() => {
     const stored = readStoredWidth(storageKey);
-    if (stored !== undefined) setContentWidth((current) => current ?? stored);
-  }, [storageKey]);
+    if (stored === undefined) return;
+    if (resizable) setChosenWidth((current) => current ?? stored);
+    else setContentWidth((current) => current ?? stored);
+  }, [storageKey, resizable]);
 
   // The expanded sidebar fits its widest content: the navigation or the context beside the toggle.
   // Both are measured at their natural width, which only shows while labels are visible.
@@ -206,8 +287,9 @@ export function AppShell({
     const frame = shell.current;
     const navigation = navigationRegion.current;
     const context = contextRegion.current;
-    // Compact and hidden sidebars show no labels to measure; the last width stays.
-    if (!frame || !navigation || !context) return;
+    // Compact and hidden sidebars show no labels to measure; the last width stays. A width chosen
+    // by resizing stays as it is.
+    if (!frame || !navigation || !context || widthChosenRef.current) return;
     if (frame.hasAttribute('data-compact') || sidebarRegion.current?.hidden) return;
     frame.setAttribute('data-measuring', '');
     const width = Math.ceil(
@@ -250,10 +332,13 @@ export function AppShell({
     const regions = [contextRegion.current, sidebarRegion.current].filter(
       (region): region is HTMLElement => region !== null,
     );
+    // Expanded tree rows are not popups; an open context menu is.
     const update = () =>
       setPopupOpen(
         regions.some((region) =>
-          region.querySelector('[aria-expanded="true"]:not(.env-app-sidebar-toggle)'),
+          region.querySelector(
+            '[aria-expanded="true"]:not(.env-app-sidebar-toggle):not([role="treeitem"]), [data-popup-open]',
+          ),
         ),
       );
     const observer = new MutationObserver(update);
@@ -261,7 +346,7 @@ export function AppShell({
       observer.observe(region, {
         subtree: true,
         attributes: true,
-        attributeFilter: ['aria-expanded'],
+        attributeFilter: ['aria-expanded', 'data-popup-open'],
       });
     update();
     return () => observer.disconnect();
@@ -286,6 +371,62 @@ export function AppShell({
   }
 
   const closeNarrowSidebar = useCallback(() => setNarrowOpen(false), []);
+
+  function changeWidth(next: number, persist: boolean) {
+    const width = clampWidth(next, bounds);
+    if (controlledWidth === undefined) {
+      setChosenWidth(width);
+      if (persist) writeStored(widthKey(storageKey), String(width));
+    }
+    if (width !== resizableWidth) onSidebarWidthChange?.(width);
+  }
+
+  function inlineDirection(element: Element) {
+    return getComputedStyle(element).direction === 'rtl' ? -1 : 1;
+  }
+
+  function startResize(event: ReactPointerEvent<HTMLDivElement>) {
+    if (event.button !== 0) return;
+    // Dragging selects no text and leaves focus where it is.
+    event.preventDefault();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    drag.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startWidth: resizableWidth,
+      direction: inlineDirection(event.currentTarget),
+    };
+    setResizing(true);
+  }
+
+  function moveResize(event: ReactPointerEvent<HTMLDivElement>) {
+    const current = drag.current;
+    if (!current || current.pointerId !== event.pointerId) return;
+    changeWidth(current.startWidth + (event.clientX - current.startX) * current.direction, false);
+  }
+
+  function endResize(event: ReactPointerEvent<HTMLDivElement>) {
+    const current = drag.current;
+    if (!current || current.pointerId !== event.pointerId) return;
+    drag.current = null;
+    setResizing(false);
+    if (event.currentTarget.hasPointerCapture(event.pointerId))
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    changeWidth(current.startWidth + (event.clientX - current.startX) * current.direction, true);
+  }
+
+  function resizeWithKeyboard(event: ReactKeyboardEvent<HTMLDivElement>) {
+    const step = event.shiftKey ? resizeLargeStep : resizeStep;
+    const direction = inlineDirection(event.currentTarget);
+    let next: number;
+    if (event.key === 'ArrowRight') next = resizableWidth + step * direction;
+    else if (event.key === 'ArrowLeft') next = resizableWidth - step * direction;
+    else if (event.key === 'Home') next = bounds.min;
+    else if (event.key === 'End') next = bounds.max;
+    else return;
+    event.preventDefault();
+    changeWidth(next, true);
+  }
 
   useEffect(() => {
     if (!narrowOpen) return;
@@ -321,8 +462,11 @@ export function AppShell({
       <div
         ref={shell}
         className={classNames('env-app-shell', className)}
-        style={sidebarWidthStyle(contentWidth)}
+        style={
+          resizable ? sidebarWidthStyle(resizableWidth, bounds) : sidebarWidthStyle(contentWidth)
+        }
         data-ready={ready ? '' : undefined}
+        data-resizing={resizing ? '' : undefined}
         data-collapsed={collapsed && !isNarrow ? '' : undefined}
         data-compact={compact ? '' : undefined}
         data-expanded-overlay={hoverExpanded ? '' : undefined}
@@ -376,6 +520,26 @@ export function AppShell({
           <nav className="env-app-navigation" aria-label={navigationLabel} ref={navigationRegion}>
             <SidebarCompactContext value={compact}>{navigation}</SidebarCompactContext>
           </nav>
+          {sidebarContent != null && (
+            <div className="env-app-sidebar-content">{sidebarContent}</div>
+          )}
+          {resizable && !collapsed && !isNarrow && (
+            <div
+              role="separator"
+              aria-orientation="vertical"
+              aria-label={resizeLabel}
+              aria-valuenow={resizableWidth}
+              aria-valuemin={Math.round(bounds.min)}
+              aria-valuemax={Math.round(bounds.max)}
+              tabIndex={0}
+              className="env-app-sidebar-resize"
+              onPointerDown={startResize}
+              onPointerMove={moveResize}
+              onPointerUp={endResize}
+              onPointerCancel={endResize}
+              onKeyDown={resizeWithKeyboard}
+            />
+          )}
         </aside>
         {isNarrow && narrowOpen && (
           <div
@@ -401,6 +565,10 @@ export interface AppShellSkeletonProps
   /** Match the stored collapsed preference of the AppShell it precedes. */
   storageKey?: string;
   defaultCollapsed?: boolean;
+  /** Match a resizable AppShell's stored width and bounds. */
+  resizable?: boolean;
+  sidebarMinWidth?: number;
+  sidebarMaxWidth?: number;
   /** Placeholder for the page content. */
   children?: ReactNode;
 }
@@ -414,18 +582,22 @@ export function AppShellSkeleton({
   navigationItems = 3,
   storageKey,
   defaultCollapsed = false,
+  resizable = false,
+  sidebarMinWidth,
+  sidebarMaxWidth,
   children,
 }: AppShellSkeletonProps) {
   const isNarrow = useMedia(narrowQuery);
   const [collapsed] = useState(() => readStoredCollapsed(storageKey, defaultCollapsed));
   const [contentWidth, setContentWidth] = useState<number>();
+  const { bounds } = useWidthBounds(sidebarMinWidth, sidebarMaxWidth);
   // Applied after mount, like AppShell's, so server-rendered markup matches the first render.
   useLayoutEffect(() => setContentWidth(readStoredWidth(storageKey)), [storageKey]);
   return (
     <LoadingState label={label} className={classNames('env-app-shell-skeleton', className)}>
       <div
         className="env-app-shell"
-        style={sidebarWidthStyle(contentWidth)}
+        style={sidebarWidthStyle(contentWidth, resizable ? bounds : undefined)}
         aria-hidden="true"
         data-collapsed={collapsed && !isNarrow ? '' : undefined}
         data-compact={collapsed && !isNarrow ? '' : undefined}

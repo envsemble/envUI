@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Theme, ToastProvider } from '@envsemble/envui';
 import '@envsemble/envui/styles.css';
 import './Fixture.css';
@@ -12,17 +13,24 @@ import { FeatureCardsFixture } from './FeatureCards.js';
 import { ColorPickerFixture } from './ColorPicker.js';
 import { MarkdownEditingFixture } from './MarkdownEditing.js';
 import { AdoptionFixture, ShellFixture } from './Adoption.js';
+import { ResizableShellFixture } from './ResizableShell.js';
+
+/** Fixtures that fill the viewport are only mounted on their own. */
+const standaloneFixtures: Record<string, () => ReactNode> = {
+  shell: ShellFixture,
+  'resizable-shell': ResizableShellFixture,
+};
 
 export default function App() {
   // Keep the full fixture available for integration checks; focused tests mount
   // only their own controls, so unrelated editors and portals do no work.
   const fixture = new URLSearchParams(location.search).get('fixture');
   const includes = (name: string) => fixture === null || fixture === name;
-  // The shell fills the viewport, so it is only mounted on its own.
-  if (fixture === 'shell')
+  const Standalone = fixture === null ? undefined : standaloneFixtures[fixture];
+  if (Standalone)
     return (
       <Theme theme="light">
-        <ShellFixture />
+        <Standalone />
       </Theme>
     );
   return (

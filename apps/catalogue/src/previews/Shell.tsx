@@ -99,6 +99,7 @@ export function AppShellPreview() {
           </AppShell>
         </div>
       </Example>
+      <ResizableShellExample />
       <Example title="Loading frame" size="wide">
         <div className="docs-shell-frame">
           <AppShellSkeleton brand={<Apps />} label="Loading sample">
@@ -110,5 +111,57 @@ export function AppShellPreview() {
         </div>
       </Example>
     </Preview>
+  );
+}
+
+const sampleFiles = Array.from({ length: 80 }, (_, index) => `Plan ${index + 1}.md`);
+
+/** A resizable sidebar with its own scrolling content below the navigation. */
+function ResizableShellExample() {
+  const [page, setPage] = useState<(typeof pages)[number]['id']>('home');
+  return (
+    <Example
+      title="Resizable sidebar with content"
+      size="wide"
+      caption="Drag the sidebar edge or focus it and use the arrow keys. The file list fills the sidebar below the navigation and scrolls on its own; the page header sticks below the topbar."
+    >
+      <div className="docs-shell-frame">
+        <AppShell
+          brand={<Apps />}
+          title="Plans"
+          navigationLabel="Resizable sample navigation"
+          navigation={pages.slice(0, 2).map((candidate) => (
+            <NavigationItem
+              key={candidate.id}
+              icon={candidate.icon}
+              selected={candidate.id === page}
+              onClick={() => setPage(candidate.id)}
+            >
+              {candidate.label}
+            </NavigationItem>
+          ))}
+          sidebarContent={
+            <ul className="docs-shell-files" aria-label="Plans">
+              {sampleFiles.map((file) => (
+                <li key={file}>{file}</li>
+              ))}
+            </ul>
+          }
+          resizable
+          storageKey="envui-catalogue-resizable-shell"
+        >
+          <div className="docs-shell-sticky">
+            <Text variant="section-heading">Sticky document header</Text>
+          </div>
+          <Stack gap={3} className="docs-shell-page">
+            {Array.from({ length: 12 }, (_, index) => (
+              <Text key={index} tone="muted">
+                Page content scrolls under the sticky header.
+              </Text>
+            ))}
+          </Stack>
+        </AppShell>
+      </div>
+    </Example>
   );
 }

@@ -168,7 +168,10 @@ button.env-app-sidebar-toggle:focus-visible {
 .env-app-sidebar[hidden] {
   display: none;
 }
+/* The navigation keeps its natural height and scrolls only when it alone overflows the sidebar. */
 .env-app-navigation {
+  flex: 0 1 auto;
+  min-block-size: 0;
   padding: var(--space-5) var(--env-sidebar-inset) var(--env-sidebar-inset);
   display: grid;
   justify-items: start;
@@ -180,10 +183,60 @@ button.env-app-sidebar-toggle:focus-visible {
 .env-app-navigation .env-navigation-item:not(.env-navigation-icon-only) {
   white-space: nowrap;
 }
+/* Content below the navigation, such as a Tree, fills the remaining height and scrolls itself. */
+.env-app-sidebar-content {
+  flex: 1 1 0;
+  min-block-size: 0;
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* The expanded sidebar's edge is a resize handle when AppShell is resizable. A line shows on hover,
+   keyboard focus and while dragging. */
+.env-app-sidebar-resize {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: calc(-0.25rem - 0.03125rem);
+  z-index: 1;
+  inline-size: 0.5rem;
+  cursor: col-resize;
+  touch-action: none;
+  outline: none;
+}
+.env-app-sidebar-resize::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: calc(50% - 0.0625rem);
+  inline-size: 0.125rem;
+  background: transparent;
+  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+}
+.env-app-sidebar-resize:hover::after {
+  background: var(--color-border-hover);
+  transition-delay: var(--motion-duration-medium);
+}
+.env-app-sidebar-resize:focus-visible::after,
+.env-app-shell[data-resizing] .env-app-sidebar-resize::after {
+  background: var(--color-focus-ring);
+  transition-delay: 0s;
+}
+/* While dragging, the width follows the pointer without easing and no text is selected. */
+.env-app-shell[data-resizing] {
+  cursor: col-resize;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.env-app-shell[data-resizing] :is(.env-app-topbar, .env-app-sidebar, .env-app-content) {
+  transition: none;
+}
 
 /* A collapsed sidebar shows icons; hover or focus expands it over the content, together with the
-   context area above it. */
-.env-app-shell[data-compact] .env-app-context {
+   context area above it. Sidebar content shows only while the sidebar is expanded. */
+.env-app-shell[data-compact] :is(.env-app-context, .env-app-sidebar-content) {
   display: none;
 }
 .env-app-shell[data-expanded-overlay] .env-app-sidebar {
@@ -193,6 +246,8 @@ button.env-app-sidebar-toggle:focus-visible {
   grid-template-columns: var(--env-sidebar-expanded-width) minmax(0, 1fr);
 }
 
+/* The document scrolls, so content can stick below the fixed topbar with
+   position: sticky; inset-block-start: var(--topbar-height). */
 .env-app-content {
   min-inline-size: 0;
   padding-block-start: var(--topbar-height);
