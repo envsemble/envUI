@@ -1,5 +1,38 @@
 # Changelog
 
+## Unreleased
+
+Components for document-centred desktop applications such as Atlas: a file tree, editor tabs, quick open, context menus and a resizable sidebar, with badges, notices, tables and other everyday pieces.
+
+### Added
+
+- `AppShell` `sidebarContent`: content below the navigation that fills the remaining sidebar height and scrolls itself, such as a `Tree`; hidden while the sidebar is compact.
+- `AppShell` `resizable`: the expanded sidebar's edge becomes a resize handle for the pointer and the keyboard (Arrow keys by 16 px, 48 px with Shift, Home and End), between `sidebarMinWidth` and `sidebarMaxWidth` (12 and 32 rem by default). `sidebarWidth` and `onSidebarWidthChange` control the width; otherwise it persists under `storageKey`. `AppShellSkeleton` accepts the same `resizable` and bounds.
+- `ContextMenu`: actions for an area on right click, long press, the context-menu key and Shift+F10, with the target element passed to its content; `open`, `onOpenChange` and `anchorPoint` open it programmatically.
+- `MenuItem` `description`, `shortcut` and `trailing`; `MenuGroup`, `MenuRadioGroup`, `MenuRadioItem` and `MenuCheckboxItem`.
+- `Tree`: a virtualized WAI-ARIA tree for thousands of rows, with keyboard navigation, type-ahead, preview and open callbacks, a context menu and two densities.
+- `DocumentTabs`: closable editor-style tabs with preview tabs, pinning, middle-click closing and a strip that scrolls sideways.
+- `CommandPalette`: a quick-open dialog near the top of the window with grouped options, keyboard highlight and modifier selection.
+- `SegmentedControl`: one choice among a few options on a pill rail, with counts and icons.
+- `Badge` in six tones and three variants, `Counter`, and `NavigationItem` `trailing` content (a dot while icon-only).
+- Status tone tokens `--color-tone-neutral`, `--color-tone-accent`, `--color-tone-success`, `--color-tone-warning`, `--color-tone-danger`, `--color-tone-done` and `--color-on-tone`, with at least 4.5:1 contrast on the canvas, panes and rows in both themes.
+- `Notice`: an inline banner in four tones with an action, a dismiss button and `announce` for alerts.
+- `Popover`: a floating panel with a title, two widths and a close function for its content.
+- `Table` with `TableHead`, `TableBody`, `TableRow`, `TableHeaderCell` and `TableCell`: density, sticky headers, numeric cells and a focusable scroll region.
+- `Breadcrumbs` and `Kbd`.
+- `Markdown` `components`, `remarkPlugins` and `rehypePlugins`; application overrides win and attributes such as heading ids reach the elements.
+- `Dialog` `size="wide"` (about 44 rem) and `placement="top"`.
+
+### Changed
+
+- `ThemePreferenceProvider` follows theme changes made in other windows and tabs of the same origin.
+- A collapsed `AppShell` sidebar no longer treats expanded tree rows as open popups, and stays expanded while a context menu opened from it is open.
+
+### Documentation
+
+- New pages for the tree, document tabs, breadcrumbs, command palette, segmented controls, badges and counters, notices, popovers, tables and keyboard keys. The application shell page shows sticky headers and full-height content; colors list the status tones.
+- The browser suite's ports can be changed with `ENVUI_CATALOGUE_PORT` and `ENVUI_FIXTURE_PORT`.
+
 ## 0.4.0 — 2026-10-11
 
 Clearer contrast in both themes, more ways to show loading, and refinements from reviewing the catalogue and Platform.

@@ -36,19 +36,19 @@ import { Category } from '@envsemble/envui/icons/Category';
 
 ### Props & contracts
 
-| Name                                             | Contract                                                                                   |
-| ------------------------------------------------ | ------------------------------------------------------------------------------------------ |
-| brand                                            | Mark in the sidebar toggle; the toggle icon replaces it while the sidebar area is hovered  |
-| context                                          | Optional content above the sidebar, such as an organization switcher; hidden while compact |
-| title / actions                                  | Current page name and topbar actions at the end                                            |
-| navigation / navigationLabel                     | NavigationItem elements and the accessible name of the sidebar                             |
-| storageKey                                       | Persist the collapsed preference and the measured sidebar width in localStorage            |
-| loading / loadingLabel                           | Show a LoadingBar along the topbar's bottom edge, for example while the next page loads    |
-| defaultCollapsed / collapsed / onCollapsedChange | Uncontrolled or controlled collapsed preference on wide viewports                          |
-| dividers                                         | Separator lines between topbar, sidebar and content; true by default                       |
-| expandLabel / collapseLabel                      | Accessible names of the toggle                                                             |
-| useAppShell().closeNarrowSidebar                 | Close the overlay sidebar from content                                                     |
-| AppShellSkeleton                                 | The same frame with placeholders for the first load; pass the same storageKey and brand    |
+| Name                                             | Contract                                                                                                     |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| brand                                            | Mark in the sidebar toggle; the toggle icon replaces it while the sidebar area is hovered                    |
+| context                                          | Optional content above the sidebar, such as an organization switcher; hidden while compact                   |
+| title / actions                                  | Current page name and topbar actions at the end                                                              |
+| navigation / navigationLabel                     | NavigationItem elements and the accessible name of the sidebar                                               |
+| storageKey                                       | Persist the collapsed preference and the sidebar width (measured, or chosen while resizable) in localStorage |
+| loading / loadingLabel                           | Show a LoadingBar along the topbar's bottom edge, for example while the next page loads                      |
+| defaultCollapsed / collapsed / onCollapsedChange | Uncontrolled or controlled collapsed preference on wide viewports                                            |
+| dividers                                         | Separator lines between topbar, sidebar and content; true by default                                         |
+| expandLabel / collapseLabel                      | Accessible names of the toggle                                                                               |
+| useAppShell().closeNarrowSidebar                 | Close the overlay sidebar from content                                                                       |
+| AppShellSkeleton                                 | The same frame with placeholders for the first load; pass the same storageKey and brand                      |
 
 ## Resizable sidebar with content
 
