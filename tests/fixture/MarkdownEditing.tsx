@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import { Button, Stack } from '@envsemble/envui';
-import { CodeBlock, MarkdownEditor, type MarkdownLinkProps } from '@envsemble/envui/content';
+import {
+  CodeBlock,
+  Markdown,
+  MarkdownEditor,
+  type MarkdownLinkProps,
+} from '@envsemble/envui/content';
 
 declare global {
   interface Window {
@@ -100,5 +105,69 @@ export function MarkdownEditingFixture() {
         {block !== null && <CodeBlock language="javascript">{block}</CodeBlock>}
       </div>
     </Stack>
+  );
+}
+
+interface HastNode {
+  type: string;
+  tagName?: string;
+  value?: string;
+  properties?: Record<string, unknown>;
+  children?: HastNode[];
+}
+
+/** A small rehype plugin: headings get ids from their text. */
+function headingIds() {
+  const text = (node: HastNode): string =>
+    node.type === 'text' ? (node.value ?? '') : (node.children ?? []).map(text).join('');
+  return (tree: HastNode) => {
+    const visit = (node: HastNode) => {
+      if (node.type === 'element' && /^h[1-6]$/.test(node.tagName ?? ''))
+        node.properties = {
+          ...node.properties,
+          id: text(node).toLowerCase().replace(/\W+/g, '-'),
+        };
+      node.children?.forEach(visit);
+    };
+    visit(tree);
+  };
+}
+
+/** A small remark plugin: the text "TODO" becomes emphasized. */
+function emphasizeTodo() {
+  interface MdastNode {
+    type: string;
+    value?: string;
+    children?: MdastNode[];
+  }
+  return (tree: MdastNode) => {
+    const visit = (node: MdastNode) => {
+      if (node.type === 'emphasis') return;
+      node.children = node.children?.map((child) =>
+        child.type === 'text' && child.value === 'TODO'
+          ? { type: 'emphasis', children: [{ type: 'text', value: 'TODO' }] }
+          : child,
+      );
+      node.children?.forEach(visit);
+    };
+    visit(tree);
+  };
+}
+
+export function MarkdownExtensionsFixture() {
+  return (
+    <section data-testid="markdown-extensions">
+      <Markdown
+        headingOffset={1}
+        className="fixture-markdown"
+        rehypePlugins={[headingIds]}
+        remarkPlugins={[emphasizeTodo]}
+        components={{
+          blockquote: ({ node: _node, ...props }) => <blockquote {...props} data-custom-quote="" />,
+        }}
+      >
+        {'# Project plan\n\n> A quoted decision\n\nTODO\n\n| A | B |\n| - | - |\n| 1 | 2 |'}
+      </Markdown>
+    </section>
   );
 }

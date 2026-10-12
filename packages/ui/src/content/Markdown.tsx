@@ -5,7 +5,7 @@ import {
   type ComponentPropsWithoutRef,
   type ReactNode,
 } from 'react';
-import ReactMarkdown, { type Components } from 'react-markdown';
+import ReactMarkdown, { type Components, type Options } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { classNames } from '../internal/classNames.js';
 import { Checkbox } from '../forms/Checkbox.js';
@@ -23,6 +23,15 @@ export interface MarkdownProps extends Omit<ComponentPropsWithRef<'div'>, 'child
   /** Receives safe hrefs and native anchor props. Retain a real anchor destination. */
   renderLink?: (props: MarkdownLinkProps) => ReactNode;
   codeCopyable?: boolean;
+  /**
+   * react-markdown component overrides, merged over envUI's own; the application's win. Native
+   * props such as id and className reach the element.
+   */
+  components?: Components;
+  /** remark plugins that run after envUI's GFM support. */
+  remarkPlugins?: Options['remarkPlugins'];
+  /** rehype plugins, such as heading ids; envUI adds none of its own. */
+  rehypePlugins?: Options['rehypePlugins'];
 }
 
 const markdownPlugins = [remarkGfm];
@@ -33,6 +42,9 @@ export function Markdown({
   headingOffset = 0,
   renderLink,
   codeCopyable = false,
+  components: componentOverrides,
+  remarkPlugins,
+  rehypePlugins,
   className,
   ...props
 }: MarkdownProps) {
@@ -86,9 +98,22 @@ export function Markdown({
         src ? <img {...imageProps} src={src} loading="lazy" /> : <span>{imageProps.alt}</span>,
     };
   }, [headingOffset, renderLink, codeCopyable]);
+  const mergedComponents = useMemo(
+    () => (componentOverrides ? { ...components, ...componentOverrides } : components),
+    [components, componentOverrides],
+  );
+  const mergedRemarkPlugins = useMemo(
+    () => (remarkPlugins?.length ? [...markdownPlugins, ...remarkPlugins] : markdownPlugins),
+    [remarkPlugins],
+  );
   return (
     <div {...props} className={classNames('env-markdown', className)}>
-      <ReactMarkdown remarkPlugins={markdownPlugins} components={components} skipHtml>
+      <ReactMarkdown
+        remarkPlugins={mergedRemarkPlugins}
+        rehypePlugins={rehypePlugins}
+        components={mergedComponents}
+        skipHtml
+      >
         {children}
       </ReactMarkdown>
     </div>

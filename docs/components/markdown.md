@@ -85,6 +85,32 @@ import { Markdown } from '@envsemble/envui/content';
 | ---------- | ---------------------------------------------------------------------------------------------- |
 | renderLink | Keep real hrefs and preserve modified clicks; the application decides which routes open panels |
 
+## Extend rendering
+
+```tsx
+import { Markdown } from '@envsemble/envui/content';
+import rehypeSlug from 'rehype-slug';
+
+<Markdown
+  headingOffset={1}
+  rehypePlugins={[rehypeSlug]}
+  components={{
+    blockquote: ({ node: _node, ...props }) => <Callout {...props} />,
+  }}
+>
+  {document}
+</Markdown>;
+```
+
+### Props & contracts
+
+| Name          | Contract                                                                                         |
+| ------------- | ------------------------------------------------------------------------------------------------ |
+| components    | react-markdown overrides merged over envUI's own; the application's win for the same element     |
+| remarkPlugins | Run after envUI's GFM support                                                                    |
+| rehypePlugins | Run on the HTML tree, for example to add heading ids; envUI adds none of its own                 |
+| Native props  | id, className and other attributes from plugins reach envUI's headings, links, tables and images |
+
 ## Edit and preview
 
 ```tsx
@@ -161,6 +187,7 @@ async function requestLink({
 - Resource references are ordinary links with stable destination URLs. Labels are saved text; resource resolution, permissions and missing destinations belong to the application.
 - Tables and code scroll within their own regions. Images keep their aspect ratio and fit the available width; image loading follows the supplied URL.
 - Choose headingOffset to place a document below the surrounding page heading. Native semantic levels are retained, capped at h6.
+- Extend rendering with plugins and component overrides rather than post-processing the output. Overriding a heading level replaces envUI’s offset for that level, and overriding pre or code replaces CodeBlock. Raw HTML stays ignored.
 - Use MarkdownEditor for formatted prose, Textarea for plain text. The stored value remains an ordinary Markdown string; syntax stays visible while editing.
 - Preview uses Markdown with envUI prose typography and standard GitHub code-block colors. The source control reuses Textarea geometry and states, including fixed or content sizing.
 - Formatting and typing share bounded undo/redo history. Ctrl/Cmd+B, I and K apply enabled bold, italic and link commands. Ctrl/Cmd+Z undoes; Shift+Z or Y redoes. Toolbar arrow keys move between actions.

@@ -11,7 +11,7 @@ import { ButtonGroupsFixture } from './ButtonGroups.js';
 import { LayoutFixture } from './Layout.js';
 import { FeatureCardsFixture } from './FeatureCards.js';
 import { ColorPickerFixture } from './ColorPicker.js';
-import { MarkdownEditingFixture } from './MarkdownEditing.js';
+import { MarkdownEditingFixture, MarkdownExtensionsFixture } from './MarkdownEditing.js';
 import { AdoptionFixture, ShellFixture } from './Adoption.js';
 import { ResizableShellFixture } from './ResizableShell.js';
 import { MenusFixture } from './Menus.js';
@@ -88,6 +88,7 @@ export default function App() {
             </>
           )}
           {includes('markdown') && <MarkdownEditingFixture />}
+          {includes('markdown-extensions') && <MarkdownExtensionsFixture />}
           {includes('tree') && (
             <>
               <TreeFixture theme="light" />
