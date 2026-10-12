@@ -9,7 +9,19 @@ import {
   Button,
   ToastProvider,
   useToast,
+  Badge,
+  Breadcrumbs,
+  DocumentTabs,
+  Notice,
+  SegmentedControl,
+  Tree,
 } from '@envsemble/envui';
+
+const treeItems = Array.from({ length: 40 }, (_, index) => ({
+  id: `doc-${index}`,
+  depth: 0,
+  label: `Hydrated document ${index}`,
+}));
 
 function NotificationTrigger() {
   const toast = useToast();
@@ -19,6 +31,9 @@ function NotificationTrigger() {
 export function HydrationApp() {
   const [name, setName] = useState('Server value');
   const [checked, setChecked] = useState<boolean | 'mixed'>('mixed');
+  const [view, setView] = useState('open');
+  const [tab, setTab] = useState('one');
+  const [selected, setSelected] = useState<string | null>(null);
   return (
     <Theme theme="dark">
       <ToastProvider>
@@ -41,6 +56,37 @@ export function HydrationApp() {
           <p>Server-rendered content</p>
         </Dialog>
         <NotificationTrigger />
+        <Breadcrumbs items={[{ label: 'Workspace', href: '/' }, { label: 'Hydrated page' }]} />
+        <Notice title="Hydrated notice banner">Server-rendered notice</Notice>
+        <Badge tone="done">Hydrated badge</Badge>
+        <SegmentedControl
+          aria-label="Hydrated view"
+          value={view}
+          onValueChange={setView}
+          options={[
+            { value: 'open', label: 'Open' },
+            { value: 'done', label: 'Done' },
+          ]}
+        />
+        <DocumentTabs
+          aria-label="Hydrated tabs"
+          items={[
+            { id: 'one', label: 'One.md' },
+            { id: 'two', label: 'Two.md' },
+          ]}
+          value={tab}
+          onValueChange={setTab}
+          onClose={() => undefined}
+        />
+        <div style={{ blockSize: '12rem' }}>
+          <Tree
+            aria-label="Hydrated tree"
+            items={treeItems}
+            selectedId={selected}
+            onOpen={(item) => setSelected(item.id)}
+            onExpandedChange={() => undefined}
+          />
+        </div>
         <output>{name}</output>
       </ToastProvider>
     </Theme>

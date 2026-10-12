@@ -27,6 +27,13 @@ test('public components hydrate server output without recoverable errors', async
   await page.keyboard.press('Escape');
   await page.getByRole('button', { name: 'Notify', exact: true }).click();
   await expect(page.locator('.env-toast-viewport .env-toast')).toContainText('Hydrated notice');
+  await page.getByRole('radio', { name: 'Done' }).click();
+  await expect(page.getByRole('radio', { name: 'Done' })).toHaveAttribute('aria-checked', 'true');
+  await page.getByRole('tab', { name: 'Two.md' }).click();
+  await expect(page.getByRole('tab', { name: 'Two.md' })).toHaveAttribute('aria-selected', 'true');
+  const row = page.getByRole('treeitem', { name: 'Hydrated document 2', exact: true });
+  await row.click();
+  await expect(row).toHaveAttribute('aria-selected', 'true');
   expect(
     await page.evaluate(() => (window as unknown as { hydrationErrors: string[] }).hydrationErrors),
   ).toEqual([]);
