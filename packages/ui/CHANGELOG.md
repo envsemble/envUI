@@ -37,6 +37,7 @@ Clearer contrast in both themes, more ways to show loading, and refinements from
 - `ConfirmButton`: an action that takes effect at once is confirmed in place. The first press arms the button and names the consequence, and the second press runs it. A double click only arms it, and the arming ends after a few seconds, when focus leaves and on Escape.
 - `AnimatedNumber`: a count rolls up as it grows and down as it shrinks, and fades with reduced motion.
 - `OrganizationMenu` organizations accept a `detail`, such as the person's role, shown muted after the name.
+- `headingLevel` on `EmptyState`, for an empty or error state that is the whole page.
 
 ### Documentation
 

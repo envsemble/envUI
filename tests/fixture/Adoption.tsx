@@ -172,6 +172,7 @@ export function AdoptionFixture() {
             />
           </GroupedRows>
           <EmptyState tone="error" title="Products couldn’t load" description="Try again." />
+          <EmptyState headingLevel={1} title="Nothing here yet" />
           <Meter label="Seats assigned" value={7} max={5} valueText="5 of 5" />
           <Avatar name="Broken Picture" src="data:image/png;base64,invalid" label />
           <Avatar name="Organization Name" fallback="initials" label />

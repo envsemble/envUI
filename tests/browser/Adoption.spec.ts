@@ -150,6 +150,12 @@ test('Tooltip describes a disabled control on keyboard focus', async ({ page }) 
 test('error states, meters and avatars expose their semantics', async ({ page }) => {
   await page.goto(fixture);
   await expect(page.getByRole('alert')).toContainText('Products couldn’t load');
+  await expect(
+    page.getByRole('heading', { name: 'Products couldn’t load', level: 4 }),
+  ).toBeVisible();
+  // A whole-page state can take the top heading level without changing its look.
+  const pageHeading = page.getByRole('heading', { name: 'Nothing here yet', level: 1 });
+  await expect(pageHeading).toHaveClass(/env-text-section-heading/);
   const meter = page.getByRole('meter', { name: 'Seats assigned' });
   await expect(meter).toHaveAttribute('aria-valuenow', '5');
   // A failed picture shows the default person picture; initials are opt-in.
