@@ -35,6 +35,7 @@ import { Speed } from '@envsemble/envui/icons/Speed';
 import { SpaceDashboard } from '@envsemble/envui/icons/SpaceDashboard';
 import { AccountTree } from '@envsemble/envui/icons/AccountTree';
 import { Tab } from '@envsemble/envui/icons/Tab';
+import { KeyboardCommandKey } from '@envsemble/envui/icons/KeyboardCommandKey';
 import { type Reference } from '../Reference';
 
 export const foundationIcons: Record<string, typeof Palette> = {
@@ -93,6 +94,7 @@ const referenceIcons: Record<string, typeof Palette> = {
   'app-shell': SpaceDashboard,
   tree: AccountTree,
   'document-tabs': Tab,
+  'command-palette': KeyboardCommandKey,
 };
 
 /** A decorative symbol for the individual reference topic. */

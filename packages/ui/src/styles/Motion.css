@@ -11,6 +11,8 @@
 .env-modal-pane[data-ending-style],
 .env-menu[data-starting-style],
 .env-menu[data-ending-style],
+.env-command-palette[data-starting-style],
+.env-command-palette[data-ending-style],
 .env-dropdown-options[data-starting-style],
 .env-dropdown-options[data-ending-style],
 .env-tooltip[data-starting-style],
@@ -19,6 +21,7 @@
 }
 .env-modal-pane,
 .env-menu,
+.env-command-palette,
 .env-dropdown-options,
 .env-tooltip,
 .env-toast-viewport > .env-toast {
@@ -28,6 +31,7 @@
 .env-dialog-backdrop[data-ending-style],
 .env-modal-pane[data-ending-style],
 .env-menu[data-ending-style],
+.env-command-palette[data-ending-style],
 .env-dropdown-options[data-ending-style],
 .env-tooltip[data-ending-style],
 .env-toast-viewport > .env-toast[data-ending-style] {
@@ -88,6 +92,7 @@
      from their screen edge. */
   .env-modal-pane,
   .env-menu,
+  .env-command-palette,
   .env-dropdown-options,
   .env-tooltip,
   .env-toast-viewport > .env-toast {
@@ -109,6 +114,10 @@
   .env-dropdown-options[data-ending-style] {
     transform: scale(0.96);
   }
+  .env-command-palette[data-starting-style],
+  .env-command-palette[data-ending-style] {
+    transform: translateY(-0.5rem) scale(0.98);
+  }
   .env-tooltip[data-starting-style],
   .env-tooltip[data-ending-style] {
     transform: scale(0.94);
@@ -123,6 +132,7 @@
   }
   .env-modal-pane[data-ending-style],
   .env-menu[data-ending-style],
+  .env-command-palette[data-ending-style],
   .env-dropdown-options[data-ending-style],
   .env-tooltip[data-ending-style],
   .env-toast-viewport > .env-toast[data-ending-style] {

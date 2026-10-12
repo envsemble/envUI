@@ -26,6 +26,7 @@ export * from './forms/Switch.js';
 export * from './forms/Radio.js';
 export * from './forms/Select.js';
 export * from './feedback/Dialog.js';
+export * from './feedback/CommandPalette.js';
 export * from './feedback/EmptyState.js';
 export * from './feedback/Skeleton.js';
 export * from './feedback/LoadingState.js';
