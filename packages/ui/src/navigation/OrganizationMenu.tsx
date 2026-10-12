@@ -104,8 +104,12 @@ export function OrganizationMenu({
               <BaseMenu.RadioItemIndicator className="env-organization-menu-radio-dot" />
             </span>
             <span className="env-menu-item-label">{organization.name}</span>
+            {/* The space keeps the detail a separate word in the item's accessible name. */}
             {organization.detail && (
-              <span className="env-organization-menu-detail">{organization.detail}</span>
+              <>
+                {' '}
+                <span className="env-organization-menu-detail">{organization.detail}</span>
+              </>
             )}
           </BaseMenu.RadioItem>
         ))}

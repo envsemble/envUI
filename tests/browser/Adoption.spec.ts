@@ -270,7 +270,9 @@ test('OrganizationMenu switches organizations and offers creating one', async ({
     'true',
   );
   // A detail, such as the person's role, follows each name.
-  await expect(menu.getByRole('menuitemradio', { name: 'Contoso' })).toContainText('Member');
+  await expect(
+    menu.getByRole('menuitemradio', { name: 'Contoso Member', exact: true }),
+  ).toBeVisible();
   await expect(menu.locator('.env-organization-menu-detail').first()).toHaveText('Admin');
   // Choosing the active organization again does not switch.
   await menu.getByRole('menuitemradio', { name: 'Northwind Labs' }).click();

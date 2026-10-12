@@ -110,13 +110,15 @@ test('button link specimens and optional interaction matrices consume public con
   await page.goto(`${offline}#/components/buttons/preview`);
   const hash = await page.evaluate(() => location.hash);
   const preview = page.locator('.docs-preview');
+  // Confirm buttons on the page keep their own status regions.
+  const destination = preview.getByRole('status').filter({ hasText: 'Selected destination' });
   await preview.getByRole('link', { name: 'Read guide', exact: true }).press('Enter');
-  await expect(preview.getByRole('status')).toHaveText('Selected destination: Guide');
+  await expect(destination).toHaveText('Selected destination: Guide');
   expect(await page.evaluate(() => location.hash)).toBe(hash);
   await preview
     .getByRole('link', { name: 'project guide', exact: true })
     .click({ modifiers: ['Control'] });
-  await expect(preview.getByRole('status')).toHaveText('Selected destination: Project guide');
+  await expect(destination).toHaveText('Selected destination: Project guide');
   expect(await page.evaluate(() => location.hash)).toBe(hash);
   const disclosure = preview.locator('details.env-disclosure-note');
   await disclosure.locator('summary').focus();
