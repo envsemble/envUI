@@ -93,6 +93,19 @@ export function ThemePreferenceProvider({
     return () => query.removeEventListener('change', update);
   }, [preference]);
 
+  // A choice made in another window or tab of the same origin applies here too.
+  useEffect(() => {
+    const onStorage = (event: StorageEvent) => {
+      if (event.storageArea !== window.localStorage || event.key !== storageKey) return;
+      const next = event.newValue;
+      setPreferenceState(
+        next === 'light' || next === 'dark' || next === 'system' ? next : defaultPreference,
+      );
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, [storageKey, defaultPreference]);
+
   useEffect(() => {
     if (!applyToDocument) return;
     const root = document.documentElement;
