@@ -67,3 +67,25 @@ test('popovers open from their trigger, close on Escape and outside presses, and
     await expect(page.getByTestId(`popover-result-${theme}`)).toHaveText('Renamed');
   }
 });
+
+test('dialogs open wide for heavy content and near the top for search-like tasks', async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/?fixture=dialog-variants`);
+  await page.getByRole('button', { name: 'Open wide dialog' }).click();
+  const wide = page.getByRole('dialog', { name: 'Wide details' });
+  await expect(wide).toBeVisible();
+  await expect.poll(async () => (await wide.boundingBox())!.width).toBeCloseTo(44 * 16, 0);
+  await page.keyboard.press('Escape');
+  await expect(wide).toBeHidden();
+
+  await page.getByRole('button', { name: 'Open top dialog' }).click();
+  const top = page.getByRole('dialog', { name: 'Search plans' });
+  await expect(top).toBeVisible();
+  await expect(top.getByRole('button', { name: 'Close' })).toBeVisible();
+  const viewport = page.viewportSize()!;
+  await expect
+    .poll(async () => (await top.boundingBox())!.y)
+    .toBeLessThan(Math.min(viewport.height * 0.12, 96) + 8);
+  await expect.poll(async () => (await top.boundingBox())!.width).toBeCloseTo(28 * 16, 0);
+});

@@ -187,6 +187,25 @@ export function DialogsPreview() {
         caption="Modals block page interaction and trap focus. Escape closes the dialog and returns focus to its trigger."
       >
         <SpecimenGrid size="compact">
+          <Specimen title="Wide">
+            <Dialog
+              trigger={<Button variant="secondary">Review changes</Button>}
+              title="Review changes"
+              description="Wide dialogs suit tables, comparisons and longer forms."
+              size="wide"
+            >
+              <Text>Three documents changed since your last review.</Text>
+            </Dialog>
+          </Specimen>
+          <Specimen title="Near the top">
+            <Dialog
+              trigger={<Button variant="secondary">Find a plan</Button>}
+              title="Find a plan"
+              placement="top"
+            >
+              <Input label="Plan name" name="plan" />
+            </Dialog>
+          </Specimen>
           <Specimen title="Confirmation">
             <Dialog
               open={activeDialog === 'delete'}

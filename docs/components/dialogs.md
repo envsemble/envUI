@@ -18,22 +18,24 @@ import { Dialog, Button, Text } from '@envsemble/envui';
 
 ### Props & contracts
 
-| Name                              | Contract                                                                                                              |
-| --------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| trigger / title / description     | Launch control and accessible modal labeling                                                                          |
-| children / actions                | General content and shared controls                                                                                   |
-| closeLabel                        | Built-in dismissal label; defaults to Close                                                                           |
-| placement                         | center (default) or right; right is a full-height side panel with a header close button                               |
-| modal                             | true (default) traps focus, blocks outside interaction and locks page scroll; false permits interaction with the page |
-| disablePointerDismissal           | false by default; true keeps an inspector open on outside presses or focus changes                                    |
-| open / defaultOpen / onOpenChange | Controlled or uncontrolled visibility                                                                                 |
-| DialogClose                       | Additional dismissal action; shared button props                                                                      |
-| initialFocus / finalFocus         | Optional focus refs                                                                                                   |
-| pending                           | Work is in progress: Escape, outside presses and the built-in close button cannot dismiss the dialog                  |
+| Name                              | Contract                                                                                                                           |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| trigger / title / description     | Launch control and accessible modal labeling                                                                                       |
+| children / actions                | General content and shared controls                                                                                                |
+| closeLabel                        | Built-in dismissal label; defaults to Close                                                                                        |
+| placement                         | center (default), top or right; top opens near the top of the window, right is a full-height side panel with a header close button |
+| size                              | standard (default, about 28 rem) or wide (about 44 rem) for content-heavy centered and top dialogs                                 |
+| modal                             | true (default) traps focus, blocks outside interaction and locks page scroll; false permits interaction with the page              |
+| disablePointerDismissal           | false by default; true keeps an inspector open on outside presses or focus changes                                                 |
+| open / defaultOpen / onOpenChange | Controlled or uncontrolled visibility                                                                                              |
+| DialogClose                       | Additional dismissal action; shared button props                                                                                   |
+| initialFocus / finalFocus         | Optional focus refs                                                                                                                |
+| pending                           | Work is in progress: Escape, outside presses and the built-in close button cannot dismiss the dialog                               |
 
 ## Guidelines
 
 - Use a centered modal for a focused confirmation or short form. Use a right panel to inspect content; set modal=false when its source page should remain interactive.
+- Use placement top for search-like dialogs, so results can grow downward without moving the field, and size wide for tables, comparisons and longer forms. For quick open, use CommandPalette.
 - Centered dialogs include a footer dismissal; right panels include a header close button. Escape closes either placement and focus returns to the trigger or finalFocus ref.
 - Modal dialogs trap focus; non-modal panels do not. Portals preserve the originating theme.
 - The application owns validation, saving, async work and whether completion closes the dialog.
@@ -45,6 +47,7 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Toasts](../components/toasts.md)
+- [Command palette](../components/command-palette.md)
 - [Text fields](../components/fields.md)
 - [Stacks & action groups](../components/layout.md)
 - [Accessibility](../foundations/accessibility.md)

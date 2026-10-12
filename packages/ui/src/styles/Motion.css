@@ -111,6 +111,10 @@
   .env-modal-pane[data-ending-style] {
     transform: translateY(0.75rem) scale(0.98);
   }
+  .env-modal-pane[data-placement='top'][data-starting-style],
+  .env-modal-pane[data-placement='top'][data-ending-style] {
+    transform: translateY(-0.5rem) scale(0.98);
+  }
   .env-modal-pane[data-placement='right'][data-starting-style],
   .env-modal-pane[data-placement='right'][data-ending-style] {
     transform: translateX(2rem);

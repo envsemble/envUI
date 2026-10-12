@@ -20,7 +20,7 @@ import { DocumentTabsFixture } from './Tabs.js';
 import { CommandPaletteFixture } from './Palette.js';
 import { SegmentedControlFixture } from './Segments.js';
 import { BadgesFixture } from './Badges.js';
-import { NoticesFixture, PopoverFixture } from './Overlays.js';
+import { DialogVariantsFixture, NoticesFixture, PopoverFixture } from './Overlays.js';
 import { DataDisplayFixture } from './DataDisplay.js';
 
 /** Fixtures that fill the viewport are only mounted on their own. */
@@ -125,6 +125,7 @@ export default function App() {
               <NoticesFixture theme="dark" />
             </>
           )}
+          {includes('dialog-variants') && <DialogVariantsFixture />}
           {includes('popover') && (
             <>
               <PopoverFixture theme="light" />

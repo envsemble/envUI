@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import {
   Button,
+  Dialog,
   Input,
   Link,
   Notice,
@@ -73,6 +74,29 @@ export function PopoverFixture({ theme }: { theme: ThemeValue }) {
         </Popover>
       </div>
       <output data-testid={`popover-result-${theme}`}>{saved}</output>
+    </Theme>
+  );
+}
+
+export function DialogVariantsFixture() {
+  return (
+    <Theme theme="light" className="fixture-section">
+      <div className="fixture-actions">
+        <Dialog
+          title="Wide details"
+          size="wide"
+          trigger={<Button variant="secondary">Open wide dialog</Button>}
+        >
+          <Text>Content-heavy dialogs use the wide size.</Text>
+        </Dialog>
+        <Dialog
+          title="Search plans"
+          placement="top"
+          trigger={<Button variant="secondary">Open top dialog</Button>}
+        >
+          <Input label="Search" name="search" />
+        </Dialog>
+      </div>
     </Theme>
   );
 }

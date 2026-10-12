@@ -23,6 +23,9 @@
   min-inline-size: 0;
   overflow-wrap: anywhere;
 }
+.env-modal-pane[data-size='wide']:not([data-placement='right']) {
+  width: min(44rem, 100%);
+}
 .env-modal-pane[data-placement='right'] {
   inline-size: min(24rem, 100%);
   block-size: 100%;
@@ -57,6 +60,11 @@
     max(var(--viewport-gutter), env(safe-area-inset-bottom))
     max(var(--viewport-gutter), env(safe-area-inset-left));
   pointer-events: none;
+}
+/* Search-like dialogs open near the top, so results can grow downward without moving the field. */
+.env-dialog-positioner[data-placement='top'] {
+  place-items: start center;
+  padding-block-start: max(var(--viewport-gutter), min(12vh, 6rem), env(safe-area-inset-top));
 }
 .env-dialog-positioner[data-placement='right'] {
   place-items: stretch end;

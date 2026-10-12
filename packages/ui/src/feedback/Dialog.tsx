@@ -19,8 +19,13 @@ export interface DialogProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title
   children?: ReactNode;
   actions?: ReactNode;
   closeLabel?: string;
-  /** Centered modal or a full-height panel at the right edge. */
-  placement?: 'center' | 'right';
+  /**
+   * Centered modal, a modal near the top of the window for search-like tasks, or a full-height panel
+   * at the right edge.
+   */
+  placement?: 'center' | 'top' | 'right';
+  /** standard (default, about 28 rem) or wide (about 44 rem) for content-heavy dialogs. */
+  size?: 'standard' | 'wide';
   /** Non-modal panels allow interaction with the surrounding page. */
   modal?: boolean;
   /** Keep a non-modal inspector open while interacting with its source content. */
@@ -56,6 +61,7 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
     actions,
     closeLabel = 'Close',
     placement = 'center',
+    size = 'standard',
     modal = true,
     disablePointerDismissal = false,
     initialFocus,
@@ -98,6 +104,7 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
               ref={ref}
               className={classNames('env-modal-pane', className)}
               data-placement={placement}
+              data-size={size}
               aria-busy={pending || undefined}
               initialFocus={initialFocus}
               finalFocus={finalFocus}
@@ -119,9 +126,9 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
                   </BaseDialog.Description>
                 )}
                 {children}
-                {(placement === 'center' || actions != null) && (
+                {(placement !== 'right' || actions != null) && (
                   <ActionGroup align="end" className="env-dialog-actions">
-                    {placement === 'center' && (
+                    {placement !== 'right' && (
                       <DialogClose disabled={pending}>{closeLabel}</DialogClose>
                     )}
                     {actions}
