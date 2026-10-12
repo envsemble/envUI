@@ -114,6 +114,19 @@ test.describe('Resizable AppShell', () => {
     // Focus moving within the sidebar afterwards expands it again.
     await page.getByRole('button', { name: 'Search' }).focus();
     await expect(shell).not.toHaveAttribute('data-compact');
+
+    // With the pointer over the sidebar too, until the pointer leaves and comes back.
+    await page.keyboard.press('Alt+KeyB');
+    const box = (await page.getByRole('button', { name: 'Search' }).boundingBox())!;
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await expect(shell).not.toHaveAttribute('data-compact');
+    await page.getByRole('button', { name: 'Documents' }).focus();
+    await page.keyboard.press('Alt+KeyB');
+    await expect(shell).toHaveAttribute('data-compact', '');
+    await page.mouse.move(900, 500);
+    const compact = (await page.locator('.env-app-sidebar').boundingBox())!;
+    await page.mouse.move(compact.x + compact.width / 2, box.y + box.height / 2);
+    await expect(shell).not.toHaveAttribute('data-compact');
     expect(errors).toEqual([]);
   });
 

@@ -279,18 +279,20 @@ export function AppShell({
   const compact = !isNarrow && collapsed && !hoverExpanded;
 
   // Collapsing, by the toggle, an application shortcut or the collapsed prop, compacts the sidebar
-  // even while it holds focus: focus already there does not hold it open, though focus moving
-  // within it afterwards does. Content the compact sidebar hides lets go of focus.
+  // even while it holds focus or the pointer: focus already there does not hold it open, though
+  // focus moving within it afterwards does, and the pointer expands it again once it has left.
+  // Content the compact sidebar hides lets go of focus.
   const wasCollapsed = useRef(collapsed);
   useLayoutEffect(() => {
     const collapsing = collapsed && !wasCollapsed.current;
     wasCollapsed.current = collapsed;
     if (!collapsing || isNarrow) return;
     setFocusWithin(false);
+    if (regionHovered) setHoverSuppressed(true);
     const focused = sidebarContentRegion.current?.ownerDocument.activeElement;
     if (focused instanceof HTMLElement && sidebarContentRegion.current?.contains(focused))
       focused.blur();
-  }, [collapsed, isNarrow]);
+  }, [collapsed, isNarrow, regionHovered]);
   const sidebarVisible = !isNarrow || narrowOpen;
   const measurable = !compact && sidebarVisible;
 
