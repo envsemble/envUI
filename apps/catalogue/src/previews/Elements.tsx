@@ -2,14 +2,23 @@ import { useState } from 'react';
 import {
   ActionGroup,
   Badge,
+  Breadcrumbs,
   Button,
   Counter,
   Input,
+  Kbd,
+  Link,
   NavigationItem,
   Notice,
   Popover,
   SegmentedControl,
   Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeaderCell,
+  TableRow,
   Text,
 } from '@envsemble/envui';
 import { CheckCircle } from '@envsemble/envui/icons/CheckCircle';
@@ -262,6 +271,134 @@ export function PopoverPreview() {
         <Text variant="caption" className="docs-caption">
           Current name: {name}
         </Text>
+      </Example>
+    </Preview>
+  );
+}
+
+const samplePlans = [
+  {
+    title: 'Search relevance',
+    folder: 'Plans/Search',
+    owner: 'Alex Morgan',
+    decisions: 12,
+    status: 'In progress',
+  },
+  {
+    title: 'Sync conflicts',
+    folder: 'Plans/Sync',
+    owner: 'Sam Lee',
+    decisions: 4,
+    status: 'Blocked',
+  },
+  {
+    title: 'Sharing links',
+    folder: 'Plans/Sharing',
+    owner: 'Priya Shah',
+    decisions: 27,
+    status: 'Completed',
+  },
+  {
+    title: 'Billing cleanup',
+    folder: 'Plans/Billing',
+    owner: 'Alex Morgan',
+    decisions: 3,
+    status: 'In progress',
+  },
+] as const;
+const statusTones = { 'In progress': 'accent', Blocked: 'warning', Completed: 'done' } as const;
+
+export function TablesPreview() {
+  const [density, setDensity] = useState('standard');
+  return (
+    <Preview>
+      <Example
+        title="Plans"
+        size="wide"
+        actions={
+          <SegmentedControl
+            aria-label="Density"
+            size="compact"
+            value={density}
+            onValueChange={setDensity}
+            options={[
+              { value: 'standard', label: 'Standard' },
+              { value: 'compact', label: 'Compact' },
+            ]}
+          />
+        }
+        caption="Wide tables scroll sideways within their region; numeric cells align to the end with tabular figures."
+      >
+        <Table aria-label="Plans" density={density === 'compact' ? 'compact' : 'standard'}>
+          <TableHead>
+            <TableRow>
+              <TableHeaderCell>Plan</TableHeaderCell>
+              <TableHeaderCell>Owner</TableHeaderCell>
+              <TableHeaderCell numeric>Decisions</TableHeaderCell>
+              <TableHeaderCell>Status</TableHeaderCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {samplePlans.map((plan) => (
+              <TableRow key={plan.title} interactive>
+                <TableCell>
+                  <Link href={`#/${plan.folder}`} underline={false}>
+                    {plan.title}
+                  </Link>
+                  <Text variant="caption">{plan.folder}</Text>
+                </TableCell>
+                <TableCell nowrap>{plan.owner}</TableCell>
+                <TableCell numeric>{plan.decisions}</TableCell>
+                <TableCell>
+                  <Badge tone={statusTones[plan.status]}>{plan.status}</Badge>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Example>
+    </Preview>
+  );
+}
+
+export function BreadcrumbsPreview() {
+  const [level, setLevel] = useState('Roadmap.md');
+  return (
+    <Preview>
+      <Example
+        title="Where you are"
+        size="collection"
+        caption="Earlier levels are links or buttons; the current page is last and not a link."
+      >
+        <Breadcrumbs
+          items={[
+            { label: 'Workspace', href: '#/workspace' },
+            { label: 'Plans', onClick: () => setLevel('Plans') },
+            { label: 'Search', onClick: () => setLevel('Search') },
+            { label: 'Roadmap.md' },
+          ]}
+        />
+        <Text variant="caption" className="docs-caption" aria-live="polite">
+          {level === 'Roadmap.md' ? '' : `Went to ${level}`}
+        </Text>
+      </Example>
+    </Preview>
+  );
+}
+
+export function KbdPreview() {
+  return (
+    <Preview>
+      <Example title="Keys and shortcuts" size="collection">
+        <Stack gap={3}>
+          <Text>
+            Press <Kbd keys={['Ctrl', 'P']} /> to open a document, or <Kbd>F2</Kbd> to rename it.
+          </Text>
+          <Text>
+            Close the current tab with <Kbd keys={['Ctrl', 'W']} />, or every tab with{' '}
+            <Kbd keys={['Ctrl', 'K', 'W']} />.
+          </Text>
+        </Stack>
       </Example>
     </Preview>
   );

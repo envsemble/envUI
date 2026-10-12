@@ -50,6 +50,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Application shell](components/app-shell.md) — Topbar and collapsible navigation sidebar for a whole application.
 - [Tree](components/tree.md) — A virtualized tree of rows for large hierarchies, such as file trees.
 - [Document tabs](components/document-tabs.md) — Closable editor-style tabs for open documents.
+- [Breadcrumbs](components/breadcrumbs.md) — The path from the top level to the current page.
 
 ## Content & guidance
 
@@ -58,6 +59,8 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Code](components/code.md) — Render inline code and highlighted code blocks.
 - [Info chips](components/chips.md) — Read-only metadata beside related content.
 - [Badges & counters](components/badges.md) — Small pills that name a state in its tone, and compact counts.
+- [Tables](components/tables.md) — Semantic data tables on a rounded surface, with dense and sticky options.
+- [Keyboard keys](components/keyboard.md) — Key caps for shortcuts in text, menus and hints.
 - [Animated numbers](components/animated-number.md) — Counts that roll to their new value, so a change is noticed.
 - [Disclosure notes](components/disclosures.md) — Keep optional details collapsed until needed.
 - [Avatars](components/avatar.md) — A picture of a person or organization with a default picture or initials as fallback, and the avatar button.

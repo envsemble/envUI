@@ -11,6 +11,9 @@
 @import './DisclosureNote.css';
 @import './InfoChip.css';
 @import './Badge.css';
+@import './Table.css';
+@import './Breadcrumbs.css';
+@import './Kbd.css';
 @import './GroupedRows.css';
 @import './FeedbackStates.css';
 @import './Text.css';

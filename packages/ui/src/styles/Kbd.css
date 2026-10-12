@@ -1,0 +1,34 @@
+/* Keyboard keys: small key caps with a heavier bottom edge. */
+.env-kbd {
+  box-sizing: border-box;
+  min-inline-size: 1.375rem;
+  block-size: 1.375rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: 0.3125rem;
+  border: 0.0625rem solid var(--color-border-strong);
+  border-block-end-width: 0.125rem;
+  border-radius: 0.3125rem;
+  background: var(--color-fill);
+  color: var(--color-text-primary);
+  font: 500 0.75rem / 1 var(--font-family);
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.env-kbd-combination {
+  display: inline-flex;
+  align-items: center;
+  font: inherit;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.env-kbd-part {
+  display: inline-flex;
+  align-items: center;
+}
+.env-kbd-separator {
+  padding-inline: 0.1875rem;
+  color: var(--color-text-muted);
+  font: var(--type-body-small);
+}

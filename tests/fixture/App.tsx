@@ -21,6 +21,7 @@ import { CommandPaletteFixture } from './Palette.js';
 import { SegmentedControlFixture } from './Segments.js';
 import { BadgesFixture } from './Badges.js';
 import { NoticesFixture, PopoverFixture } from './Overlays.js';
+import { DataDisplayFixture } from './DataDisplay.js';
 
 /** Fixtures that fill the viewport are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
@@ -127,6 +128,12 @@ export default function App() {
             <>
               <PopoverFixture theme="light" />
               <PopoverFixture theme="dark" />
+            </>
+          )}
+          {includes('data-display') && (
+            <>
+              <DataDisplayFixture theme="light" />
+              <DataDisplayFixture theme="dark" />
             </>
           )}
           {includes('menus') && (

@@ -40,6 +40,9 @@ import { ViewWeek } from '@envsemble/envui/icons/ViewWeek';
 import { Sell } from '@envsemble/envui/icons/Sell';
 import { Campaign } from '@envsemble/envui/icons/Campaign';
 import { Chat } from '@envsemble/envui/icons/Chat';
+import { TableChart } from '@envsemble/envui/icons/TableChart';
+import { Keyboard } from '@envsemble/envui/icons/Keyboard';
+import { LinearScale } from '@envsemble/envui/icons/LinearScale';
 import { type Reference } from '../Reference';
 
 export const foundationIcons: Record<string, typeof Palette> = {
@@ -103,6 +106,9 @@ const referenceIcons: Record<string, typeof Palette> = {
   badges: Sell,
   notices: Campaign,
   popover: Chat,
+  tables: TableChart,
+  keyboard: Keyboard,
+  breadcrumbs: LinearScale,
 };
 
 /** A decorative symbol for the individual reference topic. */
