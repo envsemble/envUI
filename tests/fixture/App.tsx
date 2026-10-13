@@ -12,7 +12,7 @@ import { LayoutFixture } from './Layout.js';
 import { FeatureCardsFixture } from './FeatureCards.js';
 import { ColorPickerFixture } from './ColorPicker.js';
 import { MarkdownEditingFixture, MarkdownExtensionsFixture } from './MarkdownEditing.js';
-import { AdoptionFixture, ShellFixture } from './Adoption.js';
+import { AdoptionFixture, ShellFixture, TwoShellsFixture } from './Adoption.js';
 import { ResizableShellFixture } from './ResizableShell.js';
 import {
   FramedShellFixture,
@@ -44,6 +44,7 @@ import { HeatmapFixture } from './Heatmaps.js';
 /** Fixtures that fill the viewport are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
   shell: ShellFixture,
+  'two-shells': TwoShellsFixture,
   'resizable-shell': ResizableShellFixture,
   'full-shell': FullShellFixture,
   'full-shell-skeleton': FullShellSkeletonFixture,

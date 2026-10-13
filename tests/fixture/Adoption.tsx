@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 import {
   AnimatedNumber,
   AppShell,
@@ -194,6 +194,62 @@ export function AdoptionFixture() {
         </section>
       </LinkProvider>
     </ThemePreferenceProvider>
+  );
+}
+
+/**
+ * Two shells on one page, the second with a taller topbar that can be hidden or removed, mounted
+ * with ?fixture=two-shells.
+ */
+export function TwoShellsFixture() {
+  const [first, setFirst] = useState(true);
+  const [second, setSecond] = useState<'shown' | 'hidden' | 'gone'>('shown');
+  return (
+    <>
+      <div hidden={!first}>
+        <AppShell
+          brand={<span>A</span>}
+          title="First"
+          navigationLabel="First navigation"
+          navigation={
+            <NavigationItem href="/" icon={<Home />}>
+              Home
+            </NavigationItem>
+          }
+        >
+          <div className="fixture-two-shells-actions">
+            <button type="button" onClick={() => setSecond('hidden')}>
+              Hide the second shell
+            </button>
+            <button type="button" onClick={() => setSecond('shown')}>
+              Show the second shell
+            </button>
+            <button type="button" onClick={() => setSecond('gone')}>
+              Remove the second shell
+            </button>
+            <button type="button" onClick={() => setFirst(false)}>
+              Hide the first shell
+            </button>
+          </div>
+        </AppShell>
+      </div>
+      {second !== 'gone' && (
+        <div hidden={second === 'hidden'} style={{ '--topbar-height': '5rem' } as CSSProperties}>
+          <AppShell
+            brand={<span>B</span>}
+            title="Second"
+            navigationLabel="Second navigation"
+            navigation={
+              <NavigationItem href="/second" icon={<Category />}>
+                Second home
+              </NavigationItem>
+            }
+          >
+            <p>Second content</p>
+          </AppShell>
+        </div>
+      )}
+    </>
   );
 }
 

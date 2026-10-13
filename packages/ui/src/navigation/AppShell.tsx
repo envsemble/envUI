@@ -720,9 +720,9 @@ function useTopbarBlockSize(shellElement: HTMLElement | null) {
     if (!heights) documentTopbars.set(page, (heights = new Map()));
     const shellTopbars = heights;
     const update = () => {
-      // A topbar without a box, hidden or taken out of the document, has nothing to keep clear of.
-      if (topbar.getClientRects().length === 0) shellTopbars.delete(topbar);
-      else shellTopbars.set(topbar, topbar.offsetHeight);
+      // A topbar without a box, hidden or taken out of the document, measures 0, so a shell that is
+      // hidden alone keeps nothing clear but the margin.
+      shellTopbars.set(topbar, topbar.offsetHeight);
       publishTopbarBlockSize(page);
     };
     update();

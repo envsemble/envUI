@@ -105,6 +105,13 @@ body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-p
 .fixture-wide-stack-frame {
   inline-size: min(100%, 48rem);
 }
+/* The second shell's topbar covers the top of the first shell's content. */
+.fixture-two-shells-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding-block-start: 6rem;
+}
 .fixture-measured-stack-frame {
   inline-size: min(100%, 25rem);
 }

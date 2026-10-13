@@ -757,16 +757,29 @@ test.describe('AppShell', () => {
     await expect(html).toHaveCSS('scroll-padding-top', '96px');
     await layered.evaluate((style) => style.remove());
     await expect(html).toHaveCSS('scroll-padding-top', `${topbar.height + 8}px`);
-    // With two shells, the one that stays keeps the padding when the other leaves.
-    await page.evaluate(() => {
-      const shell = document.querySelector('.env-app-shell')!;
-      document.body.append(shell.cloneNode(false));
-      shell.remove();
-    });
-    await expect(page.locator('.env-app-shell')).toHaveCount(1);
-    await expect(html).toHaveCSS('scroll-padding-top', `${topbar.height + 8}px`);
-    await page.evaluate(() => document.querySelector('.env-app-shell')!.remove());
-    await expect(html).toHaveCSS('scroll-padding-top', 'auto');
+  });
+
+  test('several shells keep the padding for the tallest topbar that shows', async ({ page }) => {
+    await page.goto(`${fixtureUrl}/?fixture=two-shells`);
+    const html = page.locator('html');
+    const size = () =>
+      html.evaluate((element) => element.style.getPropertyValue('--env-app-topbar-block-size'));
+    // The second shell's topbar is 5 rem tall, the first one's 3.25 rem.
+    await expect.poll(size).toBe('80px');
+    await expect(html).toHaveCSS('scroll-padding-top', '88px');
+    await page.getByRole('button', { name: 'Hide the second shell' }).click();
+    await expect.poll(size).toBe('52px');
+    await expect(html).toHaveCSS('scroll-padding-top', '60px');
+    await page.getByRole('button', { name: 'Show the second shell' }).click();
+    await expect.poll(size).toBe('80px');
+    await expect(html).toHaveCSS('scroll-padding-top', '88px');
+    await page.getByRole('button', { name: 'Remove the second shell' }).click();
+    await expect.poll(size).toBe('52px');
+    await expect(html).toHaveCSS('scroll-padding-top', '60px');
+    // A shell hidden on its own keeps nothing clear but the margin.
+    await page.getByRole('button', { name: 'Hide the first shell' }).click();
+    await expect.poll(size).toBe('0px');
+    await expect(html).toHaveCSS('scroll-padding-top', '8px');
   });
 
   test('the scroll padding follows the topbar however tall it is', async ({ page }) => {
