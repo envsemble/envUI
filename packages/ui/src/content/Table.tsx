@@ -274,11 +274,11 @@ export interface TableHeaderCellProps
   /** The header becomes a button that asks the application to sort the rows by this column. */
   onSort?: () => void;
   /**
-   * Accessible name of the sort button, which says what pressing it does: the header and "sort
-   * ascending" by default, or "sort descending" while the column is sorted ascending.
+   * Accessible name of the sort button, which says what pressing it does: the header followed by
+   * "sort ascending" by default, or by "sort descending" while the column is sorted ascending.
    */
   sortLabel?: string;
-  /** Accessible name of the column's resize handle; "Resize" and the header by default. */
+  /** Accessible name of the column's resize handle; "Resize" followed by the header by default. */
   resizeLabel?: string;
 }
 
@@ -334,7 +334,8 @@ export function TableHeaderCell({
   const column = useColumnIndex(cell, section === 'head' && columns?.resizable === true);
   const handle = columns && column !== undefined && column + 1 < columns.widths.length;
   const sortable = onSort !== undefined;
-  // The header keeps its own text as its name; the controls inside add what they do.
+  // The header keeps its own text as its name; the controls inside add what they do to it through
+  // aria-labelledby, so the children render once.
   const labelled = sortable || Boolean(handle);
   const label = labelled ? (
     <span id={`${id}-label`} className="env-table-header-label">
@@ -361,7 +362,7 @@ export function TableHeaderCell({
           type="button"
           className="env-table-sort-button"
           aria-label={sortLabel}
-          aria-labelledby={sortLabel === undefined ? `${id}-sort` : undefined}
+          aria-labelledby={sortLabel === undefined ? `${id}-label ${id}-sort` : undefined}
           onClick={onSort}
         >
           {label}
@@ -372,7 +373,7 @@ export function TableHeaderCell({
       )}
       {sortable && sortLabel === undefined && (
         <span id={`${id}-sort`} hidden>
-          {children}, {sortDirection === 'ascending' ? 'sort descending' : 'sort ascending'}
+          {sortDirection === 'ascending' ? 'sort descending' : 'sort ascending'}
         </span>
       )}
       {handle && (
@@ -380,12 +381,12 @@ export function TableHeaderCell({
           column={column}
           columns={columns}
           label={resizeLabel}
-          labelledBy={`${id}-resize`}
+          labelledBy={`${id}-resize ${id}-label`}
         />
       )}
       {handle && resizeLabel === undefined && (
         <span id={`${id}-resize`} hidden>
-          Resize {children}
+          Resize
         </span>
       )}
     </th>

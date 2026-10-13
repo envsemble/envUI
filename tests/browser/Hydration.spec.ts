@@ -28,7 +28,7 @@ test('public components hydrate server output without recoverable errors', async
   const table = page.getByRole('table', { name: 'Hydrated table' });
   const name = table.getByRole('columnheader', { name: 'Hydrated name', exact: true });
   await expect(name).toHaveAttribute('aria-sort', 'ascending');
-  await table.getByRole('button', { name: 'Hydrated name, sort descending' }).click();
+  await table.getByRole('button', { name: 'Hydrated name sort descending' }).click();
   await expect(name).toHaveAttribute('aria-sort', 'descending');
   const handle = table.getByRole('separator', { name: 'Resize Hydrated name' });
   await expect(handle).toHaveAttribute('aria-valuenow', '60');

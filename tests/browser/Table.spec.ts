@@ -69,7 +69,9 @@ test('sortable headers are buttons that say what pressing does and report the or
     'aria-sort',
   );
   const sortReport = report.getByRole('button');
-  await expect(sortReport).toHaveAccessibleName('Report, sort ascending');
+  await expect(sortReport).toHaveAccessibleName('Report sort ascending');
+  // The header renders its children once; the button and the handle refer to them for their names.
+  expect(await report.evaluate((cell) => cell.textContent!.split('Report').length - 1)).toBe(1);
   // The button fills its header cell, so the whole cell is the target.
   const cell = (await report.boundingBox())!;
   const button = (await sortReport.boundingBox())!;
@@ -78,7 +80,7 @@ test('sortable headers are buttons that say what pressing does and report the or
 
   await sortReport.click();
   await expect(report).toHaveAttribute('aria-sort', 'ascending');
-  await expect(sortReport).toHaveAccessibleName('Report, sort descending');
+  await expect(sortReport).toHaveAccessibleName('Report sort descending');
   await expect(page.getByTestId('order-light')).toHaveText('audit tokens quarterly roadmap');
   // The sorted header shows its order in the primary text color.
   await expect(report).toHaveCSS('color', await tokenColor(report, '--color-text-primary'));
@@ -86,7 +88,7 @@ test('sortable headers are buttons that say what pressing does and report the or
   await sortReport.focus();
   await page.keyboard.press('Enter');
   await expect(report).toHaveAttribute('aria-sort', 'descending');
-  await expect(sortReport).toHaveAccessibleName('Report, sort ascending');
+  await expect(sortReport).toHaveAccessibleName('Report sort ascending');
   await expect(sortReport).toBeFocused();
   await expect(page.getByTestId('order-light')).toHaveText('roadmap quarterly tokens audit');
 
@@ -298,10 +300,10 @@ test('a stacking table lists its rows as blocks in a narrow container and keeps 
     const head = table.locator('thead');
     await expect(head).toHaveCSS('position', 'absolute');
     expect((await head.boundingBox())!.height).toBeLessThanOrEqual(1);
-    await table.getByRole('button', { name: /^Report, sort/ }).focus();
+    await table.getByRole('button', { name: /^Report sort/ }).focus();
     await expect(head).toHaveCSS('position', 'static');
     expect((await head.boundingBox())!.height).toBeGreaterThan(20);
-    await table.getByRole('button', { name: /^Report, sort/ }).blur();
+    await table.getByRole('button', { name: /^Report sort/ }).blur();
 
     // A wide container shows the table again, without the labels.
     await frame.evaluate((element) => (element.style.inlineSize = '48rem'));
