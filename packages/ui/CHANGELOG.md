@@ -23,7 +23,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 - `Notice`: an inline banner in four tones with an action, a round dismiss button in its tone and `announce` for alerts.
 - `Popover`: a floating panel with a title, two widths and a close function for its content.
 - `Table` with `TableHead`, `TableBody`, `TableRow`, `TableHeaderCell` and `TableCell`: density, where compact tables give the controls in their cells the compact height, sticky headers, numeric cells and a focusable scroll region, which keeps content positioned in cells, such as visually hidden text, from widening the page.
-- `Breadcrumbs` and `Kbd`.
+- `Breadcrumbs`, with `wrap={false}` for a trail that stays on one line in a bar or header, and `Kbd`.
 - `Markdown` `components`, `remarkPlugins` and `rehypePlugins`; application overrides win and attributes such as heading ids reach the elements. Raw HTML is dropped before any rehype plugin runs, so it stays ignored, except keys written as `<kbd>Ctrl</kbd>`, which render as `Kbd`.
 - `Dialog` `size="wide"` (about 44 rem), also for right panels, and `placement="top"`.
 - `Menu` and `ContextMenu` `density="compact"`: the desktop dropdown for dense surfaces. It takes the raised popup of `Popover` and `Select`, with small corners, 1.75 rem rows that highlight on hover and keyboard focus, labels that line up whether a row has a check mark, an icon or neither, shortcuts as small muted `Kbd` keys, hairline separators and small group labels. A compact `Tree` opens a compact context menu.

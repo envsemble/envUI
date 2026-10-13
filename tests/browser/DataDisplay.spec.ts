@@ -1,7 +1,35 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { fixtureUrl } from './Servers';
 
 const dataFixture = `${fixtureUrl}/?fixture=data-display`;
+
+/** How a breadcrumb trail is laid out: its height in lines, which labels are cut short, and what
+ * extends past the navigation's box or clips the crumbs. */
+function trailLayout(navigation: Locator) {
+  return navigation.evaluate((nav) => {
+    const list = nav.querySelector('.env-breadcrumbs-list')!;
+    const items = [...list.children];
+    const box = nav.getBoundingClientRect();
+    return {
+      direction: getComputedStyle(nav).direction,
+      lines:
+        list.getBoundingClientRect().height /
+        Math.max(...items.map((item) => item.getBoundingClientRect().height)),
+      truncated: [...nav.querySelectorAll('.env-breadcrumb-label')].map(
+        (label) => label.scrollWidth > label.clientWidth,
+      ),
+      outside: [...nav.querySelectorAll('*')]
+        .filter((element) => {
+          const rect = element.getBoundingClientRect();
+          return rect.left < box.left - 0.5 || rect.right > box.right + 0.5;
+        })
+        .map((element) => element.getAttribute('class')),
+      clipping: [nav, list, ...items]
+        .filter((element) => getComputedStyle(element).overflowX !== 'visible')
+        .map((element) => element.getAttribute('class')),
+    };
+  });
+}
 
 test('breadcrumbs link earlier levels and mark the current page', async ({ page }) => {
   await page.goto(dataFixture);
@@ -22,6 +50,49 @@ test('breadcrumbs link earlier levels and mark the current page', async ({ page 
   await navigation.getByRole('button', { name: 'Plans' }).click();
   await expect(scope.getByTestId('breadcrumb-result-light')).toHaveText('Plans');
   await expect(navigation.getByText('Search')).toHaveCSS('cursor', 'auto');
+});
+
+test('a narrow breadcrumb trail wraps by default', async ({ page }) => {
+  await page.goto(dataFixture);
+  for (const theme of ['light', 'dark']) {
+    const navigation = page
+      .getByTestId(`data-${theme}`)
+      .getByRole('navigation', { name: 'Wrapping trail' });
+    await expect(navigation).not.toHaveAttribute('data-nowrap');
+    const layout = await trailLayout(navigation);
+    expect(layout.lines).toBeGreaterThan(1.5);
+    expect(layout.outside).toEqual([]);
+  }
+});
+
+test('a breadcrumb trail without wrap stays on one line and cuts the current page short first', async ({
+  page,
+}) => {
+  await page.goto(dataFixture);
+  for (const theme of ['light', 'dark']) {
+    const scope = page.getByTestId(`data-${theme}`);
+    for (const [name, direction, truncated] of [
+      ['One-line trail', 'ltr', [false, false, true]],
+      ['Right-to-left trail', 'rtl', [false, false, true]],
+      ['Header trail', 'ltr', [false, true]],
+    ] as const) {
+      const layout = await trailLayout(scope.getByRole('navigation', { name }));
+      expect(layout.direction, name).toBe(direction);
+      expect(layout.lines, name).toBeCloseTo(1, 1);
+      // Only the current page is cut short; earlier levels keep their width.
+      expect(layout.truncated, name).toEqual(truncated);
+      expect(layout.outside, name).toEqual([]);
+      // Nothing clips the crumbs, so their focus outlines stay whole.
+      expect(layout.clipping, name).toEqual([]);
+    }
+    // In a compact header bar as wide as a phone, the trail ends before the status and the action.
+    const bar = scope.getByTestId(`breadcrumb-bar-${theme}`);
+    const trail = (await bar.getByRole('navigation', { name: 'Header trail' }).boundingBox())!;
+    const status = (await bar.locator('.env-badge').boundingBox())!;
+    const action = (await bar.getByRole('button', { name: 'More actions' }).boundingBox())!;
+    expect(trail.x + trail.width).toBeLessThanOrEqual(status.x);
+    expect(status.x + status.width).toBeLessThanOrEqual(action.x);
+  }
 });
 
 test('keys render as key caps joined by plus', async ({ page }) => {

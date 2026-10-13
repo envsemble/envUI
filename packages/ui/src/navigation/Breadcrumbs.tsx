@@ -14,6 +14,12 @@ export interface BreadcrumbItem {
 export interface BreadcrumbsProps {
   /** From the top level to the current page, which is last. */
   items: readonly BreadcrumbItem[];
+  /**
+   * The trail wraps onto more lines when it runs out of room; true by default. False keeps it on
+   * one line, for a bar or header: the current page is cut short first, and earlier levels keep
+   * their width.
+   */
+  wrap?: boolean;
   /** Accessible name of the navigation; Breadcrumb by default. */
   'aria-label'?: string;
   className?: string;
@@ -22,12 +28,17 @@ export interface BreadcrumbsProps {
 /** The path from the top level to the current page; earlier levels are links. */
 export function Breadcrumbs({
   items,
+  wrap = true,
   'aria-label': label = 'Breadcrumb',
   className,
 }: BreadcrumbsProps) {
   const LinkComponent = useLinkComponent();
   return (
-    <nav aria-label={label} className={classNames('env-breadcrumbs', className)}>
+    <nav
+      aria-label={label}
+      className={classNames('env-breadcrumbs', className)}
+      data-nowrap={wrap ? undefined : ''}
+    >
       <ol className="env-breadcrumbs-list">
         {items.map((item, index) => {
           const current = index === items.length - 1;

@@ -93,6 +93,16 @@ body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-p
 .fixture-section output[data-testid^='document-tabs-log'] {
   white-space: pre-line;
 }
+.fixture-breadcrumb-frame {
+  inline-size: min(100%, 16rem);
+}
+.fixture-breadcrumb-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--space-2);
+  inline-size: min(100%, 22.5rem);
+}
 .fixture-table-frame {
   inline-size: min(100%, 32rem);
 }

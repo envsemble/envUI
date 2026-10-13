@@ -6,6 +6,7 @@ import {
   Button,
   Checkbox,
   Counter,
+  IconButton,
   Input,
   Kbd,
   Link,
@@ -14,6 +15,7 @@ import {
   Popover,
   SegmentedControl,
   Stack,
+  Surface,
   Table,
   TableBody,
   TableCell,
@@ -29,6 +31,7 @@ import { Edit } from '@envsemble/envui/icons/Edit';
 import { Info } from '@envsemble/envui/icons/Info';
 import { Folder } from '@envsemble/envui/icons/Folder';
 import { Inbox } from '@envsemble/envui/icons/Inbox';
+import { MoreVert } from '@envsemble/envui/icons/MoreVert';
 import { TaskAlt } from '@envsemble/envui/icons/TaskAlt';
 import { ViewList } from '@envsemble/envui/icons/ViewList';
 import { ViewModule } from '@envsemble/envui/icons/ViewModule';
@@ -525,6 +528,30 @@ export function BreadcrumbsPreview() {
         <Text variant="caption" className="docs-caption" aria-live="polite">
           {level === 'Roadmap.md' ? '' : `Went to ${level}`}
         </Text>
+      </Example>
+      <Example
+        title="On one line"
+        size="field"
+        caption="With wrap set to false, the trail stays on one line in a bar or header: the current page is cut short first, and earlier levels keep their width."
+      >
+        <Surface
+          tone="row"
+          padding={2}
+          corners="standard"
+          density="compact"
+          className="docs-breadcrumb-bar"
+        >
+          <Breadcrumbs
+            aria-label="Document location"
+            wrap={false}
+            items={[
+              { label: 'Plans', href: '#/plans' },
+              { label: 'Quarterly review of the shared design tokens' },
+            ]}
+          />
+          <Badge tone="success">Published</Badge>
+          <IconButton variant="text" icon={<MoreVert />} aria-label="More actions" />
+        </Surface>
       </Example>
     </Preview>
   );
