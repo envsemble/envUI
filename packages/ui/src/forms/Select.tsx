@@ -6,6 +6,7 @@ import { classNames } from '../internal/classNames.js';
 import { Theme, useTheme } from '../foundations/Theme.js';
 import { Surface } from '../foundations/Surface.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
+import { Check } from '../icons/Check.js';
 import { FieldFrame, type FieldProps } from './internal/FieldFrame.js';
 import { setRef } from '../internal/setRef.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
@@ -34,6 +35,11 @@ export interface SelectProps
    * outlined for panes, dialogs, rows and toolbars.
    */
   variant?: 'secondary' | 'outlined';
+  /**
+   * compact suits dense desktop surfaces: a compact trigger and the compact menu's popup, where a
+   * check mark shows the selected option.
+   */
+  density?: 'standard' | 'compact';
 }
 
 /** A single selection with native form participation and a themed popup. */
@@ -54,6 +60,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
     placeholder,
     autoComplete,
     variant = 'secondary',
+    density = 'standard',
     form,
     id: suppliedId,
     className,
@@ -62,6 +69,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
   ref,
 ) {
   const metadata = useFieldMetadata(suppliedId, hint, error, describedBy, invalid);
+  const compact = density === 'compact';
   const { id } = metadata;
   const theme = useTheme();
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -119,6 +127,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
             setRef(ref, node);
           }}
           data-variant={variant}
+          data-density={compact ? 'compact' : undefined}
           className={classNames(
             'env-button',
             variant === 'outlined' ? 'env-button-outlined' : 'env-button-secondary',
@@ -140,7 +149,10 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
               align="start"
               sideOffset={getPopupOffset}
             >
-              <BaseSelect.Popup className="env-dropdown-options" render={<Surface padding={2} />}>
+              <BaseSelect.Popup
+                className="env-dropdown-options"
+                render={<Surface padding={compact ? 1 : 2} density={density} />}
+              >
                 <BaseSelect.List className="env-dropdown-list">
                   {options.map((option) => (
                     <BaseSelect.Item
@@ -150,6 +162,14 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
                       disabled={option.disabled}
                       className="env-dropdown-option"
                     >
+                      {compact && (
+                        // A check mark shows the selected option; the slot keeps labels aligned.
+                        <span className="env-dropdown-option-check" aria-hidden="true">
+                          <BaseSelect.ItemIndicator className="env-symbol">
+                            <Check />
+                          </BaseSelect.ItemIndicator>
+                        </span>
+                      )}
                       <BaseSelect.ItemText>{option.label}</BaseSelect.ItemText>
                     </BaseSelect.Item>
                   ))}

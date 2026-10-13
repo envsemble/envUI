@@ -342,3 +342,86 @@ test('Dialog provides an accessible dismissal action and controlled action closu
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(trigger).toBeFocused();
 });
+
+test('a compact Select has a compact trigger and the compact menu popup with a check mark', async ({
+  page,
+}) => {
+  const compact = page.getByRole('combobox', { name: 'Compact plan', exact: true });
+  const standard = page.getByRole('combobox', { name: 'Plan', exact: true });
+  await expect(compact).toHaveAttribute('data-density', 'compact');
+  const [compactBox, standardBox] = await Promise.all([
+    compact.boundingBox(),
+    standard.boundingBox(),
+  ]);
+  expect(compactBox!.height).toBeCloseTo(32, 0);
+  expect(compactBox!.height).toBeLessThan(standardBox!.height);
+  const chevron = (locator: typeof compact) =>
+    locator.locator('.env-symbol').evaluate((icon) => icon.getBoundingClientRect().width);
+  expect(await chevron(compact)).toBeLessThan(await chevron(standard));
+  // The outlined variant keeps its Button style at the compact height.
+  const outlined = page.getByRole('combobox', { name: 'Compact outlined plan', exact: true });
+  expect((await outlined.boundingBox())!.height).toBeCloseTo(32, 0);
+  expect(
+    Number.parseFloat(
+      await outlined.evaluate((element) => getComputedStyle(element).borderTopWidth),
+    ),
+  ).toBeGreaterThan(0);
+
+  await compact.focus();
+  await page.keyboard.press('Space');
+  const list = page.getByRole('listbox');
+  await expect(list).toBeVisible();
+  const popup = page.locator('.env-dropdown-options');
+  await expect(popup).toHaveAttribute('data-density', 'compact');
+  await expect(popup).not.toHaveAttribute('data-starting-style');
+  const surface = await popup.evaluate(async (element) => {
+    // The popup grows in; its rows have their final size once the transition has run.
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    await Promise.allSettled(element.getAnimations().map(({ finished }) => finished));
+    const probe = document.createElement('div');
+    probe.style.backgroundColor = 'var(--color-popup)';
+    element.append(probe);
+    const popupColor = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    const style = getComputedStyle(element);
+    return {
+      popupColor,
+      background: style.backgroundColor,
+      border: Number.parseFloat(style.borderTopWidth),
+      radius: Number.parseFloat(style.borderTopLeftRadius),
+      padding: Number.parseFloat(style.paddingTop),
+    };
+  });
+  expect(surface.background).toBe(surface.popupColor);
+  expect(surface.border).toBeGreaterThanOrEqual(1);
+  expect(surface.radius).toBeCloseTo(12, 0);
+  expect(surface.padding).toBeCloseTo(4, 0);
+  const starter = page.getByRole('option', { name: 'Starter', exact: true });
+  const team = page.getByRole('option', { name: 'Team', exact: true });
+  await expect(starter).toBeFocused();
+  for (const option of [starter, team])
+    expect((await option.boundingBox())!.height).toBeCloseTo(28, 0);
+  // A check mark shows the selected option instead of a fill, and labels stay aligned.
+  await expect(starter.locator('.env-dropdown-option-check svg')).toBeVisible();
+  await expect(team.locator('.env-dropdown-option-check svg')).toHaveCount(0);
+  const textStart = (option: typeof starter) =>
+    option.evaluate((element) => element.lastElementChild!.getBoundingClientRect().x);
+  expect(await textStart(team)).toBeCloseTo(await textStart(starter), 0);
+  await page.keyboard.press('ArrowDown');
+  await expect(team).toBeFocused();
+  expect(await starter.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe(
+    'rgba(0, 0, 0, 0)',
+  );
+  await page.keyboard.press('Enter');
+  await expect(list).toHaveCount(0);
+  await expect(compact).toHaveText('Team');
+  await expect(compact).toBeFocused();
+  await page.getByRole('button', { name: 'Submit compact form', exact: true }).click();
+  await expect
+    .poll(async () => JSON.parse((await page.getByTestId('compact-values').textContent())!))
+    .toEqual({ compactPlan: 'team' });
+  await compact.click();
+  await expect(team.locator('.env-dropdown-option-check svg')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(compact).toBeFocused();
+});

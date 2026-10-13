@@ -141,3 +141,54 @@
 .env-dropdown-option[data-selected]:active:not([data-disabled]) {
   background: var(--color-select-selected-pressed);
 }
+
+/* Compact selects suit dense desktop surfaces: a compact Button trigger, and the compact menu's popup
+   with small corners and 1.75 rem rows, where a check mark rather than a fill shows the selection. */
+.env-button.env-dropdown-trigger[data-density='compact'] {
+  --control-height-small: var(--control-height-compact);
+  gap: calc(0.25rem * var(--scale, 1));
+  padding-inline: calc(0.625rem * var(--scale, 1)) calc(0.5rem * var(--scale, 1));
+}
+.env-dropdown-trigger[data-density='compact'] .env-symbol {
+  width: calc(var(--control-icon-size) * var(--scale, 1));
+  height: calc(var(--control-icon-size) * var(--scale, 1));
+}
+.env-surface.env-dropdown-options[data-density='compact'] {
+  --env-surface-radius: calc(var(--radius-standard) + var(--space-1));
+  max-width: min(calc(22rem * var(--scale, 1)), var(--available-width));
+}
+.env-dropdown-options[data-density='compact'] .env-dropdown-list {
+  gap: 0;
+  max-height: calc(var(--available-height) - calc(0.5rem * var(--scale, 1)));
+}
+.env-surface.env-dropdown-options[data-density='compact'] .env-dropdown-option {
+  gap: calc(var(--space-2) * var(--scale, 1));
+  min-height: calc(1.75rem * var(--scale, 1));
+  padding: calc(var(--space-1) * var(--scale, 1)) calc(var(--space-2) * var(--scale, 1));
+  border-radius: calc(var(--radius-standard) * var(--scale, 1));
+  background: transparent;
+  color: var(--color-text-primary);
+}
+.env-surface.env-dropdown-options[data-density='compact'] .env-dropdown-option[data-highlighted] {
+  background: var(--color-select-option-hover);
+}
+.env-surface.env-dropdown-options[data-density='compact']
+  .env-dropdown-option:active:not([data-disabled]) {
+  background: var(--color-select-option-pressed);
+}
+.env-surface.env-dropdown-options[data-density='compact'] .env-dropdown-option[data-selected] {
+  font-weight: 500;
+}
+.env-dropdown-option-check {
+  inline-size: calc(var(--control-icon-size) * var(--scale, 1));
+  block-size: calc(var(--control-icon-size) * var(--scale, 1));
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  color: var(--color-radio);
+}
+@media (pointer: coarse) {
+  .env-surface.env-dropdown-options[data-density='compact'] .env-dropdown-option {
+    min-height: var(--control-height-touch);
+  }
+}
