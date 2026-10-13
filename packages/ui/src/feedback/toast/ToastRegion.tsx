@@ -19,6 +19,11 @@ function glideOffset(item: HTMLElement) {
   return Number.parseFloat(y) || 0;
 }
 
+/** A notice's running animations; none where the Web Animations API is missing, such as jsdom. */
+function animationsOf(item: HTMLElement) {
+  return item.getAnimations?.() ?? [];
+}
+
 export function ToastRegion({
   placement,
   controller,
@@ -61,7 +66,7 @@ export function ToastRegion({
     ).some(
       (item) =>
         item.hasAttribute('data-leaving') ||
-        item.getAnimations().some((animation) => animation.playState === 'running'),
+        animationsOf(item).some((animation) => animation.playState === 'running'),
     );
     const limit = Number.parseFloat(getComputedStyle(element).maxBlockSize);
     const overflowing =
@@ -84,7 +89,9 @@ export function ToastRegion({
   useLayoutEffect(() => {
     const element = viewport.current;
     if (!element) return;
-    const glide = !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    // Without the Web Animations API, such as in jsdom, notices move without motion.
+    const animates = typeof element.animate === 'function';
+    const glide = animates && !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     const leavingIds = new Set(
       toastStore.toasts
         .filter((toast) => toast.transitionStatus === 'ending')
@@ -108,8 +115,7 @@ export function ToastRegion({
         return { item, left, top, right, bottom: top + Number.parseFloat(size.height) };
       });
     for (const { item, left, right } of pins) {
-      for (const animation of item.getAnimations())
-        if (animation.id === glideId) animation.cancel();
+      for (const animation of animationsOf(item)) if (animation.id === glideId) animation.cancel();
       item.style.width = `${right - left}px`;
       item.setAttribute('data-leaving', '');
     }
@@ -140,7 +146,7 @@ export function ToastRegion({
       next.set(id, top);
       if (previous === undefined) {
         // Revealed from the hidden ones, the notice fades in; new notices have their own entrance.
-        if (hiddenIds.current.has(id))
+        if (animates && hiddenIds.current.has(id))
           item
             .animate([{ opacity: 0 }, { opacity: 1 }], {
               id: revealId,
@@ -153,8 +159,7 @@ export function ToastRegion({
       if (!glide || Math.abs(previous - top) < 1) continue;
       // Start where the notice was drawn before this change, including an interrupted glide.
       const offset = glideOffset(item);
-      for (const animation of item.getAnimations())
-        if (animation.id === glideId) animation.cancel();
+      for (const animation of animationsOf(item)) if (animation.id === glideId) animation.cancel();
       item
         .animate([{ translate: `0 ${previous + offset - top}px` }, { translate: '0 0' }], {
           id: glideId,

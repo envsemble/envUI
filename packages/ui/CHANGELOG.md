@@ -47,6 +47,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 ### Fixed
 
 - A `Tooltip` stopped opening on hover once its control became enabled or disabled, such as a back button once there is somewhere to go: it kept listening to the element the control had replaced.
+- The toast region no longer throws where the Web Animations API is missing, such as in jsdom tests of an application: notices there move without motion instead of unmounting the page.
 
 ### Documentation
 
