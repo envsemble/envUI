@@ -42,6 +42,10 @@
   transition-duration: var(--motion-duration-fast);
   transition-timing-function: var(--motion-ease-exit);
 }
+/* Moving between the menus of a menubar swaps them at once, without fading one out and in. */
+.env-menu[data-instant='group'] {
+  transition: none;
+}
 .env-disclosure-note[open] > .env-disclosure-content,
 .env-avatar-image {
   animation: env-motion-fade-in var(--motion-duration-slow) var(--motion-ease-enter);

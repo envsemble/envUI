@@ -435,6 +435,8 @@ export interface MenuSubmenuProps
 
 /** Gap between a submenu and the edge of the menu it opens from, in pixels. */
 const submenuGap = 2;
+/** Ways of closing only the submenu, after which focus returns to the row that opened it. */
+const submenuReturnReasons = new Set(['escape-key', 'list-navigation']);
 
 /**
  * A row that opens a nested menu beside it, on hover or with the keyboard. The submenu opens in the
@@ -456,13 +458,17 @@ export function MenuSubmenu({
   const density = useContext(MenuDensityContext);
   const trigger = useRef<HTMLDivElement>(null);
   const popup = useRef<HTMLDivElement>(null);
+  const closeReason = useRef<string | null>(null);
   const { content, accessibility } = useMenuItemContent({ icon, children: label, description });
   const textLabel = typeof label === 'string' ? label : undefined;
   return (
     <BaseMenu.SubmenuRoot
       open={open}
       defaultOpen={defaultOpen}
-      onOpenChange={(next) => onOpenChange?.(next)}
+      onOpenChange={(next, details) => {
+        closeReason.current = next ? null : details.reason;
+        onOpenChange?.(next);
+      }}
     >
       <BaseMenu.SubmenuTrigger
         ref={trigger}
@@ -493,6 +499,13 @@ export function MenuSubmenu({
               ref={popup}
               className={classNames('env-menu', className)}
               render={renderMenuPopup(ariaLabel ?? textLabel, density)}
+              // Escape and ← close only the submenu and return to its row. Otherwise focus has
+              // moved on, or an item closed the whole menu, whose own trigger takes focus.
+              finalFocus={() =>
+                submenuReturnReasons.has(closeReason.current ?? '')
+                  ? (trigger.current ?? false)
+                  : false
+              }
             >
               <MenuDensityContext value={density}>{children}</MenuDensityContext>
             </BaseMenu.Popup>

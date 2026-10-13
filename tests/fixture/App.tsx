@@ -15,6 +15,7 @@ import { MarkdownEditingFixture, MarkdownExtensionsFixture } from './MarkdownEdi
 import { AdoptionFixture, ShellFixture } from './Adoption.js';
 import { ResizableShellFixture } from './ResizableShell.js';
 import { MenusFixture } from './Menus.js';
+import { MenubarFixture } from './Menubars.js';
 import { TreeFixture } from './TreeView.js';
 import { DocumentTabsFixture } from './Tabs.js';
 import { CommandPaletteFixture } from './Palette.js';
@@ -146,6 +147,8 @@ export default function App() {
           )}
           {/* Root theming would change the host document, so adoption mounts only on its own. */}
           {fixture === 'adoption' && <AdoptionFixture />}
+          {/* Access keys listen to the whole window, so the menubar mounts only on its own. */}
+          {fixture === 'menubar' && <MenubarFixture />}
         </main>
       </Theme>
     </>

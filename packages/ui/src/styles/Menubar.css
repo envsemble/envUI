@@ -1,0 +1,47 @@
+/* An application menubar: a row of compact text buttons, each opening a compact menu below it. */
+.env-menubar {
+  min-inline-size: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+}
+.env-menubar-trigger {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  min-block-size: var(--control-height-compact);
+  margin: 0;
+  padding: 0 var(--space-2);
+  border: 0;
+  border-radius: var(--radius-standard);
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  color: var(--color-text-primary);
+  font: var(--type-body-small);
+  white-space: nowrap;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+}
+.env-menubar-trigger:hover:not([data-disabled]) {
+  background: var(--color-state-layer-hover);
+}
+/* The trigger of the open menu keeps a fill, so the menu reads as coming from it. */
+.env-menubar-trigger[data-popup-open] {
+  background: var(--color-state-layer-pressed);
+}
+.env-menubar-trigger:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: -0.125rem;
+}
+.env-menubar-trigger[data-disabled] {
+  opacity: var(--state-disabled-opacity);
+  cursor: default;
+}
+/* Access keys are underlined while Alt is held, or while the keyboard has activated the menubar. */
+.env-menubar[data-access-keys-shown] .env-menubar-access-key {
+  text-decoration: underline;
+  text-decoration-thickness: 0.0625rem;
+  text-underline-offset: 0.15em;
+}

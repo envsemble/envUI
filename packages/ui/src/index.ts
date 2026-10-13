@@ -60,6 +60,7 @@ export * from './content/Avatar.js';
 export * from './content/AnimatedNumber.js';
 export * from './foundations/ThemePreference.js';
 export * from './navigation/Menu.js';
+export * from './navigation/Menubar.js';
 export * from './navigation/OrganizationMenu.js';
 export * from './navigation/AppShell.js';
 export * from './navigation/Tree.js';
