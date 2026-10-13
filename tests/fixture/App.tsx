@@ -30,6 +30,7 @@ import { SegmentedControlFixture } from './Segments.js';
 import { BadgesFixture } from './Badges.js';
 import { DialogVariantsFixture, NoticesFixture, PopoverFixture } from './Overlays.js';
 import { DataDisplayFixture } from './DataDisplay.js';
+import { ComposerFixture } from './Composer.js';
 
 /** Fixtures that fill the viewport are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
@@ -149,6 +150,12 @@ export default function App() {
             <>
               <DataDisplayFixture theme="light" />
               <DataDisplayFixture theme="dark" />
+            </>
+          )}
+          {includes('composer') && (
+            <>
+              <ComposerFixture theme="light" />
+              <ComposerFixture theme="dark" />
             </>
           )}
           {includes('menus') && (

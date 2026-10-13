@@ -16,6 +16,7 @@ import { Text } from '@envsemble/envui';
 import { EmptyStatePreview, LoadingPreview, DialogsPreview } from './Feedback';
 import { ToastsPreview } from './Toasts';
 import { ColorPickerPreview } from './ColorPicking';
+import { ComposerPreview } from './Conversation';
 import {
   MenuPreview,
   MenubarPreview,
@@ -58,6 +59,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <SelectPreview />;
     case 'color-picker':
       return <ColorPickerPreview />;
+    case 'composer':
+      return <ComposerPreview />;
     case 'navigation':
       return <NavigationPreview />;
     case 'tabs':

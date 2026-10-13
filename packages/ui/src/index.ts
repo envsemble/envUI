@@ -25,6 +25,7 @@ export * from './content/Kbd.js';
 export * from './forms/Input.js';
 export * from './forms/ColorPicker.js';
 export * from './forms/Textarea.js';
+export * from './forms/Composer.js';
 export * from './forms/Checkbox.js';
 export * from './forms/Switch.js';
 export * from './forms/Radio.js';

@@ -20,6 +20,7 @@ import {
   MenubarMenu,
   MenuItem,
   MenuSubmenu,
+  Composer,
 } from '@envsemble/envui';
 
 const treeItems = Array.from({ length: 40 }, (_, index) => ({
@@ -39,6 +40,8 @@ export function HydrationApp() {
   const [view, setView] = useState('open');
   const [tab, setTab] = useState('one');
   const [selected, setSelected] = useState<string | null>(null);
+  const [draft, setDraft] = useState('');
+  const [message, setMessage] = useState('');
   return (
     <Theme theme="dark">
       <ToastProvider>
@@ -115,6 +118,17 @@ export function HydrationApp() {
             onExpandedChange={() => undefined}
           />
         </div>
+        <Composer
+          aria-label="Hydrated composer"
+          value={draft}
+          onValueChange={setDraft}
+          onSubmit={(value) => {
+            setMessage(value);
+            setDraft('');
+          }}
+          footer="Hydrated composer footer"
+        />
+        <p data-testid="hydrated-message">{message}</p>
         <output>{name}</output>
       </ToastProvider>
     </Theme>
