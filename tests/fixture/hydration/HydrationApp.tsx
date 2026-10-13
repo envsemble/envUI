@@ -20,6 +20,12 @@ import {
   MenubarMenu,
   MenuItem,
   MenuSubmenu,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeaderCell,
+  TableRow,
 } from '@envsemble/envui';
 
 const treeItems = Array.from({ length: 40 }, (_, index) => ({
@@ -39,6 +45,7 @@ export function HydrationApp() {
   const [view, setView] = useState('open');
   const [tab, setTab] = useState('one');
   const [selected, setSelected] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<'ascending' | 'descending'>('ascending');
   return (
     <Theme theme="dark">
       <ToastProvider>
@@ -115,6 +122,34 @@ export function HydrationApp() {
             onExpandedChange={() => undefined}
           />
         </div>
+        <Table
+          aria-label="Hydrated table"
+          narrowLayout="stack"
+          resizableColumns
+          defaultColumnWidths={[60, 40]}
+        >
+          <TableHead>
+            <TableRow>
+              <TableHeaderCell
+                sortDirection={sortDirection}
+                onSort={() =>
+                  setSortDirection((current) =>
+                    current === 'ascending' ? 'descending' : 'ascending',
+                  )
+                }
+              >
+                Hydrated name
+              </TableHeaderCell>
+              <TableHeaderCell>Hydrated owner</TableHeaderCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow selected>
+              <TableCell>Quarterly report</TableCell>
+              <TableCell label="Owner">Aurora</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
         <output>{name}</output>
       </ToastProvider>
     </Theme>

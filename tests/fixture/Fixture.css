@@ -99,3 +99,6 @@ body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-p
 .fixture-table-region {
   max-block-size: 16rem;
 }
+.fixture-stack-frame {
+  inline-size: min(100%, 30rem);
+}

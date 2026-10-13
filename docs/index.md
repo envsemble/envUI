@@ -59,7 +59,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Code](components/code.md) — Render inline code and highlighted code blocks.
 - [Info chips](components/chips.md) — Read-only metadata beside related content.
 - [Badges & counters](components/badges.md) — Small pills that name a state in its tone, and compact counts.
-- [Tables](components/tables.md) — Semantic data tables on a rounded surface, with dense and sticky options.
+- [Tables](components/tables.md) — Semantic data tables on a rounded surface: sorting, resizable columns, selected rows and stacked rows in narrow containers.
 - [Keyboard keys](components/keyboard.md) — Key caps for shortcuts in text, menus and hints.
 - [Animated numbers](components/animated-number.md) — Counts that roll to their new value, so a change is noticed.
 - [Disclosure notes](components/disclosures.md) — Keep optional details collapsed until needed.

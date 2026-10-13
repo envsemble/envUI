@@ -49,6 +49,20 @@ test('public components hydrate server output without recoverable errors', async
   const row = page.getByRole('treeitem', { name: 'Hydrated document 2', exact: true });
   await row.click();
   await expect(row).toHaveAttribute('aria-selected', 'true');
+  const table = page.getByRole('table', { name: 'Hydrated table' });
+  const name = table.getByRole('columnheader', { name: 'Hydrated name', exact: true });
+  await expect(name).toHaveAttribute('aria-sort', 'ascending');
+  await table.getByRole('button', { name: 'Hydrated name, sort descending' }).click();
+  await expect(name).toHaveAttribute('aria-sort', 'descending');
+  const handle = table.getByRole('separator', { name: 'Resize Hydrated name' });
+  await expect(handle).toHaveAttribute('aria-valuenow', '60');
+  await handle.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(handle).toHaveAttribute('aria-valuenow', '61');
+  await expect(table.getByRole('row', { name: /Quarterly report/ })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
   expect(
     await page.evaluate(() => (window as unknown as { hydrationErrors: string[] }).hydrationErrors),
   ).toEqual([]);

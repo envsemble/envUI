@@ -4,6 +4,7 @@ import {
   Badge,
   Breadcrumbs,
   Button,
+  Checkbox,
   Counter,
   Input,
   Kbd,
@@ -20,6 +21,7 @@ import {
   TableHeaderCell,
   TableRow,
   Text,
+  type TableSortDirection,
 } from '@envsemble/envui';
 import { CheckCircle } from '@envsemble/envui/icons/CheckCircle';
 import { Description } from '@envsemble/envui/icons/Description';
@@ -313,8 +315,38 @@ const samplePlans = [
 ] as const;
 const statusTones = { 'In progress': 'accent', Blocked: 'warning', Completed: 'done' } as const;
 
+type PlanColumn = 'title' | 'owner' | 'decisions';
+type Plan = (typeof samplePlans)[number];
+
+function comparePlans(column: PlanColumn) {
+  return (first: Plan, second: Plan) =>
+    column === 'decisions'
+      ? first.decisions - second.decisions
+      : first[column].localeCompare(second[column]);
+}
+
 export function TablesPreview() {
   const [density, setDensity] = useState('standard');
+  const [sort, setSort] = useState<{ column: PlanColumn; direction: 'ascending' | 'descending' }>();
+  const [selected, setSelected] = useState<string[]>(['Sync conflicts']);
+  const [width, setWidth] = useState('narrow');
+  const plans = sort
+    ? [...samplePlans].sort((first, second) =>
+        sort.direction === 'ascending'
+          ? comparePlans(sort.column)(first, second)
+          : comparePlans(sort.column)(second, first),
+      )
+    : samplePlans;
+  const direction = (column: PlanColumn): TableSortDirection =>
+    sort?.column === column ? sort.direction : 'none';
+  const sortBy = (column: PlanColumn) => () =>
+    setSort((current) => ({
+      column,
+      direction:
+        current?.column === column && current.direction === 'ascending'
+          ? 'descending'
+          : 'ascending',
+    }));
   return (
     <Preview>
       <Example
@@ -332,19 +364,41 @@ export function TablesPreview() {
             ]}
           />
         }
-        caption="Wide tables scroll sideways within their region; numeric cells align to the end with tabular figures."
+        caption={
+          <>
+            Select a header to sort the plans. Drag the boundary between two headers to resize the
+            columns, or focus it and press <Kbd>←</Kbd> or <Kbd>→</Kbd>; double-click it to restore
+            the widths. Numeric cells align to the end with tabular figures.
+          </>
+        }
       >
-        <Table aria-label="Plans" density={density === 'compact' ? 'compact' : 'standard'}>
+        <Table
+          aria-label="Plans"
+          density={density === 'compact' ? 'compact' : 'standard'}
+          resizableColumns
+          defaultColumnWidths={[40, 22, 16, 22]}
+          minColumnWidths={12}
+        >
           <TableHead>
             <TableRow>
-              <TableHeaderCell>Plan</TableHeaderCell>
-              <TableHeaderCell>Owner</TableHeaderCell>
-              <TableHeaderCell numeric>Decisions</TableHeaderCell>
+              <TableHeaderCell sortDirection={direction('title')} onSort={sortBy('title')}>
+                Plan
+              </TableHeaderCell>
+              <TableHeaderCell sortDirection={direction('owner')} onSort={sortBy('owner')}>
+                Owner
+              </TableHeaderCell>
+              <TableHeaderCell
+                numeric
+                sortDirection={direction('decisions')}
+                onSort={sortBy('decisions')}
+              >
+                Decisions
+              </TableHeaderCell>
               <TableHeaderCell>Status</TableHeaderCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {samplePlans.map((plan) => (
+            {plans.map((plan) => (
               <TableRow key={plan.title} interactive>
                 <TableCell>
                   <Link href={`#/${plan.folder}`} underline={false}>
@@ -355,6 +409,91 @@ export function TablesPreview() {
                 <TableCell nowrap>{plan.owner}</TableCell>
                 <TableCell numeric>{plan.decisions}</TableCell>
                 <TableCell>
+                  <Badge tone={statusTones[plan.status]}>{plan.status}</Badge>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Example>
+      <Example
+        title="Selected rows"
+        size="wide"
+        caption={`${selected.length} of ${samplePlans.length} plans selected. Selected rows take the navigation selection color.`}
+      >
+        <Table aria-label="Plans to archive">
+          <TableHead>
+            <TableRow>
+              <TableHeaderCell>Plan</TableHeaderCell>
+              <TableHeaderCell>Owner</TableHeaderCell>
+              <TableHeaderCell>Status</TableHeaderCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {samplePlans.map((plan) => (
+              <TableRow key={plan.title} selected={selected.includes(plan.title)}>
+                <TableCell>
+                  <Checkbox
+                    label={plan.title}
+                    checked={selected.includes(plan.title)}
+                    onCheckedChange={(checked) =>
+                      setSelected((current) =>
+                        checked
+                          ? [...current, plan.title]
+                          : current.filter((title) => title !== plan.title),
+                      )
+                    }
+                  />
+                </TableCell>
+                <TableCell nowrap>{plan.owner}</TableCell>
+                <TableCell>
+                  <Badge tone={statusTones[plan.status]}>{plan.status}</Badge>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Example>
+      <Example
+        title="Stacked rows"
+        size={width === 'narrow' ? 'field' : 'content'}
+        actions={
+          <SegmentedControl
+            aria-label="Available width"
+            size="compact"
+            value={width}
+            onValueChange={setWidth}
+            options={[
+              { value: 'narrow', label: '24 rem' },
+              { value: 'wide', label: '42 rem' },
+            ]}
+          />
+        }
+        caption="Below 36 rem of available width, each row becomes a block: the first cell is its title, the other cells show their labels. Assistive technology still reads a table."
+      >
+        <Table aria-label="Plans by owner" narrowLayout="stack">
+          <TableHead>
+            <TableRow>
+              <TableHeaderCell>Plan</TableHeaderCell>
+              <TableHeaderCell>Owner</TableHeaderCell>
+              <TableHeaderCell numeric>Decisions</TableHeaderCell>
+              <TableHeaderCell>Status</TableHeaderCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {samplePlans.map((plan) => (
+              <TableRow key={plan.title}>
+                <TableCell>
+                  {plan.title}
+                  <Text variant="caption">{plan.folder}</Text>
+                </TableCell>
+                <TableCell label="Owner" nowrap>
+                  {plan.owner}
+                </TableCell>
+                <TableCell label="Decisions" numeric>
+                  {plan.decisions}
+                </TableCell>
+                <TableCell label="Status">
                   <Badge tone={statusTones[plan.status]}>{plan.status}</Badge>
                 </TableCell>
               </TableRow>
