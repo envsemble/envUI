@@ -16,7 +16,8 @@
   --env-title-bar-left: var(--env-title-bar-start);
   --env-title-bar-right: var(--env-title-bar-end);
   box-sizing: border-box;
-  block-size: env(titlebar-area-height, var(--title-bar-height));
+  /* The window reports a smaller height once the page is zoomed in; the compact controls still fit. */
+  block-size: max(env(titlebar-area-height, 0px), var(--title-bar-height));
   padding-left: calc(env(titlebar-area-x, 0px) + var(--env-title-bar-left));
   padding-right: calc(
     100vw - env(titlebar-area-x, 0px) - env(titlebar-area-width, 100vw) + var(--env-title-bar-right)

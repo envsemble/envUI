@@ -146,11 +146,13 @@
   border-radius: var(--radius-surface);
   transform: translateZ(0);
 }
-.docs-shell-frame > .env-app-shell,
-.docs-shell-frame > .env-app-shell-skeleton > .env-app-shell {
+.docs-shell-frame > .env-app-shell:not([data-title-bar]),
+.docs-shell-frame > .env-app-shell-skeleton > .env-app-shell:not([data-title-bar]) {
   min-block-size: 30rem;
 }
-.docs-shell-frame .env-app-content {
+/* The frame stands in for the window: a document-scrolling shell scrolls its content in the frame. A
+   title-bar shell already fills the frame and scrolls its content area itself. */
+.docs-shell-frame .env-app-shell:not([data-title-bar]) .env-app-content {
   block-size: 30rem;
   overflow-y: auto;
 }

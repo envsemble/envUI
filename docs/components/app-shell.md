@@ -36,28 +36,30 @@ import { Category } from '@envsemble/envui/icons/Category';
 
 ### Props & contracts
 
-| Name                                             | Contract                                                                                                       |
-| ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
-| brand                                            | Mark in the sidebar toggle; the toggle icon replaces it while the sidebar area is hovered                      |
-| context                                          | Optional content beside the toggle, such as an organization switcher; in the split topbar hidden while compact |
-| title / actions                                  | Current page name and topbar actions at the end                                                                |
-| navigation / navigationLabel                     | NavigationItem elements and the accessible name of the sidebar                                                 |
-| storageKey                                       | Persist the collapsed preference and the sidebar width (measured, or chosen while resizable) in localStorage   |
-| loading / loadingLabel                           | Show a LoadingBar along the topbar's bottom edge, for example while the next page loads                        |
-| defaultCollapsed / collapsed / onCollapsedChange | Uncontrolled or controlled collapsed preference on wide viewports                                              |
-| dividers                                         | Separator lines between topbar, sidebar and content; true by default                                           |
-| expandLabel / collapseLabel                      | Accessible names of the toggle                                                                                 |
-| useAppShell().closeNarrowSidebar                 | Close the overlay sidebar from content                                                                         |
-| AppShellSkeleton                                 | The same frame with placeholders for the first load; pass the same storageKey and brand                        |
-| sidebarContent                                   | The application's own content below the navigation; hidden while compact                                       |
-| resizable                                        | The sidebar edge becomes a resize handle for the expanded width                                                |
-| sidebarWidth / onSidebarWidthChange              | Controlled width in pixels; uncontrolled widths persist under storageKey                                       |
-| sidebarMinWidth / sidebarMaxWidth                | Resize bounds in pixels; 12 rem and 32 rem by default                                                          |
-| resizeLabel                                      | Accessible name of the handle; Resize sidebar by default                                                       |
-| AppShellSkeleton resizable                       | With the same storageKey and bounds, the loading frame starts at the chosen width                              |
-| topbar                                           | split (default): the context above the sidebar, beside the page part; full: one row across the window          |
-| titleBar                                         | The topbar is the window's title bar in apps that draw their own; meant for the full topbar                    |
-| AppShellSkeleton topbar / titleBar               | Match the AppShell the loading frame precedes                                                                  |
+| Name                                             | Contract                                                                                                         |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| brand                                            | Mark in the sidebar toggle; the toggle icon replaces it while the sidebar area is hovered                        |
+| context                                          | Optional content beside the toggle, such as an organization switcher; in the split topbar hidden while compact   |
+| title / actions                                  | Current page name and topbar actions at the end                                                                  |
+| navigation / navigationLabel                     | NavigationItem elements and the accessible name of the sidebar                                                   |
+| storageKey                                       | Persist the collapsed preference and the sidebar width (measured, or chosen while resizable) in localStorage     |
+| loading / loadingLabel                           | Show a LoadingBar along the topbar's bottom edge, for example while the next page loads                          |
+| defaultCollapsed / collapsed / onCollapsedChange | Uncontrolled or controlled collapsed preference on wide viewports                                                |
+| dividers                                         | Separator lines between topbar, sidebar and content; true by default                                             |
+| expandLabel / collapseLabel                      | Accessible names of the toggle                                                                                   |
+| useAppShell().closeNarrowSidebar                 | Close the overlay sidebar from content                                                                           |
+| useAppShell().getScrollElement                   | The element that scrolls the page content: the content area with titleBar, else the document's scrolling element |
+| --app-sticky-top                                 | Where page content sticks: the topbar height while the document scrolls, 0 in a title-bar shell's content area   |
+| AppShellSkeleton                                 | The same frame with placeholders for the first load; pass the same storageKey and brand                          |
+| sidebarContent                                   | The application's own content below the navigation; hidden while compact                                         |
+| resizable                                        | The sidebar edge becomes a resize handle for the expanded width                                                  |
+| sidebarWidth / onSidebarWidthChange              | Controlled width in pixels; uncontrolled widths persist under storageKey                                         |
+| sidebarMinWidth / sidebarMaxWidth                | Resize bounds in pixels; 12 rem and 32 rem by default                                                            |
+| resizeLabel                                      | Accessible name of the handle; Resize sidebar by default                                                         |
+| AppShellSkeleton resizable                       | With the same storageKey and bounds, the loading frame starts at the chosen width                                |
+| topbar                                           | split (default): the context above the sidebar, beside the page part; full: one row across the window            |
+| titleBar                                         | The topbar is the window's title bar in apps that draw their own; meant for the full topbar                      |
+| AppShellSkeleton topbar / titleBar               | Match the AppShell the loading frame precedes                                                                    |
 
 ### A full-width topbar as the window title bar
 
@@ -114,13 +116,13 @@ import { Button, Menubar, TitleBar } from '@envsemble/envui';
 </TitleBar>;
 ```
 
-| Name                  | Contract                                                                                       |
-| --------------------- | ---------------------------------------------------------------------------------------------- |
-| TitleBar start        | Content at the inline start, such as the application mark and a Menubar                        |
-| TitleBar children     | Content centered in the window, such as the document title; it truncates when space runs short |
-| TitleBar end          | Content at the inline end, such as actions; the window controls follow it                      |
-| TitleBar native props | className, style, aria attributes and other header attributes                                  |
-| --title-bar-height    | 2.5 rem, 3 rem on coarse pointers: a title bar's height where the window reports none          |
+| Name                  | Contract                                                                                         |
+| --------------------- | ------------------------------------------------------------------------------------------------ |
+| TitleBar start        | Content at the inline start, such as the application mark and a Menubar                          |
+| TitleBar children     | Content centered in the window, such as the document title; it truncates when space runs short   |
+| TitleBar end          | Content at the inline end, such as actions; the window controls follow it                        |
+| TitleBar native props | className, style, aria attributes and other header attributes                                    |
+| --title-bar-height    | 2.5 rem, 3 rem on coarse pointers: a title bar's least height, and its height outside an overlay |
 
 ## Guidelines
 
@@ -131,12 +133,14 @@ import { Button, Menubar, TitleBar } from '@envsemble/envui';
 - AppShell is the frame: topbar, sidebar and content area. The application owns what goes inside them: routing, the selected destination, the page layout and any content below the navigation. Use LinkProvider so navigation stays on the client.
 - sidebarContent sits below the navigation, which keeps its natural height and scrolls only when it alone overflows. The content fills the remaining height, so give it block-size: 100% and its own scrolling. It shows while the sidebar is expanded, including hover expansion, and hides while compact.
 - With resizable, drag the sidebar’s inline-end edge or focus it: <kbd>←</kbd> and <kbd>→</kbd> change the width by 16 px, 48 px with <kbd>Shift</kbd>, and <kbd>Home</kbd> and <kbd>End</kbd> reach the bounds. The topbar’s context column follows. Until someone resizes it, the sidebar starts at the measured width; the chosen width then replaces it and is kept across reloads. A cancelled drag keeps the width it began with. A collapsed or narrow sidebar has no handle.
-- The document scrolls, not the content area. --topbar-height is the topbar's height, for content that sticks below it or fills the rest of the window.
+- Without titleBar the document scrolls; with titleBar the content area scrolls below the title bar. Content that sticks uses position: sticky; inset-block-start: var(--app-sticky-top), which is the topbar height while the document scrolls and 0 in a title-bar shell's content area. useAppShell().getScrollElement() returns the element that scrolls the page content: read and restore scroll positions on it, and listen to its scroll events rather than the window's. --topbar-height is the topbar's height, for content that fills the rest of the window.
 - By default the topbar is split: the context sits above the sidebar, as wide as the sidebar, and a divider separates it from the page title and actions. With topbar="full", the topbar is one row across the window instead: the toggle, the context at its natural width, the title, which truncates first, and the actions at the end. It does not follow the sidebar, so nothing in it moves while the sidebar collapses, and the context stays visible while the sidebar is compact. Use it when the context holds more than an organization switcher, such as a menubar and a context picker.
-- titleBar makes the topbar the window's title bar, in installed web apps and desktop shells that draw their own title bar while the system draws the window controls over the page (the Window Controls Overlay). Such a window reports the part of its top edge that the controls leave free through the environment variables env(titlebar-area-x), env(titlebar-area-y), env(titlebar-area-width) and env(titlebar-area-height). The title bar takes that height and leaves room beside the controls, on whichever side they are, in addition to its own padding. In an ordinary browser window the variables are undefined, so the bar is --title-bar-height tall and spans the full width.
+- titleBar makes the topbar the window's title bar, in installed web apps and desktop shells that draw their own title bar while the system draws the window controls over the page (the Window Controls Overlay). Such a window reports the part of its top edge that the controls leave free through the environment variables env(titlebar-area-x), env(titlebar-area-y), env(titlebar-area-width) and env(titlebar-area-height). The title bar takes that height, at least --title-bar-height, and leaves room beside the controls, on whichever side they are, in addition to its own padding. In an ordinary browser window the variables are undefined, so the bar is --title-bar-height tall and spans the full width.
+- Once the page is zoomed in, the window reports a smaller height in CSS pixels while its controls keep their size, so the bar never gets shorter than --title-bar-height (2.5 rem), which holds its compact controls. An application whose overlay is not 40 px tall sets --title-bar-height to match it, and where the desktop shell lets the application choose the overlay's height, the application keeps it in step with the page zoom.
+- A title-bar shell fills the window, and its content area scrolls below the title bar instead of the document, so the window controls drawn over the title bar never cover a scrollbar. A stable scrollbar gutter keeps the layout in place as content starts or stops overflowing. Inside the content, position: fixed still places an element against the window: a full-window view, such as a canvas shown on its own, is a fixed element with a z-index of 30 or more, which covers the topbar and the sidebar.
 - The application turns the overlay on, for example with display_override and window-controls-overlay in a web app manifest, or with its desktop shell's option for a hidden title bar with overlaid window controls. envUI only reads the variables.
 - Empty space in a title bar drags the window (app-region: drag) and its text cannot be selected. Buttons, links, fields, menubars, menu items and other focusable elements stay clickable (app-region: no-drag); give any other interactive element in the bar app-region: no-drag too.
-- Controls in a title bar take the compact control height, as in a compact Surface, and the toggle shrinks to match while keeping the navigation icons' center line. --topbar-height follows the title bar's height, so the sidebar, the content and content that sticks below the topbar line up with it.
+- Controls in a title bar take the compact control height, as in a compact Surface, and the toggle shrinks to match while keeping the navigation icons' center line. --topbar-height follows the title bar's height, so the sidebar and the content area line up with it.
 - TitleBar is the same title bar without the shell, for a start page or a simple window: content at the start, centered and at the end. It is a normal block at the top of its container. Make it sticky (position: sticky; inset-block-start: 0) or fixed in the application, and offset the content below a fixed bar by its height.
 
 TypeScript declarations provide the complete public API.

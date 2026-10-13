@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
   type CSSProperties,
@@ -33,6 +34,11 @@ export function useSidebarCompact() {
 interface AppShellContextValue {
   /** Close the overlay sidebar on narrow viewports; no effect elsewhere. */
   closeNarrowSidebar: () => void;
+  /**
+   * The element that scrolls the page content: the content area in a title-bar shell, else the
+   * document's scrolling element. Read or restore scroll positions on it.
+   */
+  getScrollElement: () => HTMLElement | null;
 }
 
 const AppShellContext = createContext<AppShellContextValue | null>(null);
@@ -266,6 +272,7 @@ export function AppShell({
   const sidebarContentRegion = useRef<HTMLDivElement>(null);
   const shell = useRef<HTMLDivElement>(null);
   const navigationRegion = useRef<HTMLElement>(null);
+  const contentRegion = useRef<HTMLElement>(null);
   const [contentWidth, setContentWidth] = useState<number>();
   const measuredWidth = useRef<number>(undefined);
   // Transitions start after the first paint, so the measured width never animates in on load.
@@ -426,6 +433,18 @@ export function AppShell({
   }
 
   const closeNarrowSidebar = useCallback(() => setNarrowOpen(false), []);
+  // A title-bar shell scrolls its content area below the title bar; otherwise the document scrolls.
+  const getScrollElement = useCallback(
+    () =>
+      titleBar
+        ? contentRegion.current
+        : ((contentRegion.current?.ownerDocument.scrollingElement as HTMLElement | null) ?? null),
+    [titleBar],
+  );
+  const shellApi = useMemo(
+    () => ({ closeNarrowSidebar, getScrollElement }),
+    [closeNarrowSidebar, getScrollElement],
+  );
 
   function changeWidth(next: number, persist: boolean) {
     const width = clampWidth(next, bounds);
@@ -521,7 +540,7 @@ export function AppShell({
       : collapseLabel;
 
   return (
-    <AppShellContext value={{ closeNarrowSidebar }}>
+    <AppShellContext value={shellApi}>
       <div
         ref={shell}
         className={classNames('env-app-shell', className)}
@@ -622,7 +641,7 @@ export function AppShell({
             onClick={closeNarrowSidebar}
           />
         )}
-        <main className="env-app-content" tabIndex={-1}>
+        <main className="env-app-content" tabIndex={-1} ref={contentRegion}>
           {children}
         </main>
       </div>

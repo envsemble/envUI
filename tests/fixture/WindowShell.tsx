@@ -9,6 +9,7 @@ import {
   MenubarMenu,
   NavigationItem,
   TitleBar,
+  useAppShell,
 } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Search } from '@envsemble/envui/icons/Search';
@@ -33,6 +34,27 @@ function NotesMenubar() {
   );
 }
 
+/** Restores a scroll position on the element that scrolls the page content. */
+export function ScrollProbe() {
+  const { getScrollElement } = useAppShell();
+  const [scroller, setScroller] = useState('');
+  return (
+    <div className="fixture-actions">
+      <button
+        type="button"
+        onClick={() => {
+          const element = getScrollElement();
+          element?.scrollTo(0, 300);
+          setScroller(element?.tagName.toLowerCase() ?? 'none');
+        }}
+      >
+        Restore scroll position
+      </button>
+      <output data-testid="scroll-element">{scroller}</output>
+    </div>
+  );
+}
+
 /**
  * A full-width topbar, as the window's title bar unless ?titleBar=off, mounted with
  * ?fixture=full-shell.
@@ -41,6 +63,8 @@ export function FullShellFixture() {
   const titleBar = new URLSearchParams(location.search).get('titleBar') !== 'off';
   const [page, setPage] = useState('notes');
   const [collapsed, setCollapsed] = useState(false);
+  const [fullView, setFullView] = useState(false);
+  const [short, setShort] = useState(false);
   return (
     <AppShell
       topbar="full"
@@ -82,13 +106,31 @@ export function FullShellFixture() {
           </NavigationItem>
         </>
       }
+      resizable
       className="fixture-full-shell"
     >
       <header className="fixture-sticky-header" data-testid="sticky-header">
         Sticky document header
       </header>
+      <ScrollProbe />
+      <div className="fixture-actions">
+        <button type="button" onClick={() => setFullView(true)}>
+          Show full view
+        </button>
+        <button type="button" onClick={() => setShort((value) => !value)}>
+          {short ? 'Lengthen page' : 'Shorten page'}
+        </button>
+      </div>
+      {fullView && (
+        // A full-window view inside the page content, such as a canvas shown on its own.
+        <div className="fixture-full-view" data-testid="full-view">
+          <button type="button" onClick={() => setFullView(false)}>
+            Close full view
+          </button>
+        </div>
+      )}
       <div className="fixture-tall-page">
-        {Array.from({ length: 60 }, (_, index) => (
+        {Array.from({ length: short ? 2 : 60 }, (_, index) => (
           <p key={index}>Paragraph {index + 1}</p>
         ))}
       </div>

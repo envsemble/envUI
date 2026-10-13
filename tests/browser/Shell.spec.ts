@@ -154,9 +154,23 @@ test.describe('Resizable AppShell', () => {
     await page.goto(resizableShell);
     const header = page.getByTestId('sticky-header');
     const topbar = (await page.locator('.env-app-topbar').boundingBox())!;
+    // Content sticks at --app-sticky-top, the topbar height while the document scrolls.
+    const offsets = await page.locator('.env-app-shell').evaluate((shell) => {
+      const style = getComputedStyle(shell);
+      return [
+        style.getPropertyValue('--app-sticky-top'),
+        style.getPropertyValue('--topbar-height'),
+      ];
+    });
+    expect(offsets[0]!.trim()).toBe(offsets[1]!.trim());
     await page.evaluate(() => window.scrollTo(0, 600));
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(500);
     expect((await header.boundingBox())!.y).toBeCloseTo(topbar.height, 0);
+    // The document is the element that scrolls the page content.
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.getByRole('button', { name: 'Restore scroll position' }).click();
+    await expect(page.getByTestId('scroll-element')).toHaveText('html');
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(300);
   });
 });
 
@@ -279,20 +293,12 @@ test.describe('Title bar', () => {
     await expect(shell).toHaveAttribute('data-title-bar', '');
     const topbar = page.locator('.env-app-topbar');
     expect((await topbar.boundingBox())!.height).toBe(40);
-    // --topbar-height follows the title bar, so the sidebar, the content and sticky content line up.
-    const offsets = await page.evaluate(() => {
-      const content = document.querySelector('.env-app-content')!;
-      return {
-        content: getComputedStyle(content).paddingTop,
-        sidebar: document.querySelector('.env-app-sidebar')!.getBoundingClientRect().top,
-      };
-    });
-    expect(offsets.content).toBe('40px');
-    expect(offsets.sidebar).toBe(40);
-    await page.evaluate(() => window.scrollTo(0, 600));
-    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(500);
-    expect((await page.getByTestId('sticky-header').boundingBox())!.y).toBeCloseTo(40, 0);
-    await page.evaluate(() => window.scrollTo(0, 0));
+    // --topbar-height follows the title bar, so the sidebar and the content area line up below it.
+    const offsets = await page.evaluate(() => ({
+      content: document.querySelector('.env-app-content')!.getBoundingClientRect().top,
+      sidebar: document.querySelector('.env-app-sidebar')!.getBoundingClientRect().top,
+    }));
+    expect(offsets).toEqual({ content: 40, sidebar: 40 });
 
     // Controls take the compact height; the toggle shrinks to match.
     for (const control of [
@@ -314,6 +320,26 @@ test.describe('Title bar', () => {
       .first()
       .boundingBox())!;
     expect(icon.x + icon.width / 2).toBeCloseTo(toggleBox.x + toggleBox.width / 2, 0);
+    // Hovering the collapsed sidebar still expands it over the content.
+    await page.getByRole('navigation', { name: 'Notes navigation' }).hover();
+    await expect(shell).toHaveAttribute('data-expanded-overlay', '');
+    await page.mouse.move(800, 500);
+    await expect(shell).not.toHaveAttribute('data-expanded-overlay');
+    // Expanded again, the sidebar resizes and the content area follows its edge.
+    await page.getByRole('button', { name: 'Expand sidebar' }).click();
+    await page.mouse.move(800, 500);
+    const handle = page.getByRole('separator', { name: 'Resize sidebar' });
+    const start = Number(await handle.getAttribute('aria-valuenow'));
+    await handle.focus();
+    await page.keyboard.press('ArrowRight');
+    await expect(handle).toHaveAttribute('aria-valuenow', String(start + 16));
+    await expect
+      .poll(() =>
+        page
+          .locator('.env-app-content')
+          .evaluate((element) => Number.parseFloat(getComputedStyle(element).paddingInlineStart)),
+      )
+      .toBeCloseTo(start + 16, 0);
 
     // The bar selects no text; empty space drags the window and controls stay clickable, in the
     // engines that have app regions.
@@ -331,11 +357,102 @@ test.describe('Title bar', () => {
         page.getByTestId('context-picker'),
         page.getByRole('menubar', { name: 'Application menu' }),
         page.getByRole('menuitem', { name: 'File', exact: true }),
-        page.getByRole('button', { name: 'Expand sidebar' }),
+        page.getByRole('button', { name: 'Collapse sidebar' }),
       ])
         expect(await appRegion(control)).toBe('no-drag');
     }
     expect(errors).toEqual([]);
+  });
+
+  test('a title-bar shell scrolls its content area below the title bar instead of the document', async ({
+    page,
+  }) => {
+    const errors = collectErrors(page);
+    await page.goto(fullShell);
+    const content = page.locator('.env-app-content');
+    const viewport = page.viewportSize()!;
+    const geometry = await content.evaluate((element) => {
+      const style = getComputedStyle(element);
+      const box = element.getBoundingClientRect();
+      const root = document.scrollingElement!;
+      return {
+        top: box.top,
+        bottom: box.bottom,
+        overflowY: style.overflowY,
+        gutter: style.getPropertyValue('scrollbar-gutter'),
+        documentOverflow: root.scrollHeight - root.clientHeight,
+        overflows: element.scrollHeight > element.clientHeight,
+        stickyTop: style.getPropertyValue('--app-sticky-top').trim(),
+        gutterSupported: CSS.supports('scrollbar-gutter', 'stable'),
+      };
+    });
+    // The content area runs from the title bar to the bottom of the window and scrolls; the
+    // document does not, so no scrollbar reaches under the window controls.
+    expect([geometry.top, geometry.bottom]).toEqual([40, viewport.height]);
+    expect(geometry.overflowY).toBe('auto');
+    expect(geometry.overflows).toBe(true);
+    expect(geometry.documentOverflow).toBeLessThanOrEqual(0);
+    expect(geometry.stickyTop).toBe('0px');
+    if (geometry.gutterSupported) expect(geometry.gutter).toBe('stable');
+    await page.mouse.move(800, 500);
+    await page.mouse.wheel(0, 600);
+    await expect.poll(() => content.evaluate((element) => element.scrollTop)).toBeGreaterThan(300);
+    expect(await page.evaluate(() => window.scrollY)).toBe(0);
+    // Sticky content sticks to the top of the content area, just below the title bar.
+    expect((await page.getByTestId('sticky-header').boundingBox())!.y).toBeCloseTo(40, 0);
+
+    // getScrollElement is the content area, for restoring scroll positions.
+    await content.evaluate((element) => element.scrollTo(0, 0));
+    await page.getByRole('button', { name: 'Restore scroll position' }).click();
+    await expect(page.getByTestId('scroll-element')).toHaveText('main');
+    await expect.poll(() => content.evaluate((element) => element.scrollTop)).toBe(300);
+
+    // The layout keeps its width when the content stops overflowing.
+    if (geometry.gutterSupported) {
+      const width = await content.evaluate((element) => element.clientWidth);
+      await page.getByRole('button', { name: 'Shorten page' }).click();
+      await expect
+        .poll(() => content.evaluate((element) => element.scrollHeight <= element.clientHeight))
+        .toBe(true);
+      expect(await content.evaluate((element) => element.clientWidth)).toBe(width);
+    }
+
+    // A fixed view inside the content still covers the whole window, title bar included.
+    await page.getByRole('button', { name: 'Show full view' }).click();
+    const view = (await page.getByTestId('full-view').boundingBox())!;
+    expect([view.x, view.y, view.width, view.height]).toEqual([
+      0,
+      0,
+      viewport.width,
+      viewport.height,
+    ]);
+    await page.getByRole('button', { name: 'Close full view' }).click();
+    await expect(page.getByTestId('full-view')).toHaveCount(0);
+    expect(errors).toEqual([]);
+  });
+
+  test('a title bar keeps at least --title-bar-height, which an application can set', async ({
+    page,
+  }) => {
+    await page.goto(fullShell);
+    // The window reports a smaller height once the page is zoomed in; the bar keeps its least height.
+    expect(await declaredValue(page, '.env-title-bar', 'block-size')).toContain(
+      'max(env(titlebar-area-height, 0px)',
+    );
+    await page
+      .locator('.env-app-shell')
+      .evaluate((shell: HTMLElement) => shell.style.setProperty('--title-bar-height', '48px'));
+    expect((await page.locator('.env-app-topbar').boundingBox())!.height).toBe(48);
+    expect(
+      await page
+        .locator('.env-app-content')
+        .evaluate((element) => element.getBoundingClientRect().top),
+    ).toBe(48);
+    await page.goto(`${fixtureUrl}/?fixture=title-bar`);
+    await page
+      .getByTestId('title-bar')
+      .evaluate((bar: HTMLElement) => bar.style.setProperty('--title-bar-height', '48px'));
+    expect((await page.getByTestId('title-bar').boundingBox())!.height).toBe(48);
   });
 
   test('TitleBar alone matches the shell title bar and leaves room for the window controls', async ({
@@ -395,7 +512,7 @@ test.describe('Title bar', () => {
     expect(
       await page
         .locator('.env-app-content')
-        .evaluate((element) => getComputedStyle(element).paddingTop),
-    ).toBe('40px');
+        .evaluate((element) => element.getBoundingClientRect().top),
+    ).toBe(40);
   });
 });

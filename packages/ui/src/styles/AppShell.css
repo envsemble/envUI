@@ -17,6 +17,8 @@
   /* The standard control height, for parts that line up with the navigation while a title bar makes
      its own controls compact. */
   --env-app-control-height: var(--control-height);
+  /* Where page content sticks with position: sticky: below the topbar while the document scrolls. */
+  --app-sticky-top: var(--topbar-height);
   min-block-size: 100dvh;
   background: var(--color-canvas);
 }
@@ -251,7 +253,7 @@ button.env-app-sidebar-toggle:focus-visible {
 }
 
 /* The document scrolls, so content can stick below the fixed topbar with
-   position: sticky; inset-block-start: var(--topbar-height). */
+   position: sticky; inset-block-start: var(--app-sticky-top). */
 .env-app-content {
   min-inline-size: 0;
   padding-block-start: var(--topbar-height);
@@ -323,9 +325,27 @@ button.env-app-sidebar-toggle:focus-visible {
 }
 
 /* As the window's title bar, the topbar takes the title bar height, which --topbar-height follows,
-   so sticky content, the sidebar and the content offset line up with it. */
+   so the sidebar and the content line up with it. The window reports a smaller height once the page
+   is zoomed in, so the bar keeps at least --title-bar-height, which holds its compact controls.
+   The shell fills the window and its content area scrolls below the title bar instead of the
+   document: the window controls drawn over the title bar never cover a scrollbar, and the stable
+   scrollbar gutter keeps the layout in place as content starts or stops overflowing. Content sticks
+   to the top of the content area, so --app-sticky-top is 0 there. Nothing here contains fixed
+   positioning, so a fixed overlay inside the content still covers the window. */
 .env-app-shell[data-title-bar] {
-  --topbar-height: env(titlebar-area-height, var(--title-bar-height));
+  --topbar-height: max(env(titlebar-area-height, 0px), var(--title-bar-height));
+  --app-sticky-top: 0px;
+  position: fixed;
+  inset: 0;
+  min-block-size: 0;
+  overflow: hidden;
+}
+.env-app-shell[data-title-bar] .env-app-content {
+  position: absolute;
+  inset: var(--topbar-height) 0 0 0;
+  padding-block-start: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
 }
 /* In the split topbar, the columns keep their own inner padding. */
 .env-app-topbar.env-title-bar {
