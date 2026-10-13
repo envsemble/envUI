@@ -108,7 +108,7 @@ import rehypeSlug from 'rehype-slug';
 | Name          | Contract                                                                                         |
 | ------------- | ------------------------------------------------------------------------------------------------ |
 | components    | react-markdown overrides merged over envUI's own; the application's win for the same element     |
-| remarkPlugins | Run after envUI's GFM support                                                                    |
+| remarkPlugins | Run after envUI's own Markdown extensions                                                        |
 | rehypePlugins | Run on the HTML tree, for example to add heading ids; envUI adds none of its own                 |
 | Native props  | id, className and other attributes from plugins reach envUI's headings, links, tables and images |
 
@@ -183,7 +183,7 @@ async function requestLink({
 
 - Markdown renders a string supplied by your application. MarkdownEditor adds source editing, formatting and a preview that uses the same Markdown renderer. Both work with ordinary Markdown strings.
 - Paragraphs, headings, lists, quotes and tables use envUI typography and spacing. Code blocks reuse CodeBlock with the code theme's colors.
-- Supports CommonMark plus GFM tables, strikethrough, task lists, automatic links and footnotes. Single source newlines follow standard paragraph behavior.
+- Supports CommonMark plus tables, strikethrough, task lists, automatic links and footnotes. Single source newlines follow standard paragraph behavior.
 - Raw HTML is ignored, except keys written as `<kbd>Ctrl</kbd>`, which render as Kbd. URLs retain the renderer’s safe protocol handling. Markdown is content, not executable components.
 - Resource references are ordinary links with stable destination URLs. Labels are saved text; resource resolution, permissions and missing destinations belong to the application.
 - Tables and code scroll within their own regions. Images keep their aspect ratio and fit the available width; image loading follows the supplied URL.

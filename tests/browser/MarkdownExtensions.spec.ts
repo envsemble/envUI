@@ -10,7 +10,7 @@ test('Markdown accepts component overrides and remark and rehype plugins', async
   await expect(heading).toHaveAttribute('id', 'project-plan');
   // The application's override wins over envUI's components.
   await expect(scope.locator('blockquote[data-custom-quote]')).toHaveText('A quoted decision');
-  // The remark plugin runs after GFM, which still renders tables.
+  // The remark plugin runs after envUI's own Markdown extensions, which still render tables.
   await expect(scope.locator('em')).toHaveText('TODO');
   await expect(scope.getByRole('table')).toBeVisible();
   // Raw HTML stays ignored, even with a rehype plugin that would render it.

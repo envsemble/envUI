@@ -216,8 +216,8 @@ The first published release of envUI: a private React 19 component library with 
 ### Optional entries
 
 - `@envsemble/envui/content`:
-  - `Code` and `CodeBlock`, with lazy Shiki highlighting using GitHub Dark Default in both themes; `CodeBlock` accepts an explicit theme;
-  - `Markdown`, with GitHub-flavored Markdown, envUI prose and application-owned links;
+  - `Code` and `CodeBlock`, with lazy Shiki highlighting in the dark code theme in both app themes; `CodeBlock` accepts an explicit theme;
+  - `Markdown`, with CommonMark plus tables, task lists, strikethrough, automatic links and footnotes, envUI prose and application-owned links;
   - `MarkdownEditor`, with Write/Preview, formatting, shared undo/redo and link insertion through an application picker.
 - `@envsemble/envui/rich-text`: `RichTextEditor`, the read-only `RichText` and `createRichTextExtensions`.
   - Built on Tiptap, with Markdown values and configurable reference lookup.

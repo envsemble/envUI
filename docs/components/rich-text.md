@@ -12,16 +12,16 @@ import { RichTextEditor, RichText } from '@envsemble/envui/rich-text';
 
 ### Props & contracts
 
-| Name                           | Contract                                                                                                                     |
-| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| value / defaultValue           | Controlled or initial Markdown string; external value replacements update the document                                       |
-| onValueChange                  | Receives normalized Markdown after an edit                                                                                   |
-| label / hint / error / variant | Shared accessible field presentation; outlined by default, or plain                                                          |
-| toolbar                        | Standard Tiptap formatting actions; false hides the toolbar or pass the enabled command names                                |
-| disabled / readOnly            | Prevent edits while retaining the document                                                                                   |
-| name / form                    | Include Markdown in native form submission                                                                                   |
-| RichText children              | Render saved Markdown with the same schema and reference behavior                                                            |
-| Markdown support               | Tiptap beta Markdown formatting subset; normalizes source, renders raw HTML as literal text and supports ordinary GFM tables |
+| Name                           | Contract                                                                                                                 |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| value / defaultValue           | Controlled or initial Markdown string; external value replacements update the document                                   |
+| onValueChange                  | Receives normalized Markdown after an edit                                                                               |
+| label / hint / error / variant | Shared accessible field presentation; outlined by default, or plain                                                      |
+| toolbar                        | Standard Tiptap formatting actions; false hides the toolbar or pass the enabled command names                            |
+| disabled / readOnly            | Prevent edits while retaining the document                                                                               |
+| name / form                    | Include Markdown in native form submission                                                                               |
+| RichText children              | Render saved Markdown with the same schema and reference behavior                                                        |
+| Markdown support               | Tiptap beta Markdown formatting subset; normalizes source, renders raw HTML as literal text and supports ordinary tables |
 
 ## Application reference lookup
 
@@ -135,11 +135,11 @@ const extensions = createRichTextExtensions();
 
 ## Guidelines
 
-- Use RichTextEditor for direct formatted editing. Use MarkdownEditor when people need to edit literal Markdown source; use Markdown for broader CommonMark/GFM display.
+- Use RichTextEditor for direct formatted editing. Use MarkdownEditor when people need to edit literal Markdown source; use Markdown for broader CommonMark display, with tables, task lists and footnotes.
 - The optional @envsemble/envui/rich-text entry contains Tiptap. Basic UI and content imports remain separate; use the shared envUI stylesheet and Theme boundary.
 - Tiptap owns the document, selection, formatting, undo/redo, paste and suggestion lifecycle. The application owns lookup data, permissions, navigation, uploads, persistence and save/cancel actions.
 - Markdown support follows the Tiptap schema and the beta Markdown extension. It normalizes formatting rather than preserving the original source byte for byte. Unsupported syntax needs an application extension or the Markdown renderer.
-- Raw HTML in Markdown is displayed as literal text consistently on the server and in the browser. Ordinary GFM tables are supported; merged cells and tables with block content requiring HTML are outside the Markdown subset.
+- Raw HTML in Markdown is displayed as literal text consistently on the server and in the browser. Ordinary Markdown tables are supported; merged cells and tables with block content requiring HTML are outside the Markdown subset.
 - References save a stable ID and label in generic inline Markdown syntax. The library does not resolve IDs to product records or routes; the application supplies reference items and rendering or activation callbacks.
 - RichText uses the same extensions and reference rendering as RichTextEditor, with editing disabled. Keep the same extension configuration when displaying saved content.
 - Suggestion menus use <kbd>↑</kbd> and <kbd>↓</kbd> to move, <kbd>Enter</kbd> to select and <kbd>Esc</kbd> to dismiss. Loading, empty and failure states stay in the library; source callbacks return application data and may use the supplied AbortSignal.

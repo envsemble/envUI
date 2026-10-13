@@ -31,7 +31,7 @@ export interface MarkdownProps extends Omit<ComponentPropsWithRef<'div'>, 'child
    * props such as id and className reach the element.
    */
   components?: Components;
-  /** remark plugins that run after envUI's GFM support. */
+  /** remark plugins that run after envUI's own Markdown extensions. */
   remarkPlugins?: Options['remarkPlugins'];
   /** rehype plugins, such as heading ids; envUI adds none of its own. */
   rehypePlugins?: Options['rehypePlugins'];
@@ -82,7 +82,7 @@ function remarkDropHtml() {
 
 const markdownPlugins = [remarkGfm];
 
-/** CommonMark and GFM prose composed with envUI typography and code components. */
+/** CommonMark prose with tables, task lists and other extensions, in envUI typography and code. */
 export function Markdown({
   children,
   headingOffset = 0,
