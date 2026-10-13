@@ -29,6 +29,12 @@ const widgetSelector = [
   'input',
   'textarea',
   'select',
+  // Media controls and embedded content use the keys themselves.
+  'audio[controls]',
+  'video[controls]',
+  'iframe',
+  'embed',
+  'object',
   ...widgetRoles.map((role) => `[role="${role}"]`),
 ].join(', ');
 /** Controls that Space activates, so it does not scroll from them. Links follow Enter only. */
@@ -88,6 +94,14 @@ function ancestors(element: Element) {
   return chain;
 }
 
+/**
+ * Whether what has focus inside an element is out of sight: a shadow host, whose shadow root may be
+ * closed, as in any custom element.
+ */
+function hidesFocus(element: Element) {
+  return element.shadowRoot !== null || element.localName.includes('-');
+}
+
 /** How far an element can still scroll that way. */
 function room(element: Element, direction: -1 | 1) {
   return direction > 0
@@ -100,9 +114,10 @@ function room(element: Element, direction: -1 | 1) {
  * browser scrolls a page: Page Up and Page Down, Space and Shift+Space, Home, End and the up and
  * down arrows. With focus in the region the browser scrolls it; these keys come from the document
  * and from controls outside the region that leave the key alone. Fields, widgets that use the keys,
- * anything that scrolls that way itself and keys that the page handled first keep them; with focus
- * on the document, so does an area that scrolls where the pointer last pressed, as browsers scroll
- * that area. As in the browser, quick presses add up and a held key repeats at once.
+ * media controls, web components that hold focus out of sight, anything that scrolls that way
+ * itself and keys that the page handled first keep them; with focus on the document, so does an
+ * area that scrolls where the pointer last pressed, as browsers scroll that area. As in the
+ * browser, quick presses add up and a held key repeats at once.
  *
  * The keys are heard on the window, after the page's elements and its document: a handler there
  * that calls preventDefault keeps its key, as does a window listener added before the region
@@ -151,6 +166,9 @@ function listenForScrollKeys(root: HTMLElement, scroller: HTMLElement, view: Win
       // Focus outside the root, such as in a dialog, belongs elsewhere.
       const end = chain.indexOf(root);
       if (end === -1) return false;
+      // Where the path ends at a web component, such as one with a field in a closed shadow root,
+      // the key may be typed; it stays with the browser.
+      if (hidesFocus(focused)) return false;
       for (const element of chain.slice(0, end)) {
         if (element.matches(widgetSelector) || (element as HTMLElement).isContentEditable)
           return false;

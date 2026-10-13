@@ -52,6 +52,10 @@ body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-p
   background: var(--color-canvas);
   border-block-end: 0.0625rem solid var(--color-border-strong);
 }
+.fixture-recording {
+  inline-size: 10rem;
+  block-size: 2rem;
+}
 .fixture-tall-page {
   padding: 1.5rem;
 }

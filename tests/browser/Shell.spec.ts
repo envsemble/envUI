@@ -729,6 +729,39 @@ test.describe('Title bar', () => {
     await expectTop(step);
   });
 
+  test('a field in a closed shadow root and media controls keep their keys', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(scrollKeys);
+    const content = page.locator('.env-app-content');
+    // A window listener added once the shell is ready hears whether the shell took a key.
+    await expect(page.locator('.env-app-shell')).toHaveAttribute('data-ready', '');
+    await page.evaluate(() =>
+      window.addEventListener('keydown', (event) => {
+        document.body.dataset.taken = String(event.defaultPrevented);
+      }),
+    );
+    const taken = () => page.evaluate(() => document.body.dataset.taken);
+    // The path of a key typed in a closed shadow root ends at its host, so the shell cannot tell a
+    // field from a button there and leaves Space and Home to it.
+    const closedField = page.locator('fixture-closed-field');
+    await closedField.focus();
+    await page.keyboard.type('a b');
+    expect(await taken()).toBe('false');
+    await page.keyboard.press('Home');
+    expect(await taken()).toBe('false');
+    await page.keyboard.type('x');
+    expect(
+      await closedField.evaluate((element) => (element as HTMLElement & { value: string }).value),
+    ).toBe('xa b');
+    // Media controls use the keys too.
+    await page.getByLabel('Recording').focus();
+    for (const key of ['Space', 'Home', 'ArrowDown']) {
+      await page.keyboard.press(key);
+      expect(await taken()).toBe('false');
+    }
+    expect(await settledTop(content)).toBe(0);
+  });
+
   test('WindowFrame fills the window and scrolls its content below the title bar', async ({
     page,
   }) => {

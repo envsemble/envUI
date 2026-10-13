@@ -95,10 +95,26 @@ class ShadowField extends HTMLElement {
 }
 if (!customElements.get('fixture-field')) customElements.define('fixture-field', ShadowField);
 
+/** A field in a closed shadow root, out of the page's sight; focusing the element focuses it. */
+class ClosedField extends HTMLElement {
+  #field = document.createElement('input');
+  constructor() {
+    super();
+    this.#field.setAttribute('aria-label', 'Closed note');
+    this.#field.size = 12;
+    this.attachShadow({ mode: 'closed', delegatesFocus: true }).append(this.#field);
+  }
+  get value() {
+    return this.#field.value;
+  }
+}
+if (!customElements.get('fixture-closed-field'))
+  customElements.define('fixture-closed-field', ClosedField);
+
 /**
  * A title-bar shell for the scrolling keys, mounted with ?fixture=scroll-keys: a button and a link
- * in the navigation, a field in a web component, a list that scrolls without taking focus and a
- * long page.
+ * in the navigation, fields in open and closed shadow roots, media controls, a list that scrolls
+ * without taking focus and a long page.
  */
 export function ScrollKeysFixture() {
   return (
@@ -107,7 +123,13 @@ export function ScrollKeysFixture() {
       titleBar
       brand={<span>B</span>}
       title="Scroll keys"
-      actions={createElement('fixture-field')}
+      actions={
+        <>
+          {createElement('fixture-field')}
+          {createElement('fixture-closed-field')}
+          <audio controls tabIndex={0} aria-label="Recording" className="fixture-recording" />
+        </>
+      }
       navigationLabel="Keys navigation"
       navigation={
         <>
