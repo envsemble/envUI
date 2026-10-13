@@ -28,6 +28,13 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
+  Composer,
+  Message,
+  MessageList,
+  SplitView,
+  Stat,
+  StatGroup,
+  Heatmap,
 } from '@envsemble/envui';
 
 const treeItems = Array.from({ length: 40 }, (_, index) => ({
@@ -48,6 +55,8 @@ export function HydrationApp() {
   const [tab, setTab] = useState('one');
   const [selected, setSelected] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'ascending' | 'descending'>('ascending');
+  const [draft, setDraft] = useState('');
+  const [message, setMessage] = useState('');
   const [files, setFiles] = useState('No files yet');
   return (
     <Theme theme="dark">
@@ -160,6 +169,36 @@ export function HydrationApp() {
             </TableRow>
           </TableBody>
         </Table>
+        <MessageList aria-label="Hydrated conversation">
+          <Message from="other" author="Aurora" meta="09:41">
+            Hydrated answer
+          </Message>
+          {message && <Message from="self">{message}</Message>}
+        </MessageList>
+        <Composer
+          aria-label="Hydrated composer"
+          value={draft}
+          onValueChange={setDraft}
+          onSubmit={(value) => {
+            setMessage(value);
+            setDraft('');
+          }}
+          footer="Hydrated composer footer"
+        />
+        <SplitView
+          resizeLabel="Hydrated split"
+          stackBelow="20rem"
+          start={<p>Hydrated start pane</p>}
+          end={<p>Hydrated end pane</p>}
+        />
+        <StatGroup aria-label="Hydrated stats">
+          <Stat
+            label="Hydrated stat"
+            value="128"
+            trend={{ direction: 'up', label: '+12%' }}
+            detail="Last 30 days"
+          />
+        </StatGroup>
         <FileDropzone
           compact
           label="Hydrated files"
@@ -167,6 +206,16 @@ export function HydrationApp() {
           onFiles={(chosen) => setFiles(chosen.map((file) => file.name).join(' '))}
         />
         <p>{files}</p>
+        <Heatmap
+          aria-label="Hydrated activity"
+          data={[
+            { date: '2026-03-02', value: 3 },
+            { date: '2026-03-09', value: 1200 },
+            { date: '2026-03-16', value: 7 },
+          ]}
+          startDate="2026-03-01"
+          endDate="2026-03-31"
+        />
         <output>{name}</output>
       </ToastProvider>
     </Theme>

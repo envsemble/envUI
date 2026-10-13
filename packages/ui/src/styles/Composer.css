@@ -1,0 +1,112 @@
+/* The message field of a conversation, on the raised popup surface. The field grows with its text
+   between the minimum and maximum rows, then scrolls; the round action stays at the end. */
+.env-composer {
+  --env-composer-min-rows: 1;
+  --env-composer-max-rows: 8;
+  display: grid;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+.env-composer-surface {
+  --env-composer-border: var(--color-popup-border);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: 'input action';
+  align-items: end;
+  column-gap: var(--space-2);
+  min-inline-size: 0;
+  padding: var(--space-2);
+  border: 0.0625rem solid var(--env-composer-border);
+  border-radius: var(--radius-surface);
+  background: var(--color-popup);
+  color: var(--color-text-primary);
+  cursor: text;
+  transition:
+    border-color var(--motion-duration-medium) var(--motion-ease),
+    box-shadow var(--motion-duration-medium) var(--motion-ease);
+}
+/* Content at the start moves the action into a row of its own below the field. */
+.env-composer[data-start] .env-composer-surface {
+  grid-template-areas:
+    'input input'
+    'start action';
+}
+.env-composer-input {
+  grid-area: input;
+  box-sizing: border-box;
+  display: block;
+  inline-size: 100%;
+  min-inline-size: 0;
+  /* One line sits centered beside the action; more lines grow upward from the same baseline. */
+  min-block-size: calc((var(--env-composer-min-rows) - 1) * 1lh + var(--icon-button-size));
+  max-block-size: calc((var(--env-composer-max-rows) - 1) * 1lh + var(--icon-button-size));
+  margin: 0;
+  padding-block: calc((var(--icon-button-size) - 1lh) / 2);
+  padding-inline: var(--space-4) 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--color-field-text);
+  font: var(--type-body);
+  /* Coarse pointers take the larger control text, so focusing the field never zooms the page. */
+  font-size: var(--control-font-size);
+  caret-color: var(--color-field-active);
+  resize: none;
+  field-sizing: content;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  overflow-wrap: anywhere;
+}
+.env-composer[data-start] .env-composer-input {
+  padding-inline-end: var(--space-4);
+}
+.env-composer-input::placeholder {
+  color: var(--color-field-placeholder);
+  opacity: 1;
+}
+.env-composer-start {
+  grid-area: start;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  min-block-size: var(--icon-button-size);
+  color: var(--color-text-muted);
+  font: var(--type-body-small);
+  cursor: default;
+}
+/* The action keeps the arrow of other buttons rather than the surface's text cursor. */
+.env-composer-action {
+  grid-area: action;
+  cursor: default;
+}
+@media (hover: hover) {
+  .env-composer:not([data-disabled]) .env-composer-surface:hover {
+    --env-composer-border: hsl(from var(--color-field-active) h s var(--state-hover-lightness));
+  }
+}
+/* Focus in the field recolors the outline and doubles its weight; the action has its own ring. */
+.env-composer-surface:has(> .env-composer-input:focus) {
+  --env-composer-border: var(--color-field-active);
+  box-shadow: 0 0 0 0.0625rem var(--env-composer-border);
+}
+.env-composer[data-disabled] .env-composer-surface {
+  cursor: default;
+}
+.env-composer[data-disabled] :is(.env-composer-input, .env-composer-start) {
+  opacity: var(--state-disabled-opacity);
+}
+.env-composer-footer {
+  min-inline-size: 0;
+  padding-inline: var(--space-5);
+  color: var(--color-text-muted);
+  font: var(--type-body-small);
+  overflow-wrap: anywhere;
+}
+@media (prefers-reduced-motion: reduce) {
+  .env-composer-surface {
+    transition: none;
+  }
+}

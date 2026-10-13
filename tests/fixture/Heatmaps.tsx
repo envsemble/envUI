@@ -1,0 +1,75 @@
+import { useState } from 'react';
+import {
+  Button,
+  Heatmap,
+  Surface,
+  Theme,
+  type HeatmapDay,
+  type ThemeValue,
+} from '@envsemble/envui';
+
+/** A deterministic year of activity, so the fixture renders the same days everywhere. */
+function activity(end: string, days: number, seed: number): HeatmapDay[] {
+  const last = Date.parse(`${end}T00:00:00Z`);
+  return Array.from({ length: days }, (_, index) => {
+    const date = new Date(last - (days - 1 - index) * 86_400_000).toISOString().slice(0, 10);
+    const wave = Math.sin((index + seed) / 6) + Math.sin((index * 7 + seed) / 17);
+    return { date, value: Math.max(0, Math.round(wave * 4)) };
+  });
+}
+
+const year = activity('2026-10-10', 365, 3);
+
+export function HeatmapFixture({ theme }: { theme: ThemeValue }) {
+  const [data, setData] = useState(year);
+  return (
+    <Theme theme={theme} data-testid={`heatmap-${theme}`} className="fixture-section">
+      <Heatmap aria-label={`Activity ${theme}`} data={data} data-testid={`heatmap-year-${theme}`} />
+      <Button
+        variant="secondary"
+        onClick={() =>
+          setData((days) =>
+            days.map((day) => (day.date === '2026-10-10' ? { ...day, value: 20 } : day)),
+          )
+        }
+      >
+        Update {theme}
+      </Button>
+      <Surface tone="pane" padding={4} data-surface="pane" className="fixture-heatmap-narrow">
+        <Heatmap
+          aria-label={`Deployments ${theme}`}
+          data={[
+            { date: '2026-03-02', value: 1 },
+            { date: '2026-03-03', value: 4, label: '4 deployments' },
+            { date: '2026-03-10', value: 2 },
+            { date: '2026-03-24', value: 8 },
+          ]}
+          startDate="2026-03-01"
+          endDate="2026-04-04"
+          weekStart={1}
+          levels={3}
+          maxValue={8}
+          tone="success"
+          formatTooltip={(day) => `${day.label ?? `${day.value} deployments`} on ${day.date}`}
+          monthLabels={[
+            'Jan',
+            'Feb',
+            'Mär',
+            'Apr',
+            'Mai',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Okt',
+            'Nov',
+            'Dez',
+          ]}
+          weekdayLabels={['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa']}
+          lessLabel="Weniger"
+          moreLabel="Mehr"
+        />
+      </Surface>
+    </Theme>
+  );
+}

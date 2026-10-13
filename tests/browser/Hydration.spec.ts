@@ -79,6 +79,44 @@ test('public components hydrate server output without recoverable errors', async
   const row = page.getByRole('treeitem', { name: 'Hydrated document 2', exact: true });
   await row.click();
   await expect(row).toHaveAttribute('aria-selected', 'true');
+  const table = page.getByRole('table', { name: 'Hydrated table' });
+  const name = table.getByRole('columnheader', { name: 'Hydrated name', exact: true });
+  await expect(name).toHaveAttribute('aria-sort', 'ascending');
+  await table.getByRole('button', { name: 'Hydrated name, sort descending' }).click();
+  await expect(name).toHaveAttribute('aria-sort', 'descending');
+  const handle = table.getByRole('separator', { name: 'Resize Hydrated name' });
+  await expect(handle).toHaveAttribute('aria-valuenow', '60');
+  await handle.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(handle).toHaveAttribute('aria-valuenow', '61');
+  await expect(table.getByRole('row', { name: /Quarterly report/ })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
+  await expect(page.getByRole('log', { name: 'Hydrated conversation' })).toContainText(
+    'Hydrated answer',
+  );
+  const composer = page.getByRole('textbox', { name: 'Hydrated composer' });
+  await expect(composer).toHaveAccessibleDescription('Hydrated composer footer');
+  await composer.fill('Hydrated message');
+  await composer.press('Enter');
+  const conversation = page.getByRole('log', { name: 'Hydrated conversation' });
+  await expect(conversation.getByRole('article')).toHaveCount(2);
+  await expect(conversation.getByRole('article').last()).toHaveText('Hydrated message');
+  await expect(composer).toHaveValue('');
+  const split = page.getByRole('separator', { name: 'Hydrated split' });
+  await expect(split).toHaveAttribute('aria-valuenow', '50');
+  await split.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(split).toHaveAttribute('aria-valuenow', '52');
+  await expect(page.getByLabel('Hydrated stats')).toHaveText('Hydrated stat128+12%Last 30 days');
+  const activity = page.getByRole('grid', { name: 'Hydrated activity' });
+  await expect(activity.getByRole('gridcell')).toHaveCount(31);
+  const peak = activity.getByRole('gridcell', { name: 'Mon 9 Mar 2026: 1,200' });
+  await peak.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(activity.getByRole('gridcell', { name: 'Mon 16 Mar 2026: 7' })).toBeFocused();
+  await expect(page.locator('.env-heatmap-tooltip')).toHaveText('Mon 16 Mar 2026: 7');
   expect(
     await page.evaluate(() => (window as unknown as { hydrationErrors: string[] }).hydrationErrors),
   ).toEqual([]);

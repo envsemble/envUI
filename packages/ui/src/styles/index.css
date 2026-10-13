@@ -22,6 +22,7 @@
 @import './DirectionLink.css';
 @import './Tabs.css';
 @import './Layout.css';
+@import './SplitView.css';
 @import './ChoiceControls.css';
 @import './FormFields.css';
 @import './ColorPicker.css';
@@ -43,6 +44,10 @@
 @import './CommandPalette.css';
 @import './TitleBar.css';
 @import './AppShell.css';
+@import './Composer.css';
+@import './Message.css';
+@import './Stat.css';
+@import './Heatmap.css';
 @import './Motion.css';
 @font-face {
   font-family: 'envUI Inter';

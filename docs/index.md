@@ -27,6 +27,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Surface](components/surface.md) — A background pane without automatic spacing between children.
 - [Grouped rows](components/rows.md) — Group related items with shared outer corners.
 - [Cards](components/cards.md) — A content surface with automatic spacing and optional actions.
+- [Split view](components/split-view.md) — Two panes side by side with a divider that resizes them; they stack in narrow containers.
 
 ## Actions
 
@@ -37,6 +38,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 - [Color picker](components/color-picker.md) — A color area, hue slider and HEX field for opaque colors.
 - [Text fields](components/fields.md) — Single-line inputs, search fields and multiline textareas share labels, guidance and states.
+- [Composer](components/composer.md) — The message field of a conversation, with a send button that stops a running reply.
 - [Checkboxes](components/checkbox.md) — Independent choices; partial selection represents a group.
 - [Switches](components/switch.md) — Use for an on/off setting that applies immediately.
 - [Radio groups](components/radio.md) — Choose one option from a visible set.
@@ -66,6 +68,9 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Animated numbers](components/animated-number.md) — Counts that roll to their new value, so a change is noticed.
 - [Disclosure notes](components/disclosures.md) — Keep optional details collapsed until needed.
 - [Avatars](components/avatar.md) — A picture of a person or organization with a default picture or initials as fallback, and the avatar button.
+- [Messages](components/messages.md) — Conversation entries in a log: compact bubbles for your own messages, full-width content from others.
+- [Stats](components/stats.md) — Labelled key figures for dashboards, with a trend and detail, grouped in even columns.
+- [Heatmap](components/heatmap.md) — A calendar of daily values in color steps, with a tooltip and keyboard access for every day.
 
 ## Feedback & overlays
 
