@@ -32,3 +32,80 @@
   align-items: center;
   gap: 0.75rem;
 }
+
+/* Shell and title bar fixtures fill the viewport; the host document margin would offset them. */
+body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-page)) {
+  margin: 0;
+}
+.fixture-sidebar-list {
+  block-size: 100%;
+  margin: 0;
+  padding: 0 0.75rem;
+  overflow-y: auto;
+  list-style: none;
+}
+.fixture-sticky-header {
+  position: sticky;
+  inset-block-start: var(--app-sticky-top);
+  z-index: 1;
+  padding: 0.75rem 1.5rem;
+  background: var(--color-canvas);
+  border-block-end: 0.0625rem solid var(--color-border-strong);
+}
+.fixture-recording {
+  inline-size: 10rem;
+  block-size: 2rem;
+}
+.fixture-tall-page {
+  padding: 1.5rem;
+}
+.fixture-full-view {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  background: var(--color-canvas);
+}
+.fixture-context-area {
+  display: grid;
+  justify-items: start;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 0.0625rem dashed var(--color-border-strong);
+  border-radius: var(--radius-standard);
+}
+.fixture-tree-frame {
+  block-size: 20rem;
+  inline-size: min(100%, 18rem);
+  border: 0.0625rem solid var(--color-border-strong);
+  border-radius: var(--radius-standard);
+}
+.fixture-section output[data-testid^='tree-log'] {
+  white-space: pre-line;
+}
+.fixture-tabs-frame {
+  inline-size: min(100%, 36rem);
+}
+.fixture-tab-panel {
+  padding: 1rem;
+}
+.fixture-section output[data-testid^='document-tabs-log'] {
+  white-space: pre-line;
+}
+.fixture-table-frame {
+  inline-size: min(100%, 32rem);
+}
+.fixture-table-region {
+  max-block-size: 16rem;
+}
+/* An interactive row's title is a row of an icon and a link; the link covers the row, and the
+   action stays above it. */
+.fixture-row-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.fixture-row-action {
+  position: relative;
+}

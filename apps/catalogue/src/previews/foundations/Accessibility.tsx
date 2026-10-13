@@ -1,4 +1,4 @@
-import { Text, Button, IconButton, ActionGroup, Stack } from '@envsemble/envui';
+import { Text, Button, IconButton, ActionGroup, Stack, Kbd } from '@envsemble/envui';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 import { TokenValue } from './TokenValue';
 import { Example } from '../Example';
@@ -12,8 +12,9 @@ export function AccessibilityPreview() {
           <IconButton icon={<ChevronRight />} aria-label="Next item" />
         </ActionGroup>
         <Text tone="muted">
-          Use Tab and Shift+Tab to move between controls. Enter activates links; Enter or Space
-          activates buttons. Keep focus order aligned with the visible layout.
+          Use <Kbd>Tab</Kbd> and <Kbd keys={['Shift', 'Tab']} /> to move between controls.{' '}
+          <Kbd>Enter</Kbd> activates links; <Kbd>Enter</Kbd> or <Kbd>Space</Kbd> activates buttons.
+          Keep focus order aligned with the visible layout.
         </Text>
       </Example>
       <Example title="Library responsibilities">

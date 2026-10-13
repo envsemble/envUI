@@ -55,6 +55,20 @@
   display: grid;
   min-inline-size: 0;
 }
+/* Filling Tabs give the selected panel the height left below the list. */
+.env-tabs[data-fill] {
+  min-block-size: 0;
+}
+.env-tabs[data-fill] > .env-tabs-panels {
+  flex: 1;
+  min-block-size: 0;
+  grid-template-rows: minmax(0, 1fr);
+}
+.env-tabs[data-fill] .env-tab-panel {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 0;
+}
 .env-tab-panel {
   grid-area: 1 / 1;
   min-inline-size: 0;

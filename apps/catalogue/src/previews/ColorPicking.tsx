@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ActionGroup, Button, ColorPicker, Stack, Text } from '@envsemble/envui';
+import { ActionGroup, Button, ColorPicker, Stack, Text, Kbd } from '@envsemble/envui';
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
 
@@ -11,7 +11,12 @@ export function ColorPickerPreview() {
       <Example
         title="Color selection"
         size="collection"
-        caption="Use the arrow keys in the color area or hue slider, or enter a six-digit HEX color."
+        caption={
+          <>
+            Use <Kbd>←</Kbd> <Kbd>↑</Kbd> <Kbd>→</Kbd> <Kbd>↓</Kbd> in the color area or hue slider,
+            or enter a six-digit HEX color.
+          </>
+        }
       >
         <SpecimenGrid>
           <Specimen title="Interactive">

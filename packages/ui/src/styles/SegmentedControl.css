@@ -1,0 +1,80 @@
+/* A pill rail of segments, like the tab rail: a translucent fill with the chosen segment in the
+   primary button colors. */
+.env-segmented-control {
+  box-sizing: border-box;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  display: inline-flex;
+  align-items: stretch;
+  gap: var(--space-1);
+  padding: var(--space-1);
+  border-radius: 100vmax;
+  background: var(--color-fill);
+  /* Long labels stay reachable in narrow containers. */
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.env-segment {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  min-block-size: calc(var(--control-height) - 2 * var(--space-1));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-4);
+  border: 0;
+  border-radius: 100vmax;
+  background: transparent;
+  color: var(--color-text-muted);
+  font: 400 0.875rem / 1.4 var(--font-family);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--motion-duration-fast) var(--motion-ease),
+    color var(--motion-duration-fast) var(--motion-ease);
+}
+.env-segmented-control[data-size='compact'] .env-segment {
+  min-block-size: calc(var(--control-height-compact) - 2 * var(--space-1));
+  padding-inline: var(--space-3);
+}
+.env-segment:hover:not([data-checked]):not([data-disabled]) {
+  background: var(--color-state-layer-hover);
+  color: var(--color-text-primary);
+}
+.env-segment:active:not([data-checked]):not([data-disabled]) {
+  background: var(--color-state-layer-pressed);
+}
+.env-segment[data-checked] {
+  background: var(--color-primary-action);
+  color: var(--color-on-primary-action);
+}
+.env-segment[data-checked]:hover:not([data-disabled]) {
+  background: var(--color-primary-action-hover);
+}
+.env-segment[data-checked]:active:not([data-disabled]) {
+  background: var(--color-primary-action-pressed);
+}
+.env-segment:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: 0.125rem;
+}
+.env-segment[data-disabled] {
+  opacity: var(--state-disabled-opacity);
+  cursor: default;
+}
+.env-segment .env-symbol {
+  inline-size: var(--control-icon-size);
+  block-size: var(--control-icon-size);
+}
+.env-segment-count {
+  font-size: 0.8125em;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.8;
+}
+@media (prefers-reduced-motion: reduce) {
+  .env-segment {
+    transition: none;
+  }
+}

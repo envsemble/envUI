@@ -1,5 +1,7 @@
-/* Centered dialogs and edge panels share surface, text, and action geometry. */
+/* Centered dialogs and edge panels share one surface: the popover's look, with a hairline border and
+   the surface corners, plus text and action geometry. */
 .env-modal-pane {
+  border: 0.0625rem solid var(--color-popup-border);
   color: var(--color-text-primary);
   font: var(--type-body);
   width: min(28rem, 100%);
@@ -9,9 +11,17 @@
   overflow-wrap: anywhere;
   pointer-events: auto;
 }
+.env-surface.env-modal-pane {
+  --env-surface-color: var(--color-dialog);
+}
 .env-dialog-title,
 .env-dialog-description {
   margin: 0;
+}
+/* The description belongs to the title, so they sit closer together than the dialog's sections. */
+.env-dialog-header {
+  display: grid;
+  gap: var(--space-2);
 }
 .env-dialog-heading {
   display: flex;
@@ -23,11 +33,15 @@
   min-inline-size: 0;
   overflow-wrap: anywhere;
 }
+.env-modal-pane[data-size='wide']:not([data-placement='right']) {
+  width: min(44rem, 100%);
+}
 .env-modal-pane[data-placement='right'] {
   inline-size: min(24rem, 100%);
   block-size: 100%;
   max-block-size: none;
-  border-inline-start: 0.0625rem solid var(--color-border-strong);
+  border-block: 0;
+  border-inline-end: 0;
 }
 .env-dialog-title {
   font: var(--type-h1);
@@ -57,6 +71,11 @@
     max(var(--viewport-gutter), env(safe-area-inset-bottom))
     max(var(--viewport-gutter), env(safe-area-inset-left));
   pointer-events: none;
+}
+/* Search-like dialogs open near the top, so results can grow downward without moving the field. */
+.env-dialog-positioner[data-placement='top'] {
+  place-items: start center;
+  padding-block-start: max(var(--viewport-gutter), min(12vh, 6rem), env(safe-area-inset-top));
 }
 .env-dialog-positioner[data-placement='right'] {
   place-items: stretch end;

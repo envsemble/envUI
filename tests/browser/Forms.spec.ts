@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { fixtureUrl } from './Servers';
 
 /** Contrast between two opaque CSS colors, as WCAG computes it. */
 function contrastRatio(first: string, second: string) {
@@ -30,7 +31,7 @@ async function popupSeparation(page: Page, surfaceSelector: string) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('http://127.0.0.1:8766/?fixture=forms');
+  await page.goto(`${fixtureUrl}/?fixture=forms`);
 });
 
 test('fields associate labels, hints, and validation messages', async ({ page }) => {
@@ -211,13 +212,21 @@ test('Select triggers are button styles, and the open list stands apart from a p
 }) => {
   const outlined = page.getByRole('combobox', { name: 'Pane sort', exact: true });
   await expect(outlined).toHaveAttribute('data-variant', 'outlined');
-  await expect(outlined).toHaveClass(/env-button/);
-  await expect(outlined).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-  expect(
-    Number.parseFloat(
-      await outlined.evaluate((element) => getComputedStyle(element).borderTopWidth),
-    ),
-  ).toBeGreaterThan(0);
+  // The outlined trigger looks like an outlined Button beside it.
+  const looks = await outlined.evaluate((element) => {
+    const button = document.createElement('button');
+    button.className = 'env-button env-button-outlined';
+    element.parentElement!.append(button);
+    const read = (target: Element) => {
+      const style = getComputedStyle(target);
+      return [style.backgroundColor, style.color, style.borderTopColor, style.borderTopWidth];
+    };
+    const result = { trigger: read(element), button: read(button) };
+    button.remove();
+    return result;
+  });
+  expect(looks.trigger).toEqual(looks.button);
+  expect(Number.parseFloat(looks.trigger[3]!)).toBeGreaterThan(0);
   // The label sits above a trigger that fits its content, as for every select.
   const role = page.getByRole('combobox', { name: 'Pane role', exact: true });
   const [roleBox, labelBox, paneBox] = await Promise.all([
@@ -233,6 +242,19 @@ test('Select triggers are button styles, and the open list stands apart from a p
   const separation = await popupSeparation(page, '[data-testid="select-pane"]');
   expect(separation.contrast).toBeGreaterThanOrEqual(1.08);
   expect(separation.border).toBeGreaterThan(0);
+  // The popup takes the surface corners, and its options the same corners inset by its padding.
+  const corners = await page.locator('.env-dropdown-options').evaluate((popup) => {
+    const option = popup.querySelector('.env-dropdown-option')!;
+    const radius = (element: Element) =>
+      Number.parseFloat(getComputedStyle(element).borderTopLeftRadius);
+    return {
+      popup: radius(popup),
+      option: radius(option),
+      padding: Number.parseFloat(getComputedStyle(popup).paddingTop),
+    };
+  });
+  expect(corners.popup).toBeGreaterThanOrEqual(24);
+  expect(Math.abs(corners.option - (corners.popup - corners.padding))).toBeLessThan(1);
   await page.getByRole('option', { name: 'Boreal', exact: true }).click();
   await expect(role).toHaveText('Boreal');
 });
@@ -247,13 +269,13 @@ test('a required Select participates in native constraint validation', async ({ 
   const required = page.getByRole('combobox', { name: 'Required choice', exact: true });
   await expect(required).toHaveAttribute('aria-required', 'true');
   await expect(required).toBeFocused();
-  // Dismiss native validation chrome before interacting with the custom popup.
-  // Firefox on Linux consumes the first outside click while that chrome is open.
+  // Dismiss the native validation bubble before interacting with the custom popup: one engine
+  // consumes the first outside click while that bubble is open.
   await page.keyboard.press('Escape');
   await required.press('ArrowDown');
   await expect(page.getByRole('listbox')).toBeVisible();
-  await page.getByRole('option', { name: 'Atlas', exact: true }).click();
-  await expect(nativeInput).toHaveValue('atlas');
+  await page.getByRole('option', { name: 'Aurora', exact: true }).click();
+  await expect(nativeInput).toHaveValue('aurora');
   await expect
     .poll(() => nativeInput.evaluate((input: HTMLInputElement) => input.validity.valid))
     .toBe(true);
@@ -319,4 +341,87 @@ test('Dialog provides an accessible dismissal action and controlled action closu
   await page.getByRole('dialog').getByRole('button', { name: 'Save dialog', exact: true }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(trigger).toBeFocused();
+});
+
+test('a compact Select has a compact trigger and the compact menu popup with a check mark', async ({
+  page,
+}) => {
+  const compact = page.getByRole('combobox', { name: 'Compact plan', exact: true });
+  const standard = page.getByRole('combobox', { name: 'Plan', exact: true });
+  await expect(compact).toHaveAttribute('data-density', 'compact');
+  const [compactBox, standardBox] = await Promise.all([
+    compact.boundingBox(),
+    standard.boundingBox(),
+  ]);
+  expect(compactBox!.height).toBeCloseTo(32, 0);
+  expect(compactBox!.height).toBeLessThan(standardBox!.height);
+  const chevron = (locator: typeof compact) =>
+    locator.locator('.env-symbol').evaluate((icon) => icon.getBoundingClientRect().width);
+  expect(await chevron(compact)).toBeLessThan(await chevron(standard));
+  // The outlined variant keeps its Button style at the compact height.
+  const outlined = page.getByRole('combobox', { name: 'Compact outlined plan', exact: true });
+  expect((await outlined.boundingBox())!.height).toBeCloseTo(32, 0);
+  expect(
+    Number.parseFloat(
+      await outlined.evaluate((element) => getComputedStyle(element).borderTopWidth),
+    ),
+  ).toBeGreaterThan(0);
+
+  await compact.focus();
+  await page.keyboard.press('Space');
+  const list = page.getByRole('listbox');
+  await expect(list).toBeVisible();
+  const popup = page.locator('.env-dropdown-options');
+  await expect(popup).toHaveAttribute('data-density', 'compact');
+  await expect(popup).not.toHaveAttribute('data-starting-style');
+  const surface = await popup.evaluate(async (element) => {
+    // The popup grows in; its rows have their final size once the transition has run.
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    await Promise.allSettled(element.getAnimations().map(({ finished }) => finished));
+    const probe = document.createElement('div');
+    probe.style.backgroundColor = 'var(--color-popup)';
+    element.append(probe);
+    const popupColor = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    const style = getComputedStyle(element);
+    return {
+      popupColor,
+      background: style.backgroundColor,
+      border: Number.parseFloat(style.borderTopWidth),
+      radius: Number.parseFloat(style.borderTopLeftRadius),
+      padding: Number.parseFloat(style.paddingTop),
+    };
+  });
+  expect(surface.background).toBe(surface.popupColor);
+  expect(surface.border).toBeGreaterThanOrEqual(1);
+  expect(surface.radius).toBeCloseTo(12, 0);
+  expect(surface.padding).toBeCloseTo(4, 0);
+  const starter = page.getByRole('option', { name: 'Starter', exact: true });
+  const team = page.getByRole('option', { name: 'Team', exact: true });
+  await expect(starter).toBeFocused();
+  for (const option of [starter, team])
+    expect((await option.boundingBox())!.height).toBeCloseTo(28, 0);
+  // A check mark shows the selected option instead of a fill, and labels stay aligned.
+  await expect(starter.locator('.env-dropdown-option-check svg')).toBeVisible();
+  await expect(team.locator('.env-dropdown-option-check svg')).toHaveCount(0);
+  const textStart = (option: typeof starter) =>
+    option.evaluate((element) => element.lastElementChild!.getBoundingClientRect().x);
+  expect(await textStart(team)).toBeCloseTo(await textStart(starter), 0);
+  await page.keyboard.press('ArrowDown');
+  await expect(team).toBeFocused();
+  expect(await starter.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe(
+    'rgba(0, 0, 0, 0)',
+  );
+  await page.keyboard.press('Enter');
+  await expect(list).toHaveCount(0);
+  await expect(compact).toHaveText('Team');
+  await expect(compact).toBeFocused();
+  await page.getByRole('button', { name: 'Submit compact form', exact: true }).click();
+  await expect
+    .poll(async () => JSON.parse((await page.getByTestId('compact-values').textContent())!))
+    .toEqual({ compactPlan: 'team' });
+  await compact.click();
+  await expect(team.locator('.env-dropdown-option-check svg')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(compact).toBeFocused();
 });

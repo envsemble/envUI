@@ -35,6 +35,11 @@ export interface TabsProps
   renderList?: (list: ReactElement) => ReactNode;
   listClassName?: string;
   panelClassName?: string;
+  /**
+   * The selected panel takes the height left below the list; give the Tabs a height (for example as
+   * a flex child). For content that fills a region, such as a canvas.
+   */
+  fill?: boolean;
 }
 
 function isDisabled(item: TabsItem) {
@@ -89,6 +94,7 @@ export function Tabs({
   className,
   listClassName,
   panelClassName,
+  fill = false,
   ...props
 }: TabsProps) {
   const initialValue =
@@ -124,6 +130,7 @@ export function Tabs({
     <BaseTabs.Root
       {...props}
       className={classNames('env-tabs', className)}
+      data-fill={fill ? '' : undefined}
       value={value}
       defaultValue={initialValue}
       onValueChange={onValueChange}

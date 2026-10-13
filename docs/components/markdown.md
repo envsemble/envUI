@@ -16,6 +16,7 @@ import { Markdown } from '@envsemble/envui/content';
 | ---------------------------- | ---------------------------------------- |
 | children                     | Markdown string                          |
 | headingOffset / codeCopyable | Heading semantics and code-copy controls |
+| inlineCode                   | dark (default) or subtle inline code     |
 
 ## Markdown source
 
@@ -40,10 +41,10 @@ const description = [
 
 ### Props & contracts
 
-| Name        | Contract                                                                           |
-| ----------- | ---------------------------------------------------------------------------------- |
-| Code fences | Supply a language after the opening fence; code reuses the GitHub-themed CodeBlock |
-| Inline code | Single backticks mark inline source within prose                                   |
+| Name        | Contract                                                         |
+| ----------- | ---------------------------------------------------------------- |
+| Code fences | Supply a language after the opening fence; code reuses CodeBlock |
+| Inline code | Single backticks mark inline source within prose                 |
 
 ## Application navigation
 
@@ -84,6 +85,32 @@ import { Markdown } from '@envsemble/envui/content';
 | Name       | Contract                                                                                       |
 | ---------- | ---------------------------------------------------------------------------------------------- |
 | renderLink | Keep real hrefs and preserve modified clicks; the application decides which routes open panels |
+
+## Extend rendering
+
+```tsx
+import { Markdown } from '@envsemble/envui/content';
+import rehypeSlug from 'rehype-slug';
+
+<Markdown
+  headingOffset={1}
+  rehypePlugins={[rehypeSlug]}
+  components={{
+    blockquote: ({ node: _node, ...props }) => <Callout {...props} />,
+  }}
+>
+  {document}
+</Markdown>;
+```
+
+### Props & contracts
+
+| Name          | Contract                                                                                         |
+| ------------- | ------------------------------------------------------------------------------------------------ |
+| components    | react-markdown overrides merged over envUI's own; the application's win for the same element     |
+| remarkPlugins | Run after envUI's own Markdown extensions                                                        |
+| rehypePlugins | Run on the HTML tree, for example to add heading ids; envUI adds none of its own                 |
+| Native props  | id, className and other attributes from plugins reach envUI's headings, links, tables and images |
 
 ## Edit and preview
 
@@ -155,15 +182,16 @@ async function requestLink({
 ## Guidelines
 
 - Markdown renders a string supplied by your application. MarkdownEditor adds source editing, formatting and a preview that uses the same Markdown renderer. Both work with ordinary Markdown strings.
-- Paragraphs, headings, lists, quotes and tables use envUI typography and spacing. Code blocks reuse CodeBlock with standard GitHub colors.
-- Supports CommonMark plus GFM tables, strikethrough, task lists, automatic links and footnotes. Single source newlines follow standard paragraph behavior.
-- Raw HTML is ignored and URLs retain the renderer’s safe protocol handling. Markdown is content, not executable components.
+- Paragraphs, headings, lists, quotes and tables use envUI typography and spacing. Code blocks reuse CodeBlock with the code theme's colors.
+- Supports CommonMark plus tables, strikethrough, task lists, automatic links and footnotes. Single source newlines follow standard paragraph behavior.
+- Raw HTML is ignored, except keys written as `<kbd>Ctrl</kbd>`, which render as Kbd. URLs retain the renderer’s safe protocol handling. Markdown is content, not executable components.
 - Resource references are ordinary links with stable destination URLs. Labels are saved text; resource resolution, permissions and missing destinations belong to the application.
 - Tables and code scroll within their own regions. Images keep their aspect ratio and fit the available width; image loading follows the supplied URL.
 - Choose headingOffset to place a document below the surrounding page heading. Native semantic levels are retained, capped at h6.
+- Extend rendering with plugins and component overrides rather than post-processing the output. Overriding a heading level replaces envUI’s offset for that level, and overriding pre or code replaces CodeBlock. Other raw HTML stays ignored.
 - Use MarkdownEditor for formatted prose, Textarea for plain text. The stored value remains an ordinary Markdown string; syntax stays visible while editing.
-- Preview uses Markdown with envUI prose typography and standard GitHub code-block colors. The source control reuses Textarea geometry and states, including fixed or content sizing.
-- Formatting and typing share bounded undo/redo history. Ctrl/Cmd+B, I and K apply enabled bold, italic and link commands. Ctrl/Cmd+Z undoes; Shift+Z or Y redoes. Toolbar arrow keys move between actions.
+- Preview uses Markdown with envUI prose typography and CodeBlock's code-theme colors. The source control reuses Textarea geometry and states, including fixed or content sizing.
+- Formatting and typing share bounded undo/redo history. <kbd>Ctrl</kbd> or <kbd>Cmd</kbd> with <kbd>B</kbd>, <kbd>I</kbd> and <kbd>K</kbd> apply enabled bold, italic and link commands. <kbd>Ctrl</kbd> or <kbd>Cmd</kbd> with <kbd>Z</kbd> undoes; with <kbd>Shift</kbd>+<kbd>Z</kbd> or <kbd>Y</kbd> it redoes. In the toolbar, <kbd>←</kbd> and <kbd>→</kbd> move between actions.
 - The editor retains native selection, paste and composition. Formatting waits until composition ends; toolbar actions restore the selection to the source.
 - Native forms submit the source even while Preview is visible. Uncontrolled form reset restores defaultValue; controlled reset retains value, so the application resets its own draft. Replacing the controlled document clears its editing history.
 - Preview renders when first opened, then retains its mounted state while inactive. Write edits are parsed on the next preview activation; visible previews reflect current source and rendering options.

@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { catalogueUrl } from './Servers';
 import { readFile, writeFile, unlink } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
@@ -15,7 +16,7 @@ test('public component, stylesheet, new export and Markdown documentation update
   const originals = await Promise.all(paths.map((path) => readFile(path, 'utf8')));
   const version = await readFile('packages/ui/package.json', 'utf8');
   try {
-    await page.goto('http://127.0.0.1:8770/#/components/fields/preview');
+    await page.goto(`${catalogueUrl}/#/components/fields/preview`);
     await page.evaluate(() => {
       (window as unknown as { liveProof: string }).liveProof = 'same-document';
     });

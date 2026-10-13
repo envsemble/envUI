@@ -14,8 +14,11 @@ import {
   Surface,
   GroupedRows,
   Row,
+  Kbd,
+  ActionGroup,
 } from '@envsemble/envui';
 import { Mail } from '@envsemble/envui/icons/Mail';
+import { ZoomIn } from '@envsemble/envui/icons/ZoomIn';
 import { ContentCopy } from '@envsemble/envui/icons/ContentCopy';
 
 import { Example, Specimen, SpecimenGrid } from './Example';
@@ -182,7 +185,12 @@ function CompactFieldExamples() {
     <Example
       title="Compact fields & search"
       size="collection"
-      caption="Compact fields share the button height and can show a floating label. Type to reveal the clear action; Escape also clears."
+      caption={
+        <>
+          Compact fields share the button height and can show a floating label. Type to reveal the
+          clear action; <Kbd>Esc</Kbd> also clears.
+        </>
+      }
     >
       <SpecimenGrid>
         <Specimen title="Search beside an action">
@@ -446,6 +454,42 @@ export function SelectPreview() {
           </Specimen>
         </SpecimenGrid>
       </Example>
+      <Example
+        title="Compact"
+        size="collection"
+        caption="For dense desktop interfaces such as toolbars and title bars: the compact control height, and the compact menu's popup, where a check mark shows the selected option."
+      >
+        <SpecimenGrid>
+          <Specimen title="Secondary, on the page">
+            <Select
+              density="compact"
+              aria-label="Sort documents"
+              options={sortOptions}
+              defaultValue="recent"
+            />
+          </Specimen>
+          <Specimen title="Outlined, in a compact toolbar">
+            <Surface
+              tone="pane"
+              padding={1}
+              corners="pill"
+              density="compact"
+              role="group"
+              aria-label="Canvas toolbar"
+              render={<ActionGroup />}
+            >
+              <Select
+                density="compact"
+                variant="outlined"
+                aria-label="Zoom"
+                options={zoomOptions}
+                defaultValue="100"
+              />
+              <IconButton variant="text" icon={<ZoomIn />} aria-label="Zoom in" />
+            </Surface>
+          </Specimen>
+        </SpecimenGrid>
+      </Example>
       <Example title="Selection, validation & availability" size="collection">
         <SpecimenGrid>
           <Specimen title="Interactive">
@@ -508,3 +552,7 @@ const roleOptions = [
   { value: 'member', label: 'Member' },
   { value: 'admin', label: 'Admin' },
 ];
+const zoomOptions = ['50', '75', '100', '150', '200'].map((value) => ({
+  value,
+  label: `${value}%`,
+}));

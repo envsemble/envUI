@@ -12,6 +12,7 @@ import {
   Row,
   Stack,
   Text,
+  Kbd,
 } from '@envsemble/envui';
 import { Check } from '@envsemble/envui/icons/Check';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
@@ -323,7 +324,12 @@ function OutcomeExamples() {
       <Example
         title="Confirm in place"
         size="collection"
-        caption="ConfirmButton names the consequence on the first press and acts on the second. It disarms after a few seconds, when focus leaves and on Escape."
+        caption={
+          <>
+            ConfirmButton names the consequence on the first press and acts on the second. It
+            disarms after a few seconds, when focus leaves and on <Kbd>Esc</Kbd>.
+          </>
+        }
       >
         <SpecimenGrid size="compact">
           <Specimen title="Remove from a row">

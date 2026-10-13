@@ -146,16 +146,54 @@
   border-radius: var(--radius-surface);
   transform: translateZ(0);
 }
-.docs-shell-frame > .env-app-shell,
-.docs-shell-frame > .env-app-shell-skeleton > .env-app-shell {
+.docs-shell-frame > .env-app-shell:not([data-title-bar]),
+.docs-shell-frame > .env-app-shell-skeleton > .env-app-shell:not([data-title-bar]) {
   min-block-size: 30rem;
 }
-.docs-shell-frame .env-app-content {
+/* The frame stands in for the window: a document-scrolling shell scrolls its content in the frame. A
+   title-bar shell already fills the frame and scrolls its content area itself. */
+.docs-shell-frame .env-app-shell:not([data-title-bar]) .env-app-content {
   block-size: 30rem;
   overflow-y: auto;
 }
 .docs-shell-page {
   padding: var(--space-6);
+}
+/* A window around a sample menubar and note, and around a title bar used without the shell. */
+.docs-window {
+  display: grid;
+  gap: var(--space-3);
+  border: 0.0625rem solid var(--color-border-strong);
+}
+.docs-window-note {
+  font-family: var(--font-family);
+}
+/* Stands in for a window: WindowFrame fills it as it would fill the window. */
+.docs-title-bar-frame {
+  position: relative;
+  block-size: 18rem;
+  overflow: hidden;
+  border: 0.0625rem solid var(--color-border-strong);
+  border-radius: var(--radius-surface);
+  background: var(--color-canvas);
+  transform: translateZ(0);
+}
+.docs-title-bar-mark {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  margin-inline-end: var(--space-1);
+}
+/* Stand-ins for the window controls the system draws at the end of an installed app's title bar. */
+.docs-window-controls {
+  align-self: stretch;
+  display: flex;
+  margin-inline-start: var(--space-2);
+  color: var(--color-text-muted);
+}
+.docs-window-control {
+  inline-size: 2.75rem;
+  display: grid;
+  place-items: center;
 }
 .docs-inline-row {
   flex-direction: row;
@@ -180,4 +218,60 @@
   display: flex;
   align-items: center;
   gap: var(--space-5);
+}
+.docs-context-area {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-2);
+  min-block-size: 10rem;
+}
+.docs-tree-frame {
+  block-size: 24rem;
+  inline-size: min(100%, 22rem);
+  padding-block: var(--space-2);
+  border: 0.0625rem solid var(--color-border-strong);
+  border-radius: var(--radius-surface);
+  overflow: hidden;
+}
+.docs-document-tabs {
+  padding-block-start: var(--space-2);
+  overflow: hidden;
+}
+.docs-document-tabs > .env-document-tabs {
+  padding-inline: var(--space-5);
+}
+.docs-document-panel {
+  min-block-size: 8rem;
+  padding: var(--space-5);
+}
+.docs-tone-sample {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font: var(--type-body-small);
+}
+.docs-tone-sample > svg {
+  inline-size: 1rem;
+  block-size: 1rem;
+}
+/* Tabs that fill a fixed region, like a diagram canvas below its views. */
+.docs-fill-region {
+  display: flex;
+  flex-direction: column;
+  block-size: 16rem;
+}
+.docs-fill-tabs {
+  flex: 1;
+}
+.docs-fill-canvas {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-standard);
+  background: var(--color-surface-muted);
+  color: var(--color-text-muted);
+}
+/* An interactive row's title link covers the row; its action stays above the link. */
+.docs-row-action {
+  position: relative;
 }

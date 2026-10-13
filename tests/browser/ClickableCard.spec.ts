@@ -1,11 +1,12 @@
 import { test, expect } from '@playwright/test';
+import { catalogueUrl, fixtureUrl } from './Servers';
 
 test('cards provide native keyboard activation, focus and disabled behavior in both themes', async ({
   page,
 }) => {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
-  await page.goto('http://127.0.0.1:8766/?fixture=layout');
+  await page.goto(`${fixtureUrl}/?fixture=layout`);
   let activations = 0;
   for (const theme of ['light', 'dark']) {
     const scope = page.getByTestId(`layout-${theme}`);
@@ -37,7 +38,7 @@ test('cards provide native keyboard activation, focus and disabled behavior in b
 });
 
 test('overview cards are single named links, including their padding', async ({ page }) => {
-  await page.goto('http://127.0.0.1:8770/#/overview');
+  await page.goto(`${catalogueUrl}/#/overview`);
   const catalogue = page.locator('.docs-catalogue-grid');
   const card = catalogue.getByRole('link', { name: 'Cards', exact: true });
   await expect(card).toHaveAccessibleDescription(

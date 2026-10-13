@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { catalogueUrl } from './Servers';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { readFileSync } from 'node:fs';
@@ -486,7 +487,7 @@ test('offline theme toggle switches the whole page and keeps the canvas full hei
 });
 
 test('the code copy action follows the code theme in both application themes', async ({ page }) => {
-  await page.goto('http://127.0.0.1:8770/#/components/code');
+  await page.goto(`${catalogueUrl}/#/components/code`);
   for (const appTheme of ['light', 'dark']) {
     if (appTheme === 'dark')
       await page.getByRole('button', { name: 'Switch to dark theme' }).click();

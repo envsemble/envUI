@@ -29,10 +29,21 @@ import { ViewModule } from '@envsemble/envui/icons/ViewModule';
 import { WebAsset } from '@envsemble/envui/icons/WebAsset';
 import { Widgets } from '@envsemble/envui/icons/Widgets';
 import { MoreVert } from '@envsemble/envui/icons/MoreVert';
+import { MenuOpen } from '@envsemble/envui/icons/MenuOpen';
 import { ChatBubble } from '@envsemble/envui/icons/ChatBubble';
 import { AccountCircle } from '@envsemble/envui/icons/AccountCircle';
 import { Speed } from '@envsemble/envui/icons/Speed';
 import { SpaceDashboard } from '@envsemble/envui/icons/SpaceDashboard';
+import { AccountTree } from '@envsemble/envui/icons/AccountTree';
+import { Tab } from '@envsemble/envui/icons/Tab';
+import { KeyboardCommandKey } from '@envsemble/envui/icons/KeyboardCommandKey';
+import { ViewWeek } from '@envsemble/envui/icons/ViewWeek';
+import { Sell } from '@envsemble/envui/icons/Sell';
+import { Campaign } from '@envsemble/envui/icons/Campaign';
+import { Chat } from '@envsemble/envui/icons/Chat';
+import { TableChart } from '@envsemble/envui/icons/TableChart';
+import { Keyboard } from '@envsemble/envui/icons/Keyboard';
+import { LinearScale } from '@envsemble/envui/icons/LinearScale';
 import { type Reference } from '../Reference';
 
 export const foundationIcons: Record<string, typeof Palette> = {
@@ -85,10 +96,21 @@ const referenceIcons: Record<string, typeof Palette> = {
   toasts: Notifications,
   dialogs: WebAsset,
   menu: MoreVert,
+  menubar: MenuOpen,
   tooltip: ChatBubble,
   avatar: AccountCircle,
   meters: Speed,
   'app-shell': SpaceDashboard,
+  tree: AccountTree,
+  'document-tabs': Tab,
+  'command-palette': KeyboardCommandKey,
+  'segmented-control': ViewWeek,
+  badges: Sell,
+  notices: Campaign,
+  popover: Chat,
+  tables: TableChart,
+  keyboard: Keyboard,
+  breadcrumbs: LinearScale,
 };
 
 /** A decorative symbol for the individual reference topic. */

@@ -11,6 +11,10 @@
 .env-modal-pane[data-ending-style],
 .env-menu[data-starting-style],
 .env-menu[data-ending-style],
+.env-command-palette[data-starting-style],
+.env-command-palette[data-ending-style],
+.env-popover[data-starting-style],
+.env-popover[data-ending-style],
 .env-dropdown-options[data-starting-style],
 .env-dropdown-options[data-ending-style],
 .env-tooltip[data-starting-style],
@@ -19,6 +23,8 @@
 }
 .env-modal-pane,
 .env-menu,
+.env-command-palette,
+.env-popover,
 .env-dropdown-options,
 .env-tooltip,
 .env-toast-viewport > .env-toast {
@@ -28,11 +34,17 @@
 .env-dialog-backdrop[data-ending-style],
 .env-modal-pane[data-ending-style],
 .env-menu[data-ending-style],
+.env-command-palette[data-ending-style],
+.env-popover[data-ending-style],
 .env-dropdown-options[data-ending-style],
 .env-tooltip[data-ending-style],
 .env-toast-viewport > .env-toast[data-ending-style] {
   transition-duration: var(--motion-duration-fast);
   transition-timing-function: var(--motion-ease-exit);
+}
+/* Moving between the menus of a menubar swaps them at once, without fading one out and in. */
+.env-menu[data-instant='group'] {
+  transition: none;
 }
 .env-disclosure-note[open] > .env-disclosure-content,
 .env-avatar-image {
@@ -53,6 +65,7 @@
   /* Presses: compact controls settle slightly while held, larger surfaces less, and small choice
      controls more, whether the control or its label is pressed. */
   .env-button,
+  .env-segment,
   .env-navigation-item,
   .env-avatar-button,
   .env-app-sidebar-toggle,
@@ -68,6 +81,7 @@
     transition-timing-function: var(--motion-ease);
   }
   .env-button:active:not(:disabled):not([aria-disabled='true']),
+  .env-segment:active:not([data-disabled]),
   .env-navigation-item:active:not(:disabled):not([aria-disabled='true']),
   .env-avatar-button:active:not(:disabled),
   .env-app-sidebar-toggle:active,
@@ -88,6 +102,8 @@
      from their screen edge. */
   .env-modal-pane,
   .env-menu,
+  .env-command-palette,
+  .env-popover,
   .env-dropdown-options,
   .env-tooltip,
   .env-toast-viewport > .env-toast {
@@ -99,15 +115,25 @@
   .env-modal-pane[data-ending-style] {
     transform: translateY(0.75rem) scale(0.98);
   }
+  .env-modal-pane[data-placement='top'][data-starting-style],
+  .env-modal-pane[data-placement='top'][data-ending-style] {
+    transform: translateY(-0.5rem) scale(0.98);
+  }
   .env-modal-pane[data-placement='right'][data-starting-style],
   .env-modal-pane[data-placement='right'][data-ending-style] {
     transform: translateX(2rem);
   }
   .env-menu[data-starting-style],
   .env-menu[data-ending-style],
+  .env-popover[data-starting-style],
+  .env-popover[data-ending-style],
   .env-dropdown-options[data-starting-style],
   .env-dropdown-options[data-ending-style] {
     transform: scale(0.96);
+  }
+  .env-command-palette[data-starting-style],
+  .env-command-palette[data-ending-style] {
+    transform: translateY(-0.5rem) scale(0.98);
   }
   .env-tooltip[data-starting-style],
   .env-tooltip[data-ending-style] {
@@ -123,6 +149,8 @@
   }
   .env-modal-pane[data-ending-style],
   .env-menu[data-ending-style],
+  .env-command-palette[data-ending-style],
+  .env-popover[data-ending-style],
   .env-dropdown-options[data-ending-style],
   .env-tooltip[data-ending-style],
   .env-toast-viewport > .env-toast[data-ending-style] {

@@ -4,13 +4,31 @@
   max-width: 100%;
   color: var(--color-text-primary);
 }
+/* The trigger is a Button: secondary or outlined, with the same colors and states. */
 .env-button.env-dropdown-trigger {
   position: relative;
-  border: calc(0.0625rem * var(--scale, 1)) solid var(--env-field-border-base, transparent);
   gap: calc(0.5rem * var(--scale, 1));
 }
-.env-button.env-dropdown-trigger[aria-invalid='true']:is(:hover, :active):not(:disabled) {
+/* A transparent border lets an invalid secondary trigger show the error color without resizing. */
+.env-button-secondary.env-dropdown-trigger {
+  border: calc(0.0625rem * var(--scale, 1)) solid var(--env-field-border-base, transparent);
+}
+.env-button-secondary.env-dropdown-trigger[aria-expanded='true']:not(:disabled, :active) {
+  background: var(--color-secondary-action-hover);
+}
+.env-button-outlined.env-dropdown-trigger[aria-expanded='true']:not(:disabled, :active) {
+  background: var(--color-subtle-action-hover);
+  border-color: var(--color-subtle-action-border-hover);
+}
+/* Invalid triggers recolor their border and keep their fill. */
+.env-button.env-dropdown-trigger[aria-invalid='true']:not(:disabled) {
+  border-color: var(--env-field-border-base);
+}
+.env-button-secondary.env-dropdown-trigger[aria-invalid='true']:is(:hover, :active):not(:disabled) {
   background: var(--color-secondary-action);
+}
+.env-button-outlined.env-dropdown-trigger[aria-invalid='true']:is(:hover, :active):not(:disabled) {
+  background: var(--color-subtle-action);
 }
 @media (hover: hover) {
   .env-button.env-dropdown-trigger[aria-invalid='true']:hover:not(:disabled) {
@@ -19,20 +37,6 @@
 }
 .env-button.env-dropdown-trigger[aria-invalid='true']:active:not(:disabled) {
   border-color: hsl(from var(--env-field-border-base) h s var(--state-pressed-lightness));
-}
-/* Outlined: a bordered pill without a fill, for panes, dialogs, rows and toolbars. */
-.env-button.env-dropdown-trigger[data-variant='outlined'] {
-  --env-field-border-base: var(--color-border-strong);
-  background: transparent;
-  color: var(--color-text-primary);
-}
-.env-button.env-dropdown-trigger[data-variant='outlined']:is(:hover, [aria-expanded='true']):not(
-    :disabled
-  ) {
-  background: var(--color-state-layer-hover);
-}
-.env-button.env-dropdown-trigger[data-variant='outlined']:active:not(:disabled) {
-  background: var(--color-state-layer-pressed);
 }
 
 .env-dropdown-trigger .env-symbol {
@@ -43,16 +47,14 @@
 .env-dropdown-trigger[aria-expanded='true'] .env-symbol {
   transform: rotate(-90deg);
 }
-/* The open list is a raised popup: its own color and a hairline border keep it apart from whatever
-   it opens over, including a dialog of the pane tone. */
+/* The open list is a raised popup like Popover: its own color, a hairline border and the surface
+   corners. Options are rounded rows concentric with those corners, so it stands apart from the page,
+   panes, rows and dialogs alike. */
 .env-surface.env-dropdown-options {
-  /* Compact corners: options are short rows, so large surface corners would look bubbly. */
-  --env-surface-radius: var(--md-sys-shape-corner-large);
   --env-surface-scale: var(--scale, 1);
   border: calc(0.0625rem * var(--scale, 1)) solid var(--color-popup-border);
   background: var(--color-popup);
   display: grid;
-  gap: calc(0.125rem * var(--scale, 1));
   width: max-content;
   min-width: min(var(--anchor-width), var(--available-width));
   max-width: min(calc(24rem * var(--scale, 1)), var(--available-width));
@@ -62,17 +64,18 @@
 .env-dropdown-options[hidden] {
   display: none;
 }
-/* Every option takes the small row corner, concentric with the popup's corner and padding. */
+/* Each option's corners follow the popup's, inset by its padding: a single line is a pill. */
 .env-dropdown-option {
-  border-radius: calc(var(--radius-row-inner) * var(--scale, 1));
+  border-radius: calc((var(--radius-surface) - var(--space-2)) * var(--scale, 1));
   min-inline-size: 0;
   white-space: normal;
   overflow-wrap: anywhere;
   box-sizing: border-box;
-  display: block;
+  display: flex;
+  align-items: center;
   margin: 0;
   min-height: calc(var(--control-height) * var(--scale, 1));
-  padding: calc(0.5rem * var(--scale, 1)) calc(var(--row-padding-inline) * var(--scale, 1));
+  padding: calc(0.5rem * var(--scale, 1)) calc(var(--space-4) * var(--scale, 1));
   border: 0;
   outline: none;
   background: var(--color-select-option);
@@ -137,4 +140,55 @@
 }
 .env-dropdown-option[data-selected]:active:not([data-disabled]) {
   background: var(--color-select-selected-pressed);
+}
+
+/* Compact selects suit dense desktop surfaces: a compact Button trigger, and the compact menu's popup
+   with small corners and 1.75 rem rows, where a check mark rather than a fill shows the selection. */
+.env-button.env-dropdown-trigger[data-density='compact'] {
+  --control-height-small: var(--control-height-compact);
+  gap: calc(0.25rem * var(--scale, 1));
+  padding-inline: calc(0.625rem * var(--scale, 1)) calc(0.5rem * var(--scale, 1));
+}
+.env-dropdown-trigger[data-density='compact'] .env-symbol {
+  width: calc(var(--control-icon-size) * var(--scale, 1));
+  height: calc(var(--control-icon-size) * var(--scale, 1));
+}
+.env-surface.env-dropdown-options[data-density='compact'] {
+  --env-surface-radius: calc(var(--radius-standard) + var(--space-1));
+  max-width: min(calc(22rem * var(--scale, 1)), var(--available-width));
+}
+.env-dropdown-options[data-density='compact'] .env-dropdown-list {
+  gap: 0;
+  max-height: calc(var(--available-height) - calc(0.5rem * var(--scale, 1)));
+}
+.env-surface.env-dropdown-options[data-density='compact'] .env-dropdown-option {
+  gap: calc(var(--space-2) * var(--scale, 1));
+  min-height: calc(1.75rem * var(--scale, 1));
+  padding: calc(var(--space-1) * var(--scale, 1)) calc(var(--space-2) * var(--scale, 1));
+  border-radius: calc(var(--radius-standard) * var(--scale, 1));
+  background: transparent;
+  color: var(--color-text-primary);
+}
+.env-surface.env-dropdown-options[data-density='compact'] .env-dropdown-option[data-highlighted] {
+  background: var(--color-select-option-hover);
+}
+.env-surface.env-dropdown-options[data-density='compact']
+  .env-dropdown-option:active:not([data-disabled]) {
+  background: var(--color-select-option-pressed);
+}
+.env-surface.env-dropdown-options[data-density='compact'] .env-dropdown-option[data-selected] {
+  font-weight: 500;
+}
+.env-dropdown-option-check {
+  inline-size: calc(var(--control-icon-size) * var(--scale, 1));
+  block-size: calc(var(--control-icon-size) * var(--scale, 1));
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  color: var(--color-radio);
+}
+@media (pointer: coarse) {
+  .env-surface.env-dropdown-options[data-density='compact'] .env-dropdown-option {
+    min-height: var(--control-height-touch);
+  }
 }

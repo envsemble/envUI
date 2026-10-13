@@ -115,14 +115,14 @@ import { Settings } from '@envsemble/envui/icons/Settings';
 ## Guidelines
 
 - Say what an action will do before it is taken. When the outcome is known, put it in the label, such as “Show 128 homes”, “Switch to Team · +5 seats” or “Assign to Morgan”. Use AnimatedNumber for a count that changes while choices are made.
-- Use ConfirmButton for an action that takes effect at once and cannot be undone, such as removing someone's access. The first press names the consequence in place and announces it; a double click only arms it; Escape, leaving the button and four seconds disarm it. Use a Dialog when the person must choose or type something first.
+- Use ConfirmButton for an action that takes effect at once and cannot be undone, such as removing someone's access. The first press names the consequence in place and announces it; a double click only arms it; <kbd>Esc</kbd>, leaving the button and four seconds disarm it. Use a Dialog when the person must choose or type something first.
 - Use one primary action in an action group. Reserve important emphasis for rare, consequential actions.
 - Action buttons fit their content: 2.5 rem minimum height (2 rem for important), 0.875 rem text, 0.25 rem vertical and 0.75 rem horizontal padding. Labels wrap when space is limited.
 - Use fully rounded corners; important actions use 0.5 rem corners. ActionGroup provides 1 rem row gaps or 0.5 rem stacked gaps.
 - Use ButtonGroup for connected rows or columns: the gap is 0.125 rem and adjoining corners use the shared 0.5 rem row inner radius. Each end keeps its button variant’s outer corners; a single button keeps all its normal corners.
 - Prefer the same button variant within a connected group. Mix variants when related actions need different emphasis.
 - ButtonGroup accepts any mixture of labeled, icon-only, leading/trailing icon and native link buttons. Horizontal buttons share a height; vertical buttons fill the group width. Labels wrap, and groups scroll locally if their controls cannot fit. Hidden buttons do not determine the end corners.
-- Give related actions an accessible group name. ButtonGroup retains ordinary Tab navigation and each button’s native activation, focus and disabled behavior.
+- Give related actions an accessible group name. ButtonGroup retains ordinary <kbd>Tab</kbd> navigation and each button’s native activation, focus and disabled behavior.
 - Secondary buttons use the neutral row fill and label color, without a border. On row fills (grouped rows, row-tone cards and card action strips) they shift from that fill by the control lightness rule, so they stay visible. Outlined buttons retain their border and link color.
 - Text buttons use link blue with no fill, border or horizontal inset. Set underline to show an underline. Hover and pressed states change only the text color using the shared HSL rule. Use onClick for actions and href for navigation; keyboard focus and disabled behavior remain shared with Button.
 - Interaction colors follow the central HSL lightness rule described in Colors & themes. State colors and disabled opacity come from the shared stylesheet.

@@ -9,6 +9,7 @@ import {
   Stack,
   ActionGroup,
   DisclosureNote,
+  Kbd,
 } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Search } from '@envsemble/envui/icons/Search';
@@ -159,7 +160,11 @@ export function TabsPreview() {
       <Example
         title="Project views"
         size="content"
-        caption="Arrow keys switch views; disabled tabs are skipped."
+        caption={
+          <>
+            <Kbd>←</Kbd> and <Kbd>→</Kbd> switch views; disabled tabs are skipped.
+          </>
+        }
       >
         <Tabs
           aria-label="Example project views"
@@ -205,6 +210,35 @@ export function TabsPreview() {
             },
           ]}
         />
+      </Example>
+      <Example
+        title="Filling a region"
+        size="content"
+        caption="With fill, the selected panel takes the height left below the list, for content such as a canvas."
+      >
+        <div className="docs-fill-region">
+          <Tabs
+            aria-label="Diagram views"
+            fill
+            className="docs-fill-tabs"
+            items={[
+              {
+                value: 'canvas',
+                button: <Button>Canvas</Button>,
+                content: (
+                  <div className="docs-fill-canvas" data-testid="fill-canvas">
+                    The canvas fills the panel
+                  </div>
+                ),
+              },
+              {
+                value: 'outline',
+                button: <Button>Outline</Button>,
+                content: <div className="docs-fill-canvas">Outline</div>,
+              },
+            ]}
+          />
+        </div>
       </Example>
       <Example title="Tab controls" size="collection">
         <SpecimenGrid size="wide">

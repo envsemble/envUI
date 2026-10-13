@@ -19,6 +19,7 @@ export function FormsFixture() {
   const [values, setValues] = useState<Record<string, string>>({});
   const [requiredSubmissions, setRequiredSubmissions] = useState(0);
   const [preventReset, setPreventReset] = useState(false);
+  const [compactValues, setCompactValues] = useState<Record<string, string>>({});
   return (
     <section className="fixture-section">
       <h1>Native forms</h1>
@@ -125,9 +126,41 @@ export function FormsFixture() {
         <Button type="submit">Submit required choice</Button>
       </form>
       <output data-testid="required-submissions">{requiredSubmissions}</output>
+      <form
+        data-testid="compact-form"
+        onSubmit={(event) => {
+          event.preventDefault();
+          const data = new FormData(event.currentTarget);
+          setCompactValues(
+            Object.fromEntries([...data].map(([name, value]) => [name, String(value)])),
+          );
+        }}
+      >
+        <Select
+          density="compact"
+          label="Compact plan"
+          name="compactPlan"
+          options={planOptions}
+          defaultValue="starter"
+        />
+        <Select
+          density="compact"
+          variant="outlined"
+          label="Compact outlined plan"
+          options={planOptions}
+          defaultValue="team"
+        />
+        <Button type="submit">Submit compact form</Button>
+      </form>
+      <output data-testid="compact-values">{JSON.stringify(compactValues)}</output>
       <Surface padding={4} data-testid="select-pane">
         <Select variant="outlined" label="Pane sort" options={planOptions} defaultValue="starter" />
-        <Select variant="outlined" label="Pane role" options={dialogOptions} defaultValue="atlas" />
+        <Select
+          variant="outlined"
+          label="Pane role"
+          options={dialogOptions}
+          defaultValue="aurora"
+        />
       </Surface>
     </section>
   );

@@ -25,6 +25,8 @@
   --control-font-size: var(--font-size-body);
   --viewport-gutter: clamp(0.75rem, 2vw, 1rem);
   --topbar-height: 3.25rem;
+  /* A window title bar drawn by the application, which keeps compact controls. */
+  --title-bar-height: 2.5rem;
   --color-control-blue: hsl(214.07767 81.746032% 50.588235%);
   --color-link: hsl(214.07767 81.746032% 50.588235%);
 
@@ -47,7 +49,7 @@
   --color-text-primary: hsl(225 5.882353% 13.333333%);
   --color-text-muted: hsl(213.333333 4.522613% 39.019608%);
   --color-border-strong: hsl(220 8.823529% 86.666667%);
-  /* Google reference palette: white canvas, cool panes, pale gray surfaces and blue actions. */
+  /* Light palette: white canvas, cool panes, pale gray surfaces and blue actions. */
   --color-canvas: hsl(0 0% 100%);
   --color-canvas-dark: hsl(0 0% 12.157%);
   --color-surface-base: hsl(0 0% 100%);
@@ -101,6 +103,9 @@
   /* Popups raised over the page, such as the open list of a Select. */
   --color-popup: hsl(0 0% 100%);
   --color-popup-border: var(--color-border-strong);
+  /* Dialogs and the command palette: the popup surface, which in the dark theme stays the pane color
+     so rows and fields inside keep their contrast. */
+  --color-dialog: var(--color-popup);
   --color-select-option: var(--color-popup);
   --color-select-option-text: hsl(213.333 9.333% 29.412%);
   --color-select-selected: hsl(218.181818 91.666667% 95.294118%);
@@ -128,6 +133,17 @@
   --color-avatar-figure: hsl(221.3 71.7% 57.1%);
   /* Initials use a deeper shade of the figure blue: 5:1 on the avatar fill. */
   --color-on-avatar: hsl(221.3 71.7% 36%);
+  /* Status tones for small text, icons and badges. Each keeps at least 4.5:1 on the canvas, panes and
+     rows, also over its own subtle badge fill. Solid badges put --color-on-tone on the tone. */
+  --color-tone-neutral: hsl(213.333 4.523% 39.02%);
+  --color-tone-accent: hsl(216.853 89.954% 42.941%);
+  --color-tone-success: hsl(140 64% 27%);
+  --color-tone-warning: hsl(36 100% 26%);
+  --color-tone-danger: hsl(4.231 76.471% 40%);
+  /* Completed work, such as a merged or closed-as-done item. */
+  --color-tone-done: hsl(266 55% 50%);
+  --color-on-tone: hsl(0 0% 100%);
+  --state-tone-subtle-opacity: 12%;
 
   /* Components share the Material 3 corner scale inside each theme boundary. */
   --md-sys-shape-corner-none: 0;
@@ -384,6 +400,7 @@
   --color-field-error: hsl(4.231 76.471% 75%);
   --color-popup: hsl(216 4.425% 22.157%);
   --color-popup-border: hsl(216 4.425% 30%);
+  --color-dialog: var(--color-pane);
   --color-select-option: var(--color-popup);
   --color-select-option-text: hsl(213.333 10.843% 83.725%);
   --color-select-selected: hsl(216 30% 30%);
@@ -404,6 +421,14 @@
   --color-disclosure-text: hsl(213.333 7.317% 75.882%);
   --color-dialog-overlay: hsl(0 0% 12.157%);
   --color-markdown-border: hsl(213.333 4.523% 39.02%);
+  --color-tone-neutral: hsl(213.333 7.317% 75.882%);
+  --color-tone-accent: hsl(217.317 89.13% 81.961%);
+  --color-tone-success: hsl(140 50% 66%);
+  --color-tone-warning: hsl(40 85% 64%);
+  --color-tone-danger: hsl(4.231 80% 80%);
+  --color-tone-done: hsl(268 80% 83%);
+  --color-on-tone: hsl(0 0% 12.157%);
+  --state-tone-subtle-opacity: 14%;
 }
 
 /* Relative spacing is reset at every explicit theme boundary, including portals. */
@@ -424,5 +449,7 @@
     --control-height-compact: var(--control-height-touch);
     --control-height: var(--control-height-touch);
     --control-font-size: 1rem;
+    /* The title bar holds compact controls, which take the touch height here. */
+    --title-bar-height: calc(var(--control-height-touch) + var(--space-1));
   }
 }

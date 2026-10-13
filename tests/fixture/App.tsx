@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Theme, ToastProvider } from '@envsemble/envui';
 import '@envsemble/envui/styles.css';
 import './Fixture.css';
@@ -10,19 +11,47 @@ import { ButtonGroupsFixture } from './ButtonGroups.js';
 import { LayoutFixture } from './Layout.js';
 import { FeatureCardsFixture } from './FeatureCards.js';
 import { ColorPickerFixture } from './ColorPicker.js';
-import { MarkdownEditingFixture } from './MarkdownEditing.js';
+import { MarkdownEditingFixture, MarkdownExtensionsFixture } from './MarkdownEditing.js';
 import { AdoptionFixture, ShellFixture } from './Adoption.js';
+import { ResizableShellFixture } from './ResizableShell.js';
+import {
+  FramedShellFixture,
+  FullShellFixture,
+  FullShellSkeletonFixture,
+  ScrollKeysFixture,
+  TitleBarFixture,
+} from './WindowShell.js';
+import { MenusFixture } from './Menus.js';
+import { MenubarFixture } from './Menubars.js';
+import { TreeFixture } from './TreeView.js';
+import { DocumentTabsFixture } from './Tabs.js';
+import { CommandPaletteFixture } from './Palette.js';
+import { SegmentedControlFixture } from './Segments.js';
+import { BadgesFixture } from './Badges.js';
+import { DialogVariantsFixture, NoticesFixture, PopoverFixture } from './Overlays.js';
+import { DataDisplayFixture } from './DataDisplay.js';
+
+/** Fixtures that fill the viewport are only mounted on their own. */
+const standaloneFixtures: Record<string, () => ReactNode> = {
+  shell: ShellFixture,
+  'resizable-shell': ResizableShellFixture,
+  'full-shell': FullShellFixture,
+  'full-shell-skeleton': FullShellSkeletonFixture,
+  'title-bar': TitleBarFixture,
+  'scroll-keys': ScrollKeysFixture,
+  'framed-shell': FramedShellFixture,
+};
 
 export default function App() {
   // Keep the full fixture available for integration checks; focused tests mount
   // only their own controls, so unrelated editors and portals do no work.
   const fixture = new URLSearchParams(location.search).get('fixture');
   const includes = (name: string) => fixture === null || fixture === name;
-  // The shell fills the viewport, so it is only mounted on its own.
-  if (fixture === 'shell')
+  const Standalone = fixture === null ? undefined : standaloneFixtures[fixture];
+  if (Standalone)
     return (
       <Theme theme="light">
-        <ShellFixture />
+        <Standalone />
       </Theme>
     );
   return (
@@ -72,8 +101,66 @@ export default function App() {
             </>
           )}
           {includes('markdown') && <MarkdownEditingFixture />}
+          {includes('markdown-extensions') && <MarkdownExtensionsFixture />}
+          {includes('tree') && (
+            <>
+              <TreeFixture theme="light" />
+              <TreeFixture theme="dark" />
+            </>
+          )}
+          {includes('document-tabs') && (
+            <>
+              <DocumentTabsFixture theme="light" />
+              <DocumentTabsFixture theme="dark" />
+            </>
+          )}
+          {includes('palette') && (
+            <>
+              <CommandPaletteFixture theme="light" />
+              <CommandPaletteFixture theme="dark" />
+            </>
+          )}
+          {includes('segments') && (
+            <>
+              <SegmentedControlFixture theme="light" />
+              <SegmentedControlFixture theme="dark" />
+            </>
+          )}
+          {includes('badges') && (
+            <>
+              <BadgesFixture theme="light" />
+              <BadgesFixture theme="dark" />
+            </>
+          )}
+          {includes('notices') && (
+            <>
+              <NoticesFixture theme="light" />
+              <NoticesFixture theme="dark" />
+            </>
+          )}
+          {includes('dialog-variants') && <DialogVariantsFixture />}
+          {includes('popover') && (
+            <>
+              <PopoverFixture theme="light" />
+              <PopoverFixture theme="dark" />
+            </>
+          )}
+          {includes('data-display') && (
+            <>
+              <DataDisplayFixture theme="light" />
+              <DataDisplayFixture theme="dark" />
+            </>
+          )}
+          {includes('menus') && (
+            <>
+              <MenusFixture theme="light" />
+              <MenusFixture theme="dark" />
+            </>
+          )}
           {/* Root theming would change the host document, so adoption mounts only on its own. */}
           {fixture === 'adoption' && <AdoptionFixture />}
+          {/* Access keys listen to the whole window, so the menubar mounts only on its own. */}
+          {fixture === 'menubar' && <MenubarFixture />}
         </main>
       </Theme>
     </>

@@ -30,6 +30,7 @@ import { Home } from '@envsemble/envui/icons/Home';
 | aria-label              | Required accessible destination name when iconOnly is enabled; icon is also required             |
 | icon                    | Material Symbols fill automatically when selected; custom React icons are supported              |
 | selectedIcon            | Optional selected variant for custom icons                                                       |
+| trailing                | End content such as a Counter; icon-only items show a small dot instead                          |
 | children / native props | Destination label and link/button attributes                                                     |
 
 ## Guidelines
@@ -49,3 +50,4 @@ TypeScript declarations provide the complete public API.
 - [Direction links](../components/direction-links.md)
 - [Icons & assets](../foundations/icons.md)
 - [Colors & themes](../foundations/colors.md)
+- [Badges & counters](../components/badges.md)

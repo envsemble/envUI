@@ -16,6 +16,7 @@ import {
   Spinner,
   Stack,
   Surface,
+  Kbd,
 } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { Search } from '@envsemble/envui/icons/Search';
@@ -184,9 +185,33 @@ export function DialogsPreview() {
       <Example
         title="Modal dialogs"
         size="collection"
-        caption="Modals block page interaction and trap focus. Escape closes the dialog and returns focus to its trigger."
+        caption={
+          <>
+            Modals block page interaction and trap focus. <Kbd>Esc</Kbd> closes the dialog and
+            returns focus to its trigger.
+          </>
+        }
       >
         <SpecimenGrid size="compact">
+          <Specimen title="Wide">
+            <Dialog
+              trigger={<Button variant="secondary">Review changes</Button>}
+              title="Review changes"
+              description="Wide dialogs suit tables, comparisons and longer forms."
+              size="wide"
+            >
+              <Text>Three documents changed since your last review.</Text>
+            </Dialog>
+          </Specimen>
+          <Specimen title="Near the top">
+            <Dialog
+              trigger={<Button variant="secondary">Find a plan</Button>}
+              title="Find a plan"
+              placement="top"
+            >
+              <Input label="Plan name" name="plan" />
+            </Dialog>
+          </Specimen>
           <Specimen title="Confirmation">
             <Dialog
               open={activeDialog === 'delete'}
@@ -214,7 +239,11 @@ export function DialogsPreview() {
               onOpenChange={(open) => setActiveDialog(open ? 'pending' : null)}
               trigger={<Button variant="secondary">Rename project</Button>}
               title="Rename project"
-              description="Saving keeps the dialog open; Cancel and Escape wait until it finishes."
+              description={
+                <>
+                  Saving keeps the dialog open; Cancel and <Kbd>Esc</Kbd> wait until it finishes.
+                </>
+              }
               closeLabel="Cancel"
               pending={saving}
               actions={
@@ -254,7 +283,12 @@ export function DialogsPreview() {
       <FormDialogExamples />
       <Example
         title="Side panel"
-        caption="This non-modal panel leaves the page interactive. Outside clicks keep it open; Escape or Close dismisses it."
+        caption={
+          <>
+            This non-modal panel leaves the page interactive. Outside clicks keep it open;{' '}
+            <Kbd>Esc</Kbd> or Close dismisses it.
+          </>
+        }
       >
         <Dialog
           open={activeDialog === 'inspector'}

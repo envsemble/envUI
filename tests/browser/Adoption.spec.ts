@@ -1,7 +1,8 @@
 import { test, expect, type Page } from '@playwright/test';
+import { fixtureUrl } from './Servers';
 
-const fixture = 'http://127.0.0.1:8766/?fixture=adoption';
-const shellFixture = 'http://127.0.0.1:8766/?fixture=shell';
+const fixture = `${fixtureUrl}/?fixture=adoption`;
+const shellFixture = `${fixtureUrl}/?fixture=shell`;
 
 function collectErrors(page: Page) {
   const errors: string[] = [];
@@ -145,6 +146,25 @@ test('Tooltip describes a disabled control on keyboard focus', async ({ page }) 
   await expect(page.getByText('All seats are assigned')).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(page.getByText('All seats are assigned')).toHaveCount(0);
+});
+
+test('Tooltip keeps opening on hover after its control is enabled or disabled', async ({
+  page,
+}) => {
+  await page.goto(fixture);
+  const invite = page.getByRole('button', { name: 'Invite member' });
+  const toggle = page.getByRole('button', { name: 'Toggle seats' });
+  await toggle.click();
+  await expect(invite).toBeDisabled();
+  await page.locator('.env-tooltip-disabled-target').filter({ has: invite }).hover();
+  await expect(page.locator('.env-tooltip')).toHaveText('No seats left');
+  await page.mouse.move(1, 1);
+  await expect(page.locator('.env-tooltip')).toHaveCount(0);
+  // Enabled again, the control itself is the trigger, and hovering it opens the tooltip.
+  await toggle.click();
+  await expect(invite).toBeEnabled();
+  await invite.hover();
+  await expect(page.locator('.env-tooltip')).toHaveText('Invite a member');
 });
 
 test('error states, meters and avatars expose their semantics', async ({ page }) => {
@@ -564,7 +584,7 @@ test('secondary buttons stay distinct on the canvas, rows and dialog panes in bo
 });
 
 test('direction links, radio rows and choice controls settle while pressed', async ({ page }) => {
-  await page.goto('http://127.0.0.1:8766/?fixture=colors');
+  await page.goto(`${fixtureUrl}/?fixture=colors`);
   // The choice controls shrink, not their labels, whether the control or its text is pressed.
   const targets = [
     {

@@ -16,8 +16,24 @@ import { Text } from '@envsemble/envui';
 import { EmptyStatePreview, LoadingPreview, DialogsPreview } from './Feedback';
 import { ToastsPreview } from './Toasts';
 import { ColorPickerPreview } from './ColorPicking';
-import { MenuPreview, TooltipPreview, AvatarPreview, MetersPreview } from './Overlays';
+import {
+  MenuPreview,
+  MenubarPreview,
+  TooltipPreview,
+  AvatarPreview,
+  MetersPreview,
+} from './Overlays';
 import { AppShellPreview } from './Shell';
+import { CommandPalettePreview, DocumentTabsPreview, TreePreview } from './Workspace';
+import {
+  BadgesPreview,
+  BreadcrumbsPreview,
+  KbdPreview,
+  NoticesPreview,
+  PopoverPreview,
+  SegmentedControlPreview,
+  TablesPreview,
+} from './Elements';
 
 const RichTextPreview = lazy(() =>
   import('./RichTextContent').then(({ RichTextPreview }) => ({ default: RichTextPreview })),
@@ -28,6 +44,8 @@ export function ComponentPreview({ id }: { id: string }) {
   switch (id) {
     case 'buttons':
       return <ButtonsPreview />;
+    case 'segmented-control':
+      return <SegmentedControlPreview />;
     case 'fields':
       return <TextFieldsPreview />;
     case 'checkbox':
@@ -56,6 +74,14 @@ export function ComponentPreview({ id }: { id: string }) {
       return <CardsPreview />;
     case 'chips':
       return <ChipsPreview />;
+    case 'badges':
+      return <BadgesPreview />;
+    case 'tables':
+      return <TablesPreview />;
+    case 'keyboard':
+      return <KbdPreview />;
+    case 'breadcrumbs':
+      return <BreadcrumbsPreview />;
     case 'animated-number':
       return <AnimatedNumberPreview />;
     case 'code':
@@ -76,10 +102,16 @@ export function ComponentPreview({ id }: { id: string }) {
       return <LoadingPreview />;
     case 'toasts':
       return <ToastsPreview />;
+    case 'notices':
+      return <NoticesPreview />;
+    case 'popover':
+      return <PopoverPreview />;
     case 'dialogs':
       return <DialogsPreview />;
     case 'menu':
       return <MenuPreview />;
+    case 'menubar':
+      return <MenubarPreview />;
     case 'tooltip':
       return <TooltipPreview />;
     case 'avatar':
@@ -88,6 +120,12 @@ export function ComponentPreview({ id }: { id: string }) {
       return <MetersPreview />;
     case 'app-shell':
       return <AppShellPreview />;
+    case 'tree':
+      return <TreePreview />;
+    case 'document-tabs':
+      return <DocumentTabsPreview />;
+    case 'command-palette':
+      return <CommandPalettePreview />;
     default:
       return null;
   }

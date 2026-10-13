@@ -1,0 +1,95 @@
+/* Tables sit on a rounded surface with subtle row dividers and scroll sideways within their region. */
+.env-table-region {
+  --env-table-surface: var(--color-surface);
+  box-sizing: border-box;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow-x: auto;
+  border: 0.0625rem solid var(--color-border-strong);
+  border-radius: var(--md-sys-shape-corner-large);
+  background: var(--env-table-surface);
+  scrollbar-width: thin;
+}
+.env-table-region:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: 0.125rem;
+}
+/* A sticky header needs the region to scroll vertically too; the application gives it a height. */
+.env-table-region[data-sticky-header] {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.env-table {
+  --env-table-cell-padding: var(--space-3) var(--space-4);
+  inline-size: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  color: var(--color-text-primary);
+  font: var(--type-body);
+  text-align: start;
+}
+.env-table[data-density='compact'] {
+  --env-table-cell-padding: var(--space-2) var(--space-3);
+  font: var(--type-body-small);
+}
+.env-table-caption {
+  padding: var(--space-3) var(--space-4) var(--space-1);
+  caption-side: top;
+  color: var(--color-text-primary);
+  font: var(--type-h2);
+  text-align: start;
+}
+.env-table-header-cell,
+.env-table-cell {
+  padding: var(--env-table-cell-padding);
+  text-align: start;
+  vertical-align: middle;
+}
+.env-table-header-cell {
+  /* The fill over the surface keeps the header opaque, so a sticky header covers scrolled rows. */
+  background: linear-gradient(var(--color-fill), var(--color-fill)), var(--env-table-surface);
+  color: var(--color-text-muted);
+  font: var(--type-body-small);
+  font-weight: 500;
+  white-space: nowrap;
+}
+.env-table-region[data-sticky-header] .env-table-head .env-table-header-cell {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 1;
+}
+/* Rows are separated by hairlines; the first body row meets the header without one. */
+.env-table-body > .env-table-row + .env-table-row > :is(.env-table-cell, .env-table-header-cell) {
+  border-block-start: 0.0625rem solid var(--color-border-strong);
+}
+.env-table-body .env-table-header-cell {
+  background: transparent;
+  color: var(--color-text-primary);
+  font: inherit;
+  font-weight: 500;
+  white-space: normal;
+}
+.env-table :is(.env-table-cell, .env-table-header-cell)[data-align='end'] {
+  text-align: end;
+}
+.env-table :is(.env-table-cell, .env-table-header-cell)[data-numeric] {
+  font-variant-numeric: tabular-nums;
+}
+.env-table :is(.env-table-cell, .env-table-header-cell)[data-nowrap] {
+  white-space: nowrap;
+}
+/* A secondary line, such as <Text variant="caption">, sits under the cell's main text. */
+.env-table-cell > .env-text-caption {
+  margin-block-start: 0.125rem;
+}
+.env-table-row[data-interactive] {
+  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+}
+.env-table-row[data-interactive]:is(:hover, :focus-within) {
+  background: var(--color-state-layer-hover);
+}
+@media (prefers-reduced-motion: reduce) {
+  .env-table-row[data-interactive] {
+    transition: none;
+  }
+}

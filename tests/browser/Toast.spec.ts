@@ -1,8 +1,9 @@
 import { test, expect } from '@playwright/test';
+import { fixtureUrl } from './Servers';
 
 test.beforeEach(async ({ page }) => {
   await page.clock.install();
-  await page.goto('http://127.0.0.1:8766/?fixture=toast');
+  await page.goto(`${fixtureUrl}/?fixture=toast`);
 });
 const region = (page: import('@playwright/test').Page, placement = 'bottom-right') =>
   page.locator(`.env-toast-viewport-${placement}`);
@@ -149,8 +150,10 @@ test('placement stacks, keyboard access, wrapped sizing and contextual action st
   await page.getByTestId('toast-clear').click();
   await page.getByTestId('toast-queue-actions').click();
   await page.setViewportSize({ width: 320, height: 160 });
-  // Cleared toasts finish their exit transition before the stack is measured.
+  // Cleared toasts finish their exit transition, and the new ones their entrance, before the stack
+  // is measured.
   await expect(region(page).locator('.env-toast[data-ending-style]')).toHaveCount(0);
+  await expect(region(page)).not.toHaveAttribute('data-settling');
   const stack = await region(page).evaluate((viewport) => ({
     scroll: viewport.scrollHeight,
     height: viewport.clientHeight,
@@ -183,7 +186,11 @@ test('the hidden count sits beyond the stack: above at the bottom right, below a
   await page.getByTestId('toast-queue-top').click();
   for (const placement of ['bottom-right', 'top-center']) {
     const viewport = region(page, placement);
-    await expect(viewport.locator('.env-toast-queued-count')).toHaveText('+1');
+    const count = viewport.locator('.env-toast-queued-count');
+    await expect(count).toHaveClass(/env-counter/);
+    // The status announces the full meaning; the counter shows the number.
+    await expect(count).toContainText('1 older notification hidden');
+    await expect(count.locator('[aria-hidden="true"]')).toHaveText('+1');
     // Entrances and glides move the notices for a moment; poll until they settle.
     await expect
       .poll(() =>
@@ -238,4 +245,72 @@ test('existing notices glide from their previous place when another arrives', as
       element.getAnimations().some((animation) => animation.id === 'env-toast-glide'),
     ),
   ).toBe(false);
+});
+
+for (const motion of ['reduce', 'no-preference'] as const)
+  for (const placement of ['bottom-right', 'top-center'] as const)
+    test(`dismissed notices step out at once, so the stack neither grows, scrolls nor jumps (${placement}, ${motion} motion)`, async ({
+      page,
+    }) => {
+      await page.emulateMedia({ reducedMotion: motion });
+      // A long exit keeps the leaving notices in view while the stack is measured.
+      // Letter spacing gives the messages fractional widths, which a pinned notice must keep.
+      await page.addStyleTag({
+        content:
+          '.env-toast-viewport > .env-toast[data-ending-style] { transition-duration: 4s; } .env-toast-message { letter-spacing: 0.0137em; }',
+      });
+      const top = placement === 'top-center';
+      await page.getByTestId(top ? 'toast-queue-top' : 'toast-queue-bottom').click();
+      const stack = region(page, placement);
+      const queued = (index: number) =>
+        notice(page, `${top ? 'Top' : 'Bottom'} queue ${index}`, placement);
+      await expect(stack.locator('.env-toast:not([data-limited])')).toHaveCount(3);
+      await expect(stack.locator('.env-toast[data-starting-style]')).toHaveCount(0);
+      await expect(stack).not.toHaveAttribute('data-settling');
+      const height = await stack.evaluate((element) => element.getBoundingClientRect().height);
+      const first = queued(4);
+      const drawn = (await first.boundingBox())!;
+      // Two in a row: each steps out at once while the hidden notice takes its turn.
+      await first.getByRole('button', { name: 'Dismiss notification' }).click();
+      await expect(first).toHaveAttribute('data-leaving', '');
+      // Its message keeps its lines while it fades.
+      expect(Math.abs((await first.boundingBox())!.height - drawn.height)).toBeLessThan(1);
+      if (motion === 'reduce') {
+        const pinned = (await first.boundingBox())!;
+        expect(Math.abs(pinned.x - drawn.x)).toBeLessThan(1);
+        expect(Math.abs(pinned.y - drawn.y)).toBeLessThan(1);
+      }
+      await expect(queued(1)).toBeVisible();
+      await queued(3).getByRole('button', { name: 'Dismiss notification' }).click();
+      await expect(queued(3)).toHaveAttribute('data-leaving', '');
+      expect(
+        await stack.evaluate((element) => element.getBoundingClientRect().height),
+      ).toBeLessThan(height + 1);
+      // Meanwhile the stack does not scroll, so no scrollbar flashes.
+      await expect(stack).toHaveAttribute('data-settling', '');
+      await expect(stack).toHaveCSS('overflow-y', 'visible');
+      await expect(first).toHaveCount(0, { timeout: 8_000 });
+      await expect(queued(3)).toHaveCount(0, { timeout: 8_000 });
+      await expect(stack).not.toHaveAttribute('data-settling');
+      await expect(stack).toHaveCSS('overflow-y', 'auto');
+    });
+
+test('a stack taller than the window keeps scrolling while a notice leaves', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 160 });
+  await page.getByTestId('toast-queue-actions').click();
+  const stack = region(page);
+  await expect(stack.locator('.env-toast[data-starting-style]')).toHaveCount(0);
+  await expect(stack).not.toHaveAttribute('data-settling');
+  await expect
+    .poll(() => stack.evaluate((element) => element.scrollHeight > element.clientHeight))
+    .toBe(true);
+  await stack
+    .locator('.env-toast:not([data-limited])')
+    .first()
+    .getByRole('button', { name: 'Dismiss notification' })
+    .click();
+  // It stays a scroll container: no overflow switch, which would lose the scroll position.
+  await expect(stack.locator('.env-toast[data-leaving]')).toHaveCount(1);
+  await expect(stack).not.toHaveAttribute('data-settling');
+  await expect(stack).toHaveCSS('overflow-y', 'auto');
 });

@@ -5,12 +5,15 @@ import type { SpaceStep, StackElement } from './Layout.js';
 
 export type SurfaceTone = 'pane' | 'row' | 'canvas' | 'alternate';
 export type SurfaceCorners = 'surface' | 'standard' | 'pill' | 'none';
+export type SurfaceDensity = 'standard' | 'compact';
 
 export interface SurfaceAppearanceProps {
   tone?: SurfaceTone;
   /** Omit for responsive padding; 0 removes padding. */
   padding?: SpaceStep;
   corners?: SurfaceCorners;
+  /** compact gives the controls inside the compact control height, which still grows for touch. */
+  density?: SurfaceDensity;
 }
 
 export type SurfaceProps<Element extends StackElement = 'div'> = SurfaceAppearanceProps & {
@@ -26,6 +29,7 @@ export function Surface<Element extends StackElement = 'div'>({
   tone = 'pane',
   padding,
   corners = 'surface',
+  density = 'standard',
   className,
   style,
   ...props
@@ -35,6 +39,7 @@ export function Surface<Element extends StackElement = 'div'>({
     render,
     props: {
       ...props,
+      'data-density': density === 'compact' ? 'compact' : undefined,
       className: classNames(
         'env-surface',
         `env-surface-${tone}`,

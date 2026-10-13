@@ -31,6 +31,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 ## Actions
 
 - [Buttons](components/buttons.md) — Button, IconButton, ButtonGroup.
+- [Segmented controls](components/segmented-control.md) — One choice among a few options on a pill rail, such as views or filters.
 
 ## Forms & selection
 
@@ -46,7 +47,10 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Navigation items](components/navigation.md) — Links to another destination; routing stays with the app.
 - [Tabs](components/tabs.md) — Switches between content panels in the same view.
 - [Direction links](components/direction-links.md) — Centered previous and next destinations, together or individually.
-- [Application shell](components/app-shell.md) — Topbar and collapsible navigation sidebar for a whole application.
+- [Application shell](components/app-shell.md) — Topbar, window title bar and collapsible navigation sidebar for a whole application.
+- [Tree](components/tree.md) — A virtualized tree of rows for large hierarchies, such as file trees.
+- [Document tabs](components/document-tabs.md) — Closable editor-style tabs for open documents.
+- [Breadcrumbs](components/breadcrumbs.md) — The path from the top level to the current page.
 
 ## Content & guidance
 
@@ -54,6 +58,9 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Markdown](components/markdown.md) — Render Markdown strings with Markdown, or edit them with MarkdownEditor and its shared preview.
 - [Code](components/code.md) — Render inline code and highlighted code blocks.
 - [Info chips](components/chips.md) — Read-only metadata beside related content.
+- [Badges & counters](components/badges.md) — Small pills that name a state in its tone, and compact counts.
+- [Tables](components/tables.md) — Semantic data tables on a rounded surface, with dense and sticky options.
+- [Keyboard keys](components/keyboard.md) — Key caps for shortcuts in text, menus and hints.
 - [Animated numbers](components/animated-number.md) — Counts that roll to their new value, so a change is noticed.
 - [Disclosure notes](components/disclosures.md) — Keep optional details collapsed until needed.
 - [Avatars](components/avatar.md) — A picture of a person or organization with a default picture or initials as fallback, and the avatar button.
@@ -63,7 +70,11 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Empty states](components/empty-state.md) — Explain missing content and offer the next action.
 - [Loading](components/loading.md) — Page progress, spinners, pending buttons and placeholders for incoming content.
 - [Toasts](components/toasts.md) — Managed feedback with configurable duration, placement and stack capacity.
+- [Notices](components/notices.md) — Inline banners for page- or section-level messages in four tones.
 - [Dialogs](components/dialogs.md) — Centered modals and side panels share focus and dismissal behavior.
-- [Menus](components/menu.md) — Actions, destinations and the shared organization menu, opened from a trigger.
+- [Command palette](components/command-palette.md) — Quick open: search and choose from a ranked list near the top of the window.
+- [Menus](components/menu.md) — Actions, destinations and the shared organization menu, opened from a trigger or a right click.
+- [Menubar](components/menubar.md) — An application menubar of compact menus with shortcuts, submenus and access keys.
 - [Tooltips](components/tooltip.md) — Short hints on hover and keyboard focus.
+- [Popovers](components/popover.md) — A floating panel for details or a small form beside its trigger.
 - [Meters & progress](components/meters.md) — Quantities within a range and task completion.

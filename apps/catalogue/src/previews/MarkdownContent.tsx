@@ -40,9 +40,9 @@ export function MarkdownPreview() {
           typography and spacing.
         </Text>
         <Text>
-          Rendering uses react-markdown with remark-gfm for GitHub Flavored Markdown features such
-          as tables, task lists and strikethrough. Code blocks use Shiki for syntax highlighting.
-          Raw HTML is ignored, and your application can customize how links open.
+          Rendering uses react-markdown with remark-gfm for tables, task lists, strikethrough and
+          autolinks. Code blocks use Shiki for syntax highlighting. Raw HTML is ignored, and your
+          application can customize how links open.
         </Text>
         <Card tone="pane">
           <Tabs

@@ -1,0 +1,74 @@
+import { test, expect } from '@playwright/test';
+import { catalogueUrl } from './Servers';
+
+// Options for dense, document-centred applications: compact menus, subtle inline code and tabs that
+// fill a region.
+
+test('a compact menu has shorter rows on a raised popup than a standard menu', async ({ page }) => {
+  await page.goto(`${catalogueUrl}/#/components/menu/preview`);
+  await page.getByRole('button', { name: 'Open account menu' }).click();
+  const standard = page.getByRole('menu', { name: 'Account', exact: true });
+  const standardRow = await standard.getByRole('menuitem', { name: 'Preferences' }).boundingBox();
+  await page.keyboard.press('Escape');
+  await page.getByRole('button', { name: 'Open compact account menu' }).click();
+  const compact = page.getByRole('menu', { name: 'Compact account' });
+  await expect(compact).toHaveAttribute('data-density', 'compact');
+  await expect(compact).not.toHaveAttribute('data-starting-style');
+  // Rows reach their size once the popup has grown in.
+  await expect
+    .poll(async () =>
+      Math.round(
+        (await compact.getByRole('menuitem', { name: 'Preferences' }).boundingBox())!.height,
+      ),
+    )
+    .toBe(28);
+  expect(28).toBeLessThan(standardRow!.height);
+  expect(
+    await compact.evaluate((element) =>
+      Number.parseFloat(getComputedStyle(element).borderTopWidth),
+    ),
+  ).toBeGreaterThan(0);
+  await expect(compact.getByRole('separator')).toHaveCount(1);
+  await compact.getByRole('menuitem', { name: 'Preferences' }).click();
+  await expect(compact).toBeHidden();
+});
+
+test('subtle inline code follows the theme instead of the dark code colours', async ({ page }) => {
+  await page.goto(`${catalogueUrl}/#/components/code/preview`);
+  const dark = page.locator('code', { hasText: 'theme="dark"' }).first();
+  const subtle = page.locator('code', { hasText: 'c9f60ee' }).first();
+  await expect(subtle).toBeVisible();
+  const background = (locator: typeof dark) =>
+    locator.evaluate((element) => getComputedStyle(element).backgroundColor);
+  expect(await background(subtle)).not.toBe(await background(dark));
+});
+
+test('filling tabs give the selected panel the height left below the list', async ({ page }) => {
+  await page.goto(`${catalogueUrl}/#/components/tabs/preview`);
+  const canvas = page.getByTestId('fill-canvas');
+  await expect(canvas).toBeVisible();
+  const region = await page.locator('.docs-fill-region').boundingBox();
+  const list = await page.getByRole('tablist', { name: 'Diagram views' }).boundingBox();
+  const box = await canvas.boundingBox();
+  // The canvas reaches the bottom of the region and starts below the list.
+  expect(Math.abs(box!.y + box!.height - (region!.y + region!.height))).toBeLessThanOrEqual(2);
+  expect(box!.y).toBeGreaterThan(list!.y + list!.height - 1);
+  expect(box!.height).toBeGreaterThan(100);
+});
+
+test('a compact surface gives its controls the compact height', async ({ page }) => {
+  await page.goto(`${catalogueUrl}/#/components/surface/preview`);
+  const height = async (toolbar: string, name: string) =>
+    (await page.getByRole('group', { name: toolbar }).getByRole('button', { name }).boundingBox())!
+      .height;
+  expect(await height('Compact toolbar', 'Fit')).toBeLessThan(
+    await height('Standard toolbar', 'Fit'),
+  );
+  expect(await height('Compact toolbar', 'Views')).toBeLessThan(
+    await height('Standard toolbar', 'Views'),
+  );
+  await expect(page.getByRole('group', { name: 'Compact toolbar' })).toHaveAttribute(
+    'data-density',
+    'compact',
+  );
+});

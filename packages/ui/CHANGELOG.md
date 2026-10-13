@@ -1,8 +1,65 @@
 # Changelog
 
+## Unreleased
+
+Components for document-centred desktop applications: a file tree, editor tabs, quick open, context menus and a resizable sidebar, with badges, notices, tables and other everyday pieces.
+
+### Added
+
+- `AppShell` `sidebarContent`: the application's own content below the navigation, which fills the remaining sidebar height and scrolls itself; hidden while the sidebar is compact.
+- `AppShell` `resizable`: the expanded sidebar's edge becomes a resize handle for the pointer and the keyboard (<kbd>←</kbd> and <kbd>→</kbd> by 16 px, 48 px with <kbd>Shift</kbd>, <kbd>Home</kbd> and <kbd>End</kbd>), between `sidebarMinWidth` and `sidebarMaxWidth` (12 and 32 rem by default). `sidebarWidth` and `onSidebarWidthChange` control the width; otherwise it persists under `storageKey`. `AppShellSkeleton` accepts the same `resizable` and bounds.
+- `ContextMenu`: actions for an area on right click, long press, the <kbd>Menu</kbd> key and <kbd>Shift</kbd>+<kbd>F10</kbd>, with the target element passed to its content; `open`, `onOpenChange` and `anchorPoint` open it programmatically.
+- `MenuItem` `description`, `shortcut` (shown as `Kbd` keys, with arrows announced by their key names) and `trailing`; `MenuGroup`, `MenuRadioGroup`, `MenuRadioItem` and `MenuCheckboxItem`.
+- `Tree`: a virtualized WAI-ARIA tree for thousands of rows, with keyboard navigation, type-ahead, preview and open callbacks, a context menu and two densities. Keys pressed with <kbd>Alt</kbd>, <kbd>Ctrl</kbd> or <kbd>⌘</kbd> are left to the application, such as <kbd>Alt</kbd>+<kbd>←</kbd> for going back.
+- `DocumentTabs`: closable editor-style tabs with preview tabs, pinning, closing with <kbd>Delete</kbd> or a middle click, and a strip that scrolls sideways. However the focused tab closes, focus moves to the tab that becomes active. Keys pressed with <kbd>Alt</kbd>, <kbd>Ctrl</kbd> or <kbd>⌘</kbd> are left to the application.
+- `CommandPalette`: a quick-open dialog near the top of the window, on the dialog surface, with grouped options rounded like `Select` options, keyboard highlight, modifier selection and key `hints` shown as `Kbd` keys.
+- `SegmentedControl`: one choice among a few options on a pill rail, with counts and icons.
+- `Badge` in six tones and three variants, `Counter`, and `NavigationItem` `trailing` content (a dot while icon-only).
+- Status tone tokens `--color-tone-neutral`, `--color-tone-accent`, `--color-tone-success`, `--color-tone-warning`, `--color-tone-danger`, `--color-tone-done` and `--color-on-tone`, with at least 4.5:1 contrast on the canvas, panes and rows in both themes.
+- `Notice`: an inline banner in four tones with an action, a round dismiss button in its tone and `announce` for alerts.
+- `Popover`: a floating panel with a title, two widths and a close function for its content.
+- `Table` with `TableHead`, `TableBody`, `TableRow`, `TableHeaderCell` and `TableCell`: density, sticky headers, numeric cells and a focusable scroll region.
+- `Row` `interactive`: a grouped row that opens something through a link or button inside reacts to hover, keyboard focus inside it and presses, like a clickable card. The link or button marked `data-row-target` covers the row, so a press anywhere on the row follows it; the row shows a press on it, not on the row's other controls.
+- `Breadcrumbs` and `Kbd`.
+- `Markdown` `components`, `remarkPlugins` and `rehypePlugins`; application overrides win and attributes such as heading ids reach the elements. Raw HTML is dropped before any rehype plugin runs, so it stays ignored, except keys written as `<kbd>Ctrl</kbd>`, which render as `Kbd`.
+- `Dialog` `size="wide"` (about 44 rem) and `placement="top"`.
+- `Menu` and `ContextMenu` `density="compact"`: the desktop dropdown for dense surfaces. It takes the raised popup of `Popover` and `Select`, with small corners, 1.75 rem rows that highlight on hover and keyboard focus, labels that line up whether a row has a check mark, an icon or neither, shortcuts as small muted `Kbd` keys, hairline separators and small group labels. A compact `Tree` opens a compact context menu.
+- `MenuSubmenu`: a row that opens a nested menu beside it, on hover and with <kbd>→</kbd>, <kbd>Enter</kbd> or <kbd>Space</kbd>, closing with <kbd>←</kbd> and <kbd>Esc</kbd>. Submenus nest, flip at the window edge, line their first row up with the row that opened them and take the density and theme of their menu. `open`, `defaultOpen` and `onOpenChange` control them, for example to load their items as they open.
+- `Menubar` and `MenubarMenu`: an application menubar of compact text triggers, each opening a compact menu; once one is open, hovering another trigger or <kbd>←</kbd> and <kbd>→</kbd> switch menus, and opening one neither locks scrolling nor shifts the page. After a command, focus returns to where it was before the menubar took it, which `onOpenChange` reports as `previousFocus` for commands such as Copy. `accessKeys` adds desktop access keys: holding <kbd>Alt</kbd> underlines them, <kbd>Alt</kbd> with a menu's letter opens it, and <kbd>Alt</kbd> alone moves focus to the menubar and back.
+- `Select` `density="compact"`: a compact trigger, and the compact menu's popup with a check mark on the selected option.
+- `AppShell` and `AppShellSkeleton` `topbar="full"`: one row across the window, independent of the sidebar: the toggle, the context at its natural width, the title and the actions at the end. The sidebar then fits its navigation and sidebar content, and narrow windows give the context the room it needs.
+- `AppShell` and `AppShellSkeleton` `titleBar`: the topbar is the window's title bar in installed web apps and desktop shells that draw their own (the Window Controls Overlay). It takes the title bar area's height and its divider below, so the divider runs under the window controls too, at least `--title-bar-height` so a zoomed page keeps room for its controls, and leaves room for the window controls through `env(titlebar-area-*)`. It drags the window from empty space while its controls stay clickable, and makes its controls compact, with icon-only text buttons in the quiet icon color of the window controls; `--topbar-height` follows it. The shell fills the window and its content area scrolls below the title bar, with a stable scrollbar gutter, so the window controls never cover a scrollbar; the keyboard scrolls it as it would the document, where the browser does not already, with quick presses adding up and held keys repeating.
+- `--app-sticky-top` on `AppShell`: the offset for content that sticks with `position: sticky`, the topbar height while the document scrolls and 0 in a title-bar shell's content area. `useAppShell().getScrollElement()` returns the element that scrolls the page content, for reading and restoring scroll positions; it changes once the shell is attached, so effects that depend on it run again with a title-bar shell's content area or a frame's scrolling element, and every copy of it returns the current element.
+- `TitleBar`: the same window title bar without the shell, with start, centered and end content, and the `--title-bar-height` token (2.5 rem), the least height of a title bar and its height where the window reports no title bar area.
+- `WindowFrame`: a window without the shell, such as a start page, filled by a title bar on top and content that scrolls below it, with a stable scrollbar gutter; `scrollRef` gives the scrolling element. Like a title-bar shell's content area, the keyboard scrolls it as it would the document.
+- `Tabs` `fill`: the selected panel takes the height left below the list, for content that fills a region such as a diagram canvas.
+- `Surface` `density="compact"`: the controls inside take the compact control height, for toolbars over dense content.
+- `Code` `appearance="subtle"` and `Markdown` `inlineCode="subtle"`: inline code that follows the app theme as a quiet chip, for prose dense with identifiers.
+
+### Changed
+
+- `ThemePreferenceProvider` follows theme changes made in other windows and tabs of the same origin.
+- `Select`'s outlined trigger is the outlined `Button` style. The open list takes the `Popover` surface corners, with rounded options inset by its padding.
+- `Dialog` shares the `Popover` look: the raised popup color and a hairline border. In the dark theme dialogs keep the pane color, through the new `--color-dialog` token. The title and description sit together above the content.
+- The toast stack's count of hidden notices is a `Counter`. A dismissed notice steps out of the stack at once and fades where it was, so dismissing several in a row moves the stack once each, without jerking or flashing a scrollbar; a notice revealed from the hidden ones fades in.
+- A collapsed `AppShell` sidebar no longer treats expanded tree rows as open popups, and stays expanded while a context menu opened from it is open.
+
+### Fixed
+
+- A `Tooltip` stopped opening on hover once its control became enabled or disabled, such as a back button once there is somewhere to go: it kept listening to the element the control had replaced.
+- The toast region no longer throws where the Web Animations API is missing, such as in jsdom tests of an application: notices there move without motion instead of unmounting the page.
+
+### Documentation
+
+- New pages for the tree, document tabs, breadcrumbs, command palette, segmented controls, badges and counters, notices, popovers, tables and keyboard keys. Colors list the status tones.
+- The application shell page shows the frame alone, resizable, and a full-width topbar as a window title bar, with `TitleBar` in a `WindowFrame` on its own. The menus page shows the account and organization menus, and the building blocks for the application's own menus, compact menus and submenus included.
+- New page for the menubar.
+- Keys in the documentation and the catalogue show as `Kbd` keys.
+- The browser suite's ports can be changed with `ENVUI_CATALOGUE_PORT` and `ENVUI_FIXTURE_PORT`.
+
 ## 0.4.0 — 2026-10-11
 
-Clearer contrast in both themes, more ways to show loading, and refinements from reviewing the catalogue and Platform.
+Clearer contrast in both themes, more ways to show loading, and refinements from reviewing the catalogue and an application built with it.
 
 ### Changed
 
@@ -84,7 +141,7 @@ The application frame and menus, so products share one sidebar and navigation.
 
 ## 0.2.0 — 2026-10-11
 
-Foundations found missing while adopting envUI in Platform, the first product to use it.
+Foundations found missing while adopting envUI in the first application to use it.
 
 ### Breaking changes
 
@@ -165,8 +222,8 @@ The first published release of envUI: a private React 19 component library with 
 ### Optional entries
 
 - `@envsemble/envui/content`:
-  - `Code` and `CodeBlock`, with lazy Shiki highlighting using GitHub Dark Default in both themes; `CodeBlock` accepts an explicit theme;
-  - `Markdown`, with GitHub-flavored Markdown, envUI prose and application-owned links;
+  - `Code` and `CodeBlock`, with lazy Shiki highlighting in the dark code theme in both app themes; `CodeBlock` accepts an explicit theme;
+  - `Markdown`, with CommonMark plus tables, task lists, strikethrough, automatic links and footnotes, envUI prose and application-owned links;
   - `MarkdownEditor`, with Write/Preview, formatting, shared undo/redo and link insertion through an application picker.
 - `@envsemble/envui/rich-text`: `RichTextEditor`, the read-only `RichText` and `createRichTextExtensions`.
   - Built on Tiptap, with Markdown values and configurable reference lookup.
