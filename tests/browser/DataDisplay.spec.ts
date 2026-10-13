@@ -33,6 +33,39 @@ test('keys render as key caps joined by plus', async ({ page }) => {
   await expect(scope.locator('kbd.env-kbd').filter({ hasText: 'F2' })).toBeVisible();
 });
 
+test('interactive rows react to hover, presses and focus, and open from anywhere', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dataFixture);
+  for (const theme of ['light', 'dark']) {
+    const rows = page.getByRole('list', { name: `Rows ${theme}` }).getByRole('listitem');
+    const [open, plain] = [rows.first(), rows.last()];
+    const fill = (row: typeof open) =>
+      row.evaluate((element) => getComputedStyle(element).backgroundColor);
+    const rest = await fill(open);
+    expect(await fill(plain)).toBe(rest);
+    await expect(open).toHaveCSS('position', 'relative');
+    await plain.hover();
+    expect(await fill(plain)).toBe(rest);
+    // The row reacts to the pointer anywhere on it, and to focus inside it.
+    await open.hover({ position: { x: 8, y: 8 } });
+    const hovered = await fill(open);
+    expect(hovered).not.toBe(rest);
+    await page.mouse.move(0, 0);
+    await expect.poll(() => fill(open)).toBe(rest);
+    await open.getByRole('link', { name: 'Roadmap' }).focus();
+    expect(await fill(open)).toBe(hovered);
+    await page.mouse.move(0, 0);
+    // A press beside the title follows the stretched link; the action keeps its own press.
+    const box = (await open.boundingBox())!;
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height - 6);
+    await expect(page.getByTestId(`row-result-${theme}`)).toHaveText('open roadmap');
+    await open.getByRole('button', { name: 'More actions' }).click();
+    await expect(page.getByTestId(`row-result-${theme}`)).toHaveText('more actions');
+  }
+});
+
 test('tables scroll sideways in a focusable region and keep a sticky header', async ({ page }) => {
   await page.goto(dataFixture);
   for (const theme of ['light', 'dark']) {

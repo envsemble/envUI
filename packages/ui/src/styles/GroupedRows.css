@@ -9,6 +9,7 @@
   list-style: none;
 }
 .env-grouped-rows > .env-row {
+  --env-row-fill: var(--color-row);
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -18,7 +19,7 @@
   min-height: 3.5rem;
   padding: var(--space-3) var(--row-padding-inline);
   font: var(--type-body-small);
-  background: var(--color-row);
+  background: var(--env-row-fill);
   color: var(--color-row-text);
 }
 .env-grouped-rows > .env-row > * {
@@ -31,7 +32,25 @@
   font: var(--type-body-small);
 }
 .env-contrast-row-pane .env-grouped-rows > .env-row {
-  background: var(--color-row-alternate);
+  --env-row-fill: var(--color-row-alternate);
+}
+/* A row that opens something through a link or button inside reacts like a clickable card: to
+   hover, presses and focus inside it. It is that link's containing block, so the link can stretch
+   over the row with a pseudo-element. */
+.env-grouped-rows > .env-row[data-interactive] {
+  position: relative;
+  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+}
+.env-grouped-rows > .env-row[data-interactive]:is(:hover, :focus-within) {
+  background: hsl(from var(--env-row-fill) h s var(--state-surface-hover-lightness));
+}
+.env-grouped-rows > .env-row[data-interactive]:active {
+  background: hsl(from var(--env-row-fill) h s var(--state-surface-pressed-lightness));
+}
+@media (prefers-reduced-motion: reduce) {
+  .env-grouped-rows > .env-row[data-interactive] {
+    transition: none;
+  }
 }
 .env-contrast-row-pane .env-grouped-rows + .env-grouped-rows {
   margin-top: 0.75rem;

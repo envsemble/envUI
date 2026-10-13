@@ -99,3 +99,12 @@ body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-p
 .fixture-table-region {
   max-block-size: 16rem;
 }
+/* An interactive row's link covers the row; its action stays above the link. */
+.fixture-row-link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+.fixture-row-action {
+  position: relative;
+}

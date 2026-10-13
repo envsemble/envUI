@@ -2,8 +2,12 @@ import { useState } from 'react';
 import {
   Badge,
   Breadcrumbs,
+  GroupedRows,
+  IconButton,
   Kbd,
+  Link,
   LinkProvider,
+  Row,
   Table,
   TableBody,
   TableCell,
@@ -15,6 +19,7 @@ import {
   type LinkComponentProps,
   type ThemeValue,
 } from '@envsemble/envui';
+import { MoreHoriz } from '@envsemble/envui/icons/MoreHoriz';
 
 const plans = Array.from({ length: 30 }, (_, index) => ({
   id: index + 1,
@@ -40,6 +45,7 @@ function RecordingLink({ href, onClick, ...props }: LinkComponentProps) {
 
 export function DataDisplayFixture({ theme }: { theme: ThemeValue }) {
   const [crumb, setCrumb] = useState('');
+  const [rowResult, setRowResult] = useState('');
   return (
     <Theme theme={theme} data-testid={`data-${theme}`} className="fixture-section">
       <LinkProvider component={RecordingLink}>
@@ -87,6 +93,37 @@ export function DataDisplayFixture({ theme }: { theme: ThemeValue }) {
           </TableBody>
         </Table>
       </div>
+      <GroupedRows aria-label={`Rows ${theme}`}>
+        <Row
+          interactive
+          className="fixture-open-row"
+          title={
+            <Link
+              href="#roadmap"
+              underline={false}
+              className="fixture-row-link"
+              onClick={(event) => {
+                event.preventDefault();
+                setRowResult('open roadmap');
+              }}
+            >
+              Roadmap
+            </Link>
+          }
+          detail="Updated today"
+          action={
+            <IconButton
+              variant="text"
+              icon={<MoreHoriz />}
+              aria-label="More actions"
+              className="fixture-row-action"
+              onClick={() => setRowResult('more actions')}
+            />
+          }
+        />
+        <Row title="Archive" detail="Read only" />
+      </GroupedRows>
+      <output data-testid={`row-result-${theme}`}>{rowResult}</output>
       <Table aria-label={`Compact ${theme}`} density="compact">
         <TableBody>
           <TableRow>

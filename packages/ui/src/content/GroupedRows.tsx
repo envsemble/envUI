@@ -23,11 +23,28 @@ export interface RowProps extends Omit<ComponentPropsWithRef<'li'>, 'title'> {
   title: ReactNode;
   detail?: ReactNode;
   action?: ReactNode;
+  /**
+   * The row opens something through a link or button inside: it reacts to hover, presses and focus
+   * inside it, and is the containing block a link can stretch over to cover the row.
+   */
+  interactive?: boolean;
 }
 
-export function Row({ title, detail, action, children, className, ...props }: RowProps) {
+export function Row({
+  title,
+  detail,
+  action,
+  interactive = false,
+  children,
+  className,
+  ...props
+}: RowProps) {
   return (
-    <li {...props} className={classNames('env-row', 'env-connected-row', className)}>
+    <li
+      {...props}
+      className={classNames('env-row', 'env-connected-row', className)}
+      data-interactive={interactive ? '' : undefined}
+    >
       <div>
         {title}
         {detail != null && <small>{detail}</small>}
