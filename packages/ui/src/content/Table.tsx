@@ -14,6 +14,7 @@ import {
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { setRef } from '../internal/setRef.js';
+import { useStackedReport } from '../internal/useStackedReport.js';
 import { ArrowDownward } from '../icons/ArrowDownward.js';
 import { ArrowUpward } from '../icons/ArrowUpward.js';
 import { UnfoldMore } from '../icons/UnfoldMore.js';
@@ -61,13 +62,15 @@ export interface TableProps extends Omit<ComponentPropsWithRef<'table'>, 'aria-l
   narrowLayout?: 'scroll' | 'stack';
   /**
    * The region width below which a table with narrowLayout="stack" stacks its rows, as a CSS length
-   * such as 60rem or 480px; 36rem by default. Wide tables, such as seven sortable columns, need more.
+   * such as 60rem or 480px, or a number of pixels such as 600; 36rem by default. Wide tables, such as
+   * seven sortable columns, need more.
    */
   stackBelow?: string;
   /**
    * Called with true when the rows stack and with false when the columns return, from the same
    * measurement as stackBelow, for example to show another sort control while the header row is
-   * hidden. The region has data-stacked while the rows stack.
+   * hidden; a table that leaves while its rows stack reports false. The region has data-stacked
+   * while the rows stack.
    */
   onStackedChange?: (stacked: boolean) => void;
   /** Column widths in percent of the table width, in column order and adding up to 100. */
@@ -88,6 +91,11 @@ export interface TableProps extends Omit<ComponentPropsWithRef<'table'>, 'aria-l
   resizableColumns?: boolean;
 }
 
+/** A bare number is a length in pixels. */
+function cssLength(length: string) {
+  return /^\s*\d*\.?\d+\s*$/.test(length) ? `${length.trim()}px` : length;
+}
+
 /**
  * Whether a region is narrower than a probe sized to a CSS length, following both as they change.
  * It is measured after the markup is in the document, before the browser paints a client render;
@@ -103,8 +111,17 @@ function useNarrowerThan(
   useLayoutEffect(() => {
     const element = region.current;
     const threshold = probe.current;
-    if (!enabled || !element || !threshold) return;
-    const measure = () => setNarrower(element.clientWidth < threshold.offsetWidth);
+    // A table that stops stacking starts over, so stacking again never reuses an old measurement.
+    if (!enabled || !element || !threshold) {
+      setNarrower(false);
+      return;
+    }
+    const measure = () => {
+      // A hidden region, such as one in a hidden tab panel, has no box to measure; it keeps its
+      // layout until it shows again.
+      if (element.getClientRects().length === 0) return;
+      setNarrower(element.clientWidth < threshold.offsetWidth);
+    };
     measure();
     if (typeof ResizeObserver === 'undefined') return;
     const observer = new ResizeObserver(measure);
@@ -140,13 +157,7 @@ export function Table({
   const region = useRef<HTMLDivElement>(null);
   const probe = useRef<HTMLDivElement>(null);
   const stacked = useNarrowerThan(region, probe, stack, stackBelow);
-  // Reported before paint, so an application can show its own controls for the stacked rows at once.
-  const reportedStacked = useRef(false);
-  useLayoutEffect(() => {
-    if (stacked === reportedStacked.current) return;
-    reportedStacked.current = stacked;
-    onStackedChange?.(stacked);
-  }, [stacked, onStackedChange]);
+  useStackedReport(stacked, onStackedChange);
   // Widths the table owns start over when the defaults change, for example with another column.
   const defaultsKey = defaultColumnWidths?.join(' ');
   const [chosen, setChosen] = useState({ key: defaultsKey, widths: defaultColumnWidths });
@@ -220,7 +231,7 @@ export function Table({
           ref={probe}
           className="env-table-stack-probe"
           aria-hidden="true"
-          style={{ inlineSize: stackBelow }}
+          style={{ inlineSize: cssLength(stackBelow) }}
         />
       )}
     </div>

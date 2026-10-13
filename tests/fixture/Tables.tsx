@@ -44,6 +44,11 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
   const [selected, setSelected] = useState(['tokens']);
   const [widths, setWidths] = useState([40, 30, 15, 15]);
   const [stackChanges, setStackChanges] = useState<string[]>([]);
+  const [measured, setMeasured] = useState({
+    shown: true,
+    listening: true,
+    layout: 'stack' as 'stack' | 'scroll',
+  });
   const [prioritySort, setPrioritySort] = useState<TableSortDirection>('none');
   const rows = sort
     ? [...reports].sort((first, second) =>
@@ -200,14 +205,60 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
         </Table>
       </div>
       <div className="fixture-measured-stack-frame" data-testid={`measured-stack-frame-${theme}`}>
-        <Table
-          aria-label={`Measured threshold ${theme}`}
-          narrowLayout="stack"
-          stackBelow="calc(20rem + 160px)"
-          onStackedChange={(stacked) =>
-            setStackChanges((list) => [...list, stacked ? 'stacked' : 'columns'])
+        {measured.shown && (
+          <Table
+            aria-label={`Measured threshold ${theme}`}
+            narrowLayout={measured.layout}
+            stackBelow="calc(20rem + 160px)"
+            onStackedChange={
+              measured.listening
+                ? (stacked) => setStackChanges((list) => [...list, stacked ? 'stacked' : 'columns'])
+                : undefined
+            }
+          >
+            <TableHead>
+              <TableRow>
+                <TableHeaderCell>Report</TableHeaderCell>
+                <TableHeaderCell>Owner</TableHeaderCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <TableCell>Quarterly report</TableCell>
+                <TableCell label="Owner">Aurora</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        )}
+      </div>
+      <output data-testid={`stack-changes-${theme}`}>{stackChanges.join(' ')}</output>
+      <div className="fixture-actions">
+        <button
+          type="button"
+          onClick={() => setMeasured((current) => ({ ...current, shown: !current.shown }))}
+        >
+          Toggle measured table {theme}
+        </button>
+        <button
+          type="button"
+          onClick={() => setMeasured((current) => ({ ...current, listening: !current.listening }))}
+        >
+          Toggle stacking listener {theme}
+        </button>
+        <button
+          type="button"
+          onClick={() =>
+            setMeasured((current) => ({
+              ...current,
+              layout: current.layout === 'stack' ? 'scroll' : 'stack',
+            }))
           }
         >
+          Toggle measured layout {theme}
+        </button>
+      </div>
+      <div className="fixture-measured-stack-frame" data-testid={`bare-stack-frame-${theme}`}>
+        <Table aria-label={`Bare threshold ${theme}`} narrowLayout="stack" stackBelow="600">
           <TableHead>
             <TableRow>
               <TableHeaderCell>Report</TableHeaderCell>
@@ -222,7 +273,6 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
           </TableBody>
         </Table>
       </div>
-      <output data-testid={`stack-changes-${theme}`}>{stackChanges.join(' ')}</output>
       <Table aria-label={`Icon headers ${theme}`} resizableColumns defaultColumnWidths={[30, 70]}>
         <TableHead>
           <TableRow>

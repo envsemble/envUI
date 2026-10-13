@@ -129,6 +129,34 @@ test('a controlled split reports sizes and follows its size prop', async ({ page
   await expect(page.getByTestId('split-size-light')).toHaveText('20');
 });
 
+test('a hidden split view keeps its panes stacked, and one that leaves reports it', async ({
+  page,
+}) => {
+  await page.goto(splitFixture);
+  const frame = page.getByTestId('split-frame-light');
+  const split = frame.locator('.env-split-view');
+  const stackedChanges = page.getByTestId('split-stacked-light');
+  await frame.evaluate((element) => (element.style.inlineSize = '30rem'));
+  await expect(split).toHaveAttribute('data-stacked', 'true');
+  await expect(stackedChanges).toHaveText('true');
+  // Hidden, as in a hidden tab panel, it has nothing to measure and shows again stacked.
+  await frame.evaluate((element) => (element.hidden = true));
+  await page.evaluate(
+    () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+  );
+  expect(
+    await frame.evaluate((element) => {
+      element.hidden = false;
+      return element.querySelector('.env-split-view')!.getAttribute('data-stacked');
+    }),
+  ).toBe('true');
+  await expect(stackedChanges).toHaveText('true');
+  // Leaving while stacked reports that the panes no longer stack.
+  await page.getByRole('button', { name: 'Toggle documents split light' }).click();
+  await expect(split).toHaveCount(0);
+  await expect(stackedChanges).toHaveText('true false');
+});
+
 test('the panes stack below their own width threshold and the divider leaves', async ({ page }) => {
   await page.goto(splitFixture);
   const frame = page.getByTestId('split-frame-light');

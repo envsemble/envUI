@@ -46,28 +46,28 @@ import {
 
 ### Props & contracts
 
-| Name                                     | Contract                                                                                                                                  |
-| ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| Table aria-label / caption               | Name the table: a visible caption, or aria-label without one; the scroll region shares the name                                           |
-| Table density                            | standard (default) or compact rows; in compact tables, controls in the cells take the compact control height                              |
-| Table stickyHeader                       | The header row stays visible while the table scrolls inside its region; give it a height                                                  |
-| Table regionClassName                    | Class of the scroll region, for example to limit its height                                                                               |
-| Table narrowLayout                       | scroll (default) keeps the columns and scrolls sideways; stack lists each body row as a block when the region is narrower than stackBelow |
-| Table stackBelow                         | The region width below which a stack table stacks its rows: a CSS length such as 60rem or 480px, 36rem by default                         |
-| Table onStackedChange                    | Called with true when the rows stack and false when the columns return; the region has data-stacked while they stack                      |
-| Table columnWidths / defaultColumnWidths | Column widths in percent of the table width, adding up to 100: controlled, or owned by the table from these defaults                      |
-| Table onColumnWidthsChange               | Receives every column's width when a column is resized                                                                                    |
-| Table resizableColumns                   | A handle at the end of each header cell but the last resizes the columns; needs columnWidths or defaultColumnWidths                       |
-| Table minColumnWidths                    | Smallest width in percent, one per column or one for all; 5 by default                                                                    |
-| TableHead / TableBody                    | Native thead and tbody                                                                                                                    |
-| TableRow interactive                     | Hover and focus-within highlight for rows that open something through a link or button inside                                             |
-| TableRow selected                        | aria-selected and the selection colors; pass false to the other rows when rows can be selected                                            |
-| TableHeaderCell / TableCell              | align start (default) or end; numeric aligns to the end with tabular figures; nowrap keeps one line                                       |
-| TableHeaderCell scope                    | col by default; use row for a header cell at the start of a body row                                                                      |
-| TableHeaderCell sortDirection / onSort   | onSort makes the header a sort button; sortDirection (ascending, descending or none) sets its arrow and aria-sort                         |
-| TableHeaderCell sortLabel / resizeLabel  | Accessible names of the sort button and the resize handle, for example in another language                                                |
-| TableCell label                          | The column's name before the value while a stack table stacks its rows                                                                    |
-| Native props                             | Every part accepts the native element's props, className and ref                                                                          |
+| Name                                     | Contract                                                                                                                                                            |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Table aria-label / caption               | Name the table: a visible caption, or aria-label without one; the scroll region shares the name                                                                     |
+| Table density                            | standard (default) or compact rows; in compact tables, controls in the cells take the compact control height                                                        |
+| Table stickyHeader                       | The header row stays visible while the table scrolls inside its region; give it a height                                                                            |
+| Table regionClassName                    | Class of the scroll region, for example to limit its height                                                                                                         |
+| Table narrowLayout                       | scroll (default) keeps the columns and scrolls sideways; stack lists each body row as a block when the region is narrower than stackBelow                           |
+| Table stackBelow                         | The region width below which a stack table stacks its rows: a CSS length such as 60rem or 480px, or a number of pixels such as 600; 36rem by default                |
+| Table onStackedChange                    | Called with true when the rows stack and false when the columns return, also when a table leaves while its rows stack; the region has data-stacked while they stack |
+| Table columnWidths / defaultColumnWidths | Column widths in percent of the table width, adding up to 100: controlled, or owned by the table from these defaults                                                |
+| Table onColumnWidthsChange               | Receives every column's width when a column is resized                                                                                                              |
+| Table resizableColumns                   | A handle at the end of each header cell but the last resizes the columns; needs columnWidths or defaultColumnWidths                                                 |
+| Table minColumnWidths                    | Smallest width in percent, one per column or one for all; 5 by default                                                                                              |
+| TableHead / TableBody                    | Native thead and tbody                                                                                                                                              |
+| TableRow interactive                     | Hover and focus-within highlight for rows that open something through a link or button inside                                                                       |
+| TableRow selected                        | aria-selected and the selection colors; pass false to the other rows when rows can be selected                                                                      |
+| TableHeaderCell / TableCell              | align start (default) or end; numeric aligns to the end with tabular figures; nowrap keeps one line                                                                 |
+| TableHeaderCell scope                    | col by default; use row for a header cell at the start of a body row                                                                                                |
+| TableHeaderCell sortDirection / onSort   | onSort makes the header a sort button; sortDirection (ascending, descending or none) sets its arrow and aria-sort                                                   |
+| TableHeaderCell sortLabel / resizeLabel  | Accessible names of the sort button and the resize handle, for example in another language                                                                          |
+| TableCell label                          | The column's name before the value while a stack table stacks its rows                                                                                              |
+| Native props                             | Every part accepts the native element's props, className and ref                                                                                                    |
 
 ### Sorting, resizing and selection
 
@@ -181,7 +181,7 @@ const [stacked, setStacked] = useState(false);
 - Resizable columns move the boundary between a column and the next one, so the table keeps its width. Drag the handle at the end of a header cell, or focus it and press <kbd>←</kbd> or <kbd>→</kbd> to move it by 1 percent, with <kbd>Shift</kbd> by 5 percent; <kbd>Home</kbd> and <kbd>End</kbd> go to the column's smallest and largest width. Double-click a handle to restore the starting widths. Columns with set widths wrap long words and cut nowrap cells short with an ellipsis.
 - Selected rows take the navigation selection color with a bar at their start and report aria-selected. Pass selected={false} to the other rows of a table whose rows can be selected, so every row exposes its state. Screen readers announce row selection unevenly in tables, so pair selected with a control people use to select, such as a Checkbox in the first cell, whose state they always hear.
 - narrowLayout="stack" follows the width of the table's region, not the window. Below stackBelow, 36 rem by default, each body row becomes a block: the first cell is its title, and the other cells show their label beside their value. The labels share a column as wide as the longest one, up to 10 rem, so the values line up and long values, such as an address, wrap within the row. Give a table with many columns a wider stackBelow, such as 60rem for seven sortable columns, so it stacks instead of scrolling sideways. The header row is then visually hidden but still read by assistive technology, and appears while a sort button in it has keyboard focus. Where sorting matters on small screens, offer another sort control while the rows stack: onStackedChange tells the application when they stack and when the columns return, and the region has data-stacked meanwhile, so the application need not repeat the width in its own CSS. Resize handles are hidden while rows are stacked.
-- The table measures its region after it is in the document, before the browser paints a client render. Server-rendered markup shows the columns until the page hydrates, and a narrow table then stacks.
+- The table measures its region after it is in the document, before the browser paints a client render. Server-rendered markup shows the columns until the page hydrates, and a narrow table then stacks. A hidden table, such as one in a hidden tab panel, has nothing to measure and keeps its layout until it shows again.
 - Content positioned inside cells, such as visually hidden text, stays inside the table's region and scrolls with it, so it never widens the page.
 
 TypeScript declarations provide the complete public API.

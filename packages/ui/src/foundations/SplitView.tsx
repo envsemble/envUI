@@ -11,6 +11,7 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/setRef.js';
+import { useStackedReport } from '../internal/useStackedReport.js';
 
 export interface SplitViewProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /** Content of the pane at the inline start. */
@@ -129,7 +130,12 @@ export function SplitView({
       setStacked(false);
       return;
     }
-    const measure = () => setStacked(element.offsetWidth < threshold.offsetWidth);
+    const measure = () => {
+      // A hidden split view, such as one in a hidden tab panel, has no box to measure; it keeps its
+      // layout until it shows again.
+      if (element.getClientRects().length === 0) return;
+      setStacked(element.offsetWidth < threshold.offsetWidth);
+    };
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(element);
@@ -138,13 +144,7 @@ export function SplitView({
     return () => observer.disconnect();
   }, [stackBelow]);
 
-  // Reported before paint, so an application can show the stacked layout's own controls at once.
-  const reportedStacked = useRef(false);
-  useLayoutEffect(() => {
-    if (stacked === reportedStacked.current) return;
-    reportedStacked.current = stacked;
-    onStackedChange?.(stacked);
-  }, [stacked, onStackedChange]);
+  useStackedReport(stacked, onStackedChange);
 
   function changeSize(next: number, persist: boolean) {
     const value = clamp(next);

@@ -431,6 +431,76 @@ test('a table measures stackBelow in any CSS length and reports when it stacks',
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
+/** Waits for two frames, so resize observations and the renders they cause have run. */
+function nextFrames(page: import('@playwright/test').Page) {
+  return page.evaluate(
+    () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+  );
+}
+
+test('a hidden table keeps stacking, and one that leaves reports that its rows no longer stack', async ({
+  page,
+}) => {
+  const frame = page.getByTestId('measured-stack-frame-light');
+  const region = page.getByRole('region', { name: 'Measured threshold light' });
+  const changes = page.getByTestId('stack-changes-light');
+  await expect(changes).toHaveText('stacked');
+  // Hidden, as in a hidden tab panel, the table has nothing to measure and keeps stacking, so it
+  // shows again with its rows stacked.
+  await frame.evaluate((element) => (element.hidden = true));
+  await nextFrames(page);
+  expect(
+    await frame.evaluate((element) => {
+      element.hidden = false;
+      return element.querySelector('.env-table-region')!.hasAttribute('data-stacked');
+    }),
+  ).toBe(true);
+  await nextFrames(page);
+  await expect(changes).toHaveText('stacked');
+  // Leaving while stacked, such as for an empty state, reports that the rows no longer stack, so
+  // a wider table that returns with its columns needs no report.
+  await page.getByRole('button', { name: 'Toggle measured table light' }).click();
+  await expect(region).toHaveCount(0);
+  await expect(changes).toHaveText('stacked columns');
+  await frame.evaluate((element) => (element.style.inlineSize = '31rem'));
+  await page.getByRole('button', { name: 'Toggle measured table light' }).click();
+  await expect(region).not.toHaveAttribute('data-stacked');
+  await nextFrames(page);
+  await expect(changes).toHaveText('stacked columns');
+});
+
+test('a handler added later learns that rows stack, and stacking again starts over', async ({
+  page,
+}) => {
+  const frame = page.getByTestId('measured-stack-frame-light');
+  const changes = page.getByTestId('stack-changes-light');
+  const listener = page.getByRole('button', { name: 'Toggle stacking listener light' });
+  const layout = page.getByRole('button', { name: 'Toggle measured layout light' });
+  await expect(changes).toHaveText('stacked');
+  await listener.click();
+  await listener.click();
+  await expect(changes).toHaveText('stacked stacked');
+  // Scrolling ends the stacking; a wide table that may stack again keeps its columns.
+  await layout.click();
+  await expect(changes).toHaveText('stacked stacked columns');
+  await frame.evaluate((element) => (element.style.inlineSize = '31rem'));
+  await layout.click();
+  await nextFrames(page);
+  await expect(page.getByRole('region', { name: 'Measured threshold light' })).not.toHaveAttribute(
+    'data-stacked',
+  );
+  await expect(changes).toHaveText('stacked stacked columns');
+});
+
+test('a bare number for stackBelow is a length in pixels', async ({ page }) => {
+  const frame = page.getByTestId('bare-stack-frame-light');
+  const region = page.getByRole('region', { name: 'Bare threshold light' });
+  // The frame is 400 px wide, below 600.
+  await expect(region).toHaveAttribute('data-stacked', '');
+  await frame.evaluate((element) => (element.style.inlineSize = '40rem'));
+  await expect(region).not.toHaveAttribute('data-stacked');
+});
+
 test('a header named by aria-label lends its name to its sort button and resize handle', async ({
   page,
 }) => {
