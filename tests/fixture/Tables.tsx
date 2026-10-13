@@ -16,6 +16,7 @@ import {
   type ThemeValue,
 } from '@envsemble/envui';
 import { MoreVert } from '@envsemble/envui/icons/MoreVert';
+import { PriorityHigh } from '@envsemble/envui/icons/PriorityHigh';
 
 const reports = [
   { id: 'quarterly', title: 'Quarterly report', owner: 'Aurora', reviews: 12, status: 'Ready' },
@@ -43,6 +44,7 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
   const [selected, setSelected] = useState(['tokens']);
   const [widths, setWidths] = useState([40, 30, 15, 15]);
   const [stackChanges, setStackChanges] = useState<string[]>([]);
+  const [prioritySort, setPrioritySort] = useState<TableSortDirection>('none');
   const rows = sort
     ? [...reports].sort((first, second) =>
         sort.direction === 'ascending'
@@ -221,6 +223,28 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
         </Table>
       </div>
       <output data-testid={`stack-changes-${theme}`}>{stackChanges.join(' ')}</output>
+      <Table aria-label={`Icon headers ${theme}`} resizableColumns defaultColumnWidths={[30, 70]}>
+        <TableHead>
+          <TableRow>
+            <TableHeaderCell
+              aria-label="Priority"
+              sortDirection={prioritySort}
+              onSort={() =>
+                setPrioritySort((current) => (current === 'ascending' ? 'descending' : 'ascending'))
+              }
+            >
+              <PriorityHigh />
+            </TableHeaderCell>
+            <TableHeaderCell>Report</TableHeaderCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          <TableRow>
+            <TableCell>High</TableCell>
+            <TableCell>Quarterly report</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
       <div className="fixture-wide-stack-frame" data-testid={`wide-stack-frame-${theme}`}>
         <Table aria-label={`Seven columns ${theme}`} narrowLayout="stack" stackBelow="60rem">
           <TableHead>

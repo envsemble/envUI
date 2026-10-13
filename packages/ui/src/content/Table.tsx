@@ -367,9 +367,13 @@ export function TableHeaderCell({
   const column = useColumnIndex(cell, section === 'head' && columns?.resizable === true);
   const handle = columns && column !== undefined && column + 1 < columns.widths.length;
   const sortable = onSort !== undefined;
-  // The header keeps its own text as its name; the controls inside add what they do to it through
-  // aria-labelledby, so the children render once.
+  // The header keeps its own name; the controls inside add what they do to it through
+  // aria-labelledby, so the children render once. A header named by aria-labelledby or aria-label
+  // lends that name to its controls.
   const labelled = sortable || Boolean(handle);
+  const ownLabel = props['aria-label'];
+  const nameIds =
+    props['aria-labelledby'] ?? (ownLabel !== undefined ? `${id}-name` : `${id}-label`);
   const label = labelled ? (
     <span id={`${id}-label`} className="env-table-header-label">
       {children}
@@ -395,7 +399,7 @@ export function TableHeaderCell({
           type="button"
           className="env-table-sort-button"
           aria-label={sortLabel}
-          aria-labelledby={sortLabel === undefined ? `${id}-label ${id}-sort` : undefined}
+          aria-labelledby={sortLabel === undefined ? `${nameIds} ${id}-sort` : undefined}
           onClick={onSort}
         >
           {label}
@@ -403,6 +407,11 @@ export function TableHeaderCell({
         </button>
       ) : (
         label
+      )}
+      {labelled && nameIds === `${id}-name` && (
+        <span id={`${id}-name`} hidden>
+          {ownLabel}
+        </span>
       )}
       {sortable && sortLabel === undefined && (
         <span id={`${id}-sort`} hidden>
@@ -414,7 +423,7 @@ export function TableHeaderCell({
           column={column}
           columns={columns}
           label={resizeLabel}
-          labelledBy={`${id}-resize ${id}-label`}
+          labelledBy={`${id}-resize ${nameIds}`}
         />
       )}
       {handle && resizeLabel === undefined && (

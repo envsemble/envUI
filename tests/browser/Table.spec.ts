@@ -431,6 +431,22 @@ test('a table measures stackBelow in any CSS length and reports when it stacks',
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
+test('a header named by aria-label lends its name to its sort button and resize handle', async ({
+  page,
+}) => {
+  const table = page.getByRole('table', { name: 'Icon headers light' });
+  await expect(table.getByRole('columnheader', { name: 'Priority', exact: true })).toBeVisible();
+  const sort = table.getByRole('button', { name: 'Priority sort ascending', exact: true });
+  await expect(sort).toBeVisible();
+  await sort.click();
+  await expect(
+    table.getByRole('button', { name: 'Priority sort descending', exact: true }),
+  ).toBeVisible();
+  await expect(
+    table.getByRole('separator', { name: 'Resize Priority', exact: true }),
+  ).toBeVisible();
+});
+
 test('content positioned in a cell stays inside the scroll region', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 900 });
   const region = page.getByRole('region', { name: 'Hidden header text light' });
