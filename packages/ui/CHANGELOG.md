@@ -75,6 +75,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 - Icon-only buttons keep their square size where their container is squeezed narrower, such as a slot beside long text in a flex row, instead of shrinking to nothing.
 - Labels keep 4.5:1 contrast on hover, also in a selected tab on the tab rail: secondary buttons in the dark theme have a label as bright as primary text, outlined buttons in the light theme a deeper blue one, and selected navigation items a deeper blue label in light and a lighter one in dark.
 - A `Tooltip` stopped opening on hover once its control became enabled or disabled, such as a back button once there is somewhere to go: it kept listening to the element the control had replaced.
+- The toast region no longer throws where the Web Animations API is missing, such as in jsdom tests of an application: notices there move without motion instead of unmounting the page.
 
 ### Documentation
 
