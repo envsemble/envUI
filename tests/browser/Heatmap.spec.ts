@@ -46,7 +46,7 @@ test('a year of days is one grid with named cells and a single tab stop', async 
   expect(errors).toEqual([]);
 });
 
-test('arrow keys move by day and week, Home and End reach the range, Escape hides the value', async ({
+test('arrow keys move by day and week, Home and End along the weekday, Escape hides the value', async ({
   page,
 }) => {
   await page.goto(heatmapFixture);
@@ -88,6 +88,35 @@ test('arrow keys move by day and week, Home and End reach the range, Escape hide
   await expect(page.locator('.env-tooltip-positioner')).toHaveCount(0);
   await page.keyboard.press('Shift+Tab');
   await expect(tooltip).toHaveText('Sat 10 Oct 2026: 0');
+});
+
+test('Page Up and Page Down reach the ends of the week, Ctrl+Home and Ctrl+End the range', async ({
+  page,
+}) => {
+  await page.goto(heatmapFixture);
+  const grid = page.getByRole('grid', { name: 'Activity light' });
+  await grid.locator('td[data-date="2026-10-07"]').focus();
+  expect(await focusedName(page)).toMatch(/^Wed 7 Oct 2026: \d+$/);
+  // Home and End keep the weekday: the first week holds only the first day, so Home goes to the
+  // Wednesday of the second week.
+  await page.keyboard.press('Home');
+  expect(await focusedName(page)).toMatch(/^Wed 15 Oct 2025: \d+$/);
+  await page.keyboard.press('End');
+  expect(await focusedName(page)).toMatch(/^Wed 7 Oct 2026: \d+$/);
+  await page.keyboard.press('PageUp');
+  expect(await focusedName(page)).toMatch(/^Sun 4 Oct 2026: \d+$/);
+  await page.keyboard.press('PageDown');
+  expect(await focusedName(page)).toBe('Sat 10 Oct 2026: 0');
+  await page.keyboard.press('Control+Home');
+  expect(await focusedName(page)).toMatch(/^Sat 11 Oct 2025: \d+$/);
+  // The range starts on the last day of its first week, so Page Up stays there.
+  await page.keyboard.press('PageUp');
+  expect(await focusedName(page)).toMatch(/^Sat 11 Oct 2025: \d+$/);
+  await page.keyboard.press('PageDown');
+  expect(await focusedName(page)).toMatch(/^Sat 11 Oct 2025: \d+$/);
+  await page.keyboard.press('Control+End');
+  expect(await focusedName(page)).toBe('Sat 10 Oct 2026: 0');
+  await expect(grid.locator('td[tabindex="0"]')).toHaveCount(1);
 });
 
 test('one tooltip follows the pointer across days and leaves with it', async ({ page }) => {
@@ -326,7 +355,20 @@ test.describe('on a coarse pointer', () => {
     const cell = page
       .getByRole('grid', { name: 'Activity light' })
       .locator('td[data-date="2026-06-01"]');
-    await expect(cell).toHaveCSS('width', '16px');
+    await expect(cell).toHaveCSS('width', '20px');
+    // Days are 24 px apart in both directions, the minimum target size with its spacing.
+    const box = (await cell.boundingBox())!;
+    const below = (await page
+      .getByRole('grid', { name: 'Activity light' })
+      .locator('td[data-date="2026-06-02"]')
+      .boundingBox())!;
+    const beside = (await page
+      .getByRole('grid', { name: 'Activity light' })
+      .locator('td[data-date="2026-06-08"]')
+      .boundingBox())!;
+    expect(below.y - box.y).toBeGreaterThanOrEqual(24);
+    expect(beside.x - box.x).toBeGreaterThanOrEqual(24);
+    await cell.scrollIntoViewIfNeeded();
     await cell.tap();
     await expect(page.locator('.env-heatmap-tooltip')).toHaveText(
       (await cell.getAttribute('aria-label'))!,
@@ -350,8 +392,46 @@ test('thresholds set the color steps, for example to color days by rank', async 
   // Below the first threshold a day shows as empty, like a day without data.
   expect(await level('2026-05-08')).toBe('0');
   expect(await level('2026-05-09')).toBe('0');
-  const legend = page.getByTestId('heatmap-light').locator('.env-heatmap-legend').last();
+  const legend = page.locator('.env-heatmap').filter({ has: grid }).locator('.env-heatmap-legend');
   await expect(legend.locator('.env-heatmap-swatch')).toHaveCount(5);
+});
+
+test('explicit thresholds color days of 0, and two levels color their only step in the tone', async ({
+  page,
+}) => {
+  await page.goto(heatmapFixture);
+  const fromZero = page.getByRole('grid', { name: 'From zero light' });
+  const level = (date: string) =>
+    fromZero.locator(`td[data-date="${date}"]`).getAttribute('data-level');
+  await expect(fromZero.locator('td[data-date="2026-05-04"]')).toBeAttached();
+  // A first threshold of 0 colors days of 0, with or without data; values below it stay empty.
+  expect(await level('2026-05-04')).toBe('1');
+  expect(await level('2026-05-03')).toBe('1');
+  expect(await level('2026-05-05')).toBe('2');
+  expect(await level('2026-05-06')).toBe('0');
+
+  const two = page.getByRole('grid', { name: 'Two steps light' });
+  await expect(two.locator('td[data-date="2026-05-05"]')).toHaveAttribute('data-level', '0');
+  const day = two.locator('td[data-date="2026-05-04"]');
+  await expect(day).toHaveAttribute('data-level', '1');
+  const colors = await day.evaluate((element) => {
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = 1;
+    const context = canvas.getContext('2d', { willReadFrequently: true })!;
+    const paint = (color: string) => {
+      context.clearRect(0, 0, 1, 1);
+      context.fillStyle = color;
+      context.fillRect(0, 0, 1, 1);
+      return [...context.getImageData(0, 0, 1, 1).data.slice(0, 3)];
+    };
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--color-tone-accent)';
+    element.closest('.env-heatmap')!.append(probe);
+    const tone = paint(getComputedStyle(probe).color);
+    probe.remove();
+    return { cell: paint(getComputedStyle(element).backgroundColor), tone };
+  });
+  colors.cell.forEach((channel, index) => expect(channel).toBeCloseTo(colors.tone[index]!, -0.5));
 });
 
 test('a tooltip opened by focus leaves with the pointer and never blocks a press', async ({

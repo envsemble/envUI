@@ -45,7 +45,7 @@ interface HeatmapOptions {
   /**
    * The lowest value of each color step above the empty one, in ascending order, such as quantiles
    * of the data to color by rank. Up to nine; they replace levels and maxValue. A day below the
-   * first threshold shows as empty.
+   * first threshold shows as empty, and a first threshold of 0 or less colors days of 0 too.
    */
   thresholds?: readonly number[];
   /** The first day of each week column: 0 for Sunday (default) or 1 for Monday. */
@@ -142,9 +142,13 @@ interface HeatmapModel {
   months: { column: number; span: number; label: string }[];
 }
 
-/** The strength of each color step, from 30% of the tone over the canvas to the full tone. */
+/**
+ * The strength of each color step, from 30% of the tone over the canvas to the full tone at the
+ * strongest step; with a single step above the empty one, that step is the tone.
+ */
 function levelMix(level: number, levelCount: number) {
-  return `${30 + (70 * (level - 1)) / Math.max(1, levelCount - 2)}%`;
+  if (levelCount <= 2) return '100%';
+  return `${30 + (70 * (level - 1)) / (levelCount - 2)}%`;
 }
 
 /**
@@ -222,14 +226,12 @@ export function Heatmap({
     for (let day = start; day <= end; day += 1) {
       const entry = values.get(day);
       const value = entry?.value ?? 0;
-      const level =
-        value <= 0
-          ? 0
-          : steps?.length
-            ? steps.filter((step) => value >= step).length
-            : top > 0
-              ? Math.min(levelCount - 1, Math.max(1, Math.ceil((value / top) * (levelCount - 1))))
-              : 0;
+      // Explicit thresholds decide alone, also for values of 0 and below.
+      const level = steps?.length
+        ? steps.filter((step) => value >= step).length
+        : value > 0 && top > 0
+          ? Math.min(levelCount - 1, Math.max(1, Math.ceil((value / top) * (levelCount - 1))))
+          : 0;
       const date = dayKey(day);
       const valueText = entry?.label ?? formatValue(value);
       days.set(day, {
@@ -362,8 +364,8 @@ export function Heatmap({
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLTableElement>) {
-    if (event.altKey || event.ctrlKey || event.metaKey) return;
-    if (event.key === 'Escape') {
+    if (event.altKey || event.metaKey) return;
+    if (event.key === 'Escape' && !event.ctrlKey) {
       if (tip?.open) {
         // Hiding the tooltip consumes Escape, so an enclosing dialog stays open.
         event.preventDefault();
@@ -374,14 +376,25 @@ export function Heatmap({
     }
     const rtl = getComputedStyle(event.currentTarget).direction === 'rtl';
     const week = rtl ? -7 : 7;
-    const moves: Record<string, number> = {
-      ArrowUp: active - 1,
-      ArrowDown: active + 1,
-      ArrowLeft: active - week,
-      ArrowRight: active + week,
-      Home: model.start,
-      End: model.end,
-    };
+    // As in a grid, Home and End move along the row, the same weekday in the first and the last
+    // week; Page Up and Page Down along the column, to the week's first and last day; and Ctrl+Home
+    // and Ctrl+End to the first and the last day.
+    const row = (active - model.first) % 7;
+    const weekStartDay = active - row;
+    const firstOfRow = model.first + row;
+    const lastOfRow = model.first + (model.weeks - 1) * 7 + row;
+    const moves: Record<string, number> = event.ctrlKey
+      ? { Home: model.start, End: model.end }
+      : {
+          ArrowUp: active - 1,
+          ArrowDown: active + 1,
+          ArrowLeft: active - week,
+          ArrowRight: active + week,
+          Home: firstOfRow < model.start ? firstOfRow + 7 : firstOfRow,
+          End: lastOfRow > model.end ? lastOfRow - 7 : lastOfRow,
+          PageUp: Math.max(model.start, weekStartDay),
+          PageDown: Math.min(model.end, weekStartDay + 6),
+        };
     const next = moves[event.key];
     if (next === undefined) return;
     event.preventDefault();

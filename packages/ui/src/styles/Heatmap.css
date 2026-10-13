@@ -112,9 +112,11 @@
   inline-size: var(--env-heatmap-cell);
   block-size: var(--env-heatmap-cell);
 }
+/* On touch screens the days are 24 px apart, so each is a target of the minimum size (WCAG 2.5.8);
+   a year scrolls sideways in a narrow container. */
 @media (pointer: coarse) {
   .env-heatmap {
-    --env-heatmap-cell: 1rem;
+    --env-heatmap-cell: 1.25rem;
     --env-heatmap-gap: 0.25rem;
   }
 }

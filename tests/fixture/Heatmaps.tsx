@@ -92,6 +92,27 @@ export function HeatmapFixture({ theme }: { theme: ThemeValue }) {
         endDate="2026-05-16"
         thresholds={[40, 1, 20, 10]}
       />
+      <Heatmap
+        aria-label={`From zero ${theme}`}
+        data={[
+          { date: '2026-05-04', value: 0 },
+          { date: '2026-05-05', value: 10 },
+          { date: '2026-05-06', value: -2 },
+        ]}
+        startDate="2026-05-03"
+        endDate="2026-05-09"
+        thresholds={[0, 10]}
+      />
+      <Heatmap
+        aria-label={`Two steps ${theme}`}
+        data={[
+          { date: '2026-05-04', value: 3 },
+          { date: '2026-05-05', value: 0 },
+        ]}
+        startDate="2026-05-03"
+        endDate="2026-05-09"
+        levels={2}
+      />
     </Theme>
   );
 }
