@@ -497,7 +497,7 @@ test('a bare number for stackBelow is a length in pixels', async ({ page }) => {
   const region = page.getByRole('region', { name: 'Bare threshold light' });
   // The frame is 400 px wide, below 600.
   await expect(region).toHaveAttribute('data-stacked', '');
-  // So is the number itself, from an application without types.
+  // So is a number.
   const number = page.getByRole('region', { name: 'Number threshold light' });
   await expect(number).toHaveAttribute('data-stacked', '');
   await frame.evaluate((element) => (element.style.inlineSize = '40rem'));

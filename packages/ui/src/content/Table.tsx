@@ -62,11 +62,11 @@ export interface TableProps extends Omit<ComponentPropsWithRef<'table'>, 'aria-l
    */
   narrowLayout?: 'scroll' | 'stack';
   /**
-   * The region width below which a table with narrowLayout="stack" stacks its rows, as a CSS length
-   * such as 60rem or 480px, or a number of pixels such as 600; 36rem by default. Wide tables, such as
-   * seven sortable columns, need more.
+   * The region width below which a table with narrowLayout="stack" stacks its rows: a CSS length
+   * such as 60rem or 480px, or a number of pixels, such as 600 or "600"; 36rem by default. Wide
+   * tables, such as seven sortable columns, need more.
    */
-  stackBelow?: string;
+  stackBelow?: string | number;
   /**
    * Called with true when the rows stack and with false when the columns return, from the same
    * measurement as stackBelow, for example to show another sort control while the header row is
@@ -101,7 +101,7 @@ function useNarrowerThan(
   region: RefObject<HTMLElement | null>,
   probe: RefObject<HTMLElement | null>,
   enabled: boolean,
-  length: string,
+  length: string | number,
 ) {
   const [narrower, setNarrower] = useState(false);
   useLayoutEffect(() => {

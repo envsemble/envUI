@@ -273,12 +273,8 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
             </TableRow>
           </TableBody>
         </Table>
-        {/* An application without types may pass the number itself. */}
-        <Table
-          aria-label={`Number threshold ${theme}`}
-          narrowLayout="stack"
-          stackBelow={600 as unknown as string}
-        >
+        {/* A number of pixels works as well. */}
+        <Table aria-label={`Number threshold ${theme}`} narrowLayout="stack" stackBelow={600}>
           <TableHead>
             <TableRow>
               <TableHeaderCell>Report</TableHeaderCell>

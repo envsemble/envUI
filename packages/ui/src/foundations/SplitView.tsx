@@ -35,10 +35,10 @@ export interface SplitViewProps extends Omit<ComponentPropsWithRef<'div'>, 'chil
    */
   storageKey?: string;
   /**
-   * A width, such as 48rem, or a number of pixels such as "600": while the split view itself is
-   * narrower, the panes stack and the divider is removed. The split view then has data-stacked.
+   * A width, such as 48rem, or a number of pixels, such as 600 or "600": while the split view itself
+   * is narrower, the panes stack and the divider is removed. The split view then has data-stacked.
    */
-  stackBelow?: string;
+  stackBelow?: string | number;
   /**
    * Called with true when the panes stack and with false when they sit side by side again, for
    * example to show one pane at a time with a way back.

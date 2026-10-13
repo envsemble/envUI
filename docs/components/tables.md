@@ -53,7 +53,7 @@ import {
 | Table stickyHeader                       | The header row stays visible while the table scrolls inside its region; give it a height                                                                            |
 | Table regionClassName                    | Class of the scroll region, for example to limit its height                                                                                                         |
 | Table narrowLayout                       | scroll (default) keeps the columns and scrolls sideways; stack lists each body row as a block when the region is narrower than stackBelow                           |
-| Table stackBelow                         | The region width below which a stack table stacks its rows: a CSS length such as 60rem or 480px, or a number of pixels such as "600"; 36rem by default              |
+| Table stackBelow                         | The region width below which a stack table stacks its rows: a CSS length such as 60rem or 480px, or a number of pixels, such as 600 or "600"; 36rem by default      |
 | Table onStackedChange                    | Called with true when the rows stack and false when the columns return, also when a table leaves while its rows stack; the region has data-stacked while they stack |
 | Table columnWidths / defaultColumnWidths | Column widths in percent of the table width, adding up to 100: controlled, or owned by the table from these defaults                                                |
 | Table onColumnWidthsChange               | Receives every column's width when a column is resized                                                                                                              |
