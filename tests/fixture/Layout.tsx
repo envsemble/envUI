@@ -61,6 +61,17 @@ export function LayoutFixture() {
           >
             <p>Keep the action rail attached.</p>
           </ActionCard>
+          <ActionCard
+            title="Quarterly report"
+            meta="Updated today"
+            data-testid="meta-action-card"
+            actions={<Button variant="secondary">Open</Button>}
+          >
+            <p>Figures for the last three months.</p>
+          </ActionCard>
+          <Card heading="Design tokens" meta="12 changes" data-testid="meta-card">
+            <p>Colors and spacing shared by every surface.</p>
+          </Card>
           <form
             onSubmit={(event) => {
               event.preventDefault();
