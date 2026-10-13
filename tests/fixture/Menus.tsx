@@ -81,6 +81,9 @@ export function MenusFixture({ theme }: { theme: ThemeValue }) {
           <MenuItem shortcut="Ctrl + +" onClick={() => setLog('Zoom in')}>
             Zoom in
           </MenuItem>
+          <MenuItem shortcut="Alt+←" onClick={() => setLog('Back')}>
+            Back
+          </MenuItem>
           <MenuItem shortcut="Ctrl+K Ctrl+S" onClick={() => setLog('Keyboard shortcuts')}>
             Keyboard shortcuts
           </MenuItem>
