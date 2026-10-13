@@ -12,6 +12,20 @@ function collectErrors(page: Page) {
   return errors;
 }
 
+/** Waits for two frames, so pointer events and the renders they cause have run. */
+const nextFrames = (page: Page) =>
+  page.evaluate(
+    () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+  );
+
+/** Moves the pointer straight up from a day onto its tooltip. */
+async function moveOntoTooltip(page: Page, day: import('@playwright/test').Locator) {
+  const from = (await day.boundingBox())!;
+  const to = (await page.locator('.env-heatmap-tooltip').boundingBox())!;
+  await page.mouse.move(from.x + from.width / 2, to.y + to.height / 2, { steps: 12 });
+  await nextFrames(page);
+}
+
 const focusedName = (page: Page) =>
   page.evaluate(() => document.activeElement?.getAttribute('aria-label'));
 
@@ -163,6 +177,40 @@ test('people can move the pointer onto the tooltip of a hovered day to read it',
     await page.mouse.move(to.x - 40, to.y - 60, { steps: 4 });
     await expect(positioner).toHaveCount(0);
   }
+});
+
+test('a day clicked with the mouse shows a tooltip the pointer can move onto', async ({ page }) => {
+  await page.goto(heatmapFixture);
+  const grid = page.getByRole('grid', { name: 'Activity light' });
+  const tooltip = page.locator('.env-heatmap-tooltip');
+  const day = grid.locator('td[data-date="2026-06-03"]');
+  const name = (await day.getAttribute('aria-label'))!;
+  await day.hover();
+  await expect(tooltip).toHaveText(name);
+  await day.click();
+  await expect(day).toBeFocused();
+  await expect(page.locator('.env-tooltip-positioner')).not.toHaveCSS('pointer-events', 'none');
+  await moveOntoTooltip(page, day);
+  await expect(tooltip).toHaveText(name);
+});
+
+test('a tooltip the pointer rests on stays when focus leaves the days', async ({ page }) => {
+  await page.goto(heatmapFixture);
+  const grid = page.getByRole('grid', { name: 'Activity light' });
+  const tooltip = page.locator('.env-heatmap-tooltip');
+  await page.getByRole('button', { name: 'Update light' }).focus();
+  await page.keyboard.press('Shift+Tab');
+  await expect(tooltip).toHaveText('Sat 10 Oct 2026: 0');
+  const day = grid.locator('td[data-date="2026-06-03"]');
+  const name = (await day.getAttribute('aria-label'))!;
+  await day.hover();
+  await expect(tooltip).toHaveText(name);
+  await moveOntoTooltip(page, day);
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('button', { name: 'Update light' })).toBeFocused();
+  await nextFrames(page);
+  await expect(page.locator('.env-tooltip-positioner')).toHaveAttribute('data-open', '');
+  await expect(tooltip).toHaveText(name);
 });
 
 test('custom labels, weeks from Monday, levels and a tone', async ({ page }) => {
@@ -508,6 +556,30 @@ test('Escape hides the tooltip of a heatmap in a dialog and keeps the dialog ope
   await expect(page.locator('.env-heatmap-tooltip')).toHaveCount(0);
   await expect(dialog).toBeVisible();
   // With no tooltip to hide, Escape closes the dialog as usual.
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
+});
+
+test('Escape hides a hovered tooltip in a dialog while focus is elsewhere in it', async ({
+  page,
+}) => {
+  await page.goto(heatmapFixture);
+  await page.getByRole('button', { name: 'Open activity light' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Activity details light' });
+  const close = dialog.getByRole('button', { name: 'Close' }).first();
+  await close.focus();
+  const day = dialog
+    .getByRole('grid', { name: 'Activity in a dialog light' })
+    .locator('td[data-date="2026-10-07"]');
+  await day.hover();
+  await expect(page.locator('.env-heatmap-tooltip')).toHaveText(
+    (await day.getAttribute('aria-label'))!,
+  );
+  await moveOntoTooltip(page, day);
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.env-tooltip-positioner')).toHaveCount(0);
+  await expect(dialog).toBeVisible();
+  await expect(close).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(dialog).toBeHidden();
 });

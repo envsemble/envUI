@@ -284,6 +284,9 @@ export function Heatmap({
   } | null>(null);
   const hoverTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const popup = useRef<HTMLDivElement>(null);
+  // A mouse press focuses its day as a hover would, so that tooltip takes the pointer too; keyboard
+  // focus and taps open one that takes none.
+  const mousePress = useRef(false);
   const grid = useRef<HTMLTableElement>(null);
   const scroller = useRef<HTMLDivElement>(null);
   useEffect(() => () => clearTimeout(hoverTimer.current), []);
@@ -353,6 +356,22 @@ export function Heatmap({
     return () => document?.removeEventListener('pointermove', move);
   }, [focusTipOpen]);
 
+  // Escape hides an open tooltip wherever focus is, such as on a dialog's close button while the
+  // pointer rests on the tooltip, and goes no further, so an enclosing dialog stays open.
+  const tipOpen = Boolean(tip?.open);
+  useEffect(() => {
+    if (!tipOpen) return;
+    const view = grid.current?.ownerDocument.defaultView;
+    const escape = (event: globalThis.KeyboardEvent) => {
+      if (event.key !== 'Escape' || event.defaultPrevented || event.isComposing) return;
+      event.preventDefault();
+      event.stopPropagation();
+      hide();
+    };
+    view?.addEventListener('keydown', escape, true);
+    return () => view?.removeEventListener('keydown', escape, true);
+  }, [tipOpen]);
+
   function handlePointerOver(event: PointerEvent<HTMLTableElement>) {
     if (event.pointerType === 'touch') return;
     const cell = cellFrom(event.target);
@@ -365,27 +384,21 @@ export function Heatmap({
   function handleFocus(event: FocusEvent<HTMLTableElement>) {
     // A tap focuses its day too, so touch shows the value on tap.
     const cell = cellFrom(event.target);
+    const byMouse = mousePress.current;
+    mousePress.current = false;
     if (!cell) return;
     setActiveDay(Number(cell.dataset.day));
-    show(cell, true);
+    show(cell, !byMouse);
   }
 
   function handleBlur(event: FocusEvent<HTMLTableElement>) {
     if (grid.current?.contains(event.relatedTarget as Node | null)) return;
-    if (!grid.current?.matches(':hover')) hide();
+    // A tooltip the pointer rests on stays, on the days or on the tooltip itself.
+    if (!grid.current?.matches(':hover') && !popup.current?.matches(':hover')) hide();
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLTableElement>) {
     if (event.altKey || event.metaKey) return;
-    if (event.key === 'Escape' && !event.ctrlKey) {
-      if (tip?.open) {
-        // Hiding the tooltip consumes Escape, so an enclosing dialog stays open.
-        event.preventDefault();
-        event.stopPropagation();
-        hide();
-      }
-      return;
-    }
     const rtl = getComputedStyle(event.currentTarget).direction === 'rtl';
     const week = rtl ? -7 : 7;
     // As in a grid, Home and End move along the row, the same weekday in the first and the last
@@ -433,6 +446,12 @@ export function Heatmap({
           aria-readonly="true"
           className="env-heatmap-grid"
           onPointerOver={handlePointerOver}
+          onPointerDown={(event) => {
+            mousePress.current = event.pointerType === 'mouse';
+          }}
+          onPointerUp={() => {
+            mousePress.current = false;
+          }}
           onPointerLeave={(event) => {
             if (!intoTooltip(event.relatedTarget)) hide();
           }}
