@@ -35,6 +35,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 - `Surface` `density="compact"`: the controls inside take the compact control height, for toolbars over dense content.
 - `Code` `appearance="subtle"` and `Markdown` `inlineCode="subtle"`: inline code that follows the app theme as a quiet chip, for prose dense with identifiers.
 - `Composer`: the message field of a conversation, on the raised popup surface. It grows with its text from `minRows` to `maxRows`, then scrolls. <kbd>Enter</kbd> submits through `onSubmit`, <kbd>Shift</kbd>+<kbd>Enter</kbd> starts a new line and an input method's composition never submits. The round send button stays unavailable while the text is blank and becomes a stop button that calls `onStop` while `running`; `start` holds content such as an attach button, and `footer` describes the field.
+- `Message` and `MessageList`: conversation entries in a polite `log`. Messages `from="self"` are compact bubbles at the inline end in the row tone; messages from others are full-width content without a bubble, so long formatted answers read well. `author`, `meta`, small `actions` below the message, and a `sending` or `failed` `status` shown with an icon and text (`statusLabel`).
 
 ### Changed
 
@@ -49,7 +50,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 - New pages for the tree, document tabs, breadcrumbs, command palette, segmented controls, badges and counters, notices, popovers, tables and keyboard keys. Colors list the status tones.
 - The application shell page shows the frame alone, resizable, and a full-width topbar as a window title bar, with `TitleBar` in a `WindowFrame` on its own. The menus page shows the account and organization menus, and the building blocks for the application's own menus, compact menus and submenus included.
 - New page for the menubar.
-- New page for the composer.
+- New pages for the composer and messages.
 - Keys in the documentation and the catalogue show as `Kbd` keys.
 - The browser suite's ports can be changed with `ENVUI_CATALOGUE_PORT` and `ENVUI_FIXTURE_PORT`.
 

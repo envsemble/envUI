@@ -16,7 +16,7 @@ import { Text } from '@envsemble/envui';
 import { EmptyStatePreview, LoadingPreview, DialogsPreview } from './Feedback';
 import { ToastsPreview } from './Toasts';
 import { ColorPickerPreview } from './ColorPicking';
-import { ComposerPreview } from './Conversation';
+import { ComposerPreview, MessagesPreview } from './Conversation';
 import {
   MenuPreview,
   MenubarPreview,
@@ -87,6 +87,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <BreadcrumbsPreview />;
     case 'animated-number':
       return <AnimatedNumberPreview />;
+    case 'messages':
+      return <MessagesPreview />;
     case 'code':
       return <CodePreview />;
     case 'markdown':

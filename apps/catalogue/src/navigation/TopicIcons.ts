@@ -45,6 +45,7 @@ import { TableChart } from '@envsemble/envui/icons/TableChart';
 import { Keyboard } from '@envsemble/envui/icons/Keyboard';
 import { LinearScale } from '@envsemble/envui/icons/LinearScale';
 import { Send } from '@envsemble/envui/icons/Send';
+import { Forum } from '@envsemble/envui/icons/Forum';
 import { type Reference } from '../Reference';
 
 export const foundationIcons: Record<string, typeof Palette> = {
@@ -85,6 +86,7 @@ const referenceIcons: Record<string, typeof Palette> = {
   select: ArrowDropDownCircle,
   'color-picker': Palette,
   composer: Send,
+  messages: Forum,
   navigation: Explore,
   tabs: WebAsset,
   'direction-links': ArrowForward,

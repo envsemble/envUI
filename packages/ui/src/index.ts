@@ -59,6 +59,7 @@ export * from './feedback/Tooltip.js';
 export * from './feedback/Meter.js';
 export * from './content/Avatar.js';
 export * from './content/AnimatedNumber.js';
+export * from './content/Message.js';
 export * from './foundations/ThemePreference.js';
 export * from './navigation/Menu.js';
 export * from './navigation/Menubar.js';

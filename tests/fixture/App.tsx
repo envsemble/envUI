@@ -31,6 +31,7 @@ import { BadgesFixture } from './Badges.js';
 import { DialogVariantsFixture, NoticesFixture, PopoverFixture } from './Overlays.js';
 import { DataDisplayFixture } from './DataDisplay.js';
 import { ComposerFixture } from './Composer.js';
+import { MessagesFixture } from './Messages.js';
 
 /** Fixtures that fill the viewport are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
@@ -156,6 +157,12 @@ export default function App() {
             <>
               <ComposerFixture theme="light" />
               <ComposerFixture theme="dark" />
+            </>
+          )}
+          {includes('messages') && (
+            <>
+              <MessagesFixture theme="light" />
+              <MessagesFixture theme="dark" />
             </>
           )}
           {includes('menus') && (

@@ -42,6 +42,7 @@
 @import './TitleBar.css';
 @import './AppShell.css';
 @import './Composer.css';
+@import './Message.css';
 @import './Motion.css';
 @font-face {
   font-family: 'envUI Inter';

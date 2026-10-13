@@ -49,11 +49,16 @@ test('public components hydrate server output without recoverable errors', async
   const row = page.getByRole('treeitem', { name: 'Hydrated document 2', exact: true });
   await row.click();
   await expect(row).toHaveAttribute('aria-selected', 'true');
+  await expect(page.getByRole('log', { name: 'Hydrated conversation' })).toContainText(
+    'Hydrated answer',
+  );
   const composer = page.getByRole('textbox', { name: 'Hydrated composer' });
   await expect(composer).toHaveAccessibleDescription('Hydrated composer footer');
   await composer.fill('Hydrated message');
   await composer.press('Enter');
-  await expect(page.getByTestId('hydrated-message')).toHaveText('Hydrated message');
+  const conversation = page.getByRole('log', { name: 'Hydrated conversation' });
+  await expect(conversation.getByRole('article')).toHaveCount(2);
+  await expect(conversation.getByRole('article').last()).toHaveText('Hydrated message');
   await expect(composer).toHaveValue('');
   expect(
     await page.evaluate(() => (window as unknown as { hydrationErrors: string[] }).hydrationErrors),

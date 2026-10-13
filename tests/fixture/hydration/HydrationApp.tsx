@@ -21,6 +21,8 @@ import {
   MenuItem,
   MenuSubmenu,
   Composer,
+  Message,
+  MessageList,
 } from '@envsemble/envui';
 
 const treeItems = Array.from({ length: 40 }, (_, index) => ({
@@ -118,6 +120,12 @@ export function HydrationApp() {
             onExpandedChange={() => undefined}
           />
         </div>
+        <MessageList aria-label="Hydrated conversation">
+          <Message from="other" author="Aurora" meta="09:41">
+            Hydrated answer
+          </Message>
+          {message && <Message from="self">{message}</Message>}
+        </MessageList>
         <Composer
           aria-label="Hydrated composer"
           value={draft}
@@ -128,7 +136,6 @@ export function HydrationApp() {
           }}
           footer="Hydrated composer footer"
         />
-        <p data-testid="hydrated-message">{message}</p>
         <output>{name}</output>
       </ToastProvider>
     </Theme>
