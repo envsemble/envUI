@@ -17,8 +17,10 @@ export interface TooltipProps {
 export function Tooltip({ content, children, side = 'top', delay = 400 }: TooltipProps) {
   const isDisabled = Boolean(children.props.disabled);
   return (
+    // A control that becomes enabled or disabled changes the trigger element; a fresh tooltip
+    // listens to the new one, so hovering it still opens the tooltip.
     <TooltipNestingContext value>
-      <BaseTooltip.Root>
+      <BaseTooltip.Root key={isDisabled ? 'disabled' : 'enabled'}>
         <BaseTooltip.Trigger
           delay={delay}
           render={

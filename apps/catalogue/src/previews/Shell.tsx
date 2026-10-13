@@ -23,6 +23,8 @@ import {
 } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Apps } from '@envsemble/envui/icons/Apps';
+import { ArrowBack } from '@envsemble/envui/icons/ArrowBack';
+import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { Category } from '@envsemble/envui/icons/Category';
 import { ManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
 import { Logout } from '@envsemble/envui/icons/Logout';
@@ -216,10 +218,11 @@ function TitleBarExamples() {
         size="wide"
         caption={
           <>
-            One row across the window: the mark, a menubar and a workspace picker, the title, and
-            the actions, independent of the sidebar. As the title bar of an installed app, empty
-            space drags the window, the controls are compact, and the bar leaves room for the window
-            controls the system draws, shown here at the end.
+            One row across the window: the mark, a menubar, back and forward and a workspace picker,
+            the title, and the actions, independent of the sidebar. As the title bar of an installed
+            app, empty space drags the window, the controls are compact, icon-only text buttons take
+            the quiet color of the window controls, and the bar leaves room for the window controls
+            the system draws, shown here at the end.
           </>
         }
       >
@@ -231,6 +234,8 @@ function TitleBarExamples() {
             context={
               <>
                 <SampleMenubar label="Application menu" />
+                <IconButton variant="text" icon={<ArrowBack />} aria-label="Back" />
+                <IconButton variant="text" icon={<ArrowForward />} aria-label="Forward" disabled />
                 <Select
                   aria-label="Workspace"
                   density="compact"

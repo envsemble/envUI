@@ -488,6 +488,10 @@ test('menu groups, radio and checkbox items keep their choice', async ({ page })
   const zoom = menu.getByRole('menuitem', { name: 'Zoom in' });
   await expect(zoom).toHaveAttribute('aria-keyshortcuts', 'Control+Plus');
   await expect(zoom.locator('kbd.env-kbd')).toHaveText(['Ctrl', '+']);
+  // An arrow shows as its glyph and is announced by its key name.
+  const back = menu.getByRole('menuitem', { name: 'Back' });
+  await expect(back).toHaveAttribute('aria-keyshortcuts', 'Alt+ArrowLeft');
+  await expect(back.locator('kbd.env-kbd')).toHaveText(['Alt', '←']);
   const sequence = menu.getByRole('menuitem', { name: 'Keyboard shortcuts' });
   await expect(sequence).not.toHaveAttribute('aria-keyshortcuts');
   await expect(sequence.locator('kbd.env-kbd')).toHaveText(['Ctrl', 'K', 'Ctrl', 'S']);

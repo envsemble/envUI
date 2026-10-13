@@ -285,6 +285,14 @@ const keyNames: Record<string, string> = {
   esc: 'Escape',
   del: 'Delete',
   space: 'Space',
+  left: 'ArrowLeft',
+  right: 'ArrowRight',
+  up: 'ArrowUp',
+  down: 'ArrowDown',
+  '←': 'ArrowLeft',
+  '→': 'ArrowRight',
+  '↑': 'ArrowUp',
+  '↓': 'ArrowDown',
 };
 
 /**

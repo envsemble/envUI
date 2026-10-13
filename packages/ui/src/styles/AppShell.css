@@ -346,16 +346,17 @@ button.env-app-sidebar-toggle:focus-visible {
   --env-title-bar-end: var(--space-3);
 }
 
-/* As the window's title bar, the topbar takes the title bar height, which --topbar-height follows,
-   so the sidebar and the content line up with it. The window reports a smaller height once the page
-   is zoomed in, so the bar keeps at least --title-bar-height, which holds its compact controls.
+/* As the window's title bar, the topbar takes the title bar height and its divider below, so the
+   divider runs under the window controls too; --topbar-height follows it, so the sidebar and the
+   content line up with it. The window reports a smaller height once the page is zoomed in, so the
+   bar keeps at least --title-bar-height, which holds its compact controls.
    The shell fills the window and its content area scrolls below the title bar instead of the
    document: the window controls drawn over the title bar never cover a scrollbar, and the stable
    scrollbar gutter keeps the layout in place as content starts or stops overflowing. Content sticks
    to the top of the content area, so --app-sticky-top is 0 there. Nothing here contains fixed
    positioning, so a fixed overlay inside the content still covers the window. */
 .env-app-shell[data-title-bar] {
-  --topbar-height: max(env(titlebar-area-height, 0px), var(--title-bar-height));
+  --topbar-height: max(calc(env(titlebar-area-height, 0px) + 0.0625rem), var(--title-bar-height));
   --app-sticky-top: 0px;
   position: fixed;
   inset: 0;

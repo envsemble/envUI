@@ -2,9 +2,12 @@ import { useState } from 'react';
 import {
   Badge,
   Breadcrumbs,
+  GroupedRows,
   IconButton,
   Kbd,
+  Link,
   LinkProvider,
+  Row,
   Surface,
   Table,
   TableBody,
@@ -17,6 +20,8 @@ import {
   type LinkComponentProps,
   type ThemeValue,
 } from '@envsemble/envui';
+import { Description } from '@envsemble/envui/icons/Description';
+import { MoreHoriz } from '@envsemble/envui/icons/MoreHoriz';
 import { MoreVert } from '@envsemble/envui/icons/MoreVert';
 
 /** A trail too long for its narrow frame: the current page cannot fit beside the earlier levels. */
@@ -50,6 +55,7 @@ function RecordingLink({ href, onClick, ...props }: LinkComponentProps) {
 
 export function DataDisplayFixture({ theme }: { theme: ThemeValue }) {
   const [crumb, setCrumb] = useState('');
+  const [rowResult, setRowResult] = useState('');
   return (
     <Theme theme={theme} data-testid={`data-${theme}`} className="fixture-section">
       <LinkProvider component={RecordingLink}>
@@ -126,6 +132,41 @@ export function DataDisplayFixture({ theme }: { theme: ThemeValue }) {
           </TableBody>
         </Table>
       </div>
+      <GroupedRows aria-label={`Rows ${theme}`}>
+        <Row
+          interactive
+          className="fixture-open-row"
+          title={
+            <span className="fixture-row-title">
+              <Description />
+              <Link
+                href="#roadmap"
+                underline={false}
+                data-row-target
+                draggable={false}
+                onClick={(event) => {
+                  event.preventDefault();
+                  setRowResult('open roadmap');
+                }}
+              >
+                Roadmap
+              </Link>
+            </span>
+          }
+          detail="Updated today"
+          action={
+            <IconButton
+              variant="text"
+              icon={<MoreHoriz />}
+              aria-label="More actions"
+              className="fixture-row-action"
+              onClick={() => setRowResult('more actions')}
+            />
+          }
+        />
+        <Row title="Archive" detail="Read only" />
+      </GroupedRows>
+      <output data-testid={`row-result-${theme}`}>{rowResult}</output>
       <Table aria-label={`Compact ${theme}`} density="compact">
         <TableBody>
           <TableRow>

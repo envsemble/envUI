@@ -7,11 +7,13 @@ import {
   Surface,
   FeatureCard,
   GroupedRows,
+  Link,
   Row,
   Stack,
   ActionGroup,
 } from '@envsemble/envui';
 import { Apps } from '@envsemble/envui/icons/Apps';
+import { MoreHoriz } from '@envsemble/envui/icons/MoreHoriz';
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
 
@@ -143,6 +145,7 @@ export function LayoutPreview() {
 
 export function RowsPreview() {
   const [actionResult, setActionResult] = useState('');
+  const [opened, setOpened] = useState('');
   return (
     <Preview>
       <Example title="Single and connected rows" size="collection">
@@ -184,6 +187,46 @@ export function RowsPreview() {
         </GroupedRows>
         <Text variant="caption" aria-live="polite">
           {actionResult}
+        </Text>
+      </Example>
+      <Example
+        title="Rows that open something"
+        caption="Interactive rows react to hover, presses and focus inside them. Each title link stretches over its row, and the action stays above it."
+      >
+        <GroupedRows aria-label="Recent plans">
+          {['Roadmap', 'Decisions'].map((name) => (
+            <Row
+              key={name}
+              interactive
+              title={
+                <Link
+                  href={`#${name.toLowerCase()}`}
+                  underline={false}
+                  data-row-target
+                  draggable={false}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    setOpened(`Opened ${name}`);
+                  }}
+                >
+                  {name}
+                </Link>
+              }
+              detail="Updated today"
+              action={
+                <IconButton
+                  variant="text"
+                  icon={<MoreHoriz />}
+                  aria-label={`More actions for ${name}`}
+                  className="docs-row-action"
+                  onClick={() => setOpened(`More actions for ${name}`)}
+                />
+              }
+            />
+          ))}
+        </GroupedRows>
+        <Text variant="caption" aria-live="polite">
+          {opened}
         </Text>
       </Example>
     </Preview>

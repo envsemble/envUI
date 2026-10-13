@@ -104,6 +104,69 @@ test('keys render as key caps joined by plus', async ({ page }) => {
   await expect(scope.locator('kbd.env-kbd').filter({ hasText: 'F2' })).toBeVisible();
 });
 
+test('interactive rows react to hover, presses and focus, and open from anywhere', async ({
+  page,
+}) => {
+  // With motion, as pressed controls shrink: a press on the row still follows its link.
+  await page.goto(dataFixture);
+  for (const theme of ['light', 'dark']) {
+    const rows = page.getByRole('list', { name: `Rows ${theme}` }).getByRole('listitem');
+    const [open, plain] = [rows.first(), rows.last()];
+    const link = open.getByRole('link', { name: 'Roadmap' });
+    const action = open.getByRole('button', { name: 'More actions' });
+    const fill = (row: typeof open) =>
+      row.evaluate((element) => getComputedStyle(element).backgroundColor);
+    const rest = await fill(open);
+    expect(await fill(plain)).toBe(rest);
+    await expect(open).toHaveCSS('position', 'relative');
+    await plain.hover();
+    await page.waitForTimeout(300);
+    expect(await fill(plain)).toBe(rest);
+    // The row reacts to the pointer anywhere on it, and to keyboard focus inside it.
+    await open.hover({ position: { x: 8, y: 8 } });
+    await expect.poll(() => fill(open)).not.toBe(rest);
+    await page.waitForTimeout(300);
+    const hovered = await fill(open);
+    await page.mouse.move(0, 0);
+    await expect.poll(() => fill(open)).toBe(rest);
+    // Keyboard focus inside the row highlights it (the action: WebKit's Tab skips links).
+    await link.focus();
+    await page.keyboard.press('Tab');
+    await expect(action).toBeFocused();
+    await expect.poll(() => fill(open)).toBe(hovered);
+    await action.blur();
+    await expect.poll(() => fill(open)).toBe(rest);
+    // A press beside the title follows the link that covers the row, and the row shows it.
+    const box = (await open.boundingBox())!;
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height - 6);
+    await page.mouse.down();
+    await page.waitForTimeout(300);
+    const pressed = await fill(open);
+    expect(pressed).not.toBe(hovered);
+    await page.mouse.up();
+    await expect(page.getByTestId(`row-result-${theme}`)).toHaveText('open roadmap');
+    // The action keeps its own press: the row does not darken, and stays plain once the pointer
+    // leaves, though a click may leave focus on the action.
+    const actionBox = (await action.boundingBox())!;
+    await page.mouse.move(actionBox.x + actionBox.width / 2, actionBox.y + actionBox.height / 2);
+    await page.mouse.down();
+    await page.waitForTimeout(300);
+    expect(await fill(open)).toBe(hovered);
+    await page.mouse.up();
+    await expect(page.getByTestId(`row-result-${theme}`)).toHaveText('more actions');
+    await page.mouse.move(0, 0);
+    await expect.poll(() => fill(open)).toBe(rest);
+    // The covering link is not dragged as a link where the engine supports it.
+    const drag = await link.evaluate(
+      (element) =>
+        (getComputedStyle(element) as CSSStyleDeclaration & { webkitUserDrag?: string })
+          .webkitUserDrag,
+    );
+    if (drag !== undefined) expect(drag).toBe('none');
+    await expect(link).toHaveAttribute('draggable', 'false');
+  }
+});
+
 test('tables scroll sideways in a focusable region and keep a sticky header', async ({ page }) => {
   await page.goto(dataFixture);
   for (const theme of ['light', 'dark']) {
