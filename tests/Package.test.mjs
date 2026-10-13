@@ -382,34 +382,74 @@ test('public components import and render on a server with no DOM globals', func
   assert.match(ssr.html, /aria-label="envsemble"/);
 });
 
+/** The index of the parenthesis that closes the group opening at index, or -1. */
+function closingParenthesis(selector, index) {
+  let depth = 0;
+  for (; index < selector.length; index++) {
+    if (selector[index] === '(') depth++;
+    else if (selector[index] === ')' && --depth === 0) return index;
+  }
+  return -1;
+}
+
+/** The selector without its :not() groups, which leave elements out rather than name them. */
+function withoutNegations(selector) {
+  let result = '';
+  for (let index = 0; index < selector.length; index++) {
+    if (selector.startsWith(':not(', index)) {
+      const end = closingParenthesis(selector, index + ':not'.length);
+      if (end === -1) return selector;
+      index = end;
+    } else result += selector[index];
+  }
+  return result;
+}
+
 /**
- * Every selector in a list starts at an envUI class, is a zero-specificity :where() wrapper whose
- * every selector is scoped, or is the document element while it contains an envUI element, such as
- * html:has(.env-app-shell), and nothing more.
+ * Every selector in a list matches only envUI's elements. Two whole selectors may name the document
+ * itself, each at zero specificity: the body of a themed root, and the document element while it
+ * contains an envUI element.
  */
 function scopedSelector(selector) {
   const list = splitSelectors(selector);
   if (list.length !== 1) return list.length > 1 && list.every(scopedSelector);
-  if (/^(?:[a-zA-Z][\w-]*)?\.env-/.test(selector)) return true;
-  const wrapper = /^(?::where|html:has)\(/.exec(selector)?.[0];
-  if (!wrapper) return false;
-  let depth = 0;
-  for (let index = wrapper.length - 1; index < selector.length; index++) {
-    if (selector[index] === '(') depth++;
-    else if (selector[index] === ')' && --depth === 0) {
-      const inner = splitSelectors(selector.slice(wrapper.length, index));
-      if (inner.length === 0 || !inner.every(scopedSelector)) return false;
-      // Descendants of a scoped :where() stay scoped; html:has() names the document element alone.
-      return wrapper === ':where(' || index === selector.length - 1;
-    }
+  const normalized = selector
+    .replace(/\s*([>+~])\s*/g, ' $1 ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (normalized === ':where(.env-theme:where(html) > body)') return true;
+  if (normalized.startsWith(':where(html:has(')) {
+    const end = closingParenthesis(normalized, ':where(html:has'.length);
+    // Nothing may follow, inside the :where() or after it.
+    if (end === -1 || normalized.slice(end + 1) !== ')') return false;
+    const inner = splitSelectors(normalized.slice(':where(html:has('.length, end));
+    return inner.length > 0 && inner.every(scopedElement);
   }
-  return false;
+  return scopedElement(normalized);
 }
 
-test('the CSS scope check accepts only selectors that start at an envUI class', () => {
+/**
+ * A selector that starts at an envUI class, or a zero-specificity :where() wrapper around such
+ * selectors, which never names the document element: through it, a selector reaches the whole page.
+ */
+function scopedElement(selector) {
+  const list = splitSelectors(selector);
+  if (list.length !== 1) return list.length > 1 && list.every(scopedElement);
+  if (/(?:^|[\s>+~(])html(?![\w-])/.test(withoutNegations(selector))) return false;
+  if (/^(?:[a-zA-Z][\w-]*)?\.env-/.test(selector)) return true;
+  if (!selector.startsWith(':where(')) return false;
+  const end = closingParenthesis(selector, ':where'.length);
+  if (end === -1) return false;
+  // What follows a :where() around envUI's elements matches within them.
+  const inner = splitSelectors(selector.slice(':where('.length, end));
+  return inner.length > 0 && inner.every(scopedElement);
+}
+
+test('the CSS scope check accepts only selectors that match envUI elements', () => {
   for (const selector of [
     '.env-theme',
     'button.env-button',
+    '.env-theme:where(:not(html))',
     ':where(.env-theme:where(html) > body)',
     ':where(.env-theme) .env-button',
     ':where(html:has(.env-app-shell:not([data-title-bar])))',
@@ -424,8 +464,17 @@ test('the CSS scope check accepts only selectors that start at an envUI class', 
     ':where(.env-theme',
     ':where(html:has(body))',
     ':where(html:has(.env-app-shell) body)',
+    ':where(html:has(.env-app-shell)) *',
+    ':where(html:has(.env-app-shell)) body',
+    ':where(html:has(.env-app-shell)) p',
+    ':where(html:has(.env-app-shell)) ~ div',
+    ':where(:where(html:has(.env-x))) input',
+    'html:has(.env-app-shell)',
     'html:has(.env-app-shell) body',
     'body:has(.env-app-shell)',
+    '.env-theme:where(html) *',
+    'html.env-theme body',
+    ':where(.env-theme:where(html) > body) p',
   ])
     assert.ok(!scopedSelector(selector), selector);
 });
