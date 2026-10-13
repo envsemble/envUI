@@ -209,6 +209,25 @@ test('columns resize the other way in a right-to-left table', async ({ page }) =
   await handle.focus();
   await page.keyboard.press('ArrowLeft');
   await expect(handle).toHaveAttribute('aria-valuenow', '41');
+
+  // Dragging toward the inline end, to the left, widens the column too.
+  const tableWidth = (await table.boundingBox())!.width;
+  const start = (await handle.boundingBox())!;
+  await page.mouse.move(start.x + start.width / 2, start.y + start.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(start.x + start.width / 2 - tableWidth * 0.09, start.y + start.height / 2, {
+    steps: 4,
+  });
+  await page.mouse.up();
+  await expect(handle).toHaveAttribute('aria-valuenow', '50');
+  // The boundary moves between the two columns, so the next one gives up what this one gains.
+  const [report, owner] = (await page.getByTestId('widths-light').textContent())!
+    .split(' ')
+    .map(Number);
+  expect(report).toBeCloseTo(50, 0);
+  expect(report! + owner!).toBeCloseTo(70, 5);
+  const header = (await table.getByRole('columnheader', { name: 'Report' }).boundingBox())!;
+  expect(header.width / tableWidth).toBeCloseTo(0.5, 2);
 });
 
 test('selected rows report aria-selected and take the selection colors in both themes', async ({
@@ -387,6 +406,29 @@ test('a table stacks below the width it is given, measured on its region', async
   await expect(page.getByRole('region', { name: 'Reports light' })).not.toHaveAttribute(
     'data-stacked',
   );
+});
+
+test('a table measures stackBelow in any CSS length and reports when it stacks', async ({
+  page,
+}) => {
+  for (const theme of themes) {
+    const frame = page.getByTestId(`measured-stack-frame-${theme}`);
+    const region = page.getByRole('region', { name: `Measured threshold ${theme}` });
+    const changes = page.getByTestId(`stack-changes-${theme}`);
+    // calc(20rem + 160px) is 480 px, wider than the region, so its rows stack and it says so.
+    await expect(region).toHaveAttribute('data-stacked', '');
+    await expect(changes).toHaveText('stacked');
+    await frame.evaluate((element) => (element.style.inlineSize = '31rem'));
+    await expect(region).not.toHaveAttribute('data-stacked');
+    await expect(changes).toHaveText('stacked columns');
+    await frame.evaluate((element) => (element.style.inlineSize = '29.5rem'));
+    await expect(region).toHaveAttribute('data-stacked', '');
+    await expect(changes).toHaveText('stacked columns stacked');
+  }
+  // The probe that measures the length never widens the region or the page.
+  const region = page.getByRole('region', { name: 'Measured threshold light' });
+  expect(await region.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
 test('content positioned in a cell stays inside the scroll region', async ({ page }) => {

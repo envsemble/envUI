@@ -22,7 +22,6 @@ import {
   columnMinimums,
   columnResizeLargeStep,
   columnResizeStep,
-  lengthInPixels,
   resizeColumns,
   sameWidths,
 } from './internal/TableColumns.js';
@@ -61,10 +60,16 @@ export interface TableProps extends Omit<ComponentPropsWithRef<'table'>, 'aria-l
    */
   narrowLayout?: 'scroll' | 'stack';
   /**
-   * The region width below which a table with narrowLayout="stack" stacks its rows, as a length in
-   * rem, em or px; 36rem by default. Wide tables, such as seven sortable columns, need more.
+   * The region width below which a table with narrowLayout="stack" stacks its rows, as a CSS length
+   * such as 60rem or 480px; 36rem by default. Wide tables, such as seven sortable columns, need more.
    */
   stackBelow?: string;
+  /**
+   * Called with true when the rows stack and with false when the columns return, from the same
+   * measurement as stackBelow, for example to show another sort control while the header row is
+   * hidden. The region has data-stacked while the rows stack.
+   */
+  onStackedChange?: (stacked: boolean) => void;
   /** Column widths in percent of the table width, in column order and adding up to 100. */
   columnWidths?: readonly number[];
   /**
@@ -83,20 +88,31 @@ export interface TableProps extends Omit<ComponentPropsWithRef<'table'>, 'aria-l
   resizableColumns?: boolean;
 }
 
-/** Whether a region is narrower than a length, following its width as it changes. */
-function useNarrowerThan(region: RefObject<HTMLElement | null>, enabled: boolean, length: string) {
+/**
+ * Whether a region is narrower than a probe sized to a CSS length, following both as they change.
+ * It is measured after the markup is in the document, before the browser paints a client render;
+ * server-rendered markup shows the columns until hydration measures it.
+ */
+function useNarrowerThan(
+  region: RefObject<HTMLElement | null>,
+  probe: RefObject<HTMLElement | null>,
+  enabled: boolean,
+  length: string,
+) {
   const [narrower, setNarrower] = useState(false);
   useLayoutEffect(() => {
     const element = region.current;
-    if (!enabled || !element) return;
-    const update = (width: number) => setNarrower(width < lengthInPixels(length, element));
-    // Measured before the first paint, so a narrow table never shows its columns first.
-    update(element.clientWidth);
+    const threshold = probe.current;
+    if (!enabled || !element || !threshold) return;
+    const measure = () => setNarrower(element.clientWidth < threshold.offsetWidth);
+    measure();
     if (typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(([entry]) => update(entry!.contentRect.width));
+    const observer = new ResizeObserver(measure);
     observer.observe(element);
+    // A length in rem or em follows the text size.
+    observer.observe(threshold);
     return () => observer.disconnect();
-  }, [region, enabled, length]);
+  }, [region, probe, enabled, length]);
   return enabled && narrower;
 }
 
@@ -109,6 +125,7 @@ export function Table({
   regionClassName,
   narrowLayout = 'scroll',
   stackBelow = '36rem',
+  onStackedChange,
   columnWidths,
   defaultColumnWidths,
   onColumnWidthsChange,
@@ -121,7 +138,15 @@ export function Table({
   const captionId = useId();
   const stack = narrowLayout === 'stack';
   const region = useRef<HTMLDivElement>(null);
-  const stacked = useNarrowerThan(region, stack, stackBelow);
+  const probe = useRef<HTMLDivElement>(null);
+  const stacked = useNarrowerThan(region, probe, stack, stackBelow);
+  // Reported before paint, so an application can show its own controls for the stacked rows at once.
+  const reportedStacked = useRef(false);
+  useLayoutEffect(() => {
+    if (stacked === reportedStacked.current) return;
+    reportedStacked.current = stacked;
+    onStackedChange?.(stacked);
+  }, [stacked, onStackedChange]);
   // Widths the table owns start over when the defaults change, for example with another column.
   const defaultsKey = defaultColumnWidths?.join(' ');
   const [chosen, setChosen] = useState({ key: defaultsKey, widths: defaultColumnWidths });
@@ -190,6 +215,14 @@ export function Table({
           <TableColumnsContext value={columns}>{children}</TableColumnsContext>
         </TableStackContext>
       </table>
+      {stack && (
+        <div
+          ref={probe}
+          className="env-table-stack-probe"
+          aria-hidden="true"
+          style={{ inlineSize: stackBelow }}
+        />
+      )}
     </div>
   );
 }

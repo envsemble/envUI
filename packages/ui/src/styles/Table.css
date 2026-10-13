@@ -237,6 +237,16 @@
   }
 }
 
+/* An invisible probe as wide as stackBelow, in any CSS length, outside the region's scrollable area;
+   the table compares the region's width with it. */
+.env-table-stack-probe {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 100%;
+  block-size: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
 /* A stacking table follows the width of its region, not the window. Below its stackBelow width the
    region is marked stacked and each body row becomes a block on the table surface: the first cell is
    its title, then each labelled value. */

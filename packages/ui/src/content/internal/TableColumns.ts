@@ -47,15 +47,3 @@ export function resizeColumns(
 export function sameWidths(first: readonly number[] | undefined, second: readonly number[]) {
   return first?.length === second.length && first.every((width, index) => width === second[index]);
 }
-
-/** A length in px, rem or em as pixels for an element; bare numbers are pixels. */
-export function lengthInPixels(length: string, element: Element) {
-  const match = /^\s*(\d*\.?\d+)\s*(px|rem|em)?\s*$/i.exec(length);
-  if (!match) return Number.NaN;
-  const value = Number(match[1]);
-  const unit = match[2]?.toLowerCase() ?? 'px';
-  if (unit === 'px') return value;
-  const view = element.ownerDocument.defaultView!;
-  const reference = unit === 'rem' ? element.ownerDocument.documentElement : element;
-  return value * Number.parseFloat(view.getComputedStyle(reference).fontSize);
-}

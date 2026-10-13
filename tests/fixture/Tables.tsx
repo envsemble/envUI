@@ -42,6 +42,7 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
   const [sort, setSort] = useState<{ key: SortKey; direction: 'ascending' | 'descending' }>();
   const [selected, setSelected] = useState(['tokens']);
   const [widths, setWidths] = useState([40, 30, 15, 15]);
+  const [stackChanges, setStackChanges] = useState<string[]>([]);
   const rows = sort
     ? [...reports].sort((first, second) =>
         sort.direction === 'ascending'
@@ -196,6 +197,30 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
           </TableBody>
         </Table>
       </div>
+      <div className="fixture-measured-stack-frame" data-testid={`measured-stack-frame-${theme}`}>
+        <Table
+          aria-label={`Measured threshold ${theme}`}
+          narrowLayout="stack"
+          stackBelow="calc(20rem + 160px)"
+          onStackedChange={(stacked) =>
+            setStackChanges((list) => [...list, stacked ? 'stacked' : 'columns'])
+          }
+        >
+          <TableHead>
+            <TableRow>
+              <TableHeaderCell>Report</TableHeaderCell>
+              <TableHeaderCell>Owner</TableHeaderCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell>Quarterly report</TableCell>
+              <TableCell label="Owner">Aurora</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </div>
+      <output data-testid={`stack-changes-${theme}`}>{stackChanges.join(' ')}</output>
       <div className="fixture-wide-stack-frame" data-testid={`wide-stack-frame-${theme}`}>
         <Table aria-label={`Seven columns ${theme}`} narrowLayout="stack" stackBelow="60rem">
           <TableHead>
