@@ -38,9 +38,10 @@ interface AppShellContextValue {
   /**
    * The element that scrolls the page content: the content area in a title-bar shell, else the
    * scrolling element of the shell's document. Read or restore scroll positions on it. In a
-   * title-bar shell it is null until the content area is attached; the function then changes, so
-   * effects that depend on it run again. Every copy of the function returns the current element,
-   * including one kept from an earlier render.
+   * title-bar shell it is null until the content area is attached. The function changes once the
+   * shell is attached, so effects that depend on it run again: with the content area of a title-bar
+   * shell, and with the frame's scrolling element where the shell is rendered into a frame. Every
+   * copy of the function returns the current element, including one kept from an earlier render.
    */
   getScrollElement: () => HTMLElement | null;
 }
@@ -279,8 +280,8 @@ export function AppShell({
   const shell = useRef<HTMLDivElement>(null);
   const navigationRegion = useRef<HTMLElement>(null);
   const content = useRef<HTMLElement>(null);
-  // Also kept in state, so getScrollElement changes once the content area is attached; refs attach
-  // only after the content's own layout effects run.
+  // Also kept in state, as is the shell, so getScrollElement changes once they are attached; refs
+  // attach only after the content's own layout effects run.
   const [contentElement, setContentElement] = useState<HTMLElement | null>(null);
   const [shellElement, setShellElement] = useState<HTMLDivElement | null>(null);
   const [contentWidth, setContentWidth] = useState<number>();
@@ -446,8 +447,8 @@ export function AppShell({
   // A title-bar shell scrolls its content area below the title bar; otherwise the document scrolls.
   const scrollingContent = titleBar ? contentElement : null;
   // The function reads the elements as it is called, so a copy kept from an earlier render returns
-  // them too. It still changes once the content area is attached, so effects that depend on it run
-  // again with the element.
+  // them too. It still changes once the shell and its content area are attached, so effects that
+  // depend on it run again: with the content area, or inside a frame with the frame's scroller.
   const getScrollElement = useCallback((): HTMLElement | null => {
     if (titleBar) return content.current;
     // Until the shell is attached, as the content's first layout effects run, the global document
@@ -456,7 +457,7 @@ export function AppShell({
       shell.current?.ownerDocument ?? (typeof document === 'undefined' ? null : document);
     if (!page) return null;
     return (page.scrollingElement as HTMLElement | null) ?? page.documentElement;
-  }, [titleBar, scrollingContent]);
+  }, [titleBar, scrollingContent, shellElement]);
   // With the document no longer scrolling, the keyboard scrolls the content area as it would the
   // document.
   useScrollKeys(titleBar ? shellElement : null, scrollingContent);

@@ -162,18 +162,37 @@ export function ScrollKeysFixture() {
   );
 }
 
+/** Whether getScrollElement returned the scrolling element of the frame's own document. */
+function describeScroller(element: Element | null, frame: Document) {
+  return element === frame.scrollingElement ? 'frame' : element ? 'other' : 'none';
+}
+
+/**
+ * Records what each getScrollElement function returns to a layout effect inside a frame, once per
+ * function, so that strict mode running the effect again does not count, and reads it when asked.
+ */
 function FrameScrollProbe() {
   const { getScrollElement } = useAppShell();
+  const record = useRef<HTMLOutputElement>(null);
+  const recorded = useRef<typeof getScrollElement>(null);
+  const [mounted, setMounted] = useState<string[]>([]);
   const [seen, setSeen] = useState('');
+  useLayoutEffect(() => {
+    const frame = record.current?.ownerDocument;
+    if (!frame || recorded.current === getScrollElement) return;
+    recorded.current = getScrollElement;
+    setMounted((current) => [...current, describeScroller(getScrollElement(), frame)]);
+  }, [getScrollElement]);
   return (
     <div className="fixture-actions">
+      <output ref={record} data-testid="framed-mount-scroll-element">
+        {mounted.join(' ')}
+      </output>
       <button
         type="button"
-        onClick={(event) => {
-          const element = getScrollElement();
-          const own = event.currentTarget.ownerDocument.scrollingElement;
-          setSeen(element === own ? 'frame' : element ? 'other' : 'none');
-        }}
+        onClick={(event) =>
+          setSeen(describeScroller(getScrollElement(), event.currentTarget.ownerDocument))
+        }
       >
         Read the scroll element
       </button>

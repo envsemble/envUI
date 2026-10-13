@@ -376,6 +376,11 @@ test('getScrollElement serves page content from its first layout effects', async
   // effect that depends on it runs again and gets the content area.
   await page.goto(fullShell);
   await expect(page.getByTestId('mount-scroll-element')).toHaveText(/(^| )main$/);
+  // In a shell rendered into the document of a frame, the function changes once the shell is
+  // attached, so the layout effect runs again and gets the frame's scrolling element.
+  await page.goto(`${fixtureUrl}/?fixture=framed-shell`);
+  const frame = page.frameLocator('iframe[title="Framed shell"]');
+  await expect(frame.getByTestId('framed-mount-scroll-element')).toHaveText(/(^| )frame$/);
 });
 
 test('a copy of getScrollElement kept from the first render returns the current element', async ({
