@@ -172,6 +172,20 @@ test('commands act on the field that had focus, and focus returns to it', async 
   expect(errors).toEqual([]);
 });
 
+test('a click elsewhere lets focus go when nothing had focus before the menu', async ({ page }) => {
+  await page.goto(menubarFixture);
+  await trigger(page, 'File').click();
+  const fileMenu = page.getByRole('menu', { name: 'File' });
+  await expect(fileMenu).toBeVisible();
+  await page.getByText('Line 5', { exact: true }).click();
+  await expect(fileMenu).toBeHidden();
+  await expect(trigger(page, 'File')).not.toBeFocused();
+  // Space or a menu's letter then opens nothing.
+  await page.keyboard.press('Space');
+  await page.keyboard.press('f');
+  await expect(page.getByRole('menu')).toHaveCount(0);
+});
+
 test.describe('Access keys', () => {
   test('Alt underlines access keys and Alt with a letter opens that menu', async ({ page }) => {
     const errors = collectErrors(page);
@@ -227,6 +241,28 @@ test.describe('Access keys', () => {
     await page.keyboard.press('Alt');
     await expect(note).toBeFocused();
     await expect(page.getByRole('menu', { name: 'View' })).toBeHidden();
+  });
+
+  test('the access key hint ends with another key or when the window loses focus', async ({
+    page,
+  }) => {
+    await page.goto(menubarFixture);
+    const note = page.getByRole('textbox', { name: 'Note' });
+    await note.click();
+    await page.keyboard.down('Alt');
+    await expect(menubar(page)).toHaveAttribute('data-access-keys-shown', '');
+    // Alt+Space opens the window's own menu, which may keep the release of Alt from the page.
+    await page.keyboard.press('Space');
+    await expect(menubar(page)).not.toHaveAttribute('data-access-keys-shown');
+    await page.keyboard.up('Alt');
+    await expect(note).toBeFocused();
+    await page.keyboard.down('Alt');
+    await expect(menubar(page)).toHaveAttribute('data-access-keys-shown', '');
+    await page.evaluate(() => window.dispatchEvent(new Event('blur')));
+    await expect(menubar(page)).not.toHaveAttribute('data-access-keys-shown');
+    // Releasing Alt after the window lost focus does not move focus to the menubar.
+    await page.keyboard.up('Alt');
+    await expect(note).toBeFocused();
   });
 
   test('other Alt combinations and unclaimed letters stay with the page', async ({ page }) => {

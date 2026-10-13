@@ -173,7 +173,10 @@ export function Menubar({
         if (altAlone) setAltHeld(true);
         return;
       }
+      // Another key ends the hint, such as Space opening the window's own menu, which may keep the
+      // Alt release from the page. An access key that opens a menu shows the keys again below.
       altAlone = false;
+      setAltHeld(false);
       if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.shiftKey) return;
       if (event.altKey) {
         // Alt with a letter that no menu claims stays with the page.
@@ -216,22 +219,20 @@ export function Menubar({
       setActivated(true);
       first.focus();
     }
+    // Leaving the window, or pointing, ends the hint and the keyboard activation.
     function cancel() {
       altAlone = false;
       setAltHeld(false);
-    }
-    function onPointerDown() {
-      cancel();
       setActivated(false);
     }
     view.addEventListener('keydown', onKeyDown, true);
     view.addEventListener('keyup', onKeyUp, true);
-    view.addEventListener('pointerdown', onPointerDown, true);
+    view.addEventListener('pointerdown', cancel, true);
     view.addEventListener('blur', cancel);
     return () => {
       view.removeEventListener('keydown', onKeyDown, true);
       view.removeEventListener('keyup', onKeyUp, true);
-      view.removeEventListener('pointerdown', onPointerDown, true);
+      view.removeEventListener('pointerdown', cancel, true);
       view.removeEventListener('blur', cancel);
       setAltHeld(false);
       setActivated(false);
@@ -384,6 +385,12 @@ export function MenubarMenu({
     const earlier = previousFocus.current;
     if (reason !== 'escape-key' && earlier instanceof HTMLElement && earlier.isConnected)
       return earlier;
+    // With nothing to return to, a click elsewhere lets focus go: left on the trigger, Space or a
+    // menu's letter would open a menu again.
+    if (reason === 'outside-press') {
+      if (trigger.current?.ownerDocument.activeElement === trigger.current) trigger.current?.blur();
+      return false;
+    }
     return trigger.current ?? true;
   }
 
