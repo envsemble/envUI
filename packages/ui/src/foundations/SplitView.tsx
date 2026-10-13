@@ -27,7 +27,10 @@ export interface SplitViewProps extends Omit<ComponentPropsWithRef<'div'>, 'chil
   minSize?: number;
   /** The largest share of the start pane in percent; 80 by default. */
   maxSize?: number;
-  /** Keep the share chosen in an uncontrolled split under this localStorage key. */
+  /**
+   * Keep the share chosen in an uncontrolled split under this localStorage key. Another key brings
+   * the share stored under it, or the default.
+   */
   storageKey?: string;
   /**
    * A width, such as 48rem: while the split view itself is narrower, the panes stack and the
@@ -112,10 +115,10 @@ export function SplitView({
   }>(null);
   const startId = `${useId()}-start`;
 
-  // Read after mount, so server-rendered markup and the first client render agree.
+  // Read after mount, so server-rendered markup and the first client render agree. Another key
+  // brings its own stored share, or the default.
   useLayoutEffect(() => {
-    const stored = readStoredSize(storageKey);
-    if (stored !== undefined) setChosenSize(stored);
+    setChosenSize(readStoredSize(storageKey));
   }, [storageKey]);
 
   // The split view measures itself, so it stacks by its own width rather than the window's.

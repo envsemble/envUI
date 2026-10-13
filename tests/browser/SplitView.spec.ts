@@ -96,6 +96,26 @@ test('the divider resizes with the pointer and the keyboard and remembers the si
   expect(errors).toEqual([]);
 });
 
+test('another storage key brings the share stored under it, or the default', async ({ page }) => {
+  await page.goto(splitFixture);
+  await page.evaluate(() => localStorage.setItem('fixture-split-light', '60'));
+  await page.reload();
+  const divider = page.getByRole('separator', { name: 'Resize documents light' });
+  await expect(divider).toHaveAttribute('aria-valuenow', '60');
+  const switchStorage = page.getByRole('button', { name: 'Switch storage light' });
+  await switchStorage.click();
+  // Nothing is stored under the new key yet, so the split starts at its default.
+  await expect(divider).toHaveAttribute('aria-valuenow', '40');
+  await divider.focus();
+  await page.keyboard.press('Shift+ArrowRight');
+  await expect(divider).toHaveAttribute('aria-valuenow', '50');
+  expect(await page.evaluate(() => localStorage.getItem('fixture-split-light-other'))).toBe('50');
+  await switchStorage.click();
+  await expect(divider).toHaveAttribute('aria-valuenow', '60');
+  await switchStorage.click();
+  await expect(divider).toHaveAttribute('aria-valuenow', '50');
+});
+
 test('a controlled split reports sizes and follows its size prop', async ({ page }) => {
   await page.goto(splitFixture);
   const divider = page.getByRole('separator', { name: 'Resize controlled light' });

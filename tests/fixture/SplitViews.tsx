@@ -7,12 +7,13 @@ export function SplitViewFixture({ theme }: { theme: ThemeValue }) {
   const [changes, setChanges] = useState<number[]>([]);
   const [size, setSize] = useState(30);
   const [stackedChanges, setStackedChanges] = useState<boolean[]>([]);
+  const [otherStorage, setOtherStorage] = useState(false);
   return (
     <Theme theme={theme} data-testid={`split-${theme}`} className="fixture-section">
       <div className="fixture-split-frame" data-testid={`split-frame-${theme}`}>
         <SplitView
           className="fixture-split-view"
-          storageKey={`fixture-split-${theme}`}
+          storageKey={`fixture-split-${theme}${otherStorage ? '-other' : ''}`}
           defaultSize={40}
           minSize={25}
           maxSize={75}
@@ -39,6 +40,9 @@ export function SplitViewFixture({ theme }: { theme: ThemeValue }) {
       </div>
       <output data-testid={`split-changes-${theme}`}>{changes.join(' ')}</output>
       <output data-testid={`split-stacked-${theme}`}>{stackedChanges.join(' ')}</output>
+      <button type="button" onClick={() => setOtherStorage((other) => !other)}>
+        Switch storage {theme}
+      </button>
       <SplitView
         size={size}
         onSizeChange={setSize}

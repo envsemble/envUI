@@ -25,7 +25,7 @@ import { SplitView } from '@envsemble/envui';
 | start / end                       | Content of the panes at the inline start and end                                                                                        |
 | size / defaultSize / onSizeChange | The start pane's share of the width in percent, 50 by default; onSizeChange reports each new share                                      |
 | minSize / maxSize                 | Bounds of the start pane's share in percent; 20 and 80 by default                                                                       |
-| storageKey                        | Keeps the share chosen in an uncontrolled split in localStorage                                                                         |
+| storageKey                        | Keeps the share chosen in an uncontrolled split in localStorage; another key brings its own stored share, or the default                |
 | stackBelow                        | A width such as 48rem; while the split view itself is narrower, the panes stack without the divider and the split view has data-stacked |
 | onStackedChange                   | Receives true when the panes stack and false when they sit side by side again                                                           |
 | resizeLabel                       | Accessible name of the divider; Resize panes by default                                                                                 |
