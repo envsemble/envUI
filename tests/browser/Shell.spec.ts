@@ -283,6 +283,25 @@ test.describe('Full-width topbar', () => {
   });
 });
 
+test("a narrow window gives the full topbar's context the room it needs", async ({ page }) => {
+  // About half of a 1280 px screen.
+  await page.setViewportSize({ width: 640, height: 800 });
+  await page.goto(fullShell);
+  await expect(page.locator('.env-app-shell')).toHaveAttribute('data-narrow', '');
+  const box = async (locator: Locator) => (await locator.boundingBox())!;
+  const context = await box(page.locator('.env-app-context'));
+  const menubar = await box(page.getByRole('menubar', { name: 'Application menu' }));
+  const picker = await box(page.getByTestId('context-picker'));
+  // The menubar and the picker keep their natural width side by side, beyond the 16 rem a split
+  // topbar allows above a narrow sidebar.
+  expect(context.width).toBeGreaterThan(256);
+  expect(context.width).toBeCloseTo(menubar.width + 8 + picker.width, 0);
+  // The actions stay at the end of the row, inside the window.
+  const actions = await box(page.locator('.env-app-actions'));
+  expect(actions.x).toBeGreaterThan(context.x + context.width);
+  expect(actions.x + actions.width).toBeCloseTo(640 - 12, 0);
+});
+
 test.describe('Title bar', () => {
   test('the shell topbar is the window title bar: its height, compact controls and drag regions', async ({
     page,

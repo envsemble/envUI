@@ -274,7 +274,8 @@ button.env-app-sidebar-toggle:focus-visible {
 .env-app-shell[data-narrow] .env-app-topbar-context {
   border-inline-end: 0;
 }
-.env-app-shell[data-narrow] .env-app-context {
+/* Above a narrow sidebar the context stays modest; a full topbar gives it the room it needs. */
+.env-app-shell[data-narrow]:not([data-topbar='full']) .env-app-context {
   max-inline-size: 16rem;
 }
 .env-app-shell[data-narrow] .env-app-title {
@@ -319,6 +320,10 @@ button.env-app-sidebar-toggle:focus-visible {
 .env-app-shell[data-topbar='full'] .env-app-title {
   flex: 0 1000 auto;
   margin-inline: var(--space-1) auto;
+}
+/* The actions stay at the end, also where narrow windows hide the title. */
+.env-app-shell[data-topbar='full'] .env-app-actions {
+  margin-inline-start: auto;
 }
 .env-app-shell[data-topbar='full'][data-narrow] .env-app-topbar {
   --env-title-bar-end: var(--space-3);
