@@ -864,9 +864,13 @@ test.describe('Title bar', () => {
   }) => {
     await page.goto(fullShell);
     // The window reports a smaller height once the page is zoomed in; the bar keeps its least height.
+    // Its hairline runs below the title bar area, under the window controls too.
     expect(await declaredValue(page, '.env-title-bar', 'block-size')).toContain(
-      'max(env(titlebar-area-height, 0px)',
+      'max(calc(env(titlebar-area-height, 0px) + 0.0625rem)',
     );
+    expect(
+      await declaredValue(page, '.env-app-shell[data-title-bar]', '--topbar-height'),
+    ).toContain('max(calc(env(titlebar-area-height, 0px) + 0.0625rem)');
     await page
       .locator('.env-app-shell')
       .evaluate((shell: HTMLElement) => shell.style.setProperty('--title-bar-height', '48px'));
@@ -929,6 +933,27 @@ test.describe('Title bar', () => {
     await page.getByRole('menuitem', { name: 'File', exact: true }).click();
     await expect(page.getByRole('menu', { name: 'File' })).toBeVisible();
     expect(errors).toEqual([]);
+  });
+
+  test('icon-only text buttons in a title bar take the quiet icon color', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(`${fixtureUrl}/?fixture=title-bar`);
+    const bar = page.getByTestId('title-bar');
+    const color = (token: string) =>
+      bar.evaluate((element, value) => {
+        const probe = document.createElement('span');
+        probe.style.color = `var(${value})`;
+        element.append(probe);
+        const resolved = getComputedStyle(probe).color;
+        probe.remove();
+        return resolved;
+      }, token);
+    const back = page.getByRole('button', { name: 'Back' });
+    // Like the window controls beside them, not the link blue; they darken while hovered.
+    await expect(back).toHaveCSS('color', await color('--color-icon'));
+    expect(await color('--color-icon')).not.toBe(await color('--color-link'));
+    await back.hover();
+    await expect(back).toHaveCSS('color', await color('--color-text-primary'));
   });
 
   test('AppShellSkeleton mirrors the full title bar frame', async ({ page }) => {

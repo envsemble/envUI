@@ -13,6 +13,7 @@ import {
   WindowFrame,
   useAppShell,
 } from '@envsemble/envui';
+import { ArrowBack } from '@envsemble/envui/icons/ArrowBack';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Search } from '@envsemble/envui/icons/Search';
 import { Settings } from '@envsemble/envui/icons/Settings';
@@ -349,6 +350,7 @@ export function TitleBarFixture() {
             <>
               <span data-testid="title-bar-mark">B</span>
               <NotesMenubar />
+              <IconButton variant="text" icon={<ArrowBack />} aria-label="Back" />
             </>
           }
           end={
