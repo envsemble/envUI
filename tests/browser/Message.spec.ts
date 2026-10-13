@@ -94,6 +94,8 @@ test('bubbles, text and status keep their contrast on the canvas and panes in bo
   page,
 }) => {
   await page.goto(messagesFixture);
+  // Both themes, each with seven messages on the canvas and on a pane.
+  await expect(page.locator('.env-message')).toHaveCount(14);
   const failures = await page.evaluate(() => {
     const canvas = document.createElement('canvas');
     canvas.width = canvas.height = 1;

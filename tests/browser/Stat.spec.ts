@@ -39,6 +39,8 @@ test('stats read as label, figure, trend and detail, with the trend in icon and 
 
 test('stats keep 4.5:1 contrast on their surfaces in both themes', async ({ page }) => {
   await page.goto(statsFixture);
+  // Two themes, each with seven stats.
+  await expect(page.locator('.env-stat')).toHaveCount(14);
   const failures = await page.evaluate(() => {
     const canvas = document.createElement('canvas');
     canvas.width = canvas.height = 1;
@@ -78,8 +80,6 @@ test('stats keep 4.5:1 contrast on their surfaces in both themes', async ({ page
     return results;
   });
   expect(failures).toEqual([]);
-  // Two themes, each with seven stats.
-  await expect(page.locator('.env-stat')).toHaveCount(14);
 });
 
 test('a stat group wraps its stats into even columns as space runs out', async ({ page }) => {
