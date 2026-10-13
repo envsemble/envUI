@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { createElement, useLayoutEffect, useRef, useState } from 'react';
 import {
   AppShell,
   AppShellSkeleton,
@@ -65,6 +65,63 @@ export function MountProbe() {
     setSeen((current) => [...current, element?.tagName.toLowerCase() ?? 'none']);
   }, [getScrollElement]);
   return <output data-testid="mount-scroll-element">{seen.join(' ')}</output>;
+}
+
+/** A field inside a web component, whose keys reach the page from its shadow root. */
+class ShadowField extends HTMLElement {
+  constructor() {
+    super();
+    const field = document.createElement('input');
+    field.setAttribute('aria-label', 'Quick note');
+    field.size = 12;
+    this.attachShadow({ mode: 'open' }).append(field);
+  }
+}
+if (!customElements.get('fixture-field')) customElements.define('fixture-field', ShadowField);
+
+/**
+ * A title-bar shell for the scrolling keys, mounted with ?fixture=scroll-keys: a button and a link
+ * in the navigation, a field in a web component, a list that scrolls without taking focus and a
+ * long page.
+ */
+export function ScrollKeysFixture() {
+  return (
+    <AppShell
+      topbar="full"
+      titleBar
+      brand={<span>B</span>}
+      title="Scroll keys"
+      actions={createElement('fixture-field')}
+      navigationLabel="Keys navigation"
+      navigation={
+        <>
+          <NavigationItem icon={<Home />} selected>
+            Inbox
+          </NavigationItem>
+          <NavigationItem icon={<Settings />} href="#settings">
+            Settings
+          </NavigationItem>
+        </>
+      }
+      sidebarContent={
+        <ul className="fixture-sidebar-list" data-testid="sidebar-notes" aria-label="Notes">
+          {Array.from({ length: 80 }, (_, index) => (
+            <li key={index}>Note {index + 1}</li>
+          ))}
+        </ul>
+      }
+      className="fixture-full-shell"
+    >
+      <div className="fixture-tall-page">
+        <p tabIndex={-1} data-testid="page-start">
+          Start of the page
+        </p>
+        {Array.from({ length: 400 }, (_, index) => (
+          <p key={index}>Paragraph {index + 1}</p>
+        ))}
+      </div>
+    </AppShell>
+  );
 }
 
 /**

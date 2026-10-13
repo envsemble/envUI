@@ -232,6 +232,44 @@ function declaredValue(page: Page, selector: string, property: string) {
   );
 }
 
+const scrollKeys = `${fixtureUrl}/?fixture=scroll-keys`;
+
+/** The scroll position of an element once it has stayed still for a quarter of a second. */
+function settledTop(scroller: Locator) {
+  return scroller.evaluate(
+    (element) =>
+      new Promise<number>((resolve) => {
+        let last = element.scrollTop;
+        let stillFrames = 0;
+        const check = () => {
+          stillFrames = element.scrollTop === last ? stillFrames + 1 : 0;
+          last = element.scrollTop;
+          if (stillFrames >= 15) resolve(last);
+          else requestAnimationFrame(check);
+        };
+        requestAnimationFrame(check);
+      }),
+  );
+}
+
+/** Holds a key: its first press and then repeats, as a held key sends them. */
+async function hold(page: Page, key: string, repeats: number) {
+  await page.keyboard.down(key);
+  for (let repeat = 0; repeat < repeats; repeat++) {
+    await page.waitForTimeout(30);
+    await page.keyboard.down(key);
+  }
+  await page.keyboard.up(key);
+}
+
+/** Presses a key several times, faster than a smooth scroll settles. */
+async function pressQuickly(page: Page, key: string, times: number) {
+  for (let press = 0; press < times; press++) {
+    if (press) await page.waitForTimeout(100);
+    await page.keyboard.press(key);
+  }
+}
+
 test.describe('Full-width topbar', () => {
   test('one row across the window: the toggle, the context at its natural width, the title and the actions', async ({
     page,
@@ -560,6 +598,116 @@ test.describe('Title bar', () => {
     await page.waitForTimeout(200);
     expect((await metrics()).top).toBe(0);
     await page.keyboard.press('PageDown');
+    await expectTop(step);
+  });
+
+  test('quick presses and held keys scroll as far as the browser scrolls', async ({ page }) => {
+    // With motion allowed the keys scroll smoothly, and many hold-and-settle steps take a while.
+    test.slow();
+    await page.setViewportSize({ width: 800, height: 600 });
+    await page.goto(scrollKeys);
+    const content = page.locator('.env-app-content');
+    const sequences = {
+      page: () => page.keyboard.press('PageDown'),
+      quickPages: () => pressQuickly(page, 'PageDown', 3),
+      heldPage: () => hold(page, 'PageDown', 6),
+      line: () => page.keyboard.press('ArrowDown'),
+      heldLine: () => hold(page, 'ArrowDown', 15),
+      quickSpaces: () => pressQuickly(page, 'Space', 2),
+    };
+    type Distances = Record<keyof typeof sequences, number>;
+    async function distances(focus: () => Promise<unknown>) {
+      const result: Partial<Distances> = {};
+      for (const [name, run] of Object.entries(sequences)) {
+        await content.evaluate((element) => element.scrollTo({ top: 0, behavior: 'instant' }));
+        await settledTop(content);
+        await focus();
+        await run();
+        result[name as keyof Distances] = await settledTop(content);
+      }
+      return result as Distances;
+    }
+    // With focus in the content area the browser scrolls it; from the document the shell does.
+    const native = await distances(() => page.getByTestId('page-start').focus());
+    const emulated = await distances(() =>
+      page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur()),
+    );
+    // Engines step by different amounts, so a single press only comes close to the browser's own.
+    for (const name of ['page', 'line'] as const)
+      expect(Math.abs(emulated[name] - native[name])).toBeLessThanOrEqual(native[name] / 3);
+    // Counted in single presses, quick presses add up and held keys repeat as in the browser.
+    for (const [name, unit] of [
+      ['quickPages', 'page'],
+      ['heldPage', 'page'],
+      ['heldLine', 'line'],
+      ['quickSpaces', 'page'],
+    ] as const)
+      expect(emulated[name] / emulated[unit]).toBeCloseTo(native[name] / native[unit], 0);
+  });
+
+  test('the browser keeps the keys in the content area and in what the pointer last pressed', async ({
+    page,
+  }) => {
+    await page.goto(scrollKeys);
+    const content = page.locator('.env-app-content');
+    const notes = page.getByTestId('sidebar-notes');
+    const top = (scroller: Locator) => scroller.evaluate((element) => element.scrollTop);
+    // A window listener added once the shell is ready hears whether the shell took a key.
+    await expect(page.locator('.env-app-shell')).toHaveAttribute('data-ready', '');
+    await page.evaluate(() =>
+      window.addEventListener('keydown', (event) => {
+        document.body.dataset.taken = String(event.defaultPrevented);
+      }),
+    );
+    const taken = () => page.evaluate(() => document.body.dataset.taken);
+
+    // A click in the page focuses the content area, which the browser then scrolls.
+    await page.getByText('Paragraph 2', { exact: true }).click();
+    await expect(content).toBeFocused();
+    await page.keyboard.press('PageDown');
+    expect(await taken()).toBe('false');
+    await expect.poll(() => top(content)).toBeGreaterThan(0);
+    await page.keyboard.press('Space');
+    expect(await taken()).toBe('false');
+    const scrolled = await settledTop(content);
+
+    // With focus on the document, the browser scrolls the list that the pointer last pressed.
+    await notes.getByText('Note 3', { exact: true }).click();
+    await expect(page.locator('body')).toBeFocused();
+    await page.keyboard.press('PageDown');
+    expect(await taken()).toBe('false');
+    await expect.poll(() => top(notes)).toBeGreaterThan(0);
+    expect(await settledTop(content)).toBe(scrolled);
+
+    // After a press on the title, which does not scroll, the shell scrolls the content area.
+    await page.locator('.env-app-title').click();
+    await expect(page.locator('body')).toBeFocused();
+    await page.keyboard.press('PageDown');
+    expect(await taken()).toBe('true');
+    await expect.poll(() => top(content)).toBeGreaterThan(scrolled);
+  });
+
+  test('Space scrolls from a link, and a field in a web component keeps its keys', async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(scrollKeys);
+    const content = page.locator('.env-app-content');
+    const step = await content.evaluate((element) => element.clientHeight * 0.875);
+    const expectTop = (expected: number) =>
+      expect
+        .poll(async () => Math.abs((await settledTop(content)) - expected))
+        .toBeLessThanOrEqual(1.5);
+    // Links follow Enter only, so Space scrolls from them as it would the document.
+    await page.getByRole('link', { name: 'Settings' }).focus();
+    await page.keyboard.press('Space');
+    await expectTop(step);
+    // A field in a shadow root keeps Space and the page keys.
+    const field = page.getByRole('textbox', { name: 'Quick note' });
+    await field.focus();
+    await page.keyboard.type('a b');
+    await page.keyboard.press('PageDown');
+    await expect(field).toHaveValue('a b');
     await expectTop(step);
   });
 
