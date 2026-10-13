@@ -146,10 +146,11 @@ test('an application body rule styles the body, while envUI keeps its type insid
   // An application's unlayered body rule, before envUI's style sheet, styles the body itself.
   await page.evaluate(() => {
     const style = document.createElement('style');
-    style.textContent = 'body { font-family: Georgia; font-size: 18px; line-height: 27px; }';
+    style.textContent =
+      'body { font-family: "Fixture Serif"; font-size: 18px; line-height: 27px; }';
     document.head.prepend(style);
   });
-  await expect(body).toHaveCSS('font-family', 'Georgia');
+  await expect(body).toHaveCSS('font-family', /Fixture Serif/);
   await expect(body).toHaveCSS('font-size', '18px');
   await expect(body).toHaveCSS('line-height', '27px');
   // Inside the provider's boundary, text, paragraphs and a Theme around content keep envUI's type,
@@ -174,11 +175,22 @@ test('an application body rule styles the body, while envUI keeps its type insid
   // envUI's font tokens change its typeface wherever it applies.
   await page.evaluate(() => {
     const style = document.createElement('style');
-    style.textContent = '.env-theme { --font-family: Georgia, serif; }';
+    style.textContent = '.env-theme { --font-family: "Fixture Serif", serif; }';
     document.head.append(style);
   });
-  await expect(page.getByTestId('adoption-paragraph')).toHaveCSS('font-family', /^Georgia/);
-  await expect(dialog).toHaveCSS('font-family', /^Georgia/);
+  await expect(page.getByTestId('adoption-paragraph')).toHaveCSS('font-family', /^"?Fixture Serif/);
+  await expect(dialog).toHaveCSS('font-family', /^"?Fixture Serif/);
+  // Text in another size inside a boundary keeps its lines in proportion to it.
+  const large = await page.getByTestId('adoption-plain-text').evaluateHandle((element) => {
+    const text = document.createElement('div');
+    text.textContent = 'A larger line';
+    text.style.fontSize = '2rem';
+    element.after(text);
+    return text;
+  });
+  expect(
+    Number.parseFloat(await large.evaluate((element) => getComputedStyle(element).lineHeight)),
+  ).toBeCloseTo(44.8, 1);
   // The root keeps the browser's size, so rem measures keep theirs.
   await expect(page.locator('html')).toHaveCSS('font-size', '16px');
 });
