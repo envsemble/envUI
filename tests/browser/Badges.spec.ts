@@ -5,6 +5,8 @@ test('badge and tone text keep 4.5:1 contrast on canvas, panes and rows in both 
   page,
 }) => {
   await page.goto(`${fixtureUrl}/?fixture=badges`);
+  // Two themes, three surfaces, eighteen badges and six tone texts each: measure once all render.
+  await expect(page.locator('[data-testid="badge"], [data-testid="tone-text"]')).toHaveCount(144);
   // Composite each element's text color over its own fill and the surface below, as painted.
   const failures = await page.evaluate(() => {
     const canvas = document.createElement('canvas');
@@ -43,8 +45,6 @@ test('badge and tone text keep 4.5:1 contrast on canvas, panes and rows in both 
     return results;
   });
   expect(failures).toEqual([]);
-  // Two themes, three surfaces, eighteen badges and six tone texts each.
-  await expect(page.locator('[data-testid="badge"], [data-testid="tone-text"]')).toHaveCount(144);
 
   const scope = page.getByTestId('badges-light');
   await expect(scope.getByRole('button', { name: 'Inbox 12 unread' })).toBeVisible();

@@ -179,9 +179,10 @@ test('a long prefix is cut short so the value keeps its room', async ({ page }) 
 test('prefix and suffix text keep 4.5:1 contrast in both themes', async ({ page }) => {
   for (const theme of themes) {
     const scope = page.getByTestId(`affixes-${theme}`);
-    for (const part of await scope
-      .locator('.env-text-field-prefix, .env-text-field-suffix')
-      .all()) {
+    const parts = scope.locator('.env-text-field-prefix, .env-text-field-suffix');
+    // Measure once every field has rendered: nine prefixes and suffixes in each theme.
+    await expect(parts).toHaveCount(9);
+    for (const part of await parts.all()) {
       const field = part.locator('xpath=ancestor::*[contains(@class, "env-text-field-well")][1]');
       if ((await field.locator('input:disabled').count()) > 0) continue;
       // The prefix of an empty field without focus is hidden behind its resting label.

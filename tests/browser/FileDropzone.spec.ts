@@ -186,9 +186,12 @@ test('an error is linked to the zone and colors its outline in both themes', asy
       await tokenColor(cover, '--color-field-error'),
     );
     await expect(cover).toHaveCSS('border-top-style', 'dashed');
-    for (const text of await scope
-      .locator('.env-file-dropzone-label, .env-file-dropzone-description, .env-field-error')
-      .all()) {
+    const texts = scope.locator(
+      '.env-file-dropzone-label, .env-file-dropzone-description, .env-field-error',
+    );
+    // Seven labels, four descriptions and one error in each theme.
+    await expect(texts).toHaveCount(12);
+    for (const text of await texts.all()) {
       if (await text.evaluate((element) => element.closest('button')?.disabled ?? false)) continue;
       expect(await paintedContrast(text), `${theme} ${await text.textContent()}`).toBeGreaterThan(
         4.5,
