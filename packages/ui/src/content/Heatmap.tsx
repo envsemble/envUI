@@ -359,7 +359,8 @@ export function Heatmap({
   }, [focusTipOpen]);
 
   // Escape hides an open tooltip wherever focus is, such as on a dialog's close button while the
-  // pointer rests on the tooltip, and goes no further, so an enclosing dialog stays open.
+  // pointer rests on the tooltip, and goes no further, so an enclosing dialog stays open. With Ctrl,
+  // Alt or Meta it leaves the tooltip and goes on, so an enclosing dialog closes.
   const tipOpen = Boolean(tip?.open);
   useEffect(() => {
     if (!tipOpen) return;

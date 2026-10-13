@@ -11,8 +11,9 @@
 .env-theme:where(:not(html)),
 :where(.env-theme:where(html) > body) {
   font: var(--type-body);
-  /* A unitless line height, so content in another font size keeps lines in proportion to it. */
-  line-height: 1.4;
+  /* A unitless line height, so content in another font size keeps lines in proportion to it; set
+     --line-height-body to change it. */
+  line-height: var(--line-height-body, 1.4);
 }
 /* Keep component geometry independent of a consuming application's reset. */
 .env-theme,

@@ -191,6 +191,13 @@ test('an application body rule styles the body, while envUI keeps its type insid
   expect(
     Number.parseFloat(await large.evaluate((element) => getComputedStyle(element).lineHeight)),
   ).toBeCloseTo(44.8, 1);
+  // --line-height-body sets the boundary's line height.
+  await page.evaluate(() => {
+    const style = document.createElement('style');
+    style.textContent = '.env-theme { --line-height-body: 2; }';
+    document.head.append(style);
+  });
+  await expect(page.getByTestId('adoption-plain-text')).toHaveCSS('line-height', '30px');
   // The root keeps the browser's size, so rem measures keep theirs.
   await expect(page.locator('html')).toHaveCSS('font-size', '16px');
 });

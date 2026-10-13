@@ -236,9 +236,28 @@ test('Escape with a modifier passes a hovered tooltip by', async ({ page }) => {
   });
   await page.keyboard.press('Control+Escape');
   await expect(page.locator('body')).toHaveAttribute('data-escapes', 'c');
+  // The tooltip stays.
+  await expect(page.locator('.env-tooltip-positioner')).toHaveAttribute('data-open', '');
   await page.keyboard.press('Escape');
   await expect(page.locator('.env-tooltip-positioner')).toHaveCount(0);
   await expect(page.locator('body')).toHaveAttribute('data-escapes', 'c');
+});
+
+test('Escape with a modifier over a hovered tooltip closes an enclosing dialog', async ({
+  page,
+}) => {
+  await page.goto(heatmapFixture);
+  await page.getByRole('button', { name: 'Open activity light' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Activity details light' });
+  const day = dialog
+    .getByRole('grid', { name: 'Activity in a dialog light' })
+    .locator('td[data-date="2026-10-07"]');
+  await day.hover();
+  await expect(page.locator('.env-heatmap-tooltip')).toHaveText(
+    (await day.getAttribute('aria-label'))!,
+  );
+  await page.keyboard.press('Control+Escape');
+  await expect(dialog).toBeHidden();
 });
 
 test('a tooltip the pointer rests on stays when focus leaves the days', async ({ page }) => {
