@@ -20,13 +20,18 @@ import { subscribeFormReset } from './internal/subscribeFormReset.js';
 interface ComposerOptions {
   /** The message text of a controlled composer. */
   value?: string;
-  /** The starting text of an uncontrolled composer; it clears after each submit. */
+  /**
+   * The starting text of an uncontrolled composer; it clears after each submit through onSubmit and
+   * when its form resets.
+   */
   defaultValue?: string;
   /** Receives the text as it changes, and an empty string when an uncontrolled composer clears. */
   onValueChange?: (value: string) => void;
   /**
-   * Enter or the send button submits the text as typed. Blank text never submits, and neither does
-   * a disabled or running composer.
+   * Enter or the send button submits the text as typed, and an uncontrolled composer clears. Blank
+   * text never submits, and neither does a disabled or running composer. Without onSubmit, they
+   * submit the field's form instead and the text stays until the form resets; outside a form they
+   * do nothing.
    */
   onSubmit?: (value: string) => void;
   /** A reply is on its way: the send button becomes a stop button and Enter does not submit. */
@@ -97,6 +102,7 @@ function useContentHeight(inputRef: RefObject<HTMLTextAreaElement | null>, text:
  * The message field of a conversation: a multiline field on a raised surface that grows with its
  * text up to maxRows, with a send button at the end that becomes a stop button while running.
  * Enter submits, Shift+Enter starts a new line and an input method's composition never submits.
+ * Without onSubmit, Enter and the send button submit the field's form.
  */
 export function Composer({
   value,
@@ -148,8 +154,16 @@ export function Composer({
 
   function submit() {
     if (disabled || running || blank) return false;
-    onSubmit?.(text);
-    if (value === undefined) change('');
+    if (onSubmit) {
+      onSubmit(text);
+      if (value === undefined) change('');
+      return true;
+    }
+    // The form sends the field under its name; the text stays until the form resets, as a form
+    // action does once it succeeds.
+    const owner = inputRef.current?.form;
+    if (!owner) return false;
+    owner.requestSubmit();
     return true;
   }
 
@@ -219,7 +233,6 @@ export function Composer({
           className="env-composer-action"
           icon={running ? <Stop filled /> : <ArrowUpward />}
           aria-label={actionLabel}
-          title={actionLabel}
           disabled={!running && disabled}
           aria-disabled={unavailable || undefined}
           onClick={() => {

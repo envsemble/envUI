@@ -57,7 +57,8 @@ test('Enter submits, Shift+Enter starts a line and the action stops a running re
   await expect(composer).toHaveAttribute('data-running', 'true');
   const stop = composer.getByRole('button', { name: 'Stop', exact: true });
   await expect(stop).toBeEnabled();
-  await expect(stop).toHaveAttribute('title', 'Stop');
+  // The accessible name labels the action; no native tooltip repeats it.
+  await expect(stop).not.toHaveAttribute('title');
 
   // While running, Enter neither submits nor adds a line; the draft waits.
   await page.keyboard.type('Next question');
@@ -79,24 +80,60 @@ test('Enter submits, Shift+Enter starts a line and the action stops a running re
   expect(errors).toEqual([]);
 });
 
-test('Enter that confirms an input method composition never submits', async ({ page }) => {
+for (const signal of ['isComposing', 'keyCode 229'] as const) {
+  test(`Enter that confirms an input method composition never submits (${signal})`, async ({
+    page,
+  }) => {
+    await page.goto(composerFixture);
+    const scope = page.getByTestId('composer-light');
+    const field = scope.getByRole('textbox', { name: 'Message light' });
+    await field.fill('Aurora');
+    const prevented = await field.evaluate((element, legacy) => {
+      const event = new KeyboardEvent('keydown', {
+        key: 'Enter',
+        isComposing: !legacy,
+        bubbles: true,
+        cancelable: true,
+      });
+      // Some input methods report their composition only through the legacy key code.
+      if (legacy) Object.defineProperty(event, 'keyCode', { value: 229 });
+      element.dispatchEvent(event);
+      return event.defaultPrevented;
+    }, signal === 'keyCode 229');
+    expect(prevented).toBe(false);
+    await expect(scope.getByTestId('composer-sent-light')).toHaveText('');
+    await expect(field).toHaveValue('Aurora');
+  });
+}
+
+test('without onSubmit, Enter and the send button submit the form and keep the text', async ({
+  page,
+}) => {
+  const errors = collectErrors(page);
   await page.goto(composerFixture);
   const scope = page.getByTestId('composer-light');
-  const field = scope.getByRole('textbox', { name: 'Message light' });
-  await field.fill('Aurora');
-  const prevented = await field.evaluate((element) => {
-    const event = new KeyboardEvent('keydown', {
-      key: 'Enter',
-      isComposing: true,
-      bubbles: true,
-      cancelable: true,
-    });
-    element.dispatchEvent(event);
-    return event.defaultPrevented;
-  });
-  expect(prevented).toBe(false);
-  await expect(scope.getByTestId('composer-sent-light')).toHaveText('');
-  await expect(field).toHaveValue('Aurora');
+  const field = scope.getByRole('textbox', { name: 'Comment light' });
+  const posts = scope.getByTestId('composer-posts-light');
+  await expect(field).toHaveAttribute('name', 'message');
+  await field.fill('Quarterly report');
+  await field.press('Enter');
+  // The form sends the field under its name, and the text stays until the form resets.
+  await expect(posts).toHaveText('Quarterly report');
+  await expect(field).toHaveValue('Quarterly report');
+  await composerOf(field).getByRole('button', { name: 'Send', exact: true }).click();
+  await expect(posts).toHaveText('Quarterly report | Quarterly report');
+  await expect(field).toBeFocused();
+  await scope.getByRole('button', { name: 'Reset form light' }).click();
+  await expect(field).toHaveValue('');
+  // Blank text never submits the form, and Enter adds no line to it.
+  await field.press('Enter');
+  await expect(field).toHaveValue('');
+  await expect(posts).toHaveText('Quarterly report | Quarterly report');
+  // Outside a form and without onSubmit, Enter leaves the text alone.
+  const reply = scope.getByRole('textbox', { name: 'Reply light' });
+  await reply.press('Enter');
+  await expect(reply).toHaveValue('Thanks, that works.');
+  expect(errors).toEqual([]);
 });
 
 for (const sizing of ['native', 'measured'] as const) {

@@ -8,6 +8,7 @@ export function ComposerFixture({ theme }: { theme: ThemeValue }) {
   const [running, setRunning] = useState(false);
   const [stops, setStops] = useState(0);
   const [notes, setNotes] = useState<string[]>([]);
+  const [posts, setPosts] = useState<string[]>([]);
   return (
     <Theme theme={theme} data-testid={`composer-${theme}`} className="fixture-section">
       <div data-surface="canvas">
@@ -43,6 +44,17 @@ export function ComposerFixture({ theme }: { theme: ThemeValue }) {
         />
       </Surface>
       <output data-testid={`composer-notes-${theme}`}>{notes.join(' | ')}</output>
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          const message = new FormData(event.currentTarget).get('message');
+          setPosts((list) => [...list, String(message)]);
+        }}
+      >
+        <Composer aria-label={`Comment ${theme}`} name="message" />
+        <button type="reset">Reset form {theme}</button>
+      </form>
+      <output data-testid={`composer-posts-${theme}`}>{posts.join(' | ')}</output>
       <Composer aria-label={`Disabled ${theme}`} defaultValue="Locked" disabled />
       <Composer
         aria-label={`Reply ${theme}`}
