@@ -129,11 +129,66 @@ test('without onSubmit, Enter and the send button submit the form and keep the t
   await field.press('Enter');
   await expect(field).toHaveValue('');
   await expect(posts).toHaveText('Quarterly report | Quarterly report');
-  // Outside a form and without onSubmit, Enter leaves the text alone.
+  // A held Enter key sends once.
+  await field.fill('Held key');
+  await page.keyboard.down('Enter');
+  await page.keyboard.down('Enter');
+  await page.keyboard.down('Enter');
+  await page.keyboard.up('Enter');
+  await expect(posts).toHaveText('Quarterly report | Quarterly report | Held key');
+  await expect(field).toHaveValue('Held key');
+  // Without onSubmit or a form there is nothing to send: the button is unavailable and Enter
+  // starts a new line.
   const reply = scope.getByRole('textbox', { name: 'Reply light' });
+  await expect(
+    composerOf(reply).getByRole('button', { name: 'Send', exact: true }),
+  ).toHaveAttribute('aria-disabled', 'true');
+  await reply.press('End');
   await reply.press('Enter');
-  await expect(reply).toHaveValue('Thanks, that works.');
+  await expect(reply).toHaveValue('Thanks, that works.\n');
   expect(errors).toEqual([]);
+});
+
+test('a pending form action holds the next send until it ends', async ({ page }) => {
+  const errors = collectErrors(page);
+  await page.goto(composerFixture);
+  const scope = page.getByTestId('composer-light');
+  const field = scope.getByRole('textbox', { name: 'Announcement light' });
+  const send = composerOf(field).getByRole('button', { name: 'Send', exact: true });
+  const announcements = scope.getByTestId('composer-announcements-light');
+  await field.fill('Quarterly report');
+  // The action takes a while; Enter again while it runs sends nothing.
+  await field.press('Enter');
+  await field.press('Enter');
+  await expect(send).toHaveAttribute('aria-disabled', 'true');
+  await send.click({ force: true });
+  // Once it ends, the form resets and clears the composer.
+  await expect(field).toHaveValue('');
+  await page.waitForTimeout(700);
+  await expect(announcements).toHaveText('Quarterly report');
+  expect(errors).toEqual([]);
+});
+
+test('an invalid field in the form keeps focus when the send is refused', async ({ page }) => {
+  await page.goto(composerFixture);
+  const scope = page.getByTestId('composer-light');
+  const topic = scope.getByRole('textbox', { name: 'Topic light' });
+  const field = scope.getByRole('textbox', { name: 'Feedback light' });
+  const send = composerOf(field).getByRole('button', { name: 'Send', exact: true });
+  const feedback = scope.getByTestId('composer-feedback-light');
+  await field.fill('Clearer labels');
+  await send.click();
+  // The required field is empty: the form is not submitted and focus moves to that field.
+  await expect(topic).toBeFocused();
+  await expect(feedback).toHaveText('');
+  await field.focus();
+  await field.press('Enter');
+  await expect(topic).toBeFocused();
+  await expect(feedback).toHaveText('');
+  await topic.fill('Navigation');
+  await send.click();
+  await expect(feedback).toHaveText('Navigation: Clearer labels');
+  await expect(field).toBeFocused();
 });
 
 for (const sizing of ['native', 'measured'] as const) {

@@ -9,6 +9,8 @@ export function ComposerFixture({ theme }: { theme: ThemeValue }) {
   const [stops, setStops] = useState(0);
   const [notes, setNotes] = useState<string[]>([]);
   const [posts, setPosts] = useState<string[]>([]);
+  const [announcements, setAnnouncements] = useState<string[]>([]);
+  const [feedback, setFeedback] = useState<string[]>([]);
   return (
     <Theme theme={theme} data-testid={`composer-${theme}`} className="fixture-section">
       <div data-surface="canvas">
@@ -55,6 +57,26 @@ export function ComposerFixture({ theme }: { theme: ThemeValue }) {
         <button type="reset">Reset form {theme}</button>
       </form>
       <output data-testid={`composer-posts-${theme}`}>{posts.join(' | ')}</output>
+      <form
+        action={async (data) => {
+          setAnnouncements((list) => [...list, String(data.get('announcement'))]);
+          await new Promise((resolve) => setTimeout(resolve, 600));
+        }}
+      >
+        <Composer aria-label={`Announcement ${theme}`} name="announcement" />
+      </form>
+      <output data-testid={`composer-announcements-${theme}`}>{announcements.join(' | ')}</output>
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          const data = new FormData(event.currentTarget);
+          setFeedback((list) => [...list, `${data.get('topic')}: ${data.get('feedback')}`]);
+        }}
+      >
+        <input name="topic" required aria-label={`Topic ${theme}`} />
+        <Composer aria-label={`Feedback ${theme}`} name="feedback" />
+      </form>
+      <output data-testid={`composer-feedback-${theme}`}>{feedback.join(' | ')}</output>
       <Composer aria-label={`Disabled ${theme}`} defaultValue="Locked" disabled />
       <Composer
         aria-label={`Reply ${theme}`}

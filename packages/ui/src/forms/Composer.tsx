@@ -10,6 +10,7 @@ import {
   type ReactNode,
   type RefObject,
 } from 'react';
+import { useFormStatus } from 'react-dom';
 import { IconButton } from '../actions/Button.js';
 import { ArrowUpward } from '../icons/ArrowUpward.js';
 import { Stop } from '../icons/Stop.js';
@@ -29,9 +30,10 @@ interface ComposerOptions {
   onValueChange?: (value: string) => void;
   /**
    * Enter or the send button submits the text as typed, and an uncontrolled composer clears. Blank
-   * text never submits, and neither does a disabled or running composer. Without onSubmit, they
-   * submit the field's form instead and the text stays until the form resets; outside a form they
-   * do nothing.
+   * text never submits, and neither does a disabled or running composer, or one whose form action
+   * is pending. Without onSubmit, they submit the field's form instead and the text stays until the
+   * form resets. Without onSubmit or a form there is nothing to send: the button is unavailable and
+   * Enter starts a new line.
    */
   onSubmit?: (value: string) => void;
   /** A reply is on its way: the send button becomes a stop button and Enter does not submit. */
@@ -139,6 +141,14 @@ export function Composer({
   const rows = Math.max(1, Math.round(minRows));
   const maximumRows = Math.max(rows, Math.round(maxRows));
   useContentHeight(inputRef, text);
+  // A form action in progress holds the next send, when the composer renders inside its form.
+  const { pending: formPending } = useFormStatus();
+  // Whether the field belongs to a form, known once it is in the document.
+  const [inForm, setInForm] = useState(form !== undefined);
+  useLayoutEffect(() => {
+    setInForm(Boolean(inputRef.current?.form));
+  });
+  const canSend = onSubmit !== undefined || inForm;
 
   // The browser resets the native field; an uncontrolled composer follows with its own text.
   useEffect(() => {
@@ -152,8 +162,9 @@ export function Composer({
     onValueChange?.(next);
   }
 
+  /** Sends the text, and reports whether it went. */
   function submit() {
-    if (disabled || running || blank) return false;
+    if (disabled || running || blank || formPending) return false;
     if (onSubmit) {
       onSubmit(text);
       if (value === undefined) change('');
@@ -163,22 +174,28 @@ export function Composer({
     // action does once it succeeds.
     const owner = inputRef.current?.form;
     if (!owner) return false;
+    // An invalid field keeps the form from submitting: the browser reports it and focuses it.
+    if (!owner.noValidate && !owner.checkValidity()) {
+      owner.reportValidity();
+      return false;
+    }
     owner.requestSubmit();
     return true;
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
     onKeyDown?.(event);
-    if (event.defaultPrevented || event.key !== 'Enter' || event.shiftKey) return;
+    if (event.defaultPrevented || event.key !== 'Enter' || event.shiftKey || !canSend) return;
     // Enter that confirms an input method's composition belongs to the composition.
     if (event.nativeEvent.isComposing || event.keyCode === 229) return;
     event.preventDefault();
-    submit();
+    // A held Enter key repeats; only its first press sends.
+    if (!event.repeat) submit();
   }
 
   // The action stays focusable while unavailable, so focus is never lost when it changes between
   // send and stop. A disabled composer disables sending; stopping stays available while running.
-  const unavailable = running ? !onStop : blank;
+  const unavailable = running ? !onStop : blank || formPending || !canSend;
   const actionLabel = running ? stopLabel : sendLabel;
 
   return (
