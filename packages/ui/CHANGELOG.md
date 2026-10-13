@@ -4,6 +4,10 @@
 
 Components for document-centred desktop applications: a file tree, editor tabs, quick open, context menus and a resizable sidebar, with badges, notices, tables and other everyday pieces.
 
+### Breaking changes
+
+- A document root themed through `ThemePreferenceProvider` or the bootstrap script keeps the browser's font size, so 1 rem is 16 px by default instead of 15 px and envUI renders at its designed size, no longer a sixteenth smaller. Migration: an application's own rem-based CSS on such a root grows by about 7%; multiply its rem values by 0.9375 to keep their earlier size. The document body takes the body type at zero specificity: an application's own `body` rule outside cascade layers overrides it for the body and the text that inherits from it, including the application's content inside `ThemePreferenceProvider`, while a rule inside `@layer` loses to envUI's unlayered style sheet.
+
 ### Added
 
 - `AppShell` `sidebarContent`: the application's own content below the navigation, which fills the remaining sidebar height and scrolls itself; hidden while the sidebar is compact.
@@ -51,7 +55,6 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 
 ### Changed
 
-- A document root themed through `ThemePreferenceProvider` or the bootstrap script keeps the browser's font size, so 1 rem is 16 px by default instead of 15 px and envUI renders at its designed size, no longer a sixteenth smaller. The document body takes the body type, at zero specificity, so an application's own `body` rule wins. Migration: an application's own rem-based CSS on such a root grows by about 7%; multiply its rem values by 0.9375 to keep their earlier size.
 - `ThemePreferenceProvider` follows theme changes made in other windows and tabs of the same origin.
 - `Select`'s outlined trigger is the outlined `Button` style. The open list takes the `Popover` surface corners, with rounded options inset by its padding.
 - `Dialog` shares the `Popover` look: the raised popup color and a hairline border. In the dark theme dialogs keep the pane color, through the new `--color-dialog` token. The title and description sit together above the content.

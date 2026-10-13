@@ -125,6 +125,17 @@ test('a themed document root keeps the browser font size and its body the body t
 test('an application body rule overrides the body type of a themed root', async ({ page }) => {
   await page.goto(fixture);
   await expect(page.locator('html')).toHaveClass(/env-theme/);
+  const text = page.getByTestId('adoption-plain-text');
+  await expect(text).toHaveCSS('font-size', '15px');
+  // A rule inside a cascade layer loses to envUI's unlayered style sheet, whatever its specificity.
+  const layered = await page.evaluateHandle(() => {
+    const style = document.createElement('style');
+    style.textContent = '@layer application { body { font-size: 18px; } }';
+    document.head.prepend(style);
+    return style;
+  });
+  await expect(page.locator('body')).toHaveCSS('font-size', '15px');
+  await layered.evaluate((style) => style.remove());
   // The application's style sheet comes first, so only specificity lets its plain body rule win.
   await page.evaluate(() => {
     const style = document.createElement('style');
@@ -133,6 +144,11 @@ test('an application body rule overrides the body type of a themed root', async 
   });
   await expect(page.locator('body')).toHaveCSS('font-size', '18px');
   await expect(page.locator('body')).toHaveCSS('line-height', '27px');
+  // It reaches the application's own text inside the provider, which inherits from the body.
+  await expect(text).toHaveCSS('font-size', '18px');
+  await expect(text).toHaveCSS('line-height', '27px');
+  // A Theme that scopes part of the page keeps the body type, and so do the components.
+  await expect(page.getByTestId('adoption-nested-theme')).toHaveCSS('font-size', '15px');
   await expect(page.locator('body')).toHaveCSS('font-family', /envUI Inter/);
   // The root keeps the browser's size, so rem measures keep theirs.
   await expect(page.locator('html')).toHaveCSS('font-size', '16px');

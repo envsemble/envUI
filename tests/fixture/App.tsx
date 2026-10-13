@@ -57,6 +57,9 @@ export default function App() {
   // only their own controls, so unrelated editors and portals do no work.
   const fixture = new URLSearchParams(location.search).get('fixture');
   const includes = (name: string) => fixture === null || fixture === name;
+  // Root theming changes the host document, so adoption mounts on its own, at the top of the page
+  // like an application's provider.
+  if (fixture === 'adoption') return <AdoptionFixture />;
   const Standalone = fixture === null ? undefined : standaloneFixtures[fixture];
   if (Standalone)
     return (
@@ -227,8 +230,6 @@ export default function App() {
               <MenusFixture theme="dark" />
             </>
           )}
-          {/* Root theming would change the host document, so adoption mounts only on its own. */}
-          {fixture === 'adoption' && <AdoptionFixture />}
           {/* Access keys listen to the whole window, so the menubar mounts only on its own. */}
           {fixture === 'menubar' && <MenubarFixture />}
         </main>

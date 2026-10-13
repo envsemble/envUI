@@ -23,6 +23,7 @@ import {
   SearchField,
   Skeleton,
   Spinner,
+  Theme,
   ThemePreferenceProvider,
   ThemeToggle,
   createThemeBootstrapScript,
@@ -66,6 +67,10 @@ export function AdoptionFixture() {
     <ThemePreferenceProvider storageKey="fixture-theme" className="fixture-adoption">
       <LinkProvider component={RecordingLink}>
         <section>
+          <div data-testid="adoption-plain-text">Plain application text</div>
+          <Theme theme="light" data-testid="adoption-nested-theme">
+            A themed part of the page
+          </Theme>
           <ThemeToggle data-testid="theme-toggle" />
           <Button href="/projects" data-testid="router-button">
             Projects
