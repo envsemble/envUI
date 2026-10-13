@@ -761,8 +761,10 @@ test.describe('Title bar', () => {
     // So does an ordinary element with a closed shadow root, which cannot take focus itself.
     const plainField = page.getByTestId('plain-closed-field');
     await plainField.focus();
-    await page.keyboard.type('c d');
+    await page.keyboard.type('c');
+    await page.keyboard.press('Space');
     expect(await taken()).toBe('false');
+    await page.keyboard.type('d');
     expect(
       await plainField.evaluate((element) => (element as HTMLElement & { value: string }).value),
     ).toBe('c d');
@@ -773,6 +775,34 @@ test.describe('Title bar', () => {
       expect(await taken()).toBe('false');
     }
     expect(await settledTop(content)).toBe(0);
+  });
+
+  test('a scroll area that takes focus without a tabindex passes its keys on at its end', async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(scrollKeys);
+    const content = page.locator('.env-app-content');
+    const notes = page.getByTestId('sidebar-notes');
+    await expect(page.locator('.env-app-shell')).toHaveAttribute('data-ready', '');
+    // Chromium and Firefox let a scroll area take focus without a tabindex; WebKit does not.
+    const focused = await notes.evaluate((element) => {
+      (element as HTMLElement).focus();
+      return element.ownerDocument.activeElement === element;
+    });
+    test.skip(!focused, 'This engine does not focus a scroll area without a tabindex.');
+    // The list scrolls itself to its end; from there, the content area scrolls, as a page would.
+    await page.keyboard.press('End');
+    await expect
+      .poll(() =>
+        notes.evaluate(
+          (element) => element.scrollHeight - element.clientHeight - element.scrollTop,
+        ),
+      )
+      .toBeLessThanOrEqual(1);
+    expect(await settledTop(content)).toBe(0);
+    await page.keyboard.press('PageDown');
+    await expect.poll(() => content.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
   });
 
   test('WindowFrame fills the window and scrolls its content below the title bar', async ({
