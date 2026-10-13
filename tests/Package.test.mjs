@@ -382,6 +382,45 @@ test('public components import and render on a server with no DOM globals', func
   assert.match(ssr.html, /aria-label="envsemble"/);
 });
 
+/**
+ * Every selector in a list starts at an envUI class, or is a zero-specificity :where() wrapper
+ * whose every selector does.
+ */
+function scopedSelector(selector) {
+  const list = splitSelectors(selector);
+  if (list.length !== 1) return list.length > 1 && list.every(scopedSelector);
+  if (/^(?:[a-zA-Z][\w-]*)?\.env-/.test(selector)) return true;
+  if (!selector.startsWith(':where(')) return false;
+  let depth = 0;
+  for (let index = ':where'.length; index < selector.length; index++) {
+    if (selector[index] === '(') depth++;
+    else if (selector[index] === ')' && --depth === 0) {
+      const inner = splitSelectors(selector.slice(':where('.length, index));
+      return inner.length > 0 && inner.every(scopedSelector);
+    }
+  }
+  return false;
+}
+
+test('the CSS scope check accepts only selectors that start at an envUI class', () => {
+  for (const selector of [
+    '.env-theme',
+    'button.env-button',
+    ':where(.env-theme:where(html) > body)',
+    ':where(.env-theme:where(html)) .env-theme:where([data-document-theme])',
+  ])
+    assert.ok(scopedSelector(selector), selector);
+  for (const selector of [
+    'body',
+    ':root',
+    ':where(body)',
+    ':where(.env-theme, body)',
+    ':where(.env-theme) , body',
+    ':where(.env-theme',
+  ])
+    assert.ok(!scopedSelector(selector), selector);
+});
+
 function splitSelectors(prelude) {
   const parts = [];
   let depth = 0;
@@ -428,12 +467,7 @@ test('the package includes scoped CSS, local fonts, branding and license notices
     // Keyframe steps inside @keyframes are offsets, not element selectors.
     if (/^(?:from|to|\d+(?:\.\d+)?%)(?:\s*,\s*(?:from|to|\d+(?:\.\d+)?%))*$/.test(header)) continue;
     for (const selector of splitSelectors(header)) {
-      // A zero-specificity :where() wrapper still has to start at an envUI class.
-      assert.match(
-        selector,
-        /^(?::where\()?(?:[a-zA-Z][\w-]*)?\.env-/,
-        `Unscoped CSS selector: ${selector}`,
-      );
+      assert.ok(scopedSelector(selector), `Unscoped CSS selector: ${selector}`);
     }
   }
   for (const match of css.matchAll(/url\(["']?([^\s)"']+)["']?\)/g)) {
