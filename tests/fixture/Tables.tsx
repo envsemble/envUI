@@ -162,6 +162,62 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
           </TableBody>
         </Table>
       </div>
+      <div className="fixture-wide-stack-frame" data-testid={`wide-stack-frame-${theme}`}>
+        <Table aria-label={`Seven columns ${theme}`} narrowLayout="stack" stackBelow="60rem">
+          <TableHead>
+            <TableRow>
+              {['Report', 'Owner', 'Team', 'Reviews', 'Updated', 'Status'].map((column) => (
+                <TableHeaderCell key={column} onSort={() => undefined}>
+                  {column}
+                </TableHeaderCell>
+              ))}
+              <TableHeaderCell>
+                <span className="fixture-visually-hidden">Actions</span>
+              </TableHeaderCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {reports.map((report) => (
+              <TableRow key={report.id}>
+                <TableCell>{report.title}</TableCell>
+                <TableCell label="Owner">{report.owner}</TableCell>
+                <TableCell label="Team">Platform</TableCell>
+                <TableCell label="Reviews" numeric>
+                  {report.reviews}
+                </TableCell>
+                <TableCell label="Updated">Today</TableCell>
+                <TableCell label="Status">{report.status}</TableCell>
+                <TableCell label="Actions">
+                  <button type="button">Open</button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+      <Table aria-label={`Hidden header text ${theme}`}>
+        <TableHead>
+          <TableRow>
+            {['Report', 'Owner', 'Team', 'Reviews', 'Updated', 'Status', 'Notes'].map((column) => (
+              <TableHeaderCell key={column} nowrap>
+                {column} with a long heading
+              </TableHeaderCell>
+            ))}
+            <TableHeaderCell>
+              <span className="fixture-visually-hidden">Actions</span>
+            </TableHeaderCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          <TableRow>
+            {Array.from({ length: 8 }, (_, index) => (
+              <TableCell key={index} nowrap>
+                Value {index + 1}
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableBody>
+      </Table>
     </Theme>
   );
 }

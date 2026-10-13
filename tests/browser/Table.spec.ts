@@ -314,6 +314,49 @@ test('a stacking table lists its rows as blocks in a narrow container and keeps 
   }
 });
 
+test('a table stacks below the width it is given, measured on its region', async ({ page }) => {
+  for (const theme of themes) {
+    const frame = page.getByTestId(`wide-stack-frame-${theme}`);
+    const table = page.getByRole('table', { name: `Seven columns ${theme}` });
+    const region = page.getByRole('region', { name: `Seven columns ${theme}` });
+    const row = table.getByRole('row', { name: /Quarterly report/ });
+    // 48 rem is below the 60 rem this table needs, so its rows stack.
+    await expect(region).toHaveAttribute('data-stacked', '');
+    await expect(row).toHaveCSS('display', 'grid');
+    await expect(
+      row.getByRole('cell', { name: 'Platform' }).locator('.env-table-cell-label'),
+    ).toBeVisible();
+    await frame.evaluate((element) => (element.style.inlineSize = '62rem'));
+    await expect(region).not.toHaveAttribute('data-stacked');
+    await expect(row).toHaveCSS('display', 'table-row');
+    await frame.evaluate((element) => (element.style.inlineSize = '59rem'));
+    await expect(region).toHaveAttribute('data-stacked', '');
+    await frame.evaluate((element) => (element.style.inlineSize = ''));
+  }
+  // The default stays at 36 rem.
+  await expect(page.getByRole('region', { name: 'Stacked light' })).toHaveAttribute(
+    'data-stacked',
+    '',
+  );
+  await expect(page.getByRole('region', { name: 'Reports light' })).not.toHaveAttribute(
+    'data-stacked',
+  );
+});
+
+test('content positioned in a cell stays inside the scroll region', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  const region = page.getByRole('region', { name: 'Hidden header text light' });
+  await expect(region).toHaveCSS('position', 'relative');
+  expect(await region.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(true);
+  // Visually hidden text at the end of a wide header row widens the region, not the page.
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await expect(
+    page.getByRole('table', { name: 'Hidden header text light' }).getByRole('columnheader', {
+      name: 'Actions',
+    }),
+  ).toBeAttached();
+});
+
 test('tables fit a narrow viewport: stacking tables stack, others scroll in their region', async ({
   page,
 }) => {

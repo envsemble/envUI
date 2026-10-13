@@ -22,6 +22,7 @@ import {
   columnMinimums,
   columnResizeLargeStep,
   columnResizeStep,
+  lengthInPixels,
   resizeColumns,
   sameWidths,
 } from './internal/TableColumns.js';
@@ -54,11 +55,16 @@ export interface TableProps extends Omit<ComponentPropsWithRef<'table'>, 'aria-l
   /** Class of the scroll region around the table, for example to limit its height. */
   regionClassName?: string;
   /**
-   * In containers narrower than 36 rem: scroll (default) keeps the columns and scrolls sideways;
-   * stack shows each body row as a block that starts with its first cell, followed by the other
-   * cells with their labels. The header row is then visually hidden.
+   * When the table's region is narrower than stackBelow: scroll (default) keeps the columns and
+   * scrolls sideways; stack shows each body row as a block that starts with its first cell,
+   * followed by the other cells with their labels. The header row is then visually hidden.
    */
   narrowLayout?: 'scroll' | 'stack';
+  /**
+   * The region width below which a table with narrowLayout="stack" stacks its rows, as a length in
+   * rem, em or px; 36rem by default. Wide tables, such as seven sortable columns, need more.
+   */
+  stackBelow?: string;
   /** Column widths in percent of the table width, in column order and adding up to 100. */
   columnWidths?: readonly number[];
   /**
@@ -77,6 +83,23 @@ export interface TableProps extends Omit<ComponentPropsWithRef<'table'>, 'aria-l
   resizableColumns?: boolean;
 }
 
+/** Whether a region is narrower than a length, following its width as it changes. */
+function useNarrowerThan(region: RefObject<HTMLElement | null>, enabled: boolean, length: string) {
+  const [narrower, setNarrower] = useState(false);
+  useLayoutEffect(() => {
+    const element = region.current;
+    if (!enabled || !element) return;
+    const update = (width: number) => setNarrower(width < lengthInPixels(length, element));
+    // Measured before the first paint, so a narrow table never shows its columns first.
+    update(element.clientWidth);
+    if (typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(([entry]) => update(entry!.contentRect.width));
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [region, enabled, length]);
+  return enabled && narrower;
+}
+
 /** A semantic data table on a rounded surface that scrolls sideways when columns do not fit. */
 export function Table({
   'aria-label': label,
@@ -85,6 +108,7 @@ export function Table({
   stickyHeader = false,
   regionClassName,
   narrowLayout = 'scroll',
+  stackBelow = '36rem',
   columnWidths,
   defaultColumnWidths,
   onColumnWidthsChange,
@@ -96,6 +120,8 @@ export function Table({
 }: TableProps) {
   const captionId = useId();
   const stack = narrowLayout === 'stack';
+  const region = useRef<HTMLDivElement>(null);
+  const stacked = useNarrowerThan(region, stack, stackBelow);
   // Widths the table owns start over when the defaults change, for example with another column.
   const defaultsKey = defaultColumnWidths?.join(' ');
   const [chosen, setChosen] = useState({ key: defaultsKey, widths: defaultColumnWidths });
@@ -127,6 +153,7 @@ export function Table({
 
   return (
     <div
+      ref={region}
       className={classNames('env-table-region', regionClassName)}
       role="region"
       // The region is a tab stop so keyboard users can scroll wide tables.
@@ -135,6 +162,7 @@ export function Table({
       aria-labelledby={caption == null ? undefined : captionId}
       data-sticky-header={stickyHeader ? '' : undefined}
       data-narrow-layout={stack ? 'stack' : undefined}
+      data-stacked={stacked ? '' : undefined}
     >
       <table
         role={stack ? 'table' : undefined}

@@ -1,6 +1,9 @@
 /* Tables sit on a rounded surface with subtle row dividers and scroll sideways within their region. */
 .env-table-region {
   --env-table-surface: var(--color-surface);
+  /* Absolutely positioned content, such as visually hidden text in a cell, stays in the region and
+     scrolls with it instead of widening the page. */
+  position: relative;
   box-sizing: border-box;
   min-inline-size: 0;
   max-inline-size: 100%;
@@ -230,95 +233,89 @@
   }
 }
 
-/* A stacking table follows the width of its region, not the window. Below 36 rem each body row
-   becomes a block on the table surface: the first cell is its title, then each labelled value. */
-.env-table-region[data-narrow-layout='stack'] {
-  container: env-table / inline-size;
-}
+/* A stacking table follows the width of its region, not the window. Below its stackBelow width the
+   region is marked stacked and each body row becomes a block on the table surface: the first cell is
+   its title, then each labelled value. */
 .env-table-cell-label {
   display: none;
 }
-@container env-table (inline-size < 36rem) {
-  .env-table-region[data-narrow-layout='stack']
-    :is(
-      .env-table,
-      .env-table-body,
-      .env-table-row,
-      .env-table-cell,
-      .env-table-header-cell,
-      .env-table-caption
-    ) {
-    display: block;
-  }
-  /* The header row stays available to assistive technology and shows only while a sort button in
-     it has keyboard focus. */
-  .env-table-region[data-narrow-layout='stack'] .env-table-head:not(:focus-within) {
-    position: absolute;
-    inline-size: 0.0625rem;
-    block-size: 0.0625rem;
-    margin: -0.0625rem;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-  .env-table-region[data-narrow-layout='stack'] .env-table-head:focus-within {
-    display: block;
-  }
-  .env-table-region[data-narrow-layout='stack'] .env-table-head .env-table-row {
-    display: flex;
-    flex-wrap: wrap;
-  }
-  .env-table-region[data-narrow-layout='stack'] .env-table-head .env-table-header-cell {
-    display: block;
-    flex: 1 1 auto;
-  }
-  .env-table-region[data-narrow-layout='stack'] .env-table-column-resize {
-    display: none;
-  }
-  .env-table-region[data-narrow-layout='stack'] .env-table-body > .env-table-row {
-    display: grid;
-    gap: var(--space-1);
-    padding: var(--env-table-cell-padding);
-  }
-  .env-table-region[data-narrow-layout='stack'] .env-table-body > .env-table-row + .env-table-row {
-    border-block-start: 0.0625rem solid var(--color-border-strong);
-  }
-  .env-table-region[data-narrow-layout='stack']
-    .env-table-body
-    > .env-table-row
-    > :is(.env-table-cell, .env-table-header-cell) {
-    padding: 0;
-    border-block-start: 0;
-    text-align: start;
-    white-space: normal;
-  }
-  .env-table-region[data-narrow-layout='stack'] .env-table-body > .env-table-row > :first-child {
-    margin-block-end: var(--space-1);
-    color: var(--color-text-primary);
-    font-weight: 500;
-  }
-  .env-table-region[data-narrow-layout='stack'] .env-table-cell[data-labelled] {
-    display: grid;
-    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
-    gap: var(--space-3);
-    align-items: baseline;
-  }
-  .env-table-region[data-narrow-layout='stack'] .env-table-cell-label {
-    display: block;
-    min-inline-size: 0;
-    color: var(--color-text-muted);
-    font: var(--type-body-small);
-    overflow-wrap: anywhere;
-  }
-  .env-table-region[data-narrow-layout='stack'] .env-table-row[aria-selected='true'] {
-    box-shadow: inset 0.1875rem 0 0 var(--color-on-navigation-selected);
-  }
-  .env-table-region[data-narrow-layout='stack'] .env-table-row[aria-selected='true']:dir(rtl) {
-    box-shadow: inset -0.1875rem 0 0 var(--color-on-navigation-selected);
-  }
-  .env-table-region[data-narrow-layout='stack']
-    .env-table-row[aria-selected='true']
-    > :first-child {
-    box-shadow: none;
-  }
+.env-table-region[data-stacked]
+  :is(
+    .env-table,
+    .env-table-body,
+    .env-table-row,
+    .env-table-cell,
+    .env-table-header-cell,
+    .env-table-caption
+  ) {
+  display: block;
+}
+/* The header row stays available to assistive technology and shows only while a sort button in
+   it has keyboard focus. */
+.env-table-region[data-stacked] .env-table-head:not(:focus-within) {
+  position: absolute;
+  inline-size: 0.0625rem;
+  block-size: 0.0625rem;
+  margin: -0.0625rem;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.env-table-region[data-stacked] .env-table-head:focus-within {
+  display: block;
+}
+.env-table-region[data-stacked] .env-table-head .env-table-row {
+  display: flex;
+  flex-wrap: wrap;
+}
+.env-table-region[data-stacked] .env-table-head .env-table-header-cell {
+  display: block;
+  flex: 1 1 auto;
+}
+.env-table-region[data-stacked] .env-table-column-resize {
+  display: none;
+}
+.env-table-region[data-stacked] .env-table-body > .env-table-row {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--env-table-cell-padding);
+}
+.env-table-region[data-stacked] .env-table-body > .env-table-row + .env-table-row {
+  border-block-start: 0.0625rem solid var(--color-border-strong);
+}
+.env-table-region[data-stacked]
+  .env-table-body
+  > .env-table-row
+  > :is(.env-table-cell, .env-table-header-cell) {
+  padding: 0;
+  border-block-start: 0;
+  text-align: start;
+  white-space: normal;
+}
+.env-table-region[data-stacked] .env-table-body > .env-table-row > :first-child {
+  margin-block-end: var(--space-1);
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+.env-table-region[data-stacked] .env-table-cell[data-labelled] {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  gap: var(--space-3);
+  align-items: baseline;
+}
+.env-table-region[data-stacked] .env-table-cell-label {
+  display: block;
+  min-inline-size: 0;
+  color: var(--color-text-muted);
+  font: var(--type-body-small);
+  overflow-wrap: anywhere;
+}
+.env-table-region[data-stacked] .env-table-row[aria-selected='true'] {
+  box-shadow: inset 0.1875rem 0 0 var(--color-on-navigation-selected);
+}
+.env-table-region[data-stacked] .env-table-row[aria-selected='true']:dir(rtl) {
+  box-shadow: inset -0.1875rem 0 0 var(--color-on-navigation-selected);
+}
+.env-table-region[data-stacked] .env-table-row[aria-selected='true'] > :first-child {
+  box-shadow: none;
 }
