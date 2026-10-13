@@ -96,7 +96,8 @@ test('a stat group wraps its stats into even columns as space runs out', async (
         widths: widths.size,
       };
     });
-  expect(await columns()).toEqual({ perRow: 4, rows: 1, widths: 1 });
+  // Polled, so the measure waits for the stats to render.
+  await expect.poll(columns).toEqual({ perRow: 4, rows: 1, widths: 1 });
   await page.setViewportSize({ width: 560, height: 900 });
   await expect.poll(columns).toEqual({ perRow: 2, rows: 2, widths: 1 });
   // A phone keeps two columns, with figures that still fit their column.
