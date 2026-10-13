@@ -389,3 +389,21 @@ test('a tooltip opened by focus leaves with the pointer and never blocks a press
   await expect(positioner).toHaveCount(0);
   await expect(grid.locator('td[tabindex="0"]')).toBeFocused();
 });
+
+test('Escape hides the tooltip of a heatmap in a dialog and keeps the dialog open', async ({
+  page,
+}) => {
+  await page.goto(heatmapFixture);
+  await page.getByRole('button', { name: 'Open activity light' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Activity details light' });
+  await expect(dialog).toBeVisible();
+  const grid = dialog.getByRole('grid', { name: 'Activity in a dialog light' });
+  await grid.locator('td[tabindex="0"]').focus();
+  await expect(page.locator('.env-heatmap-tooltip')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.env-heatmap-tooltip')).toHaveCount(0);
+  await expect(dialog).toBeVisible();
+  // With no tooltip to hide, Escape closes the dialog as usual.
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
+});

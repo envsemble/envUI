@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import {
   Button,
+  Dialog,
   Heatmap,
   Surface,
   Theme,
@@ -70,6 +71,14 @@ export function HeatmapFixture({ theme }: { theme: ThemeValue }) {
           moreLabel="Mehr"
         />
       </Surface>
+      <Dialog title={`Activity details ${theme}`} trigger={<Button>Open activity {theme}</Button>}>
+        <Heatmap
+          aria-label={`Activity in a dialog ${theme}`}
+          data={year.slice(-60)}
+          startDate="2026-08-12"
+          endDate="2026-10-10"
+        />
+      </Dialog>
       <Heatmap
         aria-label={`Ranked ${theme}`}
         data={[

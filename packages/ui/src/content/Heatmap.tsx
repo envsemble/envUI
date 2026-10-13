@@ -365,7 +365,9 @@ export function Heatmap({
     if (event.altKey || event.ctrlKey || event.metaKey) return;
     if (event.key === 'Escape') {
       if (tip?.open) {
+        // Hiding the tooltip consumes Escape, so an enclosing dialog stays open.
         event.preventDefault();
+        event.stopPropagation();
         hide();
       }
       return;
