@@ -40,7 +40,7 @@ import { AnimatedNumber, Stat, StatGroup } from '@envsemble/envui';
 - Use stats for the few figures that sum up a view, such as on a dashboard. Use a Table for many values to compare, and a Meter for a quantity within a range.
 - Keep labels short and put units in the value or the detail. Format numbers in the application, in the reader's locale; an AnimatedNumber value rolls to new figures as they change.
 - A trend shows an icon and its label in the trend's tone, so it never depends on color. Write the label so it reads well without the icon, such as +12% or 2 fewer than last week, and set tone when a rise is bad news, as for costs and errors.
-- StatGroup puts its stats on one pane in as many even columns as fit, each at least 11 rem wide; they wrap onto new rows as space runs out. A narrow group, such as on a phone, keeps two columns down to 6.5 rem each, with its figures a little smaller so they stay on one line, and stacks only below that. Gaps separate the stats, without dividers. Name the group with aria-label when it stands for a section.
+- StatGroup puts its stats on one pane in as many even columns as fit, each at least 11 rem wide; they wrap onto new rows as space runs out. A narrow group, such as on a phone, keeps two columns down to 6.5 rem each, with its figures a little smaller so they stay on one line, and stacks only below that. Gaps separate the stats, without dividers. Name the group with aria-label or aria-labelledby when it stands for a section; a named group is exposed as a group, so screen readers announce its name as people enter it.
 - A Stat on its own has no surface; place it in a Card or Surface where it needs one.
 
 TypeScript declarations provide the complete public API.

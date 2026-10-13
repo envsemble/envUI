@@ -74,11 +74,14 @@ export interface StatGroupProps
 
 /**
  * Stats on one surface, a pane by default, in as many even columns as fit; they wrap as space runs
- * out. Use the row tone for a group on a pane.
+ * out. Use the row tone for a group on a pane. A group named with aria-label or aria-labelledby is
+ * exposed as a group, so assistive technology announces the name.
  */
 export function StatGroup({ tone = 'pane', padding, className, ...props }: StatGroupProps) {
+  const labelled = props['aria-label'] !== undefined || props['aria-labelledby'] !== undefined;
   return (
     <Surface
+      role={labelled ? 'group' : undefined}
       {...props}
       tone={tone}
       padding={padding}

@@ -55,7 +55,9 @@ test('public components hydrate server output without recoverable errors', async
   await split.focus();
   await page.keyboard.press('ArrowRight');
   await expect(split).toHaveAttribute('aria-valuenow', '52');
-  await expect(page.getByLabel('Hydrated stats')).toHaveText('Hydrated stat128+12%Last 30 days');
+  await expect(page.getByRole('group', { name: 'Hydrated stats' })).toHaveText(
+    'Hydrated stat128+12%Last 30 days',
+  );
   const activity = page.getByRole('grid', { name: 'Hydrated activity' });
   await expect(activity.getByRole('gridcell')).toHaveCount(31);
   const peak = activity.getByRole('gridcell', { name: 'Mon 9 Mar 2026: 1,200' });

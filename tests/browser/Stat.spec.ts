@@ -7,8 +7,10 @@ test('stats read as label, figure, trend and detail, with the trend in icon and 
   page,
 }) => {
   await page.goto(statsFixture);
-  const group = page.getByTestId('stat-group-light');
-  await expect(group).toHaveAttribute('aria-label', 'Project health light');
+  // A named group is exposed as a group with that name; an unnamed one adds no role.
+  const group = page.getByRole('group', { name: 'Project health light' });
+  await expect(group).toHaveAttribute('data-testid', 'stat-group-light');
+  await expect(page.getByTestId('stat-row-group-light')).not.toHaveAttribute('role');
   const stats = group.locator('.env-stat');
   await expect(stats).toHaveCount(4);
   await expect(stats.nth(0)).toHaveText(/^Active projects128\+12% from last monthLast 30 days$/);
