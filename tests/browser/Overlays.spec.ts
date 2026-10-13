@@ -129,6 +129,31 @@ test('right panels keep their width beside the page and fill a narrow window', a
   await expect(phonePanel).toHaveCSS('border-left-width', '0px');
 });
 
+test('a panel across the whole width keeps clear of the safe areas on both sides', async ({
+  page,
+  browserName,
+}) => {
+  test.skip(browserName !== 'chromium', 'Only one engine emulates safe-area insets.');
+  await page.goto(`${fixtureUrl}/?fixture=dialog-variants`);
+  const session = await page.context().newCDPSession(page);
+  await session.send('Emulation.setSafeAreaInsetsOverride', {
+    insets: { top: 0, left: 44, bottom: 21, right: 44 },
+  });
+  for (const [viewport, trigger, title] of [
+    [390, 'Open panel', 'Report details'],
+    [600, 'Open wide panel', 'Wide report details'],
+  ] as const) {
+    await page.setViewportSize({ width: viewport, height: 800 });
+    await page.getByRole('button', { name: trigger }).click();
+    const panel = page.getByRole('dialog', { name: title });
+    await expect.poll(async () => (await panel.boundingBox())!.width).toBeCloseTo(viewport, 0);
+    await expect(panel).toHaveCSS('padding-left', '44px');
+    await expect(panel).toHaveCSS('padding-right', '44px');
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+  }
+});
+
 test('a notice dismiss button is a circle tinted with the notice tone', async ({ page }) => {
   await page.goto(`${fixtureUrl}/?fixture=notices`);
   const notice = page
