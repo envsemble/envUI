@@ -193,7 +193,7 @@ test('coarse pointers get a taller control and a larger thumb', async ({
   browser,
   browserName,
 }) => {
-  test.skip(browserName !== 'chromium', 'Touch emulation with a coarse pointer is Chromium only.');
+  test.skip(browserName !== 'chromium', 'Only one engine emulates touch with a coarse pointer.');
   const context = await browser.newContext({
     hasTouch: true,
     isMobile: true,
