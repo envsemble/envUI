@@ -547,6 +547,20 @@ test.describe('Title bar', () => {
     await page.keyboard.press('PageDown');
     await expect.poll(() => list.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
     expect((await metrics()).top).toBe(0);
+
+    // Keys that the page handles stay its own, such as a shortcut added to the document after the
+    // shell mounted.
+    await page.evaluate(() => {
+      (document.activeElement as HTMLElement | null)?.blur();
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'End') event.preventDefault();
+      });
+    });
+    await page.keyboard.press('End');
+    await page.waitForTimeout(200);
+    expect((await metrics()).top).toBe(0);
+    await page.keyboard.press('PageDown');
+    await expectTop(step);
   });
 
   test('WindowFrame fills the window and scrolls its content below the title bar', async ({

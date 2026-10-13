@@ -94,6 +94,8 @@ export function useScrollKeys(root: HTMLElement | null, scroller: HTMLElement | 
     if (!root || !scroller) return;
     const document = root.ownerDocument;
     const view = document.defaultView;
+    if (!view) return;
+    const reducedMotion = view.matchMedia('(prefers-reduced-motion: reduce)');
     // A document that still scrolls, such as a page showing the frame in a smaller area, keeps its
     // own keys.
     function documentScrolls(direction: -1 | 1) {
@@ -121,14 +123,14 @@ export function useScrollKeys(root: HTMLElement | null, scroller: HTMLElement | 
       const target = event.target instanceof Element ? event.target : null;
       if (!step || !target || !claims(target, event, step.direction)) return;
       event.preventDefault();
-      const behavior = view?.matchMedia('(prefers-reduced-motion: reduce)').matches
-        ? 'auto'
-        : 'smooth';
+      const behavior = reducedMotion.matches ? 'auto' : 'smooth';
       if (step.by === undefined)
         scroller!.scrollTo({ top: step.direction > 0 ? scroller!.scrollHeight : 0, behavior });
       else scroller!.scrollBy({ top: step.by, behavior });
     }
-    document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
+    // The window hears a key after the page's elements and its document, so keys that their
+    // handlers took, such as application shortcuts on the document, stay theirs.
+    view.addEventListener('keydown', onKeyDown);
+    return () => view.removeEventListener('keydown', onKeyDown);
   }, [root, scroller]);
 }
