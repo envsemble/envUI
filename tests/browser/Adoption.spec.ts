@@ -44,6 +44,53 @@ test('ThemePreferenceProvider stores the choice and themes the document root', a
   );
 });
 
+for (const source of ['system', 'stored'] as const) {
+  test(`the browser theme color follows the canvas of a ${source} dark theme`, async ({ page }) => {
+    // The page starts with a static light theme color, as an application's index.html might.
+    await page.emulateMedia({ colorScheme: source === 'system' ? 'dark' : 'light' });
+    if (source === 'stored')
+      await page.addInitScript(() => localStorage.setItem('fixture-theme', 'dark'));
+    await page.goto(fixture);
+    await expect(page.locator('html')).toHaveAttribute('data-env-theme', 'dark');
+    const canvas = await page.evaluate(
+      () => getComputedStyle(document.documentElement).backgroundColor,
+    );
+    expect(canvas).not.toBe('rgb(255, 255, 255)');
+    await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content', canvas);
+  });
+}
+
+test('the browser theme color follows the canvas of the resolved theme', async ({ page }) => {
+  // The page starts with a static light theme color, as an application's index.html might.
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await page.goto(fixture);
+  const root = page.locator('html');
+  const meta = page.locator('meta[name="theme-color"]');
+  const canvas = () =>
+    page.evaluate(() => getComputedStyle(document.documentElement).backgroundColor);
+  await expect(root).toHaveAttribute('data-env-theme', 'dark');
+  const dark = await canvas();
+  expect(dark).not.toBe('rgb(255, 255, 255)');
+  await expect(meta).toHaveAttribute('content', dark);
+  // A tag written for a system color scheme follows the chosen theme too.
+  await page.evaluate(() => {
+    const scheme = document.createElement('meta');
+    scheme.name = 'theme-color';
+    scheme.media = '(prefers-color-scheme: dark)';
+    scheme.content = '#000000';
+    document.head.append(scheme);
+  });
+  await page.getByTestId('theme-toggle').click();
+  await expect(root).toHaveAttribute('data-env-theme', 'light');
+  const light = await canvas();
+  await expect(meta).toHaveCount(2);
+  await expect(meta.first()).toHaveAttribute('content', light);
+  await expect(meta.last()).toHaveAttribute('content', light);
+  await page.getByTestId('theme-toggle').click();
+  await expect(meta.first()).toHaveAttribute('content', dark);
+  await expect(meta.last()).toHaveAttribute('content', dark);
+});
+
 test('a themed document root keeps the browser font size and its body the body type', async ({
   page,
 }) => {

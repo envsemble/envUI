@@ -63,6 +63,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 
 ### Fixed
 
+- `ThemePreferenceProvider` gives every `<meta name="theme-color">` the canvas color of the theme in use, including tags written for a system color scheme with `media`, instead of only the first tag.
 - Text entered in `Input`, `Textarea`, `SearchField`, the `CommandPalette` search and the rich text and Markdown editors takes `--control-font-size`, 1 rem on touch screens, so mobile browsers no longer zoom the page when such a field gets focus. Resting labels, prefixes and suffixes match it.
 - `Card` and `ActionCard` `meta` sits at the end of the heading row, also in right-to-left text, instead of right after the heading, where the text margin reset kept it.
 - A `Textarea` with `sizing="content"` and `rows` starts at that many lines, such as one for a short reply, instead of at least 7.5 rem; without `rows` it still starts at 7.5 rem.

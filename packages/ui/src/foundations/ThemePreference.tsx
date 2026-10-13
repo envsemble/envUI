@@ -41,7 +41,8 @@ export interface ThemePreferenceProviderProps {
   defaultPreference?: ThemePreference;
   /**
    * Theme the document root as well as this subtree (default). Root theming covers the page
-   * background, native controls and portals rendered by other libraries.
+   * background, native controls, portals rendered by other libraries and the content of every
+   * theme-color meta tag, which takes the canvas color.
    */
   applyToDocument?: boolean;
   /** Class name for the Theme boundary around the children. */
@@ -112,8 +113,13 @@ export function ThemePreferenceProvider({
     root.classList.add('env-theme');
     root.dataset.envTheme = theme;
     root.style.colorScheme = theme;
-    const browserTheme = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
-    if (browserTheme) browserTheme.content = getComputedStyle(root).backgroundColor;
+    // The browser's own interface, such as a mobile address bar, takes the canvas color. Every
+    // theme-color tag follows, including ones written for a system color scheme with media.
+    const canvas = getComputedStyle(root).backgroundColor;
+    for (const browserTheme of document.querySelectorAll<HTMLMetaElement>(
+      'meta[name="theme-color"]',
+    ))
+      browserTheme.content = canvas;
   }, [applyToDocument, theme]);
 
   const setPreference = useCallback(
