@@ -47,6 +47,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 - `FileDropzone`: a dashed drop target for files with an icon, a label and a description, which opens the file picker when pressed or with <kbd>Enter</kbd> and <kbd>Space</kbd>. Files dragged over it show a solid blue outline; `accept` filters dropped and chosen files, with `onFiles` for the files it takes and `onReject` for the others and, without `multiple`, those after the first. `pending` shows a spinner and takes no new files, `error` colors the outline and is linked to the zone, `compact` makes it one row, `name` submits the files with native forms, and `inputRef` opens the picker from elsewhere, such as a Replace button beside the application's own preview.
 - `Heatmap`: a calendar of daily values with weeks as columns and weekdays as rows, in `levels` color steps mixed from a `tone` into the canvas, with month and weekday names and a Less–More legend. Every day is a named grid cell; the grid is one tab stop where <kbd>↑</kbd> and <kbd>↓</kbd> move by day, <kbd>←</kbd> and <kbd>→</kbd> by week and <kbd>Home</kbd> and <kbd>End</kbd> reach the range's ends. A single `Tooltip`-styled popup follows the hovered, focused or tapped day, so a year renders without a portal per day. Narrow containers scroll the weeks, starting at the most recent. `startDate`, `endDate`, `maxValue`, `weekStart`, `formatValue`, `formatDate`, `formatTooltip`, `monthLabels`, `weekdayLabels`, `lessLabel` and `moreLabel` adjust and localize it.
 - `ConfirmButton` `icon` with a required `aria-label`: a round icon-only button at rest, like `IconButton`, that grows when armed to show the confirm label beside its icon, so the consequence is still named; focus stays on it.
+- `Tooltip` `side` takes `inline-start` and `inline-end`, which follow the text direction.
 
 ### Changed
 
@@ -56,6 +57,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 - The toast stack's count of hidden notices is a `Counter`. A dismissed notice steps out of the stack at once and fades where it was, so dismissing several in a row moves the stack once each, without jerking or flashing a scrollbar; a notice revealed from the hidden ones fades in.
 - A collapsed `AppShell` sidebar no longer treats expanded tree rows as open popups, and stays expanded while a context menu opened from it is open.
 - On narrow viewports the `AppShell` sidebar opens as a drawer at least 20 rem wide, or the window less 3 rem, instead of the measured navigation width, so `sidebarContent` such as a list of recent documents has room.
+- An icon-only `NavigationItem` shows its label in a `Tooltip` at its inline end on hover and keyboard focus instead of a native title, which doubled an application's own tooltip. An application `Tooltip` around the item replaces it.
 
 ### Fixed
 

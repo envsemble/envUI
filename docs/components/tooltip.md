@@ -17,12 +17,12 @@ import { Refresh } from '@envsemble/envui/icons/Refresh';
 
 ### Props & contracts
 
-| Name     | Contract                                                                          |
-| -------- | --------------------------------------------------------------------------------- |
-| content  | Short supplementary text                                                          |
-| children | One control; a disabled control is wrapped so it can still be hovered and focused |
-| side     | top (default), bottom, left or right; flips to stay in the viewport               |
-| delay    | Hover delay in milliseconds before opening, 400 by default; focus opens at once   |
+| Name     | Contract                                                                                                                           |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| content  | Short supplementary text                                                                                                           |
+| children | One control; a disabled control is wrapped so it can still be hovered and focused                                                  |
+| side     | top (default), bottom, left, right, or inline-start and inline-end, which follow the text direction; flips to stay in the viewport |
+| delay    | Hover delay in milliseconds before opening, 400 by default; focus opens at once                                                    |
 
 ## Guidelines
 
