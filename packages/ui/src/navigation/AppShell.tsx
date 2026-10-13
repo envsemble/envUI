@@ -37,9 +37,10 @@ interface AppShellContextValue {
   closeNarrowSidebar: () => void;
   /**
    * The element that scrolls the page content: the content area in a title-bar shell, else the
-   * document's scrolling element. Read or restore scroll positions on it. In a title-bar shell it is
-   * null until the content area is attached; the function then changes, so effects that depend on
-   * it run again.
+   * scrolling element of the shell's document. Read or restore scroll positions on it. In a
+   * title-bar shell it is null until the content area is attached; the function then changes, so
+   * effects that depend on it run again. Every copy of the function returns the current element,
+   * including one kept from an earlier render.
    */
   getScrollElement: () => HTMLElement | null;
 }
@@ -277,8 +278,9 @@ export function AppShell({
   const sidebarContentRegion = useRef<HTMLDivElement>(null);
   const shell = useRef<HTMLDivElement>(null);
   const navigationRegion = useRef<HTMLElement>(null);
-  // Kept in state, so getScrollElement changes once the content area is attached; refs attach only
-  // after the content's own layout effects run.
+  const content = useRef<HTMLElement>(null);
+  // Also kept in state, so getScrollElement changes once the content area is attached; refs attach
+  // only after the content's own layout effects run.
   const [contentElement, setContentElement] = useState<HTMLElement | null>(null);
   const [shellElement, setShellElement] = useState<HTMLDivElement | null>(null);
   const [contentWidth, setContentWidth] = useState<number>();
@@ -443,21 +445,28 @@ export function AppShell({
   const closeNarrowSidebar = useCallback(() => setNarrowOpen(false), []);
   // A title-bar shell scrolls its content area below the title bar; otherwise the document scrolls.
   const scrollingContent = titleBar ? contentElement : null;
-  const getScrollElement = useCallback(
-    () =>
-      titleBar
-        ? scrollingContent
-        : typeof document === 'undefined'
-          ? null
-          : ((document.scrollingElement as HTMLElement | null) ?? document.documentElement),
-    [titleBar, scrollingContent],
-  );
+  // The function reads the elements as it is called, so a copy kept from an earlier render returns
+  // them too. It still changes once the content area is attached, so effects that depend on it run
+  // again with the element.
+  const getScrollElement = useCallback((): HTMLElement | null => {
+    if (titleBar) return content.current;
+    // Until the shell is attached, as the content's first layout effects run, the global document
+    // stands in for the shell's own.
+    const page =
+      shell.current?.ownerDocument ?? (typeof document === 'undefined' ? null : document);
+    if (!page) return null;
+    return (page.scrollingElement as HTMLElement | null) ?? page.documentElement;
+  }, [titleBar, scrollingContent]);
   // With the document no longer scrolling, the keyboard scrolls the content area as it would the
   // document.
   useScrollKeys(titleBar ? shellElement : null, scrollingContent);
   const setShell = useCallback((node: HTMLDivElement | null) => {
     shell.current = node;
     setShellElement(node);
+  }, []);
+  const setContent = useCallback((node: HTMLElement | null) => {
+    content.current = node;
+    setContentElement(node);
   }, []);
   const shellApi = useMemo(
     () => ({ closeNarrowSidebar, getScrollElement }),
@@ -659,7 +668,7 @@ export function AppShell({
             onClick={closeNarrowSidebar}
           />
         )}
-        <main className="env-app-content" tabIndex={-1} ref={setContentElement}>
+        <main className="env-app-content" tabIndex={-1} ref={setContent}>
           {children}
         </main>
       </div>

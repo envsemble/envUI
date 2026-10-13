@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { AppShell, NavigationItem } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Search } from '@envsemble/envui/icons/Search';
-import { MountProbe, ScrollProbe } from './WindowShell.js';
+import { FirstScrollProbe, MountProbe, ScrollProbe } from './WindowShell.js';
 
 const files = Array.from({ length: 200 }, (_, index) => `Document ${index + 1}.md`);
 
@@ -64,6 +64,7 @@ export function ResizableShellFixture() {
       <output data-testid="width-changes">{widths.join(',')}</output>
       <ScrollProbe />
       <MountProbe />
+      <FirstScrollProbe />
       <div className="fixture-tall-page">
         {Array.from({ length: 60 }, (_, index) => (
           <p key={index}>Paragraph {index + 1}</p>

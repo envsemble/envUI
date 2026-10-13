@@ -378,6 +378,24 @@ test('getScrollElement serves page content from its first layout effects', async
   await expect(page.getByTestId('mount-scroll-element')).toHaveText(/(^| )main$/);
 });
 
+test('a copy of getScrollElement kept from the first render returns the current element', async ({
+  page,
+}) => {
+  for (const [url, element] of [
+    [resizableShell, 'html'],
+    [fullShell, 'main'],
+  ] as const) {
+    await page.goto(url);
+    await page.getByRole('button', { name: 'Read the first scroll element' }).click();
+    await expect(page.getByTestId('first-scroll-element')).toHaveText(element);
+  }
+  // A shell rendered into the document of a frame returns that document's scrolling element.
+  await page.goto(`${fixtureUrl}/?fixture=framed-shell`);
+  const frame = page.frameLocator('iframe[title="Framed shell"]');
+  await frame.getByRole('button', { name: 'Read the scroll element' }).click();
+  await expect(frame.getByTestId('framed-scroll-element')).toHaveText('frame');
+});
+
 test.describe('Title bar', () => {
   test('the shell topbar is the window title bar: its height, compact controls and drag regions', async ({
     page,

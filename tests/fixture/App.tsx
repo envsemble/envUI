@@ -15,6 +15,7 @@ import { MarkdownEditingFixture, MarkdownExtensionsFixture } from './MarkdownEdi
 import { AdoptionFixture, ShellFixture } from './Adoption.js';
 import { ResizableShellFixture } from './ResizableShell.js';
 import {
+  FramedShellFixture,
   FullShellFixture,
   FullShellSkeletonFixture,
   ScrollKeysFixture,
@@ -38,6 +39,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'full-shell-skeleton': FullShellSkeletonFixture,
   'title-bar': TitleBarFixture,
   'scroll-keys': ScrollKeysFixture,
+  'framed-shell': FramedShellFixture,
 };
 
 export default function App() {

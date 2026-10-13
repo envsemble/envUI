@@ -1,4 +1,5 @@
 import { createElement, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import {
   AppShell,
   AppShellSkeleton,
@@ -67,6 +68,21 @@ export function MountProbe() {
   return <output data-testid="mount-scroll-element">{seen.join(' ')}</output>;
 }
 
+/** Keeps the first getScrollElement it gets, as a listener registered once would, and calls it. */
+export function FirstScrollProbe() {
+  const { getScrollElement } = useAppShell();
+  const [first] = useState(() => getScrollElement);
+  const [seen, setSeen] = useState('');
+  return (
+    <div className="fixture-actions">
+      <button type="button" onClick={() => setSeen(first()?.tagName.toLowerCase() ?? 'none')}>
+        Read the first scroll element
+      </button>
+      <output data-testid="first-scroll-element">{seen}</output>
+    </div>
+  );
+}
+
 /** A field inside a web component, whose keys reach the page from its shadow root. */
 class ShadowField extends HTMLElement {
   constructor() {
@@ -121,6 +137,53 @@ export function ScrollKeysFixture() {
         ))}
       </div>
     </AppShell>
+  );
+}
+
+function FrameScrollProbe() {
+  const { getScrollElement } = useAppShell();
+  const [seen, setSeen] = useState('');
+  return (
+    <div className="fixture-actions">
+      <button
+        type="button"
+        onClick={(event) => {
+          const element = getScrollElement();
+          const own = event.currentTarget.ownerDocument.scrollingElement;
+          setSeen(element === own ? 'frame' : element ? 'other' : 'none');
+        }}
+      >
+        Read the scroll element
+      </button>
+      <output data-testid="framed-scroll-element">{seen}</output>
+    </div>
+  );
+}
+
+/** A shell rendered into the document of a frame, mounted with ?fixture=framed-shell. */
+export function FramedShellFixture() {
+  const [body, setBody] = useState<HTMLElement | null>(null);
+  return (
+    <>
+      <iframe
+        title="Framed shell"
+        srcDoc="<!doctype html><title>Framed shell</title><body></body>"
+        style={{ inlineSize: '40rem', blockSize: '20rem' }}
+        onLoad={(event) => setBody(event.currentTarget.contentDocument?.body ?? null)}
+      />
+      {body &&
+        createPortal(
+          <AppShell
+            brand={<span>B</span>}
+            title="Framed"
+            navigationLabel="Framed navigation"
+            navigation={null}
+          >
+            <FrameScrollProbe />
+          </AppShell>,
+          body,
+        )}
+    </>
   );
 }
 
@@ -190,6 +253,7 @@ export function FullShellFixture() {
       </header>
       <ScrollProbe />
       <MountProbe />
+      <FirstScrollProbe />
       <div className="fixture-actions">
         <button type="button" onClick={() => setFullView(true)}>
           Show full view
