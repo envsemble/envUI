@@ -344,7 +344,7 @@ test('ConfirmButton names the consequence and runs only on a deliberate second p
   await page.goto(fixture);
   const button = page.getByTestId('confirm-button');
   const confirmed = page.getByTestId('confirmed');
-  const status = page.locator('.env-confirm-button-status');
+  const status = page.locator('.env-confirm-button-status').first();
   await expect(button).toHaveText('Remove');
   await expect(button).toHaveClass(/env-button-outlined/);
 
@@ -374,6 +374,52 @@ test('ConfirmButton names the consequence and runs only on a deliberate second p
   await page.keyboard.press('Enter');
   await expect(button).toHaveText('Remove Morgan?');
   await expect(button).toHaveText('Remove', { timeout: 3000 });
+  await expect(confirmed).toHaveText('1');
+  expect(errors).toEqual([]);
+});
+
+test('an icon-only ConfirmButton is round at rest and names the consequence when armed', async ({
+  page,
+}) => {
+  const errors = collectErrors(page);
+  await page.goto(fixture);
+  const button = page.getByTestId('confirm-icon-button');
+  const confirmed = page.getByTestId('confirmed');
+  await expect(button).toHaveAccessibleName('Remove Morgan');
+  await expect(button).toHaveClass(/env-icon-button/);
+  await expect(button).toHaveClass(/env-button-secondary/);
+  const rest = (await button.boundingBox())!;
+  expect(rest.width).toBeCloseTo(40, 0);
+  expect(rest.height).toBeCloseTo(40, 0);
+  // Round like IconButton: the corners take at least half the height.
+  expect(
+    await button.evaluate((element) => parseFloat(getComputedStyle(element).borderTopLeftRadius)),
+  ).toBeGreaterThanOrEqual(20);
+
+  // Keyboard arming keeps focus on the button while it grows to name the consequence.
+  await button.focus();
+  await page.keyboard.press('Enter');
+  await expect(button).toHaveAccessibleName('Remove Morgan?');
+  await expect(button).toHaveText('Remove Morgan?');
+  await expect(button).toHaveClass(/env-button-destructive/);
+  await expect(button).not.toHaveClass(/env-icon-button/);
+  await expect(button).toBeFocused();
+  await expect(button.locator('.env-symbol')).toHaveCount(1);
+  expect((await button.boundingBox())!.width).toBeGreaterThan(rest.width + 40);
+  await expect(page.locator('.env-confirm-button-status').nth(1)).toHaveText(
+    'Remove Morgan? Press again to confirm.',
+  );
+  await page.waitForTimeout(450);
+  await page.keyboard.press('Enter');
+  await expect(confirmed).toHaveText('1');
+  await expect(button).toHaveAccessibleName('Remove Morgan');
+  await expect(button).toHaveClass(/env-icon-button/);
+  await expect(button).toBeFocused();
+
+  await button.click();
+  await expect(button).toHaveText('Remove Morgan?');
+  await button.press('Escape');
+  await expect(button).toHaveClass(/env-icon-button/);
   await expect(confirmed).toHaveText('1');
   expect(errors).toEqual([]);
 });

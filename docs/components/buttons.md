@@ -58,6 +58,7 @@ import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 
 ```tsx
 import { ConfirmButton } from '@envsemble/envui';
+import { Delete } from '@envsemble/envui/icons/Delete';
 
 <ConfirmButton confirmLabel="Remove Morgan?" onConfirm={() => removeSeat(morgan)}>
   Remove
@@ -71,18 +72,26 @@ import { ConfirmButton } from '@envsemble/envui';
 >
   Cancel plan
 </ConfirmButton>
+
+<ConfirmButton
+  icon={<Delete />}
+  aria-label="Delete draft"
+  confirmLabel="Delete draft?"
+  onConfirm={deleteDraft}
+/>
 ```
 
 ### Props & contracts
 
-| Name                | Contract                                                                            |
-| ------------------- | ----------------------------------------------------------------------------------- |
-| confirmLabel        | The label while armed, naming what a second press does                              |
-| onConfirm           | Runs on the second press                                                            |
-| variant             | outlined (default), secondary, destructive or text at rest; armed it is destructive |
-| armedDuration       | Milliseconds the button stays armed without a second press; 4000 by default         |
-| pending / disabled  | End an arming; pending shows the spinner as on Button                               |
-| Native button props | ref, onBlur, onKeyDown and accessible attributes                                    |
+| Name                | Contract                                                                                                      |
+| ------------------- | ------------------------------------------------------------------------------------------------------------- |
+| confirmLabel        | The label while armed, naming what a second press does                                                        |
+| onConfirm           | Runs on the second press                                                                                      |
+| variant             | outlined (default; secondary when icon-only), secondary, destructive or text at rest; armed it is destructive |
+| armedDuration       | Milliseconds the button stays armed without a second press; 4000 by default                                   |
+| icon / aria-label   | A round icon-only button at rest, named by aria-label; armed, it shows the icon with the confirm label        |
+| pending / disabled  | End an arming; pending shows the spinner as on Button                                                         |
+| Native button props | ref, onBlur, onKeyDown and accessible attributes                                                              |
 
 ## ButtonGroup
 
@@ -115,7 +124,7 @@ import { Settings } from '@envsemble/envui/icons/Settings';
 ## Guidelines
 
 - Say what an action will do before it is taken. When the outcome is known, put it in the label, such as “Show 128 homes”, “Switch to Team · +5 seats” or “Assign to Morgan”. Use AnimatedNumber for a count that changes while choices are made.
-- Use ConfirmButton for an action that takes effect at once and cannot be undone, such as removing someone's access. The first press names the consequence in place and announces it; a double click only arms it; <kbd>Esc</kbd>, leaving the button and four seconds disarm it. Use a Dialog when the person must choose or type something first.
+- Use ConfirmButton for an action that takes effect at once and cannot be undone, such as removing someone's access. The first press names the consequence in place and announces it; a double click only arms it; <kbd>Esc</kbd>, leaving the button and four seconds disarm it. Use a Dialog when the person must choose or type something first. An icon-only ConfirmButton, such as a delete icon in a dense row, is round like IconButton until it is armed; then it grows to show the confirm label beside its icon, so the consequence is still named, and keeps focus.
 - Use one primary action in an action group. Reserve important emphasis for rare, consequential actions.
 - Action buttons fit their content: 2.5 rem minimum height (2 rem for important), 0.875 rem text, 0.25 rem vertical and 0.75 rem horizontal padding. Labels wrap when space is limited.
 - Use fully rounded corners; important actions use 0.5 rem corners. ActionGroup provides 1 rem row gaps or 0.5 rem stacked gaps.

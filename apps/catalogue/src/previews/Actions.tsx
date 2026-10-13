@@ -291,6 +291,7 @@ function OutcomeExamples() {
   const [filters, setFilters] = useState<string[]>([]);
   const [members, setMembers] = useState(['Alex Morgan', 'Sam Lee', 'Priya Shah']);
   const [cancelled, setCancelled] = useState(false);
+  const [draftDeleted, setDraftDeleted] = useState(false);
   const homes = homeFilters.reduce(
     (count, filter) => (filters.includes(filter.id) ? Math.round(count * filter.matching) : count),
     1280,
@@ -373,6 +374,20 @@ function OutcomeExamples() {
               >
                 Cancel plan
               </ConfirmButton>
+            )}
+          </Specimen>
+          <Specimen title="Icon only">
+            {draftDeleted ? (
+              <Button variant="text" onClick={() => setDraftDeleted(false)}>
+                Draft deleted. Restore
+              </Button>
+            ) : (
+              <ConfirmButton
+                icon={<Delete />}
+                aria-label="Delete draft"
+                confirmLabel="Delete draft?"
+                onConfirm={() => setDraftDeleted(true)}
+              />
             )}
           </Specimen>
         </SpecimenGrid>

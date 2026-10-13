@@ -32,6 +32,7 @@ import {
 import { Home } from '@envsemble/envui/icons/Home';
 import { Category } from '@envsemble/envui/icons/Category';
 import { Logout } from '@envsemble/envui/icons/Logout';
+import { Delete } from '@envsemble/envui/icons/Delete';
 
 /** Stands in for a router link: it records client navigation instead of loading a page. */
 function RecordingLink({ href, onClick, ...props }: LinkComponentProps) {
@@ -150,6 +151,14 @@ export function AdoptionFixture() {
           >
             Remove
           </ConfirmButton>
+          <ConfirmButton
+            icon={<Delete />}
+            aria-label="Remove Morgan"
+            confirmLabel="Remove Morgan?"
+            armedDuration={800}
+            onConfirm={() => setConfirmed((count) => count + 1)}
+            data-testid="confirm-icon-button"
+          />
           <output data-testid="confirmed">{confirmed}</output>
           <Button onClick={() => setHomes((count) => count + 1)}>More homes</Button>
           <Button onClick={() => setHomes((count) => count - 1)}>Fewer homes</Button>
