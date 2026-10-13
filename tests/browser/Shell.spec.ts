@@ -521,6 +521,46 @@ test.describe('Title bar', () => {
     expect((await metrics()).top).toBe(0);
   });
 
+  test('WindowFrame fills the window and scrolls its content below the title bar', async ({
+    page,
+  }) => {
+    // With motion allowed, the keyboard scrolls smoothly.
+    await page.goto(`${fixtureUrl}/?fixture=title-bar`);
+    const content = page.getByTestId('window-frame').locator('.env-window-frame-content');
+    const viewport = page.viewportSize()!;
+    const geometry = await content.evaluate((element) => {
+      const style = getComputedStyle(element);
+      const box = element.getBoundingClientRect();
+      const root = document.scrollingElement!;
+      return {
+        top: box.top,
+        bottom: box.bottom,
+        overflowY: style.overflowY,
+        gutter: style.getPropertyValue('scrollbar-gutter'),
+        gutterSupported: CSS.supports('scrollbar-gutter', 'stable'),
+        documentOverflow: root.scrollHeight - root.clientHeight,
+        overflows: element.scrollHeight > element.clientHeight,
+      };
+    });
+    // The content runs from the title bar to the bottom of the window and scrolls; the document
+    // does not, so no scrollbar reaches under the window controls.
+    expect([geometry.top, geometry.bottom]).toEqual([40, viewport.height]);
+    expect(geometry.overflowY).toBe('auto');
+    expect(geometry.overflows).toBe(true);
+    expect(geometry.documentOverflow).toBeLessThanOrEqual(0);
+    if (geometry.gutterSupported) expect(geometry.gutter).toBe('stable');
+    // The keyboard scrolls it from a fresh window.
+    await page.keyboard.press('PageDown');
+    await expect
+      .poll(() => content.evaluate((element) => element.scrollTop))
+      .toBeGreaterThan(viewport.height / 2);
+    await page.keyboard.press('Home');
+    await expect.poll(() => content.evaluate((element) => element.scrollTop)).toBe(0);
+    // scrollRef is the scrolling element, for restoring scroll positions.
+    await page.getByRole('button', { name: 'Restore start page scroll' }).click();
+    await expect.poll(() => content.evaluate((element) => element.scrollTop)).toBe(200);
+  });
+
   test('a page whose document scrolls keeps its keys while it shows a title-bar frame', async ({
     page,
   }) => {

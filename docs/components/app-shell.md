@@ -100,29 +100,39 @@ import { AppShell, Menubar, MenubarMenu, MenuItem, Select } from '@envsemble/env
 ### A title bar without the shell
 
 ```tsx
-import { Button, Menubar, TitleBar } from '@envsemble/envui';
+import { Button, Menubar, TitleBar, WindowFrame } from '@envsemble/envui';
 
-<TitleBar
-  className="start-page-title-bar"
-  start={
-    <>
-      <img src={markUrl} alt="" />
-      <Menubar aria-label="Application menu">{menus}</Menubar>
-    </>
+<WindowFrame
+  scrollRef={startPageScroller}
+  titleBar={
+    <TitleBar
+      start={
+        <>
+          <img src={markUrl} alt="" />
+          <Menubar aria-label="Application menu">{menus}</Menubar>
+        </>
+      }
+      end={<Button variant="secondary">Share</Button>}
+    >
+      Quarterly report
+    </TitleBar>
   }
-  end={<Button variant="secondary">Share</Button>}
 >
-  Quarterly report
-</TitleBar>;
+  <StartPage />
+</WindowFrame>;
 ```
 
-| Name                  | Contract                                                                                         |
-| --------------------- | ------------------------------------------------------------------------------------------------ |
-| TitleBar start        | Content at the inline start, such as the application mark and a Menubar                          |
-| TitleBar children     | Content centered in the window, such as the document title; it truncates when space runs short   |
-| TitleBar end          | Content at the inline end, such as actions; the window controls follow it                        |
-| TitleBar native props | className, style, aria attributes and other header attributes                                    |
-| --title-bar-height    | 2.5 rem, 3 rem on coarse pointers: a title bar's least height, and its height outside an overlay |
+| Name                     | Contract                                                                                         |
+| ------------------------ | ------------------------------------------------------------------------------------------------ |
+| TitleBar start           | Content at the inline start, such as the application mark and a Menubar                          |
+| TitleBar children        | Content centered in the window, such as the document title; it truncates when space runs short   |
+| TitleBar end             | Content at the inline end, such as actions; the window controls follow it                        |
+| TitleBar native props    | className, style, aria attributes and other header attributes                                    |
+| WindowFrame titleBar     | The title bar at the top of the window, typically a TitleBar                                     |
+| WindowFrame children     | The window's content, which scrolls below the title bar                                          |
+| WindowFrame scrollRef    | The element that scrolls the content, to read and restore scroll positions                       |
+| WindowFrame native props | className, style, ref and other div attributes of the frame                                      |
+| --title-bar-height       | 2.5 rem, 3 rem on coarse pointers: a title bar's least height, and its height outside an overlay |
 
 ## Guidelines
 
@@ -141,7 +151,7 @@ import { Button, Menubar, TitleBar } from '@envsemble/envui';
 - The application turns the overlay on, for example with display_override and window-controls-overlay in a web app manifest, or with its desktop shell's option for a hidden title bar with overlaid window controls. envUI only reads the variables.
 - Empty space in a title bar drags the window (app-region: drag) and its text cannot be selected. Buttons, links, fields, menubars, menu items and other focusable elements stay clickable (app-region: no-drag); give any other interactive element in the bar app-region: no-drag too.
 - Controls in a title bar take the compact control height, as in a compact Surface, and the toggle shrinks to match while keeping the navigation icons' center line. --topbar-height follows the title bar's height, so the sidebar and the content area line up with it.
-- TitleBar is the same title bar without the shell, for a start page or a simple window: content at the start, centered and at the end. It is a normal block at the top of its container. Make it sticky (position: sticky; inset-block-start: 0) or fixed in the application, and offset the content below a fixed bar by its height.
+- TitleBar is the same title bar without the shell, for a start page or a simple window: content at the start, centered and at the end. It is a normal block. Put it in a WindowFrame, which fills the window with the title bar on top and the content scrolling below it, with a stable gutter and the same keyboard scrolling as a title-bar shell. Avoid a sticky or fixed TitleBar above a scrolling document: the document's scrollbar would run under the window controls.
 
 TypeScript declarations provide the complete public API.
 

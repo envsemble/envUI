@@ -30,6 +30,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 - `AppShell` and `AppShellSkeleton` `titleBar`: the topbar is the window's title bar in installed web apps and desktop shells that draw their own (the Window Controls Overlay). It takes the title bar area's height, at least `--title-bar-height` so a zoomed page keeps room for its controls, and leaves room for the window controls through `env(titlebar-area-*)`. It drags the window from empty space while its controls stay clickable, and makes its controls compact; `--topbar-height` follows it. The shell fills the window and its content area scrolls below the title bar, with a stable scrollbar gutter, so the window controls never cover a scrollbar; the keyboard scrolls it as it would the document.
 - `--app-sticky-top` on `AppShell`: the offset for content that sticks with `position: sticky`, the topbar height while the document scrolls and 0 in a title-bar shell's content area. `useAppShell().getScrollElement()` returns the element that scrolls the page content, for reading and restoring scroll positions; it changes once a title-bar shell's content area is attached, so effects that depend on it run again.
 - `TitleBar`: the same window title bar without the shell, with start, centered and end content, and the `--title-bar-height` token (2.5 rem), the least height of a title bar and its height where the window reports no title bar area.
+- `WindowFrame`: a window without the shell, such as a start page, filled by a title bar on top and content that scrolls below it, with a stable scrollbar gutter; `scrollRef` gives the scrolling element. Like a title-bar shell's content area, the keyboard scrolls it as it would the document.
 - `Tabs` `fill`: the selected panel takes the height left below the list, for content that fills a region such as a diagram canvas.
 - `Surface` `density="compact"`: the controls inside take the compact control height, for toolbars over dense content.
 - `Code` `appearance="subtle"` and `Markdown` `inlineCode="subtle"`: inline code that follows the app theme as a quiet chip, for prose dense with identifiers.
@@ -45,7 +46,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 ### Documentation
 
 - New pages for the tree, document tabs, breadcrumbs, command palette, segmented controls, badges and counters, notices, popovers, tables and keyboard keys. Colors list the status tones.
-- The application shell page shows the frame alone, resizable, and a full-width topbar as a window title bar, with `TitleBar` on its own. The menus page shows the account and organization menus, and the building blocks for the application's own menus, compact menus and submenus included.
+- The application shell page shows the frame alone, resizable, and a full-width topbar as a window title bar, with `TitleBar` in a `WindowFrame` on its own. The menus page shows the account and organization menus, and the building blocks for the application's own menus, compact menus and submenus included.
 - New page for the menubar.
 - Keys in the documentation and the catalogue show as `Kbd` keys.
 - The browser suite's ports can be changed with `ENVUI_CATALOGUE_PORT` and `ENVUI_FIXTURE_PORT`.

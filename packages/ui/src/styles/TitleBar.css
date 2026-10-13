@@ -95,3 +95,22 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* WindowFrame: a window without the shell fills the window, with the title bar on top and the content
+   scrolling below it, so the window controls drawn over the title bar never cover a scrollbar; the
+   stable gutter keeps the layout in place as content starts or stops overflowing. */
+.env-window-frame {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
+  background: var(--color-canvas);
+  color: var(--color-text-primary);
+}
+.env-window-frame-content {
+  min-block-size: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  outline: none;
+}

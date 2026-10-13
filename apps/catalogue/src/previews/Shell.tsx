@@ -19,6 +19,7 @@ import {
   Stack,
   Text,
   TitleBar,
+  WindowFrame,
 } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Apps } from '@envsemble/envui/icons/Apps';
@@ -134,6 +135,17 @@ export function AppShellPreview() {
     </Preview>
   );
 }
+
+const recentDocuments = [
+  'Quarterly report',
+  'Meeting notes',
+  'Budget',
+  'Roadmap',
+  'Release checklist',
+  'Interview notes',
+  'Design review',
+  'Team retrospective',
+];
 
 const workspaces = [
   { value: 'tokens', label: 'design-system/tokens' },
@@ -277,33 +289,42 @@ function TitleBarExamples() {
       <Example
         title="Title bar alone"
         size="wide"
-        caption="TitleBar is the same title bar without the shell, for a start page or a simple window: content at the start, centered and at the end. It is a normal block; the application makes it sticky or fixed."
+        caption="TitleBar is the same title bar without the shell, for a start page or a simple window: content at the start, centered and at the end. WindowFrame fills the window with the title bar on top and the content scrolling below it."
       >
         <div className="docs-title-bar-frame">
-          <TitleBar
-            start={
-              <>
-                <span className="env-symbol docs-title-bar-mark" aria-hidden="true">
-                  <Apps />
-                </span>
-                <SampleMenubar label="Start page menu" />
-              </>
-            }
-            end={
-              <>
-                <Button variant="secondary">Share</Button>
-                <WindowControls />
-              </>
+          <WindowFrame
+            titleBar={
+              <TitleBar
+                start={
+                  <>
+                    <span className="env-symbol docs-title-bar-mark" aria-hidden="true">
+                      <Apps />
+                    </span>
+                    <SampleMenubar label="Start page menu" />
+                  </>
+                }
+                end={
+                  <>
+                    <Button variant="secondary">Share</Button>
+                    <WindowControls />
+                  </>
+                }
+              >
+                Quarterly report
+              </TitleBar>
             }
           >
-            Quarterly report
-          </TitleBar>
-          <Stack gap={3} className="docs-shell-page">
-            <Text as="h2" variant="page-heading">
-              Recent documents
-            </Text>
-            <Text tone="muted">Quarterly report · Meeting notes · Budget</Text>
-          </Stack>
+            <Stack gap={3} className="docs-shell-page">
+              <Text as="h2" variant="page-heading">
+                Recent documents
+              </Text>
+              {recentDocuments.map((name) => (
+                <Text key={name} tone="muted">
+                  {name}
+                </Text>
+              ))}
+            </Stack>
+          </WindowFrame>
         </div>
       </Example>
     </>

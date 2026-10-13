@@ -168,11 +168,15 @@
 .docs-window-note {
   font-family: var(--font-family);
 }
+/* Stands in for a window: WindowFrame fills it as it would fill the window. */
 .docs-title-bar-frame {
+  position: relative;
+  block-size: 18rem;
   overflow: hidden;
   border: 0.0625rem solid var(--color-border-strong);
   border-radius: var(--radius-surface);
   background: var(--color-canvas);
+  transform: translateZ(0);
 }
 .docs-title-bar-mark {
   inline-size: 1.25rem;
