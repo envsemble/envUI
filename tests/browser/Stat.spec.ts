@@ -99,6 +99,14 @@ test('a stat group wraps its stats into even columns as space runs out', async (
   expect(await columns()).toEqual({ perRow: 4, rows: 1, widths: 1 });
   await page.setViewportSize({ width: 560, height: 900 });
   await expect.poll(columns).toEqual({ perRow: 2, rows: 2, widths: 1 });
+  // A phone keeps two columns, with figures that still fit their column.
+  await page.setViewportSize({ width: 390, height: 900 });
+  await expect.poll(columns).toEqual({ perRow: 2, rows: 2, widths: 1 });
+  for (const value of await group.locator('.env-stat-value').all())
+    expect(await value.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(
+      true,
+    );
+  // Only a very narrow group stacks its stats.
   await page.setViewportSize({ width: 320, height: 900 });
   await expect.poll(columns).toEqual({ perRow: 1, rows: 4, widths: 1 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

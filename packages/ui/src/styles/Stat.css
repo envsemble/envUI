@@ -50,10 +50,22 @@
 .env-stat-detail {
   color: var(--color-text-muted);
 }
-/* As many even columns as fit, at least 11 rem wide, wrapping onto new rows. */
+/* As many even columns as fit, at least 11 rem wide, wrapping onto new rows. A narrow group, such
+   as on a phone, keeps two columns down to 6.5 rem each with a smaller gap before it stacks, and
+   its figures shrink with their column so they stay on one line. */
 .env-stat-group {
+  --env-stat-group-gap: clamp(var(--space-4), 5%, var(--space-6));
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
-  gap: var(--space-5) var(--space-6);
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, 11rem, max(6.5rem, (100% - var(--env-stat-group-gap)) / 2)), 1fr)
+  );
+  gap: var(--space-5) var(--env-stat-group-gap);
   min-inline-size: 0;
+}
+.env-stat-group > .env-stat {
+  container-type: inline-size;
+}
+.env-stat-group > .env-stat .env-stat-value {
+  font-size: clamp(1.25rem, 8.33cqi + 0.833rem, 1.75rem);
 }
