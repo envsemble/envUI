@@ -2,6 +2,7 @@ export * from './foundations/Theme.js';
 export * from './foundations/Layout.js';
 export * from './foundations/Text.js';
 export * from './foundations/Surface.js';
+export * from './foundations/SplitView.js';
 export * from './actions/Button.js';
 export * from './actions/Link.js';
 export * from './actions/ButtonGroup.js';

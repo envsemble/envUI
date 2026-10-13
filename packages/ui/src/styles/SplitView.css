@@ -1,0 +1,101 @@
+/* Two panes side by side, with a divider in a gutter between them that resizes the start pane. Each
+   pane scrolls on its own when the split view has a height; stacked panes follow each other. */
+.env-split-view {
+  --env-split-view-size: 50;
+  --env-split-view-gutter: var(--space-4);
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+.env-split-view-pane {
+  box-sizing: border-box;
+  min-inline-size: 0;
+  min-block-size: 0;
+  overflow: auto;
+}
+.env-split-view-pane[data-pane='start'] {
+  flex: 0 0 calc((100% - var(--env-split-view-gutter)) * var(--env-split-view-size) / 100);
+}
+.env-split-view-pane[data-pane='end'] {
+  flex: 1 1 0;
+}
+/* Stacked panes take the height of their content; within a set height they scroll together. */
+.env-split-view[data-stacked] {
+  flex-direction: column;
+  gap: var(--env-split-view-gutter);
+  overflow-y: auto;
+}
+.env-split-view[data-stacked] > .env-split-view-pane {
+  flex: 0 0 auto;
+}
+.env-split-view-divider {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 var(--env-split-view-gutter);
+  cursor: col-resize;
+  touch-action: none;
+  outline: none;
+}
+/* The line between the panes; it thickens on hover and takes the focus color with the keyboard and
+   while dragging. */
+.env-split-view-divider::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: calc(50% - 0.03125rem);
+  inline-size: 0.0625rem;
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--color-border-strong);
+  transition:
+    background-color var(--motion-duration-fast) var(--motion-ease),
+    inline-size var(--motion-duration-fast) var(--motion-ease),
+    inset-inline-start var(--motion-duration-fast) var(--motion-ease);
+}
+.env-split-view-divider:hover::after,
+.env-split-view-divider:focus-visible::after,
+.env-split-view[data-resizing] > .env-split-view-divider::after {
+  inset-inline-start: calc(50% - 0.0625rem);
+  inline-size: 0.125rem;
+}
+.env-split-view-divider:hover::after {
+  background: var(--color-border-hover);
+}
+.env-split-view-divider:focus-visible::after,
+.env-split-view[data-resizing] > .env-split-view-divider::after {
+  background: var(--color-focus-ring);
+}
+/* While dragging, the panes follow the pointer, select no text and leave embedded content alone. */
+.env-split-view[data-resizing] {
+  cursor: col-resize;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.env-split-view[data-resizing] > .env-split-view-pane {
+  pointer-events: none;
+}
+/* Measures the stackBelow width in the split view's own text size. It lies before the inline start,
+   where overflow is never scrollable. */
+.env-split-view-probe {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 100%;
+  block-size: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+@media (pointer: coarse) {
+  /* A finger reaches the divider across the touch size, beyond the gutter. */
+  .env-split-view-divider::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline: calc((var(--env-split-view-gutter) - var(--control-height-touch)) / 2);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .env-split-view-divider::after {
+    transition: none;
+  }
+}

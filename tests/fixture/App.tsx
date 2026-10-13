@@ -32,6 +32,7 @@ import { DialogVariantsFixture, NoticesFixture, PopoverFixture } from './Overlay
 import { DataDisplayFixture } from './DataDisplay.js';
 import { ComposerFixture } from './Composer.js';
 import { MessagesFixture } from './Messages.js';
+import { SplitViewFixture } from './SplitViews.js';
 
 /** Fixtures that fill the viewport are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
@@ -163,6 +164,12 @@ export default function App() {
             <>
               <MessagesFixture theme="light" />
               <MessagesFixture theme="dark" />
+            </>
+          )}
+          {includes('split-view') && (
+            <>
+              <SplitViewFixture theme="light" />
+              <SplitViewFixture theme="dark" />
             </>
           )}
           {includes('menus') && (

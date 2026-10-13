@@ -8,6 +8,7 @@ import {
 } from './Forms';
 import { NavigationPreview, TabsPreview, DirectionLinksPreview } from './Navigation';
 import { SurfacePreview, LayoutPreview, RowsPreview, CardsPreview } from './Layout';
+import { SplitViewPreview } from './Panes';
 import { AnimatedNumberPreview, ChipsPreview, DisclosuresPreview } from './Content';
 import { CodePreview } from './CodeContent';
 import { MarkdownPreview } from './MarkdownContent';
@@ -75,6 +76,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <RowsPreview />;
     case 'cards':
       return <CardsPreview />;
+    case 'split-view':
+      return <SplitViewPreview />;
     case 'chips':
       return <ChipsPreview />;
     case 'badges':

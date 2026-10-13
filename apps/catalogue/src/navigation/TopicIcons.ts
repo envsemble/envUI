@@ -46,6 +46,7 @@ import { Keyboard } from '@envsemble/envui/icons/Keyboard';
 import { LinearScale } from '@envsemble/envui/icons/LinearScale';
 import { Send } from '@envsemble/envui/icons/Send';
 import { Forum } from '@envsemble/envui/icons/Forum';
+import { VerticalSplit } from '@envsemble/envui/icons/VerticalSplit';
 import { type Reference } from '../Reference';
 
 export const foundationIcons: Record<string, typeof Palette> = {
@@ -78,6 +79,7 @@ const referenceIcons: Record<string, typeof Palette> = {
   layout: ViewModule,
   surface: CropSquare,
   cards: Dashboard,
+  'split-view': VerticalSplit,
   buttons: TouchApp,
   fields: TextFields,
   checkbox: CheckBox,

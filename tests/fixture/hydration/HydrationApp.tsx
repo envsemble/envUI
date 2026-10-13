@@ -23,6 +23,7 @@ import {
   Composer,
   Message,
   MessageList,
+  SplitView,
 } from '@envsemble/envui';
 
 const treeItems = Array.from({ length: 40 }, (_, index) => ({
@@ -135,6 +136,12 @@ export function HydrationApp() {
             setDraft('');
           }}
           footer="Hydrated composer footer"
+        />
+        <SplitView
+          resizeLabel="Hydrated split"
+          stackBelow="20rem"
+          start={<p>Hydrated start pane</p>}
+          end={<p>Hydrated end pane</p>}
         />
         <output>{name}</output>
       </ToastProvider>

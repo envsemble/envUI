@@ -99,3 +99,11 @@ body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-p
 .fixture-table-region {
   max-block-size: 16rem;
 }
+.fixture-split-view {
+  block-size: 14rem;
+}
+.fixture-split-list {
+  margin: 0;
+  padding: 0.5rem 1rem;
+  list-style: none;
+}
