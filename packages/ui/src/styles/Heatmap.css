@@ -118,3 +118,8 @@
     --env-heatmap-gap: 0.25rem;
   }
 }
+/* The days' shared tooltip follows the pointer and focus across the grid, so it takes no pointer
+   itself and never blocks a press on what lies under it, such as a control above the latest weeks. */
+.env-heatmap-tooltip-positioner {
+  pointer-events: none;
+}

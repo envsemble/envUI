@@ -449,7 +449,7 @@ export function Heatmap({
               anchor={tip?.anchor}
               side="top"
               sideOffset={6}
-              className="env-tooltip-positioner"
+              className="env-tooltip-positioner env-heatmap-tooltip-positioner"
             >
               <BaseTooltip.Popup className="env-tooltip env-heatmap-tooltip">
                 {shown &&
