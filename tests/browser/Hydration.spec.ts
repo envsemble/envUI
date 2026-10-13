@@ -65,6 +65,7 @@ test('public components hydrate server output without recoverable errors', async
   await split.focus();
   await page.keyboard.press('ArrowRight');
   await expect(split).toHaveAttribute('aria-valuenow', '52');
+  await expect(page.getByLabel('Hydrated stats')).toHaveText('Hydrated stat128+12%Last 30 days');
   expect(
     await page.evaluate(() => (window as unknown as { hydrationErrors: string[] }).hydrationErrors),
   ).toEqual([]);

@@ -24,6 +24,8 @@ import {
   Message,
   MessageList,
   SplitView,
+  Stat,
+  StatGroup,
 } from '@envsemble/envui';
 
 const treeItems = Array.from({ length: 40 }, (_, index) => ({
@@ -143,6 +145,14 @@ export function HydrationApp() {
           start={<p>Hydrated start pane</p>}
           end={<p>Hydrated end pane</p>}
         />
+        <StatGroup aria-label="Hydrated stats">
+          <Stat
+            label="Hydrated stat"
+            value="128"
+            trend={{ direction: 'up', label: '+12%' }}
+            detail="Last 30 days"
+          />
+        </StatGroup>
         <output>{name}</output>
       </ToastProvider>
     </Theme>

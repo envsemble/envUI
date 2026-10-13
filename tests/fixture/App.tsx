@@ -33,6 +33,7 @@ import { DataDisplayFixture } from './DataDisplay.js';
 import { ComposerFixture } from './Composer.js';
 import { MessagesFixture } from './Messages.js';
 import { SplitViewFixture } from './SplitViews.js';
+import { StatsFixture } from './Stats.js';
 
 /** Fixtures that fill the viewport are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
@@ -170,6 +171,12 @@ export default function App() {
             <>
               <SplitViewFixture theme="light" />
               <SplitViewFixture theme="dark" />
+            </>
+          )}
+          {includes('stats') && (
+            <>
+              <StatsFixture theme="light" />
+              <StatsFixture theme="dark" />
             </>
           )}
           {includes('menus') && (

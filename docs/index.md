@@ -67,6 +67,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Disclosure notes](components/disclosures.md) — Keep optional details collapsed until needed.
 - [Avatars](components/avatar.md) — A picture of a person or organization with a default picture or initials as fallback, and the avatar button.
 - [Messages](components/messages.md) — Conversation entries in a log: compact bubbles for your own messages, full-width content from others.
+- [Stats](components/stats.md) — Labelled key figures for dashboards, with a trend and detail, grouped in even columns.
 
 ## Feedback & overlays
 
