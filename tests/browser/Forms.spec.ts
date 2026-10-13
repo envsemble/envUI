@@ -269,13 +269,13 @@ test('a required Select participates in native constraint validation', async ({ 
   const required = page.getByRole('combobox', { name: 'Required choice', exact: true });
   await expect(required).toHaveAttribute('aria-required', 'true');
   await expect(required).toBeFocused();
-  // Dismiss native validation chrome before interacting with the custom popup.
-  // Firefox on Linux consumes the first outside click while that chrome is open.
+  // Dismiss the native validation bubble before interacting with the custom popup: one engine
+  // consumes the first outside click while that bubble is open.
   await page.keyboard.press('Escape');
   await required.press('ArrowDown');
   await expect(page.getByRole('listbox')).toBeVisible();
-  await page.getByRole('option', { name: 'Atlas', exact: true }).click();
-  await expect(nativeInput).toHaveValue('atlas');
+  await page.getByRole('option', { name: 'Aurora', exact: true }).click();
+  await expect(nativeInput).toHaveValue('aurora');
   await expect
     .poll(() => nativeInput.evaluate((input: HTMLInputElement) => input.validity.valid))
     .toBe(true);

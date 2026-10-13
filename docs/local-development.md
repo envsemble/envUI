@@ -33,7 +33,7 @@ export default defineConfig(({ command }) => {
 });
 ```
 
-Wrap the link, the library watcher and the application server in one script, as Platform's `npm run dev:envui` does, so one command starts and stops all three.
+Wrap the link, the library watcher and the application server in one script, such as an `npm run dev:envui` script in the application, so one command starts and stops all three.
 
 ## Checks while linked
 

@@ -17,7 +17,7 @@ import { Category } from '@envsemble/envui/icons/Category';
       <AccountMenu />
     </>
   }
-  navigationLabel="Platform navigation"
+  navigationLabel="Main navigation"
   navigation={
     <>
       <NavigationItem href="/" icon={<Home />} selected={page === 'home'}>

@@ -30,7 +30,7 @@ test.describe('CommandPalette', () => {
     page.on('pageerror', (error) => errors.push(error.message));
     await page.goto(paletteFixture);
     const trigger = page.getByRole('button', { name: 'Quick open light' });
-    // Opened from the keyboard, as with a shortcut; Safari does not focus clicked buttons.
+    // Opened from the keyboard, as with a shortcut; some engines do not focus clicked buttons.
     await trigger.focus();
     await page.keyboard.press('Enter');
     const dialog = page.getByRole('dialog', { name: 'Go to document' });

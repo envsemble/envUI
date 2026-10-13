@@ -22,7 +22,7 @@ import { Kbd, Text } from '@envsemble/envui';
 
 - Use Kbd in text, tooltips, menus and palette footers to show the keys of a shortcut the application handles. Kbd only displays keys.
 - A combination renders nested kbd elements, so assistive technology reads each key and the plus between them.
-- Write keys as people see them on their keyboard, and show the platform's own names, such as <kbd>Cmd</kbd> on macOS.
+- Write keys as people see them on their keyboard, and show the system's own names, such as the Command key <kbd>⌘</kbd> on systems that use it.
 - Menu items show shortcuts through their shortcut prop instead.
 - In Markdown, write keys as `<kbd>Ctrl</kbd>`; Markdown renders them as Kbd.
 

@@ -6,7 +6,7 @@
   }
 }
 
-/* Platform's native radio and selectable-row layout, with shared state formulas. */
+/* Native radio and selectable-row layout, with shared state formulas. */
 .env-choice-control {
   min-inline-size: 0;
   max-inline-size: 100%;

@@ -53,7 +53,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 
 ## 0.4.0 — 2026-10-11
 
-Clearer contrast in both themes, more ways to show loading, and refinements from reviewing the catalogue and Platform.
+Clearer contrast in both themes, more ways to show loading, and refinements from reviewing the catalogue and an application built with it.
 
 ### Changed
 
@@ -135,7 +135,7 @@ The application frame and menus, so products share one sidebar and navigation.
 
 ## 0.2.0 — 2026-10-11
 
-Foundations found missing while adopting envUI in Platform, the first product to use it.
+Foundations found missing while adopting envUI in the first application to use it.
 
 ### Breaking changes
 

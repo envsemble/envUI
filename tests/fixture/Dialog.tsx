@@ -23,7 +23,7 @@ export function DialogFixture() {
           variant="outlined"
           label="Dialog choice"
           options={dialogOptions}
-          defaultValue="atlas"
+          defaultValue="aurora"
         />
       </Dialog>
       <output data-testid="dialog-status">{open ? 'open' : 'closed'}</output>
