@@ -200,6 +200,10 @@ textarea.env-text-input[data-sizing='content'] {
     calc(var(--env-textarea-rows, 2) * 1lh + var(--space-6) * var(--scale, 1))
   );
 }
+/* Given rows, a growing field starts at that many lines, also when that is less than 7.5 rem. */
+textarea.env-text-input[data-sizing='content'][data-rows] {
+  min-height: calc(var(--env-textarea-rows) * 1lh + var(--space-6) * var(--scale, 1));
+}
 .env-textarea-resize-edge {
   position: absolute;
   inset-inline: 0;

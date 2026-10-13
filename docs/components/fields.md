@@ -67,13 +67,13 @@ import { Textarea } from '@envsemble/envui';
 
 ### Props & contracts
 
-| Name                  | Contract                                                                                       |
-| --------------------- | ---------------------------------------------------------------------------------------------- |
-| variant               | "outlined" (default) or "plain": transparent, with an underline on hover or focus              |
-| sizing                | "fixed" (default) scrolls and resizes from the bottom edge; "content" grows and shrinks to fit |
-| rows                  | Visible rows in fixed mode; minimum rows in content mode                                       |
-| label / hint / error  | Floating label; hint and error message are linked to the control                               |
-| Native textarea props | rows, value/defaultValue, onChange, name, required, disabled, readOnly, ref                    |
+| Name                  | Contract                                                                                                                  |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| variant               | "outlined" (default) or "plain": transparent, with an underline on hover or focus                                         |
+| sizing                | "fixed" (default) scrolls and resizes from the bottom edge; "content" grows and shrinks to fit                            |
+| rows                  | Visible rows in fixed mode; in content mode the rows it starts at, also below 7.5 rem; without rows both start at 7.5 rem |
+| label / hint / error  | Floating label; hint and error message are linked to the control                                                          |
+| Native textarea props | rows, value/defaultValue, onChange, name, required, disabled, readOnly, ref                                               |
 
 ## Guidelines
 

@@ -16,7 +16,7 @@ export interface TextareaControlProps extends TextareaHTMLAttributes<HTMLTextAre
 
 /** Shared native control; field composition stays with Textarea and MarkdownEditor. */
 export const TextareaControl = forwardRef<HTMLTextAreaElement, TextareaControlProps>(
-  function TextareaControl({ className, sizing = 'fixed', rows = 2, style, ...props }, ref) {
+  function TextareaControl({ className, sizing = 'fixed', rows, style, ...props }, ref) {
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const attachInput = useCallback(
       (input: HTMLTextAreaElement | null) => {
@@ -25,16 +25,20 @@ export const TextareaControl = forwardRef<HTMLTextAreaElement, TextareaControlPr
       },
       [ref],
     );
-    // Native content sizing ignores rows, so preserve it as the minimum line count in CSS.
+    // Native content sizing ignores rows, so preserve it as the minimum line count in CSS. Without
+    // rows a growing field starts at the shared 7.5 rem; with rows, at that many lines.
     const sizingStyle =
-      sizing === 'content' ? ({ '--env-textarea-rows': rows, ...style } as CSSProperties) : style;
+      sizing === 'content'
+        ? ({ '--env-textarea-rows': rows ?? 2, ...style } as CSSProperties)
+        : style;
     return (
       <>
         <textarea
           {...props}
           ref={attachInput}
-          rows={rows}
+          rows={rows ?? 2}
           data-sizing={sizing}
+          data-rows={sizing === 'content' && rows !== undefined ? '' : undefined}
           style={sizingStyle}
           className={classNames('env-text-input', className)}
         />
