@@ -36,7 +36,7 @@ test('keys render as key caps joined by plus', async ({ page }) => {
 test('interactive rows react to hover, presses and focus, and open from anywhere', async ({
   page,
 }) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
+  // With motion, as pressed controls shrink: a press on the row still follows its link.
   await page.goto(dataFixture);
   for (const theme of ['light', 'dark']) {
     const rows = page.getByRole('list', { name: `Rows ${theme}` }).getByRole('listitem');
@@ -47,15 +47,17 @@ test('interactive rows react to hover, presses and focus, and open from anywhere
     expect(await fill(plain)).toBe(rest);
     await expect(open).toHaveCSS('position', 'relative');
     await plain.hover();
+    await page.waitForTimeout(300);
     expect(await fill(plain)).toBe(rest);
     // The row reacts to the pointer anywhere on it, and to focus inside it.
     await open.hover({ position: { x: 8, y: 8 } });
+    await expect.poll(() => fill(open)).not.toBe(rest);
+    await page.waitForTimeout(300);
     const hovered = await fill(open);
-    expect(hovered).not.toBe(rest);
     await page.mouse.move(0, 0);
     await expect.poll(() => fill(open)).toBe(rest);
     await open.getByRole('link', { name: 'Roadmap' }).focus();
-    expect(await fill(open)).toBe(hovered);
+    await expect.poll(() => fill(open)).toBe(hovered);
     await page.mouse.move(0, 0);
     // A press beside the title follows the stretched link; the action keeps its own press.
     const box = (await open.boundingBox())!;

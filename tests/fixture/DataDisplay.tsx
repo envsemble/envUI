@@ -19,6 +19,7 @@ import {
   type LinkComponentProps,
   type ThemeValue,
 } from '@envsemble/envui';
+import { Description } from '@envsemble/envui/icons/Description';
 import { MoreHoriz } from '@envsemble/envui/icons/MoreHoriz';
 
 const plans = Array.from({ length: 30 }, (_, index) => ({
@@ -98,17 +99,20 @@ export function DataDisplayFixture({ theme }: { theme: ThemeValue }) {
           interactive
           className="fixture-open-row"
           title={
-            <Link
-              href="#roadmap"
-              underline={false}
-              className="fixture-row-link"
-              onClick={(event) => {
-                event.preventDefault();
-                setRowResult('open roadmap');
-              }}
-            >
-              Roadmap
-            </Link>
+            <span className="fixture-row-title">
+              <Description />
+              <Link
+                href="#roadmap"
+                underline={false}
+                className="fixture-row-link"
+                onClick={(event) => {
+                  event.preventDefault();
+                  setRowResult('open roadmap');
+                }}
+              >
+                Roadmap
+              </Link>
+            </span>
           }
           detail="Updated today"
           action={

@@ -47,6 +47,11 @@
 .env-grouped-rows > .env-row[data-interactive]:active {
   background: hsl(from var(--env-row-fill) h s var(--state-surface-pressed-lightness));
 }
+/* The row shows the press, so a link or button in its content does not also shrink: shrinking, it
+   would hold a pseudo-element stretched over the row in place of the row. */
+.env-grouped-rows > .env-row[data-interactive] > div .env-button:active {
+  transform: none;
+}
 @media (prefers-reduced-motion: reduce) {
   .env-grouped-rows > .env-row[data-interactive] {
     transition: none;
