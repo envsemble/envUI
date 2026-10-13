@@ -356,18 +356,16 @@ test.describe('on a coarse pointer', () => {
       .getByRole('grid', { name: 'Activity light' })
       .locator('td[data-date="2026-06-01"]');
     await expect(cell).toHaveCSS('width', '20px');
-    // Days are 24 px apart in both directions, the minimum target size with its spacing.
-    const box = (await cell.boundingBox())!;
-    const below = (await page
-      .getByRole('grid', { name: 'Activity light' })
-      .locator('td[data-date="2026-06-02"]')
-      .boundingBox())!;
-    const beside = (await page
-      .getByRole('grid', { name: 'Activity light' })
-      .locator('td[data-date="2026-06-08"]')
-      .boundingBox())!;
-    expect(below.y - box.y).toBeGreaterThanOrEqual(24);
-    expect(beside.x - box.x).toBeGreaterThanOrEqual(24);
+    // Days are 24 px apart in both directions, the minimum target size with its spacing. Both are
+    // measured at once, as the weeks may still scroll to the most recent while the font loads.
+    const pitch = await page.getByRole('grid', { name: 'Activity light' }).evaluate((grid) => {
+      const box = (date: string) =>
+        grid.querySelector(`td[data-date="${date}"]`)!.getBoundingClientRect();
+      const day = box('2026-06-01');
+      return { down: box('2026-06-02').y - day.y, across: box('2026-06-08').x - day.x };
+    });
+    expect(pitch.down).toBeGreaterThan(23.99);
+    expect(pitch.across).toBeGreaterThan(23.99);
     await cell.scrollIntoViewIfNeeded();
     await cell.tap();
     await expect(page.locator('.env-heatmap-tooltip')).toHaveText(
