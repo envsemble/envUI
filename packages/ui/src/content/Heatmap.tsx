@@ -323,9 +323,11 @@ export function Heatmap({
   function show(cell: HTMLElement, focused = false) {
     clearTimeout(hoverTimer.current);
     // The tooltip meets its day across the gap between days, so the pointer reaches it from the
-    // day without crossing another day.
+    // day without crossing another day. It reaches a pixel into the gap, so rounding its position
+    // never leaves a sliver of the next day showing.
     const table = grid.current;
-    const offset = table ? Number.parseFloat(getComputedStyle(table).borderSpacing) || 0 : 0;
+    const gap = table ? Number.parseFloat(getComputedStyle(table).borderSpacing) || 0 : 0;
+    const offset = Math.max(0, gap - 1);
     setTip({ day: Number(cell.dataset.day), anchor: cell, open: true, focused, offset });
   }
 
@@ -364,6 +366,8 @@ export function Heatmap({
     const view = grid.current?.ownerDocument.defaultView;
     const escape = (event: globalThis.KeyboardEvent) => {
       if (event.key !== 'Escape' || event.defaultPrevented || event.isComposing) return;
+      // Escape with a modifier belongs to whatever handles it.
+      if (event.ctrlKey || event.altKey || event.metaKey) return;
       event.preventDefault();
       event.stopPropagation();
       hide();
@@ -371,6 +375,20 @@ export function Heatmap({
     view?.addEventListener('keydown', escape, true);
     return () => view?.removeEventListener('keydown', escape, true);
   }, [tipOpen]);
+
+  // A press ends wherever its pointer is released, also outside the grid, or when it is cancelled.
+  useEffect(() => {
+    const page = grid.current?.ownerDocument;
+    const release = () => {
+      mousePress.current = false;
+    };
+    page?.addEventListener('pointerup', release, true);
+    page?.addEventListener('pointercancel', release, true);
+    return () => {
+      page?.removeEventListener('pointerup', release, true);
+      page?.removeEventListener('pointercancel', release, true);
+    };
+  }, []);
 
   function handlePointerOver(event: PointerEvent<HTMLTableElement>) {
     if (event.pointerType === 'touch') return;
@@ -449,9 +467,6 @@ export function Heatmap({
           onPointerDown={(event) => {
             mousePress.current = event.pointerType === 'mouse';
           }}
-          onPointerUp={() => {
-            mousePress.current = false;
-          }}
           onPointerLeave={(event) => {
             if (!intoTooltip(event.relatedTarget)) hide();
           }}
@@ -486,6 +501,13 @@ export function Heatmap({
       <BaseTooltip.Root
         open={tip?.open ?? false}
         onOpenChange={(open, details) => {
+          // Escape with a modifier belongs to whatever handles it.
+          const key = details.reason === 'escape-key' ? details.event : undefined;
+          if (key && (key.ctrlKey || key.altKey || key.metaKey)) {
+            details.cancel();
+            details.allowPropagation();
+            return;
+          }
           // Presses on the days move the tooltip rather than closing it.
           if (open || (details.event && cellFrom(details.event.target))) return;
           hide();
@@ -498,7 +520,7 @@ export function Heatmap({
               side="top"
               sideOffset={tip?.offset ?? 0}
               className="env-tooltip-positioner env-heatmap-tooltip-positioner"
-              data-focus-opened={tip?.focused || undefined}
+              data-focus-opened={tip?.focused ? '' : undefined}
             >
               <BaseTooltip.Popup
                 ref={popup}

@@ -194,6 +194,53 @@ test('a day clicked with the mouse shows a tooltip the pointer can move onto', a
   await expect(tooltip).toHaveText(name);
 });
 
+test('a press released outside the days leaves keyboard focus its own tooltip', async ({
+  page,
+}) => {
+  await page.goto(heatmapFixture);
+  const grid = page.getByRole('grid', { name: 'Activity light' });
+  const update = page.getByRole('button', { name: 'Update light' });
+  const positioner = page.locator('.env-tooltip-positioner');
+  await update.focus();
+  await page.keyboard.press('Shift+Tab');
+  await expect(positioner).toHaveAttribute('data-focus-opened', '');
+  // A press on the focused day moves no focus; it ends outside the grid.
+  const day = (await grid.locator('td[tabindex="0"]').boundingBox())!;
+  await page.mouse.move(day.x + day.width / 2, day.y + day.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(5, 5, { steps: 4 });
+  await page.mouse.up();
+  // Focus that comes back from the keyboard opens a tooltip that takes no pointer.
+  await page.keyboard.press('Tab');
+  await expect(update).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(positioner).toHaveAttribute('data-focus-opened', '');
+  await expect(positioner).toHaveCSS('pointer-events', 'none');
+});
+
+test('Escape with a modifier passes a hovered tooltip by', async ({ page }) => {
+  await page.goto(heatmapFixture);
+  const day = page
+    .getByRole('grid', { name: 'Activity light' })
+    .locator('td[data-date="2026-06-03"]');
+  await day.hover();
+  await expect(page.locator('.env-heatmap-tooltip')).toHaveText(
+    (await day.getAttribute('aria-label'))!,
+  );
+  // A listener at the end of the event's path records each Escape that reaches it.
+  await page.evaluate(() => {
+    document.body.dataset.escapes = '';
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') document.body.dataset.escapes += event.ctrlKey ? 'c' : 'e';
+    });
+  });
+  await page.keyboard.press('Control+Escape');
+  await expect(page.locator('body')).toHaveAttribute('data-escapes', 'c');
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.env-tooltip-positioner')).toHaveCount(0);
+  await expect(page.locator('body')).toHaveAttribute('data-escapes', 'c');
+});
+
 test('a tooltip the pointer rests on stays when focus leaves the days', async ({ page }) => {
   await page.goto(heatmapFixture);
   const grid = page.getByRole('grid', { name: 'Activity light' });
