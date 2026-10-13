@@ -82,7 +82,8 @@
   background: transparent;
   color: var(--color-field-text);
   font: var(--type-body);
-  font-size: calc(var(--font-size-body) * var(--scale, 1));
+  /* The control font size is 1 rem on touch screens, where smaller entered text zooms the page. */
+  font-size: calc(var(--control-font-size) * var(--scale, 1));
   caret-color: var(--color-field-active);
 }
 .env-text-input::placeholder {
@@ -97,7 +98,7 @@
   overflow: hidden;
   color: var(--color-field-label);
   font: var(--type-body);
-  font-size: calc(var(--font-size-body) * var(--scale, 1));
+  font-size: calc(var(--control-font-size) * var(--scale, 1));
   white-space: nowrap;
   text-overflow: ellipsis;
   cursor: text;
@@ -378,7 +379,7 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
   overflow: hidden;
   color: var(--color-field-label);
   font: var(--type-body);
-  font-size: calc(var(--font-size-body) * var(--scale, 1));
+  font-size: calc(var(--control-font-size) * var(--scale, 1));
   white-space: nowrap;
   text-overflow: ellipsis;
   cursor: text;

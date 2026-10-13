@@ -52,6 +52,7 @@
   background: transparent;
   color: var(--color-field-text);
   font: var(--type-body);
+  font-size: var(--control-font-size);
   outline: none;
 }
 .env-command-palette-input::placeholder {
