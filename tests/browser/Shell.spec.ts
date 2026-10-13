@@ -348,6 +348,30 @@ test.describe('Full-width topbar', () => {
   });
 });
 
+test('a narrow window opens the sidebar as a drawer with room for its content', async ({
+  page,
+}) => {
+  for (const [width, expected] of [
+    [390, 320],
+    [320, 272],
+  ] as const) {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto(resizableShell);
+    const shell = page.locator('.env-app-shell');
+    await expect(shell).toHaveAttribute('data-narrow', '');
+    await page.getByRole('button', { name: 'Expand sidebar' }).click();
+    await expect(shell).toHaveAttribute('data-narrow-open', '');
+    const sidebar = page.locator('.env-app-sidebar');
+    await expect(page.getByTestId('sidebar-list')).toBeVisible();
+    // 20 rem, or the window less 3 rem, so some of the page stays in view beside it.
+    await expect.poll(async () => (await sidebar.boundingBox())!.width).toBeCloseTo(expected, 0);
+    const list = (await page.getByTestId('sidebar-list').boundingBox())!;
+    expect(list.width).toBeGreaterThan(expected - 40);
+    await page.keyboard.press('Escape');
+    await expect(shell).not.toHaveAttribute('data-narrow-open');
+  }
+});
+
 test("a narrow window gives the full topbar's context the room it needs", async ({ page }) => {
   // About half of a 1280 px screen.
   await page.setViewportSize({ width: 640, height: 800 });

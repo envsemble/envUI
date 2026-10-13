@@ -284,8 +284,10 @@ button.env-app-sidebar-toggle:focus-visible {
 .env-app-shell[data-narrow] .env-app-topbar-page {
   padding-inline: 0 var(--space-3);
 }
+/* Over a narrow window the sidebar is a drawer of a comfortable width, at least 20 rem, so sidebar
+   content such as a list of recent documents has room, while some of the page stays in view. */
 .env-app-shell[data-narrow] .env-app-sidebar {
-  inline-size: min(var(--env-sidebar-expanded-width), calc(100vw - var(--space-5)));
+  inline-size: min(max(var(--env-sidebar-expanded-width), 20rem), calc(100vw - var(--space-8)));
   z-index: 30;
 }
 .env-app-sidebar-backdrop {
