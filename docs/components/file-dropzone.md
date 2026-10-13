@@ -31,13 +31,14 @@ import { FileDropzone } from '@envsemble/envui';
 | error        | A message linked to the zone, whose outline takes the error color                                              |
 | disabled     | The zone cannot be pressed or focused and takes no files                                                       |
 | compact      | One row with a small icon instead of the tall area                                                             |
-| name / form  | Submit the files the zone took with a native form                                                              |
-| inputRef     | The native file input, for example to open the file picker from a Replace button                               |
+| name / form  | Submit the last files the zone took with a native form, until the form resets                                  |
+| files        | The files a named zone submits when the application keeps them, such as after Remove                           |
+| inputRef     | The native file input that opens the file picker, for example from a Replace button                            |
 | Native props | className, style, hidden and ref of the root element                                                           |
 
 ### Showing the chosen file
 
-The zone keeps no files of its own. The application shows what was chosen, for example an image with actions to replace or remove it, and hides the zone in the meantime.
+The application shows what was chosen, for example an image with actions to replace or remove it, and hides the zone in the meantime. Replace opens the zone's file picker through inputRef. In a form, files hands the zone the file the application keeps, so the form submits what it shows, and nothing after Remove.
 
 ```tsx
 import { useEffect, useRef, useState } from 'react';
@@ -57,6 +58,8 @@ useEffect(() => {
   <FileDropzone
     hidden={logo != null}
     inputRef={picker}
+    name="logo"
+    files={logo ? [logo] : []}
     label="Drop a logo here, or browse"
     description="PNG, JPG or WebP up to 2 MB"
     accept="image/png,image/jpeg,.webp"
@@ -83,7 +86,7 @@ useEffect(() => {
 - The zone is a button: pressing it, or <kbd>Enter</kbd> or <kbd>Space</kbd> while it has focus, opens the file picker. Files dragged over it turn the dashed outline solid blue on the selection tint, and dropping them anywhere on the zone hands them over. A pending or disabled zone still catches dropped files, so the browser does not open them, but takes none.
 - accept filters both the picker and dropped files. Files that do not fit go to onReject, and so do the ones after the first when multiple is off; show a message through error, which colors the outline and is linked to the zone. Check sizes and contents in onFiles, where the application has the files.
 - Set pending while the application uploads or reads the files: a spinner replaces the icon and the zone reports aria-busy. Change the label to say what is happening, such as "Uploading the logo".
-- With name, native forms submit the files the zone took, dropped ones included, and resetting the form clears them. Without name, the application keeps the files, and people can choose the same file again.
+- With name, native forms submit the last files the zone took, dropped ones included, and resetting the form clears them. Where the application lets people replace or remove files, pass the files it keeps to files, so the form submits exactly what it shows. People can choose the same file again, for example after removing it.
 - compact suits dense forms and rows: one row with the icon beside the label and description.
 
 TypeScript declarations provide the complete public API.

@@ -3,11 +3,15 @@ import { Button, FileDropzone, Text, Theme, type ThemeValue } from '@envsemble/e
 
 const names = (files: File[]) => files.map((file) => file.name).join(' ');
 
-/** An image chosen in a drop zone, shown with actions to replace or remove it. */
-function AvatarPicker() {
+/**
+ * An image chosen in a drop zone, shown with actions to replace or remove it; its form submits the
+ * image the application keeps.
+ */
+function AvatarPicker({ theme }: { theme: ThemeValue }) {
   const picker = useRef<HTMLInputElement>(null);
   const [avatar, setAvatar] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>();
+  const [submitted, setSubmitted] = useState('');
   useEffect(() => {
     if (!avatar) return setPreview(undefined);
     const url = URL.createObjectURL(avatar);
@@ -15,10 +19,18 @@ function AvatarPicker() {
     return () => URL.revokeObjectURL(url);
   }, [avatar]);
   return (
-    <>
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+        const file = new FormData(event.currentTarget).get('avatar');
+        setSubmitted(file instanceof File ? file.name : '');
+      }}
+    >
       <FileDropzone
         hidden={avatar != null}
         inputRef={picker}
+        name="avatar"
+        files={avatar ? [avatar] : []}
         label="Drop an avatar here, or browse"
         description="Square images look best"
         accept="image/*"
@@ -36,7 +48,14 @@ function AvatarPicker() {
           </Button>
         </div>
       )}
-    </>
+      <Button type="submit" variant="secondary">
+        Submit avatar
+      </Button>
+      <Button type="reset" variant="text">
+        Reset avatar
+      </Button>
+      <output data-testid={`avatar-submitted-${theme}`}>{submitted}</output>
+    </form>
   );
 }
 
@@ -46,6 +65,7 @@ export function DropzonesFixture({ theme }: { theme: ThemeValue }) {
   const [documents, setDocuments] = useState('');
   const [unavailable, setUnavailable] = useState('');
   const [submitted, setSubmitted] = useState('');
+  const [attached, setAttached] = useState<string[]>([]);
   return (
     <Theme theme={theme} data-testid={`dropzones-${theme}`} className="fixture-section">
       <FileDropzone
@@ -101,7 +121,7 @@ export function DropzonesFixture({ theme }: { theme: ThemeValue }) {
           name="attachments"
           accept=".pdf,.txt"
           label="Add attachments"
-          onFiles={() => undefined}
+          onFiles={(files) => setAttached((list) => [...list, names(files)])}
         />
         <div className="fixture-actions">
           <Button type="submit">Submit files</Button>
@@ -111,7 +131,8 @@ export function DropzonesFixture({ theme }: { theme: ThemeValue }) {
         </div>
       </form>
       <output data-testid={`files-submitted-${theme}`}>{submitted}</output>
-      <AvatarPicker />
+      <output data-testid={`attached-${theme}`}>{attached.join(' | ')}</output>
+      <AvatarPicker theme={theme} />
     </Theme>
   );
 }

@@ -1,6 +1,7 @@
 import {
   useEffect,
   useId,
+  useLayoutEffect,
   useRef,
   useState,
   type ComponentPropsWithRef,
@@ -49,11 +50,19 @@ export interface FileDropzoneProps
   error?: ReactNode;
   /** One row with a small icon instead of the tall area. */
   compact?: boolean;
-  /** Submits the files the zone took with a native form under this name. */
+  /**
+   * Submits files with a native form under this name: the last files the zone took, until the form
+   * resets, or files.
+   */
   name?: string;
+  /**
+   * The files a named zone submits when the application keeps them, such as after a Remove action;
+   * they replace the files the zone took, also after the form resets.
+   */
+  files?: readonly File[];
   /** The id of a form the zone belongs to when it is outside of it. */
   form?: string;
-  /** The native file input, for example to open the file picker from a Replace button. */
+  /** The native file input that opens the file picker, for example from a Replace button. */
   inputRef?: Ref<HTMLInputElement>;
 }
 
@@ -75,45 +84,55 @@ export function FileDropzone({
   error,
   compact = false,
   name,
+  files,
   form,
   inputRef,
   className,
   ...props
 }: FileDropzoneProps) {
   const id = useId();
-  const input = useRef<HTMLInputElement>(null);
+  // The picker opens the file dialog; a separate named input holds the files a form submits, so
+  // the picker can clear after every choice and people can choose the same file again.
+  const picker = useRef<HTMLInputElement>(null);
+  const field = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
   // Entering a child of the zone leaves its parent first, so count the elements under the files.
   const depth = useRef(0);
-  // The files a named input holds for native forms: the last ones the zone took.
-  const held = useRef<File[]>([]);
+  const latestFiles = useRef(files);
+  latestFiles.current = files;
   const available = !disabled && !pending;
+
+  /** Native forms submit exactly these files, also when they were dropped. */
+  function hold(next: readonly File[]) {
+    const element = field.current;
+    if (!element || typeof DataTransfer !== 'function') return;
+    const transfer = new DataTransfer();
+    next.forEach((file) => transfer.items.add(file));
+    element.files = transfer.files;
+  }
+
+  useLayoutEffect(() => {
+    if (files !== undefined) hold(files);
+  }, [files, name]);
+
   useEffect(
-    function subscribeToFormReset() {
-      const owner = input.current?.form;
+    function keepFilesAfterFormReset() {
+      const owner = field.current?.form;
       if (!owner) return;
+      // The browser empties the named input; files the application keeps stay.
       return subscribeFormReset(owner, () => {
-        held.current = [];
+        if (latestFiles.current !== undefined) hold(latestFiles.current);
       });
     },
-    [form],
+    [form, name],
   );
 
-  function take(files: File[]) {
-    const matching = files.filter((file) => acceptsFile(file, accept));
+  function take(chosen: File[]) {
+    const matching = chosen.filter((file) => acceptsFile(file, accept));
     const taken = multiple ? matching : matching.slice(0, 1);
-    const rejected = files.filter((file) => !taken.includes(file));
-    if (taken.length > 0) held.current = taken;
-    const element = input.current;
-    if (element && name && typeof DataTransfer === 'function') {
-      // Native forms submit exactly the files the zone took, also when they were dropped.
-      const transfer = new DataTransfer();
-      held.current.forEach((file) => transfer.items.add(file));
-      element.files = transfer.files;
-    } else if (element && !name) {
-      // Without a form, clearing the input lets people choose the same file again.
-      element.value = '';
-    }
+    const rejected = chosen.filter((file) => !taken.includes(file));
+    // Rejected files leave the held ones as they were, and files from the application win.
+    if (taken.length > 0 && files === undefined) hold(taken);
     if (rejected.length > 0) onReject?.(rejected);
     if (taken.length > 0) onFiles(taken);
   }
@@ -169,7 +188,7 @@ export function FileDropzone({
         aria-busy={pending || undefined}
         aria-disabled={pending || undefined}
         onClick={() => {
-          if (available) input.current?.click();
+          if (available) picker.current?.click();
         }}
       >
         <span className="env-file-dropzone-icon">
@@ -192,7 +211,7 @@ export function FileDropzone({
       </button>
       <input
         ref={(node) => {
-          input.current = node;
+          picker.current = node;
           setRef(inputRef, node);
         }}
         type="file"
@@ -200,14 +219,26 @@ export function FileDropzone({
         tabIndex={-1}
         accept={accept}
         multiple={multiple}
-        name={name}
-        form={form}
         disabled={disabled}
         onChange={(event) => {
-          const files = Array.from(event.currentTarget.files ?? []);
-          if (available && files.length > 0) take(files);
+          const element = event.currentTarget;
+          const chosen = Array.from(element.files ?? []);
+          element.value = '';
+          if (available && chosen.length > 0) take(chosen);
         }}
       />
+      {name ? (
+        <input
+          ref={field}
+          type="file"
+          hidden
+          tabIndex={-1}
+          multiple={multiple}
+          name={name}
+          form={form}
+          disabled={disabled}
+        />
+      ) : null}
       {error != null && (
         <small className="env-field-error" id={`${id}-error`}>
           <ErrorIcon aria-hidden="true" focusable="false" />

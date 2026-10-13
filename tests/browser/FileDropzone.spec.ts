@@ -1,4 +1,5 @@
 import { test, expect, type JSHandle, type Locator, type Page } from '@playwright/test';
+import { writeFile } from 'node:fs/promises';
 import { fixtureUrl } from './Servers';
 
 const themes = ['light', 'dark'] as const;
@@ -215,11 +216,17 @@ test('a named zone submits the files it took with a native form', async ({ page 
   await scope.getByRole('button', { name: 'Submit files' }).click();
   await expect(submitted).toHaveText('report.pdf notes.txt');
 
-  const chooser = page.waitForEvent('filechooser');
-  await attachments.click();
-  await (
-    await chooser
-  ).setFiles({ name: 'summary.pdf', mimeType: 'application/pdf', buffer: pixel });
+  // Choosing the same file from disk again hands it over again; the form submits it once.
+  const summary = test.info().outputPath('summary.pdf');
+  await writeFile(summary, pixel);
+  for (const attempt of [1, 2]) {
+    const chooser = page.waitForEvent('filechooser');
+    await attachments.click();
+    await (await chooser).setFiles(summary);
+    await expect(scope.getByTestId('attached-light')).toHaveText(
+      ['report.pdf notes.txt', ...Array(attempt).fill('summary.pdf')].join(' | '),
+    );
+  }
   await scope.getByRole('button', { name: 'Submit files' }).click();
   await expect(submitted).toHaveText('summary.pdf');
 
@@ -252,9 +259,28 @@ test('an application shows the chosen image with replace and remove actions', as
   await preview.getByRole('button', { name: 'Replace' }).click();
   await (await replace).setFiles({ name: 'mira.png', mimeType: 'image/png', buffer: pixel });
   await expect(preview.getByText('mira.png')).toBeVisible();
+  // The form submits the file the application keeps.
+  const submit = scope.getByRole('button', { name: 'Submit avatar' });
+  const submitted = scope.getByTestId('avatar-submitted-light');
+  await submit.click();
+  await expect(submitted).toHaveText('mira.png');
+  // A form reset keeps the file the application still shows.
+  await scope.getByRole('button', { name: 'Reset avatar' }).click();
+  await submit.click();
+  await expect(submitted).toHaveText('mira.png');
   await preview.getByRole('button', { name: 'Remove' }).click();
   await expect(zone).toBeVisible();
   await expect(preview).toHaveCount(0);
+  await submit.click();
+  await expect(submitted).toHaveText('');
+
+  // The same file can be chosen again after removing it.
+  const again = page.waitForEvent('filechooser');
+  await zone.click();
+  await (await again).setFiles({ name: 'mira.png', mimeType: 'image/png', buffer: pixel });
+  await expect(preview.getByText('mira.png')).toBeVisible();
+  await submit.click();
+  await expect(submitted).toHaveText('mira.png');
 });
 
 test('drop zones fit a narrow viewport', async ({ page }) => {
