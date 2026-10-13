@@ -160,7 +160,6 @@
 .env-button.env-icon-button {
   width: calc(var(--icon-button-size) * var(--scale, 1));
   height: calc(var(--icon-button-size) * var(--scale, 1));
-  min-inline-size: calc(var(--icon-button-size) * var(--scale, 1));
   min-height: calc(var(--icon-button-size) * var(--scale, 1));
   max-inline-size: none;
   flex-shrink: 0;
