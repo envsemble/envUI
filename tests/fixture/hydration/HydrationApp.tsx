@@ -68,6 +68,7 @@ export function HydrationApp() {
           value={name}
           onChange={(event) => setName(event.target.value)}
         />
+        <Input label="Hydrated amount" prefix="€" suffix="per month" defaultValue="12" />
         <Checkbox label="Hydrated choice" checked={checked} onCheckedChange={setChecked} />
         <ColorPicker label="Hydrated color" defaultValue="#1a73e8" />
         <Select

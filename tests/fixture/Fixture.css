@@ -102,3 +102,6 @@ body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-p
 .fixture-stack-frame {
   inline-size: min(100%, 30rem);
 }
+.fixture-narrow-field {
+  inline-size: min(100%, 16rem);
+}

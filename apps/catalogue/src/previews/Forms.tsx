@@ -20,6 +20,7 @@ import {
 import { Mail } from '@envsemble/envui/icons/Mail';
 import { ZoomIn } from '@envsemble/envui/icons/ZoomIn';
 import { ContentCopy } from '@envsemble/envui/icons/ContentCopy';
+import { Sell } from '@envsemble/envui/icons/Sell';
 
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
@@ -79,6 +80,36 @@ function InputExamples() {
               label="Project name"
               value={projectName}
               onChange={(e) => setProjectName(e.target.value)}
+            />
+          </Specimen>
+        </SpecimenGrid>
+      </Example>
+      <Example
+        title="Prefix & suffix"
+        size="collection"
+        caption="Short text before or after the value appears once the field has focus or a value; forms submit only the value."
+      >
+        <SpecimenGrid>
+          <Specimen title="Prefix">
+            <Input
+              label="Address"
+              name="address"
+              prefix="https://example.com/"
+              defaultValue="quarterly-report"
+            />
+          </Specimen>
+          <Specimen title="Suffix">
+            <Input label="Storage" name="storage" type="number" suffix="GB" defaultValue="20" />
+          </Specimen>
+          <Specimen title="Compact with an icon">
+            <Input
+              compact
+              label="Price"
+              name="price"
+              placeholder="0.00"
+              prefix="€"
+              suffix="per month"
+              startIcon={<Sell />}
             />
           </Specimen>
         </SpecimenGrid>

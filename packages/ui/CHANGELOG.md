@@ -38,6 +38,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 - `Table` `resizableColumns`, with `columnWidths` or `defaultColumnWidths` in percent of the table width, `onColumnWidthsChange` and `minColumnWidths`: a handle at the end of each header cell moves the boundary to the next column without changing the table's width, by dragging or with <kbd>←</kbd> and <kbd>→</kbd> by 1 percent (5 with <kbd>Shift</kbd>), <kbd>Home</kbd> and <kbd>End</kbd>. Double-clicking a handle restores the starting widths. Widths alone fix the columns through a `colgroup`.
 - `TableRow` `selected`: `aria-selected` and the navigation selection color, with a bar at the start of the row.
 - `Table` `narrowLayout="stack"`: in containers narrower than 36 rem, each body row becomes a block on the table surface, titled by its first cell, with each `TableCell` `label` before its value. The header row is visually hidden, and explicit roles keep the table's semantics.
+- `Input` `prefix` and `suffix`: short, non-interactive text inside the field before or after the value, such as the start of an address or a unit. They appear with the floating label once the field has focus or a value, are read after the label, work with `compact`, `startIcon` and `endAction`, and a long prefix is cut short with an ellipsis.
 
 ### Changed
 
@@ -55,6 +56,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 - Keys in the documentation and the catalogue show as `Kbd` keys.
 - The browser suite's ports can be changed with `ENVUI_CATALOGUE_PORT` and `ENVUI_FIXTURE_PORT`.
 - The tables page shows sorting, resizable columns, selected rows and stacked rows.
+- The text fields page shows an input's prefix and suffix.
 
 ## 0.4.0 — 2026-10-11
 

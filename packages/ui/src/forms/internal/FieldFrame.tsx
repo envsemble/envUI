@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import { type MouseEvent, type ReactNode } from 'react';
 import { Error as ErrorIcon } from '../../icons/Error.js';
 import { DecorativeIcon } from '../../internal/DecorativeIcon.js';
 
@@ -30,6 +30,29 @@ export interface TextFieldDecorationProps {
   showLabel?: boolean;
 }
 
+export interface TextFieldAffixProps {
+  /** Short text in the field before the value, such as the start of an address. Not interactive. */
+  prefix?: ReactNode;
+  /** Short text in the field after the value, such as a unit. Not interactive. */
+  suffix?: ReactNode;
+}
+
+/** Pressing the prefix or suffix places the caret in the control, at the nearer end of its value. */
+function focusControl(event: MouseEvent<HTMLElement>) {
+  const control = event.currentTarget.parentElement?.querySelector('input');
+  if (!control || control.disabled || event.button !== 0) return;
+  event.preventDefault();
+  control.focus();
+  const end = event.currentTarget.classList.contains('env-text-field-suffix')
+    ? control.value.length
+    : 0;
+  try {
+    control.setSelectionRange(end, end);
+  } catch {
+    // Some input types, such as number, have no text selection.
+  }
+}
+
 /** Whether a text field shows its label: always by default, and only on request when compact. */
 export function isLabelShown({ compact = false, showLabel }: TextFieldDecorationProps) {
   return showLabel ?? !compact;
@@ -48,9 +71,12 @@ export function FieldFrame({
   endAction,
   compact = false,
   showLabel,
+  prefix,
+  suffix,
 }: FieldProps &
   TextFieldAppearanceProps &
-  TextFieldDecorationProps & { id: string; children: ReactNode; floatingLabel?: boolean }) {
+  TextFieldDecorationProps &
+  TextFieldAffixProps & { id: string; children: ReactNode; floatingLabel?: boolean }) {
   return (
     <div
       className={floatingLabel ? 'env-form-field env-text-field' : 'env-form-field'}
@@ -63,8 +89,31 @@ export function FieldFrame({
           data-variant={variant}
           data-start-icon={startIcon != null || undefined}
           data-end-action={endAction != null || undefined}
+          data-prefix={prefix != null || undefined}
+          data-suffix={suffix != null || undefined}
         >
+          {/* The control names the prefix and suffix in its description, so they are read once. */}
+          {prefix != null && (
+            <span
+              className="env-text-field-prefix"
+              id={`${id}-prefix`}
+              aria-hidden="true"
+              onMouseDown={focusControl}
+            >
+              {prefix}
+            </span>
+          )}
           {children}
+          {suffix != null && (
+            <span
+              className="env-text-field-suffix"
+              id={`${id}-suffix`}
+              aria-hidden="true"
+              onMouseDown={focusControl}
+            >
+              {suffix}
+            </span>
+          )}
           {label}
           {startIcon != null && (
             <span className="env-text-field-start">
