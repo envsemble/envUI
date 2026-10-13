@@ -106,11 +106,6 @@ body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-p
   align-items: center;
   gap: var(--space-2);
 }
-.fixture-row-link::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-}
 .fixture-row-action {
   position: relative;
 }

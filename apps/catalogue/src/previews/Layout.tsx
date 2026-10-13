@@ -202,7 +202,8 @@ export function RowsPreview() {
                 <Link
                   href={`#${name.toLowerCase()}`}
                   underline={false}
-                  className="docs-row-link"
+                  data-row-target
+                  draggable={false}
                   onClick={(event) => {
                     event.preventDefault();
                     setOpened(`Opened ${name}`);

@@ -24,8 +24,8 @@ export interface RowProps extends Omit<ComponentPropsWithRef<'li'>, 'title'> {
   detail?: ReactNode;
   action?: ReactNode;
   /**
-   * The row opens something through a link or button inside: it reacts to hover, presses and focus
-   * inside it, and is the containing block a link can stretch over to cover the row.
+   * The row opens something through a link or button inside: it reacts to hover, keyboard focus
+   * inside it and presses. Mark that link or button `data-row-target` to stretch it over the row.
    */
   interactive?: boolean;
 }

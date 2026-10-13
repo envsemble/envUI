@@ -104,7 +104,8 @@ export function DataDisplayFixture({ theme }: { theme: ThemeValue }) {
               <Link
                 href="#roadmap"
                 underline={false}
-                className="fixture-row-link"
+                data-row-target
+                draggable={false}
                 onClick={(event) => {
                   event.preventDefault();
                   setRowResult('open roadmap');

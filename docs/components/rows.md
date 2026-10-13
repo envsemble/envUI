@@ -19,7 +19,7 @@ import { MoreHoriz } from '@envsemble/envui/icons/MoreHoriz';
   <Row
     interactive
     title={
-      <Link href="/plans/roadmap" underline={false} className="plan-row-link">
+      <Link href="/plans/roadmap" underline={false} data-row-target draggable={false}>
         Roadmap
       </Link>
     }
@@ -37,12 +37,7 @@ import { MoreHoriz } from '@envsemble/envui/icons/MoreHoriz';
 ```
 
 ```css
-/* The link covers its row, so a press anywhere on the row follows it; other controls stay above. */
-.plan-row-link::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-}
+/* The row's other controls stay above the link that covers it. */
 .plan-row-action {
   position: relative;
 }
@@ -50,12 +45,12 @@ import { MoreHoriz } from '@envsemble/envui/icons/MoreHoriz';
 
 ### Props & contracts
 
-| Name                        | Contract                               |
-| --------------------------- | -------------------------------------- |
-| GroupedRows contrast        | Use alternate fill inside a muted pane |
-| Row title / detail / action | General React content                  |
-| Row interactive             | Hover, press and focus-within feedback |
-| Native container props      | className and accessible attributes    |
+| Name                        | Contract                                                                                    |
+| --------------------------- | ------------------------------------------------------------------------------------------- |
+| GroupedRows contrast        | Use alternate fill inside a muted pane                                                      |
+| Row title / detail / action | General React content                                                                       |
+| Row interactive             | Hover, press and keyboard focus feedback; a `data-row-target` link or button covers the row |
+| Native container props      | className and accessible attributes                                                         |
 
 ## Guidelines
 
@@ -63,7 +58,7 @@ import { MoreHoriz } from '@envsemble/envui/icons/MoreHoriz';
 - Rows have a 3.5 rem minimum height and a 0.125 rem gap. In a muted pane, use contrast fill to distinguish the rows.
 - Text keeps 1.5 rem from the row's edges, clear of the large corners, whether a row stands alone or is connected. Radio rows, select options and menu items share it.
 - Keep actions short and let long titles and details wrap.
-- Make a row interactive when it opens something through a link or button inside, such as a document from its title. Like a clickable card, it highlights on hover and while pressed, and while focus is inside it; links and buttons in its content do not also shrink as they are pressed. To open from anywhere on the row, stretch that one link over it: the row is the link's containing block, so a pseudo-element with position: absolute and inset: 0 covers it, and keyboard and screen reader users still meet a single link. Other links and buttons in the row take position: relative to stay above it. Text under the stretched link can't be selected, and tooltips of what it covers don't show.
+- Make a row interactive when it opens something through a link or button inside, such as a document from its title. Like a clickable card, it highlights on hover and while keyboard focus is inside it; links and buttons in its content do not also shrink as they are pressed. To open from anywhere on the row, mark that one link or button `data-row-target`: it covers the row, a press anywhere on the row follows it and darkens the row, and keyboard and screen reader users still meet a single link. Give it `draggable={false}` too, so that a press that moves a little opens it in every browser instead of dragging the link. Other links and buttons in the row take position: relative to stay above it, and so does anything whose own tooltip should show, since text under the target can't be selected and tooltips of what it covers don't show.
 
 TypeScript declarations provide the complete public API.
 

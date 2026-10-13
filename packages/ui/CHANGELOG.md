@@ -19,7 +19,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 - `Notice`: an inline banner in four tones with an action, a round dismiss button in its tone and `announce` for alerts.
 - `Popover`: a floating panel with a title, two widths and a close function for its content.
 - `Table` with `TableHead`, `TableBody`, `TableRow`, `TableHeaderCell` and `TableCell`: density, sticky headers, numeric cells and a focusable scroll region.
-- `Row` `interactive`: a grouped row that opens something through a link or button inside reacts to hover, presses and focus inside it, like a clickable card, and is the containing block that link can stretch over, so a press anywhere on the row follows it.
+- `Row` `interactive`: a grouped row that opens something through a link or button inside reacts to hover, keyboard focus inside it and presses, like a clickable card. The link or button marked `data-row-target` covers the row, so a press anywhere on the row follows it; the row shows a press on it, not on the row's other controls.
 - `Breadcrumbs` and `Kbd`.
 - `Markdown` `components`, `remarkPlugins` and `rehypePlugins`; application overrides win and attributes such as heading ids reach the elements. Raw HTML is dropped before any rehype plugin runs, so it stays ignored, except keys written as `<kbd>Ctrl</kbd>`, which render as `Kbd`.
 - `Dialog` `size="wide"` (about 44 rem) and `placement="top"`.
