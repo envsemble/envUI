@@ -181,6 +181,28 @@ test('an uncontrolled composer sends from its button, clears and describes the f
   expect(Math.abs(attachBox.y - sendBox.y)).toBeLessThan(1);
   expect(attachBox.x).toBeLessThan(sendBox.x);
 
+  // Start content lines up with the field's text: the icon of a leading icon button, or text.
+  const textStart = await field.evaluate(
+    (element) =>
+      element.getBoundingClientRect().left + parseFloat(getComputedStyle(element).paddingLeft),
+  );
+  const icon = (await composer
+    .getByRole('button', { name: 'Attach files' })
+    .locator('svg')
+    .boundingBox())!;
+  expect(icon.x).toBeCloseTo(textStart, 0);
+  const reply = scope.getByRole('textbox', { name: 'Reply light' });
+  const replyStart = await reply.evaluate(
+    (element) =>
+      element.getBoundingClientRect().left + parseFloat(getComputedStyle(element).paddingLeft),
+  );
+  const replyTo = await scope.getByTestId('composer-reply-to-light').evaluate((element) => {
+    const range = element.ownerDocument.createRange();
+    range.selectNodeContents(element);
+    return range.getBoundingClientRect().left;
+  });
+  expect(replyTo).toBeCloseTo(replyStart, 0);
+
   await composer.getByRole('button', { name: 'Send' }).click();
   await expect(scope.getByTestId('composer-notes-light')).toHaveText('Draft note');
   await expect(field).toHaveValue('');

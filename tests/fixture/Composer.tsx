@@ -44,6 +44,11 @@ export function ComposerFixture({ theme }: { theme: ThemeValue }) {
       </Surface>
       <output data-testid={`composer-notes-${theme}`}>{notes.join(' | ')}</output>
       <Composer aria-label={`Disabled ${theme}`} defaultValue="Locked" disabled />
+      <Composer
+        aria-label={`Reply ${theme}`}
+        defaultValue="Thanks, that works."
+        start={<span data-testid={`composer-reply-to-${theme}`}>Replying to Aurora</span>}
+      />
     </Theme>
   );
 }

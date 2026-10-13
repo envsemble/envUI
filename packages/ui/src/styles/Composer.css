@@ -73,9 +73,15 @@
   gap: var(--space-2);
   min-inline-size: 0;
   min-block-size: var(--icon-button-size);
+  /* Start content lines up with the field's text above it. */
+  padding-inline-start: var(--space-4);
   color: var(--color-text-muted);
   font: var(--type-body-small);
   cursor: default;
+}
+/* A leading icon button reaches into that inset, so its icon, not its round target, lines up. */
+.env-composer-start > .env-icon-button:first-child {
+  margin-inline-start: calc((var(--control-icon-size) - var(--icon-button-size)) / 2);
 }
 /* The action keeps the arrow of other buttons rather than the surface's text cursor. */
 .env-composer-action {

@@ -61,6 +61,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 - Applications that theme the document root, through `ThemePreferenceProvider` or the bootstrap script, render at the designed size. The root keeps the browser's font size, so 1 rem is 16 px by default instead of 15 px, and controls, spacing and type are no longer a sixteenth smaller; the document body takes the body type.
 - Text entered in `Input`, `Textarea`, `SearchField`, the `CommandPalette` search and the rich text and Markdown editors takes `--control-font-size`, 1 rem on touch screens, so mobile browsers no longer zoom the page when such a field gets focus. Resting labels, prefixes and suffixes match it.
 - `Card` and `ActionCard` `meta` sits at the end of the heading row, also in right-to-left text, instead of right after the heading, where the text margin reset kept it.
+- `Composer` `start` content lines up with the field's text instead of starting 1 rem before it; a leading icon button lines up its icon.
 
 ### Documentation
 

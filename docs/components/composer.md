@@ -41,7 +41,7 @@ import { AttachFile } from '@envsemble/envui/icons/AttachFile';
 
 - Use Composer for the message field of a chat or a comment thread, below its MessageList. Use Textarea for multiline values in forms.
 - <kbd>Enter</kbd> submits and <kbd>Shift</kbd>+<kbd>Enter</kbd> starts a new line. <kbd>Enter</kbd> that confirms an input method's composition never submits, and touch keyboards label their <kbd>Enter</kbd> key Send.
-- The field grows with its text from minRows to maxRows, then scrolls. A single line sits centered beside the round send button; with start content, the button moves to an action row below the field.
+- The field grows with its text from minRows to maxRows, then scrolls. A single line sits centered beside the round send button; with start content, the button moves to an action row below the field. Start content lines up with the field's text above it; a leading icon button lines up its icon, its round target reaching into the inset.
 - The send button is unavailable while the text is blank. It stays focusable, so focus stays on it as it turns into the stop button and back. After a send from the button, focus returns to the field.
 - While running, people can write their next message; it waits until the reply has ended. Disable the field during a run only when the conversation cannot take another message.
 - The composer is a raised surface in the popup colors with a hairline border, at home on the canvas and on panes. Focus in the field recolors and thickens the outline; a press on the surface around the field places the caret in it. Coarse pointers get the touch-sized button and larger text.
