@@ -643,6 +643,42 @@ test.describe('AppShell', () => {
     await expect.poll(async () => (await sidebar.boundingBox())!.width).toBeLessThanOrEqual(320);
   });
 
+  test('focus that scrolls the document lands below the topbar, not under it', async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 700 });
+    await page.goto(shellFixture);
+    // Far down a long page, a focusable region nearly as tall as the window, such as a table's
+    // scroll region, with a control at its top.
+    await page.locator('.env-app-content').evaluate((content) => {
+      const spacer = () =>
+        Object.assign(document.createElement('div'), { style: 'height: 1200px' });
+      const before = Object.assign(document.createElement('button'), { textContent: 'Before' });
+      const region = Object.assign(document.createElement('div'), { tabIndex: 0 });
+      region.setAttribute('data-testid', 'tall-region');
+      region.style.height = '620px';
+      const action = Object.assign(document.createElement('button'), { textContent: 'Sort' });
+      region.append(action);
+      content.append(spacer(), before, spacer(), region, spacer());
+    });
+    const topbar = (await page.locator('.env-app-topbar').boundingBox())!;
+    const below = topbar.y + topbar.height;
+    const region = page.getByTestId('tall-region');
+    const action = region.getByRole('button', { name: 'Sort' });
+    await page.getByRole('button', { name: 'Before' }).focus();
+    // Tabbing to the region, below the window, scrolls it into the window below the topbar, so its
+    // top is not under it.
+    await page.keyboard.press('Tab');
+    await expect(region).toBeFocused();
+    expect((await region.boundingBox())!.y).toBeGreaterThanOrEqual(below);
+    // A control left under the topbar scrolls out from under it as it takes focus.
+    await action.evaluate((element) =>
+      window.scrollBy(0, element.getBoundingClientRect().top - 10),
+    );
+    expect((await action.boundingBox())!.y).toBeLessThan(below);
+    await page.keyboard.press('Tab');
+    await expect(action).toBeFocused();
+    expect((await action.boundingBox())!.y).toBeGreaterThanOrEqual(below);
+  });
+
   test('the loading bar runs along the bottom edge of the topbar', async ({ page }) => {
     await page.goto(shellFixture);
     await page.getByRole('button', { name: 'Toggle page loading' }).click();

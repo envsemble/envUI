@@ -461,6 +461,7 @@ export function AppShell({
   // With the document no longer scrolling, the keyboard scrolls the content area as it would the
   // document.
   useScrollKeys(titleBar ? shellElement : null, scrollingContent);
+  useTopbarScrollPadding(titleBar ? null : shellElement);
   const setShell = useCallback((node: HTMLDivElement | null) => {
     shell.current = node;
     setShellElement(node);
@@ -692,6 +693,36 @@ export interface AppShellSkeletonProps
   sidebarMaxWidth?: number;
   /** Placeholder for the page content. */
   children?: ReactNode;
+}
+
+/**
+ * While the document scrolls under the fixed topbar, scroll padding as tall as the topbar, and a
+ * little more for focus rings, keeps elements that take focus and anchor targets below it (WCAG
+ * 2.4.11). Scroll padding an application sets on the document itself stays.
+ */
+function useTopbarScrollPadding(shellElement: HTMLElement | null) {
+  useLayoutEffect(() => {
+    const topbar = shellElement?.querySelector<HTMLElement>(':scope > .env-app-topbar');
+    const page = shellElement?.ownerDocument;
+    const scroller = page?.scrollingElement as HTMLElement | null | undefined;
+    const view = page?.defaultView;
+    if (!topbar || !scroller || !view) return;
+    const inline = scroller.style.getPropertyValue('scroll-padding-block-start');
+    const own = view.getComputedStyle(scroller).getPropertyValue('scroll-padding-block-start');
+    if (!inline && own !== '' && own !== 'auto') return;
+    const update = () =>
+      scroller.style.setProperty(
+        'scroll-padding-block-start',
+        `calc(${topbar.offsetHeight}px + 0.5rem)`,
+      );
+    update();
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(update);
+    observer?.observe(topbar);
+    return () => {
+      observer?.disconnect();
+      scroller.style.setProperty('scroll-padding-block-start', inline);
+    };
+  }, [shellElement]);
 }
 
 /** The AppShell frame with placeholders, for the first load before account data is available. */
