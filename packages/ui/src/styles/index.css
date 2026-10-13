@@ -29,6 +29,7 @@
 @import './RichText.css';
 @import './Select.css';
 @import './Slider.css';
+@import './FileDropzone.css';
 @import './ConnectedRows.css';
 @import './Dialog.css';
 @import './Toast.css';

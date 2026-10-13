@@ -33,6 +33,7 @@ import { DataDisplayFixture } from './DataDisplay.js';
 import { TablesFixture } from './Tables.js';
 import { AffixesFixture } from './Affixes.js';
 import { SlidersFixture } from './Sliders.js';
+import { DropzonesFixture } from './Dropzones.js';
 
 /** Fixtures that fill the viewport are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
@@ -170,6 +171,12 @@ export default function App() {
             <>
               <SlidersFixture theme="light" />
               <SlidersFixture theme="dark" />
+            </>
+          )}
+          {includes('dropzones') && (
+            <>
+              <DropzonesFixture theme="light" />
+              <DropzonesFixture theme="dark" />
             </>
           )}
           {includes('menus') && (

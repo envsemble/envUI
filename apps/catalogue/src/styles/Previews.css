@@ -108,6 +108,13 @@
 .docs-narrow-actions {
   width: min(100%, 16rem);
 }
+.docs-file-preview {
+  align-items: center;
+}
+.docs-file-preview > img {
+  border-radius: var(--radius-standard);
+  object-fit: cover;
+}
 .docs-compact-feature {
   inline-size: min(100%, 24rem);
 }

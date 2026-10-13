@@ -105,3 +105,10 @@ body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-p
 .fixture-narrow-field {
   inline-size: min(100%, 16rem);
 }
+.fixture-file-preview {
+  align-items: center;
+}
+.fixture-file-preview > img {
+  border-radius: var(--radius-standard);
+  object-fit: cover;
+}

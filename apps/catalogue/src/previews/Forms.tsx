@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Input,
   Textarea,
@@ -17,6 +17,8 @@ import {
   Row,
   Kbd,
   ActionGroup,
+  FileDropzone,
+  Text,
 } from '@envsemble/envui';
 import { Mail } from '@envsemble/envui/icons/Mail';
 import { ZoomIn } from '@envsemble/envui/icons/ZoomIn';
@@ -624,6 +626,104 @@ export function SliderPreview() {
           </Specimen>
           <Specimen title="Disabled">
             <Slider label="Balance" defaultValue={50} disabled />
+          </Specimen>
+        </SpecimenGrid>
+      </Example>
+    </Preview>
+  );
+}
+
+function LogoPicker() {
+  const picker = useRef<HTMLInputElement>(null);
+  const [logo, setLogo] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string>();
+  const [error, setError] = useState<string>();
+  useEffect(() => {
+    if (!logo) return setPreview(undefined);
+    const url = URL.createObjectURL(logo);
+    setPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [logo]);
+  return (
+    <Stack gap={3}>
+      <FileDropzone
+        hidden={logo != null}
+        inputRef={picker}
+        label="Drop a logo here, or browse"
+        description="PNG, JPG or WebP up to 2 MB"
+        accept="image/png,image/jpeg,.webp"
+        error={error}
+        onFiles={([file]) => {
+          if (file && file.size > 2 * 1024 * 1024) return setError('Choose an image up to 2 MB.');
+          setError(undefined);
+          setLogo(file ?? null);
+        }}
+        onReject={() => setError('Choose a PNG, JPG or WebP image.')}
+      />
+      {logo && (
+        <ActionGroup className="docs-file-preview">
+          <img src={preview} alt="" width={48} height={48} />
+          <Text as="span">{logo.name}</Text>
+          <Button variant="secondary" onClick={() => picker.current?.click()}>
+            Replace
+          </Button>
+          <Button variant="text" onClick={() => setLogo(null)}>
+            Remove
+          </Button>
+        </ActionGroup>
+      )}
+    </Stack>
+  );
+}
+
+export function FileDropzonePreview() {
+  const [documents, setDocuments] = useState<string[]>([]);
+  return (
+    <Preview>
+      <Example
+        title="Drop or browse"
+        caption={
+          <>
+            Press the zone, or <Kbd>Enter</Kbd> or <Kbd>Space</Kbd> while it has focus, to open the
+            file picker. The application shows the chosen image with actions to replace or remove
+            it.
+          </>
+        }
+      >
+        <LogoPicker />
+      </Example>
+      <Example title="States" size="collection">
+        <SpecimenGrid>
+          <Specimen
+            title="Compact, several files"
+            caption={documents.length ? documents.join(', ') : 'No documents yet.'}
+          >
+            <FileDropzone
+              compact
+              multiple
+              label="Attach documents"
+              description="Any file, several at once"
+              onFiles={(files) => setDocuments(files.map((file) => file.name))}
+            />
+          </Specimen>
+          <Specimen title="Pending">
+            <FileDropzone
+              pending
+              label="Uploading the logo"
+              description="This takes a moment"
+              onFiles={() => undefined}
+            />
+          </Specimen>
+          <Specimen title="Error">
+            <FileDropzone
+              label="Drop a cover image"
+              accept="image/*"
+              error="Choose an image at least 1200 pixels wide."
+              onFiles={() => undefined}
+            />
+          </Specimen>
+          <Specimen title="Disabled">
+            <FileDropzone disabled label="Uploads are paused" onFiles={() => undefined} />
           </Specimen>
         </SpecimenGrid>
       </Example>

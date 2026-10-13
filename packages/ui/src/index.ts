@@ -30,6 +30,7 @@ export * from './forms/Switch.js';
 export * from './forms/Radio.js';
 export * from './forms/Select.js';
 export * from './forms/Slider.js';
+export * from './forms/FileDropzone.js';
 export * from './feedback/Dialog.js';
 export * from './feedback/CommandPalette.js';
 export * from './feedback/Notice.js';

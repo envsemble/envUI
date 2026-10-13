@@ -15,6 +15,7 @@ import {
   Notice,
   SegmentedControl,
   Slider,
+  FileDropzone,
   Tree,
   TitleBar,
   Menubar,
@@ -47,6 +48,7 @@ export function HydrationApp() {
   const [tab, setTab] = useState('one');
   const [selected, setSelected] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'ascending' | 'descending'>('ascending');
+  const [files, setFiles] = useState('No files yet');
   return (
     <Theme theme="dark">
       <ToastProvider>
@@ -158,6 +160,13 @@ export function HydrationApp() {
             </TableRow>
           </TableBody>
         </Table>
+        <FileDropzone
+          compact
+          label="Hydrated files"
+          description="Any file"
+          onFiles={(chosen) => setFiles(chosen.map((file) => file.name).join(' '))}
+        />
+        <p>{files}</p>
         <output>{name}</output>
       </ToastProvider>
     </Theme>

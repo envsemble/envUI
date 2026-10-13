@@ -40,6 +40,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 - `Table` `narrowLayout="stack"`: in containers narrower than 36 rem, each body row becomes a block on the table surface, titled by its first cell, with each `TableCell` `label` before its value. The header row is visually hidden, and explicit roles keep the table's semantics.
 - `Input` `prefix` and `suffix`: short, non-interactive text inside the field before or after the value, such as the start of an address or a unit. They appear with the floating label once the field has focus or a value, are read after the label, work with `compact`, `startIcon` and `endAction`, and a long prefix is cut short with an ellipsis.
 - `Slider`: a value in a range with a visible label, the current value as an output linked to it (`formatValue`, such as "40%", also for assistive technology), `min`, `max`, `step` and `largeStep`, `hint`, `disabled`, and `name` and `form` for native forms, which reset an uncontrolled slider. The arrow keys move by a step, <kbd>Page Up</kbd> and <kbd>Page Down</kbd> by a large step, <kbd>Home</kbd> and <kbd>End</kbd> to the ends; `onValueCommit` reports the value once a change is complete. The thumb grows on touch screens.
+- `FileDropzone`: a dashed drop target for files with an icon, a label and a description, which opens the file picker when pressed or with <kbd>Enter</kbd> and <kbd>Space</kbd>. Files dragged over it show a solid blue outline; `accept` filters dropped and chosen files, with `onFiles` for the files it takes and `onReject` for the others and, without `multiple`, those after the first. `pending` shows a spinner and takes no new files, `error` colors the outline and is linked to the zone, `compact` makes it one row, `name` submits the files with native forms, and `inputRef` opens the picker from elsewhere, such as a Replace button beside the application's own preview.
 
 ### Changed
 
@@ -58,7 +59,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 - The browser suite's ports can be changed with `ENVUI_CATALOGUE_PORT` and `ENVUI_FIXTURE_PORT`.
 - The tables page shows sorting, resizable columns, selected rows and stacked rows.
 - The text fields page shows an input's prefix and suffix.
-- New page for sliders.
+- New pages for sliders and file drop zones; the drop zone page shows a chosen image with actions to replace or remove it.
 
 ## 0.4.0 — 2026-10-11
 

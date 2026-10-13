@@ -42,6 +42,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Radio groups](components/radio.md) — Choose one option from a visible set.
 - [Selects](components/select.md) — Choose one option while keeping alternatives collapsed.
 - [Sliders](components/slider.md) — Choose a value in a range by dragging a thumb or with the keyboard.
+- [File drop zones](components/file-dropzone.md) — Drop files or choose them in the file picker; the application shows what was chosen.
 
 ## Navigation
 
