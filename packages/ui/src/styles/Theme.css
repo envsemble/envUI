@@ -2,6 +2,11 @@
 .env-theme {
   min-inline-size: 0;
   overflow-wrap: anywhere;
+}
+/* A themed document root keeps the browser's font size, so 1 rem stays the reader's size (16 px by
+   default) and every rem measure keeps its designed size; its body takes the body type instead. */
+.env-theme:where(:not(html)),
+.env-theme:where(html) > :where(body) {
   font: var(--type-body);
 }
 /* Keep component geometry independent of a consuming application's reset. */

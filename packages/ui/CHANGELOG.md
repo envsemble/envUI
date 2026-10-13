@@ -55,6 +55,10 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 - The toast stack's count of hidden notices is a `Counter`. A dismissed notice steps out of the stack at once and fades where it was, so dismissing several in a row moves the stack once each, without jerking or flashing a scrollbar; a notice revealed from the hidden ones fades in.
 - A collapsed `AppShell` sidebar no longer treats expanded tree rows as open popups, and stays expanded while a context menu opened from it is open.
 
+### Fixed
+
+- Applications that theme the document root, through `ThemePreferenceProvider` or the bootstrap script, render at the designed size. The root keeps the browser's font size, so 1 rem is 16 px by default instead of 15 px, and controls, spacing and type are no longer a sixteenth smaller; the document body takes the body type.
+
 ### Documentation
 
 - New pages for the tree, document tabs, breadcrumbs, command palette, segmented controls, badges and counters, notices, popovers, tables and keyboard keys. Colors list the status tones.

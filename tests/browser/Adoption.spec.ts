@@ -44,6 +44,37 @@ test('ThemePreferenceProvider stores the choice and themes the document root', a
   );
 });
 
+test('a themed document root keeps the browser font size and its body the body type', async ({
+  page,
+}) => {
+  await page.goto(fixture);
+  const root = page.locator('html');
+  await expect(root).toHaveClass(/env-theme/);
+  // 1 rem stays the browser's 16 px, so rem measures keep their designed size.
+  await expect(root).toHaveCSS('font-size', '16px');
+  const button = page.getByTestId('router-button');
+  await expect(button).toBeVisible();
+  expect((await button.boundingBox())!.height).toBeCloseTo(40, 1);
+  // Text takes the body type in the document body, the application and portals alike.
+  await expect(page.locator('body')).toHaveCSS('font-size', '15px');
+  await expect(page.locator('body')).toHaveCSS('line-height', '21px');
+  await expect(page.locator('.fixture-adoption')).toHaveCSS('font-size', '15px');
+  const portal = await page.evaluate(() => {
+    const element = document.createElement('div');
+    element.textContent = 'Another library’s popup';
+    document.body.append(element);
+    const { fontSize, fontFamily } = getComputedStyle(element);
+    element.remove();
+    return { fontSize, fontFamily };
+  });
+  expect(portal.fontSize).toBe('15px');
+  expect(portal.fontFamily).toContain('envUI Inter');
+  await page.getByRole('button', { name: 'Open pending dialog' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Save project' });
+  await expect(dialog).toHaveCSS('font-size', '15px');
+  await expect(dialog.getByRole('button', { name: 'Toggle pending' })).toHaveCSS('height', '40px');
+});
+
 test('the bootstrap script applies a stored theme before the application renders', async ({
   page,
 }) => {
