@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect, type Locator, type Page } from '@playwright/test';
 import { fixtureUrl } from './Servers';
 
 const menubarFixture = `${fixtureUrl}/?fixture=menubar`;
@@ -10,6 +10,18 @@ function collectErrors(page: Page) {
     if (message.type() === 'error') errors.push(message.text());
   });
   return errors;
+}
+
+/**
+ * Moves focus to a menu item once the menu holds focus: a menu takes focus as it opens, which would
+ * otherwise race with the move.
+ */
+async function focusItem(menu: Locator, item: Locator) {
+  await expect
+    .poll(() => menu.evaluate((element) => element.contains(document.activeElement)))
+    .toBe(true);
+  await item.focus();
+  await expect(item).toBeFocused();
 }
 
 function menubar(page: Page) {
@@ -69,7 +81,7 @@ test('menubar menus open below their trigger and switch on hover and with the ar
   // focus (:focus-visible), which one engine does not report for synthesized keys; there the test
   // checks that focus moves to the next trigger.
   await expect(editMenu.getByRole('menuitem', { name: 'Select all' })).toBeVisible();
-  await editMenu.getByRole('menuitem', { name: 'Select all' }).focus();
+  await focusItem(editMenu, editMenu.getByRole('menuitem', { name: 'Select all' }));
   await page.keyboard.press('ArrowRight');
   const viewMenu = page.getByRole('menu', { name: 'View' });
   if (browserName === 'firefox') {
@@ -120,7 +132,9 @@ test('commands act on the field that had focus, and focus returns to it', async 
   expect(await selection()).toEqual([0, 'Quarterly report draft'.length]);
   await expect(log).toContainText('Select all');
 
-  // With the keyboard: Alt and the access key, then Enter.
+  // With the keyboard: Alt and the access key, then Enter. The pointer rests away from the menus,
+  // where it cannot hover their items as they appear.
+  await page.mouse.move(1, 999);
   await note.evaluate((field: HTMLTextAreaElement) => field.setSelectionRange(0, 0));
   await page.keyboard.press('Alt+KeyE');
   const editMenu = page.getByRole('menu', { name: 'Edit' });

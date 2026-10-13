@@ -321,8 +321,6 @@ function AccessKeyLabel({ label, accessKey }: { label: ReactNode; accessKey: str
   );
 }
 
-/** Ways of closing after which focus returns to where it was before the menubar took it. */
-const returningReasons = new Set(['item-press', 'trigger-press', 'imperative-action']);
 /** Ways of closing in which another menu of the menubar takes focus. */
 const switchingReasons = new Set(['sibling-open', 'list-navigation']);
 
@@ -347,6 +345,7 @@ export function MenubarMenu({
   if (!menubar) throw new Error('MenubarMenu must be used inside Menubar.');
   const { registerClose } = menubar;
   const trigger = useRef<HTMLButtonElement>(null);
+  const popup = useRef<HTMLDivElement>(null);
   const actions = useRef<BaseMenu.Root.Actions>(null);
   const previousFocus = useRef<Element | null>(null);
   const closeReason = useRef<string | null>(null);
@@ -354,17 +353,37 @@ export function MenubarMenu({
   const textLabel = typeof label === 'string' ? label : undefined;
   useEffect(() => registerClose(() => actions.current?.close()), [registerClose]);
 
-  function finalFocus() {
-    const reason = closeReason.current ?? '';
-    const earlier = previousFocus.current;
-    if (returningReasons.has(reason) && earlier instanceof HTMLElement && earlier.isConnected)
-      return earlier;
-    if (switchingReasons.has(reason)) return false;
-    // Otherwise focus returns to the trigger, unless it has moved on, such as into a pressed field.
+  // Whether focus has left the closing menu for something else: a field the pointer pressed, a
+  // dialog a command opened or another menu that is open.
+  function focusMovedOn() {
     const document = trigger.current?.ownerDocument;
     const active = document?.activeElement;
-    if (active && active !== document.body && active.closest('[role="menu"]') === null)
-      return false;
+    if (!active || active === document.body || active === trigger.current) return false;
+    const menu = active.closest('[role="menu"]');
+    return menu === null || (menu !== popup.current && menu.hasAttribute('data-open'));
+  }
+
+  // Whether focus is in an open submenu of this menu, which belongs to the menu.
+  function focusInSubmenu() {
+    const active = trigger.current?.ownerDocument.activeElement;
+    const menu = active?.closest('[role="menu"]');
+    return (
+      menu != null &&
+      menu !== popup.current &&
+      menu.hasAttribute('data-open') &&
+      popup.current?.querySelector('[data-popup-open]') != null
+    );
+  }
+
+  // Runs as the menu closes. Escape leaves focus on the trigger, in the menubar. Otherwise, such
+  // as after a command, focus returns to where it was before the menubar took it, as in a desktop
+  // application. Focus that has moved on, or into another menu of the menubar, stays where it is.
+  function finalFocus() {
+    const reason = closeReason.current ?? '';
+    if (focusMovedOn() || switchingReasons.has(reason)) return false;
+    const earlier = previousFocus.current;
+    if (reason !== 'escape-key' && earlier instanceof HTMLElement && earlier.isConnected)
+      return earlier;
     return trigger.current ?? true;
   }
 
@@ -375,6 +394,12 @@ export function MenubarMenu({
       disabled={disabled}
       actionsRef={actions}
       onOpenChange={(next, details) => {
+        // Base UI checks where focus went a moment after it leaves the trigger. When that check runs
+        // late, focus may already be in one of the menu's own submenus, so the menu stays open.
+        if (!next && details.reason === 'trigger-focus' && focusInSubmenu()) {
+          details.cancel();
+          return;
+        }
         if (next) {
           previousFocus.current = menubar.previousFocus();
           closeReason.current = null;
@@ -399,6 +424,7 @@ export function MenubarMenu({
             sideOffset={4}
           >
             <BaseMenu.Popup
+              ref={popup}
               className={classNames('env-menu', className)}
               render={renderMenuPopup(ariaLabel ?? textLabel, density)}
               finalFocus={finalFocus}

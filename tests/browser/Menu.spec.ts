@@ -38,6 +38,18 @@ async function settled(locator: Locator) {
   });
 }
 
+/**
+ * Moves focus to a menu item once the menu holds focus: a menu takes focus as it opens, which would
+ * otherwise race with the move.
+ */
+async function focusItem(menu: Locator, item: Locator) {
+  await expect
+    .poll(() => menu.evaluate((element) => element.contains(document.activeElement)))
+    .toBe(true);
+  await item.focus();
+  await expect(item).toBeFocused();
+}
+
 /** The menu popup's own surface: fill, border and corners. */
 async function popupSurface(menu: Locator) {
   return menu.evaluate((element) => {
@@ -237,7 +249,7 @@ test.describe('Submenus', () => {
     const menu = page.getByRole('menu', { name: 'Compact options' });
     await expect(menu).toBeVisible();
     const recent = menu.getByRole('menuitem', { name: 'Open recent' });
-    await recent.focus();
+    await focusItem(menu, recent);
     // ArrowRight opens the submenu with its first row highlighted; ArrowLeft returns to the row.
     await page.keyboard.press('ArrowRight');
     const submenu = page.getByRole('menu', { name: 'Open recent' });
@@ -259,12 +271,12 @@ test.describe('Submenus', () => {
     // A disabled submenu row does not open.
     const unavailable = menu.getByRole('menuitem', { name: 'Unavailable documents' });
     await expect(unavailable).toHaveAttribute('aria-disabled', 'true');
-    await unavailable.focus();
+    await focusItem(menu, unavailable);
     await page.keyboard.press('ArrowRight');
     await expect(page.getByRole('menu', { name: 'Unavailable documents' })).toHaveCount(0);
     // Radio items in a submenu keep their choice.
     const appearance = menu.getByRole('menuitem', { name: 'Appearance' });
-    await appearance.focus();
+    await focusItem(menu, appearance);
     await page.keyboard.press('ArrowRight');
     const choices = page.getByRole('menu', { name: 'Appearance' });
     await expect(choices.getByRole('menuitemradio', { name: 'System' })).toHaveAttribute(
@@ -292,7 +304,7 @@ test.describe('Submenus', () => {
     const menu = page.getByRole('menu', { name: 'Compact options' });
     await expect(menu).toBeVisible();
     await settled(menu);
-    await menu.getByRole('menuitem', { name: 'Open recent' }).focus();
+    await focusItem(menu, menu.getByRole('menuitem', { name: 'Open recent' }));
     await page.keyboard.press('ArrowRight');
     const submenu = page.getByRole('menu', { name: 'Open recent' });
     await expect(submenu).toBeVisible();
@@ -309,7 +321,7 @@ test.describe('Submenus', () => {
     await page.getByTestId('menus-dark').getByRole('button', { name: 'View options' }).click();
     const menu = page.getByRole('menu', { name: 'View options' });
     await expect(menu).toBeVisible();
-    await menu.getByRole('menuitem', { name: 'More views' }).focus();
+    await focusItem(menu, menu.getByRole('menuitem', { name: 'More views' }));
     await page.keyboard.press('ArrowRight');
     const submenu = page.getByRole('menu', { name: 'More views' });
     await expect(submenu).toBeVisible();
@@ -330,7 +342,7 @@ test.describe('Submenus', () => {
       .click();
     const actions = page.getByRole('menu', { name: 'Programmatic actions' });
     await expect(actions).toHaveAttribute('data-density', 'compact');
-    await actions.getByRole('menuitem', { name: 'Share' }).focus();
+    await focusItem(actions, actions.getByRole('menuitem', { name: 'Share' }));
     await page.keyboard.press('ArrowRight');
     const share = page.getByRole('menu', { name: 'Share' });
     await expect(share).toHaveAttribute('data-density', 'compact');
