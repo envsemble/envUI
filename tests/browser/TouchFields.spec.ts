@@ -67,10 +67,10 @@ test('entered text is 16 px on touch screens, so focusing a field does not zoom 
   await markdown.context().close();
 
   const richText = await openOnTouchScreen(browser, '/rich-text.html');
-  await expect(richText.locator('.env-rich-text-document p').first()).toHaveCSS(
-    'font-size',
-    '16px',
-  );
+  // The editing host is the element that gets focus, so it takes the size, and so do paragraphs.
+  const editable = richText.locator('[contenteditable="true"]').first();
+  await expect(editable).toHaveCSS('font-size', '16px');
+  await expect(editable.locator('p').first()).toHaveCSS('font-size', '16px');
   await richText.context().close();
 });
 
@@ -84,4 +84,6 @@ test('entered text keeps the body size with a mouse', async ({ page }) => {
     'font-size',
     '15px',
   );
+  await page.goto(`${fixtureUrl}/rich-text.html`);
+  await expect(page.locator('[contenteditable="true"]').first()).toHaveCSS('font-size', '15px');
 });

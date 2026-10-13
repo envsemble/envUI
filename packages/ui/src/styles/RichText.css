@@ -12,9 +12,11 @@
   border: 0.0625rem solid var(--color-markdown-border);
   border-radius: 0.25rem;
   background: var(--color-field);
+  /* The editing host takes the control font size: 1 rem on touch screens, where a smaller size on
+     the focused element zooms the page. */
+  font-size: var(--control-font-size);
 }
-/* Edited paragraphs take the control font size: 1 rem on touch screens, where smaller text zooms
-   the page when the editor gets focus. */
+/* Paragraphs set their own type, so they take the size too. */
 .env-rich-text-document p {
   font-size: var(--control-font-size);
 }
