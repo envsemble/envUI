@@ -4,9 +4,10 @@
   overflow-wrap: anywhere;
 }
 /* A themed document root keeps the browser's font size, so 1 rem stays the reader's size (16 px by
-   default) and every rem measure keeps its designed size; its body takes the body type instead. */
+   default) and every rem measure keeps its designed size. Its body takes the body type instead, at
+   zero specificity, so an application's own body rule wins. */
 .env-theme:where(:not(html)),
-.env-theme:where(html) > :where(body) {
+:where(.env-theme:where(html) > body) {
   font: var(--type-body);
 }
 /* Keep component geometry independent of a consuming application's reset. */

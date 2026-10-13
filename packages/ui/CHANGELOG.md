@@ -51,6 +51,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 
 ### Changed
 
+- A document root themed through `ThemePreferenceProvider` or the bootstrap script keeps the browser's font size, so 1 rem is 16 px by default instead of 15 px and envUI renders at its designed size, no longer a sixteenth smaller. The document body takes the body type, at zero specificity, so an application's own `body` rule wins. Migration: an application's own rem-based CSS on such a root grows by about 7%; multiply its rem values by 0.9375 to keep their earlier size.
 - `ThemePreferenceProvider` follows theme changes made in other windows and tabs of the same origin.
 - `Select`'s outlined trigger is the outlined `Button` style. The open list takes the `Popover` surface corners, with rounded options inset by its padding.
 - `Dialog` shares the `Popover` look: the raised popup color and a hairline border. In the dark theme dialogs keep the pane color, through the new `--color-dialog` token. The title and description sit together above the content.
@@ -62,7 +63,6 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 
 ### Fixed
 
-- Applications that theme the document root, through `ThemePreferenceProvider` or the bootstrap script, render at the designed size. The root keeps the browser's font size, so 1 rem is 16 px by default instead of 15 px, and controls, spacing and type are no longer a sixteenth smaller; the document body takes the body type.
 - Text entered in `Input`, `Textarea`, `SearchField`, the `CommandPalette` search and the rich text and Markdown editors takes `--control-font-size`, 1 rem on touch screens, so mobile browsers no longer zoom the page when such a field gets focus. Resting labels, prefixes and suffixes match it.
 - `Card` and `ActionCard` `meta` sits at the end of the heading row, also in right-to-left text, instead of right after the heading, where the text margin reset kept it.
 - A `Textarea` with `sizing="content"` and `rows` starts at that many lines, such as one for a short reply, instead of at least 7.5 rem; without `rows` it still starts at 7.5 rem.

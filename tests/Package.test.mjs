@@ -428,7 +428,12 @@ test('the package includes scoped CSS, local fonts, branding and license notices
     // Keyframe steps inside @keyframes are offsets, not element selectors.
     if (/^(?:from|to|\d+(?:\.\d+)?%)(?:\s*,\s*(?:from|to|\d+(?:\.\d+)?%))*$/.test(header)) continue;
     for (const selector of splitSelectors(header)) {
-      assert.match(selector, /^(?:[a-zA-Z][\w-]*)?\.env-/, `Unscoped CSS selector: ${selector}`);
+      // A zero-specificity :where() wrapper still has to start at an envUI class.
+      assert.match(
+        selector,
+        /^(?::where\()?(?:[a-zA-Z][\w-]*)?\.env-/,
+        `Unscoped CSS selector: ${selector}`,
+      );
     }
   }
   for (const match of css.matchAll(/url\(["']?([^\s)"']+)["']?\)/g)) {

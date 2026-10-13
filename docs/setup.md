@@ -38,7 +38,7 @@ Import `@envsemble/envui/styles.css` once in the client entry. It includes local
 
 ### Theme preference
 
-For a whole application, `ThemePreferenceProvider` replaces the fixed `Theme`. It stores the choice, follows the system theme until the user picks one, and themes the document root so the page background, native controls and other libraries' portals match. The root keeps the browser's font size, so 1 rem stays the reader's size (16 px by default), and the document body takes the body type. `ThemeToggle` switches between light and dark. A choice made in another window or tab of the same origin, such as another window of a desktop application, applies at once through the storage event.
+For a whole application, `ThemePreferenceProvider` replaces the fixed `Theme`. It stores the choice, follows the system theme until the user picks one, and themes the document root so the page background, native controls and other libraries' portals match. The root keeps the browser's font size, so 1 rem stays the reader's size (16 px by default), and the document body takes the body type; an application's own `body` rule overrides it. `ThemeToggle` switches between light and dark. A choice made in another window or tab of the same origin, such as another window of a desktop application, applies at once through the storage event.
 
 ```tsx
 import { ThemePreferenceProvider, ThemeToggle } from '@envsemble/envui';

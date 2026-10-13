@@ -75,6 +75,23 @@ test('a themed document root keeps the browser font size and its body the body t
   await expect(dialog.getByRole('button', { name: 'Toggle pending' })).toHaveCSS('height', '40px');
 });
 
+test('an application body rule overrides the body type of a themed root', async ({ page }) => {
+  await page.goto(fixture);
+  await expect(page.locator('html')).toHaveClass(/env-theme/);
+  // The application's style sheet comes first, so only specificity lets its plain body rule win.
+  await page.evaluate(() => {
+    const style = document.createElement('style');
+    style.textContent = 'body { font-size: 18px; line-height: 1.5; }';
+    document.head.prepend(style);
+  });
+  await expect(page.locator('body')).toHaveCSS('font-size', '18px');
+  await expect(page.locator('body')).toHaveCSS('line-height', '27px');
+  await expect(page.locator('body')).toHaveCSS('font-family', /envUI Inter/);
+  // The root keeps the browser's size, so rem measures keep theirs.
+  await expect(page.locator('html')).toHaveCSS('font-size', '16px');
+  await expect(page.getByTestId('router-button')).toHaveCSS('height', '40px');
+});
+
 test('the bootstrap script applies a stored theme before the application renders', async ({
   page,
 }) => {
