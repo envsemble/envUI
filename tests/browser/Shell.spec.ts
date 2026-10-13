@@ -12,6 +12,23 @@ function collectErrors(page: Page) {
   return errors;
 }
 
+type Box = { x: number; y: number; width: number; height: number };
+
+/** Reads the boxes of the elements in one frame once the fonts have loaded, so neither a font swap
+ * nor another layout change falls between the readings. */
+async function measure<K extends string>(page: Page, selectors: Record<K, string>) {
+  const boxes = await page.evaluate(async (entries) => {
+    await document.fonts.ready;
+    return Object.fromEntries(
+      entries.map(([name, selector]) => {
+        const { x, y, width, height } = document.querySelector(selector)!.getBoundingClientRect();
+        return [name, { x, y, width, height }];
+      }),
+    );
+  }, Object.entries<string>(selectors));
+  return boxes as Record<K, Box>;
+}
+
 test.describe('Resizable AppShell', () => {
   test('the sidebar edge resizes with the pointer and the keyboard and remembers the width', async ({
     page,
@@ -228,13 +245,23 @@ test.describe('Full-width topbar', () => {
     const context = page.locator('.env-app-context');
     const viewport = page.viewportSize()!;
     const box = async (locator: Locator) => (await locator.boundingBox())!;
-    const toggle = await box(page.getByRole('button', { name: 'Collapse sidebar' }));
-    const contextBox = await box(context);
-    const menubar = await box(page.getByRole('menubar', { name: 'Application menu' }));
-    const picker = await box(page.getByTestId('context-picker'));
-    const title = await box(page.locator('.env-app-title'));
-    const actions = await box(page.locator('.env-app-actions'));
-    const sidebar = await box(page.locator('.env-app-sidebar'));
+    const {
+      toggle,
+      context: contextBox,
+      menubar,
+      picker,
+      title,
+      actions,
+      sidebar,
+    } = await measure(page, {
+      toggle: '.env-app-sidebar-toggle',
+      context: '.env-app-context',
+      menubar: '[role="menubar"][aria-label="Application menu"]',
+      picker: '[data-testid="context-picker"]',
+      title: '.env-app-title',
+      actions: '.env-app-actions',
+      sidebar: '.env-app-sidebar',
+    });
     // The context follows the toggle at its natural width, wider than the sidebar below it.
     expect(contextBox.x).toBeCloseTo(toggle.x + toggle.width + 12, 0);
     expect(contextBox.width).toBeCloseTo(menubar.width + 8 + picker.width, 0);
@@ -288,16 +315,17 @@ test("a narrow window gives the full topbar's context the room it needs", async 
   await page.setViewportSize({ width: 640, height: 800 });
   await page.goto(fullShell);
   await expect(page.locator('.env-app-shell')).toHaveAttribute('data-narrow', '');
-  const box = async (locator: Locator) => (await locator.boundingBox())!;
-  const context = await box(page.locator('.env-app-context'));
-  const menubar = await box(page.getByRole('menubar', { name: 'Application menu' }));
-  const picker = await box(page.getByTestId('context-picker'));
+  const { context, menubar, picker, actions } = await measure(page, {
+    context: '.env-app-context',
+    menubar: '[role="menubar"][aria-label="Application menu"]',
+    picker: '[data-testid="context-picker"]',
+    actions: '.env-app-actions',
+  });
   // The menubar and the picker keep their natural width side by side, beyond the 16 rem a split
   // topbar allows above a narrow sidebar.
   expect(context.width).toBeGreaterThan(256);
   expect(context.width).toBeCloseTo(menubar.width + 8 + picker.width, 0);
   // The actions stay at the end of the row, inside the window.
-  const actions = await box(page.locator('.env-app-actions'));
   expect(actions.x).toBeGreaterThan(context.x + context.width);
   expect(actions.x + actions.width).toBeCloseTo(640 - 12, 0);
 });
