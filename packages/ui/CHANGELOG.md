@@ -72,6 +72,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 - `Card` and `ActionCard` `meta` sits at the end of the heading row, also in right-to-left text, instead of right after the heading, where the text margin reset kept it.
 - A `Textarea` with `sizing="content"` and `rows` starts at that many lines, such as one for a short reply, instead of at least 7.5 rem; without `rows` it still starts at 7.5 rem.
 - Icon-only buttons keep their square size where their container is squeezed narrower, such as a slot beside long text in a flex row, instead of shrinking to nothing.
+- Labels keep 4.5:1 contrast on hover, also in a selected tab on the tab rail: secondary buttons in the dark theme have a label as bright as primary text, outlined buttons in the light theme a deeper blue one, and selected navigation items a deeper blue label in light and a lighter one in dark.
 
 ### Documentation
 

@@ -80,13 +80,15 @@
   --color-row-text: hsl(225 5.882353% 13.333333%);
   --color-row-detail: hsl(213.333333 4.522613% 39.019608%);
   --color-secondary-action: var(--color-fill);
+  /* Labels on action and navigation fills keep 4.5:1 on their hover shades too, also on a tab rail:
+     outlined and selected navigation labels are a deeper blue than links. */
   --color-on-secondary-action: hsl(205.714286 5.511811% 24.901961%);
-  --color-on-subtle-action: hsl(214.07767 81.746032% 50.588235%);
+  --color-on-subtle-action: hsl(216.852792 89.954338% 42.941176%);
   --color-subtle-action-border: hsl(220 8.823529% 86.666667%);
   --color-navigation-text: hsl(205.714286 5.511811% 24.901961%);
   --color-navigation-icon: hsl(213.333333 4.522613% 39.019608%);
   --color-navigation-quiet: hsl(213.333333 42.857143% 95.882353%);
-  --color-on-navigation-selected: hsl(216.852792 89.954338% 42.941176%);
+  --color-on-navigation-selected: hsl(216.852792 89.954338% 39%);
   --color-direction-link: hsl(0 0% 100%);
   --color-direction-link-text: hsl(225 5.882353% 13.333333%);
   --color-direction-link-label: hsl(213.333333 4.522613% 39.019608%);
@@ -378,13 +380,14 @@
   --color-menu-row: var(--color-row);
   --color-row-text: hsl(216 12.195% 91.961%);
   --color-row-detail: hsl(213.333 7.317% 75.882%);
-  --color-on-secondary-action: hsl(213.333 10.843% 83.725%);
+  /* As bright as primary text: a selected secondary tab's hover fill sits on the rail's fill. */
+  --color-on-secondary-action: hsl(216 12.195% 91.961%);
   --color-on-subtle-action: hsl(217.317 89.13% 81.961%);
   --color-subtle-action-border: hsl(213.333 4.523% 39.02%);
   --color-navigation-text: hsl(216 9.091% 89.216%);
   --color-navigation-icon: hsl(212.308 8.725% 70.784%);
   --color-navigation-quiet: hsl(216 4.425% 22.157%);
-  --color-on-navigation-selected: hsl(217.317 89.13% 81.961%);
+  --color-on-navigation-selected: hsl(217.317 89.13% 85%);
   --color-direction-link: hsl(220 3.614% 16.275%);
   --color-direction-link-text: hsl(216 12.195% 91.961%);
   --color-direction-link-label: hsl(213.333 7.317% 75.882%);

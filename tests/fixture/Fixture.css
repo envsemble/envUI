@@ -104,6 +104,11 @@ body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-p
   align-items: start;
   gap: 1rem;
 }
+.fixture-tab-states {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
 .fixture-section output[data-testid^='document-tabs-log'] {
   white-space: pre-line;
 }

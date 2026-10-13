@@ -2,6 +2,8 @@ import { useState } from 'react';
 import {
   Button,
   DocumentTabs,
+  NavigationItem,
+  Surface,
   Tabs,
   Text,
   Theme,
@@ -130,6 +132,45 @@ export function FillTabsFixture({ theme }: { theme: ThemeValue }) {
           items={items(false)}
         />
       </div>
+    </Theme>
+  );
+}
+
+const tabStateVariants = ['primary', 'secondary', 'outlined', 'important', 'navigation'] as const;
+
+/**
+ * Tabs built from each kind of button used as a tab, at both densities on the canvas: the first tab
+ * is selected and the second is not.
+ */
+export function TabStatesFixture({ theme }: { theme: ThemeValue }) {
+  return (
+    <Theme theme={theme} data-testid={`tab-states-${theme}`} className="fixture-section">
+      {(['standard', 'compact'] as const).map((density) => (
+        <Surface
+          key={density}
+          tone="canvas"
+          density={density}
+          padding={0}
+          className="fixture-tab-states"
+        >
+          {tabStateVariants.map((variant) => (
+            <Tabs
+              key={variant}
+              aria-label={`${variant} tabs, ${density} ${theme}`}
+              items={['Summary', 'Details'].map((label) => ({
+                value: label.toLowerCase(),
+                button:
+                  variant === 'navigation' ? (
+                    <NavigationItem>{label}</NavigationItem>
+                  ) : (
+                    <Button variant={variant}>{label}</Button>
+                  ),
+                content: null,
+              }))}
+            />
+          ))}
+        </Surface>
+      ))}
     </Theme>
   );
 }
