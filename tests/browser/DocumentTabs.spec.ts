@@ -51,6 +51,20 @@ test.describe('DocumentTabs', () => {
     await expect(last).toBeInViewport({ ratio: 0.9 });
     await page.keyboard.press('Home');
     await expect(roadmap).toBeFocused();
+    // Keys with Alt, Ctrl or ⌘ are the application's: the strip leaves them unhandled.
+    await page.evaluate(() => {
+      window.addEventListener('keydown', (event) => {
+        if (!event.key.startsWith('Arrow')) return;
+        document.body.dataset.applicationKeys =
+          (document.body.dataset.applicationKeys ?? '') + (event.defaultPrevented ? '-' : '+');
+        event.preventDefault();
+      });
+    });
+    await page.keyboard.press('Alt+ArrowRight');
+    await page.keyboard.press('Control+ArrowRight');
+    await expect(page.locator('body')).toHaveAttribute('data-application-keys', '++');
+    await expect(roadmap).toBeFocused();
+    await expect(roadmap).toHaveAttribute('aria-selected', 'true');
     // Delete closes the focused tab, and focus moves to the tab that becomes active.
     await page.keyboard.press('Delete');
     await expect.poll(() => lastLog(page)).toBe('close plans/roadmap.md');

@@ -42,8 +42,6 @@ export interface DocumentTabsProps {
 }
 
 const defaultCloseLabel = (label: string) => `Close ${label}`;
-const hasModifier = (event: KeyboardEvent) =>
-  event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
 
 /** Editor-style closable tabs for open documents; the application renders the active document. */
 export function DocumentTabs({
@@ -114,7 +112,9 @@ export function DocumentTabs({
   }
 
   function onKeyDown(event: KeyboardEvent<HTMLDivElement>, index: number) {
-    if (event.target !== event.currentTarget) return;
+    // Keys with Alt, Ctrl or ⌘ belong to the application, such as Ctrl+W or Alt+← for going back.
+    if (event.target !== event.currentTarget || event.altKey || event.ctrlKey || event.metaKey)
+      return;
     const rtl = getComputedStyle(event.currentTarget).direction === 'rtl';
     const forward = rtl ? 'ArrowLeft' : 'ArrowRight';
     const backward = rtl ? 'ArrowRight' : 'ArrowLeft';
@@ -123,8 +123,7 @@ export function DocumentTabs({
     else if (event.key === 'Home') select(0);
     else if (event.key === 'End') select(items.length - 1);
     else if (event.key === 'Enter' || event.key === ' ') select(index);
-    else if (event.key === 'Delete' && !hasModifier(event) && items[index])
-      onClose(items[index].id);
+    else if (event.key === 'Delete' && !event.shiftKey && items[index]) onClose(items[index].id);
     else return;
     event.preventDefault();
   }

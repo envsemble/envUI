@@ -121,6 +121,35 @@ test.describe('Tree', () => {
     await expect.poll(ring).toBe('none');
   });
 
+  test('keys with Alt, Ctrl or ⌘ are left to the application', async ({ page }) => {
+    await page.goto(treeFixture);
+    const tree = page.getByRole('tree', { name: 'Files light' });
+    await tree.focus();
+    await expect.poll(() => activeRowId(page)).toBe('folder-1');
+    // The application hears each key unhandled, and takes it so the browser does not go back.
+    await page.evaluate(() => {
+      window.addEventListener('keydown', (event) => {
+        if (!event.key.startsWith('Arrow')) return;
+        document.body.dataset.applicationKeys =
+          (document.body.dataset.applicationKeys ?? '') + (event.defaultPrevented ? '-' : '+');
+        event.preventDefault();
+      });
+    });
+    await page.keyboard.press('Alt+ArrowLeft');
+    await page.keyboard.press('Control+ArrowDown');
+    await page.keyboard.press('Meta+ArrowRight');
+    await expect(page.locator('body')).toHaveAttribute('data-application-keys', '+++');
+    await expect(tree.getByRole('treeitem', { name: 'Folder 01' })).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    );
+    expect(await activeRowId(page)).toBe('folder-1');
+    // Without them, the tree takes its keys again.
+    await page.keyboard.press('ArrowDown');
+    await expect.poll(() => activeRowId(page)).toBe('folder-1/nested');
+    await expect(page.locator('body')).toHaveAttribute('data-application-keys', '+++-');
+  });
+
   test('only rows in view are rendered, and a new selection scrolls into view', async ({
     page,
   }) => {

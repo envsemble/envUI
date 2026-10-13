@@ -235,6 +235,8 @@ export function Tree<T extends TreeItem>({
 
   function onKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     if (event.target !== event.currentTarget || !activeItem) return;
+    // Keys with Alt, Ctrl or ⌘ belong to the application, such as Alt+← for going back.
+    if (event.altKey || event.ctrlKey || event.metaKey) return;
     const page = Math.max(1, Math.floor(viewportHeight / rowHeight) - 1);
     let handled = true;
     switch (event.key) {
@@ -290,7 +292,7 @@ export function Tree<T extends TreeItem>({
       }
       default:
         handled = false;
-        if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+        if (event.key.length === 1) {
           const index = findByText(event.key);
           if (index !== -1) activate(index);
           handled = true;

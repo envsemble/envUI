@@ -43,7 +43,7 @@ import { Description } from '@envsemble/envui/icons/Description';
 ## Guidelines
 
 - The strip renders only the tabs. The application owns the open documents, the active one and its panel, and whether closing or pinning changes them.
-- The strip is one tab stop. <kbd>←</kbd> and <kbd>→</kbd> move to the previous or next tab and activate it, wrapping at the ends; <kbd>Home</kbd> and <kbd>End</kbd> reach the first and last. <kbd>Delete</kbd> closes the focused tab; <kbd>Ctrl</kbd>+<kbd>W</kbd> and other shortcuts are left to the application, which can bind them to onClose.
+- The strip is one tab stop. <kbd>←</kbd> and <kbd>→</kbd> move to the previous or next tab and activate it, wrapping at the ends; <kbd>Home</kbd> and <kbd>End</kbd> reach the first and last. <kbd>Delete</kbd> closes the focused tab. Keys pressed with <kbd>Alt</kbd>, <kbd>Ctrl</kbd> or <kbd>⌘</kbd> are left to the application, such as <kbd>Ctrl</kbd>+<kbd>W</kbd>, which it can bind to onClose, or <kbd>Alt</kbd>+<kbd>←</kbd> for going back.
 - A preview tab shows its label in italics; double-click it to call onPin. A middle click closes a tab without activating it.
 - Each tab has a close button that shows on the active tab, on hover and with keyboard focus, and keeps its space so tabs do not change width. It is not a tab stop. When the focused tab closes, by its button, <kbd>Delete</kbd> or the application's own shortcut, focus moves to the tab that becomes active.
 - Tabs are 2.5 rem tall, and labels truncate beyond about 14 rem; the title shows the full name. The active tab carries the fill and a selection-blue indicator along its bottom edge.
