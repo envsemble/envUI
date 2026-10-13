@@ -198,7 +198,8 @@ test('pending holds sending while the field keeps focus and takes typing', async
   await send.click({ force: true });
   await expect(field).toHaveValue('Quarterly report draft');
   await expect(posts).toHaveText('Quarterly report');
-  // Once it ends, sending works again.
+  // Once the request ends, sending works again.
+  await scope.getByRole('button', { name: 'Finish request light' }).click();
   await expect(send).not.toHaveAttribute('aria-disabled');
   await field.press('Enter');
   await expect(posts).toHaveText('Quarterly report | Quarterly report draft');

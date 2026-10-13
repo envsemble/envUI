@@ -84,7 +84,6 @@ export function ComposerFixture({ theme }: { theme: ThemeValue }) {
           event.preventDefault();
           const note = String(new FormData(event.currentTarget).get('detached'));
           setDetached((current) => ({ posts: [...current.posts, note], pending: true }));
-          setTimeout(() => setDetached((current) => ({ ...current, pending: false })), 1500);
         }}
       />
       <Composer
@@ -94,6 +93,12 @@ export function ComposerFixture({ theme }: { theme: ThemeValue }) {
         pending={detached.pending}
       />
       <output data-testid={`composer-detached-${theme}`}>{detached.posts.join(' | ')}</output>
+      <button
+        type="button"
+        onClick={() => setDetached((current) => ({ ...current, pending: false }))}
+      >
+        Finish request {theme}
+      </button>
       <Composer aria-label={`Disabled ${theme}`} defaultValue="Locked" disabled />
       <Composer
         aria-label={`Reply ${theme}`}
