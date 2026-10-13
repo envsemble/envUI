@@ -50,8 +50,10 @@ export function SplitViewFixture({ theme }: { theme: ThemeValue }) {
         Toggle documents split {theme}
       </button>
       <SplitView
+        data-testid={`controlled-split-${theme}`}
         size={size}
         onSizeChange={setSize}
+        stackBelow="600"
         resizeLabel={`Resize controlled ${theme}`}
         start={<Text>Controlled start</Text>}
         end={<Text>Controlled end</Text>}

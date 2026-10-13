@@ -13,6 +13,7 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
+import { cssLength } from '../internal/cssLength.js';
 import { setRef } from '../internal/setRef.js';
 import { useStackedReport } from '../internal/useStackedReport.js';
 import { ArrowDownward } from '../icons/ArrowDownward.js';
@@ -89,11 +90,6 @@ export interface TableProps extends Omit<ComponentPropsWithRef<'table'>, 'aria-l
    * columnWidths or defaultColumnWidths.
    */
   resizableColumns?: boolean;
-}
-
-/** A bare number is a length in pixels. */
-function cssLength(length: string) {
-  return /^\s*\d*\.?\d+\s*$/.test(length) ? `${length.trim()}px` : length;
 }
 
 /**

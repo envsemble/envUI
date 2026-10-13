@@ -20,16 +20,16 @@ import { SplitView } from '@envsemble/envui';
 
 ### Props & contracts
 
-| Name                              | Contract                                                                                                                                |
-| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| start / end                       | Content of the panes at the inline start and end                                                                                        |
-| size / defaultSize / onSizeChange | The start pane's share of the width in percent, 50 by default; onSizeChange reports each new share                                      |
-| minSize / maxSize                 | Bounds of the start pane's share in percent; 20 and 80 by default                                                                       |
-| storageKey                        | Keeps the share chosen in an uncontrolled split in localStorage; another key brings its own stored share, or the default                |
-| stackBelow                        | A width such as 48rem; while the split view itself is narrower, the panes stack without the divider and the split view has data-stacked |
-| onStackedChange                   | Receives true when the panes stack and false when they sit side by side again, also when a split view leaves while its panes stack      |
-| resizeLabel                       | Accessible name of the divider; Resize panes by default                                                                                 |
-| Native div props                  | className, style, ref and accessible attributes on the split view                                                                       |
+| Name                              | Contract                                                                                                                                                                     |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| start / end                       | Content of the panes at the inline start and end                                                                                                                             |
+| size / defaultSize / onSizeChange | The start pane's share of the width in percent, 50 by default; onSizeChange reports each new share                                                                           |
+| minSize / maxSize                 | Bounds of the start pane's share in percent; 20 and 80 by default                                                                                                            |
+| storageKey                        | Keeps the share chosen in an uncontrolled split in localStorage; another key brings its own stored share, or the default                                                     |
+| stackBelow                        | A width such as 48rem, or a number of pixels such as "600"; while the split view itself is narrower, the panes stack without the divider and the split view has data-stacked |
+| onStackedChange                   | Receives true when the panes stack and false when they sit side by side again, also when a split view leaves while its panes stack                                           |
+| resizeLabel                       | Accessible name of the divider; Resize panes by default                                                                                                                      |
+| Native div props                  | className, style, ref and accessible attributes on the split view                                                                                                            |
 
 ## Guidelines
 

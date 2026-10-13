@@ -16,6 +16,7 @@ import {
   type ThemeValue,
 } from '@envsemble/envui';
 import { MoreVert } from '@envsemble/envui/icons/MoreVert';
+import { Event } from '@envsemble/envui/icons/Event';
 import { PriorityHigh } from '@envsemble/envui/icons/PriorityHigh';
 
 const reports = [
@@ -272,8 +273,34 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
             </TableRow>
           </TableBody>
         </Table>
+        {/* An application without types may pass the number itself. */}
+        <Table
+          aria-label={`Number threshold ${theme}`}
+          narrowLayout="stack"
+          stackBelow={600 as unknown as string}
+        >
+          <TableHead>
+            <TableRow>
+              <TableHeaderCell>Report</TableHeaderCell>
+              <TableHeaderCell>Owner</TableHeaderCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell>Quarterly report</TableCell>
+              <TableCell label="Owner">Aurora</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       </div>
-      <Table aria-label={`Icon headers ${theme}`} resizableColumns defaultColumnWidths={[30, 70]}>
+      <span id={`due-date-${theme}`} hidden>
+        Due date
+      </span>
+      <Table
+        aria-label={`Icon headers ${theme}`}
+        resizableColumns
+        defaultColumnWidths={[20, 20, 60]}
+      >
         <TableHead>
           <TableRow>
             <TableHeaderCell
@@ -285,12 +312,16 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
             >
               <PriorityHigh />
             </TableHeaderCell>
+            <TableHeaderCell aria-labelledby={`due-date-${theme}`} onSort={() => undefined}>
+              <Event />
+            </TableHeaderCell>
             <TableHeaderCell>Report</TableHeaderCell>
           </TableRow>
         </TableHead>
         <TableBody>
           <TableRow>
             <TableCell>High</TableCell>
+            <TableCell>Friday</TableCell>
             <TableCell>Quarterly report</TableCell>
           </TableRow>
         </TableBody>

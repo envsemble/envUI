@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { cssLength } from '../internal/cssLength.js';
 import { setRef } from '../internal/setRef.js';
 import { useStackedReport } from '../internal/useStackedReport.js';
 
@@ -34,8 +35,8 @@ export interface SplitViewProps extends Omit<ComponentPropsWithRef<'div'>, 'chil
    */
   storageKey?: string;
   /**
-   * A width, such as 48rem: while the split view itself is narrower, the panes stack and the
-   * divider is removed. The split view then has data-stacked.
+   * A width, such as 48rem, or a number of pixels such as "600": while the split view itself is
+   * narrower, the panes stack and the divider is removed. The split view then has data-stacked.
    */
   stackBelow?: string;
   /**
@@ -276,7 +277,7 @@ export function SplitView({
           ref={probe}
           className="env-split-view-probe"
           aria-hidden="true"
-          style={{ inlineSize: stackBelow }}
+          style={{ inlineSize: cssLength(stackBelow) }}
         />
       )}
     </div>

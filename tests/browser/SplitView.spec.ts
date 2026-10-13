@@ -157,6 +157,16 @@ test('a hidden split view keeps its panes stacked, and one that leaves reports i
   await expect(stackedChanges).toHaveText('true false');
 });
 
+test('a bare number for stackBelow is a width in pixels', async ({ page }) => {
+  await page.goto(splitFixture);
+  const split = page.getByTestId('controlled-split-light');
+  await expect(split).not.toHaveAttribute('data-stacked');
+  await split.evaluate((element) => (element.style.inlineSize = '500px'));
+  await expect(split).toHaveAttribute('data-stacked', 'true');
+  await split.evaluate((element) => (element.style.inlineSize = '700px'));
+  await expect(split).not.toHaveAttribute('data-stacked');
+});
+
 test('the panes stack below their own width threshold and the divider leaves', async ({ page }) => {
   await page.goto(splitFixture);
   const frame = page.getByTestId('split-frame-light');

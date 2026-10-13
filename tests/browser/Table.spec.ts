@@ -497,8 +497,12 @@ test('a bare number for stackBelow is a length in pixels', async ({ page }) => {
   const region = page.getByRole('region', { name: 'Bare threshold light' });
   // The frame is 400 px wide, below 600.
   await expect(region).toHaveAttribute('data-stacked', '');
+  // So is the number itself, from an application without types.
+  const number = page.getByRole('region', { name: 'Number threshold light' });
+  await expect(number).toHaveAttribute('data-stacked', '');
   await frame.evaluate((element) => (element.style.inlineSize = '40rem'));
   await expect(region).not.toHaveAttribute('data-stacked');
+  await expect(number).not.toHaveAttribute('data-stacked');
 });
 
 test('a header named by aria-label lends its name to its sort button and resize handle', async ({
@@ -514,6 +518,14 @@ test('a header named by aria-label lends its name to its sort button and resize 
   ).toBeVisible();
   await expect(
     table.getByRole('separator', { name: 'Resize Priority', exact: true }),
+  ).toBeVisible();
+  // So does a header named by aria-labelledby.
+  await expect(table.getByRole('columnheader', { name: 'Due date', exact: true })).toBeVisible();
+  await expect(
+    table.getByRole('button', { name: 'Due date sort ascending', exact: true }),
+  ).toBeVisible();
+  await expect(
+    table.getByRole('separator', { name: 'Resize Due date', exact: true }),
   ).toBeVisible();
 });
 
