@@ -80,6 +80,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 - The tables page shows sorting, resizable columns, selected rows and stacked rows.
 - The text fields page shows an input's prefix and suffix.
 - New pages for sliders and file drop zones; the drop zone page shows a chosen image with actions to replace or remove it.
+- Spacing & shape lists the spacing, corner and control size tokens by name, for application CSS that arranges its own frames with the components.
 
 ## 0.4.0 — 2026-10-11
 
