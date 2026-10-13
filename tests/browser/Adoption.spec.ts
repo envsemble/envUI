@@ -148,6 +148,25 @@ test('Tooltip describes a disabled control on keyboard focus', async ({ page }) 
   await expect(page.getByText('All seats are assigned')).toHaveCount(0);
 });
 
+test('Tooltip keeps opening on hover after its control is enabled or disabled', async ({
+  page,
+}) => {
+  await page.goto(fixture);
+  const invite = page.getByRole('button', { name: 'Invite member' });
+  const toggle = page.getByRole('button', { name: 'Toggle seats' });
+  await toggle.click();
+  await expect(invite).toBeDisabled();
+  await page.locator('.env-tooltip-disabled-target').filter({ has: invite }).hover();
+  await expect(page.locator('.env-tooltip')).toHaveText('No seats left');
+  await page.mouse.move(1, 1);
+  await expect(page.locator('.env-tooltip')).toHaveCount(0);
+  // Enabled again, the control itself is the trigger, and hovering it opens the tooltip.
+  await toggle.click();
+  await expect(invite).toBeEnabled();
+  await invite.hover();
+  await expect(page.locator('.env-tooltip')).toHaveText('Invite a member');
+});
+
 test('error states, meters and avatars expose their semantics', async ({ page }) => {
   await page.goto(fixture);
   await expect(page.getByRole('alert')).toContainText('Products couldn’t load');

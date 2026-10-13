@@ -44,6 +44,10 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 - The toast stack's count of hidden notices is a `Counter`. A dismissed notice steps out of the stack at once and fades where it was, so dismissing several in a row moves the stack once each, without jerking or flashing a scrollbar; a notice revealed from the hidden ones fades in.
 - A collapsed `AppShell` sidebar no longer treats expanded tree rows as open popups, and stays expanded while a context menu opened from it is open.
 
+### Fixed
+
+- A `Tooltip` stopped opening on hover once its control became enabled or disabled, such as a back button once there is somewhere to go: it kept listening to the element the control had replaced.
+
 ### Documentation
 
 - New pages for the tree, document tabs, breadcrumbs, command palette, segmented controls, badges and counters, notices, popovers, tables and keyboard keys. Colors list the status tones.

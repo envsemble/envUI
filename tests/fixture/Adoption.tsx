@@ -61,6 +61,7 @@ export function AdoptionFixture() {
   const [loading, setLoading] = useState(false);
   const [confirmed, setConfirmed] = useState(0);
   const [homes, setHomes] = useState(3);
+  const [seatsFull, setSeatsFull] = useState(false);
   return (
     <ThemePreferenceProvider storageKey="fixture-theme" className="fixture-adoption">
       <LinkProvider component={RecordingLink}>
@@ -164,6 +165,10 @@ export function AdoptionFixture() {
           <Tooltip content="All seats are assigned">
             <Button disabled>Assign seat</Button>
           </Tooltip>
+          <Tooltip content={seatsFull ? 'No seats left' : 'Invite a member'}>
+            <Button disabled={seatsFull}>Invite member</Button>
+          </Tooltip>
+          <Button onClick={() => setSeatsFull((value) => !value)}>Toggle seats</Button>
           <GroupedRows>
             <Row
               title="Seat"
