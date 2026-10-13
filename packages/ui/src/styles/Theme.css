@@ -5,16 +5,12 @@
 }
 /* A themed document root keeps the browser's font size, so 1 rem stays the reader's size (16 px by
    default) and every rem measure keeps its designed size. Its body takes the body type instead, at
-   zero specificity, so an application's own body rule outside cascade layers wins. */
+   zero specificity, so an application's own body rule outside cascade layers styles the body and
+   what lies outside envUI's boundaries. Every boundary sets envUI's type again: a provider's or a
+   Theme around content, and the one around each popup. */
 .env-theme:where(:not(html)),
 :where(.env-theme:where(html) > body) {
   font: var(--type-body);
-}
-/* Inside a themed document root, the theme boundary of a provider that themes the document takes
-   its type from the body, so that body rule reaches the content too. Until the root is themed, the
-   boundary keeps the body type itself. */
-:where(.env-theme:where(html)) .env-theme:where([data-document-theme]) {
-  font: inherit;
 }
 /* Keep component geometry independent of a consuming application's reset. */
 .env-theme,

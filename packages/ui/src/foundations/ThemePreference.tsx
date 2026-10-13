@@ -145,11 +145,7 @@ export function ThemePreferenceProvider({
 
   return (
     <ThemePreferenceContext value={value}>
-      <Theme
-        theme={theme}
-        className={className}
-        data-document-theme={applyToDocument ? '' : undefined}
-      >
+      <Theme theme={theme} className={className}>
         {children}
       </Theme>
     </ThemePreferenceContext>

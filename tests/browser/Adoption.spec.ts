@@ -122,11 +122,17 @@ test('a themed document root keeps the browser font size and its body the body t
   await expect(dialog.getByRole('button', { name: 'Toggle pending' })).toHaveCSS('height', '40px');
 });
 
-test('an application body rule overrides the body type of a themed root', async ({ page }) => {
+test('an application body rule styles the body, while envUI keeps its type inside its boundaries', async ({
+  page,
+}) => {
   await page.goto(fixture);
   await expect(page.locator('html')).toHaveClass(/env-theme/);
-  const text = page.getByTestId('adoption-plain-text');
-  await expect(text).toHaveCSS('font-size', '15px');
+  const body = page.locator('body');
+  const inside = [
+    page.getByTestId('adoption-plain-text'),
+    page.getByTestId('adoption-paragraph'),
+    page.getByTestId('adoption-nested-theme'),
+  ];
   // A rule inside a cascade layer loses to envUI's unlayered style sheet, whatever its specificity.
   const layered = await page.evaluateHandle(() => {
     const style = document.createElement('style');
@@ -134,25 +140,46 @@ test('an application body rule overrides the body type of a themed root', async 
     document.head.prepend(style);
     return style;
   });
-  await expect(page.locator('body')).toHaveCSS('font-size', '15px');
+  await expect(body).toHaveCSS('font-size', '15px');
   await layered.evaluate((style) => style.remove());
-  // The application's style sheet comes first, so only specificity lets its plain body rule win.
+  // An application's unlayered body rule, before envUI's style sheet, styles the body itself.
   await page.evaluate(() => {
     const style = document.createElement('style');
-    style.textContent = 'body { font-size: 18px; line-height: 1.5; }';
+    style.textContent = 'body { font-family: Georgia; font-size: 18px; line-height: 27px; }';
     document.head.prepend(style);
   });
-  await expect(page.locator('body')).toHaveCSS('font-size', '18px');
-  await expect(page.locator('body')).toHaveCSS('line-height', '27px');
-  // It reaches the application's own text inside the provider, which inherits from the body.
-  await expect(text).toHaveCSS('font-size', '18px');
-  await expect(text).toHaveCSS('line-height', '27px');
-  // A Theme that scopes part of the page keeps the body type, and so do the components.
-  await expect(page.getByTestId('adoption-nested-theme')).toHaveCSS('font-size', '15px');
-  await expect(page.locator('body')).toHaveCSS('font-family', /envUI Inter/);
+  await expect(body).toHaveCSS('font-family', 'Georgia');
+  await expect(body).toHaveCSS('font-size', '18px');
+  await expect(body).toHaveCSS('line-height', '27px');
+  // Inside the provider's boundary, text, paragraphs and a Theme around content keep envUI's type,
+  // and so do the components and the popups, each in a boundary of its own.
+  for (const element of [...inside, page.getByTestId('router-button')]) {
+    await expect(element).toHaveCSS('font-family', /envUI Inter/);
+    await expect(element).not.toHaveCSS('font-size', '18px');
+  }
+  for (const element of inside) {
+    await expect(element).toHaveCSS('font-size', '15px');
+    await expect(element).toHaveCSS('line-height', '21px');
+  }
+  await page.getByRole('button', { name: 'Assign seat' }).hover();
+  const tooltip = page.locator('.env-tooltip');
+  await expect(tooltip).toHaveText('All seats are assigned');
+  await expect(tooltip).toHaveCSS('font-family', /envUI Inter/);
+  await page.mouse.move(0, 0);
+  await page.getByRole('button', { name: 'Open pending dialog' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Save project' });
+  await expect(dialog).toHaveCSS('font-family', /envUI Inter/);
+  await expect(dialog).toHaveCSS('font-size', '15px');
+  // envUI's font tokens change its typeface wherever it applies.
+  await page.evaluate(() => {
+    const style = document.createElement('style');
+    style.textContent = '.env-theme { --font-family: Georgia, serif; }';
+    document.head.append(style);
+  });
+  await expect(page.getByTestId('adoption-paragraph')).toHaveCSS('font-family', /^Georgia/);
+  await expect(dialog).toHaveCSS('font-family', /^Georgia/);
   // The root keeps the browser's size, so rem measures keep theirs.
   await expect(page.locator('html')).toHaveCSS('font-size', '16px');
-  await expect(page.getByTestId('router-button')).toHaveCSS('height', '40px');
 });
 
 test('the bootstrap script applies a stored theme before the application renders', async ({

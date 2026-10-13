@@ -68,6 +68,7 @@ export function AdoptionFixture() {
       <LinkProvider component={RecordingLink}>
         <section>
           <div data-testid="adoption-plain-text">Plain application text</div>
+          <p data-testid="adoption-paragraph">An application paragraph</p>
           <Theme theme="light" data-testid="adoption-nested-theme">
             A themed part of the page
           </Theme>
