@@ -254,10 +254,17 @@ button.env-app-sidebar-toggle:focus-visible {
 
 /* While an AppShell without a title bar is in the document, the document scrolls under its fixed
    topbar. Scroll padding as tall as the topbar, and a little more for focus rings, keeps elements
-   that take focus and anchor targets below it from the first paint (WCAG 2.4.11). The rule has zero
-   specificity, so scroll padding the application sets on the document wins. */
-:where(html:has(.env-app-shell:not([data-title-bar]))) {
-  scroll-padding-block-start: calc(var(--topbar-height, 3.25rem) + 0.5rem);
+   that take focus and anchor targets below it (WCAG 2.4.11). AppShell measures its topbar into
+   --env-app-topbar-block-size on the document element; until it does, as on the first paint of a
+   server-rendered page, --topbar-height applies. The rule has zero specificity and sits in a cascade
+   layer of its own, declared with envUI's style sheet, so scroll padding the application sets wins:
+   unlayered, or in its own layers declared after envUI's style sheet. */
+@layer envui-document {
+  :where(html:has(.env-app-shell:not([data-title-bar]))) {
+    scroll-padding-block-start: calc(
+      var(--env-app-topbar-block-size, var(--topbar-height, 3.25rem)) + 0.5rem
+    );
+  }
 }
 
 /* The document scrolls, so content can stick below the fixed topbar with

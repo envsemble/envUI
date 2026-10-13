@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { resolve } from 'node:path';
 import { fixtureUrl } from './Servers';
 
 const fixture = `${fixtureUrl}/?fixture=adoption`;
@@ -734,6 +735,15 @@ test.describe('AppShell', () => {
     });
     await expect(html).toHaveCSS('scroll-padding-top', '90px');
     await late.evaluate((style) => style.remove());
+    // And so does a rule in one of the application's cascade layers, declared after envUI's.
+    const layered = await page.evaluateHandle(() => {
+      const style = document.createElement('style');
+      style.textContent = '@layer utilities { html { scroll-padding-top: 6rem; } }';
+      document.head.append(style);
+      return style;
+    });
+    await expect(html).toHaveCSS('scroll-padding-top', '96px');
+    await layered.evaluate((style) => style.remove());
     await expect(html).toHaveCSS('scroll-padding-top', `${topbar.height + 8}px`);
     // With two shells, the one that stays keeps the padding when the other leaves.
     await page.evaluate(() => {
@@ -745,6 +755,43 @@ test.describe('AppShell', () => {
     await expect(html).toHaveCSS('scroll-padding-top', `${topbar.height + 8}px`);
     await page.evaluate(() => document.querySelector('.env-app-shell')!.remove());
     await expect(html).toHaveCSS('scroll-padding-top', 'auto');
+  });
+
+  test('the scroll padding follows the topbar however tall it is', async ({ page }) => {
+    await page.goto(shellFixture);
+    const html = page.locator('html');
+    const topbar = page.locator('.env-app-topbar');
+    await expect(html).toHaveCSS('scroll-padding-top', '60px');
+    await page.evaluate(() => {
+      const style = document.createElement('style');
+      style.textContent = '.env-theme { --topbar-height: 5rem; }';
+      document.head.append(style);
+    });
+    await expect.poll(async () => (await topbar.boundingBox())!.height).toBeCloseTo(80, 0);
+    await expect(html).toHaveCSS('scroll-padding-top', '88px');
+  });
+
+  test.describe('server-rendered', () => {
+    test.use({ javaScriptEnabled: false });
+
+    test('an anchor in the address lands below the topbar from the first paint', async ({
+      page,
+    }) => {
+      // Markup as a server renders it, before any script runs.
+      const stylesheet = `/@fs/${resolve('packages/ui/src/styles/index.css').replaceAll('\\', '/')}?direct`;
+      await page.route('**/server-rendered-shell.html', (route) =>
+        route.fulfill({
+          contentType: 'text/html',
+          body: `<!doctype html><html lang="en"><head><link rel="stylesheet" href="${stylesheet}"></head><body><div class="env-theme" data-env-theme="light"><div class="env-app-shell"><header class="env-app-topbar">Topbar</header><main class="env-app-content"><div style="height: 1500px"></div><h2 id="later-section">Later section</h2><div style="height: 1500px"></div></main></div></div></body></html>`,
+        }),
+      );
+      await page.goto(`${fixtureUrl}/server-rendered-shell.html#later-section`);
+      const topbar = (await page.locator('.env-app-topbar').boundingBox())!;
+      expect(topbar.height).toBeGreaterThan(40);
+      await expect
+        .poll(async () => (await page.locator('#later-section').boundingBox())!.y)
+        .toBeGreaterThanOrEqual(topbar.y + topbar.height);
+    });
   });
 
   test('an anchor target lands below the topbar', async ({ page }) => {
