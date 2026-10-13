@@ -48,6 +48,7 @@ import { Send } from '@envsemble/envui/icons/Send';
 import { Forum } from '@envsemble/envui/icons/Forum';
 import { VerticalSplit } from '@envsemble/envui/icons/VerticalSplit';
 import { Monitoring } from '@envsemble/envui/icons/Monitoring';
+import { CalendarViewMonth } from '@envsemble/envui/icons/CalendarViewMonth';
 import { type Reference } from '../Reference';
 
 export const foundationIcons: Record<string, typeof Palette> = {
@@ -91,6 +92,7 @@ const referenceIcons: Record<string, typeof Palette> = {
   composer: Send,
   messages: Forum,
   stats: Monitoring,
+  heatmap: CalendarViewMonth,
   navigation: Explore,
   tabs: WebAsset,
   'direction-links': ArrowForward,

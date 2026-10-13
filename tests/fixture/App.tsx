@@ -34,6 +34,7 @@ import { ComposerFixture } from './Composer.js';
 import { MessagesFixture } from './Messages.js';
 import { SplitViewFixture } from './SplitViews.js';
 import { StatsFixture } from './Stats.js';
+import { HeatmapFixture } from './Heatmaps.js';
 
 /** Fixtures that fill the viewport are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
@@ -177,6 +178,12 @@ export default function App() {
             <>
               <StatsFixture theme="light" />
               <StatsFixture theme="dark" />
+            </>
+          )}
+          {includes('heatmap') && (
+            <>
+              <HeatmapFixture theme="light" />
+              <HeatmapFixture theme="dark" />
             </>
           )}
           {includes('menus') && (

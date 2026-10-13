@@ -107,3 +107,6 @@ body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-p
   padding: 0.5rem 1rem;
   list-style: none;
 }
+.fixture-heatmap-narrow {
+  inline-size: min(100%, 24rem);
+}

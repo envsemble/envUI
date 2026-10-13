@@ -26,6 +26,7 @@ import {
   SplitView,
   Stat,
   StatGroup,
+  Heatmap,
 } from '@envsemble/envui';
 
 const treeItems = Array.from({ length: 40 }, (_, index) => ({
@@ -153,6 +154,16 @@ export function HydrationApp() {
             detail="Last 30 days"
           />
         </StatGroup>
+        <Heatmap
+          aria-label="Hydrated activity"
+          data={[
+            { date: '2026-03-02', value: 3 },
+            { date: '2026-03-09', value: 1200 },
+            { date: '2026-03-16', value: 7 },
+          ]}
+          startDate="2026-03-01"
+          endDate="2026-03-31"
+        />
         <output>{name}</output>
       </ToastProvider>
     </Theme>

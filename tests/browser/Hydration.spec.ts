@@ -66,6 +66,13 @@ test('public components hydrate server output without recoverable errors', async
   await page.keyboard.press('ArrowRight');
   await expect(split).toHaveAttribute('aria-valuenow', '52');
   await expect(page.getByLabel('Hydrated stats')).toHaveText('Hydrated stat128+12%Last 30 days');
+  const activity = page.getByRole('grid', { name: 'Hydrated activity' });
+  await expect(activity.getByRole('gridcell')).toHaveCount(31);
+  const peak = activity.getByRole('gridcell', { name: 'Mon 9 Mar 2026: 1,200' });
+  await peak.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(activity.getByRole('gridcell', { name: 'Mon 16 Mar 2026: 7' })).toBeFocused();
+  await expect(page.locator('.env-heatmap-tooltip')).toHaveText('Mon 16 Mar 2026: 7');
   expect(
     await page.evaluate(() => (window as unknown as { hydrationErrors: string[] }).hydrationErrors),
   ).toEqual([]);

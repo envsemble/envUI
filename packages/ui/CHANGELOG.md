@@ -38,6 +38,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 - `Message` and `MessageList`: conversation entries in a polite `log`. Messages `from="self"` are compact bubbles at the inline end in the row tone; messages from others are full-width content without a bubble, so long formatted answers read well. `author`, `meta`, small `actions` below the message, and a `sending` or `failed` `status` shown with an icon and text (`statusLabel`).
 - `SplitView`: two panes side by side with a divider that resizes them, a focusable `separator` in a gutter. Drag it, or press <kbd>←</kbd> and <kbd>→</kbd> (2 percent, 10 with <kbd>Shift</kbd>), <kbd>Home</kbd> and <kbd>End</kbd>; a double click returns to `defaultSize`. `size` and `onSizeChange` give the start pane's share in percent between `minSize` and `maxSize`, `storageKey` keeps the chosen share, and below the `stackBelow` width of the split view itself the panes stack without the divider.
 - `Stat` and `StatGroup`: labelled key figures for dashboards. A stat shows its `label`, a large `value` in tabular digits (an `AnimatedNumber` works too), an optional muted `detail` and a `trend` with a direction icon and text in its tone: up is success, down danger and flat neutral unless `tone` says otherwise. `StatGroup` puts stats on one pane in as many even columns as fit, wrapping as space runs out.
+- `Heatmap`: a calendar of daily values with weeks as columns and weekdays as rows, in `levels` color steps mixed from a `tone` into the canvas, with month and weekday names and a Less–More legend. Every day is a named grid cell; the grid is one tab stop where <kbd>↑</kbd> and <kbd>↓</kbd> move by day, <kbd>←</kbd> and <kbd>→</kbd> by week and <kbd>Home</kbd> and <kbd>End</kbd> reach the range's ends. A single `Tooltip`-styled popup follows the hovered, focused or tapped day, so a year renders without a portal per day. Narrow containers scroll the weeks, starting at the most recent. `startDate`, `endDate`, `maxValue`, `weekStart`, `formatValue`, `formatDate`, `formatTooltip`, `monthLabels`, `weekdayLabels`, `lessLabel` and `moreLabel` adjust and localize it.
 
 ### Changed
 
@@ -52,7 +53,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 - New pages for the tree, document tabs, breadcrumbs, command palette, segmented controls, badges and counters, notices, popovers, tables and keyboard keys. Colors list the status tones.
 - The application shell page shows the frame alone, resizable, and a full-width topbar as a window title bar, with `TitleBar` in a `WindowFrame` on its own. The menus page shows the account and organization menus, and the building blocks for the application's own menus, compact menus and submenus included.
 - New page for the menubar.
-- New pages for the composer, messages, split views and stats.
+- New pages for the composer, messages, split views, stats and heatmaps.
 - Keys in the documentation and the catalogue show as `Kbd` keys.
 - The browser suite's ports can be changed with `ENVUI_CATALOGUE_PORT` and `ENVUI_FIXTURE_PORT`.
 

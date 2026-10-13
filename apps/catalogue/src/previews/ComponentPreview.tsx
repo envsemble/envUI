@@ -18,7 +18,7 @@ import { EmptyStatePreview, LoadingPreview, DialogsPreview } from './Feedback';
 import { ToastsPreview } from './Toasts';
 import { ColorPickerPreview } from './ColorPicking';
 import { ComposerPreview, MessagesPreview } from './Conversation';
-import { StatsPreview } from './Dashboard';
+import { HeatmapPreview, StatsPreview } from './Dashboard';
 import {
   MenuPreview,
   MenubarPreview,
@@ -95,6 +95,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <MessagesPreview />;
     case 'stats':
       return <StatsPreview />;
+    case 'heatmap':
+      return <HeatmapPreview />;
     case 'code':
       return <CodePreview />;
     case 'markdown':
