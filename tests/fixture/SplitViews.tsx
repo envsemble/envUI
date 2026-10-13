@@ -6,6 +6,7 @@ const documents = Array.from({ length: 30 }, (_, index) => `Quarterly report ${i
 export function SplitViewFixture({ theme }: { theme: ThemeValue }) {
   const [changes, setChanges] = useState<number[]>([]);
   const [size, setSize] = useState(30);
+  const [stackedChanges, setStackedChanges] = useState<boolean[]>([]);
   return (
     <Theme theme={theme} data-testid={`split-${theme}`} className="fixture-section">
       <div className="fixture-split-frame" data-testid={`split-frame-${theme}`}>
@@ -18,6 +19,7 @@ export function SplitViewFixture({ theme }: { theme: ThemeValue }) {
           stackBelow="40rem"
           resizeLabel={`Resize documents ${theme}`}
           onSizeChange={(next) => setChanges((list) => [...list, next])}
+          onStackedChange={(stacked) => setStackedChanges((list) => [...list, stacked])}
           start={
             <ul className="fixture-split-list" aria-label={`Documents ${theme}`}>
               {documents.map((name) => (
@@ -36,6 +38,7 @@ export function SplitViewFixture({ theme }: { theme: ThemeValue }) {
         />
       </div>
       <output data-testid={`split-changes-${theme}`}>{changes.join(' ')}</output>
+      <output data-testid={`split-stacked-${theme}`}>{stackedChanges.join(' ')}</output>
       <SplitView
         size={size}
         onSizeChange={setSize}

@@ -31,9 +31,14 @@ export interface SplitViewProps extends Omit<ComponentPropsWithRef<'div'>, 'chil
   storageKey?: string;
   /**
    * A width, such as 48rem: while the split view itself is narrower, the panes stack and the
-   * divider is removed.
+   * divider is removed. The split view then has data-stacked.
    */
   stackBelow?: string;
+  /**
+   * Called with true when the panes stack and with false when they sit side by side again, for
+   * example to show one pane at a time with a way back.
+   */
+  onStackedChange?: (stacked: boolean) => void;
   /** Accessible name of the divider; Resize panes by default. */
   resizeLabel?: string;
 }
@@ -76,6 +81,7 @@ export function SplitView({
   maxSize = 80,
   storageKey,
   stackBelow,
+  onStackedChange,
   resizeLabel = 'Resize panes',
   className,
   style,
@@ -128,6 +134,14 @@ export function SplitView({
     observer.observe(threshold);
     return () => observer.disconnect();
   }, [stackBelow]);
+
+  // Reported before paint, so an application can show the stacked layout's own controls at once.
+  const reportedStacked = useRef(false);
+  useLayoutEffect(() => {
+    if (stacked === reportedStacked.current) return;
+    reportedStacked.current = stacked;
+    onStackedChange?.(stacked);
+  }, [stacked, onStackedChange]);
 
   function changeSize(next: number, persist: boolean) {
     const value = clamp(next);

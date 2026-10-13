@@ -113,10 +113,14 @@ test('the panes stack below their own width threshold and the divider leaves', a
   await page.goto(splitFixture);
   const frame = page.getByTestId('split-frame-light');
   const split = frame.locator('.env-split-view');
+  const stackedChanges = page.getByTestId('split-stacked-light');
   await expect(split).not.toHaveAttribute('data-stacked');
+  await expect(stackedChanges).toHaveText('');
   // The window stays wide; only the split view's container narrows.
   await frame.evaluate((element) => (element.style.inlineSize = '30rem'));
   await expect(split).toHaveAttribute('data-stacked', 'true');
+  // The application hears about it once, with the new arrangement.
+  await expect(stackedChanges).toHaveText('true');
   await expect(page.getByRole('separator', { name: 'Resize documents light' })).toHaveCount(0);
   const [start, end] = await split
     .locator(':scope > .env-split-view-pane')
@@ -138,6 +142,7 @@ test('the panes stack below their own width threshold and the divider leaves', a
   await frame.evaluate((element) => (element.style.inlineSize = ''));
   await expect(split).not.toHaveAttribute('data-stacked');
   await expect(page.getByRole('separator', { name: 'Resize documents light' })).toBeVisible();
+  await expect(stackedChanges).toHaveText('true false');
 
   // A narrow window stacks the panes without overflowing.
   await page.setViewportSize({ width: 320, height: 800 });
