@@ -319,7 +319,7 @@ export function TableHeaderCell({
     <th
       role={stack ? (scope === 'row' ? 'rowheader' : 'columnheader') : undefined}
       aria-sort={sortable ? (sortDirection ?? 'none') : sortDirection}
-      aria-labelledby={labelled ? `${id}-label` : undefined}
+      aria-labelledby={labelled && props['aria-label'] === undefined ? `${id}-label` : undefined}
       {...props}
       ref={setCell}
       scope={scope}
