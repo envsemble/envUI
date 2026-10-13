@@ -281,6 +281,28 @@ test.describe('Submenus', () => {
     expect(errors).toEqual([]);
   });
 
+  test('near the edge of the window a submenu opens on the other side', async ({ page }) => {
+    await page.goto(menusFixture);
+    // The light section's controls move to the inline end of the window.
+    await page.addStyleTag({
+      content:
+        '.fixture-main { max-width: none; } [data-testid="menus-light"] { justify-items: end; }',
+    });
+    await page.getByTestId('menus-light').getByRole('button', { name: 'Compact options' }).click();
+    const menu = page.getByRole('menu', { name: 'Compact options' });
+    await expect(menu).toBeVisible();
+    await settled(menu);
+    await menu.getByRole('menuitem', { name: 'Open recent' }).focus();
+    await page.keyboard.press('ArrowRight');
+    const submenu = page.getByRole('menu', { name: 'Open recent' });
+    await expect(submenu).toBeVisible();
+    await settled(submenu);
+    await expect(submenu).toHaveAttribute('data-side', 'inline-start');
+    const [menuBox, submenuBox] = [(await menu.boundingBox())!, (await submenu.boundingBox())!];
+    expect(submenuBox.x + submenuBox.width).toBeLessThanOrEqual(menuBox.x);
+    expect(submenuBox.x).toBeGreaterThanOrEqual(0);
+  });
+
   test('submenus follow the density and theme of their menu', async ({ page }) => {
     await page.goto(menusFixture);
     // A standard menu opens a standard submenu.
