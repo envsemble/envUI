@@ -87,3 +87,12 @@
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+/* In a button, such as a tab, a counter or badge takes the button's text color as an outlined pill
+   on the button's own fill, so it keeps the button's contrast in every variant and both themes. */
+.env-button .env-counter[data-tone],
+.env-button .env-badge[data-tone] {
+  border: 0.0625rem solid color-mix(in srgb, currentColor 55%, transparent);
+  background: transparent;
+  color: inherit;
+}

@@ -38,6 +38,7 @@ import { MessagesFixture } from './Messages.js';
 import { SplitViewFixture } from './SplitViews.js';
 import { StatsFixture } from './Stats.js';
 import { DropzonesFixture } from './Dropzones.js';
+import { ButtonCountsFixture } from './ButtonCounts.js';
 import { HeatmapFixture } from './Heatmaps.js';
 
 /** Fixtures that fill the viewport are only mounted on their own. */
@@ -212,6 +213,12 @@ export default function App() {
             <>
               <HeatmapFixture theme="light" />
               <HeatmapFixture theme="dark" />
+            </>
+          )}
+          {includes('button-counts') && (
+            <>
+              <ButtonCountsFixture theme="light" />
+              <ButtonCountsFixture theme="dark" />
             </>
           )}
           {includes('menus') && (

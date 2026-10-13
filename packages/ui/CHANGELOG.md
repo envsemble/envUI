@@ -14,7 +14,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 - `DocumentTabs`: closable editor-style tabs with preview tabs, pinning, closing with <kbd>Delete</kbd> or a middle click, and a strip that scrolls sideways. However the focused tab closes, focus moves to the tab that becomes active.
 - `CommandPalette`: a quick-open dialog near the top of the window, on the dialog surface, with grouped options rounded like `Select` options, keyboard highlight, modifier selection and key `hints` shown as `Kbd` keys.
 - `SegmentedControl`: one choice among a few options on a pill rail, with counts and icons.
-- `Badge` in six tones and three variants, `Counter`, and `NavigationItem` `trailing` content (a dot while icon-only).
+- `Badge` in six tones and three variants, `Counter`, and `NavigationItem` `trailing` content (a dot while icon-only). In a button, such as a selected tab, a counter or badge takes the button's text color as an outlined pill, so it keeps the button's contrast in both themes.
 - Status tone tokens `--color-tone-neutral`, `--color-tone-accent`, `--color-tone-success`, `--color-tone-warning`, `--color-tone-danger`, `--color-tone-done` and `--color-on-tone`, with at least 4.5:1 contrast on the canvas, panes and rows in both themes.
 - `Notice`: an inline banner in four tones with an action, a round dismiss button in its tone and `announce` for alerts.
 - `Popover`: a floating panel with a title, two widths and a close function for its content.
