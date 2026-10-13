@@ -18,6 +18,7 @@ import { DockToRight } from '../icons/DockToRight.js';
 import { Skeleton } from '../feedback/Skeleton.js';
 import { LoadingState } from '../feedback/LoadingState.js';
 import { LoadingBar } from '../feedback/LoadingBar.js';
+import { useScrollKeys } from './internal/useScrollKeys.js';
 
 /** Viewports where the sidebar becomes an overlay opened from the topbar. */
 const narrowQuery = '(max-width: 40rem), (max-height: 32rem) and (max-width: 54rem)';
@@ -36,7 +37,9 @@ interface AppShellContextValue {
   closeNarrowSidebar: () => void;
   /**
    * The element that scrolls the page content: the content area in a title-bar shell, else the
-   * document's scrolling element. Read or restore scroll positions on it.
+   * document's scrolling element. Read or restore scroll positions on it. In a title-bar shell it is
+   * null until the content area is attached; the function then changes, so effects that depend on
+   * it run again.
    */
   getScrollElement: () => HTMLElement | null;
 }
@@ -175,7 +178,9 @@ interface AppShellFrameProps {
   /**
    * The topbar is the window's title bar, for installed web apps and desktop shells that draw their
    * own title bar (the Window Controls Overlay): empty space drags the window, it leaves room for the
-   * window controls the system draws, and the controls inside are compact. Meant for the full topbar.
+   * window controls the system draws, and the controls inside are compact. The shell then fills the
+   * window and its content area scrolls below the title bar instead of the document; the keyboard
+   * scrolls it as it would the document. Meant for the full topbar.
    */
   titleBar?: boolean;
   className?: string;
@@ -272,7 +277,10 @@ export function AppShell({
   const sidebarContentRegion = useRef<HTMLDivElement>(null);
   const shell = useRef<HTMLDivElement>(null);
   const navigationRegion = useRef<HTMLElement>(null);
-  const contentRegion = useRef<HTMLElement>(null);
+  // Kept in state, so getScrollElement changes once the content area is attached; refs attach only
+  // after the content's own layout effects run.
+  const [contentElement, setContentElement] = useState<HTMLElement | null>(null);
+  const [shellElement, setShellElement] = useState<HTMLDivElement | null>(null);
   const [contentWidth, setContentWidth] = useState<number>();
   const measuredWidth = useRef<number>(undefined);
   // Transitions start after the first paint, so the measured width never animates in on load.
@@ -434,13 +442,23 @@ export function AppShell({
 
   const closeNarrowSidebar = useCallback(() => setNarrowOpen(false), []);
   // A title-bar shell scrolls its content area below the title bar; otherwise the document scrolls.
+  const scrollingContent = titleBar ? contentElement : null;
   const getScrollElement = useCallback(
     () =>
       titleBar
-        ? contentRegion.current
-        : ((contentRegion.current?.ownerDocument.scrollingElement as HTMLElement | null) ?? null),
-    [titleBar],
+        ? scrollingContent
+        : typeof document === 'undefined'
+          ? null
+          : ((document.scrollingElement as HTMLElement | null) ?? document.documentElement),
+    [titleBar, scrollingContent],
   );
+  // With the document no longer scrolling, the keyboard scrolls the content area as it would the
+  // document.
+  useScrollKeys(titleBar ? shellElement : null, scrollingContent);
+  const setShell = useCallback((node: HTMLDivElement | null) => {
+    shell.current = node;
+    setShellElement(node);
+  }, []);
   const shellApi = useMemo(
     () => ({ closeNarrowSidebar, getScrollElement }),
     [closeNarrowSidebar, getScrollElement],
@@ -542,7 +560,7 @@ export function AppShell({
   return (
     <AppShellContext value={shellApi}>
       <div
-        ref={shell}
+        ref={setShell}
         className={classNames('env-app-shell', className)}
         style={
           resizable ? sidebarWidthStyle(resizableWidth, bounds) : sidebarWidthStyle(contentWidth)
@@ -641,7 +659,7 @@ export function AppShell({
             onClick={closeNarrowSidebar}
           />
         )}
-        <main className="env-app-content" tabIndex={-1} ref={contentRegion}>
+        <main className="env-app-content" tabIndex={-1} ref={setContentElement}>
           {children}
         </main>
       </div>

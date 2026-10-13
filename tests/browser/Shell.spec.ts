@@ -1,5 +1,5 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { catalogueUrl, fixtureUrl } from './Servers';
 
 const resizableShell = `${fixtureUrl}/?fixture=resizable-shell`;
 
@@ -302,6 +302,16 @@ test("a narrow window gives the full topbar's context the room it needs", async 
   expect(actions.x + actions.width).toBeCloseTo(640 - 12, 0);
 });
 
+test('getScrollElement serves page content from its first layout effects', async ({ page }) => {
+  // While the document scrolls, the first call already returns it.
+  await page.goto(resizableShell);
+  await expect(page.getByTestId('mount-scroll-element')).toHaveText(/^html( html)*$/);
+  // In a title-bar shell the function changes once the content area is attached, so a layout
+  // effect that depends on it runs again and gets the content area.
+  await page.goto(fullShell);
+  await expect(page.getByTestId('mount-scroll-element')).toHaveText(/(^| )main$/);
+});
+
 test.describe('Title bar', () => {
   test('the shell topbar is the window title bar: its height, compact controls and drag regions', async ({
     page,
@@ -448,6 +458,81 @@ test.describe('Title bar', () => {
     await page.getByRole('button', { name: 'Close full view' }).click();
     await expect(page.getByTestId('full-view')).toHaveCount(0);
     expect(errors).toEqual([]);
+  });
+
+  test('the keyboard scrolls the content area of a title-bar shell as it would the document', async ({
+    page,
+  }) => {
+    // Without motion the scroll positions are exact.
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(fullShell);
+    const content = page.locator('.env-app-content');
+    const metrics = () =>
+      content.evaluate((element) => ({
+        top: element.scrollTop,
+        end: element.scrollHeight - element.clientHeight,
+        page: element.clientHeight * 0.875,
+      }));
+    const { page: step, end } = await metrics();
+    const expectTop = (top: number) =>
+      expect.poll(async () => Math.abs((await metrics()).top - top)).toBeLessThanOrEqual(1.5);
+
+    // A fresh window: focus is on the document.
+    await page.keyboard.press('PageDown');
+    await expectTop(step);
+    await page.keyboard.press('ArrowDown');
+    await expectTop(step + 40);
+    await page.keyboard.press('ArrowUp');
+    await expectTop(step);
+    await page.keyboard.press('Space');
+    await expectTop(2 * step);
+    await page.keyboard.press('Shift+Space');
+    await expectTop(step);
+    await page.keyboard.press('End');
+    await expectTop(end);
+    await page.keyboard.press('Home');
+    await expectTop(0);
+
+    // After choosing a destination in the sidebar: the page keys scroll, while Space activates
+    // the focused item.
+    const searchItem = page
+      .getByRole('navigation', { name: 'Notes navigation' })
+      .getByRole('button', { name: 'Search' });
+    await searchItem.focus();
+    await page.keyboard.press('PageDown');
+    await expectTop(step);
+    await page.keyboard.press('Home');
+    await expectTop(0);
+    await page.keyboard.press('Space');
+    await page.waitForTimeout(200);
+    expect((await metrics()).top).toBe(0);
+
+    // Widgets that use the keys keep them, such as a menubar trigger.
+    await page.getByRole('menuitem', { name: 'File', exact: true }).focus();
+    await page.keyboard.press('PageDown');
+    await page.waitForTimeout(200);
+    expect((await metrics()).top).toBe(0);
+
+    // A list that scrolls itself takes the keys.
+    const list = page.getByTestId('sidebar-list');
+    await list.focus();
+    await page.keyboard.press('PageDown');
+    await expect.poll(() => list.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
+    expect((await metrics()).top).toBe(0);
+  });
+
+  test('a page whose document scrolls keeps its keys while it shows a title-bar frame', async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(`${catalogueUrl}/#/components/app-shell/preview`);
+    await expect(page.locator('.env-app-shell[data-title-bar]')).toBeVisible();
+    await page.keyboard.press('PageDown');
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+    for (const scroller of await page
+      .locator('.env-window-frame-content, .env-app-shell[data-title-bar] .env-app-content')
+      .all())
+      expect(await scroller.evaluate((element) => element.scrollTop)).toBe(0);
   });
 
   test('a title bar keeps at least --title-bar-height, which an application can set', async ({

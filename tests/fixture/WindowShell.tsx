@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import {
   AppShell,
   AppShellSkeleton,
@@ -55,6 +55,17 @@ export function ScrollProbe() {
   );
 }
 
+/** Records what getScrollElement returns to a layout effect as the page content mounts. */
+export function MountProbe() {
+  const { getScrollElement } = useAppShell();
+  const [seen, setSeen] = useState<string[]>([]);
+  useLayoutEffect(() => {
+    const element = getScrollElement();
+    setSeen((current) => [...current, element?.tagName.toLowerCase() ?? 'none']);
+  }, [getScrollElement]);
+  return <output data-testid="mount-scroll-element">{seen.join(' ')}</output>;
+}
+
 /**
  * A full-width topbar, as the window's title bar unless ?titleBar=off, mounted with
  * ?fixture=full-shell.
@@ -106,6 +117,13 @@ export function FullShellFixture() {
           </NavigationItem>
         </>
       }
+      sidebarContent={
+        <ul className="fixture-sidebar-list" data-testid="sidebar-list" tabIndex={0}>
+          {Array.from({ length: 80 }, (_, index) => (
+            <li key={index}>Note {index + 1}</li>
+          ))}
+        </ul>
+      }
       resizable
       className="fixture-full-shell"
     >
@@ -113,6 +131,7 @@ export function FullShellFixture() {
         Sticky document header
       </header>
       <ScrollProbe />
+      <MountProbe />
       <div className="fixture-actions">
         <button type="button" onClick={() => setFullView(true)}>
           Show full view
@@ -130,7 +149,7 @@ export function FullShellFixture() {
         </div>
       )}
       <div className="fixture-tall-page">
-        {Array.from({ length: short ? 2 : 60 }, (_, index) => (
+        {Array.from({ length: short ? 2 : 150 }, (_, index) => (
           <p key={index}>Paragraph {index + 1}</p>
         ))}
       </div>
