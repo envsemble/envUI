@@ -314,6 +314,50 @@ test('a stacking table lists its rows as blocks in a narrow container and keeps 
   }
 });
 
+test('stacked labels take the room they need and long values wrap inside the row', async ({
+  page,
+}) => {
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const theme of themes) {
+      const table = page.getByRole('table', { name: `Pages ${theme}` });
+      await expect(page.getByRole('region', { name: `Pages ${theme}` })).toHaveAttribute(
+        'data-stacked',
+        '',
+      );
+      const row = table.locator('tbody > tr').first();
+      const rowBox = (await row.boundingBox())!;
+      const padding = await row.evaluate((element) =>
+        parseFloat(getComputedStyle(element).paddingRight),
+      );
+      const cells = row.locator('.env-table-cell[data-labelled]');
+      await expect(cells).toHaveCount(3);
+      const labels = await cells
+        .locator('.env-table-cell-label')
+        .evaluateAll((elements) =>
+          elements.map((element) => element.getBoundingClientRect().toJSON()),
+        );
+      const values = await cells.locator('.env-table-cell-content').evaluateAll((elements) =>
+        elements.map((element) => ({
+          box: element.getBoundingClientRect().toJSON(),
+          overflows: element.scrollWidth > element.clientWidth,
+        })),
+      );
+      // The label column fits the longest label, well under half the row.
+      expect(labels[0]!.width).toBeLessThan(rowBox.width / 3);
+      for (const value of values) {
+        // Values line up after the labels and wrap within the row instead of overflowing it.
+        expect(value.box.x).toBeCloseTo(values[0]!.box.x, 0);
+        expect(value.box.x + value.box.width).toBeLessThanOrEqual(
+          rowBox.x + rowBox.width - padding + 0.5,
+        );
+        expect(value.overflows).toBe(false);
+      }
+      expect(values[1]!.box.height).toBeGreaterThan(30);
+    }
+  }
+});
+
 test('a table stacks below the width it is given, measured on its region', async ({ page }) => {
   for (const theme of themes) {
     const frame = page.getByTestId(`wide-stack-frame-${theme}`);

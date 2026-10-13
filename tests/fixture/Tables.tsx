@@ -172,6 +172,30 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
           </TableBody>
         </Table>
       </div>
+      <div className="fixture-narrow-stack-frame" data-testid={`narrow-stack-frame-${theme}`}>
+        <Table aria-label={`Pages ${theme}`} narrowLayout="stack">
+          <TableHead>
+            <TableRow>
+              <TableHeaderCell>Page</TableHeaderCell>
+              <TableHeaderCell>Status</TableHeaderCell>
+              <TableHeaderCell>Address</TableHeaderCell>
+              <TableHeaderCell>Owner</TableHeaderCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell>Quarterly report</TableCell>
+              <TableCell label="Status">
+                <Badge tone="warning">Draft</Badge> Unpublished changes since the last review
+              </TableCell>
+              <TableCell label="Address">
+                https://example.com/reports/2026/quarterly-report-with-a-very-long-address
+              </TableCell>
+              <TableCell label="Owner">Aurora</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </div>
       <div className="fixture-wide-stack-frame" data-testid={`wide-stack-frame-${theme}`}>
         <Table aria-label={`Seven columns ${theme}`} narrowLayout="stack" stackBelow="60rem">
           <TableHead>

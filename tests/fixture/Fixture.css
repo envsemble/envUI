@@ -105,6 +105,9 @@ body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-p
 .fixture-wide-stack-frame {
   inline-size: min(100%, 48rem);
 }
+.fixture-narrow-stack-frame {
+  inline-size: min(100%, 22rem);
+}
 .fixture-visually-hidden {
   position: absolute;
   inline-size: 1px;

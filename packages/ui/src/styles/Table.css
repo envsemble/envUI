@@ -279,9 +279,12 @@
 .env-table-region[data-stacked] .env-table-column-resize {
   display: none;
 }
+/* The labels share a column as wide as the longest one, up to 10 rem, so the values line up and keep
+   the rest of the row; each labelled cell spans both columns through a subgrid. */
 .env-table-region[data-stacked] .env-table-body > .env-table-row {
   display: grid;
-  gap: var(--space-1);
+  grid-template-columns: fit-content(10rem) minmax(0, 1fr);
+  gap: var(--space-1) var(--space-3);
   padding: var(--env-table-cell-padding);
 }
 .env-table-region[data-stacked] .env-table-body > .env-table-row + .env-table-row {
@@ -291,10 +294,13 @@
   .env-table-body
   > .env-table-row
   > :is(.env-table-cell, .env-table-header-cell) {
+  grid-column: 1 / -1;
+  min-inline-size: 0;
   padding: 0;
   border-block-start: 0;
   text-align: start;
   white-space: normal;
+  overflow-wrap: anywhere;
 }
 .env-table-region[data-stacked] .env-table-body > .env-table-row > :first-child {
   margin-block-end: var(--space-1);
@@ -303,9 +309,11 @@
 }
 .env-table-region[data-stacked] .env-table-cell[data-labelled] {
   display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
-  gap: var(--space-3);
+  grid-template-columns: subgrid;
   align-items: baseline;
+}
+.env-table-region[data-stacked] .env-table-cell-content {
+  min-inline-size: 0;
 }
 .env-table-region[data-stacked] .env-table-cell-label {
   display: block;
