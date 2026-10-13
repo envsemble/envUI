@@ -114,14 +114,14 @@ function ancestors(element: Element) {
 /**
  * Whether what has focus inside an element is out of sight: a shadow host, whose shadow root may be
  * closed, as in any custom element. An element that cannot take focus itself, such as a span, only
- * passes on a key from its closed shadow root.
+ * passes on a key from its closed shadow root; browsers let a scroll area take focus without a
+ * tabindex, so it is not one.
  */
-function hidesFocus(element: Element) {
-  return (
-    element.shadowRoot !== null ||
-    element.localName.includes('-') ||
-    !element.matches(focusableSelector)
-  );
+function hidesFocus(element: Element, view: Window) {
+  if (element.shadowRoot !== null || element.localName.includes('-')) return true;
+  if ((element as HTMLElement).tabIndex >= 0 || element.matches(focusableSelector)) return false;
+  const { overflowX, overflowY } = view.getComputedStyle(element);
+  return !/^(auto|scroll)$/.test(overflowX) && !/^(auto|scroll)$/.test(overflowY);
 }
 
 /** How far an element can still scroll that way. */
@@ -136,8 +136,9 @@ function room(element: Element, direction: -1 | 1) {
  * browser scrolls a page: Page Up and Page Down, Space and Shift+Space, Home, End and the up and
  * down arrows. With focus in the region the browser scrolls it; these keys come from the document
  * and from controls outside the region that leave the key alone. Fields, widgets that use the keys,
- * media controls, web components that hold focus out of sight, anything that scrolls that way
- * itself and keys that the page handled first keep them; with focus on the document, so does an
+ * media controls, elements that hold focus out of sight (web components, or any element with a
+ * closed shadow root), anything that scrolls that way itself and keys that the page handled first
+ * keep them; with focus on the document, so does an
  * area that scrolls where the pointer last pressed, as browsers scroll that area. As in the
  * browser, quick presses add up and a held key repeats at once.
  *
@@ -188,9 +189,9 @@ function listenForScrollKeys(root: HTMLElement, scroller: HTMLElement, view: Win
       // Focus outside the root, such as in a dialog, belongs elsewhere.
       const end = chain.indexOf(root);
       if (end === -1) return false;
-      // Where the path ends at a web component, such as one with a field in a closed shadow root,
-      // the key may be typed; it stays with the browser.
-      if (hidesFocus(focused)) return false;
+      // Where the path ends at an element that holds focus out of sight, such as one with a field
+      // in a closed shadow root, the key may be typed; it stays with the browser.
+      if (hidesFocus(focused, view)) return false;
       for (const element of chain.slice(0, end)) {
         if (element.matches(widgetSelector) || (element as HTMLElement).isContentEditable)
           return false;
