@@ -758,6 +758,14 @@ test.describe('Title bar', () => {
     expect(
       await closedField.evaluate((element) => (element as HTMLElement & { value: string }).value),
     ).toBe('xa b');
+    // So does an ordinary element with a closed shadow root, which cannot take focus itself.
+    const plainField = page.getByTestId('plain-closed-field');
+    await plainField.focus();
+    await page.keyboard.type('c d');
+    expect(await taken()).toBe('false');
+    expect(
+      await plainField.evaluate((element) => (element as HTMLElement & { value: string }).value),
+    ).toBe('c d');
     // Media controls use the keys too.
     await page.getByLabel('Recording').focus();
     for (const key of ['Space', 'Home', 'ArrowDown']) {

@@ -111,6 +111,16 @@ class ClosedField extends HTMLElement {
 if (!customElements.get('fixture-closed-field'))
   customElements.define('fixture-closed-field', ClosedField);
 
+/** The same in an ordinary element, which cannot take focus itself. */
+function attachPlainField(host: HTMLSpanElement | null) {
+  if (!host || 'value' in host) return;
+  const field = document.createElement('input');
+  field.setAttribute('aria-label', 'Plain note');
+  field.size = 12;
+  host.attachShadow({ mode: 'closed', delegatesFocus: true }).append(field);
+  Object.defineProperty(host, 'value', { get: () => field.value });
+}
+
 /**
  * A title-bar shell for the scrolling keys, mounted with ?fixture=scroll-keys: a button and a link
  * in the navigation, fields in open and closed shadow roots, media controls, a list that scrolls
@@ -127,6 +137,7 @@ export function ScrollKeysFixture() {
         <>
           {createElement('fixture-field')}
           {createElement('fixture-closed-field')}
+          <span ref={attachPlainField} data-testid="plain-closed-field" />
           <audio controls tabIndex={0} aria-label="Recording" className="fixture-recording" />
         </>
       }

@@ -37,6 +37,23 @@ const widgetSelector = [
   'object',
   ...widgetRoles.map((role) => `[role="${role}"]`),
 ].join(', ');
+/** Elements that can take focus themselves. */
+const focusableSelector = [
+  'a[href]',
+  'area[href]',
+  'button',
+  'input',
+  'select',
+  'textarea',
+  'summary',
+  'audio[controls]',
+  'video[controls]',
+  'iframe',
+  'embed',
+  'object',
+  '[tabindex]',
+  '[contenteditable]',
+].join(', ');
 /** Controls that Space activates, so it does not scroll from them. Links follow Enter only. */
 const spaceSelector = 'button, summary, [role="button"], [role="checkbox"], [role="switch"]';
 /** Keys that only change others, which do not end a run of presses. */
@@ -96,10 +113,15 @@ function ancestors(element: Element) {
 
 /**
  * Whether what has focus inside an element is out of sight: a shadow host, whose shadow root may be
- * closed, as in any custom element.
+ * closed, as in any custom element. An element that cannot take focus itself, such as a span, only
+ * passes on a key from its closed shadow root.
  */
 function hidesFocus(element: Element) {
-  return element.shadowRoot !== null || element.localName.includes('-');
+  return (
+    element.shadowRoot !== null ||
+    element.localName.includes('-') ||
+    !element.matches(focusableSelector)
+  );
 }
 
 /** How far an element can still scroll that way. */
