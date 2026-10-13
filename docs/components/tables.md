@@ -49,7 +49,7 @@ import {
 | Name                                     | Contract                                                                                                                                  |
 | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | Table aria-label / caption               | Name the table: a visible caption, or aria-label without one; the scroll region shares the name                                           |
-| Table density                            | standard (default) or compact rows                                                                                                        |
+| Table density                            | standard (default) or compact rows; in compact tables, controls in the cells take the compact control height                              |
 | Table stickyHeader                       | The header row stays visible while the table scrolls inside its region; give it a height                                                  |
 | Table regionClassName                    | Class of the scroll region, for example to limit its height                                                                               |
 | Table narrowLayout                       | scroll (default) keeps the columns and scrolls sideways; stack lists each body row as a block when the region is narrower than stackBelow |
@@ -159,7 +159,7 @@ const sortBy = (column: string) =>
 - Use a table for data people compare across rows and columns. Use grouped rows or cards for a short list of items with actions.
 - The table sits on a rounded surface with subtle dividers between rows. It is a focusable region that scrolls sideways when the columns do not fit, so keyboard users can scroll it too.
 - Put a muted second line under a cell's main text with `<Text variant="caption">`, for example a folder under a title.
-- Keep actions in the cells as links or buttons; interactive only adds the hover highlight. Badges show states, and numeric columns compare best with numeric.
+- Keep actions in the cells as links or buttons; interactive only adds the hover highlight. Badges show states, and numeric columns compare best with numeric. In a compact table, buttons, icon buttons and fields in the cells take the 2 rem compact height, as on a compact Surface, which grows to the touch height on coarse pointers.
 - stickyHeader makes the region scroll vertically as well, so give it a height through regionClassName or the surrounding layout.
 - A sortable header is a button across the whole cell: its label, then an arrow for the current order, or a neutral double arrow while the column is not sorted. In numeric columns the arrow comes first, so the label lines up with the numbers. The header announces its order through aria-sort, and the button's name says what pressing it does, such as "Report, sort ascending". The application sorts the rows and decides the next order.
 - Resizable columns move the boundary between a column and the next one, so the table keeps its width. Drag the handle at the end of a header cell, or focus it and press <kbd>←</kbd> or <kbd>→</kbd> to move it by 1 percent, with <kbd>Shift</kbd> by 5 percent; <kbd>Home</kbd> and <kbd>End</kbd> go to the column's smallest and largest width. Double-click a handle to restore the starting widths. Columns with set widths wrap long words and cut nowrap cells short with an ellipsis.

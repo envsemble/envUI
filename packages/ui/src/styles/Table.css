@@ -33,6 +33,10 @@
 }
 .env-table[data-density='compact'] {
   --env-table-cell-padding: var(--space-2) var(--space-3);
+  /* Controls in the cells take the compact height, as on a compact Surface; it still grows for touch. */
+  --control-height-small: var(--control-height-compact);
+  --control-height: var(--control-height-compact);
+  --icon-button-size: var(--control-height-compact);
   font: var(--type-body-small);
 }
 .env-table-caption {

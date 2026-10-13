@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import {
   Badge,
+  Button,
   Checkbox,
+  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -13,6 +15,7 @@ import {
   type TableSortDirection,
   type ThemeValue,
 } from '@envsemble/envui';
+import { MoreVert } from '@envsemble/envui/icons/MoreVert';
 
 const reports = [
   { id: 'quarterly', title: 'Quarterly report', owner: 'Aurora', reviews: 12, status: 'Ready' },
@@ -126,7 +129,14 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
               A very long report name that is cut short in a narrow column
             </TableCell>
             <TableCell>Aurora</TableCell>
-            <TableCell>Ready</TableCell>
+            <TableCell>
+              <Button variant="text">Open</Button>
+              <IconButton
+                variant="text"
+                icon={<MoreVert />}
+                aria-label={`More for the report ${theme}`}
+              />
+            </TableCell>
           </TableRow>
         </TableBody>
       </Table>
@@ -210,11 +220,14 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
         </TableHead>
         <TableBody>
           <TableRow>
-            {Array.from({ length: 8 }, (_, index) => (
+            {Array.from({ length: 7 }, (_, index) => (
               <TableCell key={index} nowrap>
                 Value {index + 1}
               </TableCell>
             ))}
+            <TableCell>
+              <Button variant="text">Edit</Button>
+            </TableCell>
           </TableRow>
         </TableBody>
       </Table>

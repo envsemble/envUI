@@ -18,7 +18,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 - Status tone tokens `--color-tone-neutral`, `--color-tone-accent`, `--color-tone-success`, `--color-tone-warning`, `--color-tone-danger`, `--color-tone-done` and `--color-on-tone`, with at least 4.5:1 contrast on the canvas, panes and rows in both themes.
 - `Notice`: an inline banner in four tones with an action, a round dismiss button in its tone and `announce` for alerts.
 - `Popover`: a floating panel with a title, two widths and a close function for its content.
-- `Table` with `TableHead`, `TableBody`, `TableRow`, `TableHeaderCell` and `TableCell`: density, sticky headers, numeric cells and a focusable scroll region, which keeps content positioned in cells, such as visually hidden text, from widening the page.
+- `Table` with `TableHead`, `TableBody`, `TableRow`, `TableHeaderCell` and `TableCell`: density, where compact tables give the controls in their cells the compact height, sticky headers, numeric cells and a focusable scroll region, which keeps content positioned in cells, such as visually hidden text, from widening the page.
 - `Breadcrumbs` and `Kbd`.
 - `Markdown` `components`, `remarkPlugins` and `rehypePlugins`; application overrides win and attributes such as heading ids reach the elements. Raw HTML is dropped before any rehype plugin runs, so it stays ignored, except keys written as `<kbd>Ctrl</kbd>`, which render as `Kbd`.
 - `Dialog` `size="wide"` (about 44 rem), also for right panels, and `placement="top"`.
