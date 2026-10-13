@@ -133,19 +133,36 @@ const sortBy = (column: string) =>
 ### Stacked rows in narrow containers
 
 ```tsx
+import { ActionGroup, IconButton, Select } from '@envsemble/envui';
+import { ArrowDownward } from '@envsemble/envui/icons/ArrowDownward';
+import { ArrowUpward } from '@envsemble/envui/icons/ArrowUpward';
+
 const [stacked, setStacked] = useState(false);
+const descending = sort?.direction === 'descending';
 
 <>
   {stacked && (
-    <Select
-      label="Sort by"
-      value={sort?.column ?? null}
-      onValueChange={(column) => column && sortBy(column)}
-      options={[
-        { value: 'title', label: 'Report' },
-        { value: 'reviews', label: 'Reviews' },
-      ]}
-    />
+    <ActionGroup>
+      <Select
+        label="Sort by"
+        value={sort?.column ?? null}
+        onValueChange={(column) =>
+          column && setSort({ column, direction: sort?.direction ?? 'ascending' })
+        }
+        options={[
+          { value: 'title', label: 'Report' },
+          { value: 'reviews', label: 'Reviews' },
+        ]}
+      />
+      <IconButton
+        icon={descending ? <ArrowDownward /> : <ArrowUpward />}
+        aria-label={descending ? 'Sort ascending' : 'Sort descending'}
+        disabled={!sort}
+        onClick={() =>
+          sort && setSort({ ...sort, direction: descending ? 'ascending' : 'descending' })
+        }
+      />
+    </ActionGroup>
   )}
   <Table aria-label="Reports" narrowLayout="stack" onStackedChange={setStacked}>
     <TableHead>
@@ -180,7 +197,7 @@ const [stacked, setStacked] = useState(false);
 - A sortable header is a button across the whole cell: its label, then an arrow for the current order, or a neutral double arrow while the column is not sorted. In numeric columns the arrow comes first, so the label lines up with the numbers. The header announces its order through aria-sort, and the button's name says what pressing it does, such as "Report sort ascending". A header named with aria-label, such as one that shows only an icon, lends that name to its sort button and resize handle. The application sorts the rows and decides the next order.
 - Resizable columns move the boundary between a column and the next one, so the table keeps its width. Drag the handle at the end of a header cell, or focus it and press <kbd>←</kbd> or <kbd>→</kbd> to move it by 1 percent, with <kbd>Shift</kbd> by 5 percent; <kbd>Home</kbd> and <kbd>End</kbd> go to the column's smallest and largest width. Double-click a handle to restore the starting widths. Columns with set widths wrap long words and cut nowrap cells short with an ellipsis.
 - Selected rows take the navigation selection color with a bar at their start and report aria-selected. Pass selected={false} to the other rows of a table whose rows can be selected, so every row exposes its state. Screen readers announce row selection unevenly in tables, so pair selected with a control people use to select, such as a Checkbox in the first cell, whose state they always hear.
-- narrowLayout="stack" follows the width of the table's region, not the window. Below stackBelow, 36 rem by default, each body row becomes a block: the first cell is its title, and the other cells show their label beside their value. The labels share a column as wide as the longest one, up to 10 rem, so the values line up and long values, such as an address, wrap within the row. Give a table with many columns a wider stackBelow, such as 60rem for seven sortable columns, so it stacks instead of scrolling sideways. The header row is then visually hidden but still read by assistive technology, and appears while a sort button in it has keyboard focus. Where sorting matters on small screens, offer another sort control while the rows stack: onStackedChange tells the application when they stack and when the columns return, and the region has data-stacked meanwhile, so the application need not repeat the width in its own CSS. Resize handles are hidden while rows are stacked.
+- narrowLayout="stack" follows the width of the table's region, not the window. Below stackBelow, 36 rem by default, each body row becomes a block: the first cell is its title, and the other cells show their label beside their value. The labels share a column as wide as the longest one, up to 10 rem, so the values line up and long values, such as an address, wrap within the row. Give a table with many columns a wider stackBelow, such as 60rem for seven sortable columns, so it stacks instead of scrolling sideways. The header row is then visually hidden but still read by assistive technology, and appears while a sort button in it has keyboard focus. Where sorting matters on small screens, offer another sort control while the rows stack, such as a Select for the column and a button that reverses the order, as above: onStackedChange tells the application when they stack and when the columns return, and the region has data-stacked meanwhile, so the application need not repeat the width in its own CSS. Resize handles are hidden while rows are stacked.
 - The table measures its region after it is in the document, before the browser paints a client render. Server-rendered markup shows the columns until the page hydrates, and a narrow table then stacks. A hidden table, such as one in a hidden tab panel, has nothing to measure and keeps its layout until it shows again.
 - Content positioned inside cells, such as visually hidden text, stays inside the table's region and scrolls with it, so it never widens the page.
 
