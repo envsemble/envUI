@@ -108,6 +108,13 @@
 .docs-narrow-actions {
   width: min(100%, 16rem);
 }
+.docs-file-preview {
+  align-items: center;
+}
+.docs-file-preview > img {
+  border-radius: var(--radius-standard);
+  object-fit: cover;
+}
 .docs-compact-feature {
   inline-size: min(100%, 24rem);
 }
@@ -205,6 +212,13 @@
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: var(--space-3);
+}
+/* A header bar: the breadcrumb trail takes the room the status and the action leave. */
+.docs-breadcrumb-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--space-2);
 }
 /* The organization menu fills the shell's context area; the specimen gives it the same width. */
 .docs-organization-slot {

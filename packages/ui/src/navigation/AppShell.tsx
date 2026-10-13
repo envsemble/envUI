@@ -461,6 +461,7 @@ export function AppShell({
   // With the document no longer scrolling, the keyboard scrolls the content area as it would the
   // document.
   useScrollKeys(titleBar ? shellElement : null, scrollingContent);
+  useTopbarBlockSize(titleBar ? null : shellElement);
   const setShell = useCallback((node: HTMLDivElement | null) => {
     shell.current = node;
     setShellElement(node);
@@ -692,6 +693,47 @@ export interface AppShellSkeletonProps
   sidebarMaxWidth?: number;
   /** Placeholder for the page content. */
   children?: ReactNode;
+}
+
+/** The topbars of the shells in each document, with their heights. */
+const documentTopbars = new WeakMap<Document, Map<HTMLElement, number>>();
+
+/** Writes the tallest topbar of a document's shells, which its scroll padding follows. */
+function publishTopbarBlockSize(page: Document) {
+  const heights = documentTopbars.get(page);
+  const root = page.documentElement;
+  if (!heights?.size) root.style.removeProperty('--env-app-topbar-block-size');
+  else root.style.setProperty('--env-app-topbar-block-size', `${Math.max(...heights.values())}px`);
+}
+
+/**
+ * Measures the topbar of a shell whose document scrolls under it, so the document's scroll padding
+ * keeps focus and anchor targets below the topbar however tall it is. Only the namespaced custom
+ * property is written on the document element; the padding itself comes from a style rule.
+ */
+function useTopbarBlockSize(shellElement: HTMLElement | null) {
+  useLayoutEffect(() => {
+    const topbar = shellElement?.querySelector<HTMLElement>(':scope > .env-app-topbar');
+    if (!topbar) return;
+    const page = topbar.ownerDocument;
+    let heights = documentTopbars.get(page);
+    if (!heights) documentTopbars.set(page, (heights = new Map()));
+    const shellTopbars = heights;
+    const update = () => {
+      // A topbar without a box, hidden or taken out of the document, measures 0, so a shell that is
+      // hidden alone keeps nothing clear but the margin.
+      shellTopbars.set(topbar, topbar.offsetHeight);
+      publishTopbarBlockSize(page);
+    };
+    update();
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(update);
+    observer?.observe(topbar);
+    return () => {
+      observer?.disconnect();
+      shellTopbars.delete(topbar);
+      publishTopbarBlockSize(page);
+    };
+  }, [shellElement]);
 }
 
 /** The AppShell frame with placeholders, for the first load before account data is available. */

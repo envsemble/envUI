@@ -27,6 +27,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Surface](components/surface.md) — A background pane without automatic spacing between children.
 - [Grouped rows](components/rows.md) — Group related items with shared outer corners.
 - [Cards](components/cards.md) — A content surface with automatic spacing and optional actions.
+- [Split view](components/split-view.md) — Two panes side by side with a divider that resizes them; they stack in narrow containers.
 
 ## Actions
 
@@ -37,10 +38,13 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 - [Color picker](components/color-picker.md) — A color area, hue slider and HEX field for opaque colors.
 - [Text fields](components/fields.md) — Single-line inputs, search fields and multiline textareas share labels, guidance and states.
+- [Composer](components/composer.md) — The message field of a conversation, with a send button that stops a running reply.
 - [Checkboxes](components/checkbox.md) — Independent choices; partial selection represents a group.
 - [Switches](components/switch.md) — Use for an on/off setting that applies immediately.
 - [Radio groups](components/radio.md) — Choose one option from a visible set.
 - [Selects](components/select.md) — Choose one option while keeping alternatives collapsed.
+- [Sliders](components/slider.md) — Choose a value in a range by dragging a thumb or with the keyboard.
+- [File drop zones](components/file-dropzone.md) — Drop files or choose them in the file picker; the application shows what was chosen.
 
 ## Navigation
 
@@ -59,11 +63,14 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Code](components/code.md) — Render inline code and highlighted code blocks.
 - [Info chips](components/chips.md) — Read-only metadata beside related content.
 - [Badges & counters](components/badges.md) — Small pills that name a state in its tone, and compact counts.
-- [Tables](components/tables.md) — Semantic data tables on a rounded surface, with dense and sticky options.
+- [Tables](components/tables.md) — Semantic data tables on a rounded surface: sorting, resizable columns, selected rows and stacked rows in narrow containers.
 - [Keyboard keys](components/keyboard.md) — Key caps for shortcuts in text, menus and hints.
 - [Animated numbers](components/animated-number.md) — Counts that roll to their new value, so a change is noticed.
 - [Disclosure notes](components/disclosures.md) — Keep optional details collapsed until needed.
 - [Avatars](components/avatar.md) — A picture of a person or organization with a default picture or initials as fallback, and the avatar button.
+- [Messages](components/messages.md) — Conversation entries in a log: compact bubbles for your own messages, full-width content from others.
+- [Stats](components/stats.md) — Labelled key figures for dashboards, with a trend and detail, grouped in even columns.
+- [Heatmap](components/heatmap.md) — A calendar of daily values in color steps, with a tooltip and keyboard access for every day.
 
 ## Feedback & overlays
 

@@ -14,12 +14,27 @@ import {
   DocumentTabs,
   Notice,
   SegmentedControl,
+  Slider,
+  FileDropzone,
   Tree,
   TitleBar,
   Menubar,
   MenubarMenu,
   MenuItem,
   MenuSubmenu,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeaderCell,
+  TableRow,
+  Composer,
+  Message,
+  MessageList,
+  SplitView,
+  Stat,
+  StatGroup,
+  Heatmap,
 } from '@envsemble/envui';
 
 const treeItems = Array.from({ length: 40 }, (_, index) => ({
@@ -39,6 +54,10 @@ export function HydrationApp() {
   const [view, setView] = useState('open');
   const [tab, setTab] = useState('one');
   const [selected, setSelected] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<'ascending' | 'descending'>('ascending');
+  const [draft, setDraft] = useState('');
+  const [message, setMessage] = useState('');
+  const [files, setFiles] = useState('No files yet');
   return (
     <Theme theme="dark">
       <ToastProvider>
@@ -61,7 +80,14 @@ export function HydrationApp() {
           value={name}
           onChange={(event) => setName(event.target.value)}
         />
+        <Input label="Hydrated amount" prefix="€" suffix="per month" defaultValue="12" />
         <Checkbox label="Hydrated choice" checked={checked} onCheckedChange={setChecked} />
+        <Slider
+          label="Hydrated level"
+          name="level"
+          defaultValue={40}
+          formatValue={(value) => `${value}%`}
+        />
         <ColorPicker label="Hydrated color" defaultValue="#1a73e8" />
         <Select
           label="Hydrated select"
@@ -115,6 +141,81 @@ export function HydrationApp() {
             onExpandedChange={() => undefined}
           />
         </div>
+        <Table
+          aria-label="Hydrated table"
+          narrowLayout="stack"
+          resizableColumns
+          defaultColumnWidths={[60, 40]}
+        >
+          <TableHead>
+            <TableRow>
+              <TableHeaderCell
+                sortDirection={sortDirection}
+                onSort={() =>
+                  setSortDirection((current) =>
+                    current === 'ascending' ? 'descending' : 'ascending',
+                  )
+                }
+              >
+                Hydrated name
+              </TableHeaderCell>
+              <TableHeaderCell>Hydrated owner</TableHeaderCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow selected>
+              <TableCell>Quarterly report</TableCell>
+              <TableCell label="Owner">Aurora</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+        <MessageList aria-label="Hydrated conversation">
+          <Message from="other" author="Aurora" meta="09:41">
+            Hydrated answer
+          </Message>
+          {message && <Message from="self">{message}</Message>}
+        </MessageList>
+        <Composer
+          aria-label="Hydrated composer"
+          value={draft}
+          onValueChange={setDraft}
+          onSubmit={(value) => {
+            setMessage(value);
+            setDraft('');
+          }}
+          footer="Hydrated composer footer"
+        />
+        <SplitView
+          resizeLabel="Hydrated split"
+          stackBelow="20rem"
+          start={<p>Hydrated start pane</p>}
+          end={<p>Hydrated end pane</p>}
+        />
+        <StatGroup aria-label="Hydrated stats">
+          <Stat
+            label="Hydrated stat"
+            value="128"
+            trend={{ direction: 'up', label: '+12%' }}
+            detail="Last 30 days"
+          />
+        </StatGroup>
+        <FileDropzone
+          compact
+          label="Hydrated files"
+          description="Any file"
+          onFiles={(chosen) => setFiles(chosen.map((file) => file.name).join(' '))}
+        />
+        <p>{files}</p>
+        <Heatmap
+          aria-label="Hydrated activity"
+          data={[
+            { date: '2026-03-02', value: 3 },
+            { date: '2026-03-09', value: 1200 },
+            { date: '2026-03-16', value: 7 },
+          ]}
+          startDate="2026-03-01"
+          endDate="2026-03-31"
+        />
         <output>{name}</output>
       </ToastProvider>
     </Theme>

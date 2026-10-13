@@ -24,7 +24,7 @@ import { Dialog, Button, Text } from '@envsemble/envui';
 | children / actions                | General content and shared controls                                                                                                |
 | closeLabel                        | Built-in dismissal label; defaults to Close                                                                                        |
 | placement                         | center (default), top or right; top opens near the top of the window, right is a full-height side panel with a header close button |
-| size                              | standard (default, about 28 rem) or wide (about 44 rem) for content-heavy centered and top dialogs                                 |
+| size                              | standard (default, about 28 rem; 24 rem for a right panel) or wide (about 44 rem) for content-heavy dialogs and panels             |
 | modal                             | true (default) traps focus, blocks outside interaction and locks page scroll; false permits interaction with the page              |
 | disablePointerDismissal           | false by default; true keeps an inspector open on outside presses or focus changes                                                 |
 | open / defaultOpen / onOpenChange | Controlled or uncontrolled visibility                                                                                              |
@@ -37,6 +37,7 @@ import { Dialog, Button, Text } from '@envsemble/envui';
 - Use a centered modal for a focused confirmation or short form. Use a right panel to inspect content; set modal=false when its source page should remain interactive.
 - Use placement top for search-like dialogs, so results can grow downward without moving the field, and size wide for tables, comparisons and longer forms. For quick open, use CommandPalette.
 - Centered dialogs include a footer dismissal; right panels include a header close button. <kbd>Esc</kbd> closes either placement and focus returns to the trigger or finalFocus ref.
+- A right panel takes the whole width of a window that would otherwise show only a sliver of the page beside it, such as a phone's: below 28 rem for a standard panel and 48 rem for a wide one. Its content then keeps clear of the safe areas on both sides, such as a phone's rounded corners in landscape.
 - Every dialog has the same surface as Popover and CommandPalette: the raised popup color, a hairline border and the surface corners. In the dark theme, dialogs keep the pane color, so rows and fields inside keep their contrast. The title and its description sit together above the content, and the actions close the dialog at the end.
 - Modal dialogs trap focus; non-modal panels do not. Portals preserve the originating theme.
 - The application owns validation, saving, async work and whether completion closes the dialog.

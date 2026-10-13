@@ -162,6 +162,12 @@ export function FormsFixture() {
           defaultValue="aurora"
         />
       </Surface>
+      <div data-testid="growing-textareas" className="fixture-actions">
+        <Textarea label="One line" sizing="content" rows={1} />
+        <Textarea label="Three lines" sizing="content" rows={3} />
+        <Textarea label="Default lines" sizing="content" />
+        <Textarea label="Two fixed lines" rows={2} />
+      </div>
     </section>
   );
 }

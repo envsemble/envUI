@@ -252,6 +252,21 @@ button.env-app-sidebar-toggle:focus-visible {
   grid-template-columns: var(--env-sidebar-expanded-width) minmax(0, 1fr);
 }
 
+/* While an AppShell without a title bar is in the document, the document scrolls under its fixed
+   topbar. Scroll padding as tall as the topbar, and a little more for focus rings, keeps elements
+   that take focus and anchor targets below it (WCAG 2.4.11). AppShell measures its topbar into
+   --env-app-topbar-block-size on the document element; until it does, as on the first paint of a
+   server-rendered page, --topbar-height applies. The rule has zero specificity and sits in a cascade
+   layer of its own, declared with envUI's style sheet, so scroll padding the application sets wins:
+   unlayered, or in its own layers declared after envUI's style sheet. */
+@layer envui-document {
+  :where(html:has(.env-app-shell:not([data-title-bar]))) {
+    scroll-padding-block-start: calc(
+      var(--env-app-topbar-block-size, var(--topbar-height, 3.25rem)) + 0.5rem
+    );
+  }
+}
+
 /* The document scrolls, so content can stick below the fixed topbar with
    position: sticky; inset-block-start: var(--app-sticky-top). */
 .env-app-content {
@@ -284,8 +299,10 @@ button.env-app-sidebar-toggle:focus-visible {
 .env-app-shell[data-narrow] .env-app-topbar-page {
   padding-inline: 0 var(--space-3);
 }
+/* Over a narrow window the sidebar is a drawer of a comfortable width, at least 20 rem, so sidebar
+   content such as a list of recent documents has room, while some of the page stays in view. */
 .env-app-shell[data-narrow] .env-app-sidebar {
-  inline-size: min(var(--env-sidebar-expanded-width), calc(100vw - var(--space-5)));
+  inline-size: min(max(var(--env-sidebar-expanded-width), 20rem), calc(100vw - var(--space-8)));
   z-index: 30;
 }
 .env-app-sidebar-backdrop {

@@ -58,6 +58,7 @@ import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 
 ```tsx
 import { ConfirmButton } from '@envsemble/envui';
+import { Delete } from '@envsemble/envui/icons/Delete';
 
 <ConfirmButton confirmLabel="Remove Morgan?" onConfirm={() => removeSeat(morgan)}>
   Remove
@@ -71,18 +72,26 @@ import { ConfirmButton } from '@envsemble/envui';
 >
   Cancel plan
 </ConfirmButton>
+
+<ConfirmButton
+  icon={<Delete />}
+  aria-label="Delete draft"
+  confirmLabel="Delete draft?"
+  onConfirm={deleteDraft}
+/>
 ```
 
 ### Props & contracts
 
-| Name                | Contract                                                                            |
-| ------------------- | ----------------------------------------------------------------------------------- |
-| confirmLabel        | The label while armed, naming what a second press does                              |
-| onConfirm           | Runs on the second press                                                            |
-| variant             | outlined (default), secondary, destructive or text at rest; armed it is destructive |
-| armedDuration       | Milliseconds the button stays armed without a second press; 4000 by default         |
-| pending / disabled  | End an arming; pending shows the spinner as on Button                               |
-| Native button props | ref, onBlur, onKeyDown and accessible attributes                                    |
+| Name                | Contract                                                                                                      |
+| ------------------- | ------------------------------------------------------------------------------------------------------------- |
+| confirmLabel        | The label while armed, naming what a second press does                                                        |
+| onConfirm           | Runs on the second press                                                                                      |
+| variant             | outlined (default; secondary when icon-only), secondary, destructive or text at rest; armed it is destructive |
+| armedDuration       | Milliseconds the button stays armed without a second press; 4000 by default                                   |
+| icon / aria-label   | A round icon-only button at rest, named by aria-label; armed, it shows the icon with the confirm label        |
+| pending / disabled  | End an arming; pending shows the spinner as on Button                                                         |
+| Native button props | ref, onBlur, onKeyDown and accessible attributes                                                              |
 
 ## ButtonGroup
 
@@ -115,7 +124,7 @@ import { Settings } from '@envsemble/envui/icons/Settings';
 ## Guidelines
 
 - Say what an action will do before it is taken. When the outcome is known, put it in the label, such as “Show 128 homes”, “Switch to Team · +5 seats” or “Assign to Morgan”. Use AnimatedNumber for a count that changes while choices are made.
-- Use ConfirmButton for an action that takes effect at once and cannot be undone, such as removing someone's access. The first press names the consequence in place and announces it; a double click only arms it; <kbd>Esc</kbd>, leaving the button and four seconds disarm it. Use a Dialog when the person must choose or type something first.
+- Use ConfirmButton for an action that takes effect at once and cannot be undone, such as removing someone's access. The first press names the consequence in place and announces it; a double click only arms it; <kbd>Esc</kbd>, leaving the button and four seconds disarm it. Use a Dialog when the person must choose or type something first. An icon-only ConfirmButton, such as a delete icon in a dense row, is round like IconButton until it is armed; then it grows to show the confirm label beside its icon, so the consequence is still named, and keeps focus.
 - Use one primary action in an action group. Reserve important emphasis for rare, consequential actions.
 - Action buttons fit their content: 2.5 rem minimum height (2 rem for important), 0.875 rem text, 0.25 rem vertical and 0.75 rem horizontal padding. Labels wrap when space is limited.
 - Use fully rounded corners; important actions use 0.5 rem corners. ActionGroup provides 1 rem row gaps or 0.5 rem stacked gaps.
@@ -127,6 +136,7 @@ import { Settings } from '@envsemble/envui/icons/Settings';
 - Text buttons use link blue with no fill, border or horizontal inset. Set underline to show an underline. Hover and pressed states change only the text color using the shared HSL rule. Use onClick for actions and href for navigation; keyboard focus and disabled behavior remain shared with Button.
 - Interaction colors follow the central HSL lightness rule described in Colors & themes. State colors and disabled opacity come from the shared stylesheet.
 - Use href for destinations and onClick for actions. Disabled links have no destination and cannot activate.
+- Icon-only buttons keep their square size wherever they sit, also in a squeezed flex row; labeled buttons can shrink and wrap their labels.
 - Labeled and icon-only buttons share the 1 rem control icon size used by NavigationItem. Leading and trailing icons follow the same rule, including important buttons.
 - Every variant supports iconOnly: a square matching its regular button height (2 rem for important; 2.5 rem for the others). Corners, colors, borders and interaction states follow the chosen variant: important is a rounded square; the others are circles. Name the action, rather than the icon shape.
 - IconButton is a shorthand for Button with iconOnly enabled and variant="secondary" by default.

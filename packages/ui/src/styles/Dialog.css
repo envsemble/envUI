@@ -43,6 +43,23 @@
   border-block: 0;
   border-inline-end: 0;
 }
+.env-modal-pane[data-placement='right'][data-size='wide'] {
+  inline-size: min(44rem, 100%);
+}
+/* Where a panel would leave only a sliver of the page beside it, as on a phone, it takes the whole
+   width instead. */
+@media (max-width: 28rem) {
+  .env-modal-pane[data-placement='right'] {
+    inline-size: 100%;
+    border-inline-start: 0;
+  }
+}
+@media (max-width: 48rem) {
+  .env-modal-pane[data-placement='right'][data-size='wide'] {
+    inline-size: 100%;
+    border-inline-start: 0;
+  }
+}
 .env-dialog-title {
   font: var(--type-h1);
 }
@@ -85,4 +102,16 @@
   padding-block-start: max(var(--space-5), env(safe-area-inset-top));
   padding-block-end: max(var(--space-5), env(safe-area-inset-bottom));
   padding-inline-end: max(var(--space-5), env(safe-area-inset-right));
+}
+/* A panel across the whole width keeps clear of the safe areas on both sides, such as a phone's
+   rounded corners in landscape. */
+@media (max-width: 28rem) {
+  .env-modal-pane[data-placement='right'] {
+    padding-inline: max(var(--space-5), env(safe-area-inset-left), env(safe-area-inset-right));
+  }
+}
+@media (max-width: 48rem) {
+  .env-modal-pane[data-placement='right'][data-size='wide'] {
+    padding-inline: max(var(--space-5), env(safe-area-inset-left), env(safe-area-inset-right));
+  }
 }

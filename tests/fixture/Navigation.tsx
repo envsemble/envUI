@@ -1,5 +1,13 @@
 import { useState } from 'react';
-import { Theme, ActionGroup, Stack, NavigationItem, Icon, type ThemeValue } from '@envsemble/envui';
+import {
+  Theme,
+  ActionGroup,
+  Stack,
+  NavigationItem,
+  Icon,
+  Tooltip,
+  type ThemeValue,
+} from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Settings } from '@envsemble/envui/icons/Settings';
 
@@ -52,6 +60,32 @@ export function NavigationFixture({ theme }: { theme: ThemeValue }) {
           Custom destination
         </NavigationItem>
       </Stack>
+      <ActionGroup>
+        <NavigationItem
+          iconOnly
+          icon={<Home />}
+          aria-label="Home overview"
+          data-testid="icon-only-navigation"
+          selected={selected === 'home'}
+          onClick={() => setSelected('home')}
+        />
+        <NavigationItem
+          iconOnly
+          disabled
+          icon={<Settings />}
+          aria-label="Archive"
+          data-testid="disabled-icon-only-navigation"
+        />
+        <Tooltip content="Settings and preferences">
+          <NavigationItem
+            iconOnly
+            icon={<Settings />}
+            aria-label="Settings"
+            data-testid="described-navigation"
+            onClick={() => setSelected('settings')}
+          />
+        </Tooltip>
+      </ActionGroup>
     </Theme>
   );
 }

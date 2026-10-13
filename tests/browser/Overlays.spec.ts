@@ -90,6 +90,70 @@ test('dialogs open wide for heavy content and near the top for search-like tasks
   await expect.poll(async () => (await top.boundingBox())!.width).toBeCloseTo(28 * 16, 0);
 });
 
+test('right panels keep their width beside the page and fill a narrow window', async ({ page }) => {
+  await page.goto(`${fixtureUrl}/?fixture=dialog-variants`);
+  const open = async (trigger: string, title: string) => {
+    await page.getByRole('button', { name: trigger }).click();
+    const panel = page.getByRole('dialog', { name: title });
+    await expect(panel).toBeVisible();
+    return panel;
+  };
+  const close = async () => {
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+  };
+  const width = async (panel: import('@playwright/test').Locator) =>
+    (await panel.boundingBox())!.width;
+  for (const [viewport, standard, wide] of [
+    [1440, 24 * 16, 44 * 16],
+    [600, 24 * 16, 600],
+    [390, 390, 390],
+  ] as const) {
+    await page.setViewportSize({ width: viewport, height: 800 });
+    const panel = await open('Open panel', 'Report details');
+    await expect.poll(() => width(panel)).toBeCloseTo(standard, 0);
+    // Once it has slid in, the panel ends at the window's edge.
+    await expect
+      .poll(async () => {
+        const box = (await panel.boundingBox())!;
+        return box.x + box.width;
+      })
+      .toBeCloseTo(viewport, 0);
+    await close();
+    const widePanel = await open('Open wide panel', 'Wide report details');
+    await expect.poll(() => width(widePanel)).toBeCloseTo(wide, 0);
+    await close();
+  }
+  // Across the whole width, the panel needs no border at its start.
+  const phonePanel = await open('Open panel', 'Report details');
+  await expect(phonePanel).toHaveCSS('border-left-width', '0px');
+});
+
+test('a panel across the whole width keeps clear of the safe areas on both sides', async ({
+  page,
+  browserName,
+}) => {
+  test.skip(browserName !== 'chromium', 'Only one engine emulates safe-area insets.');
+  await page.goto(`${fixtureUrl}/?fixture=dialog-variants`);
+  const session = await page.context().newCDPSession(page);
+  await session.send('Emulation.setSafeAreaInsetsOverride', {
+    insets: { top: 0, left: 44, bottom: 21, right: 44 },
+  });
+  for (const [viewport, trigger, title] of [
+    [390, 'Open panel', 'Report details'],
+    [600, 'Open wide panel', 'Wide report details'],
+  ] as const) {
+    await page.setViewportSize({ width: viewport, height: 800 });
+    await page.getByRole('button', { name: trigger }).click();
+    const panel = page.getByRole('dialog', { name: title });
+    await expect.poll(async () => (await panel.boundingBox())!.width).toBeCloseTo(viewport, 0);
+    await expect(panel).toHaveCSS('padding-left', '44px');
+    await expect(panel).toHaveCSS('padding-right', '44px');
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+  }
+});
+
 test('a notice dismiss button is a circle tinted with the notice tone', async ({ page }) => {
   await page.goto(`${fixtureUrl}/?fixture=notices`);
   const notice = page

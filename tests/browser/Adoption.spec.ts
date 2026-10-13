@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { resolve } from 'node:path';
 import { fixtureUrl } from './Servers';
 
 const fixture = `${fixtureUrl}/?fixture=adoption`;
@@ -42,6 +43,163 @@ test('ThemePreferenceProvider stores the choice and themes the document root', a
   await expect(page.getByTestId('theme-toggle')).toHaveAccessibleName(
     `Switch to ${after === 'dark' ? 'light' : 'dark'} theme`,
   );
+});
+
+for (const source of ['system', 'stored'] as const) {
+  test(`the browser theme color follows the canvas of a ${source} dark theme`, async ({ page }) => {
+    // The page starts with a static light theme color, as an application's index.html might.
+    await page.emulateMedia({ colorScheme: source === 'system' ? 'dark' : 'light' });
+    if (source === 'stored')
+      await page.addInitScript(() => localStorage.setItem('fixture-theme', 'dark'));
+    await page.goto(fixture);
+    await expect(page.locator('html')).toHaveAttribute('data-env-theme', 'dark');
+    const canvas = await page.evaluate(
+      () => getComputedStyle(document.documentElement).backgroundColor,
+    );
+    expect(canvas).not.toBe('rgb(255, 255, 255)');
+    await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content', canvas);
+  });
+}
+
+test('the browser theme color follows the canvas of the resolved theme', async ({ page }) => {
+  // The page starts with a static light theme color, as an application's index.html might.
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await page.goto(fixture);
+  const root = page.locator('html');
+  const meta = page.locator('meta[name="theme-color"]');
+  const canvas = () =>
+    page.evaluate(() => getComputedStyle(document.documentElement).backgroundColor);
+  await expect(root).toHaveAttribute('data-env-theme', 'dark');
+  const dark = await canvas();
+  expect(dark).not.toBe('rgb(255, 255, 255)');
+  await expect(meta).toHaveAttribute('content', dark);
+  // A tag written for a system color scheme follows the chosen theme too.
+  await page.evaluate(() => {
+    const scheme = document.createElement('meta');
+    scheme.name = 'theme-color';
+    scheme.media = '(prefers-color-scheme: dark)';
+    scheme.content = '#000000';
+    document.head.append(scheme);
+  });
+  await page.getByTestId('theme-toggle').click();
+  await expect(root).toHaveAttribute('data-env-theme', 'light');
+  const light = await canvas();
+  await expect(meta).toHaveCount(2);
+  await expect(meta.first()).toHaveAttribute('content', light);
+  await expect(meta.last()).toHaveAttribute('content', light);
+  await page.getByTestId('theme-toggle').click();
+  await expect(meta.first()).toHaveAttribute('content', dark);
+  await expect(meta.last()).toHaveAttribute('content', dark);
+});
+
+test('a themed document root keeps the browser font size and its body the body type', async ({
+  page,
+}) => {
+  await page.goto(fixture);
+  const root = page.locator('html');
+  await expect(root).toHaveClass(/env-theme/);
+  // 1 rem stays the browser's 16 px, so rem measures keep their designed size.
+  await expect(root).toHaveCSS('font-size', '16px');
+  const button = page.getByTestId('router-button');
+  await expect(button).toBeVisible();
+  expect((await button.boundingBox())!.height).toBeCloseTo(40, 1);
+  // Text takes the body type in the document body, the application and portals alike.
+  await expect(page.locator('body')).toHaveCSS('font-size', '15px');
+  await expect(page.locator('body')).toHaveCSS('line-height', '21px');
+  await expect(page.locator('.fixture-adoption')).toHaveCSS('font-size', '15px');
+  const portal = await page.evaluate(() => {
+    const element = document.createElement('div');
+    element.textContent = 'Another library’s popup';
+    document.body.append(element);
+    const { fontSize, fontFamily } = getComputedStyle(element);
+    element.remove();
+    return { fontSize, fontFamily };
+  });
+  expect(portal.fontSize).toBe('15px');
+  expect(portal.fontFamily).toContain('envUI Inter');
+  await page.getByRole('button', { name: 'Open pending dialog' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Save project' });
+  await expect(dialog).toHaveCSS('font-size', '15px');
+  await expect(dialog.getByRole('button', { name: 'Toggle pending' })).toHaveCSS('height', '40px');
+});
+
+test('an application body rule styles the body, while envUI keeps its type inside its boundaries', async ({
+  page,
+}) => {
+  await page.goto(fixture);
+  await expect(page.locator('html')).toHaveClass(/env-theme/);
+  const body = page.locator('body');
+  const inside = [
+    page.getByTestId('adoption-plain-text'),
+    page.getByTestId('adoption-paragraph'),
+    page.getByTestId('adoption-nested-theme'),
+  ];
+  // A rule inside a cascade layer loses to envUI's unlayered style sheet, whatever its specificity.
+  const layered = await page.evaluateHandle(() => {
+    const style = document.createElement('style');
+    style.textContent = '@layer application { body { font-size: 18px; } }';
+    document.head.prepend(style);
+    return style;
+  });
+  await expect(body).toHaveCSS('font-size', '15px');
+  await layered.evaluate((style) => style.remove());
+  // An application's unlayered body rule, before envUI's style sheet, styles the body itself.
+  await page.evaluate(() => {
+    const style = document.createElement('style');
+    style.textContent =
+      'body { font-family: "Fixture Serif"; font-size: 18px; line-height: 27px; }';
+    document.head.prepend(style);
+  });
+  await expect(body).toHaveCSS('font-family', /Fixture Serif/);
+  await expect(body).toHaveCSS('font-size', '18px');
+  await expect(body).toHaveCSS('line-height', '27px');
+  // Inside the provider's boundary, text, paragraphs and a Theme around content keep envUI's type,
+  // and so do the components and the popups, each in a boundary of its own.
+  for (const element of [...inside, page.getByTestId('router-button')]) {
+    await expect(element).toHaveCSS('font-family', /envUI Inter/);
+    await expect(element).not.toHaveCSS('font-size', '18px');
+  }
+  for (const element of inside) {
+    await expect(element).toHaveCSS('font-size', '15px');
+    await expect(element).toHaveCSS('line-height', '21px');
+  }
+  await page.getByRole('button', { name: 'Assign seat' }).hover();
+  const tooltip = page.locator('.env-tooltip');
+  await expect(tooltip).toHaveText('All seats are assigned');
+  await expect(tooltip).toHaveCSS('font-family', /envUI Inter/);
+  await page.mouse.move(0, 0);
+  await page.getByRole('button', { name: 'Open pending dialog' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Save project' });
+  await expect(dialog).toHaveCSS('font-family', /envUI Inter/);
+  await expect(dialog).toHaveCSS('font-size', '15px');
+  // envUI's font tokens change its typeface wherever it applies.
+  await page.evaluate(() => {
+    const style = document.createElement('style');
+    style.textContent = '.env-theme { --font-family: "Fixture Serif", serif; }';
+    document.head.append(style);
+  });
+  await expect(page.getByTestId('adoption-paragraph')).toHaveCSS('font-family', /^"?Fixture Serif/);
+  await expect(dialog).toHaveCSS('font-family', /^"?Fixture Serif/);
+  // Text in another size inside a boundary keeps its lines in proportion to it.
+  const large = await page.getByTestId('adoption-plain-text').evaluateHandle((element) => {
+    const text = document.createElement('div');
+    text.textContent = 'A larger line';
+    text.style.fontSize = '2rem';
+    element.after(text);
+    return text;
+  });
+  expect(
+    Number.parseFloat(await large.evaluate((element) => getComputedStyle(element).lineHeight)),
+  ).toBeCloseTo(44.8, 1);
+  // --line-height-body sets the boundary's line height.
+  await page.evaluate(() => {
+    const style = document.createElement('style');
+    style.textContent = '.env-theme { --line-height-body: 2; }';
+    document.head.append(style);
+  });
+  await expect(page.getByTestId('adoption-plain-text')).toHaveCSS('line-height', '30px');
+  // The root keeps the browser's size, so rem measures keep theirs.
+  await expect(page.locator('html')).toHaveCSS('font-size', '16px');
 });
 
 test('the bootstrap script applies a stored theme before the application renders', async ({
@@ -332,7 +490,7 @@ test('ConfirmButton names the consequence and runs only on a deliberate second p
   await page.goto(fixture);
   const button = page.getByTestId('confirm-button');
   const confirmed = page.getByTestId('confirmed');
-  const status = page.locator('.env-confirm-button-status');
+  const status = page.locator('.env-confirm-button-status').first();
   await expect(button).toHaveText('Remove');
   await expect(button).toHaveClass(/env-button-outlined/);
 
@@ -362,6 +520,52 @@ test('ConfirmButton names the consequence and runs only on a deliberate second p
   await page.keyboard.press('Enter');
   await expect(button).toHaveText('Remove Morgan?');
   await expect(button).toHaveText('Remove', { timeout: 3000 });
+  await expect(confirmed).toHaveText('1');
+  expect(errors).toEqual([]);
+});
+
+test('an icon-only ConfirmButton is round at rest and names the consequence when armed', async ({
+  page,
+}) => {
+  const errors = collectErrors(page);
+  await page.goto(fixture);
+  const button = page.getByTestId('confirm-icon-button');
+  const confirmed = page.getByTestId('confirmed');
+  await expect(button).toHaveAccessibleName('Remove Morgan');
+  await expect(button).toHaveClass(/env-icon-button/);
+  await expect(button).toHaveClass(/env-button-secondary/);
+  const rest = (await button.boundingBox())!;
+  expect(rest.width).toBeCloseTo(40, 0);
+  expect(rest.height).toBeCloseTo(40, 0);
+  // Round like IconButton: the corners take at least half the height.
+  expect(
+    await button.evaluate((element) => parseFloat(getComputedStyle(element).borderTopLeftRadius)),
+  ).toBeGreaterThanOrEqual(20);
+
+  // Keyboard arming keeps focus on the button while it grows to name the consequence.
+  await button.focus();
+  await page.keyboard.press('Enter');
+  await expect(button).toHaveAccessibleName('Remove Morgan?');
+  await expect(button).toHaveText('Remove Morgan?');
+  await expect(button).toHaveClass(/env-button-destructive/);
+  await expect(button).not.toHaveClass(/env-icon-button/);
+  await expect(button).toBeFocused();
+  await expect(button.locator('.env-symbol')).toHaveCount(1);
+  expect((await button.boundingBox())!.width).toBeGreaterThan(rest.width + 40);
+  await expect(page.locator('.env-confirm-button-status').nth(1)).toHaveText(
+    'Remove Morgan? Press again to confirm.',
+  );
+  await page.waitForTimeout(450);
+  await page.keyboard.press('Enter');
+  await expect(confirmed).toHaveText('1');
+  await expect(button).toHaveAccessibleName('Remove Morgan');
+  await expect(button).toHaveClass(/env-icon-button/);
+  await expect(button).toBeFocused();
+
+  await button.click();
+  await expect(button).toHaveText('Remove Morgan?');
+  await button.press('Escape');
+  await expect(button).toHaveClass(/env-icon-button/);
   await expect(confirmed).toHaveText('1');
   expect(errors).toEqual([]);
 });
@@ -503,6 +707,169 @@ test.describe('AppShell', () => {
       .evaluate((element) => (element.textContent = 'Northwind Laboratories International'));
     await expect.poll(async () => (await sidebar.boundingBox())!.width).toBeGreaterThan(width);
     await expect.poll(async () => (await sidebar.boundingBox())!.width).toBeLessThanOrEqual(320);
+  });
+
+  test('focus that scrolls the document lands below the topbar, not under it', async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 700 });
+    await page.goto(shellFixture);
+    // Far down a long page, a focusable region nearly as tall as the window, such as a table's
+    // scroll region, with a control at its top.
+    await page.locator('.env-app-content').evaluate((content) => {
+      const spacer = () =>
+        Object.assign(document.createElement('div'), { style: 'height: 1200px' });
+      const before = Object.assign(document.createElement('button'), { textContent: 'Before' });
+      const region = Object.assign(document.createElement('div'), { tabIndex: 0 });
+      region.setAttribute('data-testid', 'tall-region');
+      region.style.height = '620px';
+      const action = Object.assign(document.createElement('button'), { textContent: 'Sort' });
+      region.append(action);
+      content.append(spacer(), before, spacer(), region, spacer());
+    });
+    const topbar = (await page.locator('.env-app-topbar').boundingBox())!;
+    const below = topbar.y + topbar.height;
+    const region = page.getByTestId('tall-region');
+    const action = region.getByRole('button', { name: 'Sort' });
+    await page.getByRole('button', { name: 'Before' }).focus();
+    // Tabbing to the region, below the window, scrolls it into the window below the topbar, so its
+    // top is not under it.
+    await page.keyboard.press('Tab');
+    await expect(region).toBeFocused();
+    expect((await region.boundingBox())!.y).toBeGreaterThanOrEqual(below);
+    // A control left under the topbar scrolls out from under it as it takes focus.
+    await action.evaluate((element) =>
+      window.scrollBy(0, element.getBoundingClientRect().top - 10),
+    );
+    expect((await action.boundingBox())!.y).toBeLessThan(below);
+    await page.keyboard.press('Tab');
+    await expect(action).toBeFocused();
+    expect((await action.boundingBox())!.y).toBeGreaterThanOrEqual(below);
+  });
+
+  test('the topbar scroll padding gives way to the application and holds for every shell', async ({
+    page,
+  }) => {
+    await page.goto(shellFixture);
+    const html = page.locator('html');
+    const topbar = (await page.locator('.env-app-topbar').boundingBox())!;
+    await expect(html).toHaveCSS('scroll-padding-top', `${topbar.height + 8}px`);
+    // It comes from a style rule, never from a style written on the document element.
+    expect(
+      await html.evaluate((element) =>
+        element.style.getPropertyValue('scroll-padding-block-start'),
+      ),
+    ).toBe('');
+    // Scroll padding the application sets inline on the document wins.
+    await html.evaluate((element) =>
+      element.style.setProperty('scroll-padding-block-start', '123px'),
+    );
+    await expect(html).toHaveCSS('scroll-padding-top', '123px');
+    await html.evaluate((element) => element.style.removeProperty('scroll-padding-block-start'));
+    // So does a style sheet that loads after the shell.
+    const late = await page.evaluateHandle(() => {
+      const style = document.createElement('style');
+      style.textContent = 'html { scroll-padding-top: 90px; }';
+      document.head.append(style);
+      return style;
+    });
+    await expect(html).toHaveCSS('scroll-padding-top', '90px');
+    await late.evaluate((style) => style.remove());
+    // And so does a rule in one of the application's cascade layers, declared after envUI's.
+    const layered = await page.evaluateHandle(() => {
+      const style = document.createElement('style');
+      style.textContent = '@layer utilities { html { scroll-padding-top: 6rem; } }';
+      document.head.append(style);
+      return style;
+    });
+    await expect(html).toHaveCSS('scroll-padding-top', '96px');
+    await layered.evaluate((style) => style.remove());
+    await expect(html).toHaveCSS('scroll-padding-top', `${topbar.height + 8}px`);
+  });
+
+  test('several shells keep the padding for the tallest topbar that shows', async ({ page }) => {
+    await page.goto(`${fixtureUrl}/?fixture=two-shells`);
+    const html = page.locator('html');
+    const size = () =>
+      html.evaluate((element) => element.style.getPropertyValue('--env-app-topbar-block-size'));
+    // The second shell's topbar is 5 rem tall, the first one's 3.25 rem.
+    await expect.poll(size).toBe('80px');
+    await expect(html).toHaveCSS('scroll-padding-top', '88px');
+    await page.getByRole('button', { name: 'Hide the second shell' }).click();
+    await expect.poll(size).toBe('52px');
+    await expect(html).toHaveCSS('scroll-padding-top', '60px');
+    await page.getByRole('button', { name: 'Show the second shell' }).click();
+    await expect.poll(size).toBe('80px');
+    await expect(html).toHaveCSS('scroll-padding-top', '88px');
+    await page.getByRole('button', { name: 'Remove the second shell' }).click();
+    await expect.poll(size).toBe('52px');
+    await expect(html).toHaveCSS('scroll-padding-top', '60px');
+    // A shell hidden on its own keeps nothing clear but the margin.
+    await page.getByRole('button', { name: 'Hide the first shell' }).click();
+    await expect.poll(size).toBe('0px');
+    await expect(html).toHaveCSS('scroll-padding-top', '8px');
+  });
+
+  test('the scroll padding follows the topbar however tall it is', async ({ page }) => {
+    await page.goto(shellFixture);
+    const html = page.locator('html');
+    const topbar = page.locator('.env-app-topbar');
+    await expect(html).toHaveCSS('scroll-padding-top', '60px');
+    await page.evaluate(() => {
+      const style = document.createElement('style');
+      style.textContent = '.env-theme { --topbar-height: 5rem; }';
+      document.head.append(style);
+    });
+    await expect.poll(async () => (await topbar.boundingBox())!.height).toBeCloseTo(80, 0);
+    await expect(html).toHaveCSS('scroll-padding-top', '88px');
+  });
+
+  test.describe('server-rendered', () => {
+    test.use({ javaScriptEnabled: false });
+
+    test('an anchor in the address lands below the topbar from the first paint', async ({
+      page,
+    }) => {
+      // Markup as a server renders it, before any script runs.
+      const stylesheet = `/@fs/${resolve('packages/ui/src/styles/index.css').replaceAll('\\', '/')}?direct`;
+      await page.route('**/server-rendered-shell.html', (route) =>
+        route.fulfill({
+          contentType: 'text/html',
+          body: `<!doctype html><html lang="en"><head><link rel="stylesheet" href="${stylesheet}"></head><body><div class="env-theme" data-env-theme="light"><div class="env-app-shell"><header class="env-app-topbar">Topbar</header><main class="env-app-content"><div style="height: 1500px"></div><h2 id="later-section">Later section</h2><div style="height: 1500px"></div></main></div></div></body></html>`,
+        }),
+      );
+      await page.goto(`${fixtureUrl}/server-rendered-shell.html#later-section`);
+      const topbar = (await page.locator('.env-app-topbar').boundingBox())!;
+      expect(topbar.height).toBeGreaterThan(40);
+      await expect
+        .poll(async () => (await page.locator('#later-section').boundingBox())!.y)
+        .toBeGreaterThanOrEqual(topbar.y + topbar.height);
+    });
+  });
+
+  test('an anchor target lands below the topbar', async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 700 });
+    await page.goto(shellFixture);
+    await page.locator('.env-app-content').evaluate((content) => {
+      const spacer = () =>
+        Object.assign(document.createElement('div'), { style: 'height: 1500px' });
+      const target = Object.assign(document.createElement('h2'), {
+        id: 'later-section',
+        textContent: 'Later section',
+      });
+      content.append(spacer(), target, spacer());
+    });
+    const topbar = (await page.locator('.env-app-topbar').boundingBox())!;
+    await page.evaluate(() => (location.hash = '#later-section'));
+    await expect
+      .poll(async () => (await page.locator('#later-section').boundingBox())!.y)
+      .toBeGreaterThanOrEqual(topbar.y + topbar.height);
+  });
+
+  test('a shell whose topbar is the title bar leaves the document without scroll padding', async ({
+    page,
+  }) => {
+    await page.goto(`${fixtureUrl}/?fixture=full-shell`);
+    await expect(page.locator('.env-app-shell')).toHaveAttribute('data-title-bar', '');
+    await expect(page.locator('html')).toHaveCSS('scroll-padding-top', 'auto');
   });
 
   test('the loading bar runs along the bottom edge of the topbar', async ({ page }) => {

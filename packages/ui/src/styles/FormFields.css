@@ -82,7 +82,8 @@
   background: transparent;
   color: var(--color-field-text);
   font: var(--type-body);
-  font-size: calc(var(--font-size-body) * var(--scale, 1));
+  /* The control font size is 1 rem on touch screens, where smaller entered text zooms the page. */
+  font-size: calc(var(--control-font-size) * var(--scale, 1));
   caret-color: var(--color-field-active);
 }
 .env-text-input::placeholder {
@@ -97,7 +98,7 @@
   overflow: hidden;
   color: var(--color-field-label);
   font: var(--type-body);
-  font-size: calc(var(--font-size-body) * var(--scale, 1));
+  font-size: calc(var(--control-font-size) * var(--scale, 1));
   white-space: nowrap;
   text-overflow: ellipsis;
   cursor: text;
@@ -198,6 +199,10 @@ textarea.env-text-input[data-sizing='content'] {
     calc(7.5rem * var(--scale, 1)),
     calc(var(--env-textarea-rows, 2) * 1lh + var(--space-6) * var(--scale, 1))
   );
+}
+/* Given rows, a growing field starts at that many lines, also when that is less than 7.5 rem. */
+textarea.env-text-input[data-sizing='content'][data-rows] {
+  min-height: calc(var(--env-textarea-rows) * 1lh + var(--space-6) * var(--scale, 1));
 }
 .env-textarea-resize-edge {
   position: absolute;
@@ -360,4 +365,71 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
 }
 .env-text-field[data-compact] .env-text-field-well[data-end-action] > .env-text-input {
   padding-inline-end: calc(var(--control-height) * var(--scale, 1));
+}
+/* Prefix and suffix text sit in line with the value, inside the well. A long prefix is cut short
+   with an ellipsis, so the control always keeps room for its value. */
+.env-text-field-well:is([data-prefix], [data-suffix]) {
+  display: flex;
+}
+.env-text-field-well:is([data-prefix], [data-suffix]) > .env-text-input {
+  flex: 1 1 0;
+  min-inline-size: min(6rem, 50%);
+}
+.env-text-field-prefix,
+.env-text-field-suffix {
+  flex: 0 1 auto;
+  align-self: center;
+  min-inline-size: 0;
+  overflow: hidden;
+  color: var(--color-field-label);
+  font: var(--type-body);
+  font-size: calc(var(--control-font-size) * var(--scale, 1));
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: text;
+  transition: opacity var(--motion-duration-medium) var(--motion-ease);
+}
+.env-text-field-prefix {
+  padding-inline-start: calc(var(--space-4) * var(--scale, 1));
+}
+.env-text-field-suffix {
+  padding-inline-end: calc(var(--space-4) * var(--scale, 1));
+}
+.env-text-field-well[data-prefix] > .env-text-input {
+  padding-inline-start: calc(0.125rem * var(--scale, 1));
+}
+.env-text-field-well[data-suffix] > .env-text-input {
+  padding-inline-end: calc(0.125rem * var(--scale, 1));
+}
+.env-text-field-well[data-start-icon] > .env-text-field-prefix {
+  padding-inline-start: calc(
+    (var(--space-4) + var(--control-icon-size) + var(--space-3)) * var(--scale, 1)
+  );
+}
+.env-text-field-well[data-end-action] > .env-text-field-suffix {
+  padding-inline-end: calc((var(--control-height) + var(--space-3)) * var(--scale, 1));
+}
+.env-text-field[data-compact] .env-text-field-well[data-end-action][data-suffix] > .env-text-input {
+  padding-inline-end: calc(0.125rem * var(--scale, 1));
+}
+.env-text-field[data-compact] .env-text-field-well[data-end-action] > .env-text-field-suffix {
+  padding-inline-end: calc(var(--control-height) * var(--scale, 1));
+}
+.env-text-field-well[data-variant='plain'] > .env-text-field-prefix {
+  padding-inline-start: 0;
+}
+.env-text-field-well[data-variant='plain'] > .env-text-field-suffix {
+  padding-inline-end: 0;
+}
+/* While the label rests inside an empty field, the prefix and suffix wait for focus or a value. */
+.env-text-field:not([data-label-hidden])
+  .env-text-field-well:has(> label):has(> .env-text-input:not(:focus):placeholder-shown)
+  > :is(.env-text-field-prefix, .env-text-field-suffix) {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .env-text-field-prefix,
+  .env-text-field-suffix {
+    transition: none;
+  }
 }

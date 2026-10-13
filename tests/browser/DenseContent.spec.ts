@@ -1,8 +1,18 @@
-import { test, expect } from '@playwright/test';
-import { catalogueUrl } from './Servers';
+import { test, expect, type Page } from '@playwright/test';
+import { catalogueUrl, fixtureUrl } from './Servers';
 
 // Options for dense, document-centred applications: compact menus, subtle inline code and tabs that
 // fill a region.
+
+/** The computed display of the panel each tab of a tab list controls, in order. */
+function panelDisplays(page: Page, list: string) {
+  return page.getByRole('tablist', { name: list, exact: true }).evaluate((element) =>
+    [...element.querySelectorAll('[role="tab"]')].map((tab) => {
+      const panel = document.getElementById(tab.getAttribute('aria-controls') ?? '');
+      return panel ? getComputedStyle(panel).display : 'missing';
+    }),
+  );
+}
 
 test('a compact menu has shorter rows on a raised popup than a standard menu', async ({ page }) => {
   await page.goto(`${catalogueUrl}/#/components/menu/preview`);
@@ -54,6 +64,28 @@ test('filling tabs give the selected panel the height left below the list', asyn
   expect(Math.abs(box!.y + box!.height - (region!.y + region!.height))).toBeLessThanOrEqual(2);
   expect(box!.y).toBeGreaterThan(list!.y + list!.height - 1);
   expect(box!.height).toBeGreaterThan(100);
+});
+
+test('filling tabs that keep inactive panels mounted display only the selected panel', async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/?fixture=fill-tabs`);
+  for (const theme of ['light', 'dark']) {
+    // Tabs nested in a filling panel keep their own layout, and their hidden panel stays hidden.
+    await expect
+      .poll(() => panelDisplays(page, `Canvas layers ${theme}`))
+      .toEqual(['block', 'none']);
+    // Alone, and vertical with the list beside a heading through renderList.
+    for (const name of [`Filling views ${theme}`, `Vertical filling views ${theme}`]) {
+      await expect.poll(() => panelDisplays(page, name)).toEqual(['flex', 'none', 'none']);
+      await page
+        .getByRole('tablist', { name, exact: true })
+        .getByRole('tab', { name: 'History' })
+        .click();
+      // The outgoing panel is hidden once it has faded out.
+      await expect.poll(() => panelDisplays(page, name)).toEqual(['none', 'none', 'flex']);
+    }
+  }
 });
 
 test('a compact surface gives its controls the compact height', async ({ page }) => {

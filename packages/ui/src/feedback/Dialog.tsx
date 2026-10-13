@@ -21,10 +21,13 @@ export interface DialogProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title
   closeLabel?: string;
   /**
    * Centered modal, a modal near the top of the window for search-like tasks, or a full-height panel
-   * at the right edge.
+   * at the right edge, which takes the whole width of a narrow window such as a phone's.
    */
   placement?: 'center' | 'top' | 'right';
-  /** standard (default, about 28 rem) or wide (about 44 rem) for content-heavy dialogs. */
+  /**
+   * standard (default, about 28 rem, 24 rem for a panel) or wide (about 44 rem) for content-heavy
+   * dialogs and panels.
+   */
   size?: 'standard' | 'wide';
   /** Non-modal panels allow interaction with the surrounding page. */
   modal?: boolean;

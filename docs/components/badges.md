@@ -40,6 +40,7 @@ import { TaskAlt } from '@envsemble/envui/icons/TaskAlt';
 - Subtle badges suit lists and tables; solid badges draw more attention, so use them sparingly. Outline badges suit names and categories.
 - Tone colors are central tokens (see colors), so status icons and text can share them without copying badge styles.
 - A counter is a compact count. Give it an aria-label when the number needs context, and keep the value short.
+- In a button, such as a tab with a count, a counter or badge takes the button's text color as an outlined pill on the button's own fill, whatever its tone or variant. It keeps the button's contrast whether the tab is selected or not, in both themes.
 
 TypeScript declarations provide the complete public API.
 

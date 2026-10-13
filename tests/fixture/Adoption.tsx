@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 import {
   AnimatedNumber,
   AppShell,
@@ -23,6 +23,7 @@ import {
   SearchField,
   Skeleton,
   Spinner,
+  Theme,
   ThemePreferenceProvider,
   ThemeToggle,
   createThemeBootstrapScript,
@@ -32,6 +33,7 @@ import {
 import { Home } from '@envsemble/envui/icons/Home';
 import { Category } from '@envsemble/envui/icons/Category';
 import { Logout } from '@envsemble/envui/icons/Logout';
+import { Delete } from '@envsemble/envui/icons/Delete';
 
 /** Stands in for a router link: it records client navigation instead of loading a page. */
 function RecordingLink({ href, onClick, ...props }: LinkComponentProps) {
@@ -66,6 +68,11 @@ export function AdoptionFixture() {
     <ThemePreferenceProvider storageKey="fixture-theme" className="fixture-adoption">
       <LinkProvider component={RecordingLink}>
         <section>
+          <div data-testid="adoption-plain-text">Plain application text</div>
+          <p data-testid="adoption-paragraph">An application paragraph</p>
+          <Theme theme="light" data-testid="adoption-nested-theme">
+            A themed part of the page
+          </Theme>
           <ThemeToggle data-testid="theme-toggle" />
           <Button href="/projects" data-testid="router-button">
             Projects
@@ -151,6 +158,14 @@ export function AdoptionFixture() {
           >
             Remove
           </ConfirmButton>
+          <ConfirmButton
+            icon={<Delete />}
+            aria-label="Remove Morgan"
+            confirmLabel="Remove Morgan?"
+            armedDuration={800}
+            onConfirm={() => setConfirmed((count) => count + 1)}
+            data-testid="confirm-icon-button"
+          />
           <output data-testid="confirmed">{confirmed}</output>
           <Button onClick={() => setHomes((count) => count + 1)}>More homes</Button>
           <Button onClick={() => setHomes((count) => count - 1)}>Fewer homes</Button>
@@ -184,6 +199,62 @@ export function AdoptionFixture() {
         </section>
       </LinkProvider>
     </ThemePreferenceProvider>
+  );
+}
+
+/**
+ * Two shells on one page, the second with a taller topbar that can be hidden or removed, mounted
+ * with ?fixture=two-shells.
+ */
+export function TwoShellsFixture() {
+  const [first, setFirst] = useState(true);
+  const [second, setSecond] = useState<'shown' | 'hidden' | 'gone'>('shown');
+  return (
+    <>
+      <div hidden={!first}>
+        <AppShell
+          brand={<span>A</span>}
+          title="First"
+          navigationLabel="First navigation"
+          navigation={
+            <NavigationItem href="/" icon={<Home />}>
+              Home
+            </NavigationItem>
+          }
+        >
+          <div className="fixture-two-shells-actions">
+            <button type="button" onClick={() => setSecond('hidden')}>
+              Hide the second shell
+            </button>
+            <button type="button" onClick={() => setSecond('shown')}>
+              Show the second shell
+            </button>
+            <button type="button" onClick={() => setSecond('gone')}>
+              Remove the second shell
+            </button>
+            <button type="button" onClick={() => setFirst(false)}>
+              Hide the first shell
+            </button>
+          </div>
+        </AppShell>
+      </div>
+      {second !== 'gone' && (
+        <div hidden={second === 'hidden'} style={{ '--topbar-height': '5rem' } as CSSProperties}>
+          <AppShell
+            brand={<span>B</span>}
+            title="Second"
+            navigationLabel="Second navigation"
+            navigation={
+              <NavigationItem href="/second" icon={<Category />}>
+                Second home
+              </NavigationItem>
+            }
+          >
+            <p>Second content</p>
+          </AppShell>
+        </div>
+      )}
+    </>
   );
 }
 

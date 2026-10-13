@@ -64,7 +64,9 @@
   min-block-size: 0;
   grid-template-rows: minmax(0, 1fr);
 }
-.env-tabs[data-fill] .env-tab-panel {
+/* Only the Tabs' own shown panels become columns: hidden panels, which keepMounted leaves in place,
+   stay hidden, and Tabs nested in a panel keep their layout. :where() keeps the rule's specificity. */
+.env-tabs[data-fill] > .env-tabs-panels > :where(.env-tab-panel:not([hidden])) {
   display: flex;
   flex-direction: column;
   min-block-size: 0;

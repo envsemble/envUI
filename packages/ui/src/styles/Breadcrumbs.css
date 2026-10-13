@@ -18,6 +18,14 @@
   align-items: center;
   gap: var(--space-1);
 }
+/* On one line, the current page gives way first and ends in an ellipsis; earlier levels keep their
+   width. Nothing clips the list, so focus outlines stay whole. */
+.env-breadcrumbs[data-nowrap] > .env-breadcrumbs-list {
+  flex-wrap: nowrap;
+}
+.env-breadcrumbs[data-nowrap] > .env-breadcrumbs-list > .env-breadcrumb:not(:last-child) {
+  flex-shrink: 0;
+}
 .env-breadcrumb-link,
 .env-breadcrumb-text,
 .env-breadcrumb-current {

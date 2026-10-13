@@ -5,9 +5,12 @@ import {
   SwitchPreview,
   RadioPreview,
   SelectPreview,
+  SliderPreview,
+  FileDropzonePreview,
 } from './Forms';
 import { NavigationPreview, TabsPreview, DirectionLinksPreview } from './Navigation';
 import { SurfacePreview, LayoutPreview, RowsPreview, CardsPreview } from './Layout';
+import { SplitViewPreview } from './Panes';
 import { AnimatedNumberPreview, ChipsPreview, DisclosuresPreview } from './Content';
 import { CodePreview } from './CodeContent';
 import { MarkdownPreview } from './MarkdownContent';
@@ -16,6 +19,8 @@ import { Text } from '@envsemble/envui';
 import { EmptyStatePreview, LoadingPreview, DialogsPreview } from './Feedback';
 import { ToastsPreview } from './Toasts';
 import { ColorPickerPreview } from './ColorPicking';
+import { ComposerPreview, MessagesPreview } from './Conversation';
+import { HeatmapPreview, StatsPreview } from './Dashboard';
 import {
   MenuPreview,
   MenubarPreview,
@@ -56,8 +61,14 @@ export function ComponentPreview({ id }: { id: string }) {
       return <RadioPreview />;
     case 'select':
       return <SelectPreview />;
+    case 'slider':
+      return <SliderPreview />;
+    case 'file-dropzone':
+      return <FileDropzonePreview />;
     case 'color-picker':
       return <ColorPickerPreview />;
+    case 'composer':
+      return <ComposerPreview />;
     case 'navigation':
       return <NavigationPreview />;
     case 'tabs':
@@ -72,6 +83,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <RowsPreview />;
     case 'cards':
       return <CardsPreview />;
+    case 'split-view':
+      return <SplitViewPreview />;
     case 'chips':
       return <ChipsPreview />;
     case 'badges':
@@ -84,6 +97,12 @@ export function ComponentPreview({ id }: { id: string }) {
       return <BreadcrumbsPreview />;
     case 'animated-number':
       return <AnimatedNumberPreview />;
+    case 'messages':
+      return <MessagesPreview />;
+    case 'stats':
+      return <StatsPreview />;
+    case 'heatmap':
+      return <HeatmapPreview />;
     case 'code':
       return <CodePreview />;
     case 'markdown':

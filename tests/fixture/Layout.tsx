@@ -49,6 +49,14 @@ export function LayoutFixture() {
               <p>Supporting detail</p>
             </DisclosureNote>
           </Stack>
+          <div className="fixture-shrink-row" data-testid="shrink-row">
+            <span className="fixture-shrink-label">
+              A long label that fills the row and squeezes what sits beside it
+            </span>
+            <span className="fixture-shrink-slot">
+              <IconButton icon={<ChevronRight />} aria-label={`Squeezed next ${theme}`} />
+            </span>
+          </div>
           <ActionGroup stacked data-testid="stacked-actions" style={{ maxInlineSize: '20rem' }}>
             <Button>Continue</Button>
             <Button variant="secondary">Cancel</Button>
@@ -61,6 +69,17 @@ export function LayoutFixture() {
           >
             <p>Keep the action rail attached.</p>
           </ActionCard>
+          <ActionCard
+            title="Quarterly report"
+            meta="Updated today"
+            data-testid="meta-action-card"
+            actions={<Button variant="secondary">Open</Button>}
+          >
+            <p>Figures for the last three months.</p>
+          </ActionCard>
+          <Card heading="Design tokens" meta="12 changes" data-testid="meta-card">
+            <p>Colors and spacing shared by every surface.</p>
+          </Card>
           <form
             onSubmit={(event) => {
               event.preventDefault();
