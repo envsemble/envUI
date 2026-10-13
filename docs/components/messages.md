@@ -64,7 +64,7 @@ import { ContentCopy } from '@envsemble/envui/icons/ContentCopy';
 | Message from           | self: written by the person using the app, a bubble at the inline end; other: full-width content without a bubble    |
 | Message children       | The message; plain text keeps its line breaks, and formatted content such as Markdown fills an other message's width |
 | Message author / meta  | Who wrote it and supporting facts such as the time, above the message                                                |
-| Message actions        | Small actions below the message, such as copy or retry; they take the compact size and the touch size on touch       |
+| Message actions        | Small actions below the message, such as copy or retry, at the compact control size, or the touch size on touch      |
 | Message status         | sending shows a spinner and failed an error icon, each with its text                                                 |
 | Message statusLabel    | Text of the status; Sending or Not sent by default                                                                   |
 | Native element props   | MessageList takes div attributes and Message article attributes, including className and ref                         |
