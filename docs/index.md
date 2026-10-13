@@ -41,6 +41,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Switches](components/switch.md) — Use for an on/off setting that applies immediately.
 - [Radio groups](components/radio.md) — Choose one option from a visible set.
 - [Selects](components/select.md) — Choose one option while keeping alternatives collapsed.
+- [Sliders](components/slider.md) — Choose a value in a range by dragging a thumb or with the keyboard.
 
 ## Navigation
 

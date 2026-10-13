@@ -14,6 +14,7 @@ import {
   DocumentTabs,
   Notice,
   SegmentedControl,
+  Slider,
   Tree,
   TitleBar,
   Menubar,
@@ -70,6 +71,12 @@ export function HydrationApp() {
         />
         <Input label="Hydrated amount" prefix="€" suffix="per month" defaultValue="12" />
         <Checkbox label="Hydrated choice" checked={checked} onCheckedChange={setChecked} />
+        <Slider
+          label="Hydrated level"
+          name="level"
+          defaultValue={40}
+          formatValue={(value) => `${value}%`}
+        />
         <ColorPicker label="Hydrated color" defaultValue="#1a73e8" />
         <Select
           label="Hydrated select"

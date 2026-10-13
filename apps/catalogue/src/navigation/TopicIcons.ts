@@ -44,6 +44,7 @@ import { Chat } from '@envsemble/envui/icons/Chat';
 import { TableChart } from '@envsemble/envui/icons/TableChart';
 import { Keyboard } from '@envsemble/envui/icons/Keyboard';
 import { LinearScale } from '@envsemble/envui/icons/LinearScale';
+import { Tune } from '@envsemble/envui/icons/Tune';
 import { type Reference } from '../Reference';
 
 export const foundationIcons: Record<string, typeof Palette> = {
@@ -82,6 +83,7 @@ const referenceIcons: Record<string, typeof Palette> = {
   switch: ToggleOn,
   radio: RadioButtonChecked,
   select: ArrowDropDownCircle,
+  slider: Tune,
   'color-picker': Palette,
   navigation: Explore,
   tabs: WebAsset,

@@ -32,6 +32,7 @@ import { DialogVariantsFixture, NoticesFixture, PopoverFixture } from './Overlay
 import { DataDisplayFixture } from './DataDisplay.js';
 import { TablesFixture } from './Tables.js';
 import { AffixesFixture } from './Affixes.js';
+import { SlidersFixture } from './Sliders.js';
 
 /** Fixtures that fill the viewport are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
@@ -163,6 +164,12 @@ export default function App() {
             <>
               <AffixesFixture theme="light" />
               <AffixesFixture theme="dark" />
+            </>
+          )}
+          {includes('sliders') && (
+            <>
+              <SlidersFixture theme="light" />
+              <SlidersFixture theme="dark" />
             </>
           )}
           {includes('menus') && (

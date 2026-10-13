@@ -39,6 +39,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 - `TableRow` `selected`: `aria-selected` and the navigation selection color, with a bar at the start of the row.
 - `Table` `narrowLayout="stack"`: in containers narrower than 36 rem, each body row becomes a block on the table surface, titled by its first cell, with each `TableCell` `label` before its value. The header row is visually hidden, and explicit roles keep the table's semantics.
 - `Input` `prefix` and `suffix`: short, non-interactive text inside the field before or after the value, such as the start of an address or a unit. They appear with the floating label once the field has focus or a value, are read after the label, work with `compact`, `startIcon` and `endAction`, and a long prefix is cut short with an ellipsis.
+- `Slider`: a value in a range with a visible label, the current value as an output linked to it (`formatValue`, such as "40%", also for assistive technology), `min`, `max`, `step` and `largeStep`, `hint`, `disabled`, and `name` and `form` for native forms, which reset an uncontrolled slider. The arrow keys move by a step, <kbd>Page Up</kbd> and <kbd>Page Down</kbd> by a large step, <kbd>Home</kbd> and <kbd>End</kbd> to the ends; `onValueCommit` reports the value once a change is complete. The thumb grows on touch screens.
 
 ### Changed
 
@@ -57,6 +58,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 - The browser suite's ports can be changed with `ENVUI_CATALOGUE_PORT` and `ENVUI_FIXTURE_PORT`.
 - The tables page shows sorting, resizable columns, selected rows and stacked rows.
 - The text fields page shows an input's prefix and suffix.
+- New page for sliders.
 
 ## 0.4.0 — 2026-10-11
 

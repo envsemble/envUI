@@ -8,11 +8,17 @@ test('public components hydrate server output without recoverable errors', async
   await page.goto(pathToFileURL(resolve('.cache/Hydration.html')).href);
   await expect(page.getByRole('textbox', { name: 'Hydrated input' })).toHaveValue('Server value');
   await page.getByRole('textbox', { name: 'Hydrated input' }).fill('Client value');
-  await expect(page.locator('output')).toHaveText('Client value');
+  await expect(page.locator('output:not(.env-slider-value)')).toHaveText('Client value');
   const amount = page.getByRole('textbox', { name: 'Hydrated amount' });
   await expect(amount).toHaveAccessibleDescription('€ per month');
   await amount.fill('15');
   await expect(amount).toHaveValue('15');
+  const level = page.getByRole('slider', { name: 'Hydrated level' });
+  await expect(level).toHaveAttribute('aria-valuetext', '40%');
+  await level.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(level).toHaveAttribute('aria-valuenow', '41');
+  await expect(page.locator('output.env-slider-value')).toHaveText('41%');
   const color = page.getByRole('textbox', { name: 'Hydrated color HEX' });
   await expect(color).toHaveValue('#1a73e8');
   await color.fill('ABCDEF');

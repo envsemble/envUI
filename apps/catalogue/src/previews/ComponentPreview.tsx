@@ -5,6 +5,7 @@ import {
   SwitchPreview,
   RadioPreview,
   SelectPreview,
+  SliderPreview,
 } from './Forms';
 import { NavigationPreview, TabsPreview, DirectionLinksPreview } from './Navigation';
 import { SurfacePreview, LayoutPreview, RowsPreview, CardsPreview } from './Layout';
@@ -56,6 +57,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <RadioPreview />;
     case 'select':
       return <SelectPreview />;
+    case 'slider':
+      return <SliderPreview />;
     case 'color-picker':
       return <ColorPickerPreview />;
     case 'navigation':
