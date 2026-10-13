@@ -70,6 +70,19 @@ export function HeatmapFixture({ theme }: { theme: ThemeValue }) {
           moreLabel="Mehr"
         />
       </Surface>
+      <Heatmap
+        aria-label={`Ranked ${theme}`}
+        data={[
+          { date: '2026-05-04', value: 5 },
+          { date: '2026-05-05', value: 15 },
+          { date: '2026-05-06', value: 25 },
+          { date: '2026-05-07', value: 45 },
+          { date: '2026-05-08', value: 0.5 },
+        ]}
+        startDate="2026-05-03"
+        endDate="2026-05-16"
+        thresholds={[40, 1, 20, 10]}
+      />
     </Theme>
   );
 }

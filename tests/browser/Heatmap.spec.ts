@@ -335,3 +335,21 @@ test.describe('on a coarse pointer', () => {
     await expect(page.locator('.env-tooltip-positioner')).toHaveCount(0);
   });
 });
+
+test('thresholds set the color steps, for example to color days by rank', async ({ page }) => {
+  await page.goto(heatmapFixture);
+  const grid = page.getByRole('grid', { name: 'Ranked light' });
+  const level = (date: string) =>
+    grid.locator(`td[data-date="${date}"]`).getAttribute('data-level');
+  await expect(grid.locator('td[data-date="2026-05-04"]')).toBeAttached();
+  // Thresholds in any order: 1, 10, 20 and 40 start the four steps above the empty one.
+  expect(await level('2026-05-04')).toBe('1');
+  expect(await level('2026-05-05')).toBe('2');
+  expect(await level('2026-05-06')).toBe('3');
+  expect(await level('2026-05-07')).toBe('4');
+  // Below the first threshold a day shows as empty, like a day without data.
+  expect(await level('2026-05-08')).toBe('0');
+  expect(await level('2026-05-09')).toBe('0');
+  const legend = page.getByTestId('heatmap-light').locator('.env-heatmap-legend').last();
+  await expect(legend.locator('.env-heatmap-swatch')).toHaveCount(5);
+});

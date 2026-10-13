@@ -42,6 +42,12 @@ interface HeatmapOptions {
   levels?: number;
   /** The value that takes the strongest color; the largest value shown by default. */
   maxValue?: number;
+  /**
+   * The lowest value of each color step above the empty one, in ascending order, such as quantiles
+   * of the data to color by rank. Up to nine; they replace levels and maxValue. A day below the
+   * first threshold shows as empty.
+   */
+  thresholds?: readonly number[];
   /** The first day of each week column: 0 for Sunday (default) or 1 for Monday. */
   weekStart?: 0 | 1;
   /** The tone the colors are mixed from: accent by default. */
@@ -152,6 +158,7 @@ export function Heatmap({
   endDate,
   levels = 5,
   maxValue,
+  thresholds,
   weekStart = 0,
   tone = 'accent',
   formatValue = formatEnglishNumber,
@@ -168,7 +175,16 @@ export function Heatmap({
   ...props
 }: HeatmapProps) {
   const theme = useTheme();
+  // Thresholds compare by value, so a new array with the same steps keeps the model.
+  const thresholdsKey = thresholds?.join(' ');
   const model = useMemo<HeatmapModel>(() => {
+    const steps = thresholdsKey
+      ?.split(' ')
+      .filter(Boolean)
+      .map(Number)
+      .filter(Number.isFinite)
+      .sort((first, second) => first - second)
+      .slice(0, 9);
     const values = new Map<number, HeatmapDay>();
     for (const entry of data) {
       const day = parseDay(entry.date);
@@ -182,7 +198,9 @@ export function Heatmap({
     }
     const start = parseDay(startDate) ?? earliest;
     const end = parseDay(endDate) ?? latest;
-    const levelCount = Math.min(10, Math.max(2, Math.round(levels)));
+    const levelCount = steps?.length
+      ? steps.length + 1
+      : Math.min(10, Math.max(2, Math.round(levels)));
     if (start === undefined || end === undefined || end < start)
       return { start: 0, end: -1, first: 0, weeks: 0, levelCount, days: new Map(), months: [] };
     const offset = (day: number) => (dayParts(day).weekday - weekStart + 7) % 7;
@@ -205,9 +223,13 @@ export function Heatmap({
       const entry = values.get(day);
       const value = entry?.value ?? 0;
       const level =
-        value > 0 && top > 0
-          ? Math.min(levelCount - 1, Math.max(1, Math.ceil((value / top) * (levelCount - 1))))
-          : 0;
+        value <= 0
+          ? 0
+          : steps?.length
+            ? steps.filter((step) => value >= step).length
+            : top > 0
+              ? Math.min(levelCount - 1, Math.max(1, Math.ceil((value / top) * (levelCount - 1))))
+              : 0;
       const date = dayKey(day);
       const valueText = entry?.label ?? formatValue(value);
       days.set(day, {
@@ -234,6 +256,7 @@ export function Heatmap({
     endDate,
     levels,
     maxValue,
+    thresholdsKey,
     weekStart,
     formatValue,
     formatDate,
