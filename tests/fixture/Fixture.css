@@ -134,3 +134,16 @@ body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-p
 .fixture-heatmap-narrow {
   inline-size: min(100%, 24rem);
 }
+.fixture-shrink-row {
+  display: flex;
+  align-items: center;
+  inline-size: 12rem;
+}
+.fixture-shrink-label {
+  flex: 1 1 auto;
+  white-space: nowrap;
+}
+.fixture-shrink-slot {
+  flex: 0 1 auto;
+  min-inline-size: 0;
+}

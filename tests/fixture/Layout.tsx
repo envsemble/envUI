@@ -49,6 +49,14 @@ export function LayoutFixture() {
               <p>Supporting detail</p>
             </DisclosureNote>
           </Stack>
+          <div className="fixture-shrink-row" data-testid="shrink-row">
+            <span className="fixture-shrink-label">
+              A long label that fills the row and squeezes what sits beside it
+            </span>
+            <span className="fixture-shrink-slot">
+              <IconButton icon={<ChevronRight />} aria-label={`Squeezed next ${theme}`} />
+            </span>
+          </div>
           <ActionGroup stacked data-testid="stacked-actions" style={{ maxInlineSize: '20rem' }}>
             <Button>Continue</Button>
             <Button variant="secondary">Cancel</Button>

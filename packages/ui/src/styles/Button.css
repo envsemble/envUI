@@ -156,10 +156,13 @@
   cursor: default;
 }
 
+/* An icon-only button keeps its square size, also where its container is squeezed narrower. */
 .env-button.env-icon-button {
   width: calc(var(--icon-button-size) * var(--scale, 1));
   height: calc(var(--icon-button-size) * var(--scale, 1));
+  min-inline-size: calc(var(--icon-button-size) * var(--scale, 1));
   min-height: calc(var(--icon-button-size) * var(--scale, 1));
+  max-inline-size: none;
   flex-shrink: 0;
   padding: 0;
 }
