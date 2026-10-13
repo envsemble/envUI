@@ -29,6 +29,7 @@ import { ViewModule } from '@envsemble/envui/icons/ViewModule';
 import { WebAsset } from '@envsemble/envui/icons/WebAsset';
 import { Widgets } from '@envsemble/envui/icons/Widgets';
 import { MoreVert } from '@envsemble/envui/icons/MoreVert';
+import { MenuOpen } from '@envsemble/envui/icons/MenuOpen';
 import { ChatBubble } from '@envsemble/envui/icons/ChatBubble';
 import { AccountCircle } from '@envsemble/envui/icons/AccountCircle';
 import { Speed } from '@envsemble/envui/icons/Speed';
@@ -95,6 +96,7 @@ const referenceIcons: Record<string, typeof Palette> = {
   toasts: Notifications,
   dialogs: WebAsset,
   menu: MoreVert,
+  menubar: MenuOpen,
   tooltip: ChatBubble,
   avatar: AccountCircle,
   meters: Speed,

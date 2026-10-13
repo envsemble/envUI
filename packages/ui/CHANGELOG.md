@@ -22,7 +22,13 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 - `Breadcrumbs` and `Kbd`.
 - `Markdown` `components`, `remarkPlugins` and `rehypePlugins`; application overrides win and attributes such as heading ids reach the elements. Raw HTML is dropped before any rehype plugin runs, so it stays ignored, except keys written as `<kbd>Ctrl</kbd>`, which render as `Kbd`.
 - `Dialog` `size="wide"` (about 44 rem) and `placement="top"`.
-- `Menu` and `ContextMenu` `density="compact"`: 2 rem rows on one pane with hairline separators, for dense desktop surfaces; a compact `Tree` opens a compact context menu.
+- `Menu` and `ContextMenu` `density="compact"`: the desktop dropdown for dense surfaces. It takes the raised popup of `Popover` and `Select`, with small corners, 1.75 rem rows that highlight on hover and keyboard focus, labels that line up whether a row has a check mark, an icon or neither, shortcuts as small muted `Kbd` keys, hairline separators and small group labels. A compact `Tree` opens a compact context menu.
+- `MenuSubmenu`: a row that opens a nested menu beside it, on hover and with <kbd>→</kbd>, <kbd>Enter</kbd> or <kbd>Space</kbd>, closing with <kbd>←</kbd> and <kbd>Esc</kbd>. Submenus nest, flip at the window edge, line their first row up with the row that opened them and take the density and theme of their menu. `open`, `defaultOpen` and `onOpenChange` control them, for example to load their items as they open.
+- `Menubar` and `MenubarMenu`: an application menubar of compact text triggers, each opening a compact menu; once one is open, hovering another trigger or <kbd>←</kbd> and <kbd>→</kbd> switch menus, and opening one neither locks scrolling nor shifts the page. After a command, focus returns to where it was before the menubar took it, which `onOpenChange` reports as `previousFocus` for commands such as Copy. `accessKeys` adds desktop access keys: holding <kbd>Alt</kbd> underlines them, <kbd>Alt</kbd> with a menu's letter opens it, and <kbd>Alt</kbd> alone moves focus to the menubar and back.
+- `Select` `density="compact"`: a compact trigger, and the compact menu's popup with a check mark on the selected option.
+- `AppShell` and `AppShellSkeleton` `topbar="full"`: one row across the window, independent of the sidebar: the toggle, the context at its natural width, the title and the actions at the end. The sidebar then fits its navigation and sidebar content.
+- `AppShell` and `AppShellSkeleton` `titleBar`: the topbar is the window's title bar in installed web apps and desktop shells that draw their own (the Window Controls Overlay). It takes the title bar area's height and leaves room for the window controls through `env(titlebar-area-*)`, drags the window from empty space while its controls stay clickable, and makes its controls compact; `--topbar-height` follows it.
+- `TitleBar`: the same window title bar without the shell, with start, centered and end content, and the `--title-bar-height` token (2.5 rem) for windows that report no title bar area.
 - `Tabs` `fill`: the selected panel takes the height left below the list, for content that fills a region such as a diagram canvas.
 - `Surface` `density="compact"`: the controls inside take the compact control height, for toolbars over dense content.
 - `Code` `appearance="subtle"` and `Markdown` `inlineCode="subtle"`: inline code that follows the app theme as a quiet chip, for prose dense with identifiers.
@@ -38,7 +44,8 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 ### Documentation
 
 - New pages for the tree, document tabs, breadcrumbs, command palette, segmented controls, badges and counters, notices, popovers, tables and keyboard keys. Colors list the status tones.
-- The application shell page shows the frame alone, resizable. The menus page shows the account and organization menus, and the building blocks for the application's own menus.
+- The application shell page shows the frame alone, resizable, and a full-width topbar as a window title bar, with `TitleBar` on its own. The menus page shows the account and organization menus, and the building blocks for the application's own menus, compact menus and submenus included.
+- New page for the menubar.
 - Keys in the documentation and the catalogue show as `Kbd` keys.
 - The browser suite's ports can be changed with `ENVUI_CATALOGUE_PORT` and `ENVUI_FIXTURE_PORT`.
 

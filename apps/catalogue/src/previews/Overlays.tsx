@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   Avatar,
   AvatarButton,
@@ -15,11 +15,15 @@ import {
   MenuRadioGroup,
   MenuRadioItem,
   MenuSeparator,
+  MenuSubmenu,
+  Menubar,
+  MenubarMenu,
   OrganizationMenu,
   Progress,
   Stack,
   Surface,
   Text,
+  Textarea,
   Tooltip,
 } from '@envsemble/envui';
 import { Refresh } from '@envsemble/envui/icons/Refresh';
@@ -30,6 +34,17 @@ import { Add } from '@envsemble/envui/icons/Add';
 import { Delete } from '@envsemble/envui/icons/Delete';
 import { Edit } from '@envsemble/envui/icons/Edit';
 import { OpenInNew } from '@envsemble/envui/icons/OpenInNew';
+import { History } from '@envsemble/envui/icons/History';
+import { NoteAdd } from '@envsemble/envui/icons/NoteAdd';
+import { Save } from '@envsemble/envui/icons/Save';
+import { DriveFileMove } from '@envsemble/envui/icons/DriveFileMove';
+import { ContentCut } from '@envsemble/envui/icons/ContentCut';
+import { ContentCopy } from '@envsemble/envui/icons/ContentCopy';
+import { ContentPaste } from '@envsemble/envui/icons/ContentPaste';
+import { Undo } from '@envsemble/envui/icons/Undo';
+import { Redo } from '@envsemble/envui/icons/Redo';
+import { ZoomIn } from '@envsemble/envui/icons/ZoomIn';
+import { ZoomOut } from '@envsemble/envui/icons/ZoomOut';
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
 
@@ -95,6 +110,7 @@ export function MenuPreview() {
         </Text>
       </Example>
       <MenuPartsExample />
+      <CompactMenusExample />
     </Preview>
   );
 }
@@ -203,6 +219,16 @@ function MenuPartsExample() {
                   >
                     Rename
                   </MenuItem>
+                  <MenuSubmenu label="Move to" icon={<DriveFileMove />}>
+                    {['Archive', 'Drafts', 'Shared'].map((folder) => (
+                      <MenuItem
+                        key={folder}
+                        onClick={() => setLastAction(`Moved ${name} to ${folder}`)}
+                      >
+                        {folder}
+                      </MenuItem>
+                    ))}
+                  </MenuSubmenu>
                   <MenuSeparator />
                   <MenuItem icon={<Delete />} onClick={() => setLastAction(`Deleted ${name}`)}>
                     Delete
@@ -229,6 +255,254 @@ function MenuPartsExample() {
         {lastAction}
       </Text>
     </Example>
+  );
+}
+
+const recentDocuments = ['Quarterly report', 'Meeting notes', 'Budget'];
+
+/** Compact menus for dense desktop surfaces, with shortcuts, choices and submenus. */
+function CompactMenusExample() {
+  const [lastAction, setLastAction] = useState('');
+  const [wordWrap, setWordWrap] = useState(true);
+  const [theme, setTheme] = useState('system');
+  const [recentLoads, setRecentLoads] = useState(0);
+  return (
+    <Example
+      title="Compact menus and submenus"
+      size="collection"
+      caption={
+        <>
+          The desktop dropdown for dense surfaces: labels line up, shortcuts show as small keys, and
+          a submenu opens beside its row on hover or with <Kbd>→</Kbd>. Here Open recent counts how
+          often it loads its items as it opens: {recentLoads}.
+        </>
+      }
+    >
+      <SpecimenGrid>
+        <Specimen title="From a button">
+          <Menu
+            aria-label="Document"
+            density="compact"
+            align="start"
+            trigger={<Button variant="secondary">Document</Button>}
+          >
+            <MenuItem
+              icon={<NoteAdd />}
+              shortcut="Ctrl+N"
+              onClick={() => setLastAction('New document')}
+            >
+              New document
+            </MenuItem>
+            <MenuSubmenu
+              label="Open recent"
+              icon={<History />}
+              onOpenChange={(open) => {
+                if (open) setRecentLoads((count) => count + 1);
+              }}
+            >
+              {recentDocuments.map((name) => (
+                <MenuItem key={name} onClick={() => setLastAction(`Opened ${name}`)}>
+                  {name}
+                </MenuItem>
+              ))}
+              <MenuSeparator />
+              <MenuItem onClick={() => setLastAction('Cleared recent documents')}>
+                Clear recent
+              </MenuItem>
+            </MenuSubmenu>
+            <MenuItem icon={<Save />} shortcut="Ctrl+S" onClick={() => setLastAction('Saved')}>
+              Save
+            </MenuItem>
+            <MenuSeparator />
+            <MenuGroup label="View">
+              <MenuCheckboxItem checked={wordWrap} onCheckedChange={setWordWrap} shortcut="Alt+Z">
+                Word wrap
+              </MenuCheckboxItem>
+              <MenuSubmenu label="Theme">
+                <MenuRadioGroup value={theme} onValueChange={setTheme}>
+                  <MenuRadioItem value="light">Light</MenuRadioItem>
+                  <MenuRadioItem value="dark">Dark</MenuRadioItem>
+                  <MenuRadioItem value="system">System</MenuRadioItem>
+                </MenuRadioGroup>
+              </MenuSubmenu>
+            </MenuGroup>
+          </Menu>
+        </Specimen>
+      </SpecimenGrid>
+      <Text variant="caption" className="docs-caption" aria-live="polite">
+        {lastAction}
+      </Text>
+    </Example>
+  );
+}
+
+const sampleNote =
+  'Quarterly report\n\nRevenue grew in every region. Select some text, then use Edit to cut, copy or select all of it.';
+
+/** The menubar of a notes window: its Edit commands act on the note that had focus. */
+export function MenubarPreview() {
+  const note = useRef<HTMLTextAreaElement>(null);
+  const editTarget = useRef<Element | null>(null);
+  const [lastCommand, setLastCommand] = useState('');
+  const [wordWrap, setWordWrap] = useState(true);
+  const [zoom, setZoom] = useState(100);
+  const [theme, setTheme] = useState('system');
+  // Edit commands act on the field that had focus before the menubar took it, here the note.
+  const field = () =>
+    editTarget.current instanceof HTMLTextAreaElement ? editTarget.current : note.current!;
+  const selection = (target: HTMLTextAreaElement) =>
+    target.value.slice(target.selectionStart, target.selectionEnd);
+  async function copy(cut: boolean) {
+    const target = field();
+    const text = selection(target);
+    if (!text) {
+      setLastCommand(`Nothing selected to ${cut ? 'cut' : 'copy'}`);
+      return;
+    }
+    await navigator.clipboard?.writeText(text).catch(() => undefined);
+    if (cut) target.setRangeText('', target.selectionStart, target.selectionEnd, 'start');
+    setLastCommand(`${cut ? 'Cut' : 'Copied'} ${text.length} characters`);
+  }
+  return (
+    <Preview>
+      <Example
+        title="Application menubar"
+        size="wide"
+        caption={
+          <>
+            Open a menu, then move the pointer across the others or press <Kbd>←</Kbd> and{' '}
+            <Kbd>→</Kbd>. Hold <Kbd>Alt</Kbd> to see the access keys and press{' '}
+            <Kbd keys={['Alt', 'E']} /> to open Edit, or press <Kbd>Alt</Kbd> alone to move to the
+            menubar and back. Edit commands act on the note and return focus to it.
+          </>
+        }
+      >
+        <Surface tone="canvas" padding={3} className="docs-window">
+          <Menubar aria-label="Notes menu" accessKeys>
+            <MenubarMenu label="File" accessKey="F">
+              <MenuItem
+                icon={<NoteAdd />}
+                shortcut="Ctrl+N"
+                onClick={() => setLastCommand('New note')}
+              >
+                New note
+              </MenuItem>
+              <MenuSubmenu label="Open recent" icon={<History />}>
+                {recentDocuments.map((name) => (
+                  <MenuItem key={name} onClick={() => setLastCommand(`Opened ${name}`)}>
+                    {name}
+                  </MenuItem>
+                ))}
+                <MenuSeparator />
+                <MenuItem onClick={() => setLastCommand('Cleared recent notes')}>
+                  Clear recent
+                </MenuItem>
+              </MenuSubmenu>
+              <MenuSeparator />
+              <MenuItem icon={<Save />} shortcut="Ctrl+S" onClick={() => setLastCommand('Saved')}>
+                Save
+              </MenuItem>
+              <MenuItem shortcut="Ctrl+Shift+S" onClick={() => setLastCommand('Save as')}>
+                Save as…
+              </MenuItem>
+              <MenuSeparator />
+              <MenuItem shortcut="Ctrl+W" onClick={() => setLastCommand('Close window')}>
+                Close window
+              </MenuItem>
+            </MenubarMenu>
+            <MenubarMenu
+              label="Edit"
+              accessKey="E"
+              onOpenChange={(open, { previousFocus }) => {
+                if (open) editTarget.current = previousFocus;
+              }}
+            >
+              <MenuItem icon={<Undo />} shortcut="Ctrl+Z" onClick={() => setLastCommand('Undo')}>
+                Undo
+              </MenuItem>
+              <MenuItem icon={<Redo />} shortcut="Ctrl+Y" onClick={() => setLastCommand('Redo')}>
+                Redo
+              </MenuItem>
+              <MenuSeparator />
+              <MenuItem icon={<ContentCut />} shortcut="Ctrl+X" onClick={() => copy(true)}>
+                Cut
+              </MenuItem>
+              <MenuItem icon={<ContentCopy />} shortcut="Ctrl+C" onClick={() => copy(false)}>
+                Copy
+              </MenuItem>
+              <MenuItem
+                icon={<ContentPaste />}
+                shortcut="Ctrl+V"
+                disabled
+                description="Use the keyboard to paste here"
+              >
+                Paste
+              </MenuItem>
+              <MenuSeparator />
+              <MenuItem
+                shortcut="Ctrl+A"
+                onClick={() => {
+                  field().select();
+                  setLastCommand('Selected all');
+                }}
+              >
+                Select all
+              </MenuItem>
+            </MenubarMenu>
+            <MenubarMenu label="View" accessKey="V">
+              <MenuCheckboxItem checked={wordWrap} onCheckedChange={setWordWrap} shortcut="Alt+Z">
+                Word wrap
+              </MenuCheckboxItem>
+              <MenuSeparator />
+              <MenuItem
+                icon={<ZoomIn />}
+                shortcut="Ctrl++"
+                onClick={() => setZoom((value) => Math.min(value + 10, 200))}
+              >
+                Zoom in
+              </MenuItem>
+              <MenuItem
+                icon={<ZoomOut />}
+                shortcut="Ctrl+-"
+                onClick={() => setZoom((value) => Math.max(value - 10, 50))}
+              >
+                Zoom out
+              </MenuItem>
+              <MenuSeparator />
+              <MenuSubmenu label="Theme">
+                <MenuRadioGroup value={theme} onValueChange={setTheme}>
+                  <MenuRadioItem value="light">Light</MenuRadioItem>
+                  <MenuRadioItem value="dark">Dark</MenuRadioItem>
+                  <MenuRadioItem value="system">System</MenuRadioItem>
+                </MenuRadioGroup>
+              </MenuSubmenu>
+            </MenubarMenu>
+            <MenubarMenu label="Help" accessKey="H">
+              <MenuItem
+                shortcut="Ctrl+K Ctrl+S"
+                onClick={() => setLastCommand('Keyboard shortcuts')}
+              >
+                Keyboard shortcuts
+              </MenuItem>
+              <MenuSeparator />
+              <MenuItem onClick={() => setLastCommand('About Notes')}>About Notes</MenuItem>
+            </MenubarMenu>
+          </Menubar>
+          <Textarea
+            ref={note}
+            label="Note"
+            defaultValue={sampleNote}
+            rows={5}
+            className="docs-window-note"
+            wrap={wordWrap ? 'soft' : 'off'}
+            style={{ fontSize: `${(zoom / 100) * 0.9375}rem` }}
+          />
+        </Surface>
+        <Text variant="caption" className="docs-caption" aria-live="polite">
+          {lastCommand}
+        </Text>
+      </Example>
+    </Preview>
   );
 }
 

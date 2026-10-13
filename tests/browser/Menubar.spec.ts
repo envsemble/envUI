@@ -66,8 +66,8 @@ test('menubar menus open below their trigger and switch on hover and with the ar
   await expect(editMenu).toBeVisible();
   await expect(fileMenu).toBeHidden();
   // The arrow keys move between menus. Base UI opens the next menu as its trigger takes keyboard
-  // focus (:focus-visible), which automated Firefox does not report for synthesized keys, so
-  // Firefox checks that focus moves to the next trigger.
+  // focus (:focus-visible), which one engine does not report for synthesized keys; there the test
+  // checks that focus moves to the next trigger.
   await expect(editMenu.getByRole('menuitem', { name: 'Select all' })).toBeVisible();
   await editMenu.getByRole('menuitem', { name: 'Select all' }).focus();
   await page.keyboard.press('ArrowRight');

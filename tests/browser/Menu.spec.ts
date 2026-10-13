@@ -124,8 +124,8 @@ test.describe('Compact menus', () => {
       await expect(described).toHaveAccessibleDescription('Opens beside the current document');
       expect((await described.boundingBox())!.height).toBeGreaterThan(28.5);
 
-      // Hover and keyboard highlight fill the row. Base UI ignores WebKit pointer moves without
-      // movement, which is all the automated WebKit pointer reports, so WebKit checks the keyboard.
+      // Hover and keyboard highlight fill the row. In one engine Base UI ignores pointer moves
+      // without movement, which is all its automated pointer reports; there the keyboard is checked.
       if (browserName !== 'webkit') {
         await rows[1]!.hover();
         await expect(rows[1]!).toHaveAttribute('data-highlighted', '');

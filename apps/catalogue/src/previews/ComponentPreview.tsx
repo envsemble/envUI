@@ -16,7 +16,13 @@ import { Text } from '@envsemble/envui';
 import { EmptyStatePreview, LoadingPreview, DialogsPreview } from './Feedback';
 import { ToastsPreview } from './Toasts';
 import { ColorPickerPreview } from './ColorPicking';
-import { MenuPreview, TooltipPreview, AvatarPreview, MetersPreview } from './Overlays';
+import {
+  MenuPreview,
+  MenubarPreview,
+  TooltipPreview,
+  AvatarPreview,
+  MetersPreview,
+} from './Overlays';
 import { AppShellPreview } from './Shell';
 import { CommandPalettePreview, DocumentTabsPreview, TreePreview } from './Workspace';
 import {
@@ -104,6 +110,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <DialogsPreview />;
     case 'menu':
       return <MenuPreview />;
+    case 'menubar':
+      return <MenubarPreview />;
     case 'tooltip':
       return <TooltipPreview />;
     case 'avatar':

@@ -157,6 +157,38 @@
 .docs-shell-page {
   padding: var(--space-6);
 }
+/* A window around a sample menubar and note, and around a title bar used without the shell. */
+.docs-window {
+  display: grid;
+  gap: var(--space-3);
+  border: 0.0625rem solid var(--color-border-strong);
+}
+.docs-window-note {
+  font-family: var(--font-family);
+}
+.docs-title-bar-frame {
+  overflow: hidden;
+  border: 0.0625rem solid var(--color-border-strong);
+  border-radius: var(--radius-surface);
+  background: var(--color-canvas);
+}
+.docs-title-bar-mark {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  margin-inline-end: var(--space-1);
+}
+/* Stand-ins for the window controls the system draws at the end of an installed app's title bar. */
+.docs-window-controls {
+  align-self: stretch;
+  display: flex;
+  margin-inline-start: var(--space-2);
+  color: var(--color-text-muted);
+}
+.docs-window-control {
+  inline-size: 2.75rem;
+  display: grid;
+  place-items: center;
+}
 .docs-inline-row {
   flex-direction: row;
   flex-wrap: wrap;

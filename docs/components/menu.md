@@ -44,7 +44,7 @@ import { Logout } from '@envsemble/envui/icons/Logout';
 | MenuItem onClick         | An action; the menu closes after it runs                           |
 | MenuItem icon / disabled | Optional leading icon and unavailable state                        |
 | MenuSeparator            | Splits items into groups; each group keeps large outer corners     |
-| density                  | compact: 2 rem rows on one pane with hairline separators           |
+| density                  | compact: the desktop dropdown for dense surfaces; see below        |
 
 ### Groups, choices and shortcuts
 
@@ -87,6 +87,64 @@ import { Search } from '@envsemble/envui/icons/Search';
 | MenuRadioGroup value / onValueChange       | One checked choice among its MenuRadioItems; optional label like MenuGroup                                     |
 | MenuRadioItem value / description / icon   | A choice with a check mark while checked; closeOnClick is true by default                                      |
 | MenuCheckboxItem checked / onCheckedChange | An on/off option with a check mark; the menu stays open unless closeOnClick is set                             |
+
+### Compact menus and submenus
+
+```tsx
+import {
+  Button,
+  Menu,
+  MenuItem,
+  MenuRadioGroup,
+  MenuRadioItem,
+  MenuSeparator,
+  MenuSubmenu,
+} from '@envsemble/envui';
+import { History } from '@envsemble/envui/icons/History';
+
+<Menu
+  aria-label="Document"
+  density="compact"
+  align="start"
+  trigger={<Button variant="secondary">Document</Button>}
+>
+  <MenuItem shortcut="Ctrl+N" onClick={createDocument}>
+    New document
+  </MenuItem>
+  <MenuSubmenu
+    label="Open recent"
+    icon={<History />}
+    onOpenChange={(open) => {
+      if (open) loadRecentDocuments();
+    }}
+  >
+    {recentDocuments.map((document) => (
+      <MenuItem key={document.id} onClick={() => openDocument(document.id)}>
+        {document.name}
+      </MenuItem>
+    ))}
+    <MenuSeparator />
+    <MenuItem onClick={clearRecentDocuments}>Clear recent</MenuItem>
+  </MenuSubmenu>
+  <MenuSeparator />
+  <MenuSubmenu label="Theme">
+    <MenuRadioGroup value={theme} onValueChange={setTheme}>
+      <MenuRadioItem value="light">Light</MenuRadioItem>
+      <MenuRadioItem value="dark">Dark</MenuRadioItem>
+      <MenuRadioItem value="system">System</MenuRadioItem>
+    </MenuRadioGroup>
+  </MenuSubmenu>
+</Menu>;
+```
+
+| Name                                          | Contract                                                                                                                                  |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| density="compact"                             | The desktop dropdown: the raised popup of Popover and Select with 1.75 rem rows, 16 px icons, shortcuts as small muted keys and hairlines |
+| MenuSubmenu label / icon / description        | The row that opens the submenu, with a chevron at its end                                                                                 |
+| MenuSubmenu children                          | The submenu's items: any menu part, including further submenus                                                                            |
+| MenuSubmenu disabled                          | The row stays in place but cannot open its submenu                                                                                        |
+| MenuSubmenu open / defaultOpen / onOpenChange | Optional control; onOpenChange can load the items as the submenu opens                                                                    |
+| MenuSubmenu aria-label / className            | Name of the submenu, the label by default when it is text, and the class of its popup                                                     |
 
 ### Context menu
 
@@ -155,7 +213,10 @@ import { AppShell, OrganizationMenu } from '@envsemble/envui';
 ## Guidelines
 
 - Use a menu for a short list of actions or destinations behind one trigger. Use Select to choose a value and Tabs to switch views.
-- envUI provides two menus: OrganizationMenu, and the account menu composed from AvatarButton, MenuHeader and items. Every other menu is the application's own, built from MenuItem, MenuGroup, MenuRadioGroup, MenuCheckboxItem and MenuSeparator, in standard or compact density.
+- envUI provides two menus: OrganizationMenu, and the account menu composed from AvatarButton, MenuHeader and items. Every other menu is the application's own, built from MenuItem, MenuGroup, MenuRadioGroup, MenuCheckboxItem, MenuSubmenu and MenuSeparator, in standard or compact density.
+- Use compact density in dense desktop interfaces, such as a menubar, a compact tree's context menu or a toolbar. The popup is as wide as its content, between 12 and 22 rem, and descriptions wrap. Labels line up across rows: once a row has a check mark or an icon, the others keep its place. On coarse pointers, rows keep the touch height.
+- A submenu opens beside its row on hover, after a short delay, and with <kbd>→</kbd>, <kbd>Enter</kbd> or <kbd>Space</kbd>, with focus on its first item; <kbd>←</kbd> and <kbd>Esc</kbd> close it and return to the row. It opens at the inline end, lines its first row up with the row that opened it and flips to the other side near the edge of the window. It takes the density and theme of its menu, and the row stays highlighted while it is open.
+- Keep submenus shallow, one level in most menus, for groups of related choices such as recent documents or a theme. Frequent commands belong in the menu itself.
 - A context menu opens on right click and long press at the pointer, and with the <kbd>Menu</kbd> key or <kbd>Shift</kbd>+<kbd>F10</kbd> below the focused element. For a widget with aria-activedescendant, such as Tree, the target is its active descendant. Focus returns to where it was when the menu closes.
 - A context menu supplements visible controls: offer the same actions elsewhere, for people who cannot right click.
 - Shortcut hints show as Kbd keys and describe keys the application already handles; the menu does not bind them.
@@ -168,6 +229,7 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
+- [Menubar](../components/menubar.md)
 - [Navigation items](../components/navigation.md)
 - [Tooltips](../components/tooltip.md)
 - [Avatars](../components/avatar.md)

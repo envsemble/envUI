@@ -4,7 +4,7 @@ import { catalogueUrl } from './Servers';
 // Options for dense, document-centred applications: compact menus, subtle inline code and tabs that
 // fill a region.
 
-test('a compact menu has shorter rows on one pane than a standard menu', async ({ page }) => {
+test('a compact menu has shorter rows on a raised popup than a standard menu', async ({ page }) => {
   await page.goto(`${catalogueUrl}/#/components/menu/preview`);
   await page.getByRole('button', { name: 'Open account menu' }).click();
   const standard = page.getByRole('menu', { name: 'Account', exact: true });
@@ -13,9 +13,21 @@ test('a compact menu has shorter rows on one pane than a standard menu', async (
   await page.getByRole('button', { name: 'Open compact account menu' }).click();
   const compact = page.getByRole('menu', { name: 'Compact account' });
   await expect(compact).toHaveAttribute('data-density', 'compact');
-  const compactRow = await compact.getByRole('menuitem', { name: 'Preferences' }).boundingBox();
-  expect(compactRow!.height).toBeLessThanOrEqual(34);
-  expect(compactRow!.height).toBeLessThan(standardRow!.height);
+  await expect(compact).not.toHaveAttribute('data-starting-style');
+  // Rows reach their size once the popup has grown in.
+  await expect
+    .poll(async () =>
+      Math.round(
+        (await compact.getByRole('menuitem', { name: 'Preferences' }).boundingBox())!.height,
+      ),
+    )
+    .toBe(28);
+  expect(28).toBeLessThan(standardRow!.height);
+  expect(
+    await compact.evaluate((element) =>
+      Number.parseFloat(getComputedStyle(element).borderTopWidth),
+    ),
+  ).toBeGreaterThan(0);
   await expect(compact.getByRole('separator')).toHaveCount(1);
   await compact.getByRole('menuitem', { name: 'Preferences' }).click();
   await expect(compact).toBeHidden();

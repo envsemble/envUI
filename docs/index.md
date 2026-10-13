@@ -47,7 +47,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Navigation items](components/navigation.md) — Links to another destination; routing stays with the app.
 - [Tabs](components/tabs.md) — Switches between content panels in the same view.
 - [Direction links](components/direction-links.md) — Centered previous and next destinations, together or individually.
-- [Application shell](components/app-shell.md) — Topbar and collapsible navigation sidebar for a whole application.
+- [Application shell](components/app-shell.md) — Topbar, window title bar and collapsible navigation sidebar for a whole application.
 - [Tree](components/tree.md) — A virtualized tree of rows for large hierarchies, such as file trees.
 - [Document tabs](components/document-tabs.md) — Closable editor-style tabs for open documents.
 - [Breadcrumbs](components/breadcrumbs.md) — The path from the top level to the current page.
@@ -74,6 +74,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Dialogs](components/dialogs.md) — Centered modals and side panels share focus and dismissal behavior.
 - [Command palette](components/command-palette.md) — Quick open: search and choose from a ranked list near the top of the window.
 - [Menus](components/menu.md) — Actions, destinations and the shared organization menu, opened from a trigger or a right click.
+- [Menubar](components/menubar.md) — An application menubar of compact menus with shortcuts, submenus and access keys.
 - [Tooltips](components/tooltip.md) — Short hints on hover and keyboard focus.
 - [Popovers](components/popover.md) — A floating panel for details or a small form beside its trigger.
 - [Meters & progress](components/meters.md) — Quantities within a range and task completion.
