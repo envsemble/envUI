@@ -21,7 +21,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 - `Table` with `TableHead`, `TableBody`, `TableRow`, `TableHeaderCell` and `TableCell`: density, sticky headers, numeric cells and a focusable scroll region, which keeps content positioned in cells, such as visually hidden text, from widening the page.
 - `Breadcrumbs` and `Kbd`.
 - `Markdown` `components`, `remarkPlugins` and `rehypePlugins`; application overrides win and attributes such as heading ids reach the elements. Raw HTML is dropped before any rehype plugin runs, so it stays ignored, except keys written as `<kbd>Ctrl</kbd>`, which render as `Kbd`.
-- `Dialog` `size="wide"` (about 44 rem) and `placement="top"`.
+- `Dialog` `size="wide"` (about 44 rem), also for right panels, and `placement="top"`.
 - `Menu` and `ContextMenu` `density="compact"`: the desktop dropdown for dense surfaces. It takes the raised popup of `Popover` and `Select`, with small corners, 1.75 rem rows that highlight on hover and keyboard focus, labels that line up whether a row has a check mark, an icon or neither, shortcuts as small muted `Kbd` keys, hairline separators and small group labels. A compact `Tree` opens a compact context menu.
 - `MenuSubmenu`: a row that opens a nested menu beside it, on hover and with <kbd>→</kbd>, <kbd>Enter</kbd> or <kbd>Space</kbd>, closing with <kbd>←</kbd> and <kbd>Esc</kbd>. Submenus nest, flip at the window edge, line their first row up with the row that opened them and take the density and theme of their menu. `open`, `defaultOpen` and `onOpenChange` control them, for example to load their items as they open.
 - `Menubar` and `MenubarMenu`: an application menubar of compact text triggers, each opening a compact menu; once one is open, hovering another trigger or <kbd>←</kbd> and <kbd>→</kbd> switch menus, and opening one neither locks scrolling nor shifts the page. After a command, focus returns to where it was before the menubar took it, which `onOpenChange` reports as `previousFocus` for commands such as Copy. `accessKeys` adds desktop access keys: holding <kbd>Alt</kbd> underlines them, <kbd>Alt</kbd> with a menu's letter opens it, and <kbd>Alt</kbd> alone moves focus to the menubar and back.
@@ -58,6 +58,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 - A collapsed `AppShell` sidebar no longer treats expanded tree rows as open popups, and stays expanded while a context menu opened from it is open.
 - On narrow viewports the `AppShell` sidebar opens as a drawer at least 20 rem wide, or the window less 3 rem, instead of the measured navigation width, so `sidebarContent` such as a list of recent documents has room.
 - An icon-only `NavigationItem` shows its label in a `Tooltip` at its inline end on hover and keyboard focus instead of a native title, which doubled an application's own tooltip. An application `Tooltip` around the item replaces it.
+- A `Dialog` panel with `placement="right"` takes the whole width of a narrow window, such as a phone's, instead of leaving a sliver of the page beside it.
 
 ### Fixed
 

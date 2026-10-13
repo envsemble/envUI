@@ -96,6 +96,21 @@ export function DialogVariantsFixture() {
         >
           <Input label="Search" name="search" />
         </Dialog>
+        <Dialog
+          title="Report details"
+          placement="right"
+          trigger={<Button variant="secondary">Open panel</Button>}
+        >
+          <Text>A panel at the right edge.</Text>
+        </Dialog>
+        <Dialog
+          title="Wide report details"
+          placement="right"
+          size="wide"
+          trigger={<Button variant="secondary">Open wide panel</Button>}
+        >
+          <Text>A wide panel for content-heavy details.</Text>
+        </Dialog>
       </div>
     </Theme>
   );
