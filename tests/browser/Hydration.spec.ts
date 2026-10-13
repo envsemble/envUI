@@ -31,6 +31,21 @@ test('public components hydrate server output without recoverable errors', async
   await expect(page.getByRole('radio', { name: 'Done' })).toHaveAttribute('aria-checked', 'true');
   await page.getByRole('tab', { name: 'Two.md' }).click();
   await expect(page.getByRole('tab', { name: 'Two.md' })).toHaveAttribute('aria-selected', 'true');
+  const file = page.getByRole('menuitem', { name: 'File', exact: true });
+  await expect(page.locator('.env-title-bar')).toContainText('Hydrated title');
+  await file.click();
+  const fileMenu = page.getByRole('menu', { name: 'File' });
+  await expect(fileMenu.getByRole('menuitem', { name: 'Hydrated new' })).toBeVisible();
+  await fileMenu.getByRole('menuitem', { name: 'Hydrated recent' }).hover();
+  await expect(page.getByRole('menuitem', { name: 'Hydrated report' })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await page.keyboard.press('Escape');
+  await expect(fileMenu).toBeHidden();
+  await page.getByRole('combobox', { name: 'Hydrated compact select' }).click();
+  await page.getByRole('option', { name: 'Two', exact: true }).click();
+  await expect(page.getByRole('combobox', { name: 'Hydrated compact select' })).toContainText(
+    'Two',
+  );
   const row = page.getByRole('treeitem', { name: 'Hydrated document 2', exact: true });
   await row.click();
   await expect(row).toHaveAttribute('aria-selected', 'true');

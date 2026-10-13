@@ -39,6 +39,7 @@
 @import './Tree.css';
 @import './DocumentTabs.css';
 @import './CommandPalette.css';
+@import './TitleBar.css';
 @import './AppShell.css';
 @import './Motion.css';
 @font-face {

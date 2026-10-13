@@ -1,0 +1,96 @@
+/* A window title bar, for installed web apps and desktop shells that draw their own title bar while
+   the system draws the window controls over the page (the Window Controls Overlay). TitleBar and
+   AppShell's title bar share these rules.
+   The title bar area environment variables describe the part of the window's top edge that the
+   window controls leave free; the bar takes its height and leaves room on either side. Outside such
+   a window the variables are undefined, and the bar falls back to --title-bar-height across the full
+   width. Empty space drags the window, controls inside stay clickable, and they take the compact
+   control height, as in a compact Surface. */
+.env-title-bar {
+  --control-height-small: var(--control-height-compact);
+  --control-height: var(--control-height-compact);
+  --icon-button-size: var(--control-height-compact);
+  /* Inner padding at the inline start and end; the window controls add to the side they occupy. */
+  --env-title-bar-start: var(--space-3);
+  --env-title-bar-end: var(--space-3);
+  --env-title-bar-left: var(--env-title-bar-start);
+  --env-title-bar-right: var(--env-title-bar-end);
+  box-sizing: border-box;
+  block-size: env(titlebar-area-height, var(--title-bar-height));
+  padding-left: calc(env(titlebar-area-x, 0px) + var(--env-title-bar-left));
+  padding-right: calc(
+    100vw - env(titlebar-area-x, 0px) - env(titlebar-area-width, 100vw) + var(--env-title-bar-right)
+  );
+  -webkit-app-region: drag;
+  app-region: drag;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.env-title-bar:dir(rtl) {
+  --env-title-bar-left: var(--env-title-bar-end);
+  --env-title-bar-right: var(--env-title-bar-start);
+}
+.env-title-bar
+  :is(
+    a,
+    button,
+    input,
+    select,
+    textarea,
+    label,
+    summary,
+    iframe,
+    [role='button'],
+    [role='link'],
+    [role='menubar'],
+    [role='menuitem'],
+    [role='combobox'],
+    [role='tablist'],
+    [role='tab'],
+    [role='switch'],
+    [role='checkbox'],
+    [role='radio'],
+    [role='slider'],
+    [role='textbox'],
+    [role='searchbox'],
+    [tabindex],
+    [contenteditable],
+    .env-text-field-well
+  ) {
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+}
+.env-title-bar :is(input, textarea, [contenteditable]) {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* TitleBar: start, center and end sections on the canvas, with a hairline below like the shell's top
+   bar. The center content stays centered in the window while the sides leave room for it. */
+.env-title-bar-layout {
+  display: grid;
+  grid-template-columns: minmax(max-content, 1fr) minmax(0, auto) minmax(max-content, 1fr);
+  align-items: center;
+  column-gap: var(--space-3);
+  border-block-end: 0.0625rem solid var(--color-border-strong);
+  background: var(--color-canvas);
+  color: var(--color-text-primary);
+  font: var(--type-body-small);
+}
+.env-title-bar-start,
+.env-title-bar-end {
+  min-inline-size: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.env-title-bar-end {
+  justify-content: flex-end;
+}
+.env-title-bar-center {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

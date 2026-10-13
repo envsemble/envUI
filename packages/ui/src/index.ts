@@ -63,6 +63,7 @@ export * from './navigation/Menu.js';
 export * from './navigation/Menubar.js';
 export * from './navigation/OrganizationMenu.js';
 export * from './navigation/AppShell.js';
+export * from './navigation/TitleBar.js';
 export * from './navigation/Tree.js';
 export * from './navigation/DocumentTabs.js';
 export * from './navigation/Breadcrumbs.js';

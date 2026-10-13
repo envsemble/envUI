@@ -14,6 +14,9 @@
   --env-sidebar-collapsed-width: calc(var(--control-height) + 2 * var(--env-sidebar-inset));
   --env-sidebar-width: var(--env-sidebar-expanded-width);
   --env-app-divider: 0.0625rem solid var(--color-border-strong);
+  /* The standard control height, for parts that line up with the navigation while a title bar makes
+     its own controls compact. */
+  --env-app-control-height: var(--control-height);
   min-block-size: 100dvh;
   background: var(--color-canvas);
 }
@@ -236,7 +239,8 @@ button.env-app-sidebar-toggle:focus-visible {
 
 /* A collapsed sidebar shows icons; hover or focus expands it over the content, together with the
    context area above it. Sidebar content shows only while the sidebar is expanded. */
-.env-app-shell[data-compact] :is(.env-app-context, .env-app-sidebar-content) {
+.env-app-shell[data-compact] .env-app-sidebar-content,
+.env-app-shell[data-compact]:not([data-topbar='full']) .env-app-context {
   display: none;
 }
 .env-app-shell[data-expanded-overlay] .env-app-sidebar {
@@ -288,6 +292,62 @@ button.env-app-sidebar-toggle:focus-visible {
   background: hsl(from var(--color-dialog-overlay) h s l / 0.3);
 }
 
+/* A full topbar is one row across the window, independent of the sidebar: the toggle, the context at
+   its natural width, the title, which truncates first, and the actions at the end. Its columns do
+   not follow the sidebar, so nothing in it moves while the sidebar collapses or expands. */
+.env-app-shell[data-topbar='full'] .env-app-topbar {
+  --env-title-bar-start: var(--env-sidebar-inset);
+  --env-title-bar-end: var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  transition: none;
+}
+.env-app-shell[data-topbar='full']:not([data-title-bar]) .env-app-topbar {
+  padding-inline: var(--env-title-bar-start) var(--env-title-bar-end);
+}
+.env-app-shell[data-topbar='full'] :is(.env-app-topbar-context, .env-app-topbar-page) {
+  display: contents;
+  border: 0;
+}
+.env-app-shell[data-topbar='full'] .env-app-context {
+  flex: 0 1 auto;
+  gap: var(--space-2);
+}
+.env-app-shell[data-topbar='full'] .env-app-title {
+  flex: 0 1000 auto;
+  margin-inline: var(--space-1) auto;
+}
+.env-app-shell[data-topbar='full'][data-narrow] .env-app-topbar {
+  --env-title-bar-end: var(--space-3);
+}
+
+/* As the window's title bar, the topbar takes the title bar height, which --topbar-height follows,
+   so sticky content, the sidebar and the content offset line up with it. */
+.env-app-shell[data-title-bar] {
+  --topbar-height: env(titlebar-area-height, var(--title-bar-height));
+}
+/* In the split topbar, the columns keep their own inner padding. */
+.env-app-topbar.env-title-bar {
+  --env-title-bar-start: 0rem;
+  --env-title-bar-end: 0rem;
+}
+.env-app-topbar.env-title-bar .env-app-title {
+  font: var(--type-body-small);
+}
+/* The toggle takes the compact size and stays on the center line of the navigation icons. */
+.env-app-topbar.env-title-bar .env-app-sidebar-toggle {
+  margin-inline: calc((var(--env-app-control-height) - var(--control-height)) / 2);
+}
+.env-app-topbar.env-title-bar .env-app-brand > :is(img, svg) {
+  inline-size: 1.25rem;
+  max-block-size: 1.25rem;
+}
+.env-app-topbar.env-title-bar .env-app-toggle-icon {
+  inline-size: 1rem;
+  block-size: 1rem;
+}
+
 /* The loading frame mirrors the shell geometry. */
 .env-app-shell-skeleton {
   display: block;
@@ -305,7 +365,8 @@ button.env-app-sidebar-toggle:focus-visible {
 }
 
 /* AppShell reads the natural width of the sidebar content with these rules applied for a moment. */
-.env-app-shell[data-measuring] :is(.env-app-navigation, .env-app-topbar-context) {
+.env-app-shell[data-measuring] :is(.env-app-navigation, .env-app-topbar-context),
+.env-app-shell[data-topbar='full'][data-measuring] .env-app-sidebar-content {
   inline-size: max-content;
 }
 .env-app-shell[data-measuring] .env-app-context {

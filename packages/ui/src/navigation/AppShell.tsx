@@ -149,7 +149,10 @@ function useWidthBounds(minWidth: number | undefined, maxWidth: number | undefin
 interface AppShellFrameProps {
   /** Brand mark in the sidebar toggle; the toggle icon replaces it while the sidebar region is hovered. */
   brand: ReactNode;
-  /** Content above the sidebar in the topbar, such as an organization switcher. Hidden while compact. */
+  /**
+   * Content in the topbar beside the toggle, such as an organization switcher. In the split topbar
+   * it sits above the sidebar and hides while the sidebar is compact.
+   */
   context?: ReactNode;
   /** Current page name in the topbar. Hidden on narrow viewports. */
   title?: ReactNode;
@@ -157,6 +160,18 @@ interface AppShellFrameProps {
   actions?: ReactNode;
   /** Separator lines between the topbar, sidebar and content (default). */
   dividers?: boolean;
+  /**
+   * split (default): the context sits above the sidebar, as wide as the sidebar, beside the page
+   * part. full: one row across the window, independent of the sidebar: the toggle, the context at
+   * its natural width, the title, and the actions at the end.
+   */
+  topbar?: 'split' | 'full';
+  /**
+   * The topbar is the window's title bar, for installed web apps and desktop shells that draw their
+   * own title bar (the Window Controls Overlay): empty space drags the window, it leaves room for the
+   * window controls the system draws, and the controls inside are compact. Meant for the full topbar.
+   */
+  titleBar?: boolean;
   className?: string;
 }
 
@@ -210,6 +225,8 @@ export function AppShell({
   title,
   actions,
   dividers = true,
+  topbar = 'split',
+  titleBar = false,
   className,
   navigation,
   navigationLabel,
@@ -232,6 +249,8 @@ export function AppShell({
 }: AppShellProps) {
   const isNarrow = useMedia(narrowQuery);
   const canHover = useMedia(hoverQuery);
+  // A full topbar does not depend on the sidebar: the context keeps its width and stays visible.
+  const full = topbar === 'full';
   const [storedCollapsed, setStoredCollapsed] = useState(() =>
     readStoredCollapsed(storageKey, defaultCollapsed),
   );
@@ -309,19 +328,23 @@ export function AppShell({
     if (measured !== undefined) setContentWidth((current) => current ?? measured);
   }, [storageKey, resizable]);
 
-  // The expanded sidebar fits its widest content: the navigation or the context beside the toggle.
-  // Both are measured at their natural width, which only shows while labels are visible.
+  // The expanded sidebar fits its widest content: the navigation or, in the split topbar, the
+  // context beside the toggle; in the full topbar, the navigation or the sidebar content. They are
+  // measured at their natural width, which only shows while labels are visible.
   const measureSidebar = useCallback(() => {
     const frame = shell.current;
     const navigation = navigationRegion.current;
-    const context = contextRegion.current;
+    const companion = full ? sidebarContentRegion.current : contextRegion.current;
     // Compact and hidden sidebars show no labels to measure; the last width stays. A width chosen
     // by resizing stays as it is.
-    if (!frame || !navigation || !context || widthChosenRef.current) return;
+    if (!frame || !navigation || (!full && !companion) || widthChosenRef.current) return;
     if (frame.hasAttribute('data-compact') || sidebarRegion.current?.hidden) return;
     frame.setAttribute('data-measuring', '');
     const width = Math.ceil(
-      Math.max(navigation.getBoundingClientRect().width, context.getBoundingClientRect().width),
+      Math.max(
+        navigation.getBoundingClientRect().width,
+        companion?.getBoundingClientRect().width ?? 0,
+      ),
     );
     frame.removeAttribute('data-measuring');
     // A shell inside a hidden ancestor measures nothing; unchanged widths need no update.
@@ -329,14 +352,14 @@ export function AppShell({
     measuredWidth.current = width;
     setContentWidth(width);
     writeStored(widthKey(storageKey), String(width));
-  }, [storageKey]);
+  }, [storageKey, full]);
 
   useLayoutEffect(() => {
     if (measurable) measureSidebar();
   }, [measurable, measureSidebar]);
 
   useEffect(() => {
-    const regions = [navigationRegion.current, contextRegion.current].filter(
+    const regions = [navigationRegion.current, full ? null : contextRegion.current].filter(
       (region): region is HTMLElement => region !== null,
     );
     const observer = new MutationObserver(measureSidebar);
@@ -345,19 +368,23 @@ export function AppShell({
       // Images, such as an organization logo, change the width when they load.
       region.addEventListener('load', measureSidebar, true);
     }
+    // Sidebar content, such as a virtualized tree, changes as it scrolls; only replacing it counts.
+    if (full && sidebarContentRegion.current)
+      observer.observe(sidebarContentRegion.current, { childList: true });
     document.fonts?.addEventListener('loadingdone', measureSidebar);
     return () => {
       observer.disconnect();
       for (const region of regions) region.removeEventListener('load', measureSidebar, true);
       document.fonts?.removeEventListener('loadingdone', measureSidebar);
     };
-  }, [measureSidebar]);
+  }, [measureSidebar, full]);
 
   useEffect(() => setNarrowOpen(false), [isNarrow]);
 
   // A popup opened from the sidebar region (its trigger has aria-expanded) keeps the sidebar expanded.
+  // The context of a full topbar is not part of that region.
   useEffect(() => {
-    const regions = [contextRegion.current, sidebarRegion.current].filter(
+    const regions = [full ? null : contextRegion.current, sidebarRegion.current].filter(
       (region): region is HTMLElement => region !== null,
     );
     // Expanded tree rows are not popups; an open context menu is.
@@ -378,7 +405,7 @@ export function AppShell({
       });
     update();
     return () => observer.disconnect();
-  }, []);
+  }, [full]);
 
   const setCollapsed = useCallback(
     (next: boolean) => {
@@ -510,9 +537,17 @@ export function AppShell({
         data-narrow-open={isNarrow && narrowOpen ? '' : undefined}
         data-region-hovered={regionHovered ? '' : undefined}
         data-dividers={dividers ? '' : undefined}
+        data-topbar={full ? 'full' : undefined}
+        data-title-bar={titleBar ? '' : undefined}
       >
-        <header className="env-app-topbar">
-          <div className="env-app-topbar-context" ref={contextRegion} {...regionHandlers}>
+        <header className={classNames('env-app-topbar', titleBar && 'env-title-bar')}>
+          {/* The split topbar's context area sits above the sidebar and belongs to its region; in a
+              full topbar only the toggle does. */}
+          <div
+            className="env-app-topbar-context"
+            ref={contextRegion}
+            {...(full ? undefined : regionHandlers)}
+          >
             <button
               type="button"
               className="env-app-sidebar-toggle"
@@ -520,6 +555,7 @@ export function AppShell({
               title={toggleLabel}
               aria-expanded={isNarrow ? narrowOpen : !collapsed}
               onClick={toggleSidebar}
+              {...(full ? regionHandlers : undefined)}
             >
               <span className="env-app-brand" aria-hidden="true">
                 {brand}
@@ -615,6 +651,8 @@ export interface AppShellSkeletonProps
 export function AppShellSkeleton({
   brand,
   dividers = true,
+  topbar = 'split',
+  titleBar = false,
   className,
   label = 'Loading',
   navigationItems = 3,
@@ -648,8 +686,10 @@ export function AppShellSkeleton({
         data-compact={collapsed && !isNarrow ? '' : undefined}
         data-narrow={isNarrow ? '' : undefined}
         data-dividers={dividers ? '' : undefined}
+        data-topbar={topbar === 'full' ? 'full' : undefined}
+        data-title-bar={titleBar ? '' : undefined}
       >
-        <div className="env-app-topbar">
+        <div className={classNames('env-app-topbar', titleBar && 'env-title-bar')}>
           <div className="env-app-topbar-context">
             <span className="env-app-sidebar-toggle">
               <span className="env-app-brand">{brand}</span>

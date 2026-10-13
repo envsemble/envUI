@@ -14,6 +14,7 @@ import { ColorPickerFixture } from './ColorPicker.js';
 import { MarkdownEditingFixture, MarkdownExtensionsFixture } from './MarkdownEditing.js';
 import { AdoptionFixture, ShellFixture } from './Adoption.js';
 import { ResizableShellFixture } from './ResizableShell.js';
+import { FullShellFixture, FullShellSkeletonFixture, TitleBarFixture } from './WindowShell.js';
 import { MenusFixture } from './Menus.js';
 import { MenubarFixture } from './Menubars.js';
 import { TreeFixture } from './TreeView.js';
@@ -28,6 +29,9 @@ import { DataDisplayFixture } from './DataDisplay.js';
 const standaloneFixtures: Record<string, () => ReactNode> = {
   shell: ShellFixture,
   'resizable-shell': ResizableShellFixture,
+  'full-shell': FullShellFixture,
+  'full-shell-skeleton': FullShellSkeletonFixture,
+  'title-bar': TitleBarFixture,
 };
 
 export default function App() {

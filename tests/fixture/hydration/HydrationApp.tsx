@@ -15,6 +15,11 @@ import {
   Notice,
   SegmentedControl,
   Tree,
+  TitleBar,
+  Menubar,
+  MenubarMenu,
+  MenuItem,
+  MenuSubmenu,
 } from '@envsemble/envui';
 
 const treeItems = Array.from({ length: 40 }, (_, index) => ({
@@ -37,6 +42,20 @@ export function HydrationApp() {
   return (
     <Theme theme="dark">
       <ToastProvider>
+        <TitleBar
+          start={
+            <Menubar aria-label="Hydrated menubar" accessKeys>
+              <MenubarMenu label="File" accessKey="F">
+                <MenuItem shortcut="Ctrl+N">Hydrated new</MenuItem>
+                <MenuSubmenu label="Hydrated recent">
+                  <MenuItem>Hydrated report</MenuItem>
+                </MenuSubmenu>
+              </MenubarMenu>
+            </Menubar>
+          }
+        >
+          Hydrated title
+        </TitleBar>
         <Input
           label="Hydrated input"
           value={name}
@@ -46,6 +65,15 @@ export function HydrationApp() {
         <ColorPicker label="Hydrated color" defaultValue="#1a73e8" />
         <Select
           label="Hydrated select"
+          defaultValue="one"
+          options={[
+            { value: 'one', label: 'One' },
+            { value: 'two', label: 'Two' },
+          ]}
+        />
+        <Select
+          label="Hydrated compact select"
+          density="compact"
           defaultValue="one"
           options={[
             { value: 'one', label: 'One' },

@@ -25,6 +25,8 @@
   --control-font-size: var(--font-size-body);
   --viewport-gutter: clamp(0.75rem, 2vw, 1rem);
   --topbar-height: 3.25rem;
+  /* A window title bar drawn by the application, which keeps compact controls. */
+  --title-bar-height: 2.5rem;
   --color-control-blue: hsl(214.07767 81.746032% 50.588235%);
   --color-link: hsl(214.07767 81.746032% 50.588235%);
 
@@ -447,5 +449,7 @@
     --control-height-compact: var(--control-height-touch);
     --control-height: var(--control-height-touch);
     --control-font-size: 1rem;
+    /* The title bar holds compact controls, which take the touch height here. */
+    --title-bar-height: calc(var(--control-height-touch) + var(--space-1));
   }
 }

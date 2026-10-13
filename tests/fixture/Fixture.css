@@ -33,8 +33,8 @@
   gap: 0.75rem;
 }
 
-/* The resizable shell fixture fills the viewport; the host document margin would offset it. */
-body:has(.fixture-resizable-shell) {
+/* Shell and title bar fixtures fill the viewport; the host document margin would offset them. */
+body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-page)) {
   margin: 0;
 }
 .fixture-sidebar-list {
