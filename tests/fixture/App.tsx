@@ -24,7 +24,7 @@ import {
 import { MenusFixture } from './Menus.js';
 import { MenubarFixture } from './Menubars.js';
 import { TreeFixture } from './TreeView.js';
-import { DocumentTabsFixture } from './Tabs.js';
+import { DocumentTabsFixture, FillTabsFixture } from './Tabs.js';
 import { CommandPaletteFixture } from './Palette.js';
 import { SegmentedControlFixture } from './Segments.js';
 import { BadgesFixture } from './Badges.js';
@@ -126,6 +126,12 @@ export default function App() {
             <>
               <DocumentTabsFixture theme="light" />
               <DocumentTabsFixture theme="dark" />
+            </>
+          )}
+          {includes('fill-tabs') && (
+            <>
+              <FillTabsFixture theme="light" />
+              <FillTabsFixture theme="dark" />
             </>
           )}
           {includes('palette') && (

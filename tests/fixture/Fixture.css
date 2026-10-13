@@ -90,6 +90,20 @@ body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-p
 .fixture-tab-panel {
   padding: 1rem;
 }
+/* Filling Tabs take the height of their frame. */
+.fixture-fill-frame {
+  display: flex;
+  flex-direction: column;
+  block-size: 14rem;
+}
+.fixture-fill-tabs {
+  flex: 1;
+}
+.fixture-tabs-heading {
+  display: flex;
+  align-items: start;
+  gap: 1rem;
+}
 .fixture-section output[data-testid^='document-tabs-log'] {
   white-space: pre-line;
 }

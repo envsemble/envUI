@@ -1,5 +1,13 @@
 import { useState } from 'react';
-import { DocumentTabs, Theme, type DocumentTab, type ThemeValue } from '@envsemble/envui';
+import {
+  Button,
+  DocumentTabs,
+  Tabs,
+  Text,
+  Theme,
+  type DocumentTab,
+  type ThemeValue,
+} from '@envsemble/envui';
 import { Description } from '@envsemble/envui/icons/Description';
 
 const initialTabs: DocumentTab[] = [
@@ -63,6 +71,65 @@ export function DocumentTabsFixture({ theme }: { theme: ThemeValue }) {
         Activate the last note
       </button>
       <output data-testid={`document-tabs-log-${theme}`}>{log.join('\n')}</output>
+    </Theme>
+  );
+}
+
+const fillViews = ['Canvas', 'Outline', 'History'];
+
+/**
+ * Filling Tabs that keep their inactive panels mounted: one with a nested Tabs in its first panel,
+ * and a vertical one whose list sits beside a heading through renderList.
+ */
+export function FillTabsFixture({ theme }: { theme: ThemeValue }) {
+  const items = (nested: boolean) =>
+    fillViews.map((view, index) => ({
+      value: view.toLowerCase(),
+      button: <Button>{view}</Button>,
+      content:
+        nested && index === 0 ? (
+          <Tabs
+            aria-label={`Canvas layers ${theme}`}
+            keepMounted
+            items={['Shapes', 'Notes'].map((layer) => ({
+              value: layer.toLowerCase(),
+              button: <Button>{layer}</Button>,
+              content: <Text>{layer}</Text>,
+            }))}
+          />
+        ) : (
+          <Text>{view}</Text>
+        ),
+    }));
+  return (
+    <Theme theme={theme} data-testid={`fill-tabs-${theme}`} className="fixture-section">
+      <div className="fixture-fill-frame">
+        <Tabs
+          aria-label={`Filling views ${theme}`}
+          fill
+          keepMounted
+          className="fixture-fill-tabs"
+          items={items(true)}
+        />
+      </div>
+      <div className="fixture-fill-frame">
+        <Tabs
+          aria-label={`Vertical filling views ${theme}`}
+          fill
+          keepMounted
+          orientation="vertical"
+          className="fixture-fill-tabs"
+          renderList={(list) => (
+            <div className="fixture-tabs-heading">
+              <Text as="h3" variant="section-heading">
+                Views
+              </Text>
+              {list}
+            </div>
+          )}
+          items={items(false)}
+        />
+      </div>
     </Theme>
   );
 }
