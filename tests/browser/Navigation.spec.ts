@@ -72,6 +72,16 @@ test('icon-only navigation items show their label in one tooltip, without a nati
   await item.blur();
   await expect(tooltip).toHaveCount(0);
 
+  // A disabled icon-only item shows its label on hover too, and stays out of the tab order.
+  const disabled = scope.getByTestId('disabled-icon-only-navigation');
+  await expect(disabled).toBeDisabled();
+  await expect(disabled).toHaveAccessibleName('Archive');
+  await disabled.hover({ force: true });
+  await expect(tooltip).toHaveText('Archive');
+  await page.mouse.move(0, 0);
+  await expect(tooltip).toHaveCount(0);
+  await expect(disabled.locator('xpath=..')).not.toHaveAttribute('tabindex');
+
   // A labelled item needs no tooltip.
   await scope.getByTestId('home-navigation').hover();
   await page.waitForTimeout(600);

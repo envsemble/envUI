@@ -74,27 +74,33 @@ export function NavigationItem(props: NavigationItemProps) {
     className,
   );
 
-  // An icon-only item shows its label in a tooltip at its inline end, unless it is disabled or the
-  // application already describes it with its own Tooltip. The tooltip root stays in place while the
-  // item changes between icon-only and labelled, so the element and its focus are kept.
+  // An icon-only item shows its label in a tooltip at its inline end, unless the application
+  // already describes it with its own Tooltip. The tooltip root stays in place while the item
+  // changes between icon-only and labelled, so the element and its focus are kept.
   const nestedInTooltip = useContext(TooltipNestingContext);
-  const tooltip = iconOnly && !disabled && !nestedInTooltip ? accessibleLabel : undefined;
+  const tooltip = iconOnly && !nestedInTooltip ? accessibleLabel : undefined;
+  // A disabled control receives no pointer events, so a wrapper carries the hover for its tooltip.
+  // It takes no focus, as the disabled item takes none.
+  const hoverWrapper = tooltip !== undefined && disabled;
+  const item = (
+    <ActionElement
+      {...nativeProps}
+      disabled={disabled}
+      className={navigationClassName}
+      aria-label={accessibleLabel}
+      aria-current={props['aria-current'] ?? (selected ? 'page' : undefined)}
+    >
+      {content}
+    </ActionElement>
+  );
   return (
     <BaseTooltip.Root disabled={tooltip === undefined}>
       <BaseTooltip.Trigger
         delay={400}
-        render={
-          <ActionElement
-            {...nativeProps}
-            disabled={disabled}
-            className={navigationClassName}
-            aria-label={accessibleLabel}
-            aria-current={props['aria-current'] ?? (selected ? 'page' : undefined)}
-          >
-            {content}
-          </ActionElement>
-        }
-      />
+        render={hoverWrapper ? <span className="env-tooltip-disabled-target" /> : item}
+      >
+        {hoverWrapper ? item : undefined}
+      </BaseTooltip.Trigger>
       {tooltip !== undefined && <TooltipPopup content={tooltip} side="inline-end" />}
     </BaseTooltip.Root>
   );

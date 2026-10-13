@@ -69,6 +69,13 @@ export function NavigationFixture({ theme }: { theme: ThemeValue }) {
           selected={selected === 'home'}
           onClick={() => setSelected('home')}
         />
+        <NavigationItem
+          iconOnly
+          disabled
+          icon={<Settings />}
+          aria-label="Archive"
+          data-testid="disabled-icon-only-navigation"
+        />
         <Tooltip content="Settings and preferences">
           <NavigationItem
             iconOnly

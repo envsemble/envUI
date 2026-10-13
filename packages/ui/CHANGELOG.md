@@ -58,7 +58,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 - The toast stack's count of hidden notices is a `Counter`. A dismissed notice steps out of the stack at once and fades where it was, so dismissing several in a row moves the stack once each, without jerking or flashing a scrollbar; a notice revealed from the hidden ones fades in.
 - A collapsed `AppShell` sidebar no longer treats expanded tree rows as open popups, and stays expanded while a context menu opened from it is open.
 - On narrow viewports the `AppShell` sidebar opens as a drawer at least 20 rem wide, or the window less 3 rem, instead of the measured navigation width, so `sidebarContent` such as a list of recent documents has room.
-- An icon-only `NavigationItem` shows its label in a `Tooltip` at its inline end on hover and keyboard focus instead of a native title, which doubled an application's own tooltip. An application `Tooltip` around the item replaces it.
+- An icon-only `NavigationItem` shows its label in a `Tooltip` at its inline end on hover and keyboard focus instead of a native title, which doubled an application's own tooltip; a disabled one shows it on hover. An application `Tooltip` around the item replaces it.
 - A `Dialog` panel with `placement="right"` takes the whole width of a narrow window, such as a phone's, instead of leaving a sliver of the page beside it.
 
 ### Fixed
