@@ -383,20 +383,24 @@ test('public components import and render on a server with no DOM globals', func
 });
 
 /**
- * Every selector in a list starts at an envUI class, or is a zero-specificity :where() wrapper
- * whose every selector does.
+ * Every selector in a list starts at an envUI class, is a zero-specificity :where() wrapper whose
+ * every selector is scoped, or is the document element while it contains an envUI element, such as
+ * html:has(.env-app-shell), and nothing more.
  */
 function scopedSelector(selector) {
   const list = splitSelectors(selector);
   if (list.length !== 1) return list.length > 1 && list.every(scopedSelector);
   if (/^(?:[a-zA-Z][\w-]*)?\.env-/.test(selector)) return true;
-  if (!selector.startsWith(':where(')) return false;
+  const wrapper = /^(?::where|html:has)\(/.exec(selector)?.[0];
+  if (!wrapper) return false;
   let depth = 0;
-  for (let index = ':where'.length; index < selector.length; index++) {
+  for (let index = wrapper.length - 1; index < selector.length; index++) {
     if (selector[index] === '(') depth++;
     else if (selector[index] === ')' && --depth === 0) {
-      const inner = splitSelectors(selector.slice(':where('.length, index));
-      return inner.length > 0 && inner.every(scopedSelector);
+      const inner = splitSelectors(selector.slice(wrapper.length, index));
+      if (inner.length === 0 || !inner.every(scopedSelector)) return false;
+      // Descendants of a scoped :where() stay scoped; html:has() names the document element alone.
+      return wrapper === ':where(' || index === selector.length - 1;
     }
   }
   return false;
@@ -407,7 +411,8 @@ test('the CSS scope check accepts only selectors that start at an envUI class', 
     '.env-theme',
     'button.env-button',
     ':where(.env-theme:where(html) > body)',
-    ':where(.env-theme:where(html)) .env-theme:where([data-document-theme])',
+    ':where(.env-theme) .env-button',
+    ':where(html:has(.env-app-shell:not([data-title-bar])))',
   ])
     assert.ok(scopedSelector(selector), selector);
   for (const selector of [
@@ -417,6 +422,10 @@ test('the CSS scope check accepts only selectors that start at an envUI class', 
     ':where(.env-theme, body)',
     ':where(.env-theme) , body',
     ':where(.env-theme',
+    ':where(html:has(body))',
+    ':where(html:has(.env-app-shell) body)',
+    'html:has(.env-app-shell) body',
+    'body:has(.env-app-shell)',
   ])
     assert.ok(!scopedSelector(selector), selector);
 });

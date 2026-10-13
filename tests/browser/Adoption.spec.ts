@@ -679,6 +679,74 @@ test.describe('AppShell', () => {
     expect((await action.boundingBox())!.y).toBeGreaterThanOrEqual(below);
   });
 
+  test('the topbar scroll padding gives way to the application and holds for every shell', async ({
+    page,
+  }) => {
+    await page.goto(shellFixture);
+    const html = page.locator('html');
+    const topbar = (await page.locator('.env-app-topbar').boundingBox())!;
+    await expect(html).toHaveCSS('scroll-padding-top', `${topbar.height + 8}px`);
+    // It comes from a style rule, never from a style written on the document element.
+    expect(
+      await html.evaluate((element) =>
+        element.style.getPropertyValue('scroll-padding-block-start'),
+      ),
+    ).toBe('');
+    // Scroll padding the application sets inline on the document wins.
+    await html.evaluate((element) =>
+      element.style.setProperty('scroll-padding-block-start', '123px'),
+    );
+    await expect(html).toHaveCSS('scroll-padding-top', '123px');
+    await html.evaluate((element) => element.style.removeProperty('scroll-padding-block-start'));
+    // So does a style sheet that loads after the shell.
+    const late = await page.evaluateHandle(() => {
+      const style = document.createElement('style');
+      style.textContent = 'html { scroll-padding-top: 90px; }';
+      document.head.append(style);
+      return style;
+    });
+    await expect(html).toHaveCSS('scroll-padding-top', '90px');
+    await late.evaluate((style) => style.remove());
+    await expect(html).toHaveCSS('scroll-padding-top', `${topbar.height + 8}px`);
+    // With two shells, the one that stays keeps the padding when the other leaves.
+    await page.evaluate(() => {
+      const shell = document.querySelector('.env-app-shell')!;
+      document.body.append(shell.cloneNode(false));
+      shell.remove();
+    });
+    await expect(page.locator('.env-app-shell')).toHaveCount(1);
+    await expect(html).toHaveCSS('scroll-padding-top', `${topbar.height + 8}px`);
+    await page.evaluate(() => document.querySelector('.env-app-shell')!.remove());
+    await expect(html).toHaveCSS('scroll-padding-top', 'auto');
+  });
+
+  test('an anchor target lands below the topbar', async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 700 });
+    await page.goto(shellFixture);
+    await page.locator('.env-app-content').evaluate((content) => {
+      const spacer = () =>
+        Object.assign(document.createElement('div'), { style: 'height: 1500px' });
+      const target = Object.assign(document.createElement('h2'), {
+        id: 'later-section',
+        textContent: 'Later section',
+      });
+      content.append(spacer(), target, spacer());
+    });
+    const topbar = (await page.locator('.env-app-topbar').boundingBox())!;
+    await page.evaluate(() => (location.hash = '#later-section'));
+    await expect
+      .poll(async () => (await page.locator('#later-section').boundingBox())!.y)
+      .toBeGreaterThanOrEqual(topbar.y + topbar.height);
+  });
+
+  test('a shell whose topbar is the title bar leaves the document without scroll padding', async ({
+    page,
+  }) => {
+    await page.goto(`${fixtureUrl}/?fixture=full-shell`);
+    await expect(page.locator('.env-app-shell')).toHaveAttribute('data-title-bar', '');
+    await expect(page.locator('html')).toHaveCSS('scroll-padding-top', 'auto');
+  });
+
   test('the loading bar runs along the bottom edge of the topbar', async ({ page }) => {
     await page.goto(shellFixture);
     await page.getByRole('button', { name: 'Toggle page loading' }).click();

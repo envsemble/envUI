@@ -66,7 +66,7 @@ Components for document-centred desktop applications: a file tree, editor tabs, 
 
 ### Fixed
 
-- While the document scrolls under the `AppShell` topbar, an element that takes keyboard focus, or an anchor target, lands below the topbar instead of under it: the shell gives the document scroll padding as tall as the topbar, unless the application sets its own.
+- While the document scrolls under the `AppShell` topbar, an element that takes keyboard focus, or an anchor target, lands below the topbar instead of under it, from the first paint: a zero-specificity rule gives the document scroll padding as tall as the topbar, so any scroll padding the application sets wins.
 - `ThemePreferenceProvider` gives every `<meta name="theme-color">` the canvas color of the theme in use, including tags written for a system color scheme with `media`, instead of only the first tag.
 - Text entered in `Input`, `Textarea`, `SearchField`, the `CommandPalette` search and the rich text and Markdown editors takes `--control-font-size`, 1 rem on touch screens, so mobile browsers no longer zoom the page when such a field gets focus. Resting labels, prefixes and suffixes match it.
 - `Card` and `ActionCard` `meta` sits at the end of the heading row, also in right-to-left text, instead of right after the heading, where the text margin reset kept it.
