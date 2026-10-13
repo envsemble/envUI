@@ -30,12 +30,18 @@ interface ComposerOptions {
   onValueChange?: (value: string) => void;
   /**
    * Enter or the send button submits the text as typed, and an uncontrolled composer clears. Blank
-   * text never submits, and neither does a disabled or running composer, or one whose form action
-   * is pending. Without onSubmit, they submit the field's form instead and the text stays until the
-   * form resets. Without onSubmit or a form there is nothing to send: the button is unavailable and
-   * Enter starts a new line.
+   * text never submits, and neither does a disabled, running or pending composer. Without onSubmit,
+   * they submit the field's form instead and the text stays until the form resets. Without onSubmit
+   * or a form there is nothing to send: the button is unavailable and Enter starts a new line.
    */
   onSubmit?: (value: string) => void;
+  /**
+   * A send is in progress, such as a request the application makes: sending is unavailable while
+   * the field stays editable and keeps focus. The pending action of an enclosing form counts too;
+   * set pending for a form the field joins through its form attribute, or for a request of the
+   * application's own.
+   */
+  pending?: boolean;
   /** A reply is on its way: the send button becomes a stop button and Enter does not submit. */
   running?: boolean;
   /** Called by the stop button while running; it stays available when the field is disabled. */
@@ -111,6 +117,7 @@ export function Composer({
   defaultValue = '',
   onValueChange,
   onSubmit,
+  pending = false,
   running = false,
   onStop,
   sendLabel = 'Send',
@@ -120,7 +127,7 @@ export function Composer({
   start,
   footer,
   disabled = false,
-  enterKeyHint = 'send',
+  enterKeyHint,
   id: suppliedId,
   className,
   style,
@@ -141,8 +148,10 @@ export function Composer({
   const rows = Math.max(1, Math.round(minRows));
   const maximumRows = Math.max(rows, Math.round(maxRows));
   useContentHeight(inputRef, text);
-  // A form action in progress holds the next send, when the composer renders inside its form.
+  // A form action in progress holds the next send, when the composer renders inside its form;
+  // only an enclosing form reports its status.
   const { pending: formPending } = useFormStatus();
+  const busy = pending || formPending;
   // Whether the field belongs to a form, known once it is in the document.
   const [inForm, setInForm] = useState(form !== undefined);
   useLayoutEffect(() => {
@@ -164,7 +173,7 @@ export function Composer({
 
   /** Sends the text, and reports whether it went. */
   function submit() {
-    if (disabled || running || blank || formPending) return false;
+    if (disabled || running || blank || busy) return false;
     if (onSubmit) {
       onSubmit(text);
       if (value === undefined) change('');
@@ -175,10 +184,7 @@ export function Composer({
     const owner = inputRef.current?.form;
     if (!owner) return false;
     // An invalid field keeps the form from submitting: the browser reports it and focuses it.
-    if (!owner.noValidate && !owner.checkValidity()) {
-      owner.reportValidity();
-      return false;
-    }
+    if (!owner.noValidate && !owner.reportValidity()) return false;
     owner.requestSubmit();
     return true;
   }
@@ -195,7 +201,7 @@ export function Composer({
 
   // The action stays focusable while unavailable, so focus is never lost when it changes between
   // send and stop. A disabled composer disables sending; stopping stays available while running.
-  const unavailable = running ? !onStop : blank || formPending || !canSend;
+  const unavailable = running ? !onStop : blank || busy || !canSend;
   const actionLabel = running ? stopLabel : sendLabel;
 
   return (
@@ -232,7 +238,8 @@ export function Composer({
           rows={rows}
           value={text}
           disabled={disabled}
-          enterKeyHint={enterKeyHint}
+          // Touch keyboards label Enter Send only where it sends.
+          enterKeyHint={enterKeyHint ?? (canSend ? 'send' : undefined)}
           aria-describedby={
             [describedBy, footer != null ? footerId : undefined].filter(Boolean).join(' ') ||
             undefined

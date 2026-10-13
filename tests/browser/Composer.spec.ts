@@ -143,6 +143,8 @@ test('without onSubmit, Enter and the send button submit the form and keep the t
   await expect(
     composerOf(reply).getByRole('button', { name: 'Send', exact: true }),
   ).toHaveAttribute('aria-disabled', 'true');
+  // Touch keyboards keep their usual Enter key.
+  await expect(reply).not.toHaveAttribute('enterkeyhint');
   await reply.press('End');
   await reply.press('Enter');
   await expect(reply).toHaveValue('Thanks, that works.\n');
@@ -162,10 +164,44 @@ test('a pending form action holds the next send until it ends', async ({ page })
   await field.press('Enter');
   await expect(send).toHaveAttribute('aria-disabled', 'true');
   await send.click({ force: true });
-  // Once it ends, the form resets and clears the composer.
+  // Once it ends, the form resets and clears the composer, and sending works again.
   await expect(field).toHaveValue('');
-  await page.waitForTimeout(700);
   await expect(announcements).toHaveText('Quarterly report');
+  await field.fill('Roadmap');
+  await expect(send).not.toHaveAttribute('aria-disabled');
+  await field.press('Enter');
+  await expect(field).toHaveValue('');
+  await expect(announcements).toHaveText('Quarterly report | Roadmap');
+  expect(errors).toEqual([]);
+});
+
+test('pending holds sending while the field keeps focus and takes typing', async ({ page }) => {
+  const errors = collectErrors(page);
+  await page.goto(composerFixture);
+  const scope = page.getByTestId('composer-light');
+  // The field joins its form through the form attribute, which the form's status does not reach.
+  const field = scope.getByRole('textbox', { name: 'Detached light' });
+  const send = composerOf(field).getByRole('button', { name: 'Send', exact: true });
+  const posts = scope.getByTestId('composer-detached-light');
+  await expect(field).toHaveAttribute('form', 'detached-form-light');
+  await field.fill('Quarterly report');
+  await field.press('Enter');
+  await expect(posts).toHaveText('Quarterly report');
+  // While the application's request is pending, sending is unavailable, and the field stays
+  // editable with focus.
+  await expect(send).toHaveAttribute('aria-disabled', 'true');
+  await expect(send).not.toHaveAttribute('disabled');
+  await expect(field).toBeFocused();
+  await expect(field).toBeEnabled();
+  await page.keyboard.type(' draft');
+  await page.keyboard.press('Enter');
+  await send.click({ force: true });
+  await expect(field).toHaveValue('Quarterly report draft');
+  await expect(posts).toHaveText('Quarterly report');
+  // Once it ends, sending works again.
+  await expect(send).not.toHaveAttribute('aria-disabled');
+  await field.press('Enter');
+  await expect(posts).toHaveText('Quarterly report | Quarterly report draft');
   expect(errors).toEqual([]);
 });
 
@@ -176,10 +212,18 @@ test('an invalid field in the form keeps focus when the send is refused', async 
   const field = scope.getByRole('textbox', { name: 'Feedback light' });
   const send = composerOf(field).getByRole('button', { name: 'Send', exact: true });
   const feedback = scope.getByTestId('composer-feedback-light');
+  await topic.evaluate((element) => {
+    element.dataset.invalids = '0';
+    element.addEventListener('invalid', () => {
+      element.dataset.invalids = String(Number(element.dataset.invalids) + 1);
+    });
+  });
   await field.fill('Clearer labels');
   await send.click();
-  // The required field is empty: the form is not submitted and focus moves to that field.
+  // The required field is empty: the form is not submitted and focus moves to that field, which
+  // reports itself invalid once.
   await expect(topic).toBeFocused();
+  await expect(topic).toHaveAttribute('data-invalids', '1');
   await expect(feedback).toHaveText('');
   await field.focus();
   await field.press('Enter');

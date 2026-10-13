@@ -11,6 +11,7 @@ export function ComposerFixture({ theme }: { theme: ThemeValue }) {
   const [posts, setPosts] = useState<string[]>([]);
   const [announcements, setAnnouncements] = useState<string[]>([]);
   const [feedback, setFeedback] = useState<string[]>([]);
+  const [detached, setDetached] = useState({ posts: [] as string[], pending: false });
   return (
     <Theme theme={theme} data-testid={`composer-${theme}`} className="fixture-section">
       <div data-surface="canvas">
@@ -77,6 +78,22 @@ export function ComposerFixture({ theme }: { theme: ThemeValue }) {
         <Composer aria-label={`Feedback ${theme}`} name="feedback" />
       </form>
       <output data-testid={`composer-feedback-${theme}`}>{feedback.join(' | ')}</output>
+      <form
+        id={`detached-form-${theme}`}
+        onSubmit={(event) => {
+          event.preventDefault();
+          const note = String(new FormData(event.currentTarget).get('detached'));
+          setDetached((current) => ({ posts: [...current.posts, note], pending: true }));
+          setTimeout(() => setDetached((current) => ({ ...current, pending: false })), 1500);
+        }}
+      />
+      <Composer
+        aria-label={`Detached ${theme}`}
+        name="detached"
+        form={`detached-form-${theme}`}
+        pending={detached.pending}
+      />
+      <output data-testid={`composer-detached-${theme}`}>{detached.posts.join(' | ')}</output>
       <Composer aria-label={`Disabled ${theme}`} defaultValue="Locked" disabled />
       <Composer
         aria-label={`Reply ${theme}`}
