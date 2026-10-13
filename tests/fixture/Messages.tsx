@@ -15,6 +15,8 @@ export function MessagesFixture({ theme }: { theme: ThemeValue }) {
   const [copied, setCopied] = useState(0);
   const [retried, setRetried] = useState(0);
   const [sent, setSent] = useState<string[]>([]);
+  const [reply, setReply] = useState('');
+  const [replying, setReplying] = useState(false);
   return (
     <Theme theme={theme} data-testid={`messages-${theme}`} className="fixture-section">
       <div data-surface="canvas">
@@ -72,13 +74,34 @@ export function MessagesFixture({ theme }: { theme: ThemeValue }) {
       <output data-testid={`messages-copied-${theme}`}>{copied}</output>
       <output data-testid={`messages-retried-${theme}`}>{retried}</output>
       <Surface tone="pane" padding={4} data-surface="pane">
-        <MessageList aria-label={`Pane conversation ${theme}`}>
+        <MessageList aria-label={`Pane conversation ${theme}`} busy={replying}>
           <Message from="self">On a pane</Message>
           <Message from="other" author="Aurora">
             Answers read as plain content.
           </Message>
+          {reply !== '' && (
+            <Message from="other" author="Aurora">
+              {reply}
+            </Message>
+          )}
         </MessageList>
       </Surface>
+      <Button
+        onClick={() => {
+          setReplying(true);
+          setReply('The summary');
+        }}
+      >
+        Start reply {theme}
+      </Button>
+      <Button
+        onClick={() => {
+          setReply('The summary is ready.');
+          setReplying(false);
+        }}
+      >
+        Finish reply {theme}
+      </Button>
     </Theme>
   );
 }

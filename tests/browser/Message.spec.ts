@@ -57,6 +57,21 @@ test('a conversation is a polite log of articles with authors, status and action
   expect(errors).toEqual([]);
 });
 
+test('a busy log reports it while a reply streams in', async ({ page }) => {
+  await page.goto(messagesFixture);
+  const scope = page.getByTestId('messages-light');
+  const log = scope.getByRole('log', { name: 'Pane conversation light', exact: true });
+  await expect(log).not.toHaveAttribute('aria-busy');
+  await scope.getByRole('button', { name: 'Start reply light' }).click();
+  // While busy, assistive technology can wait instead of announcing each step of the reply.
+  await expect(log).toHaveAttribute('aria-busy', 'true');
+  await expect(log).toHaveAttribute('aria-live', 'polite');
+  await expect(log.getByRole('article').last()).toContainText('The summary');
+  await scope.getByRole('button', { name: 'Finish reply light' }).click();
+  await expect(log).not.toHaveAttribute('aria-busy');
+  await expect(log.getByRole('article').last()).toContainText('The summary is ready.');
+});
+
 test('own messages are bubbles at the inline end; others fill the width', async ({ page }) => {
   await page.goto(messagesFixture);
   for (const theme of ['light', 'dark']) {

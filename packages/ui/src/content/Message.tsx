@@ -80,16 +80,25 @@ export function Message({
   );
 }
 
-export interface MessageListProps extends ComponentPropsWithRef<'div'> {}
+export interface MessageListProps extends ComponentPropsWithRef<'div'> {
+  /**
+   * Messages are still changing, such as a reply streaming in or earlier messages loading. The log
+   * reports aria-busy, so assistive technology can wait for the change to finish instead of
+   * announcing every step.
+   */
+  busy?: boolean;
+}
 
 /**
- * The messages of a conversation in order, as a log: assistive technology announces messages added
- * at the end politely. Name it with aria-label or aria-labelledby.
+ * The messages of a conversation in order, as a log: assistive technology politely announces
+ * messages added anywhere in it and text that changes. Set busy while a reply streams in or earlier
+ * messages load. Name it with aria-label or aria-labelledby.
  */
-export function MessageList({ className, ...props }: MessageListProps) {
+export function MessageList({ busy = false, className, ...props }: MessageListProps) {
   return (
     <div
       aria-live="polite"
+      aria-busy={busy || undefined}
       {...props}
       role="log"
       className={classNames('env-message-list', className)}
