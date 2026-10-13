@@ -51,8 +51,10 @@
 .env-tooltip-theme {
   display: contents;
 }
+/* Tooltips only describe; they never take the pointer, so they never block what lies under them. */
 .env-tooltip-positioner {
   z-index: 130;
+  pointer-events: none;
 }
 .env-tooltip {
   max-inline-size: min(18rem, calc(100vw - 2rem));

@@ -353,3 +353,39 @@ test('thresholds set the color steps, for example to color days by rank', async 
   const legend = page.getByTestId('heatmap-light').locator('.env-heatmap-legend').last();
   await expect(legend.locator('.env-heatmap-swatch')).toHaveCount(5);
 });
+
+test('a tooltip opened by focus leaves with the pointer and never blocks a press', async ({
+  page,
+}) => {
+  await page.goto(heatmapFixture);
+  const grid = page.getByRole('grid', { name: 'Activity light' });
+  const tooltip = page.locator('.env-heatmap-tooltip');
+  const positioner = page.locator('.env-tooltip-positioner');
+  const update = page.getByRole('button', { name: 'Update light' });
+  await update.focus();
+  await page.keyboard.press('Shift+Tab');
+  await expect(tooltip).toHaveText('Sat 10 Oct 2026: 0');
+  // The tooltip takes no pointer: a press where it shows reaches what lies under it.
+  await expect(positioner).toHaveCSS('pointer-events', 'none');
+  const box = (await tooltip.boundingBox())!;
+  const under = await page.evaluate(
+    ({ x, y }) => document.elementFromPoint(x, y)?.closest('.env-tooltip-positioner') ?? null,
+    { x: box.x + box.width / 2, y: box.y + box.height / 2 },
+  );
+  expect(under).toBeNull();
+  // Moving the pointer elsewhere on the page closes it; the day keeps focus.
+  await page.mouse.move(5, 5);
+  await page.mouse.move(60, 40);
+  await expect(positioner).toHaveCount(0);
+  expect(await focusedName(page)).toBe('Sat 10 Oct 2026: 0');
+
+  // Hovering the days and then leaving them closes it too, also while a day has keyboard focus.
+  await page.keyboard.press('ArrowLeft');
+  await expect(tooltip).toHaveText((await focusedName(page))!);
+  const day = grid.locator('td[data-date="2026-06-01"]');
+  await day.hover();
+  await expect(tooltip).toHaveText((await day.getAttribute('aria-label'))!);
+  await update.hover();
+  await expect(positioner).toHaveCount(0);
+  await expect(grid.locator('td[tabindex="0"]')).toBeFocused();
+});

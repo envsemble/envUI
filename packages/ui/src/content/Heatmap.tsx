@@ -271,7 +271,13 @@ export function Heatmap({
       : model.end;
   // One tooltip serves every day: it follows the hovered or focused day and leaves no portal at rest.
   // A closing tooltip keeps its day and anchor while it fades.
-  const [tip, setTip] = useState<{ day: number; anchor: HTMLElement; open: boolean } | null>(null);
+  const [tip, setTip] = useState<{
+    day: number;
+    anchor: HTMLElement;
+    open: boolean;
+    /** Shown for the focused day rather than the hovered one. */
+    focused: boolean;
+  } | null>(null);
   const hoverTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const grid = useRef<HTMLTableElement>(null);
   const scroller = useRef<HTMLDivElement>(null);
@@ -306,9 +312,9 @@ export function Heatmap({
     return target instanceof Element ? target.closest<HTMLElement>('td[data-day]') : null;
   }
 
-  function show(cell: HTMLElement) {
+  function show(cell: HTMLElement, focused = false) {
     clearTimeout(hoverTimer.current);
-    setTip({ day: Number(cell.dataset.day), anchor: cell, open: true });
+    setTip({ day: Number(cell.dataset.day), anchor: cell, open: true, focused });
   }
 
   function hide() {
@@ -316,12 +322,22 @@ export function Heatmap({
     setTip((current) => current && { ...current, open: false });
   }
 
-  /** After the pointer leaves, a day focused from the keyboard keeps its tooltip. */
-  function settle() {
-    const focused = grid.current?.querySelector<HTMLElement>('td[data-day]:focus-visible');
-    if (focused) show(focused);
-    else hide();
-  }
+  // A tooltip opened by focus closes once the pointer moves away from the days, so it never stays
+  // over what people reach for next. Moves of a few pixels, or none, as when the page scrolls under
+  // a resting pointer, keep it.
+  const focusTipOpen = Boolean(tip?.open && tip.focused);
+  useEffect(() => {
+    if (!focusTipOpen) return;
+    const document = grid.current?.ownerDocument;
+    let origin: { x: number; y: number } | undefined;
+    const move = (event: globalThis.PointerEvent) => {
+      if (event.pointerType !== 'mouse' || grid.current?.contains(event.target as Node)) return;
+      origin ??= { x: event.clientX, y: event.clientY };
+      if (Math.hypot(event.clientX - origin.x, event.clientY - origin.y) > 4) hide();
+    };
+    document?.addEventListener('pointermove', move);
+    return () => document?.removeEventListener('pointermove', move);
+  }, [focusTipOpen]);
 
   function handlePointerOver(event: PointerEvent<HTMLTableElement>) {
     if (event.pointerType === 'touch') return;
@@ -337,7 +353,7 @@ export function Heatmap({
     const cell = cellFrom(event.target);
     if (!cell) return;
     setActiveDay(Number(cell.dataset.day));
-    show(cell);
+    show(cell, true);
   }
 
   function handleBlur(event: FocusEvent<HTMLTableElement>) {
@@ -390,7 +406,7 @@ export function Heatmap({
           aria-readonly="true"
           className="env-heatmap-grid"
           onPointerOver={handlePointerOver}
-          onPointerLeave={settle}
+          onPointerLeave={hide}
           onFocus={handleFocus}
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
