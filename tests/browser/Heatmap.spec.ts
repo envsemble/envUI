@@ -139,6 +139,32 @@ test('one tooltip follows the pointer across days and leaves with it', async ({ 
   await expect(page.locator('.env-tooltip-positioner')).toHaveCount(0);
 });
 
+test('people can move the pointer onto the tooltip of a hovered day to read it', async ({
+  page,
+}) => {
+  await page.goto(heatmapFixture);
+  const grid = page.getByRole('grid', { name: 'Activity light' });
+  const tooltip = page.locator('.env-heatmap-tooltip');
+  const positioner = page.locator('.env-tooltip-positioner');
+  // A day in the middle of its week, with days above it, and a Sunday in the top row.
+  for (const date of ['2026-06-03', '2026-06-07']) {
+    const day = grid.locator(`td[data-date="${date}"]`);
+    const name = (await day.getAttribute('aria-label'))!;
+    await day.hover();
+    await expect(tooltip).toHaveText(name);
+    await expect(positioner).not.toHaveCSS('pointer-events', 'none');
+    // Straight up from the day, the pointer crosses only the gap between days to reach it.
+    const from = (await day.boundingBox())!;
+    const to = (await tooltip.boundingBox())!;
+    await page.mouse.move(from.x + from.width / 2, to.y + to.height / 2, { steps: 12 });
+    await page.waitForTimeout(600);
+    await expect(tooltip).toHaveText(name);
+    // Leaving the tooltip for anything but the days closes it.
+    await page.mouse.move(to.x - 40, to.y - 60, { steps: 4 });
+    await expect(positioner).toHaveCount(0);
+  }
+});
+
 test('custom labels, weeks from Monday, levels and a tone', async ({ page }) => {
   await page.goto(heatmapFixture);
   const grid = page.getByRole('grid', { name: 'Deployments light' });

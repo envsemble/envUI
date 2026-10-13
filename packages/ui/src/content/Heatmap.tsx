@@ -279,8 +279,11 @@ export function Heatmap({
     open: boolean;
     /** Shown for the focused day rather than the hovered one. */
     focused: boolean;
+    /** The gap between days, which the tooltip keeps from its day. */
+    offset: number;
   } | null>(null);
   const hoverTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const popup = useRef<HTMLDivElement>(null);
   const grid = useRef<HTMLTableElement>(null);
   const scroller = useRef<HTMLDivElement>(null);
   useEffect(() => () => clearTimeout(hoverTimer.current), []);
@@ -316,7 +319,16 @@ export function Heatmap({
 
   function show(cell: HTMLElement, focused = false) {
     clearTimeout(hoverTimer.current);
-    setTip({ day: Number(cell.dataset.day), anchor: cell, open: true, focused });
+    // The tooltip meets its day across the gap between days, so the pointer reaches it from the
+    // day without crossing another day.
+    const table = grid.current;
+    const offset = table ? Number.parseFloat(getComputedStyle(table).borderSpacing) || 0 : 0;
+    setTip({ day: Number(cell.dataset.day), anchor: cell, open: true, focused, offset });
+  }
+
+  /** Whether the pointer moved onto the tooltip, which keeps it open on its day. */
+  function intoTooltip(target: EventTarget | null) {
+    return target instanceof Node && Boolean(popup.current?.contains(target));
   }
 
   function hide() {
@@ -421,7 +433,9 @@ export function Heatmap({
           aria-readonly="true"
           className="env-heatmap-grid"
           onPointerOver={handlePointerOver}
-          onPointerLeave={hide}
+          onPointerLeave={(event) => {
+            if (!intoTooltip(event.relatedTarget)) hide();
+          }}
           onFocus={handleFocus}
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
@@ -463,10 +477,18 @@ export function Heatmap({
             <BaseTooltip.Positioner
               anchor={tip?.anchor}
               side="top"
-              sideOffset={6}
+              sideOffset={tip?.offset ?? 0}
               className="env-tooltip-positioner env-heatmap-tooltip-positioner"
+              data-focus-opened={tip?.focused || undefined}
             >
-              <BaseTooltip.Popup className="env-tooltip env-heatmap-tooltip">
+              <BaseTooltip.Popup
+                ref={popup}
+                className="env-tooltip env-heatmap-tooltip"
+                onPointerLeave={(event) => {
+                  // Back on the days, the day under the pointer takes the tooltip.
+                  if (!grid.current?.contains(event.relatedTarget as Node | null)) hide();
+                }}
+              >
                 {shown &&
                   (formatTooltip
                     ? formatTooltip({
