@@ -116,6 +116,8 @@ type Placement = 'row' | 'fill' | 'hidden';
 interface HeightBounds {
   min: number;
   max: number;
+  /** The block size open panels have above the chips. */
+  room: number;
 }
 
 interface ScrollPosition {
@@ -257,7 +259,7 @@ export function PanelDock<T extends PanelDockPanel>({
     const max = Math.floor(Math.max(0, Math.min(panel.maxHeight ?? Infinity, room)));
     const min = Math.round(Math.min(panel.minHeight ?? minHeightRem * rem, max));
     const fallback = Math.min(room * defaultHeightShare, defaultHeightRem * rem);
-    return { height: clampRound(requested ?? fallback, min, max), bounds: { min, max } };
+    return { height: clampRound(requested ?? fallback, min, max), bounds: { min, max, room } };
   }
 
   function bringForward(id: string) {
@@ -725,6 +727,10 @@ function PanelFrame({
           aria-valuenow={shownHeight}
           aria-valuemin={bounds.min}
           aria-valuemax={bounds.max}
+          // Read as the share of the room above the chips, like SplitView's share of its width.
+          aria-valuetext={
+            bounds.room > 0 ? `${Math.round((shownHeight / bounds.room) * 100)}%` : undefined
+          }
           tabIndex={0}
           className="env-panel-dock-resize"
           onPointerDown={startResize}

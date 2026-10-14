@@ -261,6 +261,8 @@ test.describe('PanelDock', () => {
     const start = Number(await handle.getAttribute('aria-valuenow'));
     expect(start).toBe(Math.round(room * 0.85));
     expect(Number(await handle.getAttribute('aria-valuemin'))).toBe(240);
+    // The height reads as a share of that room.
+    await expect(handle).toHaveAttribute('aria-valuetext', '85%');
     expect((await box(report)).height).toBeCloseTo(start, 0);
 
     // Dragging reports the new height once, when the drag ends.
@@ -287,6 +289,7 @@ test.describe('PanelDock', () => {
     await expect.poll(() => lastLog(page)).toBe(`height report ${start - 36}`);
     await page.keyboard.press('Home');
     await expect(handle).toHaveAttribute('aria-valuenow', '240');
+    await expect(handle).toHaveAttribute('aria-valuetext', `${Math.round((240 / room) * 100)}%`);
     expect((await box(report)).height).toBeCloseTo(240, 0);
     await page.keyboard.press('End');
     await expect(handle).toHaveAttribute('aria-valuenow', String(room));
