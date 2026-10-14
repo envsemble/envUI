@@ -372,7 +372,9 @@ export function PanelDock<T extends PanelDockPanel>({
       );
   }, [panels, chosenHeights]);
 
-  // A panel that moves or changes where it shows keeps its scroll positions.
+  // A panel that moves or changes where it shows keeps its scroll positions, which the browser
+  // resets to the start as it lays the boxes out afresh. Content that scrolled itself in the same
+  // update, such as a chat showing a new message, keeps the position it chose.
   useLayoutEffect(() => {
     if (previousLayout.current === layout) return;
     previousLayout.current = layout;
@@ -380,8 +382,8 @@ export function PanelDock<T extends PanelDockPanel>({
     scrollsBefore.current = [];
     for (const { element, top, left } of positions) {
       if (!element.isConnected) continue;
-      if (element.scrollTop !== top) element.scrollTop = top;
-      if (element.scrollLeft !== left) element.scrollLeft = left;
+      if (element.scrollTop === 0 && top !== 0) element.scrollTop = top;
+      if (element.scrollLeft === 0 && left !== 0) element.scrollLeft = left;
     }
   }, [layout]);
 

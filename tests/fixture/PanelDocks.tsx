@@ -1,4 +1,4 @@
-import { useEffect, useState, type KeyboardEvent } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from 'react';
 import {
   IconButton,
   Menu,
@@ -16,7 +16,10 @@ import { Description } from '@envsemble/envui/icons/Description';
 import { Edit } from '@envsemble/envui/icons/Edit';
 import { MoreVert } from '@envsemble/envui/icons/MoreVert';
 
-const initialPanels: PanelDockPanel[] = [
+/** A panel with a chat, whose messages the application adds. */
+type FixturePanel = PanelDockPanel & { messages?: number };
+
+const initialPanels: FixturePanel[] = [
   { id: 'report', title: 'Quarterly report', mode: 'open', icon: <Description /> },
   {
     id: 'notes',
@@ -47,7 +50,7 @@ export function PanelDockFixture({ theme }: { theme: ThemeValue }) {
   const [log, setLog] = useState<string[]>([]);
   const [mounts, setMounts] = useState<Record<string, number>>({});
   const record = (entry: string) => setLog((current) => [...current.slice(-7), entry]);
-  const update = (id: string, change: (panel: PanelDockPanel) => PanelDockPanel) =>
+  const update = (id: string, change: (panel: FixturePanel) => FixturePanel) =>
     setPanels((current) => current.map((panel) => (panel.id === id ? change(panel) : panel)));
   const activeId = panels.find((panel) => panel.active)?.id;
 
@@ -76,6 +79,14 @@ export function PanelDockFixture({ theme }: { theme: ThemeValue }) {
     if (event.code === 'KeyR') {
       event.preventDefault();
       setPanels((current) => [...current].reverse());
+      return;
+    }
+    // A reorder and a new message in every chat in the same update.
+    if (event.code === 'KeyN') {
+      event.preventDefault();
+      setPanels((current) =>
+        [...current].reverse().map((panel) => ({ ...panel, messages: (panel.messages ?? 4) + 1 })),
+      );
       return;
     }
     if (!activeId) return;
@@ -166,12 +177,19 @@ function DocumentWindow({
   theme,
   onMount,
 }: {
-  panel: PanelDockPanel;
+  panel: FixturePanel;
   theme: ThemeValue;
   onMount: (change: number) => void;
 }) {
   const [draft, setDraft] = useState('');
   const [tip, setTip] = useState(true);
+  const chat = useRef<HTMLOListElement>(null);
+  const messages = panel.messages ?? 4;
+  // The chat shows its newest message.
+  useLayoutEffect(() => {
+    const list = chat.current;
+    if (list) list.scrollTop = list.scrollHeight;
+  }, [messages]);
   // Counts how many times the content is mounted, so a remount shows.
   useEffect(() => {
     onMount(1);
@@ -222,6 +240,15 @@ function DocumentWindow({
             Dismiss tip of {panel.title} {theme}
           </button>
         )}
+        <ol
+          ref={chat}
+          className="fixture-dock-chat"
+          aria-label={`Chat about ${panel.title} ${theme}`}
+        >
+          {Array.from({ length: messages }, (_, index) => (
+            <li key={index}>Message {index + 1}</li>
+          ))}
+        </ol>
         {Array.from({ length: 12 }, (_, index) => (
           <Text key={index}>
             Paragraph {index + 1} of {panel.title}.

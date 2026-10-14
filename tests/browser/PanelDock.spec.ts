@@ -946,3 +946,25 @@ test('open panels leave the controls of a maximized one in view after the dock s
   ]);
   expect(panel.y).toBeGreaterThanOrEqual(minimize.y + minimize.height);
 });
+
+test('content that scrolls itself as panels reorder keeps its own scroll position', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const dock = dockOf(page);
+  const report = dock.panel('report');
+  const chat = report.getByRole('list', { name: 'Chat about Quarterly report light' });
+  const list = report.getByRole('list', { name: 'Sections of Quarterly report light' });
+  const atNewest = () =>
+    chat.evaluate((element) => element.scrollHeight - element.clientHeight - element.scrollTop);
+  await expect.poll(atNewest).toBeLessThanOrEqual(1);
+  await list.evaluate((element) => (element.scrollTop = 60));
+  // The application reorders the panels and adds a message in the same update; the chat scrolls
+  // to the new message, and the dock puts back only the positions the move lost.
+  await report.getByRole('textbox', { name: 'Draft of Quarterly report light' }).focus();
+  await page.keyboard.press('Alt+KeyN');
+  await expect(chat.getByRole('listitem')).toHaveCount(5);
+  await expect.poll(atNewest).toBeLessThanOrEqual(1);
+  expect(await list.evaluate((element) => element.scrollTop)).toBe(60);
+});
