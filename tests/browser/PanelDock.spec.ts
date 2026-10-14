@@ -1160,3 +1160,45 @@ test('a hairline sets the header apart once the content scrolls beneath it, in b
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(header).toHaveCSS('transition-duration', '0s');
 });
+
+test('a panel that opens fills a stacked dock, also after a chip showed another', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const loose = page.getByTestId('loose-dock-light');
+  const panel = (id: string) => loose.locator(`section[data-panel-id="${id}"]`);
+  await expect(loose.locator('.env-panel-dock')).toHaveAttribute('data-stacked', 'true');
+  // Without an active panel, the newest fills the dock; a chip shows its own panel instead.
+  await expect(panel('why')).toBeVisible();
+  await loose.getByRole('button', { name: 'Show Ex light' }).click();
+  await expect(panel('ex')).toBeVisible();
+  await expect(panel('why')).toBeHidden();
+  // A panel that opens afterwards fills the dock.
+  await page.getByRole('button', { name: 'Open note light' }).click();
+  await expect(panel('zed-2')).toBeVisible();
+  await expect(panel('zed-2')).not.toHaveAttribute('inert');
+  await expect(panel('ex')).toBeHidden();
+  await expect(loose.getByRole('button', { name: 'Show Ex light' })).toBeVisible();
+});
+
+test('a chip pressed while panels sit side by side leaves the newest to fill the dock once it stacks', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const loose = page.getByTestId('loose-dock-light');
+  const dock = loose.locator('.env-panel-dock');
+  const panel = (id: string) => loose.locator(`section[data-panel-id="${id}"]`);
+  await loose.evaluate((element) => (element.style.inlineSize = '60rem'));
+  await expect(dock).not.toHaveAttribute('data-stacked');
+  // Ex comes back from its chip, then people work in Why.
+  await panel('ex').getByRole('button', { name: 'Minimize' }).click();
+  await loose.getByRole('button', { name: 'Show Ex light' }).click();
+  await expect(panel('ex')).toHaveAttribute('data-placement', 'row');
+  await panel('why').getByRole('textbox', { name: 'Words of Why light' }).click();
+  await loose.evaluate((element) => (element.style.inlineSize = ''));
+  await expect(dock).toHaveAttribute('data-stacked', 'true');
+  await expect(panel('why')).toBeVisible();
+  await expect(panel('ex')).toBeHidden();
+});

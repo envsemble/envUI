@@ -168,6 +168,7 @@ export function PanelDockFixture({ theme }: { theme: ThemeValue }) {
           .join(' ')}
       </output>
       <PassiveDock theme={theme} />
+      <LooseDock theme={theme} />
       <MinimizingDock theme={theme} />
     </Theme>
   );
@@ -243,6 +244,58 @@ function PassiveDock({ theme }: { theme: ThemeValue }) {
         )}
       </PanelDock>
     </div>
+  );
+}
+
+/**
+ * A narrow dock whose application neither marks a panel active nor activates one: the newest panel
+ * fills it, and a chip shows its own panel.
+ */
+function LooseDock({ theme }: { theme: ThemeValue }) {
+  const [panels, setPanels] = useState<PanelDockPanel[]>([
+    { id: 'ex', title: `Ex ${theme}`, mode: 'open' },
+    { id: 'why', title: `Why ${theme}`, mode: 'open' },
+  ]);
+  return (
+    <>
+      <div className="fixture-dock-frame fixture-dock-narrow" data-testid={`loose-dock-${theme}`}>
+        <PanelDock
+          panels={panels}
+          onModeChange={(id, mode) =>
+            setPanels((current) =>
+              current.map((panel) => (panel.id === id ? { ...panel, mode } : panel)),
+            )
+          }
+          onClose={(id) => setPanels((current) => current.filter((panel) => panel.id !== id))}
+        >
+          {(panel) => (
+            <>
+              <PanelDockHeader title={panel.title} />
+              <div className="fixture-dock-body">
+                <Textarea label={`Words of ${panel.title}`} />
+              </div>
+            </>
+          )}
+        </PanelDock>
+      </div>
+      <div className="fixture-actions">
+        <button
+          type="button"
+          onClick={() =>
+            setPanels((current) => [
+              ...current,
+              {
+                id: `zed-${current.length}`,
+                title: `Zed ${current.length} ${theme}`,
+                mode: 'open',
+              },
+            ])
+          }
+        >
+          Open note {theme}
+        </button>
+      </div>
+    </>
   );
 }
 
