@@ -121,6 +121,9 @@ export function ComboboxFixture({ theme }: { theme: ThemeValue }) {
   const [reviewers, setReviewers] = useState<string[]>(['sam-lee']);
   const [reviewerChanges, setReviewerChanges] = useState(0);
   const [opened, setOpened] = useState(0);
+  // One mentioned person is no longer among the options.
+  const [mentioned, setMentioned] = useState(['sam-lee', 'former-member', 'riley-chen']);
+  const [mentionedItems, setMentionedItems] = useState('');
   return (
     <Theme theme={theme} data-testid={`combobox-${theme}`} className="fixture-section">
       <form
@@ -195,6 +198,17 @@ export function ComboboxFixture({ theme }: { theme: ThemeValue }) {
       />
       <output data-testid={`combobox-reviewers-${theme}`}>{reviewers.join(',')}</output>
       <output data-testid={`combobox-reviewer-changes-${theme}`}>{reviewerChanges}</output>
+      <Combobox
+        multiple
+        label={`Mentioned ${theme}`}
+        items={people}
+        value={mentioned}
+        onValueChange={(values, items) => {
+          setMentioned(values);
+          setMentionedItems(JSON.stringify(items.map(({ value, label }) => [value, label])));
+        }}
+      />
+      <output data-testid={`combobox-mentioned-${theme}`}>{mentionedItems}</output>
       <ServerSearch theme={theme} />
       <Surface
         padding={2}

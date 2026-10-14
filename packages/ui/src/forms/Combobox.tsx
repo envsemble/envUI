@@ -132,6 +132,11 @@ function defaultRemoveLabel(label: string) {
   return `Remove ${label}`;
 }
 
+/** A chosen value the field never saw among the options stands for itself, as its chip shows. */
+function standIn<Item extends ComboboxItem>(value: string) {
+  return { value, label: value } as Item;
+}
+
 function isGroup<Item extends ComboboxItem>(
   entry: Item | ComboboxGroup<Item>,
 ): entry is ComboboxGroup<Item> {
@@ -304,7 +309,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
       const values = [...((next as readonly string[] | null) ?? [])];
       (onValueChange as ComboboxMultipleProps<Item>['onValueChange'])?.(
         values,
-        values.flatMap((selected) => known.get(selected) ?? []),
+        values.map((selected) => known.get(selected) ?? standIn<Item>(selected)),
       );
     } else {
       const single = (next as string | null) ?? null;

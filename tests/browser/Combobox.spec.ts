@@ -649,3 +649,18 @@ test('Esc clears a closed single field only while it has a value, and never remo
   await expect(dialog).toHaveCount(0);
   await expect(trigger).toBeFocused();
 });
+
+test('values without an option keep their place among the options reported', async ({ page }) => {
+  const mentioned = field(page, 'Mentioned light');
+  const well = wellOf(mentioned);
+  // A value the field never saw among the options shows as itself.
+  await expect.poll(() => chips(well)).toEqual(['Sam Lee', 'former-member', 'Riley Chen']);
+  await well.getByRole('button', { name: 'Remove Sam Lee', exact: true }).click();
+  await expect(page.getByTestId('combobox-mentioned-light')).toHaveText(
+    JSON.stringify([
+      ['former-member', 'former-member'],
+      ['riley-chen', 'Riley Chen'],
+    ]),
+  );
+  await expect.poll(() => chips(well)).toEqual(['former-member', 'Riley Chen']);
+});
