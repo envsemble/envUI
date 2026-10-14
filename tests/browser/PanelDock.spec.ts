@@ -1014,6 +1014,54 @@ test('a panel brought back scrolls only its content to the element its focus ret
   expect(await page.evaluate(() => window.scrollY)).toBe(pageTop);
 });
 
+test('a panel brought back reveals the element its focus returns to inside a scrolling list', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const dock = dockOf(page);
+  const report = dock.panel('report');
+  const content = report.locator(':scope > .env-panel-dock-content');
+  const chat = report.getByRole('list', { name: 'Chat about Quarterly report light' });
+  const quote = chat.getByRole('button', { name: 'Quote message 1 of Quarterly report light' });
+  const chip = dock.chips.getByRole('button', { name: 'Show Quarterly report' });
+  // The chat scrolls on within the content, leaving the focused button out of sight.
+  await quote.focus();
+  await chat.evaluate((element) => (element.scrollTop = element.scrollHeight));
+  const contentTop = await content.evaluate((element) => element.scrollTop);
+  await page.keyboard.press('Alt+KeyM');
+  await expect(chip).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(quote).toBeFocused();
+  // The chat scrolls back to the button; the content around it stays where it was.
+  const [chatBox, quoteBox] = await Promise.all([box(chat), box(quote)]);
+  expect(quoteBox.y).toBeGreaterThanOrEqual(chatBox.y - 1);
+  expect(quoteBox.y + quoteBox.height).toBeLessThanOrEqual(chatBox.y + chatBox.height + 1);
+  expect(await content.evaluate((element) => element.scrollTop)).toBe(contentTop);
+});
+
+test('a panel brought back reveals the element its focus returns to beside the view', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const dock = dockOf(page);
+  const report = dock.panel('report');
+  const tags = report.getByRole('group', { name: 'Tags of Quarterly report light' });
+  const first = tags.getByRole('button', { name: 'Finance tag of Quarterly report light' });
+  const chip = dock.chips.getByRole('button', { name: 'Show Quarterly report' });
+  // The row of tags scrolls sideways, leaving the focused tag out of sight.
+  await first.focus();
+  await tags.evaluate((element) => (element.scrollLeft = element.scrollWidth));
+  await page.keyboard.press('Alt+KeyM');
+  await expect(chip).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(first).toBeFocused();
+  const [tagsBox, firstBox] = await Promise.all([box(tags), box(first)]);
+  expect(firstBox.x).toBeGreaterThanOrEqual(tagsBox.x - 1);
+  expect(firstBox.x + firstBox.width).toBeLessThanOrEqual(tagsBox.x + tagsBox.width + 1);
+});
+
 test('open panels leave the controls of a maximized one in view after the dock stacks and widens', async ({
   page,
 }) => {
@@ -1066,7 +1114,7 @@ test('content that scrolls itself as panels reorder keeps its own scroll positio
   // to the new message, and the dock puts back only the positions the move lost.
   await report.getByRole('textbox', { name: 'Draft of Quarterly report light' }).focus();
   await page.keyboard.press('Alt+KeyN');
-  await expect(chat.getByRole('listitem')).toHaveCount(5);
+  await expect(chat.getByRole('listitem')).toHaveCount(9);
   await expect.poll(atNewest).toBeLessThanOrEqual(1);
   expect(await list.evaluate((element) => element.scrollTop)).toBe(60);
 });

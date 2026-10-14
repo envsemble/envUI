@@ -240,6 +240,16 @@ body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-p
   margin: 0;
   overflow-y: auto;
 }
+/* Tags in a row that scrolls sideways. */
+.fixture-dock-tags {
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.fixture-dock-tags > button {
+  flex: none;
+}
 /* Narrower than a dock's stackBelow, so it stacks. */
 .fixture-dock-narrow {
   inline-size: min(100%, 24rem);

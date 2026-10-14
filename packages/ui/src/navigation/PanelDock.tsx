@@ -1156,23 +1156,72 @@ function readScrollPositions(rowElement: Element) {
 }
 
 /**
- * Scrolls an element that a panel's content hides entirely, also beneath its sticky header, into
- * view; one that partly shows keeps the scroll positions people left. Only the content scrolls, not
- * the page or another scrolling element around the dock.
+ * Brings an element that the panel hides entirely into view, also one beneath the sticky header,
+ * inside a list that scrolls on its own or beside the view. Only the panel's own scrolling elements
+ * scroll, as little as shows it, from the innermost out: lists or rows inside the content, then the
+ * content. One that partly shows keeps the scroll positions people left.
  */
 function revealInContent(frame: HTMLElement, element: HTMLElement) {
-  const content = frame.querySelector(':scope > .env-panel-dock-content');
-  if (!content) return;
-  const area = content.getBoundingClientRect();
-  const style = getComputedStyle(content);
-  const start = area.top + (parseFloat(style.scrollPaddingTop) || 0);
-  const end = area.bottom - (parseFloat(style.scrollPaddingBottom) || 0);
-  const target = element.getBoundingClientRect();
-  if (target.bottom > start && target.top < area.bottom) return;
-  // The nearest edge: the element's top below the header, or its bottom at the content's end, as
-  // long as its top stays in view.
-  content.scrollTop +=
-    target.top < start ? target.top - start : Math.min(target.top - start, target.bottom - end);
+  const content = frame.querySelector<HTMLElement>(':scope > .env-panel-dock-content');
+  if (!content?.contains(element)) return;
+  const scrollers: HTMLElement[] = [];
+  for (let box = element.parentElement; box && box !== content; box = box.parentElement)
+    if (scrollsOverflow(box)) scrollers.push(box);
+  scrollers.push(content);
+  if (showsThrough(element, scrollers)) return;
+  for (const scroller of scrollers) {
+    const area = viewArea(scroller);
+    const target = element.getBoundingClientRect();
+    scroller.scrollTop += nearestScroll(target.top, target.bottom, area.top, area.bottom);
+    scroller.scrollLeft += nearestScroll(target.left, target.right, area.left, area.right);
+  }
+}
+
+/** Whether an element scrolls content that overflows it, on either axis. */
+function scrollsOverflow(element: HTMLElement) {
+  const style = getComputedStyle(element);
+  const scrolls = (value: string) => value === 'auto' || value === 'scroll' || value === 'hidden';
+  return (
+    (scrolls(style.overflowY) && element.scrollHeight > element.clientHeight) ||
+    (scrolls(style.overflowX) && element.scrollWidth > element.clientWidth)
+  );
+}
+
+/** Where a scrolling element shows its content, within its scroll padding, in the viewport. */
+function viewArea(scroller: HTMLElement) {
+  const box = scroller.getBoundingClientRect();
+  const style = getComputedStyle(scroller);
+  const top = box.top + scroller.clientTop;
+  const left = box.left + scroller.clientLeft;
+  return {
+    top: top + (parseFloat(style.scrollPaddingTop) || 0),
+    bottom: top + scroller.clientHeight - (parseFloat(style.scrollPaddingBottom) || 0),
+    left: left + (parseFloat(style.scrollPaddingLeft) || 0),
+    right: left + scroller.clientWidth - (parseFloat(style.scrollPaddingRight) || 0),
+  };
+}
+
+/** Whether some of an element shows through every one of these scrolling elements. */
+function showsThrough(element: HTMLElement, scrollers: readonly HTMLElement[]) {
+  let { top, bottom, left, right } = element.getBoundingClientRect();
+  for (const scroller of scrollers) {
+    const area = viewArea(scroller);
+    top = Math.max(top, area.top);
+    bottom = Math.min(bottom, area.bottom);
+    left = Math.max(left, area.left);
+    right = Math.min(right, area.right);
+  }
+  return bottom > top && right > left;
+}
+
+/**
+ * How far to scroll on one axis so a span shows in an area: as little as shows it, and from its
+ * start where it is larger than the area.
+ */
+function nearestScroll(start: number, end: number, areaStart: number, areaEnd: number) {
+  if (start < areaStart) return start - areaStart;
+  if (end > areaEnd) return Math.min(start - areaStart, end - areaEnd);
+  return 0;
 }
 
 function isShown(placement: Placement | undefined) {

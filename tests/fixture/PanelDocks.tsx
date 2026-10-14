@@ -29,7 +29,7 @@ import { MoreVert } from '@envsemble/envui/icons/MoreVert';
 type FixturePanel = PanelDockPanel & { messages?: number; rewinds?: number };
 
 const initialPanels: FixturePanel[] = [
-  { id: 'report', title: 'Quarterly report', mode: 'open', icon: <Description /> },
+  { id: 'report', title: 'Quarterly report', mode: 'open', icon: <Description />, messages: 8 },
   {
     id: 'notes',
     title: 'Meeting notes',
@@ -615,9 +615,30 @@ function DocumentWindow({
           aria-label={`Chat about ${panel.title} ${theme}`}
         >
           {Array.from({ length: messages }, (_, index) => (
-            <li key={index}>Message {index + 1}</li>
+            <li key={index}>
+              Message {index + 1}
+              {index === 0 && (
+                <>
+                  {' '}
+                  <button type="button">
+                    Quote message 1 of {panel.title} {theme}
+                  </button>
+                </>
+              )}
+            </li>
           ))}
         </ol>
+        <div
+          className="fixture-dock-tags"
+          role="group"
+          aria-label={`Tags of ${panel.title} ${theme}`}
+        >
+          {['Finance', 'Quarterly', 'Regional', 'Planning'].map((tag) => (
+            <button key={tag} type="button">
+              {tag} tag of {panel.title} {theme}
+            </button>
+          ))}
+        </div>
         {Array.from({ length: 12 }, (_, index) => (
           <Text key={index}>
             Paragraph {index + 1} of {panel.title}.
