@@ -73,6 +73,22 @@
   font-variant-numeric: tabular-nums;
   opacity: 0.8;
 }
+/* fullWidth fills the container and splits it evenly between the options, rather than scrolling. A
+   label too long for its share ends in an ellipsis; its option's tooltip shows it whole. */
+.env-segmented-control[data-full-width] {
+  display: flex;
+  inline-size: 100%;
+  overflow-x: visible;
+}
+.env-segmented-control[data-full-width] > .env-segment {
+  flex: 1 1 0;
+  min-inline-size: 0;
+}
+.env-segmented-control[data-full-width] .env-segment-label {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 @media (prefers-reduced-motion: reduce) {
   .env-segment {
     transition: none;

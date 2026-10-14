@@ -25,6 +25,7 @@ import { SegmentedControl } from '@envsemble/envui';
 | value / onValueChange | Controlled choice; receives the chosen option's value                           |
 | aria-label            | Required accessible name of the group                                           |
 | size                  | standard (default) matches buttons; compact matches compact fields and toolbars |
+| fullWidth             | Fill the container evenly; long labels end in an ellipsis and show in a tooltip |
 | disabled              | Disables every option; an option's own disabled skips just that one             |
 | count                 | A small muted number after the label, part of the option's accessible name      |
 
@@ -34,6 +35,7 @@ import { SegmentedControl } from '@envsemble/envui';
 - It is a radio group: one tab stop, and <kbd>←</kbd> <kbd>→</kbd> <kbd>↑</kbd> <kbd>↓</kbd> move to the previous or next option and choose it, skipping disabled options.
 - The rail is the translucent fill, like the tab rail, and the chosen option takes the primary button colors, so it stays clear on the canvas, panes and rows in both themes.
 - Keep labels short. A long set of options scrolls within its rail on narrow screens.
+- With fullWidth the rail fills its container, such as a sidebar or a panel, and splits it evenly between the options. A label too long for its share ends with an ellipsis, and its option shows the whole label in a tooltip on hover and keyboard focus; its accessible name stays whole. Use it where a narrow container, about 13 rem, cannot fit two labels side by side.
 
 TypeScript declarations provide the complete public API.
 

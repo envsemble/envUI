@@ -158,6 +158,12 @@ body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-p
 .fixture-narrow-field {
   inline-size: min(100%, 16rem);
 }
+.fixture-segments-narrow {
+  inline-size: 13rem;
+}
+.fixture-segments-wide {
+  inline-size: min(100%, 30rem);
+}
 .fixture-split-view {
   block-size: 14rem;
 }

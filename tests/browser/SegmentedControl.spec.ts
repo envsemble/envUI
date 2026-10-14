@@ -47,3 +47,66 @@ test('segmented controls choose one option with the pointer and arrow keys', asy
   }
   expect(errors).toEqual([]);
 });
+
+test('a full-width control splits its container evenly and cuts long labels short, with a tooltip', async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/?fixture=segments`);
+  const narrow = page.getByTestId('segments-narrow-light');
+  const control = narrow.getByRole('radiogroup', { name: 'Assignments light' });
+  const segments = control.getByRole('radio');
+  const tooltip = page.locator('.env-tooltip');
+  // In 13 rem the control fills its container, half each, without scrolling.
+  const [frame, rail, first, second] = await Promise.all([
+    narrow.boundingBox(),
+    control.boundingBox(),
+    segments.first().boundingBox(),
+    segments.nth(1).boundingBox(),
+  ]);
+  expect(rail!.width).toBeCloseTo(frame!.width, 0);
+  expect(await control.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(
+    true,
+  );
+  expect(Math.abs(first!.width - second!.width)).toBeLessThan(1);
+  // Labels too long for their half end in an ellipsis; the options keep their whole names.
+  const label = segments.first().locator('.env-segment-label');
+  await expect(label).toHaveCSS('text-overflow', 'ellipsis');
+  expect(await label.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(true);
+  await expect(segments.first()).toHaveAccessibleName('Assigned to me');
+  await expect(segments.nth(1)).toHaveAccessibleName('Everyone on the team');
+  // A cut label shows whole in a tooltip, on hover and keyboard focus.
+  await segments.nth(1).hover();
+  await expect(tooltip).toHaveText('Everyone on the team');
+  await page.mouse.move(0, 0);
+  await expect(tooltip).toHaveCount(0);
+  await segments.first().focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(segments.nth(1)).toBeFocused();
+  await expect(segments.nth(1)).toHaveAttribute('aria-checked', 'true');
+  await expect(tooltip).toHaveText('Everyone on the team');
+  await page.keyboard.press('Escape');
+
+  // With room the labels show whole, without a tooltip, and the options still share the rail.
+  const wide = page
+    .getByTestId('segments-wide-light')
+    .getByRole('radiogroup', { name: 'Scopes light' });
+  const widths = await wide
+    .getByRole('radio')
+    .evaluateAll((radios) => radios.map((radio) => radio.getBoundingClientRect().width));
+  expect(Math.max(...widths) - Math.min(...widths)).toBeLessThan(1);
+  expect(
+    await wide
+      .locator('.env-segment-label')
+      .evaluateAll((labels) =>
+        labels.every((element) => element.scrollWidth <= element.clientWidth),
+      ),
+  ).toBe(true);
+  await wide.getByRole('radio').first().hover();
+  await page.waitForTimeout(600);
+  await expect(tooltip).toHaveCount(0);
+  // Without fullWidth the control keeps the width of its options.
+  const plain = page
+    .getByTestId('segments-light')
+    .getByRole('radiogroup', { name: 'Layout light' });
+  expect((await plain.boundingBox())!.width).toBeLessThan(300);
+});
