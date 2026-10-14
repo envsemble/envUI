@@ -74,4 +74,6 @@ export * from './navigation/TitleBar.js';
 export * from './navigation/WindowFrame.js';
 export * from './navigation/Tree.js';
 export * from './navigation/DocumentTabs.js';
+export * from './navigation/PanelDock.js';
+export * from './navigation/PanelDockHeader.js';
 export * from './navigation/Breadcrumbs.js';

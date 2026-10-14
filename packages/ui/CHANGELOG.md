@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- `PanelDock`, `PanelDockHeader` and `PanelDockControls`: panels docked to the bottom inline-end edge of a region, like the compose and chat windows of web mail. Open panels sit side by side on the dialog surface, shrinking in proportion down to their minimum widths before the row scrolls sideways and keeps the newest in view; a maximized panel fills the region behind them; minimized panels wait as chips with an optional icon, an attention dot described for assistive technology, a tooltip and a close button. The application controls the panels through `panels`, `onModeChange`, `onClose`, `onActivate` and `onHeightChange` and renders their content, which mounts once and keeps its state, focus and scroll positions through every change of mode and order, so a panel can hold an unsaved draft. The top edge resizes an open panel by dragging, or with <kbd>↑</kbd> and <kbd>↓</kbd> (16 px, 64 px with <kbd>Shift</kbd>), <kbd>Home</kbd> and <kbd>End</kbd>, within its bounds and the region. Below `stackBelow` (40 rem by default) one panel at a time fills the region like a sheet; the dock then has `data-stacked`, and `onStackedChange` reports each change. `PanelDockHeader` lays out a sticky title and metadata, the application's actions and the window controls: Minimize, Maximize or Restore, and Close as compact icon buttons with tooltips, with labels to localize.
+
 ## 0.5.0 — 2026-10-14
 
 Components for document-centred desktop applications and data-heavy dashboards: a file tree, editor tabs, quick open, context menus and a resizable sidebar; sortable, resizable tables, key figures, a heatmap, conversation messages and split views; with badges, notices and other everyday pieces.
