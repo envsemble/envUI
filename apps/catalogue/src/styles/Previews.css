@@ -310,6 +310,16 @@
 .docs-dock-body {
   padding: 0 var(--space-5) var(--space-5);
 }
+/* A pane's header bar of quiet actions around its title. */
+.docs-quiet-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.docs-quiet-title {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}
 /* A compact toolbar: a title that takes the room left, then its controls. */
 .docs-compact-toolbar {
   display: flex;

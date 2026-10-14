@@ -47,6 +47,7 @@ import { RelativeTimesFixture } from './RelativeTimes.js';
 import { CopyButtonsFixture } from './CopyButtons.js';
 import { PaginationsFixture } from './Paginations.js';
 import { DateTimeFieldFixture } from './DateTimeFields.js';
+import { QuietButtonsFixture } from './QuietButtons.js';
 
 /** Fixtures that fill the viewport are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
@@ -284,6 +285,12 @@ export default function App() {
             <>
               <DateTimeFieldFixture theme="light" />
               <DateTimeFieldFixture theme="dark" />
+            </>
+          )}
+          {includes('quiet-buttons') && (
+            <>
+              <QuietButtonsFixture theme="light" />
+              <QuietButtonsFixture theme="dark" />
             </>
           )}
           {includes('menus') && (

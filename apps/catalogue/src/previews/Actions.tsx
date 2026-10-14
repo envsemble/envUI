@@ -9,6 +9,7 @@ import {
   CopyButton,
   DisclosureNote,
   GroupedRows,
+  IconButton,
   Input,
   Link,
   Row,
@@ -17,10 +18,12 @@ import {
   Text,
   Kbd,
 } from '@envsemble/envui';
+import { Add } from '@envsemble/envui/icons/Add';
 import { Check } from '@envsemble/envui/icons/Check';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 import { Close } from '@envsemble/envui/icons/Close';
 import { Delete } from '@envsemble/envui/icons/Delete';
+import { Menu } from '@envsemble/envui/icons/Menu';
 import { Settings } from '@envsemble/envui/icons/Settings';
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
@@ -33,6 +36,7 @@ const buttonVariants = [
   { variant: 'outlined', label: 'Manage', icon: Settings },
   { variant: 'destructive', label: 'Delete', icon: Delete },
   { variant: 'text', label: 'Learn more', icon: ChevronRight },
+  { variant: 'quiet', label: 'Settings', icon: Settings },
 ] as const;
 const buttonForms = [
   { value: 'label', title: 'Label' },
@@ -158,6 +162,22 @@ export function ButtonsPreview() {
         caption="Use one primary action per group. Reserve Important for rare, consequential actions."
       >
         <ButtonVariants />
+      </Example>
+      <Example
+        title="Quiet actions"
+        caption="Quiet buttons suit an application's chrome, such as a sidebar toggle or a section's actions inside a surface: the icon color, and a state layer on hover and press."
+      >
+        <Surface tone="pane" padding={3} className="docs-quiet-bar">
+          <IconButton variant="quiet" icon={<Menu />} aria-label="Toggle sidebar" />
+          <Text as="span" variant="section-heading" className="docs-quiet-title">
+            Projects
+          </Text>
+          <IconButton variant="quiet" icon={<Add />} aria-label="New project" />
+          <IconButton variant="quiet" icon={<Settings />} aria-label="Project settings" />
+        </Surface>
+        <Button variant="quiet" startIcon={<Add />}>
+          New section
+        </Button>
       </Example>
       <Example title="Text buttons">
         <Button variant="text">Without underline</Button>

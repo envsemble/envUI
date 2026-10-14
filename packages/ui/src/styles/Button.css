@@ -101,6 +101,30 @@
   background: var(--color-state-layer-pressed);
 }
 
+/* Quiet: an action in the application's chrome, such as a sidebar toggle or the actions of a toolbar
+   or of a section inside a surface. The icon, or the label, takes the quiet icon color and darkens
+   to the text color over a state layer on hover and press, as a docked panel's window controls do;
+   there is no fill or border. */
+.env-button-quiet {
+  border: 0;
+  background: transparent;
+  color: var(--color-icon);
+  cursor: pointer;
+  transition-property: background-color, color;
+  transition-duration: var(--motion-duration-fast);
+  transition-timing-function: var(--motion-ease);
+}
+
+.env-button-quiet:hover:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-state-layer-hover);
+  color: var(--color-text-primary);
+}
+
+.env-button-quiet:active:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-state-layer-pressed);
+  color: var(--color-text-primary);
+}
+
 .env-link {
   display: inline;
   min-height: 0;
