@@ -1,4 +1,5 @@
 import {
+  memo,
   startTransition,
   useEffect,
   useLayoutEffect,
@@ -183,6 +184,18 @@ export function PanelDockFixture({ theme }: { theme: ThemeValue }) {
           .map(([id, count]) => `${id}:${count}`)
           .join(' ')}
       </output>
+      <OtherDocks theme={theme} />
+    </Theme>
+  );
+}
+
+/**
+ * The other docks, each with its own state, apart from the main dock's updates, which render none
+ * of them again.
+ */
+const OtherDocks = memo(function OtherDocks({ theme }: { theme: ThemeValue }) {
+  return (
+    <>
       <PassiveDock theme={theme} />
       <LooseDock theme={theme} />
       <MinimizingDock
@@ -304,9 +317,9 @@ export function PanelDockFixture({ theme }: { theme: ThemeValue }) {
           />
         </>
       )}
-    </Theme>
+    </>
   );
-}
+});
 
 /**
  * A dock that minimizes its least recently active panel rather than scroll the row, and logs every
