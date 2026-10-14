@@ -223,3 +223,26 @@ body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-p
   margin: 0;
   overflow-y: auto;
 }
+/* An application's own fill, which the avatar group's ring matches through its custom property. */
+.fixture-avatar-surface {
+  --fixture-avatar-surface: hsl(40 90% 88%);
+  --avatar-group-ring: var(--fixture-avatar-surface);
+  padding: 1rem;
+  background: var(--fixture-avatar-surface);
+}
+[data-env-theme='dark'] .fixture-avatar-surface {
+  --fixture-avatar-surface: hsl(40 30% 20%);
+}
+.fixture-narrow-time {
+  inline-size: 6rem;
+}
+/* A toolbar as wide as a phone, and a frame too narrow for a pager on one line. */
+.fixture-pager-toolbar {
+  inline-size: min(100%, 22rem);
+}
+.fixture-pager-toolbar > .fixture-shrink-label {
+  min-inline-size: 0;
+}
+.fixture-narrow-pager {
+  inline-size: 9rem;
+}

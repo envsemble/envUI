@@ -93,6 +93,34 @@ import { Delete } from '@envsemble/envui/icons/Delete';
 | pending / disabled  | End an arming; pending shows the spinner as on Button                                                         |
 | Native button props | ref, onBlur, onKeyDown and accessible attributes                                                              |
 
+## CopyButton
+
+```tsx
+import { CopyButton } from '@envsemble/envui';
+
+<CopyButton value={shareUrl} aria-label="Copy link" />
+
+<CopyButton value={() => report.id} variant="outlined" onCopy={(text) => remember(text)}>
+  Copy ID
+</CopyButton>
+
+<CopyButton value={createShareLink} aria-label="Copy share link" size="compact" variant="text" />
+```
+
+### Props & contracts
+
+| Name                      | Contract                                                                                             |
+| ------------------------- | ---------------------------------------------------------------------------------------------------- |
+| value                     | The text to copy, or a function that returns it, also as a promise, when the button is pressed       |
+| aria-label                | Required without children: what the button copies, such as Copy link; also its tooltip at rest       |
+| children                  | A visible label after the copy icon; aria-label is then optional                                     |
+| onCopy                    | Runs once the text is on the clipboard, with that text                                               |
+| variant                   | As Button; secondary by default, like IconButton                                                     |
+| size                      | standard (default) takes the surrounding density; compact is the 2 rem compact height anywhere       |
+| icon                      | The icon at rest; ContentCopy by default                                                             |
+| copiedLabel / failedLabel | The result in the tooltip and the announcement; Copied and Couldn’t copy by default                  |
+| Native button props       | ref, disabled and accessible attributes; onClick runs first, and preventDefault there skips the copy |
+
 ## ButtonGroup
 
 ```tsx
@@ -125,6 +153,9 @@ import { Settings } from '@envsemble/envui/icons/Settings';
 
 - Say what an action will do before it is taken. When the outcome is known, put it in the label, such as “Show 128 homes”, “Switch to Team · +5 seats” or “Assign to Morgan”. Use AnimatedNumber for a count that changes while choices are made.
 - Use ConfirmButton for an action that takes effect at once and cannot be undone, such as removing someone's access. The first press names the consequence in place and announces it; a double click only arms it; <kbd>Esc</kbd>, leaving the button and four seconds disarm it. Use a Dialog when the person must choose or type something first. An icon-only ConfirmButton, such as a delete icon in a dense row, is round like IconButton until it is armed; then it grows to show the confirm label beside its icon, so the consequence is still named, and keeps focus.
+- Use CopyButton beside a value people paste elsewhere, such as a link, an ID or a command, and name it after what it copies. A press writes the text with the asynchronous Clipboard API; where the page has no clipboard access, such as without a secure connection, it copies a selection of a hidden field beside the button instead, also inside a dialog, and gives focus back. A function value runs at the press, so the text is current; a promise keeps the button pending until it resolves, and browsers that allow writing only during the press receive it as it arrives.
+- After a press the icon turns into a check, and Copied shows in the tooltip for about two seconds, also when the pointer has left; Couldn’t copy shows when nothing could be copied. <kbd>Esc</kbd> hides it. A visually hidden status announces the same words, again for each press, while the button keeps its name and focus. An icon-only CopyButton shows its name in the tooltip on hover and keyboard focus; inside an application Tooltip that tooltip describes it, and the check and the announcement report the result.
+- CopyButton is as large as IconButton and Button: 2.5 rem, and 2 rem in a compact surface or with size="compact"; both grow to 2.75 rem on touch screens.
 - Use one primary action in an action group. Reserve important emphasis for rare, consequential actions.
 - Action buttons fit their content: 2.5 rem minimum height (2 rem for important), 0.875 rem text, 0.25 rem vertical and 0.75 rem horizontal padding. Labels wrap when space is limited.
 - Use fully rounded corners; important actions use 0.5 rem corners. ActionGroup provides 1 rem row gaps or 0.5 rem stacked gaps.

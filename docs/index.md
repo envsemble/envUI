@@ -31,7 +31,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 ## Actions
 
-- [Buttons](components/buttons.md) — Button, IconButton, ButtonGroup.
+- [Buttons](components/buttons.md) — Button, IconButton, ConfirmButton, CopyButton, ButtonGroup.
 - [Segmented controls](components/segmented-control.md) — One choice among a few options on a pill rail, such as views or filters.
 
 ## Forms & selection
@@ -57,6 +57,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Document tabs](components/document-tabs.md) — Closable editor-style tabs for open documents.
 - [Panel dock](components/panel-dock.md) — Windows docked side by side at the bottom of a region that minimize to chips and maximize, keeping their content mounted.
 - [Breadcrumbs](components/breadcrumbs.md) — The path from the top level to the current page.
+- [Pagination](components/pagination.md) — The range of items shown with previous and next page buttons, compact enough for a toolbar.
 
 ## Content & guidance
 
@@ -68,8 +69,9 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Tables](components/tables.md) — Semantic data tables on a rounded surface: sorting, resizable columns, selected rows and stacked rows in narrow containers.
 - [Keyboard keys](components/keyboard.md) — Key caps for shortcuts in text, menus and hints.
 - [Animated numbers](components/animated-number.md) — Counts that roll to their new value, so a change is noticed.
+- [Relative time](components/relative-time.md) — A moment as text relative to now, such as 3 hours ago, kept current, with the date and time in a tooltip.
 - [Disclosure notes](components/disclosures.md) — Keep optional details collapsed until needed.
-- [Avatars](components/avatar.md) — A picture of a person or organization with a default picture or initials as fallback, and the avatar button.
+- [Avatars](components/avatar.md) — A picture of a person or organization with a default picture or initials as fallback, the avatar button and overlapping avatar groups.
 - [Messages](components/messages.md) — Conversation entries in a log: compact bubbles for your own messages, full-width content from others.
 - [Stats](components/stats.md) — Labelled key figures for dashboards, with a trend and detail, grouped in even columns.
 - [Heatmap](components/heatmap.md) — A calendar of daily values in color steps, with a tooltip and keyboard access for every day.

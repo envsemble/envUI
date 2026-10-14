@@ -10,6 +10,22 @@ test('public components hydrate server output without recoverable errors', async
   await page.getByRole('textbox', { name: 'Hydrated input' }).fill('Client value');
   await expect(page.locator('output:not(.env-slider-value)')).toHaveText('Client value');
   // The newer components come before the notice below, which leaves after five seconds.
+  // The server wrote this time in English; once hydrated, the browser's German replaces it.
+  const relative = page.getByTestId('hydrated-relative-time');
+  await expect(relative).toHaveText('in 2 Tagen');
+  await expect(relative).toHaveAttribute('datetime', '2026-10-16T12:00:00.000Z');
+  await expect(page.getByTestId('hydrated-live-time')).toHaveText(/^\d+ years ago$/);
+  const people = page.getByRole('group', {
+    name: '5 people: Alex Morgan, Sam Lee, Priya Shah, 2 more',
+  });
+  await people.getByRole('button', { name: 'Sam Lee' }).click();
+  await expect(page.getByTestId('hydrated-person')).toHaveText('Sam Lee');
+  await expect(people.locator('.env-avatar-group-overflow')).toHaveText('+3');
+  await expect(page.getByRole('button', { name: 'Hydrated copy' })).toBeVisible();
+  const pages = page.getByRole('navigation', { name: 'Hydrated pages' });
+  await expect(pages.locator('.env-pagination-range')).toHaveText('1–10 of 30');
+  await pages.getByRole('button', { name: 'Next page' }).click();
+  await expect(pages.locator('.env-pagination-range')).toHaveText('11–20 of 30');
   const amount = page.getByRole('textbox', { name: 'Hydrated amount' });
   await expect(amount).toHaveAccessibleDescription('€ per month');
   await amount.fill('15');

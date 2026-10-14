@@ -42,6 +42,10 @@ import { ButtonCountsFixture } from './ButtonCounts.js';
 import { HeatmapFixture } from './Heatmaps.js';
 import { ComboboxFixture } from './Comboboxes.js';
 import { PanelDockFixture } from './PanelDocks.js';
+import { AvatarGroupsFixture } from './AvatarGroups.js';
+import { RelativeTimesFixture } from './RelativeTimes.js';
+import { CopyButtonsFixture } from './CopyButtons.js';
+import { PaginationsFixture } from './Paginations.js';
 
 /** Fixtures that fill the viewport are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
@@ -249,6 +253,30 @@ export default function App() {
             <>
               <ComboboxFixture theme="light" />
               <ComboboxFixture theme="dark" />
+            </>
+          )}
+          {includes('avatar-groups') && (
+            <>
+              <AvatarGroupsFixture theme="light" />
+              <AvatarGroupsFixture theme="dark" />
+            </>
+          )}
+          {includes('relative-times') && (
+            <>
+              <RelativeTimesFixture theme="light" />
+              <RelativeTimesFixture theme="dark" />
+            </>
+          )}
+          {includes('copy-buttons') && (
+            <>
+              <CopyButtonsFixture theme="light" />
+              <CopyButtonsFixture theme="dark" />
+            </>
+          )}
+          {includes('paginations') && (
+            <>
+              <PaginationsFixture theme="light" />
+              <PaginationsFixture theme="dark" />
             </>
           )}
           {includes('menus') && (

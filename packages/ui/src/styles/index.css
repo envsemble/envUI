@@ -5,6 +5,7 @@
 @import './Actions.css';
 @import './Button.css';
 @import './ButtonGroup.css';
+@import './CopyButton.css';
 @import './SegmentedControl.css';
 @import './NavigationItem.css';
 @import './Card.css';
@@ -13,6 +14,7 @@
 @import './Badge.css';
 @import './Table.css';
 @import './Breadcrumbs.css';
+@import './Pagination.css';
 @import './Kbd.css';
 @import './GroupedRows.css';
 @import './FeedbackStates.css';
@@ -38,6 +40,8 @@
 @import './Notice.css';
 @import './Popover.css';
 @import './Indicators.css';
+@import './AvatarGroup.css';
+@import './RelativeTime.css';
 @import './Menu.css';
 @import './Menubar.css';
 @import './Tree.css';

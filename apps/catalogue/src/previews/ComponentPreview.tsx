@@ -8,11 +8,21 @@ import {
   SliderPreview,
   FileDropzonePreview,
 } from './Forms';
-import { NavigationPreview, TabsPreview, DirectionLinksPreview } from './Navigation';
+import {
+  NavigationPreview,
+  TabsPreview,
+  DirectionLinksPreview,
+  PaginationPreview,
+} from './Navigation';
 import { ComboboxPreview } from './Pickers';
 import { SurfacePreview, LayoutPreview, RowsPreview, CardsPreview } from './Layout';
 import { SplitViewPreview } from './Panes';
-import { AnimatedNumberPreview, ChipsPreview, DisclosuresPreview } from './Content';
+import {
+  AnimatedNumberPreview,
+  ChipsPreview,
+  DisclosuresPreview,
+  RelativeTimePreview,
+} from './Content';
 import { CodePreview } from './CodeContent';
 import { MarkdownPreview } from './MarkdownContent';
 import { lazy, Suspense } from 'react';
@@ -99,8 +109,12 @@ export function ComponentPreview({ id }: { id: string }) {
       return <KbdPreview />;
     case 'breadcrumbs':
       return <BreadcrumbsPreview />;
+    case 'pagination':
+      return <PaginationPreview />;
     case 'animated-number':
       return <AnimatedNumberPreview />;
+    case 'relative-time':
+      return <RelativeTimePreview />;
     case 'messages':
       return <MessagesPreview />;
     case 'stats':

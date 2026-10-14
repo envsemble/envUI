@@ -53,6 +53,8 @@ import { CloudUpload } from '@envsemble/envui/icons/CloudUpload';
 import { CalendarViewMonth } from '@envsemble/envui/icons/CalendarViewMonth';
 import { ManageSearch } from '@envsemble/envui/icons/ManageSearch';
 import { DockToBottom } from '@envsemble/envui/icons/DockToBottom';
+import { Schedule } from '@envsemble/envui/icons/Schedule';
+import { LastPage } from '@envsemble/envui/icons/LastPage';
 import { type Reference } from '../Reference';
 
 export const foundationIcons: Record<string, typeof Palette> = {
@@ -100,6 +102,7 @@ const referenceIcons: Record<string, typeof Palette> = {
   messages: Forum,
   stats: Monitoring,
   heatmap: CalendarViewMonth,
+  'relative-time': Schedule,
   navigation: Explore,
   tabs: WebAsset,
   'direction-links': ArrowForward,
@@ -129,6 +132,7 @@ const referenceIcons: Record<string, typeof Palette> = {
   tables: TableChart,
   keyboard: Keyboard,
   breadcrumbs: LinearScale,
+  pagination: LastPage,
 };
 
 /** A decorative symbol for the individual reference topic. */

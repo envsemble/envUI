@@ -307,3 +307,14 @@
 .docs-dock-body {
   padding: 0 var(--space-5) var(--space-5);
 }
+/* A compact toolbar: a title that takes the room left, then its controls. */
+.docs-compact-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-inline-size: 0;
+}
+.docs-compact-toolbar-title {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}

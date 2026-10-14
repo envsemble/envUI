@@ -1,0 +1,87 @@
+import { useState } from 'react';
+import {
+  Button,
+  IconButton,
+  RelativeTime,
+  Surface,
+  Theme,
+  formatRelativeTime,
+  type ThemeValue,
+} from '@envsemble/envui';
+import { Settings } from '@envsemble/envui/icons/Settings';
+
+const second = 1_000;
+const minute = 60 * second;
+const hour = 60 * minute;
+const day = 24 * hour;
+
+export function RelativeTimesFixture({ theme }: { theme: ThemeValue }) {
+  // Moments relative to when the fixture opens, so they read the same in every run.
+  const [openedAt] = useState(() => Date.now());
+  const [savedAt, setSavedAt] = useState(() => openedAt - 2 * hour);
+  return (
+    <Theme theme={theme} data-testid={`relative-times-${theme}`} className="fixture-section">
+      <p>
+        Saved <RelativeTime data-testid="seconds-ago" value={openedAt - 30 * second} />
+      </p>
+      <RelativeTime data-testid="seconds-ahead" value={openedAt + 20 * second} />
+      <RelativeTime data-testid="minutes-ago" value={openedAt - 90 * second} />
+      <RelativeTime data-testid="hours-ago" value={openedAt - 3 * hour} />
+      <RelativeTime data-testid="days-ahead" value={openedAt + 2 * day} />
+      <RelativeTime data-testid="weeks-ago" value={new Date(openedAt - 15 * day)} />
+      <RelativeTime data-testid="from-string" value={new Date(openedAt + 5 * day).toISOString()} />
+      <RelativeTime data-testid="short" format="short" value={openedAt - 3 * hour} />
+      <RelativeTime data-testid="narrow" format="narrow" value={openedAt + 2 * day} />
+      <RelativeTime data-testid="german" locale="de" value={openedAt - 3 * hour} />
+      <RelativeTime data-testid="german-now" locale="de" value={openedAt - 5 * second} />
+      <RelativeTime
+        data-testid="labelled-now"
+        nowLabel="moments ago"
+        value={openedAt - 5 * second}
+      />
+      <RelativeTime
+        data-testid="fixed"
+        value="2026-10-16T12:00:00Z"
+        now={Date.parse('2026-10-14T12:00:00Z')}
+      />
+      <RelativeTime
+        data-testid="fixed-german"
+        locale="de"
+        value="2026-10-16T12:00:00Z"
+        now={new Date('2026-10-14T12:00:00Z')}
+      />
+      <RelativeTime data-testid="no-tooltip" tooltip={false} value={openedAt - 3 * hour} />
+      <span data-testid="invalid">
+        <RelativeTime value="not a date" />
+      </span>
+      <output data-testid="formatted">
+        {formatRelativeTime(openedAt + 3 * hour, { now: openedAt, format: 'short' })}
+      </output>
+      <p>
+        Draft saved <RelativeTime data-testid="saved" value={savedAt} />
+      </p>
+      <Button variant="secondary" onClick={() => setSavedAt(Date.now())}>
+        Save draft {theme}
+      </Button>
+      {/* A compact toolbar: the time sits on the center line of 2 rem controls. */}
+      <Surface
+        tone="row"
+        padding={2}
+        corners="standard"
+        density="compact"
+        className="fixture-toolbar"
+        data-testid="toolbar"
+      >
+        <span className="fixture-shrink-label">Quarterly report</span>
+        <RelativeTime data-testid="toolbar-time" format="narrow" value={openedAt - 3 * hour} />
+        <IconButton icon={<Settings />} aria-label="Report settings" />
+      </Surface>
+      <p className="fixture-narrow-time" data-testid="narrow-frame">
+        Updated <RelativeTime data-testid="narrow-time" value={openedAt - 3 * hour} />
+      </p>
+      <p dir="rtl" lang="ar">
+        تم التحديث <RelativeTime data-testid="rtl" locale="en" value={openedAt - 3 * hour} />
+      </p>
+    </Theme>
+  );
+}

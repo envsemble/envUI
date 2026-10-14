@@ -23,6 +23,8 @@ test('prepare compiled-public-API hydration acceptance fixture', async () => {
   const { HydrationApp } = await import(pathToFileURL(server).href);
   const markup = renderToString(createElement(HydrationApp));
   assert.match(markup, /Server value/);
+  // The server wrote the relative time in its own language; the browser corrects it.
+  assert.match(markup, />in 2 days<\/time>/);
   const client = await build({
     stdin: {
       contents: `import {hydrateRoot} from 'react-dom/client';import {createElement} from 'react';import {HydrationApp} from './tests/fixture/hydration/HydrationApp.tsx';hydrateRoot(document.getElementById('root'),createElement(HydrationApp),{onRecoverableError:error=>{window.hydrationErrors.push(error.message)}});window.hydrationReady=true;`,
