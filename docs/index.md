@@ -66,6 +66,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Tables](components/tables.md) — Semantic data tables on a rounded surface: sorting, resizable columns, selected rows and stacked rows in narrow containers.
 - [Keyboard keys](components/keyboard.md) — Key caps for shortcuts in text, menus and hints.
 - [Animated numbers](components/animated-number.md) — Counts that roll to their new value, so a change is noticed.
+- [Relative time](components/relative-time.md) — A moment as text relative to now, such as 3 hours ago, kept current, with the date and time in a tooltip.
 - [Disclosure notes](components/disclosures.md) — Keep optional details collapsed until needed.
 - [Avatars](components/avatar.md) — A picture of a person or organization with a default picture or initials as fallback, the avatar button and overlapping avatar groups.
 - [Messages](components/messages.md) — Conversation entries in a log: compact bubbles for your own messages, full-width content from others.

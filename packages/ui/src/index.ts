@@ -63,6 +63,7 @@ export * from './feedback/Meter.js';
 export * from './content/Avatar.js';
 export * from './content/AvatarGroup.js';
 export * from './content/AnimatedNumber.js';
+export * from './content/RelativeTime.js';
 export * from './content/Message.js';
 export * from './content/Stat.js';
 export * from './content/Heatmap.js';

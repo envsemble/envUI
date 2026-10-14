@@ -35,6 +35,7 @@ import {
   Stat,
   StatGroup,
   Heatmap,
+  RelativeTime,
 } from '@envsemble/envui';
 
 const treeItems = Array.from({ length: 40 }, (_, index) => ({
@@ -216,6 +217,15 @@ export function HydrationApp() {
           startDate="2026-03-01"
           endDate="2026-03-31"
         />
+        <RelativeTime
+          data-testid="hydrated-relative-time"
+          value="2026-10-16T12:00:00Z"
+          now={Date.parse('2026-10-14T12:00:00Z')}
+          // The server and the browser use different languages, as they can in production, so
+          // the texts differ while hydrating.
+          locale={typeof window === 'undefined' ? 'en' : 'de'}
+        />
+        <RelativeTime data-testid="hydrated-live-time" value="2020-01-01T00:00:00Z" />
         <output>{name}</output>
       </ToastProvider>
     </Theme>

@@ -11,7 +11,12 @@ import {
 import { NavigationPreview, TabsPreview, DirectionLinksPreview } from './Navigation';
 import { SurfacePreview, LayoutPreview, RowsPreview, CardsPreview } from './Layout';
 import { SplitViewPreview } from './Panes';
-import { AnimatedNumberPreview, ChipsPreview, DisclosuresPreview } from './Content';
+import {
+  AnimatedNumberPreview,
+  ChipsPreview,
+  DisclosuresPreview,
+  RelativeTimePreview,
+} from './Content';
 import { CodePreview } from './CodeContent';
 import { MarkdownPreview } from './MarkdownContent';
 import { lazy, Suspense } from 'react';
@@ -97,6 +102,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <BreadcrumbsPreview />;
     case 'animated-number':
       return <AnimatedNumberPreview />;
+    case 'relative-time':
+      return <RelativeTimePreview />;
     case 'messages':
       return <MessagesPreview />;
     case 'stats':

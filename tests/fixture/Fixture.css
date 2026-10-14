@@ -209,3 +209,6 @@ body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-p
 [data-env-theme='dark'] .fixture-avatar-surface {
   --fixture-avatar-surface: hsl(40 30% 20%);
 }
+.fixture-narrow-time {
+  inline-size: 6rem;
+}

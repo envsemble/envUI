@@ -10,6 +10,11 @@ test('public components hydrate server output without recoverable errors', async
   await page.getByRole('textbox', { name: 'Hydrated input' }).fill('Client value');
   await expect(page.locator('output:not(.env-slider-value)')).toHaveText('Client value');
   // The newer components come before the notice below, which leaves after five seconds.
+  // The server wrote this time in English; once hydrated, the browser's German replaces it.
+  const relative = page.getByTestId('hydrated-relative-time');
+  await expect(relative).toHaveText('in 2 Tagen');
+  await expect(relative).toHaveAttribute('datetime', '2026-10-16T12:00:00.000Z');
+  await expect(page.getByTestId('hydrated-live-time')).toHaveText(/^\d+ years ago$/);
   const amount = page.getByRole('textbox', { name: 'Hydrated amount' });
   await expect(amount).toHaveAccessibleDescription('€ per month');
   await amount.fill('15');

@@ -51,6 +51,7 @@ import { VerticalSplit } from '@envsemble/envui/icons/VerticalSplit';
 import { Monitoring } from '@envsemble/envui/icons/Monitoring';
 import { CloudUpload } from '@envsemble/envui/icons/CloudUpload';
 import { CalendarViewMonth } from '@envsemble/envui/icons/CalendarViewMonth';
+import { Schedule } from '@envsemble/envui/icons/Schedule';
 import { type Reference } from '../Reference';
 
 export const foundationIcons: Record<string, typeof Palette> = {
@@ -97,6 +98,7 @@ const referenceIcons: Record<string, typeof Palette> = {
   messages: Forum,
   stats: Monitoring,
   heatmap: CalendarViewMonth,
+  'relative-time': Schedule,
   navigation: Explore,
   tabs: WebAsset,
   'direction-links': ArrowForward,

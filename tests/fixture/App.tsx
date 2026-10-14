@@ -41,6 +41,7 @@ import { DropzonesFixture } from './Dropzones.js';
 import { ButtonCountsFixture } from './ButtonCounts.js';
 import { HeatmapFixture } from './Heatmaps.js';
 import { AvatarGroupsFixture } from './AvatarGroups.js';
+import { RelativeTimesFixture } from './RelativeTimes.js';
 
 /** Fixtures that fill the viewport are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
@@ -242,6 +243,12 @@ export default function App() {
             <>
               <AvatarGroupsFixture theme="light" />
               <AvatarGroupsFixture theme="dark" />
+            </>
+          )}
+          {includes('relative-times') && (
+            <>
+              <RelativeTimesFixture theme="light" />
+              <RelativeTimesFixture theme="dark" />
             </>
           )}
           {includes('menus') && (
