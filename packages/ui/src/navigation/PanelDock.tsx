@@ -347,7 +347,9 @@ export function PanelDock<T extends PanelDockPanel>({
     observer.observe(threshold);
     if (strip.current) observer.observe(strip.current);
     return () => observer.disconnect();
-  }, [stackBelow, hasChips, filled]);
+    // Stacking changes the row's padding above open panels in front of a maximized one, and with it
+    // their room, without resizing anything the observer watches.
+  }, [stackBelow, hasChips, filled, stacked]);
 
   useStackedReport(stacked, onStackedChange);
 

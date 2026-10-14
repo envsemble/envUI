@@ -911,3 +911,38 @@ test('a panel brought back shows the element its focus returns to', async ({ pag
   await expect(draft).toBeFocused();
   expect(await content.evaluate((element) => element.scrollTop)).toBe(100);
 });
+
+test('open panels leave the controls of a maximized one in view after the dock stacks and widens', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const dock = dockOf(page);
+  const report = dock.panel('report');
+  const notes = dock.panel('notes');
+  // The room of an open panel is the dock's height above the chips, below the row's padding.
+  const room = () =>
+    dock.root.evaluate((element) => {
+      const row = element.querySelector<HTMLElement>(':scope > .env-panel-dock-row')!;
+      const strip = element.querySelector<HTMLElement>(':scope > .env-panel-dock-strip');
+      return Math.floor(
+        element.clientHeight -
+          (strip?.offsetHeight ?? 0) -
+          parseFloat(getComputedStyle(row).paddingTop),
+      );
+    });
+  const handle = report.getByRole('separator', { name: 'Resize Quarterly report' });
+  await notes.getByRole('button', { name: 'Maximize' }).click();
+  await expect(notes).toHaveAttribute('data-mode', 'maximized');
+  await expect(handle).toHaveAttribute('aria-valuemax', String(await room()));
+  await dock.frame.evaluate((element) => (element.style.inlineSize = '24rem'));
+  await expect(dock.root).toHaveAttribute('data-stacked', 'true');
+  await dock.frame.evaluate((element) => (element.style.inlineSize = ''));
+  await expect(dock.root).not.toHaveAttribute('data-stacked');
+  await expect(handle).toHaveAttribute('aria-valuemax', String(await room()));
+  const [panel, minimize] = await Promise.all([
+    box(report),
+    box(notes.getByRole('button', { name: 'Minimize' })),
+  ]);
+  expect(panel.y).toBeGreaterThanOrEqual(minimize.y + minimize.height);
+});
