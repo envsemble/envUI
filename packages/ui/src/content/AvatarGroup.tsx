@@ -30,6 +30,12 @@ export interface AvatarGroupProps extends Omit<ComponentPropsWithRef<'div'>, 'ch
   onPersonClick?: (person: AvatarGroupPerson, event: MouseEvent<HTMLElement>) => void;
   /** Text for people beyond the list, in the overflow tooltip and the group's name; "N more". */
   formatMore?: (count: number) => string;
+  /**
+   * The group's name from the number of people and their names, which end with formatMore's text
+   * for people counted in total but not listed: "3 people: Alex Morgan, Sam Lee, 1 more" by
+   * default. aria-label replaces it.
+   */
+  formatLabel?: (count: number, names: readonly string[]) => string;
 }
 
 /**
@@ -44,6 +50,7 @@ export function AvatarGroup({
   total,
   onPersonClick,
   formatMore = formatMorePeople,
+  formatLabel = formatGroupLabel,
   className,
   'aria-label': label,
   ...props
@@ -64,7 +71,7 @@ export function AvatarGroup({
     <div
       role="group"
       {...props}
-      aria-label={label ?? `${count} ${count === 1 ? 'person' : 'people'}: ${names.join(', ')}`}
+      aria-label={label ?? formatLabel(count, names)}
       className={classNames('env-avatar-group', `env-avatar-group-${size}`, className)}
       data-interactive={interactive ? '' : undefined}
     >
@@ -136,4 +143,8 @@ function AvatarGroupItem({
 
 function formatMorePeople(count: number) {
   return `${count} more`;
+}
+
+function formatGroupLabel(count: number, names: readonly string[]) {
+  return `${count} ${count === 1 ? 'person' : 'people'}: ${names.join(', ')}`;
 }

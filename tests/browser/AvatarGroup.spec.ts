@@ -44,6 +44,10 @@ test('an avatar group names everyone and counts the people it does not show', as
   await expect(unknown).toHaveAccessibleName('2 people: Alex Morgan, Sam Lee');
   await expect(unknown.locator('.env-avatar')).toHaveCount(2);
   await expect(unknown.locator('.env-avatar-group-overflow')).toHaveCount(0);
+  // formatLabel names the group in another language.
+  await expect(scope.getByTestId('german')).toHaveAccessibleName(
+    '5 Personen: Alex Morgan, Sam Lee, Priya Shah, Jordan Rivera, Taylor Kim',
+  );
 });
 
 test('the overflow chip lists the hidden names on hover and keyboard focus', async ({ page }) => {
@@ -166,8 +170,8 @@ test('the ring takes the color of the surface below in both themes', async ({ pa
 
 test('the overflow count keeps 4.5:1 contrast in both themes', async ({ page }) => {
   await page.goto(fixture);
-  // Twelve groups with a chip in each theme.
-  await expect(page.locator('.env-avatar-group-overflow')).toHaveCount(24);
+  // Thirteen groups with a chip in each theme.
+  await expect(page.locator('.env-avatar-group-overflow')).toHaveCount(26);
   const failures = await page.evaluate(() => {
     const canvas = document.createElement('canvas');
     canvas.width = canvas.height = 1;

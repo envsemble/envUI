@@ -59,6 +59,15 @@ export function AvatarGroupsFixture({ theme }: { theme: ThemeValue }) {
         max={Number.NaN}
       />
       <AvatarGroup
+        data-testid="german"
+        people={people}
+        max={2}
+        formatMore={(count) => `${count} weitere`}
+        formatLabel={(count, names) =>
+          `${count} ${count === 1 ? 'Person' : 'Personen'}: ${names.join(', ')}`
+        }
+      />
+      <AvatarGroup
         data-testid="pressable"
         aria-label={`Pressable people ${theme}`}
         people={people}

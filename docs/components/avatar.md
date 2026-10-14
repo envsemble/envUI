@@ -94,6 +94,7 @@ import { AvatarGroup } from '@envsemble/envui';
 | href                | Makes that person's avatar a link, rendered through LinkProvider                                                               |
 | aria-label          | The group's name; by default the count and every name, such as 4 people: Alex Morgan, Sam Lee, Priya Shah, Jordan Rivera       |
 | formatMore          | Text for people counted in total but missing from people, in the overflow tooltip and the default name; N more by default      |
+| formatLabel         | The group's name from the count and the names, which end with formatMore's text, such as in another language                   |
 | --avatar-group-ring | CSS custom property for the ring color; the envUI surface below by default, such as a Surface, Card or Dialog, else the canvas |
 | Native div props    | ref, className, style and accessible attributes; role defaults to group                                                        |
 
