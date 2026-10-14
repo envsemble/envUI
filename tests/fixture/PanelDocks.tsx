@@ -17,8 +17,8 @@ import { Description } from '@envsemble/envui/icons/Description';
 import { Edit } from '@envsemble/envui/icons/Edit';
 import { MoreVert } from '@envsemble/envui/icons/MoreVert';
 
-/** A panel with a chat, whose messages the application adds. */
-type FixturePanel = PanelDockPanel & { messages?: number };
+/** A panel with a chat, whose messages the application adds, and which it can rewind to the start. */
+type FixturePanel = PanelDockPanel & { messages?: number; rewinds?: number };
 
 const initialPanels: FixturePanel[] = [
   { id: 'report', title: 'Quarterly report', mode: 'open', icon: <Description /> },
@@ -87,6 +87,14 @@ export function PanelDockFixture({ theme }: { theme: ThemeValue }) {
       event.preventDefault();
       setPanels((current) =>
         [...current].reverse().map((panel) => ({ ...panel, messages: (panel.messages ?? 4) + 1 })),
+      );
+      return;
+    }
+    // A reorder that rewinds every chat to its first message in the same update.
+    if (event.code === 'KeyT') {
+      event.preventDefault();
+      setPanels((current) =>
+        [...current].reverse().map((panel) => ({ ...panel, rewinds: (panel.rewinds ?? 0) + 1 })),
       );
       return;
     }
@@ -413,11 +421,15 @@ function DocumentWindow({
   const [tip, setTip] = useState(true);
   const chat = useRef<HTMLOListElement>(null);
   const messages = panel.messages ?? 4;
-  // The chat shows its newest message.
+  // The chat shows its newest message, or its first once rewound.
   useLayoutEffect(() => {
     const list = chat.current;
     if (list) list.scrollTop = list.scrollHeight;
   }, [messages]);
+  useLayoutEffect(() => {
+    const list = chat.current;
+    if (list && panel.rewinds) list.scrollTop = 0;
+  }, [panel.rewinds]);
   // Counts how many times the content is mounted, so a remount shows.
   useEffect(() => {
     onMount(1);

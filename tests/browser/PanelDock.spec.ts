@@ -1044,6 +1044,28 @@ test('content that scrolls itself as panels reorder keeps its own scroll positio
   expect(await list.evaluate((element) => element.scrollTop)).toBe(60);
 });
 
+test('content that scrolls itself back to its start as panels reorder stays there', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const report = dockOf(page).panel('report');
+  const chat = report.getByRole('list', { name: 'Chat about Quarterly report light' });
+  const list = report.getByRole('list', { name: 'Sections of Quarterly report light' });
+  await expect.poll(() => chat.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
+  await list.evaluate((element) => (element.scrollTop = 60));
+  // The application reorders the panels and rewinds the chat in the same update: the chat stays
+  // at its start, which the dock does not take for a position the move lost.
+  await report.getByRole('textbox', { name: 'Draft of Quarterly report light' }).focus();
+  await page.keyboard.press('Alt+KeyT');
+  await expect(dockOf(page).row.locator(':scope > section').first()).toHaveAttribute(
+    'data-panel-id',
+    'budget',
+  );
+  expect(await chat.evaluate((element) => element.scrollTop)).toBe(0);
+  expect(await list.evaluate((element) => element.scrollTop)).toBe(60);
+});
+
 test('a hairline sets apart a header that a form in the content holds', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(dockFixture);

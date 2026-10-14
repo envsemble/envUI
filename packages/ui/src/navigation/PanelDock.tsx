@@ -386,6 +386,25 @@ export function PanelDock<T extends PanelDockPanel>({
     refresh();
   }
 
+  /**
+   * A panel that moves or changes where it shows keeps its scroll positions, which the browser
+   * resets to the start as it lays the boxes out afresh. They are put back as the update is
+   * committed, before the panels' content runs its own effects, so content that scrolls itself in
+   * the same update, such as a chat showing a new message or going back to its start, keeps the
+   * position it chose.
+   */
+  function restoreScrollPositions() {
+    if (previousLayout.current === layout) return;
+    previousLayout.current = layout;
+    const positions = scrollsBefore.current;
+    scrollsBefore.current = [];
+    for (const { element, top, left } of positions) {
+      if (!element.isConnected) continue;
+      if (element.scrollTop === 0 && top !== 0) element.scrollTop = top;
+      if (element.scrollLeft === 0 && left !== 0) element.scrollLeft = left;
+    }
+  }
+
   function resize(panel: T, height: number) {
     if (panel.height === undefined)
       setChosenHeights((current) =>
@@ -515,21 +534,6 @@ export function PanelDock<T extends PanelDockPanel>({
     if (chosen === undefined) chipChoice.current = null;
   });
 
-  // A panel that moves or changes where it shows keeps its scroll positions, which the browser
-  // resets to the start as it lays the boxes out afresh. Content that scrolled itself in the same
-  // update, such as a chat showing a new message, keeps the position it chose.
-  useLayoutEffect(() => {
-    if (previousLayout.current === layout) return;
-    previousLayout.current = layout;
-    const positions = scrollsBefore.current;
-    scrollsBefore.current = [];
-    for (const { element, top, left } of positions) {
-      if (!element.isConnected) continue;
-      if (element.scrollTop === 0 && top !== 0) element.scrollTop = top;
-      if (element.scrollLeft === 0 && left !== 0) element.scrollLeft = left;
-    }
-  }, [layout]);
-
   // A panel that joins the row scrolls into view, so the newest shows while the row overflows.
   useLayoutEffect(() => {
     const rowElement = row.current;
@@ -625,6 +629,7 @@ export function PanelDock<T extends PanelDockPanel>({
           atRowEnd.current = isAtRowEnd(event.currentTarget);
         }}
       >
+        <BeforeContent onLayout={restoreScrollPositions} />
         {panels.map((panel) => {
           const placement = placements.get(panel.id)!;
           const { height, bounds } = heightOf(panel);
@@ -673,6 +678,15 @@ export function PanelDock<T extends PanelDockPanel>({
       />
     </div>
   );
+}
+
+/**
+ * Renders nothing. As the first child of the row, its layout effect runs before those of the
+ * panels' content, which React runs in the order of the tree.
+ */
+function BeforeContent({ onLayout }: { onLayout: () => void }) {
+  useLayoutEffect(onLayout);
+  return null;
 }
 
 interface PanelFrameProps {
