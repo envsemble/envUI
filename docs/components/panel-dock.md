@@ -73,22 +73,22 @@ function DocumentWindow({ title }: { title: string }) {
 
 ### Props & contracts
 
-| Name                      | Contract                                                                                                                                                                                        |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| panels                    | The panels in order, each a PanelDockPanel (below); open panels sit side by side and chips follow the same order                                                                                |
-| children                  | Renders a panel's content from its panel, such as a PanelDockHeader above the panel's body                                                                                                      |
-| onModeChange              | Called with a panel's id and the mode its window controls or its chip ask for, or the dock with overflow="minimize": open, minimized or maximized                                               |
-| onClose                   | Called from a panel's Close control and its chip's close button                                                                                                                                 |
-| onActivate                | Called when people press or focus inside a panel that is not active, and when its chip brings it back                                                                                           |
-| onHeightChange            | Called with a panel's new height in pixels when a drag on its top edge ends, and on each key press there                                                                                        |
-| stackBelow                | A width, 40rem by default, or a number of pixels, such as 600 or "600"; while the dock itself is narrower, one panel at a time fills it and the others wait as chips; the dock has data-stacked |
-| onStackedChange           | Receives true when the dock stacks and false when its panels sit side by side again, also when a dock leaves while stacked                                                                      |
-| overflow                  | When open panels cannot all fit at their minimum widths: scroll (default) scrolls the row; minimize asks to minimize the least recently active one, never the active or newest one              |
-| minimizedLabel            | Accessible name of the list of chips, which holds minimized panels and those a stacked dock leaves out; Hidden panels by default                                                                |
-| restoreLabel / closeLabel | Functions that name a chip's buttons from its label, as each chip names its panel; Show and Close followed by the label by default                                                              |
-| resizeLabel               | Accessible name of a panel's resize handle from its title; Resize followed by the title by default                                                                                              |
-| Native div props          | className, style, ref and accessible attributes on the dock                                                                                                                                     |
-| Panel and chip elements   | Each panel is a region named by its title with data-panel-id, data-mode and data-active; each chip is a list item with data-panel-id                                                            |
+| Name                    | Contract                                                                                                                                                                                        |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| panels                  | The panels in order, each a PanelDockPanel (below); open panels sit side by side and chips follow the same order                                                                                |
+| children                | Renders a panel's content from its panel, such as a PanelDockHeader above the panel's body                                                                                                      |
+| onModeChange            | Called with a panel's id and the mode its window controls or its chip ask for, or the dock with overflow="minimize": open, minimized or maximized                                               |
+| onClose                 | Called from a panel's Close control and its chip's close button                                                                                                                                 |
+| onActivate              | Called when people press or focus inside a panel that is not active, and when its chip brings it back                                                                                           |
+| onHeightChange          | Called with a panel's new height in pixels when a drag on its top edge ends, and on each key press there                                                                                        |
+| stackBelow              | A width, 40rem by default, or a number of pixels, such as 600 or "600"; while the dock itself is narrower, one panel at a time fills it and the others wait as chips; the dock has data-stacked |
+| onStackedChange         | Receives true when the dock stacks and false when its panels sit side by side again, also when a dock leaves while stacked                                                                      |
+| overflow                | When open panels cannot all fit at their minimum widths: scroll (default) scrolls the row; minimize asks to minimize the least recently active one, never the active or newest one              |
+| minimizedLabel          | Accessible name of the list of chips, which holds minimized panels and those a stacked dock leaves out; Hidden panels by default                                                                |
+| showLabel / closeLabel  | Functions that name a chip's buttons from its label, as each chip names its panel; Show and Close followed by the label by default; restoreLabel is an older name for showLabel                 |
+| resizeLabel             | Accessible name of a panel's resize handle from its title; Resize followed by the title by default                                                                                              |
+| Native div props        | className, style, ref and accessible attributes on the dock                                                                                                                                     |
+| Panel and chip elements | Each panel is a region named by its title with data-panel-id, data-mode and data-active; each chip is a list item with data-panel-id                                                            |
 
 ### Panels
 

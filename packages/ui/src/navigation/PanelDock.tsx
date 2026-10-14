@@ -116,6 +116,11 @@ export interface PanelDockProps<T extends PanelDockPanel>
    * Accessible name of a chip's button that shows its panel, from the chip's text: Show and the text
    * by default. A function, as each chip names its own panel; PanelDockControls takes plain strings.
    */
+  showLabel?: (label: string) => string;
+  /**
+   * The earlier name of showLabel, which takes precedence.
+   * @deprecated Use showLabel: PanelDockControls has a restoreLabel of its own, for Restore.
+   */
   restoreLabel?: (label: string) => string;
   /** Accessible name of a chip's close button, from the chip's text: Close and the text by default. */
   closeLabel?: (label: string) => string;
@@ -161,7 +166,7 @@ interface Measurements {
 }
 
 // Words that fit a minimized panel and one a stacked dock leaves out alike.
-const defaultRestoreLabel = (label: string) => `Show ${label}`;
+const defaultShowLabel = (label: string) => `Show ${label}`;
 const defaultCloseLabel = (label: string) => `Close ${label}`;
 const defaultResizeLabel = (title: string) => `Resize ${title}`;
 
@@ -189,7 +194,8 @@ export function PanelDock<T extends PanelDockPanel>({
   onStackedChange,
   overflow = 'scroll',
   minimizedLabel = 'Hidden panels',
-  restoreLabel = defaultRestoreLabel,
+  showLabel,
+  restoreLabel,
   closeLabel = defaultCloseLabel,
   resizeLabel = defaultResizeLabel,
   className,
@@ -651,7 +657,7 @@ export function PanelDock<T extends PanelDockPanel>({
             <PanelChip
               key={panel.id}
               panel={panel}
-              restoreLabel={restoreLabel}
+              showLabel={showLabel ?? restoreLabel ?? defaultShowLabel}
               closeLabel={closeLabel}
               onRestore={() => restoreFromChip(panel)}
               onClose={() => close(panel.id)}
@@ -891,14 +897,14 @@ function PanelFrame({
 
 interface PanelChipProps {
   panel: PanelDockPanel;
-  restoreLabel: (label: string) => string;
+  showLabel: (label: string) => string;
   closeLabel: (label: string) => string;
   onRestore: () => void;
   onClose: () => void;
 }
 
 /** A panel out of sight: a button that brings it back and a close button. */
-function PanelChip({ panel, restoreLabel, closeLabel, onRestore, onClose }: PanelChipProps) {
+function PanelChip({ panel, showLabel, closeLabel, onRestore, onClose }: PanelChipProps) {
   const descriptionId = useId();
   const chip = useRef<HTMLLIElement>(null);
   useEntrance(chip, 'chip', true);
@@ -908,7 +914,7 @@ function PanelChip({ panel, restoreLabel, closeLabel, onRestore, onClose }: Pane
     <button
       type="button"
       className="env-panel-dock-chip-restore"
-      aria-label={restoreLabel(label)}
+      aria-label={showLabel(label)}
       aria-describedby={attention ? descriptionId : undefined}
       onClick={onRestore}
     >

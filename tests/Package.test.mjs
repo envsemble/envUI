@@ -991,8 +991,9 @@ test('the panel dock renders its panels, chips and header on a server and types 
       onHeightChange: (id, height) => { const typed: number = height; void id; void typed; },
       stackBelow: '40rem',
       onStackedChange: (stacked) => { const typed: boolean = stacked; void typed; },
+      overflow: 'minimize',
       minimizedLabel: 'Hidden panels',
-      restoreLabel: (label) => 'Show ' + label,
+      showLabel: (label) => 'Show ' + label,
       closeLabel: (label) => 'Close ' + label,
       resizeLabel: (title) => 'Resize ' + title,
     };
@@ -1001,13 +1002,17 @@ test('the panel dock renders its panels, chips and header on a server and types 
         {(panel) => <PanelDockHeader {...headerProps} title={panel.body} controls={<PanelDockControls {...controlsProps} />} />}
       </PanelDock>
     );
+    // restoreLabel is the earlier name of showLabel.
+    const earlierName = <PanelDock {...dockProps} restoreLabel={(label) => 'Show ' + label}>{() => null}</PanelDock>;
     // @ts-expect-error A dock's chip labels are functions of each chip's text.
-    const plainRestore = <PanelDock {...dockProps} restoreLabel="Show">{() => null}</PanelDock>;
+    const plainRestore = <PanelDock {...dockProps} showLabel="Show">{() => null}</PanelDock>;
+    // @ts-expect-error A dock scrolls or minimizes what does not fit.
+    const unknownOverflow = <PanelDock {...dockProps} overflow="hide">{() => null}</PanelDock>;
     // @ts-expect-error A panel is open, minimized or maximized.
     const unknownMode: PanelDockPanel = { id: 'notes', title: 'Notes', mode: 'closed' };
     // @ts-expect-error A dock asks the application to change modes and close panels.
     const inertDock = <PanelDock panels={documents}>{() => null}</PanelDock>;
-    void [plainRestore, unknownMode, inertDock];
+    void [earlierName, plainRestore, unknownOverflow, unknownMode, inertDock];
   `,
   );
   await writeFile(

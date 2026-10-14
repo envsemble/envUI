@@ -10,6 +10,7 @@ import {
   Theme,
   type PanelDockMode,
   type PanelDockPanel,
+  type PanelDockProps,
   type ThemeValue,
 } from '@envsemble/envui';
 import { Description } from '@envsemble/envui/icons/Description';
@@ -221,6 +222,10 @@ export function PanelDockFixture({ theme }: { theme: ThemeValue }) {
               { id: 'three', title: 'Three', mode: 'open', active: true },
             ]}
             activates
+            labels={{
+              showLabel: (label) => `Bring back ${label}`,
+              restoreLabel: (label) => `Return to ${label}`,
+            }}
           />
           {/* The application keeps its pinned panel open when asked to minimize it. */}
           <MinimizingDock
@@ -233,6 +238,7 @@ export function PanelDockFixture({ theme }: { theme: ThemeValue }) {
             ]}
             activates
             keeps="pinned"
+            labels={{ restoreLabel: (label) => `Return to ${label}` }}
           />
         </>
       )}
@@ -251,6 +257,7 @@ function MinimizingDock({
   activates = false,
   keeps,
   className = 'fixture-dock-minimizing',
+  labels,
 }: {
   name: string;
   theme: ThemeValue;
@@ -260,6 +267,8 @@ function MinimizingDock({
   /** A panel the application keeps open when asked to minimize it. */
   keeps?: string;
   className?: string;
+  /** Labels of the chips' buttons. */
+  labels?: Pick<PanelDockProps<PanelDockPanel>, 'showLabel' | 'restoreLabel'>;
 }) {
   const [panels, setPanels] = useState(initial);
   const [log, setLog] = useState<string[]>([]);
@@ -267,6 +276,7 @@ function MinimizingDock({
     <>
       <div className={`fixture-dock-frame ${className}`} data-testid={`${name}-dock-${theme}`}>
         <PanelDock
+          {...labels}
           panels={panels}
           overflow="minimize"
           onModeChange={(id, mode) => {
