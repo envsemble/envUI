@@ -929,3 +929,101 @@ test('avatar groups, relative times, copy buttons and pagination render on a ser
     join(consumerDirectory, 'tsconfig.display.json'),
   ]);
 });
+
+test('the panel dock renders its panels, chips and header on a server and types its contracts', async function () {
+  const dock = await runConsumer(
+    'DockConsumer.mjs',
+    `
+    import { createElement as h, Fragment } from 'react';
+    import { renderToString } from 'react-dom/server';
+    import * as ui from '@envsemble/envui';
+    if (typeof document !== 'undefined' || typeof window !== 'undefined') throw new Error('DOM globals must be absent');
+    const panels = [
+      { id: 'notes', title: 'Notes', mode: 'open', active: true },
+      { id: 'budget', title: 'Budget', mode: 'minimized', attention: 'Unsaved changes' },
+    ];
+    const html = renderToString(h(ui.Theme, { theme: 'light' },
+      h(ui.PanelDock, { panels, onModeChange() {}, onClose() {} },
+        (panel) => h(Fragment, null,
+          h(ui.PanelDockHeader, { title: panel.title, meta: 'Edited today' }),
+          h('p', null, 'Body of ' + panel.title)))));
+    console.log(JSON.stringify({ html }));
+  `,
+  );
+  assert.match(
+    dock.html,
+    /<section [^>]*aria-label="Notes"[^>]*data-panel-id="notes"[^>]*data-mode="open"/,
+  );
+  assert.match(dock.html, /<h2 class="env-panel-dock-title">Notes<\/h2>/);
+  for (const name of ['Minimize', 'Maximize', 'Close'])
+    assert.match(dock.html, new RegExp(`aria-label="${name}"`));
+  // A minimized panel's content renders too, kept out of sight behind its chip.
+  assert.match(dock.html, /<section [^>]*data-panel-id="budget"[^>]*data-placement="hidden"/);
+  assert.match(dock.html, /Body of Budget/);
+  assert.match(dock.html, /<ul class="env-panel-dock-strip" aria-label="Hidden panels">/);
+  assert.match(dock.html, /aria-label="Show Budget"/);
+  assert.match(dock.html, /Unsaved changes/);
+  // Server output is in place before it hydrates, without an entrance.
+  assert.doesNotMatch(dock.html, /data-entering/);
+
+  await writeFile(
+    join(consumerDirectory, 'DockConsumer.tsx'),
+    `
+    import { PanelDock, PanelDockControls, PanelDockHeader, type PanelDockMode, type PanelDockPanel,
+      type PanelDockProps, type PanelDockHeaderProps, type PanelDockControlsProps } from '@envsemble/envui';
+    type Document = PanelDockPanel & { body: string };
+    const documents: Document[] = [
+      { id: 'notes', title: 'Notes', mode: 'open', body: 'Text', height: 320, preferredWidth: 480, minWidth: 320,
+        maxWidth: 640, minHeight: 240, maxHeight: 560, active: true, label: 'Notes', icon: <span />, attention: 'Unsaved', tooltip: 'Notes' },
+    ];
+    const headerProps: PanelDockHeaderProps = { title: 'Notes', meta: 'Edited today', headingLevel: 3 };
+    const controlsProps: PanelDockControlsProps = { minimizeLabel: 'Min', maximizeLabel: 'Max', restoreLabel: 'Back', closeLabel: 'Shut' };
+    const dockProps: Omit<PanelDockProps<Document>, 'children'> = {
+      panels: documents,
+      onModeChange: (id, mode) => { const typed: PanelDockMode = mode; void id; void typed; },
+      onClose: (id) => { const typed: string = id; void typed; },
+      onActivate: (id) => void id,
+      onHeightChange: (id, height) => { const typed: number = height; void id; void typed; },
+      stackBelow: '40rem',
+      onStackedChange: (stacked) => { const typed: boolean = stacked; void typed; },
+      minimizedLabel: 'Hidden panels',
+      restoreLabel: (label) => 'Show ' + label,
+      closeLabel: (label) => 'Close ' + label,
+      resizeLabel: (title) => 'Resize ' + title,
+    };
+    export const dock = (
+      <PanelDock {...dockProps}>
+        {(panel) => <PanelDockHeader {...headerProps} title={panel.body} controls={<PanelDockControls {...controlsProps} />} />}
+      </PanelDock>
+    );
+    // @ts-expect-error A dock's chip labels are functions of each chip's text.
+    const plainRestore = <PanelDock {...dockProps} restoreLabel="Show">{() => null}</PanelDock>;
+    // @ts-expect-error A panel is open, minimized or maximized.
+    const unknownMode: PanelDockPanel = { id: 'notes', title: 'Notes', mode: 'closed' };
+    // @ts-expect-error A dock asks the application to change modes and close panels.
+    const inertDock = <PanelDock panels={documents}>{() => null}</PanelDock>;
+    void [plainRestore, unknownMode, inertDock];
+  `,
+  );
+  await writeFile(
+    join(consumerDirectory, 'tsconfig.dock.json'),
+    JSON.stringify({
+      compilerOptions: {
+        target: 'ES2022',
+        module: 'NodeNext',
+        moduleResolution: 'NodeNext',
+        jsx: 'react-jsx',
+        strict: true,
+        noEmit: true,
+        skipLibCheck: false,
+        types: ['react', 'react-dom'],
+        lib: ['ES2022', 'DOM'],
+      },
+      include: ['DockConsumer.tsx'],
+    }),
+  );
+  run(consumerRequire.resolve('typescript/bin/tsc'), [
+    '--project',
+    join(consumerDirectory, 'tsconfig.dock.json'),
+  ]);
+});
