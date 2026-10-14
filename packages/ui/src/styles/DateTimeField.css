@@ -46,9 +46,10 @@
 .env-date-time-placeholder {
   color: var(--color-field-placeholder);
 }
-/* Like an input's placeholder, it waits while the label rests inside the empty field. */
+/* Like an input's placeholder, it waits while the label rests inside the empty field. A field
+   without a label, named by aria-label, shows it. */
 .env-text-field:not([data-label-hidden])
-  .env-date-time-well:not([data-label-floating], :focus-within)
+  .env-date-time-well:has(> label):not([data-label-floating], :focus-within)
   .env-date-time-placeholder {
   color: transparent;
 }

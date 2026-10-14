@@ -119,6 +119,11 @@ export function DateTimeFieldFixture({ theme }: { theme: ThemeValue }) {
           onValueChange={setLaunch}
         />
         <output data-testid={`date-time-launch-${theme}`}>{launch}</output>
+        {/* Named by the application's own text instead of a label. */}
+        <span id={`date-time-starts-${theme}`}>Starts on {theme}</span>
+        <DateTimeField aria-labelledby={`date-time-starts-${theme}`} locale="en-GB" />
+        {/* Without a label, a standard field shows its placeholder. */}
+        <DateTimeField aria-label={`Ends ${theme}`} placeholder="Pick an end" locale="en-GB" />
       </div>
       <div className="fixture-actions">
         <Calendar

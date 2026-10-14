@@ -37,15 +37,16 @@ import { DateTimeField } from '@envsemble/envui';
 | defaultTime                       | The time a newly chosen day starts with, as HH:mm; 00:00 by default                                                  |
 | locale                            | The locale of the shown value and the calendar's names and numbers; the browser's by default                         |
 | formatOptions                     | Intl.DateTimeFormat options for the shown value; the medium date style, and the short time style with withTime       |
+| aria-label / aria-labelledby      | Name a field without a label; aria-labelledby also takes the place of a label                                        |
 | weekStart                         | The calendar's first day of the week, 0 for Sunday to 6 for Saturday; the locale's by default                        |
 | label / hint / error              | Floating label, guidance and validation like Input; hint and error are linked to the field                           |
 | density / showLabel               | standard (default) or compact, 2 rem; the label shows inside the field unless the field is compact                   |
-| placeholder                       | Shown while the field is empty and its label floats or is hidden                                                     |
+| placeholder                       | Shown while the field is empty and its label floats or is hidden, or the field has no label                          |
 | clearable                         | A clear button in the field and in the calendar removes the value                                                    |
 | open / defaultOpen / onOpenChange | Optional control of the calendar                                                                                     |
 | Labels                            | clearLabel, todayLabel, nowLabel, doneLabel, timeLabel, previousMonthLabel and nextMonthLabel, in English by default |
 | Native participation              | name, form, required, disabled and readOnly; a form reset restores an uncontrolled field's defaultValue              |
-| Native button props               | aria-label, ref and other attributes of the field's button                                                           |
+| Native button props               | ref and other attributes of the field's button                                                                       |
 
 ## Calendar
 

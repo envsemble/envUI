@@ -584,3 +584,28 @@ test('a locale with a calendar of its own names the Gregorian months the grid sh
   await expect(persian.locator('[data-date="2026-10-14"]')).toHaveAccessibleName(expected.day);
   await expect(persian.locator('[data-date="2026-10-14"] .env-calendar-day-mark')).toHaveText('۱۴');
 });
+
+test('a field named by other text, and one without a label that shows its placeholder', async ({
+  page,
+}) => {
+  const starts = field(page, 'Starts on light');
+  await starts.click();
+  await expect(page.getByRole('dialog', { name: 'Starts on light' })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(openPopup(page)).toHaveCount(0);
+
+  // Without a label to rest in the field, its placeholder shows.
+  const ends = field(page, 'Ends light');
+  const placeholder = ends.locator('.env-date-time-placeholder');
+  await expect(placeholder).toHaveText('Pick an end');
+  expect(
+    await placeholder.evaluate((element) => {
+      const probe = document.createElement('span');
+      probe.style.color = 'var(--color-field-placeholder)';
+      element.append(probe);
+      const expected = getComputedStyle(probe).color;
+      probe.remove();
+      return getComputedStyle(element).color === expected;
+    }),
+  ).toBe(true);
+});

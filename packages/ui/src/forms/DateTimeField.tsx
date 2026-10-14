@@ -180,6 +180,7 @@ export function DateTimeField({
   'aria-describedby': describedBy,
   'aria-invalid': invalid,
   'aria-label': ariaLabel,
+  'aria-labelledby': labelledBy,
   onKeyDown,
   ...triggerProps
 }: DateTimeFieldProps) {
@@ -193,6 +194,12 @@ export function DateTimeField({
   const popupRef = useRef<HTMLDivElement>(null);
   const direction = useTextDirection(triggerRef);
   const defaultMinutes = parseTime(defaultTime) ?? 0;
+  // The field and its popup take the application's own aria-labelledby, else the label, else the
+  // aria-label.
+  const accessibleName = {
+    'aria-labelledby': labelledBy ?? (label != null ? labelId : undefined),
+    'aria-label': labelledBy == null && label == null ? ariaLabel : undefined,
+  };
 
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
   const current = parseValue(
@@ -351,8 +358,7 @@ export function DateTimeField({
             }}
             id={id}
             role="combobox"
-            aria-labelledby={label != null ? labelId : undefined}
-            aria-label={label != null ? undefined : ariaLabel}
+            {...accessibleName}
             aria-describedby={metadata['aria-describedby']}
             aria-invalid={metadata['aria-invalid']}
             aria-required={required || undefined}
@@ -413,8 +419,7 @@ export function DateTimeField({
                 ref={popupRef}
                 className="env-popover env-date-time-popup"
                 data-density={compact ? 'compact' : undefined}
-                aria-labelledby={label != null ? labelId : undefined}
-                aria-label={label != null ? undefined : ariaLabel}
+                {...accessibleName}
                 initialFocus={() =>
                   popupRef.current?.querySelector<HTMLElement>('.env-calendar-day[tabindex="0"]') ??
                   true
