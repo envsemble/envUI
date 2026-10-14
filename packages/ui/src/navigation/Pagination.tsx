@@ -80,12 +80,9 @@ export function Pagination({
   ...props
 }: PaginationProps) {
   const [pressed, setPressed] = useState<'previous' | 'next' | null>(null);
-  const [wasPending, setWasPending] = useState(pending);
-  // A load that ends forgets the button that started it.
-  if (pending !== wasPending) {
-    setWasPending(pending);
-    if (!pending) setPressed(null);
-  }
+  // A press is remembered only while the load it started is pending: once the load ends, or when
+  // the page changed without one, a later load for another reason spins neither button.
+  if (pressed !== null && !pending) setPressed(null);
   const perPage = Math.max(1, Math.floor(pageSize) || 1);
   const count = total === undefined ? undefined : Math.max(0, Math.floor(total) || 0);
   const pageCount = count === undefined ? undefined : Math.max(1, Math.ceil(count / perPage));

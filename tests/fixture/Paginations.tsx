@@ -9,6 +9,8 @@ export function PaginationsFixture({ theme }: { theme: ThemeValue }) {
   const [requested, setRequested] = useState<number | null>(null);
   const [changes, setChanges] = useState<number[]>([]);
   const [batch, setBatch] = useState(1);
+  // A load for another reason, such as a refresh, while the batches page without loading.
+  const [refreshing, setRefreshing] = useState(false);
   return (
     <Theme theme={theme} data-testid={`paginations-${theme}`} className="fixture-section">
       <Pagination
@@ -38,8 +40,12 @@ export function PaginationsFixture({ theme }: { theme: ThemeValue }) {
         page={batch}
         pageSize={50}
         hasNextPage={batch < 3}
+        pending={refreshing}
         onPageChange={setBatch}
       />
+      <Button variant="secondary" onClick={() => setRefreshing((current) => !current)}>
+        Refresh batches {theme}
+      </Button>
       <Pagination
         aria-label="Hidden single page"
         page={1}

@@ -52,6 +52,27 @@ test('the range and the buttons follow the page, and a loading page makes both w
   await expect(scope.getByTestId('changes')).toHaveText('2,1');
 });
 
+test('a load for another reason makes both buttons wait without a spinner', async ({ page }) => {
+  await page.goto(fixture);
+  const scope = page.getByTestId('paginations-light');
+  const pager = scope.getByRole('navigation', { name: 'Batches light' });
+  const next = pager.getByRole('button', { name: 'Next page' });
+  const refresh = scope.getByRole('button', { name: 'Refresh batches light' });
+  // These batches page without loading, so the press is forgotten at once.
+  await next.click();
+  await expect(pager.locator('.env-pagination-range')).toHaveText('51–100');
+  await refresh.click();
+  await expect(next).toHaveAttribute('aria-disabled', 'true');
+  await expect(pager.getByRole('button', { name: 'Previous page' })).toHaveAttribute(
+    'aria-disabled',
+    'true',
+  );
+  await expect(pager.locator('[aria-busy]')).toHaveCount(0);
+  await expect(pager.locator('.env-spinner')).toHaveCount(0);
+  await refresh.click();
+  expect(await state(pager)).toEqual({ range: '51–100', previous: true, next: true });
+});
+
 test('the keyboard pages with Enter and Space, and focus stays on the last page', async ({
   page,
 }) => {
