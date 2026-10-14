@@ -187,6 +187,9 @@ export function PanelDock<T extends PanelDockPanel>({
   const clock = useRef(0);
   // A panel its chip asked to bring back, which takes focus once it shows.
   const pendingRestore = useRef<string | null>(null);
+  // The panel a chip asked a stacked dock to show, with the panel active then: it shows until
+  // another panel becomes active, also where the application does not activate panels.
+  const chipChoice = useRef<{ id: string; active: string | undefined } | null>(null);
   const atRowEnd = useRef(true);
   const previousRow = useRef<readonly string[]>([]);
   const previousChips = useRef<readonly string[]>([]);
@@ -206,11 +209,18 @@ export function PanelDock<T extends PanelDockPanel>({
   );
   const close = useCallback((id: string) => latest.current.onClose(id), []);
 
-  // A stacked dock fills the region with one shown panel, the active one or else the newest; a wide
-  // one with its maximized panel. The others wait behind their chips.
+  // A stacked dock fills the region with one shown panel: the one its chip asked for, else the
+  // active one, else the newest; a wide one with its maximized panel. The others wait behind their
+  // chips.
   const maximized = panels.filter((panel) => panel.mode === 'maximized');
   const shown = stacked ? panels.filter((panel) => panel.mode !== 'minimized') : maximized;
-  const filling = shown.find((panel) => panel.active) ?? newest(shown, recency.current);
+  const activeId = panels.find((panel) => panel.active)?.id;
+  const choice = chipChoice.current;
+  const chosen = stacked && choice?.active === activeId ? choice?.id : undefined;
+  const filling =
+    shown.find((panel) => panel.id === chosen) ??
+    shown.find((panel) => panel.active) ??
+    newest(shown, recency.current);
   const placements = new Map<string, Placement>();
   for (const panel of panels)
     placements.set(
@@ -262,6 +272,7 @@ export function PanelDock<T extends PanelDockPanel>({
 
   function restoreFromChip(panel: T) {
     pendingRestore.current = panel.id;
+    chipChoice.current = { id: panel.id, active: activeId };
     bringForward(panel.id);
     if (panel.mode === 'minimized') latest.current.onModeChange(panel.id, 'open');
     if (!panel.active) latest.current.onActivate?.(panel.id);

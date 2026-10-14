@@ -968,3 +968,26 @@ test('content that scrolls itself as panels reorder keeps its own scroll positio
   await expect.poll(atNewest).toBeLessThanOrEqual(1);
   expect(await list.evaluate((element) => element.scrollTop)).toBe(60);
 });
+
+test('a stacked dock shows the panel of a chip pressed, also without onActivate', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const passive = page.getByTestId('passive-dock-light');
+  const first = passive.locator('section[data-panel-id="first"]');
+  const second = passive.locator('section[data-panel-id="second"]');
+  await expect(passive.locator('.env-panel-dock')).toHaveAttribute('data-stacked', 'true');
+  // The active panel shows first; the application never activates another.
+  await expect(first).toBeVisible();
+  await expect(second).toBeHidden();
+  await passive.getByRole('button', { name: 'Show Second note light' }).click();
+  await expect(second).toBeVisible();
+  await expect(first).toBeHidden();
+  await expect
+    .poll(() => second.evaluate((element) => element.contains(document.activeElement)))
+    .toBe(true);
+  await passive.getByRole('button', { name: 'Show First note light' }).click();
+  await expect(first).toBeVisible();
+  await expect(second).toBeHidden();
+});

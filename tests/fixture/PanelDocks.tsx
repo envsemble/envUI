@@ -167,7 +167,38 @@ export function PanelDockFixture({ theme }: { theme: ThemeValue }) {
           .map(([id, count]) => `${id}:${count}`)
           .join(' ')}
       </output>
+      <PassiveDock theme={theme} />
     </Theme>
+  );
+}
+
+/** A narrow dock whose application never activates panels: its chips still show them. */
+function PassiveDock({ theme }: { theme: ThemeValue }) {
+  const [panels, setPanels] = useState<PanelDockPanel[]>([
+    { id: 'first', title: `First note ${theme}`, mode: 'open', active: true },
+    { id: 'second', title: `Second note ${theme}`, mode: 'open' },
+  ]);
+  return (
+    <div className="fixture-dock-frame fixture-dock-narrow" data-testid={`passive-dock-${theme}`}>
+      <PanelDock
+        panels={panels}
+        onModeChange={(id, mode) =>
+          setPanels((current) =>
+            current.map((panel) => (panel.id === id ? { ...panel, mode } : panel)),
+          )
+        }
+        onClose={(id) => setPanels((current) => current.filter((panel) => panel.id !== id))}
+      >
+        {(panel) => (
+          <>
+            <PanelDockHeader title={panel.title} />
+            <div className="fixture-dock-body">
+              <Textarea label={`Text of ${panel.title}`} />
+            </div>
+          </>
+        )}
+      </PanelDock>
+    </div>
   );
 }
 
