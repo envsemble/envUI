@@ -273,7 +273,7 @@ export function PanelDockPreview() {
       <Example
         title="Minimize what does not fit"
         size="wide"
-        caption="With overflow set to minimize, open panels that cannot all sit side by side at their minimum widths make room: the least recently active one other than the active one waits as a chip, so no panel scrolls out of view. Open another document to see the next one make room."
+        caption="With overflow set to minimize, open panels that cannot all sit side by side at their minimum widths make room: the least recently active one waits as a chip, never the active or the newest one, so no panel scrolls out of view. Open another document to see the next one make room, and close one to see a panel come back."
       >
         <SampleDock
           initial={[

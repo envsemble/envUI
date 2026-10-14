@@ -74,7 +74,10 @@ export interface PanelDockProps<T extends PanelDockPanel>
   panels: readonly T[];
   /** Renders a panel's content, such as a PanelDockHeader above the panel's body. */
   children: (panel: T) => ReactNode;
-  /** Called with the mode a panel asks for, from its window controls and its chip. */
+  /**
+   * Called with the mode a panel asks for, from its window controls and its chip, and from the dock
+   * itself with overflow="minimize".
+   */
   onModeChange: (id: string, mode: PanelDockMode) => void;
   /** Called from a panel's close control and its chip's close button. */
   onClose: (id: string) => void;
@@ -99,9 +102,9 @@ export interface PanelDockProps<T extends PanelDockPanel>
   /**
    * What the dock does when its open panels cannot all sit side by side at their minimum widths:
    * scroll (default) scrolls the row sideways; minimize asks onModeChange to minimize the least
-   * recently active open panel, one at a time, until the rest fit. It never asks for the active
-   * panel or the newest one, so never for a panel alone in the row, and where those cannot fit by
-   * themselves the row scrolls instead.
+   * recently active open panel, one at a time, until the rest fit, and to open it again once it
+   * fits. It never asks for the active panel or the newest one, so never for a panel alone in the
+   * row, and where those cannot fit by themselves the row scrolls instead.
    */
   overflow?: 'scroll' | 'minimize';
   /**
@@ -214,10 +217,13 @@ export function PanelDock<T extends PanelDockPanel>({
   const chipChoice = useRef<ChipChoice | null>(null);
   // Whether the dock stacks by its latest measurement, which the next render follows.
   const measuredStacked = useRef(false);
-  // With overflow="minimize": the change the dock awaits the application's answer to, and the
-  // panels the application kept open when asked to minimize them, while they stay in the row.
+  // With overflow="minimize": the change the dock awaits the application's answer to; the panels
+  // the application kept open when asked to minimize them, while they stay in the row; and the
+  // panels the dock minimized to make room, with the time each was last brought forward, so one
+  // that fits again comes back in its place.
   const awaiting = useRef<{ id: string; mode: PanelDockMode } | null>(null);
   const keptOpen = useRef(new Set<string>());
+  const minimizedForRoom = useRef(new Map<string, number | undefined>());
   const atRowEnd = useRef(true);
   const previousRow = useRef<readonly string[]>([]);
   const previousChips = useRef<readonly string[]>([]);
@@ -300,12 +306,14 @@ export function PanelDock<T extends PanelDockPanel>({
   }
 
   /**
-   * With overflow="minimize", open panels that cannot all fit at their minimum widths make room:
-   * the dock asks to minimize the least recently active one, never the active panel or the newest,
-   * and only where that lets the rest fit. It asks for one panel at a time and waits for the
-   * answer; a panel the application keeps open is not asked again while it stays in the row.
+   * With overflow="minimize", fits the open panels to the row. Where they cannot all sit side by
+   * side at their minimum widths, the dock asks to minimize the least recently active one, never
+   * the active panel or the newest, and only where that lets the rest fit. Once a panel it
+   * minimized fits again, it asks to open it, the last one first. It asks for one change at a time
+   * and waits for the answer; a panel the application keeps open is not asked again while it stays
+   * in the row.
    */
-  function makeRoom(rowElement: HTMLElement) {
+  function fitRow(rowElement: HTMLElement) {
     const request = awaiting.current;
     if (request) {
       const panel = panels.find(({ id }) => id === request.id);
@@ -313,23 +321,34 @@ export function PanelDock<T extends PanelDockPanel>({
       awaiting.current = null;
     }
     for (const id of keptOpen.current) if (!rowIds.includes(id)) keptOpen.current.delete(id);
-    if (overflow !== 'minimize') return;
-    // A dock that stacks, or is about to as it first shows or narrows, has no row to make room in.
+    // A panel the dock minimized that shows again, or closed, is no longer the dock's to bring back.
+    for (const id of minimizedForRoom.current.keys())
+      if (panels.find((panel) => panel.id === id)?.mode !== 'minimized')
+        minimizedForRoom.current.delete(id);
+    if (overflow !== 'minimize' || rowElement.getClientRects().length === 0) return;
+    // A dock that stacks, or is about to as it first shows or narrows, has no row to fit.
     if (stacked || measuredStacked.current) return;
     const inRow = panels.filter((panel) => placements.get(panel.id) === 'row');
     const room = rowRoom(rowElement);
     const fit = (list: readonly T[]) => fitsInRow(room, list.map(frameOfPanel));
-    if (!overflows(rowElement) || fit(inRow)) return;
-    // The panel people work in stays, and so does the newest, such as one just brought back from
-    // its chip, also alone in the row, and any the application kept open. Where those cannot fit
-    // by themselves, minimizing the others would only hide them, and the row scrolls.
-    const newestInRow = newest(inRow, recency.current);
-    const stays = (panel: T) =>
-      panel.active || panel === newestInRow || keptOpen.current.has(panel.id);
-    if (!fit(inRow.filter(stays))) return;
-    const others = inRow.filter((panel) => !stays(panel));
-    const leaving = oldest(others, recency.current);
-    if (leaving) ask(leaving.id, 'minimized');
+    if (overflows(rowElement) && !fit(inRow)) {
+      // The panel people work in stays, and so does the newest, such as one just brought back
+      // from its chip, also alone in the row, and any the application kept open. Where those
+      // cannot fit by themselves, minimizing the others would only hide them, and the row scrolls.
+      const newestInRow = newest(inRow, recency.current);
+      const stays = (panel: T) =>
+        panel.active || panel === newestInRow || keptOpen.current.has(panel.id);
+      if (!fit(inRow.filter(stays))) return;
+      const others = inRow.filter((panel) => !stays(panel));
+      const leaving = oldest(others, recency.current);
+      if (!leaving) return;
+      minimizedForRoom.current.set(leaving.id, recency.current.get(leaving.id));
+      ask(leaving.id, 'minimized');
+      return;
+    }
+    const last = [...minimizedForRoom.current.keys()].at(-1);
+    const returning = panels.find((panel) => panel.id === last);
+    if (returning && fit([...inRow, returning])) ask(returning.id, 'open');
   }
 
   /**
@@ -342,22 +361,20 @@ export function PanelDock<T extends PanelDockPanel>({
     requestAnimationFrame(() => {
       if (awaiting.current !== request) return;
       awaiting.current = null;
-      keptOpen.current.add(id);
+      minimizedForRoom.current.delete(id);
+      if (mode === 'minimized') keptOpen.current.add(id);
       refresh();
     });
     latest.current.onModeChange(id, mode);
   }
-  // The dock measures itself outside its renders, with this render's panels.
-  const makeRoomLatest = useRef(makeRoom);
-  useLayoutEffect(() => {
-    makeRoomLatest.current = makeRoom;
-  });
 
   function restoreFromChip(panel: T) {
     pendingRestore.current = panel.id;
     bringForward(panel.id);
     // A stacked dock shows the panel brought forward, even without an active panel.
     if (stacked) chipChoice.current = { id: panel.id, active: activeId, time: clock.current };
+    // People brought the panel back: the dock leaves it to them from now on.
+    minimizedForRoom.current.delete(panel.id);
     if (panel.mode === 'minimized') latest.current.onModeChange(panel.id, 'open');
     if (!panel.active) latest.current.onActivate?.(panel.id);
     refresh();
@@ -438,19 +455,24 @@ export function PanelDock<T extends PanelDockPanel>({
         current?.rem === rem && current.room === room ? current : { rem, room },
       );
       setOverflowing(overflows(rowElement));
-      makeRoomLatest.current(rowElement);
       if (atRowEnd.current) scrollToRowEnd(rowElement);
     };
     measure();
     if (typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(measure);
+    // A dock that minimizes renders again as it resizes, also where nothing it shows changed, so
+    // that its row's effect fits the panels: the application's answer to a change asked there
+    // renders at once, before the dock stops awaiting it.
+    const observer = new ResizeObserver(() => {
+      measure();
+      if (overflow === 'minimize') refresh();
+    });
     observer.observe(element);
     observer.observe(threshold);
     if (strip.current) observer.observe(strip.current);
     return () => observer.disconnect();
     // Stacking changes the row's padding above open panels in front of a maximized one, and with it
     // their room, without resizing anything the observer watches.
-  }, [stackBelow, hasChips, filled, stacked]);
+  }, [stackBelow, hasChips, filled, stacked, overflow]);
 
   useStackedReport(stacked, onStackedChange);
 
@@ -461,7 +483,15 @@ export function PanelDock<T extends PanelDockPanel>({
     for (const panel of panels) {
       if (panel.mode === 'minimized') continue;
       shownIds.add(panel.id);
-      if (!recency.current.has(panel.id)) bringForward(panel.id);
+      if (recency.current.has(panel.id)) continue;
+      // A panel the dock brings back once it fits again returns to its place among the others.
+      const request = awaiting.current;
+      const earlier =
+        request?.id === panel.id && request.mode === 'open'
+          ? minimizedForRoom.current.get(panel.id)
+          : undefined;
+      if (earlier === undefined) bringForward(panel.id);
+      else recency.current.set(panel.id, earlier);
     }
     for (const id of recency.current.keys()) if (!shownIds.has(id)) recency.current.delete(id);
     const ids = new Set(panels.map(({ id }) => id));
@@ -504,7 +534,7 @@ export function PanelDock<T extends PanelDockPanel>({
     const frame = joined === undefined ? undefined : frameOf(joined);
     if (frame) reveal(rowElement, frame);
     setOverflowing(overflows(rowElement));
-    makeRoom(rowElement);
+    fitRow(rowElement);
   });
 
   // Focus follows a panel's content: a panel that hides hands focus to its chip, a panel brought
