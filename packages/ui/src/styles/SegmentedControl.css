@@ -89,6 +89,20 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+/* Without hover, as on touch screens, no tooltip shows a cut label: a label too long for its share
+   wraps onto more lines instead, breaking long words only where they would overflow, and the rail
+   grows to hold it. */
+@media (hover: none), (pointer: coarse) {
+  .env-segmented-control[data-full-width] > .env-segment {
+    white-space: normal;
+  }
+  .env-segmented-control[data-full-width] .env-segment-label {
+    overflow: visible;
+    text-overflow: clip;
+    overflow-wrap: break-word;
+    text-align: center;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   .env-segment {
     transition: none;

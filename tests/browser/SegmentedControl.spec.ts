@@ -111,3 +111,43 @@ test('a full-width control splits its container evenly and cuts long labels shor
     .getByRole('radiogroup', { name: 'Layout light' });
   expect((await plain.boundingBox())!.width).toBeLessThan(300);
 });
+
+test('on touch screens a full-width label too long for its share wraps, as no tooltip shows', async ({
+  browser,
+  browserName,
+}) => {
+  test.skip(browserName !== 'chromium', 'Only one engine emulates touch with a coarse pointer.');
+  const context = await browser.newContext({
+    hasTouch: true,
+    isMobile: true,
+    viewport: { width: 1024, height: 900 },
+  });
+  const page = await context.newPage();
+  await page.goto(`${fixtureUrl}/?fixture=segments`);
+  expect(await page.evaluate(() => matchMedia('(pointer: coarse)').matches)).toBe(true);
+  const narrow = page.getByTestId('segments-narrow-light');
+  const control = narrow.getByRole('radiogroup', { name: 'Assignments light' });
+  const segments = control.getByRole('radio');
+  const label = segments.nth(1).locator('.env-segment-label');
+  // The label shows whole, on two lines, and the options still share the rail evenly.
+  await expect(label).not.toHaveCSS('text-overflow', 'ellipsis');
+  expect(await label.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
+  const lines = await label.evaluate((element) => {
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    return new Set([...range.getClientRects()].map((rect) => Math.round(rect.top))).size;
+  });
+  expect(lines).toBeGreaterThan(1);
+  const [frame, rail, first, second] = await Promise.all([
+    narrow.boundingBox(),
+    control.boundingBox(),
+    segments.first().boundingBox(),
+    segments.nth(1).boundingBox(),
+  ]);
+  expect(rail!.width).toBeCloseTo(frame!.width, 0);
+  expect(Math.abs(first!.width - second!.width)).toBeLessThan(1);
+  expect(Math.abs(first!.height - second!.height)).toBeLessThan(1);
+  await segments.nth(1).tap();
+  await expect(segments.nth(1)).toHaveAttribute('aria-checked', 'true');
+  await context.close();
+});
