@@ -1,8 +1,8 @@
 # Changelog
 
-## Unreleased
+## 0.5.0 — 2026-10-14
 
-Components for document-centred desktop applications: a file tree, editor tabs, quick open, context menus and a resizable sidebar, with badges, notices, tables and other everyday pieces.
+Components for document-centred desktop applications and data-heavy dashboards: a file tree, editor tabs, quick open, context menus and a resizable sidebar; sortable, resizable tables, key figures, a heatmap, conversation messages and split views; with badges, notices and other everyday pieces.
 
 ### Breaking changes
 
