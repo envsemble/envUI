@@ -253,6 +253,18 @@ export function PanelDockFixture({ theme }: { theme: ThemeValue }) {
             ]}
             activates
           />
+          {/* The application's own state narrows the region below stackBelow. */}
+          <MinimizingDock
+            name="squeezed"
+            theme={theme}
+            initial={[
+              { id: 'p0', title: 'P0', mode: 'open' },
+              { id: 'p1', title: 'P1', mode: 'open', active: true },
+              { id: 'p2', title: 'P2', mode: 'minimized' },
+            ]}
+            activates
+            narrowTo="30rem"
+          />
           {/* The application answers a second later, in a transition. */}
           <MinimizingDock
             name="late"
@@ -297,6 +309,7 @@ function MinimizingDock({
   className = 'fixture-dock-minimizing',
   labels,
   answerDelay,
+  narrowTo,
 }: {
   name: string;
   theme: ThemeValue;
@@ -310,12 +323,19 @@ function MinimizingDock({
   labels?: Pick<PanelDockProps<PanelDockPanel>, 'showLabel' | 'restoreLabel'>;
   /** Milliseconds after which the application answers, in a transition; at once by default. */
   answerDelay?: number;
+  /** A width the application's own state can narrow the region to, as a sidebar opening does. */
+  narrowTo?: string;
 }) {
   const [panels, setPanels] = useState(initial);
   const [log, setLog] = useState<string[]>([]);
+  const [narrowed, setNarrowed] = useState(false);
   return (
     <>
-      <div className={`fixture-dock-frame ${className}`} data-testid={`${name}-dock-${theme}`}>
+      <div
+        className={`fixture-dock-frame ${className}`}
+        data-testid={`${name}-dock-${theme}`}
+        style={narrowed ? { inlineSize: narrowTo } : undefined}
+      >
         <PanelDock
           {...labels}
           panels={panels}
@@ -350,6 +370,11 @@ function MinimizingDock({
           )}
         </PanelDock>
       </div>
+      {narrowTo !== undefined && (
+        <button type="button" onClick={() => setNarrowed((value) => !value)}>
+          Narrow {name} {theme}
+        </button>
+      )}
       <output data-testid={`${name}-log-${theme}`}>{log.join(',')}</output>
     </>
   );

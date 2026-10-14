@@ -1364,6 +1364,23 @@ test('a dock that minimizes keeps its panels where minimizing them would not end
   expect(await ids()).toEqual(['draft', 'outline', 'canvas']);
 });
 
+test('a dock that minimizes asks for nothing as the application narrows it until it stacks', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const scope = page.getByTestId('squeezed-dock-light');
+  const log = page.getByTestId('squeezed-log-light');
+  const { ids } = rowOf(scope);
+  await expect.poll(ids).toEqual(['p0', 'p1']);
+  // The application's own state narrows the region below stackBelow, as a sidebar opening does,
+  // in the same update that renders the dock.
+  await page.getByRole('button', { name: 'Narrow squeezed light' }).click();
+  await expect(scope.locator('.env-panel-dock')).toHaveAttribute('data-stacked', 'true');
+  await frames(page);
+  await expect(log).toHaveText('');
+});
+
 test('a dock that minimizes asks for the next panel when the application keeps one open', async ({
   page,
 }) => {

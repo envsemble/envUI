@@ -243,8 +243,6 @@ export function PanelDock<T extends PanelDockPanel>({
   // The panel a chip asked a stacked dock to show, also where the application does not activate
   // panels, until the situation it was asked in changes.
   const chipChoice = useRef<ChipChoice | null>(null);
-  // Whether the dock stacks by its latest measurement, which the next render follows.
-  const measuredStacked = useRef(false);
   // With overflow="minimize": the change the dock awaits the application's answer to, and a timer
   // that looks again once the answer is overdue; the panels the application kept open when asked
   // to minimize them, while they stay in the row; and the panels the dock minimized to make room.
@@ -362,8 +360,9 @@ export function PanelDock<T extends PanelDockPanel>({
       if (panels.find((panel) => panel.id === id)?.mode !== 'minimized')
         minimizedForRoom.current.delete(id);
     if (overflow !== 'minimize' || rowElement.getClientRects().length === 0) return;
-    // A dock that stacks, or is about to as it first shows or narrows, has no row to fit.
-    if (stacked || measuredStacked.current) return;
+    // A dock that stacks, or is about to as it first shows or narrows, also in the update that
+    // narrows it, as the application's own state can, has no row to fit.
+    if (stacked || stacksNow()) return;
     const inRow = panels.filter((panel) => placements.get(panel.id) === 'row');
     const room = rowRoom(rowElement);
     const widths = new Map(inRow.map(({ id }) => [id, minimumWidth(frameOf(id))]));
@@ -459,6 +458,13 @@ export function PanelDock<T extends PanelDockPanel>({
     );
   }
 
+  /** Whether the dock is narrower than stackBelow, as laid out now. */
+  function stacksNow() {
+    const element = root.current;
+    const threshold = probe.current;
+    return Boolean(element && threshold && element.offsetWidth < threshold.offsetWidth);
+  }
+
   function chipButtonOf(id: string | undefined) {
     const chip = [...(strip.current?.children ?? [])].find(
       (element) => element instanceof HTMLElement && element.dataset.panelId === id,
@@ -503,9 +509,7 @@ export function PanelDock<T extends PanelDockPanel>({
       // layout until it shows again.
       if (element.getClientRects().length === 0) return;
       const view = element.ownerDocument.defaultView;
-      const stackedNow = element.offsetWidth < threshold.offsetWidth;
-      measuredStacked.current = stackedNow;
-      setStacked(stackedNow);
+      setStacked(stacksNow());
       const fontSize = view?.getComputedStyle(element.ownerDocument.documentElement).fontSize;
       const rem = parseFloat(fontSize ?? '') || 16;
       const gutter = parseFloat(view?.getComputedStyle(rowElement).paddingBlockStart ?? '') || 0;
