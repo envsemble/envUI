@@ -53,6 +53,12 @@ export function AvatarGroupsFixture({ theme }: { theme: ThemeValue }) {
       />
       <AvatarGroup data-testid="empty" people={[]} />
       <AvatarGroup
+        data-testid="unknown-counts"
+        people={people.slice(0, 2)}
+        total={Number.NaN}
+        max={Number.NaN}
+      />
+      <AvatarGroup
         data-testid="pressable"
         aria-label={`Pressable people ${theme}`}
         people={people}

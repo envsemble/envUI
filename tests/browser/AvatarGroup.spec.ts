@@ -39,6 +39,11 @@ test('an avatar group names everyone and counts the people it does not show', as
     '4 people: Alex Morgan, 3 weitere',
   );
   await expect(scope.getByTestId('empty')).toHaveCount(0);
+  // Missing numbers count and show everyone passed.
+  const unknown = scope.getByTestId('unknown-counts');
+  await expect(unknown).toHaveAccessibleName('2 people: Alex Morgan, Sam Lee');
+  await expect(unknown.locator('.env-avatar')).toHaveCount(2);
+  await expect(unknown.locator('.env-avatar-group-overflow')).toHaveCount(0);
 });
 
 test('the overflow chip lists the hidden names on hover and keyboard focus', async ({ page }) => {

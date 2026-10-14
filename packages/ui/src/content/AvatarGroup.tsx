@@ -48,9 +48,11 @@ export function AvatarGroup({
   'aria-label': label,
   ...props
 }: AvatarGroupProps) {
-  const count = Math.max(total ?? 0, people.length);
+  // An unknown total or max, such as NaN from missing data, counts and shows everyone passed.
+  const count = Math.max(Math.floor(total ?? 0) || 0, people.length);
   if (count === 0) return null;
-  const shown = max === undefined ? people : people.slice(0, Math.max(0, Math.floor(max)));
+  const shown =
+    max === undefined || Number.isNaN(max) ? people : people.slice(0, Math.max(0, Math.floor(max)));
   const hidden = people.slice(shown.length);
   // People counted in total whom the preview leaves out, so nobody can name them.
   const unlisted = count - people.length;
