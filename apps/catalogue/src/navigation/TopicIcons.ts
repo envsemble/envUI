@@ -52,6 +52,7 @@ import { Monitoring } from '@envsemble/envui/icons/Monitoring';
 import { CloudUpload } from '@envsemble/envui/icons/CloudUpload';
 import { CalendarViewMonth } from '@envsemble/envui/icons/CalendarViewMonth';
 import { Schedule } from '@envsemble/envui/icons/Schedule';
+import { LastPage } from '@envsemble/envui/icons/LastPage';
 import { type Reference } from '../Reference';
 
 export const foundationIcons: Record<string, typeof Palette> = {
@@ -127,6 +128,7 @@ const referenceIcons: Record<string, typeof Palette> = {
   tables: TableChart,
   keyboard: Keyboard,
   breadcrumbs: LinearScale,
+  pagination: LastPage,
 };
 
 /** A decorative symbol for the individual reference topic. */

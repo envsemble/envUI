@@ -55,6 +55,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Tree](components/tree.md) — A virtualized tree of rows for large hierarchies, such as file trees.
 - [Document tabs](components/document-tabs.md) — Closable editor-style tabs for open documents.
 - [Breadcrumbs](components/breadcrumbs.md) — The path from the top level to the current page.
+- [Pagination](components/pagination.md) — The range of items shown with previous and next page buttons, compact enough for a toolbar.
 
 ## Content & guidance
 

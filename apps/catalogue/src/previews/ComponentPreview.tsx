@@ -8,7 +8,12 @@ import {
   SliderPreview,
   FileDropzonePreview,
 } from './Forms';
-import { NavigationPreview, TabsPreview, DirectionLinksPreview } from './Navigation';
+import {
+  NavigationPreview,
+  TabsPreview,
+  DirectionLinksPreview,
+  PaginationPreview,
+} from './Navigation';
 import { SurfacePreview, LayoutPreview, RowsPreview, CardsPreview } from './Layout';
 import { SplitViewPreview } from './Panes';
 import {
@@ -100,6 +105,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <KbdPreview />;
     case 'breadcrumbs':
       return <BreadcrumbsPreview />;
+    case 'pagination':
+      return <PaginationPreview />;
     case 'animated-number':
       return <AnimatedNumberPreview />;
     case 'relative-time':

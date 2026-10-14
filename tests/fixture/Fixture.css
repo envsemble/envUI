@@ -212,3 +212,13 @@ body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-p
 .fixture-narrow-time {
   inline-size: 6rem;
 }
+/* A toolbar as wide as a phone, and a frame too narrow for a pager on one line. */
+.fixture-pager-toolbar {
+  inline-size: min(100%, 22rem);
+}
+.fixture-pager-toolbar > .fixture-shrink-label {
+  min-inline-size: 0;
+}
+.fixture-narrow-pager {
+  inline-size: 9rem;
+}
