@@ -225,6 +225,23 @@ test('labels, onClick, application tooltips and themes', async ({ page }) => {
   expect(await tooltip.count()).toBeLessThanOrEqual(1);
 });
 
+test('a copy button without words or a name of its own is named Copy', async ({ page }) => {
+  await recordClipboard(page, 'available');
+  await page.goto(fixture);
+  const buttons = page.getByTestId('unnamed-light').getByRole('button');
+  await expect(buttons).toHaveCount(4);
+  // An empty label, a label of no elements, and a blank aria-label leave the default name.
+  await expect(buttons.nth(0)).toHaveAccessibleName('Copy');
+  await expect(buttons.nth(1)).toHaveAccessibleName('Copy');
+  await expect(buttons.nth(2)).toHaveAccessibleName('Copy');
+  await expect(buttons.nth(3)).toHaveAccessibleName('Kopieren');
+  // An icon-only button shows it in its tooltip.
+  await buttons.nth(2).hover();
+  await expect(page.locator(shownTooltip)).toHaveText('Copy');
+  await buttons.nth(0).click();
+  await expect.poll(() => writes(page)).toEqual(['Empty label']);
+});
+
 test('a copy button takes the compact size in compact toolbars and with size compact', async ({
   page,
 }) => {

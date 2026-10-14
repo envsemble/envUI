@@ -90,6 +90,13 @@ export function CopyButtonsFixture({ theme }: { theme: ThemeValue }) {
         </span>
         <CopyButton value="Narrow" aria-label="Copy narrow" />
       </div>
+      {/* Labels and names that leave a button without words of its own. */}
+      <div className="fixture-toolbar" data-testid={`unnamed-${theme}`}>
+        <CopyButton value="Empty label">{''}</CopyButton>
+        <CopyButton value="Empty list">{[]}</CopyButton>
+        <CopyButton value="Blank name" aria-label=" " />
+        <CopyButton value="Kopie" aria-label="" copyLabel="Kopieren" />
+      </div>
       <Dialog title={`Share ${theme}`} trigger={<Button>Share {theme}</Button>}>
         <CopyButton
           value="https://example.com/r/shared"

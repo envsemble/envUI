@@ -30,9 +30,18 @@ interface CopyButtonBaseProps
   copiedLabel?: string;
   /** Shown in the tooltip and announced when nothing could be copied; Couldn’t copy by default. */
   failedLabel?: string;
+  /**
+   * The button's name, also in an icon-only button's tooltip, where it has none of its own: no
+   * aria-label or aria-labelledby, and a label without words, such as an empty string; Copy by
+   * default.
+   */
+  copyLabel?: string;
 }
 
-/** A visible label: text or elements, rather than nothing, such as false or null. */
+/**
+ * A visible label: text or elements, rather than nothing, such as false or null. A label without
+ * words, such as an empty string, leaves the button named by copyLabel.
+ */
 export type CopyButtonLabel = Exclude<ReactNode, boolean | null | undefined>;
 
 export type CopyButtonProps = CopyButtonBaseProps &
@@ -40,7 +49,7 @@ export type CopyButtonProps = CopyButtonBaseProps &
     | {
         /**
          * Without children, or with children that render nothing, the button is icon-only, named by
-         * aria-label, such as Copy link.
+         * aria-label, such as Copy link; a blank one leaves it named by copyLabel.
          */
         children?: boolean | null;
         'aria-label': string;
@@ -64,6 +73,7 @@ export function CopyButton({
   icon,
   copiedLabel = 'Copied',
   failedLabel = 'Couldn’t copy',
+  copyLabel = 'Copy',
   children,
   className,
   onClick,
@@ -103,10 +113,17 @@ export function CopyButton({
   }
 
   const iconOnly = children === undefined || children === null || typeof children === 'boolean';
+  // The button always has a name: its own, its label's words, or else copyLabel.
+  const ownName = label?.trim() ? label : undefined;
+  const named =
+    ownName !== undefined ||
+    props['aria-labelledby'] != null ||
+    (!iconOnly && hasWords(children as CopyButtonLabel));
+  const name = named ? ownName : copyLabel;
   // A disabled button takes no pointer or focus events: around it, a target shows its name.
   const disabled = Boolean(props.disabled);
   const feedback = result ? (result.copied ? copiedLabel : failedLabel) : undefined;
-  const tooltip = feedback ?? (iconOnly ? label : undefined);
+  const tooltip = feedback ?? (iconOnly ? name : undefined);
   // The last text stays in the closing tooltip while it fades out.
   if (tooltip) shownText.current = tooltip;
   const symbol = result?.copied ? <Check /> : (icon ?? <ContentCopy />);
@@ -121,9 +138,9 @@ export function CopyButton({
     'data-failed': result && !result.copied ? '' : undefined,
   };
   const button = iconOnly ? (
-    <Button {...shared} iconOnly icon={symbol} aria-label={label ?? ''} />
+    <Button {...shared} iconOnly icon={symbol} aria-label={name ?? ''} />
   ) : (
-    <Button {...shared} startIcon={symbol} aria-label={label}>
+    <Button {...shared} startIcon={symbol} aria-label={name}>
       {children as CopyButtonLabel}
     </Button>
   );
@@ -163,6 +180,17 @@ export function CopyButton({
       </span>
     </>
   );
+}
+
+/**
+ * Whether a label has words: text other than white space, or an element, which may render some.
+ * Empty text, and a list of nothing else, have none.
+ */
+function hasWords(label: ReactNode): boolean {
+  if (label === null || label === undefined || typeof label === 'boolean') return false;
+  if (typeof label === 'string') return label.trim() !== '';
+  if (typeof label === 'object' && Symbol.iterator in label) return [...label].some(hasWords);
+  return true;
 }
 
 /** Writes the text with the asynchronous Clipboard API, or by copying a selection where it fails. */

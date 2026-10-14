@@ -119,6 +119,7 @@ import { CopyButton } from '@envsemble/envui';
 | size                      | standard (default) takes the surrounding density; compact is the 2 rem compact height anywhere       |
 | icon                      | The icon at rest; ContentCopy by default                                                             |
 | copiedLabel / failedLabel | The result in the tooltip and the announcement; Copied and Couldn’t copy by default                  |
+| copyLabel                 | The name where the button has none of its own, such as with an empty label; Copy by default          |
 | Native button props       | ref, disabled and accessible attributes; onClick runs first, and preventDefault there skips the copy |
 
 ## ButtonGroup
