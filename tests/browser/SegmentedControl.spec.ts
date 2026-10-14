@@ -55,7 +55,8 @@ test('a full-width control splits its container evenly and cuts long labels shor
   const narrow = page.getByTestId('segments-narrow-light');
   const control = narrow.getByRole('radiogroup', { name: 'Assignments light' });
   const segments = control.getByRole('radio');
-  const tooltip = page.locator('.env-tooltip');
+  // The tooltip that shows, leaving out one that is still fading out, as when focus moves on.
+  const tooltip = page.locator('.env-tooltip:not([data-ending-style])');
   // In 13 rem the control fills its container, half each, without scrolling.
   const [frame, rail, first, second] = await Promise.all([
     narrow.boundingBox(),
