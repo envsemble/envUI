@@ -5,6 +5,7 @@ import {
   RelativeTime,
   Surface,
   Theme,
+  Tooltip,
   formatRelativeTime,
   type ThemeValue,
 } from '@envsemble/envui';
@@ -54,6 +55,12 @@ export function RelativeTimesFixture({ theme }: { theme: ThemeValue }) {
       <span data-testid="invalid">
         <RelativeTime value="not a date" />
       </span>
+      {/* An invalid now, such as from missing data, leaves the text to the clock. */}
+      <RelativeTime data-testid="invalid-now" value={openedAt - 3 * hour} now={Number.NaN} />
+      {/* Inside the application's own Tooltip, that one describes the time. */}
+      <Tooltip content={`Updated by Alex Morgan ${theme}`}>
+        <RelativeTime data-testid="in-tooltip" value={openedAt - 3 * hour} />
+      </Tooltip>
       <output data-testid="formatted">
         {formatRelativeTime(openedAt + 3 * hour, { now: openedAt, format: 'short' })}
       </output>

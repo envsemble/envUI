@@ -1,5 +1,6 @@
-import { useCallback, useSyncExternalStore, type ComponentPropsWithRef } from 'react';
+import { useCallback, useContext, useSyncExternalStore, type ComponentPropsWithRef } from 'react';
 import { Tooltip } from '../feedback/Tooltip.js';
+import { TooltipNestingContext } from '../feedback/internal/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { useHydrated } from '../internal/useHydrated.js';
 import { subscribeToClock } from './internal/relativeTimeClock.js';
@@ -109,10 +110,13 @@ export interface RelativeTimeProps
   value: RelativeTimeValue;
   /**
    * A fixed moment to compare with, for tests and server rendering; the text then stays as it is.
-   * Without it the text follows the current time.
+   * Without it, or with an invalid one, the text follows the current time.
    */
   now?: Date | number;
-  /** Show the date and time in a tooltip on hover; true by default. */
+  /**
+   * Show the date and time in a tooltip on hover; true by default. Inside an application's own
+   * Tooltip, that one describes the time instead.
+   */
   tooltip?: boolean;
 }
 
@@ -131,7 +135,11 @@ export function RelativeTime({
   ...props
 }: RelativeTimeProps) {
   const time = toTime(value);
-  const fixedNow = now === undefined ? undefined : toTime(now);
+  // An invalid now, such as from missing data, leaves the text to the clock.
+  const given = now === undefined ? undefined : toTime(now);
+  const fixedNow = given !== undefined && Number.isFinite(given) ? given : undefined;
+  // Inside an application's own Tooltip, that tooltip describes the time.
+  const nested = useContext(TooltipNestingContext);
   const live = fixedNow === undefined && Number.isFinite(time);
   const subscribe = useCallback(
     (onTick: () => void) => (live ? subscribeToClock(time, onTick) : () => {}),
@@ -155,7 +163,7 @@ export function RelativeTime({
       {hydrated ? text : [text]}
     </time>
   );
-  if (!tooltip) return element;
+  if (!tooltip || nested) return element;
   return <Tooltip content={<DateAndTime time={time} locale={locale} />}>{element}</Tooltip>;
 }
 

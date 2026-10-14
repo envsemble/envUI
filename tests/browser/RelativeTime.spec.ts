@@ -80,6 +80,8 @@ test('formats, languages and the time element', async ({ page }) => {
   await expect(fixed).toHaveJSProperty('tagName', 'TIME');
   await expect(fixed).toHaveAttribute('datetime', '2026-10-16T12:00:00.000Z');
   await expect(scope.getByTestId('invalid')).toBeEmpty();
+  // An invalid now is left out, and the text follows the clock.
+  await expect(scope.getByTestId('invalid-now')).toHaveText('3 hours ago');
 });
 
 test('the tooltip shows the date and time on hover, in the theme of the page', async ({ page }) => {
@@ -108,6 +110,12 @@ test('the tooltip shows the date and time on hover, in the theme of the page', a
     return document.activeElement === time;
   });
   expect(focusable).toBe(false);
+  // Inside the application's own Tooltip, that tooltip shows instead of the date.
+  await page.mouse.move(0, 0);
+  await scope.getByTestId('in-tooltip').hover();
+  await expect(tooltip).toHaveText('Updated by Alex Morgan light');
+  await page.mouse.move(0, 0);
+  await expect(tooltip).toHaveCount(0);
 });
 
 test('times sit on the center line of compact controls, wrap in narrow frames and keep their order', async ({

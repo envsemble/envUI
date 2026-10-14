@@ -19,9 +19,9 @@ import { RelativeTime, Text } from '@envsemble/envui';
 | value             | The moment: a Date, milliseconds since 1970 or a date string such as an ISO 8601 timestamp; an invalid moment renders nothing                  |
 | format            | long 3 hours ago (default), short 3 hr. ago or narrow 3h ago                                                                                   |
 | locale            | Language of the text and the tooltip, such as en-GB or de; the browser's language by default                                                   |
-| now               | A fixed moment to compare with, for tests and server rendering; the text then stays as it is                                                   |
+| now               | A fixed moment to compare with, for tests and server rendering; the text then stays as it is. An invalid one is ignored                        |
 | nowLabel          | Text for a moment less than 45 seconds away; just now for past moments and now for coming ones in English, the locale's word for now in others |
-| tooltip           | The date and time in a Tooltip on hover, such as Oct 14, 2026, 9:41 AM; true by default                                                        |
+| tooltip           | The date and time in a Tooltip on hover, such as Oct 14, 2026, 9:41 AM; true by default. An enclosing Tooltip replaces it                      |
 | Native time props | ref, className, style and accessible attributes; dateTime is always the moment in ISO 8601                                                     |
 
 `formatRelativeTime(value, { now, locale, format, nowLabel })` returns the same text for places that take a string, such as an accessible name. An invalid moment gives an empty string.
