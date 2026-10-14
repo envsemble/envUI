@@ -242,6 +242,17 @@ export function PanelDockFixture({ theme }: { theme: ThemeValue }) {
               restoreLabel: (label) => `Return to ${label}`,
             }}
           />
+          {/* The application's style makes open panels wider at the least than minimized ones. */}
+          <MinimizingDock
+            name="wider"
+            theme={theme}
+            className="fixture-dock-wider-open"
+            initial={[
+              { id: 'p0', title: 'P0', mode: 'open' },
+              { id: 'p1', title: 'P1', mode: 'open', active: true },
+            ]}
+            activates
+          />
           {/* The application answers a second later, in a transition. */}
           <MinimizingDock
             name="late"

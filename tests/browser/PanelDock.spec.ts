@@ -818,11 +818,11 @@ test('the catalogue shows open, minimized and maximized panels whose drafts surv
     'row',
   );
   await expect(minimizing.locator('.env-panel-dock-row')).not.toHaveAttribute('data-overflowing');
-  // Once it fits again, the panel comes back.
+  // As the region widens, the panel comes back.
+  await page.setViewportSize({ width: 1800, height: 900 });
   await minimizing
-    .getByRole('region', { name: 'Roadmap' })
-    .getByRole('button', { name: 'Close', exact: true })
-    .click();
+    .locator('.docs-dock-frame')
+    .evaluate((element) => (element.style.inlineSize = '80rem'));
   await expect(minimizing.getByRole('region', { name: 'Quarterly report' })).toHaveAttribute(
     'data-placement',
     'row',
@@ -1384,6 +1384,29 @@ test('a dock that minimizes asks for the next panel when the application keeps o
   await expect(scope.getByRole('button', { name: 'Return to Inbox' })).toBeVisible();
 });
 
+test('a dock that minimizes never alternates between minimizing and opening a panel', async ({
+  page,
+}) => {
+  const errors = collectErrors(page);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const scope = page.getByTestId('wider-dock-light');
+  const log = page.getByTestId('wider-log-light');
+  const { ids } = rowOf(scope);
+  // Open panels take 420 px at the least, minimized ones less: the panel minimized to make room
+  // stays a chip, as it would not fit at its width while open.
+  await expect.poll(ids).toEqual(['p1']);
+  await frames(page);
+  await expect(log).toHaveText('p0 minimized');
+  await expect(scope.getByRole('button', { name: 'Show P0' })).toBeVisible();
+  // Only a region wide enough for it brings it back.
+  await scope.evaluate((element) => (element.style.inlineSize = '60rem'));
+  await expect.poll(ids).toEqual(['p0', 'p1']);
+  await frames(page);
+  await expect(log).toHaveText('p0 minimized,p0 open');
+  expect(errors).toEqual([]);
+});
+
 test('a dock that minimizes waits for an answer that comes later, as in a transition', async ({
   page,
 }) => {
@@ -1422,7 +1445,7 @@ test('a panel that closes while the dock awaits its answer leaves the others ope
   expect(await ids()).toEqual(['p1', 'p2']);
 });
 
-test('panels a dock minimized come back as it widens, and those people minimized stay', async ({
+test('panels a dock minimized come back as the region widens, and those people minimized stay', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -1430,27 +1453,30 @@ test('panels a dock minimized come back as it widens, and those people minimized
   const scope = page.getByTestId('minimizing-dock-light');
   const log = page.getByTestId('minimizing-log-light');
   const { row, ids } = rowOf(scope);
+  const minimize = (id: string) =>
+    scope
+      .locator(`section[data-panel-id="${id}"]`)
+      .getByRole('button', { name: 'Minimize' })
+      .click();
   await expect.poll(ids).toEqual(['review', 'retro']);
   await expect(log).toHaveText('plan minimized');
-  // Widened, the dock brings back the panel it minimized; narrowed again, it minimizes it again.
+  // Room that people free does not bring the panel back.
+  await minimize('review');
+  await expect.poll(ids).toEqual(['retro']);
+  await frames(page);
+  await expect(log).toHaveText('plan minimized,review minimized');
+  // A wider region does, while the panel people minimized stays a chip, also where it would fit.
   await scope.evaluate((element) => (element.style.inlineSize = '80rem'));
+  await expect.poll(ids).toEqual(['plan', 'retro']);
+  await frames(page);
+  await expect(log).toHaveText('plan minimized,review minimized,plan open');
+  // Narrowed again, the least recently active panel makes room once more.
+  await scope.getByRole('button', { name: 'Show Review light' }).click();
   await expect.poll(ids).toEqual(['plan', 'review', 'retro']);
-  await expect(log).toHaveText('plan minimized,plan open');
   await scope.evaluate((element) => (element.style.inlineSize = ''));
   await expect.poll(ids).toEqual(['review', 'retro']);
-  await expect(log).toHaveText('plan minimized,plan open,plan minimized');
-  await expect(row).not.toHaveAttribute('data-overflowing');
-  // A panel people minimize stays a chip, also where it would fit.
-  await scope.evaluate((element) => (element.style.inlineSize = '80rem'));
-  await expect.poll(ids).toEqual(['plan', 'review', 'retro']);
-  await scope
-    .locator('section[data-panel-id="review"]')
-    .getByRole('button', { name: 'Minimize' })
-    .click();
-  await scope.evaluate((element) => (element.style.inlineSize = '90rem'));
-  await frames(page);
-  await expect.poll(ids).toEqual(['plan', 'retro']);
   await expect(log).toHaveText(
-    'plan minimized,plan open,plan minimized,plan open,review minimized',
+    'plan minimized,review minimized,plan open,review open,plan minimized',
   );
+  await expect(row).not.toHaveAttribute('data-overflowing');
 });

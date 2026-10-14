@@ -250,6 +250,15 @@ body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-p
   inline-size: min(100%, 52rem);
   block-size: 24rem;
 }
+/* Wide enough for one open panel, whose style makes it wider at the least than a minimized one,
+   not two. */
+.fixture-dock-wider-open {
+  inline-size: min(100%, 52rem);
+  block-size: 24rem;
+}
+.fixture-dock-wider-open .env-panel-dock-panel[data-mode='open'] {
+  --env-panel-dock-panel-min-width: 420px;
+}
 /* Wide enough for one panel at its minimum width, not two, without stacking. */
 .fixture-dock-single {
   inline-size: min(100%, 42rem);
