@@ -120,7 +120,9 @@
   opacity: 0;
   pointer-events: none;
 }
-/* The content scrolls within the panel; a PanelDockHeader sticks to its top. */
+/* The content scrolls within the panel; a PanelDockHeader sticks to its top. Scroll padding as tall
+   as the header, which measures itself, and a little more for focus rings, brings a control that
+   takes focus out from beneath it (WCAG 2.4.11). */
 .env-panel-dock-content {
   flex: 1 1 auto;
   min-block-size: 0;
@@ -128,6 +130,7 @@
   flex-direction: column;
   overflow: auto;
   overscroll-behavior-block: contain;
+  scroll-padding-block-start: calc(var(--env-panel-dock-header-size, 0px) + var(--space-2));
   border-start-start-radius: inherit;
   border-start-end-radius: inherit;
   outline: none;

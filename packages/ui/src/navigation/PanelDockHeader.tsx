@@ -1,5 +1,13 @@
-import { createElement, useContext, type ComponentPropsWithRef, type ReactNode } from 'react';
+import {
+  createElement,
+  useContext,
+  useLayoutEffect,
+  useRef,
+  type ComponentPropsWithRef,
+  type ReactNode,
+} from 'react';
 import { classNames } from '../internal/classNames.js';
+import { setRef } from '../internal/setRef.js';
 import { IconButton } from '../actions/Button.js';
 import { Tooltip } from '../feedback/Tooltip.js';
 import { Close } from '../icons/Close.js';
@@ -36,12 +44,37 @@ export function PanelDockHeader({
   headingLevel = 2,
   className,
   children,
+  ref,
   ...props
 }: PanelDockHeaderProps) {
   const panel = useContext(PanelDockPanelContext);
+  const header = useRef<HTMLElement>(null);
   const windowControls = controls === undefined ? panel && <PanelDockControls /> : controls;
+  // The panel's content keeps controls that take focus out from beneath the header, so it needs
+  // the header's size, which changes as the title wraps.
+  const reportSize = panel?.reportHeaderSize;
+  useLayoutEffect(() => {
+    const element = header.current;
+    if (!element || !reportSize) return;
+    const measure = () => reportSize(element.offsetHeight);
+    measure();
+    const observer =
+      typeof ResizeObserver === 'undefined' ? undefined : new ResizeObserver(measure);
+    observer?.observe(element);
+    return () => {
+      observer?.disconnect();
+      reportSize(0);
+    };
+  }, [reportSize]);
   return (
-    <header {...props} className={classNames('env-panel-dock-header', className)}>
+    <header
+      {...props}
+      ref={(node) => {
+        header.current = node;
+        setRef(ref, node);
+      }}
+      className={classNames('env-panel-dock-header', className)}
+    >
       <div className="env-panel-dock-heading">
         {createElement(`h${headingLevel}`, { className: 'env-panel-dock-title' }, title)}
         {meta != null && <div className="env-panel-dock-meta">{meta}</div>}

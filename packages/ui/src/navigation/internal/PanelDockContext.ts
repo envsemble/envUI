@@ -13,6 +13,8 @@ export interface PanelDockPanelContextValue {
   stacked: boolean;
   changeMode: (mode: PanelDockMode) => void;
   close: () => void;
+  /** Receives the block size of the panel's sticky header in pixels, or 0 once it goes. */
+  reportHeaderSize: (size: number) => void;
 }
 
 /** Set around each panel's content, so PanelDockHeader and PanelDockControls act on that panel. */

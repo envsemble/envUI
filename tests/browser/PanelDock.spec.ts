@@ -853,3 +853,28 @@ test('focus stays in a panel whose focused edge or Maximize control goes with a 
   await expect(report).toBeVisible();
   await expect.poll(holdsFocus).toBe(true);
 });
+
+test('a control that takes focus beneath the sticky header comes out below it', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const report = dockOf(page).panel('report');
+  const content = report.locator(':scope > .env-panel-dock-content');
+  const header = report.locator('.env-panel-dock-header');
+  const tip = report.getByRole('button', { name: 'Dismiss tip of Quarterly report light' });
+  // The content scrolls until the tip lies entirely beneath the header.
+  await content.evaluate((element) => {
+    const header = element.querySelector('.env-panel-dock-header')!.getBoundingClientRect();
+    const tip = [...element.querySelectorAll('button')]
+      .find((button) => button.textContent?.startsWith('Dismiss tip'))!
+      .getBoundingClientRect();
+    element.scrollTop += tip.top - (header.top + (header.height - tip.height) / 2);
+  });
+  const [headerBefore, tipBefore] = await Promise.all([box(header), box(tip)]);
+  expect(tipBefore.y).toBeGreaterThanOrEqual(headerBefore.y);
+  expect(tipBefore.y + tipBefore.height).toBeLessThanOrEqual(headerBefore.y + headerBefore.height);
+  await tip.focus();
+  const [headerBox, tipBox] = await Promise.all([box(header), box(tip)]);
+  expect(tipBox.y).toBeGreaterThanOrEqual(headerBox.y + headerBox.height);
+});

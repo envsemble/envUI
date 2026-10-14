@@ -567,6 +567,8 @@ function PanelFrame({
   const frame = useRef<HTMLElement>(null);
   // The height while the top edge is dragged; it is reported once the drag ends.
   const [preview, setPreview] = useState<number>();
+  // The block size of a PanelDockHeader sticking to the top of the content, in pixels.
+  const [headerSize, setHeaderSize] = useState(0);
   const drag = useRef<{
     pointerId: number;
     startY: number;
@@ -581,6 +583,7 @@ function PanelFrame({
       stacked,
       changeMode: (next) => changeMode(id, next),
       close: () => close(id),
+      reportHeaderSize: setHeaderSize,
     }),
     [id, mode, stacked, changeMode, close],
   );
@@ -716,7 +719,15 @@ function PanelFrame({
       )}
       {/* Pressing the content focuses it, so the keyboard scrolls it; it is not a tab stop of its
           own, as some browsers would make a scrolling element. */}
-      <div className="env-panel-dock-content" tabIndex={-1}>
+      <div
+        className="env-panel-dock-content"
+        tabIndex={-1}
+        style={
+          headerSize > 0
+            ? ({ '--env-panel-dock-header-size': `${headerSize}px` } as CSSProperties)
+            : undefined
+        }
+      >
         <PanelDockPanelContext value={context}>{content}</PanelDockPanelContext>
       </div>
     </section>
