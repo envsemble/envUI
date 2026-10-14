@@ -67,6 +67,9 @@ export function AvatarGroup({
   const interactive = onPersonClick !== undefined || shown.some((person) => person.href);
   const names = people.map((person) => person.name);
   if (unlisted > 0) names.push(formatMore(unlisted));
+  // The overflow chip stands for the people it hides, as its tooltip lists them.
+  const hiddenNames = hidden.map((person) => person.name);
+  if (unlisted > 0) hiddenNames.push(formatMore(unlisted));
   return (
     <div
       role="group"
@@ -95,9 +98,14 @@ export function AvatarGroup({
           }
         >
           {/* A tab stop of its own, so the keyboard reaches the names it lists, as the pointer
-              does; the group's name already counts and names everyone for assistive technology.
-              The count reads +2 in right-to-left text too. */}
-          <span className="env-avatar-group-overflow" tabIndex={0}>
+              does; for assistive technology it is an image named by those names. The count reads
+              +2 in right-to-left text too. */}
+          <span
+            className="env-avatar-group-overflow"
+            tabIndex={0}
+            role="img"
+            aria-label={hiddenNames.join(', ')}
+          >
             <span dir="ltr">{`+${overflow}`}</span>
           </span>
         </Tooltip>

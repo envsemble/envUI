@@ -61,7 +61,10 @@ test('the overflow chip lists the hidden names on hover and keyboard focus', asy
   await expect(names).toHaveCount(0);
   await page.mouse.move(0, 0);
 
-  // The chip is the first tab stop of the page, and focus opens its tooltip too.
+  // The chip is the first tab stop of the page, and focus opens its tooltip too. It is named by
+  // the people it stands for, also for assistive technology.
+  await expect(chip).toHaveRole('img');
+  await expect(chip).toHaveAccessibleName('Jordan Rivera, Taylor Kim');
   await page.keyboard.press('Tab');
   await expect(chip).toBeFocused();
   await expect(chip).toHaveCSS('outline-style', 'solid');
@@ -70,6 +73,7 @@ test('the overflow chip lists the hidden names on hover and keyboard focus', asy
   const previewChip = scope.getByTestId('preview').locator('.env-avatar-group-overflow');
   await expect(previewChip).toBeFocused();
   await expect(names).toHaveText(['Priya Shah', '9 more']);
+  await expect(previewChip).toHaveAccessibleName('Priya Shah, 9 more');
   await page.keyboard.press('Escape');
   await expect(names).toHaveCount(0);
   await expect(previewChip).toBeFocused();
