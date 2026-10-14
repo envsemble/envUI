@@ -60,7 +60,8 @@ const weeksShown = 6;
 /**
  * A month of days to choose one from, following the WAI-ARIA date picker grid: the arrow keys move
  * by day and week, Page Up and Page Down by month (with Shift, by year), Home and End to the week's
- * ends, and Enter or Space chooses the day.
+ * ends, and Enter or Space chooses the day. Named with aria-label or aria-labelledby, it is a group
+ * around the month's grid.
  */
 export function Calendar({
   value,
@@ -174,9 +175,14 @@ export function Calendar({
     const sample = toUtcDate(3 + ((firstWeekday + column) % 7));
     return { short: formats.weekday.format(sample), long: formats.weekdayName.format(sample) };
   });
+  const named = props['aria-label'] != null || props['aria-labelledby'] != null;
 
   return (
-    <div {...props} className={classNames('env-calendar', className)}>
+    <div
+      role={named ? 'group' : undefined}
+      {...props}
+      className={classNames('env-calendar', className)}
+    >
       <div className="env-calendar-header">
         <IconButton
           variant="text"
@@ -226,8 +232,10 @@ export function Calendar({
             <tr key={week}>
               {Array.from({ length: 7 }, (_, column) => {
                 const day = gridStart + week * 7 + column;
+                // Days of other months leave empty cells, which keep each day under its weekday,
+                // also for assistive technology.
                 if (dayParts(day).month !== shownMonth)
-                  return <td key={day} className="env-calendar-pad" aria-hidden="true" />;
+                  return <td key={day} className="env-calendar-pad" />;
                 const unavailable = isUnavailable(day);
                 return (
                   <td

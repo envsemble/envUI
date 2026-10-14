@@ -404,6 +404,7 @@ test('public components import and render on a server with no DOM globals', func
     ssr.html,
     /name="due"[^>]*value="2026-10-14T09:30"|value="2026-10-14T09:30"[^>]*name="due"/,
   );
+  assert.match(ssr.html, /role="group" aria-label="Planning"/);
   assert.match(ssr.html, /role="grid"/);
   assert.match(ssr.html, /aria-selected="true"[^>]*data-date="2026-03-09"/);
   assert.match(ssr.html, /role="status"/);

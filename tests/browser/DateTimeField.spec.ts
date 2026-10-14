@@ -435,7 +435,20 @@ test('a calendar on its own chooses a day, stays within its range and follows ri
 }) => {
   const calendar = page.getByTestId('calendar-light');
   const output = page.getByTestId('calendar-value-light');
+  // Its aria-label names the calendar: a group around the month's grid, so two calendars showing
+  // the same month stay apart.
+  await expect(page.getByRole('group', { name: 'Planner light', exact: true })).toHaveAttribute(
+    'data-testid',
+    'calendar-light',
+  );
+  await expect(page.getByTestId('calendar-rtl-light')).not.toHaveAttribute('role');
   const grid = calendar.getByRole('grid', { name: 'October 2026' });
+  // Every week keeps seven cells for assistive technology too, so each day stays under its weekday.
+  const weeks = grid.locator('tbody tr');
+  for (const week of [0, 4, 5]) await expect(weeks.nth(week).getByRole('gridcell')).toHaveCount(7);
+  await expect(weeks.first().getByRole('gridcell').nth(3)).toHaveAccessibleName(
+    /Thursday,? 1 October 2026/,
+  );
   await grid.locator('[data-date="2026-10-22"]').click();
   await expect(output).toHaveText('2026-10-22');
   await expect.poll(() => focusedDate(page)).toBe('2026-10-22');
