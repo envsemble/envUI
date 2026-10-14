@@ -440,32 +440,47 @@ function PassiveDock({ theme }: { theme: ThemeValue }) {
     { id: 'second', title: `Second note ${theme}`, mode: 'open' },
   ]);
   return (
-    <div className="fixture-dock-frame fixture-dock-narrow" data-testid={`passive-dock-${theme}`}>
-      <PanelDock
-        panels={panels}
-        onModeChange={(id, mode) =>
-          setPanels((current) =>
-            current.map((panel) => (panel.id === id ? { ...panel, mode } : panel)),
-          )
-        }
-        onClose={(id) => setPanels((current) => current.filter((panel) => panel.id !== id))}
-      >
-        {(panel) => (
-          // A form holds the header with the fields, as the header sticks within it.
-          <form onSubmit={(event) => event.preventDefault()}>
-            <PanelDockHeader title={panel.title} />
-            <div className="fixture-dock-body">
-              <Textarea label={`Text of ${panel.title}`} />
-              {Array.from({ length: 12 }, (_, index) => (
-                <Text key={index}>
-                  Line {index + 1} of {panel.title}.
-                </Text>
-              ))}
-            </div>
-          </form>
-        )}
-      </PanelDock>
-    </div>
+    <>
+      <div className="fixture-dock-frame fixture-dock-narrow" data-testid={`passive-dock-${theme}`}>
+        <PanelDock
+          panels={panels}
+          onModeChange={(id, mode) =>
+            setPanels((current) =>
+              current.map((panel) => (panel.id === id ? { ...panel, mode } : panel)),
+            )
+          }
+          onClose={(id) => setPanels((current) => current.filter((panel) => panel.id !== id))}
+        >
+          {(panel) => (
+            // A form holds the header with the fields, as the header sticks within it.
+            <form onSubmit={(event) => event.preventDefault()}>
+              <PanelDockHeader title={panel.title} />
+              <div className="fixture-dock-body">
+                <Textarea label={`Text of ${panel.title}`} />
+                {Array.from({ length: 12 }, (_, index) => (
+                  <Text key={index}>
+                    Line {index + 1} of {panel.title}.
+                  </Text>
+                ))}
+              </div>
+            </form>
+          )}
+        </PanelDock>
+      </div>
+      <div className="fixture-actions">
+        <button
+          type="button"
+          onClick={() =>
+            setPanels((current) => [
+              ...current,
+              { id: 'third', title: `Third note ${theme}`, mode: 'open' },
+            ])
+          }
+        >
+          Add note {theme}
+        </button>
+      </div>
+    </>
   );
 }
 

@@ -1134,6 +1134,22 @@ test('a stacked dock shows the panel of a chip pressed, also without onActivate'
   await expect(second).toBeHidden();
 });
 
+test('a panel that opens shows in place of the panel a chip showed, also beside an active one', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const passive = page.getByTestId('passive-dock-light');
+  const panel = (id: string) => passive.locator(`section[data-panel-id="${id}"]`);
+  // The application marks the first note active and never activates another.
+  await passive.getByRole('button', { name: 'Show Second note light' }).click();
+  await expect(panel('second')).toBeVisible();
+  await page.getByRole('button', { name: 'Add note light' }).click();
+  await expect(panel('third')).toBeVisible();
+  await expect(panel('second')).toBeHidden();
+  await expect(panel('first')).toBeHidden();
+});
+
 test('a dock that minimizes rather than scrolls asks to minimize its least recently active panel', async ({
   page,
 }) => {

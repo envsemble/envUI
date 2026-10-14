@@ -592,9 +592,15 @@ export function PanelDock<T extends PanelDockPanel>({
   }, [panels, chosenHeights]);
 
   // A chip's choice that no longer holds is forgotten, so it never returns with an earlier state,
-  // such as the panel that was active when it was made.
+  // such as the panel that was active when it was made; one a newer panel took over now is that
+  // panel's.
   useLayoutEffect(() => {
-    if (chosen === undefined) chipChoice.current = null;
+    const choice = chipChoice.current;
+    if (!choice || chosen === choice.id) return;
+    chipChoice.current =
+      chosen === undefined
+        ? null
+        : { id: chosen, active: activeId, time: recency.current.get(chosen) ?? clock.current };
   });
 
   // A panel that joins the row scrolls into view, so the newest shows while the row overflows.
@@ -1087,9 +1093,10 @@ function locateFocus(dock: HTMLElement | null, focusedPanel: FocusedPanel | null
 }
 
 /**
- * The panel a chip asked a stacked dock to show, while that choice holds: while the panel is there,
- * the same panel is active, and no other panel has appeared or been brought forward since. A panel
- * not recorded yet has just appeared.
+ * The panel a chip asked a stacked dock to show, while that choice holds, as long as the same panel
+ * is active: that panel while it is there, or the panel that appeared or was brought forward last
+ * since, which takes the choice over, so a panel that opens shows. A panel not recorded yet has just
+ * appeared.
  */
 function heldChoice(
   choice: ChipChoice | null,
@@ -1098,13 +1105,17 @@ function heldChoice(
   times: Map<string, number>,
 ) {
   if (!choice || choice.active !== activeId) return undefined;
-  let present = false;
+  let held = panels.some((panel) => panel.id === choice.id) ? choice.id : undefined;
+  let latest = choice.time;
   for (const panel of panels) {
-    if (panel.id === choice.id) present = true;
-    else if (panel.mode !== 'minimized' && (times.get(panel.id) ?? Infinity) > choice.time)
-      return undefined;
+    if (panel.id === choice.id || panel.mode === 'minimized') continue;
+    const time = times.get(panel.id) ?? Infinity;
+    if (time > latest) {
+      held = panel.id;
+      latest = time;
+    }
   }
-  return present ? choice.id : undefined;
+  return held;
 }
 
 /** The candidate that appeared or was brought forward last; one never recorded is the newest. */
