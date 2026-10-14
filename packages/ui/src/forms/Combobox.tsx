@@ -211,7 +211,6 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   const pressFocus = useRef(false);
   // The query onInputValueChange reported last.
   const reportedQuery = useRef('');
-  const direction = useTextDirection(inputRef);
 
   // The field keeps an uncontrolled value itself, so a native form reset can restore it.
   const defaultSelection = isMultiple
@@ -272,6 +271,9 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   const [inputText, setInputText] = useState(() => singleItem?.label ?? '');
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen ?? false);
   const popupOpen = open ?? uncontrolledOpen;
+  // The chips' arrow keys and the popup follow the text direction, read as the popup opens or
+  // closes and as the field takes focus.
+  const [direction, readDirection] = useTextDirection(inputRef, popupOpen);
 
   function changeOpen(next: boolean) {
     if (open === undefined) setUncontrolledOpen(next);
@@ -463,6 +465,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
             }}
             onFocus={(event) => {
               inputProps.onFocus?.(event);
+              readDirection();
               if (selectsLabel(event.currentTarget)) event.currentTarget.select();
             }}
             onMouseUp={(event) => {

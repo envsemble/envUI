@@ -196,7 +196,10 @@ export function DateTimeField({
   const popupRef = useRef<HTMLDivElement>(null);
   // Whether the calendar was open when a press on the label began, which closes it.
   const labelPressOpen = useRef(false);
-  const direction = useTextDirection(triggerRef);
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
+  const open = controlledOpen ?? uncontrolledOpen;
+  // Read as the calendar opens, which takes the field's direction into its portal.
+  const [direction] = useTextDirection(triggerRef, open);
   const defaultMinutes = parseTime(defaultTime) ?? 0;
   // The field and its popup take the application's own aria-labelledby, else the label, else the
   // aria-label.
@@ -216,8 +219,6 @@ export function DateTimeField({
       ? formatDateTime(current.day, current.minutes)
       : formatDay(current.day)
     : '';
-  const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
-  const open = controlledOpen ?? uncontrolledOpen;
   // The time field shows what is typed until it loses focus, then the value it was kept within.
   const [timeDraft, setTimeDraft] = useState<string | null>(null);
 

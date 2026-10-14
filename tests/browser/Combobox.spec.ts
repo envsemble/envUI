@@ -673,3 +673,30 @@ test('values without an option keep their place among the options reported', asy
   );
   await expect.poll(() => chips(well)).toEqual(['former-member', 'Riley Chen']);
 });
+
+test('typing reads no styles for the text direction, which is read as the popup opens', async ({
+  page,
+}) => {
+  const author = field(page, 'Author light');
+  await author.click();
+  await expect(page.getByRole('listbox')).toBeVisible();
+  // Reading the direction brings the page's styles up to date; at every keystroke that would
+  // restyle the page as people type.
+  await page.evaluate(() => {
+    const original = window.getComputedStyle;
+    const reads = { count: 0 };
+    (window as unknown as { directionReads: typeof reads }).directionReads = reads;
+    window.getComputedStyle = function (element: Element, pseudo?: string | null) {
+      if (element instanceof HTMLInputElement && element.classList.contains('env-combobox-input'))
+        reads.count++;
+      return original.call(window, element, pseudo);
+    } as typeof window.getComputedStyle;
+  });
+  await page.keyboard.type('jordan', { delay: 20 });
+  await expect.poll(() => highlighted(page)).toEqual(['Jordan Park']);
+  expect(
+    await page.evaluate(
+      () => (window as unknown as { directionReads: { count: number } }).directionReads.count,
+    ),
+  ).toBe(0);
+});
