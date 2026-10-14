@@ -238,7 +238,15 @@ test('a copy button without words or a name of its own is named Copy', async ({ 
   // An icon-only button shows it in its tooltip.
   await buttons.nth(2).hover();
   await expect(page.locator(shownTooltip)).toHaveText('Copy');
-  await buttons.nth(0).click();
+  await movePointerAway(page);
+  await expect(page.locator(shownTooltip)).toHaveCount(0);
+  // A label without words leaves the button icon-only, round with its name in the tooltip.
+  const empty = buttons.nth(0);
+  const emptyBox = (await empty.boundingBox())!;
+  expect(Math.abs(emptyBox.width - emptyBox.height)).toBeLessThan(1);
+  await empty.hover();
+  await expect(page.locator(shownTooltip)).toHaveText('Copy');
+  await empty.click();
   await expect.poll(() => writes(page)).toEqual(['Empty label']);
 });
 

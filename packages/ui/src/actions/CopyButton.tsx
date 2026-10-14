@@ -40,7 +40,7 @@ interface CopyButtonBaseProps
 
 /**
  * A visible label: text or elements, rather than nothing, such as false or null. A label without
- * words, such as an empty string, leaves the button named by copyLabel.
+ * words, such as an empty string, leaves the button icon-only, named by copyLabel.
  */
 export type CopyButtonLabel = Exclude<ReactNode, boolean | null | undefined>;
 
@@ -112,13 +112,11 @@ export function CopyButton({
     if (copied) onCopy?.(text);
   }
 
-  const iconOnly = children === undefined || children === null || typeof children === 'boolean';
+  // A label without words, such as an empty string, leaves the button icon-only, as it looks.
+  const iconOnly = !hasWords(children);
   // The button always has a name: its own, its label's words, or else copyLabel.
   const ownName = label?.trim() ? label : undefined;
-  const named =
-    ownName !== undefined ||
-    props['aria-labelledby'] != null ||
-    (!iconOnly && hasWords(children as CopyButtonLabel));
+  const named = ownName !== undefined || props['aria-labelledby'] != null || !iconOnly;
   const name = named ? ownName : copyLabel;
   // A disabled button takes no pointer or focus events: around it, a target shows its name.
   const disabled = Boolean(props.disabled);
