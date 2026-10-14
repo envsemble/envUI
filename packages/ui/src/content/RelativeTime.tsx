@@ -9,7 +9,7 @@ import { subscribeToClock } from './internal/relativeTimeClock.js';
 export type RelativeTimeValue = Date | number | string;
 
 export interface RelativeTimeOptions {
-  /** The moment to compare with; the current time by default. */
+  /** The moment to compare with; the current time by default, also in place of an invalid one. */
   now?: Date | number;
   /** Language of the text, such as "en-GB" or "de"; the runtime's default by default. */
   locale?: string | readonly string[];
@@ -87,13 +87,14 @@ function dateTimeFormatter(locale: RelativeTimeOptions['locale']) {
 /**
  * A moment as text relative to another, by default the current time, such as "in 2 days",
  * "3 hours ago" or "just now", through Intl.RelativeTimeFormat. An invalid moment gives an empty
- * string.
+ * string; an invalid now is ignored, as by RelativeTime, for the current time.
  */
 export function formatRelativeTime(value: RelativeTimeValue, options: RelativeTimeOptions = {}) {
   const { locale, format = 'long', nowLabel } = options;
   const time = toTime(value);
-  const now = options.now === undefined ? Date.now() : toTime(options.now);
-  if (!Number.isFinite(time) || !Number.isFinite(now)) return '';
+  const given = toTime(options.now);
+  const now = Number.isFinite(given) ? given : Date.now();
+  if (!Number.isFinite(time)) return '';
   const unit = relativeUnit(time - now);
   if (unit) return relativeFormatter(locale, format, 'always').format(...unit);
   if (nowLabel !== undefined) return nowLabel;

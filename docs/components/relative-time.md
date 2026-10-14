@@ -24,7 +24,7 @@ import { RelativeTime, Text } from '@envsemble/envui';
 | tooltip           | The date and time in a Tooltip on hover, such as Oct 14, 2026, 9:41 AM; true by default. An enclosing Tooltip replaces it                      |
 | Native time props | ref, className, style and accessible attributes; dateTime is always the moment in ISO 8601                                                     |
 
-`formatRelativeTime(value, { now, locale, format, nowLabel })` returns the same text for places that take a string, such as an accessible name. An invalid moment gives an empty string.
+`formatRelativeTime(value, { now, locale, format, nowLabel })` returns the same text for places that take a string, such as an accessible name. An invalid moment gives an empty string, and an invalid now is ignored, as by RelativeTime.
 
 ## Guidelines
 

@@ -851,6 +851,8 @@ test('avatar groups, relative times, copy buttons and pagination render on a ser
         ui.formatRelativeTime(now - 10000, { now, locale: 'en' }),
         ui.formatRelativeTime(now - 3 * 3600000, { now, locale: 'de', format: 'short' }),
         ui.formatRelativeTime('not a date', { now }),
+        // An invalid now is ignored, as by RelativeTime: the text follows the clock.
+        ui.formatRelativeTime(Date.now() - 3 * 3600000, { now: new Date('not a date'), locale: 'en' }),
       ],
       avatars: light(h(ui.AvatarGroup, { people, max: 2, total: 5 })),
       copy: light(h(ui.CopyButton, { value: 'Copied text', 'aria-label': 'Copy link' })),
@@ -864,7 +866,7 @@ test('avatar groups, relative times, copy buttons and pagination render on a ser
     /<time [^>]*datetime="2026-10-16T12:00:00.000Z"[^>]*>in 2 days<\/time>/i,
   );
   assert.match(display.relative, /<time dir="auto"/);
-  assert.deepEqual(display.formatted, ['3 hours ago', 'just now', 'vor 3 Std.', '']);
+  assert.deepEqual(display.formatted, ['3 hours ago', 'just now', 'vor 3 Std.', '', '3 hours ago']);
   assert.match(
     display.avatars,
     /role="group" aria-label="5 people: Alex Morgan, Sam Lee, Priya Shah, 2 more"/,
