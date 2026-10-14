@@ -482,3 +482,42 @@ test('disabled, read-only and invalid fields', async ({ page }) => {
   await invalid.focus();
   await expect.poll(async () => (await label.boundingBox())!.y).toBeLessThan(resting - 8);
 });
+
+test('a key that does not move the day leaves focus where people take it next', async ({
+  page,
+}) => {
+  const meeting = field(page, 'Meeting light');
+  await meeting.click();
+  const dialog = page.getByRole('dialog', { name: 'Meeting light' });
+  await expect.poll(() => focusedDate(page)).toBe('2026-10-21');
+  // Home on the week's first day stays there.
+  await page.keyboard.press('Home');
+  await expect.poll(() => focusedDate(page)).toBe('2026-10-19');
+  await page.keyboard.press('Home');
+  await page.keyboard.press('Tab');
+  const time = dialog.getByLabel('Time', { exact: true });
+  await expect(time).toBeFocused();
+  await time.fill('10:15');
+  await expect(meeting).toHaveText('21 Oct 2026, 10:15');
+  await expect(time).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(openPopup(page)).toHaveCount(0);
+
+  // So do End on its last day and keys that would pass min.
+  const start = field(page, 'Compact start light');
+  await start.click();
+  const startDialog = page.getByRole('dialog', { name: 'Compact start light' });
+  await expect.poll(() => focusedDate(page)).toBe('2026-10-14');
+  await page.keyboard.press('PageUp');
+  await page.keyboard.press('ArrowLeft');
+  await expect.poll(() => focusedDate(page)).toBe('2026-10-14');
+  await page.keyboard.press('End');
+  await page.keyboard.press('End');
+  await expect.poll(() => focusedDate(page)).toBe('2026-10-18');
+  await page.keyboard.press('Tab');
+  const startTime = startDialog.getByLabel('Time', { exact: true });
+  await expect(startTime).toBeFocused();
+  await startTime.fill('08:30');
+  await expect(start).toHaveText('14 Oct 2026, 08:30');
+  await expect(startTime).toBeFocused();
+});

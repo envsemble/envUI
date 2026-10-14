@@ -119,8 +119,12 @@ export function Calendar({
     (minDay !== undefined && day < minDay) || (maxDay !== undefined && day > maxDay);
 
   function moveTo(day: number, focus: boolean) {
+    const next = clampDay(day, minDay, maxDay);
+    // A key that keeps the day, such as Home on the week's first day, has nothing to render, so it
+    // leaves no request behind that would take focus back at some later render.
+    if (next === active) return;
     focusActive.current = focus;
-    setActiveState(clampDay(day, minDay, maxDay));
+    setActiveState(next);
   }
 
   function choose(day: number) {
