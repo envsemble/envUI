@@ -50,6 +50,7 @@ export function CopyButtonsFixture({ theme }: { theme: ThemeValue }) {
         <Tooltip content="Copy the address of the plan">
           <CopyButton value="Plan address" aria-label={`Copy plan ${theme}`} onCopy={setCopied} />
         </Tooltip>
+        <CopyButton value="Unavailable" aria-label={`Copy unavailable ${theme}`} disabled />
       </div>
       <output data-testid="copied">{copied}</output>
       <output data-testid="presses">{presses}</output>

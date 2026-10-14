@@ -252,3 +252,23 @@ test('the Clipboard API receives the text in Chromium', async ({ page, context, 
   await expect(scope.getByTestId('copied')).toHaveText('Later text');
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('Later text');
 });
+
+test('a disabled icon-only copy button still shows its name on hover and focus', async ({
+  page,
+}) => {
+  await page.goto(fixture);
+  const scope = page.getByTestId('copy-buttons-light');
+  const button = scope.getByRole('button', { name: 'Copy unavailable light' });
+  await expect(button).toBeDisabled();
+  const tooltip = page.locator(shownTooltip);
+  // A disabled button takes no pointer events, so a target around it opens the tooltip.
+  const target = scope
+    .locator('.env-tooltip-disabled-target')
+    .filter({ has: page.getByRole('button', { name: 'Copy unavailable light' }) });
+  await target.hover();
+  await expect(tooltip).toHaveText('Copy unavailable light');
+  await movePointerAway(page);
+  await expect(tooltip).toHaveCount(0);
+  await target.focus();
+  await expect(tooltip).toHaveText('Copy unavailable light');
+});

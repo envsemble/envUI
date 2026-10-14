@@ -103,6 +103,8 @@ export function CopyButton({
   }
 
   const iconOnly = children === undefined || children === null || typeof children === 'boolean';
+  // A disabled button takes no pointer or focus events: around it, a target shows its name.
+  const disabled = Boolean(props.disabled);
   const feedback = result ? (result.copied ? copiedLabel : failedLabel) : undefined;
   const tooltip = feedback ?? (iconOnly ? label : undefined);
   // The last text stays in the closing tooltip while it fades out.
@@ -125,12 +127,16 @@ export function CopyButton({
       {children as CopyButtonLabel}
     </Button>
   );
+  const hoverTarget = iconOnly && disabled;
   return (
     <>
       {nested ? (
         button
       ) : (
         <BaseTooltip.Root
+          // A control that becomes enabled or disabled changes the trigger element; a fresh
+          // tooltip listens to the new one, as Tooltip does.
+          key={hoverTarget ? 'disabled' : 'enabled'}
           // A press ends the hover, as on any tooltip, but the name stays until the result
           // replaces it. The result shows whether or not the pointer is still on the button,
           // until it ends or Escape hides it.
@@ -140,7 +146,14 @@ export function CopyButton({
             if (!open && details.reason === 'escape-key') setResult(null);
           }}
         >
-          <BaseTooltip.Trigger delay={400} render={button} />
+          <BaseTooltip.Trigger
+            delay={400}
+            render={
+              hoverTarget ? <span className="env-tooltip-disabled-target" tabIndex={0} /> : button
+            }
+          >
+            {hoverTarget ? button : undefined}
+          </BaseTooltip.Trigger>
           <TooltipPopup content={shownText.current} side="top" />
         </BaseTooltip.Root>
       )}
