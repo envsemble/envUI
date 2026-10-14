@@ -1202,3 +1202,29 @@ test('a chip pressed while panels sit side by side leaves the newest to fill the
   await expect(panel('why')).toBeVisible();
   await expect(panel('ex')).toBeHidden();
 });
+
+/** Lets the dock measure itself and hear the application's answers for a few frames. */
+function frames(page: Page, count = 3) {
+  return page.evaluate(
+    (count) =>
+      new Promise<void>((resolve) => {
+        const next = (left: number) =>
+          left === 0 ? resolve() : requestAnimationFrame(() => next(left - 1));
+        next(count);
+      }),
+    count,
+  );
+}
+
+test('a dock that minimizes asks for nothing while it stacks, also as it first shows', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const scope = page.getByTestId('stacking-dock-light');
+  await expect(scope.locator('.env-panel-dock')).toHaveAttribute('data-stacked', 'true');
+  await frames(page);
+  await expect(page.getByTestId('stacking-log-light')).toHaveText('');
+  await expect(scope.locator('section[data-panel-id="three"]')).toBeVisible();
+  await expect(scope.getByRole('button', { name: 'Show One' })).toBeVisible();
+});

@@ -169,36 +169,72 @@ export function PanelDockFixture({ theme }: { theme: ThemeValue }) {
       </output>
       <PassiveDock theme={theme} />
       <LooseDock theme={theme} />
-      <MinimizingDock theme={theme} />
+      <MinimizingDock
+        name="minimizing"
+        theme={theme}
+        initial={[
+          { id: 'plan', title: `Plan ${theme}`, mode: 'open' },
+          { id: 'review', title: `Review ${theme}`, mode: 'open' },
+          { id: 'retro', title: `Retrospective ${theme}`, mode: 'open', active: true },
+        ]}
+        activates
+      />
+      {theme === 'light' && (
+        <>
+          {/* Narrower than stackBelow from the start. */}
+          <MinimizingDock
+            name="stacking"
+            theme={theme}
+            className="fixture-dock-narrow"
+            initial={[
+              { id: 'one', title: 'One', mode: 'open' },
+              { id: 'two', title: 'Two', mode: 'open' },
+              { id: 'three', title: 'Three', mode: 'open', active: true },
+            ]}
+            activates
+          />
+        </>
+      )}
     </Theme>
   );
 }
 
 /** A dock that minimizes its least recently active panel rather than scroll the row. */
-function MinimizingDock({ theme }: { theme: ThemeValue }) {
-  const [panels, setPanels] = useState<PanelDockPanel[]>([
-    { id: 'plan', title: `Plan ${theme}`, mode: 'open' },
-    { id: 'review', title: `Review ${theme}`, mode: 'open' },
-    { id: 'retro', title: `Retrospective ${theme}`, mode: 'open', active: true },
-  ]);
+function MinimizingDock({
+  name,
+  theme,
+  initial,
+  activates = false,
+  className = 'fixture-dock-minimizing',
+}: {
+  name: string;
+  theme: ThemeValue;
+  initial: PanelDockPanel[];
+  /** Whether the application activates the panels people press or bring back. */
+  activates?: boolean;
+  className?: string;
+}) {
+  const [panels, setPanels] = useState(initial);
   const [log, setLog] = useState<string[]>([]);
   return (
     <>
-      <div
-        className="fixture-dock-frame fixture-dock-minimizing"
-        data-testid={`minimizing-dock-${theme}`}
-      >
+      <div className={`fixture-dock-frame ${className}`} data-testid={`${name}-dock-${theme}`}>
         <PanelDock
           panels={panels}
           overflow="minimize"
           onModeChange={(id, mode) => {
+            setLog((current) => [...current, `${id} ${mode}`]);
             setPanels((current) =>
               current.map((panel) => (panel.id === id ? { ...panel, mode } : panel)),
             );
-            setLog((current) => [...current, `${id} ${mode}`]);
           }}
-          onActivate={(id) =>
-            setPanels((current) => current.map((panel) => ({ ...panel, active: panel.id === id })))
+          onActivate={
+            activates
+              ? (id) =>
+                  setPanels((current) =>
+                    current.map((panel) => ({ ...panel, active: panel.id === id })),
+                  )
+              : undefined
           }
           onClose={(id) => setPanels((current) => current.filter((panel) => panel.id !== id))}
         >
@@ -212,7 +248,7 @@ function MinimizingDock({ theme }: { theme: ThemeValue }) {
           )}
         </PanelDock>
       </div>
-      <output data-testid={`minimizing-log-${theme}`}>{log.join(',')}</output>
+      <output data-testid={`${name}-log-${theme}`}>{log.join(',')}</output>
     </>
   );
 }

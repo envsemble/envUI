@@ -210,6 +210,8 @@ export function PanelDock<T extends PanelDockPanel>({
   // The panel a chip asked a stacked dock to show, also where the application does not activate
   // panels, until the situation it was asked in changes.
   const chipChoice = useRef<ChipChoice | null>(null);
+  // Whether the dock stacks by its latest measurement, which the next render follows.
+  const measuredStacked = useRef(false);
   const atRowEnd = useRef(true);
   const previousRow = useRef<readonly string[]>([]);
   const previousChips = useRef<readonly string[]>([]);
@@ -299,9 +301,11 @@ export function PanelDock<T extends PanelDockPanel>({
    * for that panel to leave the row before it asks again, so a panel the application keeps open
    * is asked once.
    */
-  function makeRoom(rowElement: HTMLElement, stackedNow: boolean) {
+  function makeRoom(rowElement: HTMLElement) {
     for (const id of makingRoom.current) if (!rowIds.includes(id)) makingRoom.current.delete(id);
-    if (overflow !== 'minimize' || stackedNow || makingRoom.current.size > 0) return;
+    if (overflow !== 'minimize' || makingRoom.current.size > 0) return;
+    // A dock that stacks, or is about to as it first shows or narrows, has no row to make room in.
+    if (stacked || measuredStacked.current) return;
     if (!overflows(rowElement)) return;
     const recent = (panel: T) => recency.current.get(panel.id) ?? Infinity;
     let oldest: T | undefined;
@@ -392,6 +396,7 @@ export function PanelDock<T extends PanelDockPanel>({
       if (element.getClientRects().length === 0) return;
       const view = element.ownerDocument.defaultView;
       const stackedNow = element.offsetWidth < threshold.offsetWidth;
+      measuredStacked.current = stackedNow;
       setStacked(stackedNow);
       const fontSize = view?.getComputedStyle(element.ownerDocument.documentElement).fontSize;
       const rem = parseFloat(fontSize ?? '') || 16;
@@ -402,7 +407,7 @@ export function PanelDock<T extends PanelDockPanel>({
         current?.rem === rem && current.room === room ? current : { rem, room },
       );
       setOverflowing(overflows(rowElement));
-      makeRoomLatest.current(rowElement, stackedNow);
+      makeRoomLatest.current(rowElement);
       if (atRowEnd.current) scrollToRowEnd(rowElement);
     };
     measure();
@@ -468,7 +473,7 @@ export function PanelDock<T extends PanelDockPanel>({
     const frame = joined === undefined ? undefined : frameOf(joined);
     if (frame) reveal(rowElement, frame);
     setOverflowing(overflows(rowElement));
-    makeRoom(rowElement, stacked);
+    makeRoom(rowElement);
   });
 
   // Focus follows a panel's content: a panel that hides hands focus to its chip, a panel brought
