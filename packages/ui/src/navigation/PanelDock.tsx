@@ -94,13 +94,19 @@ export interface PanelDockProps<T extends PanelDockPanel>
   stackBelow?: string | number;
   /** Called with true when the dock stacks and with false when its panels sit side by side. */
   onStackedChange?: (stacked: boolean) => void;
-  /** Accessible name of the list of chips; Minimized panels by default. */
+  /**
+   * Accessible name of the list of chips, which holds minimized panels and the panels a stacked dock
+   * leaves out; Hidden panels by default.
+   */
   minimizedLabel?: string;
-  /** Accessible name of a chip's button that brings its panel back; receives the chip's text. */
+  /**
+   * Accessible name of a chip's button that shows its panel, from the chip's text: Show and the text
+   * by default. A function, as each chip names its own panel; PanelDockControls takes plain strings.
+   */
   restoreLabel?: (label: string) => string;
-  /** Accessible name of a chip's close button; receives the chip's text. */
+  /** Accessible name of a chip's close button, from the chip's text: Close and the text by default. */
   closeLabel?: (label: string) => string;
-  /** Accessible name of a panel's resize handle; receives the panel's title. */
+  /** Accessible name of a panel's resize handle, from its title: Resize and the title by default. */
   resizeLabel?: (title: string) => string;
 }
 
@@ -125,7 +131,8 @@ interface Measurements {
   room: number;
 }
 
-const defaultRestoreLabel = (label: string) => `Restore ${label}`;
+// Words that fit a minimized panel and one a stacked dock leaves out alike.
+const defaultRestoreLabel = (label: string) => `Show ${label}`;
 const defaultCloseLabel = (label: string) => `Close ${label}`;
 const defaultResizeLabel = (title: string) => `Resize ${title}`;
 
@@ -150,7 +157,7 @@ export function PanelDock<T extends PanelDockPanel>({
   onHeightChange,
   stackBelow = '40rem',
   onStackedChange,
-  minimizedLabel = 'Minimized panels',
+  minimizedLabel = 'Hidden panels',
   restoreLabel = defaultRestoreLabel,
   closeLabel = defaultCloseLabel,
   resizeLabel = defaultResizeLabel,

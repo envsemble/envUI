@@ -30,7 +30,7 @@ function dockOf(page: Page, theme = 'light') {
     root,
     frame: page.getByTestId(`dock-frame-${theme}`),
     panel: (id: string) => root.locator(`section[data-panel-id="${id}"]`),
-    chips: root.getByRole('list', { name: 'Minimized panels' }),
+    chips: root.getByRole('list', { name: 'Hidden panels' }),
     row: root.locator(':scope > .env-panel-dock-row'),
   };
 }
@@ -89,7 +89,7 @@ test.describe('PanelDock', () => {
     // A minimized panel is a chip with its label, an attention dot described for assistive
     // technology, a tooltip and a close button.
     await expect(dock.chips.getByRole('listitem')).toHaveCount(1);
-    const budget = dock.chips.getByRole('button', { name: 'Restore Budget', exact: true });
+    const budget = dock.chips.getByRole('button', { name: 'Show Budget', exact: true });
     await expect(budget).toHaveText('Budget');
     await expect(budget).toHaveAccessibleDescription('Unsaved changes');
     await expect(dock.chips.locator('li[data-panel-id="budget"]')).toHaveAttribute(
@@ -132,7 +132,7 @@ test.describe('PanelDock', () => {
     await expect(report.getByRole('separator')).toHaveCount(1);
 
     // A chip brings its panel back to the row and activates it.
-    await dock.chips.getByRole('button', { name: 'Restore Meeting notes' }).click();
+    await dock.chips.getByRole('button', { name: 'Show Meeting notes' }).click();
     await expect(notes).toBeVisible();
     await expect(notes).toHaveAttribute('data-mode', 'open');
     expect((await logOf(page)).slice(-2)).toEqual(['mode notes open', 'activate notes']);
@@ -191,7 +191,7 @@ test.describe('PanelDock', () => {
 
     // Minimizing hands focus to the chip; the chip brings the panel back to the draft.
     await page.keyboard.press('Alt+KeyM');
-    const chip = dock.chips.getByRole('button', { name: 'Restore Quarterly report' });
+    const chip = dock.chips.getByRole('button', { name: 'Show Quarterly report' });
     await expect(chip).toBeFocused();
     await expect(report).toBeHidden();
     await page.keyboard.press('Enter');
@@ -239,7 +239,7 @@ test.describe('PanelDock', () => {
     // Maximized and minimized from the window controls, it is the same content.
     await report.getByRole('button', { name: 'Maximize' }).click();
     await report.getByRole('button', { name: 'Minimize' }).click();
-    await dock.chips.getByRole('button', { name: 'Restore Quarterly report' }).click();
+    await dock.chips.getByRole('button', { name: 'Show Quarterly report' }).click();
     await expect(report).toHaveAttribute('data-mode', 'open');
     await expect(draft).toHaveValue('Unsent changes and more');
     await expect(draft).toBeFocused();
@@ -419,7 +419,7 @@ test.describe('PanelDock', () => {
     expect(sheet.y + sheet.height).toBeCloseTo((await box(dock.chips)).y, 0);
     await expect(report).toBeHidden();
     await expect(report).toHaveAttribute('data-mode', 'open');
-    await expect(dock.chips.getByRole('button', { name: /^Restore/ })).toHaveText([
+    await expect(dock.chips.getByRole('button', { name: /^Show/ })).toHaveText([
       'Quarterly report',
       'Budget',
     ]);
@@ -437,7 +437,7 @@ test.describe('PanelDock', () => {
     ).toBe(true);
 
     // Another panel's chip brings it across the region and focus into it.
-    await dock.chips.getByRole('button', { name: 'Restore Quarterly report' }).click();
+    await dock.chips.getByRole('button', { name: 'Show Quarterly report' }).click();
     await expect(report).toBeVisible();
     await expect(notes).toBeHidden();
     await expect.poll(() => lastLog(page)).toBe('activate report');
@@ -447,9 +447,7 @@ test.describe('PanelDock', () => {
     // Minimizing the shown panel shows the one before it.
     await report.getByRole('button', { name: 'Minimize' }).click();
     await expect(notes).toBeVisible();
-    await expect(
-      dock.chips.getByRole('button', { name: 'Restore Quarterly report' }),
-    ).toBeFocused();
+    await expect(dock.chips.getByRole('button', { name: 'Show Quarterly report' })).toBeFocused();
 
     // A newly opened panel takes the region; chips that overflow their strip scroll sideways with a
     // vertical wheel.
@@ -519,7 +517,7 @@ test.describe('PanelDock', () => {
     await page.keyboard.press('Shift+Tab');
     await expect(minimize).toBeFocused();
     await page.keyboard.press('Enter');
-    const chip = dock.chips.getByRole('button', { name: 'Restore Quarterly report' });
+    const chip = dock.chips.getByRole('button', { name: 'Show Quarterly report' });
     await expect(chip).toBeFocused();
     await expect(chip).toHaveCSS('outline-style', 'solid');
     // The chip's close button follows it.
@@ -604,7 +602,7 @@ test.describe('PanelDock', () => {
       const chip = dock.chips.getByRole('listitem');
       expect(await style(chip, 'background-color')).toBe(tokens.popup);
       expect(await style(chip, 'border-top-color')).toBe(tokens.border);
-      expect(await style(dock.chips.getByRole('button', { name: 'Restore Budget' }), 'color')).toBe(
+      expect(await style(dock.chips.getByRole('button', { name: 'Show Budget' }), 'color')).toBe(
         tokens.text,
       );
       // A filling panel covers the page with the canvas around the chips.
@@ -687,7 +685,7 @@ test.describe('PanelDock', () => {
     const chip = dock.chips.locator('li[data-panel-id="report"]');
     expect(await animation(chip)).toEqual(['env-panel-dock-chip-rise', '0.16s']);
     // A panel brought back starts its entrance again.
-    const started = await chip.getByRole('button', { name: 'Restore Quarterly report' }).evaluate(
+    const started = await chip.getByRole('button', { name: 'Show Quarterly report' }).evaluate(
       (button) =>
         new Promise<string[]>((resolve) => {
           const panel = document.querySelector<HTMLElement>(
@@ -729,7 +727,7 @@ test('the catalogue shows open, minimized and maximized panels whose drafts surv
     'data-mode',
     'open',
   );
-  await expect(docked.getByRole('button', { name: 'Restore Budget' })).toHaveAccessibleDescription(
+  await expect(docked.getByRole('button', { name: 'Show Budget' })).toHaveAccessibleDescription(
     'Unsaved changes',
   );
   await expect(maximized.getByRole('region', { name: 'Quarterly report' })).toHaveAttribute(
@@ -745,7 +743,7 @@ test('the catalogue shows open, minimized and maximized panels whose drafts surv
   const draft = report.getByRole('textbox', { name: 'Draft' });
   await draft.fill('Ask for the regional numbers.');
   await report.getByRole('button', { name: 'Minimize' }).click();
-  const chip = docked.getByRole('button', { name: 'Restore Quarterly report' });
+  const chip = docked.getByRole('button', { name: 'Show Quarterly report' });
   await expect(chip).toHaveAccessibleDescription('Unsaved changes');
   await chip.click();
   await report.getByRole('button', { name: 'Maximize' }).click();
