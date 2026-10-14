@@ -99,7 +99,9 @@ export interface PanelDockProps<T extends PanelDockPanel>
   /**
    * What the dock does when its open panels cannot all sit side by side at their minimum widths:
    * scroll (default) scrolls the row sideways; minimize asks onModeChange to minimize the least
-   * recently active open panel other than the active one, one at a time, until the rest fit.
+   * recently active open panel, one at a time, until the rest fit. It never asks for the active
+   * panel or the newest one, so never for a panel alone in the row, and where those cannot fit by
+   * themselves the row scrolls instead.
    */
   overflow?: 'scroll' | 'minimize';
   /**
@@ -297,28 +299,30 @@ export function PanelDock<T extends PanelDockPanel>({
 
   /**
    * With overflow="minimize", open panels that cannot all fit at their minimum widths make room:
-   * the dock asks to minimize the least recently active one other than the active one, then waits
-   * for that panel to leave the row before it asks again, so a panel the application keeps open
-   * is asked once.
+   * the dock asks to minimize the least recently active one, never the active panel or the newest,
+   * and only where that lets the rest fit. It then waits for that panel to leave the row before it
+   * asks again, so a panel the application keeps open is asked once.
    */
   function makeRoom(rowElement: HTMLElement) {
     for (const id of makingRoom.current) if (!rowIds.includes(id)) makingRoom.current.delete(id);
     if (overflow !== 'minimize' || makingRoom.current.size > 0) return;
     // A dock that stacks, or is about to as it first shows or narrows, has no row to make room in.
     if (stacked || measuredStacked.current) return;
-    if (!overflows(rowElement)) return;
-    const recent = (panel: T) => recency.current.get(panel.id) ?? Infinity;
-    let oldest: T | undefined;
-    for (const panel of panels)
-      if (
-        placements.get(panel.id) === 'row' &&
-        !panel.active &&
-        (!oldest || recent(panel) < recent(oldest))
-      )
-        oldest = panel;
-    if (!oldest) return;
-    makingRoom.current.add(oldest.id);
-    latest.current.onModeChange(oldest.id, 'minimized');
+    const inRow = panels.filter((panel) => placements.get(panel.id) === 'row');
+    const room = rowRoom(rowElement);
+    const fit = (list: readonly T[]) => fitsInRow(room, list.map(frameOfPanel));
+    if (!overflows(rowElement) || fit(inRow)) return;
+    // The panel people work in stays, and so does the newest, such as one just brought back from
+    // its chip, also alone in the row. Where those cannot fit by themselves, minimizing the others
+    // would only hide them, and the row scrolls.
+    const newestInRow = newest(inRow, recency.current);
+    const stays = (panel: T) => panel.active || panel === newestInRow;
+    if (!fit(inRow.filter(stays))) return;
+    const others = inRow.filter((panel) => !stays(panel));
+    const leaving = oldest(others, recency.current);
+    if (!leaving) return;
+    makingRoom.current.add(leaving.id);
+    latest.current.onModeChange(leaving.id, 'minimized');
   }
   // The dock measures itself outside its renders, with this render's panels.
   const makeRoomLatest = useRef(makeRoom);
@@ -349,6 +353,10 @@ export function PanelDock<T extends PanelDockPanel>({
       (element): element is HTMLElement =>
         element instanceof HTMLElement && element.dataset.panelId === id,
     );
+  }
+
+  function frameOfPanel(panel: T) {
+    return frameOf(panel.id);
   }
 
   function chipButtonOf(id: string | undefined) {
@@ -976,6 +984,20 @@ function newest<T extends PanelDockPanel>(candidates: readonly T[], times: Map<s
   return found;
 }
 
+/** The candidate brought forward longest ago; of those never recorded, the first. */
+function oldest<T extends PanelDockPanel>(candidates: readonly T[], times: Map<string, number>) {
+  let found: T | undefined;
+  let earliest = Infinity;
+  for (const panel of candidates) {
+    const time = times.get(panel.id) ?? Infinity;
+    if (!found || time < earliest) {
+      found = panel;
+      earliest = time;
+    }
+  }
+  return found;
+}
+
 /** The elements inside the panels that are scrolled away from their start. */
 function readScrollPositions(rowElement: Element) {
   const positions: ScrollPosition[] = [];
@@ -1009,6 +1031,43 @@ function clampRound(value: number, min: number, max: number) {
 
 function pixels(value: number | undefined) {
   return value === undefined ? undefined : `${value}px`;
+}
+
+/** The inline size the row has for its panels, and the gap between them, in pixels. */
+function rowRoom(rowElement: HTMLElement) {
+  const style = getComputedStyle(rowElement);
+  const padding =
+    (parseFloat(style.paddingInlineStart) || 0) + (parseFloat(style.paddingInlineEnd) || 0);
+  return { size: rowElement.clientWidth - padding, gap: parseFloat(style.columnGap) || 0 };
+}
+
+/** Whether panels fit side by side in the row at their minimum widths. */
+function fitsInRow(
+  room: { size: number; gap: number },
+  frames: readonly (HTMLElement | undefined)[],
+) {
+  let total = -room.gap;
+  for (const frame of frames) if (frame) total += minimumWidth(frame) + room.gap;
+  return total <= room.size + 1;
+}
+
+/** The narrowest a panel gets in the row, with its borders and margins. */
+function minimumWidth(frame: HTMLElement) {
+  const style = getComputedStyle(frame);
+  const length = (value: string) => parseFloat(value) || 0;
+  const edges =
+    style.boxSizing === 'border-box'
+      ? 0
+      : length(style.borderInlineStartWidth) +
+        length(style.borderInlineEndWidth) +
+        length(style.paddingInlineStart) +
+        length(style.paddingInlineEnd);
+  return (
+    length(style.minInlineSize) +
+    edges +
+    length(style.marginInlineStart) +
+    length(style.marginInlineEnd)
+  );
 }
 
 function overflows(rowElement: HTMLElement) {

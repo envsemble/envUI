@@ -1203,6 +1203,20 @@ test('a chip pressed while panels sit side by side leaves the newest to fill the
   await expect(panel('ex')).toBeHidden();
 });
 
+/** The panels in a dock's row, in order. */
+function rowOf(scope: Locator) {
+  const row = scope.locator('.env-panel-dock > .env-panel-dock-row');
+  return {
+    row,
+    ids: () =>
+      row.evaluate((element) =>
+        [...element.querySelectorAll<HTMLElement>(':scope > section[data-placement="row"]')].map(
+          ({ dataset }) => dataset.panelId,
+        ),
+      ),
+  };
+}
+
 /** Lets the dock measure itself and hear the application's answers for a few frames. */
 function frames(page: Page, count = 3) {
   return page.evaluate(
@@ -1227,4 +1241,48 @@ test('a dock that minimizes asks for nothing while it stacks, also as it first s
   await expect(page.getByTestId('stacking-log-light')).toHaveText('');
   await expect(scope.locator('section[data-panel-id="three"]')).toBeVisible();
   await expect(scope.getByRole('button', { name: 'Show One' })).toBeVisible();
+});
+
+test('a dock that minimizes never takes back the panel people brought back', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const scope = page.getByTestId('protective-dock-light');
+  const log = page.getByTestId('protective-log-light');
+  const { row, ids } = rowOf(scope);
+  // The row fits one panel. The application marks Alpha active and activates no other.
+  await expect.poll(ids).toEqual(['alpha']);
+  await scope.getByRole('button', { name: 'Show Beta' }).click();
+  await expect.poll(ids).toEqual(['alpha', 'beta']);
+  await frames(page);
+  // Neither the active panel nor the one brought back makes room: the row scrolls instead.
+  await expect(log).toHaveText('beta open');
+  await expect.poll(ids).toEqual(['alpha', 'beta']);
+  await expect(row).toHaveAttribute('data-overflowing', 'true');
+  // Focus goes with the panel brought back.
+  await expect(scope.locator('section[data-panel-id="beta"]')).toBeFocused();
+});
+
+test('a dock that minimizes leaves a lone panel wider than the row in it', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const scope = page.getByTestId('lone-dock-light');
+  const { row, ids } = rowOf(scope);
+  await expect(row).toHaveAttribute('data-overflowing', 'true');
+  await frames(page);
+  await expect(page.getByTestId('lone-log-light')).toHaveText('');
+  expect(await ids()).toEqual(['solo']);
+});
+
+test('a dock that minimizes keeps its panels where minimizing them would not end the scrolling', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const scope = page.getByTestId('wide-dock-light');
+  const { row, ids } = rowOf(scope);
+  // The active panel alone is wider than the row, so the others stay and the row scrolls.
+  await expect(row).toHaveAttribute('data-overflowing', 'true');
+  await frames(page);
+  await expect(page.getByTestId('wide-log-light')).toHaveText('');
+  expect(await ids()).toEqual(['draft', 'outline', 'canvas']);
 });

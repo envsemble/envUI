@@ -181,6 +181,35 @@ export function PanelDockFixture({ theme }: { theme: ThemeValue }) {
       />
       {theme === 'light' && (
         <>
+          {/* The application marks a panel active but never activates another. */}
+          <MinimizingDock
+            name="protective"
+            theme={theme}
+            className="fixture-dock-single"
+            initial={[
+              { id: 'alpha', title: 'Alpha', mode: 'open', active: true },
+              { id: 'beta', title: 'Beta', mode: 'minimized' },
+            ]}
+          />
+          {/* One panel wider than the row, and none active. */}
+          <MinimizingDock
+            name="lone"
+            theme={theme}
+            className="fixture-dock-single"
+            initial={[{ id: 'solo', title: 'Solo', mode: 'open', minWidth: 720 }]}
+          />
+          {/* The active panel alone is wider than the row. */}
+          <MinimizingDock
+            name="wide"
+            theme={theme}
+            className="fixture-dock-single"
+            initial={[
+              { id: 'draft', title: 'Draft', mode: 'open' },
+              { id: 'outline', title: 'Outline', mode: 'open' },
+              { id: 'canvas', title: 'Canvas', mode: 'open', active: true, minWidth: 720 },
+            ]}
+            activates
+          />
           {/* Narrower than stackBelow from the start. */}
           <MinimizingDock
             name="stacking"

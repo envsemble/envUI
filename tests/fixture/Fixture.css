@@ -250,6 +250,11 @@ body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-p
   inline-size: min(100%, 52rem);
   block-size: 24rem;
 }
+/* Wide enough for one panel at its minimum width, not two, without stacking. */
+.fixture-dock-single {
+  inline-size: min(100%, 42rem);
+  block-size: 24rem;
+}
 /* An application's own fill, which the avatar group's ring matches through its custom property. */
 .fixture-avatar-surface {
   --fixture-avatar-surface: hsl(40 90% 88%);
