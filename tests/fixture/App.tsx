@@ -40,6 +40,7 @@ import { StatsFixture } from './Stats.js';
 import { DropzonesFixture } from './Dropzones.js';
 import { ButtonCountsFixture } from './ButtonCounts.js';
 import { HeatmapFixture } from './Heatmaps.js';
+import { PanelDockFixture } from './PanelDocks.js';
 
 /** Fixtures that fill the viewport are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
@@ -229,6 +230,12 @@ export default function App() {
             <>
               <HeatmapFixture theme="light" />
               <HeatmapFixture theme="dark" />
+            </>
+          )}
+          {includes('panel-dock') && (
+            <>
+              <PanelDockFixture theme="light" />
+              <PanelDockFixture theme="dark" />
             </>
           )}
           {includes('button-counts') && (

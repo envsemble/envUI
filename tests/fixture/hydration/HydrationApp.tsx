@@ -35,6 +35,9 @@ import {
   Stat,
   StatGroup,
   Heatmap,
+  PanelDock,
+  PanelDockHeader,
+  type PanelDockPanel,
 } from '@envsemble/envui';
 
 const treeItems = Array.from({ length: 40 }, (_, index) => ({
@@ -58,6 +61,10 @@ export function HydrationApp() {
   const [draft, setDraft] = useState('');
   const [message, setMessage] = useState('');
   const [files, setFiles] = useState('No files yet');
+  const [dockPanels, setDockPanels] = useState<PanelDockPanel[]>([
+    { id: 'notes', title: 'Hydrated notes', mode: 'open', active: true },
+    { id: 'budget', title: 'Hydrated budget', mode: 'minimized', attention: 'Hydrated changes' },
+  ]);
   return (
     <Theme theme="dark">
       <ToastProvider>
@@ -191,6 +198,28 @@ export function HydrationApp() {
           start={<p>Hydrated start pane</p>}
           end={<p>Hydrated end pane</p>}
         />
+        <div style={{ position: 'relative', blockSize: '24rem' }}>
+          <PanelDock
+            panels={dockPanels}
+            onModeChange={(id, mode) =>
+              setDockPanels((current) =>
+                current.map((panel) => (panel.id === id ? { ...panel, mode } : panel)),
+              )
+            }
+            onClose={(id) => setDockPanels((current) => current.filter((panel) => panel.id !== id))}
+            minimizedLabel="Hydrated chips"
+            restoreLabel={(label) => `Show ${label}`}
+            closeLabel={(label) => `Discard ${label}`}
+            resizeLabel={(title) => `Height of ${title}`}
+          >
+            {(panel) => (
+              <>
+                <PanelDockHeader title={panel.title} headingLevel={3} />
+                <Input label={`${panel.title} draft`} />
+              </>
+            )}
+          </PanelDock>
+        </div>
         <StatGroup aria-label="Hydrated stats">
           <Stat
             label="Hydrated stat"
