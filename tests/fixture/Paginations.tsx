@@ -1,7 +1,44 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Pagination, SearchField, Surface, Theme, type ThemeValue } from '@envsemble/envui';
 
 const ignore = () => undefined;
+
+/**
+ * Pages whose loading starts in an effect once the page changes, as with a query keyed by the page:
+ * pending follows a page later than the press. The fixture finishes loading on request.
+ */
+function EffectLoadedPages({ theme }: { theme: ThemeValue }) {
+  const [page, setPage] = useState(1);
+  const [loaded, setLoaded] = useState(1);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    if (page !== loaded) setLoading(true);
+  }, [page, loaded]);
+  return (
+    <>
+      <Pagination
+        aria-label={`Effect pages ${theme}`}
+        page={page}
+        pageSize={20}
+        total={100}
+        pending={loading}
+        onPageChange={setPage}
+      />
+      <Button
+        variant="secondary"
+        onClick={() => {
+          setLoaded(page);
+          setLoading(false);
+        }}
+      >
+        Finish effect loading {theme}
+      </Button>
+      <Button variant="secondary" onClick={() => setLoading(true)}>
+        Reload effect pages {theme}
+      </Button>
+    </>
+  );
+}
 
 export function PaginationsFixture({ theme }: { theme: ThemeValue }) {
   const [page, setPage] = useState(1);
@@ -46,6 +83,7 @@ export function PaginationsFixture({ theme }: { theme: ThemeValue }) {
       <Button variant="secondary" onClick={() => setRefreshing((current) => !current)}>
         Refresh batches {theme}
       </Button>
+      <EffectLoadedPages theme={theme} />
       <Pagination
         aria-label="Hidden single page"
         page={1}

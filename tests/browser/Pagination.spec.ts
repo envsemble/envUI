@@ -233,3 +233,32 @@ test('the pager fits compact toolbars, wraps only when it must and mirrors right
   );
   await expect(rtl.locator('.env-pagination-range')).toHaveText('11–20 of 30');
 });
+
+test('a load the application starts in an effect after the page changes spins the button pressed', async ({
+  page,
+}) => {
+  await page.goto(fixture);
+  const scope = page.getByTestId('paginations-light');
+  const pager = scope.getByRole('navigation', { name: 'Effect pages light' });
+  const previous = pager.getByRole('button', { name: 'Previous page' });
+  const next = pager.getByRole('button', { name: 'Next page' });
+  const finish = scope.getByRole('button', { name: 'Finish effect loading light' });
+  await next.click();
+  // The page changes at once and its load starts in the effect that follows.
+  await expect(pager.locator('.env-pagination-range')).toHaveText('21–40 of 100');
+  await expect(next).toHaveAttribute('aria-busy', 'true');
+  await expect(next.locator('.env-spinner')).toBeVisible();
+  await expect(previous).toHaveAttribute('aria-disabled', 'true');
+  await expect(previous).not.toHaveAttribute('aria-busy');
+  await finish.click();
+  await expect(next).not.toHaveAttribute('aria-busy');
+  expect(await state(pager)).toEqual({ range: '21–40 of 100', previous: true, next: true });
+  // A load for another reason later spins neither button.
+  await scope.getByRole('button', { name: 'Reload effect pages light' }).click();
+  await expect(next).toHaveAttribute('aria-disabled', 'true');
+  await expect(pager.locator('[aria-busy]')).toHaveCount(0);
+  await finish.click();
+  await previous.click();
+  await expect(previous).toHaveAttribute('aria-busy', 'true');
+  await expect(next).not.toHaveAttribute('aria-busy');
+});

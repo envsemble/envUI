@@ -1,4 +1,4 @@
-import { useState, type ComponentPropsWithRef, type ReactNode } from 'react';
+import { useEffect, useState, type ComponentPropsWithRef, type ReactNode } from 'react';
 import { IconButton, type ButtonVariant } from '../actions/Button.js';
 import { Tooltip } from '../feedback/Tooltip.js';
 import { ChevronLeft } from '../icons/ChevronLeft.js';
@@ -49,6 +49,15 @@ export interface PaginationProps
 
 const englishNumbers = new Intl.NumberFormat('en');
 
+/**
+ * The button last pressed, and how far its load is: pressed until the page's effects have run,
+ * settling for the update they cause, and loading once pending.
+ */
+interface Press {
+  direction: 'previous' | 'next';
+  state: 'pressed' | 'settling' | 'loading';
+}
+
 /** "1–60 of 245", "245 of 245" for a single item, or "61–120" without a total. */
 function formatPageRange({ start, end, total }: PaginationRange) {
   const shown =
@@ -79,10 +88,22 @@ export function Pagination({
   'aria-label': label = 'Pagination',
   ...props
 }: PaginationProps) {
-  const [pressed, setPressed] = useState<'previous' | 'next' | null>(null);
-  // A press is remembered only while the load it started is pending: once the load ends, or when
-  // the page changed without one, a later load for another reason spins neither button.
-  if (pressed !== null && !pending) setPressed(null);
+  // A press spins its button for the load it starts: one pending in the same update as the press,
+  // or one the application starts in an effect after the page changes, as a query keyed by the page
+  // does. A press no load follows by then is forgotten, and so is one whose load ended, so a later
+  // load for another reason, such as a refresh, spins neither button.
+  const [press, setPress] = useState<Press | null>(null);
+  if (press) {
+    if (pending) {
+      if (press.state !== 'loading') setPress({ ...press, state: 'loading' });
+    } else if (press.state !== 'pressed') setPress(null);
+  }
+  useEffect(() => {
+    // The application's effects for the new page run in this same pass; the update they cause
+    // comes with this one.
+    if (press?.state === 'pressed' && !pending)
+      setPress((current) => (current === press ? { ...press, state: 'settling' } : current));
+  }, [press, pending]);
   const perPage = Math.max(1, Math.floor(pageSize) || 1);
   const count = total === undefined ? undefined : Math.max(0, Math.floor(total) || 0);
   const pageCount = count === undefined ? undefined : Math.max(1, Math.ceil(count / perPage));
@@ -96,7 +117,7 @@ export function Pagination({
   function pageButton(direction: 'previous' | 'next') {
     const available = direction === 'previous' ? hasPrevious : hasNext;
     const name = direction === 'previous' ? previousLabel : nextLabel;
-    const loading = pending && pressed === direction;
+    const loading = pending && press?.direction === direction;
     return (
       <Tooltip content={name}>
         <IconButton
@@ -110,7 +131,7 @@ export function Pagination({
           data-direction={direction}
           onClick={() => {
             if (!available || pending) return;
-            setPressed(direction);
+            setPress({ direction, state: 'pressed' });
             onPageChange(direction === 'previous' ? current - 1 : current + 1);
           }}
         />
