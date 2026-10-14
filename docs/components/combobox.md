@@ -55,7 +55,7 @@ const people = members.map((member) => ({
 | filter                            | By default, options whose label or description contains the typed text, ignoring case and accents; or a function    |
 | filter={null}                     | Shows items as given, for options the application finds itself, such as on a server                                 |
 | onInputValueChange                | Receives the typed text, and an empty string once the query ends: the text is cleared, or the label shows again     |
-| loading / loadingLabel            | The options are loading: the popup shows a spinner and loadingLabel (Loading…) instead of emptyLabel                |
+| loading / loadingLabel            | The options are loading: the popup shows a spinner and announces loadingLabel (Loading…), not emptyLabel            |
 | emptyLabel                        | Shown when no option matches; No matches by default                                                                 |
 | label / hint / error              | Floating label, guidance and validation like Input; hint and error are linked to the field                          |
 | density                           | standard (default), the text field of forms, or compact: 2 rem like a compact Select, with the compact menu's popup |

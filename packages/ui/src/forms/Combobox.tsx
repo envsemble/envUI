@@ -516,7 +516,6 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
               <BaseCombobox.Popup
                 className="env-dropdown-options env-combobox-popup"
                 render={<Surface padding={compact ? 1 : 2} density={density} />}
-                aria-busy={loading || undefined}
               >
                 <BaseCombobox.Status className="env-combobox-status">
                   {loading ? (
@@ -529,7 +528,12 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
                 <BaseCombobox.Empty className="env-combobox-empty">
                   {loading ? null : emptyLabel}
                 </BaseCombobox.Empty>
-                <BaseCombobox.List className="env-dropdown-list env-combobox-list">
+                {/* The options are busy while they load, not the popup, whose status announces
+                    the loading label meanwhile. */}
+                <BaseCombobox.List
+                  className="env-dropdown-list env-combobox-list"
+                  aria-busy={loading || undefined}
+                >
                   {(entry: Item | ComboboxGroup<Item>) =>
                     grouped && isGroup(entry) ? (
                       <BaseCombobox.Group

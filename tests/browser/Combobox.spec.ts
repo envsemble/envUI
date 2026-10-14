@@ -294,7 +294,13 @@ test('a server search shows its loading state, highlights the first result and k
   await expect(page.locator('.env-combobox-empty')).toHaveText('Type a name to search');
   await contact.pressSequentially('mo');
   await expect(page.locator('.env-combobox-status')).toHaveText('Searching…');
-  await expect(page.locator('.env-combobox-popup')).toHaveAttribute('aria-busy', 'true');
+  // The list is busy, not the popup, so the status around it can announce Searching….
+  await expect(page.locator('.env-combobox-list')).toHaveAttribute('aria-busy', 'true');
+  expect(
+    await page
+      .locator('.env-combobox-status')
+      .evaluate((status) => status.closest('[aria-busy="true"]') === null),
+  ).toBe(true);
   await expect(page.locator('.env-combobox-status .env-spinner')).toBeVisible();
   // The results arrive after typing; the first is highlighted, so Enter chooses it.
   await expect(page.getByRole('option')).toHaveText(['Morgan Diazmorgan.diaz@example.com']);
