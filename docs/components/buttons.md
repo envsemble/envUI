@@ -112,7 +112,7 @@ import { CopyButton } from '@envsemble/envui';
 | Name                      | Contract                                                                                             |
 | ------------------------- | ---------------------------------------------------------------------------------------------------- |
 | value                     | The text to copy, or a function that returns it, also as a promise, when the button is pressed       |
-| aria-label                | Required without children: what the button copies, such as Copy link; also its tooltip at rest       |
+| aria-label                | Required without visible children: what it copies, such as Copy link; also its tooltip at rest       |
 | children                  | A visible label after the copy icon; aria-label is then optional                                     |
 | onCopy                    | Runs once the text is on the clipboard, with that text                                               |
 | variant                   | As Button; secondary by default, like IconButton                                                     |

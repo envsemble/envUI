@@ -32,14 +32,20 @@ interface CopyButtonBaseProps
   failedLabel?: string;
 }
 
+/** A visible label: text or elements, rather than nothing, such as false or null. */
+export type CopyButtonLabel = Exclude<ReactNode, boolean | null | undefined>;
+
 export type CopyButtonProps = CopyButtonBaseProps &
   (
     | {
-        /** Without children the button is icon-only, named by aria-label, such as Copy link. */
-        children?: never;
+        /**
+         * Without children, or with children that render nothing, the button is icon-only, named by
+         * aria-label, such as Copy link.
+         */
+        children?: boolean | null;
         'aria-label': string;
       }
-    | { children: ReactNode; 'aria-label'?: string }
+    | { children: CopyButtonLabel; 'aria-label'?: string }
   );
 
 /** How long the result of a press shows: the check, the tooltip and the announcement. */
@@ -96,7 +102,7 @@ export function CopyButton({
     if (copied) onCopy?.(text);
   }
 
-  const iconOnly = children === undefined || children === null;
+  const iconOnly = children === undefined || children === null || typeof children === 'boolean';
   const feedback = result ? (result.copied ? copiedLabel : failedLabel) : undefined;
   const tooltip = feedback ?? (iconOnly ? label : undefined);
   // The last text stays in the closing tooltip while it fades out.
@@ -116,7 +122,7 @@ export function CopyButton({
     <Button {...shared} iconOnly icon={symbol} aria-label={label ?? ''} />
   ) : (
     <Button {...shared} startIcon={symbol} aria-label={label}>
-      {children}
+      {children as CopyButtonLabel}
     </Button>
   );
   return (

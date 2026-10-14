@@ -898,13 +898,18 @@ test('avatar groups, relative times, copy buttons and pagination render on a ser
     void text;
     // @ts-expect-error An icon-only copy button requires an accessible name.
     const unnamedCopy = <CopyButton value="text" />;
+    // @ts-expect-error Children that render nothing leave the button icon-only, without a name.
+    const falseLabel = <CopyButton value="text">{false}</CopyButton>;
+    // @ts-expect-error So does null.
+    const nullLabel = <CopyButton value="text">{null}</CopyButton>;
+    const namedWithoutLabel = <CopyButton value="text" aria-label="Copy">{null}</CopyButton>;
     // @ts-expect-error Avatar groups take the avatar sizes.
     const unknownSize = <AvatarGroup people={[]} size="huge" />;
     // @ts-expect-error A pager asks the application for pages.
     const inertPager = <Pagination page={1} pageSize={10} />;
     // @ts-expect-error Relative times have three formats.
     const unknownFormat = <RelativeTime value={0} format="tiny" />;
-    void [unnamedCopy, unknownSize, inertPager, unknownFormat];
+    void [unnamedCopy, falseLabel, nullLabel, namedWithoutLabel, unknownSize, inertPager, unknownFormat];
   `,
   );
   await writeFile(
