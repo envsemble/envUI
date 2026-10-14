@@ -15,6 +15,8 @@ export interface PanelDockPanelContextValue {
   close: () => void;
   /** Receives the block size of the panel's sticky header in pixels, or 0 once it goes. */
   reportHeaderSize: (size: number) => void;
+  /** The panel's content has scrolled from its top, beneath the sticky header. */
+  scrolled: boolean;
 }
 
 /** Set around each panel's content, so PanelDockHeader and PanelDockControls act on that panel. */

@@ -74,6 +74,8 @@ export function PanelDockHeader({
         setRef(ref, node);
       }}
       className={classNames('env-panel-dock-header', className)}
+      // Also where the header sits deeper in the content, such as in a form.
+      data-scrolled={panel?.scrolled || undefined}
     >
       <div className="env-panel-dock-heading">
         {createElement(`h${headingLevel}`, { className: 'env-panel-dock-title' }, title)}

@@ -319,12 +319,18 @@ function PassiveDock({ theme }: { theme: ThemeValue }) {
         onClose={(id) => setPanels((current) => current.filter((panel) => panel.id !== id))}
       >
         {(panel) => (
-          <>
+          // A form holds the header with the fields, as the header sticks within it.
+          <form onSubmit={(event) => event.preventDefault()}>
             <PanelDockHeader title={panel.title} />
             <div className="fixture-dock-body">
               <Textarea label={`Text of ${panel.title}`} />
+              {Array.from({ length: 12 }, (_, index) => (
+                <Text key={index}>
+                  Line {index + 1} of {panel.title}.
+                </Text>
+              ))}
             </div>
-          </>
+          </form>
         )}
       </PanelDock>
     </div>

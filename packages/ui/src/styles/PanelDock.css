@@ -246,7 +246,7 @@
 .env-panel-dock-header {
   transition: box-shadow var(--motion-duration-fast) var(--motion-ease);
 }
-.env-panel-dock-content[data-scrolled] > .env-panel-dock-header {
+.env-panel-dock-header[data-scrolled] {
   box-shadow: 0 0.0625rem 0 var(--color-popup-border);
 }
 /* Icon-only text buttons take the quiet icon color, like the window controls, rather than the link

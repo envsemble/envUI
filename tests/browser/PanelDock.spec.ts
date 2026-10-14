@@ -1044,6 +1044,24 @@ test('content that scrolls itself as panels reorder keeps its own scroll positio
   expect(await list.evaluate((element) => element.scrollTop)).toBe(60);
 });
 
+test('a hairline sets apart a header that a form in the content holds', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const panel = page.getByTestId('passive-dock-light').locator('section[data-panel-id="first"]');
+  const content = panel.locator(':scope > .env-panel-dock-content');
+  const header = content.locator(':scope > form > .env-panel-dock-header');
+  await expect(header).toHaveCSS('box-shadow', 'none');
+  await content.evaluate((element) => (element.scrollTop = 40));
+  await expect
+    .poll(() => header.evaluate((element) => getComputedStyle(element).boxShadow))
+    .toMatch(/ 0px 1px 0px 0px$/);
+  // The header still sticks to the top of the content.
+  const [contentBox, headerBox] = await Promise.all([box(content), box(header)]);
+  expect(Math.abs(headerBox.y - contentBox.y)).toBeLessThan(1);
+  await content.evaluate((element) => (element.scrollTop = 0));
+  await expect(header).toHaveCSS('box-shadow', 'none');
+});
+
 test('a stacked dock shows the panel of a chip pressed, also without onActivate', async ({
   page,
 }) => {
