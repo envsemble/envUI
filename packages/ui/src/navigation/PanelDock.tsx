@@ -103,8 +103,9 @@ export interface PanelDockProps<T extends PanelDockPanel>
    * What the dock does when its open panels cannot all sit side by side at their minimum widths:
    * scroll (default) scrolls the row sideways; minimize asks onModeChange to minimize the least
    * recently active open panel, one at a time, until the rest fit, and to open it again once the
-   * region widens and it fits. It never asks for the active panel or the newest one, so never for a
-   * panel alone in the row, and where those cannot fit by themselves the row scrolls instead.
+   * region widens and it fits. It never asks for the active panel, the newest one or the one that
+   * holds focus, so never for a panel alone in the row, and where those cannot fit by themselves the
+   * row scrolls instead.
    */
   overflow?: 'scroll' | 'minimize';
   /**
@@ -335,7 +336,7 @@ export function PanelDock<T extends PanelDockPanel>({
   /**
    * With overflow="minimize", fits the open panels to the row. Where they cannot all sit side by
    * side at their minimum widths, the dock asks to minimize the least recently active one, never
-   * the active panel or the newest, and only where that lets the rest fit. Once the region widens
+   * the active panel, the newest or the one that holds focus, and only where that lets the rest fit. Once the region widens
    * past the room the row had when the dock minimized a panel, and the panel fits again at its
    * width while open, it asks to open it, the most recently active first. It asks for one change at
    * a time and waits for the answer; a panel the application keeps open, or opens again itself, is
@@ -383,11 +384,17 @@ export function PanelDock<T extends PanelDockPanel>({
       fitsInRow(room, [...list.map(({ id }) => widthOf(id)), ...more]);
     if (overflows(rowElement) && !fit(inRow)) {
       // The panel people work in stays, and so does the newest, such as one just brought back
-      // from its chip, also alone in the row, and any the application kept open. Where those
-      // cannot fit by themselves, minimizing the others would only hide them, and the row scrolls.
+      // from its chip, also alone in the row, the one that holds focus, as where people type, and
+      // any the application kept open. Where those cannot fit by themselves, minimizing the others
+      // would only hide them, and the row scrolls.
       const newestInRow = newest(inRow, recency.current);
+      const focus = locateFocus(root.current, focusedPanel.current);
+      const focusedId = focus && !focus.chip ? focus.id : undefined;
       const stays = (panel: T) =>
-        panel.active || panel === newestInRow || keptOpen.current.has(panel.id);
+        panel.active ||
+        panel === newestInRow ||
+        panel.id === focusedId ||
+        keptOpen.current.has(panel.id);
       if (!fit(inRow.filter(stays))) return;
       const others = inRow.filter((panel) => !stays(panel));
       const leaving = oldest(others, recency.current);

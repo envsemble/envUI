@@ -290,6 +290,13 @@ const OtherDocks = memo(function OtherDocks({ theme }: { theme: ThemeValue }) {
             activates
             reopensAfter={100}
           />
+          {/* People type in a panel while the application opens others, and none is active. */}
+          <MinimizingDock
+            name="typing"
+            theme={theme}
+            initial={[{ id: 'draft', title: 'Draft', mode: 'open' }]}
+            opensNotes
+          />
           {/* The application answers a second later, in a transition. */}
           <MinimizingDock
             name="late"
@@ -336,6 +343,7 @@ function MinimizingDock({
   answerDelay,
   narrowTo,
   reopensAfter,
+  opensNotes = false,
 }: {
   name: string;
   theme: ThemeValue;
@@ -353,6 +361,8 @@ function MinimizingDock({
   narrowTo?: string;
   /** Milliseconds after which the application opens a panel it minimized when asked, itself. */
   reopensAfter?: number;
+  /** The application opens a note with Alt+O, wherever focus is in the region. */
+  opensNotes?: boolean;
 }) {
   const [panels, setPanels] = useState(initial);
   const [log, setLog] = useState<string[]>([]);
@@ -363,6 +373,14 @@ function MinimizingDock({
         className={`fixture-dock-frame ${className}`}
         data-testid={`${name}-dock-${theme}`}
         style={narrowed ? { inlineSize: narrowTo } : undefined}
+        onKeyDown={(event) => {
+          if (!opensNotes || !event.altKey || event.code !== 'KeyO') return;
+          event.preventDefault();
+          setPanels((current) => {
+            const count = current.filter((panel) => panel.id.startsWith('note-')).length + 1;
+            return [...current, { id: `note-${count}`, title: `Note ${count}`, mode: 'open' }];
+          });
+        }}
       >
         <PanelDock
           {...labels}

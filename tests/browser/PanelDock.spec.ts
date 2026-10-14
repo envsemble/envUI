@@ -1403,6 +1403,25 @@ test('a dock that minimizes leaves a panel the application opens again until the
   await expect(log).toHaveText(`${once},${once}`);
 });
 
+test('a dock that minimizes keeps the panel that holds focus', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const scope = page.getByTestId('typing-dock-light');
+  const log = page.getByTestId('typing-log-light');
+  const { ids } = rowOf(scope);
+  const field = scope.getByRole('textbox', { name: 'Notes of Draft' });
+  await field.click();
+  await page.keyboard.type('Hello');
+  // The application opens notes while people type in the draft, as when messages arrive.
+  await page.keyboard.press('Alt+KeyO');
+  await expect.poll(ids).toEqual(['draft', 'note-1']);
+  await page.keyboard.press('Alt+KeyO');
+  await expect(log).toHaveText('note-1 minimized');
+  await expect.poll(ids).toEqual(['draft', 'note-2']);
+  await expect(field).toBeFocused();
+  await expect(field).toHaveValue('Hello');
+});
+
 test('a dock that minimizes asks for the next panel when the application keeps one open', async ({
   page,
 }) => {
