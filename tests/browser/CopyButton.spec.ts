@@ -79,13 +79,15 @@ test('an icon-only copy button copies its text, shows a check and says Copied', 
   await expect(button).toHaveAttribute('data-copied', '');
   expect(await button.locator('path').getAttribute('d')).not.toBe(restingIcon);
   await expect(tooltip).toHaveText('Copied');
+  const shown = Date.now();
   await expect(status).toHaveText('Copied');
-  // The result stays while the pointer leaves, for about two seconds, and the name never changes.
+  // The result stays for about two seconds, also once the pointer leaves, and the name never
+  // changes. However slow the machine, the result shows at least as long as measured here.
   await movePointerAway(page);
-  await page.waitForTimeout(500);
   await expect(tooltip).toHaveText('Copied');
   await expect(button).toHaveAccessibleName('Copy link light');
-  await expect(tooltip).toHaveCount(0, { timeout: 3_000 });
+  await expect(tooltip).toHaveCount(0, { timeout: 4_000 });
+  expect(Date.now() - shown).toBeGreaterThan(1_500);
   await expect(button).not.toHaveAttribute('data-copied');
   expect(await button.locator('path').getAttribute('d')).toBe(restingIcon);
   await expect(status).toHaveText('');
