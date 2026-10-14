@@ -214,6 +214,10 @@ export function PanelDock<T extends PanelDockPanel>({
   const chipChoice = useRef<ChipChoice | null>(null);
   // Whether the dock stacks by its latest measurement, which the next render follows.
   const measuredStacked = useRef(false);
+  // With overflow="minimize": the change the dock awaits the application's answer to, and the
+  // panels the application kept open when asked to minimize them, while they stay in the row.
+  const awaiting = useRef<{ id: string; mode: PanelDockMode } | null>(null);
+  const keptOpen = useRef(new Set<string>());
   const atRowEnd = useRef(true);
   const previousRow = useRef<readonly string[]>([]);
   const previousChips = useRef<readonly string[]>([]);
@@ -254,8 +258,6 @@ export function PanelDock<T extends PanelDockPanel>({
     );
   const chips = panels.filter((panel) => placements.get(panel.id) === 'hidden');
   const rowIds = panels.filter((panel) => placements.get(panel.id) === 'row').map(({ id }) => id);
-  // Panels the dock asked to minimize to make room, until they leave the row.
-  const makingRoom = useRef(new Set<string>());
   const layout = panels.map(({ id }) => `${id}:${placements.get(id)}`).join('\n');
   const hasChips = chips.length > 0;
   const filled = filling !== undefined;
@@ -300,12 +302,18 @@ export function PanelDock<T extends PanelDockPanel>({
   /**
    * With overflow="minimize", open panels that cannot all fit at their minimum widths make room:
    * the dock asks to minimize the least recently active one, never the active panel or the newest,
-   * and only where that lets the rest fit. It then waits for that panel to leave the row before it
-   * asks again, so a panel the application keeps open is asked once.
+   * and only where that lets the rest fit. It asks for one panel at a time and waits for the
+   * answer; a panel the application keeps open is not asked again while it stays in the row.
    */
   function makeRoom(rowElement: HTMLElement) {
-    for (const id of makingRoom.current) if (!rowIds.includes(id)) makingRoom.current.delete(id);
-    if (overflow !== 'minimize' || makingRoom.current.size > 0) return;
+    const request = awaiting.current;
+    if (request) {
+      const panel = panels.find(({ id }) => id === request.id);
+      if (panel && panel.mode !== request.mode) return;
+      awaiting.current = null;
+    }
+    for (const id of keptOpen.current) if (!rowIds.includes(id)) keptOpen.current.delete(id);
+    if (overflow !== 'minimize') return;
     // A dock that stacks, or is about to as it first shows or narrows, has no row to make room in.
     if (stacked || measuredStacked.current) return;
     const inRow = panels.filter((panel) => placements.get(panel.id) === 'row');
@@ -313,16 +321,31 @@ export function PanelDock<T extends PanelDockPanel>({
     const fit = (list: readonly T[]) => fitsInRow(room, list.map(frameOfPanel));
     if (!overflows(rowElement) || fit(inRow)) return;
     // The panel people work in stays, and so does the newest, such as one just brought back from
-    // its chip, also alone in the row. Where those cannot fit by themselves, minimizing the others
-    // would only hide them, and the row scrolls.
+    // its chip, also alone in the row, and any the application kept open. Where those cannot fit
+    // by themselves, minimizing the others would only hide them, and the row scrolls.
     const newestInRow = newest(inRow, recency.current);
-    const stays = (panel: T) => panel.active || panel === newestInRow;
+    const stays = (panel: T) =>
+      panel.active || panel === newestInRow || keptOpen.current.has(panel.id);
     if (!fit(inRow.filter(stays))) return;
     const others = inRow.filter((panel) => !stays(panel));
     const leaving = oldest(others, recency.current);
-    if (!leaving) return;
-    makingRoom.current.add(leaving.id);
-    latest.current.onModeChange(leaving.id, 'minimized');
+    if (leaving) ask(leaving.id, 'minimized');
+  }
+
+  /**
+   * Asks the application to change a panel's mode. It answers by rendering the dock with the new
+   * mode; a panel without it by the next frame is one the application keeps as it is.
+   */
+  function ask(id: string, mode: PanelDockMode) {
+    const request = { id, mode };
+    awaiting.current = request;
+    requestAnimationFrame(() => {
+      if (awaiting.current !== request) return;
+      awaiting.current = null;
+      keptOpen.current.add(id);
+      refresh();
+    });
+    latest.current.onModeChange(id, mode);
   }
   // The dock measures itself outside its renders, with this render's panels.
   const makeRoomLatest = useRef(makeRoom);

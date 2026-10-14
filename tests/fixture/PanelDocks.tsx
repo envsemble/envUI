@@ -222,18 +222,34 @@ export function PanelDockFixture({ theme }: { theme: ThemeValue }) {
             ]}
             activates
           />
+          {/* The application keeps its pinned panel open when asked to minimize it. */}
+          <MinimizingDock
+            name="keeping"
+            theme={theme}
+            initial={[
+              { id: 'pinned', title: 'Pinned', mode: 'open' },
+              { id: 'inbox', title: 'Inbox', mode: 'open' },
+              { id: 'today', title: 'Today', mode: 'open', active: true },
+            ]}
+            activates
+            keeps="pinned"
+          />
         </>
       )}
     </Theme>
   );
 }
 
-/** A dock that minimizes its least recently active panel rather than scroll the row. */
+/**
+ * A dock that minimizes its least recently active panel rather than scroll the row, and logs every
+ * mode it asks for, also those the application refuses.
+ */
 function MinimizingDock({
   name,
   theme,
   initial,
   activates = false,
+  keeps,
   className = 'fixture-dock-minimizing',
 }: {
   name: string;
@@ -241,6 +257,8 @@ function MinimizingDock({
   initial: PanelDockPanel[];
   /** Whether the application activates the panels people press or bring back. */
   activates?: boolean;
+  /** A panel the application keeps open when asked to minimize it. */
+  keeps?: string;
   className?: string;
 }) {
   const [panels, setPanels] = useState(initial);
@@ -253,6 +271,7 @@ function MinimizingDock({
           overflow="minimize"
           onModeChange={(id, mode) => {
             setLog((current) => [...current, `${id} ${mode}`]);
+            if (id === keeps && mode === 'minimized') return;
             setPanels((current) =>
               current.map((panel) => (panel.id === id ? { ...panel, mode } : panel)),
             );

@@ -1286,3 +1286,19 @@ test('a dock that minimizes keeps its panels where minimizing them would not end
   await expect(page.getByTestId('wide-log-light')).toHaveText('');
   expect(await ids()).toEqual(['draft', 'outline', 'canvas']);
 });
+
+test('a dock that minimizes asks for the next panel when the application keeps one open', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const scope = page.getByTestId('keeping-dock-light');
+  const log = page.getByTestId('keeping-log-light');
+  const { row, ids } = rowOf(scope);
+  // Asked once for the pinned panel, which the application keeps, the dock minimizes the next.
+  await expect(log).toHaveText('pinned minimized,inbox minimized');
+  await expect.poll(ids).toEqual(['pinned', 'today']);
+  await expect(row).not.toHaveAttribute('data-overflowing');
+  await frames(page);
+  await expect(log).toHaveText('pinned minimized,inbox minimized');
+});
