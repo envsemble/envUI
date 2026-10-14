@@ -157,6 +157,8 @@ before(
       h(ui.Select, { name: 'choice', label: 'Choice', options: [{ value: 'one', label: 'One' }], defaultValue: 'one' }),
       h(ui.Combobox, { name: 'owner', label: 'Owner', items: [{ value: 'first', label: 'First person' }], defaultValue: 'first' }),
       h(ui.Combobox, { name: 'reviewers', label: 'Reviewers', multiple: true, items: [{ label: 'Team', items: [{ value: 'second', label: 'Second person' }] }], defaultValue: ['second'] }),
+      h(ui.DateTimeField, { name: 'due', label: 'Due', defaultValue: '2026-10-14T09:30', withTime: true, locale: 'en-GB' }),
+      h(ui.Calendar, { 'aria-label': 'Planning', defaultValue: '2026-03-09', locale: 'en-GB', weekStart: 1 }),
       h(ui.Dialog, { title: 'Example', open: false, trigger: h(ui.Button, null, 'Open') }),
       h(ui.ToastProvider, null, h(ui.Toast, { message: 'Saved', variant: 'success' })),
       h(ui.BrandLogo),
@@ -244,6 +246,8 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'Radio',
     'Select',
     'Combobox',
+    'DateTimeField',
+    'Calendar',
     'Dialog',
     'DialogClose',
     'Toast',
@@ -277,7 +281,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     `
     import { createRef } from 'react';
     import { Theme, Button, ButtonGroup, IconButton, NavigationItem, DirectionLink, Icon, BrandLogo, Input, ColorPicker, Textarea, Checkbox, Switch, Stack, ActionGroup,
-      RadioGroup, Radio, Select, Combobox, Dialog, DialogClose, Toast, ToastProvider, useToast,
+      RadioGroup, Radio, Select, Combobox, DateTimeField, Calendar, Dialog, DialogClose, Toast, ToastProvider, useToast,
       type ThemeValue, type ButtonProps, type ButtonGroupProps, type DirectionLinkProps, type SelectOption, type ComboboxItem, type ToastManager } from '@envsemble/envui';
     import { Home } from '@envsemble/envui/icons/Home';
     import { Home as BarrelHome } from '@envsemble/envui/icons';
@@ -311,6 +315,8 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       <Select options={options} name="choice" onValueChange={value => { const typed: string | null = value; void typed; }} />
       <Combobox label="Owner" items={people} onValueChange={(value, item) => { const typed: string | null = value; const chosen: ComboboxItem | null = item; void typed; void chosen; }} />
       <Combobox multiple label="Reviewers" items={[{ label: 'Team', items: people }]} filter={(item, query) => item.label.startsWith(query)} onValueChange={(values, items) => { const typed: string[] = values; const chosen: ComboboxItem[] = items; void typed; void chosen; }} ref={createRef<HTMLInputElement>()} />
+      <DateTimeField label="Due" withTime clearable onValueChange={value => { const typed: string | null = value; void typed; }} ref={createRef<HTMLButtonElement>()} />
+      <Calendar value="2026-10-14" weekStart={1} onValueChange={value => { const typed: string = value; void typed; }} />
       <Dialog title="Confirm" trigger={<Button>Open</Button>} actions={<DialogClose>Done</DialogClose>} />
       <ToastProvider><NotificationAction /><Toast message="Saved" /></ToastProvider>
     </Theme>;
@@ -393,6 +399,13 @@ test('public components import and render on a server with no DOM globals', func
   assert.match(ssr.html, /name="owner"[^>]*value="first"|value="first"[^>]*name="owner"/);
   assert.match(ssr.html, /<input type="hidden"[^>]*name="reviewers" value="second"/);
   assert.match(ssr.html, /Second person/);
+  assert.match(ssr.html, /14 Oct 2026, 09:30/);
+  assert.match(
+    ssr.html,
+    /name="due"[^>]*value="2026-10-14T09:30"|value="2026-10-14T09:30"[^>]*name="due"/,
+  );
+  assert.match(ssr.html, /role="grid"/);
+  assert.match(ssr.html, /aria-selected="true"[^>]*data-date="2026-03-09"/);
   assert.match(ssr.html, /role="status"/);
   assert.match(ssr.html, /aria-hidden="true" class="env-skeleton"/);
   assert.match(ssr.html, /aria-label="envsemble"/);

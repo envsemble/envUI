@@ -46,6 +46,7 @@ import { AvatarGroupsFixture } from './AvatarGroups.js';
 import { RelativeTimesFixture } from './RelativeTimes.js';
 import { CopyButtonsFixture } from './CopyButtons.js';
 import { PaginationsFixture } from './Paginations.js';
+import { DateTimeFieldFixture } from './DateTimeFields.js';
 
 /** Fixtures that fill the viewport are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
@@ -277,6 +278,12 @@ export default function App() {
             <>
               <PaginationsFixture theme="light" />
               <PaginationsFixture theme="dark" />
+            </>
+          )}
+          {includes('date-time') && (
+            <>
+              <DateTimeFieldFixture theme="light" />
+              <DateTimeFieldFixture theme="dark" />
             </>
           )}
           {includes('menus') && (
