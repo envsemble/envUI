@@ -626,6 +626,10 @@ test.describe('PanelDock', () => {
     expect(notes.x + notes.width).toBeLessThanOrEqual(report.x);
     expect(notes.x - rootBox.x).toBeCloseTo(24, 0);
     expect(chip.x - rootBox.x).toBeCloseTo(24, 0);
+    // The header's title keeps the wider padding at its start, on the right.
+    const header = dock.panel('report').locator('.env-panel-dock-header');
+    await expect(header).toHaveCSS('padding-right', '24px');
+    await expect(header).toHaveCSS('padding-left', '12px');
     // An overflowing row keeps the newest panel in view at the inline end, on the left.
     await page.getByRole('button', { name: 'Open document light' }).click();
     await page.getByRole('button', { name: 'Open document light' }).click();

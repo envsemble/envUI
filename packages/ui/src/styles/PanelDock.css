@@ -195,7 +195,8 @@
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: start;
   column-gap: var(--space-3);
-  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-5);
+  padding-block: var(--space-3);
+  padding-inline: var(--space-5) var(--space-3);
   background: var(--env-panel-dock-panel-color, var(--color-dialog));
   color: var(--color-text-primary);
 }
