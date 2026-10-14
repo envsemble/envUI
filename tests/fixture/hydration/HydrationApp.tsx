@@ -131,6 +131,7 @@ export function HydrationApp() {
           value={tab}
           onValueChange={setTab}
           onClose={() => undefined}
+          onCloseAll={() => undefined}
         />
         <div style={{ blockSize: '12rem' }}>
           <Tree

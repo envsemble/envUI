@@ -64,6 +64,16 @@ export function DocumentTabsFixture({ theme }: { theme: ThemeValue }) {
             );
             record(`pin ${id}`);
           }}
+          // The dark strip leaves onCloseAll out, so it keeps the browser's own context menu.
+          onCloseAll={
+            theme === 'light'
+              ? () => {
+                  setTabs([]);
+                  setValue(null);
+                  record('close all');
+                }
+              : undefined
+          }
         />
         <div id={`document-panel-${theme}`} role="tabpanel" className="fixture-tab-panel">
           {value}
