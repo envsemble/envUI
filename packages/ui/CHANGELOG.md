@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- `AvatarGroup`: overlapping avatars for a set of people in the four `Avatar` sizes, with `max` avatars shown and an overflow chip that counts the rest, such as +2, and lists their names in its `Tooltip`, followed by N more (`formatMore`) for people counted in `total` but not passed. The chip is a tab stop, so the keyboard reaches the names too. The group is named with the count and every name by default, such as "3 people: Alex Morgan, Sam Lee, Priya Shah". `onPersonClick`, or a person's `href` through `LinkProvider`, makes each avatar a button or link named after the person, with the name in a tooltip, which comes in front of its neighbours on hover and keyboard focus. A ring in the color of the surface below separates the avatars: the envUI surface it sits on, such as a `Card`, or the canvas, and `--avatar-group-ring` for any other fill. A standard group is as tall as 2 rem compact controls; on touch screens pressable avatars keep 1.5 rem uncovered, and right-to-left text runs the avatars from the right.
+
 ## 0.5.0 — 2026-10-14
 
 Components for document-centred desktop applications and data-heavy dashboards: a file tree, editor tabs, quick open, context menus and a resizable sidebar; sortable, resizable tables, key figures, a heatmap, conversation messages and split views; with badges, notices and other everyday pieces.

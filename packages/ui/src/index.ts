@@ -61,6 +61,7 @@ export * from './forms/SearchField.js';
 export * from './feedback/Tooltip.js';
 export * from './feedback/Meter.js';
 export * from './content/Avatar.js';
+export * from './content/AvatarGroup.js';
 export * from './content/AnimatedNumber.js';
 export * from './content/Message.js';
 export * from './content/Stat.js';

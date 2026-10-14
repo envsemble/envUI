@@ -199,3 +199,13 @@ body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-p
 .fixture-row-action {
   position: relative;
 }
+/* An application's own fill, which the avatar group's ring matches through its custom property. */
+.fixture-avatar-surface {
+  --fixture-avatar-surface: hsl(40 90% 88%);
+  --avatar-group-ring: var(--fixture-avatar-surface);
+  padding: 1rem;
+  background: var(--fixture-avatar-surface);
+}
+[data-env-theme='dark'] .fixture-avatar-surface {
+  --fixture-avatar-surface: hsl(40 30% 20%);
+}

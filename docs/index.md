@@ -67,7 +67,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Keyboard keys](components/keyboard.md) — Key caps for shortcuts in text, menus and hints.
 - [Animated numbers](components/animated-number.md) — Counts that roll to their new value, so a change is noticed.
 - [Disclosure notes](components/disclosures.md) — Keep optional details collapsed until needed.
-- [Avatars](components/avatar.md) — A picture of a person or organization with a default picture or initials as fallback, and the avatar button.
+- [Avatars](components/avatar.md) — A picture of a person or organization with a default picture or initials as fallback, the avatar button and overlapping avatar groups.
 - [Messages](components/messages.md) — Conversation entries in a log: compact bubbles for your own messages, full-width content from others.
 - [Stats](components/stats.md) — Labelled key figures for dashboards, with a trend and detail, grouped in even columns.
 - [Heatmap](components/heatmap.md) — A calendar of daily values in color steps, with a tooltip and keyboard access for every day.
