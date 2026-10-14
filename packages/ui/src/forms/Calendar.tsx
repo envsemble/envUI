@@ -103,7 +103,8 @@ export function Calendar({
     if (selectedDay !== undefined) setActiveState(selectedDay);
   }
   const active = clampDay(activeState, minDay, maxDay);
-  // Without a chosen day the month is today's, so the server leaves the days to the browser.
+  // Without a chosen day the month is today's, so the server leaves the days to the browser, and
+  // with them whether the month buttons reach past min and max.
   const daysShown = hydrated || selectedDay !== undefined;
 
   const formats = useMemo(
@@ -176,9 +177,9 @@ export function Calendar({
   const first = monthStart(active);
   const shownMonth = dayParts(first).month;
   const gridStart = first - ((dayParts(first).weekday - firstWeekday + 7) % 7);
-  const previousAvailable = minDay === undefined || first - 1 >= minDay;
+  const previousAvailable = !daysShown || minDay === undefined || first - 1 >= minDay;
   const nextMonth = addMonths(first, 1);
-  const nextAvailable = maxDay === undefined || nextMonth <= maxDay;
+  const nextAvailable = !daysShown || maxDay === undefined || nextMonth <= maxDay;
   const weekdays = Array.from({ length: 7 }, (_, column) => {
     // 1970-01-04, day 3, was a Sunday.
     const sample = toUtcDate(3 + ((firstWeekday + column) % 7));

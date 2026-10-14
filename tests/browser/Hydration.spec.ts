@@ -191,6 +191,17 @@ test.describe('in another language and time zone than the server', () => {
     await expect(today.getByRole('grid', { name: 'Mai 2031' })).toBeVisible();
     await expect(today.locator('[aria-current="date"]')).toHaveAttribute('data-date', '2031-05-20');
     await expect(today.locator('td[tabindex="0"]')).toHaveAttribute('data-date', '2031-05-20');
+    // Its month buttons stop at min and max from the reader's month, not the server's.
+    const bounded = page.getByRole('group', { name: 'Hydrated bounded today' });
+    await expect(bounded.getByRole('grid', { name: 'Mai 2031' })).toBeVisible();
+    await expect(bounded.getByRole('button', { name: 'Next month' })).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
+    const previous = bounded.getByRole('button', { name: 'Previous month' });
+    await expect(previous).not.toHaveAttribute('aria-disabled');
+    await previous.click();
+    await expect(bounded.getByRole('grid', { name: 'April 2031' })).toBeVisible();
     await date.click();
     await page
       .getByRole('dialog', { name: 'Hydrated local date' })

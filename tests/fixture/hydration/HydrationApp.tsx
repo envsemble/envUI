@@ -150,6 +150,8 @@ export function HydrationApp() {
         <DateTimeField label="Hydrated local date" defaultValue="2026-03-17" />
         <Calendar aria-label="Hydrated local calendar" defaultValue="2026-03-17" />
         <Calendar aria-label="Hydrated today" />
+        {/* The server renders in March 2026, at its first month; the browser in a later one. */}
+        <Calendar aria-label="Hydrated bounded today" min="2026-03-01" max="2031-05-31" />
         <Dialog title="Hydrated dialog" trigger={<Button>Open hydrated dialog</Button>}>
           <p>Server-rendered content</p>
         </Dialog>
