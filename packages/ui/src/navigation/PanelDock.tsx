@@ -1083,16 +1083,22 @@ function readScrollPositions(rowElement: Element) {
 
 /**
  * Scrolls an element that a panel's content hides entirely, also beneath its sticky header, into
- * view; one that partly shows keeps the scroll positions people left.
+ * view; one that partly shows keeps the scroll positions people left. Only the content scrolls, not
+ * the page or another scrolling element around the dock.
  */
 function revealInContent(frame: HTMLElement, element: HTMLElement) {
   const content = frame.querySelector(':scope > .env-panel-dock-content');
   if (!content) return;
   const area = content.getBoundingClientRect();
-  const start = area.top + (parseFloat(getComputedStyle(content).scrollPaddingTop) || 0);
+  const style = getComputedStyle(content);
+  const start = area.top + (parseFloat(style.scrollPaddingTop) || 0);
+  const end = area.bottom - (parseFloat(style.scrollPaddingBottom) || 0);
   const target = element.getBoundingClientRect();
   if (target.bottom > start && target.top < area.bottom) return;
-  element.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  // The nearest edge: the element's top below the header, or its bottom at the content's end, as
+  // long as its top stays in view.
+  content.scrollTop +=
+    target.top < start ? target.top - start : Math.min(target.top - start, target.bottom - end);
 }
 
 function isShown(placement: Placement | undefined) {

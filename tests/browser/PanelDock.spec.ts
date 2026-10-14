@@ -987,6 +987,33 @@ test('a panel brought back shows the element its focus returns to', async ({ pag
   expect(await content.evaluate((element) => element.scrollTop)).toBe(100);
 });
 
+test('a panel brought back scrolls only its content to the element its focus returns to', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 1440, height: 300 });
+  await page.goto(dockFixture);
+  const dock = dockOf(page);
+  const report = dock.panel('report');
+  const content = report.locator(':scope > .env-panel-dock-content');
+  const draft = report.getByRole('textbox', { name: 'Draft of Quarterly report light' });
+  const chip = dock.chips.getByRole('button', { name: 'Show Quarterly report' });
+  await draft.focus();
+  await content.evaluate((element) => (element.scrollTop = element.scrollHeight));
+  await page.keyboard.press('Alt+KeyM');
+  await expect(chip).toBeFocused();
+  // The window shows only the bottom of the dock, below where the draft comes back.
+  await dock.frame.evaluate((element) =>
+    window.scrollTo(0, element.getBoundingClientRect().bottom + window.scrollY - innerHeight),
+  );
+  const pageTop = await page.evaluate(() => window.scrollY);
+  await page.keyboard.press('Enter');
+  await expect(draft).toBeFocused();
+  // The content scrolls to the draft; the page stays where people left it.
+  await expect.poll(() => content.evaluate((element) => element.scrollTop)).toBeLessThan(200);
+  expect(await page.evaluate(() => window.scrollY)).toBe(pageTop);
+});
+
 test('open panels leave the controls of a maximized one in view after the dock stacks and widens', async ({
   page,
 }) => {
