@@ -1517,6 +1517,28 @@ test('a dock that minimizes keeps the panel that holds focus', async ({ page }) 
   await expect(field).toHaveValue('Hello');
 });
 
+test('a dock that minimizes renders at most once a frame as it resizes', async ({ page }) => {
+  await page.goto(dockFixture);
+  const scope = page.getByTestId('minimizing-dock-light');
+  await expect.poll(rowOf(scope).ids).toEqual(['review', 'retro']);
+  // Resized every frame, without a panel to minimize or open, the dock renders once a frame.
+  const result = await scope.evaluate(async (frame) => {
+    const commits = () => Number(frame.dataset.commits);
+    const next = () => new Promise((resolve) => requestAnimationFrame(resolve));
+    await next();
+    const before = commits();
+    for (let count = 1; count <= 30; count++) {
+      frame.style.inlineSize = `${50 + (count % 4) / 2}rem`;
+      await next();
+    }
+    await next();
+    await next();
+    return commits() - before;
+  });
+  expect(result).toBeGreaterThan(0);
+  expect(result).toBeLessThanOrEqual(32);
+});
+
 test('a dock that minimizes asks for the next panel when the application keeps one open', async ({
   page,
 }) => {

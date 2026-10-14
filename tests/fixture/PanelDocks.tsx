@@ -1,5 +1,6 @@
 import {
   memo,
+  Profiler,
   startTransition,
   useEffect,
   useLayoutEffect,
@@ -364,9 +365,12 @@ function MinimizingDock({
   const [panels, setPanels] = useState(initial);
   const [log, setLog] = useState<string[]>([]);
   const [narrowed, setNarrowed] = useState(false);
+  const frame = useRef<HTMLDivElement>(null);
+  const commits = useRef(0);
   return (
     <>
       <div
+        ref={frame}
         className={`fixture-dock-frame ${className}`}
         data-testid={`${name}-dock-${theme}`}
         style={narrowed ? { inlineSize: narrowTo } : undefined}
@@ -379,46 +383,52 @@ function MinimizingDock({
           });
         }}
       >
-        <PanelDock
-          {...labels}
-          panels={panels}
-          overflow="minimize"
-          onModeChange={(id, mode) => {
-            setLog((current) => [...current, `${id} ${mode}`]);
-            if (id === keeps && mode === 'minimized') return;
-            const answer = () =>
-              setPanels((current) =>
-                current.map((panel) => (panel.id === id ? { ...panel, mode } : panel)),
-              );
-            if (answerDelay === undefined) answer();
-            else setTimeout(() => startTransition(answer), answerDelay);
-            if (reopensAfter === undefined || mode !== 'minimized') return;
-            setTimeout(() => {
-              setLog((current) => [...current, `${id} reopened`]);
-              setPanels((current) =>
-                current.map((panel) => (panel.id === id ? { ...panel, mode: 'open' } : panel)),
-              );
-            }, reopensAfter);
-          }}
-          onActivate={
-            activates
-              ? (id) =>
-                  setPanels((current) =>
-                    current.map((panel) => ({ ...panel, active: panel.id === id })),
-                  )
-              : undefined
-          }
-          onClose={(id) => setPanels((current) => current.filter((panel) => panel.id !== id))}
+        {/* Counts the dock's commits on its frame, without rendering anything for them. */}
+        <Profiler
+          id={name}
+          onRender={() => frame.current?.setAttribute('data-commits', String(++commits.current))}
         >
-          {(panel) => (
-            <>
-              <PanelDockHeader title={panel.title} />
-              <div className="fixture-dock-body">
-                <Textarea label={`Notes of ${panel.title}`} />
-              </div>
-            </>
-          )}
-        </PanelDock>
+          <PanelDock
+            {...labels}
+            panels={panels}
+            overflow="minimize"
+            onModeChange={(id, mode) => {
+              setLog((current) => [...current, `${id} ${mode}`]);
+              if (id === keeps && mode === 'minimized') return;
+              const answer = () =>
+                setPanels((current) =>
+                  current.map((panel) => (panel.id === id ? { ...panel, mode } : panel)),
+                );
+              if (answerDelay === undefined) answer();
+              else setTimeout(() => startTransition(answer), answerDelay);
+              if (reopensAfter === undefined || mode !== 'minimized') return;
+              setTimeout(() => {
+                setLog((current) => [...current, `${id} reopened`]);
+                setPanels((current) =>
+                  current.map((panel) => (panel.id === id ? { ...panel, mode: 'open' } : panel)),
+                );
+              }, reopensAfter);
+            }}
+            onActivate={
+              activates
+                ? (id) =>
+                    setPanels((current) =>
+                      current.map((panel) => ({ ...panel, active: panel.id === id })),
+                    )
+                : undefined
+            }
+            onClose={(id) => setPanels((current) => current.filter((panel) => panel.id !== id))}
+          >
+            {(panel) => (
+              <>
+                <PanelDockHeader title={panel.title} />
+                <div className="fixture-dock-body">
+                  <Textarea label={`Notes of ${panel.title}`} />
+                </div>
+              </>
+            )}
+          </PanelDock>
+        </Profiler>
       </div>
       {narrowTo !== undefined && (
         <button type="button" onClick={() => setNarrowed((value) => !value)}>

@@ -249,9 +249,9 @@ export function PanelDock<T extends PanelDockPanel>({
   const atRowEnd = useRef(true);
   const previousRow = useRef<readonly string[]>([]);
   const previousChips = useRef<readonly string[]>([]);
-  const [stacked, setStacked] = useState(false);
+  const [stacked, setStacked] = useChangingState(false);
   const [measurements, setMeasurements] = useState<Measurements>();
-  const [overflowing, setOverflowing] = useState(false);
+  const [overflowing, setOverflowing] = useChangingState(false);
   // Heights people chose for panels without a height of their own.
   const [chosenHeights, setChosenHeights] = useState<ReadonlyMap<string, number>>(() => new Map());
   const [, refresh] = useReducer((count: number) => count + 1, 0);
@@ -554,17 +554,25 @@ export function PanelDock<T extends PanelDockPanel>({
     };
     measure();
     if (typeof ResizeObserver === 'undefined') return;
-    // A dock that minimizes renders again as it resizes, also where nothing it shows changed, so
-    // that its row's effect fits the panels: the application's answer to a change asked there
-    // renders at once, before the dock stops awaiting it.
+    // A dock that minimizes renders again as it resizes, once a frame however often the observer
+    // reports, also where nothing it shows changed, so that its row's effect fits the panels: the
+    // application's answer to a change asked there renders at once.
+    let frameRequest = 0;
     const observer = new ResizeObserver(() => {
       measure();
-      if (overflow === 'minimize') refresh();
+      if (overflow !== 'minimize' || frameRequest !== 0) return;
+      frameRequest = requestAnimationFrame(() => {
+        frameRequest = 0;
+        refresh();
+      });
     });
     observer.observe(element);
     observer.observe(threshold);
     if (strip.current) observer.observe(strip.current);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(frameRequest);
+    };
     // Stacking changes the row's padding above open panels in front of a maximized one, and with it
     // their room, without resizing anything the observer watches.
   }, [stackBelow, hasChips, filled, stacked, overflow]);
@@ -754,6 +762,21 @@ export function PanelDock<T extends PanelDockPanel>({
       />
     </div>
   );
+}
+
+/**
+ * A state whose setter renders only for a value other than the one it set last: setting a state to
+ * the value it has can still render a component again, as measurements on every resize would.
+ */
+function useChangingState<T>(initial: T) {
+  const [value, setValue] = useState(initial);
+  const last = useRef(initial);
+  const change = useCallback((next: T) => {
+    if (Object.is(last.current, next)) return;
+    last.current = next;
+    setValue(next);
+  }, []);
+  return [value, change] as const;
 }
 
 /**
