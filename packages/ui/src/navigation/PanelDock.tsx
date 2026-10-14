@@ -570,6 +570,16 @@ function PanelFrame({
     [id, mode, stacked, changeMode, close],
   );
 
+  // The top edge resizes only an open panel in the row. When it goes during a drag, as when the
+  // panel is maximized or the dock stacks, it takes its pointer events with it: the drag ends
+  // there, without a new height, as a cancelled one does.
+  const resizable = placement === 'row' && bounds !== undefined;
+  useLayoutEffect(() => {
+    if (resizable || !drag.current) return;
+    drag.current = null;
+    setPreview(undefined);
+  }, [resizable]);
+
   function clampHeight(value: number) {
     return bounds ? clampRound(value, bounds.min, bounds.max) : Math.round(value);
   }
@@ -670,7 +680,7 @@ function PanelFrame({
       // Focus moving within the panel, or into a popup it opened, is followed by its focus event.
       onBlur={() => onFocusWithin(false)}
     >
-      {placement === 'row' && bounds && shownHeight !== undefined && (
+      {resizable && shownHeight !== undefined && (
         <div
           role="separator"
           aria-orientation="horizontal"

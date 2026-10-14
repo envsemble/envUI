@@ -760,3 +760,49 @@ test('the catalogue shows open, minimized and maximized panels whose drafts surv
   await expect(draft).toHaveValue('Ask for the regional numbers.');
   expect(errors).toEqual([]);
 });
+
+test('a drag ends when the application maximizes its panel or the dock stacks meanwhile', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const dock = dockOf(page);
+  const report = dock.panel('report');
+  const handle = report.getByRole('separator', { name: 'Resize Quarterly report' });
+  const content = report.locator(':scope > .env-panel-dock-content');
+  const start = Number(await handle.getAttribute('aria-valuenow'));
+  const dragDown = async () => {
+    const edge = await box(handle);
+    await page.mouse.move(edge.x + edge.width / 2, edge.y + edge.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(edge.x + edge.width / 2, edge.y + edge.height / 2 + 60, { steps: 3 });
+    await expect(report).toHaveAttribute('data-resizing', 'true');
+  };
+
+  // The application's shortcut maximizes the panel while its edge is held; focus stays in the
+  // draft, as a drag leaves focus where it is.
+  await report.getByRole('textbox', { name: 'Draft of Quarterly report light' }).focus();
+  await dragDown();
+  await page.keyboard.press('Alt+KeyX');
+  await expect(report).toHaveAttribute('data-mode', 'maximized');
+  await expect(report).not.toHaveAttribute('data-resizing');
+  await expect(content).toHaveCSS('pointer-events', 'auto');
+  await page.mouse.up();
+  await page.keyboard.press('Alt+KeyO');
+  await expect(report).toHaveAttribute('data-mode', 'open');
+  // The drag ended without a height, as a cancelled one does.
+  await expect(handle).toHaveAttribute('aria-valuenow', String(start));
+  expect((await box(report)).height).toBeCloseTo(start, 0);
+
+  // The dock stacks while the edge is held.
+  await dragDown();
+  await dock.frame.evaluate((element) => (element.style.inlineSize = '24rem'));
+  await expect(dock.root).toHaveAttribute('data-stacked', 'true');
+  await expect(report).not.toHaveAttribute('data-resizing');
+  await expect(content).toHaveCSS('pointer-events', 'auto');
+  await page.mouse.up();
+  await dock.frame.evaluate((element) => (element.style.inlineSize = ''));
+  await expect(dock.root).not.toHaveAttribute('data-stacked');
+  await expect(handle).toHaveAttribute('aria-valuenow', String(start));
+  expect((await logOf(page)).filter((entry) => entry.startsWith('height'))).toEqual([]);
+});
