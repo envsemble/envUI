@@ -680,40 +680,87 @@ test.describe('PanelDock', () => {
     await page.goto(dockFixture);
     const dock = dockOf(page);
     const report = dock.panel('report');
-    const animation = (locator: Locator) =>
-      locator.evaluate((element) => {
-        const style = getComputedStyle(element);
-        return [style.animationName, style.animationDuration];
-      });
-    expect(await animation(report)).toEqual(['env-panel-dock-rise', '0.24s']);
-    await report.getByRole('button', { name: 'Maximize' }).click();
-    expect(await animation(report)).toEqual(['env-panel-dock-grow', '0.24s']);
-    await report.getByRole('button', { name: 'Minimize' }).click();
-    const chip = dock.chips.locator('li[data-panel-id="report"]');
-    expect(await animation(chip)).toEqual(['env-panel-dock-chip-rise', '0.16s']);
-    // A panel brought back starts its entrance again.
-    const started = await chip.getByRole('button', { name: 'Show Quarterly report' }).evaluate(
-      (button) =>
-        new Promise<string[]>((resolve) => {
-          const panel = document.querySelector<HTMLElement>(
-            '[data-testid="dock-region-light"] section[data-panel-id="report"]',
-          )!;
-          button.click();
-          requestAnimationFrame(() =>
-            resolve(
-              panel.getAnimations().map((running) => (running as CSSAnimation).animationName),
+    const light = '[data-testid="dock-region-light"]';
+    // Waits for the entrances running in the dock to end, then presses a button and reads, in the
+    // next frame, the animations each panel and chip started.
+    const entrances = (button: Locator) =>
+      button.evaluate(async (element, dock) => {
+        const targets = () => [
+          ...document.querySelectorAll<HTMLElement>(`${dock} [data-panel-id]`),
+        ];
+        const frame = () => new Promise((resolve) => requestAnimationFrame(resolve));
+        await frame();
+        await frame();
+        await Promise.allSettled(
+          targets().flatMap((target) => target.getAnimations().map(({ finished }) => finished)),
+        );
+        // Animations settle their promises before they send their end events.
+        await frame();
+        (element as HTMLElement).click();
+        await frame();
+        return targets().flatMap((target) =>
+          target
+            .getAnimations()
+            .map(
+              (animation) =>
+                `${target.tagName === 'LI' ? 'chip' : 'panel'} ${target.dataset.panelId} ${(animation as CSSAnimation).animationName} ${animation.effect!.getTiming().duration}`,
             ),
-          );
-        }),
-    );
-    expect(started).toEqual(['env-panel-dock-rise']);
+        );
+      }, light);
+    const open = page.getByRole('button', { name: 'Open document light' });
+    expect(await entrances(open)).toEqual(['panel extra-1 env-panel-dock-rise 240']);
+    expect(await entrances(report.getByRole('button', { name: 'Maximize' }))).toEqual([
+      'panel report env-panel-dock-grow 240',
+    ]);
+    expect(await entrances(report.getByRole('button', { name: 'Minimize' }))).toEqual([
+      'chip report env-panel-dock-chip-rise 160',
+    ]);
+    // A panel brought back starts its entrance again.
+    expect(
+      await entrances(dock.chips.getByRole('button', { name: 'Show Quarterly report' })),
+    ).toEqual(['panel report env-panel-dock-rise 240']);
+    // A reorder moves the panels and chips without their entrances.
+    const reorder = await report
+      .getByRole('textbox', { name: /^Draft of/ })
+      .evaluate(async (field, dock) => {
+        const targets = () => [
+          ...document.querySelectorAll<HTMLElement>(`${dock} [data-panel-id]`),
+        ];
+        const frame = () => new Promise((resolve) => requestAnimationFrame(resolve));
+        await frame();
+        await frame();
+        await Promise.allSettled(
+          targets().flatMap((target) => target.getAnimations().map(({ finished }) => finished)),
+        );
+        // Animations settle their promises before they send their end events.
+        await frame();
+        field.dispatchEvent(
+          new KeyboardEvent('keydown', { key: 'r', code: 'KeyR', altKey: true, bubbles: true }),
+        );
+        await frame();
+        return targets().flatMap((target) =>
+          target.getAnimations().map((animation) => (animation as CSSAnimation).animationName),
+        );
+      }, light);
+    await expect
+      .poll(() =>
+        dock.row.evaluate((row) =>
+          [...row.querySelectorAll<HTMLElement>(':scope > section')].map(
+            ({ dataset }) => dataset.panelId,
+          ),
+        ),
+      )
+      .toEqual(['extra-1', 'budget', 'notes', 'report']);
+    expect(reorder).toEqual([]);
 
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    expect(await animation(report)).toEqual(['env-motion-fade-in', '0.16s']);
-    await report.getByRole('button', { name: 'Maximize' }).click();
-    expect(await animation(report)).toEqual(['env-panel-dock-fade-in', '0.16s']);
-    await report.getByRole('button', { name: 'Minimize' }).click();
-    expect(await animation(chip)).toEqual(['env-motion-fade-in', '0.16s']);
+    expect(await entrances(open)).toEqual(['panel extra-2 env-motion-fade-in 160']);
+    expect(await entrances(report.getByRole('button', { name: 'Maximize' }))).toEqual([
+      'panel report env-panel-dock-fade-in 160',
+    ]);
+    expect(await entrances(report.getByRole('button', { name: 'Minimize' }))).toEqual([
+      'chip report env-motion-fade-in 160',
+    ]);
   });
 });
 

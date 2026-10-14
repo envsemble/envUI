@@ -62,12 +62,14 @@
 }
 
 /* Docked panels and their chips fade in where they show; a panel that comes to fill the region
-   fades in afresh, also from the row. Without a reduced-motion preference they also move (below). */
-.env-panel-dock-panel[data-placement='row'],
-.env-panel-dock-chip {
+   fades in afresh, also from the row. Without a reduced-motion preference they also move (below).
+   PanelDock marks an entrance with data-entering until it ends, so a reorder, which moves the
+   elements, does not play it again. */
+.env-panel-dock-panel[data-entering][data-placement='row'],
+.env-panel-dock-chip[data-entering] {
   animation: env-motion-fade-in var(--motion-duration-medium) var(--motion-ease-enter);
 }
-.env-panel-dock-panel[data-placement='fill'] {
+.env-panel-dock-panel[data-entering][data-placement='fill'] {
   animation: env-panel-dock-fade-in var(--motion-duration-medium) var(--motion-ease-enter);
 }
 @keyframes env-panel-dock-fade-in {
@@ -175,13 +177,13 @@
 
   /* Docked panels rise from the bottom edge into the row, a panel grows into the region it fills,
      and chips rise into their strip. */
-  .env-panel-dock-panel[data-placement='row'] {
+  .env-panel-dock-panel[data-entering][data-placement='row'] {
     animation: env-panel-dock-rise var(--motion-duration-slow) var(--motion-ease-enter);
   }
-  .env-panel-dock-panel[data-placement='fill'] {
+  .env-panel-dock-panel[data-entering][data-placement='fill'] {
     animation: env-panel-dock-grow var(--motion-duration-slow) var(--motion-ease-enter);
   }
-  .env-panel-dock-chip {
+  .env-panel-dock-chip[data-entering] {
     animation: env-panel-dock-chip-rise var(--motion-duration-medium) var(--motion-ease-enter);
   }
 

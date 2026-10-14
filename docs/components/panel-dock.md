@@ -151,7 +151,7 @@ A panel's content mounts when the panel first appears and stays mounted until it
 - Panels are labelled regions, not dialogs: they never trap focus, and the page stays usable around them. In the keyboard order, each panel's resize handle comes before its content, the header's actions before its window controls, and the chips follow the panels; every chip is two buttons in a list.
 - PanelDockHeader makes its controls compact, like a title bar's, and gives icon-only text buttons the quiet icon color of the window controls. Put the application's actions in actions, such as Edit and a Menu, beside the window controls. A long title wraps rather than truncating: keep it short and put detail in meta.
 - In right-to-left text the dock gathers at the left, its inline end, and the newest panel stays at the left edge of an overflowing row.
-- Panels rise into the row from the bottom edge, a maximized or stacked panel grows into the region, and chips rise into their strip, briefly. With reduced motion, they only fade in.
+- Panels rise into the row from the bottom edge, a maximized or stacked panel grows into the region, and chips rise into their strip, briefly. With reduced motion, they only fade in. A reorder moves them without their entrance, and panels rendered on a server are in place without one.
 
 TypeScript declarations provide the complete public API.
 
