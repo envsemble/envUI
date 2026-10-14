@@ -189,3 +189,42 @@ test('documentation demonstrates connected buttons through the public API', asyn
   await expect(page.getByRole('group', { name: 'Item actions' })).toBeVisible();
   await expect(page.getByRole('group', { name: 'Quick actions' })).toBeVisible();
 });
+
+test('a full-width group fills its container, where its labelled button takes the room', async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/?fixture=button-groups`);
+  for (const theme of ['light', 'dark']) {
+    const sidebar = page.getByTestId(`button-groups-${theme}`).getByTestId('sidebar');
+    const row = sidebar.getByRole('group', { name: 'Start a document' });
+    const column = sidebar.getByRole('group', { name: 'Sidebar actions' });
+    const box = async (locator: Locator) => (await locator.boundingBox())!;
+    const [sidebarBox, rowBox, columnBox] = await Promise.all([
+      box(sidebar),
+      box(row),
+      box(column),
+    ]);
+    expect(rowBox.width).toBeCloseTo(sidebarBox.width, 0);
+    expect(columnBox.width).toBeCloseTo(sidebarBox.width, 0);
+    // The chevron keeps its square size, and the labelled button takes the rest of the row.
+    const [create, more] = await Promise.all([
+      box(row.getByRole('button', { name: 'New document' })),
+      box(row.getByRole('button', { name: 'More ways to start' })),
+    ]);
+    expect(more.width).toBeCloseTo(40, 0);
+    expect(more.height).toBeCloseTo(create.height, 0);
+    expect(create.width + more.width + 2).toBeCloseTo(rowBox.width, 0);
+    for (const button of await column.getByRole('button').all())
+      expect((await box(button)).width).toBeCloseTo(columnBox.width, 0);
+    // Icon-only buttons alone share the row evenly.
+    const tools = sidebar.getByRole('group', { name: 'Sidebar tools' });
+    const widths = await tools
+      .getByRole('button')
+      .evaluateAll((buttons) => buttons.map((button) => button.getBoundingClientRect().width));
+    expect(Math.max(...widths) - Math.min(...widths)).toBeLessThan(1);
+    expect(widths.reduce((sum, width) => sum + width, 0) + 2 * (widths.length - 1)).toBeCloseTo(
+      (await box(tools)).width,
+      0,
+    );
+  }
+});

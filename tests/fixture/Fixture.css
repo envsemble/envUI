@@ -161,6 +161,12 @@ body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-p
 .fixture-segments-narrow {
   inline-size: 13rem;
 }
+/* A sidebar's width, which full-width groups fill. */
+.fixture-sidebar {
+  display: grid;
+  gap: var(--space-3);
+  inline-size: 16rem;
+}
 .fixture-segments-wide {
   inline-size: min(100%, 30rem);
 }

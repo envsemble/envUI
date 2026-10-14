@@ -145,6 +145,7 @@ import { Settings } from '@envsemble/envui/icons/Settings';
 | Name                         | Contract                                                                           |
 | ---------------------------- | ---------------------------------------------------------------------------------- |
 | orientation                  | horizontal (default) or vertical                                                   |
+| fullWidth                    | Fill the container: labelled buttons in a row share the room icon-only ones leave  |
 | children                     | Direct Button or IconButton children; all variants and native button links can mix |
 | aria-label / aria-labelledby | Accessible name for the related actions                                            |
 | Native div props             | ref, className, style, role and accessible attributes; role defaults to group      |
@@ -162,6 +163,7 @@ import { Settings } from '@envsemble/envui/icons/Settings';
 - Use ButtonGroup for connected rows or columns: the gap is 0.125 rem and adjoining corners use the shared 0.5 rem row inner radius. Each end keeps its button variant’s outer corners; a single button keeps all its normal corners.
 - Prefer the same button variant within a connected group. Mix variants when related actions need different emphasis.
 - ButtonGroup accepts any mixture of labeled, icon-only, leading/trailing icon and native link buttons. Horizontal buttons share a height; vertical buttons fill the group width. Labels wrap, and groups scroll locally if their controls cannot fit. Hidden buttons do not determine the end corners.
+- With fullWidth a group fills its container, such as a primary action and the chevron of its menu across a sidebar: in a row, labelled buttons share the room the icon-only ones leave, which keep their square size, and a row of icon-only buttons shares it evenly; in a column every button is as wide as the group.
 - Give related actions an accessible group name. ButtonGroup retains ordinary <kbd>Tab</kbd> navigation and each button’s native activation, focus and disabled behavior.
 - Secondary buttons use the neutral row fill and label color, without a border. On row fills (grouped rows, row-tone cards and card action strips) they shift from that fill by the control lightness rule, so they stay visible. Outlined buttons retain their border and link color.
 - Quiet buttons are for actions in an application's chrome, such as a sidebar toggle or the actions of a toolbar or a section inside a surface. The icon, or label, takes the quiet icon color, darkens to the text color over a state layer on hover and press, and shows the shared focus ring, in both themes; there is no fill or border. Use IconButton with variant="quiet" for an icon-only one, and Button for one with a label, which reads at 4.5:1 on the canvas, panes and rows.

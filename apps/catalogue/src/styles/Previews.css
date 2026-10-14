@@ -310,6 +310,10 @@
 .docs-dock-body {
   padding: 0 var(--space-5) var(--space-5);
 }
+/* A sidebar's width, which a full-width button group fills. */
+.docs-sidebar-sample {
+  inline-size: min(100%, 16rem);
+}
 /* As narrow as a sidebar, too narrow for two long labels side by side. */
 .docs-narrow-segments {
   inline-size: min(100%, 13rem);

@@ -23,6 +23,7 @@ import { Check } from '@envsemble/envui/icons/Check';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 import { Close } from '@envsemble/envui/icons/Close';
 import { Delete } from '@envsemble/envui/icons/Delete';
+import { ExpandMore } from '@envsemble/envui/icons/ExpandMore';
 import { Menu } from '@envsemble/envui/icons/Menu';
 import { Settings } from '@envsemble/envui/icons/Settings';
 import { Example, Specimen, SpecimenGrid } from './Example';
@@ -285,6 +286,17 @@ export function ButtonsPreview() {
       </Example>
       <OutcomeExamples />
       <CopyExamples />
+      <Example
+        title="Fill a sidebar"
+        caption="With fullWidth a group fills its container: the labelled button takes the room the menu's chevron leaves."
+      >
+        <div className="docs-sidebar-sample">
+          <ButtonGroup fullWidth aria-label="Start a document">
+            <Button startIcon={<Add />}>New document</Button>
+            <IconButton variant="primary" icon={<ExpandMore />} aria-label="More ways to start" />
+          </ButtonGroup>
+        </div>
+      </Example>
       <Example title="Mixed styles" caption="Different button styles can also share one group.">
         <ButtonGroup aria-label="Mixed actions">
           <Button startIcon={<ChevronRight />}>Continue</Button>
