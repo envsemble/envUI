@@ -878,3 +878,36 @@ test('a control that takes focus beneath the sticky header comes out below it', 
   const [headerBox, tipBox] = await Promise.all([box(header), box(tip)]);
   expect(tipBox.y).toBeGreaterThanOrEqual(headerBox.y + headerBox.height);
 });
+
+test('a panel brought back shows the element its focus returns to', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const dock = dockOf(page);
+  const report = dock.panel('report');
+  const content = report.locator(':scope > .env-panel-dock-content');
+  const header = report.locator('.env-panel-dock-header');
+  const draft = report.getByRole('textbox', { name: 'Draft of Quarterly report light' });
+  const chip = dock.chips.getByRole('button', { name: 'Show Quarterly report' });
+  // The content scrolls on, leaving the focused draft out of sight.
+  await draft.focus();
+  await content.evaluate((element) => (element.scrollTop = element.scrollHeight));
+  await page.keyboard.press('Alt+KeyM');
+  await expect(chip).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(draft).toBeFocused();
+  const [contentBox, headerBox, draftBox] = await Promise.all([
+    box(content),
+    box(header),
+    box(draft),
+  ]);
+  expect(draftBox.y + draftBox.height).toBeGreaterThan(headerBox.y + headerBox.height);
+  expect(draftBox.y).toBeLessThan(contentBox.y + contentBox.height);
+
+  // Where some of it shows, the scroll position people left stays.
+  await content.evaluate((element) => (element.scrollTop = 100));
+  await page.keyboard.press('Alt+KeyM');
+  await expect(chip).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(draft).toBeFocused();
+  expect(await content.evaluate((element) => element.scrollTop)).toBe(100);
+});

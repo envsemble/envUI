@@ -297,7 +297,10 @@ export function PanelDock<T extends PanelDockPanel>({
     const last = lastFocused.current.get(id);
     if (last?.isConnected && frame.contains(last)) {
       last.focus({ preventScroll: true });
-      if (last.ownerDocument.activeElement === last) return;
+      if (last.ownerDocument.activeElement === last) {
+        revealInContent(frame, last);
+        return;
+      }
     }
     frame.focus({ preventScroll: true });
   }
@@ -831,6 +834,20 @@ function readScrollPositions(rowElement: Element) {
     if (element.scrollTop !== 0 || element.scrollLeft !== 0)
       positions.push({ element, top: element.scrollTop, left: element.scrollLeft });
   return positions;
+}
+
+/**
+ * Scrolls an element that a panel's content hides entirely, also beneath its sticky header, into
+ * view; one that partly shows keeps the scroll positions people left.
+ */
+function revealInContent(frame: HTMLElement, element: HTMLElement) {
+  const content = frame.querySelector(':scope > .env-panel-dock-content');
+  if (!content) return;
+  const area = content.getBoundingClientRect();
+  const start = area.top + (parseFloat(getComputedStyle(content).scrollPaddingTop) || 0);
+  const target = element.getBoundingClientRect();
+  if (target.bottom > start && target.top < area.bottom) return;
+  element.scrollIntoView({ block: 'nearest', inline: 'nearest' });
 }
 
 function isShown(placement: Placement | undefined) {
