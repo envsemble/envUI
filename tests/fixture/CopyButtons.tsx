@@ -51,6 +51,16 @@ export function CopyButtonsFixture({ theme }: { theme: ThemeValue }) {
           <CopyButton value="Plan address" aria-label={`Copy plan ${theme}`} onCopy={setCopied} />
         </Tooltip>
         <CopyButton value="Unavailable" aria-label={`Copy unavailable ${theme}`} disabled />
+        {/* The text never arrives. */}
+        <CopyButton
+          value={() =>
+            new Promise<string>((_, reject) =>
+              setTimeout(() => reject(new Error('The link is gone.')), 300),
+            )
+          }
+          aria-label={`Copy gone ${theme}`}
+          onCopy={setCopied}
+        />
       </div>
       <output data-testid="copied">{copied}</output>
       <output data-testid="presses">{presses}</output>

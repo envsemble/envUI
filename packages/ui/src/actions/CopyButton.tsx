@@ -183,6 +183,9 @@ async function writeToClipboard(
     // let its text follow.
     try {
       const blob = resolved.then((text) => new Blob([text], { type: 'text/plain' }));
+      // A clipboard that refuses at once leaves the item behind; a text that then fails is
+      // reported once, below, not again as an unhandled rejection of the item's blob.
+      blob.catch(() => undefined);
       await clipboard.write([new ClipboardItem({ 'text/plain': blob })]);
       return await resolved;
     } catch {

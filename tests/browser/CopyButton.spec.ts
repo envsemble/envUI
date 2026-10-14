@@ -5,12 +5,20 @@ const fixture = `${fixtureUrl}/?fixture=copy-buttons`;
 
 /**
  * Records what the page writes to the clipboard. available: the asynchronous Clipboard API works;
- * selection: copying a selection works, as the fallback; neither: nothing can be copied.
+ * selection: copying a selection works, as the fallback; neither: nothing can be copied; refused:
+ * the Clipboard API refuses every write at once. It also records unhandled rejections.
  */
-async function recordClipboard(page: Page, mode: 'available' | 'selection' | 'neither') {
+async function recordClipboard(
+  page: Page,
+  mode: 'available' | 'selection' | 'neither' | 'refused',
+) {
   await page.addInitScript((mode) => {
     const writes: string[] = [];
     (window as unknown as { clipboardWrites: string[] }).clipboardWrites = writes;
+    const unhandled: string[] = [];
+    (window as unknown as { unhandledRejections: string[] }).unhandledRejections = unhandled;
+    addEventListener('unhandledrejection', (event) => unhandled.push(String(event.reason)));
+    const refuse = () => Promise.reject(new DOMException('Write refused', 'NotAllowedError'));
     Object.defineProperty(navigator, 'clipboard', {
       configurable: true,
       value:
@@ -22,7 +30,9 @@ async function recordClipboard(page: Page, mode: 'available' | 'selection' | 'ne
                   writes.push(await (await item.getType('text/plain')).text());
               },
             }
-          : undefined,
+          : mode === 'refused'
+            ? { writeText: refuse, write: refuse }
+            : undefined,
     });
     document.execCommand = (command: string) => {
       if (command !== 'copy' || mode !== 'selection') return false;
@@ -271,4 +281,23 @@ test('a disabled icon-only copy button still shows its name on hover and focus',
   await expect(tooltip).toHaveCount(0);
   await target.focus();
   await expect(tooltip).toHaveText('Copy unavailable light');
+});
+
+test('a promised text that never arrives fails quietly after the clipboard refused it', async ({
+  page,
+}) => {
+  await recordClipboard(page, 'refused');
+  await page.goto(fixture);
+  const scope = page.getByTestId('copy-buttons-light');
+  const button = scope.getByRole('button', { name: 'Copy gone light' });
+  await button.click();
+  await expect(page.locator(shownTooltip)).toHaveText('Couldn’t copy');
+  await expect(button).toHaveAttribute('data-failed', '');
+  await expect(statusOf(button)).toHaveText('Couldn’t copy');
+  await page.waitForTimeout(100);
+  expect(
+    await page.evaluate(
+      () => (window as unknown as { unhandledRejections: string[] }).unhandledRejections,
+    ),
+  ).toEqual([]);
 });
