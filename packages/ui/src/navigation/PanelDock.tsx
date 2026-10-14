@@ -342,7 +342,7 @@ export function PanelDock<T extends PanelDockPanel>({
    * not asked for again until the region changes size.
    */
   function fitRow(rowElement: HTMLElement) {
-    if (rowElement.getClientRects().length === 0) return;
+    if (overflow !== 'minimize' || rowElement.getClientRects().length === 0) return;
     const room = rowRoom(rowElement);
     const asked = awaiting.current;
     if (asked) {
@@ -356,6 +356,7 @@ export function PanelDock<T extends PanelDockPanel>({
         if (asked.mode === 'minimized') keptOpen.current.set(asked.id, room.size);
       } else if (asked.mode === 'open') minimizedForRoom.current.delete(asked.id);
       awaiting.current = null;
+      clearTimeout(answerTimer.current);
     }
     for (const [id, size] of keptOpen.current)
       if (!rowIds.includes(id) || Math.abs(size - room.size) >= 1) keptOpen.current.delete(id);
@@ -367,14 +368,19 @@ export function PanelDock<T extends PanelDockPanel>({
       minimizedForRoom.current.delete(id);
       if (mode === 'open') keptOpen.current.set(id, room.size);
     }
-    if (overflow !== 'minimize') return;
     // A dock that stacks, or is about to as it first shows or narrows, also in the update that
     // narrows it, as the application's own state can, has no row to fit.
     if (stacked || stacksNow()) return;
     const inRow = panels.filter((panel) => placements.get(panel.id) === 'row');
-    const widths = new Map(inRow.map(({ id }) => [id, minimumWidth(frameOf(id))]));
+    // Widths are read only where a decision needs them, as reading styles takes time.
+    const widths = new Map<string, number>();
+    const widthOf = (id: string) => {
+      const width = widths.get(id) ?? minimumWidth(frameOf(id));
+      widths.set(id, width);
+      return width;
+    };
     const fit = (list: readonly T[], more: readonly number[] = []) =>
-      fitsInRow(room, [...list.map(({ id }) => widths.get(id) ?? 0), ...more]);
+      fitsInRow(room, [...list.map(({ id }) => widthOf(id)), ...more]);
     if (overflows(rowElement) && !fit(inRow)) {
       // The panel people work in stays, and so does the newest, such as one just brought back
       // from its chip, also alone in the row, and any the application kept open. Where those
@@ -388,7 +394,7 @@ export function PanelDock<T extends PanelDockPanel>({
       if (!leaving) return;
       minimizedForRoom.current.set(leaving.id, {
         time: recency.current.get(leaving.id),
-        width: widths.get(leaving.id) ?? 0,
+        width: widthOf(leaving.id),
         room: room.size,
       });
       ask(leaving, 'minimized');
@@ -413,9 +419,13 @@ export function PanelDock<T extends PanelDockPanel>({
    * the application keeps as it is.
    */
   function ask(panel: T, mode: PanelDockMode) {
-    awaiting.current = { id: panel.id, mode, from: panel.mode, since: performance.now() };
+    const request = { id: panel.id, mode, from: panel.mode, since: performance.now() };
+    awaiting.current = request;
+    // Where the answer is overdue, the dock renders again to look; an answer renders it anyway.
     clearTimeout(answerTimer.current);
-    answerTimer.current = setTimeout(refresh, answerTimeout + 50);
+    answerTimer.current = setTimeout(() => {
+      if (awaiting.current === request) refresh();
+    }, answerTimeout + 50);
     latest.current.onModeChange(panel.id, mode);
   }
 
