@@ -9,6 +9,7 @@ import {
   PanelDock,
   PanelDockHeader,
   Textarea,
+  type PanelDockMode,
   type PanelDockPanel,
 } from '@envsemble/envui';
 import { Edit } from '@envsemble/envui/icons/Edit';
@@ -22,13 +23,24 @@ function Workspace() {
     setPanels((current) =>
       current.map((panel) => (panel.id === id ? { ...panel, ...change } : panel)),
     );
+  // At most one panel is maximized: maximizing another returns the earlier one to the row.
+  const changeMode = (id: string, mode: PanelDockMode) =>
+    setPanels((current) =>
+      current.map((panel) =>
+        panel.id === id
+          ? { ...panel, mode }
+          : mode === 'maximized' && panel.mode === 'maximized'
+            ? { ...panel, mode: 'open' }
+            : panel,
+      ),
+    );
   return (
     // The dock fills the positioned container and lies over the page beside it.
     <div style={{ position: 'relative', blockSize: '100%' }}>
       <WorkspacePage />
       <PanelDock
         panels={panels}
-        onModeChange={(id, mode) => update(id, { mode })}
+        onModeChange={changeMode}
         onClose={(id) => setPanels((current) => current.filter((panel) => panel.id !== id))}
         onActivate={(id) =>
           setPanels((current) => current.map((panel) => ({ ...panel, active: panel.id === id })))
@@ -134,7 +146,7 @@ import { MoreVert } from '@envsemble/envui/icons/MoreVert';
 A panel's content mounts when the panel first appears and stays mounted until it closes. Minimizing, maximizing and restoring it, a stacked dock showing another panel, resizing, and panels reordering never mount it again: its React state, effects and subscriptions stay as they are, and so do focus and the scroll positions inside it. That is why an application can keep an unsaved draft in a panel's own state, or a data subscription in its component, without lifting them out of the panel.
 
 - Changes of mode only restyle the panel: a minimized panel stays in the document, inert and out of sight, so a frame or video inside it carries on. A reorder moves the panel's element; the dock keeps focus and the scroll positions where they were, though a frame inside reloads, as browsers do with moved frames.
-- Minimizing a panel that holds focus moves focus to its chip, also from a popup the panel opened, such as a menu. Bringing it back from the chip returns focus to the element in its content that last had it, scrolled into view where the content hid it entirely, or else to the panel. Closing the focused panel moves focus to the active or newest panel in view, or else to a chip; closing a chip moves focus to the chip that takes its place.
+- Minimizing a panel that holds focus moves focus to its chip, also from a popup the panel opened, such as a menu. Bringing it back from the chip returns focus to the element in its content that last had it, scrolled into view where the content hid it entirely, or else to the panel. Closing the focused panel moves focus to the active panel in view, else to the last open panel in the row, else to the panel that fills the region, or else to the last chip; closing a chip moves focus to the chip that takes its place.
 - Pressing a window control closes a menu or popover open in the panel, as any press outside it does. When the application hides a panel itself while one is open, as from a keyboard shortcut, the popup stays until the next press or <kbd>Esc</kbd>; close it first where that matters.
 
 ## Guidelines

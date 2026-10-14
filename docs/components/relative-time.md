@@ -28,7 +28,7 @@ import { RelativeTime, Text } from '@envsemble/envui';
 
 ## Guidelines
 
-- Use relative time where how long ago or how soon matters more than the exact moment, such as when a report changed or when a review is due. Show the date itself where it must be exact, such as on an invoice.
+- Use relative time where how long ago or how soon matters more than the exact moment, such as when a report changed or when a review is due. Show the date itself where it must be exact, such as a deadline or a record's date.
 - The text rounds to the nearest unit and changes halfway between counts. Less than 45 seconds away is just now, or now for a moment ahead; then minutes below 45, hours below 22, days below a week, weeks below 26 days, months below 11, and years. Counts stay numbers, such as 1 day ago rather than yesterday, since 24 hours ago is not always yesterday by the calendar.
 - One shared clock keeps every RelativeTime on the page current. It wakes every second while a moment is less than a minute away, every minute while one is less than a day away and every hour beyond, and reads the time again when a hidden page shows. Only times whose text changed render again. A time with now stays as it is.
 - The element is a time element whose dateTime holds the exact moment. The tooltip shows the date and time in the reader's time zone and language on hover; the time is not a tab stop, so keep the relative text meaningful on its own, and set `tooltip={false}` where the exact moment shows nearby.

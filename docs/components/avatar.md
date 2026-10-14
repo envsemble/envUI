@@ -90,7 +90,7 @@ import { AvatarGroup } from '@envsemble/envui';
 | max                 | The most avatars to show; the overflow chip after them counts the rest. All by default                                         |
 | total               | How many people there are in all, when people is only a preview of them                                                        |
 | size                | small 1.5 rem, standard 2 rem (default), large 3 rem or display 5.5 rem, as Avatar                                             |
-| onPersonClick       | Makes every avatar a button; receives the person and the click event                                                           |
+| onPersonClick       | Makes every avatar pressable, a button or, for a person with href, a link; receives the person and the click event             |
 | href                | Makes that person's avatar a link, rendered through LinkProvider                                                               |
 | aria-label          | The group's name; by default the count and every name, such as 4 people: Alex Morgan, Sam Lee, Priya Shah, Jordan Rivera       |
 | formatMore          | Text for people counted in total but missing from people, in the overflow tooltip and the default name; N more by default      |

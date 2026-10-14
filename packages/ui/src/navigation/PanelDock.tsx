@@ -154,9 +154,10 @@ const resizeStep = 16;
 const resizeLargeStep = 64;
 
 /**
- * Panels docked to the bottom inline-end edge of a region, like the compose and chat windows of web
- * mail: open panels side by side, one maximized panel filling the region, and minimized panels as
- * chips. A panel's content stays mounted through every change of mode and order.
+ * Panels docked to the bottom inline-end edge of a region, beside the page, for items people work
+ * on alongside it, such as drafts and conversations: open panels side by side, one maximized panel
+ * filling the region, and minimized panels as chips. A panel's content stays mounted through every
+ * change of mode and order.
  */
 export function PanelDock<T extends PanelDockPanel>({
   panels,

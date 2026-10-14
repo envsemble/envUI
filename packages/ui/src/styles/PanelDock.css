@@ -1,6 +1,6 @@
-/* Panels docked to the bottom inline-end edge of a region, like the compose and chat windows of web
-   mail: open panels side by side in a row, one maximized panel filling the region behind them, and
-   minimized panels as chips in a strip along the bottom. The dock fills its positioned container
+/* Panels docked to the bottom inline-end edge of a region, beside the page: open panels side by side
+   in a row, one maximized panel filling the region behind them, and minimized panels as chips in a
+   strip along the bottom. The dock fills its positioned container
    and lets presses through around its panels. State attributes come from PanelDock. */
 .env-panel-dock {
   --env-panel-dock-gap: var(--space-2);
