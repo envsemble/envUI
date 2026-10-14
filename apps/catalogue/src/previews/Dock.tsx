@@ -250,7 +250,8 @@ export function PanelDockPreview() {
             panel&rsquo;s content is never mounted again. Drag a panel&rsquo;s top edge, or focus it
             and press <Kbd>↑</Kbd> or <Kbd>↓</Kbd>, to change its height. Open more documents to see
             the row share its room, then scroll; at their narrowest, a panel&rsquo;s controls move
-            above its title. In a narrow region, one panel at a time fills it.
+            above its title. Scroll a panel, and a hairline sets its header apart. In a narrow
+            region, one panel at a time fills it.
           </>
         }
         actions={

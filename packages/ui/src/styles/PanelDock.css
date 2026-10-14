@@ -241,6 +241,14 @@
   min-inline-size: 0;
   margin-block-start: var(--space-1);
 }
+/* Once the content scrolls beneath it, a hairline in the panel's border color sets the header
+   apart, so text its edge cuts reads as scrolled away rather than broken. */
+.env-panel-dock-header {
+  transition: box-shadow var(--motion-duration-fast) var(--motion-ease);
+}
+.env-panel-dock-content[data-scrolled] > .env-panel-dock-header {
+  box-shadow: 0 0.0625rem 0 var(--color-popup-border);
+}
 /* Icon-only text buttons take the quiet icon color, like the window controls, rather than the link
    blue of text buttons, and darken to the text color on hover and press. */
 .env-panel-dock-header .env-button-text.env-icon-button {
@@ -393,6 +401,7 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .env-panel-dock-header,
   .env-panel-dock-resize::after,
   .env-panel-dock-chip-restore,
   .env-panel-dock-chip-close {

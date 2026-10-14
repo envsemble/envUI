@@ -1129,3 +1129,34 @@ test('a narrow panel puts its actions and window controls above a title that kee
   ).toBe(1);
   await expect(title).toHaveCSS('overflow-wrap', 'break-word');
 });
+
+test('a hairline sets the header apart once the content scrolls beneath it, in both themes', async ({
+  page,
+}) => {
+  await page.goto(dockFixture);
+  for (const theme of ['light', 'dark']) {
+    const panel = dockOf(page, theme).panel('report');
+    const content = panel.locator(':scope > .env-panel-dock-content');
+    const header = panel.locator('.env-panel-dock-header');
+    const border = await panel.evaluate((element) => {
+      const probe = document.createElement('span');
+      probe.style.color = 'var(--color-popup-border)';
+      element.append(probe);
+      const color = getComputedStyle(probe).color;
+      probe.remove();
+      return color;
+    });
+    await expect(header).toHaveCSS('box-shadow', 'none');
+    await content.evaluate((element) => (element.scrollTop = 40));
+    await expect
+      .poll(() => header.evaluate((element) => getComputedStyle(element).boxShadow))
+      .toBe(`${border} 0px 1px 0px 0px`);
+    await content.evaluate((element) => (element.scrollTop = 0));
+    await expect(header).toHaveCSS('box-shadow', 'none');
+  }
+  // The hairline fades in, and with reduced motion appears at once.
+  const header = dockOf(page).panel('report').locator('.env-panel-dock-header');
+  await expect(header).toHaveCSS('transition-duration', '0.12s');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(header).toHaveCSS('transition-duration', '0s');
+});

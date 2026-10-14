@@ -633,6 +633,8 @@ function PanelFrame({
   const [preview, setPreview] = useState<number>();
   // The block size of a PanelDockHeader sticking to the top of the content, in pixels.
   const [headerSize, setHeaderSize] = useState(0);
+  // Whether the content has scrolled from its top, where a hairline then marks the header.
+  const [scrolled, setScrolled] = useState(false);
   const drag = useRef<{
     pointerId: number;
     startY: number;
@@ -791,6 +793,8 @@ function PanelFrame({
       <div
         className="env-panel-dock-content"
         tabIndex={-1}
+        data-scrolled={scrolled || undefined}
+        onScroll={(event) => setScrolled(event.currentTarget.scrollTop > 0)}
         style={
           headerSize > 0
             ? ({ '--env-panel-dock-header-size': `${headerSize}px` } as CSSProperties)
