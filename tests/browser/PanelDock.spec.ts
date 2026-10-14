@@ -1381,6 +1381,28 @@ test('a dock that minimizes asks for nothing as the application narrows it until
   await expect(log).toHaveText('');
 });
 
+test('a dock that minimizes leaves a panel the application opens again until the region resizes', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const scope = page.getByTestId('reopening-dock-light');
+  const log = page.getByTestId('reopening-log-light');
+  const { ids } = rowOf(scope);
+  // The application opens each panel the dock minimized again itself: the dock asks once for each,
+  // then leaves the row to scroll.
+  const once = 'p0 minimized,p0 reopened,p1 minimized,p1 reopened';
+  await expect(log).toHaveText(once);
+  await page.waitForTimeout(1000);
+  await expect(log).toHaveText(once);
+  expect(await ids()).toEqual(['p0', 'p1', 'p2']);
+  // Once the region changes size, the dock asks again, once for each.
+  await scope.evaluate((element) => (element.style.inlineSize = '50rem'));
+  await expect(log).toHaveText(`${once},${once}`);
+  await page.waitForTimeout(1000);
+  await expect(log).toHaveText(`${once},${once}`);
+});
+
 test('a dock that minimizes asks for the next panel when the application keeps one open', async ({
   page,
 }) => {

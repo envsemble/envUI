@@ -245,10 +245,11 @@ export function PanelDock<T extends PanelDockPanel>({
   const chipChoice = useRef<ChipChoice | null>(null);
   // With overflow="minimize": the change the dock awaits the application's answer to, and a timer
   // that looks again once the answer is overdue; the panels the application kept open when asked
-  // to minimize them, while they stay in the row; and the panels the dock minimized to make room.
+  // to minimize them, or opened again itself after the dock minimized them, each with the room the
+  // row had then; and the panels the dock minimized to make room.
   const awaiting = useRef<FitRequest | null>(null);
   const answerTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
-  const keptOpen = useRef(new Set<string>());
+  const keptOpen = useRef(new Map<string, number>());
   const minimizedForRoom = useRef(new Map<string, MinimizedForRoom>());
   const atRowEnd = useRef(true);
   const previousRow = useRef<readonly string[]>([]);
@@ -337,10 +338,12 @@ export function PanelDock<T extends PanelDockPanel>({
    * the active panel or the newest, and only where that lets the rest fit. Once the region widens
    * past the room the row had when the dock minimized a panel, and the panel fits again at its
    * width while open, it asks to open it, the most recently active first. It asks for one change at
-   * a time and waits for the answer; a panel the application keeps open is not asked again while it
-   * stays in the row.
+   * a time and waits for the answer; a panel the application keeps open, or opens again itself, is
+   * not asked for again until the region changes size.
    */
   function fitRow(rowElement: HTMLElement) {
+    if (rowElement.getClientRects().length === 0) return;
+    const room = rowRoom(rowElement);
     const asked = awaiting.current;
     if (asked) {
       const panel = panels.find(({ id }) => id === asked.id);
@@ -350,21 +353,25 @@ export function PanelDock<T extends PanelDockPanel>({
         // keeps the panel as it is.
         if (performance.now() - asked.since < answerTimeout) return;
         minimizedForRoom.current.delete(asked.id);
-        if (asked.mode === 'minimized') keptOpen.current.add(asked.id);
-      }
+        if (asked.mode === 'minimized') keptOpen.current.set(asked.id, room.size);
+      } else if (asked.mode === 'open') minimizedForRoom.current.delete(asked.id);
       awaiting.current = null;
     }
-    for (const id of keptOpen.current) if (!rowIds.includes(id)) keptOpen.current.delete(id);
-    // A panel the dock minimized that shows again, or closed, is no longer the dock's to bring back.
-    for (const id of minimizedForRoom.current.keys())
-      if (panels.find((panel) => panel.id === id)?.mode !== 'minimized')
-        minimizedForRoom.current.delete(id);
-    if (overflow !== 'minimize' || rowElement.getClientRects().length === 0) return;
+    for (const [id, size] of keptOpen.current)
+      if (!rowIds.includes(id) || Math.abs(size - room.size) >= 1) keptOpen.current.delete(id);
+    // A panel the dock minimized that closed is no longer the dock's to bring back, and one the
+    // application opened again itself stays open until the region changes size.
+    for (const id of minimizedForRoom.current.keys()) {
+      const mode = panels.find((panel) => panel.id === id)?.mode;
+      if (mode === 'minimized') continue;
+      minimizedForRoom.current.delete(id);
+      if (mode === 'open') keptOpen.current.set(id, room.size);
+    }
+    if (overflow !== 'minimize') return;
     // A dock that stacks, or is about to as it first shows or narrows, also in the update that
     // narrows it, as the application's own state can, has no row to fit.
     if (stacked || stacksNow()) return;
     const inRow = panels.filter((panel) => placements.get(panel.id) === 'row');
-    const room = rowRoom(rowElement);
     const widths = new Map(inRow.map(({ id }) => [id, minimumWidth(frameOf(id))]));
     const fit = (list: readonly T[], more: readonly number[] = []) =>
       fitsInRow(room, [...list.map(({ id }) => widths.get(id) ?? 0), ...more]);

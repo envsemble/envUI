@@ -265,6 +265,18 @@ export function PanelDockFixture({ theme }: { theme: ThemeValue }) {
             activates
             narrowTo="30rem"
           />
+          {/* The application opens a panel it minimized again itself, shortly after. */}
+          <MinimizingDock
+            name="reopening"
+            theme={theme}
+            initial={[
+              { id: 'p0', title: 'P0', mode: 'open' },
+              { id: 'p1', title: 'P1', mode: 'open' },
+              { id: 'p2', title: 'P2', mode: 'open', active: true },
+            ]}
+            activates
+            reopensAfter={100}
+          />
           {/* The application answers a second later, in a transition. */}
           <MinimizingDock
             name="late"
@@ -310,6 +322,7 @@ function MinimizingDock({
   labels,
   answerDelay,
   narrowTo,
+  reopensAfter,
 }: {
   name: string;
   theme: ThemeValue;
@@ -325,6 +338,8 @@ function MinimizingDock({
   answerDelay?: number;
   /** A width the application's own state can narrow the region to, as a sidebar opening does. */
   narrowTo?: string;
+  /** Milliseconds after which the application opens a panel it minimized when asked, itself. */
+  reopensAfter?: number;
 }) {
   const [panels, setPanels] = useState(initial);
   const [log, setLog] = useState<string[]>([]);
@@ -349,6 +364,13 @@ function MinimizingDock({
               );
             if (answerDelay === undefined) answer();
             else setTimeout(() => startTransition(answer), answerDelay);
+            if (reopensAfter === undefined || mode !== 'minimized') return;
+            setTimeout(() => {
+              setLog((current) => [...current, `${id} reopened`]);
+              setPanels((current) =>
+                current.map((panel) => (panel.id === id ? { ...panel, mode: 'open' } : panel)),
+              );
+            }, reopensAfter);
           }}
           onActivate={
             activates
