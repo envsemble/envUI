@@ -287,10 +287,12 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
 
   function handleValueChange(next: string[] | string | null, details: ChangeDetails) {
     if (details.isCanceled) return;
-    // Without clearable, Esc and emptying the text keep the value; Esc goes on to close a dialog.
-    const clearing =
-      details.reason === 'escape-key' || (!isMultiple && details.reason === 'input-clear');
-    if (clearing && !clearable) {
+    // Esc and emptying the text clear only a clearable single field that has a value. They keep
+    // the value otherwise, and Esc never removes chips, which go one at a time or with the clear
+    // button; Esc then goes on, such as to close a dialog.
+    const escape = details.reason === 'escape-key';
+    const clearing = escape || (!isMultiple && details.reason === 'input-clear');
+    if (clearing && (!clearable || selectedValues.length === 0 || (isMultiple && escape))) {
       details.cancel();
       details.allowPropagation();
       // Emptied text shows every option to choose another; closing the popup restores the label.

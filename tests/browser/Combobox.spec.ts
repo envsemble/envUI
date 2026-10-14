@@ -449,7 +449,7 @@ test('compact fields line up with compact buttons and open the compact popup', a
   }
 });
 
-test('in a dialog the popup keeps its theme, and Esc closes the popup, clears, then the dialog', async ({
+test('in a dialog the popup keeps its theme, and Esc closes the popup, then the dialog', async ({
   page,
 }) => {
   const trigger = page.getByRole('button', { name: 'Share dark', exact: true });
@@ -471,9 +471,7 @@ test('in a dialog the popup keeps its theme, and Esc closes the popup, clears, t
   await page.keyboard.press('Escape');
   await expect(popup).toHaveCount(0);
   await expect(dialog).toBeVisible();
-  await page.keyboard.press('Escape');
-  await expect.poll(() => chips(wellOf(share))).toEqual([]);
-  await expect(dialog).toBeVisible();
+  // Esc never removes chips; with the popup closed it goes on to close the dialog.
   await page.keyboard.press('Escape');
   await expect(dialog).toHaveCount(0);
   await expect(trigger).toBeFocused();
@@ -618,4 +616,36 @@ test('a server search ends its query with a choice or when the label returns, so
   await page.keyboard.press('Enter');
   await expect(contact).toHaveValue('Morgan Diaz');
   await expect.poll(state).toMatchObject({ chosen: 'morgan-diaz', chosenLabel: 'Morgan Diaz' });
+});
+
+test('Esc clears a closed single field only while it has a value, and never removes chips', async ({
+  page,
+}) => {
+  const author = field(page, 'Author light');
+  const changes = page.getByTestId('combobox-author-changes-light');
+  await author.focus();
+  await page.keyboard.press('Escape');
+  await expect(author).toHaveValue('');
+  await expect(changes).toHaveText('[null]');
+  // With nothing to clear, Esc reports no change.
+  await page.keyboard.press('Escape');
+  await page.keyboard.press('Escape');
+  await expect(changes).toHaveText('[null]');
+
+  // Chips stay: Backspace, their remove buttons and the clear button remove them.
+  const reviewers = field(page, 'Reviewers light');
+  await reviewers.focus();
+  await page.keyboard.press('Escape');
+  await expect.poll(() => chips(wellOf(reviewers))).toEqual(['Sam Lee']);
+  await expect(page.getByTestId('combobox-reviewer-changes-light')).toHaveText('0');
+
+  // In a dialog, Esc in an empty field goes on to close the dialog.
+  const trigger = page.getByRole('button', { name: 'Share light', exact: true });
+  await trigger.click();
+  const dialog = page.getByRole('dialog', { name: 'Share light' });
+  const share = dialog.getByRole('combobox', { name: 'Share with light', exact: true });
+  await share.focus();
+  await page.keyboard.press('Escape');
+  await expect(dialog).toHaveCount(0);
+  await expect(trigger).toBeFocused();
 });

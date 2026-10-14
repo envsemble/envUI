@@ -116,8 +116,10 @@ function ServerSearch({ theme }: { theme: ThemeValue }) {
 
 export function ComboboxFixture({ theme }: { theme: ThemeValue }) {
   const [submitted, setSubmitted] = useState('');
+  const [authorChanges, setAuthorChanges] = useState<(string | null)[]>([]);
   const [owner, setOwner] = useState<string | null>('riley-chen');
   const [reviewers, setReviewers] = useState<string[]>(['sam-lee']);
+  const [reviewerChanges, setReviewerChanges] = useState(0);
   const [opened, setOpened] = useState(0);
   return (
     <Theme theme={theme} data-testid={`combobox-${theme}`} className="fixture-section">
@@ -142,6 +144,7 @@ export function ComboboxFixture({ theme }: { theme: ThemeValue }) {
           defaultValue="alex-morgan"
           hint="The person who answers questions."
           clearable
+          onValueChange={(value) => setAuthorChanges((current) => [...current, value])}
         />
         <Combobox
           multiple
@@ -166,6 +169,9 @@ export function ComboboxFixture({ theme }: { theme: ThemeValue }) {
         </div>
       </form>
       <output data-testid={`combobox-submitted-${theme}`}>{submitted}</output>
+      <output data-testid={`combobox-author-changes-${theme}`}>
+        {JSON.stringify(authorChanges)}
+      </output>
       <Combobox
         label={`Owner ${theme}`}
         items={people}
@@ -181,10 +187,14 @@ export function ComboboxFixture({ theme }: { theme: ThemeValue }) {
         label={`Reviewers ${theme}`}
         items={people}
         value={reviewers}
-        onValueChange={setReviewers}
+        onValueChange={(next) => {
+          setReviewers(next);
+          setReviewerChanges((count) => count + 1);
+        }}
         clearable
       />
       <output data-testid={`combobox-reviewers-${theme}`}>{reviewers.join(',')}</output>
+      <output data-testid={`combobox-reviewer-changes-${theme}`}>{reviewerChanges}</output>
       <ServerSearch theme={theme} />
       <Surface
         padding={2}
