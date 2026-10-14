@@ -51,6 +51,7 @@ import { VerticalSplit } from '@envsemble/envui/icons/VerticalSplit';
 import { Monitoring } from '@envsemble/envui/icons/Monitoring';
 import { CloudUpload } from '@envsemble/envui/icons/CloudUpload';
 import { CalendarViewMonth } from '@envsemble/envui/icons/CalendarViewMonth';
+import { CalendarMonth } from '@envsemble/envui/icons/CalendarMonth';
 import { ManageSearch } from '@envsemble/envui/icons/ManageSearch';
 import { type Reference } from '../Reference';
 
@@ -92,6 +93,7 @@ const referenceIcons: Record<string, typeof Palette> = {
   radio: RadioButtonChecked,
   select: ArrowDropDownCircle,
   combobox: ManageSearch,
+  'date-time-field': CalendarMonth,
   slider: Tune,
   'file-dropzone': CloudUpload,
   'color-picker': Palette,

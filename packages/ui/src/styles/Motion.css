@@ -178,7 +178,7 @@
   }
   .env-checkbox-control:is(:checked, :indeterminate) + .env-checkbox-mark,
   .env-organization-menu-radio-dot,
-  .env-text-field-end > :not(.env-combobox-trigger),
+  .env-text-field-end > :not(.env-combobox-trigger, .env-date-time-icon),
   .env-theme-toggle .env-symbol > svg {
     animation: env-motion-pop-in var(--motion-duration-medium) var(--motion-ease-enter);
   }

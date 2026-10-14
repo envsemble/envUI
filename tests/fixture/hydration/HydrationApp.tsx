@@ -36,6 +36,8 @@ import {
   StatGroup,
   Heatmap,
   Combobox,
+  DateTimeField,
+  Calendar,
 } from '@envsemble/envui';
 
 const treeItems = Array.from({ length: 40 }, (_, index) => ({
@@ -116,6 +118,19 @@ export function HydrationApp() {
             { value: 'two', label: 'Two people', description: 'two@example.com' },
           ]}
           defaultValue={['one']}
+        />
+        <DateTimeField
+          label="Hydrated date"
+          name="date"
+          defaultValue="2026-03-09"
+          locale="en-GB"
+          weekStart={1}
+        />
+        <Calendar
+          aria-label="Hydrated calendar"
+          defaultValue="2026-03-09"
+          locale="en-GB"
+          weekStart={1}
         />
         <Dialog title="Hydrated dialog" trigger={<Button>Open hydrated dialog</Button>}>
           <p>Server-rendered content</p>

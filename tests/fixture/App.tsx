@@ -41,6 +41,7 @@ import { DropzonesFixture } from './Dropzones.js';
 import { ButtonCountsFixture } from './ButtonCounts.js';
 import { HeatmapFixture } from './Heatmaps.js';
 import { ComboboxFixture } from './Comboboxes.js';
+import { DateTimeFieldFixture } from './DateTimeFields.js';
 
 /** Fixtures that fill the viewport are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
@@ -242,6 +243,12 @@ export default function App() {
             <>
               <ComboboxFixture theme="light" />
               <ComboboxFixture theme="dark" />
+            </>
+          )}
+          {includes('date-time') && (
+            <>
+              <DateTimeFieldFixture theme="light" />
+              <DateTimeFieldFixture theme="dark" />
             </>
           )}
           {includes('menus') && (

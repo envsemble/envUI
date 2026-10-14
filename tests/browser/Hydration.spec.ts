@@ -25,6 +25,17 @@ test('public components hydrate server output without recoverable errors', async
   await people.fill('two');
   await page.keyboard.press('Enter');
   await expect(page.getByRole('toolbar', { name: 'Hydrated people' })).toContainText('Two people');
+  const date = page.getByRole('combobox', { name: 'Hydrated date', exact: true });
+  await expect(date).toHaveText('9 Mar 2026');
+  await date.click();
+  await page
+    .getByRole('dialog', { name: 'Hydrated date' })
+    .locator('[data-date="2026-03-10"]')
+    .click();
+  await expect(date).toHaveText('10 Mar 2026');
+  const month = page.getByRole('grid', { name: 'March 2026' }).last();
+  await month.locator('[data-date="2026-03-12"]').click();
+  await expect(month.locator('[data-date="2026-03-12"]')).toHaveAttribute('aria-selected', 'true');
   const chooser = page.waitForEvent('filechooser');
   await page.getByRole('button', { name: 'Hydrated files' }).click();
   const picker = await chooser;
