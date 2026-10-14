@@ -1411,7 +1411,7 @@ test('a dock that minimizes asks for nothing while it stacks, also as it first s
   await frames(page);
   await expect(page.getByTestId('stacking-log-light')).toHaveText('');
   await expect(scope.locator('section[data-panel-id="three"]')).toBeVisible();
-  // showLabel names the chips, before restoreLabel, its earlier name.
+  // showLabel names the chips' buttons.
   await expect(scope.getByRole('button', { name: 'Bring back One' })).toBeVisible();
 });
 
@@ -1533,7 +1533,7 @@ test('a dock that minimizes asks for the next panel when the application keeps o
   await expect(row).not.toHaveAttribute('data-overflowing');
   await frames(page);
   await expect(log).toHaveText('pinned minimized,inbox minimized');
-  // restoreLabel still names the chips.
+  // So it does here.
   await expect(scope.getByRole('button', { name: 'Return to Inbox' })).toBeVisible();
 });
 

@@ -118,11 +118,6 @@ export interface PanelDockProps<T extends PanelDockPanel>
    * by default. A function, as each chip names its own panel; PanelDockControls takes plain strings.
    */
   showLabel?: (label: string) => string;
-  /**
-   * The earlier name of showLabel, which takes precedence.
-   * @deprecated Use showLabel: PanelDockControls has a restoreLabel of its own, for Restore.
-   */
-  restoreLabel?: (label: string) => string;
   /** Accessible name of a chip's close button, from the chip's text: Close and the text by default. */
   closeLabel?: (label: string) => string;
   /** Accessible name of a panel's resize handle, from its title: Resize and the title by default. */
@@ -217,8 +212,7 @@ export function PanelDock<T extends PanelDockPanel>({
   onStackedChange,
   overflow = 'scroll',
   minimizedLabel = 'Hidden panels',
-  showLabel,
-  restoreLabel,
+  showLabel = defaultShowLabel,
   closeLabel = defaultCloseLabel,
   resizeLabel = defaultResizeLabel,
   className,
@@ -744,7 +738,7 @@ export function PanelDock<T extends PanelDockPanel>({
             <PanelChip
               key={panel.id}
               panel={panel}
-              showLabel={showLabel ?? restoreLabel ?? defaultShowLabel}
+              showLabel={showLabel}
               closeLabel={closeLabel}
               onRestore={() => restoreFromChip(panel)}
               onClose={() => close(panel.id)}

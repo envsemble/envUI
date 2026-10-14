@@ -250,10 +250,7 @@ const OtherDocks = memo(function OtherDocks({ theme }: { theme: ThemeValue }) {
               { id: 'three', title: 'Three', mode: 'open', active: true },
             ]}
             activates
-            labels={{
-              showLabel: (label) => `Bring back ${label}`,
-              restoreLabel: (label) => `Return to ${label}`,
-            }}
+            labels={{ showLabel: (label) => `Bring back ${label}` }}
           />
           {/* The application's style makes open panels wider at the least than minimized ones. */}
           <MinimizingDock
@@ -320,7 +317,7 @@ const OtherDocks = memo(function OtherDocks({ theme }: { theme: ThemeValue }) {
             ]}
             activates
             keeps="pinned"
-            labels={{ restoreLabel: (label) => `Return to ${label}` }}
+            labels={{ showLabel: (label) => `Return to ${label}` }}
           />
         </>
       )}
@@ -354,7 +351,7 @@ function MinimizingDock({
   keeps?: string;
   className?: string;
   /** Labels of the chips' buttons. */
-  labels?: Pick<PanelDockProps<PanelDockPanel>, 'showLabel' | 'restoreLabel'>;
+  labels?: Pick<PanelDockProps<PanelDockPanel>, 'showLabel'>;
   /** Milliseconds after which the application answers, in a transition; at once by default. */
   answerDelay?: number;
   /** A width the application's own state can narrow the region to, as a sidebar opening does. */

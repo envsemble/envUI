@@ -1005,7 +1005,7 @@ test('the panel dock renders its panels, chips and header on a server and types 
         {(panel) => <PanelDockHeader {...headerProps} title={panel.body} controls={<PanelDockControls {...controlsProps} />} />}
       </PanelDock>
     );
-    // restoreLabel is the earlier name of showLabel.
+    // @ts-expect-error A dock names its chips' buttons with showLabel; restoreLabel is PanelDockControls'.
     const earlierName = <PanelDock {...dockProps} restoreLabel={(label) => 'Show ' + label}>{() => null}</PanelDock>;
     // @ts-expect-error A dock's chip labels are functions of each chip's text.
     const plainRestore = <PanelDock {...dockProps} showLabel="Show">{() => null}</PanelDock>;
