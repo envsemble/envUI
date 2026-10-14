@@ -808,6 +808,17 @@ test('the catalogue shows open, minimized and maximized panels whose drafts surv
   await page.getByRole('button', { name: 'Switch to dark theme' }).click();
   await expect(draft).toHaveValue('Ask for the regional numbers.');
 
+  // A dock that minimizes what does not fit shows its least recently active panel as a chip.
+  const minimizing = examples.filter({
+    has: page.getByRole('heading', { name: 'Minimize what does not fit' }),
+  });
+  await expect(minimizing.getByRole('button', { name: 'Show Quarterly report' })).toBeVisible();
+  await expect(minimizing.getByRole('region', { name: 'Roadmap' })).toHaveAttribute(
+    'data-placement',
+    'row',
+  );
+  await expect(minimizing.locator('.env-panel-dock-row')).not.toHaveAttribute('data-overflowing');
+
   // A narrow region stacks the dock.
   await docked.getByRole('button', { name: 'Narrow region' }).click();
   await expect(docked.locator('.env-panel-dock')).toHaveAttribute('data-stacked', 'true');
@@ -1044,4 +1055,36 @@ test('a stacked dock shows the panel of a chip pressed, also without onActivate'
   await passive.getByRole('button', { name: 'Show First note light' }).click();
   await expect(first).toBeVisible();
   await expect(second).toBeHidden();
+});
+
+test('a dock that minimizes rather than scrolls asks to minimize its least recently active panel', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const scope = page.getByTestId('minimizing-dock-light');
+  const row = scope.locator('.env-panel-dock > .env-panel-dock-row');
+  const log = page.getByTestId('minimizing-log-light');
+  const inRow = () =>
+    row.evaluate((element) =>
+      [...element.querySelectorAll<HTMLElement>(':scope > section[data-placement="row"]')].map(
+        ({ dataset }) => dataset.panelId,
+      ),
+    );
+  // Three panels do not fit side by side at their minimum widths: the least recently active one
+  // that is not active waits as a chip, and the others share the row without scrolling it.
+  await expect.poll(inRow).toEqual(['review', 'retro']);
+  await expect(log).toHaveText('plan minimized');
+  await expect(row).not.toHaveAttribute('data-overflowing');
+  await expect(scope.getByRole('button', { name: 'Show Plan light' })).toBeVisible();
+  // Brought back, that panel is active, and the next least recently active one makes room.
+  await scope.getByRole('button', { name: 'Show Plan light' }).click();
+  await expect.poll(inRow).toEqual(['plan', 'retro']);
+  await expect(log).toHaveText('plan minimized,plan open,review minimized');
+  await expect(row).not.toHaveAttribute('data-overflowing');
+  // With room for all three, nothing more is minimized.
+  await scope.evaluate((element) => (element.style.inlineSize = '80rem'));
+  await scope.getByRole('button', { name: 'Show Review light' }).click();
+  await expect.poll(inRow).toEqual(['plan', 'review', 'retro']);
+  await expect(log).toHaveText('plan minimized,plan open,review minimized,review open');
 });

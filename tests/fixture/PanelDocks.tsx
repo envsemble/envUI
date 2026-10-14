@@ -168,7 +168,51 @@ export function PanelDockFixture({ theme }: { theme: ThemeValue }) {
           .join(' ')}
       </output>
       <PassiveDock theme={theme} />
+      <MinimizingDock theme={theme} />
     </Theme>
+  );
+}
+
+/** A dock that minimizes its least recently active panel rather than scroll the row. */
+function MinimizingDock({ theme }: { theme: ThemeValue }) {
+  const [panels, setPanels] = useState<PanelDockPanel[]>([
+    { id: 'plan', title: `Plan ${theme}`, mode: 'open' },
+    { id: 'review', title: `Review ${theme}`, mode: 'open' },
+    { id: 'retro', title: `Retrospective ${theme}`, mode: 'open', active: true },
+  ]);
+  const [log, setLog] = useState<string[]>([]);
+  return (
+    <>
+      <div
+        className="fixture-dock-frame fixture-dock-minimizing"
+        data-testid={`minimizing-dock-${theme}`}
+      >
+        <PanelDock
+          panels={panels}
+          overflow="minimize"
+          onModeChange={(id, mode) => {
+            setPanels((current) =>
+              current.map((panel) => (panel.id === id ? { ...panel, mode } : panel)),
+            );
+            setLog((current) => [...current, `${id} ${mode}`]);
+          }}
+          onActivate={(id) =>
+            setPanels((current) => current.map((panel) => ({ ...panel, active: panel.id === id })))
+          }
+          onClose={(id) => setPanels((current) => current.filter((panel) => panel.id !== id))}
+        >
+          {(panel) => (
+            <>
+              <PanelDockHeader title={panel.title} />
+              <div className="fixture-dock-body">
+                <Textarea label={`Notes of ${panel.title}`} />
+              </div>
+            </>
+          )}
+        </PanelDock>
+      </div>
+      <output data-testid={`minimizing-log-${theme}`}>{log.join(',')}</output>
+    </>
   );
 }
 

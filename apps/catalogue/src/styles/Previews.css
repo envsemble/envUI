@@ -301,6 +301,9 @@
 .docs-dock-frame[data-narrow] {
   inline-size: min(100%, 24rem);
 }
+.docs-dock-frame[data-medium] {
+  inline-size: min(100%, 52rem);
+}
 .docs-dock-page {
   padding: var(--space-6);
 }

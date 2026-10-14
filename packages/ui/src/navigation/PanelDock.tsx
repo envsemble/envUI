@@ -97,6 +97,12 @@ export interface PanelDockProps<T extends PanelDockPanel>
   /** Called with true when the dock stacks and with false when its panels sit side by side. */
   onStackedChange?: (stacked: boolean) => void;
   /**
+   * What the dock does when its open panels cannot all sit side by side at their minimum widths:
+   * scroll (default) scrolls the row sideways; minimize asks onModeChange to minimize the least
+   * recently active open panel other than the active one, one at a time, until the rest fit.
+   */
+  overflow?: 'scroll' | 'minimize';
+  /**
    * Accessible name of the list of chips, which holds minimized panels and the panels a stacked dock
    * leaves out; Hidden panels by default.
    */
@@ -168,6 +174,7 @@ export function PanelDock<T extends PanelDockPanel>({
   onHeightChange,
   stackBelow = '40rem',
   onStackedChange,
+  overflow = 'scroll',
   minimizedLabel = 'Hidden panels',
   restoreLabel = defaultRestoreLabel,
   closeLabel = defaultCloseLabel,
@@ -234,6 +241,8 @@ export function PanelDock<T extends PanelDockPanel>({
     );
   const chips = panels.filter((panel) => placements.get(panel.id) === 'hidden');
   const rowIds = panels.filter((panel) => placements.get(panel.id) === 'row').map(({ id }) => id);
+  // Panels the dock asked to minimize to make room, until they leave the row.
+  const makingRoom = useRef(new Set<string>());
   const layout = panels.map(({ id }) => `${id}:${placements.get(id)}`).join('\n');
   const hasChips = chips.length > 0;
   const filled = filling !== undefined;
@@ -274,6 +283,35 @@ export function PanelDock<T extends PanelDockPanel>({
     bringForward(panel.id);
     if (!panel.active) latest.current.onActivate?.(panel.id);
   }
+
+  /**
+   * With overflow="minimize", open panels that cannot all fit at their minimum widths make room:
+   * the dock asks to minimize the least recently active one other than the active one, then waits
+   * for that panel to leave the row before it asks again, so a panel the application keeps open
+   * is asked once.
+   */
+  function makeRoom(rowElement: HTMLElement, stackedNow: boolean) {
+    for (const id of makingRoom.current) if (!rowIds.includes(id)) makingRoom.current.delete(id);
+    if (overflow !== 'minimize' || stackedNow || makingRoom.current.size > 0) return;
+    if (!overflows(rowElement)) return;
+    const recent = (panel: T) => recency.current.get(panel.id) ?? Infinity;
+    let oldest: T | undefined;
+    for (const panel of panels)
+      if (
+        placements.get(panel.id) === 'row' &&
+        !panel.active &&
+        (!oldest || recent(panel) < recent(oldest))
+      )
+        oldest = panel;
+    if (!oldest) return;
+    makingRoom.current.add(oldest.id);
+    latest.current.onModeChange(oldest.id, 'minimized');
+  }
+  // The dock measures itself outside its renders, with this render's panels.
+  const makeRoomLatest = useRef(makeRoom);
+  useLayoutEffect(() => {
+    makeRoomLatest.current = makeRoom;
+  });
 
   function restoreFromChip(panel: T) {
     pendingRestore.current = panel.id;
@@ -344,7 +382,8 @@ export function PanelDock<T extends PanelDockPanel>({
       // layout until it shows again.
       if (element.getClientRects().length === 0) return;
       const view = element.ownerDocument.defaultView;
-      setStacked(element.offsetWidth < threshold.offsetWidth);
+      const stackedNow = element.offsetWidth < threshold.offsetWidth;
+      setStacked(stackedNow);
       const fontSize = view?.getComputedStyle(element.ownerDocument.documentElement).fontSize;
       const rem = parseFloat(fontSize ?? '') || 16;
       const gutter = parseFloat(view?.getComputedStyle(rowElement).paddingBlockStart ?? '') || 0;
@@ -354,6 +393,7 @@ export function PanelDock<T extends PanelDockPanel>({
         current?.rem === rem && current.room === room ? current : { rem, room },
       );
       setOverflowing(overflows(rowElement));
+      makeRoomLatest.current(rowElement, stackedNow);
       if (atRowEnd.current) scrollToRowEnd(rowElement);
     };
     measure();
@@ -413,6 +453,7 @@ export function PanelDock<T extends PanelDockPanel>({
     const frame = joined === undefined ? undefined : frameOf(joined);
     if (frame) reveal(rowElement, frame);
     setOverflowing(overflows(rowElement));
+    makeRoom(rowElement, stacked);
   });
 
   // Focus follows a panel's content: a panel that hides hands focus to its chip, a panel brought

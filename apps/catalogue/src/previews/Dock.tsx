@@ -180,10 +180,12 @@ function SampleDock({
   initial,
   active,
   narrow = false,
+  overflow,
 }: {
   initial: ReadonlyArray<readonly [string, PanelDockMode]>;
   active: string;
   narrow?: boolean;
+  overflow?: 'scroll' | 'minimize';
 }) {
   const dock = useSampleDock(initial, active);
   const [stacked, setStacked] = useState(false);
@@ -192,7 +194,11 @@ function SampleDock({
     ? dock.panels.some((panel) => panel.mode !== 'minimized')
     : dock.panels.some((panel) => panel.mode === 'maximized');
   return (
-    <div className="docs-dock-frame" data-narrow={narrow || undefined}>
+    <div
+      className="docs-dock-frame"
+      data-narrow={narrow || undefined}
+      data-medium={overflow === 'minimize' || undefined}
+    >
       <Stack gap={4} className="docs-dock-page" inert={covered}>
         <Text as="h3" variant="section-heading">
           Documents
@@ -218,6 +224,7 @@ function SampleDock({
         onActivate={dock.activate}
         onHeightChange={dock.resize}
         onStackedChange={setStacked}
+        overflow={overflow}
       >
         {(panel) => (
           <DocumentWindow
@@ -259,6 +266,21 @@ export function PanelDockPreview() {
           ]}
           active="notes"
           narrow={narrow}
+        />
+      </Example>
+      <Example
+        title="Minimize what does not fit"
+        size="wide"
+        caption="With overflow set to minimize, open panels that cannot all sit side by side at their minimum widths make room: the least recently active one other than the active one waits as a chip, so no panel scrolls out of view. Open another document to see the next one make room."
+      >
+        <SampleDock
+          initial={[
+            ['report', 'open'],
+            ['notes', 'open'],
+            ['roadmap', 'open'],
+          ]}
+          active="roadmap"
+          overflow="minimize"
         />
       </Example>
       <Example
