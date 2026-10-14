@@ -503,11 +503,24 @@ export function PanelDock<T extends PanelDockPanel>({
     if (last?.isConnected && frame.contains(last)) {
       last.focus({ preventScroll: true });
       if (last.ownerDocument.activeElement === last) {
-        revealInContent(frame, last);
+        revealInWindow(frame.ownerDocument.defaultView, revealInContent(frame, last));
         return;
       }
     }
     frame.focus({ preventScroll: true });
+    revealInWindow(frame.ownerDocument.defaultView, frame.getBoundingClientRect());
+  }
+
+  /**
+   * Focuses a chip's button. A browser would scroll it into view as it likes, some to the middle of
+   * the window; the page scrolls only where the chip lies entirely outside it, and as little as shows
+   * it.
+   */
+  function focusChip(id: string | undefined) {
+    const button = chipButtonOf(id);
+    if (!button) return;
+    button.focus({ preventScroll: true });
+    revealInWindow(button.ownerDocument.defaultView, button.getBoundingClientRect());
   }
 
   /** Once the focused panel or chip leaves: the active or newest panel shown, or the last chip. */
@@ -518,7 +531,7 @@ export function PanelDock<T extends PanelDockPanel>({
       visible.filter((panel) => placements.get(panel.id) === 'row').at(-1) ??
       filling;
     if (target) focusInto(target.id);
-    else chipButtonOf(chips.at(-1)?.id)?.focus();
+    else focusChip(chips.at(-1)?.id);
   }
 
   // The dock measures itself: below stackBelow it stacks, and open panels fit the room above the
@@ -639,7 +652,7 @@ export function PanelDock<T extends PanelDockPanel>({
       if (placement === undefined) {
         const index = chipsBefore.indexOf(focusBefore.id);
         const next = chips[Math.min(index, chips.length - 1)];
-        if (next) chipButtonOf(next.id)?.focus();
+        if (next) focusChip(next.id);
         else focusRemaining();
       } else if (isShown(placement)) focusInto(focusBefore.id);
       return;
@@ -649,7 +662,7 @@ export function PanelDock<T extends PanelDockPanel>({
     } else if (placement === 'hidden') {
       // Focus in a popup the panel opened, such as a menu in a portal, moves to the chip too.
       if (lost || focusBefore.popup || frameOf(focusBefore.id)?.contains(focused))
-        chipButtonOf(focusBefore.id)?.focus();
+        focusChip(focusBefore.id);
     } else if (lost) {
       // A reorder can drop focus from an element that stays. An element that went with the new
       // layout, such as the resize handle of a panel that now fills the region, or Maximize in a
@@ -1159,22 +1172,45 @@ function readScrollPositions(rowElement: Element) {
  * Brings an element that the panel hides entirely into view, also one beneath the sticky header,
  * inside a list that scrolls on its own or beside the view. Only the panel's own scrolling elements
  * scroll, as little as shows it, from the innermost out: lists or rows inside the content, then the
- * content. One that partly shows keeps the scroll positions people left.
+ * content. One that partly shows keeps the scroll positions people left. Returns the part of the
+ * element that shows.
  */
 function revealInContent(frame: HTMLElement, element: HTMLElement) {
   const content = frame.querySelector<HTMLElement>(':scope > .env-panel-dock-content');
-  if (!content?.contains(element)) return;
+  if (!content?.contains(element)) return element.getBoundingClientRect();
   const scrollers: HTMLElement[] = [];
   for (let box = element.parentElement; box && box !== content; box = box.parentElement)
     if (scrollsOverflow(box)) scrollers.push(box);
   scrollers.push(content);
-  if (showsThrough(element, scrollers)) return;
-  for (const scroller of scrollers) {
-    const area = viewArea(scroller);
-    const target = element.getBoundingClientRect();
-    scroller.scrollTop += nearestScroll(target.top, target.bottom, area.top, area.bottom);
-    scroller.scrollLeft += nearestScroll(target.left, target.right, area.left, area.right);
-  }
+  if (!shownPart(element, scrollers))
+    for (const scroller of scrollers) {
+      const area = viewArea(scroller);
+      const target = element.getBoundingClientRect();
+      scroller.scrollTop += nearestScroll(target.top, target.bottom, area.top, area.bottom);
+      scroller.scrollLeft += nearestScroll(target.left, target.right, area.left, area.right);
+    }
+  return shownPart(element, scrollers) ?? element.getBoundingClientRect();
+}
+
+/**
+ * Scrolls the page alone, as little as shows it, to the part of a focused element that shows,
+ * where that lies entirely outside the window, as where the dock is partly out of view, so focus
+ * never goes out of sight; where some of it shows in the window, the page stays where people left
+ * it.
+ */
+function revealInWindow(view: Window | null, shown: Area) {
+  if (!view) return;
+  if (
+    shown.bottom > 0 &&
+    shown.top < view.innerHeight &&
+    shown.right > 0 &&
+    shown.left < view.innerWidth
+  )
+    return;
+  view.scrollBy({
+    top: nearestScroll(shown.top, shown.bottom, 0, view.innerHeight),
+    left: nearestScroll(shown.left, shown.right, 0, view.innerWidth),
+  });
 }
 
 /** Whether an element scrolls content that overflows it, on either axis. */
@@ -1187,8 +1223,16 @@ function scrollsOverflow(element: HTMLElement) {
   );
 }
 
+/** An area in the viewport, in pixels. */
+interface Area {
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+}
+
 /** Where a scrolling element shows its content, within its scroll padding, in the viewport. */
-function viewArea(scroller: HTMLElement) {
+function viewArea(scroller: HTMLElement): Area {
   const box = scroller.getBoundingClientRect();
   const style = getComputedStyle(scroller);
   const top = box.top + scroller.clientTop;
@@ -1201,8 +1245,8 @@ function viewArea(scroller: HTMLElement) {
   };
 }
 
-/** Whether some of an element shows through every one of these scrolling elements. */
-function showsThrough(element: HTMLElement, scrollers: readonly HTMLElement[]) {
+/** The part of an element that shows through every one of these scrolling elements, if any. */
+function shownPart(element: HTMLElement, scrollers: readonly HTMLElement[]): Area | undefined {
   let { top, bottom, left, right } = element.getBoundingClientRect();
   for (const scroller of scrollers) {
     const area = viewArea(scroller);
@@ -1211,7 +1255,7 @@ function showsThrough(element: HTMLElement, scrollers: readonly HTMLElement[]) {
     left = Math.max(left, area.left);
     right = Math.min(right, area.right);
   }
-  return bottom > top && right > left;
+  return bottom > top && right > left ? { top, bottom, left, right } : undefined;
 }
 
 /**

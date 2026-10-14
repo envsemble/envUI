@@ -968,8 +968,11 @@ test('a panel brought back shows the element its focus returns to', async ({ pag
   await content.evaluate((element) => (element.scrollTop = element.scrollHeight));
   await page.keyboard.press('Alt+KeyM');
   await expect(chip).toBeFocused();
+  const pageTop = await page.evaluate(() => window.scrollY);
   await page.keyboard.press('Enter');
   await expect(draft).toBeFocused();
+  // Where the draft then shows in the window, the page stays.
+  expect(await page.evaluate(() => window.scrollY)).toBe(pageTop);
   const [contentBox, headerBox, draftBox] = await Promise.all([
     box(content),
     box(header),
@@ -987,7 +990,7 @@ test('a panel brought back shows the element its focus returns to', async ({ pag
   expect(await content.evaluate((element) => element.scrollTop)).toBe(100);
 });
 
-test('a panel brought back scrolls only its content to the element its focus returns to', async ({
+test('a panel brought back scrolls the page only to an element its focus returns to outside the window', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -1009,9 +1012,37 @@ test('a panel brought back scrolls only its content to the element its focus ret
   const pageTop = await page.evaluate(() => window.scrollY);
   await page.keyboard.press('Enter');
   await expect(draft).toBeFocused();
-  // The content scrolls to the draft; the page stays where people left it.
+  // The content scrolls to the draft, and the page as little as shows it, at the window's top.
   await expect.poll(() => content.evaluate((element) => element.scrollTop)).toBeLessThan(200);
+  expect(await page.evaluate(() => window.scrollY)).toBeLessThan(pageTop);
+  expect(Math.abs((await box(draft)).y)).toBeLessThan(2);
+});
+
+test('a chip that takes focus scrolls the page only where the window leaves it out', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const dock = dockOf(page);
+  const draft = dock
+    .panel('report')
+    .getByRole('textbox', { name: 'Draft of Quarterly report light' });
+  const chip = dock.chips.getByRole('button', { name: 'Show Quarterly report' });
+  // Some of the chip shows in the window, so the page stays as the panel minimizes.
+  await draft.focus();
+  const pageTop = await page.evaluate(() => window.scrollY);
+  await page.keyboard.press('Alt+KeyM');
+  await expect(chip).toBeFocused();
   expect(await page.evaluate(() => window.scrollY)).toBe(pageTop);
+  // Out of the window entirely, the chip comes into view at its bottom edge.
+  await page.keyboard.press('Enter');
+  await expect(draft).toBeFocused();
+  await page.setViewportSize({ width: 1280, height: 560 });
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.keyboard.press('Alt+KeyM');
+  await expect(chip).toBeFocused();
+  const chipBox = await box(chip);
+  expect(Math.abs(chipBox.y + chipBox.height - 560)).toBeLessThan(2);
 });
 
 test('a panel brought back reveals the element its focus returns to inside a scrolling list', async ({
