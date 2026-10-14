@@ -55,6 +55,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Application shell](components/app-shell.md) — Topbar, window title bar and collapsible navigation sidebar for a whole application.
 - [Tree](components/tree.md) — A virtualized tree of rows for large hierarchies, such as file trees.
 - [Document tabs](components/document-tabs.md) — Closable editor-style tabs for open documents.
+- [Panel dock](components/panel-dock.md) — Windows docked side by side at the bottom of a region that minimize to chips and maximize, keeping their content mounted.
 - [Breadcrumbs](components/breadcrumbs.md) — The path from the top level to the current page.
 
 ## Content & guidance

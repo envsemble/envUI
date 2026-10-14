@@ -61,6 +61,21 @@
   animation: env-motion-fade-in var(--motion-duration-medium) var(--motion-ease);
 }
 
+/* Docked panels and their chips fade in where they show; a panel that comes to fill the region
+   fades in afresh, also from the row. Without a reduced-motion preference they also move (below). */
+.env-panel-dock-panel[data-placement='row'],
+.env-panel-dock-chip {
+  animation: env-motion-fade-in var(--motion-duration-medium) var(--motion-ease-enter);
+}
+.env-panel-dock-panel[data-placement='fill'] {
+  animation: env-panel-dock-fade-in var(--motion-duration-medium) var(--motion-ease-enter);
+}
+@keyframes env-panel-dock-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   /* Presses: compact controls settle slightly while held, larger surfaces less, and small choice
      controls more, whether the control or its label is pressed. */
@@ -158,6 +173,18 @@
     transition-timing-function: var(--motion-ease-exit);
   }
 
+  /* Docked panels rise from the bottom edge into the row, a panel grows into the region it fills,
+     and chips rise into their strip. */
+  .env-panel-dock-panel[data-placement='row'] {
+    animation: env-panel-dock-rise var(--motion-duration-slow) var(--motion-ease-enter);
+  }
+  .env-panel-dock-panel[data-placement='fill'] {
+    animation: env-panel-dock-grow var(--motion-duration-slow) var(--motion-ease-enter);
+  }
+  .env-panel-dock-chip {
+    animation: env-panel-dock-chip-rise var(--motion-duration-medium) var(--motion-ease-enter);
+  }
+
   /* A changed number rolls in from below when it grows and from above when it shrinks. */
   .env-animated-number-value[data-direction] {
     animation: var(--motion-duration-slow) var(--motion-ease-enter) both;
@@ -207,5 +234,23 @@
   from {
     opacity: 0;
     transform: translateY(-0.6em);
+  }
+}
+@keyframes env-panel-dock-rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+}
+@keyframes env-panel-dock-grow {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+@keyframes env-panel-dock-chip-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
   }
 }

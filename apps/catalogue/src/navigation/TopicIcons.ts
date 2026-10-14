@@ -52,6 +52,7 @@ import { Monitoring } from '@envsemble/envui/icons/Monitoring';
 import { CloudUpload } from '@envsemble/envui/icons/CloudUpload';
 import { CalendarViewMonth } from '@envsemble/envui/icons/CalendarViewMonth';
 import { ManageSearch } from '@envsemble/envui/icons/ManageSearch';
+import { DockToBottom } from '@envsemble/envui/icons/DockToBottom';
 import { type Reference } from '../Reference';
 
 export const foundationIcons: Record<string, typeof Palette> = {
@@ -119,6 +120,7 @@ const referenceIcons: Record<string, typeof Palette> = {
   'app-shell': SpaceDashboard,
   tree: AccountTree,
   'document-tabs': Tab,
+  'panel-dock': DockToBottom,
   'command-palette': KeyboardCommandKey,
   'segmented-control': ViewWeek,
   badges: Sell,

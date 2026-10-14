@@ -199,3 +199,27 @@ body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-p
 .fixture-row-action {
   position: relative;
 }
+/* A region with a page beneath the docked panels. */
+.fixture-dock-frame {
+  position: relative;
+  block-size: 40rem;
+  overflow: hidden;
+  border: 0.0625rem solid var(--color-border-strong);
+  border-radius: var(--radius-standard);
+}
+.fixture-dock-page {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-3);
+  padding: var(--space-5);
+}
+.fixture-dock-body {
+  display: grid;
+  gap: var(--space-3);
+  padding: 0 var(--space-5) var(--space-5);
+}
+.fixture-dock-list {
+  max-block-size: 8rem;
+  margin: 0;
+  overflow-y: auto;
+}
