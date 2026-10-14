@@ -1012,10 +1012,21 @@ test('a panel brought back scrolls the page only to an element its focus returns
   const pageTop = await page.evaluate(() => window.scrollY);
   await page.keyboard.press('Enter');
   await expect(draft).toBeFocused();
-  // The content scrolls to the draft, and the page as little as shows it, at the window's top.
+  // The content scrolls to the draft, and the page as little as shows it: the part of the draft
+  // below the sticky header comes out at the window's top. WebKit may already have scrolled the
+  // hidden content to the draft's caret, which leaves the field's top edge beneath the header.
   await expect.poll(() => content.evaluate((element) => element.scrollTop)).toBeLessThan(200);
   expect(await page.evaluate(() => window.scrollY)).toBeLessThan(pageTop);
-  expect(Math.abs((await box(draft)).y)).toBeLessThan(2);
+  const shownTop = await content.evaluate(
+    (element, field) =>
+      Math.max(
+        field!.getBoundingClientRect().top,
+        element.getBoundingClientRect().top +
+          (parseFloat(getComputedStyle(element).scrollPaddingTop) || 0),
+      ),
+    await draft.elementHandle(),
+  );
+  expect(Math.abs(shownTop)).toBeLessThan(2);
 });
 
 test('a chip that takes focus scrolls the page only where the window leaves it out', async ({
