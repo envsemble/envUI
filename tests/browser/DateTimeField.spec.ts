@@ -252,9 +252,15 @@ test('native forms submit the values, require a value and reset to the defaults'
     .locator('[data-date="2026-10-30"]')
     .click();
   await submit.click();
+  // The empty read-only field, though required, does not keep the form from submitting.
   await expect
     .poll(async () => JSON.parse((await submitted.textContent()) || '{}'))
-    .toEqual({ publish: '2026-10-20', meeting: '2026-10-21T09:30', review: '2026-10-30' });
+    .toEqual({
+      publish: '2026-10-20',
+      meeting: '2026-10-21T09:30',
+      review: '2026-10-30',
+      approved: '',
+    });
 
   const publish = field(page, 'Publish on light');
   await publish.click();

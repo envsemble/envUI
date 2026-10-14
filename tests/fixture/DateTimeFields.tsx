@@ -27,6 +27,7 @@ export function DateTimeFieldFixture({ theme }: { theme: ThemeValue }) {
               publish: data.get('publish'),
               meeting: data.get('meeting'),
               review: data.get('review'),
+              approved: data.get('approved'),
             }),
           );
         }}
@@ -56,6 +57,14 @@ export function DateTimeFieldFixture({ theme }: { theme: ThemeValue }) {
           placeholder="Choose a day"
           min="2026-10-10"
           max="2026-11-15"
+        />
+        {/* Read-only, so its emptiness never keeps the form from submitting. */}
+        <DateTimeField
+          label={`Approved on ${theme}`}
+          name="approved"
+          locale="en-GB"
+          readOnly
+          required
         />
         <div className="fixture-actions">
           <Button type="submit">Submit dates {theme}</Button>

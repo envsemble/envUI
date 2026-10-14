@@ -85,7 +85,7 @@ import { Calendar } from '@envsemble/envui';
 - Days are round marks, each named by its full date. Today has a ring and the chosen day a solid blue fill, with their own color roles in both themes; unavailable days are faded. The calendar keeps six weeks, so its size stays the same from month to month, and empty cells before and after the month keep each day under its weekday, also for assistive technology.
 - The calendar is Gregorian. Its month and weekday names and day numbers come from the locale, also from one with a calendar of its own, such as Persian, which then names the Gregorian months.
 - The calendar is as wide as seven days, 2.5 rem each and 2.25 rem in a compact field's popup; on touch screens days are 2.75 rem, and the calendar fits a phone's width.
-- The field is the shared text field, with Input's label, guidance, invalid and disabled states, compact height and touch sizes. Read-only fields show the value and cannot open the calendar.
+- The field is the shared text field, with Input's label, guidance, invalid and disabled states, compact height and touch sizes. Read-only fields show the value and cannot open the calendar; like read-only inputs they are not validated, so an empty required one never keeps its form from submitting.
 - Native forms submit the value under name, and a form reset restores an uncontrolled field's defaultValue. required asks for a value, and an empty field takes focus when the form is submitted. Validation stays with the application.
 - Use Calendar on its own to choose a day within a page or panel, such as a planning view; it has the same keyboard and appearance. Name it with aria-label or aria-labelledby: it is then a group around the month's grid, so calendars showing the same month stay apart.
 

@@ -398,6 +398,9 @@ export function DateTimeField({
             value={serialized}
             required={required}
             disabled={disabled}
+            // Like a read-only input, a read-only field is not validated, so an empty required one
+            // never keeps its form from submitting.
+            readOnly={readOnly}
             tabIndex={-1}
             aria-hidden="true"
             autoComplete="off"
