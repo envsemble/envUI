@@ -426,8 +426,12 @@ export function PanelDock<T extends PanelDockPanel>({
       // Focus in a popup the panel opened, such as a menu in a portal, moves to the chip too.
       if (lost || focusBefore.popup || frameOf(focusBefore.id)?.contains(focused))
         chipButtonOf(focusBefore.id)?.focus();
-    } else if (lost && focusBefore.element.isConnected) {
-      focusBefore.element.focus({ preventScroll: true });
+    } else if (lost) {
+      // A reorder can drop focus from an element that stays. An element that went with the new
+      // layout, such as the resize handle of a panel that now fills the region, or Maximize in a
+      // stacked dock, leaves focus to its panel.
+      if (focusBefore.element.isConnected) focusBefore.element.focus({ preventScroll: true });
+      else focusInto(focusBefore.id);
     }
   });
 

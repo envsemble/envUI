@@ -826,3 +826,30 @@ test('focus outside the dock stays there when the application hides a panel', as
   await page.keyboard.press('Alt+KeyM');
   await expect(dock.chips.getByRole('button', { name: 'Show Quarterly report' })).toBeFocused();
 });
+
+test('focus stays in a panel whose focused edge or Maximize control goes with a new layout', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const dock = dockOf(page);
+  const report = dock.panel('report');
+  const holdsFocus = () => report.evaluate((element) => element.contains(document.activeElement));
+  // A maximized panel has no resize handle.
+  await report.getByRole('separator', { name: 'Resize Quarterly report' }).focus();
+  await expect(report).toHaveAttribute('data-active', 'true');
+  await page.keyboard.press('Alt+KeyX');
+  await expect(report).toHaveAttribute('data-mode', 'maximized');
+  await expect.poll(holdsFocus).toBe(true);
+  await page.keyboard.press('Alt+KeyO');
+  await expect(report).toHaveAttribute('data-mode', 'open');
+
+  // A stacked dock leaves out Maximize.
+  const maximize = report.getByRole('button', { name: 'Maximize' });
+  await maximize.focus();
+  await dock.frame.evaluate((element) => (element.style.inlineSize = '24rem'));
+  await expect(dock.root).toHaveAttribute('data-stacked', 'true');
+  await expect(maximize).toHaveCount(0);
+  await expect(report).toBeVisible();
+  await expect.poll(holdsFocus).toBe(true);
+});
