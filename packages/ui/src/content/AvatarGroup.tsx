@@ -89,7 +89,7 @@ export function AvatarGroup({
               does; the group's name already counts and names everyone for assistive technology.
               The count reads +2 in right-to-left text too. */}
           <span className="env-avatar-group-overflow" tabIndex={0}>
-            <span dir="ltr">+{overflow}</span>
+            <span dir="ltr">{`+${overflow}`}</span>
           </span>
         </Tooltip>
       )}

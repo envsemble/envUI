@@ -36,6 +36,9 @@ import {
   StatGroup,
   Heatmap,
   RelativeTime,
+  AvatarGroup,
+  CopyButton,
+  Pagination,
 } from '@envsemble/envui';
 
 const treeItems = Array.from({ length: 40 }, (_, index) => ({
@@ -59,6 +62,8 @@ export function HydrationApp() {
   const [draft, setDraft] = useState('');
   const [message, setMessage] = useState('');
   const [files, setFiles] = useState('No files yet');
+  const [person, setPerson] = useState('Nobody yet');
+  const [page, setPage] = useState(1);
   return (
     <Theme theme="dark">
       <ToastProvider>
@@ -226,6 +231,21 @@ export function HydrationApp() {
           locale={typeof window === 'undefined' ? 'en' : 'de'}
         />
         <RelativeTime data-testid="hydrated-live-time" value="2020-01-01T00:00:00Z" />
+        <AvatarGroup
+          people={[{ name: 'Alex Morgan' }, { name: 'Sam Lee' }, { name: 'Priya Shah' }]}
+          total={5}
+          max={2}
+          onPersonClick={(clicked) => setPerson(clicked.name)}
+        />
+        <p data-testid="hydrated-person">{person}</p>
+        <CopyButton value="Hydrated text" aria-label="Hydrated copy" />
+        <Pagination
+          aria-label="Hydrated pages"
+          page={page}
+          pageSize={10}
+          total={30}
+          onPageChange={setPage}
+        />
         <output>{name}</output>
       </ToastProvider>
     </Theme>

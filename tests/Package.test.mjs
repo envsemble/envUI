@@ -802,3 +802,100 @@ test('packed rich text statically renders the shared Markdown schema and referen
   assert.match(result.editor, /name="source"/);
   assert.match(result.module, /\/dist\/rich-text\.js$/);
 });
+
+test('avatar groups, relative times, copy buttons and pagination render on a server and type their contracts', async function () {
+  const display = await runConsumer(
+    'DisplayConsumer.mjs',
+    `
+    import { createElement as h } from 'react';
+    import { renderToString } from 'react-dom/server';
+    import * as ui from '@envsemble/envui';
+    if (typeof document !== 'undefined' || typeof window !== 'undefined') throw new Error('DOM globals must be absent');
+    const people = [{ name: 'Alex Morgan' }, { name: 'Sam Lee' }, { name: 'Priya Shah' }];
+    const now = Date.parse('2026-10-14T12:00:00Z');
+    const light = (element) => renderToString(h(ui.Theme, { theme: 'light' }, element));
+    console.log(JSON.stringify({
+      relative: light(h(ui.RelativeTime, { value: '2026-10-16T12:00:00Z', now, locale: 'en' })),
+      formatted: [
+        ui.formatRelativeTime(now - 3 * 3600000, { now, locale: 'en' }),
+        ui.formatRelativeTime(now - 10000, { now, locale: 'en' }),
+        ui.formatRelativeTime(now - 3 * 3600000, { now, locale: 'de', format: 'short' }),
+        ui.formatRelativeTime('not a date', { now }),
+      ],
+      avatars: light(h(ui.AvatarGroup, { people, max: 2, total: 5 })),
+      copy: light(h(ui.CopyButton, { value: 'Copied text', 'aria-label': 'Copy link' })),
+      pagination: light(h(ui.Pagination, { page: 2, pageSize: 60, total: 245, onPageChange() {} })),
+    }));
+  `,
+  );
+  // React writes dateTime; attribute names in HTML are case-insensitive.
+  assert.match(
+    display.relative,
+    /<time [^>]*datetime="2026-10-16T12:00:00.000Z"[^>]*>in 2 days<\/time>/i,
+  );
+  assert.match(display.relative, /<time dir="auto"/);
+  assert.deepEqual(display.formatted, ['3 hours ago', 'just now', 'vor 3 Std.', '']);
+  assert.match(
+    display.avatars,
+    /role="group" aria-label="5 people: Alex Morgan, Sam Lee, Priya Shah, 2 more"/,
+  );
+  assert.match(display.avatars, /<span dir="ltr">\+3<\/span>/);
+  assert.match(display.copy, /<button[^>]*aria-label="Copy link"/);
+  assert.match(display.copy, /role="status"/);
+  assert.match(display.pagination, /<nav aria-label="Pagination" class="env-pagination">/);
+  assert.match(display.pagination, />61–120 of 245</);
+
+  await writeFile(
+    join(consumerDirectory, 'DisplayConsumer.tsx'),
+    `
+    import { AvatarGroup, CopyButton, Pagination, RelativeTime, formatRelativeTime,
+      type AvatarGroupPerson, type AvatarGroupProps, type CopyButtonProps, type PaginationProps,
+      type PaginationRange, type RelativeTimeProps } from '@envsemble/envui';
+    const person: AvatarGroupPerson = { name: 'Alex Morgan', id: 7, href: '/people/alex', src: null, fallback: 'initials' };
+    const groupProps: AvatarGroupProps = { people: [person], max: 3, size: 'small', total: 12, formatMore: (count) => count + ' more' };
+    const describe = (range: PaginationRange) => range.start + '–' + range.end + ' of ' + (range.total ?? 'many');
+    const pagerProps: PaginationProps = { page: 1, pageSize: 10, onPageChange: (page) => { const typed: number = page; void typed; } };
+    const timeProps: RelativeTimeProps = { value: new Date(), format: 'narrow', locale: ['de', 'en'], tooltip: false };
+    const copyProps: CopyButtonProps = { value: () => Promise.resolve('text'), 'aria-label': 'Copy link' };
+    const text: string = formatRelativeTime(Date.now(), { format: 'short', now: new Date() });
+    export const display = <>
+      <AvatarGroup {...groupProps} onPersonClick={(clicked, event) => { void clicked.name; event.preventDefault(); }} />
+      <RelativeTime {...timeProps} nowLabel="moments ago" />
+      <CopyButton {...copyProps} onCopy={(copied) => { const typed: string = copied; void typed; }} />
+      <CopyButton value="text" size="compact" variant="text">Copy</CopyButton>
+      <Pagination {...pagerProps} formatRange={describe} hasNextPage pending size="compact" />
+    </>;
+    void text;
+    // @ts-expect-error An icon-only copy button requires an accessible name.
+    const unnamedCopy = <CopyButton value="text" />;
+    // @ts-expect-error Avatar groups take the avatar sizes.
+    const unknownSize = <AvatarGroup people={[]} size="huge" />;
+    // @ts-expect-error A pager asks the application for pages.
+    const inertPager = <Pagination page={1} pageSize={10} />;
+    // @ts-expect-error Relative times have three formats.
+    const unknownFormat = <RelativeTime value={0} format="tiny" />;
+    void [unnamedCopy, unknownSize, inertPager, unknownFormat];
+  `,
+  );
+  await writeFile(
+    join(consumerDirectory, 'tsconfig.display.json'),
+    JSON.stringify({
+      compilerOptions: {
+        target: 'ES2022',
+        module: 'NodeNext',
+        moduleResolution: 'NodeNext',
+        jsx: 'react-jsx',
+        strict: true,
+        noEmit: true,
+        skipLibCheck: false,
+        types: ['react', 'react-dom'],
+        lib: ['ES2022', 'DOM'],
+      },
+      include: ['DisplayConsumer.tsx'],
+    }),
+  );
+  run(consumerRequire.resolve('typescript/bin/tsc'), [
+    '--project',
+    join(consumerDirectory, 'tsconfig.display.json'),
+  ]);
+});
