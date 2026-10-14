@@ -72,7 +72,9 @@ export function momentOf(day: number, minutes: number) {
 }
 
 export function fromMoment(moment: number) {
-  return { day: Math.floor(moment / minutesPerDay), minutes: moment % minutesPerDay };
+  const day = Math.floor(moment / minutesPerDay);
+  // Moments before 1970 are negative: the minutes count on from the day's start all the same.
+  return { day, minutes: moment - day * minutesPerDay };
 }
 
 /** Today and the current time on the reader's own clock. */

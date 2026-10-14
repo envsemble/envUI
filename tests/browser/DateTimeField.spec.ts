@@ -521,3 +521,33 @@ test('a key that does not move the day leaves focus where people take it next', 
   await expect(start).toHaveText('14 Oct 2026, 08:30');
   await expect(startTime).toBeFocused();
 });
+
+test('days before 1970 keep their date and time', async ({ page }) => {
+  const launch = field(page, 'Launch light');
+  const output = page.getByTestId('date-time-launch-light');
+  await expect(launch).toHaveText('20 Dec 1969, 09:30');
+  await launch.click();
+  const dialog = page.getByRole('dialog', { name: 'Launch light' });
+  await expect(dialog.getByRole('grid', { name: 'December 1969' })).toBeVisible();
+  await expect.poll(() => focusedDate(page)).toBe('1969-12-20');
+  await expect(dialog.getByRole('columnheader').first()).toHaveText('Mon');
+  await expect(dialog.locator('[data-date="1969-12-01"]')).toHaveAccessibleName(
+    /Monday,? 1 December 1969/,
+  );
+  await dialog.locator('[data-date="1969-12-22"]').click();
+  await expect(output).toHaveText('1969-12-22T09:30');
+  await expect(launch).toHaveText('22 Dec 1969, 09:30');
+  await dialog.getByLabel('Time', { exact: true }).fill('23:45');
+  await expect(output).toHaveText('1969-12-22T23:45');
+  // The months on either side of 1970 follow each other as any others do.
+  await dialog.locator('[data-date="1969-12-22"]').focus();
+  await page.keyboard.press('PageDown');
+  await expect.poll(() => focusedDate(page)).toBe('1970-01-22');
+  await page.keyboard.press('Enter');
+  await expect(output).toHaveText('1970-01-22T23:45');
+  await page.keyboard.press('Shift+PageUp');
+  await expect.poll(() => focusedDate(page)).toBe('1969-01-22');
+  await page.keyboard.press('Enter');
+  await expect(output).toHaveText('1969-01-22T23:45');
+  await expect(launch).toHaveText('22 Jan 1969, 23:45');
+});

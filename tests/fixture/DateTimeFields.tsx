@@ -14,6 +14,7 @@ export function DateTimeFieldFixture({ theme }: { theme: ThemeValue }) {
   const [due, setDue] = useState<string | null>('2026-10-20');
   const [changes, setChanges] = useState<(string | null)[]>([]);
   const [day, setDay] = useState<string | null>('2026-10-14');
+  const [launch, setLaunch] = useState<string | null>('1969-12-20T09:30');
   return (
     <Theme theme={theme} data-testid={`date-time-${theme}`} className="fixture-section">
       <form
@@ -107,6 +108,17 @@ export function DateTimeFieldFixture({ theme }: { theme: ThemeValue }) {
           readOnly
         />
         <DateTimeField label={`Invalid date ${theme}`} locale="en-GB" error="Choose a later day." />
+      </div>
+      <div className="fixture-actions">
+        {/* Days before 1970 count back from it. */}
+        <DateTimeField
+          label={`Launch ${theme}`}
+          locale="en-GB"
+          withTime
+          value={launch}
+          onValueChange={setLaunch}
+        />
+        <output data-testid={`date-time-launch-${theme}`}>{launch}</output>
       </div>
       <div className="fixture-actions">
         <Calendar
