@@ -289,3 +289,21 @@
 .docs-row-action {
   position: relative;
 }
+/* Docked panel specimens: a region with its page beneath the panels; a narrow one stacks them. */
+.docs-dock-frame {
+  position: relative;
+  block-size: 34rem;
+  overflow: hidden;
+  border: 0.0625rem solid var(--color-border-strong);
+  border-radius: var(--radius-surface);
+  background: var(--color-canvas);
+}
+.docs-dock-frame[data-narrow] {
+  inline-size: min(100%, 24rem);
+}
+.docs-dock-page {
+  padding: var(--space-6);
+}
+.docs-dock-body {
+  padding: 0 var(--space-5) var(--space-5);
+}

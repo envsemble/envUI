@@ -30,6 +30,7 @@ import {
 } from './Overlays';
 import { AppShellPreview } from './Shell';
 import { CommandPalettePreview, DocumentTabsPreview, TreePreview } from './Workspace';
+import { PanelDockPreview } from './Dock';
 import {
   BadgesPreview,
   BreadcrumbsPreview,
@@ -143,6 +144,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <TreePreview />;
     case 'document-tabs':
       return <DocumentTabsPreview />;
+    case 'panel-dock':
+      return <PanelDockPreview />;
     case 'command-palette':
       return <CommandPalettePreview />;
     default:
