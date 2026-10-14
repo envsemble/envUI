@@ -204,6 +204,8 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   const inputRef = useRef<HTMLInputElement>(null);
   const nativeRef = useRef<HTMLInputElement>(null);
   const pressFocus = useRef(false);
+  // The query onInputValueChange reported last.
+  const reportedQuery = useRef('');
   const direction = useTextDirection(inputRef);
 
   // The field keeps an uncontrolled value itself, so a native form reset can restore it.
@@ -319,7 +321,15 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
       return;
     }
     setInputText(next);
-    if (typedChanges.has(details.reason)) onInputValueChange?.(next);
+    if (typedChanges.has(details.reason)) {
+      reportedQuery.current = next;
+      onInputValueChange?.(next);
+    } else if (!isMultiple && reportedQuery.current !== '') {
+      // The field shows the chosen label again, after a choice or when people leave a query:
+      // the query is over, so options found for it, such as on a server, go with it.
+      reportedQuery.current = '';
+      onInputValueChange?.('');
+    }
   }
 
   function popupOffset() {

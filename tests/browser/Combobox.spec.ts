@@ -304,7 +304,7 @@ test('a server search shows its loading state, highlights the first result and k
   await expect(contact).toHaveValue('Morgan Diaz');
   await expect
     .poll(async () => JSON.parse((await output.textContent())!))
-    .toEqual({ chosen: 'morgan-diaz', chosenLabel: 'Morgan Diaz', queries: ['m', 'mo'] });
+    .toEqual({ chosen: 'morgan-diaz', chosenLabel: 'Morgan Diaz', queries: ['m', 'mo', ''] });
   // New results without the chosen option keep its label in the field.
   await contact.fill('ri');
   await expect(page.getByRole('option')).toHaveText(['Riley Chenriley.chen@example.com']);
@@ -590,4 +590,32 @@ test('touch screens give fields, chips and options the touch height', async ({
   await option.tap();
   await expect(owner).toHaveValue('Sam Lee');
   await page.context().close();
+});
+
+test('a server search ends its query with a choice or when the label returns, so Enter keeps it', async ({
+  page,
+}) => {
+  const contact = field(page, 'Contact light');
+  const output = page.getByTestId('combobox-search-light');
+  const state = async () => JSON.parse((await output.textContent())!);
+  await contact.click();
+  await contact.pressSequentially('mo');
+  await expect(page.getByRole('option')).toHaveText(['Morgan Diazmorgan.diaz@example.com']);
+  await page.keyboard.press('Enter');
+  await expect(contact).toHaveValue('Morgan Diaz');
+  // The chosen label is no query: the application hears the query end.
+  await expect.poll(async () => (await state()).queries.at(-1)).toBe('');
+  await contact.fill('ri');
+  await expect(page.getByRole('option')).toHaveText(['Riley Chenriley.chen@example.com']);
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('listbox')).toHaveCount(0);
+  await expect(contact).toHaveValue('Morgan Diaz');
+  // Leaving the query brings the label back, and ends the query too, so its results go.
+  await expect.poll(async () => (await state()).queries.at(-1)).toBe('');
+  await page.keyboard.press('ArrowDown');
+  await expect(page.locator('.env-combobox-empty')).toHaveText('Type a name to search');
+  await expect(page.getByRole('option')).toHaveCount(0);
+  await page.keyboard.press('Enter');
+  await expect(contact).toHaveValue('Morgan Diaz');
+  await expect.poll(state).toMatchObject({ chosen: 'morgan-diaz', chosenLabel: 'Morgan Diaz' });
 });

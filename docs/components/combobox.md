@@ -54,7 +54,7 @@ const people = members.map((member) => ({
 | onValueChange                     | Receives the value or values, and the chosen option or options                                                      |
 | filter                            | By default, options whose label or description contains the typed text, ignoring case and accents; or a function    |
 | filter={null}                     | Shows items as given, for options the application finds itself, such as on a server                                 |
-| onInputValueChange                | Receives the typed text, and an empty string once it is cleared; not the label a chosen option fills in             |
+| onInputValueChange                | Receives the typed text, and an empty string once the query ends: the text is cleared, or the label shows again     |
 | loading / loadingLabel            | The options are loading: the popup shows a spinner and loadingLabel (Loading…) instead of emptyLabel                |
 | emptyLabel                        | Shown when no option matches; No matches by default                                                                 |
 | label / hint / error              | Floating label, guidance and validation like Input; hint and error are linked to the field                          |
@@ -87,7 +87,7 @@ import { Combobox } from '@envsemble/envui';
 />;
 ```
 
-With `filter={null}` the list shows `items` as given while the application searches for the typed text. Include the chosen options in `items` when the field first shows them, such as when editing a saved value; options chosen from earlier results keep their labels and chips.
+With `filter={null}` the list shows `items` as given while the application searches for the typed text. Once the query ends, as the field shows its chosen label again after a choice or when people leave the query, onInputValueChange receives an empty string, so results for an abandoned query never stay in the list for <kbd>Enter</kbd> to choose. Include the chosen options in `items` when the field first shows them, such as when editing a saved value; options chosen from earlier results keep their labels and chips.
 
 ## Guidelines
 
