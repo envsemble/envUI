@@ -192,6 +192,8 @@ export function DateTimeField({
   const triggerRef = useRef<HTMLButtonElement>(null);
   const nativeRef = useRef<HTMLInputElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
+  // Whether the calendar was open when a press on the label began, which closes it.
+  const labelPressOpen = useRef(false);
   const direction = useTextDirection(triggerRef);
   const defaultMinutes = parseTime(defaultTime) ?? 0;
   // The field and its popup take the application's own aria-labelledby, else the label, else the
@@ -337,7 +339,21 @@ export function DateTimeField({
           id={id}
           label={
             label != null ? (
-              <label htmlFor={id} id={labelId}>
+              <label
+                htmlFor={id}
+                id={labelId}
+                onPointerDown={() => {
+                  labelPressOpen.current = open;
+                }}
+                onClick={(event) => {
+                  // A press on the label closes the open calendar, as a press outside it does;
+                  // the click that follows would open it again, as it opens a closed one.
+                  if (!labelPressOpen.current) return;
+                  labelPressOpen.current = false;
+                  event.preventDefault();
+                  triggerRef.current?.focus();
+                }}
+              >
                 {label}
               </label>
             ) : null

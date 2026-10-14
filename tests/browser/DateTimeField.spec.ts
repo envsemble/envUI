@@ -634,3 +634,18 @@ test('a calendar opened from right-to-left text runs right to left', async ({ pa
   expect(previousBox!.x).toBeGreaterThan(nextBox!.x);
   expect(fifteenth!.x).toBeLessThan(fourteenth!.x);
 });
+
+test('pressing the label of an open field closes its calendar, as pressing the field does', async ({
+  page,
+}) => {
+  const publish = field(page, 'Publish on light');
+  await publish.click();
+  await expect(openPopup(page)).toBeVisible();
+  await wellOf(publish).locator('label').click();
+  await expect(openPopup(page)).toHaveCount(0);
+  await expect(page.locator('.env-date-time-popup')).toHaveCount(0);
+  await expect(publish).toBeFocused();
+  // Closed, the label opens it.
+  await wellOf(publish).locator('label').click();
+  await expect(openPopup(page)).toBeVisible();
+});
