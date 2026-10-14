@@ -1088,3 +1088,44 @@ test('a dock that minimizes rather than scrolls asks to minimize its least recen
   await expect.poll(inRow).toEqual(['plan', 'review', 'retro']);
   await expect(log).toHaveText('plan minimized,plan open,review minimized,review open');
 });
+
+test('a narrow panel puts its actions and window controls above a title that keeps its words', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const dock = dockOf(page);
+  const report = dock.panel('report');
+  const title = report.getByRole('heading', { name: 'Quarterly report' });
+  const minimize = report.getByRole('button', { name: 'Minimize' });
+  // With room, the title and the controls share the first row.
+  const [wideTitle, wideControl] = await Promise.all([box(title), box(minimize)]);
+  expect(Math.abs(wideTitle.y - wideControl.y)).toBeLessThan(8);
+  // At its minimum width the title would keep less than 10 rem beside the five controls, so they
+  // take a row of their own above it.
+  await dock.frame.evaluate((element) => (element.style.inlineSize = '700px'));
+  await page.getByRole('button', { name: 'Open document light' }).click();
+  await expect.poll(async () => Math.round((await box(report)).width)).toBe(320);
+  await expect
+    .poll(async () => {
+      const [narrowTitle, narrowControl] = await Promise.all([box(title), box(minimize)]);
+      return narrowControl.y + narrowControl.height <= narrowTitle.y;
+    })
+    .toBe(true);
+  // The controls stay at the inline end, and the title wraps between words.
+  const [headerBox, closeBox] = await Promise.all([
+    box(report.locator('.env-panel-dock-header')),
+    box(report.getByRole('button', { name: 'Close', exact: true })),
+  ]);
+  expect(headerBox.x + headerBox.width - (closeBox.x + closeBox.width)).toBeCloseTo(12, 0);
+  expect(
+    await title.evaluate((heading) => {
+      const text = heading.firstChild!;
+      const range = document.createRange();
+      range.setStart(text, 0);
+      range.setEnd(text, 'Quarterly'.length);
+      return range.getClientRects().length;
+    }),
+  ).toBe(1);
+  await expect(title).toHaveCSS('overflow-wrap', 'break-word');
+});

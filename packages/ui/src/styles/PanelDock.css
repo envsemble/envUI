@@ -183,7 +183,10 @@
 }
 
 /* A panel's header sticks to the top of its content: the title and its metadata at the start, the
-   application's actions and the window controls at the end, compact like a title bar's. */
+   application's actions and the window controls at the end, compact like a title bar's. The title
+   keeps about 10 rem beside them; in a narrower panel they take a row of their own, above the
+   title, rather than squeezing it. Rows stack upward, so content below the title, such as Tabs,
+   comes first. */
 .env-panel-dock-header {
   --control-height-small: var(--control-height-compact);
   --control-height: var(--control-height-compact);
@@ -191,26 +194,30 @@
   position: sticky;
   inset-block-start: 0;
   z-index: 1;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  display: flex;
+  flex-wrap: wrap-reverse;
   align-items: start;
   column-gap: var(--space-3);
+  row-gap: var(--space-2);
   padding-block: var(--space-3);
   padding-inline: var(--space-5) var(--space-3);
   background: var(--env-panel-dock-panel-color, var(--color-dialog));
   color: var(--color-text-primary);
 }
 .env-panel-dock-heading {
+  flex: 1 1 10rem;
   min-inline-size: 0;
   display: grid;
   gap: 0.125rem;
+  /* Long words break only where they would overflow the line. */
+  overflow-wrap: break-word;
 }
 /* The first line of the title lines up with the compact controls beside it. */
 .env-panel-dock-title {
   margin: 0;
   padding-block-start: max(0rem, calc((var(--control-height-compact) - 1.4em) / 2));
   font: var(--type-h1);
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 .env-panel-dock-meta {
   min-inline-size: 0;
@@ -223,10 +230,16 @@
   align-items: center;
   gap: 0.125rem;
 }
+/* On a row of their own the actions stay at the inline end. */
+.env-panel-dock-actions {
+  flex: 0 0 auto;
+  margin-inline-start: auto;
+}
 .env-panel-dock-header-content {
-  grid-column: 1 / -1;
+  order: -1;
+  flex: 1 0 100%;
   min-inline-size: 0;
-  margin-block-start: var(--space-3);
+  margin-block-start: var(--space-1);
 }
 /* Icon-only text buttons take the quiet icon color, like the window controls, rather than the link
    blue of text buttons, and darken to the text color on hover and press. */

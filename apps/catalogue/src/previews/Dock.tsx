@@ -249,7 +249,8 @@ export function PanelDockPreview() {
             Type a draft, then minimize, maximize and restore its panel: the draft stays, as the
             panel&rsquo;s content is never mounted again. Drag a panel&rsquo;s top edge, or focus it
             and press <Kbd>↑</Kbd> or <Kbd>↓</Kbd>, to change its height. Open more documents to see
-            the row share its room, then scroll. In a narrow region, one panel at a time fills it.
+            the row share its room, then scroll; at their narrowest, a panel&rsquo;s controls move
+            above its title. In a narrow region, one panel at a time fills it.
           </>
         }
         actions={
