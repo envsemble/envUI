@@ -350,6 +350,8 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   const description =
     [hasChips && selectionId, metadata['aria-describedby']].filter(Boolean).join(' ') || undefined;
   const showClear = clearable && !disabled && !readOnly;
+  // The clear button shows while there is a value to clear; the well keeps room for it only then.
+  const clearShown = showClear && selectedValues.length > 0;
   const showLeading = singleItem?.leading != null && inputText === singleItem.label && !isMultiple;
   const ariaLabel = inputProps['aria-label'];
   const toolbarName =
@@ -359,7 +361,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
     const props = {
       ...wellProps,
       className: classNames(wellProps.className, 'env-combobox-well'),
-      'data-actions': showClear ? '2' : '1',
+      'data-actions': clearShown ? '2' : '1',
     };
     if (!isMultiple) return <BaseCombobox.InputGroup {...props} />;
     // Chips and the text input share the well, so Backspace and the arrow keys reach the chips.
