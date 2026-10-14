@@ -49,7 +49,9 @@ test('public components hydrate server output without recoverable errors', async
     .locator('[data-date="2026-03-10"]')
     .click();
   await expect(date).toHaveText('10 Mar 2026');
-  const month = page.getByRole('grid', { name: 'March 2026' }).last();
+  const month = page
+    .getByRole('group', { name: 'Hydrated calendar' })
+    .getByRole('grid', { name: 'March 2026' });
   await month.locator('[data-date="2026-03-12"]').click();
   await expect(month.locator('[data-date="2026-03-12"]')).toHaveAttribute('aria-selected', 'true');
   const chooser = page.waitForEvent('filechooser');
@@ -156,4 +158,50 @@ test('public components hydrate server output without recoverable errors', async
     await page.evaluate(() => (window as unknown as { hydrationErrors: string[] }).hydrationErrors),
   ).toEqual([]);
   expect(errors).toEqual([]);
+});
+
+test.describe('in another language and time zone than the server', () => {
+  test.use({ locale: 'de-DE', timezoneId: 'Pacific/Kiritimati' });
+
+  test('date fields and calendars without a locale hydrate, then follow the reader', async ({
+    page,
+  }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (error) => errors.push(error.message));
+    // Noon in UTC is the next morning in Kiritimati, a day ahead of most servers.
+    await page.clock.setFixedTime(new Date('2031-05-19T12:00:00Z'));
+    await page.goto(pathToFileURL(resolve('.cache/Hydration.html')).href);
+    await expect(page.getByRole('textbox', { name: 'Hydrated input' })).toHaveValue('Server value');
+    // The server wrote British English; once hydrated, the browser's German replaces it.
+    const date = page.getByRole('combobox', { name: 'Hydrated local date', exact: true });
+    await expect(date).toHaveText('17.03.2026');
+    const calendar = page.getByRole('group', { name: 'Hydrated local calendar' });
+    const month = calendar.getByRole('grid', { name: 'März 2026' });
+    await expect(month).toBeVisible();
+    await expect(month.getByRole('columnheader').first()).toHaveText('Mo');
+    await expect(month.locator('[data-date="2026-03-17"]')).toHaveAccessibleName(
+      'Dienstag, 17. März 2026',
+    );
+    await expect(month.locator('[data-date="2026-03-17"]')).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    // Without a value the calendar shows the reader's month, with the reader's today.
+    const today = page.getByRole('group', { name: 'Hydrated today' });
+    await expect(today.getByRole('grid', { name: 'Mai 2031' })).toBeVisible();
+    await expect(today.locator('[aria-current="date"]')).toHaveAttribute('data-date', '2031-05-20');
+    await expect(today.locator('td[tabindex="0"]')).toHaveAttribute('data-date', '2031-05-20');
+    await date.click();
+    await page
+      .getByRole('dialog', { name: 'Hydrated local date' })
+      .locator('[data-date="2026-03-18"]')
+      .click();
+    await expect(date).toHaveText('18.03.2026');
+    expect(
+      await page.evaluate(
+        () => (window as unknown as { hydrationErrors: string[] }).hydrationErrors,
+      ),
+    ).toEqual([]);
+    expect(errors).toEqual([]);
+  });
 });

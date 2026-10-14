@@ -124,6 +124,13 @@ export function dateFormat(locale: string | undefined, options: Intl.DateTimeFor
   return new Intl.DateTimeFormat(locale, { calendar: 'gregory', ...options, timeZone: 'UTC' });
 }
 
+/**
+ * The locale of a calendar or date field without one while it renders on the server and while that
+ * output hydrates: the server cannot know the reader's language. Its weeks start on Monday, as where
+ * a browser has no week data, so every browser reproduces the server's output.
+ */
+export const serverLocale = 'en-GB';
+
 type LocaleWithWeekInfo = Intl.Locale & {
   getWeekInfo?: () => { firstDay: number };
   weekInfo?: { firstDay: number };

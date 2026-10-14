@@ -145,6 +145,11 @@ export function HydrationApp() {
           locale="en-GB"
           weekStart={1}
         />
+        {/* Without a locale, the server and the browser each have their own language, time zone
+            and today, as they can in production. */}
+        <DateTimeField label="Hydrated local date" defaultValue="2026-03-17" />
+        <Calendar aria-label="Hydrated local calendar" defaultValue="2026-03-17" />
+        <Calendar aria-label="Hydrated today" />
         <Dialog title="Hydrated dialog" trigger={<Button>Open hydrated dialog</Button>}>
           <p>Server-rendered content</p>
         </Dialog>

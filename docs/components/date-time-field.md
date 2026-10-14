@@ -88,6 +88,7 @@ import { Calendar } from '@envsemble/envui';
 - The field is the shared text field, with Input's label, guidance, invalid and disabled states, compact height and touch sizes. Read-only fields show the value and cannot open the calendar; like read-only inputs they are not validated, so an empty required one never keeps its form from submitting.
 - Native forms submit the value under name, and a form reset restores an uncontrolled field's defaultValue. required asks for a value, and an empty field takes focus when the form is submitted. Validation stays with the application.
 - Use Calendar on its own to choose a day within a page or panel, such as a planning view; it has the same keyboard and appearance. Name it with aria-label or aria-labelledby: it is then a group around the month's grid, so calendars showing the same month stay apart.
+- Rendered on a server, a field or calendar without locale writes British English, and a calendar without a value leaves its days empty, as only the reader's clock knows today. Once the page hydrates, they show the reader's language, week and today, without a mismatch error. Pass locale, such as the language the server chose for the request, and weekStart for server output in the reader's language.
 
 TypeScript declarations provide the complete public API.
 

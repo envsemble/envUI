@@ -25,6 +25,13 @@ test('prepare compiled-public-API hydration acceptance fixture', async () => {
   assert.match(markup, /Server value/);
   // The server wrote the relative time in its own language; the browser corrects it.
   assert.match(markup, />in 2 days<\/time>/);
+  // Date fields and calendars without a locale write British English on the server, as the
+  // browser does while hydrating; a calendar without a value leaves today's month to the browser.
+  assert.match(markup, />17 Mar 2026</);
+  const localCalendar = markup.slice(markup.indexOf('aria-label="Hydrated local calendar"'));
+  assert.match(localCalendar.slice(0, localCalendar.indexOf('</table>')), />March 2026</);
+  const todayCalendar = markup.slice(markup.indexOf('aria-label="Hydrated today"'));
+  assert.doesNotMatch(todayCalendar.slice(0, todayCalendar.indexOf('</table>')), /data-date=/);
   const client = await build({
     stdin: {
       contents: `import {hydrateRoot} from 'react-dom/client';import {createElement} from 'react';import {HydrationApp} from './tests/fixture/hydration/HydrationApp.tsx';hydrateRoot(document.getElementById('root'),createElement(HydrationApp),{onRecoverableError:error=>{window.hydrationErrors.push(error.message)}});window.hydrationReady=true;`,

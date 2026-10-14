@@ -11,6 +11,7 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/setRef.js';
+import { useHydrated } from '../internal/useHydrated.js';
 import { Theme, useTheme } from '../foundations/Theme.js';
 import { Button, IconButton } from '../actions/Button.js';
 import { CalendarClock } from '../icons/CalendarClock.js';
@@ -31,6 +32,7 @@ import {
   parseDateTime,
   parseDay,
   parseTime,
+  serverLocale,
   toUtcDate,
   type Weekday,
 } from './internal/CalendarDays.js';
@@ -224,16 +226,20 @@ export function DateTimeField({
   const minDay = minMoment === undefined ? undefined : fromMoment(minMoment).day;
   const maxDay = maxMoment === undefined ? undefined : fromMoment(maxMoment).day;
 
+  // On the server, and while its output hydrates, a field without a locale shows the value as every
+  // browser shows it, then in the reader's language.
+  const hydrated = useHydrated();
+  const shownLocale = locale ?? (hydrated ? undefined : serverLocale);
   const formatOptionsKey = JSON.stringify(formatOptions ?? null);
   const formatter = useMemo(
     () =>
       // Values are wall-clock dates and times, formatted in UTC so no zone shifts them.
       dateFormat(
-        locale,
+        shownLocale,
         (JSON.parse(formatOptionsKey) as Intl.DateTimeFormatOptions | null) ??
           (withTime ? { dateStyle: 'medium', timeStyle: 'short' } : { dateStyle: 'medium' }),
       ),
-    [locale, withTime, formatOptionsKey],
+    [shownLocale, withTime, formatOptionsKey],
   );
   const display = current ? formatter.format(toUtcDate(current.day, current.minutes)) : '';
 
@@ -384,7 +390,12 @@ export function DateTimeField({
             onKeyDown={handleKeyDown}
           >
             {display ? (
-              <span className="env-date-time-value">{display}</span>
+              // As in RelativeTime: should the browser format the hydrated value differently from
+              // the server, the server's text stays until hydration ends, then the browser's
+              // replaces it, without a mismatch error.
+              <span className="env-date-time-value" suppressHydrationWarning>
+                {hydrated ? display : [display]}
+              </span>
             ) : (
               <span className="env-date-time-placeholder">{placeholder}</span>
             )}

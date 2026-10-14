@@ -8,6 +8,7 @@ import {
   type KeyboardEvent,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { useHydrated } from '../internal/useHydrated.js';
 import { IconButton } from '../actions/Button.js';
 import { ChevronLeft } from '../icons/ChevronLeft.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
@@ -21,6 +22,7 @@ import {
   monthStart,
   now,
   parseDay,
+  serverLocale,
   toUtcDate,
   type Weekday,
 } from './internal/CalendarDays.js';
@@ -83,34 +85,41 @@ export function Calendar({
   const selectedDay = parseDay(value === undefined ? uncontrolledValue : value);
   const minDay = parseDay(min);
   const maxDay = parseDay(max);
-  const today = now().day;
-  const localeStart = useMemo(() => localeWeekStart(locale), [locale]);
+  // On the server, and while its output hydrates, the calendar renders what every browser renders
+  // alike: without a locale, the server's fallback, and no today, which only the reader's clock
+  // knows. The reader's language, week and today follow at once.
+  const hydrated = useHydrated();
+  const shownLocale = locale ?? (hydrated ? undefined : serverLocale);
+  const today = hydrated ? now().day : undefined;
+  const localeStart = useMemo(() => localeWeekStart(shownLocale), [shownLocale]);
   const firstWeekday = weekStart ?? localeStart;
 
   // The active day is the grid's one tab stop; the month that holds it is shown. It follows the
   // chosen day when that changes.
-  const [activeState, setActiveState] = useState(() => selectedDay ?? today);
+  const [activeState, setActiveState] = useState(() => selectedDay ?? now().day);
   const [trackedDay, setTrackedDay] = useState(selectedDay);
   if (trackedDay !== selectedDay) {
     setTrackedDay(selectedDay);
     if (selectedDay !== undefined) setActiveState(selectedDay);
   }
   const active = clampDay(activeState, minDay, maxDay);
+  // Without a chosen day the month is today's, so the server leaves the days to the browser.
+  const daysShown = hydrated || selectedDay !== undefined;
 
   const formats = useMemo(
     () => ({
-      day: dateFormat(locale, {
+      day: dateFormat(shownLocale, {
         weekday: 'long',
         day: 'numeric',
         month: 'long',
         year: 'numeric',
       }),
-      month: dateFormat(locale, { month: 'long', year: 'numeric' }),
-      weekday: dateFormat(locale, { weekday: 'short' }),
-      weekdayName: dateFormat(locale, { weekday: 'long' }),
-      number: new Intl.NumberFormat(locale, { useGrouping: false }),
+      month: dateFormat(shownLocale, { month: 'long', year: 'numeric' }),
+      weekday: dateFormat(shownLocale, { weekday: 'short' }),
+      weekdayName: dateFormat(shownLocale, { weekday: 'long' }),
+      number: new Intl.NumberFormat(shownLocale, { useGrouping: false }),
     }),
-    [locale],
+    [shownLocale],
   );
 
   useLayoutEffect(() => {
@@ -196,8 +205,12 @@ export function Calendar({
             if (previousAvailable) moveTo(addMonths(active, -1), false);
           }}
         />
-        <div className="env-calendar-heading" id={headingId} aria-live="polite">
-          {formats.month.format(toUtcDate(first))}
+        <div
+          className="env-calendar-heading"
+          id={headingId}
+          aria-live={daysShown ? 'polite' : undefined}
+        >
+          {daysShown ? formats.month.format(toUtcDate(first)) : null}
         </div>
         <IconButton
           variant="text"
@@ -234,7 +247,7 @@ export function Calendar({
                 const day = gridStart + week * 7 + column;
                 // Days of other months leave empty cells, which keep each day under its weekday,
                 // also for assistive technology.
-                if (dayParts(day).month !== shownMonth)
+                if (!daysShown || dayParts(day).month !== shownMonth)
                   return <td key={day} className="env-calendar-pad" />;
                 const unavailable = isUnavailable(day);
                 return (

@@ -1,6 +1,7 @@
 import { useCallback, useSyncExternalStore, type ComponentPropsWithRef } from 'react';
 import { Tooltip } from '../feedback/Tooltip.js';
 import { classNames } from '../internal/classNames.js';
+import { useHydrated } from '../internal/useHydrated.js';
 import { subscribeToClock } from './internal/relativeTimeClock.js';
 
 /** A moment: a Date, milliseconds since 1970 or a date string such as an ISO 8601 timestamp. */
@@ -115,10 +116,6 @@ export interface RelativeTimeProps
   tooltip?: boolean;
 }
 
-const noSubscription = () => () => {};
-const onClient = () => true;
-const onServer = () => false;
-
 /**
  * A moment in a time element as text relative to now, such as "3 hours ago", with the date and
  * time in a tooltip. One shared clock keeps every RelativeTime on the page current.
@@ -142,8 +139,7 @@ export function RelativeTime({
   );
   const read = () => formatRelativeTime(time, { now: fixedNow, locale, format, nowLabel });
   const text = useSyncExternalStore(subscribe, read, read);
-  // False while rendering on the server and while hydrating that output, true afterwards.
-  const hydrated = useSyncExternalStore(noSubscription, onClient, onServer);
+  const hydrated = useHydrated();
   if (!Number.isFinite(time)) return null;
   const element = (
     <time
