@@ -1,8 +1,12 @@
 name: CI
 on:
+  # CI runs only for main (pull requests into it and pushes to it) while Actions minutes are
+  # limited; changes reach dev after a local `npm run verify`. To run CI on dev again, add dev back
+  # to both branch lists.
   push:
-    branches: [dev, main]
-  pull_request: {}
+    branches: [main]
+  pull_request:
+    branches: [main]
 permissions:
   contents: read
 concurrency:

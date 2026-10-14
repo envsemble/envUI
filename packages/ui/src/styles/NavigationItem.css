@@ -74,3 +74,25 @@
 .env-navigation-item:is(:disabled, [aria-disabled='true']) .env-symbol {
   color: inherit;
 }
+
+/* Trailing content, such as a Counter, follows the label; icon-only items show a dot instead. */
+.env-navigation-trailing {
+  flex: 0 0 auto;
+  margin-inline-start: auto;
+  padding-inline-start: calc(0.25rem * var(--scale, 1));
+  display: inline-flex;
+  align-items: center;
+}
+.env-navigation-icon-only:has(> .env-navigation-dot) {
+  position: relative;
+}
+.env-navigation-dot {
+  position: absolute;
+  inset-block-start: 22%;
+  inset-inline-end: 22%;
+  inline-size: 0.4375rem;
+  block-size: 0.4375rem;
+  border-radius: 50%;
+  background: var(--color-tone-accent);
+  box-shadow: 0 0 0 0.125rem var(--color-canvas);
+}

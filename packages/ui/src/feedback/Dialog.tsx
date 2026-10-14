@@ -19,14 +19,27 @@ export interface DialogProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title
   children?: ReactNode;
   actions?: ReactNode;
   closeLabel?: string;
-  /** Centered modal or a full-height panel at the right edge. */
-  placement?: 'center' | 'right';
+  /**
+   * Centered modal, a modal near the top of the window for search-like tasks, or a full-height panel
+   * at the right edge, which takes the whole width of a narrow window such as a phone's.
+   */
+  placement?: 'center' | 'top' | 'right';
+  /**
+   * standard (default, about 28 rem, 24 rem for a panel) or wide (about 44 rem) for content-heavy
+   * dialogs and panels.
+   */
+  size?: 'standard' | 'wide';
   /** Non-modal panels allow interaction with the surrounding page. */
   modal?: boolean;
   /** Keep a non-modal inspector open while interacting with its source content. */
   disablePointerDismissal?: boolean;
   initialFocus?: RefObject<HTMLElement | null>;
   finalFocus?: RefObject<HTMLElement | null>;
+  /**
+   * Work started from the dialog is in progress. Escape, outside presses and the built-in close
+   * button cannot dismiss it until pending returns to false.
+   */
+  pending?: boolean;
 }
 export type DialogCloseProps = Extract<ButtonProps, { href?: undefined }>;
 
@@ -51,10 +64,12 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
     actions,
     closeLabel = 'Close',
     placement = 'center',
+    size = 'standard',
     modal = true,
     disablePointerDismissal = false,
     initialFocus,
     finalFocus,
+    pending = false,
     className,
     ...popupProps
   },
@@ -65,7 +80,13 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
     <BaseDialog.Root
       open={open}
       defaultOpen={defaultOpen}
-      onOpenChange={(next) => onOpenChange?.(next)}
+      onOpenChange={(next, eventDetails) => {
+        if (!next && pending) {
+          eventDetails.cancel();
+          return;
+        }
+        onOpenChange?.(next);
+      }}
       modal={modal}
       disablePointerDismissal={disablePointerDismissal}
     >
@@ -86,27 +107,35 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
               ref={ref}
               className={classNames('env-modal-pane', className)}
               data-placement={placement}
+              data-size={size}
+              aria-busy={pending || undefined}
               initialFocus={initialFocus}
               finalFocus={finalFocus}
             >
               <Stack gap={5} className="env-dialog-content">
-                <div className="env-dialog-heading">
-                  <BaseDialog.Title className="env-dialog-title">{title}</BaseDialog.Title>
-                  {placement === 'right' && (
-                    <BaseDialog.Close
-                      render={<IconButton icon={<Close />} aria-label={closeLabel} />}
-                    />
+                <div className="env-dialog-header">
+                  <div className="env-dialog-heading">
+                    <BaseDialog.Title className="env-dialog-title">{title}</BaseDialog.Title>
+                    {placement === 'right' && (
+                      <BaseDialog.Close
+                        render={
+                          <IconButton icon={<Close />} aria-label={closeLabel} disabled={pending} />
+                        }
+                      />
+                    )}
+                  </div>
+                  {description != null && (
+                    <BaseDialog.Description className="env-dialog-description">
+                      {description}
+                    </BaseDialog.Description>
                   )}
                 </div>
-                {description != null && (
-                  <BaseDialog.Description className="env-dialog-description">
-                    {description}
-                  </BaseDialog.Description>
-                )}
                 {children}
-                {(placement === 'center' || actions != null) && (
+                {(placement !== 'right' || actions != null) && (
                   <ActionGroup align="end" className="env-dialog-actions">
-                    {placement === 'center' && <DialogClose>{closeLabel}</DialogClose>}
+                    {placement !== 'right' && (
+                      <DialogClose disabled={pending}>{closeLabel}</DialogClose>
+                    )}
                     {actions}
                   </ActionGroup>
                 )}

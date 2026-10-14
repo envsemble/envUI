@@ -34,7 +34,54 @@ export function App() {
 }
 ```
 
-Import `@envsemble/envui/styles.css` once in the client entry. It includes local Inter and scopes styling to `.env-theme`. Place UI inside `Theme`; a document theme attribute alone does not provide React context. The application supplies `light` or `dark` and owns preference, first-render initialization and persistence. See [colors and themes](foundations/colors.md) for nested boundaries and portals.
+Import `@envsemble/envui/styles.css` once in the client entry. It includes local Inter and scopes styling to `.env-theme`. Place UI inside `Theme`; a document theme attribute alone does not provide React context. See [colors and themes](foundations/colors.md) for nested boundaries and portals.
+
+### Theme preference
+
+For a whole application, `ThemePreferenceProvider` replaces the fixed `Theme`. It stores the choice, follows the system theme until the user picks one, and themes the document root so the page background, native controls and other libraries' portals match. Every `<meta name="theme-color">` in the page takes the canvas color of the theme in use once the application has started, so the browser's own interface, such as a mobile address bar, matches too; until then, one tag per system color scheme with a `media` condition keeps the first paint close. The root keeps the browser's font size, so 1 rem stays the reader's size (16 px by default), and the document body takes envUI's body type at zero specificity. An application's own `body` rule outside cascade layers styles the body element and the text that inherits from it outside envUI's themed boundaries; paragraphs and headings take envUI's type anywhere under a themed root. Inside the boundaries, envUI's type applies: in the provider's boundary around the application, in a `Theme` and in envUI's popups, such as dialogs, menus, tooltips and notifications. Its line height is unitless, 1.4 or `--line-height-body`, so text in another size keeps lines in proportion. To change the typeface, the size or the line height there, set envUI's font tokens, such as `--font-family`, `--font-size-body` and `--line-height-body`, for `.env-theme` in a style sheet that loads after envUI's, rather than a `body` rule. A rule inside `@layer` loses to envUI's unlayered style sheet, whatever its specificity. `ThemeToggle` switches between light and dark. A choice made in another window or tab of the same origin, such as another window of a desktop application, applies at once through the storage event.
+
+```tsx
+import { ThemePreferenceProvider, ThemeToggle } from '@envsemble/envui';
+
+<ThemePreferenceProvider storageKey="app-theme">
+  <ThemeToggle />
+</ThemePreferenceProvider>;
+```
+
+Add the bootstrap script to the document head so a saved dark theme does not flash light while the application loads. `createThemeBootstrapScript` from `@envsemble/envui/theme-bootstrap` returns the inline script; use the same storage key:
+
+```ts
+// vite.config.ts
+import { createThemeBootstrapScript } from '@envsemble/envui/theme-bootstrap';
+
+const themeBootstrap = {
+  name: 'theme-bootstrap',
+  transformIndexHtml: () => [
+    {
+      tag: 'script',
+      children: createThemeBootstrapScript({ storageKey: 'app-theme' }),
+      injectTo: 'head-prepend',
+    },
+  ],
+};
+```
+
+### Router links
+
+Destinations in envUI render native anchors. Register the router's link once with `LinkProvider` so Button, Link, NavigationItem, Card, DirectionLink and MenuItem destinations navigate on the client. The component receives native anchor props with a string `href`:
+
+```tsx
+import { LinkProvider, type LinkComponentProps } from '@envsemble/envui';
+import { Link } from '@tanstack/react-router';
+
+function RouterLink({ href, ...props }: LinkComponentProps) {
+  return href.startsWith('/') ? <Link to={href} {...props} /> : <a href={href} {...props} />;
+}
+
+<LinkProvider component={RouterLink}>{app}</LinkProvider>;
+```
+
+The application still decides which destination is selected.
 
 ## Public entry points
 
@@ -43,6 +90,8 @@ Import `@envsemble/envui/styles.css` once in the client entry. It includes local
 - `@envsemble/envui/content` when the feature needs code or Markdown.
 - `@envsemble/envui/rich-text` when the feature needs formatted editing or rendering.
 - `@envsemble/envui/assets/*` for raw assets.
+
+The content and rich-text entries depend on Shiki, react-markdown, remark-gfm, marked and Tiptap. They are optional peer dependencies: applications using only the main entry do not install them. An application importing `@envsemble/envui/content` or `@envsemble/envui/rich-text` installs the packages listed under `peerDependencies` in the package manifest, for example `npm install shiki @shikijs/langs @shikijs/themes react-markdown remark-gfm`.
 
 Keep optional content/editor imports with their features. Individual icon imports avoid loading the complete catalogue; see [icons](foundations/icons.md) when adding icons.
 

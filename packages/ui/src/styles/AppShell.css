@@ -1,0 +1,429 @@
+/* Application frame: a fixed topbar, a collapsible sidebar and the scrolling content area.
+   State attributes come from AppShell; the layout below only reads them. */
+.env-app-shell {
+  --env-sidebar-inset: var(--space-3);
+  /* Expanded, the sidebar fits its widest content (measured by AppShell) within these bounds. */
+  --env-sidebar-min-width: 12rem;
+  --env-sidebar-max-width: 20rem;
+  --env-sidebar-expanded-width: clamp(
+    var(--env-sidebar-min-width),
+    var(--env-sidebar-content-width, 0px),
+    var(--env-sidebar-max-width)
+  );
+  /* Collapsed, it holds one control and its insets, so the toggle and icons share a center line. */
+  --env-sidebar-collapsed-width: calc(var(--control-height) + 2 * var(--env-sidebar-inset));
+  --env-sidebar-width: var(--env-sidebar-expanded-width);
+  --env-app-divider: 0.0625rem solid var(--color-border-strong);
+  /* The standard control height, for parts that line up with the navigation while a title bar makes
+     its own controls compact. */
+  --env-app-control-height: var(--control-height);
+  /* Where page content sticks with position: sticky: below the topbar while the document scrolls. */
+  --app-sticky-top: var(--topbar-height);
+  min-block-size: 100dvh;
+  background: var(--color-canvas);
+}
+.env-app-shell:not([data-dividers]) {
+  --env-app-divider: 0 solid transparent;
+}
+.env-app-shell[data-collapsed] {
+  --env-sidebar-width: var(--env-sidebar-collapsed-width);
+}
+.env-app-shell[data-narrow] {
+  --env-sidebar-width: 0rem;
+}
+
+.env-app-topbar {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 25;
+  block-size: var(--topbar-height);
+  display: grid;
+  grid-template-columns: var(--env-sidebar-width) minmax(0, 1fr);
+  /* A fixed row: content squeezed while the sidebar column animates must not grow the row and move
+     the toggle away from the pointer. */
+  grid-template-rows: minmax(0, 1fr);
+  border-block-end: var(--env-app-divider);
+  background: var(--color-canvas);
+  transition: grid-template-columns var(--motion-duration-medium) var(--motion-ease-standard);
+}
+/* The loading bar runs along the topbar's bottom edge, over the divider. */
+.env-app-topbar > .env-app-loading-bar {
+  inset: 100% 0 auto 0;
+}
+.env-app-topbar-context {
+  min-inline-size: 0;
+  padding-inline: var(--env-sidebar-inset);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  border-inline-end: var(--env-app-divider);
+}
+.env-app-context {
+  min-inline-size: 0;
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+}
+.env-app-topbar-page {
+  min-inline-size: 0;
+  padding-inline: var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+.env-app-title {
+  min-inline-size: 0;
+  overflow: hidden;
+  color: var(--color-text-primary);
+  font: var(--type-body);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.env-app-actions {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* The brand mark doubles as the sidebar toggle; the toggle icon shows while the region is hovered. */
+.env-app-sidebar-toggle {
+  inline-size: var(--control-height);
+  block-size: var(--control-height);
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-text-primary);
+  cursor: pointer;
+}
+/* While the toggle icon shows, the toggle is a secondary icon button like the other circular
+   actions; at rest it is only the brand mark. */
+.env-app-shell:is([data-region-hovered], [data-narrow]) button.env-app-sidebar-toggle,
+button.env-app-sidebar-toggle:focus-visible {
+  background: var(--color-secondary-action);
+  color: var(--color-on-secondary-action);
+}
+.env-app-shell button.env-app-sidebar-toggle:hover {
+  background: var(--color-secondary-action-hover);
+  color: var(--color-on-secondary-action);
+}
+.env-app-shell button.env-app-sidebar-toggle:active {
+  background: var(--color-secondary-action-pressed);
+}
+.env-app-sidebar-toggle:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: 0.125rem;
+}
+.env-app-brand,
+.env-app-toggle-icon {
+  grid-area: 1 / 1;
+  display: grid;
+  place-items: center;
+}
+.env-app-brand > :is(img, svg) {
+  display: block;
+  inline-size: 1.5rem;
+  block-size: auto;
+  max-block-size: 1.5rem;
+}
+.env-app-toggle-icon {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  visibility: hidden;
+}
+.env-app-shell:is([data-region-hovered], [data-narrow]) .env-app-sidebar-toggle .env-app-brand,
+.env-app-sidebar-toggle:focus-visible .env-app-brand {
+  visibility: hidden;
+}
+.env-app-shell:is([data-region-hovered], [data-narrow])
+  .env-app-sidebar-toggle
+  .env-app-toggle-icon,
+.env-app-sidebar-toggle:focus-visible .env-app-toggle-icon {
+  visibility: visible;
+}
+@media (hover: none), (pointer: coarse) {
+  .env-app-sidebar-toggle .env-app-brand {
+    visibility: hidden;
+  }
+  .env-app-sidebar-toggle .env-app-toggle-icon {
+    visibility: visible;
+  }
+  button.env-app-sidebar-toggle {
+    background: var(--color-secondary-action);
+    color: var(--color-on-secondary-action);
+  }
+}
+
+.env-app-sidebar {
+  position: fixed;
+  inset: var(--topbar-height) auto 0 0;
+  z-index: 20;
+  inline-size: var(--env-sidebar-width);
+  display: flex;
+  flex-direction: column;
+  border-inline-end: var(--env-app-divider);
+  background: var(--color-canvas);
+  transition: inline-size var(--motion-duration-medium) var(--motion-ease-standard);
+}
+.env-app-sidebar[hidden] {
+  display: none;
+}
+/* The navigation keeps its natural height and scrolls only when it alone overflows the sidebar. */
+.env-app-navigation {
+  flex: 0 1 auto;
+  min-block-size: 0;
+  padding: var(--space-5) var(--env-sidebar-inset) var(--env-sidebar-inset);
+  display: grid;
+  justify-items: start;
+  align-content: start;
+  gap: var(--space-1);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.env-app-navigation .env-navigation-item:not(.env-navigation-icon-only) {
+  white-space: nowrap;
+}
+/* Content below the navigation, such as a Tree, fills the remaining height and scrolls itself. */
+.env-app-sidebar-content {
+  flex: 1 1 0;
+  min-block-size: 0;
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* The expanded sidebar's edge is a resize handle when AppShell is resizable. A line shows on hover,
+   keyboard focus and while dragging. */
+.env-app-sidebar-resize {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: calc(-0.25rem - 0.03125rem);
+  z-index: 1;
+  inline-size: 0.5rem;
+  cursor: col-resize;
+  touch-action: none;
+  outline: none;
+}
+.env-app-sidebar-resize::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: calc(50% - 0.0625rem);
+  inline-size: 0.125rem;
+  background: transparent;
+  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+}
+.env-app-sidebar-resize:hover::after {
+  background: var(--color-border-hover);
+  transition-delay: var(--motion-duration-medium);
+}
+.env-app-sidebar-resize:focus-visible::after,
+.env-app-shell[data-resizing] .env-app-sidebar-resize::after {
+  background: var(--color-focus-ring);
+  transition-delay: 0s;
+}
+/* While dragging, the width follows the pointer without easing and no text is selected. */
+.env-app-shell[data-resizing] {
+  cursor: col-resize;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.env-app-shell[data-resizing] :is(.env-app-topbar, .env-app-sidebar, .env-app-content) {
+  transition: none;
+}
+
+/* A collapsed sidebar shows icons; hover or focus expands it over the content, together with the
+   context area above it. Sidebar content shows only while the sidebar is expanded. */
+.env-app-shell[data-compact] .env-app-sidebar-content,
+.env-app-shell[data-compact]:not([data-topbar='full']) .env-app-context {
+  display: none;
+}
+.env-app-shell[data-expanded-overlay] .env-app-sidebar {
+  inline-size: var(--env-sidebar-expanded-width);
+}
+.env-app-shell[data-expanded-overlay] .env-app-topbar {
+  grid-template-columns: var(--env-sidebar-expanded-width) minmax(0, 1fr);
+}
+
+/* While an AppShell without a title bar is in the document, the document scrolls under its fixed
+   topbar. Scroll padding as tall as the topbar, and a little more for focus rings, keeps elements
+   that take focus and anchor targets below it (WCAG 2.4.11). AppShell measures its topbar into
+   --env-app-topbar-block-size on the document element; until it does, as on the first paint of a
+   server-rendered page, --topbar-height applies. The rule has zero specificity and sits in a cascade
+   layer of its own, declared with envUI's style sheet, so scroll padding the application sets wins:
+   unlayered, or in its own layers declared after envUI's style sheet. */
+@layer envui-document {
+  :where(html:has(.env-app-shell:not([data-title-bar]))) {
+    scroll-padding-block-start: calc(
+      var(--env-app-topbar-block-size, var(--topbar-height, 3.25rem)) + 0.5rem
+    );
+  }
+}
+
+/* The document scrolls, so content can stick below the fixed topbar with
+   position: sticky; inset-block-start: var(--app-sticky-top). */
+.env-app-content {
+  min-inline-size: 0;
+  padding-block-start: var(--topbar-height);
+  padding-inline-start: var(--env-sidebar-width);
+  container-type: inline-size;
+  outline: none;
+  transition: padding-inline-start var(--motion-duration-medium) var(--motion-ease-standard);
+}
+/* Hover expansion overlays the content instead of moving it. */
+.env-app-shell[data-expanded-overlay] .env-app-content {
+  padding-inline-start: var(--env-sidebar-collapsed-width);
+}
+
+/* Narrow viewports: the sidebar opens over the content and the page title is hidden. */
+.env-app-shell[data-narrow] .env-app-topbar {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.env-app-shell[data-narrow] .env-app-topbar-context {
+  border-inline-end: 0;
+}
+/* Above a narrow sidebar the context stays modest; a full topbar gives it the room it needs. */
+.env-app-shell[data-narrow]:not([data-topbar='full']) .env-app-context {
+  max-inline-size: 16rem;
+}
+.env-app-shell[data-narrow] .env-app-title {
+  display: none;
+}
+.env-app-shell[data-narrow] .env-app-topbar-page {
+  padding-inline: 0 var(--space-3);
+}
+/* Over a narrow window the sidebar is a drawer of a comfortable width, at least 20 rem, so sidebar
+   content such as a list of recent documents has room, while some of the page stays in view. */
+.env-app-shell[data-narrow] .env-app-sidebar {
+  inline-size: min(max(var(--env-sidebar-expanded-width), 20rem), calc(100vw - var(--space-8)));
+  z-index: 30;
+}
+.env-app-sidebar-backdrop {
+  position: fixed;
+  inset: var(--topbar-height) 0 0 0;
+  z-index: 29;
+  background: hsl(from var(--color-dialog-overlay) h s l / 0.3);
+}
+
+/* A full topbar is one row across the window, independent of the sidebar: the toggle, the context at
+   its natural width, the title, which truncates first, and the actions at the end. Its columns do
+   not follow the sidebar, so nothing in it moves while the sidebar collapses or expands. */
+.env-app-shell[data-topbar='full'] .env-app-topbar {
+  --env-title-bar-start: var(--env-sidebar-inset);
+  --env-title-bar-end: var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  transition: none;
+}
+.env-app-shell[data-topbar='full']:not([data-title-bar]) .env-app-topbar {
+  padding-inline: var(--env-title-bar-start) var(--env-title-bar-end);
+}
+.env-app-shell[data-topbar='full'] :is(.env-app-topbar-context, .env-app-topbar-page) {
+  display: contents;
+  border: 0;
+}
+.env-app-shell[data-topbar='full'] .env-app-context {
+  flex: 0 1 auto;
+  gap: var(--space-2);
+}
+.env-app-shell[data-topbar='full'] .env-app-title {
+  flex: 0 1000 auto;
+  margin-inline: var(--space-1) auto;
+}
+/* The actions stay at the end, also where narrow windows hide the title. */
+.env-app-shell[data-topbar='full'] .env-app-actions {
+  margin-inline-start: auto;
+}
+.env-app-shell[data-topbar='full'][data-narrow] .env-app-topbar {
+  --env-title-bar-end: var(--space-3);
+}
+
+/* As the window's title bar, the topbar takes the title bar height and its divider below, so the
+   divider runs under the window controls too; --topbar-height follows it, so the sidebar and the
+   content line up with it. The window reports a smaller height once the page is zoomed in, so the
+   bar keeps at least --title-bar-height, which holds its compact controls.
+   The shell fills the window and its content area scrolls below the title bar instead of the
+   document: the window controls drawn over the title bar never cover a scrollbar, and the stable
+   scrollbar gutter keeps the layout in place as content starts or stops overflowing. Content sticks
+   to the top of the content area, so --app-sticky-top is 0 there. Nothing here contains fixed
+   positioning, so a fixed overlay inside the content still covers the window. */
+.env-app-shell[data-title-bar] {
+  --topbar-height: max(calc(env(titlebar-area-height, 0px) + 0.0625rem), var(--title-bar-height));
+  --app-sticky-top: 0px;
+  position: fixed;
+  inset: 0;
+  min-block-size: 0;
+  overflow: hidden;
+}
+.env-app-shell[data-title-bar] .env-app-content {
+  position: absolute;
+  inset: var(--topbar-height) 0 0 0;
+  padding-block-start: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+/* In the split topbar, the columns keep their own inner padding. */
+.env-app-topbar.env-title-bar {
+  --env-title-bar-start: 0rem;
+  --env-title-bar-end: 0rem;
+}
+.env-app-topbar.env-title-bar .env-app-title {
+  font: var(--type-body-small);
+}
+/* The toggle takes the compact size and stays on the center line of the navigation icons. */
+.env-app-topbar.env-title-bar .env-app-sidebar-toggle {
+  margin-inline: calc((var(--env-app-control-height) - var(--control-height)) / 2);
+}
+.env-app-topbar.env-title-bar .env-app-brand > :is(img, svg) {
+  inline-size: 1.25rem;
+  max-block-size: 1.25rem;
+}
+.env-app-topbar.env-title-bar .env-app-toggle-icon {
+  inline-size: 1rem;
+  block-size: 1rem;
+}
+
+/* The loading frame mirrors the shell geometry. */
+.env-app-shell-skeleton {
+  display: block;
+  pointer-events: none;
+}
+.env-app-navigation-placeholder {
+  min-block-size: var(--control-height);
+  padding: var(--space-1) var(--space-3);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.env-app-shell[data-compact] .env-app-navigation-placeholder-label {
+  display: none;
+}
+
+/* AppShell reads the natural width of the sidebar content with these rules applied for a moment. */
+.env-app-shell[data-measuring] :is(.env-app-navigation, .env-app-topbar-context),
+.env-app-shell[data-topbar='full'][data-measuring] .env-app-sidebar-content {
+  inline-size: max-content;
+}
+.env-app-shell[data-measuring] .env-app-context {
+  flex: none;
+}
+/* Nothing animates before the first paint, including the measured width. */
+.env-app-shell:not([data-ready]) :is(.env-app-topbar, .env-app-sidebar, .env-app-content) {
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .env-app-topbar,
+  .env-app-sidebar,
+  .env-app-content {
+    transition: none;
+  }
+}

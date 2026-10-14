@@ -30,6 +30,7 @@ import { Add } from '@envsemble/envui/icons/Add';
 | Link                | Inline native link with inherited typography; underline defaults to true          |
 | startIcon / endIcon | Optional React content beside the label                                           |
 | iconOnly / icon     | Show only the supplied icon; size is square and corners follow the chosen variant |
+| pending             | A spinner replaces the content at the same size; busy, and activation is ignored  |
 | aria-label          | Required accessible action name when iconOnly is true                             |
 | href                | Render a native link with the same button appearance; omit for a native button    |
 | Native action props | disabled, type/onClick or anchor attributes, ref and accessible attributes        |
@@ -49,8 +50,48 @@ import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 | ------------------- | --------------------------------------------- |
 | icon                | React icon content                            |
 | variant             | Same variants as Button; secondary by default |
+| pending             | A spinner replaces the icon while work runs   |
 | aria-label          | Required accessible action name               |
 | Native button props | disabled, type, onClick and ref               |
+
+## ConfirmButton
+
+```tsx
+import { ConfirmButton } from '@envsemble/envui';
+import { Delete } from '@envsemble/envui/icons/Delete';
+
+<ConfirmButton confirmLabel="Remove Morgan?" onConfirm={() => removeSeat(morgan)}>
+  Remove
+</ConfirmButton>
+
+<ConfirmButton
+  variant="destructive"
+  confirmLabel="Cancel plan · 3 lose access"
+  pending={cancelling}
+  onConfirm={cancelPlan}
+>
+  Cancel plan
+</ConfirmButton>
+
+<ConfirmButton
+  icon={<Delete />}
+  aria-label="Delete draft"
+  confirmLabel="Delete draft?"
+  onConfirm={deleteDraft}
+/>
+```
+
+### Props & contracts
+
+| Name                | Contract                                                                                                      |
+| ------------------- | ------------------------------------------------------------------------------------------------------------- |
+| confirmLabel        | The label while armed, naming what a second press does                                                        |
+| onConfirm           | Runs on the second press                                                                                      |
+| variant             | outlined (default; secondary when icon-only), secondary, destructive or text at rest; armed it is destructive |
+| armedDuration       | Milliseconds the button stays armed without a second press; 4000 by default                                   |
+| icon / aria-label   | A round icon-only button at rest, named by aria-label; armed, it shows the icon with the confirm label        |
+| pending / disabled  | End an arming; pending shows the spinner as on Button                                                         |
+| Native button props | ref, onBlur, onKeyDown and accessible attributes                                                              |
 
 ## ButtonGroup
 
@@ -82,17 +123,20 @@ import { Settings } from '@envsemble/envui/icons/Settings';
 
 ## Guidelines
 
+- Say what an action will do before it is taken. When the outcome is known, put it in the label, such as “Show 128 homes”, “Switch to Team · +5 seats” or “Assign to Morgan”. Use AnimatedNumber for a count that changes while choices are made.
+- Use ConfirmButton for an action that takes effect at once and cannot be undone, such as removing someone's access. The first press names the consequence in place and announces it; a double click only arms it; <kbd>Esc</kbd>, leaving the button and four seconds disarm it. Use a Dialog when the person must choose or type something first. An icon-only ConfirmButton, such as a delete icon in a dense row, is round like IconButton until it is armed; then it grows to show the confirm label beside its icon, so the consequence is still named, and keeps focus.
 - Use one primary action in an action group. Reserve important emphasis for rare, consequential actions.
 - Action buttons fit their content: 2.5 rem minimum height (2 rem for important), 0.875 rem text, 0.25 rem vertical and 0.75 rem horizontal padding. Labels wrap when space is limited.
 - Use fully rounded corners; important actions use 0.5 rem corners. ActionGroup provides 1 rem row gaps or 0.5 rem stacked gaps.
 - Use ButtonGroup for connected rows or columns: the gap is 0.125 rem and adjoining corners use the shared 0.5 rem row inner radius. Each end keeps its button variant’s outer corners; a single button keeps all its normal corners.
 - Prefer the same button variant within a connected group. Mix variants when related actions need different emphasis.
 - ButtonGroup accepts any mixture of labeled, icon-only, leading/trailing icon and native link buttons. Horizontal buttons share a height; vertical buttons fill the group width. Labels wrap, and groups scroll locally if their controls cannot fit. Hidden buttons do not determine the end corners.
-- Give related actions an accessible group name. ButtonGroup retains ordinary Tab navigation and each button’s native activation, focus and disabled behavior.
-- Secondary buttons use the neutral row fill and label color, without a border. Outlined buttons retain their border and link color.
+- Give related actions an accessible group name. ButtonGroup retains ordinary <kbd>Tab</kbd> navigation and each button’s native activation, focus and disabled behavior.
+- Secondary buttons use the neutral row fill and label color, without a border. On row fills (grouped rows, row-tone cards and card action strips) they shift from that fill by the control lightness rule, so they stay visible. Outlined buttons retain their border and link color.
 - Text buttons use link blue with no fill, border or horizontal inset. Set underline to show an underline. Hover and pressed states change only the text color using the shared HSL rule. Use onClick for actions and href for navigation; keyboard focus and disabled behavior remain shared with Button.
 - Interaction colors follow the central HSL lightness rule described in Colors & themes. State colors and disabled opacity come from the shared stylesheet.
 - Use href for destinations and onClick for actions. Disabled links have no destination and cannot activate.
+- Icon-only buttons keep their square size wherever they sit, also in a squeezed flex row; labeled buttons can shrink and wrap their labels.
 - Labeled and icon-only buttons share the 1 rem control icon size used by NavigationItem. Leading and trailing icons follow the same rule, including important buttons.
 - Every variant supports iconOnly: a square matching its regular button height (2 rem for important; 2.5 rem for the others). Corners, colors, borders and interaction states follow the chosen variant: important is a rounded square; the others are circles. Name the action, rather than the icon shape.
 - IconButton is a shorthand for Button with iconOnly enabled and variant="secondary" by default.
@@ -102,6 +146,7 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Stacks & action groups](../components/layout.md)
+- [Animated numbers](../components/animated-number.md)
 - [Colors & themes](../foundations/colors.md)
 - [Icons & assets](../foundations/icons.md)
 - [Accessibility](../foundations/accessibility.md)

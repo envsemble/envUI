@@ -1,5 +1,14 @@
 import { useId, useMemo, useRef, useState } from 'react';
-import { ActionGroup, Button, Card, Dialog, Input, Stack, Switch, Text } from '@envsemble/envui';
+import {
+  ActionGroup,
+  Button,
+  Card,
+  Dialog,
+  SearchField,
+  Stack,
+  Switch,
+  Text,
+} from '@envsemble/envui';
 // This offline browser consumes the full public catalogue. Products use per-icon imports.
 import * as symbols from '@envsemble/envui/icons';
 import { Example } from '../Example';
@@ -101,13 +110,12 @@ export function IconCatalogue({
   return (
     <Example size="collection">
       <div className="docs-icon-toolbar">
-        <Input
+        <SearchField
           label="Search icons"
-          type="search"
+          showLabel
           value={query}
-          placeholder="Icon name"
-          onChange={(event) => {
-            setQuery(event.target.value);
+          onValueChange={(next) => {
+            setQuery(next);
             setPage(0);
           }}
         />

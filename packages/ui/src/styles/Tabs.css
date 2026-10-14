@@ -15,6 +15,10 @@
   overflow: auto;
   scrollbar-width: thin;
 }
+/* The rail is a translucent fill, so it stands out from the canvas, panes and rows alike. */
+.env-tabs-list.env-surface {
+  --env-surface-color: var(--color-fill);
+}
 .env-tabs-list[data-orientation='vertical'] {
   flex-direction: column;
   align-items: stretch;
@@ -37,15 +41,35 @@
   color: var(--color-text-muted);
 }
 .env-tabs-list > .env-tab:not([data-active]):hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-surface-hover);
+  background: var(--color-state-layer-hover);
+}
+.env-tabs-list > .env-tab:not([data-active]):active:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-state-layer-pressed);
 }
 .env-tabs-list > .env-tab:focus-visible {
   outline: 0.125rem solid var(--color-focus-ring);
   outline-offset: -0.125rem;
 }
 .env-tabs-panels {
+  position: relative;
   display: grid;
   min-inline-size: 0;
+}
+/* Filling Tabs give the selected panel the height left below the list. */
+.env-tabs[data-fill] {
+  min-block-size: 0;
+}
+.env-tabs[data-fill] > .env-tabs-panels {
+  flex: 1;
+  min-block-size: 0;
+  grid-template-rows: minmax(0, 1fr);
+}
+/* Only the Tabs' own shown panels become columns: hidden panels, which keepMounted leaves in place,
+   stay hidden, and Tabs nested in a panel keep their layout. :where() keeps the rule's specificity. */
+.env-tabs[data-fill] > .env-tabs-panels > :where(.env-tab-panel:not([hidden])) {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 0;
 }
 .env-tab-panel {
   grid-area: 1 / 1;
@@ -62,7 +86,12 @@
   opacity: 0;
   transform: translateY(var(--space-1));
 }
+/* The outgoing panel fades out of flow, so content after the tabs settles when the tab changes
+   instead of jumping when the fade ends. */
 .env-tab-panel[data-ending-style] {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
   opacity: 0;
   transform: translateY(calc(-1 * var(--space-1)));
   pointer-events: none;

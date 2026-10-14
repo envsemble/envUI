@@ -21,3 +21,117 @@
 .env-skeleton-highlight {
   background: var(--color-skeleton-highlight);
 }
+.env-empty-state-error > .env-symbol {
+  color: var(--color-field-error);
+}
+
+/* Spinner: an arc that turns and lengthens, for work of unknown length in a small area. */
+.env-spinner {
+  display: inline-block;
+  flex: 0 0 auto;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  color: var(--color-control-blue);
+}
+.env-spinner-small {
+  inline-size: 1rem;
+  block-size: 1rem;
+}
+.env-spinner-large {
+  inline-size: 3rem;
+  block-size: 3rem;
+}
+.env-spinner > svg {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  animation: env-spinner-turn 1.4s linear infinite;
+}
+.env-spinner-arc {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-dasharray: 1 200;
+  animation: env-spinner-arc 1.4s ease-in-out infinite;
+}
+@keyframes env-spinner-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes env-spinner-arc {
+  0% {
+    stroke-dasharray: 1 200;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90 200;
+    stroke-dashoffset: -35;
+  }
+  100% {
+    stroke-dasharray: 90 200;
+    stroke-dashoffset: -124;
+  }
+}
+
+/* Loading bar: page-level progress that creeps toward the end while work continues, then completes
+   and fades out. */
+.env-loading-bar {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 140;
+  block-size: 0.1875rem;
+  overflow: hidden;
+  pointer-events: none;
+}
+.env-loading-bar-contained {
+  position: absolute;
+  z-index: 1;
+}
+.env-loading-bar-indicator {
+  block-size: 100%;
+  background: var(--color-control-blue);
+  transform-origin: left center;
+  transform: scaleX(0.9);
+  transition: transform 10s cubic-bezier(0.1, 0.7, 0.15, 1);
+}
+.env-loading-bar-indicator:dir(rtl) {
+  transform-origin: right center;
+}
+@starting-style {
+  .env-loading-bar-indicator {
+    transform: scaleX(0);
+  }
+}
+/* Completing takes 0.2 s and fading 0.2 s more; LoadingBar removes the bar after both. */
+.env-loading-bar[data-state='finishing'] .env-loading-bar-indicator {
+  transform: scaleX(1);
+  opacity: 0;
+  transition:
+    transform 0.2s var(--motion-ease-enter),
+    opacity 0.2s var(--motion-ease) 0.2s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The spinner keeps turning slowly, because it is the only sign of the work. */
+  .env-spinner > svg {
+    animation-duration: 2.8s;
+  }
+  .env-spinner-arc {
+    animation: none;
+    stroke-dasharray: 80 200;
+  }
+  /* The bar fades in at full width instead of moving. */
+  .env-loading-bar-indicator,
+  .env-loading-bar[data-state='finishing'] .env-loading-bar-indicator {
+    transform: none;
+    transition: opacity 0.2s var(--motion-ease);
+  }
+  @starting-style {
+    .env-loading-bar-indicator {
+      transform: none;
+      opacity: 0;
+    }
+  }
+}

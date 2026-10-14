@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
+import { fixtureUrl as fixtureServer } from './Servers';
 
-const fixtureUrl = 'http://127.0.0.1:8766/?fixture=markdown';
+const fixtureUrl = `${fixtureServer}/?fixture=markdown`;
 
 test('inactive preview avoids rendering and highlighting work while retaining custom link state', async ({
   page,

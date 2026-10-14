@@ -6,7 +6,7 @@
   }
 }
 
-/* Platform's native radio and selectable-row layout, with shared state formulas. */
+/* Native radio and selectable-row layout, with shared state formulas. */
 .env-choice-control {
   min-inline-size: 0;
   max-inline-size: 100%;
@@ -38,7 +38,7 @@
   justify-content: space-between;
   gap: calc(0.75rem * var(--scale, 1));
   min-width: 0;
-  padding: calc(0.75rem * var(--scale, 1)) calc(1rem * var(--scale, 1));
+  padding: calc(0.75rem * var(--scale, 1)) calc(var(--row-padding-inline) * var(--scale, 1));
   background: var(--color-radio-row);
   font: var(--type-body-small);
   color: var(--color-radio-text);

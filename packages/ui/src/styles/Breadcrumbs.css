@@ -1,0 +1,74 @@
+/* Breadcrumbs: muted links separated by chevrons, ending in the current page. */
+.env-breadcrumbs {
+  min-inline-size: 0;
+}
+.env-breadcrumbs-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font: var(--type-body-small);
+}
+.env-breadcrumb {
+  min-inline-size: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+/* On one line, the current page gives way first and ends in an ellipsis; earlier levels keep their
+   width. Nothing clips the list, so focus outlines stay whole. */
+.env-breadcrumbs[data-nowrap] > .env-breadcrumbs-list {
+  flex-wrap: nowrap;
+}
+.env-breadcrumbs[data-nowrap] > .env-breadcrumbs-list > .env-breadcrumb:not(:last-child) {
+  flex-shrink: 0;
+}
+.env-breadcrumb-link,
+.env-breadcrumb-text,
+.env-breadcrumb-current {
+  min-inline-size: 0;
+  max-inline-size: 20rem;
+  display: inline-flex;
+  padding: 0.125rem var(--space-1);
+  border-radius: var(--radius-standard);
+}
+.env-breadcrumb-link {
+  border: 0;
+  background: transparent;
+  color: var(--color-text-muted);
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color var(--motion-duration-fast) var(--motion-ease);
+}
+.env-breadcrumb-link:hover {
+  color: var(--color-text-primary);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+.env-breadcrumb-link:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: 0;
+}
+.env-breadcrumb-text {
+  color: var(--color-text-muted);
+}
+.env-breadcrumb-current {
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+.env-breadcrumb-label {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.env-breadcrumb-separator {
+  color: var(--color-text-muted);
+}
+.env-breadcrumb-separator:dir(rtl) {
+  transform: scaleX(-1);
+}

@@ -33,6 +33,7 @@
   background: var(--color-primary-action-pressed);
 }
 
+/* The secondary fill is a translucent layer, so it stays visible on rows, panes and dialogs. */
 .env-button-secondary {
   background: var(--color-secondary-action);
   color: var(--color-on-secondary-action);
@@ -82,6 +83,22 @@
 
 .env-button-text:active:not(:disabled):not([aria-disabled='true']) {
   color: var(--color-link-pressed);
+}
+
+/* Without a label, a color change alone is too faint; icon-only text buttons such as a field's clear
+   action also show a translucent state layer on hover and press. */
+.env-button-text.env-icon-button {
+  transition-property: background-color, color;
+  transition-duration: var(--motion-duration-fast);
+  transition-timing-function: var(--motion-ease);
+}
+
+.env-button-text.env-icon-button:hover:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-state-layer-hover);
+}
+
+.env-button-text.env-icon-button:active:not(:disabled):not([aria-disabled='true']) {
+  background: var(--color-state-layer-pressed);
 }
 
 .env-link {
@@ -139,10 +156,83 @@
   cursor: default;
 }
 
+/* An icon-only button keeps its square size, also where its container is squeezed narrower. */
 .env-button.env-icon-button {
   width: calc(var(--icon-button-size) * var(--scale, 1));
   height: calc(var(--icon-button-size) * var(--scale, 1));
   min-height: calc(var(--icon-button-size) * var(--scale, 1));
+  max-inline-size: none;
   flex-shrink: 0;
   padding: 0;
+}
+
+/* Pending: the transparent label keeps the button's size and name while a spinner shows the work. */
+.env-button[data-pending] {
+  position: relative;
+  cursor: progress;
+}
+.env-button[data-pending]:is(:disabled, [aria-disabled='true']) {
+  opacity: 1;
+}
+.env-button-content {
+  display: contents;
+}
+/* Transparent rather than hidden, so the label stays the button's accessible name. */
+.env-button[data-pending] > .env-button-content {
+  color: transparent;
+}
+.env-button[data-pending] > .env-button-content > * {
+  opacity: 0;
+}
+/* ConfirmButton announces its armed state from a visually hidden status beside the button. */
+.env-confirm-button-status {
+  position: absolute;
+  inline-size: 0.0625rem;
+  block-size: 0.0625rem;
+  margin: -0.0625rem;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.env-button-spinner.env-spinner {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  color: inherit;
+}
+
+/* A person's avatar as a control. The halo is a state layer, so it shows on any surface. */
+.env-avatar-button {
+  flex: 0 0 auto;
+  inline-size: fit-content;
+  block-size: fit-content;
+  display: inline-grid;
+  place-items: center;
+  padding: 0.25rem;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+}
+.env-avatar-button:hover:not(:disabled) {
+  background: var(--color-state-layer-hover);
+}
+/* The halo stays while the button's menu is open. */
+.env-avatar-button:is(:active, [aria-expanded='true']):not(:disabled) {
+  background: var(--color-state-layer-pressed);
+}
+.env-avatar-button:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: 0.125rem;
+}
+.env-avatar-button:disabled {
+  opacity: var(--state-disabled-opacity);
+  cursor: default;
+}
+.env-avatar-button-tooltip {
+  display: grid;
+}
+.env-avatar-button-tooltip > :last-child {
+  opacity: 0.8;
 }

@@ -1,0 +1,134 @@
+/* Editor tabs for open documents. Inactive tabs are quiet, with state layers on hover; the active tab
+   carries the translucent fill and a selection-blue indicator along its bottom edge. */
+.env-document-tabs {
+  box-sizing: border-box;
+  display: flex;
+  align-items: stretch;
+  gap: 0.125rem;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  block-size: 2.5rem;
+  padding-inline: var(--space-1);
+  border-block-end: 0.0625rem solid var(--color-border-strong);
+  /* The strip takes the width it is given; its tabs never widen a grid or flex parent. */
+  contain: inline-size;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  /* A scrollbar would cover the tabs; the wheel, touch and the keyboard scroll the strip instead, and
+     the active tab scrolls into view. */
+  scrollbar-width: none;
+}
+.env-document-tabs::-webkit-scrollbar {
+  display: none;
+}
+.env-document-tab {
+  box-sizing: border-box;
+  position: relative;
+  flex: 0 0 auto;
+  min-inline-size: 0;
+  max-inline-size: 14rem;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-inline: var(--space-3) var(--space-1);
+  border-start-start-radius: var(--radius-standard);
+  border-start-end-radius: var(--radius-standard);
+  color: var(--color-text-muted);
+  font: var(--type-body-small);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+  transition:
+    background-color var(--motion-duration-fast) var(--motion-ease),
+    color var(--motion-duration-fast) var(--motion-ease);
+}
+.env-document-tab:hover {
+  background: var(--color-state-layer-hover);
+  color: var(--color-text-primary);
+}
+.env-document-tab:active {
+  background: var(--color-state-layer-pressed);
+}
+.env-document-tab[data-active] {
+  background: var(--color-fill);
+  color: var(--color-text-primary);
+}
+.env-document-tab[data-active]::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  block-size: 0.125rem;
+  border-radius: 0.125rem 0.125rem 0 0;
+  background: var(--color-on-navigation-selected);
+}
+.env-document-tab:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: -0.125rem;
+}
+.env-document-tab .env-symbol {
+  inline-size: var(--control-icon-size);
+  block-size: var(--control-icon-size);
+  color: var(--color-icon);
+}
+.env-document-tab-label {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* A preview tab is replaced by the next previewed document until it is pinned. The bundled Inter has
+   no italic face, so the slant is synthesized. */
+.env-document-tab[data-preview='true'] .env-document-tab-label {
+  font-style: italic;
+  font-synthesis: style;
+  padding-inline-end: 0.125em;
+}
+/* The close button keeps its space so tabs do not change width; it shows on the active tab, on hover
+   and with keyboard focus. */
+.env-document-tab-close {
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-icon);
+  cursor: pointer;
+  visibility: hidden;
+}
+.env-document-tab-close .env-symbol {
+  inline-size: 1rem;
+  block-size: 1rem;
+}
+.env-document-tab:is([data-active], :hover, :focus-visible) .env-document-tab-close,
+.env-document-tab-close:focus-visible {
+  visibility: visible;
+}
+.env-document-tab-close:hover {
+  background: var(--color-state-layer-hover);
+  color: var(--color-text-primary);
+}
+.env-document-tab-close:active {
+  background: var(--color-state-layer-pressed);
+}
+.env-document-tab-close:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: -0.125rem;
+}
+@media (pointer: coarse) {
+  .env-document-tabs {
+    block-size: var(--control-height-touch);
+  }
+  .env-document-tab-close {
+    visibility: visible;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .env-document-tab {
+    transition: none;
+  }
+}

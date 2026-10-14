@@ -4,20 +4,32 @@ import type { InputHTMLAttributes } from 'react';
 import { classNames } from '../internal/classNames.js';
 import {
   FieldFrame,
+  isLabelShown,
   type FieldProps,
+  type TextFieldAffixProps,
   type TextFieldAppearanceProps,
+  type TextFieldDecorationProps,
 } from './internal/FieldFrame.js';
 
+// The prefix prop replaces the native RDFa attribute of the same name.
 export interface InputProps
-  extends InputHTMLAttributes<HTMLInputElement>,
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix'>,
     FieldProps,
-    TextFieldAppearanceProps {}
+    TextFieldAppearanceProps,
+    TextFieldDecorationProps,
+    TextFieldAffixProps {}
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   {
     label,
     hint,
     error,
     variant,
+    startIcon,
+    endAction,
+    compact = false,
+    showLabel,
+    prefix,
+    suffix,
     id: suppliedId,
     className,
     placeholder,
@@ -29,6 +41,18 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
 ) {
   const metadata = useFieldMetadata(suppliedId, hint, error, describedBy, invalid);
   const { id } = metadata;
+  // The prefix and suffix are read with the field, before its hint and error.
+  const description =
+    [
+      prefix != null && `${id}-prefix`,
+      suffix != null && `${id}-suffix`,
+      metadata['aria-describedby'],
+    ]
+      .filter(Boolean)
+      .join(' ') || undefined;
+  // A floating label needs a blank placeholder to detect the empty state; hidden labels leave it.
+  const fieldPlaceholder =
+    label != null && isLabelShown({ compact, showLabel }) ? placeholder || ' ' : placeholder;
   return (
     <FieldFrame
       id={id}
@@ -37,12 +61,19 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       error={error}
       floatingLabel
       variant={variant}
+      startIcon={startIcon}
+      endAction={endAction}
+      compact={compact}
+      showLabel={showLabel}
+      prefix={prefix}
+      suffix={suffix}
     >
       <input
         {...props}
         ref={ref}
         {...metadata}
-        placeholder={label != null ? placeholder || ' ' : placeholder}
+        aria-describedby={description}
+        placeholder={fieldPlaceholder}
         className={classNames('env-text-input', className)}
       />
     </FieldFrame>

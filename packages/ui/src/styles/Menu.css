@@ -1,0 +1,357 @@
+/* Menus are a pane of grouped rows: separators split groups, which keep large outer corners. */
+.env-menu-theme {
+  display: contents;
+}
+.env-menu-positioner {
+  z-index: 110;
+  outline: none;
+}
+.env-menu {
+  box-sizing: border-box;
+  display: grid;
+  gap: 0.125rem;
+  inline-size: min(19rem, calc(100vw - 2rem));
+  max-block-size: var(--available-height, 80vh);
+  overflow-y: auto;
+  padding: var(--space-2);
+  border-radius: var(--radius-surface);
+  background: var(--color-pane);
+  outline: none;
+}
+.env-menu-header,
+.env-menu-item {
+  box-sizing: border-box;
+  min-inline-size: 0;
+  border-radius: var(--radius-row-inner);
+  /* Rows stand out from the pane in both themes. */
+  background: var(--color-menu-row);
+  color: var(--color-row-text);
+}
+.env-menu-header {
+  padding: var(--space-4) var(--row-padding-inline);
+}
+.env-menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-block-size: 3rem;
+  padding: var(--space-2) var(--row-padding-inline);
+  font: var(--type-body);
+  text-decoration: none;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+}
+.env-menu-item .env-symbol {
+  width: calc(var(--control-icon-size) * 1.25);
+  height: calc(var(--control-icon-size) * 1.25);
+  color: var(--color-icon);
+}
+/* The label and its optional muted description share the flexible column; trailing content and the
+   shortcut hint sit at the end. */
+.env-menu-item-text {
+  min-inline-size: 0;
+  flex: 1 1 auto;
+  display: grid;
+}
+.env-menu-item-label {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+.env-menu-item-description {
+  min-inline-size: 0;
+  color: var(--color-row-detail);
+  font: var(--type-body-small);
+  overflow-wrap: anywhere;
+}
+.env-menu-item-trailing {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.env-menu-item-shortcut {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-row-detail);
+  font: var(--type-body-small);
+  white-space: nowrap;
+}
+/* Radio and checkbox items keep a check-mark slot, so their labels align whether checked or not. */
+.env-menu-item-check {
+  inline-size: calc(var(--control-icon-size) * 1.25);
+  block-size: calc(var(--control-icon-size) * 1.25);
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+}
+.env-menu-item .env-menu-item-check-mark {
+  color: var(--color-radio);
+}
+.env-menu-choice[data-checked] .env-menu-item-label {
+  font-weight: 500;
+}
+/* A row that opened a submenu stays highlighted while the submenu is open. */
+.env-menu-item:is([data-highlighted], [data-popup-open]) {
+  background: hsl(from var(--color-menu-row) h s var(--state-surface-hover-lightness));
+}
+/* A submenu row ends in a chevron that points to the side the submenu opens on. */
+.env-menu-submenu-chevron:dir(rtl) {
+  transform: scaleX(-1);
+}
+.env-menu-item:active {
+  background: hsl(from var(--color-menu-row) h s var(--state-surface-pressed-lightness));
+}
+.env-menu-item:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: -0.125rem;
+}
+.env-menu-item:is([data-disabled], [aria-disabled='true']) {
+  opacity: var(--state-disabled-opacity);
+  cursor: default;
+}
+.env-menu-separator {
+  block-size: var(--space-1);
+  border: 0;
+  margin: 0;
+}
+.env-menu:not([data-density='compact']) > :is(.env-menu-header, .env-menu-item):first-child,
+.env-menu:not([data-density='compact'])
+  > :is(.env-menu-separator, .env-menu-group)
+  + :is(.env-menu-header, .env-menu-item),
+.env-menu:not([data-density='compact'])
+  .env-menu-group
+  > .env-menu-item:nth-child(1 of .env-menu-item) {
+  border-start-start-radius: var(--radius-row-outer);
+  border-start-end-radius: var(--radius-row-outer);
+}
+.env-menu:not([data-density='compact']) > :is(.env-menu-header, .env-menu-item):last-child,
+.env-menu:not([data-density='compact'])
+  > :is(.env-menu-header, .env-menu-item):has(+ :is(.env-menu-separator, .env-menu-group)),
+.env-menu:not([data-density='compact'])
+  .env-menu-group
+  > .env-menu-item:nth-last-child(1 of .env-menu-item) {
+  border-end-start-radius: var(--radius-row-outer);
+  border-end-end-radius: var(--radius-row-outer);
+}
+/* A group is its own set of rows below a small heading on the pane. */
+.env-menu-group {
+  display: grid;
+  gap: 0.125rem;
+}
+.env-menu > .env-menu-group:not(:first-child) {
+  margin-block-start: var(--space-1);
+}
+.env-menu-group-label {
+  padding: var(--space-2) var(--row-padding-inline) var(--space-1);
+  color: var(--color-text-muted);
+  font: var(--type-body-small);
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+/* Compact menus are the desktop dropdown for dense surfaces: the raised popup of Popover and Select
+   with small corners and concentric 1.75 rem rows that highlight on hover and keyboard focus,
+   hairline separators, small muted group labels, and shortcuts as small muted keys at the end. */
+.env-menu[data-density='compact'] {
+  /* One leading slot holds a check mark or an icon. */
+  --env-menu-slot: calc(var(--control-icon-size) + var(--space-2));
+  --env-menu-leading: 0rem;
+  gap: 0;
+  inline-size: max-content;
+  min-inline-size: 12rem;
+  max-inline-size: min(22rem, calc(100vw - 2rem));
+  padding: var(--space-1);
+  border: 0.0625rem solid var(--color-popup-border);
+  border-radius: calc(var(--radius-standard) + var(--space-1));
+  background: var(--color-popup);
+}
+/* Labels line up across rows: once a row has a leading check mark or icon, the others keep its place. */
+.env-menu[data-density='compact']:has(
+    .env-menu-item > :is(.env-menu-item-check, .env-symbol):first-child
+  ) {
+  --env-menu-leading: var(--env-menu-slot);
+}
+.env-menu[data-density='compact']:has(.env-menu-item > .env-menu-item-check + .env-symbol) {
+  --env-menu-leading: calc(2 * var(--env-menu-slot));
+}
+.env-menu[data-density='compact'] .env-menu-item {
+  min-block-size: 1.75rem;
+  gap: var(--space-2);
+  padding-block: var(--space-1);
+  padding-inline: calc(var(--space-2) + var(--env-menu-leading)) var(--space-2);
+  border-radius: var(--radius-standard);
+  background: transparent;
+  font: var(--type-body-small);
+}
+.env-menu[data-density='compact']
+  .env-menu-item:has(> :is(.env-menu-item-check, .env-symbol):first-child) {
+  padding-inline-start: calc(var(--space-2) + var(--env-menu-leading) - var(--env-menu-slot));
+}
+.env-menu[data-density='compact'] .env-menu-item:has(> .env-menu-item-check + .env-symbol) {
+  padding-inline-start: calc(var(--space-2) + var(--env-menu-leading) - 2 * var(--env-menu-slot));
+}
+.env-menu[data-density='compact'] .env-menu-header {
+  padding: var(--space-3) var(--space-2);
+  border-radius: var(--radius-standard);
+  background: transparent;
+  font: var(--type-body-small);
+}
+.env-menu[data-density='compact'] .env-menu-item:is([data-highlighted], [data-popup-open]) {
+  background: hsl(from var(--color-popup) h s var(--state-surface-hover-lightness));
+}
+.env-menu[data-density='compact'] .env-menu-item:active {
+  background: hsl(from var(--color-popup) h s var(--state-surface-pressed-lightness));
+}
+.env-menu[data-density='compact'] .env-menu-item .env-symbol,
+.env-menu[data-density='compact'] .env-menu-item-check {
+  inline-size: var(--control-icon-size);
+  block-size: var(--control-icon-size);
+}
+.env-menu[data-density='compact'] .env-menu-item-description {
+  font-size: 0.75rem;
+}
+/* Shortcut keys stay key caps, small enough to keep the row height, and muted like the hint they are. */
+.env-menu[data-density='compact'] .env-menu-item-shortcut {
+  margin-inline-start: var(--space-3);
+  gap: 0.125rem;
+}
+.env-menu[data-density='compact'] .env-menu-item-shortcut .env-kbd {
+  min-inline-size: 1.125rem;
+  block-size: 1.125rem;
+  padding-inline: 0.25rem;
+  border-radius: 0.25rem;
+  color: var(--color-text-muted);
+  font-size: 0.6875rem;
+}
+.env-menu[data-density='compact'] .env-menu-item-shortcut .env-kbd-separator {
+  padding-inline: 0.125rem;
+  font: 0.6875rem / 1 var(--font-family);
+}
+.env-menu[data-density='compact'] .env-menu-separator {
+  block-size: 0.0625rem;
+  margin: var(--space-1) 0;
+  background: var(--color-popup-border);
+}
+.env-menu[data-density='compact'] .env-menu-group {
+  gap: 0;
+}
+.env-menu[data-density='compact'] .env-menu-group-label {
+  padding-block: var(--space-1) 0.125rem;
+  padding-inline: calc(var(--space-2) + var(--env-menu-leading)) var(--space-2);
+  font: 500 0.75rem / 1.4 var(--font-family);
+}
+
+/* Organization menu: a secondary button in the shell's context area and a pane of radio rows. Long
+   organization names truncate inside the button. */
+.env-organization-trigger {
+  max-inline-size: 100%;
+}
+.env-organization-trigger-label {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.env-organization-menu-header {
+  box-sizing: border-box;
+  min-block-size: 7.25rem;
+  padding: var(--space-5) var(--space-3);
+  border-radius: var(--radius-row-outer) var(--radius-row-outer) var(--radius-row-inner)
+    var(--radius-row-inner);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  background: var(--color-menu-row);
+  color: var(--color-row-text);
+  text-align: center;
+}
+.env-organization-menu-header .env-symbol {
+  inline-size: 2rem;
+  block-size: 2rem;
+}
+.env-organization-menu-heading {
+  font: var(--type-h1);
+}
+.env-organization-menu-options {
+  display: grid;
+  gap: 0.125rem;
+}
+.env-organization-menu-options > .env-menu-item:last-child {
+  border-end-start-radius: var(--radius-row-outer);
+  border-end-end-radius: var(--radius-row-outer);
+}
+.env-organization-menu-option[data-checked] {
+  font-weight: 500;
+}
+.env-organization-menu-detail {
+  margin-inline-start: auto;
+  flex: 0 0 auto;
+  color: var(--color-text-muted);
+  font: var(--type-body-small);
+}
+/* The selection indicator follows the radio control. */
+.env-organization-menu-radio {
+  box-sizing: border-box;
+  inline-size: 1.125rem;
+  block-size: 1.125rem;
+  flex: 0 0 1.125rem;
+  border: 0.125rem solid var(--color-checkbox-border);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  transition: border-color var(--motion-duration-fast) var(--motion-ease);
+}
+.env-organization-menu-option[data-checked] .env-organization-menu-radio {
+  border-color: var(--color-radio);
+}
+.env-organization-menu-radio-dot {
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  border-radius: 50%;
+  background: var(--color-radio);
+}
+.env-organization-menu-create {
+  box-sizing: border-box;
+  min-block-size: var(--control-height);
+  margin-block-start: var(--space-2);
+  padding: var(--space-1) var(--space-4);
+  border-radius: 100vmax;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  /* A pill on the pane's row fill, separate from the organization rows above it. */
+  background: var(--color-menu-row);
+  color: var(--color-row-text);
+  font: var(--type-body);
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+}
+.env-organization-menu-create .env-symbol {
+  inline-size: var(--control-icon-size);
+  block-size: var(--control-icon-size);
+}
+.env-organization-menu-create[data-highlighted] {
+  background: hsl(from var(--color-menu-row) h s var(--state-surface-hover-lightness));
+}
+.env-organization-menu-create:active {
+  background: hsl(from var(--color-menu-row) h s var(--state-surface-pressed-lightness));
+}
+.env-organization-menu-create:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: 0.125rem;
+}
+/* Coarse pointers keep the touch height in both densities. */
+@media (pointer: coarse) {
+  .env-menu-item,
+  .env-menu[data-density='compact'] .env-menu-item {
+    min-block-size: var(--control-height-touch);
+  }
+}

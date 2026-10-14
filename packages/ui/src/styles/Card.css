@@ -46,8 +46,10 @@
   flex-wrap: wrap;
   gap: var(--space-3);
 }
-.env-action-card-meta {
-  margin-left: auto;
+/* The meta goes to the end of the heading row; the heading's child selector outweighs the text
+   margin reset that Text applies to every variant. */
+.env-action-card-heading > .env-action-card-meta {
+  margin-inline-start: auto;
 }
 .env-action-card-body > :where(p:not(.env-text)) {
   margin: 0;

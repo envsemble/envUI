@@ -1,0 +1,33 @@
+/* A floating panel in the raised popup colors, with the menu's corners. */
+.env-popover-theme {
+  display: contents;
+}
+.env-popover-positioner {
+  z-index: 110;
+  outline: none;
+}
+.env-popover {
+  box-sizing: border-box;
+  inline-size: min(20rem, calc(100vw - 2rem));
+  max-block-size: var(--available-height, 80vh);
+  display: grid;
+  align-content: start;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  overflow-y: auto;
+  border: 0.0625rem solid var(--color-popup-border);
+  border-radius: var(--radius-surface);
+  background: var(--color-popup);
+  color: var(--color-text-primary);
+  font: var(--type-body);
+  overflow-wrap: anywhere;
+  outline: none;
+  transform-origin: var(--transform-origin);
+}
+.env-popover[data-width='wide'] {
+  inline-size: min(28rem, calc(100vw - 2rem));
+}
+.env-popover-title {
+  margin: 0;
+  font: var(--type-h2);
+}

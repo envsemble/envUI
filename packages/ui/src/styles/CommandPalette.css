@@ -1,0 +1,178 @@
+/* Quick open: a dialog near the top of the window with a search field over its options. It shares
+   the dialog surface, and its options take the Select options' shape and selection colors. */
+.env-command-palette-positioner {
+  box-sizing: border-box;
+  position: fixed;
+  inset: 0;
+  z-index: 101;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  align-items: start;
+  padding: max(var(--viewport-gutter), min(12vh, 6rem)) var(--viewport-gutter)
+    var(--viewport-gutter);
+  pointer-events: none;
+}
+.env-command-palette {
+  box-sizing: border-box;
+  inline-size: min(40rem, 100%);
+  max-block-size: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-2);
+  border: 0.0625rem solid var(--color-popup-border);
+  border-radius: var(--radius-surface);
+  background: var(--color-dialog);
+  color: var(--color-text-primary);
+  font: var(--type-body);
+  overflow: hidden;
+  outline: none;
+  pointer-events: auto;
+  transform-origin: top center;
+}
+.env-command-palette-search {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-block-size: var(--control-height);
+  padding-inline: var(--space-4);
+  border-radius: 100vmax;
+  background: var(--color-fill);
+}
+.env-command-palette-search > .env-symbol {
+  color: var(--color-icon);
+}
+.env-command-palette-input {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  block-size: var(--control-height);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-field-text);
+  font: var(--type-body);
+  font-size: var(--control-font-size);
+  outline: none;
+}
+.env-command-palette-input::placeholder {
+  color: var(--color-field-placeholder);
+}
+.env-command-palette-search:has(.env-command-palette-input:focus-visible) {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: -0.125rem;
+}
+.env-command-palette-list {
+  /* The options' offset parent, so the highlight scrolls into view by their offsets. */
+  position: relative;
+  flex: 0 1 auto;
+  min-block-size: 0;
+  max-block-size: 60vh;
+  margin-block-start: var(--space-2);
+  display: grid;
+  align-content: start;
+  gap: 0.125rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+.env-command-palette-list[hidden] {
+  display: none;
+}
+.env-command-palette-group {
+  display: grid;
+  gap: 0.125rem;
+}
+.env-command-palette-group + .env-command-palette-group,
+.env-command-palette-option + .env-command-palette-group {
+  margin-block-start: var(--space-2);
+}
+.env-command-palette-heading {
+  padding: var(--space-2) var(--space-4) var(--space-1);
+  color: var(--color-text-muted);
+  font: var(--type-body-small);
+  font-weight: 500;
+}
+.env-command-palette-option {
+  box-sizing: border-box;
+  min-inline-size: 0;
+  min-block-size: 2.5rem;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-1) var(--space-4);
+  /* Concentric with the palette's corners through its padding, like the search field above. */
+  border-radius: calc(var(--radius-surface) - var(--space-2));
+  color: var(--color-select-option-text);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+.env-command-palette-option[data-highlighted] {
+  background: var(--color-select-selected);
+  color: var(--color-on-select-selected);
+}
+.env-command-palette-option:active {
+  background: var(--color-select-selected-pressed);
+}
+.env-command-palette-option .env-symbol {
+  color: var(--color-icon);
+}
+.env-command-palette-option[data-highlighted] .env-symbol {
+  color: inherit;
+}
+.env-command-palette-label {
+  min-inline-size: 0;
+  flex: 0 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.env-command-palette-detail {
+  min-inline-size: 0;
+  flex: 0 1000 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--color-text-muted);
+  font: var(--type-body-small);
+}
+.env-command-palette-trailing {
+  flex: 0 0 auto;
+  margin-inline-start: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-text-muted);
+  font: var(--type-body-small);
+}
+.env-command-palette-empty {
+  padding: var(--space-5) var(--space-4);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+.env-command-palette-footer {
+  flex: 0 0 auto;
+  margin-block-start: var(--space-2);
+  padding: var(--space-2) var(--space-4) var(--space-1);
+  border-block-start: 0.0625rem solid var(--color-popup-border);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-4);
+  color: var(--color-text-muted);
+  font: var(--type-body-small);
+}
+/* The application's own footer content flows as text after the hints. */
+.env-command-palette-footer-content {
+  min-inline-size: 0;
+}
+/* Each hint is its keys followed by what they do. */
+.env-command-palette-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+@media (pointer: coarse) {
+  .env-command-palette-option {
+    min-block-size: var(--control-height-touch);
+  }
+}

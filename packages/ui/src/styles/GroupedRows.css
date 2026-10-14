@@ -9,6 +9,7 @@
   list-style: none;
 }
 .env-grouped-rows > .env-row {
+  --env-row-fill: var(--color-row);
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -16,9 +17,9 @@
   flex-wrap: wrap;
   gap: 0.75rem;
   min-height: 3.5rem;
-  padding: var(--space-3) var(--space-4);
+  padding: var(--space-3) var(--row-padding-inline);
   font: var(--type-body-small);
-  background: var(--color-row);
+  background: var(--env-row-fill);
   color: var(--color-row-text);
 }
 .env-grouped-rows > .env-row > * {
@@ -31,7 +32,44 @@
   font: var(--type-body-small);
 }
 .env-contrast-row-pane .env-grouped-rows > .env-row {
-  background: var(--color-row-alternate);
+  --env-row-fill: var(--color-row-alternate);
+}
+/* A row that opens something through a link or button inside reacts like a clickable card: to
+   hover, to keyboard focus inside it and to presses. The link or button marked data-row-target
+   covers the row with a pseudo-element (the row is its containing block), so a press anywhere on
+   the row follows it, and it is not dragged away as a link; the row shows a press on it, not on the
+   row's other controls. */
+.env-grouped-rows > .env-row[data-interactive] {
+  position: relative;
+  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+}
+.env-grouped-rows > .env-row[data-interactive] [data-row-target] {
+  -webkit-user-drag: none;
+}
+.env-grouped-rows > .env-row[data-interactive] [data-row-target]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+.env-grouped-rows > .env-row[data-interactive]:is(:hover, :has(:focus-visible)) {
+  background: hsl(from var(--env-row-fill) h s var(--state-surface-hover-lightness));
+}
+.env-grouped-rows
+  > .env-row[data-interactive]:is(
+    :has([data-row-target]:active),
+    :not(:has([data-row-target])):active
+  ) {
+  background: hsl(from var(--env-row-fill) h s var(--state-surface-pressed-lightness));
+}
+/* The row shows the press, so a link or button in its content does not also shrink: shrinking, it
+   would hold a pseudo-element stretched over the row in place of the row. */
+.env-grouped-rows > .env-row[data-interactive] > div .env-button:active {
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .env-grouped-rows > .env-row[data-interactive] {
+    transition: none;
+  }
 }
 .env-contrast-row-pane .env-grouped-rows + .env-grouped-rows {
   margin-top: 0.75rem;

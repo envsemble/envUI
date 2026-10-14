@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { catalogueUrl, fixtureUrl } from './Servers';
 import {
   findReferencePage,
   normalizeRoute,
@@ -27,7 +28,7 @@ const foundations = ['colors', 'typography', 'spacing', 'composition', 'icons', 
 test('public composition owns spacing and content-fit sizing without documentation CSS', async ({
   page,
 }) => {
-  await page.goto('http://127.0.0.1:8766/?fixture=layout');
+  await page.goto(`${fixtureUrl}/?fixture=layout`);
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: 1000 });
     for (const theme of ['light', 'dark']) {
@@ -101,7 +102,7 @@ test('all documentation views retain explicit content gaps and a single preview'
     ...foundations.map((id) => `foundations/${id}`),
     ...components.flatMap((id) => ['preview', 'usage'].map((view) => `components/${id}/${view}`)),
   ];
-  await page.goto('http://127.0.0.1:8770/#/overview');
+  await page.goto(`${catalogueUrl}/#/overview`);
   for (const width of [1920, 960]) {
     await page.setViewportSize({ width, height: 1000 });
     for (const route of routes) {

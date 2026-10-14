@@ -19,7 +19,12 @@ export function DialogFixture() {
         actions={<Button onClick={() => setOpen(false)}>Save dialog</Button>}
       >
         <Input ref={firstField} label="Dialog first field" defaultValue="Dialog value" />
-        <Select label="Dialog choice" options={dialogOptions} defaultValue="atlas" />
+        <Select
+          variant="outlined"
+          label="Dialog choice"
+          options={dialogOptions}
+          defaultValue="aurora"
+        />
       </Dialog>
       <output data-testid="dialog-status">{open ? 'open' : 'closed'}</output>
     </Theme>

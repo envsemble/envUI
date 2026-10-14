@@ -1,0 +1,91 @@
+/* A slider: the label and its current value above a track, with a thumb that follows the value. The
+   indicator and thumb take the control blue; the rest of the track is the translucent fill. */
+.env-slider {
+  --env-slider-thumb-size: 1.25rem;
+  --env-slider-halo: color-mix(in srgb, var(--color-control-blue) 16%, transparent);
+  min-inline-size: 0;
+}
+.env-slider-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-3);
+  min-inline-size: 0;
+}
+.env-slider-label {
+  min-inline-size: 0;
+  cursor: default;
+}
+.env-slider-value {
+  color: var(--color-text-strong);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+/* The control is the pressable row around the track; its padding keeps the thumb inside it. */
+.env-slider-control {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  block-size: calc(var(--env-slider-thumb-size) + var(--space-2));
+  padding-inline: calc(var(--env-slider-thumb-size) / 2);
+  cursor: pointer;
+  touch-action: none;
+}
+.env-slider-track {
+  flex: 1 1 auto;
+  block-size: 0.375rem;
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--color-fill);
+}
+.env-slider-indicator {
+  border-radius: inherit;
+  background: var(--color-control-blue);
+}
+.env-slider-thumb {
+  box-sizing: border-box;
+  inline-size: var(--env-slider-thumb-size);
+  block-size: var(--env-slider-thumb-size);
+  border-radius: 50%;
+  background: var(--color-control-blue);
+  transition: box-shadow var(--motion-duration-fast) var(--motion-ease);
+}
+/* A halo in the control blue shows the thumb under the pointer and while it is dragged. */
+.env-slider-control:hover .env-slider-thumb,
+.env-slider-thumb[data-dragging] {
+  box-shadow: 0 0 0 0.375rem var(--env-slider-halo);
+}
+.env-slider-thumb:has(:focus-visible) {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: 0.125rem;
+}
+.env-slider[data-disabled] :is(.env-slider-heading, .env-slider-value) {
+  color: var(--color-disabled-text);
+}
+.env-slider[data-disabled] .env-slider-control {
+  opacity: var(--state-disabled-opacity);
+  cursor: default;
+}
+.env-slider[data-disabled] .env-slider-thumb {
+  box-shadow: none;
+}
+/* Coarse pointers get a taller row and a larger thumb with a touch-sized target around it. */
+@media (pointer: coarse) {
+  .env-slider {
+    --env-slider-thumb-size: 1.5rem;
+  }
+  .env-slider-control {
+    block-size: var(--control-height-touch);
+  }
+  .env-slider-thumb::before {
+    content: '';
+    position: absolute;
+    inset: calc((var(--control-height-touch) - var(--env-slider-thumb-size)) / -2);
+    border-radius: 50%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .env-slider-thumb {
+    transition: none;
+  }
+}

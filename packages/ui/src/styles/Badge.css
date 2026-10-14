@@ -1,0 +1,98 @@
+/* Badges: small pills that name a state in its tone. The tone tokens keep 4.5:1 text contrast on the
+   canvas, panes and rows, including over the subtle fill. */
+.env-badge {
+  --env-badge-tone: var(--color-tone-neutral);
+  box-sizing: border-box;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0.0625rem var(--space-2);
+  border: 0.0625rem solid transparent;
+  border-radius: 100vmax;
+  background: color-mix(
+    in srgb,
+    var(--env-badge-tone) var(--state-tone-subtle-opacity),
+    transparent
+  );
+  color: var(--env-badge-tone);
+  font: 500 0.75rem / 1.4 var(--font-family);
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.env-badge[data-tone='accent'] {
+  --env-badge-tone: var(--color-tone-accent);
+}
+.env-badge[data-tone='success'] {
+  --env-badge-tone: var(--color-tone-success);
+}
+.env-badge[data-tone='warning'] {
+  --env-badge-tone: var(--color-tone-warning);
+}
+.env-badge[data-tone='danger'] {
+  --env-badge-tone: var(--color-tone-danger);
+}
+.env-badge[data-tone='done'] {
+  --env-badge-tone: var(--color-tone-done);
+}
+.env-badge[data-variant='solid'] {
+  background: var(--env-badge-tone);
+  color: var(--color-on-tone);
+}
+.env-badge[data-variant='outline'] {
+  border-color: color-mix(in srgb, var(--env-badge-tone) 55%, transparent);
+  background: transparent;
+}
+.env-badge .env-symbol {
+  inline-size: 0.875rem;
+  block-size: 0.875rem;
+}
+.env-badge-label {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Counters: a compact count in a rounded fill. */
+.env-counter {
+  box-sizing: border-box;
+  position: relative;
+  flex: 0 0 auto;
+  min-inline-size: 1.25rem;
+  block-size: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: 0.375rem;
+  border-radius: 100vmax;
+  background: var(--color-fill);
+  color: var(--color-text-primary);
+  font: 500 0.75rem / 1 var(--font-family);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.env-counter[data-tone='accent'] {
+  background: var(--color-tone-accent);
+  color: var(--color-on-tone);
+}
+.env-counter-label {
+  position: absolute;
+  inline-size: 0.0625rem;
+  block-size: 0.0625rem;
+  margin: -0.0625rem;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* In a button, such as a tab, a counter or badge takes the button's text color as an outlined pill
+   on the button's own fill, so it keeps the button's contrast in every variant and both themes. */
+.env-button .env-counter[data-tone],
+.env-button .env-badge[data-tone] {
+  border: 0.0625rem solid color-mix(in srgb, currentColor 55%, transparent);
+  background: transparent;
+  color: inherit;
+}

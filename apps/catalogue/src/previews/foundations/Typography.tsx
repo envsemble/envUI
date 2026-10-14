@@ -4,6 +4,7 @@ import { TokenValue } from './TokenValue';
 import { Example } from '../Example';
 
 const textVariants = [
+  ['Display', 'display', '--color-text-primary', '1.75–2.75 rem · 500'],
   ['Page heading', 'page-heading', '--color-text-primary', '1.125 rem · 500'],
   ['Section heading', 'section-heading', '--color-text-primary', '1 rem · 500'],
   ['Body text', 'body', '--color-text-primary', '0.9375 rem · 400'],

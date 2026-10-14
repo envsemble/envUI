@@ -1,8 +1,27 @@
-import { useState } from 'react';
-import { Text, Button, EmptyState, Skeleton, LoadingState, Dialog, Stack } from '@envsemble/envui';
+import { useEffect, useState } from 'react';
+import {
+  ActionGroup,
+  Text,
+  Button,
+  EmptyState,
+  IconButton,
+  Input,
+  Radio,
+  RadioGroup,
+  Select,
+  Skeleton,
+  LoadingBar,
+  LoadingState,
+  Dialog,
+  Spinner,
+  Stack,
+  Surface,
+  Kbd,
+} from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { Search } from '@envsemble/envui/icons/Search';
 import { Apps } from '@envsemble/envui/icons/Apps';
+import { Refresh } from '@envsemble/envui/icons/Refresh';
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
 
@@ -23,6 +42,22 @@ export function EmptyStatePreview() {
                   onClick={() => setActionResult('Project creation started')}
                 >
                   Create project
+                </Button>
+              }
+            />
+          </Specimen>
+          <Specimen title="Failed to load">
+            <EmptyState
+              tone="error"
+              title="Projects couldn’t load"
+              description="Something went wrong. Please try again."
+              action={
+                <Button
+                  variant="secondary"
+                  startIcon={<Refresh />}
+                  onClick={() => setActionResult('Retrying')}
+                >
+                  Try again
                 </Button>
               }
             />
@@ -48,9 +83,67 @@ export function EmptyStatePreview() {
   );
 }
 
+/** Simulates work that ends after a short while. */
+function useSimulatedWork(duration: number) {
+  const [working, setWorking] = useState(false);
+  useEffect(() => {
+    if (!working) return;
+    const timer = setTimeout(() => setWorking(false), duration);
+    return () => clearTimeout(timer);
+  }, [working, duration]);
+  return [working, () => setWorking(true)] as const;
+}
+
 export function LoadingPreview() {
+  const [pageLoading, loadPage] = useSimulatedWork(2400);
+  const [saving, save] = useSimulatedWork(1800);
+  const [refreshing, refresh] = useSimulatedWork(1800);
   return (
     <Preview>
+      <Example
+        title="Page progress"
+        size="collection"
+        caption="Appears only when loading takes longer than 200 ms, creeps forward while it continues and completes when it ends. AppShell shows it under the topbar through its loading prop."
+      >
+        <Surface tone="row" padding={5} className="docs-loading-frame">
+          <LoadingBar active={pageLoading} contained label="Loading next page" />
+          <Stack gap={3}>
+            <Text variant="section-heading">Projects</Text>
+            <Text tone="muted">Open the next page to see the bar along the top edge.</Text>
+            <Button variant="secondary" onClick={loadPage}>
+              Open next page
+            </Button>
+          </Stack>
+        </Surface>
+      </Example>
+      <Example
+        title="Work in place"
+        size="collection"
+        caption="A spinner shows work of unknown length in a small area. A pending button keeps its size and ignores repeated presses."
+      >
+        <SpecimenGrid>
+          <Specimen title="Spinner sizes">
+            <div className="docs-spinner-row">
+              <Spinner size="small" label="Loading" />
+              <Spinner label="Loading" />
+              <Spinner size="large" label="Loading" />
+            </div>
+          </Specimen>
+          <Specimen title="Pending actions">
+            <ActionGroup>
+              <Button pending={saving} onClick={save}>
+                Save changes
+              </Button>
+              <IconButton
+                icon={<Refresh />}
+                aria-label="Refresh"
+                pending={refreshing}
+                onClick={refresh}
+              />
+            </ActionGroup>
+          </Specimen>
+        </SpecimenGrid>
+      </Example>
       <Example
         title="Loading placeholders"
         size="collection"
@@ -82,16 +175,43 @@ export function LoadingPreview() {
 }
 
 export function DialogsPreview() {
-  const [activeDialog, setActiveDialog] = useState<'details' | 'delete' | 'inspector' | null>(null);
+  const [activeDialog, setActiveDialog] = useState<
+    'details' | 'delete' | 'inspector' | 'pending' | null
+  >(null);
+  const [saving, setSaving] = useState(false);
   const [actionResult, setActionResult] = useState('');
   return (
     <Preview>
       <Example
         title="Modal dialogs"
         size="collection"
-        caption="Modals block page interaction and trap focus. Escape closes the dialog and returns focus to its trigger."
+        caption={
+          <>
+            Modals block page interaction and trap focus. <Kbd>Esc</Kbd> closes the dialog and
+            returns focus to its trigger.
+          </>
+        }
       >
         <SpecimenGrid size="compact">
+          <Specimen title="Wide">
+            <Dialog
+              trigger={<Button variant="secondary">Review changes</Button>}
+              title="Review changes"
+              description="Wide dialogs suit tables, comparisons and longer forms."
+              size="wide"
+            >
+              <Text>Three documents changed since your last review.</Text>
+            </Dialog>
+          </Specimen>
+          <Specimen title="Near the top">
+            <Dialog
+              trigger={<Button variant="secondary">Find a plan</Button>}
+              title="Find a plan"
+              placement="top"
+            >
+              <Input label="Plan name" name="plan" />
+            </Dialog>
+          </Specimen>
           <Specimen title="Confirmation">
             <Dialog
               open={activeDialog === 'delete'}
@@ -113,6 +233,36 @@ export function DialogsPreview() {
               }
             />
           </Specimen>
+          <Specimen title="Pending work">
+            <Dialog
+              open={activeDialog === 'pending'}
+              onOpenChange={(open) => setActiveDialog(open ? 'pending' : null)}
+              trigger={<Button variant="secondary">Rename project</Button>}
+              title="Rename project"
+              description={
+                <>
+                  Saving keeps the dialog open; Cancel and <Kbd>Esc</Kbd> wait until it finishes.
+                </>
+              }
+              closeLabel="Cancel"
+              pending={saving}
+              actions={
+                <Button
+                  pending={saving}
+                  onClick={() => {
+                    setSaving(true);
+                    window.setTimeout(() => {
+                      setSaving(false);
+                      setActiveDialog(null);
+                      setActionResult('Project renamed');
+                    }, 2000);
+                  }}
+                >
+                  Save
+                </Button>
+              }
+            />
+          </Specimen>
           <Specimen title="Content dialog">
             <Dialog
               open={activeDialog === 'details'}
@@ -130,9 +280,15 @@ export function DialogsPreview() {
           {actionResult}
         </Text>
       </Example>
+      <FormDialogExamples />
       <Example
         title="Side panel"
-        caption="This non-modal panel leaves the page interactive. Outside clicks keep it open; Escape or Close dismisses it."
+        caption={
+          <>
+            This non-modal panel leaves the page interactive. Outside clicks keep it open;{' '}
+            <Kbd>Esc</Kbd> or Close dismisses it.
+          </>
+        }
       >
         <Dialog
           open={activeDialog === 'inspector'}
@@ -147,5 +303,143 @@ export function DialogsPreview() {
         </Dialog>
       </Example>
     </Preview>
+  );
+}
+
+const roleOptions = [
+  { value: 'member', label: 'Member' },
+  { value: 'admin', label: 'Admin' },
+] as const;
+
+/** Dialogs that collect input: fields, a choice and a typed confirmation. */
+function FormDialogExamples() {
+  const [activeDialog, setActiveDialog] = useState<'invite' | 'role' | 'remove' | null>(null);
+  const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState<string>();
+  const [inviting, setInviting] = useState(false);
+  const [role, setRole] = useState('member');
+  const [confirmation, setConfirmation] = useState('');
+  const [result, setResult] = useState('');
+  function open(dialog: 'invite' | 'role' | 'remove' | null) {
+    setActiveDialog(dialog);
+    setEmail('');
+    setEmailError(undefined);
+    setConfirmation('');
+  }
+  function invite() {
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      setEmailError('Enter an e-mail address such as name@example.com.');
+      return;
+    }
+    setInviting(true);
+    window.setTimeout(() => {
+      setInviting(false);
+      setActiveDialog(null);
+      setResult(`Invitation sent to ${email}`);
+    }, 1500);
+  }
+  return (
+    <Example
+      title="Dialogs with forms"
+      size="collection"
+      caption="Fields keep their floating labels and validation inside the dialog. The primary action stays pending while the work runs, and Cancel waits for it."
+    >
+      <SpecimenGrid size="compact">
+        <Specimen title="Fields and validation">
+          <Dialog
+            open={activeDialog === 'invite'}
+            onOpenChange={(next) => open(next ? 'invite' : null)}
+            trigger={<Button variant="secondary">Invite member</Button>}
+            title="Invite member"
+            description="We'll send an invitation with a link to join the workspace."
+            closeLabel="Cancel"
+            pending={inviting}
+            actions={
+              <Button pending={inviting} onClick={invite}>
+                Send invitation
+              </Button>
+            }
+          >
+            <Stack gap={4}>
+              <Input
+                label="E-mail address"
+                type="email"
+                autoComplete="off"
+                value={email}
+                error={emailError}
+                onChange={(event) => {
+                  setEmail(event.target.value);
+                  setEmailError(undefined);
+                }}
+              />
+              <Select
+                variant="outlined"
+                label="Role"
+                hint="Admins also manage members and billing."
+                options={roleOptions}
+                defaultValue="member"
+              />
+            </Stack>
+          </Dialog>
+        </Specimen>
+        <Specimen title="A choice">
+          <Dialog
+            open={activeDialog === 'role'}
+            onOpenChange={(next) => open(next ? 'role' : null)}
+            trigger={<Button variant="secondary">Change role</Button>}
+            title="Change role"
+            description="Alex Morgan keeps access to the projects they already have."
+            closeLabel="Cancel"
+            actions={
+              <Button
+                onClick={() => {
+                  setActiveDialog(null);
+                  setResult(`Role changed to ${role}`);
+                }}
+              >
+                Save
+              </Button>
+            }
+          >
+            <RadioGroup variant="rows" label="Role" value={role} onValueChange={setRole}>
+              <Radio value="member" label="Member" detail="Uses the products assigned to them." />
+              <Radio value="admin" label="Admin" detail="Also manages members and billing." />
+            </RadioGroup>
+          </Dialog>
+        </Specimen>
+        <Specimen title="Typed confirmation">
+          <Dialog
+            open={activeDialog === 'remove'}
+            onOpenChange={(next) => open(next ? 'remove' : null)}
+            trigger={<Button variant="secondary">Remove workspace</Button>}
+            title="Remove workspace?"
+            description="This deletes Northwind and its projects for everyone. It cannot be undone."
+            closeLabel="Cancel"
+            actions={
+              <Button
+                variant="destructive"
+                disabled={confirmation !== 'Northwind'}
+                onClick={() => {
+                  setActiveDialog(null);
+                  setResult('Workspace removed');
+                }}
+              >
+                Remove workspace
+              </Button>
+            }
+          >
+            <Input
+              label="Workspace name"
+              hint="Type Northwind to confirm."
+              value={confirmation}
+              onChange={(event) => setConfirmation(event.target.value)}
+            />
+          </Dialog>
+        </Specimen>
+      </SpecimenGrid>
+      <Text variant="caption" className="docs-caption" aria-live="polite">
+        {result}
+      </Text>
+    </Example>
   );
 }

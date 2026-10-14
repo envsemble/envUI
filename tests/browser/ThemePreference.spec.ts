@@ -1,0 +1,36 @@
+import { test, expect } from '@playwright/test';
+import { fixtureUrl } from './Servers';
+
+test('a theme chosen in one window applies in the other windows of the same origin', async ({
+  context,
+}) => {
+  const first = await context.newPage();
+  const second = await context.newPage();
+  await first.goto(`${fixtureUrl}/?fixture=adoption`);
+  await second.goto(`${fixtureUrl}/?fixture=adoption`);
+  const before = await second.locator('html').getAttribute('data-env-theme');
+  const after = before === 'dark' ? 'light' : 'dark';
+
+  await first.getByTestId('theme-toggle').click();
+  await expect(first.locator('html')).toHaveAttribute('data-env-theme', after);
+  await expect(second.locator('html')).toHaveAttribute('data-env-theme', after);
+  await expect(second.getByTestId('theme-toggle')).toHaveAccessibleName(
+    `Switch to ${after === 'dark' ? 'light' : 'dark'} theme`,
+  );
+
+  // Clearing the stored choice returns the other window to the default preference.
+  await first.evaluate(() => localStorage.removeItem('fixture-theme'));
+  await second.evaluate(() =>
+    window.dispatchEvent(
+      new StorageEvent('storage', {
+        key: 'fixture-theme',
+        newValue: null,
+        storageArea: localStorage,
+      }),
+    ),
+  );
+  const system = await second.evaluate(() =>
+    matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
+  );
+  await expect(second.locator('html')).toHaveAttribute('data-env-theme', system);
+});

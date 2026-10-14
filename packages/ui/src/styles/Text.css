@@ -6,6 +6,12 @@
   font: var(--type-body);
   color: var(--color-text-primary);
 }
+/* Display text introduces a page or hero; it scales with the viewport and keeps a tight measure. */
+.env-text-display {
+  font: 500 clamp(1.75rem, 1.25rem + 2.5vw, 2.75rem) / 1.1 var(--font-family);
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
 .env-text-page-heading {
   font: var(--type-h1);
 }
@@ -28,4 +34,15 @@
 }
 .env-text-tone-quiet {
   color: var(--color-text-quiet);
+}
+
+/* An animated number keeps the line box of the text around it; the rolling value is clipped to it. */
+.env-animated-number {
+  display: inline-flex;
+  overflow: clip;
+  vertical-align: bottom;
+  font-variant-numeric: tabular-nums;
+}
+.env-animated-number-value {
+  display: inline-block;
 }

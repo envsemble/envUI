@@ -28,6 +28,29 @@ import { ToggleOn } from '@envsemble/envui/icons/ToggleOn';
 import { ViewModule } from '@envsemble/envui/icons/ViewModule';
 import { WebAsset } from '@envsemble/envui/icons/WebAsset';
 import { Widgets } from '@envsemble/envui/icons/Widgets';
+import { MoreVert } from '@envsemble/envui/icons/MoreVert';
+import { MenuOpen } from '@envsemble/envui/icons/MenuOpen';
+import { ChatBubble } from '@envsemble/envui/icons/ChatBubble';
+import { AccountCircle } from '@envsemble/envui/icons/AccountCircle';
+import { Speed } from '@envsemble/envui/icons/Speed';
+import { SpaceDashboard } from '@envsemble/envui/icons/SpaceDashboard';
+import { AccountTree } from '@envsemble/envui/icons/AccountTree';
+import { Tab } from '@envsemble/envui/icons/Tab';
+import { KeyboardCommandKey } from '@envsemble/envui/icons/KeyboardCommandKey';
+import { ViewWeek } from '@envsemble/envui/icons/ViewWeek';
+import { Sell } from '@envsemble/envui/icons/Sell';
+import { Campaign } from '@envsemble/envui/icons/Campaign';
+import { Chat } from '@envsemble/envui/icons/Chat';
+import { TableChart } from '@envsemble/envui/icons/TableChart';
+import { Keyboard } from '@envsemble/envui/icons/Keyboard';
+import { LinearScale } from '@envsemble/envui/icons/LinearScale';
+import { Tune } from '@envsemble/envui/icons/Tune';
+import { Send } from '@envsemble/envui/icons/Send';
+import { Forum } from '@envsemble/envui/icons/Forum';
+import { VerticalSplit } from '@envsemble/envui/icons/VerticalSplit';
+import { Monitoring } from '@envsemble/envui/icons/Monitoring';
+import { CloudUpload } from '@envsemble/envui/icons/CloudUpload';
+import { CalendarViewMonth } from '@envsemble/envui/icons/CalendarViewMonth';
 import { type Reference } from '../Reference';
 
 export const foundationIcons: Record<string, typeof Palette> = {
@@ -60,13 +83,20 @@ const referenceIcons: Record<string, typeof Palette> = {
   layout: ViewModule,
   surface: CropSquare,
   cards: Dashboard,
+  'split-view': VerticalSplit,
   buttons: TouchApp,
   fields: TextFields,
   checkbox: CheckBox,
   switch: ToggleOn,
   radio: RadioButtonChecked,
   select: ArrowDropDownCircle,
+  slider: Tune,
+  'file-dropzone': CloudUpload,
   'color-picker': Palette,
+  composer: Send,
+  messages: Forum,
+  stats: Monitoring,
+  heatmap: CalendarViewMonth,
   navigation: Explore,
   tabs: WebAsset,
   'direction-links': ArrowForward,
@@ -79,6 +109,22 @@ const referenceIcons: Record<string, typeof Palette> = {
   loading: HourglassEmpty,
   toasts: Notifications,
   dialogs: WebAsset,
+  menu: MoreVert,
+  menubar: MenuOpen,
+  tooltip: ChatBubble,
+  avatar: AccountCircle,
+  meters: Speed,
+  'app-shell': SpaceDashboard,
+  tree: AccountTree,
+  'document-tabs': Tab,
+  'command-palette': KeyboardCommandKey,
+  'segmented-control': ViewWeek,
+  badges: Sell,
+  notices: Campaign,
+  popover: Chat,
+  tables: TableChart,
+  keyboard: Keyboard,
+  breadcrumbs: LinearScale,
 };
 
 /** A decorative symbol for the individual reference topic. */

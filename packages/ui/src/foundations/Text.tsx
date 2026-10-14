@@ -12,7 +12,13 @@ export type TextElement =
   | 'h4'
   | 'h5'
   | 'h6';
-export type TextVariant = 'body' | 'page-heading' | 'section-heading' | 'supporting' | 'caption';
+export type TextVariant =
+  | 'display'
+  | 'body'
+  | 'page-heading'
+  | 'section-heading'
+  | 'supporting'
+  | 'caption';
 
 export type TextTone = 'primary' | 'muted' | 'quiet';
 

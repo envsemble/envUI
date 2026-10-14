@@ -25,6 +25,8 @@
   --control-font-size: var(--font-size-body);
   --viewport-gutter: clamp(0.75rem, 2vw, 1rem);
   --topbar-height: 3.25rem;
+  /* A window title bar drawn by the application, which keeps compact controls. */
+  --title-bar-height: 2.5rem;
   --color-control-blue: hsl(214.07767 81.746032% 50.588235%);
   --color-link: hsl(214.07767 81.746032% 50.588235%);
 
@@ -32,6 +34,10 @@
   --motion-duration-medium: 0.16s;
   --motion-ease: cubic-bezier(0.45, 0, 0.2, 1);
   --motion-ease-standard: var(--motion-ease);
+  --motion-duration-slow: 0.24s;
+  /* Elements entering decelerate into place; leaving ones accelerate away. */
+  --motion-ease-enter: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --motion-ease-exit: cubic-bezier(0.3, 0, 0.8, 0.15);
   color-scheme: light;
   font-family: var(--font-family);
   font-weight: 400;
@@ -43,7 +49,7 @@
   --color-text-primary: hsl(225 5.882353% 13.333333%);
   --color-text-muted: hsl(213.333333 4.522613% 39.019608%);
   --color-border-strong: hsl(220 8.823529% 86.666667%);
-  /* Google reference palette: white canvas, cool panes, pale gray surfaces and blue actions. */
+  /* Light palette: white canvas, cool panes, pale gray surfaces and blue actions. */
   --color-canvas: hsl(0 0% 100%);
   --color-canvas-dark: hsl(0 0% 12.157%);
   --color-surface-base: hsl(0 0% 100%);
@@ -60,7 +66,7 @@
   --color-white: hsl(0 0% 100%);
   --color-on-accent: hsl(0 0% 100%);
   --color-surface-muted: hsl(210 16.666667% 97.647059%);
-  --color-skeleton-base: hsl(200 12% 95.098039%);
+  --color-skeleton-base: var(--color-fill);
   --color-text-strong: hsl(205.714286 5.511811% 24.901961%);
   --color-control-text: hsl(205.714286 5.511811% 24.901961%);
   --color-icon: hsl(213.333333 4.522613% 39.019608%);
@@ -69,16 +75,20 @@
   --color-disabled-text: hsl(213.333333 4.522613% 39.019608%);
   --color-row: hsl(200 12% 95.098039%);
   --color-row-alternate: hsl(0 0% 100%);
+  /* Rows on a menu pane: white in light, raised from the pane in dark. */
+  --color-menu-row: var(--color-row-alternate);
   --color-row-text: hsl(225 5.882353% 13.333333%);
   --color-row-detail: hsl(213.333333 4.522613% 39.019608%);
-  --color-secondary-action: hsl(200 12% 95.098039%);
+  --color-secondary-action: var(--color-fill);
+  /* Labels on action and navigation fills keep 4.5:1 on their hover shades too, also on a tab rail:
+     outlined and selected navigation labels are a deeper blue than links. */
   --color-on-secondary-action: hsl(205.714286 5.511811% 24.901961%);
-  --color-on-subtle-action: hsl(214.07767 81.746032% 50.588235%);
+  --color-on-subtle-action: hsl(216.852792 89.954338% 42.941176%);
   --color-subtle-action-border: hsl(220 8.823529% 86.666667%);
   --color-navigation-text: hsl(205.714286 5.511811% 24.901961%);
   --color-navigation-icon: hsl(213.333333 4.522613% 39.019608%);
   --color-navigation-quiet: hsl(213.333333 42.857143% 95.882353%);
-  --color-on-navigation-selected: hsl(216.852792 89.954338% 42.941176%);
+  --color-on-navigation-selected: hsl(216.852792 89.954338% 39%);
   --color-direction-link: hsl(0 0% 100%);
   --color-direction-link-text: hsl(225 5.882353% 13.333333%);
   --color-direction-link-label: hsl(213.333333 4.522613% 39.019608%);
@@ -92,7 +102,13 @@
   --color-field-border: hsl(220 8.823529% 86.666667%);
   --color-field-active: hsl(214.07767 81.746032% 50.588235%);
   --color-field-error: hsl(4.231 76.471% 40%);
-  --color-select-option: hsl(210 16.666667% 97.647059%);
+  /* Popups raised over the page, such as the open list of a Select. */
+  --color-popup: hsl(0 0% 100%);
+  --color-popup-border: var(--color-border-strong);
+  /* Dialogs and the command palette: the popup surface, which in the dark theme stays the pane color
+     so rows and fields inside keep their contrast. */
+  --color-dialog: var(--color-popup);
+  --color-select-option: var(--color-popup);
   --color-select-option-text: hsl(213.333 9.333% 29.412%);
   --color-select-selected: hsl(218.181818 91.666667% 95.294118%);
   --color-on-select-selected: hsl(216.852792 89.954338% 42.941176%);
@@ -104,16 +120,32 @@
   --color-on-checkbox: hsl(0 0% 100%);
   --color-checkbox-border: hsl(213.333333 4.522613% 39.019608%);
   --color-checkbox-text: hsl(225 5.882353% 13.333333%);
-  --color-switch-off: hsl(200 12% 95.098039%);
+  --color-switch-off: var(--color-fill);
   --color-switch-on: hsl(214.07767 81.746032% 50.588235%);
   --color-switch-thumb: hsl(205.714286 5.511811% 24.901961%);
   --color-switch-thumb-on: hsl(0 0% 100%);
   --color-switch-text: hsl(225 5.882353% 13.333333%);
-  --color-chip: hsl(200 12% 95.098039%);
+  --color-chip: var(--color-fill);
   --color-chip-text: hsl(216.852792 89.954338% 42.941176%);
   --color-disclosure-text: hsl(213.333333 4.522613% 39.019608%);
   --color-dialog-overlay: hsl(0 0% 12.157%);
   --color-markdown-border: hsl(220 8.823529% 86.666667%);
+  /* The envsemble avatar: the default person picture and initials share it in both themes. */
+  --color-avatar: hsl(217.9 100% 81.4%);
+  --color-avatar-figure: hsl(221.3 71.7% 57.1%);
+  /* Initials use a deeper shade of the figure blue: 5:1 on the avatar fill. */
+  --color-on-avatar: hsl(221.3 71.7% 36%);
+  /* Status tones for small text, icons and badges. Each keeps at least 4.5:1 on the canvas, panes and
+     rows, also over its own subtle badge fill. Solid badges put --color-on-tone on the tone. */
+  --color-tone-neutral: hsl(213.333 4.523% 39.02%);
+  --color-tone-accent: hsl(216.853 89.954% 42.941%);
+  --color-tone-success: hsl(140 64% 27%);
+  --color-tone-warning: hsl(36 100% 26%);
+  --color-tone-danger: hsl(4.231 76.471% 40%);
+  /* Completed work, such as a merged or closed-as-done item. */
+  --color-tone-done: hsl(266 55% 50%);
+  --color-on-tone: hsl(0 0% 100%);
+  --state-tone-subtle-opacity: 12%;
 
   /* Components share the Material 3 corner scale inside each theme boundary. */
   --md-sys-shape-corner-none: 0;
@@ -129,8 +161,8 @@
   --state-lightness-threshold: 50;
   --state-hover-shift: 10;
   --state-pressed-shift: 20;
-  --state-surface-hover-shift: 2;
-  --state-surface-pressed-shift: 4;
+  --state-surface-hover-shift: 6;
+  --state-surface-pressed-shift: 10;
   --state-lightness-direction: calc(
     1 - 2 * clamp(0, calc(sign(l - var(--state-lightness-threshold)) + 1), 1)
   );
@@ -158,13 +190,39 @@
   --state-selected-base-weight: 13%;
   --state-card-strip-weight: 35%;
   --state-dialog-overlay-opacity: 0.55;
+  /* Fills (secondary actions, tab rails, chips, switch tracks and skeletons) and state layers are
+     translucent layers of the content color. They keep their tone on the canvas and stay distinct
+     on every other surface they sit on: panes, rows, cards and dialogs. */
+  --color-state-layer: var(--color-text-primary);
+  --state-layer-hover-opacity: 8%;
+  --state-layer-pressed-opacity: 12%;
+  --state-fill-opacity: 6%;
+  --state-fill-hover-opacity: 17%;
+  --state-fill-pressed-opacity: 29%;
+  --color-state-layer-hover: color-mix(
+    in srgb,
+    var(--color-state-layer) var(--state-layer-hover-opacity),
+    transparent
+  );
+  --color-state-layer-pressed: color-mix(
+    in srgb,
+    var(--color-state-layer) var(--state-layer-pressed-opacity),
+    transparent
+  );
+  --color-fill: color-mix(in srgb, var(--color-state-layer) var(--state-fill-opacity), transparent);
+  --color-fill-hover: color-mix(
+    in srgb,
+    var(--color-state-layer) var(--state-fill-hover-opacity),
+    transparent
+  );
+  --color-fill-pressed: color-mix(
+    in srgb,
+    var(--color-state-layer) var(--state-fill-pressed-opacity),
+    transparent
+  );
 
-  --color-secondary-action-hover: hsl(
-    from var(--color-secondary-action) h s var(--state-hover-lightness)
-  );
-  --color-secondary-action-pressed: hsl(
-    from var(--color-secondary-action) h s var(--state-pressed-lightness)
-  );
+  --color-secondary-action-hover: var(--color-fill-hover);
+  --color-secondary-action-pressed: var(--color-fill-pressed);
   --color-subtle-action-border-hover: hsl(
     from var(--color-subtle-action-border) h s var(--state-hover-lightness)
   );
@@ -179,8 +237,8 @@
   --color-radio-row-pressed: hsl(
     from var(--color-radio-row) h s var(--state-surface-pressed-lightness)
   );
-  --color-switch-off-hover: hsl(from var(--color-switch-off) h s var(--state-hover-lightness));
-  --color-switch-off-pressed: hsl(from var(--color-switch-off) h s var(--state-pressed-lightness));
+  --color-switch-off-hover: var(--color-fill-hover);
+  --color-switch-off-pressed: var(--color-fill-pressed);
   --color-switch-on-hover: hsl(from var(--color-switch-on) h s var(--state-hover-lightness));
   --color-switch-on-pressed: hsl(from var(--color-switch-on) h s var(--state-pressed-lightness));
   --color-checkbox-hover: hsl(from var(--color-checkbox) h s var(--state-hover-lightness));
@@ -270,7 +328,7 @@
     from var(--color-navigation-quiet) h s var(--state-pressed-lightness)
   );
   --color-action-strip: hsl(200 12% 95.098039%);
-  --color-skeleton-highlight: hsl(from var(--color-skeleton-base) h s var(--state-hover-lightness));
+  --color-skeleton-highlight: var(--color-fill-hover);
   --color-primary-action: hsl(214.07767 81.746032% 50.588235%);
   --color-on-primary-action: hsl(0 0% 100%);
   --color-subtle-action: hsl(0 0% 100%);
@@ -282,6 +340,8 @@
   --radius-row-outer: var(--radius-surface);
   --radius-row-inner: 0.5rem;
   --radius-row-single: var(--radius-row-outer);
+  /* Text in rows keeps clear of the large outer corners, whether a row stands alone or is connected. */
+  --row-padding-inline: 1.5rem;
   background: var(--color-canvas);
   color: var(--color-text-primary);
 }
@@ -291,6 +351,10 @@
   --color-control-blue: hsl(212.087 100% 45.098%);
   color-scheme: dark;
   --color-focus-ring: hsl(217.317 89.13% 81.961%);
+  /* Dark surfaces need larger steps for the same visible difference. */
+  --state-fill-opacity: 12.5%;
+  --state-fill-hover-opacity: 25%;
+  --state-fill-pressed-opacity: 37.5%;
   --color-subtle-action: hsl(220 3.614% 16.275%);
   --color-primary-action: hsl(216 9.091% 89.216%);
   --color-on-primary-action: hsl(0 0% 12.157%);
@@ -307,23 +371,23 @@
   --color-control-text: hsl(213.333 10.843% 83.725%);
   --color-icon: hsl(212.308 11.712% 78.235%);
   --color-text-quiet: hsl(212.308 8.725% 70.784%);
-  --color-skeleton-base: hsl(216 4.425% 22.157%);
   --color-surface: hsl(220 3.614% 16.275%);
   --color-action-strip: hsl(218.107956 3.957044% 18.3337%);
   --color-navigation-selected: hsl(217.84467 10.485441% 24.81418%);
   --color-disabled-text: hsl(212.308 8.725% 70.784%);
   --color-row: hsl(216 4.425% 22.157%);
   --color-row-alternate: hsl(220 3.614% 16.275%);
+  --color-menu-row: var(--color-row);
   --color-row-text: hsl(216 12.195% 91.961%);
   --color-row-detail: hsl(213.333 7.317% 75.882%);
-  --color-secondary-action: hsl(216 4.425% 22.157%);
-  --color-on-secondary-action: hsl(213.333 10.843% 83.725%);
+  /* As bright as primary text: a selected secondary tab's hover fill sits on the rail's fill. */
+  --color-on-secondary-action: hsl(216 12.195% 91.961%);
   --color-on-subtle-action: hsl(217.317 89.13% 81.961%);
   --color-subtle-action-border: hsl(213.333 4.523% 39.02%);
   --color-navigation-text: hsl(216 9.091% 89.216%);
   --color-navigation-icon: hsl(212.308 8.725% 70.784%);
   --color-navigation-quiet: hsl(216 4.425% 22.157%);
-  --color-on-navigation-selected: hsl(217.317 89.13% 81.961%);
+  --color-on-navigation-selected: hsl(217.317 89.13% 85%);
   --color-direction-link: hsl(220 3.614% 16.275%);
   --color-direction-link-text: hsl(216 12.195% 91.961%);
   --color-direction-link-label: hsl(213.333 7.317% 75.882%);
@@ -337,9 +401,12 @@
   --color-field-border: hsl(213.333 4.523% 39.02%);
   --color-field-active: hsl(217.317 89.13% 81.961%);
   --color-field-error: hsl(4.231 76.471% 75%);
-  --color-select-option: hsl(216 4.425% 22.157%);
+  --color-popup: hsl(216 4.425% 22.157%);
+  --color-popup-border: hsl(216 4.425% 30%);
+  --color-dialog: var(--color-pane);
+  --color-select-option: var(--color-popup);
   --color-select-option-text: hsl(213.333 10.843% 83.725%);
-  --color-select-selected: hsl(217.84467 10.485441% 24.81418%);
+  --color-select-selected: hsl(216 30% 30%);
   --color-on-select-selected: hsl(217.317 89.13% 81.961%);
   --color-radio: hsl(217.317 89.13% 81.961%);
   --color-radio-row: hsl(216 4.425% 22.157%);
@@ -349,16 +416,22 @@
   --color-on-checkbox: hsl(0 0% 100%);
   --color-checkbox-border: hsl(212.308 11.712% 78.235%);
   --color-checkbox-text: hsl(216 12.195% 91.961%);
-  --color-switch-off: hsl(216 4.425% 22.157%);
   --color-switch-on: hsl(212.087 100% 45.098%);
   --color-switch-thumb: hsl(213.333 10.843% 83.725%);
   --color-switch-thumb-on: hsl(0 0% 100%);
   --color-switch-text: hsl(216 12.195% 91.961%);
-  --color-chip: hsl(216 4.425% 22.157%);
   --color-chip-text: hsl(217.317 89.13% 81.961%);
   --color-disclosure-text: hsl(213.333 7.317% 75.882%);
   --color-dialog-overlay: hsl(0 0% 12.157%);
   --color-markdown-border: hsl(213.333 4.523% 39.02%);
+  --color-tone-neutral: hsl(213.333 7.317% 75.882%);
+  --color-tone-accent: hsl(217.317 89.13% 81.961%);
+  --color-tone-success: hsl(140 50% 66%);
+  --color-tone-warning: hsl(40 85% 64%);
+  --color-tone-danger: hsl(4.231 80% 80%);
+  --color-tone-done: hsl(268 80% 83%);
+  --color-on-tone: hsl(0 0% 12.157%);
+  --state-tone-subtle-opacity: 14%;
 }
 
 /* Relative spacing is reset at every explicit theme boundary, including portals. */
@@ -379,5 +452,7 @@
     --control-height-compact: var(--control-height-touch);
     --control-height: var(--control-height-touch);
     --control-font-size: 1rem;
+    /* The title bar holds compact controls, which take the touch height here. */
+    --title-bar-height: calc(var(--control-height-touch) + var(--space-1));
   }
 }

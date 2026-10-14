@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test';
+import { fixtureUrl } from './Servers';
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('http://127.0.0.1:8766/?fixture=colors');
+  await page.goto(`${fixtureUrl}/?fixture=colors`);
   await page.emulateMedia({ reducedMotion: 'reduce' });
 });
 
@@ -19,23 +20,41 @@ const sources: Record<string, string> = {
   'tab-navigation': '--color-navigation-selected',
 };
 
-async function lightness(control: import('@playwright/test').Locator, token?: string) {
-  return control.evaluate((element, name) => {
-    const probe = document.createElement('span');
-    if (name) {
-      probe.style.backgroundColor = `var(${name})`;
-      element.append(probe);
-    }
-    const color = getComputedStyle(name ? probe : element).backgroundColor;
-    const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = 1;
-    const ctx = canvas.getContext('2d')!;
-    ctx.fillStyle = color;
-    ctx.fillRect(0, 0, 1, 1);
-    const rgb = [...ctx.getImageData(0, 0, 1, 1).data].slice(0, 3).map((value) => value / 255);
-    probe.remove();
-    return (Math.max(...rgb) + Math.min(...rgb)) * 50;
-  }, token);
+/**
+ * HSL lightness of a control's fill as painted on its theme canvas. Translucent fills are calibrated
+ * against the canvas; with `layered`, the fills of the ancestors in between are painted too.
+ */
+async function lightness(
+  control: import('@playwright/test').Locator,
+  token?: string,
+  { layered = false } = {},
+) {
+  return control.evaluate(
+    (element, { name, layered }) => {
+      const probe = document.createElement('span');
+      if (name) {
+        probe.style.backgroundColor = `var(${name})`;
+        element.append(probe);
+      }
+      const layers = [getComputedStyle(name ? probe : element).backgroundColor];
+      for (let node = element.parentElement; node; node = node.parentElement) {
+        const isCanvas = node.classList.contains('env-theme');
+        if (layered || isCanvas) layers.unshift(getComputedStyle(node).backgroundColor);
+        if (isCanvas) break;
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = 1;
+      const ctx = canvas.getContext('2d')!;
+      for (const color of layers) {
+        ctx.fillStyle = color;
+        ctx.fillRect(0, 0, 1, 1);
+      }
+      const rgb = [...ctx.getImageData(0, 0, 1, 1).data].slice(0, 3).map((value) => value / 255);
+      probe.remove();
+      return (Math.max(...rgb) + Math.min(...rgb)) * 50;
+    },
+    { name: token, layered },
+  );
 }
 
 test('all action and navigation fills derive hover/pressed from their base color', async ({
@@ -152,7 +171,7 @@ test('compositions reuse primitive colors while unrelated roles stay independent
     const cases = [
       ['--color-canvas', ['canvas', 'canvasCard']],
       ['--color-pane', ['pane', 'paneCard']],
-      ['--color-surface-muted', ['surface', 'card', 'tabRail', 'contrastPane']],
+      ['--color-surface-muted', ['surface', 'card', 'contrastPane']],
       ['--color-row', ['row']],
       ['--color-secondary-action', ['secondary', 'icon', 'select', 'selectError']],
       ['--color-on-secondary-action', ['secondary', 'icon', 'select', 'selectError']],
@@ -174,6 +193,10 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       ['--color-checkbox', ['checkbox']],
       ['--color-switch-on', ['switch']],
       ['--color-chip', ['chip']],
+      [
+        '--color-fill',
+        ['secondary', 'icon', 'select', 'selectError', 'tabRail', 'chip', 'skeleton'],
+      ],
       ['--color-skeleton-base', ['skeleton']],
     ] as const;
     for (const [token, targets] of cases) {
@@ -223,15 +246,17 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       (element) => getComputedStyle(element).backgroundColor,
     );
     const rail = boundary.locator('.env-tabs-list');
-    const railLightness = await lightness(rail);
+    const railLightness = await lightness(rail, undefined, { layered: true });
     for (const id of ['tab-primary', 'tab-secondary']) {
       const inactive = page.getByTestId(`${theme}-${id}`);
       await expect(inactive).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
       await inactive.hover();
-      expect(await lightness(inactive)).toBeCloseTo(
-        railLightness + (railLightness < 50 ? 2 : -2),
-        0,
-      );
+      // Hover is a translucent state layer over the rail, clearly visible in both themes.
+      const shift =
+        ((await lightness(inactive, undefined, { layered: true })) - railLightness) *
+        (railLightness < 50 ? 1 : -1);
+      expect(shift).toBeGreaterThan(4);
+      expect(shift).toBeLessThan(9);
       await expect(inactive).toHaveAttribute('aria-selected', 'false');
       await expect(selected).toHaveCSS('background-color', selectedFill);
       await page.mouse.move(0, 0);

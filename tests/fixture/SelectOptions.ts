@@ -6,6 +6,6 @@ export const planOptions: readonly SelectOption[] = [
   { value: 'enterprise', label: 'Enterprise', disabled: true },
 ];
 export const dialogOptions: readonly SelectOption[] = [
-  { value: 'atlas', label: 'Atlas' },
+  { value: 'aurora', label: 'Aurora' },
   { value: 'boreal', label: 'Boreal' },
 ];
