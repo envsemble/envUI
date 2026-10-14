@@ -58,6 +58,13 @@ export function AvatarGroupsFixture({ theme }: { theme: ThemeValue }) {
         total={Number.NaN}
         max={Number.NaN}
       />
+      {/* Numbers no group can show, as from data an application did not check. */}
+      <AvatarGroup
+        data-testid="endless-counts"
+        people={people.slice(0, 2)}
+        total={Number.POSITIVE_INFINITY}
+        max={null as unknown as number}
+      />
       <AvatarGroup
         data-testid="german"
         people={people}

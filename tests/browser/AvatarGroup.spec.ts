@@ -44,6 +44,11 @@ test('an avatar group names everyone and counts the people it does not show', as
   await expect(unknown).toHaveAccessibleName('2 people: Alex Morgan, Sam Lee');
   await expect(unknown.locator('.env-avatar')).toHaveCount(2);
   await expect(unknown.locator('.env-avatar-group-overflow')).toHaveCount(0);
+  // So do an endless total and a max of null.
+  const endless = scope.getByTestId('endless-counts');
+  await expect(endless).toHaveAccessibleName('2 people: Alex Morgan, Sam Lee');
+  await expect(endless.locator('.env-avatar')).toHaveCount(2);
+  await expect(endless.locator('.env-avatar-group-overflow')).toHaveCount(0);
   // formatLabel names the group in another language.
   await expect(scope.getByTestId('german')).toHaveAccessibleName(
     '5 Personen: Alex Morgan, Sam Lee, Priya Shah, Jordan Rivera, Taylor Kim',

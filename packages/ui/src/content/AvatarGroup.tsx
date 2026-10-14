@@ -55,11 +55,14 @@ export function AvatarGroup({
   'aria-label': label,
   ...props
 }: AvatarGroupProps) {
-  // An unknown total or max, such as NaN from missing data, counts and shows everyone passed.
-  const count = Math.max(Math.floor(total ?? 0) || 0, people.length);
+  // A total or max that is no count, such as NaN from missing data, an endless total or a max of
+  // null, counts and shows everyone passed.
+  const count = Math.max(isCount(total) ? Math.floor(total) : 0, people.length);
   if (count === 0) return null;
   const shown =
-    max === undefined || Number.isNaN(max) ? people : people.slice(0, Math.max(0, Math.floor(max)));
+    typeof max === 'number' && !Number.isNaN(max)
+      ? people.slice(0, Math.max(0, Math.floor(max)))
+      : people;
   const hidden = people.slice(shown.length);
   // People counted in total whom the preview leaves out, so nobody can name them.
   const unlisted = count - people.length;
@@ -155,4 +158,9 @@ function formatMorePeople(count: number) {
 
 function formatGroupLabel(count: number, names: readonly string[]) {
   return `${count} ${count === 1 ? 'person' : 'people'}: ${names.join(', ')}`;
+}
+
+/** A number of people: finite, so neither NaN nor endless. */
+function isCount(value: number | undefined): value is number {
+  return typeof value === 'number' && Number.isFinite(value);
 }

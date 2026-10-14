@@ -87,8 +87,8 @@ import { AvatarGroup } from '@envsemble/envui';
 | Name                | Contract                                                                                                                       |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | people              | `{ name, src?, fallback?, id?, href? }` in display order; id is a stable key, the name and position by default                 |
-| max                 | The most avatars to show; the overflow chip after them counts the rest. All by default                                         |
-| total               | How many people there are in all, when people is only a preview of them                                                        |
+| max                 | The most avatars to show; the overflow chip after them counts the rest. All by default, or when not a number                   |
+| total               | How many people there are in all, when people is only a preview; not a finite number counts those passed                       |
 | size                | small 1.5 rem, standard 2 rem (default), large 3 rem or display 5.5 rem, as Avatar                                             |
 | onPersonClick       | Makes every avatar pressable, a button or, for a person with href, a link; receives the person and the click event             |
 | href                | Makes that person's avatar a link, rendered through LinkProvider                                                               |
