@@ -1372,14 +1372,54 @@ test('a dock that minimizes asks for the next panel when the application keeps o
   const scope = page.getByTestId('keeping-dock-light');
   const log = page.getByTestId('keeping-log-light');
   const { row, ids } = rowOf(scope);
-  // Asked once for the pinned panel, which the application keeps, the dock minimizes the next.
-  await expect(log).toHaveText('pinned minimized,inbox minimized');
+  // Asked once for the pinned panel, which the application keeps without an answer for 5 seconds,
+  // the dock minimizes the next.
+  await expect(log).toHaveText('pinned minimized');
+  await expect(log).toHaveText('pinned minimized,inbox minimized', { timeout: 10_000 });
   await expect.poll(ids).toEqual(['pinned', 'today']);
   await expect(row).not.toHaveAttribute('data-overflowing');
   await frames(page);
   await expect(log).toHaveText('pinned minimized,inbox minimized');
   // restoreLabel still names the chips.
   await expect(scope.getByRole('button', { name: 'Return to Inbox' })).toBeVisible();
+});
+
+test('a dock that minimizes waits for an answer that comes later, as in a transition', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const scope = page.getByTestId('late-dock-light');
+  const log = page.getByTestId('late-log-light');
+  const { ids } = rowOf(scope);
+  // The application answers a second later: the dock asks for nothing else meanwhile, and one
+  // panel makes room.
+  await expect.poll(ids).toEqual(['p1', 'p2']);
+  await page.waitForTimeout(500);
+  await expect(log).toHaveText('p0 minimized');
+  expect(await ids()).toEqual(['p1', 'p2']);
+  // With room for it again, the panel comes back, also with an answer that comes later.
+  await scope.evaluate((element) => (element.style.inlineSize = '88rem'));
+  await expect.poll(ids).toEqual(['p0', 'p1', 'p2']);
+  await expect(log).toHaveText('p0 minimized,p0 open');
+});
+
+test('a panel that closes while the dock awaits its answer leaves the others open', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const scope = page.getByTestId('late-dock-light');
+  const log = page.getByTestId('late-log-light');
+  const { ids } = rowOf(scope);
+  const first = scope.locator('section[data-panel-id="p0"]');
+  // Asked to minimize, the panel closes before the application answers.
+  await expect(log).toHaveText('p0 minimized');
+  await first.getByRole('button', { name: 'Close', exact: true }).click();
+  await expect(first).toHaveCount(0);
+  await page.waitForTimeout(1500);
+  await expect(log).toHaveText('p0 minimized');
+  expect(await ids()).toEqual(['p1', 'p2']);
 });
 
 test('panels a dock minimized come back as it widens, and those people minimized stay', async ({

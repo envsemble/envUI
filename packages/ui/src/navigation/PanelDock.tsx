@@ -144,6 +144,16 @@ interface ScrollPosition {
   left: number;
 }
 
+/** A change of mode a dock with overflow="minimize" asked for, until the application answers. */
+interface FitRequest {
+  id: string;
+  mode: PanelDockMode;
+  /** The panel's mode when asked; the panel in any other mode is the answer. */
+  from: PanelDockMode;
+  /** When the dock asked, from performance.now(). */
+  since: number;
+}
+
 /** A chip's press in a stacked dock: the panel to show, the panel active then, and when. */
 interface ChipChoice {
   id: string;
@@ -176,6 +186,8 @@ const defaultHeightRem = 40;
 const minHeightRem = 15;
 const resizeStep = 16;
 const resizeLargeStep = 64;
+/** How long a dock with overflow="minimize" waits for an answer, in milliseconds. */
+const answerTimeout = 5_000;
 
 /**
  * Panels docked to the bottom inline-end edge of a region, beside the page, for items people work
@@ -223,11 +235,12 @@ export function PanelDock<T extends PanelDockPanel>({
   const chipChoice = useRef<ChipChoice | null>(null);
   // Whether the dock stacks by its latest measurement, which the next render follows.
   const measuredStacked = useRef(false);
-  // With overflow="minimize": the change the dock awaits the application's answer to; the panels
-  // the application kept open when asked to minimize them, while they stay in the row; and the
-  // panels the dock minimized to make room, with the time each was last brought forward, so one
-  // that fits again comes back in its place.
-  const awaiting = useRef<{ id: string; mode: PanelDockMode } | null>(null);
+  // With overflow="minimize": the change the dock awaits the application's answer to, and a timer
+  // that looks again once the answer is overdue; the panels the application kept open when asked
+  // to minimize them, while they stay in the row; and the panels the dock minimized to make room,
+  // with the time each was last brought forward, so one that fits again comes back in its place.
+  const awaiting = useRef<FitRequest | null>(null);
+  const answerTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const keptOpen = useRef(new Set<string>());
   const minimizedForRoom = useRef(new Map<string, number | undefined>());
   const atRowEnd = useRef(true);
@@ -320,10 +333,17 @@ export function PanelDock<T extends PanelDockPanel>({
    * in the row.
    */
   function fitRow(rowElement: HTMLElement) {
-    const request = awaiting.current;
-    if (request) {
-      const panel = panels.find(({ id }) => id === request.id);
-      if (panel && panel.mode !== request.mode) return;
+    const asked = awaiting.current;
+    if (asked) {
+      const panel = panels.find(({ id }) => id === asked.id);
+      if (panel?.mode === asked.from) {
+        // The answer can come in a later render, as from a transition or after an asynchronous
+        // step: until then the dock asks for nothing else. Once it is overdue, the application
+        // keeps the panel as it is.
+        if (performance.now() - asked.since < answerTimeout) return;
+        minimizedForRoom.current.delete(asked.id);
+        if (asked.mode === 'minimized') keptOpen.current.add(asked.id);
+      }
       awaiting.current = null;
     }
     for (const id of keptOpen.current) if (!rowIds.includes(id)) keptOpen.current.delete(id);
@@ -349,29 +369,24 @@ export function PanelDock<T extends PanelDockPanel>({
       const leaving = oldest(others, recency.current);
       if (!leaving) return;
       minimizedForRoom.current.set(leaving.id, recency.current.get(leaving.id));
-      ask(leaving.id, 'minimized');
+      ask(leaving, 'minimized');
       return;
     }
     const last = [...minimizedForRoom.current.keys()].at(-1);
     const returning = panels.find((panel) => panel.id === last);
-    if (returning && fit([...inRow, returning])) ask(returning.id, 'open');
+    if (returning && fit([...inRow, returning])) ask(returning, 'open');
   }
 
   /**
-   * Asks the application to change a panel's mode. It answers by rendering the dock with the new
-   * mode; a panel without it by the next frame is one the application keeps as it is.
+   * Asks the application to change a panel's mode. It answers by rendering the dock with the panel
+   * in another mode, also in a later render; a panel still in its mode after answerTimeout is one
+   * the application keeps as it is.
    */
-  function ask(id: string, mode: PanelDockMode) {
-    const request = { id, mode };
-    awaiting.current = request;
-    requestAnimationFrame(() => {
-      if (awaiting.current !== request) return;
-      awaiting.current = null;
-      minimizedForRoom.current.delete(id);
-      if (mode === 'minimized') keptOpen.current.add(id);
-      refresh();
-    });
-    latest.current.onModeChange(id, mode);
+  function ask(panel: T, mode: PanelDockMode) {
+    awaiting.current = { id: panel.id, mode, from: panel.mode, since: performance.now() };
+    clearTimeout(answerTimer.current);
+    answerTimer.current = setTimeout(refresh, answerTimeout + 50);
+    latest.current.onModeChange(panel.id, mode);
   }
 
   function restoreFromChip(panel: T) {

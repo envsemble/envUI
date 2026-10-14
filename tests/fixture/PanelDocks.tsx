@@ -1,4 +1,11 @@
-import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from 'react';
+import {
+  startTransition,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+} from 'react';
 import {
   IconButton,
   Menu,
@@ -235,6 +242,18 @@ export function PanelDockFixture({ theme }: { theme: ThemeValue }) {
               restoreLabel: (label) => `Return to ${label}`,
             }}
           />
+          {/* The application answers a second later, in a transition. */}
+          <MinimizingDock
+            name="late"
+            theme={theme}
+            initial={[
+              { id: 'p0', title: 'P0', mode: 'open' },
+              { id: 'p1', title: 'P1', mode: 'open' },
+              { id: 'p2', title: 'P2', mode: 'open', active: true },
+            ]}
+            activates
+            answerDelay={1000}
+          />
           {/* The application keeps its pinned panel open when asked to minimize it. */}
           <MinimizingDock
             name="keeping"
@@ -266,6 +285,7 @@ function MinimizingDock({
   keeps,
   className = 'fixture-dock-minimizing',
   labels,
+  answerDelay,
 }: {
   name: string;
   theme: ThemeValue;
@@ -277,6 +297,8 @@ function MinimizingDock({
   className?: string;
   /** Labels of the chips' buttons. */
   labels?: Pick<PanelDockProps<PanelDockPanel>, 'showLabel' | 'restoreLabel'>;
+  /** Milliseconds after which the application answers, in a transition; at once by default. */
+  answerDelay?: number;
 }) {
   const [panels, setPanels] = useState(initial);
   const [log, setLog] = useState<string[]>([]);
@@ -290,9 +312,12 @@ function MinimizingDock({
           onModeChange={(id, mode) => {
             setLog((current) => [...current, `${id} ${mode}`]);
             if (id === keeps && mode === 'minimized') return;
-            setPanels((current) =>
-              current.map((panel) => (panel.id === id ? { ...panel, mode } : panel)),
-            );
+            const answer = () =>
+              setPanels((current) =>
+                current.map((panel) => (panel.id === id ? { ...panel, mode } : panel)),
+              );
+            if (answerDelay === undefined) answer();
+            else setTimeout(() => startTransition(answer), answerDelay);
           }}
           onActivate={
             activates
