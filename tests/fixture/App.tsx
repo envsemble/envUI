@@ -42,6 +42,7 @@ import { ButtonCountsFixture } from './ButtonCounts.js';
 import { HeatmapFixture } from './Heatmaps.js';
 import { AvatarGroupsFixture } from './AvatarGroups.js';
 import { RelativeTimesFixture } from './RelativeTimes.js';
+import { CopyButtonsFixture } from './CopyButtons.js';
 
 /** Fixtures that fill the viewport are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
@@ -249,6 +250,12 @@ export default function App() {
             <>
               <RelativeTimesFixture theme="light" />
               <RelativeTimesFixture theme="dark" />
+            </>
+          )}
+          {includes('copy-buttons') && (
+            <>
+              <CopyButtonsFixture theme="light" />
+              <CopyButtonsFixture theme="dark" />
             </>
           )}
           {includes('menus') && (

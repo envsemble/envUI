@@ -289,14 +289,14 @@
 .docs-row-action {
   position: relative;
 }
-/* A compact toolbar: a title that takes the room left, an avatar group and an action. */
-.docs-avatar-toolbar {
+/* A compact toolbar: a title that takes the room left, then its controls. */
+.docs-compact-toolbar {
   display: flex;
   align-items: center;
   gap: var(--space-3);
   min-inline-size: 0;
 }
-.docs-avatar-toolbar-title {
+.docs-compact-toolbar-title {
   flex: 1 1 auto;
   min-inline-size: 0;
 }

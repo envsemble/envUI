@@ -6,11 +6,14 @@ import {
   ButtonGroup,
   Checkbox,
   ConfirmButton,
+  CopyButton,
   DisclosureNote,
   GroupedRows,
+  Input,
   Link,
   Row,
   Stack,
+  Surface,
   Text,
   Kbd,
 } from '@envsemble/envui';
@@ -261,6 +264,7 @@ export function ButtonsPreview() {
         </SpecimenGrid>
       </Example>
       <OutcomeExamples />
+      <CopyExamples />
       <Example title="Mixed styles" caption="Different button styles can also share one group.">
         <ButtonGroup aria-label="Mixed actions">
           <Button startIcon={<ChevronRight />}>Continue</Button>
@@ -393,5 +397,49 @@ function OutcomeExamples() {
         </SpecimenGrid>
       </Example>
     </>
+  );
+}
+
+const shareLink = 'https://example.com/r/quarterly-report';
+
+/** Copy actions beside a value, with a label and in a compact toolbar. */
+function CopyExamples() {
+  const [copied, setCopied] = useState('');
+  return (
+    <Example
+      title="Copy to the clipboard"
+      size="collection"
+      caption="After a press the icon turns into a check, and Copied shows and is announced for about two seconds."
+    >
+      <SpecimenGrid>
+        <Specimen title="Beside a value">
+          <div className="docs-field-toolbar">
+            <Input label="Share link" value={shareLink} readOnly />
+            <CopyButton value={shareLink} aria-label="Copy link" onCopy={setCopied} />
+          </div>
+        </Specimen>
+        <Specimen title="With a label">
+          <CopyButton value="RPT-2041" variant="outlined" onCopy={setCopied}>
+            Copy ID
+          </CopyButton>
+        </Specimen>
+        <Specimen title="In a compact toolbar">
+          <Surface tone="row" padding={2} corners="standard" density="compact">
+            <div className="docs-compact-toolbar">
+              <Text className="docs-compact-toolbar-title">RPT-2041</Text>
+              <CopyButton
+                value="RPT-2041"
+                variant="text"
+                aria-label="Copy report ID"
+                onCopy={setCopied}
+              />
+            </div>
+          </Surface>
+        </Specimen>
+      </SpecimenGrid>
+      <Text variant="caption" className="docs-caption" aria-live="polite">
+        {copied && `Copied ${copied}`}
+      </Text>
+    </Example>
   );
 }

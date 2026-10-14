@@ -31,7 +31,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 ## Actions
 
-- [Buttons](components/buttons.md) — Button, IconButton, ButtonGroup.
+- [Buttons](components/buttons.md) — Button, IconButton, ConfirmButton, CopyButton, ButtonGroup.
 - [Segmented controls](components/segmented-control.md) — One choice among a few options on a pill rail, such as views or filters.
 
 ## Forms & selection

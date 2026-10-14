@@ -560,8 +560,8 @@ function AvatarGroupExample() {
         </Specimen>
         <Specimen title="In a compact toolbar">
           <Surface tone="row" padding={2} corners="standard" density="compact">
-            <div className="docs-avatar-toolbar">
-              <Text className="docs-avatar-toolbar-title">Quarterly report</Text>
+            <div className="docs-compact-toolbar">
+              <Text className="docs-compact-toolbar-title">Quarterly report</Text>
               <AvatarGroup people={groupPeople} max={2} />
               <IconButton icon={<Settings />} aria-label="Report settings" />
             </div>
