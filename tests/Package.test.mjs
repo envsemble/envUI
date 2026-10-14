@@ -155,6 +155,8 @@ before(
       h(ui.Switch, { name: 'alerts', label: 'Alerts' }),
       h(ui.RadioGroup, { name: 'mode', label: 'Mode', defaultValue: 'one' }, h(ui.Radio, { value: 'one', label: 'One' })),
       h(ui.Select, { name: 'choice', label: 'Choice', options: [{ value: 'one', label: 'One' }], defaultValue: 'one' }),
+      h(ui.Combobox, { name: 'owner', label: 'Owner', items: [{ value: 'first', label: 'First person' }], defaultValue: 'first' }),
+      h(ui.Combobox, { name: 'reviewers', label: 'Reviewers', multiple: true, items: [{ label: 'Team', items: [{ value: 'second', label: 'Second person' }] }], defaultValue: ['second'] }),
       h(ui.Dialog, { title: 'Example', open: false, trigger: h(ui.Button, null, 'Open') }),
       h(ui.ToastProvider, null, h(ui.Toast, { message: 'Saved', variant: 'success' })),
       h(ui.BrandLogo),
@@ -241,6 +243,7 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'RadioGroup',
     'Radio',
     'Select',
+    'Combobox',
     'Dialog',
     'DialogClose',
     'Toast',
@@ -274,8 +277,8 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     `
     import { createRef } from 'react';
     import { Theme, Button, ButtonGroup, IconButton, NavigationItem, DirectionLink, Icon, BrandLogo, Input, ColorPicker, Textarea, Checkbox, Switch, Stack, ActionGroup,
-      RadioGroup, Radio, Select, Dialog, DialogClose, Toast, ToastProvider, useToast,
-      type ThemeValue, type ButtonProps, type ButtonGroupProps, type DirectionLinkProps, type SelectOption, type ToastManager } from '@envsemble/envui';
+      RadioGroup, Radio, Select, Combobox, Dialog, DialogClose, Toast, ToastProvider, useToast,
+      type ThemeValue, type ButtonProps, type ButtonGroupProps, type DirectionLinkProps, type SelectOption, type ComboboxItem, type ToastManager } from '@envsemble/envui';
     import { Home } from '@envsemble/envui/icons/Home';
     import { Home as BarrelHome } from '@envsemble/envui/icons';
     import '@envsemble/envui/styles.css';
@@ -284,6 +287,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     const buttonGroupProps: ButtonGroupProps = { orientation: 'vertical', ref: createRef<HTMLDivElement>(), 'aria-label': 'Actions' };
     const directionLinkProps: DirectionLinkProps = { direction: 'next', href: '/guide', children: 'Read the guide', ref: createRef<HTMLAnchorElement>(), icon: <Home /> };
     const options: SelectOption[] = [{ value: 'one', label: 'One' }];
+    const people: ComboboxItem[] = [{ value: 'first', label: 'First person', description: 'first@example.com', leading: <Home /> }];
     const theme: ThemeValue = 'dark';
     const referenceSources: RichTextReferenceSource[] = [{ char: '@', items: async ({ query, signal }) => signal.aborted ? [] : [{ id: query, label: query }] }];
     const richTextConsumer = <><RichTextEditor ref={createRef<RichTextEditorHandle>()} value="Notes" references={referenceSources} onValueChange={markdown => { const typed: string = markdown; void typed; }} onUpload={async (file, { signal }) => signal.aborted ? null : ({ url: '/uploads/example', label: file.name, id: 'stable-file-id', kind: 'file' })} /><RichText onReferenceClick={(reference, event) => { event.preventDefault(); void reference.id; }}>Notes</RichText></>;
@@ -305,6 +309,8 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       <Checkbox label="Enabled" checked="mixed" onCheckedChange={value => { const typed: boolean = value; void typed; }} />
       <Switch label="Alerts" defaultChecked /><RadioGroup name="mode"><Radio value="one" label="One" /></RadioGroup>
       <Select options={options} name="choice" onValueChange={value => { const typed: string | null = value; void typed; }} />
+      <Combobox label="Owner" items={people} onValueChange={(value, item) => { const typed: string | null = value; const chosen: ComboboxItem | null = item; void typed; void chosen; }} />
+      <Combobox multiple label="Reviewers" items={[{ label: 'Team', items: people }]} filter={(item, query) => item.label.startsWith(query)} onValueChange={(values, items) => { const typed: string[] = values; const chosen: ComboboxItem[] = items; void typed; void chosen; }} ref={createRef<HTMLInputElement>()} />
       <Dialog title="Confirm" trigger={<Button>Open</Button>} actions={<DialogClose>Done</DialogClose>} />
       <ToastProvider><NotificationAction /><Toast message="Saved" /></ToastProvider>
     </Theme>;
@@ -322,6 +328,9 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     const unknownDirection = <DirectionLink direction="up" href="/guide">Guide</DirectionLink>;
     // @ts-expect-error A direction link requires a destination URL.
     const missingDestination = <DirectionLink direction="next">Guide</DirectionLink>;
+    // @ts-expect-error A multiple combobox takes a list of values.
+    const singleValueForSeveral = <Combobox multiple items={people} value="first" />;
+    void singleValueForSeveral;
     // @ts-expect-error A color picker requires a visible label.
     const unnamedColorPicker = <ColorPicker defaultValue="#abcdef" />;
     void unnamedColorPicker;
@@ -377,6 +386,13 @@ test('public components import and render on a server with no DOM globals', func
   assert.match(ssr.html, /name="title"/);
   assert.match(ssr.html, /role="switch"/);
   assert.match(ssr.html, /name="mode"/);
+  assert.match(
+    ssr.html,
+    /role="combobox"[^>]*value="First person"|value="First person"[^>]*role="combobox"/,
+  );
+  assert.match(ssr.html, /name="owner"[^>]*value="first"|value="first"[^>]*name="owner"/);
+  assert.match(ssr.html, /<input type="hidden"[^>]*name="reviewers" value="second"/);
+  assert.match(ssr.html, /Second person/);
   assert.match(ssr.html, /role="status"/);
   assert.match(ssr.html, /aria-hidden="true" class="env-skeleton"/);
   assert.match(ssr.html, /aria-label="envsemble"/);

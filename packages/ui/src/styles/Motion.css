@@ -169,14 +169,16 @@
     animation-name: env-motion-roll-down;
   }
 
-  /* Indicators turn, marks and small actions settle into size, and skeletons pulse. */
+  /* Indicators turn, marks and small actions settle into size, and skeletons pulse. A field's actions
+     settle in as they appear; the ones always there, such as a combobox's chevron, stay still. */
   .env-dropdown-trigger .env-symbol,
+  .env-combobox-trigger .env-symbol,
   .env-disclosure-note > summary::before {
     transition: transform var(--motion-duration-medium) var(--motion-ease);
   }
   .env-checkbox-control:is(:checked, :indeterminate) + .env-checkbox-mark,
   .env-organization-menu-radio-dot,
-  .env-text-field-end > *,
+  .env-text-field-end > :not(.env-combobox-trigger),
   .env-theme-toggle .env-symbol > svg {
     animation: env-motion-pop-in var(--motion-duration-medium) var(--motion-ease-enter);
   }

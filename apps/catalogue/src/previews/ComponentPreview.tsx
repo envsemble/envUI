@@ -9,6 +9,7 @@ import {
   FileDropzonePreview,
 } from './Forms';
 import { NavigationPreview, TabsPreview, DirectionLinksPreview } from './Navigation';
+import { ComboboxPreview } from './Pickers';
 import { SurfacePreview, LayoutPreview, RowsPreview, CardsPreview } from './Layout';
 import { SplitViewPreview } from './Panes';
 import { AnimatedNumberPreview, ChipsPreview, DisclosuresPreview } from './Content';
@@ -61,6 +62,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <RadioPreview />;
     case 'select':
       return <SelectPreview />;
+    case 'combobox':
+      return <ComboboxPreview />;
     case 'slider':
       return <SliderPreview />;
     case 'file-dropzone':

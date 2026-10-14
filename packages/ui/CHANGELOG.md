@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- `Combobox`: a text field that filters a list of options as people type, to choose one option or, with `multiple`, several. Options have a `label`, an optional muted `description` and `leading` content such as an `Avatar` or an icon, which takes the size of its slot; they can be `disabled` or grouped under headings. The default filter matches the label and the description, ignoring case and accents; `filter` replaces it, and `filter={null}` with `onInputValueChange` and `loading` shows options the application finds itself, such as on a server, while chosen options keep their labels. The first match is highlighted, also when options arrive after typing, so <kbd>Enter</kbd> chooses it; `emptyLabel` (No matches) and `loadingLabel` (Loading…) show in the popup. Chosen options of a multiple combobox are chips in the field: <kbd>Backspace</kbd> in the empty text removes the last one, the arrow keys reach them, and each has a remove button named after its option (`removeLabel`). The field is the shared text field, with a floating `label`, `hint`, `error`, `required`, `disabled`, `readOnly`, `placeholder`, `showLabel`, `clearable` and `density="compact"`, 2 rem like a compact `Select`; focusing a single combobox selects its label, so typing replaces it. The popup is `Select`'s raised popup, with rounded options inset by its padding and a check mark on chosen options; it scrolls beyond 20 rem, flips above the field near the edge of the window and keeps the originating theme, also inside a `Dialog`. `name` submits the value, or one entry per chosen value, a native form reset restores `defaultValue`, and `onValueChange` also receives the chosen option or options.
+
+### Documentation
+
+- New page for comboboxes; selects and text fields link to it.
+
 ## 0.5.0 — 2026-10-14
 
 Components for document-centred desktop applications and data-heavy dashboards: a file tree, editor tabs, quick open, context menus and a resizable sidebar; sortable, resizable tables, key figures, a heatmap, conversation messages and split views; with badges, notices and other everyday pieces.

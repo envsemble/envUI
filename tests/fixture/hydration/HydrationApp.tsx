@@ -35,6 +35,7 @@ import {
   Stat,
   StatGroup,
   Heatmap,
+  Combobox,
 } from '@envsemble/envui';
 
 const treeItems = Array.from({ length: 40 }, (_, index) => ({
@@ -105,6 +106,16 @@ export function HydrationApp() {
             { value: 'one', label: 'One' },
             { value: 'two', label: 'Two' },
           ]}
+        />
+        <Combobox
+          multiple
+          label="Hydrated people"
+          name="people"
+          items={[
+            { value: 'one', label: 'One person', description: 'one@example.com' },
+            { value: 'two', label: 'Two people', description: 'two@example.com' },
+          ]}
+          defaultValue={['one']}
         />
         <Dialog title="Hydrated dialog" trigger={<Button>Open hydrated dialog</Button>}>
           <p>Server-rendered content</p>

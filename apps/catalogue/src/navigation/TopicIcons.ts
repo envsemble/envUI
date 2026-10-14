@@ -51,6 +51,7 @@ import { VerticalSplit } from '@envsemble/envui/icons/VerticalSplit';
 import { Monitoring } from '@envsemble/envui/icons/Monitoring';
 import { CloudUpload } from '@envsemble/envui/icons/CloudUpload';
 import { CalendarViewMonth } from '@envsemble/envui/icons/CalendarViewMonth';
+import { ManageSearch } from '@envsemble/envui/icons/ManageSearch';
 import { type Reference } from '../Reference';
 
 export const foundationIcons: Record<string, typeof Palette> = {
@@ -90,6 +91,7 @@ const referenceIcons: Record<string, typeof Palette> = {
   switch: ToggleOn,
   radio: RadioButtonChecked,
   select: ArrowDropDownCircle,
+  combobox: ManageSearch,
   slider: Tune,
   'file-dropzone': CloudUpload,
   'color-picker': Palette,

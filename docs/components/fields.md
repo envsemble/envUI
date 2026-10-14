@@ -96,5 +96,6 @@ TypeScript declarations provide the complete public API.
 
 - [Markdown](../components/markdown.md)
 - [Selects](../components/select.md)
+- [Comboboxes](../components/combobox.md)
 - [Stacks & action groups](../components/layout.md)
 - [Accessibility](../foundations/accessibility.md)

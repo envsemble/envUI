@@ -40,6 +40,7 @@ import { StatsFixture } from './Stats.js';
 import { DropzonesFixture } from './Dropzones.js';
 import { ButtonCountsFixture } from './ButtonCounts.js';
 import { HeatmapFixture } from './Heatmaps.js';
+import { ComboboxFixture } from './Comboboxes.js';
 
 /** Fixtures that fill the viewport are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
@@ -235,6 +236,12 @@ export default function App() {
             <>
               <ButtonCountsFixture theme="light" />
               <ButtonCountsFixture theme="dark" />
+            </>
+          )}
+          {includes('combobox') && (
+            <>
+              <ComboboxFixture theme="light" />
+              <ComboboxFixture theme="dark" />
             </>
           )}
           {includes('menus') && (
