@@ -21,6 +21,7 @@ import { Input } from './Input.js';
 import { FieldFrame, type FieldProps, type FieldWellProps } from './internal/FieldFrame.js';
 import {
   clampDay,
+  dateFormat,
   formatDateTime,
   formatDay,
   formatTime,
@@ -60,13 +61,16 @@ export interface DateTimeFieldProps
   max?: string;
   /** The time a newly chosen day starts with, as HH:mm; 00:00 by default. */
   defaultTime?: string;
-  /** The locale of the shown value and the calendar's names and numbers; the browser's by default. */
+  /**
+   * The locale of the shown value and the calendar's names and numbers; the browser's by default.
+   * Dates are Gregorian, also in a locale with a calendar of its own.
+   */
   locale?: string;
   /** The calendar's first day of the week, from 0 for Sunday to 6 for Saturday; see Calendar. */
   weekStart?: Weekday;
   /**
    * How the field shows the value: Intl.DateTimeFormat options, by default the medium date style
-   * and, with withTime, the short time style.
+   * and, with withTime, the short time style, in the Gregorian calendar unless they name another.
    */
   formatOptions?: Intl.DateTimeFormatOptions;
   name?: string;
@@ -214,12 +218,12 @@ export function DateTimeField({
   const formatOptionsKey = JSON.stringify(formatOptions ?? null);
   const formatter = useMemo(
     () =>
-      new Intl.DateTimeFormat(locale, {
-        ...((JSON.parse(formatOptionsKey) as Intl.DateTimeFormatOptions | null) ??
-          (withTime ? { dateStyle: 'medium', timeStyle: 'short' } : { dateStyle: 'medium' })),
-        // Values are wall-clock dates and times, kept in UTC so no zone shifts them.
-        timeZone: 'UTC',
-      }),
+      // Values are wall-clock dates and times, formatted in UTC so no zone shifts them.
+      dateFormat(
+        locale,
+        (JSON.parse(formatOptionsKey) as Intl.DateTimeFormatOptions | null) ??
+          (withTime ? { dateStyle: 'medium', timeStyle: 'short' } : { dateStyle: 'medium' }),
+      ),
     [locale, withTime, formatOptionsKey],
   );
   const display = current ? formatter.format(toUtcDate(current.day, current.minutes)) : '';

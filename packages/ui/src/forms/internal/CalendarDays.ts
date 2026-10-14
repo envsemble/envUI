@@ -115,6 +115,15 @@ export function toUtcDate(day: number, minutes = 0) {
   return new Date(day * dayMilliseconds + minutes * 60_000);
 }
 
+/**
+ * Formats days and moments of the Gregorian calendar the grid shows, in UTC, with the locale's
+ * language and digits: a locale with a calendar of its own, such as Persian, names Gregorian months
+ * too. Options can choose another calendar.
+ */
+export function dateFormat(locale: string | undefined, options: Intl.DateTimeFormatOptions) {
+  return new Intl.DateTimeFormat(locale, { calendar: 'gregory', ...options, timeZone: 'UTC' });
+}
+
 type LocaleWithWeekInfo = Intl.Locale & {
   getWeekInfo?: () => { firstDay: number };
   weekInfo?: { firstDay: number };

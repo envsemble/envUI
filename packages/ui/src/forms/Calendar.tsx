@@ -14,6 +14,7 @@ import { ChevronRight } from '../icons/ChevronRight.js';
 import {
   addMonths,
   clampDay,
+  dateFormat,
   dayParts,
   formatDay,
   localeWeekStart,
@@ -42,7 +43,10 @@ export interface CalendarProps
    * Monday where the browser cannot tell.
    */
   weekStart?: Weekday;
-  /** The locale of the month and weekday names and the day numbers; the browser's by default. */
+  /**
+   * The locale of the month and weekday names and the day numbers; the browser's by default. The
+   * days are always Gregorian, also in a locale with a calendar of its own.
+   */
   locale?: string;
   /** Accessible name of the previous month button; Previous month by default. */
   previousMonthLabel?: string;
@@ -94,16 +98,15 @@ export function Calendar({
 
   const formats = useMemo(
     () => ({
-      day: new Intl.DateTimeFormat(locale, {
+      day: dateFormat(locale, {
         weekday: 'long',
         day: 'numeric',
         month: 'long',
         year: 'numeric',
-        timeZone: 'UTC',
       }),
-      month: new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric', timeZone: 'UTC' }),
-      weekday: new Intl.DateTimeFormat(locale, { weekday: 'short', timeZone: 'UTC' }),
-      weekdayName: new Intl.DateTimeFormat(locale, { weekday: 'long', timeZone: 'UTC' }),
+      month: dateFormat(locale, { month: 'long', year: 'numeric' }),
+      weekday: dateFormat(locale, { weekday: 'short' }),
+      weekdayName: dateFormat(locale, { weekday: 'long' }),
       number: new Intl.NumberFormat(locale, { useGrouping: false }),
     }),
     [locale],

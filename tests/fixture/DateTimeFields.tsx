@@ -138,6 +138,13 @@ export function DateTimeFieldFixture({ theme }: { theme: ThemeValue }) {
             defaultValue="2026-10-14"
           />
         </div>
+        {/* Persian uses its own calendar by default; the grid's days are Gregorian. */}
+        <Calendar
+          aria-label={`Persian planner ${theme}`}
+          data-testid={`calendar-persian-${theme}`}
+          locale="fa-IR"
+          defaultValue="2026-10-14"
+        />
       </div>
       <Dialog
         title={`Schedule ${theme}`}

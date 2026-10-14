@@ -551,3 +551,23 @@ test('days before 1970 keep their date and time', async ({ page }) => {
   await expect(output).toHaveText('1969-01-22T23:45');
   await expect(launch).toHaveText('22 Jan 1969, 23:45');
 });
+
+test('a locale with a calendar of its own names the Gregorian months the grid shows', async ({
+  page,
+}) => {
+  const persian = page.getByTestId('calendar-persian-light');
+  const expected = await page.evaluate(() => {
+    const day = new Date(Date.UTC(2026, 9, 14));
+    const format = (options: Intl.DateTimeFormatOptions) =>
+      new Intl.DateTimeFormat('fa-IR', { ...options, calendar: 'gregory', timeZone: 'UTC' }).format(
+        day,
+      );
+    return {
+      month: format({ month: 'long', year: 'numeric' }),
+      day: format({ weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
+    };
+  });
+  await expect(persian.getByRole('grid', { name: expected.month })).toBeVisible();
+  await expect(persian.locator('[data-date="2026-10-14"]')).toHaveAccessibleName(expected.day);
+  await expect(persian.locator('[data-date="2026-10-14"] .env-calendar-day-mark')).toHaveText('۱۴');
+});
