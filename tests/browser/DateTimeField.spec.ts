@@ -22,6 +22,26 @@ const wellOf = (trigger: Locator) =>
 /** The open calendar popup; a closing one can still fade out. */
 const openPopup = (page: Page) => page.locator('.env-date-time-popup[data-open]');
 
+/** The WCAG contrast ratio of two opaque rgb() colors. */
+function contrast(first: string, second: string) {
+  const luminance = (color: string) => {
+    const [red, green, blue] = color
+      .match(/[\d.]+/g)!
+      .slice(0, 3)
+      .map(Number) as [number, number, number];
+    const linear = (channel: number) => {
+      const value = channel / 255;
+      return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+    };
+    return 0.2126 * linear(red) + 0.7152 * linear(green) + 0.0722 * linear(blue);
+  };
+  const [light, dark] = [luminance(first), luminance(second)].sort((a, b) => b - a) as [
+    number,
+    number,
+  ];
+  return (light + 0.05) / (dark + 0.05);
+}
+
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(today);
   await page.goto(dateFixture);
@@ -326,6 +346,11 @@ test('the calendar is the Popover surface with its day colors in both themes, an
     expect(colors.selectedFill).toBe(colors.selectedRole);
     expect(colors.selectedText).toBe(colors.onSelectedRole);
     expect(colors.todayRing).toContain(colors.todayRole);
+    // The chosen day's fill and today's ring stand out from the popup, and the chosen day's number
+    // reads on its fill.
+    expect(contrast(colors.selectedFill, colors.background)).toBeGreaterThanOrEqual(3);
+    expect(contrast(colors.todayRole, colors.background)).toBeGreaterThanOrEqual(3);
+    expect(contrast(colors.selectedText, colors.selectedFill)).toBeGreaterThanOrEqual(4.5);
     await page.keyboard.press('Escape');
     await expect(openPopup(page)).toHaveCount(0);
 

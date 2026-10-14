@@ -420,8 +420,10 @@
   --color-on-checkbox: hsl(0 0% 100%);
   --color-checkbox-border: hsl(212.308 11.712% 78.235%);
   --color-checkbox-text: hsl(216 12.195% 91.961%);
-  --color-calendar-selected: hsl(212.087 100% 45.098%);
-  --color-on-calendar-selected: hsl(0 0% 100%);
+  /* The chosen day is the light blue of a chosen radio, with dark text, so the circle stands out
+     from dark popups and panes (3:1); today keeps the ring in the same blue. */
+  --color-calendar-selected: hsl(217.317 89.13% 81.961%);
+  --color-on-calendar-selected: hsl(0 0% 12.157%);
   --color-calendar-today: hsl(217.317 89.13% 81.961%);
   --color-switch-on: hsl(212.087 100% 45.098%);
   --color-switch-thumb: hsl(213.333 10.843% 83.725%);
