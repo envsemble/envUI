@@ -36,9 +36,9 @@ test('public components hydrate server output without recoverable errors', async
   await page.keyboard.press('ArrowRight');
   await expect(level).toHaveAttribute('aria-valuenow', '41');
   await expect(page.locator('output.env-slider-value')).toHaveText('41%');
-  const people = page.getByRole('combobox', { name: 'Hydrated people', exact: true });
+  const peoplePicker = page.getByRole('combobox', { name: 'Hydrated people', exact: true });
   await expect(page.getByRole('toolbar', { name: 'Hydrated people' })).toContainText('One person');
-  await people.fill('two');
+  await peoplePicker.fill('two');
   await page.keyboard.press('Enter');
   await expect(page.getByRole('toolbar', { name: 'Hydrated people' })).toContainText('Two people');
   const date = page.getByRole('combobox', { name: 'Hydrated date', exact: true });
