@@ -125,6 +125,9 @@ export function DateTimeFieldFixture({ theme }: { theme: ThemeValue }) {
         {/* Without a label, a standard field shows its placeholder. */}
         <DateTimeField aria-label={`Ends ${theme}`} placeholder="Pick an end" locale="en-GB" />
       </div>
+      <div dir="rtl" className="fixture-actions">
+        <DateTimeField label={`Arabic date ${theme}`} locale="ar-EG" defaultValue="2026-10-14" />
+      </div>
       <div className="fixture-actions">
         <Calendar
           aria-label={`Planner ${theme}`}

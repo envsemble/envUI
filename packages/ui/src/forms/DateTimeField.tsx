@@ -419,6 +419,8 @@ export function DateTimeField({
                 ref={popupRef}
                 className="env-popover env-date-time-popup"
                 data-density={compact ? 'compact' : undefined}
+                // The portal leaves the field's text direction behind; the calendar keeps it.
+                dir={direction}
                 {...accessibleName}
                 initialFocus={() =>
                   popupRef.current?.querySelector<HTMLElement>('.env-calendar-day[tabindex="0"]') ??

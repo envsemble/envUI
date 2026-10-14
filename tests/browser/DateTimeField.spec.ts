@@ -609,3 +609,22 @@ test('a field named by other text, and one without a label that shows its placeh
     }),
   ).toBe(true);
 });
+
+test('a calendar opened from right-to-left text runs right to left', async ({ page }) => {
+  const arabic = field(page, 'Arabic date light');
+  await arabic.click();
+  const popup = openPopup(page);
+  await expect(popup).toHaveCSS('direction', 'rtl');
+  await expect.poll(() => focusedDate(page)).toBe('2026-10-14');
+  // Left moves forward, the forward month button points left, and days run from the right.
+  await page.keyboard.press('ArrowLeft');
+  await expect.poll(() => focusedDate(page)).toBe('2026-10-15');
+  const [previousBox, nextBox, fourteenth, fifteenth] = await Promise.all([
+    popup.locator('.env-calendar-previous').boundingBox(),
+    popup.locator('.env-calendar-next').boundingBox(),
+    popup.locator('[data-date="2026-10-14"]').boundingBox(),
+    popup.locator('[data-date="2026-10-15"]').boundingBox(),
+  ]);
+  expect(previousBox!.x).toBeGreaterThan(nextBox!.x);
+  expect(fifteenth!.x).toBeLessThan(fourteenth!.x);
+});
