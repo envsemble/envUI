@@ -171,6 +171,7 @@ function DocumentWindow({
   onMount: (change: number) => void;
 }) {
   const [draft, setDraft] = useState('');
+  const [tip, setTip] = useState(true);
   // Counts how many times the content is mounted, so a remount shows.
   useEffect(() => {
     onMount(1);
@@ -215,6 +216,12 @@ function DocumentWindow({
             <li key={index}>Section {index + 1}</li>
           ))}
         </ol>
+        {/* Removes itself when pressed, leaving focus nowhere. */}
+        {tip && (
+          <button type="button" onClick={() => setTip(false)}>
+            Dismiss tip of {panel.title} {theme}
+          </button>
+        )}
         {Array.from({ length: 12 }, (_, index) => (
           <Text key={index}>
             Paragraph {index + 1} of {panel.title}.

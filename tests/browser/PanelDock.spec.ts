@@ -806,3 +806,23 @@ test('a drag ends when the application maximizes its panel or the dock stacks me
   await expect(handle).toHaveAttribute('aria-valuenow', String(start));
   expect((await logOf(page)).filter((entry) => entry.startsWith('height'))).toEqual([]);
 });
+
+test('focus outside the dock stays there when the application hides a panel', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(dockFixture);
+  const dock = dockOf(page);
+  const report = dock.panel('report');
+  // A button that removes itself as it is pressed leaves focus nowhere, without a blur.
+  await report.getByRole('button', { name: 'Dismiss tip of Quarterly report light' }).click();
+  await expect(report).toHaveAttribute('data-active', 'true');
+  const action = page.getByRole('button', { name: 'Page action light' });
+  await action.focus();
+  await page.keyboard.press('Alt+KeyM');
+  await expect(report).toHaveAttribute('data-mode', 'minimized');
+  await expect(action).toBeFocused();
+  // Focus in the panel still moves to its chip.
+  await dock.chips.getByRole('button', { name: 'Show Quarterly report' }).click();
+  await report.getByRole('textbox', { name: 'Draft of Quarterly report light' }).focus();
+  await page.keyboard.press('Alt+KeyM');
+  await expect(dock.chips.getByRole('button', { name: 'Show Quarterly report' })).toBeFocused();
+});

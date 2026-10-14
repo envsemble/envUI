@@ -124,6 +124,12 @@ interface ScrollPosition {
   left: number;
 }
 
+/** The panel whose content, or a popup it opened, took focus last, and the element that took it. */
+interface FocusedPanel {
+  id: string;
+  element: EventTarget;
+}
+
 interface Measurements {
   /** Pixels per rem. */
   rem: number;
@@ -172,8 +178,10 @@ export function PanelDock<T extends PanelDockPanel>({
   // The element in each panel's content that last had focus, where restoring the panel returns.
   const lastFocused = useRef(new Map<string, HTMLElement>());
   // The panel whose content holds focus, also in a popup it opened, such as a menu in a portal:
-  // React's focus events reach the panel through portals.
-  const focusedPanel = useRef<string | null>(null);
+  // React's focus events reach the panel through portals. It holds the element that took focus, as
+  // an element that leaves while it has focus fires no blur, and focus elsewhere is no longer the
+  // panel's.
+  const focusedPanel = useRef<FocusedPanel | null>(null);
   // When each shown panel last appeared or was brought forward; a stacked dock shows the newest.
   const recency = useRef(new Map<string, number>());
   const clock = useRef(0);
@@ -478,9 +486,9 @@ export function PanelDock<T extends PanelDockPanel>({
               changeMode={changeMode}
               close={close}
               onActivate={() => activate(panel)}
-              onFocusWithin={(within) => {
-                if (within) focusedPanel.current = panel.id;
-                else if (focusedPanel.current === panel.id) focusedPanel.current = null;
+              onFocusWithin={(element) => {
+                if (element) focusedPanel.current = { id: panel.id, element };
+                else if (focusedPanel.current?.id === panel.id) focusedPanel.current = null;
               }}
               onFocusContent={(target) => lastFocused.current.set(panel.id, target)}
               onResize={(next) => resize(panel, next)}
@@ -525,8 +533,11 @@ interface PanelFrameProps {
   changeMode: (id: string, mode: PanelDockMode) => void;
   close: (id: string) => void;
   onActivate: () => void;
-  /** Called as focus enters and leaves the panel's content, including popups it opened. */
-  onFocusWithin: (within: boolean) => void;
+  /**
+   * Called with the element that takes focus in the panel's content, including popups it opened,
+   * and with null as focus leaves.
+   */
+  onFocusWithin: (element: EventTarget | null) => void;
   onFocusContent: (target: HTMLElement) => void;
   onResize: (height: number) => void;
 }
@@ -650,7 +661,7 @@ function PanelFrame({
       !target.closest('.env-panel-dock-controls')
     )
       onFocusContent(target);
-    onFocusWithin(true);
+    onFocusWithin(target);
     onActivate();
   }
 
@@ -678,7 +689,7 @@ function PanelFrame({
       onPointerDownCapture={onActivate}
       onFocus={noteFocus}
       // Focus moving within the panel, or into a popup it opened, is followed by its focus event.
-      onBlur={() => onFocusWithin(false)}
+      onBlur={() => onFocusWithin(null)}
     >
       {resizable && shownHeight !== undefined && (
         <div
@@ -765,14 +776,14 @@ function PanelChip({ panel, restoreLabel, closeLabel, onRestore, onClose }: Pane
  * The panel or chip of this dock that holds focus, read before an update is committed: focus in the
  * dock, or elsewhere in a popup that the panel whose content last took focus opened.
  */
-function locateFocus(dock: HTMLElement | null, focusedPanel: string | null) {
+function locateFocus(dock: HTMLElement | null, focusedPanel: FocusedPanel | null) {
   const page = dock?.ownerDocument;
   const focused = page?.activeElement;
   if (!dock || !(focused instanceof HTMLElement) || focused === page?.body) return null;
   if (!dock.contains(focused))
-    return focusedPanel === null
-      ? null
-      : { id: focusedPanel, chip: false, popup: true, element: focused };
+    return focusedPanel?.element === focused
+      ? { id: focusedPanel.id, chip: false, popup: true, element: focused }
+      : null;
   const owner = focused.closest<HTMLElement>('.env-panel-dock-panel, .env-panel-dock-chip');
   if (!owner || owner.closest('.env-panel-dock') !== dock || owner.dataset.panelId === undefined)
     return null;
