@@ -97,3 +97,18 @@ test('quiet buttons take the icon color, a state layer and the focus ring in bot
     );
   }
 });
+
+test('a quiet confirm button rests quiet and arms as a destructive button', async ({ page }) => {
+  await page.goto(`${fixtureUrl}/?fixture=quiet-buttons`);
+  const scope = page.getByTestId('quiet-light');
+  const button = scope.getByRole('button', { name: 'Delete section light' });
+  await expect(button).toHaveClass(/env-button-quiet/);
+  await expect(button).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await button.click();
+  await expect(button).toHaveAccessibleName('Delete section light?');
+  await expect(button).toHaveClass(/env-button-destructive/);
+  await page.waitForTimeout(450);
+  await button.click();
+  await expect(scope.getByTestId('quiet-deleted-light')).toHaveText('1');
+  await expect(button).toHaveClass(/env-button-quiet/);
+});
