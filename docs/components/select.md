@@ -33,7 +33,7 @@ import { Select } from '@envsemble/envui';
 
 ## Guidelines
 
-- Use a select to save space when a single choice has several alternatives.
+- Use a select to save space when a single choice has several alternatives. For a list long enough to search, or to choose several options, use Combobox.
 - The trigger is a Button, not a field, in one of the Button styles. Choose it for the surroundings:
   - secondary sits on the page canvas;
   - outlined sits on panes, dialogs, rows and toolbars, where a fill would blend with the surface.
@@ -47,6 +47,7 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
+- [Comboboxes](../components/combobox.md)
 - [Menus](../components/menu.md)
 - [Radio groups](../components/radio.md)
 - [Text fields](../components/fields.md)

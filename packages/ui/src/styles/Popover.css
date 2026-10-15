@@ -1,4 +1,4 @@
-/* A floating panel in the raised popup colors, with the menu's corners. */
+/* A floating panel in the raised popup colors, with the menu's corners; HoverCard shares it. */
 .env-popover-theme {
   display: contents;
 }

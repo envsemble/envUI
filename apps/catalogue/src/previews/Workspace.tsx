@@ -182,7 +182,8 @@ export function DocumentTabsPreview() {
         caption={
           <>
             Click or use <Kbd>←</Kbd> and <Kbd>→</Kbd> to switch, double-click the italic preview
-            tab to keep it, and close with the button, a middle click or <Kbd>Delete</Kbd>.
+            tab to keep it, and close with the button, a middle click or <Kbd>Delete</Kbd>. Right
+            click or <Kbd>Shift</Kbd>+<Kbd>F10</Kbd> to close one or all tabs from the menu.
           </>
         }
       >
@@ -199,6 +200,10 @@ export function DocumentTabsPreview() {
               setTabs(remaining);
               if (id === value)
                 setValue(remaining[Math.min(index, remaining.length - 1)]?.id ?? null);
+            }}
+            onCloseAll={() => {
+              setTabs([]);
+              setValue(null);
             }}
             onPin={(id) =>
               setTabs((current) =>

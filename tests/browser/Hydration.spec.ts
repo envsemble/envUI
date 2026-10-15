@@ -10,6 +10,22 @@ test('public components hydrate server output without recoverable errors', async
   await page.getByRole('textbox', { name: 'Hydrated input' }).fill('Client value');
   await expect(page.locator('output:not(.env-slider-value)')).toHaveText('Client value');
   // The newer components come before the notice below, which leaves after five seconds.
+  // The server wrote this time in English; once hydrated, the browser's German replaces it.
+  const relative = page.getByTestId('hydrated-relative-time');
+  await expect(relative).toHaveText('in 2 Tagen');
+  await expect(relative).toHaveAttribute('datetime', '2026-10-16T12:00:00.000Z');
+  await expect(page.getByTestId('hydrated-live-time')).toHaveText(/^\d+ years ago$/);
+  const people = page.getByRole('group', {
+    name: '5 people: Alex Morgan, Sam Lee, Priya Shah, 2 more',
+  });
+  await people.getByRole('button', { name: 'Sam Lee' }).click();
+  await expect(page.getByTestId('hydrated-person')).toHaveText('Sam Lee');
+  await expect(people.locator('.env-avatar-group-overflow')).toHaveText('+3');
+  await expect(page.getByRole('button', { name: 'Hydrated copy' })).toBeVisible();
+  const pages = page.getByRole('navigation', { name: 'Hydrated pages' });
+  await expect(pages.locator('.env-pagination-range')).toHaveText('1–10 of 30');
+  await pages.getByRole('button', { name: 'Next page' }).click();
+  await expect(pages.locator('.env-pagination-range')).toHaveText('11–20 of 30');
   const amount = page.getByRole('textbox', { name: 'Hydrated amount' });
   await expect(amount).toHaveAccessibleDescription('€ per month');
   await amount.fill('15');
@@ -20,6 +36,24 @@ test('public components hydrate server output without recoverable errors', async
   await page.keyboard.press('ArrowRight');
   await expect(level).toHaveAttribute('aria-valuenow', '41');
   await expect(page.locator('output.env-slider-value')).toHaveText('41%');
+  const peoplePicker = page.getByRole('combobox', { name: 'Hydrated people', exact: true });
+  await expect(page.getByRole('toolbar', { name: 'Hydrated people' })).toContainText('One person');
+  await peoplePicker.fill('two');
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('toolbar', { name: 'Hydrated people' })).toContainText('Two people');
+  const date = page.getByRole('combobox', { name: 'Hydrated date', exact: true });
+  await expect(date).toHaveText('9 Mar 2026');
+  await date.click();
+  await page
+    .getByRole('dialog', { name: 'Hydrated date' })
+    .locator('[data-date="2026-03-10"]')
+    .click();
+  await expect(date).toHaveText('10 Mar 2026');
+  const month = page
+    .getByRole('group', { name: 'Hydrated calendar' })
+    .getByRole('grid', { name: 'March 2026' });
+  await month.locator('[data-date="2026-03-12"]').click();
+  await expect(month.locator('[data-date="2026-03-12"]')).toHaveAttribute('aria-selected', 'true');
   const chooser = page.waitForEvent('filechooser');
   await page.getByRole('button', { name: 'Hydrated files' }).click();
   const picker = await chooser;
@@ -55,6 +89,21 @@ test('public components hydrate server output without recoverable errors', async
   await split.focus();
   await page.keyboard.press('ArrowRight');
   await expect(split).toHaveAttribute('aria-valuenow', '52');
+  // The server renders the dock's panels and chips; the client then measures and resizes them.
+  const docked = page.getByRole('region', { name: 'Hydrated notes' });
+  await expect(docked.getByRole('heading', { level: 3, name: 'Hydrated notes' })).toBeVisible();
+  const chips = page.getByRole('list', { name: 'Hydrated chips' });
+  await expect(
+    chips.getByRole('button', { name: 'Show Hydrated budget' }),
+  ).toHaveAccessibleDescription('Hydrated changes');
+  await expect(chips.getByRole('button', { name: 'Discard Hydrated budget' })).toBeVisible();
+  const dockHandle = docked.getByRole('separator', { name: 'Height of Hydrated notes' });
+  await expect(dockHandle).toHaveAttribute('aria-valuenow', /\d+/);
+  const dockDraft = docked.getByRole('textbox', { name: 'Hydrated notes draft' });
+  await dockDraft.fill('Hydrated draft');
+  await docked.getByRole('button', { name: 'Minimize' }).click();
+  await chips.getByRole('button', { name: 'Show Hydrated notes' }).click();
+  await expect(dockDraft).toHaveValue('Hydrated draft');
   await expect(page.getByRole('group', { name: 'Hydrated stats' })).toHaveText(
     'Hydrated stat128+12%Last 30 days',
   );
@@ -109,4 +158,61 @@ test('public components hydrate server output without recoverable errors', async
     await page.evaluate(() => (window as unknown as { hydrationErrors: string[] }).hydrationErrors),
   ).toEqual([]);
   expect(errors).toEqual([]);
+});
+
+test.describe('in another language and time zone than the server', () => {
+  test.use({ locale: 'de-DE', timezoneId: 'Pacific/Kiritimati' });
+
+  test('date fields and calendars without a locale hydrate, then follow the reader', async ({
+    page,
+  }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (error) => errors.push(error.message));
+    // Noon in UTC is the next morning in Kiritimati, a day ahead of most servers.
+    await page.clock.setFixedTime(new Date('2031-05-19T12:00:00Z'));
+    await page.goto(pathToFileURL(resolve('.cache/Hydration.html')).href);
+    await expect(page.getByRole('textbox', { name: 'Hydrated input' })).toHaveValue('Server value');
+    // The server wrote British English; once hydrated, the browser's German replaces it.
+    const date = page.getByRole('combobox', { name: 'Hydrated local date', exact: true });
+    await expect(date).toHaveText('17.03.2026');
+    const calendar = page.getByRole('group', { name: 'Hydrated local calendar' });
+    const month = calendar.getByRole('grid', { name: 'März 2026' });
+    await expect(month).toBeVisible();
+    await expect(month.getByRole('columnheader').first()).toHaveText('Mo');
+    await expect(month.locator('[data-date="2026-03-17"]')).toHaveAccessibleName(
+      'Dienstag, 17. März 2026',
+    );
+    await expect(month.locator('[data-date="2026-03-17"]')).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    // Without a value the calendar shows the reader's month, with the reader's today.
+    const today = page.getByRole('group', { name: 'Hydrated today' });
+    await expect(today.getByRole('grid', { name: 'Mai 2031' })).toBeVisible();
+    await expect(today.locator('[aria-current="date"]')).toHaveAttribute('data-date', '2031-05-20');
+    await expect(today.locator('td[tabindex="0"]')).toHaveAttribute('data-date', '2031-05-20');
+    // Its month buttons stop at min and max from the reader's month, not the server's.
+    const bounded = page.getByRole('group', { name: 'Hydrated bounded today' });
+    await expect(bounded.getByRole('grid', { name: 'Mai 2031' })).toBeVisible();
+    await expect(bounded.getByRole('button', { name: 'Next month' })).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
+    const previous = bounded.getByRole('button', { name: 'Previous month' });
+    await expect(previous).not.toHaveAttribute('aria-disabled');
+    await previous.click();
+    await expect(bounded.getByRole('grid', { name: 'April 2031' })).toBeVisible();
+    await date.click();
+    await page
+      .getByRole('dialog', { name: 'Hydrated local date' })
+      .locator('[data-date="2026-03-18"]')
+      .click();
+    await expect(date).toHaveText('18.03.2026');
+    expect(
+      await page.evaluate(
+        () => (window as unknown as { hydrationErrors: string[] }).hydrationErrors,
+      ),
+    ).toEqual([]);
+    expect(errors).toEqual([]);
+  });
 });

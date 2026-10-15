@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import {
   Avatar,
   AvatarButton,
+  AvatarGroup,
   Button,
   ContextMenu,
   IconButton,
@@ -527,6 +528,53 @@ export function TooltipPreview() {
   );
 }
 
+const groupPeople = [
+  { id: 'alex', name: 'Alex Morgan' },
+  { id: 'sam', name: 'Sam Lee' },
+  { id: 'priya', name: 'Priya Shah' },
+  { id: 'jordan', name: 'Jordan Rivera' },
+  { id: 'taylor', name: 'Taylor Kim' },
+];
+
+function AvatarGroupExample() {
+  const [pressed, setPressed] = useState('');
+  return (
+    <Example
+      title="Avatar groups"
+      size="collection"
+      caption="Hover or focus the count to see who it stands for. A ring in the color of the surface below keeps the avatars apart."
+    >
+      <SpecimenGrid>
+        <Specimen title="The rest counted">
+          <AvatarGroup people={groupPeople} max={3} />
+        </Specimen>
+        <Specimen title="A preview of many" caption="Three names of twelve, in the small size.">
+          <AvatarGroup people={groupPeople.slice(0, 3)} total={12} max={3} size="small" />
+        </Specimen>
+        <Specimen title="Pressable" caption="Each avatar is a button with the name in a tooltip.">
+          <AvatarGroup
+            people={groupPeople}
+            max={4}
+            onPersonClick={(person) => setPressed(`Opened ${person.name}`)}
+          />
+        </Specimen>
+        <Specimen title="In a compact toolbar">
+          <Surface tone="row" padding={2} corners="standard" density="compact">
+            <div className="docs-compact-toolbar">
+              <Text className="docs-compact-toolbar-title">Quarterly report</Text>
+              <AvatarGroup people={groupPeople} max={2} />
+              <IconButton icon={<Settings />} aria-label="Report settings" />
+            </div>
+          </Surface>
+        </Specimen>
+      </SpecimenGrid>
+      <Text variant="caption" className="docs-caption" aria-live="polite">
+        {pressed}
+      </Text>
+    </Example>
+  );
+}
+
 export function AvatarPreview() {
   return (
     <Preview>
@@ -551,6 +599,7 @@ export function AvatarPreview() {
           </Specimen>
         </SpecimenGrid>
       </Example>
+      <AvatarGroupExample />
     </Preview>
   );
 }

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import {
   Button,
   Dialog,
+  HoverCard,
   Input,
   Link,
   Notice,
@@ -112,6 +113,24 @@ export function DialogVariantsFixture() {
           <Text>A wide panel for content-heavy details.</Text>
         </Dialog>
       </div>
+    </Theme>
+  );
+}
+
+export function HoverCardFixture({ theme }: { theme: ThemeValue }) {
+  const [changes, setChanges] = useState<string[]>([]);
+  return (
+    <Theme theme={theme} data-testid={`hover-card-${theme}`} className="fixture-section">
+      <div className="fixture-actions">
+        <Button variant="secondary">Before {theme}</Button>
+        <HoverCard
+          trigger={<Link href="#roadmap">Roadmap {theme}</Link>}
+          onOpenChange={(open) => setChanges((current) => [...current, String(open)])}
+        >
+          <Text>Changed today by Alex. 3 open decisions, 1 blocked.</Text>
+        </HoverCard>
+      </div>
+      <output data-testid={`hover-card-changes-${theme}`}>{changes.join(' ')}</output>
     </Theme>
   );
 }

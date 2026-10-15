@@ -58,6 +58,26 @@
   flex-direction: column;
 }
 
+/* fullWidth fills the container: in a row, labelled buttons share the room the icon-only ones
+   leave, such as a primary action and its menu's chevron across a sidebar, and a row of icon-only
+   buttons shares it evenly. */
+.env-button-group[data-full-width] {
+  display: flex;
+  inline-size: 100%;
+}
+
+.env-button-group[data-full-width][data-orientation='horizontal']
+  > .env-button:not(.env-icon-button) {
+  flex: 1 1 auto;
+}
+
+.env-button-group[data-full-width][data-orientation='horizontal']:not(
+    :has(> .env-button:not(.env-icon-button):not([hidden]))
+  )
+  > .env-button {
+  flex: 1 1 0;
+}
+
 .env-button-group[data-orientation='vertical'] > .env-button {
   inline-size: 100%;
 }

@@ -193,3 +193,38 @@ test('prefix and suffix text keep 4.5:1 contrast in both themes', async ({ page 
     }
   }
 });
+
+test('a quiet field is only its text at rest, takes a soft fill on hover and focus, and clears its placeholder once focused', async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/?fixture=affixes`);
+  for (const theme of themes) {
+    const field = page
+      .getByTestId(`affixes-${theme}`)
+      .getByRole('searchbox', { name: 'Find projects' });
+    const well = field.locator('xpath=..');
+    const look = () =>
+      well.evaluate((element) => {
+        const style = getComputedStyle(element);
+        const input = element.querySelector('input')!;
+        return {
+          border: style.borderTopColor,
+          fill: style.backgroundColor,
+          placeholder: getComputedStyle(input, '::placeholder').color,
+        };
+      });
+    await page.mouse.move(0, 0);
+    const rest = await look();
+    expect(rest.border).toBe('rgba(0, 0, 0, 0)');
+    expect(rest.fill).toBe('rgba(0, 0, 0, 0)');
+    expect(rest.placeholder).not.toBe('rgba(0, 0, 0, 0)');
+    await field.hover();
+    await expect.poll(async () => (await look()).fill).not.toBe('rgba(0, 0, 0, 0)');
+    expect((await look()).border).toBe('rgba(0, 0, 0, 0)');
+    await field.focus();
+    await page.mouse.move(0, 0);
+    await expect.poll(async () => (await look()).placeholder).toBe('rgba(0, 0, 0, 0)');
+    expect((await look()).fill).not.toBe('rgba(0, 0, 0, 0)');
+    await field.blur();
+  }
+});

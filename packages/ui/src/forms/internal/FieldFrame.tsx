@@ -1,6 +1,12 @@
-import { type MouseEvent, type ReactNode } from 'react';
+import { type ComponentPropsWithoutRef, type MouseEvent, type ReactNode } from 'react';
 import { Error as ErrorIcon } from '../../icons/Error.js';
 import { DecorativeIcon } from '../../internal/DecorativeIcon.js';
+import { classNames } from '../../internal/classNames.js';
+
+/** The attributes and content of a text field's well, for a control that renders the well itself. */
+export type FieldWellProps = ComponentPropsWithoutRef<'div'> & {
+  [attribute: `data-${string}`]: string | boolean | undefined;
+};
 
 export interface FieldProps {
   label?: ReactNode;
@@ -9,8 +15,12 @@ export interface FieldProps {
 }
 
 export interface TextFieldAppearanceProps {
-  /** Outlined by default; plain shows an underline on hover or focus without a border or fill. */
-  variant?: 'outlined' | 'plain';
+  /**
+   * Outlined by default; plain shows an underline on hover or focus without a border or fill; quiet
+   * is only its text (and icon) at rest, takes a soft fill under the pointer and while focused, and
+   * clears its placeholder once focused, for a search at the top of a sidebar.
+   */
+  variant?: 'outlined' | 'plain' | 'quiet';
 }
 
 export interface TextFieldDecorationProps {
@@ -58,6 +68,11 @@ export function isLabelShown({ compact = false, showLabel }: TextFieldDecoration
   return showLabel ?? !compact;
 }
 
+/** The well as a plain element; composed controls render it through their own primitive. */
+function renderPlainWell(props: FieldWellProps) {
+  return <div {...props} />;
+}
+
 /** Text controls place their label on the well; composite controls keep a separate label. */
 export function FieldFrame({
   id,
@@ -73,55 +88,70 @@ export function FieldFrame({
   showLabel,
   prefix,
   suffix,
+  className,
+  renderWell = renderPlainWell,
 }: FieldProps &
   TextFieldAppearanceProps &
   TextFieldDecorationProps &
-  TextFieldAffixProps & { id: string; children: ReactNode; floatingLabel?: boolean }) {
+  TextFieldAffixProps & {
+    id: string;
+    children: ReactNode;
+    floatingLabel?: boolean;
+    className?: string;
+    /** Renders the well, such as through a primitive that owns it; it receives the well's props. */
+    renderWell?: (props: FieldWellProps) => ReactNode;
+  }) {
   return (
     <div
-      className={floatingLabel ? 'env-form-field env-text-field' : 'env-form-field'}
+      className={classNames(
+        floatingLabel ? 'env-form-field env-text-field' : 'env-form-field',
+        className,
+      )}
       data-compact={compact || undefined}
       data-label-hidden={(floatingLabel && !isLabelShown({ compact, showLabel })) || undefined}
     >
       {floatingLabel ? (
-        <div
-          className="env-text-field-well"
-          data-variant={variant}
-          data-start-icon={startIcon != null || undefined}
-          data-end-action={endAction != null || undefined}
-          data-prefix={prefix != null || undefined}
-          data-suffix={suffix != null || undefined}
-        >
-          {/* The control names the prefix and suffix in its description, so they are read once. */}
-          {prefix != null && (
-            <span
-              className="env-text-field-prefix"
-              id={`${id}-prefix`}
-              aria-hidden="true"
-              onMouseDown={focusControl}
-            >
-              {prefix}
-            </span>
-          )}
-          {children}
-          {suffix != null && (
-            <span
-              className="env-text-field-suffix"
-              id={`${id}-suffix`}
-              aria-hidden="true"
-              onMouseDown={focusControl}
-            >
-              {suffix}
-            </span>
-          )}
-          {label}
-          {startIcon != null && (
-            <span className="env-text-field-start">
-              <DecorativeIcon>{startIcon}</DecorativeIcon>
-            </span>
-          )}
-          {endAction != null && <span className="env-text-field-end">{endAction}</span>}
-        </div>
+        renderWell({
+          className: 'env-text-field-well',
+          'data-variant': variant,
+          'data-start-icon': startIcon != null || undefined,
+          'data-end-action': endAction != null || undefined,
+          'data-prefix': prefix != null || undefined,
+          'data-suffix': suffix != null || undefined,
+          children: (
+            <>
+              {/* The control names the prefix and suffix in its description, so they are read once. */}
+              {prefix != null && (
+                <span
+                  className="env-text-field-prefix"
+                  id={`${id}-prefix`}
+                  aria-hidden="true"
+                  onMouseDown={focusControl}
+                >
+                  {prefix}
+                </span>
+              )}
+              {children}
+              {suffix != null && (
+                <span
+                  className="env-text-field-suffix"
+                  id={`${id}-suffix`}
+                  aria-hidden="true"
+                  onMouseDown={focusControl}
+                >
+                  {suffix}
+                </span>
+              )}
+              {label}
+              {startIcon != null && (
+                <span className="env-text-field-start">
+                  <DecorativeIcon>{startIcon}</DecorativeIcon>
+                </span>
+              )}
+              {endAction != null && <span className="env-text-field-end">{endAction}</span>}
+            </>
+          ),
+        })
       ) : (
         <>
           {label}

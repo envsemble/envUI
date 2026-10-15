@@ -2,6 +2,7 @@ import {
   useEffect,
   useLayoutEffect,
   useRef,
+  useState,
   type KeyboardEvent,
   type MouseEvent,
   type ReactNode,
@@ -9,6 +10,7 @@ import {
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { Close } from '../icons/Close.js';
+import { ContextMenu, MenuItem } from './Menu.js';
 
 export interface DocumentTab {
   /** Stable identifier; the tab carries it as data-tab-id. */
@@ -38,6 +40,16 @@ export interface DocumentTabsProps {
   panelId?: string;
   /** Accessible name of each close button; receives the tab label. */
   closeLabel?: (label: string) => string;
+  /**
+   * Called from Close all tabs in the strip's context menu. With it, the strip and each tab open
+   * that menu on right click, long press, the Menu key and Shift+F10; a tab's menu also offers
+   * closing that tab.
+   */
+  onCloseAll?: () => void;
+  /** Label of the Close all tabs item. */
+  closeAllLabel?: string;
+  /** Accessible name of the context menu; Tab actions by default. */
+  contextMenuLabel?: string;
   className?: string;
 }
 
@@ -53,6 +65,9 @@ export function DocumentTabs({
   'aria-label': label,
   panelId,
   closeLabel = defaultCloseLabel,
+  onCloseAll,
+  closeAllLabel = 'Close all tabs',
+  contextMenuLabel = 'Tab actions',
   className,
 }: DocumentTabsProps) {
   const list = useRef<HTMLDivElement>(null);
@@ -77,15 +92,21 @@ export function DocumentTabs({
   }, [value, items]);
 
   // Closing the focused tab moves focus to the tab that becomes active, however it closed: its
-  // button, Delete, or the application's own shortcut such as Ctrl+W. Read before the update is
-  // committed, while the closing tab still holds focus.
+  // button, Delete, the context menu, or the application's own shortcut such as Ctrl+W. Read before
+  // the update is committed, while the closing tab still holds focus. The context menu holds focus
+  // instead when the strip had it as the menu opened.
   const focusWasInside = Boolean(list.current?.contains(list.current.ownerDocument.activeElement));
+  const menuOpenedInside = useRef(false);
+  const [closedFromMenu, setClosedFromMenu] = useState(false);
   useLayoutEffect(() => {
-    if (!focusWasInside) return;
-    const active = list.current?.ownerDocument.activeElement;
-    if (active && active !== active.ownerDocument.body && active.isConnected) return;
+    if (closedFromMenu) setClosedFromMenu(false);
+    else {
+      if (!focusWasInside) return;
+      const active = list.current?.ownerDocument.activeElement;
+      if (active && active !== active.ownerDocument.body && active.isConnected) return;
+    }
     tabElement(focusable)?.focus();
-  }, [items, focusable, focusWasInside]);
+  }, [items, focusable, focusWasInside, closedFromMenu]);
 
   // A vertical wheel scrolls an overflowing strip sideways.
   useEffect(() => {
@@ -133,7 +154,7 @@ export function DocumentTabs({
     onClose(id);
   }
 
-  return (
+  const strip = (
     <div
       ref={list}
       role="tablist"
@@ -190,5 +211,43 @@ export function DocumentTabs({
         );
       })}
     </div>
+  );
+
+  if (!onCloseAll) return strip;
+  return (
+    <ContextMenu
+      aria-label={contextMenuLabel}
+      density="compact"
+      onOpenChange={(open) => {
+        if (open)
+          menuOpenedInside.current = Boolean(
+            list.current?.contains(list.current.ownerDocument.activeElement),
+          );
+      }}
+      content={(target) => {
+        // Read from the tab element, so the menu keeps its items while it closes after the tab.
+        const tab = target?.closest<HTMLElement>('.env-document-tab');
+        const id = tab?.dataset.tabId;
+        return (
+          <>
+            {tab && id !== undefined && (
+              <MenuItem
+                onClick={() => {
+                  if (menuOpenedInside.current) setClosedFromMenu(true);
+                  onClose(id);
+                }}
+              >
+                {closeLabel(tab.getAttribute('aria-label') ?? '')}
+              </MenuItem>
+            )}
+            <MenuItem onClick={onCloseAll} disabled={items.length === 0}>
+              {closeAllLabel}
+            </MenuItem>
+          </>
+        );
+      }}
+    >
+      {strip}
+    </ContextMenu>
   );
 }

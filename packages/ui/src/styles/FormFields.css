@@ -108,8 +108,13 @@
     color var(--motion-duration-medium) var(--motion-ease),
     padding var(--motion-duration-medium) var(--motion-ease);
 }
-/* Native placeholder state tracks controlled values, autofill and form reset without JS. */
-.env-text-field-well:has(> .env-text-input:focus, > .env-text-input:not(:placeholder-shown))
+/* Native placeholder state tracks controlled values, autofill and form reset without JS. A control
+   that is not a text input, such as the button of a date field, marks its well data-label-floating
+   while it has a value. */
+.env-text-field-well:is(
+    :has(> .env-text-input:focus, > .env-text-input:is(input, textarea):not(:placeholder-shown)),
+    [data-label-floating]
+  )
   > label {
   inset-block-start: calc(-0.625rem * var(--scale, 1));
   padding-inline: calc(var(--space-1) * var(--scale, 1));
@@ -119,9 +124,9 @@
 }
 /* On an outline, the label hides only the line behind it; its upper half shows whatever surface the
    field sits on, such as a dialog pane. */
-.env-text-field-well:not([data-variant='plain']):has(
-    > .env-text-input:focus,
-    > .env-text-input:not(:placeholder-shown)
+.env-text-field-well:not([data-variant='plain']):is(
+    :has(> .env-text-input:focus, > .env-text-input:is(input, textarea):not(:placeholder-shown)),
+    [data-label-floating]
   )
   > label {
   background: linear-gradient(
@@ -150,6 +155,31 @@
 .env-text-field-well[data-variant='plain']:focus-within {
   border-block-end-color: var(--env-field-border-color);
   box-shadow: 0 calc(0.0625rem * var(--scale, 1)) 0 var(--env-field-border-color);
+}
+/* Quiet fields are only their text and icon at rest: no border, underline or fill. A soft fill
+   shows under the pointer and while the field has focus, the icon keeps its quiet color, and the
+   placeholder clears once the field has focus. An invalid quiet field shows its red border. */
+.env-text-field-well[data-variant='quiet'] {
+  border-color: transparent;
+  background: transparent;
+  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+}
+@media (hover: hover) {
+  .env-text-field-well[data-variant='quiet']:hover:not(:has(> .env-text-input:disabled)) {
+    background: var(--color-fill);
+  }
+}
+.env-text-field-well[data-variant='quiet']:focus-within {
+  background: var(--color-fill);
+}
+.env-text-field-well[data-variant='quiet']:focus-within > .env-text-field-start {
+  color: var(--color-field-label);
+}
+.env-text-field-well[data-variant='quiet'] > .env-text-input:focus::placeholder {
+  color: transparent;
+}
+.env-text-field-well[data-variant='quiet']:has(> .env-text-input[aria-invalid='true']) {
+  border-color: var(--env-field-border-color);
 }
 /* Invalid outlined controls recolor their existing border; plain controls use an underline. */
 .env-text-field-well:has(> .env-text-input[aria-invalid='true']),

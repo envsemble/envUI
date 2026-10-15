@@ -1,0 +1,5 @@
+/* Relative times take the surrounding type; tabular digits keep a changing count from shifting the
+   text beside it. */
+.env-relative-time {
+  font-variant-numeric: tabular-nums;
+}

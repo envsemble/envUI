@@ -8,10 +8,21 @@ import {
   SliderPreview,
   FileDropzonePreview,
 } from './Forms';
-import { NavigationPreview, TabsPreview, DirectionLinksPreview } from './Navigation';
+import {
+  NavigationPreview,
+  TabsPreview,
+  DirectionLinksPreview,
+  PaginationPreview,
+} from './Navigation';
+import { ComboboxPreview, DateTimeFieldPreview } from './Pickers';
 import { SurfacePreview, LayoutPreview, RowsPreview, CardsPreview } from './Layout';
 import { SplitViewPreview } from './Panes';
-import { AnimatedNumberPreview, ChipsPreview, DisclosuresPreview } from './Content';
+import {
+  AnimatedNumberPreview,
+  ChipsPreview,
+  DisclosuresPreview,
+  RelativeTimePreview,
+} from './Content';
 import { CodePreview } from './CodeContent';
 import { MarkdownPreview } from './MarkdownContent';
 import { lazy, Suspense } from 'react';
@@ -30,9 +41,11 @@ import {
 } from './Overlays';
 import { AppShellPreview } from './Shell';
 import { CommandPalettePreview, DocumentTabsPreview, TreePreview } from './Workspace';
+import { PanelDockPreview } from './Dock';
 import {
   BadgesPreview,
   BreadcrumbsPreview,
+  HoverCardPreview,
   KbdPreview,
   NoticesPreview,
   PopoverPreview,
@@ -61,6 +74,10 @@ export function ComponentPreview({ id }: { id: string }) {
       return <RadioPreview />;
     case 'select':
       return <SelectPreview />;
+    case 'combobox':
+      return <ComboboxPreview />;
+    case 'date-time-field':
+      return <DateTimeFieldPreview />;
     case 'slider':
       return <SliderPreview />;
     case 'file-dropzone':
@@ -95,8 +112,12 @@ export function ComponentPreview({ id }: { id: string }) {
       return <KbdPreview />;
     case 'breadcrumbs':
       return <BreadcrumbsPreview />;
+    case 'pagination':
+      return <PaginationPreview />;
     case 'animated-number':
       return <AnimatedNumberPreview />;
+    case 'relative-time':
+      return <RelativeTimePreview />;
     case 'messages':
       return <MessagesPreview />;
     case 'stats':
@@ -125,6 +146,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <NoticesPreview />;
     case 'popover':
       return <PopoverPreview />;
+    case 'hover-card':
+      return <HoverCardPreview />;
     case 'dialogs':
       return <DialogsPreview />;
     case 'menu':
@@ -143,6 +166,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <TreePreview />;
     case 'document-tabs':
       return <DocumentTabsPreview />;
+    case 'panel-dock':
+      return <PanelDockPreview />;
     case 'command-palette':
       return <CommandPalettePreview />;
     default:
