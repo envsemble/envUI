@@ -17,6 +17,12 @@ export interface EmptyStateProps extends Omit<ComponentPropsWithRef<'div'>, 'tit
   tone?: 'neutral' | 'error';
   /** The title's heading level in the page outline; 4 by default. The appearance stays the same. */
   headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
+  /**
+   * `start` (default) for a state inside a card, panel or dialog. `center` for a state that takes the
+   * place of a page's or region's content: a larger icon, centred text and action, centred
+   * vertically in the height the application gives it.
+   */
+  align?: 'start' | 'center';
 }
 
 export function EmptyState({
@@ -26,6 +32,7 @@ export function EmptyState({
   action,
   tone = 'neutral',
   headingLevel = 4,
+  align = 'start',
   className,
   children,
   ...props
@@ -38,6 +45,7 @@ export function EmptyState({
       className={classNames(
         'env-empty-state',
         tone === 'error' && 'env-empty-state-error',
+        align === 'center' && 'env-empty-state-center',
         className,
       )}
     >

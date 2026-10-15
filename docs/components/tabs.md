@@ -38,6 +38,7 @@ import { Tabs, Button, Text } from '@envsemble/envui';
 | value / defaultValue           | Controlled or initial selection; defaults to the first enabled item                                     |
 | onValueChange                  | Receives the selected string, or null when no selection remains                                         |
 | activation                     | automatic (default) selects on focus; manual requires <kbd>Enter</kbd> or <kbd>Space</kbd>              |
+| size                           | standard (default) matches buttons; compact makes the rail as tall as a compact control, for bars       |
 | fill                           | The selected panel takes the height left below the list, for canvases                                   |
 | orientation                    | horizontal (default) with <kbd>←</kbd> and <kbd>→</kbd>, or vertical with <kbd>↑</kbd> and <kbd>↓</kbd> |
 | keepMounted                    | Preserve inactive content state; default false unmounts it after transition                             |

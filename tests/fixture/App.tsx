@@ -24,7 +24,12 @@ import {
 import { MenusFixture } from './Menus.js';
 import { MenubarFixture } from './Menubars.js';
 import { TreeFixture } from './TreeView.js';
-import { DocumentTabsFixture, FillTabsFixture, TabStatesFixture } from './Tabs.js';
+import {
+  CompactTabsFixture,
+  DocumentTabsFixture,
+  FillTabsFixture,
+  TabStatesFixture,
+} from './Tabs.js';
 import { CommandPaletteFixture } from './Palette.js';
 import { SegmentedControlFixture } from './Segments.js';
 import { BadgesFixture } from './Badges.js';
@@ -40,7 +45,6 @@ import { AffixesFixture } from './Affixes.js';
 import { SlidersFixture } from './Sliders.js';
 import { ComposerFixture } from './Composer.js';
 import { MessagesFixture } from './Messages.js';
-import { SplitViewFixture } from './SplitViews.js';
 import { StatsFixture } from './Stats.js';
 import { DropzonesFixture } from './Dropzones.js';
 import { ButtonCountsFixture } from './ButtonCounts.js';
@@ -53,6 +57,8 @@ import { CopyButtonsFixture } from './CopyButtons.js';
 import { PaginationsFixture } from './Paginations.js';
 import { DateTimeFieldFixture } from './DateTimeFields.js';
 import { QuietButtonsFixture } from './QuietButtons.js';
+import { EmptyStatesFixture } from './EmptyStates.js';
+import { RatingsFixture } from './Ratings.js';
 
 /** Fixtures that fill the viewport are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
@@ -226,12 +232,6 @@ export default function App() {
               <MessagesFixture theme="dark" />
             </>
           )}
-          {includes('split-view') && (
-            <>
-              <SplitViewFixture theme="light" />
-              <SplitViewFixture theme="dark" />
-            </>
-          )}
           {includes('stats') && (
             <>
               <StatsFixture theme="light" />
@@ -302,6 +302,24 @@ export default function App() {
             <>
               <QuietButtonsFixture theme="light" />
               <QuietButtonsFixture theme="dark" />
+            </>
+          )}
+          {includes('compact-tabs') && (
+            <>
+              <CompactTabsFixture theme="light" />
+              <CompactTabsFixture theme="dark" />
+            </>
+          )}
+          {includes('ratings') && (
+            <>
+              <RatingsFixture theme="light" />
+              <RatingsFixture theme="dark" />
+            </>
+          )}
+          {includes('empty-states') && (
+            <>
+              <EmptyStatesFixture theme="light" />
+              <EmptyStatesFixture theme="dark" />
             </>
           )}
           {includes('menus') && (

@@ -25,6 +25,25 @@
   color: var(--color-field-error);
 }
 
+/* Centred: the state takes the place of a page's or region's content, in the middle of the room the
+   application gives it, with the icon at the size of a feature card's. */
+.env-empty-state-center {
+  justify-items: center;
+  align-content: center;
+  padding-block: var(--space-8);
+  text-align: center;
+}
+.env-empty-state-center > .env-symbol {
+  width: calc(2.5rem * var(--scale, 1));
+  height: calc(2.5rem * var(--scale, 1));
+}
+.env-empty-state-center:not(.env-empty-state-error) > .env-symbol {
+  color: var(--color-icon);
+}
+.env-empty-state-center > .env-empty-copy {
+  max-inline-size: 30rem;
+}
+
 /* Spinner: an arc that turns and lengthens, for work of unknown length in a small area. */
 .env-spinner {
   display: inline-block;

@@ -976,7 +976,7 @@ function PanelFrame({
           aria-valuenow={shownHeight}
           aria-valuemin={bounds.min}
           aria-valuemax={bounds.max}
-          // Read as the share of the room above the chips, like SplitView's share of its width.
+          // Read as the share of the room above the chips.
           aria-valuetext={
             bounds.room > 0 ? `${Math.round((shownHeight / bounds.room) * 100)}%` : undefined
           }

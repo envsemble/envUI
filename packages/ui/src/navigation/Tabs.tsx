@@ -40,6 +40,11 @@ export interface TabsProps
    * a flex child). For content that fills a region, such as a canvas.
    */
   fill?: boolean;
+  /**
+   * standard (default) matches buttons; compact makes the whole rail as tall as a compact control,
+   * for toolbars and bars, like a compact `SegmentedControl`.
+   */
+  size?: 'standard' | 'compact';
 }
 
 function isDisabled(item: TabsItem) {
@@ -95,6 +100,7 @@ export function Tabs({
   listClassName,
   panelClassName,
   fill = false,
+  size = 'standard',
   ...props
 }: TabsProps) {
   const initialValue =
@@ -105,6 +111,7 @@ export function Tabs({
     <BaseTabs.List
       render={<Surface tone="row" padding={1} corners="pill" />}
       aria-label={label}
+      data-size={size === 'compact' ? 'compact' : undefined}
       className={classNames('env-tabs-list', listClassName)}
       activateOnFocus={activation === 'automatic'}
     >

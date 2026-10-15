@@ -16,11 +16,11 @@ import {
 } from './Navigation';
 import { ComboboxPreview, DateTimeFieldPreview } from './Pickers';
 import { SurfacePreview, LayoutPreview, RowsPreview, CardsPreview } from './Layout';
-import { SplitViewPreview } from './Panes';
 import {
   AnimatedNumberPreview,
   ChipsPreview,
   DisclosuresPreview,
+  RatingPreview,
   RelativeTimePreview,
 } from './Content';
 import { CodePreview } from './CodeContent';
@@ -100,8 +100,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <RowsPreview />;
     case 'cards':
       return <CardsPreview />;
-    case 'split-view':
-      return <SplitViewPreview />;
     case 'chips':
       return <ChipsPreview />;
     case 'badges':
@@ -116,6 +114,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <PaginationPreview />;
     case 'animated-number':
       return <AnimatedNumberPreview />;
+    case 'rating':
+      return <RatingPreview />;
     case 'relative-time':
       return <RelativeTimePreview />;
     case 'messages':

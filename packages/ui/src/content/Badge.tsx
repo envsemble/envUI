@@ -64,3 +64,39 @@ export function Counter({
     </span>
   );
 }
+
+export interface DiffCountProps extends Omit<ComponentPropsWithRef<'span'>, 'children'> {
+  /** Lines or items added, shown as +12 in the success tone. */
+  additions: number;
+  /** Lines or items removed, shown as −3 in the danger tone. */
+  deletions: number;
+  /** Full meaning for assistive technology; "12 added lines and 3 removed lines" by default. */
+  formatLabel?: (additions: number, deletions: number) => string;
+}
+
+const defaultDiffLabel = (additions: number, deletions: number) =>
+  `${additions} added ${additions === 1 ? 'line' : 'lines'} and ${deletions} removed ${deletions === 1 ? 'line' : 'lines'}`;
+
+/**
+ * The size of a change as one compact pill, such as +12 −3: additions in the success tone and
+ * deletions in the danger tone, on a counter's quiet fill.
+ */
+export function DiffCount({
+  additions,
+  deletions,
+  formatLabel = defaultDiffLabel,
+  className,
+  ...props
+}: DiffCountProps) {
+  return (
+    <span {...props} className={classNames('env-diff-count', className)}>
+      <span className="env-diff-count-additions" aria-hidden="true">
+        +{additions}
+      </span>
+      <span className="env-diff-count-deletions" aria-hidden="true">
+        −{deletions}
+      </span>
+      <span className="env-counter-label">{formatLabel(additions, deletions)}</span>
+    </span>
+  );
+}

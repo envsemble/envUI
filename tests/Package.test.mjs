@@ -263,8 +263,15 @@ test('a packed consumer resolves compiled public exports and its own React insta
   );
   assert.match(installedManifest.peerDependencies.react, /19/);
   assert.equal(installedManifest.dependencies['react-colorful'], '5.8.1');
-  // Basic UI installs without the content and rich-text stacks; apps using those entries add them.
-  for (const name of ['shiki', 'react-markdown', 'remark-gfm', 'marked', '@tiptap/react']) {
+  // Basic UI installs without the content, rich-text and diff stacks; apps using those entries add them.
+  for (const name of [
+    'shiki',
+    'react-markdown',
+    'remark-gfm',
+    'marked',
+    '@tiptap/react',
+    '@pierre/diffs',
+  ]) {
     assert.equal(installedManifest.dependencies[name], undefined);
     assert.equal(installedManifest.peerDependenciesMeta[name]?.optional, true);
   }

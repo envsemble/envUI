@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import {
   Button,
+  Counter,
   DocumentTabs,
   NavigationItem,
   Surface,
@@ -181,6 +182,39 @@ export function TabStatesFixture({ theme }: { theme: ThemeValue }) {
           ))}
         </Surface>
       ))}
+    </Theme>
+  );
+}
+
+/** Compact tabs with a counter in a compact bar, mounted with ?fixture=compact-tabs. */
+export function CompactTabsFixture({ theme }: { theme: ThemeValue }) {
+  return (
+    <Theme theme={theme} data-testid={`compact-tabs-${theme}`} className="fixture-section">
+      <Surface
+        tone="canvas"
+        density="compact"
+        padding={0}
+        className="fixture-actions"
+        style={{ alignItems: 'center' }}
+      >
+        <Button data-testid={`compact-control-${theme}`}>Compact control</Button>
+        <Tabs
+          size="compact"
+          aria-label={`Form sections ${theme}`}
+          items={[
+            {
+              value: 'submissions',
+              button: (
+                <Button variant="secondary">
+                  Submissions <Counter value={24} />
+                </Button>
+              ),
+              content: null,
+            },
+            { value: 'editor', button: <Button variant="secondary">Editor</Button>, content: null },
+          ]}
+        />
+      </Surface>
     </Theme>
   );
 }

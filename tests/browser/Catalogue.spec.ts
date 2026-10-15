@@ -486,7 +486,8 @@ test('offline theme toggle switches the whole page and keeps the canvas full hei
   await expect(panes).toHaveCount(0);
 });
 
-test('the code copy action follows the code theme in both application themes', async ({ page }) => {
+test('the code copy action follows the app theme with the code it copies', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(`${catalogueUrl}/#/components/code`);
   for (const appTheme of ['light', 'dark']) {
     if (appTheme === 'dark')
@@ -494,30 +495,32 @@ test('the code copy action follows the code theme in both application themes', a
     const copy = page.getByRole('button', { name: 'Copy code' }).first();
     await expect(copy.locator('xpath=ancestor::*[@data-env-theme][1]')).toHaveAttribute(
       'data-env-theme',
-      'dark',
+      appTheme,
     );
-    // The icon stays legible on the dark code background.
-    const contrast = await copy.evaluate((button) => {
-      const luminance = (color: string) => {
-        const canvas = document.createElement('canvas');
-        canvas.width = canvas.height = 1;
-        const context = canvas.getContext('2d', { willReadFrequently: true })!;
-        context.fillStyle = color;
-        context.fillRect(0, 0, 1, 1);
-        const [red, green, blue] = context.getImageData(0, 0, 1, 1).data;
-        const linear = (value: number) => {
-          const channel = value / 255;
-          return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+    // The icon stays legible on the code background of either theme.
+    const contrast = () =>
+      copy.evaluate((button) => {
+        const luminance = (color: string) => {
+          const canvas = document.createElement('canvas');
+          canvas.width = canvas.height = 1;
+          const context = canvas.getContext('2d', { willReadFrequently: true })!;
+          context.fillStyle = color;
+          context.fillRect(0, 0, 1, 1);
+          const [red, green, blue] = context.getImageData(0, 0, 1, 1).data;
+          const linear = (value: number) => {
+            const channel = value / 255;
+            return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+          };
+          return 0.2126 * linear(red) + 0.7152 * linear(green) + 0.0722 * linear(blue);
         };
-        return 0.2126 * linear(red) + 0.7152 * linear(green) + 0.0722 * linear(blue);
-      };
-      const block = button.closest('.env-code-block')!;
-      const [lighter, darker] = [
-        luminance(getComputedStyle(button).color),
-        luminance(getComputedStyle(block).backgroundColor),
-      ].sort((a, b) => b - a);
-      return (lighter + 0.05) / (darker + 0.05);
-    });
-    expect(contrast).toBeGreaterThan(4.5);
+        const block = button.closest('.env-code-block')!;
+        const [lighter, darker] = [
+          luminance(getComputedStyle(button).color),
+          luminance(getComputedStyle(block).backgroundColor),
+        ].sort((a, b) => b - a);
+        return (lighter + 0.05) / (darker + 0.05);
+      });
+    // Measured once the theme change has settled.
+    await expect.poll(contrast, appTheme).toBeGreaterThan(4.5);
   }
 });

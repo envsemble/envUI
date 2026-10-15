@@ -79,6 +79,24 @@ export function EmptyStatePreview() {
           {actionResult}
         </Text>
       </Example>
+      <Example title="In place of a page’s content" size="collection">
+        <Surface tone="pane" padding={0} style={{ display: 'grid', minBlockSize: '22rem' }}>
+          <EmptyState
+            align="center"
+            icon={<Apps />}
+            title="No projects yet"
+            description="Create a project to bring plans and people together."
+            action={
+              <Button
+                startIcon={<Add />}
+                onClick={() => setActionResult('Project creation started')}
+              >
+                Create project
+              </Button>
+            }
+          />
+        </Surface>
+      </Example>
     </Preview>
   );
 }

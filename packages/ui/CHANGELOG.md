@@ -1,5 +1,35 @@
 # Changelog
 
+## 0.7.0 — 2026-10-15
+
+Code in the Pierre themes that Diffs (diffs.com) uses, and code diffs rendered by Diffs; centred empty states, compact tabs, diff counts, ratings and color swatches; the soft blue primary action in the dark theme. Split views are gone.
+
+### Breaking changes
+
+- `SplitView` is removed, with its divider. Lay out a list beside its detail with an application grid and a `Surface` pane for the detail, as Console's submissions do; follow the region's width with a `ResizeObserver` where the layout changes, such as to open the detail in a `Dialog` on narrow screens.
+- `Code`'s `appearance` and `Markdown`'s `inlineCode` are removed, with the subtle inline code; `CodeBlock`'s `theme` is removed. Code always takes the code theme of the app theme. Migration: delete the props.
+- The content entry's optional peer `@shikijs/themes` is replaced by `@pierre/theme` (2.x): install `@pierre/theme` and remove `@shikijs/themes`.
+
+### Added
+
+- `@envsemble/envui/diff`, with `CodeDiff` and `countDiffLines`: the changes between two versions of a file rendered by Diffs (`@pierre/diffs` 1.5.2 or later, an optional peer installed with this entry). `before`, `after` and `filename`, which names the header and chooses the language unless `language` does; `header` (true by default), `expandUnchanged`, and `layout`: `auto` sets old and new side by side from 56 rem of the diff's own width, `unified` keeps one column. The diff takes Diffs' own Pierre theme for the app theme on the code blocks' background, and applications do not choose its colors; long lines wrap, and it shows a loading state while its highlighter loads and an error state with Retry if it fails. A diff without changes shows the whole file. `countDiffLines(before, after)` returns the added and removed lines, for a `DiffCount`.
+- `DiffCount`: the size of a change in one counter-sized pill, such as +12 −3, additions in the success tone and deletions in the danger tone, named once for assistive technology (`formatLabel`; "12 added lines and 3 removed lines" by default). In a button, such as a tab, it keeps its pill, on a fill that leans back toward the canvas where the button's and a tab rail's fills would add up, so the tones keep 4.5:1 contrast; on primary and important fills it takes the outlined pill.
+- `EmptyState` `align="center"`: for a state that takes the place of a page's or region's content, a larger, quieter icon, centred text and action, centred vertically in the height the application gives it; an error keeps its error icon color. `start` stays the default for states inside cards, panels and dialogs.
+- `Tabs` `size="compact"`: the whole rail as tall as a compact control, as a compact `SegmentedControl` is, for bars and toolbars; coarse pointers keep the touch height.
+- `Rating`: a read-only rating as stars filled to the value in half steps in the warning tone, the rest in the strong border color, named once as an image ("4.5 out of 5 stars", `formatLabel`), with `max` and `showValue`; a half star fills its inline-start half, also in right-to-left text.
+- `ColorSwatch`: a round, decorative sample of a color; as a `Button`'s start icon it takes the icon's size, as on a button that opens a `ColorPicker` in a `Popover`.
+
+### Changed
+
+- Inline code, code blocks and code diffs use the Pierre code themes, the ones Diffs uses: Pierre Light in the light app theme, on the theme's own light grey so code stands out on the white canvas, and Pierre Dark in the dark one. Code follows the app theme instead of staying dark.
+- A code block's copy button is a quiet icon button.
+- The primary action in the dark theme takes the link's soft blue with dark text instead of the light grey, so the dark theme carries the same blue emphasis as the light one. Everything that uses the primary colors follows, such as the chosen segment of a `SegmentedControl`.
+- A counter in a button, such as a tab's count, keeps its own filled pill, neutral or accent; only on the solid primary and important fills does it take the button's text color as an outlined pill, as a badge does.
+
+### Documentation
+
+- The Code page covers code diffs and the code themes; a new Rating page; the color picker page shows the swatch; the badges and counters page covers the diff count; the empty state and tabs pages cover centred states and compact tabs; the setup page names the diff entry and its peers.
+
 ## 0.6.0 — 2026-10-15
 
 Components for workspaces that track jobs and for tools that sit beside a page: docked panels, comboboxes, date and time fields, calendars, pagination, relative times, avatar groups and copy buttons; a hover card, a quiet text field and a quiet button, and Close all tabs in the document tab strip. A table with a sticky header no longer swallows the wheel.

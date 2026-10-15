@@ -6,6 +6,7 @@ import {
   Button,
   Checkbox,
   Counter,
+  DiffCount,
   HoverCard,
   IconButton,
   Input,
@@ -151,6 +152,14 @@ export function BadgesPreview() {
               <Counter value={3} />
               <Counter value={128} />
               <Counter value="99+" tone="accent" aria-label="More than 99 unread" />
+            </ActionGroup>
+          </Specimen>
+          <Specimen title="Diff counts">
+            <ActionGroup>
+              <DiffCount additions={124} deletions={37} />
+              <Button variant="secondary">
+                Diffs <DiffCount additions={12} deletions={3} />
+              </Button>
             </ActionGroup>
           </Specimen>
           <Specimen title="In navigation">

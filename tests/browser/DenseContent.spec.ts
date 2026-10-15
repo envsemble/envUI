@@ -1,8 +1,8 @@
 import { test, expect, type Page } from '@playwright/test';
 import { catalogueUrl, fixtureUrl } from './Servers';
 
-// Options for dense, document-centred applications: compact menus, subtle inline code and tabs that
-// fill a region.
+// Options for dense, document-centred applications: compact menus, code in the app's code theme
+// and tabs that fill a region.
 
 /** The computed display of the panel each tab of a tab list controls, in order. */
 function panelDisplays(page: Page, list: string) {
@@ -43,14 +43,24 @@ test('a compact menu has shorter rows on a raised popup than a standard menu', a
   await expect(compact).toBeHidden();
 });
 
-test('subtle inline code follows the theme instead of the dark code colours', async ({ page }) => {
+test('inline code and code blocks take the Pierre code theme of the app theme', async ({
+  page,
+}) => {
   await page.goto(`${catalogueUrl}/#/components/code/preview`);
-  const dark = page.locator('code', { hasText: 'theme="dark"' }).first();
-  const subtle = page.locator('code', { hasText: 'c9f60ee' }).first();
-  await expect(subtle).toBeVisible();
-  const background = (locator: typeof dark) =>
+  const inline = page.locator('code.env-code', { hasText: 'c9f60ee' }).first();
+  const block = page.locator('.env-code-block').first();
+  await expect(inline).toBeVisible();
+  const background = (locator: typeof inline) =>
     locator.evaluate((element) => getComputedStyle(element).backgroundColor);
-  expect(await background(subtle)).not.toBe(await background(dark));
+  // Pierre Light's sidebar grey, which stands out on the white canvas, then Pierre Dark's editor.
+  for (const [theme, color] of [
+    ['light', 'rgb(245, 245, 245)'],
+    ['dark', 'rgb(10, 10, 10)'],
+  ] as const) {
+    if (theme === 'dark') await page.getByRole('button', { name: 'Switch to dark theme' }).click();
+    await expect.poll(() => background(inline), theme).toBe(color);
+    await expect.poll(() => background(block), theme).toBe(color);
+  }
 });
 
 test('filling tabs give the selected panel the height left below the list', async ({ page }) => {
