@@ -10,7 +10,9 @@ export type ButtonVariant =
   | 'secondary'
   | 'outlined'
   | 'destructive'
-  | 'text';
+  | 'text'
+  /** For the application's chrome: the icon color, with a state layer on hover and press. */
+  | 'quiet';
 
 export interface ButtonAppearanceProps {
   variant?: ButtonVariant;

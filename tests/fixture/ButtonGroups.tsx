@@ -1,6 +1,8 @@
 import { useState, type CSSProperties } from 'react';
 import { Button, ButtonGroup, IconButton, Stack, Theme, type ThemeValue } from '@envsemble/envui';
+import { Add } from '@envsemble/envui/icons/Add';
 import { Check } from '@envsemble/envui/icons/Check';
+import { ExpandMore } from '@envsemble/envui/icons/ExpandMore';
 import { Settings } from '@envsemble/envui/icons/Settings';
 
 export function ButtonGroupsFixture({ theme }: { theme: ThemeValue }) {
@@ -74,6 +76,22 @@ export function ButtonGroupsFixture({ theme }: { theme: ThemeValue }) {
           </ButtonGroup>
         </form>
         <output data-testid="activations">{activations}</output>
+        {/* Groups that fill a sidebar. */}
+        <div className="fixture-sidebar" data-testid="sidebar">
+          <ButtonGroup fullWidth aria-label="Start a document">
+            <Button startIcon={<Add />}>New document</Button>
+            <IconButton variant="primary" icon={<ExpandMore />} aria-label="More ways to start" />
+          </ButtonGroup>
+          <ButtonGroup fullWidth orientation="vertical" aria-label="Sidebar actions">
+            <Button variant="secondary">Import</Button>
+            <Button variant="secondary">Export</Button>
+          </ButtonGroup>
+          <ButtonGroup fullWidth aria-label="Sidebar tools">
+            <IconButton icon={<Settings />} aria-label="Sidebar settings" />
+            <IconButton icon={<Check />} aria-label="Mark all done" />
+            <IconButton icon={<Add />} aria-label="Add a list" />
+          </ButtonGroup>
+        </div>
       </Stack>
     </Theme>
   );

@@ -58,7 +58,7 @@ Status icons, short status text and badges share these tokens. Each keeps at lea
   - Controls without a fill, such as inactive tabs and the avatar button, show `--color-state-layer-hover` (8%) and `--color-state-layer-pressed` (12%) layers.
 - Each role keeps the same purpose across themes. Its hue, saturation and lightness can differ between palettes. Focus has its own role, with blue defaults in both themes.
 - Tabs reuse the supplied Button or NavigationItem colors, and their rail uses Surface. Cards, dialog shells and standard menus reuse Surface tones; compact menus take the raised popup colors, like Popover and Select. IconButton and inline Link reuse Button variants; Select shares secondary Button and field colors.
-- Navigation selection, radio selection and selected Select options have separate roles. Card action strips, dialog backdrops, field validation and toast fills also have their own purposes; composed action buttons retain Button colors.
+- Navigation selection, radio selection, selected Select options and the chosen and current days of a calendar have separate roles. Card action strips, dialog backdrops, field validation and toast fills also have their own purposes; composed action buttons retain Button colors.
 - Scope content with Theme. Nested boundaries and library portals retain the originating theme. Application-owned portal content needs an appropriate Theme boundary too.
 
 TypeScript declarations provide the complete public API.

@@ -42,6 +42,7 @@ import { Preview } from './Preview';
 export function SegmentedControlPreview() {
   const [view, setView] = useState('open');
   const [layout, setLayout] = useState('list');
+  const [assigned, setAssigned] = useState('mine');
   return (
     <Preview>
       <Example
@@ -79,6 +80,20 @@ export function SegmentedControlPreview() {
                 { value: 'timeline', label: 'Timeline', disabled: true },
               ]}
             />
+          </Specimen>
+          <Specimen title="Full width in a narrow sidebar">
+            <div className="docs-narrow-segments">
+              <SegmentedControl
+                fullWidth
+                aria-label="Assignments"
+                value={assigned}
+                onValueChange={setAssigned}
+                options={[
+                  { value: 'mine', label: 'Assigned to me' },
+                  { value: 'team', label: 'Everyone on the team' },
+                ]}
+              />
+            </div>
           </Specimen>
         </SpecimenGrid>
         <Text variant="caption" className="docs-caption" aria-live="polite">

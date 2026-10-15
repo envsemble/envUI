@@ -108,8 +108,13 @@
     color var(--motion-duration-medium) var(--motion-ease),
     padding var(--motion-duration-medium) var(--motion-ease);
 }
-/* Native placeholder state tracks controlled values, autofill and form reset without JS. */
-.env-text-field-well:has(> .env-text-input:focus, > .env-text-input:not(:placeholder-shown))
+/* Native placeholder state tracks controlled values, autofill and form reset without JS. A control
+   that is not a text input, such as the button of a date field, marks its well data-label-floating
+   while it has a value. */
+.env-text-field-well:is(
+    :has(> .env-text-input:focus, > .env-text-input:is(input, textarea):not(:placeholder-shown)),
+    [data-label-floating]
+  )
   > label {
   inset-block-start: calc(-0.625rem * var(--scale, 1));
   padding-inline: calc(var(--space-1) * var(--scale, 1));
@@ -119,9 +124,9 @@
 }
 /* On an outline, the label hides only the line behind it; its upper half shows whatever surface the
    field sits on, such as a dialog pane. */
-.env-text-field-well:not([data-variant='plain']):has(
-    > .env-text-input:focus,
-    > .env-text-input:not(:placeholder-shown)
+.env-text-field-well:not([data-variant='plain']):is(
+    :has(> .env-text-input:focus, > .env-text-input:is(input, textarea):not(:placeholder-shown)),
+    [data-label-floating]
   )
   > label {
   background: linear-gradient(

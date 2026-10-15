@@ -46,7 +46,7 @@ Consult the relevant [component documentation](index.md) before adopting these c
 
 Port behavior explicitly instead of mechanically translating props. Preserve labels, accessible names, href/router state, callback payloads, refs, form names/reset, focus restoration and mutation timing. Check button types inside forms, pending-operation dismissal rules and draft state through dialogs/navigation.
 
-Keep vendor dependencies with remaining consumers. WorkOS widgets can require Radix Themes as a peer even after application-owned Radix controls migrate. Inspect the installed widget manifest and behavior. Scope its CSS/theme to the widget area and adapt tokens through supported configuration or narrowly scoped existing styles.
+Keep vendor dependencies with remaining consumers. A vendor widget can require another component library and its theme as a peer even after the application's own controls migrate. Inspect the installed widget's manifest and behavior. Scope its CSS and theme to the widget's area and adapt tokens through supported configuration or narrowly scoped existing styles.
 
 Identify gaps early: dropdown/organization menus, avatars, tables or other features may lack a direct envUI export. Compose public primitives only when they preserve the interaction. Retain a functioning implementation for unmigrated features and report gaps; avoid incomplete imitations and silent behavior loss. Shared library additions require envUI work to be in scope.
 

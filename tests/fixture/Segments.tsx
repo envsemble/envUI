@@ -5,6 +5,7 @@ import { ViewList } from '@envsemble/envui/icons/ViewList';
 export function SegmentedControlFixture({ theme }: { theme: ThemeValue }) {
   const [view, setView] = useState('open');
   const [layout, setLayout] = useState('list');
+  const [assigned, setAssigned] = useState('mine');
   return (
     <Theme theme={theme} data-testid={`segments-${theme}`} className="fixture-section">
       <SegmentedControl
@@ -28,6 +29,32 @@ export function SegmentedControlFixture({ theme }: { theme: ThemeValue }) {
           { value: 'board', label: 'Board' },
         ]}
       />
+      {/* Two long labels in a container too narrow for them side by side. */}
+      <div className="fixture-segments-narrow" data-testid={`segments-narrow-${theme}`}>
+        <SegmentedControl
+          fullWidth
+          aria-label={`Assignments ${theme}`}
+          value={assigned}
+          onValueChange={setAssigned}
+          options={[
+            { value: 'mine', label: 'Assigned to me' },
+            { value: 'team', label: 'Everyone on the team' },
+          ]}
+        />
+      </div>
+      <div className="fixture-segments-wide" data-testid={`segments-wide-${theme}`}>
+        <SegmentedControl
+          fullWidth
+          aria-label={`Scopes ${theme}`}
+          value={assigned}
+          onValueChange={setAssigned}
+          options={[
+            { value: 'mine', label: 'Mine', count: 4 },
+            { value: 'team', label: 'Team', count: 12 },
+            { value: 'all', label: 'All' },
+          ]}
+        />
+      </div>
       <output data-testid={`segments-value-${theme}`}>
         {view} {layout}
       </output>
