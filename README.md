@@ -134,7 +134,7 @@ npx playwright install chromium firefox webkit
 npm run verify
 ```
 
-Build outputs are `packages/ui/dist/` and `dist/envUI.html`. CI retains the offline catalogue and browser diagnostics as artifacts. CI runs for pull requests into `main` and pushes to `main` only, so run `npm run verify` before pushing a branch or merging into `dev`.
+Build outputs are `packages/ui/dist/` and `dist/envUI.html`. CI retains the offline catalogue and browser diagnostics as artifacts. CI runs for pull requests into `main` and pushes to `main` only, and tests in Chromium alone, so run `npm run verify`, which tests all three engines, before pushing a branch or merging into `dev`.
 
 ## Repository map
 

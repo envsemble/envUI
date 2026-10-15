@@ -3,18 +3,60 @@ on:
   # CI runs only for main (pull requests into it and pushes to it) while Actions minutes are
   # limited; changes reach dev after a local `npm run verify`. To run CI on dev again, add dev back
   # to both branch lists.
+  #
+  # There is no paths-ignore: Markdown is package content. The README, docs and skills ship in the
+  # package and render in the catalogue, and Prettier, the product-name and documentation tests and
+  # the catalogue's browser specs all read them, so a docs-only change can still break CI.
   push:
     branches: [main]
   pull_request:
     branches: [main]
+    # ready_for_review runs CI once a draft is marked ready; drafts themselves are skipped below.
+    types: [opened, synchronize, reopened, ready_for_review]
 permissions:
   contents: read
 concurrency:
   group: envui-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 jobs:
-  check:
-    name: CI
+  checks:
+    name: Checks
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft != true
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Check generated icons
+        run: npm run icons:check
+      - name: Lint scripts and components
+        run: npm run lint
+      - name: Lint styles
+        run: npm run lint:css
+      - name: Check formatting
+        run: npm run format:check
+      - name: Check TypeScript
+        run: npm run typecheck
+      - name: Build package and offline catalogue
+        run: npm run build
+      - name: Test package contracts
+        run: npm test
+      - name: Save offline catalogue
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: envui-reference
+          path: dist/envUI.html
+          if-no-files-found: error
+  browser:
+    # Chromium only; Firefox and WebKit run in `npm run verify` before every release.
+    name: Browser (Chromium)
+    needs: checks
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -24,24 +66,31 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 24
+          cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium firefox webkit
-      - name: Check generated icons
-        run: npm run icons:check
-      - name: Check TypeScript
-        run: npm run typecheck
-      - name: Build package and offline catalogue
-        run: npm run build
-      - name: Test package contracts
-        run: npm test
-      - name: Test browser behavior
-        run: npm run test:browser
-      - name: Save offline catalogue
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+      - name: Read the Playwright version
+        id: playwright
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+      - name: Restore Chromium
+        id: chromium
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+      - name: Install Chromium
+        if: steps.chromium.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+      - name: Install Chromium's system libraries
+        if: steps.chromium.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+      # The catalogue specs open the offline catalogue that the checks job built.
+      - name: Fetch offline catalogue
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: envui-reference
-          path: dist/envUI.html
-          if-no-files-found: error
+          path: dist
+      - name: Test browser behavior
+        run: npx playwright test --project=chromium
       - name: Save browser results and failure diagnostics
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
@@ -51,6 +100,7 @@ jobs:
           if-no-files-found: ignore
   betterleaks:
     name: Betterleaks
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft != true
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
