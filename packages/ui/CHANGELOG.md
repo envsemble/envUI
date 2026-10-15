@@ -6,6 +6,10 @@
 
 - `DocumentTabs` `onCloseAll`: the strip and each tab open a compact context menu on right click, long press, the <kbd>Menu</kbd> key and <kbd>Shift</kbd>+<kbd>F10</kbd>, with Close all tabs, which calls it; on a tab, the menu first offers closing that tab through `onClose`. When the tab that had focus closes from the menu, focus moves to the tab that becomes active. `closeAllLabel` and `contextMenuLabel` localize the item and the menu's name. Without `onCloseAll`, the strip keeps the browser's own context menu.
 
+### Fixed
+
+- A `Table` with `stickyHeader` no longer swallows the wheel: over a region without a height of its own, or scrolled to an end, the wheel scrolls the page again (it stopped in Chromium).
+
 ## 0.5.0 — 2026-10-14
 
 Components for document-centred desktop applications and data-heavy dashboards: a file tree, editor tabs, quick open, context menus and a resizable sidebar; sortable, resizable tables, key figures, a heatmap, conversation messages and split views; with badges, notices and other everyday pieces.
