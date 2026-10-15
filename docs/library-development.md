@@ -18,6 +18,16 @@ Update the public-API specimen under `apps/catalogue/src/previews` together with
 
 The two skills contain routing and workflow instructions. Move conditional component details into their owning documentation page. Improve that page when integration reveals a gap rather than adding another guide.
 
+## Record the change
+
+A change that people using envUI notice carries a changeset: a Markdown file in `.changeset/` that names the version bump and holds the changelog entry. Run `npm run changeset`, select `@envsemble/envui` and the bump, and write the entry as it should read in the changelog: what changed for someone using the package and, for a breaking change, how to migrate. Commit it with the change. Tests, tooling and catalogue-only changes need none.
+
+- `major`: a breaking change, such as a removed or renamed component, prop or value.
+- `minor`: a new component, prop, variant or token.
+- `patch`: a fix that keeps the API.
+
+Describe the pattern rather than the application that needed it: changesets, the changelog and this documentation name no products, and `npm test` rejects them. Releases turn the changesets into the changelog; see the README.
+
 ## Verify
 
 Run `npm run verify` at the envUI root. It checks generated icons, types, documentation links, package and offline-catalogue builds, isolated tarball consumers, SSR and browser acceptance.

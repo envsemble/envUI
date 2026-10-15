@@ -10,7 +10,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 - [Develop envUI locally](local-development.md) — Link a checkout while co-developing a consuming application.
 
-- [Extend the shared library](library-development.md) — Public API changes, catalogue specimens and acceptance checks.
+- [Extend the shared library](library-development.md) — Public API changes, changesets, catalogue specimens and acceptance checks.
 
 ## Foundations
 

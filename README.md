@@ -125,6 +125,7 @@ Open the catalogue at [localhost:8770](http://127.0.0.1:8770). It consumes libra
 | `npm test`             | Test package consumers, SSR and hydration          |
 | `npm run test:browser` | Check interactions in Chromium, Firefox and WebKit |
 | `npm run verify`       | Run the complete CI verification sequence          |
+| `npm run changeset`    | Record a change for the changelog                  |
 
 Install browser engines before running the full checks:
 
@@ -155,16 +156,16 @@ React components and scripts use PascalCase filenames; hooks and helpers use cam
 
 ## Releases
 
-Releases are cut from `main`. Merge `dev` into `main` through a pull request, then push a `v<version>` tag on `main`. The [Release workflow](https://github.com/envsemble/envUI/actions/workflows/release.yml) then:
+Releases are cut from `main`. Each change records its changelog entry as a changeset in `.changeset/`; see [library development](docs/library-development.md). To prepare a release, run `npm run changeset:version`. It applies the pending changesets to `packages/ui/package.json`, the dependency in `apps/catalogue/package.json`, the lockfile and the [changelog](packages/ui/CHANGELOG.md), where it adds the version above the earlier ones. Add the date to its heading and a sentence on what the release brings, as earlier releases have. Verify, review and merge `dev` into `main` through a pull request, then push a `v<version>` tag on `main`. The [Release workflow](https://github.com/envsemble/envUI/actions/workflows/release.yml) then:
 
 - rejects tags that are not on `main`;
 - verifies the tag matches the package version;
 - publishes privately to GitHub Packages;
 - creates a GitHub release with that version's CHANGELOG section and the matching offline HTML.
 
-Prereleases use `next`; stable releases use `latest`.
+Prereleases use `next`; stable releases use `latest`. The work towards 1.0 is in Changesets' prerelease mode for `next` (`.changeset/pre.json`), so each `npm run changeset:version` produces the next `1.0.0-next.N`. Breaking changes are `major` changesets, and the first prerelease needs one to start at 1.0.0. Before releasing 1.0.0, run `npx changeset pre exit`: the next `npm run changeset:version` then releases 1.0.0 with the entries of every prerelease. A later prerelease line starts with `npx changeset pre enter next`.
 
-Align `packages/ui/package.json`, the dependency in `apps/catalogue/package.json` and the lockfile, then update the [changelog](packages/ui/CHANGELOG.md). Verify, review and merge before pushing `v<version>`. Published versions are immutable. During `0.x`, breaking changes require a new minor version and migration notes; after `1.0`, a new major version.
+Published versions are immutable. Breaking changes require a new major version and migration notes.
 
 Grant consuming repositories package Read access for their GitHub Actions workflows. If only the HTML upload fails, recover it from the same tag without republishing the package.
 

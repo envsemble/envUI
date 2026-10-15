@@ -26,9 +26,12 @@
     "brand:generate": "node scripts/GenerateBrandAssets.mjs",
     "icons:sync": "node scripts/SyncIcons.mjs",
     "icons:generate": "node scripts/GenerateIcons.mjs",
-    "icons:check": "node scripts/GenerateIcons.mjs --check"
+    "icons:check": "node scripts/GenerateIcons.mjs --check",
+    "changeset": "changeset",
+    "changeset:version": "changeset version && npm install --package-lock-only --ignore-scripts"
   },
   "devDependencies": {
+    "@changesets/cli": "3.0.3",
     "@eslint/js": "10.0.1",
     "@playwright/test": "1.63.0",
     "@types/node": "^24.0.0",
