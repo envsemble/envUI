@@ -38,6 +38,7 @@ import { AccountTree } from '@envsemble/envui/icons/AccountTree';
 import { Tab } from '@envsemble/envui/icons/Tab';
 import { KeyboardCommandKey } from '@envsemble/envui/icons/KeyboardCommandKey';
 import { ViewWeek } from '@envsemble/envui/icons/ViewWeek';
+import { Preview } from '@envsemble/envui/icons/Preview';
 import { Sell } from '@envsemble/envui/icons/Sell';
 import { Campaign } from '@envsemble/envui/icons/Campaign';
 import { Chat } from '@envsemble/envui/icons/Chat';
@@ -131,6 +132,7 @@ const referenceIcons: Record<string, typeof Palette> = {
   badges: Sell,
   notices: Campaign,
   popover: Chat,
+  'hover-card': Preview,
   tables: TableChart,
   keyboard: Keyboard,
   breadcrumbs: LinearScale,

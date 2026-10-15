@@ -202,3 +202,31 @@ test('tables scroll sideways in a focusable region and keep a sticky header', as
   const compact = page.getByRole('table', { name: 'Compact light' });
   await expect(compact.getByRole('rowheader', { name: 'Total' })).toBeVisible();
 });
+
+test('wheeling over a table with a sticky header scrolls the page when the table cannot scroll further', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 900, height: 500 });
+  await page.goto(dataFixture);
+  const region = page.getByRole('region', { name: 'Plans light' });
+  const pageTop = () => page.evaluate(() => document.scrollingElement!.scrollTop);
+  const wheelOver = async (deltaY: number) => {
+    const box = (await region.boundingBox())!;
+    await page.mouse.move(box.x + box.width / 2, Math.min(Math.max(box.y, 0) + 40, 460));
+    const before = await pageTop();
+    await page.mouse.wheel(0, deltaY);
+    await expect.poll(async () => Math.sign((await pageTop()) - before)).toBe(Math.sign(deltaY));
+  };
+  // At its start, the region hands an upward wheel on to the page.
+  await region.scrollIntoViewIfNeeded();
+  await page.evaluate(() => window.scrollBy(0, 200));
+  await region.evaluate((element) => (element.scrollTop = 0));
+  await wheelOver(-150);
+  // Without a height, the region has nothing to scroll: the wheel moves the page at once.
+  await region.evaluate((element) => (element.style.maxBlockSize = 'none'));
+  expect(await region.evaluate((element) => element.scrollHeight > element.clientHeight)).toBe(
+    false,
+  );
+  await region.scrollIntoViewIfNeeded();
+  await wheelOver(300);
+});

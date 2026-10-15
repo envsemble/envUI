@@ -6,6 +6,7 @@ import {
   Button,
   Checkbox,
   Counter,
+  HoverCard,
   IconButton,
   Input,
   Kbd,
@@ -295,6 +296,48 @@ export function PopoverPreview() {
         </ActionGroup>
         <Text variant="caption" className="docs-caption">
           Current name: {name}
+        </Text>
+      </Example>
+    </Preview>
+  );
+}
+
+export function HoverCardPreview() {
+  return (
+    <Preview>
+      <Example
+        title="Hover cards"
+        size="collection"
+        caption={
+          <>
+            Rest the pointer on a link or focus it with the keyboard. <Kbd>Esc</Kbd> closes the
+            card; focus stays on the link.
+          </>
+        }
+      >
+        <Text>
+          The release depends on{' '}
+          <HoverCard trigger={<Link href="#roadmap">Roadmap.md</Link>}>
+            <Stack gap={2}>
+              <Text>
+                <strong>Roadmap.md</strong>
+              </Text>
+              <Text tone="muted">Changed today by Alex. 3 open decisions, 1 blocked.</Text>
+            </Stack>
+          </HoverCard>{' '}
+          and on{' '}
+          <HoverCard width="wide" side="top" trigger={<Link href="#sync">Sync conflicts</Link>}>
+            <Stack gap={2}>
+              <Text>
+                <strong>Sync conflicts</strong>
+              </Text>
+              <Text tone="muted">
+                Owned by Sam Lee in Plans/Sync. Two edits made offline on the same paragraph wait
+                for a decision about which one to keep.
+              </Text>
+            </Stack>
+          </HoverCard>
+          .
         </Text>
       </Example>
     </Preview>

@@ -17,10 +17,10 @@
   outline: 0.125rem solid var(--color-focus-ring);
   outline-offset: 0.125rem;
 }
-/* A sticky header needs the region to scroll vertically too; the application gives it a height. */
+/* A sticky header needs the region to scroll vertically too; the application gives it a height.
+   Scrolling past either end, or over a region with nothing to scroll, moves the page. */
 .env-table-region[data-sticky-header] {
   overflow-y: auto;
-  overscroll-behavior: contain;
 }
 .env-table {
   --env-table-cell-padding: var(--space-3) var(--space-4);

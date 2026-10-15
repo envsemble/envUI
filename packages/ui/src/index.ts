@@ -41,6 +41,7 @@ export * from './feedback/Dialog.js';
 export * from './feedback/CommandPalette.js';
 export * from './feedback/Notice.js';
 export * from './feedback/Popover.js';
+export * from './feedback/HoverCard.js';
 export * from './feedback/EmptyState.js';
 export * from './feedback/Skeleton.js';
 export * from './feedback/LoadingState.js';

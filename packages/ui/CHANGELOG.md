@@ -16,12 +16,19 @@
 - `SegmentedControl` `fullWidth`: the rail fills its container and splits it evenly between the options instead of scrolling; a label too long for its share ends with an ellipsis and shows whole in a tooltip on hover and keyboard focus, or wraps onto more lines on touch screens, where tooltips do not show, while its accessible name stays whole.
 - `ButtonGroup` `fullWidth`: the group fills its container, such as a sidebar: in a row, labelled buttons share the room the icon-only ones leave, which keep their square size, and a row of icon-only buttons shares it evenly; in a column every button is as wide as the group. An application no longer styles the group itself to fill.
 - Color tokens `--color-calendar-selected`, `--color-on-calendar-selected` and `--color-calendar-today`, for a calendar's chosen day and today in both themes, each at least 3:1 against the surface.
+- `DocumentTabs` `onCloseAll`: the strip and each tab open a compact context menu on right click, long press, the <kbd>Menu</kbd> key and <kbd>Shift</kbd>+<kbd>F10</kbd>, with Close all tabs, which calls it; on a tab, the menu first offers closing that tab through `onClose`. When the tab that had focus closes from the menu, focus moves to the tab that becomes active. `closeAllLabel` and `contextMenuLabel` localize the item and the menu's name. Without `onCloseAll`, the strip keeps the browser's own context menu.
+- `Input`, `SearchField` and other text fields take `variant="quiet"`: only the text and the start icon at rest, with no border, underline or fill; a soft fill under the pointer and while focused; the placeholder clears once the field has focus. For a search at the top of a sidebar or a list.
+- `HoverCard`: supplementary details beside a trigger such as a link, like a link preview, on `Popover`'s raised surface, padding and type, in two widths. It opens once the pointer rests on the trigger for `delay` (600 ms) and at once on keyboard focus, stays open while the pointer moves onto it so its text can be selected, and closes `closeDelay` (300 ms) after the pointer leaves the trigger and the card, or with <kbd>Esc</kbd>. Focus stays on the trigger, and the card is not announced as a dialog. It keeps the originating theme, flips at the window edge and sits above dialogs; `open`, `defaultOpen` and `onOpenChange` control it.
 
 ### Documentation
 
 - New pages for comboboxes, date & time fields, the panel dock, pagination and relative time; selects and text fields link to the new field pages.
 - The avatar page has a section on `AvatarGroup`, and the buttons page one on `CopyButton`.
 - The migration guide describes vendor widgets without naming them.
+
+### Fixed
+
+- A `Table` with `stickyHeader` no longer swallows the wheel: over a region without a height of its own, or scrolled to an end, the wheel scrolls the page again (it stopped in Chromium).
 
 ## 0.5.0 — 2026-10-14
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { IconButton, Input, Theme, type ThemeValue } from '@envsemble/envui';
+import { IconButton, Input, SearchField, Theme, type ThemeValue } from '@envsemble/envui';
 import { ContentCopy } from '@envsemble/envui/icons/ContentCopy';
 import { Sell } from '@envsemble/envui/icons/Sell';
 
@@ -35,6 +35,7 @@ export function AffixesFixture({ theme }: { theme: ThemeValue }) {
         />
         <Input compact showLabel label="Share" name="share" suffix="%" defaultValue="40" />
         <Input variant="plain" label="Handle" name="handle" prefix="@" defaultValue="aurora" />
+        <SearchField variant="quiet" label="Find projects" placeholder="Find projects" />
         <Input label="Quota" name="quota" suffix="GB" defaultValue="12" disabled />
         <Input label="Limit" name="limit" suffix="items" defaultValue="0" error="Use 1 or more." />
         <div className="fixture-narrow-field">
