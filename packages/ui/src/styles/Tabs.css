@@ -19,6 +19,16 @@
 .env-tabs-list.env-surface {
   --env-surface-color: var(--color-fill);
 }
+/* Compact: the whole rail is as tall as a compact control, like a compact segmented control. Coarse
+   pointers keep the touch height, which the compact height takes there. */
+.env-tabs-list[data-size='compact'] {
+  --control-height-small: calc(var(--control-height-compact) - 2 * var(--space-1));
+  --control-height: calc(var(--control-height-compact) - 2 * var(--space-1));
+  --icon-button-size: calc(var(--control-height-compact) - 2 * var(--space-1));
+}
+.env-tabs-list[data-size='compact'] > .env-tab {
+  padding-block: 0;
+}
 .env-tabs-list[data-orientation='vertical'] {
   flex-direction: column;
   align-items: stretch;
