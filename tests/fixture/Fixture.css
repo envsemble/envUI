@@ -170,14 +170,6 @@ body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-p
 .fixture-segments-wide {
   inline-size: min(100%, 30rem);
 }
-.fixture-split-view {
-  block-size: 14rem;
-}
-.fixture-split-list {
-  margin: 0;
-  padding: 0.5rem 1rem;
-  list-style: none;
-}
 .fixture-file-preview {
   align-items: center;
 }

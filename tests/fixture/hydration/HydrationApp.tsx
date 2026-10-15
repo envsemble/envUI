@@ -31,7 +31,6 @@ import {
   Composer,
   Message,
   MessageList,
-  SplitView,
   Stat,
   StatGroup,
   Heatmap,
@@ -231,12 +230,6 @@ export function HydrationApp() {
             setDraft('');
           }}
           footer="Hydrated composer footer"
-        />
-        <SplitView
-          resizeLabel="Hydrated split"
-          stackBelow="20rem"
-          start={<p>Hydrated start pane</p>}
-          end={<p>Hydrated end pane</p>}
         />
         <div style={{ position: 'relative', blockSize: '24rem' }}>
           <PanelDock
