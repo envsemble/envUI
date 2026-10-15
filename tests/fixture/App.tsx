@@ -40,6 +40,14 @@ import { StatsFixture } from './Stats.js';
 import { DropzonesFixture } from './Dropzones.js';
 import { ButtonCountsFixture } from './ButtonCounts.js';
 import { HeatmapFixture } from './Heatmaps.js';
+import { ComboboxFixture } from './Comboboxes.js';
+import { PanelDockFixture } from './PanelDocks.js';
+import { AvatarGroupsFixture } from './AvatarGroups.js';
+import { RelativeTimesFixture } from './RelativeTimes.js';
+import { CopyButtonsFixture } from './CopyButtons.js';
+import { PaginationsFixture } from './Paginations.js';
+import { DateTimeFieldFixture } from './DateTimeFields.js';
+import { QuietButtonsFixture } from './QuietButtons.js';
 
 /** Fixtures that fill the viewport are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
@@ -231,10 +239,58 @@ export default function App() {
               <HeatmapFixture theme="dark" />
             </>
           )}
+          {includes('panel-dock') && (
+            <>
+              <PanelDockFixture theme="light" />
+              <PanelDockFixture theme="dark" />
+            </>
+          )}
           {includes('button-counts') && (
             <>
               <ButtonCountsFixture theme="light" />
               <ButtonCountsFixture theme="dark" />
+            </>
+          )}
+          {includes('combobox') && (
+            <>
+              <ComboboxFixture theme="light" />
+              <ComboboxFixture theme="dark" />
+            </>
+          )}
+          {includes('avatar-groups') && (
+            <>
+              <AvatarGroupsFixture theme="light" />
+              <AvatarGroupsFixture theme="dark" />
+            </>
+          )}
+          {includes('relative-times') && (
+            <>
+              <RelativeTimesFixture theme="light" />
+              <RelativeTimesFixture theme="dark" />
+            </>
+          )}
+          {includes('copy-buttons') && (
+            <>
+              <CopyButtonsFixture theme="light" />
+              <CopyButtonsFixture theme="dark" />
+            </>
+          )}
+          {includes('paginations') && (
+            <>
+              <PaginationsFixture theme="light" />
+              <PaginationsFixture theme="dark" />
+            </>
+          )}
+          {includes('date-time') && (
+            <>
+              <DateTimeFieldFixture theme="light" />
+              <DateTimeFieldFixture theme="dark" />
+            </>
+          )}
+          {includes('quiet-buttons') && (
+            <>
+              <QuietButtonsFixture theme="light" />
+              <QuietButtonsFixture theme="dark" />
             </>
           )}
           {includes('menus') && (

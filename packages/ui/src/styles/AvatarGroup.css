@@ -1,0 +1,122 @@
+/* Avatar groups: overlapping avatars, later ones over earlier ones, each ringed in the color of the
+   surface below so neighbours stay apart. The ring follows the envUI surface the group sits on, or
+   the canvas; --avatar-group-ring sets it for any other surface, such as a row. */
+.env-avatar-group {
+  --env-avatar-group-size: 2rem;
+  --env-avatar-group-overlap: calc(var(--env-avatar-group-size) / 4);
+  --env-avatar-group-ring-width: max(0.125rem, calc(var(--env-avatar-group-size) / 16));
+  --env-avatar-group-ring: var(--avatar-group-ring, var(--env-surface-color, var(--color-canvas)));
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  vertical-align: middle;
+}
+.env-avatar-group-small {
+  --env-avatar-group-size: 1.5rem;
+}
+.env-avatar-group-large {
+  --env-avatar-group-size: 3rem;
+}
+.env-avatar-group-display {
+  --env-avatar-group-size: 5.5rem;
+}
+.env-avatar-group > * {
+  position: relative;
+  flex: 0 0 auto;
+}
+.env-avatar-group > * + * {
+  margin-inline-start: calc(-1 * var(--env-avatar-group-overlap));
+}
+.env-avatar-group .env-avatar,
+.env-avatar-group-overflow {
+  box-shadow: 0 0 0 var(--env-avatar-group-ring-width) var(--env-avatar-group-ring);
+}
+
+/* A pressable avatar: a button or link the size of the picture, with a state layer over it. */
+.env-avatar-group-item {
+  display: inline-flex;
+  margin-block: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+.env-avatar-group-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+}
+.env-avatar-group-item:hover::after {
+  background: var(--color-state-layer-hover);
+}
+.env-avatar-group-item:active::after {
+  background: var(--color-state-layer-pressed);
+}
+/* The avatar under the pointer or keyboard focus comes in front of its neighbours. */
+.env-avatar-group
+  > :is(.env-avatar-group-item, .env-avatar-group-overflow):is(:hover, :focus-visible) {
+  z-index: 1;
+}
+.env-avatar-group-item:focus-visible,
+.env-avatar-group-overflow:focus-visible {
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: var(--env-avatar-group-ring-width);
+}
+
+/* The overflow chip: the count in the translucent fill as painted on the surface, opaque so the
+   avatar it overlaps stays hidden. A larger count grows it into a pill. */
+.env-avatar-group-overflow {
+  box-sizing: border-box;
+  display: inline-grid;
+  place-items: center;
+  min-inline-size: var(--env-avatar-group-size);
+  block-size: var(--env-avatar-group-size);
+  padding-inline: calc(var(--env-avatar-group-size) / 6);
+  border-radius: 100vmax;
+  background: color-mix(
+    in srgb,
+    var(--color-state-layer) var(--state-fill-opacity),
+    var(--env-avatar-group-ring)
+  );
+  color: var(--color-text-primary);
+  font: 500 max(0.6875rem, calc(var(--env-avatar-group-size) * 0.4)) / 1 var(--font-family);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  cursor: default;
+  user-select: none;
+}
+.env-avatar-group-tooltip {
+  display: grid;
+}
+
+/* On touch screens each pressable avatar keeps at least 1.5 rem uncovered, so small ones sit side
+   by side. */
+@media (pointer: coarse) {
+  .env-avatar-group[data-interactive] {
+    --env-avatar-group-overlap: clamp(
+      0rem,
+      calc(var(--env-avatar-group-size) - 1.5rem),
+      calc(var(--env-avatar-group-size) / 4)
+    );
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .env-avatar-group-item {
+    transition: transform var(--motion-duration-fast) var(--motion-ease);
+  }
+  .env-avatar-group-item:active {
+    transform: scale(0.97);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .env-avatar-group-item::after {
+    transition: none;
+  }
+}

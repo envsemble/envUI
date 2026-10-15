@@ -6,18 +6,25 @@ import {
   ButtonGroup,
   Checkbox,
   ConfirmButton,
+  CopyButton,
   DisclosureNote,
   GroupedRows,
+  IconButton,
+  Input,
   Link,
   Row,
   Stack,
+  Surface,
   Text,
   Kbd,
 } from '@envsemble/envui';
+import { Add } from '@envsemble/envui/icons/Add';
 import { Check } from '@envsemble/envui/icons/Check';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 import { Close } from '@envsemble/envui/icons/Close';
 import { Delete } from '@envsemble/envui/icons/Delete';
+import { ExpandMore } from '@envsemble/envui/icons/ExpandMore';
+import { Menu } from '@envsemble/envui/icons/Menu';
 import { Settings } from '@envsemble/envui/icons/Settings';
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
@@ -30,6 +37,7 @@ const buttonVariants = [
   { variant: 'outlined', label: 'Manage', icon: Settings },
   { variant: 'destructive', label: 'Delete', icon: Delete },
   { variant: 'text', label: 'Learn more', icon: ChevronRight },
+  { variant: 'quiet', label: 'Settings', icon: Settings },
 ] as const;
 const buttonForms = [
   { value: 'label', title: 'Label' },
@@ -156,6 +164,22 @@ export function ButtonsPreview() {
       >
         <ButtonVariants />
       </Example>
+      <Example
+        title="Quiet actions"
+        caption="Quiet buttons suit an application's chrome, such as a sidebar toggle or a section's actions inside a surface: the icon color, and a state layer on hover and press."
+      >
+        <Surface tone="pane" padding={3} className="docs-quiet-bar">
+          <IconButton variant="quiet" icon={<Menu />} aria-label="Toggle sidebar" />
+          <Text as="span" variant="section-heading" className="docs-quiet-title">
+            Projects
+          </Text>
+          <IconButton variant="quiet" icon={<Add />} aria-label="New project" />
+          <IconButton variant="quiet" icon={<Settings />} aria-label="Project settings" />
+        </Surface>
+        <Button variant="quiet" startIcon={<Add />}>
+          New section
+        </Button>
+      </Example>
       <Example title="Text buttons">
         <Button variant="text">Without underline</Button>
         <Button variant="text" underline>
@@ -261,6 +285,18 @@ export function ButtonsPreview() {
         </SpecimenGrid>
       </Example>
       <OutcomeExamples />
+      <CopyExamples />
+      <Example
+        title="Fill a sidebar"
+        caption="With fullWidth a group fills its container: the labelled button takes the room the menu's chevron leaves."
+      >
+        <div className="docs-sidebar-sample">
+          <ButtonGroup fullWidth aria-label="Start a document">
+            <Button startIcon={<Add />}>New document</Button>
+            <IconButton variant="primary" icon={<ExpandMore />} aria-label="More ways to start" />
+          </ButtonGroup>
+        </div>
+      </Example>
       <Example title="Mixed styles" caption="Different button styles can also share one group.">
         <ButtonGroup aria-label="Mixed actions">
           <Button startIcon={<ChevronRight />}>Continue</Button>
@@ -393,5 +429,49 @@ function OutcomeExamples() {
         </SpecimenGrid>
       </Example>
     </>
+  );
+}
+
+const shareLink = 'https://example.com/r/quarterly-report';
+
+/** Copy actions beside a value, with a label and in a compact toolbar. */
+function CopyExamples() {
+  const [copied, setCopied] = useState('');
+  return (
+    <Example
+      title="Copy to the clipboard"
+      size="collection"
+      caption="After a press the icon turns into a check, and Copied shows and is announced for about two seconds."
+    >
+      <SpecimenGrid>
+        <Specimen title="Beside a value">
+          <div className="docs-field-toolbar">
+            <Input label="Share link" value={shareLink} readOnly />
+            <CopyButton value={shareLink} aria-label="Copy link" onCopy={setCopied} />
+          </div>
+        </Specimen>
+        <Specimen title="With a label">
+          <CopyButton value="RPT-2041" variant="outlined" onCopy={setCopied}>
+            Copy ID
+          </CopyButton>
+        </Specimen>
+        <Specimen title="In a compact toolbar">
+          <Surface tone="row" padding={2} corners="standard" density="compact">
+            <div className="docs-compact-toolbar">
+              <Text className="docs-compact-toolbar-title">RPT-2041</Text>
+              <CopyButton
+                value="RPT-2041"
+                variant="text"
+                aria-label="Copy report ID"
+                onCopy={setCopied}
+              />
+            </div>
+          </Surface>
+        </Specimen>
+      </SpecimenGrid>
+      <Text variant="caption" className="docs-caption" aria-live="polite">
+        {copied && `Copied ${copied}`}
+      </Text>
+    </Example>
   );
 }

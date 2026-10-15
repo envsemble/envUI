@@ -21,8 +21,39 @@ test('prepare compiled-public-API hydration acceptance fixture', async () => {
     outfile: server,
   });
   const { HydrationApp } = await import(pathToFileURL(server).href);
-  const markup = renderToString(createElement(HydrationApp));
+  // The server renders on a fixed day, so the browser's own today can lie in another month.
+  const RealDate = Date;
+  const serverTime = RealDate.parse('2026-03-17T10:00:00Z');
+  globalThis.Date = class extends RealDate {
+    constructor(...values) {
+      super(...(values.length > 0 ? values : [serverTime]));
+    }
+    static now() {
+      return serverTime;
+    }
+  };
+  let markup;
+  try {
+    markup = renderToString(createElement(HydrationApp));
+  } finally {
+    globalThis.Date = RealDate;
+  }
   assert.match(markup, /Server value/);
+  // The server wrote the relative time in its own language; the browser corrects it.
+  assert.match(markup, />in 2 days<\/time>/);
+  // Date fields and calendars without a locale write British English on the server, as the
+  // browser does while hydrating; a calendar without a value leaves today's month to the browser.
+  assert.match(markup, />17 Mar 2026</);
+  const localCalendar = markup.slice(markup.indexOf('aria-label="Hydrated local calendar"'));
+  assert.match(localCalendar.slice(0, localCalendar.indexOf('</table>')), />March 2026</);
+  const todayCalendar = markup.slice(markup.indexOf('aria-label="Hydrated today"'));
+  assert.doesNotMatch(todayCalendar.slice(0, todayCalendar.indexOf('</table>')), /data-date=/);
+  // Nor does it tell whether its month buttons reach past min and max.
+  const boundedCalendar = markup.slice(markup.indexOf('aria-label="Hydrated bounded today"'));
+  assert.doesNotMatch(
+    boundedCalendar.slice(0, boundedCalendar.indexOf('</table>')),
+    /aria-disabled=/,
+  );
   const client = await build({
     stdin: {
       contents: `import {hydrateRoot} from 'react-dom/client';import {createElement} from 'react';import {HydrationApp} from './tests/fixture/hydration/HydrationApp.tsx';hydrateRoot(document.getElementById('root'),createElement(HydrationApp),{onRecoverableError:error=>{window.hydrationErrors.push(error.message)}});window.hydrationReady=true;`,

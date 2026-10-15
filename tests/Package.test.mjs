@@ -155,6 +155,10 @@ before(
       h(ui.Switch, { name: 'alerts', label: 'Alerts' }),
       h(ui.RadioGroup, { name: 'mode', label: 'Mode', defaultValue: 'one' }, h(ui.Radio, { value: 'one', label: 'One' })),
       h(ui.Select, { name: 'choice', label: 'Choice', options: [{ value: 'one', label: 'One' }], defaultValue: 'one' }),
+      h(ui.Combobox, { name: 'owner', label: 'Owner', items: [{ value: 'first', label: 'First person' }], defaultValue: 'first' }),
+      h(ui.Combobox, { name: 'reviewers', label: 'Reviewers', multiple: true, items: [{ label: 'Team', items: [{ value: 'second', label: 'Second person' }] }], defaultValue: ['second'] }),
+      h(ui.DateTimeField, { name: 'due', label: 'Due', defaultValue: '2026-10-14T09:30', withTime: true, locale: 'en-GB' }),
+      h(ui.Calendar, { 'aria-label': 'Planning', defaultValue: '2026-03-09', locale: 'en-GB', weekStart: 1 }),
       h(ui.Dialog, { title: 'Example', open: false, trigger: h(ui.Button, null, 'Open') }),
       h(ui.ToastProvider, null, h(ui.Toast, { message: 'Saved', variant: 'success' })),
       h(ui.BrandLogo),
@@ -241,6 +245,9 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'RadioGroup',
     'Radio',
     'Select',
+    'Combobox',
+    'DateTimeField',
+    'Calendar',
     'Dialog',
     'DialogClose',
     'Toast',
@@ -273,9 +280,9 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     join(consumerDirectory, 'Consumer.tsx'),
     `
     import { createRef } from 'react';
-    import { Theme, Button, ButtonGroup, IconButton, NavigationItem, DirectionLink, Icon, BrandLogo, Input, ColorPicker, Textarea, Checkbox, Switch, Stack, ActionGroup,
-      RadioGroup, Radio, Select, Dialog, DialogClose, Toast, ToastProvider, useToast,
-      type ThemeValue, type ButtonProps, type ButtonGroupProps, type DirectionLinkProps, type SelectOption, type ToastManager } from '@envsemble/envui';
+    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, NavigationItem, DirectionLink, Icon, BrandLogo, Input, ColorPicker, Textarea, Checkbox, Switch, Stack, ActionGroup,
+      RadioGroup, Radio, Select, Combobox, DateTimeField, Calendar, Dialog, DialogClose, Toast, ToastProvider, useToast,
+      type ThemeValue, type ButtonProps, type ButtonGroupProps, type DirectionLinkProps, type SelectOption, type ComboboxItem, type ToastManager } from '@envsemble/envui';
     import { Home } from '@envsemble/envui/icons/Home';
     import { Home as BarrelHome } from '@envsemble/envui/icons';
     import '@envsemble/envui/styles.css';
@@ -284,6 +291,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     const buttonGroupProps: ButtonGroupProps = { orientation: 'vertical', ref: createRef<HTMLDivElement>(), 'aria-label': 'Actions' };
     const directionLinkProps: DirectionLinkProps = { direction: 'next', href: '/guide', children: 'Read the guide', ref: createRef<HTMLAnchorElement>(), icon: <Home /> };
     const options: SelectOption[] = [{ value: 'one', label: 'One' }];
+    const people: ComboboxItem[] = [{ value: 'first', label: 'First person', description: 'first@example.com', leading: <Home /> }];
     const theme: ThemeValue = 'dark';
     const referenceSources: RichTextReferenceSource[] = [{ char: '@', items: async ({ query, signal }) => signal.aborted ? [] : [{ id: query, label: query }] }];
     const richTextConsumer = <><RichTextEditor ref={createRef<RichTextEditorHandle>()} value="Notes" references={referenceSources} onValueChange={markdown => { const typed: string = markdown; void typed; }} onUpload={async (file, { signal }) => signal.aborted ? null : ({ url: '/uploads/example', label: file.name, id: 'stable-file-id', kind: 'file' })} /><RichText onReferenceClick={(reference, event) => { event.preventDefault(); void reference.id; }}>Notes</RichText></>;
@@ -291,6 +299,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     function NotificationAction() { const manager: ToastManager = useToast(); return <Button onClick={() => manager.show({ message: 'Saved' })}>Save</Button>; }
     export const consumer = <Theme theme={theme} ref={createRef<HTMLDivElement>()}>
       <Button {...buttonProps}>Create</Button><IconButton aria-label="Open" icon={<Home filled />} />
+      <ConfirmButton variant="quiet" icon={<Home />} aria-label="Remove" confirmLabel="Remove?" onConfirm={() => undefined} />
       <ButtonGroup {...buttonGroupProps}><Button href="/">Home</Button><IconButton aria-label="Options" icon={<Home />} /><Button variant="important">Confirm</Button></ButtonGroup>
       <Stack gap={3} ref={createRef<HTMLDivElement>()}><Input label="First" /><Input label="Second" /></Stack>
       <ActionGroup stacked ref={createRef<HTMLDivElement>()}><Button>Save</Button><Button variant="secondary">Cancel</Button></ActionGroup>
@@ -305,6 +314,10 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       <Checkbox label="Enabled" checked="mixed" onCheckedChange={value => { const typed: boolean = value; void typed; }} />
       <Switch label="Alerts" defaultChecked /><RadioGroup name="mode"><Radio value="one" label="One" /></RadioGroup>
       <Select options={options} name="choice" onValueChange={value => { const typed: string | null = value; void typed; }} />
+      <Combobox label="Owner" items={people} onValueChange={(value, item) => { const typed: string | null = value; const chosen: ComboboxItem | null = item; void typed; void chosen; }} />
+      <Combobox multiple label="Reviewers" items={[{ label: 'Team', items: people }]} filter={(item, query) => item.label.startsWith(query)} onValueChange={(values, items) => { const typed: string[] = values; const chosen: ComboboxItem[] = items; void typed; void chosen; }} ref={createRef<HTMLInputElement>()} />
+      <DateTimeField label="Due" withTime clearable onValueChange={value => { const typed: string | null = value; void typed; }} ref={createRef<HTMLButtonElement>()} />
+      <Calendar value="2026-10-14" weekStart={1} onValueChange={value => { const typed: string = value; void typed; }} />
       <Dialog title="Confirm" trigger={<Button>Open</Button>} actions={<DialogClose>Done</DialogClose>} />
       <ToastProvider><NotificationAction /><Toast message="Saved" /></ToastProvider>
     </Theme>;
@@ -322,6 +335,9 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     const unknownDirection = <DirectionLink direction="up" href="/guide">Guide</DirectionLink>;
     // @ts-expect-error A direction link requires a destination URL.
     const missingDestination = <DirectionLink direction="next">Guide</DirectionLink>;
+    // @ts-expect-error A multiple combobox takes a list of values.
+    const singleValueForSeveral = <Combobox multiple items={people} value="first" />;
+    void singleValueForSeveral;
     // @ts-expect-error A color picker requires a visible label.
     const unnamedColorPicker = <ColorPicker defaultValue="#abcdef" />;
     void unnamedColorPicker;
@@ -377,6 +393,21 @@ test('public components import and render on a server with no DOM globals', func
   assert.match(ssr.html, /name="title"/);
   assert.match(ssr.html, /role="switch"/);
   assert.match(ssr.html, /name="mode"/);
+  assert.match(
+    ssr.html,
+    /role="combobox"[^>]*value="First person"|value="First person"[^>]*role="combobox"/,
+  );
+  assert.match(ssr.html, /name="owner"[^>]*value="first"|value="first"[^>]*name="owner"/);
+  assert.match(ssr.html, /<input type="hidden"[^>]*name="reviewers" value="second"/);
+  assert.match(ssr.html, /Second person/);
+  assert.match(ssr.html, /14 Oct 2026, 09:30/);
+  assert.match(
+    ssr.html,
+    /name="due"[^>]*value="2026-10-14T09:30"|value="2026-10-14T09:30"[^>]*name="due"/,
+  );
+  assert.match(ssr.html, /role="group" aria-label="Planning"/);
+  assert.match(ssr.html, /role="grid"/);
+  assert.match(ssr.html, /aria-selected="true"[^>]*data-date="2026-03-09"/);
   assert.match(ssr.html, /role="status"/);
   assert.match(ssr.html, /aria-hidden="true" class="env-skeleton"/);
   assert.match(ssr.html, /aria-label="envsemble"/);
@@ -801,4 +832,211 @@ test('packed rich text statically renders the shared Markdown schema and referen
   assert.match(result.task, /disabled/);
   assert.match(result.editor, /name="source"/);
   assert.match(result.module, /\/dist\/rich-text\.js$/);
+});
+
+test('avatar groups, relative times, copy buttons and pagination render on a server and type their contracts', async function () {
+  const display = await runConsumer(
+    'DisplayConsumer.mjs',
+    `
+    import { createElement as h } from 'react';
+    import { renderToString } from 'react-dom/server';
+    import * as ui from '@envsemble/envui';
+    if (typeof document !== 'undefined' || typeof window !== 'undefined') throw new Error('DOM globals must be absent');
+    const people = [{ name: 'Alex Morgan' }, { name: 'Sam Lee' }, { name: 'Priya Shah' }];
+    const now = Date.parse('2026-10-14T12:00:00Z');
+    const light = (element) => renderToString(h(ui.Theme, { theme: 'light' }, element));
+    console.log(JSON.stringify({
+      relative: light(h(ui.RelativeTime, { value: '2026-10-16T12:00:00Z', now, locale: 'en' })),
+      formatted: [
+        ui.formatRelativeTime(now - 3 * 3600000, { now, locale: 'en' }),
+        ui.formatRelativeTime(now - 10000, { now, locale: 'en' }),
+        ui.formatRelativeTime(now - 3 * 3600000, { now, locale: 'de', format: 'short' }),
+        ui.formatRelativeTime('not a date', { now }),
+        // An invalid now is ignored, as by RelativeTime: the text follows the clock.
+        ui.formatRelativeTime(Date.now() - 3 * 3600000, { now: new Date('not a date'), locale: 'en' }),
+      ],
+      avatars: light(h(ui.AvatarGroup, { people, max: 2, total: 5 })),
+      copy: light(h(ui.CopyButton, { value: 'Copied text', 'aria-label': 'Copy link' })),
+      pagination: light(h(ui.Pagination, { page: 2, pageSize: 60, total: 245, onPageChange() {} })),
+    }));
+  `,
+  );
+  // React writes dateTime; attribute names in HTML are case-insensitive.
+  assert.match(
+    display.relative,
+    /<time [^>]*datetime="2026-10-16T12:00:00.000Z"[^>]*>in 2 days<\/time>/i,
+  );
+  assert.match(display.relative, /<time dir="auto"/);
+  assert.deepEqual(display.formatted, ['3 hours ago', 'just now', 'vor 3 Std.', '', '3 hours ago']);
+  assert.match(
+    display.avatars,
+    /role="group" aria-label="5 people: Alex Morgan, Sam Lee, Priya Shah, 2 more"/,
+  );
+  assert.match(display.avatars, /<span dir="ltr">\+3<\/span>/);
+  assert.match(display.copy, /<button[^>]*aria-label="Copy link"/);
+  assert.match(display.copy, /role="status"/);
+  assert.match(display.pagination, /<nav aria-label="Pagination" class="env-pagination">/);
+  assert.match(display.pagination, />61–120 of 245</);
+
+  await writeFile(
+    join(consumerDirectory, 'DisplayConsumer.tsx'),
+    `
+    import { AvatarGroup, CopyButton, Pagination, RelativeTime, formatRelativeTime,
+      type AvatarGroupPerson, type AvatarGroupProps, type CopyButtonProps, type PaginationProps,
+      type PaginationRange, type RelativeTimeProps } from '@envsemble/envui';
+    const person: AvatarGroupPerson = { name: 'Alex Morgan', id: 7, href: '/people/alex', src: null, fallback: 'initials' };
+    const groupProps: AvatarGroupProps = { people: [person], max: 3, size: 'small', total: 12, formatMore: (count) => count + ' more' };
+    const describe = (range: PaginationRange) => range.start + '–' + range.end + ' of ' + (range.total ?? 'many');
+    const pagerProps: PaginationProps = { page: 1, pageSize: 10, onPageChange: (page) => { const typed: number = page; void typed; } };
+    const timeProps: RelativeTimeProps = { value: new Date(), format: 'narrow', locale: ['de', 'en'], tooltip: false };
+    const copyProps: CopyButtonProps = { value: () => Promise.resolve('text'), 'aria-label': 'Copy link', copyLabel: 'Copy' };
+    const text: string = formatRelativeTime(Date.now(), { format: 'short', now: new Date() });
+    export const display = <>
+      <AvatarGroup {...groupProps} onPersonClick={(clicked, event) => { void clicked.name; event.preventDefault(); }} />
+      <RelativeTime {...timeProps} nowLabel="moments ago" />
+      <CopyButton {...copyProps} onCopy={(copied) => { const typed: string = copied; void typed; }} />
+      <CopyButton value="text" size="compact" variant="text">Copy</CopyButton>
+      <Pagination {...pagerProps} formatRange={describe} hasNextPage pending size="compact" />
+    </>;
+    void text;
+    // @ts-expect-error An icon-only copy button requires an accessible name.
+    const unnamedCopy = <CopyButton value="text" />;
+    // @ts-expect-error Children that render nothing leave the button icon-only, without a name.
+    const falseLabel = <CopyButton value="text">{false}</CopyButton>;
+    // @ts-expect-error So does null.
+    const nullLabel = <CopyButton value="text">{null}</CopyButton>;
+    const namedWithoutLabel = <CopyButton value="text" aria-label="Copy">{null}</CopyButton>;
+    // @ts-expect-error Avatar groups take the avatar sizes.
+    const unknownSize = <AvatarGroup people={[]} size="huge" />;
+    // @ts-expect-error A pager asks the application for pages.
+    const inertPager = <Pagination page={1} pageSize={10} />;
+    // @ts-expect-error Relative times have three formats.
+    const unknownFormat = <RelativeTime value={0} format="tiny" />;
+    void [unnamedCopy, falseLabel, nullLabel, namedWithoutLabel, unknownSize, inertPager, unknownFormat];
+  `,
+  );
+  await writeFile(
+    join(consumerDirectory, 'tsconfig.display.json'),
+    JSON.stringify({
+      compilerOptions: {
+        target: 'ES2022',
+        module: 'NodeNext',
+        moduleResolution: 'NodeNext',
+        jsx: 'react-jsx',
+        strict: true,
+        noEmit: true,
+        skipLibCheck: false,
+        types: ['react', 'react-dom'],
+        lib: ['ES2022', 'DOM'],
+      },
+      include: ['DisplayConsumer.tsx'],
+    }),
+  );
+  run(consumerRequire.resolve('typescript/bin/tsc'), [
+    '--project',
+    join(consumerDirectory, 'tsconfig.display.json'),
+  ]);
+});
+
+test('the panel dock renders its panels, chips and header on a server and types its contracts', async function () {
+  const dock = await runConsumer(
+    'DockConsumer.mjs',
+    `
+    import { createElement as h, Fragment } from 'react';
+    import { renderToString } from 'react-dom/server';
+    import * as ui from '@envsemble/envui';
+    if (typeof document !== 'undefined' || typeof window !== 'undefined') throw new Error('DOM globals must be absent');
+    const panels = [
+      { id: 'notes', title: 'Notes', mode: 'open', active: true },
+      { id: 'budget', title: 'Budget', mode: 'minimized', attention: 'Unsaved changes' },
+    ];
+    const html = renderToString(h(ui.Theme, { theme: 'light' },
+      h(ui.PanelDock, { panels, onModeChange() {}, onClose() {} },
+        (panel) => h(Fragment, null,
+          h(ui.PanelDockHeader, { title: panel.title, meta: 'Edited today' }),
+          h('p', null, 'Body of ' + panel.title)))));
+    console.log(JSON.stringify({ html }));
+  `,
+  );
+  assert.match(
+    dock.html,
+    /<section [^>]*aria-label="Notes"[^>]*data-panel-id="notes"[^>]*data-mode="open"/,
+  );
+  assert.match(dock.html, /<h2 class="env-panel-dock-title">Notes<\/h2>/);
+  for (const name of ['Minimize', 'Maximize', 'Close'])
+    assert.match(dock.html, new RegExp(`aria-label="${name}"`));
+  // A minimized panel's content renders too, kept out of sight behind its chip.
+  assert.match(dock.html, /<section [^>]*data-panel-id="budget"[^>]*data-placement="hidden"/);
+  assert.match(dock.html, /Body of Budget/);
+  assert.match(dock.html, /<ul class="env-panel-dock-strip" aria-label="Hidden panels">/);
+  assert.match(dock.html, /aria-label="Show Budget"/);
+  assert.match(dock.html, /Unsaved changes/);
+  // Server output is in place before it hydrates, without an entrance.
+  assert.doesNotMatch(dock.html, /data-entering/);
+
+  await writeFile(
+    join(consumerDirectory, 'DockConsumer.tsx'),
+    `
+    import { PanelDock, PanelDockControls, PanelDockHeader, type PanelDockMode, type PanelDockPanel,
+      type PanelDockProps, type PanelDockHeaderProps, type PanelDockControlsProps } from '@envsemble/envui';
+    type Document = PanelDockPanel & { body: string };
+    const documents: Document[] = [
+      { id: 'notes', title: 'Notes', mode: 'open', body: 'Text', height: 320, preferredWidth: 480, minWidth: 320,
+        maxWidth: 640, minHeight: 240, maxHeight: 560, active: true, label: 'Notes', icon: <span />, attention: 'Unsaved', tooltip: 'Notes' },
+    ];
+    const headerProps: PanelDockHeaderProps = { title: 'Notes', meta: 'Edited today', headingLevel: 3 };
+    const controlsProps: PanelDockControlsProps = { minimizeLabel: 'Min', maximizeLabel: 'Max', restoreLabel: 'Back', closeLabel: 'Shut' };
+    const dockProps: Omit<PanelDockProps<Document>, 'children'> = {
+      panels: documents,
+      onModeChange: (id, mode) => { const typed: PanelDockMode = mode; void id; void typed; },
+      onClose: (id) => { const typed: string = id; void typed; },
+      onActivate: (id) => void id,
+      onHeightChange: (id, height) => { const typed: number = height; void id; void typed; },
+      stackBelow: '40rem',
+      onStackedChange: (stacked) => { const typed: boolean = stacked; void typed; },
+      overflow: 'minimize',
+      minimizedLabel: 'Hidden panels',
+      showLabel: (label) => 'Show ' + label,
+      closeLabel: (label) => 'Close ' + label,
+      resizeLabel: (title) => 'Resize ' + title,
+    };
+    export const dock = (
+      <PanelDock {...dockProps}>
+        {(panel) => <PanelDockHeader {...headerProps} title={panel.body} controls={<PanelDockControls {...controlsProps} />} />}
+      </PanelDock>
+    );
+    // @ts-expect-error A dock names its chips' buttons with showLabel; restoreLabel is PanelDockControls'.
+    const earlierName = <PanelDock {...dockProps} restoreLabel={(label) => 'Show ' + label}>{() => null}</PanelDock>;
+    // @ts-expect-error A dock's chip labels are functions of each chip's text.
+    const plainRestore = <PanelDock {...dockProps} showLabel="Show">{() => null}</PanelDock>;
+    // @ts-expect-error A dock scrolls or minimizes what does not fit.
+    const unknownOverflow = <PanelDock {...dockProps} overflow="hide">{() => null}</PanelDock>;
+    // @ts-expect-error A panel is open, minimized or maximized.
+    const unknownMode: PanelDockPanel = { id: 'notes', title: 'Notes', mode: 'closed' };
+    // @ts-expect-error A dock asks the application to change modes and close panels.
+    const inertDock = <PanelDock panels={documents}>{() => null}</PanelDock>;
+    void [earlierName, plainRestore, unknownOverflow, unknownMode, inertDock];
+  `,
+  );
+  await writeFile(
+    join(consumerDirectory, 'tsconfig.dock.json'),
+    JSON.stringify({
+      compilerOptions: {
+        target: 'ES2022',
+        module: 'NodeNext',
+        moduleResolution: 'NodeNext',
+        jsx: 'react-jsx',
+        strict: true,
+        noEmit: true,
+        skipLibCheck: false,
+        types: ['react', 'react-dom'],
+        lib: ['ES2022', 'DOM'],
+      },
+      include: ['DockConsumer.tsx'],
+    }),
+  );
+  run(consumerRequire.resolve('typescript/bin/tsc'), [
+    '--project',
+    join(consumerDirectory, 'tsconfig.dock.json'),
+  ]);
 });
