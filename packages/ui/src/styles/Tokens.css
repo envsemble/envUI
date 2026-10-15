@@ -360,9 +360,10 @@
   --state-fill-hover-opacity: 25%;
   --state-fill-pressed-opacity: 37.5%;
   --color-subtle-action: hsl(220 3.614% 16.275%);
-  /* The primary action takes the link's soft blue with dark text, so the dark theme carries the
-     same blue emphasis as the light one without a saturated fill. */
-  --color-primary-action: var(--color-link);
+  /* The primary action takes the same soft blue as links, with dark text, so the dark theme carries
+     the same blue emphasis as the light one without a saturated fill. It is its own value, so the
+     two roles stay independent. */
+  --color-primary-action: hsl(217.317 89.13% 81.961%);
   --color-on-primary-action: hsl(0 0% 12.157%);
   --color-link: hsl(217.317 89.13% 81.961%);
   --color-text-primary: hsl(216 12.195% 91.961%);
