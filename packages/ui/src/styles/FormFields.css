@@ -161,11 +161,11 @@
 }
 @media (hover: hover) {
   .env-text-field-well[data-variant='quiet']:hover:not(:has(> .env-text-input:disabled)) {
-    background: var(--color-fill-hover);
+    background: var(--color-fill);
   }
 }
 .env-text-field-well[data-variant='quiet']:focus-within {
-  background: var(--color-fill-hover);
+  background: var(--color-fill);
 }
 .env-text-field-well[data-variant='quiet']:focus-within > .env-text-field-start {
   color: var(--color-field-label);
