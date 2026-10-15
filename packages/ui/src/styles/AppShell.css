@@ -357,6 +357,7 @@ button.env-app-sidebar-toggle:focus-visible {
    positioning, so a fixed overlay inside the content still covers the window. */
 .env-app-shell[data-title-bar] {
   --topbar-height: max(calc(env(titlebar-area-height, 0px) + 0.0625rem), var(--title-bar-height));
+  /* stylelint-disable-next-line unit-disallowed-list -- A zero with its unit, so applications can add to it in calc(). */
   --app-sticky-top: 0px;
   position: fixed;
   inset: 0;

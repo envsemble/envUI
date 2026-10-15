@@ -1,0 +1,370 @@
+{
+  "packages/ui/src/styles/Actions.css": {
+    "no-duplicate-selectors": {
+      "count": 1
+    }
+  },
+  "packages/ui/src/styles/AppShell.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 19
+    },
+    "declaration-property-value-allowed-list": {
+      "count": 5
+    }
+  },
+  "packages/ui/src/styles/AvatarGroup.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 2
+    },
+    "declaration-property-value-allowed-list": {
+      "count": 1
+    }
+  },
+  "packages/ui/src/styles/Badge.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 17
+    }
+  },
+  "packages/ui/src/styles/Breadcrumbs.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 3
+    },
+    "declaration-property-value-allowed-list": {
+      "count": 1
+    }
+  },
+  "packages/ui/src/styles/Button.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 14
+    }
+  },
+  "packages/ui/src/styles/ButtonGroup.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 2
+    }
+  },
+  "packages/ui/src/styles/Calendar.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 5
+    },
+    "declaration-property-value-allowed-list": {
+      "count": 2
+    }
+  },
+  "packages/ui/src/styles/Card.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 7
+    }
+  },
+  "packages/ui/src/styles/ChoiceControls.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 29
+    }
+  },
+  "packages/ui/src/styles/Code.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 3
+    }
+  },
+  "packages/ui/src/styles/ColorPicker.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 11
+    }
+  },
+  "packages/ui/src/styles/ColorSwatch.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 3
+    }
+  },
+  "packages/ui/src/styles/Combobox.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 20
+    },
+    "declaration-property-value-allowed-list": {
+      "count": 1
+    }
+  },
+  "packages/ui/src/styles/CommandPalette.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 9
+    },
+    "declaration-property-value-allowed-list": {
+      "count": 2
+    }
+  },
+  "packages/ui/src/styles/Composer.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 2
+    }
+  },
+  "packages/ui/src/styles/CopyButton.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 3
+    }
+  },
+  "packages/ui/src/styles/DateTimeField.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 6
+    }
+  },
+  "packages/ui/src/styles/Dialog.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 6
+    },
+    "declaration-property-value-allowed-list": {
+      "count": 2
+    },
+    "no-duplicate-selectors": {
+      "count": 2
+    }
+  },
+  "packages/ui/src/styles/DirectionLink.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 5
+    }
+  },
+  "packages/ui/src/styles/DisclosureNote.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 4
+    }
+  },
+  "packages/ui/src/styles/DocumentTabs.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 15
+    }
+  },
+  "packages/ui/src/styles/FeedbackStates.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 11
+    },
+    "declaration-property-value-allowed-list": {
+      "count": 2
+    }
+  },
+  "packages/ui/src/styles/FileDropzone.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 10
+    },
+    "declaration-property-value-allowed-list": {
+      "count": 2
+    }
+  },
+  "packages/ui/src/styles/FormFields.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 23
+    }
+  },
+  "packages/ui/src/styles/GroupedRows.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 4
+    }
+  },
+  "packages/ui/src/styles/Heatmap.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 6
+    },
+    "declaration-property-value-allowed-list": {
+      "count": 1
+    }
+  },
+  "packages/ui/src/styles/Icon.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 2
+    }
+  },
+  "packages/ui/src/styles/Indicators.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 5
+    },
+    "declaration-property-value-allowed-list": {
+      "count": 2
+    }
+  },
+  "packages/ui/src/styles/InfoChip.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 3
+    }
+  },
+  "packages/ui/src/styles/Kbd.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 8
+    }
+  },
+  "packages/ui/src/styles/Markdown.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 4
+    },
+    "declaration-property-value-allowed-list": {
+      "count": 2
+    }
+  },
+  "packages/ui/src/styles/MarkdownEditor.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 2
+    }
+  },
+  "packages/ui/src/styles/Menu.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 36
+    },
+    "declaration-property-value-allowed-list": {
+      "count": 4
+    }
+  },
+  "packages/ui/src/styles/Menubar.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 4
+    }
+  },
+  "packages/ui/src/styles/Message.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 2
+    },
+    "declaration-property-value-allowed-list": {
+      "count": 1
+    }
+  },
+  "packages/ui/src/styles/Motion.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 8
+    }
+  },
+  "packages/ui/src/styles/NavigationItem.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 10
+    }
+  },
+  "packages/ui/src/styles/Notice.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 3
+    }
+  },
+  "packages/ui/src/styles/PanelDock.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 33
+    },
+    "declaration-property-value-allowed-list": {
+      "count": 8
+    },
+    "no-duplicate-selectors": {
+      "count": 1
+    }
+  },
+  "packages/ui/src/styles/Popover.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 5
+    },
+    "declaration-property-value-allowed-list": {
+      "count": 1
+    }
+  },
+  "packages/ui/src/styles/Rating.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 4
+    }
+  },
+  "packages/ui/src/styles/RichText.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 17
+    },
+    "declaration-property-value-allowed-list": {
+      "count": 1
+    }
+  },
+  "packages/ui/src/styles/SegmentedControl.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 3
+    }
+  },
+  "packages/ui/src/styles/Select.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 17
+    },
+    "declaration-property-value-allowed-list": {
+      "count": 2
+    },
+    "no-duplicate-selectors": {
+      "count": 1
+    }
+  },
+  "packages/ui/src/styles/Slider.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 4
+    },
+    "declaration-property-value-allowed-list": {
+      "count": 1
+    }
+  },
+  "packages/ui/src/styles/Stat.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 6
+    },
+    "declaration-property-value-allowed-list": {
+      "count": 1
+    }
+  },
+  "packages/ui/src/styles/Table.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 20
+    },
+    "declaration-property-value-allowed-list": {
+      "count": 5
+    }
+  },
+  "packages/ui/src/styles/Tabs.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 4
+    }
+  },
+  "packages/ui/src/styles/Text.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 3
+    }
+  },
+  "packages/ui/src/styles/TitleBar.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 2
+    }
+  },
+  "packages/ui/src/styles/Toast.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 10
+    },
+    "declaration-property-value-allowed-list": {
+      "count": 2
+    },
+    "no-duplicate-selectors": {
+      "count": 1
+    }
+  },
+  "packages/ui/src/styles/Tokens.css": {
+    "no-duplicate-selectors": {
+      "count": 1
+    }
+  },
+  "packages/ui/src/styles/Tree.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 2
+    }
+  },
+  "apps/catalogue/src/styles/Accessibility.css": {
+    "declaration-property-value-allowed-list": {
+      "count": 1
+    }
+  },
+  "apps/catalogue/src/styles/Previews.css": {
+    "declaration-property-value-allowed-list": {
+      "count": 1
+    }
+  },
+  "apps/catalogue/src/styles/Reference.css": {
+    "no-duplicate-selectors": {
+      "count": 1
+    }
+  },
+  "apps/catalogue/src/styles/Shell.css": {
+    "declaration-property-value-allowed-list": {
+      "count": 3
+    }
+  }
+}
