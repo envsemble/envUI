@@ -59,8 +59,9 @@ import { DateTimeFieldFixture } from './DateTimeFields.js';
 import { QuietButtonsFixture } from './QuietButtons.js';
 import { EmptyStatesFixture } from './EmptyStates.js';
 import { RatingsFixture } from './Ratings.js';
+import { DensityFixture } from './Density.js';
 
-/** Fixtures that fill the viewport are only mounted on their own. */
+/** Fixtures that fill the viewport, or need it to themselves, are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
   shell: ShellFixture,
   'two-shells': TwoShellsFixture,
@@ -70,6 +71,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'title-bar': TitleBarFixture,
   'scroll-keys': ScrollKeysFixture,
   'framed-shell': FramedShellFixture,
+  density: DensityFixture,
 };
 
 export default function App() {
