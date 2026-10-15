@@ -88,10 +88,11 @@ The application still decides which destination is selected.
 - `@envsemble/envui` for ordinary UI.
 - `@envsemble/envui/icons/Name` for individual official symbols.
 - `@envsemble/envui/content` when the feature needs code or Markdown.
+- `@envsemble/envui/diff` when the feature shows code diffs.
 - `@envsemble/envui/rich-text` when the feature needs formatted editing or rendering.
 - `@envsemble/envui/assets/*` for raw assets.
 
-The content and rich-text entries depend on Shiki, react-markdown, remark-gfm, marked and Tiptap. They are optional peer dependencies: applications using only the main entry do not install them. An application importing `@envsemble/envui/content` or `@envsemble/envui/rich-text` installs the packages listed under `peerDependencies` in the package manifest, for example `npm install shiki @shikijs/langs @shikijs/themes react-markdown remark-gfm`.
+The content, rich-text and diff entries depend on Shiki, the Pierre code themes, react-markdown, remark-gfm, marked, Tiptap and Diffs. They are optional peer dependencies: applications using only the main entry do not install them. An application importing `@envsemble/envui/content`, `@envsemble/envui/rich-text` or `@envsemble/envui/diff` installs the packages listed under `peerDependencies` in the package manifest, for example `npm install shiki @shikijs/langs @pierre/theme react-markdown remark-gfm`, and `@pierre/diffs` for the diff entry.
 
 Keep optional content/editor imports with their features. Individual icon imports avoid loading the complete catalogue; see [icons](foundations/icons.md) when adding icons.
 

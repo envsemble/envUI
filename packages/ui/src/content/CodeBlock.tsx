@@ -9,7 +9,7 @@ import {
 import { IconButton } from '../actions/Button.js';
 import { ContentCopy } from '../icons/ContentCopy.js';
 import { Check } from '../icons/Check.js';
-import { Theme, type ThemeValue } from '../foundations/Theme.js';
+import { useTheme } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
 import { codeThemeStyle } from './internal/CodeThemes.js';
 import { useCodeHighlighting } from './internal/useCodeHighlighting.js';
@@ -21,22 +21,23 @@ export interface CodeBlockProps extends Omit<ComponentPropsWithRef<'div'>, 'chil
   label?: string;
   copyable?: boolean;
   wrap?: boolean;
-  /** The dark code theme in both app themes by default; optionally override with light or dark. */
-  theme?: ThemeValue;
 }
 
-/** Source display with the code theme's own colors; copy always uses the original string. */
+/**
+ * Source display in the code theme of the app theme, with that code theme's own colors; copy always
+ * uses the original string.
+ */
 export function CodeBlock({
   children: source,
   language,
   label,
   copyable = false,
   wrap = false,
-  theme = 'dark',
   className,
   style,
   ...props
 }: CodeBlockProps) {
+  const theme = useTheme();
   const tokens = useCodeHighlighting(source, language);
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'unavailable'>('idle');
   const preRef = useRef<HTMLPreElement>(null);
@@ -72,18 +73,17 @@ export function CodeBlock({
       style={{ ...codeThemeStyle(theme), ...style }}
     >
       {(label || copyable) && (
-        // The heading follows the code theme, so the copy action uses that theme's colors
-        // whatever the surrounding application theme is.
-        <Theme theme={theme} className="env-code-block-heading">
+        <div className="env-code-block-heading">
           <span>{label ?? language ?? 'Code'}</span>
           {copyable && (
             <IconButton
+              variant="quiet"
               icon={copyStatus === 'copied' ? <Check /> : <ContentCopy />}
               aria-label={copyStatus === 'copied' ? 'Code copied' : 'Copy code'}
               onClick={copy}
             />
           )}
-        </Theme>
+        </div>
       )}
       <pre ref={preRef} tabIndex={0} aria-label={label ?? `${language ?? 'Plain text'} code`}>
         <code>
