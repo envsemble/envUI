@@ -17,6 +17,7 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     viewport: { width: 1440, height: 1000 },
   },
+  // `npm run test:browser` runs the behavior projects; the gates below have their own scripts.
   projects: [
     { name: 'chromium', testIgnore: /LiveDevelopment/, use: { ...devices['Desktop Chrome'] } },
     { name: 'firefox', testIgnore: /LiveDevelopment/, use: { ...devices['Desktop Firefox'] } },
@@ -26,6 +27,12 @@ export default defineConfig({
       testMatch: /LiveDevelopment/,
       dependencies: ['chromium', 'firefox', 'webkit'],
       use: { ...devices['Desktop Chrome'] },
+    },
+    // `npm run test:a11y`: axe over every catalogue page in both themes, Chromium only.
+    {
+      name: 'a11y',
+      testDir: './tests/accessibility',
+      use: { ...devices['Desktop Chrome'], screenshot: 'off' },
     },
   ],
   webServer: [

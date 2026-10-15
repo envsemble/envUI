@@ -20,9 +20,11 @@ The two skills contain routing and workflow instructions. Move conditional compo
 
 ## Verify
 
-Run `npm run verify` at the envUI root. It checks generated icons, types, documentation links, package and offline-catalogue builds, isolated tarball consumers, SSR and browser acceptance.
+Run `npm run verify` at the envUI root. It checks generated icons, types, documentation links, package and offline-catalogue builds, isolated tarball consumers, SSR, browser acceptance and accessibility.
 
 The browser suite starts or reuses the catalogue on port 8770 and the test fixture on 8766. To run it beside another checkout’s servers, choose free ports, for example `ENVUI_CATALOGUE_PORT=8772 ENVUI_FIXTURE_PORT=8767 npm run test:browser`; a reused server on the default ports would otherwise serve the other checkout’s code.
+
+`npm run test:a11y` scans every catalogue page, preview and usage, in both themes with axe in Chromium, against WCAG 2.2 A and AA and axe’s best practices. Today’s violations are listed in `tests/accessibility/KnownViolations.json` by page, theme, rule and element. A violation not on the list fails, and so does a listed one that no longer occurs. After fixing violations, run `npm run test:a11y:update` and commit the shorter list; add to it only for a reviewed reason.
 
 Exercise meaningful interaction changes in both themes, with keyboard focus and dismissal, native form submit/reset, narrow containers and enlarged text. Check portals, wrapping and local scrolling where affected. Inspect bundle boundaries when optional content or icon imports change.
 

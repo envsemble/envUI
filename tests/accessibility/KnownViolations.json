@@ -1,0 +1,949 @@
+{
+  "components/animated-number/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 2
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 7
+      }
+    }
+  },
+  "components/app-shell/preview": {
+    "dark": {
+      "landmark-main-is-top-level": {
+        "Application shell :: main.env-app-content": 1,
+        "Full-width title bar :: main.env-app-content": 1
+      },
+      "landmark-no-duplicate-main": {
+        "main :: main.docs-main": 1
+      },
+      "landmark-unique": {
+        "main :: main.docs-main": 1
+      },
+      "scrollable-region-focusable": {
+        "Title bar alone :: div.env-window-frame-content": 1
+      }
+    },
+    "light": {
+      "landmark-main-is-top-level": {
+        "Application shell :: main.env-app-content": 1,
+        "Full-width title bar :: main.env-app-content": 1
+      },
+      "landmark-no-duplicate-main": {
+        "main :: main.docs-main": 1
+      },
+      "landmark-unique": {
+        "main :: main.docs-main": 1
+      },
+      "scrollable-region-focusable": {
+        "Title bar alone :: div.env-window-frame-content": 1
+      }
+    }
+  },
+  "components/app-shell/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 5
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 96
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    }
+  },
+  "components/avatar/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 1
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 66
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    }
+  },
+  "components/badges/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 5
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 33
+      }
+    }
+  },
+  "components/breadcrumbs/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 4
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 15
+      }
+    }
+  },
+  "components/buttons/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 14
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 116
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    }
+  },
+  "components/cards/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 6
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 38
+      }
+    }
+  },
+  "components/checkbox/usage": {
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 10
+      }
+    }
+  },
+  "components/chips/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 2
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 3
+      }
+    }
+  },
+  "components/code/preview": {
+    "dark": {
+      "color-contrast": {
+        "Highlighted source :: div.env-code-block span": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "Code diff :: div.env-code-diff diffs-container": 15,
+        "Highlighted source :: div.env-code-block span": 4,
+        "Wrapped source :: div.env-code-block span": 4
+      }
+    }
+  },
+  "components/code/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 3
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 22
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    }
+  },
+  "components/color-picker/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 1
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 33
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    }
+  },
+  "components/combobox/preview": {
+    "dark": {
+      "aria-allowed-attr": {
+        "Validation & availability :: div.env-combobox-chip": 1
+      }
+    },
+    "light": {
+      "aria-allowed-attr": {
+        "Validation & availability :: div.env-combobox-chip": 1
+      }
+    }
+  },
+  "components/combobox/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 4
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 87
+      }
+    }
+  },
+  "components/command-palette/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 5
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 55
+      }
+    }
+  },
+  "components/composer/usage": {
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 27
+      }
+    }
+  },
+  "components/date-time-field/usage": {
+    "dark": {
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 46
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    }
+  },
+  "components/dialogs/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 4
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 23
+      }
+    }
+  },
+  "components/direction-links/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 8
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 36
+      }
+    }
+  },
+  "components/disclosures/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 5
+      }
+    }
+  },
+  "components/document-tabs/preview": {
+    "dark": {
+      "nested-interactive": {
+        "Open documents :: div.env-document-tab": 1
+      }
+    },
+    "light": {
+      "nested-interactive": {
+        "Open documents :: div.env-document-tab": 1
+      }
+    }
+  },
+  "components/document-tabs/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 45
+      }
+    }
+  },
+  "components/empty-state/preview": {
+    "dark": {
+      "heading-order": {
+        "In place of a page’s content :: h4.env-text.env-text-section-heading": 1
+      }
+    },
+    "light": {
+      "heading-order": {
+        "In place of a page’s content :: h4.env-text.env-text-section-heading": 1
+      }
+    }
+  },
+  "components/empty-state/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 15
+      }
+    }
+  },
+  "components/fields/preview": {
+    "dark": {
+      "target-size": {
+        "States & validation :: button.env-textarea-resize-edge": 3,
+        "Textarea appearance & sizing :: button.env-textarea-resize-edge": 1
+      }
+    },
+    "light": {
+      "target-size": {
+        "States & validation :: button.env-textarea-resize-edge": 3,
+        "Textarea appearance & sizing :: button.env-textarea-resize-edge": 1
+      }
+    }
+  },
+  "components/fields/usage": {
+    "dark": {
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 79
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    }
+  },
+  "components/file-dropzone/preview": {
+    "dark": {
+      "label-content-name-mismatch": {
+        "Drop or browse :: button.env-file-dropzone-target": 1,
+        "States :: button.env-file-dropzone-target": 2
+      }
+    },
+    "light": {
+      "label-content-name-mismatch": {
+        "Drop or browse :: button.env-file-dropzone-target": 1,
+        "States :: button.env-file-dropzone-target": 2
+      }
+    }
+  },
+  "components/file-dropzone/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 2
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 81
+      }
+    }
+  },
+  "components/heatmap/usage": {
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 61
+      }
+    }
+  },
+  "components/hover-card/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 3
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 13
+      }
+    }
+  },
+  "components/keyboard/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 4
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 6
+      }
+    }
+  },
+  "components/layout/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 7
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 17
+      }
+    }
+  },
+  "components/loading/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 4
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 36
+      }
+    }
+  },
+  "components/markdown/preview": {
+    "light": {
+      "color-contrast": {
+        "Rendered markdown :: a.env-button.env-button-text.env-button-underlined.env-link": 1
+      }
+    }
+  },
+  "components/markdown/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 5
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 100
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    }
+  },
+  "components/menu/preview": {
+    "light": {
+      "color-contrast": {
+        "Building blocks :: button.env-button.env-button-text": 3
+      }
+    }
+  },
+  "components/menu/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 17
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 158
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    }
+  },
+  "components/menubar/preview": {
+    "dark": {
+      "target-size": {
+        "Application menubar :: button.env-textarea-resize-edge": 1
+      }
+    },
+    "light": {
+      "target-size": {
+        "Application menubar :: button.env-textarea-resize-edge": 1
+      }
+    }
+  },
+  "components/menubar/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 7
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 66
+      }
+    }
+  },
+  "components/messages/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 67
+      }
+    }
+  },
+  "components/meters/usage": {
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 19
+      }
+    }
+  },
+  "components/navigation/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 4
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 22
+      }
+    }
+  },
+  "components/notices/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 3
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 20
+      }
+    }
+  },
+  "components/pagination/usage": {
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 25
+      }
+    }
+  },
+  "components/panel-dock/preview": {
+    "dark": {
+      "landmark-unique": {
+        "Docked panels :: section.env-panel-dock-panel": 2
+      },
+      "target-size": {
+        "Docked panels :: button.env-textarea-resize-edge": 2,
+        "Maximized panel :: button.env-textarea-resize-edge": 2,
+        "Minimize what does not fit :: button.env-textarea-resize-edge": 2
+      }
+    },
+    "light": {
+      "landmark-unique": {
+        "Docked panels :: section.env-panel-dock-panel": 2
+      },
+      "target-size": {
+        "Docked panels :: button.env-textarea-resize-edge": 2,
+        "Maximized panel :: button.env-textarea-resize-edge": 2,
+        "Minimize what does not fit :: button.env-textarea-resize-edge": 2
+      }
+    }
+  },
+  "components/panel-dock/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 6
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 142
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    }
+  },
+  "components/popover/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 5
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 35
+      }
+    }
+  },
+  "components/radio/usage": {
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 25
+      }
+    }
+  },
+  "components/rating/usage": {
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 13
+      }
+    }
+  },
+  "components/relative-time/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 13
+      }
+    }
+  },
+  "components/rich-text/preview": {
+    "dark": {
+      "target-size": {
+        "Formatted editing and saved content :: div.env-markdown.env-rich-text-document input": 2
+      }
+    },
+    "light": {
+      "target-size": {
+        "Formatted editing and saved content :: div.env-markdown.env-rich-text-document input": 2
+      }
+    }
+  },
+  "components/rich-text/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 5
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 116
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    }
+  },
+  "components/rows/preview": {
+    "light": {
+      "color-contrast": {
+        "Rows that open something :: a.env-button.env-button-text.env-link": 2
+      }
+    }
+  },
+  "components/rows/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 3
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 44
+      }
+    }
+  },
+  "components/segmented-control/preview": {
+    "light": {
+      "color-contrast": {
+        "One choice among a few :: span.env-segment-count": 2
+      }
+    }
+  },
+  "components/segmented-control/usage": {
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 25
+      }
+    }
+  },
+  "components/select/usage": {
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 27
+      }
+    }
+  },
+  "components/slider/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 20
+      }
+    }
+  },
+  "components/stats/usage": {
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 35
+      }
+    }
+  },
+  "components/surface/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 2
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 17
+      }
+    }
+  },
+  "components/switch/usage": {
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 10
+      }
+    }
+  },
+  "components/tables/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 12
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 197
+      }
+    }
+  },
+  "components/tabs/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 12
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 22
+      }
+    }
+  },
+  "components/toasts/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 3
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 49
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    }
+  },
+  "components/tooltip/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 16
+      }
+    }
+  },
+  "components/tree/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 5
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 61
+      }
+    }
+  },
+  "foundations/accessibility/usage": {
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 13
+      }
+    }
+  },
+  "foundations/colors/preview": {
+    "dark": {
+      "color-contrast": {
+        "preview :: button.env-button.env-button-secondary.docs-swatch code": 4
+      },
+      "label-content-name-mismatch": {
+        "preview :: button.env-button.env-button-secondary.docs-swatch": 73
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "preview :: button.env-button.env-button-secondary.docs-swatch code": 4
+      },
+      "label-content-name-mismatch": {
+        "preview :: button.env-button.env-button-secondary.docs-swatch": 73
+      }
+    }
+  },
+  "foundations/colors/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 1
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 14
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    }
+  },
+  "foundations/composition/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 2
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 36
+      }
+    }
+  },
+  "foundations/icons/usage": {
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 20
+      }
+    }
+  },
+  "foundations/spacing/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 2
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 11
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    }
+  },
+  "foundations/typography/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 10
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 27
+      }
+    }
+  },
+  "overview/components": {
+    "dark": {
+      "label-content-name-mismatch": {
+        "main :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 53
+      }
+    },
+    "light": {
+      "label-content-name-mismatch": {
+        "main :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 53
+      }
+    }
+  },
+  "overview/get-started": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 3
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 51
+      }
+    }
+  }
+}

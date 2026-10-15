@@ -124,7 +124,8 @@ Open the catalogue at [localhost:8770](http://127.0.0.1:8770). It consumes libra
 | `npm run build`        | Build the package and offline catalogue            |
 | `npm test`             | Test package consumers, SSR and hydration          |
 | `npm run test:browser` | Check interactions in Chromium, Firefox and WebKit |
-| `npm run verify`       | Run the complete CI verification sequence          |
+| `npm run test:a11y`    | Scan every catalogue page with axe in both themes  |
+| `npm run verify`       | Run the complete verification sequence             |
 
 Install browser engines before running the full checks:
 
