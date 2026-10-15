@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.7.0 — 2026-10-15
 
 Code in the Pierre themes that Diffs (diffs.com) uses, and code diffs rendered by Diffs; centred empty states, compact tabs, diff counts, ratings and color swatches; the soft blue primary action in the dark theme. Split views are gone.
 
