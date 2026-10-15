@@ -117,15 +117,18 @@ npm run dev
 
 Open the catalogue at [localhost:8770](http://127.0.0.1:8770). It consumes library source directly and updates as you edit.
 
-| Command                | Purpose                                            |
-| ---------------------- | -------------------------------------------------- |
-| `npm run dev:library`  | Watch compiled exports for a linked external app   |
-| `npm run typecheck`    | Check the library and catalogue                    |
-| `npm run build`        | Build the package and offline catalogue            |
-| `npm test`             | Test package consumers, SSR and hydration          |
-| `npm run test:browser` | Check interactions in Chromium, Firefox and WebKit |
-| `npm run verify`       | Run the complete CI verification sequence          |
-| `npm run changeset`    | Record a change for the changelog                  |
+| Command                | Purpose                                                       |
+| ---------------------- | ------------------------------------------------------------- |
+| `npm run dev:library`  | Watch compiled exports for a linked external app              |
+| `npm run lint`         | Lint components, the catalogue, tests and scripts with ESLint |
+| `npm run lint:css`     | Lint styles with Stylelint                                    |
+| `npm run format`       | Format with Prettier; `npm run format:check` only checks      |
+| `npm run typecheck`    | Check the library and catalogue                               |
+| `npm run build`        | Build the package and offline catalogue                       |
+| `npm test`             | Test package consumers, SSR and hydration                     |
+| `npm run test:browser` | Check interactions in Chromium, Firefox and WebKit            |
+| `npm run verify`       | Run the complete CI verification sequence                     |
+| `npm run changeset`    | Record a change for the changelog                             |
 
 Install browser engines before running the full checks:
 

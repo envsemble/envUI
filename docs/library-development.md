@@ -30,7 +30,15 @@ Describe the pattern rather than the application that needed it: changesets, the
 
 ## Verify
 
-Run `npm run verify` at the envUI root. It checks generated icons, types, documentation links, package and offline-catalogue builds, isolated tarball consumers, SSR and browser acceptance.
+Run `npm run verify` at the envUI root. It checks generated icons, lint, formatting, types, documentation links, package and offline-catalogue builds, isolated tarball consumers, SSR and browser acceptance.
+
+- `npm run lint` runs ESLint over components, the catalogue, tests and scripts. It reports likely bugs and the Rules of Hooks, not style.
+- `npm run lint:css` runs Stylelint over the library's and the catalogue's CSS. Colors, stacking order (`z-index`) and font weights come from tokens; lengths that follow the text size use rem, and px is only for hairlines: border and outline widths, focus-ring offsets and shadow offsets. Library components take their sizes from tokens rather than literal rem values.
+- `npm run format:check` checks Prettier formatting; `npm run format` applies it.
+
+Where a rule does not fit one line, disable it on that line with the reason: a comment above `// eslint-disable-next-line rule`, or `/* stylelint-disable-next-line rule -- reason */`.
+
+Style violations from before these rules are recorded per file and rule in `stylelint-suppressions.json` until the tokens replace them. A listed file fails once it has more violations of a rule than recorded, and a new file has none to spare. After removing some, run `npm run lint:css -- --suppress` while `npm run lint:css` passes, so the lower counts are recorded; the file should only shrink.
 
 The browser suite starts or reuses the catalogue on port 8770 and the test fixture on 8766. To run it beside another checkout’s servers, choose free ports, for example `ENVUI_CATALOGUE_PORT=8772 ENVUI_FIXTURE_PORT=8767 npm run test:browser`; a reused server on the default ports would otherwise serve the other checkout’s code.
 
