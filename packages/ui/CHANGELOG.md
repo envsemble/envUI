@@ -6,7 +6,7 @@ Code in the Pierre themes that Diffs (diffs.com) uses, and code diffs rendered b
 
 ### Breaking changes
 
-- `SplitView` is removed, with its divider. Lay out a list beside its detail with an application grid and a `Surface` pane for the detail, as Console's submissions do; follow the region's width with a `ResizeObserver` where the layout changes, such as to open the detail in a `Dialog` on narrow screens.
+- `SplitView` is removed, with its divider. Lay out a list beside its detail with an application grid and a `Surface` pane for the detail; follow the region's width with a `ResizeObserver` where the layout changes, such as to open the detail in a `Dialog` on narrow screens.
 - `Code`'s `appearance` and `Markdown`'s `inlineCode` are removed, with the subtle inline code; `CodeBlock`'s `theme` is removed. Code always takes the code theme of the app theme. Migration: delete the props.
 - The content entry's optional peer `@shikijs/themes` is replaced by `@pierre/theme` (2.x): install `@pierre/theme` and remove `@shikijs/themes`.
 
