@@ -33,6 +33,7 @@ import { CommandPalettePreview, DocumentTabsPreview, TreePreview } from './Works
 import {
   BadgesPreview,
   BreadcrumbsPreview,
+  HoverCardPreview,
   KbdPreview,
   NoticesPreview,
   PopoverPreview,
@@ -125,6 +126,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <NoticesPreview />;
     case 'popover':
       return <PopoverPreview />;
+    case 'hover-card':
+      return <HoverCardPreview />;
     case 'dialogs':
       return <DialogsPreview />;
     case 'menu':

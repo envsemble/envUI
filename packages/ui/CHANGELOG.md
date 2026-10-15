@@ -8,6 +8,8 @@
 
 - `Input`, `SearchField` and other text fields take `variant="quiet"`: only the text and the start icon at rest, with no border, underline or fill; a soft fill under the pointer and while focused; the placeholder clears once the field has focus. For a search at the top of a sidebar or a list.
 
+- `HoverCard`: supplementary details beside a trigger such as a link, like a link preview, on `Popover`'s raised surface, padding and type, in two widths. It opens once the pointer rests on the trigger for `delay` (600 ms) and at once on keyboard focus, stays open while the pointer moves onto it so its text can be selected, and closes `closeDelay` (300 ms) after the pointer leaves the trigger and the card, or with <kbd>Esc</kbd>. Focus stays on the trigger, and the card is not announced as a dialog. It keeps the originating theme, flips at the window edge and sits above dialogs; `open`, `defaultOpen` and `onOpenChange` control it.
+
 ### Fixed
 
 - A `Table` with `stickyHeader` no longer swallows the wheel: over a region without a height of its own, or scrolled to an end, the wheel scrolls the page again (it stopped in Chromium).

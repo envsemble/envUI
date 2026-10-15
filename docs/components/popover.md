@@ -46,5 +46,6 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Tooltips](../components/tooltip.md)
+- [Hover cards](../components/hover-card.md)
 - [Menus](../components/menu.md)
 - [Dialogs](../components/dialogs.md)

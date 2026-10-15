@@ -28,7 +28,12 @@ import { DocumentTabsFixture, FillTabsFixture, TabStatesFixture } from './Tabs.j
 import { CommandPaletteFixture } from './Palette.js';
 import { SegmentedControlFixture } from './Segments.js';
 import { BadgesFixture } from './Badges.js';
-import { DialogVariantsFixture, NoticesFixture, PopoverFixture } from './Overlays.js';
+import {
+  DialogVariantsFixture,
+  HoverCardFixture,
+  NoticesFixture,
+  PopoverFixture,
+} from './Overlays.js';
 import { DataDisplayFixture } from './DataDisplay.js';
 import { TablesFixture } from './Tables.js';
 import { AffixesFixture } from './Affixes.js';
@@ -169,6 +174,12 @@ export default function App() {
             <>
               <PopoverFixture theme="light" />
               <PopoverFixture theme="dark" />
+            </>
+          )}
+          {includes('hover-card') && (
+            <>
+              <HoverCardFixture theme="light" />
+              <HoverCardFixture theme="dark" />
             </>
           )}
           {includes('data-display') && (

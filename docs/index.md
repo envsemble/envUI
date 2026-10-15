@@ -84,4 +84,5 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Menubar](components/menubar.md) — An application menubar of compact menus with shortcuts, submenus and access keys.
 - [Tooltips](components/tooltip.md) — Short hints on hover and keyboard focus.
 - [Popovers](components/popover.md) — A floating panel for details or a small form beside its trigger.
+- [Hover cards](components/hover-card.md) — Supplementary details beside a link on hover and keyboard focus, like a link preview.
 - [Meters & progress](components/meters.md) — Quantities within a range and task completion.
