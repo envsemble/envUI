@@ -20,11 +20,13 @@ The two skills contain routing and workflow instructions. Move conditional compo
 
 ## Verify
 
-Run `npm run verify` at the envUI root. It checks generated icons, types, documentation links, package and offline-catalogue builds, isolated tarball consumers, SSR, browser acceptance and accessibility.
+Run `npm run verify` at the envUI root. It checks generated icons, types, documentation links, package and offline-catalogue builds, isolated tarball consumers, SSR, browser acceptance, accessibility and the visual baseline.
 
 The browser suite starts or reuses the catalogue on port 8770 and the test fixture on 8766. To run it beside another checkout’s servers, choose free ports, for example `ENVUI_CATALOGUE_PORT=8772 ENVUI_FIXTURE_PORT=8767 npm run test:browser`; a reused server on the default ports would otherwise serve the other checkout’s code.
 
 `npm run test:a11y` scans every catalogue page, preview and usage, in both themes with axe in Chromium, against WCAG 2.2 A and AA and axe’s best practices. Today’s violations are listed in `tests/accessibility/KnownViolations.json` by page, theme, rule and element. A violation not on the list fails, and so does a listed one that no longer occurs. After fixing violations, run `npm run test:a11y:update` and commit the shorter list; add to it only for a reviewed reason.
+
+`npm run test:visual` compares the catalogue’s specimens, their forced interaction states and the density specimens in both themes with the screenshots in `tests/visual/snapshots`. It renders inside the Linux Playwright image in Docker, with Linux dependencies in named volumes, so every machine draws the same pixels. After an intended visual change, run `npm run test:visual:update` and review the changed images like code. `npm run verify` skips the visual baseline with a warning when Docker is not running, so run it with Docker before a release.
 
 Exercise meaningful interaction changes in both themes, with keyboard focus and dismissal, native form submit/reset, narrow containers and enlarged text. Check portals, wrapping and local scrolling where affected. Inspect bundle boundaries when optional content or icon imports change.
 

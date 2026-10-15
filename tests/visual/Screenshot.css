@@ -1,0 +1,6 @@
+/* Applied while the visual baseline takes a screenshot. The catalogue's fixed controls would float
+   over whichever specimen is scrolled beneath them. */
+.docs-theme-toggle,
+.docs-skip {
+  visibility: hidden !important;
+}
