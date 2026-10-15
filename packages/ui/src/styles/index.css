@@ -24,7 +24,6 @@
 @import './DirectionLink.css';
 @import './Tabs.css';
 @import './Layout.css';
-@import './SplitView.css';
 @import './ChoiceControls.css';
 @import './FormFields.css';
 @import './ColorPicker.css';
@@ -44,6 +43,8 @@
 @import './Indicators.css';
 @import './AvatarGroup.css';
 @import './RelativeTime.css';
+@import './Rating.css';
+@import './ColorSwatch.css';
 @import './Menu.css';
 @import './Menubar.css';
 @import './Tree.css';

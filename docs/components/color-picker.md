@@ -32,6 +32,30 @@ import { ColorPicker } from '@envsemble/envui';
 - Uncontrolled native form reset restores defaultValue without emitting onValueChange. Controlled reset retains value; the application resets its own state. Canceling the reset event preserves the draft.
 - Disabled pickers cannot be edited or focused and are excluded from native form submission. Read-only pickers prevent edits while retaining a focusable, copyable HEX field.
 
+## Color swatch
+
+```tsx
+import { Button, ColorPicker, ColorSwatch, Popover } from '@envsemble/envui';
+
+<Popover
+  trigger={
+    <Button variant="secondary" startIcon={<ColorSwatch color={color} />}>
+      {color.toUpperCase()}
+    </Button>
+  }
+>
+  <ColorPicker label="Accent color" value={color} onValueChange={setColor} />
+</Popover>;
+```
+
+| Name              | Contract                                           |
+| ----------------- | -------------------------------------------------- |
+| color             | The color it shows, in any CSS color format        |
+| Native span props | className, style, ref and attributes on the swatch |
+
+- ColorSwatch is a round sample of a color with a hairline ring, so white and black samples stay visible on every surface. It is decorative and hidden from assistive technology: name or write the color beside it, such as its HEX value.
+- As a Button's start icon it takes the icon's size, as on a button that opens a ColorPicker in a Popover; elsewhere it is 1 rem.
+
 TypeScript declarations provide the complete public API.
 
 ## Related topics
