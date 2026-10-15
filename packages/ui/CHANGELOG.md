@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## 0.6.0 — 2026-10-15
+
+Components for workspaces that track jobs and for tools that sit beside a page: docked panels, comboboxes, date and time fields, calendars, pagination, relative times, avatar groups and copy buttons; a hover card, a quiet text field and a quiet button, and Close all tabs in the document tab strip. A table with a sticky header no longer swallows the wheel.
 
 ### Added
 
