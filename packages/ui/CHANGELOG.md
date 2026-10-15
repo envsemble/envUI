@@ -6,6 +6,8 @@
 
 - `DocumentTabs` `onCloseAll`: the strip and each tab open a compact context menu on right click, long press, the <kbd>Menu</kbd> key and <kbd>Shift</kbd>+<kbd>F10</kbd>, with Close all tabs, which calls it; on a tab, the menu first offers closing that tab through `onClose`. When the tab that had focus closes from the menu, focus moves to the tab that becomes active. `closeAllLabel` and `contextMenuLabel` localize the item and the menu's name. Without `onCloseAll`, the strip keeps the browser's own context menu.
 
+- `Input`, `SearchField` and other text fields take `variant="quiet"`: only the text and the start icon at rest, with no border, underline or fill; a soft fill under the pointer and while focused; the placeholder clears once the field has focus. For a search at the top of a sidebar or a list.
+
 ### Fixed
 
 - A `Table` with `stickyHeader` no longer swallows the wheel: over a region without a height of its own, or scrolled to an end, the wheel scrolls the page again (it stopped in Chromium).

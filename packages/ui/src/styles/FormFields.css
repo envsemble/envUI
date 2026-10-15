@@ -151,6 +151,31 @@
   border-block-end-color: var(--env-field-border-color);
   box-shadow: 0 calc(0.0625rem * var(--scale, 1)) 0 var(--env-field-border-color);
 }
+/* Quiet fields are only their text and icon at rest: no border, underline or fill. A soft fill
+   shows under the pointer and while the field has focus, the icon keeps its quiet color, and the
+   placeholder clears once the field has focus. An invalid quiet field shows its red border. */
+.env-text-field-well[data-variant='quiet'] {
+  border-color: transparent;
+  background: transparent;
+  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+}
+@media (hover: hover) {
+  .env-text-field-well[data-variant='quiet']:hover:not(:has(> .env-text-input:disabled)) {
+    background: var(--color-fill-hover);
+  }
+}
+.env-text-field-well[data-variant='quiet']:focus-within {
+  background: var(--color-fill-hover);
+}
+.env-text-field-well[data-variant='quiet']:focus-within > .env-text-field-start {
+  color: var(--color-field-label);
+}
+.env-text-field-well[data-variant='quiet'] > .env-text-input:focus::placeholder {
+  color: transparent;
+}
+.env-text-field-well[data-variant='quiet']:has(> .env-text-input[aria-invalid='true']) {
+  border-color: var(--env-field-border-color);
+}
 /* Invalid outlined controls recolor their existing border; plain controls use an underline. */
 .env-text-field-well:has(> .env-text-input[aria-invalid='true']),
 .env-dropdown-trigger[aria-invalid='true'] {

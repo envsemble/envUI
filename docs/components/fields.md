@@ -17,16 +17,16 @@ import { Input } from '@envsemble/envui';
 
 ### Props & contracts
 
-| Name                 | Contract                                                                                  |
-| -------------------- | ----------------------------------------------------------------------------------------- |
-| variant              | "outlined" (default) or "plain": transparent, with an underline on hover or focus         |
-| label / hint / error | Floating label; hint and error message are linked to the control                          |
-| startIcon            | Decorative icon at the start of the field                                                 |
-| endAction            | A control at the end of the field, such as a clear IconButton                             |
-| compact              | Match the button height; the label is hidden unless showLabel is set                      |
-| showLabel            | Float the label into the outline on focus or input; true unless the field is compact      |
-| prefix / suffix      | Short text inside the field before or after the value, such as an address start or a unit |
-| Native input props   | value/defaultValue, onChange, name, type, required, disabled, readOnly, ref               |
+| Name                 | Contract                                                                                                                                                                      |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| variant              | "outlined" (default); "plain": transparent, with an underline on hover or focus; "quiet": only its text and icon, a soft fill on hover or focus, placeholder cleared on focus |
+| label / hint / error | Floating label; hint and error message are linked to the control                                                                                                              |
+| startIcon            | Decorative icon at the start of the field                                                                                                                                     |
+| endAction            | A control at the end of the field, such as a clear IconButton                                                                                                                 |
+| compact              | Match the button height; the label is hidden unless showLabel is set                                                                                                          |
+| showLabel            | Float the label into the outline on focus or input; true unless the field is compact                                                                                          |
+| prefix / suffix      | Short text inside the field before or after the value, such as an address start or a unit                                                                                     |
+| Native input props   | value/defaultValue, onChange, name, type, required, disabled, readOnly, ref                                                                                                   |
 
 ## SearchField
 
@@ -80,7 +80,7 @@ import { Textarea } from '@envsemble/envui';
 - Use compact fields in toolbars and beside buttons: they share the 2.5 rem control height and pill shape. Use the default floating-label size in forms.
 - A compact field shows its placeholder, or with showLabel a label that rests inside and floats into the outline without adding height, so the field stays aligned with buttons.
 - Use a text IconButton as endAction. Inside the field it takes the field's quiet icon color and shows a state layer on hover and press.
-- SearchField shows a search icon and, while it has a query, a clear button inside the field. <kbd>Esc</kbd> also clears the query and keeps an enclosing dialog open.
+- SearchField shows a search icon and, while it has a query, a clear button inside the field. `variant="quiet"` suits a search at the top of a sidebar or list: no outline until the pointer or focus gives it a soft fill. <kbd>Esc</kbd> also clears the query and keeps an enclosing dialog open.
 - Use Input for one line and Textarea for multiline content. Both share the same corner radius. Fixed sizing scrolls and resizes from the full bottom edge; content sizing grows and shrinks automatically. Set rows for the initial or minimum height.
 - The resize edge follows the field’s border color on hover, focus and error, and uses the pressed shade while dragging. Focus the edge and use <kbd>↑</kbd> and <kbd>↓</kbd> to change height by one line, or <kbd>Shift</kbd>+<kbd>↑</kbd> and <kbd>Shift</kbd>+<kbd>↓</kbd> for five lines. <kbd>Home</kbd> restores the minimum height. Disabled fields cannot resize.
 - Outlined fields turn their single thin border blue on hover and focus in both themes, without changing the background or adding an outline. Hover and pressed colors follow the shared HSL rule, including while focused. Invalid borders and plain-field error underlines stay red and change shade on hover or press.

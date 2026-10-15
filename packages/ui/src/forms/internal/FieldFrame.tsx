@@ -9,8 +9,12 @@ export interface FieldProps {
 }
 
 export interface TextFieldAppearanceProps {
-  /** Outlined by default; plain shows an underline on hover or focus without a border or fill. */
-  variant?: 'outlined' | 'plain';
+  /**
+   * Outlined by default; plain shows an underline on hover or focus without a border or fill; quiet
+   * is only its text (and icon) at rest, takes a soft fill under the pointer and while focused, and
+   * clears its placeholder once focused, for a search at the top of a sidebar.
+   */
+  variant?: 'outlined' | 'plain' | 'quiet';
 }
 
 export interface TextFieldDecorationProps {
