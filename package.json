@@ -19,6 +19,8 @@
     "test": "node --test tests/*.test.mjs",
     "test:browser": "playwright test",
     "lint": "eslint . --cache --cache-location .cache/eslint/",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "verify": "npm run icons:check && npm run typecheck && npm run build && npm test && npm run test:browser",
     "brand:generate": "node scripts/GenerateBrandAssets.mjs",
     "icons:sync": "node scripts/SyncIcons.mjs",
