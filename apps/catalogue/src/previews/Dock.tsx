@@ -146,6 +146,8 @@ function DocumentWindow({
 }) {
   const [draft, setDraft] = useState(document.draft);
   const changed = draft !== '';
+  // Reports only when the draft starts or stops differing; the callback is new on every render.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => onChangedChange(changed), [changed]);
   return (
     <>

@@ -325,6 +325,9 @@ export interface TableHeaderCellProps
 /** The column at the inline end of a header cell, counting the columns that cells before it span. */
 function useColumnIndex(cell: RefObject<HTMLTableCellElement | null>, enabled: boolean) {
   const [column, setColumn] = useState<number>();
+  // Read after every render: the column depends on the cells before this one, which are not in its
+  // props. Setting the same column again renders nothing.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(() => {
     const element = cell.current;
     if (!enabled || !element?.parentElement) return;

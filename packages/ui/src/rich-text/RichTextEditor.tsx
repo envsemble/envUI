@@ -233,6 +233,8 @@ export const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorPro
           : null,
     });
     useImperativeHandle(ref, () => ({ editor }), [editor]);
+    const describedByIds = metadata['aria-describedby'];
+    const invalidState = metadata['aria-invalid'];
     useLayoutEffect(() => {
       if (!editor) return;
       focusTarget.current = editor.view.dom;
@@ -249,8 +251,8 @@ export const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorPro
               label != null && typeof label !== 'string' && !ariaLabel
                 ? `${metadata.id}-label`
                 : '',
-            'aria-describedby': metadata['aria-describedby'] ?? '',
-            'aria-invalid': String(metadata['aria-invalid'] ?? false),
+            'aria-describedby': describedByIds ?? '',
+            'aria-invalid': String(invalidState ?? false),
             'aria-disabled': String(disabled),
             'aria-readonly': String(readOnly),
           },
@@ -268,9 +270,12 @@ export const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorPro
       label,
       ariaLabel,
       metadata.id,
-      metadata['aria-describedby'],
-      metadata['aria-invalid'],
+      describedByIds,
+      invalidState,
     ]);
+    // Runs after every render: the document can drift from a controlled value that stays the same,
+    // as when the application declines an edit. Setting the same Markdown again renders nothing.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useLayoutEffect(() => {
       if (!editor || value === undefined || value === editor.getMarkdown()) return;
       if (

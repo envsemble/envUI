@@ -55,7 +55,7 @@ function run(script, args = [], cwd = consumerDirectory) {
     });
   } catch (error) {
     const detail = [error.stdout, error.stderr].filter(Boolean).join('\n').slice(-12000);
-    throw new Error(`Consumer command failed: ${script}\n${detail}`);
+    throw new Error(`Consumer command failed: ${script}\n${detail}`, { cause: error });
   }
 }
 

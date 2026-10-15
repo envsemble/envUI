@@ -23,6 +23,8 @@ export function ActionElement({ disabled = false, ...props }: ActionElementProps
     return LinkComponent === 'a' ? (
       <a {...sharedProps} href={href} onClick={onClick} />
     ) : (
+      // The link component comes from LinkProvider and keeps its identity between renders.
+      // eslint-disable-next-line react-hooks/static-components
       <LinkComponent {...sharedProps} href={href} onClick={onClick} />
     );
   }

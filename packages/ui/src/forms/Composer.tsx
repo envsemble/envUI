@@ -152,8 +152,10 @@ export function Composer({
   // only an enclosing form reports its status.
   const { pending: formPending } = useFormStatus();
   const busy = pending || formPending;
-  // Whether the field belongs to a form, known once it is in the document.
+  // Whether the field belongs to a form, known once it is in the document. Read after every render:
+  // the owning form is found in the document, not in props.
   const [inForm, setInForm] = useState(form !== undefined);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(() => {
     setInForm(Boolean(inputRef.current?.form));
   });

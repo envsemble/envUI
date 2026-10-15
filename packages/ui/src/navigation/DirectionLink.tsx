@@ -24,6 +24,8 @@ export function DirectionLink({
   const symbol = icon != null ? <DecorativeIcon>{icon}</DecorativeIcon> : null;
 
   return (
+    // The link component comes from LinkProvider and keeps its identity between renders.
+    // eslint-disable-next-line react-hooks/static-components
     <LinkComponent
       {...props}
       rel={rel ?? (isPrevious ? 'prev' : 'next')}

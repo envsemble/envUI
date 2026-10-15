@@ -399,6 +399,8 @@ export function MenuItem({
     return (
       <BaseMenu.LinkItem
         className={itemClassName}
+        // The link component comes from LinkProvider and keeps its identity between renders.
+        // eslint-disable-next-line react-hooks/static-components
         render={<LinkComponent href={props.href} target={props.target} rel={props.rel} />}
         aria-disabled={disabled || undefined}
         {...accessibility}

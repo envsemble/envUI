@@ -90,6 +90,8 @@ export function insertMarkdownLink(
   link: MarkdownLink,
 ): MarkdownSelection {
   const href = link.href.trim();
+  // Control characters are what the pattern looks for: a link may not contain them.
+  // eslint-disable-next-line no-control-regex
   if (!href || !defaultUrlTransform(href) || /[\u0000-\u001f\u007f]/u.test(href)) {
     throw new Error('Enter a valid URL or relative path.');
   }

@@ -457,6 +457,8 @@ export function AppShell({
       shell.current?.ownerDocument ?? (typeof document === 'undefined' ? null : document);
     if (!page) return null;
     return (page.scrollingElement as HTMLElement | null) ?? page.documentElement;
+    // The elements are listed on purpose, so that the function changes as they attach (above).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [titleBar, scrollingContent, shellElement]);
   // With the document no longer scrolling, the keyboard scrolls the content area as it would the
   // document.

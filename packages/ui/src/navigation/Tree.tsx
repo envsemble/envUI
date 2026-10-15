@@ -149,6 +149,7 @@ export function Tree<T extends TreeItem>({
   const activeItem = activeIndex === -1 ? undefined : items[activeIndex];
 
   // Row height follows the density, enlarged text and coarse pointers; it is read from a row.
+  const hasItems = items.length > 0;
   useLayoutEffect(() => {
     const element = container.current;
     if (!element) return;
@@ -168,7 +169,7 @@ export function Tree<T extends TreeItem>({
     const observer = new ResizeObserver(measure);
     observer.observe(element);
     return () => observer.disconnect();
-  }, [density, items.length > 0]);
+  }, [density, hasItems]);
 
   const scrollToIndex = useCallback(
     (index: number, block: 'nearest' | 'center' = 'nearest') => {

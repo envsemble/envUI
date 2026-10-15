@@ -72,6 +72,8 @@ export function ReferenceContent({
       title={reference.title}
       breadcrumb={breadcrumb}
       description={reference.summary}
+      // The icon is looked up among module-level components, not created here.
+      // eslint-disable-next-line react-hooks/static-components
       symbol={<BannerIcon />}
       view={view}
       preview={

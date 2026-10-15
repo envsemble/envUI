@@ -95,12 +95,13 @@ export const MarkdownEditor = forwardRef<HTMLTextAreaElement, MarkdownEditorProp
       },
       [],
     );
+    const { attachInput: attachEditingInput } = editing;
     const attachInput = useCallback(
       (input: HTMLTextAreaElement | null) => {
-        editing.attachInput(input);
+        attachEditingInput(input);
         setRef(forwardedRef, input);
       },
-      [editing.attachInput, forwardedRef],
+      [attachEditingInput, forwardedRef],
     );
 
     function insertLink(selection: MarkdownSelection, link: MarkdownLink) {

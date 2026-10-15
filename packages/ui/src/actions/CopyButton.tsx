@@ -249,7 +249,7 @@ function copyWithSelection(text: string, anchor: HTMLElement) {
     : [];
   field.focus({ preventScroll: true });
   field.select();
-  let copied = false;
+  let copied: boolean;
   try {
     copied = document.execCommand('copy');
   } catch {

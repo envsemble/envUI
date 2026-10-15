@@ -46,6 +46,8 @@ export function referenceFromAttributes(attributes: Record<string, unknown>): Ri
 /** Relative paths and ordinary web/mail/telephone URLs; no domain-specific schemes. */
 export function safeRichTextUrl(url: unknown): boolean {
   if (typeof url !== 'string') return false;
+  // Strips control characters and spaces, which browsers ignore inside a URL scheme.
+  // eslint-disable-next-line no-control-regex
   const normalized = url.replace(/[\u0000-\u0020\u007f-\u009f]/g, '');
   return (
     normalized.length > 0 &&

@@ -566,10 +566,12 @@ function DocumentWindow({
     const list = chat.current;
     if (list && panel.rewinds) list.scrollTop = 0;
   }, [panel.rewinds]);
-  // Counts how many times the content is mounted, so a remount shows.
+  // Counts how many times the content is mounted, so a remount shows; only mounting counts, not a
+  // new callback.
   useEffect(() => {
     onMount(1);
     return () => onMount(-1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <>
