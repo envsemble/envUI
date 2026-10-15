@@ -66,3 +66,27 @@ test('selected and unselected tab labels keep 4.5:1 contrast at rest and on hove
   }
   expect(failures).toEqual([]);
 });
+
+test('compact tabs make the whole rail as tall as a compact control', async ({ page }) => {
+  await page.goto(`${fixtureUrl}/?fixture=compact-tabs`);
+  for (const theme of ['light', 'dark']) {
+    const scope = page.getByTestId(`compact-tabs-${theme}`);
+    const control = (await scope.getByTestId(`compact-control-${theme}`).boundingBox())!;
+    const rail = (await scope.getByRole('tablist').boundingBox())!;
+    expect(Math.abs(rail.height - control.height), theme).toBeLessThan(1);
+    // The counter fits inside its tab, centred on the label's line.
+    const tab = (await scope.getByRole('tab', { name: /Submissions/ }).boundingBox())!;
+    const counter = (await scope.locator('.env-counter').boundingBox())!;
+    expect(counter.y).toBeGreaterThanOrEqual(tab.y);
+    expect(counter.y + counter.height).toBeLessThanOrEqual(tab.y + tab.height);
+    const label = await scope.getByRole('tab', { name: /Submissions/ }).evaluate((node) => {
+      const range = document.createRange();
+      range.selectNodeContents(node.firstChild!);
+      return range.getBoundingClientRect();
+    });
+    expect(
+      Math.abs(counter.y + counter.height / 2 - (label.y + label.height / 2)),
+      theme,
+    ).toBeLessThan(1.5);
+  }
+});

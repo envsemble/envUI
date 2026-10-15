@@ -1,6 +1,7 @@
 import { Home } from '@envsemble/envui/icons/Home';
 import { Apps } from '@envsemble/envui/icons/Apps';
 import { Palette } from '@envsemble/envui/icons/Palette';
+import { Star } from '@envsemble/envui/icons/Star';
 import { TextFields } from '@envsemble/envui/icons/TextFields';
 import { ViewList } from '@envsemble/envui/icons/ViewList';
 import { TouchApp } from '@envsemble/envui/icons/TouchApp';
@@ -48,7 +49,6 @@ import { LinearScale } from '@envsemble/envui/icons/LinearScale';
 import { Tune } from '@envsemble/envui/icons/Tune';
 import { Send } from '@envsemble/envui/icons/Send';
 import { Forum } from '@envsemble/envui/icons/Forum';
-import { VerticalSplit } from '@envsemble/envui/icons/VerticalSplit';
 import { Monitoring } from '@envsemble/envui/icons/Monitoring';
 import { CloudUpload } from '@envsemble/envui/icons/CloudUpload';
 import { CalendarViewMonth } from '@envsemble/envui/icons/CalendarViewMonth';
@@ -89,7 +89,6 @@ const referenceIcons: Record<string, typeof Palette> = {
   layout: ViewModule,
   surface: CropSquare,
   cards: Dashboard,
-  'split-view': VerticalSplit,
   buttons: TouchApp,
   fields: TextFields,
   checkbox: CheckBox,
@@ -105,6 +104,7 @@ const referenceIcons: Record<string, typeof Palette> = {
   messages: Forum,
   stats: Monitoring,
   heatmap: CalendarViewMonth,
+  rating: Star,
   'relative-time': Schedule,
   navigation: Explore,
   tabs: WebAsset,

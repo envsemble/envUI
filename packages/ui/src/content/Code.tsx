@@ -1,22 +1,18 @@
 import type { ComponentPropsWithRef } from 'react';
+import { useTheme } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
 import { codeThemeStyle } from './internal/CodeThemes.js';
 
-export interface CodeProps extends ComponentPropsWithRef<'code'> {
-  /**
-   * dark (default) uses the dark code theme in both app themes. subtle follows the theme with a
-   * quiet chip, for prose dense with identifiers, paths and hashes.
-   */
-  appearance?: 'dark' | 'subtle';
-}
+export type CodeProps = ComponentPropsWithRef<'code'>;
 
-/** Inline source; use CodeBlock for multiline source. */
-export function Code({ appearance = 'dark', className, style, ...props }: CodeProps) {
+/** Inline source in the code theme of the app theme; use CodeBlock for multiline source. */
+export function Code({ className, style, ...props }: CodeProps) {
+  const theme = useTheme();
   return (
     <code
       {...props}
-      className={classNames('env-code', appearance === 'subtle' && 'env-code-subtle', className)}
-      style={appearance === 'subtle' ? style : { ...codeThemeStyle(), ...style }}
+      className={classNames('env-code', className)}
+      style={{ ...codeThemeStyle(theme), ...style }}
     />
   );
 }

@@ -84,11 +84,6 @@ test('public components hydrate server output without recoverable errors', async
   await expect(conversation.getByRole('article')).toHaveCount(2);
   await expect(conversation.getByRole('article').last()).toHaveText('Hydrated message');
   await expect(composer).toHaveValue('');
-  const split = page.getByRole('separator', { name: 'Hydrated split' });
-  await expect(split).toHaveAttribute('aria-valuenow', '50');
-  await split.focus();
-  await page.keyboard.press('ArrowRight');
-  await expect(split).toHaveAttribute('aria-valuenow', '52');
   // The server renders the dock's panels and chips; the client then measures and resizes them.
   const docked = page.getByRole('region', { name: 'Hydrated notes' });
   await expect(docked.getByRole('heading', { level: 3, name: 'Hydrated notes' })).toBeVisible();

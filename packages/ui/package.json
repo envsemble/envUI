@@ -1,6 +1,6 @@
 {
   "name": "@envsemble/envui",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "envUI: the internal envsemble React component library",
   "homepage": "https://github.com/envsemble/envUI#readme",
   "bugs": {
@@ -49,6 +49,11 @@
       "types": "./dist/content.d.ts",
       "import": "./dist/content.js"
     },
+    "./diff": {
+      "envui-source": "./src/diff.ts",
+      "types": "./dist/diff.d.ts",
+      "import": "./dist/diff.js"
+    },
     "./theme-bootstrap": {
       "envui-source": "./src/theme-bootstrap.ts",
       "types": "./dist/theme-bootstrap.d.ts",
@@ -72,10 +77,9 @@
     "./package.json": "./package.json"
   },
   "peerDependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "@pierre/diffs": "^1.5.2",
+    "@pierre/theme": "^2.0.0",
     "@shikijs/langs": "^4.5.0",
-    "@shikijs/themes": "^4.5.0",
     "@tiptap/core": "^3.31.4",
     "@tiptap/extension-image": "^3.31.4",
     "@tiptap/extension-list": "^3.31.4",
@@ -89,15 +93,20 @@
     "@tiptap/static-renderer": "^3.31.4",
     "@tiptap/suggestion": "^3.31.4",
     "marked": "^17.0.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
     "shiki": "^4.5.0"
   },
   "peerDependenciesMeta": {
-    "@shikijs/langs": {
+    "@pierre/diffs": {
       "optional": true
     },
-    "@shikijs/themes": {
+    "@pierre/theme": {
+      "optional": true
+    },
+    "@shikijs/langs": {
       "optional": true
     },
     "@tiptap/core": {
@@ -158,8 +167,9 @@
     "access": "restricted"
   },
   "devDependencies": {
+    "@pierre/diffs": "1.5.2",
+    "@pierre/theme": "2.0.0",
     "@shikijs/langs": "4.5.0",
-    "@shikijs/themes": "4.5.0",
     "@tiptap/core": "3.31.4",
     "@tiptap/extension-image": "3.31.4",
     "@tiptap/extension-list": "3.31.4",

@@ -171,7 +171,6 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Application shell](../components/app-shell.md)
-- [Split view](../components/split-view.md)
 - [Document tabs](../components/document-tabs.md)
 - [Dialogs](../components/dialogs.md)
 - [Tooltips](../components/tooltip.md)

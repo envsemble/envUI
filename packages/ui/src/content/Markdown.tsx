@@ -24,8 +24,6 @@ export interface MarkdownProps extends Omit<ComponentPropsWithRef<'div'>, 'child
   /** Receives safe hrefs and native anchor props. Retain a real anchor destination. */
   renderLink?: (props: MarkdownLinkProps) => ReactNode;
   codeCopyable?: boolean;
-  /** Inline code: dark (default, as Code), or subtle for prose dense with identifiers, paths and hashes. */
-  inlineCode?: 'dark' | 'subtle';
   /**
    * react-markdown component overrides, merged over envUI's own; the application's win. Native
    * props such as id and className reach the element.
@@ -88,7 +86,6 @@ export function Markdown({
   headingOffset = 0,
   renderLink,
   codeCopyable = false,
-  inlineCode = 'dark',
   components: componentOverrides,
   remarkPlugins,
   rehypePlugins,
@@ -113,7 +110,7 @@ export function Markdown({
         ) : (
           <span>{linkProps.children}</span>
         ),
-      code: ({ node: _node, ...codeProps }) => <Code appearance={inlineCode} {...codeProps} />,
+      code: ({ node: _node, ...codeProps }) => <Code {...codeProps} />,
       kbd: ({ node: _node, ...keyProps }) => <Kbd {...keyProps} />,
       pre: ({ node, children: preChildren }) => {
         const code = node?.children.find(
@@ -145,7 +142,7 @@ export function Markdown({
       img: ({ node: _node, src, ...imageProps }) =>
         src ? <img {...imageProps} src={src} loading="lazy" /> : <span>{imageProps.alt}</span>,
     };
-  }, [headingOffset, renderLink, codeCopyable, inlineCode]);
+  }, [headingOffset, renderLink, codeCopyable]);
   const mergedComponents = useMemo(
     () => (componentOverrides ? { ...components, ...componentOverrides } : components),
     [components, componentOverrides],

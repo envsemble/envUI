@@ -27,7 +27,6 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Surface](components/surface.md) — A background pane without automatic spacing between children.
 - [Grouped rows](components/rows.md) — Group related items with shared outer corners.
 - [Cards](components/cards.md) — A content surface with automatic spacing and optional actions.
-- [Split view](components/split-view.md) — Two panes side by side with a divider that resizes them; they stack in narrow containers.
 
 ## Actions
 
@@ -36,7 +35,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 ## Forms & selection
 
-- [Color picker](components/color-picker.md) — A color area, hue slider and HEX field for opaque colors.
+- [Color picker](components/color-picker.md) — A color area, hue slider and HEX field for opaque colors, and a color swatch for the button that opens it.
 - [Text fields](components/fields.md) — Single-line inputs, search fields and multiline textareas share labels, guidance and states.
 - [Composer](components/composer.md) — The message field of a conversation, with a send button that stops a running reply.
 - [Checkboxes](components/checkbox.md) — Independent choices; partial selection represents a group.
@@ -64,12 +63,13 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 - [Rich text](components/rich-text.md) — Edit formatted content with Tiptap and render the same saved Markdown read-only.
 - [Markdown](components/markdown.md) — Render Markdown strings with Markdown, or edit them with MarkdownEditor and its shared preview.
-- [Code](components/code.md) — Render inline code and highlighted code blocks.
+- [Code](components/code.md) — Render inline code, highlighted code blocks and code diffs.
 - [Info chips](components/chips.md) — Read-only metadata beside related content.
-- [Badges & counters](components/badges.md) — Small pills that name a state in its tone, and compact counts.
+- [Badges & counters](components/badges.md) — Small pills that name a state in its tone, compact counts and the size of a change.
 - [Tables](components/tables.md) — Semantic data tables on a rounded surface: sorting, resizable columns, selected rows and stacked rows in narrow containers.
 - [Keyboard keys](components/keyboard.md) — Key caps for shortcuts in text, menus and hints.
 - [Animated numbers](components/animated-number.md) — Counts that roll to their new value, so a change is noticed.
+- [Rating](components/rating.md) — A read-only rating as stars filled in half steps, named once for assistive technology.
 - [Relative time](components/relative-time.md) — A moment as text relative to now, such as 3 hours ago, kept current, with the date and time in a tooltip.
 - [Disclosure notes](components/disclosures.md) — Keep optional details collapsed until needed.
 - [Avatars](components/avatar.md) — A picture of a person or organization with a default picture or initials as fallback, the avatar button and overlapping avatar groups.

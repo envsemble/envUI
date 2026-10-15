@@ -78,6 +78,29 @@
   background: var(--color-tone-accent);
   color: var(--color-on-tone);
 }
+/* A change as one counter-sized pill: additions in the success tone, deletions in the danger tone. */
+.env-diff-count {
+  box-sizing: border-box;
+  position: relative;
+  flex: 0 0 auto;
+  block-size: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding-inline: 0.375rem;
+  border-radius: 100vmax;
+  background: var(--color-fill);
+  font: 500 0.75rem / 1 var(--font-family);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.env-diff-count-additions {
+  color: var(--color-tone-success);
+}
+.env-diff-count-deletions {
+  color: var(--color-tone-danger);
+}
 .env-counter-label {
   position: absolute;
   inline-size: 0.0625rem;
@@ -88,11 +111,22 @@
   white-space: nowrap;
 }
 
-/* In a button, such as a tab, a counter or badge takes the button's text color as an outlined pill
-   on the button's own fill, so it keeps the button's contrast in every variant and both themes. */
-.env-button .env-counter[data-tone],
-.env-button .env-badge[data-tone] {
+/* In a button, such as a tab, a counter or diff count keeps its own filled pill. On the solid primary and
+   important fills, where that pill can't keep its contrast, it takes the button's text color as an
+   outlined pill instead, as a badge does in every button, in both themes. */
+.env-button .env-badge[data-tone],
+.env-button:is(.env-button-primary, .env-button-important) .env-counter[data-tone],
+.env-button:is(.env-button-primary, .env-button-important) .env-diff-count {
   border: 0.0625rem solid color-mix(in srgb, currentColor 55%, transparent);
   background: transparent;
   color: inherit;
+}
+.env-button:is(.env-button-primary, .env-button-important) .env-diff-count > * {
+  color: inherit;
+}
+/* On a button's own fill, which already adds up with a tab rail's, a diff count's pill leans halfway
+   back toward the canvas instead of adding another fill. It looks about as it does on the canvas,
+   and its tones keep their 4.5:1 contrast in both themes. */
+.env-button:not(.env-button-primary, .env-button-important) .env-diff-count {
+  background: color-mix(in srgb, var(--color-canvas) 50%, transparent);
 }

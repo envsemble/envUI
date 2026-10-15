@@ -1,5 +1,14 @@
 import { useState } from 'react';
-import { ActionGroup, Button, ColorPicker, Stack, Text, Kbd } from '@envsemble/envui';
+import {
+  ActionGroup,
+  Button,
+  ColorPicker,
+  ColorSwatch,
+  Kbd,
+  Popover,
+  Stack,
+  Text,
+} from '@envsemble/envui';
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
 
@@ -29,6 +38,21 @@ export function ColorPickerPreview() {
             <ColorPicker label="Unavailable color" defaultValue="#ea4335" disabled />
           </Specimen>
         </SpecimenGrid>
+      </Example>
+      <Example
+        title="Color swatch"
+        size="field"
+        caption="A swatch shows the color on the button that opens the picker."
+      >
+        <Popover
+          trigger={
+            <Button variant="secondary" startIcon={<ColorSwatch color={color} />}>
+              {color.toUpperCase()}
+            </Button>
+          }
+        >
+          <ColorPicker label="Accent color" value={color} onValueChange={setColor} />
+        </Popover>
       </Example>
       <Example
         title="Native form"
