@@ -68,6 +68,8 @@ function rehypeTableNames() {
       }
       if (node.type === 'element' && node.tagName === 'table') {
         const caption = node.children?.find((child) => child.tagName === 'caption');
+        // Localisation (the strings provider, Phase 3): "table" and "Table" here and in the region's
+        // fallback label below are English; they move to the provider with envUI's other strings.
         const base = caption ? textOf(caption).trim() : heading ? `${heading} table` : 'Table';
         const count = (counts.get(base) ?? 0) + 1;
         counts.set(base, count);
