@@ -45,7 +45,9 @@ export default function RequiredChoice() {
           </Text>
         )}
         <Button type="submit">Export</Button>
-        <Text role="status">{exported && `Exported Northwind launch as ${formats[exported]}.`}</Text>
+        <Text role="status">
+          {exported && `Exported Northwind launch as ${formats[exported]}.`}
+        </Text>
       </Stack>
     </form>
   );
