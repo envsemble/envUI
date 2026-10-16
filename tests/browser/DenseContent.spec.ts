@@ -113,15 +113,16 @@ test('filling tabs that keep inactive panels mounted display only the selected p
 });
 
 test('a compact surface gives its controls the compact height', async ({ page }) => {
-  await page.goto(`${catalogueUrl}/#/components/surface/preview`);
+  // The density specimen shows the same toolbar on a standard and a compact surface.
+  await page.goto(`${catalogueUrl}/#/components/surface/guidelines`);
   const height = async (toolbar: string, name: string) =>
     (await page.getByRole('group', { name: toolbar }).getByRole('button', { name }).boundingBox())!
       .height;
   expect(await height('Compact toolbar', 'Fit')).toBeLessThan(
     await height('Standard toolbar', 'Fit'),
   );
-  expect(await height('Compact toolbar', 'Views')).toBeLessThan(
-    await height('Standard toolbar', 'Views'),
+  expect(await height('Compact toolbar', 'Zoom in')).toBeLessThan(
+    await height('Standard toolbar', 'Zoom in'),
   );
   await expect(page.getByRole('group', { name: 'Compact toolbar' })).toHaveAttribute(
     'data-density',

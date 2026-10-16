@@ -1,6 +1,6 @@
 import { CheckboxPreview, DropZonePreview } from './Forms';
 import { ComboboxPreview, DatePickerPreview } from './Pickers';
-import { SurfacePreview, LayoutPreview, ListPreview, CardsPreview } from './Layout';
+import { ListPreview, CardsPreview } from './Layout';
 import { AnimatedNumberPreview, ChipsPreview, DisclosurePreview } from './Content';
 import { CodePreview } from './CodeContent';
 import { MarkdownPreview } from './MarkdownContent';
@@ -45,10 +45,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <ColorPickerPreview />;
     case 'composer':
       return <ComposerPreview />;
-    case 'surface':
-      return <SurfacePreview />;
-    case 'stack':
-      return <LayoutPreview />;
     case 'list':
       return <ListPreview />;
     case 'card':
