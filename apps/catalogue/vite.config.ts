@@ -34,10 +34,17 @@ function sourceRevision() {
   }
 }
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ command, mode }) => {
   const site = mode === 'site';
   return {
-    define: { __ENVUI_SOURCE_REVISION__: JSON.stringify(sourceRevision()) },
+    define: {
+      __ENVUI_SOURCE_REVISION__: JSON.stringify(sourceRevision()),
+      // The hosted catalogue, and the development server, keep routes in the address's path, such
+      // as /components/button/props, which the server answers with index.html. The offline
+      // catalogue keeps them in its hash, #/components/button/props: opened from a file, or from
+      // an archived version's folder of the hosted site, no server answers another path with it.
+      __ENVUI_PATH_ROUTES__: JSON.stringify(site || command === 'serve'),
+    },
     plugins: [
       // Rebuilds Tokens.css from packages/ui/tokens on every token edit; Vite hot-reloads it.
       tokensVitePlugin(),

@@ -14,6 +14,7 @@ import type { Reference } from '../Reference';
 import { getReferenceIcon } from '../navigation/TopicIcons';
 import { TemplateContent, TemplateMeta } from '../template/TemplateContent';
 import { LoadBoundary, lazyPart } from '../template/LoadBoundary';
+import { navigate, routeHref } from '../navigation/Address';
 
 /** How to use the icon a reader chose in the icon list, which loads with the page that shows it. */
 const iconUsage = lazyPart(
@@ -120,7 +121,9 @@ export function ReferenceContent({
               <FoundationPreview
                 id={reference.id}
                 onIconUsage={(name, filled) => {
-                  location.hash = `/${page.path}/usage?${new URLSearchParams({ icon: name, filled: String(filled) })}`;
+                  navigate(
+                    `${page.path}/usage?${new URLSearchParams({ icon: name, filled: String(filled) })}`,
+                  );
                 }}
               />
             ) : (
@@ -135,7 +138,9 @@ export function ReferenceContent({
           <Stack gap={7} className="docs-article">
             <Usage reference={reference} search={search} />
             <Text tone="muted">
-              <Link href="#/overview/get-started">Setup, local edits and version updates</Link>
+              <Link href={routeHref('overview/get-started')}>
+                Setup, local edits and version updates
+              </Link>
             </Text>
           </Stack>
         ),

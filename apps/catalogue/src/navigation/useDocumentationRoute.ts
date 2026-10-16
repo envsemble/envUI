@@ -1,21 +1,24 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { normalizeRoute } from './DocumentationRoutes';
-
-/** The route the address names, written as it is. */
-const writtenRoute = () => location.hash.replace(/^#\/?/, '');
+import { navigate, replaceAddress, subscribeToAddress, writtenRoute } from './Address';
 
 function readRoute() {
   return normalizeRoute(writtenRoute() || 'overview');
 }
 
+/** The query of the current route, such as a page's `section`. */
+export function currentRouteQuery() {
+  return new URLSearchParams(readRoute().split('?')[1] ?? '');
+}
+
 /**
- * An old address, such as a page's 0.x name, is replaced in place by the route it leads to, so the
- * address bar, a new bookmark and the history show the page's own address.
+ * An old address, such as a page's 0.x name or a hash route in the hosted catalogue, is replaced in
+ * place by the address of the route it leads to, so the address bar, a new bookmark and the history
+ * show the page's own address. The root address stays as it is.
  */
 function correctAddress() {
   const written = writtenRoute();
-  const route = normalizeRoute(written || 'overview');
-  if (written && route !== written) history.replaceState(history.state, '', `#/${route}`);
+  if (written) replaceAddress(normalizeRoute(written));
 }
 
 /** Whether the next route change comes from a page's tabs, until it happens. */
@@ -32,15 +35,9 @@ export const reachedFromTabs = () => lastChangeFromTabs;
  * stepping through every view on the way.
  */
 export function showView(route: string, { replace }: { replace: boolean }) {
-  // The address already names the view: nothing changes, so no change is pending.
-  if (location.hash === `#/${route}`) return;
   viewChangePending = true;
-  if (!replace) {
-    location.hash = `/${route}`;
-    return;
-  }
-  history.replaceState(history.state, '', `#/${route}`);
-  dispatchEvent(new HashChangeEvent('hashchange'));
+  // The address already names the view: nothing changes, so no change is pending.
+  if (!navigate(route, { replace })) viewChangePending = false;
 }
 
 /** Keys that move between tabs, which select as they move. */
@@ -73,19 +70,19 @@ export function useViewTabs(routeOf: (value: string) => string) {
   };
 }
 
-/** Hash routes also work in the downloaded reference without a server. */
+/** The current route, from the address's path in the hosted catalogue or its hash offline. */
 export function useDocumentationRoute() {
   const [route, setRoute] = useState(readRoute);
   useEffect(() => {
     correctAddress();
-    const onHashChange = () => {
+    // An address that changed before this effect, such as an old one corrected, is read again.
+    setRoute(readRoute());
+    return subscribeToAddress(() => {
       lastChangeFromTabs = viewChangePending;
       viewChangePending = false;
       correctAddress();
       setRoute(readRoute());
-    };
-    addEventListener('hashchange', onHashChange);
-    return () => removeEventListener('hashchange', onHashChange);
+    });
   }, []);
   return route;
 }

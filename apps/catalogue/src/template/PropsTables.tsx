@@ -52,7 +52,8 @@ function ExportProps({ name, entry }: { name: string; entry: ExportEntry }) {
           </Table.Head>
           <Table.Body>
             {entry.props.map((prop) => (
-              <Table.Row key={prop.name}>
+              // Search leads to a prop's row: props-Button-variant.
+              <Table.Row key={prop.name} id={`props-${name}-${prop.name}`}>
                 <Table.Cell label="Prop" nowrap>
                   <Code className="docs-prop-code">{prop.name}</Code>
                   {prop.required && <Text variant="caption"> required</Text>}

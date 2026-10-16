@@ -1,7 +1,8 @@
 import { Link } from '@envsemble/envui';
 import { Markdown, type MarkdownLinkProps } from '@envsemble/envui/content';
 import { documents, type Documentation as Document } from '../Reference';
-import { pageHref, referencePages } from '../navigation/DocumentationRoutes';
+import { pageHref, referencePages, routeOfDocument } from '../navigation/DocumentationRoutes';
+import { routeHref } from '../navigation/Address';
 
 /** Keep authored relative Markdown links usable in the self-contained catalogue. */
 export function documentationHref(href: string, sourcePath: string) {
@@ -14,8 +15,8 @@ export function documentationHref(href: string, sourcePath: string) {
   const page = referencePages.find((entry) => entry.reference.path === target.path);
   // Links in guidance open the page's own guidance, or the overview of a page on the template.
   if (page) return pageHref(page, page.reference.sections ? 'overview' : 'usage');
-  if (target.id === 'setup') return '#/overview/get-started?section=setup';
-  return `#/overview/get-started?${new URLSearchParams({ document: target.id, section: 'documentation' })}`;
+  const route = routeOfDocument(target.id);
+  return route ? routeHref(route) : href;
 }
 
 /** A page's Markdown, or a part of it such as one section, with its links resolved. */
