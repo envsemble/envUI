@@ -5,7 +5,9 @@
   "changelog": "./changelog.mjs",
   "commit": false,
   "format": "prettier",
-  "fixed": [],
+  "fixed": [
+    ["@envsemble/envui", "@envsemble/eslint-plugin-envui", "@envsemble/stylelint-config-envui"]
+  ],
   "linked": [],
   "ignore": [],
   "privatePackages": { "version": false, "tag": false },

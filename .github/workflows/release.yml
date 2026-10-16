@@ -46,10 +46,10 @@ jobs:
           scope: '@envsemble'
       - run: npm ci
       - run: npm run build
-      - name: Publish immutable package
+      - name: Publish immutable packages
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm publish --workspace @envsemble/envui --tag "$(node scripts/ValidateRelease.mjs --dist-tag)"
+        run: npm publish --workspace @envsemble/envui --workspace @envsemble/eslint-plugin-envui --workspace @envsemble/stylelint-config-envui --tag "$(node scripts/ValidateRelease.mjs --dist-tag)"
       - name: Create matching release download
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
