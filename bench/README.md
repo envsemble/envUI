@@ -124,6 +124,7 @@ A run is **confined by its environment and audited afterwards. It is not sandbox
 - **Working directory.** Each agent starts in its workspace. The workdir must be outside the folder that holds the repository; the runner refuses one the audit would flag.
 - **No sandbox for Claude Code.** `--dangerously-skip-permissions` lets it read and run anything the user can. Nothing stops it from finding the source checkout by searching the disk.
 - **Codex's `workspace-write` sandbox limits writes only.** Codex can write to the workspace, the npm cache and its temp folder, and still read the whole disk.
+- **Git Bash's `/tmp` is the user's temp folder.** Git for Windows mounts `/tmp` there whatever `TEMP` says, so in the baselines Claude Code wrote scratch files such as screenshots and browser scripts to the user's temp folder. That folder can hold other projects' files. No baseline run read any of them, but the audit doesn't check that folder.
 - **Logins and user state.** Claude Code still creates a folder per workspace under `~/.claude/projects/` (with `--no-session-persistence`, no session is kept in it).
 - **Processes and ports.** Runs share the machine. An agent can stop any process the user can, and parallel runs can start dev servers on the same port. In the first hard-fixture baseline, a Claude Code run cleaned up with `taskkill /F /IM node.exe`, which stopped every Node process on the machine, the runner included; `--resume` finished that run.
 
