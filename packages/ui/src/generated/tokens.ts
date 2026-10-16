@@ -5,13 +5,16 @@
 export const themes = ['light', 'dark', 'light-high-contrast', 'dark-high-contrast'] as const;
 export type ThemeName = (typeof themes)[number];
 
+/** A token's CSS value: one value, or a value per part of a composite token such as typography. */
+export type TokenValue = string | Readonly<Record<string, string>>;
+
 export interface TokenDefinition {
   /** The CSS custom property that carries the token. */
   cssVariable: `--${string}`;
   /** The DTCG type. */
   type: string;
   /** The CSS value in each theme, with aliases resolved. */
-  values: Readonly<Record<ThemeName, string>>;
+  values: Readonly<Record<ThemeName, TokenValue>>;
 }
 
 /** Every token, by its DTCG path. */
