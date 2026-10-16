@@ -50,7 +50,7 @@ The files agents read come from the documentation's sources, as [For agents](age
 
 The `envui` command is plain JavaScript in `packages/ui/bin`, run as it is from the installed package: `agents.mjs` renders the AGENTS.md index, `mcp.mjs` is the MCP server and `catalog.mjs` the lookups and ranking they share. It uses Node's own modules only, so installing envUI adds no dependency for it. `tests/Agents.test.mjs` holds the index to its 8 KB budget and calls every MCP tool over stdio.
 
-The skills' source is `.agents/skills/`; each folder holds one `SKILL.md`, and the build copies them into the package's `skills/`. Validate them with the available skill validator after editing them.
+The skills' source is `.agents/skills/`; each folder holds one `SKILL.md`, and the build copies them into the package's `skills/`. The agent plugin in `plugin/` carries a committed copy: run `npm run plugin:generate` after editing them and commit `plugin/skills` with the change, as [For agents](agent-tooling.md#how-a-release-updates-the-plugin) describes. Validate them with the available skill validator after editing them.
 
 [For agents](agent-tooling.md) describes publishing the skills and the MCP server as a plugin.
 
