@@ -188,13 +188,20 @@ function rank(manifest, query, { kinds, limit = 10 } = {}) {
       matched.push(term);
     }
     if (!score) continue;
+    let named = false;
     for (const name of document.names)
-      if (name && queryPhrase.includes(` ${name} `)) score += name.includes(' ') ? 30 : 20;
+      if (name && queryPhrase.includes(` ${name} `)) {
+        score += name.includes(' ') ? 30 : 20;
+        named = true;
+      }
     for (const alias of document.aliases)
-      if (alias && queryPhrase.includes(` ${alias} `)) score += alias.includes(' ') ? 30 : 8;
+      if (alias && queryPhrase.includes(` ${alias} `)) {
+        score += alias.includes(' ') ? 30 : 8;
+        named = true;
+      }
     if (document.names.includes(queryPhrase.trim())) score += 50;
     score = Math.round(score * kindFactor[document.kind] * 10) / 10;
-    results.push({ document, score, strength, matched });
+    results.push({ document, score, strength, matched, named, of: queryTerms.length });
   }
   return results.sort((a, b) => b.score - a.score).slice(0, limit);
 }
@@ -283,8 +290,15 @@ function exportFor(component, part) {
   return best ?? candidates.find((entry) => entry.name === component.name) ?? candidates[0];
 }
 
-/** A part counts as covered by a component that matched it on a name, an alias or a summary. */
-const covers = (hit) => hit && hit.score >= 10 && hit.strength >= weights.summary;
+/**
+ * A part counts as covered by a component that matched it on a name, an alias or a summary, and
+ * either by a whole name or alias or on at least half of its terms: one shared word is not enough.
+ */
+const covers = (hit) =>
+  hit &&
+  hit.score >= 10 &&
+  hit.strength >= weights.summary &&
+  (hit.named || hit.matched.length * 2 >= hit.of);
 
 /**
  * A plan for a UI description: the components that cover each part of it, the patterns and
