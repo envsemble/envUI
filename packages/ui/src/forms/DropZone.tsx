@@ -214,9 +214,12 @@ export function DropZone({
             {label}
           </span>
           {description != null && (
-            <span className="env-drop-zone-description" id={`${id}-description`}>
-              {description}
-            </span>
+            <>
+              {/* A space between the lines, so the visible text reads as the name does. */}{' '}
+              <span className="env-drop-zone-description" id={`${id}-description`}>
+                {description}
+              </span>
+            </>
           )}
         </span>
       </ActionElement>
