@@ -703,6 +703,12 @@ test('packed skills locate separate versioned documentation and match the releas
   const packagedReadme = await readFile(join(installedDirectory, 'README.md'), 'utf8');
   assert.match(packagedReadme, /\]\(skills\/envui-use\/SKILL\.md\)/);
   assert.doesNotMatch(packagedReadme, /\]\(\.agents\/skills\//);
+  // Hosting, deployment and the release runbook are for maintainers, in CONTRIBUTING.md.
+  assert.doesNotMatch(packagedReadme, /^#{2,} (?:Hosting|Deploying|Releases)\b|wrangler/im);
+  assert.match(
+    packagedReadme,
+    /\]\(https:\/\/github\.com\/envsemble\/envUI\/blob\/main\/CONTRIBUTING\.md\)/,
+  );
   const readmeResources = [
     ...[...packagedReadme.matchAll(/\[[^\]]+\]\(([^)]+)\)/g)].map((match) => match[1]),
     ...[...packagedReadme.matchAll(/\b(?:src|srcset)="([^"]+)"/g)].map((match) => match[1]),

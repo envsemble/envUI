@@ -34,16 +34,27 @@ const productNames = [
  * name's patterns matches on the same line and covers it.
  */
 const allowed = {
-  // envUI is distributed through GitHub Packages and released by GitHub Actions; setup says so.
-  // The hosted catalogue's readers sign in with GitHub login; the README's hosting section says so.
-  GitHub: [/GitHub (?:Packages|Actions|release|token|login)/g],
+  // envUI is distributed through GitHub Packages and installed with a GitHub token, also in GitHub
+  // Actions; setup says so.
+  GitHub: [/GitHub (?:Packages|Actions|token)/g],
   // The English word: the name of the family of form components, and a list of what to preserve.
   Forms: [/Forms & selection/g, /^#{2,} Forms$/g, /^- Forms, validation/g],
 };
 
-/** Text that ships with the package or documents it: Markdown whole, code by comments and strings. */
+/** Uses allowed in one file only, by path and name. */
+const allowedIn = {
+  // The maintainers' guide, which does not ship: releases are GitHub releases, and the hosted
+  // catalogue's readers sign in with GitHub login.
+  'CONTRIBUTING.md': { GitHub: [/GitHub (?:release|login)/g] },
+};
+
+/**
+ * Text that ships with the package or documents it, and the maintainers' guide: Markdown whole,
+ * code by comments and strings.
+ */
 const sources = [
   { path: 'README.md', read: 'whole' },
+  { path: 'CONTRIBUTING.md', read: 'whole' },
   { path: 'packages/ui/CHANGELOG.md', read: 'whole' },
   { directory: '.changeset', extensions: ['.md'], read: 'whole' },
   { directory: 'docs', extensions: ['.md'], read: 'whole' },
@@ -77,6 +88,11 @@ test('the check finds a product name and lets its allowed uses pass', () => {
     'example.md:1: Console in "- Lay it out as Console does."',
     'example.md:2: GitHub in "- Publish to GitHub Packages; read GitHub Docs."',
   ]);
+  const release = '- Attach it to the GitHub release.\n';
+  assert.deepEqual(productMentions('README.md', release, { start: 0, text: release }), [
+    'README.md:1: GitHub in "- Attach it to the GitHub release."',
+  ]);
+  assert.deepEqual(productMentions('CONTRIBUTING.md', release, { start: 0, text: release }), []);
   const code = "// Unlike Slack.\nconsole.log('Coord');\nimport { Forms } from './Forms';\n";
   const segments = codeText('example.ts', code);
   assert.deepEqual(
@@ -163,7 +179,8 @@ function productMentions(path, fileText, segment) {
   segment.text.split('\n').forEach((line, index) => {
     for (const name of productNames) {
       for (const hit of line.matchAll(new RegExp(`\\b${name}\\b`, 'g'))) {
-        const covered = (allowed[name] ?? []).some((pattern) =>
+        const patterns = [...(allowed[name] ?? []), ...(allowedIn[path]?.[name] ?? [])];
+        const covered = patterns.some((pattern) =>
           [...line.matchAll(pattern)].some(
             (use) => use.index <= hit.index && hit.index < use.index + use[0].length,
           ),
