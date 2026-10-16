@@ -72,6 +72,17 @@ const sources = [
   { directory: 'bench/fixture', extensions: ['.md', '.css', '.html', '.json'], read: 'whole' },
   { directory: 'bench/fixture', extensions: ['.ts', '.tsx'], read: 'code' },
   { directory: 'bench', extensions: ['.mjs'], read: 'code' },
+  // The codemods package, its rename map and the code its fixtures show.
+  { path: 'packages/codemods/README.md', read: 'whole' },
+  { directory: 'packages/codemods/src', extensions: ['.json'], read: 'whole' },
+  { directory: 'packages/codemods/src', extensions: ['.mjs'], read: 'code' },
+  { directory: 'packages/codemods/bin', extensions: ['.mjs'], read: 'code' },
+  {
+    directory: 'packages/codemods/test/fixtures',
+    extensions: ['.ts', '.tsx', '.jsx'],
+    read: 'code',
+  },
+  { directory: 'packages/codemods/test/fixtures', extensions: ['.css', '.scss'], read: 'whole' },
 ];
 
 /** Generated from pinned inputs: Material Symbols names its own icons, such as ChromeMaximize. */

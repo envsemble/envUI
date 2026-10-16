@@ -47,11 +47,11 @@ export const derived: Readonly<Record<string, string>> = {
   'menu-row-pressed': 'hsl(from var(--color-menu-row) h s var(--state-surface-pressed-lightness))',
   'popup-hover': 'hsl(from var(--color-popup) h s var(--state-surface-hover-lightness))',
   'popup-pressed': 'hsl(from var(--color-popup) h s var(--state-surface-pressed-lightness))',
-  // DirectionLink.css: the link's fill on hover and press.
+  // Pager.css: the link's fill on hover and press.
   'direction-link-hover': 'hsl(from var(--color-direction-link) h s var(--state-hover-lightness))',
   'direction-link-pressed':
     'hsl(from var(--color-direction-link) h s var(--state-pressed-lightness))',
-  // Badge.css and Notice.css: the subtle fill of each tone.
+  // Badge.css and Alert.css: the subtle fill of each tone.
   ...Object.fromEntries(
     tones.map((tone) => [
       `tone-${tone}-subtle`,
@@ -72,7 +72,7 @@ const canvas = '--color-canvas'; // the page, the app frame, title bars
 const pane = '--color-pane'; // Surface's default, sidebars, the standard menu
 const rowSurface = '--color-surface-muted'; // Surface tone="row"
 const alternate = '--color-surface'; // Surface tone="alternate", a table's region
-const row = '--color-row'; // GroupedRows
+const row = '--color-row'; // List
 const rowAlternate = '--color-row-alternate'; // rows on a contrasting pane
 const menuRow = '--color-menu-row';
 const popup = '--color-popup'; // popovers, Select lists, compact menus, the composer
@@ -130,9 +130,9 @@ export const pairs: readonly ContrastPair[] = [
   ...text('--color-link', [popup, dialog, '--color-action-strip']),
   ...text('--color-link-hover', [canvas, pane, rowSurface]),
   ...text('--color-link-pressed', [canvas, pane, rowSurface]),
-  ...text('--color-disclosure-text', [canvas, pane], 'DisclosureNote'),
-  ...text('--color-quiet-label-hover', [canvas, pane], 'DisclosureNote summary on hover'),
-  ...text('--color-quiet-label-pressed', [canvas, pane], 'DisclosureNote summary on press'),
+  ...text('--color-disclosure-text', [canvas, pane], 'Disclosure'),
+  ...text('--color-quiet-label-hover', [canvas, pane], 'Disclosure summary on hover'),
+  ...text('--color-quiet-label-pressed', [canvas, pane], 'Disclosure summary on press'),
 
   // Actions: labels on their fills, at rest, hovered and pressed.
   ...text('--color-on-primary-action', [
@@ -205,7 +205,7 @@ export const pairs: readonly ContrastPair[] = [
   ...nonText(
     '--color-field-border',
     [field, canvas, pane, rowSurface],
-    "The border is an outlined field's boundary; FileDropzone uses it too",
+    "The border is an outlined field's boundary; DropZone uses it too",
   ),
   // The focused and invalid borders on the field itself are held to 4.5 above, as label and message.
   ...nonText('--color-field-active', [canvas, pane], 'The border of a focused field'),
@@ -368,7 +368,7 @@ export const pairs: readonly ContrastPair[] = [
     text(
       '--color-text-primary',
       [[`tone-${tone}-subtle`, canvas]],
-      `Notice tone="${tone === 'danger' ? 'error' : tone === 'accent' ? 'info' : tone}"`,
+      `Alert tone="${tone === 'danger' ? 'error' : tone === 'accent' ? 'info' : tone}"`,
     ),
   ),
   ...nonText(

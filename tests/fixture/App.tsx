@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react';
-import { Theme, ToastProvider } from '@envsemble/envui';
+import { Theme, Toast } from '@envsemble/envui';
 import '@envsemble/envui/styles.css';
 import './Fixture.css';
 import { FormsFixture } from './Forms.js';
 import { DialogFixture } from './Dialog.js';
-import { ToastTriggers, ManualToastFixture, StrictToastFixture } from './Toasts.js';
+import { ToastTriggers, StrictToastFixture } from './Toasts.js';
 import { ColorControls } from './Colors.js';
 import { NavigationFixture } from './Navigation.js';
 import { ButtonGroupsFixture } from './ButtonGroups.js';
@@ -36,7 +36,7 @@ import { BadgesFixture } from './Badges.js';
 import {
   DialogVariantsFixture,
   HoverCardFixture,
-  NoticesFixture,
+  AlertsFixture,
   PopoverFixture,
 } from './Overlays.js';
 import { DataDisplayFixture } from './DataDisplay.js';
@@ -46,16 +46,16 @@ import { SlidersFixture } from './Sliders.js';
 import { ComposerFixture } from './Composer.js';
 import { MessagesFixture } from './Messages.js';
 import { StatsFixture } from './Stats.js';
-import { DropzonesFixture } from './Dropzones.js';
+import { DropZonesFixture } from './DropZones.js';
 import { ButtonCountsFixture } from './ButtonCounts.js';
-import { HeatmapFixture } from './Heatmaps.js';
+import { CalendarHeatmapFixture } from './CalendarHeatmaps.js';
 import { ComboboxFixture } from './Comboboxes.js';
 import { PanelDockFixture } from './PanelDocks.js';
 import { AvatarGroupsFixture } from './AvatarGroups.js';
 import { RelativeTimesFixture } from './RelativeTimes.js';
 import { CopyButtonsFixture } from './CopyButtons.js';
 import { PaginationsFixture } from './Paginations.js';
-import { DateTimeFieldFixture } from './DateTimeFields.js';
+import { DatePickerFixture } from './DatePickers.js';
 import { QuietButtonsFixture } from './QuietButtons.js';
 import { EmptyStatesFixture } from './EmptyStates.js';
 import { RatingsFixture } from './Ratings.js';
@@ -102,10 +102,9 @@ export default function App() {
           )}
           {includes('toast') && (
             <>
-              <ToastProvider>
+              <Toast.Provider>
                 <ToastTriggers />
-              </ToastProvider>
-              <ManualToastFixture />
+              </Toast.Provider>
               <StrictToastFixture />
             </>
           )}
@@ -179,10 +178,10 @@ export default function App() {
               <BadgesFixture theme="dark" />
             </>
           )}
-          {includes('notices') && (
+          {includes('alerts') && (
             <>
-              <NoticesFixture theme="light" />
-              <NoticesFixture theme="dark" />
+              <AlertsFixture theme="light" />
+              <AlertsFixture theme="dark" />
             </>
           )}
           {includes('dialog-variants') && <DialogVariantsFixture />}
@@ -240,16 +239,16 @@ export default function App() {
               <StatsFixture theme="dark" />
             </>
           )}
-          {includes('dropzones') && (
+          {includes('drop-zones') && (
             <>
-              <DropzonesFixture theme="light" />
-              <DropzonesFixture theme="dark" />
+              <DropZonesFixture theme="light" />
+              <DropZonesFixture theme="dark" />
             </>
           )}
-          {includes('heatmap') && (
+          {includes('calendar-heatmap') && (
             <>
-              <HeatmapFixture theme="light" />
-              <HeatmapFixture theme="dark" />
+              <CalendarHeatmapFixture theme="light" />
+              <CalendarHeatmapFixture theme="dark" />
             </>
           )}
           {includes('panel-dock') && (
@@ -294,10 +293,10 @@ export default function App() {
               <PaginationsFixture theme="dark" />
             </>
           )}
-          {includes('date-time') && (
+          {includes('date-picker') && (
             <>
-              <DateTimeFieldFixture theme="light" />
-              <DateTimeFieldFixture theme="dark" />
+              <DatePickerFixture theme="light" />
+              <DatePickerFixture theme="dark" />
             </>
           )}
           {includes('quiet-buttons') && (

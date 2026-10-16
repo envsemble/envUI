@@ -36,7 +36,9 @@ test('mixed buttons connect in rows and columns with variant outer corners', asy
   // This composition check retains the shared host's intrinsic grid sizing.
   // The focused fixture is used below for independent interaction checks.
   await page.goto(fixtureUrl);
-  for (const width of [1440, 390]) {
+  // The narrow width still fits both groups on one line: the host's column used to be held wider
+  // than a phone by a static toast, and a group squeezed below its content wraps its labels.
+  for (const width of [1440, 480]) {
     await page.setViewportSize({ width, height: 1000 });
     for (const theme of ['light', 'dark']) {
       const scope = page.getByTestId(`button-groups-${theme}`);

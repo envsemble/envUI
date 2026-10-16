@@ -8,18 +8,13 @@ import {
   ConfirmButton,
   Dialog,
   EmptyState,
-  GroupedRows,
-  Input,
-  Row,
+  List,
+  TextField,
   LinkProvider,
-  LoadingBar,
   Menu,
-  MenuHeader,
-  MenuItem,
-  MenuSeparator,
   Meter,
-  NavigationItem,
-  OrganizationMenu,
+  NavList,
+  OrganizationSwitcher,
   SearchField,
   Skeleton,
   Spinner,
@@ -60,7 +55,6 @@ export function AdoptionFixture() {
   const [action, setAction] = useState('');
   const [organizationId, setOrganizationId] = useState('northwind');
   const [presses, setPresses] = useState(0);
-  const [loading, setLoading] = useState(false);
   const [confirmed, setConfirmed] = useState(0);
   const [homes, setHomes] = useState(3);
   const [seatsFull, setSeatsFull] = useState(false);
@@ -98,7 +92,7 @@ export function AdoptionFixture() {
           >
             <SearchField label="Search inside dialog" defaultValue="draft" />
           </Dialog>
-          <Menu
+          <Menu.Root
             aria-label="Account"
             trigger={
               <AvatarButton
@@ -108,15 +102,15 @@ export function AdoptionFixture() {
               />
             }
           >
-            <MenuHeader>Alex Morgan</MenuHeader>
-            <MenuItem href="/account">Account settings</MenuItem>
-            <MenuSeparator />
-            <MenuItem icon={<Logout />} onClick={() => setAction('Signed out')}>
+            <Menu.Header>Alex Morgan</Menu.Header>
+            <Menu.Item href="/account">Account settings</Menu.Item>
+            <Menu.Separator />
+            <Menu.Item icon={<Logout />} onClick={() => setAction('Signed out')}>
               Sign out
-            </MenuItem>
-          </Menu>
+            </Menu.Item>
+          </Menu.Root>
           <output data-testid="menu-action">{action}</output>
-          <OrganizationMenu
+          <OrganizationSwitcher
             organizations={[
               { id: 'northwind', name: 'Northwind Labs', detail: 'Admin' },
               { id: 'contoso', name: 'Contoso', detail: 'Member' },
@@ -129,7 +123,7 @@ export function AdoptionFixture() {
             onCreate={() => setAction('Create organization')}
           />
           <div data-testid="no-organization">
-            <OrganizationMenu
+            <OrganizationSwitcher
               organizations={[]}
               currentOrganizationId={null}
               onSelect={() => undefined}
@@ -138,7 +132,7 @@ export function AdoptionFixture() {
           </div>
           <Skeleton width="4rem" />
           <div className="fixture-toolbar" data-testid="compact-label-toolbar">
-            <Input compact showLabel label="Project filter" data-testid="compact-label" />
+            <TextField compact showLabel label="Project filter" data-testid="compact-label" />
             <Button>Apply</Button>
           </div>
           <Button
@@ -172,8 +166,6 @@ export function AdoptionFixture() {
           <Button>
             Show <AnimatedNumber value={homes} data-testid="animated-number" /> homes
           </Button>
-          <Button onClick={() => setLoading((value) => !value)}>Toggle loading</Button>
-          <LoadingBar active={loading} label="Loading next page" />
           <output hidden data-testid="bootstrap-script">
             {createThemeBootstrapScript({ storageKey: 'bootstrap-theme' })}
           </output>
@@ -184,13 +176,13 @@ export function AdoptionFixture() {
             <Button disabled={seatsFull}>Invite member</Button>
           </Tooltip>
           <Button onClick={() => setSeatsFull((value) => !value)}>Toggle seats</Button>
-          <GroupedRows>
-            <Row
+          <List.Root>
+            <List.Item
               title="Seat"
               data-testid="secondary-row"
               action={<Button variant="secondary">Remove</Button>}
             />
-          </GroupedRows>
+          </List.Root>
           <EmptyState tone="error" title="Products couldn’t load" description="Try again." />
           <EmptyState headingLevel={1} title="Nothing here yet" />
           <Meter label="Seats assigned" value={7} max={5} valueText="5 of 5" />
@@ -217,9 +209,9 @@ export function TwoShellsFixture() {
           title="First"
           navigationLabel="First navigation"
           navigation={
-            <NavigationItem href="/" icon={<Home />}>
+            <NavList.Item href="/" icon={<Home />}>
               Home
-            </NavigationItem>
+            </NavList.Item>
           }
         >
           <div className="fixture-two-shells-actions">
@@ -245,9 +237,9 @@ export function TwoShellsFixture() {
             title="Second"
             navigationLabel="Second navigation"
             navigation={
-              <NavigationItem href="/second" icon={<Category />}>
+              <NavList.Item href="/second" icon={<Category />}>
                 Second home
-              </NavigationItem>
+              </NavList.Item>
             }
           >
             <p>Second content</p>
@@ -275,22 +267,22 @@ export function ShellFixture() {
         navigationLabel="Fixture navigation"
         navigation={
           <>
-            <NavigationItem
+            <NavList.Item
               href="/"
               icon={<Home />}
               selected={page === 'home'}
               onClick={() => setPage('home')}
             >
               Home
-            </NavigationItem>
-            <NavigationItem
+            </NavList.Item>
+            <NavList.Item
               href="/products"
               icon={<Category />}
               selected={page === 'products'}
               onClick={() => setPage('products')}
             >
               Products
-            </NavigationItem>
+            </NavList.Item>
           </>
         }
         storageKey="fixture-sidebar"

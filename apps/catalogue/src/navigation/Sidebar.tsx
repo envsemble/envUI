@@ -1,5 +1,5 @@
 import { version } from '@envsemble/envui/package.json';
-import { Text, EnvUILogo, NavigationItem, Stack, Link } from '@envsemble/envui';
+import { Text, EnvUILogo, NavList, Stack, Link } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Category } from '@envsemble/envui/icons/Category';
 import { references, foundations, componentGroups } from '../Reference';
@@ -40,21 +40,21 @@ export function Sidebar({
         className="docs-sidebar-navigation"
         aria-label="Documentation"
       >
-        <NavigationItem
+        <NavList.Item
           size="compact"
           href="#/overview"
           selected={routePath.split('/')[0] === 'overview'}
           icon={<Home />}
         >
           Overview
-        </NavigationItem>
+        </NavList.Item>
         <Text variant="caption" className="docs-nav-heading">
           Foundations
         </Text>
         {foundations.map((item) => {
           const Icon = foundationIcons[item.id] ?? Category;
           return (
-            <NavigationItem
+            <NavList.Item
               size="compact"
               key={item.id}
               href={`#/foundations/${item.id}`}
@@ -62,7 +62,7 @@ export function Sidebar({
               icon={<Icon />}
             >
               {item.title}
-            </NavigationItem>
+            </NavList.Item>
           );
         })}
         {componentGroups.map((group) => (
@@ -75,7 +75,7 @@ export function Sidebar({
               .map((item) => {
                 const Icon = getComponentIcon(item.group);
                 return (
-                  <NavigationItem
+                  <NavList.Item
                     key={item.id}
                     size="compact"
                     href={`#/components/${item.id}/preview`}
@@ -83,7 +83,7 @@ export function Sidebar({
                     icon={<Icon />}
                   >
                     {item.title}
-                  </NavigationItem>
+                  </NavList.Item>
                 );
               })}
           </Stack>

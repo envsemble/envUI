@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { AppShell, NavigationItem } from '@envsemble/envui';
+import { AppShell, NavList } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Search } from '@envsemble/envui/icons/Search';
 import { FirstScrollProbe, MountProbe, ScrollProbe } from './WindowShell.js';
@@ -30,20 +30,20 @@ export function ResizableShellFixture() {
       navigationLabel="Resizable navigation"
       navigation={
         <>
-          <NavigationItem
+          <NavList.Item
             icon={<Home />}
             selected={page === 'documents'}
             onClick={() => setPage('documents')}
           >
             Documents
-          </NavigationItem>
-          <NavigationItem
+          </NavList.Item>
+          <NavList.Item
             icon={<Search />}
             selected={page === 'search'}
             onClick={() => setPage('search')}
           >
             Search
-          </NavigationItem>
+          </NavList.Item>
         </>
       }
       sidebarContent={

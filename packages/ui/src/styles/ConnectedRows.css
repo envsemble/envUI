@@ -2,7 +2,7 @@
 .env-connected-rows {
   --env-connected-row-scale: var(--scale, 1);
 }
-.env-grouped-rows.env-connected-rows {
+.env-list.env-connected-rows {
   --env-connected-row-scale: 1;
 }
 .env-connected-rows > .env-connected-row {

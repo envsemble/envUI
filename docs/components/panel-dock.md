@@ -109,7 +109,7 @@ function DocumentWindow({ title }: { title: string }) {
 ### Header and window controls
 
 ```tsx
-import { IconButton, Menu, MenuItem, PanelDockHeader } from '@envsemble/envui';
+import { IconButton, Menu, PanelDockHeader } from '@envsemble/envui';
 import { Edit } from '@envsemble/envui/icons/Edit';
 import { MoreVert } from '@envsemble/envui/icons/MoreVert';
 
@@ -119,13 +119,13 @@ import { MoreVert } from '@envsemble/envui/icons/MoreVert';
   actions={
     <>
       <IconButton variant="text" icon={<Edit />} aria-label="Edit" onClick={startEditing} />
-      <Menu
+      <Menu.Root
         aria-label="Report actions"
         density="compact"
         trigger={<IconButton variant="text" icon={<MoreVert />} aria-label="More actions" />}
       >
-        <MenuItem onClick={share}>Share</MenuItem>
-      </Menu>
+        <Menu.Item onClick={share}>Share</Menu.Item>
+      </Menu.Root>
     </>
   }
 />;

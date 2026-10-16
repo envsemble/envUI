@@ -10,7 +10,8 @@ import {
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { Close } from '../icons/Close.js';
-import { ContextMenu, MenuItem } from './Menu.js';
+import { ContextMenu } from './ContextMenu.js';
+import * as Menu from './Menu.js';
 
 export interface DocumentTab {
   /** Stable identifier; the tab carries it as data-tab-id. */
@@ -231,18 +232,18 @@ export function DocumentTabs({
         return (
           <>
             {tab && id !== undefined && (
-              <MenuItem
+              <Menu.Item
                 onClick={() => {
                   if (menuOpenedInside.current) setClosedFromMenu(true);
                   onClose(id);
                 }}
               >
                 {closeLabel(tab.getAttribute('aria-label') ?? '')}
-              </MenuItem>
+              </Menu.Item>
             )}
-            <MenuItem onClick={onCloseAll} disabled={items.length === 0}>
+            <Menu.Item onClick={onCloseAll} disabled={items.length === 0}>
               {closeAllLabel}
-            </MenuItem>
+            </Menu.Item>
           </>
         );
       }}

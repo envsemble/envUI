@@ -2,14 +2,13 @@ import { useMemo, useState } from 'react';
 import {
   AnimatedNumber,
   Button,
-  Heatmap,
+  CalendarHeatmap,
   Kbd,
   Stack,
   Stat,
-  StatGroup,
   Surface,
   Text,
-  type HeatmapDay,
+  type CalendarHeatmapDay,
 } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { Example } from './Example';
@@ -33,30 +32,30 @@ export function StatsPreview() {
         }
         caption="Stats share one pane in as many even columns as fit and wrap as space runs out. A trend shows an icon and text in its tone."
       >
-        <StatGroup aria-label="Project health">
-          <Stat
+        <Stat.Group aria-label="Project health">
+          <Stat.Root
             label="Active projects"
             value={<AnimatedNumber value={projects} />}
             trend={{ direction: 'up', label: '+12% from last month' }}
             detail="Last 30 days"
           />
-          <Stat
+          <Stat.Root
             label="Open risks"
             value="3"
             trend={{ direction: 'down', label: '2 fewer than last week', tone: 'success' }}
           />
-          <Stat
+          <Stat.Root
             label="Error rate"
             value="0.4%"
             trend={{ direction: 'up', label: '+0.1 points', tone: 'danger' }}
           />
-          <Stat
+          <Stat.Root
             label="Lead time"
             value="2.5 days"
             trend={{ direction: 'flat', label: 'No change' }}
             detail="Median"
           />
-        </StatGroup>
+        </Stat.Group>
       </Example>
       <Example
         title="On a pane"
@@ -66,10 +65,10 @@ export function StatsPreview() {
           <Text as="h3" variant="section-heading">
             Design review
           </Text>
-          <StatGroup tone="row" padding={4}>
-            <Stat label="Comments" value="24" detail="From 6 people" />
-            <Stat label="Resolved" value="18" trend={{ direction: 'up', label: '+5 today' }} />
-          </StatGroup>
+          <Stat.Group tone="row" padding={4}>
+            <Stat.Root label="Comments" value="24" detail="From 6 people" />
+            <Stat.Root label="Resolved" value="18" trend={{ direction: 'up', label: '+5 today' }} />
+          </Stat.Group>
         </Surface>
       </Example>
     </Preview>
@@ -77,7 +76,7 @@ export function StatsPreview() {
 }
 
 /** A repeatable year of activity ending today: busier midweek, with quiet stretches. */
-function activityYear(days: number, seed: number): HeatmapDay[] {
+function activityYear(days: number, seed: number): CalendarHeatmapDay[] {
   const today = new Date();
   const end = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
   return Array.from({ length: days }, (_, index) => {
@@ -92,7 +91,7 @@ function activityYear(days: number, seed: number): HeatmapDay[] {
   });
 }
 
-export function HeatmapPreview() {
+export function CalendarHeatmapPreview() {
   const activity = useMemo(() => activityYear(371, 4), []);
   const deployments = useMemo(
     () =>
@@ -115,13 +114,13 @@ export function HeatmapPreview() {
           </>
         }
       >
-        <Heatmap aria-label="Activity in the last year" data={activity} />
+        <CalendarHeatmap aria-label="Activity in the last year" data={activity} />
       </Example>
       <Example
         title="A tone and weeks from Monday"
         caption="Each step mixes the tone into the canvas; labels can name the unit of each day."
       >
-        <Heatmap
+        <CalendarHeatmap
           aria-label="Deployments in the last twenty weeks"
           data={deployments}
           tone="success"

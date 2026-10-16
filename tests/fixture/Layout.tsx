@@ -5,10 +5,10 @@ import {
   ActionGroup,
   Button,
   InfoChip,
-  DisclosureNote,
+  Disclosure,
   Stack,
-  Input,
-  NavigationItem,
+  TextField,
+  NavList,
   IconButton,
   ActionCard,
   ClickableCard,
@@ -35,19 +35,19 @@ export function LayoutFixture() {
               <Button>Save changes</Button>
             </ActionGroup>
             <InfoChip>Updated today</InfoChip>
-            <DisclosureNote title={`Card guidance ${theme}`} open>
+            <Disclosure title={`Card guidance ${theme}`} open>
               <p>First detail</p>
               <p>Second detail</p>
-            </DisclosureNote>
+            </Disclosure>
           </Card>
           <Stack data-testid="layout-stack" gap={3} style={{ maxInlineSize: '20rem' }}>
-            <Input label={`Layout field ${theme}`} />
+            <TextField label={`Layout field ${theme}`} />
             <Button>Fit action</Button>
-            <NavigationItem selected>Destination</NavigationItem>
+            <NavList.Item selected>Destination</NavList.Item>
             <InfoChip>Metadata</InfoChip>
-            <DisclosureNote title={`Stack guidance ${theme}`} open>
+            <Disclosure title={`Stack guidance ${theme}`} open>
               <p>Supporting detail</p>
-            </DisclosureNote>
+            </Disclosure>
           </Stack>
           <div className="fixture-shrink-row" data-testid="shrink-row">
             <span className="fixture-shrink-label">
@@ -120,14 +120,14 @@ export function LayoutFixture() {
             <p>Extra detail</p>
             <p>Another detail</p>
             <Button>Explore detail</Button>
-            <DisclosureNote title={`Feature guidance ${theme}`} open>
+            <Disclosure title={`Feature guidance ${theme}`} open>
               <p>Available options</p>
               <ul>
                 <li>First option</li>
                 <li>Second option</li>
               </ul>
               <p>Choose an option</p>
-            </DisclosureNote>
+            </Disclosure>
           </FeatureCard>
         </Theme>
       ))}

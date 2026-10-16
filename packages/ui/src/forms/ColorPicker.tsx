@@ -4,12 +4,12 @@ import { Stack } from '../foundations/Layout.js';
 import { Text } from '../foundations/Text.js';
 import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/setRef.js';
-import { Input, type InputProps } from './Input.js';
+import { TextField, type TextFieldProps } from './TextField.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
 
 export interface ColorPickerProps
   extends Omit<
-    InputProps,
+    TextFieldProps,
     | 'label'
     | 'type'
     | 'value'
@@ -128,7 +128,7 @@ export const ColorPicker = forwardRef<HTMLInputElement, ColorPickerProps>(functi
           onChange={(next) => commit(next, true)}
         />
       </div>
-      <Input
+      <TextField
         {...inputProps}
         ref={(input) => {
           inputRef.current = input;

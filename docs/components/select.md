@@ -41,7 +41,7 @@ import { Select } from '@envsemble/envui';
 - The open list is a raised popup like Popover: its own color, a hairline border and the surface corners, so it stands apart from the page, panes, rows and dialogs alike. Options are rounded rows whose corners follow the popup's, inset by its padding. They show only hover, press and selection. Keyboard navigation, typeahead and dismissal come from the component.
 - Option focus rings appear for keyboard interaction, not pointer opening or hover.
 - Use compact density in dense desktop interfaces, such as toolbars and title bars. The trigger takes the compact control height and a smaller chevron in the same Button styles. The open list takes the compact menu's look: the raised popup with small corners and 1.75 rem rows, where a check mark rather than a fill shows the selected option. Keyboard and form behavior are the same in both densities.
-- Label, hint and error use the same field structure and colors as Input and Textarea. Invalid controls use the shared red border with HSL hover and pressed shades, without background changes, and retain the standard keyboard focus ring. The application owns validation.
+- Label, hint and error use the same field structure and colors as TextField and Textarea. Invalid controls use the shared red border with HSL hover and pressed shades, without background changes, and retain the standard keyboard focus ring. The application owns validation.
 
 TypeScript declarations provide the complete public API.
 
@@ -50,6 +50,6 @@ TypeScript declarations provide the complete public API.
 - [Comboboxes](../components/combobox.md)
 - [Menus](../components/menu.md)
 - [Radio groups](../components/radio.md)
-- [Text fields](../components/fields.md)
-- [Grouped rows](../components/rows.md)
+- [Text fields](../components/text-field.md)
+- [Lists](../components/list.md)
 - [Accessibility](../foundations/accessibility.md)

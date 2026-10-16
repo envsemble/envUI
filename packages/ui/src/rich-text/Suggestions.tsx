@@ -6,7 +6,7 @@ import { Button } from '../actions/Button.js';
 import { Theme, useTheme } from '../foundations/Theme.js';
 import type { RichTextReference, RichTextReferenceSource } from './Types.js';
 
-interface MenuItem {
+interface SuggestionItem {
   id: string;
   label: string;
 }
@@ -15,7 +15,7 @@ interface MenuHandle {
 }
 const SuggestionMenu = forwardRef<
   MenuHandle,
-  SuggestionProps<MenuItem> & { label: string; error: string }
+  SuggestionProps<SuggestionItem> & { label: string; error: string }
 >(function SuggestionMenu({ items, command, loading, label, error, editor }, ref) {
   const theme = useTheme();
   const [selected, setSelected] = useState(0);
@@ -97,7 +97,7 @@ const SuggestionMenu = forwardRef<
 });
 
 /** Tiptap owns query matching, async cancellation/staleness, mounting, and Floating UI. */
-export function createSuggestionOptions<I extends MenuItem>(source: {
+export function createSuggestionOptions<I extends SuggestionItem>(source: {
   char: string;
   label?: string;
   minQueryLength?: number;

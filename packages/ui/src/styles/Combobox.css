@@ -1,5 +1,5 @@
 /* Combobox: the shared text field with a popup of options to choose one or several of. Labels,
-   guidance, validation, density and touch heights follow Input; the popup is Select's raised popup,
+   guidance, validation, density and touch heights follow TextField; the popup is Select's raised popup,
    where a check mark shows each chosen option. */
 
 /* Compact fields take the compact control height, like a compact Select or Button. */
@@ -8,7 +8,7 @@
 }
 
 /* The well lays out the chosen option's leading content, the chips and the text input in rows. Its
-   padding keeps one row as tall as an Input, and leaves room for the actions at its end. */
+   padding keeps one row as tall as a TextField, and leaves room for the actions at its end. */
 .env-combobox .env-combobox-well {
   --env-combobox-row: 1.5rem;
   --env-combobox-action: var(--control-height-compact);

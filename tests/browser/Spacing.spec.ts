@@ -8,16 +8,16 @@ import {
 const components = [
   'layout',
   'buttons',
-  'fields',
+  'text-field',
   'checkbox',
   'switch',
   'radio',
   'select',
-  'navigation',
-  'rows',
+  'nav-list',
+  'list',
   'cards',
   'chips',
-  'disclosures',
+  'disclosure',
   'empty-state',
   'loading',
   'toasts',
@@ -52,7 +52,7 @@ test('public composition owns spacing and content-fit sizing without documentati
       }
       const stack = scope.getByTestId('layout-stack');
       const stackWidth = (await stack.boundingBox())!.width;
-      for (const selector of ['.env-button', '.env-navigation-item', '.env-info-chip']) {
+      for (const selector of ['.env-button', '.env-nav-list-item', '.env-info-chip']) {
         expect((await stack.locator(selector).boundingBox())!.width).toBeLessThan(stackWidth);
       }
       const actionGroup = scope.getByTestId('stacked-actions');
@@ -73,7 +73,7 @@ test('public composition owns spacing and content-fit sizing without documentati
       expect(extraContent.y - description.y - description.height).toBeGreaterThanOrEqual(15);
       for (const [selector, step] of [
         ['.env-feature-card-extra', 1],
-        ['.env-disclosure-content', 0.5],
+        ['.env-disclosure-panel', 0.5],
       ] as const) {
         const result = await extra.locator(selector).evaluate((element) => {
           const root = parseFloat(getComputedStyle(document.documentElement).fontSize);

@@ -7,11 +7,22 @@ import {
   references,
   foundations as foundationReferences,
 } from '../../apps/catalogue/src/Reference';
+import { normalizeRoute } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
 
 const offline = pathToFileURL(resolve('dist/envUI.html')).href;
 const version = JSON.parse(readFileSync('packages/ui/package.json', 'utf8')).version;
 const components = references.map(({ id }) => id);
 const foundations = foundationReferences.map(({ id }) => id);
+
+test('the 0.x routes of renamed pages open the pages under their new names', () => {
+  const { docs } = JSON.parse(readFileSync('packages/codemods/src/maps/v1.json', 'utf8'));
+  for (const [from, to] of Object.entries<string>(docs).filter(([key]) => !key.startsWith('$'))) {
+    expect(components).toContain(to);
+    expect(components).not.toContain(from);
+    for (const view of ['preview', 'usage'])
+      expect(normalizeRoute(`components/${from}/${view}`)).toBe(`components/${to}/${view}`);
+  }
+});
 
 test('offline usage renders shared Markdown guidance and follows relative topic links', async ({
   page,
@@ -121,24 +132,22 @@ test('button link specimens and optional interaction matrices consume public con
     .click({ modifiers: ['Control'] });
   await expect(destination).toHaveText('Selected destination: Project guide');
   expect(await page.evaluate(() => location.hash)).toBe(hash);
-  const disclosure = preview.locator('details.env-disclosure-note');
+  const disclosure = preview.locator('details.env-disclosure');
   await disclosure.locator('summary').focus();
   await disclosure.locator('summary').press('Enter');
   await expect(disclosure).toHaveAttribute('open', '');
   await expect(disclosure.getByRole('region', { name: 'Button interaction states' })).toBeVisible();
-  await page.goto(`${offline}#/components/navigation/preview`);
-  const navigationDisclosure = page.locator('.docs-preview details.env-disclosure-note');
+  await page.goto(`${offline}#/components/nav-list/preview`);
+  const navigationDisclosure = page.locator('.docs-preview details.env-disclosure');
   await navigationDisclosure.locator('summary').click();
   await expect(
     navigationDisclosure.getByRole('region', { name: 'Navigation item interaction states' }),
   ).toBeVisible();
 });
 
-test('direction link groups center pairs and single destinations at every page width', async ({
-  page,
-}) => {
-  await page.goto(`${offline}#/components/direction-links/preview`);
-  const groups = page.locator('.env-direction-links');
+test('pagers center pairs and single destinations at every page width', async ({ page }) => {
+  await page.goto(`${offline}#/components/pager/preview`);
+  const groups = page.locator('.env-pager');
   await expect(groups).toHaveCount(5);
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: 1000 });
@@ -183,7 +192,7 @@ test('direction link groups center pairs and single destinations at every page w
   const longDestinations = page.getByRole('navigation', { name: 'Long destinations example' });
   const fragmentedWords = await longDestinations.evaluate((nav) => {
     const fragments: string[] = [];
-    for (const title of nav.querySelectorAll('.env-direction-link-title')) {
+    for (const title of nav.querySelectorAll('.env-pager-link-title')) {
       const text = title.firstChild!;
       for (const word of text.textContent!.matchAll(/\S+/g)) {
         const range = document.createRange();
@@ -406,7 +415,7 @@ test('overview centers its banner and switches between components and setup with
     .locator('#documentation')
     .getByRole('link', { name: 'Text fields', exact: true })
     .click();
-  await expect(page).toHaveURL(/#\/components\/fields\/usage$/);
+  await expect(page).toHaveURL(/#\/components\/text-field\/usage$/);
   await page.goto(`${offline}#/overview/get-started`);
   await expect(page.getByRole('heading', { name: 'Install the private package' })).toBeVisible();
   const overviewNext = page

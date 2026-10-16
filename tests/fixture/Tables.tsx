@@ -5,14 +5,8 @@ import {
   Checkbox,
   IconButton,
   Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeaderCell,
-  TableRow,
   Text,
   Theme,
-  type TableSortDirection,
   type ThemeValue,
 } from '@envsemble/envui';
 import { MoreVert } from '@envsemble/envui/icons/MoreVert';
@@ -50,7 +44,7 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
     listening: true,
     layout: 'stack' as 'stack' | 'scroll',
   });
-  const [prioritySort, setPrioritySort] = useState<TableSortDirection>('none');
+  const [prioritySort, setPrioritySort] = useState<Table.SortDirection>('none');
   const rows = sort
     ? [...reports].sort((first, second) =>
         sort.direction === 'ascending'
@@ -58,7 +52,7 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
           : compare(sort.key)(second, first),
       )
     : reports;
-  const direction = (key: SortKey): TableSortDirection =>
+  const direction = (key: SortKey): Table.SortDirection =>
     sort?.key === key ? sort.direction : 'none';
   const sortBy = (key: SortKey) =>
     setSort((current) => ({
@@ -68,33 +62,33 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
     }));
   return (
     <Theme theme={theme} data-testid={`tables-${theme}`} className="fixture-section">
-      <Table
+      <Table.Root
         aria-label={`Reports ${theme}`}
         resizableColumns
         columnWidths={widths}
         onColumnWidthsChange={setWidths}
         minColumnWidths={10}
       >
-        <TableHead>
-          <TableRow>
-            <TableHeaderCell sortDirection={direction('title')} onSort={() => sortBy('title')}>
+        <Table.Head>
+          <Table.Row>
+            <Table.HeaderCell sortDirection={direction('title')} onSort={() => sortBy('title')}>
               Report
-            </TableHeaderCell>
-            <TableHeaderCell>Owner</TableHeaderCell>
-            <TableHeaderCell
+            </Table.HeaderCell>
+            <Table.HeaderCell>Owner</Table.HeaderCell>
+            <Table.HeaderCell
               numeric
               sortDirection={direction('reviews')}
               onSort={() => sortBy('reviews')}
             >
               Reviews
-            </TableHeaderCell>
-            <TableHeaderCell>Status</TableHeaderCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
+            </Table.HeaderCell>
+            <Table.HeaderCell>Status</Table.HeaderCell>
+          </Table.Row>
+        </Table.Head>
+        <Table.Body>
           {rows.map((report) => (
-            <TableRow key={report.id} interactive selected={selected.includes(report.id)}>
-              <TableCell>
+            <Table.Row key={report.id} interactive selected={selected.includes(report.id)}>
+              <Table.Cell>
                 <Checkbox
                   label={report.title}
                   checked={selected.includes(report.id)}
@@ -104,110 +98,110 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
                     )
                   }
                 />
-              </TableCell>
-              <TableCell nowrap>{report.owner}</TableCell>
-              <TableCell numeric>{report.reviews}</TableCell>
-              <TableCell>
+              </Table.Cell>
+              <Table.Cell nowrap>{report.owner}</Table.Cell>
+              <Table.Cell numeric>{report.reviews}</Table.Cell>
+              <Table.Cell>
                 <Badge tone={tones[report.status as keyof typeof tones]}>{report.status}</Badge>
-              </TableCell>
-            </TableRow>
+              </Table.Cell>
+            </Table.Row>
           ))}
-        </TableBody>
-      </Table>
+        </Table.Body>
+      </Table.Root>
       <output data-testid={`widths-${theme}`}>
         {widths.map((width) => width.toFixed(1)).join(' ')}
       </output>
       <output data-testid={`order-${theme}`}>{rows.map((report) => report.id).join(' ')}</output>
 
-      <Table
+      <Table.Root
         aria-label={`Owned widths ${theme}`}
         density="compact"
         resizableColumns
         defaultColumnWidths={[30, 35, 35]}
       >
-        <TableHead>
-          <TableRow>
-            <TableHeaderCell>Name</TableHeaderCell>
-            <TableHeaderCell resizeLabel="Resize the owner column">Owner</TableHeaderCell>
-            <TableHeaderCell>State</TableHeaderCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          <TableRow>
-            <TableCell nowrap>
+        <Table.Head>
+          <Table.Row>
+            <Table.HeaderCell>Name</Table.HeaderCell>
+            <Table.HeaderCell resizeLabel="Resize the owner column">Owner</Table.HeaderCell>
+            <Table.HeaderCell>State</Table.HeaderCell>
+          </Table.Row>
+        </Table.Head>
+        <Table.Body>
+          <Table.Row>
+            <Table.Cell nowrap>
               A very long report name that is cut short in a narrow column
-            </TableCell>
-            <TableCell>Aurora</TableCell>
-            <TableCell>
+            </Table.Cell>
+            <Table.Cell>Aurora</Table.Cell>
+            <Table.Cell>
               <Button variant="text">Open</Button>
               <IconButton
                 variant="text"
                 icon={<MoreVert />}
                 aria-label={`More for the report ${theme}`}
               />
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
+            </Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table.Root>
 
       <div className="fixture-stack-frame" data-testid={`stack-frame-${theme}`}>
-        <Table caption={`Stacked ${theme}`} narrowLayout="stack">
-          <TableHead>
-            <TableRow>
-              <TableHeaderCell sortDirection={direction('title')} onSort={() => sortBy('title')}>
+        <Table.Root caption={`Stacked ${theme}`} narrowLayout="stack">
+          <Table.Head>
+            <Table.Row>
+              <Table.HeaderCell sortDirection={direction('title')} onSort={() => sortBy('title')}>
                 Report
-              </TableHeaderCell>
-              <TableHeaderCell>Owner</TableHeaderCell>
-              <TableHeaderCell numeric>Reviews</TableHeaderCell>
-              <TableHeaderCell>Status</TableHeaderCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
+              </Table.HeaderCell>
+              <Table.HeaderCell>Owner</Table.HeaderCell>
+              <Table.HeaderCell numeric>Reviews</Table.HeaderCell>
+              <Table.HeaderCell>Status</Table.HeaderCell>
+            </Table.Row>
+          </Table.Head>
+          <Table.Body>
             {rows.map((report) => (
-              <TableRow key={report.id} interactive selected={report.id === 'tokens'}>
-                <TableCell>
+              <Table.Row key={report.id} interactive selected={report.id === 'tokens'}>
+                <Table.Cell>
                   {report.title}
                   <Text variant="caption">Updated today</Text>
-                </TableCell>
-                <TableCell label="Owner">{report.owner}</TableCell>
-                <TableCell label="Reviews" numeric>
+                </Table.Cell>
+                <Table.Cell label="Owner">{report.owner}</Table.Cell>
+                <Table.Cell label="Reviews" numeric>
                   {report.reviews}
-                </TableCell>
-                <TableCell label="Status">
+                </Table.Cell>
+                <Table.Cell label="Status">
                   <Badge tone={tones[report.status as keyof typeof tones]}>{report.status}</Badge>
-                </TableCell>
-              </TableRow>
+                </Table.Cell>
+              </Table.Row>
             ))}
-          </TableBody>
-        </Table>
+          </Table.Body>
+        </Table.Root>
       </div>
       <div className="fixture-narrow-stack-frame" data-testid={`narrow-stack-frame-${theme}`}>
-        <Table aria-label={`Pages ${theme}`} narrowLayout="stack">
-          <TableHead>
-            <TableRow>
-              <TableHeaderCell>Page</TableHeaderCell>
-              <TableHeaderCell>Status</TableHeaderCell>
-              <TableHeaderCell>Address</TableHeaderCell>
-              <TableHeaderCell>Owner</TableHeaderCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableRow>
-              <TableCell>Quarterly report</TableCell>
-              <TableCell label="Status">
+        <Table.Root aria-label={`Pages ${theme}`} narrowLayout="stack">
+          <Table.Head>
+            <Table.Row>
+              <Table.HeaderCell>Page</Table.HeaderCell>
+              <Table.HeaderCell>Status</Table.HeaderCell>
+              <Table.HeaderCell>Address</Table.HeaderCell>
+              <Table.HeaderCell>Owner</Table.HeaderCell>
+            </Table.Row>
+          </Table.Head>
+          <Table.Body>
+            <Table.Row>
+              <Table.Cell>Quarterly report</Table.Cell>
+              <Table.Cell label="Status">
                 <Badge tone="warning">Draft</Badge> Unpublished changes since the last review
-              </TableCell>
-              <TableCell label="Address">
+              </Table.Cell>
+              <Table.Cell label="Address">
                 https://example.com/reports/2026/quarterly-report-with-a-very-long-address
-              </TableCell>
-              <TableCell label="Owner">Aurora</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+              </Table.Cell>
+              <Table.Cell label="Owner">Aurora</Table.Cell>
+            </Table.Row>
+          </Table.Body>
+        </Table.Root>
       </div>
       <div className="fixture-measured-stack-frame" data-testid={`measured-stack-frame-${theme}`}>
         {measured.shown && (
-          <Table
+          <Table.Root
             aria-label={`Measured threshold ${theme}`}
             narrowLayout={measured.layout}
             stackBelow="calc(20rem + 160px)"
@@ -217,19 +211,19 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
                 : undefined
             }
           >
-            <TableHead>
-              <TableRow>
-                <TableHeaderCell>Report</TableHeaderCell>
-                <TableHeaderCell>Owner</TableHeaderCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell>Quarterly report</TableCell>
-                <TableCell label="Owner">Aurora</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+            <Table.Head>
+              <Table.Row>
+                <Table.HeaderCell>Report</Table.HeaderCell>
+                <Table.HeaderCell>Owner</Table.HeaderCell>
+              </Table.Row>
+            </Table.Head>
+            <Table.Body>
+              <Table.Row>
+                <Table.Cell>Quarterly report</Table.Cell>
+                <Table.Cell label="Owner">Aurora</Table.Cell>
+              </Table.Row>
+            </Table.Body>
+          </Table.Root>
         )}
       </div>
       <output data-testid={`stack-changes-${theme}`}>{stackChanges.join(' ')}</output>
@@ -259,47 +253,47 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
         </button>
       </div>
       <div className="fixture-measured-stack-frame" data-testid={`bare-stack-frame-${theme}`}>
-        <Table aria-label={`Bare threshold ${theme}`} narrowLayout="stack" stackBelow="600">
-          <TableHead>
-            <TableRow>
-              <TableHeaderCell>Report</TableHeaderCell>
-              <TableHeaderCell>Owner</TableHeaderCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableRow>
-              <TableCell>Quarterly report</TableCell>
-              <TableCell label="Owner">Aurora</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+        <Table.Root aria-label={`Bare threshold ${theme}`} narrowLayout="stack" stackBelow="600">
+          <Table.Head>
+            <Table.Row>
+              <Table.HeaderCell>Report</Table.HeaderCell>
+              <Table.HeaderCell>Owner</Table.HeaderCell>
+            </Table.Row>
+          </Table.Head>
+          <Table.Body>
+            <Table.Row>
+              <Table.Cell>Quarterly report</Table.Cell>
+              <Table.Cell label="Owner">Aurora</Table.Cell>
+            </Table.Row>
+          </Table.Body>
+        </Table.Root>
         {/* A number of pixels works as well. */}
-        <Table aria-label={`Number threshold ${theme}`} narrowLayout="stack" stackBelow={600}>
-          <TableHead>
-            <TableRow>
-              <TableHeaderCell>Report</TableHeaderCell>
-              <TableHeaderCell>Owner</TableHeaderCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableRow>
-              <TableCell>Quarterly report</TableCell>
-              <TableCell label="Owner">Aurora</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+        <Table.Root aria-label={`Number threshold ${theme}`} narrowLayout="stack" stackBelow={600}>
+          <Table.Head>
+            <Table.Row>
+              <Table.HeaderCell>Report</Table.HeaderCell>
+              <Table.HeaderCell>Owner</Table.HeaderCell>
+            </Table.Row>
+          </Table.Head>
+          <Table.Body>
+            <Table.Row>
+              <Table.Cell>Quarterly report</Table.Cell>
+              <Table.Cell label="Owner">Aurora</Table.Cell>
+            </Table.Row>
+          </Table.Body>
+        </Table.Root>
       </div>
       <span id={`due-date-${theme}`} hidden>
         Due date
       </span>
-      <Table
+      <Table.Root
         aria-label={`Icon headers ${theme}`}
         resizableColumns
         defaultColumnWidths={[20, 20, 60]}
       >
-        <TableHead>
-          <TableRow>
-            <TableHeaderCell
+        <Table.Head>
+          <Table.Row>
+            <Table.HeaderCell
               aria-label="Priority"
               sortDirection={prioritySort}
               onSort={() =>
@@ -307,80 +301,80 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
               }
             >
               <PriorityHigh />
-            </TableHeaderCell>
-            <TableHeaderCell aria-labelledby={`due-date-${theme}`} onSort={() => undefined}>
+            </Table.HeaderCell>
+            <Table.HeaderCell aria-labelledby={`due-date-${theme}`} onSort={() => undefined}>
               <Event />
-            </TableHeaderCell>
-            <TableHeaderCell>Report</TableHeaderCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          <TableRow>
-            <TableCell>High</TableCell>
-            <TableCell>Friday</TableCell>
-            <TableCell>Quarterly report</TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
+            </Table.HeaderCell>
+            <Table.HeaderCell>Report</Table.HeaderCell>
+          </Table.Row>
+        </Table.Head>
+        <Table.Body>
+          <Table.Row>
+            <Table.Cell>High</Table.Cell>
+            <Table.Cell>Friday</Table.Cell>
+            <Table.Cell>Quarterly report</Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table.Root>
       <div className="fixture-wide-stack-frame" data-testid={`wide-stack-frame-${theme}`}>
-        <Table aria-label={`Seven columns ${theme}`} narrowLayout="stack" stackBelow="60rem">
-          <TableHead>
-            <TableRow>
+        <Table.Root aria-label={`Seven columns ${theme}`} narrowLayout="stack" stackBelow="60rem">
+          <Table.Head>
+            <Table.Row>
               {['Report', 'Owner', 'Team', 'Reviews', 'Updated', 'Status'].map((column) => (
-                <TableHeaderCell key={column} onSort={() => undefined}>
+                <Table.HeaderCell key={column} onSort={() => undefined}>
                   {column}
-                </TableHeaderCell>
+                </Table.HeaderCell>
               ))}
-              <TableHeaderCell>
+              <Table.HeaderCell>
                 <span className="fixture-visually-hidden">Actions</span>
-              </TableHeaderCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
+              </Table.HeaderCell>
+            </Table.Row>
+          </Table.Head>
+          <Table.Body>
             {reports.map((report) => (
-              <TableRow key={report.id}>
-                <TableCell>{report.title}</TableCell>
-                <TableCell label="Owner">{report.owner}</TableCell>
-                <TableCell label="Team">Research</TableCell>
-                <TableCell label="Reviews" numeric>
+              <Table.Row key={report.id}>
+                <Table.Cell>{report.title}</Table.Cell>
+                <Table.Cell label="Owner">{report.owner}</Table.Cell>
+                <Table.Cell label="Team">Infrastructure</Table.Cell>
+                <Table.Cell label="Reviews" numeric>
                   {report.reviews}
-                </TableCell>
-                <TableCell label="Updated">Today</TableCell>
-                <TableCell label="Status">{report.status}</TableCell>
-                <TableCell label="Actions">
+                </Table.Cell>
+                <Table.Cell label="Updated">Today</Table.Cell>
+                <Table.Cell label="Status">{report.status}</Table.Cell>
+                <Table.Cell label="Actions">
                   <button type="button">Open</button>
-                </TableCell>
-              </TableRow>
+                </Table.Cell>
+              </Table.Row>
             ))}
-          </TableBody>
-        </Table>
+          </Table.Body>
+        </Table.Root>
       </div>
-      <Table aria-label={`Hidden header text ${theme}`}>
-        <TableHead>
-          <TableRow>
+      <Table.Root aria-label={`Hidden header text ${theme}`}>
+        <Table.Head>
+          <Table.Row>
             {['Report', 'Owner', 'Team', 'Reviews', 'Updated', 'Status', 'Notes'].map((column) => (
-              <TableHeaderCell key={column} nowrap>
+              <Table.HeaderCell key={column} nowrap>
                 {column} with a long heading
-              </TableHeaderCell>
+              </Table.HeaderCell>
             ))}
-            <TableHeaderCell>
+            <Table.HeaderCell>
               <span className="fixture-visually-hidden">Actions</span>
-            </TableHeaderCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          <TableRow>
+            </Table.HeaderCell>
+          </Table.Row>
+        </Table.Head>
+        <Table.Body>
+          <Table.Row>
             {Array.from({ length: 7 }, (_, index) => (
-              <TableCell key={index} nowrap>
+              <Table.Cell key={index} nowrap>
                 Value {index + 1}
-              </TableCell>
+              </Table.Cell>
             ))}
-            <TableCell>
+            <Table.Cell>
               <Button variant="text">Edit</Button>
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
+            </Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table.Root>
     </Theme>
   );
 }

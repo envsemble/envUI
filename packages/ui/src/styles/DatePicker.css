@@ -1,0 +1,130 @@
+/* Date & time field: the shared text field, whose control is a button that shows the value and opens
+   a calendar on the Popover surface. Beside other controls it stays wide enough for a date, like an
+   input's default width, and in a narrower container it fills it. */
+.env-date-picker {
+  min-inline-size: min(12rem, 100%);
+}
+.env-date-picker[data-compact] {
+  --control-height: var(--control-height-compact);
+  min-inline-size: min(8rem, 100%);
+}
+.env-date-picker .env-date-picker-well {
+  --env-date-picker-action: var(--control-height-compact);
+  --env-date-picker-actions: 1;
+  --env-date-picker-end: var(--space-2);
+}
+.env-date-picker .env-date-picker-well[data-actions='2'] {
+  --env-date-picker-actions: 2;
+}
+.env-date-picker[data-compact] .env-date-picker-well {
+  --env-date-picker-action: calc(var(--control-height) - var(--space-2));
+  --env-date-picker-end: var(--space-1);
+}
+.env-date-picker .env-date-picker-well > .env-text-input.env-date-picker-trigger {
+  display: flex;
+  align-items: center;
+  padding-inline-end: calc(
+    (
+        var(--env-date-picker-end) + var(--env-date-picker-actions) *
+          var(--env-date-picker-action) + var(--space-1)
+      ) *
+      var(--scale, 1)
+  );
+  text-align: start;
+  cursor: pointer;
+}
+.env-date-picker .env-date-picker-well > .env-date-picker-trigger:disabled {
+  cursor: default;
+}
+.env-date-picker-value,
+.env-date-picker-placeholder {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.env-date-picker-placeholder {
+  color: var(--color-field-placeholder);
+}
+/* Like an input's placeholder, it waits while the label rests inside the empty field. A field
+   without a label, named by aria-label, shows it. */
+.env-text-field:not([data-label-hidden])
+  .env-date-picker-well:has(> label):not([data-label-floating], :focus-within)
+  .env-date-picker-placeholder {
+  color: transparent;
+}
+/* The icon shows what the field opens; presses on it reach the field. The clear button, a quiet icon
+   button like the other fields' actions, stays pressable. */
+.env-date-picker-end {
+  pointer-events: none;
+}
+.env-date-picker-end > .env-button {
+  pointer-events: auto;
+}
+.env-date-picker:not([data-compact]) .env-text-field-end .env-icon-button {
+  --icon-button-size: var(--control-height-compact);
+}
+.env-date-picker-end > .env-symbol.env-date-picker-icon {
+  display: grid;
+  place-items: center;
+  inline-size: calc(var(--env-date-picker-action) * var(--scale, 1));
+  block-size: calc(var(--env-date-picker-action) * var(--scale, 1));
+}
+.env-date-picker-end > .env-date-picker-icon > svg {
+  inline-size: calc(var(--control-icon-size) * var(--scale, 1));
+  block-size: calc(var(--control-icon-size) * var(--scale, 1));
+}
+.env-text-field-well:focus-within .env-date-picker-icon {
+  color: var(--color-field-active);
+}
+/* Carries the value for native forms; an invalid required field's message points at the field. */
+.env-date-picker-native {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline-start: 50%;
+  inline-size: 0.0625rem;
+  block-size: 0.0625rem;
+  margin: -0.0625rem;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* The calendar popup: the Popover surface, as wide as the calendar, with compact controls that grow
+   for touch. */
+.env-popover.env-date-picker-popup {
+  --control-height-small: var(--control-height-compact);
+  --control-height: var(--control-height-compact);
+  inline-size: auto;
+  max-inline-size: calc(100vw - 2rem);
+  padding: var(--space-4);
+  gap: var(--space-3);
+}
+.env-popover.env-date-picker-popup[data-density='compact'] {
+  padding: var(--space-3);
+}
+.env-date-picker-popup[data-density='compact'] .env-calendar {
+  --env-calendar-day: 2.25rem;
+}
+@media (pointer: coarse) {
+  .env-date-picker-popup[data-density='compact'] .env-calendar {
+    --env-calendar-day: var(--control-height-touch);
+  }
+}
+.env-date-picker-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+.env-date-picker-actions-end {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-inline-start: auto;
+}

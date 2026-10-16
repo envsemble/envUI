@@ -25,7 +25,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 - [Stacks & action groups](components/layout.md) — Use Stack for related content and ActionGroup for buttons.
 - [Surface](components/surface.md) — A background pane without automatic spacing between children.
-- [Grouped rows](components/rows.md) — Group related items with shared outer corners.
+- [Lists](components/list.md) — Group related items with shared outer corners.
 - [Cards](components/cards.md) — A content surface with automatic spacing and optional actions.
 
 ## Actions
@@ -36,22 +36,22 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 ## Forms & selection
 
 - [Color picker](components/color-picker.md) — A color area, hue slider and HEX field for opaque colors, and a color swatch for the button that opens it.
-- [Text fields](components/fields.md) — Single-line inputs, search fields and multiline textareas share labels, guidance and states.
+- [Text fields](components/text-field.md) — Single-line inputs, search fields and multiline textareas share labels, guidance and states.
 - [Composer](components/composer.md) — The message field of a conversation, with a send button that stops a running reply.
 - [Checkboxes](components/checkbox.md) — Independent choices; partial selection represents a group.
 - [Switches](components/switch.md) — Use for an on/off setting that applies immediately.
 - [Radio groups](components/radio.md) — Choose one option from a visible set.
 - [Selects](components/select.md) — Choose one option while keeping alternatives collapsed.
 - [Comboboxes](components/combobox.md) — Choose one option or several from a list that filters as people type.
-- [Date & time fields](components/date-time-field.md) — Choose a date, or a date and time, from a calendar, which also stands on its own.
+- [Date pickers](components/date-picker.md) — Choose a date, or a date and time, from a calendar, which also stands on its own.
 - [Sliders](components/slider.md) — Choose a value in a range by dragging a thumb or with the keyboard.
-- [File drop zones](components/file-dropzone.md) — Drop files or choose them in the file picker; the application shows what was chosen.
+- [Drop zones](components/drop-zone.md) — Drop files or choose them in the file picker; the application shows what was chosen.
 
 ## Navigation
 
-- [Navigation items](components/navigation.md) — Links to another destination; routing stays with the app.
+- [Navigation lists](components/nav-list.md) — Links to another destination; routing stays with the app.
 - [Tabs](components/tabs.md) — Switches between content panels in the same view.
-- [Direction links](components/direction-links.md) — Centered previous and next destinations, together or individually.
+- [Pager](components/pager.md) — Centered previous and next destinations, together or individually.
 - [Application shell](components/app-shell.md) — Topbar, window title bar and collapsible navigation sidebar for a whole application.
 - [Tree](components/tree.md) — A virtualized tree of rows for large hierarchies, such as file trees.
 - [Document tabs](components/document-tabs.md) — Closable editor-style tabs for open documents.
@@ -71,21 +71,21 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Animated numbers](components/animated-number.md) — Counts that roll to their new value, so a change is noticed.
 - [Rating](components/rating.md) — A read-only rating as stars filled in half steps, named once for assistive technology.
 - [Relative time](components/relative-time.md) — A moment as text relative to now, such as 3 hours ago, kept current, with the date and time in a tooltip.
-- [Disclosure notes](components/disclosures.md) — Keep optional details collapsed until needed.
+- [Disclosures](components/disclosure.md) — Keep optional details collapsed until needed.
 - [Avatars](components/avatar.md) — A picture of a person or organization with a default picture or initials as fallback, the avatar button and overlapping avatar groups.
 - [Messages](components/messages.md) — Conversation entries in a log: compact bubbles for your own messages, full-width content from others.
 - [Stats](components/stats.md) — Labelled key figures for dashboards, with a trend and detail, grouped in even columns.
-- [Heatmap](components/heatmap.md) — A calendar of daily values in color steps, with a tooltip and keyboard access for every day.
+- [Calendar heatmap](components/calendar-heatmap.md) — A calendar of daily values in color steps, with a tooltip and keyboard access for every day.
 
 ## Feedback & overlays
 
 - [Empty states](components/empty-state.md) — Explain missing content and offer the next action.
 - [Loading](components/loading.md) — Page progress, spinners, pending buttons and placeholders for incoming content.
 - [Toasts](components/toasts.md) — Managed feedback with configurable duration, placement and stack capacity.
-- [Notices](components/notices.md) — Inline banners for page- or section-level messages in four tones.
+- [Alerts](components/alert.md) — Inline banners for page- or section-level messages in four tones.
 - [Dialogs](components/dialogs.md) — Centered modals and side panels share focus and dismissal behavior.
 - [Command palette](components/command-palette.md) — Quick open: search and choose from a ranked list near the top of the window.
-- [Menus](components/menu.md) — Actions, destinations and the shared organization menu, opened from a trigger or a right click.
+- [Menus](components/menu.md) — Actions, destinations and the shared organization switcher, opened from a trigger or a right click.
 - [Menubar](components/menubar.md) — An application menubar of compact menus with shortcuts, submenus and access keys.
 - [Tooltips](components/tooltip.md) — Short hints on hover and keyboard focus.
 - [Popovers](components/popover.md) — A floating panel for details or a small form beside its trigger.

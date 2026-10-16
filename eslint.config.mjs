@@ -40,6 +40,8 @@ export default defineConfig(
     // Packaged copies of the README, skills and documentation.
     'packages/ui/docs/**',
     'packages/ui/skills/**',
+    // Codemod fixtures: inputs and expected outputs, compared byte for byte.
+    'packages/codemods/test/fixtures/**',
   ]),
   {
     files: ['**/*.{ts,tsx,mjs,js,cjs}'],

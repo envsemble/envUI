@@ -1,0 +1,140 @@
+import assert from 'node:assert/strict';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { test } from 'node:test';
+import { entriesOf, loadMap, renameClass, validateMap } from '../src/map.mjs';
+import { map } from './helpers.mjs';
+
+const name = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
+const part = /^[A-Za-z_$][A-Za-z0-9_$]*\.[A-Za-z_$][A-Za-z0-9_$]*$/;
+const className = /^env-[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const isObject = (value) => typeof value === 'object' && value !== null && !Array.isArray(value);
+
+test('the v1 map is well-formed', () => {
+  assert.deepEqual(validateMap(map), []);
+});
+
+test('the v1 map has the expected sections', () => {
+  for (const section of ['exports', 'split', 'removed', 'classes', 'docs'])
+    assert.ok(isObject(map[section]), section);
+  assert.equal(map.package, '@envsemble/envui');
+  assert.match(map.version, /^1\.0\.0/);
+});
+
+test('every export maps an old name to a different new name or Namespace.Part', () => {
+  for (const [entry, names] of entriesOf(map.exports)) {
+    assert.match(entry, /^@envsemble\/envui(\/[a-z-]+)?$/);
+    const renamed = entriesOf(names);
+    assert.ok(renamed.length > 0, entry);
+    const old = new Set(renamed.map(([from]) => from));
+    for (const [from, to] of renamed) {
+      assert.match(from, name, `${entry} ${from}`);
+      assert.equal(typeof to, 'string', `${entry} ${from}`);
+      assert.ok(name.test(to) || part.test(to), `${entry} ${from}: ${to}`);
+      assert.notEqual(from, to, `${entry} ${from}`);
+      if (name.test(to)) assert.ok(!old.has(to), `${entry} ${from}: ${to} is renamed again`);
+    }
+  }
+});
+
+test('every split names its prop and maps each value to a part', () => {
+  for (const [entry, names] of entriesOf(map.split)) {
+    for (const [from, rule] of entriesOf(names)) {
+      assert.match(from, name, `${entry} ${from}`);
+      assert.match(rule.prop, name, `${entry} ${from}`);
+      const values = entriesOf(rule.values);
+      assert.ok(values.length > 1, `${entry} ${from}`);
+      for (const [value, to] of values) assert.match(to, part, `${entry} ${from} ${value}`);
+      assert.ok(!Object.hasOwn(map.exports[entry] ?? {}, from), `${from} is also renamed`);
+    }
+  }
+});
+
+test('every removed export says what to use instead', () => {
+  for (const [entry, names] of entriesOf(map.removed)) {
+    for (const [from, rule] of entriesOf(names)) {
+      assert.match(from, name, `${entry} ${from}`);
+      assert.equal(typeof rule.use, 'string', `${entry} ${from}`);
+      assert.ok(rule.use.length > 20, `${entry} ${from}`);
+      if (rule.value !== undefined) assert.equal(typeof rule.value, 'string', `${entry} ${from}`);
+      assert.ok(!Object.hasOwn(map.exports[entry] ?? {}, from), `${from} is also renamed`);
+    }
+  }
+  assert.equal(
+    map.removed['@envsemble/envui/theme-bootstrap'].defaultThemeStorageKey.value,
+    'env-theme',
+  );
+});
+
+test('every class entry renames an env- class to another, and no rename chains', () => {
+  const { classes } = loadMap();
+  for (const [from, to] of entriesOf(map.classes)) {
+    assert.match(from, className, from);
+    assert.match(to, className, `${from}: ${to}`);
+    assert.notEqual(from, to, from);
+    assert.equal(renameClass(from, classes), to, from);
+    assert.equal(renameClass(to, classes), to, `${from}: ${to} is renamed again`);
+    assert.equal(renameClass(`${to}-part`, classes), `${to}-part`, `${from}: ${to}-part`);
+  }
+});
+
+test('every docs entry maps a page slug to another', () => {
+  for (const [from, to] of entriesOf(map.docs)) {
+    assert.match(from, /^[a-z0-9]+(-[a-z0-9]+)*$/, from);
+    assert.match(to, /^[a-z0-9]+(-[a-z0-9]+)*$/, `${from}: ${to}`);
+    assert.notEqual(from, to, from);
+  }
+});
+
+test('validateMap reports malformed maps', () => {
+  const problems = (value) => validateMap(value).join('\n');
+  assert.match(problems([]), /JSON object/);
+  assert.match(problems({ exports: { x: { Input: 'Input' } } }), /maps to itself/);
+  assert.match(problems({ exports: { x: { Input: 'Text Field' } } }), /Namespace\.Part/);
+  assert.match(problems({ exports: { x: { A: 'B', B: 'C' } } }), /itself renamed/);
+  assert.match(problems({ split: { x: { Link: { prop: 'direction' } } } }), /needs "values"/);
+  assert.match(
+    problems({ split: { x: { Link: { prop: 'direction', values: { next: 'Next' } } } } }),
+    /Namespace\.Part/,
+  );
+  assert.match(problems({ removed: { x: { Bar: {} } } }), /"use" hint/);
+  assert.match(
+    problems({ exports: { x: { A: 'B' } }, removed: { x: { A: { use: 'C' } } } }),
+    /both/,
+  );
+  assert.match(problems({ classes: { 'env-a': 'Env-B' } }), /env- class name/);
+  assert.match(problems({ classes: { 'env-a': 'env-b', 'env-b': 'env-c' } }), /renames again/);
+  assert.match(problems({ docs: { a: 'a' } }), /maps to itself/);
+});
+
+test('loadMap reports a map it cannot read or that is malformed', () => {
+  const directory = mkdtempSync(join(tmpdir(), 'envui-codemods-map-'));
+  try {
+    assert.throws(() => loadMap(join(directory, 'missing.json')), /Cannot read the rename map/);
+    const malformed = join(directory, 'malformed.json');
+    writeFileSync(malformed, JSON.stringify({ classes: { 'env-a': 'env-a' } }));
+    assert.throws(() => loadMap(malformed), /malformed:\n- classes: env-a maps to itself/);
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+});
+
+test('loadMap lists the namespaces each entry point has in 1.0', () => {
+  const library = loadMap().entries.get('@envsemble/envui');
+  const targets = [
+    ...entriesOf(map.exports['@envsemble/envui']).map(([, to]) => to),
+    ...entriesOf(map.split['@envsemble/envui']).flatMap(([, rule]) => Object.values(rule.values)),
+  ];
+  const namespaces = new Set(
+    targets.filter((to) => to.includes('.')).map((to) => to.split('.')[0]),
+  );
+  assert.deepEqual([...library.namespaces].sort(), [...namespaces].sort());
+  for (const namespace of ['Menu', 'Pager', 'Toast']) assert.ok(namespaces.has(namespace));
+  assert.deepEqual(library.renames.get('MenuItem'), {
+    to: 'Menu.Item',
+    namespace: 'Menu',
+    part: 'Item',
+  });
+  assert.deepEqual(library.renames.get('Input'), { to: 'TextField' });
+});

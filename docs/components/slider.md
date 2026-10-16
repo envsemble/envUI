@@ -36,7 +36,7 @@ import { Slider } from '@envsemble/envui';
 
 ## Guidelines
 
-- Use a slider for a value people adjust by eye within a known range, such as opacity or volume. Use an Input with type="number" when people know the exact number they want.
+- Use a slider for a value people adjust by eye within a known range, such as opacity or volume. Use a TextField with type="number" when people know the exact number they want.
 - The label and the current value sit above the track. The value is an output linked to the slider; formatValue formats both what people read and what assistive technology announces.
 - <kbd>←</kbd> and <kbd>→</kbd>, or <kbd>↓</kbd> and <kbd>↑</kbd>, move by one step; <kbd>Page Up</kbd> and <kbd>Page Down</kbd>, or <kbd>Shift</kbd> with an arrow key, by a large step; <kbd>Home</kbd> and <kbd>End</kbd> go to the ends of the range. Pressing the track moves the thumb there, and pressing the label focuses the slider.
 - The indicator and the thumb take the control blue, at least 3:1 against the canvas in both themes; the rest of the track is the translucent fill. The thumb shows a halo under the pointer and while it is dragged, and the focus ring with keyboard focus. On touch screens the slider's row is 2.75 rem tall and the thumb larger.
@@ -48,5 +48,5 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Meters & progress](../components/meters.md)
-- [Text fields](../components/fields.md)
+- [Text fields](../components/text-field.md)
 - [Accessibility](../foundations/accessibility.md)

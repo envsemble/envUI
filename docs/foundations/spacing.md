@@ -48,7 +48,7 @@ Inside a `Theme`, or a document root themed by `ThemePreferenceProvider`, these 
 - Let text wrap and controls grow with content. The application chooses layout breakpoints; there is no separate mobile theme or component set.
 - Text has no outer margins. Cards already space direct children; Stack and ActionGroup supply other layouts.
 - Use component defaults for geometry. Choose Surface for a plain pane and Card for a content surface.
-- Grouped rows keep large outside corners and compact inside joins. Their component page owns the complete row behavior.
+- Lists keep large outside corners and compact inside joins. Their component page owns the complete row behavior.
 
 TypeScript declarations provide the complete public API.
 
@@ -57,5 +57,5 @@ TypeScript declarations provide the complete public API.
 - [Stacks & action groups](../components/layout.md)
 - [Surface](../components/surface.md)
 - [Cards](../components/cards.md)
-- [Grouped rows](../components/rows.md)
+- [Lists](../components/list.md)
 - [Composition & extension](../foundations/composition.md)

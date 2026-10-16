@@ -1,7 +1,7 @@
 import {
   Badge,
-  Counter,
-  NavigationItem,
+  CounterBadge,
+  NavList,
   Stack,
   Surface,
   Theme,
@@ -46,20 +46,20 @@ export function BadgesFixture({ theme }: { theme: ThemeValue }) {
           </Stack>
         </Surface>
       ))}
-      <NavigationItem
+      <NavList.Item
         icon={<Inbox />}
-        trailing={<Counter value={12} aria-label="12 unread" tone="accent" />}
+        trailing={<CounterBadge value={12} aria-label="12 unread" tone="accent" />}
       >
         Inbox
-      </NavigationItem>
-      <NavigationItem
+      </NavList.Item>
+      <NavList.Item
         icon={<Inbox />}
         iconOnly
         aria-label="Inbox with unread"
-        trailing={<Counter value={12} />}
+        trailing={<CounterBadge value={12} />}
       >
         Inbox
-      </NavigationItem>
+      </NavList.Item>
     </Theme>
   );
 }

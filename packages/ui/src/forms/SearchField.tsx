@@ -3,11 +3,11 @@ import { Search } from '../icons/Search.js';
 import { Close } from '../icons/Close.js';
 import { IconButton } from '../actions/Button.js';
 import { setRef } from '../internal/setRef.js';
-import { Input, type InputProps } from './Input.js';
+import { TextField, type TextFieldProps } from './TextField.js';
 
 export interface SearchFieldProps
   extends Omit<
-    InputProps,
+    TextFieldProps,
     'type' | 'startIcon' | 'endAction' | 'label' | 'value' | 'defaultValue'
   > {
   /** Accessible name; shown as a floating label when the field is not compact or sets showLabel. */
@@ -43,7 +43,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
     onValueChange?.(next);
   }
   return (
-    <Input
+    <TextField
       {...props}
       ref={(node) => {
         inputRef.current = node;

@@ -3,9 +3,9 @@ import {
   Button,
   Dialog,
   HoverCard,
-  Input,
+  TextField,
   Link,
-  Notice,
+  Alert,
   Popover,
   Stack,
   Text,
@@ -13,31 +13,31 @@ import {
   type ThemeValue,
 } from '@envsemble/envui';
 
-export function NoticesFixture({ theme }: { theme: ThemeValue }) {
+export function AlertsFixture({ theme }: { theme: ThemeValue }) {
   const [dismissed, setDismissed] = useState(false);
   const [failed, setFailed] = useState(false);
   return (
-    <Theme theme={theme} data-testid={`notices-${theme}`} className="fixture-section">
-      <Notice title="Sync paused">Changes are saved on this device.</Notice>
-      <Notice tone="success">The plan was published.</Notice>
-      <Notice tone="warning" title="Blocked" action={<Link href="#blockers">Show blockers</Link>}>
+    <Theme theme={theme} data-testid={`alerts-${theme}`} className="fixture-section">
+      <Alert title="Sync paused">Changes are saved on this device.</Alert>
+      <Alert tone="success">The plan was published.</Alert>
+      <Alert tone="warning" title="Blocked" action={<Link href="#blockers">Show blockers</Link>}>
         Two decisions are waiting for review.
-      </Notice>
+      </Alert>
       {!dismissed && (
-        <Notice tone="error" title="Could not load the index" onDismiss={() => setDismissed(true)}>
+        <Alert tone="error" title="Could not load the index" onDismiss={() => setDismissed(true)}>
           The search service did not respond.
-        </Notice>
+        </Alert>
       )}
-      <Notice tone="info" icon={false}>
+      <Alert tone="info" icon={false}>
         No icon here.
-      </Notice>
+      </Alert>
       <Button variant="secondary" onClick={() => setFailed(true)}>
         Fail the save {theme}
       </Button>
       {failed && (
-        <Notice tone="error" announce title="Save failed">
+        <Alert tone="error" announce title="Save failed">
           Try again in a moment.
-        </Notice>
+        </Alert>
       )}
     </Theme>
   );
@@ -61,7 +61,7 @@ export function PopoverFixture({ theme }: { theme: ThemeValue }) {
         >
           {(close) => (
             <Stack gap={3}>
-              <Input label="Name" name="name" defaultValue="Roadmap.md" />
+              <TextField label="Name" name="name" defaultValue="Roadmap.md" />
               <Button
                 onClick={() => {
                   setSaved('Renamed');
@@ -95,7 +95,7 @@ export function DialogVariantsFixture() {
           placement="top"
           trigger={<Button variant="secondary">Open top dialog</Button>}
         >
-          <Input label="Search" name="search" />
+          <TextField label="Search" name="search" />
         </Dialog>
         <Dialog
           title="Report details"

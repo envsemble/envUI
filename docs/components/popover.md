@@ -3,7 +3,7 @@
 ## React usage
 
 ```tsx
-import { Button, Input, Popover, Stack, Text } from '@envsemble/envui';
+import { Button, Popover, Stack, Text, TextField } from '@envsemble/envui';
 
 <Popover title="Roadmap.md" trigger={<Button variant="secondary">Details</Button>}>
   <Text tone="muted">Changed today by Alex. 3 open decisions, 1 blocked.</Text>
@@ -14,7 +14,7 @@ import { Button, Input, Popover, Stack, Text } from '@envsemble/envui';
   {(close) => (
     <form onSubmit={(event) => { event.preventDefault(); rename(event.currentTarget); close(); }}>
       <Stack gap={3}>
-        <Input label="Name" name="name" defaultValue={name} />
+        <TextField label="Name" name="name" defaultValue={name} />
         <Button type="submit">Rename</Button>
       </Stack>
     </form>

@@ -56,6 +56,6 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Messages](../components/messages.md)
-- [Text fields](../components/fields.md)
+- [Text fields](../components/text-field.md)
 - [Buttons](../components/buttons.md)
 - [Accessibility](../foundations/accessibility.md)

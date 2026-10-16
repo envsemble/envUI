@@ -1,11 +1,11 @@
 .env-button,
-.env-navigation-item {
+.env-nav-list-item {
   margin: 0;
   box-sizing: border-box;
 }
 
 .env-button,
-.env-navigation-item {
+.env-nav-list-item {
   transition:
     background-color var(--motion-duration-fast) var(--motion-ease),
     color var(--motion-duration-fast) var(--motion-ease),
@@ -14,7 +14,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .env-button,
-  .env-navigation-item {
+  .env-nav-list-item {
     transition: none;
   }
 }

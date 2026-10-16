@@ -1,4 +1,16 @@
 {
+  "components/alert/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 3
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 20
+      }
+    }
+  },
   "components/animated-number/usage": {
     "dark": {
       "color-contrast": {
@@ -54,7 +66,7 @@
     },
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 96
+        "article :: div.env-code-block span": 95
       },
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
@@ -72,7 +84,7 @@
     },
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 66
+        "article :: div.env-code-block span": 65
       },
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
@@ -118,6 +130,13 @@
       },
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
+      }
+    }
+  },
+  "components/calendar-heatmap/usage": {
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 61
       }
     }
   },
@@ -245,7 +264,7 @@
       }
     }
   },
-  "components/date-time-field/usage": {
+  "components/date-picker/usage": {
     "dark": {
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
@@ -272,19 +291,7 @@
       }
     }
   },
-  "components/direction-links/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 8
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 36
-      }
-    }
-  },
-  "components/disclosures/usage": {
+  "components/disclosure/usage": {
     "dark": {
       "color-contrast": {
         "article :: div.env-code-block span": 1
@@ -320,6 +327,32 @@
       }
     }
   },
+  "components/drop-zone/preview": {
+    "dark": {
+      "label-content-name-mismatch": {
+        "Drop or browse :: button.env-drop-zone-target": 1,
+        "States :: button.env-drop-zone-target": 2
+      }
+    },
+    "light": {
+      "label-content-name-mismatch": {
+        "Drop or browse :: button.env-drop-zone-target": 1,
+        "States :: button.env-drop-zone-target": 2
+      }
+    }
+  },
+  "components/drop-zone/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 2
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 81
+      }
+    }
+  },
   "components/empty-state/preview": {
     "dark": {
       "heading-order": {
@@ -341,68 +374,6 @@
     "light": {
       "color-contrast": {
         "article :: div.env-code-block span": 15
-      }
-    }
-  },
-  "components/fields/preview": {
-    "dark": {
-      "target-size": {
-        "States & validation :: button.env-textarea-resize-edge": 3,
-        "Textarea appearance & sizing :: button.env-textarea-resize-edge": 1
-      }
-    },
-    "light": {
-      "target-size": {
-        "States & validation :: button.env-textarea-resize-edge": 3,
-        "Textarea appearance & sizing :: button.env-textarea-resize-edge": 1
-      }
-    }
-  },
-  "components/fields/usage": {
-    "dark": {
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 79
-      },
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
-      }
-    }
-  },
-  "components/file-dropzone/preview": {
-    "dark": {
-      "label-content-name-mismatch": {
-        "Drop or browse :: button.env-file-dropzone-target": 1,
-        "States :: button.env-file-dropzone-target": 2
-      }
-    },
-    "light": {
-      "label-content-name-mismatch": {
-        "Drop or browse :: button.env-file-dropzone-target": 1,
-        "States :: button.env-file-dropzone-target": 2
-      }
-    }
-  },
-  "components/file-dropzone/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 2
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 81
-      }
-    }
-  },
-  "components/heatmap/usage": {
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 61
       }
     }
   },
@@ -442,6 +413,25 @@
       }
     }
   },
+  "components/list/preview": {
+    "light": {
+      "color-contrast": {
+        "Rows that open something :: a.env-button.env-button-text.env-link": 2
+      }
+    }
+  },
+  "components/list/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 3
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 43
+      }
+    }
+  },
   "components/loading/usage": {
     "dark": {
       "color-contrast": {
@@ -450,7 +440,7 @@
     },
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 36
+        "article :: div.env-code-block span": 33
       }
     }
   },
@@ -497,7 +487,7 @@
     },
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 158
+        "article :: div.env-code-block span": 144
       },
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
@@ -524,7 +514,7 @@
     },
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 66
+        "article :: div.env-code-block span": 62
       }
     }
   },
@@ -547,27 +537,27 @@
       }
     }
   },
-  "components/navigation/usage": {
+  "components/nav-list/usage": {
     "dark": {
       "color-contrast": {
-        "article :: div.env-code-block span": 4
+        "article :: div.env-code-block span": 8
       }
     },
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 22
+        "article :: div.env-code-block span": 49
       }
     }
   },
-  "components/notices/usage": {
+  "components/pager/usage": {
     "dark": {
       "color-contrast": {
-        "article :: div.env-code-block span": 3
+        "article :: div.env-code-block span": 10
       }
     },
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 20
+        "article :: div.env-code-block span": 37
       }
     }
   },
@@ -611,7 +601,7 @@
     },
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 142
+        "article :: div.env-code-block span": 141
       },
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
@@ -686,25 +676,6 @@
       }
     }
   },
-  "components/rows/preview": {
-    "light": {
-      "color-contrast": {
-        "Rows that open something :: a.env-button.env-button-text.env-link": 2
-      }
-    }
-  },
-  "components/rows/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 3
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 44
-      }
-    }
-  },
   "components/segmented-control/preview": {
     "light": {
       "color-contrast": {
@@ -741,7 +712,7 @@
   "components/stats/usage": {
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 35
+        "article :: div.env-code-block span": 34
       }
     }
   },
@@ -772,7 +743,7 @@
     },
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 197
+        "article :: div.env-code-block span": 187
       }
     }
   },
@@ -788,21 +759,44 @@
       }
     }
   },
-  "components/toasts/usage": {
+  "components/text-field/preview": {
     "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 3
-      },
+      "target-size": {
+        "States & validation :: button.env-textarea-resize-edge": 3,
+        "Textarea appearance & sizing :: button.env-textarea-resize-edge": 1
+      }
+    },
+    "light": {
+      "target-size": {
+        "States & validation :: button.env-textarea-resize-edge": 3,
+        "Textarea appearance & sizing :: button.env-textarea-resize-edge": 1
+      }
+    }
+  },
+  "components/text-field/usage": {
+    "dark": {
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
       }
     },
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 49
+        "article :: div.env-code-block span": 79
       },
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
+      }
+    }
+  },
+  "components/toasts/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 2
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 30
       }
     }
   },

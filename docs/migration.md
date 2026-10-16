@@ -33,16 +33,16 @@ Prefer a small complete slice with shared controls and representative interactio
 
 Consult the relevant [component documentation](index.md) before adopting these candidates:
 
-| Existing responsibility                          | Candidate                                             |
-| ------------------------------------------------ | ----------------------------------------------------- |
-| Typography, panes, vertical layouts, action rows | Text, Surface, Stack, ActionGroup                     |
-| Buttons, inline links, icon/connected actions    | Button, Link, IconButton, ButtonGroup                 |
-| Side navigation and selected destinations        | NavigationItem with router-owned selection            |
-| Content/action/clickable cards                   | Appropriate public Card composition                   |
-| Fields and choices                               | Input, Textarea, Select, Checkbox, RadioGroup, Switch |
-| Modal/inspector shells, notifications            | Dialog, ToastProvider/useToast                        |
-| Loading and empty results                        | LoadingState, Skeleton, EmptyState                    |
-| Source, Markdown, formatted editing              | Optional content or rich-text entry                   |
+| Existing responsibility                          | Candidate                                                 |
+| ------------------------------------------------ | --------------------------------------------------------- |
+| Typography, panes, vertical layouts, action rows | Text, Surface, Stack, ActionGroup                         |
+| Buttons, inline links, icon/connected actions    | Button, Link, IconButton, ButtonGroup                     |
+| Side navigation and selected destinations        | NavList.Item with router-owned selection                  |
+| Content/action/clickable cards                   | Appropriate public Card composition                       |
+| Fields and choices                               | TextField, Textarea, Select, Checkbox, RadioGroup, Switch |
+| Modal/inspector shells, notifications            | Dialog, Toast.Provider/useToast                           |
+| Loading and empty results                        | LoadingState, Skeleton, EmptyState                        |
+| Source, Markdown, formatted editing              | Optional content or rich-text entry                       |
 
 Port behavior explicitly instead of mechanically translating props. Preserve labels, accessible names, href/router state, callback payloads, refs, form names/reset, focus restoration and mutation timing. Check button types inside forms, pending-operation dismissal rules and draft state through dialogs/navigation.
 

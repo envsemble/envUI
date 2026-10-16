@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   Button,
-  Input,
+  TextField,
   Textarea,
   Checkbox,
   Switch,
@@ -34,7 +34,7 @@ export function FormsFixture() {
           setValues(Object.fromEntries([...data].map(([name, value]) => [name, String(value)])));
         }}
       >
-        <Input
+        <TextField
           label="Project name"
           hint="A descriptive name"
           name="project"
@@ -47,7 +47,7 @@ export function FormsFixture() {
           name="notes"
           defaultValue="Initial notes"
         />
-        <Input
+        <TextField
           label="Invalid sample"
           error="Please correct this value"
           defaultValue="Invalid value"

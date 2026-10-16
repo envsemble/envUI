@@ -1,0 +1,80 @@
+/* Alerts: an inline banner tinted with its tone. Text stays primary; the icon carries the tone. */
+.env-alert {
+  --env-alert-tone: var(--color-tone-accent);
+  box-sizing: border-box;
+  min-inline-size: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 0.0625rem solid color-mix(in srgb, var(--env-alert-tone) 28%, transparent);
+  border-radius: var(--md-sys-shape-corner-large);
+  background: color-mix(
+    in srgb,
+    var(--env-alert-tone) var(--state-tone-subtle-opacity),
+    transparent
+  );
+  color: var(--color-text-primary);
+  font: var(--type-body);
+  overflow-wrap: anywhere;
+}
+.env-alert[data-tone='success'] {
+  --env-alert-tone: var(--color-tone-success);
+}
+.env-alert[data-tone='warning'] {
+  --env-alert-tone: var(--color-tone-warning);
+}
+.env-alert[data-tone='error'] {
+  --env-alert-tone: var(--color-tone-danger);
+}
+.env-alert-icon {
+  grid-column: 1;
+  display: grid;
+  place-items: center;
+  block-size: 1.4em;
+  color: var(--env-alert-tone);
+}
+.env-alert-icon .env-symbol {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+}
+.env-alert-content {
+  grid-column: 2;
+  min-inline-size: 0;
+  display: grid;
+  gap: var(--space-1);
+}
+.env-alert-title {
+  font: var(--type-h2);
+}
+.env-alert-message {
+  color: var(--color-text-primary);
+}
+.env-alert-action {
+  margin-block-start: var(--space-2);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+/* The dismiss button is a small circle in the alert's tone, centered on the first line. */
+.env-alert-dismiss.env-button {
+  grid-column: 3;
+  inline-size: var(--control-height-compact);
+  max-inline-size: none;
+  block-size: var(--control-height-compact);
+  min-block-size: var(--control-height-compact);
+  margin-block: calc((1.4 * var(--font-size-heading-small) - var(--control-height-compact)) / 2);
+  margin-inline-end: calc(-1 * var(--space-2));
+  border-radius: 50%;
+  color: var(--env-alert-tone);
+}
+/* Hover and press tint the circle with the tone instead of the text button's link colors. */
+.env-alert-dismiss.env-button.env-icon-button:hover:not(:disabled):not([aria-disabled='true']) {
+  background: color-mix(in srgb, var(--env-alert-tone) 14%, transparent);
+  color: var(--env-alert-tone);
+}
+.env-alert-dismiss.env-button.env-icon-button:active:not(:disabled):not([aria-disabled='true']) {
+  background: color-mix(in srgb, var(--env-alert-tone) 22%, transparent);
+  color: var(--env-alert-tone);
+}

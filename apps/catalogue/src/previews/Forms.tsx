@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  Input,
+  TextField,
   Textarea,
   Checkbox,
   Switch,
@@ -13,11 +13,10 @@ import {
   Button,
   IconButton,
   Surface,
-  GroupedRows,
-  Row,
+  List,
   Kbd,
   ActionGroup,
-  FileDropzone,
+  DropZone,
   Text,
 } from '@envsemble/envui';
 import { Mail } from '@envsemble/envui/icons/Mail';
@@ -38,13 +37,13 @@ function InputExamples() {
   return (
     <>
       <Example
-        title="Input appearance"
+        title="Text field appearance"
         size="collection"
         caption="Focus the plain field to reveal its underline."
       >
         <SpecimenGrid>
           <Specimen title="Outlined">
-            <Input
+            <TextField
               label="Project name"
               name="project"
               value={projectName}
@@ -53,7 +52,7 @@ function InputExamples() {
             />
           </Specimen>
           <Specimen title="Plain">
-            <Input
+            <TextField
               variant="plain"
               label="Project name"
               name="plainProject"
@@ -71,7 +70,7 @@ function InputExamples() {
       >
         <SpecimenGrid>
           <Specimen title="Empty">
-            <Input
+            <TextField
               label="Project name"
               placeholder="Enter a name"
               value={emptyProjectName}
@@ -79,7 +78,7 @@ function InputExamples() {
             />
           </Specimen>
           <Specimen title="Filled">
-            <Input
+            <TextField
               label="Project name"
               value={projectName}
               onChange={(e) => setProjectName(e.target.value)}
@@ -94,7 +93,7 @@ function InputExamples() {
       >
         <SpecimenGrid>
           <Specimen title="Prefix">
-            <Input
+            <TextField
               label="Address"
               name="address"
               prefix="https://example.com/"
@@ -102,10 +101,10 @@ function InputExamples() {
             />
           </Specimen>
           <Specimen title="Suffix">
-            <Input label="Storage" name="storage" type="number" suffix="GB" defaultValue="20" />
+            <TextField label="Storage" name="storage" type="number" suffix="GB" defaultValue="20" />
           </Specimen>
           <Specimen title="Compact with an icon">
-            <Input
+            <TextField
               compact
               label="Price"
               name="price"
@@ -120,7 +119,7 @@ function InputExamples() {
       <Example title="Validation & availability" size="collection">
         <SpecimenGrid>
           <Specimen title="Invalid">
-            <Input
+            <TextField
               label="Project handle"
               value={projectHandle}
               onChange={(e) => setProjectHandle(e.target.value)}
@@ -128,10 +127,10 @@ function InputExamples() {
             />
           </Specimen>
           <Specimen title="Read only" caption="Can still be focused and copied.">
-            <Input label="Project name" value="Workspace default" readOnly />
+            <TextField label="Project name" value="Workspace default" readOnly />
           </Specimen>
           <Specimen title="Disabled" caption="Unavailable and excluded from form submission.">
-            <Input label="Project name" value="Unavailable" disabled />
+            <TextField label="Project name" value="Unavailable" disabled />
           </Specimen>
         </SpecimenGrid>
       </Example>
@@ -245,7 +244,7 @@ function CompactFieldExamples() {
           </div>
         </Specimen>
         <Specimen title="Floating label, icon and end action">
-          <Input
+          <TextField
             compact
             showLabel
             label="Invite address"
@@ -258,7 +257,7 @@ function CompactFieldExamples() {
           />
         </Specimen>
         <Specimen title="Icon and end action">
-          <Input
+          <TextField
             label="Invite address"
             name="invite"
             defaultValue="team@example.com"
@@ -458,8 +457,8 @@ export function SelectPreview() {
             </Surface>
           </Specimen>
           <Specimen title="Outlined, in a row">
-            <GroupedRows aria-label="Notification settings">
-              <Row
+            <List.Root aria-label="Notification settings">
+              <List.Item
                 title="E-mail digest"
                 action={
                   <Select
@@ -470,12 +469,12 @@ export function SelectPreview() {
                   />
                 }
               />
-            </GroupedRows>
+            </List.Root>
           </Specimen>
           <Specimen title="Outlined, in a form on a pane">
             <Surface padding={4}>
               <Stack gap={4}>
-                <Input label="E-mail address" type="email" />
+                <TextField label="E-mail address" type="email" />
                 <Select
                   variant="outlined"
                   label="Role"
@@ -646,7 +645,7 @@ function LogoPicker() {
   }, [logo]);
   return (
     <Stack gap={3}>
-      <FileDropzone
+      <DropZone
         hidden={logo != null}
         inputRef={picker}
         label="Drop a logo here, or browse"
@@ -676,7 +675,7 @@ function LogoPicker() {
   );
 }
 
-export function FileDropzonePreview() {
+export function DropZonePreview() {
   const [documents, setDocuments] = useState<string[]>([]);
   return (
     <Preview>
@@ -698,7 +697,7 @@ export function FileDropzonePreview() {
             title="Compact, several files"
             caption={documents.length ? documents.join(', ') : 'No documents yet.'}
           >
-            <FileDropzone
+            <DropZone
               compact
               multiple
               label="Attach documents"
@@ -707,7 +706,7 @@ export function FileDropzonePreview() {
             />
           </Specimen>
           <Specimen title="Pending">
-            <FileDropzone
+            <DropZone
               pending
               label="Uploading the logo"
               description="This takes a moment"
@@ -715,7 +714,7 @@ export function FileDropzonePreview() {
             />
           </Specimen>
           <Specimen title="Error">
-            <FileDropzone
+            <DropZone
               label="Drop a cover image"
               accept="image/*"
               error="Choose an image at least 1200 pixels wide."
@@ -723,7 +722,7 @@ export function FileDropzonePreview() {
             />
           </Specimen>
           <Specimen title="Disabled">
-            <FileDropzone disabled label="Uploads are paused" onFiles={() => undefined} />
+            <DropZone disabled label="Uploads are paused" onFiles={() => undefined} />
           </Specimen>
         </SpecimenGrid>
       </Example>

@@ -2,19 +2,13 @@ import { useState } from 'react';
 import {
   Badge,
   Breadcrumbs,
-  GroupedRows,
+  List,
   IconButton,
   Kbd,
   Link,
   LinkProvider,
-  Row,
   Surface,
   Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeaderCell,
-  TableRow,
   Text,
   Theme,
   type LinkComponentProps,
@@ -102,38 +96,40 @@ export function DataDisplayFixture({ theme }: { theme: ThemeValue }) {
         Open with <Kbd keys={['Ctrl', 'P']} /> or press <Kbd>F2</Kbd>.
       </p>
       <div className="fixture-table-frame">
-        <Table caption={`Plans ${theme}`} stickyHeader regionClassName="fixture-table-region">
-          <TableHead>
-            <TableRow>
-              <TableHeaderCell>Plan</TableHeaderCell>
-              <TableHeaderCell>Owner</TableHeaderCell>
-              <TableHeaderCell numeric>Decisions</TableHeaderCell>
-              <TableHeaderCell>Status</TableHeaderCell>
-              <TableHeaderCell nowrap>A long trailing column heading</TableHeaderCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
+        <Table.Root caption={`Plans ${theme}`} stickyHeader regionClassName="fixture-table-region">
+          <Table.Head>
+            <Table.Row>
+              <Table.HeaderCell>Plan</Table.HeaderCell>
+              <Table.HeaderCell>Owner</Table.HeaderCell>
+              <Table.HeaderCell numeric>Decisions</Table.HeaderCell>
+              <Table.HeaderCell>Status</Table.HeaderCell>
+              <Table.HeaderCell nowrap>A long trailing column heading</Table.HeaderCell>
+            </Table.Row>
+          </Table.Head>
+          <Table.Body>
             {plans.map((plan) => (
-              <TableRow key={plan.id} interactive>
-                <TableCell>
+              <Table.Row key={plan.id} interactive>
+                <Table.Cell>
                   {plan.title}
                   <Text variant="caption">Updated today</Text>
-                </TableCell>
-                <TableCell nowrap>{plan.owner}</TableCell>
-                <TableCell numeric>{plan.decisions}</TableCell>
-                <TableCell>
+                </Table.Cell>
+                <Table.Cell nowrap>{plan.owner}</Table.Cell>
+                <Table.Cell numeric>{plan.decisions}</Table.Cell>
+                <Table.Cell>
                   <Badge tone={plan.status === 'Blocked' ? 'warning' : 'accent'}>
                     {plan.status}
                   </Badge>
-                </TableCell>
-                <TableCell nowrap>Some wide content that makes the table scroll sideways</TableCell>
-              </TableRow>
+                </Table.Cell>
+                <Table.Cell nowrap>
+                  Some wide content that makes the table scroll sideways
+                </Table.Cell>
+              </Table.Row>
             ))}
-          </TableBody>
-        </Table>
+          </Table.Body>
+        </Table.Root>
       </div>
-      <GroupedRows aria-label={`Rows ${theme}`}>
-        <Row
+      <List.Root aria-label={`Rows ${theme}`}>
+        <List.Item
           interactive
           className="fixture-open-row"
           title={
@@ -164,17 +160,17 @@ export function DataDisplayFixture({ theme }: { theme: ThemeValue }) {
             />
           }
         />
-        <Row title="Archive" detail="Read only" />
-      </GroupedRows>
+        <List.Item title="Archive" detail="Read only" />
+      </List.Root>
       <output data-testid={`row-result-${theme}`}>{rowResult}</output>
-      <Table aria-label={`Compact ${theme}`} density="compact">
-        <TableBody>
-          <TableRow>
-            <TableHeaderCell scope="row">Total</TableHeaderCell>
-            <TableCell numeric>1,204</TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
+      <Table.Root aria-label={`Compact ${theme}`} density="compact">
+        <Table.Body>
+          <Table.Row>
+            <Table.HeaderCell scope="row">Total</Table.HeaderCell>
+            <Table.Cell numeric>1,204</Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table.Root>
     </Theme>
   );
 }

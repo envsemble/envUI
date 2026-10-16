@@ -6,20 +6,15 @@ import {
   RadioPreview,
   SelectPreview,
   SliderPreview,
-  FileDropzonePreview,
+  DropZonePreview,
 } from './Forms';
-import {
-  NavigationPreview,
-  TabsPreview,
-  DirectionLinksPreview,
-  PaginationPreview,
-} from './Navigation';
-import { ComboboxPreview, DateTimeFieldPreview } from './Pickers';
-import { SurfacePreview, LayoutPreview, RowsPreview, CardsPreview } from './Layout';
+import { NavListPreview, TabsPreview, PagerPreview, PaginationPreview } from './Navigation';
+import { ComboboxPreview, DatePickerPreview } from './Pickers';
+import { SurfacePreview, LayoutPreview, ListPreview, CardsPreview } from './Layout';
 import {
   AnimatedNumberPreview,
   ChipsPreview,
-  DisclosuresPreview,
+  DisclosurePreview,
   RatingPreview,
   RelativeTimePreview,
 } from './Content';
@@ -31,7 +26,7 @@ import { EmptyStatePreview, LoadingPreview, DialogsPreview } from './Feedback';
 import { ToastsPreview } from './Toasts';
 import { ColorPickerPreview } from './ColorPicking';
 import { ComposerPreview, MessagesPreview } from './Conversation';
-import { HeatmapPreview, StatsPreview } from './Dashboard';
+import { CalendarHeatmapPreview, StatsPreview } from './Dashboard';
 import {
   MenuPreview,
   MenubarPreview,
@@ -47,7 +42,7 @@ import {
   BreadcrumbsPreview,
   HoverCardPreview,
   KbdPreview,
-  NoticesPreview,
+  AlertsPreview,
   PopoverPreview,
   SegmentedControlPreview,
   TablesPreview,
@@ -64,7 +59,7 @@ export function ComponentPreview({ id }: { id: string }) {
       return <ButtonsPreview />;
     case 'segmented-control':
       return <SegmentedControlPreview />;
-    case 'fields':
+    case 'text-field':
       return <TextFieldsPreview />;
     case 'checkbox':
       return <CheckboxPreview />;
@@ -76,28 +71,28 @@ export function ComponentPreview({ id }: { id: string }) {
       return <SelectPreview />;
     case 'combobox':
       return <ComboboxPreview />;
-    case 'date-time-field':
-      return <DateTimeFieldPreview />;
+    case 'date-picker':
+      return <DatePickerPreview />;
     case 'slider':
       return <SliderPreview />;
-    case 'file-dropzone':
-      return <FileDropzonePreview />;
+    case 'drop-zone':
+      return <DropZonePreview />;
     case 'color-picker':
       return <ColorPickerPreview />;
     case 'composer':
       return <ComposerPreview />;
-    case 'navigation':
-      return <NavigationPreview />;
+    case 'nav-list':
+      return <NavListPreview />;
     case 'tabs':
       return <TabsPreview />;
-    case 'direction-links':
-      return <DirectionLinksPreview />;
+    case 'pager':
+      return <PagerPreview />;
     case 'surface':
       return <SurfacePreview />;
     case 'layout':
       return <LayoutPreview />;
-    case 'rows':
-      return <RowsPreview />;
+    case 'list':
+      return <ListPreview />;
     case 'cards':
       return <CardsPreview />;
     case 'chips':
@@ -122,8 +117,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <MessagesPreview />;
     case 'stats':
       return <StatsPreview />;
-    case 'heatmap':
-      return <HeatmapPreview />;
+    case 'calendar-heatmap':
+      return <CalendarHeatmapPreview />;
     case 'code':
       return <CodePreview />;
     case 'markdown':
@@ -134,16 +129,16 @@ export function ComponentPreview({ id }: { id: string }) {
           <RichTextPreview />
         </Suspense>
       );
-    case 'disclosures':
-      return <DisclosuresPreview />;
+    case 'disclosure':
+      return <DisclosurePreview />;
     case 'empty-state':
       return <EmptyStatePreview />;
     case 'loading':
       return <LoadingPreview />;
     case 'toasts':
       return <ToastsPreview />;
-    case 'notices':
-      return <NoticesPreview />;
+    case 'alert':
+      return <AlertsPreview />;
     case 'popover':
       return <PopoverPreview />;
     case 'hover-card':

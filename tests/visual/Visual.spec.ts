@@ -28,7 +28,7 @@ const snapshots = fileURLToPath(new URL('./snapshots/', import.meta.url));
  */
 const stateMatrices: Record<string, string[]> = {
   buttons: ['Button'],
-  navigation: ['Navigation item'],
+  'nav-list': ['Navigation item'],
 };
 
 test.skip(

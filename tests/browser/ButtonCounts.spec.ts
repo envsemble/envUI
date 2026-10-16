@@ -6,10 +6,10 @@ test('counters and badges in buttons and tabs keep 4.5:1 contrast in both themes
 }) => {
   await page.goto(`${fixtureUrl}/?fixture=button-counts`);
   // Two themes: two tabs and five buttons with a counter and a badge each.
-  await expect(page.locator('.env-counter')).toHaveCount(14);
+  await expect(page.locator('.env-counter-badge')).toHaveCount(14);
   await expect(page.locator('.env-badge')).toHaveCount(10);
   // Two themes: a diff count in a tab, in five buttons and on the page.
-  await expect(page.locator('.env-diff-count')).toHaveCount(14);
+  await expect(page.locator('.env-diff-stat')).toHaveCount(14);
   const measure = () =>
     page.evaluate(() => {
       const canvas = document.createElement('canvas');
@@ -30,7 +30,7 @@ test('counters and badges in buttons and tabs keep 4.5:1 contrast in both themes
       };
       const results: string[] = [];
       for (const pill of document.querySelectorAll<HTMLElement>(
-        '.env-counter, .env-badge, .env-diff-count-additions, .env-diff-count-deletions',
+        '.env-counter-badge, .env-badge, .env-diff-stat-additions, .env-diff-stat-deletions',
       )) {
         // The pill's text over every fill below it: its own, the button's and the surface's.
         const layers: string[] = [];
@@ -74,15 +74,15 @@ test('counters and badges in buttons and tabs keep 4.5:1 contrast in both themes
   expect(await measure()).toEqual([]);
 });
 
-test('a diff count is one pill with additions in green and deletions in red, named in full', async ({
+test('a diff stat is one pill with additions in green and deletions in red, named in full', async ({
   page,
 }) => {
   await page.goto(`${fixtureUrl}/?fixture=button-counts`);
   for (const theme of ['light', 'dark']) {
-    const count = page.getByTestId(`diff-count-${theme}`);
-    await expect(count.locator('.env-diff-count-additions')).toHaveText('+12');
-    await expect(count.locator('.env-diff-count-deletions')).toHaveText('−3');
-    await expect(count.locator('.env-counter-label')).toHaveText(
+    const count = page.getByTestId(`diff-stat-${theme}`);
+    await expect(count.locator('.env-diff-stat-additions')).toHaveText('+12');
+    await expect(count.locator('.env-diff-stat-deletions')).toHaveText('−3');
+    await expect(count.locator('.env-diff-stat-label')).toHaveText(
       '12 added lines and 3 removed lines',
     );
     const [additions, deletions, success, danger] = await count.evaluate((element) => {
@@ -95,8 +95,8 @@ test('a diff count is one pill with additions in green and deletions in red, nam
         return value;
       };
       return [
-        getComputedStyle(element.querySelector('.env-diff-count-additions')!).color,
-        getComputedStyle(element.querySelector('.env-diff-count-deletions')!).color,
+        getComputedStyle(element.querySelector('.env-diff-stat-additions')!).color,
+        getComputedStyle(element.querySelector('.env-diff-stat-deletions')!).color,
         probe('var(--color-tone-success)'),
         probe('var(--color-tone-danger)'),
       ];
@@ -106,7 +106,7 @@ test('a diff count is one pill with additions in green and deletions in red, nam
     // As tall as a counter, so it sits in the same places.
     const counter = (await page
       .getByTestId(`button-counts-${theme}`)
-      .locator('.env-counter')
+      .locator('.env-counter-badge')
       .first()
       .boundingBox())!;
     expect(Math.abs((await count.boundingBox())!.height - counter.height)).toBeLessThan(0.5);

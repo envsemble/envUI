@@ -40,14 +40,7 @@ test('newest notices stay visible and older notices return independently per pla
   await expect(page.locator('.env-toast-viewport .env-toast')).toHaveCount(0);
 });
 
-test('manual rendering works without a provider and errors/actions persist', async ({ page }) => {
-  await page.getByTestId('manual-toast').getByRole('button', { name: 'Manual action' }).click();
-  await expect(page.getByTestId('manual-action-count')).toHaveText('1');
-  await page
-    .getByTestId('manual-toast')
-    .getByRole('button', { name: 'Dismiss manual notice' })
-    .click();
-  await expect(page.getByTestId('manual-toast')).toHaveCount(0);
+test('errors and notices with actions persist', async ({ page }) => {
   await page.getByTestId('toast-error').click();
   await page.getByTestId('toast-action').click();
   await page.clock.fastForward(6_000);
@@ -187,7 +180,7 @@ test('the hidden count sits beyond the stack: above at the bottom right, below a
   for (const placement of ['bottom-right', 'top-center']) {
     const viewport = region(page, placement);
     const count = viewport.locator('.env-toast-queued-count');
-    await expect(count).toHaveClass(/env-counter/);
+    await expect(count).toHaveClass(/env-counter-badge/);
     // The status announces the full meaning; the counter shows the number.
     await expect(count).toContainText('1 older notification hidden');
     await expect(count.locator('[aria-hidden="true"]')).toHaveText('+1');

@@ -7,12 +7,11 @@ import {
   Checkbox,
   ConfirmButton,
   CopyButton,
-  DisclosureNote,
-  GroupedRows,
+  Disclosure,
+  List,
   IconButton,
-  Input,
+  TextField,
   Link,
-  Row,
   Stack,
   Surface,
   Text,
@@ -308,9 +307,9 @@ export function ButtonsPreview() {
         </ButtonGroup>
       </Example>
       <Example size="wide">
-        <DisclosureNote title="Interaction states">
+        <Disclosure title="Interaction states">
           <ButtonStates />
-        </DisclosureNote>
+        </Disclosure>
       </Example>
     </Preview>
   );
@@ -370,9 +369,9 @@ function OutcomeExamples() {
       >
         <SpecimenGrid size="compact">
           <Specimen title="Remove from a row">
-            <GroupedRows aria-label="Members with access">
+            <List.Root aria-label="Members with access">
               {members.map((name) => (
-                <Row
+                <List.Item
                   key={name}
                   title={name}
                   action={
@@ -387,7 +386,7 @@ function OutcomeExamples() {
                   }
                 />
               ))}
-            </GroupedRows>
+            </List.Root>
             {members.length === 0 && (
               <Button
                 variant="text"
@@ -446,7 +445,7 @@ function CopyExamples() {
       <SpecimenGrid>
         <Specimen title="Beside a value">
           <div className="docs-field-toolbar">
-            <Input label="Share link" value={shareLink} readOnly />
+            <TextField label="Share link" value={shareLink} readOnly />
             <CopyButton value={shareLink} aria-label="Copy link" onCopy={setCopied} />
           </div>
         </Specimen>

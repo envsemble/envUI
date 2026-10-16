@@ -38,6 +38,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Navigation items](../components/navigation.md)
+- [Navigation lists](../components/nav-list.md)
 - [Tree](../components/tree.md)
 - [Install the private package](../setup.md)

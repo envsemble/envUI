@@ -2,7 +2,7 @@ import { useRef, useState, type RefObject } from 'react';
 import { Dialog } from '../../../feedback/Dialog.js';
 import { Button } from '../../../actions/Button.js';
 import { Stack } from '../../../foundations/Layout.js';
-import { Input } from '../../Input.js';
+import { TextField } from '../../TextField.js';
 import { insertMarkdownLink, type MarkdownLink } from './MarkdownFormatting.js';
 
 export function MarkdownLinkDialog({
@@ -41,8 +41,8 @@ export function MarkdownLinkDialog({
       actions={<Button onClick={insert}>Insert link</Button>}
     >
       <Stack>
-        <Input label="Text" value={label} onChange={(event) => setLabel(event.target.value)} />
-        <Input
+        <TextField label="Text" value={label} onChange={(event) => setLabel(event.target.value)} />
+        <TextField
           ref={hrefInput}
           label="URL or path"
           value={href}

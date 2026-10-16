@@ -133,6 +133,7 @@ before(
     import { createElement as h } from 'react';
     import { renderToString } from 'react-dom/server';
     import * as ui from '@envsemble/envui';
+    import * as themeBootstrap from '@envsemble/envui/theme-bootstrap';
     import { Home } from '@envsemble/envui/icons/Home';
     import { Home as BarrelHome } from '@envsemble/envui/icons';
     if (typeof document !== 'undefined' || typeof window !== 'undefined') throw new Error('DOM globals must be absent');
@@ -146,9 +147,9 @@ before(
         h(ui.Button, { startIcon: h(Home) }, 'Continue'),
         h(ui.IconButton, { icon: custom, 'aria-label': 'Settings' }),
         h(ui.Button, { variant: 'important', href: '/confirm' }, 'Confirm')),
-      h(ui.DirectionLink, { direction: 'previous', href: '/previous-guide' }, 'Earlier guide'),
-      h(ui.DirectionLink, { direction: 'next', href: '/next-guide', icon: custom }, 'Following guide'),
-      h(ui.Input, { name: 'title', label: 'Title', hint: 'One line', defaultValue: 'Example' }),
+      h(ui.Pager.Previous, { href: '/previous-guide' }, 'Earlier guide'),
+      h(ui.Pager.Next, { href: '/next-guide', icon: custom }, 'Following guide'),
+      h(ui.TextField, { name: 'title', label: 'Title', hint: 'One line', defaultValue: 'Example' }),
       h(ui.ColorPicker, { name: 'accent', label: 'Accent color', defaultValue: 'ABCDEF' }),
       h(ui.Textarea, { name: 'description', label: 'Description', defaultValue: 'Content' }),
       h(ui.Checkbox, { name: 'enabled', label: 'Enabled', defaultChecked: true }),
@@ -157,25 +158,29 @@ before(
       h(ui.Select, { name: 'choice', label: 'Choice', options: [{ value: 'one', label: 'One' }], defaultValue: 'one' }),
       h(ui.Combobox, { name: 'owner', label: 'Owner', items: [{ value: 'first', label: 'First person' }], defaultValue: 'first' }),
       h(ui.Combobox, { name: 'reviewers', label: 'Reviewers', multiple: true, items: [{ label: 'Team', items: [{ value: 'second', label: 'Second person' }] }], defaultValue: ['second'] }),
-      h(ui.DateTimeField, { name: 'due', label: 'Due', defaultValue: '2026-10-14T09:30', withTime: true, locale: 'en-GB' }),
+      h(ui.DatePicker, { name: 'due', label: 'Due', defaultValue: '2026-10-14T09:30', withTime: true, locale: 'en-GB' }),
       h(ui.Calendar, { 'aria-label': 'Planning', defaultValue: '2026-03-09', locale: 'en-GB', weekStart: 1 }),
       h(ui.Dialog, { title: 'Example', open: false, trigger: h(ui.Button, null, 'Open') }),
-      h(ui.ToastProvider, null, h(ui.Toast, { message: 'Saved', variant: 'success' })),
+      h(ui.Toast.Provider, null, 'Managed notifications'),
       h(ui.BrandLogo),
       h(ui.LoadingState, null, h(ui.Skeleton, { width: '38%' }))
     ));
     console.log(JSON.stringify({
-      exports: Object.keys(ui), html,
-      emptyDirectionLinks: renderToString(h(ui.DirectionLinks, { previous: null, next: null })),
-      pairedDirectionLinks: renderToString(h(ui.DirectionLinks, {
+      exports: Object.keys(ui), themeBootstrapExports: Object.keys(themeBootstrap), html,
+      partNames: [ui.Menu.Root, ui.Menu.Item, ui.Menubar.Menu, ui.Table.HeaderCell, ui.Stat.Group, ui.Toast.Provider].map((part) => part.displayName),
+      emptyPager: renderToString(h(ui.Pager.Root, { previous: null, next: null })),
+      pairedPager: renderToString(h(ui.Pager.Root, {
         'aria-label': 'Guide sequence',
         previous: { href: '/before', children: 'Before', target: '_blank', rel: 'noopener' },
         next: { href: '/after', children: 'After' },
       })),
       defaultIcon: renderToString(h(Home)), filledIcon: renderToString(h(Home, { filled: true, label: 'Home' })),
       barrelIcon: renderToString(h(BarrelHome)), customIcon: renderToString(custom),
-      selectedNavigation: renderToString(h(ui.NavigationItem, { selected: true, icon: h(Home, { filled: false }) }, 'Home')),
-      unselectedNavigation: renderToString(h(ui.NavigationItem, { icon: h(Home, { filled: true }) }, 'Home')),
+      selectedNavigation: renderToString(h(ui.NavList.Item, { selected: true, icon: h(Home, { filled: false }) }, 'Home')),
+      unselectedNavigation: renderToString(h(ui.NavList.Item, { icon: h(Home, { filled: true }) }, 'Home')),
+      navigationList: renderToString(h(ui.NavList.Root, { 'aria-label': 'Main' },
+        h(ui.NavList.Item, { href: '/home' }, 'Home'),
+        h(ui.NavList.Group, { label: 'Settings' }, h(ui.NavList.Item, { href: '/profile' }, 'Profile')))),
       module: import.meta.resolve('@envsemble/envui'), iconsModule: import.meta.resolve('@envsemble/envui/icons'),
       homeModule: import.meta.resolve('@envsemble/envui/icons/Home'),
       reactModule: import.meta.resolve('react'),
@@ -200,12 +205,62 @@ after(async function removeConsumerFixture() {
   await rm(fixtureDirectory, { recursive: true, force: true });
 });
 
-test('direction link groups omit empty navigation and preserve destination attributes', () => {
-  assert.equal(ssr.emptyDirectionLinks, '');
-  assert.match(ssr.pairedDirectionLinks, /<nav aria-label="Guide sequence"/);
-  assert.match(ssr.pairedDirectionLinks, /href="\/before" target="_blank" rel="noopener"/);
-  assert.match(ssr.pairedDirectionLinks, /href="\/after" rel="next"/);
-  assert.ok(ssr.pairedDirectionLinks.indexOf('Before') < ssr.pairedDirectionLinks.indexOf('After'));
+test('pagers omit empty navigation and preserve destination attributes', () => {
+  assert.equal(ssr.emptyPager, '');
+  assert.match(ssr.pairedPager, /<nav aria-label="Guide sequence"/);
+  assert.match(ssr.pairedPager, /href="\/before" target="_blank" rel="noopener"/);
+  assert.match(ssr.pairedPager, /href="\/after" rel="next"/);
+  assert.ok(ssr.pairedPager.indexOf('Before') < ssr.pairedPager.indexOf('After'));
+});
+
+test('a navigation list renders its items and groups as list items', () => {
+  const html = ssr.navigationList;
+  assert.match(html, /^<ul aria-label="Main" class="env-nav-list"><li><a [^>]*href="\/home"/);
+  const label = html.match(/<span class="env-nav-list-group-label" id="([^"]+)">Settings<\/span>/);
+  assert.ok(label, 'The group shows its label.');
+  assert.ok(html.includes('</li><li class="env-nav-list-group"><span'));
+  assert.match(
+    html,
+    new RegExp(
+      `<ul class="env-nav-list-group-list" aria-labelledby="${label[1]}"><li><a [^>]*href="/profile"[^>]*>Profile</a></li></ul></li></ul>$`,
+    ),
+  );
+});
+
+test('no 0.x name of the rename map is exported, and every namespace is', async () => {
+  const map = JSON.parse(
+    await readFile(join(repository, 'packages/codemods/src/maps/v1.json'), 'utf8'),
+  );
+  const names = (section) => Object.keys(section).filter((name) => !name.startsWith('$'));
+  const entries = {
+    '@envsemble/envui': ssr.exports,
+    '@envsemble/envui/theme-bootstrap': ssr.themeBootstrapExports,
+  };
+  // Namespaces such as Menu and Toast reuse the name of a 0.x component.
+  const namespaces = new Set(
+    Object.values(map.exports['@envsemble/envui'])
+      .filter((name) => name.includes('.'))
+      .map((name) => name.split('.')[0]),
+  );
+  for (const [entry, exported] of Object.entries(entries)) {
+    for (const section of ['exports', 'split', 'removed'])
+      for (const name of names(map[section][entry] ?? {}))
+        if (!namespaces.has(name))
+          assert.ok(!exported.includes(name), `${entry} still exports ${name}.`);
+  }
+  for (const namespace of namespaces)
+    assert.ok(ssr.exports.includes(namespace), `Missing namespace export: ${namespace}`);
+});
+
+test('compound parts are namespace members named after their part', () => {
+  assert.deepEqual(ssr.partNames, [
+    'Menu.Root',
+    'Menu.Item',
+    'Menubar.Menu',
+    'Table.HeaderCell',
+    'Stat.Group',
+    'Toast.Provider',
+  ]);
 });
 
 test('a packed consumer resolves compiled public exports and its own React installation', async function () {
@@ -221,23 +276,21 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'Button',
     'ButtonGroup',
     'IconButton',
-    'NavigationItem',
-    'DirectionLink',
-    'DirectionLinks',
+    'NavList',
+    'Pager',
     'Card',
     'ClickableCard',
     'Stack',
     'ActionGroup',
     'ActionCard',
     'FeatureCard',
-    'GroupedRows',
-    'Row',
+    'List',
     'InfoChip',
-    'DisclosureNote',
+    'Disclosure',
     'EmptyState',
     'Skeleton',
     'LoadingState',
-    'Input',
+    'TextField',
     'ColorPicker',
     'Textarea',
     'Checkbox',
@@ -246,15 +299,25 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'Radio',
     'Select',
     'Combobox',
-    'DateTimeField',
+    'DatePicker',
     'Calendar',
     'Dialog',
     'DialogClose',
     'Toast',
-    'ToastProvider',
     'useToast',
     'Icon',
     'BrandLogo',
+    'DropZone',
+    'Alert',
+    'CounterBadge',
+    'DiffStat',
+    'CalendarHeatmap',
+    'OrganizationSwitcher',
+    'Menu',
+    'ContextMenu',
+    'Menubar',
+    'Table',
+    'Stat',
   ]) {
     assert.ok(ssr.exports.includes(name), `Missing public export: ${name}`);
   }
@@ -287,16 +350,16 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     join(consumerDirectory, 'Consumer.tsx'),
     `
     import { createRef } from 'react';
-    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, NavigationItem, DirectionLink, Icon, BrandLogo, Input, ColorPicker, Textarea, Checkbox, Switch, Stack, ActionGroup,
-      RadioGroup, Radio, Select, Combobox, DateTimeField, Calendar, Dialog, DialogClose, Toast, ToastProvider, useToast,
-      type ThemeValue, type ButtonProps, type ButtonGroupProps, type DirectionLinkProps, type SelectOption, type ComboboxItem, type ToastManager } from '@envsemble/envui';
+    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, NavList, Pager, Icon, BrandLogo, TextField, ColorPicker, Textarea, Checkbox, Switch, Stack, ActionGroup,
+      RadioGroup, Radio, Select, Combobox, DatePicker, Calendar, Dialog, DialogClose, Toast, useToast,
+      type ThemeValue, type ButtonProps, type ButtonGroupProps, type SelectOption, type ComboboxItem, type ToastManager } from '@envsemble/envui';
     import { Home } from '@envsemble/envui/icons/Home';
     import { Home as BarrelHome } from '@envsemble/envui/icons';
     import '@envsemble/envui/styles.css';
     import { RichText, RichTextEditor, type RichTextEditorHandle, type RichTextReferenceSource } from '@envsemble/envui/rich-text';
     const buttonProps: ButtonProps = { variant: 'important', ref: createRef<HTMLButtonElement>(), startIcon: <Home /> };
     const buttonGroupProps: ButtonGroupProps = { orientation: 'vertical', ref: createRef<HTMLDivElement>(), 'aria-label': 'Actions' };
-    const directionLinkProps: DirectionLinkProps = { direction: 'next', href: '/guide', children: 'Read the guide', ref: createRef<HTMLAnchorElement>(), icon: <Home /> };
+    const pagerLinkProps: Pager.LinkProps = { href: '/guide', children: 'Read the guide', ref: createRef<HTMLAnchorElement>(), icon: <Home /> };
     const options: SelectOption[] = [{ value: 'one', label: 'One' }];
     const people: ComboboxItem[] = [{ value: 'first', label: 'First person', description: 'first@example.com', leading: <Home /> }];
     const theme: ThemeValue = 'dark';
@@ -308,14 +371,14 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       <Button {...buttonProps}>Create</Button><IconButton aria-label="Open" icon={<Home filled />} />
       <ConfirmButton variant="quiet" icon={<Home />} aria-label="Remove" confirmLabel="Remove?" onConfirm={() => undefined} />
       <ButtonGroup {...buttonGroupProps}><Button href="/">Home</Button><IconButton aria-label="Options" icon={<Home />} /><Button variant="important">Confirm</Button></ButtonGroup>
-      <Stack gap={3} ref={createRef<HTMLDivElement>()}><Input label="First" /><Input label="Second" /></Stack>
+      <Stack gap={3} ref={createRef<HTMLDivElement>()}><TextField label="First" /><TextField label="Second" /></Stack>
       <ActionGroup stacked ref={createRef<HTMLDivElement>()}><Button>Save</Button><Button variant="secondary">Cancel</Button></ActionGroup>
-      <NavigationItem href="/" ref={createRef<HTMLAnchorElement>()}>Home</NavigationItem>
-      <NavigationItem ref={createRef<HTMLButtonElement>()}>Change view</NavigationItem>
-      <DirectionLink {...directionLinkProps} target="_blank" rel="noopener" />
-      <DirectionLink direction="previous" href="/previous">Previous guide</DirectionLink>
+      <NavList.Item href="/" ref={createRef<HTMLAnchorElement>()}>Home</NavList.Item>
+      <NavList.Item ref={createRef<HTMLButtonElement>()}>Change view</NavList.Item>
+      <Pager.Next {...pagerLinkProps} target="_blank" rel="noopener" />
+      <Pager.Previous href="/previous">Previous guide</Pager.Previous>
       <Icon label="Custom" viewBox="0 0 1 1"><path d="M0 0L1 1" /></Icon><BrandLogo /><BarrelHome />
-      <Input name="title" label="Title" required ref={createRef<HTMLInputElement>()} />
+      <TextField name="title" label="Title" required ref={createRef<HTMLInputElement>()} />
       <ColorPicker label="Accent color" name="accent" defaultValue="#abcdef" ref={createRef<HTMLInputElement>()} onValueChange={value => { const typed: string = value; void typed; }} />
       <Textarea label="Notes" ref={createRef<HTMLTextAreaElement>()} />
       <Checkbox label="Enabled" checked="mixed" onCheckedChange={value => { const typed: boolean = value; void typed; }} />
@@ -323,10 +386,10 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       <Select options={options} name="choice" onValueChange={value => { const typed: string | null = value; void typed; }} />
       <Combobox label="Owner" items={people} onValueChange={(value, item) => { const typed: string | null = value; const chosen: ComboboxItem | null = item; void typed; void chosen; }} />
       <Combobox multiple label="Reviewers" items={[{ label: 'Team', items: people }]} filter={(item, query) => item.label.startsWith(query)} onValueChange={(values, items) => { const typed: string[] = values; const chosen: ComboboxItem[] = items; void typed; void chosen; }} ref={createRef<HTMLInputElement>()} />
-      <DateTimeField label="Due" withTime clearable onValueChange={value => { const typed: string | null = value; void typed; }} ref={createRef<HTMLButtonElement>()} />
+      <DatePicker label="Due" withTime clearable onValueChange={value => { const typed: string | null = value; void typed; }} ref={createRef<HTMLButtonElement>()} />
       <Calendar value="2026-10-14" weekStart={1} onValueChange={value => { const typed: string = value; void typed; }} />
       <Dialog title="Confirm" trigger={<Button>Open</Button>} actions={<DialogClose>Done</DialogClose>} />
-      <ToastProvider><NotificationAction /><Toast message="Saved" /></ToastProvider>
+      <Toast.Provider><NotificationAction /></Toast.Provider>
     </Theme>;
     // @ts-expect-error Icon-only actions require an accessible name.
     const unnamedIconButton = <IconButton icon={<Home />} />;
@@ -338,10 +401,10 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     const unknownOrientation = <ButtonGroup orientation="diagonal" />;
     // @ts-expect-error Layout gap must use the defined spacing scale.
     const unknownGap = <Stack gap={10} />;
-    // @ts-expect-error Direction links have exactly two supported directions.
-    const unknownDirection = <DirectionLink direction="up" href="/guide">Guide</DirectionLink>;
-    // @ts-expect-error A direction link requires a destination URL.
-    const missingDestination = <DirectionLink direction="next">Guide</DirectionLink>;
+    // @ts-expect-error A pager link takes its direction from its part.
+    const unknownDirection = <Pager.Next direction="up" href="/guide">Guide</Pager.Next>;
+    // @ts-expect-error A pager link requires a destination URL.
+    const missingDestination = <Pager.Next>Guide</Pager.Next>;
     // @ts-expect-error A multiple combobox takes a list of values.
     const singleValueForSeveral = <Combobox multiple items={people} value="first" />;
     void singleValueForSeveral;

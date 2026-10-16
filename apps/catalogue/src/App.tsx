@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import {
   Theme,
-  NavigationItem,
+  NavList,
   IconButton,
   Button,
   Stack,
@@ -65,7 +65,7 @@ export default function App() {
   else
     content = (
       <Stack gap={7} className="docs-article">
-        <NavigationItem href="#/overview">Return to overview</NavigationItem>
+        <NavList.Item href="#/overview">Return to overview</NavList.Item>
       </Stack>
     );
   return (

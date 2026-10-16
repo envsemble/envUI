@@ -1,12 +1,5 @@
 import { useMemo, useState } from 'react';
-import {
-  MenuItem,
-  MenuSeparator,
-  Theme,
-  Tree,
-  type ThemeValue,
-  type TreeItem,
-} from '@envsemble/envui';
+import { Menu, Theme, Tree, type ThemeValue, type TreeItem } from '@envsemble/envui';
 import { Description } from '@envsemble/envui/icons/Description';
 import { Folder } from '@envsemble/envui/icons/Folder';
 
@@ -93,14 +86,14 @@ export function TreeFixture({ theme }: { theme: ThemeValue }) {
           contextMenu={(item) =>
             item ? (
               <>
-                <MenuItem onClick={() => record(`rename ${item.id}`)}>
+                <Menu.Item onClick={() => record(`rename ${item.id}`)}>
                   Rename {item.node.name}
-                </MenuItem>
-                <MenuSeparator />
-                <MenuItem onClick={() => record(`delete ${item.id}`)}>Delete</MenuItem>
+                </Menu.Item>
+                <Menu.Separator />
+                <Menu.Item onClick={() => record(`delete ${item.id}`)}>Delete</Menu.Item>
               </>
             ) : (
-              <MenuItem onClick={() => record('new file')}>New file</MenuItem>
+              <Menu.Item onClick={() => record('new file')}>New file</Menu.Item>
             )
           }
         />

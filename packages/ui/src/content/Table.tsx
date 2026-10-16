@@ -27,6 +27,7 @@ import {
   resizeColumns,
   sameWidths,
 } from './internal/TableColumns.js';
+import { withDisplayName } from '../internal/withDisplayName.js';
 
 interface TableColumns {
   widths: readonly number[];
@@ -44,7 +45,7 @@ const TableStackContext = createContext(false);
 const TableColumnsContext = createContext<TableColumns | null>(null);
 const TableSectionContext = createContext<'head' | 'body' | null>(null);
 
-export interface TableProps extends Omit<ComponentPropsWithRef<'table'>, 'aria-label'> {
+export interface RootProps extends Omit<ComponentPropsWithRef<'table'>, 'aria-label'> {
   /** Accessible name of the table and its scroll region when there is no caption. */
   'aria-label'?: string;
   /** A visible caption that names the table. */
@@ -130,7 +131,7 @@ function useNarrowerThan(
 }
 
 /** A semantic data table on a rounded surface that scrolls sideways when columns do not fit. */
-export function Table({
+function Root({
   'aria-label': label,
   caption,
   density = 'standard',
@@ -147,7 +148,7 @@ export function Table({
   className,
   children,
   ...props
-}: TableProps) {
+}: RootProps) {
   const captionId = useId();
   const stack = narrowLayout === 'stack';
   const region = useRef<HTMLDivElement>(null);
@@ -234,9 +235,9 @@ export function Table({
   );
 }
 
-export type TableHeadProps = ComponentPropsWithRef<'thead'>;
+export type HeadProps = ComponentPropsWithRef<'thead'>;
 
-export function TableHead({ className, ...props }: TableHeadProps) {
+function Head({ className, ...props }: HeadProps) {
   const stack = useContext(TableStackContext);
   return (
     <TableSectionContext value="head">
@@ -249,9 +250,9 @@ export function TableHead({ className, ...props }: TableHeadProps) {
   );
 }
 
-export type TableBodyProps = ComponentPropsWithRef<'tbody'>;
+export type BodyProps = ComponentPropsWithRef<'tbody'>;
 
-export function TableBody({ className, ...props }: TableBodyProps) {
+function Body({ className, ...props }: BodyProps) {
   const stack = useContext(TableStackContext);
   return (
     <TableSectionContext value="body">
@@ -264,7 +265,7 @@ export function TableBody({ className, ...props }: TableBodyProps) {
   );
 }
 
-export interface TableRowProps extends ComponentPropsWithRef<'tr'> {
+export interface RowProps extends ComponentPropsWithRef<'tr'> {
   /** The row reacts to hover, for rows that open something through a link or button inside. */
   interactive?: boolean;
   /**
@@ -274,7 +275,7 @@ export interface TableRowProps extends ComponentPropsWithRef<'tr'> {
   selected?: boolean;
 }
 
-export function TableRow({ interactive = false, selected, className, ...props }: TableRowProps) {
+function Row({ interactive = false, selected, className, ...props }: RowProps) {
   const stack = useContext(TableStackContext);
   return (
     <tr
@@ -304,13 +305,13 @@ function cellAttributes({ align, numeric, nowrap }: TableCellLayout) {
   };
 }
 
-export type TableSortDirection = 'ascending' | 'descending' | 'none';
+export type SortDirection = 'ascending' | 'descending' | 'none';
 
-export interface TableHeaderCellProps
+export interface HeaderCellProps
   extends Omit<ComponentPropsWithRef<'th'>, 'align'>,
     TableCellLayout {
   /** The column's sort order, announced on the header. Use it with onSort. */
-  sortDirection?: TableSortDirection;
+  sortDirection?: SortDirection;
   /** The header becomes a button that asks the application to sort the rows by this column. */
   onSort?: () => void;
   /**
@@ -348,7 +349,7 @@ const sortIcons = {
   none: <UnfoldMore />,
 };
 
-export function TableHeaderCell({
+function HeaderCell({
   align,
   numeric,
   nowrap,
@@ -361,7 +362,7 @@ export function TableHeaderCell({
   children,
   ref,
   ...props
-}: TableHeaderCellProps) {
+}: HeaderCellProps) {
   const stack = useContext(TableStackContext);
   const columns = useContext(TableColumnsContext);
   const section = useContext(TableSectionContext);
@@ -547,9 +548,7 @@ function ColumnResizeHandle({
   );
 }
 
-export interface TableCellProps
-  extends Omit<ComponentPropsWithRef<'td'>, 'align'>,
-    TableCellLayout {
+export interface CellProps extends Omit<ComponentPropsWithRef<'td'>, 'align'>, TableCellLayout {
   /**
    * The column's name, shown before the value while a table with narrowLayout="stack" stacks its
    * rows. Assistive technology reads the column header instead.
@@ -557,15 +556,7 @@ export interface TableCellProps
   label?: ReactNode;
 }
 
-export function TableCell({
-  align,
-  numeric,
-  nowrap,
-  label,
-  className,
-  children,
-  ...props
-}: TableCellProps) {
+function Cell({ align, numeric, nowrap, label, className, children, ...props }: CellProps) {
   const stack = useContext(TableStackContext);
   const labelled = stack && label != null;
   return (
@@ -589,3 +580,20 @@ export function TableCell({
     </td>
   );
 }
+
+// Each part is named for React DevTools by a pure call, so a bundler drops the parts an
+// application leaves unused.
+const RootPart = /* @__PURE__ */ withDisplayName(Root, 'Table.Root');
+const HeadPart = /* @__PURE__ */ withDisplayName(Head, 'Table.Head');
+const BodyPart = /* @__PURE__ */ withDisplayName(Body, 'Table.Body');
+const RowPart = /* @__PURE__ */ withDisplayName(Row, 'Table.Row');
+const HeaderCellPart = /* @__PURE__ */ withDisplayName(HeaderCell, 'Table.HeaderCell');
+const CellPart = /* @__PURE__ */ withDisplayName(Cell, 'Table.Cell');
+export {
+  RootPart as Root,
+  HeadPart as Head,
+  BodyPart as Body,
+  RowPart as Row,
+  HeaderCellPart as HeaderCell,
+  CellPart as Cell,
+};

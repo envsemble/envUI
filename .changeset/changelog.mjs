@@ -8,7 +8,7 @@ export default {
     const [first, ...rest] = changeset.summary.trim().split('\n');
     return [`- ${first}`, ...rest.map((line) => (line ? `  ${line}` : line))].join('\n');
   },
-  // The published packages do not depend on one another, so no entry reports updated internal
-  // dependencies.
+  // The published packages share one version and none depends on another, so no entry reports
+  // updated internal dependencies.
   getDependencyReleaseLine: () => '',
 };

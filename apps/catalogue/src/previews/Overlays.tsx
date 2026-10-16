@@ -9,17 +9,8 @@ import {
   Kbd,
   Meter,
   Menu,
-  MenuHeader,
-  MenuCheckboxItem,
-  MenuGroup,
-  MenuItem,
-  MenuRadioGroup,
-  MenuRadioItem,
-  MenuSeparator,
-  MenuSubmenu,
   Menubar,
-  MenubarMenu,
-  OrganizationMenu,
+  OrganizationSwitcher,
   Progress,
   Stack,
   Surface,
@@ -61,14 +52,14 @@ export function MenuPreview() {
   return (
     <Preview>
       <Example
-        title="Organization menu"
+        title="Organization switcher"
         size="collection"
         caption="Sits in the shell's context area. Choosing an organization calls onSelect; the application switches and reports progress."
       >
         <SpecimenGrid>
           <Specimen title="Active organization">
             <div className="docs-organization-slot">
-              <OrganizationMenu
+              <OrganizationSwitcher
                 organizations={sampleOrganizations}
                 currentOrganizationId={organizationId}
                 onSelect={(id) => {
@@ -83,7 +74,7 @@ export function MenuPreview() {
           </Specimen>
           <Specimen title="No organization yet">
             <div className="docs-organization-slot">
-              <OrganizationMenu
+              <OrganizationSwitcher
                 organizations={[]}
                 currentOrganizationId={null}
                 onSelect={() => undefined}
@@ -126,7 +117,7 @@ function AccountMenu({
   onAction: (action: string) => void;
 }) {
   return (
-    <Menu
+    <Menu.Root
       aria-label={label}
       density={density}
       trigger={
@@ -138,24 +129,24 @@ function AccountMenu({
       }
       align="start"
     >
-      <MenuHeader>
+      <Menu.Header>
         <Stack gap={1} align="center">
           <Avatar name="Alex Morgan" size={density ? 'standard' : 'large'} />
           <Text>Alex Morgan</Text>
           <Text variant="supporting">alex@example.com</Text>
         </Stack>
-      </MenuHeader>
-      <MenuItem href="#/account" icon={<ManageAccounts />}>
+      </Menu.Header>
+      <Menu.Item href="#/account" icon={<ManageAccounts />}>
         Account settings
-      </MenuItem>
-      <MenuItem icon={<Settings />} onClick={() => onAction('Preferences opened')}>
+      </Menu.Item>
+      <Menu.Item icon={<Settings />} onClick={() => onAction('Preferences opened')}>
         Preferences
-      </MenuItem>
-      <MenuSeparator />
-      <MenuItem icon={<Logout />} onClick={() => onAction('Signed out')}>
+      </Menu.Item>
+      <Menu.Separator />
+      <Menu.Item icon={<Logout />} onClick={() => onAction('Signed out')}>
         Sign out
-      </MenuItem>
-    </Menu>
+      </Menu.Item>
+    </Menu.Root>
   );
 }
 
@@ -181,26 +172,30 @@ function MenuPartsExample() {
     >
       <SpecimenGrid>
         <Specimen title="Groups and choices, from a button">
-          <Menu
+          <Menu.Root
             aria-label="Sample options"
             trigger={<Button variant="secondary">Options</Button>}
             align="start"
           >
-            <MenuRadioGroup label="Sort by" value={sort} onValueChange={setSort}>
-              <MenuRadioItem value="name">Name</MenuRadioItem>
-              <MenuRadioItem value="date" description="Most recently changed first">
+            <Menu.RadioGroup label="Sort by" value={sort} onValueChange={setSort}>
+              <Menu.RadioItem value="name">Name</Menu.RadioItem>
+              <Menu.RadioItem value="date" description="Most recently changed first">
                 Date changed
-              </MenuRadioItem>
-            </MenuRadioGroup>
-            <MenuGroup label="Display">
-              <MenuCheckboxItem checked={hidden} onCheckedChange={setHidden}>
+              </Menu.RadioItem>
+            </Menu.RadioGroup>
+            <Menu.Group label="Display">
+              <Menu.CheckboxItem checked={hidden} onCheckedChange={setHidden}>
                 Show hidden items
-              </MenuCheckboxItem>
-              <MenuItem icon={<Refresh />} shortcut="F5" onClick={() => setLastAction('Refreshed')}>
+              </Menu.CheckboxItem>
+              <Menu.Item
+                icon={<Refresh />}
+                shortcut="F5"
+                onClick={() => setLastAction('Refreshed')}
+              >
                 Refresh
-              </MenuItem>
-            </MenuGroup>
-          </Menu>
+              </Menu.Item>
+            </Menu.Group>
+          </Menu.Root>
         </Specimen>
         <Specimen title="Compact, at the pointer">
           <ContextMenu
@@ -210,35 +205,35 @@ function MenuPartsExample() {
               const name = target?.closest<HTMLElement>('[data-item]')?.dataset.item;
               return name ? (
                 <>
-                  <MenuItem icon={<OpenInNew />} onClick={() => setLastAction(`Opened ${name}`)}>
+                  <Menu.Item icon={<OpenInNew />} onClick={() => setLastAction(`Opened ${name}`)}>
                     Open
-                  </MenuItem>
-                  <MenuItem
+                  </Menu.Item>
+                  <Menu.Item
                     icon={<Edit />}
                     shortcut="F2"
                     onClick={() => setLastAction(`Rename ${name}`)}
                   >
                     Rename
-                  </MenuItem>
-                  <MenuSubmenu label="Move to" icon={<DriveFileMove />}>
+                  </Menu.Item>
+                  <Menu.Submenu label="Move to" icon={<DriveFileMove />}>
                     {['Archive', 'Drafts', 'Shared'].map((folder) => (
-                      <MenuItem
+                      <Menu.Item
                         key={folder}
                         onClick={() => setLastAction(`Moved ${name} to ${folder}`)}
                       >
                         {folder}
-                      </MenuItem>
+                      </Menu.Item>
                     ))}
-                  </MenuSubmenu>
-                  <MenuSeparator />
-                  <MenuItem icon={<Delete />} onClick={() => setLastAction(`Deleted ${name}`)}>
+                  </Menu.Submenu>
+                  <Menu.Separator />
+                  <Menu.Item icon={<Delete />} onClick={() => setLastAction(`Deleted ${name}`)}>
                     Delete
-                  </MenuItem>
+                  </Menu.Item>
                 </>
               ) : (
-                <MenuItem icon={<Add />} onClick={() => setLastAction('New item started')}>
+                <Menu.Item icon={<Add />} onClick={() => setLastAction('New item started')}>
                   New item
-                </MenuItem>
+                </Menu.Item>
               );
             }}
           >
@@ -281,20 +276,20 @@ function CompactMenusExample() {
     >
       <SpecimenGrid>
         <Specimen title="From a button">
-          <Menu
+          <Menu.Root
             aria-label="Document"
             density="compact"
             align="start"
             trigger={<Button variant="secondary">Document</Button>}
           >
-            <MenuItem
+            <Menu.Item
               icon={<NoteAdd />}
               shortcut="Ctrl+N"
               onClick={() => setLastAction('New document')}
             >
               New document
-            </MenuItem>
-            <MenuSubmenu
+            </Menu.Item>
+            <Menu.Submenu
               label="Open recent"
               icon={<History />}
               onOpenChange={(open) => {
@@ -302,32 +297,32 @@ function CompactMenusExample() {
               }}
             >
               {recentDocuments.map((name) => (
-                <MenuItem key={name} onClick={() => setLastAction(`Opened ${name}`)}>
+                <Menu.Item key={name} onClick={() => setLastAction(`Opened ${name}`)}>
                   {name}
-                </MenuItem>
+                </Menu.Item>
               ))}
-              <MenuSeparator />
-              <MenuItem onClick={() => setLastAction('Cleared recent documents')}>
+              <Menu.Separator />
+              <Menu.Item onClick={() => setLastAction('Cleared recent documents')}>
                 Clear recent
-              </MenuItem>
-            </MenuSubmenu>
-            <MenuItem icon={<Save />} shortcut="Ctrl+S" onClick={() => setLastAction('Saved')}>
+              </Menu.Item>
+            </Menu.Submenu>
+            <Menu.Item icon={<Save />} shortcut="Ctrl+S" onClick={() => setLastAction('Saved')}>
               Save
-            </MenuItem>
-            <MenuSeparator />
-            <MenuGroup label="View">
-              <MenuCheckboxItem checked={wordWrap} onCheckedChange={setWordWrap} shortcut="Alt+Z">
+            </Menu.Item>
+            <Menu.Separator />
+            <Menu.Group label="View">
+              <Menu.CheckboxItem checked={wordWrap} onCheckedChange={setWordWrap} shortcut="Alt+Z">
                 Word wrap
-              </MenuCheckboxItem>
-              <MenuSubmenu label="Theme">
-                <MenuRadioGroup value={theme} onValueChange={setTheme}>
-                  <MenuRadioItem value="light">Light</MenuRadioItem>
-                  <MenuRadioItem value="dark">Dark</MenuRadioItem>
-                  <MenuRadioItem value="system">System</MenuRadioItem>
-                </MenuRadioGroup>
-              </MenuSubmenu>
-            </MenuGroup>
-          </Menu>
+              </Menu.CheckboxItem>
+              <Menu.Submenu label="Theme">
+                <Menu.RadioGroup value={theme} onValueChange={setTheme}>
+                  <Menu.RadioItem value="light">Light</Menu.RadioItem>
+                  <Menu.RadioItem value="dark">Dark</Menu.RadioItem>
+                  <Menu.RadioItem value="system">System</Menu.RadioItem>
+                </Menu.RadioGroup>
+              </Menu.Submenu>
+            </Menu.Group>
+          </Menu.Root>
         </Specimen>
       </SpecimenGrid>
       <Text variant="caption" className="docs-caption" aria-live="polite">
@@ -379,68 +374,68 @@ export function MenubarPreview() {
         }
       >
         <Surface tone="canvas" padding={3} className="docs-window">
-          <Menubar aria-label="Notes menu" accessKeys>
-            <MenubarMenu label="File" accessKey="F">
-              <MenuItem
+          <Menubar.Root aria-label="Notes menu" accessKeys>
+            <Menubar.Menu label="File" accessKey="F">
+              <Menu.Item
                 icon={<NoteAdd />}
                 shortcut="Ctrl+N"
                 onClick={() => setLastCommand('New note')}
               >
                 New note
-              </MenuItem>
-              <MenuSubmenu label="Open recent" icon={<History />}>
+              </Menu.Item>
+              <Menu.Submenu label="Open recent" icon={<History />}>
                 {recentDocuments.map((name) => (
-                  <MenuItem key={name} onClick={() => setLastCommand(`Opened ${name}`)}>
+                  <Menu.Item key={name} onClick={() => setLastCommand(`Opened ${name}`)}>
                     {name}
-                  </MenuItem>
+                  </Menu.Item>
                 ))}
-                <MenuSeparator />
-                <MenuItem onClick={() => setLastCommand('Cleared recent notes')}>
+                <Menu.Separator />
+                <Menu.Item onClick={() => setLastCommand('Cleared recent notes')}>
                   Clear recent
-                </MenuItem>
-              </MenuSubmenu>
-              <MenuSeparator />
-              <MenuItem icon={<Save />} shortcut="Ctrl+S" onClick={() => setLastCommand('Saved')}>
+                </Menu.Item>
+              </Menu.Submenu>
+              <Menu.Separator />
+              <Menu.Item icon={<Save />} shortcut="Ctrl+S" onClick={() => setLastCommand('Saved')}>
                 Save
-              </MenuItem>
-              <MenuItem shortcut="Ctrl+Shift+S" onClick={() => setLastCommand('Save as')}>
+              </Menu.Item>
+              <Menu.Item shortcut="Ctrl+Shift+S" onClick={() => setLastCommand('Save as')}>
                 Save as…
-              </MenuItem>
-              <MenuSeparator />
-              <MenuItem shortcut="Ctrl+W" onClick={() => setLastCommand('Close window')}>
+              </Menu.Item>
+              <Menu.Separator />
+              <Menu.Item shortcut="Ctrl+W" onClick={() => setLastCommand('Close window')}>
                 Close window
-              </MenuItem>
-            </MenubarMenu>
-            <MenubarMenu
+              </Menu.Item>
+            </Menubar.Menu>
+            <Menubar.Menu
               label="Edit"
               accessKey="E"
               onOpenChange={(open, { previousFocus }) => {
                 if (open) editTarget.current = previousFocus;
               }}
             >
-              <MenuItem icon={<Undo />} shortcut="Ctrl+Z" onClick={() => setLastCommand('Undo')}>
+              <Menu.Item icon={<Undo />} shortcut="Ctrl+Z" onClick={() => setLastCommand('Undo')}>
                 Undo
-              </MenuItem>
-              <MenuItem icon={<Redo />} shortcut="Ctrl+Y" onClick={() => setLastCommand('Redo')}>
+              </Menu.Item>
+              <Menu.Item icon={<Redo />} shortcut="Ctrl+Y" onClick={() => setLastCommand('Redo')}>
                 Redo
-              </MenuItem>
-              <MenuSeparator />
-              <MenuItem icon={<ContentCut />} shortcut="Ctrl+X" onClick={() => copy(true)}>
+              </Menu.Item>
+              <Menu.Separator />
+              <Menu.Item icon={<ContentCut />} shortcut="Ctrl+X" onClick={() => copy(true)}>
                 Cut
-              </MenuItem>
-              <MenuItem icon={<ContentCopy />} shortcut="Ctrl+C" onClick={() => copy(false)}>
+              </Menu.Item>
+              <Menu.Item icon={<ContentCopy />} shortcut="Ctrl+C" onClick={() => copy(false)}>
                 Copy
-              </MenuItem>
-              <MenuItem
+              </Menu.Item>
+              <Menu.Item
                 icon={<ContentPaste />}
                 shortcut="Ctrl+V"
                 disabled
                 description="Use the keyboard to paste here"
               >
                 Paste
-              </MenuItem>
-              <MenuSeparator />
-              <MenuItem
+              </Menu.Item>
+              <Menu.Separator />
+              <Menu.Item
                 shortcut="Ctrl+A"
                 onClick={() => {
                   field().select();
@@ -448,47 +443,47 @@ export function MenubarPreview() {
                 }}
               >
                 Select all
-              </MenuItem>
-            </MenubarMenu>
-            <MenubarMenu label="View" accessKey="V">
-              <MenuCheckboxItem checked={wordWrap} onCheckedChange={setWordWrap} shortcut="Alt+Z">
+              </Menu.Item>
+            </Menubar.Menu>
+            <Menubar.Menu label="View" accessKey="V">
+              <Menu.CheckboxItem checked={wordWrap} onCheckedChange={setWordWrap} shortcut="Alt+Z">
                 Word wrap
-              </MenuCheckboxItem>
-              <MenuSeparator />
-              <MenuItem
+              </Menu.CheckboxItem>
+              <Menu.Separator />
+              <Menu.Item
                 icon={<ZoomIn />}
                 shortcut="Ctrl++"
                 onClick={() => setZoom((value) => Math.min(value + 10, 200))}
               >
                 Zoom in
-              </MenuItem>
-              <MenuItem
+              </Menu.Item>
+              <Menu.Item
                 icon={<ZoomOut />}
                 shortcut="Ctrl+-"
                 onClick={() => setZoom((value) => Math.max(value - 10, 50))}
               >
                 Zoom out
-              </MenuItem>
-              <MenuSeparator />
-              <MenuSubmenu label="Theme">
-                <MenuRadioGroup value={theme} onValueChange={setTheme}>
-                  <MenuRadioItem value="light">Light</MenuRadioItem>
-                  <MenuRadioItem value="dark">Dark</MenuRadioItem>
-                  <MenuRadioItem value="system">System</MenuRadioItem>
-                </MenuRadioGroup>
-              </MenuSubmenu>
-            </MenubarMenu>
-            <MenubarMenu label="Help" accessKey="H">
-              <MenuItem
+              </Menu.Item>
+              <Menu.Separator />
+              <Menu.Submenu label="Theme">
+                <Menu.RadioGroup value={theme} onValueChange={setTheme}>
+                  <Menu.RadioItem value="light">Light</Menu.RadioItem>
+                  <Menu.RadioItem value="dark">Dark</Menu.RadioItem>
+                  <Menu.RadioItem value="system">System</Menu.RadioItem>
+                </Menu.RadioGroup>
+              </Menu.Submenu>
+            </Menubar.Menu>
+            <Menubar.Menu label="Help" accessKey="H">
+              <Menu.Item
                 shortcut="Ctrl+K Ctrl+S"
                 onClick={() => setLastCommand('Keyboard shortcuts')}
               >
                 Keyboard shortcuts
-              </MenuItem>
-              <MenuSeparator />
-              <MenuItem onClick={() => setLastCommand('About Notes')}>About Notes</MenuItem>
-            </MenubarMenu>
-          </Menubar>
+              </Menu.Item>
+              <Menu.Separator />
+              <Menu.Item onClick={() => setLastCommand('About Notes')}>About Notes</Menu.Item>
+            </Menubar.Menu>
+          </Menubar.Root>
           <Textarea
             ref={note}
             label="Note"

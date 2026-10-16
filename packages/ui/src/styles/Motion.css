@@ -46,7 +46,7 @@
 .env-menu[data-instant='group'] {
   transition: none;
 }
-.env-disclosure-note[open] > .env-disclosure-content,
+.env-disclosure[open] > .env-disclosure-panel,
 .env-avatar-image {
   animation: env-motion-fade-in var(--motion-duration-slow) var(--motion-ease-enter);
 }
@@ -83,12 +83,12 @@
      controls more, whether the control or its label is pressed. */
   .env-button,
   .env-segment,
-  .env-navigation-item,
+  .env-nav-list-item,
   .env-avatar-button,
   .env-app-sidebar-toggle,
   .env-toast-dismiss,
   .env-clickable-card,
-  .env-direction-link,
+  .env-pager-link,
   .env-radio-option,
   .env-checkbox-box,
   .env-radio-control,
@@ -99,14 +99,14 @@
   }
   .env-button:active:not(:disabled):not([aria-disabled='true']),
   .env-segment:active:not([data-disabled]),
-  .env-navigation-item:active:not(:disabled):not([aria-disabled='true']),
+  .env-nav-list-item:active:not(:disabled):not([aria-disabled='true']),
   .env-avatar-button:active:not(:disabled),
   .env-app-sidebar-toggle:active,
   .env-toast-dismiss:active {
     transform: scale(0.97);
   }
   .env-clickable-card:active:not(:disabled):not([aria-disabled='true']),
-  .env-direction-link:active:not([aria-disabled='true']),
+  .env-pager-link:active:not([aria-disabled='true']),
   .env-radio-option:active:not(:has(input:disabled)) {
     transform: scale(0.99);
   }
@@ -202,12 +202,12 @@
      settle in as they appear; the ones always there, such as a combobox's chevron, stay still. */
   .env-dropdown-trigger .env-symbol,
   .env-combobox-trigger .env-symbol,
-  .env-disclosure-note > summary::before {
+  .env-disclosure > summary::before {
     transition: transform var(--motion-duration-medium) var(--motion-ease);
   }
   .env-checkbox-control:is(:checked, :indeterminate) + .env-checkbox-mark,
-  .env-organization-menu-radio-dot,
-  .env-text-field-end > :not(.env-combobox-trigger, .env-date-time-icon),
+  .env-organization-switcher-radio-dot,
+  .env-text-field-end > :not(.env-combobox-trigger, .env-date-picker-icon),
   .env-theme-toggle .env-symbol > svg {
     animation: env-motion-pop-in var(--motion-duration-medium) var(--motion-ease-enter);
   }

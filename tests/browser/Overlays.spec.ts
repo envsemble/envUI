@@ -2,18 +2,18 @@ import { test, expect } from '@playwright/test';
 import { fixtureUrl } from './Servers';
 
 test('notices use status and alert roles by tone and dismiss on request', async ({ page }) => {
-  await page.goto(`${fixtureUrl}/?fixture=notices`);
-  const scope = page.getByTestId('notices-light');
+  await page.goto(`${fixtureUrl}/?fixture=alerts`);
+  const scope = page.getByTestId('alerts-light');
   await expect(scope.getByRole('status').filter({ hasText: 'Sync paused' })).toBeVisible();
   await expect(scope.getByRole('status').filter({ hasText: 'published' })).toBeVisible();
   // Warnings and errors present from the start are not live regions.
   await expect(scope.getByRole('alert')).toHaveCount(0);
-  const blocked = scope.locator('.env-notice[data-tone="warning"]');
+  const blocked = scope.locator('.env-alert[data-tone="warning"]');
   await expect(blocked).not.toHaveAttribute('role');
   await expect(blocked.getByRole('link', { name: 'Show blockers' })).toBeVisible();
-  await expect(blocked.locator('.env-notice-icon svg')).toHaveCount(1);
+  await expect(blocked.locator('.env-alert-icon svg')).toHaveCount(1);
   await expect(
-    scope.locator('.env-notice').filter({ hasText: 'No icon here' }).locator('svg'),
+    scope.locator('.env-alert').filter({ hasText: 'No icon here' }).locator('svg'),
   ).toHaveCount(0);
 
   await scope.getByRole('button', { name: 'Dismiss' }).click();
@@ -23,9 +23,9 @@ test('notices use status and alert roles by tone and dismiss on request', async 
   await expect(scope.getByRole('alert')).toContainText('Save failed');
 
   for (const theme of ['light', 'dark']) {
-    const notice = page.getByTestId(`notices-${theme}`).locator('.env-notice[data-tone="success"]');
+    const notice = page.getByTestId(`alerts-${theme}`).locator('.env-alert[data-tone="success"]');
     const colors = await notice.evaluate((element) => ({
-      icon: getComputedStyle(element.querySelector('.env-notice-icon')!).color,
+      icon: getComputedStyle(element.querySelector('.env-alert-icon')!).color,
       text: getComputedStyle(element).color,
     }));
     expect(colors.icon).not.toBe(colors.text);
@@ -155,17 +155,17 @@ test('a panel across the whole width keeps clear of the safe areas on both sides
 });
 
 test('a notice dismiss button is a circle tinted with the notice tone', async ({ page }) => {
-  await page.goto(`${fixtureUrl}/?fixture=notices`);
+  await page.goto(`${fixtureUrl}/?fixture=alerts`);
   const notice = page
-    .getByTestId('notices-light')
-    .locator('.env-notice')
+    .getByTestId('alerts-light')
+    .locator('.env-alert')
     .filter({ has: page.getByRole('button', { name: 'Dismiss' }) });
   const dismiss = notice.getByRole('button', { name: 'Dismiss' });
   const box = (await dismiss.boundingBox())!;
   expect(Math.abs(box.width - box.height)).toBeLessThan(0.5);
   await expect(dismiss).toHaveCSS('border-top-left-radius', '50%');
   const tone = await notice.evaluate(
-    (element) => getComputedStyle(element.querySelector('.env-notice-icon')!).color,
+    (element) => getComputedStyle(element.querySelector('.env-alert-icon')!).color,
   );
   await expect(dismiss).toHaveCSS('color', tone);
   await dismiss.hover();

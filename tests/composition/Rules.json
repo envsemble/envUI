@@ -35,17 +35,17 @@
       "actions/CopyButton.tsx": "composites",
       "content/AvatarGroup.tsx": "composites",
       "content/CodeBlock.tsx": "composites",
-      "content/Heatmap.tsx": "composites",
+      "content/CalendarHeatmap.tsx": "composites",
       "content/Markdown.tsx": "composites",
       "content/RelativeTime.tsx": "composites",
       "feedback/CommandPalette.tsx": "composites",
       "forms/ColorPicker.tsx": "composites",
       "forms/Composer.tsx": "composites",
-      "forms/DateTimeField.tsx": "composites",
+      "forms/DatePicker.tsx": "composites",
       "forms/MarkdownEditor.tsx": "composites",
       "forms/SearchField.tsx": "composites",
       "navigation/DocumentTabs.tsx": "composites",
-      "navigation/OrganizationMenu.tsx": "composites",
+      "navigation/OrganizationSwitcher.tsx": "composites",
       "navigation/Pagination.tsx": "composites",
       "navigation/AppShell.tsx": "shell",
       "navigation/PanelDock.tsx": "shell",
@@ -65,13 +65,13 @@
     "roles": ["button"],
     "leafControls": {
       "internal/ActionElement.tsx": ["a", "button"],
-      "forms/Input.tsx": ["input"],
+      "forms/TextField.tsx": ["input"],
       "forms/internal/TextareaControl.tsx": ["textarea"],
       "forms/internal/TextareaResizeEdge.tsx": ["button"],
       "forms/Checkbox.tsx": ["input"],
       "forms/Radio.tsx": ["input"],
       "forms/Switch.tsx": ["input"],
-      "forms/FileDropzone.tsx": ["input"],
+      "forms/DropZone.tsx": ["input"],
       "actions/SegmentedControl.tsx": ["button"]
     }
   },
@@ -82,8 +82,8 @@
       "env-symbol": "The icon wrapper, which every component sizes and colors through currentColor.",
       "env-text": "The text style helper.",
       "env-surface": "The surface helper, which components render through Surface.",
-      "env-connected-rows": "The shared connected-row corners (ConnectedRows.css) of GroupedRows and row radios.",
-      "env-connected-row": "The shared connected-row corners (ConnectedRows.css) of GroupedRows and row radios."
+      "env-connected-rows": "The shared connected-row corners (ConnectedRows.css) of List and row radios.",
+      "env-connected-row": "The shared connected-row corners (ConnectedRows.css) of List and row radios."
     },
     "components": {
       "Button": { "classes": ["env-icon-button"], "styles": ["Actions.css"] },
@@ -93,7 +93,7 @@
       "SegmentedControl": { "classes": ["env-segment"] },
       "AnimatedNumber": { "styles": ["Text.css"] },
       "Avatar": { "styles": ["Indicators.css"] },
-      "Badge": { "classes": ["env-counter", "env-diff-count"] },
+      "Badge": { "modules": ["content/CounterBadge.tsx", "content/DiffStat.tsx"] },
       "Card": {
         "modules": [
           "content/ClickableCard.tsx",
@@ -110,8 +110,6 @@
           "content/internal/useCodeHighlighting.ts"
         ]
       },
-      "DisclosureNote": { "classes": ["env-disclosure-content"] },
-      "GroupedRows": { "classes": ["env-row", "env-contrast-row-pane"] },
       "Dialog": { "classes": ["env-modal-pane"] },
       "EmptyState": { "classes": ["env-empty-copy"], "styles": ["FeedbackStates.css"] },
       "LoadingBar": { "styles": ["FeedbackStates.css"] },
@@ -131,6 +129,7 @@
           "feedback/toast/ToastProvider.tsx",
           "feedback/toast/ToastRegion.tsx",
           "feedback/toast/ToastTypes.ts",
+          "feedback/toast/useToast.ts",
           "feedback/toast/useToastController.ts"
         ]
       },
@@ -147,7 +146,7 @@
       "Field": {
         "modules": [
           "forms/internal/FieldFrame.tsx",
-          "forms/Input.tsx",
+          "forms/TextField.tsx",
           "forms/Textarea.tsx",
           "forms/internal/TextareaControl.tsx",
           "forms/internal/TextareaResizeEdge.tsx"
@@ -159,11 +158,10 @@
           "env-field-hint",
           "env-field-error"
         ],
-        "styles": ["FormFields.css"],
+        "styles": ["TextField.css"],
         "slots": ["env-text-input", "env-text-field-start", "env-text-field-end"]
       },
       "Select": { "classes": ["env-dropdown"] },
-      "DateTimeField": { "classes": ["env-date-time"] },
       "MarkdownEditor": {
         "modules": [
           "forms/internal/markdown/MarkdownFormatting.ts",
@@ -183,10 +181,10 @@
       "ThemePreference": { "classes": ["env-theme-toggle"] },
       "AppShell": { "classes": ["env-app"] },
       "Breadcrumbs": { "classes": ["env-breadcrumb"] },
-      "DirectionLink": { "modules": ["navigation/DirectionLinks.tsx"] },
       "DocumentTabs": { "classes": ["env-document-tab"] },
-      "NavigationItem": { "classes": ["env-navigation"], "styles": ["Actions.css"] },
-      "OrganizationMenu": { "classes": ["env-organization-trigger"], "styles": ["Menu.css"] },
+      "NavList": { "styles": ["Actions.css"] },
+      "Menu": { "modules": ["navigation/ContextMenu.tsx"] },
+      "OrganizationSwitcher": { "styles": ["Menu.css"] },
       "PanelDock": {
         "modules": ["navigation/PanelDockHeader.tsx", "navigation/internal/PanelDockContext.ts"]
       },

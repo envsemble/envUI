@@ -413,16 +413,16 @@ test('a pending button keeps its size and name, reports busy and ignores presses
   }
 });
 
-test('LoadingBar waits before appearing, then completes and leaves', async ({ page }) => {
-  await page.goto(fixture);
-  const toggle = page.getByRole('button', { name: 'Toggle loading' });
-  const bar = page.getByRole('progressbar', { name: 'Loading next page' });
+test('page progress waits before appearing, then completes and leaves', async ({ page }) => {
+  await page.goto(shellFixture);
+  const toggle = page.getByRole('button', { name: 'Toggle page loading' });
+  const bar = page.getByRole('progressbar', { name: 'Loading page' });
   // Record every state the bar renders, so short-lived states cannot slip between assertions.
   await page.evaluate(() => {
     const states: string[] = [];
     (window as unknown as { barStates: string[] }).barStates = states;
     new MutationObserver(() => {
-      const element = document.querySelector('[aria-label="Loading next page"]');
+      const element = document.querySelector('[aria-label="Loading page"]');
       // After the bar has shown, its absence is recorded as "none".
       const state = element ? element.getAttribute('data-state')! : states.length ? 'none' : null;
       if (state && states.at(-1) !== state) states.push(state);
@@ -442,7 +442,7 @@ test('LoadingBar waits before appearing, then completes and leaves', async ({ pa
   expect(await states()).toEqual(['running', 'finishing', 'none']);
 });
 
-test('OrganizationMenu switches organizations and offers creating one', async ({ page }) => {
+test('OrganizationSwitcher switches organizations and offers creating one', async ({ page }) => {
   const errors = collectErrors(page);
   await page.goto(fixture);
   const trigger = page.getByRole('button', { name: 'Northwind Labs' });
@@ -457,7 +457,7 @@ test('OrganizationMenu switches organizations and offers creating one', async ({
   await expect(
     menu.getByRole('menuitemradio', { name: 'Contoso Member', exact: true }),
   ).toBeVisible();
-  await expect(menu.locator('.env-organization-menu-detail').first()).toHaveText('Admin');
+  await expect(menu.locator('.env-organization-switcher-detail').first()).toHaveText('Admin');
   // Choosing the active organization again does not switch.
   await menu.getByRole('menuitemradio', { name: 'Northwind Labs' }).click();
   await expect(menu).toBeHidden();
@@ -939,7 +939,7 @@ test('secondary buttons stay distinct on the canvas, rows and dialog panes in bo
     const row = page.getByTestId('secondary-row');
     // Colors transition after the theme changes; poll until they settle.
     await expect
-      .poll(() => fillContrast(row.getByRole('button', { name: 'Remove' }), '.env-row'))
+      .poll(() => fillContrast(row.getByRole('button', { name: 'Remove' }), '.env-list-item'))
       .toBeGreaterThan(1.08);
     await page.getByRole('button', { name: 'Open pending dialog' }).click();
     const dialog = page.getByRole('dialog', { name: 'Save project' });
@@ -950,7 +950,7 @@ test('secondary buttons stay distinct on the canvas, rows and dialog panes in bo
   }
 });
 
-test('direction links, radio rows and choice controls settle while pressed', async ({ page }) => {
+test('pager links, radio rows and choice controls settle while pressed', async ({ page }) => {
   await page.goto(`${fixtureUrl}/?fixture=colors`);
   // The choice controls shrink, not their labels, whether the control or its text is pressed.
   const targets = [

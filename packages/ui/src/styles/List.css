@@ -1,0 +1,76 @@
+/* List geometry is shared with selectable rows and select options. */
+.env-list {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+  display: grid;
+  gap: 0.125rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.env-list > .env-list-item {
+  --env-list-item-fill: var(--color-row);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  min-height: 3.5rem;
+  padding: var(--space-3) var(--row-padding-inline);
+  font: var(--type-body-small);
+  background: var(--env-list-item-fill);
+  color: var(--color-row-text);
+}
+.env-list > .env-list-item > * {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+.env-list small {
+  display: block;
+  color: var(--color-row-detail);
+  font: var(--type-body-small);
+}
+.env-list-surface .env-list > .env-list-item {
+  --env-list-item-fill: var(--color-row-alternate);
+}
+/* A row that opens something through a link or button inside reacts like a clickable card: to
+   hover, to keyboard focus inside it and to presses. The link or button marked data-row-target
+   covers the row with a pseudo-element (the row is its containing block), so a press anywhere on
+   the row follows it, and it is not dragged away as a link; the row shows a press on it, not on the
+   row's other controls. */
+.env-list > .env-list-item[data-interactive] {
+  position: relative;
+  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+}
+.env-list > .env-list-item[data-interactive] [data-row-target] {
+  -webkit-user-drag: none;
+}
+.env-list > .env-list-item[data-interactive] [data-row-target]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+.env-list > .env-list-item[data-interactive]:is(:hover, :has(:focus-visible)) {
+  background: hsl(from var(--env-list-item-fill) h s var(--state-surface-hover-lightness));
+}
+.env-list
+  > .env-list-item[data-interactive]:is(
+    :has([data-row-target]:active),
+    :not(:has([data-row-target])):active
+  ) {
+  background: hsl(from var(--env-list-item-fill) h s var(--state-surface-pressed-lightness));
+}
+/* The row shows the press, so a link or button in its content does not also shrink: shrinking, it
+   would hold a pseudo-element stretched over the row in place of the row. */
+.env-list > .env-list-item[data-interactive] > div .env-button:active {
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .env-list > .env-list-item[data-interactive] {
+    transition: none;
+  }
+}
+.env-list-surface .env-list + .env-list {
+  margin-top: 0.75rem;
+}

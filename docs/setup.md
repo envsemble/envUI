@@ -68,7 +68,7 @@ const themeBootstrap = {
 
 ### Router links
 
-Destinations in envUI render native anchors. Register the router's link once with `LinkProvider` so Button, Link, NavigationItem, Card, DirectionLink and MenuItem destinations navigate on the client. The component receives native anchor props with a string `href`:
+Destinations in envUI render native anchors. Register the router's link once with `LinkProvider` so Button, Link, NavList.Item, Card, Pager links and Menu.Item destinations navigate on the client. The component receives native anchor props with a string `href`:
 
 ```tsx
 import { LinkProvider, type LinkComponentProps } from '@envsemble/envui';

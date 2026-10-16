@@ -37,6 +37,13 @@ Requires React and React DOM 19, plus access to the private `@envsemble` GitHub 
 npm install --save-exact @envsemble/envui@<version>
 ```
 
+Upgrading an application from envUI 0.x to 1.0? The `@envsemble/envui-codemods` package moves its imports, components, types and `env-*` classes to the 1.0 names and reports what needs a decision:
+
+```sh
+npx @envsemble/envui-codemods v1-names src
+npx @envsemble/envui-codemods v1-classes src
+```
+
 Import the stylesheet once at your application entry point, then compose public components:
 
 ```tsx
@@ -64,13 +71,13 @@ export function App() {
 Native form behavior stays familiar. Render this inside your application’s theme:
 
 ```tsx
-import { ActionGroup, Button, Input, Stack } from '@envsemble/envui';
+import { ActionGroup, Button, Stack, TextField } from '@envsemble/envui';
 
 export function ProjectForm() {
   return (
     <form>
       <Stack gap={4}>
-        <Input name="projectName" label="Project name" required />
+        <TextField name="projectName" label="Project name" required />
         <ActionGroup>
           <Button type="submit">Create project</Button>
           <Button type="reset" variant="secondary">

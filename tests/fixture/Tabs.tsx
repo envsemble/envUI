@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import {
   Button,
-  Counter,
+  CounterBadge,
   DocumentTabs,
-  NavigationItem,
+  NavList,
   Surface,
   Tabs,
   Text,
@@ -172,7 +172,7 @@ export function TabStatesFixture({ theme }: { theme: ThemeValue }) {
                 value: label.toLowerCase(),
                 button:
                   variant === 'navigation' ? (
-                    <NavigationItem>{label}</NavigationItem>
+                    <NavList.Item>{label}</NavList.Item>
                   ) : (
                     <Button variant={variant}>{label}</Button>
                   ),
@@ -206,7 +206,7 @@ export function CompactTabsFixture({ theme }: { theme: ThemeValue }) {
               value: 'submissions',
               button: (
                 <Button variant="secondary">
-                  Submissions <Counter value={24} />
+                  Submissions <CounterBadge value={24} />
                 </Button>
               ),
               content: null,

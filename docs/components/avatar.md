@@ -22,8 +22,6 @@ import { Avatar, Stack } from '@envsemble/envui';
 | size     | small 1.5 rem, standard 2 rem (default), large 3 rem or display 5.5 rem                   |
 | label    | Announce the name as an image; omit when adjacent text already names the person (default) |
 
-`getInitials(name)` returns the same initials for custom layouts.
-
 ## Guidelines
 
 - Pictures load without a referrer. A missing or failed picture shows the fallback without an error.
@@ -34,9 +32,9 @@ import { Avatar, Stack } from '@envsemble/envui';
 ## AvatarButton
 
 ```tsx
-import { AvatarButton, Menu, MenuItem } from '@envsemble/envui';
+import { AvatarButton, Menu } from '@envsemble/envui';
 
-<Menu
+<Menu.Root
   aria-label="Account"
   trigger={
     <AvatarButton
@@ -47,8 +45,8 @@ import { AvatarButton, Menu, MenuItem } from '@envsemble/envui';
     />
   }
 >
-  <MenuItem onClick={signOut}>Sign out</MenuItem>
-</Menu>;
+  <Menu.Item onClick={signOut}>Sign out</Menu.Item>
+</Menu.Root>;
 ```
 
 | Name                  | Contract                                                                          |
@@ -110,4 +108,4 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Menus](../components/menu.md)
-- [Grouped rows](../components/rows.md)
+- [Lists](../components/list.md)

@@ -1,12 +1,43 @@
 import { readFile, readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
-/** Include the locked runtime dependencies, including optional bundled grammar modules. */
+/**
+ * The workspaces whose runtime dependencies ship: the library's and the offline catalogue's. The
+ * codemods package runs on the developer's machine and its dependencies ship with it, not here.
+ */
+const shippingWorkspaces = ['packages/ui', 'apps/catalogue'];
+
+/** The lockfile location a dependency of the package at `from` resolves to, as Node finds it. */
+function resolveLocked(packages, from, name) {
+  for (let base = from; ; ) {
+    const location = `${base ? `${base}/` : ''}node_modules/${name}`;
+    if (packages[location]) return location;
+    if (!base) return undefined;
+    const parent = base.lastIndexOf('/node_modules/');
+    base = parent === -1 ? '' : base.slice(0, parent);
+  }
+}
+
+/**
+ * Include the locked runtime dependencies of the shipping workspaces, including optional bundled
+ * grammar modules: every non-dev package reachable from them through non-dev packages.
+ */
 export async function collectDependencyNotices(repositoryRoot) {
   const lock = JSON.parse(await readFile(resolve(repositoryRoot, 'package-lock.json'), 'utf8'));
-  const entries = Object.entries(lock.packages)
-    .filter(([path, entry]) => path.startsWith('node_modules/') && !entry.dev && !entry.link)
-    .sort(([first], [second]) => first.localeCompare(second));
+  const reachable = new Map();
+  const visit = (location) => {
+    const { dependencies, optionalDependencies, peerDependencies } = lock.packages[location];
+    const names = Object.keys({ ...dependencies, ...optionalDependencies, ...peerDependencies });
+    for (const name of names) {
+      const found = resolveLocked(lock.packages, location, name);
+      const entry = found && lock.packages[found];
+      if (!entry || entry.dev || entry.link || reachable.has(found)) continue;
+      reachable.set(found, entry);
+      visit(found);
+    }
+  };
+  for (const workspace of shippingWorkspaces) visit(workspace);
+  const entries = [...reachable].sort(([first], [second]) => first.localeCompare(second));
   const notices = await Promise.all(
     entries.map(async ([path, entry]) => {
       const directory = resolve(repositoryRoot, path);

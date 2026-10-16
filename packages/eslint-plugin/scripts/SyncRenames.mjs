@@ -30,9 +30,15 @@ function targetsOf(value) {
   if (typeof value === 'string')
     return removedWords.has(value) ? [] : isName(value) ? [value] : undefined;
   if (Array.isArray(value)) return value.every(isName) ? value : undefined;
-  if (typeof value === 'object')
+  if (typeof value === 'object') {
     for (const field of targetFields)
       if (Object.hasOwn(value, field)) return targetsOf(value[field]);
+    // A split: one old name becomes one of several, chosen by a prop's value.
+    if (value.values && typeof value.values === 'object')
+      return targetsOf(Object.values(value.values));
+    // A removal: the entry says what to use instead, but names no replacement export.
+    if (typeof value.use === 'string') return [];
+  }
   return undefined;
 }
 
@@ -88,6 +94,17 @@ export function normalizeRenameMap(map, exportsSnapshot) {
   }
 
   visit(map, '@envsemble/envui');
+  // A name removed from 0.7 that 1.0 reuses as a namespace (the manual Toast; 1.0's Toast holds
+  // Toast.Provider) stays importable: it points at its namespace's parts, so only rendering the
+  // old component is reported.
+  for (const names of Object.values(modules))
+    for (const [name, targets] of Object.entries(names)) {
+      if (targets.length > 0) continue;
+      const parts = Object.values(names)
+        .flat()
+        .filter((target) => target.startsWith(`${name}.`) && !target.endsWith('Props'));
+      if (parts.length > 0) names[name] = [...new Set(parts)];
+    }
   return Object.fromEntries(
     Object.entries(modules)
       .filter(([, names]) => Object.keys(names).length > 0)

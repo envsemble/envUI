@@ -53,5 +53,5 @@ TypeScript declarations provide the complete public API.
 
 - [Surface](../components/surface.md)
 - [Stacks & action groups](../components/layout.md)
-- [Grouped rows](../components/rows.md)
+- [Lists](../components/list.md)
 - [Typography](../foundations/typography.md)
