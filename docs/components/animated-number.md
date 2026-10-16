@@ -1,4 +1,4 @@
-# Animated numbers
+# AnimatedNumber
 
 ## React usage
 
@@ -28,6 +28,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Buttons](../components/buttons.md)
+- [Button](../components/button.md)
 - [Typography](../foundations/typography.md)
 - [Accessibility](../foundations/accessibility.md)

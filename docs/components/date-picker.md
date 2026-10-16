@@ -1,4 +1,4 @@
-# Date pickers
+# DatePicker
 
 ## DatePicker
 
@@ -94,8 +94,8 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Text fields](../components/text-field.md)
-- [Popovers](../components/popover.md)
-- [Comboboxes](../components/combobox.md)
-- [Calendar heatmap](../components/calendar-heatmap.md)
+- [TextField](../components/text-field.md)
+- [Popover](../components/popover.md)
+- [Combobox](../components/combobox.md)
+- [CalendarHeatmap](../components/calendar-heatmap.md)
 - [Accessibility](../foundations/accessibility.md)

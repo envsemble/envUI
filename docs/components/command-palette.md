@@ -1,4 +1,4 @@
-# Command palette
+# CommandPalette
 
 ## React usage
 
@@ -64,7 +64,7 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Dialogs](../components/dialogs.md)
-- [Menus](../components/menu.md)
-- [Text fields](../components/text-field.md)
+- [Dialog](../components/dialog.md)
+- [Menu](../components/menu.md)
+- [TextField](../components/text-field.md)
 - [Accessibility](../foundations/accessibility.md)

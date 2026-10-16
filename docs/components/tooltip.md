@@ -1,4 +1,4 @@
-# Tooltips
+# Tooltip
 
 ## React usage
 
@@ -35,6 +35,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Buttons](../components/buttons.md)
-- [Menus](../components/menu.md)
+- [Button](../components/button.md)
+- [Menu](../components/menu.md)
 - [Accessibility](../foundations/accessibility.md)

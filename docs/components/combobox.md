@@ -1,4 +1,4 @@
-# Comboboxes
+# Combobox
 
 ## React usage
 
@@ -104,8 +104,8 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Selects](../components/select.md)
-- [Text fields](../components/text-field.md)
-- [Avatars](../components/avatar.md)
-- [Menus](../components/menu.md)
+- [Select](../components/select.md)
+- [TextField](../components/text-field.md)
+- [Avatar](../components/avatar.md)
+- [Menu](../components/menu.md)
 - [Accessibility](../foundations/accessibility.md)

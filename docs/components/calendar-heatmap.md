@@ -1,4 +1,4 @@
-# Calendar heatmap
+# CalendarHeatmap
 
 ## React usage
 
@@ -81,7 +81,7 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Stats](../components/stats.md)
-- [Tooltips](../components/tooltip.md)
+- [Stat](../components/stat.md)
+- [Tooltip](../components/tooltip.md)
 - [Colors & themes](../foundations/colors.md)
 - [Accessibility](../foundations/accessibility.md)

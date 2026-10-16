@@ -111,7 +111,7 @@ function useSimulatedWork(duration: number) {
   return [working, () => setWorking(true)] as const;
 }
 
-export function LoadingPreview() {
+export function SpinnerPreview() {
   const [saving, save] = useSimulatedWork(1800);
   const [refreshing, refresh] = useSimulatedWork(1800);
   return (
@@ -144,6 +144,13 @@ export function LoadingPreview() {
           </Specimen>
         </SpecimenGrid>
       </Example>
+    </Preview>
+  );
+}
+
+export function SkeletonPreview() {
+  return (
+    <Preview>
       <Example
         title="Loading placeholders"
         size="collection"

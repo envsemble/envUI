@@ -6,8 +6,8 @@ import {
 } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
 
 const components = [
-  'layout',
-  'buttons',
+  'stack',
+  'button',
   'text-field',
   'checkbox',
   'switch',
@@ -15,13 +15,14 @@ const components = [
   'select',
   'nav-list',
   'list',
-  'cards',
+  'card',
   'chips',
   'disclosure',
   'empty-state',
-  'loading',
-  'toasts',
-  'dialogs',
+  'spinner',
+  'skeleton',
+  'toast',
+  'dialog',
 ];
 const foundations = ['colors', 'typography', 'spacing', 'composition', 'icons', 'accessibility'];
 

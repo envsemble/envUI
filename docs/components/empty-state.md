@@ -1,4 +1,4 @@
-# Empty states
+# EmptyState
 
 ## React usage
 
@@ -40,6 +40,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Loading](../components/loading.md)
-- [Cards](../components/cards.md)
-- [Buttons](../components/buttons.md)
+- [Loading](../patterns/loading.md)
+- [Card](../components/card.md)
+- [Button](../components/button.md)

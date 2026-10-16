@@ -1,4 +1,4 @@
-# Cards
+# Card
 
 ## React usage
 
@@ -52,6 +52,6 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Surface](../components/surface.md)
-- [Stacks & action groups](../components/layout.md)
-- [Lists](../components/list.md)
+- [Stack](../components/stack.md)
+- [List](../components/list.md)
 - [Typography](../foundations/typography.md)

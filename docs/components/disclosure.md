@@ -1,4 +1,4 @@
-# Disclosures
+# Disclosure
 
 ## React usage
 
@@ -27,6 +27,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Info chips](../components/chips.md)
+- [InfoChip](../components/chips.md)
 - [Typography](../foundations/typography.md)
-- [Text fields](../components/text-field.md)
+- [TextField](../components/text-field.md)

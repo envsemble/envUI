@@ -77,7 +77,7 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Menus](../components/menu.md)
-- [Application shell](../components/app-shell.md)
-- [Keyboard keys](../components/keyboard.md)
+- [Menu](../components/menu.md)
+- [AppShell](../components/app-shell.md)
+- [Kbd](../components/kbd.md)
 - [Accessibility](../foundations/accessibility.md)

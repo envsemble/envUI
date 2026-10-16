@@ -1,4 +1,4 @@
-# Color picker
+# ColorPicker
 
 ## React usage
 
@@ -60,6 +60,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Text fields](../components/text-field.md)
+- [TextField](../components/text-field.md)
 - [Colors & themes](../foundations/colors.md)
 - [Accessibility](../foundations/accessibility.md)

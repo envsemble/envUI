@@ -1,4 +1,4 @@
-# Rich text
+# RichText
 
 ## Edit and render the same document
 
@@ -150,6 +150,6 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Markdown](../components/markdown.md)
-- [Text fields](../components/text-field.md)
+- [TextField](../components/text-field.md)
 - [Composition & extension](../foundations/composition.md)
 - [Accessibility](../foundations/accessibility.md)

@@ -1,4 +1,4 @@
-# Alerts
+# Alert
 
 ## React usage
 
@@ -51,7 +51,7 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Toasts](../components/toasts.md)
-- [Empty states](../components/empty-state.md)
-- [Badges & counters](../components/badges.md)
+- [Toast](../components/toast.md)
+- [EmptyState](../components/empty-state.md)
+- [Badge](../components/badge.md)
 - [Colors & themes](../foundations/colors.md)

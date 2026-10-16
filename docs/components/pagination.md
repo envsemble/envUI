@@ -54,6 +54,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Tables](../components/tables.md)
-- [Buttons](../components/buttons.md)
-- [Loading](../components/loading.md)
+- [Table](../components/table.md)
+- [Button](../components/button.md)
+- [Loading](../patterns/loading.md)

@@ -1,4 +1,4 @@
-# Popovers
+# Popover
 
 ## React usage
 
@@ -45,7 +45,7 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Tooltips](../components/tooltip.md)
-- [Hover cards](../components/hover-card.md)
-- [Menus](../components/menu.md)
-- [Dialogs](../components/dialogs.md)
+- [Tooltip](../components/tooltip.md)
+- [HoverCard](../components/hover-card.md)
+- [Menu](../components/menu.md)
+- [Dialog](../components/dialog.md)

@@ -27,7 +27,7 @@ const snapshots = fileURLToPath(new URL('./snapshots/', import.meta.url));
  * must show exactly these, so a matrix that disappears, or a new one, fails until it is listed.
  */
 const stateMatrices: Record<string, string[]> = {
-  buttons: ['Button'],
+  button: ['Button'],
   'nav-list': ['Navigation item'],
 };
 

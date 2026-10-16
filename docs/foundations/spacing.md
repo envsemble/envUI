@@ -54,8 +54,8 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Stacks & action groups](../components/layout.md)
+- [Stack](../components/stack.md)
 - [Surface](../components/surface.md)
-- [Cards](../components/cards.md)
-- [Lists](../components/list.md)
+- [Card](../components/card.md)
+- [List](../components/list.md)
 - [Composition & extension](../foundations/composition.md)

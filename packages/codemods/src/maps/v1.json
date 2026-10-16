@@ -155,6 +155,18 @@
     "heatmap": "calendar-heatmap",
     "rows": "list",
     "navigation": "nav-list",
-    "direction-links": "pager"
+    "direction-links": "pager",
+    "buttons": "button",
+    "badges": "badge",
+    "tables": "table",
+    "stats": "stat",
+    "toasts": "toast",
+    "dialogs": "dialog",
+    "meters": "meter",
+    "messages": "message",
+    "cards": "card",
+    "keyboard": "kbd",
+    "layout": "stack",
+    "loading": "skeleton"
   }
 }

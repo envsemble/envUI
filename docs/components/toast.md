@@ -1,4 +1,4 @@
-# Toasts
+# Toast
 
 ## Managed notifications
 
@@ -68,7 +68,7 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Dialogs](../components/dialogs.md)
-- [Buttons](../components/buttons.md)
+- [Dialog](../components/dialog.md)
+- [Button](../components/button.md)
 - [Colors & themes](../foundations/colors.md)
 - [Accessibility](../foundations/accessibility.md)

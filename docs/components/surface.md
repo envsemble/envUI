@@ -38,6 +38,6 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Spacing & shape](../foundations/spacing.md)
-- [Stacks & action groups](../components/layout.md)
-- [Cards](../components/cards.md)
+- [Stack](../components/stack.md)
+- [Card](../components/card.md)
 - [Colors & themes](../foundations/colors.md)

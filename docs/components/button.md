@@ -1,4 +1,4 @@
-# Buttons
+# Button
 
 ## Button
 
@@ -181,8 +181,8 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Stacks & action groups](../components/layout.md)
-- [Animated numbers](../components/animated-number.md)
+- [Stack](../components/stack.md)
+- [AnimatedNumber](../components/animated-number.md)
 - [Colors & themes](../foundations/colors.md)
 - [Icons & assets](../foundations/icons.md)
 - [Accessibility](../foundations/accessibility.md)

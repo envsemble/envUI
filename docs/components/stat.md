@@ -1,4 +1,4 @@
-# Stats
+# Stat
 
 ## React usage
 
@@ -47,7 +47,7 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Animated numbers](../components/animated-number.md)
-- [Meters & progress](../components/meters.md)
+- [AnimatedNumber](../components/animated-number.md)
+- [Meter](../components/meter.md)
 - [Surface](../components/surface.md)
 - [Colors & themes](../foundations/colors.md)

@@ -1,4 +1,4 @@
-# Lists
+# List
 
 ## React usage
 
@@ -65,7 +65,7 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Surface](../components/surface.md)
-- [Cards](../components/cards.md)
-- [Radio groups](../components/radio.md)
-- [Selects](../components/select.md)
+- [Card](../components/card.md)
+- [Radio](../components/radio.md)
+- [Select](../components/select.md)
 - [Spacing & shape](../foundations/spacing.md)

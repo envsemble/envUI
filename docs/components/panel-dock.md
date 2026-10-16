@@ -1,4 +1,4 @@
-# Panel dock
+# PanelDock
 
 ## React usage
 
@@ -170,8 +170,8 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Application shell](../components/app-shell.md)
-- [Document tabs](../components/document-tabs.md)
-- [Dialogs](../components/dialogs.md)
-- [Tooltips](../components/tooltip.md)
+- [AppShell](../components/app-shell.md)
+- [DocumentTabs](../components/document-tabs.md)
+- [Dialog](../components/dialog.md)
+- [Tooltip](../components/tooltip.md)
 - [Accessibility](../foundations/accessibility.md)

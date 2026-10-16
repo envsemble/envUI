@@ -1,4 +1,4 @@
-# Application shell
+# AppShell
 
 ## React usage
 
@@ -157,8 +157,8 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Navigation lists](../components/nav-list.md)
-- [Menus](../components/menu.md)
+- [NavList](../components/nav-list.md)
+- [Menu](../components/menu.md)
 - [Menubar](../components/menubar.md)
 - [Colors & themes](../foundations/colors.md)
 - [Install the private package](../setup.md)

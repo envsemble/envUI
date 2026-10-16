@@ -1,4 +1,4 @@
-# Navigation lists
+# NavList
 
 ## React usage
 
@@ -70,4 +70,4 @@ TypeScript declarations provide the complete public API.
 - [Pager](../components/pager.md)
 - [Icons & assets](../foundations/icons.md)
 - [Colors & themes](../foundations/colors.md)
-- [Badges & counters](../components/badges.md)
+- [Badge](../components/badge.md)

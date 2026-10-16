@@ -119,7 +119,7 @@ test('palette editing uses public controls and remains temporary and independent
 test('button link specimens and optional interaction matrices consume public controls', async ({
   page,
 }) => {
-  await page.goto(`${offline}#/components/buttons/preview`);
+  await page.goto(`${offline}#/components/button/preview`);
   const hash = await page.evaluate(() => location.hash);
   const preview = page.locator('.docs-preview');
   // Confirm buttons on the page keep their own status regions.
@@ -319,7 +319,7 @@ test('single previews retain state when the theme changes', async ({ page }) => 
   await expect(mobileNavigation).toHaveCount(0);
   await expect(navigationTrigger).toBeFocused();
   await navigationTrigger.click();
-  await mobileNavigation.getByRole('link', { name: 'Text fields', exact: true }).click();
+  await mobileNavigation.getByRole('link', { name: 'TextField', exact: true }).click();
   await expect(mobileNavigation).toHaveCount(0);
   await expect
     .poll(() =>
@@ -413,7 +413,7 @@ test('overview centers its banner and switches between components and setup with
   await expect(page.getByRole('tab', { name: 'Use envUI', selected: true })).toBeVisible();
   await page
     .locator('#documentation')
-    .getByRole('link', { name: 'Text fields', exact: true })
+    .getByRole('link', { name: 'TextField', exact: true })
     .click();
   await expect(page).toHaveURL(/#\/components\/text-field\/usage$/);
   await page.goto(`${offline}#/overview/get-started`);

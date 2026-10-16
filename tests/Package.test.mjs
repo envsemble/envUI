@@ -812,7 +812,7 @@ test('packed skills locate separate versioned documentation and match the releas
   }
   const packagedDocumentation = readDocumentation(join(installedDirectory, 'docs'));
   assert.deepEqual(packagedDocumentation, readDocumentation());
-  assert.ok(packagedDocumentation.some((document) => document.path === 'components/dialogs.md'));
+  assert.ok(packagedDocumentation.some((document) => document.path === 'components/dialog.md'));
   assert.ok(packagedDocumentation.some((document) => document.path === 'components/rich-text.md'));
   for (const { path } of packagedDocumentation) {
     assert.equal(

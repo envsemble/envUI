@@ -1,4 +1,4 @@
-# Document tabs
+# DocumentTabs
 
 ## React usage
 
@@ -60,5 +60,5 @@ TypeScript declarations provide the complete public API.
 
 - [Tabs](../components/tabs.md)
 - [Tree](../components/tree.md)
-- [Application shell](../components/app-shell.md)
+- [AppShell](../components/app-shell.md)
 - [Accessibility](../foundations/accessibility.md)

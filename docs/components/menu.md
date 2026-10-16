@@ -1,4 +1,4 @@
-# Menus
+# Menu
 
 ## React usage
 
@@ -214,7 +214,7 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Menubar](../components/menubar.md)
-- [Navigation lists](../components/nav-list.md)
-- [Tooltips](../components/tooltip.md)
-- [Avatars](../components/avatar.md)
-- [Application shell](../components/app-shell.md)
+- [NavList](../components/nav-list.md)
+- [Tooltip](../components/tooltip.md)
+- [Avatar](../components/avatar.md)
+- [AppShell](../components/app-shell.md)

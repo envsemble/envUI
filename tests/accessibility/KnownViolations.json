@@ -91,7 +91,7 @@
       }
     }
   },
-  "components/badges/usage": {
+  "components/badge/usage": {
     "dark": {
       "color-contrast": {
         "article :: div.env-code-block span": 5
@@ -115,7 +115,7 @@
       }
     }
   },
-  "components/buttons/usage": {
+  "components/button/usage": {
     "dark": {
       "color-contrast": {
         "article :: div.env-code-block span": 14
@@ -140,7 +140,7 @@
       }
     }
   },
-  "components/cards/usage": {
+  "components/card/usage": {
     "dark": {
       "color-contrast": {
         "article :: div.env-code-block span": 6
@@ -279,7 +279,7 @@
       }
     }
   },
-  "components/dialogs/usage": {
+  "components/dialog/usage": {
     "dark": {
       "color-contrast": {
         "article :: div.env-code-block span": 4
@@ -389,7 +389,7 @@
       }
     }
   },
-  "components/keyboard/usage": {
+  "components/kbd/usage": {
     "dark": {
       "color-contrast": {
         "article :: div.env-code-block span": 4
@@ -398,18 +398,6 @@
     "light": {
       "color-contrast": {
         "article :: div.env-code-block span": 6
-      }
-    }
-  },
-  "components/layout/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 7
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 17
       }
     }
   },
@@ -518,7 +506,7 @@
       }
     }
   },
-  "components/messages/usage": {
+  "components/message/usage": {
     "dark": {
       "color-contrast": {
         "article :: div.env-code-block span": 1
@@ -709,7 +697,19 @@
       }
     }
   },
-  "components/stats/usage": {
+  "components/stack/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 7
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 17
+      }
+    }
+  },
+  "components/stat/usage": {
     "light": {
       "color-contrast": {
         "article :: div.env-code-block span": 34
@@ -735,7 +735,7 @@
       }
     }
   },
-  "components/tables/usage": {
+  "components/table/usage": {
     "dark": {
       "color-contrast": {
         "article :: div.env-code-block span": 12
@@ -788,7 +788,7 @@
       }
     }
   },
-  "components/toasts/usage": {
+  "components/toast/usage": {
     "dark": {
       "color-contrast": {
         "article :: div.env-code-block span": 2

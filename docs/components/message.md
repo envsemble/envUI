@@ -1,4 +1,4 @@
-# Messages
+# Message
 
 ## React usage
 
@@ -85,5 +85,5 @@ TypeScript declarations provide the complete public API.
 
 - [Composer](../components/composer.md)
 - [Markdown](../components/markdown.md)
-- [Loading](../components/loading.md)
+- [Loading](../patterns/loading.md)
 - [Accessibility](../foundations/accessibility.md)

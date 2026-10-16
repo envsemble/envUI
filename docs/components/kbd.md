@@ -1,4 +1,4 @@
-# Keyboard keys
+# Kbd
 
 ## React usage
 
@@ -30,6 +30,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Menus](../components/menu.md)
-- [Command palette](../components/command-palette.md)
+- [Menu](../components/menu.md)
+- [CommandPalette](../components/command-palette.md)
 - [Accessibility](../foundations/accessibility.md)

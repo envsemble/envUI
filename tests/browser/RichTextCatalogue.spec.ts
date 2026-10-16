@@ -9,7 +9,7 @@ test('rich text documentation composes generic reference editing and matching sa
 }) => {
   await page.goto(`${offline}#/components/rich-text/preview`);
   await expect(
-    page.getByRole('heading', { name: 'Rich text', exact: true, level: 1 }),
+    page.getByRole('heading', { name: 'RichText', exact: true, level: 1 }),
   ).toBeVisible();
   const example = page.getByRole('tabpanel', { name: 'Editor', exact: true });
   const editor = page.getByRole('textbox', { name: 'Rich text notes', exact: true });

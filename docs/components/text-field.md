@@ -1,4 +1,4 @@
-# Text fields
+# TextField
 
 ## TextField
 
@@ -95,8 +95,8 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Markdown](../components/markdown.md)
-- [Selects](../components/select.md)
-- [Comboboxes](../components/combobox.md)
-- [Date pickers](../components/date-picker.md)
-- [Stacks & action groups](../components/layout.md)
+- [Select](../components/select.md)
+- [Combobox](../components/combobox.md)
+- [DatePicker](../components/date-picker.md)
+- [Stack](../components/stack.md)
 - [Accessibility](../foundations/accessibility.md)

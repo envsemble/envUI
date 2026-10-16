@@ -11,7 +11,7 @@ test('unrelated documentation routes load optional features only when requested'
 }) => {
   const requests: string[] = [];
   page.on('request', (request) => requests.push(request.url()));
-  await page.goto(`${catalogueUrl}/#/components/buttons/preview`);
+  await page.goto(`${catalogueUrl}/#/components/button/preview`);
   await expect(page.getByRole('group', { name: 'Project actions' })).toBeVisible();
   expect(
     requests.filter((url) => optionalImplementation.test(url) || iconCatalogue.test(url)),

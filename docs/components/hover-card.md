@@ -1,4 +1,4 @@
-# Hover cards
+# HoverCard
 
 ## React usage
 
@@ -39,6 +39,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Popovers](../components/popover.md)
-- [Tooltips](../components/tooltip.md)
+- [Popover](../components/popover.md)
+- [Tooltip](../components/tooltip.md)
 - [Accessibility](../foundations/accessibility.md)

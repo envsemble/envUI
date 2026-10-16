@@ -38,8 +38,8 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Text fields](../components/text-field.md)
-- [Selects](../components/select.md)
+- [TextField](../components/text-field.md)
+- [Select](../components/select.md)
 - [Tabs](../components/tabs.md)
-- [Dialogs](../components/dialogs.md)
-- [Toasts](../components/toasts.md)
+- [Dialog](../components/dialog.md)
+- [Toast](../components/toast.md)

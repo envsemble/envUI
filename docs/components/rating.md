@@ -30,5 +30,5 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Badges & counters](../components/badges.md)
-- [Stats](../components/stats.md)
+- [Badge](../components/badge.md)
+- [Stat](../components/stat.md)

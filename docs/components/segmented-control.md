@@ -1,4 +1,4 @@
-# Segmented controls
+# SegmentedControl
 
 ## React usage
 
@@ -42,5 +42,5 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Tabs](../components/tabs.md)
-- [Radio groups](../components/radio.md)
-- [Buttons](../components/buttons.md)
+- [Radio](../components/radio.md)
+- [Button](../components/button.md)

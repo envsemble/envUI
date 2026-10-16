@@ -1,4 +1,4 @@
-# Radio groups
+# Radio
 
 ## React usage
 
@@ -28,6 +28,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Selects](../components/select.md)
-- [Checkboxes](../components/checkbox.md)
-- [Lists](../components/list.md)
+- [Select](../components/select.md)
+- [Checkbox](../components/checkbox.md)
+- [List](../components/list.md)

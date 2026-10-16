@@ -1,4 +1,4 @@
-# Sliders
+# Slider
 
 ## React usage
 
@@ -47,6 +47,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Meters & progress](../components/meters.md)
-- [Text fields](../components/text-field.md)
+- [Meter](../components/meter.md)
+- [TextField](../components/text-field.md)
 - [Accessibility](../foundations/accessibility.md)

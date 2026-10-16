@@ -1,4 +1,4 @@
-# Relative time
+# RelativeTime
 
 ## React usage
 
@@ -39,6 +39,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Tooltips](../components/tooltip.md)
-- [Animated numbers](../components/animated-number.md)
-- [Tables](../components/tables.md)
+- [Tooltip](../components/tooltip.md)
+- [AnimatedNumber](../components/animated-number.md)
+- [Table](../components/table.md)

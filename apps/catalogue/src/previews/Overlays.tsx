@@ -599,15 +599,26 @@ export function AvatarPreview() {
   );
 }
 
-export function MetersPreview() {
+export function MeterPreview() {
   return (
     <Preview>
-      <Example title="Meters & progress" size="collection">
+      <Example title="Meter" size="collection">
         <SpecimenGrid>
-          <Specimen title="Meter">
+          <Specimen title="A quantity in a range">
             <Meter label="Seats assigned" value={2} max={5} valueText="2 of 5" />
           </Specimen>
-          <Specimen title="Progress">
+        </SpecimenGrid>
+      </Example>
+    </Preview>
+  );
+}
+
+export function ProgressPreview() {
+  return (
+    <Preview>
+      <Example title="Progress" size="collection">
+        <SpecimenGrid>
+          <Specimen title="Known amount">
             <Progress label="Uploading" value={40} valueText="40%" />
           </Specimen>
           <Specimen title="Indeterminate">

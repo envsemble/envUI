@@ -22,7 +22,7 @@ import { CodePreview } from './CodeContent';
 import { MarkdownPreview } from './MarkdownContent';
 import { lazy, Suspense } from 'react';
 import { Text } from '@envsemble/envui';
-import { EmptyStatePreview, LoadingPreview, DialogsPreview } from './Feedback';
+import { EmptyStatePreview, SpinnerPreview, SkeletonPreview, DialogsPreview } from './Feedback';
 import { ToastsPreview } from './Toasts';
 import { ColorPickerPreview } from './ColorPicking';
 import { ComposerPreview, MessagesPreview } from './Conversation';
@@ -32,7 +32,8 @@ import {
   MenubarPreview,
   TooltipPreview,
   AvatarPreview,
-  MetersPreview,
+  MeterPreview,
+  ProgressPreview,
 } from './Overlays';
 import { AppShellPreview } from './Shell';
 import { CommandPalettePreview, DocumentTabsPreview, TreePreview } from './Workspace';
@@ -55,7 +56,7 @@ const RichTextPreview = lazy(() =>
 /** Select a topic; each preview retains its state across theme changes. */
 export function ComponentPreview({ id }: { id: string }) {
   switch (id) {
-    case 'buttons':
+    case 'button':
       return <ButtonsPreview />;
     case 'segmented-control':
       return <SegmentedControlPreview />;
@@ -89,19 +90,19 @@ export function ComponentPreview({ id }: { id: string }) {
       return <PagerPreview />;
     case 'surface':
       return <SurfacePreview />;
-    case 'layout':
+    case 'stack':
       return <LayoutPreview />;
     case 'list':
       return <ListPreview />;
-    case 'cards':
+    case 'card':
       return <CardsPreview />;
     case 'chips':
       return <ChipsPreview />;
-    case 'badges':
+    case 'badge':
       return <BadgesPreview />;
-    case 'tables':
+    case 'table':
       return <TablesPreview />;
-    case 'keyboard':
+    case 'kbd':
       return <KbdPreview />;
     case 'breadcrumbs':
       return <BreadcrumbsPreview />;
@@ -113,9 +114,9 @@ export function ComponentPreview({ id }: { id: string }) {
       return <RatingPreview />;
     case 'relative-time':
       return <RelativeTimePreview />;
-    case 'messages':
+    case 'message':
       return <MessagesPreview />;
-    case 'stats':
+    case 'stat':
       return <StatsPreview />;
     case 'calendar-heatmap':
       return <CalendarHeatmapPreview />;
@@ -133,9 +134,11 @@ export function ComponentPreview({ id }: { id: string }) {
       return <DisclosurePreview />;
     case 'empty-state':
       return <EmptyStatePreview />;
-    case 'loading':
-      return <LoadingPreview />;
-    case 'toasts':
+    case 'spinner':
+      return <SpinnerPreview />;
+    case 'skeleton':
+      return <SkeletonPreview />;
+    case 'toast':
       return <ToastsPreview />;
     case 'alert':
       return <AlertsPreview />;
@@ -143,7 +146,7 @@ export function ComponentPreview({ id }: { id: string }) {
       return <PopoverPreview />;
     case 'hover-card':
       return <HoverCardPreview />;
-    case 'dialogs':
+    case 'dialog':
       return <DialogsPreview />;
     case 'menu':
       return <MenuPreview />;
@@ -153,8 +156,10 @@ export function ComponentPreview({ id }: { id: string }) {
       return <TooltipPreview />;
     case 'avatar':
       return <AvatarPreview />;
-    case 'meters':
-      return <MetersPreview />;
+    case 'meter':
+      return <MeterPreview />;
+    case 'progress':
+      return <ProgressPreview />;
     case 'app-shell':
       return <AppShellPreview />;
     case 'tree':

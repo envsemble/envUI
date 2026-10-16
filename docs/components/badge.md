@@ -1,4 +1,4 @@
-# Badges & counters
+# Badge
 
 ## React usage
 
@@ -53,6 +53,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Info chips](../components/chips.md)
-- [Navigation lists](../components/nav-list.md)
+- [InfoChip](../components/chips.md)
+- [NavList](../components/nav-list.md)
 - [Colors & themes](../foundations/colors.md)

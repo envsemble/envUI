@@ -1,4 +1,4 @@
-# Info chips
+# InfoChip
 
 ## React usage
 
@@ -26,7 +26,7 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Cards](../components/cards.md)
+- [Card](../components/card.md)
 - [Typography](../foundations/typography.md)
-- [Disclosures](../components/disclosure.md)
-- [Badges & counters](../components/badges.md)
+- [Disclosure](../components/disclosure.md)
+- [Badge](../components/badge.md)

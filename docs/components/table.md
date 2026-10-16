@@ -1,4 +1,4 @@
-# Tables
+# Table
 
 ## React usage
 
@@ -191,6 +191,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Lists](../components/list.md)
-- [Badges & counters](../components/badges.md)
+- [List](../components/list.md)
+- [Badge](../components/badge.md)
 - [Typography](../foundations/typography.md)

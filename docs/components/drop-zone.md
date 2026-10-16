@@ -1,4 +1,4 @@
-# Drop zones
+# DropZone
 
 ## React usage
 
@@ -93,6 +93,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Text fields](../components/text-field.md)
-- [Buttons](../components/buttons.md)
-- [Loading](../components/loading.md)
+- [TextField](../components/text-field.md)
+- [Button](../components/button.md)
+- [Loading](../patterns/loading.md)

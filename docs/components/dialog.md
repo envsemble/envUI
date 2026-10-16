@@ -1,4 +1,4 @@
-# Dialogs
+# Dialog
 
 ## React usage
 
@@ -48,8 +48,8 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Toasts](../components/toasts.md)
-- [Command palette](../components/command-palette.md)
-- [Text fields](../components/text-field.md)
-- [Stacks & action groups](../components/layout.md)
+- [Toast](../components/toast.md)
+- [CommandPalette](../components/command-palette.md)
+- [TextField](../components/text-field.md)
+- [Stack](../components/stack.md)
 - [Accessibility](../foundations/accessibility.md)

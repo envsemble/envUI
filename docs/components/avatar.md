@@ -1,4 +1,4 @@
-# Avatars
+# Avatar
 
 ## React usage
 
@@ -107,5 +107,5 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Menus](../components/menu.md)
-- [Lists](../components/list.md)
+- [Menu](../components/menu.md)
+- [List](../components/list.md)

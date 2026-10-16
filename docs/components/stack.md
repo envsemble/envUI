@@ -1,4 +1,4 @@
-# Stacks & action groups
+# Stack
 
 ## React usage
 
@@ -49,4 +49,4 @@ TypeScript declarations provide the complete public API.
 
 - [Spacing & shape](../foundations/spacing.md)
 - [Surface](../components/surface.md)
-- [Cards](../components/cards.md)
+- [Card](../components/card.md)
