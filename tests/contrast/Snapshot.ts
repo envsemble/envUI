@@ -2,10 +2,13 @@
  * The contrast gate's record of what it requires: tests/contrast/DeclaredPairs.json holds every
  * declared pair with its kind and its minimum at each contrast it is measured in, and the names of
  * the dropped, renamed and relaxed pairs. Against it the gate fails on a pair that disappears
- * unexplained, and on one that is held to less than before, by a weaker kind, a lower minimum or a
- * contrast it is no longer measured in, unless `relaxed` in Pairs.ts lists that change with its
- * rationale. Entries of `dropped`, `renamed` and `relaxed` stay once recorded, so the reasons can't
- * be removed after the snapshot is updated either.
+ * unexplained, and on one that is held to less than before, by a weaker kind, a switch between a
+ * ΔEOK distance and a ratio, a lower minimum or a contrast it is no longer measured in, unless a new
+ * entry of `relaxed` in Pairs.ts lists that change with its rationale. A renamed pair is held to
+ * what its old name recorded. Each `relaxed` entry approves one loosening: once recorded it is
+ * spent, so loosening the pair the same way again later needs another entry. Entries of `dropped`,
+ * `renamed` and `relaxed` stay once recorded, so the reasons can't be removed after the snapshot is
+ * updated either.
  */
 import type { ContrastKind, ContrastPair, Relaxation, Requirement } from './Pairs';
 import type { ContrastTheme } from './Themes';
@@ -21,11 +24,14 @@ export interface DeclaredPairs {
   dropped: string[];
   /** The old names in `renamed`. */
   renamed: string[];
-  /** The changes `relaxed` accepts, without their rationale. */
+  /** The changes `relaxed` accepted, without their rationale; each is spent once recorded. */
   relaxed: Omit<Relaxation, 'rationale'>[];
 }
 
-/** How much a kind asks, from least to most: a kind lower down is a weaker requirement. */
+/**
+ * How much a kind asks, from least to most: a kind lower down is a weaker requirement. Only kinds of
+ * one measure compare; a switch between a ΔEOK distance and a ratio is a loosening of its own.
+ */
 const strength: Readonly<Record<ContrastKind, number>> = {
   difference: 0,
   distinct: 1,
@@ -61,13 +67,34 @@ const describe = ({ kind, minimum }: Requirement) =>
 const sameRequirement = (a: Requirement, b: Requirement) =>
   a.kind === b.kind && levels.every((level) => a.minimum[level] === b.minimum[level]);
 
+/** A relaxation's identity: its pair and the requirement it accepts, without the rationale. */
+const relaxationKey = ({ pair, kind, minimum }: Omit<Relaxation, 'rationale'>) =>
+  JSON.stringify([pair, kind, ...levels.map((level) => minimum[level] ?? null)]);
+
+/** How many times each relaxation is listed. */
+function countRelaxations(entries: readonly Omit<Relaxation, 'rationale'>[]) {
+  const counts = new Map<string, number>();
+  for (const entry of entries) {
+    const key = relaxationKey(entry);
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+  return counts;
+}
+
+const measure = (kind: ContrastKind) => (isDistance(kind) ? 'a ΔEOK distance' : 'a ratio');
+
 /** How `current` asks less than `recorded`, one line per way; empty when it asks as much or more. */
 export function loosening(current: Requirement, recorded: Requirement): string[] {
   const ways: string[] = [];
-  if (strength[current.kind] < strength[recorded.kind])
-    ways.push(`its kind went from ${recorded.kind} to the weaker ${current.kind}`);
-  // Ratios and ΔEOK distances can't be compared; a stronger kind of the other measure asks more.
+  // Ratios and ΔEOK distances can't be compared, so a switch between them, either way and to any
+  // kind, asks less: a ratio of 1.01 or a distance of 0.0001 would pass for the stronger kind.
   const comparable = isDistance(current.kind) === isDistance(recorded.kind);
+  if (!comparable)
+    ways.push(
+      `its kind went from ${recorded.kind}, ${measure(recorded.kind)}, to ${current.kind}, ${measure(current.kind)}, which can't be compared`,
+    );
+  else if (strength[current.kind] < strength[recorded.kind])
+    ways.push(`its kind went from ${recorded.kind} to the weaker ${current.kind}`);
   for (const level of levels) {
     const before = recorded.minimum[level];
     const after = current.minimum[level];
@@ -82,7 +109,7 @@ export function loosening(current: Requirement, recorded: Requirement): string[]
 export interface SnapshotInput {
   pairs: readonly ContrastPair[];
   dropped: readonly { pair: string }[];
-  renamed: readonly { from: string }[];
+  renamed: readonly { from: string; to: string }[];
   relaxed: readonly Relaxation[];
   themes: readonly ContrastTheme[];
   pairName: (pair: ContrastPair) => string;
@@ -158,20 +185,40 @@ export function checkSnapshot(input: SnapshotInput): {
         `${name} was declared (${declaredFile}) and is gone from tests/contrast/Pairs.ts: list it in dropped or renamed there, with the reason.`,
       );
 
-  // No pair is held to less than it was, unless `relaxed` lists the change.
+  // No pair is held to less than it was, under its name or the one it was renamed from, unless a
+  // relaxation not yet recorded lists the change. Each relaxation approves one loosening.
+  const unspent = countRelaxations(current.relaxed);
+  for (const [key, count] of countRelaxations(recorded.relaxed))
+    unspent.set(key, (unspent.get(key) ?? 0) - count);
+  const spend = (key: string) => {
+    const left = unspent.get(key) ?? 0;
+    if (left > 0) unspent.set(key, left - 1);
+    return left > 0;
+  };
   for (const [name, requirement] of Object.entries(current.pairs)) {
-    const before = recorded.pairs[name];
-    if (!before) continue;
-    const ways = loosening(requirement, before);
-    if (ways.length === 0) continue;
-    const accepted = input.relaxed.some(
-      (entry) => entry.pair === name && sameRequirement(entry, requirement),
-    );
-    if (!accepted)
+    const baselines = recorded.pairs[name]
+      ? [{ from: name, before: recorded.pairs[name] }]
+      : input.renamed
+          .filter((entry) => entry.to === name && recorded.pairs[entry.from])
+          .map((entry) => ({ from: entry.from, before: recorded.pairs[entry.from] }));
+    const loosened = baselines
+      .map(({ from, before }) => ({ from, ways: loosening(requirement, before) }))
+      .filter(({ ways }) => ways.length > 0);
+    if (loosened.length === 0 || spend(relaxationKey({ pair: name, ...requirement }))) continue;
+    for (const { from, ways } of loosened) {
+      const renamedFrom = from === name ? '' : `, renamed from ${from},`;
+      const recordedFor = from === name ? '' : ` for ${from}`;
       problems.push(
-        `${name} is held to less than ${declaredFile} records: ${ways.join('; ')}. Restore it, or, for a deliberate relaxation, list it in relaxed in tests/contrast/Pairs.ts with its rationale: ${JSON.stringify({ pair: name, ...requirement, rationale: '…' })}`,
+        `${name}${renamedFrom} is held to less than ${declaredFile} records${recordedFor}: ${ways.join('; ')}. Restore it, or, for a deliberate relaxation, add an entry to relaxed in tests/contrast/Pairs.ts with its rationale: ${JSON.stringify({ pair: name, ...requirement, rationale: '…' })}`,
       );
+    }
   }
+  // A new relaxation is spent on a loosening now, so it can't be recorded ahead of one and used later.
+  for (const entry of current.relaxed)
+    if (spend(relaxationKey(entry)))
+      problems.push(
+        `relaxed in tests/contrast/Pairs.ts lists ${entry.pair} at ${describe(entry)}, which relaxes nothing ${declaredFile} records: remove the entry, or list exactly what the pair is held to now, when that is less than recorded.`,
+      );
 
   // Recorded reasons stay: a dropped or renamed pair until it is declared again, a relaxation always.
   for (const name of recorded.dropped)
@@ -184,13 +231,13 @@ export function checkSnapshot(input: SnapshotInput): {
       problems.push(
         `${name} is recorded as renamed (${declaredFile}) but no longer listed in renamed in tests/contrast/Pairs.ts: keep its entry and reason.`,
       );
-  for (const entry of recorded.relaxed)
-    if (
-      !current.relaxed.some((other) => other.pair === entry.pair && sameRequirement(other, entry))
-    )
+  for (const [key, count] of countRelaxations(recorded.relaxed))
+    if ((countRelaxations(current.relaxed).get(key) ?? 0) < count) {
+      const entry = recorded.relaxed.find((other) => relaxationKey(other) === key)!;
       problems.push(
-        `The relaxation of ${entry.pair} to ${describe(entry)} is recorded (${declaredFile}) but no longer listed in relaxed in tests/contrast/Pairs.ts: keep its entry and rationale.`,
+        `The relaxation of ${entry.pair} to ${describe(entry)} is recorded${count > 1 ? ` ${count} times` : ''} (${declaredFile}) but no longer listed${count > 1 ? ' as often' : ''} in relaxed in tests/contrast/Pairs.ts: keep its entry and rationale.`,
       );
+    }
 
   if (problems.length > 0) return { problems };
   if (update) return { problems, write: current };

@@ -10,6 +10,7 @@ import {
   relaxed,
   renamed,
   type ContrastPair,
+  type Relaxation,
 } from '../contrast/Pairs';
 import {
   checkSnapshot,
@@ -310,7 +311,7 @@ test.describe('contrast', { tag: '@contrast' }, () => {
     expect(check({ pairs: [lowered, b], relaxed: [relaxation] })).toEqual([
       expect.stringContaining('out of date'),
     ]);
-    expect(check({ pairs: [{ ...a, kind: 'text' }, b] })).toEqual([
+    expect(check({ pairs: [{ ...a, minimum: { standard: 0.05 } }, b] })).toEqual([
       expect.stringContaining('out of date'),
     ]);
     expect(check({ pairs: [lowered, b], relaxed: [{ ...relaxation, rationale: ' ' }] })).toEqual([
@@ -341,6 +342,166 @@ test.describe('contrast', { tag: '@contrast' }, () => {
     expect(
       checkSnapshot({ ...base, pairs: [lowered, b], recorded: withRelaxation }).problems,
     ).toEqual([expect.stringContaining('no longer listed in relaxed')]);
+  });
+
+  test('the snapshot holds a renamed pair to what its old name recorded', () => {
+    const a: ContrastPair = { fg: '--a', bg: ['--b'], kind: 'text' };
+    const base = { dropped: [], relaxed: [], themes, pairName, update: false, ci: false };
+    const recorded = checkSnapshot({
+      ...base,
+      pairs: [a],
+      renamed: [],
+      recorded: undefined,
+      update: true,
+    }).write!;
+    const renamed = [{ from: '--a on --b', to: '--a2 on --b' }];
+    const weaker: ContrastPair = {
+      fg: '--a2',
+      bg: ['--b'],
+      kind: 'non-text',
+      minimum: { standard: 1.1, high: 1.1 },
+      rationale: 'Lowered.',
+    };
+    const check = (pair: ContrastPair, relaxed: Relaxation[] = []) =>
+      checkSnapshot({ ...base, pairs: [pair], renamed, relaxed, recorded });
+
+    // Renaming a pair keeps what it is held to: a weaker kind or minimum under the new name fails.
+    expect(check(weaker).problems).toEqual([
+      expect.stringMatching(
+        /--a2 on --b, renamed from --a on --b, is held to less than .*the weaker non-text.*standard minimum went from 4\.5 to 1\.1/,
+      ),
+    ]);
+    expect(check(weaker).write).toBeUndefined();
+    expect(checkSnapshot({ ...base, pairs: [weaker], renamed, recorded, update: true })).toEqual({
+      problems: [expect.stringContaining('renamed from --a on --b')],
+    });
+    // The same requirement under the new name only asks for the snapshot to be updated…
+    expect(check({ ...a, fg: '--a2' }).problems).toEqual([expect.stringContaining('out of date')]);
+    // …and a relaxation of the new name accepts the weaker one.
+    const relaxation: Relaxation = {
+      pair: '--a2 on --b',
+      kind: 'non-text',
+      minimum: { standard: 1.1, high: 1.1 },
+      rationale: 'Accepted for a reason.',
+    };
+    expect(check(weaker, [relaxation]).problems).toEqual([expect.stringContaining('out of date')]);
+    const written = checkSnapshot({
+      ...base,
+      pairs: [weaker],
+      renamed,
+      relaxed: [relaxation],
+      recorded,
+      update: true,
+    }).write!;
+    expect(written.pairs['--a2 on --b']).toEqual({
+      kind: 'non-text',
+      minimum: { standard: 1.1, high: 1.1 },
+    });
+    // Once recorded, the new name is compared with its own record.
+    expect(
+      checkSnapshot({ ...base, pairs: [weaker], renamed, relaxed: [relaxation], recorded: written })
+        .problems,
+    ).toEqual([]);
+  });
+
+  test('the snapshot treats a switch between a distance and a ratio as a loosening', () => {
+    const a: ContrastPair = { fg: '--a', bg: ['--b'], kind: 'distinct' };
+    const base = {
+      dropped: [],
+      renamed: [],
+      relaxed: [],
+      themes,
+      pairName,
+      update: false,
+      ci: false,
+    };
+    const recorded = checkSnapshot({
+      ...base,
+      pairs: [a],
+      recorded: undefined,
+      update: true,
+    }).write!;
+    const ratio: ContrastPair = {
+      ...a,
+      kind: 'non-text',
+      minimum: { standard: 1.01, high: 1.01 },
+      rationale: 'Lowered.',
+    };
+    expect(checkSnapshot({ ...base, pairs: [ratio], recorded }).problems).toEqual([
+      expect.stringContaining('its kind went from distinct, a ΔEOK distance, to non-text, a ratio'),
+    ]);
+    // Even the strongest ratio can't be compared with a distance, so it needs a relaxation too.
+    expect(checkSnapshot({ ...base, pairs: [{ ...a, kind: 'text' }], recorded }).problems).toEqual([
+      expect.stringContaining('to text, a ratio'),
+    ]);
+    const relaxation: Relaxation = {
+      pair: '--a on --b',
+      kind: 'non-text',
+      minimum: { standard: 1.01, high: 1.01 },
+      rationale: 'Measured as a ratio now.',
+    };
+    expect(
+      checkSnapshot({ ...base, pairs: [ratio], relaxed: [relaxation], recorded }).problems,
+    ).toEqual([expect.stringContaining('out of date')]);
+    // The other way, from a ratio to a distance, too.
+    const fromRatio = checkSnapshot({
+      ...base,
+      pairs: [{ ...a, kind: 'text' }],
+      recorded: undefined,
+      update: true,
+    }).write!;
+    expect(checkSnapshot({ ...base, pairs: [a], recorded: fromRatio }).problems).toEqual([
+      expect.stringContaining('its kind went from text, a ratio, to distinct, a ΔEOK distance'),
+    ]);
+    // Within one measure a stronger kind still only asks for the snapshot to be updated.
+    const difference = checkSnapshot({
+      ...base,
+      pairs: [{ ...a, kind: 'difference' }],
+      recorded: undefined,
+      update: true,
+    }).write!;
+    expect(checkSnapshot({ ...base, pairs: [a], recorded: difference }).problems).toEqual([
+      expect.stringContaining('out of date'),
+    ]);
+  });
+
+  test('a relaxation approves one loosening, once', () => {
+    const a: ContrastPair = { fg: '--a', bg: ['--b'], kind: 'distinct' };
+    const base = { dropped: [], renamed: [], themes, pairName, ci: false };
+    const lowered: ContrastPair = { ...a, minimum: { standard: 0.02 }, rationale: 'Lowered.' };
+    const relaxation: Relaxation = {
+      pair: '--a on --b',
+      kind: 'distinct',
+      minimum: { standard: 0.02, high: 0.04 },
+      rationale: 'Accepted for a reason.',
+    };
+    // Each run updates the snapshot, as `--update-snapshots` does.
+    const run = (pairs: ContrastPair[], relaxed: Relaxation[], recorded?: DeclaredPairs) =>
+      checkSnapshot({ ...base, pairs, relaxed, recorded, update: true });
+    const initial = run([a], []).write!;
+
+    // Relaxed to 0.02 and recorded, then tightened back to 0.03 and recorded.
+    const relaxedOnce = run([lowered], [relaxation], initial);
+    expect(relaxedOnce.problems).toEqual([]);
+    const tightened = run([a], [relaxation], relaxedOnce.write);
+    expect(tightened.problems).toEqual([]);
+    expect(tightened.write!.relaxed).toEqual([
+      { pair: '--a on --b', kind: 'distinct', minimum: { standard: 0.02, high: 0.04 } },
+    ]);
+
+    // Lowering it to 0.02 again is a new relaxation: the recorded entry has been used.
+    expect(run([lowered], [relaxation], tightened.write)).toEqual({
+      problems: [expect.stringContaining('its standard minimum went from 0.03 to 0.02')],
+    });
+    // A second entry, with the reason for this time, accepts it, and is recorded beside the first.
+    const again = { ...relaxation, rationale: 'Accepted again, for another reason.' };
+    const relaxedTwice = run([lowered], [relaxation, again], tightened.write);
+    expect(relaxedTwice.problems).toEqual([]);
+    expect(relaxedTwice.write!.relaxed).toHaveLength(2);
+    // A new entry must relax something, so it can't be recorded in advance and used later.
+    expect(run([a], [relaxation, again], tightened.write)).toEqual({
+      problems: [expect.stringContaining('relaxes nothing')],
+    });
   });
 
   // Playwright requires the fixtures object as the first parameter, even when no fixture is used.

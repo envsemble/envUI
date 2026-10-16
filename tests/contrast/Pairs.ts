@@ -681,12 +681,15 @@ export interface Relaxation extends Requirement {
 
 /**
  * Deliberate relaxations: pairs held to less than DeclaredPairs.json recorded, by a weaker kind
- * (distinct to difference, text to non-text), a lower minimum, or a contrast they are no longer
- * measured in. Each entry names the pair, the requirement it is held to now, as the gate's failure
- * prints it (its kind, and its minimum at each contrast it is measured in, after any `minimum` of
- * its own), and the rationale. The gate accepts a looser pair only when an entry matches its new
- * requirement exactly, so loosening it further needs another entry. Entries stay once
- * `--update-snapshots` has recorded them: they are the history of what was relaxed and why.
+ * (distinct to difference, text to non-text), a switch between a ΔEOK distance and a ratio, a lower
+ * minimum, or a contrast they are no longer measured in, also under a new name in `renamed`. Each
+ * entry names the pair (its new name, if renamed), the requirement it is held to now, as the gate's
+ * failure prints it (its kind, and its minimum at each contrast it is measured in, after any
+ * `minimum` of its own), and the rationale. The gate accepts a looser pair only when a new entry
+ * matches its new requirement exactly, and fails on a new entry that relaxes nothing. Each entry
+ * approves one loosening: once `--update-snapshots` has recorded it, it is spent, so loosening the
+ * pair again, even back to a requirement relaxed before, needs another entry with its own
+ * rationale. Entries stay once recorded: they are the history of what was relaxed and why.
  */
 export const relaxed: readonly Relaxation[] = [];
 
