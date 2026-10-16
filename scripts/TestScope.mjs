@@ -44,6 +44,7 @@ export const overrides = {
     ],
     'IconButton.spec.ts': ['IconButton'],
     'MarkdownExtensions.spec.ts': ['components/markdown'],
+    'Meter.spec.ts': ['Progress', 'Spinner'],
     'Messages.spec.ts': [
       'EnvUIProvider',
       'CloseButton',

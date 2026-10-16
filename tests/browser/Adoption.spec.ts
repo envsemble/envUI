@@ -337,7 +337,9 @@ test('Tooltip keeps opening on hover after its control is enabled or disabled', 
   const toggle = page.getByRole('button', { name: 'Toggle seats' });
   await toggle.click();
   await expect(invite).toBeDisabled();
-  await page.locator('.env-tooltip-disabled-target').filter({ has: invite }).hover();
+  // Disabled, the control is the wrapper that carries its name and reports it disabled.
+  await expect(invite).toHaveClass('env-tooltip-disabled-target');
+  await invite.hover();
   await expect(page.locator('.env-tooltip')).toHaveText('No seats left');
   await page.mouse.move(1, 1);
   await expect(page.locator('.env-tooltip')).toHaveCount(0);
@@ -982,7 +984,7 @@ test('secondary buttons stay distinct on the canvas, rows and dialog panes in bo
     await page.getByRole('button', { name: 'Open pending dialog' }).click();
     const dialog = page.getByRole('dialog', { name: 'Save project' });
     const cancel = dialog.getByRole('button', { name: 'Cancel' }).last();
-    await expect.poll(() => fillContrast(cancel, '.env-modal-pane')).toBeGreaterThan(1.08);
+    await expect.poll(() => fillContrast(cancel, '.env-dialog-surface')).toBeGreaterThan(1.08);
     await cancel.click();
     await expect(dialog).toBeHidden();
   }

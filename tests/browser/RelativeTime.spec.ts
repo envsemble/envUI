@@ -91,7 +91,7 @@ test('the tooltip shows the date and time on hover, in the theme of the page', a
     const scope = page.getByTestId(`relative-times-${theme}`);
     await scope.getByTestId('fixed').hover();
     await expect(tooltip).toHaveText('Oct 16, 2026, 12:00 PM');
-    await expect(page.locator('.env-tooltip-theme')).toHaveAttribute('data-env-theme', theme);
+    await expect(page.locator('.env-popup-theme')).toHaveAttribute('data-env-theme', theme);
     await page.keyboard.press('Escape');
     await expect(tooltip).toHaveCount(0);
     await page.mouse.move(0, 0);

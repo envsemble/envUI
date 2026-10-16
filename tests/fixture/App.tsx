@@ -58,6 +58,9 @@ import { PaginationsFixture } from './Paginations.js';
 import { DatePickerFixture } from './DatePickers.js';
 import { QuietButtonsFixture } from './QuietButtons.js';
 import { EmptyStatesFixture } from './EmptyStates.js';
+import { DrawersFixture } from './Drawers.js';
+import { TooltipsFixture } from './Tooltips.js';
+import { MetersFixture } from './Meters.js';
 import { RatingsFixture } from './Ratings.js';
 import { DensityFixture } from './Density.js';
 import { PrimitivesFixture } from './Primitives.js';
@@ -85,6 +88,9 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   primitives: PrimitivesFixture,
   'message-strings': MessageStringsFixture,
   direction: DirectionFixture,
+  drawers: DrawersFixture,
+  tooltips: TooltipsFixture,
+  meters: MetersFixture,
 };
 
 export default function App() {

@@ -232,8 +232,8 @@ test.describe('search', () => {
     await expect.poll(() => highlighted(page)).toBe(ids[0]);
     await page.keyboard.press('ArrowDown');
     await expect.poll(() => highlighted(page)).toBe(ids[1]);
-    await expect(option(page, ids[1]!)).toHaveAttribute('aria-selected', 'true');
-    await expect(option(page, ids[0]!)).toHaveAttribute('aria-selected', 'false');
+    await expect(option(page, ids[1]!)).toHaveAttribute('data-highlighted');
+    await expect(option(page, ids[0]!)).not.toHaveAttribute('data-highlighted');
     await page.keyboard.press('End');
     await expect.poll(() => highlighted(page)).toBe(ids.at(-1));
     await page.keyboard.press('ArrowDown');

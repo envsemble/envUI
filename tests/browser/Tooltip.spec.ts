@@ -1,0 +1,67 @@
+import { test, expect } from '@playwright/test';
+import { fixtureUrl } from './Servers';
+
+const tooltips = `${fixtureUrl}/?fixture=tooltips`;
+
+test.describe('Tooltip', () => {
+  test('describes a named control while open, and adds nothing that repeats its name', async ({
+    page,
+  }) => {
+    await page.goto(tooltips);
+    const archive = page.getByRole('button', { name: 'Archive' });
+    await expect(archive).not.toHaveAttribute('aria-describedby');
+    await archive.hover();
+    const tooltip = page.getByRole('tooltip');
+    await expect(tooltip).toHaveText('Moves it out of the list');
+    await expect(archive).toHaveAccessibleDescription('Moves it out of the list');
+    await page.mouse.move(1, 1);
+    await expect(tooltip).toHaveCount(0);
+    await expect(archive).not.toHaveAttribute('aria-describedby');
+
+    const remove = page.getByRole('button', { name: 'Delete' });
+    await remove.hover();
+    await expect(page.getByRole('tooltip')).toHaveText('Delete');
+    await expect(remove).not.toHaveAttribute('aria-describedby');
+  });
+
+  test('a disabled control is one named, disabled tab stop that opens its tooltip', async ({
+    page,
+  }) => {
+    await page.goto(tooltips);
+    const invite = page.getByRole('button', { name: 'Invite member' });
+    // One control for assistive technology: the wrapper, which carries the name and the state.
+    await expect(invite).toHaveCount(1);
+    await expect(invite).toHaveClass('env-tooltip-disabled-target');
+    await expect(invite).toHaveAttribute('aria-disabled', 'true');
+    await expect(invite).toHaveAttribute('tabindex', '0');
+    await invite.focus();
+    await expect(page.getByRole('tooltip')).toHaveText('No seats left');
+    await expect(invite).toHaveAccessibleDescription('No seats left');
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('tooltip')).toHaveCount(0);
+
+    // Enabled, the control itself is the trigger again.
+    await page.getByRole('button', { name: 'Toggle seats' }).click();
+    const enabled = page.getByRole('button', { name: 'Invite member' });
+    await expect(enabled).toBeEnabled();
+    await expect(enabled).not.toHaveClass(/env-tooltip-disabled-target/);
+  });
+
+  test('a Kbd in a tooltip takes key caps for its dark fill', async ({ page }) => {
+    await page.goto(tooltips);
+    await page.getByRole('button', { name: 'Save' }).hover();
+    const tooltip = page.getByTestId('shortcut-tooltip');
+    await expect(tooltip).toBeVisible();
+    const colors = await tooltip.evaluate((element) => {
+      const key = element.querySelector('.env-kbd')!;
+      return {
+        tooltip: getComputedStyle(element).color,
+        key: getComputedStyle(key).color,
+        keyFill: getComputedStyle(key).backgroundColor,
+      };
+    });
+    // The key's label is the tooltip's own light text, on no fill of its own.
+    expect(colors.key).toBe(colors.tooltip);
+    expect(colors.keyFill).toBe('rgba(0, 0, 0, 0)');
+  });
+});
