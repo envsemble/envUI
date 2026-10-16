@@ -61,6 +61,8 @@ import { EmptyStatesFixture } from './EmptyStates.js';
 import { RatingsFixture } from './Ratings.js';
 import { DensityFixture } from './Density.js';
 import { ChoiceControlsFixture } from './ChoiceControls.js';
+import { StackingFixture } from './Stacking.js';
+import { ResponsiveHooksFixture } from './ResponsiveHooks.js';
 import { PrimitivesFixture } from './Primitives.js';
 import { MessageStringsFixture } from './MessageStrings.js';
 import { DirectionFixture } from './Direction.js';
@@ -84,6 +86,8 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'framed-shell': FramedShellFixture,
   density: DensityFixture,
   'choice-controls': ChoiceControlsFixture,
+  stacking: StackingFixture,
+  'responsive-hooks': ResponsiveHooksFixture,
   primitives: PrimitivesFixture,
   'message-strings': MessageStringsFixture,
   direction: DirectionFixture,

@@ -853,7 +853,7 @@ test.describe('AppShell', () => {
     await expect(html).toHaveCSS('scroll-padding-top', '60px');
     await page.evaluate(() => {
       const style = document.createElement('style');
-      style.textContent = '.env-theme { --env-topbar-height: 5rem; }';
+      style.textContent = '.env-theme { --env-app-shell-header-height: 5rem; }';
       document.head.append(style);
     });
     await expect.poll(async () => (await topbar.boundingBox())!.height).toBeCloseTo(80, 0);

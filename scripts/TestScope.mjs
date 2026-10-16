@@ -60,6 +60,7 @@ export const overrides = {
       'components/alert',
       'components/command-palette',
     ],
+    'ResponsiveHooks.spec.ts': ['useMediaQuery', 'useBreakpoint', 'foundations/responsive'],
     'Scale.spec.ts': ['foundations/scale'],
     'SegmentedControl.spec.ts': ['SegmentedControl'],
     'Shell.spec.ts': ['components/app-shell'],
@@ -82,7 +83,7 @@ export const overrides = {
     'packages/ui/src/index.ts',
   ],
   /** Run for any library style sheet: every rule sits in a cascade layer and keeps its states under forced colors. */
-  stylesheetSpecs: ['CascadeLayers.spec.ts', 'ForcedColors.spec.ts'],
+  stylesheetSpecs: ['CascadeLayers.spec.ts', 'ForcedColors.spec.ts', 'Stacking.spec.ts'],
   /** Run for a shared change: quick specs that touch theming, fields, popups and the catalogue. */
   smokeSpecs: [
     'Colors.spec.ts',
@@ -698,7 +699,11 @@ export function selectScope(paths, index) {
       scope.css.push(path);
     if (exists) scope.format.push(path);
     if (/\.(?:[cm]?js|tsx?|json)$/.test(path) || path.endsWith('.css')) scope.unit = true;
-    if (/^(?:packages\/ui\/src\/|apps\/catalogue\/src\/|tests\/fixture\/).*\.tsx?$/.test(path))
+    if (
+      /^(?:packages\/ui\/src\/|apps\/catalogue\/src\/|tests\/fixture\/|tests\/types\/).*\.tsx?$/.test(
+        path,
+      )
+    )
       scope.typecheck = true;
     if (/(?:^|\/)tsconfig\.json$/.test(path)) scope.typecheck = true;
 

@@ -63,3 +63,16 @@ test('no English default is left under a provider that sets every message', asyn
   ])
     expect(found).toContain(`⟦${key}⟧`);
 });
+
+test('messages written inline keep the context while they stay the same', async ({ page }) => {
+  await page.goto(`${fixtureUrl}/?fixture=message-strings`);
+  const probe = page.getByTestId('inline-probe');
+  await expect(probe).toHaveText('⟦inline.close⟧');
+  const before = await probe.getAttribute('data-renders');
+  const rerender = page.getByRole('button', { name: /⟦rerender⟧/ });
+  for (const count of [1, 2, 3]) {
+    await rerender.click();
+    await expect(rerender).toHaveText(`⟦rerender⟧ ${count}`);
+  }
+  await expect(probe).toHaveAttribute('data-renders', before ?? '');
+});

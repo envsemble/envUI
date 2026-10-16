@@ -1,5 +1,6 @@
 'use client';
 
+import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { Radio } from '@base-ui/react/radio';
 import { RadioGroup } from '@base-ui/react/radio-group';
 import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
@@ -8,6 +9,7 @@ import type { ControlSize } from '../foundations/Theme.js';
 import { TooltipPopup } from '../feedback/internal/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
+import { useDirectionScope } from '../internal/useDirection.js';
 
 /** One option of a SegmentedControl. */
 export interface SegmentedControlOption {
@@ -67,20 +69,26 @@ export function SegmentedControl({
   disabled = false,
   className,
 }: SegmentedControlProps) {
+  // The arrow keys follow the text direction, which Base UI only knows from its own provider.
+  const scope = useDirectionScope<HTMLDivElement>();
   return (
-    <RadioGroup
-      value={value}
-      onValueChange={(next) => onValueChange(next as string)}
-      disabled={disabled}
-      aria-label={label}
-      className={classNames('env-segmented-control', className)}
-      data-size={size}
-      data-full-width={fullWidth || undefined}
-    >
-      {options.map((option) => (
-        <Segment key={option.value} option={option} fullWidth={fullWidth} />
-      ))}
-    </RadioGroup>
+    <DirectionProvider direction={scope.direction}>
+      <RadioGroup
+        ref={scope.ref}
+        onFocus={scope.onFocus}
+        value={value}
+        onValueChange={(next) => onValueChange(next as string)}
+        disabled={disabled}
+        aria-label={label}
+        className={classNames('env-segmented-control', className)}
+        data-size={size}
+        data-full-width={fullWidth || undefined}
+      >
+        {options.map((option) => (
+          <Segment key={option.value} option={option} fullWidth={fullWidth} />
+        ))}
+      </RadioGroup>
+    </DirectionProvider>
   );
 }
 

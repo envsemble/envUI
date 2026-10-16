@@ -1,5 +1,5 @@
 {
-  "$comment": "Every custom property that envUI 0.x or 1.0’s development defined and 1.0 no longer does, with what replaces it. prefixed: names that only take the --env- prefix. renamed: names that changed beyond the prefix, to a token (replacement) or a hand-written property (cssVariable). aliases: the 0.7 alias tokens, removed with the prefix, each to the token of its role or the value of a fixed color. removed: names with no counterpart, with the token to use instead where there is one. The token build turns this into src/generated/token-migration.json, the map that the codemods (v1-classes) and the migration guide read.",
+  "$comment": "Every custom property that envUI 0.x or 1.0’s development defined and 1.0 no longer does, with what replaces it. prefixed: names that only take the --env- prefix. renamed: names that changed beyond the prefix, to a token (replacement) or a hand-written property (cssVariable); a name of 1.0’s development has the prefix already. aliases: the 0.7 alias tokens, removed with the prefix, each to the token of its role or the value of a fixed color. removed: names with no counterpart, with the token to use instead where there is one. The token build turns this into src/generated/token-migration.json, the map that the codemods (v1-classes) and the migration guide read.",
   "prefixed": [
     "--body-font-weight",
     "--color-bg-accent-emphasis",
@@ -162,7 +162,6 @@
     "--space-9",
     "--state-disabled-opacity",
     "--title-bar-height",
-    "--topbar-height",
     "--tree-row-padding-block-lg",
     "--tree-row-padding-block-md",
     "--tree-row-padding-block-sm",
@@ -296,8 +295,24 @@
     "--font-family-code": { "cssVariable": "--env-code-font-family" },
     "--font-size-code": { "cssVariable": "--env-code-font-size" },
     "--app-sticky-top": {
-      "cssVariable": "--env-app-sticky-top",
-      "note": "The offset sticky content takes below the app shell's top bar, which AppShell sets."
+      "cssVariable": "--env-frame-sticky-top",
+      "note": "Where sticky content sticks below the app frame's header or title bar, which the frame sets."
+    },
+    "--env-app-sticky-top": {
+      "cssVariable": "--env-frame-sticky-top",
+      "note": "Where sticky content sticks below the app frame's header or title bar, which the frame sets."
+    },
+    "--env-app-topbar-block-size": {
+      "cssVariable": "--env-frame-header-block-size",
+      "note": "The height of the app frame's header or title bar, which the frame sets on the document."
+    },
+    "--topbar-height": {
+      "replacement": "app-shell.header-height",
+      "note": "The app frame's header height."
+    },
+    "--env-topbar-height": {
+      "replacement": "app-shell.header-height",
+      "note": "The app frame's header height."
     }
   },
   "aliases": {

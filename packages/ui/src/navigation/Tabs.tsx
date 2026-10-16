@@ -1,10 +1,12 @@
 'use client';
 
+import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { Tabs as BaseTabs } from '@base-ui/react/tabs';
 import { useRender } from '@base-ui/react/use-render';
 import { cloneElement, type ComponentPropsWithRef, type ReactElement, type ReactNode } from 'react';
 import type { ControlSize } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
+import { useDirectionScope } from '../internal/useDirection.js';
 import * as NavList from './NavList.js';
 import { NavigationIconState } from '../MaterialSymbolState.js';
 import { Surface } from '../foundations/Surface.js';
@@ -144,8 +146,13 @@ export function Tabs({
   panelClassName,
   fill = false,
   size = 'lg',
+  ref,
+  onFocus,
   ...props
 }: TabsProps) {
+  // A horizontal tab list's arrow keys follow the text direction, which Base UI only knows from
+  // its own provider.
+  const scope = useDirectionScope(ref);
   const initialValue =
     defaultValue === undefined
       ? (items.find((item) => !isDisabled(item))?.value ?? null)
@@ -177,28 +184,35 @@ export function Tabs({
     </BaseTabs.List>
   );
   return (
-    <BaseTabs.Root
-      {...props}
-      className={classNames('env-tabs', className)}
-      data-fill={fill ? '' : undefined}
-      value={value}
-      defaultValue={initialValue}
-      onValueChange={onValueChange}
-      orientation={orientation}
-    >
-      {renderList ? renderList(list) : list}
-      <div className="env-tabs-panels">
-        {items.map((item) => (
-          <BaseTabs.Panel
-            key={item.value}
-            value={item.value}
-            keepMounted={keepMounted}
-            className={classNames('env-tab-panel', panelClassName)}
-          >
-            {item.content}
-          </BaseTabs.Panel>
-        ))}
-      </div>
-    </BaseTabs.Root>
+    <DirectionProvider direction={scope.direction}>
+      <BaseTabs.Root
+        {...props}
+        ref={scope.ref}
+        onFocus={(event) => {
+          scope.onFocus();
+          onFocus?.(event);
+        }}
+        className={classNames('env-tabs', className)}
+        data-fill={fill ? '' : undefined}
+        value={value}
+        defaultValue={initialValue}
+        onValueChange={onValueChange}
+        orientation={orientation}
+      >
+        {renderList ? renderList(list) : list}
+        <div className="env-tabs-panels">
+          {items.map((item) => (
+            <BaseTabs.Panel
+              key={item.value}
+              value={item.value}
+              keepMounted={keepMounted}
+              className={classNames('env-tab-panel', panelClassName)}
+            >
+              {item.content}
+            </BaseTabs.Panel>
+          ))}
+        </div>
+      </BaseTabs.Root>
+    </DirectionProvider>
   );
 }

@@ -56,7 +56,7 @@ At the default 16 px root. Every value is a token, in rem, so it follows the rea
 | `--env-icon-size-sm` / `-md` / `-lg`                                    | 16 / 18 / 20          | 16 / 16 / 18          |
 | `--env-radius-sm` / `--env-radius-lg` / `--env-radius-surface`          | 8 / 16 / 28           | 6 / 12 / 22           |
 | `--env-field-floating-height` (inside the 1 px border)                  | 56                    | 44                    |
-| `--env-topbar-height` / `--env-title-bar-height`                        | 52 / 40               | 42 / 32               |
+| `--env-app-shell-header-height` / `--env-title-bar-height`              | 52 / 40               | 42 / 32               |
 | `--env-control-border-width`, focus rings, `--env-control-height-touch` | 1, 2, 44              | 1, 2, 44              |
 
 - A tree row is its content line plus its density's padding on both sides: 24, 28, 36 and 44 from `xs` to `lg` in the comfortable scale, and 24, 28, 30 and 34 in the compact one, whose tree paddings are a pixel more than the row densities' so that no compact row is taller than a comfortable one and a `sm` row, the default, is as tall as a compact menu row. A table cell adds 4 px to its row padding, so a `md` table row of one line is 45 px tall, and a list row is at least as tall as a small control with its padding, 56 px at `md`.

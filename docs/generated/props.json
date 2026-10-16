@@ -649,7 +649,7 @@
           "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
           "required": false,
           "default": "'primary'",
-          "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else primary (secondary for IconButton)."
+          "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives where that variant takes its tone, such as ghost in a toolbar, and else primary."
         },
         {
           "name": "tone",
@@ -1830,20 +1830,6 @@
           "description": ""
         },
         {
-          "name": "tone",
-          "type": "'neutral' | 'accent' | 'danger'",
-          "required": false,
-          "default": "'neutral'",
-          "description": "The meaning: neutral for most actions; accent, on a primary button only, for a rare consequential action, with 0.5 rem corners; danger for an action that deletes or ends something. Secondary buttons are always neutral."
-        },
-        {
-          "name": "variant",
-          "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
-          "required": false,
-          "default": "'outline', or 'secondary' with icon",
-          "description": "The resting appearance; armed, the button is always variant=\"primary\" tone=\"danger\". outline by default, and secondary for an icon-only button, like IconButton; ghost for an action in the application's chrome, such as a toolbar."
-        },
-        {
           "name": "confirmLabel",
           "type": "ReactNode",
           "required": true,
@@ -1867,6 +1853,19 @@
           "type": "ReactNode",
           "required": false,
           "description": "A round icon-only button at rest, named by aria-label. Armed, it shows the icon with the confirm label, so the consequence is still named."
+        },
+        {
+          "name": "variant",
+          "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
+          "required": false,
+          "description": ""
+        },
+        {
+          "name": "tone",
+          "type": "'neutral' | 'accent' | 'danger'",
+          "required": false,
+          "default": "'neutral'",
+          "description": "The resting meaning, as Button's: neutral, or danger on a primary, outline, ghost or text button."
         }
       ],
       "native": [
@@ -1954,19 +1953,6 @@
           "description": "Runs once the text is on the clipboard, with that text."
         },
         {
-          "name": "variant",
-          "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
-          "required": false,
-          "default": "'secondary'",
-          "description": "As Button's, among its designed pairs with tone; secondary by default."
-        },
-        {
-          "name": "tone",
-          "type": "'neutral' | 'danger'",
-          "required": false,
-          "description": "As Button's: neutral by default, or danger."
-        },
-        {
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
@@ -2002,6 +1988,20 @@
           "required": false,
           "requiredWhen": "`children` is not set",
           "description": ""
+        },
+        {
+          "name": "variant",
+          "type": "'secondary' | 'primary' | 'outline' | 'ghost' | 'text'",
+          "required": false,
+          "default": "'secondary'",
+          "description": "The emphasis, as Button's. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else secondary."
+        },
+        {
+          "name": "tone",
+          "type": "'neutral' | 'accent' | 'danger'",
+          "required": false,
+          "default": "'neutral'",
+          "description": "The meaning, as Button's: accent on a primary button only, and danger on a primary, outline, ghost or text one. A secondary button is always neutral."
         },
         {
           "name": "children",
@@ -2429,7 +2429,7 @@
           "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
           "required": false,
           "default": "'primary'",
-          "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else primary (secondary for IconButton)."
+          "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives where that variant takes its tone, such as ghost in a toolbar, and else primary."
         },
         {
           "name": "tone",
@@ -3290,17 +3290,17 @@
       "props": [
         {
           "name": "variant",
-          "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
+          "type": "'secondary' | 'primary' | 'outline' | 'ghost' | 'text'",
           "required": false,
-          "default": "'primary'",
-          "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else primary (secondary for IconButton)."
+          "default": "'secondary'",
+          "description": "The emphasis, as Button's. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else secondary."
         },
         {
           "name": "tone",
           "type": "'neutral' | 'accent' | 'danger'",
           "required": false,
           "default": "'neutral'",
-          "description": "The meaning: neutral for most actions; accent, on a primary button only, for a rare consequential action, with 0.5 rem corners; danger for an action that deletes or ends something. Secondary buttons are always neutral."
+          "description": "The meaning, as Button's: accent on a primary button only, and danger on a primary, outline, ghost or text one. A secondary button is always neutral."
         },
         {
           "name": "icon",
@@ -6899,17 +6899,17 @@
         },
         {
           "name": "variant",
-          "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
+          "type": "'secondary' | 'primary' | 'outline' | 'ghost' | 'text'",
           "required": false,
-          "default": "'primary'",
-          "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else primary (secondary for IconButton)."
+          "default": "'secondary'",
+          "description": "The emphasis, as Button's. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else secondary."
         },
         {
           "name": "tone",
           "type": "'neutral' | 'accent' | 'danger'",
           "required": false,
           "default": "'neutral'",
-          "description": "The meaning: neutral for most actions; accent, on a primary button only, for a rare consequential action, with 0.5 rem corners; danger for an action that deletes or ends something. Secondary buttons are always neutral."
+          "description": "The meaning, as Button's: accent on a primary button only, and danger on a primary, outline, ghost or text one. A secondary button is always neutral."
         },
         {
           "name": "pending",
@@ -7046,7 +7046,7 @@
           "name": "shortcut",
           "type": "string",
           "required": false,
-          "description": "The keyboard shortcut that does the same, such as Ctrl+B, with keys joined by +: the tooltip shows it, and aria-keyshortcuts announces it."
+          "description": "The keyboard shortcut that does the same, such as Ctrl+B, with keys joined by +: the tooltip shows it, and aria-keyshortcuts announces it, in ARIA's key names, such as Control+B. A sequence, such as Ctrl+K Ctrl+B, shows its keys without the attribute, as in Menu."
         },
         {
           "name": "variant",
@@ -7335,6 +7335,15 @@
         "@envsemble/envui"
       ]
     },
+    "breakpointQuery": {
+      "kind": "function",
+      "source": "packages/ui/src/foundations/breakpoints.ts",
+      "description": "The media query for a viewport at least as wide as a breakpoint (`up`, the default), or narrower than it (`down`), so that `up` and `down` of one breakpoint never both match nor both miss: `breakpointQuery('md')` is `(width >= 48rem)`.",
+      "signature": "(breakpoint: Breakpoint, direction?: \"up\" | \"down\"): string",
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
     "countDiffLines": {
       "kind": "function",
       "source": "packages/ui/src/diff/countDiffLines.ts",
@@ -7381,11 +7390,29 @@
         "@envsemble/envui"
       ]
     },
+    "useBreakpoint": {
+      "kind": "function",
+      "source": "packages/ui/src/foundations/useMediaQuery.ts",
+      "description": "Whether the viewport is at least as wide as a breakpoint: `useBreakpoint('md')` is true from 48 rem up. As useMediaQuery, it returns `defaultValue` on the server and while hydrating.",
+      "signature": "(breakpoint: Breakpoint, options?: MediaQueryOptions): boolean",
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
     "useLocale": {
       "kind": "function",
       "source": "packages/ui/src/internal/EnvUIContext.ts",
       "description": "The locale of the nearest EnvUIProvider, for formatting in step with envUI, or undefined where no provider sets one: the runtime's locale applies then.",
       "signature": "(): string | undefined",
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "useMediaQuery": {
+      "kind": "function",
+      "source": "packages/ui/src/foundations/useMediaQuery.ts",
+      "description": "Whether the viewport matches a media query, such as `(prefers-reduced-motion: reduce)`, kept up to date as it changes. It returns `defaultValue` on the server and while hydrating, then the browser's answer; a page rendered only in the browser gets the answer in its first render. Prefer CSS (`@media`, or `@container` for a component's own width) where the difference is only in styles.",
+      "signature": "(query: string, options?: MediaQueryOptions): boolean",
       "entries": [
         "@envsemble/envui"
       ]

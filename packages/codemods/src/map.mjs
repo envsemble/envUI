@@ -266,13 +266,13 @@ export function validateMap(map) {
   return problems;
 }
 
-const oldProperty = /^--(?!env-)[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const oldProperty = /^--[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const newProperty = /^--env-[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 /**
- * Problems with the `tokens` section: each old custom property, without the --env- prefix, maps
- * to the --env- property that replaces it (`to`), to a fixed color's `value`, or is `removed`,
- * with `to` what to use instead or null.
+ * Problems with the `tokens` section: each old custom property, without the --env- prefix or a
+ * name that 1.0's development gave it, maps to the --env- property that replaces it (`to`), to a
+ * fixed color's `value`, or is `removed`, with `to` what to use instead or null.
  */
 function validateTokens(tokens) {
   const problems = [];
@@ -292,6 +292,7 @@ function validateTokens(tokens) {
         problems.push(`${where}: "value" must be a color or a color per theme.`);
     } else if (typeof entry.to !== 'string' || !newProperty.test(entry.to))
       problems.push(`${where} needs "to", an --env- custom property, "value" or "removed".`);
+    else if (entry.to === from) problems.push(`${where} maps to itself.`);
   }
   return problems;
 }

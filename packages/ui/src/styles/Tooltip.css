@@ -2,7 +2,7 @@
   display: contents;
 }
 .env-tooltip-positioner {
-  z-index: 130;
+  z-index: var(--env-z-tooltip);
 }
 .env-tooltip {
   max-inline-size: min(18rem, calc(100vw - 2rem));

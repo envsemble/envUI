@@ -16,6 +16,9 @@
 //   of `unless`) or a `report`; `*` stands for any other child, text and expressions included.
 // - `wrap`: an element the result is wrapped in, with its props.
 // - `report`: a note reported at every element the case rewrites.
+// An element that spreads props, such as `<ActionGroup {...group}>`, may set any of them, so no case
+// can be chosen for it: it stays as it is and the entry's `report` is reported. So does a child
+// that spreads props where a case would add some, since it may already set them.
 // Elements are matched by their import from @envsemble/envui, as v1-props matches them.
 import { loadMap } from '../map.mjs';
 import { componentResolver, envuiImports, jsxAttribute, literalKey } from '../elements.mjs';
@@ -95,6 +98,7 @@ export default function transform(file, api, options = {}) {
   const attributeIndex = (attributes, name) =>
     attributes.findIndex((node) => node.type === 'JSXAttribute' && node.name.name === name);
   const hasAttribute = (attributes, name) => attributeIndex(attributes, name) !== -1;
+  const spreads = (attributes) => attributes.some((node) => node.type === 'JSXSpreadAttribute');
 
   /** Whether a case's `when` matches the element: true, false, or undefined for an expression. */
   function matches(attributes, when) {
@@ -171,6 +175,13 @@ export default function transform(file, api, options = {}) {
     if (!rule) continue;
     const { attributes } = path.node.openingElement;
     const where = component.name;
+    if (spreads(attributes)) {
+      reporter.warn(
+        path.node,
+        `${where}: its spread props may set what decides its 1.0 form, so it stays. ${rule.report}`,
+      );
+      continue;
+    }
     let chosen;
     for (const each of rule.cases) {
       const result = matches(attributes, each.when);
@@ -211,6 +222,17 @@ export default function transform(file, api, options = {}) {
       if (child.type !== 'JSXElement') continue;
       const childAttributes = child.openingElement.attributes;
       if ((childRule.unless ?? []).some((prop) => hasAttribute(childAttributes, prop))) continue;
+      const adding = Object.keys(childRule.add ?? {}).filter(
+        (prop) => !hasAttribute(childAttributes, prop),
+      );
+      if (adding.length > 0 && spreads(childAttributes)) {
+        const props = [...new Set([...(childRule.unless ?? []), ...adding])].join(' or ');
+        reporter.warn(
+          child,
+          `${where}: this child's spread props may set ${props}, so it doesn't get ${adding.join(', ')}: add ${adding.length > 1 ? 'them' : 'it'} if it should.`,
+        );
+        continue;
+      }
       for (const [prop, value] of Object.entries(childRule.add ?? {}))
         if (!hasAttribute(childAttributes, prop))
           childAttributes.push(jsxAttribute(j, prop, value));

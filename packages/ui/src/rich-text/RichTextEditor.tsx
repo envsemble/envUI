@@ -13,6 +13,7 @@ import { Extension } from '@tiptap/core';
 import { EditorContent, useEditor, useEditorState } from '@tiptap/react';
 import { Suggestion, exitSuggestion } from '@tiptap/suggestion';
 import { Toolbar } from '@base-ui/react/toolbar';
+import { DirectedToolbarRoot } from '../internal/DirectedToolbarRoot.js';
 import { IconButton } from '../actions/Button.js';
 import { ButtonGroup } from '../actions/ButtonGroup.js';
 import { Title } from '../icons/Title.js';
@@ -453,7 +454,7 @@ export const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorPro
         >
           {toolbar !== false && (
             <div className="env-markdown-toolbar">
-              <Toolbar.Root
+              <DirectedToolbarRoot
                 render={<ButtonGroup />}
                 aria-label="Rich text formatting"
                 disabled={!editor || disabled || readOnly || busy}
@@ -503,7 +504,7 @@ export const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorPro
                     onClick={() => input.current?.click()}
                   />
                 )}
-              </Toolbar.Root>
+              </DirectedToolbarRoot>
             </div>
           )}
           <RichTextRenderingContext

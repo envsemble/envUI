@@ -4,7 +4,7 @@
   box-sizing: border-box;
   position: fixed;
   inset: 0;
-  z-index: 101;
+  z-index: var(--env-z-modal);
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   justify-items: center;

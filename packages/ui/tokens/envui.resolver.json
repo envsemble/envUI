@@ -16,6 +16,8 @@
         { "$ref": "./base/radius.tokens.json" },
         { "$ref": "./base/size.tokens.json" },
         { "$ref": "./base/motion.tokens.json" },
+        { "$ref": "./base/stacking.tokens.json" },
+        { "$ref": "./base/breakpoint.tokens.json" },
         { "$ref": "./base/state.tokens.json" }
       ]
     }

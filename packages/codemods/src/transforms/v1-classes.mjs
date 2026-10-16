@@ -9,7 +9,8 @@
 //
 // - Style sheets (.css, .scss, .sass, .less, .pcss): `.env-*` class selectors, `--env-*` custom
 //   properties, the tokens' custom properties before 1.0 (`--color-text-muted` becomes
-//   `--env-color-fg-muted`) and `[class…='env-*']` attribute selectors. A token that 1.0 removes,
+//   `--env-color-fg-muted`), the names 1.0's development gave some (`--env-topbar-height` becomes
+//   `--env-app-shell-header-height`) and `[class…='env-*']` attribute selectors. A token that 1.0 removes,
 //   or a fixed color no token replaces, stays and is reported.
 // - Scripts: class tokens in string and template literals inside JSX `className` and `class`
 //   attributes, `className` properties and assignments, selector strings passed to
@@ -53,6 +54,17 @@ function renameTokens(text, tokens, report, pattern = tokenProperty) {
     report?.(offset, entry.report);
     return match;
   });
+}
+
+/**
+ * A `--env-*` custom property that the tokens section lists, a name of 1.0's development such as
+ * --env-topbar-height: its 1.0 name, or the name itself after `report` for a removed one.
+ */
+function renameDevelopmentToken(name, tokens, report, offset) {
+  const entry = tokens.get(name);
+  if (entry.to) return entry.to;
+  report?.(offset, entry.report);
+  return name;
 }
 
 /** A `--env-*` custom property. */
@@ -149,16 +161,24 @@ export function renameInStyles(
     .replace(classAttribute, (selector) =>
       selector.replace(attributeName, (name) => renameClass(name, classes)),
     )
-    .replace(styleToken, (match, prefix, name) =>
-      prefix === '--' && tokenNames.has(name) ? match : prefix + renameClass(name, classes),
+    .replace(styleToken, (match, prefix, name, offset) =>
+      prefix === '--' && tokens.has(name)
+        ? prefix + renameDevelopmentToken(name, tokens, report, offset)
+        : prefix === '--' && tokenNames.has(name)
+          ? match
+          : prefix + renameClass(name, classes),
     );
   return renameTokens(renamed, tokens, report);
 }
 
 const renameCustomProperties = (text, classes, tokens, tokenNames, report) =>
   renameTokens(
-    text.replace(customProperty, (match, name) =>
-      tokenNames.has(name) ? match : `--${renameClass(name, classes)}`,
+    text.replace(customProperty, (match, name, offset) =>
+      tokens.has(name)
+        ? `--${renameDevelopmentToken(name, tokens, report, offset)}`
+        : tokenNames.has(name)
+          ? match
+          : `--${renameClass(name, classes)}`,
     ),
     tokens,
     report,
@@ -168,8 +188,12 @@ const renameCustomProperties = (text, classes, tokens, tokenNames, report) =>
 const variable = /(var\(\s*--)(env-[a-z0-9][a-z0-9_-]*)(?![A-Za-z0-9_-])/g;
 const renameVariables = (text, classes, tokens, tokenNames, report) =>
   renameTokens(
-    text.replace(variable, (match, prefix, name) =>
-      tokenNames.has(name) ? match : prefix + renameClass(name, classes),
+    text.replace(variable, (match, prefix, name, offset) =>
+      tokens.has(name)
+        ? prefix + renameDevelopmentToken(name, tokens, report, offset)
+        : tokenNames.has(name)
+          ? match
+          : prefix + renameClass(name, classes),
     ),
     tokens,
     report,

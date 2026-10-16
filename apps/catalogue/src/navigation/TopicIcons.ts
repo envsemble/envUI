@@ -4,6 +4,7 @@ import { Palette } from '@envsemble/envui/icons/Palette';
 import { Star } from '@envsemble/envui/icons/Star';
 import { TextFields } from '@envsemble/envui/icons/TextFields';
 import { ViewList } from '@envsemble/envui/icons/ViewList';
+import { Devices } from '@envsemble/envui/icons/Devices';
 import { TouchApp } from '@envsemble/envui/icons/TouchApp';
 import { Info } from '@envsemble/envui/icons/Info';
 import { Category } from '@envsemble/envui/icons/Category';
@@ -64,6 +65,7 @@ export const foundationIcons: Record<string, typeof Palette> = {
   typography: TextFields,
   spacing: ViewList,
   scale: ViewList,
+  responsive: Devices,
   icons: Category,
   composition: ViewList,
   accessibility: TouchApp,

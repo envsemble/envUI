@@ -57,6 +57,16 @@ for (const fixture of fixtures('v1-props')) {
   });
 }
 
+test('v1-props reads calls from a map folder, as the bundled map stores them', () => {
+  const fixture = fixtures('v1-props').find(({ name }) => name === 'calls.tsx');
+  const fromFile = runTransform(v1Props, fixture.path, fixture.input, { map: maps['calls.tsx'] });
+  const fromFolder = runTransform(v1Props, fixture.path, fixture.input, {
+    map: join(packageDirectory, 'test/maps/calls-folder'),
+  });
+  assert.equal(fromFolder.output, fixture.output);
+  assert.deepEqual(fromFolder.reports, fromFile.reports);
+});
+
 test('v1-props keeps line endings and a byte order mark', () => {
   const fixture = fixtures('v1-props').find(({ name }) => name === 'density.tsx');
   for (const [name, encode] of encodings) {

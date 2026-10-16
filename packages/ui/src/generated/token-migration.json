@@ -3,8 +3,8 @@
   "names": {
     "--app-sticky-top": {
       "kind": "renamed",
-      "cssVariable": "--env-app-sticky-top",
-      "note": "The offset sticky content takes below the app shell's top bar, which AppShell sets."
+      "cssVariable": "--env-frame-sticky-top",
+      "note": "Where sticky content sticks below the app frame's header or title bar, which the frame sets."
     },
     "--avatar-group-ring": {
       "kind": "renamed",
@@ -1323,6 +1323,22 @@
     "--elevation-2-shadow": { "kind": "prefixed", "cssVariable": "--env-elevation-2-shadow" },
     "--elevation-3-border": { "kind": "prefixed", "cssVariable": "--env-elevation-3-border" },
     "--elevation-3-shadow": { "kind": "prefixed", "cssVariable": "--env-elevation-3-shadow" },
+    "--env-app-sticky-top": {
+      "kind": "renamed",
+      "cssVariable": "--env-frame-sticky-top",
+      "note": "Where sticky content sticks below the app frame's header or title bar, which the frame sets."
+    },
+    "--env-app-topbar-block-size": {
+      "kind": "renamed",
+      "cssVariable": "--env-frame-header-block-size",
+      "note": "The height of the app frame's header or title bar, which the frame sets on the document."
+    },
+    "--env-topbar-height": {
+      "kind": "renamed",
+      "token": "app-shell.header-height",
+      "cssVariable": "--env-app-shell-header-height",
+      "note": "The app frame's header height."
+    },
     "--field-floating-height": { "kind": "prefixed", "cssVariable": "--env-field-floating-height" },
     "--font-family": { "kind": "prefixed", "cssVariable": "--env-font-family" },
     "--font-family-code": { "kind": "renamed", "cssVariable": "--env-code-font-family" },
@@ -1528,7 +1544,12 @@
       "kind": "removed",
       "note": "Internal to the 0.7 toast. A toast takes its fill from its tone; restyle a toast through the component, not this property."
     },
-    "--topbar-height": { "kind": "prefixed", "cssVariable": "--env-topbar-height" },
+    "--topbar-height": {
+      "kind": "renamed",
+      "token": "app-shell.header-height",
+      "cssVariable": "--env-app-shell-header-height",
+      "note": "The app frame's header height."
+    },
     "--tree-row-padding-block-lg": {
       "kind": "prefixed",
       "cssVariable": "--env-tree-row-padding-block-lg"

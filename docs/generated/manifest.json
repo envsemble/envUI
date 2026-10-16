@@ -5192,6 +5192,7 @@
       "doc": "docs/foundations/spacing.md",
       "related": [
         "scale",
+        "responsive",
         "stack",
         "surface",
         "card",
@@ -5213,6 +5214,37 @@
         "text-field",
         "table",
         "tree"
+      ]
+    },
+    {
+      "name": "responsive",
+      "title": "Responsive layout & stacking",
+      "group": "Foundations",
+      "summary": "Viewport breakpoints, container queries, the media query hooks and the stacking order of frames and popups.",
+      "doc": "docs/foundations/responsive.md",
+      "exports": [
+        "useMediaQuery",
+        "useBreakpoint",
+        "breakpointQuery"
+      ],
+      "aliases": [
+        "breakpoint",
+        "breakpoints",
+        "media query",
+        "responsive",
+        "mobile layout",
+        "container query",
+        "z-index",
+        "stacking order",
+        "layers"
+      ],
+      "related": [
+        "spacing",
+        "scale",
+        "dialog",
+        "menu",
+        "tooltip",
+        "toast"
       ]
     },
     {
@@ -5923,7 +5955,7 @@
           "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
           "required": false,
           "default": "'primary'",
-          "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else primary (secondary for IconButton)."
+          "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives where that variant takes its tone, such as ghost in a toolbar, and else primary."
         },
         {
           "name": "tone",
@@ -7088,20 +7120,6 @@
           "description": ""
         },
         {
-          "name": "tone",
-          "type": "'neutral' | 'accent' | 'danger'",
-          "required": false,
-          "default": "'neutral'",
-          "description": "The meaning: neutral for most actions; accent, on a primary button only, for a rare consequential action, with 0.5 rem corners; danger for an action that deletes or ends something. Secondary buttons are always neutral."
-        },
-        {
-          "name": "variant",
-          "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
-          "required": false,
-          "default": "'outline', or 'secondary' with icon",
-          "description": "The resting appearance; armed, the button is always variant=\"primary\" tone=\"danger\". outline by default, and secondary for an icon-only button, like IconButton; ghost for an action in the application's chrome, such as a toolbar."
-        },
-        {
           "name": "confirmLabel",
           "type": "ReactNode",
           "required": true,
@@ -7125,6 +7143,19 @@
           "type": "ReactNode",
           "required": false,
           "description": "A round icon-only button at rest, named by aria-label. Armed, it shows the icon with the confirm label, so the consequence is still named."
+        },
+        {
+          "name": "variant",
+          "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
+          "required": false,
+          "description": ""
+        },
+        {
+          "name": "tone",
+          "type": "'neutral' | 'accent' | 'danger'",
+          "required": false,
+          "default": "'neutral'",
+          "description": "The resting meaning, as Button's: neutral, or danger on a primary, outline, ghost or text button."
         }
       ],
       "native": [
@@ -7210,19 +7241,6 @@
           "description": "Runs once the text is on the clipboard, with that text."
         },
         {
-          "name": "variant",
-          "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
-          "required": false,
-          "default": "'secondary'",
-          "description": "As Button's, among its designed pairs with tone; secondary by default."
-        },
-        {
-          "name": "tone",
-          "type": "'neutral' | 'danger'",
-          "required": false,
-          "description": "As Button's: neutral by default, or danger."
-        },
-        {
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
@@ -7258,6 +7276,20 @@
           "required": false,
           "requiredWhen": "`children` is not set",
           "description": ""
+        },
+        {
+          "name": "variant",
+          "type": "'secondary' | 'primary' | 'outline' | 'ghost' | 'text'",
+          "required": false,
+          "default": "'secondary'",
+          "description": "The emphasis, as Button's. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else secondary."
+        },
+        {
+          "name": "tone",
+          "type": "'neutral' | 'accent' | 'danger'",
+          "required": false,
+          "default": "'neutral'",
+          "description": "The meaning, as Button's: accent on a primary button only, and danger on a primary, outline, ghost or text one. A secondary button is always neutral."
         },
         {
           "name": "children",
@@ -7681,7 +7713,7 @@
           "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
           "required": false,
           "default": "'primary'",
-          "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else primary (secondary for IconButton)."
+          "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives where that variant takes its tone, such as ghost in a toolbar, and else primary."
         },
         {
           "name": "tone",
@@ -8535,17 +8567,17 @@
       "props": [
         {
           "name": "variant",
-          "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
+          "type": "'secondary' | 'primary' | 'outline' | 'ghost' | 'text'",
           "required": false,
-          "default": "'primary'",
-          "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else primary (secondary for IconButton)."
+          "default": "'secondary'",
+          "description": "The emphasis, as Button's. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else secondary."
         },
         {
           "name": "tone",
           "type": "'neutral' | 'accent' | 'danger'",
           "required": false,
           "default": "'neutral'",
-          "description": "The meaning: neutral for most actions; accent, on a primary button only, for a rare consequential action, with 0.5 rem corners; danger for an action that deletes or ends something. Secondary buttons are always neutral."
+          "description": "The meaning, as Button's: accent on a primary button only, and danger on a primary, outline, ghost or text one. A secondary button is always neutral."
         },
         {
           "name": "icon",
@@ -12079,17 +12111,17 @@
         },
         {
           "name": "variant",
-          "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
+          "type": "'secondary' | 'primary' | 'outline' | 'ghost' | 'text'",
           "required": false,
-          "default": "'primary'",
-          "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else primary (secondary for IconButton)."
+          "default": "'secondary'",
+          "description": "The emphasis, as Button's. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else secondary."
         },
         {
           "name": "tone",
           "type": "'neutral' | 'accent' | 'danger'",
           "required": false,
           "default": "'neutral'",
-          "description": "The meaning: neutral for most actions; accent, on a primary button only, for a rare consequential action, with 0.5 rem corners; danger for an action that deletes or ends something. Secondary buttons are always neutral."
+          "description": "The meaning, as Button's: accent on a primary button only, and danger on a primary, outline, ghost or text one. A secondary button is always neutral."
         },
         {
           "name": "pending",
@@ -12228,7 +12260,7 @@
           "name": "shortcut",
           "type": "string",
           "required": false,
-          "description": "The keyboard shortcut that does the same, such as Ctrl+B, with keys joined by +: the tooltip shows it, and aria-keyshortcuts announces it."
+          "description": "The keyboard shortcut that does the same, such as Ctrl+B, with keys joined by +: the tooltip shows it, and aria-keyshortcuts announces it, in ARIA's key names, such as Control+B. A sequence, such as Ctrl+K Ctrl+B, shows its keys without the attribute, as in Menu."
         },
         {
           "name": "variant",
@@ -12509,6 +12541,14 @@
       "page": "app-shell",
       "doc": "docs/components/app-shell.md"
     },
+    "breakpointQuery": {
+      "kind": "function",
+      "import": "@envsemble/envui",
+      "description": "The media query for a viewport at least as wide as a breakpoint (`up`, the default), or narrower than it (`down`), so that `up` and `down` of one breakpoint never both match nor both miss: `breakpointQuery('md')` is `(width >= 48rem)`.",
+      "signature": "(breakpoint: Breakpoint, direction?: \"up\" | \"down\"): string",
+      "page": "responsive",
+      "doc": "docs/foundations/responsive.md"
+    },
     "countDiffLines": {
       "kind": "function",
       "import": "@envsemble/envui/diff",
@@ -12552,6 +12592,14 @@
       "page": "app-shell",
       "doc": "docs/components/app-shell.md"
     },
+    "useBreakpoint": {
+      "kind": "function",
+      "import": "@envsemble/envui",
+      "description": "Whether the viewport is at least as wide as a breakpoint: `useBreakpoint('md')` is true from 48 rem up. As useMediaQuery, it returns `defaultValue` on the server and while hydrating.",
+      "signature": "(breakpoint: Breakpoint, options?: MediaQueryOptions): boolean",
+      "page": "responsive",
+      "doc": "docs/foundations/responsive.md"
+    },
     "useLocale": {
       "kind": "function",
       "import": "@envsemble/envui",
@@ -12562,6 +12610,14 @@
       ],
       "page": "setup",
       "doc": "docs/setup.md"
+    },
+    "useMediaQuery": {
+      "kind": "function",
+      "import": "@envsemble/envui",
+      "description": "Whether the viewport matches a media query, such as `(prefers-reduced-motion: reduce)`, kept up to date as it changes. It returns `defaultValue` on the server and while hydrating, then the browser's answer; a page rendered only in the browser gets the answer in its first render. Prefer CSS (`@media`, or `@container` for a component's own width) where the difference is only in styles.",
+      "signature": "(query: string, options?: MediaQueryOptions): boolean",
+      "page": "responsive",
+      "doc": "docs/foundations/responsive.md"
     },
     "useTheme": {
       "kind": "function",
@@ -12602,10 +12658,46 @@
     "usage": "Use a token through its CSS custom property, such as var(--env-color-fg-muted), in CSS that styles the application. envUI components already use them; never restyle their classes.",
     "items": [
       {
+        "id": "app-shell.header-height",
+        "cssVariable": "--env-app-shell-header-height",
+        "type": "dimension",
+        "description": "The app frame's header bar, a single row that holds controls of the control height with space around them; sticky content and the sidebar headers line up with it.",
+        "value": "3.25rem",
+        "compact": "2.625rem"
+      },
+      {
         "id": "body.font-weight",
         "cssVariable": "--env-body-font-weight",
         "type": "fontWeight",
         "value": "400"
+      },
+      {
+        "id": "breakpoint.lg",
+        "cssVariable": "--env-breakpoint-lg",
+        "type": "dimension",
+        "description": "64 rem: a tablet held sideways or a laptop.",
+        "value": "64rem"
+      },
+      {
+        "id": "breakpoint.md",
+        "cssVariable": "--env-breakpoint-md",
+        "type": "dimension",
+        "description": "48 rem: a tablet held upright, and the default line between a phone's layout and a wider one.",
+        "value": "48rem"
+      },
+      {
+        "id": "breakpoint.sm",
+        "cssVariable": "--env-breakpoint-sm",
+        "type": "dimension",
+        "description": "40 rem: a large phone held sideways, or a narrow window.",
+        "value": "40rem"
+      },
+      {
+        "id": "breakpoint.xl",
+        "cssVariable": "--env-breakpoint-xl",
+        "type": "dimension",
+        "description": "80 rem: a desktop window.",
+        "value": "80rem"
       },
       {
         "id": "color.avatar.bg",
@@ -14530,13 +14622,6 @@
         "compact": "2rem"
       },
       {
-        "id": "topbar.height",
-        "cssVariable": "--env-topbar-height",
-        "type": "dimension",
-        "value": "3.25rem",
-        "compact": "2.625rem"
-      },
-      {
         "id": "tree.row-padding-block-lg",
         "cssVariable": "--env-tree-row-padding-block-lg",
         "type": "dimension",
@@ -14607,13 +14692,76 @@
           "letter-spacing": "0rem",
           "line-height": "1.4em"
         }
+      },
+      {
+        "id": "z.base",
+        "cssVariable": "--env-z-base",
+        "type": "number",
+        "description": "The flow of a page or a component; a part drawn behind its siblings takes calc(var(--env-z-base) - 1).",
+        "value": "0"
+      },
+      {
+        "id": "z.modal",
+        "cssVariable": "--env-z-modal",
+        "type": "number",
+        "description": "Modal layers over their scrim: dialogs, drawers and the command palette.",
+        "value": "100"
+      },
+      {
+        "id": "z.overlay",
+        "cssVariable": "--env-z-overlay",
+        "type": "number",
+        "description": "The scrim behind a modal layer, which covers the page and the frame.",
+        "value": "90"
+      },
+      {
+        "id": "z.peek",
+        "cssVariable": "--env-z-peek",
+        "type": "number",
+        "description": "A collapsed sidebar that opens over the content without docking, above the frame's sticky parts.",
+        "value": "30"
+      },
+      {
+        "id": "z.popover",
+        "cssVariable": "--env-z-popover",
+        "type": "number",
+        "description": "Popups anchored to a control, also inside a modal layer: menus, popovers, hover cards, the lists of Select and Combobox, and suggestions.",
+        "value": "110"
+      },
+      {
+        "id": "z.raised",
+        "cssVariable": "--env-z-raised",
+        "type": "number",
+        "description": "A part raised over its siblings inside a component or a region: a sticky table header, a resize handle, the hovered avatar of a group.",
+        "value": "1"
+      },
+      {
+        "id": "z.sticky",
+        "cssVariable": "--env-z-sticky",
+        "type": "number",
+        "description": "The frame's sticky and fixed parts that content scrolls under: the app header and the sidebar columns.",
+        "value": "20"
+      },
+      {
+        "id": "z.toast",
+        "cssVariable": "--env-z-toast",
+        "type": "number",
+        "description": "Notifications, above the popups and modal layers they report on.",
+        "value": "120"
+      },
+      {
+        "id": "z.tooltip",
+        "cssVariable": "--env-z-tooltip",
+        "type": "number",
+        "description": "Tooltips, above everything they can describe.",
+        "value": "130"
       }
     ],
     "legacy": [
       {
         "cssVariable": "--app-sticky-top",
-        "use": "--env-app-sticky-top",
-        "note": "The offset sticky content takes below the app shell's top bar, which AppShell sets."
+        "use": "--env-frame-sticky-top",
+        "note": "Where sticky content sticks below the app frame's header or title bar, which the frame sets."
       },
       {
         "cssVariable": "--avatar-group-ring",
@@ -16006,6 +16154,22 @@
         "use": "--env-elevation-3-shadow"
       },
       {
+        "cssVariable": "--env-app-sticky-top",
+        "use": "--env-frame-sticky-top",
+        "note": "Where sticky content sticks below the app frame's header or title bar, which the frame sets."
+      },
+      {
+        "cssVariable": "--env-app-topbar-block-size",
+        "use": "--env-frame-header-block-size",
+        "note": "The height of the app frame's header or title bar, which the frame sets on the document."
+      },
+      {
+        "cssVariable": "--env-topbar-height",
+        "use": "--env-app-shell-header-height",
+        "type": "dimension",
+        "note": "The app frame's header height."
+      },
+      {
         "cssVariable": "--field-floating-height",
         "use": "--env-field-floating-height"
       },
@@ -16401,7 +16565,9 @@
       },
       {
         "cssVariable": "--topbar-height",
-        "use": "--env-topbar-height"
+        "use": "--env-app-shell-header-height",
+        "type": "dimension",
+        "note": "The app frame's header height."
       },
       {
         "cssVariable": "--tree-row-padding-block-lg",

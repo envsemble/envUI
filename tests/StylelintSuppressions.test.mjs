@@ -22,9 +22,14 @@ async function lintedGlobs() {
   return globs;
 }
 
-/** Violations per file and rule, as stylelint-suppressions.json records them. */
-async function violations() {
-  const counts = {};
+/** Every warning of the linted style sheets without the suppressions, with its file. */
+let linted;
+async function warnings() {
+  linted ??= lintAll();
+  return linted;
+}
+async function lintAll() {
+  const found = [];
   const files = new Set();
   for (const pattern of await lintedGlobs())
     for await (const file of glob(pattern, { cwd: repository }))
@@ -36,11 +41,19 @@ async function violations() {
       codeFilename: join(repository, file),
       configFile: join(repository, 'stylelint.config.mjs'),
     });
-    for (const { rule } of results.flatMap((result) => result.warnings)) {
-      counts[file] ??= {};
-      counts[file][rule] ??= { count: 0 };
-      counts[file][rule].count++;
-    }
+    for (const warning of results.flatMap((result) => result.warnings))
+      found.push({ file, ...warning });
+  }
+  return found;
+}
+
+/** Violations per file and rule, as stylelint-suppressions.json records them. */
+async function violations() {
+  const counts = {};
+  for (const { file, rule } of await warnings()) {
+    counts[file] ??= {};
+    counts[file][rule] ??= { count: 0 };
+    counts[file][rule].count++;
   }
   return counts;
 }
@@ -80,6 +93,22 @@ test('stylelint-suppressions.json records exactly the CSS violations there are',
       ...drops,
     );
   assert.deepEqual(report, [], report.join('\n'));
+});
+
+// The stacking order comes from the --env-z-* tokens everywhere, so no suppression may hide a
+// literal z-index: a new one fails here even where the file's count of the rule would allow it.
+test('no style sheet sets a literal z-index', async () => {
+  const literal = (await warnings())
+    .filter(
+      ({ rule, text }) =>
+        rule === 'declaration-property-value-allowed-list' && /"z-index"/.test(text),
+    )
+    .map(({ file, line, text }) => `  ${file}:${line} ${text}`);
+  assert.deepEqual(
+    literal,
+    [],
+    ['Take z-index from a stacking token, such as var(--env-z-popover):', ...literal].join('\n'),
+  );
 });
 
 test('the comparison reports rising and falling counts', () => {

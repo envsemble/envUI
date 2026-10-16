@@ -103,7 +103,7 @@
   background: var(--env-color-bg-field);
   color: var(--env-color-fg-default);
   box-shadow: var(--env-elevation-2-shadow);
-  z-index: 100;
+  z-index: var(--env-z-popover);
 }
 .env-rich-text-suggestions .env-button {
   justify-content: start;

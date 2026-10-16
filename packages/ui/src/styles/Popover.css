@@ -3,7 +3,7 @@
   display: contents;
 }
 .env-popover-positioner {
-  z-index: 110;
+  z-index: var(--env-z-popover);
   outline: none;
 }
 .env-popover {
