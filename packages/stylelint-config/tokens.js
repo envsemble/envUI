@@ -41,7 +41,7 @@ export function colorTokenSuggestion(property) {
   return `one of the ${list.length > 1 ? `${list.slice(0, -1).join(', ')} or ${list.at(-1)}` : list[0]} roles`;
 }
 
-/** envUI's stacking tokens, the custom properties of z-index layers such as `--z-modal`. */
+/** envUI's stacking tokens, the custom properties of z-index layers such as `--env-z-modal`. */
 export const stackingTokens = Object.values(tokens)
   .flat()
   .filter((name) => /^--(?:env-)?z(?:-index)?-/.test(name))

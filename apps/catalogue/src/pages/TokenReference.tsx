@@ -30,7 +30,7 @@ const tokenGroups: { title: string; prefixes: string[]; component?: boolean }[] 
 
 function groupOf(token: Token) {
   const prefix = token.id.split('.')[0];
-  const component = prefix === 'color' && !/^color.(?:bg|fg|border)./.test(token.id);
+  const component = prefix === 'color' && !/^color\.(?:bg|fg|border)\./.test(token.id);
   return (
     tokenGroups.find(
       (group) => group.prefixes.includes(prefix) && Boolean(group.component) === component,
