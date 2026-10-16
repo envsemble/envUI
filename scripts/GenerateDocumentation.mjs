@@ -21,6 +21,7 @@ import { basename, dirname, isAbsolute, posix, relative, resolve } from 'node:pa
 import { fileURLToPath } from 'node:url';
 import { marked } from 'marked';
 import { parse as parseYaml } from 'yaml';
+import { writeSearchIndex } from './SearchIndex.mjs';
 
 export const documentationDirectory = fileURLToPath(new URL('../docs/', import.meta.url));
 export const examplesDirectory = fileURLToPath(
@@ -821,6 +822,8 @@ export function generateDocumentation() {
   mkdirSync(dirname(generatedFile), { recursive: true });
   if (!existsSync(generatedFile) || readFileSync(generatedFile, 'utf8') !== source)
     writeFileSync(generatedFile, source);
+  // The catalogue's search index, of the same pages, props and the token list.
+  writeSearchIndex({ documents, props });
   return documents;
 }
 
