@@ -1,3 +1,10 @@
+import {
+  contrastSourceAttribute,
+  ownContrastSource,
+  ownScaleSource,
+  scaleSourceAttribute,
+} from '../../../../packages/ui/src/foundations/ThemeBootstrap.js';
+
 /**
  * Where the catalogue stores the reader's display settings in localStorage. vite.config.ts writes
  * the script that applies them before the catalogue loads.
@@ -19,5 +26,10 @@ export const displayStorageKeys = {
 export function createDisplayBootstrapScript() {
   const contrastKey = JSON.stringify(displayStorageKeys.contrast);
   const scaleKey = JSON.stringify(displayStorageKeys.scale);
-  return `(function(){var r=document.documentElement;try{var c=localStorage.getItem(${contrastKey}),q=new URLSearchParams(location.search).get("scale"),s=q==="compact"||q==="comfortable"?q:localStorage.getItem(${scaleKey});if(c==="high"||c==="standard"){r.setAttribute("data-env-contrast",c);r.setAttribute("data-env-contrast-source","envui:"+c)}if(s==="compact"){r.setAttribute("data-env-scale","compact");r.setAttribute("data-env-scale-source","envui:compact")}}catch(e){}})();`;
+  const contrastSource = JSON.stringify(contrastSourceAttribute);
+  const scaleSource = JSON.stringify(scaleSourceAttribute);
+  // The markers' values, envui:high, as ownContrastSource and ownScaleSource write them.
+  const contrastMark = JSON.stringify(ownContrastSource(''));
+  const compactMark = JSON.stringify(ownScaleSource('compact'));
+  return `(function(){var r=document.documentElement;try{var c=localStorage.getItem(${contrastKey}),q=new URLSearchParams(location.search).get("scale"),s=q==="compact"||q==="comfortable"?q:localStorage.getItem(${scaleKey});if(c==="high"||c==="standard"){r.setAttribute("data-env-contrast",c);r.setAttribute(${contrastSource},${contrastMark}+c)}if(s==="compact"){r.setAttribute("data-env-scale","compact");r.setAttribute(${scaleSource},${compactMark})}}catch(e){}})();`;
 }

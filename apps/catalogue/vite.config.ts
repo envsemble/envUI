@@ -52,15 +52,23 @@ export default defineConfig(({ command, mode }) => {
         // The stored theme, contrast and scale apply before the catalogue loads, so a dark theme
         // does not flash light and a compact page does not start at the comfortable size.
         name: 'envui-theme-bootstrap',
-        transformIndexHtml: () => [
-          {
-            tag: 'script',
-            children:
-              createThemeBootstrapScript({ storageKey: displayStorageKeys.theme }) +
-              createDisplayBootstrapScript(),
-            injectTo: 'head-prepend',
+        // The script goes right after <meta charset>, which has to stay within the first 1024
+        // bytes, and before the styles, so it runs before the first paint.
+        transformIndexHtml: {
+          order: 'pre',
+          handler: (html) => {
+            const meta = /<meta charset="UTF-8" \/>/;
+            if (!meta.test(html)) throw new Error('index.html needs <meta charset="UTF-8" />.');
+            return html.replace(
+              meta,
+              (tag) =>
+                `${tag}\n    <script>${
+                  createThemeBootstrapScript({ storageKey: displayStorageKeys.theme }) +
+                  createDisplayBootstrapScript()
+                }</script>`,
+            );
           },
-        ],
+        },
       },
       // Rebuilds Tokens.css from packages/ui/tokens on every token edit; Vite hot-reloads it.
       tokensVitePlugin(),
