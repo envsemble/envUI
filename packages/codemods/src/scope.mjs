@@ -3,7 +3,7 @@
 // ast-types gives scopes to programs, functions and catch clauses only, and hoists every `let`,
 // `const` and `class` to the function around it, so a `const Input` inside a block, a `for` head or
 // a `case` read as a declaration of the whole function, or of the file. This module follows the
-// language instead: blocks, `for` heads, `switch` cases, class names, type parameters and
+// language instead: blocks, `for` heads, `switch` cases, class names, type parameters, enums and
 // TypeScript namespaces each have their own scope, and a name is looked up in one of the three
 // spaces TypeScript keeps apart:
 // - `value`: what an expression or JSX element refers to;
@@ -200,12 +200,19 @@ export function createScopes() {
     if (cache.has(node)) return cache.get(node);
     const names = spaces();
     let imports;
+    let body;
     switch (node.type) {
       case 'Program':
         imports = new Set();
         for (const statement of node.body)
           if (statement.type === 'ImportDeclaration')
             for (const specifier of statement.specifiers ?? []) imports.add(specifier.local.name);
+          else if (
+            statement.type === 'TSImportEqualsDeclaration' &&
+            statement.moduleReference?.type === 'TSExternalModuleReference'
+          )
+            // `import ui = require('…')` imports a module as `import * as ui` does.
+            imports.add(statement.id.name);
         addLexical(node.body, names);
         addHoisted(node.body, names);
         break;
@@ -242,19 +249,28 @@ export function createScopes() {
       case 'TSMappedType':
         names.type.add(typeParameterName(node.typeParameter ?? node.key));
         break;
+      case 'TSEnumDeclaration':
+        // Inside its body, an enum's members are in scope by their names.
+        for (const member of node.members ?? node.body?.members ?? [])
+          if (member.id?.type === 'Identifier') names.value.add(member.id.name);
+        break;
       default:
         if (functionTypes.has(node.type)) {
           for (const parameter of node.params ?? []) addPatternNames(parameter, names.value);
           if (node.type === 'FunctionExpression' && node.id) names.value.add(node.id.name);
           addTypeParameters(node, names);
-          if (node.body?.type === 'BlockStatement') addHoisted(node.body.body, names);
+          // The body's `var`s are in scope for the body only, not for parameter defaults.
+          if (node.body?.type === 'BlockStatement') {
+            body = spaces();
+            addHoisted(node.body.body, body);
+          }
         } else if (signatureTypes.has(node.type)) {
           for (const parameter of node.parameters ?? node.params ?? [])
             addPatternNames(parameter, names.value);
           addTypeParameters(node, names);
         }
     }
-    const result = { names, imports };
+    const result = { names, imports, body };
     cache.set(node, result);
     return result;
   }
@@ -284,9 +300,10 @@ export function createScopes() {
         if (inferred[space].has(name)) return { node, imported: false };
         continue;
       }
-      const { names, imports } = declared(node);
+      const { names, imports, body } = declared(node);
       if (imports?.has(name)) return { node, imported: true };
       if (names[space].has(name)) return { node, imported: false };
+      if (body?.[space].has(name) && fieldOf(child) === 'body') return { node, imported: false };
     }
     return undefined;
   }

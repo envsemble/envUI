@@ -66,6 +66,11 @@ const reports = {
     expectError(10, 'not exported by the installed 1.0'),
     expectError(13, 'not exported by the installed 1.0'),
   ],
+  'literal-keys.tsx': [
+    `line 5: ui.LoadingBar is no longer exported by ${library}: ${use('LoadingBar')}`,
+    'line 6: ui[…] reads an export by a name computed at run time, which is not changed: if it can name an export that 1.0 renames, rename it by hand.',
+    'line 7: destructures Notice from ui, which is Alert in 1.0: rename it by hand.',
+  ],
   'theme-bootstrap-directive.ts': [
     'line 3: dropped // eslint-disable-next-line envui/no-renamed-exports -- until the 1.0 upgrade, which applied to the import that was removed.',
   ],

@@ -15,14 +15,27 @@ import { createReporter, keepByteOrderMark, parserFor, printOptions } from '../s
 export const parser = 'tsx';
 
 /** Reference kinds that sit in type positions. */
-const typeKinds = new Set(['type', 'typeof', 'qualified']);
+const typeKinds = new Set(['type', 'typeof', 'qualified', 'typeof-qualified']);
 /** Reference kinds that access a member of the binding, as a namespace is used. */
-const memberKinds = new Set(['object', 'jsx-object', 'qualified']);
+const memberKinds = new Set(['object', 'jsx-object', 'qualified', 'typeof-qualified']);
+/** Reference kinds written as the left side of a qualified name, `Menu.ItemProps`. */
+const qualifiedKinds = new Set(['qualified', 'typeof-qualified']);
+
+/**
+ * Whether the qualified name a path is the left side of is the name of a `typeof` query, as in
+ * `typeof ui.Input` or `typeof Menu.Item.displayName`, whose first name is a value.
+ */
+function inTypeQuery(path) {
+  let current = path.parent;
+  while (current.parent?.node.type === 'TSQualifiedName' && current.name === 'left')
+    current = current.parent;
+  return current.parent?.node.type === 'TSTypeQuery' && current.name === 'exprName';
+}
 
 /**
  * How an Identifier or JSXIdentifier is used: `decl` for a declaration, a reference kind (`jsx`,
- * `jsx-object`, `object`, `qualified`, `type`, `typeof`, `shorthand`, `export` or `value`), or
- * null for a name that refers to no binding, such as a property key.
+ * `jsx-object`, `object`, `qualified`, `typeof-qualified`, `type`, `typeof`, `shorthand`, `export`
+ * or `value`), or null for a name that refers to no binding, such as a property key.
  */
 function classify(path) {
   const { node } = path;
@@ -62,7 +75,8 @@ function classify(path) {
       if (field === 'property') return parent.computed ? 'value' : null;
       return field === 'object' ? 'object' : 'value';
     case 'TSQualifiedName':
-      return field === 'left' ? 'qualified' : null;
+      if (field !== 'left') return null;
+      return inTypeQuery(path) ? 'typeof-qualified' : 'qualified';
     case 'TSTypeReference':
       return field === 'typeName' ? 'type' : null;
     case 'TSExpressionWithTypeArguments':
@@ -87,7 +101,10 @@ function classify(path) {
   return 'value';
 }
 
-/** The space a reference kind looks its name up in; see scope.mjs. */
+/**
+ * The space a reference kind looks its name up in; see scope.mjs. `typeof ui.Input` looks `ui` up
+ * as a value, as `ui.Input` in an expression does.
+ */
 const spaceOf = (kind) => (kind === 'type' ? 'type' : kind === 'qualified' ? 'namespace' : 'value');
 /**
  * The space a namespace written at a reference of a kind is looked up in: `Menu.ItemProps` in a
@@ -184,13 +201,29 @@ export default function transform(file, api, options = {}) {
     .find(j.ImportDeclaration)
     .filter((path) => entries.has(path.node.source.value))
     .paths();
+  // `import ui = require('@envsemble/envui')`, which TypeScript reads as `import * as ui`.
+  const importEquals = root
+    .find(j.TSImportEqualsDeclaration)
+    .filter(
+      ({ node }) =>
+        node.moduleReference?.type === 'TSExternalModuleReference' &&
+        entries.has(node.moduleReference.expression?.value),
+    )
+    .paths();
   const reExports = root
     .find(j.ExportNamedDeclaration)
     .filter((path) => Boolean(path.node.source) && entries.has(path.node.source.value))
     .paths();
-  if (importDeclarations.length === 0 && reExports.length === 0) return undefined;
+  if (importDeclarations.length === 0 && reExports.length === 0 && importEquals.length === 0)
+    return undefined;
+  /** The specifiers as written, before any is replaced. */
+  const originalSpecifiers = new Set(
+    [...importDeclarations, ...reExports].flatMap(({ node }) => node.specifiers ?? []),
+  );
   // New string literals follow the quotes of the file's envUI imports.
-  const quoteSource = (importDeclarations[0] ?? reExports[0]).node.source;
+  const quoteSource =
+    (importDeclarations[0] ?? reExports[0])?.node.source ??
+    importEquals[0].node.moduleReference.expression;
   const quote = quoteSource.extra?.raw?.startsWith('"') ? 'double' : 'single';
 
   // Every binding and reference by name, and the names already in use anywhere in the file.
@@ -209,6 +242,12 @@ export default function transform(file, api, options = {}) {
     if (kind === 'decl') return;
     if (!references.has(path.node.name)) references.set(path.node.name, []);
     references.get(path.node.name).push({ path, kind });
+  });
+  // Type parameters, also of mapped types and `infer`, name themselves with a string, not an
+  // Identifier, in Babel's AST.
+  root.find(j.TSTypeParameter).forEach(({ node }) => {
+    const name = typeof node.name === 'string' ? node.name : node.name?.name;
+    if (name) taken.add(name);
   });
   const referencesTo = (name) =>
     (references.get(name) ?? []).filter(({ path, kind }) => bindsToModule(path, name, kind));
@@ -296,6 +335,11 @@ export default function transform(file, api, options = {}) {
       });
     }
   }
+  for (const { node } of importEquals)
+    namespaceImports.push({
+      local: node.id.name,
+      entry: entries.get(node.moduleReference.expression.value),
+    });
   const namespaceFor = (entry, name) => {
     const key = `${entry.name}\0${name}`;
     if (!namespaces.has(key))
@@ -449,8 +493,12 @@ export default function transform(file, api, options = {}) {
           alias = freeName(rename.to);
           edits.push(() => replaceImport(info, rename.to, alias));
         } else remove(info, () => sibling.declaration);
-      } else if (!isFree(rename.to)) {
-        // The new name is taken in this file: keep the old local name as an alias.
+      } else if (
+        !isFree(rename.to) ||
+        references.some(({ path, kind }) => scopes.lookup(path, rename.to, spaceOf(kind)))
+      ) {
+        // The new name is taken in this file, or something declares it where a reference would
+        // read it: keep the old local name as an alias.
         edits.push(() => replaceImport(info, rename.to, local));
         continue;
       } else {
@@ -620,7 +668,13 @@ export default function transform(file, api, options = {}) {
         const patternPath = field && parent.get(field);
         if (patternPath?.node.type === 'ObjectPattern') {
           patternPath.node.properties.forEach((property, index) => {
-            const key = property.computed ? undefined : property.key?.name;
+            // `{ Input }`, `{ 'Input': field }` and `{ ['Input']: field }`.
+            const key =
+              property.type === 'RestElement'
+                ? undefined
+                : property.computed
+                  ? literalValue(property.key)
+                  : (property.key?.name ?? literalValue(property.key));
             const rename = entry.renames.get(key);
             const split = entry.splits.get(key);
             const removed = entry.removed.get(key);
@@ -648,11 +702,23 @@ export default function transform(file, api, options = {}) {
       const accessPath = path.parent;
       const access = accessPath.node;
       if (handled.has(access)) continue;
-      const property =
-        kind === 'qualified' ? access.right : access.computed ? undefined : access.property;
-      if (!property || (property.type !== 'Identifier' && property.type !== 'JSXIdentifier'))
+      // `ui.Input`, and `ui['Input']` or ``ui[`Input`]``, whose literal key is kept a literal.
+      const literalKey =
+        !qualifiedKinds.has(kind) && access.computed ? literalValue(access.property) : undefined;
+      const property = qualifiedKinds.has(kind) ? access.right : access.property;
+      const name =
+        literalKey ??
+        (!access.computed && (property?.type === 'Identifier' || property?.type === 'JSXIdentifier')
+          ? property.name
+          : undefined);
+      if (name === undefined) {
+        if (access.computed && access.object === path.node)
+          warn(
+            access,
+            `${local}[…] reads an export by a name computed at run time, which is not changed: if it can name an export that 1.0 renames, rename it by hand.`,
+          );
         continue;
-      const name = property.name;
+      }
       const flavor = flavorOf(kind);
       const outer = accessPath.parent?.node;
       const rename = entry.renames.get(name);
@@ -660,8 +726,12 @@ export default function transform(file, api, options = {}) {
         changed = true;
         edits.push(() => {
           const replacement =
-            flavor === 'jsx' ? j.jsxIdentifier(rename.to) : j.identifier(rename.to);
-          if (kind === 'qualified') access.right = replacement;
+            literalKey !== undefined
+              ? j.stringLiteral(rename.to)
+              : flavor === 'jsx'
+                ? j.jsxIdentifier(rename.to)
+                : j.identifier(rename.to);
+          if (qualifiedKinds.has(kind)) access.right = replacement;
           else access.property = replacement;
         });
         continue;
