@@ -9,7 +9,8 @@
  */
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { controlSizes, densityScales } from '../fixture/DensitySections';
-import { fixtureUrl } from './Servers';
+import { documentationPages } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
+import { catalogueUrl, fixtureUrl } from './Servers';
 
 /** The control heights of each scale, in CSS pixels at the default 16 px root. */
 const heights = {
@@ -349,6 +350,54 @@ test.describe('on a coarse pointer', () => {
           );
       });
       expect(scrolling, section).toEqual([]);
+    }
+  });
+
+  test("on the catalogue's pages, what scrolls sideways never scrolls for its controls' height", async ({
+    page,
+    browserName,
+  }) => {
+    test.skip(browserName !== 'chromium', 'Only one engine emulates touch with a coarse pointer.');
+    // Each of these scrolls sideways when its content is wider than its room, so its other axis
+    // scrolls too: a control or a hit area taller than it would make it scroll up and down.
+    const scrollers = [
+      '.env-table-region:not([data-sticky-header])',
+      '.env-button-group',
+      '.env-tabs-list',
+      '.env-segmented-control',
+      '.env-document-tabs',
+      '.env-markdown-toolbar',
+      '.env-panel-dock-row',
+      '.env-panel-dock-strip',
+      '.env-calendar-heatmap-scroll',
+    ].join(', ');
+    const pages = documentationPages.filter(({ path }) =>
+      [
+        'button',
+        'calendar-heatmap',
+        'document-tabs',
+        'markdown',
+        'panel-dock',
+        'segmented-control',
+        'table',
+        'tabs',
+      ].some((name) => path.endsWith(`/${name}`)),
+    );
+    expect(pages).toHaveLength(8);
+    for (const { path, views } of pages) {
+      await page.goto(`${catalogueUrl}/#/${path}/${views[0]!.id}`);
+      await page.locator('#docs-main').waitFor();
+      await expect(page.getByText(/^Loading .*…$/)).toHaveCount(0);
+      const found = page.locator(`#docs-main :is(${scrollers})`);
+      await expect(found.first()).toBeVisible();
+      const scrolling = await found.evaluateAll((elements) =>
+        elements
+          .filter((element) => element.scrollHeight > element.clientHeight)
+          .map(
+            (element) => `${element.className}: ${element.scrollHeight} in ${element.clientHeight}`,
+          ),
+      );
+      expect(scrolling, path).toEqual([]);
     }
   });
 
