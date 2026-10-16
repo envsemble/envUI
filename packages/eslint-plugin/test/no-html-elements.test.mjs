@@ -55,9 +55,14 @@ ruleTester.run('no-html-elements', rule, {
     '<Dialog role="alertdialog" title="Delete?" />',
     '<Tabs role="tablist" items={items} />',
     // An envUI component that renders the role itself; a role on it refines its own.
-    'import { Popover, Menu } from \'@envsemble/envui\'; <><Popover role="dialog" /><Menu.CheckboxItem role="checkbox" /></>;',
+    'import { Popover, Menu } from \'@envsemble/envui\'; <><Popover role="dialog" /><Menu.Submenu role="menu" /></>;',
     'import * as ui from \'@envsemble/envui\'; <><ui.Popover role="dialog" /><ui.Menu.Submenu role="menu" /></>;',
     'import { Popover as Card } from \'@envsemble/envui\'; <Card role="dialog" />;',
+    'import { Spinner } from \'@envsemble/envui\'; <Spinner role="progressbar" label="Saving" />;',
+    'import { MarkdownEditor } from \'@envsemble/envui/content\'; <MarkdownEditor role="textbox" />;',
+    'import { RichTextEditor } from \'@envsemble/envui/rich-text\'; <RichTextEditor role="textbox" />;',
+    // Without an import, the full name decides.
+    '<Menu.Submenu role="menu" />',
     // Roles envUI has no component for, and roles that only make sense inside a container.
     '<div role="region" aria-label="Summary" />',
     '<li role="menuitem">Rename</li>',
@@ -259,6 +264,62 @@ ruleTester.run('no-html-elements', rule, {
     {
       code: 'import { Popover } from \'@envsemble/envui\'; <Popover role="menu" />;',
       errors: [uses('Menu.Root', '<Popover role="menu">')],
+    },
+    // A part of the namespace that the role names is not the component that renders it.
+    {
+      code: 'import { Menu } from \'@envsemble/envui\'; <><Menu.Separator role="menu" /><Menu.Item role="menu" /></>;',
+      errors: [
+        uses('Menu.Root', '<Menu.Separator role="menu">'),
+        uses('Menu.Root', '<Menu.Item role="menu">'),
+      ],
+    },
+    {
+      code: '<><Menu.Separator role="menu" /><Menu.Item role="menu" /></>',
+      errors: [
+        uses('Menu.Root', '<Menu.Separator role="menu">'),
+        uses('Menu.Root', '<Menu.Item role="menu">'),
+      ],
+    },
+    // Another library's component is not envUI's, whatever its name.
+    {
+      code: 'import { Dialog, Button } from \'other-lib\'; <><Dialog role="dialog" /><Button role="button" /></>;',
+      errors: [
+        uses('Dialog', '<Dialog role="dialog">'),
+        uses('Button', '<Button role="button">', {
+          alternatives: icon,
+          imports: 'Button, IconButton',
+        }),
+      ],
+    },
+    // The local name of an import does not make it the component of that name.
+    {
+      code: 'import { Surface as Dialog } from \'@envsemble/envui\'; <Dialog role="dialog" />;',
+      errors: [uses('Dialog', '<Dialog role="dialog">')],
+    },
+    // envUI's icons are not its components.
+    {
+      code: 'import { Button } from \'@envsemble/envui/icons\'; <Button role="button" />;',
+      errors: [
+        uses('Button', '<Button role="button">', {
+          alternatives: icon,
+          imports: 'Button, IconButton',
+        }),
+      ],
+    },
+    // Menu items render menuitemcheckbox and menuitemradio, and a menu's radio group a group.
+    {
+      code: 'import { Menu } from \'@envsemble/envui\'; <><Menu.CheckboxItem role="checkbox" /><Menu.RadioItem role="radio" /><Menu.RadioGroup role="radiogroup" /></>;',
+      errors: [
+        uses('Checkbox', '<Menu.CheckboxItem role="checkbox">'),
+        uses('Radio', '<Menu.RadioItem role="radio">', {
+          imports: 'Radio, RadioGroup',
+          note: 'Put the radios in a RadioGroup.',
+        }),
+        uses('RadioGroup', '<Menu.RadioGroup role="radiogroup">', {
+          imports: 'Radio, RadioGroup',
+          note: 'Give it a Radio for each option.',
+        }),
+      ],
     },
     { code: '<div role="tablist" />', errors: [uses('Tabs', '<div role="tablist">')] },
     { code: '<div role="tree" />', errors: [uses('Tree', '<div role="tree">')] },

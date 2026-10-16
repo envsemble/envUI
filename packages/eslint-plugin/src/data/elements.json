@@ -1,5 +1,5 @@
 {
-  "$comment": "What envui/no-html-elements reports, and the envUI component it names instead. A widget role is checked first, on any JSX element, and an element that already is one of the suggested components passes, as does an envUI component listed in owners: one that renders that role itself, so that a role on it refines its own, as Popover renders a dialog and Menu.CheckboxItem a checkbox menu item. A role on any other envUI component hand-rolls the widget and is reported. Then the elements, in order: the first entry whose element and attributes match decides, and an entry whose use is null lets the element pass. An attribute condition is true (present), false (absent), or a list of static values compared case-insensitively, where null stands for an absent attribute and a trailing * matches a prefix. A condition on absence is not met while the element spreads props, which may supply the attribute. use lists the component to render and its alternatives; import overrides the bindings to import, which default to the namespaces of the use components. id names an entry in the rule's allow option.",
+  "$comment": "What envui/no-html-elements reports, and the envUI component it names instead. A widget role is checked first, on any JSX element, and an element that already is one of the suggested components passes, as does an envUI component listed in owners: one that renders that role itself, so that a role on it refines its own, as Popover renders a dialog and Menu.Submenu a menu. An imported element counts by the name its envUI entry point exports it under, and an element that nothing imports by its written name. A role on any other component hand-rolls the widget and is reported. Then the elements, in order: the first entry whose element and attributes match decides, and an entry whose use is null lets the element pass. An attribute condition is true (present), false (absent), or a list of static values compared case-insensitively, where null stands for an absent attribute and a trailing * matches a prefix. A condition on absence is not met while the element spreads props, which may supply the attribute. use lists the component to render and its alternatives; import overrides the bindings to import, which default to the namespaces of the use components. id names an entry in the rule's allow option.",
   "roles": [
     {
       "id": "[role=button]",
@@ -19,7 +19,7 @@
     {
       "id": "[role=checkbox]",
       "role": "checkbox",
-      "owners": ["Checkbox", "Menu.CheckboxItem"],
+      "owners": ["Checkbox"],
       "use": [{ "component": "Checkbox" }]
     },
     {
@@ -31,7 +31,7 @@
     {
       "id": "[role=radio]",
       "role": "radio",
-      "owners": ["Radio", "Menu.RadioItem"],
+      "owners": ["Radio"],
       "use": [{ "component": "Radio" }],
       "import": ["Radio", "RadioGroup"],
       "note": "Put the radios in a RadioGroup."
@@ -39,7 +39,7 @@
     {
       "id": "[role=radiogroup]",
       "role": "radiogroup",
-      "owners": ["RadioGroup", "Menu.RadioGroup"],
+      "owners": ["RadioGroup"],
       "use": [{ "component": "RadioGroup" }],
       "import": ["Radio", "RadioGroup"],
       "note": "Give it a Radio for each option."
@@ -53,7 +53,7 @@
     {
       "id": "[role=textbox]",
       "role": "textbox",
-      "owners": ["TextField", "Textarea", "Composer"],
+      "owners": ["TextField", "Textarea", "Composer", "MarkdownEditor", "RichTextEditor"],
       "use": [
         { "component": "TextField" },
         { "component": "Textarea", "when": "for text on several lines" }
@@ -123,7 +123,7 @@
     {
       "id": "[role=progressbar]",
       "role": "progressbar",
-      "owners": ["Progress"],
+      "owners": ["Progress", "Spinner"],
       "use": [{ "component": "Progress" }]
     },
     {

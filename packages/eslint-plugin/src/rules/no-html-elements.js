@@ -26,6 +26,17 @@ function ownersOf(entry) {
   return new Set([...(entry.owners ?? []), ...entry.use.map(({ component }) => component)]);
 }
 
+/**
+ * The envUI entry points that export components. The others export icons, assets and a script, whose
+ * names, such as the `Button` icon, are not components.
+ */
+const componentEntryPoints = new Set([
+  '@envsemble/envui',
+  '@envsemble/envui/content',
+  '@envsemble/envui/diff',
+  '@envsemble/envui/rich-text',
+]);
+
 /** The bindings an entry imports: its own list, or the namespaces of the components it uses. */
 function bindings(entry) {
   return entry.import ?? [...new Set(entry.use.map(({ component }) => component.split('.')[0]))];
@@ -274,27 +285,44 @@ export default {
     const isAdapter = (fn) => adapters.has(fn) || hasLinkComponentProps(fn, sourceCode.visitorKeys);
 
     /**
-     * The envUI component a JSX element name stands for, by its exported name: `Popover` for
-     * `<Popover>` or `<P>` imported as `Popover as P`, `Menu.CheckboxItem` for
-     * `<Menu.CheckboxItem>` or `<ui.Menu.CheckboxItem>`. Undefined when the name does not resolve to
-     * an import from an envUI entry point.
+     * What a JSX element name stands for when its first name is imported: the entry point, and the
+     * name that entry point exports, `Popover` for `<Popover>` or `<P>` imported as
+     * `Popover as P`, `Menu.Submenu` for `<Menu.Submenu>` or `<ui.Menu.Submenu>`. `name` is
+     * undefined for an import that names no export, such as a default import. `{}` for a local,
+     * and undefined for a name that nothing in the file declares.
      */
-    function envuiComponent(name) {
+    function importedComponent(name) {
       const members = [];
       let root = name;
       for (; root.type === 'JSXMemberExpression'; root = root.object)
         members.unshift(root.property.name);
       if (root.type !== 'JSXIdentifier') return undefined;
       const variable = resolveVariable(sourceCode, root, root.name);
-      const definition = (variable?.defs ?? []).find((candidate) => {
-        if (candidate.type !== 'ImportBinding') return false;
-        const source = candidate.parent.source.value;
-        return source === '@envsemble/envui' || source.startsWith('@envsemble/envui/');
-      });
-      if (definition?.node.type === 'ImportNamespaceSpecifier') return members.join('.');
-      if (definition?.node.type === 'ImportSpecifier')
-        return [moduleExportName(definition.node.imported), ...members].join('.');
-      return undefined;
+      if (!variable?.defs.length) return undefined;
+      const definition = variable.defs.find((candidate) => candidate.type === 'ImportBinding');
+      if (!definition) return {};
+      const source = definition.parent.source?.value;
+      if (definition.node.type === 'ImportNamespaceSpecifier')
+        return { source, name: members.join('.') };
+      if (definition.node.type === 'ImportSpecifier')
+        return {
+          source,
+          name: [moduleExportName(definition.node.imported), ...members].join('.'),
+        };
+      return { source, name: undefined };
+    }
+
+    /**
+     * Whether a component element renders a role itself, so that a role on it refines its own: an
+     * envUI component of the role's owners, by the name its entry point exports when it is
+     * imported, or by its written name when nothing in the file declares it, as in
+     * `<Menu.Root role="menu">` without its import.
+     */
+    function ownsRole(node, entry) {
+      const owners = ownersOf(entry);
+      const imported = importedComponent(node.name);
+      if (!imported) return owners.has(jsxName(node.name));
+      return componentEntryPoints.has(imported.source) && owners.has(imported.name);
     }
 
     return {
@@ -317,16 +345,11 @@ export default {
             ? rolesByName.get(role.trim().split(/\s+/)[0].toLowerCase())
             : null;
         // An envUI component that renders the role itself, such as <Popover role="dialog">, refines
-        // its own; on any other, such as <Surface role="dialog">, the role hand-rolls the widget.
-        if (
-          roleEntry &&
-          !isIntrinsic(node.name) &&
-          ownersOf(roleEntry).has(envuiComponent(node.name))
-        )
-          return;
+        // its own; on any other, such as <Surface role="dialog"> or another library's Dialog, the
+        // role hand-rolls the widget.
+        if (roleEntry && !isIntrinsic(node.name) && ownsRole(node, roleEntry)) return;
         if (roleEntry) {
-          // An element that is one of the suggested components, such as <Menu.Root role="menu">.
-          if (isAllowed(roleEntry) || bindings(roleEntry).includes(name.split('.')[0])) return;
+          if (isAllowed(roleEntry)) return;
           if (insideRenderProp(node)) return;
           report(node, roleEntry, `<${name} role="${role}">`);
           return;
