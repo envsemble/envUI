@@ -34,6 +34,8 @@ envUI 1.0 renames components, compound parts, classes and documentation pages, a
 ```sh
 npx @envsemble/envui-codemods@<version> v1-names src --dry   # the files that would change, and the reports
 npx @envsemble/envui-codemods@<version> v1-names src
+npx @envsemble/envui-codemods@<version> v1-structure src
+npx @envsemble/envui-codemods@<version> v1-render src
 npx @envsemble/envui-codemods@<version> v1-props src
 npx @envsemble/envui-codemods@<version> v1-classes src
 ```
@@ -49,8 +51,10 @@ export default defineConfig(envui.configs.recommended);
 ```
 
 - `v1-names` rewrites imports and references from `@envsemble/envui` and `@envsemble/envui/theme-bootstrap`: renamed components and types (`Input` is `TextField`), namespace parts (`MenuItem` is `Menu.Item`, `<Menu>` is `<Menu.Root>`), `DirectionLink` by its literal `direction` (`Pager.Previous` or `Pager.Next`), re-exports, `defaultThemeStorageKey`, which becomes `'env-theme'`, and `<Theme theme={useTheme()}>`, which becomes `<Theme {...useTheme()}>`. Other `useTheme()` calls, imported by name or through a namespace import, become `useTheme().theme`, the color scheme they returned in 0.x, unless the file already reads them as `{ theme, contrast }`.
-- `v1-props` moves the props that 1.0 removed or changed, as [scale and density](#scale-and-density) lists them.
-- `v1-classes` renames `env-*` classes and `--env-*` custom properties in style sheets, class names and selector strings, and the tokens' custom properties: `--color-text-muted` becomes `--env-color-fg-muted` and `--space-4` becomes `--env-space-4`, as [tokens](#tokens) lists them. It reports a token that 1.0 removes, and a 0.7 fixed color no token replaces, with what to use instead.
+- `v1-structure` rewrites elements whose 1.0 form is another element: ActionGroup becomes a Stack, as [the vocabulary](#variants-tones-and-render) lists.
+- `v1-render` turns a literal `as` into `render`, `as="h2"` into `render={<h2 />}`.
+- `v1-props` moves the props that 1.0 removed, renamed or changed, as [scale and density](#scale-and-density) and [the vocabulary](#variants-tones-and-render) list them.
+- `v1-classes` renames `env-*` classes and `--env-*` custom properties in style sheets, class names and selector strings, turns the modifier classes that became attributes into attribute selectors, and renames the tokens' custom properties: `--color-text-muted` becomes `--env-color-fg-muted` and `--space-4` becomes `--env-space-4`, as [tokens](#tokens) lists them. It reports a token that 1.0 removes, and a 0.7 fixed color no token replaces, with what to use instead.
 - `envui/no-renamed-exports` reports the 0.x names left in imports and re-exports, and also those it can follow statically through namespace imports, `require()`, `import()`, `import … = require()`, destructuring and `createElement()`, with each one's 1.0 name or what to use instead. A name read through a computed member such as `envui[name]` is not followed; the type check catches those. The recommended config also reports raw elements that envUI provides, envUI's private classes and raw colors; `@envsemble/stylelint-config-envui` does the same for style sheets.
 
 Change by hand what the codemods report, each with its file and line:
@@ -60,6 +64,8 @@ Change by hand what the codemods report, each with its file and line:
 - re-exports of namespace parts, and names destructured from a namespace import, `useTheme` among them;
 - a `useTheme()` call that is returned, as by a hook that wraps it, or passed as the `value` of what may be a context provider, directly or through a variable: whether its readers expect the scheme or the object is out of the file's sight;
 - each `require()` and `import()` of `@envsemble/envui`, which the codemods do not follow;
+- a `variant`, `tone`, `corners` or Text `variant` whose value is an expression, which keeps or takes its new name and may need its values mapped; an `as` that is an expression, or beside a `render`; an ActionGroup whose `stacked` is an expression, and a child of a stacked one that is not a Button, whose width the codemod can't set;
+- a modifier class in a `className`, such as `env-button-important`, which the component's props set in 1.0;
 - a local that shadows a namespace or a new name: the codemod writes a second import under an alias, such as `Menu as EnvMenu`, which you may rename;
 - comments the codemod drops: a `@ts-expect-error` above an import whose names change, which TypeScript would report once the 0.x name it expected an error from is gone; a disable comment of an import that is removed with nothing in its place; and comments on a removed import name that no namespace import takes the place of.
 
@@ -84,6 +90,28 @@ The codemods also leave class names built at run time, CSS-in-JS, selectors nest
 | `size` on NavList.Item                                             | Removed: items follow the scale                                         |
 
 The codemod reports each use it can't move, such as a value that is an expression. Fields now take the control height by default, menus and the popups of Select and Combobox have one anatomy at the scale's row height, and controls in table cells take the small height; check screens that relied on the 3.5 rem field. In style sheets, `--control-height-small` and `--icon-button-size` become `--env-control-height`, `--control-height-compact` becomes `--env-control-height-sm`, and `--scale` is gone.
+
+### Variants, tones and render
+
+Buttons take a `variant` for their emphasis and a `tone` for their meaning, and Text, Skeleton and Surface take the words the rest of envUI uses. `v1-props` moves each literal value, `v1-render` each literal `as` and `v1-structure` each ActionGroup:
+
+| 0.x                                                                                                          | 1.0                                                                 |
+| ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| `variant="important"` on Button, IconButton, ConfirmButton, CopyButton, DialogClose, ThemeToggle, Pagination | `variant="primary" tone="accent"`                                   |
+| `variant="destructive"`                                                                                      | `variant="primary" tone="danger"`                                   |
+| `variant="outlined"`, `variant="quiet"`                                                                      | `variant="outline"`, `variant="ghost"`                              |
+| Text `tone`: `primary`, `muted`, `quiet`                                                                     | `emphasis`: `default`, `muted`, `subtle`                            |
+| Text `variant`: `page-heading`, `section-heading`, `supporting`                                              | `headline`, `title`, `body-sm`                                      |
+| Skeleton `tone`: `base`, `highlight`                                                                         | `emphasis`: `muted`, `default`                                      |
+| Surface `tone`: `pane`, `row`, `canvas`, `alternate`                                                         | `background`: `default`, `muted`, `page`, `raised`                  |
+| Surface `corners`: `surface`, `standard`, `pill`, `none`                                                     | `radius`: `xl`, `sm`, `full`, `none`                                |
+| `as="h2"` on Text, Stack and Surface                                                                         | `render={<h2 />}`                                                   |
+| `<ActionGroup align="end">`                                                                                  | `<Stack direction="row" wrap align="center" gap={4} justify="end">` |
+| `<ActionGroup stacked>`                                                                                      | `<Stack gap={2}>` with `fullWidth` on each labelled Button          |
+| `TextTone`, `SurfaceTone`, `SurfaceCorners`                                                                  | `TextEmphasis`, `SurfaceBackground`, `SurfaceRadius`                |
+| `ActionGroup`, `ActionGroupProps`, `StackElement`, `TextElement`                                             | Removed: `Stack` and `render`                                       |
+
+In style sheets the modifier classes become attributes on the component's root class, which `v1-classes` writes with the specificity they had: `.env-button-important` is `.env-button:where([data-variant='primary'][data-tone='accent'])`, `.env-text-tone-muted` `.env-text:where([data-emphasis='muted'])`, `.env-surface-row` `.env-surface:where([data-background='muted'])` and `.env-skeleton-highlight` `.env-skeleton:where([data-emphasis='default'])`. The icon wrapper `env-symbol` is `env-icon`. A button without a `variant` takes its container's, such as ghost in a Toolbar.
 
 ### useTheme returns the theme, its contrast and its scale
 
