@@ -30,15 +30,21 @@ const colorProperty =
 const notColorProperty =
   /radius|width|style|clip|origin|position|size|repeat|attachment|blend|offset|collapse|spacing/i;
 
-/** A hex color, as a whole word. */
-const hexColor = /(?<![\w&-])#(?:[\da-f]{8}|[\da-f]{6}|[\da-f]{3,4})(?![\w-])/gi;
+/** A hex color, as a whole word. An expression after it makes it a hex color built from one. */
+const hexColor = /(?<![\w&-])#(?:[\da-f]{8}|[\da-f]{6}|[\da-f]{3,4})(?![\w\uE000-])/gi;
+
+/**
+ * A hex color built from a template's expressions: a `#` followed by expressions and hex digits,
+ * at least one of them an expression, as in `#${hex}` or `#fff${alpha}`.
+ */
+const builtHexColor = /(?<![\w&-])#(?=[\da-f]*\uE000)[\da-f\uE000]+(?![\w-])/gi;
 
 /** The start of a color function call. */
 const colorFunctionStart = /(?<![\w-])(rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(/gi;
 
 /**
  * What stands for each expression of a template literal, which is read as one value: a literal
- * channel, since the expression may compute any color.
+ * channel, since the expression may compute any color. The hex patterns above name it as \uE000.
  */
 const expressionStandIn = '';
 
@@ -123,6 +129,7 @@ function rawColors(text, property) {
   const value = text.replace(quotedOrUrl, ' ');
   const found = [
     ...[...value.matchAll(hexColor)].map((match) => match[0]),
+    ...[...value.matchAll(builtHexColor)].map((match) => match[0]),
     ...rawColorFunctions(value),
   ];
   if (
