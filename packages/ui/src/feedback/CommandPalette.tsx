@@ -132,7 +132,8 @@ export function CommandPalette({
   const locale = useLocale();
   const messages = useMessages('commandPalette', commandPalette);
   const input = useRef<HTMLInputElement>(null);
-  const highlighted = useRef<CommandPaletteItem | undefined>(undefined);
+  const highlighted = useRef<{ item?: CommandPaletteItem; index: number }>({ index: -1 });
+  const list = useRef<HTMLDivElement>(null);
   const sections = sectionsOf(items);
   const grouped = sections.some((section) => section.label !== undefined);
 
@@ -142,12 +143,35 @@ export function CommandPalette({
     if (closeOnAction) onOpenChange(false);
   }
 
-  // Base UI leaves Enter with a modifier to the application: it chooses the highlighted option.
+  /** Options that fit in the list's height, for Page Up and Page Down. */
+  function pageSize() {
+    const container = list.current;
+    const option = container?.querySelector<HTMLElement>('[role="option"]');
+    return container && option
+      ? Math.max(1, Math.floor(container.clientHeight / option.offsetHeight) - 1)
+      : 8;
+  }
+
   function onKeyDown(event: KeyboardEvent<HTMLInputElement>) {
-    if (event.key !== 'Enter' || event.nativeEvent.isComposing) return;
-    if (!(event.ctrlKey || event.metaKey) || !highlighted.current) return;
-    event.preventDefault();
-    act(highlighted.current, true);
+    if (event.nativeEvent.isComposing) return;
+    const { item, index } = highlighted.current;
+    // Base UI leaves Enter with a modifier to the application: it chooses the highlighted option.
+    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey) && item) {
+      event.preventDefault();
+      act(item, true);
+      return;
+    }
+    // Page Up and Page Down move the highlight a list's height, stopping at the ends, as that many
+    // presses of the arrow keys would, so Base UI keeps the highlight and its scrolling.
+    if ((event.key === 'PageDown' || event.key === 'PageUp') && items.length > 0) {
+      event.preventDefault();
+      const down = event.key === 'PageDown';
+      const steps = Math.min(pageSize(), down ? items.length - 1 - index : index);
+      for (let step = 0; step < steps; step += 1)
+        event.currentTarget.dispatchEvent(
+          new KeyboardEvent('keydown', { key: down ? 'ArrowDown' : 'ArrowUp', bubbles: true }),
+        );
+    }
   }
 
   const renderItem = (item: CommandPaletteItem) => (
@@ -197,8 +221,8 @@ export function CommandPalette({
                   if (details.reason === 'item-press') return;
                   onInputValueChange(next);
                 }}
-                onItemHighlighted={(item: CommandPaletteItem | undefined) => {
-                  highlighted.current = item;
+                onItemHighlighted={(item: CommandPaletteItem | undefined, details) => {
+                  highlighted.current = { item, index: item ? details.index : -1 };
                 }}
               >
                 <div className="env-command-palette-search">
@@ -217,6 +241,7 @@ export function CommandPalette({
                   />
                 </div>
                 <BaseAutocomplete.List
+                  ref={list}
                   className="env-command-palette-list"
                   aria-label={label}
                   hidden={items.length === 0}
