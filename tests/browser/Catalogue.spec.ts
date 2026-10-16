@@ -43,8 +43,9 @@ test('offline usage renders shared Markdown guidance and follows relative topic 
     page.getByText('Surface supplies fill, padding and corners.', { exact: false }),
   ).toBeVisible();
   await page.locator('.docs-article').getByRole('link', { name: 'Surface', exact: true }).click();
-  await expect(page).toHaveURL(/#\/components\/surface\/usage$/);
-  await expect(page.getByRole('heading', { name: 'Guidelines', exact: true })).toBeVisible();
+  // Surface is on the template, so a link to its page opens Overview.
+  await expect(page).toHaveURL(/#\/components\/surface\/overview$/);
+  await expect(page.getByRole('heading', { name: 'Overview', exact: true })).toBeVisible();
 
   await page.goto(`${offline}#/overview/get-started`);
   await page
