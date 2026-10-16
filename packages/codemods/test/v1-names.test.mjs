@@ -15,8 +15,8 @@ const removedFrom = (line, names) =>
 
 const ambiguous = (line, action) =>
   `line ${line}: ${action}, so it stays as it is: useTheme() is { theme, contrast } in 1.0; where it is read as the color scheme, read its .theme.`;
-const unfollowed = (line, how) =>
-  `line ${line}: loads ${library} with ${how}, which the codemod does not follow: change the 0.x names used through it by hand, and read .theme from a useTheme() call read as the color scheme.`;
+const unfollowed = (line, how, entry = library) =>
+  `line ${line}: loads ${entry} with ${how}, which the codemod does not follow: change the 0.x names used through it by hand${entry === library ? ', and read .theme from a useTheme() call read as the color scheme' : ''}.`;
 
 const expectError = (line, comment) =>
   `line ${line}: dropped // @ts-expect-error -- ${comment}, which expected an error from the 0.x names: TypeScript fails on a @ts-expect-error with no error below it.`;
@@ -98,6 +98,13 @@ const reports = {
     ambiguous(23, 'returns t, which holds useTheme()'),
   ],
   'use-theme-require.ts': [unfollowed(1, 'require()')],
+  // Only the main entry point has useTheme.
+  'use-theme-require-entry.ts': [unfollowed(1, 'require()', bootstrap)],
+  // A value given to a context is reported; given to a component such as Select, it is rewritten.
+  'use-theme-value.tsx': [
+    ambiguous(20, 'passes useTheme() as the value of <Scheme>'),
+    ambiguous(24, 'passes useTheme() as the value of <SchemeProvider>'),
+  ],
   'use-theme-unfollowed.tsx': [
     'line 4: destructures useTheme from ui, whose call is { theme, contrast } in 1.0 rather than the color scheme: read .theme by hand where a call is read as the color scheme.',
     unfollowed(9, 'require()'),

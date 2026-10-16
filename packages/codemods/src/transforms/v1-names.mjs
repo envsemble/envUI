@@ -229,7 +229,7 @@ export default function transform(file, api, options = {}) {
     if (how && entries.has(source))
       warn(
         node,
-        `loads ${source} with ${how}, which the codemod does not follow: change the 0.x names used through it by hand, and read .theme from a useTheme() call read as the color scheme.`,
+        `loads ${source} with ${how}, which the codemod does not follow: change the 0.x names used through it by hand${source === library ? ', and read .theme from a useTheme() call read as the color scheme' : ''}.`,
       );
   });
   if (importDeclarations.length === 0 && reExports.length === 0 && importEquals.length === 0) {
@@ -933,6 +933,7 @@ export default function transform(file, api, options = {}) {
       : name.type === 'JSXMemberExpression' &&
         name.property.name === 'Theme' &&
         isLibraryNamespace(name.object, path);
+  const contexts = contextNames(j, root);
   for (const call of useThemeCalls) {
     const container = call.parent;
     const attributePath = container?.parent;
@@ -959,7 +960,7 @@ export default function transform(file, api, options = {}) {
       changed = true;
       continue;
     }
-    if (readThemeOfCall(j, call, { references, scopes, warn })) changed = true;
+    if (readThemeOfCall(j, call, { references, scopes, warn, contexts })) changed = true;
   }
 
   if (!changed) {
@@ -1206,12 +1207,48 @@ const jsxName = (name) =>
       : name.name;
 
 /**
- * Where a value leaves for code the transform can't see, so it can't tell 0.x code from 1.0: a
- * value returned, also as an arrow function's body, or given to a component's `value` prop, as a
- * context provider takes it. Returns `{ provider }` for a `value` prop, `{}` for a return, and
- * undefined elsewhere.
+ * Whether a JSX element may be a context provider, whose `value` the transform can't follow:
+ * `Context.Provider`, an element named `…Context`, as React 19 renders a context, or `…Provider`,
+ * which may wrap one, or a binding `createContext` makes in the file. A component such as
+ * `<Select>` takes `value` as a prop of its own.
  */
-function leaves(expression) {
+function isProvider(name, contexts) {
+  const last =
+    name.type === 'JSXMemberExpression'
+      ? name.property.name
+      : name.type === 'JSXIdentifier'
+        ? name.name
+        : undefined;
+  if (!last || !/^[A-Z]/.test(last)) return false;
+  if (/(Context|Provider)$/.test(last)) return true;
+  return name.type === 'JSXIdentifier' && contexts.has(last);
+}
+
+/** The names bound to a `createContext(…)` or `React.createContext(…)` call in the file. */
+function contextNames(j, root) {
+  const names = new Set();
+  root.find(j.VariableDeclarator).forEach(({ node }) => {
+    let init = node.init;
+    while (init && transparentTypes.has(init.type)) init = init.expression;
+    const callee = init?.type === 'CallExpression' ? init.callee : undefined;
+    const called =
+      callee?.type === 'Identifier'
+        ? callee.name
+        : callee?.type === 'MemberExpression' && !callee.computed
+          ? callee.property.name
+          : undefined;
+    if (called === 'createContext' && node.id.type === 'Identifier') names.add(node.id.name);
+  });
+  return names;
+}
+
+/**
+ * Where a value leaves for code the transform can't see, so it can't tell 0.x code from 1.0: a
+ * value returned, also as an arrow function's body, or given to the `value` prop of what may be a
+ * context provider (see isProvider). Returns `{ provider }` for a `value` prop, `{}` for a return,
+ * and undefined elsewhere.
+ */
+function leaves(expression, contexts) {
   const path = valueOf(expression);
   const parent = path.parent?.node;
   if (
@@ -1226,9 +1263,9 @@ function leaves(expression) {
     attribute.name.type === 'JSXIdentifier' &&
     attribute.name.name === 'value'
   ) {
-    const provider = jsxName(path.parent.parent.parent.node.name);
-    // `<input value={…}>` is a DOM element, where 0.x's scheme was a string.
-    if (!/^[a-z]/.test(provider)) return { provider };
+    const element = path.parent.parent.parent.node.name;
+    // `<input value={…}>` and `<Select value={…}>` take 0.x's scheme as the string it was.
+    if (isProvider(element, contexts)) return { provider: jsxName(element) };
   }
   return undefined;
 }
@@ -1252,7 +1289,7 @@ const leaving = (where, call, variable) => {
  * reported. `references` are the file's references by name, which `scopes` narrows to the
  * variable's declaration. Returns whether it rewrote the call.
  */
-function readThemeOfCall(j, call, { references, scopes, warn }) {
+function readThemeOfCall(j, call, { references, scopes, warn, contexts }) {
   const outer = valueOf(call);
   if (readsAsThemeObject(call) || nullishComparison(outer.parent?.node, outer.node)) return false;
   const callee = call.node.callee;
@@ -1262,7 +1299,7 @@ function readThemeOfCall(j, call, { references, scopes, warn }) {
       node,
       `${action}, so it stays as it is: useTheme() is { theme, contrast } in 1.0; where it is read as the color scheme, read its .theme.`,
     );
-  const where = leaves(call);
+  const where = leaves(call, contexts);
   if (where) {
     report(call.node, leaving(where, shown));
     return false;
@@ -1281,7 +1318,9 @@ function readThemeOfCall(j, call, { references, scopes, warn }) {
         scopes.lookup(path, name, 'value')?.node === declaring,
     );
     if (uses.some(({ path }) => readsAsThemeObject(path))) return false;
-    const left = uses.map(({ path }) => [path, leaves(path)]).filter(([, found]) => found);
+    const left = uses
+      .map(({ path }) => [path, leaves(path, contexts)])
+      .filter(([, found]) => found);
     if (left.length > 0) {
       for (const [path, found] of left) report(path.node, leaving(found, shown, name));
       return false;

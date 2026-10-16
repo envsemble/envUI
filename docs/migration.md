@@ -56,7 +56,7 @@ Change by hand what the codemods report, each with its file and line:
 - removed exports: `LoadingBar` (AppShell's `loading` prop, or Progress), the manual `Toast` (`useToast()` inside `Toast.Provider`), `ToastProps` (`ToastNotification`), `getInitials`, `useLinkComponent` and `useSidebarCompact`;
 - a `DirectionLink` whose `direction` is computed or spread, or that is used outside JSX;
 - re-exports of namespace parts, and names destructured from a namespace import, `useTheme` among them;
-- a `useTheme()` call that is returned, as by a hook that wraps it, or passed as a component's `value`, as to a context provider, directly or through a variable: whether its readers expect the scheme or the object is out of the file's sight;
+- a `useTheme()` call that is returned, as by a hook that wraps it, or passed as the `value` of what may be a context provider, directly or through a variable: whether its readers expect the scheme or the object is out of the file's sight;
 - each `require()` and `import()` of `@envsemble/envui`, which the codemods do not follow;
 - a local that shadows a namespace or a new name: the codemod writes a second import under an alias, such as `Menu as EnvMenu`, which you may rename;
 - comments the codemod drops: a `@ts-expect-error` above an import whose names change, which TypeScript would report once the 0.x name it expected an error from is gone; a disable comment of an import that is removed with nothing in its place; and comments on a removed import name that no namespace import takes the place of.
