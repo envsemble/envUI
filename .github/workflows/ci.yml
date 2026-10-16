@@ -66,6 +66,9 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          # Two levels of history: the commit and its parents, one of which the contrast gate
+          # compares with (below).
+          fetch-depth: 2
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
@@ -94,30 +97,42 @@ jobs:
           name: envui-reference
           path: dist
       # The contrast gate also compares tests/contrast/DeclaredPairs.json with the base's copy
-      # (tests/contrast/Snapshot.ts). The checkout holds one commit, so fetch the base commit alone:
-      # the pull request's base, or the commit a push to main moved it from. A push that creates the
-      # branch has none (all zeros), and the gate then compares with the checkout's snapshot alone.
-      # The checkout keeps no credentials, so the token is passed to this fetch only.
-      - name: Fetch the contrast gate's base commit
+      # (tests/contrast/Snapshot.ts). A pull request's checkout is its merge commit, whose first
+      # parent is the tip of the branch it merges into. A push's base is the commit it moved main
+      # from, which the checkout holds when the push added one commit, as a merge or squash does; a
+      # push that brought several commits, a force-push and a push that creates the branch skip the
+      # comparison, which the pull request into main already made. A base from before the snapshot
+      # existed is skipped too, and the gate then compares with the checkout's snapshot alone.
+      - name: Find the contrast gate's base commit
         id: contrast-base
         env:
-          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
-          TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          FORCED: ${{ github.event.forced }}
         run: |
-          if [ -z "${BASE//0/}" ]; then
-            echo "No base commit to compare the contrast snapshot with."
+          if [ "$EVENT" = pull_request ]; then
+            if ! git rev-parse --verify --quiet 'HEAD^2' >/dev/null; then
+              echo "::error::The checkout isn't the pull request's merge commit, so it doesn't show the base the pull request merges into."
+              exit 1
+            fi
+            base=$(git rev-parse 'HEAD^1')
+          elif [ "$FORCED" = true ]; then
+            echo "::notice::A force-push has no base, so the contrast gate compares with the checkout's snapshot alone."
             exit 0
-          fi
-          auth=$(printf 'x-access-token:%s' "$TOKEN" | base64 -w0)
-          echo "::add-mask::$auth"
-          if git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $auth" \
-            fetch --no-tags --depth=1 origin "$BASE"; then
-            echo "sha=$BASE" >> "$GITHUB_OUTPUT"
-          elif [ "$GITHUB_EVENT_NAME" = pull_request ]; then
-            echo "::error::Couldn't fetch the pull request's base, $BASE."
-            exit 1
+          elif [ -z "${BEFORE//0/}" ]; then
+            echo "::notice::A push that creates the branch has no base, so the contrast gate compares with the checkout's snapshot alone."
+            exit 0
+          elif ! git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            echo "::notice::The push brought several commits, so the checkout lacks $BEFORE, which it moved main from; the contrast gate compares with the checkout's snapshot alone, as the pull request into main compared with its base."
+            exit 0
           else
-            echo "::warning::Couldn't fetch $BASE, which the push moved main from; the contrast gate compares with the checkout's snapshot alone."
+            base=$BEFORE
+          fi
+          if git cat-file -e "$base:tests/contrast/DeclaredPairs.json" 2>/dev/null; then
+            echo "Comparing the contrast snapshot with $base."
+            echo "sha=$base" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::The base, $base, predates tests/contrast/DeclaredPairs.json, so the contrast gate compares with the checkout's snapshot alone."
           fi
       # The hosted catalogue's specs need its build, which takes seconds and no network; without
       # it they fail here rather than skip.
