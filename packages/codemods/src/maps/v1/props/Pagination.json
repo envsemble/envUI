@@ -12,6 +12,34 @@
           },
           "standard": {}
         }
+      },
+      "variant": {
+        "current": ["primary", "secondary", "outline", "ghost", "text"],
+        "report": "Pagination's variant is primary, secondary, outline, ghost or text in 1.0, with tone neutral, accent or danger: important is variant=\"primary\" tone=\"accent\", destructive is variant=\"primary\" tone=\"danger\", outlined is outline and quiet is ghost.",
+        "values": {
+          "important": {
+            "props": {
+              "variant": "primary",
+              "tone": "accent"
+            }
+          },
+          "destructive": {
+            "props": {
+              "variant": "primary",
+              "tone": "danger"
+            }
+          },
+          "outlined": {
+            "props": {
+              "variant": "outline"
+            }
+          },
+          "quiet": {
+            "props": {
+              "variant": "ghost"
+            }
+          }
+        }
       }
     }
   }

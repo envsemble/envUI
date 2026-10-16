@@ -1,0 +1,25 @@
+{
+  "$comment": "A map for the calls tests: a hook's method whose object changes, as useToast().show's would.",
+  "calls": {
+    "@envsemble/envui": {
+      "useToast().show": {
+        "variant": {
+          "to": "tone",
+          "report": "show's variant is tone in 1.0, and error is danger.",
+          "values": { "error": { "props": { "tone": "danger" } } }
+        },
+        "placement": {
+          "report": "bottom-right is bottom-end in 1.0.",
+          "current": ["bottom-end", "top-center"],
+          "values": { "bottom-right": { "props": { "placement": "bottom-end" } } }
+        }
+      },
+      "notify": {
+        "kind": {
+          "to": "tone",
+          "report": "notify's kind is tone in 1.0."
+        }
+      }
+    }
+  }
+}

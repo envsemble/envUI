@@ -138,3 +138,20 @@ test('v1-classes renames every token entry, and no class entry renames a 1.0 tok
   for (const name of tokenNames)
     assert.equal(renameInStyles(`--${name}`, classes, [], new Map(), tokenNames), `--${name}`);
 });
+
+test('v1-classes reports modifier classes in markup, which props set in 1.0', () => {
+  const source = [
+    "import { Button } from '@envsemble/envui';",
+    'export const A = () => <a className="env-button env-button-important">Go</a>;',
+    "document.querySelector('.env-button-quiet');",
+    '',
+  ].join('\n');
+  const result = runTransform(v1Classes, 'a.tsx', source);
+  assert.equal(
+    result.output,
+    source.replace("'.env-button-quiet'", "'.env-button:where([data-variant=ghost])'"),
+  );
+  assert.deepEqual(result.reports, [
+    "line 2: env-button-important is gone in 1.0: .env-button carries [data-variant='primary'][data-tone='accent'] instead, which the component's props set.",
+  ]);
+});
