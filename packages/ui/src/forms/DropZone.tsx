@@ -13,10 +13,12 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
+import { ActionElement } from '../internal/ActionElement.js';
+import { FileInput } from '../internal/FileInput.js';
 import { setRef } from '../internal/setRef.js';
 import { Spinner } from '../feedback/Spinner.js';
 import { CloudUpload } from '../icons/CloudUpload.js';
-import { Error as ErrorIcon } from '../icons/Error.js';
+import * as Field from './Field.js';
 import { acceptsFile } from './internal/acceptsFile.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
 
@@ -25,9 +27,12 @@ export interface DropZoneProps
     ComponentPropsWithRef<'div'>,
     'children' | 'onDragEnter' | 'onDragOver' | 'onDragLeave' | 'onDrop'
   > {
-  /** What to drop or choose, such as "Drop a logo here, or browse"; the zone's accessible name. */
+  /**
+   * What to drop or choose, such as "Drop a logo here, or browse". With the description, it names
+   * the zone, as its visible text does.
+   */
   label: ReactNode;
-  /** Which files fit, such as "PNG, JPG or WebP up to 2 MB". */
+  /** Which files fit, such as "PNG, JPG or WebP up to 2 MB"; it is read as part of the name. */
   description?: ReactNode;
   /** Replaces the upload icon. */
   icon?: ReactNode;
@@ -39,9 +44,9 @@ export interface DropZoneProps
   /** Take several files at once; otherwise the zone takes the first file. */
   multiple?: boolean;
   /** Receives the dropped or chosen files that the zone takes. */
-  onFiles: (files: File[]) => void;
+  onDropAccepted: (files: File[]) => void;
   /** Receives the files that do not match accept, and those after the first without multiple. */
-  onReject?: (files: File[]) => void;
+  onDropRejected?: (files: File[]) => void;
   /** The zone can't be pressed or focused and takes no files; it still keeps the browser from opening dropped files. */
   disabled?: boolean;
   /**
@@ -84,8 +89,8 @@ export function DropZone({
   icon,
   accept,
   multiple = false,
-  onFiles,
-  onReject,
+  onDropAccepted,
+  onDropRejected,
   disabled = false,
   pending = false,
   error,
@@ -140,8 +145,8 @@ export function DropZone({
     const rejected = chosen.filter((file) => !taken.includes(file));
     // Rejected files leave the held ones as they were, and files from the application win.
     if (taken.length > 0 && files === undefined) hold(taken);
-    if (rejected.length > 0) onReject?.(rejected);
-    if (taken.length > 0) onFiles(taken);
+    if (rejected.length > 0) onDropRejected?.(rejected);
+    if (taken.length > 0) onDropAccepted(taken);
   }
 
   function endDrag() {
@@ -149,15 +154,16 @@ export function DropZone({
     setDragging(false);
   }
 
-  const descriptionIds =
-    [description != null && `${id}-description`, error != null && `${id}-error`]
-      .filter(Boolean)
-      .join(' ') || undefined;
+  // The zone's name is its visible text, the label and the description; the error describes it.
+  const nameIds = [`${id}-label`, description != null && `${id}-description`]
+    .filter(Boolean)
+    .join(' ');
 
   return (
-    <div
+    <Field.Root
       {...props}
-      className={classNames('env-form-field env-drop-zone', className)}
+      invalid={error != null || undefined}
+      className={classNames('env-drop-zone', className)}
       data-size={size}
       data-dragging={dragging ? '' : undefined}
       data-pending={pending ? '' : undefined}
@@ -186,14 +192,12 @@ export function DropZone({
         if (available) take(Array.from(event.dataTransfer.files));
       }}
     >
-      <button
-        type="button"
+      <ActionElement
         className="env-drop-zone-target"
         disabled={disabled}
-        aria-labelledby={`${id}-label`}
-        aria-describedby={descriptionIds}
-        aria-busy={pending || undefined}
-        aria-disabled={pending || undefined}
+        pending={pending}
+        aria-labelledby={nameIds}
+        aria-describedby={error != null ? `${id}-error` : undefined}
         onClick={() => {
           if (available) picker.current?.click();
         }}
@@ -215,43 +219,24 @@ export function DropZone({
             </span>
           )}
         </span>
-      </button>
-      <input
+      </ActionElement>
+      <FileInput
         ref={(node) => {
           picker.current = node;
           setRef(inputRef, node);
         }}
-        type="file"
-        hidden
-        tabIndex={-1}
         accept={accept}
         multiple={multiple}
         disabled={disabled}
-        onChange={(event) => {
-          const element = event.currentTarget;
-          const chosen = Array.from(element.files ?? []);
-          element.value = '';
-          if (available && chosen.length > 0) take(chosen);
+        onFiles={(chosen) => {
+          if (available) take(chosen);
         }}
       />
       {name ? (
-        <input
-          ref={field}
-          type="file"
-          hidden
-          tabIndex={-1}
-          multiple={multiple}
-          name={name}
-          form={form}
-          disabled={disabled}
-        />
+        // Holds the files a form submits; people never choose files in it.
+        <FileInput ref={field} multiple={multiple} name={name} form={form} disabled={disabled} />
       ) : null}
-      {error != null && (
-        <small className="env-field-error" id={`${id}-error`}>
-          <ErrorIcon aria-hidden="true" focusable="false" />
-          <span>{error}</span>
-        </small>
-      )}
-    </div>
+      {error != null && <Field.Error id={`${id}-error`}>{error}</Field.Error>}
+    </Field.Root>
   );
 }

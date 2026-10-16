@@ -18,7 +18,10 @@ import { ArrowUpward } from '../icons/ArrowUpward.js';
 import { Stop } from '../icons/Stop.js';
 import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/setRef.js';
+import { useMessages } from '../internal/EnvUIContext.js';
+import { composer as composerMessages } from '../foundations/messages/composer.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
+import { TextareaControl } from './internal/TextareaControl.js';
 
 interface ComposerOptions {
   /** The message text of a controlled composer. */
@@ -48,9 +51,15 @@ interface ComposerOptions {
   running?: boolean;
   /** Called by the stop button while running; it stays available when the field is disabled. */
   onStop?: () => void;
-  /** Accessible name of the send button; Send by default. */
+  /**
+   * Accessible name of the send button.
+   * @default 'Send', or EnvUIProvider's messages.composer.send
+   */
   sendLabel?: string;
-  /** Accessible name of the stop button; Stop by default. */
+  /**
+   * Accessible name of the stop button.
+   * @default 'Stop', or EnvUIProvider's messages.composer.stop
+   */
   stopLabel?: string;
   /** Lines the field shows while empty; 1 by default. */
   minRows?: number;
@@ -127,8 +136,8 @@ export function Composer({
   pending = false,
   running = false,
   onStop,
-  sendLabel = 'Send',
-  stopLabel = 'Stop',
+  sendLabel,
+  stopLabel,
   minRows = 1,
   maxRows = 8,
   start,
@@ -145,6 +154,7 @@ export function Composer({
   'aria-describedby': describedBy,
   ...props
 }: ComposerProps) {
+  const messages = useMessages('composer', composerMessages);
   const generatedId = useId();
   const id = suppliedId ?? generatedId;
   const footerId = `${id}-footer`;
@@ -211,7 +221,7 @@ export function Composer({
   // The action stays focusable while unavailable, so focus is never lost when it changes between
   // send and stop. A disabled composer disables sending; stopping stays available while running.
   const unavailable = running ? !onStop : blank || busy || !canSend;
-  const actionLabel = running ? stopLabel : sendLabel;
+  const actionLabel = running ? (stopLabel ?? messages.stop) : (sendLabel ?? messages.send);
 
   return (
     <div
@@ -236,7 +246,8 @@ export function Composer({
           inputRef.current?.focus();
         }}
       >
-        <textarea
+        <TextareaControl
+          bare
           {...props}
           ref={(node) => {
             inputRef.current = node;

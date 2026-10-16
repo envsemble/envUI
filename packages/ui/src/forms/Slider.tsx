@@ -12,7 +12,9 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/setRef.js';
+import { useLocale } from '../internal/EnvUIContext.js';
 import { FieldFrame } from './internal/FieldFrame.js';
+import { fieldMessageIds } from './internal/useFieldMetadata.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
 
 export interface SliderProps
@@ -26,7 +28,7 @@ export interface SliderProps
    * Lasting guidance under the track, such as what the value applies to, linked to the slider as
    * its description.
    */
-  hint?: ReactNode;
+  description?: ReactNode;
   /** The value of a controlled slider; update it from onValueChange. */
   value?: number;
   /**
@@ -43,7 +45,7 @@ export interface SliderProps
    * Receives the value once a change is complete: when the thumb is released or the track pressed,
    * and after each key. Use it for work that runs once per change, such as saving.
    */
-  onValueCommit?: (value: number) => void;
+  onValueCommitted?: (value: number) => void;
   /** The lowest value, at the start of the track. */
   min?: number;
   /** The highest value, at the end of the track. */
@@ -60,9 +62,11 @@ export interface SliderProps
   largeStep?: number;
   /**
    * The value as people read it above the track and assistive technology announces it, such as
-   * (value) => `${value}%`. Without it, the number shows as it is.
+   * (value) => `${value}%`. Without it, the number shows in the locale.
    */
   formatValue?: (value: number) => string;
+  /** The locale of the shown number: EnvUIProvider's, else the browser's. */
+  locale?: string;
   /** Dim the slider; it can't be focused or moved, and forms leave it out. */
   disabled?: boolean;
   /** Submits the value with a form under this name. */
@@ -75,20 +79,21 @@ export interface SliderProps
 
 /**
  * A value in a range, chosen by dragging a thumb along a track, pressing the track or with the
- * keyboard, with its label and current value above the track and an optional hint below.
+ * keyboard, with its label and current value above the track and an optional description below.
  */
 export function Slider({
   label,
-  hint,
+  description,
   value,
   defaultValue,
   onValueChange,
-  onValueCommit,
+  onValueCommitted,
   min = 0,
   max = 100,
   step = 1,
   largeStep = Math.max(step, Math.round((max - min) / 10 / step) * step),
   formatValue,
+  locale,
   disabled = false,
   name,
   form,
@@ -98,6 +103,7 @@ export function Slider({
   ...props
 }: SliderProps) {
   const id = useId();
+  const providedLocale = useLocale();
   const input = useRef<HTMLInputElement>(null);
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue ?? min);
   const current = value ?? uncontrolledValue;
@@ -114,8 +120,10 @@ export function Slider({
     },
     [value, defaultValue, min, form],
   );
-  const description =
-    [describedBy, hint != null ? `${id}-hint` : undefined].filter(Boolean).join(' ') || undefined;
+  const describedByIds =
+    [describedBy, description != null ? fieldMessageIds(id).description : undefined]
+      .filter(Boolean)
+      .join(' ') || undefined;
   return (
     <BaseSlider.Root
       // The group, which the label names, is disabled with its range input, so its label and value
@@ -128,7 +136,8 @@ export function Slider({
         if (value === undefined) setUncontrolledValue(next);
         onValueChange?.(next);
       }}
-      onValueCommitted={(next) => onValueCommit?.(next)}
+      onValueCommitted={(next) => onValueCommitted?.(next)}
+      locale={locale ?? providedLocale}
       min={min}
       max={max}
       step={step}
@@ -148,7 +157,7 @@ export function Slider({
             </BaseSlider.Value>
           </div>
         }
-        hint={hint}
+        description={description}
       >
         <BaseSlider.Control className="env-slider-control">
           <BaseSlider.Track className="env-slider-track">
@@ -159,7 +168,7 @@ export function Slider({
                 input.current = node;
                 setRef(inputRef, node);
               }}
-              aria-describedby={description}
+              aria-describedby={describedByIds}
               getAriaValueText={(formatted, number) =>
                 formatValue ? formatValue(number) : formatted
               }
