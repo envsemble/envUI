@@ -9,7 +9,6 @@ import { NavListPreview, TabsPreview, PagerPreview, PaginationPreview } from './
 import { ComboboxPreview, DatePickerPreview } from './Pickers';
 import { SurfacePreview, LayoutPreview } from './Layout';
 import { ChipsPreview, RatingPreview, RelativeTimePreview } from './Content';
-import { CodePreview } from './CodeContent';
 import { MarkdownPreview } from './MarkdownContent';
 import { lazy, Suspense } from 'react';
 import { Text } from '@envsemble/envui';
@@ -75,8 +74,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <StatsPreview />;
     case 'calendar-heatmap':
       return <CalendarHeatmapPreview />;
-    case 'code':
-      return <CodePreview />;
     case 'markdown':
       return <MarkdownPreview />;
     case 'rich-text':

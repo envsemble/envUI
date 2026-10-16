@@ -58,9 +58,10 @@ test('a compact menu has shorter rows on a raised popup than a standard menu', a
 test('inline code and code blocks take the Pierre code theme of the app theme', async ({
   page,
 }) => {
-  await page.goto(`${catalogueUrl}/#/components/code/preview`);
-  const inline = page.locator('code.env-code', { hasText: 'c9f60ee' }).first();
-  const block = page.locator('.env-code-block').first();
+  await page.goto(`${catalogueUrl}/#/components/code/overview`);
+  const example = page.getByRole('group', { name: 'Code example', exact: true });
+  const inline = example.locator('code.env-code', { hasText: 'c9f60ee' });
+  const block = example.locator('.env-code-block');
   await expect(inline).toBeVisible();
   const background = (locator: typeof inline) =>
     locator.evaluate((element) => getComputedStyle(element).backgroundColor);

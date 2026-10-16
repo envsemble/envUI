@@ -18,10 +18,18 @@ import { useCodeHighlighting } from './internal/useCodeHighlighting.js';
 import type { CodeTokenStyle } from './internal/CodeHighlighting.js';
 
 export interface CodeBlockProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
+  /** The source, as one string; it is shown, highlighted and copied as it is. */
   children: string;
+  /**
+   * The language to highlight: js, jsx, ts, tsx, java, json, html, xml, css, sql, sh, bash, yaml,
+   * md or ini, or their full names. Other values, and none, leave the source plain text.
+   */
   language?: string;
+  /** Names the block in its heading and for assistive technology, such as a file name. */
   label?: string;
+  /** Shows a copy button in the heading that copies the source; false by default. */
   copyable?: boolean;
+  /** Wraps long lines instead of scrolling them; false by default. */
   wrap?: boolean;
 }
 

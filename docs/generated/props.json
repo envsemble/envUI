@@ -1131,33 +1131,33 @@
           "name": "children",
           "type": "string",
           "required": true,
-          "description": ""
+          "description": "The source, as one string; it is shown, highlighted and copied as it is."
         },
         {
           "name": "language",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The language to highlight: js, jsx, ts, tsx, java, json, html, xml, css, sql, sh, bash, yaml, md or ini, or their full names. Other values, and none, leave the source plain text."
         },
         {
           "name": "label",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Names the block in its heading and for assistive technology, such as a file name."
         },
         {
           "name": "copyable",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Shows a copy button in the heading that copies the source; false by default."
         },
         {
           "name": "wrap",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Wraps long lines instead of scrolling them; false by default."
         }
       ],
       "native": [
