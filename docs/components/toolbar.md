@@ -65,7 +65,7 @@ A toolbar holds the controls for one subject, such as an editor's formatting, in
 - **Focus**: one control holds the tab stop. The arrow keys move it, and from the last control back to the first, unless `loopFocus` is false. The toolbar remembers the control people left.
 - **Disabled**: a disabled button leaves the arrow keys' path and shows no tooltip; `disabled` on the root or a group disables every control in it.
 - **Tooltips**: each button's label, and its shortcut as key caps, show on hover after a moment and at once on keyboard focus, and close on <kbd>Esc</kbd>.
-- **Shortcuts**: `shortcut` is shown and announced (`aria-keyshortcuts`); the application handles the keys themselves.
+- **Shortcuts**: `shortcut` is shown in the tooltip and announced through `aria-keyshortcuts` in ARIA's key names, so Ctrl+B is announced as Control+B. A sequence, such as Ctrl+K Ctrl+B, is shown without the attribute, which lists only single chords. The application handles the keys themselves.
 
 ## Content guidelines
 
