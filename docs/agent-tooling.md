@@ -90,20 +90,43 @@ The package ships three short skills under `skills/`. They lean on the MCP tools
 - **envui-migrate**: move an application onto envUI, or from 0.x to 1.0, keeping its behavior.
 - **envui-contribute**: when envUI lacks something, propose the addition upstream instead of a local copy.
 
-Copy the three folders together from `node_modules/@envsemble/envui/skills` into the project: Codex reads `.agents/skills`, Claude Code `.claude/skills`. Keep them at the installed version. Installing the package registers nothing by itself.
+Copy the three folders together from `node_modules/@envsemble/envui/skills` into the project: Codex reads `.agents/skills`, Claude Code `.claude/skills`. Keep them at the installed version, or [install the plugin](#install-the-skills-and-the-server-as-a-plugin), which brings the skills and the server together. Installing the package registers nothing by itself.
 
-## Publish the skills and the server as a plugin
+## Install the skills and the server as a plugin
 
-The skills and the MCP server can also reach agents as one plugin from a private plugin marketplace, for Claude Code and, mirrored, for Codex. Nothing publishes it yet. For each release:
+The skills and the MCP server also reach agents as one plugin, `envui`, for Claude Code and Codex. The envUI repository is its private marketplace, also named `envui`, so the plugin is `envui@envui`. Install it once per machine:
 
-1. In the repository that hosts the marketplace, keep a plugin folder, `envui/`, with:
-   - `skills/`: the three folders of `.agents/skills` at the release's tag;
-   - `.mcp.json`: `{ "mcpServers": { "envui": { "command": "node", "args": ["node_modules/@envsemble/envui/bin/envui.mjs", "mcp"] } } }`, so the server comes from the project's own installed envUI;
-   - `.claude-plugin/plugin.json`: `name` `envui`, `version` the envUI version, a `description` and the `author`;
-   - `.codex-plugin/plugin.json`: the same fields, with `"skills": "./skills/"` and `"mcpServers": "./.mcp.json"`.
-2. List the plugin in the marketplace's `.claude-plugin/marketplace.json` (`{ "name": "envui", "source": "./envui" }`) and, for Codex, in `.agents/plugins/marketplace.json` (`{ "name": "envui", "source": { "source": "local", "path": "./envui" } }`).
-3. Raise the plugin's version with every release, so clients update their cached copy, and merge.
-4. People install it once: `claude plugin marketplace add <owner>/<repository>` and `claude plugin install envui@<marketplace>`; in Codex, add the marketplace and `codex plugin add envui@<marketplace>`. `claude plugin update envui@<marketplace>` picks up a release.
+```sh
+# Claude Code
+claude plugin marketplace add envsemble/envUI#main
+claude plugin install envui@envui
+
+# Codex
+codex plugin marketplace add envsemble/envUI --ref main
+codex plugin add envui@envui
+```
+
+- Both clients clone the repository with the Git credentials the machine already holds, an SSH key loaded in an agent or a stored HTTPS credential such as the one `gh auth login` and `gh auth setup-git` leave, and never prompt for them.
+- The commands follow `main`, which holds the released versions, so the plugin matches the envUI that applications install. To try unreleased work, add the marketplace without the branch, `envsemble/envUI` in both clients, which follows the default branch, `dev`.
+- The plugin's server is `node node_modules/@envsemble/envui/bin/envui.mjs mcp`, as in [Register the MCP server](#register-the-mcp-server). It starts in the folder the client works in, so it answers from the project's installed envUI and needs envUI installed there. Where a workspace installs envUI in a folder above, register the server per project instead.
+- The plugin takes the place of the registered server and the copied skills; use one or the other. Its skills are those of the plugin's version and look everything up in the installed package, so their answers match the project's version.
+
+Start a new session after installing or updating.
+
+### How a release updates the plugin
+
+The repository holds the marketplace. `.claude-plugin/marketplace.json` (Claude Code) and `.agents/plugins/marketplace.json` (Codex) list the plugin in `plugin/`:
+
+- `.claude-plugin/plugin.json` and `.codex-plugin/plugin.json`: the name `envui` and the version of `@envsemble/envui`; the Codex manifest also points at `./skills/` and `./.mcp.json`;
+- `.mcp.json`: the server;
+- `skills/`: a copy of `.agents/skills`, which stays the skills' one source.
+
+A client installs a copy of `plugin/` alone, and a plugin's manifest can't point outside its folder, so the plugin carries its own copy of the skills. `npm run plugin:generate` (`scripts/GeneratePlugin.mjs`) copies `.agents/skills` into `plugin/skills` and sets both manifests' version to that of `@envsemble/envui`. After editing a skill, run it and commit `plugin/` with the change: `npm run check`, `npm test` and `npm run docs:check` fail while the copy or the version is stale.
+
+`npm run changeset:version` runs it too, so preparing a release raises the plugin's version with the packages', and the Release workflow refuses a tag whose plugin version differs. Clients keep their cached copy until the version changes, so a skill edited between releases reaches people with the next release. Once the release is merged into `main`:
+
+- Claude Code updates it in the background when auto-update is on for the marketplace (`/plugin`, Marketplaces); otherwise `claude plugin update envui@envui`.
+- Codex: `codex plugin marketplace upgrade envui`, then `codex plugin add envui@envui` again.
 
 ## Lint feedback
 

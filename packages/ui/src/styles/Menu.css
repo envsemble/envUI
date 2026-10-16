@@ -348,6 +348,8 @@
   .env-menu-item:is([data-highlighted], [data-popup-open]) :focus-visible {
     outline-color: HighlightText;
   }
+  /* An unavailable item under the highlight keeps the selection pair, which reads, and fades as
+     every unavailable item does: GrayText on Highlight would not read. */
   .env-menu-item[data-disabled]:is([data-highlighted], [data-popup-open]) {
     color: HighlightText;
     opacity: var(--env-state-disabled-opacity);

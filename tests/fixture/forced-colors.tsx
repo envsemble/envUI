@@ -8,12 +8,14 @@ import {
   IconButton,
   DocumentTabs,
   Menu,
+  Menubar,
   NavList,
   Pagination,
   Radio,
   RadioGroup,
   Rating,
   SegmentedControl,
+  Select,
   Switch,
   Table,
   Tabs,
@@ -171,6 +173,19 @@ function Page() {
         ]}
       />
       <Rating value={3} />
+      <Menubar.Root aria-label="Application menu">
+        <Menubar.Menu label="File">
+          <Menu.Item>New document</Menu.Item>
+        </Menubar.Menu>
+      </Menubar.Root>
+      <Select
+        label="Plan type"
+        defaultValue="team"
+        options={[
+          { value: 'team', label: 'Team' },
+          { value: 'solo', label: 'Solo' },
+        ]}
+      />
       <Menu.Root aria-label="View options" defaultOpen trigger={<Button>Options</Button>}>
         <Menu.CheckboxItem checked onCheckedChange={noop}>
           Wrap lines

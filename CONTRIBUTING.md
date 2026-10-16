@@ -61,7 +61,10 @@ Some browser specs open the hosted catalogue from `dist/site/`. `npm run verify`
 
 ```text
 AGENTS.md            The testing policy and pointers for agents working on envUI
-.agents/skills/       Two small entry points for agents
+.agents/skills/      The agent skills, the source of every copy
+.agents/plugins/     A plugin marketplace that lists plugin/
+.claude-plugin/      A plugin marketplace that lists plugin/ (one per client)
+plugin/              The envui agent plugin: manifests, MCP server and a copy of the skills
 docs/                Canonical Markdown documentation and discovery index
 apps/catalogue/      Live previews and the offline catalogue application
   site/              The hosted catalogue's Worker script and response headers
@@ -122,7 +125,7 @@ Builds run on Cloudflare with Workers Builds, so they use no GitHub Actions minu
 
 ## Releases
 
-Releases are cut from `main`. Each change records its changelog entry as a changeset in `.changeset/`; see [library development](docs/library-development.md). To prepare a release, run `npm run changeset:version`. It applies the pending changesets to the four published packages (`packages/ui`, `packages/codemods`, `packages/eslint-plugin` and `packages/stylelint-config`), which share one version, the dependency in `apps/catalogue/package.json`, the lockfile and the [changelog](packages/ui/CHANGELOG.md), where it adds the version above the earlier ones. Add the date to its heading and a sentence on what the release brings, as earlier releases have. Verify, review and merge `dev` into `main` through a pull request, then push a `v<version>` tag on `main`. The [Release workflow](https://github.com/envsemble/envUI/actions/workflows/release.yml) then:
+Releases are cut from `main`. Each change records its changelog entry as a changeset in `.changeset/`; see [library development](docs/library-development.md). To prepare a release, run `npm run changeset:version`. It applies the pending changesets to the four published packages (`packages/ui`, `packages/codemods`, `packages/eslint-plugin` and `packages/stylelint-config`), which share one version, the dependency in `apps/catalogue/package.json`, the lockfile, the version of the [agent plugin](docs/agent-tooling.md#how-a-release-updates-the-plugin) in `plugin/` and the [changelog](packages/ui/CHANGELOG.md), where it adds the version above the earlier ones. Add the date to its heading and a sentence on what the release brings, as earlier releases have. Verify, review and merge `dev` into `main` through a pull request, then push a `v<version>` tag on `main`. The [Release workflow](https://github.com/envsemble/envUI/actions/workflows/release.yml) then:
 
 - rejects tags that are not on `main`;
 - verifies the tag matches the package version;

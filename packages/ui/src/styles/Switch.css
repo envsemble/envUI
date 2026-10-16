@@ -90,4 +90,8 @@
     background-color: GrayText;
     outline-color: GrayText;
   }
+  /* The knob of an unavailable switch that is on stays apart from its gray track. */
+  .env-switch-control:checked:disabled::before {
+    background-color: Canvas;
+  }
 }

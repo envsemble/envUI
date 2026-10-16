@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
 import { fixtureUrl } from './Servers';
 
@@ -103,4 +104,52 @@ test('each theme boundary sets its color scheme, also nested and at high contras
     return [light, dark, darkHigh, lightHigh, nested].map(read);
   });
   expect(schemes).toEqual(['light', 'dark', 'dark', 'light', 'light']);
+});
+
+test('the migration guide’s per-theme token override applies in each theme and contrast', async ({
+  page,
+}) => {
+  // The example in docs/migration.md, as written, so the guide can't drift from the cascade.
+  const guide = readFileSync('docs/migration.md', 'utf8');
+  const example = [...guide.matchAll(/```css\n([\s\S]*?)```/g)]
+    .map(([, css]) => css)
+    .find((css) => css.includes('--env-color-fg-link') && css.includes('prefers-contrast'));
+  expect(example, 'the token override example').toBeDefined();
+  const values = [...example!.matchAll(/--env-color-fg-link:\s*([^;]+);/g)].map(([, value]) =>
+    value.trim(),
+  );
+  const [light, dark, lightHigh, darkHigh] = values;
+  const read = (scheme: string, contrast?: string) =>
+    page.evaluate(
+      ({ css, scheme, contrast }) => {
+        // Added afresh each time: one engine evaluates an emulated media feature only in style
+        // sheets added after it changes.
+        document.getElementById('guide-example')?.remove();
+        const style = document.createElement('style');
+        style.id = 'guide-example';
+        style.textContent = css;
+        document.head.append(style);
+        const boundary = document.createElement('div');
+        boundary.className = 'env-theme';
+        boundary.setAttribute('data-env-theme', scheme);
+        if (contrast) boundary.setAttribute('data-env-contrast', contrast);
+        document.body.append(boundary);
+        const value = getComputedStyle(boundary).getPropertyValue('--env-color-fg-link').trim();
+        boundary.remove();
+        return value;
+      },
+      { css: example!, scheme, contrast },
+    );
+  await page.emulateMedia({ contrast: 'no-preference' });
+  expect(await read('light')).toBe(light);
+  expect(await read('dark')).toBe(dark);
+  expect(await read('light', 'high')).toBe(lightHigh);
+  expect(await read('dark', 'high')).toBe(darkHigh);
+  await page.emulateMedia({ contrast: 'more' });
+  const emulated = await page.evaluate(() => matchMedia('(prefers-contrast: more)').matches);
+  test.skip(!emulated, 'This engine does not emulate prefers-contrast.');
+  expect(await read('light')).toBe(lightHigh);
+  expect(await read('dark')).toBe(darkHigh);
+  expect(await read('light', 'standard')).toBe(light);
+  expect(await read('dark', 'standard')).toBe(dark);
 });

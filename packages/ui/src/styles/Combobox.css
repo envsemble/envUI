@@ -306,10 +306,8 @@
   .env-combobox-option[data-disabled] {
     color: GrayText;
   }
-  .env-combobox-option[data-highlighted]:focus-visible,
-  .env-combobox-option[data-highlighted] :focus-visible {
-    outline-color: HighlightText;
-  }
+  /* An unavailable item under the highlight keeps the selection pair, which reads, and fades as
+     every unavailable item does: GrayText on Highlight would not read. */
   .env-combobox-option[data-disabled][data-highlighted] {
     color: HighlightText;
     opacity: var(--env-state-disabled-opacity);

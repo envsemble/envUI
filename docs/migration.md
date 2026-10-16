@@ -136,7 +136,11 @@ envUI's style sheet puts every rule in a cascade layer of `env`: `env.reset`, `e
   }
   ```
 
-  Declare the order before any style sheet that uses the layers, envUI's included, so a library whose layers load first takes its place in that order too.
+  Declare the order before any style sheet that uses the layers, envUI's included, so a library whose layers load first takes its place in that order too. A framework that brings layers of its own, such as `base`, `components` and `utilities`, takes its place in the same statement: its base layer, with its preflight, before `env`, and its components and utilities after it, so they can restyle envUI's:
+
+  ```css
+  @layer reset, base, env, components, utilities, app;
+  ```
 
 - **Token overrides.** A token set on `.env-theme` outside layers now wins over every theme's value: a color set there applies in dark and at high contrast as well, and can break the contrast every theme is checked for. Override a token per theme and contrast, with the selectors the themes use, in this order:
 
@@ -153,11 +157,19 @@ envUI's style sheet puts every rule in a cascade layer of `env`: `env.reset`, `e
   .env-theme[data-env-theme='dark'][data-env-contrast='high'] {
     --env-color-fg-link: #d3e3fd;
   }
+  /* Under the system's prefers-contrast: more, high contrast applies to a boundary that sets no
+     data-env-contrast too, unless it opts out with 'standard'. */
+  @media (prefers-contrast: more) {
+    .env-theme:not([data-env-contrast='standard']) {
+      --env-color-fg-link: #0842a0;
+    }
+    .env-theme[data-env-theme='dark']:not([data-env-contrast='standard']) {
+      --env-color-fg-link: #d3e3fd;
+    }
+  }
   ```
 
-  Under the system's `prefers-contrast: more`, high contrast applies to a boundary without `data-env-contrast` too: repeat the high-contrast value in `@media (prefers-contrast: more) { .env-theme:not([data-env-contrast='standard']) { … } }`.
-
-- **`!important`.** An important declaration in a cascade layer beats every important declaration outside layers. envUI uses `!important` only where ColorPicker replaces the styles of react-colorful, its picker, so an application can't override those few properties, even with `!important`.
+- **`!important`.** An important declaration in a cascade layer beats every important declaration outside layers. envUI uses `!important` only where ColorPicker replaces the styles of react-colorful, its picker, so an `!important` in the application's style sheets outside layers doesn't override those few properties; one in a layer declared before `env`, or in a `style` attribute, does.
 
 ### Tokens
 
