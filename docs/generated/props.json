@@ -1778,7 +1778,7 @@
           "name": "aria-label",
           "type": "string",
           "required": true,
-          "description": "Accessible name of the menu."
+          "description": "Accessible name of the menu, such as Document actions."
         },
         {
           "name": "content",
@@ -1809,7 +1809,7 @@
           "name": "onOpenChange",
           "type": "(open: boolean) => void",
           "required": false,
-          "description": ""
+          "description": "Called with the new visibility as the menu opens or closes."
         },
         {
           "name": "anchorPoint",
@@ -1828,7 +1828,7 @@
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Class of the menu popup."
         }
       ],
       "native": [],
@@ -3196,50 +3196,51 @@
           "name": "checked",
           "type": "boolean",
           "required": true,
-          "description": ""
+          "description": "Whether the option is on; a check mark shows while it is."
         },
         {
           "name": "onCheckedChange",
           "type": "(checked: boolean) => void",
           "required": true,
-          "description": ""
+          "description": "Called with the new state when the item is toggled."
         },
         {
           "name": "disabled",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "default": "false",
+          "description": "The item stays in place, dimmed, but cannot be toggled."
         },
         {
           "name": "closeOnClick",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Close the menu after toggling; false by default, so several options can change."
+          "description": "Close the menu after toggling; off by default, so several options can change."
         },
         {
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Class of the item's row."
         },
         {
           "name": "children",
           "type": "ReactNode",
           "required": true,
-          "description": ""
+          "description": "The item's label, which names it."
         },
         {
           "name": "shortcut",
           "type": "string",
           "required": false,
-          "description": "Keyboard hint at the end, such as Ctrl+P, shown as Kbd keys. The application handles the shortcut itself."
+          "description": "Keyboard hint at the end, such as Ctrl+P, shown as Kbd keys and announced as aria-keyshortcuts; a sequence, such as Ctrl+K Ctrl+S, shows its keys without the attribute. The application handles the shortcut itself."
         },
         {
           "name": "icon",
           "type": "ReactNode",
           "required": false,
-          "description": "Optional leading icon."
+          "description": "A decorative icon before the label, such as Settings."
         },
         {
           "name": "description",
@@ -3274,7 +3275,7 @@
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Class of the group."
         }
       ],
       "native": [],
@@ -3291,7 +3292,7 @@
           "name": "children",
           "type": "ReactNode",
           "required": true,
-          "description": ""
+          "description": "The context, such as the signed-in person's avatar, name and e-mail address."
         }
       ],
       "native": [
@@ -3310,25 +3311,26 @@
           "name": "disabled",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "default": "false",
+          "description": "The item is unavailable: it stays in place, dimmed, and reports aria-disabled; its action does not run."
         },
         {
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Class of the item's row."
         },
         {
           "name": "icon",
           "type": "ReactNode",
           "required": false,
-          "description": "Optional leading icon."
+          "description": "A decorative icon before the label, such as Settings."
         },
         {
           "name": "children",
           "type": "ReactNode",
           "required": true,
-          "description": ""
+          "description": "The item's label, which names it."
         },
         {
           "name": "description",
@@ -3340,37 +3342,37 @@
           "name": "shortcut",
           "type": "string",
           "required": false,
-          "description": "Keyboard hint at the end, such as Ctrl+P, shown as Kbd keys. The application handles the shortcut itself."
+          "description": "Keyboard hint at the end, such as Ctrl+P, shown as Kbd keys and announced as aria-keyshortcuts; a sequence, such as Ctrl+K Ctrl+S, shows its keys without the attribute. The application handles the shortcut itself."
         },
         {
           "name": "trailing",
           "type": "ReactNode",
           "required": false,
-          "description": "End content, such as a Badge or CounterBadge."
+          "description": "End content, such as a Badge or CounterBadge; it is part of the item's name."
         },
         {
           "name": "href",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The destination: the item is a link, through the LinkProvider's link component."
         },
         {
           "name": "onClick",
           "type": "() => void",
           "required": false,
-          "description": ""
+          "description": "The action, run when the item is chosen; the menu then closes."
         },
         {
           "name": "target",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Where the destination opens, such as _blank, as on a native link."
         },
         {
           "name": "rel",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The destination's relationship to the page, such as noopener, as on a native link."
         }
       ],
       "native": [],
@@ -3411,7 +3413,7 @@
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Class of the group."
         }
       ],
       "native": [],
@@ -3428,38 +3430,39 @@
           "name": "value",
           "type": "string",
           "required": true,
-          "description": ""
+          "description": "The value the Menu.RadioGroup reports when this item is chosen."
         },
         {
           "name": "disabled",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "default": "false",
+          "description": "The item stays in place, dimmed, but cannot be chosen."
         },
         {
           "name": "closeOnClick",
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "Close the menu after choosing; true by default."
+          "description": "Close the menu after choosing."
         },
         {
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Class of the item's row."
         },
         {
           "name": "children",
           "type": "ReactNode",
           "required": true,
-          "description": ""
+          "description": "The item's label, which names it."
         },
         {
           "name": "icon",
           "type": "ReactNode",
           "required": false,
-          "description": "Optional leading icon."
+          "description": "A decorative icon before the label, such as Settings."
         },
         {
           "name": "description",
@@ -3482,13 +3485,13 @@
           "name": "trigger",
           "type": "ReactElement",
           "required": true,
-          "description": "The control that opens the menu; it receives the menu button semantics and ref."
+          "description": "The control that opens the menu, such as a Button or an AvatarButton; it receives the menu button semantics and ref, so it must accept native props and a ref."
         },
         {
           "name": "aria-label",
           "type": "string",
           "required": true,
-          "description": "Accessible name of the menu."
+          "description": "Accessible name of the menu, such as Account."
         },
         {
           "name": "children",
@@ -3501,32 +3504,33 @@
           "type": "'top' | 'bottom' | 'left' | 'right'",
           "required": false,
           "default": "'bottom'",
-          "description": ""
+          "description": "The side of the trigger the menu opens on; it flips to the other side where the window has no room."
         },
         {
           "name": "align",
           "type": "'start' | 'center' | 'end'",
           "required": false,
           "default": "'end'",
-          "description": ""
+          "description": "How the menu lines up with the trigger along that side."
         },
         {
           "name": "open",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "Whether the menu is open, for a controlled menu; leave it out and the menu opens and closes itself."
         },
         {
           "name": "defaultOpen",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "default": "false",
+          "description": "Whether an uncontrolled menu starts open."
         },
         {
           "name": "onOpenChange",
           "type": "(open: boolean) => void",
           "required": false,
-          "description": ""
+          "description": "Called with the new visibility as the menu opens or closes."
         },
         {
           "name": "density",
@@ -3539,7 +3543,7 @@
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Class of the menu popup."
         }
       ],
       "native": [],
@@ -3566,7 +3570,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": true,
-          "description": "The row that opens the submenu."
+          "description": "The label of the row that opens the submenu, which names the row."
         },
         {
           "name": "children",
@@ -3584,7 +3588,8 @@
           "name": "disabled",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "default": "false",
+          "description": "The row stays in place, dimmed, but cannot open its submenu."
         },
         {
           "name": "open",
@@ -3596,13 +3601,14 @@
           "name": "defaultOpen",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "default": "false",
+          "description": "Whether an uncontrolled submenu starts open."
         },
         {
           "name": "onOpenChange",
           "type": "(open: boolean) => void",
           "required": false,
-          "description": ""
+          "description": "Called with the new visibility as the submenu opens or closes, for example to load its items."
         },
         {
           "name": "className",
@@ -3614,7 +3620,7 @@
           "name": "icon",
           "type": "ReactNode",
           "required": false,
-          "description": "Optional leading icon."
+          "description": "A decorative icon before the label, such as Settings."
         },
         {
           "name": "description",
@@ -4023,7 +4029,7 @@
           "name": "onSelect",
           "type": "(organizationId: string) => void",
           "required": true,
-          "description": "Called with the chosen organization; the application switches and reports progress."
+          "description": "Called with the id of the organization chosen, unless it is the active one; the application switches and reports progress."
         },
         {
           "name": "onCreate",
@@ -4056,6 +4062,7 @@
           "name": "disabled",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "Prevents opening, for example while a switch is in progress."
         },
         {
@@ -4069,7 +4076,7 @@
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Class of the trigger button, or of the create button without organizations."
         }
       ],
       "native": [],

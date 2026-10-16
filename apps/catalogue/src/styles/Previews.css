@@ -215,19 +215,10 @@
   gap: var(--space-2);
 }
 /* The organization switcher fills the shell's context area; the specimen gives it the same width. */
-.docs-organization-slot {
-  inline-size: min(100%, 14rem);
-}
 .docs-spinner-row {
   display: flex;
   align-items: center;
   gap: var(--space-5);
-}
-.docs-context-area {
-  display: grid;
-  justify-items: start;
-  gap: var(--space-2);
-  min-block-size: 10rem;
 }
 .docs-tree-frame {
   block-size: 24rem;

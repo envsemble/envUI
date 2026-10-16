@@ -23,25 +23,43 @@ import {
 import { withDisplayName } from '../internal/withDisplayName.js';
 
 export interface RootProps {
-  /** The control that opens the menu; it receives the menu button semantics and ref. */
+  /**
+   * The control that opens the menu, such as a Button or an AvatarButton; it receives the menu
+   * button semantics and ref, so it must accept native props and a ref.
+   */
   trigger: ReactElement;
-  /** Accessible name of the menu. */
+  /** Accessible name of the menu, such as Account. */
   'aria-label': string;
   /**
    * Menu.Header, Menu.Item, Menu.Group, Menu.RadioGroup, Menu.CheckboxItem, Menu.Submenu and Menu.Separator
    * elements.
    */
   children: ReactNode;
+  /**
+   * The side of the trigger the menu opens on; it flips to the other side where the window has no
+   * room.
+   */
   side?: 'top' | 'bottom' | 'left' | 'right';
+  /** How the menu lines up with the trigger along that side. */
   align?: 'start' | 'center' | 'end';
+  /**
+   * Whether the menu is open, for a controlled menu; leave it out and the menu opens and closes
+   * itself.
+   */
   open?: boolean;
+  /**
+   * Whether an uncontrolled menu starts open.
+   * @default false
+   */
   defaultOpen?: boolean;
+  /** Called with the new visibility as the menu opens or closes. */
   onOpenChange?: (open: boolean) => void;
   /**
    * compact is the desktop dropdown for dense surfaces: a raised popup with 1.75 rem rows, hairline
    * separators and small keys for shortcuts. Submenus open in the same density.
    */
   density?: Density;
+  /** Class of the menu popup. */
   className?: string;
 }
 
@@ -91,6 +109,7 @@ function Root({
 }
 
 export interface HeaderProps extends ComponentPropsWithRef<'div'> {
+  /** The context, such as the signed-in person's avatar, name and e-mail address. */
   children: ReactNode;
 }
 
@@ -102,17 +121,19 @@ function Header({ className, ...props }: HeaderProps) {
 }
 
 interface ItemContentProps {
-  /** Optional leading icon. */
+  /** A decorative icon before the label, such as Settings. */
   icon?: ReactNode;
+  /** The item's label, which names it. */
   children: ReactNode;
   /** A second, muted line; announced as the item's description. */
   description?: ReactNode;
   /**
-   * Keyboard hint at the end, such as Ctrl+P, shown as Kbd keys. The application handles the
-   * shortcut itself.
+   * Keyboard hint at the end, such as Ctrl+P, shown as Kbd keys and announced as aria-keyshortcuts;
+   * a sequence, such as Ctrl+K Ctrl+S, shows its keys without the attribute. The application
+   * handles the shortcut itself.
    */
   shortcut?: string;
-  /** End content, such as a Badge or CounterBadge. */
+  /** End content, such as a Badge or CounterBadge; it is part of the item's name. */
   trailing?: ReactNode;
 }
 
@@ -212,14 +233,34 @@ function useMenuItemContent(
 }
 
 interface ItemSharedProps extends ItemContentProps {
+  /**
+   * The item is unavailable: it stays in place, dimmed, and reports aria-disabled; its action does
+   * not run.
+   * @default false
+   */
   disabled?: boolean;
+  /** Class of the item's row. */
   className?: string;
 }
 
 export type ItemProps = ItemSharedProps &
   (
-    | { href: string; onClick?: never; target?: string; rel?: string }
-    | { href?: undefined; onClick?: () => void; target?: never; rel?: never }
+    | {
+        /** The destination: the item is a link, through the LinkProvider's link component. */
+        href: string;
+        onClick?: never;
+        /** Where the destination opens, such as _blank, as on a native link. */
+        target?: string;
+        /** The destination's relationship to the page, such as noopener, as on a native link. */
+        rel?: string;
+      }
+    | {
+        href?: undefined;
+        /** The action, run when the item is chosen; the menu then closes. */
+        onClick?: () => void;
+        target?: never;
+        rel?: never;
+      }
   );
 
 /** One action (onClick) or destination (href) in a Menu. Destinations use the LinkProvider's link. */
@@ -274,16 +315,27 @@ function Separator() {
 }
 
 export interface SubmenuProps extends Omit<ItemContentProps, 'children' | 'shortcut' | 'trailing'> {
-  /** The row that opens the submenu. */
+  /** The label of the row that opens the submenu, which names the row. */
   label: ReactNode;
   /** The submenu's items: Menu.Item, Menu.Group, Menu.Separator and the other parts, nested submenus too. */
   children: ReactNode;
   /** Accessible name of the submenu; by default the label, when it is a string. */
   'aria-label'?: string;
+  /**
+   * The row stays in place, dimmed, but cannot open its submenu.
+   * @default false
+   */
   disabled?: boolean;
   /** Controlled visibility; onOpenChange also suits loading the items as the submenu opens. */
   open?: boolean;
+  /**
+   * Whether an uncontrolled submenu starts open.
+   * @default false
+   */
   defaultOpen?: boolean;
+  /**
+   * Called with the new visibility as the submenu opens or closes, for example to load its items.
+   */
   onOpenChange?: (open: boolean) => void;
   /** Class of the submenu popup. */
   className?: string;
@@ -377,6 +429,7 @@ export interface GroupProps {
   label: ReactNode;
   /** Items of the group. */
   children: ReactNode;
+  /** Class of the group. */
   className?: string;
 }
 
@@ -399,6 +452,7 @@ export interface RadioGroupProps {
   children: ReactNode;
   /** Optional heading; the group is then labelled like Menu.Group. */
   label?: ReactNode;
+  /** Class of the group. */
   className?: string;
 }
 
@@ -431,10 +485,16 @@ function CheckIndicator({ kind }: { kind: 'radio' | 'checkbox' }) {
 }
 
 export interface RadioItemProps extends Omit<ItemContentProps, 'shortcut' | 'trailing'> {
+  /** The value the Menu.RadioGroup reports when this item is chosen. */
   value: string;
+  /**
+   * The item stays in place, dimmed, but cannot be chosen.
+   * @default false
+   */
   disabled?: boolean;
-  /** Close the menu after choosing; true by default. */
+  /** Close the menu after choosing. */
   closeOnClick?: boolean;
+  /** Class of the item's row. */
   className?: string;
 }
 
@@ -464,11 +524,18 @@ function RadioItem({
 }
 
 export interface CheckboxItemProps extends Omit<ItemContentProps, 'trailing'> {
+  /** Whether the option is on; a check mark shows while it is. */
   checked: boolean;
+  /** Called with the new state when the item is toggled. */
   onCheckedChange: (checked: boolean) => void;
+  /**
+   * The item stays in place, dimmed, but cannot be toggled.
+   * @default false
+   */
   disabled?: boolean;
-  /** Close the menu after toggling; false by default, so several options can change. */
+  /** Close the menu after toggling; off by default, so several options can change. */
   closeOnClick?: boolean;
+  /** Class of the item's row. */
   className?: string;
 }
 

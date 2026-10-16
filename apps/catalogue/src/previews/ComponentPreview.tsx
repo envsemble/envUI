@@ -26,7 +26,6 @@ import { ColorPickerPreview } from './ColorPicking';
 import { ComposerPreview, MessagesPreview } from './Conversation';
 import { CalendarHeatmapPreview, StatsPreview } from './Dashboard';
 import {
-  MenuPreview,
   MenubarPreview,
   TooltipPreview,
   AvatarPreview,
@@ -142,8 +141,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <HoverCardPreview />;
     case 'dialog':
       return <DialogsPreview />;
-    case 'menu':
-      return <MenuPreview />;
     case 'menubar':
       return <MenubarPreview />;
     case 'tooltip':

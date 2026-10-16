@@ -42,7 +42,6 @@ const unconverted = [
   'kbd',
   'list',
   'markdown',
-  'menu',
   'menubar',
   'message',
   'meter',
