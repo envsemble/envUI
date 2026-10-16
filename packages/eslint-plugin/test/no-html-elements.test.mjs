@@ -54,9 +54,10 @@ ruleTester.run('no-html-elements', rule, {
     '<Menu.Root role="menu" />',
     '<Dialog role="alertdialog" title="Delete?" />',
     '<Tabs role="tablist" items={items} />',
-    // envUI's own components set their roles; a role on one refines it.
-    'import { Popover, Menu, Surface } from \'@envsemble/envui\'; <><Popover role="dialog" /><Menu.CheckboxItem role="checkbox" /><Surface role="dialog" /></>;',
-    'import * as ui from \'@envsemble/envui\'; <ui.Text role="alert">Saved</ui.Text>;',
+    // An envUI component that renders the role itself; a role on it refines its own.
+    'import { Popover, Menu } from \'@envsemble/envui\'; <><Popover role="dialog" /><Menu.CheckboxItem role="checkbox" /></>;',
+    'import * as ui from \'@envsemble/envui\'; <><ui.Popover role="dialog" /><ui.Menu.Submenu role="menu" /></>;',
+    'import { Popover as Card } from \'@envsemble/envui\'; <Card role="dialog" />;',
     // Roles envUI has no component for, and roles that only make sense inside a container.
     '<div role="region" aria-label="Summary" />',
     '<li role="menuitem">Rename</li>',
@@ -241,6 +242,23 @@ ruleTester.run('no-html-elements', rule, {
     {
       code: 'function Local() { const Popover = Box; return <Popover role="dialog" />; }',
       errors: [uses('Dialog', '<Popover role="dialog">')],
+    },
+    // An envUI component that does not render the role: the role hand-rolls the widget on it.
+    {
+      code: 'import { Surface } from \'@envsemble/envui\'; <Surface role="dialog" aria-modal="true" />;',
+      errors: [uses('Dialog', '<Surface role="dialog">')],
+    },
+    {
+      code: 'import { Stack, Card } from \'@envsemble/envui\'; <Stack role="menu"><Card role="menuitem">Rename</Card></Stack>;',
+      errors: [uses('Menu.Root', '<Stack role="menu">')],
+    },
+    {
+      code: 'import * as ui from \'@envsemble/envui\'; <ui.Text role="alert">Saved</ui.Text>;',
+      errors: [uses('Alert', '<ui.Text role="alert">')],
+    },
+    {
+      code: 'import { Popover } from \'@envsemble/envui\'; <Popover role="menu" />;',
+      errors: [uses('Menu.Root', '<Popover role="menu">')],
     },
     { code: '<div role="tablist" />', errors: [uses('Tabs', '<div role="tablist">')] },
     { code: '<div role="tree" />', errors: [uses('Tree', '<div role="tree">')] },

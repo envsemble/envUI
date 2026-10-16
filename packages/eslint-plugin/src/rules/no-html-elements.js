@@ -4,6 +4,7 @@ import {
   isFunction,
   isIntrinsic,
   jsxName,
+  moduleExportName,
   readData,
   resolveVariable,
   spreadsProps,
@@ -16,6 +17,14 @@ const rolesByName = new Map(roles.map((entry) => [entry.role, entry]));
 const knownIds = new Set([...roles, ...elements].flatMap((entry) => [entry.id, entry.element]));
 knownIds.delete(undefined);
 knownIds.delete('*');
+
+/**
+ * The envUI components that render a role themselves, so that the role on one refines its own:
+ * the entry's owners and the components it suggests.
+ */
+function ownersOf(entry) {
+  return new Set([...(entry.owners ?? []), ...entry.use.map(({ component }) => component)]);
+}
 
 /** The bindings an entry imports: its own list, or the namespaces of the components it uses. */
 function bindings(entry) {
@@ -206,18 +215,27 @@ export default {
     const isAdapter = (fn) => adapters.has(fn) || hasLinkComponentProps(fn, sourceCode.visitorKeys);
 
     /**
-     * Whether a JSX element is an envUI component: its name, or the object of a member such as
-     * `ui.Popover` or `Menu.CheckboxItem`, is imported from an envUI entry point.
+     * The envUI component a JSX element name stands for, by its exported name: `Popover` for
+     * `<Popover>` or `<P>` imported as `Popover as P`, `Menu.CheckboxItem` for
+     * `<Menu.CheckboxItem>` or `<ui.Menu.CheckboxItem>`. Undefined when the name does not resolve to
+     * an import from an envUI entry point.
      */
-    function isEnvuiComponent(name) {
+    function envuiComponent(name) {
+      const members = [];
       let root = name;
-      while (root.type === 'JSXMemberExpression') root = root.object;
-      if (root.type !== 'JSXIdentifier') return false;
+      for (; root.type === 'JSXMemberExpression'; root = root.object)
+        members.unshift(root.property.name);
+      if (root.type !== 'JSXIdentifier') return undefined;
       const variable = resolveVariable(sourceCode, root, root.name);
-      return (variable?.defs ?? []).some((definition) => {
-        const source = definition.type === 'ImportBinding' ? definition.parent.source.value : '';
+      const definition = (variable?.defs ?? []).find((candidate) => {
+        if (candidate.type !== 'ImportBinding') return false;
+        const source = candidate.parent.source.value;
         return source === '@envsemble/envui' || source.startsWith('@envsemble/envui/');
       });
+      if (definition?.node.type === 'ImportNamespaceSpecifier') return members.join('.');
+      if (definition?.node.type === 'ImportSpecifier')
+        return [moduleExportName(definition.node.imported), ...members].join('.');
+      return undefined;
     }
 
     return {
@@ -239,9 +257,14 @@ export default {
           typeof role === 'string'
             ? rolesByName.get(role.trim().split(/\s+/)[0].toLowerCase())
             : null;
-        // envUI's components set their own roles: a role on one, such as <Popover role="dialog">,
-        // refines it rather than hand-rolling a widget.
-        if (roleEntry && !isIntrinsic(node.name) && isEnvuiComponent(node.name)) return;
+        // An envUI component that renders the role itself, such as <Popover role="dialog">, refines
+        // its own; on any other, such as <Surface role="dialog">, the role hand-rolls the widget.
+        if (
+          roleEntry &&
+          !isIntrinsic(node.name) &&
+          ownersOf(roleEntry).has(envuiComponent(node.name))
+        )
+          return;
         if (roleEntry) {
           // An element that is one of the suggested components, such as <Menu.Root role="menu">.
           if (isAllowed(roleEntry) || bindings(roleEntry).includes(name.split('.')[0])) return;
