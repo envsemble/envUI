@@ -51,12 +51,13 @@ export interface RichTextRenderOptions {
    * Tiptap extensions added to the shared schema, such as a custom mark. They must parse and
    * write Markdown, and the array must stay the same between renders, such as at module scope;
    * a new array starts a new editing session. Pass the same extensions to RichText.
+   * @default []
    */
   extensions?: AnyExtension[];
   /**
    * Renders a reference's content, such as an avatar beside the name; it receives whether the
    * document is read-only and whether the reference is selected.
-   * @default the trigger and the label, such as @Priya Shah
+   * @default the trigger and the label, such as #Launch
    */
   renderReference?: (
     reference: RichTextReference,
@@ -155,6 +156,7 @@ export interface RichTextEditorProps
    * Kinds of references people insert by typing a trigger, such as @ for people and # for topics,
    * each with its own lookup. Triggers must be unique, and the array must stay the same between
    * renders, such as at module scope.
+   * @default []
    */
   references?: readonly RichTextReferenceSource[];
   /**

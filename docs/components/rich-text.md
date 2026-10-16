@@ -246,6 +246,7 @@ With `name`, the form submits the Markdown. `error` says what to fix.
 
 ## Changelog
 
+- **1.0.0**: A task item's checkbox sits beside its text in the editor, as in RichText.
 - **0.5.0**: Text in the document takes the control font size, 1 rem on touch screens, so focusing it doesn't zoom the page.
 - **0.2.0**: Tiptap and marked are optional peer dependencies, installed by applications that import the rich-text entry.
 - **0.1.0**: RichTextEditor, RichText and `createRichTextExtensions` in `@envsemble/envui/rich-text`, built on Tiptap, with Markdown values, references and slash commands.
