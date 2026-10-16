@@ -3,11 +3,10 @@
 ## React usage
 
 ```tsx
-import { AppShell, Button, LoadingBar, LoadingState, Skeleton, Spinner } from '@envsemble/envui';
+import { AppShell, Button, LoadingState, Skeleton, Spinner } from '@envsemble/envui';
 
-// Page progress: under the AppShell topbar, or at the top of the viewport.
+// Page progress: a bar along the bottom of the AppShell topbar.
 <AppShell loading={router.isLoading} {...shellProps} />;
-<LoadingBar active={isNavigating} />;
 
 // Work in place.
 <Spinner label="Refreshing seats" />;
@@ -25,16 +24,13 @@ import { AppShell, Button, LoadingBar, LoadingState, Skeleton, Spinner } from '@
 
 ### Props & contracts
 
-| Name                          | Contract                                                                                   |
-| ----------------------------- | ------------------------------------------------------------------------------------------ |
-| LoadingBar active             | Shows progress while true; the bar then completes and fades out                            |
-| LoadingBar delay              | Milliseconds before it appears, 200 by default, so quick loads never flash it              |
-| LoadingBar contained          | Pin it to the top of its positioned container instead of the viewport                      |
-| LoadingBar label              | Accessible name of the progress bar while it shows; "Loading" by default                   |
-| Spinner label / size          | Accessible name, or none when a busy control announces the work; small, standard or large  |
-| Button pending                | A spinner replaces the content at the same size; the button is busy and ignores activation |
-| Skeleton width / height       | CSS dimensions appropriate for anticipated content                                         |
-| LoadingState label / children | Accessible loading announcement and visual placeholders                                    |
+| Name                            | Contract                                                                                                                                                     |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| AppShell loading / loadingLabel | Page progress while true, after 200 ms so quick loads never flash it; the bar then completes and fades out. loadingLabel names it, "Loading page" by default |
+| Spinner label / size            | Accessible name, or none when a busy control announces the work; small, standard or large                                                                    |
+| Button pending                  | A spinner replaces the content at the same size; the button is busy and ignores activation                                                                   |
+| Skeleton width / height         | CSS dimensions appropriate for anticipated content                                                                                                           |
+| LoadingState label / children   | Accessible loading announcement and visual placeholders                                                                                                      |
 
 ## Guidelines
 

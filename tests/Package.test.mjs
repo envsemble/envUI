@@ -133,6 +133,7 @@ before(
     import { createElement as h } from 'react';
     import { renderToString } from 'react-dom/server';
     import * as ui from '@envsemble/envui';
+    import * as themeBootstrap from '@envsemble/envui/theme-bootstrap';
     import { Home } from '@envsemble/envui/icons/Home';
     import { Home as BarrelHome } from '@envsemble/envui/icons';
     if (typeof document !== 'undefined' || typeof window !== 'undefined') throw new Error('DOM globals must be absent');
@@ -165,7 +166,7 @@ before(
       h(ui.LoadingState, null, h(ui.Skeleton, { width: '38%' }))
     ));
     console.log(JSON.stringify({
-      exports: Object.keys(ui), html,
+      exports: Object.keys(ui), themeBootstrapExports: Object.keys(themeBootstrap), html,
       partNames: [ui.Menu.Root, ui.Menu.Item, ui.Menubar.Menu, ui.Table.HeaderCell, ui.Stat.Group, ui.Toast.Provider].map((part) => part.displayName),
       emptyPager: renderToString(h(ui.Pager.Root, { previous: null, next: null })),
       pairedPager: renderToString(h(ui.Pager.Root, {
@@ -226,6 +227,31 @@ test('a navigation list renders its items and groups as list items', () => {
   );
 });
 
+test('no 0.x name of the rename map is exported, and every namespace is', async () => {
+  const map = JSON.parse(
+    await readFile(join(repository, 'packages/codemods/src/maps/v1.json'), 'utf8'),
+  );
+  const names = (section) => Object.keys(section).filter((name) => !name.startsWith('$'));
+  const entries = {
+    '@envsemble/envui': ssr.exports,
+    '@envsemble/envui/theme-bootstrap': ssr.themeBootstrapExports,
+  };
+  // Namespaces such as Menu and Toast reuse the name of a 0.x component.
+  const namespaces = new Set(
+    Object.values(map.exports['@envsemble/envui'])
+      .filter((name) => name.includes('.'))
+      .map((name) => name.split('.')[0]),
+  );
+  for (const [entry, exported] of Object.entries(entries)) {
+    for (const section of ['exports', 'split', 'removed'])
+      for (const name of names(map[section][entry] ?? {}))
+        if (!namespaces.has(name))
+          assert.ok(!exported.includes(name), `${entry} still exports ${name}.`);
+  }
+  for (const namespace of namespaces)
+    assert.ok(ssr.exports.includes(namespace), `Missing namespace export: ${namespace}`);
+});
+
 test('compound parts are namespace members named after their part', () => {
   assert.deepEqual(ssr.partNames, [
     'Menu.Root',
@@ -281,6 +307,17 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'useToast',
     'Icon',
     'BrandLogo',
+    'DropZone',
+    'Alert',
+    'CounterBadge',
+    'DiffStat',
+    'CalendarHeatmap',
+    'OrganizationSwitcher',
+    'Menu',
+    'ContextMenu',
+    'Menubar',
+    'Table',
+    'Stat',
   ]) {
     assert.ok(ssr.exports.includes(name), `Missing public export: ${name}`);
   }

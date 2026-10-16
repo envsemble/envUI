@@ -11,7 +11,6 @@ import {
   List,
   TextField,
   LinkProvider,
-  LoadingBar,
   Menu,
   Meter,
   NavList,
@@ -56,7 +55,6 @@ export function AdoptionFixture() {
   const [action, setAction] = useState('');
   const [organizationId, setOrganizationId] = useState('northwind');
   const [presses, setPresses] = useState(0);
-  const [loading, setLoading] = useState(false);
   const [confirmed, setConfirmed] = useState(0);
   const [homes, setHomes] = useState(3);
   const [seatsFull, setSeatsFull] = useState(false);
@@ -168,8 +166,6 @@ export function AdoptionFixture() {
           <Button>
             Show <AnimatedNumber value={homes} data-testid="animated-number" /> homes
           </Button>
-          <Button onClick={() => setLoading((value) => !value)}>Toggle loading</Button>
-          <LoadingBar active={loading} label="Loading next page" />
           <output hidden data-testid="bootstrap-script">
             {createThemeBootstrapScript({ storageKey: 'bootstrap-theme' })}
           </output>

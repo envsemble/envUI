@@ -10,7 +10,6 @@ import {
   RadioGroup,
   Select,
   Skeleton,
-  LoadingBar,
   LoadingState,
   Dialog,
   Spinner,
@@ -113,27 +112,10 @@ function useSimulatedWork(duration: number) {
 }
 
 export function LoadingPreview() {
-  const [pageLoading, loadPage] = useSimulatedWork(2400);
   const [saving, save] = useSimulatedWork(1800);
   const [refreshing, refresh] = useSimulatedWork(1800);
   return (
     <Preview>
-      <Example
-        title="Page progress"
-        size="collection"
-        caption="Appears only when loading takes longer than 200 ms, creeps forward while it continues and completes when it ends. AppShell shows it under the topbar through its loading prop."
-      >
-        <Surface tone="row" padding={5} className="docs-loading-frame">
-          <LoadingBar active={pageLoading} contained label="Loading next page" />
-          <Stack gap={3}>
-            <Text variant="section-heading">Projects</Text>
-            <Text tone="muted">Open the next page to see the bar along the top edge.</Text>
-            <Button variant="secondary" onClick={loadPage}>
-              Open next page
-            </Button>
-          </Stack>
-        </Surface>
-      </Example>
       <Example
         title="Work in place"
         size="collection"

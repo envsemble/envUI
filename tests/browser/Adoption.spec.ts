@@ -413,16 +413,16 @@ test('a pending button keeps its size and name, reports busy and ignores presses
   }
 });
 
-test('LoadingBar waits before appearing, then completes and leaves', async ({ page }) => {
-  await page.goto(fixture);
-  const toggle = page.getByRole('button', { name: 'Toggle loading' });
-  const bar = page.getByRole('progressbar', { name: 'Loading next page' });
+test('page progress waits before appearing, then completes and leaves', async ({ page }) => {
+  await page.goto(shellFixture);
+  const toggle = page.getByRole('button', { name: 'Toggle page loading' });
+  const bar = page.getByRole('progressbar', { name: 'Loading page' });
   // Record every state the bar renders, so short-lived states cannot slip between assertions.
   await page.evaluate(() => {
     const states: string[] = [];
     (window as unknown as { barStates: string[] }).barStates = states;
     new MutationObserver(() => {
-      const element = document.querySelector('[aria-label="Loading next page"]');
+      const element = document.querySelector('[aria-label="Loading page"]');
       // After the bar has shown, its absence is recorded as "none".
       const state = element ? element.getAttribute('data-state')! : states.length ? 'none' : null;
       if (state && states.at(-1) !== state) states.push(state);

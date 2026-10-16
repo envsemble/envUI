@@ -1,5 +1,5 @@
 import { useEffect, useReducer } from 'react';
-import { classNames } from '../internal/classNames.js';
+import { classNames } from '../../internal/classNames.js';
 
 export interface LoadingBarProps {
   /** Shows progress while true; the bar then completes and fades out. */

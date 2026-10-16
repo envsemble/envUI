@@ -7,11 +7,6 @@
       "note": "The internal anchor and button switch reads the public LinkProvider; the provider moves into internal/."
     },
     {
-      "module": "navigation/NavList.tsx",
-      "imports": "navigation/AppShell.tsx",
-      "note": "NavList.Item reads useSidebarCompact from the shell, so Tabs and MarkdownEditor pull in AppShell; the compact context moves into internal/."
-    },
-    {
       "module": "rich-text/RichTextEditor.tsx",
       "imports": "forms/internal/markdown/MarkdownLinkDialog.tsx",
       "note": "RichTextEditor reuses MarkdownEditor's private link dialog; the dialog moves to shared internals."

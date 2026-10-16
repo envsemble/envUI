@@ -224,10 +224,6 @@
 .docs-organization-slot {
   inline-size: min(100%, 14rem);
 }
-.docs-loading-frame {
-  position: relative;
-  overflow: hidden;
-}
 .docs-spinner-row {
   display: flex;
   align-items: center;

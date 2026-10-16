@@ -22,8 +22,6 @@ import { Avatar, Stack } from '@envsemble/envui';
 | size     | small 1.5 rem, standard 2 rem (default), large 3 rem or display 5.5 rem                   |
 | label    | Announce the name as an image; omit when adjacent text already names the person (default) |
 
-`getInitials(name)` returns the same initials for custom layouts.
-
 ## Guidelines
 
 - Pictures load without a referrer. A missing or failed picture shows the fallback without an error.

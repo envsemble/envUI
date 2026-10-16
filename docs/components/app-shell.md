@@ -43,7 +43,7 @@ import { Category } from '@envsemble/envui/icons/Category';
 | title / actions                                  | Current page name and topbar actions at the end                                                                  |
 | navigation / navigationLabel                     | NavList.Item elements and the accessible name of the sidebar                                                     |
 | storageKey                                       | Persist the collapsed preference and the sidebar width (measured, or chosen while resizable) in localStorage     |
-| loading / loadingLabel                           | Show a LoadingBar along the topbar's bottom edge, for example while the next page loads                          |
+| loading / loadingLabel                           | Show page progress along the topbar's bottom edge, for example while the next page loads                         |
 | defaultCollapsed / collapsed / onCollapsedChange | Uncontrolled or controlled collapsed preference on wide viewports                                                |
 | dividers                                         | Separator lines between topbar, sidebar and content; true by default                                             |
 | expandLabel / collapseLabel                      | Accessible names of the toggle                                                                                   |

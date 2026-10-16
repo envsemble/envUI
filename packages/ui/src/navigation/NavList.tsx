@@ -11,7 +11,7 @@ import { TooltipNestingContext, TooltipPopup } from '../feedback/internal/Toolti
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { NavigationIconState } from '../MaterialSymbolState.js';
 import { ActionElement, type ActionElementProps } from '../internal/ActionElement.js';
-import { useSidebarCompact } from './AppShell.js';
+import { useSidebarCompact } from './internal/SidebarCompact.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 
 /** Inside NavList.Root or NavList.Group, an item renders as a list item. */

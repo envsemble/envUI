@@ -45,7 +45,6 @@ export * from './feedback/HoverCard.js';
 export * from './feedback/EmptyState.js';
 export * from './feedback/Skeleton.js';
 export * from './feedback/LoadingState.js';
-export * from './feedback/LoadingBar.js';
 export * from './feedback/Spinner.js';
 export * as Toast from './feedback/toast/ToastProvider.js';
 export { useToast } from './feedback/toast/useToast.js';
@@ -59,7 +58,11 @@ export type {
 export * from './Icon.js';
 export * from './BrandLogo.js';
 export * from './EnvUILogo.js';
-export * from './navigation/LinkProvider.js';
+export {
+  LinkProvider,
+  type LinkProviderProps,
+  type LinkComponentProps,
+} from './navigation/LinkProvider.js';
 export * from './forms/SearchField.js';
 export * from './feedback/Tooltip.js';
 export * from './feedback/Meter.js';

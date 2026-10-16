@@ -17,20 +17,14 @@ import { classNames } from '../internal/classNames.js';
 import { DockToRight } from '../icons/DockToRight.js';
 import { Skeleton } from '../feedback/Skeleton.js';
 import { LoadingState } from '../feedback/LoadingState.js';
-import { LoadingBar } from '../feedback/LoadingBar.js';
+import { LoadingBar } from '../feedback/internal/LoadingBar.js';
 import { useScrollKeys } from './internal/useScrollKeys.js';
+import { SidebarCompactContext } from './internal/SidebarCompact.js';
 
 /** Viewports where the sidebar becomes an overlay opened from the topbar. */
 const narrowQuery = '(max-width: 40rem), (max-height: 32rem) and (max-width: 54rem)';
 /** Hover expansion needs a precise pointer; touch input toggles instead. */
 const hoverQuery = '(hover: hover) and (pointer: fine)';
-
-const SidebarCompactContext = createContext(false);
-
-/** True while the shell sidebar shows icons only; NavList.Item follows it automatically. */
-export function useSidebarCompact() {
-  return useContext(SidebarCompactContext);
-}
 
 interface AppShellContextValue {
   /** Close the overlay sidebar on narrow viewports; no effect elsewhere. */

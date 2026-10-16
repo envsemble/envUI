@@ -16,7 +16,7 @@ export interface AvatarProps extends Omit<ComponentPropsWithRef<'span'>, 'childr
 }
 
 /** The first letters of the first and last words, or the first two letters of a single word. */
-export function getInitials(name: string) {
+function getInitials(name: string) {
   const words = name.trim().split(/\s+/).filter(Boolean);
   if (words.length === 0) return '';
   const initials =
