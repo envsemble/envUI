@@ -17,7 +17,6 @@ import {
   HoverCardPreview,
   KbdPreview,
   AlertsPreview,
-  PopoverPreview,
 } from './Elements';
 
 /** Select a topic; each preview retains its state across theme changes. */
@@ -61,8 +60,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <EmptyStatePreview />;
     case 'alert':
       return <AlertsPreview />;
-    case 'popover':
-      return <PopoverPreview />;
     case 'hover-card':
       return <HoverCardPreview />;
     case 'menubar':

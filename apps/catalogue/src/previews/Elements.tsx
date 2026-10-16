@@ -8,20 +8,16 @@ import {
   DiffStat,
   HoverCard,
   IconButton,
-  TextField,
   Kbd,
   Link,
   NavList,
   Alert,
-  Popover,
   Stack,
   Surface,
   Text,
 } from '@envsemble/envui';
 import { CheckCircle } from '@envsemble/envui/icons/CheckCircle';
 import { Description } from '@envsemble/envui/icons/Description';
-import { Edit } from '@envsemble/envui/icons/Edit';
-import { Info } from '@envsemble/envui/icons/Info';
 import { Folder } from '@envsemble/envui/icons/Folder';
 import { Inbox } from '@envsemble/envui/icons/Inbox';
 import { MoreVert } from '@envsemble/envui/icons/MoreVert';
@@ -168,68 +164,6 @@ export function AlertsPreview() {
             </Alert>
           )}
         </Stack>
-      </Example>
-    </Preview>
-  );
-}
-
-export function PopoverPreview() {
-  const [name, setName] = useState('Roadmap.md');
-  return (
-    <Preview>
-      <Example
-        title="Popovers"
-        size="collection"
-        caption={
-          <>
-            <Kbd>Esc</Kbd> or a press outside closes the popover and focus returns to its trigger.
-          </>
-        }
-      >
-        <ActionGroup>
-          <Popover
-            title="Roadmap.md"
-            trigger={
-              <Button variant="secondary" startIcon={<Info />}>
-                Details
-              </Button>
-            }
-          >
-            <Text tone="muted">Changed today by Alex. 3 open decisions, 1 blocked.</Text>
-          </Popover>
-          <Popover
-            aria-label="Rename document"
-            width="wide"
-            trigger={
-              <Button variant="secondary" startIcon={<Edit />}>
-                Rename
-              </Button>
-            }
-          >
-            {(close) => (
-              <form
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  setName(String(new FormData(event.currentTarget).get('name')));
-                  close();
-                }}
-              >
-                <Stack gap={3}>
-                  <TextField label="Name" name="name" defaultValue={name} />
-                  <ActionGroup align="end">
-                    <Button variant="secondary" onClick={close}>
-                      Cancel
-                    </Button>
-                    <Button type="submit">Rename</Button>
-                  </ActionGroup>
-                </Stack>
-              </form>
-            )}
-          </Popover>
-        </ActionGroup>
-        <Text variant="caption" className="docs-caption">
-          Current name: {name}
-        </Text>
       </Example>
     </Preview>
   );
