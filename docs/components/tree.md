@@ -62,7 +62,7 @@ const rows: FileRow[] = visibleFiles.map((file) => ({
 - One tab stop: the tree keeps focus and points aria-activedescendant at the active row. <kbd>↑</kbd> and <kbd>↓</kbd> move, <kbd>Home</kbd> and <kbd>End</kbd> reach the ends, <kbd>Page Up</kbd> and <kbd>Page Down</kbd> move by a page, <kbd>→</kbd> expands or enters a folder, <kbd>←</kbd> collapses or returns to the parent, and typing jumps to a matching row. Keys pressed with <kbd>Alt</kbd>, <kbd>Ctrl</kbd> or <kbd>⌘</kbd> are left to the application, such as <kbd>Alt</kbd>+<kbd>←</kbd> for going back.
 - Single click and <kbd>Space</kbd> preview; double click and <kbd>Enter</kbd> open. A folder row calls onOpen too, so the application decides whether that toggles it or opens an index document.
 - Rows indent 0.75 rem per level, truncate long labels with an ellipsis, and keep a data-id attribute with the item id. The selected row uses the navigation selection colors; the focus ring shows on the active row only with keyboard focus.
-- Use detail for a short muted fact after the label, such as a status, and trailing for a Counter or Badge at the end.
+- Use detail for a short muted fact after the label, such as a status, and trailing for a CounterBadge or Badge at the end.
 
 TypeScript declarations provide the complete public API.
 

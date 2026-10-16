@@ -5,8 +5,8 @@ import {
   Breadcrumbs,
   Button,
   Checkbox,
-  Counter,
-  DiffCount,
+  CounterBadge,
+  DiffStat,
   HoverCard,
   IconButton,
   TextField,
@@ -149,16 +149,16 @@ export function BadgesPreview() {
         <SpecimenGrid>
           <Specimen title="Neutral and accent">
             <ActionGroup>
-              <Counter value={3} />
-              <Counter value={128} />
-              <Counter value="99+" tone="accent" aria-label="More than 99 unread" />
+              <CounterBadge value={3} />
+              <CounterBadge value={128} />
+              <CounterBadge value="99+" tone="accent" aria-label="More than 99 unread" />
             </ActionGroup>
           </Specimen>
           <Specimen title="Diff counts">
             <ActionGroup>
-              <DiffCount additions={124} deletions={37} />
+              <DiffStat additions={124} deletions={37} />
               <Button variant="secondary">
-                Diffs <DiffCount additions={12} deletions={3} />
+                Diffs <DiffStat additions={12} deletions={3} />
               </Button>
             </ActionGroup>
           </Specimen>
@@ -168,7 +168,7 @@ export function BadgesPreview() {
                 icon={<Inbox />}
                 selected={selected === 'inbox'}
                 onClick={() => setSelected('inbox')}
-                trailing={<Counter value={12} aria-label="12 unread" tone="accent" />}
+                trailing={<CounterBadge value={12} aria-label="12 unread" tone="accent" />}
               >
                 Inbox
               </NavigationItem>
@@ -176,7 +176,7 @@ export function BadgesPreview() {
                 icon={<Description />}
                 selected={selected === 'plans'}
                 onClick={() => setSelected('plans')}
-                trailing={<Counter value={4} />}
+                trailing={<CounterBadge value={4} />}
               >
                 Plans
               </NavigationItem>
@@ -186,7 +186,7 @@ export function BadgesPreview() {
                 aria-label="Inbox, 12 unread"
                 selected={selected === 'compact'}
                 onClick={() => setSelected('compact')}
-                trailing={<Counter value={12} />}
+                trailing={<CounterBadge value={12} />}
               >
                 Inbox
               </NavigationItem>

@@ -57,7 +57,7 @@ function prepareHighlighter(language: string) {
   return highlighterReady;
 }
 
-/** How many lines a change adds and removes, as a DiffCount shows them. */
+/** How many lines a change adds and removes, as a DiffStat shows them. */
 export function countDiffLines(before: string, after: string, filename = 'file') {
   if (before === after) return { additions: 0, deletions: 0 };
   const diff = parseDiffFromFile(

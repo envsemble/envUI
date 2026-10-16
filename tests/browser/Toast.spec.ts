@@ -187,7 +187,7 @@ test('the hidden count sits beyond the stack: above at the bottom right, below a
   for (const placement of ['bottom-right', 'top-center']) {
     const viewport = region(page, placement);
     const count = viewport.locator('.env-toast-queued-count');
-    await expect(count).toHaveClass(/env-counter/);
+    await expect(count).toHaveClass(/env-counter-badge/);
     // The status announces the full meaning; the counter shows the number.
     await expect(count).toContainText('1 older notification hidden');
     await expect(count.locator('[aria-hidden="true"]')).toHaveText('+1');

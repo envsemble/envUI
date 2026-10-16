@@ -30,7 +30,7 @@ import { Home } from '@envsemble/envui/icons/Home';
 | aria-label              | Required accessible destination name when iconOnly is enabled; icon is also required             |
 | icon                    | Material Symbols fill automatically when selected; custom React icons are supported              |
 | selectedIcon            | Optional selected variant for custom icons                                                       |
-| trailing                | End content such as a Counter; icon-only items show a small dot instead                          |
+| trailing                | End content such as a CounterBadge; icon-only items show a small dot instead                     |
 | children / native props | Destination label and link/button attributes                                                     |
 
 ## Guidelines

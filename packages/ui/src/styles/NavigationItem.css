@@ -75,7 +75,7 @@
   color: inherit;
 }
 
-/* Trailing content, such as a Counter, follows the label; icon-only items show a dot instead. */
+/* Trailing content, such as a CounterBadge, follows the label; icon-only items show a dot instead. */
 .env-navigation-trailing {
   flex: 0 0 auto;
   margin-inline-start: auto;

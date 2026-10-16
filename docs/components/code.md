@@ -47,7 +47,7 @@ const { additions, deletions } = countDiffLines(savedSource, draftSource);
 | header           | Shows the file header with its name and change counts; true by default                          |
 | expandUnchanged  | Shows the unchanged lines between changes instead of folding them                               |
 | layout           | auto (default) sets old and new side by side from 56 rem of the diff's width; unified keeps one |
-| countDiffLines   | The added and removed lines between two versions, for a DiffCount                               |
+| countDiffLines   | The added and removed lines between two versions, for a DiffStat                                |
 | Native div props | className, style, ref and accessible attributes on the root                                     |
 
 - CodeDiff renders with [Diffs](https://diffs.com) (`@pierre/diffs`), an optional peer installed with the `@envsemble/envui/diff` entry. CodeBlock's highlighting is for snippets; diffs use Diffs.

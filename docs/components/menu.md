@@ -82,7 +82,7 @@ import { Search } from '@envsemble/envui/icons/Search';
 | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
 | MenuItem description                       | A second, muted line; announced as the item’s description                                                      |
 | MenuItem shortcut                          | Key hint at the end, such as <kbd>Ctrl</kbd>+<kbd>P</kbd>, also exposed as aria-keyshortcuts; the app binds it |
-| MenuItem trailing                          | End content such as a Badge or Counter                                                                         |
+| MenuItem trailing                          | End content such as a Badge or CounterBadge                                                                    |
 | MenuGroup label                            | A labelled group with a small heading; its rows keep large outer corners                                       |
 | MenuRadioGroup value / onValueChange       | One checked choice among its MenuRadioItems; optional label like MenuGroup                                     |
 | MenuRadioItem value / description / icon   | A choice with a check mark while checked; closeOnClick is true by default                                      |

@@ -28,7 +28,7 @@ export interface TreeItem {
   icon?: ReactNode;
   /** Muted text after the label, such as a status or a path. */
   detail?: ReactNode;
-  /** End content, such as a Counter or Badge. */
+  /** End content, such as a CounterBadge or Badge. */
   trailing?: ReactNode;
   /** Native tooltip of the row, such as the full path. */
   title?: string;

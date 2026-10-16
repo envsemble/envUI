@@ -1,7 +1,7 @@
 import { useCallback, useLayoutEffect, useRef } from 'react';
 import { Toast as BaseToast } from '@base-ui/react/toast';
 import { Button } from '../../actions/Button.js';
-import { Counter } from '../../content/Badge.js';
+import { CounterBadge } from '../../content/CounterBadge.js';
 import { Theme, useTheme } from '../../foundations/Theme.js';
 import { Close } from '../../icons/Close.js';
 import { ToastBody } from './ToastBody.js';
@@ -197,7 +197,7 @@ export function ToastRegion({
           }}
         >
           {hiddenCount > 0 && (
-            <Counter
+            <CounterBadge
               className="env-toast-queued-count"
               data-toast-id="queued"
               role="status"

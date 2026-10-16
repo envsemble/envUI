@@ -15,7 +15,7 @@ interface NavigationItemSharedProps {
   icon?: ReactNode;
   /** Optional alternate content for custom icons when selected. */
   selectedIcon?: ReactNode;
-  /** End content, such as a Counter; icon-only items show a small dot instead. */
+  /** End content, such as a CounterBadge; icon-only items show a small dot instead. */
   trailing?: ReactNode;
 }
 

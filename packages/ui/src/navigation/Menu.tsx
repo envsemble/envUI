@@ -265,7 +265,7 @@ interface MenuItemContentProps {
    * shortcut itself.
    */
   shortcut?: string;
-  /** End content, such as a Badge or Counter. */
+  /** End content, such as a Badge or CounterBadge. */
   trailing?: ReactNode;
 }
 

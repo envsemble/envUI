@@ -3,8 +3,8 @@ import {
   ActionGroup,
   Badge,
   Button,
-  Counter,
-  DiffCount,
+  CounterBadge,
+  DiffStat,
   Tabs,
   Text,
   Theme,
@@ -29,7 +29,7 @@ export function ButtonCountsFixture({ theme }: { theme: ThemeValue }) {
             value: 'submissions',
             button: (
               <Button>
-                Submissions <Counter value={24} tone="accent" />
+                Submissions <CounterBadge value={24} tone="accent" />
               </Button>
             ),
             content: <Text>Submissions</Text>,
@@ -38,7 +38,7 @@ export function ButtonCountsFixture({ theme }: { theme: ThemeValue }) {
             value: 'drafts',
             button: (
               <Button>
-                Drafts <Counter value={3} />
+                Drafts <CounterBadge value={3} />
               </Button>
             ),
             content: <Text>Drafts</Text>,
@@ -59,7 +59,7 @@ export function ButtonCountsFixture({ theme }: { theme: ThemeValue }) {
             value: 'diffs',
             button: (
               <Button variant="secondary">
-                Diffs <DiffCount additions={124} deletions={37} />
+                Diffs <DiffStat additions={124} deletions={37} />
               </Button>
             ),
             content: <Text>Diffs</Text>,
@@ -69,12 +69,12 @@ export function ButtonCountsFixture({ theme }: { theme: ThemeValue }) {
       <ActionGroup>
         {variants.map((variant) => (
           <Button key={variant} variant={variant}>
-            {variant} <Counter value={7} /> <Badge tone="success">New</Badge>{' '}
-            <DiffCount additions={3} deletions={1} />
+            {variant} <CounterBadge value={7} /> <Badge tone="success">New</Badge>{' '}
+            <DiffStat additions={3} deletions={1} />
           </Button>
         ))}
       </ActionGroup>
-      <DiffCount additions={12} deletions={3} data-testid={`diff-count-${theme}`} />
+      <DiffStat additions={12} deletions={3} data-testid={`diff-stat-${theme}`} />
     </Theme>
   );
 }

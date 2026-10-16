@@ -1,6 +1,6 @@
 import {
   Badge,
-  Counter,
+  CounterBadge,
   NavigationItem,
   Stack,
   Surface,
@@ -48,7 +48,7 @@ export function BadgesFixture({ theme }: { theme: ThemeValue }) {
       ))}
       <NavigationItem
         icon={<Inbox />}
-        trailing={<Counter value={12} aria-label="12 unread" tone="accent" />}
+        trailing={<CounterBadge value={12} aria-label="12 unread" tone="accent" />}
       >
         Inbox
       </NavigationItem>
@@ -56,7 +56,7 @@ export function BadgesFixture({ theme }: { theme: ThemeValue }) {
         icon={<Inbox />}
         iconOnly
         aria-label="Inbox with unread"
-        trailing={<Counter value={12} />}
+        trailing={<CounterBadge value={12} />}
       >
         Inbox
       </NavigationItem>

@@ -92,7 +92,7 @@
       "SegmentedControl": { "classes": ["env-segment"] },
       "AnimatedNumber": { "styles": ["Text.css"] },
       "Avatar": { "styles": ["Indicators.css"] },
-      "Badge": { "classes": ["env-counter", "env-diff-count"] },
+      "Badge": { "modules": ["content/CounterBadge.tsx", "content/DiffStat.tsx"] },
       "Card": {
         "modules": [
           "content/ClickableCard.tsx",

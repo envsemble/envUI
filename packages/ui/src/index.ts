@@ -21,6 +21,8 @@ export * from './content/GroupedRows.js';
 export * from './content/Disclosure.js';
 export * from './content/InfoChip.js';
 export * from './content/Badge.js';
+export * from './content/CounterBadge.js';
+export * from './content/DiffStat.js';
 export * from './content/Table.js';
 export * from './content/Kbd.js';
 export * from './forms/TextField.js';

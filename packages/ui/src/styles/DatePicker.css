@@ -25,8 +25,8 @@
   align-items: center;
   padding-inline-end: calc(
     (
-        var(--env-date-picker-end) + var(--env-date-picker-actions) * var(--env-date-picker-action) +
-          var(--space-1)
+        var(--env-date-picker-end) + var(--env-date-picker-actions) *
+          var(--env-date-picker-action) + var(--space-1)
       ) *
       var(--scale, 1)
   );

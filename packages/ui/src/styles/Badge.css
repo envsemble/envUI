@@ -55,8 +55,8 @@
   text-overflow: ellipsis;
 }
 
-/* Counters: a compact count in a rounded fill. */
-.env-counter {
+/* Counter badges: a compact count in a rounded fill. */
+.env-counter-badge {
   box-sizing: border-box;
   position: relative;
   flex: 0 0 auto;
@@ -74,12 +74,12 @@
   white-space: nowrap;
   vertical-align: middle;
 }
-.env-counter[data-tone='accent'] {
+.env-counter-badge[data-tone='accent'] {
   background: var(--color-tone-accent);
   color: var(--color-on-tone);
 }
 /* A change as one counter-sized pill: additions in the success tone, deletions in the danger tone. */
-.env-diff-count {
+.env-diff-stat {
   box-sizing: border-box;
   position: relative;
   flex: 0 0 auto;
@@ -95,13 +95,14 @@
   white-space: nowrap;
   vertical-align: middle;
 }
-.env-diff-count-additions {
+.env-diff-stat-additions {
   color: var(--color-tone-success);
 }
-.env-diff-count-deletions {
+.env-diff-stat-deletions {
   color: var(--color-tone-danger);
 }
-.env-counter-label {
+.env-counter-badge-label,
+.env-diff-stat-label {
   position: absolute;
   inline-size: 0.0625rem;
   block-size: 0.0625rem;
@@ -111,22 +112,22 @@
   white-space: nowrap;
 }
 
-/* In a button, such as a tab, a counter or diff count keeps its own filled pill. On the solid primary and
+/* In a button, such as a tab, a counter badge or diff stat keeps its own filled pill. On the solid primary and
    important fills, where that pill can't keep its contrast, it takes the button's text color as an
    outlined pill instead, as a badge does in every button, in both themes. */
 .env-button .env-badge[data-tone],
-.env-button:is(.env-button-primary, .env-button-important) .env-counter[data-tone],
-.env-button:is(.env-button-primary, .env-button-important) .env-diff-count {
+.env-button:is(.env-button-primary, .env-button-important) .env-counter-badge[data-tone],
+.env-button:is(.env-button-primary, .env-button-important) .env-diff-stat {
   border: 0.0625rem solid color-mix(in srgb, currentColor 55%, transparent);
   background: transparent;
   color: inherit;
 }
-.env-button:is(.env-button-primary, .env-button-important) .env-diff-count > * {
+.env-button:is(.env-button-primary, .env-button-important) .env-diff-stat > * {
   color: inherit;
 }
-/* On a button's own fill, which already adds up with a tab rail's, a diff count's pill leans halfway
+/* On a button's own fill, which already adds up with a tab rail's, a diff stat's pill leans halfway
    back toward the canvas instead of adding another fill. It looks about as it does on the canvas,
    and its tones keep their 4.5:1 contrast in both themes. */
-.env-button:not(.env-button-primary, .env-button-important) .env-diff-count {
+.env-button:not(.env-button-primary, .env-button-important) .env-diff-stat {
   background: color-mix(in srgb, var(--color-canvas) 50%, transparent);
 }

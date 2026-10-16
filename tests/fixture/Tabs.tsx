@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   Button,
-  Counter,
+  CounterBadge,
   DocumentTabs,
   NavigationItem,
   Surface,
@@ -206,7 +206,7 @@ export function CompactTabsFixture({ theme }: { theme: ThemeValue }) {
               value: 'submissions',
               button: (
                 <Button variant="secondary">
-                  Submissions <Counter value={24} />
+                  Submissions <CounterBadge value={24} />
                 </Button>
               ),
               content: null,
