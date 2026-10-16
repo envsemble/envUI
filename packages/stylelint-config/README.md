@@ -56,7 +56,7 @@ envUI's markup and its `env-` class names are private: they change in any releas
 
 ### Raw colors
 
-Colors come from envUI's semantic color tokens, so they follow the theme and keep their contrast in light, dark and high contrast: text colors such as `var(--env-color-fg-default)`, backgrounds such as `var(--env-color-bg-default)` and boundaries such as `var(--env-color-border-default)`. Where the property says which, the message suggests that family, such as `var(--color-bg-…)` for `background`.
+Colors come from envUI's semantic color tokens, so they follow the theme and keep their contrast in light, dark and high contrast: text colors such as `var(--env-color-fg-default)`, backgrounds such as `var(--env-color-bg-default)` and boundaries such as `var(--env-color-border-default)`. Where the property says which, the message suggests that family, such as `var(--env-color-bg-…)` for `background`.
 
 - `color-no-hex` reports hex colors.
 - `color-named` reports named colors such as `red`.

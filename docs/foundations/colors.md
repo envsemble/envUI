@@ -68,7 +68,7 @@ The colors come from a primitive palette of ten hues: neutral (the slightly blue
 
 ## Semantic tokens
 
-Semantic tokens are named `--color-{bg|fg|border}-{role}-{emphasis}[-{state}]`. Every `fg-on-X` pairs with a `bg-X`, and the contrast gate measures every pair a component paints, in all four themes.
+Semantic tokens are named `--env-color-{bg|fg|border}-{role}-{emphasis}[-{state}]`. Every `fg-on-X` pairs with a `bg-X`, and the contrast gate measures every pair a component paints, in all four themes.
 
 - **Backgrounds:** `bg-page` behind everything; `bg-default`, `bg-muted` and `bg-raised`, the Surface backgrounds; `bg-popup` for menus, Select lists and popovers; `bg-field`; `bg-selected`, a blue tint in light and a blue-gray in dark; `bg-navigation-hover` and `-pressed` for navigation items; `bg-overlay`, the scrim behind dialogs, and `bg-overlay-muted`, the lighter one behind a drawer.
 - **Fills in a role:** `bg-neutral-muted` is the translucent fill of secondary buttons, tab rails, chips, switch tracks and skeletons, a layer of the text color that keeps its tone on any surface, and `bg-neutral-subtle` is the state layer of controls without a fill; `bg-{tone}-subtle-hover` and `-pressed` are that layer in a tone, as on an alert's dismiss button. Solid fills come as `emphasis` (white labels in light, dark labels in dark, as on primary buttons, chosen radios and, in dark, checked checkboxes, switches, sliders, meters and spinners) and `strong` (white in both themes: labels at 4.5:1 on destructive buttons, important buttons, toasts and tooltips; on the brand's strong fill of light checkboxes and switches only marks, at 3:1).

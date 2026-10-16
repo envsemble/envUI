@@ -38,7 +38,7 @@ ruleTester.run('no-raw-colors', rule, {
     '<div style={{ color: "rgba(var(--rgb), 0.5)", background: "rgba(var(--r), var(--g), var(--b), 50%)" }} />',
     '<div style={{ color: "rgb(var(--brand-rgb))", background: "rgb(var(--rgb, var(--fallback-rgb)))" }} />',
     // A template whose expressions sit outside any color.
-    `<div style={{ color: \`var(--color-fg-\${tone})\`, background: \`rgb(var(--rgb) / \${alpha})\` }} />`,
+    `<div style={{ color: \`var(--env-color-fg-\${tone})\`, background: \`rgb(var(--rgb) / \${alpha})\` }} />`,
     `<div style={{ content: '"rgb(1 2 3) #fff"', quotes: "'red' 'blue'" }} />`,
     '<div style={{ color: "currentColor", borderColor: "transparent", fill: "inherit" }} />',
     // Words that are not colors, and named colors where a property does not take one.
@@ -62,7 +62,7 @@ ruleTester.run('no-raw-colors', rule, {
     `<div style={{ color: read(element.closest('#fff')), background: read(node?.matches('#000')) }} />`,
     `<div style={read(document.getElementById('fff'), document.getElementById(\`#\${id}\`))} />`,
     // Adding numbers, and concatenated strings without a color.
-    `<div style={{ width: base + 4, color: 'var(--color-fg-' + tone + ')' }} />`,
+    `<div style={{ width: base + 4, color: 'var(--env-color-fg-' + tone + ')' }} />`,
   ],
   invalid: [
     {
@@ -70,7 +70,7 @@ ruleTester.run('no-raw-colors', rule, {
       errors: [
         {
           message:
-            'Raw color #fff in an inline style: use an envUI color token instead, such as var(--env-color-fg-default) or another var(--color-fg-…) role, so the color follows the theme and keeps its contrast.',
+            'Raw color #fff in an inline style: use an envUI color token instead, such as var(--env-color-fg-default) or another var(--env-color-fg-…) role, so the color follows the theme and keeps its contrast.',
           line: 1,
           column: 22,
         },
@@ -114,7 +114,7 @@ ruleTester.run('no-raw-colors', rule, {
       errors: [
         {
           message:
-            'Raw color red in an inline style: use an envUI color token instead, such as var(--env-color-border-default) or another var(--color-border-…) role, so the color follows the theme and keeps its contrast.',
+            'Raw color red in an inline style: use an envUI color token instead, such as var(--env-color-border-default) or another var(--env-color-border-…) role, so the color follows the theme and keeps its contrast.',
         },
       ],
     },
@@ -127,7 +127,7 @@ ruleTester.run('no-raw-colors', rule, {
       errors: [
         {
           message:
-            'Raw color #ddd in an inline style: use an envUI color token instead, one of the var(--color-fg-…), var(--color-bg-…) or var(--color-border-…) roles, so the color follows the theme and keeps its contrast.',
+            'Raw color #ddd in an inline style: use an envUI color token instead, one of the var(--env-color-fg-…), var(--env-color-bg-…) or var(--env-color-border-…) roles, so the color follows the theme and keeps its contrast.',
         },
         raw('rgb(0 0 0 / 20%)', 'boxShadow'),
       ],

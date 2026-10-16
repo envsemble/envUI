@@ -16,7 +16,7 @@ const roleOfProperty = [
 
 /**
  * One family of semantic color tokens, such as the text colors: the prefix its custom properties
- * share (`--color-fg-`) and its default token, or undefined when envUI has no such tokens.
+ * share (`--env-color-fg-`) and its default token, or undefined when envUI has no such tokens.
  */
 function colorFamily(role) {
   const names = (tokens.color ?? []).filter((name) => name.includes(`-${role}-`));

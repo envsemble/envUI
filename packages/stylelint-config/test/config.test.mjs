@@ -100,19 +100,19 @@ test('raw colors are reported, and colors from tokens pass', async () => {
   );
   assert.equal(
     (await message('.a { box-shadow: 0 1px 2px rgb(0 0 0 / 20%); }')).text,
-    'Raw color rgb(0 0 0 / 20%) in box-shadow: use an envUI color token instead, one of the var(--color-fg-…), var(--color-bg-…) or var(--color-border-…) roles, so the color follows the theme and keeps its contrast. (declaration-property-value-disallowed-list)',
+    'Raw color rgb(0 0 0 / 20%) in box-shadow: use an envUI color token instead, one of the var(--env-color-fg-…), var(--env-color-bg-…) or var(--env-color-border-…) roles, so the color follows the theme and keeps its contrast. (declaration-property-value-disallowed-list)',
   );
   assert.equal(
     (await message('.a { color: #fff; }')).text,
-    'Raw color #fff: use an envUI color token instead, one of the var(--color-fg-…), var(--color-bg-…) or var(--color-border-…) roles, so the color follows the theme and keeps its contrast. (color-no-hex)',
+    'Raw color #fff: use an envUI color token instead, one of the var(--env-color-fg-…), var(--env-color-bg-…) or var(--env-color-border-…) roles, so the color follows the theme and keeps its contrast. (color-no-hex)',
   );
   assert.equal(
     (await message('.a { background: oklch(0.6 0.15 250); }')).text,
-    'Raw color oklch(0.6 0.15 250) in background: use an envUI color token instead, such as var(--env-color-bg-default) or another var(--color-bg-…) role, so the color follows the theme and keeps its contrast. (declaration-property-value-disallowed-list)',
+    'Raw color oklch(0.6 0.15 250) in background: use an envUI color token instead, such as var(--env-color-bg-default) or another var(--env-color-bg-…) role, so the color follows the theme and keeps its contrast. (declaration-property-value-disallowed-list)',
   );
   assert.match(
     (await message('.a { border-color: rgb(0 0 0); }')).text,
-    /such as var\(--env-color-border-default\) or another var\(--color-border-…\) role/,
+    /such as var\(--env-color-border-default\) or another var\(--env-color-border-…\) role/,
   );
   await passes('.a { color: var(--env-color-fg-default); background: transparent; }');
   await passes('.a { color: hsl(from var(--env-color-fg-link) h s calc(l - 10)); }');
