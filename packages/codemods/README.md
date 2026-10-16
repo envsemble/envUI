@@ -31,14 +31,14 @@ npx envui-codemods v1-names src test --ignore-pattern='**/*.stories.tsx'
 
 | Option                    | Effect                                                                                                                                                     |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--dry`                   | Reports what would change and writes nothing.                                                                                                              |
-| `--print`                 | Prints every changed file.                                                                                                                                 |
+| `--dry`                   | Lists the files that would change, with the reports, and writes nothing.                                                                                   |
+| `--print`                 | Prints every changed file under its name, as `==> src/menu.tsx <==`.                                                                                       |
 | `--extensions=<list>`     | Reads only these comma-separated extensions. By default `js,jsx,ts,tsx,mjs,cjs,mts,cts`, and for v1-classes also `css,scss,sass,less,pcss`.                |
 | `--ignore-pattern=<glob>` | Skips matching files and folders; repeatable. A pattern without a slash matches a name at any depth. `node_modules`, `dist` and `.git` are always skipped. |
 | `--map=<path>`            | Uses another rename map with the shape of `src/maps/v1.json`, for example one component family at a time.                                                  |
 | `--list`, `--help`        | Lists the transforms, or shows the usage.                                                                                                                  |
 
-Paths default to the current folder. The CLI runs jscodeshift's runner with the `tsx` parser, or `ts` for `.ts`, `.mts` and `.cts` files, where `<T>value` is a type assertion. It prints a summary and every report as `REP <file> line <n>: …`, and exits with 1 when a file fails to parse or transform.
+Paths default to the current folder. The CLI runs jscodeshift's runner with the `tsx` parser, or `ts` for `.ts`, `.mts` and `.cts` files, where `<T>value` is a type assertion. It names every file it changes (`Changed src/menu.tsx`, or `Would change` with `--dry`), prints a summary and every report as `REP <file> line <n>: …`, and exits with 1 when a file fails to parse or transform.
 
 ## Recommended order
 

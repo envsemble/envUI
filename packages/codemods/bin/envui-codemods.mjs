@@ -4,6 +4,7 @@
 import { readdirSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { extname, join, posix, relative, resolve, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { loadMap } from '../src/map.mjs';
 import { transforms } from '../src/transforms.mjs';
@@ -21,8 +22,8 @@ Transforms:
 ${list}
 
 Options:
-  --dry                    Report what would change without writing any file.
-  --print                  Print every changed file.
+  --dry                    List the files that would change, and report, without writing.
+  --print                  Print every changed file under its name.
   --extensions=<list>      Comma-separated extensions to read instead of the transform's.
   --ignore-pattern=<glob>  Skip matching files and folders; repeatable. node_modules, dist
                            and .git are always skipped.
@@ -152,16 +153,24 @@ const { files, missing } = collectFiles(paths.length ? paths : ['.'], extensions
 for (const path of missing) console.error(`Skipped ${path}, which does not exist.`);
 
 const Runner = require('jscodeshift/src/Runner.js');
-const result = await Runner.run(transform.file, files, {
-  // The transforms are ES modules, which Node loads as they are; Babel would compile them to
-  // CommonJS and break them.
-  babel: false,
-  parser: 'tsx',
-  dry: values.dry,
-  print: values.print,
-  map,
-  verbose: 0,
-});
+// The workers run src/run-transform.mjs, which runs the named transform and names each file it
+// changes; jscodeshift's own --print would print the new text without the file's name.
+const result = await Runner.run(
+  fileURLToPath(new URL('../src/run-transform.mjs', import.meta.url)),
+  files,
+  {
+    // The transforms are ES modules, which Node loads as they are; Babel would compile them to
+    // CommonJS and break them.
+    babel: false,
+    parser: 'tsx',
+    dry: values.dry,
+    print: false,
+    printChanges: values.print,
+    transform: name,
+    map,
+    verbose: 0,
+  },
+);
 
 const processed = result.ok + result.nochange + result.skip + result.error;
 if (processed < files.length)
