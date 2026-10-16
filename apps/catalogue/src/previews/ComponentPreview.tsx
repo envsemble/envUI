@@ -35,12 +35,7 @@ import {
 import { AppShellPreview } from './Shell';
 import { CommandPalettePreview, DocumentTabsPreview, TreePreview } from './Workspace';
 import { PanelDockPreview } from './Dock';
-import {
-  BreadcrumbsPreview,
-  HoverCardPreview,
-  PopoverPreview,
-  SegmentedControlPreview,
-} from './Elements';
+import { HoverCardPreview, PopoverPreview, SegmentedControlPreview } from './Elements';
 
 const RichTextPreview = lazy(() =>
   import('./RichTextContent').then(({ RichTextPreview }) => ({ default: RichTextPreview })),
@@ -87,8 +82,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <CardsPreview />;
     case 'chips':
       return <ChipsPreview />;
-    case 'breadcrumbs':
-      return <BreadcrumbsPreview />;
     case 'pagination':
       return <PaginationPreview />;
     case 'animated-number':

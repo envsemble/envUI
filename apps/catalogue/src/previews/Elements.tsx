@@ -1,23 +1,18 @@
 import { useState } from 'react';
 import {
   ActionGroup,
-  Badge,
-  Breadcrumbs,
   Button,
   HoverCard,
-  IconButton,
   TextField,
   Kbd,
   Link,
   Popover,
   SegmentedControl,
   Stack,
-  Surface,
   Text,
 } from '@envsemble/envui';
 import { Edit } from '@envsemble/envui/icons/Edit';
 import { Info } from '@envsemble/envui/icons/Info';
-import { MoreVert } from '@envsemble/envui/icons/MoreVert';
 import { ViewList } from '@envsemble/envui/icons/ViewList';
 import { ViewModule } from '@envsemble/envui/icons/ViewModule';
 import { Example, Specimen, SpecimenGrid } from './Example';
@@ -187,55 +182,6 @@ export function HoverCardPreview() {
           </HoverCard>
           .
         </Text>
-      </Example>
-    </Preview>
-  );
-}
-
-export function BreadcrumbsPreview() {
-  const [level, setLevel] = useState('Roadmap.md');
-  return (
-    <Preview>
-      <Example
-        title="Where you are"
-        size="collection"
-        caption="Earlier levels are links or buttons; the current page is last and not a link."
-      >
-        <Breadcrumbs
-          items={[
-            { label: 'Workspace', href: '#/workspace' },
-            { label: 'Plans', onClick: () => setLevel('Plans') },
-            { label: 'Search', onClick: () => setLevel('Search') },
-            { label: 'Roadmap.md' },
-          ]}
-        />
-        <Text variant="caption" className="docs-caption" aria-live="polite">
-          {level === 'Roadmap.md' ? '' : `Went to ${level}`}
-        </Text>
-      </Example>
-      <Example
-        title="On one line"
-        size="field"
-        caption="With wrap set to false, the trail stays on one line in a bar or header: the current page is cut short first, and earlier levels keep their width."
-      >
-        <Surface
-          tone="row"
-          padding={2}
-          corners="standard"
-          density="compact"
-          className="docs-breadcrumb-bar"
-        >
-          <Breadcrumbs
-            aria-label="Document location"
-            wrap={false}
-            items={[
-              { label: 'Plans', href: '#/plans' },
-              { label: 'Quarterly review of the shared design tokens' },
-            ]}
-          />
-          <Badge tone="success">Published</Badge>
-          <IconButton variant="text" icon={<MoreVert />} aria-label="More actions" />
-        </Surface>
       </Example>
     </Preview>
   );

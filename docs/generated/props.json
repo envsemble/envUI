@@ -658,13 +658,13 @@
           "type": "string",
           "required": false,
           "default": "'Breadcrumb'",
-          "description": "Accessible name of the navigation; Breadcrumb by default."
+          "description": "Accessible name of the navigation landmark; name each trail where a page has several."
         },
         {
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Classes for the `nav` element."
         }
       ],
       "native": [],
