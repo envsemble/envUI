@@ -18,7 +18,7 @@ const field = (page: Page, name: string) => page.getByRole('combobox', { name, e
 const focusedDate = (page: Page) =>
   page.evaluate(() => (document.activeElement as HTMLElement | null)?.dataset.date ?? null);
 const wellOf = (trigger: Locator) =>
-  trigger.locator('xpath=ancestor::*[contains(@class, "env-text-field-well")][1]');
+  trigger.locator('xpath=ancestor::*[contains(@class, "env-text-field-control")][1]');
 /** The open calendar popup; a closing one can still fade out. */
 const openPopup = (page: Page) => page.locator('.env-date-picker-popup[data-open]');
 
@@ -424,7 +424,6 @@ test('the calendar fits a phone-wide window', async ({ page }) => {
 async function openOnTouchScreen(browser: Browser) {
   const context = await browser.newContext({
     hasTouch: true,
-    isMobile: true,
     viewport: { width: 390, height: 844 },
   });
   const page = await context.newPage();
@@ -436,9 +435,7 @@ async function openOnTouchScreen(browser: Browser) {
 
 test('on touch screens days are touch-sized and the calendar still fits the phone', async ({
   browser,
-  browserName,
 }) => {
-  test.skip(browserName !== 'chromium', 'Only one engine emulates touch with a coarse pointer.');
   const page = await openOnTouchScreen(browser);
   const meeting = field(page, 'Meeting light');
   await expect(meeting).toHaveCSS('font-size', '16px');

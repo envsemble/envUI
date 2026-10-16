@@ -183,7 +183,9 @@ test('prefix and suffix text keep 4.5:1 contrast in both themes', async ({ page 
     // Measure once every field has rendered: nine prefixes and suffixes in each theme.
     await expect(parts).toHaveCount(9);
     for (const part of await parts.all()) {
-      const field = part.locator('xpath=ancestor::*[contains(@class, "env-text-field-well")][1]');
+      const field = part.locator(
+        'xpath=ancestor::*[contains(@class, "env-text-field-control")][1]',
+      );
       if ((await field.locator('input:disabled').count()) > 0) continue;
       // The prefix of an empty field without focus is hidden behind its resting label.
       if ((await part.evaluate((element) => getComputedStyle(element).opacity)) === '0') continue;

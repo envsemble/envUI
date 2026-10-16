@@ -997,8 +997,8 @@ test('pager links, radio rows and choice controls settle while pressed', async (
       moves: page.getByTestId('light-color-direction'),
     },
     {
-      press: page.getByTestId('light-color-radio-row').locator('.env-radio-option'),
-      moves: page.getByTestId('light-color-radio-row').locator('.env-radio-option'),
+      press: page.getByTestId('light-color-radio-row').locator('.env-radio'),
+      moves: page.getByTestId('light-color-radio-row').locator('.env-radio'),
     },
     {
       press: page.getByText('light isolated checkbox'),

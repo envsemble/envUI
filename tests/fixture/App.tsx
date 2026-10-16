@@ -60,6 +60,7 @@ import { QuietButtonsFixture } from './QuietButtons.js';
 import { EmptyStatesFixture } from './EmptyStates.js';
 import { RatingsFixture } from './Ratings.js';
 import { DensityFixture } from './Density.js';
+import { ChoiceControlsFixture } from './ChoiceControls.js';
 import { PrimitivesFixture } from './Primitives.js';
 import { MessageStringsFixture } from './MessageStrings.js';
 import { DirectionFixture } from './Direction.js';
@@ -82,6 +83,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'scroll-keys': ScrollKeysFixture,
   'framed-shell': FramedShellFixture,
   density: DensityFixture,
+  'choice-controls': ChoiceControlsFixture,
   primitives: PrimitivesFixture,
   'message-strings': MessageStringsFixture,
   direction: DirectionFixture,

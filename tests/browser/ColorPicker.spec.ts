@@ -46,7 +46,8 @@ test('color-area and hue controls support keyboard and pointer interaction with 
     await hue.focus();
     await hue.press('ArrowRight');
     await expect(field).not.toHaveValue('#1a73e8');
-    const focus = await hue.evaluate((element) => {
+    // The hue's range input is visually hidden; the bar it moves on shows its focus.
+    const focus = await picker.locator('.env-color-picker-hue').evaluate((element) => {
       const style = getComputedStyle(element);
       return { width: style.outlineWidth, color: style.outlineColor };
     });
@@ -83,7 +84,7 @@ test('rejected and same-value clamped changes keep the whole controlled picker s
     const area = picker.getByRole('slider', { name: 'Color', exact: true });
     const acceptedHue = await hue.getAttribute('aria-valuenow');
     const acceptedArea = await area.getAttribute('aria-valuetext');
-    const pointer = picker.locator('.react-colorful__saturation-pointer');
+    const pointer = picker.locator('.env-color-picker-saturation-thumb');
     const acceptedPointer = await pointer.getAttribute('style');
     let changes = 0;
     for (const policy of ['Reject', 'Clamp']) {
@@ -121,7 +122,7 @@ test('disabled and read-only pickers prevent interaction and retain native field
     const disabled = scope.getByRole('group', { name: 'Disabled color', exact: true });
     await expect(disabled.getByRole('textbox')).toBeDisabled();
     await expect(disabled.getByRole('slider')).toHaveCount(0);
-    await disabled.locator('.react-colorful__interactive').first().click({ force: true });
+    await disabled.locator('.env-color-picker-saturation-slider').first().click({ force: true });
     await expect(disabled.getByRole('textbox')).toHaveValue('#ea4335');
     const readOnly = scope.getByRole('group', { name: 'Read only color', exact: true });
     await expect(readOnly.getByRole('textbox')).toHaveAttribute('readonly', '');

@@ -5,7 +5,6 @@ import { fixtureUrl } from './Servers';
 async function openOnTouchScreen(browser: Browser, path: string) {
   const context = await browser.newContext({
     hasTouch: true,
-    isMobile: true,
     viewport: { width: 390, height: 844 },
   });
   const page = await context.newPage();
@@ -16,9 +15,7 @@ async function openOnTouchScreen(browser: Browser, path: string) {
 
 test('entered text is 16 px on touch screens, so focusing a field does not zoom the page', async ({
   browser,
-  browserName,
 }) => {
-  test.skip(browserName !== 'chromium', 'Only one engine emulates touch with a coarse pointer.');
   const forms = await openOnTouchScreen(browser, '/?fixture=forms');
   const input = forms.getByRole('textbox', { name: 'Project name', exact: true });
   await expect(input).toHaveCSS('font-size', '16px');

@@ -78,10 +78,16 @@ test.afterEach(() => {
   expect(errors).toEqual([]);
 });
 
-test('the zone is a button named by its label that opens the file picker', async ({ page }) => {
+test('the zone is a button named by its visible text that opens the file picker', async ({
+  page,
+}) => {
   const scope = page.getByTestId('drop-zones-light');
-  const zone = scope.getByRole('button', { name: 'Drop a logo here, or browse', exact: true });
-  await expect(zone).toHaveAccessibleDescription('PNG, JPG or WebP up to 2 MB');
+  // The name is what the zone shows, its label and then its description, so speech input finds it.
+  const zone = scope.getByRole('button', {
+    name: 'Drop a logo here, or browse PNG, JPG or WebP up to 2 MB',
+    exact: true,
+  });
+  await expect(zone).toHaveAccessibleDescription('');
   // The zone is the first tab stop; keyboard focus shows the focus ring around it.
   await page.keyboard.press('Tab');
   await expect(zone).toBeFocused();
@@ -121,7 +127,7 @@ test('the zone is a button named by its label that opens the file picker', async
 
 test('dropped files show the drag-over state and are filtered by accept', async ({ page }) => {
   const scope = page.getByTestId('drop-zones-light');
-  const zone = scope.getByRole('button', { name: 'Drop a logo here, or browse', exact: true });
+  const zone = scope.getByRole('button', { name: /^Drop a logo here, or browse/ });
   const root = scope.locator('.env-drop-zone').first();
   const transfer = await filesTransfer(page, [
     ['logo.webp', 'image/webp'],

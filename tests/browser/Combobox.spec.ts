@@ -17,11 +17,11 @@ const highlighted = (page: Page) =>
   page
     .locator('[role="option"][data-highlighted]')
     .evaluateAll((options) =>
-      options.map((option) => option.querySelector('.env-combobox-option-label')?.textContent),
+      options.map((option) => option.querySelector('.env-list-row-label')?.textContent),
     );
 const chips = (scope: Locator) => scope.locator('.env-combobox-chip-label').allTextContents();
 const wellOf = (input: Locator) =>
-  input.locator('xpath=ancestor::*[contains(@class, "env-combobox-well")][1]');
+  input.locator('xpath=ancestor::*[contains(@class, "env-combobox-control")][1]');
 
 test.beforeEach(async ({ page }) => {
   await page.goto(comboboxFixture);
@@ -80,8 +80,8 @@ test('arrows move the highlight from the chosen option, which shows a check mark
   await expect.poll(() => highlighted(page)).toEqual(['Riley Chen']);
   const riley = list.getByRole('option', { name: 'Riley Chen', exact: true });
   await expect(riley).toHaveAttribute('aria-selected', 'true');
-  await expect(riley.locator('.env-combobox-check svg')).toBeVisible();
-  await expect(list.locator('.env-combobox-check svg')).toHaveCount(1);
+  await expect(riley.locator('.env-combobox-item-indicator svg')).toBeVisible();
+  await expect(list.locator('.env-combobox-item-indicator svg')).toHaveCount(1);
   await page.keyboard.press('ArrowDown');
   await expect.poll(() => highlighted(page)).toEqual(['Taylor Brooks']);
   await page.keyboard.press('ArrowUp');
@@ -160,7 +160,7 @@ test('several options show as chips that Backspace, the arrow keys and their but
   // Without a typed filter the popup stays open for more choices.
   await expect(list).toBeVisible();
   await expect.poll(() => chips(well)).toEqual(['Sam Lee', 'Jordan Park']);
-  await expect(list.locator('.env-combobox-check svg')).toHaveCount(2);
+  await expect(list.locator('.env-combobox-item-indicator svg')).toHaveCount(2);
   // Choosing a chosen option again removes it.
   await list.getByRole('option', { name: 'Sam Lee', exact: true }).click();
   await expect.poll(() => chips(well)).toEqual(['Jordan Park']);
@@ -344,7 +344,7 @@ test('the popup is the raised popup with rounded options inset by its padding, i
       probe.remove();
       const style = getComputedStyle(element);
       const list = element.querySelector('.env-combobox-list')!;
-      const options = [...element.querySelectorAll('.env-combobox-option')];
+      const options = [...element.querySelectorAll('.env-combobox-item')];
       return {
         popupColor,
         background: style.backgroundColor,
@@ -355,7 +355,7 @@ test('the popup is the raised popup with rounded options inset by its padding, i
         scrolls: list.scrollHeight > list.clientHeight,
         optionRadius: Number.parseFloat(getComputedStyle(options[0]!).borderTopLeftRadius),
         labelStarts: options.map(
-          (option) => option.querySelector('.env-combobox-option-label')!.getBoundingClientRect().x,
+          (option) => option.querySelector('.env-list-row-label')!.getBoundingClientRect().x,
         ),
         leadingSizes: options.map(
           (option) => option.querySelector('.env-avatar')!.getBoundingClientRect().width,
@@ -429,7 +429,7 @@ test('small fields line up with small buttons and open the one popup', async ({ 
       // The popup grows in; its rows have their final size once the transition has run.
       await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
       await Promise.allSettled(element.getAnimations().map(({ finished }) => finished));
-      const option = element.querySelector('.env-combobox-option')!;
+      const option = element.querySelector('.env-combobox-item')!;
       return {
         radius: Number.parseFloat(getComputedStyle(element).borderTopLeftRadius),
         padding: Number.parseFloat(getComputedStyle(element).paddingTop),
@@ -545,6 +545,10 @@ test('disabled and read-only fields keep their value', async ({ page }) => {
   await expect(wellOf(disabled)).toHaveCSS('opacity', '0.48');
   const readOnly = field(page, 'Read only light');
   await expect(readOnly).toHaveAttribute('readonly', '');
+  // The input reports the read-only state; its chips are no widgets, so they carry none.
+  await expect(readOnly).toHaveAttribute('aria-readonly', 'true');
+  await expect(wellOf(readOnly).locator('.env-combobox-chip')).toHaveCount(1);
+  await expect(wellOf(readOnly).locator('.env-combobox-chip[aria-readonly]')).toHaveCount(0);
   await expect(wellOf(readOnly).getByRole('button', { name: /^Remove/ })).toHaveCount(0);
   await readOnly.click();
   const list = page.getByRole('listbox');
@@ -561,7 +565,6 @@ test('disabled and read-only fields keep their value', async ({ page }) => {
 async function openOnTouchScreen(browser: Browser) {
   const context = await browser.newContext({
     hasTouch: true,
-    isMobile: true,
     viewport: { width: 390, height: 844 },
   });
   const page = await context.newPage();
@@ -570,11 +573,7 @@ async function openOnTouchScreen(browser: Browser) {
   return page;
 }
 
-test('touch screens give fields, chips and options the touch height', async ({
-  browser,
-  browserName,
-}) => {
-  test.skip(browserName !== 'chromium', 'Only one engine emulates touch with a coarse pointer.');
+test('touch screens give fields, chips and options the touch height', async ({ browser }) => {
   const page = await openOnTouchScreen(browser);
   const owner = field(page, 'Compact owner light');
   expect((await wellOf(owner).boundingBox())!.height).toBeCloseTo(44, 0);

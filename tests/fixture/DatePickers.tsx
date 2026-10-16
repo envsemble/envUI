@@ -37,13 +37,13 @@ export function DatePickerFixture({ theme }: { theme: ThemeValue }) {
           name="publish"
           defaultValue="2026-10-20"
           locale="en-GB"
-          hint="The day the report goes out."
+          description="The day the report goes out."
           clearable
         />
         <DatePicker
           label={`Meeting ${theme}`}
           name="meeting"
-          withTime
+          granularity="minute"
           defaultValue="2026-10-21T09:30"
           locale="en-GB"
           defaultTime="09:00"
@@ -93,7 +93,7 @@ export function DatePickerFixture({ theme }: { theme: ThemeValue }) {
           aria-label={`Compact start ${theme}`}
           placeholder="Start"
           locale="en-GB"
-          withTime
+          granularity="minute"
           min="2026-10-14T08:00"
           max="2026-10-31T18:00"
         />
@@ -121,7 +121,7 @@ export function DatePickerFixture({ theme }: { theme: ThemeValue }) {
         <DatePicker
           label={`Launch ${theme}`}
           locale="en-GB"
-          withTime
+          granularity="minute"
           value={launch}
           onValueChange={setLaunch}
         />
@@ -168,7 +168,7 @@ export function DatePickerFixture({ theme }: { theme: ThemeValue }) {
         <DatePicker
           label={`Remind me ${theme}`}
           locale="en-GB"
-          withTime
+          granularity="minute"
           clearable
           defaultValue="2026-10-22T14:00"
         />

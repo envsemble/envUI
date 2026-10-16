@@ -20,9 +20,9 @@ export function DialogFixture() {
       >
         <TextField ref={firstField} label="Dialog first field" defaultValue="Dialog value" />
         <Select
-          variant="outlined"
+          variant="outline"
           label="Dialog choice"
-          options={dialogOptions}
+          items={dialogOptions}
           defaultValue="aurora"
         />
       </Dialog>

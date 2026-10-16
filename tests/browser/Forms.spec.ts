@@ -20,7 +20,7 @@ function contrastRatio(first: string, second: string) {
 /** The open Select list against the surface it opens over: its color and its border. */
 async function popupSeparation(page: Page, surfaceSelector: string) {
   const [surface, popup, border] = await page.evaluate((selector) => {
-    const popupElement = document.querySelector('.env-dropdown-options')!;
+    const popupElement = document.querySelector('.env-select-popup')!;
     return [
       getComputedStyle(document.querySelector(selector)!).backgroundColor,
       getComputedStyle(popupElement).backgroundColor,
@@ -43,6 +43,14 @@ test('fields associate labels, hints, and validation messages', async ({ page })
   const invalid = page.getByRole('textbox', { name: 'Invalid sample', exact: true });
   await expect(invalid).toHaveAttribute('aria-invalid', 'true');
   await expect(invalid).toHaveAccessibleDescription('Please correct this value');
+  // The frame is Field's: Field.Root around the control, Field.Description and Field.Error.
+  const field = page.locator('.env-field', { has: invalid });
+  await expect(field).toHaveAttribute('data-invalid', '');
+  await expect(field.locator('> .env-field-error')).toHaveText('Please correct this value');
+  await expect(
+    page.locator('.env-field', { has: project }).locator('> .env-field-description'),
+  ).toHaveText('A descriptive name');
+  await expect(page.locator('.env-field', { has: project })).not.toHaveAttribute('data-invalid');
 });
 
 test('native controls submit values and restore uncontrolled defaults on form reset', async ({
@@ -194,7 +202,7 @@ test('Select supports keyboard commit, typeahead, Escape, and native form reset'
     expect(option.content).toBeLessThanOrEqual(option.height + 1);
   // Changing option content invalidates Floating UI's previous measurements.
   await expect(async () => {
-    const popup = await page.locator('.env-dropdown-options').boundingBox();
+    const popup = await page.locator('.env-select-popup').boundingBox();
     expect(popup!.x).toBeGreaterThanOrEqual(0);
     expect(popup!.x + popup!.width).toBeLessThanOrEqual(321);
     expect(popup!.y + popup!.height).toBeLessThanOrEqual(481);
@@ -246,8 +254,8 @@ test('Select triggers are button styles, and the open list stands apart from a p
   expect(separation.contrast).toBeGreaterThanOrEqual(1.08);
   expect(separation.border).toBeGreaterThan(0);
   // The popup takes the surface corners, and its options the same corners inset by its padding.
-  const corners = await page.locator('.env-dropdown-options').evaluate((popup) => {
-    const option = popup.querySelector('.env-dropdown-option')!;
+  const corners = await page.locator('.env-select-popup').evaluate((popup) => {
+    const option = popup.querySelector('.env-select-item')!;
     const radius = (element: Element) =>
       Number.parseFloat(getComputedStyle(element).borderTopLeftRadius);
     return {
@@ -375,7 +383,7 @@ test('a small Select has a small trigger, and its popup has the menus anatomy wi
   await page.keyboard.press('Space');
   const list = page.getByRole('listbox');
   await expect(list).toBeVisible();
-  const popup = page.locator('.env-dropdown-options');
+  const popup = page.locator('.env-select-popup');
   await expect(popup).not.toHaveAttribute('data-starting-style');
   const surface = await popup.evaluate(async (element) => {
     // The popup grows in; its rows have their final size once the transition has run.
@@ -405,16 +413,17 @@ test('a small Select has a small trigger, and its popup has the menus anatomy wi
   for (const option of [starter, team])
     expect((await option.boundingBox())!.height).toBeCloseTo(36, 0);
   // A check mark shows the selected option instead of a fill, and labels stay aligned.
-  await expect(starter.locator('.env-dropdown-option-check svg')).toBeVisible();
-  await expect(team.locator('.env-dropdown-option-check svg')).toHaveCount(0);
+  await expect(starter.locator('.env-select-item-indicator svg')).toBeVisible();
+  await expect(team.locator('.env-select-item-indicator svg')).toHaveCount(0);
   const textStart = (option: typeof starter) =>
     option.evaluate((element) => element.lastElementChild!.getBoundingClientRect().x);
   expect(await textStart(team)).toBeCloseTo(await textStart(starter), 0);
   await page.keyboard.press('ArrowDown');
   await expect(team).toBeFocused();
-  expect(await starter.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe(
-    'rgba(0, 0, 0, 0)',
-  );
+  // The highlight fades out as rows' highlights do.
+  await expect
+    .poll(() => starter.evaluate((element) => getComputedStyle(element).backgroundColor))
+    .toBe('rgba(0, 0, 0, 0)');
   await page.keyboard.press('Enter');
   await expect(list).toHaveCount(0);
   await expect(compact).toHaveText('Team');
@@ -424,7 +433,7 @@ test('a small Select has a small trigger, and its popup has the menus anatomy wi
     .poll(async () => JSON.parse((await page.getByTestId('compact-values').textContent())!))
     .toEqual({ compactPlan: 'team' });
   await compact.click();
-  await expect(team.locator('.env-dropdown-option-check svg')).toBeVisible();
+  await expect(team.locator('.env-select-item-indicator svg')).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(compact).toBeFocused();
 });

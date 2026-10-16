@@ -24,25 +24,25 @@ const states: Record<string, [state: string, rest: string]> = {
   'the selected navigation item': ['[data-testid=nav-selected]', '[data-testid=nav]'],
   'a disabled navigation item': ['[data-testid=nav-disabled]', '[data-testid=nav]'],
   'a checked checkbox': [
-    '.env-choice-control:has-text("Checked") >> nth=0',
-    '.env-choice-control:has-text("Unchecked")',
+    '.env-checkbox:has-text("Checked") >> nth=0',
+    '.env-checkbox:has-text("Unchecked")',
   ],
-  'a switch that is on': [
-    '.env-choice-control:has-text("On")',
-    '.env-choice-control:has-text("Off")',
-  ],
+  'a switch that is on': ['.env-switch:has-text("On")', '.env-switch:has-text("Off")'],
   'a chosen radio': [
-    'fieldset:has-text("Plan") .env-choice-control >> nth=0',
-    'fieldset:has-text("Plan") .env-choice-control >> nth=1',
+    'fieldset:has-text("Plan") .env-radio >> nth=0',
+    'fieldset:has-text("Plan") .env-radio >> nth=1',
   ],
-  'a chosen radio row': ['.env-radio-option >> nth=0', '.env-radio-option >> nth=1'],
+  'a chosen radio row': [
+    '.env-radio[data-orientation=vertical] >> nth=0',
+    '.env-radio[data-orientation=vertical] >> nth=1',
+  ],
   'an invalid field': [
-    '.env-text-field-well:has-text("Invalid")',
-    '.env-text-field-well:has-text("Valid") >> nth=0',
+    '.env-text-field-control:has-text("Invalid")',
+    '.env-text-field-control:has-text("Valid") >> nth=0',
   ],
   'a disabled field': [
-    '.env-text-field-well:has-text("Disabled")',
-    '.env-text-field-well:has-text("Valid") >> nth=0',
+    '.env-text-field-control:has-text("Disabled")',
+    '.env-text-field-control:has-text("Valid") >> nth=0',
   ],
   'a selected table row': ['[data-testid=row-selected]', '[data-testid=row]'],
   'the selected tree row': ['[role=treeitem] >> nth=0', '[role=treeitem] >> nth=1'],
@@ -157,8 +157,8 @@ test('selection and checked states take the system colors', async ({ page, brows
     '.env-nav-list-item-selected',
     "[role=treeitem][aria-selected='true']",
     '.env-calendar-day[aria-selected=true] > .env-calendar-day-mark',
-    '.env-choice-control:has-text("Checked") >> nth=0 >> .env-checkbox-control',
-    '.env-choice-control:has-text("On") >> .env-switch-control',
+    '.env-checkbox:has-text("Checked") >> nth=0 >> .env-checkbox-input',
+    '.env-switch:has-text("On") >> .env-switch-input',
   ])
     expect(await background(selector), selector).toBe(system.highlight);
   // Where the system forces colors, an unselected item paints no fill of its own.
@@ -225,7 +225,7 @@ const focusCases: FocusCase[] = [
   { name: 'the active document tab', ring: '.env-document-tab[data-active]', over: 'fill' },
   {
     name: 'a chosen radio row',
-    ring: '.env-radio-option >> nth=0',
+    ring: '.env-radio[data-orientation=vertical] >> nth=0',
     over: 'canvas',
     focus: 'fieldset:has-text("Role") input >> nth=0',
   },

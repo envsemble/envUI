@@ -131,19 +131,19 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
         />
         <Select
           label={`${theme} isolated select`}
-          hint="Select hint"
-          options={planOptions}
+          description="Select hint"
+          items={planOptions}
           defaultValue="starter"
           data-testid={`${theme}-color-select`}
         />
         <Select
           label={`${theme} isolated select error`}
           error="Select validation error"
-          options={planOptions}
+          items={planOptions}
           defaultValue="starter"
           data-testid={`${theme}-color-select-error`}
         />
-        <RadioGroup variant="rows" data-testid={`${theme}-color-radio-row`}>
+        <RadioGroup orientation="vertical" data-testid={`${theme}-color-radio-row`}>
           <Radio
             value="sample"
             label={`${theme} isolated radio`}

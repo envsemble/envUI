@@ -145,7 +145,7 @@ export function ComboboxFixture({ theme }: { theme: ThemeValue }) {
           name="author"
           items={people}
           defaultValue="alex-morgan"
-          hint="The person who answers questions."
+          description="The person who answers questions."
           clearable
           onValueChange={(value) => setAuthorChanges((current) => [...current, value])}
         />
