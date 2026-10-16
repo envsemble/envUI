@@ -28,8 +28,33 @@ const configFile = resolve(repositoryRoot, 'packages/ui/tsconfig.json');
 /** The directive, as the modules write it. */
 export const directive = "'use client';";
 
-/** The comment that gives a module the directive for a reason the reading cannot see. */
+/**
+ * The comment that gives a module the directive for a reason the reading cannot see, tested on the
+ * module's comments only, so that the words in a string don't count.
+ */
 const annotation = /(?:\/\/|\/\*+|^\s*\*)\s*@client-module\b[ \t:—-]*([^\n]*?)\s*(?:\*\/)?$/m;
+
+/** The text of every comment in a source file. */
+function commentsOf(sourceFile) {
+  const text = sourceFile.getFullText();
+  const seen = new Set();
+  const comments = [];
+  const collect = (ranges) => {
+    for (const range of ranges ?? [])
+      if (!seen.has(range.pos)) {
+        seen.add(range.pos);
+        comments.push(text.slice(range.pos, range.end));
+      }
+  };
+  const visit = (node) => {
+    collect(ts.getLeadingCommentRanges(text, node.getFullStart()));
+    collect(ts.getTrailingCommentRanges(text, node.getEnd()));
+    ts.forEachChild(node, visit);
+  };
+  visit(sourceFile);
+  collect(ts.getLeadingCommentRanges(text, sourceFile.endOfFileToken.getFullStart()));
+  return comments;
+}
 
 /** Calls that only work in the browser's React: createContext and react-dom's createPortal. */
 const clientCalls = new Set(['createContext', 'createPortal']);
@@ -110,13 +135,22 @@ function createReader(checker) {
   const createsFunction = (node, seen = new Set()) => {
     const expression = skipOuter(node);
     if (ts.isArrowFunction(expression) || ts.isFunctionExpression(expression)) return true;
-    // A function made only when the parent passed one, as in `onSelect && (() => onSelect(item))`,
-    // is never made under a server parent, which cannot pass functions.
+    // A function made only when the parent passed one, as in `onSelect && (() => onSelect(item))`
+    // or `!onSelect ? undefined : () => onSelect(item)`, is never made under a server parent,
+    // which cannot pass functions.
     const guarded = (test) => isCallable(test) && isPassedOn(test);
+    const negated = (test) => {
+      const condition = skipOuter(test);
+      return (
+        ts.isPrefixUnaryExpression(condition) &&
+        condition.operator === ts.SyntaxKind.ExclamationToken &&
+        guarded(condition.operand)
+      );
+    };
     if (ts.isConditionalExpression(expression))
       return (
         (!guarded(expression.condition) && createsFunction(expression.whenTrue, seen)) ||
-        createsFunction(expression.whenFalse, seen)
+        (!negated(expression.condition) && createsFunction(expression.whenFalse, seen))
       );
     if (
       ts.isBinaryExpression(expression) &&
@@ -153,7 +187,22 @@ function createReader(checker) {
     if (ts.isObjectLiteralExpression(expression))
       return expression.properties.some((property) => {
         if (ts.isPropertyAssignment(property)) return createsFunction(property.initializer);
-        if (ts.isShorthandPropertyAssignment(property)) return createsFunction(property.name);
+        // `{ onClick }` holds the value of the variable it names, which may only pass a prop on.
+        if (ts.isShorthandPropertyAssignment(property)) {
+          const value = checker?.getShorthandAssignmentValueSymbol(property);
+          const declaration = value?.valueDeclaration ?? value?.declarations?.[0];
+          if (declaration && isParameter(declaration)) return false;
+          if (
+            declaration &&
+            ts.isVariableDeclaration(declaration) &&
+            declaration.initializer &&
+            !seen.has(declaration)
+          ) {
+            seen.add(declaration);
+            return createsFunction(declaration.initializer, seen);
+          }
+          return checker ? isCallable(property.name) : true;
+        }
         if (ts.isSpreadAssignment(property)) return propsCarryFunction(property.expression, seen);
         return true; // methods and accessors
       });
@@ -195,7 +244,9 @@ function createReader(checker) {
   /** What makes a module a client module, as reasons; none for a module a server can render. */
   return function clientReasons(sourceFile) {
     const reasons = new Set();
-    const marked = annotation.exec(sourceFile.text);
+    const marked = commentsOf(sourceFile)
+      .map((comment) => annotation.exec(comment))
+      .find(Boolean);
     if (marked) reasons.add(`is marked @client-module${marked[1] ? `: ${marked[1]}` : ''}`);
     const visit = (node) => {
       if (
@@ -232,7 +283,7 @@ function createReader(checker) {
         reasons.add(`spreads a function into ${node.parent.parent.tagName.getText()}`);
       if (
         ts.isClassDeclaration(node) &&
-        node.heritageClauses?.some((clause) => /\bComponent\b/.test(clause.getText()))
+        node.heritageClauses?.some((clause) => /\b(?:Pure)?Component\b/.test(clause.getText()))
       )
         reasons.add('is a class component');
       ts.forEachChild(node, visit);

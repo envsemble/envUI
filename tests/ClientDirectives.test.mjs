@@ -81,6 +81,24 @@ test('the check sees what makes a module a client module, also by name and throu
       [],
     ],
     ['export const H = ({ label }: { label: string }) => <b title={label}>{label}</b>;', []],
+    // The guard written the other way round, and a prop passed on in a shorthand spread.
+    [
+      'export function I({ onPick }: { onPick?: () => void }) { return <button onClick={!onPick ? undefined : () => onPick()} />; }',
+      [],
+    ],
+    [
+      'export function J({ onClick }: { onClick?: () => void }) { return <button {...{ onClick }} />; }',
+      [],
+    ],
+    // A class component of either base, and the marker only in a comment, not a string.
+    [
+      "import { PureComponent } from 'react';\nexport class K extends PureComponent { render() { return null; } }",
+      ['is a class component'],
+    ],
+    [
+      "export const L = '// @client-module not a comment';\nexport const M = `/* @client-module nor this */`;",
+      [],
+    ],
   ];
   for (const [source, reasons] of cases) assert.deepEqual(clientReasonsOf(source), reasons, source);
 });
@@ -129,7 +147,29 @@ test('a server component imports envUI and renders it on the server', () => {
   }
   const main = result.surveys['@envsemble/envui'];
   // Each server component renders with its documented variants too: pending, href, icon-only…
-  assert.ok(main.renders > main.server.length * 2, `${main.renders} renders`);
+  const variants = {
+    Button: [
+      '(defaults)',
+      'variant="destructive"',
+      'pending',
+      'disabled',
+      'href="/destination"',
+      'href="/destination" pending',
+      'href="/destination" disabled',
+      'iconOnly icon={…} aria-label="Home"',
+    ],
+    Link: ['(defaults)', 'href="/destination"', 'href="/destination" disabled'],
+    Card: ['layout="action"', 'as="button"', 'href="/destination"'],
+    Badge: ['tone="danger"', 'variant="solid"'],
+    Alert: ['tone="error"', 'announce'],
+    Text: ['variant="page-heading"', 'tone="muted"'],
+  };
+  for (const [name, expected] of Object.entries(variants))
+    for (const variant of expected)
+      assert.ok(
+        main.variants[name]?.includes(variant),
+        `${name} renders on the server with ${variant}`,
+      );
   for (const name of ['Badge', 'Card', 'Text', 'Button', 'Alert', 'List.Item', 'Stat.Root'])
     assert.ok(main.server.includes(name), `${name} renders on the server`);
   for (const name of ['Menu.Item', 'Theme', 'Dialog', 'Table.Root', 'useToast'])

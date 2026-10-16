@@ -70,11 +70,11 @@ const describe = (variant) =>
 
 /**
  * Every export of an entry: client references, server components (each rendered on the server,
- * with its defaults and with each variant of its props), and plain values, with the server
- * components that failed to render, with which props and why.
+ * with its defaults and with each variant of its props, which `variants` lists by component), and
+ * plain values, with the server components that failed to render, with which props and why.
  */
 function survey(entry, exports) {
-  const found = { client: [], server: [], values: [], failed: [], renders: 0 };
+  const found = { client: [], server: [], values: [], failed: [], renders: 0, variants: {} };
   const visit = (name, value) => {
     if (isClientReference(value)) found.client.push(name);
     else if (isComponent(name, value)) {
@@ -84,6 +84,7 @@ function survey(entry, exports) {
         try {
           render(h(value, { ...base, ...requiredProps[name], ...variant }));
           found.renders += 1;
+          (found.variants[name] ??= []).push(describe(variant) || '(defaults)');
         } catch (error) {
           rendered = false;
           const props = describe(variant);
