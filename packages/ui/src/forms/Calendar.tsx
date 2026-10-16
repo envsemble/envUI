@@ -11,6 +11,9 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { useHydrated } from '../internal/useHydrated.js';
+import { useMessages } from '../internal/EnvUIContext.js';
+import { useResolvedLocale } from '../internal/useFormatters.js';
+import { calendar as calendarMessages } from '../foundations/messages/calendar.js';
 import { IconButton } from '../actions/Button.js';
 import { ChevronLeft } from '../icons/ChevronLeft.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
@@ -24,7 +27,6 @@ import {
   monthStart,
   now,
   parseDay,
-  serverLocale,
   toUtcDate,
   type Weekday,
 } from './internal/CalendarDays.js';
@@ -49,14 +51,28 @@ export interface CalendarProps
    */
   weekStart?: Weekday;
   /**
-   * The locale of the month and weekday names and the day numbers; the browser's by default. The
-   * days are always Gregorian, also in a locale with a calendar of its own.
+   * The locale of the month and weekday names and the day numbers: EnvUIProvider's, else the
+   * browser's. The days are always Gregorian, also in a locale with a calendar of its own.
    */
   locale?: string;
-  /** Accessible name of the previous month button; Previous month by default. */
+  /**
+   * Accessible name of the previous month button.
+   * @default 'Previous month', or EnvUIProvider's messages.calendar.previousMonth
+   */
   previousMonthLabel?: string;
-  /** Accessible name of the next month button; Next month by default. */
+  /**
+   * Accessible name of the next month button.
+   * @default 'Next month', or EnvUIProvider's messages.calendar.nextMonth
+   */
   nextMonthLabel?: string;
+}
+
+/**
+ * The day of a calendar that holds its tab stop, the day focus goes to as the calendar opens in a
+ * popup, such as DatePicker's.
+ */
+export function calendarActiveDay(root: ParentNode | null | undefined): HTMLElement | null {
+  return root?.querySelector<HTMLElement>('.env-calendar-day[tabindex="0"]') ?? null;
 }
 
 /** Six weeks always fit a month, so the calendar keeps its height from month to month. */
@@ -76,11 +92,14 @@ export function Calendar({
   max,
   weekStart,
   locale,
-  previousMonthLabel = 'Previous month',
-  nextMonthLabel = 'Next month',
+  previousMonthLabel,
+  nextMonthLabel,
   className,
   ...props
 }: CalendarProps) {
+  const messages = useMessages('calendar', calendarMessages);
+  const previousName = previousMonthLabel ?? messages.previousMonth;
+  const nextName = nextMonthLabel ?? messages.nextMonth;
   const headingId = useId();
   const grid = useRef<HTMLTableElement>(null);
   const focusActive = useRef(false);
@@ -92,7 +111,7 @@ export function Calendar({
   // alike: without a locale, the server's fallback, and no today, which only the reader's clock
   // knows. The reader's language, week and today follow at once.
   const hydrated = useHydrated();
-  const shownLocale = locale ?? (hydrated ? undefined : serverLocale);
+  const shownLocale = useResolvedLocale(locale);
   const today = hydrated ? now().day : undefined;
   const localeStart = useMemo(() => localeWeekStart(shownLocale), [shownLocale]);
   const firstWeekday = weekStart ?? localeStart;
@@ -198,10 +217,10 @@ export function Calendar({
     >
       <div className="env-calendar-header">
         <IconButton
-          variant="text"
+          variant="ghost"
           icon={<ChevronLeft />}
-          aria-label={previousMonthLabel}
-          title={previousMonthLabel}
+          aria-label={previousName}
+          title={previousName}
           // Unavailable rather than disabled, so focus stays on the button at the earliest month.
           aria-disabled={!previousAvailable || undefined}
           className="env-calendar-previous"
@@ -217,10 +236,10 @@ export function Calendar({
           {daysShown ? formats.month.format(toUtcDate(first)) : null}
         </div>
         <IconButton
-          variant="text"
+          variant="ghost"
           icon={<ChevronRight />}
-          aria-label={nextMonthLabel}
-          title={nextMonthLabel}
+          aria-label={nextName}
+          title={nextName}
           aria-disabled={!nextAvailable || undefined}
           className="env-calendar-next"
           onClick={() => {

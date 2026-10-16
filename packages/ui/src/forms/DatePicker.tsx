@@ -1,6 +1,5 @@
 'use client';
 
-import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { Popover as BasePopover } from '@base-ui/react/popover';
 import {
   useEffect,
@@ -8,20 +7,25 @@ import {
   useRef,
   useState,
   type ButtonHTMLAttributes,
+  type CSSProperties,
   type KeyboardEvent,
   type Ref,
 } from 'react';
-import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/setRef.js';
 import { useHydrated } from '../internal/useHydrated.js';
-import { Theme, useTheme, type ControlSize } from '../foundations/Theme.js';
+import { useDirection } from '../internal/useDirection.js';
+import { useMessages } from '../internal/EnvUIContext.js';
+import { useResolvedLocale } from '../internal/useFormatters.js';
+import { PopupSurface } from '../internal/PopupSurface.js';
+import { type ControlSize } from '../foundations/Theme.js';
+import { datePicker as datePickerMessages } from '../foundations/messages/datePicker.js';
 import { Button, IconButton } from '../actions/Button.js';
 import { CalendarClock } from '../icons/CalendarClock.js';
 import { CalendarMonth } from '../icons/CalendarMonth.js';
 import { Close } from '../icons/Close.js';
-import { Calendar } from './Calendar.js';
+import { Calendar, calendarActiveDay } from './Calendar.js';
 import { TextField } from './TextField.js';
-import { FieldFrame, type FieldProps, type FieldWellProps } from './internal/FieldFrame.js';
+import { FieldFrame, type FieldControlBoxProps, type FieldProps } from './internal/FieldFrame.js';
 import {
   clampDay,
   dateFormat,
@@ -34,13 +38,11 @@ import {
   parseDateTime,
   parseDay,
   parseTime,
-  serverLocale,
   toUtcDate,
   type Weekday,
 } from './internal/CalendarDays.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
 import { useFieldMetadata } from './internal/useFieldMetadata.js';
-import { useTextDirection } from './internal/useTextDirection.js';
 
 export interface DatePickerProps
   extends Omit<
@@ -48,19 +50,27 @@ export interface DatePickerProps
       'value' | 'defaultValue' | 'onChange' | 'children' | 'name' | 'type'
     >,
     FieldProps {
-  /** The field's button. */
+  /** The field's button, which shows the value and opens the calendar. */
   ref?: Ref<HTMLButtonElement>;
+  /** The field's class, on its root element, beside env-field and env-date-picker. */
+  className?: string;
+  /** Styles of the field's root element. */
+  style?: CSSProperties;
   /**
-   * The value: a day as YYYY-MM-DD, or with withTime a local date and time as YYYY-MM-DDTHH:mm.
-   * null, or an empty string, for none.
+   * The value: a day as YYYY-MM-DD, or with the minute granularity a local date and time as
+   * YYYY-MM-DDTHH:mm. null, or an empty string, for none.
    */
   value?: string | null;
   /** The value an uncontrolled field starts with, and that a form reset restores; none by default. */
   defaultValue?: string | null;
   /** Receives the new value, or null once the field is cleared. */
   onValueChange?: (value: string | null) => void;
-  /** Choose a time as well: the value becomes YYYY-MM-DDTHH:mm. */
-  withTime?: boolean;
+  /**
+   * What the value holds: day, a date as YYYY-MM-DD, or minute, a date and a time as
+   * YYYY-MM-DDTHH:mm, chosen in a time field under the calendar.
+   * @default 'day'
+   */
+  granularity?: 'day' | 'minute';
   /** The earliest value, as YYYY-MM-DD or YYYY-MM-DDTHH:mm; earlier days are unavailable. */
   min?: string;
   /** The latest value, as YYYY-MM-DD or YYYY-MM-DDTHH:mm; later days are unavailable. */
@@ -68,15 +78,16 @@ export interface DatePickerProps
   /** The time a newly chosen day starts with, as HH:mm; 00:00 by default. */
   defaultTime?: string;
   /**
-   * The locale of the shown value and the calendar's names and numbers; the browser's by default.
-   * Dates are Gregorian, also in a locale with a calendar of its own.
+   * The locale of the shown value and the calendar's names and numbers: EnvUIProvider's, else the
+   * browser's. Dates are Gregorian, also in a locale with a calendar of its own.
    */
   locale?: string;
   /** The calendar's first day of the week, from 0 for Sunday to 6 for Saturday; see Calendar. */
   weekStart?: Weekday;
   /**
    * How the field shows the value: Intl.DateTimeFormat options, by default the medium date style
-   * and, with withTime, the short time style, in the Gregorian calendar unless they name another.
+   * and, with the minute granularity, the short time style, in the Gregorian calendar unless they
+   * name another.
    */
   formatOptions?: Intl.DateTimeFormatOptions;
   /** The name the value is submitted under with a form, as YYYY-MM-DD or YYYY-MM-DDTHH:mm. */
@@ -88,11 +99,11 @@ export interface DatePickerProps
   /** Shown while the field is empty and its label floats or is hidden. */
   placeholder?: string;
   /**
-   * The field's look, as TextField's: outlined, at the control height, or floating, 3.5 rem tall
+   * The field's look, as TextField's: outline, at the control height, or floating, 3.5 rem tall
    * with room for its label, for long forms on a page.
-   * @default 'outlined'
+   * @default 'outline'
    */
-  variant?: 'outlined' | 'floating';
+  variant?: 'outline' | 'floating';
   /**
    * The field's height, as on every control: sm, md or lg in the current scale. Without it, the
    * field takes the control height of its container, md unless the container sets another.
@@ -112,19 +123,40 @@ export interface DatePickerProps
   defaultOpen?: boolean;
   /** Called with the new state when the calendar opens or closes. */
   onOpenChange?: (open: boolean) => void;
-  /** Accessible name of the field's clear button and text of the calendar's; Clear by default. */
+  /**
+   * Accessible name of the field's clear button and text of the calendar's.
+   * @default 'Clear', or EnvUIProvider's messages.datePicker.clear
+   */
   clearLabel?: string;
-  /** The calendar's shortcut to today; Today by default. */
+  /**
+   * The calendar's shortcut to today.
+   * @default 'Today', or EnvUIProvider's messages.datePicker.today
+   */
   todayLabel?: string;
-  /** With withTime, the calendar's shortcut to the current date and time; Now by default. */
+  /**
+   * With the minute granularity, the calendar's shortcut to the current date and time.
+   * @default 'Now', or EnvUIProvider's messages.datePicker.now
+   */
   nowLabel?: string;
-  /** With withTime, the button that closes the calendar; Done by default. */
+  /**
+   * With the minute granularity, the button that closes the calendar.
+   * @default 'Done', or EnvUIProvider's messages.datePicker.done
+   */
   doneLabel?: string;
-  /** With withTime, the label of the time field; Time by default. */
+  /**
+   * With the minute granularity, the label of the time field.
+   * @default 'Time', or EnvUIProvider's messages.datePicker.time
+   */
   timeLabel?: string;
-  /** Accessible name of the calendar's previous month button; Previous month by default. */
+  /**
+   * Accessible name of the calendar's previous month button.
+   * @default 'Previous month', or EnvUIProvider's messages.calendar.previousMonth
+   */
   previousMonthLabel?: string;
-  /** Accessible name of the calendar's next month button; Next month by default. */
+  /**
+   * Accessible name of the calendar's next month button.
+   * @default 'Next month', or EnvUIProvider's messages.calendar.nextMonth
+   */
   nextMonthLabel?: string;
 }
 
@@ -156,6 +188,12 @@ function remPixels(element: Element | null) {
   return Number.parseFloat(getComputedStyle(element.ownerDocument.documentElement).fontSize) || 16;
 }
 
+const popupParts = {
+  Portal: BasePopover.Portal,
+  Positioner: BasePopover.Positioner,
+  Popup: BasePopover.Popup,
+};
+
 function ignoreChange() {
   // The visually hidden input only carries the value for native forms.
 }
@@ -169,7 +207,7 @@ export function DatePicker({
   value,
   defaultValue = null,
   onValueChange,
-  withTime = false,
+  granularity = 'day',
   min,
   max,
   defaultTime = '00:00',
@@ -182,25 +220,26 @@ export function DatePicker({
   disabled = false,
   readOnly = false,
   placeholder,
-  variant = 'outlined',
+  variant = 'outline',
   size,
   showLabel,
   clearable = false,
   open: controlledOpen,
   defaultOpen = false,
   onOpenChange,
-  clearLabel = 'Clear',
-  todayLabel = 'Today',
-  nowLabel = 'Now',
-  doneLabel = 'Done',
-  timeLabel = 'Time',
+  clearLabel,
+  todayLabel,
+  nowLabel,
+  doneLabel,
+  timeLabel,
   previousMonthLabel,
   nextMonthLabel,
   label,
-  hint,
+  description,
   error,
   id: suppliedId,
   className,
+  style,
   'aria-describedby': describedBy,
   'aria-invalid': invalid,
   'aria-label': ariaLabel,
@@ -208,10 +247,11 @@ export function DatePicker({
   onKeyDown,
   ...triggerProps
 }: DatePickerProps) {
-  const metadata = useFieldMetadata(suppliedId, hint, error, describedBy, invalid);
+  const withTime = granularity === 'minute';
+  const messages = useMessages('datePicker', datePickerMessages);
+  const metadata = useFieldMetadata(suppliedId, description, error, describedBy, invalid);
   const { id } = metadata;
   const labelId = `${id}-label`;
-  const theme = useTheme();
   const triggerRef = useRef<HTMLButtonElement>(null);
   const nativeRef = useRef<HTMLInputElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
@@ -220,7 +260,7 @@ export function DatePicker({
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
   const open = controlledOpen ?? uncontrolledOpen;
   // Read as the calendar opens, which takes the field's direction into its portal.
-  const [direction] = useTextDirection(triggerRef, open);
+  const [direction] = useDirection(triggerRef, open);
   const defaultMinutes = parseTime(defaultTime) ?? 0;
   // The field and its popup take the application's own aria-labelledby, else the label, else the
   // aria-label.
@@ -251,7 +291,7 @@ export function DatePicker({
   // On the server, and while its output hydrates, a field without a locale shows the value as every
   // browser shows it, then in the reader's language.
   const hydrated = useHydrated();
-  const shownLocale = locale ?? (hydrated ? undefined : serverLocale);
+  const shownLocale = useResolvedLocale(locale);
   const formatOptionsKey = JSON.stringify(formatOptions ?? null);
   const formatter = useMemo(
     () =>
@@ -349,11 +389,11 @@ export function DatePicker({
   const showClear = clearable && Boolean(serialized) && !disabled && !readOnly;
   const labelFloats = Boolean(serialized) || open;
 
-  function renderWell(wellProps: FieldWellProps) {
+  function renderControlBox(boxProps: FieldControlBoxProps) {
     return (
       <div
-        {...wellProps}
-        className={classNames(wellProps.className, 'env-date-picker-well')}
+        {...boxProps}
+        className={`${boxProps.className} env-date-picker-control`}
         data-label-floating={labelFloats || undefined}
         data-actions={showClear ? '2' : '1'}
       />
@@ -361,171 +401,159 @@ export function DatePicker({
   }
 
   return (
-    <DirectionProvider direction={direction}>
-      <BasePopover.Root open={open} onOpenChange={(next) => setOpen(next)}>
-        <FieldFrame
-          id={id}
-          label={
-            label != null ? (
-              <label
-                htmlFor={id}
-                id={labelId}
-                onPointerDown={() => {
-                  labelPressOpen.current = open;
-                }}
-                onClick={(event) => {
-                  // A press on the label closes the open calendar, as a press outside it does;
-                  // the click that follows would open it again, as it opens a closed one.
-                  if (!labelPressOpen.current) return;
-                  labelPressOpen.current = false;
-                  event.preventDefault();
-                  triggerRef.current?.focus();
-                }}
-              >
-                {label}
-              </label>
-            ) : null
-          }
-          hint={hint}
-          error={error}
-          floatingLabel
-          variant={variant}
-          size={size}
-          showLabel={showLabel}
-          className="env-date-picker"
-          renderWell={renderWell}
-        >
-          <BasePopover.Trigger
-            {...triggerProps}
-            ref={(node: HTMLButtonElement | null) => {
-              triggerRef.current = node;
-              setRef(ref, node);
-            }}
-            id={id}
-            role="combobox"
-            {...accessibleName}
-            aria-describedby={metadata['aria-describedby']}
-            aria-invalid={metadata['aria-invalid']}
-            aria-required={required || undefined}
-            aria-readonly={readOnly || undefined}
-            disabled={disabled}
-            className={classNames('env-text-input', 'env-date-picker-trigger', className)}
-            onKeyDown={handleKeyDown}
-          >
-            {display ? (
-              // As in RelativeTime: should the browser format the hydrated value differently from
-              // the server, the server's text stays until hydration ends, then the browser's
-              // replaces it, without a mismatch error.
-              <span className="env-date-picker-value" suppressHydrationWarning>
-                {hydrated ? display : [display]}
-              </span>
-            ) : (
-              <span className="env-date-picker-placeholder">{placeholder}</span>
-            )}
-          </BasePopover.Trigger>
-          <span className="env-text-field-end env-date-picker-end">
-            {showClear && (
-              <IconButton
-                variant="text"
-                icon={<Close />}
-                aria-label={clearLabel}
-                title={clearLabel}
-                onClick={() => {
-                  commit(null);
-                  triggerRef.current?.focus();
-                }}
-              />
-            )}
-            <span className="env-icon env-date-picker-icon" aria-hidden="true">
-              {withTime ? <CalendarClock /> : <CalendarMonth />}
-            </span>
-          </span>
-          <input
-            ref={nativeRef}
-            className="env-date-picker-native"
-            name={name}
-            form={form}
-            value={serialized}
-            required={required}
-            disabled={disabled}
-            // Like a read-only input, a read-only field is not validated, so an empty required one
-            // never keeps its form from submitting.
-            readOnly={readOnly}
-            tabIndex={-1}
-            aria-hidden="true"
-            autoComplete="off"
-            onChange={ignoreChange}
-            // The browser focuses an invalid required field on submit; the field takes it instead.
-            onFocus={() => triggerRef.current?.focus()}
-          />
-        </FieldFrame>
-        <BasePopover.Portal>
-          <Theme {...theme} className="env-popover-theme">
-            <BasePopover.Positioner
-              side="bottom"
-              align="start"
-              sideOffset={() => remPixels(triggerRef.current) * 0.25}
-              collisionPadding={8}
-              className="env-popover-positioner"
+    <BasePopover.Root open={open} onOpenChange={(next) => setOpen(next)}>
+      <FieldFrame
+        id={id}
+        label={
+          label != null ? (
+            <label
+              htmlFor={id}
+              id={labelId}
+              onPointerDown={() => {
+                labelPressOpen.current = open;
+              }}
+              onClick={(event) => {
+                // A press on the label closes the open calendar, as a press outside it does;
+                // the click that follows would open it again, as it opens a closed one.
+                if (!labelPressOpen.current) return;
+                labelPressOpen.current = false;
+                event.preventDefault();
+                triggerRef.current?.focus();
+              }}
             >
-              <BasePopover.Popup
-                ref={popupRef}
-                className="env-popover env-date-picker-popup"
-                // The portal leaves the field's text direction behind; the calendar keeps it.
-                dir={direction}
-                {...accessibleName}
-                initialFocus={() =>
-                  popupRef.current?.querySelector<HTMLElement>('.env-calendar-day[tabindex="0"]') ??
-                  true
-                }
-              >
-                <Calendar
-                  value={current ? formatDay(current.day) : null}
-                  onValueChange={chooseDay}
-                  min={minDay === undefined ? undefined : formatDay(minDay)}
-                  max={maxDay === undefined ? undefined : formatDay(maxDay)}
-                  weekStart={weekStart}
-                  locale={locale}
-                  previousMonthLabel={previousMonthLabel}
-                  nextMonthLabel={nextMonthLabel}
-                />
-                {withTime && (
-                  <TextField
-                    type="time"
-                    label={timeLabel}
-                    value={timeDraft ?? (current ? formatTime(current.minutes) : '')}
-                    onChange={(event) => changeTime(event.currentTarget.value)}
-                    onBlur={() => setTimeDraft(null)}
-                  />
-                )}
-                <div className="env-date-picker-actions">
-                  <Button
-                    variant="text"
-                    aria-disabled={!nowAvailable || undefined}
-                    onClick={() => {
-                      if (nowAvailable) chooseNow();
-                    }}
-                  >
-                    {withTime ? nowLabel : todayLabel}
-                  </Button>
-                  <span className="env-date-picker-actions-end">
-                    {clearable && serialized && (
-                      <Button variant="text" onClick={clear}>
-                        {clearLabel}
-                      </Button>
-                    )}
-                    {withTime && (
-                      <Button variant="secondary" onClick={() => setOpen(false)}>
-                        {doneLabel}
-                      </Button>
-                    )}
-                  </span>
-                </div>
-              </BasePopover.Popup>
-            </BasePopover.Positioner>
-          </Theme>
-        </BasePopover.Portal>
-      </BasePopover.Root>
-    </DirectionProvider>
+              {label}
+            </label>
+          ) : null
+        }
+        description={description}
+        error={error}
+        floatingLabel
+        variant={variant}
+        size={size}
+        showLabel={showLabel}
+        className={className ? `env-date-picker ${className}` : 'env-date-picker'}
+        style={style}
+        renderControlBox={renderControlBox}
+      >
+        <BasePopover.Trigger
+          {...triggerProps}
+          ref={(node: HTMLButtonElement | null) => {
+            triggerRef.current = node;
+            setRef(ref, node);
+          }}
+          id={id}
+          role="combobox"
+          {...accessibleName}
+          aria-describedby={metadata['aria-describedby']}
+          aria-invalid={metadata['aria-invalid']}
+          aria-required={required || undefined}
+          aria-readonly={readOnly || undefined}
+          disabled={disabled}
+          className="env-text-field-input env-date-picker-trigger"
+          onKeyDown={handleKeyDown}
+        >
+          {display ? (
+            // As in RelativeTime: should the browser format the hydrated value differently from
+            // the server, the server's text stays until hydration ends, then the browser's
+            // replaces it, without a mismatch error.
+            <span className="env-date-picker-value" suppressHydrationWarning>
+              {hydrated ? display : [display]}
+            </span>
+          ) : (
+            <span className="env-date-picker-placeholder">{placeholder}</span>
+          )}
+        </BasePopover.Trigger>
+        <span className="env-text-field-end env-date-picker-end">
+          {showClear && (
+            <IconButton
+              variant="ghost"
+              icon={<Close />}
+              aria-label={clearLabel ?? messages.clear}
+              title={clearLabel ?? messages.clear}
+              className="env-date-picker-clear"
+              onClick={() => {
+                commit(null);
+                triggerRef.current?.focus();
+              }}
+            />
+          )}
+          <span className="env-icon env-date-picker-icon" aria-hidden="true">
+            {withTime ? <CalendarClock /> : <CalendarMonth />}
+          </span>
+        </span>
+        <input
+          ref={nativeRef}
+          className="env-date-picker-native"
+          name={name}
+          form={form}
+          value={serialized}
+          required={required}
+          disabled={disabled}
+          // Like a read-only input, a read-only field is not validated, so an empty required one
+          // never keeps its form from submitting.
+          readOnly={readOnly}
+          tabIndex={-1}
+          aria-hidden="true"
+          autoComplete="off"
+          onChange={ignoreChange}
+          // The browser focuses an invalid required field on submit; the field takes it instead.
+          onFocus={() => triggerRef.current?.focus()}
+        />
+      </FieldFrame>
+      <PopupSurface
+        parts={popupParts}
+        side="bottom"
+        align="start"
+        sideOffset={() => remPixels(triggerRef.current) * 0.25}
+        // The portal leaves the field's text direction behind; the calendar keeps it.
+        dir={direction}
+        className="env-date-picker-popup"
+        popupProps={{ ref: popupRef, ...accessibleName }}
+        initialFocus={() => calendarActiveDay(popupRef.current) ?? true}
+      >
+        <Calendar
+          value={current ? formatDay(current.day) : null}
+          onValueChange={chooseDay}
+          min={minDay === undefined ? undefined : formatDay(minDay)}
+          max={maxDay === undefined ? undefined : formatDay(maxDay)}
+          weekStart={weekStart}
+          locale={locale}
+          previousMonthLabel={previousMonthLabel}
+          nextMonthLabel={nextMonthLabel}
+        />
+        {withTime && (
+          <TextField
+            type="time"
+            label={timeLabel ?? messages.time}
+            value={timeDraft ?? (current ? formatTime(current.minutes) : '')}
+            onChange={(event) => changeTime(event.currentTarget.value)}
+            onBlur={() => setTimeDraft(null)}
+          />
+        )}
+        <div className="env-date-picker-actions">
+          <Button
+            variant="text"
+            aria-disabled={!nowAvailable || undefined}
+            onClick={() => {
+              if (nowAvailable) chooseNow();
+            }}
+          >
+            {withTime ? (nowLabel ?? messages.now) : (todayLabel ?? messages.today)}
+          </Button>
+          <span className="env-date-picker-actions-end">
+            {clearable && serialized && (
+              <Button variant="text" onClick={clear}>
+                {clearLabel ?? messages.clear}
+              </Button>
+            )}
+            {withTime && (
+              <Button variant="secondary" onClick={() => setOpen(false)}>
+                {doneLabel ?? messages.done}
+              </Button>
+            )}
+          </span>
+        </div>
+      </PopupSurface>
+    </BasePopover.Root>
   );
 }
