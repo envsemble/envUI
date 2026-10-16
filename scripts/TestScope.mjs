@@ -759,6 +759,14 @@ export function selectScope(paths, index) {
       scope.build.library = true;
       continue;
     }
+    // The agent plugin and its marketplaces: tests/Plugin.test.mjs, a unit test, checks them
+    // against .agents/skills and the library's version.
+    if (
+      /^plugin\/|^\.claude-plugin\/|^\.agents\/plugins\/|^scripts\/GeneratePlugin\.mjs$/.test(path)
+    ) {
+      scope.unit = true;
+      continue;
+    }
 
     // Documentation and catalogue pages.
     const page = pageOfFile(path, index.pages);

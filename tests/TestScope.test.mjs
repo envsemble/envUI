@@ -243,6 +243,22 @@ test('catalogue parts run the specs that import them or are about them', () => {
     for (const spec of specs) assert.ok(index.specs.has(spec), `${spec} is a spec`);
 });
 
+test('the plugin and its marketplaces run the unit tests, no browser spec', () => {
+  for (const path of [
+    'plugin/.claude-plugin/plugin.json',
+    'plugin/skills/envui-use/SKILL.md',
+    '.claude-plugin/marketplace.json',
+    '.agents/plugins/marketplace.json',
+    'scripts/GeneratePlugin.mjs',
+  ]) {
+    const scope = select(path);
+    assert.equal(scope.unit, true, path);
+    assert.deepEqual(scope.unmapped, [], path);
+    assert.deepEqual(fast(scope), [], path);
+    assert.equal(scope.build.library, false, path);
+  }
+});
+
 test('lint and format take only changed files, and their configuration everything', () => {
   const scope = select('scripts/Check.mjs', 'README.md');
   assert.deepEqual(scope.lint, ['scripts/Check.mjs']);
