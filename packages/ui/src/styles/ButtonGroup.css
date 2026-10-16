@@ -9,7 +9,7 @@
   overflow: auto;
   scrollbar-width: thin;
   /* Rings are inset here, so on a solid fill Button adds its inner ring in the label color. */
-  --env-button-focus-inner-ring: 4px;
+  --env-button-focus-inner-ring: 0.25rem;
 }
 .env-button-group > .env-button:focus-visible {
   outline-offset: -0.125rem;

@@ -62,7 +62,7 @@
 }
 /* The active tab's ring is inset, so on a solid fill Button adds its inner ring in the label color. */
 .env-tabs-list > .env-tab[data-active] {
-  --env-button-focus-inner-ring: 4px;
+  --env-button-focus-inner-ring: 0.25rem;
 }
 .env-tabs-panels {
   position: relative;
