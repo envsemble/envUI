@@ -268,8 +268,8 @@
         {
           "stylesheet": "ButtonGroup.css",
           "classes": ["env-button", "env-icon-button", "env-button-important"],
-          "properties": ["border-radius", "border-*-radius", "outline-offset"],
-          "note": "ButtonGroup joins its buttons into one control: it sizes them, squares their inner corners and insets their focus rings."
+          "properties": ["border-radius", "border-*-radius", "outline-offset", "--control-height"],
+          "note": "ButtonGroup joins its buttons into one control: it sizes them, giving an important button the group's control height, squares their inner corners and insets their focus rings."
         },
         {
           "stylesheet": "Layout.css",
