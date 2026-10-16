@@ -51,6 +51,7 @@ export const overrides = {
       'components/alert',
       'components/command-palette',
     ],
+    'ResponsiveHooks.spec.ts': ['useMediaQuery', 'useBreakpoint', 'foundations/responsive'],
     'Scale.spec.ts': ['foundations/scale'],
     'SegmentedControl.spec.ts': ['SegmentedControl'],
     'Shell.spec.ts': ['components/app-shell'],

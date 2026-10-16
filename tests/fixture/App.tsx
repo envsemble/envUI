@@ -61,6 +61,7 @@ import { EmptyStatesFixture } from './EmptyStates.js';
 import { RatingsFixture } from './Ratings.js';
 import { DensityFixture } from './Density.js';
 import { StackingFixture } from './Stacking.js';
+import { ResponsiveHooksFixture } from './ResponsiveHooks.js';
 import {
   ThemeContrastFixture,
   ThemeContrastNestedFixture,
@@ -81,6 +82,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'framed-shell': FramedShellFixture,
   density: DensityFixture,
   stacking: StackingFixture,
+  'responsive-hooks': ResponsiveHooksFixture,
 };
 
 export default function App() {
