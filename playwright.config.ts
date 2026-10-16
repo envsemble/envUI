@@ -1,3 +1,4 @@
+import { availableParallelism } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { defineConfig, devices } from '@playwright/test';
 import { resolveServers } from './scripts/CheckoutMarker.mjs';
@@ -38,7 +39,24 @@ const servers = await resolveServers(
  * Browser workers: ENVUI_WORKERS, a count or a share of the cores such as 50%; else half the cores
  * locally and 3 in CI. Each worker runs one browser, and the development servers serve them all.
  */
-const workers = process.env.ENVUI_WORKERS ?? (process.env.CI ? 3 : '50%');
+const configured = process.env.ENVUI_WORKERS;
+const workers = configured
+  ? /^d+$/.test(configured)
+    ? Number(configured)
+    : configured
+  : process.env.CI
+    ? 3
+    : '50%';
+/**
+ * Firefox and WebKit stop gaining beyond a few workers each (on 24 threads, about 1.5 tests a second
+ * from 4 workers on), and with more their slowest specs run out of time. Locally each takes at most
+ * a third of the workers, and Chromium and the accessibility scan the rest; CI keeps its 3 shared.
+ */
+const totalWorkers =
+  typeof workers === 'number'
+    ? workers
+    : Math.max(1, Math.floor((availableParallelism() * parseFloat(workers)) / 100));
+const engineWorkers = process.env.CI ? undefined : Math.max(1, Math.round(totalWorkers / 3));
 
 export default defineConfig({
   testDir: './tests/browser',
@@ -64,12 +82,14 @@ export default defineConfig({
       name: 'firefox',
       testIgnore: /LiveDevelopment/,
       grepInvert: /@contrast/,
+      workers: engineWorkers,
       use: { ...devices['Desktop Firefox'] },
     },
     {
       name: 'webkit',
       testIgnore: /LiveDevelopment/,
       grepInvert: /@contrast/,
+      workers: engineWorkers,
       use: { ...devices['Desktop Safari'] },
     },
     {
