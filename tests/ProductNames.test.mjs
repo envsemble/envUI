@@ -35,7 +35,8 @@ const productNames = [
  */
 const allowed = {
   // envUI is distributed through GitHub Packages and released by GitHub Actions; setup says so.
-  GitHub: [/GitHub (?:Packages|Actions|release|token)/g],
+  // The hosted catalogue's readers sign in with GitHub login; the README's hosting section says so.
+  GitHub: [/GitHub (?:Packages|Actions|release|token|login)/g],
   // The English word: the name of the family of form components, and a list of what to preserve.
   Forms: [/Forms & selection/g, /^#{2,} Forms$/g, /^- Forms, validation/g],
 };

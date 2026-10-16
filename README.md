@@ -125,6 +125,8 @@ Open the catalogue at [localhost:8770](http://127.0.0.1:8770). It consumes libra
 | `npm run format`       | Format with Prettier; `npm run format:check` only checks          |
 | `npm run typecheck`    | Check the library and catalogue                                   |
 | `npm run build`        | Build the package and offline catalogue                           |
+| `npm run build:site`   | Build the hosted catalogue, described under Hosting below         |
+| `npm run site:dev`     | Build the hosted catalogue and serve it locally                   |
 | `npm test`             | Test package consumers, SSR and hydration                         |
 | `npm run test:browser` | Check interactions in Chromium, Firefox and WebKit                |
 | `npm run test:a11y`    | Scan every catalogue page with axe in both themes                 |
@@ -139,7 +141,7 @@ npx playwright install chromium firefox webkit
 npm run verify
 ```
 
-Build outputs are `packages/ui/dist/` and `dist/envUI.html`. CI retains the offline catalogue and browser diagnostics as artifacts. CI runs for pull requests into `main` and pushes to `main` only, and tests in Chromium alone, so run `npm run verify`, which tests all three engines, before pushing a branch or merging into `dev`.
+Build outputs are `packages/ui/dist/`, `dist/envUI.html` and, from `npm run build:site`, `dist/site/`. CI retains the offline catalogue and browser diagnostics as artifacts. CI runs for pull requests into `main` and pushes to `main` only, and tests in Chromium alone, so run `npm run verify`, which tests all three engines, before pushing a branch or merging into `dev`.
 
 ## Repository map
 
@@ -147,6 +149,7 @@ Build outputs are `packages/ui/dist/` and `dist/envUI.html`. CI retains the offl
 .agents/skills/       Two small entry points for agents
 docs/                Canonical Markdown documentation and discovery index
 apps/catalogue/      Live previews and the offline catalogue application
+  site/              The hosted catalogue's Worker script and response headers
 packages/ui/         The publishable @envsemble/envui package
   src/               Components by family, styles and public entry points
   licenses/          Third-party license texts
@@ -158,6 +161,41 @@ tests/               Package contract tests, browser specs and React fixtures
 ```
 
 React components and scripts use PascalCase filenames; hooks and helpers use camelCase. Documentation uses lowercase filenames. Keep standard tool filenames such as `package.json`, `index.ts` and `vite.config.ts`. Generated icons, manifests, catalogue data, builds and packaged copies of the README, skills and documentation have explicit sources; edit the source and regenerate.
+
+## Hosting
+
+The catalogue is also a website for envsemble. It isn't deployed yet: the domain, most likely `envUI.envsemble.com`, and the connection to Cloudflare are still to be decided. Until then it runs locally.
+
+- `npm run build:site` builds it into `dist/site/`: separate files with content-hashed names, so browsers keep them cached. It needs no network.
+- `npm run site:dev` builds it and serves it at [localhost:8771](http://127.0.0.1:8771) in Wrangler, the Workers runtime that will host it. `npm run site:dev -- --port <port>` picks another port, and `npm run site:serve` serves the last build again.
+- `npm run build:site -- --with-versions` also downloads the offline catalogue attached to each GitHub release. The newest patch of every minor goes to `/v<major>.<minor>/`, and `/versions.json` lists them. It reads the releases with `GH_TOKEN` or `GITHUB_TOKEN`, or else through a signed-in `gh` CLI. Without either, it skips them with a warning. With a token, a failed download fails the build.
+
+`dist/envUI.html` stays the release artifact. The site is a Cloudflare Worker, configured in `wrangler.jsonc`, that serves `dist/site/` as static assets:
+
+- A path without a file gets `index.html`, ready for routes in the URL path.
+- `apps/catalogue/site/_headers` sets the security headers. Pages are revalidated on every load, and hashed files are cached for a year.
+- A small Worker script answers a missing hashed file with 404, so a stale page never caches `index.html` under its name. Requests for files and page loads never run the script.
+
+### Deploying
+
+Builds run on Cloudflare with Workers Builds, so they use no GitHub Actions minutes. The free plan includes 3,000 build minutes a month.
+
+1. **Connect the repository.** In the Cloudflare dashboard, open Workers & Pages, choose Create application and import `envsemble/envUI`. This installs Cloudflare's Workers and Pages app on the envsemble organization; limit it to this repository. The Worker must be named `envui`, as in `wrangler.jsonc`. Use these build settings:
+   - Root directory: the repository root.
+   - Build command: `npm run build:site -- --with-versions`. Dependencies are installed with `npm ci` before it runs.
+   - Deploy command: `npx wrangler deploy`. Preview command: `npx wrangler preview`. Both are the defaults.
+   - Build secret `GITHUB_TOKEN`: a fine-grained GitHub token with read-only Contents access to `envsemble/envUI` alone. Without it, the site deploys without its archived versions; once it expires, builds fail until it is renewed.
+   - Node.js: the build image's default is 24. Set `NODE_VERSION` to pin a version.
+2. **Branches.**
+   - `main` is the production branch. It deploys to the custom domain and serves the latest release.
+   - With preview builds enabled, every other branch gets a Preview URL that follows it: `<branch>-envui.<subdomain>.workers.dev`. `dev` serves "next" at a stable address.
+   - Pull requests get a comment with their branch's preview.
+3. **Custom domain.** Add the chosen hostname in the Worker's Settings → Domains & Routes. Alternatively, add `"routes": [{ "pattern": "envui.envsemble.com", "custom_domain": true }]` to `wrangler.jsonc`. The `envsemble.com` zone must be on the same Cloudflare account.
+4. **Cloudflare Access.**
+   - In Zero Trust, add GitHub login as an identity provider, with an OAuth app owned by the envsemble organization. Keep the one-time PIN login method as the email fallback.
+   - In the Worker's Settings → Domains & Routes, choose Enable Cloudflare Access for workers.dev and the Preview URLs. Protect the custom domain with an Access application for its hostname.
+   - The policy allows members of the envsemble organization. A second rule allows listed email addresses through the one-time PIN.
+   - Access is free for up to 50 users.
 
 ## Releases
 
