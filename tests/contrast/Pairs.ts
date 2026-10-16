@@ -425,6 +425,7 @@ export const pairs: readonly ContrastPair[] = [
     'The selection against the other items, at rest and under the pointer: Select options, tree and table rows',
   ),
   ...distinct(selected, [navigationHover], 'A selected navigation item next to a hovered one'),
+  ...distinct(selected, [navigationPressed], 'A selected navigation item next to a pressed one'),
   ...distinct(
     selectedHover,
     [navigationHover, popupHover, [layerHover, surface], [layerHover, raised]],

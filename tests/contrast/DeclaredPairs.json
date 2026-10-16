@@ -127,6 +127,13 @@
         "high": 0.04
       }
     },
+    "--color-bg-selected on --color-bg-navigation-pressed": {
+      "kind": "distinct",
+      "minimum": {
+        "standard": 0.03,
+        "high": 0.04
+      }
+    },
     "--color-bg-selected on --color-bg-neutral-subtle-hover over --color-bg-default": {
       "kind": "distinct",
       "minimum": {
