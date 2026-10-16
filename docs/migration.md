@@ -50,7 +50,7 @@ export default defineConfig(envui.configs.recommended);
 
 - `v1-names` rewrites imports and references from `@envsemble/envui` and `@envsemble/envui/theme-bootstrap`: renamed components and types (`Input` is `TextField`), namespace parts (`MenuItem` is `Menu.Item`, `<Menu>` is `<Menu.Root>`), `DirectionLink` by its literal `direction` (`Pager.Previous` or `Pager.Next`), re-exports, `defaultThemeStorageKey`, which becomes `'env-theme'`, and `<Theme theme={useTheme()}>`, which becomes `<Theme {...useTheme()}>`. Other `useTheme()` calls, imported by name or through a namespace import, become `useTheme().theme`, the color scheme they returned in 0.x, unless the file already reads them as `{ theme, contrast }`.
 - `v1-props` moves the props that 1.0 removed or changed, as [scale and density](#scale-and-density) lists them.
-- `v1-classes` renames `env-*` classes and `--env-*` custom properties in style sheets, class names and selector strings.
+- `v1-classes` renames `env-*` classes and `--env-*` custom properties in style sheets, class names and selector strings, and the tokens' custom properties: `--color-text-muted` becomes `--env-color-fg-muted` and `--space-4` becomes `--env-space-4`, as [tokens](#tokens) lists them. It reports a token that 1.0 removes, and a 0.7 fixed color no token replaces, with what to use instead.
 - `envui/no-renamed-exports` reports the 0.x names left in imports and re-exports, and also those it can follow statically through namespace imports, `require()`, `import()`, `import … = require()`, destructuring and `createElement()`, with each one's 1.0 name or what to use instead. A name read through a computed member such as `envui[name]` is not followed; the type check catches those. The recommended config also reports raw elements that envUI provides, envUI's private classes and raw colors; `@envsemble/stylelint-config-envui` does the same for style sheets.
 
 Change by hand what the codemods report, each with its file and line:
@@ -83,7 +83,7 @@ The codemods also leave class names built at run time, CSS-in-JS, selectors nest
 | `density` on Surface, Menu.Root, ContextMenu, Menubar.Menu         | Removed: give controls `size="sm"`, or set `scale="compact"` on a Theme |
 | `size` on NavList.Item                                             | Removed: items follow the scale                                         |
 
-The codemod reports each use it can't move, such as a value that is an expression. Fields now take the control height by default, menus and the popups of Select and Combobox have one anatomy at the scale's row height, and controls in table cells take the small height; check screens that relied on the 3.5 rem field. In style sheets, `--control-height-small` and `--icon-button-size` become `--control-height`, `--control-height-compact` becomes `--control-height-sm`, and `--scale` is gone.
+The codemod reports each use it can't move, such as a value that is an expression. Fields now take the control height by default, menus and the popups of Select and Combobox have one anatomy at the scale's row height, and controls in table cells take the small height; check screens that relied on the 3.5 rem field. In style sheets, `--control-height-small` and `--icon-button-size` become `--env-control-height`, `--control-height-compact` becomes `--env-control-height-sm`, and `--scale` is gone.
 
 ### useTheme returns the theme, its contrast and its scale
 
@@ -91,7 +91,9 @@ The codemod reports each use it can't move, such as a value that is an expressio
 
 ### Tokens
 
-envUI 1.0 names its colors by semantic role, `--color-{bg|fg|border}-{role}-{emphasis}[-{state}]` (see [colors](foundations/colors.md)). A few 0.7 custom properties are removed: unused ones, and the state values that the hover and pressed color tokens replace. The other 0.7 names remain for now as aliases of their roles, so style sheets that read them keep working; they are removed in the CSS-architecture step of 1.0, together with the move of every token to the `--env-` prefix. Move to the roles before then. The codemods do not rename tokens yet; the `tokens` section of their rename map lists the same replacements as below.
+Every token is a custom property with the `--env-` prefix in 1.0, and colors are named by semantic role, `--env-color-{bg|fg|border}-{role}[-{emphasis}][-{state}]` (see [colors](foundations/colors.md)). The 0.7 alias tokens are removed, each for the token that replaces it; a few names change beyond the prefix, such as the Material corner scale, which is the radius scale now; and the unused ones and the state values that the hover and pressed color tokens replace are removed. `v1-classes` rewrites every name below in style sheets and scripts, including a style sheet that themes envUI by setting a token, which then sets the new name. Check a renamed declaration of an application property that happens to share an old token's name, such as `--space-4`. The `tokens` section of the codemods' rename map lists the same entries.
+
+envUI's style sheet now puts every rule in a cascade layer of `env` (`env.reset`, `env.tokens`, `env.base`, `env.components` and `env.utilities`), so an application's CSS outside cascade layers overrides it whatever its specificity: a selector or `!important` that only out-weighed envUI's rules can go. An application's own cascade layers win over envUI's when they are declared after `env`; declare the order first, as `@layer env, app;`, when another library's layers come before envUI's style sheet.
 
 <!-- token-migration:start: npm run tokens:build writes this list from packages/ui/src/generated/token-migration.json. Change the tokens, not the list. -->
 

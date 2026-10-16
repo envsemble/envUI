@@ -82,3 +82,25 @@ test('every rule of envUI’s style sheet is in a cascade layer of env, in order
     ]),
   );
 });
+
+test('each theme boundary sets its color scheme, also nested and at high contrast', async ({
+  page,
+}) => {
+  const schemes = await page.evaluate(() => {
+    const boundary = (attributes: Record<string, string>, parent: Element = document.body) => {
+      const element = document.createElement('div');
+      element.className = 'env-theme';
+      for (const [name, value] of Object.entries(attributes)) element.setAttribute(name, value);
+      parent.append(element);
+      return element;
+    };
+    const light = boundary({});
+    const dark = boundary({ 'data-env-theme': 'dark' });
+    const darkHigh = boundary({ 'data-env-theme': 'dark', 'data-env-contrast': 'high' });
+    const lightHigh = boundary({ 'data-env-contrast': 'high' });
+    const nested = boundary({ 'data-env-theme': 'light' }, dark);
+    const read = (element: Element) => getComputedStyle(element).colorScheme;
+    return [light, dark, darkHigh, lightHigh, nested].map(read);
+  });
+  expect(schemes).toEqual(['light', 'dark', 'dark', 'light', 'light']);
+});

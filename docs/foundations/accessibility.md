@@ -14,16 +14,17 @@ import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 
 ### Props & contracts
 
-| Name                  | Contract                                                                                                                                            |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Library ownership     | Native control semantics, connected field guidance, keyboard behavior, modal focus and toast announcements                                          |
-| Application ownership | Labels, heading structure, reading order, product validation and recovery actions                                                                   |
-| Keyboard              | <kbd>Tab</kbd> / <kbd>Shift</kbd>+<kbd>Tab</kbd> move focus; <kbd>Enter</kbd> activates links; <kbd>Enter</kbd> / <kbd>Space</kbd> activate buttons |
-| Focus                 | Text fields recolor their thin border or underline; other controls use the shared 0.125 rem focus ring                                              |
-| Motion                | Presses, popups, dialogs, toasts and new content use brief transitions under a quarter second                                                       |
-| Reduced motion        | prefers-reduced-motion removes movement and keeps only opacity changes; spinners turn slowly without morphing                                       |
-| Transition tokens     | --env-motion-duration-fast (0.12 s), --env-motion-duration-medium (0.16 s), --env-motion-duration-slow (0.24 s)                                                 |
-| Shared easing         | --env-motion-ease for state changes; --env-motion-ease-enter and --env-motion-ease-exit for elements entering/leaving                                           |
+| Name                  | Contract                                                                                                                                                                                                                                       |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Library ownership     | Native control semantics, connected field guidance, keyboard behavior, modal focus and toast announcements                                                                                                                                     |
+| Application ownership | Labels, heading structure, reading order, product validation and recovery actions                                                                                                                                                              |
+| Keyboard              | <kbd>Tab</kbd> / <kbd>Shift</kbd>+<kbd>Tab</kbd> move focus; <kbd>Enter</kbd> activates links; <kbd>Enter</kbd> / <kbd>Space</kbd> activate buttons                                                                                            |
+| Focus                 | Text fields recolor their thin border or underline; other controls use the shared 0.125 rem focus ring                                                                                                                                         |
+| Motion                | Presses, popups, dialogs, toasts and new content use brief transitions under a quarter second                                                                                                                                                  |
+| Reduced motion        | prefers-reduced-motion removes movement and keeps only opacity changes; spinners turn slowly without morphing                                                                                                                                  |
+| Transition tokens     | --env-motion-duration-fast (0.12 s), --env-motion-duration-medium (0.16 s), --env-motion-duration-slow (0.24 s)                                                                                                                                |
+| Shared easing         | --env-motion-ease for state changes; --env-motion-ease-enter and --env-motion-ease-exit for elements entering/leaving                                                                                                                          |
+| Forced colors         | Under forced-colors: active, selected, current, checked, highlighted, focused, invalid and unavailable states take system colors, such as Highlight and GrayText, where a fill or shadow carried them; swatches and heatmaps keep their colors |
 
 ## Guidelines
 
