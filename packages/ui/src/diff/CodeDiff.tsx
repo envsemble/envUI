@@ -204,7 +204,7 @@ export function CodeDiff({
     >
       {failed ? (
         <EmptyState
-          tone="error"
+          tone="danger"
           headingLevel={3}
           title="Changes could not be shown"
           description="The code highlighter did not load."

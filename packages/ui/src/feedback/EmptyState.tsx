@@ -17,10 +17,11 @@ export interface EmptyStateProps extends Omit<ComponentPropsWithRef<'div'>, 'tit
   /** More content under the description, such as a short list of next steps. */
   children?: ReactNode;
   /**
-   * Error states replace content that failed to load: they show the error icon by default and
-   * are announced as an alert. Pair them with a retry action.
+   * neutral for a state with nothing to show yet; danger for content that failed to load, which
+   * shows the error icon by default and is announced as an alert. Pair it with a retry action.
+   * @default 'neutral'
    */
-  tone?: 'neutral' | 'error';
+  tone?: 'neutral' | 'danger';
   /** The title's heading level in the page outline; 4 by default. The appearance stays the same. */
   headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
   /**
@@ -31,6 +32,10 @@ export interface EmptyStateProps extends Omit<ComponentPropsWithRef<'div'>, 'tit
   align?: 'start' | 'center';
 }
 
+/**
+ * What a region shows when it has nothing to show: no items yet, no matches, or content that failed
+ * to load. A title, a description, an optional icon and the action that resolves the state.
+ */
 export function EmptyState({
   title,
   description,
@@ -43,20 +48,17 @@ export function EmptyState({
   children,
   ...props
 }: EmptyStateProps) {
-  const stateIcon = icon ?? (tone === 'error' ? <ErrorIcon /> : null);
+  const stateIcon = icon ?? (tone === 'danger' ? <ErrorIcon /> : null);
   return (
     <div
-      role={tone === 'error' ? 'alert' : undefined}
+      role={tone === 'danger' ? 'alert' : undefined}
       {...props}
-      className={classNames(
-        'env-empty-state',
-        tone === 'error' && 'env-empty-state-error',
-        align === 'center' && 'env-empty-state-center',
-        className,
-      )}
+      className={classNames('env-empty-state', className)}
+      data-tone={tone}
+      data-align={align}
     >
       {stateIcon != null && <DecorativeIcon>{stateIcon}</DecorativeIcon>}
-      <Stack gap={2} className="env-empty-copy">
+      <Stack gap={2} className="env-empty-state-description">
         <Text render={createElement(`h${headingLevel}`)} variant="title">
           {title}
         </Text>

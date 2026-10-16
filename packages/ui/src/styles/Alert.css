@@ -33,7 +33,7 @@
   --env-alert-hover: var(--env-color-bg-warning-subtle-hover);
   --env-alert-pressed: var(--env-color-bg-warning-subtle-pressed);
 }
-.env-alert[data-tone='error'] {
+.env-alert[data-tone='danger'] {
   --env-alert-tone: var(--env-color-fg-danger);
   --env-alert-tint: var(--env-color-bg-danger-muted);
   --env-alert-edge: var(--env-color-border-danger-muted);
@@ -69,26 +69,22 @@
   flex-wrap: wrap;
   gap: var(--env-space-2);
 }
-/* The dismiss button is a small circle in the alert's tone, centered on the first line. Under a
-   coarse pointer it grows to the touch height, as every button does. */
-.env-alert-dismiss.env-button {
-  --env-control-height: var(--env-control-height-sm);
+/* The dismiss button is a small CloseButton circle in the alert's tone, centered on the first line.
+   Under a coarse pointer it grows to the touch height, as every button does. Alert.css comes after
+   Button.css, so at equal specificity the tone wins over the ghost colors. */
+.env-alert-dismiss {
   grid-column: 3;
-  inline-size: var(--env-button-height);
-  max-inline-size: none;
-  block-size: var(--env-button-height);
-  min-block-size: var(--env-button-height);
   margin-block: calc((1.4 * var(--env-font-size-heading-small) - var(--env-button-height)) / 2);
   margin-inline-end: calc(-1 * var(--env-space-2));
   border-radius: 50%;
   color: var(--env-alert-tone);
 }
-/* Hover and press tint the circle with the tone instead of the text button's link colors. */
-.env-alert-dismiss.env-button.env-icon-button:hover:not(:disabled):not([aria-disabled='true']) {
+/* Hover and press tint the circle with the tone instead of the ghost button's neutral layer. */
+.env-alert-dismiss:hover:not(:disabled):not([aria-disabled='true']) {
   background: var(--env-alert-hover);
   color: var(--env-alert-tone);
 }
-.env-alert-dismiss.env-button.env-icon-button:active:not(:disabled):not([aria-disabled='true']) {
+.env-alert-dismiss:active:not(:disabled):not([aria-disabled='true']) {
   background: var(--env-alert-pressed);
   color: var(--env-alert-tone);
 }
