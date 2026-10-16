@@ -29,6 +29,8 @@ export default defineConfig(
     '**/dist/**',
     '**/node_modules/**',
     '.cache/**',
+    // Local state of `wrangler dev`.
+    '.wrangler/**',
     'test-results/**',
     'playwright-report/**',
     // Generated from pinned inputs by scripts; edit the generator instead.
