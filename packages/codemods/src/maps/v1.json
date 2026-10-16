@@ -130,7 +130,7 @@
     }
   },
   "props": {
-    "$comment": "Props of 0.x components that 1.0 removed or changed, per entry point and component, by its 1.0 name. Each literal value of a prop maps to the props that replace it, in its place: an empty object drops the prop, and a replacement prop the element already sets is kept as it is. `report` says what replaces the prop; the v1-props codemod reports it at each use whose value is not listed, such as an expression, and with a value's own `report` at each use of that value.",
+    "$comment": "Props of 0.x components that 1.0 removed or changed, per entry point and component, by its 1.0 name. Each literal value of a prop maps to the props that replace it, in its place: an empty object drops the prop, and a replacement prop the element already sets is kept as it is. `report` says what replaces the prop; the v1-props codemod reports it at each use whose value is not listed, such as an expression, and with a value's own `report` at each use of that value. `current` lists a prop's 1.0 values, which it leaves alone without a report, so it can run again over its own output.",
     "@envsemble/envui": {
       "TextField": {
         "compact": {
@@ -270,6 +270,7 @@
       },
       "Tree": {
         "density": {
+          "current": ["xs", "sm", "md", "lg"],
           "report": "Tree's density is a row density in 1.0: xs, sm (the default, as compact was) or md (as standard was) or lg.",
           "values": {
             "compact": {},
@@ -283,6 +284,7 @@
       },
       "Table.Root": {
         "density": {
+          "current": ["xs", "sm", "md", "lg"],
           "report": "Table's density is a row density in 1.0: xs, sm (as compact was), md (the default, as standard was) or lg.",
           "values": {
             "compact": {
@@ -296,6 +298,7 @@
       },
       "Tabs": {
         "size": {
+          "current": ["sm", "md", "lg"],
           "report": "Tabs' size is the rail's control size in 1.0: sm (as compact was), md or lg (the default, as standard was).",
           "values": {
             "compact": {
@@ -309,6 +312,7 @@
       },
       "SegmentedControl": {
         "size": {
+          "current": ["sm", "md", "lg"],
           "report": "SegmentedControl's size-as-density is gone: use size=\"sm\", \"md\" or \"lg\". compact is sm, and standard is the default.",
           "values": {
             "compact": {
@@ -322,6 +326,7 @@
       },
       "Pagination": {
         "size": {
+          "current": ["sm", "md", "lg"],
           "report": "Pagination's size-as-density is gone: use size=\"sm\", \"md\" or \"lg\". compact is sm, and standard is the default.",
           "values": {
             "compact": {
@@ -335,6 +340,7 @@
       },
       "CopyButton": {
         "size": {
+          "current": ["sm", "md", "lg"],
           "report": "CopyButton's size-as-density is gone: use size=\"sm\", \"md\" or \"lg\". compact is sm, and standard is the default.",
           "values": {
             "compact": {

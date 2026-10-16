@@ -188,6 +188,14 @@ function validateProps(props) {
           problems.push(`${where} needs "values" mapping its literal values to new props.`);
           continue;
         }
+        if (
+          rule.current !== undefined &&
+          (!Array.isArray(rule.current) || !rule.current.every((value) => propValue(value)))
+        )
+          problems.push(`${where}: "current" must list the prop's 1.0 literal values.`);
+        for (const value of rule.current ?? [])
+          if (Object.hasOwn(rule.values, String(value)))
+            problems.push(`${where}: ${value} is both a 0.x value and a 1.0 one.`);
         for (const [value, replacement] of entriesOf(rule.values)) {
           if (!isObject(replacement)) {
             problems.push(`${where}.values.${value} must be an object.`);
@@ -264,7 +272,11 @@ export function normalizeMap(map) {
         new Map(
           entriesOf(names).map(([prop, rule]) => [
             prop,
-            { report: rule.report, values: Object.fromEntries(entriesOf(rule.values)) },
+            {
+              report: rule.report,
+              values: Object.fromEntries(entriesOf(rule.values)),
+              current: new Set((rule.current ?? []).map(String)),
+            },
           ]),
         ),
       );

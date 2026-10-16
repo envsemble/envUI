@@ -124,6 +124,8 @@ export default function transform(file, api, options = {}) {
       if (!rule) continue;
       const where = `${component.name}'s ${node.name.name}`;
       const key = literalKey(node.value);
+      // A 1.0 value, such as density="sm" on a Table, is already moved: no change, no report.
+      if (key !== undefined && rule.current.has(key)) continue;
       const replacement = key === undefined ? undefined : rule.values[key];
       if (!replacement) {
         reporter.warn(

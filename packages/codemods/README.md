@@ -85,6 +85,8 @@ It reports, with the prop's replacement:
 - props that 1.0 removed without a replacement, which it drops: `density` on Surface, Menu.Root, ContextMenu and Menubar.Menu, and `size` on NavList.Item; for a compact app or region, set `scale="compact"` on its Theme;
 - a value it can't read, such as `density={density}`, which stays as it is, so the type checker points at it too.
 
+A 1.0 value, such as `density="sm"` on a Table or `size="lg"` on Tabs, is left alone without a report, so the codemod can run again over code it already moved.
+
 ## v1-classes
 
 Renames 0.x `env-*` class names and custom properties. An entry also renames every name that continues it with a hyphen, the longest entry wins, and names that already have the new name are left alone: `env-notice-title` becomes `env-alert-title`, `--env-notice-tone` becomes `--env-alert-tone`, and `env-counter-badge` stays.

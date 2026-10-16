@@ -28,8 +28,13 @@ for (const fixture of fixtures('v1-props')) {
     const result = runTransform(v1Props, fixture.path, fixture.input);
     assert.equal(result.output, fixture.output);
     assert.deepEqual(result.reports, reports[fixture.name] ?? []);
-    // A second run changes nothing more.
-    assert.equal(runTransform(v1Props, fixture.path, result.output).output, result.output);
+    // A second run changes nothing more, and reports only the values it could not move before.
+    const again = runTransform(v1Props, fixture.path, result.output);
+    assert.equal(again.output, result.output);
+    assert.deepEqual(
+      again.reports,
+      result.reports.filter((report) => report.includes("can't move")),
+    );
   });
 }
 
