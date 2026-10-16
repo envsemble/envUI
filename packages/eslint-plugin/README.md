@@ -56,12 +56,16 @@ The rules share their settings under `settings.envui` in the ESLint configuratio
 `reexportModules` lists the application's modules that re-export envUI's components under envUI's names, such as a `src/ui.ts` with `export * from '@envsemble/envui'`. Names imported from them count as envUI's:
 
 ```js
+import path from 'node:path';
+
 export default defineConfig(envui.configs.recommended, {
-  settings: { envui: { reexportModules: ['./src/ui', '@/components/ui'] } },
+  settings: {
+    envui: { reexportModules: [path.resolve(import.meta.dirname, 'src/ui'), '@/components/ui'] },
+  },
 });
 ```
 
-- A relative entry, such as `'./src/ui'`, names the module's file from ESLint's working directory (`cwd`), usually the folder of the configuration where you run ESLint; an absolute path, such as `path.resolve(import.meta.dirname, 'src/ui')` in the configuration, names it outright. A relative import matches when it resolves to that file from the file that writes it, with or without the extension or `/index`: in `src/pages/Home.tsx`, `'../ui'`, `'../ui.ts'` and `'../ui/index'` match `'./src/ui'`, and `'./ui'`, which is `src/pages/ui`, does not.
+- A path names the module's file. Write it absolute, from the configuration's own folder, with `path.resolve(import.meta.dirname, 'src/ui')`, so it names the same file wherever ESLint runs: from the application's folder, a monorepo's root or an editor. A relative entry, such as `'./src/ui'`, also works, but is read from ESLint's working directory (`cwd`), which changes with where ESLint runs. Either must name an existing module, the file itself, with a script extension (`.ts`, `.tsx`, `.js` and the like) or as its `/index`; an entry that names none is a configuration error, rather than matching nothing, that gives the path it looked for and, for a relative entry, the working directory. A relative import matches when it resolves to that module from the file that writes it, with or without the extension or `/index`: in `src/pages/Home.tsx`, `'../ui'`, `'../ui.ts'` and `'../ui/index'` match `src/ui`, and `'./ui'`, which is `src/pages/ui`, does not.
 - Any other entry, an alias such as `'@/components/ui'` or a package, matches an import that writes it exactly, in any file: `'@/components/ui/index'` is a different spelling. List each spelling the application writes.
 - [no-html-elements](#no-html-elements) counts a name imported from a listed module as the envUI component it is exported as: `<Dialog role="alertdialog">` with `Dialog` from `'./ui'` passes.
 - [no-renamed-exports](#no-renamed-exports) checks the names imported or re-exported from a listed module as names of `@envsemble/envui`, and its message names the module as written: `import { Input } from './ui'` is reported, with `TextField` to import from `'./ui'`. The v1-names codemod rewrites imports from `@envsemble/envui`, not through a module of the application, so the message says to update the listed module first and rename such imports by hand.

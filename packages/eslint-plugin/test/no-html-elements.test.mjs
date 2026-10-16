@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { Linter } from 'eslint';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 
 /**
@@ -479,11 +480,12 @@ test('an unknown allow entry fails with the known entries', () => {
 });
 
 // An application module that re-exports envUI, listed in the shared settings, stands for envUI. A
-// relative entry names a file from ESLint's working directory, and an import matches it by the file
-// it resolves to.
-const reexports = { envui: { reexportModules: ['./src/ui', '@/components/ui'] } };
-const app = resolve('src/App.jsx');
-const page = resolve('src/pages/Page.jsx');
+// path entry names the module's file, here the fixture application's src/ui/index.ts, and an
+// import matches it by the file it resolves to.
+const fixture = fileURLToPath(new URL('fixtures/app/', import.meta.url));
+const reexports = { envui: { reexportModules: [resolve(fixture, 'src/ui'), '@/components/ui'] } };
+const app = resolve(fixture, 'src/App.jsx');
+const page = resolve(fixture, 'src/pages/Page.jsx');
 
 ruleTester.run('no-html-elements with modules that re-export envUI', rule, {
   valid: [
@@ -567,5 +569,9 @@ test('settings.envui.reexportModules must list module specifiers', () => {
     () => verify({ envui: { reexportModule: ['./ui'] } }),
     /unknown setting settings\.envui\.reexportModule/,
   );
-  assert.deepEqual(verify({ envui: { reexportModules: ['./ui'] } }), []);
+  assert.throws(
+    () => verify({ envui: { reexportModules: [resolve(fixture, 'src/missing')] } }),
+    /settings\.envui\.reexportModules entry '.*' names no module/,
+  );
+  assert.deepEqual(verify({ envui: { reexportModules: [resolve(fixture, 'src/ui')] } }), []);
 });

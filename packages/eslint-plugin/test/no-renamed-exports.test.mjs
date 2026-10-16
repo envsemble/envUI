@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import rule from '../src/rules/no-renamed-exports.js';
 import { ruleTester, typeScriptRuleTester } from './RuleTester.mjs';
 
@@ -324,12 +325,13 @@ typeScriptRuleTester.run('no-renamed-exports in TypeScript', rule, {
 });
 
 // An application module that re-exports envUI, listed in the shared settings, stands for its main
-// entry point, and the message names the module as written. A relative entry names a file from
-// ESLint's working directory, and an import matches it by the file it resolves to; an alias matches
-// as written.
-const reexports = { envui: { reexportModules: ['./src/ui', '@/components/ui'] } };
-const app = resolve('src/App.jsx');
-const page = resolve('src/pages/Page.jsx');
+// entry point, and the message names the module as written. A path entry names the module's file,
+// here the fixture application's src/ui/index.ts, and an import matches it by the file it resolves
+// to; an alias matches as written.
+const fixture = fileURLToPath(new URL('fixtures/app/', import.meta.url));
+const reexports = { envui: { reexportModules: [resolve(fixture, 'src/ui'), '@/components/ui'] } };
+const app = resolve(fixture, 'src/App.jsx');
+const page = resolve(fixture, 'src/pages/Page.jsx');
 const fromUi = (error, source) => ({
   ...error,
   data: { ...error.data, source, codemod: codemod(source) },
@@ -389,7 +391,7 @@ ruleTester.run('no-renamed-exports with modules that re-export envUI', rule, {
     // An absolute entry names the file outright.
     {
       code: "import { Input } from '../ui';",
-      settings: { envui: { reexportModules: [resolve('src/ui/index.ts')] } },
+      settings: { envui: { reexportModules: [resolve(fixture, 'src/ui/index.ts')] } },
       filename: page,
       errors: [fromUi(renamed('Input', 'TextField'), '../ui')],
     },
