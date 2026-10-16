@@ -21,6 +21,8 @@
   },
   "files": [
     "index.js",
+    "tokens.js",
+    "data",
     "plugins",
     "README.md",
     "CHANGELOG.md"
@@ -33,6 +35,8 @@
     "node": ">=20.19.0"
   },
   "scripts": {
+    "prepack": "node scripts/SyncTokens.mjs",
+    "sync:tokens": "node scripts/SyncTokens.mjs",
     "test": "node --test test/*.test.mjs"
   },
   "peerDependencies": {

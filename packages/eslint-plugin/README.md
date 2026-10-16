@@ -169,9 +169,15 @@ A CSS module's lookup such as `styles['env-panel']` names a local class and pass
 
 ### no-raw-colors
 
-Reports literal colors in JSX `style` objects: hex colors, color functions with literal channels (`rgb()`, `hsl()`, `hwb()`, `lab()`, `lch()`, `oklab()`, `oklch()`, `color()`), and named colors in properties that take a color, such as `border: '1px solid red'`. Use an envUI color token, `var(--env-color-…)`, so the color follows the theme and keeps its contrast.
+Reports literal colors in JSX `style` objects: hex colors, color functions with literal channels (`rgb()`, `hsl()`, `hwb()`, `lab()`, `lch()`, `oklab()`, `oklch()`, `color()`), and named colors in properties that take a color, such as `border: '1px solid red'`. Use an envUI color token instead, so the color follows the theme and keeps its contrast. The message suggests the semantic role of the property: a text color such as `var(--color-fg-default)` for `color`, `fill` and `stroke`, a `var(--color-bg-…)` background, or a `var(--color-border-…)` boundary for borders and outlines:
 
-Values that depend on state, spread objects and custom properties are checked too, including an inline override of envUI's own tokens. A relative color derived from a token, `hsl(from var(--env-color-fg-link) h s calc(l - 10))`, and `color-mix()` of tokens pass, as do `currentColor`, `transparent` and `url()` references. Style sheets are the [Stylelint config](../stylelint-config/README.md)'s concern. The rule has no options.
+```text
+Raw color #fff in an inline style: use an envUI color token instead, such as var(--color-fg-default) or another var(--color-fg-…) role, so the color follows the theme and keeps its contrast.
+```
+
+The token names come from [`src/data/tokens.json`](src/data/tokens.json). Before every pack, `scripts/SyncTokens.mjs` rewrites it from the library's generated token list (`packages/ui/src/generated/tokens.json` in the envUI repository), so a release names the tokens of the same envUI release, and the tests fail when a message or this README names a token that does not exist.
+
+Values that depend on state, spread objects and custom properties are checked too, including an inline override of envUI's own tokens. A relative color derived from a token, `hsl(from var(--color-fg-link) h s calc(l - 10))`, and `color-mix()` of tokens pass, as do `currentColor`, `transparent` and `url()` references. Style sheets are the [Stylelint config](../stylelint-config/README.md)'s concern. The rule has no options.
 
 ### no-renamed-exports
 
@@ -223,6 +229,7 @@ Run from the envUI repository root:
 ```sh
 npm test --workspace @envsemble/eslint-plugin-envui           # the rule and package tests
 npm run sync:renames --workspace @envsemble/eslint-plugin-envui  # update the rename map from the codemods
+npm run sync:tokens --workspace @envsemble/eslint-plugin-envui   # update the token names from the library
 npm run dogfood --workspace @envsemble/eslint-plugin-envui     # count reports in the catalogue and test fixture
 ```
 

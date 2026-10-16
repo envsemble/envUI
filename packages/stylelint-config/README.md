@@ -56,17 +56,19 @@ envUI's markup and its `env-` class names are private: they change in any releas
 
 ### Raw colors
 
-Colors come from envUI's tokens, `var(--env-color-…)`, so they follow the theme and keep their contrast in light, dark and high contrast.
+Colors come from envUI's semantic color tokens, so they follow the theme and keep their contrast in light, dark and high contrast: text colors such as `var(--color-fg-default)`, backgrounds such as `var(--color-bg-default)` and boundaries such as `var(--color-border-default)`. Where the property says which, the message suggests that family, such as `var(--color-bg-…)` for `background`.
 
 - `color-no-hex` reports hex colors.
 - `color-named` reports named colors such as `red`.
-- `declaration-property-value-disallowed-list` reports color functions with literal channels: `rgb()`, `hsl()`, `hwb()`, `lab()`, `lch()`, `oklab()`, `oklch()` and `color()`. A relative color derived from a token, `hsl(from var(--env-color-fg-link) h s calc(l - 10))`, passes, as does `color-mix()` of tokens. This rule takes one list of options.
+- `declaration-property-value-disallowed-list` reports color functions with literal channels: `rgb()`, `hsl()`, `hwb()`, `lab()`, `lch()`, `oklab()`, `oklch()` and `color()`. A relative color derived from a token, `hsl(from var(--color-fg-link) h s calc(l - 10))`, passes, as does `color-mix()` of tokens. This rule takes one list of options.
 
 Custom properties are checked too, including inline overrides of envUI's own tokens.
 
+The token names in the messages come from [`data/tokens.json`](data/tokens.json). Before every pack, `scripts/SyncTokens.mjs` rewrites it from the library's generated token list (`packages/ui/src/generated/tokens.json` in the envUI repository), so a release names the tokens of the same envUI release, and the tests fail when a message or this README names a token that does not exist.
+
 ### Stacking order
 
-`declaration-property-value-allowed-list` allows `z-index` only as `auto` or a custom property (`var(--…)`, also inside `calc()`), such as envUI's stacking tokens, `var(--env-z-…)`. Layers then keep one order with envUI's popups, dialogs and notifications. This rule takes one list of options.
+`declaration-property-value-allowed-list` allows `z-index` only as `auto` or a custom property (`var(--…)`, also inside `calc()`). envUI has no stacking tokens yet, so until it has, keep an application's few z-index values in documented custom properties of its own, such as `var(--app-z-header)`, and the order of its layers stays in one place. Once a release has stacking tokens, the message names them. This rule takes one list of options.
 
 ### Units
 

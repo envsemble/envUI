@@ -9,6 +9,8 @@ import {
   normalizeRenameMap,
   renamesUrl,
 } from '../scripts/SyncRenames.mjs';
+import { expectedTokens, libraryTokensUrl, tokensUrl } from '../scripts/SyncTokens.mjs';
+import { colorTokenSuggestion } from '../src/tokens.js';
 
 const read = (url) => JSON.parse(readFileSync(url, 'utf8'));
 const manifest = read(new URL('../package.json', import.meta.url));
@@ -167,4 +169,43 @@ test('the README documents every entry of the mapping table and every renamed na
   for (const names of Object.values(renames.modules))
     for (const name of Object.keys(names))
       assert.match(readme, new RegExp(`\`${name}\``), `the README lists ${name}`);
+});
+
+test("the token names are the library's when the repository has its token list", () => {
+  const copy = read(tokensUrl);
+  if (existsSync(libraryTokensUrl)) {
+    assert.equal(
+      readFileSync(tokensUrl, 'utf8'),
+      expectedTokens(),
+      "src/data/tokens.json is behind the library's token list: run npm run sync:tokens --workspace @envsemble/eslint-plugin-envui.",
+    );
+    assert.equal(copy.source, 'packages/ui/src/generated/tokens.json');
+  } else assert.equal(copy.source, 'embedded');
+});
+
+test('every token the messages and the README name exists in the library', () => {
+  const library = existsSync(libraryTokensUrl)
+    ? read(libraryTokensUrl).tokens.map((token) => token.cssVariable)
+    : Object.values(read(tokensUrl).tokens).flat();
+  const messages = [
+    ...Object.values(plugin.rules).flatMap((rule) => Object.values(rule.meta.messages)),
+    ...['color', 'backgroundColor', 'borderColor', 'outline', 'fill', 'boxShadow', '--brand'].map(
+      colorTokenSuggestion,
+    ),
+    colorTokenSuggestion(undefined),
+  ];
+  const named = [...messages, readme].flatMap((text) => [
+    ...text.matchAll(/var\((--[\w-]+)(…)?/g),
+    // Bare names of envUI's color and stacking tokens, such as `--color-fg-default`.
+    ...text.matchAll(/(?<![\w-])(--(?:env-)?(?:color|z)-[\w-]*)(…)?/g),
+  ]);
+  assert.ok(named.length > 0, 'the messages name tokens');
+  for (const [, name, family] of named) {
+    if (family)
+      assert.ok(
+        library.some((token) => token.startsWith(name)),
+        `${name}… names no envUI token`,
+      );
+    else assert.ok(library.includes(name), `${name} is not an envUI token`);
+  }
 });

@@ -2,6 +2,7 @@
 // and stacking order from tokens, and rem for everything that follows the reader's font size, with
 // px only for hairlines. See README.md.
 import noPrivateClasses from './plugins/no-private-classes.js';
+import { colorTokenSuggestion, stackingAdvice } from './tokens.js';
 
 const documentation =
   'https://github.com/envsemble/envUI/blob/main/packages/stylelint-config/README.md';
@@ -31,8 +32,9 @@ export const hairlineProperties = [
 const colorCall =
   /(?<![\w-])(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\([^()]*(?:\([^()]*\)[^()]*)*\)?/i;
 
-const useColorToken =
-  'use an envUI color token instead, such as var(--env-color-…), so the color follows the theme and keeps its contrast.';
+/** What to use instead of a raw color, with the envUI tokens for the property it is in. */
+const useColorToken = (property) =>
+  `use an envUI color token instead, ${colorTokenSuggestion(property)}, so the color follows the theme and keeps its contrast.`;
 
 /** @type {import('stylelint').Config} */
 export default {
@@ -45,14 +47,14 @@ export default {
     'color-no-hex': [
       true,
       {
-        message: (hex) => `Raw color ${hex}: ${useColorToken}`,
+        message: (hex) => `Raw color ${hex}: ${useColorToken()}`,
         url: `${documentation}#raw-colors`,
       },
     ],
     'color-named': [
       'never',
       {
-        message: (name) => `Raw color ${name}: ${useColorToken}`,
+        message: (name) => `Raw color ${name}: ${useColorToken()}`,
         url: `${documentation}#raw-colors`,
       },
     ],
@@ -60,15 +62,14 @@ export default {
       { '/.*/': [rawColorFunction] },
       {
         message: (property, value) =>
-          `Raw color ${value.match(colorCall)?.[0] ?? value} in ${property}: ${useColorToken}`,
+          `Raw color ${value.match(colorCall)?.[0] ?? value} in ${property}: ${useColorToken(property)}`,
         url: `${documentation}#raw-colors`,
       },
     ],
     'declaration-property-value-allowed-list': [
       { 'z-index': ['auto', '/^var\\(--/', '/^calc\\(.*var\\(--/'] },
       {
-        message: (property, value) =>
-          `Literal ${property} ${value}: use a stacking token instead, such as envUI's var(--env-z-…), so layers keep one order with envUI's popups and dialogs.`,
+        message: (property, value) => `Literal ${property} ${value}: ${stackingAdvice()}`,
         url: `${documentation}#stacking-order`,
       },
     ],

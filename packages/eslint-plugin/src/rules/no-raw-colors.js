@@ -1,3 +1,4 @@
+import { colorTokenSuggestion } from '../tokens.js';
 import { documentationUrl, jsxName, walk } from '../utilities.js';
 
 /** The CSS named colors (CSS Color 4), besides transparent and currentcolor. */
@@ -74,7 +75,7 @@ export default {
     schema: [],
     messages: {
       rawColor:
-        'Raw color {{color}} in an inline style: use an envUI color token instead, such as var(--env-color-…), so the color follows the theme and keeps its contrast.',
+        'Raw color {{color}} in an inline style: use an envUI color token instead, {{tokens}}, so the color follows the theme and keeps its contrast.',
     },
   },
   create(context) {
@@ -82,7 +83,11 @@ export default {
 
     function check(node, text, property) {
       for (const color of rawColors(text, property))
-        context.report({ node, messageId: 'rawColor', data: { color } });
+        context.report({
+          node,
+          messageId: 'rawColor',
+          data: { color, tokens: colorTokenSuggestion(property) },
+        });
     }
 
     /** Checks the strings under a style value, each with the property it sets. */

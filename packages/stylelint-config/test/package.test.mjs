@@ -55,13 +55,15 @@ after(async () => {
   if (consumerDirectory) await rm(consumerDirectory, { recursive: true, force: true });
 });
 
-test('the package ships the config, its plugin and its documentation, and nothing else', () => {
+test('the package ships the config, its plugin, its token names and its documentation, and nothing else', () => {
   const files = packed.files.map(({ path }) => path.replaceAll('\\', '/')).sort();
   assert.deepEqual(files, [
     'README.md',
+    'data/tokens.json',
     'index.js',
     'package.json',
     'plugins/no-private-classes.js',
+    'tokens.js',
   ]);
 });
 

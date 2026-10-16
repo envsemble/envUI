@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import stylelint from 'stylelint';
 import config from '../index.js';
+import { expectedTokens, libraryTokensUrl, tokensUrl } from '../scripts/SyncTokens.mjs';
 
 const readme = readFileSync(new URL('../README.md', import.meta.url), 'utf8');
 
@@ -95,17 +96,23 @@ test('raw colors are reported, and colors from tokens pass', async () => {
   );
   assert.equal(
     (await message('.a { box-shadow: 0 1px 2px rgb(0 0 0 / 20%); }')).text,
-    'Raw color rgb(0 0 0 / 20%) in box-shadow: use an envUI color token instead, such as var(--env-color-…), so the color follows the theme and keeps its contrast. (declaration-property-value-disallowed-list)',
+    'Raw color rgb(0 0 0 / 20%) in box-shadow: use an envUI color token instead, one of the var(--color-fg-…), var(--color-bg-…) or var(--color-border-…) roles, so the color follows the theme and keeps its contrast. (declaration-property-value-disallowed-list)',
   );
   assert.equal(
     (await message('.a { color: #fff; }')).text,
-    'Raw color #fff: use an envUI color token instead, such as var(--env-color-…), so the color follows the theme and keeps its contrast. (color-no-hex)',
+    'Raw color #fff: use an envUI color token instead, one of the var(--color-fg-…), var(--color-bg-…) or var(--color-border-…) roles, so the color follows the theme and keeps its contrast. (color-no-hex)',
   );
-  await passes('.a { color: var(--env-color-fg-default); background: transparent; }');
-  await passes('.a { color: hsl(from var(--env-color-fg-link) h s calc(l - 10)); }');
-  await passes(
-    '.a { background: color-mix(in srgb, var(--env-color-bg-default) 80%, transparent); }',
+  assert.equal(
+    (await message('.a { background: oklch(0.6 0.15 250); }')).text,
+    'Raw color oklch(0.6 0.15 250) in background: use an envUI color token instead, such as var(--color-bg-default) or another var(--color-bg-…) role, so the color follows the theme and keeps its contrast. (declaration-property-value-disallowed-list)',
   );
+  assert.match(
+    (await message('.a { border-color: rgb(0 0 0); }')).text,
+    /such as var\(--color-border-default\) or another var\(--color-border-…\) role/,
+  );
+  await passes('.a { color: var(--color-fg-default); background: transparent; }');
+  await passes('.a { color: hsl(from var(--color-fg-link) h s calc(l - 10)); }');
+  await passes('.a { background: color-mix(in srgb, var(--color-bg-default) 80%, transparent); }');
   await passes('.a { fill: currentColor; }');
 });
 
@@ -114,13 +121,14 @@ test('a literal z-index is reported, and stacking tokens pass', async () => {
     { rule: 'declaration-property-value-allowed-list', text: '10' },
     { rule: 'declaration-property-value-allowed-list', text: '-1' },
   ]);
-  assert.match(
+  // envUI has no stacking tokens yet, and the message says so rather than naming one.
+  assert.equal(
     (await message('.a { z-index: 999; }')).text,
-    /^Literal z-index 999: use a stacking token/,
+    'Literal z-index 999: envUI has no stacking tokens yet. Avoid a literal z-index, or set it through a documented custom property of your own, such as var(--app-z-header), so the order of layers lives in one place. (declaration-property-value-allowed-list)',
   );
   await passes('.a { z-index: auto; }');
-  await passes('.a { z-index: var(--env-z-modal); }');
-  await passes('.a { z-index: calc(var(--env-z-modal) + 1); }');
+  await passes('.a { z-index: var(--app-z-modal); }');
+  await passes('.a { z-index: calc(var(--app-z-modal) + 1); }');
 });
 
 test('px is reported outside hairlines and offsets', async () => {
@@ -144,7 +152,7 @@ test('px is reported outside hairlines and offsets', async () => {
   );
   await passes(
     [
-      '.a { border: 1px solid var(--env-color-border-default); outline: 2px solid; outline-offset: 2px; }',
+      '.a { border: 1px solid var(--color-border-default); outline: 2px solid; outline-offset: 2px; }',
       '.b { box-shadow: 0 1px 2px var(--shadow); text-underline-offset: 3px; border-inline-start-width: 1px; }',
       '.c { --card-border-width: 1px; --focus-ring-offset: 2px; }',
       '.d { padding: 1rem; margin: var(--space, 8px); inset-block-start: env(safe-area-inset-top, 20px); }',
@@ -169,4 +177,49 @@ test('the config validates its plugin rule options', async () => {
 test('the README documents every rule the config sets', () => {
   for (const rule of Object.keys(config.rules))
     assert.ok(readme.includes(`\`${rule}\``), `the README names ${rule}`);
+});
+
+test("the token names are the library's when the repository has its token list", () => {
+  const copy = JSON.parse(readFileSync(tokensUrl, 'utf8'));
+  if (existsSync(libraryTokensUrl)) {
+    assert.equal(
+      readFileSync(tokensUrl, 'utf8'),
+      expectedTokens(),
+      "data/tokens.json is behind the library's token list: run npm run sync:tokens --workspace @envsemble/stylelint-config-envui.",
+    );
+    assert.equal(copy.source, 'packages/ui/src/generated/tokens.json');
+  } else assert.equal(copy.source, 'embedded');
+});
+
+test('every token the messages and the README name exists in the library', () => {
+  const library = existsSync(libraryTokensUrl)
+    ? JSON.parse(readFileSync(libraryTokensUrl, 'utf8')).tokens.map((token) => token.cssVariable)
+    : Object.values(JSON.parse(readFileSync(tokensUrl, 'utf8')).tokens).flat();
+  const rules = config.rules;
+  const messages = [
+    rules['color-no-hex'][1].message('#fff'),
+    rules['color-named'][1].message('red'),
+    ...['color', 'background', 'border-color', 'outline', 'fill', 'box-shadow', '--brand'].map(
+      (property) =>
+        rules['declaration-property-value-disallowed-list'][1].message(property, 'rgb(0 0 0)'),
+    ),
+    rules['declaration-property-value-allowed-list'][1].message('z-index', '10'),
+    rules['unit-disallowed-list'][1].message('px'),
+  ];
+  const named = [...messages, readme].flatMap((text) => [
+    ...text.matchAll(/var\((--[\w-]+)(…)?/g),
+    // Bare names of envUI's color and stacking tokens, such as `--color-fg-default`.
+    ...text.matchAll(/(?<![\w-])(--(?:env-)?(?:color|z)-[\w-]*)(…)?/g),
+  ]);
+  assert.ok(named.length > 0, 'the messages name tokens');
+  for (const [, name, family] of named) {
+    // The application's own custom properties, in examples.
+    if (name.startsWith('--app-')) continue;
+    if (family)
+      assert.ok(
+        library.some((token) => token.startsWith(name)),
+        `${name}… names no envUI token`,
+      );
+    else assert.ok(library.includes(name), `${name} is not an envUI token`);
+  }
 });
