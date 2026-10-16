@@ -77,6 +77,9 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: site ? '../../dist/site' : '../../dist/catalogue',
       emptyOutDir: true,
+      // The hosted catalogue's manifest, which FinalizeSite.mjs turns into module-files.json: the
+      // files a reload fetches again when part of a page failed to load.
+      ...(site && { manifest: true }),
       target: 'es2022',
       ...(!site && { assetsInlineLimit: () => true, cssCodeSplit: false }),
       // The token reference reads the authored HSL channels from CSS.

@@ -44,26 +44,54 @@ export function reloadModule<T>(
     );
 }
 
+/** Whether this is the hosted catalogue, whose parts load from files of their own. */
+const hostedBuild = import.meta.env.MODE === 'site';
+
 /**
- * Reloads the page, which fetches the files of the current deployment. WebKit keeps a module that
- * failed to load, such as one Vite preloaded with a link, as failed for the whole tab, across
- * reloads, until the file is fetched again; so the page's scripts that arrived empty are fetched
- * anew first.
+ * The files of the hosted catalogue behind each part that loads on its own, from the
+ * module-files.json that scripts/SiteModuleFiles.mjs writes; null when the connection seems down.
  */
-export async function reloadPage() {
-  const failed = performance
-    .getEntriesByType('resource')
-    .filter(
-      (entry): entry is PerformanceResourceTiming =>
-        entry instanceof PerformanceResourceTiming &&
-        ['script', 'link', 'other'].includes(entry.initiatorType) &&
-        entry.decodedBodySize === 0 &&
-        new URL(entry.name).origin === window.location.origin,
+async function moduleFiles(): Promise<Record<string, string[]> | null> {
+  try {
+    const response = await fetch(`${import.meta.env.BASE_URL}module-files.json`, {
+      cache: 'no-cache',
+      signal: AbortSignal.timeout(15_000),
+    });
+    // A build without the map, or an answer that isn't one, still reloads.
+    return response.ok ? ((await response.json()) as Record<string, string[]>) : {};
+  } catch (error) {
+    return error instanceof SyntaxError ? {} : null;
+  }
+}
+
+/**
+ * Reloads the page, which fetches the files of the current deployment, unless the connection seems
+ * to be down: then it resolves to false and leaves the page as it is, rather than replacing it with
+ * the browser's error page. WebKit keeps a module that failed to load, such as one Vite preloaded
+ * with a link, as failed for the whole tab, across reloads, until its file is fetched again; so in
+ * the hosted build, the files of `modules` are fetched anew first. Each is a module's path in the
+ * catalogue app, such as `src/examples/button/CreateProject.tsx`. The connection seems down when
+ * the browser says it is offline, or when none of those files can be fetched; a file that answers,
+ * even as not found after a new deploy, shows that it is up.
+ */
+export async function reloadPage(modules: readonly string[] = []): Promise<boolean> {
+  if (!navigator.onLine) return false;
+  if (hostedBuild) {
+    const map = await moduleFiles();
+    if (!map) return false;
+    const files = [...new Set(modules.flatMap((module) => map[module] ?? []))];
+    const fetched = await Promise.allSettled(
+      files.map((file) =>
+        fetch(`${import.meta.env.BASE_URL}${file}`, {
+          cache: 'reload',
+          signal: AbortSignal.timeout(15_000),
+        }).then((response) => response.blob()),
+      ),
     );
-  await Promise.all(
-    failed.map(({ name }) => fetch(name, { cache: 'reload' }).catch(() => undefined)),
-  );
+    if (fetched.length && fetched.every(({ status }) => status === 'rejected')) return false;
+  }
   window.location.reload();
+  return true;
 }
 
 /** What went wrong, as a message for people: the error's own message when it has one. */
@@ -75,6 +103,11 @@ export function errorMessage(error: unknown) {
 interface LoadBoundaryProps {
   /** What failed, for the message: an example, its code or a specimen. */
   what: string;
+  /**
+   * The modules that load it, by their paths in the catalogue app, such as
+   * `src/examples/button/CreateProject.tsx`: Reload the page fetches their files again first.
+   */
+  modules: readonly string[];
   /** Loads it again: drops what failed, so the next render fetches it anew. */
   onRetry: () => void;
   children: ReactNode;
@@ -85,6 +118,8 @@ interface LoadBoundaryState {
   failure: { error: unknown } | null;
   /** Whether people asked to load it again, which keeps a focusable wrapper around it. */
   wrapped: boolean;
+  /** Whether a reload found the connection down, and left the page as it was. */
+  offline: boolean;
 }
 
 /**
@@ -94,7 +129,7 @@ interface LoadBoundaryState {
  * error, such as a bug in an example, is shown in place as a failure to render, with its message.
  */
 export class LoadBoundary extends Component<LoadBoundaryProps, LoadBoundaryState> {
-  state: LoadBoundaryState = { failure: null, wrapped: false };
+  state: LoadBoundaryState = { failure: null, wrapped: false, offline: false };
 
   /** What focus goes to once Try again, which had it, is gone. */
   private wrapper = createRef<HTMLDivElement>();
@@ -103,7 +138,7 @@ export class LoadBoundary extends Component<LoadBoundaryProps, LoadBoundaryState
   private focusPending = false;
 
   static getDerivedStateFromError(error: unknown): Partial<LoadBoundaryState> {
-    return { failure: { error } };
+    return { failure: { error }, offline: false };
   }
 
   componentDidUpdate() {
@@ -118,11 +153,16 @@ export class LoadBoundary extends Component<LoadBoundaryProps, LoadBoundaryState
   retry = () => {
     this.focusPending = true;
     this.props.onRetry();
-    this.setState({ failure: null, wrapped: true });
+    this.setState({ failure: null, wrapped: true, offline: false });
+  };
+
+  reload = async () => {
+    this.setState({ offline: false });
+    if (!(await reloadPage(this.props.modules))) this.setState({ offline: true });
   };
 
   render() {
-    const { failure, wrapped } = this.state;
+    const { failure, wrapped, offline } = this.state;
     const { what } = this.props;
     let content: ReactNode;
     if (!failure) content = this.props.children;
@@ -146,7 +186,7 @@ export class LoadBoundary extends Component<LoadBoundaryProps, LoadBoundaryState
               )}
               <Button
                 variant={canRetryLoad ? 'text' : 'secondary'}
-                onClick={() => void reloadPage()}
+                onClick={() => void this.reload()}
               >
                 Reload the page
               </Button>
@@ -155,6 +195,9 @@ export class LoadBoundary extends Component<LoadBoundaryProps, LoadBoundaryState
         >
           The catalogue may have been updated since this page opened, or the connection dropped.
           {!canRetryLoad && ` Reloading the page loads the ${what} again.`}
+          <span role="status">
+            {offline && ' The connection seems to be down. Reload the page once it is back.'}
+          </span>
         </Alert>
       );
     // Until a retry, the content stands on its own, as the page lays it out.

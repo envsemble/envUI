@@ -22,6 +22,7 @@ export function Specimen({ page, name }: { page: string; name: string }) {
     <Preview>
       <LoadBoundary
         what="specimen"
+        modules={[`src/specimens/${page}/${name}.tsx`]}
         onRetry={() => {
           // A failed load stays failed in its lazy component; the retry makes a new one.
           specimens.set(path, lazy(loadModule(reloadModule(loaders[path], path, import.meta.url))));

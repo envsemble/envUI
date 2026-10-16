@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import { catalogueUrl } from './Servers';
 import { extname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -518,35 +518,139 @@ test('an example that fails to load says so in place, and loads again on request
   expect(await hero.evaluate((group) => group.contains(document.activeElement))).toBe(true);
 });
 
-test('in the hosted build, an example that fails to load offers a reload, which loads it', async ({
-  page,
-}) => {
-  // A build's chunk that failed stays failed until the page reloads, in Chromium and WebKit, and in
-  // WebKit even then, unless it is fetched again.
-  test.skip(!existsSync(resolve(site, 'index.html')), 'Needs the hosted build: npm run build:site');
-  let failing = true;
+/** The hosted Worker's answer for a file under /assets/ that is gone. */
+const notFound = {
+  status: 404,
+  body: 'Not found\n',
+  headers: {
+    'Cache-Control': 'no-store',
+    'Content-Type': 'text/plain; charset=utf-8',
+    'X-Content-Type-Options': 'nosniff',
+  },
+};
+
+/**
+ * Requires the hosted build. `npm run verify` builds it first, and so does CI, where a missing build
+ * fails rather than skips; a local run without one skips.
+ */
+function requireSite() {
+  const built = existsSync(resolve(site, 'module-files.json'));
+  if (!built && process.env.CI)
+    throw new Error('The hosted build is missing: run npm run build:site first');
+  test.skip(!built, 'Needs the hosted build: npm run build:site');
+}
+
+/** The files of the hosted build that a module, by its path in the catalogue app, loads. */
+function moduleFiles(module: string) {
+  const files: string[] =
+    JSON.parse(readFileSync(resolve(site, 'module-files.json'), 'utf8'))[module] ?? [];
+  expect(files.length, `${module} in module-files.json`).toBeGreaterThan(0);
+  return files.map((file) => `/${file}`);
+}
+
+/**
+ * Serves the hosted build at siteUrl as the Worker does, except that the files `failing` returns
+ * true for fail as `failure` says: gone after a deploy, or with the connection dropped.
+ */
+async function serveSite(
+  page: Page,
+  failing: (pathname: string) => boolean,
+  failure: 'missing' | 'aborted',
+) {
   await page.route(`${siteUrl}/**`, (route) => {
     const { pathname } = new URL(route.request().url());
-    // The hosted Worker's answer for a file that is gone.
-    if (failing && /^\/assets\/CreateProject-[\w-]+\.js$/.test(pathname))
-      return route.fulfill({ status: 404, headers: { 'Cache-Control': 'no-store' } });
+    if (failing(pathname))
+      return failure === 'aborted' ? route.abort('internetdisconnected') : route.fulfill(notFound);
     const file = resolve(site, `.${pathname.endsWith('/') ? `${pathname}index.html` : pathname}`);
-    if (!existsSync(file)) return route.fulfill({ status: 404 });
+    if (!existsSync(file)) return route.fulfill(notFound);
     return route.fulfill({
       body: readFileSync(file),
       contentType: contentTypes[extname(file)] ?? 'application/octet-stream',
     });
   });
-  await page.goto(`${siteUrl}/#/components/button/overview`);
+}
+
+for (const failure of ['missing', 'aborted'] as const) {
+  test(`in the hosted build, an example whose file is ${failure} offers a reload, which loads it`, async ({
+    page,
+  }) => {
+    // A build's chunk that failed stays failed until the page reloads, in Chromium and WebKit, and
+    // in WebKit even then, unless it is fetched again.
+    requireSite();
+    const files = moduleFiles('src/examples/button/CreateProject.tsx');
+    let failing = true;
+    await serveSite(page, (pathname) => failing && files.includes(pathname), failure);
+    await page.goto(`${siteUrl}/#/components/button/overview`);
+    const hero = page.getByRole('group', { name: 'Button example', exact: true });
+    await expect(hero.getByText('The example could not load')).toBeVisible();
+    await expect(hero.getByText('Reloading the page loads the example again.')).toBeVisible();
+    await expect(hero.getByRole('button', { name: 'Try again' })).toHaveCount(0);
+    failing = false;
+    await hero.getByRole('button', { name: 'Reload the page', exact: true }).click();
+    await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+  });
+}
+
+test('in the hosted build, a reload after many pages still loads an example that failed', async ({
+  page,
+}) => {
+  // Resource Timing keeps 250 entries, so by then the failed file is not among them.
+  test.slow();
+  requireSite();
+  const files = moduleFiles('src/examples/button/CreateProject.tsx');
+  let failing = true;
+  await serveSite(page, (pathname) => failing && files.includes(pathname), 'aborted');
+  await page.goto(`${siteUrl}/#/overview`);
+  const resources = () => page.evaluate(() => performance.getEntriesByType('resource').length);
+  for (const { path, reference } of referencePages) {
+    if ((await resources()) >= 250) break;
+    if (path === 'components/button') continue;
+    await page.evaluate((hash) => (window.location.hash = hash), `#/${path}`);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(reference.title);
+    await expect(page.getByText(/^Loading .*…$/)).toHaveCount(0);
+  }
+  expect(await resources()).toBe(250);
+  await page.evaluate(() => (window.location.hash = '#/components/button/overview'));
   const hero = page.getByRole('group', { name: 'Button example', exact: true });
   await expect(hero.getByText('The example could not load')).toBeVisible();
-  await expect(hero.getByText('Reloading the page loads the example again.')).toBeVisible();
-  await expect(hero.getByRole('button', { name: 'Try again' })).toHaveCount(0);
   failing = false;
   await hero.getByRole('button', { name: 'Reload the page', exact: true }).click();
   await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
 });
+
+for (const down of ['offline', 'unreachable'] as const) {
+  test(`in the hosted build, a reload with the connection ${down} keeps the page and says so`, async ({
+    page,
+    context,
+  }) => {
+    requireSite();
+    const files = moduleFiles('src/examples/button/CreateProject.tsx');
+    let connection: 'failing' | 'down' | 'up' = 'failing';
+    await serveSite(
+      page,
+      (pathname) => connection === 'down' || (connection === 'failing' && files.includes(pathname)),
+      'aborted',
+    );
+    await page.goto(`${siteUrl}/#/components/button/overview`);
+    const hero = page.getByRole('group', { name: 'Button example', exact: true });
+    await expect(hero.getByText('The example could not load')).toBeVisible();
+    // A reload would replace the page, and this mark with it.
+    await page.evaluate(() => Object.assign(window, { stillHere: true }));
+    // The browser knows it is offline, or it doesn't and no file arrives.
+    if (down === 'offline') await context.setOffline(true);
+    connection = 'down';
+    await hero.getByRole('button', { name: 'Reload the page', exact: true }).click();
+    await expect(hero.getByRole('status')).toHaveText(
+      'The connection seems to be down. Reload the page once it is back.',
+    );
+    expect(await page.evaluate(() => 'stillHere' in window)).toBe(true);
+    await context.setOffline(false);
+    connection = 'up';
+    await hero.getByRole('button', { name: 'Reload the page', exact: true }).click();
+    await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
+  });
+}
 
 test('code that fails to load is asked for once, not on every render', async ({ page }) => {
   const source = /\/src\/examples\/button\/CreateProject\.tsx\?raw/;
