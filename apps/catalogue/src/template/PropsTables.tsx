@@ -63,6 +63,8 @@ function ExportProps({ name, entry }: { name: string; entry: ExportEntry }) {
                 <Table.Cell label="Default" nowrap>
                   {prop.default !== undefined ? (
                     <Code className="docs-prop-code">{prop.default}</Code>
+                  ) : prop.defaultBuiltIn ? (
+                    'built-in'
                   ) : (
                     '—'
                   )}

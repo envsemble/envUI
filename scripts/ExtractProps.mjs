@@ -285,10 +285,22 @@ export function extractProps() {
       .replace(/,\s*([\])])/g, '$1');
   }
 
-  /** What a private const or one-expression function holds, as text a reader can use. */
+  /**
+   * What a private const or one-expression function holds, as text a reader can use. `seen` holds
+   * the declarations being resolved around this one, so that a name that refers back to one of them
+   * is left unresolved; a helper used twice side by side resolves both times.
+   */
   function privateValue(identifier, declaration, seen) {
     if (seen.has(declaration)) return undefined;
     seen.add(declaration);
+    try {
+      return resolvedValue(declaration, seen);
+    } finally {
+      seen.delete(declaration);
+    }
+  }
+
+  function resolvedValue(declaration, seen) {
     if (
       ts.isVariableDeclaration(declaration) &&
       declaration.initializer &&
@@ -310,7 +322,8 @@ export function extractProps() {
    * A default as a reader can use it. A name that envUI does not export reads as the value it holds:
    * 'env-theme' for defaultThemeStorageKey, or an arrow function for a label function, with the
    * private names inside resolved too. A default that cannot be shown that way within
-   * longestDefault characters is left out rather than named by a name no reader can import.
+   * longestDefault characters is undefined: the table says the prop has a built-in default rather
+   * than name something no reader can import.
    */
   function defaultText(initializer) {
     const text = inlined(initializer, new Set());
@@ -326,8 +339,8 @@ export function extractProps() {
       if (!element.initializer || element.dotDotDotToken) continue;
       const key = element.propertyName ?? element.name;
       const name = ts.isIdentifier(key) || ts.isStringLiteral(key) ? key.text : key.getText();
-      const text = defaultText(element.initializer);
-      if (text !== undefined) defaults.set(name, text);
+      // A default that cannot be shown, such as a toolbar built from private parts, is built in.
+      defaults.set(name, defaultText(element.initializer));
     }
     return defaults;
   }
@@ -462,6 +475,9 @@ export function extractProps() {
         ...((docs.default ?? defaults.get(name)) !== undefined && {
           default: docs.default ?? defaults.get(name),
         }),
+        ...(docs.default === undefined &&
+          defaults.has(name) &&
+          defaults.get(name) === undefined && { defaultBuiltIn: true }),
         description: docs.description,
         ...(docs.deprecated !== undefined && { deprecated: docs.deprecated }),
         ...(origin === 'base-ui' && { source: 'base-ui' }),

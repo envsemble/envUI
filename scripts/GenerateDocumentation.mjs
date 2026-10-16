@@ -632,7 +632,11 @@ export function renderProps(names, props, headingDepth = 2) {
     for (const prop of entry.props)
       lines.push(
         `| ${codeCell(prop.name)}${prop.required ? ' (required)' : ''} | ${codeCell(prop.type)} | ${
-          prop.default !== undefined ? codeCell(prop.default) : '—'
+          prop.default !== undefined
+            ? codeCell(prop.default)
+            : prop.defaultBuiltIn
+              ? 'built-in'
+              : '—'
         } | ${cell(propDescription(prop))} |`,
       );
     lines.push('');

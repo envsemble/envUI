@@ -3125,6 +3125,7 @@
           "name": "toolbar",
           "type": "readonly MarkdownCommand[] | false",
           "required": false,
+          "defaultBuiltIn": true,
           "description": "Formatting actions; false hides the toolbar. Undo/redo accompany a visible toolbar."
         },
         {

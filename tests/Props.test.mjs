@@ -32,6 +32,9 @@ test('a default that names a private value shows the value, or nothing', () => {
   assert.equal(props('DocumentTabs').closeLabel.default, `(label: string) => \`Close \${label}\``);
   // A TSDoc @default says it in words instead.
   assert.equal(props('Rating').formatLabel.default, "'{value} out of {max} stars'");
+  // A default that can't be shown as a value is marked built in rather than left out.
+  assert.equal(props('MarkdownEditor').toolbar.default, undefined);
+  assert.equal(props('MarkdownEditor').toolbar.defaultBuiltIn, true);
   // Private names inside a value are resolved too.
   assert.equal(
     props('CalendarHeatmap').formatValue.default,
