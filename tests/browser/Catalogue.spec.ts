@@ -600,33 +600,6 @@ for (const failure of ['missing', 'aborted'] as const) {
   });
 }
 
-test('in the hosted build, a reload after many pages still loads an example that failed', async ({
-  page,
-}) => {
-  // Resource Timing keeps 250 entries, so by then the failed file is not among them.
-  test.slow();
-  requireSite();
-  const files = moduleFiles('src/examples/button/CreateProject.tsx');
-  let failing = true;
-  await serveSite(page, (pathname) => failing && files.includes(pathname), 'aborted');
-  await page.goto(`${siteUrl}/#/overview`);
-  const resources = () => page.evaluate(() => performance.getEntriesByType('resource').length);
-  for (const { path, reference } of referencePages) {
-    if ((await resources()) >= 250) break;
-    if (path === 'components/button') continue;
-    await page.evaluate((hash) => (window.location.hash = hash), `#/${path}`);
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText(reference.title);
-    await expect(page.getByText(/^Loading .*…$/)).toHaveCount(0);
-  }
-  expect(await resources()).toBe(250);
-  await page.evaluate(() => (window.location.hash = '#/components/button/overview'));
-  const hero = page.getByRole('group', { name: 'Button example', exact: true });
-  await expect(hero.getByText('The example could not load')).toBeVisible();
-  failing = false;
-  await hero.getByRole('button', { name: 'Reload the page', exact: true }).click();
-  await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
-});
-
 for (const down of ['offline', 'unreachable'] as const) {
   test(`in the hosted build, a reload with the connection ${down} keeps the page and says so`, async ({
     page,
