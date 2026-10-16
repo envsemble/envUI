@@ -6444,7 +6444,7 @@
     },
     "formatRelativeTime": {
       "kind": "function",
-      "source": "packages/ui/src/content/RelativeTime.tsx",
+      "source": "packages/ui/src/content/formatRelativeTime.ts",
       "description": "A moment as text relative to another, by default the current time, such as \"in 2 days\", \"3 hours ago\" or \"just now\", through Intl.RelativeTimeFormat. An invalid moment gives an empty string; an invalid now is ignored, as by RelativeTime, for the current time.",
       "signature": "(value: RelativeTimeValue, options?: RelativeTimeOptions): string",
       "entries": [
