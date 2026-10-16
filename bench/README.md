@@ -248,7 +248,7 @@ The transcript tells whether the agent read envUI's own material. "Read envUI do
 
 - **Static.** The scorer doesn't run the app or check behaviour. A capability built with the right component but wired wrongly still counts as covered.
 - **Coverage is by export name.** Using envUI's `Button` for a toggle covers "toggle button" even if `AppShell` would have provided it. That is why the sidebar task lists only `AppShell` for the toggle.
-- **The basic fixture has little headroom.** It is small, already uses envUI, and envUI is the only UI package installed. Agents that look in `node_modules` find the shipped docs and skills there. Judge a condition on Codex, on the `hard` fixture and on the docs-lookup numbers.
+- **The basic fixture has little headroom.** It is small, already uses envUI, and envUI is the only UI package installed. Agents that look in `node_modules` find the shipped docs and skills there. In its baseline, Claude Code scored 100 on every task. Judge a condition on Codex, on the `hard` fixture (Claude Code 92.6, Codex 50.5) and on the docs-lookup numbers.
 - **One run per task and agent.** Repeat runs before trusting differences of a few points.
 
 ## Adding a condition
@@ -293,19 +293,17 @@ If the task needs mocked data or an API call, add it to `fixtures/basic/src/api.
 
 ## Cost and time
 
-Baseline on 2026-10-16 (26 runs, 4 in parallel; exact figures in `results/2026-10-16-baseline/summary.md`):
+Baselines on envUI 0.7.0, 2026-10-16, 26 runs each, 4 in parallel. Exact figures are in `results/2026-10-16-baseline-v2/summary.md` (basic) and `results/2026-10-16-baseline-hard/summary.md` (hard).
 
-- The whole run took 11 minutes of wall-clock time.
-- Claude Code:
-  - 21 min of agent time, 0.7–3.4 min per run;
-  - $7.16 at list price;
-  - 8.4M input tokens, mostly cache reads, and 86k output tokens.
-- Codex:
-  - 10.5 min of agent time, 0.4–2.6 min per run;
-  - cost not reported;
-  - 3.3M input tokens, mostly cached, and 38k output tokens.
+| Fixture | Wall-clock time | Agent       | Agent time | Per run     | Cost at list price | Input tokens (cached) | Output tokens |
+| ------- | --------------- | ----------- | ---------: | ----------- | -----------------: | --------------------- | ------------: |
+| basic   | 10 min          | Claude Code |   19.2 min | 0.6–3.0 min |              $7.55 | 8.8M (8.3M)           |           94k |
+|         |                 | Codex       |    9.4 min | 0.4–1.0 min |       not reported | 3.9M (3.5M)           |           39k |
+| hard    | 15 min          | Claude Code |   29.5 min | 0.9–5.8 min |              $9.96 | 12.7M (12.1M)         |          133k |
+|         |                 | Codex       |    8.3 min | 0.4–0.9 min |       not reported | 2.2M (2.0M)           |           40k |
 
-- Installing the template takes about 40 s, once per tarball. Copying a workspace takes about 15 s per run.
+- The hard baseline's wall-clock time includes a resume: a run stopped the runner after 12 minutes, and three runs were done again. The table counts only the runs in the results.
+- Installing a template takes 30–40 s, once per tarball and fixture. Copying a workspace takes about 15 s per run.
 - No run came near the 12-minute timeout.
 - Claude Code reports a list-price cost per run. On a subscription this is an estimate, not a charge. Codex reports tokens only.
 - Every condition repeats the full matrix. Run single tasks (`--tasks sidebar`) while developing a condition.
