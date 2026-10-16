@@ -1,0 +1,18 @@
+{
+  "@envsemble/envui": {
+    "Tree": {
+      "density": {
+        "current": ["xs", "sm", "md", "lg"],
+        "report": "Tree's density is a row density in 1.0: xs, sm (the default, as compact was) or md (as standard was) or lg.",
+        "values": {
+          "compact": {},
+          "standard": {
+            "props": {
+              "density": "md"
+            }
+          }
+        }
+      }
+    }
+  }
+}

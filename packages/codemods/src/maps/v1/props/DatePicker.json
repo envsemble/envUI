@@ -1,0 +1,23 @@
+{
+  "@envsemble/envui": {
+    "DatePicker": {
+      "density": {
+        "report": "DatePicker's density is gone: fields take the control height by default, size=\"sm\" gives the small one and variant=\"floating\" the tall one. For a compact app or region, set scale=\"compact\" on its Theme.",
+        "values": {
+          "compact": {
+            "props": {
+              "size": "sm",
+              "showLabel": false
+            }
+          },
+          "standard": {
+            "props": {
+              "variant": "floating"
+            },
+            "report": "the standard density was the tall floating field, which is variant=\"floating\" now."
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,6 +1,6 @@
 {
-  "$comment": "Names that envUI 0.7 exported and 1.0 does not, by entry point. Each entry's `to` lists what replaces it in 1.0: one name, alternatives, or nothing for a name that became internal, whose `use` says what to do instead. A split (DirectionLink) also has the `prop` whose `values` choose the part. A name that becomes the Root part of its own namespace (Menu -> Menu.Root) stays importable, and so does a removed name that 1.0 reuses as a namespace (`namespace`: the manual Toast; 1.0's Toast holds Toast.Provider); only rendering them as components is reported. scripts/SyncRenames.mjs rewrites this file from the codemods' rename map (packages/codemods/src/maps/v1.json) whenever that map exists, before every pack; source says where the entries came from.",
-  "source": "packages/codemods/src/maps/v1.json",
+  "$comment": "Names that envUI 0.7 exported and 1.0 does not, by entry point. Each entry's `to` lists what replaces it in 1.0: one name, alternatives, or nothing for a name that became internal, whose `use` says what to do instead. A split (DirectionLink) also has the `prop` whose `values` choose the part. A name that becomes the Root part of its own namespace (Menu -> Menu.Root) stays importable, and so does a removed name that 1.0 reuses as a namespace (`namespace`: the manual Toast; 1.0's Toast holds Toast.Provider); only rendering them as components is reported. scripts/SyncRenames.mjs rewrites this file from the codemods' rename map (packages/codemods/src/maps/v1) whenever that map exists, before every pack; source says where the entries came from.",
+  "source": "packages/codemods/src/maps/v1",
   "modules": {
     "@envsemble/envui": {
       "Counter": { "to": ["CounterBadge"] },

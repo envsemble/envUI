@@ -129,7 +129,7 @@ test("the rename map is the codemods' map when the repository has one", async ()
       await expectedRenames(),
       "src/data/renames.json is behind the codemods' map: run npm run sync:renames --workspace @envsemble/eslint-plugin-envui.",
     );
-    assert.equal(renames.source, 'packages/codemods/src/maps/v1.json');
+    assert.equal(renames.source, 'packages/codemods/src/maps/v1');
   } else assert.equal(renames.source, 'embedded');
 });
 

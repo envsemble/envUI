@@ -1,10 +1,120 @@
-// Reads a rename map (src/maps/v1.json, or a file of the same shape passed as the `map` option) and
-// turns it into lookups the transforms share. Keys that start with `$` are comments.
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+// Reads a rename map and turns it into lookups the transforms share. Keys that start with `$` are
+// comments.
+//
+// The bundled map is a folder, src/maps/v1: map.json holds its header (the version, the package
+// and a comment per section), and every other file is a fragment of one section, named after the
+// component family it covers, as `props/Button.json` or `classes/Menu.json`. A fragment holds
+// what the section holds for that family, in the section's shape; `readMap` merges them into one
+// map, and fails where two fragments set the same name. The `map` option takes such a folder or a
+// single JSON file with the merged shape.
+import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-export const defaultMapPath = fileURLToPath(new URL('./maps/v1.json', import.meta.url));
+export const defaultMapPath = fileURLToPath(new URL('./maps/v1', import.meta.url));
+
+/** The sections of a rename map, in the order the merged map lists them. */
+export const mapSections = [
+  'exports',
+  'split',
+  'removed',
+  'props',
+  'calls',
+  'render',
+  'structure',
+  'classes',
+  'classAttributes',
+  'classesWithin',
+  'docs',
+  'tokens',
+];
+
+/**
+ * How deep a section's names sit: `exports` lists names per entry point, `props` components per
+ * entry point, `classes` names at the top. Fragments merge down to this depth, and two fragments
+ * may not both set a name there.
+ */
+const sectionDepth = {
+  exports: 2,
+  split: 2,
+  removed: 2,
+  props: 2,
+  calls: 2,
+  render: 2,
+  structure: 2,
+  classes: 1,
+  classAttributes: 1,
+  classesWithin: 1,
+  docs: 1,
+  tokens: 1,
+};
+
+/** The fragment files of a map folder, relative to it with forward slashes, in a stable order. */
+export function mapFragments(directory = defaultMapPath) {
+  const found = [];
+  for (const section of readdirSync(directory, { withFileTypes: true })) {
+    if (!section.isDirectory()) continue;
+    for (const file of readdirSync(join(directory, section.name)))
+      if (file.endsWith('.json')) found.push(`${section.name}/${file}`);
+  }
+  return found.sort();
+}
+
+const readJson = (file) => {
+  try {
+    return JSON.parse(readFileSync(file, 'utf8'));
+  } catch (error) {
+    throw new Error(`Cannot read the rename map ${file}: ${error.message}`, { cause: error });
+  }
+};
+
+/**
+ * The rename map at `path` as one object, in the shape of a single-file map: a JSON file as it is,
+ * or a folder's header with its fragments merged into their sections.
+ */
+export function readMap(path = defaultMapPath) {
+  const location = resolve(path);
+  let directory = false;
+  try {
+    directory = statSync(location).isDirectory();
+  } catch {
+    // A missing path fails below, as a file that cannot be read.
+  }
+  if (!directory) return readJson(location);
+  const { sections: comments = {}, ...header } = readJson(join(location, 'map.json'));
+  const map = { ...header };
+  for (const section of mapSections)
+    if (comments[section] !== undefined) map[section] = { $comment: comments[section] };
+  const owners = new Map();
+  for (const fragment of mapFragments(location)) {
+    const [section] = fragment.split('/');
+    if (!Object.hasOwn(sectionDepth, section))
+      throw new Error(
+        `The rename map ${location} has a folder ${section}, which is no section: ${mapSections.join(', ')}.`,
+      );
+    map[section] ??= {};
+    const merge = (target, source, depth, trail) => {
+      for (const [key, value] of Object.entries(source)) {
+        if (key.startsWith('$')) continue;
+        const where = [...trail, key];
+        if (depth > 1 && typeof value === 'object' && value !== null && !Array.isArray(value)) {
+          target[key] ??= {};
+          merge(target[key], value, depth - 1, where);
+          continue;
+        }
+        const name = `${section} ${where.join(' ')}`;
+        if (owners.has(name))
+          throw new Error(
+            `The rename map ${location} sets ${section} > ${where.join(' > ')} in both ${owners.get(name)} and ${fragment}.`,
+          );
+        owners.set(name, fragment);
+        target[key] = value;
+      }
+    };
+    merge(map[section], readJson(join(location, fragment)), sectionDepth[section], []);
+  }
+  return map;
+}
 
 const identifier = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
 const part = /^([A-Za-z_$][A-Za-z0-9_$]*)\.([A-Za-z_$][A-Za-z0-9_$]*)$/;
@@ -352,12 +462,7 @@ const cache = new Map();
 export function loadMap(path = defaultMapPath) {
   const file = resolve(path);
   if (!cache.has(file)) {
-    let parsed;
-    try {
-      parsed = JSON.parse(readFileSync(file, 'utf8'));
-    } catch (error) {
-      throw new Error(`Cannot read the rename map ${file}: ${error.message}`, { cause: error });
-    }
+    const parsed = readMap(file);
     const problems = validateMap(parsed);
     if (problems.length > 0)
       throw new Error(`The rename map ${file} is malformed:\n- ${problems.join('\n- ')}`);

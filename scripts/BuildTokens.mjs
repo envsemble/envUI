@@ -2,8 +2,9 @@
 // Terrazzo into packages/ui/src/styles/Tokens.css, packages/ui/src/generated/tokens.ts,
 // packages/ui/src/generated/tokens.json and packages/ui/src/generated/token-migration.json,
 // formatted with Prettier. Terrazzo lints the tokens first. The migration map's copies follow it:
-// the `tokens` section of the codemods' rename map (packages/codemods/src/maps/v1.json) and the
-// token list in docs/migration.md, between its token-migration markers.
+// the `tokens` section of the codemods' rename map, its fragment
+// packages/codemods/src/maps/v1/tokens/Tokens.json, and the token list in docs/migration.md,
+// between its token-migration markers.
 //
 //   node scripts/BuildTokens.mjs [--check]
 //
@@ -21,7 +22,10 @@ const repositoryRoot = fileURLToPath(new URL('../', import.meta.url));
 const libraryDirectory = resolve(repositoryRoot, 'packages/ui');
 export const tokensDirectory = resolve(libraryDirectory, 'tokens');
 const configFile = pathToFileURL(resolve(libraryDirectory, 'terrazzo.config.mjs'));
-export const codemodsMapFile = resolve(repositoryRoot, 'packages/codemods/src/maps/v1.json');
+export const codemodsMapFile = resolve(
+  repositoryRoot,
+  'packages/codemods/src/maps/v1/tokens/Tokens.json',
+);
 export const migrationGuideFile = resolve(repositoryRoot, 'docs/migration.md');
 
 const mapComment =
@@ -44,29 +48,14 @@ export function migrationMapSection(migration) {
 }
 
 /**
- * The rename map's text with `section` as its `tokens` section, in place of the one it has or at
- * the end. The map is formatted with Prettier, so a top-level section starts on the line
- * `  "tokens": {` and ends on the next line that is `  }` or `  },`. Each entry is written on one
- * line, which Prettier keeps when it fits.
+ * The text of the rename map's tokens fragment for `section`: one JSON object whose entries are each
+ * written on one line, which Prettier keeps when it fits.
  */
-export function withMapSection(text, section) {
-  const lines = text.split('\n');
+export function mapFragmentText(section) {
   const entries = Object.entries(section).map(
-    ([key, value]) => `    ${JSON.stringify(key)}: ${JSON.stringify(value)}`,
+    ([key, value]) => `  ${JSON.stringify(key)}: ${JSON.stringify(value)}`,
   );
-  const written = (comma) => ['  "tokens": {', entries.join(',\n'), `  }${comma}`];
-  const start = lines.indexOf('  "tokens": {');
-  if (start === -1) {
-    const end = lines.lastIndexOf('}');
-    if (end < 1 || lines[end - 1] !== '  }')
-      throw new Error(`${codemodsMapFile} does not end with a section that the tokens can follow.`);
-    lines.splice(end - 1, 1, '  },', ...written(''));
-  } else {
-    const end = lines.findIndex((line, index) => index > start && /^ {2}\},?$/.test(line));
-    if (end === -1) throw new Error(`The tokens section of ${codemodsMapFile} does not end.`);
-    lines.splice(start, end - start + 1, ...written(lines[end].endsWith(',') ? ',' : ''));
-  }
-  return lines.join('\n');
+  return `{\n${entries.join(',\n')}\n}\n`;
 }
 
 const guideStart = '<!-- token-migration:start';
@@ -173,10 +162,9 @@ export function withGuideList(text, list) {
 
 /** The codemods' rename map and the migration guide, with the token list of `migration`. */
 export async function migrationCopies(migration) {
-  const map = await readFile(codemodsMapFile, 'utf8');
   const guide = await readFile(migrationGuideFile, 'utf8');
   return [
-    { path: codemodsMapFile, contents: withMapSection(map, migrationMapSection(migration)) },
+    { path: codemodsMapFile, contents: mapFragmentText(migrationMapSection(migration)) },
     { path: migrationGuideFile, contents: withGuideList(guide, migrationGuideList(migration)) },
   ];
 }

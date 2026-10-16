@@ -7,6 +7,7 @@ import { dirname, join, resolve, relative, isAbsolute, delimiter } from 'node:pa
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import { compileDocumentation } from '../scripts/GenerateDocumentation.mjs';
+import { readMap } from '../packages/codemods/src/map.mjs';
 
 const repository = fileURLToPath(new URL('../', import.meta.url));
 const cacheDirectory = join(repository, '.cache');
@@ -240,9 +241,7 @@ test("a navigation list's item list items are its own items only", () => {
 });
 
 test('no 0.x name of the rename map is exported, and every namespace is', async () => {
-  const map = JSON.parse(
-    await readFile(join(repository, 'packages/codemods/src/maps/v1.json'), 'utf8'),
-  );
+  const map = readMap(join(repository, 'packages/codemods/src/maps/v1'));
   const names = (section) => Object.keys(section).filter((name) => !name.startsWith('$'));
   const entries = {
     '@envsemble/envui': ssr.exports,

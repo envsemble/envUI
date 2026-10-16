@@ -1,0 +1,15 @@
+{
+  "@envsemble/envui": {
+    "NavList.Item": {
+      "size": {
+        "report": "NavList.Item's size is gone: items follow the scale. For a compact app or region, set scale=\"compact\" on its Theme.",
+        "values": {
+          "compact": {
+            "report": "size=\"compact\" is gone: items follow the scale. For a compact app or region, set scale=\"compact\" on its Theme."
+          },
+          "standard": {}
+        }
+      }
+    }
+  }
+}

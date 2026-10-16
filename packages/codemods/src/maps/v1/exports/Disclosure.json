@@ -1,0 +1,6 @@
+{
+  "@envsemble/envui": {
+    "DisclosureNote": "Disclosure",
+    "DisclosureNoteProps": "DisclosureProps"
+  }
+}

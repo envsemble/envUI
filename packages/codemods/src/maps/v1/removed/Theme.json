@@ -1,0 +1,13 @@
+{
+  "@envsemble/envui": {
+    "useLinkComponent": {
+      "use": "Render envUI's Link, Button with href, NavList.Item or Menu.Item with href, which use the LinkProvider's component; or read the router's link component in the application."
+    }
+  },
+  "@envsemble/envui/theme-bootstrap": {
+    "defaultThemeStorageKey": {
+      "use": "The default storage key is the string \"env-theme\"; pass the same storageKey to createThemeBootstrapScript and ThemePreferenceProvider to change it.",
+      "value": "env-theme"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "@envsemble/envui": {
+    "DropZone": {
+      "compact": {
+        "report": "DropZone's compact is size=\"sm\" in 1.0.",
+        "values": {
+          "true": {
+            "props": {
+              "size": "sm"
+            }
+          },
+          "false": {}
+        }
+      }
+    }
+  }
+}

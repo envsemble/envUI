@@ -1,0 +1,6 @@
+{
+  "@envsemble/envui": {
+    "ToastProvider": "Toast.Provider",
+    "ToastProviderProps": "Toast.ProviderProps"
+  }
+}

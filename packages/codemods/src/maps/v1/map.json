@@ -1,0 +1,15 @@
+{
+  "$comment": "The envUI 1.0 rename map: every public name of @envsemble/envui 0.x that changed, with its 1.0 name. It is the one source for the codemods (v1-names, v1-classes), the migration guide and the search and manifest aliases. 1.0 re-exports nothing under an old name. A new name with a dot is a part of an ES module namespace: `Menu.Item` is the `Item` part of the `Menu` export.",
+  "version": "1.0.0",
+  "package": "@envsemble/envui",
+  "sections": {
+    "exports": "Old export name to new name, per entry point. Prop and other types are listed beside their components.",
+    "split": "Old components that became several parts: the part follows the value of one prop, which the new part no longer takes.",
+    "removed": "Exports that became internal in 1.0, with what to use instead. A `value` is the constant's literal, which a codemod can inline.",
+    "props": "Props of 0.x components that 1.0 removed or changed, per entry point and component, by its 1.0 name. Each literal value of a prop maps to the props that replace it, in its place: an empty object drops the prop, and a replacement prop the element already sets is kept as it is. `report` says what replaces the prop; the v1-props codemod reports it at each use whose value is not listed, such as an expression, and with a value's own `report` at each use of that value. `current` lists a prop's 1.0 values, which it leaves alone without a report, so it can run again over its own output.",
+    "classes": "Old class name to new name. An entry also renames every class and custom property that continues it with a hyphen (env-date-time-well becomes env-date-picker-well, --env-notice-tone becomes --env-alert-tone); the longest matching entry wins.",
+    "docs": "Old documentation page slug (docs/components/<slug>.md and the catalogue route components/<slug>) to the new one.",
+    "classesWithin": "Class renames that depend on an ancestor, by the ancestor's old class: 0.7's DiffCount labelled itself with the counter's label class, which 1.0's DiffStat names for itself. In a selector that puts the old class inside the ancestor, such as `.env-diff-count .env-counter-label`, the class takes this name instead of the one in classes. Markup is not changed by context: a className is renamed by classes alone.",
+    "tokens": "Every custom property that envUI 0.x or 1.0’s development defined and 1.0 no longer does, with what replaces it: `to`, the 1.0 custom property, which v1-classes writes in its place (every token takes the --env- prefix, and a few names change beyond it); `value`, the color of a 0.7 fixed color that no token replaces, which v1-classes reports; or `removed`, with `to` what to use instead where there is one, which v1-classes also reports. A `note` says what changed beyond the name. `npm run tokens:build` writes this section from packages/ui/src/generated/token-migration.json."
+  }
+}

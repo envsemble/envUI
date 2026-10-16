@@ -1,0 +1,15 @@
+{
+  "@envsemble/envui": {
+    "Surface": {
+      "density": {
+        "report": "Surface's density is gone: give the controls inside size=\"sm\", or wrap a whole region in <Theme scale=\"compact\">.",
+        "values": {
+          "compact": {
+            "report": "density=\"compact\" is gone: give the controls inside size=\"sm\", or wrap a whole region in <Theme scale=\"compact\">."
+          },
+          "standard": {}
+        }
+      }
+    }
+  }
+}

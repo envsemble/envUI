@@ -1,0 +1,9 @@
+{
+  "@envsemble/envui": {
+    "Menubar": "Menubar.Root",
+    "MenubarProps": "Menubar.RootProps",
+    "MenubarMenu": "Menubar.Menu",
+    "MenubarMenuProps": "Menubar.MenuProps",
+    "MenubarMenuOpenChangeDetails": "Menubar.MenuOpenChangeDetails"
+  }
+}

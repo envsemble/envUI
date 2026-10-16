@@ -27,7 +27,8 @@ Options:
   --extensions=<list>      Comma-separated extensions to read instead of the transform's.
   --ignore-pattern=<glob>  Skip matching files and folders; repeatable. node_modules, dist
                            and .git are always skipped.
-  --map=<path>             Use a rename map with the shape of src/maps/v1.json instead.
+  --map=<path>             Use another rename map: a folder shaped like src/maps/v1, or one
+                           JSON file with its merged sections.
   --list                   List the transforms.
   -h, --help               Show this help.
 

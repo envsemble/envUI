@@ -1,0 +1,18 @@
+{
+  "@envsemble/envui": {
+    "Pagination": {
+      "size": {
+        "current": ["sm", "md", "lg"],
+        "report": "Pagination's size-as-density is gone: use size=\"sm\", \"md\" or \"lg\". compact is sm, and standard is the default.",
+        "values": {
+          "compact": {
+            "props": {
+              "size": "sm"
+            }
+          },
+          "standard": {}
+        }
+      }
+    }
+  }
+}

@@ -21,7 +21,7 @@ import {
   migrationGuideList,
   migrationMapSection,
   withGuideList,
-  withMapSection,
+  mapFragmentText,
 } from '../scripts/BuildTokens.mjs';
 
 // The token build's guards, on copies of the tokens built into a scratch folder, and the custom
@@ -781,23 +781,10 @@ test("the codemods' rename map takes the token migration map as its tokens secti
     '--space-1': { to: '--env-space-1' },
     '--space-2': { to: '--env-space-2' },
   });
-  // The section is added after the last one, or replaces itself; the other sections stay as written.
-  const map = '{\n  "version": "1.0.0",\n  "docs": {\n    "a": "b"\n  }\n}\n';
-  const added = withMapSection(map, { $comment: 'One.', '--x': { to: '--y' } });
-  assert.equal(
-    added,
-    '{\n  "version": "1.0.0",\n  "docs": {\n    "a": "b"\n  },\n  "tokens": {\n    "$comment": "One.",\n    "--x": {"to":"--y"}\n  }\n}\n',
-  );
-  assert.deepEqual(JSON.parse(withMapSection(added, { '--z': { to: '--w' } })), {
-    version: '1.0.0',
-    docs: { a: 'b' },
-    tokens: { '--z': { to: '--w' } },
-  });
-  const middle = '{\n  "tokens": {\n    "--x": {}\n  },\n  "docs": {\n    "a": "b"\n  }\n}\n';
-  assert.deepEqual(JSON.parse(withMapSection(middle, { '--z': {} })), {
-    tokens: { '--z': {} },
-    docs: { a: 'b' },
-  });
+  // The fragment is the section alone, an entry on each line.
+  const text = mapFragmentText({ $comment: 'One.', '--x': { to: '--y' } });
+  assert.equal(text, '{\n  "$comment": "One.",\n  "--x": {"to":"--y"}\n}\n');
+  assert.deepEqual(JSON.parse(text), { $comment: 'One.', '--x': { to: '--y' } });
 });
 
 test('the migration guide lists the token migration map between its markers', () => {
@@ -886,7 +873,7 @@ test("the codemods' rename map and the migration guide carry the token migration
   const copies = await migrationCopies(migration);
   assert.deepEqual(
     copies.map(({ path }) => relative(repository, path).replaceAll('\\', '/')),
-    ['packages/codemods/src/maps/v1.json', 'docs/migration.md'],
+    ['packages/codemods/src/maps/v1/tokens/Tokens.json', 'docs/migration.md'],
   );
   for (const { path, contents } of copies)
     assert.equal(
@@ -895,7 +882,7 @@ test("the codemods' rename map and the migration guide carry the token migration
       `${relative(repository, path)} is behind the token migration map: run npm run tokens:build.`,
     );
   // Every 0.7 name is in both, the map's entries in the migration map's order.
-  const { tokens } = JSON.parse(await readFile(codemodsMapFile, 'utf8'));
+  const tokens = JSON.parse(await readFile(codemodsMapFile, 'utf8'));
   assert.deepEqual(Object.keys(tokens).slice(1), Object.keys(migration.names));
   const guide = await readFile(migrationGuideFile, 'utf8');
   for (const name of Object.keys(migration.names)) assert.ok(guide.includes(`\`${name}\``), name);

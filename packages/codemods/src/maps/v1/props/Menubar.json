@@ -1,0 +1,13 @@
+{
+  "@envsemble/envui": {
+    "Menubar.Menu": {
+      "density": {
+        "report": "Menus have one anatomy in 1.0, at the scale's row height: density is gone. For a compact app or region, set scale=\"compact\" on its Theme.",
+        "values": {
+          "compact": {},
+          "standard": {}
+        }
+      }
+    }
+  }
+}

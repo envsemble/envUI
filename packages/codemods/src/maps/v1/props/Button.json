@@ -1,0 +1,18 @@
+{
+  "@envsemble/envui": {
+    "CopyButton": {
+      "size": {
+        "current": ["sm", "md", "lg"],
+        "report": "CopyButton's size-as-density is gone: use size=\"sm\", \"md\" or \"lg\". compact is sm, and standard is the default.",
+        "values": {
+          "compact": {
+            "props": {
+              "size": "sm"
+            }
+          },
+          "standard": {}
+        }
+      }
+    }
+  }
+}

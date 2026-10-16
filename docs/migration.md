@@ -63,7 +63,7 @@ Change by hand what the codemods report, each with its file and line:
 - a local that shadows a namespace or a new name: the codemod writes a second import under an alias, such as `Menu as EnvMenu`, which you may rename;
 - comments the codemod drops: a `@ts-expect-error` above an import whose names change, which TypeScript would report once the 0.x name it expected an error from is gone; a disable comment of an import that is removed with nothing in its place; and comments on a removed import name that no namespace import takes the place of.
 
-The codemods also leave class names built at run time, CSS-in-JS, selectors nested in a Sass or Less rule (a DiffCount label in a nested `.env-diff-count` rule becomes `env-diff-stat-label`), mocks and `declare module` augmentations; search for the old names there. The codemods' rename map, `src/maps/v1.json` in `@envsemble/envui-codemods`, lists every change.
+The codemods also leave class names built at run time, CSS-in-JS, selectors nested in a Sass or Less rule (a DiffCount label in a nested `.env-diff-count` rule becomes `env-diff-stat-label`), mocks and `declare module` augmentations; search for the old names there. The codemods' rename map, the folder `src/maps/v1` in `@envsemble/envui-codemods`, lists every change.
 
 ### Scale and density
 

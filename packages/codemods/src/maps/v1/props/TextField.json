@@ -1,0 +1,38 @@
+{
+  "@envsemble/envui": {
+    "TextField": {
+      "compact": {
+        "report": "TextField's compact is gone: fields take the control height by default, and size=\"sm\" gives the small one. For a compact app or region, set scale=\"compact\" on its Theme.",
+        "values": {
+          "true": {
+            "props": {
+              "showLabel": false
+            },
+            "report": "compact is gone: the field takes the control height, and showLabel={false} keeps its label hidden as compact did. For a compact app or region, set scale=\"compact\" on its Theme."
+          },
+          "false": {
+            "props": {
+              "variant": "floating"
+            },
+            "report": "compact={false} was the tall floating field, which is variant=\"floating\" now."
+          }
+        }
+      }
+    },
+    "SearchField": {
+      "compact": {
+        "report": "SearchField's compact is gone: it takes the control height, and showLabel shows its label. For a compact app or region, set scale=\"compact\" on its Theme.",
+        "values": {
+          "true": {},
+          "false": {
+            "props": {
+              "showLabel": true,
+              "variant": "floating"
+            },
+            "report": "compact={false} was the tall floating field, which is variant=\"floating\" now."
+          }
+        }
+      }
+    }
+  }
+}
