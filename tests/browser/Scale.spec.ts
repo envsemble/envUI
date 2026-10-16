@@ -257,7 +257,7 @@ const measureHitAreas = `async (root, selector) => {
   const results = [];
   for (const element of root.querySelectorAll(selector)) {
     if (!element.checkVisibility()) continue;
-    if (element.matches('.env-link, .env-breadcrumb-link, .env-text-input')) continue;
+    if (element.matches('.env-link, .env-breadcrumbs-link, .env-text-input')) continue;
     element.scrollIntoView({ block: 'center', inline: 'center' });
     await new Promise((resolve) => requestAnimationFrame(resolve));
     const box = element.getBoundingClientRect();

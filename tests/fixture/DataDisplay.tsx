@@ -70,6 +70,18 @@ export function DataDisplayFixture({ theme }: { theme: ThemeValue }) {
         <div className="fixture-breadcrumb-frame" dir="rtl">
           <Breadcrumbs aria-label="Right-to-left trail" wrap={false} items={narrowTrail} />
         </div>
+        {/* A level whose name runs past the 20 rem a level takes. */}
+        <Breadcrumbs
+          aria-label="Long level trail"
+          items={[
+            { label: 'Workspace', href: '/workspace' },
+            {
+              label: 'A folder whose name runs well past the room that one level of a trail takes',
+              href: '/workspace/folder',
+            },
+            { label: 'Notes' },
+          ]}
+        />
         {/* A small header bar as wide as a phone: the trail beside a status and an action. */}
         <Surface
           background="muted"

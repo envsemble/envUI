@@ -105,7 +105,7 @@
       "forms/Switch.tsx": "base",
       "forms/TextField.tsx": "base",
       "forms/Textarea.tsx": "base",
-      "navigation/Breadcrumbs.tsx": "base",
+      "navigation/Breadcrumbs.tsx": "composites",
       "navigation/ContextMenu.tsx": "base",
       "navigation/DocumentTabs.tsx": "composites",
       "navigation/Menu.tsx": "composites",
@@ -296,9 +296,7 @@
       "AppShell": {
         "classes": ["env-app"]
       },
-      "Breadcrumbs": {
-        "classes": ["env-breadcrumb"]
-      },
+      "Breadcrumbs": {},
       "DocumentTabs": {},
       "NavList": {},
       "Menu": {

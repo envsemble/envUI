@@ -17,7 +17,6 @@
     { "module": "forms/Composer.tsx", "element": "textarea", "count": 1 },
     { "module": "forms/DropZone.tsx", "element": "button", "count": 1 },
     { "module": "navigation/AppShell.tsx", "element": "button", "count": 1 },
-    { "module": "navigation/Breadcrumbs.tsx", "element": "button", "count": 1 },
     { "module": "navigation/PanelDock.tsx", "element": "button", "count": 2 },
     { "module": "rich-text/Reference.tsx", "element": "a", "count": 1 },
     { "module": "rich-text/RichTextEditor.tsx", "element": "input", "count": 1 },
