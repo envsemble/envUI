@@ -1,8 +1,8 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 
 import { test, expect, type Page } from '@playwright/test';
 import { fixtureUrl } from './Servers';
-import { cssColor, dropped, pairName, pairs, type ContrastPair } from '../contrast/Pairs';
+import { cssColor, dropped, pairName, pairs, renamed, type ContrastPair } from '../contrast/Pairs';
 import { themes, type ContrastTheme } from '../contrast/Themes';
 import {
   apcaContrast,
@@ -30,6 +30,13 @@ import {
  */
 
 const exceptionsFile = 'tests/contrast/Exceptions.json';
+
+/**
+ * The names of the pairs declared when it was last updated, so a pair can't leave the registry
+ * unnoticed: a name gone from Pairs.ts must be listed as dropped or renamed there. Run the gate
+ * with --update-snapshots to record the names after adding, dropping or renaming a pair.
+ */
+const declaredFile = 'tests/contrast/DeclaredPairs.json';
 
 /** The generated token list: every custom property the token build writes. */
 const tokenList = JSON.parse(readFileSync('packages/ui/src/generated/tokens.json', 'utf8')) as {
@@ -160,7 +167,9 @@ test.describe('contrast', { tag: '@contrast' }, () => {
     'Colors resolve the same in every engine, so one engine measures them.',
   );
 
-  test('the pair registry and its exceptions agree', () => {
+  // Playwright requires the fixtures object as the first parameter, even when no fixture is used.
+  // eslint-disable-next-line no-empty-pattern
+  test('the pair registry and its exceptions agree', ({}, testInfo) => {
     const problems: string[] = [];
     const declared = new Set<string>();
     for (const pair of pairs) {
@@ -197,6 +206,47 @@ test.describe('contrast', { tag: '@contrast' }, () => {
         );
       if (!entry.rationale.trim())
         problems.push(`The dropped pair ${entry.pair} needs a rationale.`);
+    }
+    for (const entry of renamed) {
+      if (declared.has(entry.from))
+        problems.push(
+          `${entry.from} is listed as renamed in tests/contrast/Pairs.ts but is still declared.`,
+        );
+      if (!declared.has(entry.to))
+        problems.push(
+          `${entry.from} is listed as renamed to ${entry.to}, which tests/contrast/Pairs.ts doesn't declare.`,
+        );
+      if (!entry.rationale.trim())
+        problems.push(`The renamed pair ${entry.from} needs a rationale.`);
+    }
+    // Every name declared when the snapshot was taken is still declared, dropped or renamed.
+    const accounted = new Set([
+      ...dropped.map((entry) => entry.pair),
+      ...renamed.map((entry) => entry.from),
+    ]);
+    const snapshot: string[] = existsSync(declaredFile)
+      ? (JSON.parse(readFileSync(declaredFile, 'utf8')) as { pairs: string[] }).pairs
+      : [];
+    for (const name of snapshot)
+      if (!declared.has(name) && !accounted.has(name))
+        problems.push(
+          `${name} was declared (${declaredFile}) and is gone from tests/contrast/Pairs.ts: list it in dropped or renamed there, with the reason.`,
+        );
+    const current = [...declared].sort();
+    const update = ['all', 'changed'].includes(testInfo.config.updateSnapshots);
+    if (problems.length === 0 && (update || !existsSync(declaredFile)))
+      writeFileSync(
+        declaredFile,
+        `${JSON.stringify({ $comment: 'The contrast pairs declared in tests/contrast/Pairs.ts, by name. Written by npm run test:contrast -- --update-snapshots; see declaredFile in tests/browser/Contrast.spec.ts.', pairs: current }, null, 2)}
+`,
+      );
+    else {
+      const recorded = new Set(snapshot);
+      const added = current.filter((name) => !recorded.has(name));
+      if (added.length > 0)
+        problems.push(
+          `${added.length} declared pairs are missing from ${declaredFile}, such as ${added[0]}: run npm run test:contrast -- --update-snapshots.`,
+        );
     }
     const themeNames = new Set(themes.map((theme) => theme.name));
     const listed = new Set<string>();
@@ -239,6 +289,7 @@ test.describe('contrast', { tag: '@contrast' }, () => {
             }]: ${pair.rationale}`,
         ),
       ...dropped.map((entry) => `${entry.pair} [dropped]: ${entry.rationale}`),
+      ...renamed.map((entry) => `${entry.from} [renamed to ${entry.to}]: ${entry.rationale}`),
     ];
     await testInfo.attach('scoped-and-dropped-pairs.txt', {
       body: lines.join('\n'),

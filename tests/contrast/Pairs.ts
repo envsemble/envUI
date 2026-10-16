@@ -22,7 +22,8 @@
  *   difference, and ΔEOK 0.03, 0.04 at high contrast, for a distinct pair.
  * - A pair that departs from those rules says why in its `rationale`: `contrast: 'high'` measures it
  *   only in the high-contrast themes, and `minimum` lowers its minimum at standard or high contrast. Pairs the gate no
- *   longer measures are listed in `dropped`, each with the reason, rather than disappearing.
+ *   longer measures are listed in `dropped`, and pairs it measures under a new name in `renamed`,
+ *   each with the reason, rather than disappearing; DeclaredPairs.json holds the declared names.
  * - Disabled states are exempt from 1.4.3 and 1.4.11, so none is listed.
  *
  * A pair is named `<fg> on <bg> over <next layer>`, which is also how Exceptions.json refers to it.
@@ -592,7 +593,9 @@ export const pairs: readonly ContrastPair[] = [
 
 /**
  * Pairs the gate measured once and no longer does, with the reason. A pair that leaves `pairs`
- * must be listed here; tests/browser/Contrast.spec.ts checks that none of these is still declared.
+ * must be listed here or in `renamed`: tests/contrast/DeclaredPairs.json holds the names declared
+ * when it was last updated, and tests/browser/Contrast.spec.ts fails on a name that is gone from
+ * `pairs` without an entry, and on a dropped pair that is still declared.
  */
 export const dropped: readonly { pair: string; rationale: string }[] = [
   {
@@ -609,6 +612,31 @@ export const dropped: readonly { pair: string; rationale: string }[] = [
     pair: '--color-border-strong on --color-canvas',
     rationale:
       'The empty stars of a Rating, which this pair measured on the page and on panes, take the control boundary now, --color-border-default, measured at 3:1 on every surface. The 0.7 name only paints dividers, measured as --color-border-muted in high contrast.',
+  },
+];
+
+/**
+ * Pairs the gate still measures under another name, from the old name to the new, with the reason.
+ * tests/browser/Contrast.spec.ts checks that each new name is declared and each old one is not.
+ */
+export const renamed: readonly { from: string; to: string; rationale: string }[] = [
+  {
+    from: '--color-fg-control on --color-navigation-quiet-hover',
+    to: '--color-fg-control on --color-bg-navigation-hover',
+    rationale:
+      'Navigation items hover on a role of their own, bg.navigation; the 0.7 name is its alias.',
+  },
+  {
+    from: '--color-fg-control on --color-navigation-quiet-pressed',
+    to: '--color-fg-control on --color-bg-navigation-pressed',
+    rationale:
+      'Navigation items press on a role of their own, bg.navigation; the 0.7 name is its alias.',
+  },
+  {
+    from: '--color-border-focus on --color-navigation-quiet-hover',
+    to: '--color-border-focus on --color-bg-navigation-hover',
+    rationale:
+      'The inset ring of a hovered navigation item, on the bg.navigation role; the 0.7 name is its alias.',
   },
 ];
 
