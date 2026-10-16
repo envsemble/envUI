@@ -42,7 +42,6 @@ const unconverted = [
   'list',
   'markdown',
   'menubar',
-  'message',
   'panel-dock',
   'popover',
   'rich-text',

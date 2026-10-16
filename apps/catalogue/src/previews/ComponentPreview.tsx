@@ -8,7 +8,7 @@ import { lazy, Suspense } from 'react';
 import { Text } from '@envsemble/envui';
 import { EmptyStatePreview } from './Feedback';
 import { ColorPickerPreview } from './ColorPicking';
-import { ComposerPreview, MessagesPreview } from './Conversation';
+import { ComposerPreview } from './Conversation';
 import { CalendarHeatmapPreview, StatsPreview } from './Dashboard';
 import { MenubarPreview, AvatarPreview } from './Overlays';
 import { AppShellPreview } from './Shell';
@@ -56,8 +56,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <BreadcrumbsPreview />;
     case 'animated-number':
       return <AnimatedNumberPreview />;
-    case 'message':
-      return <MessagesPreview />;
     case 'stat':
       return <StatsPreview />;
     case 'calendar-heatmap':

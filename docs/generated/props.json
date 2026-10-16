@@ -5503,17 +5503,17 @@
       "props": [
         {
           "name": "tone",
-          "type": "'pane' | 'row' | 'canvas' | 'alternate'",
+          "type": "SurfaceAppearanceProps['tone']",
           "required": false,
           "default": "'pane'",
-          "description": "The background: pane, the default background of panes and side regions; row, the muted background of rows; canvas, the page background; or alternate, the raised background, such as a block that stands out on a pane."
+          "description": "The group's background, as for Surface: pane on the canvas, or row for a group on a pane, so its stats stand apart; canvas or alternate where those fit."
         },
         {
           "name": "padding",
-          "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9",
+          "type": "SurfaceAppearanceProps['padding']",
           "required": false,
           "default": "1.25 rem in narrow windows, growing to 1.5 rem from 50 rem wide",
-          "description": "The inset on every side, as a step of the spacing scale, from 1 (0.25 rem) to 9 (4 rem), such as 5 for 1.5 rem; 0 removes it. Without it, the inset follows the window's width."
+          "description": "The inset on every side, as a step of the spacing scale, such as 4 for 1 rem; 0 removes it. Without it, the inset follows the window's width, as for Surface."
         }
       ],
       "native": [
@@ -5526,31 +5526,31 @@
     "Stat.Root": {
       "kind": "component",
       "source": "packages/ui/src/content/Stat.tsx",
-      "description": "A labelled key figure for a dashboard, with an optional trend and detail.",
+      "description": "A labelled key figure for a dashboard, such as Active projects 128, with an optional trend and detail. It has no surface of its own; Stat.Group puts several on one, or a Card holds one.",
       "props": [
         {
           "name": "label",
           "type": "ReactNode",
           "required": true,
-          "description": "What the figure measures, such as Active projects."
+          "description": "What the figure measures, such as Active projects, in muted text above it."
         },
         {
           "name": "value",
           "type": "ReactNode",
           "required": true,
-          "description": "The figure, such as a formatted number or an AnimatedNumber."
+          "description": "The figure, formatted by the application with its unit, such as 1,284 or 2.5 days, or an AnimatedNumber that rolls to new values. It shows large, in tabular digits."
         },
         {
           "name": "detail",
           "type": "ReactNode",
           "required": false,
-          "description": "A muted line below, such as the period: Last 30 days."
+          "description": "A muted note below the figure, after the trend, such as the period: Last 30 days."
         },
         {
           "name": "trend",
           "type": "Trend",
           "required": false,
-          "description": "The change since an earlier period, shown with an icon and text in its tone."
+          "description": "The change since an earlier period, such as up and +12% from last month, shown below the figure as a direction icon and text in its tone."
         }
       ],
       "native": [
