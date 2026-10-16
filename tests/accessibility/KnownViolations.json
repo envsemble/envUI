@@ -115,24 +115,6 @@
       }
     }
   },
-  "components/button/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 14
-      },
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 116
-      },
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
-      }
-    }
-  },
   "components/calendar-heatmap/usage": {
     "light": {
       "color-contrast": {
@@ -279,15 +261,22 @@
       }
     }
   },
-  "components/dialog/usage": {
+  "components/dialog/guidelines": {
     "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 4
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
       }
     },
     "light": {
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    }
+  },
+  "components/dialog/overview": {
+    "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 23
+        "article :: button.env-button.env-button-text": 3
       }
     }
   },
@@ -439,31 +428,6 @@
     "light": {
       "color-contrast": {
         "article :: div.env-code-block span": 100
-      },
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
-      }
-    }
-  },
-  "components/menu/preview": {
-    "light": {
-      "color-contrast": {
-        "Building blocks :: button.env-button.env-button-text": 3
-      }
-    }
-  },
-  "components/menu/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 17
-      },
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 144
       },
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
@@ -754,15 +718,15 @@
       }
     }
   },
-  "components/table/usage": {
+  "components/table/guidelines": {
     "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 12
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
       }
     },
     "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 187
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
       }
     }
   },
@@ -778,32 +742,29 @@
       }
     }
   },
-  "components/text-field/preview": {
+  "components/text-field/guidelines": {
     "dark": {
       "target-size": {
-        "States & validation :: button.env-textarea-resize-edge": 3,
-        "Textarea appearance & sizing :: button.env-textarea-resize-edge": 1
+        "Appearances :: button.env-textarea-resize-edge": 1,
+        "Textarea states :: button.env-textarea-resize-edge": 3
       }
     },
     "light": {
       "target-size": {
-        "States & validation :: button.env-textarea-resize-edge": 3,
-        "Textarea appearance & sizing :: button.env-textarea-resize-edge": 1
+        "Appearances :: button.env-textarea-resize-edge": 1,
+        "Textarea states :: button.env-textarea-resize-edge": 3
       }
     }
   },
-  "components/text-field/usage": {
+  "components/text-field/overview": {
     "dark": {
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
+      "target-size": {
+        "article :: button.env-textarea-resize-edge": 1
       }
     },
     "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 79
-      },
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
+      "target-size": {
+        "article :: button.env-textarea-resize-edge": 1
       }
     }
   },
@@ -970,12 +931,12 @@
   "overview/components": {
     "dark": {
       "label-content-name-mismatch": {
-        "main :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 55
+        "main :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 56
       }
     },
     "light": {
       "label-content-name-mismatch": {
-        "main :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 55
+        "main :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 56
       }
     }
   },
