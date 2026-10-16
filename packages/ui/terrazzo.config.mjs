@@ -6,6 +6,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { RECOMMENDED_CONFIG } from '@terrazzo/parser';
 import css from '@terrazzo/plugin-css';
+import { makeCSSVar } from '@terrazzo/token-tools/css';
 import { converter, formatHex } from 'culori';
 
 /** The token sources, and where the build writes; a test can build other tokens elsewhere. */
@@ -16,8 +17,14 @@ const resolverIn = (directory) => new URL('envui.resolver.json', directory);
 /** The vendor key of envUI's `$extensions`. */
 const extension = 'com.envsemble.envui';
 
-/** The CSS custom property of a token: its path joined with hyphens, as Tokens.css names it. */
-export const cssVariable = (id) => `--${id.split('.').join('-')}`;
+/**
+ * The CSS custom property of a token, as plugin-css writes it in Tokens.css, in a var() that
+ * aliases it, and for each part of a composite token (`--text-label-font-size`): makeCSSVar()
+ * keeps letters and digits, joins the words with hyphens and lowercases them. The lint rule
+ * envui/unique-css-names makes it the token's path joined with hyphens, `color.fg.muted` as
+ * `--color-fg-muted`.
+ */
+export const cssVariable = (id) => makeCSSVar(id);
 
 /**
  * Token groups that are build input only: the primitive palette, and the high-contrast values of
@@ -221,14 +228,23 @@ const highContrastRule = {
   },
 };
 
-/** `envui/unique-css-names`: no two tokens become the same custom property. */
+/**
+ * `envui/unique-css-names`: no two tokens become the same custom property, compared as Tokens.css
+ * writes them, and a token's path spells its property: `space.4+` would be written `--space-4`,
+ * where space.4 already is.
+ */
 const uniqueNamesRule = {
-  meta: { docs: { description: 'Every token has its own CSS custom property.' } },
+  meta: { docs: { description: 'Every token has its own CSS custom property, its path.' } },
   create({ tokens, report }) {
     const seen = new Map();
     for (const id of Object.keys(tokens)) {
       if (internal(id)) continue;
       const name = cssVariable(id);
+      const spelled = `--${id.split('.').join('-')}`;
+      if (name !== spelled)
+        report({
+          message: `${id} becomes ${name}, not ${spelled}: name tokens with lowercase letters, digits and hyphens.`,
+        });
       if (seen.has(name)) report({ message: `${id} and ${seen.get(name)} both become ${name}.` });
       seen.set(name, id);
     }
@@ -365,17 +381,19 @@ function envui({ removedFile, handwrittenFile }) {
           default: item.default,
         }));
       // Tokens.css declares the base set, then each theme's overrides on top of its scheme's; var()
-      // resolves in the element's own theme, as in the browser.
+      // resolves in the element's own theme, as in the browser. Each part of a composite token is
+      // a custom property of its own, which a token that aliases it reads.
       const declared = Object.fromEntries(
-        themes.map((theme) => [
-          theme.name,
-          new Map(
-            getTransforms({ format: 'css', input: theme.input }).map((entry) => [
-              entry.localID,
-              entry.value,
-            ]),
-          ),
-        ]),
+        themes.map((theme) => {
+          const values = new Map();
+          for (const { localID, value } of getTransforms({ format: 'css', input: theme.input })) {
+            values.set(localID, value);
+            if (value && typeof value === 'object')
+              for (const [part, partValue] of Object.entries(value))
+                values.set(`${localID}-${part}`, partValue);
+          }
+          return [theme.name, values];
+        }),
       );
       const fallback = { dark: ['light'], 'light-high-contrast': ['light'] };
       fallback['dark-high-contrast'] = ['dark', 'light'];
@@ -524,7 +542,10 @@ export function createConfig({
       withoutDescriptions(
         css({
           filename: 'styles/Tokens.css',
-          variableName: (token) => cssVariable(token.id),
+          // No variableName: plugin-css names every property itself, cssVariable() as it does. A
+          // custom one would also name the parts that an alias of a composite token reads, as
+          // `text.label-fontSize`, which plugin-css passes it before writing them as
+          // `--text-label-font-size`.
           exclude: internalGroups.map((group) => `${group}.**`),
           transform,
           permutations: [

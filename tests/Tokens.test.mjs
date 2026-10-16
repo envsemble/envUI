@@ -57,6 +57,29 @@ test('two tokens that become one custom property fail the build', async () => {
   );
 });
 
+test('two tokens that the CSS output names alike fail the build', async () => {
+  // plugin-css writes a name only with letters, digits and hyphens: space.4+ would be --space-4.
+  await assert.rejects(
+    buildChanged('collision-written', {
+      'base/space.tokens.json': (tokens) => {
+        tokens.space['4+'] = { $value: { value: 1.25, unit: 'rem' } };
+      },
+    }),
+    /space\.4\+ and space\.4 both become --space-4|space\.4 and space\.4\+ both become --space-4/,
+  );
+});
+
+test('a token whose path does not spell its custom property fails the build', async () => {
+  await assert.rejects(
+    buildChanged('unspelled', {
+      'base/space.tokens.json': (tokens) => {
+        tokens.space['huge+'] = { $value: { value: 8, unit: 'rem' } };
+      },
+    }),
+    /space\.huge\+ becomes --space-huge, not --space-huge\+/,
+  );
+});
+
 test('a token that TokensHandwritten.css also declares for every theme fails the build', async () => {
   await assert.rejects(
     buildChanged('handwritten', {
@@ -192,6 +215,28 @@ test('a part that only one theme gives a composite token cannot clash either', a
     }),
     /text\.label and text\.label-font-style both become --text-label-font-style/,
   );
+});
+
+test('a typography token that aliases another reads the parts the other declares', async () => {
+  const directory = await buildChanged('typography-alias', {
+    'base/typography.tokens.json': (tokens) => {
+      tokens.text = {
+        label: textLabel(),
+        caption: { $type: 'typography', $value: '{text.label}' },
+      };
+    },
+  });
+  const css = await readFile(join(directory, 'src/styles/Tokens.css'), 'utf8');
+  assert.match(css, /--text-caption-font-size: var\(--text-label-font-size\);/);
+  const declared = new Set([...css.matchAll(/(--[\w-]+)\s*:/g)].map(([, name]) => name));
+  const undeclared = [...css.matchAll(/var\((--[\w-]+)\)/g)]
+    .map(([, name]) => name)
+    .filter((name) => !declared.has(name));
+  assert.deepEqual(undeclared, []);
+  const list = JSON.parse(await readFile(join(directory, 'src/generated/tokens.json'), 'utf8'));
+  const resolved = (id) => list.tokens.find((token) => token.id === id).values.dark.resolved;
+  assert.equal(resolved('text.caption')['font-size'], '0.875rem');
+  assert.deepEqual(resolved('text.caption'), resolved('text.label'));
 });
 
 /**
