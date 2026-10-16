@@ -1,3 +1,5 @@
+'use client';
+
 import { ContextMenu as BaseContextMenu } from '@base-ui/react/context-menu';
 import {
   useRef,

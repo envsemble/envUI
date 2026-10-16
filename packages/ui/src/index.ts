@@ -70,12 +70,23 @@ export * from './content/Avatar.js';
 export * from './content/AvatarGroup.js';
 export * from './content/AnimatedNumber.js';
 export * from './content/RelativeTime.js';
+// Plain functions that a server component calls come from modules that are not client modules.
+export {
+  formatRelativeTime,
+  type RelativeTimeOptions,
+  type RelativeTimeValue,
+} from './content/formatRelativeTime.js';
 export * from './content/Rating.js';
 export * from './content/ColorSwatch.js';
 export * from './content/Message.js';
 export * as Stat from './content/Stat.js';
 export * from './content/CalendarHeatmap.js';
 export * from './foundations/ThemePreference.js';
+export {
+  createThemeBootstrapScript,
+  type ThemeBootstrapOptions,
+  type ThemePreference,
+} from './foundations/ThemeBootstrap.js';
 export * as Menu from './navigation/Menu.js';
 export * from './navigation/ContextMenu.js';
 export * as Menubar from './navigation/Menubar.js';

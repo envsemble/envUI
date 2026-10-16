@@ -1,3 +1,5 @@
+'use client';
+
 import { useId, type AriaAttributes, type ReactNode } from 'react';
 
 /** Keep accessible field metadata identical across native and composed controls. */

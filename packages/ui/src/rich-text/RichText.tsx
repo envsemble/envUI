@@ -1,3 +1,5 @@
+'use client';
+
 import { useMemo } from 'react';
 import { MarkdownManager } from '@tiptap/markdown';
 import { renderToReactElement } from '@tiptap/static-renderer/pm/react';

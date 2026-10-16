@@ -1,3 +1,5 @@
+'use client';
+
 import { Avatar as BaseAvatar } from '@base-ui/react/avatar';
 import type { ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';

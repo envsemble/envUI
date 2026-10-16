@@ -1,3 +1,5 @@
+'use client';
+
 import { useCallback, useLayoutEffect, useRef, useState, type ChangeEvent } from 'react';
 import { subscribeFormReset } from '../subscribeFormReset.js';
 import { readMarkdownSelection, type MarkdownSelection } from './MarkdownFormatting.js';

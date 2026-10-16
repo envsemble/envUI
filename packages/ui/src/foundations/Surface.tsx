@@ -1,3 +1,5 @@
+'use client';
+
 import type { ComponentPropsWithRef, CSSProperties, ReactElement } from 'react';
 import { useRender } from '@base-ui/react/use-render';
 import { classNames } from '../internal/classNames.js';

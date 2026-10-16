@@ -1,3 +1,5 @@
+'use client';
+
 import { Meter as BaseMeter } from '@base-ui/react/meter';
 import { Progress as BaseProgress } from '@base-ui/react/progress';
 import type { ReactNode } from 'react';

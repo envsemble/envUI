@@ -1,3 +1,5 @@
+'use client';
+
 import { Toolbar } from '@base-ui/react/toolbar';
 import { IconButton } from '../../../actions/Button.js';
 import { ButtonGroup } from '../../../actions/ButtonGroup.js';

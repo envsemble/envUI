@@ -1,3 +1,5 @@
+'use client';
+
 import { useLayoutEffect, useRef, useState, type PointerEvent, type RefObject } from 'react';
 import type { TextareaControlProps } from './TextareaControl.js';
 

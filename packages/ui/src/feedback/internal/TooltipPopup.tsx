@@ -1,3 +1,5 @@
+'use client';
+
 import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
 import { createContext, type ReactNode } from 'react';
 import { Theme, useTheme } from '../../foundations/Theme.js';

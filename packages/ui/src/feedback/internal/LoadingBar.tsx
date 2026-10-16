@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useReducer } from 'react';
 import { classNames } from '../../internal/classNames.js';
 

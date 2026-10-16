@@ -1,3 +1,5 @@
+'use client';
+
 import { useRef, useState, type RefObject } from 'react';
 import { Dialog } from '../../../feedback/Dialog.js';
 import { Button } from '../../../actions/Button.js';

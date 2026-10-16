@@ -1,3 +1,5 @@
+'use client';
+
 import { createContext, useContext } from 'react';
 import { createInlineMarkdownSpec, flattenExtensions, mergeAttributes } from '@tiptap/core';
 import Mention from '@tiptap/extension-mention';

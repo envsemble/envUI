@@ -1,3 +1,5 @@
+'use client';
+
 import { forwardRef, useEffect, useId, useImperativeHandle, useState } from 'react';
 import { ReactRenderer } from '@tiptap/react';
 import type { SuggestionOptions, SuggestionProps } from '@tiptap/suggestion';

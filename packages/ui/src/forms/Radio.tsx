@@ -1,3 +1,5 @@
+'use client';
+
 import { createContext, forwardRef, useContext, useEffect, useId, useRef, useState } from 'react';
 import type { FieldsetHTMLAttributes, InputHTMLAttributes, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';

@@ -1,3 +1,5 @@
+'use client';
+
 import { forwardRef } from 'react';
 import { useFieldMetadata } from './internal/useFieldMetadata.js';
 import { TextareaControl, type TextareaControlProps } from './internal/TextareaControl.js';

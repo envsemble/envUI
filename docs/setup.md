@@ -83,6 +83,17 @@ function RouterLink({ href, ...props }: LinkComponentProps) {
 
 The application still decides which destination is selected.
 
+## React Server Components
+
+envUI works in an application built on React Server Components. Server and client components import from the same entry points:
+
+- Components that keep state, run effects, read context or take part in Base UI's interactions are client components. Their modules start with `'use client'`, as Base UI's parts do, so a server component renders them as client references and the bundler sends them to the browser. They include `Theme`, `Dialog`, `Menu.Root` and its parts, `Table.Root`, the form fields, and icons that follow a selection's fill.
+- Components that only lay out markup, such as `Card`, `Badge`, `Text`, `Button`, `Alert`, `List.Item` and `Stat.Root`, render on the server and send no code of their own to the browser.
+- The entry points carry no directive, so `Menu.Item` from `@envsemble/envui` in a server component is the client part, reached through its namespace.
+- Plain functions, such as `createThemeBootstrapScript` and `formatRelativeTime`, run on the server.
+
+What a server component passes to a client component must be serializable: strings, numbers, elements and plain objects, but no functions. Event handlers such as `onClick` or `onOpenChange`, render props and formatting callbacks belong in a client component of the application's own, marked `'use client'`, that renders the envUI part. Hooks such as `useTheme` and `useToast` work in client components only. Bundlers without server components ignore the directive.
+
 ## Public entry points
 
 - `@envsemble/envui` for ordinary UI.
