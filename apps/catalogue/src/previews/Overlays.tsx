@@ -2,7 +2,6 @@ import { useRef, useState } from 'react';
 import {
   Avatar,
   AvatarGroup,
-  Button,
   IconButton,
   Kbd,
   Meter,
@@ -13,9 +12,7 @@ import {
   Surface,
   Text,
   Textarea,
-  Tooltip,
 } from '@envsemble/envui';
-import { Refresh } from '@envsemble/envui/icons/Refresh';
 import { Settings } from '@envsemble/envui/icons/Settings';
 import { History } from '@envsemble/envui/icons/History';
 import { NoteAdd } from '@envsemble/envui/icons/NoteAdd';
@@ -198,27 +195,6 @@ export function MenubarPreview() {
         <Text variant="caption" className="docs-caption" aria-live="polite">
           {lastCommand}
         </Text>
-      </Example>
-    </Preview>
-  );
-}
-
-export function TooltipPreview() {
-  return (
-    <Preview>
-      <Example title="Tooltips" size="collection" caption="Hover or focus each control.">
-        <SpecimenGrid>
-          <Specimen title="Icon-only action">
-            <Tooltip content="Refresh seats and members">
-              <IconButton icon={<Refresh />} aria-label="Refresh seats and members" />
-            </Tooltip>
-          </Specimen>
-          <Specimen title="Why a control is disabled">
-            <Tooltip content="All seats are assigned">
-              <Button disabled>Assign seat</Button>
-            </Tooltip>
-          </Specimen>
-        </SpecimenGrid>
       </Example>
     </Preview>
   );

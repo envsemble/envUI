@@ -58,7 +58,6 @@ const unconverted = [
   'stack',
   'stat',
   'surface',
-  'tooltip',
   'tree',
 ];
 

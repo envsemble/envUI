@@ -16,13 +16,7 @@ import { EmptyStatePreview, SpinnerPreview, SkeletonPreview } from './Feedback';
 import { ColorPickerPreview } from './ColorPicking';
 import { ComposerPreview, MessagesPreview } from './Conversation';
 import { CalendarHeatmapPreview, StatsPreview } from './Dashboard';
-import {
-  MenubarPreview,
-  TooltipPreview,
-  AvatarPreview,
-  MeterPreview,
-  ProgressPreview,
-} from './Overlays';
+import { MenubarPreview, AvatarPreview, MeterPreview, ProgressPreview } from './Overlays';
 import { AppShellPreview } from './Shell';
 import { CommandPalettePreview, DocumentTabsPreview, TreePreview } from './Workspace';
 import { PanelDockPreview } from './Dock';
@@ -115,8 +109,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <HoverCardPreview />;
     case 'menubar':
       return <MenubarPreview />;
-    case 'tooltip':
-      return <TooltipPreview />;
     case 'avatar':
       return <AvatarPreview />;
     case 'meter':
