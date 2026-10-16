@@ -420,18 +420,6 @@
       }
     }
   },
-  "components/loading/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 4
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 33
-      }
-    }
-  },
   "components/markdown/preview": {
     "light": {
       "color-contrast": {
@@ -518,10 +506,10 @@
       }
     }
   },
-  "components/meters/usage": {
+  "components/meter/usage": {
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 19
+        "article :: div.env-code-block span": 8
       }
     }
   },
@@ -608,6 +596,13 @@
       }
     }
   },
+  "components/progress/usage": {
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 12
+      }
+    }
+  },
   "components/radio/usage": {
     "light": {
       "color-contrast": {
@@ -685,6 +680,18 @@
       }
     }
   },
+  "components/skeleton/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 18
+      }
+    }
+  },
   "components/slider/usage": {
     "dark": {
       "color-contrast": {
@@ -694,6 +701,18 @@
     "light": {
       "color-contrast": {
         "article :: div.env-code-block span": 20
+      }
+    }
+  },
+  "components/spinner/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 3
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 11
       }
     }
   },
@@ -951,12 +970,12 @@
   "overview/components": {
     "dark": {
       "label-content-name-mismatch": {
-        "main :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 53
+        "main :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 55
       }
     },
     "light": {
       "label-content-name-mismatch": {
-        "main :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 53
+        "main :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 55
       }
     }
   },
