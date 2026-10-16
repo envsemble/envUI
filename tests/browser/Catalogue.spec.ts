@@ -528,6 +528,50 @@ test('code that fails to load is asked for once, not on every render', async ({ 
   await expect(entry.getByText('CreateProject.tsx', { exact: true })).toBeVisible();
 });
 
+test('a retry returns focus once, and later updates leave focus where it is', async ({ page }) => {
+  const example = '**/src/examples/button/CreateProject.tsx*';
+  await page.route(example, (route) => route.abort());
+  await page.goto(`${catalogueUrl}/#/components/button/overview`);
+  const hero = page.getByRole('group', { name: 'Button example', exact: true });
+  await expect(hero.getByText('The example could not load')).toBeVisible();
+  await page.unroute(example);
+  await hero.getByRole('button', { name: 'Try again', exact: true }).focus();
+  await page.keyboard.press('Enter');
+  await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
+  expect(await hero.evaluate((group) => group.contains(document.activeElement))).toBe(true);
+  // Focus leaves for the page; the theme changes with a click that moves no focus.
+  await page.evaluate(() => {
+    (document.activeElement as HTMLElement | null)?.blur();
+    window.scrollTo(0, document.documentElement.scrollHeight);
+  });
+  const scrolled = await page.evaluate(() => window.scrollY);
+  expect(scrolled).toBeGreaterThan(1000);
+  await page.locator('.docs-theme-toggle').evaluate((toggle: HTMLElement) => toggle.click());
+  await expect(page.locator('.docs-app')).toHaveAttribute('data-env-theme', 'dark');
+  expect(await page.evaluate(() => document.activeElement === document.body)).toBe(true);
+  expect(await page.evaluate(() => window.scrollY)).toBe(scrolled);
+});
+
+test('retrying the code after the example returns focus to the code', async ({ page }) => {
+  const files = '**/src/examples/button/CreateProject.tsx*';
+  await page.route(files, (route) => route.abort());
+  await page.goto(`${catalogueUrl}/#/components/button/overview`);
+  const entry = page.locator('.docs-live-example-entry').first();
+  const hero = page.getByRole('group', { name: 'Button example', exact: true });
+  const code = entry.locator('.docs-live-example-code');
+  await entry.getByText('Code', { exact: true }).click();
+  await expect(hero.getByText('The example could not load')).toBeVisible();
+  await expect(code.getByText('The code could not load')).toBeVisible();
+  await page.unroute(files);
+  await hero.getByRole('button', { name: 'Try again', exact: true }).focus();
+  await page.keyboard.press('Enter');
+  await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
+  await code.getByRole('button', { name: 'Try again', exact: true }).focus();
+  await page.keyboard.press('Enter');
+  await expect(code.getByText('CreateProject.tsx', { exact: true })).toBeVisible();
+  expect(await code.evaluate((element) => element.contains(document.activeElement))).toBe(true);
+});
+
 test('an example that fails to render says so in place, and the rest of the page works', async ({
   page,
 }) => {

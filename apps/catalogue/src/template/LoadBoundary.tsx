@@ -55,7 +55,7 @@ interface LoadBoundaryState {
   /** What the content threw, if it did. */
   failure: { error: unknown } | null;
   /** Whether people asked to load it again, which keeps a focusable wrapper around it. */
-  retried: boolean;
+  wrapped: boolean;
 }
 
 /**
@@ -65,29 +65,35 @@ interface LoadBoundaryState {
  * a bug in an example, is shown in place as a failure to render, with its message.
  */
 export class LoadBoundary extends Component<LoadBoundaryProps, LoadBoundaryState> {
-  state: LoadBoundaryState = { failure: null, retried: false };
+  state: LoadBoundaryState = { failure: null, wrapped: false };
 
   /** What focus goes to once Try again, which had it, is gone. */
   private wrapper = createRef<HTMLDivElement>();
+
+  /** Whether focus, which was on Try again, still has to return to the wrapper. */
+  private focusPending = false;
 
   static getDerivedStateFromError(error: unknown): Partial<LoadBoundaryState> {
     return { failure: { error } };
   }
 
   componentDidUpdate() {
-    // After a retry, focus that the replaced content dropped returns here, whether the content
-    // loads or fails again.
-    if (this.state.retried && document.activeElement === document.body)
+    // The first update after a retry replaces Try again. The focus it dropped returns here,
+    // whether the content loads or fails again, and only then: later updates leave focus alone.
+    if (!this.focusPending) return;
+    this.focusPending = false;
+    if (document.activeElement === document.body || document.activeElement === null)
       this.wrapper.current?.focus();
   }
 
   retry = () => {
+    this.focusPending = true;
     this.props.onRetry();
-    this.setState({ failure: null, retried: true });
+    this.setState({ failure: null, wrapped: true });
   };
 
   render() {
-    const { failure, retried } = this.state;
+    const { failure, wrapped } = this.state;
     const { what } = this.props;
     let content: ReactNode;
     if (!failure) content = this.props.children;
@@ -117,7 +123,7 @@ export class LoadBoundary extends Component<LoadBoundaryProps, LoadBoundaryState
         </Alert>
       );
     // Until a retry, the content stands on its own, as the page lays it out.
-    if (!retried) return content;
+    if (!wrapped) return content;
     return (
       <div ref={this.wrapper} tabIndex={-1} className="docs-load-boundary">
         {content}
