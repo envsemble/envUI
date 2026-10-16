@@ -161,6 +161,7 @@ A ButtonGroup joins its buttons with a 0.125 rem gap; inner corners take the sha
 - `type="submit"` on the button that submits a form.
 - The routing behind `href`, through `LinkProvider`.
 - A way to recover from a ConfirmButton action where possible, such as an undo.
+- Focus for after a confirmed action removes the button, as a row's Remove does: move it to the neighbouring row's button, or to what replaces the button, so it doesn't fall back to the page.
 
 ## Examples
 

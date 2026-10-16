@@ -178,6 +178,7 @@ OrganizationSwitcher composes the same pane: its trigger is a secondary Button w
 
 - An `aria-label` for every Menu.Root and ContextMenu, and for an icon-only trigger.
 - A visible control for every action of a context menu.
+- Focus for after an action removes the menu's trigger, as a row's Delete does: move it to the neighbouring row's trigger, or to the list when it is empty, so it doesn't fall back to the page.
 - The keys behind every shortcut hint, and the routing behind `href`, through `LinkProvider`.
 - An `aria-label` on trailing content that a number alone doesn't explain, such as "3 unresolved" on a CounterBadge, since trailing content is part of the item's name.
 - The switch between organizations, with its progress, and translated `heading`, `createLabel`, `placeholder` and `aria-label` where the interface is not in English.
