@@ -28,7 +28,9 @@
 .env-dropdown-options,
 .env-tooltip,
 .env-toast-viewport > .env-toast {
-  transform-origin: var(--transform-origin);
+  /* Base UI's positioners set the origin; dialogs and the toast list have none, so they scale from
+     the center. */
+  transform-origin: var(--transform-origin, center);
   transition: opacity var(--motion-duration-medium) var(--motion-ease);
 }
 .env-dialog-backdrop[data-ending-style],
