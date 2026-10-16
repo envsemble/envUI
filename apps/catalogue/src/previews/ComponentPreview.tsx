@@ -1,5 +1,4 @@
 import { CheckboxPreview, SelectPreview, SliderPreview, DropZonePreview } from './Forms';
-import { PaginationPreview } from './Navigation';
 import { ComboboxPreview, DatePickerPreview } from './Pickers';
 import { SurfacePreview, LayoutPreview, ListPreview, CardsPreview } from './Layout';
 import {
@@ -78,8 +77,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <KbdPreview />;
     case 'breadcrumbs':
       return <BreadcrumbsPreview />;
-    case 'pagination':
-      return <PaginationPreview />;
     case 'animated-number':
       return <AnimatedNumberPreview />;
     case 'rating':

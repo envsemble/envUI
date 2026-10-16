@@ -5,13 +5,29 @@ status: beta
 since: 0.6.0
 category: Navigation
 aliases:
+  - paginator
   - paging
   - page navigation
-  - next page
+  - page numbers
   - page range
+  - next page
+  - previous page
+  - table pagination
+useWhen:
+  - A long list or table read a page at a time, such as reports or invoices.
+  - A list read in batches whose total isn't known yet, such as an activity feed.
+  - A toolbar with little room for paging, beside a search field or filters.
+avoidWhen:
+  - text: Links between the pages of an ordered sequence, such as the chapters of a guide.
+    use: Pager
+  - text: Switching between a few views of the same content.
+    use: Tabs
 related:
   - table
+  - list
+  - pager
   - button
+  - tooltip
   - loading
 components:
   - Pagination
@@ -19,60 +35,117 @@ components:
 
 # Pagination
 
-## React usage
+## Overview
 
-```tsx
-import { Pagination } from '@envsemble/envui';
+Pagination shows which items of a long list are on screen, such as 1–60 of 245, and moves a page back or forward. It is compact enough for a toolbar: the range, then a previous and a next icon button with their names in tooltips, in a navigation landmark.
 
-<Pagination
-  aria-label="Report pages"
-  page={page}
-  pageSize={60}
-  total={reportCount}
-  pending={loading}
-  onPageChange={setPage}
-/>
+The application owns the page, the loading and the scroll position. Pagination reports the page a press asks for through `onPageChange`, shows a spinner on the button pressed while the page loads, announces the new range and keeps focus on the button, so people who page from the keyboard stay in place.
 
-<Pagination
-  page={page}
-  pageSize={50}
-  hasNextPage={batch.hasMore}
-  size="compact"
-  onPageChange={setPage}
-/>
+```tsx example=PagesOfAList
+
 ```
 
-### Props & contracts
+## Anatomy
 
-| Name                          | Contract                                                                                                          |
-| ----------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| page                          | The page shown, counted from 1; kept within the pages that exist                                                  |
-| pageSize                      | The most items a page shows                                                                                       |
-| total                         | All items; omit when it is not known, and the range shows without it                                              |
-| hasNextPage                   | Whether a later page exists, for a list without total; true by default                                            |
-| onPageChange                  | Receives the page before or after the current one; the application loads it and passes the new page               |
-| pending                       | A page is loading: the button pressed shows a spinner and both buttons wait, without losing focus                 |
-| hideWhenSinglePage            | Renders nothing while all items fit on one page                                                                   |
-| formatRange                   | Text for the range from `{ start, end, total, page, pageCount }`; 1–60 of 245 by default, or 61–120 without total |
-| previousLabel / nextLabel     | Names and tooltips of the buttons; Previous page and Next page by default                                         |
-| variant                       | As IconButton; secondary by default                                                                               |
-| size                          | standard (default) takes the surrounding density; compact gives 2 rem buttons anywhere                            |
-| aria-label / native nav props | The navigation's name, Pagination by default; ref, className, style and accessible attributes                     |
+1. **Landmark**: a `nav`, named Pagination unless `aria-label` names it, as wide as its content; its parts sit 0.25 rem apart on one line.
+2. **Range**: the items shown, in 0.875 rem muted text with tabular digits, on one line, 0.75 rem before the buttons. `formatRange` writes it.
+3. **Previous button**: an IconButton with a chevron that points back, named by `previousLabel` in a tooltip.
+4. **Next button**: an IconButton with a chevron that points forward, named by `nextLabel`.
+5. **Spinner** (while `pending`): replaces the chevron of the button pressed, at the button's size.
 
-## Guidelines
+## Variants and sizes
 
-- Use Pagination where a list is read a page at a time, such as a long table, and the toolbar has little room. The application owns the page, the loading and the scroll position; Pagination shows where the reader is and asks for the next or previous page.
-- The range comes first, then the previous and next buttons, in a navigation landmark. Name it with aria-label where a page has more than one, such as Report pages. The range is announced politely when it changes, so people who press Next from the keyboard hear the new range while focus stays on the button.
-- Without total the range shows only the items on the page, such as 61–120, and hasNextPage says when the list ends. Pass total once it is known, such as on the last page, so the range ends at the last item.
-- The first and last pages leave the button that would go past them unavailable but focusable, so focus never drops to the page. While pending, the button pressed shows a spinner and both buttons ignore presses; focus stays on the button. The spinner shows for the load a press starts, whether pending follows at once or from an effect after the page changes, as with a query keyed by the page; a load for another reason, such as a refresh, makes both buttons wait without one.
-- The buttons are IconButtons with their names in tooltips. They are 2.5 rem tall, or 2 rem in a compact surface or with size="compact", so the pager fits a compact toolbar beside 2 rem fields and buttons; both grow to 2.75 rem on touch screens.
-- The range keeps tabular digits and one line. In a toolbar the pager keeps its width while fields beside it shrink; only a container too narrow for the pager itself wraps the buttons below the range. In right-to-left text the pager runs from the right and the chevrons point the way the pages run.
-- Localize with formatRange, previousLabel and nextLabel; the default numbers are English, so server and browser render the same text.
+| Option            | Use for                                                                                 |
+| ----------------- | --------------------------------------------------------------------------------------- |
+| `size="standard"` | Most places: 2.5 rem buttons, or the 2 rem compact height inside a compact surface.     |
+| `size="compact"`  | A compact toolbar outside a compact surface: 2 rem buttons anywhere.                    |
+| `variant`         | The buttons' look, as on IconButton: secondary by default, or text for a quiet toolbar. |
 
-TypeScript declarations provide the complete public API.
+- On touch screens the buttons grow to 2.75 rem in both sizes.
+- In a toolbar the pager keeps its width while a field beside it shrinks; only a container too narrow for the pager itself wraps the buttons below the range.
+- In right-to-left text the pager runs from the right, and the chevrons point the way the pages run.
 
-## Related topics
+## States and behaviour
 
-- [Table](../components/table.md)
-- [Button](../components/button.md)
-- [Loading](../patterns/loading.md)
+- **Range**: the first and last item on the page and the total, such as 1–60 of 245; one number where the page holds one item, such as 241 of 241, and 0 of 0 for an empty list. Without `total` it shows only the page's items, such as 61–120. Numbers are English, such as 1,234, so the server and the browser render the same text; `formatRange` receives `start`, `end`, `total`, `page` and `pageCount` and writes it in another language.
+- **Pages**: `page` counts from 1 in pages of `pageSize`, and stays within the pages that exist, so a page beyond the end shows the last one. With `total` the last page ends the list; without it, `hasNextPage`, true by default, says whether another page follows.
+- **Paging**: a press calls `onPageChange` with the page before or after the current one, and nothing else; the application loads that page and passes it back as `page`.
+- **Unavailable buttons**: on the first page the previous button, and on the last the next button, report `aria-disabled` and do nothing, but stay focusable and keep their tooltip, so focus never drops to the page when it reaches an end.
+- **Pending**: while `pending` the button pressed shows a spinner and reports `aria-busy`, and both buttons ignore presses; focus stays on the button. The spinner shows for the load a press starts, whether `pending` follows at once or from an effect after the page changes, as with a query keyed by the page. A load for another reason, such as a refresh, makes both buttons wait without a spinner.
+- **Announcements**: the range is a polite live region, so people hear the new range after a page loads while focus stays on the button.
+- **Tooltips**: each button shows its name in a tooltip on hover and keyboard focus; <kbd>Esc</kbd> hides it.
+- **A single page**: with `hideWhenSinglePage` the pager renders nothing while every item fits on one page.
+
+## Content guidelines
+
+- Name each pager after what it pages through, such as "Report pages", where a page has more than one navigation landmark.
+- Keep the default names, Previous page and Next page, unless the interface is in another language; then pass `previousLabel`, `nextLabel` and a `formatRange` in that language.
+- Write the range as numbers people can check against the list, with an en dash between the first and last item, in the reader's number format.
+
+## Do and don't
+
+### Do
+
+- Keep focus where it is and scroll the list to its top after a page loads, so the reader starts at the first new item.
+- Pass `pending` while a page loads, and `total` as soon as it is known, such as on the last page.
+- Use `size="compact"` or a compact surface in a toolbar beside compact fields.
+
+### Don't
+
+- Don't use Pagination between the pages of a guide or an article; use [Pager](../components/pager.md).
+- Don't disable or hide the buttons at the ends yourself; the pager keeps them focusable and unavailable.
+- Don't page a short list that fits on one screen; show it whole, or use `hideWhenSinglePage`.
+
+## Accessibility
+
+### Keyboard
+
+| Key                                             | Action                                                                                               |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves focus to the previous button, then to the next one; unavailable buttons stay in the tab order. |
+| <kbd>Enter</kbd> or <kbd>Space</kbd>            | Asks for the page before or after the current one; does nothing at an end or while a page loads.     |
+| <kbd>Esc</kbd>                                  | Hides the focused button's tooltip.                                                                  |
+
+### envUI provides
+
+- A `nav` landmark, named Pagination unless `aria-label` names it.
+- Icon buttons named by `previousLabel` and `nextLabel`, with the names in tooltips, and decorative chevrons hidden from assistive technology.
+- `aria-disabled` on a button that has no page to go to or waits for a load, and `aria-busy` on the button whose load is running; both stay focusable.
+- The range as a polite, atomic live region, so a new range is announced once.
+- The range's own text direction, so numbers keep their order in right-to-left text.
+
+### You provide
+
+- An `aria-label` that tells the pager apart where a page has several navigation landmarks, such as "Report pages".
+- `pending` while a page loads, and the page itself.
+- Translated `previousLabel`, `nextLabel` and `formatRange`, and a `lang` attribute, where the interface is not in English.
+
+## Examples
+
+### Without a known total
+
+A list read in batches shows the items on the page; `hasNextPage` says when the list ends.
+
+```tsx example=WithoutATotal
+
+```
+
+### In a compact toolbar
+
+Inside a compact surface the buttons take the 2 rem compact height, and the field beside the pager shrinks first. The text variant keeps the toolbar quiet.
+
+```tsx example=CompactToolbar
+
+```
+
+### In another language
+
+`previousLabel`, `nextLabel` and `formatRange` localize the pager; `lang` tells assistive technology the language.
+
+```tsx example=AnotherLanguage
+
+```
+
+## Changelog
+
+- **0.6.0**: Pagination: the range of items shown, with previous and next buttons that wait while a page loads, `formatRange`, `hideWhenSinglePage` and `size="compact"`.

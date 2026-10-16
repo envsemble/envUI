@@ -4218,86 +4218,94 @@
     "Pagination": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Pagination.tsx",
-      "description": "A compact pager for toolbars: the range of items shown, such as 1–60 of 245, and buttons for the previous and next pages, in a navigation landmark. The application loads the pages.",
+      "description": "A compact pager for toolbars: the range of items shown, such as 1–60 of 245, and icon buttons for the previous and next pages, in a navigation landmark. The application loads the pages; the range is announced as it changes, and focus stays on the button pressed.",
       "props": [
         {
           "name": "page",
           "type": "number",
           "required": true,
-          "description": "The page shown, counted from 1."
+          "description": "The page shown, counted from 1. It is kept within the pages that exist, so a page beyond the end shows the last one."
         },
         {
           "name": "pageSize",
           "type": "number",
           "required": true,
-          "description": "The most items a page shows."
+          "description": "The most items a page shows, such as 60; at least 1."
         },
         {
           "name": "total",
           "type": "number",
           "required": false,
-          "description": "All items; omit when it is not known, such as for a list read in batches."
+          "description": "All items, when known; the range then ends with it, as in 1–60 of 245, and the last page ends the list. Leave it out for a list read in batches, where hasNextPage says when it ends."
         },
         {
           "name": "hasNextPage",
           "type": "boolean",
           "required": false,
-          "description": "Whether a later page exists, for a list without total; true by default."
+          "default": "true",
+          "description": "Whether a later page exists, for a list without total, such as from a cursor's has more."
         },
         {
           "name": "onPageChange",
           "type": "(page: number) => void",
           "required": true,
-          "description": "Receives the page before or after the current one when a button is pressed."
+          "description": "Receives the page before or after the current one when its button is pressed. The application loads that page and passes it back as page."
         },
         {
           "name": "pending",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "A page is loading: the button pressed shows a spinner, and both wait."
+          "description": "A page is loading: the button pressed shows a spinner, also when the load starts in an effect after the page changes, and both buttons ignore presses while staying focusable. A load for another reason, such as a refresh, makes both wait without a spinner."
         },
         {
           "name": "hideWhenSinglePage",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Renders nothing while all items fit on one page."
+          "description": "Render nothing while every item fits on one page, so neither button has anywhere to go."
         },
         {
           "name": "formatRange",
           "type": "(range: PaginationRange) => ReactNode",
           "required": false,
-          "default": "formatPageRange",
-          "description": "Text for the range, such as \"1–60 of 245\", for example in another language."
+          "default": "1–60 of 245, or 61–120 without total, in English numbers",
+          "description": "Writes the range from the first and last item shown, the total, the page and the page count, for example in another language."
         },
         {
           "name": "previousLabel",
           "type": "string",
           "required": false,
           "default": "'Previous page'",
-          "description": "Name and tooltip of the previous button; Previous page by default."
+          "description": "The previous button's accessible name and tooltip, in the application's language."
         },
         {
           "name": "nextLabel",
           "type": "string",
           "required": false,
           "default": "'Next page'",
-          "description": "Name and tooltip of the next button; Next page by default."
+          "description": "The next button's accessible name and tooltip, in the application's language."
         },
         {
           "name": "variant",
           "type": "'primary' | 'important' | 'secondary' | 'outlined' | 'destructive' | 'text' | 'quiet'",
           "required": false,
           "default": "'secondary'",
-          "description": "As IconButton; secondary by default."
+          "description": "The buttons' variant, as on IconButton, such as text for a quiet toolbar."
         },
         {
           "name": "size",
           "type": "'standard' | 'compact'",
           "required": false,
           "default": "'standard'",
-          "description": "standard (default) takes the surrounding density; compact gives 2 rem buttons anywhere."
+          "description": "standard takes the height of the surroundings, 2.5 rem, or 2 rem in a compact surface; compact gives the buttons the 2 rem compact height anywhere. Touch screens keep 2.75 rem."
+        },
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "default": "'Pagination'",
+          "description": "The navigation landmark's name, such as Report pages, where a page has more than one."
         }
       ],
       "native": [
@@ -4822,37 +4830,38 @@
     "RichText": {
       "kind": "component",
       "source": "packages/ui/src/rich-text/RichText.tsx",
-      "description": "Static, SSR-capable view using exactly the editor's Tiptap schema and Markdown parser.",
+      "description": "Saved rich text, read-only: Markdown rendered with the editor's own schema and parser, so it shows what RichTextEditor wrote, references included, with envUI's links, code and checkboxes. It renders on the server too.",
       "props": [
         {
           "name": "children",
           "type": "string",
           "required": true,
-          "description": ""
+          "description": "The Markdown to show, such as what RichTextEditor saved."
         },
         {
           "name": "extensions",
           "type": "AnyExtension[]",
           "required": false,
-          "description": "Keep this array stable; extensions must implement Markdown parsing and serialization."
+          "description": "Tiptap extensions added to the shared schema, such as a custom mark. They must parse and write Markdown, and the array must stay the same between renders, such as at module scope; a new array starts a new editing session. Pass the same extensions to RichText."
         },
         {
           "name": "renderReference",
           "type": "(reference: RichTextReference, context: { readOnly: boolean; selected: boolean }) => ReactNode",
           "required": false,
-          "description": ""
+          "default": "the trigger and the label, such as",
+          "description": "Renders a reference's content, such as an avatar beside the name; it receives whether the document is read-only and whether the reference is selected."
         },
         {
           "name": "onReferenceClick",
           "type": "(reference: RichTextReference, event: MouseEvent<HTMLElement>) => void",
           "required": false,
-          "description": ""
+          "description": "Called when people activate a reference, with the reference and the event, such as to open the record. A reference with an href is a link, which the editor never follows while it is editable; without an href, this makes the reference a button."
         },
         {
           "name": "onLinkClick",
           "type": "(href: string, event: RichTextLinkEvent) => void",
           "required": false,
-          "description": ""
+          "description": "Called when people activate a link in the document, with its href and the event: a native MouseEvent in the editor, a React mouse event in RichText. The editor never follows links while editable; call preventDefault to keep RichText or a read-only editor from following it."
         }
       ],
       "native": [
@@ -4865,129 +4874,137 @@
     "RichTextEditor": {
       "kind": "component",
       "source": "packages/ui/src/rich-text/RichTextEditor.tsx",
-      "description": "Markdown IO with Tiptap owning document editing, history, and selection.",
+      "description": "A labelled editor for formatted text that people edit as it looks, built on Tiptap, with a formatting toolbar, references typed with a trigger such as",
       "props": [
         {
           "name": "value",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The Markdown of a controlled editor; update it from onValueChange. A new value from outside, such as another draft, replaces the document and keeps the caret where it can."
         },
         {
           "name": "defaultValue",
           "type": "string",
           "required": false,
           "default": "''",
-          "description": ""
+          "description": "The Markdown an uncontrolled editor starts with, and returns to when its form resets."
         },
         {
           "name": "onValueChange",
           "type": "(markdown: string) => void",
           "required": false,
-          "description": ""
+          "description": "Receives the document as Markdown after every edit, normalized by the editor's schema, so it can differ from the Markdown it was given, such as * for _ around italics."
         },
         {
           "name": "name",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Submits the Markdown with a native form under this name, through a hidden input."
         },
         {
           "name": "form",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The ID of the form the hidden input belongs to, where the editor sits outside it."
         },
         {
           "name": "placeholder",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Text shown in an empty document, such as what to write."
         },
         {
           "name": "disabled",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Makes the editor unavailable: it cannot be edited or focused, the toolbar is disabled, its value is left out of form submission and it takes the shared disabled opacity."
         },
         {
           "name": "readOnly",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Shows the document without editing it: the toolbar is disabled and the document cannot be focused, but its links and references can, and the form still submits its value."
         },
         {
           "name": "toolbar",
           "type": "readonly RichTextCommand[] | false",
           "required": false,
-          "default": "defaultRichTextCommands",
-          "description": ""
+          "default": "every command, from heading to table",
+          "description": "The toolbar's commands, in order, or false for no toolbar; Undo and Redo, and Attach files with onUpload, follow them."
         },
         {
           "name": "references",
           "type": "readonly RichTextReferenceSource[]",
           "required": false,
           "default": "emptySources",
-          "description": ""
+          "description": "Kinds of references people insert by typing a trigger, such as @ for people and # for topics, each with its own lookup. Triggers must be unique, and the array must stay the same between renders, such as at module scope."
         },
         {
           "name": "slashCommands",
           "type": "boolean | readonly RichTextSlashCommand[]",
           "required": false,
           "default": "false",
-          "description": "true enables standard block commands; an array adds application commands to them."
+          "description": "Typing / opens a menu of block commands: true offers heading, the lists, quote, code block and table; an array adds the application's commands after them. A / reference source can't be used beside it."
         },
         {
           "name": "onRequestLink",
           "type": "(request: MarkdownLinkRequest) => MarkdownLink | null | Promise<MarkdownLink | null>",
           "required": false,
-          "description": "For selections the URL marks existing content; label is used only for new links at the caret."
+          "description": "Opens the application's own link picker for Insert link, with the selected text, instead of the built-in dialog. Return the link, null to cancel, or a promise of either. A selection becomes a link to its href; at the caret, the label is inserted as the link's text."
         },
         {
           "name": "onUpload",
           "type": "(file: File, request: { signal: AbortSignal }) => RichTextAttachment | null | Promise<RichTextAttachment | null>",
           "required": false,
-          "description": ""
+          "description": "Uploads a file people chose with Attach files, which shows in the toolbar only with this. Return where it lives as an attachment, null to skip it, or a promise of either; the signal aborts when the editor becomes read-only or disabled, or when a controlled value changes."
         },
         {
           "name": "accept",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The file types Attach files offers, as in a file input's accept, such as \"image/*,.pdf\"."
         },
         {
           "name": "multiple",
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": ""
+          "description": "Lets people choose several files at once with Attach files."
+        },
+        {
+          "name": "variant",
+          "type": "'outlined' | 'plain' | 'quiet'",
+          "required": false,
+          "default": "'outlined'",
+          "description": "The editor's look: outlined, the document in a bordered well on the field background, or plain, without a border or fill. quiet is accepted for the shared field type, but draws as outlined."
         },
         {
           "name": "extensions",
           "type": "AnyExtension[]",
           "required": false,
           "default": "emptyExtensions",
-          "description": "Keep this array stable; extensions must implement Markdown parsing and serialization."
+          "description": "Tiptap extensions added to the shared schema, such as a custom mark. They must parse and write Markdown, and the array must stay the same between renders, such as at module scope; a new array starts a new editing session. Pass the same extensions to RichText."
         },
         {
           "name": "renderReference",
           "type": "(reference: RichTextReference, context: { readOnly: boolean; selected: boolean }) => ReactNode",
           "required": false,
-          "description": ""
+          "default": "the trigger and the label, such as",
+          "description": "Renders a reference's content, such as an avatar beside the name; it receives whether the document is read-only and whether the reference is selected."
         },
         {
           "name": "onReferenceClick",
           "type": "(reference: RichTextReference, event: MouseEvent<HTMLElement>) => void",
           "required": false,
-          "description": ""
+          "description": "Called when people activate a reference, with the reference and the event, such as to open the record. A reference with an href is a link, which the editor never follows while it is editable; without an href, this makes the reference a button."
         },
         {
           "name": "onLinkClick",
           "type": "(href: string, event: RichTextLinkEvent) => void",
           "required": false,
-          "description": ""
+          "description": "Called when people activate a link in the document, with its href and the event: a native MouseEvent in the editor, a React mouse event in RichText. The editor never follows links while editable; call preventDefault to keep RichText or a read-only editor from following it."
         },
         {
           "name": "label",
@@ -5006,13 +5023,6 @@
           "type": "ReactNode",
           "required": false,
           "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the hint."
-        },
-        {
-          "name": "variant",
-          "type": "'outlined' | 'plain' | 'quiet'",
-          "required": false,
-          "default": "'outlined'",
-          "description": "The field's look: outlined, with a thin border; plain, with no border or fill and an underline on hover and focus; or quiet, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list."
         }
       ],
       "native": [
@@ -6323,33 +6333,33 @@
     "Tooltip": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Tooltip.tsx",
-      "description": "A small label that describes a control on hover and keyboard focus.",
+      "description": "A short label beside a control, shown while the pointer rests on it or it has keyboard focus, such as an icon-only button's name or why a control is disabled. It closes on Esc and when the control is pressed.",
       "props": [
         {
           "name": "content",
           "type": "ReactNode",
           "required": true,
-          "description": "Short supplementary text; never the only place essential information appears."
+          "description": "What the tooltip shows: a short, supplementary text, such as an icon-only control's name or why a control is disabled. It is visual only and not linked to the control for assistive technology, so the control's name or the page says the same; never the only place essential information appears."
         },
         {
           "name": "children",
           "type": "ReactElement<{ disabled?: boolean }>",
           "required": true,
-          "description": "The described control. A disabled control is wrapped so it can still be focused and hovered."
+          "description": "The one control it describes, such as an IconButton, which takes the trigger's props and ref. A disabled control is wrapped in a focusable element, so hovering and keyboard focus still open the tooltip."
         },
         {
           "name": "side",
           "type": "'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end'",
           "required": false,
           "default": "'top'",
-          "description": "top (default), bottom, left, right, or inline-start and inline-end, which follow the text direction."
+          "description": "The side of the control it opens on: top, bottom, left, right, or inline-start and inline-end, which follow the text direction. Where the window has no room, it flips to the other side."
         },
         {
           "name": "delay",
           "type": "number",
           "required": false,
           "default": "400",
-          "description": "Milliseconds before the tooltip opens on hover; focus opens it immediately. Defaults to 400."
+          "description": "Milliseconds the pointer rests on the control before the tooltip opens; keyboard focus opens it at once."
         }
       ],
       "native": [],
@@ -6468,7 +6478,7 @@
     "createRichTextExtensions": {
       "kind": "function",
       "source": "packages/ui/src/rich-text/Extensions.ts",
-      "description": "Shared schema for editing, Markdown IO, and static rendering. Custom extensions append.",
+      "description": "The Tiptap extensions RichTextEditor and RichText share: formatting, lists and task lists, tables, safe links and images, Markdown with raw HTML kept as text, a placeholder and references. options.extensions are added after them, for other Tiptap integrations that need the same schema.",
       "signature": "(options?: RichTextRenderOptions & { placeholder?: string; }): AnyExtension[]",
       "entries": [
         "@envsemble/envui/rich-text"
