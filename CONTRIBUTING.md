@@ -70,8 +70,9 @@ The catalogue is also a website for envsemble. It isn't deployed yet: the domain
 `dist/envUI.html` stays the release artifact. The site is a Cloudflare Worker, configured in `wrangler.jsonc`, that serves `dist/site/` as static assets:
 
 - A path without a file gets `index.html`, ready for routes in the URL path.
-- `apps/catalogue/site/_headers` sets the security headers. Pages are revalidated on every load, and hashed files are cached for a year.
-- A small Worker script answers a missing hashed file with 404, so a stale page never caches `index.html` under its name. Requests for files and page loads never run the script.
+- `apps/catalogue/site/_headers` sets the security headers, and pages are revalidated on every load.
+- A small Worker script runs first for `/assets/` (`run_worker_first`). It serves the hashed files there with a year-long cache, and answers a missing one with 404, also when a browser opens it as a page, so `index.html` is never cached under a file's name. These requests count as Worker requests; other files and page loads never run the script.
+- `workers_dev` and `preview_urls` are `false`, so the site has no `workers.dev` address or Preview URLs until Cloudflare Access protects them; step 5 below turns them on.
 
 ### Deploying
 
@@ -85,14 +86,18 @@ Builds run on Cloudflare with Workers Builds, so they use no GitHub Actions minu
    - Node.js: the build image's default is 24. Set `NODE_VERSION` to pin a version.
 2. **Branches.**
    - `main` is the production branch. It deploys to the custom domain and serves the latest release.
-   - With preview builds enabled, every other branch gets a Preview URL that follows it: `<branch>-envui.<subdomain>.workers.dev`. `dev` serves "next" at a stable address.
+   - With preview builds enabled and, after step 5, Preview URLs on, every other branch gets a Preview URL that follows it: `<branch>-envui.<subdomain>.workers.dev`. `dev` serves "next" at a stable address.
    - Pull requests get a comment with their branch's preview.
 3. **Custom domain.** Add the chosen hostname in the Worker's Settings → Domains & Routes. Alternatively, add `"routes": [{ "pattern": "envui.envsemble.com", "custom_domain": true }]` to `wrangler.jsonc`. The `envsemble.com` zone must be on the same Cloudflare account.
 4. **Cloudflare Access.**
    - In Zero Trust, add GitHub login as an identity provider, with an OAuth app owned by the envsemble organization. Keep the one-time PIN login method as the email fallback.
-   - In the Worker's Settings → Domains & Routes, choose Enable Cloudflare Access for workers.dev and the Preview URLs. Protect the custom domain with an Access application for its hostname.
+   - Protect the custom domain with an Access application for its hostname.
    - The policy allows members of the envsemble organization. A second rule allows listed email addresses through the one-time PIN.
    - Access is free for up to 50 users.
+5. **workers.dev and Preview URLs, behind Access.** Only once Access is set up:
+   - In the Worker's Settings → Domains & Routes, choose Enable Cloudflare Access for workers.dev and the Preview URLs, with the same policy.
+   - Set `workers_dev` and `preview_urls` to `true` in `wrangler.jsonc` and merge the change, so the next deployment turns both on. A deployment with them `false` turns them off again.
+   - In a private window, check that the `workers.dev` address and a branch's Preview URL both ask for the Access login.
 
 ## Releases
 
