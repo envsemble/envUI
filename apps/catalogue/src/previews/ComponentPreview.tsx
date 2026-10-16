@@ -6,7 +6,7 @@ import { CodePreview } from './CodeContent';
 import { MarkdownPreview } from './MarkdownContent';
 import { lazy, Suspense } from 'react';
 import { Text } from '@envsemble/envui';
-import { EmptyStatePreview, SpinnerPreview, SkeletonPreview } from './Feedback';
+import { EmptyStatePreview } from './Feedback';
 import { ColorPickerPreview } from './ColorPicking';
 import { ComposerPreview, MessagesPreview } from './Conversation';
 import { CalendarHeatmapPreview, StatsPreview } from './Dashboard';
@@ -83,10 +83,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <DisclosurePreview />;
     case 'empty-state':
       return <EmptyStatePreview />;
-    case 'spinner':
-      return <SpinnerPreview />;
-    case 'skeleton':
-      return <SkeletonPreview />;
     case 'alert':
       return <AlertsPreview />;
     case 'popover':

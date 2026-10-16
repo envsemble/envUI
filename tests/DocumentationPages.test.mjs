@@ -47,8 +47,6 @@ const unconverted = [
   'popover',
   'rich-text',
   'segmented-control',
-  'skeleton',
-  'spinner',
   'stack',
   'stat',
   'surface',
