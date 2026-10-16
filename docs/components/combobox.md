@@ -68,7 +68,7 @@ A combobox is a text field with a list of options: typing filters the list, the 
 
 | Density    | Use for                                                                                                                                                                                                 |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `standard` | Forms and dialogs: the 3.5 rem text field with its floating label. The default.                                                                                                                         |
+| `standard` | In forms and dialogs: the 3.5 rem text field with its floating label. The default.                                                                                                                      |
 | `compact`  | Toolbars and dense surfaces: the 2 rem height of a compact Select or Button, and the compact menu's popup; the label is hidden unless `showLabel` is set, so a placeholder and an `aria-label` name it. |
 
 <!-- specimen: States -->
@@ -89,7 +89,7 @@ A combobox is a text field with a list of options: typing filters the list, the 
 - **Values without options**: chosen options keep their labels while `items` changes, such as with each search. A value the field never saw among `items` shows as itself, and `onValueChange` reports it as `{ value, label: value }`.
 - **Popup**: it opens below the field, flips above it near the bottom of the window, and keeps the theme of the page around the field, also inside a Dialog. `open`, `defaultOpen` and `onOpenChange` control it, such as to load the options as it opens.
 - **Read only and disabled**: a read-only field can be focused and its list browsed, but its value can't change and chips lose their remove buttons. A disabled field can't be focused, takes the shared disabled look and is left out of form submission.
-- **Forms**: `name` submits the value, or one entry for each chosen value; `required` asks for a value or at least one chip, and a form reset restores an uncontrolled field's `defaultValue`. Validation and its `error` belong to the application.
+- **In forms**: `name` submits the value, or one entry for each chosen value; `required` asks for a value or at least one chip, and a form reset restores an uncontrolled field's `defaultValue`. Validation and its `error` belong to the application.
 
 ## Content guidelines
 

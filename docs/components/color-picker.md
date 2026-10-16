@@ -71,7 +71,7 @@ A color picker chooses one opaque color in three ways that stay in step: a color
 - **Rejected changes**: a controlled picker whose application keeps the old `value` returns the area, the slider and the field to it.
 - **Read only**: the area and the slider can't be changed or focused, and the HEX field stays focusable and copyable.
 - **Disabled**: nothing can be changed or focused, the label and the area take the shared disabled opacity, and forms leave the field out.
-- **Forms**: `name` submits the HEX field's value, `required` and `form` work as on a field, and a form reset restores an uncontrolled picker's `defaultValue` without calling `onValueChange`; a controlled picker keeps its `value`, and a reset the application cancels keeps the draft.
+- **In forms**: `name` submits the HEX field's value, `required` and `form` work as on a field, and a form reset restores an uncontrolled picker's `defaultValue` without calling `onValueChange`; a controlled picker keeps its `value`, and a reset the application cancels keeps the draft.
 - **Swatch**: ColorSwatch takes any CSS color as `color`, and is hidden from assistive technology.
 
 ## Content guidelines

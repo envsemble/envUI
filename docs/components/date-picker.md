@@ -88,7 +88,7 @@ A date picker is a field that shows a date, or with `withTime` a date and time, 
 - **Locale and week**: `locale` sets the value's format and the calendar's names and numbers, the browser's by default; `formatOptions` changes the field's format. `weekStart` is the locale's first weekday, or Monday where the browser can't tell. The calendar is Gregorian, also in a locale with a calendar of its own, which then names the Gregorian months.
 - **Right to left**: a field in right-to-left text opens a calendar that runs right to left, where <kbd>←</kbd> and <kbd>→</kbd> follow the reading direction.
 - **Read only and disabled**: a read-only field shows its value and can be focused, but its calendar doesn't open; like a read-only input it isn't validated, so an empty required one never keeps its form from submitting. A disabled field can't be focused and is left out of the form.
-- **Forms**: `name` submits the value, `required` asks for one, and an empty required field takes focus when its form is submitted; a form reset restores an uncontrolled field's `defaultValue`. Validation and its `error` belong to the application.
+- **In forms**: `name` submits the value, `required` asks for one, and an empty required field takes focus when its form is submitted; a form reset restores an uncontrolled field's `defaultValue`. Validation and its `error` belong to the application.
 - **Server rendering**: without `locale`, a field or calendar rendered on a server writes British English, and a calendar without a value leaves its days empty until it hydrates; then the reader's language, week and today replace them without a mismatch error. Pass `locale` and `weekStart` for server output in the reader's language.
 
 ## Content guidelines

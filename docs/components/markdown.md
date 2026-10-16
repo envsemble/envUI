@@ -83,7 +83,7 @@ Markdown renders a Markdown string from the application in envUI's typography: h
 - **History**: typing and formatting share a bounded undo history: <kbd>Ctrl</kbd>+<kbd>Z</kbd> undoes, and <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd> or <kbd>Ctrl</kbd>+<kbd>Y</kbd> redoes, also with <kbd>Cmd</kbd>. Replacing a controlled `value` clears the history.
 - **Links in the editor**: without `onRequestLink`, Insert link opens a dialog for the text and the address; with it, the application's picker returns `{ label, href }`, or null to cancel, also as a promise. Labels and addresses are escaped as they are inserted, and a link is refused when the source changed while the picker was open.
 - **Preview**: the Preview tab renders the source with Markdown and `previewProps` when it is first opened, and stays mounted afterwards; edits are rendered when it is shown again.
-- **Forms**: the source submits under `name` even while Preview shows; an invalid source switches back to Write before the browser focuses it. A form reset restores an uncontrolled editor's `defaultValue`; a controlled one keeps its `value`. `maxLength` limits typing and formatting, and a change beyond it is refused with a message.
+- **In forms**: the source submits under `name` even while Preview shows; an invalid source switches back to Write before the browser focuses it. A form reset restores an uncontrolled editor's `defaultValue`; a controlled one keeps its `value`. `maxLength` limits typing and formatting, and a change beyond it is refused with a message.
 - **Read only and disabled**: `readOnly` and `disabled` prevent edits and turn the toolbar off.
 
 ## Content guidelines

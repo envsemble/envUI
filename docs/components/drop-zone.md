@@ -73,7 +73,7 @@ A drop zone takes files two ways: dropped onto it, or chosen in the file picker 
 - **Filtering**: `accept` filters both the picker and dropped files, by MIME type, group such as `image/*` and extension such as `.webp`. Files that don't fit go to `onReject`, and without `multiple` so do the files after the first; check sizes and contents in `onFiles`.
 - **Pending**: while `pending`, a spinner replaces the icon, the zone reports `aria-busy`, and it takes no new files; change the label to say what is happening, such as "Uploading the logo".
 - **Disabled**: the zone can't be pressed or focused, takes the shared disabled opacity and takes no files. A pending or disabled zone still catches dropped files, so the browser doesn't open them.
-- **Forms**: with `name`, native forms submit the last files the zone took, dropped ones included, and a form reset clears them. `files` hands the zone the files the application keeps, such as after Remove, so the form submits exactly what it shows. People can choose the same file again, such as after removing it.
+- **In forms**: with `name`, native forms submit the last files the zone took, dropped ones included, and a form reset clears them. `files` hands the zone the files the application keeps, such as after Remove, so the form submits exactly what it shows. People can choose the same file again, such as after removing it.
 - **Hidden**: `hidden` hides the zone, such as while the application shows the chosen file; its file picker still opens through `inputRef`, such as from a Replace button.
 
 ## Content guidelines
