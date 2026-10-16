@@ -6,6 +6,7 @@ import { execFileSync } from 'node:child_process';
 import { generateBrandAssets } from './GenerateBrandAssets.mjs';
 import { collectDependencyNotices } from './DependencyNotices.mjs';
 import { generateDocumentation } from './GenerateDocumentation.mjs';
+import { buildTokens } from './BuildTokens.mjs';
 const repositoryRoot = fileURLToPath(new URL('../', import.meta.url));
 const libraryDirectory = resolve(repositoryRoot, 'packages/ui');
 const sourceDirectory = resolve(libraryDirectory, 'src');
@@ -24,6 +25,7 @@ async function findTypeScriptFiles(directory) {
   );
   return files.flat();
 }
+await buildTokens();
 generateDocumentation();
 await generateBrandAssets();
 await writeFile(

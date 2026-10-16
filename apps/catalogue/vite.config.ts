@@ -6,8 +6,11 @@ import {
   documentationDirectory,
   generateDocumentation,
 } from '../../scripts/GenerateDocumentation.mjs';
+import { tokensVitePlugin } from '../../scripts/BuildTokens.mjs';
 export default defineConfig({
   plugins: [
+    // Rebuilds Tokens.css from packages/ui/tokens on every token edit; Vite hot-reloads it.
+    tokensVitePlugin(),
     {
       name: 'envui-documentation',
       buildStart() {
