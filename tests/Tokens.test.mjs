@@ -482,7 +482,8 @@ function undefinedReads({
       /['"](--[\w-]+)['"]\s*:|\[\s*['"](--[\w-]+)['"]\s*\]\s*=(?!=)|setProperty\(\s*['"](--[\w-]+)['"]/g,
     ))
       setInline(match[1] ?? match[2] ?? match[3], path);
-    if (/<\w+\.Positioner\b/.test(source)) for (const name of positioned) setInline(name, path);
+    if (/<(?:\w+\.)?Positioner\b/.test(source))
+      for (const name of positioned) setInline(name, path);
   }
 
   const defines = (name, complex, file, readConditions) => {

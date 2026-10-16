@@ -100,7 +100,7 @@
       "forms/MarkdownEditor.tsx": "composites",
       "forms/Radio.tsx": "base",
       "forms/SearchField.tsx": "composites",
-      "forms/Select.tsx": "base",
+      "forms/Select.tsx": "composites",
       "forms/Slider.tsx": "base",
       "forms/Switch.tsx": "base",
       "forms/TextField.tsx": "base",
@@ -152,17 +152,16 @@
       "internal/ActionElement.tsx": ["a", "button"],
       "forms/TextField.tsx": ["input"],
       "forms/internal/TextareaControl.tsx": ["textarea"],
-      "forms/internal/TextareaResizeEdge.tsx": ["button"],
       "forms/Checkbox.tsx": ["input"],
       "forms/Radio.tsx": ["input"],
       "forms/Switch.tsx": ["input"],
-      "forms/DropZone.tsx": ["input"],
       "actions/SegmentedControl.tsx": ["button"],
       "navigation/Tree.tsx": ["role=\"tree\"", "role=\"treeitem\""],
       "forms/Calendar.tsx": ["role=\"grid\""],
       "content/CalendarHeatmap.tsx": ["role=\"grid\"", "role=\"gridcell\""],
       "internal/FileInput.tsx": ["input"],
-      "internal/Listbox.tsx": ["role=\"listbox\"", "role=\"option\""]
+      "internal/Listbox.tsx": ["role=\"listbox\"", "role=\"option\""],
+      "forms/internal/ColorPlane.tsx": ["role=\"slider\""]
     }
   },
   "classes": {
@@ -247,7 +246,6 @@
           "forms/Switch.tsx",
           "forms/internal/useCheckedInput.ts"
         ],
-        "classes": ["env-choice-control"],
         "styles": ["Checkbox.css", "Switch.css", "Radio.css"]
       },
       "Field": {
@@ -258,18 +256,9 @@
           "forms/internal/TextareaControl.tsx",
           "forms/internal/TextareaResizeEdge.tsx"
         ],
-        "classes": [
-          "env-form-field",
-          "env-text-field",
-          "env-text-input",
-          "env-field-hint",
-          "env-field-error"
-        ],
+        "classes": ["env-text-field"],
         "styles": ["TextField.css"],
-        "slots": ["env-text-input", "env-text-field-start", "env-text-field-end"]
-      },
-      "Select": {
-        "classes": ["env-dropdown"]
+        "slots": ["env-text-field-input", "env-text-field-start", "env-text-field-end"]
       },
       "MarkdownEditor": {
         "modules": [
@@ -336,6 +325,9 @@
       },
       "CloseButton": {
         "styles": ["Button.css"]
+      },
+      "ColorPicker": {
+        "modules": ["forms/internal/ColorPlane.tsx"]
       }
     },
     "stylesheetsWithoutComponent": {
@@ -411,6 +403,18 @@
           "stylesheet": "Message.css",
           "classes": ["env-button", "env-icon-button"],
           "note": "A message's edge action lines its icon up with the message rather than its round hit area."
+        },
+        {
+          "stylesheet": "Combobox.css",
+          "classes": ["env-avatar"],
+          "properties": ["--env-avatar-size"],
+          "note": "An avatar in a combobox's leading slot takes the slot's size."
+        },
+        {
+          "stylesheet": "Markdown.css",
+          "classes": ["env-checkbox"],
+          "properties": ["vertical-align"],
+          "note": "A task list item lines its checkbox up with the item's text."
         }
       ]
     }
