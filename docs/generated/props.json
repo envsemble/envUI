@@ -2412,7 +2412,7 @@
           "name": "items",
           "type": "readonly DocumentTab[]",
           "required": true,
-          "description": ""
+          "description": "The open documents, in tab order."
         },
         {
           "name": "value",
@@ -2455,7 +2455,7 @@
           "type": "(label: string) => string",
           "required": false,
           "default": "defaultCloseLabel",
-          "description": "Accessible name of each close button; receives the tab label."
+          "description": "Accessible name of each close button and the menu's close item; Close and the label by default."
         },
         {
           "name": "onCloseAll",
@@ -2468,7 +2468,7 @@
           "type": "string",
           "required": false,
           "default": "'Close all tabs'",
-          "description": "Label of the Close all tabs item."
+          "description": "Label of the Close all tabs item; Close all tabs by default."
         },
         {
           "name": "contextMenuLabel",
@@ -2481,7 +2481,7 @@
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Classes for the strip."
         }
       ],
       "native": [],

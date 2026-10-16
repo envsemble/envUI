@@ -20,7 +20,6 @@ const unconverted = [
   'app-shell',
   'calendar-heatmap',
   'chips',
-  'document-tabs',
   'markdown',
   'menubar',
   'message',
