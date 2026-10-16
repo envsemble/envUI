@@ -1,5 +1,6 @@
 'use client';
 
+import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { Slider as BaseSlider } from '@base-ui/react/slider';
 import {
   useEffect,
@@ -13,6 +14,7 @@ import {
 import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/setRef.js';
 import { useLocale } from '../internal/EnvUIContext.js';
+import { useDirectionScope } from '../internal/useDirection.js';
 import { FieldFrame } from './internal/FieldFrame.js';
 import { fieldMessageIds } from './internal/useFieldMetadata.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
@@ -99,9 +101,13 @@ export function Slider({
   form,
   inputRef,
   className,
+  ref,
+  onFocus,
   'aria-describedby': describedBy,
   ...props
 }: SliderProps) {
+  // The arrow keys follow the text direction: Base UI reads it from its DirectionProvider.
+  const scope = useDirectionScope(ref);
   const id = useId();
   const providedLocale = useLocale();
   const input = useRef<HTMLInputElement>(null);
@@ -125,57 +131,64 @@ export function Slider({
       .filter(Boolean)
       .join(' ') || undefined;
   return (
-    <BaseSlider.Root
-      // The group, which the label names, is disabled with its range input, so its label and value
-      // read as part of an inactive control, which WCAG exempts from contrast, as they fade with it.
-      aria-disabled={disabled || undefined}
-      {...props}
-      className={classNames('env-slider', className)}
-      value={current}
-      onValueChange={(next) => {
-        if (value === undefined) setUncontrolledValue(next);
-        onValueChange?.(next);
-      }}
-      onValueCommitted={(next) => onValueCommitted?.(next)}
-      locale={locale ?? providedLocale}
-      min={min}
-      max={max}
-      step={step}
-      largeStep={largeStep}
-      disabled={disabled}
-      name={name}
-      form={form}
-    >
-      <FieldFrame
-        id={id}
-        label={
-          <div className="env-slider-heading">
-            <BaseSlider.Label className="env-slider-label">{label}</BaseSlider.Label>
-            {/* The output names the range input it shows, and stays quiet while the value moves. */}
-            <BaseSlider.Value className="env-slider-value">
-              {(formatted, values) => (formatValue ? formatValue(values[0]!) : formatted[0])}
-            </BaseSlider.Value>
-          </div>
-        }
-        description={description}
+    <DirectionProvider direction={scope.direction}>
+      <BaseSlider.Root
+        // The group, which the label names, is disabled with its range input, so its label and value
+        // read as part of an inactive control, which WCAG exempts from contrast, as they fade with it.
+        aria-disabled={disabled || undefined}
+        {...props}
+        ref={scope.ref}
+        onFocus={(event) => {
+          scope.onFocus();
+          onFocus?.(event);
+        }}
+        className={classNames('env-slider', className)}
+        value={current}
+        onValueChange={(next) => {
+          if (value === undefined) setUncontrolledValue(next);
+          onValueChange?.(next);
+        }}
+        onValueCommitted={(next) => onValueCommitted?.(next)}
+        locale={locale ?? providedLocale}
+        min={min}
+        max={max}
+        step={step}
+        largeStep={largeStep}
+        disabled={disabled}
+        name={name}
+        form={form}
       >
-        <BaseSlider.Control className="env-slider-control">
-          <BaseSlider.Track className="env-slider-track">
-            <BaseSlider.Indicator className="env-slider-indicator" />
-            <BaseSlider.Thumb
-              className="env-slider-thumb"
-              inputRef={(node: HTMLInputElement | null) => {
-                input.current = node;
-                setRef(inputRef, node);
-              }}
-              aria-describedby={describedByIds}
-              getAriaValueText={(formatted, number) =>
-                formatValue ? formatValue(number) : formatted
-              }
-            />
-          </BaseSlider.Track>
-        </BaseSlider.Control>
-      </FieldFrame>
-    </BaseSlider.Root>
+        <FieldFrame
+          id={id}
+          label={
+            <div className="env-slider-heading">
+              <BaseSlider.Label className="env-slider-label">{label}</BaseSlider.Label>
+              {/* The output names the range input it shows, and stays quiet while the value moves. */}
+              <BaseSlider.Value className="env-slider-value">
+                {(formatted, values) => (formatValue ? formatValue(values[0]!) : formatted[0])}
+              </BaseSlider.Value>
+            </div>
+          }
+          description={description}
+        >
+          <BaseSlider.Control className="env-slider-control">
+            <BaseSlider.Track className="env-slider-track">
+              <BaseSlider.Indicator className="env-slider-indicator" />
+              <BaseSlider.Thumb
+                className="env-slider-thumb"
+                inputRef={(node: HTMLInputElement | null) => {
+                  input.current = node;
+                  setRef(inputRef, node);
+                }}
+                aria-describedby={describedByIds}
+                getAriaValueText={(formatted, number) =>
+                  formatValue ? formatValue(number) : formatted
+                }
+              />
+            </BaseSlider.Track>
+          </BaseSlider.Control>
+        </FieldFrame>
+      </BaseSlider.Root>
+    </DirectionProvider>
   );
 }

@@ -199,6 +199,7 @@ export function Select({
           side="bottom"
           align="start"
           sideOffset={getPopupOffset}
+          trigger={triggerRef}
           className="env-select-popup"
         >
           <BaseSelect.List className="env-select-list">
