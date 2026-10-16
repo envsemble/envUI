@@ -4,7 +4,7 @@ import {
   Button,
   Checkbox,
   IconButton,
-  Input,
+  TextField,
   Menu,
   MenuItem,
   MenuSeparator,
@@ -78,11 +78,11 @@ function FormRow({ compact }: { compact: boolean }) {
     <Row
       label={
         compact
-          ? 'Input compact · Select density=compact · Button'
-          : 'Input · Select · Button (defaults)'
+          ? 'TextField compact · Select density=compact · Button'
+          : 'TextField · Select · Button (defaults)'
       }
     >
-      <Input label="Name" defaultValue="Quarterly report" compact={compact} />
+      <TextField label="Name" defaultValue="Quarterly report" compact={compact} />
       <Select
         label="Plan"
         options={plans}
@@ -107,7 +107,7 @@ function FormSection() {
       <div className="density-band">
         <Surface density="compact" tone="canvas" padding={0}>
           <Row label="Same props, inside <Surface density=compact>">
-            <Input label="Name" defaultValue="Quarterly report" compact />
+            <TextField label="Name" defaultValue="Quarterly report" compact />
             <Select label="Plan" options={plans} defaultValue="team" density="compact" />
             <Button variant="primary">Save</Button>
             <Button variant="outlined">Cancel</Button>
@@ -467,7 +467,7 @@ function DesktopSection() {
           <Tabs aria-label="Views" items={tabItems('button')} />
           <ReportTable density="standard" />
           <div className="density-row">
-            <Input label="Title" defaultValue="Quarterly report" />
+            <TextField label="Title" defaultValue="Quarterly report" />
             <Button variant="secondary">Rename</Button>
           </div>
         </div>

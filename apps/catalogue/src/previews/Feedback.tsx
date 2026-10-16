@@ -5,7 +5,7 @@ import {
   Button,
   EmptyState,
   IconButton,
-  Input,
+  TextField,
   Radio,
   RadioGroup,
   Select,
@@ -227,7 +227,7 @@ export function DialogsPreview() {
               title="Find a plan"
               placement="top"
             >
-              <Input label="Plan name" name="plan" />
+              <TextField label="Plan name" name="plan" />
             </Dialog>
           </Specimen>
           <Specimen title="Confirmation">
@@ -379,7 +379,7 @@ function FormDialogExamples() {
             }
           >
             <Stack gap={4}>
-              <Input
+              <TextField
                 label="E-mail address"
                 type="email"
                 autoComplete="off"
@@ -446,7 +446,7 @@ function FormDialogExamples() {
               </Button>
             }
           >
-            <Input
+            <TextField
               label="Workspace name"
               hint="Type Northwind to confirm."
               value={confirmation}

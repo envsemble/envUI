@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  Input,
+  TextField,
   Textarea,
   Checkbox,
   Switch,
@@ -38,13 +38,13 @@ function InputExamples() {
   return (
     <>
       <Example
-        title="Input appearance"
+        title="Text field appearance"
         size="collection"
         caption="Focus the plain field to reveal its underline."
       >
         <SpecimenGrid>
           <Specimen title="Outlined">
-            <Input
+            <TextField
               label="Project name"
               name="project"
               value={projectName}
@@ -53,7 +53,7 @@ function InputExamples() {
             />
           </Specimen>
           <Specimen title="Plain">
-            <Input
+            <TextField
               variant="plain"
               label="Project name"
               name="plainProject"
@@ -71,7 +71,7 @@ function InputExamples() {
       >
         <SpecimenGrid>
           <Specimen title="Empty">
-            <Input
+            <TextField
               label="Project name"
               placeholder="Enter a name"
               value={emptyProjectName}
@@ -79,7 +79,7 @@ function InputExamples() {
             />
           </Specimen>
           <Specimen title="Filled">
-            <Input
+            <TextField
               label="Project name"
               value={projectName}
               onChange={(e) => setProjectName(e.target.value)}
@@ -94,7 +94,7 @@ function InputExamples() {
       >
         <SpecimenGrid>
           <Specimen title="Prefix">
-            <Input
+            <TextField
               label="Address"
               name="address"
               prefix="https://example.com/"
@@ -102,10 +102,10 @@ function InputExamples() {
             />
           </Specimen>
           <Specimen title="Suffix">
-            <Input label="Storage" name="storage" type="number" suffix="GB" defaultValue="20" />
+            <TextField label="Storage" name="storage" type="number" suffix="GB" defaultValue="20" />
           </Specimen>
           <Specimen title="Compact with an icon">
-            <Input
+            <TextField
               compact
               label="Price"
               name="price"
@@ -120,7 +120,7 @@ function InputExamples() {
       <Example title="Validation & availability" size="collection">
         <SpecimenGrid>
           <Specimen title="Invalid">
-            <Input
+            <TextField
               label="Project handle"
               value={projectHandle}
               onChange={(e) => setProjectHandle(e.target.value)}
@@ -128,10 +128,10 @@ function InputExamples() {
             />
           </Specimen>
           <Specimen title="Read only" caption="Can still be focused and copied.">
-            <Input label="Project name" value="Workspace default" readOnly />
+            <TextField label="Project name" value="Workspace default" readOnly />
           </Specimen>
           <Specimen title="Disabled" caption="Unavailable and excluded from form submission.">
-            <Input label="Project name" value="Unavailable" disabled />
+            <TextField label="Project name" value="Unavailable" disabled />
           </Specimen>
         </SpecimenGrid>
       </Example>
@@ -245,7 +245,7 @@ function CompactFieldExamples() {
           </div>
         </Specimen>
         <Specimen title="Floating label, icon and end action">
-          <Input
+          <TextField
             compact
             showLabel
             label="Invite address"
@@ -258,7 +258,7 @@ function CompactFieldExamples() {
           />
         </Specimen>
         <Specimen title="Icon and end action">
-          <Input
+          <TextField
             label="Invite address"
             name="invite"
             defaultValue="team@example.com"
@@ -475,7 +475,7 @@ export function SelectPreview() {
           <Specimen title="Outlined, in a form on a pane">
             <Surface padding={4}>
               <Stack gap={4}>
-                <Input label="E-mail address" type="email" />
+                <TextField label="E-mail address" type="email" />
                 <Select
                   variant="outlined"
                   label="Role"

@@ -202,6 +202,6 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Code](../components/code.md)
-- [Text fields](../components/fields.md)
+- [Text fields](../components/text-field.md)
 - [Typography](../foundations/typography.md)
 - [Accessibility](../foundations/accessibility.md)

@@ -29,4 +29,4 @@ TypeScript declarations provide the complete public API.
 
 - [Info chips](../components/chips.md)
 - [Typography](../foundations/typography.md)
-- [Text fields](../components/fields.md)
+- [Text fields](../components/text-field.md)

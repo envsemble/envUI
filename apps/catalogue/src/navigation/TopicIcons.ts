@@ -90,7 +90,7 @@ const referenceIcons: Record<string, typeof Palette> = {
   surface: CropSquare,
   cards: Dashboard,
   buttons: TouchApp,
-  fields: TextFields,
+  'text-field': TextFields,
   checkbox: CheckBox,
   switch: ToggleOn,
   radio: RadioButtonChecked,

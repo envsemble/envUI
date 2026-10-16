@@ -10,7 +10,7 @@ import {
   DisclosureNote,
   GroupedRows,
   IconButton,
-  Input,
+  TextField,
   Link,
   Row,
   Stack,
@@ -446,7 +446,7 @@ function CopyExamples() {
       <SpecimenGrid>
         <Specimen title="Beside a value">
           <div className="docs-field-toolbar">
-            <Input label="Share link" value={shareLink} readOnly />
+            <TextField label="Share link" value={shareLink} readOnly />
             <CopyButton value={shareLink} aria-label="Copy link" onCopy={setCopied} />
           </div>
         </Specimen>

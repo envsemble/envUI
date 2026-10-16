@@ -3,11 +3,11 @@
 ## React usage
 
 ```tsx
-import { Stack, Input, IconButton } from '@envsemble/envui';
+import { Stack, TextField, IconButton } from '@envsemble/envui';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 
 <Stack>
-  <Input label="Project name" hint="Visible labels stay available while typing." />
+  <TextField label="Project name" hint="Visible labels stay available while typing." />
   <IconButton icon={<ChevronRight />} aria-label="Next project" />
 </Stack>;
 ```
@@ -38,7 +38,7 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Text fields](../components/fields.md)
+- [Text fields](../components/text-field.md)
 - [Selects](../components/select.md)
 - [Tabs](../components/tabs.md)
 - [Dialogs](../components/dialogs.md)

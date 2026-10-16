@@ -148,7 +148,7 @@ before(
         h(ui.Button, { variant: 'important', href: '/confirm' }, 'Confirm')),
       h(ui.DirectionLink, { direction: 'previous', href: '/previous-guide' }, 'Earlier guide'),
       h(ui.DirectionLink, { direction: 'next', href: '/next-guide', icon: custom }, 'Following guide'),
-      h(ui.Input, { name: 'title', label: 'Title', hint: 'One line', defaultValue: 'Example' }),
+      h(ui.TextField, { name: 'title', label: 'Title', hint: 'One line', defaultValue: 'Example' }),
       h(ui.ColorPicker, { name: 'accent', label: 'Accent color', defaultValue: 'ABCDEF' }),
       h(ui.Textarea, { name: 'description', label: 'Description', defaultValue: 'Content' }),
       h(ui.Checkbox, { name: 'enabled', label: 'Enabled', defaultChecked: true }),
@@ -237,7 +237,7 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'EmptyState',
     'Skeleton',
     'LoadingState',
-    'Input',
+    'TextField',
     'ColorPicker',
     'Textarea',
     'Checkbox',
@@ -287,7 +287,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     join(consumerDirectory, 'Consumer.tsx'),
     `
     import { createRef } from 'react';
-    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, NavigationItem, DirectionLink, Icon, BrandLogo, Input, ColorPicker, Textarea, Checkbox, Switch, Stack, ActionGroup,
+    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, NavigationItem, DirectionLink, Icon, BrandLogo, TextField, ColorPicker, Textarea, Checkbox, Switch, Stack, ActionGroup,
       RadioGroup, Radio, Select, Combobox, DateTimeField, Calendar, Dialog, DialogClose, Toast, ToastProvider, useToast,
       type ThemeValue, type ButtonProps, type ButtonGroupProps, type DirectionLinkProps, type SelectOption, type ComboboxItem, type ToastManager } from '@envsemble/envui';
     import { Home } from '@envsemble/envui/icons/Home';
@@ -308,14 +308,14 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       <Button {...buttonProps}>Create</Button><IconButton aria-label="Open" icon={<Home filled />} />
       <ConfirmButton variant="quiet" icon={<Home />} aria-label="Remove" confirmLabel="Remove?" onConfirm={() => undefined} />
       <ButtonGroup {...buttonGroupProps}><Button href="/">Home</Button><IconButton aria-label="Options" icon={<Home />} /><Button variant="important">Confirm</Button></ButtonGroup>
-      <Stack gap={3} ref={createRef<HTMLDivElement>()}><Input label="First" /><Input label="Second" /></Stack>
+      <Stack gap={3} ref={createRef<HTMLDivElement>()}><TextField label="First" /><TextField label="Second" /></Stack>
       <ActionGroup stacked ref={createRef<HTMLDivElement>()}><Button>Save</Button><Button variant="secondary">Cancel</Button></ActionGroup>
       <NavigationItem href="/" ref={createRef<HTMLAnchorElement>()}>Home</NavigationItem>
       <NavigationItem ref={createRef<HTMLButtonElement>()}>Change view</NavigationItem>
       <DirectionLink {...directionLinkProps} target="_blank" rel="noopener" />
       <DirectionLink direction="previous" href="/previous">Previous guide</DirectionLink>
       <Icon label="Custom" viewBox="0 0 1 1"><path d="M0 0L1 1" /></Icon><BrandLogo /><BarrelHome />
-      <Input name="title" label="Title" required ref={createRef<HTMLInputElement>()} />
+      <TextField name="title" label="Title" required ref={createRef<HTMLInputElement>()} />
       <ColorPicker label="Accent color" name="accent" defaultValue="#abcdef" ref={createRef<HTMLInputElement>()} onValueChange={value => { const typed: string = value; void typed; }} />
       <Textarea label="Notes" ref={createRef<HTMLTextAreaElement>()} />
       <Checkbox label="Enabled" checked="mixed" onCheckedChange={value => { const typed: boolean = value; void typed; }} />

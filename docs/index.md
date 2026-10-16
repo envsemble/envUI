@@ -36,7 +36,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 ## Forms & selection
 
 - [Color picker](components/color-picker.md) — A color area, hue slider and HEX field for opaque colors, and a color swatch for the button that opens it.
-- [Text fields](components/fields.md) — Single-line inputs, search fields and multiline textareas share labels, guidance and states.
+- [Text fields](components/text-field.md) — Single-line inputs, search fields and multiline textareas share labels, guidance and states.
 - [Composer](components/composer.md) — The message field of a conversation, with a send button that stops a running reply.
 - [Checkboxes](components/checkbox.md) — Independent choices; partial selection represents a group.
 - [Switches](components/switch.md) — Use for an on/off setting that applies immediately.

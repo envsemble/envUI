@@ -11,7 +11,7 @@ import {
   Tabs,
   Link,
   DirectionLink,
-  Input,
+  TextField,
   Select,
   RadioGroup,
   Radio,
@@ -116,8 +116,8 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
         <DirectionLink direction="next" href="#" data-testid={`${theme}-color-direction`}>
           Next page
         </DirectionLink>
-        <Input label={`${theme} isolated field`} data-testid={`${theme}-color-field`} />
-        <Input
+        <TextField label={`${theme} isolated field`} data-testid={`${theme}-color-field`} />
+        <TextField
           label={`${theme} isolated error`}
           error="Validation error"
           data-testid={`${theme}-color-error-field`}

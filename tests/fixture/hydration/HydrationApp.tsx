@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   Theme,
-  Input,
+  TextField,
   ColorPicker,
   Checkbox,
   Select,
@@ -90,12 +90,12 @@ export function HydrationApp() {
         >
           Hydrated title
         </TitleBar>
-        <Input
+        <TextField
           label="Hydrated input"
           value={name}
           onChange={(event) => setName(event.target.value)}
         />
-        <Input label="Hydrated amount" prefix="€" suffix="per month" defaultValue="12" />
+        <TextField label="Hydrated amount" prefix="€" suffix="per month" defaultValue="12" />
         <Checkbox label="Hydrated choice" checked={checked} onCheckedChange={setChecked} />
         <Slider
           label="Hydrated level"
@@ -248,7 +248,7 @@ export function HydrationApp() {
             {(panel) => (
               <>
                 <PanelDockHeader title={panel.title} headingLevel={3} />
-                <Input label={`${panel.title} draft`} />
+                <TextField label={`${panel.title} draft`} />
               </>
             )}
           </PanelDock>

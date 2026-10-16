@@ -344,35 +344,6 @@
       }
     }
   },
-  "components/fields/preview": {
-    "dark": {
-      "target-size": {
-        "States & validation :: button.env-textarea-resize-edge": 3,
-        "Textarea appearance & sizing :: button.env-textarea-resize-edge": 1
-      }
-    },
-    "light": {
-      "target-size": {
-        "States & validation :: button.env-textarea-resize-edge": 3,
-        "Textarea appearance & sizing :: button.env-textarea-resize-edge": 1
-      }
-    }
-  },
-  "components/fields/usage": {
-    "dark": {
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 79
-      },
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
-      }
-    }
-  },
   "components/file-dropzone/preview": {
     "dark": {
       "label-content-name-mismatch": {
@@ -785,6 +756,35 @@
     "light": {
       "color-contrast": {
         "article :: div.env-code-block span": 22
+      }
+    }
+  },
+  "components/text-field/preview": {
+    "dark": {
+      "target-size": {
+        "States & validation :: button.env-textarea-resize-edge": 3,
+        "Textarea appearance & sizing :: button.env-textarea-resize-edge": 1
+      }
+    },
+    "light": {
+      "target-size": {
+        "States & validation :: button.env-textarea-resize-edge": 3,
+        "Textarea appearance & sizing :: button.env-textarea-resize-edge": 1
+      }
+    }
+  },
+  "components/text-field/usage": {
+    "dark": {
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 79
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
       }
     }
   },

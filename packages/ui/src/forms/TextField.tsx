@@ -12,13 +12,13 @@ import {
 } from './internal/FieldFrame.js';
 
 // The prefix prop replaces the native RDFa attribute of the same name.
-export interface InputProps
+export interface TextFieldProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix'>,
     FieldProps,
     TextFieldAppearanceProps,
     TextFieldDecorationProps,
     TextFieldAffixProps {}
-export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
+export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function TextField(
   {
     label,
     hint,

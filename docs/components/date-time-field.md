@@ -39,7 +39,7 @@ import { DateTimeField } from '@envsemble/envui';
 | formatOptions                     | Intl.DateTimeFormat options for the shown value; the medium date style, and the short time style with withTime       |
 | aria-label / aria-labelledby      | Name a field without a label; aria-labelledby also takes the place of a label                                        |
 | weekStart                         | The calendar's first day of the week, 0 for Sunday to 6 for Saturday; the locale's by default                        |
-| label / hint / error              | Floating label, guidance and validation like Input; hint and error are linked to the field                           |
+| label / hint / error              | Floating label, guidance and validation like TextField; hint and error are linked to the field                       |
 | density / showLabel               | standard (default) or compact, 2 rem; the label shows inside the field unless the field is compact                   |
 | placeholder                       | Shown while the field is empty and its label floats or is hidden, or the field has no label                          |
 | clearable                         | A clear button in the field and in the calendar removes the value                                                    |
@@ -85,7 +85,7 @@ import { Calendar } from '@envsemble/envui';
 - Days are round marks, each named by its full date. Today has a ring and the chosen day a solid fill, blue with white text in the light theme and light blue with dark text in the dark theme, with their own color roles and at least 3:1 against the surface; unavailable days are faded. The calendar keeps six weeks, so its size stays the same from month to month, and empty cells before and after the month keep each day under its weekday, also for assistive technology.
 - The calendar is Gregorian. Its month and weekday names and day numbers come from the locale, also from one with a calendar of its own, such as Persian, which then names the Gregorian months.
 - The calendar is as wide as seven days, 2.5 rem each and 2.25 rem in a compact field's popup; on touch screens days are 2.75 rem, and the calendar fits a phone's width.
-- The field is the shared text field, with Input's label, guidance, invalid and disabled states, compact height and touch sizes. Read-only fields show the value and cannot open the calendar; like read-only inputs they are not validated, so an empty required one never keeps its form from submitting.
+- The field is the shared text field, with TextField's label, guidance, invalid and disabled states, compact height and touch sizes. Read-only fields show the value and cannot open the calendar; like read-only inputs they are not validated, so an empty required one never keeps its form from submitting.
 - Native forms submit the value under name, and a form reset restores an uncontrolled field's defaultValue. required asks for a value, and an empty field takes focus when the form is submitted. Validation stays with the application.
 - Use Calendar on its own to choose a day within a page or panel, such as a planning view; it has the same keyboard and appearance. Name it with aria-label or aria-labelledby: it is then a group around the month's grid, so calendars showing the same month stay apart.
 - Rendered on a server, a field or calendar without locale writes British English, and a calendar without a value leaves its days empty and its month buttons available, as only the reader's clock knows today and so the month that min and max limit. Once the page hydrates, they show the reader's language, week and today, without a mismatch error. Pass locale, such as the language the server chose for the request, and weekStart for server output in the reader's language.
@@ -94,7 +94,7 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Text fields](../components/fields.md)
+- [Text fields](../components/text-field.md)
 - [Popovers](../components/popover.md)
 - [Comboboxes](../components/combobox.md)
 - [Heatmap](../components/heatmap.md)

@@ -9,7 +9,7 @@ import {
   DiffCount,
   HoverCard,
   IconButton,
-  Input,
+  TextField,
   Kbd,
   Link,
   NavigationItem,
@@ -291,7 +291,7 @@ export function PopoverPreview() {
                 }}
               >
                 <Stack gap={3}>
-                  <Input label="Name" name="name" defaultValue={name} />
+                  <TextField label="Name" name="name" defaultValue={name} />
                   <ActionGroup align="end">
                     <Button variant="secondary" onClick={close}>
                       Cancel

@@ -3,7 +3,7 @@ import {
   Button,
   Dialog,
   HoverCard,
-  Input,
+  TextField,
   Link,
   Notice,
   Popover,
@@ -61,7 +61,7 @@ export function PopoverFixture({ theme }: { theme: ThemeValue }) {
         >
           {(close) => (
             <Stack gap={3}>
-              <Input label="Name" name="name" defaultValue="Roadmap.md" />
+              <TextField label="Name" name="name" defaultValue="Roadmap.md" />
               <Button
                 onClick={() => {
                   setSaved('Renamed');
@@ -95,7 +95,7 @@ export function DialogVariantsFixture() {
           placement="top"
           trigger={<Button variant="secondary">Open top dialog</Button>}
         >
-          <Input label="Search" name="search" />
+          <TextField label="Search" name="search" />
         </Dialog>
         <Dialog
           title="Report details"

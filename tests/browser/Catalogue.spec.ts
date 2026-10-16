@@ -406,7 +406,7 @@ test('overview centers its banner and switches between components and setup with
     .locator('#documentation')
     .getByRole('link', { name: 'Text fields', exact: true })
     .click();
-  await expect(page).toHaveURL(/#\/components\/fields\/usage$/);
+  await expect(page).toHaveURL(/#\/components\/text-field\/usage$/);
   await page.goto(`${offline}#/overview/get-started`);
   await expect(page.getByRole('heading', { name: 'Install the private package' })).toBeVisible();
   const overviewNext = page

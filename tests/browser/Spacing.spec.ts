@@ -8,7 +8,7 @@ import {
 const components = [
   'layout',
   'buttons',
-  'fields',
+  'text-field',
   'checkbox',
   'switch',
   'radio',

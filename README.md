@@ -71,13 +71,13 @@ export function App() {
 Native form behavior stays familiar. Render this inside your application’s theme:
 
 ```tsx
-import { ActionGroup, Button, Input, Stack } from '@envsemble/envui';
+import { ActionGroup, Button, Stack, TextField } from '@envsemble/envui';
 
 export function ProjectForm() {
   return (
     <form>
       <Stack gap={4}>
-        <Input name="projectName" label="Project name" required />
+        <TextField name="projectName" label="Project name" required />
         <ActionGroup>
           <Button type="submit">Create project</Button>
           <Button type="reset" variant="secondary">

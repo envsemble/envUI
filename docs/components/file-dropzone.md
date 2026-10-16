@@ -93,6 +93,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Text fields](../components/fields.md)
+- [Text fields](../components/text-field.md)
 - [Buttons](../components/buttons.md)
 - [Loading](../components/loading.md)

@@ -7,7 +7,7 @@ import {
   InfoChip,
   DisclosureNote,
   Stack,
-  Input,
+  TextField,
   NavigationItem,
   IconButton,
   ActionCard,
@@ -41,7 +41,7 @@ export function LayoutFixture() {
             </DisclosureNote>
           </Card>
           <Stack data-testid="layout-stack" gap={3} style={{ maxInlineSize: '20rem' }}>
-            <Input label={`Layout field ${theme}`} />
+            <TextField label={`Layout field ${theme}`} />
             <Button>Fit action</Button>
             <NavigationItem selected>Destination</NavigationItem>
             <InfoChip>Metadata</InfoChip>

@@ -1,18 +1,18 @@
 # Text fields
 
-## Input
+## TextField
 
 ```tsx
-import { Input } from '@envsemble/envui';
+import { TextField } from '@envsemble/envui';
 
-<Input label="Project name" name="project" value={name}
+<TextField label="Project name" name="project" value={name}
   onChange={event => setName(event.target.value)}
   hint="A name your team will recognize." required />
 
-<Input variant="plain" label="Title" name="title" />
+<TextField variant="plain" label="Title" name="title" />
 
-<Input label="Address" name="slug" prefix="https://example.com/" />
-<Input label="Storage" name="storage" type="number" suffix="GB" />
+<TextField label="Address" name="slug" prefix="https://example.com/" />
+<TextField label="Storage" name="storage" type="number" suffix="GB" />
 ```
 
 ### Props & contracts
@@ -81,7 +81,7 @@ import { Textarea } from '@envsemble/envui';
 - A compact field shows its placeholder, or with showLabel a label that rests inside and floats into the outline without adding height, so the field stays aligned with buttons.
 - Use a text IconButton as endAction. Inside the field it takes the field's quiet icon color and shows a state layer on hover and press.
 - SearchField shows a search icon and, while it has a query, a clear button inside the field. `variant="quiet"` suits a search at the top of a sidebar or list: no outline until the pointer or focus gives it a soft fill. <kbd>Esc</kbd> also clears the query and keeps an enclosing dialog open.
-- Use Input for one line and Textarea for multiline content. Both share the same corner radius. Fixed sizing scrolls and resizes from the full bottom edge; content sizing grows and shrinks automatically. Set rows for the initial or minimum height.
+- Use TextField for one line and Textarea for multiline content. Both share the same corner radius. Fixed sizing scrolls and resizes from the full bottom edge; content sizing grows and shrinks automatically. Set rows for the initial or minimum height.
 - The resize edge follows the field’s border color on hover, focus and error, and uses the pressed shade while dragging. Focus the edge and use <kbd>↑</kbd> and <kbd>↓</kbd> to change height by one line, or <kbd>Shift</kbd>+<kbd>↑</kbd> and <kbd>Shift</kbd>+<kbd>↓</kbd> for five lines. <kbd>Home</kbd> restores the minimum height. Disabled fields cannot resize.
 - Outlined fields turn their single thin border blue on hover and focus in both themes, without changing the background or adding an outline. Hover and pressed colors follow the shared HSL rule, including while focused. Invalid borders and plain-field error underlines stay red and change shade on hover or press.
 - Labels move above the text when focused or filled. Plain fields have no border or fill at rest and show an underline on hover or focus; invalid plain fields use a red underline. Both variants retain linked recovery text.

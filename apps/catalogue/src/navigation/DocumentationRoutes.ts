@@ -63,7 +63,8 @@ export function normalizeRoute(route: string): string {
     .replace(/^components\/notes(?=\/|$)/, 'components/disclosures')
     .replace(/^components\/icon-buttons(?=\/|$)/, 'components/buttons')
     .replace(/^components\/markdown-editor(?=\/|$)/, 'components/markdown')
-    .replace(/^components\/(input|textarea)(?=\/|$)/, 'components/fields')
+    .replace(/^components\/(input|textarea)(?=\/|$)/, 'components/text-field')
+    .replace(/^components\/fields(?=\/|$)/, 'components/text-field')
     .replace(/^foundations\/responsive(?=\/|$)/, 'foundations/spacing')
     .replace(/^foundations\/motion(?=\/|$)/, 'foundations/accessibility');
   const page = findReferencePage(path);

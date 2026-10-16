@@ -9,7 +9,7 @@ import {
   Dialog,
   EmptyState,
   GroupedRows,
-  Input,
+  TextField,
   Row,
   LinkProvider,
   LoadingBar,
@@ -138,7 +138,7 @@ export function AdoptionFixture() {
           </div>
           <Skeleton width="4rem" />
           <div className="fixture-toolbar" data-testid="compact-label-toolbar">
-            <Input compact showLabel label="Project filter" data-testid="compact-label" />
+            <TextField compact showLabel label="Project filter" data-testid="compact-label" />
             <Button>Apply</Button>
           </div>
           <Button

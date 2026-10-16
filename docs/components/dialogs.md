@@ -50,6 +50,6 @@ TypeScript declarations provide the complete public API.
 
 - [Toasts](../components/toasts.md)
 - [Command palette](../components/command-palette.md)
-- [Text fields](../components/fields.md)
+- [Text fields](../components/text-field.md)
 - [Stacks & action groups](../components/layout.md)
 - [Accessibility](../foundations/accessibility.md)

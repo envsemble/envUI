@@ -64,7 +64,7 @@
     "roles": ["button"],
     "leafControls": {
       "internal/ActionElement.tsx": ["a", "button"],
-      "forms/Input.tsx": ["input"],
+      "forms/TextField.tsx": ["input"],
       "forms/internal/TextareaControl.tsx": ["textarea"],
       "forms/internal/TextareaResizeEdge.tsx": ["button"],
       "forms/Checkbox.tsx": ["input"],
@@ -146,7 +146,7 @@
       "Field": {
         "modules": [
           "forms/internal/FieldFrame.tsx",
-          "forms/Input.tsx",
+          "forms/TextField.tsx",
           "forms/Textarea.tsx",
           "forms/internal/TextareaControl.tsx",
           "forms/internal/TextareaResizeEdge.tsx"
@@ -158,7 +158,7 @@
           "env-field-hint",
           "env-field-error"
         ],
-        "styles": ["FormFields.css"],
+        "styles": ["TextField.css"],
         "slots": ["env-text-input", "env-text-field-start", "env-text-field-end"]
       },
       "Select": { "classes": ["env-dropdown"] },

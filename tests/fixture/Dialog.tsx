@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Theme, Dialog, Button, Input, Select } from '@envsemble/envui';
+import { Theme, Dialog, Button, TextField, Select } from '@envsemble/envui';
 import { dialogOptions } from './SelectOptions.js';
 
 export function DialogFixture() {
@@ -18,7 +18,7 @@ export function DialogFixture() {
         trigger={<Button>Open dark dialog</Button>}
         actions={<Button onClick={() => setOpen(false)}>Save dialog</Button>}
       >
-        <Input ref={firstField} label="Dialog first field" defaultValue="Dialog value" />
+        <TextField ref={firstField} label="Dialog first field" defaultValue="Dialog value" />
         <Select
           variant="outlined"
           label="Dialog choice"

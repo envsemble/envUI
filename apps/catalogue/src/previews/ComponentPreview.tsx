@@ -64,7 +64,7 @@ export function ComponentPreview({ id }: { id: string }) {
       return <ButtonsPreview />;
     case 'segmented-control':
       return <SegmentedControlPreview />;
-    case 'fields':
+    case 'text-field':
       return <TextFieldsPreview />;
     case 'checkbox':
       return <CheckboxPreview />;

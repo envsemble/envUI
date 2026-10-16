@@ -18,7 +18,7 @@ import { CalendarClock } from '../icons/CalendarClock.js';
 import { CalendarMonth } from '../icons/CalendarMonth.js';
 import { Close } from '../icons/Close.js';
 import { Calendar } from './Calendar.js';
-import { Input } from './Input.js';
+import { TextField } from './TextField.js';
 import { FieldFrame, type FieldProps, type FieldWellProps } from './internal/FieldFrame.js';
 import {
   clampDay,
@@ -469,7 +469,7 @@ export function DateTimeField({
                   nextMonthLabel={nextMonthLabel}
                 />
                 {withTime && (
-                  <Input
+                  <TextField
                     type="time"
                     compact
                     showLabel
