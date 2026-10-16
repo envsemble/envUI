@@ -17,7 +17,6 @@ import {
  * page as docs/component-pages.md describes, then remove it here; the list only shrinks.
  */
 const unconverted = [
-  'animated-number',
   'app-shell',
   'avatar',
   'calendar-heatmap',

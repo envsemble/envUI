@@ -138,14 +138,14 @@
           "name": "value",
           "type": "number",
           "required": true,
-          "description": ""
+          "description": "The number to show; when it changes, the new value rolls in, up as it grows, down as it shrinks."
         },
         {
           "name": "format",
           "type": "(value: number) => string",
           "required": false,
           "default": "formatNumber",
-          "description": "Text for the value; the locale's number format by default."
+          "description": "Writes the value as text, such as a currency; the browser locale's number format by default."
         }
       ],
       "native": [

@@ -4,8 +4,9 @@ import { useState, type ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
 
 export interface AnimatedNumberProps extends Omit<ComponentPropsWithRef<'span'>, 'children'> {
+  /** The number to show; when it changes, the new value rolls in, up as it grows, down as it shrinks. */
   value: number;
-  /** Text for the value; the locale's number format by default. */
+  /** Writes the value as text, such as a currency; the browser locale's number format by default. */
   format?: (value: number) => string;
 }
 

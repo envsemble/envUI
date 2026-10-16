@@ -9,7 +9,7 @@ import {
 import { NavListPreview, TabsPreview, PagerPreview, PaginationPreview } from './Navigation';
 import { ComboboxPreview, DatePickerPreview } from './Pickers';
 import { SurfacePreview, LayoutPreview, ListPreview, CardsPreview } from './Layout';
-import { AnimatedNumberPreview, ChipsPreview, RatingPreview, RelativeTimePreview } from './Content';
+import { ChipsPreview, RatingPreview, RelativeTimePreview } from './Content';
 import { CodePreview } from './CodeContent';
 import { MarkdownPreview } from './MarkdownContent';
 import { lazy, Suspense } from 'react';
@@ -78,8 +78,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <ChipsPreview />;
     case 'pagination':
       return <PaginationPreview />;
-    case 'animated-number':
-      return <AnimatedNumberPreview />;
     case 'rating':
       return <RatingPreview />;
     case 'relative-time':

@@ -1,17 +1,5 @@
 import { useState } from 'react';
-import {
-  Text,
-  InfoChip,
-  ActionGroup,
-  AnimatedNumber,
-  IconButton,
-  Button,
-  Rating,
-  RelativeTime,
-  Stack,
-} from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons/Add';
-import { Remove } from '@envsemble/envui/icons/Remove';
+import { Text, InfoChip, ActionGroup, Button, Rating, RelativeTime, Stack } from '@envsemble/envui';
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
 
@@ -24,35 +12,6 @@ export function ChipsPreview() {
           <InfoChip>Read only</InfoChip>
           <InfoChip>3 members</InfoChip>
         </ActionGroup>
-      </Example>
-    </Preview>
-  );
-}
-
-export function AnimatedNumberPreview() {
-  const [seats, setSeats] = useState(3);
-  return (
-    <Preview>
-      <Example
-        title="A changing count"
-        caption="The number rolls up as it grows and down as it shrinks; with reduced motion it fades."
-      >
-        <ActionGroup>
-          <IconButton
-            icon={<Remove />}
-            aria-label="One seat fewer"
-            disabled={seats === 0}
-            onClick={() => setSeats((count) => count - 1)}
-          />
-          <IconButton
-            icon={<Add />}
-            aria-label="One seat more"
-            onClick={() => setSeats((count) => count + 1)}
-          />
-        </ActionGroup>
-        <Text>
-          <AnimatedNumber value={seats} /> {seats === 1 ? 'seat' : 'seats'} left after this change
-        </Text>
       </Example>
     </Preview>
   );
