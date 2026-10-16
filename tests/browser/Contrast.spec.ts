@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 
 import { test, expect, type Page } from '@playwright/test';
 import { fixtureUrl } from './Servers';
@@ -18,8 +18,11 @@ import {
   declaredFile,
   formatSnapshot,
   minimumOf,
+  parseSnapshot,
   readBaseSnapshot,
+  readSnapshot,
   type DeclaredPairs,
+  type Git,
 } from '../contrast/Snapshot';
 import { themes, type ContrastTheme } from '../contrast/Themes';
 import {
@@ -230,23 +233,25 @@ test.describe('contrast', { tag: '@contrast' }, () => {
       console.log(note);
       testInfo.annotations.push({ type: 'note', description: note });
     }
-    const snapshot = checkSnapshot({
-      pairs,
-      dropped,
-      renamed,
-      relaxed,
-      themes,
-      pairName,
-      recorded: existsSync(declaredFile)
-        ? (JSON.parse(readFileSync(declaredFile, 'utf8')) as DeclaredPairs)
-        : undefined,
-      update: ['all', 'changed'].includes(testInfo.config.updateSnapshots),
-      ci: Boolean(process.env.CI),
-      base,
-    });
-    problems.push(...snapshot.problems);
-    if (problems.length === 0 && snapshot.write)
-      writeFileSync(declaredFile, formatSnapshot(snapshot.write));
+    const working = readSnapshot();
+    if (working.problem !== undefined) problems.push(working.problem);
+    else {
+      const snapshot = checkSnapshot({
+        pairs,
+        dropped,
+        renamed,
+        relaxed,
+        themes,
+        pairName,
+        recorded: working.recorded,
+        update: ['all', 'changed'].includes(testInfo.config.updateSnapshots),
+        ci: Boolean(process.env.CI),
+        base,
+      });
+      problems.push(...snapshot.problems);
+      if (problems.length === 0 && snapshot.write)
+        writeFileSync(declaredFile, formatSnapshot(snapshot.write));
+    }
     const themeNames = new Set(themes.map((theme) => theme.name));
     const listed = new Set<string>();
     for (const exception of exceptions) {
@@ -589,6 +594,22 @@ test.describe('contrast', { tag: '@contrast' }, () => {
     expect(check([lowered], [], edited)).toEqual([
       expect.stringContaining('is held to less than the base snapshot records'),
     ]);
+    // Nor does deleting the snapshot and recording it afresh, which compares with the base too.
+    const afresh = (relaxed: Relaxation[]) =>
+      checkSnapshot({
+        ...common,
+        pairs: [lowered],
+        relaxed,
+        recorded: undefined,
+        update: true,
+        base,
+      });
+    expect(afresh([])).toEqual({
+      problems: [expect.stringContaining('is held to less than the base snapshot records')],
+      write: undefined,
+    });
+    expect(afresh([relaxation]).problems).toEqual([]);
+    expect(afresh([relaxation]).write?.pairs).toEqual(record([lowered], []).pairs);
     // A relaxation new since the base accepts it, recorded on the branch or not.
     const relaxedOnBranch = record([lowered], [relaxation], onBase);
     expect(check([lowered], [relaxation], relaxedOnBranch)).toEqual([]);
@@ -622,6 +643,107 @@ test.describe('contrast', { tag: '@contrast' }, () => {
     expect(check([a], [], record([a], []))).toEqual([]);
     // Tightened back on the branch, a spent relaxation may stay as history.
     expect(check([a], [relaxation], record([a], [relaxation], relaxedOnBranch))).toEqual([]);
+  });
+
+  test('the base is the one asked for, or the nearest base branch with the snapshot', () => {
+    const snapshot = JSON.stringify({ pairs: {}, dropped: [], renamed: [], relaxed: [] });
+    /** A clone where each command answers as listed, and any other fails as git would. */
+    const clone =
+      (answers: Record<string, string>): Git =>
+      (...args) => {
+        const answer = answers[args.join(' ')];
+        if (answer === undefined) throw new Error(`git ${args.join(' ')} failed`);
+        return answer;
+      };
+    const show = (commit: string) => `show ${commit}:${declaredFile}`;
+    const basic = {
+      'symbolic-ref --quiet --short HEAD': 'topic',
+      'merge-base HEAD origin/dev': 'dev00000old',
+      'rev-list --count dev00000old..HEAD': '40',
+      'merge-base HEAD origin/envui-1.0': 'one00000new',
+      'rev-list --count one00000new..HEAD': '2',
+      [show('one00000new')]: snapshot,
+      // The branch's own remote copy has the snapshot, but holds the branch's edits.
+      'rev-parse --abbrev-ref --symbolic-full-name @{upstream}': 'origin/topic',
+      'merge-base HEAD origin/topic': 'topic000own',
+      'rev-list --count topic000own..HEAD': '0',
+      [show('topic000own')]: snapshot,
+    };
+
+    // The merge-base with origin/dev predates the snapshot, so the one with origin/envui-1.0 is
+    // used, and the note says so.
+    const fallback = readBaseSnapshot({ requested: '', git: clone(basic) });
+    expect(fallback.problem).toBeUndefined();
+    expect(fallback.base?.label).toContain('one00000, the merge-base with origin/envui-1.0');
+    expect(fallback.note).toContain('the merge-base with origin/dev (dev00000)');
+    expect(fallback.note).toContain('ENVUI_CONTRAST_BASE');
+
+    // Where several have it, the nearest; an upstream that isn't the branch's own copy counts.
+    const nearest = readBaseSnapshot({
+      requested: '',
+      git: clone({
+        ...basic,
+        [show('dev00000old')]: snapshot,
+        'rev-parse --abbrev-ref --symbolic-full-name @{upstream}': 'origin/feature',
+        'merge-base HEAD origin/feature': 'feat0000mid',
+        'rev-list --count feat0000mid..HEAD': '1',
+        [show('feat0000mid')]: snapshot,
+      }),
+    });
+    expect(nearest.base?.label).toContain('the merge-base with origin/feature');
+
+    // Without any, the gate compares with the working tree's snapshot alone, and the note says how
+    // to compare with a base.
+    const none = readBaseSnapshot({ requested: '', git: clone({}) });
+    expect(none.base).toBeUndefined();
+    expect(none.problem).toBeUndefined();
+    expect(none.note).toMatch(/No merge-base with .* Set ENVUI_CONTRAST_BASE/);
+    const predating = readBaseSnapshot({
+      requested: '',
+      git: clone({ 'merge-base HEAD origin/dev': 'dev00000old' }),
+    });
+    expect(predating.base).toBeUndefined();
+    expect(predating.note).toMatch(/doesn't exist at the merge-base with origin\/dev \(dev00000\)/);
+
+    // A base that was asked for is used, and fails when git can't find it or it lacks the file.
+    const asked = (git: Git) => readBaseSnapshot({ requested: 'v1', git });
+    const v1 = { 'rev-parse --verify v1^{commit}': 'v1000000abc' };
+    expect(asked(clone({ ...v1, [show('v1000000abc')]: snapshot })).base?.label).toContain(
+      'at v1 (ENVUI_CONTRAST_BASE)',
+    );
+    expect(asked(clone({})).problem).toContain("which git can't find");
+    expect(asked(clone(v1))).toEqual({ problem: expect.stringContaining("doesn't exist") });
+  });
+
+  test('a snapshot from before dropped, renamed and relaxed were recorded still reads', () => {
+    const a: ContrastPair = { fg: '--a', bg: ['--b'], kind: 'text' };
+    const common = { dropped: [], renamed: [], relaxed: [], themes, pairName, ci: false };
+    const pairsOnly = { pairs: { '--a on --b': { kind: 'text', minimum: { standard: 4.5 } } } };
+    const older = parseSnapshot(JSON.stringify(pairsOnly), 'an older snapshot');
+    expect(older).toEqual({ recorded: { ...pairsOnly, dropped: [], renamed: [], relaxed: [] } });
+    // Compared as the base, it holds its pairs to what it recorded.
+    const weaker = { ...a, kind: 'non-text' as const };
+    const recorded = checkSnapshot({
+      ...common,
+      pairs: [weaker],
+      recorded: undefined,
+      update: true,
+    }).write!;
+    expect(
+      checkSnapshot({
+        ...common,
+        pairs: [weaker],
+        recorded,
+        update: false,
+        base: { label: 'an older snapshot', recorded: older.recorded! },
+      }).problems,
+    ).toEqual([expect.stringContaining('is held to less than an older snapshot records')]);
+    // What isn't a snapshot at all says so, rather than failing to iterate.
+    expect(parseSnapshot('[]', 'x').problem).toContain("isn't a snapshot the contrast gate reads");
+    expect(parseSnapshot('{"pairs": {}, "relaxed": {}}', 'x').problem).toContain(
+      "relaxed that isn't a list",
+    );
+    expect(parseSnapshot('{', 'x').problem).toContain("isn't valid JSON");
   });
 
   // Playwright requires the fixtures object as the first parameter, even when no fixture is used.
