@@ -48,12 +48,14 @@ export interface DatePickerProps
       'value' | 'defaultValue' | 'onChange' | 'children' | 'name' | 'type'
     >,
     FieldProps {
+  /** The field's button. */
   ref?: Ref<HTMLButtonElement>;
   /**
    * The value: a day as YYYY-MM-DD, or with withTime a local date and time as YYYY-MM-DDTHH:mm.
    * null, or an empty string, for none.
    */
   value?: string | null;
+  /** The value an uncontrolled field starts with, and that a form reset restores; none by default. */
   defaultValue?: string | null;
   /** Receives the new value, or null once the field is cleared. */
   onValueChange?: (value: string | null) => void;
@@ -77,7 +79,9 @@ export interface DatePickerProps
    * and, with withTime, the short time style, in the Gregorian calendar unless they name another.
    */
   formatOptions?: Intl.DateTimeFormatOptions;
+  /** The name the value is submitted under with a form, as YYYY-MM-DD or YYYY-MM-DDTHH:mm. */
   name?: string;
+  /** A value is needed: an empty field keeps its form from submitting and takes focus. */
   required?: boolean;
   /** The value can be read and focused but not changed. */
   readOnly?: boolean;
@@ -92,8 +96,11 @@ export interface DatePickerProps
   showLabel?: boolean;
   /** A clear button in the field and in the calendar removes the value. */
   clearable?: boolean;
+  /** Whether the calendar is open; with `onOpenChange` it controls it. */
   open?: boolean;
+  /** Whether an uncontrolled calendar starts open; closed by default. */
   defaultOpen?: boolean;
+  /** Called with the new state when the calendar opens or closes. */
   onOpenChange?: (open: boolean) => void;
   /** Accessible name of the field's clear button and text of the calendar's; Clear by default. */
   clearLabel?: string;
@@ -105,7 +112,9 @@ export interface DatePickerProps
   doneLabel?: string;
   /** With withTime, the label of the time field; Time by default. */
   timeLabel?: string;
+  /** Accessible name of the calendar's previous month button; Previous month by default. */
   previousMonthLabel?: string;
+  /** Accessible name of the calendar's next month button; Next month by default. */
   nextMonthLabel?: string;
 }
 

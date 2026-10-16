@@ -795,7 +795,7 @@
           "type": "string | null",
           "required": false,
           "default": "null",
-          "description": ""
+          "description": "The day an uncontrolled calendar starts with; none by default, which shows today's month."
         },
         {
           "name": "onValueChange",
@@ -1957,7 +1957,7 @@
           "name": "ref",
           "type": "Ref<HTMLButtonElement>",
           "required": false,
-          "description": ""
+          "description": "The field's button."
         },
         {
           "name": "value",
@@ -1970,7 +1970,7 @@
           "type": "string | null",
           "required": false,
           "default": "null",
-          "description": ""
+          "description": "The value an uncontrolled field starts with, and that a form reset restores; none by default."
         },
         {
           "name": "onValueChange",
@@ -2026,14 +2026,14 @@
           "name": "name",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The name the value is submitted under with a form, as YYYY-MM-DD or YYYY-MM-DDTHH:mm."
         },
         {
           "name": "required",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "A value is needed: an empty field keeps its form from submitting and takes focus."
         },
         {
           "name": "readOnly",
@@ -2072,20 +2072,20 @@
           "name": "open",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "Whether the calendar is open; with `onOpenChange` it controls it."
         },
         {
           "name": "defaultOpen",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Whether an uncontrolled calendar starts open; closed by default."
         },
         {
           "name": "onOpenChange",
           "type": "(open: boolean) => void",
           "required": false,
-          "description": ""
+          "description": "Called with the new state when the calendar opens or closes."
         },
         {
           "name": "clearLabel",
@@ -2126,13 +2126,13 @@
           "name": "previousMonthLabel",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Accessible name of the calendar's previous month button; Previous month by default."
         },
         {
           "name": "nextMonthLabel",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Accessible name of the calendar's next month button; Next month by default."
         },
         {
           "name": "label",

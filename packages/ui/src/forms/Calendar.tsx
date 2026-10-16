@@ -35,6 +35,7 @@ export interface CalendarProps
   extends Omit<ComponentPropsWithRef<'div'>, 'defaultValue' | 'onChange' | 'children'> {
   /** The chosen day as YYYY-MM-DD, or null for none. */
   value?: string | null;
+  /** The day an uncontrolled calendar starts with; none by default, which shows today's month. */
   defaultValue?: string | null;
   /** Receives the chosen day as YYYY-MM-DD. */
   onValueChange?: (value: string) => void;

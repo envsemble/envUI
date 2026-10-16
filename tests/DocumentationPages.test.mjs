@@ -22,7 +22,6 @@ const unconverted = [
   'chips',
   'command-palette',
   'composer',
-  'date-picker',
   'document-tabs',
   'drop-zone',
   'markdown',
