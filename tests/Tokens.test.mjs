@@ -163,6 +163,37 @@ test('a typography token builds, with a custom property for each part', async ()
   assert.deepEqual(problems, []);
 });
 
+/** A typography token for text.label, with the parts in `extra` besides the five DTCG requires. */
+const textLabel = (extra = {}) => ({
+  $type: 'typography',
+  $value: {
+    fontFamily: '{font.family}',
+    fontSize: '{font.size.body-small}',
+    fontWeight: '{body.font-weight}',
+    lineHeight: 1.4,
+    letterSpacing: { value: 0, unit: 'rem' },
+    ...extra,
+  },
+});
+
+test('a part that only one theme gives a composite token cannot clash either', async () => {
+  // The dark scheme adds a part, --text-label-font-style, which another token already becomes.
+  await assert.rejects(
+    buildChanged('typography-theme-part', {
+      'base/typography.tokens.json': (tokens) => {
+        tokens.text = {
+          label: textLabel(),
+          'label-font-style': { $type: 'number', $value: 1 },
+        };
+      },
+      'color-scheme/dark.tokens.json': (tokens) => {
+        tokens.text = { label: textLabel({ fontStyle: 'italic' }) };
+      },
+    }),
+    /text\.label and text\.label-font-style both become --text-label-font-style/,
+  );
+});
+
 /**
  * Custom properties that Base UI's positioners and popups set on the elements envUI styles; they
  * are documented in Base UI's API reference for each part, not declared in a style sheet.

@@ -317,13 +317,13 @@ export function overridingCustomProperties(css) {
 function checkCustomProperties(list, handwrittenFile) {
   const owners = new Map();
   for (const token of list) {
-    const parts = Object.values(token.values).find(
-      ({ css }) => css && typeof css === 'object',
-    )?.css;
-    const names = [
-      token.cssVariable,
-      ...Object.keys(parts ?? {}).map((part) => `${token.cssVariable}-${part}`),
-    ];
+    // A theme can give a composite token parts that the others don't, so take them from every one.
+    const parts = new Set(
+      Object.values(token.values).flatMap(({ css }) =>
+        css && typeof css === 'object' ? Object.keys(css) : [],
+      ),
+    );
+    const names = [token.cssVariable, ...[...parts].map((part) => `${token.cssVariable}-${part}`)];
     for (const name of names) {
       if (owners.has(name))
         throw new Error(
