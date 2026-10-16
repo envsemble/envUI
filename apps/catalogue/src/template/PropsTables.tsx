@@ -2,6 +2,8 @@ import { Link, Stack, Table, Text } from '@envsemble/envui';
 import { Code } from '@envsemble/envui/content';
 import type { ExportEntry, PropEntry } from '../DocumentationTypes';
 import type { Reference } from '../Reference';
+// The ids search leads to, as the search index writes them.
+import { exportSection, propSection } from '../../../../scripts/SearchAnchors.mjs';
 
 /** The same sentences as the packaged Markdown's Props section (scripts/GenerateDocumentation.mjs). */
 function nativeSentence(elements: string[]) {
@@ -31,8 +33,8 @@ function description(prop: PropEntry) {
 function ExportProps({ name, entry }: { name: string; entry: ExportEntry }) {
   if (entry.kind === 'namespace') return null;
   return (
-    <Stack as="section" gap={4} aria-labelledby={`props-${name}`}>
-      <Text as="h2" variant="section-heading" id={`props-${name}`}>
+    <Stack as="section" gap={4} aria-labelledby={exportSection(name)}>
+      <Text as="h2" variant="section-heading" id={exportSection(name)}>
         <Code>{name}</Code>
       </Text>
       {entry.description && <Text>{entry.description}</Text>}
@@ -53,7 +55,7 @@ function ExportProps({ name, entry }: { name: string; entry: ExportEntry }) {
           <Table.Body>
             {entry.props.map((prop) => (
               // Search leads to a prop's row: props-Button-variant.
-              <Table.Row key={prop.name} id={`props-${name}-${prop.name}`}>
+              <Table.Row key={prop.name} id={propSection(name, prop.name)}>
                 <Table.Cell label="Prop" nowrap>
                   <Code className="docs-prop-code">{prop.name}</Code>
                   {prop.required && <Text variant="caption"> required</Text>}

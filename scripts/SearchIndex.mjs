@@ -9,8 +9,10 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { marked } from 'marked';
 import MiniSearch from 'minisearch';
 import { indexOptions } from './SearchTerms.mjs';
+import { exportSection, headingSlugger, propSection, tokenSection } from './SearchAnchors.mjs';
 
 export const searchIndexFile = fileURLToPath(
   new URL('../apps/catalogue/src/generated/SearchIndex.json', import.meta.url),
@@ -28,9 +30,10 @@ export const tokensFile = fileURLToPath(
  *   detail: string;
  *   aliases: string;
  *   keywords: string;
+ *   owner: string;
  *   text: string;
  *   page: string;
- *   view?: 'props';
+ *   view?: 'props' | 'usage';
  *   section?: string;
  * }} SearchDocument
  */
@@ -51,12 +54,7 @@ export const cataloguePages = [
   { page: 'changelog', title: 'Changelog', aliases: ['release notes', 'releases', 'versions'] },
 ];
 
-/** The element id of an export's props on its page's Props view. */
-export const exportSection = (name) => `props-${name}`;
-/** The element id of a prop's row in its export's table. */
-export const propSection = (name, prop) => `props-${name}-${prop}`;
-/** The element id of a token's row in the token reference: --color-fg-muted is token-color-fg-muted. */
-export const tokenSection = (cssVariable) => `token-${cssVariable.replace(/^--/, '')}`;
+export { exportSection, propSection, tokenSection, headingSlug } from './SearchAnchors.mjs';
 
 const kindOfGroup = (group) =>
   group === 'Foundations'
@@ -79,19 +77,84 @@ function documentedExports(names, props) {
 const sentence = (text, length = 240) =>
   text.length > length ? `${text.slice(0, length).replace(/\s+\S*$/, '')}…` : text;
 
+/** The text of a heading as the reader sees it, without its Markdown. */
+function plainText(tokens) {
+  return tokens
+    .map((token) =>
+      token.tokens ? plainText(token.tokens) : token.type === 'html' ? '' : (token.text ?? ''),
+    )
+    .join('');
+}
+
+/**
+ * The headed sections of a page's Markdown, in order, each with the id its rendered heading takes
+ * and the Markdown under it up to the next heading, its code fences apart.
+ */
+function sectionsOf(markdown) {
+  const slug = headingSlugger();
+  const sections = [];
+  let current;
+  for (const token of marked.lexer(markdown)) {
+    if (token.type === 'heading') {
+      current = { slug: slug(plainText(token.tokens)), prose: token.text, code: '' };
+      sections.push(current);
+    } else if (current) {
+      if (token.type === 'code') current.code += `${token.text}\n`;
+      else current.prose += `\n${token.raw}`;
+    }
+  }
+  return sections;
+}
+
+const mentions = (text, name) =>
+  new RegExp(`(?<![\\w.])${name.replace(/[.$]/g, '\\$&')}(?![\\w])`).test(text);
+
+/**
+ * Where a page that has no Props view says the most about an export: the first section whose code
+ * uses it, on its own page and then on the foundations, else the first that names it. Returns the
+ * page's document and the section's id, or the page alone when no section names the export.
+ */
+function placeOf(name, home, documents) {
+  const foundations = documents.filter(
+    (document) => document.group === 'Foundations' && document !== home,
+  );
+  for (const where of ['code', 'prose'])
+    for (const document of [home, ...foundations]) {
+      const section = sectionsOf(document.markdown).find((entry) => mentions(entry[where], name));
+      if (section) return { document, section: section.slug };
+    }
+  return { document: home };
+}
+
+/** The route parts of a document's place: the Usage view of a reference page, at its section. */
+function placeRoute({ document, section }) {
+  const reference = document.group === 'Foundations' || document.path.startsWith('components/');
+  return {
+    page: document.id,
+    ...(reference && { view: 'usage' }),
+    ...(section && { section }),
+  };
+}
+
 /**
  * The search documents of the documentation: `documents` as readDocumentation() returns them,
- * `props` as docs/generated/props.json and `tokens` as the token list holds them.
+ * `props` as docs/generated/props.json and `tokens` as the token list holds them. Every export in
+ * props.json is found, as the page that documents it when it shares its name, and else as an export
+ * of its own, at its props on a page with a Props view, or else at the section of the page that
+ * shows it; an export that no page lists is placed where the documentation shows it.
  * @returns {SearchDocument[]}
  */
 export function searchDocuments({ documents, props, tokens }) {
   /** @type {SearchDocument[]} */
   const results = [];
+  /** The page that lists each export, by its name. */
+  const homes = new Map();
   for (const document of documents) {
     if (document.id === 'index') continue;
     const kind = kindOfGroup(document.group);
     const frontmatter = document.frontmatter ?? {};
     const exports = documentedExports(frontmatter.components ?? [], props);
+    for (const name of exports) homes.set(name, document);
     results.push({
       id: `page:${document.id}`,
       kind,
@@ -99,39 +162,45 @@ export function searchDocuments({ documents, props, tokens }) {
       detail: kind === 'component' ? document.group : kind === 'guide' ? 'Guide' : document.group,
       aliases: (frontmatter.aliases ?? []).join('\n'),
       keywords: exports.join(' '),
+      owner: '',
       text: [document.summary, ...(frontmatter.useWhen ?? [])].join('\n'),
       page: document.id,
     });
-    // Only a page on the template has a Props view with a place for each export and prop.
-    const template = Boolean(document.sections);
-    for (const name of exports) {
-      const entry = props.exports[name];
-      if (name !== document.title && entry.kind !== 'namespace')
-        results.push({
-          id: `export:${name}`,
-          kind: 'export',
-          title: name,
-          detail: document.title,
-          aliases: '',
-          keywords: document.title,
-          text: sentence(entry.description ?? ''),
-          page: document.id,
-          ...(template && { view: 'props', section: exportSection(name) }),
-        });
-      if (entry.kind !== 'component') continue;
-      for (const prop of entry.props)
-        results.push({
-          id: `prop:${name}.${prop.name}`,
-          kind: 'prop',
-          title: prop.name,
-          detail: `${name} prop`,
-          aliases: '',
-          keywords: `${name} ${name}.${prop.name}`,
-          text: sentence(prop.description ?? ''),
-          page: document.id,
-          ...(template && { view: 'props', section: propSection(name, prop.name) }),
-        });
-    }
+  }
+  const pages = new Set(results.map(({ title }) => title));
+  const setup = documents.find((document) => document.id === 'setup');
+  for (const [name, entry] of Object.entries(props.exports)) {
+    if (entry.kind === 'namespace') continue;
+    const home = homes.get(name) ?? setup;
+    // Only a page on the template has a Props view with a place for each export and prop; on
+    // another page, both lead to the section that shows the export.
+    const place = home.sections ? undefined : placeRoute(placeOf(name, home, documents));
+    const own = (section) => place ?? { page: home.id, view: 'props', section };
+    if (!(homes.get(name)?.title === name && pages.has(name)))
+      results.push({
+        id: `export:${name}`,
+        kind: 'export',
+        title: name,
+        detail: name.includes('.') ? `Part of ${name.split('.')[0]}` : home.title,
+        aliases: '',
+        keywords: home.title,
+        owner: '',
+        text: sentence(entry.description ?? ''),
+        ...own(exportSection(name)),
+      });
+    if (entry.kind !== 'component') continue;
+    for (const prop of entry.props)
+      results.push({
+        id: `prop:${name}.${prop.name}`,
+        kind: 'prop',
+        title: prop.name,
+        detail: `${name} prop`,
+        aliases: '',
+        keywords: `${name}.${prop.name}`,
+        owner: name,
+        text: sentence(prop.description ?? ''),
+        ...own(propSection(name, prop.name)),
+      });
   }
   for (const token of tokens.tokens) {
     const aliasOf = token.values?.light?.aliasOf;
@@ -142,6 +211,7 @@ export function searchDocuments({ documents, props, tokens }) {
       detail: token.legacy && aliasOf ? `0.7 name of ${aliasOf}` : `${token.type} token`,
       aliases: '',
       keywords: [token.id, token.type, aliasOf].filter(Boolean).join(' '),
+      owner: '',
       text: sentence(token.description ?? ''),
       page: 'tokens',
       section: tokenSection(token.cssVariable),
@@ -159,6 +229,7 @@ function catalogueDocuments() {
     detail: 'Page',
     aliases: aliases.join('\n'),
     keywords: '',
+    owner: '',
     text: '',
     page,
   }));

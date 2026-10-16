@@ -214,8 +214,10 @@ export function routeOfDocument(
     const start = reference.reference.sections ? 'overview' : 'preview';
     return `${reference.path}/${viewFor(reference.reference, view ?? start)}${query}`;
   }
+  // The setup guide and the index are on the overview's Get started view, each in a section of its
+  // own, where its headings are.
   if (id === 'setup' || id === 'index')
-    return `overview/get-started?${new URLSearchParams({ section: id === 'setup' ? 'setup' : 'documentation' })}`;
+    return `overview/get-started?${new URLSearchParams({ section: section ?? (id === 'setup' ? 'setup' : 'documentation') })}`;
   if (id === 'overview') return homeRoute;
   if (id === 'tokens') return `${tokensPage.path}${query}`;
   if (id === 'templates') return templatesPage.path;

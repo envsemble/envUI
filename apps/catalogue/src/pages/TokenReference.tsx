@@ -1,12 +1,11 @@
 import { ColorSwatch, Stack, Table, Text } from '@envsemble/envui';
 import { Code } from '@envsemble/envui/content';
 import tokenList from '../../../../packages/ui/src/generated/tokens.json';
+// The ids search leads to, as the search index writes them.
+import { tokenSection } from '../../../../scripts/SearchAnchors.mjs';
 
 type Token = (typeof tokenList.tokens)[number];
 type TokenValue = Token['values']['light'];
-
-/** The element id of a token's row, which search leads to: token-color-fg-muted. */
-export const tokenSection = (cssVariable: string) => `token-${cssVariable.replace(/^--/, '')}`;
 
 /** The groups of the reference, by the first part of the tokens' names, in order. */
 const tokenGroups: { title: string; prefixes: string[]; legacy?: boolean }[] = [

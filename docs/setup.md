@@ -2,6 +2,11 @@
 components:
   - LinkProvider
   - createThemeBootstrapScript
+  - Theme
+  - ThemePreferenceProvider
+  - ThemeToggle
+  - useTheme
+  - useThemePreference
 ---
 
 # Install the private package
