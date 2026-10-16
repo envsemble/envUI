@@ -5,27 +5,31 @@
  *
  * Fonts and anti-aliasing differ between systems, so the baseline renders only in the Linux
  * Playwright image: `npm run test:visual` checks it, `npm run test:visual:update` rewrites it.
- * Snapshots live in tests/visual/snapshots; review their diffs like code.
+ * Snapshots live in tests/visual/snapshots; review their diffs like code. Each run also compares
+ * the images a page takes with the files in its folder, so a specimen that stops rendering, or an
+ * image no specimen takes any more, fails rather than passing unnoticed.
  */
-import { test, expect, type Locator, type Page } from '@playwright/test';
+import { existsSync, readdirSync, rmSync, type Dirent } from 'node:fs';
+import { join, posix } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { test, expect, type Locator, type Page, type TestInfo } from '@playwright/test';
 import { catalogueUrl, fixtureUrl } from '../browser/Servers';
+import { densitySectionNames } from '../fixture/DensitySections';
 import { referencePages } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
 
 type Theme = 'light' | 'dark';
 const themes: Theme[] = ['light', 'dark'];
 /** Relative times, calendars and generated activity are drawn against this moment. */
 const now = new Date('2026-03-04T10:00:00Z');
-/** The sections of tests/fixture/Density.tsx. */
-const densitySections = [
-  'form',
-  'toolbar',
-  'menu',
-  'tree',
-  'table',
-  'tabs',
-  'navigation',
-  'desktop',
-];
+const snapshots = fileURLToPath(new URL('./snapshots/', import.meta.url));
+/**
+ * The forced-state matrices of InteractionStates.ts, by catalogue page and matrix label. A page
+ * must show exactly these, so a matrix that disappears, or a new one, fails until it is listed.
+ */
+const stateMatrices: Record<string, string[]> = {
+  buttons: ['Button'],
+  navigation: ['Navigation item'],
+};
 
 test.skip(
   process.env.ENVUI_VISUAL !== 'docker',
@@ -100,9 +104,44 @@ async function capture(locator: Locator, path: string[]) {
   await expect.soft(locator).toHaveScreenshot(path);
 }
 
+function updating(testInfo: TestInfo) {
+  return ['all', 'changed'].includes(testInfo.config.updateSnapshots);
+}
+
+/** What a snapshot folder holds, or nothing when it does not exist yet. */
+function contents(directory: string) {
+  return existsSync(directory) ? readdirSync(directory).sort() : [];
+}
+
+/**
+ * Compares the images a test took with the files its folder held before it ran. A check fails on
+ * either difference; an update removes the files no capture took, and only once every capture of
+ * the test has succeeded, so a failed update deletes nothing.
+ */
+function reconcile(testInfo: TestInfo, directory: string, recorded: string[], taken: Set<string>) {
+  const orphaned = recorded.filter((file) => !taken.has(file));
+  if (updating(testInfo)) {
+    if (testInfo.errors.length === 0)
+      for (const file of orphaned) rmSync(join(directory, file), { recursive: true });
+    return;
+  }
+  const missing = [...taken].filter((file) => !recorded.includes(file)).sort();
+  expect(
+    { missing, orphaned },
+    `The images in ${directory} match the specimens; after an intended change run \`npm run test:visual:update\``,
+  ).toEqual({ missing: [], orphaned: [] });
+}
+
 test.describe('catalogue', () => {
   for (const { path, reference } of referencePages) {
-    test(`${reference.title} (${path})`, async ({ page }) => {
+    test(`${reference.title} (${path})`, async ({ page }, testInfo) => {
+      const directory = join(snapshots, 'catalogue', reference.id);
+      const recorded = contents(directory);
+      const taken = new Set<string>();
+      const take = async (locator: Locator, file: string) => {
+        taken.add(file);
+        await capture(locator, ['catalogue', reference.id, file]);
+      };
       await page.clock.setFixedTime(now);
       await page.goto(`${catalogueUrl}/#/${path}/preview`);
       await page.locator('.docs-preview').waitFor();
@@ -113,6 +152,7 @@ test.describe('catalogue', () => {
         const examples = page.locator(
           '.docs-preview .docs-example:not(.docs-example .docs-example)',
         );
+        let specimens = 0;
         for (const example of await examples.all()) {
           if (!(await example.isVisible())) continue;
           // Untitled examples are named after their first disclosure or specimen heading.
@@ -120,33 +160,37 @@ test.describe('catalogue', () => {
             .locator(':scope > h2, :scope > .docs-example-heading > h2, summary, h3')
             .first();
           const title = (await heading.count()) ? await heading.textContent() : '';
-          await capture(example, [
-            'catalogue',
-            reference.id,
-            `${theme}-${name(slug(title ?? ''))}.png`,
-          ]);
+          await take(example, `${theme}-${name(slug(title ?? ''))}.png`);
+          specimens++;
         }
+        expect(specimens, `The ${theme} preview shows at least one specimen`).toBeGreaterThan(0);
         // The forced hover, pressed, focus and disabled states of InteractionStates.ts, which
         // the catalogue keeps in closed disclosures.
         const states = page.locator(
           '.docs-preview [role="region"][aria-label$="interaction states"]',
         );
+        const matrices: string[] = [];
         for (const matrix of await states.all()) {
-          const label = (await matrix.getAttribute('aria-label')) ?? 'interaction states';
+          const label = ((await matrix.getAttribute('aria-label')) ?? '').replace(
+            / interaction states$/,
+            '',
+          );
+          matrices.push(label);
           const summary = matrix.locator('xpath=ancestor::details[1]/summary');
           const closed = (await summary.count()) > 0 && !(await matrix.isVisible());
           if (closed) await press(page, summary);
-          await capture(matrix, [
-            'catalogue',
-            reference.id,
-            `${theme}-states-${name(slug(label.replace(/ interaction states$/, '')))}.png`,
-          ]);
+          await take(matrix, `${theme}-states-${name(slug(label))}.png`);
           if (closed) {
             await press(page, summary);
             await expect(matrix).toBeHidden();
           }
         }
+        expect(
+          matrices.sort(),
+          `The ${theme} preview shows the interaction states listed in stateMatrices`,
+        ).toEqual([...(stateMatrices[reference.id] ?? [])].sort());
       }
+      reconcile(testInfo, directory, recorded, taken);
     });
   }
 });
@@ -154,7 +198,7 @@ test.describe('catalogue', () => {
 test.describe('density', () => {
   // The mixed desktop view is 80 rem wide; the evidence it reproduces used the same viewport.
   test.use({ viewport: { width: 1440, height: 1000 } });
-  for (const section of densitySections) {
+  for (const section of densitySectionNames) {
     for (const theme of themes) {
       test(`${section} (${theme})`, async ({ page }) => {
         await page.clock.setFixedTime(now);
@@ -168,4 +212,30 @@ test.describe('density', () => {
       });
     }
   }
+});
+
+// Playwright requires the fixtures object as the first parameter, even when no fixture is used.
+// eslint-disable-next-line no-empty-pattern
+test('every snapshot folder belongs to a catalogue page or a density section', async ({}, testInfo) => {
+  const pages = new Set(referencePages.map(({ reference }) => reference.id));
+  const density = new Set(
+    densitySectionNames.flatMap((section) => themes.map((theme) => `${theme}-${section}.png`)),
+  );
+  const stale = (folder: string, belongs: (entry: Dirent) => boolean) =>
+    readdirSync(join(snapshots, folder), { withFileTypes: true })
+      .filter((entry) => !belongs(entry))
+      .map((entry) => posix.join(folder, entry.name));
+  const unused = [
+    ...stale('', (entry) => entry.isDirectory() && ['catalogue', 'density'].includes(entry.name)),
+    ...stale('catalogue', (entry) => entry.isDirectory() && pages.has(entry.name)),
+    ...stale('density', (entry) => entry.isFile() && density.has(entry.name)),
+  ];
+  if (updating(testInfo)) {
+    for (const path of unused) rmSync(join(snapshots, path), { recursive: true });
+    return;
+  }
+  expect(
+    unused,
+    'Snapshots of pages or sections that no longer exist; run `npm run test:visual:update`',
+  ).toEqual([]);
 });

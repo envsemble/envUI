@@ -96,6 +96,11 @@ await writeFile(
   readme
     .replaceAll('](.agents/skills/', '](skills/')
     .replaceAll('](packages/ui/CHANGELOG.md)', '](CHANGELOG.md)')
+    // The maintainers' guide stays in the repository.
+    .replaceAll(
+      '](CONTRIBUTING.md)',
+      '](https://github.com/envsemble/envUI/blob/main/CONTRIBUTING.md)',
+    )
     .replaceAll('src="assets/brand/envUI/', 'src="dist/assets/envUI/')
     .replaceAll('srcset="assets/brand/envUI/', 'srcset="dist/assets/envUI/')
     .replaceAll('src="assets/readme/', 'src="dist/assets/readme/')

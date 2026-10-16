@@ -840,18 +840,50 @@
   "foundations/colors/preview": {
     "dark": {
       "color-contrast": {
-        "preview :: button.env-button.env-button-secondary.docs-swatch code": 4
+        "Buttons :: button.env-button.env-button-secondary.docs-swatch code": 1,
+        "Content & loading :: button.env-button.env-button-secondary.docs-swatch code": 1,
+        "Feedback :: button.env-button.env-button-secondary.docs-swatch code": 1,
+        "Switches :: button.env-button.env-button-secondary.docs-swatch code": 1
       },
       "label-content-name-mismatch": {
-        "preview :: button.env-button.env-button-secondary.docs-swatch": 73
+        "Buttons :: button.env-button.env-button-secondary.docs-swatch": 11,
+        "Cards :: button.env-button.env-button-secondary.docs-swatch": 1,
+        "Checkboxes :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Content & loading :: button.env-button.env-button-secondary.docs-swatch": 2,
+        "Direction links :: button.env-button.env-button-secondary.docs-swatch": 5,
+        "Feedback :: button.env-button.env-button-secondary.docs-swatch": 9,
+        "Navigation :: button.env-button.env-button-secondary.docs-swatch": 5,
+        "Page & surfaces :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Radio :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Rows :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Select options :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Switches :: button.env-button.env-button-secondary.docs-swatch": 5,
+        "Text & focus :: button.env-button.env-button-secondary.docs-swatch": 7,
+        "Text fields :: button.env-button.env-button-secondary.docs-swatch": 8
       }
     },
     "light": {
       "color-contrast": {
-        "preview :: button.env-button.env-button-secondary.docs-swatch code": 4
+        "Buttons :: button.env-button.env-button-secondary.docs-swatch code": 1,
+        "Content & loading :: button.env-button.env-button-secondary.docs-swatch code": 1,
+        "Feedback :: button.env-button.env-button-secondary.docs-swatch code": 1,
+        "Switches :: button.env-button.env-button-secondary.docs-swatch code": 1
       },
       "label-content-name-mismatch": {
-        "preview :: button.env-button.env-button-secondary.docs-swatch": 73
+        "Buttons :: button.env-button.env-button-secondary.docs-swatch": 11,
+        "Cards :: button.env-button.env-button-secondary.docs-swatch": 1,
+        "Checkboxes :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Content & loading :: button.env-button.env-button-secondary.docs-swatch": 2,
+        "Direction links :: button.env-button.env-button-secondary.docs-swatch": 5,
+        "Feedback :: button.env-button.env-button-secondary.docs-swatch": 9,
+        "Navigation :: button.env-button.env-button-secondary.docs-swatch": 5,
+        "Page & surfaces :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Radio :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Rows :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Select options :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Switches :: button.env-button.env-button-secondary.docs-swatch": 5,
+        "Text & focus :: button.env-button.env-button-secondary.docs-swatch": 7,
+        "Text fields :: button.env-button.env-button-secondary.docs-swatch": 8
       }
     }
   },
