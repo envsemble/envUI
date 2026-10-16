@@ -1,0 +1,445 @@
+// `envui mcp`: a Model Context Protocol server over stdio that answers from the installed package's
+// manifest.json and docs/, so it always describes the version the project has installed.
+//
+// It is a small JSON-RPC 2.0 server written against the MCP specification rather than built on the
+// official SDK: it only offers tools, reads local files and needs nothing beyond Node, while the SDK
+// would add some 90 packages (an HTTP server, auth and schema libraries) to every application that
+// installs envUI. Messages are one JSON object per line on stdin and stdout; logs go to stderr.
+import { existsSync, readFileSync } from 'node:fs';
+import { resolve, sep } from 'node:path';
+import { createInterface } from 'node:readline';
+import {
+  findComponent,
+  loadManifest,
+  packageRoot,
+  plan,
+  search,
+  suggestions,
+  summarize,
+} from './catalog.mjs';
+
+/** Protocol versions this server speaks, newest first. */
+export const protocolVersions = ['2025-11-25', '2025-06-18', '2025-03-26', '2024-11-05'];
+
+const readOnly = {
+  readOnlyHint: true,
+  destructiveHint: false,
+  idempotentHint: true,
+  openWorldHint: false,
+};
+const string = (description) => ({ type: 'string', description });
+const object = (properties, required = []) => ({
+  type: 'object',
+  properties,
+  ...(required.length && { required }),
+  additionalProperties: false,
+});
+
+const searchKinds = ['component', 'pattern', 'template', 'foundation', 'guide', 'token'];
+
+/** The tools, with their JSON Schemas and what each returns. */
+export const tools = [
+  {
+    name: 'search',
+    title: 'Search envUI',
+    description:
+      'Search envUI components, patterns, templates, foundations, guides and tokens by what they do or what people call them, such as "sidebar toggle", "modal" or "muted text". Search before writing any UI element.',
+    inputSchema: object(
+      {
+        query: string('What you need, in your own words.'),
+        kind: { type: 'string', enum: searchKinds, description: 'Only this kind of result.' },
+        limit: {
+          type: 'integer',
+          minimum: 1,
+          maximum: 50,
+          description: 'At most this many; 10 by default.',
+        },
+      },
+      ['query'],
+    ),
+  },
+  {
+    name: 'list_components',
+    title: 'List envUI components',
+    description:
+      'Every envUI component page with its exports, import path, status and one-line summary, optionally in one category.',
+    inputSchema: object({
+      category: string('Only this category, such as "Forms & selection".'),
+      status: { type: 'string', enum: ['experimental', 'beta', 'stable', 'deprecated'] },
+    }),
+  },
+  {
+    name: 'get_component',
+    title: 'Get an envUI component',
+    description:
+      "A component's summary, aliases, when to use it and what to use instead, its exports with their import paths, its examples and related pages. Accepts a component, an export such as IconButton or Menu.Item, a page name or an alias. Set docs to true for the whole page as Markdown.",
+    inputSchema: object(
+      {
+        name: string('A component, export, part, page name or alias.'),
+        docs: {
+          type: 'boolean',
+          description:
+            "Include the page's Markdown: guidelines, accessibility, examples and props.",
+        },
+      },
+      ['name'],
+    ),
+  },
+  {
+    name: 'get_props',
+    title: 'Get the props of an envUI export',
+    description:
+      'The props of an export or part, such as Button or Menu.Item: type, default, whether required and what each does, from the TypeScript declarations. A page name returns the props of every export on it.',
+    inputSchema: object({ name: string('An export, part or page name.') }, ['name']),
+  },
+  {
+    name: 'get_example',
+    title: 'Get an envUI example',
+    description:
+      "The source of an example: a small component an application can copy. Without an example name, lists the component's examples with what each shows.",
+    inputSchema: object(
+      {
+        component: string('A component, export, page name or alias.'),
+        example: string('The example file name, such as ConfirmDelete; leave out to list them.'),
+      },
+      ['component'],
+    ),
+  },
+  {
+    name: 'list_patterns',
+    title: 'List envUI patterns',
+    description:
+      'Patterns: guidance for a recurring need, such as loading, that combines components.',
+    inputSchema: object({}),
+  },
+  {
+    name: 'list_templates',
+    title: 'List envUI templates',
+    description:
+      'Templates: whole pages, such as settings or sign-in, built from envUI to start from.',
+    inputSchema: object({}),
+  },
+  {
+    name: 'get_tokens',
+    title: 'Get envUI tokens',
+    description:
+      'Design tokens with their CSS custom property and values per theme and scale. Filter by words ("danger text", "spacing"), by a name prefix ("color.fg") or by type. Style application CSS with these, never raw colors or pixel sizes.',
+    inputSchema: object({
+      query: string('Words to search the tokens for.'),
+      prefix: string('A token name prefix, such as color.fg, space or radius.'),
+      type: string('A token type, such as color, dimension, shadow or typography.'),
+      legacy: {
+        type: 'boolean',
+        description: 'List the 0.7 names and the tokens that replace them instead.',
+      },
+      limit: {
+        type: 'integer',
+        minimum: 1,
+        maximum: 400,
+        description: 'At most this many; 60 by default.',
+      },
+    }),
+  },
+  {
+    name: 'plan',
+    title: 'Plan a UI with envUI',
+    description:
+      'Turn a description of a screen or feature into the envUI components that cover each part, matching patterns and templates, relevant tokens, the imports, and the parts envUI has nothing for. Start here for anything bigger than one control.',
+    inputSchema: object(
+      {
+        description: string(
+          'The UI to build, such as "a settings page with a form and a save button".',
+        ),
+      },
+      ['description'],
+    ),
+  },
+].map((tool) => ({ ...tool, annotations: { title: tool.title, ...readOnly } }));
+
+class ToolError extends Error {}
+
+const requireString = (args, key) => {
+  const value = args[key];
+  if (typeof value !== 'string' || !value.trim())
+    throw new ToolError(`"${key}" must be a non-empty string.`);
+  return value.trim();
+};
+
+function componentOrError(manifest, name) {
+  const found = findComponent(manifest, name);
+  if (found) return found;
+  const exported = manifest.exports[name];
+  if (exported) return { exported, name };
+  const close = suggestions(manifest, name);
+  throw new ToolError(
+    `envUI has no component, export or alias "${name}".${close.length ? ` Closest: ${close.join(', ')}.` : ''} Try search.`,
+  );
+}
+
+/** Reads a file of the package by a path the manifest gave, never outside the package. */
+function readPackageFile(root, path) {
+  const file = resolve(root, path);
+  if (!file.startsWith(resolve(root) + sep) || !existsSync(file))
+    throw new ToolError(`${path} is not in the installed package.`);
+  return readFileSync(file, 'utf8');
+}
+
+/** Runs a tool; returns what it found, or throws a ToolError for the caller to read. */
+export function callTool(context, name, args = {}) {
+  const { manifest, root } = context;
+  switch (name) {
+    case 'search': {
+      const query = requireString(args, 'query');
+      if (args.kind !== undefined && !searchKinds.includes(args.kind))
+        throw new ToolError(`"kind" must be one of ${searchKinds.join(', ')}.`);
+      const results = search(manifest, query, {
+        kinds: args.kind ? [args.kind] : undefined,
+        limit: Number.isInteger(args.limit) ? Math.min(Math.max(args.limit, 1), 50) : 10,
+      });
+      return {
+        query,
+        results,
+        ...(!results.length && {
+          note: 'Nothing matched. Try other words, or list_components. If envUI lacks it, propose an addition rather than a local copy.',
+        }),
+      };
+    }
+    case 'list_components': {
+      const components = manifest.components.filter(
+        (component) =>
+          (!args.category ||
+            component.category.toLowerCase() === String(args.category).toLowerCase()) &&
+          (!args.status || component.status === args.status),
+      );
+      return {
+        categories: manifest.categories,
+        components: components.map((component) => ({
+          ...summarize('component', component),
+          category: component.category,
+        })),
+      };
+    }
+    case 'get_component': {
+      const found = componentOrError(manifest, requireString(args, 'name'));
+      if (found.exported)
+        return {
+          name: found.name,
+          ...found.exported,
+          note: 'This export has no component page of its own; see get_props, and the page it is documented on if any.',
+        };
+      const { component, entry } = found;
+      const result = {
+        ...component,
+        ...(entry && entry.name !== component.name && { requested: entry.name }),
+        exports: component.exports.map(({ props, native, ...rest }) => ({
+          ...rest,
+          ...(props && { props: props.map((prop) => prop.name) }),
+        })),
+      };
+      if (args.docs) result.markdown = readPackageFile(root, component.doc);
+      return result;
+    }
+    case 'get_props': {
+      const requested = requireString(args, 'name');
+      const found = componentOrError(manifest, requested);
+      if (found.exported)
+        return { name: found.name, import: found.exported.import, kind: found.exported.kind };
+      const { component, entry } = found;
+      const entries =
+        entry && normalizeName(entry.name) === normalizeName(requested)
+          ? [entry]
+          : component.exports;
+      return {
+        page: component.name,
+        exports: entries.map(
+          ({
+            name: exportName,
+            kind,
+            import: from,
+            props,
+            native,
+            signature,
+            parts,
+            description,
+          }) => ({
+            name: exportName,
+            kind,
+            import: from,
+            description,
+            ...(props && { props }),
+            ...(native?.length && {
+              native: `Also accepts the native props of ${native.map((tag) => (tag === 'element' ? 'an HTML element' : `<${tag}>`)).join(' or ')}.`,
+            }),
+            ...(signature && { signature }),
+            ...(parts && { parts }),
+          }),
+        ),
+      };
+    }
+    case 'get_example': {
+      const { component, exported } = componentOrError(manifest, requireString(args, 'component'));
+      if (exported) throw new ToolError(`${args.component} has no component page with examples.`);
+      if (args.example === undefined || args.example === '')
+        return {
+          component: component.name,
+          examples: component.examples.map(({ name: exampleName, title, description }) => ({
+            name: exampleName,
+            title,
+            description,
+          })),
+        };
+      const wanted = requireString(args, 'example');
+      const example = component.examples.find(
+        (item) =>
+          item.name.toLowerCase() === wanted.toLowerCase() ||
+          item.title.toLowerCase() === wanted.toLowerCase(),
+      );
+      if (!example)
+        throw new ToolError(
+          `${component.name} has no example "${wanted}". Its examples: ${component.examples.map((item) => item.name).join(', ')}.`,
+        );
+      return { component: component.name, ...example, source: readPackageFile(root, example.file) };
+    }
+    case 'list_patterns':
+      return {
+        patterns: manifest.patterns.map((page) => summarize('pattern', page)),
+        ...(!manifest.patterns.length && { note: 'This version has no patterns yet.' }),
+      };
+    case 'list_templates':
+      return {
+        templates: manifest.templates.map((page) => summarize('template', page)),
+        ...(!manifest.templates.length && {
+          note: 'This version has no templates yet. Use plan to choose components for a page.',
+        }),
+      };
+    case 'get_tokens': {
+      const { tokens } = manifest;
+      const limit = Number.isInteger(args.limit) ? Math.min(Math.max(args.limit, 1), 400) : 60;
+      if (args.legacy) {
+        const legacy = tokens.legacy.filter(
+          (token) => !args.prefix || token.id.startsWith(String(args.prefix)),
+        );
+        return { total: legacy.length, legacy: legacy.slice(0, limit) };
+      }
+      let items = tokens.items;
+      if (args.prefix) items = items.filter((token) => token.id.startsWith(String(args.prefix)));
+      if (args.type) items = items.filter((token) => token.type === args.type);
+      if (typeof args.query === 'string' && args.query.trim()) {
+        const order = search(manifest, args.query, { kinds: ['token'], limit: 400 }).map(
+          (hit) => hit.name,
+        );
+        items = order.map((id) => items.find((token) => token.id === id)).filter(Boolean);
+      }
+      return {
+        themes: tokens.themes,
+        scales: tokens.scales,
+        usage: tokens.usage,
+        total: items.length,
+        tokens: items.slice(0, limit),
+      };
+    }
+    case 'plan':
+      return plan(manifest, requireString(args, 'description'));
+    default:
+      return undefined;
+  }
+}
+
+const normalizeName = (name) => String(name).toLowerCase();
+
+/** A JSON-RPC server for one connection: hand it a parsed message, get the response or nothing. */
+export function createServer({
+  root = packageRoot,
+  manifest = loadManifest(root),
+  log = () => {},
+} = {}) {
+  const version = manifest.version ?? JSON.parse(readPackageFile(root, 'package.json')).version;
+  const context = { manifest, root };
+  const instructions = `envUI ${version} (${manifest.package}). ${manifest.rule} Use plan for a screen or feature, search to find a component, get_component and get_props before using one, and get_example for code to start from. Import only what these tools list.`;
+  const result = (id, value) => ({ jsonrpc: '2.0', id, result: value });
+  const error = (id, code, message) => ({ jsonrpc: '2.0', id, error: { code, message } });
+
+  function handle(message) {
+    const valid = message && typeof message === 'object' && message.jsonrpc === '2.0';
+    if (valid && message.method === undefined && ('result' in message || 'error' in message))
+      return undefined; // A response; this server sends no requests.
+    if (!valid || typeof message.method !== 'string')
+      return error(message?.id ?? null, -32600, 'Invalid request.');
+    const { id, method, params = {} } = message;
+    const notification = !('id' in message);
+    if (notification) return undefined;
+    switch (method) {
+      case 'initialize': {
+        const requested = params.protocolVersion;
+        return result(id, {
+          protocolVersion: protocolVersions.includes(requested) ? requested : protocolVersions[0],
+          capabilities: { tools: { listChanged: false } },
+          serverInfo: { name: 'envui', title: 'envUI', version },
+          instructions,
+        });
+      }
+      case 'ping':
+        return result(id, {});
+      case 'tools/list':
+        return result(id, { tools });
+      case 'tools/call': {
+        const name = params?.name;
+        if (!tools.some((tool) => tool.name === name))
+          return error(id, -32602, `Unknown tool: ${name}`);
+        const args = params.arguments ?? {};
+        if (typeof args !== 'object' || Array.isArray(args))
+          return error(id, -32602, 'Tool arguments must be an object.');
+        try {
+          const value = callTool(context, name, args);
+          return result(id, { content: [{ type: 'text', text: JSON.stringify(value) }] });
+        } catch (caught) {
+          if (!(caught instanceof ToolError)) log(caught.stack ?? String(caught));
+          return result(id, {
+            content: [
+              {
+                type: 'text',
+                text:
+                  caught instanceof ToolError
+                    ? caught.message
+                    : `envUI tool failed: ${caught.message}`,
+              },
+            ],
+            isError: true,
+          });
+        }
+      }
+      default:
+        return error(id, -32601, `Method not found: ${method}`);
+    }
+  }
+
+  /** One line of input: a message or a batch, answered with a line or nothing. */
+  function handleLine(line) {
+    if (!line.trim()) return undefined;
+    let message;
+    try {
+      message = JSON.parse(line);
+    } catch {
+      return error(null, -32700, 'Parse error.');
+    }
+    if (Array.isArray(message)) {
+      const responses = message.map(handle).filter(Boolean);
+      return responses.length ? responses : undefined;
+    }
+    return handle(message);
+  }
+
+  return { handle, handleLine, version };
+}
+
+export function runMcp({ input = process.stdin, output = process.stdout } = {}) {
+  const log = (text) => process.stderr.write(`envui mcp: ${text}\n`);
+  const server = createServer({ log });
+  log(`serving envUI ${server.version} over stdio`);
+  const lines = createInterface({ input, crlfDelay: Infinity });
+  lines.on('line', (line) => {
+    const response = server.handleLine(line);
+    if (response) output.write(`${JSON.stringify(response)}\n`);
+  });
+  return new Promise((resolveClosed) => lines.on('close', resolveClosed));
+}
