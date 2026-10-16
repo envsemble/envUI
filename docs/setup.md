@@ -72,7 +72,7 @@ const themeBootstrap = {
 };
 ```
 
-When the application's contrast is fixed, such as an application that is always high contrast, pass it to both: `contrast: 'high'` to the bootstrap script as well as `contrast="high"` to the provider, so the root has it from the first paint. The script marks what it writes with `data-env-contrast-source="bootstrap"`, and the provider treats that contrast as its own: once the application starts, the provider's contrast replaces it, and a provider at `system` removes it. So when the contrast is a setting that the application stores, the bootstrap script, built once, cannot know it: leave `contrast` out of the script, and the provider applies the stored setting when the application starts.
+When the application's contrast is fixed, such as an application that is always high contrast, pass it to both: `contrast: 'high'` to the bootstrap script as well as `contrast="high"` to the provider, so the root has it from the first paint. The script marks what it writes with `data-env-contrast-source="envui"`, as the provider marks the contrast it writes, and a provider treats a marked contrast as its own: once the application starts, the provider's contrast replaces it, and a provider at `system` removes it, also when it mounts in place of another, such as a provider keyed by the signed-in user. So when the contrast is a setting that the application stores, the bootstrap script, built once, cannot know it: leave `contrast` out of the script, and the provider applies the stored setting when the application starts.
 
 ### Router links
 

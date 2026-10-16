@@ -27,7 +27,7 @@ test('a provider at system removes the contrast the bootstrap script wrote', asy
     const response = await route.fetch();
     const body = (await response.text()).replace(
       '<html',
-      '<html data-env-contrast="high" data-env-contrast-source="bootstrap"',
+      '<html data-env-contrast="high" data-env-contrast-source="envui"',
     );
     await route.fulfill({ response, body });
   });
@@ -44,17 +44,28 @@ test('a provider with a contrast replaces the one the bootstrap script wrote', a
     const response = await route.fetch();
     const body = (await response.text()).replace(
       '<html',
-      '<html data-env-contrast="standard" data-env-contrast-source="bootstrap"',
+      '<html data-env-contrast="standard" data-env-contrast-source="envui"',
     );
     await route.fulfill({ response, body });
   });
   await page.goto(url);
   const root = page.locator('html');
   await expect(root).toHaveAttribute('data-env-contrast', 'high');
-  await expect(root).not.toHaveAttribute('data-env-contrast-source');
+  await expect(root).toHaveAttribute('data-env-contrast-source', 'envui');
   // The contrast is now the provider's own, so following the system removes it.
   await page.getByRole('button', { name: 'Follow the system contrast' }).click();
   await expect(root).not.toHaveAttribute('data-env-contrast');
+});
+
+test('a provider mounted again removes the contrast its predecessor wrote', async ({ page }) => {
+  // Keyed by the user, the provider mounts again for the second user, whose stored contrast is
+  // system: the first user's high contrast must not stay on the root.
+  await page.goto(`${fixtureUrl}/?fixture=theme-contrast-remount`);
+  const root = page.locator('html');
+  await expect(root).toHaveAttribute('data-env-contrast', 'high');
+  await page.getByRole('button', { name: 'Switch to the second user' }).click();
+  await expect(root).not.toHaveAttribute('data-env-contrast');
+  await expect(root).not.toHaveAttribute('data-env-contrast-source');
 });
 
 test('a theme chosen in one window applies in the other windows of the same origin', async ({

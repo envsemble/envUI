@@ -39,8 +39,8 @@ test('the bootstrap script writes a high or standard contrast before the first p
   for (const contrast of ['high', 'standard']) {
     const root = bootstrap(createThemeBootstrapScript({ contrast }));
     assert.equal(root.attributes['data-env-contrast'], contrast, contrast);
-    // Marked as the bootstrap's, so ThemePreferenceProvider replaces or removes it as its own.
-    assert.equal(root.attributes['data-env-contrast-source'], 'bootstrap', contrast);
+    // Marked as envUI's, so ThemePreferenceProvider replaces or removes it as its own.
+    assert.equal(root.attributes['data-env-contrast-source'], 'envui', contrast);
   }
 });
 
