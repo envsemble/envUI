@@ -1,8 +1,9 @@
 import { test, expect, type Page } from '@playwright/test';
 import { catalogueUrl } from './Servers';
+import { contentTypes, notFound, site, siteBuilt, siteFile, siteUrl } from './HostedSite';
 import { extname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import {
   references,
   foundations as foundationReferences,
@@ -14,18 +15,6 @@ import {
 } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
 
 const offline = pathToFileURL(resolve('dist/envUI.html')).href;
-/** The hosted catalogue from `npm run build:site`, served at a made-up address. */
-const site = resolve('dist/site');
-const siteUrl = 'http://envui.site.test';
-const contentTypes: Record<string, string> = {
-  '.html': 'text/html',
-  '.js': 'text/javascript',
-  '.css': 'text/css',
-  '.svg': 'image/svg+xml',
-  '.woff2': 'font/woff2',
-  '.json': 'application/json',
-  '.png': 'image/png',
-};
 const version = JSON.parse(readFileSync('packages/ui/package.json', 'utf8')).version;
 const components = references.map(({ id }) => id);
 const foundations = foundationReferences.map(({ id }) => id);
@@ -518,23 +507,12 @@ test('an example that fails to load says so in place, and loads again on request
   expect(await hero.evaluate((group) => group.contains(document.activeElement))).toBe(true);
 });
 
-/** The hosted Worker's answer for a file under /assets/ that is gone. */
-const notFound = {
-  status: 404,
-  body: 'Not found\n',
-  headers: {
-    'Cache-Control': 'no-store',
-    'Content-Type': 'text/plain; charset=utf-8',
-    'X-Content-Type-Options': 'nosniff',
-  },
-};
-
 /**
  * Requires the hosted build. `npm run verify` builds it first, and so does CI, where a missing build
  * fails rather than skips; a local run without one skips.
  */
 function requireSite() {
-  const built = existsSync(resolve(site, 'module-files.json'));
+  const built = siteBuilt();
   if (!built && process.env.CI)
     throw new Error('The hosted build is missing: run npm run build:site first');
   test.skip(!built, 'Needs the hosted build: npm run build:site');
@@ -561,8 +539,8 @@ async function serveSite(
     const { pathname } = new URL(route.request().url());
     if (failing(pathname))
       return failure === 'aborted' ? route.abort('internetdisconnected') : route.fulfill(notFound);
-    const file = resolve(site, `.${pathname.endsWith('/') ? `${pathname}index.html` : pathname}`);
-    if (!existsSync(file)) return route.fulfill(notFound);
+    const file = siteFile(pathname);
+    if (!file) return route.fulfill(notFound);
     return route.fulfill({
       body: readFileSync(file),
       contentType: contentTypes[extname(file)] ?? 'application/octet-stream',

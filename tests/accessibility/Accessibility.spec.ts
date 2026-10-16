@@ -14,7 +14,7 @@ import { expect, test, type Page, type TestInfo } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { mkdirSync, readFileSync, rmdirSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { catalogueUrl } from '../browser/Servers';
+import { serveSite, siteBuilt, siteUrl } from '../browser/HostedSite';
 import {
   emulateContrast,
   themesFor,
@@ -285,151 +285,36 @@ function compare(scan: Scan, known: RuleCounts = {}) {
   return { added, fixed };
 }
 
-/** A page that lost some of the catalogue's files, or reloaded, while it was being scanned. */
-class LoadInterrupted extends Error {}
-
-type Loads = ReturnType<typeof watchLoads>;
-
-/**
- * Watches a page for the catalogue's files that fail to load, and for the page reloading. In
- * development every module is a request of its own, and one the server drops, as when it restarts,
- * is never asked for again: the app stays blank, a part shows that it could not load, or code stays
- * plain. Waiting on such a page only ends at the test's timeout, and a page the server's client
- * reloads, once it is back, starts over in the light theme. `during` stops at either.
- */
-function watchLoads(page: Page) {
-  const failed: string[] = [];
-  let interrupt: (() => void) | undefined;
-  /** Whether the route has loaded, after which the page must not load again. */
-  let loaded = false;
-  const fail = (what: string) => {
-    failed.push(what);
-    interrupt?.();
-  };
-  page.on('request', (request) => {
-    if (loaded && request.isNavigationRequest() && request.frame() === page.mainFrame())
-      fail(`the page reloaded (${request.url()})`);
-  });
-  page.on('requestfailed', (request) => {
-    const error = request.failure()?.errorText;
-    // The page aborts requests itself, such as on leaving it; those didn't fail.
-    if (request.url().startsWith(`${catalogueUrl}/`) && error !== 'net::ERR_ABORTED')
-      fail(`${request.url()} (${error})`);
-  });
-  page.on('response', (response) => {
-    if (response.url().startsWith(`${catalogueUrl}/`) && response.status() >= 500)
-      fail(`${response.url()} (HTTP ${response.status()})`);
-  });
-  return {
-    /** Marks the route loaded: from now on, the page loading again interrupts. */
-    loaded() {
-      loaded = true;
-    },
-    /**
-     * Runs `work` on the page. Rejects with LoadInterrupted as soon as a file fails to load or the
-     * page reloads, and when the work fails after either, as on a navigation it didn't expect.
-     */
-    async during<T>(work: () => Promise<T>): Promise<T> {
-      const before = failed.length;
-      const interrupted = () =>
-        new LoadInterrupted(`It lost files or reloaded: ${failed.slice(before).join(', ')}`);
-      const stopped = new Promise<never>((_, reject) => {
-        interrupt = () => reject(interrupted());
-      });
-      const running = work().catch((error: unknown) => {
-        throw failed.length > before ? interrupted() : error;
-      });
-      // Once interrupted, the work is abandoned with its page, and how it ends doesn't matter.
-      running.catch(() => {});
-      try {
-        if (failed.length > before) throw interrupted();
-        return await Promise.race([running, stopped]);
-      } finally {
-        interrupt = undefined;
-      }
-    },
-  };
-}
-
-/**
- * The catalogue server's answer to `path`, once it answers: a server that restarts refuses
- * connections for a moment.
- */
-async function answer(path = '/') {
-  const deadline = Date.now() + 30_000;
-  for (;;) {
-    try {
-      return await fetch(`${catalogueUrl}${path}`);
-    } catch (error) {
-      if (Date.now() > deadline)
-        throw new Error(`The catalogue at ${catalogueUrl} doesn't answer.`, { cause: error });
-      await new Promise((resolve) => setTimeout(resolve, 250));
-    }
-  }
-}
-
-/** How many times a route is loaded, when the catalogue's files keep failing to arrive. */
-const loadAttempts = 3;
-
-/** Scans a route in each of the page's themes. */
-async function scanRoute(page: Page, loads: Loads, path: string, route: string) {
-  await page.goto(`${catalogueUrl}/#/${route}`);
-  loads.loaded();
-  await expandCode(page);
-  const scans: Scan[] = [];
-  for (const theme of themesFor(path)) {
-    await setTheme(page, theme);
-    await settle(page);
-    await highlighted(page);
-    scans.push(await scan(page, route, theme.name));
-  }
-  return scans;
-}
-
-// A server left on the catalogue's port by another checkout would be reused: it serves that
-// checkout's code, and restarts as that checkout changes, dropping the files of a page loading
-// here. Vite's development server serves files under /@fs/ only from its own workspace.
-test.beforeAll(async () => {
-  const manifest = fileURLToPath(new URL('../../package.json', import.meta.url)).replaceAll(
-    '\\',
-    '/',
-  );
-  const response = await answer(`/@fs${manifest.startsWith('/') ? '' : '/'}${manifest}`);
-  if (!response.ok)
+// The scan runs on the hosted build, served from dist/site/ by page.route, so no server is
+// involved. The development server, with each module a request of its own, could drop a page's
+// files, as when it restarted or ran out of sockets, and leave the page blank until the test's
+// timeout.
+test.beforeAll(() => {
+  if (!siteBuilt())
     throw new Error(
-      `The catalogue at ${catalogueUrl} isn't this checkout's (/@fs/ answered ${response.status}). Stop that server, or choose free ports, such as ENVUI_CATALOGUE_PORT=8772 ENVUI_FIXTURE_PORT=8767 npm run test:a11y.`,
+      'The hosted catalogue is missing: run npm run test:a11y, which builds it first with npm run build:site.',
     );
 });
 
+test.beforeEach(async ({ page }) => {
+  await serveSite(page);
+});
+
 for (const { path, title, routes: pageRoutes } of pages) {
-  test(`${title} (${path}) has no new accessibility violations`, async ({
-    page: first,
-  }, testInfo) => {
+  test(`${title} (${path}) has no new accessibility violations`, async ({ page }, testInfo) => {
     // Pages scanned in high contrast as well take twice as long.
     test.setTimeout(240_000);
-    const context = first.context();
-    let page = first;
-    let loads = watchLoads(page);
     const scans: Scan[] = [];
-    for (const route of pageRoutes)
-      for (let attempt = 1; ; attempt++) {
-        try {
-          scans.push(...(await loads.during(() => scanRoute(page, loads, path, route))));
-          break;
-        } catch (error) {
-          if (!(error instanceof LoadInterrupted) || attempt === loadAttempts) throw error;
-          testInfo.annotations.push({
-            type: 'reloaded',
-            description: `#/${route} on attempt ${attempt}: ${error.message}`,
-          });
-          // The route is scanned again on a new page; closing this one ends whatever it was
-          // still waiting for.
-          await page.close();
-          await answer();
-          page = await context.newPage();
-          loads = watchLoads(page);
-        }
+    for (const route of pageRoutes) {
+      await page.goto(`${siteUrl}/#/${route}`);
+      await expandCode(page);
+      for (const theme of themesFor(path)) {
+        await setTheme(page, theme);
+        await settle(page);
+        await highlighted(page);
+        scans.push(await scan(page, route, theme.name));
       }
+    }
 
     if (updating(testInfo)) {
       updateExceptions((violations) => {

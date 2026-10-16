@@ -25,7 +25,7 @@ Open the catalogue at [localhost:8770](http://127.0.0.1:8770). It consumes libra
 | `npm run site:dev`         | Build the hosted catalogue and serve it locally               |
 | `npm test`                 | Test package consumers, SSR and hydration                     |
 | `npm run test:browser`     | Check interactions in Chromium, Firefox and WebKit            |
-| `npm run test:a11y`        | Scan every catalogue page with axe in both themes             |
+| `npm run test:a11y`        | Scan every page of the hosted build with axe in both themes   |
 | `npm run test:visual`      | Compare screenshots with the visual baseline, in Docker       |
 | `npm run verify`           | Run every check, including the visual baseline; needs Docker  |
 | `npm run verify:no-visual` | Every check but the visual baseline, ending with a warning    |
