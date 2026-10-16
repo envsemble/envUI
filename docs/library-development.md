@@ -10,6 +10,12 @@ The catalogue owns routes, page grids, specimen state and token measurement. Reu
 
 When a shared capability is missing, identify the required behavior and reusable API. Implement a variant, slot or component when library work is within scope. Otherwise report the concrete gap and preserve functioning product behavior. Keep routing, authorization, validation, preference and persistence in the application.
 
+## Design tokens
+
+The tokens are data: `packages/ui/tokens` holds them as DTCG 2025.10 `.tokens.json` files, with `envui.resolver.json` describing the themes. The base set has every token as the light theme shows it, and `color-scheme/dark.tokens.json` overrides what the dark theme changes; the `contrast` and `scale` modifiers are declared with no values yet. A token's path names its custom property: `color.text-muted` is `--color-text-muted`.
+
+`npm run tokens:build` runs Terrazzo (`packages/ui/terrazzo.config.mjs`), which lints the tokens and writes `src/styles/Tokens.css`, the internal typed module `src/generated/tokens.ts` and the token list `src/generated/tokens.json`. Commit them with the token change; `npm run tokens:check` fails when they are stale, and the catalogue rebuilds them on every token edit. Every color needs a dark value; the few that look the same in both themes are listed in the config until the palette gives them one. What DTCG can't express yet, such as derived hover colors and font shorthands, is in `src/styles/TokensHandwritten.css`.
+
 ## One documentation source
 
 Edit the relevant Markdown page under `docs/`; add a focused page when a new topic needs one. Register it in [the index](index.md) beneath its existing family. Each entry has a title, relative path and one-line purpose. The index defines catalogue grouping and reading order. Page titles must match their index entries.
@@ -30,7 +36,7 @@ Describe the pattern rather than the application that needed it: changesets, the
 
 ## Verify
 
-Run `npm run verify` at the envUI root. It checks generated icons, lint, formatting, types, documentation links, package and offline-catalogue builds, isolated tarball consumers, SSR, browser acceptance, accessibility and the visual baseline.
+Run `npm run verify` at the envUI root. It checks generated icons and tokens, lint, formatting, types, documentation links, package and offline-catalogue builds, isolated tarball consumers, SSR, browser acceptance, accessibility and the visual baseline.
 
 - `npm run lint` runs ESLint over components, the catalogue, tests and scripts. It reports likely bugs and the Rules of Hooks, not style.
 - `npm run lint:css` runs Stylelint over the library's and the catalogue's CSS. Colors, stacking order (`z-index`) and font weights come from tokens; lengths that follow the text size use rem, and px is only for hairlines: border and outline widths, focus-ring offsets and shadow offsets. Library components take their sizes from tokens rather than literal rem values.

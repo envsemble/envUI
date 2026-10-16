@@ -35,6 +35,8 @@ jobs:
       - run: npm ci
       - name: Check generated icons
         run: npm run icons:check
+      - name: Check generated tokens
+        run: npm run tokens:check
       - name: Lint scripts and components
         run: npm run lint
       - name: Lint styles

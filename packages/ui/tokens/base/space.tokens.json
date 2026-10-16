@@ -1,0 +1,23 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "space": {
+    "$type": "dimension",
+    "$description": "Relative spacing is reset at every explicit theme boundary, including portals.",
+    "1": { "$value": { "value": 0.25, "unit": "rem" } },
+    "2": { "$value": { "value": 0.5, "unit": "rem" } },
+    "3": { "$value": { "value": 0.75, "unit": "rem" } },
+    "4": { "$value": { "value": 1, "unit": "rem" } },
+    "5": { "$value": { "value": 1.5, "unit": "rem" } },
+    "6": { "$value": { "value": 2, "unit": "rem" } },
+    "7": { "$value": { "value": 2.5, "unit": "rem" } },
+    "8": { "$value": { "value": 3, "unit": "rem" } },
+    "9": { "$value": { "value": 4, "unit": "rem" } }
+  },
+  "row": {
+    "$type": "dimension",
+    "padding-inline": {
+      "$description": "Text in rows keeps clear of the large outer corners, whether a row stands alone or is connected.",
+      "$value": { "value": 1.5, "unit": "rem" }
+    }
+  }
+}

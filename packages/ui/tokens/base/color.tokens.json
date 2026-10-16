@@ -1,0 +1,213 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "color": {
+    "$type": "color",
+    "$description": "Every color as the light scheme shows it; color-scheme/dark.tokens.json overrides them for dark. The light palette: a white canvas, cool panes, pale gray surfaces and blue actions. Primitive roles are distinct; composed components reuse these values.",
+    "control-blue": {
+      "$value": { "colorSpace": "hsl", "components": [214.07767, 81.746032, 50.588235] }
+    },
+    "link": { "$value": { "colorSpace": "hsl", "components": [214.07767, 81.746032, 50.588235] } },
+    "accent": { "$value": { "colorSpace": "hsl", "components": [284.182, 43.651, 50.588] } },
+    "text-primary": { "$value": { "colorSpace": "hsl", "components": [225, 5.882353, 13.333333] } },
+    "text-muted": {
+      "$value": { "colorSpace": "hsl", "components": [213.333333, 4.522613, 39.019608] }
+    },
+    "border-strong": {
+      "$value": { "colorSpace": "hsl", "components": [220, 8.823529, 86.666667] }
+    },
+    "canvas": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
+    "canvas-dark": { "$value": { "colorSpace": "hsl", "components": [0, 0, 12.157] } },
+    "surface-base": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
+    "pane": { "$value": { "colorSpace": "hsl", "components": [213.333333, 42.857143, 95.882353] } },
+    "surface-raised": { "$value": { "colorSpace": "hsl", "components": [220, 0, 100] } },
+    "surface": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
+    "neutral-fill": { "$value": { "colorSpace": "hsl", "components": [0, 0, 28] } },
+    "toast-neutral": { "$value": { "colorSpace": "hsl", "components": [0, 0, 28] } },
+    "toast-success": { "$value": { "colorSpace": "hsl", "components": [158, 48, 30] } },
+    "toast-info": { "$value": { "colorSpace": "hsl", "components": [214, 60, 40] } },
+    "toast-error": { "$value": { "colorSpace": "hsl", "components": [4.231, 76.471, 40] } },
+    "on-toast": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
+    "white": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
+    "on-accent": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
+    "surface-muted": {
+      "$value": { "colorSpace": "hsl", "components": [210, 16.666667, 97.647059] }
+    },
+    "text-strong": {
+      "$value": { "colorSpace": "hsl", "components": [205.714286, 5.511811, 24.901961] }
+    },
+    "control-text": {
+      "$value": { "colorSpace": "hsl", "components": [205.714286, 5.511811, 24.901961] }
+    },
+    "icon": { "$value": { "colorSpace": "hsl", "components": [213.333333, 4.522613, 39.019608] } },
+    "text-quiet": {
+      "$value": { "colorSpace": "hsl", "components": [213.333333, 4.522613, 39.019608] }
+    },
+    "disabled-text": {
+      "$value": { "colorSpace": "hsl", "components": [213.333333, 4.522613, 39.019608] }
+    },
+    "row": { "$value": { "colorSpace": "hsl", "components": [200, 12, 95.098039] } },
+    "row-alternate": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
+    "menu-row": {
+      "$description": "Rows on a menu pane: white in light, raised from the pane in dark.",
+      "$value": "{color.row-alternate}"
+    },
+    "row-text": { "$value": { "colorSpace": "hsl", "components": [225, 5.882353, 13.333333] } },
+    "row-detail": {
+      "$value": { "colorSpace": "hsl", "components": [213.333333, 4.522613, 39.019608] }
+    },
+    "on-secondary-action": {
+      "$description": "Labels on action and navigation fills keep 4.5:1 on their hover shades too, also on a tab rail: outlined and selected navigation labels are a deeper blue than links.",
+      "$value": { "colorSpace": "hsl", "components": [205.714286, 5.511811, 24.901961] }
+    },
+    "on-subtle-action": {
+      "$value": { "colorSpace": "hsl", "components": [216.852792, 89.954338, 42.941176] }
+    },
+    "subtle-action-border": {
+      "$value": { "colorSpace": "hsl", "components": [220, 8.823529, 86.666667] }
+    },
+    "navigation-text": {
+      "$value": { "colorSpace": "hsl", "components": [205.714286, 5.511811, 24.901961] }
+    },
+    "navigation-icon": {
+      "$value": { "colorSpace": "hsl", "components": [213.333333, 4.522613, 39.019608] }
+    },
+    "navigation-quiet": {
+      "$value": { "colorSpace": "hsl", "components": [213.333333, 42.857143, 95.882353] }
+    },
+    "on-navigation-selected": {
+      "$value": { "colorSpace": "hsl", "components": [216.852792, 89.954338, 39] }
+    },
+    "direction-link": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
+    "direction-link-text": {
+      "$value": { "colorSpace": "hsl", "components": [225, 5.882353, 13.333333] }
+    },
+    "direction-link-label": {
+      "$value": { "colorSpace": "hsl", "components": [213.333333, 4.522613, 39.019608] }
+    },
+    "direction-link-icon": {
+      "$value": { "colorSpace": "hsl", "components": [216.852792, 89.954338, 42.941176] }
+    },
+    "direction-link-border": {
+      "$value": { "colorSpace": "hsl", "components": [220, 8.823529, 86.666667] }
+    },
+    "field": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
+    "field-text": { "$value": { "colorSpace": "hsl", "components": [225, 5.882353, 13.333333] } },
+    "field-label": {
+      "$value": { "colorSpace": "hsl", "components": [213.333333, 4.522613, 39.019608] }
+    },
+    "field-hint": {
+      "$value": { "colorSpace": "hsl", "components": [213.333333, 4.522613, 39.019608] }
+    },
+    "field-placeholder": {
+      "$value": { "colorSpace": "hsl", "components": [213.333333, 4.522613, 39.019608] }
+    },
+    "field-border": { "$value": { "colorSpace": "hsl", "components": [220, 8.823529, 86.666667] } },
+    "field-active": {
+      "$value": { "colorSpace": "hsl", "components": [214.07767, 81.746032, 50.588235] }
+    },
+    "field-error": { "$value": { "colorSpace": "hsl", "components": [4.231, 76.471, 40] } },
+    "popup": {
+      "$description": "Popups raised over the page, such as the open list of a Select.",
+      "$value": { "colorSpace": "hsl", "components": [0, 0, 100] }
+    },
+    "popup-border": { "$value": "{color.border-strong}" },
+    "dialog": {
+      "$description": "Dialogs and the command palette: the popup surface, which in the dark theme stays the pane color so rows and fields inside keep their contrast.",
+      "$value": "{color.popup}"
+    },
+    "select-option": { "$value": "{color.popup}" },
+    "select-option-text": {
+      "$value": { "colorSpace": "hsl", "components": [213.333, 9.333, 29.412] }
+    },
+    "select-selected": {
+      "$value": { "colorSpace": "hsl", "components": [218.181818, 91.666667, 95.294118] }
+    },
+    "on-select-selected": {
+      "$value": { "colorSpace": "hsl", "components": [216.852792, 89.954338, 42.941176] }
+    },
+    "radio": { "$value": { "colorSpace": "hsl", "components": [214.07767, 81.746032, 50.588235] } },
+    "radio-row": { "$value": { "colorSpace": "hsl", "components": [210, 16.666667, 97.647059] } },
+    "radio-text": { "$value": { "colorSpace": "hsl", "components": [225, 5.882353, 13.333333] } },
+    "radio-detail": {
+      "$value": { "colorSpace": "hsl", "components": [213.333333, 4.522613, 39.019608] }
+    },
+    "checkbox": {
+      "$value": { "colorSpace": "hsl", "components": [214.07767, 81.746032, 50.588235] }
+    },
+    "on-checkbox": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
+    "checkbox-border": {
+      "$value": { "colorSpace": "hsl", "components": [213.333333, 4.522613, 39.019608] }
+    },
+    "checkbox-text": {
+      "$value": { "colorSpace": "hsl", "components": [225, 5.882353, 13.333333] }
+    },
+    "calendar-selected": {
+      "$description": "Calendars: the chosen day is a solid blue circle with white text (4.5:1), today a blue ring.",
+      "$value": { "colorSpace": "hsl", "components": [214.07767, 81.746032, 50.588235] }
+    },
+    "on-calendar-selected": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
+    "calendar-today": {
+      "$value": { "colorSpace": "hsl", "components": [214.07767, 81.746032, 50.588235] }
+    },
+    "switch-on": {
+      "$value": { "colorSpace": "hsl", "components": [214.07767, 81.746032, 50.588235] }
+    },
+    "switch-thumb": {
+      "$value": { "colorSpace": "hsl", "components": [205.714286, 5.511811, 24.901961] }
+    },
+    "switch-thumb-on": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
+    "switch-text": { "$value": { "colorSpace": "hsl", "components": [225, 5.882353, 13.333333] } },
+    "chip-text": {
+      "$value": { "colorSpace": "hsl", "components": [216.852792, 89.954338, 42.941176] }
+    },
+    "disclosure-text": {
+      "$value": { "colorSpace": "hsl", "components": [213.333333, 4.522613, 39.019608] }
+    },
+    "dialog-overlay": { "$value": { "colorSpace": "hsl", "components": [0, 0, 12.157] } },
+    "markdown-border": {
+      "$value": { "colorSpace": "hsl", "components": [220, 8.823529, 86.666667] }
+    },
+    "avatar": {
+      "$description": "The envsemble avatar: the default person picture and initials share it in both themes.",
+      "$value": { "colorSpace": "hsl", "components": [217.9, 100, 81.4] }
+    },
+    "avatar-figure": { "$value": { "colorSpace": "hsl", "components": [221.3, 71.7, 57.1] } },
+    "on-avatar": {
+      "$description": "Initials use a deeper shade of the figure blue: 5:1 on the avatar fill.",
+      "$value": { "colorSpace": "hsl", "components": [221.3, 71.7, 36] }
+    },
+    "tone": {
+      "$description": "Status tones for small text, icons and badges. Each keeps at least 4.5:1 on the canvas, panes and rows, also over its own subtle badge fill. Solid badges put --color-on-tone on the tone.",
+      "neutral": { "$value": { "colorSpace": "hsl", "components": [213.333, 4.523, 39.02] } },
+      "accent": { "$value": { "colorSpace": "hsl", "components": [216.853, 89.954, 42.941] } },
+      "success": { "$value": { "colorSpace": "hsl", "components": [140, 64, 27] } },
+      "warning": { "$value": { "colorSpace": "hsl", "components": [36, 100, 26] } },
+      "danger": { "$value": { "colorSpace": "hsl", "components": [4.231, 76.471, 40] } },
+      "done": {
+        "$description": "Completed work, such as a merged or closed-as-done item.",
+        "$value": { "colorSpace": "hsl", "components": [266, 55, 50] }
+      }
+    },
+    "on-tone": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
+    "state-layer": {
+      "$description": "The content color that fills and state layers mix with transparency, in TokensHandwritten.css.",
+      "$value": "{color.text-primary}"
+    },
+    "text-subtle": { "$value": "{color.text-quiet}" },
+    "focus-ring": {
+      "$value": { "colorSpace": "hsl", "components": [214.07767, 81.746032, 50.588235] }
+    },
+    "outlined-focus": { "$value": "{color.focus-ring}" },
+    "navigation-selected": {
+      "$value": { "colorSpace": "hsl", "components": [218.181818, 91.666667, 95.294118] }
+    },
+    "action-strip": { "$value": { "colorSpace": "hsl", "components": [200, 12, 95.098039] } },
+    "primary-action": {
+      "$value": { "colorSpace": "hsl", "components": [214.07767, 81.746032, 50.588235] }
+    },
+    "on-primary-action": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
+    "subtle-action": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
+    "destructive-action": { "$value": { "colorSpace": "hsl", "components": [4.231, 76.471, 40] } },
+    "on-destructive-action": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } }
+  }
+}

@@ -9,10 +9,14 @@ import {
 // `vite build` makes the offline catalogue, one HTML file with every asset inlined. With
 // `--mode site` it makes the hosted catalogue: separate files with content-hashed names that
 // browsers keep cached.
+import { tokensVitePlugin } from '../../scripts/BuildTokens.mjs';
+
 export default defineConfig(({ mode }) => {
   const site = mode === 'site';
   return {
     plugins: [
+      // Rebuilds Tokens.css from packages/ui/tokens on every token edit; Vite hot-reloads it.
+      tokensVitePlugin(),
       {
         name: 'envui-documentation',
         buildStart() {
