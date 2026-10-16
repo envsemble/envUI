@@ -200,7 +200,7 @@ export function DropZone({
       >
         <span className="env-drop-zone-icon">
           {pending ? (
-            <Spinner size={size === 'sm' ? 'small' : 'standard'} />
+            <Spinner size={size === 'sm' ? 'sm' : 'md'} />
           ) : (
             <DecorativeIcon>{icon ?? <CloudUpload />}</DecorativeIcon>
           )}

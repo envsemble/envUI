@@ -2,11 +2,13 @@
 
 import { useEffect, useReducer } from 'react';
 import { classNames } from '../../internal/classNames.js';
+import { useMessages } from '../../internal/EnvUIContext.js';
+import { common } from '../../foundations/messages/common.js';
 
 export interface LoadingBarProps {
   /** Shows progress while true; the bar then completes and fades out. */
   active: boolean;
-  /** Accessible name while the bar is visible. */
+  /** Accessible name while the bar is visible; EnvUIProvider's messages.common.loading by default. */
   label?: string;
   /** Milliseconds to wait before appearing, so quick loads never flash the bar. Defaults to 200. */
   delay?: number;
@@ -48,11 +50,12 @@ function reduce(
  */
 export function LoadingBar({
   active,
-  label = 'Loading',
+  label,
   delay = 200,
   contained = false,
   className,
 }: LoadingBarProps) {
+  const messages = useMessages('common', common);
   const [state, dispatch] = useReducer(reduce, { phase: 'idle', run: 0 });
 
   useEffect(() => dispatch(active ? 'start' : 'stop'), [active]);
@@ -71,7 +74,7 @@ export function LoadingBar({
     <div
       key={state.run}
       role="progressbar"
-      aria-label={label}
+      aria-label={label ?? messages.loading}
       className={classNames('env-loading-bar', contained && 'env-loading-bar-contained', className)}
       data-state={state.phase}
     >

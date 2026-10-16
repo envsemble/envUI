@@ -7,11 +7,11 @@
   /* The hook --env-spinner-color recolors it, such as to a button's label color. */
   color: var(--env-spinner-color, var(--env-color-bg-brand-emphasis));
 }
-.env-spinner-small {
+.env-spinner:where([data-size='sm']) {
   inline-size: 1rem;
   block-size: 1rem;
 }
-.env-spinner-large {
+.env-spinner:where([data-size='lg']) {
   inline-size: 3rem;
   block-size: 3rem;
 }
