@@ -49,6 +49,23 @@ export default defineConfig(envui.configs.recommended, {
 
 If envUI lacks something you need, propose an addition to envUI rather than keeping a local copy.
 
+## Settings
+
+The rules share their settings under `settings.envui` in the ESLint configuration. An unknown setting, or a value of the wrong shape, is a configuration error.
+
+`reexportModules` lists the application's modules that re-export envUI's components under envUI's names, such as a `src/ui.ts` with `export * from '@envsemble/envui'`. Names imported from them count as envUI's:
+
+```js
+export default defineConfig(envui.configs.recommended, {
+  settings: { envui: { reexportModules: ['./ui', '@/components/ui'] } },
+});
+```
+
+- A module is matched by its specifier exactly as an import writes it, in any file: `'./ui'` matches `import { Dialog } from './ui'`, but not `'../ui'` or `'./ui/index'`. List each spelling the application writes, or import the module through an alias that every file writes the same way, such as `'@/components/ui'`.
+- [no-html-elements](#no-html-elements) counts a name imported from a listed module as the envUI component it is exported as: `<Dialog role="alertdialog">` with `Dialog` from `'./ui'` passes.
+- [no-renamed-exports](#no-renamed-exports) checks the names imported or re-exported from a listed module as names of `@envsemble/envui`, and its message names the module as written: `import { Input } from './ui'` is reported, with `TextField` to import from `'./ui'`.
+- List only modules that keep envUI's names: a component of the application's own exported under an envUI name would count as envUI's.
+
 ## Rules
 
 | Rule                                      | Reports                                                         |
@@ -70,7 +87,7 @@ One rule reads one mapping table, [`src/data/elements.json`](src/data/elements.j
 
 How an element is matched:
 
-1. A static `role` is checked first, on any JSX element: `<ul role="menu">`, a `<Box role="dialog">` of the application's own or of another library, and envUI's own `<Surface role="dialog">` or `<Stack role="menu">`, which hand-roll the widget. An envUI component that renders the role itself, listed in the role's `owners`, passes, since a role on it refines its own: `<Popover role="dialog">`, `<Menu.Submenu role="menu">`, and the component the role names, `<Menu.Root role="menu">`. An element whose name is imported counts by the name its entry point exports, from `@envsemble/envui`, `/content`, `/diff` or `/rich-text`: `Surface` imported as `Dialog` is a `Surface`, a `Dialog` from another library is not envUI's, and `<Menu.Item role="menu">` is an item, not the menu. An element whose name nothing in the file declares, as in an example written without its imports, counts by its full written name. With several roles, the first counts.
+1. A static `role` is checked first, on any JSX element: `<ul role="menu">`, a `<Box role="dialog">` of the application's own or of another library, and envUI's own `<Surface role="dialog">` or `<Stack role="menu">`, which hand-roll the widget. An envUI component that renders the role itself, listed in the role's `owners`, passes, since a role on it refines its own: `<Popover role="dialog">`, `<Menu.Submenu role="menu">`, and the component the role names, `<Menu.Root role="menu">`. An element whose name is imported counts by the name its entry point exports, from `@envsemble/envui`, `/content`, `/diff` or `/rich-text`, or from a module listed in [`reexportModules`](#settings): `Surface` imported as `Dialog` is a `Surface`, a `Dialog` from another library is not envUI's, and `<Menu.Item role="menu">` is an item, not the menu. An element whose name nothing in the file declares, as in an example written without its imports, counts by its full written name. With several roles, the first counts.
 2. Otherwise HTML elements are checked in the order of the table, and the first entry whose element and attributes match decides. An `<input>` is matched by its `type`.
 3. Nothing is reported for:
    - what a part renders in place of its own element, through the `render` prop: `<Menu.Item render={<a href="/settings" />}>`;
@@ -194,7 +211,7 @@ It also reports:
 - the module and its names reached without an import declaration: `require('@envsemble/envui')`, `import('@envsemble/envui')`, awaited or through `.then()`, `import envui = require('@envsemble/envui')` in TypeScript, names destructured from any module object, as in `const { Input } = envui`, `const { ['Input']: Field } = envui` or the assignment `({ Input } = envui)`, and type queries such as `import('@envsemble/envui').InputProps`;
 - rendering a name that became a namespace of parts, such as `<Menu>` or `<Table>`, which must now be `<Menu.Root>` or `<Table.Root>`, in JSX or through `createElement()`, `React.createElement()` and the JSX runtime's `jsx()`.
 
-Type imports count. A name is read statically, so a member with a computed key, such as `envui[name]`, or a module object passed through a function is not followed. A name is checked where it resolves to envUI, so a local `Menu` or a parameter named `envui` that shadows the import passes. Only the entry point that exported a name is checked, so an icon named `Input` from `@envsemble/envui/icons` passes. The rule has no options.
+Type imports count. A name is read statically, so a member with a computed key, such as `envui[name]`, or a module object passed through a function is not followed. A name is checked where it resolves to envUI, so a local `Menu` or a parameter named `envui` that shadows the import passes. Only the entry point that exported a name is checked, so an icon named `Input` from `@envsemble/envui/icons` passes. A module listed in [`reexportModules`](#settings) is checked as `@envsemble/envui`. The rule has no options.
 
 What the codemods' map says to do instead comes with the report:
 

@@ -9,4 +9,6 @@ The first release: ESLint rules for applications built with envUI, for ESLint 10
 - `no-raw-colors`: literal colors in inline styles, with the envUI color tokens to use instead.
 - `no-renamed-exports`: names that envUI 0.7 exported and 1.0 renamed or made internal, with the 1.0 name, and names that became namespaces, such as `Menu`, rendered as components.
 
+An application that re-exports envUI from a module of its own, such as `./ui`, lists it in `settings.envui.reexportModules`: `no-html-elements` and `no-renamed-exports` then count the names imported from it as envUI's.
+
 The plugin is released with `@envsemble/envui` at the same version; install the version that matches envUI.
