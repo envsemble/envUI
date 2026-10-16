@@ -55,9 +55,17 @@ function highlighted(page: Page) {
   );
 }
 
+/** The search shortcut's modifier where the page runs: ⌘ on Apple platforms, Ctrl elsewhere. */
+async function shortcutKeys(page: Page) {
+  const apple = await page.evaluate(() => /Mac|iPhone|iPad/.test(navigator.userAgent));
+  return apple
+    ? { own: 'Meta+k', other: 'Control+k', named: 'Meta+K' }
+    : { own: 'Control+k', other: 'Meta+k', named: 'Control+K' };
+}
+
 /** Opens search with the shortcut and types a query, once the index has loaded. */
 async function search(page: Page, query: string) {
-  await page.keyboard.press('ControlOrMeta+k');
+  await page.keyboard.press((await shortcutKeys(page)).own);
   await expect(field(page)).toBeFocused();
   await expect(dialog(page).getByText('Loading search…')).toHaveCount(0);
   await field(page).fill(query);
@@ -69,15 +77,21 @@ async function openCatalogue(page: Page, address: string) {
 }
 
 test.describe('search', () => {
-  test('Ctrl+K and ⌘K open and close search, and so does the search button', async ({ page }) => {
+  test('Ctrl+K, or ⌘K on Apple platforms, opens and closes search, and so does its button', async ({
+    page,
+  }) => {
     await openCatalogue(page, `${catalogueUrl}/`);
-    await page.keyboard.press('Control+k');
+    const keys = await shortcutKeys(page);
+    await page.keyboard.press(keys.own);
     await expect(dialog(page)).toBeVisible();
     await expect(field(page)).toBeFocused();
     await expect(dialog(page)).toContainText('Search components and their aliases');
-    await page.keyboard.press('Control+k');
+    await page.keyboard.press(keys.own);
     await expect(dialog(page)).toBeHidden();
-    await page.keyboard.press('Meta+k');
+    // The other platform's modifier leaves the keys to the page, such as Ctrl+K in a Mac text field.
+    await page.keyboard.press(keys.other);
+    await expect(dialog(page)).toBeHidden();
+    await page.keyboard.press(keys.own);
     await expect(dialog(page)).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(dialog(page)).toBeHidden();
@@ -86,7 +100,7 @@ test.describe('search', () => {
       .locator('.docs-sidebar')
       .getByRole('button', { name: /^Search/ })
       .first();
-    await expect(button).toHaveAttribute('aria-keyshortcuts', 'Control+K Meta+K');
+    await expect(button).toHaveAttribute('aria-keyshortcuts', keys.named);
     // Opened from the keyboard, as some engines do not focus a clicked button.
     await button.focus();
     await page.keyboard.press('Enter');
@@ -128,6 +142,20 @@ test.describe('search', () => {
     await expect(page.locator('#docs-main')).toBeFocused();
   });
 
+  test('choosing the place the address is at already scrolls to it again', async ({ page }) => {
+    await openCatalogue(page, `${catalogueUrl}/components/button/props#props-Button-variant`);
+    const row = page.locator('[id="props-Button-variant"]');
+    await expect(row).toBeInViewport();
+    await page.evaluate(() => window.scrollTo({ top: 0 }));
+    await expect(row).not.toBeInViewport();
+    await search(page, 'Button.variant');
+    await expect.poll(() => highlighted(page)).toBe('prop:Button.variant');
+    await page.keyboard.press('Enter');
+    await expect(dialog(page)).toBeHidden();
+    await expect(page).toHaveURL(`${catalogueUrl}/components/button/props#props-Button-variant`);
+    await expect(row).toBeInViewport();
+  });
+
   test('finds a token and opens the token reference at its row', async ({ page }) => {
     await openCatalogue(page, `${catalogueUrl}/`);
     await search(page, '--color-fg-muted');
@@ -138,6 +166,24 @@ test.describe('search', () => {
     // The reference loads on its own, and the route scrolls to the row once it is there.
     await expect(page.locator('#token-color-fg-muted')).toBeInViewport();
     await expect(page.locator('#token-color-fg-muted')).toContainText('#5d6166');
+  });
+
+  test('finds every export, also one on a page without a Props view, at the section that shows it', async ({
+    page,
+  }) => {
+    await openCatalogue(page, `${catalogueUrl}/`);
+    await search(page, 'ThemePreferenceProvider');
+    await expect.poll(() => highlighted(page)).toBe('export:ThemePreferenceProvider');
+    await page.keyboard.press('Enter');
+    await expect(page).toHaveURL(`${catalogueUrl}/overview/get-started#theme-preference`);
+    await expect(
+      page.getByRole('heading', { name: 'Theme preference', exact: true }),
+    ).toBeInViewport();
+    await search(page, 'useTheme');
+    await expect.poll(() => highlighted(page)).toBe('export:useTheme');
+    await page.keyboard.press('Enter');
+    await expect(page).toHaveURL(`${catalogueUrl}/foundations/colors/usage#react-usage`);
+    await expect(page.getByRole('heading', { name: 'React usage', exact: true })).toBeInViewport();
   });
 
   test('arrow keys, Home and End move through the grouped results, and Enter opens one', async ({
@@ -258,6 +304,35 @@ test.describe('hosted build', () => {
     expect(readFileSync(resolve(site, 'index.html'), 'utf8')).toContain('envui-catalogue-theme');
   });
 
+  test('the stored theme, contrast and scale apply before the catalogue loads', async ({
+    page,
+  }) => {
+    requireSite();
+    await page.addInitScript(() => {
+      localStorage.setItem('envui-catalogue-theme', 'dark');
+      localStorage.setItem('envui-catalogue-contrast', 'high');
+      localStorage.setItem('envui-catalogue-scale', 'compact');
+    });
+    // The catalogue's script never arrives, so only the head script runs.
+    const entry = /^\/assets\/index-[\w-]+\.js$/;
+    await serveSite(page, (pathname) => entry.test(pathname), 'aborted');
+    await page.goto(`${siteUrl}/components/button/overview`);
+    const root = page.locator('html');
+    await expect(root).toHaveAttribute('data-env-theme', 'dark');
+    await expect(root).toHaveAttribute('data-env-contrast', 'high');
+    await expect(root).toHaveAttribute('data-env-contrast-source', 'envui:high');
+    await expect(root).toHaveAttribute('data-env-scale', 'compact');
+    await expect(root).toHaveAttribute('data-env-scale-source', 'envui:compact');
+    await expect(page.locator('.docs-app')).toHaveCount(0);
+    // Once the catalogue loads, its provider keeps them as its own.
+    await page.unroute(`${siteUrl}/**`);
+    await serveSite(page, () => false, 'missing');
+    await page.reload();
+    await expect(page.locator('.docs-app')).toHaveAttribute('data-env-scale', 'compact');
+    await expect(root).toHaveAttribute('data-env-scale', 'compact');
+    await expect(root).toHaveAttribute('data-env-contrast-source', 'envui:high');
+  });
+
   test('links open pages without loading the catalogue again, and Back returns', async ({
     page,
   }) => {
@@ -276,7 +351,7 @@ test.describe('hosted build', () => {
     );
     await page.getByRole('tab', { name: 'Accessibility' }).click();
     await expect(page).toHaveURL(`${siteUrl}/components/dialog/accessibility`);
-    await navigation.getByRole('link', { name: 'Release notes' }).click();
+    await navigation.getByRole('link', { name: 'Changelog', exact: true }).click();
     await expect(page).toHaveURL(`${siteUrl}/changelog`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Changelog');
     await expect(page.getByRole('heading', { level: 2 }).first()).toBeVisible();
@@ -329,7 +404,7 @@ test.describe('hosted build', () => {
     // An index that fails to load says so, and offers to load the page again.
     failing = true;
     await openCatalogue(page, `${siteUrl}/components/badge/overview`);
-    await page.keyboard.press('ControlOrMeta+k');
+    await page.keyboard.press((await shortcutKeys(page)).own);
     await expect(dialog(page).getByText('Search could not load.')).toBeVisible();
     await expect(dialog(page).getByRole('button', { name: 'Reload the page' })).toBeVisible();
   });
@@ -349,6 +424,40 @@ test('search works in the offline catalogue, whose routes stay in the hash', asy
   await expect(page).toHaveURL(`${offline}#/patterns/loading`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Loading');
 });
+
+for (const where of ['offline', 'hosted'] as const) {
+  test(`a link to a heading of the same page scrolls to it, also again, ${where}`, async ({
+    page,
+  }) => {
+    if (where === 'hosted') {
+      requireSite();
+      await serveSite(page, () => false, 'missing');
+    }
+    const base = where === 'offline' ? `${offline}#/` : `${siteUrl}/`;
+    await openCatalogue(page, `${base}get-started/migration`);
+    const heading = page.getByRole('heading', { name: 'Scale and density', exact: true });
+    await expect(heading).toHaveAttribute('id', 'scale-and-density');
+    // The guide links the heading of its own and, elsewhere, the page of the same name.
+    const link = page
+      .locator('.docs-article')
+      .getByRole('link', { name: 'scale and density' })
+      .and(page.locator('a[href*="scale-and-density"]'));
+    await link.click();
+    await expect(page).toHaveURL(
+      where === 'offline'
+        ? `${offline}#/get-started/migration?section=scale-and-density`
+        : `${siteUrl}/get-started/migration#scale-and-density`,
+    );
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+      'Migrate an interface to envUI',
+    );
+    await expect(heading).toBeInViewport();
+    await page.evaluate(() => window.scrollTo({ top: 0 }));
+    await expect(heading).not.toBeInViewport();
+    await link.click();
+    await expect(heading).toBeInViewport();
+  });
+}
 
 test('the Display menu stores the theme, contrast and scale, for a reload and other tabs', async ({
   page,
