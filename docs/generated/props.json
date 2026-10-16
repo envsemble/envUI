@@ -3704,7 +3704,7 @@
           "name": "disabled",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "The trigger stays in place, dimmed, but doesn't open its menu."
         },
         {
           "name": "open",
@@ -3716,7 +3716,7 @@
           "name": "defaultOpen",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "Whether an uncontrolled menu starts open; closed by default."
         },
         {
           "name": "onOpenChange",

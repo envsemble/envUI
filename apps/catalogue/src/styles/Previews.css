@@ -154,14 +154,6 @@
   padding: var(--space-6);
 }
 /* A window around a sample menubar and note, and around a title bar used without the shell. */
-.docs-window {
-  display: grid;
-  gap: var(--space-3);
-  border: 0.0625rem solid var(--color-border-strong);
-}
-.docs-window-note {
-  font-family: var(--font-family);
-}
 /* Stands in for a window: WindowFrame fills it as it would fill the window. */
 .docs-title-bar-frame {
   position: relative;

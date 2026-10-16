@@ -9,7 +9,7 @@ import { SpinnerPreview, SkeletonPreview } from './Feedback';
 import { ToastsPreview } from './Toasts';
 import { MessagesPreview } from './Conversation';
 import { CalendarHeatmapPreview, StatsPreview } from './Dashboard';
-import { MenubarPreview, TooltipPreview, MeterPreview, ProgressPreview } from './Overlays';
+import { TooltipPreview, MeterPreview, ProgressPreview } from './Overlays';
 import { AppShellPreview } from './Shell';
 import { TreePreview } from './Workspace';
 import { PanelDockPreview } from './Dock';
@@ -72,8 +72,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <ToastsPreview />;
     case 'popover':
       return <PopoverPreview />;
-    case 'menubar':
-      return <MenubarPreview />;
     case 'tooltip':
       return <TooltipPreview />;
     case 'meter':
