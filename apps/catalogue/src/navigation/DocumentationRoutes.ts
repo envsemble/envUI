@@ -310,7 +310,7 @@ export function normalizeRoute(route: string): string {
   // A heading of a page on the template opens in the view that shows it, also from an old link
   // such as components/button#keyboard.
   const section = search.get('section');
-  const shown = (page && section && viewOfHeading(page.reference, section)) || view;
-  const destination = page ? `${page.path}/${viewFor(page.reference, shown)}` : path;
+  const opened = (page && section && viewOfHeading(page.reference, section)) || view;
+  const destination = page ? `${page.path}/${viewFor(page.reference, opened)}` : path;
   return `${destination}${search.size ? `?${search}` : ''}`;
 }
