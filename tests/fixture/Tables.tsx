@@ -335,7 +335,7 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
               <Table.Row key={report.id}>
                 <Table.Cell>{report.title}</Table.Cell>
                 <Table.Cell label="Owner">{report.owner}</Table.Cell>
-                <Table.Cell label="Team">Platform</Table.Cell>
+                <Table.Cell label="Team">Infrastructure</Table.Cell>
                 <Table.Cell label="Reviews" numeric>
                   {report.reviews}
                 </Table.Cell>

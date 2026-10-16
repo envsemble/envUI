@@ -389,7 +389,7 @@ test('a table stacks below the width it is given, measured on its region', async
     await expect(region).toHaveAttribute('data-stacked', '');
     await expect(row).toHaveCSS('display', 'grid');
     await expect(
-      row.getByRole('cell', { name: 'Platform' }).locator('.env-table-cell-label'),
+      row.getByRole('cell', { name: 'Infrastructure' }).locator('.env-table-cell-label'),
     ).toBeVisible();
     await frame.evaluate((element) => (element.style.inlineSize = '62rem'));
     await expect(region).not.toHaveAttribute('data-stacked');
