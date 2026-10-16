@@ -31,7 +31,7 @@ test('a default that names a private value shows the value, or nothing', () => {
   assert.equal(props('ThemePreferenceProvider').storageKey.default, "'env-theme'");
   assert.equal(
     props('Rating').formatLabel.default,
-    '(value: number, max: number) => `${value} out of ${max} stars`',
+    `(value: number, max: number) => \`\${value} out of \${max} stars\``,
   );
   // Private names inside a value are resolved too.
   assert.equal(

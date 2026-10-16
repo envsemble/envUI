@@ -38,7 +38,7 @@ test('every highlighted token is readable on its code background, in code blocks
   );
   assert.ok(targetContrast >= 4.5);
   const samples = {
-    tsx: "import { Button } from '@envsemble/envui';\n// Saves the draft.\nexport const Save = ({ count = 2 }) => <Button onClick={() => save(`${count}`)}>Save {true}</Button>;",
+    tsx: "import { Button } from '@envsemble/envui';\n// Saves the draft.\nexport const Save = ({ count = 2 }) => <Button onClick={() => save(String(count))}>Save {true}</Button>;",
     css: '.card:hover { color: var(--color-fg-default); margin: 0 1rem !important; }',
     json: '{ "name": "envui", "private": true, "count": 3, "items": [null] }',
     shellscript: 'npm install --save-exact "@envsemble/envui" # pinned\nexport PORT=8080',
