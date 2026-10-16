@@ -14,6 +14,10 @@ ruleTester.run('no-raw-colors', rule, {
     '<div style={{ background: "color-mix(in srgb, var(--color-bg-default) 80%, transparent)" }} />',
     // A relative color derived from a token keeps following it.
     '<div style={{ color: "hsl(from var(--color-fg-link) h s calc(l - 10))" }} />',
+    // Channels that all come from custom properties, and colors inside a CSS string.
+    '<div style={{ color: "oklch(var(--l) var(--c) var(--h))", background: "rgb(var(--rgb) / 50%)" }} />',
+    '<div style={{ color: "color(display-p3 var(--r) var(--g) var(--b))" }} />',
+    `<div style={{ content: '"rgb(1 2 3) #fff"', quotes: "'red' 'blue'" }} />`,
     '<div style={{ color: "currentColor", borderColor: "transparent", fill: "inherit" }} />',
     // Words that are not colors, and named colors where a property does not take one.
     '<div style={{ border: "1px solid", fontFamily: "Tan Pearl", animationName: "red" }} />',
@@ -61,6 +65,15 @@ ruleTester.run('no-raw-colors', rule, {
     {
       code: '<div style={{ color: "color(display-p3 1 0 0)" }} />',
       errors: [raw('color(display-p3 1 0 0)', 'color')],
+    },
+    {
+      // One literal channel among custom properties is still a literal color.
+      code: '<div style={{ color: "oklch(var(--l) 0.15 var(--h))" }} />',
+      errors: [raw('oklch(var(--l) 0.15 var(--h))', 'color')],
+    },
+    {
+      code: `<div style={{ content: '"a"', color: 'RGB(1 2 3)' }} />`,
+      errors: [raw('RGB(1 2 3)', 'color')],
     },
     {
       code: '<div style={{ border: "1px solid red" }} />',

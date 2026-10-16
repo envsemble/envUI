@@ -112,6 +112,23 @@ test('raw colors are reported, and colors from tokens pass', async () => {
   );
   await passes('.a { color: var(--color-fg-default); background: transparent; }');
   await passes('.a { color: hsl(from var(--color-fg-link) h s calc(l - 10)); }');
+  // Channels that all come from custom properties, and colors inside a CSS string.
+  await passes(
+    '.a { color: oklch(var(--l) var(--c) var(--h)); background: rgb(var(--rgb) / 50%); }',
+  );
+  await passes('.a { color: color(display-p3 var(--r) var(--g) var(--b)); }');
+  await passes(`.a { content: "rgb(1 2 3)"; } .b { content: 'it\\'s hsl(0 0% 0%)'; }`);
+  assert.deepEqual(
+    await lint('.a { color: oklch(var(--l) 0.15 var(--h)); }\n.b { content: "a" rgb(1 2 3); }'),
+    [
+      { rule: 'declaration-property-value-disallowed-list', text: 'oklch(var(--l) 0.15 var(--h))' },
+      { rule: 'declaration-property-value-disallowed-list', text: '"a" rgb(1 2 3)' },
+    ],
+  );
+  assert.match(
+    (await message('.a { background: rgb(var(--x)), url("rgb(0 0 0)"), hsl(0 0% 0%); }')).text,
+    /^Raw color hsl\(0 0% 0%\) in background/,
+  );
   await passes('.a { background: color-mix(in srgb, var(--color-bg-default) 80%, transparent); }');
   await passes('.a { fill: currentColor; }');
 });

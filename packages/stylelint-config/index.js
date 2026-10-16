@@ -9,14 +9,24 @@ const documentation =
 
 /** Not inside `url(…)`, where a data URL can spell colors of its own image. */
 const outsideUrl = String.raw`(?<!\burl\(\s*(?:"[^"]*|'[^']*|[^"')]*))`;
+/** Not inside a CSS string, such as the text of `content: "rgb(1 2 3)"`. */
+const outsideString = String.raw`(?<!^(?:[^"'\\]|\\.|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')*(?:"(?:[^"\\]|\\.)*|'(?:[^'\\]|\\.)*))`;
 /** The start of a color function call. */
 const colorFunctionStart = String.raw`(?<![\w-])(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(`;
+/**
+ * Arguments with a literal channel: a number, percentage or angle among the channels, before the
+ * `/` of the alpha and outside nested calls. `oklch(var(--l) var(--c) var(--h))` and
+ * `rgb(var(--rgb) / 50%)` take every channel from custom properties, and a relative color
+ * (`hsl(from …)`) derives them from a token.
+ */
+const literalChannel = String.raw`(?!\s*from\b)(?:[^()/"']|\((?:[^()]|\([^()]*\))*\))*?(?<![\w.-])[+-]?(?:\d|\.\d)`;
 
 /**
  * Color functions with literal channels, as a Stylelint regular expression; relative colors derived
- * from a token (`hsl(from …)`) and colors inside `url()` pass. envUI's own style sheets use it too.
+ * from a token (`hsl(from …)`), channels from custom properties and colors inside `url()` or a
+ * string pass. envUI's own style sheets use it too.
  */
-export const rawColorFunction = `/${outsideUrl}${colorFunctionStart}(?!\\s*from\\b)/i`;
+export const rawColorFunction = `/${outsideString}${outsideUrl}${colorFunctionStart}(?=${literalChannel})/i`;
 
 /**
  * The z-index values that pass: `auto`, the global keywords, and a custom property, also inside
@@ -55,9 +65,9 @@ export const hairlineProperties = [
   '/^--[\\w-]*(?:shadow|hairline)$/',
 ];
 
-/** A whole color function call outside url(), for the message. */
+/** A whole color function call with literal channels outside url() and strings, for the message. */
 const colorCall = new RegExp(
-  String.raw`${outsideUrl}${colorFunctionStart}[^()]*(?:\([^()]*\)[^()]*)*\)?`,
+  String.raw`${outsideString}${outsideUrl}${colorFunctionStart}(?=${literalChannel})[^()]*(?:\([^()]*\)[^()]*)*\)?`,
   'i',
 );
 

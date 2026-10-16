@@ -178,7 +178,7 @@ Raw color #fff in an inline style: use an envUI color token instead, such as var
 
 The token names come from [`src/data/tokens.json`](src/data/tokens.json). Before every pack, `scripts/SyncTokens.mjs` rewrites it from the library's generated token list (`packages/ui/src/generated/tokens.json` in the envUI repository), so a release names the tokens of the same envUI release, and the tests fail when a message or this README names a token that does not exist.
 
-Values that depend on state, spread objects and custom properties are checked too, including an inline override of envUI's own tokens. A relative color derived from a token, `hsl(from var(--color-fg-link) h s calc(l - 10))`, and `color-mix()` of tokens pass, as do `currentColor`, `transparent` and `url()` references. Style sheets are the [Stylelint config](../stylelint-config/README.md)'s concern. The rule has no options.
+Values that depend on state, spread objects and custom properties are checked too, including an inline override of envUI's own tokens. A relative color derived from a token, `hsl(from var(--color-fg-link) h s calc(l - 10))`, `color-mix()` of tokens and a function whose channels all come from custom properties, each channel a `var()`, with or without a literal alpha after the `/`, pass, as do `currentColor`, `transparent`, `url()` references and colors inside CSS strings, such as `content: '"rgb(1 2 3)"'`. Style sheets are the [Stylelint config](../stylelint-config/README.md)'s concern. The rule has no options.
 
 ### no-renamed-exports
 

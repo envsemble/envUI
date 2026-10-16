@@ -32,13 +32,21 @@ const notColorProperty =
 
 /** A hex color, as a whole word. */
 const hexColor = /(?<![\w&-])#(?:[\da-f]{8}|[\da-f]{6}|[\da-f]{3,4})(?![\w-])/gi;
-/** A color function with literal channels; a relative color from a token (`from …`) passes. */
+/**
+ * A color function with literal channels: a number, percentage or angle among the channels, before
+ * the `/` of the alpha and outside nested calls. A relative color from a token (`from …`) passes,
+ * and so does one whose channels all come from custom properties, such as
+ * `oklch(var(--l) var(--c) var(--h))` or `rgb(var(--rgb) / 50%)`.
+ */
 const colorFunction =
-  /(?<![\w-])(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\((?!\s*from\b)[^()]*(?:\([^()]*\)[^()]*)*\)?/gi;
+  /(?<![\w-])(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\((?=(?!\s*from\b)(?:[^()/"']|\((?:[^()]|\([^()]*\))*\))*?(?<![\w.-])[+-]?(?:\d|\.\d))[^()]*(?:\([^()]*\)[^()]*)*\)?/gi;
+
+/** CSS strings and url() references, whose text may spell colors that are not the style's own. */
+const quotedOrUrl = /"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|url\([^)]*\)/gi;
 
 /** The raw colors in a style value, given the property it sets. */
 function rawColors(text, property) {
-  const value = text.replace(/url\([^)]*\)/gi, ' ');
+  const value = text.replace(quotedOrUrl, ' ');
   const found = [...value.matchAll(hexColor), ...value.matchAll(colorFunction)].map(
     (match) => match[0],
   );
