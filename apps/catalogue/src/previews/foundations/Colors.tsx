@@ -85,12 +85,10 @@ function ColorPalette() {
     setColorValues(measuredColors);
   }, [theme, palettes]);
   return (
-    <Stack ref={paletteElement} gap={9} className="docs-palette">
+    // Each group is an Example, so the visual baseline captures it; their margins space them.
+    <Stack ref={paletteElement} gap={0} className="docs-palette">
       {colorGroups.map(([group, tokens]) => (
-        <Stack as="section" key={group}>
-          <Text as="h2" variant="page-heading">
-            {group}
-          </Text>
+        <Example key={group} title={group} size="collection">
           <Stack gap={0}>
             {tokens.map(([token, label]) => (
               <div className="docs-palette-row" key={token}>
@@ -104,7 +102,7 @@ function ColorPalette() {
               </div>
             ))}
           </Stack>
-        </Stack>
+        </Example>
       ))}
     </Stack>
   );

@@ -42,6 +42,7 @@ import { Inbox } from '@envsemble/envui/icons/Inbox';
 import { MoreVert } from '@envsemble/envui/icons/MoreVert';
 import { Refresh } from '@envsemble/envui/icons/Refresh';
 import { Settings } from '@envsemble/envui/icons/Settings';
+import { densitySectionNames, type DensitySection } from './DensitySections.js';
 
 /*
  * Standard and compact forms of the same controls side by side, at today's defaults. The visual
@@ -476,7 +477,7 @@ function DesktopSection() {
   );
 }
 
-export const densitySections: Record<string, () => ReactNode> = {
+const densitySections: Record<DensitySection, () => ReactNode> = {
   form: FormSection,
   toolbar: ToolbarSection,
   menu: MenuSection,
@@ -492,15 +493,17 @@ export function DensityFixture() {
   const section = query.get('section');
   const theme = query.get('theme');
   // Open menus lock page scrolling, so they render only on their own.
-  const sections = section
+  const sections: string[] = section
     ? [section]
-    : Object.keys(densitySections).filter((name) => name !== 'menu');
+    : densitySectionNames.filter((name) => name !== 'menu');
   const themes: ThemeValue[] = theme ? [theme as ThemeValue] : ['light', 'dark'];
   return (
     <div className="density-fixture">
       {themes.map((name) =>
         sections.map((key) => {
-          const Section = densitySections[key];
+          const Section = (densitySectionNames as readonly string[]).includes(key)
+            ? densitySections[key as DensitySection]
+            : undefined;
           return (
             <Theme
               key={`${name}-${key}`}
