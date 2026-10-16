@@ -1,143 +1,61 @@
 {
-  "components/alert/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 3
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 20
-      }
-    }
-  },
-  "components/animated-number/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 2
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 7
-      }
-    }
-  },
-  "components/app-shell/preview": {
+  "components/app-shell/overview": {
     "dark": {
       "landmark-main-is-top-level": {
-        "Application shell :: main.env-app-content": 1,
-        "Full-width title bar :: main.env-app-content": 1
+        "article :: main.env-app-content": 2
       },
       "landmark-no-duplicate-main": {
         "main :: main.docs-main": 1
       },
       "landmark-unique": {
         "main :: main.docs-main": 1
-      },
-      "scrollable-region-focusable": {
-        "Title bar alone :: div.env-window-frame-content": 1
       }
     },
     "light": {
       "landmark-main-is-top-level": {
-        "Application shell :: main.env-app-content": 1,
-        "Full-width title bar :: main.env-app-content": 1
+        "article :: main.env-app-content": 2
       },
       "landmark-no-duplicate-main": {
         "main :: main.docs-main": 1
       },
       "landmark-unique": {
         "main :: main.docs-main": 1
-      },
-      "scrollable-region-focusable": {
-        "Title bar alone :: div.env-window-frame-content": 1
       }
     }
   },
-  "components/app-shell/usage": {
+  "components/avatar/guidelines": {
     "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 5
-      },
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
       }
     },
     "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 95
-      },
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
       }
     }
   },
-  "components/avatar/usage": {
+  "components/badge/guidelines": {
     "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 1
-      },
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
       }
     },
     "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 65
-      },
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
       }
     }
   },
-  "components/badge/usage": {
+  "components/card/overview": {
     "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 5
+      "label-content-name-mismatch": {
+        "article :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 3
       }
     },
     "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 33
-      }
-    }
-  },
-  "components/breadcrumbs/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 4
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 15
-      }
-    }
-  },
-  "components/calendar-heatmap/usage": {
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 61
-      }
-    }
-  },
-  "components/card/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 6
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 38
-      }
-    }
-  },
-  "components/checkbox/usage": {
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 10
+      "label-content-name-mismatch": {
+        "article :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 3
       }
     }
   },
@@ -153,111 +71,28 @@
       }
     }
   },
-  "components/code/preview": {
-    "dark": {
-      "color-contrast": {
-        "Highlighted source :: div.env-code-block span": 1
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "Code diff :: div.env-code-diff diffs-container": 15,
-        "Highlighted source :: div.env-code-block span": 4,
-        "Wrapped source :: div.env-code-block span": 4
-      }
-    }
-  },
-  "components/code/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 3
-      },
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 22
-      },
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
-      }
-    }
-  },
-  "components/color-picker/usage": {
+  "components/code/overview": {
     "dark": {
       "color-contrast": {
         "article :: div.env-code-block span": 1
-      },
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
       }
     },
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 33
-      },
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
+        "article :: div.env-code-block span": 15,
+        "article :: div.env-code-diff diffs-container": 15
       }
     }
   },
-  "components/combobox/preview": {
+  "components/combobox/guidelines": {
     "dark": {
       "aria-allowed-attr": {
-        "Validation & availability :: div.env-combobox-chip": 1
+        "Combobox states :: div.env-combobox-chip": 2
       }
     },
     "light": {
       "aria-allowed-attr": {
-        "Validation & availability :: div.env-combobox-chip": 1
-      }
-    }
-  },
-  "components/combobox/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 4
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 87
-      }
-    }
-  },
-  "components/command-palette/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 5
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 55
-      }
-    }
-  },
-  "components/composer/usage": {
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 27
-      }
-    }
-  },
-  "components/date-picker/usage": {
-    "dark": {
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 46
-      },
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
+        "Combobox states :: div.env-combobox-chip": 2
       }
     }
   },
@@ -273,167 +108,58 @@
       }
     }
   },
-  "components/disclosure/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 1
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 5
-      }
-    }
-  },
-  "components/document-tabs/preview": {
+  "components/document-tabs/overview": {
     "dark": {
       "nested-interactive": {
-        "Open documents :: div.env-document-tab": 1
+        "article :: div.env-document-tab": 2
       }
     },
     "light": {
       "nested-interactive": {
-        "Open documents :: div.env-document-tab": 1
+        "article :: div.env-document-tab": 2
       }
     }
   },
-  "components/document-tabs/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 1
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 45
-      }
-    }
-  },
-  "components/drop-zone/preview": {
+  "components/drop-zone/guidelines": {
     "dark": {
       "label-content-name-mismatch": {
-        "Drop or browse :: button.env-drop-zone-target": 1,
-        "States :: button.env-drop-zone-target": 2
+        "Drop zone states :: button.env-drop-zone-target": 2
       }
     },
     "light": {
       "label-content-name-mismatch": {
-        "Drop or browse :: button.env-drop-zone-target": 1,
-        "States :: button.env-drop-zone-target": 2
+        "Drop zone states :: button.env-drop-zone-target": 2
       }
     }
   },
-  "components/drop-zone/usage": {
+  "components/drop-zone/overview": {
     "dark": {
+      "label-content-name-mismatch": {
+        "article :: button.env-drop-zone-target": 4
+      }
+    },
+    "light": {
+      "label-content-name-mismatch": {
+        "article :: button.env-drop-zone-target": 4
+      }
+    }
+  },
+  "components/markdown/overview": {
+    "light": {
       "color-contrast": {
         "article :: div.env-code-block span": 2
       }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 81
-      }
     }
   },
-  "components/empty-state/preview": {
-    "dark": {
-      "heading-order": {
-        "In place of a page’s content :: h4.env-text.env-text-section-heading": 1
-      }
-    },
-    "light": {
-      "heading-order": {
-        "In place of a page’s content :: h4.env-text.env-text-section-heading": 1
-      }
-    }
-  },
-  "components/empty-state/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 1
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 15
-      }
-    }
-  },
-  "components/hover-card/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 3
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 13
-      }
-    }
-  },
-  "components/kbd/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 4
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 6
-      }
-    }
-  },
-  "components/list/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 3
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 43
-      }
-    }
-  },
-  "components/markdown/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 5
-      },
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 100
-      },
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
-      }
-    }
-  },
-  "components/menubar/preview": {
+  "components/menubar/overview": {
     "dark": {
       "target-size": {
-        "Application menubar :: button.env-textarea-resize-edge": 1
+        "article :: button.env-textarea-resize-edge": 1
       }
     },
     "light": {
       "target-size": {
-        "Application menubar :: button.env-textarea-resize-edge": 1
-      }
-    }
-  },
-  "components/menubar/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 7
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 62
+        "article :: button.env-textarea-resize-edge": 1
       }
     }
   },

@@ -3,6 +3,7 @@ import { Breadcrumbs } from '@envsemble/envui';
 export default function LevelWithoutPage() {
   return (
     <Breadcrumbs
+      aria-label="Budget location"
       items={[
         { label: 'Northwind', href: '/northwind' },
         // Archived projects have no page of their own, so this level is plain text.
