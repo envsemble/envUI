@@ -1,12 +1,31 @@
+import { readFileSync } from 'node:fs';
 import rule from '../src/rules/no-renamed-exports.js';
 import { ruleTester, typeScriptRuleTester } from './RuleTester.mjs';
 
+const { modules } = JSON.parse(
+  readFileSync(new URL('../src/data/renames.json', import.meta.url), 'utf8'),
+);
 const main = '@envsemble/envui';
+const bootstrap = '@envsemble/envui/theme-bootstrap';
+/** The hint the rename map gives for a removed name. */
+const use = (name, source = main) => modules[source][name].use;
 const renamed = (name, replacement, imports = replacement.split('.')[0], source = main) => ({
   messageId: 'renamed',
   data: { name, replacement, imports, source },
 });
-const internal = (name) => ({ messageId: 'internal', data: { name } });
+const internal = (name, source = main) => ({
+  messageId: 'internal',
+  data: { name, use: use(name, source) },
+});
+const pagerChoices = 'Pager.Previous for direction="previous" or Pager.Next for direction="next"';
+const split = (name = 'DirectionLink') => ({
+  messageId: 'split',
+  data: { name, source: main, prop: 'direction', choices: pagerChoices, imports: 'Pager' },
+});
+const splitElement = (local, value, part) => ({
+  messageId: 'splitElement',
+  data: { local, prop: 'direction', value, part },
+});
 const namespace = (name, local, root) => ({ messageId: 'namespace', data: { name, local, root } });
 
 ruleTester.run('no-renamed-exports', rule, {
@@ -20,6 +39,9 @@ ruleTester.run('no-renamed-exports', rule, {
     'function Menu() {} <Menu />;',
     // A namespace import's other members, and a Root part reached through it.
     "import * as envui from '@envsemble/envui'; envui.Button; <envui.Menu.Root />; const M = envui.Menu;",
+    // 1.0 reuses the manual Toast's name for the namespace of Toast.Provider.
+    "import { Toast, useToast } from '@envsemble/envui'; <Toast.Provider>{children}</Toast.Provider>;",
+    "import * as envui from '@envsemble/envui'; <envui.Toast.Provider />; envui.Toast.Provider;",
     "export { TextField } from '@envsemble/envui';",
     "export { Input } from './Input.js';",
   ],
@@ -50,7 +72,34 @@ ruleTester.run('no-renamed-exports', rule, {
     },
     {
       code: "import { DirectionLink } from '@envsemble/envui';",
-      errors: [renamed('DirectionLink', 'Pager.Previous or Pager.Next', 'Pager')],
+      errors: [
+        {
+          message:
+            'DirectionLink is not exported by envUI 1.0: use Pager.Previous for direction="previous" or Pager.Next for direction="next" instead, without the direction prop (import { Pager } from \'@envsemble/envui\'). The v1-names codemod in @envsemble/envui-codemods rewrites the old names.',
+        },
+      ],
+    },
+    // Each rendered DirectionLink is told the part its direction chooses.
+    {
+      code: 'import { DirectionLink } from \'@envsemble/envui\'; <><DirectionLink direction="previous" href="/1" /><DirectionLink direction={\'next\'} href="/3" /></>;',
+      errors: [
+        split(),
+        {
+          message:
+            '<DirectionLink direction="previous"> is Pager.Previous in envUI 1.0: render <Pager.Previous> without the direction prop.',
+        },
+        splitElement('DirectionLink', 'next', 'Pager.Next'),
+      ],
+    },
+    {
+      code: "import { DirectionLink as Step } from '@envsemble/envui'; <Step direction={direction} />;",
+      errors: [
+        split(),
+        {
+          message:
+            '<Step> is one of several parts in envUI 1.0, chosen by its direction: render Pager.Previous for direction="previous" or Pager.Next for direction="next", without the direction prop.',
+        },
+      ],
     },
     {
       code: "import { NavigationItem, OrganizationMenu, ToastProvider } from '@envsemble/envui';",
@@ -65,14 +114,14 @@ ruleTester.run('no-renamed-exports', rule, {
       errors: [
         {
           message:
-            'LoadingBar is internal in envUI 1.0 and no longer exported. If you need what it did, propose it as public envUI API rather than copying it.',
+            "LoadingBar is internal in envUI 1.0 and no longer exported. AppShell's loading and loadingLabel props show page progress along the bottom of its topbar; Progress shows the progress of a task.",
         },
         internal('getInitials'),
       ],
     },
     {
       code: "import { defaultThemeStorageKey } from '@envsemble/envui/theme-bootstrap';",
-      errors: [internal('defaultThemeStorageKey')],
+      errors: [internal('defaultThemeStorageKey', bootstrap)],
     },
     {
       code: "export { Heatmap, Button } from '@envsemble/envui';",
@@ -97,6 +146,17 @@ ruleTester.run('no-renamed-exports', rule, {
         namespace('Stat', 'Stat', 'Stat.Root'),
       ],
     },
+    // The manual Toast is internal: rendering it is reported with what to do instead.
+    {
+      code: 'import { Toast } from \'@envsemble/envui\'; <Toast title="Saved" />;',
+      errors: [
+        {
+          message:
+            'In envUI 1.0 Toast is a namespace, not the 0.x component, which is internal. Show notifications through useToast() inside Toast.Provider. The manual Toast is internal; the `Toast` export is now the namespace of Toast.Provider.',
+          column: 44,
+        },
+      ],
+    },
     // Members of a namespace import.
     {
       code: "import * as envui from '@envsemble/envui'; <envui.Input />; envui.Counter; <envui.Menubar />;",
@@ -104,6 +164,16 @@ ruleTester.run('no-renamed-exports', rule, {
         renamed('Input', 'TextField'),
         renamed('Counter', 'CounterBadge'),
         namespace('Menubar', 'envui.Menubar', 'envui.Menubar.Root'),
+      ],
+    },
+    {
+      code: 'import * as envui from \'@envsemble/envui\'; <><envui.DirectionLink direction="next" /><envui.Toast /></>;',
+      errors: [
+        splitElement('envui.DirectionLink', 'next', 'envui.Pager.Next'),
+        {
+          messageId: 'reusedNamespace',
+          data: { name: 'Toast', use: use('Toast') },
+        },
       ],
     },
   ],
@@ -115,6 +185,15 @@ typeScriptRuleTester.run('no-renamed-exports in TypeScript', rule, {
     "import type * as envui from '@envsemble/envui'; type P = envui.ButtonProps;",
   ],
   invalid: [
+    {
+      code: "import type { ToastProps } from '@envsemble/envui';",
+      errors: [
+        {
+          message:
+            'ToastProps is internal in envUI 1.0 and no longer exported. Describe a notification with ToastNotification, the argument of useToast().show().',
+        },
+      ],
+    },
     {
       code: "import type { InputProps, MenuItemProps } from '@envsemble/envui';",
       errors: [

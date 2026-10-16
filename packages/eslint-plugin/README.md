@@ -189,7 +189,13 @@ MenuItem is not exported by envUI 1.0: use Menu.Item instead (import { Menu } fr
 
 It also reports members of a namespace import (`envui.Input`, `<envui.Input>`, and `envui.InputProps` in TypeScript), and rendering a name that became a namespace of parts, such as `<Menu>` or `<Table>`, which must now be `<Menu.Root>` or `<Table.Root>`. Type imports count. Only the entry point that exported a name is checked, so an icon named `Input` from `@envsemble/envui/icons` passes. The rule has no options.
 
-The names come from [`src/data/renames.json`](src/data/renames.json). The canonical rename map belongs to the codemods (`packages/codemods/src/maps/v1.json` in the envUI repository). Before every pack, `scripts/SyncRenames.mjs` rewrites `src/data/renames.json` from that map when it exists, keeping the renames of names that envUI 0.7 exported ([`data/envui-0.7-exports.json`](data/envui-0.7-exports.json)) and leaving out prop, value and class renames. Until the codemods' map exists, the plugin's own copy is used; its `source` field says which one a release carries, and the tests fail when the copy falls behind the codemods' map.
+What the codemods' map says to do instead comes with the report:
+
+- A name that became internal gives the map's hint: `LoadingBar is internal in envUI 1.0 and no longer exported. AppShell's loading and loadingLabel props show page progress along the bottom of its topbar; Progress shows the progress of a task.`
+- `Toast` stays importable, because 1.0's `Toast` is the namespace of `Toast.Provider`; rendering `<Toast …/>`, the 0.x manual toast, is reported with its hint: show notifications through `useToast()` inside `Toast.Provider`.
+- Each rendered `DirectionLink` is told its part: `<DirectionLink direction="previous">` is `Pager.Previous`, `direction="next"` is `Pager.Next`, and with a computed `direction` the message names both, each with the value that chooses it.
+
+The names come from [`src/data/renames.json`](src/data/renames.json). The canonical rename map belongs to the codemods (`packages/codemods/src/maps/v1.json` in the envUI repository). Before every pack, `scripts/SyncRenames.mjs` rewrites `src/data/renames.json` from that map when it exists, keeping the renames of names that envUI 0.7 exported ([`data/envui-0.7-exports.json`](data/envui-0.7-exports.json)) and leaving out prop, value and class renames. Each name's entry has `to`, its replacements, and where the map gives them, the `use` hint of a removed name, the `prop` and `values` of a split, and `namespace` for a removed name that 1.0 reuses as a namespace. Until the codemods' map exists, the plugin's own copy is used; its `source` field says which one a release carries, and the tests fail when the copy falls behind the codemods' map.
 
 The plugin's own copy:
 
