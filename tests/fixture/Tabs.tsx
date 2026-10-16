@@ -4,6 +4,7 @@ import {
   CounterBadge,
   DocumentTabs,
   EnvUIProvider,
+  Slider,
   NavList,
   Surface,
   Tabs,
@@ -243,6 +244,23 @@ export function RtlTabsFixture() {
       <EnvUIProvider dir="rtl">
         <Tabs aria-label="Provider tabs" items={directionItems} />
       </EnvUIProvider>
+      {/* A left-to-right region in a panel of right-to-left tabs keeps its own direction. */}
+      <div dir="rtl">
+        <Tabs
+          aria-label="Tabs around a slider"
+          items={[
+            {
+              value: 'volume',
+              button: <Button variant="secondary">Volume</Button>,
+              content: (
+                <div dir="ltr">
+                  <Slider label="Volume" defaultValue={50} />
+                </div>
+              ),
+            },
+          ]}
+        />
+      </div>
     </>
   );
 }
