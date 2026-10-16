@@ -10825,6 +10825,7 @@
       "related": [
         "colors",
         "icons",
+        "agents",
         "index",
         "migration",
         "local-development"
@@ -10843,6 +10844,14 @@
         "scale",
         "colors"
       ]
+    },
+    {
+      "name": "agents",
+      "title": "For agents",
+      "group": "Setup and workflows",
+      "summary": "The AGENTS.md index, the MCP server, the manifest, llms.txt and the skills that coding agents use.",
+      "doc": "docs/agents.md",
+      "related": []
     },
     {
       "name": "local-development",
@@ -10866,7 +10875,8 @@
         "composition",
         "scale",
         "index",
-        "component-pages"
+        "component-pages",
+        "agents"
       ]
     },
     {

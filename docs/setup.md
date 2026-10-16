@@ -138,12 +138,13 @@ The modules have no side effects, so a bundler keeps only what the application u
 
 Gzipped, `Table.Cell` alone is 3.7 KB with esbuild and 0.6 KB with Vite.
 
-## Agent skills
+## Coding agents
 
-Both short skills ship under `skills/`. Install or copy them into the application's `.agents/skills`, keeping their version aligned with the package. Installing the npm package does not register skills automatically. Component documentation stays under the installed package's `docs/`; copied skills locate that directory before reading relevant pages.
+Run `npx envui agents` once to put the envUI index into the project's `AGENTS.md`, and register `npx --no envui mcp` as an MCP server. The three skills ship under `skills/`; copy them into the project, keeping their version aligned with the package. Installing the npm package registers none of these by itself. [For agents](agents.md) describes them.
 
 ## Related workflows
 
 - [Documentation index](index.md)
+- [For agents](agents.md)
 - [Migration](migration.md)
 - [Local development](local-development.md)

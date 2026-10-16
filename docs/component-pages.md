@@ -101,6 +101,7 @@ The Props section and `docs/generated/props.json` come from the component's Type
 - Write a TSDoc comment on every prop of the component's props interface: what it does, its values and its default where the code can't show it.
 - Add `@default` where the default is computed, such as `@default 'outlined', or 'secondary' with icon`, and `@deprecated` with what to use instead.
 - Run `npm run docs:props` and commit `docs/generated/props.json`. `npm run docs:check` and `npm test` fail while it is stale.
+- Then run `npm run docs:manifest` and commit `docs/generated/manifest.json` and `llms.txt`, which agents read; they follow every change to a page's frontmatter, examples and props.
 
 Native DOM props are summarised by element, so document only the props envUI declares or narrows.
 
