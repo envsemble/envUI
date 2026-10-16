@@ -390,48 +390,104 @@ export function readSnapshot(file = declaredFile) {
     : { recorded: undefined };
 }
 
+/** Runs git with these arguments and returns its trimmed output; throws when git fails. */
+export type Git = (...args: string[]) => string;
+
+const runGit: Git = (...args) =>
+  execFileSync('git', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+
+/**
+ * The branches a branch may be based on, whose merge-base with HEAD can be the base when
+ * ENVUI_CONTRAST_BASE is unset: the integration branch, the branch's upstream unless that is its
+ * own remote copy, and the branch the work towards 1.0 collects on.
+ */
+export const baseCandidates = ['origin/dev', '@{upstream}', 'origin/envui-1.0'] as const;
+
 /**
  * The snapshot on the base branch: at ENVUI_CONTRAST_BASE, any revision git knows, or else at the
- * merge-base with origin/dev. It reads only what the clone already has, never fetching. Without git,
- * origin/dev or the file at the base, it returns a note instead, and the gate compares with the
- * working tree's snapshot alone; a base that was asked for and can't be read is a problem.
+ * nearest merge-base of HEAD with one of baseCandidates that has the file. It reads only what the
+ * clone already has, never fetching. Without git, a candidate or the file at any of their
+ * merge-bases, it returns a note instead, and the gate compares with the working tree's snapshot
+ * alone; a base that was asked for and can't be read, or lacks the file, is a problem.
  */
-export function readBaseSnapshot(requested = process.env.ENVUI_CONTRAST_BASE): {
+export function readBaseSnapshot({
+  requested = process.env.ENVUI_CONTRAST_BASE,
+  git = runGit,
+}: { requested?: string; git?: Git } = {}): {
   base?: BaseSnapshot;
   note?: string;
   problem?: string;
 } {
-  const git = (...args: string[]) =>
-    execFileSync('git', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
-  let commit: string;
-  let label: string;
-  try {
-    if (requested) {
-      commit = git('rev-parse', '--verify', `${requested}^{commit}`);
-      label = `${declaredFile} at ${requested} (ENVUI_CONTRAST_BASE)`;
-    } else {
-      commit = git('merge-base', 'HEAD', 'origin/dev');
-      label = `${declaredFile} at ${commit.slice(0, 8)}, the merge-base with origin/dev`;
+  const attempt = <T>(read: () => T) => {
+    try {
+      return read();
+    } catch {
+      return undefined;
     }
-  } catch {
-    return requested
-      ? { problem: `ENVUI_CONTRAST_BASE is ${requested}, which git can't find in this clone.` }
-      : {
-          note: `No merge-base with origin/dev in this clone, so ${declaredFile} is not compared with the base branch's. Set ENVUI_CONTRAST_BASE to a revision to compare with.`,
-        };
+  };
+  const show = (commit: string) => attempt(() => git('show', `${commit}:${declaredFile}`));
+  const read = (text: string, label: string) => {
+    const parsed = parseSnapshot(text, label);
+    return parsed.problem !== undefined
+      ? { problem: parsed.problem }
+      : { base: { label, recorded: parsed.recorded } };
+  };
+  if (requested) {
+    const commit = attempt(() => git('rev-parse', '--verify', `${requested}^{commit}`));
+    if (commit === undefined)
+      return {
+        problem: `ENVUI_CONTRAST_BASE is ${requested}, which git can't find in this clone.`,
+      };
+    const text = show(commit);
+    if (text === undefined)
+      return {
+        problem: `ENVUI_CONTRAST_BASE is ${requested}, where ${declaredFile} doesn't exist: set it to a revision that has the snapshot, or unset it to compare with the nearest base branch's.`,
+      };
+    return read(text, `${declaredFile} at ${requested} (ENVUI_CONTRAST_BASE)`);
   }
-  let text: string;
-  try {
-    text = git('show', `${commit}:${declaredFile}`);
-  } catch {
+
+  const branch = attempt(() => git('symbolic-ref', '--quiet', '--short', 'HEAD'));
+  const found: { ref: string; commit: string; text: string; distance: number }[] = [];
+  const lacking: string[] = [];
+  const seen = new Set<string>();
+  for (const candidate of baseCandidates) {
+    let ref: string | undefined = candidate;
+    if (candidate === '@{upstream}') {
+      ref = attempt(() => git('rev-parse', '--abbrev-ref', '--symbolic-full-name', candidate));
+      // A branch's own remote copy holds the branch's edits, so it is no base.
+      if (branch && (ref === branch || ref?.endsWith(`/${branch}`))) continue;
+    }
+    if (ref === undefined || seen.has(ref)) continue;
+    seen.add(ref);
+    const commit = attempt(() => git('merge-base', 'HEAD', ref));
+    if (commit === undefined) continue;
+    const text = show(commit);
+    if (text === undefined) {
+      lacking.push(`${ref} (${commit.slice(0, 8)})`);
+      continue;
+    }
+    // How many commits HEAD is past the merge-base, to find the nearest.
+    const distance = Number(attempt(() => git('rev-list', '--count', `${commit}..HEAD`)) ?? NaN);
+    found.push({ ref, commit, text, distance: Number.isNaN(distance) ? Infinity : distance });
+  }
+  const predating = lacking.length > 0 ? `the merge-base with ${lacking.join(' or ')}` : undefined;
+  // The nearest merge-base holds the most recent snapshot, which asks the most; on a tie, the
+  // earlier candidate.
+  const nearest = found.reduce<(typeof found)[number] | undefined>(
+    (best, next) => (best && best.distance <= next.distance ? best : next),
+    undefined,
+  );
+  if (!nearest)
     return {
-      note: `${declaredFile} doesn't exist at the base, ${commit.slice(0, 8)}: nothing to compare with.`,
+      note: `${predating ? `${declaredFile} doesn't exist at ${predating}` : `No merge-base with ${baseCandidates.join(', ')} in this clone`}, so ${declaredFile} is not compared with a base branch's copy. Set ENVUI_CONTRAST_BASE to a revision that has it, such as the branch this one merges into.`,
     };
-  }
-  const parsed = parseSnapshot(text, label);
-  return parsed.problem !== undefined
-    ? { problem: parsed.problem }
-    : { base: { label, recorded: parsed.recorded } };
+  const at = `${nearest.commit.slice(0, 8)}, the merge-base with ${nearest.ref}`;
+  const result = read(nearest.text, `${declaredFile} at ${at}`);
+  if (result.problem !== undefined) return result;
+  return {
+    ...result,
+    note: `Comparing ${declaredFile} with its copy at ${at}${predating ? `; it doesn't exist at ${predating}` : ''}. Set ENVUI_CONTRAST_BASE to compare with another revision.`,
+  };
 }
 
 /** The file's text for a snapshot. */
