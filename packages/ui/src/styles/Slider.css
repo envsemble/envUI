@@ -59,7 +59,8 @@
   outline: 0.125rem solid var(--color-focus-ring);
   outline-offset: 0.125rem;
 }
-/* The heading fades with the track, at the opacity of every disabled control. */
+/* The heading fades with the track, at the opacity of every disabled control; the group says it is
+   disabled (aria-disabled), so the faded label and value read as part of an inactive control. */
 .env-slider[data-disabled] :is(.env-slider-heading, .env-slider-control) {
   opacity: var(--state-disabled-opacity);
 }

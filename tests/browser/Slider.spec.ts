@@ -152,6 +152,10 @@ test('sliders submit their value with a form and restore it on reset', async ({ 
   const balance = scope.getByRole('slider', { name: 'Balance' });
   await expect(balance).toBeDisabled();
   await expect(scope.locator('.env-slider-control').nth(3)).toHaveCSS('opacity', '0.48');
+  // The group the label names is disabled too, so its faded label and value are an inactive
+  // control's, which WCAG exempts from contrast; an enabled one says nothing.
+  await expect(scope.locator('.env-slider').nth(3)).toHaveAttribute('aria-disabled', 'true');
+  await expect(scope.locator('.env-slider').first()).not.toHaveAttribute('aria-disabled');
 });
 
 test('the thumb, indicator and value keep their contrast in both themes', async ({ page }) => {
