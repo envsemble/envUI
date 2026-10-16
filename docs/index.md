@@ -49,7 +49,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 ## Navigation
 
-- [Navigation items](components/navigation.md) — Links to another destination; routing stays with the app.
+- [Navigation lists](components/nav-list.md) — Links to another destination; routing stays with the app.
 - [Tabs](components/tabs.md) — Switches between content panels in the same view.
 - [Direction links](components/direction-links.md) — Centered previous and next destinations, together or individually.
 - [Application shell](components/app-shell.md) — Topbar, window title bar and collapsible navigation sidebar for a whole application.

@@ -9,7 +9,7 @@ export * from './actions/AvatarButton.js';
 export * from './actions/ConfirmButton.js';
 export * from './actions/CopyButton.js';
 export * from './actions/SegmentedControl.js';
-export * from './navigation/NavigationItem.js';
+export * as NavList from './navigation/NavList.js';
 export * from './navigation/DirectionLink.js';
 export * from './navigation/DirectionLinks.js';
 export * from './navigation/Tabs.js';

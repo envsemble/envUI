@@ -7,9 +7,9 @@
       "note": "The internal anchor and button switch reads the public LinkProvider; the provider moves into internal/."
     },
     {
-      "module": "navigation/NavigationItem.tsx",
+      "module": "navigation/NavList.tsx",
       "imports": "navigation/AppShell.tsx",
-      "note": "NavigationItem reads useSidebarCompact from the shell, so Tabs and MarkdownEditor pull in AppShell; the compact context moves into internal/."
+      "note": "NavList.Item reads useSidebarCompact from the shell, so Tabs and MarkdownEditor pull in AppShell; the compact context moves into internal/."
     },
     {
       "module": "rich-text/RichTextEditor.tsx",
@@ -68,8 +68,8 @@
   "cssClasses": [
     { "stylesheet": "Alert.css", "class": "env-button", "count": 3 },
     { "stylesheet": "Alert.css", "class": "env-icon-button", "count": 2 },
-    { "stylesheet": "AppShell.css", "class": "env-navigation-icon-only", "count": 1 },
-    { "stylesheet": "AppShell.css", "class": "env-navigation-item", "count": 1 },
+    { "stylesheet": "AppShell.css", "class": "env-nav-list-item", "count": 1 },
+    { "stylesheet": "AppShell.css", "class": "env-nav-list-item-icon-only", "count": 1 },
     { "stylesheet": "AppShell.css", "class": "env-title-bar", "count": 5 },
     { "stylesheet": "AvatarGroup.css", "class": "env-avatar", "count": 1 },
     { "stylesheet": "Badge.css", "class": "env-button", "count": 5 },
@@ -93,7 +93,7 @@
     { "stylesheet": "DatePicker.css", "class": "env-text-field-well", "count": 1 },
     { "stylesheet": "DatePicker.css", "class": "env-text-input", "count": 1 },
     { "stylesheet": "Icon.css", "class": "env-button", "count": 1 },
-    { "stylesheet": "Icon.css", "class": "env-navigation-item", "count": 1 },
+    { "stylesheet": "Icon.css", "class": "env-nav-list-item", "count": 1 },
     { "stylesheet": "List.css", "class": "env-button", "count": 1 },
     { "stylesheet": "Markdown.css", "class": "env-choice-control", "count": 1 },
     { "stylesheet": "Menu.css", "class": "env-kbd", "count": 1 },
@@ -122,7 +122,7 @@
     { "stylesheet": "Motion.css", "class": "env-dropdown-trigger", "count": 1 },
     { "stylesheet": "Motion.css", "class": "env-menu", "count": 9 },
     { "stylesheet": "Motion.css", "class": "env-modal-pane", "count": 12 },
-    { "stylesheet": "Motion.css", "class": "env-navigation-item", "count": 2 },
+    { "stylesheet": "Motion.css", "class": "env-nav-list-item", "count": 2 },
     { "stylesheet": "Motion.css", "class": "env-organization-switcher-radio-dot", "count": 1 },
     { "stylesheet": "Motion.css", "class": "env-panel-dock-chip", "count": 2 },
     { "stylesheet": "Motion.css", "class": "env-panel-dock-panel", "count": 4 },

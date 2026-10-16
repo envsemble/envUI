@@ -7,7 +7,7 @@ import {
   TextField,
   Menu,
   Menubar,
-  NavigationItem,
+  NavList,
   Pagination,
   SearchField,
   SegmentedControl,
@@ -356,7 +356,7 @@ function tabItems(kind: 'button' | 'navigation') {
       kind === 'button' ? (
         <Button variant="secondary">{name}</Button>
       ) : (
-        <NavigationItem>{name}</NavigationItem>
+        <NavList.Item>{name}</NavList.Item>
       ),
     content: <Text>{name} panel</Text>,
   }));
@@ -367,12 +367,12 @@ function TabsSection() {
     <div className="density-columns">
       <Column title="Tabs size=standard">
         <Tabs aria-label="Standard tabs (Button)" items={tabItems('button')} />
-        <Tabs aria-label="Standard tabs (NavigationItem)" items={tabItems('navigation')} />
+        <Tabs aria-label="Standard tabs (NavList.Item)" items={tabItems('navigation')} />
       </Column>
       <Column title="Tabs size=compact">
         <Tabs aria-label="Compact tabs (Button)" size="compact" items={tabItems('button')} />
         <Tabs
-          aria-label="Compact tabs (NavigationItem)"
+          aria-label="Compact tabs (NavList.Item)"
           size="compact"
           items={tabItems('navigation')}
         />
@@ -384,15 +384,15 @@ function TabsSection() {
 function Sidebar({ size }: { size: 'standard' | 'compact' }) {
   return (
     <nav className="density-sidebar" aria-label={`${size} navigation`}>
-      <NavigationItem size={size} icon={<Home />} selected>
+      <NavList.Item size={size} icon={<Home />} selected>
         Home
-      </NavigationItem>
-      <NavigationItem size={size} icon={<Inbox />}>
+      </NavList.Item>
+      <NavList.Item size={size} icon={<Inbox />}>
         Inbox
-      </NavigationItem>
-      <NavigationItem size={size} icon={<Settings />}>
+      </NavList.Item>
+      <NavList.Item size={size} icon={<Settings />}>
         Settings
-      </NavigationItem>
+      </NavList.Item>
     </nav>
   );
 }
@@ -400,10 +400,10 @@ function Sidebar({ size }: { size: 'standard' | 'compact' }) {
 function NavigationSection() {
   return (
     <div className="density-columns" data-columns="3">
-      <Column title="NavigationItem size=standard">
+      <Column title="NavList.Item size=standard">
         <Sidebar size="standard" />
       </Column>
-      <Column title="NavigationItem size=compact">
+      <Column title="NavList.Item size=compact">
         <Sidebar size="compact" />
       </Column>
       <Column title="Tree default (compact) for comparison">

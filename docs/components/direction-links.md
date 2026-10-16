@@ -50,6 +50,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Navigation items](../components/navigation.md)
+- [Navigation lists](../components/nav-list.md)
 - [Stacks & action groups](../components/layout.md)
 - [Typography](../foundations/typography.md)

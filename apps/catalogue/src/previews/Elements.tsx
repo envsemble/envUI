@@ -12,7 +12,7 @@ import {
   TextField,
   Kbd,
   Link,
-  NavigationItem,
+  NavList,
   Alert,
   Popover,
   SegmentedControl,
@@ -158,23 +158,23 @@ export function BadgesPreview() {
           </Specimen>
           <Specimen title="In navigation">
             <Stack gap={1}>
-              <NavigationItem
+              <NavList.Item
                 icon={<Inbox />}
                 selected={selected === 'inbox'}
                 onClick={() => setSelected('inbox')}
                 trailing={<CounterBadge value={12} aria-label="12 unread" tone="accent" />}
               >
                 Inbox
-              </NavigationItem>
-              <NavigationItem
+              </NavList.Item>
+              <NavList.Item
                 icon={<Description />}
                 selected={selected === 'plans'}
                 onClick={() => setSelected('plans')}
                 trailing={<CounterBadge value={4} />}
               >
                 Plans
-              </NavigationItem>
-              <NavigationItem
+              </NavList.Item>
+              <NavList.Item
                 icon={<Inbox />}
                 iconOnly
                 aria-label="Inbox, 12 unread"
@@ -183,7 +183,7 @@ export function BadgesPreview() {
                 trailing={<CounterBadge value={12} />}
               >
                 Inbox
-              </NavigationItem>
+              </NavList.Item>
             </Stack>
           </Specimen>
         </SpecimenGrid>

@@ -214,7 +214,7 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Menubar](../components/menubar.md)
-- [Navigation items](../components/navigation.md)
+- [Navigation lists](../components/nav-list.md)
 - [Tooltips](../components/tooltip.md)
 - [Avatars](../components/avatar.md)
 - [Application shell](../components/app-shell.md)

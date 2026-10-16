@@ -13,7 +13,7 @@ const components = [
   'switch',
   'radio',
   'select',
-  'navigation',
+  'nav-list',
   'list',
   'cards',
   'chips',
@@ -52,7 +52,7 @@ test('public composition owns spacing and content-fit sizing without documentati
       }
       const stack = scope.getByTestId('layout-stack');
       const stackWidth = (await stack.boundingBox())!.width;
-      for (const selector of ['.env-button', '.env-navigation-item', '.env-info-chip']) {
+      for (const selector of ['.env-button', '.env-nav-list-item', '.env-info-chip']) {
         expect((await stack.locator(selector).boundingBox())!.width).toBeLessThan(stackWidth);
       }
       const actionGroup = scope.getByTestId('stacked-actions');

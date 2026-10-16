@@ -27,7 +27,7 @@ const hoverQuery = '(hover: hover) and (pointer: fine)';
 
 const SidebarCompactContext = createContext(false);
 
-/** True while the shell sidebar shows icons only; NavigationItem follows it automatically. */
+/** True while the shell sidebar shows icons only; NavList.Item follows it automatically. */
 export function useSidebarCompact() {
   return useContext(SidebarCompactContext);
 }
@@ -189,7 +189,7 @@ interface AppShellFrameProps {
 }
 
 export interface AppShellProps extends AppShellFrameProps {
-  /** NavigationItem elements for the sidebar. */
+  /** NavList.Item elements for the sidebar. */
   navigation: ReactNode;
   /** Accessible name of the sidebar navigation. */
   navigationLabel: string;

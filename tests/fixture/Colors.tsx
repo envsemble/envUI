@@ -2,7 +2,7 @@ import {
   Theme,
   Button,
   IconButton,
-  NavigationItem,
+  NavList,
   Stack,
   Surface,
   Card,
@@ -46,12 +46,12 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
         aria-label={`${theme} chevron`}
         data-testid={`${theme}-icon-button`}
       />
-      <NavigationItem icon={<Home />} data-testid={`${theme}-navigation`}>
+      <NavList.Item icon={<Home />} data-testid={`${theme}-navigation`}>
         {theme} navigation
-      </NavigationItem>
-      <NavigationItem selected data-testid={`${theme}-navigation-selected`}>
+      </NavList.Item>
+      <NavList.Item selected data-testid={`${theme}-navigation-selected`}>
         {theme} selected navigation
-      </NavigationItem>
+      </NavList.Item>
       <Stack gap={3}>
         <Surface tone="row" data-testid={`${theme}-color-surface`}>
           Surface
@@ -91,9 +91,9 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
             {
               value: 'navigation',
               button: (
-                <NavigationItem icon={<Home />} data-testid={`${theme}-tab-navigation`}>
+                <NavList.Item icon={<Home />} data-testid={`${theme}-tab-navigation`}>
                   Third tab
-                </NavigationItem>
+                </NavList.Item>
               ),
               content: 'Third panel',
             },

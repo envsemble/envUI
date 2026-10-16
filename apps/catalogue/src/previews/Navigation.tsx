@@ -3,7 +3,7 @@ import {
   Text,
   Button,
   IconButton,
-  NavigationItem,
+  NavList,
   DirectionLinks,
   Tabs,
   Stack,
@@ -60,14 +60,14 @@ function NavigationStates() {
               <th scope="row">{selected ? 'Selected' : 'Unselected'}</th>
               {controlStates.map((state) => (
                 <td key={state.title}>
-                  <NavigationItem
+                  <NavList.Item
                     selected={selected}
                     disabled={state.disabled}
                     className={state.className}
                     inert
                   >
                     Home
-                  </NavigationItem>
+                  </NavList.Item>
                 </td>
               ))}
             </tr>
@@ -78,7 +78,7 @@ function NavigationStates() {
   );
 }
 
-export function NavigationPreview() {
+export function NavListPreview() {
   const [selectedDestination, setSelectedDestination] = useState('Home');
   return (
     <Preview>
@@ -118,7 +118,7 @@ export function NavigationPreview() {
                             onClick: () => setSelectedDestination(destination.label),
                           };
                           return form.value === 'icon-only' ? (
-                            <NavigationItem
+                            <NavList.Item
                               {...props}
                               key={destination.label}
                               iconOnly
@@ -126,13 +126,13 @@ export function NavigationPreview() {
                               aria-label={destination.label}
                             />
                           ) : (
-                            <NavigationItem
+                            <NavList.Item
                               {...props}
                               key={destination.label}
                               icon={form.value === 'icon' ? <destination.icon /> : undefined}
                             >
                               {destination.label}
-                            </NavigationItem>
+                            </NavList.Item>
                           );
                         })}
                       </ActionGroup>
@@ -310,12 +310,12 @@ export function TabsPreview() {
               items={[
                 {
                   value: 'home',
-                  button: <NavigationItem icon={<Home />}>Home</NavigationItem>,
+                  button: <NavList.Item icon={<Home />}>Home</NavList.Item>,
                   content: <Text>Workspace overview</Text>,
                 },
                 {
                   value: 'projects',
-                  button: <NavigationItem icon={<Apps />}>Projects</NavigationItem>,
+                  button: <NavList.Item icon={<Apps />}>Projects</NavList.Item>,
                   content: <Text>Workspace projects</Text>,
                 },
               ]}

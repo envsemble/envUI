@@ -106,7 +106,7 @@ const referenceIcons: Record<string, typeof Palette> = {
   'calendar-heatmap': CalendarViewMonth,
   rating: Star,
   'relative-time': Schedule,
-  navigation: Explore,
+  'nav-list': Explore,
   tabs: WebAsset,
   'direction-links': ArrowForward,
   markdown: Article,

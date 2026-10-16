@@ -70,5 +70,5 @@ TypeScript declarations provide the complete public API.
 
 - [Application shell](../components/app-shell.md)
 - [Menus](../components/menu.md)
-- [Navigation items](../components/navigation.md)
+- [Navigation lists](../components/nav-list.md)
 - [Accessibility](../foundations/accessibility.md)

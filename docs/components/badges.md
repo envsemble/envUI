@@ -3,7 +3,7 @@
 ## React usage
 
 ```tsx
-import { Badge, Button, CounterBadge, DiffStat, NavigationItem } from '@envsemble/envui';
+import { Badge, Button, CounterBadge, DiffStat, NavList } from '@envsemble/envui';
 import { Inbox } from '@envsemble/envui/icons/Inbox';
 import { TaskAlt } from '@envsemble/envui/icons/TaskAlt';
 
@@ -11,13 +11,13 @@ import { TaskAlt } from '@envsemble/envui/icons/TaskAlt';
 <Badge tone="done" icon={<TaskAlt />}>Completed</Badge>
 <Badge variant="outline">Shared drafts</Badge>
 
-<NavigationItem
+<NavList.Item
   href="/inbox"
   icon={<Inbox />}
   trailing={<CounterBadge value={unread} aria-label={`${unread} unread`} tone="accent" />}
 >
   Inbox
-</NavigationItem>
+</NavList.Item>
 
 <Button variant="secondary">
   Diffs <DiffStat additions={12} deletions={3} />
@@ -36,7 +36,7 @@ import { TaskAlt } from '@envsemble/envui/icons/TaskAlt';
 | CounterBadge tone              | neutral (default) quiet fill, or accent                                                          |
 | DiffStat additions / deletions | The size of a change, shown as +12 in the success tone and −3 in the danger tone                 |
 | DiffStat formatLabel           | Full meaning for assistive technology; 12 added lines and 3 removed lines by default             |
-| NavigationItem trailing        | End content such as a CounterBadge; an icon-only item shows a small dot instead                  |
+| NavList.Item trailing          | End content such as a CounterBadge; an icon-only item shows a small dot instead                  |
 | Native props                   | Badge, CounterBadge and DiffStat accept span attributes, including title, className and ref      |
 
 ## Guidelines
@@ -54,5 +54,5 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Info chips](../components/chips.md)
-- [Navigation items](../components/navigation.md)
+- [Navigation lists](../components/nav-list.md)
 - [Colors & themes](../foundations/colors.md)

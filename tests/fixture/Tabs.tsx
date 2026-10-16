@@ -3,7 +3,7 @@ import {
   Button,
   CounterBadge,
   DocumentTabs,
-  NavigationItem,
+  NavList,
   Surface,
   Tabs,
   Text,
@@ -172,7 +172,7 @@ export function TabStatesFixture({ theme }: { theme: ThemeValue }) {
                 value: label.toLowerCase(),
                 button:
                   variant === 'navigation' ? (
-                    <NavigationItem>{label}</NavigationItem>
+                    <NavList.Item>{label}</NavList.Item>
                   ) : (
                     <Button variant={variant}>{label}</Button>
                   ),

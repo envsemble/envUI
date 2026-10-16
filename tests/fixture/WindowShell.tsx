@@ -7,7 +7,7 @@ import {
   IconButton,
   Menu,
   Menubar,
-  NavigationItem,
+  NavList,
   TitleBar,
   WindowFrame,
   useAppShell,
@@ -144,12 +144,12 @@ export function ScrollKeysFixture() {
       navigationLabel="Keys navigation"
       navigation={
         <>
-          <NavigationItem icon={<Home />} selected>
+          <NavList.Item icon={<Home />} selected>
             Inbox
-          </NavigationItem>
-          <NavigationItem icon={<Settings />} href="#settings">
+          </NavList.Item>
+          <NavList.Item icon={<Settings />} href="#settings">
             Settings
-          </NavigationItem>
+          </NavList.Item>
         </>
       }
       sidebarContent={
@@ -274,20 +274,20 @@ export function FullShellFixture() {
       navigationLabel="Notes navigation"
       navigation={
         <>
-          <NavigationItem
+          <NavList.Item
             icon={<Home />}
             selected={page === 'notes'}
             onClick={() => setPage('notes')}
           >
             Notes
-          </NavigationItem>
-          <NavigationItem
+          </NavList.Item>
+          <NavList.Item
             icon={<Search />}
             selected={page === 'search'}
             onClick={() => setPage('search')}
           >
             Search
-          </NavigationItem>
+          </NavList.Item>
         </>
       }
       sidebarContent={

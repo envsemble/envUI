@@ -549,7 +549,7 @@
       }
     }
   },
-  "components/navigation/usage": {
+  "components/nav-list/usage": {
     "dark": {
       "color-contrast": {
         "article :: div.env-code-block span": 4

@@ -115,7 +115,7 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       contrastPane: `.env-list-surface:has([data-testid="${theme}-color-contrast-rows"])`,
       tabRail: `[data-testid="${theme}-color-tabs"] .env-tabs-list`,
       tab: `[data-testid="${theme}-color-tabs"] [role="tab"][aria-selected="true"]`,
-      tabIcon: `[data-testid="${theme}-color-tabs"] .env-navigation-item .env-symbol`,
+      tabIcon: `[data-testid="${theme}-color-tabs"] .env-nav-list-item .env-symbol`,
       link: `[data-testid="${theme}-color-link"]`,
       textButton: `[data-testid="${theme}-color-text-button"]`,
       navigation: `[data-testid="${theme}-navigation-selected"]`,

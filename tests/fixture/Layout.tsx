@@ -8,7 +8,7 @@ import {
   Disclosure,
   Stack,
   TextField,
-  NavigationItem,
+  NavList,
   IconButton,
   ActionCard,
   ClickableCard,
@@ -43,7 +43,7 @@ export function LayoutFixture() {
           <Stack data-testid="layout-stack" gap={3} style={{ maxInlineSize: '20rem' }}>
             <TextField label={`Layout field ${theme}`} />
             <Button>Fit action</Button>
-            <NavigationItem selected>Destination</NavigationItem>
+            <NavList.Item selected>Destination</NavList.Item>
             <InfoChip>Metadata</InfoChip>
             <Disclosure title={`Stack guidance ${theme}`} open>
               <p>Supporting detail</p>

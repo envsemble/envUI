@@ -126,7 +126,7 @@ test('button link specimens and optional interaction matrices consume public con
   await disclosure.locator('summary').press('Enter');
   await expect(disclosure).toHaveAttribute('open', '');
   await expect(disclosure.getByRole('region', { name: 'Button interaction states' })).toBeVisible();
-  await page.goto(`${offline}#/components/navigation/preview`);
+  await page.goto(`${offline}#/components/nav-list/preview`);
   const navigationDisclosure = page.locator('.docs-preview details.env-disclosure');
   await navigationDisclosure.locator('summary').click();
   await expect(

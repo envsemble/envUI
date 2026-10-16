@@ -37,7 +37,7 @@ Consult the relevant [component documentation](index.md) before adopting these c
 | ------------------------------------------------ | --------------------------------------------------------- |
 | Typography, panes, vertical layouts, action rows | Text, Surface, Stack, ActionGroup                         |
 | Buttons, inline links, icon/connected actions    | Button, Link, IconButton, ButtonGroup                     |
-| Side navigation and selected destinations        | NavigationItem with router-owned selection                |
+| Side navigation and selected destinations        | NavList.Item with router-owned selection                  |
 | Content/action/clickable cards                   | Appropriate public Card composition                       |
 | Fields and choices                               | TextField, Textarea, Select, Checkbox, RadioGroup, Switch |
 | Modal/inspector shells, notifications            | Dialog, Toast.Provider/useToast                           |

@@ -229,7 +229,7 @@
       "count": 8
     }
   },
-  "packages/ui/src/styles/NavigationItem.css": {
+  "packages/ui/src/styles/NavList.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 10
     }

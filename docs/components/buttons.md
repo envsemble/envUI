@@ -173,7 +173,7 @@ import { Settings } from '@envsemble/envui/icons/Settings';
 - Interaction colors follow the central HSL lightness rule described in Colors & themes. State colors and disabled opacity come from the shared stylesheet.
 - Use href for destinations and onClick for actions. Disabled links have no destination and cannot activate.
 - Icon-only buttons keep their square size wherever they sit, also in a squeezed flex row; labeled buttons can shrink and wrap their labels.
-- Labeled and icon-only buttons share the 1 rem control icon size used by NavigationItem. Leading and trailing icons follow the same rule, including important buttons.
+- Labeled and icon-only buttons share the 1 rem control icon size used by NavList.Item. Leading and trailing icons follow the same rule, including important buttons.
 - Every variant supports iconOnly: a square matching its regular button height (2 rem for important; 2.5 rem for the others). Corners, colors, borders and interaction states follow the chosen variant: important is a rounded square; the others are circles. Name the action, rather than the icon shape.
 - IconButton is a shorthand for Button with iconOnly enabled and variant="secondary" by default.
 

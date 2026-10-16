@@ -1,4 +1,4 @@
-.env-navigation-item {
+.env-nav-list-item {
   inline-size: fit-content;
   min-inline-size: 0;
   max-inline-size: 100%;
@@ -18,16 +18,16 @@
   text-decoration: none;
 }
 
-.env-navigation-selected {
+.env-nav-list-item-selected {
   color: var(--color-on-navigation-selected);
   background: var(--color-navigation-selected);
 }
 
-.env-navigation-compact {
+.env-nav-list-item-compact {
   font-size: calc(var(--font-size-body-small) * var(--scale, 1));
 }
 
-.env-navigation-icon-only {
+.env-nav-list-item-icon-only {
   inline-size: calc(var(--control-height) * var(--scale, 1));
   block-size: calc(var(--control-height) * var(--scale, 1));
   min-inline-size: calc(var(--control-height) * var(--scale, 1));
@@ -36,57 +36,57 @@
   padding: 0;
 }
 
-.env-navigation-item:not(.env-navigation-selected):not(:disabled):not([aria-disabled='true'])
+.env-nav-list-item:not(.env-nav-list-item-selected):not(:disabled):not([aria-disabled='true'])
   .env-symbol {
   color: var(--color-navigation-icon);
 }
 
-.env-navigation-selected .env-symbol {
+.env-nav-list-item-selected .env-symbol {
   color: inherit;
 }
 
-.env-navigation-item:hover:not(:disabled):not([aria-disabled='true']) {
+.env-nav-list-item:hover:not(:disabled):not([aria-disabled='true']) {
   background: var(--color-navigation-quiet-hover);
 }
 
-.env-navigation-item:active:not(:disabled):not([aria-disabled='true']) {
+.env-nav-list-item:active:not(:disabled):not([aria-disabled='true']) {
   background: var(--color-navigation-quiet-pressed);
 }
 
-.env-navigation-selected:hover:not(:disabled):not([aria-disabled='true']) {
+.env-nav-list-item-selected:hover:not(:disabled):not([aria-disabled='true']) {
   background: var(--color-navigation-hover);
 }
 
-.env-navigation-selected:active:not(:disabled):not([aria-disabled='true']) {
+.env-nav-list-item-selected:active:not(:disabled):not([aria-disabled='true']) {
   background: var(--color-navigation-pressed);
 }
 
-.env-navigation-item:focus-visible {
+.env-nav-list-item:focus-visible {
   outline: 0.125rem solid var(--color-focus-ring);
   outline-offset: -0.125rem;
 }
 
-.env-navigation-item:is(:disabled, [aria-disabled='true']) {
+.env-nav-list-item:is(:disabled, [aria-disabled='true']) {
   opacity: var(--state-disabled-opacity);
   cursor: default;
 }
 
-.env-navigation-item:is(:disabled, [aria-disabled='true']) .env-symbol {
+.env-nav-list-item:is(:disabled, [aria-disabled='true']) .env-symbol {
   color: inherit;
 }
 
 /* Trailing content, such as a CounterBadge, follows the label; icon-only items show a dot instead. */
-.env-navigation-trailing {
+.env-nav-list-item-trailing {
   flex: 0 0 auto;
   margin-inline-start: auto;
   padding-inline-start: calc(0.25rem * var(--scale, 1));
   display: inline-flex;
   align-items: center;
 }
-.env-navigation-icon-only:has(> .env-navigation-dot) {
+.env-nav-list-item-icon-only:has(> .env-nav-list-item-dot) {
   position: relative;
 }
-.env-navigation-dot {
+.env-nav-list-item-dot {
   position: absolute;
   inset-block-start: 22%;
   inset-inline-end: 22%;
@@ -95,4 +95,39 @@
   border-radius: 50%;
   background: var(--color-tone-accent);
   box-shadow: 0 0 0 0.125rem var(--color-canvas);
+}
+
+/* NavList.Root and NavList.Group: plain lists of items, spaced and aligned like the shell's sidebar
+   navigation. A group's heading sits in line with its items' labels. */
+.env-nav-list,
+.env-nav-list-group-list {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-1);
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.env-nav-list li:not(.env-nav-list-group) {
+  display: flex;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+.env-nav-list-group {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-1);
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+.env-nav-list-group + .env-nav-list-group,
+.env-nav-list li:not(.env-nav-list-group) + .env-nav-list-group {
+  margin-block-start: var(--space-3);
+}
+.env-nav-list-group-label {
+  padding-inline: var(--space-3);
+  color: var(--color-text-muted);
+  font: var(--type-body-small);
+  overflow-wrap: anywhere;
 }

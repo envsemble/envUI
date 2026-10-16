@@ -49,6 +49,6 @@ test('badge and tone text keep 4.5:1 contrast on canvas, panes and rows in both 
   const scope = page.getByTestId('badges-light');
   await expect(scope.getByRole('button', { name: 'Inbox 12 unread' })).toBeVisible();
   const iconOnly = scope.getByRole('button', { name: 'Inbox with unread' });
-  await expect(iconOnly.locator('.env-navigation-dot')).toBeVisible();
+  await expect(iconOnly.locator('.env-nav-list-item-dot')).toBeVisible();
   await expect(iconOnly.locator('.env-counter-badge')).toHaveCount(0);
 });

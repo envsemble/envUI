@@ -37,16 +37,16 @@
 .docs-preview .docs-force-pressed.env-button-text {
   color: var(--color-link-pressed);
 }
-.docs-preview .docs-force-hover.env-navigation-item {
+.docs-preview .docs-force-hover.env-nav-list-item {
   background: var(--color-navigation-quiet-hover);
 }
-.docs-preview .docs-force-pressed.env-navigation-item {
+.docs-preview .docs-force-pressed.env-nav-list-item {
   background: var(--color-navigation-quiet-pressed);
 }
-.docs-preview .docs-force-hover.env-navigation-selected {
+.docs-preview .docs-force-hover.env-nav-list-item-selected {
   background: var(--color-navigation-hover);
 }
-.docs-preview .docs-force-pressed.env-navigation-selected {
+.docs-preview .docs-force-pressed.env-nav-list-item-selected {
   background: var(--color-navigation-pressed);
 }
 .docs-preview .docs-force-focus {
@@ -57,6 +57,6 @@
   outline-color: var(--color-outlined-focus);
   outline-offset: 0.0625rem;
 }
-.docs-preview .docs-force-focus.env-navigation-item {
+.docs-preview .docs-force-focus.env-nav-list-item {
   outline-offset: -0.125rem;
 }

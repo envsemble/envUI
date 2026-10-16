@@ -2,14 +2,14 @@ import { Tabs as BaseTabs } from '@base-ui/react/tabs';
 import { useRender } from '@base-ui/react/use-render';
 import { cloneElement, type ComponentPropsWithRef, type ReactElement, type ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { NavigationItem, type NavigationItemProps } from './NavigationItem.js';
+import * as NavList from './NavList.js';
 import { NavigationIconState } from '../MaterialSymbolState.js';
 import { Surface } from '../foundations/Surface.js';
 
 export interface TabsItem {
   /** Unique, stable identifier shared by the tab and its panel. */
   value: string;
-  /** Button, IconButton, button-based NavigationItem, or a compatible native button component. */
+  /** Button, IconButton, button-based NavList.Item, or a compatible native button component. */
   button: ReactElement<ComponentPropsWithRef<'button'>>;
   content: ReactNode;
   disabled?: boolean;
@@ -62,7 +62,7 @@ function TabButton({
   disabled: boolean;
 }) {
   if (button.type === 'a' || ('href' in button.props && button.props.href != null)) {
-    throw new Error('Tabs items must render buttons. Use NavigationItem without href.');
+    throw new Error('Tabs items must render buttons. Use NavList.Item without href.');
   }
   const tabButton = cloneElement(button, {
     type: 'button',
@@ -74,8 +74,8 @@ function TabButton({
     'aria-controls': props['aria-controls'],
   });
   const render =
-    button.type === NavigationItem
-      ? cloneElement(tabButton as ReactElement<NavigationItemProps>, {
+    button.type === NavList.Item
+      ? cloneElement(tabButton as ReactElement<NavList.ItemProps>, {
           selected: active,
           'aria-current': false,
         })

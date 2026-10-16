@@ -8,7 +8,7 @@ import {
   Kbd,
   Menu,
   Menubar,
-  NavigationItem,
+  NavList,
   OrganizationSwitcher,
   Select,
   Skeleton,
@@ -97,14 +97,14 @@ export function AppShellPreview() {
             }
             navigationLabel="Sample navigation"
             navigation={pages.map((candidate) => (
-              <NavigationItem
+              <NavList.Item
                 key={candidate.id}
                 icon={candidate.icon}
                 selected={candidate.id === page}
                 onClick={() => setPage(candidate.id)}
               >
                 {candidate.label}
-              </NavigationItem>
+              </NavList.Item>
             ))}
             dividers={dividers}
             resizable
@@ -265,14 +265,14 @@ function TitleBarExamples() {
             }
             navigationLabel="Document navigation"
             navigation={documentPages.map((candidate) => (
-              <NavigationItem
+              <NavList.Item
                 key={candidate.id}
                 icon={candidate.icon}
                 selected={candidate.id === page}
                 onClick={() => setPage(candidate.id)}
               >
                 {candidate.label}
-              </NavigationItem>
+              </NavList.Item>
             ))}
             storageKey="envui-catalogue-title-bar-shell"
           >

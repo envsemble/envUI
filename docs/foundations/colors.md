@@ -57,7 +57,7 @@ Status icons, short status text and badges share these tokens. Each keeps at lea
   - Secondary buttons, tab rails, chips, switch tracks, meter tracks and skeletons use `--color-fill`: 6% in light and 12.5% in dark, with 17% and 29% (25% and 37.5% in dark) for hover and press.
   - Controls without a fill, such as inactive tabs and the avatar button, show `--color-state-layer-hover` (8%) and `--color-state-layer-pressed` (12%) layers.
 - Each role keeps the same purpose across themes. Its hue, saturation and lightness can differ between palettes. Focus has its own role, with blue defaults in both themes.
-- Tabs reuse the supplied Button or NavigationItem colors, and their rail uses Surface. Cards, dialog shells and standard menus reuse Surface tones; compact menus take the raised popup colors, like Popover and Select. IconButton and inline Link reuse Button variants; Select shares secondary Button and field colors.
+- Tabs reuse the supplied Button or NavList.Item colors, and their rail uses Surface. Cards, dialog shells and standard menus reuse Surface tones; compact menus take the raised popup colors, like Popover and Select. IconButton and inline Link reuse Button variants; Select shares secondary Button and field colors.
 - Navigation selection, radio selection, selected Select options and the chosen and current days of a calendar have separate roles. Card action strips, dialog backdrops, field validation and toast fills also have their own purposes; composed action buttons retain Button colors.
 - Scope content with Theme. Nested boundaries and library portals retain the originating theme. Application-owned portal content needs an appropriate Theme boundary too.
 
@@ -67,7 +67,7 @@ TypeScript declarations provide the complete public API.
 
 - [Surface](../components/surface.md)
 - [Buttons](../components/buttons.md)
-- [Navigation items](../components/navigation.md)
+- [Navigation lists](../components/nav-list.md)
 - [Color picker](../components/color-picker.md)
 - [Accessibility](../foundations/accessibility.md)
 - [Badges & counters](../components/badges.md)

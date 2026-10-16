@@ -14,7 +14,7 @@ import {
   LoadingBar,
   Menu,
   Meter,
-  NavigationItem,
+  NavList,
   OrganizationSwitcher,
   SearchField,
   Skeleton,
@@ -213,9 +213,9 @@ export function TwoShellsFixture() {
           title="First"
           navigationLabel="First navigation"
           navigation={
-            <NavigationItem href="/" icon={<Home />}>
+            <NavList.Item href="/" icon={<Home />}>
               Home
-            </NavigationItem>
+            </NavList.Item>
           }
         >
           <div className="fixture-two-shells-actions">
@@ -241,9 +241,9 @@ export function TwoShellsFixture() {
             title="Second"
             navigationLabel="Second navigation"
             navigation={
-              <NavigationItem href="/second" icon={<Category />}>
+              <NavList.Item href="/second" icon={<Category />}>
                 Second home
-              </NavigationItem>
+              </NavList.Item>
             }
           >
             <p>Second content</p>
@@ -271,22 +271,22 @@ export function ShellFixture() {
         navigationLabel="Fixture navigation"
         navigation={
           <>
-            <NavigationItem
+            <NavList.Item
               href="/"
               icon={<Home />}
               selected={page === 'home'}
               onClick={() => setPage('home')}
             >
               Home
-            </NavigationItem>
-            <NavigationItem
+            </NavList.Item>
+            <NavList.Item
               href="/products"
               icon={<Category />}
               selected={page === 'products'}
               onClick={() => setPage('products')}
             >
               Products
-            </NavigationItem>
+            </NavList.Item>
           </>
         }
         storageKey="fixture-sidebar"

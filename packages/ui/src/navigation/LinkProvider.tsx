@@ -13,7 +13,7 @@ const LinkComponentContext = createContext<ComponentType<LinkComponentProps> | '
 
 export interface LinkProviderProps {
   /**
-   * Renders every envUI destination (Button, Link, NavigationItem, Card, DirectionLink and menu
+   * Renders every envUI destination (Button, Link, NavList.Item, Card, DirectionLink and menu
    * links with href). It must render an anchor and forward native props and ref, for example a
    * router's link that navigates on the client.
    */

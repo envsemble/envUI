@@ -9,7 +9,7 @@ import {
   DropZonePreview,
 } from './Forms';
 import {
-  NavigationPreview,
+  NavListPreview,
   TabsPreview,
   DirectionLinksPreview,
   PaginationPreview,
@@ -86,8 +86,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <ColorPickerPreview />;
     case 'composer':
       return <ComposerPreview />;
-    case 'navigation':
-      return <NavigationPreview />;
+    case 'nav-list':
+      return <NavListPreview />;
     case 'tabs':
       return <TabsPreview />;
     case 'direction-links':

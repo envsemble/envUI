@@ -175,8 +175,11 @@ before(
       })),
       defaultIcon: renderToString(h(Home)), filledIcon: renderToString(h(Home, { filled: true, label: 'Home' })),
       barrelIcon: renderToString(h(BarrelHome)), customIcon: renderToString(custom),
-      selectedNavigation: renderToString(h(ui.NavigationItem, { selected: true, icon: h(Home, { filled: false }) }, 'Home')),
-      unselectedNavigation: renderToString(h(ui.NavigationItem, { icon: h(Home, { filled: true }) }, 'Home')),
+      selectedNavigation: renderToString(h(ui.NavList.Item, { selected: true, icon: h(Home, { filled: false }) }, 'Home')),
+      unselectedNavigation: renderToString(h(ui.NavList.Item, { icon: h(Home, { filled: true }) }, 'Home')),
+      navigationList: renderToString(h(ui.NavList.Root, { 'aria-label': 'Main' },
+        h(ui.NavList.Item, { href: '/home' }, 'Home'),
+        h(ui.NavList.Group, { label: 'Settings' }, h(ui.NavList.Item, { href: '/profile' }, 'Profile')))),
       module: import.meta.resolve('@envsemble/envui'), iconsModule: import.meta.resolve('@envsemble/envui/icons'),
       homeModule: import.meta.resolve('@envsemble/envui/icons/Home'),
       reactModule: import.meta.resolve('react'),
@@ -209,6 +212,20 @@ test('direction link groups omit empty navigation and preserve destination attri
   assert.ok(ssr.pairedDirectionLinks.indexOf('Before') < ssr.pairedDirectionLinks.indexOf('After'));
 });
 
+test('a navigation list renders its items and groups as list items', () => {
+  const html = ssr.navigationList;
+  assert.match(html, /^<ul aria-label="Main" class="env-nav-list"><li><a [^>]*href="\/home"/);
+  const label = html.match(/<span class="env-nav-list-group-label" id="([^"]+)">Settings<\/span>/);
+  assert.ok(label, 'The group shows its label.');
+  assert.ok(html.includes('</li><li class="env-nav-list-group"><span'));
+  assert.match(
+    html,
+    new RegExp(
+      `<ul class="env-nav-list-group-list" aria-labelledby="${label[1]}"><li><a [^>]*href="/profile"[^>]*>Profile</a></li></ul></li></ul>$`,
+    ),
+  );
+});
+
 test('compound parts are namespace members named after their part', () => {
   assert.deepEqual(ssr.partNames, [
     'Menu.Root',
@@ -233,7 +250,7 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'Button',
     'ButtonGroup',
     'IconButton',
-    'NavigationItem',
+    'NavList',
     'DirectionLink',
     'DirectionLinks',
     'Card',
@@ -297,7 +314,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     join(consumerDirectory, 'Consumer.tsx'),
     `
     import { createRef } from 'react';
-    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, NavigationItem, DirectionLink, Icon, BrandLogo, TextField, ColorPicker, Textarea, Checkbox, Switch, Stack, ActionGroup,
+    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, NavList, DirectionLink, Icon, BrandLogo, TextField, ColorPicker, Textarea, Checkbox, Switch, Stack, ActionGroup,
       RadioGroup, Radio, Select, Combobox, DatePicker, Calendar, Dialog, DialogClose, Toast, useToast,
       type ThemeValue, type ButtonProps, type ButtonGroupProps, type DirectionLinkProps, type SelectOption, type ComboboxItem, type ToastManager } from '@envsemble/envui';
     import { Home } from '@envsemble/envui/icons/Home';
@@ -320,8 +337,8 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       <ButtonGroup {...buttonGroupProps}><Button href="/">Home</Button><IconButton aria-label="Options" icon={<Home />} /><Button variant="important">Confirm</Button></ButtonGroup>
       <Stack gap={3} ref={createRef<HTMLDivElement>()}><TextField label="First" /><TextField label="Second" /></Stack>
       <ActionGroup stacked ref={createRef<HTMLDivElement>()}><Button>Save</Button><Button variant="secondary">Cancel</Button></ActionGroup>
-      <NavigationItem href="/" ref={createRef<HTMLAnchorElement>()}>Home</NavigationItem>
-      <NavigationItem ref={createRef<HTMLButtonElement>()}>Change view</NavigationItem>
+      <NavList.Item href="/" ref={createRef<HTMLAnchorElement>()}>Home</NavList.Item>
+      <NavList.Item ref={createRef<HTMLButtonElement>()}>Change view</NavList.Item>
       <DirectionLink {...directionLinkProps} target="_blank" rel="noopener" />
       <DirectionLink direction="previous" href="/previous">Previous guide</DirectionLink>
       <Icon label="Custom" viewBox="0 0 1 1"><path d="M0 0L1 1" /></Icon><BrandLogo /><BarrelHome />
