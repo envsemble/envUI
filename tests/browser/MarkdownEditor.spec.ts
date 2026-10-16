@@ -184,3 +184,14 @@ for (const change of ['remove', 'replace'] as const) {
     if (change === 'replace') await expect(scope.locator('code')).toHaveText('const latest = 2;');
   });
 }
+
+test('the source is a tall text area with medium corners, never a pill', async ({ page }) => {
+  await page.goto(fixtureUrl);
+  const wells = page.locator('.env-text-field-well:has(> textarea)');
+  expect(await wells.count()).toBeGreaterThan(0);
+  for (const well of await wells.all()) {
+    await expect(well.locator('xpath=..')).toHaveAttribute('data-tall');
+    await expect(well).toHaveCSS('border-top-left-radius', '16px');
+    expect((await well.boundingBox())!.height).toBeGreaterThanOrEqual(120);
+  }
+});
