@@ -161,6 +161,7 @@ if (scope.typecheck)
   for (const [name, project] of [
     ['ui', 'packages/ui/tsconfig.json'],
     ['catalogue', 'apps/catalogue/tsconfig.json'],
+    ['types', 'tests/types/tsconfig.json'],
   ])
     staticTasks.push(
       task(`tsc ${name}`, [

@@ -3,21 +3,13 @@
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { Tabs as BaseTabs } from '@base-ui/react/tabs';
 import { useRender } from '@base-ui/react/use-render';
-import {
-  cloneElement,
-  useCallback,
-  useRef,
-  type ComponentPropsWithRef,
-  type ReactElement,
-  type ReactNode,
-} from 'react';
+import { cloneElement, type ComponentPropsWithRef, type ReactElement, type ReactNode } from 'react';
 import type { ControlSize } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
+import { useDirectionScope } from '../internal/useDirection.js';
 import * as NavList from './NavList.js';
 import { NavigationIconState } from '../MaterialSymbolState.js';
 import { Surface } from '../foundations/Surface.js';
-import { setRef } from '../internal/setRef.js';
-import { useDirection } from '../internal/useDirection.js';
 
 export interface TabsItem {
   /** Unique, stable identifier shared by the tab and its panel. */
@@ -61,9 +53,8 @@ export interface TabsProps
    */
   activation?: 'automatic' | 'manual';
   /**
-   * horizontal puts the tabs in a row, moved through with the left and right arrow keys, which
-   * follow the text direction; vertical in a column, with the up and down arrow keys. The panels
-   * stay below the list either way.
+   * horizontal puts the tabs in a row, moved through with the left and right arrow keys; vertical
+   * in a column, with the up and down arrow keys. The panels stay below the list either way.
    * @default 'horizontal'
    */
   orientation?: 'horizontal' | 'vertical';
@@ -156,18 +147,12 @@ export function Tabs({
   fill = false,
   size = 'lg',
   ref,
+  onFocus,
   ...props
 }: TabsProps) {
-  // The arrow keys follow the text direction: the EnvUIProvider's, or the one at the tabs.
-  const root = useRef<HTMLDivElement | null>(null);
-  const [direction] = useDirection(root);
-  const setRoot = useCallback(
-    (node: HTMLDivElement | null) => {
-      root.current = node;
-      setRef(ref, node);
-    },
-    [ref],
-  );
+  // A horizontal tab list's arrow keys follow the text direction, which Base UI only knows from
+  // its own provider.
+  const scope = useDirectionScope(ref);
   const initialValue =
     defaultValue === undefined
       ? (items.find((item) => !isDisabled(item))?.value ?? null)
@@ -199,10 +184,14 @@ export function Tabs({
     </BaseTabs.List>
   );
   return (
-    <DirectionProvider direction={direction}>
+    <DirectionProvider direction={scope.direction}>
       <BaseTabs.Root
         {...props}
-        ref={setRoot}
+        ref={scope.ref}
+        onFocus={(event) => {
+          scope.onFocus();
+          onFocus?.(event);
+        }}
         className={classNames('env-tabs', className)}
         data-fill={fill ? '' : undefined}
         value={value}

@@ -1,6 +1,7 @@
 'use client';
 
 import { Toolbar } from '@base-ui/react/toolbar';
+import { DirectedToolbarRoot } from '../../../internal/DirectedToolbarRoot.js';
 import { IconButton } from '../../../actions/Button.js';
 import { ButtonGroup } from '../../../actions/ButtonGroup.js';
 import { Title } from '../../../icons/Title.js';
@@ -47,7 +48,11 @@ export function MarkdownToolbar({
 }) {
   return (
     <div className="env-markdown-toolbar">
-      <Toolbar.Root render={<ButtonGroup />} aria-label="Markdown formatting" disabled={disabled}>
+      <DirectedToolbarRoot
+        render={<ButtonGroup />}
+        aria-label="Markdown formatting"
+        disabled={disabled}
+      >
         {tools
           .filter((tool) => commands.includes(tool.command))
           .map(({ command, label, Icon }) => (
@@ -73,7 +78,7 @@ export function MarkdownToolbar({
           onMouseDown={(event) => event.preventDefault()}
           onClick={onRedo}
         />
-      </Toolbar.Root>
+      </DirectedToolbarRoot>
     </div>
   );
 }

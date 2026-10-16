@@ -34,6 +34,8 @@ export interface MenuPopupProps {
   sideOffset?: PopupSurfaceProps['sideOffset'];
   alignOffset?: PopupSurfaceProps['alignOffset'];
   anchor?: PopupSurfaceProps['anchor'];
+  /** The menu's trigger, whose text direction the menu takes as it opens. */
+  trigger?: PopupSurfaceProps['trigger'];
   finalFocus?: PopupSurfaceProps['finalFocus'];
   /** The application's class for the popup, beside env-menu. */
   className?: string;
@@ -56,6 +58,7 @@ export function MenuPopup({
   sideOffset,
   alignOffset,
   anchor,
+  trigger,
   finalFocus,
   className,
   popupRef,
@@ -72,6 +75,7 @@ export function MenuPopup({
       // Base UI's own room from the window's edges for menus.
       collisionPadding={5}
       anchor={anchor}
+      trigger={trigger}
       finalFocus={finalFocus}
       className={classNames('env-menu', className)}
       positionerClassName="env-menu-positioner"

@@ -106,6 +106,7 @@ export function ContextMenu({
   // Browsers may follow a context-menu key with their own contextmenu event; it must not reopen
   // the menu at the pointer.
   const keyboardOpenedAt = useRef(Number.NEGATIVE_INFINITY);
+  const region = useRef<HTMLDivElement>(null);
 
   function setOpen(next: boolean) {
     if (!next) keyboardOpenedAt.current = Number.NEGATIVE_INFINITY;
@@ -150,6 +151,7 @@ export function ContextMenu({
   return (
     <BaseContextMenu.Root open={open} onOpenChange={(next) => setOpen(next)} disabled={disabled}>
       <BaseContextMenu.Trigger
+        ref={region}
         render={children}
         onContextMenu={openAtPointer}
         onPointerDown={notePress}
@@ -158,6 +160,7 @@ export function ContextMenu({
       <MenuPopup
         parts={contextMenuParts}
         label={label}
+        trigger={region}
         // At a point or an element the menu opens below its start; at the pointer, Base UI's own
         // placement puts its first row under the pointer.
         {...(anchor

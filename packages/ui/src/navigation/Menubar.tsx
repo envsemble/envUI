@@ -1,8 +1,8 @@
 'use client';
 
+import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { Menubar as BaseMenubar } from '@base-ui/react/menubar';
-import { DirectionProvider } from '@base-ui/react/direction-provider';
 import {
   createContext,
   useCallback,
@@ -88,11 +88,13 @@ function Root({
   disabled = false,
   className,
   ref,
+  onFocus,
   ...props
 }: RootProps) {
   const root = useRef<HTMLDivElement>(null);
-  // ← and → follow the text direction: the EnvUIProvider's, or the one at the menubar.
-  const [direction] = useDirection(root);
+  // The arrow keys between the menus, and the side submenus open on, follow the text direction,
+  // which Base UI only knows from its own provider.
+  const [direction, readDirection] = useDirection(root);
   // The last element outside the menubar and its menus that had focus, such as a text field.
   const lastFocus = useRef<Element | null>(null);
   const closers = useRef(new Set<() => void>());
@@ -270,6 +272,10 @@ function Root({
         <BaseMenubar
           {...props}
           ref={setRoot}
+          onFocus={(event) => {
+            readDirection();
+            onFocus?.(event);
+          }}
           aria-label={label}
           // Opening a menu leaves the page scrollable and the layout in place.
           modal={false}
@@ -448,6 +454,7 @@ function Menu({
         side="bottom"
         align="start"
         sideOffset={4}
+        trigger={trigger}
         finalFocus={finalFocus}
         className={className}
         popupRef={(node: HTMLDivElement | null) => {

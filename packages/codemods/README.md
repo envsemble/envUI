@@ -94,7 +94,7 @@ A 1.0 value, such as `density="sm"` on a Table or `size="lg"` on Tabs, is left a
 
 ## v1-render
 
-Replaces `as` with `render` on the components the map's `render` section lists (Text, Stack and Surface): `<Text as="h2">` becomes `<Text render={<h2 />}>`. It reports an expression, such as `as={level}`, which `render` takes as an element instead, and an element that already sets `render`.
+Replaces `as` with `render` on the components the map's `render` section lists (Text, Stack and Surface): `<Text as="h2">` becomes `<Text render={<h2 />}>`. It reports an expression, such as `as={level}`, which `render` takes as an element instead, and an element that already sets `render`. Beside a spread, as in `<Text {...heading} as="h2">`, `as` still becomes `render` and is reported, since the spread may set `as` or `render` too. Only the attribute's text changes, so the file keeps its layout.
 
 ## v1-structure
 
@@ -102,6 +102,7 @@ Rewrites elements whose 1.0 form is another element, as the map's `structure` se
 
 - `<ActionGroup>` becomes `<Stack direction="row" wrap align="center" gap={4}>`, its `align` Stack's `justify` and its `as` a `render`; a stacked one becomes `<Stack gap={2}>` with `fullWidth` on each labelled `<Button>` inside. Stack is imported under a free name where the file already uses the name, and ActionGroup's import goes once nothing uses it.
 - It reports an ActionGroup whose `stacked` is an expression, and a child of a stacked one that is not a Button, whose width it can't set.
+- It leaves an ActionGroup that spreads props, as in `<ActionGroup {...group}>`, and reports it: the spread may set `stacked` or `align`. A Button in a stacked one that spreads props is reported instead of getting `fullWidth`, since the spread may set `iconOnly` or `fullWidth`.
 
 Each entry is a list of cases matched on the element's literal props; a case renames the element, drops, renames or maps props, adds props to it or to its children, or wraps it in another element. Later 1.0 changes add entries, not code.
 

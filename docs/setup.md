@@ -130,28 +130,37 @@ The application still decides which destination is selected.
 
 ## Locale, strings and direction
 
-envUI works without setup in English, in the runtime's locale and in each element's text direction. An application that translates or formats for its people wraps itself, or a region, in `EnvUIProvider`:
+envUI works without setup in English, in the runtime's locale and in each element's text direction. An application that translates or formats for its people wraps itself, or a region, in `EnvUIProvider`, here in a client component of its own, where `t` is its translation library's function:
 
 ```tsx
-import { EnvUIProvider } from '@envsemble/envui';
+'use client';
 
-<EnvUIProvider
-  locale="de-CH"
-  messages={{
-    common: { close: 'Schließen', loading: 'Wird geladen' },
-    toast: { hidden: ({ count }) => t('notifications.hidden', { count }) },
-  }}
-  dir="ltr"
->
-  {app}
-</EnvUIProvider>;
+import { EnvUIProvider } from '@envsemble/envui';
+import type { ReactNode } from 'react';
+
+export function Localized({ children }: { children: ReactNode }) {
+  return (
+    <EnvUIProvider
+      locale="de-CH"
+      messages={{
+        common: { close: 'Schließen', loading: 'Wird geladen' },
+        toast: { hidden: ({ count }) => t('notifications.hidden', { count }) },
+      }}
+      dir="ltr"
+    >
+      {children}
+    </EnvUIProvider>
+  );
+}
 ```
 
 - `locale` is the BCP 47 tag envUI formats numbers, dates and relative times in. Without it, the server and the first client render use `en-GB`, so their markup matches, and the browser's locale applies once the page has hydrated. `useLocale()` returns the provider's locale, to format in step with envUI.
 - `messages` overrides envUI's built-in strings, per namespace, one per component family, such as `common`, `toast` or `pagination`. A message is a string, or a function of the values it names, so any translation library plugs in. Nested providers merge per namespace, the inner winning, and a component's own label prop, such as `closeLabel`, wins over both. `defaultMessages` from `@envsemble/envui/messages` lists every namespace and key with its English default, for extracting them.
 - `dir` sets the direction for keyboard and placement logic, such as which arrow key moves forward. Without it, components read the direction at their element. It doesn't set the `dir` attribute: set that on the page or the region.
 
-The provider is a client component. A component with a built-in string reads it in a client module, so a server component renders it as before.
+The provider is a client component. A server component, such as a server layout, can render it with a `locale`, a `dir` and messages that are strings, but not with function messages: a function can't cross from the server to a client component. Pass those from a client component of the application's own, as above. A component with a built-in string reads it in a client module, so a server component renders it as before.
+
+The provider compares `messages` namespace by namespace, so an object written inline, as above, keeps the components that read it from rendering again as long as its strings and functions are the same ones. A function written inline is a new one at each render: define the functions once, outside the component or with `useMemo`, where the provider re-renders often.
 
 ## React Server Components
 

@@ -2,18 +2,24 @@
 
 import type { ComponentPropsWithRef, MouseEvent } from 'react';
 import { useLinkComponent } from './LinkContext.js';
-import { useControlDefaults, type ControlVariant } from './ControlDefaults.js';
+import {
+  resolveEmphasis,
+  useControlDefaults,
+  type ControlTone,
+  type ControlVariant,
+} from './ControlDefaults.js';
 import type { ControlSize } from './controlTypes.js';
 
 /**
  * A button's emphasis as Button gives it: its own variant, tone and size, which win, and the
- * variant it falls back to where neither it nor the nearest ControlDefaults sets one. It is read
- * here, in the client module, so that Button stays a server component.
+ * variant it falls back to where neither it nor the nearest ControlDefaults gives one that takes its
+ * tone (resolveEmphasis). It is read here, in the client module, so that Button stays a server
+ * component.
  */
 export interface ActionEmphasis {
   variant?: ControlVariant;
   fallbackVariant: ControlVariant;
-  tone?: 'neutral' | 'accent' | 'danger';
+  tone?: ControlTone;
   size?: ControlSize;
   underline?: boolean;
 }
@@ -47,11 +53,11 @@ export function ActionElement({
   const defaults = useControlDefaults();
   let rest = given;
   if (emphasis) {
-    const variant = emphasis.variant ?? defaults.variant ?? emphasis.fallbackVariant;
+    const { variant, tone } = resolveEmphasis(emphasis, defaults.variant);
     rest = {
       ...given,
       'data-variant': variant,
-      'data-tone': emphasis.tone ?? 'neutral',
+      'data-tone': tone,
       'data-size': emphasis.size ?? defaults.size,
       'data-underline': (variant === 'text' && emphasis.underline) || undefined,
     } as unknown as typeof given;

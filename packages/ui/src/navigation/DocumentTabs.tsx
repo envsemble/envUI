@@ -160,7 +160,9 @@ export function DocumentTabs({
   }, []);
 
   // Keys with Alt, Ctrl or ⌘ belong to the application, such as Ctrl+W or Alt+← for going back.
-  function onListKeyDown(event: KeyboardEvent<HTMLDivElement> & { preventBaseUIHandler?: () => void }) {
+  function onListKeyDown(
+    event: KeyboardEvent<HTMLDivElement> & { preventBaseUIHandler?: () => void },
+  ) {
     if (event.altKey || event.ctrlKey || event.metaKey) event.preventBaseUIHandler?.();
   }
 

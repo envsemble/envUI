@@ -21,6 +21,7 @@ import { useLinkComponent } from '../internal/LinkContext.js';
 import { MenuPopup, menuPopupInlineInset, menuPopupInset } from './internal/MenuPopup.js';
 import { setRef } from '../internal/setRef.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
+import { keyShortcuts, shortcutChords } from '../internal/shortcuts.js';
 
 /** The Base UI parts every menu's popup is made of. */
 const menuParts = {
@@ -91,13 +92,14 @@ function Root({
   ref,
   ...popupProps
 }: RootProps) {
+  const triggerRef = useRef<HTMLButtonElement>(null);
   return (
     <BaseMenu.Root
       open={open}
       defaultOpen={defaultOpen}
       onOpenChange={(next) => onOpenChange?.(next)}
     >
-      <BaseMenu.Trigger render={trigger} />
+      <BaseMenu.Trigger ref={triggerRef} render={trigger} />
       {/* Base UI names the menu after its trigger; the menu's own label replaces that name. */}
       <MenuPopup
         parts={menuParts}
@@ -105,6 +107,7 @@ function Root({
         side={side}
         align={align}
         sideOffset={8}
+        trigger={triggerRef}
         className={className}
         popupRef={ref}
         popupProps={popupProps}
@@ -142,61 +145,6 @@ interface ItemContentProps {
   shortcut?: string;
   /** End content, such as a Badge or CounterBadge; it is part of the item's name. */
   end?: ReactNode;
-}
-
-const keyNames: Record<string, string> = {
-  ctrl: 'Control',
-  control: 'Control',
-  cmd: 'Meta',
-  command: 'Meta',
-  meta: 'Meta',
-  '⌘': 'Meta',
-  win: 'Meta',
-  alt: 'Alt',
-  option: 'Alt',
-  '⌥': 'Alt',
-  shift: 'Shift',
-  '⇧': 'Shift',
-  esc: 'Escape',
-  del: 'Delete',
-  space: 'Space',
-  left: 'ArrowLeft',
-  right: 'ArrowRight',
-  up: 'ArrowUp',
-  down: 'ArrowDown',
-  '←': 'ArrowLeft',
-  '→': 'ArrowRight',
-  '↑': 'ArrowUp',
-  '↓': 'ArrowDown',
-};
-
-/**
- * A displayed hint such as Ctrl+Shift+P, Ctrl++ or a sequence such as Ctrl+K Ctrl+S, as the keys of
- * each chord. Spaces around + join a chord.
- */
-function shortcutChords(shortcut: string) {
-  return (
-    shortcut
-      .trim()
-      // A spaced + between two keys joins them; a + that is itself the key stays.
-      .replace(/(\S)\s+\+\s+(?=\S)/g, '$1+')
-      .split(/\s+/)
-      .filter(Boolean)
-      // Each key is followed by a + or the end; a + right after a separator is the key itself.
-      .map((chord) => Array.from(chord.matchAll(/([^+]+|\+)(?:\+|$)/g), (match) => match[1]!))
-      .filter((keys) => keys.length > 0)
-  );
-}
-
-/**
- * aria-keyshortcuts for a single chord, such as Control+Shift+P or Control+Plus. ARIA lists
- * alternative shortcuts, not sequences, so a sequence shows its keys without the attribute.
- */
-function keyShortcuts(chords: string[][]) {
-  if (chords.length !== 1) return undefined;
-  return chords[0]!
-    .map((key) => (key === '+' ? 'Plus' : (keyNames[key.toLowerCase()] ?? key)))
-    .join('+');
 }
 
 /** Shared item layout: indicator, icon, label with optional description, end content, shortcut. */
@@ -426,6 +374,7 @@ function Submenu({
         // the row that opened it. Collisions flip it to the other side.
         sideOffset={() => menuPopupInlineInset(trigger.current?.closest('.env-menu')) + submenuGap}
         alignOffset={() => -menuPopupInset(popup.current)}
+        trigger={trigger}
         // Escape and ← close only the submenu and return to its row. Otherwise focus has moved on,
         // or an item closed the whole menu, whose own trigger takes focus.
         finalFocus={() =>
