@@ -284,6 +284,9 @@ test('offline reference loads every view without network or script errors', asyn
   page,
   context,
 }) => {
+  // It opens every view of every page, over 20 s in Firefox on its own: more than the default
+  // timeout leaves once the other engines share the machine.
+  test.setTimeout(90_000);
   const errors: string[] = [];
   const requests: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));

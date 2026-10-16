@@ -76,7 +76,8 @@ function PopupTriggers({ name }: { name: string }) {
       <Select label={`Sort ${name}`} size="sm" options={statusOptions} defaultValue="open" />
       <Combobox label={`Person ${name}`} items={people} />
       <DatePicker label={`Due ${name}`} defaultValue="2026-10-20" locale="en-GB" />
-      <HoverCard trigger={<Link href="#card">Card {name}</Link>}>
+      {/* No hover delay: these boundaries test colors, and HoverCard.spec.ts tests the delay. */}
+      <HoverCard delay={0} trigger={<Link href="#card">Card {name}</Link>}>
         <Text>Card {name} details.</Text>
       </HoverCard>
       <Dialog
@@ -108,7 +109,7 @@ function PopupTriggers({ name }: { name: string }) {
         <Text>Last changed today.</Text>
       </Popover>
       <Select label={`Status ${name}`} options={statusOptions} defaultValue="open" />
-      <Tooltip content={`Tooltip ${name}`}>
+      <Tooltip delay={0} content={`Tooltip ${name}`}>
         <Button variant="secondary">Tooltip {name}</Button>
       </Tooltip>
       <Dialog title={`Dialog ${name}`} trigger={<Button variant="secondary">Dialog {name}</Button>}>

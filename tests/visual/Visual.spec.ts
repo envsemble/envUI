@@ -194,6 +194,24 @@ const openLists: OpenList[] = [
   toasts('toast-error', ['error']),
 ];
 
+/**
+ * ENVUI_PAGES limits the run to some catalogue pages, by path such as components/button, with the
+ * open lists those pages show, and to the density specimens when it lists density; as
+ * `npm run check:affected` sets it for a change. `npm run test:visual` takes every image.
+ */
+const only = process.env.ENVUI_PAGES?.split(',').filter(Boolean);
+const unknown = only?.filter(
+  (path) => path !== 'density' && !referencePages.some((page) => page.path === path),
+);
+if (unknown?.length)
+  throw new Error(`ENVUI_PAGES names pages the catalogue does not have: ${unknown.join(', ')}`);
+const selected = (path: string) => !only || only.includes(path);
+const pagesTaken = referencePages.filter(({ path }) => selected(path));
+const listsTaken = openLists.filter((list) =>
+  selected(list.route.split('/').slice(0, 2).join('/')),
+);
+const densityTaken = selected('density') ? densitySectionNames : [];
+
 test.skip(
   process.env.ENVUI_VISUAL !== 'docker',
   'The visual baseline renders in the Linux Playwright image: run `npm run test:visual`.',
@@ -348,7 +366,7 @@ function reconcile(testInfo: TestInfo, directory: string, recorded: string[], ta
 }
 
 test.describe('catalogue', () => {
-  for (const { path, reference, views } of referencePages) {
+  for (const { path, reference, views } of pagesTaken) {
     test(`${reference.title} (${path})`, async ({ page }, testInfo) => {
       const directory = join(snapshots, 'catalogue', reference.id);
       const recorded = contents(directory);
@@ -428,7 +446,7 @@ test.describe('catalogue', () => {
 test.describe('density', () => {
   // The mixed desktop view is 80 rem wide; the evidence it reproduces used the same viewport.
   test.use({ viewport: { width: 1440, height: 1000 } });
-  for (const section of densitySectionNames) {
+  for (const section of densityTaken) {
     for (const theme of densityThemes) {
       test(`${section} (${theme})`, async ({ page }) => {
         await page.clock.setFixedTime(now);
@@ -445,7 +463,7 @@ test.describe('density', () => {
 });
 
 test.describe('open lists', () => {
-  for (const list of openLists) {
+  for (const list of listsTaken) {
     for (const theme of allThemes) {
       test(`${list.name} (${theme.name})`, async ({ page }) => {
         // Timers keep running until the popups are open, so the page and its animations settle.
