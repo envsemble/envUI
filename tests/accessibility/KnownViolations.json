@@ -45,18 +45,6 @@
       }
     }
   },
-  "components/combobox/guidelines": {
-    "dark": {
-      "aria-allowed-attr": {
-        "Combobox states :: div.env-combobox-chip": 2
-      }
-    },
-    "light": {
-      "aria-allowed-attr": {
-        "Combobox states :: div.env-combobox-chip": 2
-      }
-    }
-  },
   "components/document-tabs/overview": {
     "dark": {
       "nested-interactive": {
@@ -66,54 +54,6 @@
     "light": {
       "nested-interactive": {
         "article :: div.env-document-tab": 2
-      }
-    }
-  },
-  "components/drop-zone/guidelines": {
-    "dark": {
-      "label-content-name-mismatch": {
-        "Drop zone states :: button.env-drop-zone-target": 2
-      }
-    },
-    "light": {
-      "label-content-name-mismatch": {
-        "Drop zone states :: button.env-drop-zone-target": 2
-      }
-    }
-  },
-  "components/drop-zone/overview": {
-    "dark": {
-      "label-content-name-mismatch": {
-        "article :: button.env-drop-zone-target": 4
-      }
-    },
-    "light": {
-      "label-content-name-mismatch": {
-        "article :: button.env-drop-zone-target": 4
-      }
-    }
-  },
-  "components/menubar/overview": {
-    "dark": {
-      "target-size": {
-        "article :: button.env-textarea-resize-edge": 1
-      }
-    },
-    "light": {
-      "target-size": {
-        "article :: button.env-textarea-resize-edge": 1
-      }
-    }
-  },
-  "components/panel-dock/overview": {
-    "dark": {
-      "target-size": {
-        "article :: button.env-textarea-resize-edge": 2
-      }
-    },
-    "light": {
-      "target-size": {
-        "article :: button.env-textarea-resize-edge": 2
       }
     }
   },
@@ -133,54 +73,6 @@
     "light": {
       "color-contrast": {
         "Sizes and states :: span.env-segment-count": 3
-      }
-    }
-  },
-  "components/text-field/guidelines": {
-    "dark": {
-      "target-size": {
-        "Appearances :: button.env-textarea-resize-edge": 1,
-        "Textarea states :: button.env-textarea-resize-edge": 3
-      }
-    },
-    "dark-hc": {
-      "target-size": {
-        "Appearances :: button.env-textarea-resize-edge": 1,
-        "Textarea states :: button.env-textarea-resize-edge": 3
-      }
-    },
-    "light": {
-      "target-size": {
-        "Appearances :: button.env-textarea-resize-edge": 1,
-        "Textarea states :: button.env-textarea-resize-edge": 3
-      }
-    },
-    "light-hc": {
-      "target-size": {
-        "Appearances :: button.env-textarea-resize-edge": 1,
-        "Textarea states :: button.env-textarea-resize-edge": 3
-      }
-    }
-  },
-  "components/text-field/overview": {
-    "dark": {
-      "target-size": {
-        "article :: button.env-textarea-resize-edge": 1
-      }
-    },
-    "dark-hc": {
-      "target-size": {
-        "article :: button.env-textarea-resize-edge": 1
-      }
-    },
-    "light": {
-      "target-size": {
-        "article :: button.env-textarea-resize-edge": 1
-      }
-    },
-    "light-hc": {
-      "target-size": {
-        "article :: button.env-textarea-resize-edge": 1
       }
     }
   },
