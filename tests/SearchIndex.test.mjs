@@ -8,7 +8,7 @@ import {
   readTokens,
   searchDocuments,
 } from '../scripts/SearchIndex.mjs';
-import { indexOptions, queryOptions, tokenize } from '../scripts/SearchTerms.mjs';
+import { indexOptions, queryOptionsFor, tokenize } from '../scripts/SearchTerms.mjs';
 
 const props = readProps();
 const documents = readDocumentation(undefined, { props });
@@ -18,7 +18,7 @@ const serialized = buildSearchIndex({ documents, props, tokens });
 const index = MiniSearch.loadJSON(serialized, indexOptions);
 const best = (query, count = 1) =>
   index
-    .search(query, queryOptions)
+    .search(query, queryOptionsFor(query))
     .slice(0, count)
     .map(({ id }) => id);
 
@@ -28,17 +28,20 @@ test('words split at punctuation and at camel-case humps, which stay whole too',
   assert.deepEqual(tokenize('Menu.RadioItem'), ['Menu', 'RadioItem', 'Radio', 'Item']);
 });
 
-test('search covers every page, documented export, prop and token', () => {
+test('search covers every page, export, prop and token', () => {
   const ids = new Set(records.map(({ id }) => id));
   for (const document of documents.filter(({ id }) => id !== 'index'))
     assert.ok(ids.has(`page:${document.id}`), document.id);
   for (const token of tokens.tokens) assert.ok(ids.has(`token:${token.id}`), token.id);
-  const documented = new Set(
-    documents.flatMap((document) => document.frontmatter?.components ?? []),
+  const pageTitles = new Set(
+    records.filter(({ kind }) => kind !== 'export').map(({ title }) => title),
   );
+  // Every export in props.json is found: as an export of its own, or as the page of its name, such
+  // as Button, or a namespace, such as Menu, whose page has its name.
   for (const [name, entry] of Object.entries(props.exports)) {
-    if (entry.kind !== 'component' || !documented.has(name)) continue;
-    for (const prop of entry.props) assert.ok(ids.has(`prop:${name}.${prop.name}`), name);
+    assert.ok(ids.has(`export:${name}`) || pageTitles.has(name), `${name} has no search document`);
+    if (entry.kind === 'component')
+      for (const prop of entry.props) assert.ok(ids.has(`prop:${name}.${prop.name}`), name);
   }
   assert.equal(ids.size, records.length, 'every search document has an id of its own');
   for (const { page } of cataloguePages) assert.ok(index.has(`page:${page}`), page);
@@ -57,14 +60,60 @@ test('search finds components by alias, props and tokens by name, and pages befo
   assert.deepEqual(best('chnagelog'), ['page:changelog']);
 });
 
+test('a whole name ranks first: an export, a prop by its export, a token', () => {
+  assert.deepEqual(best('Button.variant'), ['prop:Button.variant']);
+  assert.deepEqual(best('Button variant'), ['prop:Button.variant']);
+  assert.deepEqual(best('button  VARIANT'), ['prop:Button.variant']);
+  assert.deepEqual(best('Button size'), ['prop:Button.size']);
+  assert.deepEqual(best('IconButton'), ['export:IconButton']);
+  assert.deepEqual(best('ThemeToggle'), ['export:ThemeToggle']);
+  assert.deepEqual(best('useToast'), ['export:useToast']);
+  assert.deepEqual(best('Menu.Item'), ['export:Menu.Item']);
+  assert.deepEqual(best('Theme'), ['export:Theme']);
+  // A prop's name alone still finds the props of that name, ahead of other matches.
+  assert.ok(
+    best('startIcon', 4).every((id) => id.startsWith('prop:') && id.endsWith('.startIcon')),
+  );
+});
+
+test('an export on a page without a Props view leads to the section that shows it', () => {
+  const place = (id) => {
+    const { page, view, section } = records.find((record) => record.id === id);
+    return { page, view, section };
+  };
+  assert.deepEqual(place('export:ThemePreferenceProvider'), {
+    page: 'setup',
+    view: undefined,
+    section: 'theme-preference',
+  });
+  assert.deepEqual(place('prop:LinkProvider.component'), {
+    page: 'setup',
+    view: undefined,
+    section: 'router-links',
+  });
+  assert.deepEqual(place('export:useTheme'), {
+    page: 'colors',
+    view: 'usage',
+    section: 'react-usage',
+  });
+  assert.deepEqual(place('prop:Text.variant'), {
+    page: 'typography',
+    view: 'usage',
+    section: 'react-usage',
+  });
+  // Every export and prop on such a page has a section to go to.
+  for (const record of records.filter(({ kind }) => kind === 'export' || kind === 'prop'))
+    assert.ok(record.section, `${record.id} leads to no section`);
+});
+
 test('a result carries where it is: its page, view and element', () => {
   const prop = index
-    .search('startIcon', queryOptions)
+    .search('startIcon', queryOptionsFor('startIcon'))
     .find(({ id }) => id === 'prop:Button.startIcon');
   assert.equal(prop.page, 'button');
   assert.equal(prop.view, 'props');
   assert.equal(prop.section, 'props-Button-startIcon');
-  const token = index.search('--color-fg-muted', queryOptions)[0];
+  const token = index.search('--color-fg-muted', queryOptionsFor('--color-fg-muted'))[0];
   assert.equal(token.page, 'tokens');
   assert.equal(token.section, 'token-color-fg-muted');
 });

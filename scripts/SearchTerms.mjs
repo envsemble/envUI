@@ -3,10 +3,10 @@
 // It runs in Node and in the browser, so it imports nothing.
 
 /** The fields of a search document that are indexed, by weight at query time. */
-export const searchFields = ['title', 'aliases', 'keywords', 'text'];
+export const searchFields = ['title', 'owner', 'aliases', 'keywords', 'text'];
 
 /** The fields a result carries, to show and open it without the documents themselves. */
-export const storeFields = ['kind', 'title', 'detail', 'page', 'view', 'section'];
+export const storeFields = ['kind', 'title', 'owner', 'detail', 'page', 'view', 'section'];
 
 /**
  * Splits text into words: at anything but a letter or digit, so `--color-fg-muted` and
@@ -40,17 +40,47 @@ export const indexOptions = {
 /** How much a match counts by what it finds: a page before the exports, props and tokens on it. */
 const kindBoost = { export: 1.5, prop: 1, token: 1 };
 
+/** How much more a result counts whose whole name the query is; a prop's name alone counts a fifth. */
+const exactBoost = 20;
+
+/**
+ * A name as a query compares with it: its words folded and joined by single spaces, so Button.variant,
+ * "Button variant" and "button  variant" read alike, and --color-fg-muted is "color fg muted".
+ */
+export function nameKey(text) {
+  return text
+    .split(/[^\p{L}\p{N}]+/u)
+    .filter(Boolean)
+    .map(processTerm)
+    .join(' ');
+}
+
 /**
  * How a query matches: every word must match, as the start of a word as people type, and longer
- * words also with a typo. Names count most, then aliases and other names, then text; pages count
- * three times as much as the parts they document. A page's long list of aliases counts nearly as
- * much as a prop's short name (BM25's `b`, which discounts long fields, is low).
+ * words also with a typo. Names count most, then the export a prop belongs to, aliases and other
+ * names, then text; pages count three times as much as the parts they document. A page's long list
+ * of aliases counts nearly as much as a prop's short name (BM25's `b`, which discounts long fields,
+ * is low). A result whose whole name the query is comes first: an export or page by its name, such
+ * as IconButton or useToast, a prop by its export and its name, Button.variant or "Button variant",
+ * and a token by its custom property.
  */
-export const queryOptions = {
-  combineWith: 'AND',
-  prefix: true,
-  fuzzy: (term) => (term.length > 5 ? 0.2 : false),
-  boost: { title: 6, aliases: 4, keywords: 2, text: 1 },
-  boostDocument: (_id, _term, stored) => kindBoost[stored?.kind] ?? 3,
-  bm25: { k: 1.2, b: 0.3, d: 0.5 },
-};
+export function queryOptionsFor(query) {
+  const key = nameKey(query);
+  return {
+    combineWith: 'AND',
+    prefix: true,
+    fuzzy: (term) => (term.length > 5 ? 0.2 : false),
+    boost: { title: 6, owner: 3, aliases: 4, keywords: 2, text: 1 },
+    boostDocument: (_id, _term, stored) => {
+      const kind = kindBoost[stored?.kind] ?? 3;
+      if (key === '') return kind;
+      if (stored?.owner && nameKey(`${stored.owner} ${stored.title}`) === key)
+        return kind * exactBoost;
+      // Many exports share a prop's name, such as variant, so it counts less on its own.
+      if (nameKey(stored?.title ?? '') === key)
+        return kind * (stored?.owner ? exactBoost / 5 : exactBoost);
+      return kind;
+    },
+    bm25: { k: 1.2, b: 0.3, d: 0.5 },
+  };
+}
