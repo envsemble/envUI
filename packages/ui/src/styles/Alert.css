@@ -73,11 +73,21 @@
    Under a coarse pointer it grows to the touch height, as every button does. Alert.css comes after
    Button.css, so at equal specificity the tone wins over the ghost colors. */
 .env-alert-dismiss {
+  /* The small button's height, which grows to the touch height under a coarse pointer, as the
+     button itself does. */
+  --env-alert-dismiss-height: var(--env-control-height-sm);
   grid-column: 3;
-  margin-block: calc((1.4 * var(--env-font-size-heading-small) - var(--env-button-height)) / 2);
+  margin-block: calc(
+    (1.4 * var(--env-font-size-heading-small) - var(--env-alert-dismiss-height)) / 2
+  );
   margin-inline-end: calc(-1 * var(--env-space-2));
   border-radius: 50%;
   color: var(--env-alert-tone);
+}
+@media (pointer: coarse) {
+  .env-alert-dismiss {
+    --env-alert-dismiss-height: max(var(--env-control-height-sm), var(--env-control-height-touch));
+  }
 }
 /* Hover and press tint the circle with the tone instead of the ghost button's neutral layer. */
 .env-alert-dismiss:hover:not(:disabled):not([aria-disabled='true']) {

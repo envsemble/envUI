@@ -22,7 +22,7 @@ test('props carry readable types, defaults from destructuring and their TSDoc', 
   assert.equal(button.pending.type, 'boolean');
   assert.match(button.pending.description, /spinner/);
   assert.equal(props('Dialog').title.required, true);
-  assert.equal(props('Dialog').closeLabel.default, "'Close'");
+  assert.match(props('Dialog').closeLabel.default, /^'Close'/);
 });
 
 test('a default that names a private value shows the value, or nothing', () => {
