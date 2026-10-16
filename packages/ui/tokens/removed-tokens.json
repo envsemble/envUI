@@ -250,31 +250,31 @@
     },
     "--md-sys-shape-corner-none": {
       "replacement": "radius.none",
-      "note": "The Material corner scale is the radius scale now."
+      "note": "The old corner scale is the radius scale now."
     },
     "--md-sys-shape-corner-extra-small": {
       "replacement": "radius.xs",
-      "note": "The Material corner scale is the radius scale now."
+      "note": "The old corner scale is the radius scale now."
     },
     "--md-sys-shape-corner-small": {
       "replacement": "radius.sm",
-      "note": "The Material corner scale is the radius scale now."
+      "note": "The old corner scale is the radius scale now."
     },
     "--md-sys-shape-corner-medium": {
       "replacement": "radius.md",
-      "note": "The Material corner scale is the radius scale now."
+      "note": "The old corner scale is the radius scale now."
     },
     "--md-sys-shape-corner-large": {
       "replacement": "radius.lg",
-      "note": "The Material corner scale is the radius scale now."
+      "note": "The old corner scale is the radius scale now."
     },
     "--md-sys-shape-corner-extra-large": {
       "replacement": "radius.xl",
-      "note": "The Material corner scale is the radius scale now."
+      "note": "The old corner scale is the radius scale now."
     },
     "--md-sys-shape-corner-full": {
       "cssVariable": "--env-radius-full",
-      "note": "The Material corner scale is the radius scale now."
+      "note": "The old corner scale is the radius scale now."
     },
     "--radius-standard": {
       "replacement": "radius.sm",
@@ -796,6 +796,14 @@
     "--scale": {
       "replacement": null,
       "note": "The multiplier is gone: components read sized tokens. Set scale=\"compact\" on a Theme for the compact scale."
+    },
+    "--toast-fill": {
+      "replacement": null,
+      "note": "Internal to the 0.7 toast. A toast takes its fill from its tone; restyle a toast through the component, not this property."
+    },
+    "--surface-card-padding": {
+      "replacement": null,
+      "note": "Internal to the 0.7 card. Set a card's padding with its padding prop."
     }
   }
 }

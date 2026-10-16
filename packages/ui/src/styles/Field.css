@@ -119,4 +119,8 @@
   .env-field-control:is([data-invalid], [aria-invalid='true']) {
     border-style: dashed;
   }
+  .env-field-control:is(:disabled, [data-disabled]) {
+    border-color: GrayText;
+    color: GrayText;
+  }
 }

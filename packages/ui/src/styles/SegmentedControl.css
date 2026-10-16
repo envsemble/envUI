@@ -178,4 +178,7 @@
   .env-segment[data-disabled] {
     color: GrayText;
   }
+  .env-segment[data-checked]:focus-visible {
+    outline-color: CanvasText;
+  }
 }

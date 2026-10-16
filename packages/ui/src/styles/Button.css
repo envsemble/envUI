@@ -423,10 +423,14 @@
   }
 }
 
-/* Forced colors: the system paints no fills or shadows, so a button that is unavailable takes
-   the disabled color. */
+/* Forced colors: the system paints no fills or shadows, so every button but an underlined text
+   button, which reads as a link, takes the system's button edge, and an unavailable one the
+   disabled color. */
 @media (forced-colors: active) {
-  .env-button[aria-disabled='true'] {
+  .env-button:not([data-underline]) {
+    border: var(--env-control-border-width) solid ButtonText;
+  }
+  .env-button:is(:disabled, [aria-disabled='true']) {
     border-color: GrayText;
     color: GrayText;
   }

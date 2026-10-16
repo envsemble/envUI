@@ -128,4 +128,7 @@
   .env-calendar-day[aria-disabled='true'] {
     color: GrayText;
   }
+  .env-calendar-day[aria-selected='true']:focus-visible > .env-calendar-day-mark {
+    outline-color: CanvasText;
+  }
 }

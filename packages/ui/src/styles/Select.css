@@ -198,4 +198,12 @@
   .env-dropdown-trigger[aria-invalid='true'] {
     border-style: dashed;
   }
+  .env-dropdown-option[data-highlighted]:focus-visible,
+  .env-dropdown-option[data-highlighted] :focus-visible {
+    outline-color: HighlightText;
+  }
+  .env-dropdown-option[data-disabled][data-highlighted] {
+    color: HighlightText;
+    opacity: var(--env-state-disabled-opacity);
+  }
 }

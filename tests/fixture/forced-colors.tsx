@@ -5,6 +5,7 @@ import {
   Button,
   Calendar,
   Checkbox,
+  IconButton,
   DocumentTabs,
   Menu,
   NavList,
@@ -19,10 +20,32 @@ import {
   TextField,
   Theme,
   Tree,
+  CloseButton,
+  Field,
+  Toolbar,
+  type ButtonProps,
 } from '@envsemble/envui';
+import { Close } from '@envsemble/envui/icons/Close';
 import '@envsemble/envui/styles.css';
 
 const noop = () => {};
+
+/**
+ * Every designed pair of variant and tone, each of which must keep a visible edge under forced
+ * colors.
+ */
+const variants = [
+  ['primary', { variant: 'primary' }],
+  ['primary-accent', { variant: 'primary', tone: 'accent' }],
+  ['primary-danger', { variant: 'primary', tone: 'danger' }],
+  ['secondary', { variant: 'secondary' }],
+  ['outline', { variant: 'outline' }],
+  ['outline-danger', { variant: 'outline', tone: 'danger' }],
+  ['ghost', { variant: 'ghost' }],
+  ['ghost-danger', { variant: 'ghost', tone: 'danger' }],
+  ['text', { variant: 'text' }],
+  ['text-danger', { variant: 'text', tone: 'danger' }],
+] as const;
 
 function Page() {
   return (
@@ -33,6 +56,22 @@ function Page() {
           Save
         </Button>
         <Button data-testid="button-focus">Focus me</Button>
+      </div>
+      <div style={{ display: 'flex', gap: '0.5rem' }}>
+        {variants.map(([name, emphasis]) => (
+          <Button
+            key={name}
+            {...({ ...emphasis, children: name, 'data-testid': `variant-${name}` } as ButtonProps)}
+          />
+        ))}
+        <CloseButton data-testid="variant-close" />
+        <IconButton icon={<Close />} aria-label="Close" data-testid="variant-icon" />
+        <IconButton
+          icon={<Close />}
+          aria-label="Close"
+          variant="text"
+          data-testid="variant-icon-text"
+        />
       </div>
       <SegmentedControl
         aria-label="View"
@@ -72,6 +111,18 @@ function Page() {
         <Radio value="team" label="Team" />
         <Radio value="solo" label="Solo" />
       </RadioGroup>
+      <Toolbar.Root aria-label="Formatting">
+        <Toolbar.Button icon={<Close />} label="Pressed" pressed data-testid="toolbar-pressed" />
+        <Toolbar.Button icon={<Close />} label="Released" data-testid="toolbar-released" />
+      </Toolbar.Root>
+      <Field.Root invalid>
+        <Field.Label>Invalid field part</Field.Label>
+        <Field.Control data-testid="field-invalid" />
+      </Field.Root>
+      <Field.Root>
+        <Field.Label>Valid field part</Field.Label>
+        <Field.Control data-testid="field-valid" />
+      </Field.Root>
       <RadioGroup variant="rows" label="Role" defaultValue="member">
         <Radio value="member" label="Member" />
         <Radio value="admin" label="Admin" />

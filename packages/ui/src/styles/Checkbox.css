@@ -137,4 +137,8 @@
   .env-checkbox-control:disabled {
     border-color: GrayText;
   }
+  .env-checkbox-control:is(:checked, :indeterminate):disabled {
+    border-color: GrayText;
+    background-color: GrayText;
+  }
 }

@@ -4859,11 +4859,11 @@
         "useThemePreference"
       ],
       "related": [
+        "migration",
         "colors",
         "icons",
         "agent-tooling",
         "index",
-        "migration",
         "local-development"
       ]
     },
@@ -15048,42 +15048,42 @@
         "cssVariable": "--md-sys-shape-corner-extra-large",
         "use": "--env-radius-xl",
         "type": "dimension",
-        "note": "The Material corner scale is the radius scale now."
+        "note": "The old corner scale is the radius scale now."
       },
       {
         "cssVariable": "--md-sys-shape-corner-extra-small",
         "use": "--env-radius-xs",
         "type": "dimension",
-        "note": "The Material corner scale is the radius scale now."
+        "note": "The old corner scale is the radius scale now."
       },
       {
         "cssVariable": "--md-sys-shape-corner-full",
         "use": "--env-radius-full",
-        "note": "The Material corner scale is the radius scale now."
+        "note": "The old corner scale is the radius scale now."
       },
       {
         "cssVariable": "--md-sys-shape-corner-large",
         "use": "--env-radius-lg",
         "type": "dimension",
-        "note": "The Material corner scale is the radius scale now."
+        "note": "The old corner scale is the radius scale now."
       },
       {
         "cssVariable": "--md-sys-shape-corner-medium",
         "use": "--env-radius-md",
         "type": "dimension",
-        "note": "The Material corner scale is the radius scale now."
+        "note": "The old corner scale is the radius scale now."
       },
       {
         "cssVariable": "--md-sys-shape-corner-none",
         "use": "--env-radius-none",
         "type": "dimension",
-        "note": "The Material corner scale is the radius scale now."
+        "note": "The old corner scale is the radius scale now."
       },
       {
         "cssVariable": "--md-sys-shape-corner-small",
         "use": "--env-radius-sm",
         "type": "dimension",
-        "note": "The Material corner scale is the radius scale now."
+        "note": "The old corner scale is the radius scale now."
       },
       {
         "cssVariable": "--member-identity-avatar-size",
@@ -15357,8 +15357,18 @@
         "note": "Each tone has its tint as a color token: color.bg.{tone}.muted."
       },
       {
+        "cssVariable": "--surface-card-padding",
+        "removed": true,
+        "note": "Internal to the 0.7 card. Set a card's padding with its padding prop."
+      },
+      {
         "cssVariable": "--title-bar-height",
         "use": "--env-title-bar-height"
+      },
+      {
+        "cssVariable": "--toast-fill",
+        "removed": true,
+        "note": "Internal to the 0.7 toast. A toast takes its fill from its tone; restyle a toast through the component, not this property."
       },
       {
         "cssVariable": "--topbar-height",

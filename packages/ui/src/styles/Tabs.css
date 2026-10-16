@@ -167,4 +167,8 @@
   .env-tabs-list > .env-tab[data-active] :where(*) {
     color: inherit;
   }
+  .env-tabs-list > .env-tab[data-active]:focus-visible,
+  .env-tabs-list > .env-tab[data-active] :focus-visible {
+    outline-color: HighlightText;
+  }
 }

@@ -86,4 +86,8 @@
   .env-switch-control:disabled::before {
     background-color: GrayText;
   }
+  .env-switch-control:checked:disabled {
+    background-color: GrayText;
+    outline-color: GrayText;
+  }
 }

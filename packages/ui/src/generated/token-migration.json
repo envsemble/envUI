@@ -1355,42 +1355,42 @@
       "kind": "renamed",
       "token": "radius.xl",
       "cssVariable": "--env-radius-xl",
-      "note": "The Material corner scale is the radius scale now."
+      "note": "The old corner scale is the radius scale now."
     },
     "--md-sys-shape-corner-extra-small": {
       "kind": "renamed",
       "token": "radius.xs",
       "cssVariable": "--env-radius-xs",
-      "note": "The Material corner scale is the radius scale now."
+      "note": "The old corner scale is the radius scale now."
     },
     "--md-sys-shape-corner-full": {
       "kind": "renamed",
       "cssVariable": "--env-radius-full",
-      "note": "The Material corner scale is the radius scale now."
+      "note": "The old corner scale is the radius scale now."
     },
     "--md-sys-shape-corner-large": {
       "kind": "renamed",
       "token": "radius.lg",
       "cssVariable": "--env-radius-lg",
-      "note": "The Material corner scale is the radius scale now."
+      "note": "The old corner scale is the radius scale now."
     },
     "--md-sys-shape-corner-medium": {
       "kind": "renamed",
       "token": "radius.md",
       "cssVariable": "--env-radius-md",
-      "note": "The Material corner scale is the radius scale now."
+      "note": "The old corner scale is the radius scale now."
     },
     "--md-sys-shape-corner-none": {
       "kind": "renamed",
       "token": "radius.none",
       "cssVariable": "--env-radius-none",
-      "note": "The Material corner scale is the radius scale now."
+      "note": "The old corner scale is the radius scale now."
     },
     "--md-sys-shape-corner-small": {
       "kind": "renamed",
       "token": "radius.sm",
       "cssVariable": "--env-radius-sm",
-      "note": "The Material corner scale is the radius scale now."
+      "note": "The old corner scale is the radius scale now."
     },
     "--member-identity-avatar-size": { "kind": "removed", "note": "Unused." },
     "--member-identity-copy-height": { "kind": "removed", "note": "Unused." },
@@ -1519,7 +1519,15 @@
       "kind": "removed",
       "note": "Each tone has its tint as a color token: color.bg.{tone}.muted."
     },
+    "--surface-card-padding": {
+      "kind": "removed",
+      "note": "Internal to the 0.7 card. Set a card's padding with its padding prop."
+    },
     "--title-bar-height": { "kind": "prefixed", "cssVariable": "--env-title-bar-height" },
+    "--toast-fill": {
+      "kind": "removed",
+      "note": "Internal to the 0.7 toast. A toast takes its fill from its tone; restyle a toast through the component, not this property."
+    },
     "--topbar-height": { "kind": "prefixed", "cssVariable": "--env-topbar-height" },
     "--tree-row-padding-block-lg": {
       "kind": "prefixed",

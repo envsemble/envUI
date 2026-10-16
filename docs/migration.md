@@ -89,11 +89,53 @@ The codemod reports each use it can't move, such as a value that is an expressio
 
 `useTheme()` returns `{ theme, contrast, scale }` instead of the color scheme alone. Read the scheme as `const { theme } = useTheme()`. An application's own portal that re-themed with `<Theme theme={useTheme()}>` takes all three with `<Theme {...useTheme()}>`, so it keeps a high contrast or a `standard` opt-out and the compact scale too; `v1-names` makes that change, turns other calls into `useTheme().theme` unless the file already reads them as `{ theme, contrast }`, and reports those whose value is returned or passed to a context. In JavaScript, `theme={useTheme()}` would render `data-env-theme="[object Object]"`, so in development Theme warns about a `theme` that is not `light` or `dark`.
 
+### Cascade layers
+
+envUI's style sheet puts every rule in a cascade layer of `env`: `env.reset`, `env.tokens`, `env.base`, `env.components` and `env.utilities`. CSS outside cascade layers now overrides it whatever its specificity, which is what lets an application restyle a component without `!important`. It also means that rules which used to lose to envUI's more specific selectors now win, so check the application's own CSS:
+
+- **Resets and element styles.** A global or element rule outside layers, such as `* { margin: 0 }`, `button { background: none; border: 0 }` or `h2 { font-size: 1.5rem }`, now restyles envUI's components too. So does a preflight that a utility framework adds outside layers. Put resets and element base styles in a layer declared before `env`, and the application's own component styles after it:
+
+  ```css
+  @layer reset, env, app;
+  @layer reset {
+    * {
+      margin: 0;
+    }
+    button {
+      background: none;
+      border: 0;
+    }
+  }
+  ```
+
+  Declare the order before any style sheet that uses the layers, envUI's included, so a library whose layers load first takes its place in that order too.
+
+- **Token overrides.** A token set on `.env-theme` outside layers now wins over every theme's value: a color set there applies in dark and at high contrast as well, and can break the contrast every theme is checked for. Override a token per theme and contrast, with the selectors the themes use, in this order:
+
+  ```css
+  .env-theme {
+    --env-color-fg-link: #0b57d0;
+  }
+  .env-theme[data-env-theme='dark'] {
+    --env-color-fg-link: #a8c7fa;
+  }
+  .env-theme[data-env-contrast='high'] {
+    --env-color-fg-link: #0842a0;
+  }
+  .env-theme[data-env-theme='dark'][data-env-contrast='high'] {
+    --env-color-fg-link: #d3e3fd;
+  }
+  ```
+
+  Under the system's `prefers-contrast: more`, high contrast applies to a boundary without `data-env-contrast` too: repeat the high-contrast value in `@media (prefers-contrast: more) { .env-theme:not([data-env-contrast='standard']) { … } }`.
+
+- **`!important`.** An important declaration in a cascade layer beats every important declaration outside layers. envUI uses `!important` only where ColorPicker replaces the styles of react-colorful, its picker, so an application can't override those few properties, even with `!important`.
+
 ### Tokens
 
-Every token is a custom property with the `--env-` prefix in 1.0, and colors are named by semantic role, `--env-color-{bg|fg|border}-{role}[-{emphasis}][-{state}]` (see [colors](foundations/colors.md)). The 0.7 alias tokens are removed, each for the token that replaces it; a few names change beyond the prefix, such as the Material corner scale, which is the radius scale now; and the unused ones and the state values that the hover and pressed color tokens replace are removed. `v1-classes` rewrites every name below in style sheets and scripts, including a style sheet that themes envUI by setting a token, which then sets the new name. Check a renamed declaration of an application property that happens to share an old token's name, such as `--space-4`. The `tokens` section of the codemods' rename map lists the same entries.
+Every token is a custom property with the `--env-` prefix in 1.0, and colors are named by semantic role, `--env-color-{bg|fg|border}-{role}[-{emphasis}][-{state}]` (see [colors](foundations/colors.md)). The 0.7 alias tokens are removed, each for the token that replaces it; a few names change beyond the prefix, such as the old corner scale, which is the radius scale now; and the unused ones and the state values that the hover and pressed color tokens replace are removed. `v1-classes` rewrites every name below in style sheets and scripts, including a style sheet that themes envUI by setting a token, which then sets the new name. Check a renamed declaration of an application property that happens to share an old token's name, such as `--space-4`. The `tokens` section of the codemods' rename map lists the same entries.
 
-envUI's style sheet now puts every rule in a cascade layer of `env` (`env.reset`, `env.tokens`, `env.base`, `env.components` and `env.utilities`), so an application's CSS outside cascade layers overrides it whatever its specificity: a selector or `!important` that only out-weighed envUI's rules can go. An application's own cascade layers win over envUI's when they are declared after `env`; declare the order first, as `@layer env, app;`, when another library's layers come before envUI's style sheet.
+A style sheet that themes envUI through its tokens needs a look for [cascade layers](#cascade-layers) too.
 
 <!-- token-migration:start: npm run tokens:build writes this list from packages/ui/src/generated/token-migration.json. Change the tokens, not the list. -->
 
@@ -120,13 +162,13 @@ Renamed beyond the prefix:
 | `--font-family-code`                | `--env-code-font-family`                     |                                                                                                        |
 | `--font-size-code`                  | `--env-code-font-size`                       |                                                                                                        |
 | `--line-height-body`                | `--env-line-height-body`                     | The body line height an application may set; envUI reads it with a fallback of 1.4.                    |
-| `--md-sys-shape-corner-extra-large` | `--env-radius-xl`                            | The Material corner scale is the radius scale now.                                                     |
-| `--md-sys-shape-corner-extra-small` | `--env-radius-xs`                            | The Material corner scale is the radius scale now.                                                     |
-| `--md-sys-shape-corner-full`        | `--env-radius-full`                          | The Material corner scale is the radius scale now.                                                     |
-| `--md-sys-shape-corner-large`       | `--env-radius-lg`                            | The Material corner scale is the radius scale now.                                                     |
-| `--md-sys-shape-corner-medium`      | `--env-radius-md`                            | The Material corner scale is the radius scale now.                                                     |
-| `--md-sys-shape-corner-none`        | `--env-radius-none`                          | The Material corner scale is the radius scale now.                                                     |
-| `--md-sys-shape-corner-small`       | `--env-radius-sm`                            | The Material corner scale is the radius scale now.                                                     |
+| `--md-sys-shape-corner-extra-large` | `--env-radius-xl`                            | The old corner scale is the radius scale now.                                                          |
+| `--md-sys-shape-corner-extra-small` | `--env-radius-xs`                            | The old corner scale is the radius scale now.                                                          |
+| `--md-sys-shape-corner-full`        | `--env-radius-full`                          | The old corner scale is the radius scale now.                                                          |
+| `--md-sys-shape-corner-large`       | `--env-radius-lg`                            | The old corner scale is the radius scale now.                                                          |
+| `--md-sys-shape-corner-medium`      | `--env-radius-md`                            | The old corner scale is the radius scale now.                                                          |
+| `--md-sys-shape-corner-none`        | `--env-radius-none`                          | The old corner scale is the radius scale now.                                                          |
+| `--md-sys-shape-corner-small`       | `--env-radius-sm`                            | The old corner scale is the radius scale now.                                                          |
 | `--radius-large`                    | `--env-radius-lg`                            | One radius scale: the large corner is its lg step.                                                     |
 | `--radius-standard`                 | `--env-radius-sm`                            | One radius scale: the standard corner is its sm step.                                                  |
 | `--viewport-gutter`                 | `--env-viewport-gutter`                      |                                                                                                        |
@@ -309,48 +351,50 @@ Fixed colors, which no token replaces: write the value, or a custom property of 
 
 Removed, with what to use instead:
 
-| 0.7 custom property                   | Use instead                             | Note                                                                                                        |
-| ------------------------------------- | --------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `--color-border-pressed`              | `--env-color-border-muted-pressed`      | Unused.                                                                                                     |
-| `--color-control-blue-hover`          | `--env-color-bg-brand-strong-hover`     | Unused.                                                                                                     |
-| `--color-control-blue-pressed`        | `--env-color-bg-brand-strong-pressed`   | Unused.                                                                                                     |
-| `--color-control-text`                | `--env-color-fg-control`                | Unused synonym.                                                                                             |
-| `--color-fill-hover`                  | `--env-color-bg-neutral-muted-hover`    | Unused.                                                                                                     |
-| `--color-fill-pressed`                | `--env-color-bg-neutral-muted-pressed`  | Unused.                                                                                                     |
-| `--color-neutral-fill`                | `--env-color-bg-neutral-strong`         | Unused.                                                                                                     |
-| `--color-surface-base`                | `--env-color-bg-raised`                 | Unused.                                                                                                     |
-| `--color-surface-raised`              | `--env-color-bg-raised`                 | Unused.                                                                                                     |
-| `--color-text-subtle`                 | `--env-color-fg-muted`                  | Unused synonym.                                                                                             |
-| `--control-height-compact`            | `--env-control-height-sm`               | The small control height. For a compact app or region, set scale="compact" on its Theme instead.            |
-| `--control-height-small`              | `--env-control-height`                  | It always equalled --control-height, which every control reads now.                                         |
-| `--icon-button-size`                  | `--env-control-height`                  | An icon button is as tall as the other controls of its size.                                                |
-| `--member-identity-avatar-size`       | —                                       | Unused.                                                                                                     |
-| `--member-identity-copy-height`       | —                                       | Unused.                                                                                                     |
-| `--member-identity-email-line-height` | —                                       | Unused.                                                                                                     |
-| `--member-identity-email-size`        | —                                       | Unused.                                                                                                     |
-| `--member-identity-gap`               | —                                       | Unused.                                                                                                     |
-| `--member-identity-name-line-height`  | —                                       | Unused.                                                                                                     |
-| `--member-identity-name-size`         | —                                       | Unused.                                                                                                     |
-| `--scale`                             | —                                       | The multiplier is gone: components read sized tokens. Set scale="compact" on a Theme for the compact scale. |
-| `--state-card-strip-weight`           | —                                       | Unused.                                                                                                     |
-| `--state-dialog-overlay-opacity`      | `--env-color-bg-overlay`                | The scrim is a translucent color token now.                                                                 |
-| `--state-fill-hover-opacity`          | `--env-color-bg-neutral-muted-hover`    | The fill's states are color tokens now.                                                                     |
-| `--state-fill-opacity`                | `--env-color-bg-neutral-muted`          | The neutral fill is a translucent color token; layer it over a surface rather than mixing.                  |
-| `--state-fill-pressed-opacity`        | `--env-color-bg-neutral-muted-pressed`  | The fill's states are color tokens now.                                                                     |
-| `--state-hover-lightness`             | —                                       | The runtime hover rule is gone: use the role's -hover token.                                                |
-| `--state-hover-shift`                 | —                                       | The runtime hover rule is gone.                                                                             |
-| `--state-layer-hover-opacity`         | `--env-color-bg-neutral-subtle-hover`   | The state layer is a color token now.                                                                       |
-| `--state-layer-pressed-opacity`       | `--env-color-bg-neutral-subtle-pressed` | The state layer is a color token now.                                                                       |
-| `--state-lightness-direction`         | —                                       | The runtime hover rule is gone: every role has hover and pressed tokens.                                    |
-| `--state-lightness-threshold`         | —                                       | The runtime hover rule is gone.                                                                             |
-| `--state-pressed-lightness`           | —                                       | The runtime hover rule is gone: use the role's -pressed token.                                              |
-| `--state-pressed-shift`               | —                                       | The runtime hover rule is gone.                                                                             |
-| `--state-selected-base-weight`        | —                                       | Unused.                                                                                                     |
-| `--state-surface-hover-lightness`     | —                                       | The runtime hover rule is gone: use the surface's -hover token.                                             |
-| `--state-surface-hover-shift`         | —                                       | The runtime hover rule is gone.                                                                             |
-| `--state-surface-pressed-lightness`   | —                                       | The runtime hover rule is gone: use the surface's -pressed token.                                           |
-| `--state-surface-pressed-shift`       | —                                       | The runtime hover rule is gone.                                                                             |
-| `--state-tone-subtle-opacity`         | —                                       | Each tone has its tint as a color token: color.bg.{tone}.muted.                                             |
+| 0.7 custom property                   | Use instead                             | Note                                                                                                                       |
+| ------------------------------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `--color-border-pressed`              | `--env-color-border-muted-pressed`      | Unused.                                                                                                                    |
+| `--color-control-blue-hover`          | `--env-color-bg-brand-strong-hover`     | Unused.                                                                                                                    |
+| `--color-control-blue-pressed`        | `--env-color-bg-brand-strong-pressed`   | Unused.                                                                                                                    |
+| `--color-control-text`                | `--env-color-fg-control`                | Unused synonym.                                                                                                            |
+| `--color-fill-hover`                  | `--env-color-bg-neutral-muted-hover`    | Unused.                                                                                                                    |
+| `--color-fill-pressed`                | `--env-color-bg-neutral-muted-pressed`  | Unused.                                                                                                                    |
+| `--color-neutral-fill`                | `--env-color-bg-neutral-strong`         | Unused.                                                                                                                    |
+| `--color-surface-base`                | `--env-color-bg-raised`                 | Unused.                                                                                                                    |
+| `--color-surface-raised`              | `--env-color-bg-raised`                 | Unused.                                                                                                                    |
+| `--color-text-subtle`                 | `--env-color-fg-muted`                  | Unused synonym.                                                                                                            |
+| `--control-height-compact`            | `--env-control-height-sm`               | The small control height. For a compact app or region, set scale="compact" on its Theme instead.                           |
+| `--control-height-small`              | `--env-control-height`                  | It always equalled --control-height, which every control reads now.                                                        |
+| `--icon-button-size`                  | `--env-control-height`                  | An icon button is as tall as the other controls of its size.                                                               |
+| `--member-identity-avatar-size`       | —                                       | Unused.                                                                                                                    |
+| `--member-identity-copy-height`       | —                                       | Unused.                                                                                                                    |
+| `--member-identity-email-line-height` | —                                       | Unused.                                                                                                                    |
+| `--member-identity-email-size`        | —                                       | Unused.                                                                                                                    |
+| `--member-identity-gap`               | —                                       | Unused.                                                                                                                    |
+| `--member-identity-name-line-height`  | —                                       | Unused.                                                                                                                    |
+| `--member-identity-name-size`         | —                                       | Unused.                                                                                                                    |
+| `--scale`                             | —                                       | The multiplier is gone: components read sized tokens. Set scale="compact" on a Theme for the compact scale.                |
+| `--state-card-strip-weight`           | —                                       | Unused.                                                                                                                    |
+| `--state-dialog-overlay-opacity`      | `--env-color-bg-overlay`                | The scrim is a translucent color token now.                                                                                |
+| `--state-fill-hover-opacity`          | `--env-color-bg-neutral-muted-hover`    | The fill's states are color tokens now.                                                                                    |
+| `--state-fill-opacity`                | `--env-color-bg-neutral-muted`          | The neutral fill is a translucent color token; layer it over a surface rather than mixing.                                 |
+| `--state-fill-pressed-opacity`        | `--env-color-bg-neutral-muted-pressed`  | The fill's states are color tokens now.                                                                                    |
+| `--state-hover-lightness`             | —                                       | The runtime hover rule is gone: use the role's -hover token.                                                               |
+| `--state-hover-shift`                 | —                                       | The runtime hover rule is gone.                                                                                            |
+| `--state-layer-hover-opacity`         | `--env-color-bg-neutral-subtle-hover`   | The state layer is a color token now.                                                                                      |
+| `--state-layer-pressed-opacity`       | `--env-color-bg-neutral-subtle-pressed` | The state layer is a color token now.                                                                                      |
+| `--state-lightness-direction`         | —                                       | The runtime hover rule is gone: every role has hover and pressed tokens.                                                   |
+| `--state-lightness-threshold`         | —                                       | The runtime hover rule is gone.                                                                                            |
+| `--state-pressed-lightness`           | —                                       | The runtime hover rule is gone: use the role's -pressed token.                                                             |
+| `--state-pressed-shift`               | —                                       | The runtime hover rule is gone.                                                                                            |
+| `--state-selected-base-weight`        | —                                       | Unused.                                                                                                                    |
+| `--state-surface-hover-lightness`     | —                                       | The runtime hover rule is gone: use the surface's -hover token.                                                            |
+| `--state-surface-hover-shift`         | —                                       | The runtime hover rule is gone.                                                                                            |
+| `--state-surface-pressed-lightness`   | —                                       | The runtime hover rule is gone: use the surface's -pressed token.                                                          |
+| `--state-surface-pressed-shift`       | —                                       | The runtime hover rule is gone.                                                                                            |
+| `--state-tone-subtle-opacity`         | —                                       | Each tone has its tint as a color token: color.bg.{tone}.muted.                                                            |
+| `--surface-card-padding`              | —                                       | Internal to the 0.7 card. Set a card's padding with its padding prop.                                                      |
+| `--toast-fill`                        | —                                       | Internal to the 0.7 toast. A toast takes its fill from its tone; restyle a toast through the component, not this property. |
 
 Every other name only takes the prefix, `--body-font-weight` as `--env-body-font-weight`: `--body-font-weight`, `--color-bg-accent-emphasis`, `--color-bg-accent-muted`, `--color-bg-accent-subtle-hover`, `--color-bg-accent-subtle-pressed`, `--color-bg-brand-emphasis`, `--color-bg-brand-emphasis-hover`, `--color-bg-brand-emphasis-pressed`, `--color-bg-brand-muted`, `--color-bg-brand-strong`, `--color-bg-brand-strong-hover`, `--color-bg-brand-strong-pressed`, `--color-bg-danger-emphasis`, `--color-bg-danger-muted`, `--color-bg-danger-strong`, `--color-bg-danger-strong-hover`, `--color-bg-danger-strong-pressed`, `--color-bg-danger-subtle-hover`, `--color-bg-danger-subtle-pressed`, `--color-bg-default`, `--color-bg-default-hover`, `--color-bg-default-pressed`, `--color-bg-done-emphasis`, `--color-bg-done-muted`, `--color-bg-field`, `--color-bg-important-strong`, `--color-bg-important-strong-hover`, `--color-bg-important-strong-pressed`, `--color-bg-info-strong`, `--color-bg-info-strong-hover`, `--color-bg-info-strong-pressed`, `--color-bg-muted`, `--color-bg-muted-hover`, `--color-bg-muted-pressed`, `--color-bg-navigation-hover`, `--color-bg-navigation-pressed`, `--color-bg-neutral-emphasis`, `--color-bg-neutral-muted`, `--color-bg-neutral-muted-hover`, `--color-bg-neutral-muted-pressed`, `--color-bg-neutral-strong`, `--color-bg-neutral-strong-hover`, `--color-bg-neutral-strong-pressed`, `--color-bg-neutral-subtle`, `--color-bg-neutral-subtle-hover`, `--color-bg-neutral-subtle-pressed`, `--color-bg-overlay`, `--color-bg-overlay-muted`, `--color-bg-page`, `--color-bg-page-hover`, `--color-bg-page-pressed`, `--color-bg-popup`, `--color-bg-popup-hover`, `--color-bg-popup-pressed`, `--color-bg-raised`, `--color-bg-raised-hover`, `--color-bg-raised-pressed`, `--color-bg-selected`, `--color-bg-selected-hover`, `--color-bg-selected-pressed`, `--color-bg-success-emphasis`, `--color-bg-success-muted`, `--color-bg-success-strong`, `--color-bg-success-strong-hover`, `--color-bg-success-strong-pressed`, `--color-bg-success-subtle-hover`, `--color-bg-success-subtle-pressed`, `--color-bg-warning-emphasis`, `--color-bg-warning-muted`, `--color-bg-warning-subtle-hover`, `--color-bg-warning-subtle-pressed`, `--color-border-accent-muted`, `--color-border-danger-muted`, `--color-border-danger-strong`, `--color-border-default`, `--color-border-default-hover`, `--color-border-default-pressed`, `--color-border-focus`, `--color-border-info-strong`, `--color-border-muted`, `--color-border-muted-hover`, `--color-border-muted-pressed`, `--color-border-neutral-strong`, `--color-border-success-muted`, `--color-border-success-strong`, `--color-border-warning-muted`, `--color-fg-accent`, `--color-fg-control`, `--color-fg-danger`, `--color-fg-default`, `--color-fg-done`, `--color-fg-link`, `--color-fg-link-hover`, `--color-fg-link-pressed`, `--color-fg-muted`, `--color-fg-muted-hover`, `--color-fg-muted-pressed`, `--color-fg-on-emphasis`, `--color-fg-on-selected`, `--color-fg-on-strong`, `--color-fg-success`, `--color-fg-warning`, `--control-border-width`, `--control-font-size`, `--control-gap`, `--control-height`, `--control-height-lg`, `--control-height-md`, `--control-height-sm`, `--control-height-touch`, `--control-icon-size`, `--control-target-min`, `--elevation-0-border`, `--elevation-0-shadow`, `--elevation-1-border`, `--elevation-1-shadow`, `--elevation-2-border`, `--elevation-2-shadow`, `--elevation-3-border`, `--elevation-3-shadow`, `--field-floating-height`, `--font-family`, `--font-size-body`, `--font-size-body-small`, `--font-size-caption`, `--font-size-heading`, `--font-size-heading-small`, `--font-size-label`, `--font-size-label-small`, `--icon-size-lg`, `--icon-size-md`, `--icon-size-sm`, `--motion-duration-fast`, `--motion-duration-medium`, `--motion-duration-slow`, `--motion-ease`, `--motion-ease-enter`, `--motion-ease-exit`, `--motion-ease-standard`, `--radius-row-inner`, `--radius-row-outer`, `--radius-row-single`, `--radius-surface`, `--row-content-height`, `--row-height`, `--row-padding-block-lg`, `--row-padding-block-md`, `--row-padding-block-sm`, `--row-padding-block-xs`, `--row-padding-inline`, `--space-1`, `--space-2`, `--space-3`, `--space-4`, `--space-5`, `--space-6`, `--space-7`, `--space-8`, `--space-9`, `--state-disabled-opacity`, `--title-bar-height`, `--topbar-height`, `--tree-row-padding-block-lg`, `--tree-row-padding-block-md`, `--tree-row-padding-block-sm`, `--type-body`, `--type-body-font-family`, `--type-body-font-size`, `--type-body-font-weight`, `--type-body-letter-spacing`, `--type-body-line-height`, `--type-body-small`, `--type-body-small-font-family`, `--type-body-small-font-size`, `--type-body-small-font-weight`, `--type-body-small-letter-spacing`, `--type-body-small-line-height`, `--type-h1`, `--type-h1-font-family`, `--type-h1-font-size`, `--type-h1-font-weight`, `--type-h1-letter-spacing`, `--type-h1-line-height`, `--type-h2`, `--type-h2-font-family`, `--type-h2-font-size`, `--type-h2-font-weight`, `--type-h2-letter-spacing`, `--type-h2-line-height`.
 

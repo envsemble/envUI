@@ -151,4 +151,8 @@
   .env-document-tab[data-active]::after {
     background-color: HighlightText;
   }
+  .env-document-tab[data-active]:focus-visible,
+  .env-document-tab[data-active] :focus-visible {
+    outline-color: HighlightText;
+  }
 }
