@@ -26,5 +26,17 @@ test.describe('in a right-to-left region', () => {
       await expect(toolbar.getByRole('button', { name: 'Italic' })).toBeFocused();
       await page.keyboard.press('ArrowRight');
       await expect(toolbar.getByRole('button', { name: 'Bold' })).toBeFocused();
+      const view = region.getByRole('radiogroup', { name: 'View' });
+      await view.getByRole('radio', { name: 'List' }).focus();
+      await page.keyboard.press('ArrowLeft');
+      await expect(view.getByRole('radio', { name: 'Board' })).toBeFocused();
+      const tabs = region.getByRole('tablist', { name: 'Sections' });
+      await tabs.getByRole('tab', { name: 'Overview' }).focus();
+      await page.keyboard.press('ArrowLeft');
+      await expect(tabs.getByRole('tab', { name: 'Activity' })).toBeFocused();
+      const menubar = region.getByRole('menubar', { name: 'Application' });
+      await menubar.getByRole('menuitem', { name: 'File' }).focus();
+      await page.keyboard.press('ArrowLeft');
+      await expect(menubar.getByRole('menuitem', { name: 'Edit' })).toBeFocused();
     });
 });
