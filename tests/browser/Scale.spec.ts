@@ -80,6 +80,53 @@ for (const scale of densityScales)
       );
     });
 
+/**
+ * Tree rows at each density: a 20 px content line in both scales, so a compact row is never taller
+ * than a comfortable one, and the default sm row is as tall as a compact menu row.
+ */
+const treeRows = {
+  comfortable: { xs: 24, sm: 28, md: 36, lg: 44 },
+  compact: { xs: 24, sm: 28, md: 30, lg: 34 },
+} as const;
+
+test('tree rows are as tall as their density in each scale, and as a compact menu row at sm', async ({
+  page,
+}) => {
+  await openSection(page, 'tree');
+  for (const scale of densityScales) {
+    const heights = await page
+      .locator(`[data-density-scale="${scale}"] .env-tree`)
+      .evaluateAll((trees) =>
+        Object.fromEntries(
+          trees.map((tree) => [
+            tree.getAttribute('data-density'),
+            tree.querySelector('.env-tree-row')!.getBoundingClientRect().height,
+          ]),
+        ),
+      );
+    expect(heights, scale).toEqual(treeRows[scale]);
+    for (const density of ['xs', 'sm', 'md', 'lg'] as const)
+      expect(treeRows.compact[density]).toBeLessThanOrEqual(treeRows.comfortable[density]);
+  }
+  // The menu of each scale opens in a popup of that scale; its rows reach their height once it has
+  // grown in.
+  await openSection(page, 'menu');
+  await expect
+    .poll(() =>
+      page
+        .getByRole('menuitem', { name: 'Move to folder' })
+        .evaluateAll((rows) =>
+          Object.fromEntries(
+            rows.map((row) => [
+              row.closest<HTMLElement>('.env-theme')!.dataset.envScale,
+              row.getBoundingClientRect().height,
+            ]),
+          ),
+        ),
+    )
+    .toEqual({ comfortable: 36, compact: treeRows.compact.sm });
+});
+
 test('each scale writes data-env-scale on its boundary, and nested Themes and popups keep it', async ({
   page,
 }) => {

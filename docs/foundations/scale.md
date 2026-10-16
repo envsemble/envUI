@@ -45,8 +45,9 @@ At the default 16 px root. Every value is a token, in rem, so it follows the rea
 | `--control-height-sm` / `-md` / `-lg`                           | 32 / 40 / 48          | 26 / 32 / 38          |
 | `--control-target-min`                                          | 24                    | 24                    |
 | `--row-height` (menu, Select and Combobox rows)                 | 36                    | 28                    |
-| `--row-content-height` (tree rows)                              | 20                    | 22                    |
+| `--row-content-height` (tree rows)                              | 20                    | 20                    |
 | `--row-padding-block-xs` / `-sm` / `-md` / `-lg`                | 2 / 4 / 8 / 12        | 2 / 3 / 4 / 6         |
+| `--tree-row-padding-block-sm` / `-md` / `-lg`                   | 4 / 8 / 12            | 4 / 5 / 7             |
 | `--space-1` … `--space-9`                                       | 4, 8, 12, 16, 24 … 64 | 4, 6, 10, 12, 20 … 52 |
 | `--control-gap`                                                 | 7                     | 6                     |
 | `--font-size-caption` / `-body-small` / `-label`                | 12 / 14 / 14          | 11 / 12 / 13          |
@@ -58,7 +59,7 @@ At the default 16 px root. Every value is a token, in rem, so it follows the rea
 | `--topbar-height` / `--title-bar-height`                        | 52 / 40               | 42 / 32               |
 | `--control-border-width`, focus rings, `--control-height-touch` | 1, 2, 44              | 1, 2, 44              |
 
-- A tree row is its content line plus its density's padding on both sides: 28 at `sm`, the default, and 36 at `md` in the comfortable scale, and 28 at `sm` and 30 at `md` in the compact one. A table cell adds 4 px to its row padding, so a `md` table row of one line is 45 px tall, and a list row is at least as tall as a small control with its padding, 56 px at `md`.
+- A tree row is its content line plus its density's padding on both sides: 24, 28, 36 and 44 from `xs` to `lg` in the comfortable scale, and 24, 28, 30 and 34 in the compact one, whose tree paddings are a pixel more than the row densities' so that no compact row is taller than a comfortable one and a `sm` row, the default, is as tall as a compact menu row. A table cell adds 4 px to its row padding, so a `md` table row of one line is 45 px tall, and a list row is at least as tall as a small control with its padding, 56 px at `md`.
 - Controls in table cells take the small control height, so a row with an action stays close to the height of its text.
 - `--control-height` is the height of a control that sets no size: md, unless its container sets it to another control height. Set it in an application's own toolbar the same way: `--control-height: var(--control-height-sm)`.
 
