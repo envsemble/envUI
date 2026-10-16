@@ -469,7 +469,7 @@ test('public components import and render on a server with no DOM globals', func
   assert.match(ssr.html, /name="accent"[^>]*value="#abcdef"/);
   assert.match(ssr.html, /data-env-theme="dark"/);
   assert.match(ssr.html, /data-originating-theme="dark"/);
-  assert.match(ssr.html, /class="env-button env-button-primary"/);
+  assert.match(ssr.html, /class="env-button" data-variant="primary" data-tone="neutral"/);
   assert.match(
     ssr.html,
     /aria-label="Connected actions" role="group" class="env-button-group" data-orientation="vertical"/,
