@@ -2,7 +2,7 @@
 // BEGIN envui and END envui markers, from the installed package's manifest. Coding agents read
 // AGENTS.md at the start of every task, so the index puts the rule "search envUI first" and the way
 // to the installed documentation in front of them without a tool call.
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
 import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { exportOf, packageRoot, topLevelExports } from './catalog.mjs';
 
@@ -29,6 +29,8 @@ export function packagePathFor(file, { installed = packageRoot } = {}) {
       return { path: relative(from, candidate).split(sep).join('/') };
     if (dirname(folder) === folder) break;
   }
+  const below = installed && linkBelow(from, installed);
+  if (below) return { path: relative(from, below).split(sep).join('/') };
   const inside = installed ? relative(from, resolve(installed)) : '';
   if (inside && !inside.startsWith('..') && !isAbsolute(inside))
     return { path: inside.split(sep).join('/') };
@@ -36,6 +38,37 @@ export function packagePathFor(file, { installed = packageRoot } = {}) {
     path: defaultPackagePath,
     warning: `envUI is not installed in or below ${from}, so the index points at ${defaultPackagePath}; run envui agents from the project that installs it.`,
   };
+}
+
+/**
+ * The path by which a project folder's packages reach the installed package, without following
+ * links: pnpm links apps/web/node_modules/@envsemble/envui to a folder in node_modules/.pnpm, and
+ * the index should name the link. Searches a few folders deep, past node_modules and hidden ones.
+ */
+function linkBelow(from, installed, depth = 4) {
+  let target;
+  try {
+    target = realpathSync(installed);
+  } catch {
+    return undefined;
+  }
+  const folders = [from];
+  for (let level = 0; level <= depth && folders.length; level += 1) {
+    const next = [];
+    for (const folder of folders) {
+      const candidate = join(folder, defaultPackagePath);
+      try {
+        if (existsSync(candidate) && realpathSync(candidate) === target) return candidate;
+        for (const entry of readdirSync(folder, { withFileTypes: true }))
+          if (entry.isDirectory() && entry.name !== 'node_modules' && !entry.name.startsWith('.'))
+            next.push(join(folder, entry.name));
+      } catch {
+        // An unreadable folder holds nothing to find.
+      }
+    }
+    folders.splice(0, folders.length, ...next);
+  }
+  return undefined;
 }
 
 /**
@@ -90,7 +123,7 @@ function renderBlock(manifest, aliasCount, packagePath) {
     `This project's UI is built with envUI (\`${manifest.package}\`${version}), a React design system.`,
     '',
     `- **${manifest.rule}** Never hand-roll a button, field, menu, dialog, table, tabs or layout that envUI has, and never restyle its \`.env-*\` classes. What envUI lacks, compose from its parts for now and propose upstream.`,
-    '- Look things up with the `envui` MCP tools when they are available: `plan` for a whole screen, `search`, `get_component`, `get_props`, `get_example`, `get_tokens`. Otherwise read the docs below; use only the exports and props they or the `.d.ts` files list.',
+    '- Look things up with the `envui` MCP tools when they are available: `plan` for candidates for a whole screen, `search`, `get_component`, `get_props`, `get_example`, `get_tokens`. Otherwise read the docs below; use only the exports and props they or the `.d.ts` files list.',
     `- Docs in \`${packagePath}/docs/\`: \`index.md\`; \`components/<page>.md\` with when to use it and what instead, accessibility, examples and props; \`examples/<page>/<Name>.tsx\`; \`foundations/\`; \`patterns/\`; \`setup.md\`. The same as data in \`${packagePath}/manifest.json\`.`,
     `- Imports: ${manifest.imports.entryPoints.map((entry) => `\`${entry}\``).join(', ')}; icons one by one from \`${manifest.imports.icons}\` (names in \`icon-manifest.json\`); \`${manifest.imports.styles}\` once, and the UI inside \`Theme\`.`,
     '- Style with tokens, as CSS custom properties such as `var(--color-fg-muted)` or `var(--space-4)`: no raw colors or pixel sizes.',
