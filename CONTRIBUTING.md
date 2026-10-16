@@ -23,7 +23,9 @@ Routes live in the address's path in development and in the hosted catalogue, su
 | `npm run lint`             | Lint components, the catalogue, tests and scripts with ESLint |
 | `npm run lint:css`         | Lint styles with Stylelint                                    |
 | `npm run format`           | Format with Prettier; `npm run format:check` only checks      |
-| `npm run typecheck`        | Check the library and catalogue                               |
+| `npm run typecheck`        | Check the library and catalogue, incrementally                |
+| `npm run check`            | Fast tier: check what the branch changed, after each change   |
+| `npm run check:affected`   | Affected tier: the change in every engine, before committing  |
 | `npm run build`            | Build the package and offline catalogue                       |
 | `npm run build:site`       | Build the hosted catalogue, described under Hosting below     |
 | `npm run site:dev`         | Build the hosted catalogue and serve it locally               |
@@ -31,24 +33,34 @@ Routes live in the address's path in development and in the hosted catalogue, su
 | `npm run test:browser`     | Check interactions in Chromium, Firefox and WebKit            |
 | `npm run test:a11y`        | Scan every page of the hosted build with axe in both themes   |
 | `npm run test:visual`      | Compare screenshots with the visual baseline, in Docker       |
-| `npm run verify`           | Run every check, including the visual baseline; needs Docker  |
+| `npm run verify`           | Full tier: every check and the visual baseline; needs Docker  |
 | `npm run verify:no-visual` | Every check but the visual baseline, ending with a warning    |
 | `npm run changeset`        | Record a change for the changelog                             |
 
-Install browser engines before running the full checks:
+Install browser engines before running the checks:
 
 ```sh
 npx playwright install chromium firefox webkit
-npm run verify
 ```
 
-Build outputs are `packages/ui/dist/`, `dist/envUI.html` and, from `npm run build:site`, `dist/site/`. CI retains the offline catalogue and browser diagnostics as artifacts. CI runs for pull requests into `main` and pushes to `main` only, and tests in Chromium alone, so run `npm run verify`, which tests all three engines, before pushing a branch or merging into `dev`.
+### Checks in three tiers
 
-Some browser specs open the hosted catalogue from `dist/site/`. `npm run verify` builds it before the browser tests, and so does CI's browser job, a step of a few seconds; where `CI` is set, a missing build fails those specs. A local `npm run test:browser` uses the last build and skips them without one, so run `npm run build:site` first when you change the catalogue's loading or the site build.
+The checks come in three tiers, so that a change is checked in seconds while it is made and in full only before it ships:
+
+1. **`npm run check`, after each change.** It looks at what the branch changed since it left the integration branch (`origin/envui-1.0`, else `origin/dev`; `--base <ref>` or `ENVUI_BASE` picks another), including uncommitted and untracked files, and runs ESLint, Stylelint and Prettier on those files, `tsc` incrementally, the generated-file checks the change touches, the unit tests that need no build, and the browser specs related to the change in Chromium. It prints what it selected and why; `npm run check -- --dry-run` prints only that, and options go after `--` in the same way. On a 24-thread machine it takes about 1 second with nothing changed, 10 to 20 seconds for a component, token or documentation change, and under a minute for a change across the catalogue.
+2. **`npm run check:affected`, before committing a branch or merging it into the integration branch.** The fast tier, plus the related specs in Chromium, Firefox and WebKit, the builds the change needs and the unit tests that read them, and the accessibility scan and screenshots of the affected catalogue pages. The screenshots need Docker; `--skip-visual` leaves them out with a warning. About 2 minutes for a component change.
+3. **`npm run verify`, before a release (tagging or publishing), before merging into `dev` or `main`, or when asked.** Every check: generated files, lint, formatting, types, the three builds, every unit test, every browser spec in all three engines with the contrast gate, the accessibility scan of every page, live development and the visual baseline. It builds once and runs independent checks side by side. About 20 minutes on a 24-thread machine; it took about 30 before the tiers. `npm run verify:no-visual` runs everything but the screenshots and ends with a warning that the run does not count as verified.
+
+How the first two choose what to run is described in [library development](docs/library-development.md#verify). The browser suite uses half the cores; `ENVUI_WORKERS` sets another count or share, such as `ENVUI_WORKERS=25%`.
+
+Build outputs are `packages/ui/dist/`, `dist/envUI.html` and, from `npm run build:site`, `dist/site/`. CI retains the offline catalogue and browser diagnostics as artifacts. CI runs for pull requests into `main` and pushes to `main` only, and tests in Chromium alone. Run `npm run check:affected` before pushing a branch or merging it into the integration branch, and `npm run verify`, which tests everything in all three engines, before merging into `dev` or `main` and before a release.
+
+Some browser specs open the hosted catalogue from `dist/site/`. `npm run verify` and `npm run check:affected` build it before the browser tests, and so does CI's browser job, a step of a few seconds; where `CI` is set, a missing build fails those specs. A local `npm run test:browser` uses the last build and skips them without one, so run `npm run build:site` first when you change the catalogue's loading or the site build.
 
 ## Repository map
 
 ```text
+AGENTS.md            The testing policy and pointers for agents working on envUI
 .agents/skills/       Two small entry points for agents
 docs/                Canonical Markdown documentation and discovery index
 apps/catalogue/      Live previews and the offline catalogue application

@@ -65,6 +65,17 @@ const pages = documentationPages.map(({ path, title, views }) => ({
         : [path],
 }));
 const routes = new Set(pages.flatMap((page) => page.routes));
+/**
+ * ENVUI_PAGES limits the scan to some pages, by path such as components/button, as
+ * `npm run check:affected` sets it for a change; `npm run test:a11y` scans every page.
+ */
+const only = process.env.ENVUI_PAGES?.split(',').filter(Boolean);
+const unknown = only?.filter(
+  (path) => path !== 'density' && !pages.some((page) => page.path === path),
+);
+if (unknown?.length)
+  throw new Error(`ENVUI_PAGES names pages the catalogue does not have: ${unknown.join(', ')}`);
+const scanned = only ? pages.filter((page) => only.includes(page.path)) : pages;
 
 function readExceptions(): Violations {
   return JSON.parse(readFileSync(exceptionsFile, 'utf8'));
@@ -302,7 +313,7 @@ test.beforeEach(async ({ page }) => {
   await serveSite(page);
 });
 
-for (const { path, title, routes: pageRoutes } of pages) {
+for (const { path, title, routes: pageRoutes } of scanned) {
   test(`${title} (${path}) has no new accessibility violations`, async ({ page }, testInfo) => {
     // Pages scanned in high contrast as well take twice as long.
     test.setTimeout(240_000);

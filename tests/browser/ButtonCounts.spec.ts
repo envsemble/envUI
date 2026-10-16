@@ -70,7 +70,24 @@ test('counters and badges in buttons and tabs keep 4.5:1 contrast in both themes
     );
   }
   await page.mouse.move(0, 0);
-  await page.waitForTimeout(300);
+  // Measure once the tabs' and buttons' transitions to their new states have finished.
+  await page.evaluate(
+    () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+  );
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          document
+            .getAnimations()
+            .filter(
+              (animation) =>
+                animation.playState === 'running' &&
+                Number.isFinite(Number(animation.effect?.getComputedTiming().endTime)),
+            ).length,
+      ),
+    )
+    .toBe(0);
   expect(await measure()).toEqual([]);
 });
 

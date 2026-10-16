@@ -3,6 +3,24 @@ import { fixtureUrl } from './Servers';
 
 const dataFixture = `${fixtureUrl}/?fixture=data-display`;
 
+/**
+ * Waits two frames, so a state change has started its transitions, and then until the element's
+ * own transitions have finished: what it shows then is where it settles.
+ */
+async function settled(element: Locator) {
+  await element.evaluate(
+    () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+  );
+  await expect
+    .poll(() =>
+      element.evaluate(
+        (node) =>
+          node.getAnimations().filter((animation) => animation.playState === 'running').length,
+      ),
+    )
+    .toBe(0);
+}
+
 /** How a breadcrumb trail is laid out: its height in lines, which labels are cut short, and what
  * extends past the navigation's box or clips the crumbs. */
 function trailLayout(navigation: Locator) {
@@ -120,12 +138,12 @@ test('interactive rows react to hover, presses and focus, and open from anywhere
     expect(await fill(plain)).toBe(rest);
     await expect(open).toHaveCSS('position', 'relative');
     await plain.hover();
-    await page.waitForTimeout(300);
+    await settled(plain);
     expect(await fill(plain)).toBe(rest);
     // The row reacts to the pointer anywhere on it, and to keyboard focus inside it.
     await open.hover({ position: { x: 8, y: 8 } });
     await expect.poll(() => fill(open)).not.toBe(rest);
-    await page.waitForTimeout(300);
+    await settled(open);
     const hovered = await fill(open);
     await page.mouse.move(0, 0);
     await expect.poll(() => fill(open)).toBe(rest);
@@ -140,7 +158,7 @@ test('interactive rows react to hover, presses and focus, and open from anywhere
     const box = (await open.boundingBox())!;
     await page.mouse.move(box.x + box.width / 2, box.y + box.height - 6);
     await page.mouse.down();
-    await page.waitForTimeout(300);
+    await settled(open);
     const pressed = await fill(open);
     expect(pressed).not.toBe(hovered);
     await page.mouse.up();
@@ -150,7 +168,7 @@ test('interactive rows react to hover, presses and focus, and open from anywhere
     const actionBox = (await action.boundingBox())!;
     await page.mouse.move(actionBox.x + actionBox.width / 2, actionBox.y + actionBox.height / 2);
     await page.mouse.down();
-    await page.waitForTimeout(300);
+    await settled(open);
     expect(await fill(open)).toBe(hovered);
     await page.mouse.up();
     await expect(page.getByTestId(`row-result-${theme}`)).toHaveText('more actions');

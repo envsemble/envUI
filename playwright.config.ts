@@ -1,6 +1,62 @@
+import { availableParallelism } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { defineConfig, devices } from '@playwright/test';
-import { catalogueUrl, cataloguePort, fixtureUrl, fixturePort } from './tests/browser/Servers';
+import { resolveServers } from './scripts/CheckoutMarker.mjs';
+
+/**
+ * The development servers this run needs: ENVUI_SERVERS lists them (catalogue, fixture, or none),
+ * as `npm run check` sets it for the specs it picked. Without it a run that only scans the hosted
+ * build (the a11y projects) needs none, and any other run needs both.
+ */
+function wantedServers() {
+  if (process.env.ENVUI_SERVERS)
+    return new Set(process.env.ENVUI_SERVERS.split(',').filter((name) => name !== 'none'));
+  const projects = process.argv.flatMap((argument, index, all) =>
+    argument === '--project'
+      ? [all[index + 1]]
+      : argument.startsWith('--project=')
+        ? [argument.slice(10)]
+        : [],
+  );
+  if (projects.length && projects.every((project) => /^a11y(?:-setup)?$/.test(project)))
+    return new Set<string>();
+  return new Set(['catalogue', 'fixture']);
+}
+const wanted = wantedServers();
+
+// Ports, and whether a server running there belongs to this checkout and can be reused. Specs read
+// the chosen ports through tests/browser/Servers.ts; see scripts/CheckoutMarker.mjs.
+const servers = await resolveServers(
+  Object.fromEntries(
+    Object.entries({
+      catalogue: { variable: 'ENVUI_CATALOGUE_PORT', port: 8770, offset: 0 },
+      fixture: { variable: 'ENVUI_FIXTURE_PORT', port: 8766, offset: 1 },
+    }).filter(([name]) => wanted.has(name)),
+  ),
+);
+
+/**
+ * Browser workers: ENVUI_WORKERS, a count or a share of the cores such as 50%; else half the cores
+ * locally and 3 in CI. Each worker runs one browser, and the development servers serve them all.
+ */
+const configured = process.env.ENVUI_WORKERS;
+const workers = configured
+  ? /^d+$/.test(configured)
+    ? Number(configured)
+    : configured
+  : process.env.CI
+    ? 3
+    : '50%';
+/**
+ * Firefox and WebKit stop gaining beyond a few workers each (on 24 threads, about 1.5 tests a second
+ * from 4 workers on), and with more their slowest specs run out of time. Locally each takes at most
+ * a third of the workers, and Chromium and the accessibility scan the rest; CI keeps its 3 shared.
+ */
+const totalWorkers =
+  typeof workers === 'number'
+    ? workers
+    : Math.max(1, Math.floor((availableParallelism() * parseFloat(workers)) / 100));
+const engineWorkers = process.env.CI ? undefined : Math.max(1, Math.round(totalWorkers / 3));
 
 export default defineConfig({
   testDir: './tests/browser',
@@ -9,7 +65,7 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
-  workers: 3,
+  workers,
   reporter: process.env.CI
     ? [['github'], ['json', { outputFile: 'test-results/results.json' }]]
     : 'list',
@@ -21,8 +77,21 @@ export default defineConfig({
   // `npm run test:browser` runs the behavior projects; the gates below have their own scripts.
   projects: [
     { name: 'chromium', testIgnore: /LiveDevelopment/, use: { ...devices['Desktop Chrome'] } },
-    { name: 'firefox', testIgnore: /LiveDevelopment/, use: { ...devices['Desktop Firefox'] } },
-    { name: 'webkit', testIgnore: /LiveDevelopment/, use: { ...devices['Desktop Safari'] } },
+    // The contrast gate (`npm run test:contrast`) measures computed colors once, in Chromium.
+    {
+      name: 'firefox',
+      testIgnore: /LiveDevelopment/,
+      grepInvert: /@contrast/,
+      workers: engineWorkers,
+      use: { ...devices['Desktop Firefox'] },
+    },
+    {
+      name: 'webkit',
+      testIgnore: /LiveDevelopment/,
+      grepInvert: /@contrast/,
+      workers: engineWorkers,
+      use: { ...devices['Desktop Safari'] },
+    },
     {
       name: 'live-development',
       testMatch: /LiveDevelopment/,
@@ -68,16 +137,16 @@ export default defineConfig({
     },
   ],
   webServer: [
-    {
-      command: `node ../../node_modules/vite/bin/vite.js --host 127.0.0.1 --port ${cataloguePort} --strictPort`,
+    servers.catalogue && {
+      command: `node ../../node_modules/vite/bin/vite.js --host 127.0.0.1 --port ${servers.catalogue.port} --strictPort`,
       cwd: 'apps/catalogue',
-      url: catalogueUrl,
-      reuseExistingServer: !process.env.CI,
+      url: `http://127.0.0.1:${servers.catalogue.port}`,
+      reuseExistingServer: servers.catalogue.reuse,
     },
-    {
-      command: `node node_modules/vite/bin/vite.js --config tests/fixture/vite.config.ts --host 127.0.0.1 --port ${fixturePort} --strictPort`,
-      url: fixtureUrl,
-      reuseExistingServer: !process.env.CI,
+    servers.fixture && {
+      command: `node node_modules/vite/bin/vite.js --config tests/fixture/vite.config.ts --host 127.0.0.1 --port ${servers.fixture.port} --strictPort`,
+      url: `http://127.0.0.1:${servers.fixture.port}`,
+      reuseExistingServer: servers.fixture.reuse,
     },
-  ],
+  ].filter((server) => server !== undefined),
 });
