@@ -7,7 +7,7 @@ import { MarkdownPreview } from './MarkdownContent';
 import { EmptyStatePreview } from './Feedback';
 import { ColorPickerPreview } from './ColorPicking';
 import { ComposerPreview } from './Conversation';
-import { CalendarHeatmapPreview, StatsPreview } from './Dashboard';
+import { CalendarHeatmapPreview } from './Dashboard';
 import { MenubarPreview, AvatarPreview } from './Overlays';
 import { AppShellPreview } from './Shell';
 import { CommandPalettePreview, DocumentTabsPreview } from './Workspace';
@@ -50,8 +50,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <BreadcrumbsPreview />;
     case 'animated-number':
       return <AnimatedNumberPreview />;
-    case 'stat':
-      return <StatsPreview />;
     case 'calendar-heatmap':
       return <CalendarHeatmapPreview />;
     case 'code':

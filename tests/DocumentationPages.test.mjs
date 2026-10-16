@@ -44,7 +44,6 @@ const unconverted = [
   'menubar',
   'panel-dock',
   'popover',
-  'stat',
 ];
 
 /**

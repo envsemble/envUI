@@ -4506,77 +4506,77 @@
     "Popover": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Popover.tsx",
-      "description": "A floating panel opened from a trigger, for details or a small form beside the control.",
+      "description": "A floating panel beside its trigger, for details or a small form: it opens on press, moves focus into itself, and closes with Esc, a press outside or when focus leaves it.",
       "props": [
         {
           "name": "trigger",
           "type": "ReactElement",
           "required": true,
-          "description": "The control that opens the popover; it receives the expanded state and ref."
+          "description": "The control that opens and closes the popover, such as a Button or an IconButton. It must take a ref and props: it receives the press handler, aria-haspopup and aria-expanded."
         },
         {
           "name": "title",
           "type": "ReactNode",
           "required": false,
-          "description": "A heading that also names the popover."
+          "description": "A heading at the top, such as the name of what the popover describes; it names the popover."
         },
         {
           "name": "children",
           "type": "ReactNode | ((close: () => void) => ReactNode)",
           "required": true,
-          "description": "Content, or a function that receives close for actions inside the popover."
+          "description": "The popover's content, or a function that receives close, for an action inside it that should close the popover once it is done, such as a form's submit."
         },
         {
           "name": "aria-label",
           "type": "string",
           "required": false,
-          "description": "Accessible name when there is no title."
+          "description": "The popover's accessible name when it has no title, such as Rename document."
         },
         {
           "name": "side",
           "type": "'top' | 'bottom' | 'left' | 'right'",
           "required": false,
           "default": "'bottom'",
-          "description": ""
+          "description": "The side of the trigger the popover opens on; it flips to the other side without room."
         },
         {
           "name": "align",
           "type": "'start' | 'center' | 'end'",
           "required": false,
           "default": "'center'",
-          "description": ""
+          "description": "How the popover lines up with the trigger along that side: its start, center or end."
         },
         {
           "name": "open",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "Whether a controlled popover is open; update it from onOpenChange."
         },
         {
           "name": "defaultOpen",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Whether an uncontrolled popover starts open."
         },
         {
           "name": "onOpenChange",
           "type": "(open: boolean) => void",
           "required": false,
-          "description": ""
+          "description": "Receives the requested state each time the popover asks to open or close: from the trigger, Esc, a press outside, focus leaving it or close."
         },
         {
           "name": "width",
           "type": "'standard' | 'wide'",
           "required": false,
           "default": "'standard'",
-          "description": "standard (default) about 20 rem wide; wide about 28 rem."
+          "description": "The popover's width: standard, 20 rem, for details and a field or two; wide, 28 rem, for a longer form. Both narrow to fit the window."
         },
         {
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "A class for the popover's surface."
         }
       ],
       "native": [],

@@ -9,26 +9,37 @@ import { withDisplayName } from '../internal/withDisplayName.js';
 
 export type TrendTone = 'neutral' | 'success' | 'warning' | 'danger';
 
+/** How a figure changed since an earlier period, shown as a direction icon and text in a tone. */
 export interface Trend {
-  /** Which way the figure moved; it chooses the icon and the default tone. */
+  /** Which way the figure moved: up, down or flat. It chooses the icon and the default tone. */
   direction: 'up' | 'down' | 'flat';
-  /** The change in words or signs, such as +12% from last month; it reads well without the icon. */
+  /**
+   * The change in words or signs, such as +12% from last month or 2 fewer than last week. The icon
+   * is hidden from assistive technology, so the text says which way the figure moved.
+   */
   label: ReactNode;
   /**
-   * Whether the change is good news: up is success, down danger and flat neutral by default. Set it
-   * when a rise is bad, as for costs or errors.
+   * Whether the change is good news: success, warning, danger or neutral. Set it when a rise is bad,
+   * as for costs or errors, or a fall is good.
+   * @default 'success' when up, 'danger' when down, 'neutral' when flat
    */
   tone?: TrendTone;
 }
 
 export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
-  /** What the figure measures, such as Active projects. */
+  /** What the figure measures, such as Active projects, in muted text above it. */
   label: ReactNode;
-  /** The figure, such as a formatted number or an AnimatedNumber. */
+  /**
+   * The figure, formatted by the application with its unit, such as 1,284 or 2.5 days, or an
+   * AnimatedNumber that rolls to new values. It shows large, in tabular digits.
+   */
   value: ReactNode;
-  /** A muted line below, such as the period: Last 30 days. */
+  /** A muted note below the figure, after the trend, such as the period: Last 30 days. */
   detail?: ReactNode;
-  /** The change since an earlier period, shown with an icon and text in its tone. */
+  /**
+   * The change since an earlier period, such as up and +12% from last month, shown below the figure
+   * as a direction icon and text in its tone.
+   */
   trend?: Trend;
 }
 
@@ -44,7 +55,10 @@ const trendTones: Record<Trend['direction'], TrendTone> = {
   flat: 'neutral',
 };
 
-/** A labelled key figure for a dashboard, with an optional trend and detail. */
+/**
+ * A labelled key figure for a dashboard, such as Active projects 128, with an optional trend and
+ * detail. It has no surface of its own; Stat.Group puts several on one, or a Card holds one.
+ */
 function Root({ label, value, detail, trend, className, ...props }: RootProps) {
   return (
     <div {...props} className={classNames('env-stat', className)}>
@@ -69,9 +83,20 @@ function Root({ label, value, detail, trend, className, ...props }: RootProps) {
   );
 }
 
-export interface GroupProps
-  extends ComponentPropsWithRef<'div'>,
-    Pick<SurfaceAppearanceProps, 'tone' | 'padding'> {}
+export interface GroupProps extends ComponentPropsWithRef<'div'> {
+  /**
+   * The group's background, as for Surface: pane on the canvas, or row for a group on a pane, so
+   * its stats stand apart; canvas or alternate where those fit.
+   * @default 'pane'
+   */
+  tone?: SurfaceAppearanceProps['tone'];
+  /**
+   * The inset on every side, as a step of the spacing scale, such as 4 for 1 rem; 0 removes it.
+   * Without it, the inset follows the window's width, as for Surface.
+   * @default 1.25 rem in narrow windows, growing to 1.5 rem from 50 rem wide
+   */
+  padding?: SurfaceAppearanceProps['padding'];
+}
 
 /**
  * Stats on one surface, a pane by default, in as many even columns as fit; they wrap as space runs
