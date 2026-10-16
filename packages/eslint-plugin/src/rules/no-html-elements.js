@@ -1,11 +1,14 @@
 import {
   documentationUrl,
   findAttribute,
+  isFunction,
   isIntrinsic,
   jsxName,
   readData,
+  resolveVariable,
   spreadsProps,
   staticValue,
+  walk,
 } from '../utilities.js';
 
 const { roles, elements } = readData('elements.json');
@@ -49,6 +52,49 @@ function isDecoy(element) {
     (hiddenValue === true || hiddenValue === 'true') &&
     tabIndex !== undefined &&
     Number(staticValue(tabIndex)) === -1
+  );
+}
+
+/**
+ * The entry that a link adapter, the component LinkProvider renders for envUI's destinations,
+ * renders itself: it receives native anchor props and draws the anchor, so envUI's Link, which
+ * would render the adapter again, cannot replace it.
+ */
+const adapterEntry = 'a[href]';
+
+/** Whether a type annotation names envUI's LinkComponentProps, as an adapter's props are typed. */
+function namesLinkComponentProps(annotation, visitorKeys) {
+  let found = false;
+  walk(annotation, visitorKeys, (node) => {
+    if (found) return false;
+    if (node.type === 'TSTypeReference') {
+      const { typeName } = node;
+      const name = typeName.type === 'TSQualifiedName' ? typeName.right.name : typeName.name;
+      found = name === 'LinkComponentProps';
+    }
+    return !found;
+  });
+  return found;
+}
+
+/**
+ * Whether a function's props are typed as LinkComponentProps: `({ href }: LinkComponentProps)`,
+ * `const RouterLink: ComponentType<LinkComponentProps> = …` or `forwardRef<…, LinkComponentProps>(…)`.
+ */
+function hasLinkComponentProps(fn, visitorKeys) {
+  const [props] = fn.params;
+  const annotation = props?.typeAnnotation ?? props?.left?.typeAnnotation;
+  if (annotation && namesLinkComponentProps(annotation, visitorKeys)) return true;
+  let holder = fn.parent;
+  while (holder?.type === 'CallExpression') {
+    const typeArguments = holder.typeArguments ?? holder.typeParameters;
+    if (typeArguments && namesLinkComponentProps(typeArguments, visitorKeys)) return true;
+    holder = holder.parent;
+  }
+  return (
+    holder?.type === 'VariableDeclarator' &&
+    Boolean(holder.id.typeAnnotation) &&
+    namesLinkComponentProps(holder.id.typeAnnotation, visitorKeys)
   );
 }
 
@@ -100,6 +146,7 @@ export default {
   },
   create(context) {
     const [{ allow, renderProps }] = context.options;
+    const { sourceCode } = context;
     const unknown = allow.filter((id) => !knownIds.has(id));
     if (unknown.length > 0)
       throw new Error(
@@ -132,10 +179,45 @@ export default {
       });
     }
 
+    /** The functions that LinkProvider elements in this file render as their link component. */
+    const adapters = new Set();
+    /** Raw anchors inside functions, decided at the end, once every LinkProvider is known. */
+    const anchors = [];
+
+    /** The functions an expression stands for: itself, a wrapped one, or a variable's. */
+    function functionsOf(expression, seen = new Set()) {
+      if (!expression || seen.has(expression)) return [];
+      seen.add(expression);
+      if (isFunction(expression)) return [expression];
+      // memo(forwardRef(function RouterLink(…) {…}))
+      if (expression.type === 'CallExpression')
+        return expression.arguments.flatMap((argument) => functionsOf(argument, seen));
+      if (expression.type !== 'Identifier') return [];
+      const variable = resolveVariable(sourceCode, expression, expression.name);
+      return (variable?.defs ?? []).flatMap((definition) =>
+        definition.type === 'FunctionName'
+          ? [definition.node]
+          : definition.type === 'Variable'
+            ? functionsOf(definition.node.init, seen)
+            : [],
+      );
+    }
+
+    const isAdapter = (fn) => adapters.has(fn) || hasLinkComponentProps(fn, sourceCode.visitorKeys);
+
     return {
+      'Program:exit'() {
+        for (const { node, entry, found, functions } of anchors)
+          if (!functions.some(isAdapter)) report(node, entry, found);
+      },
       JSXOpeningElement(node) {
         if (isDecoy(node)) return;
         const name = jsxName(node.name);
+        if (name === 'LinkProvider' || name.endsWith('.LinkProvider')) {
+          const component = findAttribute(node, 'component')?.value;
+          if (component?.type === 'JSXExpressionContainer')
+            for (const fn of functionsOf(component.expression)) adapters.add(fn);
+        }
         const roleAttribute = findAttribute(node, 'role');
         const role = roleAttribute && staticValue(roleAttribute);
         const roleEntry =
@@ -157,7 +239,11 @@ export default {
             attributesMatch(node, candidate.attributes),
         );
         if (!entry || entry.use === null || isAllowed(entry) || insideRenderProp(node)) return;
-        report(node, entry, describeElement(entry, node, name));
+        const found = describeElement(entry, node, name);
+        const functions =
+          entry.id === adapterEntry ? sourceCode.getAncestors(node).filter(isFunction) : [];
+        if (functions.length > 0) anchors.push({ node, entry, found, functions });
+        else report(node, entry, found);
       },
     };
   },

@@ -2,7 +2,17 @@ import rule from '../src/rules/no-html-elements.js';
 import { ruleTester, typeScriptRuleTester } from './RuleTester.mjs';
 import assert from 'node:assert/strict';
 import { Linter } from 'eslint';
+import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
+
+/**
+ * The router adapter that envUI's setup guide registers with LinkProvider, as the guide writes it,
+ * when the repository has the guide.
+ */
+const setupGuide = new URL('../../../docs/setup.md', import.meta.url);
+const routerAdapter = existsSync(setupGuide)
+  ? readFileSync(setupGuide, 'utf8').match(/### Router links[\s\S]*?```tsx\n([\s\S]*?)```/)?.[1]
+  : undefined;
 
 const tail =
   " If envUI can't do what you need, propose an addition to envUI instead of a local copy.";
@@ -291,9 +301,52 @@ ruleTester.run('no-html-elements', rule, {
   ],
 });
 
-typeScriptRuleTester.run('no-html-elements in TypeScript', rule, {
-  valid: ['const field = <TextField<string> label="Name" />;'],
+const anchor = uses('Link', 'a raw <a href>', {
+  alternatives: ', or Button with href, for a link that looks like a button',
+  imports: 'Link, Button',
+  note: 'Both follow the router adapter set by LinkProvider.',
+});
+
+// A link adapter draws the anchor that envUI's Link would render through it again.
+ruleTester.run('no-html-elements in link adapters', rule, {
+  valid: [
+    'function RouterLink(props) { return <a href={props.href} {...props} />; }\n<LinkProvider component={RouterLink}>{app}</LinkProvider>;',
+    '<LinkProvider component={(props) => <a href={props.href} {...props} />}>{app}</LinkProvider>;',
+    'const RouterLink = memo(forwardRef((props, ref) => <a ref={ref} href={props.href} />));\n<ui.LinkProvider component={RouterLink} />;',
+  ],
   invalid: [
+    // An anchor elsewhere, and other raw elements inside an adapter, are still reported.
+    {
+      code: 'function Nav() { return <a href="/settings">Settings</a>; }\n<LinkProvider component={RouterLink} />;',
+      errors: [anchor],
+    },
+    {
+      code: 'function RouterLink(props) { return <a href={props.href}><button /></a>; }\n<LinkProvider component={RouterLink} />;',
+      errors: [
+        uses('Button', 'a raw <button>', { alternatives: icon, imports: 'Button, IconButton' }),
+      ],
+    },
+    { code: '<a href="/settings">Settings</a>', errors: [anchor] },
+  ],
+});
+
+test("the setup guide's router adapter is in the guide", () => {
+  if (existsSync(setupGuide)) assert.match(routerAdapter ?? '', /LinkComponentProps/);
+});
+
+typeScriptRuleTester.run('no-html-elements in TypeScript', rule, {
+  valid: [
+    'const field = <TextField<string> label="Name" />;',
+    // Props typed as envUI's LinkComponentProps make a link adapter, wherever it is registered.
+    ...(routerAdapter ? [routerAdapter] : []),
+    'const RouterLink: ComponentType<LinkComponentProps> = ({ href, ...props }) => <a href={href} {...props} />;',
+    'export const RouterLink = forwardRef<HTMLAnchorElement, envui.LinkComponentProps>((props, ref) => <a ref={ref} href={props.href} {...props} />);',
+  ],
+  invalid: [
+    {
+      code: 'export function Card({ href }: { href: string }) { return <a href={href}>Open</a>; }',
+      errors: [anchor],
+    },
     {
       code: 'export function Save({ onSave }: { onSave(): void }) { return <button onClick={onSave} />; }',
       errors: [

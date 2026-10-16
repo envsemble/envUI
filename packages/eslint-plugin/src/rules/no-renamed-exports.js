@@ -3,6 +3,7 @@ import {
   findAttribute,
   moduleExportName,
   readData,
+  resolveVariable,
   staticValue,
 } from '../utilities.js';
 
@@ -103,14 +104,7 @@ export default {
     /** Variables bound to a name that changed (Menu, DirectionLink, Toast), with its entry. */
     const changedVariables = new Map();
 
-    /** The variable a name resolves to where a node is, if any: an import, a local or a parameter. */
-    function resolve(node, name) {
-      for (let scope = sourceCode.getScope(node); scope; scope = scope.upper) {
-        const variable = scope.set.get(name);
-        if (variable) return variable;
-      }
-      return undefined;
-    }
+    const resolve = (node, name) => resolveVariable(sourceCode, node, name);
 
     /** The variable that a declaration binds to an identifier. */
     const declared = (declaration, identifier) =>
