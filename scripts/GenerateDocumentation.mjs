@@ -94,30 +94,68 @@ const contained = (directory, path) => {
   return inside && !inside.startsWith('..') && !isAbsolute(inside);
 };
 
+/** The changesets' version bumps, in order of size. */
+const bumpOrder = ['patch', 'minor', 'major'];
+
+/** A version raised by a bump: 1.2.3 by minor is 1.3.0. */
+function bumped(version, bump) {
+  const [major, minor, patch] = version.split('.').map(Number);
+  if (bump === 'major') return `${major + 1}.0.0`;
+  if (bump === 'minor') return `${major}.${minor + 1}.0`;
+  return `${major}.${minor}.${patch + 1}`;
+}
+
+/** Orders versions such as 0.10.0 after 0.9.0. */
+const compareVersions = (a, b) => {
+  const [x, y] = [a, b].map((version) => version.split('.').map(Number));
+  return x[0] - y[0] || x[1] - y[1] || x[2] - y[2];
+};
+
 /**
- * The versions a page's `since` may name: each version the library's changelog lists, and the
- * version that its pending changesets release next. Undefined outside the repository, where the
- * check is skipped.
+ * The versions a page's `since` may name: each stable version the library's changelog lists, and
+ * the version its changesets lead to. That is the newest stable version raised by the largest bump
+ * of a pending changeset, counting the packages that share envUI's version (the `fixed` group of
+ * .changeset/config.json). In prerelease mode (.changeset/pre.json) it is the version the
+ * prereleases lead to, such as 1.0.0 for 1.0.0-next.3: the version before the prereleases, from
+ * the mode's initialVersions, raised by the largest bump of every changeset since, released in a
+ * prerelease or not, as Changesets computes it. Prerelease headings such as `## 1.0.0-next.0` are
+ * not versions a page can name. Undefined outside the repository, where the check is skipped.
  */
-export function libraryVersions() {
-  if (!existsSync(changelogFile)) return undefined;
-  const released = [...readFileSync(changelogFile, 'utf8').matchAll(/^## (\d+\.\d+\.\d+)\b/gm)].map(
-    (match) => match[1],
-  );
+export function libraryVersions({
+  changelog = changelogFile,
+  changesets = changesetDirectory,
+} = {}) {
+  if (!existsSync(changelog)) return undefined;
+  const released = [...readFileSync(changelog, 'utf8').matchAll(/^## (\d+\.\d+\.\d+)(?=\s|$)/gm)]
+    .map((match) => match[1])
+    .sort(compareVersions);
   const versions = new Set(released);
-  const [major, minor, patch] = (released[0] ?? '0.0.0').split('.').map(Number);
-  const bumps = existsSync(changesetDirectory)
-    ? readdirSync(changesetDirectory)
+  const readJson = (name) => {
+    const file = resolve(changesets, name);
+    return existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : undefined;
+  };
+  const library = '@envsemble/envui';
+  const group = readJson('config.json')?.fixed?.find((names) => names.includes(library)) ?? [
+    library,
+  ];
+  const pre = readJson('pre.json');
+  const bumps = existsSync(changesets)
+    ? readdirSync(changesets)
         .filter((name) => name.endsWith('.md') && name !== 'README.md')
         .flatMap((name) => {
-          const source = readFileSync(resolve(changesetDirectory, name), 'utf8');
-          const bump = source.match(/^['"]?@envsemble\/envui['"]?:\s*(major|minor|patch)\s*$/m);
-          return bump ? [bump[1]] : [];
+          const source = readFileSync(resolve(changesets, name), 'utf8');
+          const header = source.match(/^---\r?\n([\s\S]*?)\r?\n---/)?.[1] ?? '';
+          return [...header.matchAll(/^['"]?([^'"\s:]+)['"]?:\s*(major|minor|patch)\s*$/gm)]
+            .filter(([, name]) => group.includes(name))
+            .map(([, , bump]) => bump);
         })
     : [];
-  if (bumps.includes('major')) versions.add(`${major + 1}.0.0`);
-  else if (bumps.includes('minor')) versions.add(`${major}.${minor + 1}.0`);
-  else if (bumps.includes('patch')) versions.add(`${major}.${minor}.${patch + 1}`);
+  const largest = bumps.sort((a, b) => bumpOrder.indexOf(b) - bumpOrder.indexOf(a))[0];
+  const base =
+    (pre?.mode === 'pre' ? pre.initialVersions?.[library] : undefined) ??
+    released.at(-1) ??
+    '0.0.0';
+  if (largest) versions.add(bumped(base, largest));
   return versions;
 }
 
@@ -226,16 +264,11 @@ const propsTableNames = [
   'field',
   'fields',
 ];
-/** Other columns of a props table. */
-const propsTableColumns = [
-  'type',
-  'types',
-  'contract',
-  'default',
-  'defaults',
-  'description',
-  'values',
-];
+/**
+ * The columns that make a table one of props: a type, default or contract. A table of attributes
+ * and their values, or of names and descriptions, is not.
+ */
+const propsTableColumns = ['type', 'types', 'contract', 'contracts', 'default', 'defaults'];
 
 /**
  * A table that lists props by hand, such as `| Name | Contract |` or `| Option | Type |`; the
@@ -273,7 +306,12 @@ function readTemplate(document, body, { examples, specimens }) {
       problems.push('only the title is a level-one heading');
     if (token.type === 'html' && /<h[1-6][\s>]/i.test(token.raw))
       problems.push(`write headings in Markdown, not as HTML: ${token.raw.trim().split('\n')[0]}`);
-    if (token.type === 'heading' && token.depth >= 3 && /^props\b/i.test(token.text))
+    // "### Props" and "### Props & contracts", but not "### Props forwarding".
+    if (
+      token.type === 'heading' &&
+      token.depth >= 3 &&
+      /^props(?:$|\s*(?:&|and)\s)/i.test(token.text.trim())
+    )
       problems.push(
         `"${'#'.repeat(token.depth)} ${token.text}" lists props by hand; the Props section is generated`,
       );
@@ -472,16 +510,23 @@ export function readDocumentation(
         throw new Error(`Documentation title differs from its index entry: ${path}`);
       const markdown = body.replace(/^# [^\n]+\r?\n\s*/, '');
       const component = path.startsWith('components/');
-      const firstSection = marked
-        .lexer(markdown)
-        .find((t) => t.type === 'heading' && t.depth === 2);
+      const tokens = marked.lexer(markdown);
+      const firstSection = tokens.find((t) => t.type === 'heading' && t.depth === 2);
       const template = component && firstSection?.text === 'Overview';
       // A page that uses the template's parts is on the template, whatever its first section.
+      // They are read from the tokens, as the page renders: a fence indented by a few spaces is a
+      // fence, and one shown inside another fence is text.
+      let usesTemplate = false;
+      marked.walkTokens(tokens, (token) => {
+        if (
+          (token.type === 'heading' && token.depth === 2 && token.text === 'Overview') ||
+          (token.type === 'code' && examplePattern.test(token.lang ?? '')) ||
+          (token.type === 'html' && /^<!--\s*specimen:/.test(token.raw.trim()))
+        )
+          usesTemplate = true;
+      });
       const templateParts =
-        /^## Overview[ \t]*$/m.test(markdown) ||
-        /^(?:`{3,}|~{3,})tsx\s+example=/m.test(markdown) ||
-        /^<!--\s*specimen:/m.test(markdown) ||
-        (frontmatter && ('useWhen' in frontmatter || 'avoidWhen' in frontmatter));
+        usesTemplate || (frontmatter && ('useWhen' in frontmatter || 'avoidWhen' in frontmatter));
       if (component && !template && templateParts)
         throw new Error(
           `${path} uses the page template, so its first section must be "## Overview", not ${

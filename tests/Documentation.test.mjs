@@ -2,7 +2,11 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import { resolve, join, relative, isAbsolute } from 'node:path';
-import { compileDocument, readDocumentation } from '../scripts/GenerateDocumentation.mjs';
+import {
+  compileDocument,
+  libraryVersions,
+  readDocumentation,
+} from '../scripts/GenerateDocumentation.mjs';
 
 test('focused Markdown discovery preserves examples and rejects broken documentation', async () => {
   const cache = resolve('.cache');
@@ -314,5 +318,77 @@ test('a filled-in example keeps its fence closed, with backticks in its source',
     assert.ok(
       compiled.includes(`\`\`\`\`tsx example=Basic\n${source}\`\`\`\`\nAfter the example.\n`),
     );
+  });
+});
+
+test('since names a stable release or the version the changesets lead to, also in prerelease mode', async () => {
+  const cache = resolve('.cache');
+  await mkdir(cache, { recursive: true });
+  const fixture = await mkdtemp(join(cache, 'versions-'));
+  const changelog = join(fixture, 'CHANGELOG.md');
+  const changesets = join(fixture, 'changeset');
+  const changeset = (name, packages) =>
+    writeFile(
+      join(changesets, `${name}.md`),
+      `---\n${Object.entries(packages)
+        .map(([pkg, bump]) => `'${pkg}': ${bump}`)
+        .join('\n')}\n---\n\nA change.\n`,
+    );
+  const versions = () => [...libraryVersions({ changelog, changesets })].sort();
+  try {
+    await mkdir(changesets);
+    await writeFile(
+      join(changesets, 'config.json'),
+      JSON.stringify({ fixed: [['@envsemble/envui', '@envsemble/envui-codemods']] }),
+    );
+    await writeFile(changelog, '# Changelog\n\n## 0.7.0\n\nText.\n\n## 0.6.0\n\nText.\n');
+    await changeset('fix', { '@envsemble/envui': 'patch' });
+    assert.deepEqual(versions(), ['0.6.0', '0.7.0', '0.7.1']);
+    // A package that shares envUI's version raises it too.
+    await changeset('codemods', { '@envsemble/envui-codemods': 'minor' });
+    assert.deepEqual(versions(), ['0.6.0', '0.7.0', '0.8.0']);
+    // In prerelease mode, a released prerelease is no version of its own, and the changesets lead
+    // to the version the prereleases are for, from the version before them.
+    await changeset('names', { '@envsemble/envui': 'major' });
+    await writeFile(
+      join(changesets, 'pre.json'),
+      JSON.stringify({
+        mode: 'pre',
+        tag: 'next',
+        initialVersions: { '@envsemble/envui': '0.7.0' },
+      }),
+    );
+    await writeFile(changelog, '# Changelog\n\n## 1.0.0-next.0\n\nText.\n\n## 0.7.0\n\nText.\n');
+    assert.deepEqual(versions(), ['0.7.0', '1.0.0']);
+  } finally {
+    await rm(fixture, { recursive: true, force: true });
+  }
+});
+
+test('the template rules read Markdown as it renders', async () => {
+  await templateFixture(async ({ page, read }) => {
+    const accepts = async (source) => {
+      await writeFile(page, source);
+      assert.doesNotThrow(read);
+    };
+    // Tables of attributes and a section on forwarding props are not props tables.
+    await accepts(
+      switchFrontmatter +
+        switchBody.replace(
+          'Turns a setting on or off.',
+          '### Props forwarding\n\nOther props go to the input.\n\n| Attribute | Values |\n| --- | --- |\n| role | switch |\n\nTurns a setting on or off.',
+        ),
+    );
+    const legacy = switchFrontmatter.replace(/useWhen:[\s\S]*?(?=related:)/, '');
+    // An example fence shown inside another fence is text, not an example.
+    await accepts(
+      `${legacy}# Switch\n\n## React usage\n\n\`\`\`\`md\n\`\`\`tsx example=Basic\n\`\`\`\n\`\`\`\`\n`,
+    );
+    // An example fence indented by up to three spaces is one.
+    await writeFile(
+      page,
+      `${legacy}# Switch\n\n## React usage\n\n  \`\`\`tsx example=Basic\n  \`\`\`\n`,
+    );
+    assert.throws(read, /first section must be "## Overview", not "## React usage"/);
   });
 });

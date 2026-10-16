@@ -54,7 +54,7 @@ After the `# Title`, a page has these `##` sections in this order. Omit a sectio
 | Examples             | yes      | One `###` heading per example, a sentence or two, and the example's fence.                                  |
 | Changelog            |          | Releases that changed the component, newest first, such as `- **0.6.0**: The quiet variant.`                |
 
-The build adds **Props**, generated from the TypeScript declarations, and **Related**, from the frontmatter, before Changelog. Don't write them, and don't list props anywhere: the build rejects a table whose first column is Name, Prop, Option, Attribute or the like beside a Type, Default, Contract or Description column, and a `###` or deeper heading named Props. Write headings in Markdown, not as HTML. A page that uses the template's parts, such as an example fence or `useWhen`, must start with `## Overview`.
+The build adds **Props**, generated from the TypeScript declarations, and **Related**, from the frontmatter, before Changelog. Don't write them, and don't list props anywhere: the build rejects a table whose first column is Name, Prop, Option, Attribute or the like beside a Type, Default or Contract column, and a `###` or deeper heading named Props or Props & contracts. A table of attributes and their values, or a heading such as Props forwarding, is fine. Write headings in Markdown, not as HTML. A page that uses the template's parts, such as an example fence or `useWhen`, must start with `## Overview`.
 
 In the catalogue the sections become tabs: Overview (overview, examples, related, changelog), Guidelines (anatomy to do and don't), Accessibility and Props.
 
