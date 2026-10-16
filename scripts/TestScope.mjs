@@ -33,6 +33,7 @@ export const overrides = {
     'Cards.spec.ts': ['components/card'],
     'DataDisplay.spec.ts': ['components/list', 'components/table', 'components/card'],
     'DenseContent.spec.ts': ['components/code', 'components/menu', 'components/tabs'],
+    'Direction.spec.ts': ['EnvUIProvider'],
     'Forms.spec.ts': [
       'components/text-field',
       'components/checkbox',
@@ -43,8 +44,16 @@ export const overrides = {
     ],
     'IconButton.spec.ts': ['IconButton'],
     'MarkdownExtensions.spec.ts': ['components/markdown'],
+    'Messages.spec.ts': [
+      'EnvUIProvider',
+      'CloseButton',
+      'ConfirmButton',
+      'CopyButton',
+      'ThemeToggle',
+    ],
     'InputAffixes.spec.ts': ['TextField', 'SearchField'],
     'Navigation.spec.ts': ['components/nav-list', 'Tooltip'],
+    'Primitives.spec.ts': ['Toolbar', 'Field', 'CloseButton', 'EnvUIProvider'],
     'Overlays.spec.ts': [
       'components/dialog',
       'components/popover',

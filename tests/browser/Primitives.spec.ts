@@ -47,8 +47,10 @@ test.describe('Toolbar', () => {
     await expect(tooltip.locator('.env-kbd')).toHaveText(['Ctrl', 'B']);
     await page.keyboard.press('Enter');
     await expect(bold).toHaveAttribute('aria-pressed', 'true');
-    const fill = await bold.evaluate((element) => getComputedStyle(element).backgroundColor);
-    expect(fill).not.toBe('rgba(0, 0, 0, 0)');
+    // The selected fill eases in.
+    await expect
+      .poll(() => bold.evaluate((element) => getComputedStyle(element).backgroundColor))
+      .not.toBe('rgba(0, 0, 0, 0)');
   });
 
   test("gives the application's buttons the ghost variant", async ({ page }) => {

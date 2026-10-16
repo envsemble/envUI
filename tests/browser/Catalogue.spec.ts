@@ -148,7 +148,7 @@ test('live examples keep links in place, show their source, and matrices sit in 
   const code = destinations.locator('xpath=following-sibling::details[1]');
   await code.locator('summary').click();
   await expect(code.locator('.env-code-block')).toContainText(
-    "import { ActionGroup, Button } from '@envsemble/envui';",
+    "import { Button, Stack } from '@envsemble/envui';",
   );
   await expect(code.getByRole('button', { name: 'Copy code', exact: true })).toBeVisible();
   // Catalogue-only specimens, such as the forced interaction states, are in the guidelines.

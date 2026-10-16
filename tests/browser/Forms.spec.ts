@@ -212,11 +212,13 @@ test('Select triggers are button styles, and the open list stands apart from a p
   page,
 }) => {
   const outlined = page.getByRole('combobox', { name: 'Pane sort', exact: true });
-  await expect(outlined).toHaveAttribute('data-variant', 'outlined');
+  await expect(outlined).toHaveAttribute('data-variant', 'outline');
   // The outlined trigger looks like an outlined Button beside it.
   const looks = await outlined.evaluate((element) => {
     const button = document.createElement('button');
-    button.className = 'env-button env-button-outlined';
+    button.className = 'env-button';
+    button.dataset.variant = 'outline';
+    button.dataset.tone = 'neutral';
     element.parentElement!.append(button);
     const read = (target: Element) => {
       const style = getComputedStyle(target);

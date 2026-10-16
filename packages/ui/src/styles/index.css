@@ -57,7 +57,6 @@
 @import './DropZone.css' layer(env.components);
 @import './ConnectedRows.css' layer(env.components);
 @import './Dialog.css' layer(env.components);
-@import './Drawer.css' layer(env.components);
 @import './Toast.css' layer(env.components);
 @import './Alert.css' layer(env.components);
 @import './Popover.css' layer(env.components);

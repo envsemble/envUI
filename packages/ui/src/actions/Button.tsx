@@ -28,6 +28,7 @@ export type ButtonEmphasisProps =
        * ghost for an application's chrome, such as a toolbar, and text for a link-like action.
        * Without it, the button takes the variant its container gives, such as ghost in a toolbar,
        * and else primary (secondary for IconButton).
+       * @default 'primary'
        */
       variant?: 'primary';
       /**

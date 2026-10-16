@@ -1,3 +1,7 @@
+/* The color of an envUI field's error and of its invalid control. */
+.env-form-field {
+  --env-field-error-color: var(--env-color-fg-danger);
+}
 /* A field takes the control height of its size, or of its container where it sets none. A tall
    field (the floating variant, plain fields and text areas) keeps room above it for its label. */
 .env-text-field {

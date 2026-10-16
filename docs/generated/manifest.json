@@ -5922,6 +5922,7 @@
           "name": "variant",
           "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
           "required": false,
+          "default": "'primary'",
           "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else primary (secondary for IconButton)."
         },
         {
@@ -7528,7 +7529,7 @@
           "name": "closeLabel",
           "type": "string",
           "required": false,
-          "default": "'Close', or EnvUIProvider's messages.dialog.close",
+          "default": "'Close'",
           "description": "The label of the built-in close button that starts the actions, such as Cancel, or the name of a right panel's close icon button."
         },
         {
@@ -7614,7 +7615,7 @@
           "name": "variant",
           "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
           "required": false,
-          "default": "'secondary'",
+          "default": "'primary'",
           "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else primary (secondary for IconButton)."
         },
         {
@@ -8471,6 +8472,7 @@
           "name": "variant",
           "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
           "required": false,
+          "default": "'primary'",
           "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else primary (secondary for IconButton)."
         },
         {
@@ -11870,6 +11872,7 @@
           "name": "variant",
           "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
           "required": false,
+          "default": "'primary'",
           "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else primary (secondary for IconButton)."
         },
         {

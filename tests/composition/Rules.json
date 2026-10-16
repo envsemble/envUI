@@ -342,8 +342,7 @@
       "index.css": "Imports every stylesheet.",
       "ConnectedRows.css": "Shared connected-row corners.",
       "Motion.css": "The keyframes several components share.",
-      "Reset.css": "The box-sizing reset inside every theme boundary.",
-      "Drawer.css": "Drawer's style sheet, created ahead of the component, which its batch fills."
+      "Reset.css": "The box-sizing reset inside every theme boundary."
     },
     "childRules": {
       "$comment": "A container may lay out a child that belongs to another component: place, size and space it, never restyle it. Each rule lets one stylesheet's selectors name a child's classes, as long as they declare only layoutProperties and the rule's own properties.",

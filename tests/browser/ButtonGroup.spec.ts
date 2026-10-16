@@ -18,7 +18,7 @@ async function geometry(group: Locator) {
             y: rect.y,
             width: rect.width,
             height: rect.height,
-            important: button.classList.contains('env-button-important'),
+            important: button.matches("[data-variant='primary'][data-tone='accent']"),
             icon: button.classList.contains('env-icon-button'),
             corners: [
               style.borderStartStartRadius,

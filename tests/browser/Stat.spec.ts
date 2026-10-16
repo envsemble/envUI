@@ -114,6 +114,9 @@ test('a stat group wraps its stats into even columns as space runs out', async (
   await expect.poll(columns).toEqual({ perRow: 1, rows: 4, widths: 1 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   // The group is a pane, or a row tone on a pane.
-  await expect(group).toHaveClass(/env-surface-pane/);
-  await expect(page.getByTestId('stat-row-group-light')).toHaveClass(/env-surface-row/);
+  await expect(group).toHaveAttribute('data-background', 'default');
+  await expect(page.getByTestId('stat-row-group-light')).toHaveAttribute(
+    'data-background',
+    'muted',
+  );
 });

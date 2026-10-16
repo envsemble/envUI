@@ -40,10 +40,10 @@ CloseButton is an icon-only button with a cross, ghost by default, named "Close"
 
 ## Variants and sizes
 
-| Variant     | Use for                                                                                  |
-| ----------- | ---------------------------------------------------------------------------------------- |
-| `ghost`     | Chrome and surfaces: the quiet icon, with a state layer on hover and press. The default. |
-| `secondary` | Where the button should read as a control of its own, such as over an image.             |
+| Variant     | Use for                                                                                                   |
+| ----------- | --------------------------------------------------------------------------------------------------------- |
+| `ghost`     | An application's chrome and surfaces: the quiet icon, with a state layer on hover and press. The default. |
+| `secondary` | Where the button should read as a control of its own, such as over an image.                              |
 
 - **Size**: `sm`, `md` or `lg`, as on every button: 2, 2.5 or 3 rem square in the comfortable scale; without it, the control height of its container.
 - **Icon**: a Close cross by default; `icon` takes another, such as a smaller cross.

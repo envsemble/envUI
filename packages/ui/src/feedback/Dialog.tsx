@@ -49,7 +49,7 @@ export interface DialogProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title
   /**
    * The label of the built-in close button that starts the actions, such as Cancel, or the name of
    * a right panel's close icon button.
-   * @default 'Close', or EnvUIProvider's messages.dialog.close
+   * @default 'Close'
    */
   closeLabel?: string;
   /**

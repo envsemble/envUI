@@ -2,7 +2,6 @@
    description and its error. */
 .env-form-field,
 .env-field {
-  --env-field-error-color: var(--env-color-fg-danger);
   display: grid;
   align-content: start;
   gap: var(--env-space-3);
@@ -11,6 +10,10 @@
   overflow-wrap: anywhere;
   font: var(--env-type-body-small);
   color: var(--env-color-fg-default);
+}
+/* The color of a field's error and of its invalid control. */
+.env-field {
+  --env-field-error-color: var(--env-color-fg-danger);
 }
 .env-field-hint,
 .env-field-description,
