@@ -1,27 +1,32 @@
 /**
  * The contrast gate's pair registry: every foreground envUI paints on a background, with the kind
- * of contrast WCAG 2.x asks of it. tests/browser/Contrast.spec.ts resolves each pair in every theme
- * of Themes.ts, in a real browser, and fails on any pair below the theme's minimum for its kind
- * that Exceptions.json doesn't list.
+ * of contrast WCAG 2.x asks of it, and every pair of state fills that must look different.
+ * tests/browser/Contrast.spec.ts resolves each pair in every theme of Themes.ts, in a real browser,
+ * and fails on any pair below the theme's minimum for its kind that Exceptions.json doesn't list.
  *
  * - `fg` and each `bg` layer name a custom property: a semantic role (`--color-{bg|fg|border}-…`),
  *   or a component token where the component takes a different role per theme (`--color-row`,
- *   `--color-checkbox`…). Every color the gate measures is a token; nothing is composed at runtime.
+ *   `--color-checkbox`…). The few colors a component still composes where it paints, because they
+ *   depend on something no token can name, are listed in `derived` below and measured like tokens.
  * - `bg` lists what the foreground sits on, nearest first. A translucent layer is composited over
  *   the next one, and the last over the theme's page. A translucent foreground is composited over
  *   its background before it is measured.
  * - `kind`: text (WCAG 1.4.3); non-text (1.4.11: icons, borders that are a control's only boundary,
  *   state indicators); focus (2.4.13: the ring against what it is drawn on, which is the surface
- *   behind an offset ring and the element's own fill behind an inset one). Themes.ts sets the
- *   minimum of each kind: 4.5, 3 and 3 at standard contrast, 7, 4.5 and 4.5 at high contrast.
- * - `contrast: 'high'` measures a pair only in the high-contrast themes, for boundaries that are
- *   decorative at standard contrast, such as dividers and the edges of elevated popups.
+ *   behind an offset ring and the element's own fill behind an inset one); difference (two state
+ *   fills, or two labels, that must be told apart, such as a selected row and a hovered one,
+ *   measured as their OKLab distance ΔEOK rather than a ratio). Themes.ts sets the minimum of each
+ *   kind: 4.5, 3 and 3 at standard contrast and 7, 4.5 and 4.5 at high contrast for the ratios, and
+ *   ΔEOK 0.02 for a difference in every theme.
+ * - A pair that departs from those rules says why in its `rationale`: `contrast: 'high'` measures it
+ *   only in the high-contrast themes, and `minimum` lowers its minimum at standard or high contrast. Pairs the gate no
+ *   longer measures are listed in `dropped`, each with the reason, rather than disappearing.
  * - Disabled states are exempt from 1.4.3 and 1.4.11, so none is listed.
  *
  * A pair is named `<fg> on <bg> over <next layer>`, which is also how Exceptions.json refers to it.
  */
 
-export type ContrastKind = 'text' | 'non-text' | 'focus';
+export type ContrastKind = 'text' | 'non-text' | 'focus' | 'difference';
 
 export interface ContrastPair {
   fg: string;
@@ -29,36 +34,43 @@ export interface ContrastPair {
   kind: ContrastKind;
   /** Measured only in the themes of this contrast; both when absent. */
   contrast?: 'high';
+  /** Minimums below the kind's, per contrast, for what WCAG doesn't require of this pair. */
+  minimum?: { readonly standard?: number; readonly high?: number };
+  /** Why the pair is scoped to one contrast or held to a lower minimum. */
+  rationale?: string;
   note?: string;
 }
 
 const tones = ['neutral', 'accent', 'success', 'warning', 'danger', 'done'] as const;
+const alertTones = ['accent', 'success', 'warning', 'danger'] as const;
 
 /** The text color of each status tone; the neutral tone is muted text. */
 const toneText = (tone: (typeof tones)[number]) =>
-  tone === 'neutral'
-    ? '--color-fg-muted'
-    : tone === 'accent'
-      ? '--color-fg-accent'
-      : `--color-fg-${tone}`;
+  tone === 'neutral' ? '--color-fg-muted' : `--color-fg-${tone}`;
 
 // Surfaces, by role.
 const page = '--color-bg-page'; // the app frame, title bars, Surface background="page"
 const surface = '--color-bg-default'; // Surface's default, sidebars, standard menus
-const muted = '--color-bg-muted'; // Surface background="muted", radio rows
-const raised = '--color-bg-raised'; // Surface background="raised", dialogs, rows on a contrasting surface
-const popup = '--color-bg-popup'; // menus, Select lists, popovers, the composer
+const muted = '--color-bg-muted'; // Surface background="muted", cards, radio rows
+const raised = '--color-bg-raised'; // Surface background="raised", dialogs, tables, rows on a contrasting surface
+const popup = '--color-bg-popup'; // Select lists, popovers, compact menus, menu rows, the composer
 const field = '--color-bg-field';
+const overlay = '--color-bg-overlay'; // the scrim behind dialogs
 const selected = '--color-bg-selected';
+const selectedHover = '--color-bg-selected-hover';
+const selectedPressed = '--color-bg-selected-pressed';
+const popupHover = '--color-bg-popup-hover';
+const popupPressed = '--color-bg-popup-pressed';
 const fill = '--color-bg-neutral-muted'; // the translucent fill of tab rails, chips, secondary buttons
 const layerHover = '--color-bg-neutral-subtle-hover';
 const layerPressed = '--color-bg-neutral-subtle-pressed';
+const navigationHover = '--color-bg-navigation-hover';
+const navigationPressed = '--color-bg-navigation-pressed';
 // Component tokens that take a different role per theme.
 const row = '--color-row'; // List rows: the default surface in light, the muted one in dark
+const rowHover = '--color-row-hover';
+const rowPressed = '--color-row-pressed';
 const actionStrip = '--color-action-strip';
-// Navigation items: the default surface's states in light, the muted surface's in dark.
-const navigationHover = '--color-navigation-quiet-hover';
-const navigationPressed = '--color-navigation-quiet-pressed';
 
 type Background = string | readonly string[];
 
@@ -67,13 +79,13 @@ function on(
   fg: string,
   backgrounds: readonly Background[],
   note?: string,
-  contrast?: 'high',
+  extra: Pick<ContrastPair, 'contrast' | 'minimum' | 'rationale'> = {},
 ): ContrastPair[] {
   return backgrounds.map((bg) => ({
     fg,
     bg: typeof bg === 'string' ? [bg] : bg,
     kind,
-    ...(contrast ? { contrast } : {}),
+    ...extra,
     ...(note ? { note } : {}),
   }));
 }
@@ -84,10 +96,27 @@ const nonText = (
   fg: string,
   backgrounds: readonly Background[],
   note?: string,
-  contrast?: 'high',
-) => on('non-text', fg, backgrounds, note, contrast);
+  extra?: Pick<ContrastPair, 'contrast' | 'minimum' | 'rationale'>,
+) => on('non-text', fg, backgrounds, note, extra);
 const focus = (fg: string, backgrounds: readonly Background[], note?: string) =>
   on('focus', fg, backgrounds, note);
+/** `fill` must look different from each background: a state from its rest, or from another state. */
+const different = (fill: string, backgrounds: readonly Background[], note?: string) =>
+  on('difference', fill, backgrounds, note);
+
+/**
+ * The hairline edge of an elevated surface at standard contrast: below 3:1 by design. WCAG 1.4.11
+ * asks 3:1 of what is needed to identify a component; a popup is identified by its elevation shadow
+ * and its content, so its edge is decorative there. Raising the edge to 3:1 would outline every
+ * menu, list and popover in mid gray, which changes the identity (Decision 7). The gate still
+ * measures the edge, so it can't fade into its surface: at least 1.2:1. It is the boundary in high
+ * contrast (4.5:1, measured below) and under forced colors, where the shadow is gone.
+ */
+const popupEdge = {
+  minimum: { standard: 1.2 },
+  rationale:
+    'Decorative at standard contrast: the elevation shadow and the content identify the popup, as WCAG 1.4.11 allows, and a 3:1 edge would outline every popup in mid gray. Held to 1.2:1 so it stays visible; the boundary in high contrast and under forced colors.',
+} as const;
 
 export const pairs: readonly ContrastPair[] = [
   // Text on every surface role.
@@ -102,14 +131,14 @@ export const pairs: readonly ContrastPair[] = [
     [page, surface],
     'Navigation labels, meter and slider values, the thumb of a switch that is off',
   ),
-  ...text('--color-fg-default', [row, '--color-row-hover', '--color-row-pressed'], 'List rows'),
-  ...text('--color-fg-muted', [row], 'List row details'),
+  ...text('--color-fg-default', [row, rowHover, rowPressed], 'List rows'),
+  ...text('--color-fg-muted', [row, rowHover, rowPressed], 'List row details'),
   ...text(
     '--color-fg-default',
-    ['--color-bg-popup-hover', '--color-bg-popup-pressed'],
+    [popupHover, popupPressed],
     'Menu items and Select and Combobox options, highlighted and pressed',
   ),
-  ...text('--color-fg-muted', ['--color-bg-popup-hover'], 'Menu item descriptions'),
+  ...text('--color-fg-muted', [popupHover], 'Menu item descriptions'),
 
   // Links and text buttons on every surface, and in their states.
   ...text('--color-fg-link', [page, surface, muted, raised, popup, row, actionStrip]),
@@ -196,6 +225,11 @@ export const pairs: readonly ContrastPair[] = [
   ...text('--color-border-accent', [field], 'The label of a focused field'),
   ...text('--color-fg-danger', [field], 'The label and message of an invalid field'),
   ...text(
+    '--color-fg-danger',
+    [muted],
+    'The message of an invalid field on a muted surface; the tone pairs below measure the others',
+  ),
+  ...text(
     '--color-fg-default',
     [
       [fill, page],
@@ -217,26 +251,38 @@ export const pairs: readonly ContrastPair[] = [
   ),
   ...nonText(
     '--color-border-default',
-    [field, page, surface, muted, raised],
-    'The only boundary of outlined fields, outlined buttons, Select triggers and the track of a switch that is off; DropZone and the empty stars of a Rating take it too',
+    [field, page, surface, muted, raised, popup],
+    'The only boundary of outlined fields, the composer, outlined buttons, Select triggers and the track of a switch that is off; DropZone and the empty stars of a Rating take it too',
   ),
   ...nonText(
     '--color-border-accent',
     [page, surface, popup],
-    'The border of a focused field, and today’s ring in a calendar',
+    'The border of a focused field and of the composer, and today’s ring in a calendar',
   ),
   ...nonText('--color-border-danger', [field, page, surface], 'The border of an invalid field'),
   ...nonText(
     '--color-border-muted',
     [page, surface, muted],
-    'Dividers: decorative at standard contrast, boundaries at high contrast',
-    'high',
+    'Dividers: table lines, title bars, Markdown rules, menu separators',
+    {
+      contrast: 'high',
+      rationale:
+        'Decorative at standard contrast: a divider separates content that its spacing already groups, and WCAG 1.4.11 asks nothing of decorative edges. High contrast makes dividers boundaries, so they are measured there.',
+    },
   ),
+
+  // Elevated surfaces: the edge of every popup, at standard and at high contrast.
   ...nonText(
     '--elevation-2-border',
-    [popup, page, surface],
-    'The edge of menus, Select lists and popovers: elevation separates them at standard contrast, the edge does at high contrast',
-    'high',
+    [popup, surface, page, muted, raised],
+    'The edge of menus, Select and Combobox lists, popovers, hover cards, the date picker, rich text suggestions and docked panels, against the popup and what it floats over',
+    popupEdge,
+  ),
+  ...nonText(
+    '--elevation-3-border',
+    [raised, [overlay, page]],
+    'The edge of dialogs and the command palette, against the dialog and the scrim',
+    popupEdge,
   ),
 
   // Choice controls.
@@ -248,34 +294,68 @@ export const pairs: readonly ContrastPair[] = [
   ...text('--color-fg-muted', ['--color-bg-muted-hover'], 'Radio row details'),
   ...nonText(
     '--color-bg-brand-emphasis',
-    [page, surface, muted, '--color-bg-muted-hover', popup, '--color-bg-popup-hover', selected],
-    'A chosen radio, also in a chosen row; check marks in menus and options; the chosen calendar day',
+    [
+      page,
+      surface,
+      muted,
+      '--color-bg-muted-hover',
+      popup,
+      popupHover,
+      selected,
+      selectedHover,
+      selectedPressed,
+    ],
+    'A chosen radio, also in a chosen row; check marks in menus and options, also on a selected option under the pointer; the chosen calendar day',
   ),
-  ...nonText('--color-checkbox', [page, surface, muted], 'A checked checkbox'),
-  ...nonText('--color-on-checkbox', [
+  ...nonText(
     '--color-checkbox',
-    '--color-checkbox-hover',
-    '--color-checkbox-pressed',
-  ]),
-  ...nonText('--color-switch-on', [page, surface], 'The track of a switch that is on'),
-  ...nonText('--color-switch-thumb-on', [
+    [page, surface, muted, raised, row, selected, selectedHover],
+    'A checked checkbox, also in a list row and a selected table row',
+  ),
+  // The marks of checked controls are held to the text minimum, 4.5:1 and 7:1 at high contrast,
+  // though WCAG asks 3:1 of them: a check reads as a symbol, as a glyph does.
+  ...text(
+    '--color-on-checkbox',
+    ['--color-checkbox', '--color-checkbox-hover', '--color-checkbox-pressed'],
+    'The check of a checked checkbox',
+  ),
+  ...nonText(
     '--color-switch-on',
-    '--color-switch-on-hover',
-    '--color-switch-on-pressed',
-  ]),
+    [page, surface, muted, raised, row, selected],
+    'The track of a switch that is on',
+  ),
+  ...text(
+    '--color-switch-thumb-on',
+    ['--color-switch-on', '--color-switch-on-hover', '--color-switch-on-pressed'],
+    'The thumb of a switch that is on',
+  ),
+  ...nonText(
+    '--color-fg-on-strong',
+    ['--color-bg-brand-strong', '--color-bg-brand-strong-hover', '--color-bg-brand-strong-pressed'],
+    'White marks on the brand’s strong fill, which light checkboxes and switches take; dark and high contrast move them to the emphasis fill with dark marks. Not text: in dark the fill keeps 3:1 against the surfaces, which puts white text below 4.5:1',
+  ),
 
-  // Selection: menus, Select, the command palette, tabs, navigation, trees, tables.
+  // Selection: menus, Select, tabs, navigation, trees, tables.
   ...text(
     '--color-fg-control',
-    [popup, '--color-bg-popup-hover', '--color-bg-popup-pressed', raised],
+    [popup, popupHover, popupPressed, raised],
     'Select options; the command palette lists them on a dialog',
   ),
   ...text(
     '--color-fg-on-selected',
-    [selected, '--color-bg-selected-hover', '--color-bg-selected-pressed'],
-    'Selected navigation items, tabs, tree rows and Select options',
+    [selected, selectedHover, selectedPressed],
+    'Selected navigation items, tabs, tree rows and Select options, and the bar at the start of a selected table row',
   ),
-  ...text('--color-fg-default', [selected, '--color-bg-selected-hover'], 'Selected table rows'),
+  ...text(
+    '--color-fg-default',
+    [selected, selectedHover, selectedPressed],
+    'Selected table and tree rows',
+  ),
+  ...text(
+    '--color-fg-muted',
+    [selected, selectedHover, selectedPressed],
+    'Details of selected tree rows and captions in selected table rows',
+  ),
   ...text(
     '--color-fg-muted',
     [
@@ -298,7 +378,39 @@ export const pairs: readonly ContrastPair[] = [
     [navigationHover, navigationPressed, [layerHover, page], [layerHover, surface]],
     'Navigation labels on hover and press',
   ),
+  ...nonText(
+    '--color-fg-muted',
+    [navigationHover, navigationPressed],
+    'Navigation icons on hover and press',
+  ),
   ...nonText('--color-fg-on-selected', [[fill, page]], 'The bar of the active document tab'),
+
+  // Selection must look selected next to the states around it: a selected row next to a hovered one,
+  // a hovered selected row next to the selection, a hovered row next to its surface.
+  ...different(
+    selected,
+    [popup, popupHover, surface, page, raised, [layerHover, surface], [layerHover, raised]],
+    'The selection against the surfaces it sits on and their hover fills: Select options, tree and table rows',
+  ),
+  ...different(selected, [navigationHover], 'A selected navigation item next to a hovered one'),
+  ...different(selectedHover, [selected], 'A selected item under the pointer'),
+  ...different(popupHover, [popup], 'A highlighted option or menu item'),
+  ...different(
+    navigationHover,
+    [surface, page],
+    'A navigation item under the pointer, on a sidebar and on the page',
+  ),
+  ...different(layerHover, [surface, page, raised], 'A tree or table row under the pointer'),
+  ...different(
+    '--color-fg-on-selected',
+    ['--color-fg-control', '--color-fg-default'],
+    'The label of a selected item against the labels of the others',
+  ),
+  ...different(
+    actionStrip,
+    [muted],
+    'The action strip of a card against the card, on its default muted surface',
+  ),
 
   // Status tones as text, on their tints, and as fills for labels.
   // The neutral tone is muted text on the neutral fill, which the pairs above already measure.
@@ -314,9 +426,17 @@ export const pairs: readonly ContrastPair[] = [
         ])),
     ...text('--color-fg-on-emphasis', [`--color-bg-${tone}-emphasis`], 'Solid badges and counters'),
   ]),
-  ...(['accent', 'success', 'warning', 'danger'] as const).flatMap((tone) =>
-    text('--color-fg-default', [[`--color-bg-${tone}-muted`, page]], `Alert tone="${tone}"`),
-  ),
+  ...alertTones.flatMap((tone) => [
+    ...text('--color-fg-default', [[`--color-bg-${tone}-muted`, page]], `Alert tone="${tone}"`),
+    ...nonText(
+      toneText(tone),
+      [
+        [`--color-bg-${tone}-subtle-hover`, `--color-bg-${tone}-muted`, page],
+        [`--color-bg-${tone}-subtle-pressed`, `--color-bg-${tone}-muted`, page],
+      ],
+      'The dismiss icon of an alert on hover and press',
+    ),
+  ]),
   ...text(
     '--color-fg-on-strong',
     ['--color-bg-neutral-strong', '--color-bg-success-strong', '--color-bg-info-strong'],
@@ -326,10 +446,13 @@ export const pairs: readonly ContrastPair[] = [
     '--color-fg-on-strong',
     [
       '--color-bg-neutral-strong-hover',
+      '--color-bg-neutral-strong-pressed',
       '--color-bg-success-strong-hover',
+      '--color-bg-success-strong-pressed',
       '--color-bg-info-strong-hover',
+      '--color-bg-info-strong-pressed',
     ],
-    'A toast’s dismiss icon on hover',
+    'A toast’s dismiss icon on hover and press; the error toast’s states are the destructive button’s, measured as text above',
   ),
 
   // Content.
@@ -351,12 +474,36 @@ export const pairs: readonly ContrastPair[] = [
   ...text('--color-fg-muted', ['--color-bg-raised-hover'], 'Pager link captions on hover'),
   ...nonText(
     '--color-control-blue',
-    [page, surface, [fill, page]],
+    [page, surface, muted, raised, [fill, page], [fill, surface]],
     'Spinners, slider thumbs and indicators, and meter indicators on their track',
   ),
+  ...different(
+    'heatmap-accent-lowest',
+    [[fill, page]],
+    'The lightest step of a calendar heatmap against an empty day',
+  ),
+  ...nonText(
+    'badge-outline-primary',
+    ['--color-bg-brand-emphasis'],
+    'The outline of a badge or counter on a primary button',
+    {
+      minimum: { standard: 1.5, high: 3 },
+      rationale:
+        'Decorative: the pill’s text is the button’s label color, which the primary button pairs measure at 4.5:1; the outline only groups it. Held to 1.5:1, and 3:1 in high contrast, so it stays visible.',
+    },
+  ),
+  ...nonText(
+    'badge-outline-important',
+    ['--color-bg-important-strong'],
+    'The outline of a badge or counter on an important button',
+    {
+      minimum: { standard: 1.5, high: 3 },
+      rationale:
+        'Decorative: the pill’s text is the button’s label color, which the important button pairs measure at 4.5:1; the outline only groups it. Held to 1.5:1, and 3:1 in high contrast, so it stays visible.',
+    },
+  ),
 
-  // Focus rings, against what they are drawn on. Inset rings on solid fills add an inner ring in the
-  // label's color, which the label pairs above measure.
+  // Focus rings, against what they are drawn on.
   ...focus(
     '--color-border-focus',
     [page, surface, muted, raised, row, popup, field],
@@ -365,16 +512,45 @@ export const pairs: readonly ContrastPair[] = [
   ...focus(
     '--color-border-focus',
     [
-      '--color-bg-popup-hover',
+      popupHover,
       selected,
-      '--color-bg-selected-hover',
+      selectedHover,
+      selectedPressed,
       navigationHover,
+      navigationPressed,
+      rowPressed,
+      [layerHover, surface],
+      [layerPressed, surface],
       '--color-bg-muted-hover',
       [fill, raised],
       [fill, fill, page],
     ],
-    'Inset rings sit on the focused element: menu and Select options, navigation items, tree rows, row radios, the command palette search and tabs',
+    'Inset rings sit on the focused element: menu and Select options, navigation items, tree rows, list rows, row radios, the command palette search and tabs, also while pressed',
   ),
+  // An inset ring on a solid fill of its own blue adds an inner ring in the label's color, which
+  // the label pairs of the primary, important and destructive fills measure, as text.
+];
+
+/**
+ * Pairs the gate measured once and no longer does, with the reason. A pair that leaves `pairs`
+ * must be listed here; tests/browser/Contrast.spec.ts checks that none of these is still declared.
+ */
+export const dropped: readonly { pair: string; rationale: string }[] = [
+  {
+    pair: '--color-focus-ring on --color-primary-action',
+    rationale:
+      'The ring is the brand blue, so on a primary fill it measured 1:1. An inset ring on a solid fill draws an inner ring in the label color instead, which the label pairs on the primary, important and destructive fills measure as text, above the focus minimum.',
+  },
+  {
+    pair: '--color-border-strong on --color-pane',
+    rationale:
+      'As --color-border-strong on --color-canvas: the empty stars of a Rating take --color-border-default.',
+  },
+  {
+    pair: '--color-border-strong on --color-canvas',
+    rationale:
+      'The empty stars of a Rating, which this pair measured on the page and on panes, take the control boundary now, --color-border-default, measured at 3:1 on every surface. The 0.7 name only paints dividers, measured as --color-border-muted in high contrast.',
+  },
 ];
 
 export function pairName(pair: Pick<ContrastPair, 'fg' | 'bg'>): string {
@@ -382,11 +558,21 @@ export function pairName(pair: Pick<ContrastPair, 'fg' | 'bg'>): string {
 }
 
 /**
- * Colors the CSS composes from tokens where they are painted. None: every hover, pressed and
- * translucent color is a token of its own, so the gate measures what the browser paints. Keep it
- * empty; add a token instead.
+ * Colors a component composes where it paints, because they depend on something no token can
+ * name, measured as the browser resolves them. Every other hover, pressed and translucent color is
+ * a token of its own; add a token rather than an entry here.
+ *
+ * - A badge or counter inside a primary or important button is outlined in 55% of the button's label
+ *   color, `currentColor`, which only the button knows (Badge.css).
+ * - Calendar heatmap steps mix the tone into the page by a share that depends on how many steps the
+ *   data has, from 30% at the lightest to the full tone (CalendarHeatmap.tsx and .css). The
+ *   lightest step of the default accent tone is measured.
  */
-export const derived: Readonly<Record<string, string>> = {};
+export const derived: Readonly<Record<string, string>> = {
+  'badge-outline-primary': 'color-mix(in srgb, var(--color-fg-on-emphasis) 55%, transparent)',
+  'badge-outline-important': 'color-mix(in srgb, var(--color-fg-on-strong) 55%, transparent)',
+  'heatmap-accent-lowest': 'color-mix(in srgb, var(--color-fg-accent) 30%, var(--color-bg-page))',
+};
 
 /** The CSS color a name in a pair stands for. */
 export function cssColor(name: string): string {

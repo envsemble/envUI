@@ -1,14 +1,15 @@
 import { readFileSync } from 'node:fs';
 import { test, expect, type Page } from '@playwright/test';
 import { fixtureUrl } from './Servers';
-import { cssColor, pairName, pairs, type ContrastPair } from '../contrast/Pairs';
+import { cssColor, dropped, pairName, pairs, type ContrastPair } from '../contrast/Pairs';
 import { themes, type ContrastTheme } from '../contrast/Themes';
 import {
   apcaContrast,
+  colorDifference,
   contrastRatio,
   flatten,
-  formatRatio,
   formatTable,
+  formatValue,
   parseColor,
   type ContrastRow,
   type Rgb,
@@ -17,7 +18,8 @@ import {
 /**
  * The contrast gate. Every pair in tests/contrast/Pairs.ts is resolved in every theme of
  * tests/contrast/Themes.ts by the browser, so var(), relative colors, color-mix() and light-dark()
- * resolve as shipped, and is measured with WCAG 2.x. Pairs that fail today are listed in
+ * resolve as shipped, and is measured with WCAG 2.x, or as a ΔEOK distance for the difference
+ * pairs, which must be told apart rather than read against each other. Pairs that fail today are listed in
  * tests/contrast/Exceptions.json; the gate fails on a new failure, on a listed failure that got
  * worse, and on a listed failure that now passes, so the list only shrinks.
  *
@@ -84,6 +86,11 @@ async function resolveColors(
   );
 }
 
+/** The minimum a pair is held to in a theme: its own lowered one for the theme's contrast, if any. */
+function minimumOf(pair: ContrastPair, theme: ContrastTheme) {
+  return pair.minimum?.[theme.contrast] ?? theme.minimums[pair.kind];
+}
+
 function measure(
   pair: ContrastPair,
   theme: ContrastTheme,
@@ -91,7 +98,7 @@ function measure(
   canvas: Rgb,
 ): ContrastRow {
   const name = pairName(pair);
-  const min = theme.minimums[pair.kind];
+  const min = minimumOf(pair, theme);
   const row = { pair: name, theme: theme.name, kind: pair.kind, min };
   const unresolved = [pair.fg, ...pair.bg].filter((color) => resolved[color] === null);
   if (unresolved.length > 0)
@@ -107,28 +114,35 @@ function measure(
     canvas,
   );
   const foreground = flatten([parseColor(resolved[pair.fg]!)], background);
-  const ratio = contrastRatio(foreground, background);
-  const measured = { ...row, ratio, apca: apcaContrast(foreground, background) };
+  const difference = pair.kind === 'difference';
+  const ratio = difference
+    ? colorDifference(foreground, background)
+    : contrastRatio(foreground, background);
+  const measured = {
+    ...row,
+    ratio,
+    apca: difference ? null : apcaContrast(foreground, background),
+  };
   const exception = exceptionFor(name, theme.name);
   if (ratio >= min)
     return exception
       ? {
           ...measured,
           status: 'FAIL: exception now passes',
-          detail: `It measures ${formatRatio(ratio)} against ${min}: remove its entry from ${exceptionsFile}.`,
+          detail: `It measures ${formatValue(pair.kind, ratio)} against ${min}: remove its entry from ${exceptionsFile}.`,
         }
       : { ...measured, status: 'pass' };
   if (!exception)
     return {
       ...measured,
       status: 'FAIL: below minimum',
-      detail: `${pair.note ? `${pair.note}. ` : ''}Fix the colors. Only if the failure is accepted for now, list it in ${exceptionsFile}: ${JSON.stringify({ pair: name, theme: theme.name, ratio: Number(formatRatio(ratio)), note: '…' })}`,
+      detail: `${pair.note ? `${pair.note}. ` : ''}Fix the colors. Only if the failure is accepted for now, list it in ${exceptionsFile}: ${JSON.stringify({ pair: name, theme: theme.name, ratio: Number(formatValue(pair.kind, ratio)), note: '…' })}`,
     };
   if (ratio < exception.ratio - tolerance)
     return {
       ...measured,
       status: 'FAIL: worse than its exception',
-      detail: `It measures ${formatRatio(ratio)}, below the ${exception.ratio.toFixed(2)} recorded in ${exceptionsFile}: fix the colors rather than lowering the record.`,
+      detail: `It measures ${formatValue(pair.kind, ratio)}, below the ${formatValue(pair.kind, exception.ratio)} recorded in ${exceptionsFile}: fix the colors rather than lowering the record.`,
     };
   return { ...measured, status: 'known exception', detail: exception.note };
 }
@@ -154,6 +168,28 @@ test.describe('contrast', { tag: '@contrast' }, () => {
           problems.push(`${name}: ${(error as Error).message}`);
         }
       }
+      const scoped = pair.contrast !== undefined || pair.minimum !== undefined;
+      if (scoped && !pair.rationale?.trim())
+        problems.push(
+          `${name} is measured only at high contrast or below its kind's minimum: give it a rationale that says why WCAG doesn't require more.`,
+        );
+      if (!scoped && pair.rationale)
+        problems.push(`${name} has a rationale but no scope or minimum: move it to its note.`);
+      for (const theme of themes) {
+        const lowered = pair.minimum?.[theme.contrast];
+        if (lowered !== undefined && lowered >= theme.minimums[pair.kind])
+          problems.push(
+            `${name} lowers its ${theme.contrast} minimum to ${lowered}, which is not below its kind's.`,
+          );
+      }
+    }
+    for (const entry of dropped) {
+      if (declared.has(entry.pair))
+        problems.push(
+          `${entry.pair} is listed as dropped in tests/contrast/Pairs.ts but is still measured.`,
+        );
+      if (!entry.rationale.trim())
+        problems.push(`The dropped pair ${entry.pair} needs a rationale.`);
     }
     const themeNames = new Set(themes.map((theme) => theme.name));
     const listed = new Set<string>();
@@ -177,6 +213,34 @@ test.describe('contrast', { tag: '@contrast' }, () => {
         );
     }
     expect(problems.length, problems.join('\n')).toBe(0);
+  });
+
+  test('every pair measured below the WCAG minimum, or not at all, says why', async ({}, testInfo) => {
+    const lines = [
+      ...pairs
+        .filter((pair) => pair.contrast !== undefined || pair.minimum !== undefined)
+        .map(
+          (pair) =>
+            `${pairName(pair)} [${
+              pair.contrast
+                ? `${pair.contrast} contrast only`
+                : Object.entries(pair.minimum ?? {})
+                    .map(([contrast, value]) => `${value}:1 at ${contrast} contrast`)
+                    .join(', ')
+            }]: ${pair.rationale}`,
+        ),
+      ...dropped.map((entry) => `${entry.pair} [dropped]: ${entry.rationale}`),
+    ];
+    await testInfo.attach('scoped-and-dropped-pairs.txt', {
+      body: lines.join('\n'),
+      contentType: 'text/plain',
+    });
+    if (process.env.ENVUI_CONTRAST_REPORT) console.log(`\n${lines.join('\n')}\n`);
+    expect(lines.length, 'The scoped, lowered and dropped pairs are listed').toBeGreaterThan(0);
+    expect(
+      lines.filter((line) => line.endsWith(': ') || line.endsWith(': undefined')),
+      'Every scoped, lowered or dropped pair has a rationale',
+    ).toEqual([]);
   });
 
   for (const theme of themes) {
