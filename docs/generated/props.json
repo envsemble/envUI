@@ -6274,7 +6274,7 @@
           "name": "scale",
           "type": "'comfortable' | 'compact'",
           "required": false,
-          "description": "The app scale, comfortable or compact for a desktop productivity app, as on Theme: of the Theme boundary around the children, and, marked as envUI's own, of the document root with applyToDocument. Without it, the boundary takes the scale of an enclosing Theme, or comfortable, and the root keeps a scale the page set but drops one that envUI wrote. Pass the same scale to createThemeBootstrapScript so the root has it before the first paint."
+          "description": "The app scale, comfortable or compact for a desktop productivity app, as on Theme: of the Theme boundary around the children, and, marked as envUI's own, of the document root with applyToDocument. Without it, the boundary takes the scale of an enclosing Theme, or comfortable, and the root keeps a scale the page set but drops one that envUI wrote and the page left unchanged. Pass the same scale to createThemeBootstrapScript so the root has it before the first paint."
         },
         {
           "name": "className",
