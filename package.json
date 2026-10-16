@@ -36,7 +36,7 @@
     "format:check": "prettier --check .",
     "verify": "node scripts/VisualTests.mjs --preflight && npm run verify:checks && node scripts/VisualTests.mjs",
     "verify:no-visual": "npm run verify:checks && node scripts/VisualTests.mjs --skip",
-    "verify:checks": "npm run icons:check && npm run tokens:check && npm run docs:check && npm run lint && npm run lint:css && npm run format:check && npm run typecheck && npm run build && npm test && npm run test:contrast && npm run test:browser -- --grep-invert @contrast && npm run test:a11y",
+    "verify:checks": "npm run icons:check && npm run tokens:check && npm run docs:check && npm run lint && npm run lint:css && npm run format:check && npm run typecheck && npm run build && npm run build:site && npm test && npm run test:contrast && npm run test:browser -- --grep-invert @contrast && npm run test:a11y",
     "brand:generate": "node scripts/GenerateBrandAssets.mjs",
     "icons:sync": "node scripts/SyncIcons.mjs",
     "icons:generate": "node scripts/GenerateIcons.mjs",

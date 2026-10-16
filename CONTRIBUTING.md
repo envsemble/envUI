@@ -40,6 +40,8 @@ npm run verify
 
 Build outputs are `packages/ui/dist/`, `dist/envUI.html` and, from `npm run build:site`, `dist/site/`. CI retains the offline catalogue and browser diagnostics as artifacts. CI runs for pull requests into `main` and pushes to `main` only, and tests in Chromium alone, so run `npm run verify`, which tests all three engines, before pushing a branch or merging into `dev`.
 
+Some browser specs open the hosted catalogue from `dist/site/`. `npm run verify` builds it before the browser tests, and so does CI's browser job, a step of a few seconds; where `CI` is set, a missing build fails those specs. A local `npm run test:browser` uses the last build and skips them without one, so run `npm run build:site` first when you change the catalogue's loading or the site build.
+
 ## Repository map
 
 ```text

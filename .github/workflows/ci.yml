@@ -93,6 +93,10 @@ jobs:
         with:
           name: envui-reference
           path: dist
+      # The hosted catalogue's specs need its build, which takes seconds and no network; without
+      # it they fail here rather than skip.
+      - name: Build hosted catalogue
+        run: npm run build:site
       - name: Test browser behavior
         run: npx playwright test --project=chromium
       - name: Save browser results and failure diagnostics
