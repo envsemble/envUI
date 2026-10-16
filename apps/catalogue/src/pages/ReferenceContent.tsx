@@ -19,8 +19,7 @@ import { LoadBoundary, lazyPart } from '../template/LoadBoundary';
 const iconUsage = lazyPart(
   () => import('../usage/IconUsage'),
   (module) => module.IconUsageDetails,
-  '../usage/IconUsage.tsx',
-  import.meta.url,
+  'src/usage/IconUsage.tsx',
 );
 
 function IconUsage({ name, filled }: { name: string | null; filled: boolean }) {
@@ -29,7 +28,7 @@ function IconUsage({ name, filled }: { name: string | null; filled: boolean }) {
   return (
     <LoadBoundary
       what="icon usage"
-      modules={['src/usage/IconUsage.tsx']}
+      modules={iconUsage.modules}
       onRetry={() => {
         iconUsage.retry();
         setAttempt((count) => count + 1);

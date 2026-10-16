@@ -45,22 +45,25 @@ export function reloadModule<T>(
 }
 
 /**
- * A component that loads on its own, for LoadBoundary to show: `component` is the lazy component to
- * render. A lazy component that failed to load stays failed, so `retry` replaces it with one that
- * asks for the module again, as reloadModule does with `path` relative to `base`.
+ * A component that loads on its own, for LoadBoundary to show. `module` is the path in the
+ * catalogue app of the module `load` imports, such as `src/usage/IconUsage.tsx`, and `modules`
+ * passes it on to LoadBoundary. `component` is the lazy component to render. A lazy component
+ * that failed to load stays failed, so `retry` replaces it with one that asks for the module again,
+ * as reloadModule does, at that path from the app's root, where Vite serves it in development.
  */
 export function lazyPart<M, P extends object>(
   load: () => Promise<M>,
   pick: (module: M) => ComponentType<P>,
-  path: string,
-  base: string,
+  module: string,
 ) {
   const make = (from: () => Promise<M>) =>
-    lazy(loadModule(() => from().then((module) => ({ default: pick(module) }))));
+    lazy(loadModule(() => from().then((loaded) => ({ default: pick(loaded) }))));
   const part = {
     component: make(load),
+    modules: [module] as const,
     retry() {
-      part.component = make(reloadModule(load, path, base));
+      const root = new URL(import.meta.env.BASE_URL, window.location.href).href;
+      part.component = make(reloadModule(load, module, root));
     },
   };
   return part;
