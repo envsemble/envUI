@@ -5563,32 +5563,32 @@
     "Switch": {
       "kind": "component",
       "source": "packages/ui/src/forms/Switch.tsx",
-      "description": "",
+      "description": "An on/off setting that takes effect at once: a native checkbox with the switch role, drawn as a track and a thumb, with its label beside it.",
       "props": [
         {
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "The setting the switch turns on or off, such as Show completed tasks, beside the track. It names the switch, stays the same in both states, and pressing it toggles the switch too. Without it, name the switch with aria-label or aria-labelledby."
         },
         {
           "name": "checked",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "Whether a controlled switch is on; update it from onCheckedChange."
         },
         {
           "name": "defaultChecked",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Whether an uncontrolled switch starts on; a native form reset returns it to this state."
         },
         {
           "name": "onCheckedChange",
           "type": "(checked: boolean) => void",
           "required": false,
-          "description": ""
+          "description": "Receives the new state each time people turn the switch on or off."
         }
       ],
       "native": [

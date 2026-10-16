@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import {
   TextField,
   Checkbox,
-  Switch,
   RadioGroup,
   Radio,
   Select,
@@ -85,43 +84,6 @@ export function CheckboxPreview() {
             ))}
           </Stack>
         </Stack>
-      </Example>
-    </Preview>
-  );
-}
-
-export function SwitchPreview() {
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [summariesEnabled, setSummariesEnabled] = useState(false);
-  return (
-    <Preview>
-      <Example
-        title="On, off & disabled"
-        size="collection"
-        caption="Use switches for settings that apply immediately; use checkboxes for choices saved with a form."
-      >
-        <SpecimenGrid size="compact">
-          <Specimen title="Interactive settings">
-            <Stack>
-              <Switch
-                label="Enable notifications"
-                checked={notificationsEnabled}
-                onCheckedChange={setNotificationsEnabled}
-              />
-              <Switch
-                label="Enable summaries"
-                checked={summariesEnabled}
-                onCheckedChange={setSummariesEnabled}
-              />
-            </Stack>
-          </Specimen>
-          <Specimen title="Disabled settings">
-            <Stack>
-              <Switch label="Enable notifications" disabled />
-              <Switch label="Enable summaries" checked disabled />
-            </Stack>
-          </Specimen>
-        </SpecimenGrid>
       </Example>
     </Preview>
   );
