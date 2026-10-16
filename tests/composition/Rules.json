@@ -44,7 +44,7 @@
       "forms/MarkdownEditor.tsx": "composites",
       "forms/SearchField.tsx": "composites",
       "navigation/DocumentTabs.tsx": "composites",
-      "navigation/OrganizationMenu.tsx": "composites",
+      "navigation/OrganizationSwitcher.tsx": "composites",
       "navigation/Pagination.tsx": "composites",
       "navigation/AppShell.tsx": "shell",
       "navigation/PanelDock.tsx": "shell",
@@ -180,7 +180,7 @@
       "DirectionLink": { "modules": ["navigation/DirectionLinks.tsx"] },
       "DocumentTabs": { "classes": ["env-document-tab"] },
       "NavigationItem": { "classes": ["env-navigation"], "styles": ["Actions.css"] },
-      "OrganizationMenu": { "classes": ["env-organization-trigger"], "styles": ["Menu.css"] },
+      "OrganizationSwitcher": { "styles": ["Menu.css"] },
       "PanelDock": {
         "modules": ["navigation/PanelDockHeader.tsx", "navigation/internal/PanelDockContext.ts"]
       },

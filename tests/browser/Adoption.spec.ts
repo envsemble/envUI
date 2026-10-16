@@ -442,7 +442,7 @@ test('LoadingBar waits before appearing, then completes and leaves', async ({ pa
   expect(await states()).toEqual(['running', 'finishing', 'none']);
 });
 
-test('OrganizationMenu switches organizations and offers creating one', async ({ page }) => {
+test('OrganizationSwitcher switches organizations and offers creating one', async ({ page }) => {
   const errors = collectErrors(page);
   await page.goto(fixture);
   const trigger = page.getByRole('button', { name: 'Northwind Labs' });
@@ -457,7 +457,7 @@ test('OrganizationMenu switches organizations and offers creating one', async ({
   await expect(
     menu.getByRole('menuitemradio', { name: 'Contoso Member', exact: true }),
   ).toBeVisible();
-  await expect(menu.locator('.env-organization-menu-detail').first()).toHaveText('Admin');
+  await expect(menu.locator('.env-organization-switcher-detail').first()).toHaveText('Admin');
   // Choosing the active organization again does not switch.
   await menu.getByRole('menuitemradio', { name: 'Northwind Labs' }).click();
   await expect(menu).toBeHidden();

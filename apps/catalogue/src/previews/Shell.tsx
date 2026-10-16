@@ -13,7 +13,7 @@ import {
   Menubar,
   MenubarMenu,
   NavigationItem,
-  OrganizationMenu,
+  OrganizationSwitcher,
   Select,
   Skeleton,
   Stack,
@@ -76,7 +76,7 @@ export function AppShellPreview() {
           <AppShell
             brand={<Apps />}
             context={
-              <OrganizationMenu
+              <OrganizationSwitcher
                 organizations={organizations}
                 currentOrganizationId={organizationId}
                 onSelect={setOrganizationId}

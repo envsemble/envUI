@@ -85,7 +85,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Alerts](components/alert.md) — Inline banners for page- or section-level messages in four tones.
 - [Dialogs](components/dialogs.md) — Centered modals and side panels share focus and dismissal behavior.
 - [Command palette](components/command-palette.md) — Quick open: search and choose from a ranked list near the top of the window.
-- [Menus](components/menu.md) — Actions, destinations and the shared organization menu, opened from a trigger or a right click.
+- [Menus](components/menu.md) — Actions, destinations and the shared organization switcher, opened from a trigger or a right click.
 - [Menubar](components/menubar.md) — An application menubar of compact menus with shortcuts, submenus and access keys.
 - [Tooltips](components/tooltip.md) — Short hints on hover and keyboard focus.
 - [Popovers](components/popover.md) — A floating panel for details or a small form beside its trigger.

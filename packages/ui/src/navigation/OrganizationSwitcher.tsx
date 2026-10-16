@@ -7,16 +7,16 @@ import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { Menu } from './Menu.js';
 
-export interface OrganizationMenuOrganization {
+export interface OrganizationSwitcherOrganization {
   id: string;
   name: string;
   /** A short muted note after the name, such as the person's role in the organization. */
   detail?: string;
 }
 
-export interface OrganizationMenuProps {
+export interface OrganizationSwitcherProps {
   /** Organizations the signed-in person belongs to, in display order. */
-  organizations: readonly OrganizationMenuOrganization[];
+  organizations: readonly OrganizationSwitcherOrganization[];
   /** The active organization, or null before one is chosen. */
   currentOrganizationId: string | null;
   /** Called with the chosen organization; the application switches and reports progress. */
@@ -37,7 +37,7 @@ export interface OrganizationMenuProps {
 }
 
 /** Shows the active organization and switches between the person's organizations; fits AppShell's context area. */
-export function OrganizationMenu({
+export function OrganizationSwitcher({
   organizations,
   currentOrganizationId,
   onSelect,
@@ -48,17 +48,17 @@ export function OrganizationMenu({
   disabled,
   'aria-label': label = 'Organizations',
   className,
-}: OrganizationMenuProps) {
+}: OrganizationSwitcherProps) {
   if (organizations.length === 0) {
     return onCreate ? (
       <Button
         variant="secondary"
         startIcon={<Add />}
-        className={classNames('env-organization-trigger', className)}
+        className={classNames('env-organization-switcher-trigger', className)}
         onClick={onCreate}
         disabled={disabled}
       >
-        <span className="env-organization-trigger-label">{createLabel}</span>
+        <span className="env-organization-switcher-trigger-label">{createLabel}</span>
       </Button>
     ) : null;
   }
@@ -68,26 +68,28 @@ export function OrganizationMenu({
     <Menu
       aria-label={label}
       align="start"
-      className="env-organization-menu"
+      className="env-organization-switcher"
       trigger={
         <Button
           variant="secondary"
           endIcon={<UnfoldMore />}
-          className={classNames('env-organization-trigger', className)}
+          className={classNames('env-organization-switcher-trigger', className)}
           disabled={disabled}
         >
-          <span className="env-organization-trigger-label">{current?.name ?? placeholder}</span>
+          <span className="env-organization-switcher-trigger-label">
+            {current?.name ?? placeholder}
+          </span>
         </Button>
       }
     >
-      <div role="presentation" className="env-organization-menu-header">
+      <div role="presentation" className="env-organization-switcher-header">
         <DecorativeIcon>
           <Groups3 />
         </DecorativeIcon>
-        <span className="env-organization-menu-heading">{heading}</span>
+        <span className="env-organization-switcher-heading">{heading}</span>
       </div>
       <BaseMenu.RadioGroup
-        className="env-organization-menu-options"
+        className="env-organization-switcher-options"
         value={current?.id ?? null}
         onValueChange={(organizationId: string) => {
           if (organizationId !== current?.id) onSelect(organizationId);
@@ -98,24 +100,24 @@ export function OrganizationMenu({
             key={organization.id}
             value={organization.id}
             closeOnClick
-            className="env-menu-item env-organization-menu-option"
+            className="env-menu-item env-organization-switcher-option"
           >
-            <span className="env-organization-menu-radio" aria-hidden="true">
-              <BaseMenu.RadioItemIndicator className="env-organization-menu-radio-dot" />
+            <span className="env-organization-switcher-radio" aria-hidden="true">
+              <BaseMenu.RadioItemIndicator className="env-organization-switcher-radio-dot" />
             </span>
             <span className="env-menu-item-label">{organization.name}</span>
             {/* The space keeps the detail a separate word in the item's accessible name. */}
             {organization.detail && (
               <>
                 {' '}
-                <span className="env-organization-menu-detail">{organization.detail}</span>
+                <span className="env-organization-switcher-detail">{organization.detail}</span>
               </>
             )}
           </BaseMenu.RadioItem>
         ))}
       </BaseMenu.RadioGroup>
       {onCreate && (
-        <BaseMenu.Item className="env-organization-menu-create" onClick={onCreate}>
+        <BaseMenu.Item className="env-organization-switcher-create" onClick={onCreate}>
           <DecorativeIcon>
             <Add />
           </DecorativeIcon>

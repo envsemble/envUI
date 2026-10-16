@@ -206,7 +206,7 @@
     transition: transform var(--motion-duration-medium) var(--motion-ease);
   }
   .env-checkbox-control:is(:checked, :indeterminate) + .env-checkbox-mark,
-  .env-organization-menu-radio-dot,
+  .env-organization-switcher-radio-dot,
   .env-text-field-end > :not(.env-combobox-trigger, .env-date-picker-icon),
   .env-theme-toggle .env-symbol > svg {
     animation: env-motion-pop-in var(--motion-duration-medium) var(--motion-ease-enter);

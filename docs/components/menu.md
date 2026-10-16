@@ -180,16 +180,16 @@ import { ContextMenu, MenuItem, MenuSeparator } from '@envsemble/envui';
 | disabled                          | Keep the browser’s own context menu                                                                              |
 | open / onOpenChange / anchorPoint | Controlled visibility; anchorPoint `{ x, y }` in viewport pixels opens the menu there, for example from a button |
 
-### Organization menu
+### Organization switcher
 
 Every product shows the active organization in the application shell's context area with the same menu. Its trigger is a secondary Button with the organization name and up and down arrows; long names truncate.
 
 ```tsx
-import { AppShell, OrganizationMenu } from '@envsemble/envui';
+import { AppShell, OrganizationSwitcher } from '@envsemble/envui';
 
 <AppShell
   context={
-    <OrganizationMenu
+    <OrganizationSwitcher
       organizations={organizations}
       currentOrganizationId={activeOrganization?.id ?? null}
       onSelect={(organizationId) => switchOrganization(organizationId)}
@@ -213,7 +213,7 @@ import { AppShell, OrganizationMenu } from '@envsemble/envui';
 ## Guidelines
 
 - Use a menu for a short list of actions or destinations behind one trigger. Use Select to choose a value and Tabs to switch views.
-- envUI provides two menus: OrganizationMenu, and the account menu composed from AvatarButton, MenuHeader and items. Every other menu is the application's own, built from MenuItem, MenuGroup, MenuRadioGroup, MenuCheckboxItem, MenuSubmenu and MenuSeparator, in standard or compact density.
+- envUI provides two menus: OrganizationSwitcher, and the account menu composed from AvatarButton, MenuHeader and items. Every other menu is the application's own, built from MenuItem, MenuGroup, MenuRadioGroup, MenuCheckboxItem, MenuSubmenu and MenuSeparator, in standard or compact density.
 - Use compact density in dense desktop interfaces, such as a menubar, a compact tree's context menu or a toolbar. The popup is as wide as its content, between 12 and 22 rem, and descriptions wrap. Labels line up across rows: once a row has a check mark or an icon, the others keep its place. On coarse pointers, rows keep the touch height.
 - A submenu opens beside its row on hover, after a short delay, and with <kbd>→</kbd>, <kbd>Enter</kbd> or <kbd>Space</kbd>, with focus on its first item; <kbd>←</kbd> and <kbd>Esc</kbd> close it and return to the row. It opens at the inline end, lines its first row up with the row that opened it and flips to the other side near the edge of the window. It takes the density and theme of its menu, and the row stays highlighted while it is open.
 - Keep submenus shallow, one level in most menus, for groups of related choices such as recent documents or a theme. Frequent commands belong in the menu itself.

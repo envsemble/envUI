@@ -244,18 +244,18 @@
   font: 500 0.75rem / 1.4 var(--font-family);
 }
 
-/* Organization menu: a secondary button in the shell's context area and a pane of radio rows. Long
+/* Organization switcher: a secondary button in the shell's context area and a pane of radio rows. Long
    organization names truncate inside the button. */
-.env-organization-trigger {
+.env-organization-switcher-trigger {
   max-inline-size: 100%;
 }
-.env-organization-trigger-label {
+.env-organization-switcher-trigger-label {
   min-inline-size: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.env-organization-menu-header {
+.env-organization-switcher-header {
   box-sizing: border-box;
   min-block-size: 7.25rem;
   padding: var(--space-5) var(--space-3);
@@ -270,32 +270,32 @@
   color: var(--color-row-text);
   text-align: center;
 }
-.env-organization-menu-header .env-symbol {
+.env-organization-switcher-header .env-symbol {
   inline-size: 2rem;
   block-size: 2rem;
 }
-.env-organization-menu-heading {
+.env-organization-switcher-heading {
   font: var(--type-h1);
 }
-.env-organization-menu-options {
+.env-organization-switcher-options {
   display: grid;
   gap: 0.125rem;
 }
-.env-organization-menu-options > .env-menu-item:last-child {
+.env-organization-switcher-options > .env-menu-item:last-child {
   border-end-start-radius: var(--radius-row-outer);
   border-end-end-radius: var(--radius-row-outer);
 }
-.env-organization-menu-option[data-checked] {
+.env-organization-switcher-option[data-checked] {
   font-weight: 500;
 }
-.env-organization-menu-detail {
+.env-organization-switcher-detail {
   margin-inline-start: auto;
   flex: 0 0 auto;
   color: var(--color-text-muted);
   font: var(--type-body-small);
 }
 /* The selection indicator follows the radio control. */
-.env-organization-menu-radio {
+.env-organization-switcher-radio {
   box-sizing: border-box;
   inline-size: 1.125rem;
   block-size: 1.125rem;
@@ -306,16 +306,16 @@
   place-items: center;
   transition: border-color var(--motion-duration-fast) var(--motion-ease);
 }
-.env-organization-menu-option[data-checked] .env-organization-menu-radio {
+.env-organization-switcher-option[data-checked] .env-organization-switcher-radio {
   border-color: var(--color-radio);
 }
-.env-organization-menu-radio-dot {
+.env-organization-switcher-radio-dot {
   inline-size: 0.5rem;
   block-size: 0.5rem;
   border-radius: 50%;
   background: var(--color-radio);
 }
-.env-organization-menu-create {
+.env-organization-switcher-create {
   box-sizing: border-box;
   min-block-size: var(--control-height);
   margin-block-start: var(--space-2);
@@ -334,17 +334,17 @@
   user-select: none;
   transition: background-color var(--motion-duration-fast) var(--motion-ease);
 }
-.env-organization-menu-create .env-symbol {
+.env-organization-switcher-create .env-symbol {
   inline-size: var(--control-icon-size);
   block-size: var(--control-icon-size);
 }
-.env-organization-menu-create[data-highlighted] {
+.env-organization-switcher-create[data-highlighted] {
   background: hsl(from var(--color-menu-row) h s var(--state-surface-hover-lightness));
 }
-.env-organization-menu-create:active {
+.env-organization-switcher-create:active {
   background: hsl(from var(--color-menu-row) h s var(--state-surface-pressed-lightness));
 }
-.env-organization-menu-create:focus-visible {
+.env-organization-switcher-create:focus-visible {
   outline: 0.125rem solid var(--color-focus-ring);
   outline-offset: 0.125rem;
 }

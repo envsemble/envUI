@@ -19,7 +19,7 @@ import {
   MenuSubmenu,
   Menubar,
   MenubarMenu,
-  OrganizationMenu,
+  OrganizationSwitcher,
   Progress,
   Stack,
   Surface,
@@ -61,14 +61,14 @@ export function MenuPreview() {
   return (
     <Preview>
       <Example
-        title="Organization menu"
+        title="Organization switcher"
         size="collection"
         caption="Sits in the shell's context area. Choosing an organization calls onSelect; the application switches and reports progress."
       >
         <SpecimenGrid>
           <Specimen title="Active organization">
             <div className="docs-organization-slot">
-              <OrganizationMenu
+              <OrganizationSwitcher
                 organizations={sampleOrganizations}
                 currentOrganizationId={organizationId}
                 onSelect={(id) => {
@@ -83,7 +83,7 @@ export function MenuPreview() {
           </Specimen>
           <Specimen title="No organization yet">
             <div className="docs-organization-slot">
-              <OrganizationMenu
+              <OrganizationSwitcher
                 organizations={[]}
                 currentOrganizationId={null}
                 onSelect={() => undefined}

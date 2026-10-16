@@ -19,7 +19,7 @@ import {
   MenuSeparator,
   Meter,
   NavigationItem,
-  OrganizationMenu,
+  OrganizationSwitcher,
   SearchField,
   Skeleton,
   Spinner,
@@ -116,7 +116,7 @@ export function AdoptionFixture() {
             </MenuItem>
           </Menu>
           <output data-testid="menu-action">{action}</output>
-          <OrganizationMenu
+          <OrganizationSwitcher
             organizations={[
               { id: 'northwind', name: 'Northwind Labs', detail: 'Admin' },
               { id: 'contoso', name: 'Contoso', detail: 'Member' },
@@ -129,7 +129,7 @@ export function AdoptionFixture() {
             onCreate={() => setAction('Create organization')}
           />
           <div data-testid="no-organization">
-            <OrganizationMenu
+            <OrganizationSwitcher
               organizations={[]}
               currentOrganizationId={null}
               onSelect={() => undefined}
