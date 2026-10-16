@@ -37,8 +37,14 @@ export function reloadModule<T>(
     );
 }
 
+/** What went wrong, as a message for people: the error's own message when it has one. */
+export function errorMessage(error: unknown) {
+  if (error instanceof Error && error.message) return error.message;
+  return typeof error === 'string' && error ? error : 'An unknown error.';
+}
+
 interface LoadBoundaryProps {
-  /** What failed to load, for the message: an example, its code or a specimen. */
+  /** What failed, for the message: an example, its code or a specimen. */
   what: string;
   /** Loads it again: drops what failed, so the next render fetches it anew. */
   onRetry: () => void;
@@ -46,25 +52,26 @@ interface LoadBoundaryProps {
 }
 
 interface LoadBoundaryState {
-  error: unknown;
+  /** What the content threw, if it did. */
+  failure: { error: unknown } | null;
   /** Whether people asked to load it again, which keeps a focusable wrapper around it. */
   retried: boolean;
 }
 
 /**
- * Keeps a part of a page that loads on its own, such as an example, from taking the page down when
- * its file fails to load: after a new deploy the old file may be gone. It says so in place, with
- * a retry and a reload of the page, which fetches the current files. Any other error, such as a
- * bug in an example, is not a failed load and goes on to the boundaries above.
+ * Keeps a part of a page that loads on its own, such as an example, from taking the page down. When
+ * its file fails to load, as after a new deploy that removed the old file, it says so in place,
+ * with a retry and a reload of the page, which fetches the current files. Any other error, such as
+ * a bug in an example, is shown in place as a failure to render, with its message.
  */
 export class LoadBoundary extends Component<LoadBoundaryProps, LoadBoundaryState> {
-  state: LoadBoundaryState = { error: undefined, retried: false };
+  state: LoadBoundaryState = { failure: null, retried: false };
 
   /** What focus goes to once Try again, which had it, is gone. */
   private wrapper = createRef<HTMLDivElement>();
 
-  static getDerivedStateFromError(error: unknown) {
-    return { error };
+  static getDerivedStateFromError(error: unknown): Partial<LoadBoundaryState> {
+    return { failure: { error } };
   }
 
   componentDidUpdate() {
@@ -76,19 +83,25 @@ export class LoadBoundary extends Component<LoadBoundaryProps, LoadBoundaryState
 
   retry = () => {
     this.props.onRetry();
-    this.setState({ error: undefined, retried: true });
+    this.setState({ failure: null, retried: true });
   };
 
   render() {
-    const { error, retried } = this.state;
-    if (error !== undefined && !(error instanceof ModuleLoadError)) throw error;
-    const content =
-      error === undefined ? (
-        this.props.children
-      ) : (
+    const { failure, retried } = this.state;
+    const { what } = this.props;
+    let content: ReactNode;
+    if (!failure) content = this.props.children;
+    else if (!(failure.error instanceof ModuleLoadError))
+      content = (
+        <Alert tone="error" title={`This ${what} failed to render`}>
+          {errorMessage(failure.error)}
+        </Alert>
+      );
+    else
+      content = (
         <Alert
           tone="warning"
-          title={`The ${this.props.what} could not load`}
+          title={`The ${what} could not load`}
           action={
             <ActionGroup>
               <Button variant="secondary" onClick={this.retry}>

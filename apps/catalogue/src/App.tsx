@@ -14,6 +14,7 @@ import { DarkMode } from '@envsemble/envui/icons/DarkMode';
 import { LightMode } from '@envsemble/envui/icons/LightMode';
 import { findReferencePage, overviewViews, viewFor } from './navigation/DocumentationRoutes';
 import { ReferenceContent } from './pages/ReferenceContent';
+import { PageBoundary } from './layout/PageBoundary';
 import { PageHeader } from './layout/PageHeader';
 import { Overview } from './pages/Overview';
 import { Sidebar } from './navigation/Sidebar';
@@ -127,8 +128,10 @@ export default function App() {
       <div className="docs-shell">
         <Sidebar routePath={routePath} page={page} />
         <main id="docs-main" ref={mainElement} tabIndex={-1} className="docs-main">
-          {!isOverview && !page && <PageHeader title={title} breadcrumb="envUI" />}
-          {content}
+          <PageBoundary title={title} route={route}>
+            {!isOverview && !page && <PageHeader title={title} breadcrumb="envUI" />}
+            {content}
+          </PageBoundary>
           <PageNavigation
             path={contentPath}
             view={isOverview ? (overviewView === 'get-started' ? 'usage' : 'preview') : view}

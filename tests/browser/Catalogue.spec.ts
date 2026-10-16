@@ -528,9 +528,9 @@ test('code that fails to load is asked for once, not on every render', async ({ 
   await expect(entry.getByText('CreateProject.tsx', { exact: true })).toBeVisible();
 });
 
-test('an example that fails to render is not reported as failing to load', async ({ page }) => {
-  const errors: string[] = [];
-  page.on('pageerror', (error) => errors.push(error.message));
+test('an example that fails to render says so in place, and the rest of the page works', async ({
+  page,
+}) => {
   await page.route('**/src/examples/button/CreateProject.tsx', (route) =>
     route.fulfill({
       contentType: 'text/javascript',
@@ -538,8 +538,54 @@ test('an example that fails to render is not reported as failing to load', async
     }),
   );
   await page.goto(`${catalogueUrl}/#/components/button/overview`);
-  await expect.poll(() => errors.join('\n')).toContain('Broken example');
+  const hero = page.getByRole('group', { name: 'Button example', exact: true });
+  await expect(hero.getByText('This example failed to render')).toBeVisible();
+  await expect(hero.getByText('Broken example')).toBeVisible();
+  // It is not a failed load, which a retry or a reload could mend.
   await expect(page.getByText('The example could not load')).toHaveCount(0);
+  await expect(hero.getByRole('button')).toHaveCount(0);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+  // The other examples and the example's code render.
+  const variants = page.getByRole('group', { name: 'Variants example', exact: true });
+  await expect(variants.getByRole('button').first()).toBeVisible();
+  const entry = page.locator('.docs-live-example-entry').first();
+  await entry.getByText('Code', { exact: true }).click();
+  await expect(entry.getByText('CreateProject.tsx', { exact: true })).toBeVisible();
+  // And the navigation still leads elsewhere.
+  await page
+    .getByRole('navigation', { name: 'Documentation' })
+    .first()
+    .getByRole('link', { name: 'Badge', exact: true })
+    .click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Badge');
+});
+
+test('a page that fails to render says so, and the navigation leads to the others', async ({
+  page,
+}) => {
+  await page.route('**/src/pages/Overview.tsx', (route) =>
+    route.fulfill({
+      contentType: 'text/javascript',
+      body: "export function Overview() { throw new Error('Broken page'); }",
+    }),
+  );
+  await page.goto(`${catalogueUrl}/#/overview`);
+  const main = page.getByRole('main');
+  await expect(main.getByText('This page failed to render')).toBeVisible();
+  await expect(main.getByText('Broken page')).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('envUI');
+  const navigation = page.getByRole('navigation', { name: 'Documentation' }).first();
+  await navigation.getByRole('link', { name: 'Button', exact: true }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+  await expect(main.getByText('This page failed to render')).toHaveCount(0);
+  await expect(
+    page
+      .getByRole('group', { name: 'Button example', exact: true })
+      .getByRole('button', { name: 'Create project', exact: true }),
+  ).toBeVisible();
+  // Going back to the page that failed says so again.
+  await page.goBack();
+  await expect(main.getByText('This page failed to render')).toBeVisible();
 });
 
 test('each Markdown table region is named after its heading', async ({ page }) => {
