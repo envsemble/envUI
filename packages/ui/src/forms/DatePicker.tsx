@@ -440,7 +440,7 @@ export function DatePicker({
           />
         </FieldFrame>
         <BasePopover.Portal>
-          <Theme theme={theme} className="env-popover-theme">
+          <Theme {...theme} className="env-popover-theme">
             <BasePopover.Positioner
               side="bottom"
               align="start"

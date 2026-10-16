@@ -64,7 +64,7 @@ const SuggestionMenu = forwardRef<
     [items, selected, loading, command],
   );
   return (
-    <Theme theme={theme}>
+    <Theme {...theme}>
       <div
         className="env-rich-text-suggestions"
         id={id}

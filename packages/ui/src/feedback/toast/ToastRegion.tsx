@@ -176,7 +176,7 @@ export function ToastRegion({
   }, [toastStore.toasts, hiddenCount, placement, settle]);
   return (
     <BaseToast.Portal>
-      <Theme theme={theme} className="env-toast-portal-theme">
+      <Theme {...theme} className="env-toast-portal-theme">
         <BaseToast.Viewport
           ref={attachViewport}
           className={`env-toast-viewport env-toast-viewport-${placement}`}

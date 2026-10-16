@@ -143,7 +143,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
           </BaseSelect.Icon>
         </BaseSelect.Trigger>
         <BaseSelect.Portal>
-          <Theme theme={theme}>
+          <Theme {...theme}>
             <BaseSelect.Positioner
               className="env-select-positioner"
               alignItemWithTrigger={false}
