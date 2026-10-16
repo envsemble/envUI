@@ -14,13 +14,25 @@ export const transforms = {
   'v1-props': {
     file: fileURLToPath(new URL('./transforms/v1-props.mjs', import.meta.url)),
     description:
-      'Move the props 1.0 removed or changed: density, compact and size-as-density become sizes, row densities or the Theme scale, and what cannot move is reported.',
+      'Move the props 1.0 removed, renamed or changed, such as variant="important" to variant="primary" tone="accent" and Text tone to emphasis, and the properties of objects that calls such as useToast().show take; what cannot move is reported.',
+    extensions: scripts,
+  },
+  'v1-render': {
+    file: fileURLToPath(new URL('./transforms/v1-render.mjs', import.meta.url)),
+    description:
+      'Replace the as prop with render: as="h2" becomes render={<h2 />}; an expression is reported.',
+    extensions: scripts,
+  },
+  'v1-structure': {
+    file: fileURLToPath(new URL('./transforms/v1-structure.mjs', import.meta.url)),
+    description:
+      'Rewrite elements whose 1.0 form is another element or shape, such as ActionGroup, which becomes a Stack; what cannot be rewritten is reported.',
     extensions: scripts,
   },
   'v1-classes': {
     file: fileURLToPath(new URL('./transforms/v1-classes.mjs', import.meta.url)),
     description:
-      'Rename envUI 0.x class names and custom properties in style sheets, className values and selector strings.',
+      'Rename envUI 0.x class names and custom properties in style sheets, className values and selector strings, and turn modifier classes into attribute selectors.',
     extensions: [...scripts, ...styleSheets],
   },
 };

@@ -21,24 +21,24 @@ export default function StartOptions() {
         {options.map(({ id, title, detail }) => (
           // A button card holds phrasing content only, so its text is spans.
           <Card key={id} as="button" onClick={() => setStarted(title)}>
-            <Text as="span" variant="section-heading">
+            <Text render={<span />} variant="title">
               {title}
             </Text>
-            <Text as="span" tone="muted">
+            <Text render={<span />} emphasis="muted">
               {detail}
             </Text>
           </Card>
         ))}
         <Card as="button" disabled>
-          <Text as="span" variant="section-heading">
+          <Text render={<span />} variant="title">
             Copy a project
           </Text>
-          <Text as="span" tone="muted">
+          <Text render={<span />} emphasis="muted">
             Available once you have a project.
           </Text>
         </Card>
       </div>
-      <Text variant="caption" tone="muted" role="status">
+      <Text variant="caption" emphasis="muted" role="status">
         {started && `Starting: ${started}`}
       </Text>
     </Stack>

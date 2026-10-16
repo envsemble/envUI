@@ -13,7 +13,7 @@ export default function FormSubmit() {
     <form onSubmit={submit}>
       <Stack gap={3}>
         <Composer name="note" aria-label="Note" placeholder="Add a note to the plan" />
-        <Text variant="caption" tone="muted" role="status">
+        <Text variant="caption" emphasis="muted" role="status">
           {sent && `Added: ${sent}`}
         </Text>
       </Stack>

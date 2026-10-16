@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ActionGroup, List, SegmentedControl, Spinner, Stack } from '@envsemble/envui';
+import { List, SegmentedControl, Spinner, Stack } from '@envsemble/envui';
 
 const tasks = [
   { id: 'brief', title: 'Write the launch brief', owner: 'Alex Morgan', done: true },
@@ -25,7 +25,7 @@ export default function UpdatingList() {
   const visible = tasks.filter((task) => shown === 'all' || (shown === 'done') === task.done);
   return (
     <Stack gap={4}>
-      <ActionGroup>
+      <Stack direction="row" wrap align="center" gap={4}>
         <SegmentedControl
           aria-label="Show tasks"
           options={views}
@@ -34,7 +34,7 @@ export default function UpdatingList() {
         />
         {/* The tasks shown stay while the new ones load; the spinner says they are updating. */}
         {updating && <Spinner size="small" label="Updating tasks" />}
-      </ActionGroup>
+      </Stack>
       <List.Root aria-label="Tasks" aria-busy={updating}>
         {visible.map((task) => (
           <List.Item key={task.id} title={task.title} detail={task.owner} />

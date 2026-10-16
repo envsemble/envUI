@@ -273,6 +273,19 @@ export const pairs: readonly ContrastPair[] = merged([
     ],
     'Quiet buttons, menubar triggers and document tabs on hover and press, and hovered segments',
   ),
+  ...text(
+    '--env-color-fg-danger',
+    [
+      raised,
+      '--env-color-bg-raised-hover',
+      '--env-color-bg-raised-pressed',
+      [layerHover, page],
+      [layerPressed, page],
+      [layerHover, surface],
+      [layerPressed, surface],
+    ],
+    'Outline, ghost and text buttons in the danger tone: the label on the raised fill of an outline button, at rest, hovered and pressed, and on the state layer of a ghost button on hover and press',
+  ),
 
   // Fields.
   ...text('--env-color-fg-default', [field]),
@@ -313,6 +326,13 @@ export const pairs: readonly ContrastPair[] = merged([
     [field, page, surface, muted, raised, popup],
     'The only boundary of outlined fields, the composer, outlined buttons, Select triggers and the track of a switch that is off; DropZone and the empty stars of a Rating take it too',
   ),
+  ...nonText(
+    '--env-color-border-danger-emphasis',
+    [raised],
+    'The edge of an outline button in the danger tone',
+  ),
+  ...nonText('--env-color-border-danger-emphasis-hover', [raised]),
+  ...nonText('--env-color-border-danger-emphasis-pressed', [raised]),
   ...nonText(
     '--env-color-border-accent-emphasis',
     [page, surface, popup],

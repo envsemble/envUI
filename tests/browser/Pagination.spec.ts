@@ -227,7 +227,7 @@ test('the pager fits small toolbars, wraps only when it must and mirrors right t
   const rtlRange = (await rtl.locator('.env-pagination-range').boundingBox())!;
   expect(rtlRange.x).toBeGreaterThan(previous.x);
   expect(previous.x).toBeGreaterThan(following.x);
-  await expect(rtl.getByRole('button', { name: 'Next page' }).locator('.env-symbol')).toHaveCSS(
+  await expect(rtl.getByRole('button', { name: 'Next page' }).locator('.env-icon')).toHaveCSS(
     'transform',
     'matrix(-1, 0, 0, 1, 0, 0)',
   );

@@ -6,7 +6,7 @@
   border-radius: 100vmax;
   box-shadow: inset 0 0 0 0.0625rem var(--env-color-border-muted);
 }
-.env-symbol > .env-color-swatch {
+.env-icon > .env-color-swatch {
   display: block;
   inline-size: 100%;
   block-size: 100%;

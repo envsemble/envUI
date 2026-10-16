@@ -4,7 +4,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { defaultMapPath } from '../src/map.mjs';
+import { readMap } from '../src/map.mjs';
 
 const require = createRequire(import.meta.url);
 const jscodeshift = require('jscodeshift');
@@ -12,7 +12,7 @@ export const { applyTransform } = require('jscodeshift/src/testUtils.js');
 
 export const packageDirectory = fileURLToPath(new URL('../', import.meta.url));
 export const fixturesDirectory = fileURLToPath(new URL('./fixtures/', import.meta.url));
-export const map = JSON.parse(readFileSync(defaultMapPath, 'utf8'));
+export const map = readMap();
 
 /**
  * Runs a transform module on one file with the API jscodeshift's worker passes, and returns its

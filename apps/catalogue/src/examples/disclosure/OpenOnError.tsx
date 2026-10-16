@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { ActionGroup, Button, Disclosure, Stack, TextField } from '@envsemble/envui';
+import { Button, Disclosure, Stack, TextField } from '@envsemble/envui';
 
 export default function OpenOnError() {
   const [advanced, setAdvanced] = useState(false);
@@ -31,9 +31,9 @@ export default function OpenOnError() {
             onChange={(event) => setDomain(event.target.value)}
           />
         </Disclosure>
-        <ActionGroup>
+        <Stack direction="row" wrap align="center" gap={4}>
           <Button type="submit">Save site</Button>
-        </ActionGroup>
+        </Stack>
       </Stack>
     </form>
   );

@@ -61,8 +61,8 @@ function RelatedTopics({ page }: { page: ReferencePage }) {
   });
   if (!related.length) return null;
   return (
-    <Stack as="section">
-      <Text as="h2" variant="page-heading">
+    <Stack render={<section />}>
+      <Text render={<h2 />} variant="headline">
         Related topics
       </Text>
       <Stack gap={2}>
@@ -137,7 +137,7 @@ export function ReferenceContent({
         usage: (
           <Stack gap={7} className="docs-article">
             <Usage reference={reference} search={search} />
-            <Text tone="muted">
+            <Text emphasis="muted">
               <Link href={routeHref('overview/get-started')}>
                 Setup, local edits and version updates
               </Link>

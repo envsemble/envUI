@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { ActionGroup, Button, Checkbox, Stack, Text } from '@envsemble/envui';
+import { Button, Checkbox, Stack, Text } from '@envsemble/envui';
 
 export default function NotificationForm() {
   const [sent, setSent] = useState<string>();
@@ -15,7 +15,7 @@ export default function NotificationForm() {
         {/* envUI has no checkbox group yet: a fieldset names the choices, read with each one. */}
         <fieldset style={{ minInlineSize: 0, margin: 0, padding: 0, border: 0 }}>
           <legend style={{ padding: 0, marginBlockEnd: '0.75rem' }}>
-            <Text as="span" variant="section-heading">
+            <Text render={<span />} variant="title">
               Send me an e-mail about
             </Text>
           </legend>
@@ -25,13 +25,13 @@ export default function NotificationForm() {
             <Checkbox name="notify" value="digest" label="A weekly digest" />
           </Stack>
         </fieldset>
-        <ActionGroup>
+        <Stack direction="row" wrap align="center" gap={4}>
           <Button type="submit">Save preferences</Button>
           <Button type="reset" variant="secondary">
             Reset
           </Button>
-        </ActionGroup>
-        <Text variant="caption" tone="muted" role="status">
+        </Stack>
+        <Text variant="caption" emphasis="muted" role="status">
           {sent && `Saved: ${sent}.`}
         </Text>
       </Stack>

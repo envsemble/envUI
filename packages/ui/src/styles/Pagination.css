@@ -31,6 +31,6 @@
   white-space: nowrap;
 }
 /* The chevrons point the way the pages run, also in right-to-left text. */
-.env-pagination-button .env-symbol:dir(rtl) {
+.env-pagination-button .env-icon:dir(rtl) {
   transform: scaleX(-1);
 }

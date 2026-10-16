@@ -25,7 +25,7 @@ export default function SavedContent() {
       >
         {saved}
       </RichText>
-      <Text variant="supporting" role="status">
+      <Text variant="body-sm" role="status">
         {opened}
       </Text>
     </Stack>

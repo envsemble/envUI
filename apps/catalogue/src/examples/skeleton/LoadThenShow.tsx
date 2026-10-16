@@ -37,7 +37,7 @@ export default function LoadThenShow() {
       <Card>
         {chosen === loaded ? (
           <Stack gap={2}>
-            <Text as="h3" variant="section-heading">
+            <Text render={<h3 />} variant="title">
               {project.name}
             </Text>
             <Text>{project.summary}</Text>

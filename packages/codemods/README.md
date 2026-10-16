@@ -35,7 +35,7 @@ npx envui-codemods v1-names src test --ignore-pattern='**/*.stories.tsx'
 | `--print`                 | Prints every changed file under its name, as `==> src/menu.tsx <==`.                                                                                       |
 | `--extensions=<list>`     | Reads only these comma-separated extensions. By default `js,jsx,ts,tsx,mjs,cjs,mts,cts`, and for v1-classes also `css,scss,sass,less,pcss`.                |
 | `--ignore-pattern=<glob>` | Skips matching files and folders; repeatable. A pattern without a slash matches a name at any depth. `node_modules`, `dist` and `.git` are always skipped. |
-| `--map=<path>`            | Uses another rename map with the shape of `src/maps/v1.json`, for example one component family at a time.                                                  |
+| `--map=<path>`            | Uses another rename map: a folder shaped like `src/maps/v1`, or one JSON file with its sections merged, for example one component family at a time.        |
 | `--list`, `--help`        | Lists the transforms, or shows the usage.                                                                                                                  |
 
 Paths default to the current folder. The CLI runs jscodeshift's runner with the `tsx` parser, or `ts` for `.ts`, `.mts` and `.cts` files, where `<T>value` is a type assertion. It names every file it changes (`Changed src/menu.tsx`, or `Would change` with `--dry`), prints a summary and every report as `REP <file> line <n>: …`, and exits with 1 when a file fails to parse or transform.
@@ -43,10 +43,11 @@ Paths default to the current folder. The CLI runs jscodeshift's runner with the 
 ## Recommended order
 
 1. Commit first: the codemods write files in place.
-2. Run `npx envui-codemods v1-names src`. The codemods are meant for 0.x code, run once. Some 1.0 code reads as 0.x to them, such as a `useTheme()` call whose result nothing reads as `{ theme, contrast }`, so a run over code already written for 1.0 can change it.
-3. Run `npx envui-codemods v1-props src`.
-4. Run `npx envui-codemods v1-classes src` over the scripts and style sheets.
-5. Install `@envsemble/envui` 1.0, run your formatter, then type-check. Fix each reported line; removed exports stay in the code on purpose, so the type checker points at them too.
+2. Run `npx envui-codemods v1-names src`.
+3. Run `npx envui-codemods v1-structure src`, then `npx envui-codemods v1-render src`. The codemods are meant for 0.x code, run once. Some 1.0 code reads as 0.x to them, such as a `useTheme()` call whose result nothing reads as `{ theme, contrast }`, so a run over code already written for 1.0 can change it.
+4. Run `npx envui-codemods v1-props src`.
+5. Run `npx envui-codemods v1-classes src` over the scripts and style sheets.
+6. Install `@envsemble/envui` 1.0, run your formatter, then type-check. Fix each reported line; removed exports stay in the code on purpose, so the type checker points at them too.
 
 ## v1-names
 
@@ -85,13 +86,32 @@ It reports, with the prop's replacement:
 - props that 1.0 removed without a replacement, which it drops: `density` on Surface, Menu.Root, ContextMenu and Menubar.Menu, and `size` on NavList.Item; for a compact app or region, set `scale="compact"` on its Theme;
 - a value it can't read, such as `density={density}`, which stays as it is, so the type checker points at it too.
 
-A 1.0 value, such as `density="sm"` on a Table or `size="lg"` on Tabs, is left alone without a report, so the codemod can run again over code it already moved.
+- Button emphasis: `variant="important"` becomes `variant="primary" tone="accent"`, `destructive` `variant="primary" tone="danger"`, `outlined` `outline` and `quiet` `ghost`, on Button, IconButton, ConfirmButton, CopyButton, DialogClose, ThemeToggle and Pagination.
+- Renamed props, which take their new name whatever their value and map the values that changed: Text's `tone` becomes `emphasis` (`primary` is `default`, `quiet` is `subtle`) and its variants `page-heading`, `section-heading` and `supporting` become `headline`, `title` and `body-sm`; Skeleton's `tone` becomes `emphasis` (`base` is `muted`, `highlight` is `default`); Surface's `tone` becomes `background` (`pane`, `row`, `canvas` and `alternate` are `default`, `muted`, `page` and `raised`) and `corners` becomes `radius` (`surface`, `standard` and `pill` are `xl`, `sm` and `full`).
+- The properties of the object some calls take, as the map's `calls` section lists them: a call of a function imported by name, or of a method of what a hook returns, such as `useToast().show({ … })`, `const toast = useToast(); toast.show({ … })` or `const { show } = useToast(); show({ … })`. An argument that is not an object literal is reported.
+
+A 1.0 value, such as `density="sm"` on a Table or `size="lg"` on Tabs, is left alone without a report, so the codemod can run again over code it already moved. A renamed prop with an expression, such as `<Text tone={tone}>`, takes its new name and is reported, since its values may need mapping.
+
+## v1-render
+
+Replaces `as` with `render` on the components the map's `render` section lists (Text, Stack and Surface): `<Text as="h2">` becomes `<Text render={<h2 />}>`. It reports an expression, such as `as={level}`, which `render` takes as an element instead, and an element that already sets `render`.
+
+## v1-structure
+
+Rewrites elements whose 1.0 form is another element, as the map's `structure` section lists them:
+
+- `<ActionGroup>` becomes `<Stack direction="row" wrap align="center" gap={4}>`, its `align` Stack's `justify` and its `as` a `render`; a stacked one becomes `<Stack gap={2}>` with `fullWidth` on each labelled `<Button>` inside. Stack is imported under a free name where the file already uses the name, and ActionGroup's import goes once nothing uses it.
+- It reports an ActionGroup whose `stacked` is an expression, and a child of a stacked one that is not a Button, whose width it can't set.
+
+Each entry is a list of cases matched on the element's literal props; a case renames the element, drops, renames or maps props, adds props to it or to its children, or wraps it in another element. Later 1.0 changes add entries, not code.
 
 ## v1-classes
 
-Renames 0.x `env-*` class names and custom properties. An entry also renames every name that continues it with a hyphen, the longest entry wins, and names that already have the new name are left alone: `env-notice-title` becomes `env-alert-title`, `--env-notice-tone` becomes `--env-alert-tone`, and `env-counter-badge` stays.
+Renames 0.x `env-*` class names and custom properties, and turns modifier classes into the attributes 1.0 sets. An entry also renames every name that continues it with a hyphen, the longest entry wins, and names that already have the new name are left alone: `env-notice-title` becomes `env-alert-title`, `--env-notice-tone` becomes `--env-alert-tone`, and `env-counter-badge` stays.
 
 A few classes depend on where they are. 0.7 gave DiffCount's label the counter's class, `env-counter-label`, which becomes `env-counter-badge-label`; 1.0's DiffStat names its label `env-diff-stat-label`. In a selector that puts the class inside DiffCount, such as `.env-diff-count .env-counter-label` or `.env-diff-count > .env-counter-label`, the label takes the DiffStat name. A selector nested inside a DiffCount rule in Sass or Less, and class names in markup, are not changed by context: rename those by hand.
+
+Modifier classes, as the map's `classAttributes` section lists them, become attribute selectors on their root class, with the specificity they had: `.env-button-important` becomes `.env-button:where([data-variant='primary'][data-tone='accent'])`, `.env-button.env-button-quiet` becomes `.env-button[data-variant='ghost']` and `.env-text-tone-muted` becomes `.env-text:where([data-emphasis='muted'])`. In markup, such a class is reported: 1.0 components set the attributes from their props. `env-symbol`, the icon wrapper, becomes `env-icon`.
 
 It also renames the tokens' custom properties, as the map's `tokens` section lists them. Every token takes the `--env-` prefix in 1.0, a few change their names beyond it, and the 0.7 aliases go straight to the token that replaces them: `--space-4` becomes `--env-space-4`, `--color-text-muted` becomes `--env-color-fg-muted`, `--color-row` becomes `--env-color-list-item-bg` and `--md-sys-shape-corner-large` becomes `--env-radius-lg`. A declaration is renamed too, so a style sheet that themes envUI by setting `--color-link` sets `--env-color-fg-link`; an application property of the same name as an old token is renamed with it, consistently, so check a renamed declaration that was the application's own. A name 1.0 removes, such as `--scale`, and a 0.7 fixed color that no token replaces, such as `--color-white`, stay as they are and are reported with what to use instead. A 1.0 name is left alone: `--env-row-height` is a token, not a property of the 0.x `env-row` class.
 
@@ -102,7 +122,7 @@ Both transforms keep a file's line endings, CRLF or LF, and its byte order mark;
 
 ## The rename map
 
-`src/maps/v1.json` is the single source of the renames: `exports` (old export name to new name per entry point; a dot names a namespace part), `split` (components that became several parts, chosen by a prop value), `removed` (exports that became internal, with what to use instead), `classes`, `classesWithin` (class renames inside an ancestor's selector), `docs` (documentation page slugs) and `tokens` (custom properties before 1.0, each with the 1.0 name in `to`, or a fixed color's `value` or `removed`, which are reported; the token build writes this section). The transforms hardcode no names. Pass `--map` to run them with a map of the same shape; the map is checked before anything runs.
+The folder `src/maps/v1` is the single source of the renames. `map.json` holds the version, the package and what each section means; every other file is a fragment of one section for one component family, such as `props/Button.json` or `classes/Menu.json`, which the transforms merge, failing where two fragments set the same name. The sections: `exports` (old export name to new name per entry point; a dot names a namespace part), `split` (components that became several parts, chosen by a prop value), `removed` (exports that became internal, with what to use instead), `props` (changed props, their values and new names), `calls` (properties of the objects some calls take), `render` (components whose `as` became `render`), `structure` (element rewrites), `classes`, `classAttributes` (modifier classes that became attributes), `classesWithin` (class renames inside an ancestor's selector), `docs` (documentation page slugs) and `tokens` (custom properties before 1.0, each with the 1.0 name in `to`, or a fixed color's `value` or `removed`, which are reported; the token build writes `tokens/Tokens.json`). The transforms hardcode no names. Pass `--map` to run them with another folder or a single JSON file of the merged shape; the map is checked before anything runs.
 
 ## Limitations
 

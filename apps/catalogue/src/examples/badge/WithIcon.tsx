@@ -1,11 +1,11 @@
-import { ActionGroup, Badge } from '@envsemble/envui';
+import { Badge, Stack } from '@envsemble/envui';
 import { CheckCircle } from '@envsemble/envui/icons/CheckCircle';
 import { Folder } from '@envsemble/envui/icons/Folder';
 import { TaskAlt } from '@envsemble/envui/icons/TaskAlt';
 
 export default function WithIcon() {
   return (
-    <ActionGroup>
+    <Stack direction="row" wrap align="center" gap={4}>
       <Badge tone="success" icon={<CheckCircle />}>
         Approved
       </Badge>
@@ -15,6 +15,6 @@ export default function WithIcon() {
       <Badge variant="outline" icon={<Folder />}>
         Shared drafts
       </Badge>
-    </ActionGroup>
+    </Stack>
   );
 }

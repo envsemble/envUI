@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { ActionGroup, Button, ColorPicker, Stack, Text } from '@envsemble/envui';
+import { Button, ColorPicker, Stack, Text } from '@envsemble/envui';
 
 export default function ProjectColorForm() {
   const [applied, setApplied] = useState('');
@@ -20,13 +20,13 @@ export default function ProjectColorForm() {
           defaultValue="#6b4fa3"
           hint="Shown beside the project in lists."
         />
-        <ActionGroup>
+        <Stack direction="row" wrap align="center" gap={4}>
           <Button type="submit">Apply color</Button>
           <Button type="reset" variant="secondary">
             Reset
           </Button>
-        </ActionGroup>
-        <Text variant="caption" tone="muted" role="status">
+        </Stack>
+        <Text variant="caption" emphasis="muted" role="status">
           {applied && `Applied ${applied}.`}
         </Text>
       </Stack>

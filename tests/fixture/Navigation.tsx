@@ -1,13 +1,5 @@
 import { useState } from 'react';
-import {
-  Theme,
-  ActionGroup,
-  Stack,
-  NavList,
-  Icon,
-  Tooltip,
-  type ThemeValue,
-} from '@envsemble/envui';
+import { Theme, Stack, NavList, Icon, Tooltip, type ThemeValue } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Settings } from '@envsemble/envui/icons/Settings';
 
@@ -15,12 +7,12 @@ export function NavigationFixture({ theme }: { theme: ThemeValue }) {
   const [selected, setSelected] = useState('home');
   return (
     <Theme theme={theme} data-testid={`navigation-icons-${theme}`} className="fixture-section">
-      <ActionGroup>
+      <Stack direction="row" wrap align="center" gap={4}>
         <Home data-testid="home-outline" />
         <Home filled data-testid="home-filled" />
         <Settings data-testid="settings-outline" />
         <Settings filled data-testid="settings-filled" />
-      </ActionGroup>
+      </Stack>
       <Stack>
         <NavList.Item
           data-testid="home-navigation"
@@ -60,7 +52,7 @@ export function NavigationFixture({ theme }: { theme: ThemeValue }) {
           Custom destination
         </NavList.Item>
       </Stack>
-      <ActionGroup>
+      <Stack direction="row" wrap align="center" gap={4}>
         <NavList.Item
           iconOnly
           icon={<Home />}
@@ -85,7 +77,7 @@ export function NavigationFixture({ theme }: { theme: ThemeValue }) {
             onClick={() => setSelected('settings')}
           />
         </Tooltip>
-      </ActionGroup>
+      </Stack>
     </Theme>
   );
 }

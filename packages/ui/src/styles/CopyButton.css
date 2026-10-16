@@ -20,7 +20,7 @@
   pointer-events: none;
 }
 @media (prefers-reduced-motion: no-preference) {
-  .env-copy-button[data-copied] .env-symbol > svg {
+  .env-copy-button[data-copied] .env-icon > svg {
     animation: env-motion-pop-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
 }

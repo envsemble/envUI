@@ -4,12 +4,12 @@ import { Stack, Surface, Text } from '@envsemble/envui';
 export default function DetailPane() {
   const heading = useId();
   return (
-    <Surface padding={5} render={<Stack as="section" gap={3} aria-labelledby={heading} />}>
-      <Text as="h3" variant="section-heading" id={heading}>
+    <Surface padding={5} render={<Stack render={<section />} gap={3} aria-labelledby={heading} />}>
+      <Text render={<h3 />} variant="title" id={heading}>
         Northwind launch
       </Text>
       <Text>Shared plans, notes and decisions for the spring launch.</Text>
-      <Text variant="supporting">Updated by Priya Shah</Text>
+      <Text variant="body-sm">Updated by Priya Shah</Text>
     </Surface>
   );
 }

@@ -1,0 +1,64 @@
+.env-bar {
+  display: grid;
+  gap: var(--env-space-2);
+  min-inline-size: 0;
+}
+.env-bar-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--env-space-3);
+  font: var(--env-type-body-small);
+}
+.env-bar-label {
+  color: var(--env-color-fg-muted);
+}
+.env-bar-value {
+  color: var(--env-color-fg-control);
+  font-weight: 500;
+}
+.env-bar-track {
+  block-size: 0.625rem;
+  overflow: hidden;
+  border-radius: var(--env-radius-full);
+  background: var(--env-color-bg-neutral-muted);
+}
+.env-bar-indicator {
+  block-size: 100%;
+  border-radius: inherit;
+  background: var(--env-color-bg-brand-emphasis);
+  transition: inline-size var(--env-motion-duration-medium) var(--env-motion-ease);
+}
+.env-bar[data-indeterminate] .env-bar-indicator {
+  inline-size: 40%;
+  animation: env-bar-indeterminate 1.2s var(--env-motion-ease) infinite;
+}
+@keyframes env-bar-indeterminate {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(250%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .env-bar-indicator {
+    transition: none;
+  }
+  .env-bar[data-indeterminate] .env-bar-indicator {
+    animation: none;
+  }
+}
+
+/* Forced colors: the system paints no fills or shadows, so a bar’s track is outlined and its
+   indicator takes the selection color. */
+@media (forced-colors: active) {
+  .env-bar-track {
+    outline: 1px solid CanvasText;
+    outline-offset: -1px;
+  }
+  .env-bar-indicator {
+    background-color: Highlight;
+  }
+}

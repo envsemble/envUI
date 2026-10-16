@@ -24,7 +24,7 @@ export default function NoResults() {
         value={query}
         onValueChange={setQuery}
       />
-      <Text variant="caption" tone="muted" role="status">
+      <Text variant="caption" emphasis="muted" role="status">
         {matches.length === 1 ? '1 project' : `${matches.length} projects`}
       </Text>
       {matches.length > 0 ? (

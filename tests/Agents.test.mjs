@@ -572,7 +572,7 @@ test('envui mcp answers every tool over stdio from the installed files', async (
   const listed = await server.call('list_components', { category: 'Actions' });
   assert.deepEqual(
     listed.components.map((component) => component.name),
-    ['Button', 'Link', 'SegmentedControl'],
+    ['Button', 'CloseButton', 'Toolbar', 'Link', 'SegmentedControl'],
   );
   assert.equal(listed.components[0].import, '@envsemble/envui');
 
@@ -965,7 +965,7 @@ const corpus = [
     ['SegmentedControl'],
   ],
   ['a Dark Mode switch in the header', ['ThemeToggle'], ['AppShell'], ['Switch']],
-  ['a form with a postal code field', [], ['TextField', 'Stack'], ['Code']],
+  ['a form with a postal code field', [], ['TextField', 'Stack', 'Field'], ['Code']],
   ['A top bar with the product name', [], ['AppShell'], ['Menubar']],
   ['pick a date range for the report', [], ['DatePicker'], ['Slider']],
   ['a remember me checkbox on the sign-in form', ['Checkbox'], [], ['ThemePreferenceProvider']],

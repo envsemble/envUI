@@ -22,7 +22,7 @@ function Projects() {
       },
     });
   };
-  if (projects.length === 0) return <Text variant="supporting">Every project is archived.</Text>;
+  if (projects.length === 0) return <Text variant="body-sm">Every project is archived.</Text>;
   return (
     <List.Root aria-label="Projects">
       {projects.map((project) => (

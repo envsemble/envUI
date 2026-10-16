@@ -168,7 +168,7 @@ function FormSection() {
           <TextField label="Name" defaultValue="Quarterly report" />
           <Select aria-label="Plan" options={plans} defaultValue="team" />
           <Button variant="primary">Save</Button>
-          <Button variant="outlined">Cancel</Button>
+          <Button variant="outline">Cancel</Button>
         </Row>
       </div>
       <div className="density-band">
@@ -183,7 +183,9 @@ function FormSection() {
           <Checkbox label="Notify" defaultChecked />
           <Switch label="Sync" defaultChecked />
           <Badge tone="success">Ready</Badge>
-          <Button variant="important">Important</Button>
+          <Button variant="primary" tone="accent">
+            Important
+          </Button>
           <IconButton icon={<Edit />} aria-label="Edit" variant="secondary" />
         </Row>
       </div>
@@ -201,7 +203,7 @@ function ToolbarSection() {
           <div className="density-label">Toolbar, size="{size}"</div>
           <div className="density-row">
             <IconButton size={size} icon={<Add />} aria-label="Add" variant="secondary" />
-            <IconButton size={size} icon={<Refresh />} aria-label="Refresh" variant="quiet" />
+            <IconButton size={size} icon={<Refresh />} aria-label="Refresh" variant="ghost" />
             <SegmentedControl
               aria-label="Filter"
               size={size}
@@ -355,7 +357,7 @@ function ReportTable({ density }: { density?: RowDensity }) {
               <Badge tone={tones[report.status]}>{report.status}</Badge>
             </Table.Cell>
             <Table.Cell>
-              <IconButton icon={<MoreVert />} aria-label="More" variant="quiet" />
+              <IconButton icon={<MoreVert />} aria-label="More" variant="ghost" />
             </Table.Cell>
           </Table.Row>
         ))}
@@ -479,7 +481,9 @@ function DesktopSection() {
                 { value: 'open', label: 'Open' },
               ]}
             />
-            <Button variant="important">Publish</Button>
+            <Button variant="primary" tone="accent">
+              Publish
+            </Button>
           </div>
           <Tabs aria-label="Views" items={tabItems('button')} />
           <ReportTable />
@@ -553,7 +557,7 @@ function LayoutsSection() {
               <span key={name}>
                 <IconButton
                   size="sm"
-                  variant="quiet"
+                  variant="ghost"
                   icon={<Edit />}
                   aria-label={`${name}, ${direction}`}
                 />

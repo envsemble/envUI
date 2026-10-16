@@ -31,11 +31,11 @@ export default function StartPageWindow() {
         }
       >
         <Stack gap={2} style={{ padding: '1.5rem' }}>
-          <Text as="h3" variant="page-heading">
+          <Text render={<h3 />} variant="headline">
             Recent documents
           </Text>
           {recent.map((name) => (
-            <Text key={name} tone="muted">
+            <Text key={name} emphasis="muted">
               {name}
             </Text>
           ))}

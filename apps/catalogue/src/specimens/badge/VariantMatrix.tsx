@@ -83,26 +83,33 @@ export default function VariantMatrix() {
                   <DiffStat additions={12} deletions={3} />
                 </td>
               </tr>
-              {(['secondary', 'outlined', 'primary', 'important'] as const).map((variant) => (
-                <tr key={variant}>
-                  <th scope="row">{variant}</th>
+              {(
+                [
+                  ['secondary', { variant: 'secondary' }],
+                  ['outline', { variant: 'outline' }],
+                  ['primary', { variant: 'primary' }],
+                  ['primary · accent', { variant: 'primary', tone: 'accent' }],
+                ] as const
+              ).map(([name, emphasis]) => (
+                <tr key={name}>
+                  <th scope="row">{name}</th>
                   <td>
-                    <Button variant={variant}>
+                    <Button {...emphasis}>
                       Plans <Badge tone="accent">New</Badge>
                     </Button>
                   </td>
                   <td>
-                    <Button variant={variant}>
+                    <Button {...emphasis}>
                       Plans <CounterBadge value={4} />
                     </Button>
                   </td>
                   <td>
-                    <Button variant={variant}>
+                    <Button {...emphasis}>
                       Inbox <CounterBadge value={12} tone="accent" />
                     </Button>
                   </td>
                   <td>
-                    <Button variant={variant}>
+                    <Button {...emphasis}>
                       Changes <DiffStat additions={12} deletions={3} />
                     </Button>
                   </td>

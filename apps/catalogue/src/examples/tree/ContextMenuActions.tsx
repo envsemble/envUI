@@ -89,13 +89,13 @@ export default function ContextMenuActions() {
       {/* The menu's actions are buttons too, for people who cannot right-click. */}
       <div style={{ display: 'flex', gap: '0.25rem' }}>
         <IconButton
-          variant="quiet"
+          variant="ghost"
           icon={<NoteAdd />}
           aria-label="New document"
           onClick={() => create(null)}
         />
         <IconButton
-          variant="quiet"
+          variant="ghost"
           icon={<Delete />}
           aria-label="Delete the selected document"
           disabled={selected === null}

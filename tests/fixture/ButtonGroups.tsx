@@ -20,29 +20,43 @@ export function ButtonGroupsFixture({ theme }: { theme: ThemeValue }) {
             data-testid={orientation}
           >
             <Button onClick={() => setActivations((value) => value + 1)}>Continue</Button>
-            <Button variant="important" iconOnly icon={<Check />} aria-label="Confirm" />
+            <Button
+              variant="primary"
+              tone="accent"
+              iconOnly
+              icon={<Check />}
+              aria-label="Confirm"
+            />
             <IconButton icon={<Settings />} aria-label="Settings" />
-            <Button href="#group-destination" variant="outlined" startIcon={<Settings />}>
+            <Button href="#group-destination" variant="outline" startIcon={<Settings />}>
               Manage
             </Button>
-            <Button variant="destructive" endIcon={<Check />}>
+            <Button variant="primary" tone="danger" endIcon={<Check />}>
               Delete
             </Button>
           </ButtonGroup>
         ))}
         <ButtonGroup data-testid="important-end">
-          <Button variant="important" iconOnly icon={<Check />} aria-label="Approve" />
+          <Button variant="primary" tone="accent" iconOnly icon={<Check />} aria-label="Approve" />
           <Button variant="secondary">Cancel</Button>
         </ButtonGroup>
         <ButtonGroup orientation="vertical" data-testid="important-top">
-          <Button variant="important">Confirm</Button>
+          <Button variant="primary" tone="accent">
+            Confirm
+          </Button>
           <IconButton icon={<Settings />} aria-label="Options" />
         </ButtonGroup>
         <ButtonGroup data-testid="single">
           <Button>Only action</Button>
         </ButtonGroup>
         <ButtonGroup orientation="vertical" data-testid="single-important">
-          <Button variant="important" iconOnly icon={<Check />} aria-label="Only confirmation" />
+          <Button
+            variant="primary"
+            tone="accent"
+            iconOnly
+            icon={<Check />}
+            aria-label="Only confirmation"
+          />
         </ButtonGroup>
         <ButtonGroup data-testid="dynamic">
           {ends && <Button>First</Button>}

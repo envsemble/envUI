@@ -87,7 +87,7 @@ export default function FilterPanel() {
           ))}
         </List.Root>
       ) : (
-        <Text tone="muted">No projects match these filters.</Text>
+        <Text emphasis="muted">No projects match these filters.</Text>
       )}
     </Stack>
   );

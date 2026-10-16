@@ -14,7 +14,7 @@ import { Theme, useTheme } from '../foundations/Theme.js';
 import { Check } from '../icons/Check.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
 import { Kbd } from '../content/Kbd.js';
-import { useLinkComponent } from './LinkProvider.js';
+import { useLinkComponent } from '../internal/LinkContext.js';
 import { menuPopupInlineInset, menuPopupInset, renderMenuPopup } from './internal/MenuPopup.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 
@@ -377,7 +377,7 @@ function Submenu({
         {...accessibility}
       >
         {content}
-        <span className="env-symbol env-menu-submenu-chevron" aria-hidden="true">
+        <span className="env-icon env-menu-submenu-chevron" aria-hidden="true">
           <ChevronRight />
         </span>
       </BaseMenu.SubmenuTrigger>
@@ -468,7 +468,7 @@ function CheckIndicator({ kind }: { kind: 'radio' | 'checkbox' }) {
   const Indicator = kind === 'radio' ? BaseMenu.RadioItemIndicator : BaseMenu.CheckboxItemIndicator;
   return (
     <span className="env-menu-item-check" aria-hidden="true">
-      <Indicator className="env-symbol env-menu-item-check-mark">
+      <Indicator className="env-icon env-menu-item-check-mark">
         <Check />
       </Indicator>
     </span>

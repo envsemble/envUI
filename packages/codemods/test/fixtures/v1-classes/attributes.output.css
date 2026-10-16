@@ -1,0 +1,19 @@
+/* Modifier classes become the attributes their root class carries, with the same specificity. */
+.env-button:where([data-variant='primary'][data-tone='accent']) {
+  border-radius: 0;
+}
+.app-toolbar .env-button[data-variant='ghost']:hover {
+  color: red;
+}
+.env-button:is([data-variant='primary']:where([data-tone='neutral']), .env-button:where([data-variant='primary'][data-tone='danger'])) .app-count,
+.app-panel > .env-button:not([data-variant='text']) {
+  margin: 0;
+}
+.env-button:where([data-variant='text'])[data-underline],
+.env-text[data-emphasis='muted'],
+.env-surface:where([data-background='raised'])[data-radius='full'] {
+  outline: 0;
+}
+.app-card .env-icon {
+  width: 2rem;
+}

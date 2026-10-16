@@ -21,7 +21,7 @@ export default function AccountMenu() {
           <Stack gap={1} align="center">
             <Avatar name="Alex Morgan" size="large" />
             <Text>Alex Morgan</Text>
-            <Text variant="supporting">alex@example.com</Text>
+            <Text variant="body-sm">alex@example.com</Text>
           </Stack>
         </Menu.Header>
         <Menu.Item href="/account" icon={<ManageAccounts />}>

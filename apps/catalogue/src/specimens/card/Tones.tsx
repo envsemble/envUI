@@ -7,18 +7,18 @@ const tones = ['row', 'pane', 'canvas'] as const;
 export default function Tones() {
   return (
     <Example title="Tones" size="collection">
-      <Surface tone="pane">
+      <Surface background="default">
         <SpecimenGrid size="card">
           {tones.map((tone) => (
             <Specimen key={tone} title={tone}>
               <Card tone={tone}>
-                <Text as="h4" variant="section-heading">
+                <Text render={<h4 />} variant="title">
                   Northwind launch
                 </Text>
-                <Text tone="muted">Plans and milestones for the spring launch.</Text>
+                <Text emphasis="muted">Plans and milestones for the spring launch.</Text>
               </Card>
               <Card tone={tone} href="#northwind">
-                <Text as="span" variant="section-heading">
+                <Text render={<span />} variant="title">
                   Open Northwind launch
                 </Text>
               </Card>
@@ -26,7 +26,7 @@ export default function Tones() {
           ))}
           <Specimen title="Disabled link">
             <Card href="#archive" disabled>
-              <Text as="span" variant="section-heading">
+              <Text render={<span />} variant="title">
                 Archived projects
               </Text>
             </Card>

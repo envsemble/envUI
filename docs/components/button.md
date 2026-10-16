@@ -67,7 +67,7 @@ The family shares Button's variants and states:
 
 ## Anatomy
 
-1. **Container**: the fill, border and corners of the variant. Labelled buttons are pills; icon-only buttons are circles, except important ones, which are rounded squares.
+1. **Container**: the fill, border and corners of the variant. Labelled buttons are pills; icon-only buttons are circles, except primary ones in the accent tone, which are rounded squares.
 2. **Start icon** (optional, `startIcon`): decorative, at the control icon size of 1 rem.
 3. **Label**: the button's text and its accessible name. It wraps when space runs out.
 4. **End icon** (optional, `endIcon`): decorative, such as a chevron for a next step.
@@ -78,35 +78,42 @@ A ButtonGroup joins its buttons with a 0.125 rem gap; inner corners take the sha
 
 ## Variants and sizes
 
-| Variant       | Use for                                                                          |
-| ------------- | -------------------------------------------------------------------------------- |
-| `primary`     | The main action of a view or group. Use one per group.                           |
-| `important`   | A rare, consequential action that must stand out, with 0.5 rem corners.          |
-| `secondary`   | Other actions, on the neutral fill without a border.                             |
-| `outlined`    | Other actions on panes, dialogs and rows, with a border in the link color.       |
-| `destructive` | An action that deletes or ends something.                                        |
-| `text`        | A link-like action without fill, border or inset; `underline` adds an underline. |
-| `quiet`       | Actions in an application's chrome, such as a sidebar toggle or a toolbar.       |
+`variant` sets the emphasis and `tone` the meaning, in the designed pairs below; `tone` is `neutral` unless set.
+
+| Variant     | Tones                   | Use for                                                                          |
+| ----------- | ----------------------- | -------------------------------------------------------------------------------- |
+| `primary`   | neutral, accent, danger | The main action of a view or group. Use one per group.                           |
+| `secondary` | neutral                 | Other actions, on the neutral fill without a border.                             |
+| `outline`   | neutral, danger         | Other actions on panes, dialogs and rows, with a border.                         |
+| `ghost`     | neutral, danger         | Actions in an application's chrome, such as a sidebar toggle or a toolbar.       |
+| `text`      | neutral, danger         | A link-like action without fill, border or inset; `underline` adds an underline. |
+
+| Tone      | Use for                                                                                                                                    |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `neutral` | Most actions. The default.                                                                                                                 |
+| `accent`  | On a primary button, a rare, consequential action that must stand out, with 0.5 rem corners.                                               |
+| `danger`  | An action that deletes or ends something: the strong danger fill on a primary button, the danger color on outline, ghost and text buttons. |
 
 <!-- specimen: VariantMatrix -->
 
 <!-- specimen: Sizes -->
 
 - **Sizes**: `sm` for a small action where space is short, such as in a toolbar beside small fields or in a table cell; `md` for most actions; `lg` for the one prominent call to action of a page.
-- `size` sets the height, the same for every control of that size in the app's [scale](../foundations/scale.md): `sm`, `md` and `lg` are 2, 2.5 and 3 rem in the comfortable scale, and 1.625, 2 and 2.375 rem in the compact one. IconButton and CopyButton take the same sizes, and so do important buttons.
+- `size` sets the height, the same for every control of that size in the app's [scale](../foundations/scale.md): `sm`, `md` and `lg` are 2, 2.5 and 3 rem in the comfortable scale, and 1.625, 2 and 2.375 rem in the compact one. IconButton and CopyButton take the same sizes, and so do accent buttons. `fullWidth` makes a labelled button as wide as its container, such as the actions of a narrow form stacked in a column.
 - A button without a size takes the control height of its container: buttons in a table cell are `sm`, as are those in a title bar, a panel header or a message's actions. A button beside a field takes the field's size.
 - On touch screens a button grows to 2.75 rem, tall and wide, in either [scale](../foundations/scale.md), as every control of its row does; its own box is its hit area, so a press on it never reaches a button beside it. The buttons of a ButtonGroup grow with their group, which keeps its round ends.
 - Labels are 0.875 rem, 0.8125 rem in the compact scale, with 0.25 rem vertical and 0.75 rem horizontal padding. Buttons fit their content; a labelled button can shrink and wrap its label, while an icon-only button keeps its square size, also in a squeezed row.
 - Primary buttons are blue in both themes: the control blue with white labels in the light theme, and the link's soft blue with dark labels in the dark theme.
 - Secondary buttons use the neutral fill and label color without a border; the fill is a translucent layer of the text color, so they stay visible on rows, panes and dialogs. Outlined buttons keep their border and link color.
-- Quiet buttons take the quiet icon color, darken to the text color over a state layer on hover and press, and show the focus ring, with no fill or border. A quiet label reads at 4.5:1 on the canvas, panes and rows.
+- Ghost buttons take the quiet icon color, darken to the text color over a state layer on hover and press, and show the focus ring, with no fill or border. A ghost label reads at 4.5:1 on the canvas, panes and rows. In the danger tone, outline, ghost and text buttons take the danger color, with the danger state layer on hover and press.
+- A button without a `variant` takes the one its container gives: buttons the application puts in a [Toolbar](../components/toolbar.md) are ghost. Without one, a Button is primary and an IconButton secondary.
 
 ## States and behaviour
 
 - **Hover, pressed, focus and disabled**: hover and pressed take each variant's hover and pressed color tokens, as [colors and themes](../foundations/colors.md) describes; disabled buttons use the shared disabled opacity.
 - **Pending**: while `pending` is true a spinner replaces the content at the same size; the button reports `aria-busy` and `aria-disabled`, and ignores activation, including form submission and navigation.
 - **Links**: with `href` the button is a native link, rendered through the `LinkProvider`'s link component so routing stays with the application. A disabled link has no destination, cannot be focused or followed, and reports `aria-disabled`.
-- **ConfirmButton**: the first press arms it. It turns destructive, shows `confirmLabel` and announces it with "Press again to confirm." A second press runs `onConfirm`; a double click only arms it, since a second press within 400 ms is ignored. <kbd>Esc</kbd>, leaving the button, disabling it, starting its work and `armedDuration` (4 seconds) disarm it. An icon-only ConfirmButton is round at rest and grows when armed to show its icon with the confirm label, keeping focus.
+- **ConfirmButton**: the first press arms it. It turns into a primary button in the danger tone, shows `confirmLabel` and announces it with "Press again to confirm." A second press runs `onConfirm`; a double click only arms it, since a second press within 400 ms is ignored. <kbd>Esc</kbd>, leaving the button, disabling it, starting its work and `armedDuration` (4 seconds) disarm it. An icon-only ConfirmButton is round at rest and grows when armed to show its icon with the confirm label, keeping focus.
 - **CopyButton**: a press writes the text with the asynchronous Clipboard API; without clipboard access, such as on an insecure connection, it copies a selection of a hidden field instead, also inside a dialog. A function `value` runs at the press, and a promise keeps the button pending until it resolves. The icon turns into a check and "Copied" (or "Couldn’t copy") shows in the tooltip and is announced for about two seconds, again for each press; <kbd>Esc</kbd> hides it. An icon-only CopyButton shows its name in a tooltip on hover and focus, also while disabled.
 - **ButtonGroup**: horizontal buttons share a height and vertical buttons fill the group's width. Labels wrap, and a group scrolls locally if its controls cannot fit. With `fullWidth` the group fills its container: labelled buttons share the room the icon-only ones leave. Hidden buttons don't count for the end corners.
 
@@ -132,7 +139,7 @@ A ButtonGroup joins its buttons with a 0.125 rem gap; inner corners take the sha
 
 ### Don't
 
-- Don't use several primary or important buttons side by side; reserve important for rare, consequential actions.
+- Don't use several primary buttons side by side; reserve the accent tone for rare, consequential actions.
 - Don't disable a button to explain a missing requirement; let people press it and show what is missing.
 - Don't use a Button for a destination inside a sentence; use [Link](../components/link.md).
 - Don't confirm everyday actions; use ConfirmButton only where the action cannot be undone.
@@ -186,9 +193,9 @@ One primary action per group; the others step down in emphasis.
 
 ```
 
-### Quiet actions in chrome
+### Ghost actions in chrome
 
-Quiet buttons suit an application's chrome, such as a sidebar toggle or a section's actions inside a surface: the icon color, with a state layer on hover and press.
+Ghost buttons suit an application's chrome, such as a sidebar toggle or a section's actions inside a surface: the icon color, with a state layer on hover and press.
 
 ```tsx example=QuietToolbar
 
@@ -252,7 +259,7 @@ With `fullWidth` a group fills its container: the labelled button takes the room
 
 ## Changelog
 
-- **1.0.0**: The page is `button`, after the component, and Link has a page of its own.
+- **1.0.0**: `variant` is `primary`, `secondary`, `outline`, `ghost` or `text`, and `tone` is `neutral`, `accent` or `danger`: `important` is `variant="primary" tone="accent"`, `destructive` is `variant="primary" tone="danger"`, `outlined` is `outline` and `quiet` is `ghost`, which the `v1-props` codemod writes. Outline, ghost and text buttons take the danger tone. `fullWidth`. Buttons take the variant their container gives where they set none. The page is `button`, after the component, and Link has a page of its own.
 - **0.6.0**: The `quiet` variant on Button, IconButton and ConfirmButton; CopyButton; ButtonGroup `fullWidth`.
 - **0.5.0**: ConfirmButton `icon`, an icon-only form that grows when armed.
 - **0.4.0**: `pending` on Button and IconButton; ConfirmButton.

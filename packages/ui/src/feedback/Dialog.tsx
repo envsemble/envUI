@@ -7,8 +7,10 @@ import { classNames } from '../internal/classNames.js';
 import { Button, IconButton } from '../actions/Button.js';
 import type { ButtonProps } from '../actions/Button.js';
 import { Close } from '../icons/Close.js';
+import { useMessages } from '../internal/EnvUIContext.js';
+import { dialog } from '../foundations/messages/dialog.js';
 import { Theme, useTheme } from '../foundations/Theme.js';
-import { Stack, ActionGroup } from '../foundations/Layout.js';
+import { Stack } from '../foundations/Layout.js';
 import { Surface } from '../foundations/Surface.js';
 
 export interface DialogProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title' | 'children'> {
@@ -105,7 +107,9 @@ export const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(funct
   { variant = 'secondary', ...props },
   ref,
 ) {
-  return <BaseDialog.Close ref={ref} render={<Button {...props} variant={variant} />} />;
+  return (
+    <BaseDialog.Close ref={ref} render={<Button {...({ ...props, variant } as ButtonProps)} />} />
+  );
 });
 
 /**
@@ -124,7 +128,7 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
     description,
     children,
     actions,
-    closeLabel = 'Close',
+    closeLabel: ownCloseLabel,
     placement = 'center',
     size = 'standard',
     modal = true,
@@ -138,6 +142,8 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
   ref,
 ) {
   const theme = useTheme();
+  const messages = useMessages('dialog', dialog);
+  const closeLabel = ownCloseLabel ?? messages.close;
   return (
     <BaseDialog.Root
       open={open}
@@ -160,9 +166,9 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
             <BaseDialog.Popup
               render={
                 <Surface
-                  tone="pane"
+                  background="default"
                   padding={5}
-                  corners={placement === 'right' ? 'none' : 'surface'}
+                  radius={placement === 'right' ? 'none' : 'xl'}
                 />
               }
               {...popupProps}
@@ -194,12 +200,18 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
                 </div>
                 {children}
                 {(placement !== 'right' || actions != null) && (
-                  <ActionGroup align="end" className="env-dialog-actions">
+                  <Stack
+                    direction="row"
+                    wrap
+                    align="center"
+                    justify="end"
+                    className="env-dialog-actions"
+                  >
                     {placement !== 'right' && (
                       <DialogClose disabled={pending}>{closeLabel}</DialogClose>
                     )}
                     {actions}
-                  </ActionGroup>
+                  </Stack>
                 )}
               </Stack>
             </BaseDialog.Popup>

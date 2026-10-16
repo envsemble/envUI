@@ -1,5 +1,5 @@
 // Rewrites src/data/renames.json, the names envui/no-renamed-exports reports, from the codemods'
-// rename map (packages/codemods/src/maps/v1.json), the canonical list of envUI 1.0 renames.
+// rename map (packages/codemods/src/maps/v1), the canonical list of envUI 1.0 renames.
 // It runs before every pack, so a published plugin carries the codemods' map whenever the
 // repository has one; without it, the plugin's own copy in src/data/renames.json is kept.
 //
@@ -9,12 +9,13 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-export const codemodsMapUrl = new URL('../../codemods/src/maps/v1.json', import.meta.url);
+export const codemodsMapUrl = new URL('../../codemods/src/maps/v1/', import.meta.url);
+const codemodsLoaderUrl = new URL('../../codemods/src/map.mjs', import.meta.url);
 export const renamesUrl = new URL('../src/data/renames.json', import.meta.url);
 export const exportsUrl = new URL('../data/envui-0.7-exports.json', import.meta.url);
 
 const comment =
-  "Names that envUI 0.7 exported and 1.0 does not, by entry point. Each entry's `to` lists what replaces it in 1.0: one name, alternatives, or nothing for a name that became internal, whose `use` says what to do instead. A split (DirectionLink) also has the `prop` whose `values` choose the part. A name that becomes the Root part of its own namespace (Menu -> Menu.Root) stays importable, and so does a removed name that 1.0 reuses as a namespace (`namespace`: the manual Toast; 1.0's Toast holds Toast.Provider); only rendering them as components is reported. scripts/SyncRenames.mjs rewrites this file from the codemods' rename map (packages/codemods/src/maps/v1.json) whenever that map exists, before every pack; source says where the entries came from.";
+  "Names that envUI 0.7 exported and 1.0 does not, by entry point. Each entry's `to` lists what replaces it in 1.0: one name, alternatives, or nothing for a name that became internal, whose `use` says what to do instead. A split (DirectionLink) also has the `prop` whose `values` choose the part. A name that becomes the Root part of its own namespace (Menu -> Menu.Root) stays importable, and so does a removed name that 1.0 reuses as a namespace (`namespace`: the manual Toast; 1.0's Toast holds Toast.Provider); only rendering them as components is reported. scripts/SyncRenames.mjs rewrites this file from the codemods' rename map (packages/codemods/src/maps/v1) whenever that map exists, before every pack; source says where the entries came from.";
 
 /** Fields of a map entry that may hold its replacement, in the order they are read. */
 const targetFields = ['to', 'new', 'replacement', 'replacements', 'target', 'targets'];
@@ -162,9 +163,11 @@ export async function serializeRenames(modules, source) {
 /** The text src/data/renames.json should have, or undefined when there is no codemods map. */
 export async function expectedRenames() {
   if (!existsSync(codemodsMapUrl)) return undefined;
-  const map = JSON.parse(readFileSync(codemodsMapUrl, 'utf8'));
+  // The codemods merge their map's fragments, one folder per section, into one map.
+  const { readMap } = await import(codemodsLoaderUrl.href);
+  const map = readMap(fileURLToPath(codemodsMapUrl));
   const snapshot = JSON.parse(readFileSync(exportsUrl, 'utf8'));
-  return serializeRenames(normalizeRenameMap(map, snapshot), 'packages/codemods/src/maps/v1.json');
+  return serializeRenames(normalizeRenameMap(map, snapshot), 'packages/codemods/src/maps/v1');
 }
 
 async function main() {

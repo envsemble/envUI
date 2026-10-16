@@ -66,6 +66,11 @@
       "types": "./dist/theme-bootstrap.d.ts",
       "import": "./dist/theme-bootstrap.js"
     },
+    "./messages": {
+      "envui-source": "./src/messages.ts",
+      "types": "./dist/messages.d.ts",
+      "import": "./dist/messages.js"
+    },
     "./styles.css": {
       "envui-source": "./src/styles/index.css",
       "default": "./dist/styles.css"

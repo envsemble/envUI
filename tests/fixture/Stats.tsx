@@ -32,7 +32,7 @@ export function StatsFixture({ theme }: { theme: ThemeValue }) {
       <Button variant="secondary" onClick={() => setReviews((count) => count + 1)}>
         Add review {theme}
       </Button>
-      <Surface tone="pane" padding={4} data-surface="pane">
+      <Surface background="default" padding={4} data-surface="pane">
         <Stat.Group tone="row" data-testid={`stat-row-group-${theme}`}>
           <Stat.Root
             label="Deploys"

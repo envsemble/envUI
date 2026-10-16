@@ -10,7 +10,7 @@ export default function PersonWithName() {
       <Avatar name="Alex Morgan" size="large" />
       <div>
         <Text>Alex Morgan</Text>
-        <Text variant="supporting">alex.morgan@example.com</Text>
+        <Text variant="body-sm">alex.morgan@example.com</Text>
       </div>
     </div>
   );

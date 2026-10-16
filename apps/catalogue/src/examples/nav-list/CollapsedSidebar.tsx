@@ -20,7 +20,7 @@ export default function CollapsedSidebar() {
   return (
     <Stack gap={2} align="start">
       <IconButton
-        variant="quiet"
+        variant="ghost"
         icon={collapsed ? <Menu /> : <MenuOpen />}
         aria-label={collapsed ? 'Expand navigation' : 'Collapse navigation'}
         onClick={() => setCollapsed((value) => !value)}

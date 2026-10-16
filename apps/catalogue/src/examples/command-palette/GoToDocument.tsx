@@ -59,7 +59,7 @@ export default function GoToDocument() {
           { keys: ['Esc'], label: 'Close' },
         ]}
       />
-      <Text variant="caption" tone="muted" role="status">
+      <Text variant="caption" emphasis="muted" role="status">
         {opened}
       </Text>
     </Stack>

@@ -68,8 +68,8 @@ function TokenTable({ title, tokens }: { title: string; tokens: Token[] }) {
     : undefined;
   const headings = colors ? ['Light', 'Dark', 'Light, high contrast', 'Dark, high contrast'] : [];
   return (
-    <Stack as="section" gap={4} aria-labelledby={`tokens-${title}`}>
-      <Text as="h2" variant="section-heading" id={`tokens-${title}`}>
+    <Stack render={<section />} gap={4} aria-labelledby={`tokens-${title}`}>
+      <Text render={<h2 />} variant="title" id={`tokens-${title}`}>
         {title}
       </Text>
       <Table.Root aria-label={`${title} tokens`} narrowLayout="stack" stackBelow="40rem">

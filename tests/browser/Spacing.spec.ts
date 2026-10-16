@@ -133,7 +133,10 @@ test('all documentation views retain explicit content gaps and a single preview'
         const faults: string[] = [];
         const root = parseFloat(getComputedStyle(document.documentElement).fontSize);
         document
-          .querySelectorAll('.docs-example, .docs-article > section, .env-card-content, .env-stack')
+          .querySelectorAll(
+            // A row stack spaces its children across, not down.
+            '.docs-example, .docs-article > section, .env-card-content, .env-stack:not([data-direction=row])',
+          )
           .forEach((parent) => {
             const style = getComputedStyle(parent);
             const gap = parseFloat(style.rowGap);

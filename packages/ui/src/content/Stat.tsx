@@ -1,7 +1,11 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
-import { Surface, type SurfaceAppearanceProps } from '../foundations/Surface.js';
+import {
+  Surface,
+  type SurfaceAppearanceProps,
+  type SurfaceBackground,
+} from '../foundations/Surface.js';
 import { TrendingDown } from '../icons/TrendingDown.js';
 import { TrendingFlat } from '../icons/TrendingFlat.js';
 import { TrendingUp } from '../icons/TrendingUp.js';
@@ -89,7 +93,7 @@ export interface GroupProps extends ComponentPropsWithRef<'div'> {
    * its stats stand apart; canvas or alternate where those fit.
    * @default 'pane'
    */
-  tone?: SurfaceAppearanceProps['tone'];
+  tone?: 'pane' | 'row' | 'canvas' | 'alternate';
   /**
    * The inset on every side, as a step of the spacing scale, such as 4 for 1 rem; 0 removes it.
    * Without it, the inset follows the window's width, as for Surface.
@@ -103,13 +107,21 @@ export interface GroupProps extends ComponentPropsWithRef<'div'> {
  * out. Use the row tone for a group on a pane. A group named with aria-label or aria-labelledby is
  * exposed as a group, so assistive technology announces the name.
  */
+/** The Surface background of each group tone. */
+const groupBackgrounds: Record<NonNullable<GroupProps['tone']>, SurfaceBackground> = {
+  pane: 'default',
+  row: 'muted',
+  canvas: 'page',
+  alternate: 'raised',
+};
+
 function Group({ tone = 'pane', padding, className, ...props }: GroupProps) {
   const labelled = props['aria-label'] !== undefined || props['aria-labelledby'] !== undefined;
   return (
     <Surface
       role={labelled ? 'group' : undefined}
       {...props}
-      tone={tone}
+      background={groupBackgrounds[tone]}
       padding={padding}
       className={classNames('env-stat-group', className)}
     />

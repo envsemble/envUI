@@ -6,10 +6,10 @@ export default function DocumentPreview() {
       The launch depends on the{' '}
       <HoverCard trigger={<Link href="/documents/roadmap">roadmap</Link>}>
         <Stack gap={2}>
-          <Text as="strong" variant="section-heading">
+          <Text render={<strong />} variant="title">
             Roadmap
           </Text>
-          <Text tone="muted">Changed today by Alex Morgan. 3 open decisions, 1 blocked.</Text>
+          <Text emphasis="muted">Changed today by Alex Morgan. 3 open decisions, 1 blocked.</Text>
         </Stack>
       </HoverCard>{' '}
       and the pricing review.

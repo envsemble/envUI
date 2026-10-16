@@ -1,0 +1,53 @@
+{
+  "env-button-primary": {
+    "class": "env-button",
+    "attributes": {
+      "data-variant": "primary",
+      "data-tone": "neutral"
+    }
+  },
+  "env-button-important": {
+    "class": "env-button",
+    "attributes": {
+      "data-variant": "primary",
+      "data-tone": "accent"
+    }
+  },
+  "env-button-destructive": {
+    "class": "env-button",
+    "attributes": {
+      "data-variant": "primary",
+      "data-tone": "danger"
+    }
+  },
+  "env-button-secondary": {
+    "class": "env-button",
+    "attributes": {
+      "data-variant": "secondary"
+    }
+  },
+  "env-button-outlined": {
+    "class": "env-button",
+    "attributes": {
+      "data-variant": "outline"
+    }
+  },
+  "env-button-text": {
+    "class": "env-button",
+    "attributes": {
+      "data-variant": "text"
+    }
+  },
+  "env-button-quiet": {
+    "class": "env-button",
+    "attributes": {
+      "data-variant": "ghost"
+    }
+  },
+  "env-button-underlined": {
+    "class": "env-button",
+    "attributes": {
+      "data-underline": ""
+    }
+  }
+}

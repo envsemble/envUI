@@ -1,4 +1,4 @@
-import { ActionGroup, Button, IconButton, type ControlSize } from '@envsemble/envui';
+import { Button, IconButton, type ControlSize, Stack } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { Edit } from '@envsemble/envui/icons/Edit';
 import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
@@ -16,7 +16,7 @@ export default function Sizes() {
       <SpecimenGrid size="compact">
         {sizes.map(({ size, caption }) => (
           <Specimen key={size} title={size} caption={caption}>
-            <ActionGroup>
+            <Stack direction="row" wrap align="center" gap={4}>
               <Button size={size} startIcon={<Add />}>
                 New
               </Button>
@@ -24,7 +24,7 @@ export default function Sizes() {
                 Cancel
               </Button>
               <IconButton size={size} icon={<Edit />} aria-label="Edit" />
-            </ActionGroup>
+            </Stack>
           </Specimen>
         ))}
       </SpecimenGrid>

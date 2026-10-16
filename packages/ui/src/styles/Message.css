@@ -91,12 +91,12 @@
 /* A text icon action at the edge lines its icon up with the message, not its round hit area. */
 .env-message[data-from='other']
   > .env-message-actions
-  > .env-button-text.env-icon-button:first-child {
+  > .env-button:where([data-variant='text']).env-icon-button:first-child {
   margin-inline-start: calc((var(--env-control-icon-size) - var(--env-message-action-height)) / 2);
 }
 .env-message[data-from='self']
   > .env-message-actions
-  > .env-button-text.env-icon-button:last-child {
+  > .env-button:where([data-variant='text']).env-icon-button:last-child {
   margin-inline-end: calc((var(--env-control-icon-size) - var(--env-message-action-height)) / 2);
 }
 @media (pointer: coarse) {

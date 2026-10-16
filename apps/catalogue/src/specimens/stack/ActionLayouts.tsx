@@ -1,4 +1,4 @@
-import { ActionGroup, Button, IconButton } from '@envsemble/envui';
+import { Button, IconButton, Stack } from '@envsemble/envui';
 import { MoreHoriz } from '@envsemble/envui/icons/MoreHoriz';
 import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
 
@@ -13,18 +13,20 @@ export default function ActionLayouts() {
             title={`align="${align}"`}
             caption="1 rem apart; wraps when needed."
           >
-            <ActionGroup align={align}>
+            <Stack direction="row" wrap align="center" gap={4} justify={align}>
               <Button variant="secondary">Cancel</Button>
               <Button>Save changes</Button>
-            </ActionGroup>
+            </Stack>
           </Specimen>
         ))}
         <Specimen title="stacked" caption="0.5 rem apart; labelled buttons fill the group.">
-          <ActionGroup stacked>
-            <Button>Save changes</Button>
-            <Button variant="secondary">Cancel</Button>
+          <Stack gap={2}>
+            <Button fullWidth>Save changes</Button>
+            <Button variant="secondary" fullWidth>
+              Cancel
+            </Button>
             <IconButton icon={<MoreHoriz />} aria-label="More actions" />
-          </ActionGroup>
+          </Stack>
         </Specimen>
       </SpecimenGrid>
     </Example>

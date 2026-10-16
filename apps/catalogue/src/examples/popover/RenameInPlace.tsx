@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ActionGroup, Button, Popover, Stack, Text, TextField } from '@envsemble/envui';
+import { Button, Popover, Stack, Text, TextField } from '@envsemble/envui';
 import { Edit } from '@envsemble/envui/icons/Edit';
 
 export default function RenameInPlace() {
@@ -26,12 +26,12 @@ export default function RenameInPlace() {
           >
             <Stack gap={4}>
               <TextField label="Name" name="name" defaultValue={name} required />
-              <ActionGroup align="end">
+              <Stack direction="row" wrap align="center" gap={4} justify="end">
                 <Button variant="secondary" onClick={close}>
                   Cancel
                 </Button>
                 <Button type="submit">Rename</Button>
-              </ActionGroup>
+              </Stack>
             </Stack>
           </form>
         )}

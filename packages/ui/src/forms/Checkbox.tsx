@@ -52,7 +52,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
           aria-checked={checkedState === 'mixed' ? 'mixed' : checkedState}
           onChange={handleChange}
         />
-        <span className="env-checkbox-mark env-symbol" aria-hidden="true">
+        <span className="env-checkbox-mark env-icon" aria-hidden="true">
           <Check />
         </span>
       </span>

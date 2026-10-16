@@ -11,7 +11,7 @@ export default function MemberRows() {
         >
           <Skeleton width="2rem" height="2rem" style={{ borderRadius: '50%', flexShrink: 0 }} />
           <div style={{ display: 'grid', gap: '0.5rem', flex: 1 }}>
-            <Skeleton width={`${40 - row * 6}%`} height="0.875rem" tone="highlight" />
+            <Skeleton width={`${40 - row * 6}%`} height="0.875rem" emphasis="default" />
             <Skeleton width="24%" height="0.75rem" />
           </div>
         </div>

@@ -1,0 +1,62 @@
+{
+  "@envsemble/envui": {
+    "Surface": {
+      "density": {
+        "report": "Surface's density is gone: give the controls inside size=\"sm\", or wrap a whole region in <Theme scale=\"compact\">.",
+        "values": {
+          "compact": {
+            "report": "density=\"compact\" is gone: give the controls inside size=\"sm\", or wrap a whole region in <Theme scale=\"compact\">."
+          },
+          "standard": {}
+        }
+      },
+      "tone": {
+        "to": "background",
+        "report": "Surface's tone is background in 1.0: pane is default, row is muted, canvas is page and alternate is raised.",
+        "values": {
+          "pane": {
+            "props": {
+              "background": "default"
+            }
+          },
+          "row": {
+            "props": {
+              "background": "muted"
+            }
+          },
+          "canvas": {
+            "props": {
+              "background": "page"
+            }
+          },
+          "alternate": {
+            "props": {
+              "background": "raised"
+            }
+          }
+        }
+      },
+      "corners": {
+        "to": "radius",
+        "report": "Surface's corners are radius in 1.0, named after the radius tokens: surface is xl, standard is sm, pill is full and none stays none.",
+        "values": {
+          "surface": {
+            "props": {
+              "radius": "xl"
+            }
+          },
+          "standard": {
+            "props": {
+              "radius": "sm"
+            }
+          },
+          "pill": {
+            "props": {
+              "radius": "full"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -442,13 +442,13 @@ export function Tree<T extends TreeItem>({
                 data-expanded={item.expanded ? '' : undefined}
               >
                 {item.expandable && (
-                  <span className="env-symbol">
+                  <span className="env-icon">
                     <ChevronRight />
                   </span>
                 )}
               </span>
               {item.icon != null && (
-                <span className="env-symbol env-tree-icon" aria-hidden="true">
+                <span className="env-icon env-tree-icon" aria-hidden="true">
                   {item.icon}
                 </span>
               )}

@@ -1,0 +1,12 @@
+/* Listbox: the options of a list whose focus stays in a text input, as ListRows. */
+.env-listbox {
+  display: grid;
+  gap: calc(var(--env-space-1) / 2);
+  min-inline-size: 0;
+  padding: var(--env-space-1);
+}
+.env-listbox-empty {
+  padding: var(--env-space-2);
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
+}

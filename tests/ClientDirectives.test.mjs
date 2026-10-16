@@ -182,7 +182,8 @@ test('a server component imports envUI and renders it on the server', () => {
   const variants = {
     Button: [
       '(defaults)',
-      'variant="destructive"',
+      'variant="ghost"',
+      'tone="danger"',
       'pending',
       'disabled',
       'href="/destination"',
@@ -194,7 +195,7 @@ test('a server component imports envUI and renders it on the server', () => {
     Card: ['layout="action"', 'as="button"', 'href="/destination"'],
     Badge: ['tone="danger"', 'variant="solid"'],
     Alert: ['tone="error"', 'announce'],
-    Text: ['variant="page-heading"', 'tone="muted"'],
+    Text: ['variant="headline"', 'emphasis="muted"'],
   };
   for (const [name, expected] of Object.entries(variants))
     for (const variant of expected)
@@ -204,7 +205,17 @@ test('a server component imports envUI and renders it on the server', () => {
       );
   for (const name of ['Badge', 'Card', 'Text', 'Button', 'Alert', 'List.Item', 'Stat.Root'])
     assert.ok(main.server.includes(name), `${name} renders on the server`);
-  for (const name of ['Menu.Item', 'Theme', 'Dialog', 'Table.Root', 'useToast'])
+  for (const name of [
+    'Menu.Item',
+    'Theme',
+    'Dialog',
+    'Table.Root',
+    'useToast',
+    'EnvUIProvider',
+    'CloseButton',
+    'Toolbar.Root',
+    'Field.Root',
+  ])
     assert.ok(main.client.includes(name), `${name} is a client reference`);
   // The page's client components receive only what a server can send them.
   const page = JSON.stringify(result.page);

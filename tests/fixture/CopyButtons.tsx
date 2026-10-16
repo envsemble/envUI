@@ -22,7 +22,7 @@ export function CopyButtonsFixture({ theme }: { theme: ThemeValue }) {
           aria-label={`Copy link ${theme}`}
           onCopy={setCopied}
         />
-        <CopyButton value={() => `RPT-${2040 + 1}`} variant="outlined" onCopy={setCopied}>
+        <CopyButton value={() => `RPT-${2040 + 1}`} variant="outline" onCopy={setCopied}>
           Copy ID {theme}
         </CopyButton>
         <CopyButton
@@ -66,9 +66,9 @@ export function CopyButtonsFixture({ theme }: { theme: ThemeValue }) {
       <output data-testid="presses">{presses}</output>
       {/* A small toolbar: the copy action takes the 2 rem height of the controls beside it. */}
       <Surface
-        tone="row"
+        background="muted"
         padding={2}
-        corners="standard"
+        radius="sm"
         className="fixture-toolbar"
         data-testid="toolbar"
       >

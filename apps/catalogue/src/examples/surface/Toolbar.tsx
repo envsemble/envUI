@@ -1,4 +1,4 @@
-import { ActionGroup, Button, IconButton, Stack, Surface } from '@envsemble/envui';
+import { Button, IconButton, Stack, Surface } from '@envsemble/envui';
 import { ZoomIn } from '@envsemble/envui/icons/ZoomIn';
 import { ZoomOut } from '@envsemble/envui/icons/ZoomOut';
 
@@ -8,13 +8,13 @@ export default function Toolbar() {
     <Stack align="start">
       <Surface
         padding={1}
-        corners="pill"
+        radius="full"
         role="group"
         aria-label="Diagram view"
-        render={<ActionGroup />}
+        render={<Stack direction="row" wrap align="center" gap={4} />}
       >
-        <IconButton variant="quiet" size="sm" icon={<ZoomOut />} aria-label="Zoom out" />
-        <IconButton variant="quiet" size="sm" icon={<ZoomIn />} aria-label="Zoom in" />
+        <IconButton variant="ghost" size="sm" icon={<ZoomOut />} aria-label="Zoom out" />
+        <IconButton variant="ghost" size="sm" icon={<ZoomIn />} aria-label="Zoom in" />
         <Button variant="secondary" size="sm">
           Fit to screen
         </Button>

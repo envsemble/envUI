@@ -1,4 +1,4 @@
-import { ActionGroup, IconButton, Tooltip } from '@envsemble/envui';
+import { IconButton, Tooltip, Stack } from '@envsemble/envui';
 import { Download } from '@envsemble/envui/icons/Download';
 import { Refresh } from '@envsemble/envui/icons/Refresh';
 import { Share } from '@envsemble/envui/icons/Share';
@@ -11,13 +11,13 @@ const actions = [
 
 export default function IconActions() {
   return (
-    <ActionGroup>
+    <Stack direction="row" wrap align="center" gap={4}>
       {actions.map(({ label, icon }) => (
         // The tooltip shows the name the button already has.
         <Tooltip key={label} content={label}>
           <IconButton icon={icon} aria-label={label} />
         </Tooltip>
       ))}
-    </ActionGroup>
+    </Stack>
   );
 }

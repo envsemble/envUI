@@ -34,7 +34,7 @@ export default function MaximizedPanel() {
   return (
     // The dock fills a positioned region with a height, such as the area below a topbar.
     <Surface
-      tone="row"
+      background="muted"
       padding={0}
       style={{ position: 'relative', blockSize: '30rem', overflow: 'hidden' }}
     >

@@ -21,6 +21,7 @@ function Ladder() {
       <div data-layer="dialog-backdrop" className="env-dialog-backdrop" />
       <div data-layer="dialog-positioner" className="env-dialog-positioner" />
       <div data-layer="command-palette-positioner" className="env-command-palette-positioner" />
+      <div data-layer="popup-positioner" className="env-popup-positioner" />
       <div data-layer="menu-positioner" className="env-menu-positioner" />
       <div data-layer="popover-positioner" className="env-popover-positioner" />
       <div data-layer="select-positioner" className="env-select-positioner" />

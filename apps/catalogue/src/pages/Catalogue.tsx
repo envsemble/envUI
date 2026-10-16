@@ -7,8 +7,8 @@ export function Catalogue() {
   return (
     <Stack gap={7}>
       {componentGroups.map((group) => (
-        <Stack as="section" gap={5} key={group}>
-          <Text as="h3" variant="section-heading">
+        <Stack render={<section />} gap={5} key={group}>
+          <Text render={<h3 />} variant="title">
             {group}
           </Text>
           <div className="docs-catalogue-grid">
@@ -26,7 +26,7 @@ export function Catalogue() {
                     <Stack align="center" className="docs-catalogue-content">
                       <Icon width="1.5rem" height="1.5rem" aria-hidden="true" />
                       <Stack gap={2} align="center">
-                        <Text as="h4" variant="page-heading" id={`catalogue-${ref.id}-title`}>
+                        <Text render={<h4 />} variant="headline" id={`catalogue-${ref.id}-title`}>
                           {ref.title}
                         </Text>
                         {ref.summary && (

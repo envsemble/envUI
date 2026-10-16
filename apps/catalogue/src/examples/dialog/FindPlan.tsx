@@ -58,7 +58,7 @@ export default function FindPlan() {
               ))}
             </List.Root>
           ) : (
-            <Text tone="muted">No plans match “{query.trim()}”.</Text>
+            <Text emphasis="muted">No plans match “{query.trim()}”.</Text>
           )}
         </Stack>
       </Dialog>

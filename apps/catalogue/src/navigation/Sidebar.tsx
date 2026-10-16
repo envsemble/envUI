@@ -72,7 +72,7 @@ export function Sidebar({
     const id = `${headingId}-${title.toLowerCase().replace(/\s+/g, '-')}`;
     return (
       <Fragment key={title}>
-        <Text variant="section-heading" id={id} className="docs-nav-heading">
+        <Text variant="title" id={id} className="docs-nav-heading">
           {title}
         </Text>
         <NavList.Root aria-labelledby={id}>{children}</NavList.Root>

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ActionGroup, Alert, Button, Stack } from '@envsemble/envui';
+import { Alert, Button, Stack } from '@envsemble/envui';
 
 export default function SaveFailed() {
   const [status, setStatus] = useState<'idle' | 'saving' | 'failed'>('idle');
@@ -26,11 +26,11 @@ export default function SaveFailed() {
           moment.
         </Alert>
       )}
-      <ActionGroup>
+      <Stack direction="row" wrap align="center" gap={4}>
         <Button ref={saveButton} pending={status === 'saving'} onClick={save}>
           Save draft
         </Button>
-      </ActionGroup>
+      </Stack>
     </Stack>
   );
 }

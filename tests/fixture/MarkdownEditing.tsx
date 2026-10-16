@@ -51,7 +51,7 @@ export function MarkdownEditingFixture() {
   const [requiredSubmissions, setRequiredSubmissions] = useState(0);
   const [block, setBlock] = useState<string | null>(null);
   return (
-    <Stack as="section" className="fixture-section" data-testid="markdown-editing">
+    <Stack render={<section />} className="fixture-section" data-testid="markdown-editing">
       <form
         data-testid="markdown-form"
         onSubmit={(event) => {

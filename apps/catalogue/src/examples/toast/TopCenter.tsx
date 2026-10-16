@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { ActionGroup, Button, Toast, useToast } from '@envsemble/envui';
+import { Button, Toast, useToast, Stack } from '@envsemble/envui';
 import { Send } from '@envsemble/envui/icons/Send';
 
 const people = ['Alex Morgan', 'Sam Lee', 'Priya Shah', 'Jordan Rivera'];
@@ -13,11 +13,11 @@ function ReminderButton() {
     toast.show({ message: `Reminder sent to ${person}.`, duration: 8000 });
   };
   return (
-    <ActionGroup>
+    <Stack direction="row" wrap align="center" gap={4}>
       <Button variant="secondary" startIcon={<Send />} onClick={remind}>
         Send reminder
       </Button>
-    </ActionGroup>
+    </Stack>
   );
 }
 

@@ -1,0 +1,51 @@
+/* Toolbar: a row, or a column, of controls one tab stop apart from the page. The buttons inside take
+   the ghost variant; groups sit side by side, with separators between them. */
+.env-toolbar,
+.env-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: var(--env-space-1);
+  min-inline-size: 0;
+}
+.env-toolbar[data-orientation='vertical'],
+.env-toolbar-group[data-orientation='vertical'] {
+  flex-direction: column;
+}
+.env-toolbar-separator {
+  flex: 0 0 auto;
+  align-self: stretch;
+  margin: var(--env-space-1);
+  border: 0 solid var(--env-color-border-muted);
+}
+.env-toolbar-separator[data-orientation='vertical'] {
+  border-inline-start-width: var(--env-control-border-width);
+}
+.env-toolbar-separator[data-orientation='horizontal'] {
+  border-block-start-width: var(--env-control-border-width);
+}
+/* A pressed toggle, such as Bold while the selection is bold, takes the selected fill. */
+.env-toolbar-button[aria-pressed='true'] {
+  background: var(--env-color-bg-selected);
+  color: var(--env-color-fg-on-selected);
+}
+.env-toolbar-button[aria-pressed='true']:hover:not(:disabled):not([aria-disabled='true']) {
+  background: var(--env-color-bg-selected-hover);
+  color: var(--env-color-fg-on-selected);
+}
+.env-toolbar-button[aria-pressed='true']:active:not(:disabled):not([aria-disabled='true']) {
+  background: var(--env-color-bg-selected-pressed);
+  color: var(--env-color-fg-on-selected);
+}
+.env-toolbar-tooltip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--env-space-2);
+}
+/* Forced colors: the system paints no fills, so a pressed toggle takes the selection colors. */
+@media (forced-colors: active) {
+  .env-toolbar-button[aria-pressed='true'] {
+    forced-color-adjust: none;
+    background: Highlight;
+    color: HighlightText;
+  }
+}

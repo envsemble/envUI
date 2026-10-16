@@ -72,9 +72,9 @@ export function RelativeTimesFixture({ theme }: { theme: ThemeValue }) {
       </Button>
       {/* A small toolbar: the time sits on the center line of 2 rem controls. */}
       <Surface
-        tone="row"
+        background="muted"
         padding={2}
-        corners="standard"
+        radius="sm"
         className="fixture-toolbar"
         data-testid="toolbar"
       >

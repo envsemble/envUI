@@ -1,5 +1,11 @@
 // v1-classes: renames envUI 0.x class names and custom properties to their 1.0 names, as the
-// `classes` and `tokens` sections of the rename map list them.
+// `classes` and `tokens` sections of the rename map list them, and turns the modifier classes of
+// its `classAttributes` section into attribute selectors.
+//
+// - A modifier class becomes the attributes its root class now carries: `.env-button-important`
+//   becomes `.env-button[data-variant='primary'][data-tone='accent']`, without the root class where
+//   the compound selector already has it. In markup, such a class is reported: set the component's
+//   props instead.
 //
 // - Style sheets (.css, .scss, .sass, .less, .pcss): `.env-*` class selectors, `--env-*` custom
 //   properties, the tokens' custom properties before 1.0 (`--color-text-muted` becomes
@@ -83,6 +89,59 @@ function renameWithin(text, classesWithin) {
   return output;
 }
 
+/** A class selector in style sheet text. */
+const classSelector = /\.(env-[a-z0-9][a-z0-9_-]*)(?![A-Za-z0-9_-])/g;
+/** What ends a compound selector: a combinator, a list or a parenthesis. */
+const compoundBoundary = /[\s>+~,(){};]/;
+
+/**
+ * The attribute selectors for a modifier's attributes; an empty value tests presence alone. In a
+ * script's string, whose quotes the codemod doesn't know, a value is an unquoted identifier.
+ */
+const attributeList = (attributes, quote = "'") =>
+  Object.entries(attributes).map(([name, value]) =>
+    value === '' ? `[${name}]` : `[${name}=${quote}${value}${quote}]`,
+  );
+const attributeSelectors = (attributes) => attributeList(attributes).join('');
+
+/**
+ * Turns modifier classes into attribute selectors on their root class, as the map's
+ * classAttributes list them, keeping each selector's specificity: a modifier class counted as one
+ * class, and so does what replaces it. In a compound selector that has the root class, the first
+ * attribute stands for it and the others are in :where(), as `.env-button.env-button-important`
+ * becomes `.env-button[data-variant='primary']:where([data-tone='accent'])`; in one without it,
+ * the root class does, once, as `.env-button-important` becomes
+ * `.env-button:where([data-variant='primary'][data-tone='accent'])`.
+ */
+export function attributesInStyles(text, classAttributes = new Map(), quote = "'") {
+  if (classAttributes.size === 0) return text;
+  const inserted = new Set();
+  return text.replace(classSelector, (match, name, offset) => {
+    const rule = classAttributes.get(name);
+    if (!rule) return match;
+    let start = offset;
+    while (start > 0 && !compoundBoundary.test(text[start - 1])) start -= 1;
+    let end = offset + match.length;
+    while (end < text.length && !compoundBoundary.test(text[end])) end += 1;
+    // Inside :is(), :not() or :where(), the compound before the pseudo-class is the same element's.
+    let compound = text.slice(start, end);
+    let outer = start;
+    while (text[outer - 1] === '(' && /:(?:is|not|where|matches)$/.test(text.slice(0, outer - 1))) {
+      let before = text.lastIndexOf(':', outer - 1);
+      while (before > 0 && !compoundBoundary.test(text[before - 1])) before -= 1;
+      compound = text.slice(before, outer) + compound;
+      outer = before;
+    }
+    const root = new RegExp(String.raw`\.${rule.class}(?![A-Za-z0-9_-])`);
+    const key = `${start} ${rule.class}`;
+    const [first, ...others] = attributeList(rule.attributes, quote);
+    if (root.test(compound) || inserted.has(key))
+      return others.length > 0 ? `${first}:where(${others.join('')})` : first;
+    inserted.add(key);
+    return `.${rule.class}:where(${first}${others.join('')})`;
+  });
+}
+
 /**
  * Renames class selectors, attribute selectors and custom properties in style sheet text. A
  * custom property that a 1.0 token has, such as --env-row-height, is no class's: the class renames
@@ -95,8 +154,10 @@ export function renameInStyles(
   tokens = new Map(),
   tokenNames = new Set(),
   report = undefined,
+  classAttributes = new Map(),
+  quote = "'",
 ) {
-  const renamed = renameWithin(text, classesWithin)
+  const renamed = renameWithin(attributesInStyles(text, classAttributes, quote), classesWithin)
     .replace(classAttribute, (selector) =>
       selector.replace(attributeName, (name) => renameClass(name, classes)),
     )
@@ -161,7 +222,7 @@ function lineStarts(source) {
 }
 
 export default function transform(file, api, options = {}) {
-  const { classes, classesWithin, tokens, tokenNames } = loadMap(options.map);
+  const { classes, classAttributes, classesWithin, tokens, tokenNames } = loadMap(options.map);
   if (!file.source.includes('env-') && !file.source.includes('--')) return undefined;
   const reporter = createReporter(api);
   /** Reports at the line of `offset` in `text`, which starts on line `first`. */
@@ -178,6 +239,7 @@ export default function transform(file, api, options = {}) {
       tokens,
       tokenNames,
       reportAt(file.source, 1),
+      classAttributes,
     );
     reporter.flush();
     return output === file.source ? file.source : output;
@@ -270,14 +332,34 @@ export default function transform(file, api, options = {}) {
   root.find(j.StringLiteral).forEach((path) => mark(path.node, 'var'));
   root.find(j.TemplateLiteral).forEach((path) => mark(path.node, 'var'));
 
+  /** Reports the modifier classes in a class string, which only the component's props set now. */
+  const reportModifiers = (text, report) => {
+    for (const match of text.matchAll(classToken)) {
+      const rule = classAttributes.get(match[0]);
+      if (rule)
+        report(
+          match.index,
+          `${match[0]} is gone in 1.0: .${rule.class} carries ${attributeSelectors(rule.attributes)} instead, which the component's props set.`,
+        );
+    }
+  };
   const rewrite = (text, mode, atStart, report) =>
     mode === 'selector'
-      ? renameInStyles(text, classes, classesWithin, tokens, tokenNames, report)
+      ? renameInStyles(
+          text,
+          classes,
+          classesWithin,
+          tokens,
+          tokenNames,
+          report,
+          classAttributes,
+          '',
+        )
       : mode === 'property'
         ? renameCustomProperties(text, classes, tokens, tokenNames, report)
         : mode === 'var'
           ? renameVariables(text, classes, tokens, tokenNames, report)
-          : renameClassTokens(text, classes, atStart);
+          : (reportModifiers(text, report), renameClassTokens(text, classes, atStart));
 
   // Babel gives a template's raw text with its line breaks as \n, whatever the file's are.
   const sameText = (source, raw) => source === raw || source.replace(/\r\n?/g, '\n') === raw;

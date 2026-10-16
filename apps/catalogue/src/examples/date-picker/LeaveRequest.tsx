@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { ActionGroup, Button, DatePicker, Stack, Text } from '@envsemble/envui';
+import { Button, DatePicker, Stack, Text } from '@envsemble/envui';
 
 export default function LeaveRequest() {
   const [error, setError] = useState<string>();
@@ -25,13 +25,13 @@ export default function LeaveRequest() {
       <Stack>
         <DatePicker label="First day" name="first" defaultValue="2026-11-02" required />
         <DatePicker label="Last day" name="last" defaultValue="2026-11-06" required error={error} />
-        <ActionGroup>
+        <Stack direction="row" wrap align="center" gap={4}>
           <Button type="submit">Request leave</Button>
           <Button type="reset" variant="secondary">
             Reset
           </Button>
-        </ActionGroup>
-        <Text variant="caption" tone="muted" role="status">
+        </Stack>
+        <Text variant="caption" emphasis="muted" role="status">
           {sent}
         </Text>
       </Stack>

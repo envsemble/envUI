@@ -3,8 +3,8 @@ import { Button, Surface, Tabs, Text } from '@envsemble/envui';
 function View({ children }: { children: string }) {
   return (
     // The view fills the panel; a canvas would draw here.
-    <Surface tone="row" style={{ flex: 1, display: 'grid', placeItems: 'center' }}>
-      <Text tone="muted">{children}</Text>
+    <Surface background="muted" style={{ flex: 1, display: 'grid', placeItems: 'center' }}>
+      <Text emphasis="muted">{children}</Text>
     </Surface>
   );
 }

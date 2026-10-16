@@ -134,7 +134,7 @@ export function FillTabsFixture({ theme }: { theme: ThemeValue }) {
           className="fixture-fill-tabs"
           renderList={(list) => (
             <div className="fixture-tabs-heading">
-              <Text as="h3" variant="section-heading">
+              <Text render={<h3 />} variant="title">
                 Views
               </Text>
               {list}
@@ -147,6 +147,15 @@ export function FillTabsFixture({ theme }: { theme: ThemeValue }) {
   );
 }
 
+/** The 1.0 emphasis of each 0.7 variant, which the samples are still named by. */
+const emphasis = {
+  primary: { variant: 'primary' },
+  secondary: { variant: 'secondary' },
+  outlined: { variant: 'outline' },
+  destructive: { variant: 'primary', tone: 'danger' },
+  important: { variant: 'primary', tone: 'accent' },
+  text: { variant: 'text' },
+} as const;
 const tabStateVariants = ['primary', 'secondary', 'outlined', 'important', 'navigation'] as const;
 
 /**
@@ -168,7 +177,7 @@ export function TabStatesFixture({ theme }: { theme: ThemeValue }) {
                   variant === 'navigation' ? (
                     <NavList.Item>{label}</NavList.Item>
                   ) : (
-                    <Button variant={variant}>{label}</Button>
+                    <Button {...emphasis[variant]}>{label}</Button>
                   ),
                 content: null,
               }))}
@@ -185,7 +194,7 @@ export function CompactTabsFixture({ theme }: { theme: ThemeValue }) {
   return (
     <Theme theme={theme} data-testid={`compact-tabs-${theme}`} className="fixture-section">
       <Surface
-        tone="canvas"
+        background="page"
         padding={0}
         className="fixture-actions"
         style={{ alignItems: 'center' }}

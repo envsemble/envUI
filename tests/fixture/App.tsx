@@ -62,6 +62,9 @@ import { RatingsFixture } from './Ratings.js';
 import { DensityFixture } from './Density.js';
 import { StackingFixture } from './Stacking.js';
 import { ResponsiveHooksFixture } from './ResponsiveHooks.js';
+import { PrimitivesFixture } from './Primitives.js';
+import { MessageStringsFixture } from './MessageStrings.js';
+import { DirectionFixture } from './Direction.js';
 import {
   ThemeContrastFixture,
   ThemeContrastNestedFixture,
@@ -83,6 +86,9 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   density: DensityFixture,
   stacking: StackingFixture,
   'responsive-hooks': ResponsiveHooksFixture,
+  primitives: PrimitivesFixture,
+  'message-strings': MessageStringsFixture,
+  direction: DirectionFixture,
 };
 
 export default function App() {

@@ -1,7 +1,7 @@
 import { Disclosure } from '@envsemble/envui';
 import { Example } from '../../previews/Example';
 import { controlStates } from '../../previews/InteractionStates';
-import { ButtonSample, buttonVariants } from './VariantMatrix';
+import { ButtonSample, buttonVariants, pairName } from './VariantMatrix';
 
 /** Every variant forced into its hover, pressed, focus and disabled looks, for review. */
 export default function InteractionStates() {
@@ -27,8 +27,8 @@ export default function InteractionStates() {
             </thead>
             <tbody>
               {buttonVariants.map((example) => (
-                <tr key={example.variant}>
-                  <th scope="row">{example.variant}</th>
+                <tr key={pairName(example)}>
+                  <th scope="row">{pairName(example)}</th>
                   {controlStates.map((state) => (
                     <td key={state.title}>
                       <ButtonSample

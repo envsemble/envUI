@@ -23,7 +23,7 @@ export default function ReleaseNotesForm() {
         toolbar={['heading', 'bold', 'italic', 'bullet-list', 'link']}
       />
       <Button type="submit">Publish</Button>
-      <Text variant="supporting" role="status">
+      <Text variant="body-sm" role="status">
         {published}
       </Text>
     </Stack>

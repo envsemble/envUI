@@ -36,7 +36,7 @@ export function TemplateMeta({ page }: { page: ReferencePage }) {
       <Badge tone={statusTones[metadata.status]}>
         {metadata.status[0].toUpperCase() + metadata.status.slice(1)}
       </Badge>
-      <Text as="span" variant="caption">
+      <Text render={<span />} variant="caption">
         Since {metadata.since}
       </Text>
     </div>
@@ -64,7 +64,7 @@ function UseAndAvoid({ metadata, path }: { metadata: DocumentationMetadata; path
 function Section({ page, section }: { page: ReferencePage; section: DocumentationSection }) {
   const { reference } = page;
   return (
-    <Stack as="section" gap={5} className="docs-template-section" data-section={section.id}>
+    <Stack render={<section />} gap={5} className="docs-template-section" data-section={section.id}>
       {section.blocks.map((block, index) =>
         block.kind === 'markdown' ? (
           <Documentation key={index} markdown={block.markdown} path={reference.path} />
@@ -93,15 +93,15 @@ function Related({ page }: { page: ReferencePage }) {
   });
   if (!related.length) return null;
   return (
-    <Stack as="section" gap={4}>
-      <Text as="h2" variant="page-heading">
+    <Stack render={<section />} gap={4}>
+      <Text render={<h2 />} variant="headline">
         Related
       </Text>
       <ul className="docs-related-list">
         {related.map((item) => (
           <li key={item.path}>
             <Link href={pageHref(item, 'overview')}>{item.reference.title}</Link>
-            <Text as="span" tone="muted">
+            <Text render={<span />} emphasis="muted">
               {' '}
               — {item.reference.summary}
             </Text>

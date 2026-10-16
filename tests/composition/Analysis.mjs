@@ -19,6 +19,11 @@ const stylesRoot = join(sourceRoot, 'styles');
  */
 const generated = 'icons/';
 const isGenerated = (module) => module.startsWith(generated) && module !== 'icons/index.ts';
+/**
+ * The message modules hold strings, one module per namespace, and render nothing: they are no
+ * components, so their names claim no classes.
+ */
+const isMessages = (module) => module.startsWith('foundations/messages/');
 
 function walk(directory, found = []) {
   for (const entry of readdirSync(directory, { withFileTypes: true })) {
@@ -187,7 +192,8 @@ export function analyze() {
   const components = new Map();
   const componentOf = new Map();
   for (const module of modules) {
-    if (layerOf(module) === 'entries' || module.startsWith(generated)) continue;
+    if (layerOf(module) === 'entries' || module.startsWith(generated) || isMessages(module))
+      continue;
     const name = baseName(module);
     if (components.has(name)) {
       problems.push(

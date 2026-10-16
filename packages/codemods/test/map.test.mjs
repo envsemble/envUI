@@ -1,9 +1,17 @@
 import assert from 'node:assert/strict';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { test } from 'node:test';
-import { entriesOf, loadMap, renameClass, validateMap } from '../src/map.mjs';
+import {
+  entriesOf,
+  loadMap,
+  mapFragments,
+  mapSections,
+  readMap,
+  renameClass,
+  validateMap,
+} from '../src/map.mjs';
 import { map } from './helpers.mjs';
 
 const name = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
@@ -129,6 +137,56 @@ test('loadMap reports a map it cannot read or that is malformed', () => {
     assert.throws(() => loadMap(malformed), /malformed:\n- classes: env-a maps to itself/);
   } finally {
     rmSync(directory, { recursive: true, force: true });
+  }
+});
+
+test('readMap merges a folder of fragments, one folder per section', () => {
+  const directory = mkdtempSync(join(tmpdir(), 'envui-codemods-folder-'));
+  const write = (file, value) => {
+    mkdirSync(join(directory, dirname(file)), { recursive: true });
+    writeFileSync(join(directory, file), JSON.stringify(value));
+  };
+  try {
+    write('map.json', { version: '1.0.0', sections: { props: 'Props.', classes: 'Classes.' } });
+    write('props/Button.json', {
+      $comment: 'A fragment may say what it covers.',
+      '@envsemble/envui': { Button: { variant: { report: 'r', values: { a: {} } } } },
+    });
+    write('props/Text.json', {
+      '@envsemble/envui': { Text: { tone: { report: 'r', values: { a: {} } } } },
+    });
+    write('classes/Button.json', { 'env-a': 'env-b' });
+    assert.deepEqual(readMap(directory), {
+      version: '1.0.0',
+      props: {
+        $comment: 'Props.',
+        '@envsemble/envui': {
+          Button: { variant: { report: 'r', values: { a: {} } } },
+          Text: { tone: { report: 'r', values: { a: {} } } },
+        },
+      },
+      classes: { $comment: 'Classes.', 'env-a': 'env-b' },
+    });
+    assert.deepEqual(loadMap(directory).classes, [{ from: 'env-a', to: 'env-b' }]);
+    // Two fragments may not set the same name, and a folder must be a section.
+    write('classes/Other.json', { 'env-a': 'env-c' });
+    assert.throws(
+      () => readMap(directory),
+      /sets classes > env-a in both classes\/Button\.json and classes\/Other\.json/,
+    );
+    rmSync(join(directory, 'classes/Other.json'));
+    write('colours/Button.json', {});
+    assert.throws(() => readMap(directory), /has a folder colours, which is no section/);
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+});
+
+test('the bundled map is a folder whose fragments each hold one family of one section', () => {
+  for (const fragment of mapFragments()) {
+    const [section, file] = fragment.split('/');
+    assert.ok(mapSections.includes(section), fragment);
+    assert.match(file, /^[A-Z][A-Za-z]*\.json$/, fragment);
   }
 });
 

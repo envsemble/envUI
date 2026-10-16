@@ -31,7 +31,7 @@ export default function AskAnything() {
         running={running}
         onStop={stop}
       />
-      <Text variant="caption" tone="muted" role="status">
+      <Text variant="caption" emphasis="muted" role="status">
         {running ? 'Replying…' : sent ? `Sent: ${sent}` : ''}
       </Text>
     </Stack>

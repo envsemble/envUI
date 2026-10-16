@@ -393,7 +393,7 @@ test.describe('on a coarse pointer', () => {
                     left: box.left,
                     right: box.right,
                     center: center(box),
-                    icon: center(item.querySelector('.env-symbol')!.getBoundingClientRect()),
+                    icon: center(item.querySelector('.env-icon')!.getBoundingClientRect()),
                   };
                 },
               ),

@@ -19,11 +19,7 @@ export type ThemeContrast = 'standard' | 'high' | 'system';
  */
 export type ThemeScale = 'comfortable' | 'compact';
 
-/**
- * A control's size: its height in the current scale. Every control of one size has the same height
- * in a scale, so a button, a field and a select of the same size line up.
- */
-export type ControlSize = 'sm' | 'md' | 'lg';
+export type { ControlSize } from '../internal/controlTypes.js';
 
 /**
  * How tightly a data component, such as a Table, Tree or List, packs its rows: only the rows' block

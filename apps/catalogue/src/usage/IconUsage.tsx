@@ -6,8 +6,8 @@ import * as symbols from '@envsemble/envui/icons';
 export function IconUsageDetails({ name, filled }: { name: string | null; filled: boolean }) {
   if (!name || !Object.hasOwn(symbols, name)) return null;
   return (
-    <Stack as="section">
-      <Text as="h2" variant="page-heading">
+    <Stack render={<section />}>
+      <Text render={<h2 />} variant="headline">
         {name}
       </Text>
       <CodeBlock

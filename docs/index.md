@@ -37,6 +37,8 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 ## Actions
 
 - [Button](components/button.md)
+- [CloseButton](components/close-button.md)
+- [Toolbar](components/toolbar.md)
 - [Link](components/link.md)
 - [SegmentedControl](components/segmented-control.md)
 
@@ -44,6 +46,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 - [ColorPicker](components/color-picker.md)
 - [TextField](components/text-field.md)
+- [Field](components/field.md)
 - [Composer](components/composer.md)
 - [Checkbox](components/checkbox.md)
 - [Switch](components/switch.md)

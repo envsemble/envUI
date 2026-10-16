@@ -134,7 +134,7 @@ export function PanelDockFixture({ theme }: { theme: ThemeValue }) {
     <Theme theme={theme} data-testid={`dock-${theme}`} className="fixture-section">
       <div className="fixture-dock-frame" data-testid={`dock-frame-${theme}`} onKeyDown={shortcut}>
         <main className="fixture-dock-page" inert={covered}>
-          <Text as="h2" variant="section-heading">
+          <Text render={<h2 />} variant="title">
             Workspace {theme}
           </Text>
           <button type="button" onClick={() => record('page')}>

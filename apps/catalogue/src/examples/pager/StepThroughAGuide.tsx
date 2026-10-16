@@ -17,7 +17,7 @@ export default function StepThroughAGuide() {
   const next = pages[index + 1];
   return (
     <Stack gap={5}>
-      <Text as="h3" variant="section-heading">
+      <Text render={<h3 />} variant="title">
         {pages[index].title}
       </Text>
       <Pager.Root

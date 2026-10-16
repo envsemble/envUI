@@ -96,7 +96,7 @@ export function ScalePreview() {
                       <Table.Cell>{report.owner}</Table.Cell>
                       <Table.Cell align="end">
                         <IconButton
-                          variant="quiet"
+                          variant="ghost"
                           icon={<MoreVert />}
                           aria-label={`More for ${report.name}`}
                         />

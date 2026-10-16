@@ -40,7 +40,7 @@ export default function RequiredChoice() {
           ))}
         </RadioGroup>
         {error && (
-          <Text id={errorId} variant="supporting" role="alert">
+          <Text id={errorId} variant="body-sm" role="alert">
             {error}
           </Text>
         )}

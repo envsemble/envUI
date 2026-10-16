@@ -1,0 +1,13 @@
+{
+  "@envsemble/envui": {
+    "LoadingBar": {
+      "use": "AppShell's loading and loadingLabel props show page progress along the bottom of its topbar; Progress shows the progress of a task."
+    },
+    "LoadingBarProps": {
+      "use": "AppShell's loading and loadingLabel props show page progress along the bottom of its topbar; Progress shows the progress of a task."
+    },
+    "useSidebarCompact": {
+      "use": "Keep the sidebar's collapsed state in the application through AppShell's collapsed and onCollapsedChange props."
+    }
+  }
+}

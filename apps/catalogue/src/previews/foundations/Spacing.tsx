@@ -20,7 +20,7 @@ export function SpacingPreview() {
         </Stack>
       </Example>
       <Example title="Responsive sizing">
-        <Text tone="muted">
+        <Text emphasis="muted">
           Use relative units and let content wrap. The library increases touch targets to at least
           2.75 rem for coarse pointers.
         </Text>

@@ -26,22 +26,22 @@
   "components/card/overview": {
     "dark": {
       "label-content-name-mismatch": {
-        "article :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 3
+        "article :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface": 3
       }
     },
     "dark-hc": {
       "label-content-name-mismatch": {
-        "article :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 3
+        "article :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface": 3
       }
     },
     "light": {
       "label-content-name-mismatch": {
-        "article :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 3
+        "article :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface": 3
       }
     },
     "light-hc": {
       "label-content-name-mismatch": {
-        "article :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 3
+        "article :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface": 3
       }
     }
   },
@@ -187,108 +187,108 @@
   "foundations/colors/preview": {
     "dark": {
       "label-content-name-mismatch": {
-        "Buttons :: button.env-button.env-button-secondary.docs-swatch": 11,
-        "Cards :: button.env-button.env-button-secondary.docs-swatch": 1,
-        "Checkboxes :: button.env-button.env-button-secondary.docs-swatch": 4,
-        "Content & loading :: button.env-button.env-button-secondary.docs-swatch": 2,
-        "Direction links :: button.env-button.env-button-secondary.docs-swatch": 5,
-        "Feedback :: button.env-button.env-button-secondary.docs-swatch": 9,
-        "Navigation :: button.env-button.env-button-secondary.docs-swatch": 4,
-        "Page & surfaces :: button.env-button.env-button-secondary.docs-swatch": 4,
-        "Radio :: button.env-button.env-button-secondary.docs-swatch": 4,
-        "Rows :: button.env-button.env-button-secondary.docs-swatch": 4,
-        "Select options :: button.env-button.env-button-secondary.docs-swatch": 4,
-        "Switches :: button.env-button.env-button-secondary.docs-swatch": 5,
-        "Text & focus :: button.env-button.env-button-secondary.docs-swatch": 7,
-        "Text fields :: button.env-button.env-button-secondary.docs-swatch": 8
+        "Buttons :: button.env-button.docs-swatch": 11,
+        "Cards :: button.env-button.docs-swatch": 1,
+        "Checkboxes :: button.env-button.docs-swatch": 4,
+        "Content & loading :: button.env-button.docs-swatch": 2,
+        "Direction links :: button.env-button.docs-swatch": 5,
+        "Feedback :: button.env-button.docs-swatch": 9,
+        "Navigation :: button.env-button.docs-swatch": 4,
+        "Page & surfaces :: button.env-button.docs-swatch": 4,
+        "Radio :: button.env-button.docs-swatch": 4,
+        "Rows :: button.env-button.docs-swatch": 4,
+        "Select options :: button.env-button.docs-swatch": 4,
+        "Switches :: button.env-button.docs-swatch": 5,
+        "Text & focus :: button.env-button.docs-swatch": 7,
+        "Text fields :: button.env-button.docs-swatch": 8
       }
     },
     "dark-hc": {
       "color-contrast-enhanced": {
-        "Buttons :: button.env-button.env-button-secondary.docs-swatch code": 1,
-        "Content & loading :: button.env-button.env-button-secondary.docs-swatch code": 1,
-        "Direction links :: button.env-button.env-button-secondary.docs-swatch code": 1,
-        "Text & focus :: button.env-button.env-button-secondary.docs-swatch code": 1,
-        "Text fields :: button.env-button.env-button-secondary.docs-swatch code": 1
+        "Buttons :: button.env-button.docs-swatch code": 1,
+        "Content & loading :: button.env-button.docs-swatch code": 1,
+        "Direction links :: button.env-button.docs-swatch code": 1,
+        "Text & focus :: button.env-button.docs-swatch code": 1,
+        "Text fields :: button.env-button.docs-swatch code": 1
       },
       "label-content-name-mismatch": {
-        "Buttons :: button.env-button.env-button-secondary.docs-swatch": 11,
-        "Cards :: button.env-button.env-button-secondary.docs-swatch": 1,
-        "Checkboxes :: button.env-button.env-button-secondary.docs-swatch": 4,
-        "Content & loading :: button.env-button.env-button-secondary.docs-swatch": 2,
-        "Direction links :: button.env-button.env-button-secondary.docs-swatch": 5,
-        "Feedback :: button.env-button.env-button-secondary.docs-swatch": 9,
-        "Navigation :: button.env-button.env-button-secondary.docs-swatch": 4,
-        "Page & surfaces :: button.env-button.env-button-secondary.docs-swatch": 4,
-        "Radio :: button.env-button.env-button-secondary.docs-swatch": 4,
-        "Rows :: button.env-button.env-button-secondary.docs-swatch": 4,
-        "Select options :: button.env-button.env-button-secondary.docs-swatch": 4,
-        "Switches :: button.env-button.env-button-secondary.docs-swatch": 5,
-        "Text & focus :: button.env-button.env-button-secondary.docs-swatch": 7,
-        "Text fields :: button.env-button.env-button-secondary.docs-swatch": 8
+        "Buttons :: button.env-button.docs-swatch": 11,
+        "Cards :: button.env-button.docs-swatch": 1,
+        "Checkboxes :: button.env-button.docs-swatch": 4,
+        "Content & loading :: button.env-button.docs-swatch": 2,
+        "Direction links :: button.env-button.docs-swatch": 5,
+        "Feedback :: button.env-button.docs-swatch": 9,
+        "Navigation :: button.env-button.docs-swatch": 4,
+        "Page & surfaces :: button.env-button.docs-swatch": 4,
+        "Radio :: button.env-button.docs-swatch": 4,
+        "Rows :: button.env-button.docs-swatch": 4,
+        "Select options :: button.env-button.docs-swatch": 4,
+        "Switches :: button.env-button.docs-swatch": 5,
+        "Text & focus :: button.env-button.docs-swatch": 7,
+        "Text fields :: button.env-button.docs-swatch": 8
       }
     },
     "light": {
       "color-contrast": {
-        "Buttons :: button.env-button.env-button-secondary.docs-swatch code": 1,
-        "Feedback :: button.env-button.env-button-secondary.docs-swatch code": 1,
-        "Text fields :: button.env-button.env-button-secondary.docs-swatch code": 1
+        "Buttons :: button.env-button.docs-swatch code": 1,
+        "Feedback :: button.env-button.docs-swatch code": 1,
+        "Text fields :: button.env-button.docs-swatch code": 1
       },
       "label-content-name-mismatch": {
-        "Buttons :: button.env-button.env-button-secondary.docs-swatch": 11,
-        "Cards :: button.env-button.env-button-secondary.docs-swatch": 1,
-        "Checkboxes :: button.env-button.env-button-secondary.docs-swatch": 4,
-        "Content & loading :: button.env-button.env-button-secondary.docs-swatch": 2,
-        "Direction links :: button.env-button.env-button-secondary.docs-swatch": 5,
-        "Feedback :: button.env-button.env-button-secondary.docs-swatch": 9,
-        "Navigation :: button.env-button.env-button-secondary.docs-swatch": 4,
-        "Page & surfaces :: button.env-button.env-button-secondary.docs-swatch": 4,
-        "Radio :: button.env-button.env-button-secondary.docs-swatch": 4,
-        "Rows :: button.env-button.env-button-secondary.docs-swatch": 4,
-        "Select options :: button.env-button.env-button-secondary.docs-swatch": 4,
-        "Switches :: button.env-button.env-button-secondary.docs-swatch": 5,
-        "Text & focus :: button.env-button.env-button-secondary.docs-swatch": 7,
-        "Text fields :: button.env-button.env-button-secondary.docs-swatch": 8
+        "Buttons :: button.env-button.docs-swatch": 11,
+        "Cards :: button.env-button.docs-swatch": 1,
+        "Checkboxes :: button.env-button.docs-swatch": 4,
+        "Content & loading :: button.env-button.docs-swatch": 2,
+        "Direction links :: button.env-button.docs-swatch": 5,
+        "Feedback :: button.env-button.docs-swatch": 9,
+        "Navigation :: button.env-button.docs-swatch": 4,
+        "Page & surfaces :: button.env-button.docs-swatch": 4,
+        "Radio :: button.env-button.docs-swatch": 4,
+        "Rows :: button.env-button.docs-swatch": 4,
+        "Select options :: button.env-button.docs-swatch": 4,
+        "Switches :: button.env-button.docs-swatch": 5,
+        "Text & focus :: button.env-button.docs-swatch": 7,
+        "Text fields :: button.env-button.docs-swatch": 8
       }
     },
     "light-hc": {
       "color-contrast": {
-        "Feedback :: button.env-button.env-button-secondary.docs-swatch code": 1
+        "Feedback :: button.env-button.docs-swatch code": 1
       },
       "color-contrast-enhanced": {
-        "Buttons :: button.env-button.env-button-secondary.docs-swatch code": 1,
-        "Content & loading :: button.env-button.env-button-secondary.docs-swatch code": 1,
-        "Direction links :: button.env-button.env-button-secondary.docs-swatch code": 1,
-        "Text & focus :: button.env-button.env-button-secondary.docs-swatch code": 1,
-        "Text fields :: button.env-button.env-button-secondary.docs-swatch code": 1
+        "Buttons :: button.env-button.docs-swatch code": 1,
+        "Content & loading :: button.env-button.docs-swatch code": 1,
+        "Direction links :: button.env-button.docs-swatch code": 1,
+        "Text & focus :: button.env-button.docs-swatch code": 1,
+        "Text fields :: button.env-button.docs-swatch code": 1
       },
       "label-content-name-mismatch": {
-        "Buttons :: button.env-button.env-button-secondary.docs-swatch": 11,
-        "Cards :: button.env-button.env-button-secondary.docs-swatch": 1,
-        "Checkboxes :: button.env-button.env-button-secondary.docs-swatch": 4,
-        "Content & loading :: button.env-button.env-button-secondary.docs-swatch": 2,
-        "Direction links :: button.env-button.env-button-secondary.docs-swatch": 5,
-        "Feedback :: button.env-button.env-button-secondary.docs-swatch": 9,
-        "Navigation :: button.env-button.env-button-secondary.docs-swatch": 4,
-        "Page & surfaces :: button.env-button.env-button-secondary.docs-swatch": 4,
-        "Radio :: button.env-button.env-button-secondary.docs-swatch": 4,
-        "Rows :: button.env-button.env-button-secondary.docs-swatch": 4,
-        "Select options :: button.env-button.env-button-secondary.docs-swatch": 4,
-        "Switches :: button.env-button.env-button-secondary.docs-swatch": 5,
-        "Text & focus :: button.env-button.env-button-secondary.docs-swatch": 7,
-        "Text fields :: button.env-button.env-button-secondary.docs-swatch": 8
+        "Buttons :: button.env-button.docs-swatch": 11,
+        "Cards :: button.env-button.docs-swatch": 1,
+        "Checkboxes :: button.env-button.docs-swatch": 4,
+        "Content & loading :: button.env-button.docs-swatch": 2,
+        "Direction links :: button.env-button.docs-swatch": 5,
+        "Feedback :: button.env-button.docs-swatch": 9,
+        "Navigation :: button.env-button.docs-swatch": 4,
+        "Page & surfaces :: button.env-button.docs-swatch": 4,
+        "Radio :: button.env-button.docs-swatch": 4,
+        "Rows :: button.env-button.docs-swatch": 4,
+        "Select options :: button.env-button.docs-swatch": 4,
+        "Switches :: button.env-button.docs-swatch": 5,
+        "Text & focus :: button.env-button.docs-swatch": 7,
+        "Text fields :: button.env-button.docs-swatch": 8
       }
     }
   },
   "overview/components": {
     "dark": {
       "label-content-name-mismatch": {
-        "main :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 56
+        "main :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface": 59
       }
     },
     "light": {
       "label-content-name-mismatch": {
-        "main :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 56
+        "main :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface": 59
       }
     }
   }

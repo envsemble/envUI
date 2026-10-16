@@ -7,6 +7,7 @@ import { dirname, join, resolve, relative, isAbsolute, delimiter } from 'node:pa
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import { compileDocumentation } from '../scripts/GenerateDocumentation.mjs';
+import { readMap } from '../packages/codemods/src/map.mjs';
 
 const repository = fileURLToPath(new URL('../', import.meta.url));
 const cacheDirectory = join(repository, '.cache');
@@ -146,7 +147,7 @@ before(
       h(ui.ButtonGroup, { orientation: 'vertical', 'aria-label': 'Connected actions' },
         h(ui.Button, { startIcon: h(Home) }, 'Continue'),
         h(ui.IconButton, { icon: custom, 'aria-label': 'Settings' }),
-        h(ui.Button, { variant: 'important', href: '/confirm' }, 'Confirm')),
+        h(ui.Button, { variant: 'primary', tone: 'accent', href: '/confirm' }, 'Confirm')),
       h(ui.Pager.Previous, { href: '/previous-guide' }, 'Earlier guide'),
       h(ui.Pager.Next, { href: '/next-guide', icon: custom }, 'Following guide'),
       h(ui.TextField, { name: 'title', label: 'Title', hint: 'One line', defaultValue: 'Example' }),
@@ -240,9 +241,7 @@ test("a navigation list's item list items are its own items only", () => {
 });
 
 test('no 0.x name of the rename map is exported, and every namespace is', async () => {
-  const map = JSON.parse(
-    await readFile(join(repository, 'packages/codemods/src/maps/v1.json'), 'utf8'),
-  );
+  const map = readMap(join(repository, 'packages/codemods/src/maps/v1'));
   const names = (section) => Object.keys(section).filter((name) => !name.startsWith('$'));
   const entries = {
     '@envsemble/envui': ssr.exports,
@@ -295,7 +294,6 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'Card',
     'ClickableCard',
     'Stack',
-    'ActionGroup',
     'ActionCard',
     'FeatureCard',
     'List',
@@ -364,14 +362,14 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     join(consumerDirectory, 'Consumer.tsx'),
     `
     import { createRef } from 'react';
-    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, NavList, Pager, Icon, BrandLogo, TextField, ColorPicker, Textarea, Checkbox, Switch, Stack, ActionGroup,
-      RadioGroup, Radio, Select, Combobox, DatePicker, Calendar, Dialog, DialogClose, Toast, useToast,
+    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, NavList, Pager, Icon, BrandLogo, TextField, ColorPicker, Textarea, Checkbox, Switch, Stack,
+      EnvUIProvider, Toolbar, Field, CloseButton, RadioGroup, Radio, Select, Combobox, DatePicker, Calendar, Dialog, DialogClose, Toast, useToast,
       type ThemeValue, type ButtonProps, type ButtonGroupProps, type SelectOption, type ComboboxItem, type ToastManager } from '@envsemble/envui';
     import { Home } from '@envsemble/envui/icons/Home';
     import { Home as BarrelHome } from '@envsemble/envui/icons';
     import '@envsemble/envui/styles.css';
     import { RichText, RichTextEditor, type RichTextEditorHandle, type RichTextReferenceSource } from '@envsemble/envui/rich-text';
-    const buttonProps: ButtonProps = { variant: 'important', ref: createRef<HTMLButtonElement>(), startIcon: <Home /> };
+    const buttonProps: ButtonProps = { variant: 'primary', tone: 'accent', ref: createRef<HTMLButtonElement>(), startIcon: <Home /> };
     const buttonGroupProps: ButtonGroupProps = { orientation: 'vertical', ref: createRef<HTMLDivElement>(), 'aria-label': 'Actions' };
     const pagerLinkProps: Pager.LinkProps = { href: '/guide', children: 'Read the guide', ref: createRef<HTMLAnchorElement>(), icon: <Home /> };
     const options: SelectOption[] = [{ value: 'one', label: 'One' }];
@@ -383,10 +381,13 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     function NotificationAction() { const manager: ToastManager = useToast(); return <Button onClick={() => manager.show({ message: 'Saved' })}>Save</Button>; }
     export const consumer = <Theme theme={theme} ref={createRef<HTMLDivElement>()}>
       <Button {...buttonProps}>Create</Button><IconButton aria-label="Open" icon={<Home filled />} />
-      <ConfirmButton variant="quiet" icon={<Home />} aria-label="Remove" confirmLabel="Remove?" onConfirm={() => undefined} />
-      <ButtonGroup {...buttonGroupProps}><Button href="/">Home</Button><IconButton aria-label="Options" icon={<Home />} /><Button variant="important">Confirm</Button></ButtonGroup>
+      <ConfirmButton variant="ghost" icon={<Home />} aria-label="Remove" confirmLabel="Remove?" onConfirm={() => undefined} />
+      <ButtonGroup {...buttonGroupProps}><Button href="/">Home</Button><IconButton aria-label="Options" icon={<Home />} /><Button variant="primary" tone="accent">Confirm</Button></ButtonGroup>
       <Stack gap={3} ref={createRef<HTMLDivElement>()}><TextField label="First" /><TextField label="Second" /></Stack>
-      <ActionGroup stacked ref={createRef<HTMLDivElement>()}><Button>Save</Button><Button variant="secondary">Cancel</Button></ActionGroup>
+      <Stack direction="row" wrap justify="end" ref={createRef<HTMLDivElement>()}><Button fullWidth>Save</Button><Button variant="outline" tone="danger">Cancel</Button></Stack>
+      <EnvUIProvider locale="de-CH" dir="ltr" messages={{ common: { close: 'Schließen' }, toast: { hidden: ({ count }) => count + ' hidden' } }}><CloseButton ref={createRef<HTMLButtonElement>()} /></EnvUIProvider>
+      <Toolbar.Root aria-label="Formatting"><Toolbar.Button icon={<Home />} label="Home" pressed shortcut="Ctrl+H" /><Toolbar.Separator /><Toolbar.Link href="/" icon={<Home />} label="Home" /></Toolbar.Root>
+      <Field.Root name="project" invalid><Field.Label>Project</Field.Label><Field.Control size="sm" /><Field.Description>Shown to everyone</Field.Description><Field.Error>Enter a name</Field.Error></Field.Root>
       <NavList.Item href="/" ref={createRef<HTMLAnchorElement>()}>Home</NavList.Item>
       <NavList.Item ref={createRef<HTMLButtonElement>()}>Change view</NavList.Item>
       <Pager.Next {...pagerLinkProps} target="_blank" rel="noopener" />
@@ -411,6 +412,8 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     const unknownTheme = <Theme theme="system" />;
     // @ts-expect-error Button variants are the explicit public contract.
     const unknownButton = <Button variant="custom">Example</Button>;
+    // @ts-expect-error A secondary button has no danger tone: tones come in designed pairs.
+    const undesignedTone = <Button variant="secondary" tone="danger">Example</Button>;
     // @ts-expect-error Connected buttons support rows or columns.
     const unknownOrientation = <ButtonGroup orientation="diagonal" />;
     // @ts-expect-error Layout gap must use the defined spacing scale.
@@ -425,7 +428,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     // @ts-expect-error A color picker requires a visible label.
     const unnamedColorPicker = <ColorPicker defaultValue="#abcdef" />;
     void unnamedColorPicker;
-    void [unnamedIconButton, unknownTheme, unknownButton, unknownOrientation, unknownGap, unknownDirection, missingDestination];
+    void [unnamedIconButton, unknownTheme, unknownButton, undesignedTone, unknownOrientation, unknownGap, unknownDirection, missingDestination];
   `,
   );
   await writeFile(
@@ -466,7 +469,7 @@ test('public components import and render on a server with no DOM globals', func
   assert.match(ssr.html, /name="accent"[^>]*value="#abcdef"/);
   assert.match(ssr.html, /data-env-theme="dark"/);
   assert.match(ssr.html, /data-originating-theme="dark"/);
-  assert.match(ssr.html, /class="env-button env-button-primary"/);
+  assert.match(ssr.html, /class="env-button" data-variant="primary" data-tone="neutral"/);
   assert.match(
     ssr.html,
     /aria-label="Connected actions" role="group" class="env-button-group" data-orientation="vertical"/,

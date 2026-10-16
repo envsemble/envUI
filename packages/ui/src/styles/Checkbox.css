@@ -1,0 +1,144 @@
+/* Selection reuses tonal controls and the grouped-row corner pattern. */
+@media (pointer: coarse) {
+  .env-choice-control {
+    min-height: var(--env-control-height-touch);
+  }
+}
+
+/* Native radio and selectable-row layout, with shared state formulas. */
+.env-choice-control {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--env-space-3);
+  font: var(--env-type-body-small);
+  color: var(--env-color-fg-default);
+  cursor: pointer;
+}
+.env-choice-control > span {
+  min-inline-size: 0;
+}
+.env-choice-control:has(input:disabled) {
+  cursor: default;
+}
+.env-choice-control:has(input:disabled) > * {
+  opacity: var(--env-state-disabled-opacity);
+}
+
+/* Checkbox geometry is distinct from radio; input retains native semantics. */
+.env-checkbox-box {
+  position: relative;
+  display: inline-flex;
+  width: 1.125rem;
+  height: 1.125rem;
+  flex: 0 0 auto;
+}
+.env-checkbox-control {
+  appearance: none;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border: 0.0625rem solid var(--env-color-fg-muted);
+  border-radius: 0.25rem;
+  background: transparent;
+  cursor: inherit;
+}
+.env-checkbox-mark.env-icon {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0.125rem;
+  color: var(--env-color-fg-on-emphasis);
+  pointer-events: none;
+  visibility: hidden;
+}
+.env-checkbox-control:is(:checked, :indeterminate) {
+  border-color: transparent;
+  background: var(--env-color-bg-brand-emphasis);
+}
+.env-checkbox-control:checked + .env-checkbox-mark {
+  visibility: visible;
+}
+.env-checkbox-control:indeterminate + .env-checkbox-mark {
+  visibility: visible;
+}
+.env-checkbox-control:indeterminate + .env-checkbox-mark svg {
+  display: none;
+}
+.env-checkbox-control:indeterminate + .env-checkbox-mark::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0.25rem;
+  inset-block-start: 0.5rem;
+  height: 0.125rem;
+  background: currentColor;
+}
+.env-checkbox-control:hover:not(:disabled) {
+  border-color: var(--env-color-fg-muted-hover);
+}
+.env-checkbox-control:active:not(:disabled) {
+  border-color: var(--env-color-fg-muted-pressed);
+}
+.env-checkbox-control:is(:checked, :indeterminate):hover:not(:disabled) {
+  background: var(--env-color-bg-brand-emphasis-hover);
+  border-color: transparent;
+}
+.env-checkbox-control:is(:checked, :indeterminate):active:not(:disabled) {
+  background: var(--env-color-bg-brand-emphasis-pressed);
+  border-color: transparent;
+}
+.env-checkbox-control:focus-visible {
+  outline: 0.125rem solid var(--env-color-border-focus);
+  outline-offset: 0.125rem;
+}
+.env-checkbox-mark {
+  box-sizing: border-box;
+}
+
+.env-choice-control:has(.env-checkbox-control) {
+  color: var(--env-color-fg-default);
+}
+.env-choice-control:has(.env-switch-control) {
+  color: var(--env-color-fg-default);
+}
+.env-choice-control:has(.env-radio-control) {
+  color: var(--env-color-fg-default);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .env-checkbox-box {
+    transition-property: background-color, color, border-color, transform;
+    transition-duration: var(--env-motion-duration-fast);
+    transition-timing-function: var(--env-motion-ease);
+  }
+  .env-choice-control:active:not(:has(input:disabled))
+    :is(.env-checkbox-box, .env-radio-control, .env-switch-control) {
+    transform: scale(0.9);
+  }
+  .env-checkbox-control:is(:checked, :indeterminate) + .env-checkbox-mark {
+    animation: env-motion-pop-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
+  }
+}
+
+/* Forced colors: the system paints no fills or shadows, so checked boxes and switches take the
+   system’s selection colors, a switch draws its track and thumb in system colors, and a chosen
+   radio row is outlined; the radio itself is the system’s. */
+@media (forced-colors: active) {
+  .env-checkbox-control:is(:checked, :indeterminate) {
+    border-color: Highlight;
+    background-color: Highlight;
+  }
+  .env-checkbox-control:is(:checked, :indeterminate) + .env-checkbox-mark {
+    color: HighlightText;
+  }
+  .env-checkbox-control:disabled {
+    border-color: GrayText;
+  }
+  .env-checkbox-control:is(:checked, :indeterminate):disabled {
+    border-color: GrayText;
+    background-color: GrayText;
+  }
+}

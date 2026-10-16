@@ -49,8 +49,9 @@ test('--help, --list and unknown transforms', () => {
   assert.match(help.stdout, /Usage: envui-codemods <transform> \[paths\.\.\.\]/);
   const list = cli('--list');
   assert.equal(list.status, 0);
-  assert.match(list.stdout, /^ {2}v1-names {4}\S/m);
-  assert.match(list.stdout, /^ {2}v1-classes {2}\S/m);
+  assert.match(list.stdout, /^ {2}v1-names {6}\S/m);
+  assert.match(list.stdout, /^ {2}v1-structure {2}\S/m);
+  assert.match(list.stdout, /^ {2}v1-classes {4}\S/m);
   const unknown = cli('v0-names', 'src');
   assert.equal(unknown.status, 2);
   assert.match(unknown.stderr, /Unknown transform: v0-names/);

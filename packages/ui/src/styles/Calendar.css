@@ -11,6 +11,9 @@
   font: var(--env-type-body-small);
 }
 .env-calendar-header {
+  /* The month buttons take the quiet icon color, darkening to the text color on hover and press. */
+  --env-button-text-icon-color: var(--env-color-fg-muted);
+  --env-button-text-icon-color-active: var(--env-color-fg-default);
   display: flex;
   align-items: center;
   gap: var(--env-space-1);
@@ -25,15 +28,8 @@
 .env-calendar-header .env-icon-button {
   --env-control-height: var(--env-calendar-day);
 }
-.env-calendar-header .env-button-text.env-icon-button {
-  color: var(--env-color-fg-muted);
-}
-.env-calendar-header
-  .env-button-text.env-icon-button:is(:hover, :active):not(:disabled):not([aria-disabled='true']) {
-  color: var(--env-color-fg-default);
-}
 /* The month buttons point back and forward in the reading direction. */
-.env-calendar-header .env-symbol:dir(rtl) {
+.env-calendar-header .env-icon:dir(rtl) {
   transform: scaleX(-1);
 }
 .env-calendar-grid {

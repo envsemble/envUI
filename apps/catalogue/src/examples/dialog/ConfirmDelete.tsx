@@ -15,7 +15,8 @@ export default function ConfirmDelete() {
         closeLabel="Cancel"
         actions={
           <Button
-            variant="destructive"
+            variant="primary"
+            tone="danger"
             onClick={() => {
               setOpen(false);
               setResult('Northwind launch deleted');

@@ -1,5 +1,5 @@
 import { Component, createRef, lazy, type ComponentType, type ReactNode } from 'react';
-import { ActionGroup, Alert, Button } from '@envsemble/envui';
+import { Alert, Button, Stack } from '@envsemble/envui';
 
 /** A file that a part of a page loads on its own and that failed to arrive. */
 export class ModuleLoadError extends Error {
@@ -232,19 +232,22 @@ export class LoadBoundary extends Component<LoadBoundaryProps, LoadBoundaryState
           tone="warning"
           title={`The ${what} could not load`}
           action={
-            <ActionGroup>
+            <Stack direction="row" wrap align="center" gap={4}>
               {canRetryLoad && (
                 <Button variant="secondary" onClick={this.retry}>
                   Try again
                 </Button>
               )}
-              <Button
-                variant={canRetryLoad ? 'text' : 'secondary'}
-                onClick={() => void this.reload()}
-              >
-                Reload the page
-              </Button>
-            </ActionGroup>
+              {canRetryLoad ? (
+                <Button variant="text" onClick={() => void this.reload()}>
+                  Reload the page
+                </Button>
+              ) : (
+                <Button variant="secondary" onClick={() => void this.reload()}>
+                  Reload the page
+                </Button>
+              )}
+            </Stack>
           }
         >
           The catalogue may have been updated since this page opened, or the connection dropped.

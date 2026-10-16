@@ -57,7 +57,7 @@ test('a color swatch takes the size of a button icon and stays visible with a ri
     await expect(swatch).toHaveAttribute('aria-hidden', 'true');
     const [swatchBox, iconBox] = await Promise.all([
       swatch.boundingBox(),
-      button.locator('.env-symbol').boundingBox(),
+      button.locator('.env-icon').boundingBox(),
     ]);
     expect(Math.abs(swatchBox!.width - iconBox!.width)).toBeLessThan(1);
     expect(Math.abs(swatchBox!.height - iconBox!.height)).toBeLessThan(1);

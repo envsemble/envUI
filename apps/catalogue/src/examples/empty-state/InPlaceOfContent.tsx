@@ -5,7 +5,7 @@ import { FolderOpen } from '@envsemble/envui/icons/FolderOpen';
 export default function InPlaceOfContent() {
   return (
     // The region a list would fill; the state centres itself in the height it gets.
-    <Surface tone="pane" padding={0} style={{ display: 'grid', minBlockSize: '22rem' }}>
+    <Surface background="default" padding={0} style={{ display: 'grid', minBlockSize: '22rem' }}>
       <EmptyState
         align="center"
         headingLevel={2}

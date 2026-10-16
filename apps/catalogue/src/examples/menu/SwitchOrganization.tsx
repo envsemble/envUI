@@ -22,7 +22,7 @@ export default function SwitchOrganization() {
         }}
         onCreate={() => setMessage('Create organization chosen')}
       />
-      <Text variant="supporting" role="status">
+      <Text variant="body-sm" role="status">
         {message}
       </Text>
     </Stack>

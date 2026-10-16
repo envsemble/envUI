@@ -80,7 +80,7 @@ export function CodeBlock({
           <span>{label ?? language ?? 'Code'}</span>
           {copyable && (
             <IconButton
-              variant="quiet"
+              variant="ghost"
               icon={copyStatus === 'copied' ? <Check /> : <ContentCopy />}
               aria-label={copyStatus === 'copied' ? 'Code copied' : 'Copy code'}
               onClick={copy}

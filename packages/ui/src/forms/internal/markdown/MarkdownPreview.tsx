@@ -40,7 +40,7 @@ export function MarkdownPreview({
           {source}
         </Markdown>
       ) : (
-        <Text tone="muted">Nothing to preview.</Text>
+        <Text emphasis="muted">Nothing to preview.</Text>
       ),
     });
   }

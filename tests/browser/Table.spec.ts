@@ -103,7 +103,7 @@ test('sortable headers are buttons that say what pressing does and report the or
   await expect(page.getByTestId('order-light')).toHaveText('roadmap tokens quarterly audit');
   // In a numeric column the arrow comes first, so the label lines up with the numbers below.
   const label = (await reviews.locator('.env-table-header-label').boundingBox())!;
-  const arrow = (await reviews.locator('.env-symbol').boundingBox())!;
+  const arrow = (await reviews.locator('.env-icon').boundingBox())!;
   const number = table.getByRole('cell', { name: '3', exact: true });
   const numberBox = (await number.boundingBox())!;
   const padding = await number.evaluate((cell) => parseFloat(getComputedStyle(cell).paddingRight));

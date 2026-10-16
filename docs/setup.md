@@ -1,5 +1,7 @@
 ---
 components:
+  - EnvUIProvider
+  - useLocale
   - LinkProvider
   - createThemeBootstrapScript
   - Theme
@@ -8,6 +10,17 @@ components:
   - useTheme
   - useThemePreference
 exportAliases:
+  EnvUIProvider:
+    - i18n
+    - internationalization
+    - localization
+    - translations
+    - messages
+    - locale
+    - right to left
+    - RTL
+  useLocale:
+    - current locale
   ThemeToggle:
     - theme switcher
     - dark mode toggle
@@ -115,6 +128,31 @@ function RouterLink({ href, ...props }: LinkComponentProps) {
 
 The application still decides which destination is selected.
 
+## Locale, strings and direction
+
+envUI works without setup in English, in the runtime's locale and in each element's text direction. An application that translates or formats for its people wraps itself, or a region, in `EnvUIProvider`:
+
+```tsx
+import { EnvUIProvider } from '@envsemble/envui';
+
+<EnvUIProvider
+  locale="de-CH"
+  messages={{
+    common: { close: 'Schließen', loading: 'Wird geladen' },
+    toast: { hidden: ({ count }) => t('notifications.hidden', { count }) },
+  }}
+  dir="ltr"
+>
+  {app}
+</EnvUIProvider>;
+```
+
+- `locale` is the BCP 47 tag envUI formats numbers, dates and relative times in. Without it, the server and the first client render use `en-GB`, so their markup matches, and the browser's locale applies once the page has hydrated. `useLocale()` returns the provider's locale, to format in step with envUI.
+- `messages` overrides envUI's built-in strings, per namespace, one per component family, such as `common`, `toast` or `pagination`. A message is a string, or a function of the values it names, so any translation library plugs in. Nested providers merge per namespace, the inner winning, and a component's own label prop, such as `closeLabel`, wins over both. `defaultMessages` from `@envsemble/envui/messages` lists every namespace and key with its English default, for extracting them.
+- `dir` sets the direction for keyboard and placement logic, such as which arrow key moves forward. Without it, components read the direction at their element. It doesn't set the `dir` attribute: set that on the page or the region.
+
+The provider is a client component. A component with a built-in string reads it in a client module, so a server component renders it as before.
+
 ## React Server Components
 
 envUI works in an application built on React Server Components. Server and client components import from the same entry points:
@@ -133,6 +171,7 @@ What a server component passes to a client component must be serializable: strin
 - `@envsemble/envui/content` when the feature needs code or Markdown.
 - `@envsemble/envui/diff` when the feature shows code diffs.
 - `@envsemble/envui/rich-text` when the feature needs formatted editing or rendering.
+- `@envsemble/envui/messages` for `defaultMessages`, envUI's English strings by namespace, for applications that extract or translate them.
 - `@envsemble/envui/assets/*` for raw assets.
 
 The content, rich-text and diff entries depend on Shiki, the Pierre code themes, react-markdown, remark-gfm, marked, Tiptap and Diffs. They are optional peer dependencies: applications using only the main entry do not install them. An application importing `@envsemble/envui/content`, `@envsemble/envui/rich-text` or `@envsemble/envui/diff` installs the packages listed under `peerDependencies` in the package manifest, for example `npm install shiki @shikijs/langs @pierre/theme react-markdown remark-gfm`, and `@pierre/diffs` for the diff entry.

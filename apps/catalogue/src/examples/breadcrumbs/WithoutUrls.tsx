@@ -29,7 +29,7 @@ export default function WithoutUrls() {
           onClick: () => open(path.slice(0, index + 1)),
         }))}
       />
-      <Text as="h3" variant="section-heading" ref={heading} tabIndex={-1}>
+      <Text render={<h3 />} variant="title" ref={heading} tabIndex={-1}>
         {folder}
       </Text>
       {folders[folder].length > 0 ? (
@@ -51,7 +51,7 @@ export default function WithoutUrls() {
           ))}
         </List.Root>
       ) : (
-        <Text tone="muted">This folder is empty.</Text>
+        <Text emphasis="muted">This folder is empty.</Text>
       )}
     </Stack>
   );

@@ -10,7 +10,7 @@ export default function DisabledReason() {
         </Button>
       </Tooltip>
       {/* The tooltip isn't read by assistive technology, so the page says it too. */}
-      <Text variant="supporting">5 of 5 seats assigned</Text>
+      <Text variant="body-sm">5 of 5 seats assigned</Text>
     </Stack>
   );
 }

@@ -191,6 +191,10 @@
    title, rather than squeezing it. Rows stack upward, so content below the title, such as Tabs,
    comes first. */
 .env-panel-dock-header {
+  /* Icon-only text buttons take the quiet icon color, like the window controls, darkening to the
+     text color on hover and press. */
+  --env-button-text-icon-color: var(--env-color-fg-muted);
+  --env-button-text-icon-color-active: var(--env-color-fg-default);
   --env-control-height: var(--env-control-height-sm);
   position: sticky;
   inset-block-start: 0;
@@ -249,15 +253,6 @@
 }
 .env-panel-dock-header[data-scrolled] {
   box-shadow: 0 0.0625rem 0 var(--env-color-border-muted);
-}
-/* Icon-only text buttons take the quiet icon color, like the window controls, rather than the link
-   blue of text buttons, and darken to the text color on hover and press. */
-.env-panel-dock-header .env-button-text.env-icon-button {
-  color: var(--env-color-fg-muted);
-}
-.env-panel-dock-header
-  .env-button-text.env-icon-button:is(:hover, :active):not(:disabled):not([aria-disabled='true']) {
-  color: var(--env-color-fg-default);
 }
 
 /* Minimized panels wait as chips along the bottom, at the inline end: a button that brings the
@@ -323,7 +318,7 @@
 .env-panel-dock-chip-restore:active {
   background: var(--env-color-bg-neutral-subtle-pressed);
 }
-.env-panel-dock-chip .env-symbol {
+.env-panel-dock-chip .env-icon {
   inline-size: var(--env-control-icon-size);
   block-size: var(--env-control-icon-size);
   color: var(--env-color-fg-muted);
@@ -366,7 +361,7 @@
 .env-panel-dock-chip-close:active {
   background: var(--env-color-bg-neutral-subtle-pressed);
 }
-.env-panel-dock-chip-close .env-symbol {
+.env-panel-dock-chip-close .env-icon {
   color: inherit;
 }
 .env-panel-dock-chip-restore:focus-visible,

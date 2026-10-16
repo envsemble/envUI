@@ -6,18 +6,18 @@ import { Settings } from '@envsemble/envui/icons/Settings';
 export default function QuietToolbar() {
   return (
     <Stack align="start">
-      <Surface tone="pane" padding={3} style={{ inlineSize: 'min(100%, 24rem)' }}>
+      <Surface background="default" padding={3} style={{ inlineSize: 'min(100%, 24rem)' }}>
         {/* A toolbar row: the title takes the room the actions leave. */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-          <IconButton variant="quiet" icon={<Menu />} aria-label="Toggle sidebar" />
-          <Text as="span" variant="section-heading" style={{ flex: '1 1 auto' }}>
+          <IconButton variant="ghost" icon={<Menu />} aria-label="Toggle sidebar" />
+          <Text render={<span />} variant="title" style={{ flex: '1 1 auto' }}>
             Projects
           </Text>
-          <IconButton variant="quiet" icon={<Add />} aria-label="New project" />
-          <IconButton variant="quiet" icon={<Settings />} aria-label="Project settings" />
+          <IconButton variant="ghost" icon={<Add />} aria-label="New project" />
+          <IconButton variant="ghost" icon={<Settings />} aria-label="Project settings" />
         </div>
       </Surface>
-      <Button variant="quiet" startIcon={<Add />}>
+      <Button variant="ghost" startIcon={<Add />}>
         New section
       </Button>
     </Stack>

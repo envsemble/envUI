@@ -155,17 +155,14 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
             triggerRef.current = node;
             setRef(ref, node);
           }}
-          data-variant={variant}
+          // The trigger looks like a Button of the matching variant.
+          data-variant={variant === 'outlined' ? 'outline' : 'secondary'}
+          data-tone="neutral"
           data-size={size}
-          className={classNames(
-            'env-button',
-            variant === 'outlined' ? 'env-button-outlined' : 'env-button-secondary',
-            'env-dropdown-trigger',
-            className,
-          )}
+          className={classNames('env-button', 'env-dropdown-trigger', className)}
         >
           <BaseSelect.Value placeholder={placeholder} />
-          <BaseSelect.Icon className="env-symbol">
+          <BaseSelect.Icon className="env-icon">
             <ChevronRight />
           </BaseSelect.Icon>
         </BaseSelect.Trigger>
@@ -190,7 +187,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
                     >
                       {/* A check mark shows the selected option; the slot keeps labels aligned. */}
                       <span className="env-dropdown-option-check" aria-hidden="true">
-                        <BaseSelect.ItemIndicator className="env-symbol">
+                        <BaseSelect.ItemIndicator className="env-icon">
                           <Check />
                         </BaseSelect.ItemIndicator>
                       </span>

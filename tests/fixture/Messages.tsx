@@ -73,7 +73,7 @@ export function MessagesFixture({ theme }: { theme: ThemeValue }) {
       </div>
       <output data-testid={`messages-copied-${theme}`}>{copied}</output>
       <output data-testid={`messages-retried-${theme}`}>{retried}</output>
-      <Surface tone="pane" padding={4} data-surface="pane">
+      <Surface background="default" padding={4} data-surface="pane">
         <MessageList aria-label={`Pane conversation ${theme}`} busy={replying}>
           <Message from="self">On a pane</Message>
           <Message from="other" author="Aurora">

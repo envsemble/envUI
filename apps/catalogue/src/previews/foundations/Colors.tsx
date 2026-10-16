@@ -94,7 +94,7 @@ function ColorPalette() {
             {tokens.map(([token, label]) => (
               <div className="docs-palette-row" key={label}>
                 <div className="docs-palette-label">
-                  <Text as="span" variant="supporting">
+                  <Text render={<span />} variant="body-sm">
                     {label}
                   </Text>
                   <code>{colorVariable(token)}</code>
@@ -119,7 +119,7 @@ function InteractionColors() {
 
   return (
     <Example title="Derived interaction colors" size="collection">
-      <Text tone="muted">
+      <Text emphasis="muted">
         Hover and pressed are derived when the tokens are built: other grades of the same hue, each
         a token of its own, so the contrast gate checks the label on every state.
       </Text>

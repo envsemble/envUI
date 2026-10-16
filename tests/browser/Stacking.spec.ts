@@ -28,6 +28,7 @@ const literals: Record<string, number> = {
   'dialog-backdrop': 100,
   'dialog-positioner': 101,
   'command-palette-positioner': 101,
+  'popup-positioner': 110,
   'menu-positioner': 110,
   'popover-positioner': 110,
   'select-positioner': 110,

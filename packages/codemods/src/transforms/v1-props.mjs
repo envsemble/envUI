@@ -1,46 +1,41 @@
 // v1-props: moves the props of envUI 0.x components to 1.0, as the rename map's `props` section
-// lists them.
+// lists them, and the properties of the objects some calls take, as its `calls` section does.
 //
 // - A prop whose literal value the map lists is replaced by the props that value maps to, in its
 //   place among the element's attributes, so spreads keep their order around it. A replacement prop
 //   the element already sets is left as the element sets it.
+// - A prop with `to` takes its new name whatever its value: `<Text tone="muted">` becomes
+//   `<Text emphasis="muted">`, and a listed literal its replacement, as above.
 // - A value the map doesn't list, such as an expression, stays as it is and is reported, and so is
 //   every use whose entry carries a report.
+// - A call the `calls` section lists, such as `useToast().show({ variant: 'error' })`, has the
+//   properties of its object literal moved by the same rules. The call is found through the
+//   function's import: `useToast().show(…)`, `const toast = useToast(); toast.show(…)` and
+//   `const { show } = useToast(); show(…)`. An argument that is not an object literal is reported.
 // Elements are matched by their import from @envsemble/envui, under their 0.x or their 1.0 name,
 // including namespace parts such as `<Menu.Root>` and `import * as ui` accesses such as
 // `<ui.Table.Root>`. Run it after v1-names, or before: both names are recognised.
 import { loadMap } from '../map.mjs';
+import {
+  applyPropRules,
+  componentResolver,
+  envuiImports,
+  expressionKey,
+  jsxAttribute,
+  literalExpression,
+  literalKey,
+} from '../elements.mjs';
 import { createReporter, keepByteOrderMark, parserFor, printOptions } from '../shared.mjs';
 
 export const parser = 'tsx';
 
-/** The name a JSX element's name spells: `TextField`, `Menu.Root` or `ui.Table.Root`. */
-function jsxPath(name) {
-  if (name.type === 'JSXIdentifier') return [name.name];
-  if (name.type === 'JSXMemberExpression') {
-    const object = jsxPath(name.object);
-    return object && [...object, name.property.name];
-  }
-  return null;
-}
-
-/**
- * The literal value of an attribute, as the map's keys write it: `true` for a bare attribute or
- * `{true}`, `false` for `{false}`, a string for `"sm"`, `{'sm'}` or `` {`sm`} ``, and undefined
- * for anything else, such as an expression.
- */
-function literalKey(value) {
-  if (value == null) return 'true';
-  const node = value.type === 'JSXExpressionContainer' ? value.expression : value;
-  if (node.type === 'StringLiteral' || (node.type === 'Literal' && typeof node.value === 'string'))
-    return node.value;
-  if (
-    node.type === 'BooleanLiteral' ||
-    (node.type === 'Literal' && typeof node.value === 'boolean')
-  )
-    return String(node.value);
-  if (node.type === 'TemplateLiteral' && node.expressions.length === 0)
-    return node.quasis[0].value.cooked;
+/** The name of an object property with a plain key, or undefined. */
+function propertyName(node) {
+  if (node.type !== 'ObjectProperty' && node.type !== 'Property') return undefined;
+  if (node.computed) return undefined;
+  if (node.key.type === 'Identifier') return node.key.name;
+  if (node.key.type === 'StringLiteral' || node.key.type === 'Literal')
+    return String(node.key.value);
   return undefined;
 }
 
@@ -52,104 +47,130 @@ export default function transform(file, api, options = {}) {
   const root = j(file.source);
   const reporter = createReporter(api);
 
-  // Local names of the components imported from an entry point, with the 1.0 name each stands
-  // for, and the namespace imports of the entry points.
-  const components = new Map();
-  const namespaceImports = new Map();
-  root
-    .find(j.ImportDeclaration)
-    .filter((path) => entries.has(path.node.source.value))
-    .forEach((path) => {
-      const entry = entries.get(path.node.source.value);
-      for (const specifier of path.node.specifiers ?? []) {
-        if (specifier.type === 'ImportNamespaceSpecifier')
-          namespaceImports.set(specifier.local.name, entry);
-        else if (specifier.type === 'ImportSpecifier')
-          components.set(specifier.local.name, { entry, imported: specifier.imported.name });
-      }
-    });
-  if (components.size === 0 && namespaceImports.size === 0) return undefined;
-
-  /**
-   * The 1.0 name of an export and the parts accessed on it: `Input` is TextField, and `Menu` is
-   * Menu.Root alone but the Menu namespace in `Menu.Item`, which is already 1.0 code.
-   */
-  const nameOf = (entry, imported, parts) => {
-    const target = entry.renames.get(imported)?.to ?? imported;
-    if (parts.length > 0 && target.startsWith(`${imported}.`))
-      return [imported, ...parts].join('.');
-    return [target, ...parts].join('.');
-  };
-
-  /** The entry and 1.0 component name of an element, or null for any other element. */
-  function componentOf(path) {
-    const names = jsxPath(path.node.name);
-    if (!names) return null;
-    const [first, ...rest] = names;
-    // A local of the same name in an inner scope is another component.
-    const scope = path.scope?.lookup(first);
-    if (scope && !scope.isGlobal) return null;
-    if (namespaceImports.has(first) && rest.length > 0) {
-      const entry = namespaceImports.get(first);
-      const [exported, ...parts] = rest;
-      return { entry, name: nameOf(entry, exported, parts) };
-    }
-    const component = components.get(first);
-    return component
-      ? { entry: component.entry, name: nameOf(component.entry, component.imported, rest) }
-      : null;
-  }
-
-  const attribute = (name, value) => {
-    if (value === true) return j.jsxAttribute(j.jsxIdentifier(name));
-    if (typeof value === 'string')
-      return j.jsxAttribute(j.jsxIdentifier(name), j.stringLiteral(value));
-    const expression =
-      typeof value === 'number' ? j.numericLiteral(value) : j.booleanLiteral(value);
-    return j.jsxAttribute(j.jsxIdentifier(name), j.jsxExpressionContainer(expression));
-  };
+  const imports = envuiImports(j, root, entries);
+  if (imports.components.size === 0 && imports.namespaceImports.size === 0) return undefined;
+  const componentOf = componentResolver(imports);
 
   let changed = false;
+  let changedAttributes = false;
+  const attributes = {
+    name: (node) =>
+      node.type === 'JSXAttribute' && node.name.type === 'JSXIdentifier'
+        ? node.name.name
+        : undefined,
+    key: (node) => literalKey(node.value),
+    make: (name, value) => jsxAttribute(j, name, value),
+    rename: (node, name) => {
+      node.name = j.jsxIdentifier(name);
+    },
+  };
   root.find(j.JSXOpeningElement).forEach((path) => {
     const component = componentOf(path);
     const rules = component && component.entry.props.get(component.name);
     if (!rules) return;
-    const attributes = path.node.attributes;
-    const own = (name) =>
-      attributes.some((each) => each.type === 'JSXAttribute' && each.name.name === name);
-    for (let index = 0; index < attributes.length; index += 1) {
-      const node = attributes[index];
-      if (node.type !== 'JSXAttribute' || node.name.type !== 'JSXIdentifier') continue;
-      const rule = rules.get(node.name.name);
-      if (!rule) continue;
-      const where = `${component.name}'s ${node.name.name}`;
-      const key = literalKey(node.value);
-      // A 1.0 value, such as density="sm" on a Table, is already moved: no change, no report.
-      if (key !== undefined && rule.current.has(key)) continue;
-      const replacement = key === undefined ? undefined : rule.values[key];
-      if (!replacement) {
-        reporter.warn(
-          node,
-          `${where} has a value the codemod can't move: ${rule.report ?? 'change it by hand.'}`,
-        );
-        continue;
-      }
-      // Remove the old attribute first, so a replacement of the same name, such as density, is
-      // written rather than counted as already set.
-      attributes.splice(index, 1);
-      const added = Object.entries(replacement.props ?? {})
-        .filter(([name]) => !own(name))
-        .map(([name, value]) => attribute(name, value));
-      attributes.splice(index, 0, ...added);
-      index += added.length - 1;
+    if (
+      applyPropRules(path.node.attributes, rules, component.name, attributes, (node, message) =>
+        reporter.warn(node, message),
+      )
+    ) {
       changed = true;
-      const report = replacement.report ?? (replacement.reportAlways ? rule.report : undefined);
-      if (report) reporter.warn(node, `${where}: ${report}`);
+      changedAttributes = true;
     }
   });
 
+  const properties = {
+    name: propertyName,
+    key: (node) => expressionKey(node.value),
+    make: (name, value) => j.objectProperty(j.identifier(name), literalExpression(j, value)),
+    rename: (node, name) => {
+      node.key = j.identifier(name);
+      node.shorthand = false;
+    },
+  };
+  for (const entry of entries.values()) {
+    for (const [call, { callee, method, rules }] of entry.calls) {
+      // The local names of the function: imported by name, or read from a namespace import.
+      const locals = new Set(
+        [...imports.components]
+          .filter(([, each]) => each.entry === entry && each.imported === callee)
+          .map(([local]) => local),
+      );
+      const namespaces = new Set(
+        [...imports.namespaceImports].filter(([, each]) => each === entry).map(([local]) => local),
+      );
+      if (locals.size === 0 && namespaces.size === 0) continue;
+      /** Whether an expression calls the function: `useToast()` or `ui.useToast()`. */
+      const callsFunction = (node) =>
+        node?.type === 'CallExpression' &&
+        ((node.callee.type === 'Identifier' && locals.has(node.callee.name)) ||
+          (node.callee.type === 'MemberExpression' &&
+            !node.callee.computed &&
+            node.callee.object.type === 'Identifier' &&
+            namespaces.has(node.callee.object.name) &&
+            node.callee.property.name === callee));
+      const targets = [];
+      if (method === undefined) {
+        root
+          .find(j.CallExpression)
+          .filter((path) => callsFunction(path.node))
+          .forEach((path) => targets.push(path));
+      } else {
+        // Variables that hold what the hook returns, and the method destructured from it.
+        const holders = new Set();
+        const methods = new Set();
+        root
+          .find(j.VariableDeclarator)
+          .filter((path) => callsFunction(path.node.init))
+          .forEach((path) => {
+            const { id } = path.node;
+            if (id.type === 'Identifier') holders.add(id.name);
+            else if (id.type === 'ObjectPattern')
+              for (const property of id.properties)
+                if (propertyName(property) === method && property.value.type === 'Identifier')
+                  methods.add(property.value.name);
+          });
+        root.find(j.CallExpression).forEach((path) => {
+          const target = path.node.callee;
+          if (target.type === 'Identifier' && methods.has(target.name)) targets.push(path);
+          else if (
+            target.type === 'MemberExpression' &&
+            !target.computed &&
+            target.property.name === method &&
+            (callsFunction(target.object) ||
+              (target.object.type === 'Identifier' && holders.has(target.object.name)))
+          )
+            targets.push(path);
+        });
+      }
+      for (const path of targets) {
+        const [argument] = path.node.arguments;
+        if (argument?.type !== 'ObjectExpression') {
+          if (argument)
+            reporter.warn(
+              argument,
+              `${call} takes an object the codemod can't read: ${[...rules.values()].map((rule) => rule.report).join(' ')}`,
+            );
+          continue;
+        }
+        if (
+          applyPropRules(argument.properties, rules, call, properties, (node, message) =>
+            reporter.warn(node, message),
+          )
+        )
+          changed = true;
+      }
+    }
+  }
+
   reporter.flush();
   if (!changed) return undefined;
-  // The only strings the transform writes are JSX attributes, which take double quotes.
-  return keepByteOrderMark(file.source, root.toSource(printOptions(file.source, 'double')));
+  // JSX attributes take double quotes; where only objects changed, strings follow the quotes of
+  // the file's envUI imports.
+  const importQuote = root
+    .find(j.ImportDeclaration)
+    .filter((path) => entries.has(path.node.source.value))
+    .paths()[0]
+    ?.node.source.extra?.raw?.startsWith("'");
+  const quote = changedAttributes || !importQuote ? 'double' : 'single';
+  return keepByteOrderMark(file.source, root.toSource(printOptions(file.source, quote)));
 }

@@ -1,14 +1,14 @@
-import { ActionGroup, Button, DatePicker, Surface } from '@envsemble/envui';
+import { Button, DatePicker, Surface, Stack } from '@envsemble/envui';
 
 export default function SmallToolbar() {
   return (
     <Surface
-      tone="pane"
+      background="default"
       padding={1}
-      corners="pill"
+      radius="full"
       role="group"
       aria-label="Schedule toolbar"
-      render={<ActionGroup />}
+      render={<Stack direction="row" wrap align="center" gap={4} />}
     >
       <DatePicker
         size="sm"
@@ -18,7 +18,7 @@ export default function SmallToolbar() {
         withTime
         clearable
       />
-      <Button variant="outlined" size="sm">
+      <Button variant="outline" size="sm">
         Schedule
       </Button>
     </Surface>

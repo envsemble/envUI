@@ -21,7 +21,7 @@ function BreakpointRow({ breakpoint }: { breakpoint: Breakpoint }) {
     <div className="docs-measure">
       <code>--env-breakpoint-{breakpoint}</code>
       <span>{breakpoints[breakpoint]}</span>
-      <Text tone="muted">
+      <Text emphasis="muted">
         {reached ? 'This window is at least as wide' : 'This window is narrower'}
       </Text>
     </div>
@@ -52,7 +52,7 @@ export function ResponsivePreview() {
             <div className="docs-measure" key={level}>
               <code>--env-z-{level}</code>
               <TokenValue token={`--env-z-${level}`} />
-              <Text tone="muted">{use}</Text>
+              <Text emphasis="muted">{use}</Text>
             </div>
           ))}
         </Stack>

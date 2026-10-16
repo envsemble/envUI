@@ -110,7 +110,7 @@ export function RichTextEditingFixture() {
   const [keyboardClicks, setKeyboardClicks] = useState(0);
   const editorHandle = useRef<RichTextEditorHandle>(null);
   return (
-    <Stack as="section" className="fixture-section" data-testid="rich-text-editing">
+    <Stack render={<section />} className="fixture-section" data-testid="rich-text-editing">
       {includes('form') && (
         <>
           <form

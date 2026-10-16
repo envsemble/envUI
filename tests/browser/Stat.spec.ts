@@ -20,7 +20,7 @@ test('stats read as label, figure, trend and detail, with the trend in icon and 
   );
   // Each trend shows a decorative icon beside its text, in a tone chosen by direction or by tone.
   const trends = group.locator('.env-stat-trend');
-  await expect(trends.locator('.env-symbol[aria-hidden="true"] svg')).toHaveCount(4);
+  await expect(trends.locator('.env-icon[aria-hidden="true"] svg')).toHaveCount(4);
   expect(
     await trends.evaluateAll((elements) =>
       elements.map((element) => [element.dataset.direction, element.dataset.tone]),
@@ -114,6 +114,9 @@ test('a stat group wraps its stats into even columns as space runs out', async (
   await expect.poll(columns).toEqual({ perRow: 1, rows: 4, widths: 1 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   // The group is a pane, or a row tone on a pane.
-  await expect(group).toHaveClass(/env-surface-pane/);
-  await expect(page.getByTestId('stat-row-group-light')).toHaveClass(/env-surface-row/);
+  await expect(group).toHaveAttribute('data-background', 'default');
+  await expect(page.getByTestId('stat-row-group-light')).toHaveAttribute(
+    'data-background',
+    'muted',
+  );
 });

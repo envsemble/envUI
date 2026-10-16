@@ -1,0 +1,19 @@
+{
+  "@envsemble/envui": {
+    "Select": {
+      "density": {
+        "report": "Select's density is gone: size=\"sm\" gives the small trigger, and every popup has the menus' anatomy. For a compact app or region, set scale=\"compact\" on its Theme.",
+        "values": {
+          "compact": {
+            "props": {
+              "size": "sm"
+            }
+          },
+          "standard": {
+            "report": "the popup now has the menus' anatomy, with a check mark on the chosen option."
+          }
+        }
+      }
+    }
+  }
+}

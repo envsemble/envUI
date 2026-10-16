@@ -27,11 +27,13 @@ Options:
   --extensions=<list>      Comma-separated extensions to read instead of the transform's.
   --ignore-pattern=<glob>  Skip matching files and folders; repeatable. node_modules, dist
                            and .git are always skipped.
-  --map=<path>             Use a rename map with the shape of src/maps/v1.json instead.
+  --map=<path>             Use another rename map: a folder shaped like src/maps/v1, or one
+                           JSON file with its merged sections.
   --list                   List the transforms.
   -h, --help               Show this help.
 
-Paths default to the current folder. Run v1-names, then v1-classes, then type-check.`;
+Paths default to the current folder. Run v1-names, v1-structure, v1-render, v1-props, then
+v1-classes, then type-check.`;
 
 /** Paths relative to the working folder, with forward slashes, for ignore patterns. */
 const portable = (path) =>

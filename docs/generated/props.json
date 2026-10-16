@@ -32,39 +32,6 @@
         "@envsemble/envui"
       ]
     },
-    "ActionGroup": {
-      "kind": "component",
-      "source": "packages/ui/src/foundations/Layout.tsx",
-      "description": "A set of actions laid out together, such as a form's Cancel and Save: a row 1 rem apart that wraps when it runs out of room, or a column 0.5 rem apart whose labelled buttons fill it. It adds layout only, no role or keyboard behaviour.",
-      "props": [
-        {
-          "name": "stacked",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Stack the actions in a column, 0.5 rem apart, where each labelled button takes the group's width and icon-only buttons keep their size. Otherwise they sit in a row, 1 rem apart, and wrap onto more rows when they don't fit."
-        },
-        {
-          "name": "align",
-          "type": "'start' | 'center' | 'end'",
-          "required": false,
-          "default": "'start'",
-          "description": "Where a row of actions sits: at the start, in the center or at the end, such as at the end of a form. A stacked group fills its width instead."
-        },
-        {
-          "name": "as",
-          "type": "Element",
-          "required": false,
-          "description": "The element to render, for its meaning: div by default, or footer for the actions of a card or a form, or section, article, nav, main, aside or header."
-        }
-      ],
-      "native": [
-        "element"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
     "Alert": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Alert.tsx",
@@ -675,20 +642,26 @@
     "Button": {
       "kind": "component",
       "source": "packages/ui/src/actions/Button.tsx",
-      "description": "Starts an action, or goes to a destination with href, in one of seven emphases, with optional icons; icon-only with iconOnly. It renders a native button or link.",
+      "description": "Starts an action, or goes to a destination with href, in one of five variants and three tones, with optional icons; icon-only with iconOnly. It renders a native button or link.",
       "props": [
         {
           "name": "variant",
-          "type": "'primary' | 'important' | 'secondary' | 'outlined' | 'destructive' | 'text' | 'quiet'",
+          "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
           "required": false,
           "default": "'primary'",
-          "description": "The emphasis: primary for the main action of a view, important for a rare consequential one, secondary and outlined for the rest, destructive for an action that deletes or ends something, text for a link-like action and quiet for an application's chrome, such as a toolbar."
+          "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else primary (secondary for IconButton)."
+        },
+        {
+          "name": "tone",
+          "type": "'neutral' | 'accent' | 'danger'",
+          "required": false,
+          "default": "'neutral'",
+          "description": "The meaning: neutral for most actions; accent, on a primary button only, for a rare consequential action, with 0.5 rem corners; danger for an action that deletes or ends something. Secondary buttons are always neutral."
         },
         {
           "name": "underline",
           "type": "boolean",
           "required": false,
-          "default": "false",
           "description": "Show an underline for the text variant; defaults to false."
         },
         {
@@ -696,6 +669,12 @@
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
           "description": "The height, as on every control: sm, md or lg in the current scale, such as sm for an action in a table cell or lg for the main call to action of a page. Without it, the button takes the control height of its container, md unless the container sets another. A button beside a field takes the field's size."
+        },
+        {
+          "name": "fullWidth",
+          "type": "boolean",
+          "required": false,
+          "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column. An icon-only button keeps its square size."
         },
         {
           "name": "startIcon",
@@ -713,7 +692,6 @@
           "name": "pending",
           "type": "boolean",
           "required": false,
-          "default": "false",
           "description": "Work started by this button is running: a spinner replaces the content without changing the button's size, and the button reports busy and ignores activation until pending ends."
         },
         {
@@ -739,7 +717,6 @@
           "name": "iconOnly",
           "type": "boolean",
           "required": false,
-          "default": "false",
           "description": "Show only icon, in a square button that keeps its size; name it with aria-label."
         },
         {
@@ -994,7 +971,7 @@
         },
         {
           "name": "tone",
-          "type": "Exclude<SurfaceAppearanceProps['tone'], 'alternate'>",
+          "type": "'row' | 'pane' | 'canvas'",
           "required": false,
           "default": "'row'",
           "description": "The surface's fill: `row`, the standalone card fill; `pane`, a quieter fill that groups content; or `canvas`, the page's own color."
@@ -1112,6 +1089,51 @@
       "native": [
         "button",
         "a"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "CloseButton": {
+      "kind": "component",
+      "source": "packages/ui/src/actions/CloseButton.tsx",
+      "description": "The button that closes, dismisses or removes what it sits in, such as a dialog, a notification, a tab or a chip: an icon-only button with a cross, named Close in the provider's language. Under a coarse pointer, its hit area reaches the touch size even where it draws smaller.",
+      "props": [
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "default": "'Close', or EnvUIProvider's messages.common.close",
+          "description": "The button's name, such as Close notification or Remove Alex Morgan where more than one thing closes nearby."
+        },
+        {
+          "name": "variant",
+          "type": "'ghost' | 'secondary'",
+          "required": false,
+          "default": "'ghost'",
+          "description": "ghost, the quiet icon on chrome and inside surfaces, or secondary, on the neutral fill, where the button should read as a control of its own, such as over an image."
+        },
+        {
+          "name": "icon",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The icon; a Close cross by default."
+        },
+        {
+          "name": "size",
+          "type": "'sm' | 'md' | 'lg'",
+          "required": false,
+          "description": "As Button's: the height, and the width, of the square button."
+        },
+        {
+          "name": "pending",
+          "type": "boolean",
+          "required": false,
+          "description": "As Button's: a spinner replaces the icon while the work runs."
+        }
+      ],
+      "native": [
+        "button"
       ],
       "entries": [
         "@envsemble/envui"
@@ -1263,6 +1285,12 @@
           "description": "Receives valid colors normalized to lowercase #rrggbb."
         },
         {
+          "name": "prefix",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Short, non-interactive text before the value, such as the start of an address. It is not part of the value; it shows once the field has focus or a value and is read after the label."
+        },
+        {
           "name": "hint",
           "type": "ReactNode",
           "required": false,
@@ -1270,10 +1298,10 @@
           "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
         },
         {
-          "name": "prefix",
-          "type": "ReactNode",
+          "name": "size",
+          "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "Short, non-interactive text before the value, such as the start of an address. It is not part of the value; it shows once the field has focus or a value and is read after the label."
+          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. Floating and plain fields have their own height."
         },
         {
           "name": "variant",
@@ -1281,12 +1309,6 @@
           "required": false,
           "default": "'outlined'",
           "description": "The field's look: outlined, with a thin border, at the control height; floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page; plain, as tall, with no border or fill and an underline on hover and focus; or quiet, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list."
-        },
-        {
-          "name": "size",
-          "type": "'sm' | 'md' | 'lg'",
-          "required": false,
-          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. Floating and plain fields have their own height."
         },
         {
           "name": "startIcon",
@@ -1714,30 +1736,10 @@
       "description": "A button for an action that takes effect at once and cannot be undone. The first press arms it and names the consequence in place; a second press runs it. It disarms after a few seconds, when focus leaves and on Escape.",
       "props": [
         {
-          "name": "variant",
-          "type": "'outlined' | 'secondary' | 'destructive' | 'text' | 'quiet'",
+          "name": "size",
+          "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "default": "'outlined', or 'secondary' with icon",
-          "description": "The resting appearance; armed, the button is always destructive. outlined by default, and secondary for an icon-only button, like IconButton; quiet for an action in the application's chrome, such as a toolbar."
-        },
-        {
-          "name": "confirmLabel",
-          "type": "ReactNode",
-          "required": true,
-          "description": "The label while armed, naming what a second press does, such as “Remove Morgan?”."
-        },
-        {
-          "name": "onConfirm",
-          "type": "() => void",
-          "required": true,
-          "description": "Runs on the second press, while the button is armed."
-        },
-        {
-          "name": "armedDuration",
-          "type": "number",
-          "required": false,
-          "default": "4000",
-          "description": "How long the button stays armed without a second press, in milliseconds."
+          "description": "The height, as on every control: sm, md or lg in the current scale, such as sm for an action in a table cell or lg for the main call to action of a page. Without it, the button takes the control height of its container, md unless the container sets another. A button beside a field takes the field's size."
         },
         {
           "name": "underline",
@@ -1746,10 +1748,10 @@
           "description": "Show an underline for the text variant; defaults to false."
         },
         {
-          "name": "size",
-          "type": "'sm' | 'md' | 'lg'",
+          "name": "fullWidth",
+          "type": "boolean",
           "required": false,
-          "description": "The height, as on every control: sm, md or lg in the current scale, such as sm for an action in a table cell or lg for the main call to action of a page. Without it, the button takes the control height of its container, md unless the container sets another. A button beside a field takes the field's size."
+          "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column. An icon-only button keeps its square size."
         },
         {
           "name": "startIcon",
@@ -1775,6 +1777,39 @@
           "required": false,
           "requiredWhen": "`icon` is set",
           "description": ""
+        },
+        {
+          "name": "tone",
+          "type": "'neutral' | 'accent' | 'danger'",
+          "required": false,
+          "default": "'neutral'",
+          "description": "The meaning: neutral for most actions; accent, on a primary button only, for a rare consequential action, with 0.5 rem corners; danger for an action that deletes or ends something. Secondary buttons are always neutral."
+        },
+        {
+          "name": "variant",
+          "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
+          "required": false,
+          "default": "'outline', or 'secondary' with icon",
+          "description": "The resting appearance; armed, the button is always variant=\"primary\" tone=\"danger\". outline by default, and secondary for an icon-only button, like IconButton; ghost for an action in the application's chrome, such as a toolbar."
+        },
+        {
+          "name": "confirmLabel",
+          "type": "ReactNode",
+          "required": true,
+          "description": "The label while armed, naming what a second press does, such as “Remove Morgan?”."
+        },
+        {
+          "name": "onConfirm",
+          "type": "() => void",
+          "required": true,
+          "description": "Runs on the second press, while the button is armed."
+        },
+        {
+          "name": "armedDuration",
+          "type": "number",
+          "required": false,
+          "default": "4000",
+          "description": "How long the button stays armed without a second press, in milliseconds."
         },
         {
           "name": "icon",
@@ -1869,10 +1904,16 @@
         },
         {
           "name": "variant",
-          "type": "'primary' | 'important' | 'secondary' | 'outlined' | 'destructive' | 'text' | 'quiet'",
+          "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
           "required": false,
           "default": "'secondary'",
-          "description": "As Button; secondary by default."
+          "description": "As Button's, among its designed pairs with tone; secondary by default."
+        },
+        {
+          "name": "tone",
+          "type": "'neutral' | 'danger'",
+          "required": false,
+          "description": "As Button's: neutral by default, or danger."
         },
         {
           "name": "size",
@@ -1890,21 +1931,18 @@
           "name": "copiedLabel",
           "type": "string",
           "required": false,
-          "default": "'Copied'",
           "description": "Shown in the tooltip and announced after copying; Copied by default."
         },
         {
           "name": "failedLabel",
           "type": "string",
           "required": false,
-          "default": "'Couldn’t copy'",
           "description": "Shown in the tooltip and announced when nothing could be copied; Couldn’t copy by default."
         },
         {
           "name": "copyLabel",
           "type": "string",
           "required": false,
-          "default": "'Copy'",
           "description": "The button's name, also in an icon-only button's tooltip, where it has none of its own: no aria-label or aria-labelledby, and a label without words, such as an empty string; Copy by default."
         },
         {
@@ -2309,6 +2347,12 @@
           "description": "The action's name, such as Delete draft, for an icon-only button."
         },
         {
+          "name": "size",
+          "type": "'sm' | 'md' | 'lg'",
+          "required": false,
+          "description": "The height, as on every control: sm, md or lg in the current scale, such as sm for an action in a table cell or lg for the main call to action of a page. Without it, the button takes the control height of its container, md unless the container sets another. A button beside a field takes the field's size."
+        },
+        {
           "name": "icon",
           "type": "ReactNode",
           "required": false,
@@ -2317,10 +2361,17 @@
         },
         {
           "name": "variant",
-          "type": "'primary' | 'important' | 'secondary' | 'outlined' | 'destructive' | 'text' | 'quiet'",
+          "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
           "required": false,
-          "default": "'secondary'",
-          "description": "The emphasis: primary for the main action of a view, important for a rare consequential one, secondary and outlined for the rest, destructive for an action that deletes or ends something, text for a link-like action and quiet for an application's chrome, such as a toolbar."
+          "default": "'primary'",
+          "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else primary (secondary for IconButton)."
+        },
+        {
+          "name": "tone",
+          "type": "'neutral' | 'accent' | 'danger'",
+          "required": false,
+          "default": "'neutral'",
+          "description": "The meaning: neutral for most actions; accent, on a primary button only, for a rare consequential action, with 0.5 rem corners; danger for an action that deletes or ends something. Secondary buttons are always neutral."
         },
         {
           "name": "underline",
@@ -2329,10 +2380,10 @@
           "description": "Show an underline for the text variant; defaults to false."
         },
         {
-          "name": "size",
-          "type": "'sm' | 'md' | 'lg'",
+          "name": "fullWidth",
+          "type": "boolean",
           "required": false,
-          "description": "The height, as on every control: sm, md or lg in the current scale, such as sm for an action in a table cell or lg for the main call to action of a page. Without it, the button takes the control height of its container, md unless the container sets another. A button beside a field takes the field's size."
+          "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column. An icon-only button keeps its square size."
         },
         {
           "name": "startIcon",
@@ -2706,6 +2757,41 @@
         "@envsemble/envui"
       ]
     },
+    "EnvUIProvider": {
+      "kind": "component",
+      "source": "packages/ui/src/foundations/EnvUIProvider.tsx",
+      "description": "Sets the locale, the strings and the text direction of the envUI components inside it. envUI works without it, in English, in the runtime's locale and in each element's direction; an application that translates or formats for its people wraps itself, or a region, in one.",
+      "props": [
+        {
+          "name": "locale",
+          "type": "string",
+          "required": false,
+          "description": "The BCP 47 locale envUI formats numbers, dates and relative times in, and reads plural rules, collation and the week's first day from, such as de-CH. Without it, the runtime's locale, from the browser once the page has hydrated."
+        },
+        {
+          "name": "messages",
+          "type": "EnvUIMessagesInput",
+          "required": false,
+          "description": "Overrides of envUI's built-in English strings, per namespace, such as `{ common: { close: 'Schließen' }, toast: { hidden: ({ count }) => t('hidden', { count }) } }`. A message is a string, or a function of the values it names. Nested providers merge per namespace, the inner winning; a component's own label prop, such as closeLabel, wins over both."
+        },
+        {
+          "name": "dir",
+          "type": "'ltr' | 'rtl'",
+          "required": false,
+          "description": "The text direction for keyboard and placement logic, such as which arrow key moves forward and which side a popup's start is. Without it, each component reads the direction at its element, from dir attributes and CSS. It doesn't set the dir attribute: set that on the page or region."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": ""
+        }
+      ],
+      "native": [],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
     "FeatureCard": {
       "kind": "component",
       "source": "packages/ui/src/content/FeatureCard.tsx",
@@ -2734,6 +2820,293 @@
           "type": "ReactNode",
           "required": false,
           "description": "One control at the end, such as a Button; it moves below the text and fills the card's width in a card narrower than 38 rem."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "Field": {
+      "kind": "namespace",
+      "source": "packages/ui/src/forms/Field.tsx",
+      "description": "",
+      "parts": [
+        "Field.Root",
+        "Field.Label",
+        "Field.Control",
+        "Field.Description",
+        "Field.Error"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "Field.Control": {
+      "kind": "component",
+      "source": "packages/ui/src/forms/Field.tsx",
+      "description": "The control: a native text input in the outlined field look by default, or any control through render, such as render={<MyControl />}, which receives the control's props, id and ref. A custom control styles itself; the class env-field-control gives it the field's outline.",
+      "props": [
+        {
+          "name": "style",
+          "type": "React.CSSProperties | ((state: State) => React.CSSProperties | undefined) | undefined",
+          "required": false,
+          "description": "Style applied to the element, or a function that returns a style object based on the component's state.",
+          "source": "base-ui"
+        },
+        {
+          "name": "defaultValue",
+          "type": "React.ComponentProps<'input'>['defaultValue'] | undefined",
+          "required": false,
+          "description": "",
+          "source": "base-ui"
+        },
+        {
+          "name": "render",
+          "type": "React.ReactElement | ComponentRenderFn<RenderFunctionProps, State> | undefined",
+          "required": false,
+          "description": "Allows you to replace the component's HTML element with a different tag, or compose it with another component. Accepts a `ReactElement` or a function that returns the element to render.",
+          "source": "base-ui"
+        },
+        {
+          "name": "onValueChange",
+          "type": "((value: string, eventDetails: FieldControl.ChangeEventDetails) => void) | undefined",
+          "required": false,
+          "description": "Callback fired when the `value` changes. Use when controlled.",
+          "source": "base-ui"
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "name": "size",
+          "type": "'sm' | 'md' | 'lg'",
+          "required": false,
+          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the control height of the container."
+        }
+      ],
+      "native": [
+        "input"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "Field.Description": {
+      "kind": "component",
+      "source": "packages/ui/src/forms/Field.tsx",
+      "description": "Lasting guidance under the control, such as a format or a limit, linked to the control as its description.",
+      "props": [
+        {
+          "name": "style",
+          "type": "React.CSSProperties | ((state: State) => React.CSSProperties | undefined) | undefined",
+          "required": false,
+          "description": "Style applied to the element, or a function that returns a style object based on the component's state.",
+          "source": "base-ui"
+        },
+        {
+          "name": "render",
+          "type": "React.ReactElement | ComponentRenderFn<RenderFunctionProps, State> | undefined",
+          "required": false,
+          "description": "Allows you to replace the component's HTML element with a different tag, or compose it with another component. Accepts a `ReactElement` or a function that returns the element to render.",
+          "source": "base-ui"
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": ""
+        }
+      ],
+      "native": [
+        "p"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "Field.Error": {
+      "kind": "component",
+      "source": "packages/ui/src/forms/Field.tsx",
+      "description": "A message under the control that says how to correct the value, with an error icon. It shows while the field is invalid, from its own validation or from invalid on Field.Root, and is linked to the control; match=\"valueMissing\" and the like show it for one kind of failure, and match={true} always.",
+      "props": [
+        {
+          "name": "style",
+          "type": "React.CSSProperties | ((state: State) => React.CSSProperties | undefined) | undefined",
+          "required": false,
+          "description": "Style applied to the element, or a function that returns a style object based on the component's state.",
+          "source": "base-ui"
+        },
+        {
+          "name": "render",
+          "type": "React.ReactElement | ComponentRenderFn<RenderFunctionProps, State> | undefined",
+          "required": false,
+          "description": "Allows you to replace the component's HTML element with a different tag, or compose it with another component. Accepts a `ReactElement` or a function that returns the element to render.",
+          "source": "base-ui"
+        },
+        {
+          "name": "match",
+          "type": "boolean | keyof ValidityState | undefined",
+          "required": false,
+          "description": "Determines whether to show the error message according to the field's [ValidityState](https://developer.mozilla.org/en-US/docs/Web/API/ValidityState). Specifying `true` will always show the error message, and lets external libraries control the visibility.",
+          "source": "base-ui"
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": ""
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "How to correct the value. Without children, the browser's validation message shows."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "Field.Label": {
+      "kind": "component",
+      "source": "packages/ui/src/forms/Field.tsx",
+      "description": "The field's visible name; it names the control for assistive technology.",
+      "props": [
+        {
+          "name": "style",
+          "type": "React.CSSProperties | ((state: State) => React.CSSProperties | undefined) | undefined",
+          "required": false,
+          "description": "Style applied to the element, or a function that returns a style object based on the component's state.",
+          "source": "base-ui"
+        },
+        {
+          "name": "render",
+          "type": "React.ReactElement | ComponentRenderFn<RenderFunctionProps, State> | undefined",
+          "required": false,
+          "description": "Allows you to replace the component's HTML element with a different tag, or compose it with another component. Accepts a `ReactElement` or a function that returns the element to render.",
+          "source": "base-ui"
+        },
+        {
+          "name": "nativeLabel",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "true",
+          "description": "Whether the component renders a native `<label>` element when replacing it via the `render` prop. Set to `false` if the rendered element is not a label (for example, `<div>`). This is useful to avoid inheriting label behaviors on `<button>` controls (such as `<Select.Trigger>` and `<Combobox.Trigger>`), including avoiding `:hover` on the button when hovering the label, and preventing clicks on the label from firing on the button.",
+          "source": "base-ui"
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": ""
+        }
+      ],
+      "native": [
+        "label"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "Field.Root": {
+      "kind": "component",
+      "source": "packages/ui/src/forms/Field.tsx",
+      "description": "A labelled form control with its description and error, for a control envUI has no field for, such as a control of the application's own: Field.Label names Field.Control, and the description and the error describe it, with ids, aria-invalid and the disabled state wired through Base UI's Field.",
+      "props": [
+        {
+          "name": "style",
+          "type": "React.CSSProperties | ((state: State) => React.CSSProperties | undefined) | undefined",
+          "required": false,
+          "description": "Style applied to the element, or a function that returns a style object based on the component's state.",
+          "source": "base-ui"
+        },
+        {
+          "name": "disabled",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Whether the component should ignore user interaction. Takes precedence over the `disabled` prop on the `<Field.Control>` component.",
+          "source": "base-ui"
+        },
+        {
+          "name": "name",
+          "type": "string | undefined",
+          "required": false,
+          "description": "Identifies the field when a form is submitted. Takes precedence over the `name` prop on the `<Field.Control>` component.",
+          "source": "base-ui"
+        },
+        {
+          "name": "validate",
+          "type": "((value: unknown, formValues: Form.Values) => string | string[] | null | void | Promise<string | string[] | null | void>) | undefined",
+          "required": false,
+          "description": "A function for custom validation. Return a string or an array of strings with the error message(s) if the value is invalid. Returning nothing, `null`, an empty string, or an empty array means the value is valid. Asynchronous functions are supported, but they do not prevent form submission when using `validationMode=\"onSubmit\"`.",
+          "source": "base-ui"
+        },
+        {
+          "name": "validationMode",
+          "type": "Form.ValidationMode | undefined",
+          "required": false,
+          "default": "'onSubmit'",
+          "description": "Determines when the field should be validated. This takes precedence over the `validationMode` prop on `<Form>`. - `onSubmit`: triggers validation when the form is submitted, and re-validates on change after submission. - `onBlur`: triggers validation when the control loses focus. - `onChange`: triggers validation on every change to the control value.",
+          "source": "base-ui"
+        },
+        {
+          "name": "validationDebounceTime",
+          "type": "number | undefined",
+          "required": false,
+          "default": "0",
+          "description": "How long to wait between `validate` callbacks if `validationMode=\"onChange\"` is used. Specified in milliseconds.",
+          "source": "base-ui"
+        },
+        {
+          "name": "invalid",
+          "type": "boolean | undefined",
+          "required": false,
+          "description": "Whether the field is invalid. Useful when the field state is controlled by an external library.",
+          "source": "base-ui"
+        },
+        {
+          "name": "dirty",
+          "type": "boolean | undefined",
+          "required": false,
+          "description": "Whether the field's value has been changed from its initial value. Useful when the field state is controlled by an external library.",
+          "source": "base-ui"
+        },
+        {
+          "name": "touched",
+          "type": "boolean | undefined",
+          "required": false,
+          "description": "Whether the field has been touched. Useful when the field state is controlled by an external library.",
+          "source": "base-ui"
+        },
+        {
+          "name": "actionsRef",
+          "type": "React.RefObject<FieldRoot.Actions | null> | undefined",
+          "required": false,
+          "description": "A ref to imperative actions. - `validate`: Validates the field when called.",
+          "source": "base-ui"
+        },
+        {
+          "name": "render",
+          "type": "React.ReactElement | ComponentRenderFn<RenderFunctionProps, State> | undefined",
+          "required": false,
+          "description": "Allows you to replace the component's HTML element with a different tag, or compose it with another component. Accepts a `ReactElement` or a function that returns the element to render.",
+          "source": "base-ui"
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": ""
         }
       ],
       "native": [
@@ -2848,8 +3221,22 @@
     "IconButton": {
       "kind": "component",
       "source": "packages/ui/src/actions/Button.tsx",
-      "description": "Shorthand for Button's icon-only mode, using the neutral secondary variant by default.",
+      "description": "Shorthand for Button's icon-only mode. Without a variant it takes its container's, and else the neutral secondary one.",
       "props": [
+        {
+          "name": "variant",
+          "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
+          "required": false,
+          "default": "'primary'",
+          "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else primary (secondary for IconButton)."
+        },
+        {
+          "name": "tone",
+          "type": "'neutral' | 'accent' | 'danger'",
+          "required": false,
+          "default": "'neutral'",
+          "description": "The meaning: neutral for most actions; accent, on a primary button only, for a rare consequential action, with 0.5 rem corners; danger for an action that deletes or ends something. Secondary buttons are always neutral."
+        },
         {
           "name": "icon",
           "type": "ReactNode",
@@ -2861,13 +3248,6 @@
           "type": "string",
           "required": true,
           "description": "The action's name, which assistive technology announces, such as Open settings."
-        },
-        {
-          "name": "variant",
-          "type": "'primary' | 'important' | 'secondary' | 'outlined' | 'destructive' | 'text' | 'quiet'",
-          "required": false,
-          "default": "'secondary'",
-          "description": "As Button's; secondary by default."
         },
         {
           "name": "pending",
@@ -4329,7 +4709,7 @@
         },
         {
           "name": "variant",
-          "type": "'primary' | 'important' | 'secondary' | 'outlined' | 'destructive' | 'text' | 'quiet'",
+          "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
           "required": false,
           "default": "'secondary'",
           "description": "The buttons' variant, as on IconButton, such as text for a quiet toolbar."
@@ -5118,16 +5498,22 @@
           "description": "The accessible name and tooltip of the clear button, in the application's language."
         },
         {
+          "name": "prefix",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Short, non-interactive text before the value, such as the start of an address. It is not part of the value; it shows once the field has focus or a value and is read after the label."
+        },
+        {
           "name": "hint",
           "type": "ReactNode",
           "required": false,
           "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
         },
         {
-          "name": "prefix",
-          "type": "ReactNode",
+          "name": "size",
+          "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "Short, non-interactive text before the value, such as the start of an address. It is not part of the value; it shows once the field has focus or a value and is read after the label."
+          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. Floating and plain fields have their own height."
         },
         {
           "name": "variant",
@@ -5135,12 +5521,6 @@
           "required": false,
           "default": "'outlined'",
           "description": "The field's look: outlined, with a thin border, at the control height; floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page; plain, as tall, with no border or fill and an underline on hover and focus; or quiet, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list."
-        },
-        {
-          "name": "size",
-          "type": "'sm' | 'md' | 'lg'",
-          "required": false,
-          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. Floating and plain fields have their own height."
         },
         {
           "name": "error",
@@ -5334,11 +5714,11 @@
           "description": "The placeholder's height, as a CSS length, such as 1.25rem for a heading or 3.5rem for a row."
         },
         {
-          "name": "tone",
-          "type": "'base' | 'highlight'",
+          "name": "emphasis",
+          "type": "'muted' | 'default'",
           "required": false,
-          "default": "'base'",
-          "description": "The fill: base, the neutral fill, or highlight, one step stronger, for a placeholder that stands out among the others, such as a title."
+          "default": "'muted'",
+          "description": "How strong the fill is: muted, the neutral fill, or default, one step stronger, for a placeholder that stands out among the others, such as a title."
         }
       ],
       "native": [
@@ -5486,8 +5866,22 @@
     "Stack": {
       "kind": "component",
       "source": "packages/ui/src/foundations/Layout.tsx",
-      "description": "A vertical layout: its direct children in a column, a step of the spacing scale apart, so the parent owns the space between them and the children need no margins.",
+      "description": "A layout of its direct children in a column, or a row, a step of the spacing scale apart, so the parent owns the space between them and the children need no margins.",
       "props": [
+        {
+          "name": "direction",
+          "type": "'column' | 'row'",
+          "required": false,
+          "default": "'column'",
+          "description": "The direction the children run in: column, one under another, or row, side by side, such as a form's actions."
+        },
+        {
+          "name": "wrap",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Let a row wrap onto more lines when its children don't fit, as a row of actions does."
+        },
         {
           "name": "gap",
           "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9",
@@ -5500,23 +5894,24 @@
           "type": "'start' | 'center' | 'end' | 'stretch'",
           "required": false,
           "default": "'stretch'",
-          "description": "How the children line up across the stack: stretch makes each as wide as the stack, except controls such as buttons, which keep their own width; start, center and end keep every child at its own width, at that side or in the middle."
+          "description": "How the children line up across the stack: stretch makes each as wide as a column (as tall as a row), except controls such as buttons, which keep their own size; start, center and end keep every child at its own size, at that side or in the middle."
         },
         {
-          "name": "as",
-          "type": "Element",
+          "name": "justify",
+          "type": "'start' | 'center' | 'end' | 'between'",
           "required": false,
-          "description": "The element to render, for its meaning: div by default, or section, article, nav, main, aside, header or footer. With render, set the element there instead."
+          "default": "'start'",
+          "description": "Where the children sit along the stack when there is room to spare: at the start, in the center, at the end, such as a form's actions at its end, or between, spread out with the first and last at the edges."
         },
         {
           "name": "render",
           "type": "ReactElement",
           "required": false,
-          "description": "Another element to lay out as the stack, without a wrapper, such as a Surface or a Theme: the stack's class, gap and alignment merge into its props. It must forward native props and refs."
+          "description": "The element to render, for its meaning, such as render={<section />} or render={<footer />}, or another component to lay out as the stack without a wrapper, such as a Surface or a Theme: the stack's class, gap and alignment merge into its props. It must forward native props and refs. A div by default."
         }
       ],
       "native": [
-        "element"
+        "div"
       ],
       "entries": [
         "@envsemble/envui"
@@ -5537,11 +5932,11 @@
     "Stat.Group": {
       "kind": "component",
       "source": "packages/ui/src/content/Stat.tsx",
-      "description": "Stats on one surface, a pane by default, in as many even columns as fit; they wrap as space runs out. Use the row tone for a group on a pane. A group named with aria-label or aria-labelledby is exposed as a group, so assistive technology announces the name.",
+      "description": "",
       "props": [
         {
           "name": "tone",
-          "type": "SurfaceAppearanceProps['tone']",
+          "type": "'pane' | 'row' | 'canvas' | 'alternate'",
           "required": false,
           "default": "'pane'",
           "description": "The group's background, as for Surface: pane on the canvas, or row for a group on a pane, so its stats stand apart; canvas or alternate where those fit."
@@ -5604,11 +5999,11 @@
       "description": "A container with a background, an inset and corners, but no layout of its own: spacing between its children, alignment and behaviour come from what it holds, such as a Stack. Card and other containers build on it.",
       "props": [
         {
-          "name": "tone",
-          "type": "'pane' | 'row' | 'canvas' | 'alternate'",
+          "name": "background",
+          "type": "'default' | 'muted' | 'page' | 'raised'",
           "required": false,
-          "default": "'pane'",
-          "description": "The background: pane, the default background of panes and side regions; row, the muted background of rows; canvas, the page background; or alternate, the raised background, such as a block that stands out on a pane."
+          "default": "'default'",
+          "description": "The fill: default, the background of panes and side regions; muted, the background of rows; page, the page background; or raised, a block that stands out on a pane."
         },
         {
           "name": "padding",
@@ -5618,27 +6013,21 @@
           "description": "The inset on every side, as a step of the spacing scale, from 1 (0.25 rem) to 9 (4 rem), such as 5 for 1.5 rem; 0 removes it. Without it, the inset follows the window's width."
         },
         {
-          "name": "corners",
-          "type": "'surface' | 'standard' | 'pill' | 'none'",
+          "name": "radius",
+          "type": "'xl' | 'sm' | 'full' | 'none'",
           "required": false,
-          "default": "'surface'",
-          "description": "The corner radius: surface, the large 1.75 rem corners of panes; standard, 0.5 rem for small blocks; pill, fully rounded ends for a toolbar or a bar of filters; or none, square, for a region that meets the edges of its container."
-        },
-        {
-          "name": "as",
-          "type": "Element",
-          "required": false,
-          "description": "The element to render, for its meaning: div by default, or section, article, nav, main, aside, header or footer. With render, set the element there instead."
+          "default": "'xl'",
+          "description": "The corner radius: xl, the large 1.75 rem corners of panes; sm, 0.5 rem for small blocks; full, fully rounded ends for a toolbar or a bar of filters; or none, square, for a region that meets the edges of its container."
         },
         {
           "name": "render",
           "type": "ReactElement",
           "required": false,
-          "description": "Another element to render the surface onto, without a wrapper, such as a Stack that lays out its content: the surface's class, style and attributes merge into its props. It must forward native props and refs."
+          "description": "The element to render the surface as, for its meaning, such as render={<section />}, or another component to render it onto without a wrapper, such as a Stack that lays out its content: the surface's class, style and attributes merge into its props. It must forward native props and refs. A div by default."
         }
       ],
       "native": [
-        "element"
+        "div"
       ],
       "entries": [
         "@envsemble/envui"
@@ -6049,27 +6438,27 @@
       "description": "Semantic native text with typography and color from the shared token scale.",
       "props": [
         {
-          "name": "as",
-          "type": "Element",
-          "required": false,
-          "description": ""
-        },
-        {
           "name": "variant",
-          "type": "'display' | 'body' | 'page-heading' | 'section-heading' | 'supporting' | 'caption'",
+          "type": "'display' | 'body' | 'headline' | 'title' | 'body-sm' | 'caption'",
           "required": false,
           "default": "'body'",
-          "description": ""
+          "description": "The text style: display for a page's introduction, body for running text, headline for a page's heading, title for a section's, body-sm for supporting text and caption for the smallest notes. body-sm and caption are muted unless emphasis says otherwise."
         },
         {
-          "name": "tone",
-          "type": "'primary' | 'muted' | 'quiet'",
+          "name": "emphasis",
+          "type": "'default' | 'muted' | 'subtle'",
           "required": false,
-          "description": ""
+          "description": "How strong the text is: default, the text color; muted, for supporting text; subtle, the weakest, for text that should recede, such as a hint beside a value."
+        },
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "The element to render, for its meaning, such as render={<h2 />} for a heading or render={<span />} inside a line; a p by default. The text's class and attributes merge into its props."
         }
       ],
       "native": [
-        "element"
+        "p"
       ],
       "entries": [
         "@envsemble/envui"
@@ -6294,22 +6683,36 @@
       "description": "Switches between the light and dark themes and stores the choice.",
       "props": [
         {
-          "name": "variant",
-          "type": "'primary' | 'important' | 'secondary' | 'outlined' | 'destructive' | 'text' | 'quiet'",
-          "required": false,
-          "description": "As Button's; secondary by default."
-        },
-        {
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
           "description": "As Button's: the height, and the width, of the square button."
         },
         {
+          "name": "variant",
+          "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
+          "required": false,
+          "default": "'primary'",
+          "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else primary (secondary for IconButton)."
+        },
+        {
+          "name": "tone",
+          "type": "'neutral' | 'accent' | 'danger'",
+          "required": false,
+          "default": "'neutral'",
+          "description": "The meaning: neutral for most actions; accent, on a primary button only, for a rare consequential action, with 0.5 rem corners; danger for an action that deletes or ends something. Secondary buttons are always neutral."
+        },
+        {
           "name": "pending",
           "type": "boolean",
           "required": false,
           "description": "As Button's: a spinner replaces the icon while the work runs."
+        },
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "description": "The button's name; without it, Switch to dark theme or Switch to light theme, or EnvUIProvider's messages.themeToggle."
         }
       ],
       "native": [
@@ -6388,6 +6791,201 @@
         }
       ],
       "native": [],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "Toolbar": {
+      "kind": "namespace",
+      "source": "packages/ui/src/actions/Toolbar.tsx",
+      "description": "",
+      "parts": [
+        "Toolbar.Root",
+        "Toolbar.Group",
+        "Toolbar.Separator",
+        "Toolbar.Button",
+        "Toolbar.Link"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "Toolbar.Button": {
+      "kind": "component",
+      "source": "packages/ui/src/actions/Toolbar.tsx",
+      "description": "An icon-only button of a toolbar, named by its label, which a tooltip shows; disabled, it leaves the arrow keys' path.",
+      "props": [
+        {
+          "name": "icon",
+          "type": "ReactNode",
+          "required": true,
+          "description": "The icon, such as FormatBold."
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "required": true,
+          "description": "The action's name, such as Bold: assistive technology announces it, and the tooltip shows it on hover and focus."
+        },
+        {
+          "name": "pressed",
+          "type": "boolean",
+          "required": false,
+          "description": "For a button that turns something on and off, such as Bold: whether it is on. It is announced as pressed and drawn selected. Leave it out for a button that acts once, such as Undo."
+        },
+        {
+          "name": "shortcut",
+          "type": "string",
+          "required": false,
+          "description": "The keyboard shortcut that does the same, such as Ctrl+B, with keys joined by +: the tooltip shows it, and aria-keyshortcuts announces it."
+        },
+        {
+          "name": "variant",
+          "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
+          "required": false,
+          "description": "As Button's; ghost by default, from the toolbar."
+        },
+        {
+          "name": "pending",
+          "type": "boolean",
+          "required": false,
+          "description": "As Button's: a spinner replaces the icon while the work runs."
+        }
+      ],
+      "native": [
+        "button"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "Toolbar.Group": {
+      "kind": "component",
+      "source": "packages/ui/src/actions/Toolbar.tsx",
+      "description": "Controls of a toolbar that belong together, such as the text styles.",
+      "props": [
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "description": "Names the group, such as Text style, where its controls belong together."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "required": false,
+          "description": "Disables every control in the group."
+        },
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "Another element to render the group as, such as a ButtonGroup."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "Toolbar.Link": {
+      "kind": "component",
+      "source": "packages/ui/src/actions/Toolbar.tsx",
+      "description": "An icon-only link of a toolbar, named by its label, which a tooltip shows.",
+      "props": [
+        {
+          "name": "href",
+          "type": "string",
+          "required": true,
+          "description": "The destination, through the LinkProvider's link component."
+        },
+        {
+          "name": "icon",
+          "type": "ReactNode",
+          "required": true,
+          "description": "The icon, such as Help."
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "required": true,
+          "description": "The destination's name, which assistive technology announces and the tooltip shows."
+        }
+      ],
+      "native": [
+        "a"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "Toolbar.Root": {
+      "kind": "component",
+      "source": "packages/ui/src/actions/Toolbar.tsx",
+      "description": "A row, or a column, of controls for one subject, such as a text editor's formatting: one tab stop, with the arrow keys moving between its controls (the APG toolbar pattern). Buttons the application puts inside take the ghost variant unless they set another.",
+      "props": [
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "description": "Names the toolbar for assistive technology, such as Formatting."
+        },
+        {
+          "name": "orientation",
+          "type": "'horizontal' | 'vertical'",
+          "required": false,
+          "default": "'horizontal'",
+          "description": "The direction the controls run in, and which arrow keys move between them."
+        },
+        {
+          "name": "size",
+          "type": "'sm' | 'md' | 'lg'",
+          "required": false,
+          "description": "The height of the buttons inside, as on every control: sm, md or lg in the current scale. Without it, the control height of the container."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "required": false,
+          "description": "Disables every control inside."
+        },
+        {
+          "name": "loopFocus",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Whether the arrow keys move from the last control to the first and back."
+        },
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "Another element to render the toolbar as, such as a ButtonGroup that connects its buttons; the toolbar's class, attributes and keyboard handling merge into its props."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The controls: Toolbar.Button, Toolbar.Link, Toolbar.Group and Toolbar.Separator."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "Toolbar.Separator": {
+      "kind": "component",
+      "source": "packages/ui/src/actions/Toolbar.tsx",
+      "description": "A line between groups of a toolbar's controls, across the toolbar's direction.",
+      "props": [],
+      "native": [
+        "div"
+      ],
       "entries": [
         "@envsemble/envui"
       ]
@@ -6588,6 +7186,15 @@
       "source": "packages/ui/src/foundations/useMediaQuery.ts",
       "description": "Whether the viewport is at least as wide as a breakpoint: `useBreakpoint('md')` is true from 48 rem up. As useMediaQuery, it returns `defaultValue` on the server and while hydrating.",
       "signature": "(breakpoint: Breakpoint, options?: MediaQueryOptions): boolean",
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "useLocale": {
+      "kind": "function",
+      "source": "packages/ui/src/internal/EnvUIContext.ts",
+      "description": "The locale of the nearest EnvUIProvider, for formatting in step with envUI, or undefined where no provider sets one: the runtime's locale applies then.",
+      "signature": "(): string | undefined",
       "entries": [
         "@envsemble/envui"
       ]

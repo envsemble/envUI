@@ -30,7 +30,7 @@ export default function NarrowRegion() {
   return (
     // As narrow as a phone: below stackBelow, 40 rem, one panel at a time fills the region.
     <Surface
-      tone="row"
+      background="muted"
       padding={0}
       style={{
         position: 'relative',
@@ -40,7 +40,7 @@ export default function NarrowRegion() {
       }}
     >
       <Stack gap={2} inert={covered} style={{ padding: '1.5rem' }}>
-        <Text as="h3" variant="section-heading">
+        <Text render={<h3 />} variant="title">
           Messages
         </Text>
       </Stack>

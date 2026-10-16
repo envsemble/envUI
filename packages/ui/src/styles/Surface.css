@@ -13,27 +13,27 @@
   border-radius: var(--env-surface-radius);
   background: var(--env-surface-color);
 }
-.env-surface-row {
+.env-surface:where([data-background='muted']) {
   --env-surface-color: var(--env-color-bg-muted);
   --env-surface-hover: var(--env-color-bg-muted-hover);
   --env-surface-pressed: var(--env-color-bg-muted-pressed);
 }
-.env-surface-canvas {
+.env-surface:where([data-background='page']) {
   --env-surface-color: var(--env-color-bg-page);
   --env-surface-hover: var(--env-color-bg-page-hover);
   --env-surface-pressed: var(--env-color-bg-page-pressed);
 }
-.env-surface-alternate {
+.env-surface:where([data-background='raised']) {
   --env-surface-color: var(--env-color-bg-raised);
   --env-surface-hover: var(--env-color-bg-raised-hover);
   --env-surface-pressed: var(--env-color-bg-raised-pressed);
 }
-.env-surface-corners-standard {
+.env-surface:where([data-radius='sm']) {
   --env-surface-radius: var(--env-radius-sm);
 }
-.env-surface-corners-pill {
+.env-surface:where([data-radius='full']) {
   --env-surface-radius: var(--env-radius-full);
 }
-.env-surface-corners-none {
+.env-surface:where([data-radius='none']) {
   --env-surface-radius: 0rem;
 }

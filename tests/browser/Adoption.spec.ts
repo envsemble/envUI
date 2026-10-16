@@ -356,7 +356,7 @@ test('error states, meters and avatars expose their semantics', async ({ page })
   ).toBeVisible();
   // A whole-page state can take the top heading level without changing its look.
   const pageHeading = page.getByRole('heading', { name: 'Nothing here yet', level: 1 });
-  await expect(pageHeading).toHaveClass(/env-text-section-heading/);
+  await expect(pageHeading).toHaveAttribute('data-variant', 'title');
   const meter = page.getByRole('meter', { name: 'Seats assigned' });
   await expect(meter).toHaveAttribute('aria-valuenow', '5');
   // A failed picture shows the default person picture; initials are opt-in.
@@ -509,7 +509,10 @@ test('OrganizationSwitcher switches organizations and offers creating one', asyn
   await expect(page.getByTestId('menu-action')).toHaveText('Create organization');
 
   // The trigger is an ordinary secondary button.
-  await expect(page.getByRole('button', { name: 'Contoso' })).toHaveClass(/env-button-secondary/);
+  await expect(page.getByRole('button', { name: 'Contoso' })).toHaveAttribute(
+    'data-variant',
+    'secondary',
+  );
   await page
     .getByTestId('no-organization')
     .getByRole('button', { name: 'Create organization' })
@@ -527,11 +530,11 @@ test('ConfirmButton names the consequence and runs only on a deliberate second p
   const confirmed = page.getByTestId('confirmed');
   const status = page.locator('.env-confirm-button-status').first();
   await expect(button).toHaveText('Remove');
-  await expect(button).toHaveClass(/env-button-outlined/);
+  await expect(button).toHaveAttribute('data-variant', 'outline');
 
   await button.click();
   await expect(button).toHaveText('Remove Morgan?');
-  await expect(button).toHaveClass(/env-button-destructive/);
+  await expect(button).toHaveAttribute('data-tone', 'danger');
   await expect(status).toHaveText('Remove Morgan? Press again to confirm.');
   await page.waitForTimeout(450);
   await button.click();
@@ -568,7 +571,7 @@ test('an icon-only ConfirmButton is round at rest and names the consequence when
   const confirmed = page.getByTestId('confirmed');
   await expect(button).toHaveAccessibleName('Remove Morgan');
   await expect(button).toHaveClass(/env-icon-button/);
-  await expect(button).toHaveClass(/env-button-secondary/);
+  await expect(button).toHaveAttribute('data-variant', 'secondary');
   const rest = (await button.boundingBox())!;
   expect(rest.width).toBeCloseTo(40, 0);
   expect(rest.height).toBeCloseTo(40, 0);
@@ -582,10 +585,10 @@ test('an icon-only ConfirmButton is round at rest and names the consequence when
   await page.keyboard.press('Enter');
   await expect(button).toHaveAccessibleName('Remove Morgan?');
   await expect(button).toHaveText('Remove Morgan?');
-  await expect(button).toHaveClass(/env-button-destructive/);
+  await expect(button).toHaveAttribute('data-tone', 'danger');
   await expect(button).not.toHaveClass(/env-icon-button/);
   await expect(button).toBeFocused();
-  await expect(button.locator('.env-symbol')).toHaveCount(1);
+  await expect(button.locator('.env-icon')).toHaveCount(1);
   expect((await button.boundingBox())!.width).toBeGreaterThan(rest.width + 40);
   await expect(page.locator('.env-confirm-button-status').nth(1)).toHaveText(
     'Remove Morgan? Press again to confirm.',

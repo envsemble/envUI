@@ -1,0 +1,18 @@
+{
+  "@envsemble/envui": {
+    "Table.Root": {
+      "density": {
+        "current": ["xs", "sm", "md", "lg"],
+        "report": "Table's density is a row density in 1.0: xs, sm (as compact was), md (the default, as standard was) or lg.",
+        "values": {
+          "compact": {
+            "props": {
+              "density": "sm"
+            }
+          },
+          "standard": {}
+        }
+      }
+    }
+  }
+}

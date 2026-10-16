@@ -212,11 +212,13 @@ test('Select triggers are button styles, and the open list stands apart from a p
   page,
 }) => {
   const outlined = page.getByRole('combobox', { name: 'Pane sort', exact: true });
-  await expect(outlined).toHaveAttribute('data-variant', 'outlined');
+  await expect(outlined).toHaveAttribute('data-variant', 'outline');
   // The outlined trigger looks like an outlined Button beside it.
   const looks = await outlined.evaluate((element) => {
     const button = document.createElement('button');
-    button.className = 'env-button env-button-outlined';
+    button.className = 'env-button';
+    button.dataset.variant = 'outline';
+    button.dataset.tone = 'neutral';
     element.parentElement!.append(button);
     const read = (target: Element) => {
       const style = getComputedStyle(target);
@@ -358,7 +360,7 @@ test('a small Select has a small trigger, and its popup has the menus anatomy wi
   expect(compactBox!.height).toBeCloseTo(32, 0);
   expect(compactBox!.height).toBeLessThan(standardBox!.height);
   const chevron = (locator: typeof compact) =>
-    locator.locator('.env-symbol').evaluate((icon) => icon.getBoundingClientRect().width);
+    locator.locator('.env-icon').evaluate((icon) => icon.getBoundingClientRect().width);
   expect(await chevron(compact)).toBeLessThan(await chevron(standard));
   // The outlined variant keeps its Button style at the small height.
   const outlined = page.getByRole('combobox', { name: 'Compact outlined plan', exact: true });

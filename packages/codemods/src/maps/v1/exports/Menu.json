@@ -1,0 +1,24 @@
+{
+  "@envsemble/envui": {
+    "OrganizationMenu": "OrganizationSwitcher",
+    "OrganizationMenuProps": "OrganizationSwitcherProps",
+    "OrganizationMenuOrganization": "OrganizationSwitcherOrganization",
+    "Menu": "Menu.Root",
+    "MenuProps": "Menu.RootProps",
+    "MenuItem": "Menu.Item",
+    "MenuItemProps": "Menu.ItemProps",
+    "MenuGroup": "Menu.Group",
+    "MenuGroupProps": "Menu.GroupProps",
+    "MenuRadioGroup": "Menu.RadioGroup",
+    "MenuRadioGroupProps": "Menu.RadioGroupProps",
+    "MenuRadioItem": "Menu.RadioItem",
+    "MenuRadioItemProps": "Menu.RadioItemProps",
+    "MenuCheckboxItem": "Menu.CheckboxItem",
+    "MenuCheckboxItemProps": "Menu.CheckboxItemProps",
+    "MenuSeparator": "Menu.Separator",
+    "MenuHeader": "Menu.Header",
+    "MenuHeaderProps": "Menu.HeaderProps",
+    "MenuSubmenu": "Menu.Submenu",
+    "MenuSubmenuProps": "Menu.SubmenuProps"
+  }
+}

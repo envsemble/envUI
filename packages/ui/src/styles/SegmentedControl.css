@@ -107,7 +107,7 @@
   opacity: var(--env-state-disabled-opacity);
   cursor: default;
 }
-.env-segment .env-symbol {
+.env-segment .env-icon {
   inline-size: var(--env-control-icon-size);
   block-size: var(--env-control-icon-size);
 }

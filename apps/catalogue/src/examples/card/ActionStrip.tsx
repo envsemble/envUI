@@ -8,13 +8,13 @@ export default function ActionStrip() {
       meta="Updated yesterday"
       actions={
         <>
-          <Button variant="outlined">Share</Button>
+          <Button variant="outline">Share</Button>
           <Button>Open project</Button>
         </>
       }
       style={{ inlineSize: 'min(100%, 28rem)' }}
     >
-      <Text tone="muted">Interviews and survey results from twelve teams.</Text>
+      <Text emphasis="muted">Interviews and survey results from twelve teams.</Text>
     </Card>
   );
 }

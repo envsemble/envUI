@@ -6,12 +6,12 @@ export default function SettingsRows() {
       <List.Item
         title="Notifications"
         detail="E-mail and in-app alerts"
-        action={<Button variant="outlined">Manage</Button>}
+        action={<Button variant="outline">Manage</Button>}
       />
       <List.Item
         title="Members"
         detail="12 people · 3 pending invitations"
-        action={<Button variant="outlined">Manage</Button>}
+        action={<Button variant="outline">Manage</Button>}
       />
       <List.Item title="Plan" detail="Team, renews on 1 December" />
     </List.Root>

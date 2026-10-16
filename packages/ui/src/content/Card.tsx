@@ -1,8 +1,12 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { Text } from '../foundations/Text.js';
-import { Stack, ActionGroup } from '../foundations/Layout.js';
-import { Surface, type SurfaceAppearanceProps } from '../foundations/Surface.js';
+import { Stack } from '../foundations/Layout.js';
+import {
+  Surface,
+  type SurfaceAppearanceProps,
+  type SurfaceBackground,
+} from '../foundations/Surface.js';
 import { ActionElement, type ActionElementProps } from '../internal/ActionElement.js';
 
 type CardAppearanceProps = Pick<SurfaceAppearanceProps, 'padding'> & {
@@ -10,7 +14,14 @@ type CardAppearanceProps = Pick<SurfaceAppearanceProps, 'padding'> & {
    * The surface's fill: `row`, the standalone card fill; `pane`, a quieter fill that groups
    * content; or `canvas`, the page's own color.
    */
-  tone?: Exclude<SurfaceAppearanceProps['tone'], 'alternate'>;
+  tone?: 'row' | 'pane' | 'canvas';
+};
+
+/** The Surface background of each card tone. */
+const cardBackgrounds: Record<NonNullable<CardAppearanceProps['tone']>, SurfaceBackground> = {
+  row: 'muted',
+  pane: 'default',
+  canvas: 'page',
 };
 interface CardContentProps {
   /** A title in the section heading type, as an `h3`, at the top of a content card. */
@@ -83,12 +94,12 @@ export function Card({
       {(heading != null || meta != null) && (
         <div className="env-action-card-heading">
           {heading != null && (
-            <Text as="h3" variant="section-heading">
+            <Text render={<h3 />} variant="title">
               {heading}
             </Text>
           )}
           {meta != null && (
-            <Text as="span" variant="supporting" className="env-action-card-meta">
+            <Text render={<span />} variant="body-sm" className="env-action-card-meta">
               {meta}
             </Text>
           )}
@@ -107,23 +118,30 @@ export function Card({
   ) : (
     <Stack
       {...(props as ComponentPropsWithRef<'div'> & ComponentPropsWithRef<'article'>)}
-      as={as === 'article' ? 'article' : 'div'}
+      render={as === 'article' ? <article /> : undefined}
       gap={hasActionLayout ? 0 : 4}
       className={cardClassName}
       style={style}
     />
   );
   return (
-    <Surface tone={tone} padding={padding} render={cardRoot}>
+    <Surface background={cardBackgrounds[tone]} padding={padding} render={cardRoot}>
       {isInteractive ? (
         children
       ) : hasActionLayout ? (
         <>
           <Stack className="env-card-content env-action-card-body">{content}</Stack>
           {actions != null && (
-            <ActionGroup as="footer" align="end" className="env-action-card-actions">
+            <Stack
+              render={<footer />}
+              direction="row"
+              wrap
+              align="center"
+              justify="end"
+              className="env-action-card-actions"
+            >
               {actions}
-            </ActionGroup>
+            </Stack>
           )}
         </>
       ) : (

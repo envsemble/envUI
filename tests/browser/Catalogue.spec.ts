@@ -4,6 +4,7 @@ import { moduleFiles, requireSite, serveSite, siteUrl } from './HostedSite';
 import { dirname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { readMap } from '../../packages/codemods/src/map.mjs';
 import {
   references,
   foundations as foundationReferences,
@@ -20,7 +21,7 @@ const components = references.map(({ id }) => id);
 const foundations = foundationReferences.map(({ id }) => id);
 
 test('the 0.x routes of renamed pages open the pages under their new names', () => {
-  const { docs } = JSON.parse(readFileSync('packages/codemods/src/maps/v1.json', 'utf8'));
+  const { docs } = readMap() as { docs: Record<string, string> };
   for (const [from, to] of Object.entries<string>(docs).filter(([key]) => !key.startsWith('$'))) {
     expect(components).toContain(to);
     expect(components).not.toContain(from);
@@ -147,7 +148,7 @@ test('live examples keep links in place, show their source, and matrices sit in 
   const code = destinations.locator('xpath=following-sibling::details[1]');
   await code.locator('summary').click();
   await expect(code.locator('.env-code-block')).toContainText(
-    "import { ActionGroup, Button } from '@envsemble/envui';",
+    "import { Button, Stack } from '@envsemble/envui';",
   );
   await expect(code.getByRole('button', { name: 'Copy code', exact: true })).toBeVisible();
   // Catalogue-only specimens, such as the forced interaction states, are in the guidelines.

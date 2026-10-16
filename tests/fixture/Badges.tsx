@@ -18,7 +18,7 @@ export function BadgesFixture({ theme }: { theme: ThemeValue }) {
       {(['canvas', 'pane', 'row'] as const).map((surface) => (
         <Surface
           key={surface}
-          tone={surface === 'canvas' ? 'canvas' : surface}
+          background={surface === 'canvas' ? 'page' : surface === 'row' ? 'muted' : 'default'}
           padding={4}
           data-surface={surface}
         >

@@ -1,0 +1,13 @@
+{
+  "@envsemble/envui": {
+    "ActionGroup": {
+      "use": "Lay actions out with Stack: <Stack direction=\"row\" wrap align=\"center\" gap={4}> for a row, with justify=\"end\" for the end of a form, and <Stack gap={2}> with fullWidth on each labelled Button for a stacked group. v1-structure rewrites each use."
+    },
+    "ActionGroupProps": {
+      "use": "StackProps, with direction, wrap, align, justify and gap."
+    },
+    "StackElement": {
+      "use": "Stack, Surface and Text render another element through render, such as render={<section />}; they no longer take as."
+    }
+  }
+}

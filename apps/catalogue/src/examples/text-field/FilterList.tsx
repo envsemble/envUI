@@ -33,7 +33,7 @@ export default function FilterList() {
         />
         <Button>Invite member</Button>
       </div>
-      <Text variant="caption" tone="muted" role="status">
+      <Text variant="caption" emphasis="muted" role="status">
         {matches.length === members.length
           ? `${members.length} members`
           : `${matches.length} of ${members.length} members`}

@@ -365,6 +365,27 @@
         "high": 4.5
       }
     },
+    "--env-color-border-danger-emphasis on --env-color-bg-raised": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
+    "--env-color-border-danger-emphasis-hover on --env-color-bg-raised": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
+    "--env-color-border-danger-emphasis-pressed on --env-color-bg-raised": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
     "--env-color-border-danger-muted on --env-color-bg-default": {
       "kind": "non-text",
       "minimum": {
@@ -1160,7 +1181,56 @@
         "high": 7
       }
     },
+    "--env-color-fg-danger on --env-color-bg-neutral-subtle-hover over --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-danger on --env-color-bg-neutral-subtle-hover over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-danger on --env-color-bg-neutral-subtle-pressed over --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-danger on --env-color-bg-neutral-subtle-pressed over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
     "--env-color-fg-danger on --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-danger on --env-color-bg-raised": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-danger on --env-color-bg-raised-hover": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-danger on --env-color-bg-raised-pressed": {
       "kind": "text",
       "minimum": {
         "standard": 4.5,

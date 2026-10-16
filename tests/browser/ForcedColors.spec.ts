@@ -17,6 +17,8 @@ import { fixtureUrl } from './Servers';
 const states: Record<string, [state: string, rest: string]> = {
   'a disabled button': ['[data-testid=button-disabled]', '[data-testid=button]'],
   'a focused button': ['[data-testid=button-focus]', '[data-testid=button]'],
+  'a pressed toolbar toggle': ['[data-testid=toolbar-pressed]', '[data-testid=toolbar-released]'],
+  'an invalid field part': ['[data-testid=field-invalid]', '[data-testid=field-valid]'],
   'the chosen segment': ['.env-segment >> nth=0', '.env-segment >> nth=1'],
   'the selected tab': ['[role=tab] >> nth=0', '[role=tab] >> nth=1'],
   'the selected navigation item': ['[data-testid=nav-selected]', '[data-testid=nav]'],
@@ -349,6 +351,8 @@ const fillStates: Record<string, 'highlight' | 'outline' | 'dashed'> = {
   'a filled star': 'highlight',
   "today's calendar day": 'outline',
   'an invalid field': 'dashed',
+  'a pressed toolbar toggle': 'highlight',
+  'an invalid field part': 'dashed',
 };
 
 test('the states a fill carries show in what the forced-colors rules paint', async ({ page }) => {

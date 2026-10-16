@@ -8,6 +8,10 @@
    Empty space drags the window, controls inside stay clickable, and they take the small control
    height. */
 .env-title-bar {
+  /* Icon-only text buttons take the quiet icon color, like the window controls beside them,
+     darkening to the text color on hover and press. */
+  --env-button-text-icon-color: var(--env-color-fg-muted);
+  --env-button-text-icon-color-active: var(--env-color-fg-default);
   --env-control-height: var(--env-control-height-sm);
   /* Inner padding at the inline start and end; the window controls add to the side they occupy. */
   --env-title-bar-start: var(--env-space-3);
@@ -63,15 +67,6 @@
 .env-title-bar :is(input, textarea, [contenteditable]) {
   -webkit-user-select: text;
   user-select: text;
-}
-/* Icon-only text buttons take the quiet icon color, like the window controls beside them, rather
-   than the link blue of text buttons, and darken to the text color on hover and press. */
-.env-title-bar .env-button-text.env-icon-button {
-  color: var(--env-color-fg-muted);
-}
-.env-title-bar
-  .env-button-text.env-icon-button:is(:hover, :active):not(:disabled):not([aria-disabled='true']) {
-  color: var(--env-color-fg-default);
 }
 
 /* TitleBar: start, center and end sections on the canvas, with a hairline below like the shell's top

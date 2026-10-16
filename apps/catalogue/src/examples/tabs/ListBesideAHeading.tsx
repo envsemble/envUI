@@ -17,7 +17,7 @@ export default function ListBesideAHeading() {
               gap: '0.75rem',
             }}
           >
-            <Text as="h3" variant="section-heading">
+            <Text render={<h3 />} variant="title">
               Orders
             </Text>
             {list}

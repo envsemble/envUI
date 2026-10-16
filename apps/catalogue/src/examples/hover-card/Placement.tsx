@@ -10,10 +10,10 @@ export default function Placement() {
         trigger={<Link href="/plans/sync-conflicts">sync conflicts</Link>}
       >
         <Stack gap={2}>
-          <Text as="strong" variant="section-heading">
+          <Text render={<strong />} variant="title">
             Sync conflicts
           </Text>
-          <Text tone="muted">
+          <Text emphasis="muted">
             Sam Lee and Jordan Ellis changed the same paragraph while offline. Choose which edit to
             keep.
           </Text>

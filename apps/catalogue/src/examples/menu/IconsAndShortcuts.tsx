@@ -37,7 +37,7 @@ export default function IconsAndShortcuts() {
           Delete
         </Menu.Item>
       </Menu.Root>
-      <Text variant="supporting" role="status">
+      <Text variant="body-sm" role="status">
         {lastAction && `Chose ${lastAction}`}
       </Text>
     </Stack>

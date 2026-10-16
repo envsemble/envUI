@@ -21,7 +21,8 @@ export default function RemoveWorkspace() {
         closeLabel="Cancel"
         actions={
           <Button
-            variant="destructive"
+            variant="primary"
+            tone="danger"
             disabled={typed !== workspace}
             onClick={() => {
               setOpen(false);

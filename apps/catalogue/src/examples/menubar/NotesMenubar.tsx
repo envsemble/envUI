@@ -20,7 +20,7 @@ export default function NotesMenubar() {
   return (
     <Stack gap={3}>
       {/* Stands in for the application's window. */}
-      <Surface tone="pane" padding={3}>
+      <Surface background="default" padding={3}>
         <Stack gap={3}>
           <Menubar.Root aria-label="Notes menu" accessKeys>
             <Menubar.Menu label="File" accessKey="F">
@@ -93,7 +93,7 @@ export default function NotesMenubar() {
           />
         </Stack>
       </Surface>
-      <Text variant="caption" tone="muted" role="status">
+      <Text variant="caption" emphasis="muted" role="status">
         {lastCommand}
       </Text>
     </Stack>
