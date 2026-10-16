@@ -296,7 +296,9 @@ function checkCustomProperties(list, handwrittenFile) {
 /**
  * envUI's own plugin: the lint rules, and the generated token modules, a typed TypeScript module, a
  * JSON token list for the docs, and the migration map from the 0.7 custom properties to the roles.
- * The modules carry each token's value in every theme, as the browser resolves Tokens.css.
+ * The modules carry each token's value in every theme, as the browser resolves Tokens.css alone:
+ * TokensHandwritten.css can change a few of them under a condition, such as the touch sizes of
+ * --control-height and --title-bar-height under a coarse pointer, and those values are not in them.
  */
 function envui({ removedFile, handwrittenFile }) {
   return {
@@ -421,12 +423,12 @@ function envui({ removedFile, handwrittenFile }) {
         }),
       );
 
-      let module = `// ${header}\n// Internal for now: the package does not export it yet.\n\n`;
+      let module = `// ${header}\n// Internal for now: the package neither exports nor ships it yet.\n\n`;
       module += `/** The themes Tokens.css builds: each color scheme at standard and high contrast. */\n`;
       module += `export const themes = ${JSON.stringify(themes.map((theme) => theme.name))} as const;\n`;
       module += `export type ThemeName = (typeof themes)[number];\n\n`;
       module += `/** A token's CSS value: one value, or a value per part of a composite token such as typography. */\nexport type TokenValue = string | Readonly<Record<string, string>>;\n\n`;
-      module += `export interface TokenDefinition {\n  /** The CSS custom property that carries the token. */\n  cssVariable: \`--\${string}\`;\n  /** The DTCG type. */\n  type: string;\n  /** The CSS value in each theme, with aliases resolved. */\n  values: Readonly<Record<ThemeName, TokenValue>>;\n}\n\n`;
+      module += `export interface TokenDefinition {\n  /** The CSS custom property that carries the token. */\n  cssVariable: \`--\${string}\`;\n  /** The DTCG type. */\n  type: string;\n  /**\n   * The value Tokens.css gives in each theme, with aliases resolved. Conditions that\n   * TokensHandwritten.css adds, such as the touch sizes under a coarse pointer, are not in it.\n   */\n  values: Readonly<Record<ThemeName, TokenValue>>;\n}\n\n`;
       module += `/** Every token, by its DTCG path. */\n`;
       module += `export const tokens = {\n`;
       for (const token of list) {

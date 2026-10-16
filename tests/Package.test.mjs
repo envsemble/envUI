@@ -270,6 +270,8 @@ test('a packed consumer resolves compiled public exports and its own React insta
   assert.match(ssr.homeModule, /\/dist\/icons\/Home\.js$/);
   assert.match(ssr.reactModule, /\/consumer\/node_modules\/react\/index\.js$/);
   assert.equal(existsSync(join(installedDirectory, 'src')), false);
+  // The generated token module is internal, so it does not ship.
+  assert.equal(existsSync(join(installedDirectory, 'dist/generated')), false);
   for (const name of [
     'Theme',
     'useTheme',
