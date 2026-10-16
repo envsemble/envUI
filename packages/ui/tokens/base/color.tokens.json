@@ -671,7 +671,12 @@
     },
     "dialog-overlay": {
       "$value": "{color.bg.overlay}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true } }
+      "$extensions": {
+        "com.envsemble.envui": {
+          "legacy": true,
+          "note": "0.7's was opaque, #1e1f21, and the dialog backdrop made it 55% opaque with --state-dialog-overlay-opacity, which is removed. The role is the scrim itself, 55% opaque: paint it as it is, since a style that applies its own opacity now applies it twice. For the opaque color, write #1e1f21."
+        }
+      }
     },
     "menu-row": {
       "$value": "{color.bg.popup}",

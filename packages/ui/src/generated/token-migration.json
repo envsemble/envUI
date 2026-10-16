@@ -1,5 +1,5 @@
 {
-  "$comment": "Generated from packages/ui/tokens by `npm run tokens:build`. Do not edit: change the tokens and rebuild. Maps each 0.7 custom property to the token that replaces it, with its custom property (cssVariable, or cssVariables per theme): one role, a role per theme for component tokens, a palette color that no role replaces (primitive), or removed with its replacement. npm run tokens:build copies it into the tokens section of the codemods' rename map and the token list of docs/migration.md.",
+  "$comment": "Generated from packages/ui/tokens by `npm run tokens:build`. Do not edit: change the tokens and rebuild. Maps each 0.7 custom property to the token that replaces it, with its custom property (cssVariable, or cssVariables per theme): one role, a role per theme for component tokens, a palette color that no role replaces (primitive), with its value, or removed with its replacement; a note says what changed beyond the name. npm run tokens:build copies it into the tokens section of the codemods' rename map and the token list of docs/migration.md.",
   "names": {
     "--color-accent": {
       "token": "color.bg.important.strong",
@@ -21,8 +21,16 @@
       "cssVariable": "--color-bg-default",
       "component": "The action strip of a card"
     },
-    "--color-avatar": { "primitive": "palette.blue.20", "component": "Avatars" },
-    "--color-avatar-figure": { "primitive": "palette.blue.45", "component": "Avatars" },
+    "--color-avatar": {
+      "primitive": "palette.blue.20",
+      "value": "#9fc1f8",
+      "component": "Avatars"
+    },
+    "--color-avatar-figure": {
+      "primitive": "palette.blue.45",
+      "value": "#347eea",
+      "component": "Avatars"
+    },
     "--color-border-hover": {
       "token": "color.border.muted.hover",
       "cssVariable": "--color-border-muted-hover"
@@ -50,6 +58,7 @@
     "--color-canvas": { "token": "color.bg.page", "cssVariable": "--color-bg-page" },
     "--color-canvas-dark": {
       "primitive": "palette.neutral.92",
+      "value": "#1e1f21",
       "component": "Fixed dark page color"
     },
     "--color-checkbox": {
@@ -176,7 +185,11 @@
       "component": "Destructive buttons"
     },
     "--color-dialog": { "token": "color.bg.raised", "cssVariable": "--color-bg-raised" },
-    "--color-dialog-overlay": { "token": "color.bg.overlay", "cssVariable": "--color-bg-overlay" },
+    "--color-dialog-overlay": {
+      "token": "color.bg.overlay",
+      "cssVariable": "--color-bg-overlay",
+      "note": "0.7's was opaque, #1e1f21, and the dialog backdrop made it 55% opaque with --state-dialog-overlay-opacity, which is removed. The role is the scrim itself, 55% opaque: paint it as it is, since a style that applies its own opacity now applies it twice. For the opaque color, write #1e1f21."
+    },
     "--color-direction-link": {
       "token": "color.bg.raised",
       "cssVariable": "--color-bg-raised",
@@ -352,7 +365,16 @@
       "cssVariable": "--color-fg-on-strong",
       "component": "Important buttons"
     },
-    "--color-on-avatar": { "primitive": "palette.blue.70", "component": "Avatars" },
+    "--color-on-avatar": {
+      "primitive": "palette.blue.70",
+      "value": {
+        "light": "#004aa2",
+        "dark": "#004aa2",
+        "light-high-contrast": "#001d49",
+        "dark-high-contrast": "#001d49"
+      },
+      "component": "Avatars"
+    },
     "--color-on-calendar-selected": {
       "token": "color.fg.on-emphasis",
       "cssVariable": "--color-fg-on-emphasis",
@@ -790,7 +812,11 @@
     "--color-tone-neutral": { "token": "color.fg.muted", "cssVariable": "--color-fg-muted" },
     "--color-tone-success": { "token": "color.fg.success", "cssVariable": "--color-fg-success" },
     "--color-tone-warning": { "token": "color.fg.warning", "cssVariable": "--color-fg-warning" },
-    "--color-white": { "primitive": "palette.neutral.0", "component": "Fixed white" },
+    "--color-white": {
+      "primitive": "palette.neutral.0",
+      "value": "#ffffff",
+      "component": "Fixed white"
+    },
     "--member-identity-avatar-size": { "removed": true, "replacement": null, "note": "Unused." },
     "--member-identity-copy-height": { "removed": true, "replacement": null, "note": "Unused." },
     "--member-identity-email-line-height": {

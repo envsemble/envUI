@@ -244,6 +244,12 @@ Aliases of one role, which replaces them:
 | `--color-tone-success`                  | `--color-fg-success`                  |                                    |
 | `--color-tone-warning`                  | `--color-fg-warning`                  |                                    |
 
+Aliases whose value changed, so a style that relied on the 0.7 value needs a look:
+
+| 0.7 custom property      | Role                 | What changed                                                                                                                                                                                                                                                                                    |
+| ------------------------ | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--color-dialog-overlay` | `--color-bg-overlay` | 0.7's was opaque, #1e1f21, and the dialog backdrop made it 55% opaque with --state-dialog-overlay-opacity, which is removed. The role is the scrim itself, 55% opaque: paint it as it is, since a style that applies its own opacity now applies it twice. For the opaque color, write #1e1f21. |
+
 Component tokens that take another role in some themes, so no one role replaces them; use the role of each theme:
 
 | 0.7 custom property         | Used for                     | Light                             | Dark                                | Light, high contrast                | Dark, high contrast                 |
@@ -262,15 +268,15 @@ Component tokens that take another role in some themes, so no one role replaces 
 | `--color-switch-on-pressed` | Switches                     | `--color-bg-brand-strong-pressed` | `--color-bg-brand-emphasis-pressed` | `--color-bg-brand-emphasis-pressed` | `--color-bg-brand-emphasis-pressed` |
 | `--color-switch-thumb-on`   | Switches                     | `--color-fg-on-strong`            | `--color-fg-on-emphasis`            | `--color-fg-on-emphasis`            | `--color-fg-on-emphasis`            |
 
-Fixed colors, one palette color in every theme, which no role replaces:
+Fixed colors, which no role replaces: write the value, or a custom property of your own that holds it.
 
-| 0.7 custom property     | Used for              | Palette color        |
-| ----------------------- | --------------------- | -------------------- |
-| `--color-avatar`        | Avatars               | `palette.blue.20`    |
-| `--color-avatar-figure` | Avatars               | `palette.blue.45`    |
-| `--color-canvas-dark`   | Fixed dark page color | `palette.neutral.92` |
-| `--color-on-avatar`     | Avatars               | `palette.blue.70`    |
-| `--color-white`         | Fixed white           | `palette.neutral.0`  |
+| 0.7 custom property     | Used for              | Value                                                                          |
+| ----------------------- | --------------------- | ------------------------------------------------------------------------------ |
+| `--color-avatar`        | Avatars               | `#9fc1f8`                                                                      |
+| `--color-avatar-figure` | Avatars               | `#347eea`                                                                      |
+| `--color-canvas-dark`   | Fixed dark page color | `#1e1f21`                                                                      |
+| `--color-on-avatar`     | Avatars               | `#004aa2` (light; dark), `#001d49` (light, high contrast; dark, high contrast) |
+| `--color-white`         | Fixed white           | `#ffffff`                                                                      |
 
 <!-- token-migration:end -->
 
