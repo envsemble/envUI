@@ -323,8 +323,9 @@
   }
 }
 
-/* Forced colors: the system paints no fills or shadows, so the highlighted item takes the system’s selection colors, a disabled one the disabled color,
-   and the chosen organization’s radio is drawn in the text color. */
+/* Forced colors: the system paints no fills or shadows, so the highlighted item takes the
+   system’s selection colors, a disabled one the disabled color, and the chosen organization’s
+   radio is drawn in the text color. */
 @media (forced-colors: active) {
   .env-menu-item:is([data-highlighted], [data-popup-open]) {
     forced-color-adjust: none;

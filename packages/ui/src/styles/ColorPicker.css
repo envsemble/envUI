@@ -50,8 +50,8 @@
   }
 }
 
-/* Forced colors: the picker's area and the swatches show colors as content, as an image does, so the
-   system keeps them. */
+/* Forced colors: the picker's area and the swatches show colors as content, as an image does, so
+   the system keeps them. */
 @media (forced-colors: active) {
   .env-color-picker-area .react-colorful {
     forced-color-adjust: none;

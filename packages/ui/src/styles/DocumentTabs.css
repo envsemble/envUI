@@ -137,7 +137,8 @@
   }
 }
 
-/* Forced colors: the system paints no fills or shadows, so the active tab takes the system’s selection colors. */
+/* Forced colors: the system paints no fills or shadows, so the active tab takes the system’s
+   selection colors. */
 @media (forced-colors: active) {
   .env-document-tab[data-active] {
     forced-color-adjust: none;

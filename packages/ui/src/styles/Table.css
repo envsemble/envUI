@@ -354,7 +354,8 @@
   box-shadow: none;
 }
 
-/* Forced colors: the system paints no fills or shadows, so a selected row is outlined in the selection color, which keeps the controls in it legible. */
+/* Forced colors: the system paints no fills or shadows, so a selected row is outlined in the
+   selection color, which keeps the controls in it legible. */
 @media (forced-colors: active) {
   .env-table-row[aria-selected='true'] {
     outline: 2px solid Highlight;

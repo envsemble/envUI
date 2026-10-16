@@ -114,8 +114,8 @@
   }
 }
 
-/* Forced colors: the system paints no fills or shadows, so the chosen day takes the system’s selection colors, today is outlined, and unavailable days
-   take the disabled color. */
+/* Forced colors: the system paints no fills or shadows, so the chosen day takes the system’s
+   selection colors, today is outlined, and unavailable days take the disabled color. */
 @media (forced-colors: active) {
   .env-calendar-day[aria-current='date'] > .env-calendar-day-mark {
     outline: 1px solid CanvasText;

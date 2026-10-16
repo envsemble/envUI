@@ -498,27 +498,23 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
   }
 }
 
-/* Motion: a field's actions settle in as they appear, and a Select's chevron turns as it opens;
-   the actions always there, such as a combobox's chevron, stay still. Only without a
-   reduced-motion preference. */
+/* Motion: a field's actions settle in as they appear. Only without a reduced-motion preference;
+   an action that is always there, such as a combobox's chevron, stays still in its own sheet. */
 @media (prefers-reduced-motion: no-preference) {
-  .env-dropdown-trigger .env-symbol {
-    transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);
-  }
-  .env-text-field-end > :not(.env-combobox-trigger, .env-date-picker-icon) {
+  .env-text-field-end > * {
     animation: env-motion-pop-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
 }
 
-/* Forced colors: the system paints no fills or shadows, so a focused field is outlined in the selection color, an invalid one has a dashed border, and a
-   disabled one takes the disabled color. */
+/* Forced colors: the system paints no fills or shadows, so a focused field is outlined in the
+   selection color, an invalid one has a dashed border, and a disabled one takes the disabled
+   color. */
 @media (forced-colors: active) {
   .env-text-field-well:focus-within {
     outline: 2px solid Highlight;
     outline-offset: 1px;
   }
-  .env-text-field-well:has(> .env-text-input[aria-invalid='true']),
-  .env-dropdown-trigger[aria-invalid='true'] {
+  .env-text-field-well:has(> .env-text-input[aria-invalid='true']) {
     border-style: dashed;
   }
   .env-text-field-well[data-variant='plain']:has(> .env-text-input[aria-invalid='true'])::after {

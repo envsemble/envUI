@@ -205,7 +205,8 @@
   }
 }
 
-/* Forced colors: the system paints no fills or shadows, so the highlighted command takes the system’s selection colors. */
+/* Forced colors: the system paints no fills or shadows, so the highlighted command takes the
+   system’s selection colors. */
 @media (forced-colors: active) {
   .env-command-palette-option[data-highlighted] {
     forced-color-adjust: none;

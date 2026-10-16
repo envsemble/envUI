@@ -281,15 +281,19 @@
   }
 }
 
-/* Motion: the chevron turns as the list opens. Only without a reduced-motion preference. */
+/* Motion: the chevron, always in the field, doesn't settle in as the field's other actions do,
+   and turns as the list opens without a reduced-motion preference. */
+.env-combobox-trigger {
+  animation: none;
+}
 @media (prefers-reduced-motion: no-preference) {
   .env-combobox-trigger .env-symbol {
     transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);
   }
 }
 
-/* Forced colors: the system paints no fills or shadows, so the highlighted option takes the system’s selection colors, and a disabled one the disabled
-   color. */
+/* Forced colors: the system paints no fills or shadows, so the highlighted option takes the
+   system’s selection colors, and a disabled one the disabled color. */
 @media (forced-colors: active) {
   .env-combobox-option[data-highlighted] {
     forced-color-adjust: none;

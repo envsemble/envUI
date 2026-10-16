@@ -144,8 +144,8 @@
   }
 }
 
-/* Motion: the list fades in and grows from its trigger. Movement only without a reduced-motion
-   preference. Base UI's positioner sets the origin. */
+/* Motion: the trigger's chevron turns, and the list fades in and grows from its trigger.
+   Movement only without a reduced-motion preference. Base UI's positioner sets the origin. */
 .env-dropdown-options[data-starting-style],
 .env-dropdown-options[data-ending-style] {
   opacity: 0;
@@ -159,6 +159,9 @@
   transition-timing-function: var(--env-motion-ease-exit);
 }
 @media (prefers-reduced-motion: no-preference) {
+  .env-dropdown-trigger .env-symbol {
+    transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);
+  }
   .env-dropdown-options {
     transition:
       opacity var(--env-motion-duration-medium) var(--env-motion-ease),
@@ -174,8 +177,8 @@
   }
 }
 
-/* Forced colors: the system paints no fills or shadows, so the highlighted option takes the system’s selection colors, and a disabled one the disabled
-   color. */
+/* Forced colors: the system paints no fills or shadows, so the highlighted option takes the
+   system’s selection colors, and a disabled one the disabled color. */
 @media (forced-colors: active) {
   .env-dropdown-option[data-highlighted] {
     forced-color-adjust: none;
@@ -187,5 +190,8 @@
   }
   .env-dropdown-option[data-disabled] {
     color: GrayText;
+  }
+  .env-dropdown-trigger[aria-invalid='true'] {
+    border-style: dashed;
   }
 }

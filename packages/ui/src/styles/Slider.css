@@ -91,7 +91,8 @@
   }
 }
 
-/* Forced colors: the system paints no fills or shadows, so the track is drawn in the text color, and the indicator and thumb in the selection color. */
+/* Forced colors: the system paints no fills or shadows, so the track is drawn in the text color,
+   and the indicator and thumb in the selection color. */
 @media (forced-colors: active) {
   .env-slider-track {
     background-color: CanvasText;

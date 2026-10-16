@@ -42,7 +42,8 @@
   max-inline-size: none;
 }
 
-/* Forced colors: the system paints no fills or shadows, so the filled stars take the selection color. */
+/* Forced colors: the system paints no fills or shadows, so the filled stars take the selection
+   color. */
 @media (forced-colors: active) {
   .env-rating-star[data-fill='full'],
   .env-rating-star-half {

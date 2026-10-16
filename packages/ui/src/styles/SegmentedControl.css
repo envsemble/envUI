@@ -164,7 +164,8 @@
   }
 }
 
-/* Forced colors: the system paints no fills or shadows, so the chosen segment takes the system’s selection colors. */
+/* Forced colors: the system paints no fills or shadows, so the chosen segment takes the system’s
+   selection colors. */
 @media (forced-colors: active) {
   .env-segment[data-checked] {
     forced-color-adjust: none;

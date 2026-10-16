@@ -469,7 +469,8 @@
   }
 }
 
-/* Forced colors: the system paints no fills or shadows, so the active panel’s edge takes the selection color. */
+/* Forced colors: the system paints no fills or shadows, so the active panel’s edge takes the
+   selection color. */
 @media (forced-colors: active) {
   .env-panel-dock-panel[data-active] {
     border-color: Highlight;

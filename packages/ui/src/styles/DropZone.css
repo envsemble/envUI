@@ -119,7 +119,8 @@
   }
 }
 
-/* Forced colors: the system paints no fills or shadows, so a zone that a file is dragged over takes the selection color for its edge. */
+/* Forced colors: the system paints no fills or shadows, so a zone that a file is dragged over
+   takes the selection color for its edge. */
 @media (forced-colors: active) {
   .env-drop-zone[data-dragging] .env-drop-zone-target {
     border-color: Highlight;

@@ -155,7 +155,8 @@
   }
 }
 
-/* Forced colors: the system paints no fills or shadows, so the selected item takes the system’s selection colors. */
+/* Forced colors: the system paints no fills or shadows, so the selected item takes the system’s
+   selection colors. */
 @media (forced-colors: active) {
   .env-nav-list-item-selected {
     forced-color-adjust: none;

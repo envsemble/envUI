@@ -11,6 +11,7 @@
 @import './Theme.css' layer(env.base);
 @import './Icon.css' layer(env.components);
 @import './Actions.css' layer(env.components);
+@import './ThemeToggle.css' layer(env.components);
 @import './Button.css' layer(env.components);
 @import './ButtonGroup.css' layer(env.components);
 @import './CopyButton.css' layer(env.components);
