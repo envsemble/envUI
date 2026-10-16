@@ -377,7 +377,7 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
 /* The label rests at the vertical center and floats into the outline like a tall field's, without
    reserving space above the field, so the field still lines up with adjacent buttons. */
 .env-text-field:where(:not([data-tall])) .env-text-field-well > label {
-  inset-block-start: calc((var(--env-field-height) - 1lh) / 2 - 0.0625rem);
+  inset-block-start: calc((var(--env-field-height) - 1lh) / 2 - var(--control-border-width));
 }
 /* A hidden label stays available to assistive technology; the placeholder gives visible guidance. */
 .env-text-field[data-label-hidden] .env-text-field-well > .env-text-input:not(:focus)::placeholder {
