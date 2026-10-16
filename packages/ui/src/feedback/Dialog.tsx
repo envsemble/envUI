@@ -154,7 +154,7 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
     >
       {trigger && <BaseDialog.Trigger render={trigger} />}
       <BaseDialog.Portal>
-        <Theme theme={theme}>
+        <Theme {...theme}>
           {modal && <BaseDialog.Backdrop className="env-dialog-backdrop" />}
           <div className="env-dialog-positioner" data-placement={placement}>
             <BaseDialog.Popup

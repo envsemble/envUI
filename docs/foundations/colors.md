@@ -7,26 +7,30 @@ import { Theme, Text, useTheme } from '@envsemble/envui';
 import '@envsemble/envui/styles.css';
 
 function ThemeLabel() {
-  const theme = useTheme();
-  return <Text>Current theme: {theme}</Text>;
+  const { theme, contrast } = useTheme();
+  return (
+    <Text>
+      Current theme: {theme}, {contrast} contrast
+    </Text>
+  );
 }
 
-<Theme theme="dark">
+<Theme theme="dark" contrast="high">
   <ThemeLabel />
 </Theme>;
 ```
 
 ### Props & contracts
 
-| Name                    | Contract                                                                                                                                          |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Theme theme             | Required: light or dark; scopes tokens and provides React theme context                                                                           |
-| Theme native props      | children, ref, className, style and native div attributes                                                                                         |
-| data-env-contrast       | On a Theme: high for the high-contrast colors, standard to keep the standard ones when the system asks for more contrast (prefers-contrast: more) |
-| useTheme()              | Returns the current theme, including across library portals                                                                                       |
-| ThemePreferenceProvider | Stores the preference, follows the system theme and other windows, and themes the document root; see setup                                        |
-| useThemePreference()    | preference (light, dark or system), resolved theme, setPreference and toggleTheme                                                                 |
-| ThemeToggle             | IconButton that switches between light and dark                                                                                                   |
+| Name                    | Contract                                                                                                                                                                                                                                     |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Theme theme             | Required: light or dark; scopes tokens and provides React theme context                                                                                                                                                                      |
+| Theme contrast          | high for the high-contrast colors, standard to keep the standard ones even when the system asks for more contrast, system (the default outside any Theme) to follow prefers-contrast: more; inherited from the enclosing Theme when left out |
+| Theme native props      | children, ref, className, style and native div attributes                                                                                                                                                                                    |
+| useTheme()              | `{ theme, contrast }` of the nearest Theme, including across library portals                                                                                                                                                                 |
+| ThemePreferenceProvider | Stores the preference, follows the system theme and other windows, and themes the document root; takes contrast as Theme does; see setup                                                                                                     |
+| useThemePreference()    | preference (light, dark or system), resolved theme, setPreference and toggleTheme                                                                                                                                                            |
+| ThemeToggle             | IconButton that switches between light and dark                                                                                                                                                                                              |
 
 ### Status tones
 
@@ -73,7 +77,7 @@ The 0.7 names, such as `--color-text-muted`, are aliases of these roles until th
 ## States, contrast and elevation
 
 - **Hover and pressed** are tokens of their own (`--color-bg-brand-emphasis-hover`), other grades of the same hue chosen when the tokens are built, so labels keep their contrast on every state. Text and outlines gain contrast on hover; fills follow the direction they always had.
-- **High contrast:** `data-env-contrast='high'` on a Theme boundary, or the system's `prefers-contrast: more`, moves text to 7:1 and every boundary, indicator and focus ring to 4.5:1. Dividers and popup edges become boundaries, fills get lighter layers, and checked controls take the emphasis fill. `data-env-contrast='standard'` keeps the standard colors.
+- **High contrast:** `contrast="high"` on a Theme moves text to 7:1 and every boundary, indicator and focus ring to 4.5:1, and so does the system's `prefers-contrast: more` while the contrast is `system`, the default. Dividers and popup edges become boundaries, fills get lighter layers, and checked controls take the emphasis fill. `contrast="standard"` keeps the standard colors even when the system asks for more contrast. A nested Theme and envUI's popups, such as menus, Select lists, tooltips and dialogs, take the contrast of the boundary they open from, as they take its color scheme: `<Theme theme="dark">` inside a high-contrast boundary is dark and high contrast. Theme writes `data-env-contrast`, `high` or `standard`, on its element, and none for `system`; style sheets can select it.
 - **Elevation** 0–3 (`--elevation-{level}-shadow`, `--elevation-{level}-border`) is a shadow and an edge color, after Material 3's levels. Menus, Select lists and popovers take level 2, so they separate from a page or surface of their own color.
 
 ## Guidelines
@@ -84,7 +88,7 @@ The 0.7 names, such as `--color-text-muted`, are aliases of these roles until th
 - Surfaces (page, default, muted, raised) are opaque. Fills drawn on them are translucent layers of the text color, so they keep their tone on the page and stay distinct on every other surface.
 - Disabled controls use 0.48 opacity, which WCAG exempts from contrast.
 - Focus rings are blue in both themes. A ring drawn inside a solid fill of its own color gains an inner ring in the label color.
-- Scope content with Theme. Nested boundaries and library portals retain the originating theme. Application-owned portal content needs an appropriate Theme boundary too.
+- Scope content with Theme. Nested boundaries and library portals retain the originating theme and contrast. Application-owned portal content needs a Theme boundary too: `<Theme {...useTheme()}>` inside the portal takes both from where the portal opens.
 
 TypeScript declarations provide the complete public API.
 

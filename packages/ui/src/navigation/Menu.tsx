@@ -89,7 +89,7 @@ function Root({
     >
       <BaseMenu.Trigger render={trigger} />
       <BaseMenu.Portal>
-        <Theme theme={theme} className="env-menu-theme">
+        <Theme {...theme} className="env-menu-theme">
           <BaseMenu.Positioner
             side={side}
             align={align}
@@ -393,7 +393,7 @@ function Submenu({
         </span>
       </BaseMenu.SubmenuTrigger>
       <BaseMenu.Portal>
-        <Theme theme={theme} className="env-menu-theme">
+        <Theme {...theme} className="env-menu-theme">
           <BaseMenu.Positioner
             className="env-menu-positioner"
             side="inline-end"

@@ -13,7 +13,7 @@ export function Preview({ children }: { children: ReactNode }) {
   const theme = useTheme();
   return (
     <Stack
-      render={<Theme theme={theme} />}
+      render={<Theme {...theme} />}
       gap={0}
       className="docs-preview"
       onClickCapture={preventExampleNavigation}

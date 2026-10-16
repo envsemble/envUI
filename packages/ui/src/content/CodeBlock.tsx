@@ -39,7 +39,7 @@ export function CodeBlock({
   style,
   ...props
 }: CodeBlockProps) {
-  const theme = useTheme();
+  const { theme } = useTheme();
   const tokens = useCodeHighlighting(source, language);
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'unavailable'>('idle');
   const preRef = useRef<HTMLPreElement>(null);

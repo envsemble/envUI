@@ -524,7 +524,7 @@ export function CalendarHeatmap({
         }}
       >
         <BaseTooltip.Portal>
-          <Theme theme={theme} className="env-tooltip-theme">
+          <Theme {...theme} className="env-tooltip-theme">
             <BaseTooltip.Positioner
               anchor={tip?.anchor}
               side="top"

@@ -170,7 +170,7 @@ export function CommandPalette({
   return (
     <BaseDialog.Root open={open} onOpenChange={(next) => onOpenChange(next)}>
       <BaseDialog.Portal>
-        <Theme theme={theme}>
+        <Theme {...theme}>
           <BaseDialog.Backdrop className="env-dialog-backdrop env-command-palette-backdrop" />
           <div className="env-command-palette-positioner">
             <BaseDialog.Popup
