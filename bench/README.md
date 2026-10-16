@@ -14,9 +14,11 @@ Each later agent aid (the AGENTS.md index, the MCP server, the manifest, the lin
 | `lib/agents.mjs`    | How each agent CLI is invoked and how its transcript is read.                                                                                                                                                                                                                                            |
 | `lib/conditions/`   | Conditions. `baseline` changes nothing.                                                                                                                                                                                                                                                                  |
 | `lib/prepare.mjs`   | Packing the library, the installed template, workspaces and git diffs.                                                                                                                                                                                                                                   |
+| `lib/process.mjs`   | Running an agent with a timeout that bounds it, and stopping what it left running.                                                                                                                                                                                                                       |
 | `lib/score.mjs`     | The scorer: static, deterministic, built on the TypeScript compiler API.                                                                                                                                                                                                                                 |
 | `lib/report.mjs`    | Aggregates and the Markdown summary.                                                                                                                                                                                                                                                                     |
 | `scoring/*.json`    | Scoring data: raw HTML elements and roles, local-name aliases, and third-party UI packages.                                                                                                                                                                                                              |
+| `test/`             | Unit tests for the runner and the scorer; part of `npm test`.                                                                                                                                                                                                                                            |
 | `results/<run-id>/` | Saved results: `summary.md` and compact `results.json`. Transcripts are not in git.                                                                                                                                                                                                                      |
 
 ## Running it
@@ -114,6 +116,10 @@ codex exec --json --ignore-user-config --ephemeral --sandbox workspace-write
 - The npm cache is added as a writable root. Without it, `npm install` fails with `EPERM` in the sandbox.
 - Codex reports tokens per turn (`turn.completed`) but no cost.
 - Model: `gpt-6.1-sol`, the model in the local config, is rejected with "not supported when using Codex with a ChatGPT account". `gpt-6-luna` is the CLI's default for this account.
+
+### The timeout
+
+A run ends when the agent's process exits or at the timeout, whichever comes first. The runner doesn't wait for the agent's output pipes to close: a dev server started in the background, such as `npm run dev &` in Git Bash, holds them open for as long as it runs. At the timeout, the whole process tree is killed (`taskkill /T /F` on Windows, the process group elsewhere). Afterwards, processes whose command line names the workspace are stopped.
 
 ## Scoring
 
