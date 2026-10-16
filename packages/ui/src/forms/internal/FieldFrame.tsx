@@ -1,13 +1,21 @@
 'use client';
 
-import { type ComponentPropsWithoutRef, type MouseEvent, type ReactNode } from 'react';
-import { Error as ErrorIcon } from '../../icons/Error.js';
+import {
+  type ComponentPropsWithoutRef,
+  type CSSProperties,
+  type MouseEvent,
+  type ReactNode,
+  type Ref,
+} from 'react';
+import * as Field from '../Field.js';
 import { DecorativeIcon } from '../../internal/DecorativeIcon.js';
+import { ControlDefaults } from '../../internal/ControlDefaults.js';
 import { classNames } from '../../internal/classNames.js';
 import type { ControlSize } from '../../foundations/Theme.js';
+import { fieldMessageIds } from './useFieldMetadata.js';
 
-/** The attributes and content of a text field's well, for a control that renders the well itself. */
-export type FieldWellProps = ComponentPropsWithoutRef<'div'> & {
+/** The attributes and content of a text field's control box, for a control that renders it itself. */
+export type FieldControlBoxProps = ComponentPropsWithoutRef<'div'> & {
   [attribute: `data-${string}`]: string | boolean | undefined;
 };
 
@@ -21,32 +29,35 @@ export interface FieldProps {
    * Lasting guidance under the field, such as a format or a limit, linked to the control as its
    * description.
    */
-  hint?: ReactNode;
+  description?: ReactNode;
   /**
    * A message under the field that says how to correct the value. While it is set, the control is
-   * invalid (aria-invalid) and the message joins its description, after the hint.
+   * invalid (aria-invalid) and the message joins its description, after the description.
    */
   error?: ReactNode;
 }
 
+/** A field's look. */
+export type FieldVariant = 'outline' | 'floating' | 'underline' | 'ghost';
+
 export interface TextFieldAppearanceProps {
   /**
-   * The field's look: outlined, with a thin border, at the control height; floating, an outlined
+   * The field's look: outline, with a thin border, at the control height; floating, an outlined
    * field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a
-   * page; plain, as tall, with no border or fill and an underline on hover and focus; or quiet,
+   * page; underline, as tall, with no border or fill and an underline on hover and focus; or ghost,
    * only its text and start icon at rest, with a soft fill under the pointer and while focused and
    * a placeholder that clears on focus, for a search at the top of a sidebar or a list.
-   * @default 'outlined'
+   * @default 'outline'
    */
-  variant?: 'outlined' | 'floating' | 'plain' | 'quiet';
+  variant?: FieldVariant;
 }
 
 export interface FieldSizeProps {
   /**
    * The height, as on every control: sm, md or lg in the current scale. Without it, the field takes
    * the control height of its container, md unless the container sets another, as a table cell
-   * does. A button beside a field takes the field's size. Floating and plain fields have their own
-   * height.
+   * does. A button beside a field takes the field's size. Floating and underline fields have their
+   * own height.
    */
   size?: ControlSize;
 }
@@ -55,8 +66,8 @@ export interface TextFieldDecorationProps {
   /** A decorative icon at the start of the field, such as Search or Mail. */
   startIcon?: ReactNode;
   /**
-   * A control at the end of the field, such as a text IconButton that reveals or copies the value;
-   * name it with aria-label.
+   * A control at the end of the field, such as an IconButton that reveals or copies the value; name
+   * it with aria-label. A button that sets no variant takes ghost here.
    */
   endAction?: ReactNode;
   /**
@@ -105,23 +116,27 @@ export function isLabelShown({ showLabel }: TextFieldDecorationProps) {
 
 /** Whether a field is tall: its label sits above the value rather than at the control height. */
 export function isTallField(variant: TextFieldAppearanceProps['variant'], multiline = false) {
-  return multiline || variant === 'floating' || variant === 'plain';
+  return multiline || variant === 'floating' || variant === 'underline';
 }
 
-/** The well as a plain element; composed controls render it through their own primitive. */
-function renderPlainWell(props: FieldWellProps) {
+/** The control box as a plain element; composed controls render it through their own primitive. */
+function renderPlainControlBox(props: FieldControlBoxProps) {
   return <div {...props} />;
 }
 
-/** Text controls place their label on the well; composite controls keep a separate label. */
+/**
+ * The frame of envUI's own fields, built from Field's parts: Field.Root around the label, the
+ * control, Field.Description and Field.Error. Text controls (floatingLabel) sit in a control box
+ * with their label, icon and actions; composite controls, such as Select, keep a separate label.
+ */
 export function FieldFrame({
   id,
   label,
-  hint,
+  description,
   error,
   children,
   floatingLabel = false,
-  variant = 'outlined',
+  variant = 'outline',
   startIcon,
   endAction,
   showLabel,
@@ -130,7 +145,9 @@ export function FieldFrame({
   prefix,
   suffix,
   className,
-  renderWell = renderPlainWell,
+  style,
+  rootRef,
+  renderControlBox = renderPlainControlBox,
 }: FieldProps &
   TextFieldAppearanceProps &
   TextFieldDecorationProps &
@@ -141,23 +158,29 @@ export function FieldFrame({
     floatingLabel?: boolean;
     /** A text area, which is tall whatever its variant. */
     multiline?: boolean;
+    /** The owner's root class, beside env-field. */
     className?: string;
-    /** Renders the well, such as through a primitive that owns it; it receives the well's props. */
-    renderWell?: (props: FieldWellProps) => ReactNode;
+    /** The root's style, from the owner's style prop. */
+    style?: CSSProperties;
+    /** The root element. */
+    rootRef?: Ref<HTMLDivElement>;
+    /** Renders the control box, such as through a primitive that owns it; it receives its props. */
+    renderControlBox?: (props: FieldControlBoxProps) => ReactNode;
   }) {
+  const ids = fieldMessageIds(id);
   return (
-    <div
-      className={classNames(
-        floatingLabel ? 'env-form-field env-text-field' : 'env-form-field',
-        className,
-      )}
+    <Field.Root
+      ref={rootRef}
+      className={classNames(floatingLabel ? 'env-text-field' : undefined, className)}
+      style={style}
+      invalid={error != null || undefined}
       data-size={floatingLabel ? size : undefined}
       data-tall={(floatingLabel && isTallField(variant, multiline)) || undefined}
       data-label-hidden={(floatingLabel && !isLabelShown({ showLabel })) || undefined}
     >
       {floatingLabel ? (
-        renderWell({
-          className: 'env-text-field-well',
+        renderControlBox({
+          className: 'env-text-field-control',
           'data-variant': variant,
           'data-start-icon': startIcon != null || undefined,
           'data-end-action': endAction != null || undefined,
@@ -193,7 +216,12 @@ export function FieldFrame({
                   <DecorativeIcon>{startIcon}</DecorativeIcon>
                 </span>
               )}
-              {endAction != null && <span className="env-text-field-end">{endAction}</span>}
+              {endAction != null && (
+                <span className="env-text-field-end">
+                  {/* The actions an application passes take the field's quiet look. */}
+                  <ControlDefaults variant="ghost">{endAction}</ControlDefaults>
+                </span>
+              )}
             </>
           ),
         })
@@ -203,17 +231,12 @@ export function FieldFrame({
           {children}
         </>
       )}
-      {hint != null && (
-        <small className="env-field-hint" id={`${id}-hint`}>
-          {hint}
-        </small>
+      {description != null && (
+        <Field.Description id={ids.description} render={<small />}>
+          {description}
+        </Field.Description>
       )}
-      {error != null && (
-        <small className="env-field-error" id={`${id}-error`}>
-          <ErrorIcon aria-hidden="true" focusable="false" />
-          <span>{error}</span>
-        </small>
-      )}
-    </div>
+      {error != null && <Field.Error id={ids.error}>{error}</Field.Error>}
+    </Field.Root>
   );
 }

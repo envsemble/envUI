@@ -448,7 +448,7 @@ export const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorPro
               </label>
             ) : null
           }
-          hint={hint}
+          description={hint}
           error={error}
         >
           {toolbar !== false && (

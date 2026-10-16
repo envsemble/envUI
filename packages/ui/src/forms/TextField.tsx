@@ -1,9 +1,7 @@
 'use client';
 
-import { forwardRef } from 'react';
+import type { CSSProperties, InputHTMLAttributes, Ref } from 'react';
 import { useFieldMetadata } from './internal/useFieldMetadata.js';
-import type { InputHTMLAttributes } from 'react';
-import { classNames } from '../internal/classNames.js';
 import {
   FieldFrame,
   isLabelShown,
@@ -22,38 +20,48 @@ export interface TextFieldProps
     TextFieldAppearanceProps,
     TextFieldDecorationProps,
     FieldSizeProps,
-    TextFieldAffixProps {}
+    TextFieldAffixProps {
+  /** The native input, so that a form library can register it and focus it. */
+  ref?: Ref<HTMLInputElement>;
+  /** The field's class, on its root element, beside env-field and env-text-field. */
+  className?: string;
+  /** Styles of the field's root element, such as its width in a row. */
+  style?: CSSProperties;
+  /** Receives the value as people type, after the native onChange. */
+  onValueChange?: (value: string) => void;
+}
 
 /**
- * A labelled single-line text input: a native input with a floating label, a hint and an error, at
- * the control height in an outlined or quiet look, or taller as the floating and plain variants,
- * with an optional start icon, end action, prefix and suffix.
+ * A labelled single-line text input: a native input with a floating label, a description and an
+ * error, at the control height in an outline or ghost look, or taller as the floating and underline
+ * variants, with an optional start icon, end action, prefix and suffix.
  */
-export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function TextField(
-  {
-    label,
-    hint,
-    error,
-    variant,
-    startIcon,
-    endAction,
-    showLabel,
-    size,
-    prefix,
-    suffix,
-    id: suppliedId,
-    className,
-    placeholder,
-    'aria-describedby': describedBy,
-    'aria-invalid': invalid,
-    ...props
-  },
+export function TextField({
   ref,
-) {
-  const metadata = useFieldMetadata(suppliedId, hint, error, describedBy, invalid);
+  label,
+  description,
+  error,
+  variant,
+  startIcon,
+  endAction,
+  showLabel,
+  size,
+  prefix,
+  suffix,
+  id: suppliedId,
+  className,
+  style,
+  placeholder,
+  onChange,
+  onValueChange,
+  'aria-describedby': describedBy,
+  'aria-invalid': invalid,
+  ...props
+}: TextFieldProps) {
+  const metadata = useFieldMetadata(suppliedId, description, error, describedBy, invalid);
   const { id } = metadata;
-  // The prefix and suffix are read with the field, before its hint and error.
-  const description =
+  // The prefix and suffix are read with the field, before its description and error.
+  const describedByIds =
     [
       prefix != null && `${id}-prefix`,
       suffix != null && `${id}-suffix`,
@@ -68,7 +76,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
     <FieldFrame
       id={id}
       label={label != null ? <label htmlFor={id}>{label}</label> : null}
-      hint={hint}
+      description={description}
       error={error}
       floatingLabel
       variant={variant}
@@ -78,15 +86,21 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
       size={size}
       prefix={prefix}
       suffix={suffix}
+      className={className}
+      style={style}
     >
       <input
         {...props}
         ref={ref}
         {...metadata}
-        aria-describedby={description}
+        aria-describedby={describedByIds}
         placeholder={fieldPlaceholder}
-        className={classNames('env-text-input', className)}
+        className="env-text-field-input"
+        onChange={(event) => {
+          onChange?.(event);
+          onValueChange?.(event.currentTarget.value);
+        }}
       />
     </FieldFrame>
   );
-});
+}

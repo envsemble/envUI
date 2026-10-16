@@ -59,7 +59,7 @@
     [role='searchbox'],
     [tabindex],
     [contenteditable],
-    .env-text-field-well
+    .env-text-field-control
   ) {
   -webkit-app-region: no-drag;
   app-region: no-drag;

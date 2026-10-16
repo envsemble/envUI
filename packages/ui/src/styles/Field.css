@@ -1,7 +1,8 @@
 /* The look every field shares: the field (Field.Root, and the frame of envUI's own fields), its
    description and its error. */
-.env-form-field,
 .env-field {
+  /* The color of a field's error and of its invalid control. */
+  --env-field-error-color: var(--env-color-fg-danger);
   display: grid;
   align-content: start;
   gap: var(--env-space-3);
@@ -9,19 +10,14 @@
   max-inline-size: 100%;
   overflow-wrap: anywhere;
   font: var(--env-type-body-small);
+  font-size: var(--env-font-size-body-small);
   color: var(--env-color-fg-default);
 }
-/* The color of a field's error and of its invalid control. */
-.env-field {
-  --env-field-error-color: var(--env-color-fg-danger);
-}
-.env-field-hint,
 .env-field-description,
 .env-field-error {
   font: var(--env-type-body-small);
   font-size: var(--env-font-size-body-small);
 }
-.env-field-hint,
 .env-field-description {
   color: var(--env-color-fg-muted);
 }
