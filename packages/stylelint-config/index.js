@@ -13,7 +13,7 @@ const rawColorFunction =
 /**
  * Where px may appear: hairlines and offsets that must not scale with the text, such as border and
  * outline widths, focus-ring offsets and shadow offsets, also in custom properties named for them.
- * Radii scale, so they take rem. The same list as envUI's own style sheets.
+ * Radii scale, so they take rem.
  */
 export const hairlineProperties = [
   '/^border(?!.*radius)/',

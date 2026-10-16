@@ -10,6 +10,9 @@
     },
     "declaration-property-value-allowed-list": {
       "count": 5
+    },
+    "unit-disallowed-list": {
+      "count": 1
     }
   },
   "packages/ui/src/styles/AvatarGroup.css": {
@@ -18,11 +21,17 @@
     },
     "declaration-property-value-allowed-list": {
       "count": 1
+    },
+    "envui/font-weight-from-token": {
+      "count": 1
     }
   },
   "packages/ui/src/styles/Badge.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 17
+    },
+    "envui/font-weight-from-token": {
+      "count": 3
     }
   },
   "packages/ui/src/styles/Breadcrumbs.css": {
@@ -36,6 +45,9 @@
   "packages/ui/src/styles/Button.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 14
+    },
+    "envui/font-weight-from-token": {
+      "count": 1
     }
   },
   "packages/ui/src/styles/ButtonGroup.css": {
@@ -49,6 +61,9 @@
     },
     "declaration-property-value-allowed-list": {
       "count": 2
+    },
+    "envui/font-weight-from-token": {
+      "count": 1
     }
   },
   "packages/ui/src/styles/Card.css": {
@@ -64,6 +79,9 @@
   "packages/ui/src/styles/Code.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 3
+    },
+    "unit-disallowed-list": {
+      "count": 2
     }
   },
   "packages/ui/src/styles/ColorPicker.css": {
@@ -82,6 +100,9 @@
     },
     "declaration-property-value-allowed-list": {
       "count": 1
+    },
+    "envui/font-weight-from-token": {
+      "count": 2
     }
   },
   "packages/ui/src/styles/CommandPalette.css": {
@@ -131,6 +152,9 @@
   "packages/ui/src/styles/DocumentTabs.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 15
+    },
+    "unit-disallowed-list": {
+      "count": 1
     }
   },
   "packages/ui/src/styles/FeedbackStates.css": {
@@ -165,6 +189,9 @@
     },
     "declaration-property-value-allowed-list": {
       "count": 1
+    },
+    "envui/font-weight-from-token": {
+      "count": 1
     }
   },
   "packages/ui/src/styles/Icon.css": {
@@ -178,16 +205,25 @@
     },
     "declaration-property-value-allowed-list": {
       "count": 2
+    },
+    "envui/font-weight-from-token": {
+      "count": 1
     }
   },
   "packages/ui/src/styles/InfoChip.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 3
+    },
+    "envui/font-weight-from-token": {
+      "count": 1
     }
   },
   "packages/ui/src/styles/Kbd.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 8
+    },
+    "envui/font-weight-from-token": {
+      "count": 1
     }
   },
   "packages/ui/src/styles/Markdown.css": {
@@ -209,6 +245,9 @@
     },
     "declaration-property-value-allowed-list": {
       "count": 4
+    },
+    "envui/font-weight-from-token": {
+      "count": 1
     }
   },
   "packages/ui/src/styles/Menubar.css": {
@@ -227,16 +266,25 @@
   "packages/ui/src/styles/Motion.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 8
+    },
+    "unit-disallowed-list": {
+      "count": 2
     }
   },
   "packages/ui/src/styles/NavigationItem.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 10
+    },
+    "envui/font-weight-from-token": {
+      "count": 1
     }
   },
   "packages/ui/src/styles/Notice.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 3
+    },
+    "unit-disallowed-list": {
+      "count": 1
     }
   },
   "packages/ui/src/styles/PanelDock.css": {
@@ -248,6 +296,9 @@
     },
     "no-duplicate-selectors": {
       "count": 1
+    },
+    "unit-disallowed-list": {
+      "count": 2
     }
   },
   "packages/ui/src/styles/Popover.css": {
@@ -274,6 +325,9 @@
   "packages/ui/src/styles/SegmentedControl.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 3
+    },
+    "envui/font-weight-from-token": {
+      "count": 1
     }
   },
   "packages/ui/src/styles/Select.css": {
@@ -301,6 +355,9 @@
     },
     "declaration-property-value-allowed-list": {
       "count": 1
+    },
+    "envui/font-weight-from-token": {
+      "count": 1
     }
   },
   "packages/ui/src/styles/Table.css": {
@@ -319,6 +376,9 @@
   "packages/ui/src/styles/Text.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 3
+    },
+    "envui/font-weight-from-token": {
+      "count": 1
     }
   },
   "packages/ui/src/styles/TitleBar.css": {

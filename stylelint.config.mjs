@@ -1,6 +1,13 @@
 // Stylelint for the library's and the catalogue's CSS. Existing violations of the rules that the
-// token work removes are recorded in stylelint-suppressions.json; anything new fails. See
+// token work removes are recorded in stylelint-suppressions.json, and tests/StylelintSuppressions
+// requires the recorded counts to match the CSS exactly; anything new fails. See
 // docs/library-development.md.
+import stylelint from 'stylelint';
+
+const {
+  createPlugin,
+  utils: { report, ruleMessages, validateOptions },
+} = stylelint;
 
 /** Color functions with literal channels; relative colors derived from a token (`hsl(from …)`) pass. */
 const rawColorFunction = '/\\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\\((?!\\s*from\\b)/i';
@@ -8,24 +15,111 @@ const hexColor = '/#[\\da-f]{3,8}\\b/i';
 
 /**
  * Where px may appear: hairlines and offsets that must not scale with the text, such as border and
- * outline widths, focus-ring offsets and shadow offsets, also in custom properties named for them.
- * Radii scale, so they take rem.
+ * outline widths, focus-ring offsets and shadow offsets. Custom properties take px only when their
+ * name ends in one of those: `--…-border-width`, `--…-ring-offset`, `--…-shadow`, `--…-hairline`.
+ * Radii and table spacing scale, so they take rem.
  */
 const hairlineProperties = [
-  '/^border(?!.*radius)/',
-  '/^outline/',
-  '/^column-rule/',
+  '/^border(?:-(?:top|right|bottom|left|block|inline)(?:-(?:start|end))?)?(?:-width)?$/',
+  '/^outline(?:-width|-offset)?$/',
+  '/^column-rule(?:-width)?$/',
   'box-shadow',
   'text-shadow',
   'filter',
   'text-decoration-thickness',
   'text-underline-offset',
-  '/^--.*(?:border|outline|ring|shadow|divider|hairline|stroke)/',
+  '/^--[\\w-]*(?:border|outline|ring|divider|rule|stroke)-(?:width|offset)$/',
+  '/^--[\\w-]*(?:shadow|hairline)$/',
 ];
+
+/**
+ * Where em may appear: typography that follows the element's own font size rather than the
+ * reader's root size. Boxes, spacing and motion take rem, from tokens in the library.
+ */
+const textRelativeProperties = [
+  'font',
+  'font-size',
+  'line-height',
+  'letter-spacing',
+  'word-spacing',
+  'text-indent',
+  'text-decoration-thickness',
+  'text-underline-offset',
+];
+
+const unitRule = (units, ignoreProperties) => [
+  units,
+  {
+    ignoreProperties,
+    // env() values are in CSS pixels by definition.
+    ignoreFunctions: ['env'],
+    message: (unit) =>
+      unit === 'em'
+        ? 'Disallowed unit "em": em is only for typography that follows the element’s font size, such as line-height and letter-spacing; use rem or a token.'
+        : `Disallowed unit "${unit}": px is only for hairlines, such as border and outline widths, focus-ring and shadow offsets; use rem or a token.`,
+  },
+];
+
+/**
+ * envui/font-weight-from-token: the `font` shorthand takes its weight from a token too, as
+ * `font-weight` does; a literal weight in it, such as `font: 600 1rem/1.4 …`, is reported.
+ */
+const fontWeightRuleName = 'envui/font-weight-from-token';
+const fontWeightMessages = ruleMessages(fontWeightRuleName, {
+  rejected: (weight) =>
+    `Literal font weight ${weight} in the font shorthand: take it from a token, such as var(--type-…) or a var(--…-font-weight) weight.`,
+});
+/** Words of a value outside functions, with their offsets; `/` is a word of its own. */
+function topLevelWords(value) {
+  const words = [];
+  let depth = 0;
+  let start = -1;
+  const end = (index) => {
+    if (start !== -1) words.push({ word: value.slice(start, index), index: start });
+    start = -1;
+  };
+  for (let index = 0; index < value.length; index++) {
+    const character = value[index];
+    if (character === '(') depth++;
+    if (character === ')') depth--;
+    if (depth > 0 || character === ')') {
+      if (start === -1) start = index;
+      continue;
+    }
+    if (/\s/.test(character) || character === '/' || character === ',') {
+      end(index);
+      if (character === '/') words.push({ word: '/', index });
+    } else if (start === -1) start = index;
+  }
+  end(value.length);
+  return words;
+}
+const fontWeightFromToken = createPlugin(fontWeightRuleName, (primary) => (root, result) => {
+  if (!validateOptions(result, fontWeightRuleName, { actual: primary, possible: [true] })) return;
+  root.walkDecls(/^font$/i, (declaration) => {
+    const words = topLevelWords(declaration.value);
+    words.forEach(({ word, index }, position) => {
+      // A number after the slash is the line height; before it, only a weight is a bare number.
+      const number = /^[+-]?(?:\d+\.?\d*|\.\d+)$/.test(word) && words[position - 1]?.word !== '/';
+      if (!number && !/^(?:bold|bolder|lighter)$/i.test(word)) return;
+      const offset = declaration.prop.length + (declaration.raws.between ?? ':').length + index;
+      report({
+        result,
+        ruleName: fontWeightRuleName,
+        node: declaration,
+        message: fontWeightMessages.rejected,
+        messageArgs: [word],
+        index: offset,
+        endIndex: offset + word.length,
+      });
+    });
+  });
+});
 
 /** @type {import('stylelint').Config} */
 export default {
   extends: ['stylelint-config-recommended'],
+  plugins: [fontWeightFromToken],
   reportDescriptionlessDisables: true,
   reportInvalidScopeDisables: true,
   reportNeedlessDisables: true,
@@ -40,12 +134,13 @@ export default {
       // A range such as `100 900` is a variable font's weights in @font-face.
       'font-weight': ['inherit', 'normal', '/^var\\(--/', '/^\\d+\\s+\\d+$/'],
     },
-    // px only for hairlines; everything that follows the text size uses rem. env() values and
-    // fallbacks of custom properties that scripts measure are in CSS pixels.
-    'unit-disallowed-list': [
-      ['px'],
-      { ignoreProperties: { px: hairlineProperties }, ignoreFunctions: ['env', 'var'] },
-    ],
+    [fontWeightRuleName]: true,
+    // px only for hairlines, also as the fallback of var(); em only for typography; everything
+    // else that follows the text size uses rem.
+    'unit-disallowed-list': unitRule(['px', 'em'], {
+      px: hairlineProperties,
+      em: textRelativeProperties,
+    }),
     // Reports the order of selectors for different elements, which component CSS does not rely on.
     'no-descending-specificity': null,
   },
@@ -57,7 +152,7 @@ export default {
     },
     {
       // The token definitions, generated and hand-written: literal values belong here, in custom
-      // properties.
+      // properties, including the em line heights of the font shorthands.
       files: ['packages/ui/src/styles/Tokens.css', 'packages/ui/src/styles/TokensHandwritten.css'],
       rules: {
         'color-no-hex': null,
@@ -67,6 +162,7 @@ export default {
         },
         'declaration-property-value-allowed-list': null,
         'declaration-property-unit-disallowed-list': null,
+        'unit-disallowed-list': unitRule(['px'], { px: hairlineProperties }),
       },
     },
   ],
