@@ -19,9 +19,13 @@ const statusTones = {
   deprecated: 'danger',
 } as const;
 
-/** The page that documents a component, for the alternatives a page suggests. */
+/**
+ * The page that documents a component, for the alternatives a page suggests: a part such as
+ * Menu.Item is documented on the page of its namespace.
+ */
 function pageOf(component: string) {
-  return referencePages.find((page) => page.reference.metadata?.components.includes(component));
+  const namespace = component.split('.')[0];
+  return referencePages.find((page) => page.reference.metadata?.components.includes(namespace));
 }
 
 /** Status and first release under the title of a page on the template. */

@@ -137,6 +137,20 @@ test('every public export is documented on exactly one page', () => {
     assert.ok(props.exports[name], `A page lists ${name}, which envUI does not export.`);
 });
 
+test('every alternative a page suggests has a page to link to', () => {
+  // As the catalogue links them: a part such as Menu.Item goes to its namespace's page.
+  const documented = new Set(
+    documents.flatMap((document) => document.frontmatter?.components ?? []),
+  );
+  for (const document of components)
+    for (const { use } of document.frontmatter?.avoidWhen ?? [])
+      if (use)
+        assert.ok(
+          documented.has(use.split('.')[0]),
+          `${document.path} suggests ${use}, which no page documents.`,
+        );
+});
+
 test('pages not on the template are listed, and only those', () => {
   const legacy = components.filter((document) => !document.sections).map(({ id }) => id);
   assert.deepEqual(
