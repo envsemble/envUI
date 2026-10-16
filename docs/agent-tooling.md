@@ -98,16 +98,16 @@ The skills and the MCP server also reach agents as one plugin, `envui`, for Clau
 
 ```sh
 # Claude Code
-claude plugin marketplace add envsemble/envUI
+claude plugin marketplace add envsemble/envUI#main
 claude plugin install envui@envui
 
 # Codex
-codex plugin marketplace add envsemble/envUI
+codex plugin marketplace add envsemble/envUI --ref main
 codex plugin add envui@envui
 ```
 
 - Both clients clone the repository with the Git credentials the machine already holds, an SSH key loaded in an agent or a stored HTTPS credential such as the one `gh auth login` and `gh auth setup-git` leave, and never prompt for them.
-- The commands follow the repository's default branch, `dev`. To follow released versions only, add `envsemble/envUI#main` in Claude Code, and `envsemble/envUI --ref main` in Codex.
+- The commands follow `main`, which holds the released versions, so the plugin matches the envUI that applications install. To try unreleased work, add the marketplace without the branch, `envsemble/envUI` in both clients, which follows the default branch, `dev`.
 - The plugin's server is `node node_modules/@envsemble/envui/bin/envui.mjs mcp`, as in [Register the MCP server](#register-the-mcp-server). It starts in the folder the client works in, so it answers from the project's installed envUI and needs envUI installed there. Where a workspace installs envUI in a folder above, register the server per project instead.
 - The plugin takes the place of the registered server and the copied skills; use one or the other. Its skills are those of the plugin's version and look everything up in the installed package, so their answers match the project's version.
 
@@ -123,7 +123,7 @@ The repository holds the marketplace. `.claude-plugin/marketplace.json` (Claude 
 
 A client installs a copy of `plugin/` alone, and a plugin's manifest can't point outside its folder, so the plugin carries its own copy of the skills. `npm run plugin:generate` (`scripts/GeneratePlugin.mjs`) copies `.agents/skills` into `plugin/skills` and sets both manifests' version to that of `@envsemble/envui`. After editing a skill, run it and commit `plugin/` with the change: `npm run check`, `npm test` and `npm run docs:check` fail while the copy or the version is stale.
 
-`npm run changeset:version` runs it too, so preparing a release raises the plugin's version with the packages', and the Release workflow refuses a tag whose plugin version differs. Clients keep their cached copy until the version changes, so a skill edited between releases reaches people with the next release. Once the release is on the branch a client follows:
+`npm run changeset:version` runs it too, so preparing a release raises the plugin's version with the packages', and the Release workflow refuses a tag whose plugin version differs. Clients keep their cached copy until the version changes, so a skill edited between releases reaches people with the next release. Once the release is merged into `main`:
 
 - Claude Code updates it in the background when auto-update is on for the marketplace (`/plugin`, Marketplaces); otherwise `claude plugin update envui@envui`.
 - Codex: `codex plugin marketplace upgrade envui`, then `codex plugin add envui@envui` again.
