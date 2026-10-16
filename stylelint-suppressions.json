@@ -1,9 +1,4 @@
 {
-  "packages/ui/src/styles/Actions.css": {
-    "no-duplicate-selectors": {
-      "count": 1
-    }
-  },
   "packages/ui/src/styles/AppShell.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 19
@@ -66,11 +61,6 @@
   "packages/ui/src/styles/Card.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 7
-    }
-  },
-  "packages/ui/src/styles/ChoiceControls.css": {
-    "declaration-property-unit-disallowed-list": {
-      "count": 22
     }
   },
   "packages/ui/src/styles/Code.css": {
@@ -154,14 +144,6 @@
       "count": 1
     }
   },
-  "packages/ui/src/styles/FeedbackStates.css": {
-    "declaration-property-unit-disallowed-list": {
-      "count": 11
-    },
-    "declaration-property-value-allowed-list": {
-      "count": 2
-    }
-  },
   "packages/ui/src/styles/DropZone.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 10
@@ -172,7 +154,7 @@
   },
   "packages/ui/src/styles/TextField.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 19
+      "count": 18
     }
   },
   "packages/ui/src/styles/List.css": {
@@ -194,17 +176,6 @@
   "packages/ui/src/styles/Icon.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 2
-    }
-  },
-  "packages/ui/src/styles/Indicators.css": {
-    "declaration-property-unit-disallowed-list": {
-      "count": 5
-    },
-    "declaration-property-value-allowed-list": {
-      "count": 2
-    },
-    "envui/font-weight-from-token": {
-      "count": 1
     }
   },
   "packages/ui/src/styles/InfoChip.css": {
@@ -406,6 +377,70 @@
   "apps/catalogue/src/styles/Shell.css": {
     "declaration-property-value-allowed-list": {
       "count": 3
+    }
+  },
+  "packages/ui/src/styles/Avatar.css": {
+    "envui/font-weight-from-token": {
+      "count": 1
+    }
+  },
+  "packages/ui/src/styles/Checkbox.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 10
+    }
+  },
+  "packages/ui/src/styles/EmptyState.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 3
+    }
+  },
+  "packages/ui/src/styles/Field.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 1
+    }
+  },
+  "packages/ui/src/styles/LoadingBar.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 1
+    },
+    "declaration-property-value-allowed-list": {
+      "count": 2
+    }
+  },
+  "packages/ui/src/styles/Meter.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 1
+    },
+    "declaration-property-value-allowed-list": {
+      "count": 1
+    }
+  },
+  "packages/ui/src/styles/Radio.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 5
+    }
+  },
+  "packages/ui/src/styles/Skeleton.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 1
+    }
+  },
+  "packages/ui/src/styles/Spinner.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 6
+    }
+  },
+  "packages/ui/src/styles/Switch.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 7
+    }
+  },
+  "packages/ui/src/styles/Tooltip.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 4
+    },
+    "declaration-property-value-allowed-list": {
+      "count": 1
     }
   }
 }

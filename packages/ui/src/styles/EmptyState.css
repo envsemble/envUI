@@ -1,0 +1,30 @@
+.env-empty-state {
+  display: grid;
+  justify-items: start;
+  align-content: start;
+  min-width: 0;
+  padding: var(--env-space-5);
+  gap: var(--env-space-4);
+}
+.env-empty-state-error > .env-icon {
+  color: var(--env-color-fg-danger);
+}
+
+/* Centred: the state takes the place of a page's or region's content, in the middle of the room the
+   application gives it, with the icon at the size of a feature card's. */
+.env-empty-state-center {
+  justify-items: center;
+  align-content: center;
+  padding-block: var(--env-space-8);
+  text-align: center;
+}
+.env-empty-state-center > .env-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+.env-empty-state-center:not(.env-empty-state-error) > .env-icon {
+  color: var(--env-color-fg-muted);
+}
+.env-empty-state-center > .env-empty-copy {
+  max-inline-size: 30rem;
+}

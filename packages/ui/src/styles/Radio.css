@@ -1,0 +1,101 @@
+@media (pointer: coarse) {
+  .env-radio-option {
+    min-height: var(--env-control-height-touch);
+  }
+}
+.env-radio-options {
+  overflow-wrap: anywhere;
+  display: grid;
+  gap: 0.125rem;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.env-radio-options legend {
+  max-inline-size: 100%;
+  margin-bottom: var(--env-space-4);
+  padding: 0;
+}
+.env-radio-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--env-space-3);
+  min-width: 0;
+  padding: var(--env-space-3) var(--env-row-padding-inline);
+  background: var(--env-color-bg-muted);
+  font: var(--env-type-body-small);
+  color: var(--env-color-fg-default);
+  cursor: pointer;
+}
+.env-radio-option > span {
+  min-inline-size: 0;
+}
+.env-radio-option:has(input:checked),
+.env-radio-option:hover:not(:has(input:disabled)) {
+  background: var(--env-color-bg-muted-hover);
+}
+.env-radio-option:active:not(:has(input:disabled)) {
+  background: var(--env-color-bg-muted-pressed);
+}
+.env-radio-option:has(input:focus-visible) {
+  outline: 0.125rem solid var(--env-color-border-focus);
+  outline-offset: -0.125rem;
+}
+.env-radio-control {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  margin: 0;
+  accent-color: var(--env-color-bg-brand-emphasis);
+  cursor: inherit;
+}
+.env-radio-control:hover:not(:disabled) {
+  accent-color: var(--env-color-bg-brand-emphasis-hover);
+}
+.env-radio-control:active:not(:disabled) {
+  accent-color: var(--env-color-bg-brand-emphasis-pressed);
+}
+.env-radio-option:has(input:disabled) {
+  cursor: default;
+}
+/* A disabled control fades with its label, at the opacity of every disabled control. The row of a
+   row radio keeps its surface, so the group's shape stays whole. */
+.env-radio-option:has(input:disabled) > * {
+  opacity: var(--env-state-disabled-opacity);
+}
+
+.env-radio-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--env-space-4) var(--env-space-6);
+}
+.env-radio-inline legend {
+  flex-basis: 100%;
+}
+.env-radio-detail {
+  display: block;
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
+}
+
+/* Motion: choice controls settle while they or their label are held, a radio row a little and
+   the control more; a check mark settles into size. Only without a reduced-motion preference. */
+@media (prefers-reduced-motion: no-preference) {
+  .env-radio-option,
+  .env-radio-control {
+    transition-property: background-color, color, border-color, transform;
+    transition-duration: var(--env-motion-duration-fast);
+    transition-timing-function: var(--env-motion-ease);
+  }
+  .env-radio-option:active:not(:has(input:disabled)) {
+    transform: scale(0.99);
+  }
+}
+@media (forced-colors: active) {
+  .env-radio-option:has(input:checked) {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+}
