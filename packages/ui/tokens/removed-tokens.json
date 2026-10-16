@@ -87,6 +87,22 @@
     "--member-identity-email-size": { "replacement": null, "note": "Unused." },
     "--member-identity-gap": { "replacement": null, "note": "Unused." },
     "--member-identity-name-line-height": { "replacement": null, "note": "Unused." },
-    "--member-identity-name-size": { "replacement": null, "note": "Unused." }
+    "--member-identity-name-size": { "replacement": null, "note": "Unused." },
+    "--control-height-small": {
+      "replacement": "control.height",
+      "note": "It always equalled --control-height, which every control reads now."
+    },
+    "--control-height-compact": {
+      "replacement": "control.height-sm",
+      "note": "The small control height. For a compact app or region, set scale=\"compact\" on its Theme instead."
+    },
+    "--icon-button-size": {
+      "replacement": "control.height",
+      "note": "An icon button is as tall as the other controls of its size."
+    },
+    "--scale": {
+      "replacement": null,
+      "note": "The multiplier is gone: components read sized tokens. Set scale=\"compact\" on a Theme for the compact scale."
+    }
   }
 }

@@ -2,16 +2,85 @@
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
   "control": {
     "$type": "dimension",
-    "height-small": { "$value": "{control.height}" },
-    "height-compact": { "$value": { "value": 2, "unit": "rem" } },
-    "height": { "$value": { "value": 2.5, "unit": "rem" } },
-    "icon-size": { "$value": { "value": 1, "unit": "rem" } },
-    "height-touch": { "$value": { "value": 2.75, "unit": "rem" } },
+    "height-xs": {
+      "$description": "The extra-small control height, for actions inside a row or a chip. Kept at 1.5 rem or more by the hit area wherever it is pressed.",
+      "$value": { "value": 1.5, "unit": "rem" }
+    },
+    "height-sm": {
+      "$description": "The small control height: a control of size sm, the actions in a table cell, a title bar or a panel header.",
+      "$value": { "value": 2, "unit": "rem" }
+    },
+    "height-md": {
+      "$description": "The medium control height, every control's default size.",
+      "$value": { "value": 2.5, "unit": "rem" }
+    },
+    "height-lg": {
+      "$description": "The large control height, for a control of size lg, such as a prominent call to action.",
+      "$value": { "value": 3, "unit": "rem" }
+    },
+    "height": {
+      "$description": "The height a control takes when it sets no size: md, unless a container sets it to another control height for what it holds, as a table cell does with sm.",
+      "$value": "{control.height-md}"
+    },
+    "height-touch": {
+      "$description": "The hit area of a control under a coarse pointer, whatever the scale: a control smaller than it keeps its look and gains an invisible overlay this tall and wide. Rows and text fields grow to it instead.",
+      "$value": { "value": 2.75, "unit": "rem" }
+    },
+    "icon-size": {
+      "$description": "The icon in a control. 1 rem in both scales: icons never get smaller than this.",
+      "$value": { "value": 1, "unit": "rem" }
+    },
+    "gap": {
+      "$description": "The space between a control's icon and its label.",
+      "$value": { "value": 0.4375, "unit": "rem" }
+    },
     "font-size": { "$value": "{font.size.body}" }
   },
-  "icon-button": {
+  "icon": {
     "$type": "dimension",
-    "size": { "$value": "{control.height-small}" }
+    "size-sm": { "$value": "{control.icon-size}" },
+    "size-md": {
+      "$description": "An icon beside body text, such as in a tree or a select trigger.",
+      "$value": { "value": 1.125, "unit": "rem" }
+    },
+    "size-lg": {
+      "$description": "A leading icon in a large row, such as a list item's.",
+      "$value": { "value": 1.25, "unit": "rem" }
+    }
+  },
+  "field": {
+    "$type": "dimension",
+    "floating-height": {
+      "$description": "The height of a text field's floating variant, whose label rests inside the field and floats into its outline. Other fields take the control height.",
+      "$value": { "value": 3.5, "unit": "rem" }
+    }
+  },
+  "row": {
+    "$type": "dimension",
+    "height": {
+      "$description": "The row of a menu and of a select's or combobox's popup.",
+      "$value": { "value": 2.25, "unit": "rem" }
+    },
+    "content-height": {
+      "$description": "The line a row of a tree or list reserves for its label and icon; the row's density adds its block padding around it.",
+      "$value": { "value": 1.25, "unit": "rem" }
+    },
+    "padding-block-xs": {
+      "$description": "Row density xs: the block padding of each row of a data component, such as a table, a tree or a list.",
+      "$value": { "value": 0.125, "unit": "rem" }
+    },
+    "padding-block-sm": {
+      "$description": "Row density sm: a tree's default.",
+      "$value": { "value": 0.25, "unit": "rem" }
+    },
+    "padding-block-md": {
+      "$description": "Row density md: the default of tables and lists.",
+      "$value": { "value": 0.5, "unit": "rem" }
+    },
+    "padding-block-lg": {
+      "$description": "Row density lg.",
+      "$value": { "value": 0.75, "unit": "rem" }
+    }
   },
   "topbar": {
     "$type": "dimension",
@@ -20,7 +89,7 @@
   "title-bar": {
     "$type": "dimension",
     "height": {
-      "$description": "A window title bar drawn by the application, which keeps compact controls.",
+      "$description": "A window title bar drawn by the application, which holds controls of size sm.",
       "$value": { "value": 2.5, "unit": "rem" }
     }
   }

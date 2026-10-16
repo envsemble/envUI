@@ -1,7 +1,6 @@
 /* The token rules DTCG 2025.10 can't express yet, written by hand. Every other token is data in
    packages/ui/tokens, which `npm run tokens:build` turns into Tokens.css; that file comes first, so
-   the overrides at the end of this one win. Each group says when it moves into the tokens. Colors
-   are all tokens, hover and pressed states included. */
+   the overrides at the end of this one win. Colors, sizes and the type roles are all tokens. */
 .env-theme {
   /* The theme boundary's own type and colors: styles, not tokens. */
   font-family: var(--font-family);
@@ -12,28 +11,17 @@
   background: var(--color-canvas);
   color: var(--color-text-primary);
 
-  /* Font shorthands. A DTCG typography token's line height is a plain number, not 1.4em, and it
-     would add a custom property for each part. Moves into tokens in the scale step, with the line
-     heights per type role. */
-  --type-h1: 500 var(--font-size-heading) / 1.4em var(--font-family);
-  --type-h2: 500 var(--font-size-heading-small) / 1.4em var(--font-family);
-  --type-body: var(--body-font-weight) var(--font-size-body) / 1.4em var(--font-family);
-  --type-body-small: var(--body-font-weight) var(--font-size-body-small) / 1.4em var(--font-family);
-
-  /* Lengths a DTCG dimension (px or rem) can't hold: a viewport clamp and the pill corner. Move into
-     tokens in the scale step. */
+  /* Lengths a DTCG dimension (px or rem) can't hold: a viewport clamp and the pill corner. */
   --viewport-gutter: clamp(0.75rem, 2vw, 1rem);
   --md-sys-shape-corner-full: 100vmax;
 }
 
-/* Touch-sized controls under a coarse pointer, whatever the scale. The title bar's calc() is no
-   DTCG value, and the resolver has no pointer modifier. Moves into tokens in the scale step. */
+/* Under a coarse pointer, entered text is 1 rem in every scale: smaller text makes touch browsers
+   zoom the page into a focused field. Controls keep their size and gain a hit area of
+   --control-height-touch instead, which each component draws; the resolver has no pointer
+   modifier. */
 @media (pointer: coarse) {
   .env-theme {
-    --control-height-compact: var(--control-height-touch);
-    --control-height: var(--control-height-touch);
     --control-font-size: 1rem;
-    /* The title bar holds compact controls, which take the touch height here. */
-    --title-bar-height: calc(var(--control-height-touch) + var(--space-1));
   }
 }

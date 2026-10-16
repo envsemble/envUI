@@ -19,6 +19,10 @@
   "radius": {
     "$type": "dimension",
     "standard": { "$value": { "value": 0.5, "unit": "rem" } },
+    "large": {
+      "$description": "Fields, tables and other blocks with medium corners.",
+      "$value": { "value": 1, "unit": "rem" }
+    },
     "surface": { "$value": { "value": 1.75, "unit": "rem" } },
     "row-outer": { "$value": "{radius.surface}" },
     "row-inner": { "$value": { "value": 0.5, "unit": "rem" } },
