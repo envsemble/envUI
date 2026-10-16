@@ -15,14 +15,14 @@ export function CommandPaletteFixture({ theme }: { theme: ThemeValue }) {
       ...recent.filter(match).map((name) => ({
         id: `recent/${name}`,
         label: name,
-        detail: 'plans',
+        description: 'plans',
         icon: <Description />,
         group: 'Recently opened',
       })),
       ...documents.filter(match).map((name) => ({
         id: `documents/${name}`,
         label: name,
-        detail: 'documents',
+        description: 'documents',
         icon: <Description />,
         group: 'Documents',
       })),
@@ -41,10 +41,10 @@ export function CommandPaletteFixture({ theme }: { theme: ThemeValue }) {
         }}
         aria-label="Go to document"
         placeholder="Search documents"
-        query={query}
-        onQueryChange={setQuery}
+        inputValue={query}
+        onInputValueChange={setQuery}
         items={items}
-        onSelect={(item, { modifier }) => setLog(`${modifier ? 'side' : 'open'} ${item.id}`)}
+        onAction={(item, { modifier }) => setLog(`${modifier ? 'side' : 'open'} ${item.id}`)}
         emptyLabel="No matching documents"
         hints={[
           { keys: ['Enter'], label: 'Open' },

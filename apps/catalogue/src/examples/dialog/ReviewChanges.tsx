@@ -9,7 +9,7 @@ const changes = [
 export default function ReviewChanges() {
   return (
     <Dialog
-      size="wide"
+      width="lg"
       trigger={<Button variant="secondary">Review changes</Button>}
       title="Review changes"
       description="Three documents changed since your last review."

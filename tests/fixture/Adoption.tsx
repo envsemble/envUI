@@ -186,7 +186,7 @@ export function AdoptionFixture() {
               action={<Button variant="secondary">Remove</Button>}
             />
           </List.Root>
-          <EmptyState tone="error" title="Products couldn’t load" description="Try again." />
+          <EmptyState tone="danger" title="Products couldn’t load" description="Try again." />
           <EmptyState headingLevel={1} title="Nothing here yet" />
           <Meter label="Seats assigned" value={7} max={5} valueText="5 of 5" />
           <Avatar name="Broken Picture" src="data:image/png;base64,invalid" label />

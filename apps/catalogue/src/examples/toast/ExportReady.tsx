@@ -11,7 +11,7 @@ function ExportButton() {
     window.setTimeout(() => {
       setExporting(false);
       toast.show({
-        variant: 'info',
+        tone: 'info',
         message: 'Your export is ready: members.csv is in Downloads.',
         // People may be elsewhere when it ends, so it stays until they dismiss it.
         duration: Infinity,

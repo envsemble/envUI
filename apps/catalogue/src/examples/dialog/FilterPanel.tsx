@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import {
   Button,
-  Dialog,
   DialogClose,
   List,
   Radio,
@@ -9,6 +8,7 @@ import {
   Select,
   Stack,
   Text,
+  Drawer,
 } from '@envsemble/envui';
 import { FilterList } from '@envsemble/envui/icons/FilterList';
 
@@ -37,8 +37,8 @@ export default function FilterPanel() {
   );
   return (
     <Stack align="start">
-      <Dialog
-        placement="right"
+      <Drawer
+        side="end"
         trigger={
           <Button variant="secondary" startIcon={<FilterList />}>
             Filters
@@ -78,7 +78,7 @@ export default function FilterPanel() {
             onValueChange={(value) => setOwner(value ?? 'anyone')}
           />
         </Stack>
-      </Dialog>
+      </Drawer>
       {/* The list takes the width of a column of the page. */}
       {shown.length > 0 ? (
         <List.Root aria-label="Projects" style={{ inlineSize: 'min(100%, 24rem)' }}>

@@ -27,7 +27,7 @@ export default function GoToDocument() {
       .map((document) => ({
         id: `${document.folder}/${document.name}`,
         label: document.name,
-        detail: document.folder,
+        description: document.folder,
         icon: <Description />,
         group: !query && document.recent ? 'Recently opened' : 'Documents',
       }));
@@ -46,10 +46,10 @@ export default function GoToDocument() {
         }}
         aria-label="Go to document"
         placeholder="Search documents by name or folder"
-        query={query}
-        onQueryChange={setQuery}
+        inputValue={query}
+        onInputValueChange={setQuery}
         items={items}
-        onSelect={(item, { modifier }) =>
+        onAction={(item, { modifier }) =>
           setOpened(`${modifier ? 'Opened to the side' : 'Opened'}: ${item.id}`)
         }
         emptyLabel="No matching documents"

@@ -194,7 +194,7 @@ test('a server component imports envUI and renders it on the server', () => {
     Link: ['(defaults)', 'href="/destination"', 'href="/destination" disabled'],
     Card: ['layout="action"', 'as="button"', 'href="/destination"'],
     Badge: ['tone="danger"', 'variant="solid"'],
-    Alert: ['tone="error"', 'announce'],
+    Alert: ['tone="danger"', 'announce'],
     Text: ['variant="headline"', 'emphasis="muted"'],
   };
   for (const [name, expected] of Object.entries(variants))
