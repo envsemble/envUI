@@ -7,11 +7,22 @@ import {
   references,
   foundations as foundationReferences,
 } from '../../apps/catalogue/src/Reference';
+import { normalizeRoute } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
 
 const offline = pathToFileURL(resolve('dist/envUI.html')).href;
 const version = JSON.parse(readFileSync('packages/ui/package.json', 'utf8')).version;
 const components = references.map(({ id }) => id);
 const foundations = foundationReferences.map(({ id }) => id);
+
+test('the 0.x routes of renamed pages open the pages under their new names', () => {
+  const { docs } = JSON.parse(readFileSync('packages/codemods/src/maps/v1.json', 'utf8'));
+  for (const [from, to] of Object.entries<string>(docs).filter(([key]) => !key.startsWith('$'))) {
+    expect(components).toContain(to);
+    expect(components).not.toContain(from);
+    for (const view of ['preview', 'usage'])
+      expect(normalizeRoute(`components/${from}/${view}`)).toBe(`components/${to}/${view}`);
+  }
+});
 
 test('offline usage renders shared Markdown guidance and follows relative topic links', async ({
   page,
