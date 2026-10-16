@@ -113,7 +113,7 @@ const referenceIcons: Record<string, typeof Palette> = {
   'rich-text': Article,
   code: Code,
   chips: Label,
-  disclosures: Notes,
+  disclosure: Notes,
   'empty-state': Inbox,
   loading: HourglassEmpty,
   toasts: Notifications,

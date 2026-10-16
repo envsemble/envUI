@@ -8,7 +8,7 @@ import {
   Tabs,
   Stack,
   ActionGroup,
-  DisclosureNote,
+  Disclosure,
   Kbd,
   Pagination,
   SearchField,
@@ -145,9 +145,9 @@ export function NavigationPreview() {
         </div>
       </Example>
       <Example size="wide">
-        <DisclosureNote title="Interaction states">
+        <Disclosure title="Interaction states">
           <NavigationStates />
-        </DisclosureNote>
+        </Disclosure>
       </Example>
     </Preview>
   );

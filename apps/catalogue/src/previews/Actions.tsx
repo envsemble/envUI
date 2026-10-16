@@ -7,7 +7,7 @@ import {
   Checkbox,
   ConfirmButton,
   CopyButton,
-  DisclosureNote,
+  Disclosure,
   GroupedRows,
   IconButton,
   TextField,
@@ -308,9 +308,9 @@ export function ButtonsPreview() {
         </ButtonGroup>
       </Example>
       <Example size="wide">
-        <DisclosureNote title="Interaction states">
+        <Disclosure title="Interaction states">
           <ButtonStates />
-        </DisclosureNote>
+        </Disclosure>
       </Example>
     </Preview>
   );

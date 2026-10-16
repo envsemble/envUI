@@ -2,7 +2,7 @@ import { useState } from 'react';
 import {
   Text,
   InfoChip,
-  DisclosureNote,
+  Disclosure,
   ActionGroup,
   AnimatedNumber,
   IconButton,
@@ -30,7 +30,7 @@ export function ChipsPreview() {
   );
 }
 
-export function DisclosuresPreview() {
+export function DisclosurePreview() {
   const [guidanceExpanded, setGuidanceExpanded] = useState(false);
   return (
     <Preview>
@@ -38,7 +38,7 @@ export function DisclosuresPreview() {
         title="Optional guidance"
         caption="Keep required information and validation errors visible."
       >
-        <DisclosureNote
+        <Disclosure
           title="How visibility works"
           open={guidanceExpanded}
           onToggle={(e) => setGuidanceExpanded(e.currentTarget.open)}
@@ -47,7 +47,7 @@ export function DisclosuresPreview() {
             Team projects are available to every workspace member. Private projects are visible only
             to invited people.
           </Text>
-        </DisclosureNote>
+        </Disclosure>
       </Example>
     </Preview>
   );

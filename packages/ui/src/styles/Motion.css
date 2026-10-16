@@ -46,7 +46,7 @@
 .env-menu[data-instant='group'] {
   transition: none;
 }
-.env-disclosure-note[open] > .env-disclosure-content,
+.env-disclosure[open] > .env-disclosure-panel,
 .env-avatar-image {
   animation: env-motion-fade-in var(--motion-duration-slow) var(--motion-ease-enter);
 }
@@ -202,7 +202,7 @@
      settle in as they appear; the ones always there, such as a combobox's chevron, stay still. */
   .env-dropdown-trigger .env-symbol,
   .env-combobox-trigger .env-symbol,
-  .env-disclosure-note > summary::before {
+  .env-disclosure > summary::before {
     transition: transform var(--motion-duration-medium) var(--motion-ease);
   }
   .env-checkbox-control:is(:checked, :indeterminate) + .env-checkbox-mark,

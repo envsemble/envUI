@@ -1,4 +1,4 @@
-.env-disclosure-note {
+.env-disclosure {
   min-inline-size: 0;
   max-inline-size: 100%;
   overflow-wrap: anywhere;
@@ -9,7 +9,7 @@
   color: var(--color-disclosure-text);
   font: var(--type-body-small);
 }
-.env-disclosure-note > summary {
+.env-disclosure > summary {
   display: flex;
   align-items: baseline;
   gap: 0.5rem;
@@ -20,42 +20,42 @@
   width: fit-content;
   max-width: 100%;
 }
-.env-disclosure-note > summary::-webkit-details-marker {
+.env-disclosure > summary::-webkit-details-marker {
   display: none;
 }
-.env-disclosure-note > summary::before {
+.env-disclosure > summary::before {
   content: '›';
   flex: 0 0 0.5rem;
   text-align: center;
 }
-.env-disclosure-note[open] > summary::before {
+.env-disclosure[open] > summary::before {
   transform: rotate(90deg);
 }
-.env-disclosure-note > summary:focus-visible {
+.env-disclosure > summary:focus-visible {
   outline: 0.125rem solid var(--color-focus-ring);
   outline-offset: 0.25rem;
 }
-.env-disclosure-note > summary:hover {
+.env-disclosure > summary:hover {
   color: var(--color-quiet-label-hover);
 }
-.env-disclosure-note > summary:active {
+.env-disclosure > summary:active {
   color: var(--color-quiet-label-pressed);
 }
 @media (pointer: coarse) {
-  .env-disclosure-note > summary {
+  .env-disclosure > summary {
     min-block-size: var(--control-height-touch);
     align-items: center;
   }
 }
-.env-disclosure-content {
+.env-disclosure-panel {
   margin: var(--space-2) 0 0 var(--space-4);
   color: inherit;
   font: inherit;
 }
-.env-disclosure-content > :where(p:not(.env-text)) {
+.env-disclosure-panel > :where(p:not(.env-text)) {
   color: inherit;
   font: inherit;
 }
-.env-disclosure-content > :is(ul, ol) {
+.env-disclosure-panel > :is(ul, ol) {
   padding-inline-start: var(--space-5);
 }

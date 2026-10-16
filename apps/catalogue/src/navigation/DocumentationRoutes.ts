@@ -60,13 +60,14 @@ export function normalizeRoute(route: string): string {
   }
   const path = originalPath
     .replace(/^components\/text(?=\/|$)/, 'foundations/typography')
-    .replace(/^components\/notes(?=\/|$)/, 'components/disclosures')
+    .replace(/^components\/notes(?=\/|$)/, 'components/disclosure')
     .replace(/^components\/icon-buttons(?=\/|$)/, 'components/buttons')
     .replace(/^components\/markdown-editor(?=\/|$)/, 'components/markdown')
     .replace(/^components\/(input|textarea)(?=\/|$)/, 'components/text-field')
     .replace(/^components\/fields(?=\/|$)/, 'components/text-field')
     .replace(/^components\/date-time-field(?=\/|$)/, 'components/date-picker')
     .replace(/^components\/file-dropzone(?=\/|$)/, 'components/drop-zone')
+    .replace(/^components\/disclosures(?=\/|$)/, 'components/disclosure')
     .replace(/^foundations\/responsive(?=\/|$)/, 'foundations/spacing')
     .replace(/^foundations\/motion(?=\/|$)/, 'foundations/accessibility');
   const page = findReferencePage(path);

@@ -121,13 +121,13 @@ test('button link specimens and optional interaction matrices consume public con
     .click({ modifiers: ['Control'] });
   await expect(destination).toHaveText('Selected destination: Project guide');
   expect(await page.evaluate(() => location.hash)).toBe(hash);
-  const disclosure = preview.locator('details.env-disclosure-note');
+  const disclosure = preview.locator('details.env-disclosure');
   await disclosure.locator('summary').focus();
   await disclosure.locator('summary').press('Enter');
   await expect(disclosure).toHaveAttribute('open', '');
   await expect(disclosure.getByRole('region', { name: 'Button interaction states' })).toBeVisible();
   await page.goto(`${offline}#/components/navigation/preview`);
-  const navigationDisclosure = page.locator('.docs-preview details.env-disclosure-note');
+  const navigationDisclosure = page.locator('.docs-preview details.env-disclosure');
   await navigationDisclosure.locator('summary').click();
   await expect(
     navigationDisclosure.getByRole('region', { name: 'Navigation item interaction states' }),

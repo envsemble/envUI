@@ -28,5 +28,5 @@ TypeScript declarations provide the complete public API.
 
 - [Cards](../components/cards.md)
 - [Typography](../foundations/typography.md)
-- [Disclosure notes](../components/disclosures.md)
+- [Disclosures](../components/disclosure.md)
 - [Badges & counters](../components/badges.md)

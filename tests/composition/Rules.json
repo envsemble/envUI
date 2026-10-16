@@ -109,7 +109,6 @@
           "content/internal/useCodeHighlighting.ts"
         ]
       },
-      "DisclosureNote": { "classes": ["env-disclosure-content"] },
       "GroupedRows": { "classes": ["env-row", "env-contrast-row-pane"] },
       "Dialog": { "classes": ["env-modal-pane"] },
       "EmptyState": { "classes": ["env-empty-copy"], "styles": ["FeedbackStates.css"] },

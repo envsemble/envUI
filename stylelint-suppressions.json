@@ -123,7 +123,7 @@
       "count": 5
     }
   },
-  "packages/ui/src/styles/DisclosureNote.css": {
+  "packages/ui/src/styles/Disclosure.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 4
     }

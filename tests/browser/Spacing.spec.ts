@@ -17,7 +17,7 @@ const components = [
   'rows',
   'cards',
   'chips',
-  'disclosures',
+  'disclosure',
   'empty-state',
   'loading',
   'toasts',
@@ -73,7 +73,7 @@ test('public composition owns spacing and content-fit sizing without documentati
       expect(extraContent.y - description.y - description.height).toBeGreaterThanOrEqual(15);
       for (const [selector, step] of [
         ['.env-feature-card-extra', 1],
-        ['.env-disclosure-content', 0.5],
+        ['.env-disclosure-panel', 0.5],
       ] as const) {
         const result = await extra.locator(selector).evaluate((element) => {
           const root = parseFloat(getComputedStyle(document.documentElement).fontSize);

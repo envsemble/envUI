@@ -71,7 +71,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Animated numbers](components/animated-number.md) — Counts that roll to their new value, so a change is noticed.
 - [Rating](components/rating.md) — A read-only rating as stars filled in half steps, named once for assistive technology.
 - [Relative time](components/relative-time.md) — A moment as text relative to now, such as 3 hours ago, kept current, with the date and time in a tooltip.
-- [Disclosure notes](components/disclosures.md) — Keep optional details collapsed until needed.
+- [Disclosures](components/disclosure.md) — Keep optional details collapsed until needed.
 - [Avatars](components/avatar.md) — A picture of a person or organization with a default picture or initials as fallback, the avatar button and overlapping avatar groups.
 - [Messages](components/messages.md) — Conversation entries in a log: compact bubbles for your own messages, full-width content from others.
 - [Stats](components/stats.md) — Labelled key figures for dashboards, with a trend and detail, grouped in even columns.

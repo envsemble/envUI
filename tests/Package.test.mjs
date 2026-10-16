@@ -233,7 +233,7 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'GroupedRows',
     'Row',
     'InfoChip',
-    'DisclosureNote',
+    'Disclosure',
     'EmptyState',
     'Skeleton',
     'LoadingState',

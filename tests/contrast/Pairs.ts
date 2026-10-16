@@ -130,9 +130,9 @@ export const pairs: readonly ContrastPair[] = [
   ...text('--color-link', [popup, dialog, '--color-action-strip']),
   ...text('--color-link-hover', [canvas, pane, rowSurface]),
   ...text('--color-link-pressed', [canvas, pane, rowSurface]),
-  ...text('--color-disclosure-text', [canvas, pane], 'DisclosureNote'),
-  ...text('--color-quiet-label-hover', [canvas, pane], 'DisclosureNote summary on hover'),
-  ...text('--color-quiet-label-pressed', [canvas, pane], 'DisclosureNote summary on press'),
+  ...text('--color-disclosure-text', [canvas, pane], 'Disclosure'),
+  ...text('--color-quiet-label-hover', [canvas, pane], 'Disclosure summary on hover'),
+  ...text('--color-quiet-label-pressed', [canvas, pane], 'Disclosure summary on press'),
 
   // Actions: labels on their fills, at rest, hovered and pressed.
   ...text('--color-on-primary-action', [

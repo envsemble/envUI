@@ -19,7 +19,7 @@ import { SurfacePreview, LayoutPreview, RowsPreview, CardsPreview } from './Layo
 import {
   AnimatedNumberPreview,
   ChipsPreview,
-  DisclosuresPreview,
+  DisclosurePreview,
   RatingPreview,
   RelativeTimePreview,
 } from './Content';
@@ -134,8 +134,8 @@ export function ComponentPreview({ id }: { id: string }) {
           <RichTextPreview />
         </Suspense>
       );
-    case 'disclosures':
-      return <DisclosuresPreview />;
+    case 'disclosure':
+      return <DisclosurePreview />;
     case 'empty-state':
       return <EmptyStatePreview />;
     case 'loading':

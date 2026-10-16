@@ -18,7 +18,7 @@ export * from './content/ClickableCard.js';
 export * from './content/ActionCard.js';
 export * from './content/FeatureCard.js';
 export * from './content/GroupedRows.js';
-export * from './content/DisclosureNote.js';
+export * from './content/Disclosure.js';
 export * from './content/InfoChip.js';
 export * from './content/Badge.js';
 export * from './content/Table.js';
