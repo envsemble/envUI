@@ -1,4 +1,4 @@
-import type { ComponentPropsWithRef, MouseEvent, ReactNode } from 'react';
+import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { ActionElement, type ActionElementProps } from '../internal/ActionElement.js';
@@ -78,13 +78,7 @@ export function Button({
   return (
     <ActionElement
       {...props}
-      {...(pending && {
-        'aria-busy': true,
-        'aria-disabled': true,
-        'data-pending': '',
-        // Pending blocks activation, including form submission and navigation.
-        onClick: (event: MouseEvent<HTMLElement>) => event.preventDefault(),
-      })}
+      pending={pending}
       className={classNames(
         'env-button',
         `env-button-${variant}`,
