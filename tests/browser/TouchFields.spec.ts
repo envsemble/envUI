@@ -16,6 +16,8 @@ async function openOnTouchScreen(browser: Browser, path: string) {
 test('entered text is 16 px on touch screens, so focusing a field does not zoom the page', async ({
   browser,
 }) => {
+  // Four touch contexts take Firefox and WebKit longer than the default timeout.
+  test.slow();
   const forms = await openOnTouchScreen(browser, '/?fixture=forms');
   const input = forms.getByRole('textbox', { name: 'Project name', exact: true });
   await expect(input).toHaveCSS('font-size', '16px');

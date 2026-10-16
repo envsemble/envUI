@@ -573,7 +573,14 @@ async function openOnTouchScreen(browser: Browser) {
   return page;
 }
 
-test('touch screens give fields, chips and options the touch height', async ({ browser }) => {
+test('touch screens give fields, chips and options the touch height', async ({
+  browser,
+  browserName,
+}) => {
+  test.skip(
+    browserName !== 'chromium',
+    "Firefox's and WebKit's emulated taps don't open the list or choose the option they aim at.",
+  );
   const page = await openOnTouchScreen(browser);
   const owner = field(page, 'Compact owner light');
   expect((await wellOf(owner).boundingBox())!.height).toBeCloseTo(44, 0);
