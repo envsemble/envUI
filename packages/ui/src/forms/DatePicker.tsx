@@ -40,7 +40,7 @@ import { subscribeFormReset } from './internal/subscribeFormReset.js';
 import { useFieldMetadata } from './internal/useFieldMetadata.js';
 import { useTextDirection } from './internal/useTextDirection.js';
 
-export interface DateTimeFieldProps
+export interface DatePickerProps
   extends Omit<
       ButtonHTMLAttributes<HTMLButtonElement>,
       'value' | 'defaultValue' | 'onChange' | 'children' | 'name' | 'type'
@@ -143,7 +143,7 @@ function ignoreChange() {
  * A field for a date, or a date and time, that shows the value in the reader's locale and opens a
  * calendar to choose it, with keyboard access following the WAI-ARIA date picker.
  */
-export function DateTimeField({
+export function DatePicker({
   ref,
   value,
   defaultValue = null,
@@ -185,7 +185,7 @@ export function DateTimeField({
   'aria-labelledby': labelledBy,
   onKeyDown,
   ...triggerProps
-}: DateTimeFieldProps) {
+}: DatePickerProps) {
   const metadata = useFieldMetadata(suppliedId, hint, error, describedBy, invalid);
   const { id } = metadata;
   const labelId = `${id}-label`;
@@ -332,7 +332,7 @@ export function DateTimeField({
     return (
       <div
         {...wellProps}
-        className={classNames(wellProps.className, 'env-date-time-well')}
+        className={classNames(wellProps.className, 'env-date-picker-well')}
         data-label-floating={labelFloats || undefined}
         data-actions={showClear ? '2' : '1'}
       />
@@ -370,7 +370,7 @@ export function DateTimeField({
           floatingLabel
           compact={compact}
           showLabel={showLabel}
-          className="env-date-time-field"
+          className="env-date-picker"
           renderWell={renderWell}
         >
           <BasePopover.Trigger
@@ -387,21 +387,21 @@ export function DateTimeField({
             aria-required={required || undefined}
             aria-readonly={readOnly || undefined}
             disabled={disabled}
-            className={classNames('env-text-input', 'env-date-time-trigger', className)}
+            className={classNames('env-text-input', 'env-date-picker-trigger', className)}
             onKeyDown={handleKeyDown}
           >
             {display ? (
               // As in RelativeTime: should the browser format the hydrated value differently from
               // the server, the server's text stays until hydration ends, then the browser's
               // replaces it, without a mismatch error.
-              <span className="env-date-time-value" suppressHydrationWarning>
+              <span className="env-date-picker-value" suppressHydrationWarning>
                 {hydrated ? display : [display]}
               </span>
             ) : (
-              <span className="env-date-time-placeholder">{placeholder}</span>
+              <span className="env-date-picker-placeholder">{placeholder}</span>
             )}
           </BasePopover.Trigger>
-          <span className="env-text-field-end env-date-time-end">
+          <span className="env-text-field-end env-date-picker-end">
             {showClear && (
               <IconButton
                 variant="text"
@@ -414,13 +414,13 @@ export function DateTimeField({
                 }}
               />
             )}
-            <span className="env-symbol env-date-time-icon" aria-hidden="true">
+            <span className="env-symbol env-date-picker-icon" aria-hidden="true">
               {withTime ? <CalendarClock /> : <CalendarMonth />}
             </span>
           </span>
           <input
             ref={nativeRef}
-            className="env-date-time-native"
+            className="env-date-picker-native"
             name={name}
             form={form}
             value={serialized}
@@ -448,7 +448,7 @@ export function DateTimeField({
             >
               <BasePopover.Popup
                 ref={popupRef}
-                className="env-popover env-date-time-popup"
+                className="env-popover env-date-picker-popup"
                 data-density={compact ? 'compact' : undefined}
                 // The portal leaves the field's text direction behind; the calendar keeps it.
                 dir={direction}
@@ -479,7 +479,7 @@ export function DateTimeField({
                     onBlur={() => setTimeDraft(null)}
                   />
                 )}
-                <div className="env-date-time-actions">
+                <div className="env-date-picker-actions">
                   <Button
                     variant="text"
                     aria-disabled={!nowAvailable || undefined}
@@ -489,7 +489,7 @@ export function DateTimeField({
                   >
                     {withTime ? nowLabel : todayLabel}
                   </Button>
-                  <span className="env-date-time-actions-end">
+                  <span className="env-date-picker-actions-end">
                     {clearable && serialized && (
                       <Button variant="text" onClick={clear}>
                         {clearLabel}

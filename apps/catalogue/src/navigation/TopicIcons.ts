@@ -96,7 +96,7 @@ const referenceIcons: Record<string, typeof Palette> = {
   radio: RadioButtonChecked,
   select: ArrowDropDownCircle,
   combobox: ManageSearch,
-  'date-time-field': CalendarMonth,
+  'date-picker': CalendarMonth,
   slider: Tune,
   'file-dropzone': CloudUpload,
   'color-picker': Palette,

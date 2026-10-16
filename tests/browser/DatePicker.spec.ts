@@ -1,7 +1,7 @@
 import { test, expect, type Browser, type Locator, type Page } from '@playwright/test';
 import { fixtureUrl } from './Servers';
 
-const dateFixture = `${fixtureUrl}/?fixture=date-time`;
+const dateFixture = `${fixtureUrl}/?fixture=date-picker`;
 /** Today is fixed, so the calendar marks the same day in every run. */
 const today = new Date('2026-10-14T10:00:00');
 
@@ -20,7 +20,7 @@ const focusedDate = (page: Page) =>
 const wellOf = (trigger: Locator) =>
   trigger.locator('xpath=ancestor::*[contains(@class, "env-text-field-well")][1]');
 /** The open calendar popup; a closing one can still fade out. */
-const openPopup = (page: Page) => page.locator('.env-date-time-popup[data-open]');
+const openPopup = (page: Page) => page.locator('.env-date-picker-popup[data-open]');
 
 /** The WCAG contrast ratio of two opaque rgb() colors. */
 function contrast(first: string, second: string) {
@@ -140,7 +140,7 @@ test('month buttons, a pressed day, Today and the clear button change the value'
   page,
 }) => {
   const due = field(page, 'Due light');
-  const output = page.getByTestId('date-time-due-light');
+  const output = page.getByTestId('date-picker-due-light');
   await expect(due).toHaveText('Oct 20, 2026');
   await due.click();
   const dialog = page.getByRole('dialog', { name: 'Due light' });
@@ -257,7 +257,7 @@ test('native forms submit the values, require a value and reset to the defaults'
   page,
 }) => {
   const submit = page.getByRole('button', { name: 'Submit dates light', exact: true });
-  const submitted = page.getByTestId('date-time-submitted-light');
+  const submitted = page.getByTestId('date-picker-submitted-light');
   const review = field(page, 'Review by light');
   await expect(review).toHaveAttribute('aria-required', 'true');
   await submit.click();
@@ -293,7 +293,7 @@ test('native forms submit the values, require a value and reset to the defaults'
   await expect(publish).toHaveText('20 Oct 2026');
   await expect(review).toHaveText('Choose a day');
   await expect(
-    page.getByTestId('date-time-form-light').locator('input[name="review"]'),
+    page.getByTestId('date-picker-form-light').locator('input[name="review"]'),
   ).toHaveValue('');
 });
 
@@ -354,7 +354,7 @@ test('the calendar is the Popover surface with its day colors in both themes, an
     await page.keyboard.press('Escape');
     await expect(openPopup(page)).toHaveCount(0);
 
-    const toolbar = page.getByTestId(`date-time-compact-${theme}`);
+    const toolbar = page.getByTestId(`date-picker-compact-${theme}`);
     const [fieldBox, buttonBox] = await Promise.all([
       wellOf(field(page, `Compact start ${theme}`)).boundingBox(),
       toolbar.getByRole('button', { name: `Compact neighbour ${theme}` }).boundingBox(),
@@ -568,7 +568,7 @@ test('a key that does not move the day leaves focus where people take it next', 
 
 test('days before 1970 keep their date and time', async ({ page }) => {
   const launch = field(page, 'Launch light');
-  const output = page.getByTestId('date-time-launch-light');
+  const output = page.getByTestId('date-picker-launch-light');
   await expect(launch).toHaveText('20 Dec 1969, 09:30');
   await launch.click();
   const dialog = page.getByRole('dialog', { name: 'Launch light' });
@@ -627,7 +627,7 @@ test('a field named by other text, and one without a label that shows its placeh
 
   // Without a label to rest in the field, its placeholder shows.
   const ends = field(page, 'Ends light');
-  const placeholder = ends.locator('.env-date-time-placeholder');
+  const placeholder = ends.locator('.env-date-picker-placeholder');
   await expect(placeholder).toHaveText('Pick an end');
   expect(
     await placeholder.evaluate((element) => {
@@ -668,7 +668,7 @@ test('pressing the label of an open field closes its calendar, as pressing the f
   await expect(openPopup(page)).toBeVisible();
   await wellOf(publish).locator('label').click();
   await expect(openPopup(page)).toHaveCount(0);
-  await expect(page.locator('.env-date-time-popup')).toHaveCount(0);
+  await expect(page.locator('.env-date-picker-popup')).toHaveCount(0);
   await expect(publish).toBeFocused();
   // Closed, the label opens it.
   await wellOf(publish).locator('label').click();

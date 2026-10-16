@@ -43,7 +43,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Radio groups](components/radio.md) — Choose one option from a visible set.
 - [Selects](components/select.md) — Choose one option while keeping alternatives collapsed.
 - [Comboboxes](components/combobox.md) — Choose one option or several from a list that filters as people type.
-- [Date & time fields](components/date-time-field.md) — Choose a date, or a date and time, from a calendar, which also stands on its own.
+- [Date pickers](components/date-picker.md) — Choose a date, or a date and time, from a calendar, which also stands on its own.
 - [Sliders](components/slider.md) — Choose a value in a range by dragging a thumb or with the keyboard.
 - [File drop zones](components/file-dropzone.md) — Drop files or choose them in the file picker; the application shows what was chosen.
 

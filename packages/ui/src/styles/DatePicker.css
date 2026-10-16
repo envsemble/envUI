@@ -1,31 +1,31 @@
 /* Date & time field: the shared text field, whose control is a button that shows the value and opens
    a calendar on the Popover surface. Beside other controls it stays wide enough for a date, like an
    input's default width, and in a narrower container it fills it. */
-.env-date-time-field {
+.env-date-picker {
   min-inline-size: min(12rem, 100%);
 }
-.env-date-time-field[data-compact] {
+.env-date-picker[data-compact] {
   --control-height: var(--control-height-compact);
   min-inline-size: min(8rem, 100%);
 }
-.env-date-time-field .env-date-time-well {
-  --env-date-time-action: var(--control-height-compact);
-  --env-date-time-actions: 1;
-  --env-date-time-end: var(--space-2);
+.env-date-picker .env-date-picker-well {
+  --env-date-picker-action: var(--control-height-compact);
+  --env-date-picker-actions: 1;
+  --env-date-picker-end: var(--space-2);
 }
-.env-date-time-field .env-date-time-well[data-actions='2'] {
-  --env-date-time-actions: 2;
+.env-date-picker .env-date-picker-well[data-actions='2'] {
+  --env-date-picker-actions: 2;
 }
-.env-date-time-field[data-compact] .env-date-time-well {
-  --env-date-time-action: calc(var(--control-height) - var(--space-2));
-  --env-date-time-end: var(--space-1);
+.env-date-picker[data-compact] .env-date-picker-well {
+  --env-date-picker-action: calc(var(--control-height) - var(--space-2));
+  --env-date-picker-end: var(--space-1);
 }
-.env-date-time-field .env-date-time-well > .env-text-input.env-date-time-trigger {
+.env-date-picker .env-date-picker-well > .env-text-input.env-date-picker-trigger {
   display: flex;
   align-items: center;
   padding-inline-end: calc(
     (
-        var(--env-date-time-end) + var(--env-date-time-actions) * var(--env-date-time-action) +
+        var(--env-date-picker-end) + var(--env-date-picker-actions) * var(--env-date-picker-action) +
           var(--space-1)
       ) *
       var(--scale, 1)
@@ -33,52 +33,52 @@
   text-align: start;
   cursor: pointer;
 }
-.env-date-time-field .env-date-time-well > .env-date-time-trigger:disabled {
+.env-date-picker .env-date-picker-well > .env-date-picker-trigger:disabled {
   cursor: default;
 }
-.env-date-time-value,
-.env-date-time-placeholder {
+.env-date-picker-value,
+.env-date-picker-placeholder {
   min-inline-size: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.env-date-time-placeholder {
+.env-date-picker-placeholder {
   color: var(--color-field-placeholder);
 }
 /* Like an input's placeholder, it waits while the label rests inside the empty field. A field
    without a label, named by aria-label, shows it. */
 .env-text-field:not([data-label-hidden])
-  .env-date-time-well:has(> label):not([data-label-floating], :focus-within)
-  .env-date-time-placeholder {
+  .env-date-picker-well:has(> label):not([data-label-floating], :focus-within)
+  .env-date-picker-placeholder {
   color: transparent;
 }
 /* The icon shows what the field opens; presses on it reach the field. The clear button, a quiet icon
    button like the other fields' actions, stays pressable. */
-.env-date-time-end {
+.env-date-picker-end {
   pointer-events: none;
 }
-.env-date-time-end > .env-button {
+.env-date-picker-end > .env-button {
   pointer-events: auto;
 }
-.env-date-time-field:not([data-compact]) .env-text-field-end .env-icon-button {
+.env-date-picker:not([data-compact]) .env-text-field-end .env-icon-button {
   --icon-button-size: var(--control-height-compact);
 }
-.env-date-time-end > .env-symbol.env-date-time-icon {
+.env-date-picker-end > .env-symbol.env-date-picker-icon {
   display: grid;
   place-items: center;
-  inline-size: calc(var(--env-date-time-action) * var(--scale, 1));
-  block-size: calc(var(--env-date-time-action) * var(--scale, 1));
+  inline-size: calc(var(--env-date-picker-action) * var(--scale, 1));
+  block-size: calc(var(--env-date-picker-action) * var(--scale, 1));
 }
-.env-date-time-end > .env-date-time-icon > svg {
+.env-date-picker-end > .env-date-picker-icon > svg {
   inline-size: calc(var(--control-icon-size) * var(--scale, 1));
   block-size: calc(var(--control-icon-size) * var(--scale, 1));
 }
-.env-text-field-well:focus-within .env-date-time-icon {
+.env-text-field-well:focus-within .env-date-picker-icon {
   color: var(--color-field-active);
 }
 /* Carries the value for native forms; an invalid required field's message points at the field. */
-.env-date-time-native {
+.env-date-picker-native {
   position: absolute;
   inset-block-end: 0;
   inset-inline-start: 50%;
@@ -95,7 +95,7 @@
 
 /* The calendar popup: the Popover surface, as wide as the calendar, with compact controls that grow
    for touch. */
-.env-popover.env-date-time-popup {
+.env-popover.env-date-picker-popup {
   --control-height-small: var(--control-height-compact);
   --control-height: var(--control-height-compact);
   inline-size: auto;
@@ -103,24 +103,24 @@
   padding: var(--space-4);
   gap: var(--space-3);
 }
-.env-popover.env-date-time-popup[data-density='compact'] {
+.env-popover.env-date-picker-popup[data-density='compact'] {
   padding: var(--space-3);
 }
-.env-date-time-popup[data-density='compact'] .env-calendar {
+.env-date-picker-popup[data-density='compact'] .env-calendar {
   --env-calendar-day: 2.25rem;
 }
 @media (pointer: coarse) {
-  .env-date-time-popup[data-density='compact'] .env-calendar {
+  .env-date-picker-popup[data-density='compact'] .env-calendar {
     --env-calendar-day: var(--control-height-touch);
   }
 }
-.env-date-time-actions {
+.env-date-picker-actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-2);
 }
-.env-date-time-actions-end {
+.env-date-picker-actions-end {
   display: flex;
   flex-wrap: wrap;
   align-items: center;

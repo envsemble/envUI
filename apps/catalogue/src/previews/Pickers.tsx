@@ -5,7 +5,7 @@ import {
   Button,
   Calendar,
   Combobox,
-  DateTimeField,
+  DatePicker,
   Kbd,
   Stack,
   Surface,
@@ -216,7 +216,7 @@ export function ComboboxPreview() {
   );
 }
 
-export function DateTimeFieldPreview() {
+export function DatePickerPreview() {
   const [publishOn, setPublishOn] = useState<string | null>('2026-10-20');
   const [meeting, setMeeting] = useState<string | null>('2026-10-21T09:30');
   const [day, setDay] = useState<string | null>(null);
@@ -235,7 +235,7 @@ export function DateTimeFieldPreview() {
       >
         <SpecimenGrid>
           <Specimen title="Date">
-            <DateTimeField
+            <DatePicker
               label="Publish on"
               value={publishOn}
               onValueChange={setPublishOn}
@@ -244,7 +244,7 @@ export function DateTimeFieldPreview() {
             />
           </Specimen>
           <Specimen title="Date and time">
-            <DateTimeField
+            <DatePicker
               label="Meeting"
               withTime
               defaultTime="09:00"
@@ -271,18 +271,12 @@ export function DateTimeFieldPreview() {
               aria-label="Schedule toolbar"
               render={<ActionGroup />}
             >
-              <DateTimeField
-                density="compact"
-                aria-label="Due"
-                placeholder="Due"
-                withTime
-                clearable
-              />
+              <DatePicker density="compact" aria-label="Due" placeholder="Due" withTime clearable />
               <Button variant="outlined">Schedule</Button>
             </Surface>
           </Specimen>
           <Specimen title="Within a range">
-            <DateTimeField
+            <DatePicker
               label="Review by"
               min="2026-10-01"
               max="2026-12-31"
@@ -294,13 +288,13 @@ export function DateTimeFieldPreview() {
       <Example title="Validation & availability" size="collection">
         <SpecimenGrid>
           <Specimen title="Invalid">
-            <DateTimeField label="Ends" required error="Choose a day after the start." />
+            <DatePicker label="Ends" required error="Choose a day after the start." />
           </Specimen>
           <Specimen title="Read only">
-            <DateTimeField label="Created" defaultValue="2026-09-30T16:45" withTime readOnly />
+            <DatePicker label="Created" defaultValue="2026-09-30T16:45" withTime readOnly />
           </Specimen>
           <Specimen title="Disabled">
-            <DateTimeField label="Archived on" defaultValue="2026-08-14" disabled />
+            <DatePicker label="Archived on" defaultValue="2026-08-14" disabled />
           </Specimen>
         </SpecimenGrid>
       </Example>

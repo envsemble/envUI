@@ -14,7 +14,7 @@ import {
   DirectionLinksPreview,
   PaginationPreview,
 } from './Navigation';
-import { ComboboxPreview, DateTimeFieldPreview } from './Pickers';
+import { ComboboxPreview, DatePickerPreview } from './Pickers';
 import { SurfacePreview, LayoutPreview, RowsPreview, CardsPreview } from './Layout';
 import {
   AnimatedNumberPreview,
@@ -76,8 +76,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <SelectPreview />;
     case 'combobox':
       return <ComboboxPreview />;
-    case 'date-time-field':
-      return <DateTimeFieldPreview />;
+    case 'date-picker':
+      return <DatePickerPreview />;
     case 'slider':
       return <SliderPreview />;
     case 'file-dropzone':

@@ -55,7 +55,7 @@ import { AvatarGroupsFixture } from './AvatarGroups.js';
 import { RelativeTimesFixture } from './RelativeTimes.js';
 import { CopyButtonsFixture } from './CopyButtons.js';
 import { PaginationsFixture } from './Paginations.js';
-import { DateTimeFieldFixture } from './DateTimeFields.js';
+import { DatePickerFixture } from './DatePickers.js';
 import { QuietButtonsFixture } from './QuietButtons.js';
 import { EmptyStatesFixture } from './EmptyStates.js';
 import { RatingsFixture } from './Ratings.js';
@@ -294,10 +294,10 @@ export default function App() {
               <PaginationsFixture theme="dark" />
             </>
           )}
-          {includes('date-time') && (
+          {includes('date-picker') && (
             <>
-              <DateTimeFieldFixture theme="light" />
-              <DateTimeFieldFixture theme="dark" />
+              <DatePickerFixture theme="light" />
+              <DatePickerFixture theme="dark" />
             </>
           )}
           {includes('quiet-buttons') && (

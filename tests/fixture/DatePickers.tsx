@@ -2,23 +2,23 @@ import { useState } from 'react';
 import {
   Button,
   Calendar,
-  DateTimeField,
+  DatePicker,
   Dialog,
   Surface,
   Theme,
   type ThemeValue,
 } from '@envsemble/envui';
 
-export function DateTimeFieldFixture({ theme }: { theme: ThemeValue }) {
+export function DatePickerFixture({ theme }: { theme: ThemeValue }) {
   const [submitted, setSubmitted] = useState('');
   const [due, setDue] = useState<string | null>('2026-10-20');
   const [changes, setChanges] = useState<(string | null)[]>([]);
   const [day, setDay] = useState<string | null>('2026-10-14');
   const [launch, setLaunch] = useState<string | null>('1969-12-20T09:30');
   return (
-    <Theme theme={theme} data-testid={`date-time-${theme}`} className="fixture-section">
+    <Theme theme={theme} data-testid={`date-picker-${theme}`} className="fixture-section">
       <form
-        data-testid={`date-time-form-${theme}`}
+        data-testid={`date-picker-form-${theme}`}
         onSubmit={(event) => {
           event.preventDefault();
           const data = new FormData(event.currentTarget);
@@ -32,7 +32,7 @@ export function DateTimeFieldFixture({ theme }: { theme: ThemeValue }) {
           );
         }}
       >
-        <DateTimeField
+        <DatePicker
           label={`Publish on ${theme}`}
           name="publish"
           defaultValue="2026-10-20"
@@ -40,7 +40,7 @@ export function DateTimeFieldFixture({ theme }: { theme: ThemeValue }) {
           hint="The day the report goes out."
           clearable
         />
-        <DateTimeField
+        <DatePicker
           label={`Meeting ${theme}`}
           name="meeting"
           withTime
@@ -49,7 +49,7 @@ export function DateTimeFieldFixture({ theme }: { theme: ThemeValue }) {
           defaultTime="09:00"
           clearable
         />
-        <DateTimeField
+        <DatePicker
           label={`Review by ${theme}`}
           name="review"
           locale="en-GB"
@@ -59,7 +59,7 @@ export function DateTimeFieldFixture({ theme }: { theme: ThemeValue }) {
           max="2026-11-15"
         />
         {/* Read-only, so its emptiness never keeps the form from submitting. */}
-        <DateTimeField
+        <DatePicker
           label={`Approved on ${theme}`}
           name="approved"
           locale="en-GB"
@@ -73,8 +73,8 @@ export function DateTimeFieldFixture({ theme }: { theme: ThemeValue }) {
           </Button>
         </div>
       </form>
-      <output data-testid={`date-time-submitted-${theme}`}>{submitted}</output>
-      <DateTimeField
+      <output data-testid={`date-picker-submitted-${theme}`}>{submitted}</output>
+      <DatePicker
         label={`Due ${theme}`}
         locale="en-US"
         weekStart={0}
@@ -85,14 +85,14 @@ export function DateTimeFieldFixture({ theme }: { theme: ThemeValue }) {
         }}
         clearable
       />
-      <output data-testid={`date-time-due-${theme}`}>{JSON.stringify({ due, changes })}</output>
+      <output data-testid={`date-picker-due-${theme}`}>{JSON.stringify({ due, changes })}</output>
       <Surface
         padding={2}
         density="compact"
         className="fixture-actions"
-        data-testid={`date-time-compact-${theme}`}
+        data-testid={`date-picker-compact-${theme}`}
       >
-        <DateTimeField
+        <DatePicker
           density="compact"
           aria-label={`Compact start ${theme}`}
           placeholder="Start"
@@ -104,38 +104,38 @@ export function DateTimeFieldFixture({ theme }: { theme: ThemeValue }) {
         <Button variant="secondary">Compact neighbour {theme}</Button>
       </Surface>
       <div className="fixture-actions">
-        <DateTimeField
+        <DatePicker
           label={`Disabled date ${theme}`}
           locale="en-GB"
           defaultValue="2026-10-20"
           disabled
         />
-        <DateTimeField
+        <DatePicker
           label={`Read only date ${theme}`}
           locale="en-GB"
           defaultValue="2026-10-20"
           readOnly
         />
-        <DateTimeField label={`Invalid date ${theme}`} locale="en-GB" error="Choose a later day." />
+        <DatePicker label={`Invalid date ${theme}`} locale="en-GB" error="Choose a later day." />
       </div>
       <div className="fixture-actions">
         {/* Days before 1970 count back from it. */}
-        <DateTimeField
+        <DatePicker
           label={`Launch ${theme}`}
           locale="en-GB"
           withTime
           value={launch}
           onValueChange={setLaunch}
         />
-        <output data-testid={`date-time-launch-${theme}`}>{launch}</output>
+        <output data-testid={`date-picker-launch-${theme}`}>{launch}</output>
         {/* Named by the application's own text instead of a label. */}
-        <span id={`date-time-starts-${theme}`}>Starts on {theme}</span>
-        <DateTimeField aria-labelledby={`date-time-starts-${theme}`} locale="en-GB" />
+        <span id={`date-picker-starts-${theme}`}>Starts on {theme}</span>
+        <DatePicker aria-labelledby={`date-picker-starts-${theme}`} locale="en-GB" />
         {/* Without a label, a standard field shows its placeholder. */}
-        <DateTimeField aria-label={`Ends ${theme}`} placeholder="Pick an end" locale="en-GB" />
+        <DatePicker aria-label={`Ends ${theme}`} placeholder="Pick an end" locale="en-GB" />
       </div>
       <div dir="rtl" className="fixture-actions">
-        <DateTimeField label={`Arabic date ${theme}`} locale="ar-EG" defaultValue="2026-10-14" />
+        <DatePicker label={`Arabic date ${theme}`} locale="ar-EG" defaultValue="2026-10-14" />
       </div>
       <div className="fixture-actions">
         <Calendar
@@ -167,7 +167,7 @@ export function DateTimeFieldFixture({ theme }: { theme: ThemeValue }) {
         title={`Schedule ${theme}`}
         trigger={<Button variant="secondary">Schedule {theme}</Button>}
       >
-        <DateTimeField
+        <DatePicker
           label={`Remind me ${theme}`}
           locale="en-GB"
           withTime

@@ -40,7 +40,7 @@
       "feedback/CommandPalette.tsx": "composites",
       "forms/ColorPicker.tsx": "composites",
       "forms/Composer.tsx": "composites",
-      "forms/DateTimeField.tsx": "composites",
+      "forms/DatePicker.tsx": "composites",
       "forms/MarkdownEditor.tsx": "composites",
       "forms/SearchField.tsx": "composites",
       "navigation/DocumentTabs.tsx": "composites",
@@ -162,7 +162,6 @@
         "slots": ["env-text-input", "env-text-field-start", "env-text-field-end"]
       },
       "Select": { "classes": ["env-dropdown"] },
-      "DateTimeField": { "classes": ["env-date-time"] },
       "MarkdownEditor": {
         "modules": [
           "forms/internal/markdown/MarkdownFormatting.ts",

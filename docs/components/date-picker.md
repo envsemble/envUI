@@ -1,11 +1,11 @@
-# Date & time fields
+# Date pickers
 
-## DateTimeField
+## DatePicker
 
 ```tsx
-import { DateTimeField } from '@envsemble/envui';
+import { DatePicker } from '@envsemble/envui';
 
-<DateTimeField
+<DatePicker
   label="Publish on"
   name="publish"
   value={publishOn}
@@ -13,7 +13,7 @@ import { DateTimeField } from '@envsemble/envui';
   clearable
 />
 
-<DateTimeField
+<DatePicker
   label="Meeting"
   name="meeting"
   withTime
@@ -23,7 +23,7 @@ import { DateTimeField } from '@envsemble/envui';
   onValueChange={setMeeting}
 />
 
-<DateTimeField density="compact" aria-label="Due" placeholder="Due" withTime clearable />;
+<DatePicker density="compact" aria-label="Due" placeholder="Due" withTime clearable />;
 ```
 
 ### Props & contracts

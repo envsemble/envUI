@@ -42,7 +42,7 @@ import {
   AvatarGroup,
   CopyButton,
   Pagination,
-  DateTimeField,
+  DatePicker,
   Calendar,
 } from '@envsemble/envui';
 
@@ -131,7 +131,7 @@ export function HydrationApp() {
           ]}
           defaultValue={['one']}
         />
-        <DateTimeField
+        <DatePicker
           label="Hydrated date"
           name="date"
           defaultValue="2026-03-09"
@@ -146,7 +146,7 @@ export function HydrationApp() {
         />
         {/* Without a locale, the server and the browser each have their own language, time zone
             and today, as they can in production. */}
-        <DateTimeField label="Hydrated local date" defaultValue="2026-03-17" />
+        <DatePicker label="Hydrated local date" defaultValue="2026-03-17" />
         <Calendar aria-label="Hydrated local calendar" defaultValue="2026-03-17" />
         <Calendar aria-label="Hydrated today" />
         {/* The server renders in March 2026, at its first month; the browser in a later one. */}

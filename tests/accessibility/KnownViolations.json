@@ -245,7 +245,7 @@
       }
     }
   },
-  "components/date-time-field/usage": {
+  "components/date-picker/usage": {
     "dark": {
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
