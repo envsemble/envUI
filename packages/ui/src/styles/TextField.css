@@ -333,10 +333,14 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
   height: var(--env-control-icon-size);
 }
 .env-text-field-well[data-start-icon] > .env-text-input {
-  padding-inline-start: calc((var(--env-space-4) + var(--env-control-icon-size) + var(--env-space-3)));
+  padding-inline-start: calc(
+    (var(--env-space-4) + var(--env-control-icon-size) + var(--env-space-3))
+  );
 }
 .env-text-field-well[data-start-icon] > label {
-  inset-inline-start: calc((var(--env-space-4) + var(--env-control-icon-size) + var(--env-space-3)));
+  inset-inline-start: calc(
+    (var(--env-space-4) + var(--env-control-icon-size) + var(--env-space-3))
+  );
 }
 .env-text-field-well[data-end-action] > .env-text-input {
   padding-inline-end: calc((var(--env-control-height) + var(--env-space-3)));
@@ -394,7 +398,10 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
   white-space: nowrap;
 }
 .env-text-field:not([data-tall]) .env-text-field-end {
-  --env-control-height: max(var(--env-control-target-min), calc(var(--env-field-height) - var(--env-space-2)));
+  --env-control-height: max(
+    var(--env-control-target-min),
+    calc(var(--env-field-height) - var(--env-space-2))
+  );
   inset-inline-end: var(--env-space-1);
 }
 .env-text-field:not([data-tall]) .env-text-field-well[data-end-action] > .env-text-input {
@@ -436,7 +443,9 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
   padding-inline-end: 0.125rem;
 }
 .env-text-field-well[data-start-icon] > .env-text-field-prefix {
-  padding-inline-start: calc((var(--env-space-4) + var(--env-control-icon-size) + var(--env-space-3)));
+  padding-inline-start: calc(
+    (var(--env-space-4) + var(--env-control-icon-size) + var(--env-space-3))
+  );
 }
 .env-text-field-well[data-end-action] > .env-text-field-suffix {
   padding-inline-end: calc((var(--env-control-height) + var(--env-space-3)));
@@ -486,5 +495,17 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
     position: absolute;
     inset-block: min(0%, calc((100% - var(--env-control-height-touch)) / 2));
     inset-inline: 0;
+  }
+}
+
+/* Motion: a field's actions settle in as they appear, and a Select's chevron turns as it opens;
+   the actions always there, such as a combobox's chevron, stay still. Only without a
+   reduced-motion preference. */
+@media (prefers-reduced-motion: no-preference) {
+  .env-dropdown-trigger .env-symbol {
+    transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);
+  }
+  .env-text-field-end > :not(.env-combobox-trigger, .env-date-picker-icon) {
+    animation: env-motion-pop-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
 }

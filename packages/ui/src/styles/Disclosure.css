@@ -60,3 +60,14 @@
 .env-disclosure-panel > :is(ul, ol) {
   padding-inline-start: var(--env-space-5);
 }
+
+/* Motion: an open panel fades in, and without a reduced-motion preference the summary's
+   indicator turns. */
+.env-disclosure[open] > .env-disclosure-panel {
+  animation: env-motion-fade-in var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .env-disclosure > summary::before {
+    transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);
+  }
+}

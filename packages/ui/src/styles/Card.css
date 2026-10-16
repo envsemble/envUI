@@ -111,3 +111,16 @@
     width: 100%;
   }
 }
+
+/* Motion: a clickable card settles a little while it is held, less than a compact control. Only
+   without a reduced-motion preference. */
+@media (prefers-reduced-motion: no-preference) {
+  .env-clickable-card {
+    transition-property: background-color, color, border-color, transform;
+    transition-duration: var(--env-motion-duration-fast);
+    transition-timing-function: var(--env-motion-ease);
+  }
+  .env-clickable-card:active:not(:disabled):not([aria-disabled='true']) {
+    transform: scale(0.99);
+  }
+}

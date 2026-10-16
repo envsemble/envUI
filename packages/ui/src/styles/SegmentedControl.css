@@ -151,3 +151,15 @@
     transition: none;
   }
 }
+
+/* Motion: a segment settles slightly while it is held. Only without a reduced-motion preference. */
+@media (prefers-reduced-motion: no-preference) {
+  .env-segment {
+    transition-property: background-color, color, border-color, transform;
+    transition-duration: var(--env-motion-duration-fast);
+    transition-timing-function: var(--env-motion-ease);
+  }
+  .env-segment:active:not([data-disabled]) {
+    transform: scale(0.97);
+  }
+}

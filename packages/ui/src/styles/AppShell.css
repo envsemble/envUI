@@ -44,7 +44,8 @@
   grid-template-rows: minmax(0, 1fr);
   border-block-end: var(--env-app-divider);
   background: var(--env-color-bg-page);
-  transition: grid-template-columns var(--env-motion-duration-medium) var(--env-motion-ease-standard);
+  transition: grid-template-columns var(--env-motion-duration-medium)
+    var(--env-motion-ease-standard);
 }
 /* The loading bar runs along the topbar's bottom edge, over the divider. */
 .env-app-topbar > .env-app-loading-bar {
@@ -372,7 +373,10 @@ button.env-app-sidebar-toggle:focus-visible {
    to the top of the content area, so --env-app-sticky-top is 0 there. Nothing here contains fixed
    positioning, so a fixed overlay inside the content still covers the window. */
 .env-app-shell[data-title-bar] {
-  --env-topbar-height: max(calc(env(titlebar-area-height, 0px) + 0.0625rem), var(--env-title-bar-height));
+  --env-topbar-height: max(
+    calc(env(titlebar-area-height, 0px) + 0.0625rem),
+    var(--env-title-bar-height)
+  );
   /* stylelint-disable-next-line unit-disallowed-list -- A zero with its unit, so applications can add to it in calc(). */
   --env-app-sticky-top: 0px;
   position: fixed;
@@ -448,5 +452,18 @@ button.env-app-sidebar-toggle:focus-visible {
   .env-app-sidebar,
   .env-app-content {
     transition: none;
+  }
+}
+
+/* Motion: the sidebar toggle settles slightly while it is held. Only without a reduced-motion
+   preference. */
+@media (prefers-reduced-motion: no-preference) {
+  .env-app-sidebar-toggle {
+    transition-property: background-color, color, border-color, transform;
+    transition-duration: var(--env-motion-duration-fast);
+    transition-timing-function: var(--env-motion-ease);
+  }
+  .env-app-sidebar-toggle:active {
+    transform: scale(0.97);
   }
 }

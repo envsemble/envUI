@@ -46,3 +46,32 @@
 .env-animated-number-value {
   display: inline-block;
 }
+
+/* Motion: a changed number fades in, and without a reduced-motion preference rolls in from below
+   when it grows and from above when it shrinks. */
+.env-animated-number-value[data-direction] {
+  animation: env-motion-fade-in var(--env-motion-duration-medium) var(--env-motion-ease);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .env-animated-number-value[data-direction] {
+    animation: var(--env-motion-duration-slow) var(--env-motion-ease-enter) both;
+  }
+  .env-animated-number-value[data-direction='up'] {
+    animation-name: env-motion-roll-up;
+  }
+  .env-animated-number-value[data-direction='down'] {
+    animation-name: env-motion-roll-down;
+  }
+}
+@keyframes env-motion-roll-up {
+  from {
+    opacity: 0;
+    transform: translateY(0.6em);
+  }
+}
+@keyframes env-motion-roll-down {
+  from {
+    opacity: 0;
+    transform: translateY(-0.6em);
+  }
+}

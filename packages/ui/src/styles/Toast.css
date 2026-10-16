@@ -141,6 +141,9 @@
   flex-shrink: 0;
   pointer-events: auto;
   box-sizing: border-box;
+  /* Motion: it fades in, below; the toast list has no positioner, so it scales from the center. */
+  transform-origin: var(--transform-origin, center);
+  transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
 }
 .env-toast-viewport > .env-toast[data-limited] {
   display: none;
@@ -189,5 +192,39 @@
 @media (prefers-reduced-motion: reduce) {
   .env-toast {
     transition: none;
+  }
+}
+
+/* Motion: a toast fades in, and without a reduced-motion preference arrives from its screen
+   edge. The toast list has no positioner, so toasts scale from the center. */
+.env-toast-viewport > .env-toast[data-ending-style] {
+  transition-duration: var(--env-motion-duration-fast);
+  transition-timing-function: var(--env-motion-ease-exit);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .env-toast-dismiss {
+    transition-property: background-color, color, border-color, transform;
+    transition-duration: var(--env-motion-duration-fast);
+    transition-timing-function: var(--env-motion-ease);
+  }
+  .env-toast-dismiss:active {
+    transform: scale(0.97);
+  }
+  .env-toast-viewport > .env-toast {
+    transition:
+      opacity var(--env-motion-duration-medium) var(--env-motion-ease),
+      transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+  }
+  .env-toast-viewport-bottom-right > .env-toast[data-starting-style],
+  .env-toast-viewport-bottom-right > .env-toast[data-ending-style] {
+    transform: translateY(0.75rem) scale(0.98);
+  }
+  .env-toast-viewport-top-center > .env-toast[data-starting-style],
+  .env-toast-viewport-top-center > .env-toast[data-ending-style] {
+    transform: translateY(-0.75rem) scale(0.98);
+  }
+  .env-toast-viewport > .env-toast[data-ending-style] {
+    transition-duration: var(--env-motion-duration-fast);
+    transition-timing-function: var(--env-motion-ease-exit);
   }
 }

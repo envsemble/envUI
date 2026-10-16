@@ -104,7 +104,7 @@
   },
   "packages/ui/src/styles/CommandPalette.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 9
+      "count": 10
     },
     "declaration-property-value-allowed-list": {
       "count": 2
@@ -127,7 +127,7 @@
   },
   "packages/ui/src/styles/Dialog.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 6
+      "count": 9
     },
     "declaration-property-value-allowed-list": {
       "count": 2
@@ -260,14 +260,6 @@
       "count": 1
     }
   },
-  "packages/ui/src/styles/Motion.css": {
-    "declaration-property-unit-disallowed-list": {
-      "count": 8
-    },
-    "unit-disallowed-list": {
-      "count": 2
-    }
-  },
   "packages/ui/src/styles/NavList.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 5
@@ -283,7 +275,7 @@
   },
   "packages/ui/src/styles/PanelDock.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 31
+      "count": 33
     },
     "declaration-property-value-allowed-list": {
       "count": 8
@@ -370,6 +362,9 @@
     },
     "envui/font-weight-from-token": {
       "count": 1
+    },
+    "unit-disallowed-list": {
+      "count": 2
     }
   },
   "packages/ui/src/styles/TitleBar.css": {
@@ -379,7 +374,7 @@
   },
   "packages/ui/src/styles/Toast.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 10
+      "count": 12
     },
     "declaration-property-value-allowed-list": {
       "count": 2

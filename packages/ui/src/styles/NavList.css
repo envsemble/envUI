@@ -141,3 +141,16 @@
     );
   }
 }
+
+/* Motion: a navigation item settles slightly while it is held. Only without a reduced-motion
+   preference. */
+@media (prefers-reduced-motion: no-preference) {
+  .env-nav-list-item {
+    transition-property: background-color, color, border-color, transform;
+    transition-duration: var(--env-motion-duration-fast);
+    transition-timing-function: var(--env-motion-ease);
+  }
+  .env-nav-list-item:active:not(:disabled):not([aria-disabled='true']) {
+    transform: scale(0.97);
+  }
+}

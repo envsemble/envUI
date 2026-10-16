@@ -248,7 +248,8 @@
 }
 .env-combobox-group-label {
   padding-block: var(--env-space-1) 0.125rem;
-  padding-inline: calc(var(--env-space-2) + var(--env-control-icon-size) + var(--env-space-2)) var(--env-space-2);
+  padding-inline: calc(var(--env-space-2) + var(--env-control-icon-size) + var(--env-space-2))
+    var(--env-space-2);
   color: var(--env-color-fg-muted);
   font: 500 var(--env-font-size-caption) / 1.4 var(--env-font-family);
   overflow-wrap: anywhere;
@@ -277,5 +278,12 @@
 @media (prefers-reduced-motion: reduce) {
   .env-combobox-chip-remove {
     transition: none;
+  }
+}
+
+/* Motion: the chevron turns as the list opens. Only without a reduced-motion preference. */
+@media (prefers-reduced-motion: no-preference) {
+  .env-combobox-trigger .env-symbol {
+    transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);
   }
 }

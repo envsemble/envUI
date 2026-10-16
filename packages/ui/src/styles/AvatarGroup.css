@@ -5,7 +5,10 @@
   --env-avatar-group-size: 2rem;
   --env-avatar-group-overlap: calc(var(--env-avatar-group-size) / 4);
   --env-avatar-group-ring-width: max(0.125rem, calc(var(--env-avatar-group-size) / 16));
-  --env-avatar-group-ring-color: var(--env-avatar-group-ring, var(--env-surface-color, var(--env-color-bg-page)));
+  --env-avatar-group-ring-color: var(
+    --env-avatar-group-ring,
+    var(--env-surface-color, var(--env-color-bg-page))
+  );
   box-sizing: border-box;
   display: inline-flex;
   flex: 0 0 auto;

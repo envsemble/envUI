@@ -306,3 +306,17 @@
 .env-avatar-button-tooltip > :last-child {
   opacity: 0.8;
 }
+
+/* Motion: a button settles slightly while it is held. Only without a reduced-motion preference. */
+@media (prefers-reduced-motion: no-preference) {
+  .env-button,
+  .env-avatar-button {
+    transition-property: background-color, color, border-color, transform;
+    transition-duration: var(--env-motion-duration-fast);
+    transition-timing-function: var(--env-motion-ease);
+  }
+  .env-button:active:not(:disabled):not([aria-disabled='true']),
+  .env-avatar-button:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+}

@@ -154,3 +154,15 @@
     }
   }
 }
+
+/* Motion: skeletons pulse. Only without a reduced-motion preference. */
+@media (prefers-reduced-motion: no-preference) {
+  .env-skeleton {
+    animation: env-motion-pulse 1.6s ease-in-out infinite alternate;
+  }
+}
+@keyframes env-motion-pulse {
+  to {
+    opacity: 0.55;
+  }
+}

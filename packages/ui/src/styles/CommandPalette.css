@@ -29,7 +29,9 @@
   overflow: hidden;
   outline: none;
   pointer-events: auto;
-  transform-origin: top center;
+  /* Motion: it fades in, below; it has no positioner, so it scales from the center. */
+  transform-origin: var(--transform-origin, center);
+  transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
 }
 .env-command-palette-search {
   flex: 0 0 auto;
@@ -174,5 +176,31 @@
 @media (pointer: coarse) {
   .env-command-palette-option {
     min-block-size: var(--env-control-height-touch);
+  }
+}
+
+/* Motion: the command palette fades in and drops into place. Movement only without a
+   reduced-motion preference. Base UI's positioner sets the origin. */
+.env-command-palette[data-starting-style],
+.env-command-palette[data-ending-style] {
+  opacity: 0;
+}
+.env-command-palette[data-ending-style] {
+  transition-duration: var(--env-motion-duration-fast);
+  transition-timing-function: var(--env-motion-ease-exit);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .env-command-palette {
+    transition:
+      opacity var(--env-motion-duration-medium) var(--env-motion-ease),
+      transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+  }
+  .env-command-palette[data-starting-style],
+  .env-command-palette[data-ending-style] {
+    transform: translateY(-0.5rem) scale(0.98);
+  }
+  .env-command-palette[data-ending-style] {
+    transition-duration: var(--env-motion-duration-fast);
+    transition-timing-function: var(--env-motion-ease-exit);
   }
 }

@@ -240,3 +240,26 @@
 .env-choice-control:has(.env-radio-control) {
   color: var(--env-color-fg-default);
 }
+
+/* Motion: choice controls settle while they or their label are held, a radio row a little and
+   the control more; a check mark settles into size. Only without a reduced-motion preference. */
+@media (prefers-reduced-motion: no-preference) {
+  .env-radio-option,
+  .env-checkbox-box,
+  .env-radio-control,
+  .env-switch-control {
+    transition-property: background-color, color, border-color, transform;
+    transition-duration: var(--env-motion-duration-fast);
+    transition-timing-function: var(--env-motion-ease);
+  }
+  .env-radio-option:active:not(:has(input:disabled)) {
+    transform: scale(0.99);
+  }
+  .env-choice-control:active:not(:has(input:disabled))
+    :is(.env-checkbox-box, .env-radio-control, .env-switch-control) {
+    transform: scale(0.9);
+  }
+  .env-checkbox-control:is(:checked, :indeterminate) + .env-checkbox-mark {
+    animation: env-motion-pop-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
+  }
+}

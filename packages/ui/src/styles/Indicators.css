@@ -46,6 +46,8 @@
   inline-size: 100%;
   block-size: 100%;
   object-fit: cover;
+  /* Motion: the image fades in as it loads. */
+  animation: env-motion-fade-in var(--env-motion-duration-slow) var(--env-motion-ease-enter);
 }
 
 .env-tooltip-theme {
@@ -69,6 +71,9 @@
   box-shadow: var(--env-elevation-2-shadow);
   font: var(--env-type-body-small);
   overflow-wrap: anywhere;
+  /* Motion: it fades in, below, and grows from the origin its positioner sets. */
+  transform-origin: var(--transform-origin, center);
+  transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
 }
 .env-tooltip-disabled-target {
   display: inline-flex;
@@ -130,5 +135,31 @@
   }
   .env-bar[data-indeterminate] .env-bar-indicator {
     animation: none;
+  }
+}
+
+/* Motion: a tooltip fades in and grows from its trigger. Movement only without a reduced-motion
+   preference. Base UI's positioner sets the origin. */
+.env-tooltip[data-starting-style],
+.env-tooltip[data-ending-style] {
+  opacity: 0;
+}
+.env-tooltip[data-ending-style] {
+  transition-duration: var(--env-motion-duration-fast);
+  transition-timing-function: var(--env-motion-ease-exit);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .env-tooltip {
+    transition:
+      opacity var(--env-motion-duration-medium) var(--env-motion-ease),
+      transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+  }
+  .env-tooltip[data-starting-style],
+  .env-tooltip[data-ending-style] {
+    transform: scale(0.94);
+  }
+  .env-tooltip[data-ending-style] {
+    transition-duration: var(--env-motion-duration-fast);
+    transition-timing-function: var(--env-motion-ease-exit);
   }
 }

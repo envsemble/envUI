@@ -143,3 +143,33 @@
     min-height: var(--env-control-height-touch);
   }
 }
+
+/* Motion: the list fades in and grows from its trigger. Movement only without a reduced-motion
+   preference. Base UI's positioner sets the origin. */
+.env-dropdown-options[data-starting-style],
+.env-dropdown-options[data-ending-style] {
+  opacity: 0;
+}
+.env-dropdown-options {
+  transform-origin: var(--transform-origin, center);
+  transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
+}
+.env-dropdown-options[data-ending-style] {
+  transition-duration: var(--env-motion-duration-fast);
+  transition-timing-function: var(--env-motion-ease-exit);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .env-dropdown-options {
+    transition:
+      opacity var(--env-motion-duration-medium) var(--env-motion-ease),
+      transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+  }
+  .env-dropdown-options[data-starting-style],
+  .env-dropdown-options[data-ending-style] {
+    transform: scale(0.96);
+  }
+  .env-dropdown-options[data-ending-style] {
+    transition-duration: var(--env-motion-duration-fast);
+    transition-timing-function: var(--env-motion-ease-exit);
+  }
+}

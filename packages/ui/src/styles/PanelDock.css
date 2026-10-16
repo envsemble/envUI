@@ -58,7 +58,9 @@
 }
 /* Open panels above a maximized one keep its header's first row in view. */
 .env-panel-dock[data-filled]:not([data-stacked]) > .env-panel-dock-row {
-  padding-block-start: calc(var(--env-panel-dock-control) + 2 * var(--env-space-3) + var(--env-space-2));
+  padding-block-start: calc(
+    var(--env-panel-dock-control) + 2 * var(--env-space-3) + var(--env-space-2)
+  );
 }
 
 /* A panel is the raised dialog surface with a hairline border and a shadow, rounded at the top and
@@ -389,7 +391,8 @@
   .env-panel-dock {
     /* A chip holds its buttons at the touch height inside its top hairline. */
     --env-panel-dock-chip-height: calc(
-      max(var(--env-control-height-sm), var(--env-control-height-touch)) + var(--env-control-border-width)
+      max(var(--env-control-height-sm), var(--env-control-height-touch)) +
+        var(--env-control-border-width)
     );
     /* The header's controls grow to the touch height, as every button does. */
     --env-panel-dock-control: max(var(--env-control-height-sm), var(--env-control-height-touch));
@@ -415,5 +418,53 @@
   .env-panel-dock-chip-restore,
   .env-panel-dock-chip-close {
     transition: none;
+  }
+}
+
+/* Motion: docked panels and their chips fade in where they show; a panel that comes to fill the
+   region fades in afresh, also from the row. Without a reduced-motion preference panels rise from
+   the bottom edge into the row, a panel grows into the region it fills, and chips rise into their
+   strip. PanelDock marks an entrance with data-entering until it ends, so a reorder, which moves
+   the elements, does not play it again. */
+.env-panel-dock-panel[data-entering][data-placement='row'],
+.env-panel-dock-chip[data-entering] {
+  animation: env-motion-fade-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
+}
+.env-panel-dock-panel[data-entering][data-placement='fill'] {
+  animation: env-panel-dock-fade-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .env-panel-dock-panel[data-entering][data-placement='row'] {
+    animation: env-panel-dock-rise var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+  }
+  .env-panel-dock-panel[data-entering][data-placement='fill'] {
+    animation: env-panel-dock-grow var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+  }
+  .env-panel-dock-chip[data-entering] {
+    animation: env-panel-dock-chip-rise var(--env-motion-duration-medium)
+      var(--env-motion-ease-enter);
+  }
+}
+@keyframes env-panel-dock-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes env-panel-dock-rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+}
+@keyframes env-panel-dock-grow {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+@keyframes env-panel-dock-chip-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
   }
 }
