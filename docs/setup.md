@@ -107,6 +107,23 @@ The content, rich-text and diff entries depend on Shiki, the Pierre code themes,
 
 Keep optional content/editor imports with their features. Individual icon imports avoid loading the complete catalogue; see [icons](foundations/icons.md) when adding icons.
 
+### Bundle size
+
+The modules have no side effects, so a bundler keeps only what the application uses. Namespaces are where bundlers differ. Rolldown, which Vite uses, keeps only the parts the application renders. esbuild keeps every part of a namespace it uses, because it does not tree-shake a namespace that the entry point re-exports; no other export shape of the entry point changes that, and the parts are already pure. The cost is at most the namespace's own size. Measured with esbuild 0.28 and Vite 8 on envUI 1.0, minified, envUI's own code only (React, Base UI and the other dependencies counted apart):
+
+| Application renders                    | esbuild | Vite (Rolldown) |
+| -------------------------------------- | ------: | --------------: |
+| `Table.Cell` alone                     |  9.1 KB |          1.4 KB |
+| `Table.Root`, `Body`, `Row` and `Cell` |  9.2 KB |          5.3 KB |
+| `Menu.Item` alone                      |  7.7 KB |          3.8 KB |
+| `Menu.Root` with a `Menu.Item`         |  9.2 KB |          7.4 KB |
+| `Stat.Root`                            |  3.3 KB |          3.5 KB |
+| `NavList.Item`                         |  3.8 KB |          4.2 KB |
+| `Pager.Next`                           |  1.5 KB |          1.6 KB |
+| `Badge`, which is no namespace's part  |  0.6 KB |          0.9 KB |
+
+Gzipped, `Table.Cell` alone is 3.7 KB with esbuild and 0.6 KB with Vite.
+
 ## Agent skills
 
 Both short skills ship under `skills/`. Install or copy them into the application's `.agents/skills`, keeping their version aligned with the package. Installing the npm package does not register skills automatically. Component documentation stays under the installed package's `docs/`; copied skills locate that directory before reading relevant pages.
