@@ -44,7 +44,7 @@ export function MessageStringsFixture() {
           {/* A blank name leaves it named by its copy label. */}
           <CopyButton value="Northwind" aria-label="" />
           <ThemeToggle />
-          <Dialog title="Settings" defaultOpen modal={false}>
+          <Dialog title="Settings" defaultOpen modal={false} disablePointerDismissal>
             Content
           </Dialog>
         </Stack>
