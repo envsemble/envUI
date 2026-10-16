@@ -1,4 +1,6 @@
 'use client';
+// @client-module react-markdown imports useEffect and useState, which React's server build lacks,
+// so Markdown cannot be a server component even without its own useMemo.
 
 import {
   createElement,
