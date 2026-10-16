@@ -44,6 +44,16 @@ ruleTester.run('no-renamed-exports', rule, {
     "import * as envui from '@envsemble/envui'; <envui.Toast.Provider />; envui.Toast.Provider;",
     "export { TextField } from '@envsemble/envui';",
     "export { Input } from './Input.js';",
+    // A local that shadows an import or a namespace import is not envUI's.
+    "import { Menu } from '@envsemble/envui'; function Local() { const Menu = 'li'; return <Menu />; }",
+    "import * as envui from '@envsemble/envui'; function read(envui) { return [envui.Input, <envui.Menu />]; }",
+    "import { Toast } from '@envsemble/envui'; const render = (Toast) => <Toast />;",
+    // New names through require(), import() and a destructured module object.
+    "const { Button, Menu } = require('@envsemble/envui'); <Menu.Root />;",
+    "import('@envsemble/envui').then(({ TextField }) => TextField);",
+    "import * as envui from '@envsemble/envui'; const { Alert, Menu } = envui; <Menu.Root />;",
+    // createElement of the 1.0 parts.
+    "import { Menu, Toast } from '@envsemble/envui'; createElement(Menu.Root); React.createElement(Toast.Provider, null);",
   ],
   invalid: [
     {
@@ -176,6 +186,45 @@ ruleTester.run('no-renamed-exports', rule, {
         },
       ],
     },
+    // require(), import() and module objects bound or destructured from them.
+    {
+      code: "const { Input, LoadingBar: Bar } = require('@envsemble/envui');",
+      errors: [{ ...renamed('Input', 'TextField'), line: 1, column: 9 }, internal('LoadingBar')],
+    },
+    {
+      code: "const envui = require('@envsemble/envui'); envui.Notice; require('@envsemble/envui').Counter;",
+      errors: [renamed('Notice', 'Alert'), renamed('Counter', 'CounterBadge')],
+    },
+    {
+      code: "async function load() { const { Input } = await import('@envsemble/envui'); const ui = await import('@envsemble/envui'); return [Input, ui.Row, (await import('@envsemble/envui')).getInitials]; }",
+      errors: [
+        renamed('Input', 'TextField'),
+        renamed('Row', 'List.Item', 'List'),
+        internal('getInitials'),
+      ],
+    },
+    {
+      code: "import('@envsemble/envui').then(({ Notice }) => Notice); import('@envsemble/envui').then((ui) => ui.Heatmap);",
+      errors: [renamed('Notice', 'Alert'), renamed('Heatmap', 'CalendarHeatmap')],
+    },
+    {
+      code: "import * as envui from '@envsemble/envui'; const { Input, Menu } = envui; <Menu />;",
+      errors: [renamed('Input', 'TextField'), namespace('Menu', 'Menu', 'Menu.Root')],
+    },
+    // Components created without JSX.
+    {
+      code: "import { Menu, Toast, DirectionLink } from '@envsemble/envui'; createElement(Menu, null); React.createElement(Toast, {}); jsx(DirectionLink, { direction: 'next' });",
+      errors: [
+        split(),
+        namespace('Menu', 'Menu', 'Menu.Root'),
+        { messageId: 'reusedNamespace', data: { name: 'Toast', use: use('Toast') } },
+        splitElement('DirectionLink', 'next', 'Pager.Next'),
+      ],
+    },
+    {
+      code: "import * as envui from '@envsemble/envui'; createElement(envui.Table, { rows });",
+      errors: [namespace('Table', 'envui.Table', 'envui.Table.Root')],
+    },
   ],
 });
 
@@ -183,8 +232,14 @@ typeScriptRuleTester.run('no-renamed-exports in TypeScript', rule, {
   valid: [
     "import type { TextFieldProps } from '@envsemble/envui';",
     "import type * as envui from '@envsemble/envui'; type P = envui.ButtonProps;",
+    "type P = import('@envsemble/envui').TextFieldProps; type M = typeof import('@envsemble/envui').Menu.Item;",
+    "type P = import('@envsemble/envui/icons').Input;",
   ],
   invalid: [
+    {
+      code: "type P = import('@envsemble/envui').InputProps; type T = typeof import('@envsemble/envui').LoadingBar;",
+      errors: [{ ...renamed('InputProps', 'TextFieldProps'), column: 37 }, internal('LoadingBar')],
+    },
     {
       code: "import type { ToastProps } from '@envsemble/envui';",
       errors: [

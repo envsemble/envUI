@@ -187,7 +187,7 @@ Reports imports and re-exports from `@envsemble/envui` of names that envUI 0.x e
 MenuItem is not exported by envUI 1.0: use Menu.Item instead (import { Menu } from '@envsemble/envui'). The v1-names codemod in @envsemble/envui-codemods rewrites the old names.
 ```
 
-It also reports members of a namespace import (`envui.Input`, `<envui.Input>`, and `envui.InputProps` in TypeScript), and rendering a name that became a namespace of parts, such as `<Menu>` or `<Table>`, which must now be `<Menu.Root>` or `<Table.Root>`. Type imports count. Only the entry point that exported a name is checked, so an icon named `Input` from `@envsemble/envui/icons` passes. The rule has no options.
+It also reports members of a namespace import (`envui.Input`, `<envui.Input>`, and `envui.InputProps` in TypeScript), and rendering a name that became a namespace of parts, such as `<Menu>` or `<Table>`, which must now be `<Menu.Root>` or `<Table.Root>`, in JSX or through `createElement()`, `React.createElement()` and the JSX runtime's `jsx()`. The module can also come from `require('@envsemble/envui')` or `import('@envsemble/envui')`, awaited or through `.then()`, and names destructured from any of these, as in `const { Input } = envui`, count like imports, as do type queries such as `import('@envsemble/envui').InputProps`. Type imports count. A name is checked where it resolves to envUI, so a local `Menu` or a parameter named `envui` that shadows the import passes. Only the entry point that exported a name is checked, so an icon named `Input` from `@envsemble/envui/icons` passes. The rule has no options.
 
 What the codemods' map says to do instead comes with the report:
 
