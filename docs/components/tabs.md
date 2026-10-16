@@ -69,7 +69,7 @@ The tabs are `items`, each a `value`, a `button`, the panel's `content` and whet
 
 - **Tab controls**: a tab is a Button in any variant, an IconButton or a NavList.Item without `href`. Prefer one variant for every tab of a rail; primary is Button's default. An icon-only tab needs an `aria-label`, and a NavList.Item takes its selected look while its tab is selected.
 - **Unselected tabs** are transparent with a muted label at rest, and show a translucent state layer on hover and press; the selected tab keeps its variant's hover and pressed colors. Labels keep 4.5:1 contrast at rest and on hover in both themes.
-- Tabs keep their size: labels wrap only within a tab, and a rail with more tabs than fit scrolls. The rail follows the app's [scale](../foundations/scale.md). On touch screens tabs gain a 2.75 rem hit area.
+- Tabs keep their size: labels wrap only within a tab, and a rail with more tabs than fit scrolls. The rail follows the app's [scale](../foundations/scale.md). On touch screens the rail grows to 2.75 rem, as every control of its row does, and each tab, at least as wide, takes presses across the rail's whole height; a vertical rail's tabs grow to 2.75 rem themselves.
 - A vertical rail has the 1.75 rem corners of a surface. Its panels stay below it, as in every Tabs; lay out Tabs as a row to put them beside it.
 
 ## States and behaviour

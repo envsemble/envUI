@@ -13,6 +13,7 @@ export const densitySectionNames = [
   'tabs',
   'navigation',
   'desktop',
+  'layouts',
 ] as const;
 
 export type DensitySection = (typeof densitySectionNames)[number];

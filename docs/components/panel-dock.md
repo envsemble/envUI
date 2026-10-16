@@ -144,7 +144,7 @@ The application owns the panels: which exist, their order and mode, which one is
 - Chips in a list named Hidden panels, each a Show button, described by its `attention` text, and a close button; decorative icons and the dot hidden from assistive technology.
 - Hidden panels inert and out of sight, and focus that follows panels as they hide, come back and close.
 - Scroll padding that keeps a focused control from hiding beneath the sticky header.
-- A taller resize band with its bar always shown, and 2 rem chip close buttons, on coarse pointers.
+- A taller resize band with its bar always shown, header controls that grow to 2.75 rem, and 2 rem chip close buttons, on coarse pointers.
 
 ### You provide
 

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import { fixtureUrl } from './Servers';
 
 test('a provider without a contrast leaves the contrast the page set on the root', async ({
@@ -165,6 +165,117 @@ test('a provider without a scale leaves a scale the page wrote over the bootstra
   await expect(page.getByTestId('theme-toggle')).toBeVisible();
   await expect(root).toHaveAttribute('data-env-scale', 'comfortable');
   await expect(root).not.toHaveAttribute('data-env-scale-source');
+});
+
+/** Serves the adoption fixture with these attributes on its root, as a server or the page sets them. */
+async function withRoot(page: Page, attributes: string) {
+  await page.route(`${fixtureUrl}/?fixture=adoption`, async (route) => {
+    const response = await route.fetch();
+    const body = (await response.text()).replace('<html', `<html ${attributes}`);
+    await route.fulfill({ response, body });
+  });
+  await page.goto(`${fixtureUrl}/?fixture=adoption`);
+  await expect(page.getByTestId('theme-toggle')).toBeVisible();
+}
+
+test('a provider without a scale gives the application the scale the page set on the root', async ({
+  page,
+}) => {
+  await withRoot(page, 'data-env-scale="compact"');
+  // The boundary, a Theme nested in it and the popups of both take the root's compact scale, as
+  // the page and other libraries' portals do.
+  const boundary = page.locator('.fixture-adoption');
+  await expect(boundary).toHaveAttribute('data-env-scale', 'compact');
+  await expect(page.getByTestId('adoption-nested-theme')).toHaveAttribute(
+    'data-env-scale',
+    'compact',
+  );
+  await page.getByRole('button', { name: 'Open account menu' }).click();
+  await expect(
+    page
+      .getByRole('menu', { name: 'Account' })
+      .locator('xpath=ancestor::*[contains(@class, "env-theme")][1]'),
+  ).toHaveAttribute('data-env-scale', 'compact');
+  // The root keeps the page's scale, unmarked, and so does the boundary when the page changes it.
+  await expect(page.locator('html')).not.toHaveAttribute('data-env-scale-source');
+  await page.locator('html').evaluate((root) => root.setAttribute('data-env-scale', 'comfortable'));
+  await expect(boundary).toHaveAttribute('data-env-scale', 'comfortable');
+});
+
+test('a provider without a scale keeps comfortable where envUI wrote the root scale', async ({
+  page,
+}) => {
+  await withRoot(page, 'data-env-scale="compact" data-env-scale-source="envui:compact"');
+  await expect(page.locator('html')).not.toHaveAttribute('data-env-scale');
+  await expect(page.locator('.fixture-adoption')).toHaveAttribute('data-env-scale', 'comfortable');
+});
+
+for (const contrast of ['high', 'standard'] as const)
+  test(`a provider without a contrast gives the application the ${contrast} contrast the page set on the root`, async ({
+    page,
+  }) => {
+    await withRoot(page, `data-env-contrast="${contrast}"`);
+    await expect(page.locator('.fixture-adoption')).toHaveAttribute('data-env-contrast', contrast);
+    await expect(page.getByTestId('adoption-nested-theme')).toHaveAttribute(
+      'data-env-contrast',
+      contrast,
+    );
+    // The page's contrast stays its own: the provider never marks it as envUI's.
+    await page.getByTestId('theme-toggle').click();
+    await expect(page.locator('html')).toHaveAttribute('data-env-contrast', contrast);
+    await expect(page.locator('html')).not.toHaveAttribute('data-env-contrast-source');
+  });
+
+test('a provider releases the root scale and contrast once it stops applying to the document', async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/?fixture=theme-release`);
+  const root = page.locator('html');
+  await expect(root).toHaveAttribute('data-env-contrast', 'high');
+  await expect(root).toHaveAttribute('data-env-scale', 'compact');
+  await page.getByRole('button', { name: 'Stop applying to the document' }).click();
+  for (const attribute of [
+    'data-env-contrast',
+    'data-env-contrast-source',
+    'data-env-scale',
+    'data-env-scale-source',
+  ])
+    await expect(root).not.toHaveAttribute(attribute);
+  // The boundary around the children keeps them.
+  await expect(page.locator('.fixture-main')).toHaveAttribute('data-env-scale', 'compact');
+});
+
+test('a provider releases the root scale and contrast when it unmounts', async ({ page }) => {
+  await page.goto(`${fixtureUrl}/?fixture=theme-release`);
+  const root = page.locator('html');
+  await expect(root).toHaveAttribute('data-env-scale', 'compact');
+  await page.getByRole('button', { name: 'Unmount the provider' }).click();
+  await expect(page.getByText('Provider content')).toHaveCount(0);
+  for (const attribute of [
+    'data-env-contrast',
+    'data-env-contrast-source',
+    'data-env-scale',
+    'data-env-scale-source',
+  ])
+    await expect(root).not.toHaveAttribute(attribute);
+});
+
+test('a provider that unmounts leaves a scale and contrast the page wrote over its own', async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/?fixture=theme-release`);
+  const root = page.locator('html');
+  await expect(root).toHaveAttribute('data-env-scale', 'compact');
+  await root.evaluate((element) => {
+    element.setAttribute('data-env-scale', 'comfortable');
+    element.setAttribute('data-env-contrast', 'standard');
+  });
+  await page.getByRole('button', { name: 'Unmount the provider' }).click();
+  await expect(page.getByText('Provider content')).toHaveCount(0);
+  await expect(root).toHaveAttribute('data-env-scale', 'comfortable');
+  await expect(root).toHaveAttribute('data-env-contrast', 'standard');
+  await expect(root).not.toHaveAttribute('data-env-scale-source');
+  await expect(root).not.toHaveAttribute('data-env-contrast-source');
 });
 
 test('a theme chosen in one window applies in the other windows of the same origin', async ({

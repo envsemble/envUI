@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useMemo, type ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { outsideTheme } from '../internal/outsideTheme.js';
 
 /** A color scheme. */
 export type ThemeValue = 'light' | 'dark';
@@ -58,11 +59,7 @@ export interface ThemeProps extends ComponentPropsWithRef<'div'> {
   scale?: ThemeScale;
 }
 
-const ThemeContext = createContext<ThemeContextValue>({
-  theme: 'light',
-  contrast: 'system',
-  scale: 'comfortable',
-});
+const ThemeContext = createContext<ThemeContextValue>(outsideTheme);
 
 /** Invalid themes already warned about, so each is reported once. */
 const warnedThemes = new Set<string>();

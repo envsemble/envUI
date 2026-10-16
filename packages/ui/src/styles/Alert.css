@@ -69,14 +69,16 @@
   flex-wrap: wrap;
   gap: var(--space-2);
 }
-/* The dismiss button is a small circle in the alert's tone, centered on the first line. */
+/* The dismiss button is a small circle in the alert's tone, centered on the first line. Under a
+   coarse pointer it grows to the touch height, as every button does. */
 .env-alert-dismiss.env-button {
+  --control-height: var(--control-height-sm);
   grid-column: 3;
-  inline-size: var(--control-height-sm);
+  inline-size: var(--env-button-height);
   max-inline-size: none;
-  block-size: var(--control-height-sm);
-  min-block-size: var(--control-height-sm);
-  margin-block: calc((1.4 * var(--font-size-heading-small) - var(--control-height-sm)) / 2);
+  block-size: var(--env-button-height);
+  min-block-size: var(--env-button-height);
+  margin-block: calc((1.4 * var(--font-size-heading-small) - var(--env-button-height)) / 2);
   margin-inline-end: calc(-1 * var(--space-2));
   border-radius: 50%;
   color: var(--env-alert-tone);

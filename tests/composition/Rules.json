@@ -277,9 +277,10 @@
           "note": "ButtonGroup joins its buttons into one control: it sizes them, squares their inner corners and insets their focus rings."
         },
         {
-          "stylesheet": "Button.css",
-          "classes": ["env-stack", "env-action-group"],
-          "note": "Under a coarse pointer a button's hit area grows into free space only: in a Stack or a stacked ActionGroup, its neighbours are above and below it."
+          "stylesheet": "TextField.css",
+          "classes": ["env-icon-button"],
+          "properties": ["content"],
+          "note": "Under a coarse pointer a field's end actions keep their size, and an empty pseudo-element reaches their hit area to the touch height within the field."
         },
         {
           "stylesheet": "Layout.css",

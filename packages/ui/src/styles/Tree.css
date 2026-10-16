@@ -2,7 +2,7 @@
    navigation colors: transparent at rest, a state layer on hover and the navigation selection. */
 .env-tree {
   /* The density sets the rows' block padding around their content line. */
-  --env-tree-row-padding: var(--row-padding-block-sm);
+  --env-tree-row-padding: var(--tree-row-padding-block-sm);
   --env-tree-row-height: calc(var(--row-content-height) + 2 * var(--env-tree-row-padding));
   --env-tree-indent: 0.75rem;
   --env-tree-icon-size: var(--control-icon-size);
@@ -23,10 +23,10 @@
   --env-tree-row-padding: var(--row-padding-block-xs);
 }
 .env-tree[data-density='md'] {
-  --env-tree-row-padding: var(--row-padding-block-md);
+  --env-tree-row-padding: var(--tree-row-padding-block-md);
 }
 .env-tree[data-density='lg'] {
-  --env-tree-row-padding: var(--row-padding-block-lg);
+  --env-tree-row-padding: var(--tree-row-padding-block-lg);
 }
 .env-tree-rows {
   position: relative;

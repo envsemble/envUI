@@ -21,7 +21,7 @@ export interface MessageProps extends Omit<ComponentPropsWithRef<'article'>, 'ch
   meta?: ReactNode;
   /**
    * Small actions below the message, such as Copy or Retry, at the small control height, with the
-   * touch hit area on touch screens; at the inline end for your own messages. A text IconButton at
+   * touch height on touch screens; at the inline end for your own messages. A text IconButton at
    * the edge lines its icon up with the message. false and null count as absent.
    */
   actions?: ReactNode;

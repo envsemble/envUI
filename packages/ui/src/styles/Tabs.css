@@ -8,11 +8,13 @@
    it inside its padding, which gives way where a tab would be shorter than the smallest target. */
 .env-tabs-list {
   --env-tabs-rail: var(--control-height-lg);
+  /* The height the rail draws at: its size's, or the touch height under a coarse pointer. */
+  --env-tabs-height: var(--env-tabs-rail);
   --env-tabs-inset: min(
     var(--space-1),
-    calc((var(--env-tabs-rail) - var(--control-target-min)) / 2)
+    calc((var(--env-tabs-height) - var(--control-target-min)) / 2)
   );
-  --control-height: calc(var(--env-tabs-rail) - 2 * var(--env-tabs-inset));
+  --control-height: calc(var(--env-tabs-height) - 2 * var(--env-tabs-inset));
   display: flex;
   align-items: center;
   gap: var(--space-1);
@@ -28,15 +30,26 @@
   --env-surface-color: var(--color-fill);
   --env-surface-padding: var(--env-tabs-inset);
 }
-/* Under a coarse pointer the tabs grow to the touch height themselves: an overlay would reach over
-   the next tab, and out of the rail, which scrolls. */
+/* Under a coarse pointer the rail grows to the touch height, like every control of its row, and
+   each tab's hit area covers the rail's padding above and below it, so it is as tall as the rail and
+   nothing reaches out of the rail, which scrolls, and it is at least as wide. A vertical rail's tabs
+   grow themselves instead. */
 @media (pointer: coarse) {
   .env-tabs-list {
-    --env-button-hit-area: 0rem;
-    --control-height: max(
-      calc(var(--env-tabs-rail) - 2 * var(--env-tabs-inset)),
-      var(--control-height-touch)
-    );
+    --env-tabs-height: max(var(--env-tabs-rail), var(--control-height-touch));
+  }
+  .env-tabs-list:not([data-orientation='vertical']) {
+    --env-touch-height: 0rem;
+  }
+  .env-tabs-list:not([data-orientation='vertical']) > .env-tab {
+    position: relative;
+    min-inline-size: var(--control-height-touch);
+  }
+  .env-tabs-list:not([data-orientation='vertical']) > .env-tab::before {
+    content: '';
+    position: absolute;
+    inset-block: calc(-1 * var(--env-tabs-inset));
+    inset-inline: 0;
   }
 }
 .env-tabs-list[data-size='sm'] {

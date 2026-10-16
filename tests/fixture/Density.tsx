@@ -14,6 +14,8 @@ import {
   Menubar,
   NavList,
   Pagination,
+  PanelDock,
+  PanelDockHeader,
   SearchField,
   SegmentedControl,
   Select,
@@ -491,6 +493,82 @@ function DesktopSection() {
   );
 }
 
+/** Small buttons 4 px apart in a layout of the application's own: a press must reach the button it
+ * lands on under a coarse pointer, whatever the layout. */
+function TightButtons({ label }: { label: string }) {
+  return ['Cut', 'Copy', 'Paste', 'Undo'].map((name) => (
+    <Button key={name} size="sm" variant="secondary" aria-label={`${name}, ${label}`}>
+      {name}
+    </Button>
+  ));
+}
+
+const tightLayouts = [
+  { name: 'column', title: 'A plain flex column' },
+  { name: 'wrap', title: 'A wrapping row' },
+  { name: 'grid', title: 'A two-column grid' },
+  { name: 'reverse', title: 'A reversed row' },
+] as const;
+
+/** A panel with its header's actions beside the window controls, as a docked panel shows them. */
+function DockedPanel() {
+  return (
+    <div className="density-dock-frame">
+      <PanelDock
+        panels={[{ id: 'report', title: 'Quarterly report', mode: 'open', active: true }]}
+        onModeChange={() => {}}
+        onClose={() => {}}
+      >
+        {(panel) => (
+          <PanelDockHeader
+            title={panel.title}
+            actions={
+              <>
+                <IconButton variant="text" icon={<Edit />} aria-label="Edit the report" />
+                <IconButton variant="text" icon={<MoreVert />} aria-label="More actions" />
+              </>
+            }
+          />
+        )}
+      </PanelDock>
+    </div>
+  );
+}
+
+/** Tight layouts of small buttons, and a docked panel's header, for the touch hit areas. */
+function LayoutsSection() {
+  return (
+    <div className="density-columns" data-columns="4">
+      {tightLayouts.map(({ name, title }) => (
+        <Column key={name} title={title}>
+          <div className="density-tight" data-layout={name}>
+            <TightButtons label={name} />
+          </div>
+        </Column>
+      ))}
+      {(['ltr', 'rtl'] as const).map((direction) => (
+        <Column key={direction} title={`Each button in a span, ${direction}`}>
+          <div className="density-tight" data-layout="spans" dir={direction}>
+            {['Bold', 'Italic', 'Link'].map((name) => (
+              <span key={name}>
+                <IconButton
+                  size="sm"
+                  variant="quiet"
+                  icon={<Edit />}
+                  aria-label={`${name}, ${direction}`}
+                />
+              </span>
+            ))}
+          </div>
+        </Column>
+      ))}
+      <Column title="A docked panel's header">
+        <DockedPanel />
+      </Column>
+    </div>
+  );
+}
+
 const densitySections: Record<DensitySection, () => ReactNode> = {
   sizes: SizesSection,
   form: FormSection,
@@ -501,6 +579,7 @@ const densitySections: Record<DensitySection, () => ReactNode> = {
   tabs: TabsSection,
   navigation: NavigationSection,
   desktop: DesktopSection,
+  layouts: LayoutsSection,
 };
 
 /** One section in each scale, one above the other. */

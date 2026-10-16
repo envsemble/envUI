@@ -45,8 +45,9 @@ At the default 16 px root. Every value is a token, in rem, so it follows the rea
 | `--control-height-sm` / `-md` / `-lg`                           | 32 / 40 / 48          | 26 / 32 / 38          |
 | `--control-target-min`                                          | 24                    | 24                    |
 | `--row-height` (menu, Select and Combobox rows)                 | 36                    | 28                    |
-| `--row-content-height` (tree rows)                              | 20                    | 22                    |
+| `--row-content-height` (tree rows)                              | 20                    | 20                    |
 | `--row-padding-block-xs` / `-sm` / `-md` / `-lg`                | 2 / 4 / 8 / 12        | 2 / 3 / 4 / 6         |
+| `--tree-row-padding-block-sm` / `-md` / `-lg`                   | 4 / 8 / 12            | 4 / 5 / 7             |
 | `--space-1` … `--space-9`                                       | 4, 8, 12, 16, 24 … 64 | 4, 6, 10, 12, 20 … 52 |
 | `--control-gap`                                                 | 7                     | 6                     |
 | `--font-size-caption` / `-body-small` / `-label`                | 12 / 14 / 14          | 11 / 12 / 13          |
@@ -58,7 +59,7 @@ At the default 16 px root. Every value is a token, in rem, so it follows the rea
 | `--topbar-height` / `--title-bar-height`                        | 52 / 40               | 42 / 32               |
 | `--control-border-width`, focus rings, `--control-height-touch` | 1, 2, 44              | 1, 2, 44              |
 
-- A tree row is its content line plus its density's padding on both sides: 28 at `sm`, the default, and 36 at `md` in the comfortable scale, and 28 at `sm` and 30 at `md` in the compact one. A table cell adds 4 px to its row padding, so a `md` table row of one line is 45 px tall, and a list row is at least as tall as a small control with its padding, 56 px at `md`.
+- A tree row is its content line plus its density's padding on both sides: 24, 28, 36 and 44 from `xs` to `lg` in the comfortable scale, and 24, 28, 30 and 34 in the compact one, whose tree paddings are a pixel more than the row densities' so that no compact row is taller than a comfortable one and a `sm` row, the default, is as tall as a compact menu row. A table cell adds 4 px to its row padding, so a `md` table row of one line is 45 px tall, and a list row is at least as tall as a small control with its padding, 56 px at `md`.
 - Controls in table cells take the small control height, so a row with an action stays close to the height of its text.
 - `--control-height` is the height of a control that sets no size: md, unless its container sets it to another control height. Set it in an application's own toolbar the same way: `--control-height: var(--control-height-sm)`.
 
@@ -70,8 +71,11 @@ At the default 16 px root. Every value is a token, in rem, so it follows the rea
 
 ## Touch
 
-- Under a coarse pointer, a button, an icon button or a menubar trigger smaller than 44 px (`--control-height-touch`) keeps its look and gains an invisible hit area up to 44 px tall and wide, in either scale. The hit area grows only into free space: never towards a control beside it in a row, or above or below it in a column, so a press on a control always reaches that control.
-- Controls joined in a rail or a group, such as segments, tabs and the buttons of a ButtonGroup, grow to 44 px themselves under a coarse pointer, and so do rows, such as menu items, tree rows and navigation items, and text fields. Entered text becomes 1 rem, so touch browsers don't zoom into a focused field.
+- Under a coarse pointer, every control grows to at least 44 px (`--control-height-touch`), in either scale: buttons, icon buttons, the fields, Select, the rails of SegmentedControl and Tabs, a ButtonGroup and its buttons, Pagination and menubar triggers. Their `sm` and `md` heights become 44 px, and `lg` stays 48 px in the comfortable scale and becomes 44 px in the compact one, so the controls of a row still match. A button and a menubar trigger are at least as wide, and so are segments and tabs.
+- A control's own box is its hit area, so a press always reaches the control it lands on, whatever the layout around it: an application's own column, grid or wrapping row needs nothing more. Hit areas drawn beyond a part's box stay inside its control: a segment's or a tab's covers the rail's padding above and below it, so it is as tall as the rail, and an action inside a field reaches the touch height above and below it, within the field, but keeps its width, so it never reaches over the next action or the text.
+- Rows grow to 44 px too, such as menu items, tree rows, navigation items and table rows with an action, and the top bar and the title bar to 52 px, which holds a control with 4 px around it. Entered text becomes 1 rem, so touch browsers don't zoom into a focused field.
+- Growing, rather than keeping each control's look and adding an invisible hit area around it, is what keeps a row's controls the same height when a field beside a button must be 44 px for its text, and keeps one control's hit area from taking presses on another, which only the layout around them could prevent.
+- Keep your own targets the same way: size them with the control tokens, which grow under a coarse pointer, rather than lengths of your own. A link in running text, a breadcrumb link and the remove button of a combobox chip keep their size and rely on the spacing below.
 - With a mouse, every target is at least 24 px in both scales, WCAG 2.2's minimum: segments, tabs and the actions inside fields keep 24 px even in a small rail or field of the compact scale. A few targets are shorter but keep 24 px of room around them, which WCAG 2.5.8 allows as its spacing exception: a breadcrumb link, a line of text 21 px tall, and the remove button of a combobox chip.
 
 ## Guidelines

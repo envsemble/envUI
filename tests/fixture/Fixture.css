@@ -377,6 +377,32 @@ body:has(.density-fixture) {
   overflow: hidden;
   clip-path: inset(50%);
 }
+.density-tight {
+  display: flex;
+  gap: 0.25rem;
+  align-items: start;
+}
+.density-tight[data-layout='column'] {
+  flex-direction: column;
+}
+.density-tight[data-layout='wrap'] {
+  flex-wrap: wrap;
+  inline-size: 8rem;
+}
+.density-tight[data-layout='grid'] {
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+}
+.density-tight[data-layout='reverse'] {
+  flex-direction: row-reverse;
+  justify-content: start;
+}
+.density-dock-frame {
+  position: relative;
+  block-size: 12rem;
+  inline-size: 22rem;
+  outline: 0.0625rem dashed var(--color-border-strong);
+}
 .density-app {
   display: grid;
   grid-template-rows: auto 1fr;

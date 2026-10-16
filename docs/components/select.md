@@ -69,7 +69,7 @@ A select chooses one value from a list that stays collapsed until people open it
 
 - The trigger takes the control height of its `size`, as every control does: `sm`, `md` and `lg` are 2, 2.5 and 3 rem in the comfortable scale and 1.625, 2 and 2.375 rem in the compact one; without a size it takes its container's control height. It has 0.875 rem text and a 1.125 rem chevron, 1 rem at `sm` and in the compact scale.
 - The popup is the menus' raised popup: 0.75 rem corners, 0.25 rem padding and a 22 rem maximum width. Options are rows of the scale's row height, 2.25 rem or 1.75 rem compact, that fill only while highlighted, and the chosen option shows a check mark and a medium-weight label. See [scale and density](../foundations/scale.md).
-- On touch screens, options are at least 2.75 rem tall, and the trigger gains a 2.75 rem hit area.
+- On touch screens, options are at least 2.75 rem tall, and so is the trigger, as every control is.
 - A long option label wraps in the list. The popup scrolls when its options are taller than the room in the window.
 
 ## States and behaviour

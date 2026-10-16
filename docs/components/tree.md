@@ -70,7 +70,7 @@ The application owns the data. It passes the visible rows in order, flattened, e
 | `md`    | Fewer rows with more room, such as mailboxes: 2.25 rem rows.                      |
 | `lg`    | 2.75 rem rows.                                                                    |
 
-- Density changes only the rows' padding: the text is 0.875 rem and the icons 1 rem at every density. In the compact [scale](../foundations/scale.md) the rows are shorter and the text 0.8125 rem; a `sm` row is 1.625 rem.
+- Density changes only the rows' padding: the text is 0.875 rem and the icons 1 rem at every density. In the compact [scale](../foundations/scale.md) the text is 0.8125 rem and the rows keep the same 1.25 rem line, so none is taller than in the comfortable one: 1.5, 1.75, 1.875 and 2.125 rem from `xs` to `lg`, and a `sm` row is as tall as a compact menu row.
 - On touch screens rows are at least 2.75 rem tall at every density.
 - Rows take the navigation text color, with icons and chevrons in the muted navigation icon color. Hover and press show a translucent state layer; the selected row takes the navigation selection colors, its icon and chevron too, with their own hover and pressed tokens.
 
