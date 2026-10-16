@@ -19,7 +19,7 @@ import { Surface, Stack, Text } from '@envsemble/envui';
 | ----------------- | --------------------------------------------------------------------------------------------------- |
 | Spacing steps 1–9 | 0.25, 0.5, 0.75, 1, 1.5, 2, 2.5, 3 and 4 rem in the comfortable scale; smaller in the compact one   |
 | Step 0            | Removes padding or gap where the component supports it                                              |
-| Touch minimum     | A 2.75 rem hit area for coarse pointers; controls can grow with content                             |
+| Touch minimum     | 2.75 rem: every control grows to it under a coarse pointer, and can grow further with content       |
 | Outer corners     | 1.75 rem for panes, cards and the outside of a row group                                            |
 | Standard corners  | 0.5 rem for inner rows, important actions, toasts and chips                                         |
 | Other shapes      | Fully rounded actions/navigation; icon-only actions keep their variant corners; 0.25 rem checkboxes |

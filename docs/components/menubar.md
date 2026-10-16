@@ -57,7 +57,7 @@ A menubar holds an application's commands as a desktop window does: a row of sma
 
 ## Variants and sizes
 
-- Triggers are as tall as a small control, 2 rem, or 1.625 rem in the compact scale, with 0.5 rem inline padding and 0.5 rem corners; their labels don't wrap. On touch screens they gain a 2.75 rem hit area.
+- Triggers are as tall as a small control, 2 rem, or 1.625 rem in the compact scale, with 0.5 rem inline padding and 0.5 rem corners; their labels don't wrap. On touch screens they grow to 2.75 rem, tall and wide, as buttons do.
 - Menus take the sizes of every [Menu](../components/menu.md), in the app's [scale](../foundations/scale.md).
 
 ## States and behaviour

@@ -522,7 +522,7 @@ for (const failure of ['missing', 'aborted'] as const) {
     requireSite();
     const files = moduleFiles('src/examples/button/CreateProject.tsx');
     let failing = true;
-    await serveSite(page, (pathname) => failing && files.includes(pathname), failure);
+    await serveSite(page, { failing: (pathname) => failing && files.includes(pathname), failure });
     await page.goto(`${siteUrl}/#/components/button/overview`);
     const hero = page.getByRole('group', { name: 'Button example', exact: true });
     await expect(hero.getByText('The example could not load')).toBeVisible();
@@ -545,15 +545,14 @@ for (const failure of ['missing', 'aborted'] as const) {
 async function openFailingButtonPage(page: Page) {
   const loaded = new Set<string>();
   let state: 'opening' | 'failing' | 'assets' | 'up' = 'opening';
-  await serveSite(
-    page,
-    (pathname) => {
+  await serveSite(page, {
+    failing: (pathname) => {
       if (!pathname.startsWith('/assets/')) return false;
       if (state === 'opening') loaded.add(pathname);
       return state === 'assets' || (state === 'failing' && !loaded.has(pathname));
     },
-    'aborted',
-  );
+    failure: 'aborted',
+  });
   await page.goto(`${siteUrl}/#/overview`);
   await expect(page.getByRole('heading', { level: 1, name: 'envUI' })).toBeVisible();
   await expect(page.getByText(/^Loading .*…$/)).toHaveCount(0);
@@ -631,7 +630,7 @@ test('in the hosted build, a reload from an overview that failed keeps the page 
 }) => {
   requireSite();
   let down = false;
-  await serveSite(page, () => down, 'aborted', breakOverview);
+  await serveSite(page, { failing: () => down, failure: 'aborted', script: breakOverview });
   await page.goto(`${siteUrl}/#/overview`);
   const main = page.getByRole('main');
   const alert = main.locator('.env-alert');
@@ -662,11 +661,11 @@ for (const down of ['offline', 'unreachable'] as const) {
     requireSite();
     const files = moduleFiles('src/examples/button/CreateProject.tsx');
     let connection: 'failing' | 'down' | 'up' = 'failing';
-    await serveSite(
-      page,
-      (pathname) => connection === 'down' || (connection === 'failing' && files.includes(pathname)),
-      'aborted',
-    );
+    await serveSite(page, {
+      failing: (pathname) =>
+        connection === 'down' || (connection === 'failing' && files.includes(pathname)),
+      failure: 'aborted',
+    });
     await page.goto(`${siteUrl}/#/components/button/overview`);
     const hero = page.getByRole('group', { name: 'Button example', exact: true });
     await expect(hero.getByText('The example could not load')).toBeVisible();
@@ -693,7 +692,10 @@ test('in the hosted build, an icon list that fails to load offers a reload, whic
   requireSite();
   const files = moduleFiles('src/previews/foundations/Icons.tsx');
   let failing = true;
-  await serveSite(page, (pathname) => failing && files.includes(pathname), 'missing');
+  await serveSite(page, {
+    failing: (pathname) => failing && files.includes(pathname),
+    failure: 'missing',
+  });
   await page.goto(`${siteUrl}/#/foundations/icons/preview`);
   const main = page.getByRole('main');
   await expect(main.getByText('The icon list could not load')).toBeVisible();

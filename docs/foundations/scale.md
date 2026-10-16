@@ -18,14 +18,14 @@ import '@envsemble/envui/styles.css';
 
 ### Props & contracts
 
-| Name                          | Contract                                                                                                                                                                                      |
-| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Theme scale                   | comfortable or compact; inherited from the enclosing Theme when left out, and comfortable outside any. Theme writes it to `data-env-scale` on its element, nested boundaries and popups alike |
-| ThemePreferenceProvider scale | As on Theme, for the boundary around the children and the document root                                                                                                                       |
-| createThemeBootstrapScript    | `scale: 'compact'` writes `data-env-scale="compact"` to the root before the first paint                                                                                                       |
-| useTheme()                    | `{ theme, contrast, scale }` of the nearest Theme, including across library portals                                                                                                           |
-| Control `size`                | sm, md or lg on Button, IconButton, CopyButton, TextField, SearchField, Select, Combobox, DatePicker, SegmentedControl, Pagination and the rail of Tabs                                       |
-| Row `density`                 | xs, sm, md or lg on Table.Root, Tree and List.Root: only the rows' block padding changes                                                                                                      |
+| Name                          | Contract                                                                                                                                                                                                            |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Theme scale                   | comfortable or compact; inherited from the enclosing Theme when left out, and comfortable outside any. Theme writes it to `data-env-scale` on its element, nested boundaries and popups alike                       |
+| ThemePreferenceProvider scale | As on Theme, for the boundary around the children and the document root. Left out, outside any Theme, the boundary inherits a scale the page set on the root, `<html data-env-scale>`, and is otherwise comfortable |
+| createThemeBootstrapScript    | `scale: 'compact'` writes `data-env-scale="compact"` to the root before the first paint                                                                                                                             |
+| useTheme()                    | `{ theme, contrast, scale }` of the nearest Theme, including across library portals                                                                                                                                 |
+| Control `size`                | sm, md or lg on Button, IconButton, CopyButton, TextField, SearchField, Select, Combobox, DatePicker, SegmentedControl, Pagination and the rail of Tabs                                                             |
+| Row `density`                 | xs, sm, md or lg on Table.Root, Tree and List.Root: only the rows' block padding changes                                                                                                                            |
 
 ## Two axes
 
@@ -45,8 +45,9 @@ At the default 16 px root. Every value is a token, in rem, so it follows the rea
 | `--control-height-sm` / `-md` / `-lg`                           | 32 / 40 / 48          | 26 / 32 / 38          |
 | `--control-target-min`                                          | 24                    | 24                    |
 | `--row-height` (menu, Select and Combobox rows)                 | 36                    | 28                    |
-| `--row-content-height` (tree rows)                              | 20                    | 22                    |
+| `--row-content-height` (tree rows)                              | 20                    | 20                    |
 | `--row-padding-block-xs` / `-sm` / `-md` / `-lg`                | 2 / 4 / 8 / 12        | 2 / 3 / 4 / 6         |
+| `--tree-row-padding-block-sm` / `-md` / `-lg`                   | 4 / 8 / 12            | 4 / 5 / 7             |
 | `--space-1` … `--space-9`                                       | 4, 8, 12, 16, 24 … 64 | 4, 6, 10, 12, 20 … 52 |
 | `--control-gap`                                                 | 7                     | 6                     |
 | `--font-size-caption` / `-body-small` / `-label`                | 12 / 14 / 14          | 11 / 12 / 13          |
@@ -58,7 +59,7 @@ At the default 16 px root. Every value is a token, in rem, so it follows the rea
 | `--topbar-height` / `--title-bar-height`                        | 52 / 40               | 42 / 32               |
 | `--control-border-width`, focus rings, `--control-height-touch` | 1, 2, 44              | 1, 2, 44              |
 
-- A tree row is its content line plus its density's padding on both sides: 28 at `sm`, the default, and 36 at `md` in the comfortable scale, and 28 at `sm` and 30 at `md` in the compact one. A table cell adds 4 px to its row padding, so a `md` table row of one line is 45 px tall, and a list row is at least as tall as a small control with its padding, 56 px at `md`.
+- A tree row is its content line plus its density's padding on both sides: 24, 28, 36 and 44 from `xs` to `lg` in the comfortable scale, and 24, 28, 30 and 34 in the compact one, whose tree paddings are a pixel more than the row densities' so that no compact row is taller than a comfortable one and a `sm` row, the default, is as tall as a compact menu row. A table cell adds 4 px to its row padding, so a `md` table row of one line is 45 px tall, and a list row is at least as tall as a small control with its padding, 56 px at `md`.
 - Controls in table cells take the small control height, so a row with an action stays close to the height of its text.
 - `--control-height` is the height of a control that sets no size: md, unless its container sets it to another control height. Set it in an application's own toolbar the same way: `--control-height: var(--control-height-sm)`.
 
@@ -70,13 +71,31 @@ At the default 16 px root. Every value is a token, in rem, so it follows the rea
 
 ## Touch
 
-- Under a coarse pointer, a button, an icon button or a menubar trigger smaller than 44 px (`--control-height-touch`) keeps its look and gains an invisible hit area up to 44 px tall and wide, in either scale. The hit area grows only into free space: never towards a control beside it in a row, or above or below it in a column, so a press on a control always reaches that control.
-- Controls joined in a rail or a group, such as segments, tabs and the buttons of a ButtonGroup, grow to 44 px themselves under a coarse pointer, and so do rows, such as menu items, tree rows and navigation items, and text fields. Entered text becomes 1 rem, so touch browsers don't zoom into a focused field.
+- Under a coarse pointer, controls grow to at least 44 px (`--control-height-touch`), in either scale: buttons, icon buttons, the fields, Select, the rails of SegmentedControl and Tabs, a ButtonGroup and its buttons, Pagination, menubar triggers, AppShell's sidebar toggle, a toast's dismiss button, AvatarButton, sortable table headers, and the close buttons of a PanelDock chip and of DocumentTabs. Their `sm` and `md` heights become 44 px, and `lg` stays 48 px in the comfortable scale and becomes 44 px in the compact one, so the controls of a row still match. A button and a menubar trigger are at least as wide, and so are segments and tabs. The few that stay smaller are listed below.
+- envUI follows the primary pointer, `@media (pointer: coarse)`, not `any-pointer`: a touchscreen laptop used with a mouse or a trackpad keeps the desktop density, and a phone or a tablet grows. The control tokens themselves keep their values, because the token resolver has no pointer modifier; each component applies the touch height under the media query.
+- A control's own box is its hit area, so a press always reaches the control it lands on, whatever the layout around it: an application's own column, grid or wrapping row needs nothing more. Hit areas drawn beyond a part's box stay inside its control: a segment's or a tab's covers the rail's padding above and below it, so it is as tall as the rail, and an action inside a field reaches the touch height above and below it, within the field, but keeps its width, so it never reaches over the next action or the text.
+- Rows grow to 44 px too, such as menu items, tree rows, navigation items and table rows with an action, and the top bar and the title bar to 52 px, which holds a control with 4 px around it. Entered text becomes 1 rem, so touch browsers don't zoom into a focused field.
+- Growing, rather than keeping each control's look and adding an invisible hit area around it, is what keeps a row's controls the same height when a field beside a button must be 44 px for its text, and keeps one control's hit area from taking presses on another, which only the layout around them could prevent.
+- Keep your own targets the same way. Use envUI's Button or IconButton, which grow on their own, or grow your own control under the same query, since `--control-height` keeps its value under a coarse pointer:
+
+  ```css
+  .my-target {
+    block-size: var(--control-height);
+  }
+  @media (pointer: coarse) {
+    .my-target {
+      block-size: max(var(--control-height), var(--control-height-touch));
+    }
+  }
+  ```
+
+- These targets stay smaller under a coarse pointer and rely on WCAG 2.5.8's spacing exception below: a link in running text, a breadcrumb link, the remove button of a combobox chip, the avatars of an interactive AvatarGroup, which keep at least 1.5 rem of each uncovered, and a Switch's 40 px track, whose label row grows to 44 px and takes presses too.
 - With a mouse, every target is at least 24 px in both scales, WCAG 2.2's minimum: segments, tabs and the actions inside fields keep 24 px even in a small rail or field of the compact scale. A few targets are shorter but keep 24 px of room around them, which WCAG 2.5.8 allows as its spacing exception: a breadcrumb link, a line of text 21 px tall, and the remove button of a combobox chip.
 
 ## Guidelines
 
 - **One scale per app or window.** Set it on the application's root Theme or ThemePreferenceProvider.
+- **Server rendering: pass the scale to the provider.** A ThemePreferenceProvider's boundary takes the scale of a server-rendered `<html data-env-scale="compact">` only once the application hydrates and reads the root, so until then the boundary paints comfortable. Pass `scale` to ThemePreferenceProvider, so the server renders the boundary in it, and the same scale to createThemeBootstrapScript if the page uses it.
 - **A different scale only at a Theme boundary around a whole region**, such as a docked inspector or a panel of its own: `<Theme {...useTheme()} scale="compact">`. Never mix scales inside a toolbar or a form row.
 - **Desktop productivity apps use compact. Web, customer-facing and touch apps use comfortable.**
 - **Rows match.** A button next to an input takes the input's size, a table toolbar follows its rows, and menu items match their trigger. Give the controls of a row the same size, or none.

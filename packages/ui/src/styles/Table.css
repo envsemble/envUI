@@ -233,6 +233,10 @@
   .env-table-column-resize {
     inline-size: var(--space-5);
   }
+  /* A sortable header is a button, at least the touch height in every scale and row density. */
+  .env-table-sort-button {
+    min-block-size: var(--control-height-touch);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .env-table-row[data-interactive],

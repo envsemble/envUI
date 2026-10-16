@@ -14,7 +14,7 @@ import { expect, test, type Page, type TestInfo } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { mkdirSync, readFileSync, rmdirSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { catalogueUrl } from '../browser/Servers';
+import { serveSite, siteBuilt, siteUrl } from '../browser/HostedSite';
 import {
   emulateContrast,
   themesFor,
@@ -287,13 +287,28 @@ function compare(scan: Scan, known: RuleCounts = {}) {
   return { added, fixed };
 }
 
+// The scan runs on the hosted build, served from dist/site/ by page.route, so no server is
+// involved. The development server, with each module a request of its own, could drop a page's
+// files, as when it restarted or ran out of sockets, and leave the page blank until the test's
+// timeout.
+test.beforeAll(() => {
+  if (!siteBuilt())
+    throw new Error(
+      'The hosted catalogue is missing: run npm run test:a11y, which builds it first with npm run build:site.',
+    );
+});
+
+test.beforeEach(async ({ page }) => {
+  await serveSite(page);
+});
+
 for (const { path, title, routes: pageRoutes } of pages) {
   test(`${title} (${path}) has no new accessibility violations`, async ({ page }, testInfo) => {
     // Pages scanned in high contrast as well take twice as long.
     test.setTimeout(240_000);
     const scans: Scan[] = [];
     for (const route of pageRoutes) {
-      await page.goto(`${catalogueUrl}/#/${route}`);
+      await page.goto(`${siteUrl}/#/${route}`);
       await expandCode(page);
       for (const theme of themesFor(path)) {
         await setTheme(page, theme);

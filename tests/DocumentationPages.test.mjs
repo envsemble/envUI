@@ -19,7 +19,7 @@ import {
  */
 const unconverted = ['chips'];
 
-/** Exports that no page lists in its components yet; the list only shrinks. */
+/** Exports without a page that lists them in its frontmatter; the list only shrinks. */
 const undocumentedExports = [];
 
 /**

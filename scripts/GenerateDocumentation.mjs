@@ -83,7 +83,7 @@ export const frontmatterSchema = {
   related: { type: 'strings', required: true },
   components: { type: 'strings', required: true, nonEmpty: true },
 };
-const otherFrontmatter = new Set(['components', 'aliases']);
+const otherFrontmatter = new Set(['components', 'aliases', 'exportAliases']);
 /** A page whose slug cannot follow its title until the component it documents is merged. */
 const slugExceptions = new Set(['chips']);
 
@@ -187,9 +187,30 @@ function validateFrontmatter(frontmatter, path, { component, template, versions 
   if (!component) {
     for (const key of Object.keys(frontmatter))
       if (!otherFrontmatter.has(key))
-        problems.push(`${key} is not allowed here; only components and aliases are`);
+        problems.push(`${key} is not allowed here; only components, aliases and exportAliases are`);
+  }
+  if (!component && 'exportAliases' in frontmatter) {
+    // The names people search for an export by, for an export without a component page of its
+    // own, such as "theme switcher" for ThemeToggle: a list per export the page documents.
+    const value = frontmatter.exportAliases;
+    const listed = Array.isArray(frontmatter.components) ? frontmatter.components : [];
+    if (!value || typeof value !== 'object' || Array.isArray(value))
+      problems.push('exportAliases must map an export to its aliases');
+    else
+      for (const [name, aliases] of Object.entries(value)) {
+        if (!listed.includes(name))
+          problems.push(`exportAliases names ${name}, which components does not list`);
+        if (
+          !Array.isArray(aliases) ||
+          !aliases.length ||
+          aliases.some((alias) => typeof alias !== 'string' || !alias.trim()) ||
+          new Set(aliases).size !== aliases.length
+        )
+          problems.push(`exportAliases of ${name} must be a list of distinct strings`);
+      }
   }
   for (const [key, value] of Object.entries(frontmatter)) {
+    if (key === 'exportAliases' && !component) continue;
     const rule = frontmatterSchema[key];
     if (!rule) {
       problems.push(`unknown field ${key}`);

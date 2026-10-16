@@ -2,17 +2,19 @@
    height of its size, or of its container where it sets none. */
 
 .env-button {
+  /* The height the button draws at: the control height, or more under a coarse pointer. */
+  --env-button-height: var(--control-height);
   inline-size: fit-content;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--control-gap);
-  min-height: var(--control-height);
+  min-height: var(--env-button-height);
   /* The block padding gives way where a line of the label and the padding would outgrow the
      control height, as in a small control of the compact scale. */
   padding: min(
       var(--space-1),
-      calc((var(--control-height) - 2 * var(--control-border-width) - 1lh) / 2)
+      calc((var(--env-button-height) - 2 * var(--control-border-width) - 1lh) / 2)
     )
     var(--space-3);
   border: var(--control-border-width) solid transparent;
@@ -203,53 +205,27 @@
 
 /* An icon-only button keeps its square size, also where its container is squeezed narrower. */
 .env-button.env-icon-button {
-  width: var(--control-height);
-  height: var(--control-height);
-  min-height: var(--control-height);
+  width: var(--env-button-height);
+  height: var(--env-button-height);
+  min-height: var(--env-button-height);
   max-inline-size: none;
   flex-shrink: 0;
   padding: 0;
 }
 
-/* Under a coarse pointer, a button smaller than the touch height keeps its look and gains an
-   invisible hit area around it, up to that height and width, which grows only into free space: not
-   towards a sibling beside it in a row, or above or below it in a column, whose own presses it
-   would take. A container of joined controls, such as ButtonGroup or a tab rail, grows its controls
-   instead and sets --env-button-hit-area to 0rem. A link-like text button in running text keeps
-   its own hit area, and so does a button that already covers its row. */
+/* Under a coarse pointer, a button is at least the touch height tall and wide, in either scale.
+   Its own box is its hit area, so it never reaches over a neighbour, whatever the layout around
+   it, and every control of a size grows alike, so the controls of a row still match. A control
+   that sizes its parts itself, such as a tab rail or the actions inside a field, sets
+   --env-touch-height to 0rem and gives them a hit area inside its own box. A link-like text button
+   in running text keeps its size, and so does a button that already covers its row. */
 @media (pointer: coarse) {
-  :where(.env-button:not(.env-link, [data-row-target])) {
-    position: relative;
-  }
-  .env-button:not(.env-link, [data-row-target])::before {
-    --env-button-hit-slop: min(
-      0%,
-      calc((100% - var(--env-button-hit-area, var(--control-height-touch))) / 2)
+  .env-button:not(.env-link, [data-row-target]) {
+    --env-button-height: max(
+      var(--control-height),
+      var(--env-touch-height, var(--control-height-touch))
     );
-    content: '';
-    position: absolute;
-    inset: var(--env-button-hit-slop);
-  }
-  .env-button:not(.env-link, [data-row-target]):not(:last-child)::before {
-    inset-inline-end: 0%;
-  }
-  .env-button:not(.env-link, [data-row-target]):not(:first-child)::before {
-    inset-inline-start: 0%;
-  }
-  /* In a column, the neighbours are above and below. */
-  .env-stack > .env-button:not(.env-link, [data-row-target])::before,
-  .env-action-group[data-stacked] > .env-button:not(.env-link, [data-row-target])::before {
-    inset: var(--env-button-hit-slop);
-  }
-  .env-stack > .env-button:not(.env-link, [data-row-target]):not(:last-child)::before,
-  .env-action-group[data-stacked]
-    > .env-button:not(.env-link, [data-row-target]):not(:last-child)::before {
-    inset-block-end: 0%;
-  }
-  .env-stack > .env-button:not(.env-link, [data-row-target]):not(:first-child)::before,
-  .env-action-group[data-stacked]
-    > .env-button:not(.env-link, [data-row-target]):not(:first-child)::before {
-    inset-block-start: 0%;
+    min-inline-size: var(--env-button-height);
   }
 }
 
@@ -316,6 +292,13 @@
 .env-avatar-button:disabled {
   opacity: var(--state-disabled-opacity);
   cursor: default;
+}
+/* Under a coarse pointer the halo around a small avatar grows to the touch height. */
+@media (pointer: coarse) {
+  .env-avatar-button {
+    min-inline-size: var(--control-height-touch);
+    min-block-size: var(--control-height-touch);
+  }
 }
 .env-avatar-button-tooltip {
   display: grid;

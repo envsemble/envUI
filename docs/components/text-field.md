@@ -11,10 +11,15 @@ aliases:
   - textbox
   - input field
   - form field
+  - email field
+  - email
+  - password field
+  - password
   - search field
   - search box
   - textarea
   - multiline text
+  - description field
 useWhen:
   - Someone types a short value on one line, such as a name, an e-mail address or a number.
   - A value has a fixed start or a unit beside it, such as an address after a domain or a size in GB.
@@ -88,7 +93,7 @@ Textarea comes outlined or plain.
 
 <!-- specimen: Appearances -->
 
-- Outlined and quiet fields take the control height of their `size`, as every control does: `sm`, `md` and `lg` are 2, 2.5 and 3 rem in the comfortable scale, and 1.625, 2 and 2.375 rem in the compact one. Without a size, a field takes its container's control height, `md` by default. The label rests in the middle and floats into the outline without adding height, so the field stays in line with buttons beside it. An end action is 0.5 rem shorter than the field. On touch screens fields grow to 2.75 rem.
+- Outlined and quiet fields take the control height of their `size`, as every control does: `sm`, `md` and `lg` are 2, 2.5 and 3 rem in the comfortable scale, and 1.625, 2 and 2.375 rem in the compact one. Without a size, a field takes its container's control height, `md` by default. The label rests in the middle and floats into the outline without adding height, so the field stays in line with buttons beside it. An end action is 0.5 rem shorter than the field. On touch screens fields grow to 2.75 rem, as every control does, and an end action takes presses up to 2.75 rem tall, within the field.
 - Floating and plain fields are 3.5 rem tall inside a 0.0625 rem border, 2.75 rem in the compact scale, with 1 rem padding. A field with a visible label keeps 0.5 rem above it for the floated label. See [scale and density](../foundations/scale.md).
 - A Textarea starts at 7.5 rem. With `rows`, a fixed Textarea is that many lines tall, at least 7.5 rem, and a growing one starts at that many lines, also below 7.5 rem.
 - Entered text and a resting label are 0.9375 rem, 0.8125 rem in the compact scale; a floated label, the hint and the error are 0.875 rem. On touch screens, entered text, resting labels, prefixes and suffixes are 1 rem (16 px by default), so focusing a field does not zoom the page.

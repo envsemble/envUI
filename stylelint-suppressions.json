@@ -93,7 +93,7 @@
   },
   "packages/ui/src/styles/Combobox.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 14
+      "count": 13
     },
     "declaration-property-value-allowed-list": {
       "count": 1
@@ -172,7 +172,7 @@
   },
   "packages/ui/src/styles/TextField.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 20
+      "count": 19
     }
   },
   "packages/ui/src/styles/List.css": {
@@ -283,7 +283,7 @@
   },
   "packages/ui/src/styles/PanelDock.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 33
+      "count": 31
     },
     "declaration-property-value-allowed-list": {
       "count": 8

@@ -2829,7 +2829,7 @@ export const tokens = {
     },
     scales: { compact: '1.625rem' },
   },
-  /** The hit area of a control under a coarse pointer, whatever the scale: a control smaller than it keeps its look and gains an invisible overlay this tall and wide. Rows and text fields grow to it instead. */
+  /** The height every control grows to under a coarse pointer, whatever the scale, and the width of a button: its own box is its hit area. Rows grow to it too. */
   'control.height-touch': {
     cssVariable: '--control-height-touch',
     type: 'dimension',
@@ -3275,7 +3275,7 @@ export const tokens = {
     },
     scales: { compact: '1.375rem' },
   },
-  /** The line a row of a tree or list reserves for its label and icon; the row's density adds its block padding around it. */
+  /** The line a tree row reserves for its label and icon, 20 px in both scales; the row's density adds its block padding around it. */
   'row.content-height': {
     cssVariable: '--row-content-height',
     type: 'dimension',
@@ -3285,7 +3285,6 @@ export const tokens = {
       'light-high-contrast': '1.25rem',
       'dark-high-contrast': '1.25rem',
     },
-    scales: { compact: '1.375rem' },
   },
   /** The row of a menu and of a select's or combobox's popup. */
   'row.height': {
@@ -3489,6 +3488,42 @@ export const tokens = {
       'dark-high-contrast': '3.25rem',
     },
     scales: { compact: '2.625rem' },
+  },
+  /** A tree row's block padding at density lg: the row density's in the comfortable scale. */
+  'tree.row-padding-block-lg': {
+    cssVariable: '--tree-row-padding-block-lg',
+    type: 'dimension',
+    values: {
+      light: '0.75rem',
+      dark: '0.75rem',
+      'light-high-contrast': '0.75rem',
+      'dark-high-contrast': '0.75rem',
+    },
+    scales: { compact: '0.4375rem' },
+  },
+  /** A tree row's block padding at density md: the row density's in the comfortable scale. */
+  'tree.row-padding-block-md': {
+    cssVariable: '--tree-row-padding-block-md',
+    type: 'dimension',
+    values: {
+      light: '0.5rem',
+      dark: '0.5rem',
+      'light-high-contrast': '0.5rem',
+      'dark-high-contrast': '0.5rem',
+    },
+    scales: { compact: '0.3125rem' },
+  },
+  /** A tree row's block padding at density sm, its default, so that a row is as tall as a menu row in either scale: the row density's in the comfortable scale. */
+  'tree.row-padding-block-sm': {
+    cssVariable: '--tree-row-padding-block-sm',
+    type: 'dimension',
+    values: {
+      light: '0.25rem',
+      dark: '0.25rem',
+      'light-high-contrast': '0.25rem',
+      'dark-high-contrast': '0.25rem',
+    },
+    scales: { compact: '0.25rem' },
   },
   'type.body': {
     cssVariable: '--type-body',

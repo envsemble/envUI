@@ -20,12 +20,18 @@
   "row": {
     "$type": "dimension",
     "height": { "$value": { "value": 1.75, "unit": "rem" } },
-    "content-height": { "$value": { "value": 1.375, "unit": "rem" } },
     "padding-block-xs": { "$value": { "value": 0.125, "unit": "rem" } },
     "padding-block-sm": { "$value": { "value": 0.1875, "unit": "rem" } },
     "padding-block-md": { "$value": { "value": 0.25, "unit": "rem" } },
     "padding-block-lg": { "$value": { "value": 0.375, "unit": "rem" } },
     "padding-inline": { "$value": { "value": 1.25, "unit": "rem" } }
+  },
+  "tree": {
+    "$type": "dimension",
+    "$description": "A compact tree row keeps the 20 px content line, so its paddings are a pixel more than the row densities': 28 px at sm, as tall as a compact menu row, 30 px at md and 34 px at lg. At xs it takes the row density's, 24 px, as in the comfortable scale.",
+    "row-padding-block-sm": { "$value": { "value": 0.25, "unit": "rem" } },
+    "row-padding-block-md": { "$value": { "value": 0.3125, "unit": "rem" } },
+    "row-padding-block-lg": { "$value": { "value": 0.4375, "unit": "rem" } }
   },
   "topbar": {
     "$type": "dimension",

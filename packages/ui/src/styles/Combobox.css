@@ -28,7 +28,9 @@
   align-items: center;
   gap: var(--space-1);
   border-radius: calc(var(--env-field-height) / 2);
-  padding-block: calc((var(--env-field-height) - 0.125rem - var(--env-combobox-row)) / 2);
+  padding-block: calc(
+    (var(--env-field-height) - 2 * var(--control-border-width) - var(--env-combobox-row)) / 2
+  );
   padding-inline: var(--space-3)
     calc(
       var(--env-combobox-end) + var(--env-combobox-actions) * var(--env-combobox-action) +

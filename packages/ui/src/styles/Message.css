@@ -74,9 +74,11 @@
 .env-message[data-status='failed'] .env-message-status {
   color: var(--color-tone-danger);
 }
-/* Actions are small text and icon buttons; on coarse pointers they gain the touch hit area. */
+/* Actions are small text and icon buttons; on coarse pointers they grow to the touch height. */
 .env-message-actions {
   --control-height: var(--control-height-sm);
+  /* The height the actions draw at, which a coarse pointer raises to the touch height. */
+  --env-message-action-height: var(--control-height);
   justify-self: stretch;
   display: flex;
   flex-wrap: wrap;
@@ -90,10 +92,15 @@
 .env-message[data-from='other']
   > .env-message-actions
   > .env-button-text.env-icon-button:first-child {
-  margin-inline-start: calc((var(--control-icon-size) - var(--control-height)) / 2);
+  margin-inline-start: calc((var(--control-icon-size) - var(--env-message-action-height)) / 2);
 }
 .env-message[data-from='self']
   > .env-message-actions
   > .env-button-text.env-icon-button:last-child {
-  margin-inline-end: calc((var(--control-icon-size) - var(--control-height)) / 2);
+  margin-inline-end: calc((var(--control-icon-size) - var(--env-message-action-height)) / 2);
+}
+@media (pointer: coarse) {
+  .env-message-actions {
+    --env-message-action-height: max(var(--control-height), var(--control-height-touch));
+  }
 }

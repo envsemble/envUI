@@ -8,6 +8,8 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 - [Migrate an interface to envUI](migration.md) — Replace existing UI while preserving application behavior.
 
+- [For agents](agent-tooling.md) — The AGENTS.md index, the MCP server, the manifest, llms.txt and the skills that coding agents use.
+
 - [Develop envUI locally](local-development.md) — Link a checkout while co-developing a consuming application.
 
 - [Extend the shared library](library-development.md) — Public API changes, changesets, catalogue specimens and acceptance checks.

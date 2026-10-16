@@ -119,11 +119,15 @@
   outline: 0.125rem solid var(--color-focus-ring);
   outline-offset: -0.125rem;
 }
+/* Under a coarse pointer the tabs are the touch height above the strip's hairline, and each close
+   button always shows, as tall and wide as its tab. */
 @media (pointer: coarse) {
   .env-document-tabs {
-    block-size: var(--control-height-touch);
+    block-size: calc(var(--control-height-touch) + var(--control-border-width));
   }
   .env-document-tab-close {
+    inline-size: var(--control-height-touch);
+    block-size: var(--control-height-touch);
     visibility: visible;
   }
 }

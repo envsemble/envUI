@@ -647,7 +647,7 @@ test.describe('PanelDock', () => {
     await expect(handle).toHaveAttribute('aria-valuenow', String(height - 16));
   });
 
-  test('coarse pointers get a taller resize band, touch-sized chips and hit areas', async ({
+  test('coarse pointers get a taller resize band, touch-sized chips and controls', async ({
     browser,
     browserName,
   }) => {
@@ -667,17 +667,21 @@ test.describe('PanelDock', () => {
     expect(await handle.evaluate((element) => getComputedStyle(element, '::after').opacity)).toBe(
       '1',
     );
-    // The header's small controls keep their size and gain a touch-sized hit area.
+    // The header's small controls grow to the touch height, as every button does, so a press on
+    // one never reaches the next.
     const minimize = report.getByRole('button', { name: 'Minimize' });
-    await expect(minimize).toHaveCSS('height', '32px');
-    expect(
-      await minimize.evaluate((element) => parseFloat(getComputedStyle(element, '::before').top)),
-    ).toBe(-6);
-    await expect(dock.chips.getByRole('listitem')).toHaveCSS('height', '44px');
-    await expect(dock.chips.getByRole('button', { name: 'Close Budget' })).toHaveCSS(
-      'width',
-      '32px',
-    );
+    await expect(minimize).toHaveCSS('height', '44px');
+    await expect(minimize).toHaveCSS('width', '44px');
+    // A chip holds its buttons at the touch height inside its top hairline.
+    await expect(dock.chips.getByRole('listitem')).toHaveCSS('height', '45px');
+    for (const name of ['Show Budget', 'Close Budget']) {
+      const button = dock.chips.getByRole('button', { name, exact: true });
+      await expect
+        .poll(() => button.evaluate((element) => element.getBoundingClientRect().height))
+        .toBe(44);
+    }
+    const close = dock.chips.getByRole('button', { name: 'Close Budget' });
+    await expect(close).toHaveCSS('width', '44px');
     await context.close();
   });
 

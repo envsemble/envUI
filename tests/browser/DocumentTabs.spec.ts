@@ -205,4 +205,37 @@ test.describe('DocumentTabs', () => {
       expect(indicator).not.toBe('rgba(0, 0, 0, 0)');
     }
   });
+
+  test.describe('on a coarse pointer', () => {
+    test.use({ hasTouch: true });
+
+    for (const scale of ['comfortable', 'compact'] as const)
+      test(`tabs and their close buttons are the touch height in the ${scale} scale`, async ({
+        page,
+      }) => {
+        await page.goto(`${tabsFixture}&scale=${scale}`);
+        expect(await page.evaluate(() => matchMedia('(pointer: coarse)').matches)).toBe(true);
+        const strip = page.locator('.env-document-tabs').first();
+        await expect(
+          strip.locator('xpath=ancestor::*[contains(@class, "env-theme")][1]'),
+        ).toHaveAttribute('data-env-scale', scale);
+        const boxes = await strip.evaluate((element) => ({
+          inside: element.clientHeight,
+          tabs: [...element.querySelectorAll('.env-document-tab')].map(
+            (tab) => tab.getBoundingClientRect().height,
+          ),
+          closes: [...element.querySelectorAll('.env-document-tab-close')].map((close) => {
+            const box = close.getBoundingClientRect();
+            return [box.width, box.height];
+          }),
+        }));
+        // The tabs fill the strip above its hairline, and every close button shows, as tall and
+        // wide as its tab.
+        expect(boxes.inside).toBe(44);
+        expect(boxes.tabs.length).toBeGreaterThan(0);
+        expect(boxes.tabs.filter((height) => height !== 44)).toEqual([]);
+        expect(boxes.closes.filter(([width, height]) => width !== 44 || height !== 44)).toEqual([]);
+        await expect(strip.locator('.env-document-tab-close').first()).toBeVisible();
+      });
+  });
 });

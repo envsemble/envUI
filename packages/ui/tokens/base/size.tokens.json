@@ -27,7 +27,7 @@
       "$value": { "value": 1, "unit": "px" }
     },
     "height-touch": {
-      "$description": "The hit area of a control under a coarse pointer, whatever the scale: a control smaller than it keeps its look and gains an invisible overlay this tall and wide. Rows and text fields grow to it instead.",
+      "$description": "The height every control grows to under a coarse pointer, whatever the scale, and the width of a button: its own box is its hit area. Rows grow to it too.",
       "$value": { "value": 2.75, "unit": "rem" }
     },
     "icon-size": {
@@ -66,7 +66,7 @@
       "$value": { "value": 2.25, "unit": "rem" }
     },
     "content-height": {
-      "$description": "The line a row of a tree or list reserves for its label and icon; the row's density adds its block padding around it.",
+      "$description": "The line a tree row reserves for its label and icon, 20 px in both scales; the row's density adds its block padding around it.",
       "$value": { "value": 1.25, "unit": "rem" }
     },
     "padding-block-xs": {
@@ -84,6 +84,21 @@
     "padding-block-lg": {
       "$description": "Row density lg.",
       "$value": { "value": 0.75, "unit": "rem" }
+    }
+  },
+  "tree": {
+    "$type": "dimension",
+    "row-padding-block-sm": {
+      "$description": "A tree row's block padding at density sm, its default, so that a row is as tall as a menu row in either scale: the row density's in the comfortable scale.",
+      "$value": "{row.padding-block-sm}"
+    },
+    "row-padding-block-md": {
+      "$description": "A tree row's block padding at density md: the row density's in the comfortable scale.",
+      "$value": "{row.padding-block-md}"
+    },
+    "row-padding-block-lg": {
+      "$description": "A tree row's block padding at density lg: the row density's in the comfortable scale.",
+      "$value": "{row.padding-block-lg}"
     }
   },
   "topbar": {

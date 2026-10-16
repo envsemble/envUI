@@ -9,7 +9,7 @@
  * and through a chain of renames. Each `relaxed` entry approves one loosening: once recorded it is
  * spent, so loosening the pair the same way again later needs another entry. Entries of `dropped`,
  * `renamed` and `relaxed` stay once recorded, so the reasons can't be removed after the snapshot is
- * updated either. The pairs are also compared with the base branch's copy of the file
+ * updated either. The pairs are also compared with the base branches' copies of the file
  * (readBaseSnapshot), which a branch can't edit along with Pairs.ts.
  */
 import { execFileSync } from 'node:child_process';
@@ -30,6 +30,12 @@ export interface DeclaredPairs {
   renamed: string[];
   /** The changes `relaxed` accepted, without their rationale; each is spent once recorded. */
   relaxed: Omit<Relaxation, 'rationale'>[];
+  /**
+   * Names declared when the snapshot was taken whose requirements it doesn't record. Only a base's
+   * snapshot in the first format, which listed the declared pairs by name alone, has them: they
+   * must still be declared, dropped or renamed, and hold their pairs to nothing more.
+   */
+  unrecorded?: string[];
 }
 
 /**
@@ -165,10 +171,10 @@ export interface SnapshotInput {
   /** Whether the run is in CI, where a missing snapshot is never written. */
   ci: boolean;
   /**
-   * The snapshot on the base branch, as readBaseSnapshot reads it, when there is one: the declared
-   * pairs are compared with it too, and a loosening since needs a relaxation new since.
+   * The snapshots on the base branches, as readBaseSnapshot reads them: the declared pairs are
+   * compared with each too, and a loosening since needs a relaxation new since.
    */
-  base?: BaseSnapshot;
+  bases?: readonly BaseSnapshot[];
 }
 
 export interface BaseSnapshot {
@@ -186,6 +192,7 @@ export function checkSnapshot(input: SnapshotInput): {
   write?: DeclaredPairs;
 } {
   const { recorded, update, ci } = input;
+  const bases = input.bases ?? [];
   const problems: string[] = [];
   const current: DeclaredPairs = {
     pairs: Object.fromEntries(
@@ -229,21 +236,42 @@ export function checkSnapshot(input: SnapshotInput): {
         `${declaredFile} is missing: restore it from the repository, or, for a new registry, record it with npm run test:contrast -- --update-snapshots.`,
       );
     // A snapshot written afresh holds every pair to what it asks today, so it is compared with the
-    // base first: deleting the file can't record a weakening the base would catch.
-    if (input.base)
-      problems.push(
-        ...compare(current, input.base.recorded, input.renamed, input.base.label, { fresh: false }),
-      );
+    // bases first: deleting the file can't record a weakening a base would catch.
+    const compared = bases.map((base) =>
+      compare(current, base.recorded, input.renamed, base.label),
+    );
+    for (const result of compared) problems.push(...result.problems);
+    // Nor can it record a relaxation that relaxed nothing, which it would count as spent. An entry
+    // is spent when a base records it or it approves a loosening since one; without a base, nothing
+    // records what any entry relaxed.
+    problems.push(
+      ...(compared.length === 0
+        ? relaxingNothing(
+            current,
+            countRelaxations(current.relaxed),
+            `, and neither ${declaredFile} nor a base branch's copy records what it relaxed: restore ${declaredFile} from the repository, or remove the entry.`,
+          )
+        : relaxingNothing(
+            current,
+            fewest(compared.map((result) => result.unspent)),
+            relaxesNothing(bases.map((base) => base.label).join(' or ')),
+          )),
+    );
     return { problems, write: problems.length === 0 ? current : undefined };
   }
 
-  problems.push(...compare(current, recorded, input.renamed, declaredFile, { fresh: true }));
-  // Against the base branch's snapshot too, so that a snapshot edited by hand along with Pairs.ts,
-  // or a recorded relaxation deleted from both, can't weaken a pair unnoticed.
-  if (problems.length === 0 && input.base)
-    problems.push(
-      ...compare(current, input.base.recorded, input.renamed, input.base.label, { fresh: false }),
-    );
+  const own = compare(current, recorded, input.renamed, declaredFile);
+  problems.push(
+    ...own.problems,
+    ...relaxingNothing(current, own.unspent, relaxesNothing(declaredFile)),
+  );
+  // Against the base branches' snapshots too, so that a snapshot edited by hand along with
+  // Pairs.ts, or a recorded relaxation deleted from both, can't weaken a pair unnoticed. An entry
+  // recorded on the branch may since have been spent and tightened back, so one a base doesn't
+  // record and that approves no loosening since the base is no problem.
+  if (problems.length === 0)
+    for (const base of bases)
+      problems.push(...compare(current, base.recorded, input.renamed, base.label).problems);
 
   if (problems.length > 0) return { problems };
   if (update) return { problems, write: current };
@@ -266,21 +294,21 @@ export function checkSnapshot(input: SnapshotInput): {
 /**
  * Compares the declared pairs, `current`, with a recorded snapshot, read from `source`: names gone
  * unexplained, pairs held to less without a relaxation new since the record, and recorded reasons
- * removed. `fresh` is the working tree's snapshot, where an unspent new relaxation fails too.
+ * removed. Also returns how many entries of each relaxation are new since the record and approved
+ * no loosening, for relaxingNothing.
  */
 function compare(
   current: DeclaredPairs,
   recorded: DeclaredPairs,
   renamed: readonly { from: string; to: string }[],
   source: string,
-  { fresh }: { fresh: boolean },
-): string[] {
+): { problems: string[]; unspent: Map<string, number> } {
   const problems: string[] = [];
   const declared = new Set(Object.keys(current.pairs));
   const accounted = new Set([...current.dropped, ...current.renamed]);
 
   // Every name declared when the snapshot was taken is still declared, dropped or renamed.
-  for (const name of Object.keys(recorded.pairs))
+  for (const name of [...Object.keys(recorded.pairs), ...(recorded.unrecorded ?? [])])
     if (!declared.has(name) && !accounted.has(name))
       problems.push(
         `${name} was declared (${source}) and is gone from tests/contrast/Pairs.ts: list it in dropped or renamed there, with the reason.`,
@@ -315,14 +343,6 @@ function compare(
       );
     }
   }
-  // A new relaxation is spent on a loosening now, so it can't be recorded ahead of one and used later.
-  // Against the base, an entry recorded on the branch may since have been spent and tightened back.
-  if (fresh)
-    for (const entry of current.relaxed)
-      if (spend(relaxationKey(entry)))
-        problems.push(
-          `relaxed in tests/contrast/Pairs.ts lists ${entry.pair} at ${describe(entry)}, which relaxes nothing ${source} records: remove the entry, or list exactly what the pair is held to now, when that is less than recorded.`,
-        );
 
   // Recorded reasons stay: a dropped or renamed pair until it is declared again, a relaxation always.
   for (const name of recorded.dropped)
@@ -342,7 +362,42 @@ function compare(
         `The relaxation of ${entry.pair} to ${describe(entry)} is recorded${count > 1 ? ` ${count} times` : ''} (${source}) but no longer listed${count > 1 ? ' as often' : ''} in relaxed in tests/contrast/Pairs.ts: keep its entry and rationale.`,
       );
     }
+  return { problems, unspent };
+}
+
+const relaxesNothing = (source: string) =>
+  `, which relaxes nothing ${source} records: remove the entry, or list exactly what the pair is held to now, when that is less than recorded.`;
+
+/**
+ * The new relaxations that relaxed nothing, each a problem ending with `why`: `unspent` counts, for
+ * each relaxation, its entries new since the record that approved no loosening. A new entry is
+ * spent on a loosening now, so it can't be recorded ahead of one and used later.
+ */
+function relaxingNothing(
+  current: DeclaredPairs,
+  unspent: ReadonlyMap<string, number>,
+  why: string,
+): string[] {
+  const left = new Map(unspent);
+  const problems: string[] = [];
+  for (const entry of current.relaxed) {
+    const key = relaxationKey(entry);
+    const count = left.get(key) ?? 0;
+    if (count <= 0) continue;
+    left.set(key, count - 1);
+    problems.push(
+      `relaxed in tests/contrast/Pairs.ts lists ${entry.pair} at ${describe(entry)}${why}`,
+    );
+  }
   return problems;
+}
+
+/** For each relaxation, the fewest unspent entries any of `counts` leaves: one spent by any is spent. */
+function fewest(counts: readonly ReadonlyMap<string, number>[]) {
+  const keys = new Set(counts.flatMap((count) => [...count.keys()]));
+  return new Map(
+    [...keys].map((key) => [key, Math.min(...counts.map((count) => count.get(key) ?? 0))]),
+  );
 }
 
 function stripComment({ pairs, dropped, renamed, relaxed }: DeclaredPairs): DeclaredPairs {
@@ -354,7 +409,9 @@ const isObject = (value: unknown): value is Record<string, unknown> =>
 
 /**
  * Reads a snapshot's text, from `source`. A snapshot from before `dropped`, `renamed` or `relaxed`
- * were recorded lists none; anything else that isn't a snapshot is a problem.
+ * were recorded lists none, and one in the first format, whose `pairs` listed the declared pairs by
+ * name alone, records no requirements: its names are `unrecorded`. Anything else that isn't a
+ * snapshot is a problem.
  */
 export function parseSnapshot(
   text: string,
@@ -366,7 +423,13 @@ export function parseSnapshot(
   } catch (error) {
     return { problem: `${source} isn't valid JSON: ${(error as Error).message}` };
   }
-  if (!isObject(data) || !isObject(data.pairs))
+  const names =
+    isObject(data) &&
+    Array.isArray(data.pairs) &&
+    data.pairs.every((name) => typeof name === 'string')
+      ? (data.pairs as string[])
+      : undefined;
+  if (!isObject(data) || (!isObject(data.pairs) && !names))
     return {
       problem: `${source} has no pairs object, so it isn't a snapshot the contrast gate reads.`,
     };
@@ -380,6 +443,7 @@ export function parseSnapshot(
       return {
         problem: `${source} has a ${key} that isn't a list, so it isn't a snapshot the contrast gate reads.`,
       };
+  if (names) return { recorded: { pairs: {}, ...lists, unrecorded: names } as DeclaredPairs };
   return { recorded: { ...data, pairs: data.pairs, ...lists } as DeclaredPairs };
 }
 
@@ -397,16 +461,17 @@ const runGit: Git = (...args) =>
   execFileSync('git', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
 
 /**
- * The branches a branch may be based on, whose merge-base with HEAD can be the base when
- * ENVUI_CONTRAST_BASE is unset: the integration branch, the branch's upstream unless that is its
- * own remote copy, and the branch the work towards 1.0 collects on.
+ * The branches a branch may be based on, whose merge-bases with HEAD are the bases when
+ * ENVUI_CONTRAST_BASE is unset: the integration branch and the branch the work towards 1.0
+ * collects on.
  */
-export const baseCandidates = ['origin/dev', '@{upstream}', 'origin/envui-1.0'] as const;
+export const baseCandidates = ['origin/dev', 'origin/envui-1.0'] as const;
 
 /**
- * The snapshot on the base branch: at ENVUI_CONTRAST_BASE, any revision git knows, or else at the
- * nearest merge-base of HEAD with one of baseCandidates that has the file. It reads only what the
- * clone already has, never fetching. Without git, a candidate or the file at any of their
+ * The snapshots on the base branches: at ENVUI_CONTRAST_BASE, any revision git knows, or else at
+ * the merge-base of HEAD with each of baseCandidates that has the file, except the branch's own
+ * copies: the branch it tracks and its namesake on origin, which hold its edits. It reads only what
+ * the clone already has, never fetching. Without git, a candidate or the file at any of their
  * merge-bases, it returns a note instead, and the gate compares with the working tree's snapshot
  * alone; a base that was asked for and can't be read, or lacks the file, is a problem.
  */
@@ -414,7 +479,7 @@ export function readBaseSnapshot({
   requested = process.env.ENVUI_CONTRAST_BASE,
   git = runGit,
 }: { requested?: string; git?: Git } = {}): {
-  base?: BaseSnapshot;
+  bases: BaseSnapshot[];
   note?: string;
   problem?: string;
 } {
@@ -426,67 +491,96 @@ export function readBaseSnapshot({
     }
   };
   const show = (commit: string) => attempt(() => git('show', `${commit}:${declaredFile}`));
-  const read = (text: string, label: string) => {
-    const parsed = parseSnapshot(text, label);
-    return parsed.problem !== undefined
-      ? { problem: parsed.problem }
-      : { base: { label, recorded: parsed.recorded } };
-  };
   if (requested) {
     const commit = attempt(() => git('rev-parse', '--verify', `${requested}^{commit}`));
     if (commit === undefined)
       return {
+        bases: [],
         problem: `ENVUI_CONTRAST_BASE is ${requested}, which git can't find in this clone.`,
       };
     const text = show(commit);
     if (text === undefined)
       return {
-        problem: `ENVUI_CONTRAST_BASE is ${requested}, where ${declaredFile} doesn't exist: set it to a revision that has the snapshot, or unset it to compare with the nearest base branch's.`,
+        bases: [],
+        problem: `ENVUI_CONTRAST_BASE is ${requested}, where ${declaredFile} doesn't exist: set it to a revision that has the snapshot, or unset it to compare with the base branches'.`,
       };
-    return read(text, `${declaredFile} at ${requested} (ENVUI_CONTRAST_BASE)`);
+    const label = `${declaredFile} at ${requested} (ENVUI_CONTRAST_BASE)`;
+    const parsed = parseSnapshot(text, label);
+    return parsed.problem !== undefined
+      ? { bases: [], problem: parsed.problem }
+      : { bases: [{ label, recorded: parsed.recorded }] };
   }
 
+  // The branch's own copies hold its edits, so neither is a base: the branch it tracks, however it
+  // is named, and its namesake on origin.
   const branch = attempt(() => git('symbolic-ref', '--quiet', '--short', 'HEAD'));
+  const own = new Set<string>();
+  if (branch) {
+    own.add(`origin/${branch}`);
+    const upstream = attempt(() =>
+      git('for-each-ref', '--format=%(upstream:short)', `refs/heads/${branch}`),
+    );
+    if (upstream) own.add(upstream);
+  }
+  const candidates = baseCandidates.filter((candidate) => !own.has(candidate));
+  const skipped = baseCandidates.filter((candidate) => own.has(candidate));
   const found: { ref: string; commit: string; text: string; distance: number }[] = [];
   const lacking: string[] = [];
-  const seen = new Set<string>();
-  for (const candidate of baseCandidates) {
-    let ref: string | undefined = candidate;
-    if (candidate === '@{upstream}') {
-      ref = attempt(() => git('rev-parse', '--abbrev-ref', '--symbolic-full-name', candidate));
-      // A branch's own remote copy holds the branch's edits, so it is no base.
-      if (branch && (ref === branch || ref?.endsWith(`/${branch}`))) continue;
-    }
-    if (ref === undefined || seen.has(ref)) continue;
-    seen.add(ref);
+  for (const ref of candidates) {
     const commit = attempt(() => git('merge-base', 'HEAD', ref));
     if (commit === undefined) continue;
+    // Two candidates can share a merge-base, which is compared once.
+    const same = found.find((other) => other.commit === commit);
+    if (same) {
+      same.ref += ` and ${ref}`;
+      continue;
+    }
     const text = show(commit);
     if (text === undefined) {
       lacking.push(`${ref} (${commit.slice(0, 8)})`);
       continue;
     }
-    // How many commits HEAD is past the merge-base, to find the nearest.
+    // How many commits HEAD is past the merge-base, to list the nearest first.
     const distance = Number(attempt(() => git('rev-list', '--count', `${commit}..HEAD`)) ?? NaN);
     found.push({ ref, commit, text, distance: Number.isNaN(distance) ? Infinity : distance });
   }
-  const predating = lacking.length > 0 ? `the merge-base with ${lacking.join(' or ')}` : undefined;
-  // The nearest merge-base holds the most recent snapshot, which asks the most; on a tie, the
-  // earlier candidate.
-  const nearest = found.reduce<(typeof found)[number] | undefined>(
-    (best, next) => (best && best.distance <= next.distance ? best : next),
-    undefined,
-  );
-  if (!nearest)
+  const notes: string[] = [];
+  if (skipped.length > 0)
+    notes.push(
+      `Skipping ${skipped.join(' and ')}, this branch's own ${skipped.length > 1 ? 'copies' : 'copy'}.`,
+    );
+  if (lacking.length > 0)
+    notes.push(`${declaredFile} doesn't exist at the merge-base with ${lacking.join(' or ')}.`);
+  const advice = 'Set ENVUI_CONTRAST_BASE to compare with another revision.';
+  if (found.length === 0)
     return {
-      note: `${predating ? `${declaredFile} doesn't exist at ${predating}` : `No merge-base with ${baseCandidates.join(', ')} in this clone`}, so ${declaredFile} is not compared with a base branch's copy. Set ENVUI_CONTRAST_BASE to a revision that has it, such as the branch this one merges into.`,
+      bases: [],
+      note: [
+        ...(lacking.length > 0
+          ? notes
+          : [
+              ...notes,
+              `No merge-base with ${candidates.join(' or ') || 'a base branch'} in this clone.`,
+            ]),
+        `${declaredFile} is not compared with a base branch's copy. Set ENVUI_CONTRAST_BASE to a revision that has it, such as the branch this one merges into.`,
+      ].join(' '),
     };
-  const at = `${nearest.commit.slice(0, 8)}, the merge-base with ${nearest.ref}`;
-  const result = read(nearest.text, `${declaredFile} at ${at}`);
-  if (result.problem !== undefined) return result;
+  // Each base is compared: an older one records less, and a relaxation a newer one records is new
+  // since the older, so it approves the loosening there too.
+  const bases: BaseSnapshot[] = [];
+  for (const { ref, commit, text } of found.sort((a, b) => a.distance - b.distance)) {
+    const label = `${declaredFile} at ${commit.slice(0, 8)}, the merge-base with ${ref}`;
+    const parsed = parseSnapshot(text, label);
+    if (parsed.problem !== undefined) return { bases: [], problem: parsed.problem };
+    bases.push({ label, recorded: parsed.recorded });
+  }
   return {
-    ...result,
-    note: `Comparing ${declaredFile} with its copy at ${at}${predating ? `; it doesn't exist at ${predating}` : ''}. Set ENVUI_CONTRAST_BASE to compare with another revision.`,
+    bases,
+    note: [
+      `Comparing ${declaredFile} with its ${bases.length > 1 ? 'copies' : 'copy'} at ${found.map(({ ref, commit }) => `${commit.slice(0, 8)} (the merge-base with ${ref})`).join(' and ')}.`,
+      ...notes,
+      advice,
+    ].join(' '),
   };
 }
 

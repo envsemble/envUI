@@ -307,3 +307,20 @@ test('a stack taller than the window keeps scrolling while a notice leaves', asy
   await expect(stack).not.toHaveAttribute('data-settling');
   await expect(stack).toHaveCSS('overflow-y', 'auto');
 });
+
+test.describe('on a coarse pointer', () => {
+  test.use({ hasTouch: true });
+
+  for (const scale of ['comfortable', 'compact'] as const)
+    test(`the dismiss button grows to the touch height in the ${scale} scale`, async ({ page }) => {
+      await page.goto(`${fixtureUrl}/?fixture=toast&scale=${scale}`);
+      expect(await page.evaluate(() => matchMedia('(pointer: coarse)').matches)).toBe(true);
+      await page.getByTestId('toast-queue-bottom').click();
+      const dismiss = region(page).getByRole('button', { name: 'Dismiss notification' }).first();
+      await expect(
+        dismiss.locator('xpath=ancestor::*[contains(@class, "env-theme")][1]'),
+      ).toHaveAttribute('data-env-scale', scale);
+      await expect(dismiss).toHaveCSS('width', '44px');
+      await expect(dismiss).toHaveCSS('height', '44px');
+    });
+});

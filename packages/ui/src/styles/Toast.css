@@ -94,6 +94,14 @@
   width: 1.125rem;
   height: 1.125rem;
 }
+/* Under a coarse pointer the dismiss button grows to the touch height, as icon buttons do. */
+@media (pointer: coarse) {
+  .env-toast-dismiss {
+    flex-basis: max(var(--control-height), var(--control-height-touch));
+    width: max(var(--control-height), var(--control-height-touch));
+    height: max(var(--control-height), var(--control-height-touch));
+  }
+}
 .env-toast-dismiss:hover {
   background: var(--toast-fill-hover);
 }

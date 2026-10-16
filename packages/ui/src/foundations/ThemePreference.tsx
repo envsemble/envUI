@@ -7,9 +7,11 @@ import {
   useEffect,
   useMemo,
   useState,
+  useSyncExternalStore,
   type ReactNode,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { outsideTheme } from '../internal/outsideTheme.js';
 import { Theme, useTheme, type ThemeContrast, type ThemeScale, type ThemeValue } from './Theme.js';
 import { IconButton, type IconButtonProps } from '../actions/Button.js';
 import { DarkMode } from '../icons/DarkMode.js';
@@ -53,19 +55,22 @@ export interface ThemePreferenceProviderProps {
   /**
    * Contrast of the Theme boundary around the children, and of the document root with
    * applyToDocument: high, standard, or system to follow `prefers-contrast: more`, as on Theme.
-   * Defaults to the contrast of an enclosing Theme, and to system. With system, the provider
-   * removes from the root only a contrast that envUI wrote and the page left unchanged: a provider,
-   * this one or one before it, or the bootstrap script. Pass a contrast that is fixed for the
-   * application to createThemeBootstrapScript too, so the root has it before the first paint.
+   * Defaults to the contrast of an enclosing Theme; outside any, a provider applying to the
+   * document gives its boundary a contrast the page set on the root, and otherwise system. With
+   * system, the provider removes from the root only a contrast that envUI wrote and the page left
+   * unchanged: a provider, this one or one before it, or the bootstrap script. Pass a contrast that
+   * is fixed for the application to createThemeBootstrapScript too, so the root has it before the
+   * first paint.
    */
   contrast?: ThemeContrast;
   /**
    * The app scale, comfortable or compact for a desktop productivity app, as on Theme: of the Theme
    * boundary around the children, and, marked as envUI's own, of the document root with
-   * applyToDocument. Without it, the boundary takes the scale of an enclosing Theme, or
-   * comfortable, and the root keeps a scale the page set but drops one that envUI wrote and the page
-   * left unchanged. Pass the same scale to createThemeBootstrapScript so the root has it before the
-   * first paint.
+   * applyToDocument. Without it, the boundary takes the scale of an enclosing Theme; outside any, a
+   * provider applying to the document gives its boundary a scale the page set on the root, so the
+   * application, the page and its portals share it, and otherwise comfortable. The root keeps a
+   * scale the page set but drops one that envUI wrote and the page left unchanged. Pass the same
+   * scale to createThemeBootstrapScript so the root has it before the first paint.
    */
   scale?: ThemeScale;
   /** Class name for the Theme boundary around the children. */
@@ -129,6 +134,41 @@ function releaseScale(root: HTMLElement) {
   root.removeAttribute(scaleSourceAttribute);
 }
 
+/** Calls back whenever the root's scale or contrast, or envUI's markers of them, change. */
+function subscribeToRoot(change: () => void) {
+  const observer = new MutationObserver(change);
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: [
+      'data-env-scale',
+      'data-env-contrast',
+      scaleSourceAttribute,
+      contrastSourceAttribute,
+    ],
+  });
+  return () => observer.disconnect();
+}
+
+/** The root's scale when the page set it rather than envUI. */
+function readPageScale(): ThemeScale | undefined {
+  const root = document.documentElement;
+  const scale = root.dataset.envScale;
+  if (scale !== 'comfortable' && scale !== 'compact') return undefined;
+  return root.getAttribute(scaleSourceAttribute) === ownScaleSource(scale) ? undefined : scale;
+}
+
+/** The root's contrast when the page set it rather than envUI. */
+function readPageContrast(): Exclude<ThemeContrast, 'system'> | undefined {
+  const root = document.documentElement;
+  const contrast = root.dataset.envContrast;
+  if (contrast !== 'high' && contrast !== 'standard') return undefined;
+  return root.getAttribute(contrastSourceAttribute) === ownContrastSource(contrast)
+    ? undefined
+    : contrast;
+}
+
+const onServer = () => undefined;
+
 function readSystemTheme(): ThemeValue {
   return typeof window !== 'undefined' && window.matchMedia?.(systemDarkQuery).matches
     ? 'dark'
@@ -146,8 +186,15 @@ export function ThemePreferenceProvider({
   className,
 }: ThemePreferenceProviderProps) {
   const inherited = useTheme();
-  const contrast = ownContrast ?? inherited.contrast;
-  const scale = ownScale ?? inherited.scale;
+  // Outside any Theme, a provider that applies to the document gives its boundary the scale and
+  // contrast the page set on the root, which the page and other libraries' portals already show,
+  // rather than comfortable and system. It never writes them back as its own.
+  const fromPage = applyToDocument && inherited === outsideTheme;
+  const pageScale = useSyncExternalStore(subscribeToRoot, readPageScale, onServer);
+  const pageContrast = useSyncExternalStore(subscribeToRoot, readPageContrast, onServer);
+  const appliedContrast = ownContrast ?? inherited.contrast;
+  const contrast = ownContrast ?? (fromPage ? (pageContrast ?? 'system') : inherited.contrast);
+  const scale = ownScale ?? (fromPage ? (pageScale ?? 'comfortable') : inherited.scale);
   const [preference, setPreferenceState] = useState<ThemePreference>(() =>
     typeof window === 'undefined'
       ? defaultPreference
@@ -203,8 +250,13 @@ export function ThemePreferenceProvider({
       // No bundler defined process.env.NODE_ENV: written as in Theme.
     }
     documentProviders.set(provider, {});
+    // Once the provider unmounts or stops applying to the document, it releases what it wrote on
+    // the root, as a provider at system does: what the page wrote or another provider holds stays.
     return () => {
       documentProviders.delete(provider);
+      const root = document.documentElement;
+      releaseContrast(root);
+      releaseScale(root);
     };
   }, [applyToDocument, provider]);
 
@@ -217,7 +269,7 @@ export function ThemePreferenceProvider({
     // writes carries a marker with the value, so a provider removes a contrast that it, a provider
     // before it (such as one keyed by the user) or the bootstrap script wrote, and one the page set
     // itself, or wrote over envUI's, stays.
-    const written = contrast === 'system' ? undefined : contrast;
+    const written = appliedContrast === 'system' ? undefined : appliedContrast;
     documentProviders.set(provider, { ...documentProviders.get(provider), contrast: written });
     if (written) {
       root.dataset.envContrast = written;
@@ -238,7 +290,7 @@ export function ThemePreferenceProvider({
       'meta[name="theme-color"]',
     ))
       browserTheme.content = canvas;
-  }, [applyToDocument, theme, contrast, ownScale, provider]);
+  }, [applyToDocument, theme, appliedContrast, ownScale, provider]);
 
   const setPreference = useCallback(
     (next: ThemePreference) => {

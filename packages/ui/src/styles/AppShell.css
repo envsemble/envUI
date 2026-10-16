@@ -89,8 +89,10 @@
 
 /* The brand mark doubles as the sidebar toggle; the toggle icon shows while the region is hovered. */
 .env-app-sidebar-toggle {
-  inline-size: var(--control-height);
-  block-size: var(--control-height);
+  /* The toggle's size: the control height, or more under a coarse pointer. */
+  --env-app-toggle-size: var(--control-height);
+  inline-size: var(--env-app-toggle-size);
+  block-size: var(--env-app-toggle-size);
   flex: 0 0 auto;
   display: grid;
   place-items: center;
@@ -156,6 +158,20 @@ button.env-app-sidebar-toggle:focus-visible {
   button.env-app-sidebar-toggle {
     background: var(--color-secondary-action);
     color: var(--color-on-secondary-action);
+  }
+}
+/* Under a coarse pointer the navigation items grow to the touch height, so the toggle grows with
+   them and the collapsed sidebar holds one at that height: the toggle and the icons keep their
+   shared center line inside the sidebar, in either scale and in a title bar. */
+@media (pointer: coarse) {
+  .env-app-shell {
+    --env-sidebar-collapsed-width: calc(
+      max(var(--control-height), var(--control-height-touch)) + 2 * var(--env-sidebar-inset)
+    );
+    --env-app-control-height: max(var(--control-height), var(--control-height-touch));
+  }
+  .env-app-sidebar-toggle {
+    --env-app-toggle-size: max(var(--control-height), var(--control-height-touch));
   }
 }
 
@@ -381,7 +397,7 @@ button.env-app-sidebar-toggle:focus-visible {
 }
 /* The toggle takes the compact size and stays on the center line of the navigation icons. */
 .env-app-topbar.env-title-bar .env-app-sidebar-toggle {
-  margin-inline: calc((var(--env-app-control-height) - var(--control-height)) / 2);
+  margin-inline: calc((var(--env-app-control-height) - var(--env-app-toggle-size)) / 2);
 }
 .env-app-topbar.env-title-bar .env-app-brand > :is(img, svg) {
   inline-size: 1.25rem;
@@ -406,6 +422,12 @@ button.env-app-sidebar-toggle:focus-visible {
 }
 .env-app-shell[data-compact] .env-app-navigation-placeholder-label {
   display: none;
+}
+/* Under a coarse pointer the placeholders are as tall as the navigation items they stand for. */
+@media (pointer: coarse) {
+  .env-app-navigation-placeholder {
+    min-block-size: max(var(--control-height), var(--control-height-touch));
+  }
 }
 
 /* AppShell reads the natural width of the sidebar content with these rules applied for a moment. */

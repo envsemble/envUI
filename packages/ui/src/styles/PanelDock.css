@@ -7,6 +7,8 @@
   /* Room around the row and the strip for the panels' shadows. */
   --env-panel-dock-gutter: var(--space-5);
   --env-panel-dock-chip-height: var(--control-height-sm);
+  /* The height of the header's small controls, which a coarse pointer raises to the touch height. */
+  --env-panel-dock-control: var(--control-height-sm);
   --env-panel-dock-strip-size: 0rem;
   --env-panel-dock-shadow: var(--elevation-2-shadow);
   --env-panel-dock-active-shadow: var(--elevation-3-shadow);
@@ -56,7 +58,7 @@
 }
 /* Open panels above a maximized one keep its header's first row in view. */
 .env-panel-dock[data-filled]:not([data-stacked]) > .env-panel-dock-row {
-  padding-block-start: calc(var(--control-height-sm) + 2 * var(--space-3) + var(--space-2));
+  padding-block-start: calc(var(--env-panel-dock-control) + 2 * var(--space-3) + var(--space-2));
 }
 
 /* A panel is the raised dialog surface with a hairline border and a shadow, rounded at the top and
@@ -212,7 +214,7 @@
 /* The first line of the title lines up with the small controls beside it. */
 .env-panel-dock-title {
   margin: 0;
-  padding-block-start: max(0rem, calc((var(--control-height-sm) - 1.4em) / 2));
+  padding-block-start: max(0rem, calc((var(--env-panel-dock-control) - 1.4em) / 2));
   font: var(--type-h1);
   overflow-wrap: break-word;
 }
@@ -385,7 +387,12 @@
 @media (pointer: coarse) {
   /* Chips are rows of the strip, which grow to the touch height. */
   .env-panel-dock {
-    --env-panel-dock-chip-height: max(var(--control-height-sm), var(--control-height-touch));
+    /* A chip holds its buttons at the touch height inside its top hairline. */
+    --env-panel-dock-chip-height: calc(
+      max(var(--control-height-sm), var(--control-height-touch)) + var(--control-border-width)
+    );
+    /* The header's controls grow to the touch height, as every button does. */
+    --env-panel-dock-control: max(var(--control-height-sm), var(--control-height-touch));
   }
   /* A finger reaches the top edge across a larger band, and the bar always shows. */
   .env-panel-dock-resize {
@@ -397,8 +404,9 @@
     opacity: 1;
   }
   .env-panel-dock-chip-close {
-    inline-size: 2rem;
-    block-size: 2rem;
+    inline-size: var(--control-height-touch);
+    block-size: var(--control-height-touch);
+    margin-inline: 0;
   }
 }
 @media (prefers-reduced-motion: reduce) {

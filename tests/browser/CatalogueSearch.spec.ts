@@ -293,7 +293,7 @@ test.describe('search', () => {
 test.describe('hosted build', () => {
   test('a deep link loads through the Worker, and loads again on refresh', async ({ page }) => {
     requireSite();
-    await serveSite(page, () => false, 'missing');
+    await serveSite(page);
     await page.goto(`${siteUrl}/components/button/props#props-Button-variant`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
     await expect(page.getByRole('tab', { name: 'Props', selected: true })).toBeVisible();
@@ -358,7 +358,7 @@ test.describe('hosted build', () => {
     });
     // The catalogue's script never arrives, so only the head script runs.
     const entry = /^\/assets\/index-[\w-]+\.js$/;
-    await serveSite(page, (pathname) => entry.test(pathname), 'aborted');
+    await serveSite(page, { failing: (pathname) => entry.test(pathname), failure: 'aborted' });
     await page.goto(`${siteUrl}/components/button/overview`);
     const root = page.locator('html');
     await expect(root).toHaveAttribute('data-env-theme', 'dark');
@@ -369,7 +369,7 @@ test.describe('hosted build', () => {
     await expect(page.locator('.docs-app')).toHaveCount(0);
     // Once the catalogue loads, its provider keeps them as its own.
     await page.unroute(`${siteUrl}/**`);
-    await serveSite(page, () => false, 'missing');
+    await serveSite(page);
     await page.reload();
     await expect(page.locator('.docs-app')).toHaveAttribute('data-env-scale', 'compact');
     await expect(root).toHaveAttribute('data-env-scale', 'compact');
@@ -380,7 +380,7 @@ test.describe('hosted build', () => {
     page,
   }) => {
     requireSite();
-    await serveSite(page, () => false, 'missing');
+    await serveSite(page);
     await openCatalogue(page, `${siteUrl}/`);
     await page.evaluate(() => ((window as unknown as { loaded: boolean }).loaded = true));
     const navigation = page.getByRole('navigation', { name: 'Documentation' });
@@ -411,7 +411,7 @@ test.describe('hosted build', () => {
 
   test('old hash addresses open their page at its path address', async ({ page }) => {
     requireSite();
-    await serveSite(page, () => false, 'missing');
+    await serveSite(page);
     await page.goto(`${siteUrl}/#/components/tables/usage?section=keyboard`);
     // The Keyboard heading is in the Accessibility view, which opens.
     await expect(page).toHaveURL(`${siteUrl}/components/table/accessibility#keyboard`);
@@ -436,7 +436,10 @@ test.describe('hosted build', () => {
     const requested: string[] = [];
     let failing = false;
     page.on('request', (request) => requested.push(new URL(request.url()).pathname));
-    await serveSite(page, (pathname) => failing && files.includes(pathname), 'missing');
+    await serveSite(page, {
+      failing: (pathname) => failing && files.includes(pathname),
+      failure: 'missing',
+    });
     await openCatalogue(page, `${siteUrl}/`);
     expect(requested.filter((path) => files.includes(path))).toEqual([]);
     await search(page, 'hamburger');
@@ -475,7 +478,7 @@ for (const where of ['offline', 'hosted'] as const) {
   }) => {
     if (where === 'hosted') {
       requireSite();
-      await serveSite(page, () => false, 'missing');
+      await serveSite(page);
     }
     const base = where === 'offline' ? `${offline}#/` : `${siteUrl}/`;
     await openCatalogue(page, `${base}get-started/migration`);
