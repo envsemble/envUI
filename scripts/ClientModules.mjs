@@ -117,8 +117,14 @@ function createReader(checker) {
     const expression = skipOuter(node);
     if (ts.isPropertyAccessExpression(expression) || ts.isElementAccessExpression(expression))
       return isPassedOn(expression.expression, seen);
-    if (!ts.isIdentifier(expression)) return false;
-    const declaration = declarationOf(expression);
+    return ts.isIdentifier(expression) && holdsPassedOn(declarationOf(expression), seen);
+  };
+
+  /**
+   * Whether a variable only holds what a parameter of a function holds: the parameter, a name
+   * destructured from it, or a variable set to, or destructured from, such a value.
+   */
+  const holdsPassedOn = (declaration, seen = new Set()) => {
     if (!declaration || seen.has(declaration)) return false;
     seen.add(declaration);
     if (isParameter(declaration)) return true;
@@ -187,11 +193,12 @@ function createReader(checker) {
     if (ts.isObjectLiteralExpression(expression))
       return expression.properties.some((property) => {
         if (ts.isPropertyAssignment(property)) return createsFunction(property.initializer);
-        // `{ onClick }` holds the value of the variable it names, which may only pass a prop on.
+        // `{ onClick }` holds the value of the variable it names, which may only pass a prop on,
+        // also one destructured in the body, as in `const { onClick } = props`.
         if (ts.isShorthandPropertyAssignment(property)) {
           const value = checker?.getShorthandAssignmentValueSymbol(property);
           const declaration = value?.valueDeclaration ?? value?.declarations?.[0];
-          if (declaration && isParameter(declaration)) return false;
+          if (holdsPassedOn(declaration)) return false;
           if (
             declaration &&
             ts.isVariableDeclaration(declaration) &&
