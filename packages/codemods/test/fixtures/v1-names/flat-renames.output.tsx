@@ -22,11 +22,11 @@ import type {
   TextFieldProps,
   AlertProps,
   AlertTone,
-  OrganizationSwitcherOrganization,
+  OrganizationSwitcherItem,
   OrganizationSwitcherProps,
 } from '@envsemble/envui';
 
-const organizations: OrganizationSwitcherOrganization[] = [
+const organizations: OrganizationSwitcherItem[] = [
   { id: 'northwind', name: 'Northwind Labs' },
   { id: 'contoso', name: 'Contoso' },
 ];

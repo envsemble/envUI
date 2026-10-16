@@ -78,7 +78,7 @@
       "NoticeProps": { "to": ["AlertProps"] },
       "NoticeTone": { "to": ["AlertTone"] },
       "OrganizationMenu": { "to": ["OrganizationSwitcher"] },
-      "OrganizationMenuOrganization": { "to": ["OrganizationSwitcherOrganization"] },
+      "OrganizationMenuOrganization": { "to": ["OrganizationSwitcherItem"] },
       "OrganizationMenuProps": { "to": ["OrganizationSwitcherProps"] },
       "Row": { "to": ["List.Item"] },
       "RowProps": { "to": ["List.ItemProps"] },
@@ -127,6 +127,7 @@
       },
       "ToastProvider": { "to": ["Toast.Provider"] },
       "ToastProviderProps": { "to": ["Toast.ProviderProps"] },
+      "TreeOpenOptions": { "to": ["TreeActionOptions"] },
       "getInitials": {
         "to": [],
         "use": "Avatar shows the initials itself with fallback=\"initials\"; derive initials in the application for custom layouts."

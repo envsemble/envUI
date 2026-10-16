@@ -17,6 +17,26 @@
           "standard": {}
         }
       }
+    },
+    "Menu.Item": {
+      "trailing": {
+        "to": "end",
+        "report": "Menu.Item's trailing content is end in 1.0."
+      }
+    },
+    "OrganizationSwitcher": {
+      "organizations": {
+        "to": "items",
+        "report": "OrganizationSwitcher's organizations are items in 1.0; each item's detail is description, which the codemod can't see in the data, so TypeScript points at it."
+      },
+      "currentOrganizationId": {
+        "to": "value",
+        "report": "OrganizationSwitcher's currentOrganizationId is value in 1.0."
+      },
+      "onSelect": {
+        "to": "onValueChange",
+        "report": "OrganizationSwitcher's onSelect is onValueChange in 1.0, called with the id as before."
+      }
     }
   }
 }

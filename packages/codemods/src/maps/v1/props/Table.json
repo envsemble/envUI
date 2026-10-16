@@ -13,6 +13,12 @@
           "standard": {}
         }
       }
+    },
+    "Table.HeaderCell": {
+      "onSort": {
+        "to": "onSortChange",
+        "report": "Table.HeaderCell's onSort is onSortChange in 1.0, called with the order pressing asks for: descending while the column is sorted ascending, else ascending. A handler without arguments keeps working."
+      }
     }
   }
 }

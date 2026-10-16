@@ -61,3 +61,13 @@ li.env-navigation-item.env-navigation-selected .env-navigation-dot {
 .env-counter .env-counter-label {
   clip-path: inset(50%);
 }
+/* Navigation parts named after their components, and modifiers that became attributes. */
+.env-tabs-list > .env-tab:not([data-active]),
+.env-tab-panel,
+.env-document-tab:hover .env-document-tab-close,
+.env-breadcrumb + .env-breadcrumb .env-breadcrumb-link,
+.env-tree-row .env-tree-detail,
+.env-navigation-item.env-navigation-icon-only .env-navigation-trailing,
+.env-menu-item-trailing {
+  color: inherit;
+}

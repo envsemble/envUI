@@ -9,6 +9,10 @@
           },
           "standard": {}
         }
+      },
+      "trailing": {
+        "to": "end",
+        "report": "NavList.Item's trailing content is end in 1.0. An icon-only item, or one named by aria-label, now says the count in its name: leave the count out of aria-label."
       }
     }
   }
