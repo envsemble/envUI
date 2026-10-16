@@ -53,6 +53,14 @@ ruleTester.run('no-raw-colors', rule, {
     "const theme = { primary: '#0b57d0' };",
     '<div title="#fff" />',
     '<div style={styles} />',
+    // Strings that choose or compute a style are not its value: a member's key and a call's
+    // arguments.
+    `<div style={styles[\`#\${id}\`]} />`,
+    `<div style={{ color: theme[\`#\${id}\`], background: theme['#fff'] }} />`,
+    `<div style={pick(document.querySelector(\`#\${id} .x\`))} />`,
+    `<div style={{ color: lighten('#fff', 0.2), background: new Color('#000').css }} />`,
+    // Adding numbers, and concatenated strings without a color.
+    `<div style={{ width: base + 4, color: 'var(--color-fg-' + tone + ')' }} />`,
   ],
   invalid: [
     {
@@ -166,6 +174,19 @@ ruleTester.run('no-raw-colors', rule, {
     {
       code: `<div style={{ border: \`1px solid #\${r}\${g}\${b}\`, background: \`#fff\${alpha}\` }} />`,
       errors: [raw(`#\${…}\${…}\${…}`, 'border'), raw(`#fff\${…}`, 'background')],
+    },
+    // So is one concatenated from strings, read whole, with its other operands on their own.
+    {
+      code: `<div style={{ color: '#' + hex, background: '#fff' + alpha, fill: \`#\${r}\` + g + 'cc' }} />`,
+      errors: [
+        raw(`#\${…}`, 'color'),
+        raw(`#fff\${…}`, 'background'),
+        raw(`#\${…}\${…}cc`, 'fill'),
+      ],
+    },
+    {
+      code: `<div style={{ border: '1px solid #' + (dark ? '000' : 'fff'), color: x + '#' + y }} />`,
+      errors: [raw(`#\${…}`, 'border'), raw(`#\${…}`, 'color')],
     },
     // Strings and url() spanning expressions don't hide a color between them.
     {
