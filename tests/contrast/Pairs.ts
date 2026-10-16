@@ -47,7 +47,7 @@ export const derived: Readonly<Record<string, string>> = {
   'menu-row-pressed': 'hsl(from var(--color-menu-row) h s var(--state-surface-pressed-lightness))',
   'popup-hover': 'hsl(from var(--color-popup) h s var(--state-surface-hover-lightness))',
   'popup-pressed': 'hsl(from var(--color-popup) h s var(--state-surface-pressed-lightness))',
-  // DirectionLink.css: the link's fill on hover and press.
+  // Pager.css: the link's fill on hover and press.
   'direction-link-hover': 'hsl(from var(--color-direction-link) h s var(--state-hover-lightness))',
   'direction-link-pressed':
     'hsl(from var(--color-direction-link) h s var(--state-pressed-lightness))',

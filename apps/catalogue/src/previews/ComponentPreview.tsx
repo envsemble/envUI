@@ -8,12 +8,7 @@ import {
   SliderPreview,
   DropZonePreview,
 } from './Forms';
-import {
-  NavListPreview,
-  TabsPreview,
-  DirectionLinksPreview,
-  PaginationPreview,
-} from './Navigation';
+import { NavListPreview, TabsPreview, PagerPreview, PaginationPreview } from './Navigation';
 import { ComboboxPreview, DatePickerPreview } from './Pickers';
 import { SurfacePreview, LayoutPreview, ListPreview, CardsPreview } from './Layout';
 import {
@@ -90,8 +85,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <NavListPreview />;
     case 'tabs':
       return <TabsPreview />;
-    case 'direction-links':
-      return <DirectionLinksPreview />;
+    case 'pager':
+      return <PagerPreview />;
     case 'surface':
       return <SurfacePreview />;
     case 'layout':

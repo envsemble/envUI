@@ -4,7 +4,7 @@ import {
   Button,
   IconButton,
   NavList,
-  DirectionLinks,
+  Pager,
   Tabs,
   Stack,
   ActionGroup,
@@ -327,7 +327,7 @@ export function TabsPreview() {
   );
 }
 
-export function DirectionLinksPreview() {
+export function PagerPreview() {
   const [selectedDestination, setSelectedDestination] = useState('');
   const destination = (title: string) => ({
     href: location.href,
@@ -337,24 +337,24 @@ export function DirectionLinksPreview() {
   return (
     <Preview>
       <Example title="Previous & up next">
-        <DirectionLinks
+        <Pager.Root
           aria-label="Paired destinations example"
           previous={{ ...destination('Typography'), icon: <ArrowBack /> }}
           next={{ ...destination('Spacing & shape'), icon: <ArrowForward /> }}
         />
       </Example>
       <Example title="Next only, without an icon">
-        <DirectionLinks aria-label="Next-only example" next={destination('Getting started')} />
+        <Pager.Root aria-label="Next-only example" next={destination('Getting started')} />
       </Example>
       <Example title="Previous only">
-        <DirectionLinks
+        <Pager.Root
           aria-label="Previous-only example"
           previous={{ ...destination('Typography'), icon: <ArrowBack /> }}
         />
       </Example>
       <Example title="Long destinations in a narrow container">
         <div className="docs-narrow-actions">
-          <DirectionLinks
+          <Pager.Root
             aria-label="Long destinations example"
             previous={{ ...destination('Typography & readable content'), icon: <ArrowBack /> }}
             next={{

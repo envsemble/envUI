@@ -118,7 +118,7 @@
       "count": 2
     }
   },
-  "packages/ui/src/styles/DirectionLink.css": {
+  "packages/ui/src/styles/Pager.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 5
     }

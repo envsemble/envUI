@@ -177,7 +177,6 @@
       "ThemePreference": { "classes": ["env-theme-toggle"] },
       "AppShell": { "classes": ["env-app"] },
       "Breadcrumbs": { "classes": ["env-breadcrumb"] },
-      "DirectionLink": { "modules": ["navigation/DirectionLinks.tsx"] },
       "DocumentTabs": { "classes": ["env-document-tab"] },
       "NavList": { "styles": ["Actions.css"] },
       "Menu": { "modules": ["navigation/ContextMenu.tsx"] },

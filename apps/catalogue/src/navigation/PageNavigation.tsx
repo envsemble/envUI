@@ -1,4 +1,4 @@
-import { DirectionLinks } from '@envsemble/envui';
+import { Pager } from '@envsemble/envui';
 import { ArrowBack } from '@envsemble/envui/icons/ArrowBack';
 import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { documentationPages, type ReferenceView } from './DocumentationRoutes';
@@ -13,7 +13,7 @@ export function PageNavigation({ path, view }: { path: string; view: ReferenceVi
       ? `overview/${view === 'usage' ? 'get-started' : 'components'}`
       : `${path}/${view}`;
   return (
-    <DirectionLinks
+    <Pager.Root
       className="docs-page-navigation"
       previous={
         previous && {

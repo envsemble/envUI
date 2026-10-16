@@ -291,18 +291,6 @@
       }
     }
   },
-  "components/direction-links/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 8
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 36
-      }
-    }
-  },
   "components/disclosure/usage": {
     "dark": {
       "color-contrast": {
@@ -558,6 +546,18 @@
     "light": {
       "color-contrast": {
         "article :: div.env-code-block span": 22
+      }
+    }
+  },
+  "components/pager/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 8
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 36
       }
     }
   },

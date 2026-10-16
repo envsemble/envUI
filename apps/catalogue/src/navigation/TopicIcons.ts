@@ -108,7 +108,7 @@ const referenceIcons: Record<string, typeof Palette> = {
   'relative-time': Schedule,
   'nav-list': Explore,
   tabs: WebAsset,
-  'direction-links': ArrowForward,
+  pager: ArrowForward,
   markdown: Article,
   'rich-text': Article,
   code: Code,

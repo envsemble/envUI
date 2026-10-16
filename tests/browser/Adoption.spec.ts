@@ -950,7 +950,7 @@ test('secondary buttons stay distinct on the canvas, rows and dialog panes in bo
   }
 });
 
-test('direction links, radio rows and choice controls settle while pressed', async ({ page }) => {
+test('pager links, radio rows and choice controls settle while pressed', async ({ page }) => {
   await page.goto(`${fixtureUrl}/?fixture=colors`);
   // The choice controls shrink, not their labels, whether the control or its text is pressed.
   const targets = [

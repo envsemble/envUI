@@ -9,7 +9,7 @@ import {
   List,
   Tabs,
   Link,
-  DirectionLink,
+  Pager,
   TextField,
   Select,
   RadioGroup,
@@ -111,9 +111,9 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
         <Button variant="text" data-testid={`${theme}-color-text-button`}>
           Text button
         </Button>
-        <DirectionLink direction="next" href="#" data-testid={`${theme}-color-direction`}>
+        <Pager.Next href="#" data-testid={`${theme}-color-direction`}>
           Next page
-        </DirectionLink>
+        </Pager.Next>
         <TextField label={`${theme} isolated field`} data-testid={`${theme}-color-field`} />
         <TextField
           label={`${theme} isolated error`}

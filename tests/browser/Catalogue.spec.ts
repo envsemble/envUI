@@ -134,11 +134,9 @@ test('button link specimens and optional interaction matrices consume public con
   ).toBeVisible();
 });
 
-test('direction link groups center pairs and single destinations at every page width', async ({
-  page,
-}) => {
-  await page.goto(`${offline}#/components/direction-links/preview`);
-  const groups = page.locator('.env-direction-links');
+test('pagers center pairs and single destinations at every page width', async ({ page }) => {
+  await page.goto(`${offline}#/components/pager/preview`);
+  const groups = page.locator('.env-pager');
   await expect(groups).toHaveCount(5);
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: 1000 });
@@ -183,7 +181,7 @@ test('direction link groups center pairs and single destinations at every page w
   const longDestinations = page.getByRole('navigation', { name: 'Long destinations example' });
   const fragmentedWords = await longDestinations.evaluate((nav) => {
     const fragments: string[] = [];
-    for (const title of nav.querySelectorAll('.env-direction-link-title')) {
+    for (const title of nav.querySelectorAll('.env-pager-link-title')) {
       const text = title.firstChild!;
       for (const word of text.textContent!.matchAll(/\S+/g)) {
         const range = document.createRange();

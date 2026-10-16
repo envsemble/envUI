@@ -67,7 +67,7 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Tabs](../components/tabs.md)
-- [Direction links](../components/direction-links.md)
+- [Pager](../components/pager.md)
 - [Icons & assets](../foundations/icons.md)
 - [Colors & themes](../foundations/colors.md)
 - [Badges & counters](../components/badges.md)

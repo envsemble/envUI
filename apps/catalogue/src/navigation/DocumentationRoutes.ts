@@ -72,6 +72,7 @@ export function normalizeRoute(route: string): string {
     .replace(/^components\/heatmap(?=\/|$)/, 'components/calendar-heatmap')
     .replace(/^components\/rows(?=\/|$)/, 'components/list')
     .replace(/^components\/navigation(?=\/|$)/, 'components/nav-list')
+    .replace(/^components\/direction-links(?=\/|$)/, 'components/pager')
     .replace(/^foundations\/responsive(?=\/|$)/, 'foundations/spacing')
     .replace(/^foundations\/motion(?=\/|$)/, 'foundations/accessibility');
   const page = findReferencePage(path);

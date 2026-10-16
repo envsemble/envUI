@@ -50,7 +50,7 @@ Status icons, short status text and badges share these tokens. Each keeps at lea
 ## Guidelines
 
 - Use separate semantic color roles for distinct primitive purposes, such as surfaces, rows, buttons, fields, navigation and feedback. Composed components reuse their underlying primitives’ colors. Derive hover and pressed states from each primitive’s base centrally.
-- Light theme uses a white page canvas, cool pale panes, soft gray cards and rows, white direction links, and blue actions and selection.
+- Light theme uses a white page canvas, cool pale panes, soft gray cards and rows, white pager links, and blue actions and selection.
 - Use the same semantic color role for a component in both themes. Change the theme palette values rather than switching which role the component uses.
 - Below 50% HSL lightness, add lightness; otherwise subtract it. Controls shift 10 points on hover and 20 on press; cards and selectable rows use gentler 6-point hover and 10-point pressed shifts. Results clamp to 0–100%. Disabled opacity is 0.48.
 - Surfaces (canvas, panes, rows and cards) are opaque. Fills drawn on them are translucent layers of the text color, so they keep their tone on the canvas and stay distinct on every other surface:

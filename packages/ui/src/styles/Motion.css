@@ -88,7 +88,7 @@
   .env-app-sidebar-toggle,
   .env-toast-dismiss,
   .env-clickable-card,
-  .env-direction-link,
+  .env-pager-link,
   .env-radio-option,
   .env-checkbox-box,
   .env-radio-control,
@@ -106,7 +106,7 @@
     transform: scale(0.97);
   }
   .env-clickable-card:active:not(:disabled):not([aria-disabled='true']),
-  .env-direction-link:active:not([aria-disabled='true']),
+  .env-pager-link:active:not([aria-disabled='true']),
   .env-radio-option:active:not(:has(input:disabled)) {
     transform: scale(0.99);
   }
