@@ -17,13 +17,15 @@
   display: inline-flex;
   align-items: stretch;
   gap: var(--space-1);
-  /* The padding gives way where a segment's line would outgrow a small rail of the compact scale;
-     the rail takes the segments' type, so 1lh is their line. */
-  --env-segmented-control-inset: min(var(--space-1), calc((var(--control-height) - 1lh) / 2));
+  /* The padding gives way where a segment's line, its label size times 1.4, would outgrow a small
+     rail of the compact scale. */
+  --env-segmented-control-inset: min(
+    var(--space-1),
+    calc((var(--control-height) - 1.4 * var(--font-size-label)) / 2)
+  );
   padding: var(--env-segmented-control-inset);
   border-radius: 100vmax;
   background: var(--color-fill);
-  font: var(--body-font-weight) var(--font-size-label) / 1.4 var(--font-family);
   /* Long labels stay reachable in narrow containers. */
   overflow-x: auto;
   scrollbar-width: none;

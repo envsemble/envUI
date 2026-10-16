@@ -90,14 +90,9 @@ A ButtonGroup joins its buttons with a 0.125 rem gap; inner corners take the sha
 
 <!-- specimen: VariantMatrix -->
 
-| Size | Use for                                                                                               |
-| ---- | ----------------------------------------------------------------------------------------------------- |
-| `sm` | A small action where space is short, such as in a toolbar beside small fields or in a table cell.     |
-| `md` | Most actions. A button without a size takes its container's control height, which is `md` by default. |
-| `lg` | The one prominent call to action of a page.                                                           |
-
 <!-- specimen: Sizes -->
 
+- **Sizes**: `sm` for a small action where space is short, such as in a toolbar beside small fields or in a table cell; `md` for most actions; `lg` for the one prominent call to action of a page.
 - `size` sets the height, the same for every control of that size in the app's [scale](../foundations/scale.md): `sm`, `md` and `lg` are 2, 2.5 and 3 rem in the comfortable scale, and 1.625, 2 and 2.375 rem in the compact one. IconButton and CopyButton take the same sizes. Important buttons are `sm` unless they set a size.
 - A button without a size takes the control height of its container: buttons in a table cell are `sm`, as are those in a title bar, a panel header or a message's actions. A button beside a field takes the field's size.
 - On touch screens a button keeps its size and gains an invisible hit area 2.75 rem tall and wide.

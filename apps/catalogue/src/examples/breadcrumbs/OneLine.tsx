@@ -23,7 +23,7 @@ export default function OneLine() {
         ]}
       />
       <Badge tone="success">Published</Badge>
-      <IconButton variant="text" icon={<MoreVert />} aria-label="More actions" />
+      <IconButton variant="text" size="sm" icon={<MoreVert />} aria-label="More actions" />
     </Surface>
   );
 }

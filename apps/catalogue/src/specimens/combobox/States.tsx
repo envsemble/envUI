@@ -8,7 +8,7 @@ const people: ComboboxItem[] = ['Alex Morgan', 'Sam Lee', 'Priya Shah', 'Jordan 
   },
 );
 
-/** An invalid, a read-only and a disabled field, and a compact field with chips. */
+/** An invalid, a read-only and a disabled field, and a small field with chips. */
 export default function States() {
   return (
     <Example title="Combobox states" size="collection">

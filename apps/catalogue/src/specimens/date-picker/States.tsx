@@ -1,7 +1,7 @@
 import { DatePicker } from '@envsemble/envui';
 import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
 
-/** Invalid, read-only and disabled fields, and an empty compact one. */
+/** Invalid, read-only and disabled fields, and an empty small one. */
 export default function States() {
   return (
     <Example title="Date picker states" size="collection">
