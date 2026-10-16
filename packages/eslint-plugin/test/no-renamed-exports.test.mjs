@@ -10,9 +10,14 @@ const main = '@envsemble/envui';
 const bootstrap = '@envsemble/envui/theme-bootstrap';
 /** The hint the rename map gives for a removed name. */
 const use = (name, source = main) => modules[source][name].use;
+/** What a report says of the codemod, which follows envUI's entry points but not an app's module. */
+const codemod = (source) =>
+  Object.hasOwn(modules, source)
+    ? 'The v1-names codemod in @envsemble/envui-codemods rewrites the old names.'
+    : `The v1-names codemod in @envsemble/envui-codemods rewrites imports from @envsemble/envui only, not through '${source}': update '${source}' first, then rename this import by hand.`;
 const renamed = (name, replacement, imports = replacement.split('.')[0], source = main) => ({
   messageId: 'renamed',
-  data: { name, replacement, imports, source },
+  data: { name, replacement, imports, source, codemod: codemod(source) },
 });
 const internal = (name, source = main) => ({
   messageId: 'internal',
@@ -21,7 +26,14 @@ const internal = (name, source = main) => ({
 const pagerChoices = 'Pager.Previous for direction="previous" or Pager.Next for direction="next"';
 const split = (name = 'DirectionLink') => ({
   messageId: 'split',
-  data: { name, source: main, prop: 'direction', choices: pagerChoices, imports: 'Pager' },
+  data: {
+    name,
+    source: main,
+    prop: 'direction',
+    choices: pagerChoices,
+    imports: 'Pager',
+    codemod: codemod(main),
+  },
 });
 const splitElement = (local, value, part) => ({
   messageId: 'splitElement',
@@ -318,7 +330,10 @@ typeScriptRuleTester.run('no-renamed-exports in TypeScript', rule, {
 const reexports = { envui: { reexportModules: ['./src/ui', '@/components/ui'] } };
 const app = resolve('src/App.jsx');
 const page = resolve('src/pages/Page.jsx');
-const fromUi = (error, source) => ({ ...error, data: { ...error.data, source } });
+const fromUi = (error, source) => ({
+  ...error,
+  data: { ...error.data, source, codemod: codemod(source) },
+});
 
 ruleTester.run('no-renamed-exports with modules that re-export envUI', rule, {
   valid: [
@@ -342,6 +357,18 @@ ruleTester.run('no-renamed-exports with modules that re-export envUI', rule, {
       settings: reexports,
       filename: app,
       errors: [fromUi(renamed('Input', 'TextField'), './ui')],
+    },
+    // The codemod rewrites imports from envUI, not through the application's module.
+    {
+      code: "import { Input } from './ui'; <Input />;",
+      settings: reexports,
+      filename: app,
+      errors: [
+        {
+          message:
+            "Input is not exported by envUI 1.0: use TextField instead (import { TextField } from './ui'). The v1-names codemod in @envsemble/envui-codemods rewrites imports from @envsemble/envui only, not through './ui': update './ui' first, then rename this import by hand.",
+        },
+      ],
     },
     // The same module from another folder, and with its extension or index file.
     {
