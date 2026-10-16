@@ -156,7 +156,7 @@ for (const change of ['remove', 'replace'] as const) {
         body: `window.delayedHighlighting = { sources: [], loaded: true };
           export async function highlightCode(source) {
             window.delayedHighlighting.sources.push(source);
-            return source.split(/\\r\\n|\\r|\\n/).map(content => [{content, light: {}, dark: {}}]);
+            return source.split(/\\r\\n|\\r|\\n/).map(content => [{content, light: {}, dark: {}, lightHigh: {}, darkHigh: {}}]);
           }`,
       });
     });
