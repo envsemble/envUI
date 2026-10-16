@@ -13,20 +13,23 @@
  *   its background before it is measured.
  * - `kind`: text (WCAG 1.4.3); non-text (1.4.11: icons, borders that are a control's only boundary,
  *   state indicators); focus (2.4.13: the ring against what it is drawn on, which is the surface
- *   behind an offset ring and the element's own fill behind an inset one); difference (two state
- *   fills, or two labels, that must be told apart, such as a selected row and a hovered one,
- *   measured as their OKLab distance ΔEOK rather than a ratio). Themes.ts sets the minimum of each
- *   kind: 4.5, 3 and 3 at standard contrast and 7, 4.5 and 4.5 at high contrast for the ratios, and
- *   ΔEOK 0.02 for a difference in every theme.
+ *   behind an offset ring and the element's own fill behind an inset one); and two kinds measured
+ *   as their OKLab distance, ΔEOK, rather than a ratio: difference (a state fill against its own
+ *   rest or the surface it borders, such as a hovered row against its table) and distinct (two
+ *   states of different items that mean different things, such as the selection and another item
+ *   under the pointer, or two labels). Themes.ts sets the minimum of each kind and says why: 4.5, 3
+ *   and 3 at standard contrast and 7, 4.5 and 4.5 at high contrast for the ratios, ΔEOK 0.02 for a
+ *   difference, and ΔEOK 0.03, 0.04 at high contrast, for a distinct pair.
  * - A pair that departs from those rules says why in its `rationale`: `contrast: 'high'` measures it
  *   only in the high-contrast themes, and `minimum` lowers its minimum at standard or high contrast. Pairs the gate no
- *   longer measures are listed in `dropped`, each with the reason, rather than disappearing.
+ *   longer measures are listed in `dropped`, and pairs it measures under a new name in `renamed`,
+ *   each with the reason, rather than disappearing; DeclaredPairs.json holds the declared names.
  * - Disabled states are exempt from 1.4.3 and 1.4.11, so none is listed.
  *
  * A pair is named `<fg> on <bg> over <next layer>`, which is also how Exceptions.json refers to it.
  */
 
-export type ContrastKind = 'text' | 'non-text' | 'focus' | 'difference';
+export type ContrastKind = 'text' | 'non-text' | 'focus' | 'difference' | 'distinct';
 
 export interface ContrastPair {
   fg: string;
@@ -100,9 +103,12 @@ const nonText = (
 ) => on('non-text', fg, backgrounds, note, extra);
 const focus = (fg: string, backgrounds: readonly Background[], note?: string) =>
   on('focus', fg, backgrounds, note);
-/** `fill` must look different from each background: a state from its rest, or from another state. */
+/** `fill` must look different from each background: a state from its own rest or its surface. */
 const different = (fill: string, backgrounds: readonly Background[], note?: string) =>
   on('difference', fill, backgrounds, note);
+/** `fill` must not be mistaken for each background: states of different items, or two labels. */
+const distinct = (fill: string, backgrounds: readonly Background[], note?: string) =>
+  on('distinct', fill, backgrounds, note);
 
 /**
  * The hairline edge of an elevated surface at standard contrast: below 3:1 by design. WCAG 1.4.11
@@ -116,6 +122,29 @@ const popupEdge = {
   minimum: { standard: 1.2 },
   rationale:
     'Decorative at standard contrast: the elevation shadow and the content identify the popup, as WCAG 1.4.11 allows, and a 3:1 edge would outline every popup in mid gray. Held to 1.2:1 so it stays visible; the boundary in high contrast and under forced colors.',
+} as const;
+
+/**
+ * The edge of an outlined badge, or the ring of a message that failed to send, in a tone: its text
+ * color at 55%, in every theme and contrast. Decorative: the badge's text in the tone, measured at
+ * 4.5:1 above, and the message's status identify them. Held to 1.5:1, and 3:1 in high contrast, as
+ * the outline of a badge on a button is.
+ */
+const toneOutline = {
+  minimum: { standard: 1.5, high: 3 },
+  rationale:
+    'Decorative: the badge’s text in its tone, measured at 4.5:1, and the failed message’s status identify them; the edge only groups. Held to 1.5:1, and 3:1 in high contrast, as a badge outline on a button is.',
+} as const;
+
+/**
+ * The faint edge of an alert, its tone's text color at 28%. Decorative: the tint, the icon and the
+ * text identify the alert, which takes no input. Held to 1.2:1, as a popup's edge is, and 1.5:1 in
+ * high contrast, so it stays visible.
+ */
+const alertEdge = {
+  minimum: { standard: 1.2, high: 1.5 },
+  rationale:
+    'Decorative: the tint, the icon and the text identify the alert, which takes no input, and WCAG 1.4.11 asks nothing of the edge. Held to 1.2:1, as a popup’s edge is, and 1.5:1 in high contrast, so it stays visible.',
 } as const;
 
 export const pairs: readonly ContrastPair[] = [
@@ -275,7 +304,7 @@ export const pairs: readonly ContrastPair[] = [
   ...nonText(
     '--elevation-2-border',
     [popup, surface, page, muted, raised],
-    'The edge of menus, Select and Combobox lists, popovers, hover cards, the date picker, rich text suggestions and docked panels, against the popup and what it floats over',
+    'The edge of menus, Select and Combobox lists, popovers, hover cards, the date picker, rich text suggestions, docked panels, tooltips and toasts, against the popup and what it floats over',
     popupEdge,
   ),
   ...nonText(
@@ -385,14 +414,20 @@ export const pairs: readonly ContrastPair[] = [
   ),
   ...nonText('--color-fg-on-selected', [[fill, page]], 'The bar of the active document tab'),
 
-  // Selection must look selected next to the states around it: a selected row next to a hovered one,
-  // a hovered selected row next to the selection, a hovered row next to its surface.
-  ...different(
+  // Selection must not be mistaken for the other items around it, at rest or under the pointer, and
+  // must stay selected while it is under the pointer itself: a selected row next to a hovered one,
+  // a hovered selected row against a hovered unselected one. Every state also differs from its rest.
+  ...distinct(
     selected,
     [popup, popupHover, surface, page, raised, [layerHover, surface], [layerHover, raised]],
-    'The selection against the surfaces it sits on and their hover fills: Select options, tree and table rows',
+    'The selection against the other items, at rest and under the pointer: Select options, tree and table rows',
   ),
-  ...different(selected, [navigationHover], 'A selected navigation item next to a hovered one'),
+  ...distinct(selected, [navigationHover], 'A selected navigation item next to a hovered one'),
+  ...distinct(
+    selectedHover,
+    [navigationHover, popupHover, [layerHover, surface], [layerHover, raised]],
+    'A selected item under the pointer against an unselected one under the pointer: navigation items, Select options, tree and table rows',
+  ),
   ...different(selectedHover, [selected], 'A selected item under the pointer'),
   ...different(popupHover, [popup], 'A highlighted option or menu item'),
   ...different(
@@ -401,7 +436,7 @@ export const pairs: readonly ContrastPair[] = [
     'A navigation item under the pointer, on a sidebar and on the page',
   ),
   ...different(layerHover, [surface, page, raised], 'A tree or table row under the pointer'),
-  ...different(
+  ...distinct(
     '--color-fg-on-selected',
     ['--color-fg-control', '--color-fg-default'],
     'The label of a selected item against the labels of the others',
@@ -437,6 +472,31 @@ export const pairs: readonly ContrastPair[] = [
       'The dismiss icon of an alert on hover and press',
     ),
   ]),
+  ...tones.flatMap((tone) =>
+    nonText(
+      `--color-border-${tone}-emphasis`,
+      [page, surface, row],
+      'The edge of an outlined badge',
+      toneOutline,
+    ),
+  ),
+  ...alertTones.flatMap((tone) =>
+    nonText(
+      `--color-border-${tone}-muted`,
+      [page, surface],
+      `The edge of an alert, tone="${tone === 'danger' ? 'error' : tone}"`,
+      alertEdge,
+    ),
+  ),
+  ...nonText(
+    '--color-border-danger-emphasis',
+    [
+      [fill, page],
+      [fill, surface],
+    ],
+    'The ring of an own message that failed to send, on its bubble',
+    toneOutline,
+  ),
   ...text(
     '--color-fg-on-strong',
     ['--color-bg-neutral-strong', '--color-bg-success-strong', '--color-bg-info-strong'],
@@ -477,7 +537,7 @@ export const pairs: readonly ContrastPair[] = [
     [page, surface, muted, raised, [fill, page], [fill, surface]],
     'Spinners, slider thumbs and indicators, and meter indicators on their track',
   ),
-  ...different(
+  ...distinct(
     'heatmap-accent-lowest',
     [[fill, page]],
     'The lightest step of a calendar heatmap against an empty day',
@@ -533,7 +593,9 @@ export const pairs: readonly ContrastPair[] = [
 
 /**
  * Pairs the gate measured once and no longer does, with the reason. A pair that leaves `pairs`
- * must be listed here; tests/browser/Contrast.spec.ts checks that none of these is still declared.
+ * must be listed here or in `renamed`: tests/contrast/DeclaredPairs.json holds the names declared
+ * when it was last updated, and tests/browser/Contrast.spec.ts fails on a name that is gone from
+ * `pairs` without an entry, and on a dropped pair that is still declared.
  */
 export const dropped: readonly { pair: string; rationale: string }[] = [
   {
@@ -550,6 +612,31 @@ export const dropped: readonly { pair: string; rationale: string }[] = [
     pair: '--color-border-strong on --color-canvas',
     rationale:
       'The empty stars of a Rating, which this pair measured on the page and on panes, take the control boundary now, --color-border-default, measured at 3:1 on every surface. The 0.7 name only paints dividers, measured as --color-border-muted in high contrast.',
+  },
+];
+
+/**
+ * Pairs the gate still measures under another name, from the old name to the new, with the reason.
+ * tests/browser/Contrast.spec.ts checks that each new name is declared and each old one is not.
+ */
+export const renamed: readonly { from: string; to: string; rationale: string }[] = [
+  {
+    from: '--color-fg-control on --color-navigation-quiet-hover',
+    to: '--color-fg-control on --color-bg-navigation-hover',
+    rationale:
+      'Navigation items hover on a role of their own, bg.navigation; the 0.7 name is its alias.',
+  },
+  {
+    from: '--color-fg-control on --color-navigation-quiet-pressed',
+    to: '--color-fg-control on --color-bg-navigation-pressed',
+    rationale:
+      'Navigation items press on a role of their own, bg.navigation; the 0.7 name is its alias.',
+  },
+  {
+    from: '--color-border-focus on --color-navigation-quiet-hover',
+    to: '--color-border-focus on --color-bg-navigation-hover',
+    rationale:
+      'The inset ring of a hovered navigation item, on the bg.navigation role; the 0.7 name is its alias.',
   },
 ];
 

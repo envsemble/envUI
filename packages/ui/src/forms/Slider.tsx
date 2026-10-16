@@ -118,6 +118,9 @@ export function Slider({
     [describedBy, hint != null ? `${id}-hint` : undefined].filter(Boolean).join(' ') || undefined;
   return (
     <BaseSlider.Root
+      // The group, which the label names, is disabled with its range input, so its label and value
+      // read as part of an inactive control, which WCAG exempts from contrast, as they fade with it.
+      aria-disabled={disabled || undefined}
       {...props}
       className={classNames('env-slider', className)}
       value={current}

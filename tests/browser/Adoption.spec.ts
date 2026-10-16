@@ -219,6 +219,29 @@ test('the bootstrap script applies a stored theme before the application renders
   expect(result).toEqual({ theme: 'dark', scheme: 'dark' });
 });
 
+test('the bootstrap script applies the contrast before the application renders', async ({
+  page,
+}) => {
+  await page.goto(fixture);
+  const read = (testId: string) =>
+    page.getByTestId(testId).evaluate((element) => element.textContent ?? '');
+  const result = await page.evaluate(
+    ([withContrast, without]) => {
+      const root = document.documentElement;
+      const run = (source: string, before: string | null) => {
+        if (before === null) root.removeAttribute('data-env-contrast');
+        else root.setAttribute('data-env-contrast', before);
+        new Function(source)();
+        return root.getAttribute('data-env-contrast');
+      };
+      return { high: run(withContrast, null), system: run(without, 'standard') };
+    },
+    [await read('bootstrap-contrast-script'), await read('bootstrap-script')],
+  );
+  // A system contrast leaves what the page set alone.
+  expect(result).toEqual({ high: 'high', system: 'standard' });
+});
+
 test('SearchField clears with its button and with Escape inside a dialog', async ({ page }) => {
   await page.goto(fixture);
   const search = page.getByRole('searchbox', { name: 'Search members' });

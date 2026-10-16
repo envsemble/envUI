@@ -169,6 +169,9 @@ export function AdoptionFixture() {
           <output hidden data-testid="bootstrap-script">
             {createThemeBootstrapScript({ storageKey: 'bootstrap-theme' })}
           </output>
+          <output hidden data-testid="bootstrap-contrast-script">
+            {createThemeBootstrapScript({ storageKey: 'bootstrap-theme', contrast: 'high' })}
+          </output>
           <Tooltip content="All seats are assigned">
             <Button disabled>Assign seat</Button>
           </Tooltip>

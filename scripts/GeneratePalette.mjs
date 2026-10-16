@@ -33,13 +33,16 @@ const toRgb = converter('rgb');
 const ln21 = Math.log(21);
 
 /**
- * The grades every hue has. Steps of 5 cover text, icons, borders and fills; the surface ranges get
- * steps of 2: 0–10, where the light theme's pages, panes and their hover states sit, and 80–100,
- * where the dark theme's do. Grade 0 (white) and 100 (black) exist only in the neutral hue.
+ * The grades every hue has. Steps of 5 cover text, icons, borders and fills; the surface ranges are
+ * finer. 0–6 in steps of 2 hold the light theme's pages and panes; 6–15 in steps of 1 hold its
+ * selection, hover and pressed fills, which must stay apart from each other while muted text keeps
+ * 4.5:1 on them (grade 10 and lighter) and an inset focus ring 3:1 (grade 13 and lighter). 80–100 in
+ * steps of 2 hold the dark theme's surfaces. Grade 0 (white) and 100 (black) exist only in the
+ * neutral hue.
  */
 export const grades = [
-  0, 2, 4, 6, 8, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 82, 84, 86, 88, 90, 92,
-  94, 96, 98, 100,
+  0, 2, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80,
+  82, 84, 86, 88, 90, 92, 94, 96, 98, 100,
 ];
 
 /** How far, in grades, a color's luminance may sit from its grade's exact value. */

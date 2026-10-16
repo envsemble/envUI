@@ -24,20 +24,49 @@ export interface ThemeProps extends ComponentPropsWithRef<'div'> {
   /**
    * `high` for the high-contrast colors; `standard` keeps the standard ones even while the system
    * asks for more contrast; `system` follows `prefers-contrast: more`. Defaults to the contrast of
-   * the enclosing Theme, and to `system` outside any.
+   * the enclosing Theme, and to `system` outside any. It wins over a `data-env-contrast` attribute
+   * passed to the Theme; left out, such an attribute of `high` or `standard` sets the contrast, for
+   * the boundary, its nested Themes and its popups alike.
    */
   contrast?: ThemeContrast;
 }
 
 const ThemeContext = createContext<ThemeContextValue>({ theme: 'light', contrast: 'system' });
 
+/** Invalid themes already warned about, so each is reported once. */
+const warnedThemes = new Set<string>();
+
+/**
+ * In development, reports a theme that is neither light nor dark. In JavaScript, 0.x's
+ * `<Theme theme={useTheme()}>` now passes `{ theme, contrast }`, which would theme nothing.
+ */
+function warnAboutTheme(theme: unknown) {
+  if (theme === 'light' || theme === 'dark') return;
+  const shown = typeof theme === 'object' && theme !== null ? JSON.stringify(theme) : String(theme);
+  if (warnedThemes.has(shown)) return;
+  warnedThemes.add(shown);
+  // A development-only report, as React reports an invalid prop.
+  // eslint-disable-next-line no-console
+  console.error(
+    `envUI: Theme takes a theme of "light" or "dark", not ${shown}.` +
+      (typeof theme === 'object' && theme !== null
+        ? ' useTheme() returns { theme, contrast }: write <Theme {...useTheme()}>.'
+        : ''),
+  );
+}
+
 /**
  * An explicit, scoped theme: a color scheme and a contrast, which nested Themes and envUI's popups
  * keep. Theme preference and persistence belong to the app.
  */
 export function Theme({ theme, contrast: ownContrast, className, children, ...props }: ThemeProps) {
+  if (process.env.NODE_ENV !== 'production') warnAboutTheme(theme);
   const inherited = useContext(ThemeContext).contrast;
-  const contrast = ownContrast ?? inherited;
+  // The prop wins; without it, a data-env-contrast written on the Theme counts, so that the
+  // context its nested Themes and popups read agrees with the attribute.
+  const attribute = (props as Record<string, unknown>)['data-env-contrast'];
+  const contrast =
+    ownContrast ?? (attribute === 'high' || attribute === 'standard' ? attribute : inherited);
   const value = useMemo(() => ({ theme, contrast }), [theme, contrast]);
   return (
     <ThemeContext value={value}>

@@ -214,20 +214,6 @@
       }
     }
   },
-  "components/slider/overview": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-slider-label": 1,
-        "article :: output.env-slider-value": 1
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-slider-label": 1,
-        "article :: output.env-slider-value": 1
-      }
-    }
-  },
   "components/table/guidelines": {
     "dark": {
       "landmark-unique": {
@@ -325,6 +311,13 @@
       }
     },
     "dark-hc": {
+      "color-contrast-enhanced": {
+        "Buttons :: button.env-button.env-button-secondary.docs-swatch code": 1,
+        "Content & loading :: button.env-button.env-button-secondary.docs-swatch code": 1,
+        "Direction links :: button.env-button.env-button-secondary.docs-swatch code": 1,
+        "Text & focus :: button.env-button.env-button-secondary.docs-swatch code": 1,
+        "Text fields :: button.env-button.env-button-secondary.docs-swatch code": 1
+      },
       "label-content-name-mismatch": {
         "Buttons :: button.env-button.env-button-secondary.docs-swatch": 11,
         "Cards :: button.env-button.env-button-secondary.docs-swatch": 1,
@@ -369,6 +362,13 @@
       "color-contrast": {
         "Feedback :: button.env-button.env-button-secondary.docs-swatch code": 1
       },
+      "color-contrast-enhanced": {
+        "Buttons :: button.env-button.env-button-secondary.docs-swatch code": 1,
+        "Content & loading :: button.env-button.env-button-secondary.docs-swatch code": 1,
+        "Direction links :: button.env-button.env-button-secondary.docs-swatch code": 1,
+        "Text & focus :: button.env-button.env-button-secondary.docs-swatch code": 1,
+        "Text fields :: button.env-button.env-button-secondary.docs-swatch code": 1
+      },
       "label-content-name-mismatch": {
         "Buttons :: button.env-button.env-button-secondary.docs-swatch": 11,
         "Cards :: button.env-button.env-button-secondary.docs-swatch": 1,
@@ -400,6 +400,9 @@
       "color-contrast": {
         "article :: div.env-code-block span": 2
       },
+      "color-contrast-enhanced": {
+        "article :: div.env-code-block span": 10
+      },
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
       }
@@ -415,6 +418,9 @@
     "light-hc": {
       "color-contrast": {
         "article :: div.env-code-block span": 18
+      },
+      "color-contrast-enhanced": {
+        "article :: div.env-code-block span": 16
       },
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
@@ -490,7 +496,7 @@
     },
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 51
+        "article :: div.env-code-block span": 53
       }
     }
   }

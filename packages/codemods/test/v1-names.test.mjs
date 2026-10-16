@@ -58,6 +58,10 @@ const reports = {
     `line 7: defaultThemeStorageKey is no longer exported by ${bootstrap}: ${use('defaultThemeStorageKey', bootstrap)}`,
     `line 8: re-exports defaultThemeStorageKey, which ${bootstrap} no longer exports: ${use('defaultThemeStorageKey', bootstrap)}`,
   ],
+  'use-theme.tsx': [
+    'line 19: compares useTheme(), which is { theme, contrast } in 1.0: compare useTheme().theme.',
+    'line 20: passes useTheme() as theme, which is { theme, contrast } in 1.0: pass useTheme().theme.',
+  ],
   'toast-manual.tsx': [
     ...removedFrom(2, ['ToastProps']),
     `line 7: Toast is no longer exported as a component by ${library}: ${use('Toast')}`,

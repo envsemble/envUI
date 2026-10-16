@@ -47,7 +47,7 @@ import envui from '@envsemble/eslint-plugin-envui';
 export default defineConfig(envui.configs.recommended);
 ```
 
-- `v1-names` rewrites imports and references from `@envsemble/envui` and `@envsemble/envui/theme-bootstrap`: renamed components and types (`Input` is `TextField`), namespace parts (`MenuItem` is `Menu.Item`, `<Menu>` is `<Menu.Root>`), `DirectionLink` by its literal `direction` (`Pager.Previous` or `Pager.Next`), re-exports, and `defaultThemeStorageKey`, which becomes `'env-theme'`.
+- `v1-names` rewrites imports and references from `@envsemble/envui` and `@envsemble/envui/theme-bootstrap`: renamed components and types (`Input` is `TextField`), namespace parts (`MenuItem` is `Menu.Item`, `<Menu>` is `<Menu.Root>`), `DirectionLink` by its literal `direction` (`Pager.Previous` or `Pager.Next`), re-exports, `defaultThemeStorageKey`, which becomes `'env-theme'`, and `<Theme theme={useTheme()}>`, which becomes `<Theme {...useTheme()}>`.
 - `v1-classes` renames `env-*` classes and `--env-*` custom properties in style sheets, class names and selector strings.
 - `envui/no-renamed-exports` reports every 0.x name left, also through `require()`, `import()` and `createElement()`, with its 1.0 name or what to use instead. The recommended config also reports raw elements that envUI provides, envUI's private classes and raw colors; `@envsemble/stylelint-config-envui` does the same for style sheets.
 
@@ -57,13 +57,14 @@ Change by hand what the codemods report, each with its file and line:
 - a `DirectionLink` whose `direction` is computed or spread, or that is used outside JSX;
 - re-exports of namespace parts, and names destructured from a namespace import;
 - a local that shadows a namespace or a new name: the codemod writes a second import under an alias, such as `Menu as EnvMenu`, which you may rename;
-- a removed import's `@ts-expect-error` or disable comment, which the codemod drops with the line it applied to.
+- a removed import's `@ts-expect-error` or disable comment, which the codemod drops with the line it applied to;
+- `useTheme()` compared with a color scheme or passed as another element's `theme`, which takes `useTheme().theme`.
 
 The codemods also leave class names built at run time, CSS-in-JS, selectors nested in a Sass or Less rule (a DiffCount label in a nested `.env-diff-count` rule becomes `env-diff-stat-label`), mocks and `declare module` augmentations; search for the old names there. The codemods' rename map, `src/maps/v1.json` in `@envsemble/envui-codemods`, lists every change.
 
 ### useTheme returns the theme and its contrast
 
-`useTheme()` returns `{ theme, contrast }` instead of the color scheme alone. Read the scheme as `const { theme } = useTheme()`. An application's own portal that re-themed with `<Theme theme={useTheme()}>` takes both with `<Theme {...useTheme()}>`, so it keeps a high contrast or a `standard` opt-out too.
+`useTheme()` returns `{ theme, contrast }` instead of the color scheme alone. Read the scheme as `const { theme } = useTheme()`. An application's own portal that re-themed with `<Theme theme={useTheme()}>` takes both with `<Theme {...useTheme()}>`, so it keeps a high contrast or a `standard` opt-out too; `v1-names` makes that change. In JavaScript, `theme={useTheme()}` would render `data-env-theme="[object Object]"`, so in development Theme warns about a `theme` that is not `light` or `dark`.
 
 ### Tokens
 
@@ -243,6 +244,12 @@ Aliases of one role, which replaces them:
 | `--color-tone-success`                  | `--color-fg-success`                  |                                    |
 | `--color-tone-warning`                  | `--color-fg-warning`                  |                                    |
 
+Aliases whose value changed, so a style that relied on the 0.7 value needs a look:
+
+| 0.7 custom property      | Role                 | What changed                                                                                                                                                                                                                                                                                    |
+| ------------------------ | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--color-dialog-overlay` | `--color-bg-overlay` | 0.7's was opaque, #1e1f21, and the dialog backdrop made it 55% opaque with --state-dialog-overlay-opacity, which is removed. The role is the scrim itself, 55% opaque: paint it as it is, since a style that applies its own opacity now applies it twice. For the opaque color, write #1e1f21. |
+
 Component tokens that take another role in some themes, so no one role replaces them; use the role of each theme:
 
 | 0.7 custom property         | Used for                     | Light                             | Dark                                | Light, high contrast                | Dark, high contrast                 |
@@ -261,15 +268,15 @@ Component tokens that take another role in some themes, so no one role replaces 
 | `--color-switch-on-pressed` | Switches                     | `--color-bg-brand-strong-pressed` | `--color-bg-brand-emphasis-pressed` | `--color-bg-brand-emphasis-pressed` | `--color-bg-brand-emphasis-pressed` |
 | `--color-switch-thumb-on`   | Switches                     | `--color-fg-on-strong`            | `--color-fg-on-emphasis`            | `--color-fg-on-emphasis`            | `--color-fg-on-emphasis`            |
 
-Fixed colors, one palette color in every theme, which no role replaces:
+Fixed colors, which no role replaces: write the value, or a custom property of your own that holds it.
 
-| 0.7 custom property     | Used for              | Palette color        |
-| ----------------------- | --------------------- | -------------------- |
-| `--color-avatar`        | Avatars               | `palette.blue.20`    |
-| `--color-avatar-figure` | Avatars               | `palette.blue.45`    |
-| `--color-canvas-dark`   | Fixed dark page color | `palette.neutral.92` |
-| `--color-on-avatar`     | Avatars               | `palette.blue.70`    |
-| `--color-white`         | Fixed white           | `palette.neutral.0`  |
+| 0.7 custom property     | Used for              | Value                                                                          |
+| ----------------------- | --------------------- | ------------------------------------------------------------------------------ |
+| `--color-avatar`        | Avatars               | `#9fc1f8`                                                                      |
+| `--color-avatar-figure` | Avatars               | `#347eea`                                                                      |
+| `--color-canvas-dark`   | Fixed dark page color | `#1e1f21`                                                                      |
+| `--color-on-avatar`     | Avatars               | `#004aa2` (light; dark), `#001d49` (light, high contrast; dark, high contrast) |
+| `--color-white`         | Fixed white           | `#ffffff`                                                                      |
 
 <!-- token-migration:end -->
 

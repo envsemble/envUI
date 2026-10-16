@@ -1,14 +1,23 @@
 import { useState } from 'react';
 import {
   Button,
+  Combobox,
+  CommandPalette,
+  ContextMenu,
+  DatePicker,
   Dialog,
+  HoverCard,
+  Link,
   Menu,
+  Menubar,
   Popover,
   Select,
   Text,
   Theme,
   ThemePreferenceProvider,
+  Toast,
   Tooltip,
+  useToast,
   type ThemeContrast,
   type ThemeValue,
 } from '@envsemble/envui';
@@ -17,9 +26,30 @@ const statusOptions = [
   { value: 'open', label: 'Open' },
   { value: 'closed', label: 'Closed' },
 ];
+const people = [
+  { value: 'alex', label: 'Alex Morgan' },
+  { value: 'sam', label: 'Sam Lee' },
+];
+const commands = [{ id: 'rename', label: 'Rename' }];
 
-/** One popup of each kind, named after the boundary it opens from. */
+/**
+ * One popup of each kind, named after the boundary it opens from: menus (standard, compact, context
+ * and menubar), Select lists (standard and compact), a Combobox list, the date picker, a popover, a
+ * hover card, a tooltip, dialogs (centered and at the edge), the command palette and a toast. Toasts
+ * take the theme of their provider, so each boundary has one.
+ */
 function Popups({ name }: { name: string }) {
+  return (
+    <Toast.Provider>
+      <PopupTriggers name={name} />
+    </Toast.Provider>
+  );
+}
+
+function PopupTriggers({ name }: { name: string }) {
+  const toast = useToast();
+  const [palette, setPalette] = useState(false);
+  const [query, setQuery] = useState('');
   return (
     <div className="fixture-actions">
       <Menu.Root
@@ -28,6 +58,54 @@ function Popups({ name }: { name: string }) {
       >
         <Menu.Item>Rename</Menu.Item>
       </Menu.Root>
+      <Menu.Root
+        aria-label={`Compact actions ${name}`}
+        density="compact"
+        trigger={<Button variant="secondary">Compact menu {name}</Button>}
+      >
+        <Menu.Item>Rename</Menu.Item>
+      </Menu.Root>
+      <ContextMenu aria-label={`Context actions ${name}`} content={<Menu.Item>Copy</Menu.Item>}>
+        <div className="fixture-context-area">Context {name}</div>
+      </ContextMenu>
+      <Menubar.Root aria-label={`Menubar ${name}`}>
+        <Menubar.Menu label={`File ${name}`}>
+          <Menu.Item>New</Menu.Item>
+        </Menubar.Menu>
+      </Menubar.Root>
+      <Select
+        label={`Sort ${name}`}
+        density="compact"
+        options={statusOptions}
+        defaultValue="open"
+      />
+      <Combobox label={`Person ${name}`} items={people} />
+      <DatePicker label={`Due ${name}`} defaultValue="2026-10-20" locale="en-GB" />
+      <HoverCard trigger={<Link href="#card">Card {name}</Link>}>
+        <Text>Card {name} details.</Text>
+      </HoverCard>
+      <Dialog
+        placement="right"
+        title={`Panel ${name}`}
+        trigger={<Button variant="secondary">Panel {name}</Button>}
+      >
+        <Text>Panel content.</Text>
+      </Dialog>
+      <Button variant="secondary" onClick={() => setPalette(true)}>
+        Palette {name}
+      </Button>
+      <CommandPalette
+        open={palette}
+        onOpenChange={setPalette}
+        aria-label={`Palette ${name}`}
+        query={query}
+        onQueryChange={setQuery}
+        items={commands}
+        onSelect={() => setPalette(false)}
+      />
+      <Button variant="secondary" onClick={() => toast.show({ message: `Toast ${name}` })}>
+        Toast {name}
+      </Button>
       <Popover
         title={`Details ${name}`}
         trigger={<Button variant="secondary">Popover {name}</Button>}

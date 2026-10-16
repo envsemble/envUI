@@ -25,7 +25,7 @@ export const codemodsMapFile = resolve(repositoryRoot, 'packages/codemods/src/ma
 export const migrationGuideFile = resolve(repositoryRoot, 'docs/migration.md');
 
 const mapComment =
-  'The 0.7 custom properties of the tokens, each with what replaces it in 1.0: `to`, the custom property of the one role that replaces it; `byTheme`, the custom property of the role a component token takes in each theme, which no one name replaces; `primitive`, the palette color of a fixed color, which no role replaces; or `removed`, with `to` its replacement where there is one and a `note`. The 0.7 names remain as aliases of their roles until the CSS-architecture step, which gives every token the --env- prefix. `npm run tokens:build` writes this section from packages/ui/src/generated/token-migration.json; the transforms do not read it yet.';
+  'The 0.7 custom properties of the tokens, each with what replaces it in 1.0: `to`, the custom property of the one role that replaces it; `byTheme`, the custom property of the role a component token takes in each theme, which no one name replaces; `value`, the color of a fixed color, which no role replaces, or its color per theme; or `removed`, with `to` its replacement where there is one. A `note` says what changed beyond the name. The 0.7 names remain as aliases of their roles until the CSS-architecture step, which gives every token the --env- prefix. `npm run tokens:build` writes this section from packages/ui/src/generated/token-migration.json; the transforms do not read it yet.';
 
 /** The `tokens` section of the codemods' rename map, from the token build's migration map. */
 export function migrationMapSection(migration) {
@@ -35,11 +35,12 @@ export function migrationMapSection(migration) {
       ? { removed: true, to: entry.cssVariable ?? null, note: entry.note }
       : {
           ...(entry.primitive
-            ? { primitive: entry.primitive }
+            ? { value: entry.value }
             : entry.cssVariables
               ? { byTheme: entry.cssVariables }
               : { to: entry.cssVariable }),
           ...(entry.component && { component: entry.component }),
+          ...(entry.note && { note: entry.note }),
         };
   return section;
 }
@@ -82,6 +83,7 @@ export function migrationGuideList(migration) {
   const entries = Object.entries(migration.names);
   const removed = entries.filter(([, entry]) => entry.removed);
   const roles = entries.filter(([, entry]) => !entry.removed && entry.token);
+  const changed = roles.filter(([, entry]) => entry.note);
   const byTheme = entries.filter(([, entry]) => !entry.removed && entry.cssVariables);
   const fixed = entries.filter(([, entry]) => !entry.removed && entry.primitive);
   const themes = [...new Set(byTheme.flatMap(([, entry]) => Object.keys(entry.cssVariables)))];
@@ -89,6 +91,19 @@ export function migrationGuideList(migration) {
     name
       .replace(/^\w/, (letter) => letter.toUpperCase())
       .replace('-high-contrast', ', high contrast');
+  /** A fixed value, or each value of a fixed color per theme, with the themes that take it. */
+  const valueOf = (value) =>
+    typeof value === 'string'
+      ? code(value)
+      : [...new Set(Object.values(value))]
+          .map(
+            (each) =>
+              `${code(each)} (${Object.keys(value)
+                .filter((name) => value[name] === each)
+                .map((name) => theme(name).toLowerCase())
+                .join('; ')})`,
+          )
+          .join(', ');
   const blocks = [];
   if (removed.length > 0)
     blocks.push(
@@ -106,6 +121,14 @@ export function migrationGuideList(migration) {
         roles.map(([name, entry]) => [code(name), code(entry.cssVariable), text(entry.component)]),
       ),
     );
+  if (changed.length > 0)
+    blocks.push(
+      'Aliases whose value changed, so a style that relied on the 0.7 value needs a look:',
+      table(
+        ['0.7 custom property', 'Role', 'What changed'],
+        changed.map(([name, entry]) => [code(name), code(entry.cssVariable), text(entry.note)]),
+      ),
+    );
   if (byTheme.length > 0)
     blocks.push(
       'Component tokens that take another role in some themes, so no one role replaces them; use the role of each theme:',
@@ -120,10 +143,10 @@ export function migrationGuideList(migration) {
     );
   if (fixed.length > 0)
     blocks.push(
-      'Fixed colors, one palette color in every theme, which no role replaces:',
+      'Fixed colors, which no role replaces: write the value, or a custom property of your own that holds it.',
       table(
-        ['0.7 custom property', 'Used for', 'Palette color'],
-        fixed.map(([name, entry]) => [code(name), text(entry.component), code(entry.primitive)]),
+        ['0.7 custom property', 'Used for', 'Value'],
+        fixed.map(([name, entry]) => [code(name), text(entry.component), valueOf(entry.value)]),
       ),
     );
   return blocks.map((block) => (Array.isArray(block) ? block.join('\n') : block)).join('\n\n');
