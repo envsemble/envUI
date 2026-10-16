@@ -58,6 +58,7 @@ Rewrites imports from `@envsemble/envui` and `@envsemble/envui/theme-bootstrap`,
 - **DirectionLink.** `<DirectionLink direction="previous">` becomes `<Pager.Previous>` and `direction="next"` becomes `<Pager.Next>`, without the prop.
 - **Re-exports.** `export { Input } from '@envsemble/envui'` becomes `export { TextField } from '@envsemble/envui'`.
 - **defaultThemeStorageKey.** References become the string `'env-theme'` and the import goes.
+- **useTheme.** `useTheme()` returns `{ theme, contrast }` in 1.0. `<Theme theme={useTheme()}>`, which re-themes a portal, becomes `<Theme {...useTheme()}>`, so the portal keeps the contrast too; a `contrast` written on the element still wins.
 
 It reports instead of changing:
 
@@ -65,6 +66,7 @@ It reports instead of changing:
 - `DirectionLink` with a dynamic, spread or missing `direction`, or used outside JSX; its import stays;
 - re-exports and `export { … }` of namespace parts, `DirectionLink` and removed exports, which cannot keep their old name;
 - names destructured from a namespace import, such as `const { MenuItem } = ui`;
+- `useTheme()` compared with a color scheme, as in `useTheme() === 'dark'`, or passed as another element's `theme`, which take `useTheme().theme` in 1.0;
 - parts destructured from a namespace that was a 0.x component, such as `const { Root, Item } = Menu` or `const { Cell } = ui.Table`, which are 1.0 code and stay as they are rather than becoming `Menu.Root`.
 
 ## v1-classes
