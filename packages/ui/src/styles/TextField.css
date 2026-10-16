@@ -1,35 +1,3 @@
-/* Native text controls share their floating caption, geometry and validation colors. */
-.env-form-field {
-  --env-field-error-color: var(--env-color-fg-danger);
-  display: grid;
-  align-content: start;
-  gap: var(--env-space-3);
-  min-width: 0;
-  max-inline-size: 100%;
-  overflow-wrap: anywhere;
-  font: var(--env-type-body-small);
-  color: var(--env-color-fg-default);
-}
-.env-field-hint,
-.env-field-error {
-  font: var(--env-type-body-small);
-  font-size: var(--env-font-size-body-small);
-}
-.env-field-hint {
-  color: var(--env-color-fg-muted);
-}
-.env-field-error {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--env-space-2);
-  color: var(--env-field-error-color);
-}
-.env-field-error > svg {
-  flex-shrink: 0;
-  width: var(--env-control-icon-size);
-  height: var(--env-control-icon-size);
-  margin-block-start: 0.125rem;
-}
 /* A field takes the control height of its size, or of its container where it sets none. A tall
    field (the floating variant, plain fields and text areas) keeps room above it for its label. */
 .env-text-field {
@@ -315,6 +283,10 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
 /* Decorations sit inside the well; the native input keeps its full hit area and caret. */
 .env-text-field-start,
 .env-text-field-end {
+  /* Icon actions, such as the clear action, take the field's quiet icon color rather than the
+     link blue of text buttons, darkening to the field text on hover and press. */
+  --env-button-text-icon-color: var(--env-color-fg-muted);
+  --env-button-text-icon-color-active: var(--env-color-fg-default);
   position: absolute;
   inset-block: 0;
   display: flex;
@@ -328,7 +300,7 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
 .env-text-field-end {
   inset-inline-end: var(--env-space-2);
 }
-.env-text-field-start .env-symbol {
+.env-text-field-start .env-icon {
   width: var(--env-control-icon-size);
   height: var(--env-control-icon-size);
 }
@@ -347,15 +319,6 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
 }
 .env-text-field-well:focus-within > .env-text-field-start {
   color: var(--env-color-border-accent-emphasis);
-}
-/* Icon actions inside a field, such as the clear action, take the field's quiet icon color rather
-   than the link blue of text buttons, and darken to the field text on hover and press. */
-.env-text-field-end .env-button-text.env-icon-button {
-  color: var(--env-color-fg-muted);
-}
-.env-text-field-end
-  .env-button-text.env-icon-button:is(:hover, :active):not(:disabled):not([aria-disabled='true']) {
-  color: var(--env-color-fg-default);
 }
 /* Search inputs supply their own clear action. */
 .env-text-input[type='search']::-webkit-search-cancel-button {
