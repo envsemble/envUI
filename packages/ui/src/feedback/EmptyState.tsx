@@ -6,10 +6,16 @@ import { Text } from '../foundations/Text.js';
 import { Error as ErrorIcon } from '../icons/Error.js';
 
 export interface EmptyStateProps extends Omit<ComponentPropsWithRef<'div'>, 'title'> {
+  /** What is missing or what happened, such as "No projects yet"; a heading of `headingLevel`. */
   title: ReactNode;
+  /** Why, and what people can do, in a sentence or two of muted text under the title. */
   description?: ReactNode;
+  /** A decorative icon above the text; an error state shows the error icon without it. */
   icon?: ReactNode;
+  /** The action that resolves the state, such as a Button that creates the first item. */
   action?: ReactNode;
+  /** More content under the description, such as a short list of next steps. */
+  children?: ReactNode;
   /**
    * Error states replace content that failed to load: they show the error icon by default and
    * are announced as an alert. Pair them with a retry action.

@@ -2593,25 +2593,31 @@
           "name": "title",
           "type": "ReactNode",
           "required": true,
-          "description": ""
+          "description": "What is missing or what happened, such as \"No projects yet\"; a heading of `headingLevel`."
         },
         {
           "name": "description",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "Why, and what people can do, in a sentence or two of muted text under the title."
         },
         {
           "name": "icon",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A decorative icon above the text; an error state shows the error icon without it."
         },
         {
           "name": "action",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "The action that resolves the state, such as a Button that creates the first item."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "More content under the description, such as a short list of next steps."
         },
         {
           "name": "tone",

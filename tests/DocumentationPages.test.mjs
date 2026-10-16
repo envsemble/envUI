@@ -33,7 +33,6 @@ const unconverted = [
   'disclosure',
   'document-tabs',
   'drop-zone',
-  'empty-state',
   'hover-card',
   'list',
   'markdown',

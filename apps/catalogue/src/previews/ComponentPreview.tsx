@@ -20,7 +20,7 @@ import { CodePreview } from './CodeContent';
 import { MarkdownPreview } from './MarkdownContent';
 import { lazy, Suspense } from 'react';
 import { Text } from '@envsemble/envui';
-import { EmptyStatePreview, SpinnerPreview, SkeletonPreview } from './Feedback';
+import { SpinnerPreview, SkeletonPreview } from './Feedback';
 import { ToastsPreview } from './Toasts';
 import { ColorPickerPreview } from './ColorPicking';
 import { ComposerPreview, MessagesPreview } from './Conversation';
@@ -108,8 +108,6 @@ export function ComponentPreview({ id }: { id: string }) {
       );
     case 'disclosure':
       return <DisclosurePreview />;
-    case 'empty-state':
-      return <EmptyStatePreview />;
     case 'spinner':
       return <SpinnerPreview />;
     case 'skeleton':
