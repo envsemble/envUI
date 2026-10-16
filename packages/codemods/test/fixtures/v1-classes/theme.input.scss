@@ -1,0 +1,19 @@
+$env-notice-gap: 8px;
+
+.env-notice {
+  gap: $env-notice-gap;
+
+  &-title {
+    font-weight: 600;
+  }
+
+  .env-heatmap & {
+    --env-heatmap-tone: #{$accent};
+  }
+}
+
+@mixin compact-row {
+  .env-row {
+    padding-block: 2px;
+  }
+}

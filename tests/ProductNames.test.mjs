@@ -51,6 +51,17 @@ const sources = [
   { directory: 'packages/ui/src', extensions: ['.ts', '.tsx'], read: 'code' },
   // The catalogue's sample data and copy.
   { directory: 'apps/catalogue/src', extensions: ['.ts', '.tsx'], read: 'code' },
+  // The codemods package, its rename map and the code its fixtures show.
+  { path: 'packages/codemods/README.md', read: 'whole' },
+  { directory: 'packages/codemods/src', extensions: ['.json'], read: 'whole' },
+  { directory: 'packages/codemods/src', extensions: ['.mjs'], read: 'code' },
+  { directory: 'packages/codemods/bin', extensions: ['.mjs'], read: 'code' },
+  {
+    directory: 'packages/codemods/test/fixtures',
+    extensions: ['.ts', '.tsx', '.jsx'],
+    read: 'code',
+  },
+  { directory: 'packages/codemods/test/fixtures', extensions: ['.css', '.scss'], read: 'whole' },
 ];
 
 /** Generated from pinned inputs: Material Symbols names its own icons, such as ChromeMaximize. */

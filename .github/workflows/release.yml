@@ -28,7 +28,7 @@ jobs:
       - run: npx playwright install --with-deps chromium firefox webkit
       - run: npm run verify
   publish:
-    name: Publish package and offline catalogue
+    name: Publish packages and offline catalogue
     needs: validate
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -46,10 +46,13 @@ jobs:
           scope: '@envsemble'
       - run: npm ci
       - run: npm run build
-      - name: Publish immutable package
+      - name: Publish immutable packages
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm publish --workspace @envsemble/envui --tag "$(node scripts/ValidateRelease.mjs --dist-tag)"
+        run: |
+          tag="$(node scripts/ValidateRelease.mjs --dist-tag)"
+          npm publish --workspace @envsemble/envui --tag "$tag"
+          npm publish --workspace @envsemble/envui-codemods --tag "$tag"
       - name: Create matching release download
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

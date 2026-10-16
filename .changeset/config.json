@@ -5,7 +5,7 @@
   "changelog": "./changelog.mjs",
   "commit": false,
   "format": "prettier",
-  "fixed": [],
+  "fixed": [["@envsemble/envui", "@envsemble/envui-codemods"]],
   "linked": [],
   "ignore": [],
   "privatePackages": { "version": false, "tag": false },

@@ -37,6 +37,13 @@ Requires React and React DOM 19, plus access to the private `@envsemble` GitHub 
 npm install --save-exact @envsemble/envui@<version>
 ```
 
+Upgrading an application from envUI 0.x to 1.0? The `@envsemble/envui-codemods` package moves its imports, components, types and `env-*` classes to the 1.0 names and reports what needs a decision:
+
+```sh
+npx @envsemble/envui-codemods v1-names src
+npx @envsemble/envui-codemods v1-classes src
+```
+
 Import the stylesheet once at your application entry point, then compose public components:
 
 ```tsx
@@ -150,6 +157,7 @@ apps/catalogue/      Live previews and the offline catalogue application
 packages/ui/         The publishable @envsemble/envui package
   src/               Components by family, styles and public entry points
   licenses/          Third-party license texts
+packages/codemods/   The publishable @envsemble/envui-codemods package: upgrades from 0.x to 1.0
 assets/brand/        Original envUI and envsemble artwork
 assets/readme/       Light/dark captures of the catalogue for this README
 scripts/             Builds, asset generation, local watching and release validation
@@ -161,11 +169,11 @@ React components and scripts use PascalCase filenames; hooks and helpers use cam
 
 ## Releases
 
-Releases are cut from `main`. Each change records its changelog entry as a changeset in `.changeset/`; see [library development](docs/library-development.md). To prepare a release, run `npm run changeset:version`. It applies the pending changesets to `packages/ui/package.json`, the dependency in `apps/catalogue/package.json`, the lockfile and the [changelog](packages/ui/CHANGELOG.md), where it adds the version above the earlier ones. Add the date to its heading and a sentence on what the release brings, as earlier releases have. Verify, review and merge `dev` into `main` through a pull request, then push a `v<version>` tag on `main`. The [Release workflow](https://github.com/envsemble/envUI/actions/workflows/release.yml) then:
+Releases are cut from `main`. Each change records its changelog entry as a changeset in `.changeset/`; see [library development](docs/library-development.md). To prepare a release, run `npm run changeset:version`. It applies the pending changesets to `packages/ui/package.json` and `packages/codemods/package.json`, which share one version, the dependency in `apps/catalogue/package.json`, the lockfile and the [changelog](packages/ui/CHANGELOG.md), where it adds the version above the earlier ones. Add the date to its heading and a sentence on what the release brings, as earlier releases have. Verify, review and merge `dev` into `main` through a pull request, then push a `v<version>` tag on `main`. The [Release workflow](https://github.com/envsemble/envUI/actions/workflows/release.yml) then:
 
 - rejects tags that are not on `main`;
 - verifies the tag matches the package version;
-- publishes privately to GitHub Packages;
+- publishes both packages privately to GitHub Packages;
 - creates a GitHub release with that version's CHANGELOG section and the matching offline HTML.
 
 Prereleases use `next`; stable releases use `latest`. The work towards 1.0 is in Changesets' prerelease mode for `next` (`.changeset/pre.json`), so each `npm run changeset:version` produces the next `1.0.0-next.N`. Breaking changes are `major` changesets, and the first prerelease needs one to start at 1.0.0. Before releasing 1.0.0, run `npx changeset pre exit`: the next `npm run changeset:version` then releases 1.0.0 with the entries of every prerelease. A later prerelease line starts with `npx changeset pre enter next`.

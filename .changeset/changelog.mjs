@@ -8,6 +8,7 @@ export default {
     const [first, ...rest] = changeset.summary.trim().split('\n');
     return [`- ${first}`, ...rest.map((line) => (line ? `  ${line}` : line))].join('\n');
   },
-  // envUI is the only published package, so no entry reports updated internal dependencies.
+  // envUI and its codemods share one version and neither depends on the other, so no entry reports
+  // updated internal dependencies.
   getDependencyReleaseLine: () => '',
 };

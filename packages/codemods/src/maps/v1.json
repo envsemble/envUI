@@ -1,0 +1,160 @@
+{
+  "$comment": "The envUI 1.0 rename map: every public name of @envsemble/envui 0.x that changed, with its 1.0 name. It is the one source for the codemods (v1-names, v1-classes), the migration guide and the search and manifest aliases. 1.0 re-exports nothing under an old name. A new name with a dot is a part of an ES module namespace: `Menu.Item` is the `Item` part of the `Menu` export.",
+  "version": "1.0.0",
+  "package": "@envsemble/envui",
+  "exports": {
+    "$comment": "Old export name to new name, per entry point. Prop and other types are listed beside their components.",
+    "@envsemble/envui": {
+      "Input": "TextField",
+      "InputProps": "TextFieldProps",
+      "DateTimeField": "DatePicker",
+      "DateTimeFieldProps": "DatePickerProps",
+      "FileDropzone": "DropZone",
+      "FileDropzoneProps": "DropZoneProps",
+      "DisclosureNote": "Disclosure",
+      "DisclosureNoteProps": "DisclosureProps",
+      "Notice": "Alert",
+      "NoticeProps": "AlertProps",
+      "NoticeTone": "AlertTone",
+      "Counter": "CounterBadge",
+      "CounterProps": "CounterBadgeProps",
+      "DiffCount": "DiffStat",
+      "DiffCountProps": "DiffStatProps",
+      "Heatmap": "CalendarHeatmap",
+      "HeatmapProps": "CalendarHeatmapProps",
+      "HeatmapDay": "CalendarHeatmapDay",
+      "HeatmapCell": "CalendarHeatmapCell",
+      "OrganizationMenu": "OrganizationSwitcher",
+      "OrganizationMenuProps": "OrganizationSwitcherProps",
+      "OrganizationMenuOrganization": "OrganizationSwitcherOrganization",
+      "GroupedRows": "List.Root",
+      "GroupedRowsProps": "List.RootProps",
+      "Row": "List.Item",
+      "RowProps": "List.ItemProps",
+      "NavigationItem": "NavList.Item",
+      "NavigationItemProps": "NavList.ItemProps",
+      "DirectionLinks": "Pager.Root",
+      "DirectionLinksProps": "Pager.RootProps",
+      "DirectionLinksDestination": "Pager.LinkProps",
+      "DirectionLinkProps": "Pager.LinkProps",
+      "Menu": "Menu.Root",
+      "MenuProps": "Menu.RootProps",
+      "MenuItem": "Menu.Item",
+      "MenuItemProps": "Menu.ItemProps",
+      "MenuGroup": "Menu.Group",
+      "MenuGroupProps": "Menu.GroupProps",
+      "MenuRadioGroup": "Menu.RadioGroup",
+      "MenuRadioGroupProps": "Menu.RadioGroupProps",
+      "MenuRadioItem": "Menu.RadioItem",
+      "MenuRadioItemProps": "Menu.RadioItemProps",
+      "MenuCheckboxItem": "Menu.CheckboxItem",
+      "MenuCheckboxItemProps": "Menu.CheckboxItemProps",
+      "MenuSeparator": "Menu.Separator",
+      "MenuHeader": "Menu.Header",
+      "MenuHeaderProps": "Menu.HeaderProps",
+      "MenuSubmenu": "Menu.Submenu",
+      "MenuSubmenuProps": "Menu.SubmenuProps",
+      "MenuDensity": "Menu.Density",
+      "Menubar": "Menubar.Root",
+      "MenubarProps": "Menubar.RootProps",
+      "MenubarMenu": "Menubar.Menu",
+      "MenubarMenuProps": "Menubar.MenuProps",
+      "MenubarMenuOpenChangeDetails": "Menubar.MenuOpenChangeDetails",
+      "Table": "Table.Root",
+      "TableProps": "Table.RootProps",
+      "TableHead": "Table.Head",
+      "TableHeadProps": "Table.HeadProps",
+      "TableBody": "Table.Body",
+      "TableBodyProps": "Table.BodyProps",
+      "TableRow": "Table.Row",
+      "TableRowProps": "Table.RowProps",
+      "TableHeaderCell": "Table.HeaderCell",
+      "TableHeaderCellProps": "Table.HeaderCellProps",
+      "TableCell": "Table.Cell",
+      "TableCellProps": "Table.CellProps",
+      "TableSortDirection": "Table.SortDirection",
+      "Stat": "Stat.Root",
+      "StatProps": "Stat.RootProps",
+      "StatGroup": "Stat.Group",
+      "StatGroupProps": "Stat.GroupProps",
+      "StatTrend": "Stat.Trend",
+      "StatTrendTone": "Stat.TrendTone",
+      "ToastProvider": "Toast.Provider",
+      "ToastProviderProps": "Toast.ProviderProps"
+    }
+  },
+  "split": {
+    "$comment": "Old components that became several parts: the part follows the value of one prop, which the new part no longer takes.",
+    "@envsemble/envui": {
+      "DirectionLink": {
+        "prop": "direction",
+        "values": { "previous": "Pager.Previous", "next": "Pager.Next" }
+      }
+    }
+  },
+  "removed": {
+    "$comment": "Exports that became internal in 1.0, with what to use instead. A `value` is the constant's literal, which a codemod can inline.",
+    "@envsemble/envui": {
+      "LoadingBar": {
+        "use": "AppShell's loading and loadingLabel props show page progress along the bottom of its topbar; Progress shows the progress of a task."
+      },
+      "LoadingBarProps": {
+        "use": "AppShell's loading and loadingLabel props show page progress along the bottom of its topbar; Progress shows the progress of a task."
+      },
+      "Toast": {
+        "use": "Show notifications through useToast() inside Toast.Provider. The manual Toast is internal; the `Toast` export is now the namespace of Toast.Provider."
+      },
+      "ToastProps": {
+        "use": "Describe a notification with ToastNotification, the argument of useToast().show()."
+      },
+      "getInitials": {
+        "use": "Avatar shows the initials itself with fallback=\"initials\"; derive initials in the application for custom layouts."
+      },
+      "useLinkComponent": {
+        "use": "Render envUI's Link, Button with href, NavList.Item or Menu.Item with href, which use the LinkProvider's component; or read the router's link component in the application."
+      },
+      "useSidebarCompact": {
+        "use": "Keep the sidebar's collapsed state in the application through AppShell's collapsed and onCollapsedChange props."
+      }
+    },
+    "@envsemble/envui/theme-bootstrap": {
+      "defaultThemeStorageKey": {
+        "use": "The default storage key is the string \"env-theme\"; pass the same storageKey to createThemeBootstrapScript and ThemePreferenceProvider to change it.",
+        "value": "env-theme"
+      }
+    }
+  },
+  "classes": {
+    "$comment": "Old class name to new name. An entry also renames every class and custom property that continues it with a hyphen (env-date-time-well becomes env-date-picker-well, --env-notice-tone becomes --env-alert-tone); the longest matching entry wins.",
+    "env-date-time-field": "env-date-picker",
+    "env-date-time": "env-date-picker",
+    "env-file-dropzone": "env-drop-zone",
+    "env-disclosure-note": "env-disclosure",
+    "env-disclosure-content": "env-disclosure-panel",
+    "env-notice": "env-alert",
+    "env-counter": "env-counter-badge",
+    "env-diff-count": "env-diff-stat",
+    "env-heatmap": "env-calendar-heatmap",
+    "env-organization-menu": "env-organization-switcher",
+    "env-organization-trigger": "env-organization-switcher-trigger",
+    "env-grouped-rows": "env-list",
+    "env-row": "env-list-item",
+    "env-contrast-row-pane": "env-list-surface",
+    "env-navigation-item": "env-nav-list-item",
+    "env-navigation": "env-nav-list-item",
+    "env-direction-links": "env-pager",
+    "env-direction-link": "env-pager-link"
+  },
+  "docs": {
+    "$comment": "Old documentation page slug (docs/components/<slug>.md and the catalogue route components/<slug>) to the new one.",
+    "fields": "text-field",
+    "date-time-field": "date-picker",
+    "file-dropzone": "drop-zone",
+    "disclosures": "disclosure",
+    "notices": "alert",
+    "heatmap": "calendar-heatmap",
+    "rows": "list",
+    "navigation": "nav-list",
+    "direction-links": "pager"
+  }
+}

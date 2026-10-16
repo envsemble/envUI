@@ -1,0 +1,56 @@
+/* Overrides for .env-notice and .env-row in the members page. */
+.members .env-notice {
+  --env-notice-tone: var(--brand-accent);
+  border-color: var(--env-notice-tone);
+}
+
+.members .env-notice-title,
+.members .env-notice-message {
+  font-weight: 600;
+}
+
+.env-row:not(.env-row-fill):hover,
+:is(.env-grouped-rows, .env-contrast-row-pane) > .env-row {
+  background: var(--env-row-fill, transparent);
+}
+
+li.env-navigation-item.env-navigation-selected .env-navigation-dot {
+  color: var(--env-color-accent);
+}
+
+.env-counter,
+.env-counter-label,
+.env-counter-badge {
+  min-width: 2ch;
+}
+
+.env-heatmap-cell[data-level='4'] {
+  --env-heatmap-mix: 80%;
+}
+
+[class~='env-direction-link'],
+[class*="env-direction-link-"],
+[class^=env-date-time-field] {
+  gap: 4px;
+}
+
+.env-date-time-well,
+.env-file-dropzone-border,
+.env-disclosure-note > .env-disclosure-content,
+.env-diff-count-additions,
+.env-organization-menu-option,
+.env-organization-trigger-label,
+.env-direction-links {
+  outline: none;
+}
+
+/* Look-alikes stay as they are. */
+.env-notices,
+.env-rowing,
+.my-env-row,
+.env-alert,
+.env-button,
+#env-notice,
+[data-variant='env-notice'] {
+  color: inherit;
+}
