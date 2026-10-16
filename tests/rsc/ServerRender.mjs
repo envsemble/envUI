@@ -131,6 +131,7 @@ console.log(
     menuItem: isClientReference(ui.Menu.Item),
     themeBootstrapScript: typeof ui.createThemeBootstrapScript({ storageKey: 'app-theme' }),
     bootstrapEntryScript: typeof themeBootstrap.createThemeBootstrapScript(),
+    bootstrapContrastScript: themeBootstrap.createThemeBootstrapScript({ contrast: 'high' }),
     relativeTime: ui.formatRelativeTime(Date.UTC(2026, 9, 14, 9), {
       now: Date.UTC(2026, 9, 14, 12),
       locale: 'en',

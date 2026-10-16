@@ -46,6 +46,12 @@ interface Scan {
 const exceptionsFile = fileURLToPath(new URL('./KnownViolations.json', import.meta.url));
 /** WCAG 2.0–2.2 A and AA plus axe's best practices: every rule except AAA and deprecated ones. */
 const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
+/**
+ * High contrast promises text at 7:1, WCAG's AAA level (1.4.6), so its themes also run axe's AAA
+ * contrast rule, color-contrast-enhanced, beside the AA rules. An enabled rule runs whatever the
+ * tags, so this adds that one rule and no other AAA rule.
+ */
+const highContrastRules = { 'color-contrast-enhanced': { enabled: true } };
 
 /** Every destination of the catalogue's own route list, with each of its views. */
 const pages = documentationPages.map(({ path, title, views }) => ({
@@ -171,7 +177,12 @@ async function setTheme(page: Page, theme: CatalogueTheme) {
 }
 
 async function scan(page: Page, route: string, theme: Theme): Promise<Scan> {
-  const results = await new AxeBuilder({ page }).withTags(tags).analyze();
+  const results = await new AxeBuilder({ page })
+    .options({
+      runOnly: { type: 'tag', values: tags },
+      ...(theme.endsWith('-hc') && { rules: highContrastRules }),
+    })
+    .analyze();
   const counts: RuleCounts = {};
   const details: Scan['details'] = {};
   for (const violation of results.violations) {

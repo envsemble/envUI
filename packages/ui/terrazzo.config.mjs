@@ -514,12 +514,20 @@ function envui({ removedFile, handwrittenFile }) {
           themes.map((theme) => [theme.name, token.values[theme.name].aliasOf ?? null]),
         );
         const distinct = [...new Set(Object.values(roles))];
-        const component = tokens[token.id].$extensions?.[extension]?.component;
-        // A fixed color, such as the avatar's, aliases the palette itself: no role replaces it.
+        const { component, note } = tokens[token.id].$extensions?.[extension] ?? {};
+        // A fixed color, such as the avatar's, aliases the palette itself: no role replaces it, and
+        // its value is what an application writes instead, one value or one per theme.
         const primitive = distinct[0] === null && tokens[token.id].aliasOf;
+        const fixedValues = Object.fromEntries(
+          themes.map((theme) => [theme.name, token.values[theme.name].resolved]),
+        );
+        const value =
+          new Set(Object.values(fixedValues)).size === 1
+            ? Object.values(fixedValues)[0]
+            : fixedValues;
         migration[token.cssVariable] = {
           ...(primitive
-            ? { primitive }
+            ? { primitive, value }
             : distinct.length === 1
               ? { token: distinct[0], cssVariable: cssVariable(distinct[0]) }
               : {
@@ -532,6 +540,7 @@ function envui({ removedFile, handwrittenFile }) {
                   ),
                 }),
           ...(component && { component }),
+          ...(note && { note }),
         };
       }
       for (const [name, entry] of Object.entries(removed)) {
@@ -550,7 +559,7 @@ function envui({ removedFile, handwrittenFile }) {
       outputFile(
         'generated/token-migration.json',
         JSON.stringify({
-          $comment: `${header} Maps each 0.7 custom property to the token that replaces it, with its custom property (cssVariable, or cssVariables per theme): one role, a role per theme for component tokens, a palette color that no role replaces (primitive), or removed with its replacement. npm run tokens:build copies it into the tokens section of the codemods' rename map and the token list of docs/migration.md.`,
+          $comment: `${header} Maps each 0.7 custom property to the token that replaces it, with its custom property (cssVariable, or cssVariables per theme): one role, a role per theme for component tokens, a palette color that no role replaces (primitive), with its value, or removed with its replacement; a note says what changed beyond the name. npm run tokens:build copies it into the tokens section of the codemods' rename map and the token list of docs/migration.md.`,
           names: Object.fromEntries(
             Object.entries(migration).sort(([a], [b]) => a.localeCompare(b)),
           ),

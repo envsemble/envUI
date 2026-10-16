@@ -174,7 +174,7 @@
     "loading": "skeleton"
   },
   "tokens": {
-    "$comment": "The 0.7 custom properties of the tokens, each with what replaces it in 1.0: `to`, the custom property of the one role that replaces it; `byTheme`, the custom property of the role a component token takes in each theme, which no one name replaces; `primitive`, the palette color of a fixed color, which no role replaces; or `removed`, with `to` its replacement where there is one and a `note`. The 0.7 names remain as aliases of their roles until the CSS-architecture step, which gives every token the --env- prefix. `npm run tokens:build` writes this section from packages/ui/src/generated/token-migration.json; the transforms do not read it yet.",
+    "$comment": "The 0.7 custom properties of the tokens, each with what replaces it in 1.0: `to`, the custom property of the one role that replaces it; `byTheme`, the custom property of the role a component token takes in each theme, which no one name replaces; `value`, the color of a fixed color, which no role replaces, or its color per theme; or `removed`, with `to` its replacement where there is one. A `note` says what changed beyond the name. The 0.7 names remain as aliases of their roles until the CSS-architecture step, which gives every token the --env- prefix. `npm run tokens:build` writes this section from packages/ui/src/generated/token-migration.json; the transforms do not read it yet.",
     "--color-accent": { "to": "--color-bg-important-strong", "component": "Important buttons" },
     "--color-accent-hover": {
       "to": "--color-bg-important-strong-hover",
@@ -188,8 +188,8 @@
       "to": "--color-bg-default",
       "component": "The action strip of a card"
     },
-    "--color-avatar": { "primitive": "palette.blue.20", "component": "Avatars" },
-    "--color-avatar-figure": { "primitive": "palette.blue.45", "component": "Avatars" },
+    "--color-avatar": { "value": "#9fc1f8", "component": "Avatars" },
+    "--color-avatar-figure": { "value": "#347eea", "component": "Avatars" },
     "--color-border-hover": { "to": "--color-border-muted-hover" },
     "--color-border-pressed": {
       "removed": true,
@@ -200,10 +200,7 @@
     "--color-calendar-selected": { "to": "--color-bg-brand-emphasis", "component": "Calendars" },
     "--color-calendar-today": { "to": "--color-border-accent", "component": "Calendars" },
     "--color-canvas": { "to": "--color-bg-page" },
-    "--color-canvas-dark": {
-      "primitive": "palette.neutral.92",
-      "component": "Fixed dark page color"
-    },
+    "--color-canvas-dark": { "value": "#1e1f21", "component": "Fixed dark page color" },
     "--color-checkbox": {
       "byTheme": {
         "light": "--color-bg-brand-strong",
@@ -277,7 +274,10 @@
       "component": "Destructive buttons"
     },
     "--color-dialog": { "to": "--color-bg-raised" },
-    "--color-dialog-overlay": { "to": "--color-bg-overlay" },
+    "--color-dialog-overlay": {
+      "to": "--color-bg-overlay",
+      "note": "0.7's was opaque, #1e1f21, and the dialog backdrop made it 55% opaque with --state-dialog-overlay-opacity, which is removed. The role is the scrim itself, 55% opaque: paint it as it is, since a style that applies its own opacity now applies it twice. For the opaque color, write #1e1f21."
+    },
     "--color-direction-link": { "to": "--color-bg-raised", "component": "Pager links" },
     "--color-direction-link-border": { "to": "--color-border-muted", "component": "Pager links" },
     "--color-direction-link-border-hover": {
@@ -353,7 +353,15 @@
       "note": "Unused."
     },
     "--color-on-accent": { "to": "--color-fg-on-strong", "component": "Important buttons" },
-    "--color-on-avatar": { "primitive": "palette.blue.70", "component": "Avatars" },
+    "--color-on-avatar": {
+      "value": {
+        "light": "#004aa2",
+        "dark": "#004aa2",
+        "light-high-contrast": "#001d49",
+        "dark-high-contrast": "#001d49"
+      },
+      "component": "Avatars"
+    },
     "--color-on-calendar-selected": { "to": "--color-fg-on-emphasis", "component": "Calendars" },
     "--color-on-checkbox": {
       "byTheme": {
@@ -574,7 +582,7 @@
     "--color-tone-neutral": { "to": "--color-fg-muted" },
     "--color-tone-success": { "to": "--color-fg-success" },
     "--color-tone-warning": { "to": "--color-fg-warning" },
-    "--color-white": { "primitive": "palette.neutral.0", "component": "Fixed white" },
+    "--color-white": { "value": "#ffffff", "component": "Fixed white" },
     "--member-identity-avatar-size": { "removed": true, "to": null, "note": "Unused." },
     "--member-identity-copy-height": { "removed": true, "to": null, "note": "Unused." },
     "--member-identity-email-line-height": { "removed": true, "to": null, "note": "Unused." },

@@ -23,6 +23,40 @@
       }
     }
   },
+  "components/avatar/guidelines": {
+    "dark": {
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "light": {
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    }
+  },
+  "components/badge/guidelines": {
+    "dark": {
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "dark-hc": {
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "light": {
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "light-hc": {
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    }
+  },
   "components/card/overview": {
     "dark": {
       "label-content-name-mismatch": {
@@ -45,6 +79,31 @@
       }
     }
   },
+  "components/chips/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 2
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 3
+      }
+    }
+  },
+  "components/code/overview": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 15,
+        "article :: div.env-code-diff diffs-container": 15
+      }
+    }
+  },
   "components/combobox/guidelines": {
     "dark": {
       "aria-allowed-attr": {
@@ -54,6 +113,18 @@
     "light": {
       "aria-allowed-attr": {
         "Combobox states :: div.env-combobox-chip": 2
+      }
+    }
+  },
+  "components/dialog/guidelines": {
+    "dark": {
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "light": {
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
       }
     }
   },
@@ -90,6 +161,13 @@
     "light": {
       "label-content-name-mismatch": {
         "article :: button.env-drop-zone-target": 4
+      }
+    }
+  },
+  "components/markdown/overview": {
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 2
       }
     }
   },
@@ -136,17 +214,25 @@
       }
     }
   },
-  "components/slider/overview": {
+  "components/table/guidelines": {
     "dark": {
-      "color-contrast": {
-        "article :: div.env-slider-label": 1,
-        "article :: output.env-slider-value": 1
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "dark-hc": {
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
       }
     },
     "light": {
-      "color-contrast": {
-        "article :: div.env-slider-label": 1,
-        "article :: output.env-slider-value": 1
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "light-hc": {
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
       }
     }
   },
@@ -198,6 +284,13 @@
       }
     }
   },
+  "foundations/accessibility/usage": {
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 13
+      }
+    }
+  },
   "foundations/colors/preview": {
     "dark": {
       "label-content-name-mismatch": {
@@ -218,6 +311,13 @@
       }
     },
     "dark-hc": {
+      "color-contrast-enhanced": {
+        "Buttons :: button.env-button.env-button-secondary.docs-swatch code": 1,
+        "Content & loading :: button.env-button.env-button-secondary.docs-swatch code": 1,
+        "Direction links :: button.env-button.env-button-secondary.docs-swatch code": 1,
+        "Text & focus :: button.env-button.env-button-secondary.docs-swatch code": 1,
+        "Text fields :: button.env-button.env-button-secondary.docs-swatch code": 1
+      },
       "label-content-name-mismatch": {
         "Buttons :: button.env-button.env-button-secondary.docs-swatch": 11,
         "Cards :: button.env-button.env-button-secondary.docs-swatch": 1,
@@ -262,6 +362,13 @@
       "color-contrast": {
         "Feedback :: button.env-button.env-button-secondary.docs-swatch code": 1
       },
+      "color-contrast-enhanced": {
+        "Buttons :: button.env-button.env-button-secondary.docs-swatch code": 1,
+        "Content & loading :: button.env-button.env-button-secondary.docs-swatch code": 1,
+        "Direction links :: button.env-button.env-button-secondary.docs-swatch code": 1,
+        "Text & focus :: button.env-button.env-button-secondary.docs-swatch code": 1,
+        "Text fields :: button.env-button.env-button-secondary.docs-swatch code": 1
+      },
       "label-content-name-mismatch": {
         "Buttons :: button.env-button.env-button-secondary.docs-swatch": 11,
         "Cards :: button.env-button.env-button-secondary.docs-swatch": 1,
@@ -280,6 +387,95 @@
       }
     }
   },
+  "foundations/colors/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 2
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "dark-hc": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 2
+      },
+      "color-contrast-enhanced": {
+        "article :: div.env-code-block span": 10
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 18
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "light-hc": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 18
+      },
+      "color-contrast-enhanced": {
+        "article :: div.env-code-block span": 16
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    }
+  },
+  "foundations/composition/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 2
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 36
+      }
+    }
+  },
+  "foundations/icons/usage": {
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 20
+      }
+    }
+  },
+  "foundations/spacing/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 2
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 11
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    }
+  },
+  "foundations/typography/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 10
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 27
+      }
+    }
+  },
   "overview/components": {
     "dark": {
       "label-content-name-mismatch": {
@@ -289,6 +485,18 @@
     "light": {
       "label-content-name-mismatch": {
         "main :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 56
+      }
+    }
+  },
+  "overview/get-started": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 3
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 53
       }
     }
   }

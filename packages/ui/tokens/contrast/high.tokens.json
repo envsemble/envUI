@@ -59,15 +59,24 @@
           "$root": { "$value": "{contrast-high.color.bg.brand.strong}" },
           "hover": { "$value": "{contrast-high.color.bg.brand.strong.hover}" },
           "pressed": { "$value": "{contrast-high.color.bg.brand.strong.pressed}" }
-        }
+        },
+        "muted": { "$value": "{contrast-high.color.bg.brand.muted}" }
       },
       "accent": {
         "emphasis": { "$value": "{contrast-high.color.bg.accent.emphasis}" },
-        "muted": { "$value": "{contrast-high.color.bg.accent.muted}" }
+        "muted": { "$value": "{contrast-high.color.bg.accent.muted}" },
+        "subtle": {
+          "hover": { "$value": "{contrast-high.color.bg.accent.subtle.hover}" },
+          "pressed": { "$value": "{contrast-high.color.bg.accent.subtle.pressed}" }
+        }
       },
       "success": {
         "emphasis": { "$value": "{contrast-high.color.bg.success.emphasis}" },
         "muted": { "$value": "{contrast-high.color.bg.success.muted}" },
+        "subtle": {
+          "hover": { "$value": "{contrast-high.color.bg.success.subtle.hover}" },
+          "pressed": { "$value": "{contrast-high.color.bg.success.subtle.pressed}" }
+        },
         "strong": {
           "$root": { "$value": "{contrast-high.color.bg.success.strong}" },
           "hover": { "$value": "{contrast-high.color.bg.success.strong.hover}" },
@@ -76,11 +85,19 @@
       },
       "warning": {
         "emphasis": { "$value": "{contrast-high.color.bg.warning.emphasis}" },
-        "muted": { "$value": "{contrast-high.color.bg.warning.muted}" }
+        "muted": { "$value": "{contrast-high.color.bg.warning.muted}" },
+        "subtle": {
+          "hover": { "$value": "{contrast-high.color.bg.warning.subtle.hover}" },
+          "pressed": { "$value": "{contrast-high.color.bg.warning.subtle.pressed}" }
+        }
       },
       "danger": {
         "emphasis": { "$value": "{contrast-high.color.bg.danger.emphasis}" },
         "muted": { "$value": "{contrast-high.color.bg.danger.muted}" },
+        "subtle": {
+          "hover": { "$value": "{contrast-high.color.bg.danger.subtle.hover}" },
+          "pressed": { "$value": "{contrast-high.color.bg.danger.subtle.pressed}" }
+        },
         "strong": {
           "$root": { "$value": "{contrast-high.color.bg.danger.strong}" },
           "hover": { "$value": "{contrast-high.color.bg.danger.strong.hover}" },
@@ -141,12 +158,30 @@
       "accent": {
         "$root": { "$value": "{contrast-high.color.border.accent}" },
         "hover": { "$value": "{contrast-high.color.border.accent.hover}" },
-        "pressed": { "$value": "{contrast-high.color.border.accent.pressed}" }
+        "pressed": { "$value": "{contrast-high.color.border.accent.pressed}" },
+        "emphasis": { "$value": "{contrast-high.color.border.accent.emphasis}" },
+        "muted": { "$value": "{contrast-high.color.border.accent.muted}" }
       },
       "danger": {
         "$root": { "$value": "{contrast-high.color.border.danger}" },
         "hover": { "$value": "{contrast-high.color.border.danger.hover}" },
-        "pressed": { "$value": "{contrast-high.color.border.danger.pressed}" }
+        "pressed": { "$value": "{contrast-high.color.border.danger.pressed}" },
+        "emphasis": { "$value": "{contrast-high.color.border.danger.emphasis}" },
+        "muted": { "$value": "{contrast-high.color.border.danger.muted}" }
+      },
+      "neutral": {
+        "emphasis": { "$value": "{contrast-high.color.border.neutral.emphasis}" }
+      },
+      "success": {
+        "emphasis": { "$value": "{contrast-high.color.border.success.emphasis}" },
+        "muted": { "$value": "{contrast-high.color.border.success.muted}" }
+      },
+      "warning": {
+        "emphasis": { "$value": "{contrast-high.color.border.warning.emphasis}" },
+        "muted": { "$value": "{contrast-high.color.border.warning.muted}" }
+      },
+      "done": {
+        "emphasis": { "$value": "{contrast-high.color.border.done.emphasis}" }
       },
       "focus": { "$value": "{contrast-high.color.border.focus}" }
     },

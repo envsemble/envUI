@@ -726,12 +726,22 @@ test('the hand-written tokens read only tokens', async () => {
 const sampleMigration = {
   names: {
     '--color-old-fill': { token: 'color.bg.default', cssVariable: '--color-bg-default' },
+    '--color-old-scrim': {
+      token: 'color.bg.overlay',
+      cssVariable: '--color-bg-overlay',
+      note: 'Translucent now.',
+    },
     '--color-old-row': {
       tokens: { light: 'color.bg.default', dark: 'color.bg.muted' },
       cssVariables: { light: '--color-bg-default', dark: '--color-bg-muted' },
       component: 'List rows',
     },
-    '--color-old-avatar': { primitive: 'palette.blue.20', component: 'Avatars' },
+    '--color-old-avatar': { primitive: 'palette.blue.20', value: '#9fc1f8', component: 'Avatars' },
+    '--color-old-initials': {
+      primitive: 'palette.blue.70',
+      value: { light: '#004aa2', 'light-high-contrast': '#001d49' },
+      component: 'Avatars',
+    },
     '--color-old-gone': {
       removed: true,
       replacement: 'color.bg.raised',
@@ -747,11 +757,16 @@ test("the codemods' rename map takes the token migration map as its tokens secti
   assert.match(section.$comment, /npm run tokens:build/);
   assert.deepEqual(Object.fromEntries(Object.entries(section).slice(1)), {
     '--color-old-fill': { to: '--color-bg-default' },
+    '--color-old-scrim': { to: '--color-bg-overlay', note: 'Translucent now.' },
     '--color-old-row': {
       byTheme: { light: '--color-bg-default', dark: '--color-bg-muted' },
       component: 'List rows',
     },
-    '--color-old-avatar': { primitive: 'palette.blue.20', component: 'Avatars' },
+    '--color-old-avatar': { value: '#9fc1f8', component: 'Avatars' },
+    '--color-old-initials': {
+      value: { light: '#004aa2', 'light-high-contrast': '#001d49' },
+      component: 'Avatars',
+    },
     '--color-old-gone': { removed: true, to: '--color-bg-raised', note: 'Unused.' },
     '--state-old-shift': { removed: true, to: null, note: 'The rule | is gone.' },
   });
@@ -783,7 +798,12 @@ test('the migration guide lists the token migration map between its markers', ()
     list,
     /\| Light \| Dark \|\n.*\n\| `--color-old-row` \| List rows \| `--color-bg-default` \| `--color-bg-muted` \|/,
   );
-  assert.match(list, /\| `--color-old-avatar` \| Avatars \| `palette\.blue\.20` \|/);
+  assert.match(list, /\| `--color-old-avatar` \| Avatars \| `#9fc1f8` \|/);
+  assert.match(
+    list,
+    /\| `--color-old-initials` \| Avatars \| `#004aa2` \(light\), `#001d49` \(light, high contrast\) \|/,
+  );
+  assert.match(list, /\| `--color-old-scrim` \| `--color-bg-overlay` \| Translucent now\. \|/);
   const guide =
     'Before.\n\n<!-- token-migration:start: note -->\nold\n<!-- token-migration:end -->\n\nAfter.\n';
   assert.equal(

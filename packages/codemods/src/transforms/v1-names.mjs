@@ -869,6 +869,89 @@ export default function transform(file, api, options = {}) {
       );
   }
 
+  // useTheme() returns `{ theme, contrast }` in 1.0 rather than the color scheme.
+  // `<Theme theme={useTheme()}>`, 0.x's way to re-theme a portal, becomes `<Theme {...useTheme()}>`,
+  // which keeps the contrast too; comparing the call with a scheme, or passing it as another
+  // element's `theme`, is reported.
+  const library = '@envsemble/envui';
+  const localsOf = (name) =>
+    specifiers
+      .filter((info) => info.entry.name === library && info.imported === name && !info.isType)
+      .map((info) => info.local);
+  const themeLocals = new Set(localsOf('Theme'));
+  const useThemeLocals = localsOf('useTheme');
+  const libraryNamespaces = new Set(
+    namespaceImports.filter(({ entry }) => entry.name === library).map(({ local }) => local),
+  );
+  const isLibraryNamespace = (node, path) =>
+    (node?.type === 'Identifier' || node?.type === 'JSXIdentifier') &&
+    libraryNamespaces.has(node.name) &&
+    bindsToModule(path, node.name, 'object');
+  const useThemeCalls = [
+    ...useThemeLocals.flatMap((local) =>
+      referencesTo(local)
+        .filter(({ kind, path }) => kind === 'value' && path.parent.node.callee === path.node)
+        .map(({ path }) => path.parent),
+    ),
+    ...root
+      .find(j.CallExpression)
+      .filter(
+        (path) =>
+          path.node.callee.type === 'MemberExpression' &&
+          !path.node.callee.computed &&
+          path.node.callee.property.name === 'useTheme' &&
+          isLibraryNamespace(path.node.callee.object, path),
+      )
+      .paths(),
+  ].filter((path) => path.node.arguments.length === 0);
+  const isLibraryTheme = (name, path) =>
+    name.type === 'JSXIdentifier'
+      ? themeLocals.has(name.name) && bindsToModule(path, name.name, 'jsx')
+      : name.type === 'JSXMemberExpression' &&
+        name.property.name === 'Theme' &&
+        isLibraryNamespace(name.object, path);
+  for (const call of useThemeCalls) {
+    const container = call.parent;
+    const attributePath = container?.parent;
+    const attribute = attributePath?.node;
+    if (
+      container?.node.type === 'JSXExpressionContainer' &&
+      attribute?.type === 'JSXAttribute' &&
+      attribute.name.type === 'JSXIdentifier' &&
+      attribute.name.name === 'theme'
+    ) {
+      const openingPath = attributePath.parent;
+      const opening = openingPath.node;
+      if (!isLibraryTheme(opening.name, openingPath)) {
+        warn(
+          attribute,
+          'passes useTheme() as theme, which is { theme, contrast } in 1.0: pass useTheme().theme.',
+        );
+        continue;
+      }
+      // Props written before the spread would lose to the contrast it carries, so it goes first.
+      const attributes = opening.attributes;
+      const contrast = attributes.findIndex(
+        (other) => other.type === 'JSXAttribute' && other.name.name === 'contrast',
+      );
+      const at = attributes.indexOf(attribute);
+      attributes.splice(at, 1);
+      attributes.splice(
+        contrast >= 0 && contrast < at ? contrast : at,
+        0,
+        j.jsxSpreadAttribute(call.node),
+      );
+      changed = true;
+      continue;
+    }
+    const outer = call.parent.node;
+    if (outer.type === 'BinaryExpression' && ['===', '!==', '==', '!='].includes(outer.operator))
+      warn(
+        outer,
+        'compares useTheme(), which is { theme, contrast } in 1.0: compare useTheme().theme.',
+      );
+  }
+
   if (!changed) {
     reporter.flush();
     return file.source;

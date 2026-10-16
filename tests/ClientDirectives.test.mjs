@@ -115,6 +115,8 @@ test('a server component imports envUI and renders it on the server', () => {
   // Plain functions stay functions on the server.
   assert.equal(result.themeBootstrapScript, 'string');
   assert.equal(result.bootstrapEntryScript, 'string');
+  // The server writes the application's contrast into the script, which sets it before paint.
+  assert.ok(result.bootstrapContrastScript.includes('r.setAttribute("data-env-contrast","high")'));
   assert.equal(result.relativeTime, '3 hours ago');
   assert.deepEqual(result.diffLines, { result: { additions: 2, deletions: 1 } });
   assert.ok(
