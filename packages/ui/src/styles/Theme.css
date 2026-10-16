@@ -1,39 +1,33 @@
-/* Typography belongs to the explicit boundary, never the host document. */
+/* The theme boundary's own type. Cascade layer env.base: envUI's components override it, and so
+   does an application's CSS outside cascade layers, whatever its specificity. */
 .env-theme {
   min-inline-size: 0;
   overflow-wrap: anywhere;
 }
 /* A themed document root keeps the browser's font size, so 1 rem stays the reader's size (16 px by
-   default) and every rem measure keeps its designed size. Its body takes the body type instead, at
-   zero specificity, so an application's own body rule outside cascade layers styles the body and
-   what lies outside envUI's boundaries. Every boundary sets envUI's type again: a provider's or a
-   Theme around content, and the one around each popup. */
-.env-theme:where(:not(html)),
-:where(.env-theme:where(html) > body) {
+   default) and every rem measure keeps its designed size. Its body takes the body type instead,
+   which an application's own body rule overrides, also for what lies outside envUI's boundaries.
+   Every boundary sets envUI's type again: a provider's or a Theme around content, and the one
+   around each popup. */
+.env-theme:not(html),
+html.env-theme > body {
   font: var(--env-type-body);
   /* A unitless line height, so content in another font size keeps lines in proportion to it; set
      --env-line-height-body to change it. */
   line-height: var(--env-line-height-body, 1.4);
 }
-/* Keep component geometry independent of a consuming application's reset. */
-.env-theme,
-.env-theme :where(*),
-.env-theme :where(*)::before,
-.env-theme :where(*)::after {
-  box-sizing: border-box;
-}
-.env-theme :where(h1) {
+.env-theme h1 {
   margin: 0;
   font: var(--env-type-h1);
 }
-.env-theme :where(h2, h3, h4, h5, h6) {
+.env-theme :is(h2, h3, h4, h5, h6) {
   margin: 0;
   font: var(--env-type-h2);
 }
-.env-theme :where(p) {
+.env-theme p {
   margin: 0;
   font: var(--env-type-body);
 }
-.env-theme :where(a) {
+.env-theme a {
   color: inherit;
 }

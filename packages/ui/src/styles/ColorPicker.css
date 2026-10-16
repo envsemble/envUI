@@ -1,32 +1,35 @@
+/* react-colorful adds a style sheet of its own, outside cascade layers, which wins over every rule
+   in envUI's layers. The declarations that replace its own are important, so they still win from
+   envUI's layer; the picker's internals are no application's to restyle. */
 .env-color-picker-area .react-colorful {
-  inline-size: 100%;
-  block-size: auto;
+  inline-size: 100% !important;
+  block-size: auto !important;
   aspect-ratio: 3 / 2;
   min-block-size: calc(var(--env-control-height-sm) * 3);
   max-block-size: 14rem;
 }
 .env-color-picker-area .react-colorful__interactive:focus-visible {
-  outline: 0.125rem solid var(--env-color-border-focus);
+  outline: 0.125rem solid var(--env-color-border-focus) !important;
   outline-offset: 0.125rem;
 }
 .env-color-picker-area .react-colorful__hue {
-  block-size: var(--env-control-height-sm);
+  block-size: var(--env-control-height-sm) !important;
   flex-shrink: 0;
 }
 .env-color-picker-area .react-colorful__saturation {
-  border-block-end-width: var(--env-space-3);
-  border-radius: var(--env-radius-sm) var(--env-radius-sm) 0 0;
+  border-block-end-width: var(--env-space-3) !important;
+  border-radius: var(--env-radius-sm) var(--env-radius-sm) 0 0 !important;
   /* A neutral inner edge over every hue. */
-  box-shadow: inset 0 0 0 0.0625rem var(--env-color-border-media);
+  box-shadow: inset 0 0 0 0.0625rem var(--env-color-border-media) !important;
 }
 .env-color-picker-area .react-colorful__last-control {
-  border-radius: 0 0 var(--env-radius-sm) var(--env-radius-sm);
+  border-radius: 0 0 var(--env-radius-sm) var(--env-radius-sm) !important;
 }
 .env-color-picker-area .react-colorful__pointer {
-  inline-size: 1.75rem;
-  block-size: 1.75rem;
-  border-width: 0.125rem;
-  box-shadow: var(--env-elevation-1-shadow);
+  inline-size: 1.75rem !important;
+  block-size: 1.75rem !important;
+  border-width: 0.125rem !important;
+  box-shadow: var(--env-elevation-1-shadow) !important;
 }
 .env-color-picker[data-disabled] > .env-text,
 .env-color-picker[data-disabled] > .env-color-picker-area {
@@ -43,6 +46,6 @@
 }
 @media (pointer: coarse) {
   .env-color-picker-area .react-colorful__hue {
-    block-size: var(--env-control-height-touch);
+    block-size: var(--env-control-height-touch) !important;
   }
 }
