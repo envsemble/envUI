@@ -192,6 +192,23 @@ const operandText = (operand) =>
       ? templateText(operand)
       : expressionStandIn;
 
+/** The DOM methods whose string arguments are selectors or ids, such as `#main`, not colors. */
+const selectorMethods = new Set([
+  'querySelector',
+  'querySelectorAll',
+  'closest',
+  'matches',
+  'getElementById',
+]);
+
+/** Whether a node calls a DOM lookup by selector, as in `document.querySelector('#fff')`. */
+const isSelectorCall = (node) =>
+  (node.type === 'CallExpression' || node.type === 'NewExpression') &&
+  node.callee.type === 'MemberExpression' &&
+  !node.callee.computed &&
+  node.callee.property.type === 'Identifier' &&
+  selectorMethods.has(node.callee.property.name);
+
 /** @type {import('eslint').Rule.RuleModule} */
 export default {
   meta: {
@@ -220,9 +237,10 @@ export default {
     }
 
     /**
-     * Checks the strings under a style value, each with the property it sets. Strings that only
-     * choose or compute a value are not the value: a member's key, as in styles[`#${id}`], and a
-     * call's arguments, as in pick(document.querySelector(`#${id}`)).
+     * Checks the strings under a style value, each with the property it sets, through calls too:
+     * darken('#123', 0.1) and mergeStyles(base, { color: 'red' }) are read. Strings that only
+     * choose a value are not the value: a member's key, as in styles[`#${id}`], and the selector a
+     * DOM lookup is given, as in pick(document.querySelector(`#${id}`)).
      */
     function visit(node, property) {
       walk(node, visitorKeys, (child) => {
@@ -234,7 +252,10 @@ export default {
           visit(child.object, property);
           return false;
         }
-        if (child.type === 'CallExpression' || child.type === 'NewExpression') return false;
+        if (isSelectorCall(child)) {
+          visit(child.callee, property);
+          return false;
+        }
         if (child.type === 'Literal' && typeof child.value === 'string')
           check(child, child.value, property);
         // A template literal is one value: `rgb(${r} 0 0)` and `url('${a}') #fff` are read whole,
