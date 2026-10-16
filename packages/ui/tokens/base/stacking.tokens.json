@@ -1,0 +1,43 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "z": {
+    "$type": "number",
+    "$description": "The stacking order: one z-index scale for components and the application's own layers, lowest first. Inside a component, a part one step above or below its siblings takes calc() of a level, such as calc(var(--env-z-raised) + 1).",
+    "base": {
+      "$description": "The flow of a page or a component; a part drawn behind its siblings takes calc(var(--env-z-base) - 1).",
+      "$value": 0
+    },
+    "raised": {
+      "$description": "A part raised over its siblings inside a component or a region: a sticky table header, a resize handle, the hovered avatar of a group.",
+      "$value": 1
+    },
+    "sticky": {
+      "$description": "The frame's sticky and fixed parts that content scrolls under: the app header and the sidebar columns.",
+      "$value": 20
+    },
+    "peek": {
+      "$description": "A collapsed sidebar that opens over the content without docking, above the frame's sticky parts.",
+      "$value": 30
+    },
+    "overlay": {
+      "$description": "The scrim behind a modal layer, which covers the page and the frame.",
+      "$value": 90
+    },
+    "modal": {
+      "$description": "Modal layers over their scrim: dialogs, drawers and the command palette.",
+      "$value": 100
+    },
+    "popover": {
+      "$description": "Popups anchored to a control, also inside a modal layer: menus, popovers, hover cards, the lists of Select and Combobox, and suggestions.",
+      "$value": 110
+    },
+    "toast": {
+      "$description": "Notifications, above the popups and modal layers they report on.",
+      "$value": 120
+    },
+    "tooltip": {
+      "$description": "Tooltips, above everything they can describe.",
+      "$value": 130
+    }
+  }
+}

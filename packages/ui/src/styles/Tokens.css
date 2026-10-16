@@ -7,6 +7,10 @@
 .env-theme {
   color-scheme: light;
   --env-body-font-weight: 400;
+  --env-breakpoint-lg: 64rem;
+  --env-breakpoint-md: 48rem;
+  --env-breakpoint-sm: 40rem;
+  --env-breakpoint-xl: 80rem;
   --env-color-avatar-bg: #9fc1f8;
   --env-color-avatar-fg: #004aa2;
   --env-color-avatar-figure: #347eea;
@@ -230,6 +234,15 @@
   --env-type-h2-font-weight: 500;
   --env-type-h2-letter-spacing: 0rem;
   --env-type-h2-line-height: 1.4em;
+  --env-z-base: 0;
+  --env-z-modal: 100;
+  --env-z-overlay: 90;
+  --env-z-peek: 30;
+  --env-z-popover: 110;
+  --env-z-raised: 1;
+  --env-z-sticky: 20;
+  --env-z-toast: 120;
+  --env-z-tooltip: 130;
 }
 
 .env-theme[data-env-theme='dark'] {

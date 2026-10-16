@@ -38,6 +38,50 @@ export const tokens = {
       'dark-high-contrast': '400',
     },
   },
+  /** 64 rem: a tablet held sideways or a laptop. */
+  'breakpoint.lg': {
+    cssVariable: '--env-breakpoint-lg',
+    type: 'dimension',
+    values: {
+      light: '64rem',
+      dark: '64rem',
+      'light-high-contrast': '64rem',
+      'dark-high-contrast': '64rem',
+    },
+  },
+  /** 48 rem: a tablet held upright, and the default line between a phone's layout and a wider one. */
+  'breakpoint.md': {
+    cssVariable: '--env-breakpoint-md',
+    type: 'dimension',
+    values: {
+      light: '48rem',
+      dark: '48rem',
+      'light-high-contrast': '48rem',
+      'dark-high-contrast': '48rem',
+    },
+  },
+  /** 40 rem: a large phone held sideways, or a narrow window. */
+  'breakpoint.sm': {
+    cssVariable: '--env-breakpoint-sm',
+    type: 'dimension',
+    values: {
+      light: '40rem',
+      dark: '40rem',
+      'light-high-contrast': '40rem',
+      'dark-high-contrast': '40rem',
+    },
+  },
+  /** 80 rem: a desktop window. */
+  'breakpoint.xl': {
+    cssVariable: '--env-breakpoint-xl',
+    type: 'dimension',
+    values: {
+      light: '80rem',
+      dark: '80rem',
+      'light-high-contrast': '80rem',
+      'dark-high-contrast': '80rem',
+    },
+  },
   /** The fill of an avatar that shows initials or the default figure. */
   'color.avatar.bg': {
     cssVariable: '--env-color-avatar-bg',
@@ -2301,6 +2345,80 @@ export const tokens = {
         'letter-spacing': '0rem',
         'line-height': '1.4em',
       },
+    },
+  },
+  /** The flow of a page or a component; a part drawn behind its siblings takes calc(var(--env-z-base) - 1). */
+  'z.base': {
+    cssVariable: '--env-z-base',
+    type: 'number',
+    values: { light: '0', dark: '0', 'light-high-contrast': '0', 'dark-high-contrast': '0' },
+  },
+  /** Modal layers over their scrim: dialogs, drawers and the command palette. */
+  'z.modal': {
+    cssVariable: '--env-z-modal',
+    type: 'number',
+    values: {
+      light: '100',
+      dark: '100',
+      'light-high-contrast': '100',
+      'dark-high-contrast': '100',
+    },
+  },
+  /** The scrim behind a modal layer, which covers the page and the frame. */
+  'z.overlay': {
+    cssVariable: '--env-z-overlay',
+    type: 'number',
+    values: { light: '90', dark: '90', 'light-high-contrast': '90', 'dark-high-contrast': '90' },
+  },
+  /** A collapsed sidebar that opens over the content without docking, above the frame's sticky parts. */
+  'z.peek': {
+    cssVariable: '--env-z-peek',
+    type: 'number',
+    values: { light: '30', dark: '30', 'light-high-contrast': '30', 'dark-high-contrast': '30' },
+  },
+  /** Popups anchored to a control, also inside a modal layer: menus, popovers, hover cards, the lists of Select and Combobox, and suggestions. */
+  'z.popover': {
+    cssVariable: '--env-z-popover',
+    type: 'number',
+    values: {
+      light: '110',
+      dark: '110',
+      'light-high-contrast': '110',
+      'dark-high-contrast': '110',
+    },
+  },
+  /** A part raised over its siblings inside a component or a region: a sticky table header, a resize handle, the hovered avatar of a group. */
+  'z.raised': {
+    cssVariable: '--env-z-raised',
+    type: 'number',
+    values: { light: '1', dark: '1', 'light-high-contrast': '1', 'dark-high-contrast': '1' },
+  },
+  /** The frame's sticky and fixed parts that content scrolls under: the app header and the sidebar columns. */
+  'z.sticky': {
+    cssVariable: '--env-z-sticky',
+    type: 'number',
+    values: { light: '20', dark: '20', 'light-high-contrast': '20', 'dark-high-contrast': '20' },
+  },
+  /** Notifications, above the popups and modal layers they report on. */
+  'z.toast': {
+    cssVariable: '--env-z-toast',
+    type: 'number',
+    values: {
+      light: '120',
+      dark: '120',
+      'light-high-contrast': '120',
+      'dark-high-contrast': '120',
+    },
+  },
+  /** Tooltips, above everything they can describe. */
+  'z.tooltip': {
+    cssVariable: '--env-z-tooltip',
+    type: 'number',
+    values: {
+      light: '130',
+      dark: '130',
+      'light-high-contrast': '130',
+      'dark-high-contrast': '130',
     },
   },
 } as const satisfies Record<string, TokenDefinition>;
