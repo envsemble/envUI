@@ -14,7 +14,7 @@
         {
           "id": "nav-links",
           "label": "sidebar navigation links",
-          "envui": ["NavigationItem"]
+          "envui": ["NavList"]
         }
       ]
     },
@@ -26,7 +26,7 @@
         {
           "id": "text-field",
           "label": "workspace name field",
-          "envui": ["Input"]
+          "envui": ["TextField"]
         },
         {
           "id": "description",
@@ -63,12 +63,12 @@
         {
           "id": "sortable-headers",
           "label": "sortable column headers",
-          "envui": ["TableHeaderCell.onSort"]
+          "envui": ["Table.onSort"]
         },
         {
           "id": "search",
           "label": "search box",
-          "envui": ["SearchField", "Input"]
+          "envui": ["SearchField", "TextField"]
         },
         {
           "id": "empty-state",
@@ -90,7 +90,7 @@
         {
           "id": "delete-action",
           "label": "delete control",
-          "envui": ["Button", "IconButton", "ConfirmButton", "MenuItem"]
+          "envui": ["Button", "IconButton", "ConfirmButton", "Menu"]
         },
         {
           "id": "confirmation",
@@ -107,12 +107,12 @@
         {
           "id": "toast",
           "label": "managed toast",
-          "envui": ["useToast", "ToastProvider", "Toast", "ToastRegion"]
+          "envui": ["useToast", "Toast", "ToastRegion"]
         },
         {
           "id": "name-field",
           "label": "name field",
-          "envui": ["Input"]
+          "envui": ["TextField"]
         },
         {
           "id": "save-button",
@@ -134,7 +134,7 @@
         {
           "id": "count",
           "label": "project count",
-          "envui": ["Badge", "Counter"]
+          "envui": ["Badge", "CounterBadge"]
         },
         {
           "id": "actions",
@@ -183,7 +183,7 @@
         {
           "id": "counts",
           "label": "count in each tab",
-          "envui": ["Badge", "Counter"]
+          "envui": ["Badge", "CounterBadge"]
         }
       ]
     },
@@ -205,7 +205,7 @@
         {
           "id": "menu-items",
           "label": "menu items",
-          "envui": ["MenuItem"]
+          "envui": ["Menu"]
         }
       ]
     },
@@ -217,7 +217,7 @@
         {
           "id": "dropzone",
           "label": "drop area and file picker",
-          "envui": ["FileDropzone"]
+          "envui": ["DropZone"]
         },
         {
           "id": "remove-file",
@@ -227,7 +227,7 @@
         {
           "id": "upload-progress",
           "label": "pending upload state",
-          "envui": ["Button.pending", "Spinner", "Progress", "LoadingBar"]
+          "envui": ["Button.pending", "Spinner", "Progress"]
         }
       ]
     },
@@ -239,7 +239,7 @@
         {
           "id": "date-picker",
           "label": "date picker",
-          "envui": ["DateTimeField", "Calendar"]
+          "envui": ["DatePicker", "Calendar"]
         },
         {
           "id": "project-choice",
@@ -249,7 +249,7 @@
         {
           "id": "title-field",
           "label": "title field",
-          "envui": ["Input"]
+          "envui": ["TextField"]
         },
         {
           "id": "description",
@@ -276,7 +276,7 @@
         {
           "id": "error-message",
           "label": "error message",
-          "envui": ["Notice", "EmptyState"]
+          "envui": ["Alert", "EmptyState"]
         },
         {
           "id": "retry",
@@ -293,12 +293,12 @@
         {
           "id": "notice",
           "label": "inline notice",
-          "envui": ["Notice"]
+          "envui": ["Alert"]
         },
         {
           "id": "dismiss",
           "label": "dismissible",
-          "envui": ["Notice.onDismiss"]
+          "envui": ["Alert.onDismiss"]
         },
         {
           "id": "upgrade-link",
