@@ -60,7 +60,7 @@ function showTheme(theme: unknown): string {
  * already. In JavaScript, 0.x's `<Theme theme={useTheme()}>` now passes `{ theme, contrast }`,
  * which would theme nothing.
  */
-function themeWarning(theme: unknown): { shown: string; message: string } | undefined {
+function themeReport(theme: unknown): { shown: string; message: string } | undefined {
   if (theme === 'light' || theme === 'dark') return undefined;
   const shown = showTheme(theme);
   if (warnedThemes.has(shown)) return undefined;
@@ -85,17 +85,17 @@ export function Theme({ theme, contrast: ownContrast, className, children, ...pr
   // as without a bundler, reading it throws and the warning stays silent. The report is built in
   // there, by code that doesn't throw; console.error, which a test may make throw, runs outside, and
   // the theme counts as reported once it has run.
-  let warning: ReturnType<typeof themeWarning>;
+  let report: ReturnType<typeof themeReport>;
   try {
-    if (process.env.NODE_ENV !== 'production') warning = themeWarning(theme);
+    if (process.env.NODE_ENV !== 'production') report = themeReport(theme);
   } catch {
     // No bundler defined process.env.NODE_ENV.
   }
-  if (warning) {
+  if (report) {
     // A development-only report, as React reports an invalid prop.
     // eslint-disable-next-line no-console
-    console.error(warning.message);
-    warnedThemes.add(warning.shown);
+    console.error(report.message);
+    warnedThemes.add(report.shown);
   }
   const inherited = useContext(ThemeContext).contrast;
   // The prop wins; without it, a data-env-contrast written on the Theme counts, so that the
