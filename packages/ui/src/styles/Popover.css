@@ -31,7 +31,8 @@
   transform-origin: var(--transform-origin, center);
   transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
 }
-:is(.env-popover, .env-hover-card)[data-width='lg'] {
+.env-popover[data-width='lg'],
+.env-hover-card[data-width='lg'] {
   inline-size: min(28rem, calc(100vw - 2rem));
 }
 .env-popover-title {

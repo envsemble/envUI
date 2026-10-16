@@ -1,12 +1,14 @@
 /* Meter and Progress share one look: a label row over a rounded track whose indicator fills with
    the value. Each emits its own classes, env-meter* and env-progress*; Progress adds the
    indeterminate sweep and segments. */
-:is(.env-meter, .env-progress) {
+.env-meter,
+.env-progress {
   display: grid;
   gap: var(--env-space-2);
   min-inline-size: 0;
 }
-:is(.env-meter-heading, .env-progress-heading) {
+.env-meter-heading,
+.env-progress-heading {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
@@ -14,20 +16,24 @@
   gap: var(--env-space-3);
   font: var(--env-type-body-small);
 }
-:is(.env-meter-label, .env-progress-label) {
+.env-meter-label,
+.env-progress-label {
   color: var(--env-color-fg-muted);
 }
-:is(.env-meter-value, .env-progress-value) {
+.env-meter-value,
+.env-progress-value {
   color: var(--env-color-fg-control);
   font-weight: 500;
 }
-:is(.env-meter-track, .env-progress-track) {
+.env-meter-track,
+.env-progress-track {
   block-size: 0.625rem;
   overflow: hidden;
   border-radius: var(--env-radius-full);
   background: var(--env-color-bg-neutral-muted);
 }
-:is(.env-meter-indicator, .env-progress-indicator) {
+.env-meter-indicator,
+.env-progress-indicator {
   block-size: 100%;
   border-radius: inherit;
   background: var(--env-color-bg-brand-emphasis);
@@ -78,7 +84,8 @@
   --env-progress-segment-edge: left;
 }
 @media (prefers-reduced-motion: reduce) {
-  :is(.env-meter-indicator, .env-progress-indicator) {
+  .env-meter-indicator,
+  .env-progress-indicator {
     transition: none;
   }
   .env-progress[data-indeterminate] .env-progress-indicator {
@@ -89,11 +96,14 @@
 /* Forced colors: the system paints no fills or shadows, so a bar’s track is outlined and its
    indicator takes the selection color. */
 @media (forced-colors: active) {
-  :is(.env-meter-track, .env-progress-track, .env-progress-segment) {
+  .env-meter-track,
+  .env-progress-track,
+  .env-progress-segment {
     outline: 1px solid CanvasText;
     outline-offset: -1px;
   }
-  :is(.env-meter-indicator, .env-progress-indicator) {
+  .env-meter-indicator,
+  .env-progress-indicator {
     background-color: Highlight;
   }
   .env-progress-segment {
