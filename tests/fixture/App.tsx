@@ -46,7 +46,7 @@ import { SlidersFixture } from './Sliders.js';
 import { ComposerFixture } from './Composer.js';
 import { MessagesFixture } from './Messages.js';
 import { StatsFixture } from './Stats.js';
-import { DropzonesFixture } from './Dropzones.js';
+import { DropZonesFixture } from './DropZones.js';
 import { ButtonCountsFixture } from './ButtonCounts.js';
 import { HeatmapFixture } from './Heatmaps.js';
 import { ComboboxFixture } from './Comboboxes.js';
@@ -240,10 +240,10 @@ export default function App() {
               <StatsFixture theme="dark" />
             </>
           )}
-          {includes('dropzones') && (
+          {includes('drop-zones') && (
             <>
-              <DropzonesFixture theme="light" />
-              <DropzonesFixture theme="dark" />
+              <DropZonesFixture theme="light" />
+              <DropZonesFixture theme="dark" />
             </>
           )}
           {includes('heatmap') && (

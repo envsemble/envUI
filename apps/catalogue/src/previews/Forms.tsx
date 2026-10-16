@@ -17,7 +17,7 @@ import {
   Row,
   Kbd,
   ActionGroup,
-  FileDropzone,
+  DropZone,
   Text,
 } from '@envsemble/envui';
 import { Mail } from '@envsemble/envui/icons/Mail';
@@ -646,7 +646,7 @@ function LogoPicker() {
   }, [logo]);
   return (
     <Stack gap={3}>
-      <FileDropzone
+      <DropZone
         hidden={logo != null}
         inputRef={picker}
         label="Drop a logo here, or browse"
@@ -676,7 +676,7 @@ function LogoPicker() {
   );
 }
 
-export function FileDropzonePreview() {
+export function DropZonePreview() {
   const [documents, setDocuments] = useState<string[]>([]);
   return (
     <Preview>
@@ -698,7 +698,7 @@ export function FileDropzonePreview() {
             title="Compact, several files"
             caption={documents.length ? documents.join(', ') : 'No documents yet.'}
           >
-            <FileDropzone
+            <DropZone
               compact
               multiple
               label="Attach documents"
@@ -707,7 +707,7 @@ export function FileDropzonePreview() {
             />
           </Specimen>
           <Specimen title="Pending">
-            <FileDropzone
+            <DropZone
               pending
               label="Uploading the logo"
               description="This takes a moment"
@@ -715,7 +715,7 @@ export function FileDropzonePreview() {
             />
           </Specimen>
           <Specimen title="Error">
-            <FileDropzone
+            <DropZone
               label="Drop a cover image"
               accept="image/*"
               error="Choose an image at least 1200 pixels wide."
@@ -723,7 +723,7 @@ export function FileDropzonePreview() {
             />
           </Specimen>
           <Specimen title="Disabled">
-            <FileDropzone disabled label="Uploads are paused" onFiles={() => undefined} />
+            <DropZone disabled label="Uploads are paused" onFiles={() => undefined} />
           </Specimen>
         </SpecimenGrid>
       </Example>

@@ -205,7 +205,7 @@ export const pairs: readonly ContrastPair[] = [
   ...nonText(
     '--color-field-border',
     [field, canvas, pane, rowSurface],
-    "The border is an outlined field's boundary; FileDropzone uses it too",
+    "The border is an outlined field's boundary; DropZone uses it too",
   ),
   // The focused and invalid borders on the field itself are held to 4.5 above, as label and message.
   ...nonText('--color-field-active', [canvas, pane], 'The border of a focused field'),

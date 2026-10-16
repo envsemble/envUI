@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, FileDropzone, Text, Theme, type ThemeValue } from '@envsemble/envui';
+import { Button, DropZone, Text, Theme, type ThemeValue } from '@envsemble/envui';
 
 const names = (files: File[]) => files.map((file) => file.name).join(' ');
 
@@ -26,7 +26,7 @@ function AvatarPicker({ theme }: { theme: ThemeValue }) {
         setSubmitted(file instanceof File ? file.name : '');
       }}
     >
-      <FileDropzone
+      <DropZone
         hidden={avatar != null}
         inputRef={picker}
         name="avatar"
@@ -59,7 +59,7 @@ function AvatarPicker({ theme }: { theme: ThemeValue }) {
   );
 }
 
-export function DropzonesFixture({ theme }: { theme: ThemeValue }) {
+export function DropZonesFixture({ theme }: { theme: ThemeValue }) {
   const [taken, setTaken] = useState('');
   const [rejected, setRejected] = useState('');
   const [documents, setDocuments] = useState('');
@@ -67,8 +67,8 @@ export function DropzonesFixture({ theme }: { theme: ThemeValue }) {
   const [submitted, setSubmitted] = useState('');
   const [attached, setAttached] = useState<string[]>([]);
   return (
-    <Theme theme={theme} data-testid={`dropzones-${theme}`} className="fixture-section">
-      <FileDropzone
+    <Theme theme={theme} data-testid={`drop-zones-${theme}`} className="fixture-section">
+      <DropZone
         label="Drop a logo here, or browse"
         description="PNG, JPG or WebP up to 2 MB"
         accept="image/png,image/jpeg,.webp"
@@ -77,7 +77,7 @@ export function DropzonesFixture({ theme }: { theme: ThemeValue }) {
       />
       <output data-testid={`taken-${theme}`}>{taken}</output>
       <output data-testid={`rejected-${theme}`}>{rejected}</output>
-      <FileDropzone
+      <DropZone
         compact
         multiple
         label="Attach documents"
@@ -85,19 +85,19 @@ export function DropzonesFixture({ theme }: { theme: ThemeValue }) {
         onFiles={(files) => setDocuments(names(files))}
       />
       <output data-testid={`documents-${theme}`}>{documents}</output>
-      <FileDropzone
+      <DropZone
         pending
         label="Uploading the logo"
         description="This takes a moment"
         onFiles={(files) => setUnavailable(names(files))}
       />
-      <FileDropzone
+      <DropZone
         disabled
         label="Uploads are paused"
         onFiles={(files) => setUnavailable(names(files))}
       />
       <output data-testid={`unavailable-${theme}`}>{unavailable}</output>
-      <FileDropzone
+      <DropZone
         label="Drop a cover image"
         accept="image/*"
         error="Choose an image at least 1200 pixels wide."
@@ -115,7 +115,7 @@ export function DropzonesFixture({ theme }: { theme: ThemeValue }) {
           );
         }}
       >
-        <FileDropzone
+        <DropZone
           compact
           multiple
           name="attachments"

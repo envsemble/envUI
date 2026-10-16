@@ -98,7 +98,7 @@ const referenceIcons: Record<string, typeof Palette> = {
   combobox: ManageSearch,
   'date-picker': CalendarMonth,
   slider: Tune,
-  'file-dropzone': CloudUpload,
+  'drop-zone': CloudUpload,
   'color-picker': Palette,
   composer: Send,
   messages: Forum,

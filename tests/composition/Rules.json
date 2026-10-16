@@ -70,7 +70,7 @@
       "forms/Checkbox.tsx": ["input"],
       "forms/Radio.tsx": ["input"],
       "forms/Switch.tsx": ["input"],
-      "forms/FileDropzone.tsx": ["input"],
+      "forms/DropZone.tsx": ["input"],
       "actions/SegmentedControl.tsx": ["button"]
     }
   },

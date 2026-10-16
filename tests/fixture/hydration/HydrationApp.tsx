@@ -15,7 +15,7 @@ import {
   Notice,
   SegmentedControl,
   Slider,
-  FileDropzone,
+  DropZone,
   Tree,
   TitleBar,
   Menubar,
@@ -261,7 +261,7 @@ export function HydrationApp() {
             detail="Last 30 days"
           />
         </StatGroup>
-        <FileDropzone
+        <DropZone
           compact
           label="Hydrated files"
           description="Any file"

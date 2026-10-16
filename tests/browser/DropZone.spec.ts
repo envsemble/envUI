@@ -71,7 +71,7 @@ let errors: string[] = [];
 test.beforeEach(async ({ page }) => {
   errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
-  await page.goto(`${fixtureUrl}/?fixture=dropzones`);
+  await page.goto(`${fixtureUrl}/?fixture=drop-zones`);
 });
 
 test.afterEach(() => {
@@ -79,7 +79,7 @@ test.afterEach(() => {
 });
 
 test('the zone is a button named by its label that opens the file picker', async ({ page }) => {
-  const scope = page.getByTestId('dropzones-light');
+  const scope = page.getByTestId('drop-zones-light');
   const zone = scope.getByRole('button', { name: 'Drop a logo here, or browse', exact: true });
   await expect(zone).toHaveAccessibleDescription('PNG, JPG or WebP up to 2 MB');
   // The zone is the first tab stop; keyboard focus shows the focus ring around it.
@@ -120,9 +120,9 @@ test('the zone is a button named by its label that opens the file picker', async
 });
 
 test('dropped files show the drag-over state and are filtered by accept', async ({ page }) => {
-  const scope = page.getByTestId('dropzones-light');
+  const scope = page.getByTestId('drop-zones-light');
   const zone = scope.getByRole('button', { name: 'Drop a logo here, or browse', exact: true });
-  const root = scope.locator('.env-file-dropzone').first();
+  const root = scope.locator('.env-drop-zone').first();
   const transfer = await filesTransfer(page, [
     ['logo.webp', 'image/webp'],
     ['notes.txt', 'text/plain'],
@@ -133,7 +133,7 @@ test('dropped files show the drag-over state and are filtered by accept', async 
   await expect(zone).toHaveCSS('border-top-style', 'solid');
   await expect(zone).toHaveCSS('border-top-color', await tokenColor(zone, '--color-field-active'));
   // Moving over the label inside keeps the state until the files leave the zone.
-  const label = zone.locator('.env-file-dropzone-label');
+  const label = zone.locator('.env-drop-zone-label');
   await label.dispatchEvent('dragenter', { dataTransfer: transfer });
   await zone.dispatchEvent('dragleave', { dataTransfer: transfer });
   await expect(root).toHaveAttribute('data-dragging', '');
@@ -153,7 +153,7 @@ test('dropped files show the drag-over state and are filtered by accept', async 
 test('a pending zone reports that it is busy and a disabled one takes no files', async ({
   page,
 }) => {
-  const scope = page.getByTestId('dropzones-light');
+  const scope = page.getByTestId('drop-zones-light');
   const pending = scope.getByRole('button', { name: 'Uploading the logo' });
   await expect(pending).toHaveAttribute('aria-busy', 'true');
   await expect(pending).toHaveAttribute('aria-disabled', 'true');
@@ -166,12 +166,12 @@ test('a pending zone reports that it is busy and a disabled one takes no files',
   await pending.click({ force: true });
   const transfer = await filesTransfer(page, [['logo.png', 'image/png']]);
   await drop(pending, transfer);
-  await expect(scope.locator('.env-file-dropzone').nth(2)).not.toHaveAttribute('data-dragging');
+  await expect(scope.locator('.env-drop-zone').nth(2)).not.toHaveAttribute('data-dragging');
 
   const disabled = scope.getByRole('button', { name: 'Uploads are paused' });
   await expect(disabled).toBeDisabled();
   await expect(disabled).toHaveCSS('opacity', '0.48');
-  await drop(scope.locator('.env-file-dropzone').nth(3), transfer);
+  await drop(scope.locator('.env-drop-zone').nth(3), transfer);
   await page.waitForTimeout(200);
   expect(opened).toBe(false);
   await expect(page.getByTestId('unavailable-light')).toHaveText('');
@@ -179,7 +179,7 @@ test('a pending zone reports that it is busy and a disabled one takes no files',
 
 test('an error is linked to the zone and colors its outline in both themes', async ({ page }) => {
   for (const theme of themes) {
-    const scope = page.getByTestId(`dropzones-${theme}`);
+    const scope = page.getByTestId(`drop-zones-${theme}`);
     const cover = scope.getByRole('button', { name: 'Drop a cover image' });
     await expect(cover).toHaveAccessibleDescription('Choose an image at least 1200 pixels wide.');
     await expect(cover).toHaveCSS(
@@ -188,7 +188,7 @@ test('an error is linked to the zone and colors its outline in both themes', asy
     );
     await expect(cover).toHaveCSS('border-top-style', 'dashed');
     const texts = scope.locator(
-      '.env-file-dropzone-label, .env-file-dropzone-description, .env-field-error',
+      '.env-drop-zone-label, .env-drop-zone-description, .env-field-error',
     );
     // Seven labels, four descriptions and one error in each theme.
     await expect(texts).toHaveCount(12);
@@ -202,7 +202,7 @@ test('an error is linked to the zone and colors its outline in both themes', asy
 });
 
 test('a named zone submits the files it took with a native form', async ({ page }) => {
-  const scope = page.getByTestId('dropzones-light');
+  const scope = page.getByTestId('drop-zones-light');
   const attachments = scope.getByRole('button', { name: 'Add attachments' });
   const submitted = page.getByTestId('files-submitted-light');
   await drop(
@@ -244,7 +244,7 @@ test('a named zone submits the files it took with a native form', async ({ page 
 });
 
 test('an application shows the chosen image with replace and remove actions', async ({ page }) => {
-  const scope = page.getByTestId('dropzones-light');
+  const scope = page.getByTestId('drop-zones-light');
   const zone = scope.getByRole('button', { name: 'Drop an avatar here, or browse' });
   const chooser = page.waitForEvent('filechooser');
   await zone.click();
@@ -286,12 +286,12 @@ test('an application shows the chosen image with replace and remove actions', as
 test('drop zones fit a narrow viewport', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 900 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  const scope = page.getByTestId('dropzones-light');
+  const scope = page.getByTestId('drop-zones-light');
   const zone = (await scope.getByRole('button', { name: /^Drop a logo/ }).boundingBox())!;
   expect(zone.x + zone.width).toBeLessThanOrEqual(390);
   const compact = scope.getByRole('button', { name: 'Attach documents' });
-  const icon = (await compact.locator('.env-file-dropzone-icon').boundingBox())!;
-  const text = (await compact.locator('.env-file-dropzone-text').boundingBox())!;
+  const icon = (await compact.locator('.env-drop-zone-icon').boundingBox())!;
+  const text = (await compact.locator('.env-drop-zone-text').boundingBox())!;
   // A compact zone keeps its icon beside the text, centered on it.
   expect(text.x).toBeGreaterThan(icon.x + icon.width);
   expect(Math.abs(icon.y + icon.height / 2 - (text.y + text.height / 2))).toBeLessThan(1);

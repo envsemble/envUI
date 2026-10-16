@@ -141,7 +141,7 @@
       "count": 2
     }
   },
-  "packages/ui/src/styles/FileDropzone.css": {
+  "packages/ui/src/styles/DropZone.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 10
     },

@@ -320,6 +320,32 @@
       }
     }
   },
+  "components/drop-zone/preview": {
+    "dark": {
+      "label-content-name-mismatch": {
+        "Drop or browse :: button.env-drop-zone-target": 1,
+        "States :: button.env-drop-zone-target": 2
+      }
+    },
+    "light": {
+      "label-content-name-mismatch": {
+        "Drop or browse :: button.env-drop-zone-target": 1,
+        "States :: button.env-drop-zone-target": 2
+      }
+    }
+  },
+  "components/drop-zone/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 2
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 81
+      }
+    }
+  },
   "components/empty-state/preview": {
     "dark": {
       "heading-order": {
@@ -341,32 +367,6 @@
     "light": {
       "color-contrast": {
         "article :: div.env-code-block span": 15
-      }
-    }
-  },
-  "components/file-dropzone/preview": {
-    "dark": {
-      "label-content-name-mismatch": {
-        "Drop or browse :: button.env-file-dropzone-target": 1,
-        "States :: button.env-file-dropzone-target": 2
-      }
-    },
-    "light": {
-      "label-content-name-mismatch": {
-        "Drop or browse :: button.env-file-dropzone-target": 1,
-        "States :: button.env-file-dropzone-target": 2
-      }
-    }
-  },
-  "components/file-dropzone/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 2
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 81
       }
     }
   },

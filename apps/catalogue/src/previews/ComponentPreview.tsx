@@ -6,7 +6,7 @@ import {
   RadioPreview,
   SelectPreview,
   SliderPreview,
-  FileDropzonePreview,
+  DropZonePreview,
 } from './Forms';
 import {
   NavigationPreview,
@@ -80,8 +80,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <DatePickerPreview />;
     case 'slider':
       return <SliderPreview />;
-    case 'file-dropzone':
-      return <FileDropzonePreview />;
+    case 'drop-zone':
+      return <DropZonePreview />;
     case 'color-picker':
       return <ColorPickerPreview />;
     case 'composer':

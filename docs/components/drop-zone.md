@@ -1,11 +1,11 @@
-# File drop zones
+# Drop zones
 
 ## React usage
 
 ```tsx
-import { FileDropzone } from '@envsemble/envui';
+import { DropZone } from '@envsemble/envui';
 
-<FileDropzone
+<DropZone
   label="Drop a logo here, or browse"
   description="PNG, JPG or WebP up to 2 MB"
   accept="image/png,image/jpeg,.webp"
@@ -42,7 +42,7 @@ The application shows what was chosen, for example an image with actions to repl
 
 ```tsx
 import { useEffect, useRef, useState } from 'react';
-import { ActionGroup, Button, FileDropzone, Text } from '@envsemble/envui';
+import { ActionGroup, Button, DropZone, Text } from '@envsemble/envui';
 
 const picker = useRef<HTMLInputElement>(null);
 const [logo, setLogo] = useState<File | null>(null);
@@ -55,7 +55,7 @@ useEffect(() => {
 }, [logo]);
 
 <>
-  <FileDropzone
+  <DropZone
     hidden={logo != null}
     inputRef={picker}
     name="logo"

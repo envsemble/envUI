@@ -18,7 +18,7 @@ import { Error as ErrorIcon } from '../icons/Error.js';
 import { acceptsFile } from './internal/acceptsFile.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
 
-export interface FileDropzoneProps
+export interface DropZoneProps
   extends Omit<
     ComponentPropsWithRef<'div'>,
     'children' | 'onDragEnter' | 'onDragOver' | 'onDragLeave' | 'onDrop'
@@ -71,7 +71,7 @@ function carriesFiles(event: DragEvent) {
 }
 
 /** A drop target for files that also opens the file picker; the application shows what was chosen. */
-export function FileDropzone({
+export function DropZone({
   label,
   description,
   icon,
@@ -89,7 +89,7 @@ export function FileDropzone({
   inputRef,
   className,
   ...props
-}: FileDropzoneProps) {
+}: DropZoneProps) {
   const id = useId();
   // The picker opens the file dialog; a separate named input holds the files a form submits, so
   // the picker can clear after every choice and people can choose the same file again.
@@ -150,7 +150,7 @@ export function FileDropzone({
   return (
     <div
       {...props}
-      className={classNames('env-form-field env-file-dropzone', className)}
+      className={classNames('env-form-field env-drop-zone', className)}
       data-compact={compact ? '' : undefined}
       data-dragging={dragging ? '' : undefined}
       data-pending={pending ? '' : undefined}
@@ -181,7 +181,7 @@ export function FileDropzone({
     >
       <button
         type="button"
-        className="env-file-dropzone-target"
+        className="env-drop-zone-target"
         disabled={disabled}
         aria-labelledby={`${id}-label`}
         aria-describedby={descriptionIds}
@@ -191,19 +191,19 @@ export function FileDropzone({
           if (available) picker.current?.click();
         }}
       >
-        <span className="env-file-dropzone-icon">
+        <span className="env-drop-zone-icon">
           {pending ? (
             <Spinner size={compact ? 'small' : 'standard'} />
           ) : (
             <DecorativeIcon>{icon ?? <CloudUpload />}</DecorativeIcon>
           )}
         </span>
-        <span className="env-file-dropzone-text">
-          <span className="env-file-dropzone-label" id={`${id}-label`}>
+        <span className="env-drop-zone-text">
+          <span className="env-drop-zone-label" id={`${id}-label`}>
             {label}
           </span>
           {description != null && (
-            <span className="env-file-dropzone-description" id={`${id}-description`}>
+            <span className="env-drop-zone-description" id={`${id}-description`}>
               {description}
             </span>
           )}

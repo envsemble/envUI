@@ -45,7 +45,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Comboboxes](components/combobox.md) — Choose one option or several from a list that filters as people type.
 - [Date pickers](components/date-picker.md) — Choose a date, or a date and time, from a calendar, which also stands on its own.
 - [Sliders](components/slider.md) — Choose a value in a range by dragging a thumb or with the keyboard.
-- [File drop zones](components/file-dropzone.md) — Drop files or choose them in the file picker; the application shows what was chosen.
+- [Drop zones](components/drop-zone.md) — Drop files or choose them in the file picker; the application shows what was chosen.
 
 ## Navigation
 

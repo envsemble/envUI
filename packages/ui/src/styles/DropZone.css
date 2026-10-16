@@ -1,13 +1,13 @@
 /* A drop target for files: a dashed area with an icon, a label and a description that opens the file
    picker when pressed. Files over it turn the outline solid blue on the selection tint. */
-.env-file-dropzone {
-  --env-file-dropzone-border: var(--color-field-border);
+.env-drop-zone {
+  --env-drop-zone-border: var(--color-field-border);
   min-inline-size: 0;
 }
-.env-file-dropzone[hidden] {
+.env-drop-zone[hidden] {
   display: none;
 }
-.env-file-dropzone-target {
+.env-drop-zone-target {
   box-sizing: border-box;
   display: grid;
   justify-items: center;
@@ -18,7 +18,7 @@
   min-block-size: 9rem;
   margin: 0;
   padding: var(--space-5) var(--space-4);
-  border: 0.125rem dashed var(--env-file-dropzone-border);
+  border: 0.125rem dashed var(--env-drop-zone-border);
   border-radius: var(--md-sys-shape-corner-large);
   background: transparent;
   color: var(--color-text-primary);
@@ -30,7 +30,7 @@
     border-color var(--motion-duration-medium) var(--motion-ease),
     background-color var(--motion-duration-fast) var(--motion-ease);
 }
-.env-file-dropzone-icon {
+.env-drop-zone-icon {
   display: grid;
   place-items: center;
   inline-size: 2.75rem;
@@ -40,57 +40,57 @@
   color: var(--color-icon);
   transition: color var(--motion-duration-fast) var(--motion-ease);
 }
-.env-file-dropzone-icon > .env-symbol {
+.env-drop-zone-icon > .env-symbol {
   inline-size: 1.5rem;
   block-size: 1.5rem;
 }
-.env-file-dropzone-text {
+.env-drop-zone-text {
   display: grid;
   gap: var(--space-1);
   min-inline-size: 0;
 }
-.env-file-dropzone-label {
+.env-drop-zone-label {
   font-weight: 500;
 }
-.env-file-dropzone-description {
+.env-drop-zone-description {
   color: var(--color-text-muted);
   font: var(--type-body-small);
 }
 @media (hover: hover) {
-  .env-file-dropzone-target:hover:not(:disabled, [aria-disabled='true']) {
-    --env-file-dropzone-border: hsl(
+  .env-drop-zone-target:hover:not(:disabled, [aria-disabled='true']) {
+    --env-drop-zone-border: hsl(
       from var(--color-field-active) h s var(--state-hover-lightness)
     );
     background: var(--color-state-layer-hover);
   }
 }
-.env-file-dropzone-target:active:not(:disabled, [aria-disabled='true']) {
+.env-drop-zone-target:active:not(:disabled, [aria-disabled='true']) {
   background: var(--color-state-layer-pressed);
 }
-.env-file-dropzone-target:focus-visible {
+.env-drop-zone-target:focus-visible {
   outline: 0.125rem solid var(--color-focus-ring);
   outline-offset: 0.125rem;
 }
-.env-file-dropzone[data-dragging] .env-file-dropzone-target {
-  --env-file-dropzone-border: var(--color-field-active);
+.env-drop-zone[data-dragging] .env-drop-zone-target {
+  --env-drop-zone-border: var(--color-field-active);
   border-style: solid;
   background: var(--color-navigation-selected);
 }
-.env-file-dropzone[data-dragging] .env-file-dropzone-icon {
+.env-drop-zone[data-dragging] .env-drop-zone-icon {
   color: var(--color-field-active);
 }
-.env-file-dropzone[data-invalid] .env-file-dropzone-target {
-  --env-file-dropzone-border: var(--color-field-error);
+.env-drop-zone[data-invalid] .env-drop-zone-target {
+  --env-drop-zone-border: var(--color-field-error);
 }
-.env-file-dropzone[data-pending] .env-file-dropzone-target {
+.env-drop-zone[data-pending] .env-drop-zone-target {
   cursor: progress;
 }
-.env-file-dropzone-target:disabled {
+.env-drop-zone-target:disabled {
   opacity: var(--state-disabled-opacity);
   cursor: default;
 }
 /* A compact zone is one row: the icon, then the label above the description. */
-.env-file-dropzone[data-compact] .env-file-dropzone-target {
+.env-drop-zone[data-compact] .env-drop-zone-target {
   grid-template-columns: auto minmax(0, 1fr);
   justify-items: start;
   align-items: center;
@@ -99,24 +99,24 @@
   padding: var(--space-2) var(--space-4);
   text-align: start;
 }
-.env-file-dropzone[data-compact] .env-file-dropzone-text {
+.env-drop-zone[data-compact] .env-drop-zone-text {
   gap: 0;
 }
-.env-file-dropzone[data-compact] .env-file-dropzone-icon {
+.env-drop-zone[data-compact] .env-drop-zone-icon {
   inline-size: 2rem;
   block-size: 2rem;
 }
-.env-file-dropzone[data-compact] .env-file-dropzone-icon > .env-symbol {
+.env-drop-zone[data-compact] .env-drop-zone-icon > .env-symbol {
   inline-size: var(--control-icon-size);
   block-size: var(--control-icon-size);
 }
-.env-file-dropzone[data-compact] .env-file-dropzone-label {
+.env-drop-zone[data-compact] .env-drop-zone-label {
   font: var(--type-body-small);
   font-weight: 500;
 }
 @media (prefers-reduced-motion: reduce) {
-  .env-file-dropzone-target,
-  .env-file-dropzone-icon {
+  .env-drop-zone-target,
+  .env-drop-zone-icon {
     transition: none;
   }
 }

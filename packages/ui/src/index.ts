@@ -35,7 +35,7 @@ export * from './forms/Combobox.js';
 export * from './forms/Calendar.js';
 export * from './forms/DatePicker.js';
 export * from './forms/Slider.js';
-export * from './forms/FileDropzone.js';
+export * from './forms/DropZone.js';
 export * from './feedback/Dialog.js';
 export * from './feedback/CommandPalette.js';
 export * from './feedback/Notice.js';
