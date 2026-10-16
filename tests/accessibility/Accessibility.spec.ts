@@ -111,6 +111,38 @@ async function settle(page: Page) {
   });
 }
 
+/**
+ * Opens every example's Code disclosure, so axe checks the highlighted source as a reader who opens
+ * it sees it; closed, its tokens are not rendered and the scan would pass over them.
+ */
+async function expandCode(page: Page) {
+  await page.locator('#docs-main').waitFor();
+  await page.evaluate(() => {
+    for (const details of document.querySelectorAll<HTMLDetailsElement>(
+      'details.docs-live-example-code',
+    ))
+      details.open = true;
+  });
+}
+
+/**
+ * Waits until every code block in a language that is highlighted shows its tokens: those of the
+ * examples, and those whose label names such a language, such as "tsx code".
+ */
+async function highlighted(page: Page) {
+  await page.waitForFunction(() =>
+    [...document.querySelectorAll<HTMLElement>('.env-code-block pre')]
+      .filter(
+        (pre) =>
+          pre.closest('.docs-live-example-code') ||
+          /^(?:tsx?|jsx?|typescript|javascript|json|css|html|xml|sh|bash|shell|ya?ml|sql|java|md|markdown|ini) code$/i.test(
+            pre.getAttribute('aria-label') ?? '',
+          ),
+      )
+      .every((pre) => !pre.textContent?.trim() || pre.querySelector('code span')),
+  );
+}
+
 async function setTheme(page: Page, theme: Theme) {
   const app = page.locator('.docs-app');
   if ((await app.getAttribute('data-env-theme')) !== theme)
@@ -228,9 +260,11 @@ for (const { path, title, routes: pageRoutes } of pages) {
     const scans: Scan[] = [];
     for (const route of pageRoutes) {
       await page.goto(`${catalogueUrl}/#/${route}`);
+      await expandCode(page);
       for (const theme of themes) {
         await setTheme(page, theme);
         await settle(page);
+        await highlighted(page);
         scans.push(await scan(page, route, theme));
       }
     }

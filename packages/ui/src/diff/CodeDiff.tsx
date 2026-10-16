@@ -1,10 +1,10 @@
 'use client';
 
-import { DEFAULT_THEMES, parseDiffFromFile, preloadHighlighter } from '@pierre/diffs';
+import { parseDiffFromFile, preloadHighlighter, registerCustomTheme } from '@pierre/diffs';
 import { File, FileDiff } from '@pierre/diffs/react';
 import { useEffect, useMemo, useRef, useState, type ComponentPropsWithRef } from 'react';
 import { Button } from '../actions/Button.js';
-import { codeBackground, codeThemeStyle } from '../content/internal/CodeThemes.js';
+import { codeBackground, codeThemeStyle, diffThemes } from '../content/internal/CodeThemes.js';
 import { EmptyState } from '../feedback/EmptyState.js';
 import { useTheme } from '../foundations/Theme.js';
 import { LoadingState } from '../feedback/LoadingState.js';
@@ -38,15 +38,26 @@ const DIFF_BACKGROUND_CSS = `:host { --diffs-light-bg: ${codeBackground('light')
 /** Side by side from this many rem of the diff's own width. */
 const SPLIT_FROM_REM = 56;
 
+/** The readable Pierre themes of code diffs, registered with Diffs once, under their names. */
+const diffThemeNames = { light: diffThemes.light.name!, dark: diffThemes.dark.name! };
+let themesRegistered = false;
+function registerThemes() {
+  if (themesRegistered) return;
+  themesRegistered = true;
+  registerCustomTheme(diffThemeNames.light, async () => diffThemes.light as never);
+  registerCustomTheme(diffThemeNames.dark, async () => diffThemes.dark as never);
+}
+
 let highlighterReady: Promise<void> | undefined;
 const loadedLanguages = new Set<string>();
 
 function prepareHighlighter(language: string) {
   if (loadedLanguages.has(language) && highlighterReady) return highlighterReady;
-  // Diffs' own Pierre themes, which code blocks share; the app theme chooses between them.
+  // The Pierre themes, readable on changed lines too; the app theme chooses between them.
+  registerThemes();
   highlighterReady = preloadHighlighter({
     langs: [...loadedLanguages, language] as never,
-    themes: [DEFAULT_THEMES.dark, DEFAULT_THEMES.light],
+    themes: [diffThemeNames.dark, diffThemeNames.light],
   }).then(
     () => {
       loadedLanguages.add(language);
@@ -165,6 +176,7 @@ export function CodeDiff({
           disableWorkerPool
           options={{
             overflow: 'wrap',
+            theme: diffThemeNames,
             themeType: theme,
             disableFileHeader: !header,
             unsafeCSS: DIFF_BACKGROUND_CSS,
@@ -177,6 +189,7 @@ export function CodeDiff({
           options={{
             diffStyle: wide ? 'split' : 'unified',
             overflow: 'wrap',
+            theme: diffThemeNames,
             themeType: theme,
             disableFileHeader: !header,
             expandUnchanged,
