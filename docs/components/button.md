@@ -95,7 +95,7 @@ A ButtonGroup joins its buttons with a 0.125 rem gap; inner corners take the sha
 - **Sizes**: `sm` for a small action where space is short, such as in a toolbar beside small fields or in a table cell; `md` for most actions; `lg` for the one prominent call to action of a page.
 - `size` sets the height, the same for every control of that size in the app's [scale](../foundations/scale.md): `sm`, `md` and `lg` are 2, 2.5 and 3 rem in the comfortable scale, and 1.625, 2 and 2.375 rem in the compact one. IconButton and CopyButton take the same sizes, and so do important buttons.
 - A button without a size takes the control height of its container: buttons in a table cell are `sm`, as are those in a title bar, a panel header or a message's actions. A button beside a field takes the field's size.
-- On touch screens a button keeps its size and gains an invisible hit area 2.75 rem tall and wide.
+- On touch screens a button grows to 2.75 rem, tall and wide, in either [scale](../foundations/scale.md), as every control of its row does; its own box is its hit area, so a press on it never reaches a button beside it. The buttons of a ButtonGroup grow with their group, which keeps its round ends.
 - Labels are 0.875 rem, 0.8125 rem in the compact scale, with 0.25 rem vertical and 0.75 rem horizontal padding. Buttons fit their content; a labelled button can shrink and wrap its label, while an icon-only button keeps its square size, also in a squeezed row.
 - Primary buttons are blue in both themes: the control blue with white labels in the light theme, and the link's soft blue with dark labels in the dark theme.
 - Secondary buttons use the neutral fill and label color without a border; the fill is a translucent layer of the text color, so they stay visible on rows, panes and dialogs. Outlined buttons keep their border and link color.
@@ -153,7 +153,7 @@ A ButtonGroup joins its buttons with a 0.125 rem gap; inner corners take the sha
 ### envUI provides
 
 - Native `<button>` and `<a>` elements, with `type="button"` by default so a button inside a form doesn't submit it unless asked.
-- The shared focus ring and a 2.75 rem touch target on coarse pointers.
+- The shared focus ring, and buttons at least 2.75 rem tall and wide on coarse pointers.
 - `aria-busy` and `aria-disabled` while pending, and `aria-disabled` on disabled links, which leave the tab order.
 - Decorative icons hidden from assistive technology.
 - ConfirmButton's announcement of the armed state, since a changed label on a focused button is not reliably read.

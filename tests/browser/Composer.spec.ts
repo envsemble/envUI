@@ -474,20 +474,15 @@ test('composers fit a narrow viewport and wrap long words', async ({ page }) => 
 test.describe('on a coarse pointer', () => {
   test.use({ hasTouch: true });
 
-  test('the action keeps its size with a touch-sized hit area, and the field the larger text', async ({
+  test('the action grows to the touch height, and the field takes the larger text', async ({
     page,
   }) => {
     await page.goto(composerFixture);
     const field = page.getByRole('textbox', { name: 'Message light' });
     const action = composerOf(field).getByRole('button', { name: 'Send' });
-    await expect(action).toHaveCSS('width', '40px');
-    await expect(action).toHaveCSS('height', '40px');
-    // An invisible overlay around the action is 2.75 rem tall; it leaves the text beside it alone.
-    const overlay = await action.evaluate((element) => {
-      const style = getComputedStyle(element, '::before');
-      return { top: parseFloat(style.top), left: parseFloat(style.left) };
-    });
-    expect(overlay).toEqual({ top: -2, left: 0 });
+    // Like every button, the action is 2.75 rem tall and wide, and its box is its hit area.
+    await expect(action).toHaveCSS('width', '44px');
+    await expect(action).toHaveCSS('height', '44px');
     await expect(field).toHaveCSS('font-size', '16px');
     expect((await field.boundingBox())!.height).toBeCloseTo(40, 0);
   });

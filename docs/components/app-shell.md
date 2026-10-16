@@ -89,7 +89,7 @@ AppShell will be rebuilt from composable parts; this page describes the current 
 - Expanded, the sidebar fits its widest content between 12 and 20 rem; collapsed, it is one control plus its insets wide, showing only the icons of NavList.Items.
 - With `resizable`, people choose the expanded width between `sidebarMinWidth` (12 rem) and `sidebarMaxWidth` (32 rem); `sidebarWidth` and `onSidebarWidthChange` control it.
 - On narrow windows (40 rem wide, or 54 rem wide and 32 rem tall) the sidebar opens over the content as a drawer at least 20 rem wide, and the title is hidden.
-- A title bar is at least `--title-bar-height` tall (2.5 rem, 2 rem in the compact scale), and its controls are small, with a 2.75 rem hit area on coarse pointers. `dividers` (true) draws hairlines between the topbar, the sidebar and the content.
+- A title bar is at least `--title-bar-height` tall (2.5 rem, 2 rem in the compact scale), and its controls are small; on coarse pointers they grow to 2.75 rem, as every control does, and the topbar and the title bar to 3.25 rem. `dividers` (true) draws hairlines between the topbar, the sidebar and the content.
 
 ## States and behaviour
 

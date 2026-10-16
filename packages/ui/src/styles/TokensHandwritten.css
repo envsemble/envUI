@@ -17,11 +17,15 @@
 }
 
 /* Under a coarse pointer, entered text is 1 rem in every scale: smaller text makes touch browsers
-   zoom the page into a focused field. Controls keep their size and gain a hit area of
-   --control-height-touch instead, which each component draws; the resolver has no pointer
-   modifier. */
+   zoom the page into a focused field. Controls grow to --control-height-touch, which each component
+   applies, so the top bar and the title bar hold a control of that height with the smallest space
+   around it, in either scale. The resolver has no pointer modifier. */
 @media (pointer: coarse) {
   .env-theme {
     --control-font-size: 1rem;
+  }
+  :is(.env-theme, .env-theme[data-env-scale='compact']) {
+    --topbar-height: calc(var(--control-height-touch) + 2 * var(--space-1));
+    --title-bar-height: calc(var(--control-height-touch) + 2 * var(--space-1));
   }
 }

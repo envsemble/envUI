@@ -61,7 +61,7 @@ The application owns the page, the loading and the scroll position. Pagination r
 | `variant` | The buttons' look, as on IconButton: secondary by default, or text for a quiet toolbar.        |
 
 - Without a size, the buttons take the control height of their container, `md` by default. See [scale and density](../foundations/scale.md).
-- On touch screens the buttons keep their size and gain a 2.75 rem hit area.
+- On touch screens the buttons grow to 2.75 rem, as every button does.
 - In a toolbar the pager keeps its width while a field beside it shrinks; only a container too narrow for the pager itself wraps the buttons below the range.
 - In right-to-left text the pager runs from the right, and the chevrons point the way the pages run.
 

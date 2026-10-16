@@ -467,10 +467,24 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
     transition: none;
   }
 }
-/* Under a coarse pointer, single-line fields grow to the touch height, whatever the scale, and their
-   text to 1 rem; other controls keep their size and gain a hit area instead. */
+/* Under a coarse pointer, single-line fields grow to the touch height, whatever the scale, as every
+   control does, and their text to 1 rem. The actions inside keep their size, a little less than
+   the field's, and their hit area grows above and below them to the touch height, within the
+   field: never beside them, over the next action or the text. */
 @media (pointer: coarse) {
   .env-text-field {
     --env-field-height: max(var(--control-height), var(--control-height-touch));
+  }
+  .env-text-field-end {
+    --env-touch-height: 0rem;
+  }
+  .env-text-field-end .env-button {
+    position: relative;
+  }
+  .env-text-field-end .env-button::before {
+    content: '';
+    position: absolute;
+    inset-block: min(0%, calc((100% - var(--control-height-touch)) / 2));
+    inset-inline: 0;
   }
 }

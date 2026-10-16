@@ -76,7 +76,7 @@ The parts of a message are 0.5 rem apart.
 
 - Message text takes the 0.9375 rem body type. Plain text keeps the line breaks it was written with, and long words wrap anywhere, so a message never widens the list.
 - A bubble grows with its text up to three quarters of the list's width, or to 16 rem where that is more, never wider than the list.
-- Actions take the small control height, 2 rem, and gain a 2.75 rem hit area on touch screens. A text IconButton at the edge lines its icon up with the message's text, not its round hit area.
+- Actions take the small control height, 2 rem, and grow to 2.75 rem on touch screens, as every button does. A text IconButton at the edge lines its icon up with the message's text, not its round edge.
 
 ## States and behaviour
 

@@ -69,7 +69,7 @@ A segmented control switches between a few views or filters of the same content,
 
 <!-- specimen: Sizes -->
 
-- The rail is as tall as every control of its size in the app's [scale](../foundations/scale.md); without a size it takes its container's control height, `md` by default. Segments fill it inside a 0.25 rem padding, with 1 rem inline padding, 0.75 rem at `sm`. On touch screens segments gain a 2.75 rem hit area.
+- The rail is as tall as every control of its size in the app's [scale](../foundations/scale.md); without a size it takes its container's control height, `md` by default. Segments fill it inside a 0.25 rem padding, with 1 rem inline padding, 0.75 rem at `sm`. On touch screens the rail grows to 2.75 rem, as every control of its row does, and each segment, at least as wide, takes presses across the rail's whole height.
 - Without `fullWidth` the rail is as wide as its options, up to the width of its container; options that don't fit scroll sideways inside the rail.
 - With `fullWidth` the rail fills its container and splits it evenly between the options. A label too long for its share ends with an ellipsis and shows whole in a tooltip; on touch screens, where tooltips don't show, it wraps onto more lines instead and the rail grows to hold it. The option's accessible name stays whole either way.
 

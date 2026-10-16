@@ -17,14 +17,16 @@
   display: inline-flex;
   align-items: stretch;
   gap: var(--space-1);
+  /* The height the rail draws at: the control height, or the touch height under a coarse pointer. */
+  --env-segmented-control-height: var(--control-height);
   /* The padding gives way where a segment would be shorter than the smallest target, as in a
      small rail of the compact scale. */
   --env-segmented-control-inset: min(
     var(--space-1),
-    calc((var(--control-height) - var(--control-target-min)) / 2)
+    calc((var(--env-segmented-control-height) - var(--control-target-min)) / 2)
   );
   padding: var(--env-segmented-control-inset);
-  min-block-size: var(--control-height);
+  min-block-size: var(--env-segmented-control-height);
   border-radius: 100vmax;
   background: var(--color-fill);
   /* Long labels stay reachable in narrow containers. */
@@ -34,7 +36,9 @@
 .env-segment {
   box-sizing: border-box;
   flex: 0 0 auto;
-  min-block-size: calc(var(--control-height) - 2 * var(--env-segmented-control-inset));
+  min-block-size: calc(
+    var(--env-segmented-control-height) - 2 * var(--env-segmented-control-inset)
+  );
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -42,7 +46,7 @@
   /* The block padding gives way where a line and the padding would outgrow the segment. */
   padding: min(
       var(--space-1),
-      calc((var(--control-height) - 2 * var(--env-segmented-control-inset) - 1lh) / 2)
+      calc((var(--env-segmented-control-height) - 2 * var(--env-segmented-control-inset) - 1lh) / 2)
     )
     var(--space-4);
   border: 0;
@@ -80,14 +84,23 @@
   outline: 0.125rem solid var(--color-focus-ring);
   outline-offset: 0.125rem;
 }
-/* Under a coarse pointer the segments grow to the touch height themselves: an overlay would reach
-   over the next segment, and out of the rail, which scrolls. */
+/* Under a coarse pointer the rail grows to the touch height, like every control of its row, and
+   each segment's hit area covers the rail's padding above and below it, so it is as tall as the
+   rail and nothing reaches out of the rail, which scrolls. A segment is at least as wide, unless
+   the rail shares out a full width. */
 @media (pointer: coarse) {
+  .env-segmented-control {
+    --env-segmented-control-height: max(var(--control-height), var(--control-height-touch));
+  }
   .env-segment {
-    min-block-size: max(
-      calc(var(--control-height) - 2 * var(--env-segmented-control-inset)),
-      var(--control-height-touch)
-    );
+    position: relative;
+    min-inline-size: var(--control-height-touch);
+  }
+  .env-segment::before {
+    content: '';
+    position: absolute;
+    inset-block: calc(-1 * var(--env-segmented-control-inset));
+    inset-inline: 0;
   }
 }
 .env-segment[data-disabled] {

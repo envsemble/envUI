@@ -25,13 +25,14 @@
       :nth-child(1 of .env-button:not([hidden])):nth-last-child(1 of .env-button:not([hidden]))
     )
   ) {
-  /* A finite pill radius keeps the browser from scaling down the inner corners. */
-  border-radius: calc(var(--control-height) / 2);
+  /* A finite pill radius keeps the browser from scaling down the inner corners. It follows the
+     height the button draws at, which a coarse pointer raises to the touch height. */
+  border-radius: calc(var(--env-button-height) / 2);
 }
 
 .env-button-group > .env-button.env-icon-button {
-  inline-size: var(--control-height);
-  min-inline-size: var(--control-height);
+  inline-size: var(--env-button-height);
+  min-inline-size: var(--env-button-height);
 }
 
 .env-button-group > .env-button[hidden] {
@@ -88,18 +89,4 @@
   > .env-button:not(:nth-last-child(1 of .env-button:not([hidden]))) {
   border-end-start-radius: var(--radius-row-inner);
   border-end-end-radius: var(--radius-row-inner);
-}
-/* Under a coarse pointer the joined buttons grow to the touch height themselves: an overlay would
-   reach over the next button, and out of the group, which scrolls. */
-@media (pointer: coarse) {
-  .env-button-group {
-    --env-button-hit-area: 0rem;
-  }
-  .env-button-group > .env-button {
-    min-height: max(var(--control-height), var(--control-height-touch));
-  }
-  .env-button-group > .env-button.env-icon-button {
-    inline-size: max(var(--control-height), var(--control-height-touch));
-    min-inline-size: max(var(--control-height), var(--control-height-touch));
-  }
 }
