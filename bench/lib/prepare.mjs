@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
+import { gunzipSync } from 'node:zlib';
 import { cp, mkdir, readFile, readdir, rename, rm, writeFile, copyFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { run } from './process.mjs';
@@ -39,6 +40,55 @@ async function sha256(file) {
     .digest('hex');
 }
 
+/** Reads one file from an npm tarball (a gzipped tar), such as `package/package.json`. */
+export function readFromTarball(tarball, name) {
+  const data = gunzipSync(readFileSync(tarball));
+  for (let offset = 0; offset + 512 <= data.length; ) {
+    const header = data.subarray(offset, offset + 512);
+    if (header.every((byte) => byte === 0)) break;
+    const field = (start, length) =>
+      header
+        .subarray(start, start + length)
+        .toString('utf8')
+        .replace(/\0.*$/s, '');
+    const prefix = field(345, 155);
+    const path = prefix ? `${prefix}/${field(0, 100)}` : field(0, 100);
+    const size = parseInt(field(124, 12).trim() || '0', 8);
+    if (path === name) return data.subarray(offset + 512, offset + 512 + size).toString('utf8');
+    offset += 512 + Math.ceil(size / 512) * 512;
+  }
+  return null;
+}
+
+/** The commit packages/ui was packed from, with `-dirty` when it has uncommitted changes. */
+function sourceCommit(repoDir) {
+  try {
+    const commit = run('git', ['rev-parse', 'HEAD'], { cwd: repoDir });
+    const dirty = run('git', ['status', '--porcelain', '--', 'packages/ui'], { cwd: repoDir });
+    return dirty ? `${commit}-dirty` : commit;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Uses a tarball packed elsewhere, such as from a release commit, instead of packing this
+ * checkout. The commit it was built from can't be read from the tarball, so the caller names it.
+ */
+export async function useTarball({ file, commit }) {
+  const tarball = resolve(file);
+  if (!existsSync(tarball)) throw new Error(`Tarball ${tarball} not found.`);
+  const manifest = JSON.parse(readFromTarball(tarball, 'package/package.json') ?? '{}');
+  if (manifest.name !== '@envsemble/envui')
+    throw new Error(`${tarball} is not an @envsemble/envui tarball.`);
+  return {
+    tarball,
+    version: manifest.version,
+    sha256: await sha256(tarball),
+    sourceCommit: commit ?? null,
+  };
+}
+
 /** Builds (optionally) and packs packages/ui into the cache; returns the tarball path. */
 export async function packLibrary({ repoDir, cacheDir, build }) {
   const libraryDir = join(repoDir, 'packages/ui');
@@ -64,23 +114,35 @@ export async function packLibrary({ repoDir, cacheDir, build }) {
     tarball,
     version: manifest.version,
     sha256: await sha256(tarball),
-    files: packed.entryCount,
+    sourceCommit: sourceCommit(repoDir),
   };
 }
 
-async function hashFixture(fixtureDir) {
+/**
+ * Fixture variants. Each is a list of folders in `bench/fixtures/`, copied in order, so `hard`
+ * is the basic app with its own files laid over it.
+ */
+export const fixtures = {
+  basic: ['basic'],
+  hard: ['basic', 'hard'],
+};
+
+async function hashFixture(fixtureDirs) {
   const hash = createHash('sha256');
-  const walk = async (directory) => {
-    const entries = (await readdir(directory, { withFileTypes: true })).sort((a, b) =>
-      a.name.localeCompare(b.name),
-    );
-    for (const entry of entries) {
-      const path = join(directory, entry.name);
-      if (entry.isDirectory()) await walk(path);
-      else hash.update(path.slice(fixtureDir.length)).update(await readFile(path));
-    }
-  };
-  await walk(fixtureDir);
+  for (const fixtureDir of fixtureDirs) {
+    hash.update(`\0${fixtureDir.split(/[\\/]/).pop()}\0`);
+    const walk = async (directory) => {
+      const entries = (await readdir(directory, { withFileTypes: true })).sort((a, b) =>
+        a.name.localeCompare(b.name),
+      );
+      for (const entry of entries) {
+        const path = join(directory, entry.name);
+        if (entry.isDirectory()) await walk(path);
+        else hash.update(path.slice(fixtureDir.length)).update(await readFile(path));
+      }
+    };
+    await walk(fixtureDir);
+  }
   return hash.digest('hex');
 }
 
@@ -88,10 +150,10 @@ async function hashFixture(fixtureDir) {
  * Installs the fixture once per library tarball and fixture version. Runs copy this template, so
  * every agent starts from identical files and the same installed dependencies.
  */
-export async function ensureTemplate({ fixtureDir, cacheDir, pack, npmCache, log }) {
+export async function ensureTemplate({ fixtureDirs, cacheDir, pack, npmCache, log }) {
   const key = createHash('sha256')
     .update(pack.sha256)
-    .update(await hashFixture(fixtureDir))
+    .update(await hashFixture(fixtureDirs))
     .digest('hex')
     .slice(0, 16);
   const templateDir = join(cacheDir, 'templates', key);
@@ -99,7 +161,7 @@ export async function ensureTemplate({ fixtureDir, cacheDir, pack, npmCache, log
     return templateDir;
   const staging = `${templateDir}.staging`;
   await rm(staging, { recursive: true, force: true });
-  await cp(fixtureDir, staging, { recursive: true });
+  for (const fixtureDir of fixtureDirs) await cp(fixtureDir, staging, { recursive: true });
   await mkdir(join(staging, 'vendor'), { recursive: true });
   await copyFile(pack.tarball, join(staging, vendoredTarball));
   log?.(`Installing the fixture template (${key})...`);

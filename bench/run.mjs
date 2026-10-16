@@ -15,29 +15,34 @@ import {
   commitBaseline,
   createWorkspace,
   ensureTemplate,
+  fixtures,
   packLibrary,
+  useTarball,
   writeJson,
 } from './lib/prepare.mjs';
-import { killStragglers, runWithTimeout } from './lib/process.mjs';
+import { killStragglers, run, runWithTimeout } from './lib/process.mjs';
 import { aggregate, compactRun, renderSummary } from './lib/report.mjs';
 import { scoreRun } from './lib/score.mjs';
 
 const benchDir = fileURLToPath(new URL('.', import.meta.url));
 const repoDir = resolve(benchDir, '..');
-const fixtureDir = join(benchDir, 'fixture');
 const allTasks = JSON.parse(readFileSync(join(benchDir, 'tasks.json'), 'utf8')).tasks;
 
 const usage = `Usage:
   npm run bench -- [--condition baseline] [--agents claude,codex] [--tasks all|id,id]
-                   [--concurrency 4] [--timeout 12] [--run-id <id>] [--workdir <dir>]
-                   [--audit-path <dir>] [--build] [--no-save] [--dry-run]
+                   [--fixture basic|hard] [--concurrency 4] [--timeout 12] [--run-id <id>]
+                   [--workdir <dir>] [--tarball <file> --envui-commit <sha>] [--audit-path <dir>]
+                   [--build] [--no-save] [--dry-run]
   npm run bench -- rescore --run-id <id> [--workdir <dir>] [--no-save]
 
   --condition    one or more conditions, comma-separated (${Object.keys(conditions).join(', ')})
   --agents       ${Object.keys(agents).join(', ')}
   --tasks        all, or task ids: ${allTasks.map((task) => task.id).join(', ')}
+  --fixture      ${Object.keys(fixtures).join(', ')} (default basic)
   --timeout      minutes per run (default 12)
   --workdir      where workspaces, transcripts and caches go (default %TEMP%/agent-workspaces)
+  --tarball      use this @envsemble/envui tarball instead of packing packages/ui
+  --envui-commit the commit the tarball was built from, recorded in the results
   --audit-path   more folders, comma-separated, that agents must not touch (see the audit)
   --build        run npm run build:library before packing
   --no-save      do not copy results.json and summary.md into bench/results/<run-id>/
@@ -50,10 +55,13 @@ const { values: options, positionals } = parseArgs({
     condition: { type: 'string', default: 'baseline' },
     agents: { type: 'string', default: 'claude,codex' },
     tasks: { type: 'string', default: 'all' },
+    fixture: { type: 'string', default: 'basic' },
     concurrency: { type: 'string', default: '4' },
     timeout: { type: 'string', default: '12' },
     'run-id': { type: 'string' },
     workdir: { type: 'string', default: join(tmpdir(), 'agent-workspaces') },
+    tarball: { type: 'string' },
+    'envui-commit': { type: 'string' },
     'audit-path': { type: 'string', default: '' },
     build: { type: 'boolean', default: false },
     'no-save': { type: 'boolean', default: false },
@@ -102,11 +110,21 @@ function agentSettings(name) {
   };
 }
 
-function defaultRunId(conditionNames) {
-  const base = `${localDate()}-${conditionNames.join('+')}`;
+function defaultRunId(conditionNames, fixture) {
+  const base = `${localDate()}-${conditionNames.join('+')}${fixture === 'basic' ? '' : `-${fixture}`}`;
   let id = base;
   for (let index = 2; existsSync(join(workdir, id)); index += 1) id = `${base}-${index}`;
   return id;
+}
+
+/** The full hash of a commit named on the command line, when this checkout knows it. */
+function fullCommit(commit) {
+  if (!commit) return null;
+  try {
+    return run('git', ['rev-parse', '--verify', `${commit}^{commit}`], { cwd: repoDir });
+  } catch {
+    return commit;
+  }
 }
 
 const transcriptFiles = (logDir) =>
@@ -230,6 +248,7 @@ async function writeResults(context, records) {
       createdAt: context.createdAt,
       date: context.date,
       conditions: context.conditionNames,
+      fixture: context.fixture ?? 'basic',
       envui: { ...context.envui, tarball: basename(context.envui.tarball ?? '') },
       agents: context.agents,
       settings: context.settings,
@@ -271,10 +290,13 @@ async function main() {
     if (!conditions[conditionName]) throw new Error(`Unknown condition ${conditionName}`);
     return conditions[conditionName];
   });
+  const fixture = options.fixture;
+  if (!fixtures[fixture]) throw new Error(`Unknown fixture ${fixture}`);
+  const fixtureDirs = fixtures[fixture].map((layer) => join(benchDir, 'fixtures', layer));
   const agentNames = list(options.agents);
   for (const agentName of agentNames) agentSettings(agentName);
   const tasks = selectTasks();
-  const runId = options['run-id'] ?? defaultRunId(conditionNames);
+  const runId = options['run-id'] ?? defaultRunId(conditionNames, fixture);
   const runDir = join(workdir, runId);
   if (existsSync(join(runDir, 'results.json')) && !options['dry-run'])
     throw new Error(`Run ${runId} already has results; choose another --run-id.`);
@@ -297,9 +319,18 @@ async function main() {
   const near = audit.markers.find(({ regex }) => regex.test(runDir));
   if (near) throw new Error(`The workdir must be outside ${near.label}.`);
 
-  log(`packing envUI from ${join(repoDir, 'packages/ui')}`);
-  const pack = await packLibrary({ repoDir, cacheDir, build: options.build });
-  const templateDir = await ensureTemplate({ fixtureDir, cacheDir, pack, npmCache, log });
+  let pack;
+  if (options.tarball) {
+    pack = await useTarball({
+      file: options.tarball,
+      commit: fullCommit(options['envui-commit']),
+    });
+    log(`using envUI ${pack.version} from ${pack.tarball}`);
+  } else {
+    log(`packing envUI from ${join(repoDir, 'packages/ui')}`);
+    pack = await packLibrary({ repoDir, cacheDir, build: options.build });
+  }
+  const templateDir = await ensureTemplate({ fixtureDirs, cacheDir, pack, npmCache, log });
   const agentInfo = {};
   for (const agentName of agentNames) {
     let cliVersion = 'unknown';
@@ -318,7 +349,13 @@ async function main() {
     createdAt: new Date().toISOString(),
     date: localDate(),
     conditionNames,
-    envui: { version: pack.version, sha256: pack.sha256, tarball: pack.tarball },
+    fixture,
+    envui: {
+      version: pack.version,
+      sha256: pack.sha256,
+      tarball: pack.tarball,
+      sourceCommit: pack.sourceCommit,
+    },
     agents: agentInfo,
     timeoutMs: Number(options.timeout) * 60_000,
     settings: {

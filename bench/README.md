@@ -6,22 +6,23 @@ Each later agent aid (the AGENTS.md index, the MCP server, the manifest, the lin
 
 ## Contents
 
-| Path                | What it is                                                                                                                                                                                                                                                                                               |
-| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `fixture/`          | A minimal Vite + React 19 + TypeScript app. It installs `@envsemble/envui` from a tarball, imports `styles.css` and renders inside `Theme`. Its `AGENTS.md` matches what apps have today: it says the UI uses `@envsemble/envui` and nothing more. It has a mocked `src/api.ts` and neutral sample data. |
-| `tasks.json`        | 13 tasks. Each has a prompt, phrased the way a product engineer would ask without naming envUI components, and the capabilities envUI already offers for it.                                                                                                                                             |
-| `run.mjs`           | The runner and the CLI.                                                                                                                                                                                                                                                                                  |
-| `lib/agents.mjs`    | How each agent CLI is invoked, the environment it gets, and how its transcript is read.                                                                                                                                                                                                                  |
-| `lib/audit.mjs`     | The isolation audit of each run's transcript.                                                                                                                                                                                                                                                            |
-| `lib/conditions/`   | Conditions. `baseline` changes nothing.                                                                                                                                                                                                                                                                  |
-| `lib/prepare.mjs`   | Packing the library, the installed template, workspaces and git diffs.                                                                                                                                                                                                                                   |
-| `lib/process.mjs`   | Running an agent with a timeout that bounds it, and stopping what it left running.                                                                                                                                                                                                                       |
-| `lib/score.mjs`     | The scorer: static, deterministic, built on the TypeScript compiler API.                                                                                                                                                                                                                                 |
-| `lib/report.mjs`    | Aggregates and the Markdown summary.                                                                                                                                                                                                                                                                     |
-| `lib/paths.mjs`     | Matching paths in any spelling, and redacting them from saved results.                                                                                                                                                                                                                                   |
-| `scoring/*.json`    | Scoring data: raw HTML elements and roles, local-name aliases, and third-party UI packages.                                                                                                                                                                                                              |
-| `test/`             | Unit tests for the runner, the audit and the scorer; part of `npm test`.                                                                                                                                                                                                                                 |
-| `results/<run-id>/` | Saved results: `summary.md` and compact `results.json`. Transcripts are not in git.                                                                                                                                                                                                                      |
+| Path                | What it is                                                                                                                                                                                                                                                                                                         |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `fixtures/basic/`   | A minimal Vite + React 19 + TypeScript app. It installs `@envsemble/envui` from a tarball, imports `styles.css` and renders inside `Theme`. Its `AGENTS.md` matches what apps have today: it says the UI uses `@envsemble/envui` and nothing more. It has a mocked `src/api.ts` and neutral sample data.           |
+| `fixtures/hard/`    | Laid over `basic`: the same app with its own hand-rolled `Button`, `Modal`, `Toolbar` (raw `<button>`s) and `StatusPill` in `src/components/`, a barrel that also re-exports envUI's `Stack` and `Text`, and CSS with hex colors and px values. Agents imitate the code around them, so this fixture has headroom. |
+| `tasks.json`        | 13 tasks. Each has a prompt, phrased the way a product engineer would ask without naming envUI components, and the capabilities envUI already offers for it.                                                                                                                                                       |
+| `run.mjs`           | The runner and the CLI.                                                                                                                                                                                                                                                                                            |
+| `lib/agents.mjs`    | How each agent CLI is invoked, the environment it gets, and how its transcript is read.                                                                                                                                                                                                                            |
+| `lib/audit.mjs`     | The isolation audit of each run's transcript.                                                                                                                                                                                                                                                                      |
+| `lib/conditions/`   | Conditions. `baseline` changes nothing.                                                                                                                                                                                                                                                                            |
+| `lib/prepare.mjs`   | Packing the library, fixture variants, the installed template, workspaces and git diffs.                                                                                                                                                                                                                           |
+| `lib/process.mjs`   | Running an agent with a timeout that bounds it, and stopping what it left running.                                                                                                                                                                                                                                 |
+| `lib/score.mjs`     | The scorer: static, deterministic, built on the TypeScript compiler API.                                                                                                                                                                                                                                           |
+| `lib/report.mjs`    | Aggregates and the Markdown summary.                                                                                                                                                                                                                                                                               |
+| `lib/paths.mjs`     | Matching paths in any spelling, and redacting them from saved results.                                                                                                                                                                                                                                             |
+| `scoring/*.json`    | Scoring data: raw HTML elements and roles, local-name aliases, and third-party UI packages.                                                                                                                                                                                                                        |
+| `test/`             | Unit tests for the runner, the audit and the scorer; part of `npm test`.                                                                                                                                                                                                                                           |
+| `results/<run-id>/` | Saved results: `summary.md` and compact `results.json`. Transcripts are not in git.                                                                                                                                                                                                                                |
 
 ## Running it
 
@@ -29,7 +30,7 @@ Requirements:
 
 - Node 24 and npm.
 - The `claude` CLI and the `codex` CLI, both logged in.
-- A built library.
+- A built library, or a tarball of a released version.
 
 ```sh
 npm ci
@@ -39,20 +40,22 @@ npm run bench -- --condition baseline --agents claude,codex --tasks all
 
 Options:
 
-| Option                                | Default                   | Meaning                                                                  |
-| ------------------------------------- | ------------------------- | ------------------------------------------------------------------------ |
-| `--condition`                         | `baseline`                | One or more conditions, comma-separated                                  |
-| `--agents`                            | `claude,codex`            | Agents to run                                                            |
-| `--tasks`                             | `all`                     | `all`, or task ids such as `sidebar,settings-form`                       |
-| `--concurrency`                       | `4`                       | Runs in parallel                                                         |
-| `--timeout`                           | `12`                      | Minutes per run; the process tree is killed at the limit                 |
-| `--run-id`                            | `<date>-<condition>`      | Name of the run directory and of `results/<run-id>`                      |
-| `--workdir`                           | `%TEMP%/agent-workspaces` | Workspaces, transcripts and caches; must not be near the repository      |
-| `--audit-path`                        | none                      | More folders, comma-separated, that agents must not touch, such as notes |
-| `--model-<agent>`, `--effort-<agent>` | see below                 | Override an agent's model or reasoning effort                            |
-| `--build`                             | off                       | Run `npm run build:library` before packing                               |
-| `--no-save`                           | off                       | Do not write `bench/results/<run-id>/`                                   |
-| `--dry-run`                           | off                       | Prepare one workspace per agent and print the commands and environment   |
+| Option                                | Default                   | Meaning                                                                        |
+| ------------------------------------- | ------------------------- | ------------------------------------------------------------------------------ |
+| `--condition`                         | `baseline`                | One or more conditions, comma-separated                                        |
+| `--agents`                            | `claude,codex`            | Agents to run                                                                  |
+| `--tasks`                             | `all`                     | `all`, or task ids such as `sidebar,settings-form`                             |
+| `--fixture`                           | `basic`                   | `basic` or `hard`                                                              |
+| `--concurrency`                       | `4`                       | Runs in parallel                                                               |
+| `--timeout`                           | `12`                      | Minutes per run; the process tree is killed at the limit                       |
+| `--run-id`                            | `<date>-<condition>`      | Name of the run directory and of `results/<run-id>`; `-hard` is added for hard |
+| `--workdir`                           | `%TEMP%/agent-workspaces` | Workspaces, transcripts and caches; must not be near the repository            |
+| `--tarball`, `--envui-commit`         | pack `packages/ui`        | Measure this `@envsemble/envui` tarball instead, built from that commit        |
+| `--audit-path`                        | none                      | More folders, comma-separated, that agents must not touch, such as notes       |
+| `--model-<agent>`, `--effort-<agent>` | see below                 | Override an agent's model or reasoning effort                                  |
+| `--build`                             | off                       | Run `npm run build:library` before packing                                     |
+| `--no-save`                           | off                       | Do not write `bench/results/<run-id>/`                                         |
+| `--dry-run`                           | off                       | Prepare one workspace per agent and print the commands and environment         |
 
 After a scorer change, rescore an earlier run from its workspaces without running the agents again. The audit runs again too:
 
@@ -60,10 +63,24 @@ After a scorer change, rescore an earlier run from its workspaces without runnin
 npm run bench -- rescore --run-id 2026-10-16-baseline-v2
 ```
 
+### Measuring a released version
+
+A baseline should measure a release, not a branch. Build that release's tarball in a temporary worktree outside the repository's folder, then pass it in:
+
+```sh
+git worktree add --detach "$TEMP/envui-src" <release commit>
+cd "$TEMP/envui-src" && npm ci && npm run build:library
+cd packages/ui && npm pack --pack-destination "$TEMP"
+cd - && git worktree remove --force "$TEMP/envui-src"
+npm run bench -- --tarball "$TEMP/envsemble-envui-<version>.tgz" --envui-commit <release commit>
+```
+
+The results record the tarball's sha256 and the commit. Without `--tarball`, they record the checkout's `HEAD`, with `-dirty` when `packages/ui` has uncommitted changes.
+
 ### What a run does
 
-1. Packs `packages/ui` with `npm pack`.
-2. Installs the fixture once per tarball and fixture version, into `_cache/templates/<hash>`. The tarball becomes `vendor/envsemble-envui.tgz` and the dependency is `file:vendor/envsemble-envui.tgz`, so an agent's own `npm install` still resolves it.
+1. Packs `packages/ui` with `npm pack`, or takes the `--tarball`.
+2. Installs the fixture once per tarball and fixture version, into `_cache/templates/<hash>`. For `hard`, `fixtures/hard/` is copied over `fixtures/basic/` first. The tarball becomes `vendor/envsemble-envui.tgz` and the dependency is `file:vendor/envsemble-envui.tgz`, so an agent's own `npm install` still resolves it.
 3. For each task, agent and condition:
    - copies the template, including `node_modules`, to `<workdir>/<run-id>/<agent>-<task>/`. This is outside the repository, so the source isn't next to the workspace.
    - applies the condition's `setup`, then commits everything as the base commit.
@@ -201,7 +218,7 @@ A component is a candidate when the agent declared it (a PascalCase function, ar
 - its full name is an envUI export or an alias, such as `Modal`, `Sidebar`, `Toggle`, `Dropdown`, `Toast` or `DatePicker`; or
 - its last one to three words match an alias, such as `ConfirmModal`, `SidebarToggle`, `UserMenu` or `StatusBadge`.
 
-A candidate is a duplicate only when its body uses none of the alias's envUI exports. A local `ConfirmDeleteDialog` built on envUI's `Dialog` is composition, not duplication. Composite names such as `SettingsPage` or `ProjectsTableView` are never candidates.
+A candidate is a duplicate only when its body uses none of the alias's envUI exports. A local `ConfirmDeleteDialog` built on envUI's `Dialog` is composition, not duplication. Composite names such as `SettingsPage` or `ProjectsTableView` are never candidates. Components already in the fixture, such as the hard fixture's `Modal`, are not the agent's and don't count; reusing them shows up as capabilities not built with envUI.
 
 ### Raw style values
 
@@ -226,7 +243,7 @@ The transcript tells whether the agent read envUI's own material. "Read envUI do
 
 - **Static.** The scorer doesn't run the app or check behaviour. A capability built with the right component but wired wrongly still counts as covered.
 - **Coverage is by export name.** Using envUI's `Button` for a toggle covers "toggle button" even if `AppShell` would have provided it. That is why the sidebar task lists only `AppShell` for the toggle.
-- **Small fixture, little headroom.** The fixture is small, already uses envUI, and envUI is the only UI package installed. Agents that look in `node_modules` find the shipped docs and skills there. In the baseline, Claude Code scored 100 on every task. A condition can't show an improvement there, so judge it on Codex and on the docs-lookup numbers. A harder fixture variant would add headroom: existing hand-rolled components, more code, raw CSS.
+- **The basic fixture has little headroom.** It is small, already uses envUI, and envUI is the only UI package installed. Agents that look in `node_modules` find the shipped docs and skills there. Judge a condition on Codex, on the `hard` fixture and on the docs-lookup numbers.
 - **One run per task and agent.** Repeat runs before trusting differences of a few points.
 
 ## Adding a condition
@@ -267,7 +284,7 @@ Add an entry to `tasks.json` with:
 - a `prompt` that doesn't name envUI components;
 - `capabilities`, each with the envUI exports that provide it.
 
-If the task needs mocked data or an API call, add it to `fixture/src/api.ts` or `fixture/src/data/`. That changes the template hash, and the next run reinstalls the template.
+If the task needs mocked data or an API call, add it to `fixtures/basic/src/api.ts` or `fixtures/basic/src/data/`. The hard fixture inherits it. That changes the template hash, and the next run reinstalls the template. Check that the task still makes sense in the hard fixture, whose projects page already has a toolbar (Refresh, Share) and a share modal.
 
 ## Cost and time
 

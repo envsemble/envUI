@@ -180,9 +180,12 @@ export function renderSummary(results, tasks) {
   push(`# envUI agent benchmark: ${results.runId}`, '');
   const escaped = runs.filter((run) => run.isolation?.escaped);
   const audited = runs.filter((run) => run.isolation);
+  const source = results.envui.sourceCommit
+    ? `, built from commit ${results.envui.sourceCommit.slice(0, 12)}`
+    : '';
   push(
-    `- Date: ${results.date ?? results.createdAt.slice(0, 10)}; condition${results.conditions.length > 1 ? 's' : ''}: ${results.conditions.map((name) => `\`${name}\``).join(', ')}`,
-    `- envUI ${results.envui.version} from a packed tarball (sha256 ${results.envui.sha256.slice(0, 12)})`,
+    `- Date: ${results.date ?? results.createdAt.slice(0, 10)}; condition${results.conditions.length > 1 ? 's' : ''}: ${results.conditions.map((name) => `\`${name}\``).join(', ')}; fixture: \`${results.fixture ?? 'basic'}\``,
+    `- envUI ${results.envui.version} from a packed tarball (sha256 ${results.envui.sha256}${source})`,
     ...Object.entries(results.agents).map(
       ([name, agent]) =>
         `- ${agent.label} (\`${name}\`): ${agent.cliVersion}, model \`${agent.model}\`, effort \`${agent.effort}\``,
