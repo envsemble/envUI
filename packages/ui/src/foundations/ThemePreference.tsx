@@ -15,7 +15,12 @@ import { Theme, useTheme, type ThemeContrast, type ThemeValue } from './Theme.js
 import { IconButton, type IconButtonProps } from '../actions/Button.js';
 import { DarkMode } from '../icons/DarkMode.js';
 import { LightMode } from '../icons/LightMode.js';
-import { defaultThemeStorageKey, type ThemePreference } from './ThemeBootstrap.js';
+import {
+  bootstrapContrastSource,
+  contrastSourceAttribute,
+  defaultThemeStorageKey,
+  type ThemePreference,
+} from './ThemeBootstrap.js';
 
 interface ThemePreferenceValue {
   /** The stored choice. */
@@ -46,8 +51,9 @@ export interface ThemePreferenceProviderProps {
    * Contrast of the Theme boundary around the children, and of the document root with
    * applyToDocument: high, standard, or system to follow `prefers-contrast: more`, as on Theme.
    * Defaults to the contrast of an enclosing Theme, and to system. With system, the provider
-   * removes from the root only a contrast it wrote; pass the same contrast to
-   * createThemeBootstrapScript so the root has it before the first paint.
+   * removes from the root only a contrast it or the bootstrap script wrote. Pass a contrast that is
+   * fixed for the application to createThemeBootstrapScript too, so the root has it before the
+   * first paint.
    */
   contrast?: ThemeContrast;
   /** Class name for the Theme boundary around the children. */
@@ -123,14 +129,19 @@ export function ThemePreferenceProvider({
     root.classList.add('env-theme');
     root.dataset.envTheme = theme;
     // Like a Theme boundary, the root leaves system contrast to prefers-contrast: more. The
-    // provider removes only a contrast it wrote, so one the page set itself stays.
+    // provider removes only a contrast it wrote, or the bootstrap script wrote for it, so one the
+    // page set itself stays.
+    const owned =
+      wroteContrast.current ||
+      root.getAttribute(contrastSourceAttribute) === bootstrapContrastSource;
     if (contrast !== 'system') {
       root.dataset.envContrast = contrast;
       wroteContrast.current = true;
-    } else if (wroteContrast.current) {
+    } else if (owned) {
       delete root.dataset.envContrast;
       wroteContrast.current = false;
     }
+    root.removeAttribute(contrastSourceAttribute);
     root.style.colorScheme = theme;
     // The browser's own interface, such as a mobile address bar, takes the canvas color. Every
     // theme-color tag follows, including ones written for a system color scheme with media.
