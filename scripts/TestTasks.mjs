@@ -1,0 +1,137 @@
+// Runs the checks of `npm run check`, `npm run check:affected` and `npm run verify` as tasks: each
+// a command with a name, run alone or beside others, its output held back and printed when it ends
+// so parallel tasks don't interleave. A summary with each task's time closes the run.
+import { spawn } from 'node:child_process';
+import { availableParallelism } from 'node:os';
+import { resolve } from 'node:path';
+import { repositoryRoot } from './TestScope.mjs';
+
+export const cores = availableParallelism();
+
+/**
+ * Browser workers: ENVUI_WORKERS (a count or a percentage of the cores), else half the cores.
+ * Playwright reads the same variable in playwright.config.ts.
+ */
+export const browserWorkers = process.env.ENVUI_WORKERS ?? '50%';
+
+const color = process.stdout.isTTY && !process.env.NO_COLOR;
+const paint = (code, text) => (color ? `\u001b[${code}m${text}\u001b[0m` : text);
+export const red = (text) => paint(31, text);
+export const green = (text) => paint(32, text);
+export const yellow = (text) => paint(33, text);
+export const dim = (text) => paint(2, text);
+export const bold = (text) => paint(1, text);
+
+export const seconds = (ms) => `${(ms / 1000).toFixed(1)} s`;
+
+const node = process.execPath;
+/** The command lines of the repository's tools, run with this Node rather than through npm. */
+export const bin = {
+  eslint: [node, resolve(repositoryRoot, 'node_modules/eslint/bin/eslint.js')],
+  stylelint: [node, resolve(repositoryRoot, 'node_modules/stylelint/bin/stylelint.mjs')],
+  prettier: [node, resolve(repositoryRoot, 'node_modules/prettier/bin/prettier.cjs')],
+  tsc: [node, resolve(repositoryRoot, 'node_modules/typescript/bin/tsc')],
+  playwright: [node, resolve(repositoryRoot, 'node_modules/@playwright/test/cli.js')],
+  node: [node],
+  npm: process.platform === 'win32' ? ['npm.cmd'] : ['npm'],
+};
+
+/**
+ * A task: `run` is [command, ...args]; `env` adds variables. `stream` prints its output as it comes,
+ * for the one long task a phase waits on. `optional` failures warn rather than fail.
+ */
+export function task(name, run, options = {}) {
+  return { name, run, ...options };
+}
+
+const results = [];
+
+/** Runs one task and records its result. */
+export function runTask(item) {
+  const started = performance.now();
+  return new Promise((done) => {
+    const [command, ...args] = item.run;
+    const child = spawn(command, args, {
+      cwd: repositoryRoot,
+      env: { ...process.env, FORCE_COLOR: color ? '1' : '0', ...item.env },
+      stdio: ['ignore', 'pipe', 'pipe'],
+      shell: process.platform === 'win32' && command.endsWith('.cmd'),
+    });
+    let output = '';
+    const collect = (chunk) => {
+      if (item.stream) process.stdout.write(chunk);
+      else output += chunk;
+    };
+    child.stdout.on('data', collect);
+    child.stderr.on('data', collect);
+    child.on('error', (error) => {
+      output += String(error);
+    });
+    child.on('close', (code) => {
+      const ms = performance.now() - started;
+      const ok = code === 0;
+      const result = { name: item.name, ok, optional: item.optional, ms, detail: item.detail };
+      results.push(result);
+      const mark = ok ? green('✔') : item.optional ? yellow('!') : red('✖');
+      console.log(
+        `${mark} ${item.name}${item.detail ? dim(` (${item.detail})`) : ''} ${dim(seconds(ms))}`,
+      );
+      if (!ok && !item.stream) console.log(indent(tail(output, 120)));
+      else if (ok && item.echo && output.trim()) console.log(indent(output.trim()));
+      done(result);
+    });
+  });
+}
+
+/** Runs tasks side by side and waits for all of them. */
+export function parallel(tasks) {
+  return Promise.all(tasks.filter(Boolean).map(runTask));
+}
+
+/** Runs tasks one after another; stops at the first failure unless `keepGoing`. */
+export async function series(tasks, { keepGoing = false } = {}) {
+  const done = [];
+  for (const item of tasks.filter(Boolean)) {
+    const result = await runTask(item);
+    done.push(result);
+    if (!result.ok && !result.optional && !keepGoing) break;
+  }
+  return done;
+}
+
+function tail(text, lines) {
+  const all = text.trimEnd().split(/\r?\n/);
+  return (
+    all.length > lines ? [`… ${all.length - lines} earlier lines`, ...all.slice(-lines)] : all
+  ).join('\n');
+}
+
+const indent = (text) =>
+  text
+    .split('\n')
+    .map((line) => `    ${line}`)
+    .join('\n');
+
+/** Prints every task's time and the total, and returns whether all required tasks passed. */
+export function summary(title, started) {
+  const failed = results.filter((result) => !result.ok && !result.optional);
+  const total = performance.now() - started;
+  console.log('');
+  console.log(
+    bold(`${title}: ${failed.length ? red('failed') : green('passed')} in ${seconds(total)}`),
+  );
+  for (const result of [...results].sort((a, b) => b.ms - a.ms))
+    console.log(
+      `  ${result.ok ? green('✔') : result.optional ? yellow('!') : red('✖')} ${result.name.padEnd(34)} ${seconds(result.ms).padStart(8)}`,
+    );
+  return failed.length === 0;
+}
+
+/** Whether Docker answers, for the visual baseline. */
+export function dockerRunning() {
+  return new Promise((done) => {
+    const child = spawn('docker', ['info', '--format', '{{.ServerVersion}}'], { stdio: 'ignore' });
+    child.on('error', () => done(false));
+    child.on('close', (code) => done(code === 0));
+  });
+}
