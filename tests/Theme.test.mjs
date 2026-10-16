@@ -50,6 +50,19 @@ test('Theme shows any theme in its warning, and lets an error from console.error
   assert.match(errors[0], /not \{"theme":"dark","self":"\[Circular\]"\}/);
   assert.match(errors[1], /not \{"size":"1n"\}/);
 
+  // Only a value that contains itself is circular: one that appears twice is shown twice.
+  const shared = { scheme: 'dark' };
+  const deep = { inner: {} };
+  deep.inner.outer = deep;
+  const shown = (theme) => render(h(Theme, { theme }, 'a')).errors;
+  assert.match(
+    shown({ a: shared, b: [shared, shared] })[0],
+    /not \{"a":\{"scheme":"dark"\},"b":\[\{"scheme":"dark"\},\{"scheme":"dark"\}\]\}\./,
+  );
+  assert.match(shown(deep)[0], /not \{"inner":\{"outer":"\[Circular\]"\}\}\./);
+  // A toJSON that returns nothing still leaves a description.
+  assert.match(shown({ toJSON: () => undefined })[0], /not an object\./);
+
   // A console.error that throws, as some test setups make it, fails the render rather than going
   // unnoticed, and the theme is reported again on the next one.
   const original = console.error;

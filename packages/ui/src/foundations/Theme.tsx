@@ -40,15 +40,20 @@ const warnedThemes = new Set<string>();
 function showTheme(theme: unknown): string {
   if (typeof theme !== 'object' || theme === null) return String(theme);
   try {
-    const seen = new WeakSet<object>();
-    return JSON.stringify(theme, (_key, value: unknown) => {
+    // The objects that contain the one being shown: only a value among them is circular, so an
+    // object that merely appears twice is shown both times.
+    const ancestors: unknown[] = [];
+    const shown = JSON.stringify(theme, function (this: unknown, _key, value: unknown) {
       if (typeof value === 'bigint') return `${value}n`;
-      if (typeof value === 'object' && value !== null) {
-        if (seen.has(value)) return '[Circular]';
-        seen.add(value);
-      }
+      if (typeof value !== 'object' || value === null) return value;
+      // `this` holds `value`; the objects shown since, which don't contain it, are left.
+      while (ancestors.length > 0 && ancestors[ancestors.length - 1] !== this) ancestors.pop();
+      if (ancestors.includes(value)) return '[Circular]';
+      ancestors.push(value);
       return value;
-    });
+    }) as string | undefined;
+    // A toJSON that returns undefined, or a function, leaves nothing to show.
+    return shown ?? 'an object';
   } catch {
     // A getter, toJSON or proxy that throws.
     return 'an object';
