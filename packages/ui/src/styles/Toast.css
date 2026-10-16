@@ -10,7 +10,7 @@
   min-width: 0;
   min-height: 3rem;
   /* Toasts float over everything at elevation 2, as menus do: a shadow and a hairline edge, so the
-     fill separates from a surface of its own color. On a light page each variant's edge is its fill
+     fill separates from a surface of its own color. On a light page each tone's edge is its fill
      a step darker rather than the light popup edge, which would ring it like a halo; in dark it is
      the popup edge. The edge is the boundary in high contrast and what forced colors paint once
      the shadow is gone. */
@@ -21,28 +21,28 @@
   color: var(--env-color-fg-on-strong);
   flex-wrap: nowrap;
 }
-.env-toast-neutral {
+.env-toast:where([data-tone='neutral']) {
   --env-toast-fill: var(--env-color-bg-neutral-strong);
   --env-toast-edge: var(--env-color-border-neutral-strong);
   --env-toast-fill-hover: var(--env-color-bg-neutral-strong-hover);
   --env-toast-fill-pressed: var(--env-color-bg-neutral-strong-pressed);
   background: var(--env-toast-fill);
 }
-.env-toast-success {
+.env-toast:where([data-tone='success']) {
   --env-toast-fill: var(--env-color-bg-success-strong);
   --env-toast-edge: var(--env-color-border-success-strong);
   --env-toast-fill-hover: var(--env-color-bg-success-strong-hover);
   --env-toast-fill-pressed: var(--env-color-bg-success-strong-pressed);
   background: var(--env-toast-fill);
 }
-.env-toast-info {
+.env-toast:where([data-tone='info']) {
   --env-toast-fill: var(--env-color-bg-info-strong);
   --env-toast-edge: var(--env-color-border-info-strong);
   --env-toast-fill-hover: var(--env-color-bg-info-strong-hover);
   --env-toast-fill-pressed: var(--env-color-bg-info-strong-pressed);
   background: var(--env-toast-fill);
 }
-.env-toast-error {
+.env-toast:where([data-tone='danger']) {
   --env-toast-fill: var(--env-color-bg-danger-strong);
   --env-toast-edge: var(--env-color-border-danger-strong);
   --env-toast-fill-hover: var(--env-color-bg-danger-strong-hover);
@@ -76,37 +76,20 @@
   min-inline-size: 0;
   white-space: normal;
 }
+/* The dismiss button is a CloseButton on the notice's strong fill: the fill's text color, with the
+   fill's own hover and press steps. Toast.css comes after Button.css, so at equal specificity
+   these colors win over the ghost ones. */
 .env-toast-dismiss {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 var(--env-control-height);
-  width: var(--env-control-height);
-  height: var(--env-control-height);
-  padding: 0;
-  border: 0;
-  border-radius: 100vmax;
-  background: transparent;
+  --env-icon-size: 1.125rem;
   color: inherit;
-  cursor: pointer;
 }
-.env-toast-dismiss .env-icon {
-  width: 1.125rem;
-  height: 1.125rem;
-}
-/* Under a coarse pointer the dismiss button grows to the touch height, as icon buttons do. */
-@media (pointer: coarse) {
-  .env-toast-dismiss {
-    flex-basis: max(var(--env-control-height), var(--env-control-height-touch));
-    width: max(var(--env-control-height), var(--env-control-height-touch));
-    height: max(var(--env-control-height), var(--env-control-height-touch));
-  }
-}
-.env-toast-dismiss:hover {
+.env-toast-dismiss:hover:not(:disabled):not([aria-disabled='true']) {
   background: var(--env-toast-fill-hover);
+  color: inherit;
 }
-.env-toast-dismiss:active {
+.env-toast-dismiss:active:not(:disabled):not([aria-disabled='true']) {
   background: var(--env-toast-fill-pressed);
+  color: inherit;
 }
 .env-toast-dismiss:focus-visible {
   outline: 0.125rem solid var(--env-color-fg-on-strong);
@@ -161,7 +144,7 @@
   margin: 0;
   pointer-events: none;
 }
-/* The CounterBadge of hidden notices sits beyond the stack: above it at the bottom right, and below it,
+/* The CounterBadge of hidden notices sits beyond the stack: above it at the bottom end, and below it,
    centered, at the top center, where notices arrive from above. It takes the neutral toast colors,
    so it reads over any page. */
 .env-toast-viewport > .env-toast-queued-count {
@@ -169,15 +152,20 @@
   background: var(--env-color-bg-neutral-strong);
   color: var(--env-color-fg-on-strong);
 }
-.env-toast-viewport-bottom-right {
+.env-toast-viewport[data-placement='bottom-end'] {
   inset-inline-end: max(var(--env-space-4), env(safe-area-inset-right));
   inset-block-end: max(var(--env-space-4), env(safe-area-inset-bottom));
   flex-direction: column-reverse;
   align-items: flex-end;
 }
-.env-toast-viewport-top-center {
-  inset-inline-start: 50%;
-  transform: translateX(-50%);
+/* In right-to-left text the end is the left edge, so the left safe area pads it. */
+.env-toast-viewport[data-placement='bottom-end']:dir(rtl) {
+  inset-inline-end: max(var(--env-space-4), env(safe-area-inset-left));
+}
+/* Centred by its margins, which hold in either direction. */
+.env-toast-viewport[data-placement='top-center'] {
+  inset-inline: 0;
+  margin-inline: auto;
   inset-block-start: max(var(--env-space-4), env(safe-area-inset-top));
   flex-direction: column;
   align-items: center;
@@ -202,25 +190,17 @@
   transition-timing-function: var(--env-motion-ease-exit);
 }
 @media (prefers-reduced-motion: no-preference) {
-  .env-toast-dismiss {
-    transition-property: background-color, color, border-color, transform;
-    transition-duration: var(--env-motion-duration-fast);
-    transition-timing-function: var(--env-motion-ease);
-  }
-  .env-toast-dismiss:active {
-    transform: scale(0.97);
-  }
   .env-toast-viewport > .env-toast {
     transition:
       opacity var(--env-motion-duration-medium) var(--env-motion-ease),
       transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
   }
-  .env-toast-viewport-bottom-right > .env-toast[data-starting-style],
-  .env-toast-viewport-bottom-right > .env-toast[data-ending-style] {
+  .env-toast-viewport[data-placement='bottom-end'] > .env-toast[data-starting-style],
+  .env-toast-viewport[data-placement='bottom-end'] > .env-toast[data-ending-style] {
     transform: translateY(0.75rem) scale(0.98);
   }
-  .env-toast-viewport-top-center > .env-toast[data-starting-style],
-  .env-toast-viewport-top-center > .env-toast[data-ending-style] {
+  .env-toast-viewport[data-placement='top-center'] > .env-toast[data-starting-style],
+  .env-toast-viewport[data-placement='top-center'] > .env-toast[data-ending-style] {
     transform: translateY(-0.75rem) scale(0.98);
   }
   .env-toast-viewport > .env-toast[data-ending-style] {

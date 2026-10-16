@@ -1,15 +1,16 @@
-import type { ComponentPropsWithRef, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 /**
  * What a notification means, which sets its fill and icon: neutral (no icon), success, info or
- * error.
+ * danger, for an error.
  */
-export type ToastVariant = 'neutral' | 'success' | 'info' | 'error';
+export type ToastTone = 'neutral' | 'success' | 'info' | 'danger';
 /**
- * Where notifications show: bottom-right stacks upward from the bottom corner at the end of the
- * line, the right in left-to-right text; top-center stacks downward from the top of the window.
+ * Where notifications show: bottom-end stacks upward from the bottom corner at the end of the
+ * line, the right in left-to-right text and the left in right-to-left text; top-center stacks
+ * downward from the top of the window.
  */
-export type ToastPlacement = 'bottom-right' | 'top-center';
+export type ToastPlacement = 'bottom-end' | 'top-center';
 /** The one button a notification can offer, such as Undo. */
 export interface ToastAction {
   /** The button's label: a short verb, such as Undo, Retry or View. */
@@ -20,16 +21,6 @@ export interface ToastAction {
    */
   onClick: () => void;
 }
-export interface ToastProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
-  message: string;
-  variant?: ToastVariant;
-  action?: ToastAction;
-  onDismiss?: () => void;
-  dismissLabel?: string;
-  /** Disable announcements for static examples; defaults to true for app feedback. */
-  announce?: boolean;
-}
-
 /** A notification to show with useToast().show(). */
 export interface ToastNotification {
   /**
@@ -38,18 +29,19 @@ export interface ToastNotification {
    */
   message: string;
   /**
-   * What the notification means: neutral, success, info or error. An error persists until it is
-   * dismissed and is announced at once.
+   * What the notification means: neutral, success, info or danger. A danger notification persists
+   * until it is dismissed, is announced at once as an alert and is never hidden behind the count
+   * of older notifications.
    * @default 'neutral'
    */
-  variant?: ToastVariant;
+  tone?: ToastTone;
   /**
    * One button in the notification, such as Undo, with its label and what it runs. A notification
    * with an action persists until it is dismissed, unless duration is set.
    */
   action?: ToastAction;
   /**
-   * Where this notification shows, bottom-right or top-center, instead of the provider's
+   * Where this notification shows, bottom-end or top-center, instead of the provider's
    * defaultPlacement.
    */
   placement?: ToastPlacement;
@@ -64,7 +56,7 @@ export interface ToastNotification {
    * visible, it pauses on hover and keyboard focus, and it starts again in full when the
    * notification returns from behind the hidden count. Infinity or 0 keeps it until it is
    * dismissed; a negative number throws a RangeError.
-   * @default 5000, or Infinity for errors and notifications with an action
+   * @default 5000, or Infinity for danger notifications and notifications with an action
    */
   duration?: number;
 }
@@ -84,14 +76,16 @@ export interface ToastProviderProps {
   /** The application, or the part of it whose components call useToast. */
   children: ReactNode;
   /**
-   * Where notifications show unless show names a placement: bottom-right, stacking upward from the
-   * bottom corner, or top-center, stacking downward from the top.
+   * Where notifications show unless show names a placement: bottom-end, stacking upward from the
+   * bottom corner at the end of the line, or top-center, stacking downward from the top.
+   * @default 'bottom-end'
    */
   defaultPlacement?: ToastPlacement;
   /**
    * How many notifications each placement shows at once, a positive integer. The newest stay
    * visible; older ones wait behind a count of hidden notifications and come back as newer ones
-   * close.
+   * close. Danger notifications always show, and take their places first.
+   * @default 3
    */
   visibleLimit?: number;
 }

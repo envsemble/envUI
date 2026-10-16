@@ -17,7 +17,7 @@ export type { ToastProviderProps as ProviderProps } from './ToastTypes.js';
  */
 function Provider({
   children,
-  defaultPlacement = 'bottom-right',
+  defaultPlacement = 'bottom-end',
   visibleLimit = 3,
 }: ToastProviderProps) {
   if (!Number.isInteger(visibleLimit) || visibleLimit < 1)
@@ -41,8 +41,8 @@ function ManagedToastRegions({
     <ToastManagerContext value={controller.manager}>
       {children}
       {toastPlacements.map((placement) => (
-        <BaseToast.Provider key={placement} timeout={0} limit={visibleLimit}>
-          <ToastRegion placement={placement} controller={controller} />
+        <BaseToast.Provider key={placement} timeout={0} limit={Number.MAX_SAFE_INTEGER}>
+          <ToastRegion placement={placement} controller={controller} visibleLimit={visibleLimit} />
         </BaseToast.Provider>
       ))}
     </ToastManagerContext>
