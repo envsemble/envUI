@@ -42,12 +42,15 @@ export interface ComboboxItem {
   description?: string;
   /** Content before the label, such as an Avatar or an icon; it takes the size of its slot. */
   leading?: ReactNode;
+  /** The option shows but can't be chosen. */
   disabled?: boolean;
 }
 
 /** Options under a heading, which also names the group for assistive technology. */
 export interface ComboboxGroup<Item extends ComboboxItem = ComboboxItem> {
+  /** The group's heading. */
   label: string;
+  /** The options under the heading, in display order. */
   items: readonly Item[];
 }
 
@@ -63,6 +66,7 @@ interface ComboboxSharedProps<Item extends ComboboxItem>
       'value' | 'defaultValue' | 'onChange' | 'type' | 'children' | 'multiple' | 'list' | 'size'
     >,
     FieldProps {
+  /** The text input. */
   ref?: Ref<HTMLInputElement>;
   /** The options, or groups of options under headings, in display order. */
   items: readonly Item[] | readonly ComboboxGroup<Item>[];
@@ -95,7 +99,9 @@ interface ComboboxSharedProps<Item extends ComboboxItem>
   clearLabel?: string;
   /** Accessible name of a chip's remove button; Remove followed by the label by default. */
   removeLabel?: (label: string) => string;
+  /** Whether the list is open; with `onOpenChange` it controls the popup. */
   open?: boolean;
+  /** Whether an uncontrolled list starts open; closed by default. */
   defaultOpen?: boolean;
   /** Called as the popup opens and closes, such as to load the options as it opens. */
   onOpenChange?: (open: boolean) => void;
@@ -107,6 +113,7 @@ interface ComboboxSingleProps<Item extends ComboboxItem> {
   multiple?: false;
   /** The chosen option's value, or null for none. */
   value?: string | null;
+  /** The value an uncontrolled field starts with, and that a form reset restores; none by default. */
   defaultValue?: string | null;
   /** Receives the chosen value and its option, or null twice once the field is cleared. */
   onValueChange?: (value: string | null, item: Item | null) => void;
@@ -117,6 +124,7 @@ interface ComboboxMultipleProps<Item extends ComboboxItem> {
   multiple: true;
   /** The chosen values, in the order they were chosen. */
   value?: readonly string[];
+  /** The values an uncontrolled field starts with, and that a form reset restores; none by default. */
   defaultValue?: readonly string[];
   /** Receives the chosen values and their options. */
   onValueChange?: (value: string[], items: Item[]) => void;

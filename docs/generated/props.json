@@ -1348,7 +1348,7 @@
           "name": "ref",
           "type": "Ref<HTMLInputElement>",
           "required": false,
-          "description": ""
+          "description": "The text input."
         },
         {
           "name": "items",
@@ -1420,13 +1420,13 @@
           "name": "open",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "Whether the list is open; with `onOpenChange` it controls the popup."
         },
         {
           "name": "defaultOpen",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "Whether an uncontrolled list starts open; closed by default."
         },
         {
           "name": "onOpenChange",
@@ -1474,7 +1474,7 @@
           "name": "defaultValue",
           "type": "string | null | readonly string[]",
           "required": false,
-          "description": ""
+          "description": "The value an uncontrolled field starts with, and that a form reset restores; none by default."
         },
         {
           "name": "onValueChange",

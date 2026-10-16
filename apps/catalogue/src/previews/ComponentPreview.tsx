@@ -6,7 +6,7 @@ import {
   DropZonePreview,
 } from './Forms';
 import { NavListPreview, TabsPreview, PagerPreview, PaginationPreview } from './Navigation';
-import { ComboboxPreview, DatePickerPreview } from './Pickers';
+import { DatePickerPreview } from './Pickers';
 import { SurfacePreview, LayoutPreview } from './Layout';
 import { ChipsPreview, RatingPreview, RelativeTimePreview } from './Content';
 import { MarkdownPreview } from './MarkdownContent';
@@ -37,8 +37,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <RadioPreview />;
     case 'select':
       return <SelectPreview />;
-    case 'combobox':
-      return <ComboboxPreview />;
     case 'date-picker':
       return <DatePickerPreview />;
     case 'slider':
