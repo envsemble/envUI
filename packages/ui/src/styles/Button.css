@@ -230,24 +230,25 @@
     position: absolute;
     inset: var(--env-button-hit-slop);
   }
-  .env-button:not(.env-link, [data-row-target]):has(+ *)::before {
+  .env-button:not(.env-link, [data-row-target]):not(:last-child)::before {
     inset-inline-end: 0%;
   }
-  * + .env-button:not(.env-link, [data-row-target])::before {
+  .env-button:not(.env-link, [data-row-target]):not(:first-child)::before {
     inset-inline-start: 0%;
   }
   /* In a column, the neighbours are above and below. */
-  :is(.env-stack, .env-action-group[data-stacked])
-    > .env-button:not(.env-link, [data-row-target])::before {
+  .env-stack > .env-button:not(.env-link, [data-row-target])::before,
+  .env-action-group[data-stacked] > .env-button:not(.env-link, [data-row-target])::before {
     inset: var(--env-button-hit-slop);
   }
-  :is(.env-stack, .env-action-group[data-stacked])
-    > .env-button:not(.env-link, [data-row-target]):has(+ *)::before {
+  .env-stack > .env-button:not(.env-link, [data-row-target]):not(:last-child)::before,
+  .env-action-group[data-stacked]
+    > .env-button:not(.env-link, [data-row-target]):not(:last-child)::before {
     inset-block-end: 0%;
   }
-  :is(.env-stack, .env-action-group[data-stacked])
-    > *
-    + .env-button:not(.env-link, [data-row-target])::before {
+  .env-stack > .env-button:not(.env-link, [data-row-target]):not(:first-child)::before,
+  .env-action-group[data-stacked]
+    > .env-button:not(.env-link, [data-row-target]):not(:first-child)::before {
     inset-block-start: 0%;
   }
 }
