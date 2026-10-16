@@ -70,12 +70,13 @@ One rule reads one mapping table, [`src/data/elements.json`](src/data/elements.j
 
 How an element is matched:
 
-1. A static `role` is checked first, on any JSX element: `<ul role="menu">`, and also `<Surface role="dialog">`. With several roles, the first counts. An element that is the component the role names, such as `<Menu.Root role="menu">`, passes.
+1. A static `role` is checked first, on HTML elements and on components that are not envUI's: `<ul role="menu">`, and also a `<Box role="dialog">` of the application's own or of another library. envUI's components, imported from an envUI entry point, set their own roles, so a role on one refines it and passes: `<Popover role="dialog">`, `<Menu.CheckboxItem role="checkbox">`. With several roles, the first counts. An element that is the component the role names, such as `<Menu.Root role="menu">`, passes.
 2. Otherwise HTML elements are checked in the order of the table, and the first entry whose element and attributes match decides. An `<input>` is matched by its `type`.
 3. Nothing is reported for:
    - what a part renders in place of its own element, through the `render` prop: `<Menu.Item render={<a href="/settings" />}>`;
    - an element hidden from assistive technology and out of the tab order (`aria-hidden` with `tabIndex={-1}`);
    - `<input type="hidden">`;
+   - the `<a href>` of a link adapter, the component that `LinkProvider` renders for envUI's destinations, as the [setup guide](../../docs/setup.md#router-links) writes it: a function whose props are typed `LinkComponentProps`, or one that a `LinkProvider` in the same file takes as its `component`. It draws the anchor itself, because envUI's `Link` would render the adapter again;
    - entries named in `allow`.
 
 Options:
@@ -169,9 +170,15 @@ A CSS module's lookup such as `styles['env-panel']` names a local class and pass
 
 ### no-raw-colors
 
-Reports literal colors in JSX `style` objects: hex colors, color functions with literal channels (`rgb()`, `hsl()`, `hwb()`, `lab()`, `lch()`, `oklab()`, `oklch()`, `color()`), and named colors in properties that take a color, such as `border: '1px solid red'`. Use an envUI color token, `var(--env-color-…)`, so the color follows the theme and keeps its contrast.
+Reports literal colors in JSX `style` objects: hex colors, color functions with literal channels (`rgb()`, `hsl()`, `hwb()`, `lab()`, `lch()`, `oklab()`, `oklch()`, `color()`), and named colors in properties that take a color, such as `border: '1px solid red'`. Use an envUI color token instead, so the color follows the theme and keeps its contrast. The message suggests the semantic role of the property: a text color such as `var(--color-fg-default)` for `color`, `fill` and `stroke`, a `var(--color-bg-…)` background, or a `var(--color-border-…)` boundary for borders and outlines:
 
-Values that depend on state, spread objects and custom properties are checked too, including an inline override of envUI's own tokens. A relative color derived from a token, `hsl(from var(--env-color-fg-link) h s calc(l - 10))`, and `color-mix()` of tokens pass, as do `currentColor`, `transparent` and `url()` references. Style sheets are the [Stylelint config](../stylelint-config/README.md)'s concern. The rule has no options.
+```text
+Raw color #fff in an inline style: use an envUI color token instead, such as var(--color-fg-default) or another var(--color-fg-…) role, so the color follows the theme and keeps its contrast.
+```
+
+The token names come from [`src/data/tokens.json`](src/data/tokens.json). Before every pack, `scripts/SyncTokens.mjs` rewrites it from the library's generated token list (`packages/ui/src/generated/tokens.json` in the envUI repository), so a release names the tokens of the same envUI release, and the tests fail when a message or this README names a token that does not exist.
+
+Values that depend on state, spread objects and custom properties are checked too, including an inline override of envUI's own tokens. A relative color derived from a token, `hsl(from var(--color-fg-link) h s calc(l - 10))`, and `color-mix()` of tokens pass, as do `currentColor`, `transparent` and `url()` references. Style sheets are the [Stylelint config](../stylelint-config/README.md)'s concern. The rule has no options.
 
 ### no-renamed-exports
 
@@ -181,9 +188,21 @@ Reports imports and re-exports from `@envsemble/envui` of names that envUI 0.x e
 MenuItem is not exported by envUI 1.0: use Menu.Item instead (import { Menu } from '@envsemble/envui'). The v1-names codemod in @envsemble/envui-codemods rewrites the old names.
 ```
 
-It also reports members of a namespace import (`envui.Input`, `<envui.Input>`, and `envui.InputProps` in TypeScript), and rendering a name that became a namespace of parts, such as `<Menu>` or `<Table>`, which must now be `<Menu.Root>` or `<Table.Root>`. Type imports count. Only the entry point that exported a name is checked, so an icon named `Input` from `@envsemble/envui/icons` passes. The rule has no options.
+It also reports:
 
-The names come from [`src/data/renames.json`](src/data/renames.json). The canonical rename map belongs to the codemods (`packages/codemods/src/maps/v1.json` in the envUI repository). Before every pack, `scripts/SyncRenames.mjs` rewrites `src/data/renames.json` from that map when it exists, keeping the renames of names that envUI 0.7 exported ([`data/envui-0.7-exports.json`](data/envui-0.7-exports.json)) and leaving out prop, value and class renames. Until the codemods' map exists, the plugin's own copy is used; its `source` field says which one a release carries, and the tests fail when the copy falls behind the codemods' map.
+- members of a namespace import: `envui.Input`, `<envui.Input>`, and `envui.InputProps` in TypeScript;
+- the module and its names reached without an import declaration: `require('@envsemble/envui')`, `import('@envsemble/envui')`, awaited or through `.then()`, names destructured from any module object, as in `const { Input } = envui`, and type queries such as `import('@envsemble/envui').InputProps`;
+- rendering a name that became a namespace of parts, such as `<Menu>` or `<Table>`, which must now be `<Menu.Root>` or `<Table.Root>`, in JSX or through `createElement()`, `React.createElement()` and the JSX runtime's `jsx()`.
+
+Type imports count. A name is checked where it resolves to envUI, so a local `Menu` or a parameter named `envui` that shadows the import passes. Only the entry point that exported a name is checked, so an icon named `Input` from `@envsemble/envui/icons` passes. The rule has no options.
+
+What the codemods' map says to do instead comes with the report:
+
+- A name that became internal gives the map's hint: `LoadingBar is internal in envUI 1.0 and no longer exported. AppShell's loading and loadingLabel props show page progress along the bottom of its topbar; Progress shows the progress of a task.`
+- `Toast` stays importable, because 1.0's `Toast` is the namespace of `Toast.Provider`; rendering `<Toast …/>`, the 0.x manual toast, is reported with its hint: show notifications through `useToast()` inside `Toast.Provider`.
+- Each rendered `DirectionLink` is told its part: `<DirectionLink direction="previous">` is `Pager.Previous`, `direction="next"` is `Pager.Next`, and with a computed `direction` the message names both, each with the value that chooses it.
+
+The names come from [`src/data/renames.json`](src/data/renames.json). The canonical rename map belongs to the codemods (`packages/codemods/src/maps/v1.json` in the envUI repository). Before every pack, `scripts/SyncRenames.mjs` rewrites `src/data/renames.json` from that map when it exists, keeping the renames of names that envUI 0.7 exported ([`data/envui-0.7-exports.json`](data/envui-0.7-exports.json)) and leaving out prop, value and class renames. Each name's entry has `to`, its replacements, and where the map gives them, the `use` hint of a removed name, the `prop` and `values` of a split, and `namespace` for a removed name that 1.0 reuses as a namespace. Until the codemods' map exists, the plugin's own copy is used; its `source` field says which one a release carries, and the tests fail when the copy falls behind the codemods' map.
 
 The plugin's own copy:
 
@@ -223,6 +242,7 @@ Run from the envUI repository root:
 ```sh
 npm test --workspace @envsemble/eslint-plugin-envui           # the rule and package tests
 npm run sync:renames --workspace @envsemble/eslint-plugin-envui  # update the rename map from the codemods
+npm run sync:tokens --workspace @envsemble/eslint-plugin-envui   # update the token names from the library
 npm run dogfood --workspace @envsemble/eslint-plugin-envui     # count reports in the catalogue and test fixture
 ```
 

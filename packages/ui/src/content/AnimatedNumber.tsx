@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, type ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
 

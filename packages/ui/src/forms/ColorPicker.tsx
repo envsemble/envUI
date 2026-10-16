@@ -1,3 +1,5 @@
+'use client';
+
 import { forwardRef, useEffect, useId, useRef, useState } from 'react';
 import { HexColorPicker } from 'react-colorful';
 import { Stack } from '../foundations/Layout.js';

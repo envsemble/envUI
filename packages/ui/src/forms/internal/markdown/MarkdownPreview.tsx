@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, type ReactNode } from 'react';
 import { Markdown, type MarkdownProps } from '../../../content/Markdown.js';
 import { Text } from '../../../foundations/Text.js';

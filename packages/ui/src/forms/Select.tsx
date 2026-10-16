@@ -1,3 +1,5 @@
+'use client';
+
 import { forwardRef, useEffect, useRef, useState } from 'react';
 import { useFieldMetadata } from './internal/useFieldMetadata.js';
 import type { ButtonHTMLAttributes } from 'react';

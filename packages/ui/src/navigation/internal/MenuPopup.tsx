@@ -1,3 +1,5 @@
+'use client';
+
 import { createContext, type ComponentPropsWithRef } from 'react';
 
 export type MenuPopupDensity = 'standard' | 'compact';

@@ -32,9 +32,22 @@ const attributeName = /(?<![A-Za-z0-9_-])env-[a-z0-9][a-z0-9_-]*(?![A-Za-z0-9_-]
 /** A whole whitespace-separated `env-*` class token. */
 const classToken = /(?<!\S)env-[a-z0-9][a-z0-9_-]*(?!\S)/g;
 
+/**
+ * Renames the classes that depend on an ancestor first: in one selector, a `.from` class after the
+ * `.ancestor` class, as in `.env-diff-count > .env-counter-label`, becomes `.to`.
+ */
+function renameWithin(text, classesWithin) {
+  let output = text;
+  for (const { ancestor, from, to } of classesWithin) {
+    const inside = new RegExp(String.raw`(\.${ancestor}(?![\w-])[^{},;]*?\.)${from}(?![\w-])`, 'g');
+    output = output.replace(inside, (match, before) => before + to);
+  }
+  return output;
+}
+
 /** Renames class selectors, attribute selectors and custom properties in style sheet text. */
-export function renameInStyles(text, classes) {
-  return text
+export function renameInStyles(text, classes, classesWithin = []) {
+  return renameWithin(text, classesWithin)
     .replace(classAttribute, (selector) =>
       selector.replace(attributeName, (name) => renameClass(name, classes)),
     )
@@ -58,9 +71,12 @@ const renameClassTokens = (text, classes, atStart) =>
     offset === 0 && !atStart ? name : renameClass(name, classes),
   );
 
-/** Offsets of the start of each line, with the line breaks Babel counts. */
+/**
+ * Offsets of the start of each line, with the line breaks Babel counts. Babel reads a byte order
+ * mark as no column, so the first line starts after it.
+ */
 function lineStarts(source) {
-  const starts = [0];
+  const starts = [source.startsWith('\uFEFF') ? 1 : 0];
   const lineBreak = /\r\n?|\n|\u2028|\u2029/g;
   for (let match = lineBreak.exec(source); match; match = lineBreak.exec(source))
     starts.push(match.index + match[0].length);
@@ -68,10 +84,10 @@ function lineStarts(source) {
 }
 
 export default function transform(file, api, options = {}) {
-  const { classes } = loadMap(options.map);
+  const { classes, classesWithin } = loadMap(options.map);
   if (!file.source.includes('env-')) return undefined;
   if (styleSheets.has(extname(file.path).toLowerCase())) {
-    const output = renameInStyles(file.source, classes);
+    const output = renameInStyles(file.source, classes, classesWithin);
     return output === file.source ? file.source : output;
   }
 
@@ -164,12 +180,15 @@ export default function transform(file, api, options = {}) {
 
   const rewrite = (text, mode, atStart) =>
     mode === 'selector'
-      ? renameInStyles(text, classes)
+      ? renameInStyles(text, classes, classesWithin)
       : mode === 'property'
         ? renameCustomProperties(text, classes)
         : mode === 'var'
           ? renameVariables(text, classes)
           : renameClassTokens(text, classes, atStart);
+
+  // Babel gives a template's raw text with its line breaks as \n, whatever the file's are.
+  const sameText = (source, raw) => source === raw || source.replace(/\r\n?/g, '\n') === raw;
 
   const edits = [];
   for (const [node, mode] of modes) {
@@ -178,7 +197,7 @@ export default function transform(file, api, options = {}) {
       const start = offset(node.loc.start) + 1;
       const end = offset(node.loc.end) - 1;
       const raw = file.source.slice(start - 1, end + 1);
-      if (raw !== node.extra.raw) continue;
+      if (!sameText(raw, node.extra.raw)) continue;
       const text = file.source.slice(start, end);
       const next = rewrite(text, mode, true);
       if (next !== text) edits.push({ start, end, text: next });
@@ -189,7 +208,7 @@ export default function transform(file, api, options = {}) {
       const start = offset(quasi.loc.start);
       const end = offset(quasi.loc.end);
       const text = file.source.slice(start, end);
-      if (text !== quasi.value.raw) return;
+      if (!sameText(text, quasi.value.raw)) return;
       const next = rewrite(text, mode, index === 0);
       if (next !== text) edits.push({ start, end, text: next });
     });

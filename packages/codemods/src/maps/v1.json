@@ -145,6 +145,10 @@
     "env-direction-links": "env-pager",
     "env-direction-link": "env-pager-link"
   },
+  "classesWithin": {
+    "$comment": "Class renames that depend on an ancestor, by the ancestor's old class: 0.7's DiffCount labelled itself with the counter's label class, which 1.0's DiffStat names for itself. In a selector that puts the old class inside the ancestor, such as `.env-diff-count .env-counter-label`, the class takes this name instead of the one in classes. Markup is not changed by context: a className is renamed by classes alone.",
+    "env-diff-count": { "env-counter-label": "env-diff-stat-label" }
+  },
   "docs": {
     "$comment": "Old documentation page slug (docs/components/<slug>.md and the catalogue route components/<slug>) to the new one.",
     "fields": "text-field",

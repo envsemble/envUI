@@ -1,3 +1,5 @@
+'use client';
+
 import { forwardRef } from 'react';
 import type { HTMLAttributes, ReactElement, ReactNode, RefObject } from 'react';
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';

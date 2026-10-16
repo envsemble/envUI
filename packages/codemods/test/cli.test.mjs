@@ -65,7 +65,11 @@ test('--dry reports changes and warnings without writing', () => {
   const result = cli('v1-names', 'src', '--dry', '--print', '--ignore-pattern=legacy');
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /Running in dry mode/);
-  assert.match(result.stdout, /<Menu\.Separator \/>/);
+  // Each file that would change is named, and printed under its name.
+  assert.match(result.stdout, /^Would change src[\\/]menu\.tsx$/m);
+  assert.match(result.stdout, /^Would change src[\\/]pager\.tsx$/m);
+  assert.match(result.stdout, /^==> src[\\/]menu\.tsx <==\n(?:.*\n)*?.*<Menu\.Separator \/>/m);
+  assert.doesNotMatch(result.stdout, /legacy/);
   assert.match(
     result.stdout,
     /REP src[\\/]pager\.tsx line 9: DirectionLink has a dynamic, spread or missing direction/,
@@ -80,6 +84,9 @@ test('a run rewrites files and skips node_modules, dist and ignored paths', () =
   const names = cli('v1-names', '--ignore-pattern=src/legacy/**');
   assert.equal(names.status, 0, names.stderr);
   assert.match(names.stdout, /2 ok/);
+  assert.match(names.stdout, /^Changed src[\\/]menu\.tsx$/m);
+  // Without --print, only the names.
+  assert.doesNotMatch(names.stdout, /==>/);
   assert.equal(read(join(project, 'src/menu.tsx')), read(fixture('v1-names', 'menu.output.tsx')));
   assert.equal(
     read(join(project, 'src/pager.tsx')),

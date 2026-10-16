@@ -1,17 +1,23 @@
 // Generated from packages/ui/tokens by `npm run tokens:build`. Do not edit: change the tokens and rebuild.
-// Internal for now: the package does not export it yet.
+// Internal for now: the package neither exports nor ships it yet.
 
 /** The themes Tokens.css builds: each color scheme at standard and high contrast. */
 export const themes = ['light', 'dark', 'light-high-contrast', 'dark-high-contrast'] as const;
 export type ThemeName = (typeof themes)[number];
+
+/** A token's CSS value: one value, or a value per part of a composite token such as typography. */
+export type TokenValue = string | Readonly<Record<string, string>>;
 
 export interface TokenDefinition {
   /** The CSS custom property that carries the token. */
   cssVariable: `--${string}`;
   /** The DTCG type. */
   type: string;
-  /** The CSS value in each theme, with aliases resolved. */
-  values: Readonly<Record<ThemeName, string>>;
+  /**
+   * The value Tokens.css gives in each theme, with aliases resolved. Conditions that
+   * TokensHandwritten.css adds, such as the touch sizes under a coarse pointer, are not in it.
+   */
+  values: Readonly<Record<ThemeName, TokenValue>>;
 }
 
 /** Every token, by its DTCG path. */

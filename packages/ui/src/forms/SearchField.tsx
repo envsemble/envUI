@@ -1,3 +1,5 @@
+'use client';
+
 import { forwardRef, useRef, useState } from 'react';
 import { Search } from '../icons/Search.js';
 import { Close } from '../icons/Close.js';

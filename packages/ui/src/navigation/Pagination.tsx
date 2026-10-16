@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useState, type ComponentPropsWithRef, type ReactNode } from 'react';
 import { IconButton, type ButtonVariant } from '../actions/Button.js';
 import { Tooltip } from '../feedback/Tooltip.js';

@@ -1,3 +1,5 @@
+'use client';
+
 import { useCallback, useLayoutEffect, useRef } from 'react';
 import { Toast as BaseToast } from '@base-ui/react/toast';
 import { Button } from '../../actions/Button.js';

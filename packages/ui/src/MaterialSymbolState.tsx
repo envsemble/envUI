@@ -1,3 +1,5 @@
+'use client';
+
 import { createContext, useContext, type ReactNode } from 'react';
 
 const MaterialSymbolFillContext = createContext<boolean | undefined>(undefined);

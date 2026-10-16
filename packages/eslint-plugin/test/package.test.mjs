@@ -63,11 +63,13 @@ test('the package ships the plugin, its data and its documentation, and nothing 
     'package.json',
     'src/data/elements.json',
     'src/data/renames.json',
+    'src/data/tokens.json',
     'src/index.js',
     'src/rules/no-html-elements.js',
     'src/rules/no-private-classes.js',
     'src/rules/no-raw-colors.js',
     'src/rules/no-renamed-exports.js',
+    'src/tokens.js',
     'src/utilities.js',
   ]);
 });

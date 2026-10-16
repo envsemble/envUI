@@ -54,3 +54,10 @@ li.env-nav-list-item.env-nav-list-item-selected .env-nav-list-item-dot {
 [data-variant='env-notice'] {
   color: inherit;
 }
+
+/* DiffCount's label had the counter's class; DiffStat names it for itself. */
+.env-diff-stat .env-diff-stat-label,
+.env-diff-stat:hover > .env-diff-stat-label,
+.env-counter-badge .env-counter-badge-label {
+  clip-path: inset(50%);
+}

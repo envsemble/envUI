@@ -19,10 +19,19 @@ const libraryDirectory = resolve(repositoryRoot, 'packages/ui');
 export const tokensDirectory = resolve(libraryDirectory, 'tokens');
 const configFile = pathToFileURL(resolve(libraryDirectory, 'terrazzo.config.mjs'));
 
-/** Builds the tokens. With `check`, compares instead of writing and throws when anything is stale. */
-export async function buildTokens({ check = false, logger = new Logger({ level: 'warn' }) } = {}) {
+/**
+ * Builds the tokens. With `check`, compares instead of writing and throws when anything is stale.
+ * `tokensDirectory` and `outDir` (file URLs ending in a slash) build other tokens elsewhere, as
+ * the tests do.
+ */
+export async function buildTokens({
+  check = false,
+  logger = new Logger({ level: 'warn' }),
+  tokensDirectory,
+  outDir,
+} = {}) {
   // A fresh config per build, so a running dev server reads the token files anew.
-  const rawConfig = createConfig();
+  const rawConfig = createConfig({ tokensDirectory, outDir });
   const config = defineConfig(rawConfig, { cwd: new URL('./', configFile), logger });
   const sources = await Promise.all(
     config.tokens.map(async (filename) => ({ filename, src: await readFile(filename, 'utf8') })),

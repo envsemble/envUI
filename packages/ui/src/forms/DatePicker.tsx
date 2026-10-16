@@ -1,3 +1,5 @@
+'use client';
+
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { Popover as BasePopover } from '@base-ui/react/popover';
 import {

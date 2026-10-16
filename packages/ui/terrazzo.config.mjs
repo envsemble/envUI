@@ -3,13 +3,15 @@
 // `npm run tokens:build`, which formats the output with Prettier; `npm run tokens:check` fails when
 // the committed output is stale. `npx tz check --config packages/ui/terrazzo.config.mjs` only lints
 // the tokens. See docs/library-development.md.
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { RECOMMENDED_CONFIG } from '@terrazzo/parser';
 import css from '@terrazzo/plugin-css';
 import { converter, formatHex } from 'culori';
 
-const resolverFile = new URL('./tokens/envui.resolver.json', import.meta.url);
-const removedFile = new URL('./tokens/removed-tokens.json', import.meta.url);
+/** The token sources, and where the build writes; a test can build other tokens elsewhere. */
+export const defaultTokensDirectory = new URL('./tokens/', import.meta.url);
+export const defaultOutDir = new URL('./src/', import.meta.url);
+const resolverIn = (directory) => new URL('envui.resolver.json', directory);
 
 /** The vendor key of envUI's `$extensions`. */
 const extension = 'com.envsemble.envui';
@@ -76,7 +78,8 @@ function declaredTokens(document, path = [], ids = []) {
 }
 
 /** IDs of the tokens one context of a resolver modifier overrides, read from its sources. */
-export function contextTokens(modifier, context) {
+export function contextTokens(modifier, context, tokensDirectory = defaultTokensDirectory) {
+  const resolverFile = resolverIn(tokensDirectory);
   const resolver = JSON.parse(readFileSync(resolverFile, 'utf8'));
   const sources = resolver.modifiers[modifier].contexts[context];
   return sources.flatMap((source) =>
@@ -233,11 +236,71 @@ const uniqueNamesRule = {
 };
 
 /**
+ * The custom properties a style sheet declares for every element it styles, outside at-rules such
+ * as the coarse-pointer overrides, which change a token's value only where they apply.
+ */
+export function unconditionalCustomProperties(css) {
+  const names = new Set();
+  const blocks = [];
+  let prelude = '';
+  const declaration = () => {
+    const name = prelude.match(/^\s*(--[\w-]+)\s*:/)?.[1];
+    if (name && !blocks.includes('at-rule')) names.add(name);
+    prelude = '';
+  };
+  for (const character of css.replace(/\/\*[\s\S]*?\*\//g, '')) {
+    if (character === '{') {
+      blocks.push(prelude.trim().startsWith('@') ? 'at-rule' : 'rule');
+      prelude = '';
+    } else if (character === '}') {
+      declaration();
+      blocks.pop();
+    } else if (character === ';') declaration();
+    else prelude += character;
+  }
+  return names;
+}
+
+/**
+ * Fails the build when two tokens would declare one custom property, or when TokensHandwritten.css
+ * declares one of the tokens' for every theme: Tokens.css would keep only the last declaration,
+ * and TokensHandwritten.css, which loads after it, would silently replace the token. A composite
+ * token, such as typography, also declares a property per part, `--type-body-font-size`.
+ */
+function checkCustomProperties(list, handwrittenFile) {
+  const owners = new Map();
+  for (const token of list) {
+    const parts = Object.values(token.values).find(
+      ({ css }) => css && typeof css === 'object',
+    )?.css;
+    const names = [
+      token.cssVariable,
+      ...Object.keys(parts ?? {}).map((part) => `${token.cssVariable}-${part}`),
+    ];
+    for (const name of names) {
+      if (owners.has(name))
+        throw new Error(
+          `${owners.get(name)} and ${token.id} both become ${name}: rename one of them.`,
+        );
+      owners.set(name, token.id);
+    }
+  }
+  if (!existsSync(handwrittenFile)) return;
+  for (const name of unconditionalCustomProperties(readFileSync(handwrittenFile, 'utf8')))
+    if (owners.has(name))
+      throw new Error(
+        `TokensHandwritten.css declares ${name}, which the token ${owners.get(name)} becomes: move the hand-written value into the token, or give one of them another name.`,
+      );
+}
+
+/**
  * envUI's own plugin: the lint rules, and the generated token modules, a typed TypeScript module, a
  * JSON token list for the docs, and the migration map from the 0.7 custom properties to the roles.
- * The modules carry each token's value in every theme, as the browser resolves Tokens.css.
+ * The modules carry each token's value in every theme, as the browser resolves Tokens.css alone:
+ * TokensHandwritten.css can change a few of them under a condition, such as the touch sizes of
+ * --control-height and --title-bar-height under a coarse pointer, and those values are not in them.
  */
-function envui() {
+function envui({ removedFile, handwrittenFile }) {
   return {
     name: 'envui',
     lint: () => ({
@@ -273,11 +336,19 @@ function envui() {
         [theme, ...(fallback[theme] ?? [])]
           .map((layer) => declared[layer].get(name))
           .find((value) => value !== undefined);
-      const resolve = (theme, name) => {
-        const value = cssValue(theme, name);
-        const alias = value?.match(/^var\((--[\w-]+)\)$/);
+      // A composite token, such as typography, has a CSS value per part: { 'font-size': … }.
+      const resolveValue = (theme, value) => {
+        if (value && typeof value === 'object')
+          return Object.fromEntries(
+            Object.entries(value).map(([part, partValue]) => [
+              part,
+              resolveValue(theme, partValue),
+            ]),
+          );
+        const alias = typeof value === 'string' ? value.match(/^var\((--[\w-]+)\)$/) : null;
         return alias ? resolve(theme, alias[1]) : value;
       };
+      const resolve = (theme, name) => resolveValue(theme, cssValue(theme, name));
       const ids = Object.keys(tokens)
         .filter((id) => !internal(id))
         .sort((a, b) => a.localeCompare(b, 'en', { numeric: true }));
@@ -310,6 +381,7 @@ function envui() {
           values,
         };
       });
+      checkCustomProperties(list, handwrittenFile);
       const header =
         'Generated from packages/ui/tokens by `npm run tokens:build`. Do not edit: change the tokens and rebuild.';
       outputFile(
@@ -351,11 +423,12 @@ function envui() {
         }),
       );
 
-      let module = `// ${header}\n// Internal for now: the package does not export it yet.\n\n`;
+      let module = `// ${header}\n// Internal for now: the package neither exports nor ships it yet.\n\n`;
       module += `/** The themes Tokens.css builds: each color scheme at standard and high contrast. */\n`;
       module += `export const themes = ${JSON.stringify(themes.map((theme) => theme.name))} as const;\n`;
       module += `export type ThemeName = (typeof themes)[number];\n\n`;
-      module += `export interface TokenDefinition {\n  /** The CSS custom property that carries the token. */\n  cssVariable: \`--\${string}\`;\n  /** The DTCG type. */\n  type: string;\n  /** The CSS value in each theme, with aliases resolved. */\n  values: Readonly<Record<ThemeName, string>>;\n}\n\n`;
+      module += `/** A token's CSS value: one value, or a value per part of a composite token such as typography. */\nexport type TokenValue = string | Readonly<Record<string, string>>;\n\n`;
+      module += `export interface TokenDefinition {\n  /** The CSS custom property that carries the token. */\n  cssVariable: \`--\${string}\`;\n  /** The DTCG type. */\n  type: string;\n  /**\n   * The value Tokens.css gives in each theme, with aliases resolved. Conditions that\n   * TokensHandwritten.css adds, such as the touch sizes under a coarse pointer, are not in it.\n   */\n  values: Readonly<Record<ThemeName, TokenValue>>;\n}\n\n`;
       module += `/** Every token, by its DTCG path. */\n`;
       module += `export const tokens = {\n`;
       for (const token of list) {
@@ -374,12 +447,15 @@ function envui() {
 }
 
 /** A fresh config, so a long-running build (the catalogue's dev server) reads the tokens anew. */
-export function createConfig() {
-  const dark = contextTokens('colorScheme', 'dark');
-  const high = contextTokens('contrast', 'high');
-  const highSource = JSON.parse(
-    readFileSync(new URL('./tokens/contrast/high.tokens.json', import.meta.url), 'utf8'),
-  );
+export function createConfig({
+  tokensDirectory = defaultTokensDirectory,
+  outDir = defaultOutDir,
+} = {}) {
+  const resolverFile = resolverIn(tokensDirectory);
+  const source = (path) => JSON.parse(readFileSync(new URL(path, tokensDirectory), 'utf8'));
+  const dark = contextTokens('colorScheme', 'dark', tokensDirectory);
+  const high = contextTokens('contrast', 'high', tokensDirectory);
+  const highSource = source('contrast/high.tokens.json');
   const pointers = {};
   (function collect(node, path) {
     for (const [key, value] of Object.entries(node)) {
@@ -396,7 +472,7 @@ export function createConfig() {
   const block = (selector, contents) => `${selector} {\n  ${contents}\n}`;
   return {
     tokens: [resolverFile],
-    outDir: new URL('./src/', import.meta.url),
+    outDir,
     plugins: [
       withoutDescriptions(
         css({
@@ -431,7 +507,10 @@ export function createConfig() {
           ],
         }),
       ),
-      envui(),
+      envui({
+        removedFile: new URL('removed-tokens.json', tokensDirectory),
+        handwrittenFile: new URL('styles/TokensHandwritten.css', outDir),
+      }),
     ],
     lint: {
       build: { enabled: true },
@@ -443,22 +522,8 @@ export function createConfig() {
         'envui/high-contrast': [
           'error',
           {
-            light: declaredTokens(
-              JSON.parse(
-                readFileSync(
-                  new URL('./tokens/base/contrast-high.tokens.json', import.meta.url),
-                  'utf8',
-                ),
-              ),
-            ),
-            dark: declaredTokens(
-              JSON.parse(
-                readFileSync(
-                  new URL('./tokens/color-scheme/dark-contrast-high.tokens.json', import.meta.url),
-                  'utf8',
-                ),
-              ),
-            ),
+            light: declaredTokens(source('base/contrast-high.tokens.json')),
+            dark: declaredTokens(source('color-scheme/dark-contrast-high.tokens.json')),
             pointers,
           },
         ],

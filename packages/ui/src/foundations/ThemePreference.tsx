@@ -1,3 +1,5 @@
+'use client';
+
 import {
   createContext,
   useCallback,
@@ -13,12 +15,6 @@ import { IconButton, type IconButtonProps } from '../actions/Button.js';
 import { DarkMode } from '../icons/DarkMode.js';
 import { LightMode } from '../icons/LightMode.js';
 import { defaultThemeStorageKey, type ThemePreference } from './ThemeBootstrap.js';
-
-export {
-  createThemeBootstrapScript,
-  type ThemePreference,
-  type ThemeBootstrapOptions,
-} from './ThemeBootstrap.js';
 
 interface ThemePreferenceValue {
   /** The stored choice. */

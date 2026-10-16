@@ -1,3 +1,5 @@
+'use client';
+
 import { createContext, useContext } from 'react';
 
 /** Whether the shell sidebar shows icons only. AppShell provides it to its navigation. */

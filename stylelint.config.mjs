@@ -3,34 +3,20 @@
 // requires the recorded counts to match the CSS exactly; anything new fails. See
 // docs/library-development.md.
 import stylelint from 'stylelint';
+// The px allowlist, the raw color functions and the z-index values are the ones envUI's Stylelint
+// config ships, so applications and the library follow the same rules.
+import {
+  hairlineProperties,
+  rawColorFunction,
+  stackingValues,
+} from '@envsemble/stylelint-config-envui';
 
 const {
   createPlugin,
   utils: { report, ruleMessages, validateOptions },
 } = stylelint;
 
-/** Color functions with literal channels; relative colors derived from a token (`hsl(from …)`) pass. */
-const rawColorFunction = '/\\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\\((?!\\s*from\\b)/i';
 const hexColor = '/#[\\da-f]{3,8}\\b/i';
-
-/**
- * Where px may appear: hairlines and offsets that must not scale with the text, such as border and
- * outline widths, focus-ring offsets and shadow offsets. Custom properties take px only when their
- * name ends in one of those: `--…-border-width`, `--…-ring-offset`, `--…-shadow`, `--…-hairline`.
- * Radii and table spacing scale, so they take rem.
- */
-const hairlineProperties = [
-  '/^border(?:-(?:top|right|bottom|left|block|inline)(?:-(?:start|end))?)?(?:-width)?$/',
-  '/^outline(?:-width|-offset)?$/',
-  '/^column-rule(?:-width)?$/',
-  'box-shadow',
-  'text-shadow',
-  'filter',
-  'text-decoration-thickness',
-  'text-underline-offset',
-  '/^--[\\w-]*(?:border|outline|ring|divider|rule|stroke)-(?:width|offset)$/',
-  '/^--[\\w-]*(?:shadow|hairline)$/',
-];
 
 /**
  * Where em may appear: typography that follows the element's own font size rather than the
@@ -130,7 +116,7 @@ export default {
     'declaration-property-value-disallowed-list': { '/.*/': [rawColorFunction] },
     // Stacking order and weights come from tokens.
     'declaration-property-value-allowed-list': {
-      'z-index': ['auto', '/^var\\(--/', '/^calc\\(.*var\\(--/'],
+      'z-index': stackingValues,
       // A range such as `100 900` is a variable font's weights in @font-face.
       'font-weight': ['inherit', 'normal', '/^var\\(--/', '/^\\d+\\s+\\d+$/'],
     },

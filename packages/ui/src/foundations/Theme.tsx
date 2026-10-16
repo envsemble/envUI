@@ -1,3 +1,5 @@
+'use client';
+
 import { createContext, useContext, type ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
 

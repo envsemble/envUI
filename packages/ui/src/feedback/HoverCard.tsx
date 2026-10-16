@@ -1,3 +1,5 @@
+'use client';
+
 import { PreviewCard as BasePreviewCard } from '@base-ui/react/preview-card';
 import { useRef, useState, type FocusEvent, type ReactElement, type ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';

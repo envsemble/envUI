@@ -178,6 +178,9 @@ before(
       barrelIcon: renderToString(h(BarrelHome)), customIcon: renderToString(custom),
       selectedNavigation: renderToString(h(ui.NavList.Item, { selected: true, icon: h(Home, { filled: false }) }, 'Home')),
       unselectedNavigation: renderToString(h(ui.NavList.Item, { icon: h(Home, { filled: true }) }, 'Home')),
+      navigationWrapped: renderToString(h(ui.NavList.Root, null,
+        h('li', { className: 'own' }, h('div', null, h(ui.NavList.Item, { href: '/own' }, 'Own'))),
+        h(ui.NavList.Item, { href: '/outer', trailing: h(ui.NavList.Item, { href: '/inner' }, 'Inner') }, 'Outer'))),
       navigationList: renderToString(h(ui.NavList.Root, { 'aria-label': 'Main' },
         h(ui.NavList.Item, { href: '/home' }, 'Home'),
         h(ui.NavList.Group, { label: 'Settings' }, h(ui.NavList.Item, { href: '/profile' }, 'Profile')))),
@@ -227,6 +230,15 @@ test('a navigation list renders its items and groups as list items', () => {
   );
 });
 
+test("a navigation list's item list items are its own items only", () => {
+  const html = ssr.navigationWrapped;
+  // An item in the application's own <li> renders no second one, nor does an item inside an item.
+  assert.match(html, /^<ul class="env-nav-list"><li class="own"><div><a [^>]*href="\/own"/);
+  assert.equal(html.match(/<li/g).length, 2, html);
+  assert.match(html, /<li><a [^>]*href="\/outer"/);
+  assert.match(html, /<span class="env-nav-list-item-trailing"><a [^>]*href="\/inner"/);
+});
+
 test('no 0.x name of the rename map is exported, and every namespace is', async () => {
   const map = JSON.parse(
     await readFile(join(repository, 'packages/codemods/src/maps/v1.json'), 'utf8'),
@@ -270,6 +282,8 @@ test('a packed consumer resolves compiled public exports and its own React insta
   assert.match(ssr.homeModule, /\/dist\/icons\/Home\.js$/);
   assert.match(ssr.reactModule, /\/consumer\/node_modules\/react\/index\.js$/);
   assert.equal(existsSync(join(installedDirectory, 'src')), false);
+  // The generated token module is internal, so it does not ship.
+  assert.equal(existsSync(join(installedDirectory, 'dist/generated')), false);
   for (const name of [
     'Theme',
     'useTheme',

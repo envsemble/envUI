@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import * as v1Names from '../src/transforms/v1-names.mjs';
-import { applyTransform, fixtures, map, runTransform } from './helpers.mjs';
+import { applyTransform, encodings, fixtures, map, runTransform } from './helpers.mjs';
 
 const library = '@envsemble/envui';
 const bootstrap = '@envsemble/envui/theme-bootstrap';
@@ -18,6 +18,11 @@ const reports = {
   'local-exports.tsx': [
     'line 3: exports Menu, which is the Menu namespace in 1.0; the old component is Menu.Root.',
     'line 3: exports MenuItem, which is Menu.Item in 1.0 and cannot be exported by its old name: export the Menu namespace or a constant instead.',
+  ],
+  'namespace-destructuring.tsx': [
+    'line 5: destructures Root and Item from Menu, which is the Menu namespace in 1.0, and stays as it is; the 0.x component is Menu.Root.',
+    'line 6: destructures Cell from ui.Table, which is the Table namespace in 1.0, and stays as it is; the 0.x component is ui.Table.Root.',
+    'line 8: destructures Head from Table, which is the Table namespace in 1.0, and stays as it is; the 0.x component is Table.Root.',
   ],
   'namespace-import.tsx': [
     'line 8: destructures DirectionLinks from ui, which is Pager.Root in 1.0: rename it by hand.',
@@ -39,6 +44,15 @@ const reports = {
   'removed.tsx': [
     ...removedFrom(1, ['getInitials', 'LoadingBar', 'useLinkComponent', 'useSidebarCompact']),
     ...removedFrom(2, ['LoadingBarProps', 'ToastProps']),
+  ],
+  'shadowing-namespace.tsx': [
+    'line 20: a local Menu shadows the import here: wrote EnvMenu.Item, with Menu also imported as EnvMenu.',
+    'line 21: a local TextField shadows the import here: wrote EnvTextField, with TextField also imported as EnvTextField.',
+    'line 23: a local Pager shadows the import here: wrote EnvPager.Next, with Pager also imported as EnvPager.',
+    'line 31: a local Menu shadows the import here: wrote EnvMenu.ItemProps, with Menu also imported as EnvMenu.',
+  ],
+  'theme-bootstrap-directive.ts': [
+    'line 3: dropped // eslint-disable-next-line envui/no-renamed-exports -- until the 1.0 upgrade, which applied to the import that was removed.',
   ],
   'theme-bootstrap-export.ts': [
     `line 7: defaultThemeStorageKey is no longer exported by ${bootstrap}: ${use('defaultThemeStorageKey', bootstrap)}`,
@@ -74,6 +88,13 @@ for (const fixture of cases) {
     const output = applyTransform(v1Names, {}, { path: fixture.path, source: fixture.input });
     assert.equal(output || fixture.input.trim(), fixture.output.trim());
   });
+
+  // Files saved on Windows: CRLF line endings, a byte order mark, or both.
+  for (const [variant, encode] of encodings)
+    test(`v1-names with ${variant}: ${fixture.name}`, () => {
+      const result = runTransform(v1Names, fixture.path, encode(fixture.input));
+      assert.equal(result.output, encode(fixture.output));
+    });
 }
 
 test('v1-names renames every export in the map', () => {
@@ -96,12 +117,6 @@ test('v1-names turns each value of a split prop into its part', () => {
       assert.equal(runTransform(v1Names, 'file.tsx', input).output, expected, value);
     }
   }
-});
-
-test('v1-names keeps Windows line endings', () => {
-  const [menu] = cases.filter(({ name }) => name === 'menu.tsx');
-  const crlf = (text) => text.replaceAll('\n', '\r\n');
-  assert.equal(runTransform(v1Names, menu.path, crlf(menu.input)).output, crlf(menu.output));
 });
 
 test('v1-names skips files that import nothing it renames', () => {

@@ -1,3 +1,5 @@
+'use client';
+
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { classNames } from '../internal/classNames.js';

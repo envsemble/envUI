@@ -1,3 +1,5 @@
+'use client';
+
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import { useFieldMetadata } from './internal/useFieldMetadata.js';
 import { flushSync } from 'react-dom';

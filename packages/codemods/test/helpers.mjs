@@ -29,6 +29,19 @@ export function runTransform(module, path, source, options = {}) {
   return { output: output ?? source, skipped: output == null, reports };
 }
 
+const crlf = (text) => text.replaceAll('\n', '\r\n');
+const bom = (text) => `\uFEFF${text}`;
+
+/**
+ * How Windows editors may save a fixture, each as a function from its LF text: CRLF line endings, a
+ * byte order mark, or both. The fixtures are LF, as .gitattributes checks them out.
+ */
+export const encodings = [
+  ['CRLF line endings', crlf],
+  ['a byte order mark', bom],
+  ['a byte order mark and CRLF line endings', (text) => bom(crlf(text))],
+];
+
 /** The fixture pairs of a transform: `<case>.input.<ext>` with `<case>.output.<ext>`. */
 export function fixtures(transform) {
   const directory = join(fixturesDirectory, transform);

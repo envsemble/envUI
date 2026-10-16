@@ -1,3 +1,5 @@
+'use client';
+
 import { forwardRef } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/setRef.js';

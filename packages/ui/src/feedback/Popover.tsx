@@ -1,3 +1,5 @@
+'use client';
+
 import { Popover as BasePopover } from '@base-ui/react/popover';
 import { useState, type ReactElement, type ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';

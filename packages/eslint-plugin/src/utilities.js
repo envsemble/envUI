@@ -99,3 +99,24 @@ export function stringParts(node, visitorKeys, { skip = () => false } = {}) {
 export function moduleExportName(node) {
   return node.type === 'Identifier' ? node.name : String(node.value);
 }
+
+/**
+ * The variable a name resolves to where a node is, through the scope chain: an import, a local or
+ * a parameter. Undefined for a global that nothing declares.
+ */
+export function resolveVariable(sourceCode, node, name) {
+  for (let scope = sourceCode.getScope(node); scope; scope = scope.upper) {
+    const variable = scope.set.get(name);
+    if (variable) return variable;
+  }
+  return undefined;
+}
+
+/** Whether a node is a function: a declaration, an expression or an arrow function. */
+export function isFunction(node) {
+  return (
+    node?.type === 'FunctionDeclaration' ||
+    node?.type === 'FunctionExpression' ||
+    node?.type === 'ArrowFunctionExpression'
+  );
+}

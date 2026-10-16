@@ -1,3 +1,5 @@
+'use client';
+
 import type { MouseEvent, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { ChevronRight } from '../icons/ChevronRight.js';

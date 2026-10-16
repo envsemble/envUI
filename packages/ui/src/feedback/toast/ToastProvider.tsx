@@ -1,3 +1,5 @@
+'use client';
+
 import { Toast as BaseToast } from '@base-ui/react/toast';
 import { withDisplayName } from '../../internal/withDisplayName.js';
 import { ToastRegion } from './ToastRegion.js';

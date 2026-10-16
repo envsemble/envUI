@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useId, useMemo, useRef } from 'react';
 import {
   toastPlacements,

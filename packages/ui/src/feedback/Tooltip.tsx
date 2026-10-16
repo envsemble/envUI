@@ -1,3 +1,5 @@
+'use client';
+
 import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
 import type { ReactElement, ReactNode } from 'react';
 import { TooltipNestingContext, TooltipPopup, type TooltipSide } from './internal/TooltipPopup.js';

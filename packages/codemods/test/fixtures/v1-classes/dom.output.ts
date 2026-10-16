@@ -5,4 +5,6 @@ for (const notice of notices) {
   if (notice.matches('.env-alert-tone')) notice.classList.remove('env-alert');
 }
 
+export const diffLabel = document.querySelector('.env-diff-stat .env-diff-stat-label');
+
 export { first };

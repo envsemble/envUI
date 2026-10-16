@@ -9,7 +9,7 @@
 // - `import * as ui` accesses and `export { … } from` re-exports are rewritten the same way.
 // Anything the transform cannot rewrite safely stays as it is and is reported with its line.
 import { loadMap } from '../map.mjs';
-import { createReporter, parserFor, printOptions } from '../shared.mjs';
+import { createReporter, keepByteOrderMark, parserFor, printOptions } from '../shared.mjs';
 
 export const parser = 'tsx';
 
@@ -98,6 +98,22 @@ function bindsToModule(path, name, kind) {
   return !found || found.isGlobal;
 }
 
+/**
+ * Whether a comment is a directive about the line below it, which must stay right above that line:
+ * `@ts-expect-error`, `@ts-ignore`, `eslint-disable-next-line`, `prettier-ignore` and the like.
+ */
+function isLineDirective(comment) {
+  return lineDirective.test(comment.value);
+}
+const lineDirective =
+  /^[\s*]*(?:@ts-(?:expect-error|ignore)|eslint-disable-(?:next-)?line|prettier-ignore|biome-ignore|oxlint-disable-next-line|deno-lint-ignore|(?:istanbul|c8|v8) ignore next)(?![\w-])/;
+
+/** A comment as it is written, for a report. */
+function commentText(comment) {
+  const block = comment.type === 'CommentBlock' || comment.type === 'Block';
+  return block ? `/*${comment.value}*/` : `//${comment.value}`;
+}
+
 /** The value of a literal prop: `prop="next"`, `prop={'next'}` or `prop={`next`}`. */
 function literalValue(value) {
   const node = value?.type === 'JSXExpressionContainer' ? value.expression : value;
@@ -110,6 +126,32 @@ function literalValue(value) {
     return node.quasis[0].value.cooked;
   return undefined;
 }
+
+/**
+ * The names an object pattern takes from a node, as in `const { Root, Item } = Menu` or
+ * `({ Root } = Menu)`, or undefined when the node is not destructured.
+ */
+function destructuredNames(path) {
+  const parent = path.parent?.node;
+  const pattern =
+    parent?.type === 'VariableDeclarator' && parent.init === path.node
+      ? parent.id
+      : parent?.type === 'AssignmentExpression' && parent.right === path.node
+        ? parent.left
+        : undefined;
+  if (pattern?.type !== 'ObjectPattern') return undefined;
+  return pattern.properties.map((property) =>
+    property.type === 'RestElement'
+      ? `...${property.argument.name}`
+      : property.computed
+        ? '[…]'
+        : (property.key.name ?? String(property.key.value)),
+  );
+}
+
+/** A list of names for a report: `Root`, `Root and Item`, `Root, Item and Group`. */
+const listOf = (names) =>
+  names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names.at(-1)}` : names[0];
 
 /** Whether a member-like node is itself the object of a further member access. */
 function isAccessedFurther(path) {
@@ -242,8 +284,11 @@ export default function transform(file, api, options = {}) {
       });
     return namespaces.get(key);
   };
-  const remove = (info) => {
+  /** Removed import specifiers, with the declaration that has their names now, if any. */
+  const movedTo = new Map();
+  const remove = (info, replacement = () => undefined) => {
     removals.add(info.specifier);
+    movedTo.set(info.specifier, replacement);
     changed = true;
   };
   // Specifiers are replaced whole: in `{ Input }` the imported and local names share one source
@@ -251,6 +296,8 @@ export default function transform(file, api, options = {}) {
   const replaceImport = (info, imported, local) => {
     const replacement = j.importSpecifier(j.identifier(imported), j.identifier(local));
     if (info.specifier.importKind) replacement.importKind = info.specifier.importKind;
+    // Comments on the specifier, such as a disable directive, stay with it.
+    if (info.specifier.comments) replacement.comments = info.specifier.comments;
     const list = info.declaration.specifiers;
     list[list.indexOf(info.specifier)] = replacement;
     info.specifier = replacement;
@@ -261,11 +308,51 @@ export default function transform(file, api, options = {}) {
       exported: j.identifier(exported),
     });
     if (specifier.exportKind) replacement.exportKind = specifier.exportKind;
+    if (specifier.comments) replacement.comments = specifier.comments;
     list[list.indexOf(specifier)] = replacement;
   };
 
-  const rewriteAsPart = ({ path, kind }, namespace, part) => {
-    const replacement = build(flavorOf(kind), [namespace.local, part]);
+  /** Elements and references already told that a local shadows the name written for them. */
+  const shadowReported = new Set();
+  const reportShadow = (node, local, written, alias, imported) => {
+    if (shadowReported.has(node)) return;
+    shadowReported.add(node);
+    warn(
+      node,
+      `a local ${local} shadows the import here: wrote ${written}, with ${imported} also imported as ${alias}.`,
+    );
+  };
+
+  /**
+   * The name a namespace is written with at a reference: its import's local name, or, where a local
+   * of that name shadows the import, a second import of the namespace under a free alias such as
+   * `Menu as EnvMenu`. `node` is what the report about the alias points at.
+   */
+  const namespaceLocalAt = ({ path, kind }, namespace, part, node = path.node) => {
+    if (bindsToModule(path, namespace.local, kind)) return namespace.local;
+    if (!namespace.alias) {
+      namespace.alias = freeName(namespace.name);
+      insertions.push({ namespace, needsValue: false, local: namespace.alias });
+    }
+    if (!typeKinds.has(kind))
+      insertions.find(({ local }) => local === namespace.alias).needsValue = true;
+    reportShadow(
+      node,
+      namespace.local,
+      `${namespace.alias}.${part}`,
+      namespace.alias,
+      namespace.name,
+    );
+    return namespace.alias;
+  };
+
+  const rewriteAsPart = (reference, namespace, part) => {
+    const { path, kind } = reference;
+    const owner = kind === 'jsx' ? path.parent.parent.node : path.node;
+    const replacement = build(flavorOf(kind), [
+      namespaceLocalAt(reference, namespace, part, owner),
+      part,
+    ]);
     if (kind === 'shorthand') path.parent.node.shorthand = false;
     path.replace(replacement);
   };
@@ -312,9 +399,16 @@ export default function transform(file, api, options = {}) {
           other.entry === entry && other.imported === rename.to && (!other.isType || info.isType),
       );
       let target;
+      let alias;
+      const references = referencesTo(local);
+      const shadowed = (path, kind) => !bindsToModule(path, sibling.local, kind);
       if (sibling) {
         target = sibling.local;
-        remove(info);
+        // Where a local of the new name shadows the sibling import, keep this import, aliased.
+        if (references.some(({ path, kind }) => kind !== 'export' && shadowed(path, kind))) {
+          alias = freeName(rename.to);
+          edits.push(() => replaceImport(info, rename.to, alias));
+        } else remove(info, () => sibling.declaration);
       } else if (!isFree(rename.to)) {
         // The new name is taken in this file: keep the old local name as an alias.
         edits.push(() => replaceImport(info, rename.to, local));
@@ -324,11 +418,16 @@ export default function transform(file, api, options = {}) {
         claimed.add(target);
         edits.push(() => replaceImport(info, target, target));
       }
-      for (const { path, kind } of referencesTo(local)) {
+      for (const { path, kind } of references) {
+        const name = alias && kind !== 'export' && shadowed(path, kind) ? alias : target;
+        if (name === alias) {
+          const owner = kind === 'jsx' ? path.parent.parent.node : path.node;
+          reportShadow(owner, target, alias, alias, rename.to);
+        }
         edits.push(() => {
           if (kind === 'shorthand') {
             path.parent.node.shorthand = false;
-            path.replace(j.identifier(target));
+            path.replace(j.identifier(name));
           } else if (kind === 'export') {
             const exportSpecifier = path.parent.node;
             const exported = exportSpecifier.exported.name;
@@ -338,7 +437,7 @@ export default function transform(file, api, options = {}) {
               target,
               exported === local ? target : exported,
             );
-          } else path.node.name = target;
+          } else path.node.name = name;
         });
       }
       continue;
@@ -350,6 +449,15 @@ export default function transform(file, api, options = {}) {
       let kept = false;
       for (const reference of referencesTo(local)) {
         if (self && memberKinds.has(reference.kind)) continue;
+        // Parts destructured from the namespace are 1.0 code: the namespace stays.
+        const names = self ? destructuredNames(reference.path) : undefined;
+        if (names) {
+          warn(
+            reference.path.node,
+            `destructures ${listOf(names)} from ${local}, which is the ${rename.namespace} namespace in 1.0, and stays as it is; the 0.x component is ${local}${rename.to.slice(rename.namespace.length)}.`,
+          );
+          continue;
+        }
         if (reference.kind === 'export') {
           warn(
             reference.path.node,
@@ -366,7 +474,7 @@ export default function transform(file, api, options = {}) {
       }
       if (!self) {
         namespace.contributors.push({ info, kept });
-        if (!kept) remove(info);
+        if (!kept) remove(info, () => namespace.declaration);
       }
       continue;
     }
@@ -388,7 +496,13 @@ export default function transform(file, api, options = {}) {
             namespace.used = true;
             contributed.add(namespace);
             changed = true;
-            edits.push(planned.rename(() => [namespace.local, planned.target.part]));
+            const { part } = planned.target;
+            edits.push(
+              planned.rename(() => [
+                namespaceLocalAt({ path, kind }, namespace, part, element),
+                part,
+              ]),
+            );
             continue;
           }
           warn(
@@ -405,7 +519,7 @@ export default function transform(file, api, options = {}) {
         kept = true;
       }
       if (!kept) {
-        remove(info);
+        remove(info, () => [...contributed][0]?.declaration);
         if (contributed.size === 0)
           for (const { namespace } of split.values.values())
             contributed.add(namespaceFor(entry, namespace));
@@ -498,6 +612,14 @@ export default function transform(file, api, options = {}) {
       }
       if (rename) {
         if (name === rename.namespace && isAccessedFurther(accessPath)) continue;
+        const names = name === rename.namespace ? destructuredNames(accessPath) : undefined;
+        if (names) {
+          warn(
+            access,
+            `destructures ${listOf(names)} from ${local}.${name}, which is the ${name} namespace in 1.0, and stays as it is; the 0.x component is ${local}.${rename.to}.`,
+          );
+          continue;
+        }
         changed = true;
         edits.push(() => accessPath.replace(build(flavor, [local, rename.namespace, rename.part])));
         continue;
@@ -591,8 +713,10 @@ export default function transform(file, api, options = {}) {
     }
   }
 
-  reporter.flush();
-  if (!changed) return file.source;
+  if (!changed) {
+    reporter.flush();
+    return file.source;
+  }
 
   // Pick the local name of each namespace the rewrites use, and plan its import specifier.
   const insertions = [];
@@ -604,10 +728,12 @@ export default function transform(file, api, options = {}) {
     const type = namespace.existing.find((info) => info.isType);
     if (value) {
       namespace.local = value.local;
+      namespace.declaration = value.declaration;
       continue;
     }
     if (type) {
       namespace.local = type.local;
+      namespace.declaration = type.declaration;
       if (!needsValue) continue;
       if (type.specifier.importKind === 'type') {
         edits.push(() => {
@@ -616,6 +742,8 @@ export default function transform(file, api, options = {}) {
         continue;
       }
       removals.add(type.specifier);
+      movedTo.set(type.specifier, () => namespace.declaration);
+      namespace.declaration = undefined;
     } else {
       namespace.local = freeName(namespace.name);
     }
@@ -624,47 +752,68 @@ export default function transform(file, api, options = {}) {
 
   for (const edit of edits) edit();
 
-  for (const { namespace, needsValue } of insertions) {
+  for (const { namespace, needsValue, local = namespace.local } of insertions) {
     const contributors = namespace.contributors.map(({ info }) => info);
     const anchor = needsValue ? contributors.find((info) => !info.isType) : contributors[0];
-    const specifier = j.importSpecifier(
-      j.identifier(namespace.name),
-      j.identifier(namespace.local),
-    );
+    const specifier = j.importSpecifier(j.identifier(namespace.name), j.identifier(local));
     if (anchor) {
       if (!needsValue && anchor.declaration.importKind !== 'type') specifier.importKind = 'type';
       const list = anchor.declaration.specifiers;
       list.splice(list.indexOf(anchor.specifier), 0, specifier);
+      namespace.declaration ??= anchor.declaration;
       continue;
     }
     const host = importDeclarations.find(
       (path) =>
         entries.get(path.node.source.value) === namespace.entry && path.node.importKind !== 'type',
     );
-    if (host) host.node.specifiers.push(specifier);
-    else {
+    if (host) {
+      host.node.specifiers.push(specifier);
+      namespace.declaration ??= host.node;
+    } else {
       const last = importDeclarations.filter(
         (path) => entries.get(path.node.source.value) === namespace.entry,
       );
-      last
-        .at(-1)
-        .insertAfter(j.importDeclaration([specifier], j.stringLiteral(namespace.entry.name)));
+      const declaration = j.importDeclaration([specifier], j.stringLiteral(namespace.entry.name));
+      last.at(-1).insertAfter(declaration);
+      namespace.declaration ??= declaration;
     }
   }
 
   for (const declarationPath of importDeclarations) {
     const declaration = declarationPath.node;
     const before = declaration.specifiers.length;
+    const removedHere = declaration.specifiers.filter((specifier) => removals.has(specifier));
     declaration.specifiers = declaration.specifiers.filter((specifier) => !removals.has(specifier));
     if (before > 0 && declaration.specifiers.length === 0) {
-      // Keep comments above a removed import, such as a file header, on the next statement.
-      const comments = (declaration.comments ?? []).filter((comment) => comment.leading);
+      const leading = (declaration.comments ?? []).filter((comment) => comment.leading);
+      const directives = leading.filter(isLineDirective);
+      // A directive about the import's own line, such as @ts-expect-error, goes with its names to
+      // the import that has them now; with no such import, the line is gone, and so is it.
+      const target = removedHere.map((specifier) => movedTo.get(specifier)?.()).find(Boolean);
+      if (target && directives.length > 0) {
+        const comments = target.comments ?? [];
+        target.comments = [
+          ...comments.filter((comment) => comment.leading),
+          ...directives,
+          ...comments.filter((comment) => !comment.leading),
+        ];
+      } else
+        for (const comment of directives)
+          warn(
+            declaration,
+            `dropped ${commentText(comment)}, which applied to the import that was removed.`,
+          );
+      // Other comments above a removed import, such as a file header, stay on the next statement.
+      const others = leading.filter((comment) => !directives.includes(comment));
       const body = declarationPath.parent.node.body ?? [];
       const next = body[body.indexOf(declaration) + 1];
-      if (comments.length && next) next.comments = [...comments, ...(next.comments ?? [])];
+      if (others.length && next) next.comments = [...others, ...(next.comments ?? [])];
       declarationPath.prune();
     }
   }
 
-  return root.toSource(printOptions(file.source, quote));
+  // The rewrites and the pruned imports can still add reports.
+  reporter.flush();
+  return keepByteOrderMark(file.source, root.toSource(printOptions(file.source, quote)));
 }

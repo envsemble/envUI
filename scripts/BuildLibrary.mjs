@@ -58,6 +58,8 @@ execFileSync(
   ],
   { stdio: 'inherit' },
 );
+// The generated token module is internal: no export reaches it, so it does not ship.
+await rm(resolve(outputDirectory, 'generated'), { recursive: true, force: true });
 const stylesheetBuild = await build({
   entryPoints: [resolve(sourceDirectory, 'styles/index.css')],
   bundle: true,

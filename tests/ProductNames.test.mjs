@@ -83,6 +83,22 @@ const sources = [
     read: 'code',
   },
   { directory: 'packages/codemods/test/fixtures', extensions: ['.css', '.scss'], read: 'whole' },
+  // The lint packages: their READMEs, the rules with their messages, the data they ship, and the
+  // code their tests lint.
+  { path: 'packages/eslint-plugin/README.md', read: 'whole' },
+  { path: 'packages/eslint-plugin/index.d.ts', read: 'code' },
+  { directory: 'packages/eslint-plugin/src', extensions: ['.js'], read: 'code' },
+  { directory: 'packages/eslint-plugin/src/data', extensions: ['.json'], read: 'whole' },
+  { directory: 'packages/eslint-plugin/data', extensions: ['.json'], read: 'whole' },
+  { directory: 'packages/eslint-plugin/scripts', extensions: ['.mjs'], read: 'code' },
+  { directory: 'packages/eslint-plugin/test', extensions: ['.mjs'], read: 'code' },
+  { path: 'packages/stylelint-config/README.md', read: 'whole' },
+  { path: 'packages/stylelint-config/index.js', read: 'code' },
+  { path: 'packages/stylelint-config/tokens.js', read: 'code' },
+  { directory: 'packages/stylelint-config/plugins', extensions: ['.js'], read: 'code' },
+  { directory: 'packages/stylelint-config/data', extensions: ['.json'], read: 'whole' },
+  { directory: 'packages/stylelint-config/scripts', extensions: ['.mjs'], read: 'code' },
+  { directory: 'packages/stylelint-config/test', extensions: ['.mjs'], read: 'code' },
 ];
 
 /** Generated from pinned inputs: Material Symbols names its own icons, such as ChromeMaximize. */

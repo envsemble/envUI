@@ -9,6 +9,8 @@ import {
   normalizeRenameMap,
   renamesUrl,
 } from '../scripts/SyncRenames.mjs';
+import { expectedTokens, libraryTokensUrl, tokensUrl } from '../scripts/SyncTokens.mjs';
+import { colorTokenSuggestion } from '../src/tokens.js';
 
 const read = (url) => JSON.parse(readFileSync(url, 'utf8'));
 const manifest = read(new URL('../package.json', import.meta.url));
@@ -70,7 +72,7 @@ test('the mapping table has unique entries that name envUI 1.0 components', () =
       const root = component.split('.')[0];
       const renamed = oldMainNames[component] ?? oldMainNames[root];
       assert.ok(
-        renamed === undefined || renamed[0].startsWith(`${root}.`),
+        renamed === undefined || renamed.namespace || renamed.to[0]?.startsWith(`${root}.`),
         `${entry.id}: ${component} is an old name`,
       );
     });
@@ -82,30 +84,38 @@ test('the rename map renames only what envUI 0.7 exported, to well-formed names'
   for (const [entry, names] of Object.entries(renames.modules)) {
     const exported = snapshot.modules[entry];
     assert.ok(exported, `${entry} is an entry point of envUI ${snapshot.version}`);
-    for (const [name, targets] of Object.entries(names)) {
+    for (const [name, rename] of Object.entries(names)) {
       assert.ok(
         exported.values.includes(name) || exported.types.includes(name),
         `${entry} exported ${name}`,
       );
-      for (const target of targets) {
+      for (const target of rename.to) {
         assert.ok(isName(target), `${name} -> ${target} is a name`);
         // A replacement must not be reached through a name that is itself gone.
         const root = target.split('.')[0];
         const gone = names[root];
         assert.ok(
-          gone === undefined || gone[0]?.startsWith(`${root}.`),
+          gone === undefined || gone.namespace || gone.to[0]?.startsWith(`${root}.`),
           `${name} -> ${target}: ${root} is not exported by 1.0`,
         );
       }
+      // A name that became internal says what to use instead.
+      if (rename.to.length === 0) assert.ok(rename.use, `${name} has a use hint`);
+      if (rename.prop !== undefined)
+        assert.deepEqual(
+          [...new Set(Object.values(rename.values))],
+          rename.to,
+          `${name}: the split's values choose its replacements`,
+        );
     }
   }
 });
 
-test("the rename map is the codemods' map when the repository has one", () => {
+test("the rename map is the codemods' map when the repository has one", async () => {
   if (existsSync(codemodsMapUrl)) {
     assert.equal(
       readFileSync(renamesUrl, 'utf8'),
-      expectedRenames(),
+      await expectedRenames(),
       "src/data/renames.json is behind the codemods' map: run npm run sync:renames --workspace @envsemble/eslint-plugin-envui.",
     );
     assert.equal(renames.source, 'packages/codemods/src/maps/v1.json');
@@ -151,14 +161,54 @@ test("the codemods' map is read in each shape it may take", () => {
   for (const map of shapes)
     assert.deepEqual(normalizeRenameMap(map, snapshot), {
       '@envsemble/envui': {
-        Input: ['TextField'],
-        InputProps: ['TextFieldProps'],
-        LoadingBar: [],
-        Menu: ['Menu.Root'],
-        MenuItem: ['Menu.Item'],
+        Input: { to: ['TextField'] },
+        InputProps: { to: ['TextFieldProps'] },
+        LoadingBar: { to: [] },
+        Menu: { to: ['Menu.Root'] },
+        MenuItem: { to: ['Menu.Item'] },
       },
-      '@envsemble/envui/theme-bootstrap': { defaultThemeStorageKey: [] },
+      '@envsemble/envui/theme-bootstrap': { defaultThemeStorageKey: { to: [] } },
     });
+});
+
+test("the codemods' hints, splits and reused namespaces carry over", () => {
+  const snapshot = {
+    modules: {
+      '@envsemble/envui': {
+        values: ['DirectionLink', 'LoadingBar', 'Toast', 'ToastProvider'],
+        types: [],
+      },
+    },
+  };
+  const map = {
+    exports: { '@envsemble/envui': { ToastProvider: 'Toast.Provider' } },
+    split: {
+      '@envsemble/envui': {
+        DirectionLink: {
+          prop: 'direction',
+          values: { previous: 'Pager.Previous', next: 'Pager.Next' },
+        },
+      },
+    },
+    removed: {
+      '@envsemble/envui': {
+        LoadingBar: { use: 'Use Progress.' },
+        Toast: { use: 'Use useToast() inside Toast.Provider.' },
+      },
+    },
+  };
+  assert.deepEqual(normalizeRenameMap(map, snapshot), {
+    '@envsemble/envui': {
+      DirectionLink: {
+        to: ['Pager.Previous', 'Pager.Next'],
+        prop: 'direction',
+        values: { previous: 'Pager.Previous', next: 'Pager.Next' },
+      },
+      LoadingBar: { to: [], use: 'Use Progress.' },
+      Toast: { to: [], use: 'Use useToast() inside Toast.Provider.', namespace: true },
+      ToastProvider: { to: ['Toast.Provider'] },
+    },
+  });
 });
 
 test('the README documents every entry of the mapping table and every renamed name', () => {
@@ -167,4 +217,43 @@ test('the README documents every entry of the mapping table and every renamed na
   for (const names of Object.values(renames.modules))
     for (const name of Object.keys(names))
       assert.match(readme, new RegExp(`\`${name}\``), `the README lists ${name}`);
+});
+
+test("the token names are the library's when the repository has its token list", () => {
+  const copy = read(tokensUrl);
+  if (existsSync(libraryTokensUrl)) {
+    assert.equal(
+      readFileSync(tokensUrl, 'utf8'),
+      expectedTokens(),
+      "src/data/tokens.json is behind the library's token list: run npm run sync:tokens --workspace @envsemble/eslint-plugin-envui.",
+    );
+    assert.equal(copy.source, 'packages/ui/src/generated/tokens.json');
+  } else assert.equal(copy.source, 'embedded');
+});
+
+test('every token the messages and the README name exists in the library', () => {
+  const library = existsSync(libraryTokensUrl)
+    ? read(libraryTokensUrl).tokens.map((token) => token.cssVariable)
+    : Object.values(read(tokensUrl).tokens).flat();
+  const messages = [
+    ...Object.values(plugin.rules).flatMap((rule) => Object.values(rule.meta.messages)),
+    ...['color', 'backgroundColor', 'borderColor', 'outline', 'fill', 'boxShadow', '--brand'].map(
+      colorTokenSuggestion,
+    ),
+    colorTokenSuggestion(undefined),
+  ];
+  const named = [...messages, readme].flatMap((text) => [
+    ...text.matchAll(/var\((--[\w-]+)(…)?/g),
+    // Bare names of envUI's color and stacking tokens, such as `--color-fg-default`.
+    ...text.matchAll(/(?<![\w-])(--(?:env-)?(?:color|z)-[\w-]*)(…)?/g),
+  ]);
+  assert.ok(named.length > 0, 'the messages name tokens');
+  for (const [, name, family] of named) {
+    if (family)
+      assert.ok(
+        library.some((token) => token.startsWith(name)),
+        `${name}… names no envUI token`,
+      );
+    else assert.ok(library.includes(name), `${name} is not an envUI token`);
+  }
 });

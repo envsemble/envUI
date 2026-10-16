@@ -89,6 +89,17 @@ function RouterLink({ href, ...props }: LinkComponentProps) {
 
 The application still decides which destination is selected.
 
+## React Server Components
+
+envUI works in an application built on React Server Components. Server and client components import from the same entry points:
+
+- Components that keep state, run effects, read context or take part in Base UI's interactions are client components. Their modules start with `'use client'`, as Base UI's parts do, so a server component renders them as client references and the bundler sends them to the browser. They include `Theme`, `Dialog`, `Menu.Root` and its parts, `Table.Root`, the form fields, and icons that follow a selection's fill.
+- Components that only lay out markup, such as `Card`, `Badge`, `Text`, `Button`, `Alert`, `List.Item` and `Stat.Root`, render on the server and send no code of their own to the browser.
+- The entry points carry no directive, so `Menu.Item` from `@envsemble/envui` in a server component is the client part, reached through its namespace.
+- Plain functions, such as `createThemeBootstrapScript` and `formatRelativeTime`, run on the server.
+
+What a server component passes to a client component must be serializable: strings, numbers, elements and plain objects, but no functions. Event handlers such as `onClick` or `onOpenChange`, render props and formatting callbacks belong in a client component of the application's own, marked `'use client'`, that renders the envUI part. Hooks such as `useTheme` and `useToast` work in client components only. Bundlers without server components ignore the directive.
+
 ## Public entry points
 
 - `@envsemble/envui` for ordinary UI.
@@ -101,6 +112,23 @@ The application still decides which destination is selected.
 The content, rich-text and diff entries depend on Shiki, the Pierre code themes, react-markdown, remark-gfm, marked, Tiptap and Diffs. They are optional peer dependencies: applications using only the main entry do not install them. An application importing `@envsemble/envui/content`, `@envsemble/envui/rich-text` or `@envsemble/envui/diff` installs the packages listed under `peerDependencies` in the package manifest, for example `npm install shiki @shikijs/langs @pierre/theme react-markdown remark-gfm`, and `@pierre/diffs` for the diff entry.
 
 Keep optional content/editor imports with their features. Individual icon imports avoid loading the complete catalogue; see [icons](foundations/icons.md) when adding icons.
+
+### Bundle size
+
+The modules have no side effects, so a bundler keeps only what the application uses. Namespaces are where bundlers differ. Rolldown, which Vite uses, keeps only the parts the application renders. esbuild keeps every part of a namespace it uses, because it does not tree-shake a namespace that the entry point re-exports; no other export shape of the entry point changes that, and the parts are already pure. The cost is at most the namespace's own size. Measured with esbuild 0.28 and Vite 8 on envUI 1.0, minified, envUI's own code only (React, Base UI and the other dependencies counted apart):
+
+| Application renders                    | esbuild | Vite (Rolldown) |
+| -------------------------------------- | ------: | --------------: |
+| `Table.Cell` alone                     |  9.1 KB |          1.4 KB |
+| `Table.Root`, `Body`, `Row` and `Cell` |  9.2 KB |          5.3 KB |
+| `Menu.Item` alone                      |  7.7 KB |          3.8 KB |
+| `Menu.Root` with a `Menu.Item`         |  9.2 KB |          7.4 KB |
+| `Stat.Root`                            |  3.3 KB |          3.5 KB |
+| `NavList.Item`                         |  3.8 KB |          4.2 KB |
+| `Pager.Next`                           |  1.5 KB |          1.6 KB |
+| `Badge`, which is no namespace's part  |  0.6 KB |          0.9 KB |
+
+Gzipped, `Table.Cell` alone is 3.7 KB with esbuild and 0.6 KB with Vite.
 
 ## Agent skills
 

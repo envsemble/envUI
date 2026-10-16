@@ -42,7 +42,7 @@ export function renameClass(name, classes) {
 export function validateMap(map) {
   const problems = [];
   if (!isObject(map)) return ['The map must be a JSON object.'];
-  for (const section of ['exports', 'split', 'removed', 'classes', 'docs']) {
+  for (const section of ['exports', 'split', 'removed', 'classes', 'classesWithin', 'docs']) {
     if (map[section] !== undefined && !isObject(map[section]))
       problems.push(`"${section}" must be an object.`);
   }
@@ -125,6 +125,23 @@ export function validateMap(map) {
         `classes: ${from} becomes ${to}, which another entry renames again to ${renameClass(to, sorted)}.`,
       );
   }
+  for (const [ancestor, names] of entriesOf(map.classesWithin)) {
+    if (!className.test(ancestor) || ancestor.endsWith('-'))
+      problems.push(`classesWithin: ${ancestor} is not an env- class name.`);
+    if (!isObject(names)) {
+      problems.push(`classesWithin.${ancestor} must be an object.`);
+      continue;
+    }
+    for (const [from, to] of entriesOf(names)) {
+      if (!className.test(from) || typeof to !== 'string' || !className.test(to))
+        problems.push(`classesWithin.${ancestor}: ${from} must map to an env- class name.`);
+      else if (to === from) problems.push(`classesWithin.${ancestor}: ${from} maps to itself.`);
+      else if (renameClass(to, sorted) !== to)
+        problems.push(
+          `classesWithin.${ancestor}: ${from} becomes ${to}, which classes renames again to ${renameClass(to, sorted)}.`,
+        );
+    }
+  }
   for (const [from, to] of entriesOf(map.docs)) {
     if (!slug.test(from) || typeof to !== 'string' || !slug.test(to))
       problems.push(`docs: ${from} must map one page slug to another.`);
@@ -141,7 +158,9 @@ const sortClasses = (classes) =>
  * - `entries`: per entry point, `renames` (old name to target), `splits` (old name to its prop and
  *   the target for each value), `removed` (old name to its hint and literal) and `namespaces` (the
  *   namespace exports that the entry has in 1.0);
- * - `classes`: class renames, longest old name first.
+ * - `classes`: class renames, longest old name first;
+ * - `classesWithin`: class renames that apply inside an ancestor's selector, as
+ *   `{ ancestor, from, to }`.
  */
 export function normalizeMap(map) {
   const entries = new Map();
@@ -181,7 +200,10 @@ export function normalizeMap(map) {
     for (const [from, rule] of entriesOf(names)) entry.removed.set(from, rule);
   }
   const classes = sortClasses(entriesOf(map.classes).map(([from, to]) => ({ from, to })));
-  return { entries, classes };
+  const classesWithin = entriesOf(map.classesWithin).flatMap(([ancestor, names]) =>
+    entriesOf(names).map(([from, to]) => ({ ancestor, from, to })),
+  );
+  return { entries, classes, classesWithin };
 }
 
 const cache = new Map();

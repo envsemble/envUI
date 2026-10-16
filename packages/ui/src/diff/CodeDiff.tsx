@@ -1,3 +1,5 @@
+'use client';
+
 import { DEFAULT_THEMES, parseDiffFromFile, preloadHighlighter } from '@pierre/diffs';
 import { File, FileDiff } from '@pierre/diffs/react';
 import { useEffect, useMemo, useRef, useState, type ComponentPropsWithRef } from 'react';

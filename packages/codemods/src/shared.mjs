@@ -14,6 +14,12 @@ export function printOptions(source, quote) {
   return { quote: quote ?? 'single', lineTerminator: source.includes('\r\n') ? '\r\n' : '\n' };
 }
 
+/** A printed file with the byte order mark of its source, which recast leaves out when it prints. */
+export function keepByteOrderMark(source, output) {
+  const mark = '\uFEFF';
+  return source.startsWith(mark) && !output.startsWith(mark) ? mark + output : output;
+}
+
 /**
  * Collects warnings about nodes and reports them through jscodeshift's `api.report` in line order,
  * each prefixed with the line of its node.
