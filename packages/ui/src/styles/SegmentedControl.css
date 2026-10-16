@@ -24,6 +24,7 @@
     calc((var(--control-height) - 1.4 * var(--font-size-label)) / 2)
   );
   padding: var(--env-segmented-control-inset);
+  min-block-size: var(--control-height);
   border-radius: 100vmax;
   background: var(--color-fill);
   /* Long labels stay reachable in narrow containers. */
