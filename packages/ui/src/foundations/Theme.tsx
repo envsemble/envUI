@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useMemo, type ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { isDevelopment } from '../internal/isDevelopment.js';
 
 /** A color scheme. */
 export type ThemeValue = 'light' | 'dark';
@@ -61,7 +60,10 @@ function warnAboutTheme(theme: unknown) {
  * keep. Theme preference and persistence belong to the app.
  */
 export function Theme({ theme, contrast: ownContrast, className, children, ...props }: ThemeProps) {
-  if (isDevelopment()) warnAboutTheme(theme);
+  // Written inline so bundlers replace process.env.NODE_ENV and drop the warning from production
+  // builds; where nothing defines `process`, as in a browser without a bundler, it stays silent.
+  if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production')
+    warnAboutTheme(theme);
   const inherited = useContext(ThemeContext).contrast;
   // The prop wins; without it, a data-env-contrast written on the Theme counts, so that the
   // context its nested Themes and popups read agrees with the attribute.

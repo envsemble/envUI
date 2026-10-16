@@ -2,9 +2,17 @@
 // neither light nor dark, as JavaScript that passes 0.x's useTheme() to it would.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { fileURLToPath } from 'node:url';
+import { build as esbuild } from 'esbuild';
 import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
+import { build as vite } from 'vite';
 import { Theme, useTheme } from '../packages/ui/dist/index.js';
+
+const themeModule = fileURLToPath(
+  new URL('../packages/ui/dist/foundations/Theme.js', import.meta.url),
+);
+const warning = 'takes a theme of';
 
 /** Renders on the server and returns the markup and what was reported through console.error. */
 function render(element) {
@@ -58,4 +66,38 @@ test('Theme renders where nothing defines process, as in a browser without a bun
   assert.match(result.markup, /class="env-theme"/);
   // Without a development build to report in, the warning stays silent.
   assert.equal(result.errors.length, 0);
+});
+
+test('a production bundle leaves the development warning out', async () => {
+  const external = /^react/;
+  const built = await esbuild({
+    entryPoints: [themeModule],
+    bundle: true,
+    minify: true,
+    write: false,
+    format: 'esm',
+    define: { 'process.env.NODE_ENV': '"production"' },
+    external: ['react', 'react/*'],
+    logLevel: 'silent',
+  });
+  assert.doesNotMatch(built.outputFiles[0].text, new RegExp(warning), 'esbuild keeps the warning');
+
+  // Vite replaces process.env.NODE_ENV itself in a production build, as it does for applications.
+  const output = await vite({
+    configFile: false,
+    logLevel: 'silent',
+    mode: 'production',
+    build: {
+      write: false,
+      minify: true,
+      rolldownOptions: { input: themeModule, preserveEntrySignatures: 'exports-only', external },
+    },
+  });
+  const code = [output]
+    .flat()
+    .flatMap((result) => result.output)
+    .map((chunk) => chunk.code ?? '')
+    .join('');
+  assert.match(code, /env-theme/, 'Vite bundled Theme');
+  assert.doesNotMatch(code, new RegExp(warning), 'Vite keeps the warning');
 });
