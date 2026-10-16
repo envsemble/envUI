@@ -61,21 +61,22 @@ A date picker is a field that shows a date, or with `withTime` a date and time, 
 4. **Popup**: the Popover surface below the field, with the calendar and its footer.
 5. **Month heading**: the month and year between the previous and next month buttons (`previousMonthLabel`, `nextMonthLabel`).
 6. **Days**: a grid of six weeks under the weekday names, each day a round mark; today has a ring and the chosen day a solid fill.
-7. **Time field** (`withTime`): a compact time field labelled `timeLabel` (Time), below the days.
+7. **Time field** (`withTime`): a small time field labelled `timeLabel` (Time), below the days.
 8. **Footer**: Today, or Now with `withTime`, at the start; Clear with `clearable`, and Done with `withTime`, at the end.
 
 ## Variants and sizes
 
-| Variant             | Use for                                                                                                             |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| Date                | A day. Choosing one closes the calendar. The default.                                                               |
-| `withTime`          | A day and a time: the calendar stays open for the time field, Now and Done.                                         |
-| `density="compact"` | Toolbars and dense surfaces: the 2 rem height of compact controls, with the label hidden unless `showLabel` is set. |
+| Variant              | Use for                                                                                                              |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Date                 | A day. Choosing one closes the calendar. The default.                                                                |
+| `withTime`           | A day and a time: the calendar stays open for the time field, Now and Done.                                          |
+| `variant="floating"` | A long form on a page: the field 3.5 rem tall inside its border, whose label floats above the value, as TextField's. |
 
 <!-- specimen: States -->
 
 - A field fills its container's width.
-- The calendar is as wide as seven days, 2.5 rem each and 2.25 rem in a compact field's popup; on touch screens days are 2.75 rem, and the calendar fits a phone's width.
+- `size` sets the field's height, as on every control: `sm`, `md` or `lg` in the app's [scale](../foundations/scale.md); without it the field takes its container's control height. `showLabel={false}` hides the label in a toolbar, so a placeholder and an `aria-label` name it.
+- The calendar is as wide as seven days, each as tall as a `md` control, 2.5 rem or 2 rem in the compact scale; on touch screens days are 2.75 rem, and the calendar fits a phone's width. The popup's buttons are `sm`.
 - The calendar always shows six weeks, so its height stays the same from month to month; empty cells before and after the month keep each day under its weekday.
 
 ## States and behaviour
@@ -163,11 +164,11 @@ With `withTime`, the calendar stays open for the time field; Now chooses the cur
 
 ```
 
-### Compact, in a toolbar
+### Small, in a toolbar
 
-A compact field takes the height of compact buttons, and its placeholder shows in place of the hidden label.
+`size="sm"` gives the field the small control height, so it lines up with small buttons, and its placeholder shows in place of the hidden label.
 
-```tsx example=CompactToolbar
+```tsx example=SmallToolbar
 
 ```
 

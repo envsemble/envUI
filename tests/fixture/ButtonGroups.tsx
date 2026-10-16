@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react';
+import { useState } from 'react';
 import { Button, ButtonGroup, IconButton, Stack, Theme, type ThemeValue } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { Check } from '@envsemble/envui/icons/Check';
@@ -55,9 +55,11 @@ export function ButtonGroupsFixture({ theme }: { theme: ThemeValue }) {
           {ends && <Button>Last</Button>}
         </ButtonGroup>
         <Button onClick={() => setEnds((value) => !value)}>Toggle end buttons</Button>
-        <ButtonGroup data-testid="scaled" style={{ '--scale': 1.5 } as CSSProperties}>
-          <Button>Scaled first</Button>
-          <Button variant="secondary">Scaled last</Button>
+        <ButtonGroup data-testid="scaled">
+          <Button size="lg">Large first</Button>
+          <Button size="lg" variant="secondary">
+            Large last
+          </Button>
         </ButtonGroup>
         <form
           onSubmit={(event) => {

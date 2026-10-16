@@ -4,7 +4,15 @@
   gap: var(--space-4);
   min-inline-size: 0;
 }
+/* The whole rail is as tall as a control of its size, like a segmented control, and its tabs fill
+   it inside its padding, which gives way where a tab would be shorter than the smallest target. */
 .env-tabs-list {
+  --env-tabs-rail: var(--control-height-lg);
+  --env-tabs-inset: min(
+    var(--space-1),
+    calc((var(--env-tabs-rail) - var(--control-target-min)) / 2)
+  );
+  --control-height: calc(var(--env-tabs-rail) - 2 * var(--env-tabs-inset));
   display: flex;
   align-items: center;
   gap: var(--space-1);
@@ -18,15 +26,26 @@
 /* The rail is a translucent fill, so it stands out from the canvas, panes and rows alike. */
 .env-tabs-list.env-surface {
   --env-surface-color: var(--color-fill);
+  --env-surface-padding: var(--env-tabs-inset);
 }
-/* Compact: the whole rail is as tall as a compact control, like a compact segmented control. Coarse
-   pointers keep the touch height, which the compact height takes there. */
-.env-tabs-list[data-size='compact'] {
-  --control-height-small: calc(var(--control-height-compact) - 2 * var(--space-1));
-  --control-height: calc(var(--control-height-compact) - 2 * var(--space-1));
-  --icon-button-size: calc(var(--control-height-compact) - 2 * var(--space-1));
+/* Under a coarse pointer the tabs grow to the touch height themselves: an overlay would reach over
+   the next tab, and out of the rail, which scrolls. */
+@media (pointer: coarse) {
+  .env-tabs-list {
+    --env-button-hit-area: 0rem;
+    --control-height: max(
+      calc(var(--env-tabs-rail) - 2 * var(--env-tabs-inset)),
+      var(--control-height-touch)
+    );
+  }
 }
-.env-tabs-list[data-size='compact'] > .env-tab {
+.env-tabs-list[data-size='sm'] {
+  --env-tabs-rail: var(--control-height-sm);
+}
+.env-tabs-list[data-size='md'] {
+  --env-tabs-rail: var(--control-height-md);
+}
+.env-tabs-list[data-size='sm'] > .env-tab {
   padding-block: 0;
 }
 .env-tabs-list[data-orientation='vertical'] {

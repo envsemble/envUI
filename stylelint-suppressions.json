@@ -44,10 +44,7 @@
   },
   "packages/ui/src/styles/Button.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 14
-    },
-    "envui/font-weight-from-token": {
-      "count": 1
+      "count": 8
     }
   },
   "packages/ui/src/styles/ButtonGroup.css": {
@@ -73,7 +70,7 @@
   },
   "packages/ui/src/styles/ChoiceControls.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 29
+      "count": 22
     }
   },
   "packages/ui/src/styles/Code.css": {
@@ -96,13 +93,13 @@
   },
   "packages/ui/src/styles/Combobox.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 20
+      "count": 14
     },
     "declaration-property-value-allowed-list": {
       "count": 1
     },
     "envui/font-weight-from-token": {
-      "count": 2
+      "count": 1
     }
   },
   "packages/ui/src/styles/CommandPalette.css": {
@@ -125,7 +122,7 @@
   },
   "packages/ui/src/styles/DatePicker.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 6
+      "count": 5
     }
   },
   "packages/ui/src/styles/Dialog.css": {
@@ -175,12 +172,12 @@
   },
   "packages/ui/src/styles/TextField.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 23
+      "count": 20
     }
   },
   "packages/ui/src/styles/List.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 4
+      "count": 1
     }
   },
   "packages/ui/src/styles/CalendarHeatmap.css": {
@@ -241,10 +238,10 @@
   },
   "packages/ui/src/styles/Menu.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 35
+      "count": 26
     },
     "declaration-property-value-allowed-list": {
-      "count": 4
+      "count": 3
     },
     "envui/font-weight-from-token": {
       "count": 1
@@ -273,10 +270,7 @@
   },
   "packages/ui/src/styles/NavList.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 10
-    },
-    "envui/font-weight-from-token": {
-      "count": 1
+      "count": 5
     }
   },
   "packages/ui/src/styles/Alert.css": {
@@ -324,15 +318,12 @@
   },
   "packages/ui/src/styles/SegmentedControl.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 3
-    },
-    "envui/font-weight-from-token": {
-      "count": 1
+      "count": 2
     }
   },
   "packages/ui/src/styles/Select.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 17
+      "count": 4
     },
     "declaration-property-value-allowed-list": {
       "count": 2

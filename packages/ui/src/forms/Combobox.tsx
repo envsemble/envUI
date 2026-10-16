@@ -16,7 +16,7 @@ import {
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { setRef } from '../internal/setRef.js';
-import { Theme, useTheme } from '../foundations/Theme.js';
+import { Theme, useTheme, type ControlSize } from '../foundations/Theme.js';
 import { Surface } from '../foundations/Surface.js';
 import { Spinner } from '../feedback/Spinner.js';
 import { Check } from '../icons/Check.js';
@@ -84,13 +84,22 @@ interface ComboboxSharedProps<Item extends ComboboxItem>
   /** Shown in the popup when no option matches; No matches by default. */
   emptyLabel?: ReactNode;
   /**
-   * standard (default) is the text field of forms; compact takes the compact control height, like
-   * a compact Select, and the compact menu's popup.
+   * The field's look, as TextField's: outlined, at the control height, or floating, 3.5 rem tall
+   * with room for its label, for long forms on a page.
+   * @default 'outlined'
    */
-  density?: 'standard' | 'compact';
+  variant?: 'outlined' | 'floating';
+  /**
+   * The field's height, as on every control: sm, md or lg in the current scale. Without it, the
+   * field takes the control height of its container, md unless the container sets another. The
+   * popup's rows take the row height of the scale.
+   */
+  size?: ControlSize;
   /**
    * Show the label inside the field, where it floats into the outline while the field has focus or
-   * a value. Defaults to true, and to false for compact fields, which can use a placeholder instead.
+   * a value. Set false for a field whose purpose is clear without it; a placeholder then gives the
+   * visible guidance.
+   * @default true
    */
   showLabel?: boolean;
   /** A clear button removes the value while there is one; Esc on the closed field clears it too. */
@@ -181,7 +190,8 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
     loading = false,
     loadingLabel = 'Loading…',
     emptyLabel = 'No matches',
-    density = 'standard',
+    variant = 'outlined',
+    size,
     showLabel,
     clearable = false,
     clearLabel = 'Clear',
@@ -210,7 +220,6 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
     ...inputProps
   } = props;
   const isMultiple = multiple === true;
-  const compact = density === 'compact';
   const metadata = useFieldMetadata(suppliedId, hint, error, describedBy, invalid);
   const { id } = metadata;
   const labelId = `${id}-label`;
@@ -352,11 +361,11 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   }
 
   function popupOffset() {
-    return remPixels(inputRef.current) * (compact ? 0.25 : 0.5);
+    return remPixels(inputRef.current) * 0.25;
   }
 
   const hasChips = isMultiple && selectedValues.length > 0;
-  const labelShown = label != null && isLabelShown({ compact, showLabel });
+  const labelShown = label != null && isLabelShown({ showLabel });
   // A floating label needs a blank placeholder to detect the empty state; chips fill the field.
   const fieldPlaceholder = hasChips ? undefined : labelShown ? placeholder || ' ' : placeholder;
   const description =
@@ -428,7 +437,8 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
           hint={hint}
           error={error}
           floatingLabel
-          compact={compact}
+          variant={variant}
+          size={size}
           showLabel={showLabel}
           className="env-combobox"
           renderWell={renderWell}
@@ -528,7 +538,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
             >
               <BaseCombobox.Popup
                 className="env-dropdown-options env-combobox-popup"
-                render={<Surface padding={compact ? 1 : 2} density={density} />}
+                render={<Surface padding={1} />}
               >
                 <BaseCombobox.Status className="env-combobox-status">
                   {loading ? (

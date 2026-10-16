@@ -14,7 +14,7 @@ import {
 import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/setRef.js';
 import { useHydrated } from '../internal/useHydrated.js';
-import { Theme, useTheme } from '../foundations/Theme.js';
+import { Theme, useTheme, type ControlSize } from '../foundations/Theme.js';
 import { Button, IconButton } from '../actions/Button.js';
 import { CalendarClock } from '../icons/CalendarClock.js';
 import { CalendarMonth } from '../icons/CalendarMonth.js';
@@ -87,11 +87,21 @@ export interface DatePickerProps
   readOnly?: boolean;
   /** Shown while the field is empty and its label floats or is hidden. */
   placeholder?: string;
-  /** standard (default) is the text field of forms; compact takes the compact control height. */
-  density?: 'standard' | 'compact';
+  /**
+   * The field's look, as TextField's: outlined, at the control height, or floating, 3.5 rem tall
+   * with room for its label, for long forms on a page.
+   * @default 'outlined'
+   */
+  variant?: 'outlined' | 'floating';
+  /**
+   * The field's height, as on every control: sm, md or lg in the current scale. Without it, the
+   * field takes the control height of its container, md unless the container sets another.
+   */
+  size?: ControlSize;
   /**
    * Show the label inside the field, where it floats into the outline while the field has a value,
-   * focus or its calendar open. Defaults to true, and to false for compact fields.
+   * focus or its calendar open. Set false for a field whose purpose is clear without it.
+   * @default true
    */
   showLabel?: boolean;
   /** A clear button in the field and in the calendar removes the value. */
@@ -172,7 +182,8 @@ export function DatePicker({
   disabled = false,
   readOnly = false,
   placeholder,
-  density = 'standard',
+  variant = 'outlined',
+  size,
   showLabel,
   clearable = false,
   open: controlledOpen,
@@ -200,7 +211,6 @@ export function DatePicker({
   const metadata = useFieldMetadata(suppliedId, hint, error, describedBy, invalid);
   const { id } = metadata;
   const labelId = `${id}-label`;
-  const compact = density === 'compact';
   const theme = useTheme();
   const triggerRef = useRef<HTMLButtonElement>(null);
   const nativeRef = useRef<HTMLInputElement>(null);
@@ -379,7 +389,8 @@ export function DatePicker({
           hint={hint}
           error={error}
           floatingLabel
-          compact={compact}
+          variant={variant}
+          size={size}
           showLabel={showLabel}
           className="env-date-picker"
           renderWell={renderWell}
@@ -453,14 +464,13 @@ export function DatePicker({
             <BasePopover.Positioner
               side="bottom"
               align="start"
-              sideOffset={() => remPixels(triggerRef.current) * (compact ? 0.25 : 0.5)}
+              sideOffset={() => remPixels(triggerRef.current) * 0.25}
               collisionPadding={8}
               className="env-popover-positioner"
             >
               <BasePopover.Popup
                 ref={popupRef}
                 className="env-popover env-date-picker-popup"
-                data-density={compact ? 'compact' : undefined}
                 // The portal leaves the field's text direction behind; the calendar keeps it.
                 dir={direction}
                 {...accessibleName}
@@ -482,8 +492,6 @@ export function DatePicker({
                 {withTime && (
                   <TextField
                     type="time"
-                    compact
-                    showLabel
                     label={timeLabel}
                     value={timeDraft ?? (current ? formatTime(current.minutes) : '')}
                     onChange={(event) => changeTime(event.currentTarget.value)}

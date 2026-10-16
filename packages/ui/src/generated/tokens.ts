@@ -5,6 +5,10 @@
 export const themes = ['light', 'dark', 'light-high-contrast', 'dark-high-contrast'] as const;
 export type ThemeName = (typeof themes)[number];
 
+/** The app scales: comfortable, the base values, and compact. */
+export const scales = ['comfortable', 'compact'] as const;
+export type ScaleName = (typeof scales)[number];
+
 /** A token's CSS value: one value, or a value per part of a composite token such as typography. */
 export type TokenValue = string | Readonly<Record<string, string>>;
 
@@ -18,6 +22,8 @@ export interface TokenDefinition {
    * TokensHandwritten.css adds, such as the touch sizes under a coarse pointer, are not in it.
    */
   values: Readonly<Record<ThemeName, TokenValue>>;
+  /** The value under each scale that changes the token, such as compact; comfortable is values. */
+  scales?: Readonly<Partial<Record<ScaleName, TokenValue>>>;
 }
 
 /** Every token, by its DTCG path. */
@@ -2743,6 +2749,17 @@ export const tokens = {
       'dark-high-contrast': '#ffffff',
     },
   },
+  /** The hairline border of controls and fields, which stays 1 px in both scales. */
+  'control.border-width': {
+    cssVariable: '--control-border-width',
+    type: 'dimension',
+    values: {
+      light: '1px',
+      dark: '1px',
+      'light-high-contrast': '1px',
+      'dark-high-contrast': '1px',
+    },
+  },
   'control.font-size': {
     cssVariable: '--control-font-size',
     type: 'dimension',
@@ -2753,6 +2770,19 @@ export const tokens = {
       'dark-high-contrast': '0.9375rem',
     },
   },
+  /** The space between a control's icon and its label. */
+  'control.gap': {
+    cssVariable: '--control-gap',
+    type: 'dimension',
+    values: {
+      light: '0.4375rem',
+      dark: '0.4375rem',
+      'light-high-contrast': '0.4375rem',
+      'dark-high-contrast': '0.4375rem',
+    },
+    scales: { compact: '0.375rem' },
+  },
+  /** The height a control takes when it sets no size: md, unless a container sets it to another control height for what it holds, as a table cell does with sm. */
   'control.height': {
     cssVariable: '--control-height',
     type: 'dimension',
@@ -2763,18 +2793,21 @@ export const tokens = {
       'dark-high-contrast': '2.5rem',
     },
   },
-  'control.height-compact': {
-    cssVariable: '--control-height-compact',
+  /** The large control height, for a control of size lg, such as a prominent call to action. */
+  'control.height-lg': {
+    cssVariable: '--control-height-lg',
     type: 'dimension',
     values: {
-      light: '2rem',
-      dark: '2rem',
-      'light-high-contrast': '2rem',
-      'dark-high-contrast': '2rem',
+      light: '3rem',
+      dark: '3rem',
+      'light-high-contrast': '3rem',
+      'dark-high-contrast': '3rem',
     },
+    scales: { compact: '2.375rem' },
   },
-  'control.height-small': {
-    cssVariable: '--control-height-small',
+  /** The medium control height, every control's default size. */
+  'control.height-md': {
+    cssVariable: '--control-height-md',
     type: 'dimension',
     values: {
       light: '2.5rem',
@@ -2782,7 +2815,21 @@ export const tokens = {
       'light-high-contrast': '2.5rem',
       'dark-high-contrast': '2.5rem',
     },
+    scales: { compact: '2rem' },
   },
+  /** The small control height: a control of size sm, the actions in a table cell, a title bar or a panel header. */
+  'control.height-sm': {
+    cssVariable: '--control-height-sm',
+    type: 'dimension',
+    values: {
+      light: '2rem',
+      dark: '2rem',
+      'light-high-contrast': '2rem',
+      'dark-high-contrast': '2rem',
+    },
+    scales: { compact: '1.625rem' },
+  },
+  /** The hit area of a control under a coarse pointer, whatever the scale: a control smaller than it keeps its look and gains an invisible overlay this tall and wide. Rows and text fields grow to it instead. */
   'control.height-touch': {
     cssVariable: '--control-height-touch',
     type: 'dimension',
@@ -2793,6 +2840,7 @@ export const tokens = {
       'dark-high-contrast': '2.75rem',
     },
   },
+  /** The icon in a control. 1 rem in both scales: icons never get smaller than this. */
   'control.icon-size': {
     cssVariable: '--control-icon-size',
     type: 'dimension',
@@ -2801,6 +2849,17 @@ export const tokens = {
       dark: '1rem',
       'light-high-contrast': '1rem',
       'dark-high-contrast': '1rem',
+    },
+  },
+  /** The smallest a pressable target may be in either dimension, in both scales: WCAG 2.2's 24 px minimum. A control smaller than its size, such as a segment inside a small rail or an action inside a small field, keeps at least this. */
+  'control.target-min': {
+    cssVariable: '--control-target-min',
+    type: 'dimension',
+    values: {
+      light: '1.5rem',
+      dark: '1.5rem',
+      'light-high-contrast': '1.5rem',
+      'dark-high-contrast': '1.5rem',
     },
   },
   'elevation.0.border': {
@@ -2883,6 +2942,18 @@ export const tokens = {
       'dark-high-contrast': '0 1px 3px 0 rgb(0 0 0 / 0.6), 0 4px 8px 3px rgb(0 0 0 / 0.3)',
     },
   },
+  /** The height of a text field's floating variant, whose label rests inside the field and floats into its outline. Other fields take the control height. */
+  'field.floating-height': {
+    cssVariable: '--field-floating-height',
+    type: 'dimension',
+    values: {
+      light: '3.5rem',
+      dark: '3.5rem',
+      'light-high-contrast': '3.5rem',
+      'dark-high-contrast': '3.5rem',
+    },
+    scales: { compact: '2.75rem' },
+  },
   'font.family': {
     cssVariable: '--font-family',
     type: 'fontFamily',
@@ -2902,6 +2973,7 @@ export const tokens = {
       'light-high-contrast': '0.9375rem',
       'dark-high-contrast': '0.9375rem',
     },
+    scales: { compact: '0.8125rem' },
   },
   'font.size.body-small': {
     cssVariable: '--font-size-body-small',
@@ -2912,6 +2984,19 @@ export const tokens = {
       'light-high-contrast': '0.875rem',
       'dark-high-contrast': '0.875rem',
     },
+    scales: { compact: '0.75rem' },
+  },
+  /** Captions, a menu's group labels and other small secondary text. */
+  'font.size.caption': {
+    cssVariable: '--font-size-caption',
+    type: 'dimension',
+    values: {
+      light: '0.75rem',
+      dark: '0.75rem',
+      'light-high-contrast': '0.75rem',
+      'dark-high-contrast': '0.75rem',
+    },
+    scales: { compact: '0.6875rem' },
   },
   'font.size.heading': {
     cssVariable: '--font-size-heading',
@@ -2922,6 +3007,7 @@ export const tokens = {
       'light-high-contrast': '1.125rem',
       'dark-high-contrast': '1.125rem',
     },
+    scales: { compact: '1rem' },
   },
   'font.size.heading-small': {
     cssVariable: '--font-size-heading-small',
@@ -2932,15 +3018,64 @@ export const tokens = {
       'light-high-contrast': '1rem',
       'dark-high-contrast': '1rem',
     },
+    scales: { compact: '0.875rem' },
   },
-  'icon-button.size': {
-    cssVariable: '--icon-button-size',
+  /** The label of a control, and the text of menu, tree and option rows. */
+  'font.size.label': {
+    cssVariable: '--font-size-label',
     type: 'dimension',
     values: {
-      light: '2.5rem',
-      dark: '2.5rem',
-      'light-high-contrast': '2.5rem',
-      'dark-high-contrast': '2.5rem',
+      light: '0.875rem',
+      dark: '0.875rem',
+      'light-high-contrast': '0.875rem',
+      'dark-high-contrast': '0.875rem',
+    },
+    scales: { compact: '0.8125rem' },
+  },
+  /** A label inside a field at the control height, such as a combobox chip's. */
+  'font.size.label-small': {
+    cssVariable: '--font-size-label-small',
+    type: 'dimension',
+    values: {
+      light: '0.8125rem',
+      dark: '0.8125rem',
+      'light-high-contrast': '0.8125rem',
+      'dark-high-contrast': '0.8125rem',
+    },
+    scales: { compact: '0.75rem' },
+  },
+  /** A leading icon in a large row, such as a list item's. */
+  'icon.size-lg': {
+    cssVariable: '--icon-size-lg',
+    type: 'dimension',
+    values: {
+      light: '1.25rem',
+      dark: '1.25rem',
+      'light-high-contrast': '1.25rem',
+      'dark-high-contrast': '1.25rem',
+    },
+    scales: { compact: '1.125rem' },
+  },
+  /** An icon beside body text, such as in a tree or a select trigger. */
+  'icon.size-md': {
+    cssVariable: '--icon-size-md',
+    type: 'dimension',
+    values: {
+      light: '1.125rem',
+      dark: '1.125rem',
+      'light-high-contrast': '1.125rem',
+      'dark-high-contrast': '1.125rem',
+    },
+    scales: { compact: '1rem' },
+  },
+  'icon.size-sm': {
+    cssVariable: '--icon-size-sm',
+    type: 'dimension',
+    values: {
+      light: '1rem',
+      dark: '1rem',
+      'light-high-contrast': '1rem',
+      'dark-high-contrast': '1rem',
     },
   },
   'md.sys.shape.corner.extra-large': {
@@ -2952,6 +3087,7 @@ export const tokens = {
       'light-high-contrast': '1.75rem',
       'dark-high-contrast': '1.75rem',
     },
+    scales: { compact: '1.375rem' },
   },
   'md.sys.shape.corner.extra-small': {
     cssVariable: '--md-sys-shape-corner-extra-small',
@@ -2962,6 +3098,7 @@ export const tokens = {
       'light-high-contrast': '0.25rem',
       'dark-high-contrast': '0.25rem',
     },
+    scales: { compact: '0.1875rem' },
   },
   'md.sys.shape.corner.large': {
     cssVariable: '--md-sys-shape-corner-large',
@@ -2972,6 +3109,7 @@ export const tokens = {
       'light-high-contrast': '1rem',
       'dark-high-contrast': '1rem',
     },
+    scales: { compact: '0.75rem' },
   },
   'md.sys.shape.corner.medium': {
     cssVariable: '--md-sys-shape-corner-medium',
@@ -2982,6 +3120,7 @@ export const tokens = {
       'light-high-contrast': '0.75rem',
       'dark-high-contrast': '0.75rem',
     },
+    scales: { compact: '0.625rem' },
   },
   'md.sys.shape.corner.none': {
     cssVariable: '--md-sys-shape-corner-none',
@@ -2997,6 +3136,7 @@ export const tokens = {
       'light-high-contrast': '0.5rem',
       'dark-high-contrast': '0.5rem',
     },
+    scales: { compact: '0.375rem' },
   },
   'motion.duration.fast': {
     cssVariable: '--motion-duration-fast',
@@ -3070,6 +3210,18 @@ export const tokens = {
       'dark-high-contrast': 'cubic-bezier(0.45, 0, 0.2, 1)',
     },
   },
+  /** Fields, tables and other blocks with medium corners. */
+  'radius.large': {
+    cssVariable: '--radius-large',
+    type: 'dimension',
+    values: {
+      light: '1rem',
+      dark: '1rem',
+      'light-high-contrast': '1rem',
+      'dark-high-contrast': '1rem',
+    },
+    scales: { compact: '0.75rem' },
+  },
   'radius.row-inner': {
     cssVariable: '--radius-row-inner',
     type: 'dimension',
@@ -3079,6 +3231,7 @@ export const tokens = {
       'light-high-contrast': '0.5rem',
       'dark-high-contrast': '0.5rem',
     },
+    scales: { compact: '0.375rem' },
   },
   'radius.row-outer': {
     cssVariable: '--radius-row-outer',
@@ -3109,6 +3262,7 @@ export const tokens = {
       'light-high-contrast': '0.5rem',
       'dark-high-contrast': '0.5rem',
     },
+    scales: { compact: '0.375rem' },
   },
   'radius.surface': {
     cssVariable: '--radius-surface',
@@ -3119,6 +3273,79 @@ export const tokens = {
       'light-high-contrast': '1.75rem',
       'dark-high-contrast': '1.75rem',
     },
+    scales: { compact: '1.375rem' },
+  },
+  /** The line a row of a tree or list reserves for its label and icon; the row's density adds its block padding around it. */
+  'row.content-height': {
+    cssVariable: '--row-content-height',
+    type: 'dimension',
+    values: {
+      light: '1.25rem',
+      dark: '1.25rem',
+      'light-high-contrast': '1.25rem',
+      'dark-high-contrast': '1.25rem',
+    },
+    scales: { compact: '1.375rem' },
+  },
+  /** The row of a menu and of a select's or combobox's popup. */
+  'row.height': {
+    cssVariable: '--row-height',
+    type: 'dimension',
+    values: {
+      light: '2.25rem',
+      dark: '2.25rem',
+      'light-high-contrast': '2.25rem',
+      'dark-high-contrast': '2.25rem',
+    },
+    scales: { compact: '1.75rem' },
+  },
+  /** Row density lg. */
+  'row.padding-block-lg': {
+    cssVariable: '--row-padding-block-lg',
+    type: 'dimension',
+    values: {
+      light: '0.75rem',
+      dark: '0.75rem',
+      'light-high-contrast': '0.75rem',
+      'dark-high-contrast': '0.75rem',
+    },
+    scales: { compact: '0.375rem' },
+  },
+  /** Row density md: the default of tables and lists. */
+  'row.padding-block-md': {
+    cssVariable: '--row-padding-block-md',
+    type: 'dimension',
+    values: {
+      light: '0.5rem',
+      dark: '0.5rem',
+      'light-high-contrast': '0.5rem',
+      'dark-high-contrast': '0.5rem',
+    },
+    scales: { compact: '0.25rem' },
+  },
+  /** Row density sm: a tree's default. */
+  'row.padding-block-sm': {
+    cssVariable: '--row-padding-block-sm',
+    type: 'dimension',
+    values: {
+      light: '0.25rem',
+      dark: '0.25rem',
+      'light-high-contrast': '0.25rem',
+      'dark-high-contrast': '0.25rem',
+    },
+    scales: { compact: '0.1875rem' },
+  },
+  /** Row density xs: the block padding of each row of a data component, such as a table, a tree or a list. */
+  'row.padding-block-xs': {
+    cssVariable: '--row-padding-block-xs',
+    type: 'dimension',
+    values: {
+      light: '0.125rem',
+      dark: '0.125rem',
+      'light-high-contrast': '0.125rem',
+      'dark-high-contrast': '0.125rem',
+    },
+    scales: { compact: '0.125rem' },
   },
   /** Text in rows keeps clear of the large outer corners, whether a row stands alone or is connected. */
   'row.padding-inline': {
@@ -3130,6 +3357,7 @@ export const tokens = {
       'light-high-contrast': '1.5rem',
       'dark-high-contrast': '1.5rem',
     },
+    scales: { compact: '1.25rem' },
   },
   'space.1': {
     cssVariable: '--space-1',
@@ -3150,6 +3378,7 @@ export const tokens = {
       'light-high-contrast': '0.5rem',
       'dark-high-contrast': '0.5rem',
     },
+    scales: { compact: '0.375rem' },
   },
   'space.3': {
     cssVariable: '--space-3',
@@ -3160,6 +3389,7 @@ export const tokens = {
       'light-high-contrast': '0.75rem',
       'dark-high-contrast': '0.75rem',
     },
+    scales: { compact: '0.625rem' },
   },
   'space.4': {
     cssVariable: '--space-4',
@@ -3170,6 +3400,7 @@ export const tokens = {
       'light-high-contrast': '1rem',
       'dark-high-contrast': '1rem',
     },
+    scales: { compact: '0.75rem' },
   },
   'space.5': {
     cssVariable: '--space-5',
@@ -3180,6 +3411,7 @@ export const tokens = {
       'light-high-contrast': '1.5rem',
       'dark-high-contrast': '1.5rem',
     },
+    scales: { compact: '1.25rem' },
   },
   'space.6': {
     cssVariable: '--space-6',
@@ -3190,6 +3422,7 @@ export const tokens = {
       'light-high-contrast': '2rem',
       'dark-high-contrast': '2rem',
     },
+    scales: { compact: '1.625rem' },
   },
   'space.7': {
     cssVariable: '--space-7',
@@ -3200,6 +3433,7 @@ export const tokens = {
       'light-high-contrast': '2.5rem',
       'dark-high-contrast': '2.5rem',
     },
+    scales: { compact: '2rem' },
   },
   'space.8': {
     cssVariable: '--space-8',
@@ -3210,6 +3444,7 @@ export const tokens = {
       'light-high-contrast': '3rem',
       'dark-high-contrast': '3rem',
     },
+    scales: { compact: '2.375rem' },
   },
   'space.9': {
     cssVariable: '--space-9',
@@ -3220,6 +3455,7 @@ export const tokens = {
       'light-high-contrast': '4rem',
       'dark-high-contrast': '4rem',
     },
+    scales: { compact: '3.25rem' },
   },
   'state.disabled-opacity': {
     cssVariable: '--state-disabled-opacity',
@@ -3231,7 +3467,7 @@ export const tokens = {
       'dark-high-contrast': '0.48',
     },
   },
-  /** A window title bar drawn by the application, which keeps compact controls. */
+  /** A window title bar drawn by the application, which holds controls of size sm. */
   'title-bar.height': {
     cssVariable: '--title-bar-height',
     type: 'dimension',
@@ -3241,6 +3477,7 @@ export const tokens = {
       'light-high-contrast': '2.5rem',
       'dark-high-contrast': '2.5rem',
     },
+    scales: { compact: '2rem' },
   },
   'topbar.height': {
     cssVariable: '--topbar-height',
@@ -3250,6 +3487,143 @@ export const tokens = {
       dark: '3.25rem',
       'light-high-contrast': '3.25rem',
       'dark-high-contrast': '3.25rem',
+    },
+    scales: { compact: '2.625rem' },
+  },
+  'type.body': {
+    cssVariable: '--type-body',
+    type: 'typography',
+    values: {
+      light: {
+        'font-family': "'envUI Inter', sans-serif",
+        'font-size': '0.9375rem',
+        'font-weight': '400',
+        'letter-spacing': '0rem',
+        'line-height': '1.4em',
+      },
+      dark: {
+        'font-family': "'envUI Inter', sans-serif",
+        'font-size': '0.9375rem',
+        'font-weight': '400',
+        'letter-spacing': '0rem',
+        'line-height': '1.4em',
+      },
+      'light-high-contrast': {
+        'font-family': "'envUI Inter', sans-serif",
+        'font-size': '0.9375rem',
+        'font-weight': '400',
+        'letter-spacing': '0rem',
+        'line-height': '1.4em',
+      },
+      'dark-high-contrast': {
+        'font-family': "'envUI Inter', sans-serif",
+        'font-size': '0.9375rem',
+        'font-weight': '400',
+        'letter-spacing': '0rem',
+        'line-height': '1.4em',
+      },
+    },
+  },
+  'type.body-small': {
+    cssVariable: '--type-body-small',
+    type: 'typography',
+    values: {
+      light: {
+        'font-family': "'envUI Inter', sans-serif",
+        'font-size': '0.875rem',
+        'font-weight': '400',
+        'letter-spacing': '0rem',
+        'line-height': '1.4em',
+      },
+      dark: {
+        'font-family': "'envUI Inter', sans-serif",
+        'font-size': '0.875rem',
+        'font-weight': '400',
+        'letter-spacing': '0rem',
+        'line-height': '1.4em',
+      },
+      'light-high-contrast': {
+        'font-family': "'envUI Inter', sans-serif",
+        'font-size': '0.875rem',
+        'font-weight': '400',
+        'letter-spacing': '0rem',
+        'line-height': '1.4em',
+      },
+      'dark-high-contrast': {
+        'font-family': "'envUI Inter', sans-serif",
+        'font-size': '0.875rem',
+        'font-weight': '400',
+        'letter-spacing': '0rem',
+        'line-height': '1.4em',
+      },
+    },
+  },
+  'type.h1': {
+    cssVariable: '--type-h1',
+    type: 'typography',
+    values: {
+      light: {
+        'font-family': "'envUI Inter', sans-serif",
+        'font-size': '1.125rem',
+        'font-weight': '500',
+        'letter-spacing': '0rem',
+        'line-height': '1.4em',
+      },
+      dark: {
+        'font-family': "'envUI Inter', sans-serif",
+        'font-size': '1.125rem',
+        'font-weight': '500',
+        'letter-spacing': '0rem',
+        'line-height': '1.4em',
+      },
+      'light-high-contrast': {
+        'font-family': "'envUI Inter', sans-serif",
+        'font-size': '1.125rem',
+        'font-weight': '500',
+        'letter-spacing': '0rem',
+        'line-height': '1.4em',
+      },
+      'dark-high-contrast': {
+        'font-family': "'envUI Inter', sans-serif",
+        'font-size': '1.125rem',
+        'font-weight': '500',
+        'letter-spacing': '0rem',
+        'line-height': '1.4em',
+      },
+    },
+  },
+  'type.h2': {
+    cssVariable: '--type-h2',
+    type: 'typography',
+    values: {
+      light: {
+        'font-family': "'envUI Inter', sans-serif",
+        'font-size': '1rem',
+        'font-weight': '500',
+        'letter-spacing': '0rem',
+        'line-height': '1.4em',
+      },
+      dark: {
+        'font-family': "'envUI Inter', sans-serif",
+        'font-size': '1rem',
+        'font-weight': '500',
+        'letter-spacing': '0rem',
+        'line-height': '1.4em',
+      },
+      'light-high-contrast': {
+        'font-family': "'envUI Inter', sans-serif",
+        'font-size': '1rem',
+        'font-weight': '500',
+        'letter-spacing': '0rem',
+        'line-height': '1.4em',
+      },
+      'dark-high-contrast': {
+        'font-family': "'envUI Inter', sans-serif",
+        'font-size': '1rem',
+        'font-weight': '500',
+        'letter-spacing': '0rem',
+        'line-height': '1.4em',
+      },
     },
   },
 } as const satisfies Record<string, TokenDefinition>;

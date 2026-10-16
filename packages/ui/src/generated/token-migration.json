@@ -817,6 +817,24 @@
       "value": "#ffffff",
       "component": "Fixed white"
     },
+    "--control-height-compact": {
+      "removed": true,
+      "replacement": "control.height-sm",
+      "note": "The small control height. For a compact app or region, set scale=\"compact\" on its Theme instead.",
+      "cssVariable": "--control-height-sm"
+    },
+    "--control-height-small": {
+      "removed": true,
+      "replacement": "control.height",
+      "note": "It always equalled --control-height, which every control reads now.",
+      "cssVariable": "--control-height"
+    },
+    "--icon-button-size": {
+      "removed": true,
+      "replacement": "control.height",
+      "note": "An icon button is as tall as the other controls of its size.",
+      "cssVariable": "--control-height"
+    },
     "--member-identity-avatar-size": { "removed": true, "replacement": null, "note": "Unused." },
     "--member-identity-copy-height": { "removed": true, "replacement": null, "note": "Unused." },
     "--member-identity-email-line-height": {
@@ -832,6 +850,11 @@
       "note": "Unused."
     },
     "--member-identity-name-size": { "removed": true, "replacement": null, "note": "Unused." },
+    "--scale": {
+      "removed": true,
+      "replacement": null,
+      "note": "The multiplier is gone: components read sized tokens. Set scale=\"compact\" on a Theme for the compact scale."
+    },
     "--state-card-strip-weight": { "removed": true, "replacement": null, "note": "Unused." },
     "--state-dialog-overlay-opacity": {
       "removed": true,

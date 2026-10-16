@@ -78,15 +78,14 @@ Items also stand on their own, such as in AppShell's `navigation`, where they fo
 
 ## Variants and sizes
 
-| Form              | Use for                                                                                    |
-| ----------------- | ------------------------------------------------------------------------------------------ |
-| `size="standard"` | Most navigation, with 0.9375 rem labels.                                                   |
-| `size="compact"`  | A dense sidebar or a long list, such as recent documents, with 0.875 rem labels.           |
-| `iconOnly`        | A collapsed sidebar or a rail: a 2.5 rem circle with the icon, and the label in a tooltip. |
+| Form       | Use for                                                                                    |
+| ---------- | ------------------------------------------------------------------------------------------ |
+| Labelled   | Most navigation: the icon and the label. The default.                                      |
+| `iconOnly` | A collapsed sidebar or a rail: a 2.5 rem circle with the icon, and the label in a tooltip. |
 
 <!-- specimen: VariantMatrix -->
 
-- Both sizes keep the 2.5 rem height and the 1 rem icon, so standard and compact items line up with buttons; on touch screens items grow to 2.75 rem, and icon-only circles with them.
+- Items take the control height of their container, 2.5 rem by default, with 0.9375 rem labels and a 1 rem icon, so they line up with buttons. They follow the app's [scale](../foundations/scale.md): 2 rem with 0.8125 rem labels in the compact scale. On touch screens items grow to 2.75 rem, and icon-only circles with them.
 - An item takes the navigation text color, with its icon in the muted navigation icon color. The selected item takes the navigation selection fill, with its label and icon in the selected label color: a deeper blue in the light theme and a lighter one in the dark theme, at 4.5:1 on hover too.
 - Hover and pressed take the navigation hover and pressed tokens of the item's fill, selected or not, over 0.12 s; pressed, an item also settles to 97 percent of its size. With reduced motion, the colors change at once and the item doesn't move.
 
@@ -165,11 +164,11 @@ NavList.Group puts related pages under a small heading, which also names the gro
 
 ```
 
-### Compact labels
+### In a compact region
 
-`size="compact"` sets 0.875 rem labels at the same height, for a long list such as recent documents.
+Items follow the app's scale. A Theme with `scale="compact"` around a whole region, such as a docked list of recent documents, gives its items the compact height and labels.
 
-```tsx example=CompactSize
+```tsx example=InACompactRegion
 
 ```
 

@@ -40,11 +40,11 @@ export default function States() {
           <Select label="Owner" options={ownerOptions} defaultValue="sam" disabled />
         </Specimen>
         <Specimen title="Compact">
-          <Select density="compact" aria-label="Owner" options={ownerOptions} defaultValue="sam" />
+          <Select size="sm" aria-label="Owner" options={ownerOptions} defaultValue="sam" />
         </Specimen>
         <Specimen title="Compact, outlined">
           <Select
-            density="compact"
+            size="sm"
             variant="outlined"
             aria-label="Owner"
             options={ownerOptions}

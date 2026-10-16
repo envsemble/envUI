@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { Theme, useTheme, type ThemeContrast, type ThemeValue } from './Theme.js';
+import { Theme, useTheme, type ThemeContrast, type ThemeScale, type ThemeValue } from './Theme.js';
 import { IconButton, type IconButtonProps } from '../actions/Button.js';
 import { DarkMode } from '../icons/DarkMode.js';
 import { LightMode } from '../icons/LightMode.js';
@@ -18,6 +18,8 @@ import {
   contrastSourceAttribute,
   defaultThemeStorageKey,
   ownContrastSource,
+  ownScaleSource,
+  scaleSourceAttribute,
   type ThemePreference,
 } from './ThemeBootstrap.js';
 
@@ -57,6 +59,15 @@ export interface ThemePreferenceProviderProps {
    * application to createThemeBootstrapScript too, so the root has it before the first paint.
    */
   contrast?: ThemeContrast;
+  /**
+   * The app scale, comfortable or compact for a desktop productivity app, as on Theme: of the Theme
+   * boundary around the children, and, marked as envUI's own, of the document root with
+   * applyToDocument. Without it, the boundary takes the scale of an enclosing Theme, or
+   * comfortable, and the root keeps a scale the page set but drops one that envUI wrote and the page
+   * left unchanged. Pass the same scale to createThemeBootstrapScript so the root has it before the
+   * first paint.
+   */
+  scale?: ThemeScale;
   /** Class name for the Theme boundary around the children. */
   className?: string;
 }
@@ -74,6 +85,7 @@ function readStoredPreference(storageKey: string, fallback: ThemePreference): Th
 /** What a provider applying to the document has written on the root. */
 interface DocumentWrites {
   contrast?: Exclude<ThemeContrast, 'system'>;
+  scale?: ThemeScale;
 }
 
 /**
@@ -100,6 +112,23 @@ function releaseContrast(root: HTMLElement) {
   root.removeAttribute(contrastSourceAttribute);
 }
 
+/**
+ * Removes the root's scale when envUI wrote it, the page has not written over it since, and no
+ * mounted provider holds it, as releaseContrast does for the contrast.
+ */
+function releaseScale(root: HTMLElement) {
+  const marker = root.getAttribute(scaleSourceAttribute);
+  if (marker === null) return;
+  const scale = root.dataset.envScale;
+  if (scale === undefined || marker !== ownScaleSource(scale)) {
+    root.removeAttribute(scaleSourceAttribute);
+    return;
+  }
+  for (const writes of documentProviders.values()) if (writes.scale === scale) return;
+  delete root.dataset.envScale;
+  root.removeAttribute(scaleSourceAttribute);
+}
+
 function readSystemTheme(): ThemeValue {
   return typeof window !== 'undefined' && window.matchMedia?.(systemDarkQuery).matches
     ? 'dark'
@@ -113,10 +142,12 @@ export function ThemePreferenceProvider({
   defaultPreference = 'system',
   applyToDocument = true,
   contrast: ownContrast,
+  scale: ownScale,
   className,
 }: ThemePreferenceProviderProps) {
-  const inheritedContrast = useTheme().contrast;
-  const contrast = ownContrast ?? inheritedContrast;
+  const inherited = useTheme();
+  const contrast = ownContrast ?? inherited.contrast;
+  const scale = ownScale ?? inherited.scale;
   const [preference, setPreferenceState] = useState<ThemePreference>(() =>
     typeof window === 'undefined'
       ? defaultPreference
@@ -192,6 +223,13 @@ export function ThemePreferenceProvider({
       root.dataset.envContrast = written;
       root.setAttribute(contrastSourceAttribute, ownContrastSource(written));
     } else releaseContrast(root);
+    // The root takes a scale the provider is given, marked with its value as the contrast is;
+    // without one it keeps a scale the page set and drops one envUI wrote.
+    documentProviders.set(provider, { ...documentProviders.get(provider), scale: ownScale });
+    if (ownScale) {
+      root.dataset.envScale = ownScale;
+      root.setAttribute(scaleSourceAttribute, ownScaleSource(ownScale));
+    } else releaseScale(root);
     root.style.colorScheme = theme;
     // The browser's own interface, such as a mobile address bar, takes the canvas color. Every
     // theme-color tag follows, including ones written for a system color scheme with media.
@@ -200,7 +238,7 @@ export function ThemePreferenceProvider({
       'meta[name="theme-color"]',
     ))
       browserTheme.content = canvas;
-  }, [applyToDocument, theme, contrast, provider]);
+  }, [applyToDocument, theme, contrast, ownScale, provider]);
 
   const setPreference = useCallback(
     (next: ThemePreference) => {
@@ -225,7 +263,7 @@ export function ThemePreferenceProvider({
 
   return (
     <ThemePreferenceContext value={value}>
-      <Theme theme={theme} contrast={contrast} className={className}>
+      <Theme theme={theme} contrast={contrast} scale={scale} className={className}>
         {children}
       </Theme>
     </ThemePreferenceContext>

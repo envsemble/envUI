@@ -2,7 +2,6 @@
 
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import {
-  useContext,
   useId,
   useRef,
   type ComponentPropsWithRef,
@@ -16,12 +15,7 @@ import { Check } from '../icons/Check.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
 import { Kbd } from '../content/Kbd.js';
 import { useLinkComponent } from './LinkProvider.js';
-import {
-  MenuDensityContext,
-  menuPopupInlineInset,
-  menuPopupInset,
-  renderMenuPopup,
-} from './internal/MenuPopup.js';
+import { menuPopupInlineInset, menuPopupInset, renderMenuPopup } from './internal/MenuPopup.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 
 export interface RootProps {
@@ -56,18 +50,15 @@ export interface RootProps {
   defaultOpen?: boolean;
   /** Called with the new visibility as the menu opens or closes. */
   onOpenChange?: (open: boolean) => void;
-  /**
-   * compact is the desktop dropdown for dense surfaces: a raised popup with 1.75 rem rows, hairline
-   * separators and small keys for shortcuts. Submenus open in the same density.
-   */
-  density?: Density;
   /** Class of the menu popup. */
   className?: string;
 }
 
-export type Density = 'standard' | 'compact';
-
-/** A list of actions and destinations that opens from a trigger; keyboard and focus follow the menu pattern. */
+/**
+ * A list of actions and destinations that opens from a trigger; keyboard and focus follow the menu
+ * pattern. The popup is raised above the page, with rows of the scale's row height, hairline
+ * separators and small keys for shortcuts.
+ */
 function Root({
   trigger,
   'aria-label': label,
@@ -77,7 +68,6 @@ function Root({
   open,
   defaultOpen,
   onOpenChange,
-  density = 'standard',
   className,
 }: RootProps) {
   const theme = useTheme();
@@ -99,9 +89,9 @@ function Root({
             <BaseMenu.Popup
               className={classNames('env-menu', className)}
               // Base UI names the menu after its trigger; the menu's own label replaces that name.
-              render={renderMenuPopup(label, density)}
+              render={renderMenuPopup(label)}
             >
-              <MenuDensityContext value={density}>{children}</MenuDensityContext>
+              {children}
             </BaseMenu.Popup>
           </BaseMenu.Positioner>
         </Theme>
@@ -350,7 +340,7 @@ const submenuReturnReasons = new Set(['escape-key', 'list-navigation']);
 
 /**
  * A row that opens a nested menu beside it, on hover or with the keyboard. The submenu opens in the
- * density and theme of its menu, and lines its first row up with the row that opened it.
+ * theme of its menu, and lines its first row up with the row that opened it.
  */
 function Submenu({
   label,
@@ -365,7 +355,6 @@ function Submenu({
   className,
 }: SubmenuProps) {
   const theme = useTheme();
-  const density = useContext(MenuDensityContext);
   const trigger = useRef<HTMLDivElement>(null);
   const popup = useRef<HTMLDivElement>(null);
   const closeReason = useRef<string | null>(null);
@@ -408,7 +397,7 @@ function Submenu({
             <BaseMenu.Popup
               ref={popup}
               className={classNames('env-menu', className)}
-              render={renderMenuPopup(ariaLabel ?? textLabel, density)}
+              render={renderMenuPopup(ariaLabel ?? textLabel)}
               // Escape and ← close only the submenu and return to its row. Otherwise focus has
               // moved on, or an item closed the whole menu, whose own trigger takes focus.
               finalFocus={() =>
@@ -417,7 +406,7 @@ function Submenu({
                   : false
               }
             >
-              <MenuDensityContext value={density}>{children}</MenuDensityContext>
+              {children}
             </BaseMenu.Popup>
           </BaseMenu.Positioner>
         </Theme>

@@ -61,7 +61,6 @@ function PopupTriggers({ name }: { name: string }) {
       </Menu.Root>
       <Menu.Root
         aria-label={`Compact actions ${name}`}
-        density="compact"
         trigger={<Button variant="secondary">Compact menu {name}</Button>}
       >
         <Menu.Item>Rename</Menu.Item>
@@ -74,12 +73,7 @@ function PopupTriggers({ name }: { name: string }) {
           <Menu.Item>New</Menu.Item>
         </Menubar.Menu>
       </Menubar.Root>
-      <Select
-        label={`Sort ${name}`}
-        density="compact"
-        options={statusOptions}
-        defaultValue="open"
-      />
+      <Select label={`Sort ${name}`} size="sm" options={statusOptions} defaultValue="open" />
       <Combobox label={`Person ${name}`} items={people} />
       <DatePicker label={`Due ${name}`} defaultValue="2026-10-20" locale="en-GB" />
       <HoverCard trigger={<Link href="#card">Card {name}</Link>}>
@@ -209,11 +203,11 @@ export function ThemeContrastRemountFixture() {
 
 /**
  * Two providers that both apply to the document, against the advice to let one: an outer one at
- * high contrast and an inner one at system. Mounted with ?fixture=theme-contrast-nested.
+ * high contrast and the compact scale, and an inner one at system contrast without a scale. Mounted with ?fixture=theme-contrast-nested.
  */
 export function ThemeContrastNestedFixture() {
   return (
-    <ThemePreferenceProvider storageKey="fixture-outer-theme" contrast="high">
+    <ThemePreferenceProvider storageKey="fixture-outer-theme" contrast="high" scale="compact">
       <ThemePreferenceProvider
         storageKey="fixture-inner-theme"
         contrast="system"

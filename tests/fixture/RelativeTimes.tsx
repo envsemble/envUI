@@ -70,18 +70,17 @@ export function RelativeTimesFixture({ theme }: { theme: ThemeValue }) {
       <Button variant="secondary" onClick={() => setSavedAt(Date.now())}>
         Save draft {theme}
       </Button>
-      {/* A compact toolbar: the time sits on the center line of 2 rem controls. */}
+      {/* A small toolbar: the time sits on the center line of 2 rem controls. */}
       <Surface
         tone="row"
         padding={2}
         corners="standard"
-        density="compact"
         className="fixture-toolbar"
         data-testid="toolbar"
       >
         <span className="fixture-shrink-label">Quarterly report</span>
         <RelativeTime data-testid="toolbar-time" format="narrow" value={openedAt - 3 * hour} />
-        <IconButton icon={<Settings />} aria-label="Report settings" />
+        <IconButton size="sm" icon={<Settings />} aria-label="Report settings" />
       </Surface>
       <p className="fixture-narrow-time" data-testid="narrow-frame">
         Updated <RelativeTime data-testid="narrow-time" value={openedAt - 3 * hour} />

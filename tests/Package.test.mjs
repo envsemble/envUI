@@ -1004,8 +1004,8 @@ test('avatar groups, relative times, copy buttons and pagination render on a ser
       <AvatarGroup {...groupProps} onPersonClick={(clicked, event) => { void clicked.name; event.preventDefault(); }} />
       <RelativeTime {...timeProps} nowLabel="moments ago" />
       <CopyButton {...copyProps} onCopy={(copied) => { const typed: string = copied; void typed; }} />
-      <CopyButton value="text" size="compact" variant="text">Copy</CopyButton>
-      <Pagination {...pagerProps} formatRange={describe} hasNextPage pending size="compact" />
+      <CopyButton value="text" size="sm" variant="text">Copy</CopyButton>
+      <Pagination {...pagerProps} formatRange={describe} hasNextPage pending size="sm" />
     </>;
     void text;
     // @ts-expect-error An icon-only copy button requires an accessible name.

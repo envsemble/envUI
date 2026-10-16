@@ -21,7 +21,7 @@ export function SegmentedControlFixture({ theme }: { theme: ThemeValue }) {
       />
       <SegmentedControl
         aria-label={`Layout ${theme}`}
-        size="compact"
+        size="sm"
         value={layout}
         onValueChange={setLayout}
         options={[

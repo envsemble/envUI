@@ -1,5 +1,7 @@
 /* List geometry is shared with selectable rows and select options. */
 .env-list {
+  /* The density sets the rows' block padding; a row is at least as tall as a small control with it. */
+  --env-list-row-padding: calc(var(--row-padding-block-md) + var(--space-1));
   min-inline-size: 0;
   overflow-wrap: anywhere;
   display: grid;
@@ -17,12 +19,21 @@
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  min-height: 3.5rem;
-  padding: var(--space-3) var(--row-padding-inline);
+  gap: var(--space-3);
+  min-height: calc(var(--control-height-sm) + 2 * var(--env-list-row-padding));
+  padding: var(--env-list-row-padding) var(--row-padding-inline);
   font: var(--type-body-small);
   background: var(--env-list-item-fill);
   color: var(--color-row-text);
+}
+.env-list[data-density='xs'] {
+  --env-list-row-padding: calc(var(--row-padding-block-xs) + var(--space-1));
+}
+.env-list[data-density='sm'] {
+  --env-list-row-padding: calc(var(--row-padding-block-sm) + var(--space-1));
+}
+.env-list[data-density='lg'] {
+  --env-list-row-padding: calc(var(--row-padding-block-lg) + var(--space-1));
 }
 .env-list > .env-list-item > * {
   min-inline-size: 0;
@@ -76,5 +87,5 @@
   }
 }
 .env-list-surface .env-list + .env-list {
-  margin-top: 0.75rem;
+  margin-top: var(--space-3);
 }

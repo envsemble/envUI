@@ -2,7 +2,7 @@
 @media (pointer: coarse) {
   .env-choice-control,
   .env-radio-option {
-    min-height: calc(var(--control-height-touch) * var(--scale, 1));
+    min-height: var(--control-height-touch);
   }
 }
 
@@ -13,7 +13,7 @@
   overflow-wrap: anywhere;
   display: inline-flex;
   align-items: center;
-  gap: calc(0.75rem * var(--scale, 1));
+  gap: var(--space-3);
   font: var(--type-body-small);
   color: var(--color-radio-text);
   cursor: pointer;
@@ -21,7 +21,7 @@
 .env-radio-options {
   overflow-wrap: anywhere;
   display: grid;
-  gap: calc(0.125rem * var(--scale, 1));
+  gap: 0.125rem;
   min-width: 0;
   margin: 0;
   padding: 0;
@@ -29,16 +29,16 @@
 }
 .env-radio-options legend {
   max-inline-size: 100%;
-  margin-bottom: calc(1rem * var(--scale, 1));
+  margin-bottom: var(--space-4);
   padding: 0;
 }
 .env-radio-option {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: calc(0.75rem * var(--scale, 1));
+  gap: var(--space-3);
   min-width: 0;
-  padding: calc(0.75rem * var(--scale, 1)) calc(var(--row-padding-inline) * var(--scale, 1));
+  padding: var(--space-3) var(--row-padding-inline);
   background: var(--color-radio-row);
   font: var(--type-body-small);
   color: var(--color-radio-text);
@@ -56,12 +56,12 @@
   background: var(--color-radio-row-pressed);
 }
 .env-radio-option:has(input:focus-visible) {
-  outline: calc(0.125rem * var(--scale, 1)) solid var(--color-focus-ring);
+  outline: 0.125rem solid var(--color-focus-ring);
   outline-offset: -0.125rem;
 }
 .env-radio-control {
-  width: calc(1rem * var(--scale, 1));
-  height: calc(1rem * var(--scale, 1));
+  width: 1rem;
+  height: 1rem;
   flex: 0 0 auto;
   margin: 0;
   accent-color: var(--color-radio);
@@ -89,10 +89,10 @@
   appearance: none;
   box-sizing: border-box;
   flex: 0 0 auto;
-  width: calc(2.5rem * var(--scale, 1));
-  height: calc(1.5rem * var(--scale, 1));
+  width: 2.5rem;
+  height: 1.5rem;
   margin: 0;
-  padding: calc(0.25rem * var(--scale, 1));
+  padding: var(--space-1);
   border: 0;
   border-radius: 100vmax;
   background: var(--color-switch-off);
@@ -104,8 +104,8 @@
 .env-switch-control::before {
   content: '';
   display: block;
-  width: calc(1rem * var(--scale, 1));
-  height: calc(1rem * var(--scale, 1));
+  width: 1rem;
+  height: 1rem;
   border-radius: 50%;
   background: var(--color-switch-thumb);
   transition: transform var(--motion-duration-fast) var(--motion-ease);
@@ -115,7 +115,7 @@
   box-shadow: none;
 }
 .env-switch-control:checked::before {
-  transform: translateX(calc(1rem * var(--scale, 1)));
+  transform: translateX(1rem);
   background: var(--color-switch-thumb-on);
 }
 /* In right-to-left text the thumb starts at the right, so it travels its own width to the left. */
@@ -135,8 +135,8 @@
   background: var(--color-switch-on-pressed);
 }
 .env-switch-control:focus-visible {
-  outline: calc(0.125rem * var(--scale, 1)) solid var(--color-focus-ring);
-  outline-offset: calc(0.125rem * var(--scale, 1));
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: 0.125rem;
 }
 @media (prefers-reduced-motion: reduce) {
   .env-switch-control,
@@ -149,8 +149,8 @@
 .env-checkbox-box {
   position: relative;
   display: inline-flex;
-  width: calc(1.125rem * var(--scale, 1));
-  height: calc(1.125rem * var(--scale, 1));
+  width: 1.125rem;
+  height: 1.125rem;
   flex: 0 0 auto;
 }
 .env-checkbox-control {
@@ -159,8 +159,8 @@
   width: 100%;
   height: 100%;
   margin: 0;
-  border: calc(0.0625rem * var(--scale, 1)) solid var(--color-checkbox-border);
-  border-radius: calc(0.25rem * var(--scale, 1));
+  border: 0.0625rem solid var(--color-checkbox-border);
+  border-radius: 0.25rem;
   background: transparent;
   cursor: inherit;
 }
@@ -169,7 +169,7 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  padding: calc(0.125rem * var(--scale, 1));
+  padding: 0.125rem;
   color: var(--color-on-checkbox);
   pointer-events: none;
   visibility: hidden;
@@ -190,9 +190,9 @@
 .env-checkbox-control:indeterminate + .env-checkbox-mark::before {
   content: '';
   position: absolute;
-  inset-inline: calc(0.25rem * var(--scale, 1));
-  inset-block-start: calc(0.5rem * var(--scale, 1));
-  height: calc(0.125rem * var(--scale, 1));
+  inset-inline: 0.25rem;
+  inset-block-start: 0.5rem;
+  height: 0.125rem;
   background: currentColor;
 }
 .env-checkbox-control:hover:not(:disabled) {
@@ -210,14 +210,14 @@
   border-color: transparent;
 }
 .env-checkbox-control:focus-visible {
-  outline: calc(0.125rem * var(--scale, 1)) solid var(--color-focus-ring);
-  outline-offset: calc(0.125rem * var(--scale, 1));
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: 0.125rem;
 }
 
 .env-radio-inline {
   display: flex;
   flex-wrap: wrap;
-  gap: calc(1rem * var(--scale, 1)) calc(2rem * var(--scale, 1));
+  gap: var(--space-4) var(--space-6);
 }
 .env-radio-inline legend {
   flex-basis: 100%;

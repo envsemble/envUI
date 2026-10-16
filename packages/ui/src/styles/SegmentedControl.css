@@ -1,5 +1,14 @@
 /* A pill rail of segments, like the tab rail: a translucent fill with the chosen segment in the
-   primary button colors. */
+   primary button colors. The rail is as tall as a control of its size, or of its container's. */
+.env-segmented-control[data-size='sm'] {
+  --control-height: var(--control-height-sm);
+}
+.env-segmented-control[data-size='md'] {
+  --control-height: var(--control-height-md);
+}
+.env-segmented-control[data-size='lg'] {
+  --control-height: var(--control-height-lg);
+}
 .env-segmented-control {
   box-sizing: border-box;
   inline-size: fit-content;
@@ -8,7 +17,14 @@
   display: inline-flex;
   align-items: stretch;
   gap: var(--space-1);
-  padding: var(--space-1);
+  /* The padding gives way where a segment would be shorter than the smallest target, as in a
+     small rail of the compact scale. */
+  --env-segmented-control-inset: min(
+    var(--space-1),
+    calc((var(--control-height) - var(--control-target-min)) / 2)
+  );
+  padding: var(--env-segmented-control-inset);
+  min-block-size: var(--control-height);
   border-radius: 100vmax;
   background: var(--color-fill);
   /* Long labels stay reachable in narrow containers. */
@@ -18,25 +34,29 @@
 .env-segment {
   box-sizing: border-box;
   flex: 0 0 auto;
-  min-block-size: calc(var(--control-height) - 2 * var(--space-1));
+  min-block-size: calc(var(--control-height) - 2 * var(--env-segmented-control-inset));
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  padding: var(--space-1) var(--space-4);
+  /* The block padding gives way where a line and the padding would outgrow the segment. */
+  padding: min(
+      var(--space-1),
+      calc((var(--control-height) - 2 * var(--env-segmented-control-inset) - 1lh) / 2)
+    )
+    var(--space-4);
   border: 0;
   border-radius: 100vmax;
   background: transparent;
   color: var(--color-text-muted);
-  font: 400 0.875rem / 1.4 var(--font-family);
+  font: var(--body-font-weight) var(--font-size-label) / 1.4 var(--font-family);
   white-space: nowrap;
   cursor: pointer;
   transition:
     background-color var(--motion-duration-fast) var(--motion-ease),
     color var(--motion-duration-fast) var(--motion-ease);
 }
-.env-segmented-control[data-size='compact'] .env-segment {
-  min-block-size: calc(var(--control-height-compact) - 2 * var(--space-1));
+.env-segmented-control[data-size='sm'] .env-segment {
   padding-inline: var(--space-3);
 }
 .env-segment:hover:not([data-checked]):not([data-disabled]) {
@@ -59,6 +79,16 @@
 .env-segment:focus-visible {
   outline: 0.125rem solid var(--color-focus-ring);
   outline-offset: 0.125rem;
+}
+/* Under a coarse pointer the segments grow to the touch height themselves: an overlay would reach
+   over the next segment, and out of the rail, which scrolls. */
+@media (pointer: coarse) {
+  .env-segment {
+    min-block-size: max(
+      calc(var(--control-height) - 2 * var(--env-segmented-control-inset)),
+      var(--control-height-touch)
+    );
+  }
 }
 .env-segment[data-disabled] {
   opacity: var(--state-disabled-opacity);

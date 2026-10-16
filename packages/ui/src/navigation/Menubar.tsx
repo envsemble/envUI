@@ -16,8 +16,7 @@ import {
 import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/setRef.js';
 import { Theme, useTheme } from '../foundations/Theme.js';
-import { MenuDensityContext, renderMenuPopup } from './internal/MenuPopup.js';
-import type { Density } from './Menu.js';
+import { renderMenuPopup } from './internal/MenuPopup.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 
 interface MenubarContextValue {
@@ -68,7 +67,7 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
 }
 
 /**
- * An application menubar: a row of compact text buttons that open compact menus, such as File, Edit,
+ * An application menubar: a row of small text buttons that open menus, such as File, Edit,
  * View and Help. Once a menu is open, hovering another trigger or pressing ← and → switches to its
  * menu. Opening a menu neither locks scrolling nor shifts the page.
  */
@@ -301,8 +300,6 @@ export interface MenuProps {
    * Called when the menu opens or closes, with the element that had focus before the menubar took it.
    */
   onOpenChange?: (open: boolean, details: MenuOpenChangeDetails) => void;
-  /** compact by default, like the menus of a desktop menubar. */
-  density?: Density;
   /** Class of the menu popup. */
   className?: string;
 }
@@ -331,7 +328,7 @@ function AccessKeyLabel({ label, accessKey }: { label: ReactNode; accessKey: str
 const switchingReasons = new Set(['sibling-open', 'list-navigation']);
 
 /**
- * One menu of a Menubar.Root: a compact text trigger and the menu that opens below it. After a command,
+ * One menu of a Menubar.Root: a small text trigger and the menu that opens below it. After a command,
  * focus returns to where it was before the menubar took it, as in a desktop application.
  */
 function Menu({
@@ -343,7 +340,7 @@ function Menu({
   open,
   defaultOpen,
   onOpenChange,
-  density = 'compact',
+
   className,
 }: MenuProps) {
   const theme = useTheme();
@@ -438,10 +435,10 @@ function Menu({
             <BaseMenu.Popup
               ref={popup}
               className={classNames('env-menu', className)}
-              render={renderMenuPopup(ariaLabel ?? textLabel, density)}
+              render={renderMenuPopup(ariaLabel ?? textLabel)}
               finalFocus={finalFocus}
             >
-              <MenuDensityContext value={density}>{children}</MenuDensityContext>
+              {children}
             </BaseMenu.Popup>
           </BaseMenu.Positioner>
         </Theme>

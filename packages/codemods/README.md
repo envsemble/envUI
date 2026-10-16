@@ -44,8 +44,9 @@ Paths default to the current folder. The CLI runs jscodeshift's runner with the 
 
 1. Commit first: the codemods write files in place.
 2. Run `npx envui-codemods v1-names src`. The codemods are meant for 0.x code, run once. Some 1.0 code reads as 0.x to them, such as a `useTheme()` call whose result nothing reads as `{ theme, contrast }`, so a run over code already written for 1.0 can change it.
-3. Run `npx envui-codemods v1-classes src` over the scripts and style sheets.
-4. Install `@envsemble/envui` 1.0, run your formatter, then type-check. Fix each reported line; removed exports stay in the code on purpose, so the type checker points at them too.
+3. Run `npx envui-codemods v1-props src`.
+4. Run `npx envui-codemods v1-classes src` over the scripts and style sheets.
+5. Install `@envsemble/envui` 1.0, run your formatter, then type-check. Fix each reported line; removed exports stay in the code on purpose, so the type checker points at them too.
 
 ## v1-names
 
@@ -62,7 +63,7 @@ Rewrites imports from `@envsemble/envui` and `@envsemble/envui/theme-bootstrap`,
 
 It reports instead of changing:
 
-- removed exports, with what to use instead: `LoadingBar`, `LoadingBarProps`, the manual `Toast` (only its bare uses; `Toast.Provider` is the 1.0 API), `ToastProps`, `getInitials`, `useLinkComponent` and `useSidebarCompact`;
+- removed exports, with what to use instead: `LoadingBar`, `LoadingBarProps`, the manual `Toast` (only its bare uses; `Toast.Provider` is the 1.0 API), `ToastProps`, `getInitials`, `useLinkComponent`, `useSidebarCompact`, and the `MenuDensity` and `SurfaceDensity` types;
 - `DirectionLink` with a dynamic, spread or missing `direction`, or used outside JSX; its import stays;
 - re-exports and `export { … }` of namespace parts, `DirectionLink` and removed exports, which cannot keep their old name;
 - a namespace import read with a key computed at run time, such as `ui[name]`;
@@ -70,6 +71,21 @@ It reports instead of changing:
 - a `useTheme()` call that is returned, as by a hook that wraps it, also as an arrow function's body, or passed as the `value` of what may be a context provider, such as `<ThemeContext value={useTheme()}>`, `<ThemeContext.Provider>`, an element named `…Provider` or one `createContext` makes in the file, directly or through a variable it initializes (another component's `value`, such as a Select's, takes `useTheme().theme`): whether the code that reads it expects 0.x's scheme or 1.0's object is out of the file's sight, so it stays as it is;
 - each `require()` and dynamic `import()` of an entry point, which the codemod does not follow, also in a file without an `import`;
 - parts destructured from a namespace that was a 0.x component, such as `const { Root, Item } = Menu` or `const { Cell } = ui.Table`, which are 1.0 code and stay as they are rather than becoming `Menu.Root`.
+
+## v1-props
+
+Moves the props that 1.0 removed or changed, as the `props` section of the rename map lists them, on elements imported from `@envsemble/envui` under their 0.x or 1.0 names, also as namespace parts (`<Menu.Root>`) and through a namespace import (`<ui.Table.Root>`). Each literal value of a prop becomes the props it maps to, in the prop's place, so spreads keep their order around it; a replacement the element already sets is kept as the element sets it.
+
+- `density`, `compact` and size-as-density become sizes: `<Select density="compact">` becomes `size="sm"`, as do `size="compact"` on Tabs, SegmentedControl, Pagination and CopyButton, and `compact` on DropZone.
+- Row densities: `<Table.Root density="compact">` becomes `density="sm"`, and `<Tree density="standard">` `density="md"`; their other values are the defaults and are dropped.
+- Fields take the control height: `<TextField compact>` becomes `showLabel={false}`, which keeps its label hidden; `compact={false}`, and the `standard` density of Combobox and DatePicker, become `variant="floating"`, the tall field.
+
+It reports, with the prop's replacement:
+
+- props that 1.0 removed without a replacement, which it drops: `density` on Surface, Menu.Root, ContextMenu and Menubar.Menu, and `size` on NavList.Item; for a compact app or region, set `scale="compact"` on its Theme;
+- a value it can't read, such as `density={density}`, which stays as it is, so the type checker points at it too.
+
+A 1.0 value, such as `density="sm"` on a Table or `size="lg"` on Tabs, is left alone without a report, so the codemod can run again over code it already moved.
 
 ## v1-classes
 

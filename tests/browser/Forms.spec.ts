@@ -185,8 +185,9 @@ test('Select supports keyboard commit, typeahead, Escape, and native form reset'
   const list = page.getByRole('listbox');
   await expect(list).toBeVisible();
   const wrappedOptions = await list.getByRole('option').evaluateAll((options) => {
+    // The label follows the check-mark slot.
     for (const option of options)
-      option.firstElementChild!.textContent = 'Long workspace configuration label '.repeat(3);
+      option.lastElementChild!.textContent = 'Long workspace configuration label '.repeat(3);
     return options.map((option) => ({ height: option.clientHeight, content: option.scrollHeight }));
   });
   for (const option of wrappedOptions)
@@ -253,7 +254,8 @@ test('Select triggers are button styles, and the open list stands apart from a p
       padding: Number.parseFloat(getComputedStyle(popup).paddingTop),
     };
   });
-  expect(corners.popup).toBeGreaterThanOrEqual(24);
+  // The menus' popup: 0.75 rem corners, concentric with its rows'.
+  expect(corners.popup).toBeCloseTo(12, 0);
   expect(Math.abs(corners.option - (corners.popup - corners.padding))).toBeLessThan(1);
   await page.getByRole('option', { name: 'Boreal', exact: true }).click();
   await expect(role).toHaveText('Boreal');
@@ -343,12 +345,12 @@ test('Dialog provides an accessible dismissal action and controlled action closu
   await expect(trigger).toBeFocused();
 });
 
-test('a compact Select has a compact trigger and the compact menu popup with a check mark', async ({
+test('a small Select has a small trigger, and its popup has the menus anatomy with a check mark', async ({
   page,
 }) => {
   const compact = page.getByRole('combobox', { name: 'Compact plan', exact: true });
   const standard = page.getByRole('combobox', { name: 'Plan', exact: true });
-  await expect(compact).toHaveAttribute('data-density', 'compact');
+  await expect(compact).toHaveAttribute('data-size', 'sm');
   const [compactBox, standardBox] = await Promise.all([
     compact.boundingBox(),
     standard.boundingBox(),
@@ -358,7 +360,7 @@ test('a compact Select has a compact trigger and the compact menu popup with a c
   const chevron = (locator: typeof compact) =>
     locator.locator('.env-symbol').evaluate((icon) => icon.getBoundingClientRect().width);
   expect(await chevron(compact)).toBeLessThan(await chevron(standard));
-  // The outlined variant keeps its Button style at the compact height.
+  // The outlined variant keeps its Button style at the small height.
   const outlined = page.getByRole('combobox', { name: 'Compact outlined plan', exact: true });
   expect((await outlined.boundingBox())!.height).toBeCloseTo(32, 0);
   expect(
@@ -372,7 +374,6 @@ test('a compact Select has a compact trigger and the compact menu popup with a c
   const list = page.getByRole('listbox');
   await expect(list).toBeVisible();
   const popup = page.locator('.env-dropdown-options');
-  await expect(popup).toHaveAttribute('data-density', 'compact');
   await expect(popup).not.toHaveAttribute('data-starting-style');
   const surface = await popup.evaluate(async (element) => {
     // The popup grows in; its rows have their final size once the transition has run.
@@ -400,7 +401,7 @@ test('a compact Select has a compact trigger and the compact menu popup with a c
   const team = page.getByRole('option', { name: 'Team', exact: true });
   await expect(starter).toBeFocused();
   for (const option of [starter, team])
-    expect((await option.boundingBox())!.height).toBeCloseTo(28, 0);
+    expect((await option.boundingBox())!.height).toBeCloseTo(36, 0);
   // A check mark shows the selected option instead of a fill, and labels stay aligned.
   await expect(starter.locator('.env-dropdown-option-check svg')).toBeVisible();
   await expect(team.locator('.env-dropdown-option-check svg')).toHaveCount(0);

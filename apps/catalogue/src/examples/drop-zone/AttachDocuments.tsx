@@ -6,7 +6,7 @@ export default function AttachDocuments() {
   return (
     <Stack gap={3}>
       <DropZone
-        compact
+        size="sm"
         multiple
         label="Attach documents"
         description="Any file, several at once"

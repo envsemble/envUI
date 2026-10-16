@@ -6,7 +6,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { RECOMMENDED_CONFIG } from '@terrazzo/parser';
 import css from '@terrazzo/plugin-css';
-import { makeCSSVar } from '@terrazzo/token-tools/css';
+import { makeCSSVar, transformCSSValue } from '@terrazzo/token-tools/css';
 import { converter, formatHex } from 'culori';
 
 /** The token sources, and where the build writes; a test can build other tokens elsewhere. */
@@ -36,6 +36,21 @@ const internal = (id) => internalGroups.includes(id.split('.')[0]);
 
 /** The semantic color roles: every one is designed for both schemes and both contrasts. */
 const semantic = (id) => /^color\.(bg|fg|border)\./.test(id);
+
+/**
+ * The app scales, each a context of the resolver's scale modifier. Comfortable is the base set;
+ * every other scale builds as a rule of its own, `.env-theme[data-env-scale='compact']`, which
+ * declares only the tokens it changes. Scales change sizes, never colors, so they combine with every
+ * theme.
+ */
+export const scales = [
+  { name: 'comfortable', input: { scale: 'comfortable' } },
+  {
+    name: 'compact',
+    input: { scale: 'compact' },
+    selector: ".env-theme[data-env-scale='compact']",
+  },
+];
 
 /**
  * The themes the tokens build into, each a resolver input, with the CSS rules that apply it. The
@@ -161,15 +176,30 @@ export function cssColor(color) {
 const length = ({ value, unit }) => (value === 0 ? '0' : `${value}${unit}`);
 
 /**
+ * A typography token's parts, as plugin-css writes them, with the line height in em where the
+ * token's `$extensions` ask for it (`lineHeightUnit: 'em'`): the font shorthands of the type roles
+ * keep the line height of their own size, also in descendants with another font size.
+ */
+function typography(token, options) {
+  const parts = transformCSSValue(token, options);
+  const unit = token.$extensions?.[extension]?.lineHeightUnit;
+  if (!unit || typeof parts?.['line-height'] !== 'string') return parts;
+  if (!/^\d+(?:\.\d+)?$/.test(parts['line-height'])) return parts;
+  return { ...parts, 'line-height': `${parts['line-height']}${unit}` };
+}
+
+/**
  * CSS values: colors as cssColor() writes them, shadows with those colors, a zero length as `0`,
  * font names in single quotes, and numbers marked with a CSS unit (percentages). A token that
  * aliases another public token is written as var(), plugin-css's default; one that aliases the
  * palette or a high-contrast value carries the resolved value, because those never become CSS.
  */
-function transform(token) {
+function transform(token, options) {
   if (token.aliasChain?.length && !internal(token.aliasChain[0])) return undefined;
   const value = token.$value;
   switch (token.$type) {
+    case 'typography':
+      return typography(token, options);
     case 'color':
       return cssColor(value);
     case 'shadow':
@@ -447,8 +477,20 @@ function envui({ removedFile, handwrittenFile }) {
           return [theme.name, values];
         }),
       );
+      // Each scale but comfortable declares only what it changes, over the light theme's values.
+      for (const scale of scales.filter((each) => each.selector)) {
+        const values = new Map();
+        for (const { localID, value } of getTransforms({ format: 'css', input: scale.input })) {
+          values.set(localID, value);
+          if (value && typeof value === 'object')
+            for (const [part, partValue] of Object.entries(value))
+              values.set(`${localID}-${part}`, partValue);
+        }
+        declared[scale.name] = values;
+      }
       const fallback = { dark: ['light'], 'light-high-contrast': ['light'] };
       fallback['dark-high-contrast'] = ['dark', 'light'];
+      for (const scale of scales.filter((each) => each.selector)) fallback[scale.name] = ['light'];
       const cssValue = (theme, name) =>
         [theme, ...(fallback[theme] ?? [])]
           .map((layer) => declared[layer].get(name))
@@ -463,7 +505,11 @@ function envui({ removedFile, handwrittenFile }) {
             ]),
           );
         const alias = typeof value === 'string' ? value.match(/^var\((--[\w-]+)\)$/) : null;
-        return alias ? resolve(theme, alias[1]) : value;
+        if (alias) return resolve(theme, alias[1]);
+        // A shorthand, such as a type role's font, reads its parts.
+        return typeof value === 'string'
+          ? value.replace(/var\((--[\w-]+)\)/g, (_, name) => resolve(theme, name))
+          : value;
       };
       const resolve = (theme, name) => resolveValue(theme, cssValue(theme, name));
       const ids = Object.keys(tokens)
@@ -488,6 +534,15 @@ function envui({ removedFile, handwrittenFile }) {
               }),
           };
         }
+        // The value under each scale but comfortable, where that scale changes the token.
+        const scaled = {};
+        for (const scale of scales.filter((each) => each.selector)) {
+          if (!declared[scale.name].has(name)) continue;
+          scaled[scale.name] = {
+            css: cssValue(scale.name, name),
+            resolved: resolve(scale.name, name),
+          };
+        }
         return {
           id,
           cssVariable: name,
@@ -496,6 +551,7 @@ function envui({ removedFile, handwrittenFile }) {
           ...(tokens[id].$deprecated && { deprecated: tokens[id].$deprecated }),
           ...(tokens[id].$extensions?.[extension]?.legacy && { legacy: true }),
           values,
+          ...(Object.keys(scaled).length > 0 && { scales: scaled }),
         };
       });
       checkCustomProperties(list, handwrittenFile);
@@ -503,7 +559,13 @@ function envui({ removedFile, handwrittenFile }) {
         'Generated from packages/ui/tokens by `npm run tokens:build`. Do not edit: change the tokens and rebuild.';
       outputFile(
         'generated/tokens.json',
-        JSON.stringify({ $comment: header, modifiers, themes, tokens: list }),
+        JSON.stringify({
+          $comment: header,
+          modifiers,
+          themes,
+          scales: scales.map(({ name, selector }) => ({ name, ...(selector && { selector }) })),
+          tokens: list,
+        }),
       );
 
       // The 0.7 names: each legacy token's role per theme, and the removed ones.
@@ -570,8 +632,11 @@ function envui({ removedFile, handwrittenFile }) {
       module += `/** The themes Tokens.css builds: each color scheme at standard and high contrast. */\n`;
       module += `export const themes = ${JSON.stringify(themes.map((theme) => theme.name))} as const;\n`;
       module += `export type ThemeName = (typeof themes)[number];\n\n`;
+      module += `/** The app scales: comfortable, the base values, and compact. */\n`;
+      module += `export const scales = ${JSON.stringify(scales.map((scale) => scale.name))} as const;\n`;
+      module += `export type ScaleName = (typeof scales)[number];\n\n`;
       module += `/** A token's CSS value: one value, or a value per part of a composite token such as typography. */\nexport type TokenValue = string | Readonly<Record<string, string>>;\n\n`;
-      module += `export interface TokenDefinition {\n  /** The CSS custom property that carries the token. */\n  cssVariable: \`--\${string}\`;\n  /** The DTCG type. */\n  type: string;\n  /**\n   * The value Tokens.css gives in each theme, with aliases resolved. Conditions that\n   * TokensHandwritten.css adds, such as the touch sizes under a coarse pointer, are not in it.\n   */\n  values: Readonly<Record<ThemeName, TokenValue>>;\n}\n\n`;
+      module += `export interface TokenDefinition {\n  /** The CSS custom property that carries the token. */\n  cssVariable: \`--\${string}\`;\n  /** The DTCG type. */\n  type: string;\n  /**\n   * The value Tokens.css gives in each theme, with aliases resolved. Conditions that\n   * TokensHandwritten.css adds, such as the touch sizes under a coarse pointer, are not in it.\n   */\n  values: Readonly<Record<ThemeName, TokenValue>>;\n  /** The value under each scale that changes the token, such as compact; comfortable is values. */\n  scales?: Readonly<Partial<Record<ScaleName, TokenValue>>>;\n}\n\n`;
       module += `/** Every token, by its DTCG path. */\n`;
       module += `export const tokens = {\n`;
       for (const token of list) {
@@ -579,7 +644,10 @@ function envui({ removedFile, handwrittenFile }) {
         const values = Object.fromEntries(
           themes.map((theme) => [theme.name, token.values[theme.name].resolved]),
         );
-        module += `  ${JSON.stringify(token.id)}: { cssVariable: ${JSON.stringify(token.cssVariable)}, type: ${JSON.stringify(token.type)}, values: ${JSON.stringify(values)} },\n`;
+        const scaled = token.scales
+          ? `, scales: ${JSON.stringify(Object.fromEntries(Object.entries(token.scales).map(([scale, value]) => [scale, value.resolved])))}`
+          : '';
+        module += `  ${JSON.stringify(token.id)}: { cssVariable: ${JSON.stringify(token.cssVariable)}, type: ${JSON.stringify(token.type)}, values: ${JSON.stringify(values)}${scaled} },\n`;
       }
       module += `} as const satisfies Record<string, TokenDefinition>;\n\n`;
       module += `export type TokenId = keyof typeof tokens;\n`;
@@ -598,6 +666,11 @@ export function createConfig({
   const source = (path) => JSON.parse(readFileSync(new URL(path, tokensDirectory), 'utf8'));
   const dark = contextTokens('colorScheme', 'dark', tokensDirectory);
   const high = contextTokens('contrast', 'high', tokensDirectory);
+  const scaleTokens = Object.fromEntries(
+    scales
+      .filter((scale) => scale.selector)
+      .map((scale) => [scale.name, contextTokens('scale', scale.name, tokensDirectory)]),
+  );
   const highSource = source('contrast/high.tokens.json');
   const pointers = {};
   (function collect(node, path) {
@@ -649,6 +722,14 @@ export function createConfig({
                 include: high,
                 prepare: (contents) =>
                   `${block(theme.selectors.join(', '), contents)}\n@media ${theme.media.query} {\n  ${block(theme.media.selector, contents)}\n}`,
+              })),
+            ...scales
+              .filter((scale) => scale.selector)
+              .map((scale) => ({
+                // Only the sizes the scale changes; colors come from the theme rules above.
+                input: scale.input,
+                include: scaleTokens[scale.name],
+                prepare: (contents) => block(scale.selector, contents),
               })),
           ],
         }),

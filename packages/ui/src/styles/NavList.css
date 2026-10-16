@@ -7,14 +7,14 @@
   text-align: start;
   display: inline-flex;
   align-items: center;
-  gap: calc(0.5rem * var(--scale, 1));
-  padding: calc(0.25rem * var(--scale, 1)) calc(0.75rem * var(--scale, 1));
-  min-height: calc(var(--control-height) * var(--scale, 1));
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  min-height: var(--control-height);
   border: 0;
   border-radius: 100vmax;
   background: transparent;
   color: var(--color-navigation-text);
-  font: 400 calc(0.9375rem * var(--scale, 1)) / 1.4 var(--font-family);
+  font: var(--body-font-weight) var(--font-size-body) / 1.4 var(--font-family);
   text-decoration: none;
 }
 
@@ -23,14 +23,10 @@
   background: var(--color-navigation-selected);
 }
 
-.env-nav-list-item-compact {
-  font-size: calc(var(--font-size-body-small) * var(--scale, 1));
-}
-
 .env-nav-list-item-icon-only {
-  inline-size: calc(var(--control-height) * var(--scale, 1));
-  block-size: calc(var(--control-height) * var(--scale, 1));
-  min-inline-size: calc(var(--control-height) * var(--scale, 1));
+  inline-size: var(--control-height);
+  block-size: var(--control-height);
+  min-inline-size: var(--control-height);
   flex-shrink: 0;
   justify-content: center;
   padding: 0;
@@ -79,7 +75,7 @@
 .env-nav-list-item-trailing {
   flex: 0 0 auto;
   margin-inline-start: auto;
-  padding-inline-start: calc(0.25rem * var(--scale, 1));
+  padding-inline-start: var(--space-1);
   display: inline-flex;
   align-items: center;
 }
@@ -132,4 +128,15 @@
   color: var(--color-text-muted);
   font: var(--type-body-small);
   overflow-wrap: anywhere;
+}
+/* Under a coarse pointer, items grow to the touch height in every scale, as rows do. */
+@media (pointer: coarse) {
+  .env-nav-list-item {
+    min-height: max(var(--control-height), var(--control-height-touch));
+  }
+  .env-nav-list-item-icon-only {
+    inline-size: max(var(--control-height), var(--control-height-touch));
+    block-size: max(var(--control-height), var(--control-height-touch));
+    min-inline-size: max(var(--control-height), var(--control-height-touch));
+  }
 }

@@ -9,7 +9,7 @@ export default function Variants() {
       <TextField variant="plain" label="Title" name="title" defaultValue="Quarterly report" />
       <TextField
         variant="quiet"
-        compact
+        showLabel={false}
         label="Find projects"
         placeholder="Find projects"
         startIcon={<Search />}

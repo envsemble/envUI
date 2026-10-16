@@ -28,11 +28,11 @@ export default function States() {
           <DropZone disabled label="Uploads are paused" onFiles={ignore} />
         </Specimen>
         <Specimen title="Compact, pending">
-          <DropZone compact pending label="Uploading 3 files" onFiles={ignore} />
+          <DropZone size="sm" pending label="Uploading 3 files" onFiles={ignore} />
         </Specimen>
         <Specimen title="Compact, error">
           <DropZone
-            compact
+            size="sm"
             label="Attach documents"
             description="Any file, several at once"
             error="One file is larger than 25 MB."

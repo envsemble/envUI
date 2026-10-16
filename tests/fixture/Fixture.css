@@ -290,14 +290,27 @@ body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-p
   inline-size: 9rem;
 }
 
-/* Density specimens: standard and compact controls side by side, the before-picture of the scale
-   work. Guides are dashed so the bands' extents show in screenshots. */
+/* Density specimens: the same content in the comfortable and the compact scale, one above the
+   other. Guides are dashed so the bands' extents show in screenshots. */
 body:has(.density-fixture) {
   margin: 0;
+}
+.density-section {
+  display: grid;
+  inline-size: max-content;
+  min-inline-size: 100%;
 }
 .density-page {
   padding: 1.5rem;
   color: var(--color-text-primary);
+}
+.density-page + .density-page {
+  border-block-start: 0.0625rem dashed var(--color-border-strong);
+}
+.density-scale-label {
+  margin: 0 0 0.75rem;
+  font: 500 0.875rem / 1.4 var(--font-family);
+  color: var(--color-text-muted);
 }
 .density-stack {
   display: grid;
@@ -311,6 +324,9 @@ body:has(.density-fixture) {
 }
 .density-columns[data-columns='3'] {
   grid-template-columns: repeat(3, 1fr);
+}
+.density-columns[data-columns='4'] {
+  grid-template-columns: repeat(4, max-content);
 }
 .density-column {
   display: grid;
@@ -334,7 +350,7 @@ body:has(.density-fixture) {
 }
 .density-tree-frame {
   block-size: 18.75rem;
-  inline-size: 17.5rem;
+  inline-size: 15rem;
   outline: 0.0625rem dashed var(--color-border-strong);
 }
 .density-sidebar {
@@ -347,8 +363,8 @@ body:has(.density-fixture) {
 }
 .density-menus {
   position: relative;
-  block-size: 23.75rem;
-  inline-size: 51.25rem;
+  block-size: 20rem;
+  inline-size: 30rem;
 }
 .density-menu-anchor {
   position: absolute;

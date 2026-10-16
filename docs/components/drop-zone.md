@@ -18,7 +18,7 @@ aliases:
   - drag and drop upload
 useWhen:
   - People add a file to a form or a page, such as a logo, by dropping it or choosing it.
-  - People attach several files at once, such as documents to a message (`multiple`, `compact`).
+  - People attach several files at once, such as documents to a message (`multiple`, `size="sm"`).
 avoidWhen:
   - text: A text value people type, such as a link to a file.
     use: TextField
@@ -56,15 +56,15 @@ A drop zone takes files two ways: dropped onto it, or chosen in the file picker 
 
 ## Variants and sizes
 
-| Variant   | Use for                                                                                                  |
-| --------- | -------------------------------------------------------------------------------------------------------- |
-| Standard  | A file that is the main content of a form, such as a logo: a tall area at least 9 rem high. The default. |
-| `compact` | Attachments in a dense form or a row: one row with a 2 rem icon beside the label and description.        |
+| Size        | Use for                                                                                                  |
+| ----------- | -------------------------------------------------------------------------------------------------------- |
+| `size="md"` | A file that is the main content of a form, such as a logo: a tall area at least 9 rem high. The default. |
+| `size="sm"` | Attachments in a dense form or a row: one row with a 2 rem icon beside the label and description.        |
 
 <!-- specimen: States -->
 
 - The zone fills its container's width; its text wraps, also within long words.
-- A compact zone is as tall as a control plus 1 rem, with the label in the small body type.
+- A small zone is as tall as a control plus 1 rem, with the label in the small body type.
 
 ## States and behaviour
 
@@ -123,7 +123,7 @@ A drop zone takes files two ways: dropped onto it, or chosen in the file picker 
 
 ### Attach several files
 
-A compact zone with `multiple` adds documents to a list the application shows, each with a Remove action.
+A small zone with `multiple` adds documents to a list the application shows, each with a Remove action.
 
 ```tsx example=AttachDocuments
 

@@ -30,7 +30,7 @@ export default function Sizes() {
         <Specimen title="Compact, with icons">
           <SegmentedControl
             aria-label="Layout"
-            size="compact"
+            size="sm"
             value="board"
             onValueChange={ignore}
             options={layouts}

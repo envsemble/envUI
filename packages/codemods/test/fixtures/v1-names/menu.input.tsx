@@ -12,7 +12,6 @@ import {
 } from '@envsemble/envui';
 import type {
   MenuCheckboxItemProps,
-  MenuDensity,
   MenuGroupProps,
   MenuHeaderProps,
   MenuItemProps,
@@ -23,7 +22,6 @@ import type {
 } from '@envsemble/envui';
 
 export interface ProjectMenuProps extends Omit<MenuProps, 'children'> {
-  density?: MenuDensity;
   item?: MenuItemProps;
   group?: MenuGroupProps;
   header?: MenuHeaderProps;

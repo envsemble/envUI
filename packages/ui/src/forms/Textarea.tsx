@@ -9,7 +9,14 @@ import {
   type TextFieldAppearanceProps,
 } from './internal/FieldFrame.js';
 
-export interface TextareaProps extends TextareaControlProps, FieldProps, TextFieldAppearanceProps {}
+export interface TextareaProps extends TextareaControlProps, FieldProps {
+  /**
+   * The field's look, as TextField's: outlined, plain or quiet. A text area is always tall, with its
+   * label resting at the top, so it has no floating variant.
+   * @default 'outlined'
+   */
+  variant?: Exclude<TextFieldAppearanceProps['variant'], 'floating'>;
+}
 
 /**
  * A labelled text area for text over several lines: a native textarea in the text field's frame,
@@ -39,6 +46,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
       hint={hint}
       error={error}
       floatingLabel
+      multiline
       variant={variant}
     >
       <TextareaControl

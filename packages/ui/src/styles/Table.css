@@ -9,7 +9,7 @@
   max-inline-size: 100%;
   overflow-x: auto;
   border: 0.0625rem solid var(--color-border-muted);
-  border-radius: var(--md-sys-shape-corner-large);
+  border-radius: var(--radius-large);
   background: var(--env-table-surface);
   scrollbar-width: thin;
 }
@@ -22,8 +22,12 @@
 .env-table-region[data-sticky-header] {
   overflow-y: auto;
 }
+/* Cells pad their content by the row density, and the actions in them, such as an IconButton, take
+   the small control height, so a row stays close to the height of its text. */
 .env-table {
-  --env-table-cell-padding: var(--space-3) var(--space-4);
+  --env-table-row-padding: var(--row-padding-block-md);
+  --env-table-cell-padding: calc(var(--env-table-row-padding) + var(--space-1)) var(--space-4);
+  --control-height: var(--control-height-sm);
   inline-size: 100%;
   border-collapse: separate;
   border-spacing: 0;
@@ -31,13 +35,14 @@
   font: var(--type-body);
   text-align: start;
 }
-.env-table[data-density='compact'] {
-  --env-table-cell-padding: var(--space-2) var(--space-3);
-  /* Controls in the cells take the compact height, as on a compact Surface; it still grows for touch. */
-  --control-height-small: var(--control-height-compact);
-  --control-height: var(--control-height-compact);
-  --icon-button-size: var(--control-height-compact);
-  font: var(--type-body-small);
+.env-table[data-density='xs'] {
+  --env-table-row-padding: var(--row-padding-block-xs);
+}
+.env-table[data-density='sm'] {
+  --env-table-row-padding: var(--row-padding-block-sm);
+}
+.env-table[data-density='lg'] {
+  --env-table-row-padding: var(--row-padding-block-lg);
 }
 .env-table-caption {
   padding: var(--space-3) var(--space-4) var(--space-1);
@@ -147,10 +152,10 @@
 }
 /* The focus ring follows the surface's outer corners in the first and last header cells. */
 .env-table-head .env-table-row:first-child > :first-child .env-table-sort-button {
-  border-start-start-radius: calc(var(--md-sys-shape-corner-large) - 0.0625rem);
+  border-start-start-radius: calc(var(--radius-large) - 0.0625rem);
 }
 .env-table-head .env-table-row:first-child > :last-child .env-table-sort-button {
-  border-start-end-radius: calc(var(--md-sys-shape-corner-large) - 0.0625rem);
+  border-start-end-radius: calc(var(--radius-large) - 0.0625rem);
 }
 .env-table-sort-button .env-symbol {
   color: var(--color-icon);

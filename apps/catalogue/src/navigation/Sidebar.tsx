@@ -41,7 +41,6 @@ export function Sidebar({
         aria-label="Documentation"
       >
         <NavList.Item
-          size="compact"
           href="#/overview"
           selected={routePath.split('/')[0] === 'overview'}
           icon={<Home />}
@@ -55,7 +54,6 @@ export function Sidebar({
           const Icon = foundationIcons[item.id] ?? Category;
           return (
             <NavList.Item
-              size="compact"
               key={item.id}
               href={`#/foundations/${item.id}`}
               selected={page?.section === 'Foundations' && reference?.id === item.id}
@@ -77,7 +75,6 @@ export function Sidebar({
                 return (
                   <NavList.Item
                     key={item.id}
-                    size="compact"
                     href={pageHref(referencePages.find((entry) => entry.reference === item)!)}
                     selected={reference?.id === item.id}
                     icon={<Icon />}

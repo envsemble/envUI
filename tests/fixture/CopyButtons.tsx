@@ -64,23 +64,27 @@ export function CopyButtonsFixture({ theme }: { theme: ThemeValue }) {
       </div>
       <output data-testid="copied">{copied}</output>
       <output data-testid="presses">{presses}</output>
-      {/* A compact toolbar: the copy action takes the 2 rem height of the controls beside it. */}
+      {/* A small toolbar: the copy action takes the 2 rem height of the controls beside it. */}
       <Surface
         tone="row"
         padding={2}
         corners="standard"
-        density="compact"
         className="fixture-toolbar"
         data-testid="toolbar"
       >
         <span className="fixture-shrink-label">RPT-2041</span>
-        <CopyButton variant="text" value="RPT-2041" aria-label={`Copy report ID ${theme}`} />
-        <IconButton icon={<Settings />} aria-label="Report settings" />
+        <CopyButton
+          variant="text"
+          size="sm"
+          value="RPT-2041"
+          aria-label={`Copy report ID ${theme}`}
+        />
+        <IconButton size="sm" icon={<Settings />} aria-label="Report settings" />
       </Surface>
       <div className="fixture-toolbar" data-testid="sizes">
         <CopyButton value="Standard" aria-label="Copy standard" />
-        <CopyButton value="Compact" size="compact" aria-label="Copy compact" />
-        <CopyButton value="Compact label" size="compact">
+        <CopyButton value="Compact" size="sm" aria-label="Copy compact" />
+        <CopyButton value="Compact label" size="sm">
           Copy compact label
         </CopyButton>
       </div>

@@ -6,7 +6,7 @@
   --env-panel-dock-gap: var(--space-2);
   /* Room around the row and the strip for the panels' shadows. */
   --env-panel-dock-gutter: var(--space-5);
-  --env-panel-dock-chip-height: var(--control-height-compact);
+  --env-panel-dock-chip-height: var(--control-height-sm);
   --env-panel-dock-strip-size: 0rem;
   --env-panel-dock-shadow: var(--elevation-2-shadow);
   --env-panel-dock-active-shadow: var(--elevation-3-shadow);
@@ -56,7 +56,7 @@
 }
 /* Open panels above a maximized one keep its header's first row in view. */
 .env-panel-dock[data-filled]:not([data-stacked]) > .env-panel-dock-row {
-  padding-block-start: calc(var(--control-height-compact) + 2 * var(--space-3) + var(--space-2));
+  padding-block-start: calc(var(--control-height-sm) + 2 * var(--space-3) + var(--space-2));
 }
 
 /* A panel is the raised dialog surface with a hairline border and a shadow, rounded at the top and
@@ -182,14 +182,12 @@
 }
 
 /* A panel's header sticks to the top of its content: the title and its metadata at the start, the
-   application's actions and the window controls at the end, compact like a title bar's. The title
+   application's actions and the window controls at the end, small like a title bar's. The title
    keeps about 10 rem beside them; in a narrower panel they take a row of their own, above the
    title, rather than squeezing it. Rows stack upward, so content below the title, such as Tabs,
    comes first. */
 .env-panel-dock-header {
-  --control-height-small: var(--control-height-compact);
-  --control-height: var(--control-height-compact);
-  --icon-button-size: var(--control-height-compact);
+  --control-height: var(--control-height-sm);
   position: sticky;
   inset-block-start: 0;
   z-index: 1;
@@ -211,10 +209,10 @@
   /* Long words break only where they would overflow the line. */
   overflow-wrap: break-word;
 }
-/* The first line of the title lines up with the compact controls beside it. */
+/* The first line of the title lines up with the small controls beside it. */
 .env-panel-dock-title {
   margin: 0;
-  padding-block-start: max(0rem, calc((var(--control-height-compact) - 1.4em) / 2));
+  padding-block-start: max(0rem, calc((var(--control-height-sm) - 1.4em) / 2));
   font: var(--type-h1);
   overflow-wrap: break-word;
 }
@@ -385,6 +383,10 @@
 }
 
 @media (pointer: coarse) {
+  /* Chips are rows of the strip, which grow to the touch height. */
+  .env-panel-dock {
+    --env-panel-dock-chip-height: max(var(--control-height-sm), var(--control-height-touch));
+  }
   /* A finger reaches the top edge across a larger band, and the bar always shows. */
   .env-panel-dock-resize {
     inset-block-start: -0.75rem;

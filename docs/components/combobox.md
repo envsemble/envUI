@@ -66,16 +66,17 @@ A combobox is a text field with a list of options: typing filters the list, the 
 
 ## Variants and sizes
 
-| Density    | Use for                                                                                                                                                                                                 |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `standard` | In forms and dialogs: the 3.5 rem text field with its floating label. The default.                                                                                                                      |
-| `compact`  | Toolbars and dense surfaces: the 2 rem height of a compact Select or Button, and the compact menu's popup; the label is hidden unless `showLabel` is set, so a placeholder and an `aria-label` name it. |
+| Variant    | Use for                                                                                                                           |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `outlined` | In forms, dialogs and toolbars: the field at the control height of its `size`, as a TextField. The default.                       |
+| `floating` | A long form on a page: the field 3.5 rem tall inside its border, whose label floats above the value, as TextField's floating one. |
 
 <!-- specimen: States -->
 
 - A field fills its container's width; set the width on the container.
-- Leading content is 1.5 rem in options, chips and a standard field, and 1.25 rem in a compact field; an icon takes the control icon size.
-- Options are at least as tall as a control, with 0.5 rem block and 1 rem inline padding; descriptions are 0.75 rem. The popup scrolls beyond 20 rem, or the room below the field.
+- `size` sets the field's height, as on every control: `sm`, `md` or `lg` in the app's [scale](../foundations/scale.md); without it the field takes its container's control height. `showLabel={false}` hides the label in a toolbar, so a placeholder and an `aria-label` name it.
+- Leading content is 1.25 rem in options and the field, and 1.5 rem in chips and a floating field; an icon takes the control icon size.
+- Options are rows of the scale's row height, 2.25 rem or 1.75 rem in the compact scale, with 0.25 rem block and 0.5 rem inline padding; descriptions are 0.75 rem. The popup scrolls beyond 20 rem, or the room below the field.
 - On touch screens the field, chips and options grow to the touch height.
 
 ## States and behaviour
@@ -94,7 +95,7 @@ A combobox is a text field with a list of options: typing filters the list, the 
 ## Content guidelines
 
 - Name the field after what people choose, in sentence case: "Owner", "Reviewers".
-- Use a placeholder for what to type in a compact field or one with chips, such as "Add people".
+- Use a placeholder for what to type in a field with a hidden label or one with chips, such as "Add people".
 - Give options a label that tells them apart and, where labels repeat, a description such as an e-mail address.
 - Write `emptyLabel` for what to do next, such as "Type a name to search" before a server search, and "No contacts found" after one.
 - Translate `clearLabel`, `removeLabel`, `loadingLabel` and `emptyLabel` where the interface is not in English.
@@ -106,7 +107,7 @@ A combobox is a text field with a list of options: typing filters the list, the 
 - Use leading content, such as Avatars, where it helps tell options apart.
 - Use `clearable` where the value is optional.
 - Keep the chosen options in `items` when the field first shows a saved value from a search.
-- Use a compact combobox beside compact buttons, with an `aria-label`.
+- Give a combobox the size of the buttons beside it, and an `aria-label` where its label is hidden.
 
 ### Don't
 
@@ -140,7 +141,7 @@ A combobox is a text field with a list of options: typing filters the list, the 
 
 ### You provide
 
-- A `label`, or an `aria-label` on a compact field without one.
+- A `label`, or an `aria-label` on a field without one.
 - The options, and with `filter={null}` the search behind them.
 - Validation and its `error` message.
 - `clearLabel`, `removeLabel`, `loadingLabel` and `emptyLabel` in the application's language.
@@ -155,11 +156,11 @@ With `multiple`, chosen people show as chips in the field; <kbd>Backspace</kbd> 
 
 ```
 
-### Compact, in a toolbar
+### Small, in a toolbar
 
-A compact combobox takes the height of compact buttons and opens the compact popup, with options in groups under headings.
+`size="sm"` gives the field the small control height, so it lines up with a small button beside it. Without a visible label, its placeholder guides; the popup groups its options under headings.
 
-```tsx example=CompactToolbar
+```tsx example=SmallToolbar
 
 ```
 

@@ -5,7 +5,7 @@ export default function ListBesideAHeading() {
     <Card>
       <Tabs
         aria-label="Orders"
-        size="compact"
+        size="sm"
         renderList={(list) => (
           // The heading and the list share a row; the panels follow below.
           <div

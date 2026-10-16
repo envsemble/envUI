@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, type ComponentPropsWithRef, type ReactNode } from 'react';
+import type { ControlSize } from '../foundations/Theme.js';
 import { IconButton, type ButtonVariant } from '../actions/Button.js';
 import { Tooltip } from '../feedback/Tooltip.js';
 import { ChevronLeft } from '../icons/ChevronLeft.js';
@@ -69,11 +70,10 @@ export interface PaginationProps
    */
   variant?: ButtonVariant;
   /**
-   * standard takes the height of the surroundings, 2.5 rem, or 2 rem in a compact surface; compact
-   * gives the buttons the 2 rem compact height anywhere. Touch screens keep 2.75 rem.
-   * @default 'standard'
+   * The buttons' height, as on every control: sm, md or lg in the current scale. Without it, they
+   * take the control height of the container, md unless the container sets another.
    */
-  size?: 'standard' | 'compact';
+  size?: ControlSize;
   /**
    * The navigation landmark's name, such as Report pages, where a page has more than one.
    * @default 'Pagination'
@@ -118,7 +118,7 @@ export function Pagination({
   previousLabel = 'Previous page',
   nextLabel = 'Next page',
   variant = 'secondary',
-  size = 'standard',
+  size,
   className,
   'aria-label': label = 'Pagination',
   ...props
@@ -179,7 +179,7 @@ export function Pagination({
       {...props}
       aria-label={label}
       className={classNames('env-pagination', className)}
-      data-size={size === 'compact' ? 'compact' : undefined}
+      data-size={size}
     >
       {/* Announced when it changes, as a page loads; its own direction keeps numbers in order. */}
       <span className="env-pagination-range" dir="auto" aria-live="polite" aria-atomic="true">

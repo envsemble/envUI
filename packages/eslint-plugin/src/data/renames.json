@@ -41,7 +41,10 @@
       "Menu": { "to": ["Menu.Root"] },
       "MenuCheckboxItem": { "to": ["Menu.CheckboxItem"] },
       "MenuCheckboxItemProps": { "to": ["Menu.CheckboxItemProps"] },
-      "MenuDensity": { "to": ["Menu.Density"] },
+      "MenuDensity": {
+        "to": [],
+        "use": "Menus have one anatomy in 1.0, and density is gone: the app's scale sizes them, so use ThemeScale for a scale and drop the density."
+      },
       "MenuGroup": { "to": ["Menu.Group"] },
       "MenuGroupProps": { "to": ["Menu.GroupProps"] },
       "MenuHeader": { "to": ["Menu.Header"] },
@@ -77,6 +80,10 @@
       "StatProps": { "to": ["Stat.RootProps"] },
       "StatTrend": { "to": ["Stat.Trend"] },
       "StatTrendTone": { "to": ["Stat.TrendTone"] },
+      "SurfaceDensity": {
+        "to": [],
+        "use": "Surface's density is gone in 1.0: give the controls inside a ControlSize with their size prop, or set a ThemeScale with scale on a Theme around the region."
+      },
       "Table": { "to": ["Table.Root"] },
       "TableBody": { "to": ["Table.Body"] },
       "TableBodyProps": { "to": ["Table.BodyProps"] },

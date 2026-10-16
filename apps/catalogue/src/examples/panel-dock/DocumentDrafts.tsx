@@ -100,7 +100,6 @@ function DocumentWindow({
         actions={
           <Menu.Root
             aria-label={`${document.title} actions`}
-            density="compact"
             trigger={<IconButton variant="text" icon={<MoreVert />} aria-label="More actions" />}
           >
             <Menu.Item icon={<Share />}>Share</Menu.Item>

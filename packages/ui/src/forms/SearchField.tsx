@@ -13,10 +13,16 @@ export interface SearchFieldProps
     'type' | 'startIcon' | 'endAction' | 'label' | 'value' | 'defaultValue'
   > {
   /**
-   * The field's accessible name, such as Search members. It shows as a floating label only when
-   * the field is not compact or sets showLabel; otherwise a placeholder gives the visible guidance.
+   * The field's accessible name, such as Search members. It shows as a floating label only with
+   * showLabel; otherwise a placeholder gives the visible guidance.
    */
   label: string;
+  /**
+   * Show the label in the field, as TextField does. A search field leaves it out, so that it sits
+   * in a toolbar with a placeholder such as Search.
+   * @default false
+   */
+  showLabel?: boolean;
   /** The query of a controlled field; update it from onValueChange. */
   value?: string;
   /** The query an uncontrolled field starts with. */
@@ -32,7 +38,7 @@ export interface SearchFieldProps
 
 /**
  * A search input with a search icon and, while it has a query, a clear button; Esc also clears.
- * Compact by default, to sit beside buttons.
+ * Its label is hidden by default, so it sits beside buttons with a placeholder.
  */
 export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(function SearchField(
   {
@@ -42,7 +48,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
     onValueChange,
     onChange,
     clearLabel = 'Clear search',
-    compact = true,
+    showLabel = false,
     disabled,
     ...props
   },
@@ -64,7 +70,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
       }}
       type="search"
       label={label}
-      compact={compact}
+      showLabel={showLabel}
       disabled={disabled}
       value={query}
       onChange={(event) => {

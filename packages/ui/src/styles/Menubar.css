@@ -1,4 +1,4 @@
-/* An application menubar: a row of compact text buttons, each opening a compact menu below it. */
+/* An application menubar: a row of small text buttons, each opening a menu below it. */
 .env-menubar {
   min-inline-size: 0;
   display: flex;
@@ -8,7 +8,7 @@
 .env-menubar-trigger {
   box-sizing: border-box;
   flex: 0 0 auto;
-  min-block-size: var(--control-height-compact);
+  min-block-size: var(--control-height-sm);
   margin: 0;
   padding: 0 var(--space-2);
   border: 0;
@@ -17,7 +17,7 @@
   align-items: center;
   background: transparent;
   color: var(--color-text-primary);
-  font: var(--type-body-small);
+  font: var(--body-font-weight) var(--font-size-label) / 1.4 var(--font-family);
   white-space: nowrap;
   cursor: pointer;
   outline: none;
@@ -38,6 +38,25 @@
 .env-menubar-trigger[data-disabled] {
   opacity: var(--state-disabled-opacity);
   cursor: default;
+}
+/* Under a coarse pointer, each trigger keeps its look and gains a hit area of the touch height,
+   which grows above and below it and at the menubar's ends, not over the next trigger. */
+@media (pointer: coarse) {
+  .env-menubar-trigger {
+    position: relative;
+  }
+  .env-menubar-trigger::before {
+    content: '';
+    position: absolute;
+    inset-block: min(0%, calc((100% - var(--control-height-touch)) / 2));
+    inset-inline: 0%;
+  }
+  .env-menubar-trigger:first-child::before {
+    inset-inline-start: min(0%, calc((100% - var(--control-height-touch)) / 2));
+  }
+  .env-menubar-trigger:last-child::before {
+    inset-inline-end: min(0%, calc((100% - var(--control-height-touch)) / 2));
+  }
 }
 /* Access keys are underlined while Alt is held, or while the keyboard has activated the menubar. */
 .env-menubar[data-access-keys-shown] .env-menubar-access-key {

@@ -14,6 +14,7 @@ import {
   type ReactNode,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
+import type { RowDensity } from '../foundations/Theme.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
 import { ContextMenu } from './ContextMenu.js';
 
@@ -34,10 +35,7 @@ export interface TreeItem {
    * type-ahead matches it where it is a string.
    */
   label: ReactNode;
-  /**
-   * A decorative icon before the label, such as a folder or a document: 1 rem, or 1.125 rem in
-   * standard density.
-   */
+  /** A decorative icon before the label, such as a folder or a document, at the control icon size. */
   icon?: ReactNode;
   /**
    * Muted text after the label, such as a status or a path. It gives way first where the row runs
@@ -97,10 +95,12 @@ export interface TreeProps<T extends TreeItem> {
   /** The context menu's accessible name, in the application's language. */
   contextMenuLabel?: string;
   /**
-   * compact rows are 1.75 rem tall, with 0.875 rem text and a compact context menu; standard rows
-   * are 2.25 rem tall, with 0.9375 rem text. On touch screens both are 2.75 rem.
+   * How tightly the rows pack: xs, sm, md or lg changes only their block padding, never the text
+   * or the icons. In the comfortable scale sm rows are 1.75 rem tall and md rows 2.25 rem. Under a
+   * coarse pointer every row is at least 2.75 rem.
+   * @default 'sm'
    */
-  density?: 'compact' | 'standard';
+  density?: RowDensity;
   /** A class for the tree, the element that scrolls. */
   className?: string;
 }
@@ -108,7 +108,8 @@ export interface TreeProps<T extends TreeItem> {
 /** Rows outside the viewport kept rendered above and below it. */
 const overscan = 8;
 const typeAheadDelay = 600;
-const rowRem = { compact: 1.75, standard: 2.25 };
+/** Each density's row height in rem in the comfortable scale, until a row can be measured. */
+const rowRem: Record<RowDensity, number> = { xs: 1.5, sm: 1.75, md: 2.25, lg: 2.75 };
 
 /** A row id safe for id references, whatever characters the item id contains. */
 function rowElementId(treeId: string, itemId: string) {
@@ -158,7 +159,7 @@ export function Tree<T extends TreeItem>({
   onExpandedChange,
   contextMenu,
   contextMenuLabel = 'Actions',
-  density = 'compact',
+  density = 'sm',
   className,
 }: TreeProps<T>) {
   const treeId = useId().replace(/[^A-Za-z0-9-]/g, '');
@@ -192,7 +193,8 @@ export function Tree<T extends TreeItem>({
   lastActiveIndex.current = Math.max(activeIndex, 0);
   const activeItem = activeIndex === -1 ? undefined : items[activeIndex];
 
-  // Row height follows the density, enlarged text and coarse pointers; it is read from a row.
+  // Row height follows the density, the scale, enlarged text and coarse pointers; it is read from
+  // a row.
   const hasItems = items.length > 0;
   useLayoutEffect(() => {
     const element = container.current;
@@ -469,7 +471,6 @@ export function Tree<T extends TreeItem>({
   return (
     <ContextMenu
       aria-label={contextMenuLabel}
-      density={density}
       content={(target) => {
         const id = target?.closest<HTMLElement>('.env-tree-row')?.dataset.id;
         const index = id === undefined ? undefined : indexById.get(id);

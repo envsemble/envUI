@@ -82,6 +82,28 @@ test('a Theme without a contrast takes a data-env-contrast written on it, and th
   assert.match(prop, /<output>standard<\/output>/);
 });
 
+test('a Theme writes its scale, which nested Themes inherit, and a data-env-scale counts', () => {
+  function Inner() {
+    return h('output', null, useTheme().scale);
+  }
+  const plain = render(h(Theme, { theme: 'light' }, h(Inner))).markup;
+  assert.match(plain, /data-env-scale="comfortable"/);
+  assert.match(plain, /<output>comfortable<\/output>/);
+  const nested = render(
+    h(Theme, { theme: 'light', scale: 'compact' }, h(Theme, { theme: 'dark' }, h(Inner))),
+  ).markup;
+  assert.equal(nested.match(/data-env-scale="compact"/g)?.length, 2);
+  assert.match(nested, /<output>compact<\/output>/);
+  const attribute = render(
+    h(Theme, { theme: 'light', 'data-env-scale': 'compact' }, h(Inner)),
+  ).markup;
+  assert.match(attribute, /<output>compact<\/output>/);
+  const prop = render(
+    h(Theme, { theme: 'light', scale: 'comfortable', 'data-env-scale': 'compact' }, h(Inner)),
+  ).markup;
+  assert.match(prop, /data-env-scale="comfortable"/);
+});
+
 /** Runs `run` where nothing defines process, as in a browser. */
 function withoutProcess(run) {
   const descriptor = Object.getOwnPropertyDescriptor(globalThis, 'process');

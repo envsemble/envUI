@@ -1,6 +1,6 @@
 ---
 title: Menubar
-summary: A desktop-style menubar of compact menus, such as File, Edit and View, with shortcuts, submenus and access keys.
+summary: A desktop-style menubar of menus, such as File, Edit and View, with shortcuts, submenus and access keys.
 status: beta
 since: 0.5.0
 category: Feedback & overlays
@@ -39,7 +39,7 @@ components:
 
 ## Overview
 
-A menubar holds an application's commands as a desktop window does: a row of compact text triggers, each opening a compact menu below it. Once a menu is open, moving the pointer over another trigger, or <kbd>←</kbd> and <kbd>→</kbd>, switch to its menu. After a command, focus returns to where it was before the menubar took it, so commands such as Copy act on the field people were in. With `accessKeys`, <kbd>Alt</kbd> works as on a desktop. The menus are built from the Menu parts.
+A menubar holds an application's commands as a desktop window does: a row of small text triggers, each opening a menu below it. Once a menu is open, moving the pointer over another trigger, or <kbd>←</kbd> and <kbd>→</kbd>, switch to its menu. After a command, focus returns to where it was before the menubar took it, so commands such as Copy act on the field people were in. With `accessKeys`, <kbd>Alt</kbd> works as on a desktop. The menus are built from the Menu parts.
 
 - **Menubar.Root** is the row, named by `aria-label`.
 - **Menubar.Menu** is one trigger and its menu, holding Menu.Item, Menu.Submenu, Menu.Group, Menu.RadioGroup, Menu.CheckboxItem and Menu.Separator.
@@ -51,19 +51,14 @@ A menubar holds an application's commands as a desktop window does: a row of com
 ## Anatomy
 
 1. **Menubar** (Menubar.Root): a row of triggers 0.125 rem apart.
-2. **Trigger** (Menubar.Menu's `label`): a compact text button in the small body type, with its access key underlined while <kbd>Alt</kbd> is held.
-3. **Menu** (Menubar.Menu's `children`): a compact menu 0.25 rem below its trigger, lined up with its start; the open menu's trigger keeps a fill.
+2. **Trigger** (Menubar.Menu's `label`): a small text button in the label type, with its access key underlined while <kbd>Alt</kbd> is held.
+3. **Menu** (Menubar.Menu's `children`): a menu 0.25 rem below its trigger, lined up with its start; the open menu's trigger keeps a fill.
 4. **Items**: the Menu parts, with shortcuts as Kbd keys at the end of their rows and submenus beside them.
 
 ## Variants and sizes
 
-| Density    | Use for                                                                 |
-| ---------- | ----------------------------------------------------------------------- |
-| `compact`  | A desktop menubar: the compact menus of a dense interface. The default. |
-| `standard` | A menu of the menubar that needs the taller rows of other menus.        |
-
-- Triggers are as tall as a compact control, 2 rem, with 0.5 rem inline padding and 0.5 rem corners; their labels don't wrap.
-- Menus take the compact menu's sizes from [Menu](../components/menu.md).
+- Triggers are as tall as a small control, 2 rem, or 1.625 rem in the compact scale, with 0.5 rem inline padding and 0.5 rem corners; their labels don't wrap. On touch screens they gain a 2.75 rem hit area.
+- Menus take the sizes of every [Menu](../components/menu.md), in the app's [scale](../foundations/scale.md).
 
 ## States and behaviour
 

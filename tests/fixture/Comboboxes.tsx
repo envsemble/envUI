@@ -210,33 +210,32 @@ export function ComboboxFixture({ theme }: { theme: ThemeValue }) {
       />
       <output data-testid={`combobox-mentioned-${theme}`}>{mentionedItems}</output>
       <ServerSearch theme={theme} />
-      <Surface
-        padding={2}
-        density="compact"
-        data-testid={`combobox-compact-${theme}`}
-        className="fixture-actions"
-      >
+      <Surface padding={2} data-testid={`combobox-compact-${theme}`} className="fixture-actions">
         <Combobox
-          density="compact"
+          size="sm"
+          showLabel={false}
           aria-label={`Compact owner ${theme}`}
           placeholder="Owner"
           items={people}
           defaultValue="taylor-brooks"
         />
         <Combobox
-          density="compact"
+          size="sm"
+          showLabel={false}
           multiple
           aria-label={`Compact labels ${theme}`}
           placeholder="Labels"
           items={tags}
           defaultValue={['accessibility']}
         />
-        <Button variant="secondary">Compact neighbour {theme}</Button>
+        <Button variant="secondary" size="sm">
+          Compact neighbour {theme}
+        </Button>
       </Surface>
       <div className="fixture-narrow-field" data-testid={`combobox-narrow-${theme}`}>
         <Combobox
           multiple
-          density="compact"
+          size="sm"
           label={`Topics ${theme}`}
           showLabel
           items={tags}
@@ -265,7 +264,7 @@ export function ComboboxFixture({ theme }: { theme: ThemeValue }) {
       <Dialog title={`Share ${theme}`} trigger={<Button variant="secondary">Share {theme}</Button>}>
         <Combobox
           multiple
-          density="compact"
+          size="sm"
           label={`Share with ${theme}`}
           showLabel
           items={people}

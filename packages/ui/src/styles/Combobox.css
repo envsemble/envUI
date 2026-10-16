@@ -1,53 +1,58 @@
 /* Combobox: the shared text field with a popup of options to choose one or several of. Labels,
-   guidance, validation, density and touch heights follow TextField; the popup is Select's raised popup,
-   where a check mark shows each chosen option. */
+   guidance, validation, sizes and touch heights follow TextField; the popup is Select's raised
+   popup, where a check mark shows each chosen option. */
 
-/* Compact fields take the compact control height, like a compact Select or Button. */
-.env-combobox[data-compact] {
-  --control-height: var(--control-height-compact);
+/* The field's height, as TextField sets it: its size's control height, and the touch height under a
+   coarse pointer. */
+.env-combobox {
+  --env-field-height: var(--control-height);
 }
-
+@media (pointer: coarse) {
+  .env-combobox {
+    --env-field-height: max(var(--control-height), var(--control-height-touch));
+  }
+}
 /* The well lays out the chosen option's leading content, the chips and the text input in rows. Its
-   padding keeps one row as tall as a TextField, and leaves room for the actions at its end. */
+   padding keeps one row as tall as a TextField of its size, and leaves room for the actions at its
+   end. While one row tall it is a pill; wrapped chips keep the same rounded ends. */
 .env-combobox .env-combobox-well {
-  --env-combobox-row: 1.5rem;
-  --env-combobox-action: var(--control-height-compact);
+  --env-combobox-row: 1.375rem;
+  --env-combobox-action: max(
+    var(--control-target-min),
+    calc(var(--env-field-height) - var(--space-2))
+  );
   --env-combobox-actions: 1;
-  --env-combobox-end: var(--space-2);
+  --env-combobox-end: var(--space-1);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: calc(var(--space-1) * var(--scale, 1));
-  padding-block: calc((3.5rem - var(--env-combobox-row)) / 2 * var(--scale, 1));
-  padding-inline: calc(var(--space-4) * var(--scale, 1))
+  gap: var(--space-1);
+  border-radius: calc(var(--env-field-height) / 2);
+  padding-block: calc((var(--env-field-height) - 0.125rem - var(--env-combobox-row)) / 2);
+  padding-inline: var(--space-3)
     calc(
-      (
-          var(--env-combobox-end) + var(--env-combobox-actions) * var(--env-combobox-action) +
-            var(--space-1)
-        ) *
-        var(--scale, 1)
+      var(--env-combobox-end) + var(--env-combobox-actions) * var(--env-combobox-action) +
+        var(--space-1)
     );
   cursor: text;
 }
 .env-combobox .env-combobox-well[data-actions='2'] {
   --env-combobox-actions: 2;
 }
-.env-combobox[data-compact] .env-combobox-well {
-  --env-combobox-row: 1.375rem;
-  --env-combobox-action: calc(var(--control-height) - var(--space-2));
-  --env-combobox-end: var(--space-1);
-  /* A pill while one row tall; wrapped chips keep the same rounded ends. */
-  border-radius: calc(var(--control-height) / 2 * var(--scale, 1));
-  padding-block: calc(
-    (var(--control-height) - 0.125rem - var(--env-combobox-row)) / 2 * var(--scale, 1)
-  );
-  padding-inline-start: calc(var(--space-3) * var(--scale, 1));
+/* A floating field is as tall as a floating TextField, with small actions. */
+.env-combobox[data-tall] .env-combobox-well {
+  --env-combobox-row: 1.5rem;
+  --env-combobox-action: var(--control-height-sm);
+  --env-combobox-end: var(--space-2);
+  border-radius: var(--radius-large);
+  padding-block: calc((var(--field-floating-height) - var(--env-combobox-row)) / 2);
+  padding-inline-start: var(--space-4);
 }
 .env-combobox .env-combobox-well > .env-text-input.env-combobox-input {
   flex: 1 1 4rem;
   inline-size: auto;
   min-inline-size: min(4rem, 100%);
-  min-block-size: calc(var(--env-combobox-row) * var(--scale, 1));
+  min-block-size: var(--env-combobox-row);
   padding: 0;
   border-radius: 0;
   text-overflow: ellipsis;
@@ -55,9 +60,9 @@
 .env-combobox .env-combobox-well > .env-combobox-input:read-only {
   cursor: default;
 }
-/* Actions are quiet icon buttons inside the field, the compact control height in a standard field. */
-.env-combobox:not([data-compact]) .env-text-field-end .env-icon-button {
-  --icon-button-size: var(--control-height-compact);
+/* Actions are quiet icon buttons inside the field, the small control height in a floating field. */
+.env-combobox[data-tall] .env-text-field-end {
+  --control-height: var(--control-height-sm);
 }
 .env-combobox-trigger .env-symbol {
   transform: rotate(90deg);
@@ -79,23 +84,19 @@
   flex: 0 0 auto;
   display: grid;
   place-items: center;
-  inline-size: calc(var(--env-combobox-leading-size) * var(--scale, 1));
-  block-size: calc(var(--env-combobox-leading-size) * var(--scale, 1));
+  inline-size: var(--env-combobox-leading-size);
+  block-size: var(--env-combobox-leading-size);
   color: var(--color-icon);
 }
 .env-combobox-leading > .env-avatar {
-  --env-avatar-size: calc(var(--env-combobox-leading-size) * var(--scale, 1));
+  --env-avatar-size: var(--env-combobox-leading-size);
 }
 .env-combobox-leading > svg,
 .env-combobox-leading > .env-symbol {
-  inline-size: calc(
-    min(var(--control-icon-size), var(--env-combobox-leading-size)) * var(--scale, 1)
-  );
-  block-size: calc(
-    min(var(--control-icon-size), var(--env-combobox-leading-size)) * var(--scale, 1)
-  );
+  inline-size: min(var(--control-icon-size), var(--env-combobox-leading-size));
+  block-size: min(var(--control-icon-size), var(--env-combobox-leading-size));
 }
-.env-combobox[data-compact] .env-combobox-value-leading {
+.env-combobox:not([data-tall]) .env-combobox-value-leading {
   --env-combobox-leading-size: 1.25rem;
 }
 
@@ -104,35 +105,33 @@
   box-sizing: border-box;
   display: inline-flex;
   align-items: center;
-  gap: calc(var(--space-1) * var(--scale, 1));
+  gap: var(--space-1);
   min-inline-size: 0;
   max-inline-size: 100%;
-  block-size: calc(var(--env-combobox-row) * var(--scale, 1));
-  padding-inline: calc(var(--space-2) * var(--scale, 1)) calc(0.125rem * var(--scale, 1));
-  border-radius: calc(var(--radius-standard) * var(--scale, 1));
+  block-size: var(--env-combobox-row);
+  padding-inline: var(--space-2) 0.125rem;
+  border-radius: var(--radius-standard);
   background: var(--color-chip);
   color: var(--color-field-text);
-  font: var(--type-body-small);
-  font-size: calc(var(--font-size-body-small) * var(--scale, 1));
-  line-height: 1.25;
+  font: var(--body-font-weight) var(--font-size-label) / 1.25 var(--font-family);
   cursor: default;
   outline: none;
 }
-.env-combobox[data-compact] .env-combobox-chip {
-  font-size: calc(0.8125rem * var(--scale, 1));
+.env-combobox:not([data-tall]) .env-combobox-chip {
+  font-size: var(--font-size-label-small);
 }
 .env-combobox-chip:not(:has(> .env-combobox-chip-remove)) {
-  padding-inline-end: calc(var(--space-2) * var(--scale, 1));
+  padding-inline-end: var(--space-2);
 }
 .env-combobox-chip:has(> .env-combobox-leading) {
-  padding-inline-start: calc(0.1875rem * var(--scale, 1));
+  padding-inline-start: 0.1875rem;
 }
 .env-combobox-chip > .env-combobox-leading {
   --env-combobox-leading-size: calc(var(--env-combobox-row) - 0.375rem);
 }
 .env-combobox-chip:focus-visible {
-  outline: calc(0.125rem * var(--scale, 1)) solid var(--color-focus-ring);
-  outline-offset: calc(0.0625rem * var(--scale, 1));
+  outline: 0.125rem solid var(--color-focus-ring);
+  outline-offset: 0.0625rem;
 }
 .env-combobox-chip-label {
   min-inline-size: 0;
@@ -144,12 +143,12 @@
   flex: 0 0 auto;
   display: grid;
   place-items: center;
-  inline-size: calc((var(--env-combobox-row) - 0.25rem) * var(--scale, 1));
-  block-size: calc((var(--env-combobox-row) - 0.25rem) * var(--scale, 1));
+  inline-size: calc(var(--env-combobox-row) - 0.25rem);
+  block-size: calc(var(--env-combobox-row) - 0.25rem);
   margin: 0;
   padding: 0;
   border: 0;
-  border-radius: calc((var(--radius-standard) - 0.125rem) * var(--scale, 1));
+  border-radius: calc(var(--radius-standard) - 0.125rem);
   background: transparent;
   color: var(--color-field-label);
   cursor: pointer;
@@ -158,8 +157,8 @@
     color var(--motion-duration-fast) var(--motion-ease);
 }
 .env-combobox-chip-remove > svg {
-  inline-size: calc(0.875rem * var(--scale, 1));
-  block-size: calc(0.875rem * var(--scale, 1));
+  inline-size: 0.875rem;
+  block-size: 0.875rem;
 }
 .env-combobox-chip-remove:hover {
   background: var(--color-state-layer-hover);
@@ -189,20 +188,19 @@
   margin-block-start: var(--space-1);
 }
 
-/* Options are rounded rows inset by the popup's padding. Hover and the keyboard highlight them; a
-   check mark and a heavier label show the chosen ones. */
+/* Options are the rows of Select's popup, inset by its padding. Hover and the keyboard highlight
+   them; a check mark and a heavier label show the chosen ones. */
 .env-combobox-option {
-  --env-combobox-option-padding: var(--space-4);
   box-sizing: border-box;
   display: flex;
   align-items: center;
   gap: var(--space-2);
   min-inline-size: 0;
-  min-block-size: var(--control-height);
-  padding: var(--space-2) var(--env-combobox-option-padding);
-  border-radius: calc(var(--radius-surface) - var(--space-2));
+  min-block-size: var(--row-height);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-standard);
   color: var(--color-text-primary);
-  font: var(--type-body-small);
+  font: var(--body-font-weight) var(--font-size-label) / 1.4 var(--font-family);
   text-align: start;
   overflow-wrap: anywhere;
   cursor: pointer;
@@ -241,13 +239,16 @@
 }
 .env-combobox-option-description {
   color: var(--color-text-muted);
-  font: 400 0.75rem / 1.4 var(--font-family);
+  font: var(--body-font-weight) var(--font-size-caption) / 1.4 var(--font-family);
+}
+.env-surface.env-combobox-popup .env-combobox-leading {
+  --env-combobox-leading-size: 1.25rem;
 }
 .env-combobox-group-label {
-  padding-block: var(--space-2) var(--space-1);
-  padding-inline: calc(var(--space-4) + var(--control-icon-size) + var(--space-2)) var(--space-4);
+  padding-block: var(--space-1) 0.125rem;
+  padding-inline: calc(var(--space-2) + var(--control-icon-size) + var(--space-2)) var(--space-2);
   color: var(--color-text-muted);
-  font: 500 0.75rem / 1.4 var(--font-family);
+  font: 500 var(--font-size-caption) / 1.4 var(--font-family);
   overflow-wrap: anywhere;
 }
 .env-combobox-status:not(:empty),
@@ -255,41 +256,19 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  min-block-size: var(--control-height);
-  padding: var(--space-2) var(--space-4);
-  color: var(--color-text-muted);
-  font: var(--type-body-small);
-  overflow-wrap: anywhere;
-}
-
-/* The compact popup is the compact menu's: small corners and 1.75 rem rows. */
-.env-surface.env-combobox-popup[data-density='compact'] .env-combobox-option {
-  --env-combobox-option-padding: var(--space-2);
-  min-block-size: 1.75rem;
-  padding-block: var(--space-1);
-  border-radius: var(--radius-standard);
-}
-.env-surface.env-combobox-popup[data-density='compact'] .env-combobox-leading {
-  --env-combobox-leading-size: 1.25rem;
-}
-.env-surface.env-combobox-popup[data-density='compact'] .env-combobox-group-label {
-  padding-block: var(--space-1) 0.125rem;
-  padding-inline: calc(var(--space-2) + var(--control-icon-size) + var(--space-2)) var(--space-2);
-}
-.env-surface.env-combobox-popup[data-density='compact']
-  :is(.env-combobox-status, .env-combobox-empty):not(:empty) {
-  min-block-size: 1.75rem;
+  min-block-size: var(--row-height);
   padding: var(--space-1) var(--space-2);
+  color: var(--color-text-muted);
+  font: var(--body-font-weight) var(--font-size-label) / 1.4 var(--font-family);
+  overflow-wrap: anywhere;
 }
 
 /* Coarse pointers keep the touch height for options, and larger chips and remove buttons. */
 @media (pointer: coarse) {
-  .env-combobox .env-combobox-well,
-  .env-combobox[data-compact] .env-combobox-well {
+  .env-combobox .env-combobox-well {
     --env-combobox-row: 1.75rem;
   }
-  .env-surface.env-combobox-popup .env-combobox-option,
-  .env-surface.env-combobox-popup[data-density='compact'] .env-combobox-option {
+  .env-surface.env-combobox-popup .env-combobox-option {
     min-block-size: var(--control-height-touch);
   }
 }

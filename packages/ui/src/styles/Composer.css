@@ -39,10 +39,10 @@
   inline-size: 100%;
   min-inline-size: 0;
   /* One line sits centered beside the action; more lines grow upward from the same baseline. */
-  min-block-size: calc((var(--env-composer-min-rows) - 1) * 1lh + var(--icon-button-size));
-  max-block-size: calc((var(--env-composer-max-rows) - 1) * 1lh + var(--icon-button-size));
+  min-block-size: calc((var(--env-composer-min-rows) - 1) * 1lh + var(--control-height));
+  max-block-size: calc((var(--env-composer-max-rows) - 1) * 1lh + var(--control-height));
   margin: 0;
-  padding-block: calc((var(--icon-button-size) - 1lh) / 2);
+  padding-block: calc((var(--control-height) - 1lh) / 2);
   padding-inline: var(--space-4) 0;
   border: 0;
   outline: none;
@@ -72,7 +72,7 @@
   align-items: center;
   gap: var(--space-2);
   min-inline-size: 0;
-  min-block-size: var(--icon-button-size);
+  min-block-size: var(--control-height);
   /* Start content lines up with the field's text above it. */
   padding-inline-start: var(--space-4);
   color: var(--color-text-muted);
@@ -81,7 +81,7 @@
 }
 /* A leading icon button reaches into that inset, so its icon, not its round target, lines up. */
 .env-composer-start > .env-icon-button:first-child {
-  margin-inline-start: calc((var(--control-icon-size) - var(--icon-button-size)) / 2);
+  margin-inline-start: calc((var(--control-icon-size) - var(--control-height)) / 2);
 }
 /* The action keeps the arrow of other buttons rather than the surface's text cursor. */
 .env-composer-action {

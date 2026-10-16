@@ -250,9 +250,7 @@ test('a copy button without words or a name of its own is named Copy', async ({ 
   await expect.poll(() => writes(page)).toEqual(['Empty label']);
 });
 
-test('a copy button takes the compact size in compact toolbars and with size compact', async ({
-  page,
-}) => {
+test('a copy button takes the small size in small toolbars and with size sm', async ({ page }) => {
   await page.goto(fixture);
   const scope = page.getByTestId('copy-buttons-light');
   const height = async (name: string) =>

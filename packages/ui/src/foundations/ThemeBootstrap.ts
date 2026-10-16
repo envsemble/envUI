@@ -1,4 +1,4 @@
-import type { ThemeContrast } from './Theme.js';
+import type { ThemeContrast, ThemeScale } from './Theme.js';
 
 /** Preference stored by ThemePreferenceProvider: an explicit theme or the operating system's. */
 export type ThemePreference = 'light' | 'dark' | 'system';
@@ -18,6 +18,14 @@ export interface ThemeBootstrapOptions {
    * while the page has left it unchanged.
    */
   contrast?: ThemeContrast;
+  /**
+   * The application's scale, as ThemePreferenceProvider's `scale`: `compact` is written to the root
+   * as `data-env-scale` before the first paint, so a compact app does not load at the comfortable
+   * size. `comfortable`, the default, writes nothing. The script marks what it writes with
+   * `data-env-scale-source="envui:compact"`, as it marks the contrast, so a ThemePreferenceProvider
+   * replaces or removes it as its own while the page has left it unchanged.
+   */
+  scale?: ThemeScale;
 }
 
 export const defaultThemeStorageKey = 'env-theme';
@@ -31,6 +39,12 @@ export const defaultThemeStorageKey = 'env-theme';
  */
 export const contrastSourceAttribute = 'data-env-contrast-source';
 export const ownContrastSource = (contrast: string) => `envui:${contrast}`;
+/**
+ * Marks a root `data-env-scale` that envUI wrote, as contrastSourceAttribute marks a contrast: the
+ * marker holds the value written, `envui:compact`, so a scale the page wrote over envUI's stays.
+ */
+export const scaleSourceAttribute = 'data-env-scale-source';
+export const ownScaleSource = (scale: string) => `envui:${scale}`;
 
 /**
  * Inline script for the document head. It themes the root element before the first paint, so a
@@ -41,10 +55,15 @@ export function createThemeBootstrapScript({
   storageKey = defaultThemeStorageKey,
   defaultPreference = 'system',
   contrast = 'system',
+  scale = 'comfortable',
 }: ThemeBootstrapOptions = {}) {
   const writeContrast =
     contrast === 'high' || contrast === 'standard'
       ? `r.setAttribute("data-env-contrast",${JSON.stringify(contrast)});r.setAttribute(${JSON.stringify(contrastSourceAttribute)},${JSON.stringify(ownContrastSource(contrast))});`
       : '';
-  return `(function(){var r=document.documentElement,t="light";try{var p=localStorage.getItem(${JSON.stringify(storageKey)});if(p!=="light"&&p!=="dark"&&p!=="system")p=${JSON.stringify(defaultPreference)};t=p==="system"?(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):p}catch(e){}r.classList.add("env-theme");r.setAttribute("data-env-theme",t);${writeContrast}r.style.colorScheme=t})();`;
+  const writeScale =
+    scale === 'compact'
+      ? `r.setAttribute("data-env-scale","compact");r.setAttribute(${JSON.stringify(scaleSourceAttribute)},${JSON.stringify(ownScaleSource('compact'))});`
+      : '';
+  return `(function(){var r=document.documentElement,t="light";try{var p=localStorage.getItem(${JSON.stringify(storageKey)});if(p!=="light"&&p!=="dark"&&p!=="system")p=${JSON.stringify(defaultPreference)};t=p==="system"?(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):p}catch(e){}r.classList.add("env-theme");r.setAttribute("data-env-theme",t);${writeContrast}${writeScale}r.style.colorScheme=t})();`;
 }

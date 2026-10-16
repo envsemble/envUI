@@ -115,7 +115,7 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
 
       <Table.Root
         aria-label={`Owned widths ${theme}`}
-        density="compact"
+        density="sm"
         resizableColumns
         defaultColumnWidths={[30, 35, 35]}
       >

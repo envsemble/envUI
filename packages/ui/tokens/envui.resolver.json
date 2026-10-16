@@ -41,10 +41,10 @@
       "default": "standard"
     },
     "scale": {
-      "description": "Reserved for the app scale. Neither context overrides anything yet, so compact equals comfortable and no CSS is built for it.",
+      "description": "The app scale. Comfortable is the base set; compact is about 0.8 of it in geometry and one step down in type, with a 1 rem icon floor and fixed borders and focus rings. Built as [data-env-scale='compact'], which Theme writes from its scale prop on every boundary.",
       "contexts": {
         "comfortable": [],
-        "compact": []
+        "compact": [{ "$ref": "./scale/compact.tokens.json" }]
       },
       "default": "comfortable"
     }

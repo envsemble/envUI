@@ -1,9 +1,11 @@
 /* A virtualized tree: the tree scrolls itself and positions its rendered rows by index. Rows follow
    navigation colors: transparent at rest, a state layer on hover and the navigation selection. */
 .env-tree {
-  --env-tree-row-height: 1.75rem;
+  /* The density sets the rows' block padding around their content line. */
+  --env-tree-row-padding: var(--row-padding-block-sm);
+  --env-tree-row-height: calc(var(--row-content-height) + 2 * var(--env-tree-row-padding));
   --env-tree-indent: 0.75rem;
-  --env-tree-icon-size: 1rem;
+  --env-tree-icon-size: var(--control-icon-size);
   box-sizing: border-box;
   position: relative;
   block-size: 100%;
@@ -14,13 +16,17 @@
   overscroll-behavior: contain;
   scrollbar-width: thin;
   color: var(--color-navigation-text);
-  font: var(--type-body-small);
+  font: var(--body-font-weight) var(--font-size-label) / 1.4 var(--font-family);
   outline: none;
 }
-.env-tree[data-density='standard'] {
-  --env-tree-row-height: 2.25rem;
-  --env-tree-icon-size: 1.125rem;
-  font: var(--type-body);
+.env-tree[data-density='xs'] {
+  --env-tree-row-padding: var(--row-padding-block-xs);
+}
+.env-tree[data-density='md'] {
+  --env-tree-row-padding: var(--row-padding-block-md);
+}
+.env-tree[data-density='lg'] {
+  --env-tree-row-padding: var(--row-padding-block-lg);
 }
 .env-tree-rows {
   position: relative;
@@ -126,7 +132,10 @@
 }
 @media (pointer: coarse) {
   .env-tree {
-    --env-tree-row-height: var(--control-height-touch);
+    --env-tree-row-height: max(
+      var(--control-height-touch),
+      calc(var(--row-content-height) + 2 * var(--env-tree-row-padding))
+    );
   }
 }
 @media (prefers-reduced-motion: reduce) {

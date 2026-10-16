@@ -51,8 +51,12 @@ export interface DropZoneProps
   pending?: boolean;
   /** A message linked to the zone, whose outline takes the error color. */
   error?: ReactNode;
-  /** One row with a small icon instead of the tall area. */
-  compact?: boolean;
+  /**
+   * md is the tall area with a large icon; sm is one row with a small icon, for a form or a
+   * sidebar.
+   * @default 'md'
+   */
+  size?: 'sm' | 'md';
   /**
    * Submits files with a native form under this name: the last files the zone took, until the form
    * resets, or files.
@@ -85,7 +89,7 @@ export function DropZone({
   disabled = false,
   pending = false,
   error,
-  compact = false,
+  size = 'md',
   name,
   files,
   form,
@@ -154,7 +158,7 @@ export function DropZone({
     <div
       {...props}
       className={classNames('env-form-field env-drop-zone', className)}
-      data-compact={compact ? '' : undefined}
+      data-size={size}
       data-dragging={dragging ? '' : undefined}
       data-pending={pending ? '' : undefined}
       data-invalid={error != null ? '' : undefined}
@@ -196,7 +200,7 @@ export function DropZone({
       >
         <span className="env-drop-zone-icon">
           {pending ? (
-            <Spinner size={compact ? 'small' : 'standard'} />
+            <Spinner size={size === 'sm' ? 'small' : 'standard'} />
           ) : (
             <DecorativeIcon>{icon ?? <CloudUpload />}</DecorativeIcon>
           )}

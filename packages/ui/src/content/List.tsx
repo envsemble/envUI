@@ -1,6 +1,7 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { Surface } from '../foundations/Surface.js';
+import type { RowDensity } from '../foundations/Theme.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 
 export interface RootProps extends ComponentPropsWithRef<'ul'> {
@@ -9,12 +10,21 @@ export interface RootProps extends ComponentPropsWithRef<'ul'> {
    * so they stand out from the pane.
    */
   contrast?: boolean;
+  /**
+   * How tightly the rows pack: xs, sm, md or lg changes only their block padding, never the text.
+   * @default 'md'
+   */
+  density?: RowDensity;
 }
 
 /** A `ul` of connected rows with shared outer corners. */
-function Root({ contrast = false, className, ...props }: RootProps) {
+function Root({ contrast = false, density = 'md', className, ...props }: RootProps) {
   const rows = (
-    <ul {...props} className={classNames('env-list', 'env-connected-rows', className)} />
+    <ul
+      {...props}
+      data-density={density}
+      className={classNames('env-list', 'env-connected-rows', className)}
+    />
   );
   return contrast ? (
     <Surface tone="row" padding={3} className="env-list-surface">

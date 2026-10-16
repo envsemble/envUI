@@ -21,6 +21,15 @@ import { Sidebar } from './navigation/Sidebar';
 import { PageNavigation } from './navigation/PageNavigation';
 import { reachedFromTabs, useDocumentationRoute } from './navigation/useDocumentationRoute';
 
+/**
+ * The catalogue's scale, comfortable unless the address asks for the compact one with
+ * ?scale=compact before its hash, to review every page at the compact scale.
+ */
+const scale =
+  typeof location !== 'undefined' && new URLSearchParams(location.search).get('scale') === 'compact'
+    ? 'compact'
+    : 'comfortable';
+
 export default function App() {
   const route = useDocumentationRoute();
   const [appearance, setAppearance] = useState<'light' | 'dark'>('light');
@@ -71,7 +80,7 @@ export default function App() {
       </Stack>
     );
   return (
-    <Theme theme={appearance} className="docs-app">
+    <Theme theme={appearance} scale={scale} className="docs-app">
       <Button
         variant="outlined"
         className="docs-skip"

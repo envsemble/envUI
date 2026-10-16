@@ -132,7 +132,7 @@ export function AdoptionFixture() {
           </div>
           <Skeleton width="4rem" />
           <div className="fixture-toolbar" data-testid="compact-label-toolbar">
-            <TextField compact showLabel label="Project filter" data-testid="compact-label" />
+            <TextField showLabel label="Project filter" data-testid="compact-label" />
             <Button>Apply</Button>
           </div>
           <Button

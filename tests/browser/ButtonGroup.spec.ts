@@ -88,7 +88,8 @@ test('mixed buttons connect in rows and columns with variant outer corners', asy
         8, 8, 8, 8,
       ]);
       const scaled = await geometry(scope.getByTestId('scaled'));
-      expect(scaled.buttons[0].corners).toEqual([30, 12, 30, 12]);
+      // Large buttons keep pill ends at their own height.
+      expect(scaled.buttons[0].corners).toEqual([24, 8, 24, 8]);
     }
   }
 });

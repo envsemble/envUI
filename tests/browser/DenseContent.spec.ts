@@ -1,8 +1,8 @@
 import { test, expect, type Page } from '@playwright/test';
 import { catalogueUrl, fixtureUrl } from './Servers';
 
-// Options for dense, document-centred applications: compact menus, code in the app's code theme
-// and tabs that fill a region.
+// Options for dense, document-centred applications: menus, the compact scale, code in the app's
+// code theme and tabs that fill a region.
 
 /** The computed display of the panel each tab of a tab list controls, in order. */
 function panelDisplays(page: Page, list: string) {
@@ -14,45 +14,42 @@ function panelDisplays(page: Page, list: string) {
   );
 }
 
-test('a compact menu has shorter rows on a raised popup than a standard menu', async ({ page }) => {
+test('every menu is the raised popup with rows of the row height', async ({ page }) => {
   await page.goto(`${catalogueUrl}/#/components/menu/preview`);
-  // The account menu of the overview is standard; the compact density example is compact.
+  // The account menu of the overview and the file menu of the examples share one anatomy.
   await page
     .getByRole('group', { name: 'Menu example' })
     .getByRole('button', { name: 'Open account menu' })
     .click();
-  const standard = page.getByRole('menu', { name: 'Account', exact: true });
-  await expect(standard).not.toHaveAttribute('data-density');
-  await expect(standard).not.toHaveAttribute('data-starting-style');
+  const account = page.getByRole('menu', { name: 'Account', exact: true });
+  await expect(account).not.toHaveAttribute('data-starting-style');
   // Rows reach their size once the popup has grown in.
-  const standardRow = standard.getByRole('menuitem', { name: 'Preferences' });
-  await expect
-    .poll(async () => Math.round((await standardRow.boundingBox())!.height))
-    .toBeGreaterThanOrEqual(48);
-  const standardHeight = (await standardRow.boundingBox())!.height;
-  await page.keyboard.press('Escape');
-  await expect(standard).toBeHidden();
-  await page
-    .getByRole('group', { name: 'Compact density example' })
-    .getByRole('button', { name: 'Document', exact: true })
-    .click();
-  const compact = page.getByRole('menu', { name: 'Document', exact: true });
-  await expect(compact).toHaveAttribute('data-density', 'compact');
-  await expect(compact).not.toHaveAttribute('data-starting-style');
   await expect
     .poll(async () =>
-      Math.round((await compact.getByRole('menuitem', { name: 'Save' }).boundingBox())!.height),
+      Math.round(
+        (await account.getByRole('menuitem', { name: 'Preferences' }).boundingBox())!.height,
+      ),
     )
-    .toBe(28);
-  expect(28).toBeLessThan(standardHeight);
+    .toBe(36);
+  await page.keyboard.press('Escape');
+  await expect(account).toBeHidden();
+  await page
+    .getByRole('group', { name: 'A file menu example' })
+    .getByRole('button', { name: 'Document', exact: true })
+    .click();
+  const menu = page.getByRole('menu', { name: 'Document', exact: true });
+  await expect(menu).not.toHaveAttribute('data-starting-style');
+  await expect
+    .poll(async () =>
+      Math.round((await menu.getByRole('menuitem', { name: 'Save' }).boundingBox())!.height),
+    )
+    .toBe(36);
   expect(
-    await compact.evaluate((element) =>
-      Number.parseFloat(getComputedStyle(element).borderTopWidth),
-    ),
+    await menu.evaluate((element) => Number.parseFloat(getComputedStyle(element).borderTopWidth)),
   ).toBeGreaterThan(0);
-  await expect(compact.getByRole('separator')).toHaveCount(1);
-  await compact.getByRole('menuitem', { name: 'Save' }).click();
-  await expect(compact).toBeHidden();
+  await expect(menu.getByRole('separator')).toHaveCount(1);
+  await menu.getByRole('menuitem', { name: 'Save' }).click();
+  await expect(menu).toBeHidden();
 });
 
 test('inline code and code blocks take the Pierre code theme of the app theme', async ({
@@ -113,20 +110,17 @@ test('filling tabs that keep inactive panels mounted display only the selected p
   }
 });
 
-test('a compact surface gives its controls the compact height', async ({ page }) => {
-  // The density specimen shows the same toolbar on a standard and a compact surface.
-  await page.goto(`${catalogueUrl}/#/components/surface/guidelines`);
-  const height = async (toolbar: string, name: string) =>
-    (await page.getByRole('group', { name: toolbar }).getByRole('button', { name }).boundingBox())!
-      .height;
-  expect(await height('Compact toolbar', 'Fit')).toBeLessThan(
-    await height('Standard toolbar', 'Fit'),
-  );
-  expect(await height('Compact toolbar', 'Zoom in')).toBeLessThan(
-    await height('Standard toolbar', 'Zoom in'),
-  );
-  await expect(page.getByRole('group', { name: 'Compact toolbar' })).toHaveAttribute(
-    'data-density',
-    'compact',
-  );
+test('a compact Theme gives its controls the compact heights', async ({ page }) => {
+  // The scale foundation shows the same controls at each size in both scales.
+  await page.goto(`${catalogueUrl}/#/foundations/scale/preview`);
+  const height = async (scale: string, size: string) =>
+    (await page
+      .locator('.docs-specimen', { has: page.getByRole('heading', { name: scale, exact: true }) })
+      .locator(`.docs-scale-row[data-size="${size}"]`)
+      .getByRole('button', { name: 'Save', exact: true })
+      .boundingBox())!.height;
+  expect(await height('Comfortable', 'md')).toBeCloseTo(40, 0);
+  expect(await height('Compact', 'md')).toBeCloseTo(32, 0);
+  expect(await height('Comfortable', 'sm')).toBeCloseTo(32, 0);
+  expect(await height('Compact', 'sm')).toBeCloseTo(26, 0);
 });

@@ -78,7 +78,7 @@ export function DropZonesFixture({ theme }: { theme: ThemeValue }) {
       <output data-testid={`taken-${theme}`}>{taken}</output>
       <output data-testid={`rejected-${theme}`}>{rejected}</output>
       <DropZone
-        compact
+        size="sm"
         multiple
         label="Attach documents"
         description="Any file, several at once"
@@ -116,7 +116,7 @@ export function DropZonesFixture({ theme }: { theme: ThemeValue }) {
         }}
       >
         <DropZone
-          compact
+          size="sm"
           multiple
           name="attachments"
           accept=".pdf,.txt"

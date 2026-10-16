@@ -54,7 +54,6 @@
       "MenuHeaderProps": "Menu.HeaderProps",
       "MenuSubmenu": "Menu.Submenu",
       "MenuSubmenuProps": "Menu.SubmenuProps",
-      "MenuDensity": "Menu.Density",
       "Menubar": "Menubar.Root",
       "MenubarProps": "Menubar.RootProps",
       "MenubarMenu": "Menubar.Menu",
@@ -95,6 +94,12 @@
   "removed": {
     "$comment": "Exports that became internal in 1.0, with what to use instead. A `value` is the constant's literal, which a codemod can inline.",
     "@envsemble/envui": {
+      "MenuDensity": {
+        "use": "Menus have one anatomy in 1.0, and density is gone: the app's scale sizes them, so use ThemeScale for a scale and drop the density."
+      },
+      "SurfaceDensity": {
+        "use": "Surface's density is gone in 1.0: give the controls inside a ControlSize with their size prop, or set a ThemeScale with scale on a Theme around the region."
+      },
       "LoadingBar": {
         "use": "AppShell's loading and loadingLabel props show page progress along the bottom of its topbar; Progress shows the progress of a task."
       },
@@ -121,6 +126,244 @@
       "defaultThemeStorageKey": {
         "use": "The default storage key is the string \"env-theme\"; pass the same storageKey to createThemeBootstrapScript and ThemePreferenceProvider to change it.",
         "value": "env-theme"
+      }
+    }
+  },
+  "props": {
+    "$comment": "Props of 0.x components that 1.0 removed or changed, per entry point and component, by its 1.0 name. Each literal value of a prop maps to the props that replace it, in its place: an empty object drops the prop, and a replacement prop the element already sets is kept as it is. `report` says what replaces the prop; the v1-props codemod reports it at each use whose value is not listed, such as an expression, and with a value's own `report` at each use of that value. `current` lists a prop's 1.0 values, which it leaves alone without a report, so it can run again over its own output.",
+    "@envsemble/envui": {
+      "TextField": {
+        "compact": {
+          "report": "TextField's compact is gone: fields take the control height by default, and size=\"sm\" gives the small one. For a compact app or region, set scale=\"compact\" on its Theme.",
+          "values": {
+            "true": {
+              "props": {
+                "showLabel": false
+              },
+              "report": "compact is gone: the field takes the control height, and showLabel={false} keeps its label hidden as compact did. For a compact app or region, set scale=\"compact\" on its Theme."
+            },
+            "false": {
+              "props": {
+                "variant": "floating"
+              },
+              "report": "compact={false} was the tall floating field, which is variant=\"floating\" now."
+            }
+          }
+        }
+      },
+      "SearchField": {
+        "compact": {
+          "report": "SearchField's compact is gone: it takes the control height, and showLabel shows its label. For a compact app or region, set scale=\"compact\" on its Theme.",
+          "values": {
+            "true": {},
+            "false": {
+              "props": {
+                "showLabel": true,
+                "variant": "floating"
+              },
+              "report": "compact={false} was the tall floating field, which is variant=\"floating\" now."
+            }
+          }
+        }
+      },
+      "Select": {
+        "density": {
+          "report": "Select's density is gone: size=\"sm\" gives the small trigger, and every popup has the menus' anatomy. For a compact app or region, set scale=\"compact\" on its Theme.",
+          "values": {
+            "compact": {
+              "props": {
+                "size": "sm"
+              }
+            },
+            "standard": {
+              "report": "the popup now has the menus' anatomy, with a check mark on the chosen option."
+            }
+          }
+        }
+      },
+      "Combobox": {
+        "density": {
+          "report": "Combobox's density is gone: fields take the control height by default, size=\"sm\" gives the small one and variant=\"floating\" the tall one. For a compact app or region, set scale=\"compact\" on its Theme.",
+          "values": {
+            "compact": {
+              "props": {
+                "size": "sm",
+                "showLabel": false
+              }
+            },
+            "standard": {
+              "props": {
+                "variant": "floating"
+              },
+              "report": "the standard density was the tall floating field, which is variant=\"floating\" now."
+            }
+          }
+        }
+      },
+      "DatePicker": {
+        "density": {
+          "report": "DatePicker's density is gone: fields take the control height by default, size=\"sm\" gives the small one and variant=\"floating\" the tall one. For a compact app or region, set scale=\"compact\" on its Theme.",
+          "values": {
+            "compact": {
+              "props": {
+                "size": "sm",
+                "showLabel": false
+              }
+            },
+            "standard": {
+              "props": {
+                "variant": "floating"
+              },
+              "report": "the standard density was the tall floating field, which is variant=\"floating\" now."
+            }
+          }
+        }
+      },
+      "Surface": {
+        "density": {
+          "report": "Surface's density is gone: give the controls inside size=\"sm\", or wrap a whole region in <Theme scale=\"compact\">.",
+          "values": {
+            "compact": {
+              "report": "density=\"compact\" is gone: give the controls inside size=\"sm\", or wrap a whole region in <Theme scale=\"compact\">."
+            },
+            "standard": {}
+          }
+        }
+      },
+      "Menu.Root": {
+        "density": {
+          "report": "Menus have one anatomy in 1.0, at the scale's row height: density is gone. For a compact app or region, set scale=\"compact\" on its Theme.",
+          "values": {
+            "compact": {},
+            "standard": {}
+          }
+        }
+      },
+      "ContextMenu": {
+        "density": {
+          "report": "Menus have one anatomy in 1.0, at the scale's row height: density is gone. For a compact app or region, set scale=\"compact\" on its Theme.",
+          "values": {
+            "compact": {},
+            "standard": {}
+          }
+        }
+      },
+      "Menubar.Menu": {
+        "density": {
+          "report": "Menus have one anatomy in 1.0, at the scale's row height: density is gone. For a compact app or region, set scale=\"compact\" on its Theme.",
+          "values": {
+            "compact": {},
+            "standard": {}
+          }
+        }
+      },
+      "NavList.Item": {
+        "size": {
+          "report": "NavList.Item's size is gone: items follow the scale. For a compact app or region, set scale=\"compact\" on its Theme.",
+          "values": {
+            "compact": {
+              "report": "size=\"compact\" is gone: items follow the scale. For a compact app or region, set scale=\"compact\" on its Theme."
+            },
+            "standard": {}
+          }
+        }
+      },
+      "Tree": {
+        "density": {
+          "current": ["xs", "sm", "md", "lg"],
+          "report": "Tree's density is a row density in 1.0: xs, sm (the default, as compact was) or md (as standard was) or lg.",
+          "values": {
+            "compact": {},
+            "standard": {
+              "props": {
+                "density": "md"
+              }
+            }
+          }
+        }
+      },
+      "Table.Root": {
+        "density": {
+          "current": ["xs", "sm", "md", "lg"],
+          "report": "Table's density is a row density in 1.0: xs, sm (as compact was), md (the default, as standard was) or lg.",
+          "values": {
+            "compact": {
+              "props": {
+                "density": "sm"
+              }
+            },
+            "standard": {}
+          }
+        }
+      },
+      "Tabs": {
+        "size": {
+          "current": ["sm", "md", "lg"],
+          "report": "Tabs' size is the rail's control size in 1.0: sm (as compact was), md or lg (the default, as standard was).",
+          "values": {
+            "compact": {
+              "props": {
+                "size": "sm"
+              }
+            },
+            "standard": {}
+          }
+        }
+      },
+      "SegmentedControl": {
+        "size": {
+          "current": ["sm", "md", "lg"],
+          "report": "SegmentedControl's size-as-density is gone: use size=\"sm\", \"md\" or \"lg\". compact is sm, and standard is the default.",
+          "values": {
+            "compact": {
+              "props": {
+                "size": "sm"
+              }
+            },
+            "standard": {}
+          }
+        }
+      },
+      "Pagination": {
+        "size": {
+          "current": ["sm", "md", "lg"],
+          "report": "Pagination's size-as-density is gone: use size=\"sm\", \"md\" or \"lg\". compact is sm, and standard is the default.",
+          "values": {
+            "compact": {
+              "props": {
+                "size": "sm"
+              }
+            },
+            "standard": {}
+          }
+        }
+      },
+      "CopyButton": {
+        "size": {
+          "current": ["sm", "md", "lg"],
+          "report": "CopyButton's size-as-density is gone: use size=\"sm\", \"md\" or \"lg\". compact is sm, and standard is the default.",
+          "values": {
+            "compact": {
+              "props": {
+                "size": "sm"
+              }
+            },
+            "standard": {}
+          }
+        }
+      },
+      "DropZone": {
+        "compact": {
+          "report": "DropZone's compact is size=\"sm\" in 1.0.",
+          "values": {
+            "true": {
+              "props": {
+                "size": "sm"
+              }
+            },
+            "false": {}
+          }
+        }
       }
     }
   },
@@ -583,6 +826,21 @@
     "--color-tone-success": { "to": "--color-fg-success" },
     "--color-tone-warning": { "to": "--color-fg-warning" },
     "--color-white": { "value": "#ffffff", "component": "Fixed white" },
+    "--control-height-compact": {
+      "removed": true,
+      "to": "--control-height-sm",
+      "note": "The small control height. For a compact app or region, set scale=\"compact\" on its Theme instead."
+    },
+    "--control-height-small": {
+      "removed": true,
+      "to": "--control-height",
+      "note": "It always equalled --control-height, which every control reads now."
+    },
+    "--icon-button-size": {
+      "removed": true,
+      "to": "--control-height",
+      "note": "An icon button is as tall as the other controls of its size."
+    },
     "--member-identity-avatar-size": { "removed": true, "to": null, "note": "Unused." },
     "--member-identity-copy-height": { "removed": true, "to": null, "note": "Unused." },
     "--member-identity-email-line-height": { "removed": true, "to": null, "note": "Unused." },
@@ -590,6 +848,11 @@
     "--member-identity-gap": { "removed": true, "to": null, "note": "Unused." },
     "--member-identity-name-line-height": { "removed": true, "to": null, "note": "Unused." },
     "--member-identity-name-size": { "removed": true, "to": null, "note": "Unused." },
+    "--scale": {
+      "removed": true,
+      "to": null,
+      "note": "The multiplier is gone: components read sized tokens. Set scale=\"compact\" on a Theme for the compact scale."
+    },
     "--state-card-strip-weight": { "removed": true, "to": null, "note": "Unused." },
     "--state-dialog-overlay-opacity": {
       "removed": true,

@@ -266,12 +266,16 @@
   --color-tone-success: var(--color-fg-success);
   --color-tone-warning: var(--color-fg-warning);
   --color-white: #ffffff;
+  --control-border-width: 1px;
   --control-font-size: var(--font-size-body);
-  --control-height: 2.5rem;
-  --control-height-compact: 2rem;
-  --control-height-small: var(--control-height);
+  --control-gap: 0.4375rem;
+  --control-height: var(--control-height-md);
+  --control-height-lg: 3rem;
+  --control-height-md: 2.5rem;
+  --control-height-sm: 2rem;
   --control-height-touch: 2.75rem;
   --control-icon-size: 1rem;
+  --control-target-min: 1.5rem;
   --elevation-0-border: transparent;
   --elevation-0-shadow: 0 0 0 0 transparent;
   --elevation-1-border: var(--color-border-muted);
@@ -280,12 +284,18 @@
   --elevation-2-shadow: 0 1px 2px 0 rgb(66 68 71 / 0.3), 0 2px 6px 2px rgb(66 68 71 / 0.15);
   --elevation-3-border: var(--color-border-muted);
   --elevation-3-shadow: 0 1px 3px 0 rgb(66 68 71 / 0.3), 0 4px 8px 3px rgb(66 68 71 / 0.15);
+  --field-floating-height: 3.5rem;
   --font-family: 'envUI Inter', sans-serif;
   --font-size-body: 0.9375rem;
   --font-size-body-small: 0.875rem;
+  --font-size-caption: 0.75rem;
   --font-size-heading: 1.125rem;
   --font-size-heading-small: 1rem;
-  --icon-button-size: var(--control-height-small);
+  --font-size-label: 0.875rem;
+  --font-size-label-small: 0.8125rem;
+  --icon-size-lg: 1.25rem;
+  --icon-size-md: 1.125rem;
+  --icon-size-sm: var(--control-icon-size);
   --md-sys-shape-corner-extra-large: 1.75rem;
   --md-sys-shape-corner-extra-small: 0.25rem;
   --md-sys-shape-corner-large: 1rem;
@@ -299,11 +309,18 @@
   --motion-ease-enter: cubic-bezier(0.05, 0.7, 0.1, 1);
   --motion-ease-exit: cubic-bezier(0.3, 0, 0.8, 0.15);
   --motion-ease-standard: var(--motion-ease);
+  --radius-large: 1rem;
   --radius-row-inner: 0.5rem;
   --radius-row-outer: var(--radius-surface);
   --radius-row-single: var(--radius-row-outer);
   --radius-standard: 0.5rem;
   --radius-surface: 1.75rem;
+  --row-content-height: 1.25rem;
+  --row-height: 2.25rem;
+  --row-padding-block-lg: 0.75rem;
+  --row-padding-block-md: 0.5rem;
+  --row-padding-block-sm: 0.25rem;
+  --row-padding-block-xs: 0.125rem;
   --row-padding-inline: 1.5rem;
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -317,6 +334,34 @@
   --state-disabled-opacity: 0.48;
   --title-bar-height: 2.5rem;
   --topbar-height: 3.25rem;
+  --type-body: var(--type-body-font-weight) var(--type-body-font-size) /
+    var(--type-body-line-height) var(--type-body-font-family);
+  --type-body-font-family: var(--font-family);
+  --type-body-font-size: var(--font-size-body);
+  --type-body-font-weight: var(--body-font-weight);
+  --type-body-letter-spacing: 0rem;
+  --type-body-line-height: 1.4em;
+  --type-body-small: var(--type-body-small-font-weight) var(--type-body-small-font-size) /
+    var(--type-body-small-line-height) var(--type-body-small-font-family);
+  --type-body-small-font-family: var(--font-family);
+  --type-body-small-font-size: var(--font-size-body-small);
+  --type-body-small-font-weight: var(--body-font-weight);
+  --type-body-small-letter-spacing: 0rem;
+  --type-body-small-line-height: 1.4em;
+  --type-h1: var(--type-h1-font-weight) var(--type-h1-font-size) / var(--type-h1-line-height)
+    var(--type-h1-font-family);
+  --type-h1-font-family: var(--font-family);
+  --type-h1-font-size: var(--font-size-heading);
+  --type-h1-font-weight: 500;
+  --type-h1-letter-spacing: 0rem;
+  --type-h1-line-height: 1.4em;
+  --type-h2: var(--type-h2-font-weight) var(--type-h2-font-size) / var(--type-h2-line-height)
+    var(--type-h2-font-family);
+  --type-h2-font-family: var(--font-family);
+  --type-h2-font-size: var(--font-size-heading-small);
+  --type-h2-font-weight: 500;
+  --type-h2-letter-spacing: 0rem;
+  --type-h2-line-height: 1.4em;
 }
 
 .env-theme[data-env-theme='dark'] {
@@ -930,4 +975,47 @@
     --elevation-2-border: var(--color-border-default);
     --elevation-3-border: #a1a4a9;
   }
+}
+
+.env-theme[data-env-scale='compact'] {
+  --control-gap: 0.375rem;
+  --control-height-lg: 2.375rem;
+  --control-height-md: 2rem;
+  --control-height-sm: 1.625rem;
+  --field-floating-height: 2.75rem;
+  --font-size-body: 0.8125rem;
+  --font-size-body-small: 0.75rem;
+  --font-size-caption: 0.6875rem;
+  --font-size-heading: 1rem;
+  --font-size-heading-small: 0.875rem;
+  --font-size-label: 0.8125rem;
+  --font-size-label-small: 0.75rem;
+  --icon-size-lg: 1.125rem;
+  --icon-size-md: 1rem;
+  --md-sys-shape-corner-extra-large: 1.375rem;
+  --md-sys-shape-corner-extra-small: 0.1875rem;
+  --md-sys-shape-corner-large: 0.75rem;
+  --md-sys-shape-corner-medium: 0.625rem;
+  --md-sys-shape-corner-small: 0.375rem;
+  --radius-large: 0.75rem;
+  --radius-row-inner: 0.375rem;
+  --radius-standard: 0.375rem;
+  --radius-surface: 1.375rem;
+  --row-content-height: 1.375rem;
+  --row-height: 1.75rem;
+  --row-padding-block-lg: 0.375rem;
+  --row-padding-block-md: 0.25rem;
+  --row-padding-block-sm: 0.1875rem;
+  --row-padding-block-xs: 0.125rem;
+  --row-padding-inline: 1.25rem;
+  --space-2: 0.375rem;
+  --space-3: 0.625rem;
+  --space-4: 0.75rem;
+  --space-5: 1.25rem;
+  --space-6: 1.625rem;
+  --space-7: 2rem;
+  --space-8: 2.375rem;
+  --space-9: 3.25rem;
+  --title-bar-height: 2rem;
+  --topbar-height: 2.625rem;
 }

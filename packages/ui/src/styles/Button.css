@@ -1,22 +1,39 @@
-/* Canonical control geometry shared by native buttons and button links. */
+/* Canonical control geometry shared by native buttons and button links. A button takes the control
+   height of its size, or of its container where it sets none. */
 
 .env-button {
   inline-size: fit-content;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: calc(0.4375rem * var(--scale, 1));
-  min-height: calc(var(--control-height-small) * var(--scale, 1));
-  padding: calc(0.25rem * var(--scale, 1)) calc(0.75rem * var(--scale, 1));
-  border: 0.0625rem solid transparent;
+  gap: var(--control-gap);
+  min-height: var(--control-height);
+  /* The block padding gives way where a line of the label and the padding would outgrow the
+     control height, as in a small control of the compact scale. */
+  padding: min(
+      var(--space-1),
+      calc((var(--control-height) - 2 * var(--control-border-width) - 1lh) / 2)
+    )
+    var(--space-3);
+  border: var(--control-border-width) solid transparent;
   border-radius: 100vmax;
-  font: 400 calc(0.875rem * var(--scale, 1)) / 1.4 var(--font-family);
+  font: var(--body-font-weight) var(--font-size-label) / 1.4 var(--font-family);
   white-space: normal;
   overflow-wrap: anywhere;
   text-align: center;
   text-decoration: none;
   max-inline-size: 100%;
   min-inline-size: 0;
+}
+
+.env-button[data-size='sm'] {
+  --control-height: var(--control-height-sm);
+}
+.env-button[data-size='md'] {
+  --control-height: var(--control-height-md);
+}
+.env-button[data-size='lg'] {
+  --control-height: var(--control-height-lg);
 }
 
 .env-button-primary {
@@ -148,13 +165,12 @@
   background: var(--color-destructive-action-pressed);
 }
 
+/* Important buttons have square corners; like every button they take the row's control height. */
 .env-button-important {
-  --icon-button-size: var(--control-height-compact);
-  min-height: calc(var(--control-height-compact) * var(--scale, 1));
   background: var(--color-bg-important-strong);
   color: var(--color-fg-on-strong);
   border: 0;
-  border-radius: calc(var(--radius-standard) * var(--scale, 1));
+  border-radius: var(--radius-standard);
 }
 
 .env-button-important:hover:not(:disabled):not([aria-disabled='true']) {
@@ -187,12 +203,54 @@
 
 /* An icon-only button keeps its square size, also where its container is squeezed narrower. */
 .env-button.env-icon-button {
-  width: calc(var(--icon-button-size) * var(--scale, 1));
-  height: calc(var(--icon-button-size) * var(--scale, 1));
-  min-height: calc(var(--icon-button-size) * var(--scale, 1));
+  width: var(--control-height);
+  height: var(--control-height);
+  min-height: var(--control-height);
   max-inline-size: none;
   flex-shrink: 0;
   padding: 0;
+}
+
+/* Under a coarse pointer, a button smaller than the touch height keeps its look and gains an
+   invisible hit area around it, up to that height and width, which grows only into free space: not
+   towards a sibling beside it in a row, or above or below it in a column, whose own presses it
+   would take. A container of joined controls, such as ButtonGroup or a tab rail, grows its controls
+   instead and sets --env-button-hit-area to 0rem. A link-like text button in running text keeps
+   its own hit area, and so does a button that already covers its row. */
+@media (pointer: coarse) {
+  :where(.env-button:not(.env-link, [data-row-target])) {
+    position: relative;
+  }
+  .env-button:not(.env-link, [data-row-target])::before {
+    --env-button-hit-slop: min(
+      0%,
+      calc((100% - var(--env-button-hit-area, var(--control-height-touch))) / 2)
+    );
+    content: '';
+    position: absolute;
+    inset: var(--env-button-hit-slop);
+  }
+  .env-button:not(.env-link, [data-row-target]):not(:last-child)::before {
+    inset-inline-end: 0%;
+  }
+  .env-button:not(.env-link, [data-row-target]):not(:first-child)::before {
+    inset-inline-start: 0%;
+  }
+  /* In a column, the neighbours are above and below. */
+  .env-stack > .env-button:not(.env-link, [data-row-target])::before,
+  .env-action-group[data-stacked] > .env-button:not(.env-link, [data-row-target])::before {
+    inset: var(--env-button-hit-slop);
+  }
+  .env-stack > .env-button:not(.env-link, [data-row-target]):not(:last-child)::before,
+  .env-action-group[data-stacked]
+    > .env-button:not(.env-link, [data-row-target]):not(:last-child)::before {
+    inset-block-end: 0%;
+  }
+  .env-stack > .env-button:not(.env-link, [data-row-target]):not(:first-child)::before,
+  .env-action-group[data-stacked]
+    > .env-button:not(.env-link, [data-row-target]):not(:first-child)::before {
+    inset-block-start: 0%;
+  }
 }
 
 /* Pending: the transparent label keeps the button's size and name while a spinner shows the work. */
@@ -237,7 +295,7 @@
   block-size: fit-content;
   display: inline-grid;
   place-items: center;
-  padding: 0.25rem;
+  padding: var(--space-1);
   border: 0;
   border-radius: 50%;
   background: transparent;

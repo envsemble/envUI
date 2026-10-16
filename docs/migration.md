@@ -34,6 +34,7 @@ envUI 1.0 renames components, compound parts, classes and documentation pages, a
 ```sh
 npx @envsemble/envui-codemods@<version> v1-names src --dry   # the files that would change, and the reports
 npx @envsemble/envui-codemods@<version> v1-names src
+npx @envsemble/envui-codemods@<version> v1-props src
 npx @envsemble/envui-codemods@<version> v1-classes src
 ```
 
@@ -48,12 +49,13 @@ export default defineConfig(envui.configs.recommended);
 ```
 
 - `v1-names` rewrites imports and references from `@envsemble/envui` and `@envsemble/envui/theme-bootstrap`: renamed components and types (`Input` is `TextField`), namespace parts (`MenuItem` is `Menu.Item`, `<Menu>` is `<Menu.Root>`), `DirectionLink` by its literal `direction` (`Pager.Previous` or `Pager.Next`), re-exports, `defaultThemeStorageKey`, which becomes `'env-theme'`, and `<Theme theme={useTheme()}>`, which becomes `<Theme {...useTheme()}>`. Other `useTheme()` calls, imported by name or through a namespace import, become `useTheme().theme`, the color scheme they returned in 0.x, unless the file already reads them as `{ theme, contrast }`.
+- `v1-props` moves the props that 1.0 removed or changed, as [scale and density](#scale-and-density) lists them.
 - `v1-classes` renames `env-*` classes and `--env-*` custom properties in style sheets, class names and selector strings.
 - `envui/no-renamed-exports` reports the 0.x names left in imports and re-exports, and also those it can follow statically through namespace imports, `require()`, `import()`, `import … = require()`, destructuring and `createElement()`, with each one's 1.0 name or what to use instead. A name read through a computed member such as `envui[name]` is not followed; the type check catches those. The recommended config also reports raw elements that envUI provides, envUI's private classes and raw colors; `@envsemble/stylelint-config-envui` does the same for style sheets.
 
 Change by hand what the codemods report, each with its file and line:
 
-- removed exports: `LoadingBar` (AppShell's `loading` prop, or Progress), the manual `Toast` (`useToast()` inside `Toast.Provider`), `ToastProps` (`ToastNotification`), `getInitials`, `useLinkComponent` and `useSidebarCompact`;
+- removed exports: `LoadingBar` (AppShell's `loading` prop, or Progress), the manual `Toast` (`useToast()` inside `Toast.Provider`), `ToastProps` (`ToastNotification`), `getInitials`, `useLinkComponent`, `useSidebarCompact`, and the `MenuDensity` and `SurfaceDensity` types (menus have one anatomy; give controls a `size` or a Theme a `scale`);
 - a `DirectionLink` whose `direction` is computed or spread, or that is used outside JSX;
 - re-exports of namespace parts, and names destructured from a namespace import, `useTheme` among them;
 - a `useTheme()` call that is returned, as by a hook that wraps it, or passed as the `value` of what may be a context provider, directly or through a variable: whether its readers expect the scheme or the object is out of the file's sight;
@@ -63,9 +65,29 @@ Change by hand what the codemods report, each with its file and line:
 
 The codemods also leave class names built at run time, CSS-in-JS, selectors nested in a Sass or Less rule (a DiffCount label in a nested `.env-diff-count` rule becomes `env-diff-stat-label`), mocks and `declare module` augmentations; search for the old names there. The codemods' rename map, `src/maps/v1.json` in `@envsemble/envui-codemods`, lists every change.
 
-### useTheme returns the theme and its contrast
+### Scale and density
 
-`useTheme()` returns `{ theme, contrast }` instead of the color scheme alone. Read the scheme as `const { theme } = useTheme()`. An application's own portal that re-themed with `<Theme theme={useTheme()}>` takes both with `<Theme {...useTheme()}>`, so it keeps a high contrast or a `standard` opt-out too; `v1-names` makes that change, turns other calls into `useTheme().theme` unless the file already reads them as `{ theme, contrast }`, and reports those whose value is returned or passed to a context. In JavaScript, `theme={useTheme()}` would render `data-env-theme="[object Object]"`, so in development Theme warns about a `theme` that is not `light` or `dark`.
+1.0 sizes an interface on two axes: an app scale, `comfortable` or `compact`, set with `scale` on a Theme, and a row density on data components. Every control takes a `size`, `sm`, `md` or `lg`, with the same height for every control of that size; see [scale and density](foundations/scale.md). The per-component density props go, and `v1-props` moves them where the meaning carries over:
+
+| 0.x                                                                | 1.0                                                                     |
+| ------------------------------------------------------------------ | ----------------------------------------------------------------------- |
+| `density="compact"` on Select                                      | `size="sm"`                                                             |
+| `density="compact"` on Combobox and DatePicker                     | `size="sm" showLabel={false}`                                           |
+| `density="standard"` on Combobox and DatePicker                    | `variant="floating"`, the tall field; without it, the control height    |
+| `compact` on TextField                                             | `showLabel={false}`; the field takes the control height                 |
+| `compact={false}` on TextField or SearchField                      | `variant="floating"`                                                    |
+| `density` on Table.Root: `compact`, `standard`                     | `density="sm"`, `"md"` (the default)                                    |
+| `density` on Tree: `compact`, `standard`                           | `"sm"` (the default), `density="md"`                                    |
+| `size="compact"` on Tabs, SegmentedControl, Pagination, CopyButton | `size="sm"`                                                             |
+| `compact` on DropZone                                              | `size="sm"`                                                             |
+| `density` on Surface, Menu.Root, ContextMenu, Menubar.Menu         | Removed: give controls `size="sm"`, or set `scale="compact"` on a Theme |
+| `size` on NavList.Item                                             | Removed: items follow the scale                                         |
+
+The codemod reports each use it can't move, such as a value that is an expression. Fields now take the control height by default, menus and the popups of Select and Combobox have one anatomy at the scale's row height, and controls in table cells take the small height; check screens that relied on the 3.5 rem field. In style sheets, `--control-height-small` and `--icon-button-size` become `--control-height`, `--control-height-compact` becomes `--control-height-sm`, and `--scale` is gone.
+
+### useTheme returns the theme, its contrast and its scale
+
+`useTheme()` returns `{ theme, contrast, scale }` instead of the color scheme alone. Read the scheme as `const { theme } = useTheme()`. An application's own portal that re-themed with `<Theme theme={useTheme()}>` takes all three with `<Theme {...useTheme()}>`, so it keeps a high contrast or a `standard` opt-out and the compact scale too; `v1-names` makes that change, turns other calls into `useTheme().theme` unless the file already reads them as `{ theme, contrast }`, and reports those whose value is returned or passed to a context. In JavaScript, `theme={useTheme()}` would render `data-env-theme="[object Object]"`, so in development Theme warns about a `theme` that is not `light` or `dark`.
 
 ### Tokens
 
@@ -75,44 +97,48 @@ envUI 1.0 names its colors by semantic role, `--color-{bg|fg|border}-{role}-{emp
 
 Removed, with what to use instead:
 
-| 0.7 custom property                   | Use instead                         | Note                                                                                       |
-| ------------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------ |
-| `--color-border-pressed`              | `--color-border-muted-pressed`      | Unused.                                                                                    |
-| `--color-control-blue-hover`          | `--color-bg-brand-strong-hover`     | Unused.                                                                                    |
-| `--color-control-blue-pressed`        | `--color-bg-brand-strong-pressed`   | Unused.                                                                                    |
-| `--color-control-text`                | `--color-fg-control`                | Unused synonym.                                                                            |
-| `--color-fill-hover`                  | `--color-bg-neutral-muted-hover`    | Unused.                                                                                    |
-| `--color-fill-pressed`                | `--color-bg-neutral-muted-pressed`  | Unused.                                                                                    |
-| `--color-neutral-fill`                | `--color-bg-neutral-strong`         | Unused.                                                                                    |
-| `--color-surface-base`                | `--color-bg-raised`                 | Unused.                                                                                    |
-| `--color-surface-raised`              | `--color-bg-raised`                 | Unused.                                                                                    |
-| `--color-text-subtle`                 | `--color-fg-muted`                  | Unused synonym.                                                                            |
-| `--member-identity-avatar-size`       | —                                   | Unused.                                                                                    |
-| `--member-identity-copy-height`       | —                                   | Unused.                                                                                    |
-| `--member-identity-email-line-height` | —                                   | Unused.                                                                                    |
-| `--member-identity-email-size`        | —                                   | Unused.                                                                                    |
-| `--member-identity-gap`               | —                                   | Unused.                                                                                    |
-| `--member-identity-name-line-height`  | —                                   | Unused.                                                                                    |
-| `--member-identity-name-size`         | —                                   | Unused.                                                                                    |
-| `--state-card-strip-weight`           | —                                   | Unused.                                                                                    |
-| `--state-dialog-overlay-opacity`      | `--color-bg-overlay`                | The scrim is a translucent color token now.                                                |
-| `--state-fill-hover-opacity`          | `--color-bg-neutral-muted-hover`    | The fill's states are color tokens now.                                                    |
-| `--state-fill-opacity`                | `--color-bg-neutral-muted`          | The neutral fill is a translucent color token; layer it over a surface rather than mixing. |
-| `--state-fill-pressed-opacity`        | `--color-bg-neutral-muted-pressed`  | The fill's states are color tokens now.                                                    |
-| `--state-hover-lightness`             | —                                   | The runtime hover rule is gone: use the role's -hover token.                               |
-| `--state-hover-shift`                 | —                                   | The runtime hover rule is gone.                                                            |
-| `--state-layer-hover-opacity`         | `--color-bg-neutral-subtle-hover`   | The state layer is a color token now.                                                      |
-| `--state-layer-pressed-opacity`       | `--color-bg-neutral-subtle-pressed` | The state layer is a color token now.                                                      |
-| `--state-lightness-direction`         | —                                   | The runtime hover rule is gone: every role has hover and pressed tokens.                   |
-| `--state-lightness-threshold`         | —                                   | The runtime hover rule is gone.                                                            |
-| `--state-pressed-lightness`           | —                                   | The runtime hover rule is gone: use the role's -pressed token.                             |
-| `--state-pressed-shift`               | —                                   | The runtime hover rule is gone.                                                            |
-| `--state-selected-base-weight`        | —                                   | Unused.                                                                                    |
-| `--state-surface-hover-lightness`     | —                                   | The runtime hover rule is gone: use the surface's -hover token.                            |
-| `--state-surface-hover-shift`         | —                                   | The runtime hover rule is gone.                                                            |
-| `--state-surface-pressed-lightness`   | —                                   | The runtime hover rule is gone: use the surface's -pressed token.                          |
-| `--state-surface-pressed-shift`       | —                                   | The runtime hover rule is gone.                                                            |
-| `--state-tone-subtle-opacity`         | —                                   | Each tone has its tint as a color token: color.bg.{tone}.muted.                            |
+| 0.7 custom property                   | Use instead                         | Note                                                                                                        |
+| ------------------------------------- | ----------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `--color-border-pressed`              | `--color-border-muted-pressed`      | Unused.                                                                                                     |
+| `--color-control-blue-hover`          | `--color-bg-brand-strong-hover`     | Unused.                                                                                                     |
+| `--color-control-blue-pressed`        | `--color-bg-brand-strong-pressed`   | Unused.                                                                                                     |
+| `--color-control-text`                | `--color-fg-control`                | Unused synonym.                                                                                             |
+| `--color-fill-hover`                  | `--color-bg-neutral-muted-hover`    | Unused.                                                                                                     |
+| `--color-fill-pressed`                | `--color-bg-neutral-muted-pressed`  | Unused.                                                                                                     |
+| `--color-neutral-fill`                | `--color-bg-neutral-strong`         | Unused.                                                                                                     |
+| `--color-surface-base`                | `--color-bg-raised`                 | Unused.                                                                                                     |
+| `--color-surface-raised`              | `--color-bg-raised`                 | Unused.                                                                                                     |
+| `--color-text-subtle`                 | `--color-fg-muted`                  | Unused synonym.                                                                                             |
+| `--control-height-compact`            | `--control-height-sm`               | The small control height. For a compact app or region, set scale="compact" on its Theme instead.            |
+| `--control-height-small`              | `--control-height`                  | It always equalled --control-height, which every control reads now.                                         |
+| `--icon-button-size`                  | `--control-height`                  | An icon button is as tall as the other controls of its size.                                                |
+| `--member-identity-avatar-size`       | —                                   | Unused.                                                                                                     |
+| `--member-identity-copy-height`       | —                                   | Unused.                                                                                                     |
+| `--member-identity-email-line-height` | —                                   | Unused.                                                                                                     |
+| `--member-identity-email-size`        | —                                   | Unused.                                                                                                     |
+| `--member-identity-gap`               | —                                   | Unused.                                                                                                     |
+| `--member-identity-name-line-height`  | —                                   | Unused.                                                                                                     |
+| `--member-identity-name-size`         | —                                   | Unused.                                                                                                     |
+| `--scale`                             | —                                   | The multiplier is gone: components read sized tokens. Set scale="compact" on a Theme for the compact scale. |
+| `--state-card-strip-weight`           | —                                   | Unused.                                                                                                     |
+| `--state-dialog-overlay-opacity`      | `--color-bg-overlay`                | The scrim is a translucent color token now.                                                                 |
+| `--state-fill-hover-opacity`          | `--color-bg-neutral-muted-hover`    | The fill's states are color tokens now.                                                                     |
+| `--state-fill-opacity`                | `--color-bg-neutral-muted`          | The neutral fill is a translucent color token; layer it over a surface rather than mixing.                  |
+| `--state-fill-pressed-opacity`        | `--color-bg-neutral-muted-pressed`  | The fill's states are color tokens now.                                                                     |
+| `--state-hover-lightness`             | —                                   | The runtime hover rule is gone: use the role's -hover token.                                                |
+| `--state-hover-shift`                 | —                                   | The runtime hover rule is gone.                                                                             |
+| `--state-layer-hover-opacity`         | `--color-bg-neutral-subtle-hover`   | The state layer is a color token now.                                                                       |
+| `--state-layer-pressed-opacity`       | `--color-bg-neutral-subtle-pressed` | The state layer is a color token now.                                                                       |
+| `--state-lightness-direction`         | —                                   | The runtime hover rule is gone: every role has hover and pressed tokens.                                    |
+| `--state-lightness-threshold`         | —                                   | The runtime hover rule is gone.                                                                             |
+| `--state-pressed-lightness`           | —                                   | The runtime hover rule is gone: use the role's -pressed token.                                              |
+| `--state-pressed-shift`               | —                                   | The runtime hover rule is gone.                                                                             |
+| `--state-selected-base-weight`        | —                                   | Unused.                                                                                                     |
+| `--state-surface-hover-lightness`     | —                                   | The runtime hover rule is gone: use the surface's -hover token.                                             |
+| `--state-surface-hover-shift`         | —                                   | The runtime hover rule is gone.                                                                             |
+| `--state-surface-pressed-lightness`   | —                                   | The runtime hover rule is gone: use the surface's -pressed token.                                           |
+| `--state-surface-pressed-shift`       | —                                   | The runtime hover rule is gone.                                                                             |
+| `--state-tone-subtle-opacity`         | —                                   | Each tone has its tint as a color token: color.bg.{tone}.muted.                                             |
 
 Aliases of one role, which replaces them:
 

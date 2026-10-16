@@ -4,7 +4,19 @@
     "family": { "$type": "fontFamily", "$value": ["envUI Inter", "sans-serif"] },
     "size": {
       "$type": "dimension",
+      "caption": {
+        "$description": "Captions, a menu's group labels and other small secondary text.",
+        "$value": { "value": 0.75, "unit": "rem" }
+      },
       "body-small": { "$value": { "value": 0.875, "unit": "rem" } },
+      "label": {
+        "$description": "The label of a control, and the text of menu, tree and option rows.",
+        "$value": { "value": 0.875, "unit": "rem" }
+      },
+      "label-small": {
+        "$description": "A label inside a field at the control height, such as a combobox chip's.",
+        "$value": { "value": 0.8125, "unit": "rem" }
+      },
       "body": { "$value": { "value": 0.9375, "unit": "rem" } },
       "heading-small": { "$value": { "value": 1, "unit": "rem" } },
       "heading": { "$value": { "value": 1.125, "unit": "rem" } }
@@ -13,5 +25,49 @@
   "body": {
     "$type": "fontWeight",
     "font-weight": { "$value": 400 }
+  },
+  "type": {
+    "$type": "typography",
+    "$description": "Font shorthands for the type roles, as the `font` property takes them: weight, size, line height and family. The line height is in em, so it follows the role's own size.",
+    "h1": {
+      "$extensions": { "com.envsemble.envui": { "lineHeightUnit": "em" } },
+      "$value": {
+        "fontFamily": "{font.family}",
+        "fontSize": "{font.size.heading}",
+        "fontWeight": 500,
+        "letterSpacing": { "value": 0, "unit": "rem" },
+        "lineHeight": 1.4
+      }
+    },
+    "h2": {
+      "$extensions": { "com.envsemble.envui": { "lineHeightUnit": "em" } },
+      "$value": {
+        "fontFamily": "{font.family}",
+        "fontSize": "{font.size.heading-small}",
+        "fontWeight": 500,
+        "letterSpacing": { "value": 0, "unit": "rem" },
+        "lineHeight": 1.4
+      }
+    },
+    "body": {
+      "$extensions": { "com.envsemble.envui": { "lineHeightUnit": "em" } },
+      "$value": {
+        "fontFamily": "{font.family}",
+        "fontSize": "{font.size.body}",
+        "fontWeight": "{body.font-weight}",
+        "letterSpacing": { "value": 0, "unit": "rem" },
+        "lineHeight": 1.4
+      }
+    },
+    "body-small": {
+      "$extensions": { "com.envsemble.envui": { "lineHeightUnit": "em" } },
+      "$value": {
+        "fontFamily": "{font.family}",
+        "fontSize": "{font.size.body-small}",
+        "fontWeight": "{body.font-weight}",
+        "letterSpacing": { "value": 0, "unit": "rem" },
+        "lineHeight": 1.4
+      }
+    }
   }
 }

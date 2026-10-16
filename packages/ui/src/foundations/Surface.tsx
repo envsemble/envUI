@@ -7,7 +7,6 @@ import type { SpaceStep, StackElement } from './Layout.js';
 
 export type SurfaceTone = 'pane' | 'row' | 'canvas' | 'alternate';
 export type SurfaceCorners = 'surface' | 'standard' | 'pill' | 'none';
-export type SurfaceDensity = 'standard' | 'compact';
 
 export interface SurfaceAppearanceProps {
   /**
@@ -30,13 +29,6 @@ export interface SurfaceAppearanceProps {
    * @default 'surface'
    */
   corners?: SurfaceCorners;
-  /**
-   * compact gives the buttons, icon buttons, selects and compact fields inside, also nested ones,
-   * the 2 rem compact control height, for toolbars over dense content; touch screens keep the
-   * 2.75 rem touch height. standard leaves them at their own height.
-   * @default 'standard'
-   */
-  density?: SurfaceDensity;
 }
 
 export type SurfaceProps<Element extends StackElement = 'div'> = SurfaceAppearanceProps & {
@@ -64,7 +56,6 @@ export function Surface<Element extends StackElement = 'div'>({
   tone = 'pane',
   padding,
   corners = 'surface',
-  density = 'standard',
   className,
   style,
   ...props
@@ -74,7 +65,6 @@ export function Surface<Element extends StackElement = 'div'>({
     render,
     props: {
       ...props,
-      'data-density': density === 'compact' ? 'compact' : undefined,
       className: classNames(
         'env-surface',
         `env-surface-${tone}`,

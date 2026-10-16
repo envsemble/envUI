@@ -12,7 +12,7 @@ const bar = {
 
 export default function OneLine() {
   return (
-    <Surface tone="row" padding={2} corners="standard" density="compact" style={bar}>
+    <Surface tone="row" padding={2} corners="standard" style={bar}>
       <Breadcrumbs
         aria-label="Document location"
         wrap={false}
@@ -23,7 +23,7 @@ export default function OneLine() {
         ]}
       />
       <Badge tone="success">Published</Badge>
-      <IconButton variant="text" icon={<MoreVert />} aria-label="More actions" />
+      <IconButton variant="text" size="sm" icon={<MoreVert />} aria-label="More actions" />
     </Surface>
   );
 }

@@ -15,6 +15,7 @@ import { TooltipNestingContext, TooltipPopup } from '../feedback/internal/Toolti
 import { Check } from '../icons/Check.js';
 import { ContentCopy } from '../icons/ContentCopy.js';
 import { classNames } from '../internal/classNames.js';
+import type { ControlSize } from '../foundations/Theme.js';
 
 interface CopyButtonBaseProps
   extends Omit<ComponentPropsWithRef<'button'>, 'value' | 'onCopy' | 'children' | 'type'> {
@@ -24,8 +25,8 @@ interface CopyButtonBaseProps
   onCopy?: (text: string) => void;
   /** As Button; secondary by default. */
   variant?: ButtonVariant;
-  /** standard (default) takes the surrounding density; compact is the 2 rem compact size anywhere. */
-  size?: 'standard' | 'compact';
+  /** As Button's: sm, md or lg; without it, the control height of the container. */
+  size?: ControlSize;
   /** The icon at rest, ContentCopy by default; a check replaces it once the text is copied. */
   icon?: ReactNode;
   /** Shown in the tooltip and announced after copying; Copied by default. */
@@ -71,7 +72,7 @@ export function CopyButton({
   value,
   onCopy,
   variant = 'secondary',
-  size = 'standard',
+  size,
   icon,
   copiedLabel = 'Copied',
   failedLabel = 'Couldn’t copy',
@@ -133,7 +134,7 @@ export function CopyButton({
     pending: waiting,
     onClick: copy,
     className: classNames('env-copy-button', className),
-    'data-size': size === 'compact' ? 'compact' : undefined,
+    size,
     'data-copied': result?.copied ? '' : undefined,
     'data-failed': result && !result.copied ? '' : undefined,
   };

@@ -12,8 +12,7 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { Theme, useTheme } from '../foundations/Theme.js';
-import { MenuDensityContext, renderMenuPopup } from './internal/MenuPopup.js';
-import type { Density } from './Menu.js';
+import { renderMenuPopup } from './internal/MenuPopup.js';
 
 export interface ContextMenuPoint {
   /** Distance from the viewport's left edge in pixels, such as a pointer event's clientX. */
@@ -41,8 +40,6 @@ export interface ContextMenuProps {
   onOpenChange?: (open: boolean) => void;
   /** Viewport point to open at while controlled; otherwise the menu opens at the pointer. */
   anchorPoint?: ContextMenuPoint;
-  /** compact suits dense surfaces such as a compact Tree; see Menu.Root. */
-  density?: Density;
   /** Class of the menu popup. */
   className?: string;
 }
@@ -85,7 +82,7 @@ export function ContextMenu({
   open: controlledOpen,
   onOpenChange,
   anchorPoint,
-  density = 'standard',
+
   className,
 }: ContextMenuProps) {
   const theme = useTheme();
@@ -155,11 +152,9 @@ export function ContextMenu({
           >
             <BaseContextMenu.Popup
               className={classNames('env-menu', className)}
-              render={renderMenuPopup(label, density)}
+              render={renderMenuPopup(label)}
             >
-              <MenuDensityContext value={density}>
-                {typeof content === 'function' ? content(target) : content}
-              </MenuDensityContext>
+              {typeof content === 'function' ? content(target) : content}
             </BaseContextMenu.Popup>
           </BaseContextMenu.Positioner>
         </Theme>

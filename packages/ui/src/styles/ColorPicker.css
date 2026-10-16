@@ -2,7 +2,7 @@
   inline-size: 100%;
   block-size: auto;
   aspect-ratio: 3 / 2;
-  min-block-size: calc(var(--control-height-compact) * 3);
+  min-block-size: calc(var(--control-height-sm) * 3);
   max-block-size: 14rem;
 }
 .env-color-picker-area .react-colorful__interactive:focus-visible {
@@ -10,7 +10,7 @@
   outline-offset: 0.125rem;
 }
 .env-color-picker-area .react-colorful__hue {
-  block-size: var(--control-height-compact);
+  block-size: var(--control-height-sm);
   flex-shrink: 0;
 }
 .env-color-picker-area .react-colorful__saturation {
