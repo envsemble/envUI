@@ -9,7 +9,8 @@
  * and through a chain of renames. Each `relaxed` entry approves one loosening: once recorded it is
  * spent, so loosening the pair the same way again later needs another entry. Entries of `dropped`,
  * `renamed` and `relaxed` stay once recorded, so the reasons can't be removed after the snapshot is
- * updated either.
+ * updated either. The pairs are also compared with the base branch's copy of the file
+ * (readBaseSnapshot), which a branch can't edit along with Pairs.ts.
  */
 import { execFileSync } from 'node:child_process';
 import type { ContrastKind, ContrastPair, Relaxation, Requirement } from './Pairs';
