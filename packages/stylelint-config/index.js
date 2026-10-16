@@ -13,20 +13,30 @@ const outsideUrl = String.raw`(?<!\burl\(\s*(?:"[^"]*|'[^']*|[^"')]*))`;
 const outsideString = String.raw`(?<!^(?:[^"'\\]|\\.|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')*(?:"(?:[^"\\]|\\.)*|'(?:[^'\\]|\\.)*))`;
 /** The start of a color function call. */
 const colorFunctionStart = String.raw`(?<![\w-])(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(`;
+/** A custom property without a fallback. */
+const plainVar = String.raw`var\(\s*--[\w-]+\s*\)`;
+/** A custom property whose fallback, if it has one, is custom properties too. */
+const customProperty = String.raw`var\(\s*--[\w-]+\s*(?:,\s*(?:${plainVar}(?:\s+${plainVar})*)?\s*)?\)`;
+/** The rest of a call's arguments, and the rest of one comma-separated argument. */
+const restOfCall = String.raw`(?:[^()]|\((?:[^()]|\([^()]*\))*\))*`;
+const restOfArgument = String.raw`(?:[^(),]|\((?:[^()]|\([^()]*\))*\))*`;
 /**
- * Arguments with a literal channel: a number, percentage or angle among the channels, before the
- * `/` of the alpha and outside nested calls. `oklch(var(--l) var(--c) var(--h))` and
- * `rgb(var(--rgb) / 50%)` take every channel from custom properties, and a relative color
- * (`hsl(from …)`) derives them from a token.
+ * Arguments that make no raw color: a relative color derived from a token (`hsl(from …)`), or
+ * channels that all come from custom properties, each a `var()` whose fallback, if any, is a
+ * `var()` too, as in `oklch(var(--l) var(--c) var(--h))` or `rgb(var(--brand-rgb))`, with any
+ * alpha after the `/` or as the last of two or four comma-separated arguments:
+ * `rgb(var(--rgb) / 50%)` and `rgba(var(--rgb), 0.5)` alike. `color()` names its color space
+ * first.
  */
-const literalChannel = String.raw`(?!\s*from\b)(?:[^()/"']|\((?:[^()]|\([^()]*\))*\))*?(?<![\w.-])[+-]?(?:\d|\.\d)`;
+const customChannels = String.raw`(?:\s*from\b|(?:(?<=color\()\s*[a-z][\w-]*\s+)?\s*${customProperty}(?:\s+${customProperty})*\s*(?:\/${restOfCall})?\)|\s*${customProperty}\s*(?:,\s*${customProperty}\s*,\s*${customProperty}\s*)?(?:,${restOfArgument})?\))`;
 
 /**
- * Color functions with literal channels, as a Stylelint regular expression; relative colors derived
- * from a token (`hsl(from …)`), channels from custom properties and colors inside `url()` or a
- * string pass. envUI's own style sheets use it too.
+ * Color functions with a channel that is not a custom property, as a Stylelint regular expression:
+ * a number, percentage, angle, keyword such as `none`, calculation or fallback. Relative colors
+ * derived from a token (`hsl(from …)`), channels from custom properties and colors inside `url()`
+ * or a string pass. envUI's own style sheets use it too.
  */
-export const rawColorFunction = `/${outsideString}${outsideUrl}${colorFunctionStart}(?=${literalChannel})/i`;
+export const rawColorFunction = `/${outsideString}${outsideUrl}${colorFunctionStart}(?!${customChannels})/i`;
 
 /**
  * The z-index values that pass: `auto`, the global keywords, and a custom property, also inside
@@ -65,9 +75,9 @@ export const hairlineProperties = [
   '/^--[\\w-]*(?:shadow|hairline)$/',
 ];
 
-/** A whole color function call with literal channels outside url() and strings, for the message. */
+/** A whole raw color function call outside url() and strings, for the message. */
 const colorCall = new RegExp(
-  String.raw`${outsideString}${outsideUrl}${colorFunctionStart}(?=${literalChannel})[^()]*(?:\([^()]*\)[^()]*)*\)?`,
+  String.raw`${outsideString}${outsideUrl}${colorFunctionStart}(?!${customChannels})[^()]*(?:\((?:[^()]|\([^()]*\))*\)[^()]*)*\)?`,
   'i',
 );
 

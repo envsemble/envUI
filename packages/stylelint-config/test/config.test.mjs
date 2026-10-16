@@ -133,6 +133,41 @@ test('raw colors are reported, and colors from tokens pass', async () => {
   await passes('.a { fill: currentColor; }');
 });
 
+test('equivalent color forms are treated alike', async () => {
+  // The comma form's last argument is the alpha, as the one after the slash is.
+  await passes('.a { color: rgba(var(--rgb), 0.5); background: rgb(var(--rgb) / 50%); }');
+  await passes('.a { color: rgba(var(--r), var(--g), var(--b), 0.5); }');
+  await passes('.a { color: rgb(var(--brand-rgb)); background: rgb(var(--rgb, var(--other))); }');
+  // A fallback is a color as much as the value, and each channel is a var().
+  assert.deepEqual(
+    await lint(
+      [
+        '.a { color: rgb(var(--rgb, 255 0 0)); }',
+        '.b { color: var(--accent, #0b57d0); }',
+        '.c { color: var(--accent, red); }',
+        '.d { color: rgb(calc(255) calc(0) calc(0)); }',
+        '.e { color: hsl(none none none); }',
+        '.f { color: rgb(var(--r), var(--g), 0); }',
+      ].join('\n'),
+    ),
+    [
+      { rule: 'declaration-property-value-disallowed-list', text: 'rgb(var(--rgb, 255 0 0))' },
+      { rule: 'color-no-hex', text: '#0b57d0' },
+      { rule: 'color-named', text: 'red' },
+      {
+        rule: 'declaration-property-value-disallowed-list',
+        text: 'rgb(calc(255) calc(0) calc(0))',
+      },
+      { rule: 'declaration-property-value-disallowed-list', text: 'hsl(none none none)' },
+      { rule: 'declaration-property-value-disallowed-list', text: 'rgb(var(--r), var(--g), 0)' },
+    ],
+  );
+  assert.match(
+    (await message('.a { color: rgb(var(--rgb, 255 0 0)); }')).text,
+    /^Raw color rgb\(var\(--rgb, 255 0 0\)\) in color/,
+  );
+});
+
 test('a literal z-index is reported, and stacking tokens pass', async () => {
   assert.deepEqual(await lint('.a { z-index: 10; }\n.b { z-index: -1; }'), [
     { rule: 'declaration-property-value-allowed-list', text: '10' },
