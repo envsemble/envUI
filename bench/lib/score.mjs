@@ -11,7 +11,7 @@ export const uiLibraries = readData('ui-libraries.json').packages;
 
 /**
  * Score parts. Each part starts at its maximum and loses `cost` per occurrence, down to zero;
- * coverage is proportional; the UI-library penalty comes off the total.
+ * coverage is proportional; the UI-library and suppression penalties come off the total.
  */
 export const scoring = {
   typecheck: { max: 20 },
@@ -21,6 +21,7 @@ export const scoring = {
   envuiErrors: { max: 10, cost: 5 },
   rawStyles: { max: 5, cost: 0.5 },
   uiLibraryPenalty: 10,
+  suppressionPenalty: 5,
 };
 
 const ENVUI = '@envsemble/envui';
@@ -157,28 +158,59 @@ function attributeMap(attributes) {
   return map;
 }
 
-export function analyzeSource(fileName, text) {
+/** Comment directives that silence the type checker. */
+const suppressionDirective = /(?:\/\/|\/\*|^\s*\*)\s*@ts-(nocheck|ignore|expect-error)\b/gm;
+
+/**
+ * Analyzes one source file. `reexports(specifier)` resolves a local module, such as a barrel
+ * file, to the envUI exports it re-exports (a map from its export name to envUI's), so
+ * `import { Button } from './ui'` counts as envUI's Button when ./ui re-exports it.
+ */
+export function analyzeSource(fileName, text, { reexports } = {}) {
   const kind = /\.[jt]sx$/i.test(fileName) ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
   const sourceFile = ts.createSourceFile(fileName, text, ts.ScriptTarget.Latest, true, kind);
   const imports = new Map(); // local name -> envUI export name
-  const namespaces = new Set();
+  const namespaces = new Map(); // local name -> null for envUI itself, or a barrel's re-exports
   const iconLocals = new Map(); // local name -> icon name
   const iconNamespaces = new Set();
+  const modules = new Set(); // every module specifier the file imports or re-exports from
   for (const statement of sourceFile.statements) {
+    if (
+      ts.isExportDeclaration(statement) &&
+      statement.moduleSpecifier &&
+      ts.isStringLiteral(statement.moduleSpecifier)
+    )
+      modules.add(statement.moduleSpecifier.text);
     if (!ts.isImportDeclaration(statement) || !ts.isStringLiteral(statement.moduleSpecifier))
       continue;
     const specifier = statement.moduleSpecifier.text;
-    if (!isEnvuiModule(specifier)) continue;
+    modules.add(specifier);
     const clause = statement.importClause;
     if (!clause || clause.isTypeOnly) continue;
+    if (!isEnvuiModule(specifier)) {
+      const local = reexports?.(specifier);
+      if (!local) continue;
+      if (clause.name && local.has('default')) imports.set(clause.name.text, local.get('default'));
+      const bindings = clause.namedBindings;
+      if (bindings && ts.isNamespaceImport(bindings)) namespaces.set(bindings.name.text, local);
+      if (bindings && ts.isNamedImports(bindings))
+        for (const element of bindings.elements) {
+          const exported = (element.propertyName ?? element.name).text;
+          if (!element.isTypeOnly && local.has(exported))
+            imports.set(element.name.text, local.get(exported));
+        }
+      continue;
+    }
     const icon = isIconModule(specifier);
     if (clause.name) {
       if (icon) iconLocals.set(clause.name.text, specifier.split('/').pop());
       else imports.set(clause.name.text, 'default');
     }
     const bindings = clause.namedBindings;
-    if (bindings && ts.isNamespaceImport(bindings))
-      (icon ? iconNamespaces : namespaces).add(bindings.name.text);
+    if (bindings && ts.isNamespaceImport(bindings)) {
+      if (icon) iconNamespaces.add(bindings.name.text);
+      else namespaces.set(bindings.name.text, null);
+    }
     if (bindings && ts.isNamedImports(bindings))
       for (const element of bindings.elements) {
         if (element.isTypeOnly) continue;
@@ -195,8 +227,10 @@ export function analyzeSource(fileName, text) {
       ts.isPropertyAccessExpression(node) &&
       ts.isIdentifier(node.expression) &&
       namespaces.has(node.expression.text)
-    )
-      return node.name.text;
+    ) {
+      const local = namespaces.get(node.expression.text);
+      return local ? (local.get(node.name.text) ?? null) : node.name.text;
+    }
     return null;
   };
   const isIconReference = (node) =>
@@ -247,6 +281,11 @@ export function analyzeSource(fileName, text) {
     components: [],
     inlineStyle: { colors: 0, px: 0, samples: [] },
     privateClasses: 0,
+    modules,
+    suppressions: [...text.matchAll(suppressionDirective)].map((match) => ({
+      directive: `@ts-${match[1]}`,
+      line: text.slice(0, match.index).split('\n').length,
+    })),
   };
   const addRaw = (node, entry) => result.raw.push({ ...entry, line: lineOf(sourceFile, node) });
 
@@ -400,6 +439,15 @@ export function analyzeSource(fileName, text) {
 
   const visit = (node) => {
     if (ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node)) inspectElement(node);
+    // require('x') and import('x')
+    if (
+      ts.isCallExpression(node) &&
+      node.arguments.length &&
+      ts.isStringLiteralLike(node.arguments[0]) &&
+      (node.expression.kind === ts.SyntaxKind.ImportKeyword ||
+        (ts.isIdentifier(node.expression) && node.expression.text === 'require'))
+    )
+      modules.add(node.arguments[0].text);
     if (ts.isIdentifier(node) && isReferencePosition(node)) {
       const reference = resolveReference(node);
       if (reference) result.usedExports.add(reference);
@@ -445,32 +493,92 @@ export function duplicateTargets(name, envuiExports) {
 // ---------------------------------------------------------------------------------------------
 // Type checking
 
-/** Value and type exports of the installed envUI entry points that the program loaded. */
-function envuiExportNames(appDir, { program, checker, options }) {
+const resolveAlias = (checker, symbol) =>
+  symbol.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(symbol) : symbol;
+
+/**
+ * Value and type exports of the installed envUI entry points that the program loaded: their names,
+ * and each export's declared symbol mapped to its public name, for resolving re-exports.
+ */
+function envuiExports(appDir, { program, checker, options }) {
   const names = new Set();
+  const targets = new Map();
   const containing = join(appDir, 'src/main.tsx');
   for (const entry of ['', '/content', '/rich-text', '/diff']) {
     const resolved = ts.resolveModuleName(`${ENVUI}${entry}`, containing, options, ts.sys)
       .resolvedModule?.resolvedFileName;
     const sourceFile = resolved && program.getSourceFile(resolved);
     const symbol = sourceFile && checker.getSymbolAtLocation(sourceFile);
-    if (symbol) for (const exported of checker.getExportsOfModule(symbol)) names.add(exported.name);
+    if (!symbol) continue;
+    for (const exported of checker.getExportsOfModule(symbol)) {
+      names.add(exported.name);
+      const target = resolveAlias(checker, exported);
+      if (!targets.has(target)) targets.set(target, exported.name);
+    }
   }
-  return names;
+  return { names, targets };
 }
 
-function compilerSetup(appDir, fixtureDir) {
-  const read = (directory) => {
-    const file = join(directory, 'tsconfig.json');
-    if (!existsSync(file)) return null;
-    const config = ts.readConfigFile(file, ts.sys.readFile);
-    if (config.error) return null;
-    const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys, appDir);
-    return parsed.errors.some((error) => error.category === ts.DiagnosticCategory.Error)
-      ? null
-      : parsed;
+/**
+ * Resolves a module that a source file imports, such as a barrel `./ui` or `@/components`, to the
+ * envUI exports it re-exports: `export { Button } from '@envsemble/envui'`, `export *`, or an
+ * imported name exported again. Packages in node_modules are not followed.
+ */
+function reexportResolver({ program, checker, options }, targets) {
+  const cache = new Map();
+  return (fromFile) => (specifier) => {
+    const resolved = ts.resolveModuleName(specifier, fromFile, options, ts.sys).resolvedModule;
+    if (!resolved || resolved.isExternalLibraryImport) return null;
+    const key = resolved.resolvedFileName;
+    if (cache.has(key)) return cache.get(key);
+    const sourceFile = program.getSourceFile(key);
+    const moduleSymbol = sourceFile && checker.getSymbolAtLocation(sourceFile);
+    let map = null;
+    if (moduleSymbol)
+      for (const exported of checker.getExportsOfModule(moduleSymbol)) {
+        const target = resolveAlias(checker, exported);
+        const isEnvui = (target.declarations ?? []).some((declaration) =>
+          isEnvuiFile(declaration.getSourceFile().fileName),
+        );
+        if (!isEnvui) continue;
+        map ??= new Map();
+        map.set(exported.name, targets.get(target) ?? target.name);
+      }
+    cache.set(key, map);
+    return map;
   };
-  const parsed = read(appDir) ?? read(fixtureDir);
+}
+
+const configErrors = (parsed) =>
+  !parsed || parsed.errors.some((error) => error.category === ts.DiagnosticCategory.Error);
+
+/**
+ * The app's tsconfig.json, parsed with its own path, so `types` such as `vite/client` and the type
+ * roots resolve from the app and not from wherever the scorer runs. If the agent broke or removed
+ * the file, its version in the base commit is used for the same app directory.
+ */
+function compilerSetup(appDir, baseCommit) {
+  const configFile = join(appDir, 'tsconfig.json');
+  const host = {
+    useCaseSensitiveFileNames: ts.sys.useCaseSensitiveFileNames,
+    readDirectory: ts.sys.readDirectory,
+    fileExists: ts.sys.fileExists,
+    readFile: ts.sys.readFile,
+    getCurrentDirectory: () => appDir,
+    onUnRecoverableConfigFileDiagnostic: () => {},
+  };
+  let parsed = existsSync(configFile)
+    ? ts.getParsedCommandLineOfConfigFile(configFile, undefined, host)
+    : undefined;
+  if (configErrors(parsed)) {
+    const text = baseContent(appDir, baseCommit, 'tsconfig.json');
+    const json = text === null ? null : ts.parseConfigFileTextToJson(configFile, text);
+    parsed =
+      json && !json.error
+        ? ts.parseJsonConfigFileContent(json.config, host, appDir, undefined, configFile)
+        : undefined;
+  }
+  if (configErrors(parsed)) throw new Error(`No usable tsconfig.json in ${appDir}.`);
   // The app's own config, kept strict whatever the agent changed.
   return {
     options: { ...parsed.options, strict: true, noEmit: true },
@@ -480,7 +588,7 @@ function compilerSetup(appDir, fixtureDir) {
 
 function symbolIsEnvui(checker, symbol) {
   if (!symbol) return false;
-  const target = symbol.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(symbol) : symbol;
+  const target = resolveAlias(checker, symbol);
   return (target.declarations ?? []).some((declaration) =>
     isEnvuiFile(declaration.getSourceFile().fileName),
   );
@@ -534,10 +642,34 @@ function classifyDiagnostic(diagnostic, checker) {
   return null;
 }
 
-function typecheck(appDir, fixtureDir, extraRoots) {
-  const { options, fileNames } = compilerSetup(appDir, fixtureDir);
+const fileKey = (fileName) => {
+  const path = toPosix(resolve(fileName));
+  return ts.sys.useCaseSensitiveFileNames ? path : path.toLowerCase();
+};
+/** Turns `@ts-nocheck` into `@ts_nocheck` and so on, keeping every position in the file. */
+const neutralize = (text) =>
+  text.replace(suppressionDirective, (match) => match.replace('@ts-', '@ts_'));
+
+/**
+ * Type-checks the app from its own directory. In the files the agent changed, comment directives
+ * that silence the checker are neutralized first, so the errors they hide still count.
+ */
+function typecheck(appDir, baseCommit, extraRoots, changedFiles) {
+  const { options, fileNames } = compilerSetup(appDir, baseCommit);
   const roots = [...new Set([...fileNames, ...extraRoots].map((file) => resolve(file)))];
-  const program = ts.createProgram(roots, options);
+  const changed = new Set(changedFiles.map(fileKey));
+  const host = ts.createCompilerHost(options, true);
+  host.getCurrentDirectory = () => appDir;
+  const getSourceFile = host.getSourceFile;
+  host.getSourceFile = (fileName, languageVersion, onError, shouldCreate) => {
+    if (changed.has(fileKey(fileName))) {
+      const text = host.readFile(fileName);
+      if (text !== undefined)
+        return ts.createSourceFile(fileName, neutralize(text), languageVersion, true);
+    }
+    return getSourceFile(fileName, languageVersion, onError, shouldCreate);
+  };
+  const program = ts.createProgram(roots, options, host);
   const checker = program.getTypeChecker();
   const diagnostics = ts
     .getPreEmitDiagnostics(program)
@@ -582,22 +714,29 @@ const dependencyNames = (text) => {
     return new Set();
   }
 };
-const isUiLibrary = (name) =>
+export const isUiLibrary = (name) =>
   uiLibraries.some((pattern) =>
     pattern.endsWith('/*') ? name.startsWith(pattern.slice(0, -1)) : name === pattern,
   );
+/** The package a bare module specifier names: `@base-ui/react/dialog` is `@base-ui/react`. */
+export const packageName = (specifier) => {
+  if (/^(\.|\/|[a-z]+:)/i.test(specifier)) return null;
+  const parts = specifier.split('/');
+  return specifier.startsWith('@') ? parts.slice(0, 2).join('/') : parts[0];
+};
 
 // ---------------------------------------------------------------------------------------------
 // Run score
 
 const clampPart = ({ max, cost }, occurrences) => Math.max(0, max - cost * occurrences);
+const penalty = (cost, occurrences) => (occurrences ? -cost * occurrences : 0);
 const round = (value) => Math.round(value * 10) / 10;
 
 /**
  * Scores one finished run from its workspace. Only files the agent created or changed count;
  * for a changed file the base version's counts are subtracted.
  */
-export function scoreRun({ appDir, baseCommit, task, fixtureDir }) {
+export function scoreRun({ appDir, baseCommit, task }) {
   const { files, patch } = changedFiles(appDir, baseCommit);
   const present = files.filter((file) => file.status !== 'D');
   const sourceFiles = present.filter(
@@ -605,15 +744,16 @@ export function scoreRun({ appDir, baseCommit, task, fixtureDir }) {
   );
   const styleFiles = present.filter((file) => styleExtensions.has(extname(file.path)));
 
+  const sourcePaths = sourceFiles.map((file) => join(appDir, file.path));
   const checked = typecheck(
     appDir,
-    fixtureDir,
-    sourceFiles
-      .filter((file) => /\.(tsx?|mts|cts)$/.test(file.path))
-      .map((file) => join(appDir, file.path)),
+    baseCommit,
+    sourcePaths.filter((path) => /\.(tsx?|mts|cts)$/.test(path)),
+    sourcePaths,
   );
   const { errors } = checked;
-  const envuiExports = envuiExportNames(appDir, checked);
+  const { names: envuiExportNames, targets } = envuiExports(appDir, checked);
+  const reexportsFrom = reexportResolver(checked, targets);
 
   const usedExports = new Set();
   const usedProps = new Set();
@@ -625,13 +765,28 @@ export function scoreRun({ appDir, baseCommit, task, fixtureDir }) {
   const inlineStyle = { colors: 0, px: 0, samples: [] };
   let privateClasses = 0;
   const shims = [];
+  const suppressions = [];
+  const importedUi = new Map(); // UI package -> first file that imports it
 
   for (const file of sourceFiles) {
     const text = readFileSync(join(appDir, file.path), 'utf8');
     if (/declare\s+module\s+['"]@envsemble\/envui/.test(text)) shims.push(file.path);
-    const after = analyzeSource(file.path, text);
+    const reexports = reexportsFrom(join(appDir, file.path));
+    const after = analyzeSource(file.path, text, { reexports });
     const beforeText = file.status === 'M' ? baseContent(appDir, baseCommit, file.path) : null;
-    const before = beforeText === null ? null : analyzeSource(file.path, beforeText);
+    const before = beforeText === null ? null : analyzeSource(file.path, beforeText, { reexports });
+    // Directives that silence the type checker, beyond the base version's count.
+    const baseSuppressions = before?.suppressions.length ?? 0;
+    for (const entry of after.suppressions.slice(baseSuppressions))
+      suppressions.push({ ...entry, file: file.path });
+    // Third-party UI packages imported directly, whether or not the agent added them to
+    // package.json: envUI's own dependencies, such as @base-ui/react, are already installed.
+    const beforePackages = new Set([...(before?.modules ?? [])].map(packageName));
+    for (const specifier of after.modules) {
+      const name = packageName(specifier);
+      if (name && isUiLibrary(name) && !beforePackages.has(name) && !importedUi.has(name))
+        importedUi.set(name, file.path);
+    }
     for (const name of after.usedExports) {
       usedExports.add(name);
       if (!before?.usedExports.has(name)) newExports.add(name);
@@ -652,7 +807,7 @@ export function scoreRun({ appDir, baseCommit, task, fixtureDir }) {
     const baseComponents = new Set((before?.components ?? []).map((component) => component.name));
     for (const component of after.components) {
       if (baseComponents.has(component.name)) continue;
-      const duplicate = duplicateTargets(component.name, envuiExports);
+      const duplicate = duplicateTargets(component.name, envuiExportNames);
       if (!duplicate) continue;
       const satisfied = duplicate.targets.some((target) =>
         target === '@icons' ? component.usesIcons : component.uses.includes(target),
@@ -699,6 +854,8 @@ export function scoreRun({ appDir, baseCommit, task, fixtureDir }) {
       )
     : [];
   const uiDependencies = addedDependencies.filter(isUiLibrary);
+  // One penalty per UI package, whether it was added, imported or both.
+  const uiPackages = [...new Set([...uiDependencies, ...importedUi.keys()])].sort();
 
   const envuiErrors = [
     ...errors
@@ -732,7 +889,8 @@ export function scoreRun({ appDir, baseCommit, task, fixtureDir }) {
     duplicates: clampPart(scoring.duplicates, duplicates.length),
     envuiErrors: clampPart(scoring.envuiErrors, envuiErrors.length),
     rawStyles: clampPart(scoring.rawStyles, rawStyleCount),
-    uiLibraryPenalty: -scoring.uiLibraryPenalty * uiDependencies.length,
+    uiLibraryPenalty: penalty(scoring.uiLibraryPenalty, uiPackages.length),
+    suppressionPenalty: penalty(scoring.suppressionPenalty, suppressions.length),
   };
   const total = hasOutput
     ? Math.max(
@@ -750,6 +908,7 @@ export function scoreRun({ appDir, baseCommit, task, fixtureDir }) {
       passed: errors.length === 0,
       errorCount: errors.length,
       errors: errors.slice(0, 40),
+      suppressions,
     },
     coverage: { ratio: round(coverage * 100) / 100, capabilities },
     envui: {
@@ -769,7 +928,11 @@ export function scoreRun({ appDir, baseCommit, task, fixtureDir }) {
       privateClassNames: privateClasses,
       total: rawStyleCount,
     },
-    dependencies: { added: addedDependencies, ui: uiDependencies },
+    dependencies: {
+      added: addedDependencies,
+      ui: uiPackages,
+      imported: [...importedUi].map(([name, file]) => ({ name, file })),
+    },
     patch,
   };
 }

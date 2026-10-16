@@ -14,12 +14,12 @@ export function killTree(pid) {
 }
 
 /**
- * Stops processes an agent left running in its workspace, such as a dev server started in the
- * background, by matching the workspace path in their command line.
+ * Stops processes an agent left running, such as a dev server started in the background, by
+ * matching a directory of the run (its workspace or temp folder) in their command line.
  */
-export function killStragglers(directory) {
+export function killStragglers(...directories) {
   if (!isWindows) return;
-  const pattern = directory.replaceAll("'", "''");
+  const patterns = directories.map((directory) => `'${directory.replaceAll("'", "''")}'`).join(',');
   try {
     execFileSync(
       'powershell.exe',
@@ -27,7 +27,7 @@ export function killStragglers(directory) {
         '-NoProfile',
         '-NonInteractive',
         '-Command',
-        `Get-CimInstance Win32_Process | Where-Object { $_.ProcessId -ne $PID -and $_.CommandLine -and $_.CommandLine.Contains('${pattern}') } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }`,
+        `$patterns = @(${patterns}); Get-CimInstance Win32_Process | Where-Object { $line = $_.CommandLine; $_.ProcessId -ne $PID -and $line -and ($patterns | Where-Object { $line.Contains($_) }) } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }`,
       ],
       { stdio: 'ignore', timeout: 60_000 },
     );
@@ -37,16 +37,25 @@ export function killStragglers(directory) {
 }
 
 /**
- * Runs a command with stdin text, streaming stdout and stderr to files, and kills the whole
- * process tree when it exceeds the timeout.
+ * Runs a command with stdin text, streaming stdout and stderr to files. It returns when the command
+ * exits, or at the timeout, whichever comes first, and never waits for its output pipes to close:
+ * a dev server the command started in the background keeps them open for as long as it runs. At
+ * the timeout the whole process tree is killed.
  */
-export function runWithTimeout(file, args, { cwd, env, input, stdoutFile, stderrFile, timeoutMs }) {
+export function runWithTimeout(
+  file,
+  args,
+  { cwd, env, input, stdoutFile, stderrFile, timeoutMs, graceMs = 2000 },
+) {
   return new Promise((resolve) => {
     const started = Date.now();
     const stdout = createWriteStream(stdoutFile);
     const stderr = createWriteStream(stderrFile);
     let timedOut = false;
     let settled = false;
+    let exit = { code: null, signal: null };
+    let spawnError;
+    let grace;
     const child = spawn(file, args, {
       cwd,
       env,
@@ -54,29 +63,50 @@ export function runWithTimeout(file, args, { cwd, env, input, stdoutFile, stderr
       windowsHide: true,
       detached: !isWindows,
     });
-    child.stdout.pipe(stdout);
-    child.stderr.pipe(stderr);
-    const timer = setTimeout(() => {
-      timedOut = true;
-      killTree(child.pid);
-    }, timeoutMs);
-    const finish = (exitCode, signal, error) => {
+    child.stdout.pipe(stdout, { end: false });
+    child.stderr.pipe(stderr, { end: false });
+
+    const finish = () => {
       if (settled) return;
       settled = true;
       clearTimeout(timer);
+      clearTimeout(grace);
+      // Output still held open by a background process is cut off here, so the run is bounded.
+      for (const pipe of [child.stdin, child.stdout, child.stderr]) pipe?.destroy();
       const close = (stream) => new Promise((done) => stream.end(done));
       Promise.all([close(stdout), close(stderr)]).then(() =>
         resolve({
-          exitCode,
-          signal,
+          exitCode: exit.code,
+          signal: exit.signal,
           timedOut,
-          error: error ? String(error.message ?? error) : undefined,
+          error: spawnError ? String(spawnError.message ?? spawnError) : undefined,
           durationMs: Date.now() - started,
         }),
       );
     };
-    child.on('error', (error) => finish(null, null, error));
-    child.on('close', (code, signal) => finish(code, signal));
+    // After the exit, wait briefly for the last output to drain, then stop waiting.
+    const drain = (ms) => {
+      clearTimeout(grace);
+      grace = setTimeout(finish, ms);
+    };
+
+    const timer = setTimeout(() => {
+      timedOut = true;
+      killTree(child.pid);
+      // If the kill did not take, still return.
+      drain(Math.max(graceMs, 5000));
+    }, timeoutMs);
+    child.on('error', (error) => {
+      spawnError = error;
+      finish();
+    });
+    child.on('exit', (code, signal) => {
+      exit = { code, signal };
+      // On POSIX the command leads its own process group; take down whatever it left behind.
+      if (!isWindows) killTree(child.pid);
+      drain(graceMs);
+    });
+    child.on('close', finish);
     child.stdin.on('error', () => {});
     child.stdin.end(input ?? '');
   });
