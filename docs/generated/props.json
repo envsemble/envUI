@@ -144,7 +144,7 @@
           "name": "format",
           "type": "(value: number) => string",
           "required": false,
-          "default": "formatNumber",
+          "default": "(value: number) => value.toLocaleString()",
           "description": "Writes the value as text, such as a currency; the browser locale's number format by default."
         }
       ],
@@ -558,14 +558,14 @@
           "name": "formatMore",
           "type": "(count: number) => string",
           "required": false,
-          "default": "formatMorePeople",
+          "default": "(count: number) => `${count} more`",
           "description": "Text for people beyond the list, in the overflow tooltip and the group's name; \"N more\"."
         },
         {
           "name": "formatLabel",
           "type": "(count: number, names: readonly string[]) => string",
           "required": false,
-          "default": "formatGroupLabel",
+          "default": "(count: number, names: readonly string[]) => `${count} ${count === 1 ? 'person' : 'people'}: ${names.join(', ')}`",
           "description": "The group's name from the number of people and their names, which end with formatMore's text for people counted in total but not listed: \"3 people: Alex Morgan, Sam Lee, 1 more\" by default. aria-label replaces it."
         }
       ],
@@ -915,7 +915,7 @@
           "name": "formatValue",
           "type": "(value: number) => string",
           "required": false,
-          "default": "formatEnglishNumber",
+          "default": "(value: number) => new Intl.NumberFormat('en').format(value)",
           "description": "Text for a value; English digit grouping by default."
         },
         {
@@ -934,14 +934,14 @@
           "name": "monthLabels",
           "type": "readonly string[]",
           "required": false,
-          "default": "englishMonths",
+          "default": "['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']",
           "description": "Twelve month names above the weeks, from January; English abbreviations by default."
         },
         {
           "name": "weekdayLabels",
           "type": "readonly string[]",
           "required": false,
-          "default": "englishWeekdays",
+          "default": "['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']",
           "description": "Seven weekday names beside the rows, from Sunday; English abbreviations by default."
         },
         {
@@ -2387,7 +2387,7 @@
           "name": "formatLabel",
           "type": "(additions: number, deletions: number) => string",
           "required": false,
-          "default": "defaultDiffLabel",
+          "default": "(additions: number, deletions: number) => `${additions} added ${additions === 1 ? 'line' : 'lines'} and ${deletions} removed ${deletions === 1 ? 'line' : 'lines'}`",
           "description": "Full meaning for assistive technology; \"12 added lines and 3 removed lines\" by default."
         }
       ],
@@ -2480,7 +2480,7 @@
           "name": "closeLabel",
           "type": "(label: string) => string",
           "required": false,
-          "default": "defaultCloseLabel",
+          "default": "(label: string) => `Close ${label}`",
           "description": "Accessible name of each close button and the menu's close item; Close and the label by default."
         },
         {
@@ -3163,7 +3163,7 @@
           "name": "toolbar",
           "type": "readonly MarkdownCommand[] | false",
           "required": false,
-          "default": "defaultMarkdownCommands",
+          "defaultBuiltIn": true,
           "description": "Formatting actions; false hides the toolbar. Undo/redo accompany a visible toolbar."
         },
         {
@@ -6247,7 +6247,7 @@
           "name": "storageKey",
           "type": "string",
           "required": false,
-          "default": "defaultThemeStorageKey",
+          "default": "'env-theme'",
           "description": "localStorage key; match the bootstrap script's. Defaults to \"env-theme\"."
         },
         {
@@ -6268,7 +6268,7 @@
           "name": "contrast",
           "type": "'standard' | 'high' | 'system'",
           "required": false,
-          "description": "Contrast of the Theme boundary around the children, and of the document root with applyToDocument: high, standard, or system to follow `prefers-contrast: more`, as on Theme. Defaults to the contrast of an enclosing Theme, and to system. With system, the provider removes from the root only a contrast it wrote; pass the same contrast to createThemeBootstrapScript so the root has it before the first paint."
+          "description": "Contrast of the Theme boundary around the children, and of the document root with applyToDocument: high, standard, or system to follow `prefers-contrast: more`, as on Theme. Defaults to the contrast of an enclosing Theme, and to system. With system, the provider removes from the root only a contrast that envUI wrote: a provider, this one or one before it, or the bootstrap script. Pass a contrast that is fixed for the application to createThemeBootstrapScript too, so the root has it before the first paint."
         },
         {
           "name": "scale",
@@ -6530,7 +6530,7 @@
     },
     "countDiffLines": {
       "kind": "function",
-      "source": "packages/ui/src/diff/CodeDiff.tsx",
+      "source": "packages/ui/src/diff/countDiffLines.ts",
       "description": "How many lines a change adds and removes, as a DiffStat shows them.",
       "signature": "(before: string, after: string, filename?: string): { additions: number; deletions: number; }",
       "entries": [

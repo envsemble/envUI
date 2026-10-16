@@ -52,10 +52,21 @@ ruleTester.run('no-renamed-exports', rule, {
     "const { Button, Menu } = require('@envsemble/envui'); <Menu.Root />;",
     "import('@envsemble/envui').then(({ TextField }) => TextField);",
     "import * as envui from '@envsemble/envui'; const { Alert, Menu } = envui; <Menu.Root />;",
+    "let Field; ({ TextField: Field } = require('@envsemble/envui')); <Field />;",
+    "import * as envui from '@envsemble/envui'; envui['TextField']; envui[name];",
     // createElement of the 1.0 parts.
     "import { Menu, Toast } from '@envsemble/envui'; createElement(Menu.Root); React.createElement(Toast.Provider, null);",
   ],
   invalid: [
+    // Names assigned from a module object by destructuring, and members read by a literal key.
+    {
+      code: "let Field, Menu; ({ Input: Field, Menu } = require('@envsemble/envui')); <Menu />;",
+      errors: [renamed('Input', 'TextField'), namespace('Menu', 'Menu', 'Menu.Root')],
+    },
+    {
+      code: "import * as envui from '@envsemble/envui'; let ui; ui = envui; envui['Input']; ui[`Notice`];",
+      errors: [renamed('Input', 'TextField'), renamed('Notice', 'Alert')],
+    },
     {
       code: "import { Input } from '@envsemble/envui';",
       errors: [
@@ -225,11 +236,22 @@ ruleTester.run('no-renamed-exports', rule, {
       code: "import * as envui from '@envsemble/envui'; createElement(envui.Table, { rows });",
       errors: [namespace('Table', 'envui.Table', 'envui.Table.Root')],
     },
+    // Literal keys, when rendered and when destructured.
+    {
+      code: "import * as envui from '@envsemble/envui'; createElement(envui['Input']); jsx(envui['Menu'], {});",
+      errors: [renamed('Input', 'TextField'), namespace('Menu', 'envui.Menu', 'envui.Menu.Root')],
+    },
+    {
+      code: "import * as envui from '@envsemble/envui'; const { ['Input']: Field, [`Notice`]: Callout } = envui;",
+      errors: [renamed('Input', 'TextField'), renamed('Notice', 'Alert')],
+    },
   ],
 });
 
 typeScriptRuleTester.run('no-renamed-exports in TypeScript', rule, {
   valid: [
+    "import envui = require('@envsemble/envui'); envui.TextField; <envui.Menu.Root />;",
+    "import icons = require('@envsemble/envui/icons'); icons.Input;",
     "import type { TextFieldProps } from '@envsemble/envui';",
     "import type * as envui from '@envsemble/envui'; type P = envui.ButtonProps;",
     "type P = import('@envsemble/envui').TextFieldProps; type M = typeof import('@envsemble/envui').Menu.Item;",
@@ -263,6 +285,73 @@ typeScriptRuleTester.run('no-renamed-exports in TypeScript', rule, {
     {
       code: "import type * as envui from '@envsemble/envui'; type P = envui.TableRowProps;",
       errors: [renamed('TableRowProps', 'Table.RowProps', 'Table')],
+    },
+    {
+      code: "import envui = require('@envsemble/envui'); envui.Input; <envui.Menu />; type P = envui.NoticeProps;",
+      errors: [
+        renamed('Input', 'TextField'),
+        namespace('Menu', 'envui.Menu', 'envui.Menu.Root'),
+        renamed('NoticeProps', 'AlertProps'),
+      ],
+    },
+    {
+      code: "export import envui = require('@envsemble/envui'); envui.Notice;",
+      errors: [renamed('Notice', 'Alert')],
+    },
+    // Through a type assertion, and as an indexed access type of the module object.
+    {
+      code: "import * as envui from '@envsemble/envui'; (envui as any).Input; envui!.Notice; type T = (typeof envui)['Input'];",
+      errors: [
+        renamed('Input', 'TextField'),
+        renamed('Notice', 'Alert'),
+        renamed('Input', 'TextField'),
+      ],
+    },
+  ],
+});
+
+// An application module that re-exports envUI, listed in the shared settings, stands for its main
+// entry point, and the message names the module as written.
+const reexports = { envui: { reexportModules: ['./ui', '@/components/ui'] } };
+
+ruleTester.run('no-renamed-exports with modules that re-export envUI', rule, {
+  valid: [
+    // Without the setting, a module of the application is not envUI.
+    "import { Input } from './ui'; <Input />;",
+    { code: "import { TextField, Menu } from './ui'; <Menu.Root />;", settings: reexports },
+    { code: "import { Input } from '../ui';", settings: reexports },
+  ],
+  invalid: [
+    {
+      code: "import { Input } from './ui';",
+      settings: reexports,
+      errors: [
+        {
+          ...renamed('Input', 'TextField'),
+          data: { ...renamed('Input', 'TextField').data, source: './ui' },
+        },
+      ],
+    },
+    {
+      code: "export { Notice } from '@/components/ui';",
+      settings: reexports,
+      errors: [
+        {
+          ...renamed('Notice', 'Alert'),
+          data: { ...renamed('Notice', 'Alert').data, source: '@/components/ui' },
+        },
+      ],
+    },
+    {
+      code: "import * as ui from './ui'; <ui.Menu />;",
+      settings: reexports,
+      errors: [namespace('Menu', 'ui.Menu', 'ui.Menu.Root')],
+    },
+    {
+      code: "const { LoadingBar } = await import('./ui');",
+      settings: reexports,
+      languageOptions: { sourceType: 'module', ecmaVersion: 2022 },
+      errors: [internal('LoadingBar')],
     },
   ],
 });

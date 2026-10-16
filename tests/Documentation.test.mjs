@@ -2,7 +2,11 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import { resolve, join, relative, isAbsolute } from 'node:path';
-import { compileDocument, readDocumentation } from '../scripts/GenerateDocumentation.mjs';
+import {
+  compileDocument,
+  libraryVersions,
+  readDocumentation,
+} from '../scripts/GenerateDocumentation.mjs';
 
 test('focused Markdown discovery preserves examples and rejects broken documentation', async () => {
   const cache = resolve('.cache');
@@ -144,9 +148,10 @@ async function templateFixture(run) {
   await writeFile(join(examples, 'switch', 'Basic.tsx'), switchExample);
   await writeFile(join(specimens, 'switch', 'States.tsx'), 'export default function States() {}\n');
   const page = join(docs, 'components', 'switch.md');
-  const read = () => readDocumentation(docs, { props: switchProps, examples, specimens });
+  const versions = new Set(['0.1.0', '0.2.0']);
+  const read = () => readDocumentation(docs, { props: switchProps, examples, specimens, versions });
   try {
-    await run({ page, read, examples });
+    await run({ page, read, examples, docs });
   } finally {
     const contained = relative(cache, fixture);
     assert.ok(contained && !contained.startsWith('..') && !isAbsolute(contained));
@@ -233,7 +238,157 @@ test('the template rejects pages that break its contract', async () => {
       /lists props in a table/,
     );
     await rejects(frontmatter + body.replace('```tsx example=Basic', '```tsx'), /example file/);
+    // Metadata that says nothing or points nowhere.
+    await rejects(frontmatter.replace('related: []', 'related: [switch]') + body, /itself/);
+    await rejects(frontmatter.replace('aliases: [toggle]', 'aliases: []') + body, /aliases must/);
+    await rejects(frontmatter.replace('since: 0.1.0', 'since: 9.9.9') + body, /since 9\.9\.9/);
+    await rejects(
+      frontmatter.replace('components: [Switch]', 'components: [Switch, Menu.Item]') + body,
+      /Menu\.Item, a part/,
+    );
+    // Lists, props and headings the template generates or needs in Markdown.
+    await rejects(
+      frontmatter +
+        body.replace('### envUI provides\n\n- The switch role.\n', '### envUI provides\n'),
+      /"### envUI provides" list/,
+    );
+    await rejects(
+      frontmatter +
+        body.replace('## Changelog', '| Option | Type |\n| --- | --- |\n| a | b |\n\n## Changelog'),
+      /lists props in a table/,
+    );
+    await rejects(
+      frontmatter + body.replace('## Changelog', '#### Props\n\nsize is sm or md.\n\n## Changelog'),
+      /"#### Props" lists props by hand/,
+    );
+    await rejects(
+      frontmatter + body.replace('## Changelog', '<h2>Notes</h2>\n\n## Changelog'),
+      /headings in Markdown/,
+    );
+    // A page with the template's parts that does not start with its Overview.
+    await rejects(
+      frontmatter +
+        body.replace(
+          '## Overview\n\nTurns a setting on or off.\n\n',
+          '## Usage\n\nTurns a setting on or off.\n\n',
+        ),
+      /first section must be "## Overview", not "## Usage"/,
+    );
+    // Saved with CRLF line endings, the page reads as it does with LF.
+    await writeFile(page, (frontmatter + body).replaceAll('\n', '\r\n'));
+    assert.deepEqual(
+      read()[1].sections.map((section) => section.id),
+      ['overview', 'states', 'accessibility', 'examples', 'changelog'],
+    );
     await writeFile(page, frontmatter + body);
     assert.doesNotThrow(read);
+  });
+});
+
+test('a page not yet on the template ships its own props table only', async () => {
+  await templateFixture(async ({ page, read, examples }) => {
+    const legacy = switchFrontmatter.replace(/useWhen:[\s\S]*?(?=related:)/, '');
+    await writeFile(
+      page,
+      `${legacy}# Switch\n\n## React usage\n\n### Props & contracts\n\n| Name | Contract |\n| --- | --- |\n| label | The visible label. |\n`,
+    );
+    const documents = read();
+    assert.equal(documents[1].sections, undefined);
+    const compiled = compileDocument(documents[1], documents, { props: switchProps, examples });
+    assert.match(compiled, /### Props & contracts/);
+    assert.doesNotMatch(compiled, /## Props\n/);
+  });
+});
+
+test('a filled-in example keeps its fence closed, with backticks in its source', async () => {
+  await templateFixture(async ({ page, read, examples }) => {
+    const source = "export default function Basic() {\n  return <Code>{'```'}</Code>;\n}\n";
+    await writeFile(join(examples, 'switch', 'Basic.tsx'), source);
+    // Text right after the empty fence, without a blank line.
+    await writeFile(
+      page,
+      switchFrontmatter +
+        switchBody.replace(
+          '```tsx example=Basic\n```\n',
+          '```tsx example=Basic\n```\nAfter the example.\n',
+        ),
+    );
+    const documents = read();
+    const compiled = compileDocument(documents[1], documents, { props: switchProps, examples });
+    assert.ok(
+      compiled.includes(`\`\`\`\`tsx example=Basic\n${source}\`\`\`\`\nAfter the example.\n`),
+    );
+  });
+});
+
+test('since names a stable release or the version the changesets lead to, also in prerelease mode', async () => {
+  const cache = resolve('.cache');
+  await mkdir(cache, { recursive: true });
+  const fixture = await mkdtemp(join(cache, 'versions-'));
+  const changelog = join(fixture, 'CHANGELOG.md');
+  const changesets = join(fixture, 'changeset');
+  const changeset = (name, packages) =>
+    writeFile(
+      join(changesets, `${name}.md`),
+      `---\n${Object.entries(packages)
+        .map(([pkg, bump]) => `'${pkg}': ${bump}`)
+        .join('\n')}\n---\n\nA change.\n`,
+    );
+  const versions = () => [...libraryVersions({ changelog, changesets })].sort();
+  try {
+    await mkdir(changesets);
+    await writeFile(
+      join(changesets, 'config.json'),
+      JSON.stringify({ fixed: [['@envsemble/envui', '@envsemble/envui-codemods']] }),
+    );
+    await writeFile(changelog, '# Changelog\n\n## 0.7.0\n\nText.\n\n## 0.6.0\n\nText.\n');
+    await changeset('fix', { '@envsemble/envui': 'patch' });
+    assert.deepEqual(versions(), ['0.6.0', '0.7.0', '0.7.1']);
+    // A package that shares envUI's version raises it too.
+    await changeset('codemods', { '@envsemble/envui-codemods': 'minor' });
+    assert.deepEqual(versions(), ['0.6.0', '0.7.0', '0.8.0']);
+    // In prerelease mode, a released prerelease is no version of its own, and the changesets lead
+    // to the version the prereleases are for, from the version before them.
+    await changeset('names', { '@envsemble/envui': 'major' });
+    await writeFile(
+      join(changesets, 'pre.json'),
+      JSON.stringify({
+        mode: 'pre',
+        tag: 'next',
+        initialVersions: { '@envsemble/envui': '0.7.0' },
+      }),
+    );
+    await writeFile(changelog, '# Changelog\n\n## 1.0.0-next.0\n\nText.\n\n## 0.7.0\n\nText.\n');
+    assert.deepEqual(versions(), ['0.7.0', '1.0.0']);
+  } finally {
+    await rm(fixture, { recursive: true, force: true });
+  }
+});
+
+test('the template rules read Markdown as it renders', async () => {
+  await templateFixture(async ({ page, read }) => {
+    const accepts = async (source) => {
+      await writeFile(page, source);
+      assert.doesNotThrow(read);
+    };
+    // Tables of attributes and a section on forwarding props are not props tables.
+    await accepts(
+      switchFrontmatter +
+        switchBody.replace(
+          'Turns a setting on or off.',
+          '### Props forwarding\n\nOther props go to the input.\n\n| Attribute | Values |\n| --- | --- |\n| role | switch |\n\nTurns a setting on or off.',
+        ),
+    );
+    const legacy = switchFrontmatter.replace(/useWhen:[\s\S]*?(?=related:)/, '');
+    // An example fence shown inside another fence is text, not an example.
+    await accepts(
+      `${legacy}# Switch\n\n## React usage\n\n\`\`\`\`md\n\`\`\`tsx example=Basic\n\`\`\`\n\`\`\`\`\n`,
+    );
+    // An example fence indented by up to three spaces is one.
+    await writeFile(
+      page,
+      `${legacy}# Switch\n\n## React usage\n\n  \`\`\`tsx example=Basic\n  \`\`\`\n`,
+    );
+    assert.throws(read, /first section must be "## Overview", not "## React usage"/);
   });
 });

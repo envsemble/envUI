@@ -40,7 +40,7 @@ import faviconUrl from '@envsemble/envui/assets/envUI/envUI-favicon.ico';
 ## Guidelines
 
 - Use the bundled official Material Symbols Rounded. Symbols load locally; no remote icon font or SVG loader is required.
-- Search the offline catalogue by name and copy its exact per-icon import. Individual imports avoid loading the full catalogue in product development.
+- Search the offline catalogue by name and copy its exact per-icon import, such as `import { Home } from '@envsemble/envui/icons/Home'`. Import each icon by its subpath rather than from the `@envsemble/envui/icons` barrel, which makes the bundler read the full catalogue for one icon, and makes Vite without `@vitejs/plugin-react` warn about the `'use client'` directive of every icon module.
 - Icons inherit their context color. Navigation and tabs choose selected fill automatically.
 - Decorative icons stay hidden from assistive technology. Standalone meaningful icons need labels; icon-only controls need accessible action names.
 - Use bundled brand assets rather than recreating the marks.

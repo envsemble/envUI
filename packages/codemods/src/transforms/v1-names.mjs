@@ -9,19 +9,36 @@
 // - `import * as ui` accesses and `export { … } from` re-exports are rewritten the same way.
 // Anything the transform cannot rewrite safely stays as it is and is reported with its line.
 import { loadMap } from '../map.mjs';
+import { createScopes } from '../scope.mjs';
 import { createReporter, keepByteOrderMark, parserFor, printOptions } from '../shared.mjs';
 
 export const parser = 'tsx';
 
 /** Reference kinds that sit in type positions. */
-const typeKinds = new Set(['type', 'typeof', 'qualified']);
+const typeKinds = new Set(['type', 'typeof', 'qualified', 'typeof-qualified']);
 /** Reference kinds that access a member of the binding, as a namespace is used. */
-const memberKinds = new Set(['object', 'jsx-object', 'qualified']);
+const memberKinds = new Set(['object', 'jsx-object', 'qualified', 'typeof-qualified']);
+/** Reference kinds written as the left side of a qualified name, `Menu.ItemProps`. */
+const qualifiedKinds = new Set(['qualified', 'typeof-qualified']);
+
+/** The entry point of `useTheme`, whose call returns `{ theme, contrast }` in 1.0. */
+const library = '@envsemble/envui';
+
+/**
+ * Whether the qualified name a path is the left side of is the name of a `typeof` query, as in
+ * `typeof ui.Input` or `typeof Menu.Item.displayName`, whose first name is a value.
+ */
+function inTypeQuery(path) {
+  let current = path.parent;
+  while (current.parent?.node.type === 'TSQualifiedName' && current.name === 'left')
+    current = current.parent;
+  return current.parent?.node.type === 'TSTypeQuery' && current.name === 'exprName';
+}
 
 /**
  * How an Identifier or JSXIdentifier is used: `decl` for a declaration, a reference kind (`jsx`,
- * `jsx-object`, `object`, `qualified`, `type`, `typeof`, `shorthand`, `export` or `value`), or
- * null for a name that refers to no binding, such as a property key.
+ * `jsx-object`, `object`, `qualified`, `typeof-qualified`, `type`, `typeof`, `shorthand`, `export`
+ * or `value`), or null for a name that refers to no binding, such as a property key.
  */
 function classify(path) {
   const { node } = path;
@@ -61,7 +78,8 @@ function classify(path) {
       if (field === 'property') return parent.computed ? 'value' : null;
       return field === 'object' ? 'object' : 'value';
     case 'TSQualifiedName':
-      return field === 'left' ? 'qualified' : null;
+      if (field !== 'left') return null;
+      return inTypeQuery(path) ? 'typeof-qualified' : 'qualified';
     case 'TSTypeReference':
       return field === 'typeName' ? 'type' : null;
     case 'TSExpressionWithTypeArguments':
@@ -86,17 +104,17 @@ function classify(path) {
   return 'value';
 }
 
-/** Whether a reference resolves to the module scope, where imports bind, rather than a local. */
-function bindsToModule(path, name, kind) {
-  const { scope } = path;
-  if (!scope) return true;
-  if (typeKinds.has(kind) && typeof scope.lookupType === 'function') {
-    const typeScope = scope.lookupType(name);
-    if (typeScope && !typeScope.isGlobal) return false;
-  }
-  const found = scope.lookup(name);
-  return !found || found.isGlobal;
-}
+/**
+ * The space a reference kind looks its name up in; see scope.mjs. `typeof ui.Input` looks `ui` up
+ * as a value, as `ui.Input` in an expression does.
+ */
+const spaceOf = (kind) => (kind === 'type' ? 'type' : kind === 'qualified' ? 'namespace' : 'value');
+/**
+ * The space a namespace written at a reference of a kind is looked up in: `Menu.ItemProps` in a
+ * type finds namespaces, while `<Menu.Item>` and `typeof Menu.Item` find values.
+ */
+const namespaceSpaceOf = (kind) =>
+  kind === 'type' || kind === 'qualified' ? 'namespace' : 'value';
 
 /**
  * Whether a comment is a directive about the line below it, which must stay right above that line:
@@ -107,6 +125,13 @@ function isLineDirective(comment) {
 }
 const lineDirective =
   /^[\s*]*(?:@ts-(?:expect-error|ignore)|eslint-disable-(?:next-)?line|prettier-ignore|biome-ignore|oxlint-disable-next-line|deno-lint-ignore|(?:istanbul|c8|v8) ignore next)(?![\w-])/;
+
+/**
+ * Whether a comment is `@ts-expect-error`. Above names the transform changes it expected an error
+ * from the 0.x names, and once that error is gone TypeScript fails on it (TS2578), so it is
+ * dropped there and reported rather than kept or moved.
+ */
+const isExpectError = (comment) => /^[\s*]*@ts-expect-error(?![\w-])/.test(comment.value);
 
 /** A comment as it is written, for a report. */
 function commentText(comment) {
@@ -179,16 +204,55 @@ export default function transform(file, api, options = {}) {
     .find(j.ImportDeclaration)
     .filter((path) => entries.has(path.node.source.value))
     .paths();
+  // `import ui = require('@envsemble/envui')`, which TypeScript reads as `import * as ui`.
+  const importEquals = root
+    .find(j.TSImportEqualsDeclaration)
+    .filter(
+      ({ node }) =>
+        node.moduleReference?.type === 'TSExternalModuleReference' &&
+        entries.has(node.moduleReference.expression?.value),
+    )
+    .paths();
   const reExports = root
     .find(j.ExportNamedDeclaration)
     .filter((path) => Boolean(path.node.source) && entries.has(path.node.source.value))
     .paths();
-  if (importDeclarations.length === 0 && reExports.length === 0) return undefined;
+  // `require('@envsemble/envui')` and `import('@envsemble/envui')`, which are not followed.
+  root.find(j.CallExpression).forEach(({ node }) => {
+    const how =
+      node.callee.type === 'Import'
+        ? 'import()'
+        : node.callee.type === 'Identifier' && node.callee.name === 'require'
+          ? 'require()'
+          : undefined;
+    const source = literalValue(node.arguments[0]);
+    if (how && entries.has(source))
+      warn(
+        node,
+        `loads ${source} with ${how}, which the codemod does not follow: change the 0.x names used through it by hand, and read .theme from a useTheme() call read as the color scheme.`,
+      );
+  });
+  if (importDeclarations.length === 0 && reExports.length === 0 && importEquals.length === 0) {
+    reporter.flush();
+    return undefined;
+  }
+  /** The specifiers as written, before any is replaced. */
+  const originalSpecifiers = new Set(
+    [...importDeclarations, ...reExports].flatMap(({ node }) => node.specifiers ?? []),
+  );
   // New string literals follow the quotes of the file's envUI imports.
-  const quoteSource = (importDeclarations[0] ?? reExports[0]).node.source;
+  const quoteSource =
+    (importDeclarations[0] ?? reExports[0])?.node.source ??
+    importEquals[0].node.moduleReference.expression;
   const quote = quoteSource.extra?.raw?.startsWith('"') ? 'double' : 'single';
 
   // Every binding and reference by name, and the names already in use anywhere in the file.
+  const scopes = createScopes();
+  /** Whether a reference reaches the imports of the file, or a global, rather than a local. */
+  const bindsToModule = (path, name, kind, space = spaceOf(kind)) => {
+    const found = scopes.lookup(path, name, space);
+    return !found || found.imported;
+  };
   const references = new Map();
   const taken = new Set();
   root.find(j.Identifier).forEach((path) => {
@@ -199,8 +263,28 @@ export default function transform(file, api, options = {}) {
     if (!references.has(path.node.name)) references.set(path.node.name, []);
     references.get(path.node.name).push({ path, kind });
   });
+  // Type parameters, also of mapped types and `infer`, name themselves with a string, not an
+  // Identifier, in Babel's AST.
+  root.find(j.TSTypeParameter).forEach(({ node }) => {
+    const name = typeof node.name === 'string' ? node.name : node.name?.name;
+    if (name) taken.add(name);
+  });
   const referencesTo = (name) =>
     (references.get(name) ?? []).filter(({ path, kind }) => bindsToModule(path, name, kind));
+
+  /**
+   * Whether the binding a pattern declares or assigns at `bindingPath` is used other than through
+   * its members (`Menu.Root`), which is how a 1.0 namespace of the same name is used.
+   */
+  const usedAsComponent = (bindingPath, name) => {
+    const declaring = scopes.lookup(bindingPath, name, 'value')?.node;
+    return (references.get(name) ?? []).some(
+      ({ path, kind }) =>
+        !memberKinds.has(kind) &&
+        !(kind === 'jsx' && path.parent.node.type === 'JSXClosingElement') &&
+        scopes.lookup(path, name, spaceOf(kind))?.node === declaring,
+    );
+  };
 
   const claimed = new Set();
   const isFree = (name) => !taken.has(name) && !claimed.has(name);
@@ -271,6 +355,11 @@ export default function transform(file, api, options = {}) {
       });
     }
   }
+  for (const { node } of importEquals)
+    namespaceImports.push({
+      local: node.id.name,
+      entry: entries.get(node.moduleReference.expression.value),
+    });
   const namespaceFor = (entry, name) => {
     const key = `${entry.name}\0${name}`;
     if (!namespaces.has(key))
@@ -286,20 +375,55 @@ export default function transform(file, api, options = {}) {
   };
   /** Removed import specifiers, with the declaration that has their names now, if any. */
   const movedTo = new Map();
+  /** Import declarations whose names change, where a @ts-expect-error above them goes stale. */
+  const rewritten = new Set();
   const remove = (info, replacement = () => undefined) => {
     removals.add(info.specifier);
     movedTo.set(info.specifier, replacement);
+    rewritten.add(info.declaration);
     changed = true;
   };
+  /**
+   * Comments to keep where names changed: all but a leading @ts-expect-error, reported at `node`.
+   * `kept` names the names below it that stay as they are, whose error it may have expected.
+   */
+  const withoutExpectError = (comments, node, kept = []) =>
+    comments?.filter((comment) => {
+      if (!comment.leading || !isExpectError(comment)) return true;
+      warn(
+        node,
+        kept.length
+          ? `dropped ${commentText(comment)}, which expected an error from the 0.x names or from ${listOf(kept)}, which ${kept.length > 1 ? 'stay' : 'stays'}: TypeScript fails on a @ts-expect-error with no error below it, so put it back if ${listOf(kept)} still ${kept.length > 1 ? 'have' : 'has'} the error.`
+          : `dropped ${commentText(comment)}, which expected an error from the 0.x names: TypeScript fails on a @ts-expect-error with no error below it.`,
+      );
+      return false;
+    });
+  /** The names an import or re-export lists that the map does not change. */
+  const unchangedNames = (specifiers, entry) =>
+    specifiers
+      .filter((specifier) => originalSpecifiers.has(specifier))
+      .filter(
+        (specifier) => specifier.type === 'ImportSpecifier' || specifier.type === 'ExportSpecifier',
+      )
+      .map((specifier) =>
+        specifier.type === 'ImportSpecifier' ? specifier.imported : specifier.local,
+      )
+      .filter((name) => name?.type === 'Identifier')
+      .map(({ name }) => name)
+      .filter(
+        (name) => !entry.renames.has(name) && !entry.splits.has(name) && !entry.removed.has(name),
+      );
   // Specifiers are replaced whole: in `{ Input }` the imported and local names share one source
   // range, and recast would reprint a changed `imported` over both.
   const replaceImport = (info, imported, local) => {
     const replacement = j.importSpecifier(j.identifier(imported), j.identifier(local));
     if (info.specifier.importKind) replacement.importKind = info.specifier.importKind;
     // Comments on the specifier, such as a disable directive, stay with it.
-    if (info.specifier.comments) replacement.comments = info.specifier.comments;
+    if (info.specifier.comments)
+      replacement.comments = withoutExpectError(info.specifier.comments, info.specifier);
     const list = info.declaration.specifiers;
     list[list.indexOf(info.specifier)] = replacement;
+    rewritten.add(info.declaration);
     info.specifier = replacement;
   };
   const replaceExport = (list, specifier, local, exported) => {
@@ -329,7 +453,7 @@ export default function transform(file, api, options = {}) {
    * `Menu as EnvMenu`. `node` is what the report about the alias points at.
    */
   const namespaceLocalAt = ({ path, kind }, namespace, part, node = path.node) => {
-    if (bindsToModule(path, namespace.local, kind)) return namespace.local;
+    if (bindsToModule(path, namespace.local, kind, namespaceSpaceOf(kind))) return namespace.local;
     if (!namespace.alias) {
       namespace.alias = freeName(namespace.name);
       insertions.push({ namespace, needsValue: false, local: namespace.alias });
@@ -409,8 +533,12 @@ export default function transform(file, api, options = {}) {
           alias = freeName(rename.to);
           edits.push(() => replaceImport(info, rename.to, alias));
         } else remove(info, () => sibling.declaration);
-      } else if (!isFree(rename.to)) {
-        // The new name is taken in this file: keep the old local name as an alias.
+      } else if (
+        !isFree(rename.to) ||
+        references.some(({ path, kind }) => scopes.lookup(path, rename.to, spaceOf(kind)))
+      ) {
+        // The new name is taken in this file, or something declares it where a reference would
+        // read it: keep the old local name as an alias.
         edits.push(() => replaceImport(info, rename.to, local));
         continue;
       } else {
@@ -569,13 +697,35 @@ export default function transform(file, api, options = {}) {
     const handled = new Set();
     for (const { path, kind } of referencesTo(local)) {
       if (kind === 'value') {
-        const declarator = path.parent.node;
-        if (declarator.type === 'VariableDeclarator' && declarator.id.type === 'ObjectPattern') {
-          for (const property of declarator.id.properties) {
-            const key = property.computed ? undefined : property.key?.name;
+        // `const { Input } = ui` and `({ Input } = ui)`.
+        const parent = path.parent;
+        const field =
+          parent.node.type === 'VariableDeclarator' && parent.node.init === path.node
+            ? 'id'
+            : parent.node.type === 'AssignmentExpression' && parent.node.right === path.node
+              ? 'left'
+              : undefined;
+        const patternPath = field && parent.get(field);
+        if (patternPath?.node.type === 'ObjectPattern') {
+          patternPath.node.properties.forEach((property, index) => {
+            // `{ Input }`, `{ 'Input': field }` and `{ ['Input']: field }`.
+            const key =
+              property.type === 'RestElement'
+                ? undefined
+                : property.computed
+                  ? literalValue(property.key)
+                  : (property.key?.name ?? literalValue(property.key));
             const rename = entry.renames.get(key);
             const split = entry.splits.get(key);
             const removed = entry.removed.get(key);
+            // `Menu` and `Toast` name 1.0 namespaces too: used through their members, as in
+            // `<Menu.Root>`, they are 1.0 code.
+            if (entry.namespaces.has(key)) {
+              let binding = patternPath.get('properties', index, 'value');
+              if (binding.value?.type === 'AssignmentPattern') binding = binding.get('left');
+              if (binding.value?.type !== 'Identifier') return;
+              if (!usedAsComponent(binding, binding.value.name)) return;
+            }
             const change = rename
               ? `which is ${rename.to} in 1.0: rename it by hand.`
               : split
@@ -584,7 +734,12 @@ export default function transform(file, api, options = {}) {
                   ? `which ${entry.name} no longer exports: ${removed.use}`
                   : undefined;
             if (change) warn(property, `destructures ${key} from ${local}, ${change}`);
-          }
+            else if (key === 'useTheme' && entry.name === library)
+              warn(
+                property,
+                `destructures useTheme from ${local}, whose call is { theme, contrast } in 1.0 rather than the color scheme: read .theme by hand where a call is read as the color scheme.`,
+              );
+          });
         }
         continue;
       }
@@ -592,11 +747,23 @@ export default function transform(file, api, options = {}) {
       const accessPath = path.parent;
       const access = accessPath.node;
       if (handled.has(access)) continue;
-      const property =
-        kind === 'qualified' ? access.right : access.computed ? undefined : access.property;
-      if (!property || (property.type !== 'Identifier' && property.type !== 'JSXIdentifier'))
+      // `ui.Input`, and `ui['Input']` or ``ui[`Input`]``, whose literal key is kept a literal.
+      const literalKey =
+        !qualifiedKinds.has(kind) && access.computed ? literalValue(access.property) : undefined;
+      const property = qualifiedKinds.has(kind) ? access.right : access.property;
+      const name =
+        literalKey ??
+        (!access.computed && (property?.type === 'Identifier' || property?.type === 'JSXIdentifier')
+          ? property.name
+          : undefined);
+      if (name === undefined) {
+        if (access.computed && access.object === path.node)
+          warn(
+            access,
+            `${local}[…] reads an export by a name computed at run time, which is not changed: if it can name an export that 1.0 renames, rename it by hand.`,
+          );
         continue;
-      const name = property.name;
+      }
       const flavor = flavorOf(kind);
       const outer = accessPath.parent?.node;
       const rename = entry.renames.get(name);
@@ -604,8 +771,12 @@ export default function transform(file, api, options = {}) {
         changed = true;
         edits.push(() => {
           const replacement =
-            flavor === 'jsx' ? j.jsxIdentifier(rename.to) : j.identifier(rename.to);
-          if (kind === 'qualified') access.right = replacement;
+            literalKey !== undefined
+              ? j.stringLiteral(rename.to)
+              : flavor === 'jsx'
+                ? j.jsxIdentifier(rename.to)
+                : j.identifier(rename.to);
+          if (qualifiedKinds.has(kind)) access.right = replacement;
           else access.property = replacement;
         });
         continue;
@@ -672,6 +843,7 @@ export default function transform(file, api, options = {}) {
   // `export { … } from '@envsemble/envui'`: flat renames move to the new name; the rest is reported.
   for (const exportPath of reExports) {
     const entry = entries.get(exportPath.node.source.value);
+    let renamed = false;
     for (const specifier of exportPath.node.specifiers ?? []) {
       if (specifier.type !== 'ExportSpecifier' || specifier.local?.type !== 'Identifier') continue;
       const name = specifier.local.name;
@@ -680,6 +852,7 @@ export default function transform(file, api, options = {}) {
       const removed = entry.removed.get(name);
       if (rename && !rename.namespace) {
         changed = true;
+        renamed = true;
         const exported = specifier.exported?.name ?? name;
         edits.push(() =>
           replaceExport(
@@ -711,13 +884,19 @@ export default function transform(file, api, options = {}) {
         );
       }
     }
+    // As above an import, a @ts-expect-error above a re-export whose names change goes stale.
+    const declaration = exportPath.node;
+    if (renamed && declaration.comments)
+      declaration.comments = withoutExpectError(
+        declaration.comments,
+        declaration,
+        unchangedNames(declaration.specifiers, entry),
+      );
   }
 
   // useTheme() returns `{ theme, contrast }` in 1.0 rather than the color scheme.
   // `<Theme theme={useTheme()}>`, 0.x's way to re-theme a portal, becomes `<Theme {...useTheme()}>`,
-  // which keeps the contrast too; comparing the call with a scheme, or passing it as another
-  // element's `theme`, is reported.
-  const library = '@envsemble/envui';
+  // which keeps the contrast too; every other bare call reads `useTheme().theme`, 0.x's value.
   const localsOf = (name) =>
     specifiers
       .filter((info) => info.entry.name === library && info.imported === name && !info.isType)
@@ -762,19 +941,11 @@ export default function transform(file, api, options = {}) {
       container?.node.type === 'JSXExpressionContainer' &&
       attribute?.type === 'JSXAttribute' &&
       attribute.name.type === 'JSXIdentifier' &&
-      attribute.name.name === 'theme'
+      attribute.name.name === 'theme' &&
+      isLibraryTheme(attributePath.parent.node.name, attributePath.parent)
     ) {
-      const openingPath = attributePath.parent;
-      const opening = openingPath.node;
-      if (!isLibraryTheme(opening.name, openingPath)) {
-        warn(
-          attribute,
-          'passes useTheme() as theme, which is { theme, contrast } in 1.0: pass useTheme().theme.',
-        );
-        continue;
-      }
       // Props written before the spread would lose to the contrast it carries, so it goes first.
-      const attributes = opening.attributes;
+      const attributes = attributePath.parent.node.attributes;
       const contrast = attributes.findIndex(
         (other) => other.type === 'JSXAttribute' && other.name.name === 'contrast',
       );
@@ -788,12 +959,7 @@ export default function transform(file, api, options = {}) {
       changed = true;
       continue;
     }
-    const outer = call.parent.node;
-    if (outer.type === 'BinaryExpression' && ['===', '!==', '==', '!='].includes(outer.operator))
-      warn(
-        outer,
-        'compares useTheme(), which is { theme, contrast } in 1.0: compare useTheme().theme.',
-      );
+    if (readThemeOfCall(j, call, { references, scopes, warn })) changed = true;
   }
 
   if (!changed) {
@@ -824,25 +990,33 @@ export default function transform(file, api, options = {}) {
         });
         continue;
       }
+      // The type-only import gives way to a value import, which takes its comments.
       removals.add(type.specifier);
       movedTo.set(type.specifier, () => namespace.declaration);
       namespace.declaration = undefined;
-    } else {
-      namespace.local = freeName(namespace.name);
+      insertions.push({ namespace, needsValue, replaces: type.specifier });
+      continue;
     }
+    namespace.local = freeName(namespace.name);
     insertions.push({ namespace, needsValue });
   }
 
   for (const edit of edits) edit();
 
-  for (const { namespace, needsValue, local = namespace.local } of insertions) {
+  /** Removed specifiers whose place a namespace specifier takes, which gets their comments. */
+  const heirs = new Map();
+  /** Namespace specifiers that took line comments from the specifiers they replace. */
+  const commented = new Set();
+  for (const { namespace, needsValue, local = namespace.local, replaces } of insertions) {
     const contributors = namespace.contributors.map(({ info }) => info);
     const anchor = needsValue ? contributors.find((info) => !info.isType) : contributors[0];
     const specifier = j.importSpecifier(j.identifier(namespace.name), j.identifier(local));
+    if (replaces) heirs.set(replaces, specifier);
     if (anchor) {
       if (!needsValue && anchor.declaration.importKind !== 'type') specifier.importKind = 'type';
       const list = anchor.declaration.specifiers;
       list.splice(list.indexOf(anchor.specifier), 0, specifier);
+      if (removals.has(anchor.specifier)) heirs.set(anchor.specifier, specifier);
       namespace.declaration ??= anchor.declaration;
       continue;
     }
@@ -868,6 +1042,35 @@ export default function transform(file, api, options = {}) {
     const before = declaration.specifiers.length;
     const removedHere = declaration.specifiers.filter((specifier) => removals.has(specifier));
     declaration.specifiers = declaration.specifiers.filter((specifier) => !removals.has(specifier));
+    // Comments on a removed specifier go to the namespace specifier in its place, if there is one;
+    // otherwise they are reported, since nothing they describe is left.
+    for (const specifier of removedHere) {
+      if (!specifier.comments?.length) continue;
+      const heir = heirs.get(specifier);
+      if (heir) {
+        heir.comments = [
+          ...(heir.comments ?? []),
+          // Leading, so that a comment that followed the removed name stays out of the list's
+          // commas.
+          ...withoutExpectError(specifier.comments, specifier).map((comment) => ({
+            ...comment,
+            leading: true,
+            trailing: false,
+          })),
+        ];
+        if (heir.comments.some(({ type }) => type === 'CommentLine' || type === 'Line'))
+          commented.add(heir);
+        continue;
+      }
+      const { imported, local } = specifier;
+      const name =
+        local && local.name !== imported.name ? `${imported.name} as ${local.name}` : imported.name;
+      for (const comment of specifier.comments)
+        warn(
+          specifier,
+          `dropped ${commentText(comment)}, which was on ${name}, removed from this import.`,
+        );
+    }
     if (before > 0 && declaration.specifiers.length === 0) {
       const leading = (declaration.comments ?? []).filter((comment) => comment.leading);
       const directives = leading.filter(isLineDirective);
@@ -878,7 +1081,7 @@ export default function transform(file, api, options = {}) {
         const comments = target.comments ?? [];
         target.comments = [
           ...comments.filter((comment) => comment.leading),
-          ...directives,
+          ...withoutExpectError(directives, declaration),
           ...comments.filter((comment) => !comment.leading),
         ];
       } else
@@ -893,10 +1096,197 @@ export default function transform(file, api, options = {}) {
       const next = body[body.indexOf(declaration) + 1];
       if (others.length && next) next.comments = [...others, ...(next.comments ?? [])];
       declarationPath.prune();
-    }
+    } else if (rewritten.has(declaration) && declaration.comments)
+      declaration.comments = withoutExpectError(
+        declaration.comments,
+        declaration,
+        unchangedNames(declaration.specifiers, entries.get(declaration.source.value)),
+      );
   }
+
+  // Recast prints a list's comments after the comma before them, so a line comment above a name
+  // that follows another would land on that name's line. These imports are printed with a name on
+  // each line instead, as a formatter would, and read back in.
+  root.find(j.ImportDeclaration).forEach((declarationPath) => {
+    const { specifiers = [] } = declarationPath.node;
+    if (!specifiers.some((specifier, index) => index > 0 && commented.has(specifier))) return;
+    const options = printOptions(file.source, quote);
+    const tabWidth = root.get().node.loc?.lines?.guessTabWidth?.() ?? 2;
+    // A copy, without the original it would otherwise be patched into.
+    let printed = j({ ...declarationPath.node }).toSource({ ...options, wrapColumn: 0, tabWidth });
+    // Recast indents a name it keeps from the source with spaces, even when told to use tabs.
+    if (options.useTabs)
+      printed = printed.replace(
+        /^ +/gm,
+        (spaces) =>
+          '	'.repeat(Math.floor(spaces.length / tabWidth)) + ' '.repeat(spaces.length % tabWidth),
+      );
+    declarationPath.replace(j(printed).find(j.ImportDeclaration).nodes()[0]);
+  });
 
   // The rewrites and the pruned imports can still add reports.
   reporter.flush();
   return keepByteOrderMark(file.source, root.toSource(printOptions(file.source, quote)));
+}
+
+/** Comparisons that hold for 0.x's scheme and 1.0's object alike: with null or undefined. */
+const nullishComparison = (node, operand) => {
+  if (node?.type !== 'BinaryExpression' || !['===', '!==', '==', '!='].includes(node.operator))
+    return false;
+  const other = node.left === operand ? node.right : node.left;
+  return (
+    other.type === 'NullLiteral' ||
+    (other.type === 'Literal' && other.value === null) ||
+    (other.type === 'Identifier' && other.name === 'undefined') ||
+    (other.type === 'UnaryExpression' && other.operator === 'void')
+  );
+};
+
+/** Expressions whose value is their operand's: parentheses and TypeScript's assertions. */
+const transparentTypes = new Set([
+  'ParenthesizedExpression',
+  'TSAsExpression',
+  'TSSatisfiesExpression',
+  'TSNonNullExpression',
+  'TSTypeAssertion',
+]);
+
+/**
+ * The outermost expression whose value can be the one at `path`: through parentheses, `as`,
+ * `satisfies`, `!` and `<T>`, the branches of a conditional, and the operands of `??`, `||` and
+ * the right of `&&`. `const { theme } = own ? useTheme() : fallback` destructures the call.
+ */
+function valueOf(path) {
+  let current = path;
+  for (;;) {
+    const parent = current.parent;
+    const node = parent?.node;
+    const passes =
+      (transparentTypes.has(node?.type) && node.expression === current.node) ||
+      (node?.type === 'ConditionalExpression' && node.test !== current.node) ||
+      (node?.type === 'LogicalExpression' &&
+        (node.operator !== '&&' || node.right === current.node));
+    if (!passes) return current;
+    current = parent;
+  }
+}
+
+/**
+ * Whether an expression is read as 1.0's `{ theme, contrast }`: `.theme` or `.contrast` read from
+ * it, spread, or destructured, also through parentheses, type assertions and conditionals.
+ */
+function readsAsThemeObject(expression) {
+  const path = valueOf(expression);
+  const { node } = path;
+  const parent = path.parent?.node;
+  switch (parent?.type) {
+    case 'MemberExpression':
+    case 'OptionalMemberExpression': {
+      if (parent.object !== node) return false;
+      const key = parent.computed ? parent.property.value : parent.property.name;
+      return key === 'theme' || key === 'contrast';
+    }
+    case 'SpreadElement':
+    case 'JSXSpreadAttribute':
+      return true;
+    case 'VariableDeclarator':
+      return parent.init === node && parent.id.type === 'ObjectPattern';
+    case 'AssignmentExpression':
+      return parent.right === node && parent.left.type === 'ObjectPattern';
+  }
+  return false;
+}
+
+/** The name of a JSX element as written: `Context` or `Context.Provider`. */
+const jsxName = (name) =>
+  name.type === 'JSXMemberExpression'
+    ? `${jsxName(name.object)}.${name.property.name}`
+    : name.type === 'JSXNamespacedName'
+      ? `${name.namespace.name}:${name.name.name}`
+      : name.name;
+
+/**
+ * Where a value leaves for code the transform can't see, so it can't tell 0.x code from 1.0: a
+ * value returned, also as an arrow function's body, or given to a component's `value` prop, as a
+ * context provider takes it. Returns `{ provider }` for a `value` prop, `{}` for a return, and
+ * undefined elsewhere.
+ */
+function leaves(expression) {
+  const path = valueOf(expression);
+  const parent = path.parent?.node;
+  if (
+    parent?.type === 'ReturnStatement' ||
+    (parent?.type === 'ArrowFunctionExpression' && parent.body === path.node)
+  )
+    return {};
+  const attribute = path.parent?.parent?.node;
+  if (
+    parent?.type === 'JSXExpressionContainer' &&
+    attribute?.type === 'JSXAttribute' &&
+    attribute.name.type === 'JSXIdentifier' &&
+    attribute.name.name === 'value'
+  ) {
+    const provider = jsxName(path.parent.parent.parent.node.name);
+    // `<input value={…}>` is a DOM element, where 0.x's scheme was a string.
+    if (!/^[a-z]/.test(provider)) return { provider };
+  }
+  return undefined;
+}
+
+/** What a report says a value that leaves does: `returns …` or `passes … as the value of <…>`. */
+const leaving = (where, call, variable) => {
+  const held = variable ? `${variable}, which holds ${call}` : call;
+  return where.provider
+    ? `passes ${held}${variable ? ',' : ''} as the value of <${where.provider}>`
+    : `returns ${held}`;
+};
+
+/**
+ * Rewrites a bare `useTheme()` call as `useTheme().theme`, the color scheme 0.x's call returned,
+ * so `useTheme() === 'dark'`, `theme={useTheme()}` on another element and `` `t-${useTheme()}` ``
+ * keep their meaning. The transform is meant for 0.x code, but a call already read as 1.0's object
+ * stays, also through a variable it initializes, such as `const current = useTheme()` read as
+ * `current.contrast`, and through parentheses, type assertions and conditionals; so does a
+ * comparison with null or undefined. A call whose value leaves for code the transform can't see,
+ * returned or given to a context as its value, also directly or through a variable, stays and is
+ * reported. `references` are the file's references by name, which `scopes` narrows to the
+ * variable's declaration. Returns whether it rewrote the call.
+ */
+function readThemeOfCall(j, call, { references, scopes, warn }) {
+  const outer = valueOf(call);
+  if (readsAsThemeObject(call) || nullishComparison(outer.parent?.node, outer.node)) return false;
+  const callee = call.node.callee;
+  const shown = `${callee.type === 'MemberExpression' ? `${callee.object.name}.${callee.property.name}` : callee.name}()`;
+  const report = (node, action) =>
+    warn(
+      node,
+      `${action}, so it stays as it is: useTheme() is { theme, contrast } in 1.0; where it is read as the color scheme, read its .theme.`,
+    );
+  const where = leaves(call);
+  if (where) {
+    report(call.node, leaving(where, shown));
+    return false;
+  }
+  const declarator = outer.parent?.node;
+  if (
+    declarator?.type === 'VariableDeclarator' &&
+    declarator.init === outer.node &&
+    declarator.id.type === 'Identifier'
+  ) {
+    const { name } = declarator.id;
+    const declaring = scopes.lookup(outer.parent.get('id'), name, 'value')?.node;
+    const uses = (references.get(name) ?? []).filter(
+      ({ path, kind }) =>
+        (kind === 'value' || kind === 'object') &&
+        scopes.lookup(path, name, 'value')?.node === declaring,
+    );
+    if (uses.some(({ path }) => readsAsThemeObject(path))) return false;
+    const left = uses.map(({ path }) => [path, leaves(path)]).filter(([, found]) => found);
+    if (left.length > 0) {
+      for (const [path, found] of left) report(path.node, leaving(found, shown, name));
+      return false;
+    }
+  }
+  call.replace(j.memberExpression(call.node, j.identifier('theme')));
+  return true;
 }

@@ -6,6 +6,10 @@ import config, { hairlineProperties, rawColorFunction, stackingValues } from '..
 import { expectedTokens, libraryTokensUrl, tokensUrl } from '../scripts/SyncTokens.mjs';
 
 const readme = readFileSync(new URL('../README.md', import.meta.url), 'utf8');
+/** Values with nested fallbacks that the ESLint plugin's no-raw-colors tests read too. */
+const nestedFallbacks = JSON.parse(
+  readFileSync(new URL('../../../tests/lint/NestedFallbacks.json', import.meta.url), 'utf8'),
+);
 
 /** The rule and the marked text of each warning for some CSS in source order, with lines on request. */
 async function lint(code, { lines = false } = {}) {
@@ -112,8 +116,66 @@ test('raw colors are reported, and colors from tokens pass', async () => {
   );
   await passes('.a { color: var(--color-fg-default); background: transparent; }');
   await passes('.a { color: hsl(from var(--color-fg-link) h s calc(l - 10)); }');
+  // Channels that all come from custom properties, and colors inside a CSS string.
+  await passes(
+    '.a { color: oklch(var(--l) var(--c) var(--h)); background: rgb(var(--rgb) / 50%); }',
+  );
+  await passes('.a { color: color(display-p3 var(--r) var(--g) var(--b)); }');
+  await passes(`.a { content: "rgb(1 2 3)"; } .b { content: 'it\\'s hsl(0 0% 0%)'; }`);
+  assert.deepEqual(
+    await lint('.a { color: oklch(var(--l) 0.15 var(--h)); }\n.b { content: "a" rgb(1 2 3); }'),
+    [
+      { rule: 'declaration-property-value-disallowed-list', text: 'oklch(var(--l) 0.15 var(--h))' },
+      { rule: 'declaration-property-value-disallowed-list', text: '"a" rgb(1 2 3)' },
+    ],
+  );
+  assert.match(
+    (await message('.a { background: rgb(var(--x)), url("rgb(0 0 0)"), hsl(0 0% 0%); }')).text,
+    /^Raw color hsl\(0 0% 0%\) in background/,
+  );
   await passes('.a { background: color-mix(in srgb, var(--color-bg-default) 80%, transparent); }');
   await passes('.a { fill: currentColor; }');
+});
+
+test('equivalent color forms are treated alike', async () => {
+  // The comma form's last argument is the alpha, as the one after the slash is.
+  await passes('.a { color: rgba(var(--rgb), 0.5); background: rgb(var(--rgb) / 50%); }');
+  await passes('.a { color: rgba(var(--r), var(--g), var(--b), 0.5); }');
+  await passes('.a { color: rgb(var(--brand-rgb)); background: rgb(var(--rgb, var(--other))); }');
+  // Fallbacks nest: each is var()s whose own fallbacks are var()s, as the ESLint rule reads them.
+  for (const value of nestedFallbacks.custom) await passes(`.a { color: ${value}; }`);
+  for (const value of nestedFallbacks.raw)
+    assert.deepEqual(await lint(`.a { color: ${value}; }`), [
+      { rule: 'declaration-property-value-disallowed-list', text: value },
+    ]);
+  // A fallback is a color as much as the value, and each channel is a var().
+  assert.deepEqual(
+    await lint(
+      [
+        '.a { color: rgb(var(--rgb, 255 0 0)); }',
+        '.b { color: var(--accent, #0b57d0); }',
+        '.c { color: var(--accent, red); }',
+        '.d { color: rgb(calc(255) calc(0) calc(0)); }',
+        '.e { color: hsl(none none none); }',
+        '.f { color: rgb(var(--r), var(--g), 0); }',
+      ].join('\n'),
+    ),
+    [
+      { rule: 'declaration-property-value-disallowed-list', text: 'rgb(var(--rgb, 255 0 0))' },
+      { rule: 'color-no-hex', text: '#0b57d0' },
+      { rule: 'color-named', text: 'red' },
+      {
+        rule: 'declaration-property-value-disallowed-list',
+        text: 'rgb(calc(255) calc(0) calc(0))',
+      },
+      { rule: 'declaration-property-value-disallowed-list', text: 'hsl(none none none)' },
+      { rule: 'declaration-property-value-disallowed-list', text: 'rgb(var(--r), var(--g), 0)' },
+    ],
+  );
+  assert.match(
+    (await message('.a { color: rgb(var(--rgb, 255 0 0)); }')).text,
+    /^Raw color rgb\(var\(--rgb, 255 0 0\)\) in color/,
+  );
 });
 
 test('a literal z-index is reported, and stacking tokens pass', async () => {

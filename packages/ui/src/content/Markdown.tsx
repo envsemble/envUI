@@ -1,4 +1,6 @@
 'use client';
+// @client-module react-markdown imports useEffect and useState, which React's server build lacks,
+// so Markdown cannot be a server component even without its own useMemo.
 
 import {
   createElement,
@@ -37,6 +39,50 @@ export interface MarkdownProps extends Omit<ComponentPropsWithRef<'div'>, 'child
   remarkPlugins?: Options['remarkPlugins'];
   /** rehype plugins, such as heading ids; envUI adds none of its own. */
   rehypePlugins?: Options['rehypePlugins'];
+}
+
+interface HastNode {
+  type: string;
+  tagName?: string;
+  value?: string;
+  properties?: Record<string, unknown>;
+  children?: HastNode[];
+}
+
+const textOf = (node: HastNode): string =>
+  node.type === 'text' ? (node.value ?? '') : (node.children ?? []).map(textOf).join('');
+
+/**
+ * Names each table's scrolling region after the table: its caption, or the heading it follows, as
+ * "Keyboard table", numbered when a heading has several. Regions need names of their own, which
+ * one shared name such as "Table" is not.
+ */
+function rehypeTableNames() {
+  return (tree: HastNode) => {
+    let heading = '';
+    const counts = new Map<string, number>();
+    const visit = (node: HastNode) => {
+      if (node.type === 'element' && /^h[1-6]$/.test(node.tagName ?? '')) {
+        heading = textOf(node).trim();
+        return;
+      }
+      if (node.type === 'element' && node.tagName === 'table') {
+        const caption = node.children?.find((child) => child.tagName === 'caption');
+        // Localisation (the strings provider, Phase 3): "table" and "Table" here and in the region's
+        // fallback label below are English; they move to the provider with envUI's other strings.
+        const base = caption ? textOf(caption).trim() : heading ? `${heading} table` : 'Table';
+        const count = (counts.get(base) ?? 0) + 1;
+        counts.set(base, count);
+        node.properties = {
+          ...node.properties,
+          dataEnvTableName: count > 1 ? `${base} ${count}` : base,
+        };
+        return;
+      }
+      node.children?.forEach(visit);
+    };
+    visit(tree);
+  };
 }
 
 interface MarkdownNode {
@@ -83,6 +129,11 @@ function remarkDropHtml() {
 }
 
 const markdownPlugins = [remarkGfm];
+
+type TableProps = ComponentPropsWithoutRef<'table'> & {
+  node?: unknown;
+  'data-env-table-name'?: unknown;
+};
 
 /** CommonMark prose with tables, task lists and other extensions, in envUI typography and code. */
 export function Markdown({
@@ -131,8 +182,13 @@ export function Markdown({
           </CodeBlock>
         );
       },
-      table: ({ node: _node, ...tableProps }) => (
-        <div className="env-markdown-table" tabIndex={0} role="region" aria-label="Table">
+      table: ({ node: _node, 'data-env-table-name': name, ...tableProps }: TableProps) => (
+        <div
+          className="env-markdown-table"
+          tabIndex={0}
+          role="region"
+          aria-label={typeof name === 'string' ? name : 'Table'}
+        >
           <table {...tableProps} />
         </div>
       ),
@@ -151,6 +207,10 @@ export function Markdown({
     () => (componentOverrides ? { ...components, ...componentOverrides } : components),
     [components, componentOverrides],
   );
+  const mergedRehypePlugins = useMemo(
+    () => [rehypeTableNames, ...(rehypePlugins ?? [])],
+    [rehypePlugins],
+  );
   const mergedRemarkPlugins = useMemo(
     () => [...markdownPlugins, ...(remarkPlugins ?? []), remarkDropHtml],
     [remarkPlugins],
@@ -159,7 +219,7 @@ export function Markdown({
     <div {...props} className={classNames('env-markdown', className)}>
       <ReactMarkdown
         remarkPlugins={mergedRemarkPlugins}
-        rehypePlugins={rehypePlugins}
+        rehypePlugins={mergedRehypePlugins}
         components={mergedComponents}
         skipHtml
       >

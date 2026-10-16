@@ -77,7 +77,18 @@ test('the mapping table has unique entries that name envUI 1.0 components', () =
       );
     });
     for (const binding of entry.import ?? []) assert.ok(isName(binding), `${entry.id}: ${binding}`);
+    for (const owner of entry.owners ?? []) assert.ok(isName(owner), `${entry.id}: ${owner}`);
+    assert.equal(entry.owners !== undefined, entry.role !== undefined, `${entry.id}: owners`);
   }
+});
+
+test("the components that own a role are envUI's when the repository has its props data", () => {
+  const props = new URL('../../../docs/generated/props.json', import.meta.url);
+  if (!existsSync(props)) return;
+  const exported = new Set(Object.keys(read(props).exports));
+  for (const entry of elements.roles)
+    for (const owner of entry.owners)
+      assert.ok(exported.has(owner), `${entry.id}: ${owner} is not an envUI component`);
 });
 
 test('the rename map renames only what envUI 0.7 exported, to well-formed names', () => {

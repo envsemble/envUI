@@ -13,8 +13,17 @@ const pager = 'use Pager.Previous or Pager.Next, which take no direction prop.';
 const removedFrom = (line, names) =>
   names.map((name) => `line ${line}: ${name} is no longer exported by ${library}: ${use(name)}`);
 
+const ambiguous = (line, action) =>
+  `line ${line}: ${action}, so it stays as it is: useTheme() is { theme, contrast } in 1.0; where it is read as the color scheme, read its .theme.`;
+const unfollowed = (line, how) =>
+  `line ${line}: loads ${library} with ${how}, which the codemod does not follow: change the 0.x names used through it by hand, and read .theme from a useTheme() call read as the color scheme.`;
+
+const expectError = (line, comment) =>
+  `line ${line}: dropped // @ts-expect-error -- ${comment}, which expected an error from the 0.x names: TypeScript fails on a @ts-expect-error with no error below it.`;
+
 /** What each fixture reports, in line order; a fixture that is not listed reports nothing. */
 const reports = {
+  'comments.tsx': [expectError(4, "the 0.x types lack the item's hint.")],
   'local-exports.tsx': [
     'line 3: exports Menu, which is the Menu namespace in 1.0; the old component is Menu.Root.',
     'line 3: exports MenuItem, which is Menu.Item in 1.0 and cannot be exported by its old name: export the Menu namespace or a constant instead.',
@@ -23,6 +32,11 @@ const reports = {
     'line 5: destructures Root and Item from Menu, which is the Menu namespace in 1.0, and stays as it is; the 0.x component is Menu.Root.',
     'line 6: destructures Cell from ui.Table, which is the Table namespace in 1.0, and stays as it is; the 0.x component is ui.Table.Root.',
     'line 8: destructures Head from Table, which is the Table namespace in 1.0, and stays as it is; the 0.x component is Table.Root.',
+  ],
+  'namespace-import-destructuring.tsx': [
+    'line 15: destructures Menu from ui, which is Menu.Root in 1.0: rename it by hand.',
+    `line 15: destructures Toast from ui, which ${library} no longer exports: ${use('Toast')}`,
+    'line 25: destructures Input from ui, which is TextField in 1.0: rename it by hand.',
   ],
   'namespace-import.tsx': [
     'line 8: destructures DirectionLinks from ui, which is Pager.Root in 1.0: rename it by hand.',
@@ -49,7 +63,25 @@ const reports = {
     'line 20: a local Menu shadows the import here: wrote EnvMenu.Item, with Menu also imported as EnvMenu.',
     'line 21: a local TextField shadows the import here: wrote EnvTextField, with TextField also imported as EnvTextField.',
     'line 23: a local Pager shadows the import here: wrote EnvPager.Next, with Pager also imported as EnvPager.',
-    'line 31: a local Menu shadows the import here: wrote EnvMenu.ItemProps, with Menu also imported as EnvMenu.',
+    'line 41: a local Menu shadows the import here: wrote EnvMenu.ItemProps, with Menu also imported as EnvMenu.',
+  ],
+  'specifier-comments.tsx': [
+    'line 7: dropped /* The body of the members table. */, which was on TableBody, removed from this import.',
+    'line 8: dropped /* The old name. */, which was on Input, removed from this import.',
+    expectError(10, 'not exported by the installed 1.0'),
+    expectError(13, 'not exported by the installed 1.0'),
+  ],
+  'expect-error-unchanged.tsx': [
+    'line 2: dropped // @ts-expect-error -- Sidebar is not exported by the installed version, which expected an error from the 0.x names or from Sidebar, which stays: TypeScript fails on a @ts-expect-error with no error below it, so put it back if Sidebar still has the error.',
+  ],
+  'literal-keys.tsx': [
+    `line 5: ui.LoadingBar is no longer exported by ${library}: ${use('LoadingBar')}`,
+    'line 6: ui[…] reads an export by a name computed at run time, which is not changed: if it can name an export that 1.0 renames, rename it by hand.',
+    'line 7: destructures Notice from ui, which is Alert in 1.0: rename it by hand.',
+  ],
+  're-export-expect-error.ts': [
+    expectError(2, 'not exported by the installed 0.x'),
+    'line 4: dropped // @ts-expect-error -- not exported by the installed 0.x, which expected an error from the 0.x names or from Button, which stays: TypeScript fails on a @ts-expect-error with no error below it, so put it back if Button still has the error.',
   ],
   'theme-bootstrap-directive.ts': [
     'line 3: dropped // eslint-disable-next-line envui/no-renamed-exports -- until the 1.0 upgrade, which applied to the import that was removed.',
@@ -58,9 +90,18 @@ const reports = {
     `line 7: defaultThemeStorageKey is no longer exported by ${bootstrap}: ${use('defaultThemeStorageKey', bootstrap)}`,
     `line 8: re-exports defaultThemeStorageKey, which ${bootstrap} no longer exports: ${use('defaultThemeStorageKey', bootstrap)}`,
   ],
-  'use-theme.tsx': [
-    'line 19: compares useTheme(), which is { theme, contrast } in 1.0: compare useTheme().theme.',
-    'line 20: passes useTheme() as theme, which is { theme, contrast } in 1.0: pass useTheme().theme.',
+  'use-theme-ambiguous.tsx': [
+    ambiguous(7, 'returns useTheme()'),
+    ambiguous(10, 'returns useTheme()'),
+    ambiguous(13, 'passes useTheme() as the value of <SchemeContext>'),
+    ambiguous(18, 'passes t, which holds useTheme(), as the value of <SchemeContext.Provider>'),
+    ambiguous(23, 'returns t, which holds useTheme()'),
+  ],
+  'use-theme-require.ts': [unfollowed(1, 'require()')],
+  'use-theme-unfollowed.tsx': [
+    'line 4: destructures useTheme from ui, whose call is { theme, contrast } in 1.0 rather than the color scheme: read .theme by hand where a call is read as the color scheme.',
+    unfollowed(9, 'require()'),
+    unfollowed(14, 'import()'),
   ],
   'toast-manual.tsx': [
     ...removedFrom(2, ['ToastProps']),

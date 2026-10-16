@@ -2,6 +2,7 @@ import { Button, Tabs } from '@envsemble/envui';
 import { Code } from '@envsemble/envui/icons/Code';
 import type { ReactElement, ReactNode } from 'react';
 import type { ReferenceView, ViewOption } from '../navigation/DocumentationRoutes';
+import { useViewTabs } from '../navigation/useDocumentationRoute';
 import { PageHeader } from './PageHeader';
 
 /** A page's views as tabs in its banner: Preview and Usage, or the template's views. */
@@ -28,17 +29,17 @@ export function PageViews({
   content: Partial<Record<ReferenceView, ReactNode>>;
   renderBanner?: (tabs: ReactElement) => ReactNode;
 }) {
+  const viewTabs = useViewTabs((next) => {
+    const query = new URLSearchParams(location.hash.split('?')[1]);
+    query.delete('section');
+    return `${path}/${next}${query.size ? `?${query}` : ''}`;
+  });
   return (
     <Tabs
       aria-label={`${title} reference views`}
       className="docs-reference-tabs"
       value={view}
-      onValueChange={(next) => {
-        if (!next) return;
-        const query = new URLSearchParams(location.hash.split('?')[1]);
-        query.delete('section');
-        location.hash = `/${path}/${next}${query.size ? `?${query}` : ''}`;
-      }}
+      {...viewTabs}
       renderList={
         renderBanner ??
         ((tabs) => (

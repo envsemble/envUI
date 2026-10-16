@@ -893,7 +893,7 @@ export const tokens = {
       'dark-high-contrast': '#afb1b6',
     },
   },
-  /** Misleading 0.7 name: it is the divider color, border.muted, not a stronger border. Components use border.muted; the alias goes in the CSS-architecture step. */
+  /** Misleading 0.7 name: it is the divider color, border.muted, light, not a stronger border, and unlike the dark edges of the strong fills, border.{neutral|success|info|danger}.strong. Components use border.muted; the alias goes in the CSS-architecture step, which also revisits these names. */
   'color.border-strong': {
     cssVariable: '--color-border-strong',
     type: 'color',
@@ -1014,6 +1014,17 @@ export const tokens = {
       'dark-high-contrast': '#fff6f5',
     },
   },
+  /** The edge of the strong danger fill where it floats, on error toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
+  'color.border.danger.strong': {
+    cssVariable: '--color-border-danger-strong',
+    type: 'color',
+    values: {
+      light: '#9f0300',
+      dark: '#5d6166',
+      'light-high-contrast': '#6b0100',
+      'dark-high-contrast': '#a1a4a9',
+    },
+  },
   /** The boundary of a control that has no other edge: outlined fields and buttons, the track of a switch that is off. At least 3:1 on every surface. */
   'color.border.default': {
     cssVariable: '--color-border-default',
@@ -1069,6 +1080,17 @@ export const tokens = {
       'dark-high-contrast': '#b5cffb',
     },
   },
+  /** The edge of the strong information fill where it floats, on information toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
+  'color.border.info.strong': {
+    cssVariable: '--color-border-info-strong',
+    type: 'color',
+    values: {
+      light: '#174d90',
+      dark: '#5d6166',
+      'light-high-contrast': '#003068',
+      'dark-high-contrast': '#a1a4a9',
+    },
+  },
   /** Decorative dividers and outlines that are not a control’s only boundary: table lines, title bars, Markdown rules, keyboard keys, and the hairline edge of every elevated popup, which the elevation shadow and the content already identify. */
   'color.border.muted': {
     cssVariable: '--color-border-muted',
@@ -1113,6 +1135,17 @@ export const tokens = {
       'dark-high-contrast': 'rgb(232 234 238 / 0.55)',
     },
   },
+  /** The edge of the strong neutral fill where it floats, on tooltips and neutral toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
+  'color.border.neutral.strong': {
+    cssVariable: '--color-border-neutral-strong',
+    type: 'color',
+    values: {
+      light: '#303234',
+      dark: '#5d6166',
+      'light-high-contrast': '#303234',
+      'dark-high-contrast': '#a1a4a9',
+    },
+  },
   /** A decorative edge in the success tone, around an outlined badge: the success text color at 55%, in every theme and at high contrast. */
   'color.border.success.emphasis': {
     cssVariable: '--color-border-success-emphasis',
@@ -1133,6 +1166,17 @@ export const tokens = {
       dark: 'rgb(122 209 151 / 0.28)',
       'light-high-contrast': 'rgb(0 68 26 / 0.28)',
       'dark-high-contrast': 'rgb(165 253 193 / 0.28)',
+    },
+  },
+  /** The edge of the strong success fill where it floats, on success toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
+  'color.border.success.strong': {
+    cssVariable: '--color-border-success-strong',
+    type: 'color',
+    values: {
+      light: '#03593f',
+      dark: '#5d6166',
+      'light-high-contrast': '#003a28',
+      'dark-high-contrast': '#a1a4a9',
     },
   },
   /** A neutral inner edge that defines content of any color, such as the color picker’s area: black at 5% in both themes. */

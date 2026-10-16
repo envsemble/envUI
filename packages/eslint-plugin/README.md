@@ -49,6 +49,23 @@ export default defineConfig(envui.configs.recommended, {
 
 If envUI lacks something you need, propose an addition to envUI rather than keeping a local copy.
 
+## Settings
+
+The rules share their settings under `settings.envui` in the ESLint configuration. An unknown setting, or a value of the wrong shape, is a configuration error.
+
+`reexportModules` lists the application's modules that re-export envUI's components under envUI's names, such as a `src/ui.ts` with `export * from '@envsemble/envui'`. Names imported from them count as envUI's:
+
+```js
+export default defineConfig(envui.configs.recommended, {
+  settings: { envui: { reexportModules: ['./ui', '@/components/ui'] } },
+});
+```
+
+- A module is matched by its specifier exactly as an import writes it, in any file: `'./ui'` matches `import { Dialog } from './ui'`, but not `'../ui'` or `'./ui/index'`. List each spelling the application writes, or import the module through an alias that every file writes the same way, such as `'@/components/ui'`.
+- [no-html-elements](#no-html-elements) counts a name imported from a listed module as the envUI component it is exported as: `<Dialog role="alertdialog">` with `Dialog` from `'./ui'` passes.
+- [no-renamed-exports](#no-renamed-exports) checks the names imported or re-exported from a listed module as names of `@envsemble/envui`, and its message names the module as written: `import { Input } from './ui'` is reported, with `TextField` to import from `'./ui'`.
+- List only modules that keep envUI's names: a component of the application's own exported under an envUI name would count as envUI's.
+
 ## Rules
 
 | Rule                                      | Reports                                                         |
@@ -70,13 +87,13 @@ One rule reads one mapping table, [`src/data/elements.json`](src/data/elements.j
 
 How an element is matched:
 
-1. A static `role` is checked first, on HTML elements and on components that are not envUI's: `<ul role="menu">`, and also a `<Box role="dialog">` of the application's own or of another library. envUI's components, imported from an envUI entry point, set their own roles, so a role on one refines it and passes: `<Popover role="dialog">`, `<Menu.CheckboxItem role="checkbox">`. With several roles, the first counts. An element that is the component the role names, such as `<Menu.Root role="menu">`, passes.
+1. A static `role` is checked first, on any JSX element: `<ul role="menu">`, a `<Box role="dialog">` of the application's own or of another library, and envUI's own `<Surface role="dialog">` or `<Stack role="menu">`, which hand-roll the widget. An envUI component that renders the role itself, listed in the role's `owners`, passes, since a role on it refines its own: `<Popover role="dialog">`, `<Menu.Submenu role="menu">`, and the component the role names, `<Menu.Root role="menu">`. An element whose name is imported counts by the name its entry point exports, from `@envsemble/envui`, `/content`, `/diff` or `/rich-text`, or from a module listed in [`reexportModules`](#settings): `Surface` imported as `Dialog` is a `Surface`, a `Dialog` from another library is not envUI's, and `<Menu.Item role="menu">` is an item, not the menu. An element whose name nothing in the file declares, as in an example written without its imports, counts by its full written name. With several roles, the first counts.
 2. Otherwise HTML elements are checked in the order of the table, and the first entry whose element and attributes match decides. An `<input>` is matched by its `type`.
 3. Nothing is reported for:
    - what a part renders in place of its own element, through the `render` prop: `<Menu.Item render={<a href="/settings" />}>`;
    - an element hidden from assistive technology and out of the tab order (`aria-hidden` with `tabIndex={-1}`);
    - `<input type="hidden">`;
-   - the `<a href>` of a link adapter, the component that `LinkProvider` renders for envUI's destinations, as the [setup guide](../../docs/setup.md#router-links) writes it: a function whose props are typed `LinkComponentProps`, or one that a `LinkProvider` in the same file takes as its `component`. It draws the anchor itself, because envUI's `Link` would render the adapter again;
+   - the `<a href>` of a link adapter, the component that `LinkProvider` renders for envUI's destinations, as the [setup guide](../../docs/setup.md#router-links) writes it: a function whose props are typed `LinkComponentProps`, or one that a `LinkProvider` in the same file takes as its `component`, directly, through a variable, as a member of an object literal (`component={adapters.link}`, also `adapters?.link`), or as either side of a choice (`component={external ? ExternalLink : RouterLink}`, `component={custom ?? RouterLink}`). It draws the anchor itself, because envUI's `Link` would render the adapter again;
    - entries named in `allow`.
 
 Options:
@@ -170,7 +187,7 @@ A CSS module's lookup such as `styles['env-panel']` names a local class and pass
 
 ### no-raw-colors
 
-Reports literal colors in JSX `style` objects: hex colors, color functions with literal channels (`rgb()`, `hsl()`, `hwb()`, `lab()`, `lch()`, `oklab()`, `oklch()`, `color()`), and named colors in properties that take a color, such as `border: '1px solid red'`. Use an envUI color token instead, so the color follows the theme and keeps its contrast. The message suggests the semantic role of the property: a text color such as `var(--color-fg-default)` for `color`, `fill` and `stroke`, a `var(--color-bg-…)` background, or a `var(--color-border-…)` boundary for borders and outlines:
+Reports literal colors in JSX `style` objects: hex colors, color functions whose channels are not custom properties (`rgb()`, `hsl()`, `hwb()`, `lab()`, `lch()`, `oklab()`, `oklch()`, `color()`), and named colors in properties that take a color, such as `border: '1px solid red'`. Use an envUI color token instead, so the color follows the theme and keeps its contrast. The message suggests the semantic role of the property: a text color such as `var(--color-fg-default)` for `color`, `fill` and `stroke`, a `var(--color-bg-…)` background, or a `var(--color-border-…)` boundary for borders and outlines:
 
 ```text
 Raw color #fff in an inline style: use an envUI color token instead, such as var(--color-fg-default) or another var(--color-fg-…) role, so the color follows the theme and keeps its contrast.
@@ -178,7 +195,7 @@ Raw color #fff in an inline style: use an envUI color token instead, such as var
 
 The token names come from [`src/data/tokens.json`](src/data/tokens.json). Before every pack, `scripts/SyncTokens.mjs` rewrites it from the library's generated token list (`packages/ui/src/generated/tokens.json` in the envUI repository), so a release names the tokens of the same envUI release, and the tests fail when a message or this README names a token that does not exist.
 
-Values that depend on state, spread objects and custom properties are checked too, including an inline override of envUI's own tokens. A relative color derived from a token, `hsl(from var(--color-fg-link) h s calc(l - 10))`, and `color-mix()` of tokens pass, as do `currentColor`, `transparent` and `url()` references. Style sheets are the [Stylelint config](../stylelint-config/README.md)'s concern. The rule has no options.
+Values that depend on state, spread objects and custom properties are checked too, including an inline override of envUI's own tokens. A template literal is read as one value, each expression standing for a literal channel: `` `rgb(${r} 0 0)` `` is reported, as is the `#fff` in `` `url('${a}') #fff` ``, and the strings in its expressions are checked on their own. A `#` followed by an expression is a hex color built from it, as in `` `#${hex}` `` or `` `#fff${alpha}` ``, also in a custom property, except inside `url()` and CSS strings, where `` `url(#${id})` `` refers to an element. A relative color derived from a token, `hsl(from var(--color-fg-link) h s calc(l - 10))`, and `color-mix()` of tokens pass. So does a function whose channels all come from custom properties, each channel a `var()` whose fallback, if any, is `var()`s too, whose own fallbacks are `var()`s in turn, as in `rgb(var(--…, var(--…, var(--…))))`, with or without a literal alpha after the `/` or as the last of two or four comma-separated arguments, `rgb(var(--…) / 50%)` and `rgba(var(--…), 0.5)` alike, and one `var()` that holds all three channels, `rgb(var(--…))`. Any other channel, such as `calc(255)`, `none` or a fallback such as `var(--…, 255 0 0)`, makes the color raw. `currentColor`, `transparent`, `url()` references and colors inside CSS strings, such as `content: '"rgb(1 2 3)"'`, pass. Style sheets are the [Stylelint config](../stylelint-config/README.md)'s concern. The rule has no options.
 
 ### no-renamed-exports
 
@@ -190,11 +207,11 @@ MenuItem is not exported by envUI 1.0: use Menu.Item instead (import { Menu } fr
 
 It also reports:
 
-- members of a namespace import: `envui.Input`, `<envui.Input>`, and `envui.InputProps` in TypeScript;
-- the module and its names reached without an import declaration: `require('@envsemble/envui')`, `import('@envsemble/envui')`, awaited or through `.then()`, names destructured from any module object, as in `const { Input } = envui`, and type queries such as `import('@envsemble/envui').InputProps`;
+- members of a namespace import: `envui.Input`, `envui['Input']`, `<envui.Input>`, `createElement(envui['Input'])`, and in TypeScript `envui.InputProps`, `(typeof envui)['Input']` and members through an assertion, such as `(envui as any).Input`;
+- the module and its names reached without an import declaration: `require('@envsemble/envui')`, `import('@envsemble/envui')`, awaited or through `.then()`, `import envui = require('@envsemble/envui')` in TypeScript, names destructured from any module object, as in `const { Input } = envui`, `const { ['Input']: Field } = envui` or the assignment `({ Input } = envui)`, and type queries such as `import('@envsemble/envui').InputProps`;
 - rendering a name that became a namespace of parts, such as `<Menu>` or `<Table>`, which must now be `<Menu.Root>` or `<Table.Root>`, in JSX or through `createElement()`, `React.createElement()` and the JSX runtime's `jsx()`.
 
-Type imports count. A name is checked where it resolves to envUI, so a local `Menu` or a parameter named `envui` that shadows the import passes. Only the entry point that exported a name is checked, so an icon named `Input` from `@envsemble/envui/icons` passes. The rule has no options.
+Type imports count. A name is read statically, so a member with a computed key, such as `envui[name]`, or a module object passed through a function is not followed. A name is checked where it resolves to envUI, so a local `Menu` or a parameter named `envui` that shadows the import passes. Only the entry point that exported a name is checked, so an icon named `Input` from `@envsemble/envui/icons` passes. A module listed in [`reexportModules`](#settings) is checked as `@envsemble/envui`. The rule has no options.
 
 What the codemods' map says to do instead comes with the report:
 

@@ -1,6 +1,7 @@
 import { Button, Link, Stack, Tabs, Text } from '@envsemble/envui';
 import { Markdown, type MarkdownLinkProps } from '@envsemble/envui/content';
 import { documents } from '../Reference';
+import { useViewTabs } from '../navigation/useDocumentationRoute';
 import { Documentation } from './Documentation';
 import usageSkill from '../../../../.agents/skills/envui-use/SKILL.md?raw';
 import migrationSkill from '../../../../.agents/skills/envui-migrate/SKILL.md?raw';
@@ -21,6 +22,10 @@ export function GettingStarted() {
   const query = new URLSearchParams(location.hash.split('?')[1] ?? '');
   const selectedSkill =
     query.get('skill') ?? (query.get('section') === 'local-development' ? 'migrate' : 'use');
+  // The guidance tabs keep focus as the page's views do, rather than moving it to the page.
+  const skillTabs = useViewTabs(
+    (value) => `overview/get-started?skill=${value}&section=local-development`,
+  );
   const setup = documents.find((document) => document.id === 'setup')!;
   const selectedDocument =
     documents.find((document) => document.id === query.get('document')) ??
@@ -40,10 +45,7 @@ export function GettingStarted() {
         <Tabs
           aria-label="Agent guidance"
           value={selectedSkill}
-          onValueChange={(value) => {
-            if (value)
-              location.hash = `/overview/get-started?skill=${value}&section=local-development`;
-          }}
+          {...skillTabs}
           items={[
             {
               value: 'use',

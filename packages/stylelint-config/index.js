@@ -9,14 +9,50 @@ const documentation =
 
 /** Not inside `url(…)`, where a data URL can spell colors of its own image. */
 const outsideUrl = String.raw`(?<!\burl\(\s*(?:"[^"]*|'[^']*|[^"')]*))`;
+/** Not inside a CSS string, such as the text of `content: "rgb(1 2 3)"`. */
+const outsideString = String.raw`(?<!^(?:[^"'\\]|\\.|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')*(?:"(?:[^"\\]|\\.)*|'(?:[^'\\]|\\.)*))`;
 /** The start of a color function call. */
 const colorFunctionStart = String.raw`(?<![\w-])(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(`;
+/**
+ * How deeply the patterns below follow nested parentheses, such as a fallback's fallback. A
+ * regular expression can't recurse, so the patterns are built to this depth, which no real value
+ * reaches; deeper nesting counts as raw.
+ */
+const nestingDepth = 8;
+/** Builds a pattern `nestingDepth` levels deep, each level wrapping the one inside it. */
+const nested = (innermost, wrap) =>
+  Array.from({ length: nestingDepth }).reduce((inner) => wrap(inner), innermost);
+/**
+ * A custom property whose fallback, if it has one, is custom properties too, separated by spaces
+ * or commas, each with a fallback of custom properties in turn: `var(--a, var(--b, var(--c)))`.
+ * The ESLint plugin's no-raw-colors reads fallbacks the same way.
+ */
+const customProperty = nested(
+  String.raw`var\(\s*--[\w-]+\s*\)`,
+  (inner) => String.raw`var\(\s*--[\w-]+\s*(?:,[\s,]*(?:${inner}(?=[\s,)])[\s,]*)*)?\)`,
+);
+/** Text whose parentheses balance. */
+const balanced = nested('[^()]*', (inner) => String.raw`(?:[^()]|\(${inner}\))*`);
+/** The rest of a call's arguments, and the rest of one comma-separated argument. */
+const restOfCall = balanced;
+const restOfArgument = String.raw`(?:[^(),]|\(${balanced}\))*`;
+/**
+ * Arguments that make no raw color: a relative color derived from a token (`hsl(from …)`), or
+ * channels that all come from custom properties, each a `var()` whose fallback, if any, is a
+ * `var()` too, as in `oklch(var(--l) var(--c) var(--h))` or `rgb(var(--brand-rgb))`, with any
+ * alpha after the `/` or as the last of two or four comma-separated arguments:
+ * `rgb(var(--rgb) / 50%)` and `rgba(var(--rgb), 0.5)` alike. `color()` names its color space
+ * first.
+ */
+const customChannels = String.raw`(?:\s*from\b|(?:(?<=color\()\s*[a-z][\w-]*\s+)?\s*${customProperty}(?:\s+${customProperty})*\s*(?:\/${restOfCall})?\)|\s*${customProperty}\s*(?:,\s*${customProperty}\s*,\s*${customProperty}\s*)?(?:,${restOfArgument})?\))`;
 
 /**
- * Color functions with literal channels, as a Stylelint regular expression; relative colors derived
- * from a token (`hsl(from …)`) and colors inside `url()` pass. envUI's own style sheets use it too.
+ * Color functions with a channel that is not a custom property, as a Stylelint regular expression:
+ * a number, percentage, angle, keyword such as `none`, calculation or fallback. Relative colors
+ * derived from a token (`hsl(from …)`), channels from custom properties and colors inside `url()`
+ * or a string pass. envUI's own style sheets use it too.
  */
-export const rawColorFunction = `/${outsideUrl}${colorFunctionStart}(?!\\s*from\\b)/i`;
+export const rawColorFunction = `/${outsideString}${outsideUrl}${colorFunctionStart}(?!${customChannels})/i`;
 
 /**
  * The z-index values that pass: `auto`, the global keywords, and a custom property, also inside
@@ -55,9 +91,9 @@ export const hairlineProperties = [
   '/^--[\\w-]*(?:shadow|hairline)$/',
 ];
 
-/** A whole color function call outside url(), for the message. */
+/** A whole raw color function call outside url() and strings, for the message. */
 const colorCall = new RegExp(
-  String.raw`${outsideUrl}${colorFunctionStart}[^()]*(?:\([^()]*\)[^()]*)*\)?`,
+  String.raw`${outsideString}${outsideUrl}${colorFunctionStart}(?!${customChannels})${balanced}\)?`,
   'i',
 );
 

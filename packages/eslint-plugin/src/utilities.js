@@ -120,3 +120,32 @@ export function isFunction(node) {
     node?.type === 'ArrowFunctionExpression'
   );
 }
+
+/** The settings the plugin reads from `settings.envui`, shared by its rules. */
+const settingNames = new Set(['reexportModules']);
+
+/**
+ * The plugin's shared settings, from `settings.envui` in the ESLint configuration:
+ * `reexportModules`, the modules of the application that re-export envUI's components under
+ * envUI's names, such as `'./ui'` or `'@/components/ui'`. A module is matched by its specifier
+ * exactly as an import writes it. Throws on a malformed or unknown setting.
+ */
+export function pluginSettings(context) {
+  const settings = context.settings?.envui ?? {};
+  if (typeof settings !== 'object' || Array.isArray(settings))
+    throw new Error('envui: settings.envui must be an object, such as { reexportModules: [] }.');
+  const unknown = Object.keys(settings).filter((name) => !settingNames.has(name));
+  if (unknown.length > 0)
+    throw new Error(
+      `envui: unknown setting ${unknown.map((name) => `settings.envui.${name}`).join(', ')}. Known settings: ${[...settingNames].join(', ')}.`,
+    );
+  const { reexportModules = [] } = settings;
+  if (
+    !Array.isArray(reexportModules) ||
+    reexportModules.some((module) => typeof module !== 'string' || module === '')
+  )
+    throw new Error(
+      "envui: settings.envui.reexportModules must be an array of module specifiers, such as ['./ui', '@/components/ui'].",
+    );
+  return { reexportModules: new Set(reexportModules) };
+}

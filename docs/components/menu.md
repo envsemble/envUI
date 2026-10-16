@@ -104,7 +104,7 @@ Menus have one anatomy, which Select's and Combobox's popups share, and follow t
 
 - **Opening and closing**: Menu.Root opens below its trigger, lined up with the trigger's end, by default; `side` and `align` change that, and it flips to the other side where the window has no room. It fades in and, without a reduced-motion preference, grows from its trigger. It closes when an action or a radio item is chosen, with <kbd>Esc</kbd> and with a press outside it; a checkbox item keeps it open, so several options can change. `open`, `defaultOpen` and `onOpenChange` control it.
 - **Focus**: opened with the keyboard, the menu highlights its first item; opened with the pointer, the menu itself takes focus, and <kbd>↓</kbd> highlights the first item. The pointer highlights the items it moves over. Once the menu closes, focus returns to the trigger.
-- **Hover, focus and disabled**: a highlighted row darkens by the shared state rule in [colors and themes](../foundations/colors.md), and the keyboard also shows the focus ring. A disabled item is dimmed with the shared disabled opacity and reports `aria-disabled`; the arrow keys still reach it, but a disabled action, choice or submenu row does nothing when chosen.
+- **Hover, focus and disabled**: a highlighted row takes the popup hover fill, `--color-bg-popup-hover`, a color token of its own as [colors and themes](../foundations/colors.md) describes, and the keyboard also shows the focus ring. A disabled item is dimmed with the shared disabled opacity and reports `aria-disabled`; the arrow keys still reach it, but a disabled action, choice or submenu row does nothing when chosen.
 - **Choices**: a checked radio or checkbox item shows a check mark and a medium-weight label. Menu.RadioGroup reports the chosen item's `value` through `onValueChange`, and Menu.CheckboxItem its new state through `onCheckedChange`; set `closeOnClick` to change whether choosing closes the menu.
 - **Destinations**: with `href` an item is a native link, rendered through the `LinkProvider`'s link component so routing stays with the application; `target` and `rel` work as on any link.
 - **Shortcuts**: `shortcut` shows a hint such as Ctrl+Shift+P as keys and sets `aria-keyshortcuts`, such as Control+Shift+P; arrows are announced by their key names, such as ArrowLeft, and the plus key as Plus. A sequence, such as Ctrl+K Ctrl+S, shows its keys without the attribute. The menu does not bind the keys; the application handles them.
@@ -173,6 +173,7 @@ Menus have one anatomy, which Select's and Combobox's popups share, and follow t
 
 - An `aria-label` for every Menu.Root and ContextMenu, and for an icon-only trigger.
 - A visible control for every action of a context menu.
+- Focus for after an action removes the menu's trigger, as a row's Delete does: move it to the neighbouring row's trigger, or to the list when it is empty, so it doesn't fall back to the page.
 - The keys behind every shortcut hint, and the routing behind `href`, through `LinkProvider`.
 - An `aria-label` on trailing content that a number alone doesn't explain, such as "3 unresolved" on a CounterBadge, since trailing content is part of the item's name.
 - The switch between organizations, with its progress, and translated `heading`, `createLabel`, `placeholder` and `aria-label` where the interface is not in English.

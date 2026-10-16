@@ -54,9 +54,15 @@ ruleTester.run('no-html-elements', rule, {
     '<Menu.Root role="menu" />',
     '<Dialog role="alertdialog" title="Delete?" />',
     '<Tabs role="tablist" items={items} />',
-    // envUI's own components set their roles; a role on one refines it.
-    'import { Popover, Menu, Surface } from \'@envsemble/envui\'; <><Popover role="dialog" /><Menu.CheckboxItem role="checkbox" /><Surface role="dialog" /></>;',
-    'import * as ui from \'@envsemble/envui\'; <ui.Text role="alert">Saved</ui.Text>;',
+    // An envUI component that renders the role itself; a role on it refines its own.
+    'import { Popover, Menu } from \'@envsemble/envui\'; <><Popover role="dialog" /><Menu.Submenu role="menu" /></>;',
+    'import * as ui from \'@envsemble/envui\'; <><ui.Popover role="dialog" /><ui.Menu.Submenu role="menu" /></>;',
+    'import { Popover as Card } from \'@envsemble/envui\'; <Card role="dialog" />;',
+    'import { Spinner } from \'@envsemble/envui\'; <Spinner role="progressbar" label="Saving" />;',
+    'import { MarkdownEditor } from \'@envsemble/envui/content\'; <MarkdownEditor role="textbox" />;',
+    'import { RichTextEditor } from \'@envsemble/envui/rich-text\'; <RichTextEditor role="textbox" />;',
+    // Without an import, the full name decides.
+    '<Menu.Submenu role="menu" />',
     // Roles envUI has no component for, and roles that only make sense inside a container.
     '<div role="region" aria-label="Summary" />',
     '<li role="menuitem">Rename</li>',
@@ -242,6 +248,79 @@ ruleTester.run('no-html-elements', rule, {
       code: 'function Local() { const Popover = Box; return <Popover role="dialog" />; }',
       errors: [uses('Dialog', '<Popover role="dialog">')],
     },
+    // An envUI component that does not render the role: the role hand-rolls the widget on it.
+    {
+      code: 'import { Surface } from \'@envsemble/envui\'; <Surface role="dialog" aria-modal="true" />;',
+      errors: [uses('Dialog', '<Surface role="dialog">')],
+    },
+    {
+      code: 'import { Stack, Card } from \'@envsemble/envui\'; <Stack role="menu"><Card role="menuitem">Rename</Card></Stack>;',
+      errors: [uses('Menu.Root', '<Stack role="menu">')],
+    },
+    {
+      code: 'import * as ui from \'@envsemble/envui\'; <ui.Text role="alert">Saved</ui.Text>;',
+      errors: [uses('Alert', '<ui.Text role="alert">')],
+    },
+    {
+      code: 'import { Popover } from \'@envsemble/envui\'; <Popover role="menu" />;',
+      errors: [uses('Menu.Root', '<Popover role="menu">')],
+    },
+    // A part of the namespace that the role names is not the component that renders it.
+    {
+      code: 'import { Menu } from \'@envsemble/envui\'; <><Menu.Separator role="menu" /><Menu.Item role="menu" /></>;',
+      errors: [
+        uses('Menu.Root', '<Menu.Separator role="menu">'),
+        uses('Menu.Root', '<Menu.Item role="menu">'),
+      ],
+    },
+    {
+      code: '<><Menu.Separator role="menu" /><Menu.Item role="menu" /></>',
+      errors: [
+        uses('Menu.Root', '<Menu.Separator role="menu">'),
+        uses('Menu.Root', '<Menu.Item role="menu">'),
+      ],
+    },
+    // Another library's component is not envUI's, whatever its name.
+    {
+      code: 'import { Dialog, Button } from \'other-lib\'; <><Dialog role="dialog" /><Button role="button" /></>;',
+      errors: [
+        uses('Dialog', '<Dialog role="dialog">'),
+        uses('Button', '<Button role="button">', {
+          alternatives: icon,
+          imports: 'Button, IconButton',
+        }),
+      ],
+    },
+    // The local name of an import does not make it the component of that name.
+    {
+      code: 'import { Surface as Dialog } from \'@envsemble/envui\'; <Dialog role="dialog" />;',
+      errors: [uses('Dialog', '<Dialog role="dialog">')],
+    },
+    // envUI's icons are not its components.
+    {
+      code: 'import { Button } from \'@envsemble/envui/icons\'; <Button role="button" />;',
+      errors: [
+        uses('Button', '<Button role="button">', {
+          alternatives: icon,
+          imports: 'Button, IconButton',
+        }),
+      ],
+    },
+    // Menu items render menuitemcheckbox and menuitemradio, and a menu's radio group a group.
+    {
+      code: 'import { Menu } from \'@envsemble/envui\'; <><Menu.CheckboxItem role="checkbox" /><Menu.RadioItem role="radio" /><Menu.RadioGroup role="radiogroup" /></>;',
+      errors: [
+        uses('Checkbox', '<Menu.CheckboxItem role="checkbox">'),
+        uses('Radio', '<Menu.RadioItem role="radio">', {
+          imports: 'Radio, RadioGroup',
+          note: 'Put the radios in a RadioGroup.',
+        }),
+        uses('RadioGroup', '<Menu.RadioGroup role="radiogroup">', {
+          imports: 'Radio, RadioGroup',
+          note: 'Give it a Radio for each option.',
+        }),
+      ],
+    },
     { code: '<div role="tablist" />', errors: [uses('Tabs', '<div role="tablist">')] },
     { code: '<div role="tree" />', errors: [uses('Tree', '<div role="tree">')] },
     { code: '<div role="tooltip" />', errors: [uses('Tooltip', '<div role="tooltip">')] },
@@ -324,6 +403,15 @@ ruleTester.run('no-html-elements in link adapters', rule, {
     'function RouterLink(props) { return <a href={props.href} {...props} />; }\n<LinkProvider component={RouterLink}>{app}</LinkProvider>;',
     '<LinkProvider component={(props) => <a href={props.href} {...props} />}>{app}</LinkProvider>;',
     'const RouterLink = memo(forwardRef((props, ref) => <a ref={ref} href={props.href} />));\n<ui.LinkProvider component={RouterLink} />;',
+    // An adapter kept in an object and passed as its member.
+    'const adapters = { link: (props) => <a href={props.href} {...props} /> };\n<LinkProvider component={adapters.link} />;',
+    "const config = { adapters: { link(props) { return <a href={props.href} />; } } };\n<LinkProvider component={config.adapters['link']} />;",
+    'function RouterLink(props) { return <a href={props.href} />; }\nconst adapters = { link: RouterLink };\n<LinkProvider component={adapters.link} />;',
+    // Optional chaining, a template key, and a choice between adapters.
+    'const adapters = { link: (props) => <a href={props.href} /> };\n<LinkProvider component={adapters?.link} />;',
+    'const adapters = { link: (props) => <a href={props.href} /> };\n<LinkProvider component={adapters[`link`]} />;',
+    'const A = (props) => <a href={props.href} />;\nconst B = (props) => <a href={props.href} />;\n<LinkProvider component={external ? A : B} />;',
+    'const X = (props) => <a href={props.href} />;\nconst L = (props) => <a href={props.href} />;\n<LinkProvider component={X ?? L} />;',
   ],
   invalid: [
     // An anchor elsewhere, and other raw elements inside an adapter, are still reported.
@@ -338,6 +426,11 @@ ruleTester.run('no-html-elements in link adapters', rule, {
       ],
     },
     { code: '<a href="/settings">Settings</a>', errors: [anchor] },
+    // Another member of the object is not the adapter.
+    {
+      code: 'const parts = { link: (props) => <a href={props.href} />, card: () => <a href="/card">Card</a> };\n<LinkProvider component={parts.link} />;',
+      errors: [anchor],
+    },
   ],
 });
 
@@ -382,4 +475,74 @@ test('an unknown allow entry fails with the known entries', () => {
       ),
     /unknown allow entry "buton". Known entries: \[role=button\]/,
   );
+});
+
+// An application module that re-exports envUI, listed in the shared settings, stands for envUI.
+const reexports = { envui: { reexportModules: ['./ui', '@/components/ui'] } };
+
+ruleTester.run('no-html-elements with modules that re-export envUI', rule, {
+  valid: [
+    {
+      code: 'import { Dialog } from \'./ui\'; <Dialog role="alertdialog" title="Delete?" />;',
+      settings: reexports,
+    },
+    {
+      code: 'import { Popover as Card, Menu } from \'@/components/ui\'; <><Card role="dialog" /><Menu.Submenu role="menu" /></>;',
+      settings: reexports,
+    },
+    {
+      code: 'import * as ui from \'./ui\'; <ui.Popover role="dialog" />;',
+      settings: reexports,
+    },
+  ],
+  invalid: [
+    // Without the setting, a module of the application is not envUI.
+    {
+      code: 'import { Dialog } from \'./ui\'; <Dialog role="alertdialog" title="Delete?" />;',
+      errors: [uses('Dialog', '<Dialog role="alertdialog">')],
+    },
+    // A module is matched as written, and a name counts by what it exports, as from envUI.
+    {
+      code: 'import { Dialog } from \'../ui\'; <Dialog role="dialog" />;',
+      settings: reexports,
+      errors: [uses('Dialog', '<Dialog role="dialog">')],
+    },
+    {
+      code: 'import { Surface as Dialog } from \'./ui\'; <Dialog role="dialog" />;',
+      settings: reexports,
+      errors: [uses('Dialog', '<Dialog role="dialog">')],
+    },
+    // Raw elements are reported as before.
+    {
+      code: "import { Dialog } from './ui'; <button />;",
+      settings: reexports,
+      errors: [
+        uses('Button', 'a raw <button>', { alternatives: icon, imports: 'Button, IconButton' }),
+      ],
+    },
+  ],
+});
+
+test('settings.envui.reexportModules must list module specifiers', () => {
+  const linter = new Linter();
+  const verify = (settings) =>
+    linter.verify(
+      '<div />',
+      {
+        plugins: { envui: { rules: { 'no-html-elements': rule } } },
+        languageOptions: { parserOptions: { ecmaFeatures: { jsx: true } } },
+        settings,
+        rules: { 'envui/no-html-elements': 'error' },
+      },
+      'file.js',
+    );
+  assert.throws(
+    () => verify({ envui: { reexportModules: './ui' } }),
+    /settings\.envui\.reexportModules must be an array of module specifiers/,
+  );
+  assert.throws(
+    () => verify({ envui: { reexportModule: ['./ui'] } }),
+    /unknown setting settings\.envui\.reexportModule/,
+  );
+  assert.deepEqual(verify({ envui: { reexportModules: ['./ui'] } }), []);
 });

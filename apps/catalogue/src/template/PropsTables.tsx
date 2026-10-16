@@ -63,6 +63,8 @@ function ExportProps({ name, entry }: { name: string; entry: ExportEntry }) {
                 <Table.Cell label="Default" nowrap>
                   {prop.default !== undefined ? (
                     <Code className="docs-prop-code">{prop.default}</Code>
+                  ) : prop.defaultBuiltIn ? (
+                    'built-in'
                   ) : (
                     '—'
                   )}
@@ -92,7 +94,9 @@ export function PropsTables({ reference }: { reference: Reference }) {
         {sources.map((source, index) => (
           <span key={source}>
             {index > 0 && ', '}
-            <Link href={`https://github.com/envsemble/envUI/blob/main/${source}`}>
+            <Link
+              href={`https://github.com/envsemble/envUI/blob/${__ENVUI_SOURCE_REVISION__}/${source}`}
+            >
               {source.replace('packages/ui/src/', '')}
             </Link>
           </span>

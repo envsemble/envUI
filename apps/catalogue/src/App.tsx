@@ -14,11 +14,12 @@ import { DarkMode } from '@envsemble/envui/icons/DarkMode';
 import { LightMode } from '@envsemble/envui/icons/LightMode';
 import { findReferencePage, overviewViews, viewFor } from './navigation/DocumentationRoutes';
 import { ReferenceContent } from './pages/ReferenceContent';
+import { PageBoundary } from './layout/PageBoundary';
 import { PageHeader } from './layout/PageHeader';
 import { Overview } from './pages/Overview';
 import { Sidebar } from './navigation/Sidebar';
 import { PageNavigation } from './navigation/PageNavigation';
-import { useDocumentationRoute } from './navigation/useDocumentationRoute';
+import { reachedFromTabs, useDocumentationRoute } from './navigation/useDocumentationRoute';
 
 /**
  * The catalogue's scale, comfortable unless the address asks for the compact one with
@@ -62,6 +63,8 @@ export default function App() {
   }, []);
   useEffect(() => {
     document.title = title === 'envUI' ? 'envUI' : `${title} · envUI`;
+    // Moving between a page's views keeps focus on its tabs, where the reader is.
+    if (reachedFromTabs()) return;
     mainElement.current?.focus({ preventScroll: true });
     const section = new URLSearchParams(contentRoute.split('?')[1]).get('section');
     if (section) document.getElementById(section)?.scrollIntoView();
@@ -134,8 +137,10 @@ export default function App() {
       <div className="docs-shell">
         <Sidebar routePath={routePath} page={page} />
         <main id="docs-main" ref={mainElement} tabIndex={-1} className="docs-main">
-          {!isOverview && !page && <PageHeader title={title} breadcrumb="envUI" />}
-          {content}
+          <PageBoundary title={title} route={route}>
+            {!isOverview && !page && <PageHeader title={title} breadcrumb="envUI" />}
+            {content}
+          </PageBoundary>
           <PageNavigation
             path={contentPath}
             view={isOverview ? (overviewView === 'get-started' ? 'usage' : 'preview') : view}

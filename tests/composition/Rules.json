@@ -128,7 +128,10 @@
         "modules": [
           "content/CodeBlock.tsx",
           "diff/CodeDiff.tsx",
+          "diff/countDiffLines.ts",
           "content/internal/CodeThemes.ts",
+          "content/internal/CodeDiffTints.ts",
+          "content/internal/ReadableColors.ts",
           "content/internal/CodeHighlighting.ts",
           "content/internal/useCodeHighlighting.ts"
         ]
@@ -217,6 +220,8 @@
         "modules": [
           "rich-text/RichTextEditor.tsx",
           "rich-text/Reference.tsx",
+          "rich-text/ReferenceAttributes.ts",
+          "rich-text/ReferenceExtension.ts",
           "rich-text/Suggestions.tsx",
           "rich-text/Commands.ts",
           "rich-text/Extensions.ts",

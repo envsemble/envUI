@@ -58,9 +58,11 @@
   max-inline-size: min(18rem, calc(100vw - 2rem));
   padding: var(--space-1) var(--space-2);
   /* Tooltips float over everything at elevation 2, as menus do: a shadow and a hairline edge, so the
-     dark fill separates from a dark surface too. The edge is the boundary in high contrast and what
-     forced colors paint once the shadow is gone. */
-  border: 1px solid var(--elevation-2-border);
+     fill separates from a surface of its own color. On a light page the edge is the dark fill a step
+     darker rather than the light popup edge, which would ring it like a halo; in dark it is the
+     popup edge. The edge is the boundary in high contrast and what forced colors paint once the
+     shadow is gone. */
+  border: 1px solid var(--color-border-neutral-strong);
   border-radius: var(--radius-standard);
   background: var(--color-toast-neutral);
   color: var(--color-on-toast);

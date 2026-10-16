@@ -54,7 +54,7 @@ import { ThemePreferenceProvider, ThemeToggle } from '@envsemble/envui';
 </ThemePreferenceProvider>;
 ```
 
-Add the bootstrap script to the document head so a saved dark theme does not flash light while the application loads. `createThemeBootstrapScript` from `@envsemble/envui/theme-bootstrap` returns the inline script; use the same storage key, and pass the provider's `contrast` when it is `high` or `standard`, so the root has it from the first paint:
+Add the bootstrap script to the document head so a saved dark theme does not flash light while the application loads. `createThemeBootstrapScript` from `@envsemble/envui/theme-bootstrap` returns the inline script; use the same storage key as the provider:
 
 ```ts
 // vite.config.ts
@@ -65,12 +65,20 @@ const themeBootstrap = {
   transformIndexHtml: () => [
     {
       tag: 'script',
-      children: createThemeBootstrapScript({ storageKey: 'app-theme', contrast: 'high' }),
+      children: createThemeBootstrapScript({ storageKey: 'app-theme' }),
       injectTo: 'head-prepend',
     },
   ],
 };
 ```
+
+An application that renders `<html>` with React, as server-rendering frameworks do, adds `suppressHydrationWarning` to that element: the script sets the root's class, `data-env-theme`, `style` and, with a contrast, `data-env-contrast` before React hydrates, so they differ from the server's markup. The prop silences only the attributes of `<html>` itself, not of its children.
+
+```tsx
+<html lang="en" suppressHydrationWarning>
+```
+
+When the application's contrast is fixed, such as an application that is always high contrast, pass it to both: `contrast: 'high'` to the bootstrap script as well as `contrast="high"` to the provider, so the root has it from the first paint. The script marks what it writes with `data-env-contrast-source="envui"`, as the provider marks the contrast it writes, and a provider treats a marked contrast as its own: once the application starts, the provider's contrast replaces it, and a provider at `system` removes it, also when it mounts in place of another, such as a provider keyed by the signed-in user. So when the contrast is a setting that the application stores, the bootstrap script, built once, cannot know it: leave `contrast` out of the script, and the provider applies the stored setting when the application starts.
 
 ### Router links
 
@@ -111,7 +119,7 @@ What a server component passes to a client component must be serializable: strin
 
 The content, rich-text and diff entries depend on Shiki, the Pierre code themes, react-markdown, remark-gfm, marked, Tiptap and Diffs. They are optional peer dependencies: applications using only the main entry do not install them. An application importing `@envsemble/envui/content`, `@envsemble/envui/rich-text` or `@envsemble/envui/diff` installs the packages listed under `peerDependencies` in the package manifest, for example `npm install shiki @shikijs/langs @pierre/theme react-markdown remark-gfm`, and `@pierre/diffs` for the diff entry.
 
-Keep optional content/editor imports with their features. Individual icon imports avoid loading the complete catalogue; see [icons](foundations/icons.md) when adding icons.
+Keep optional content/editor imports with their features. Import icons by subpath, one module each, such as `import { Add } from '@envsemble/envui/icons/Add'`, rather than from the `@envsemble/envui/icons` barrel: the barrel re-exports every symbol, so a bundler reads the whole catalogue for one icon, and Vite without `@vitejs/plugin-react` prints a warning about the `'use client'` directive of each of its thousands of modules (2,734 for one icon). See [icons](foundations/icons.md) when adding icons.
 
 ### Bundle size
 

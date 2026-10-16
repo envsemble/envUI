@@ -20,6 +20,54 @@ test('a provider without a contrast leaves the contrast the page set on the root
   await expect(root).toHaveAttribute('data-env-contrast', 'standard');
 });
 
+test('a provider at system removes the contrast the bootstrap script wrote', async ({ page }) => {
+  // The bootstrap script was built with a high contrast, but the provider, as for a contrast the
+  // user chose and the application stores, now asks for system. A reload must not keep high.
+  await page.route(`${fixtureUrl}/?fixture=adoption`, async (route) => {
+    const response = await route.fetch();
+    const body = (await response.text()).replace(
+      '<html',
+      '<html data-env-contrast="high" data-env-contrast-source="envui"',
+    );
+    await route.fulfill({ response, body });
+  });
+  await page.goto(`${fixtureUrl}/?fixture=adoption`);
+  const root = page.locator('html');
+  await expect(page.getByTestId('theme-toggle')).toBeVisible();
+  await expect(root).not.toHaveAttribute('data-env-contrast');
+  await expect(root).not.toHaveAttribute('data-env-contrast-source');
+});
+
+test('a provider with a contrast replaces the one the bootstrap script wrote', async ({ page }) => {
+  const url = `${fixtureUrl}/?fixture=theme-contrast-provider`;
+  await page.route(url, async (route) => {
+    const response = await route.fetch();
+    const body = (await response.text()).replace(
+      '<html',
+      '<html data-env-contrast="standard" data-env-contrast-source="envui"',
+    );
+    await route.fulfill({ response, body });
+  });
+  await page.goto(url);
+  const root = page.locator('html');
+  await expect(root).toHaveAttribute('data-env-contrast', 'high');
+  await expect(root).toHaveAttribute('data-env-contrast-source', 'envui');
+  // The contrast is now the provider's own, so following the system removes it.
+  await page.getByRole('button', { name: 'Follow the system contrast' }).click();
+  await expect(root).not.toHaveAttribute('data-env-contrast');
+});
+
+test('a provider mounted again removes the contrast its predecessor wrote', async ({ page }) => {
+  // Keyed by the user, the provider mounts again for the second user, whose stored contrast is
+  // system: the first user's high contrast must not stay on the root.
+  await page.goto(`${fixtureUrl}/?fixture=theme-contrast-remount`);
+  const root = page.locator('html');
+  await expect(root).toHaveAttribute('data-env-contrast', 'high');
+  await page.getByRole('button', { name: 'Switch to the second user' }).click();
+  await expect(root).not.toHaveAttribute('data-env-contrast');
+  await expect(root).not.toHaveAttribute('data-env-contrast-source');
+});
+
 test('a theme chosen in one window applies in the other windows of the same origin', async ({
   context,
 }) => {

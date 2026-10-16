@@ -30,18 +30,108 @@ const colorProperty =
 const notColorProperty =
   /radius|width|style|clip|origin|position|size|repeat|attachment|blend|offset|collapse|spacing/i;
 
-/** A hex color, as a whole word. */
-const hexColor = /(?<![\w&-])#(?:[\da-f]{8}|[\da-f]{6}|[\da-f]{3,4})(?![\w-])/gi;
-/** A color function with literal channels; a relative color from a token (`from …`) passes. */
-const colorFunction =
-  /(?<![\w-])(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\((?!\s*from\b)[^()]*(?:\([^()]*\)[^()]*)*\)?/gi;
+/** A hex color, as a whole word. An expression after it makes it a hex color built from one. */
+const hexColor = /(?<![\w&-])#(?:[\da-f]{8}|[\da-f]{6}|[\da-f]{3,4})(?![\w\uE000-])/gi;
+
+/**
+ * A hex color built from a template's expressions: a `#` followed by expressions and hex digits,
+ * at least one of them an expression, as in `#${hex}` or `#fff${alpha}`.
+ */
+const builtHexColor = /(?<![\w&-])#(?=[\da-f]*\uE000)[\da-f\uE000]+(?![\w-])/gi;
+
+/** The start of a color function call. */
+const colorFunctionStart = /(?<![\w-])(rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(/gi;
+
+/**
+ * What stands for each expression of a template literal, which is read as one value: a literal
+ * channel, since the expression may compute any color. The hex patterns above name it as \uE000.
+ */
+const expressionStandIn = '';
+
+/** CSS strings and url() references, whose text may spell colors that are not the style's own. */
+const quotedOrUrl = /"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|url\([^)]*\)/gi;
+
+/**
+ * The end of the parenthesised text that starts at `open`, just after its `(`: the index of the
+ * matching `)`, or the end of the text when it is unclosed.
+ */
+function closingParen(text, open) {
+  let depth = 1;
+  for (let index = open; index < text.length; index += 1) {
+    if (text[index] === '(') depth += 1;
+    else if (text[index] === ')' && --depth === 0) return index;
+  }
+  return text.length;
+}
+
+/** Splits text at a separator outside parentheses. */
+function splitTopLevel(text, separator) {
+  const parts = [];
+  let depth = 0;
+  let start = 0;
+  for (let index = 0; index < text.length; index += 1) {
+    if (text[index] === '(') depth += 1;
+    else if (text[index] === ')') depth -= 1;
+    else if (depth === 0 && separator.test(text[index])) {
+      parts.push(text.slice(start, index));
+      start = index + 1;
+    }
+  }
+  parts.push(text.slice(start));
+  return parts;
+}
+
+/**
+ * Whether channels all come from custom properties: each one a `var()`, whose fallback, if it has
+ * one, is a `var()` too, since a fallback is a color as much as the value.
+ */
+function fromCustomProperties(channels) {
+  return splitTopLevel(channels, /[\s,]/)
+    .filter((token) => token.trim())
+    .every((token) => {
+      const match = /^var\(\s*--[\w-]+\s*(?:,([\s\S]*))?\)$/i.exec(token.trim());
+      return Boolean(match) && (match[1] === undefined || fromCustomProperties(match[1]));
+    });
+}
+
+/**
+ * Whether a color function's arguments make a raw color: any channel that is not a custom
+ * property. A relative color derived from a token (`hsl(from …)`) passes, and so does one whose
+ * channels are custom properties with a literal alpha, after the `/` or as the last of two or four
+ * comma-separated arguments: `rgb(var(--rgb) / 50%)` and `rgba(var(--rgb), 0.5)` alike.
+ */
+function isRawColorFunction(name, args) {
+  if (/^\s*from\b/i.test(args)) return false;
+  let channels = name.toLowerCase() === 'color' ? args.replace(/^\s*[a-z][\w-]*\s/i, ' ') : args;
+  const slash = splitTopLevel(channels, /\//);
+  if (slash.length > 1) channels = slash[0];
+  else {
+    const commas = splitTopLevel(channels, /,/);
+    if (commas.length === 2 || commas.length === 4) channels = commas.slice(0, -1).join(',');
+  }
+  return !fromCustomProperties(channels);
+}
+
+/** The color function calls in a value whose channels are not all custom properties. */
+function rawColorFunctions(value) {
+  const found = [];
+  for (const match of value.matchAll(colorFunctionStart)) {
+    const open = match.index + match[0].length;
+    const close = closingParen(value, open);
+    if (isRawColorFunction(match[1], value.slice(open, close)))
+      found.push(value.slice(match.index, close + 1));
+  }
+  return found;
+}
 
 /** The raw colors in a style value, given the property it sets. */
 function rawColors(text, property) {
-  const value = text.replace(/url\([^)]*\)/gi, ' ');
-  const found = [...value.matchAll(hexColor), ...value.matchAll(colorFunction)].map(
-    (match) => match[0],
-  );
+  const value = text.replace(quotedOrUrl, ' ');
+  const found = [
+    ...[...value.matchAll(hexColor)].map((match) => match[0]),
+    ...[...value.matchAll(builtHexColor)].map((match) => match[0]),
+    ...rawColorFunctions(value),
+  ];
   if (
     property &&
     !property.startsWith('--') &&
@@ -50,7 +140,7 @@ function rawColors(text, property) {
   )
     for (const [word] of value.matchAll(/(?<![\w-])[a-z]+(?![\w(-])/gi))
       if (namedColors.has(word.toLowerCase())) found.push(word);
-  return found;
+  return found.map((color) => color.replaceAll(expressionStandIn, `\${…}`));
 }
 
 /** The name a style object's property sets: `color`, `backgroundColor` or `--accent`. */
@@ -99,9 +189,17 @@ export default {
         }
         if (child.type === 'Literal' && typeof child.value === 'string')
           check(child, child.value, property);
-        else if (child.type === 'TemplateElement')
-          check(child, child.value.cooked ?? child.value.raw, property);
-        return true;
+        // A template literal is one value: `rgb(${r} 0 0)` and `url('${a}') #fff` are read whole,
+        // and the strings and colors in its expressions on their own.
+        else if (child.type === 'TemplateLiteral')
+          check(
+            child,
+            child.quasis
+              .map((quasi) => quasi.value.cooked ?? quasi.value.raw)
+              .join(expressionStandIn),
+            property,
+          );
+        return child.type !== 'TemplateElement';
       });
     }
 

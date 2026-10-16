@@ -1,0 +1,13 @@
+{
+  "$comment": "Color values with nested var() fallbacks, shared by the tests of the ESLint plugin's no-raw-colors and the Stylelint config, so that both read them alike. custom: every channel comes from custom properties, each a var() whose fallback, if any, is var()s too. raw: a fallback deep inside holds a literal channel.",
+  "custom": [
+    "rgb(var(--a, var(--b, var(--c))))",
+    "rgb(var(--a, var(--b), var(--c, var(--d))) / var(--e, var(--f, var(--g))))",
+    "oklch(var(--l, var(--l2, var(--l3))) var(--c) var(--h, var(--h2)))",
+    "rgba(var(--a, var(--b, var(--c, var(--d, var(--e, var(--f)))))), 0.5)"
+  ],
+  "raw": [
+    "rgb(var(--a, var(--b, var(--c, 255 0 0))))",
+    "hsl(var(--h) var(--s, var(--s2, 50%)) var(--l))"
+  ]
+}

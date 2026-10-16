@@ -32,6 +32,8 @@ export const specimensDirectory = fileURLToPath(
 const generatedFile = fileURLToPath(
   new URL('../apps/catalogue/src/generated/Documentation.ts', import.meta.url),
 );
+const changelogFile = fileURLToPath(new URL('../packages/ui/CHANGELOG.md', import.meta.url));
+const changesetDirectory = fileURLToPath(new URL('../.changeset/', import.meta.url));
 
 /** The index's component groups; a component page's category is one of them. */
 export const componentGroups = [
@@ -72,7 +74,7 @@ export const frontmatterSchema = {
   status: { type: 'string', required: true, values: statuses },
   since: { type: 'string', required: true, pattern: /^\d+\.\d+\.\d+$/ },
   category: { type: 'string', required: true, values: componentGroups },
-  aliases: { type: 'strings', required: true },
+  aliases: { type: 'strings', required: true, nonEmpty: true },
   useWhen: { type: 'strings', template: true },
   avoidWhen: { type: 'avoid', template: true },
   related: { type: 'strings', required: true },
@@ -91,6 +93,71 @@ const contained = (directory, path) => {
   const inside = relative(directory, path);
   return inside && !inside.startsWith('..') && !isAbsolute(inside);
 };
+
+/** The changesets' version bumps, in order of size. */
+const bumpOrder = ['patch', 'minor', 'major'];
+
+/** A version raised by a bump: 1.2.3 by minor is 1.3.0. */
+function bumped(version, bump) {
+  const [major, minor, patch] = version.split('.').map(Number);
+  if (bump === 'major') return `${major + 1}.0.0`;
+  if (bump === 'minor') return `${major}.${minor + 1}.0`;
+  return `${major}.${minor}.${patch + 1}`;
+}
+
+/** Orders versions such as 0.10.0 after 0.9.0. */
+const compareVersions = (a, b) => {
+  const [x, y] = [a, b].map((version) => version.split('.').map(Number));
+  return x[0] - y[0] || x[1] - y[1] || x[2] - y[2];
+};
+
+/**
+ * The versions a page's `since` may name: each stable version the library's changelog lists, and
+ * the version its changesets lead to. That is the newest stable version raised by the largest bump
+ * of a pending changeset, counting the packages that share envUI's version (the `fixed` group of
+ * .changeset/config.json). In prerelease mode (.changeset/pre.json) it is the version the
+ * prereleases lead to, such as 1.0.0 for 1.0.0-next.3: the version before the prereleases, from
+ * the mode's initialVersions, raised by the largest bump of every changeset since, released in a
+ * prerelease or not, as Changesets computes it. Prerelease headings such as `## 1.0.0-next.0` are
+ * not versions a page can name. Undefined outside the repository, where the check is skipped.
+ */
+export function libraryVersions({
+  changelog = changelogFile,
+  changesets = changesetDirectory,
+} = {}) {
+  if (!existsSync(changelog)) return undefined;
+  const released = [...readFileSync(changelog, 'utf8').matchAll(/^## (\d+\.\d+\.\d+)(?=\s|$)/gm)]
+    .map((match) => match[1])
+    .sort(compareVersions);
+  const versions = new Set(released);
+  const readJson = (name) => {
+    const file = resolve(changesets, name);
+    return existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : undefined;
+  };
+  const library = '@envsemble/envui';
+  const group = readJson('config.json')?.fixed?.find((names) => names.includes(library)) ?? [
+    library,
+  ];
+  const pre = readJson('pre.json');
+  const bumps = existsSync(changesets)
+    ? readdirSync(changesets)
+        .filter((name) => name.endsWith('.md') && name !== 'README.md')
+        .flatMap((name) => {
+          const source = readFileSync(resolve(changesets, name), 'utf8');
+          const header = source.match(/^---\r?\n([\s\S]*?)\r?\n---/)?.[1] ?? '';
+          return [...header.matchAll(/^['"]?([^'"\s:]+)['"]?:\s*(major|minor|patch)\s*$/gm)]
+            .filter(([, name]) => group.includes(name))
+            .map(([, , bump]) => bump);
+        })
+    : [];
+  const largest = bumps.sort((a, b) => bumpOrder.indexOf(b) - bumpOrder.indexOf(a))[0];
+  const base =
+    (pre?.mode === 'pre' ? pre.initialVersions?.[library] : undefined) ??
+    released.at(-1) ??
+    '0.0.0';
+  if (largest) versions.add(bumped(base, largest));
+  return versions;
+}
 
 export function readProps(directory = documentationDirectory) {
   const file = resolve(directory, 'generated/props.json');
@@ -112,7 +179,7 @@ export function splitFrontmatter(source, path) {
   return { frontmatter, yaml: match[1], body: source.slice(match[0].length) };
 }
 
-function validateFrontmatter(frontmatter, path, { component, template }) {
+function validateFrontmatter(frontmatter, path, { component, template, versions }) {
   const problems = [];
   if (!component) {
     for (const key of Object.keys(frontmatter))
@@ -160,19 +227,66 @@ function validateFrontmatter(frontmatter, path, { component, template }) {
     }
     if (typeof frontmatter.summary === 'string' && !/[.!?]$/.test(frontmatter.summary.trim()))
       problems.push('summary must be a sentence ending with a full stop');
+    if (
+      versions &&
+      typeof frontmatter.since === 'string' &&
+      frontmatter.since.match(frontmatterSchema.since.pattern) &&
+      !versions.has(frontmatter.since)
+    )
+      problems.push(
+        `since ${frontmatter.since} is neither a released version nor the next one (${[...versions].join(', ')})`,
+      );
+    for (const name of Array.isArray(frontmatter.components) ? frontmatter.components : [])
+      if (typeof name === 'string' && name.includes('.'))
+        problems.push(
+          `components lists ${name}, a part: list its namespace, ${name.split('.')[0]}, whose page documents its parts`,
+        );
   }
   if (problems.length)
     throw new Error(`Invalid frontmatter in ${path}:\n  - ${problems.join('\n  - ')}`);
 }
 
-/** A table that lists props by hand, such as `| Name | Contract |`; the template generates them. */
+/** First columns that name what a props table lists. */
+const propsTableNames = [
+  'prop',
+  'props',
+  'name',
+  'property',
+  'properties',
+  'option',
+  'options',
+  'attribute',
+  'attributes',
+  'parameter',
+  'parameters',
+  'argument',
+  'arguments',
+  'field',
+  'fields',
+];
+/**
+ * The columns that make a table one of props: a type, default or contract. A table of attributes
+ * and their values, or of names and descriptions, is not.
+ */
+const propsTableColumns = ['type', 'types', 'contract', 'contracts', 'default', 'defaults'];
+
+/**
+ * A table that lists props by hand, such as `| Name | Contract |` or `| Option | Type |`; the
+ * template generates them.
+ */
 export function isPropsTable(token) {
   if (token.type !== 'table') return false;
   const header = token.header.map((cell) => cell.text.trim().toLowerCase());
   return (
-    ['prop', 'props', 'name', 'property'].includes(header[0]) &&
-    header.some((cell) => ['type', 'contract', 'default', 'description'].includes(cell))
+    propsTableNames.includes(header[0]) &&
+    header.slice(1).some((cell) => propsTableColumns.includes(cell))
   );
+}
+
+/** A fence long enough for a source: three backticks, or one more than its longest run. */
+export function fenceFor(source) {
+  const longest = Math.max(0, ...[...source.matchAll(/`+/g)].map((match) => match[0].length));
+  return '`'.repeat(Math.max(3, longest + 1));
 }
 
 const examplePattern = /^tsx\s+example=(?:"([^"]*)"|(\S+))\s*$/;
@@ -190,6 +304,17 @@ function readTemplate(document, body, { examples, specimens }) {
   for (const token of tokens) {
     if (token.type === 'heading' && token.depth === 1)
       problems.push('only the title is a level-one heading');
+    if (token.type === 'html' && /<h[1-6][\s>]/i.test(token.raw))
+      problems.push(`write headings in Markdown, not as HTML: ${token.raw.trim().split('\n')[0]}`);
+    // "### Props" and "### Props & contracts", but not "### Props forwarding".
+    if (
+      token.type === 'heading' &&
+      token.depth >= 3 &&
+      /^props(?:$|\s*(?:&|and)\s)/i.test(token.text.trim())
+    )
+      problems.push(
+        `"${'#'.repeat(token.depth)} ${token.text}" lists props by hand; the Props section is generated`,
+      );
     if (token.type === 'heading' && token.depth === 2) {
       const section = templateSections.find((item) => item.title === token.text);
       if (!section) {
@@ -286,9 +411,16 @@ function readTemplate(document, body, { examples, specimens }) {
     const headings = accessibility.tokens
       .filter((token) => token.type === 'heading' && token.depth === 3)
       .map((token) => token.text);
-    for (const required of ['envUI provides', 'You provide'])
-      if (!headings.includes(required))
+    for (const required of ['envUI provides', 'You provide']) {
+      const start = accessibility.tokens.findIndex(
+        (token) => token.type === 'heading' && token.depth === 3 && token.text === required,
+      );
+      const list = accessibility.tokens
+        .slice(start + 1)
+        .find((token) => token.type === 'list' || token.type === 'heading');
+      if (start === -1 || list?.type !== 'list' || !list.items.some((item) => item.text.trim()))
         problems.push(`"## Accessibility" needs a "### ${required}" list`);
+    }
     if (headings.includes('Keyboard')) {
       const start = accessibility.tokens.findIndex(
         (token) => token.type === 'heading' && token.text === 'Keyboard',
@@ -337,9 +469,12 @@ export function readDocumentation(
     props = readProps(directory),
     examples = examplesDirectory,
     specimens = specimensDirectory,
+    versions = directory === documentationDirectory ? libraryVersions() : undefined,
   } = {},
 ) {
-  const index = readFileSync(resolve(directory, 'index.md'), 'utf8');
+  // Pages saved with CRLF line endings read as LF, as Git checks them out.
+  const read = (file) => readFileSync(file, 'utf8').replace(/\r\n?/g, '\n');
+  const index = read(resolve(directory, 'index.md'));
   const documents = [
     {
       id: 'index',
@@ -369,18 +504,37 @@ export function readDocumentation(
       const id = basename(path, '.md');
       if (documents.some((document) => document.id === id))
         throw new Error(`Two documentation pages share the name ${id}: ${path}`);
-      const source = readFileSync(file, 'utf8');
+      const source = read(file);
       const { frontmatter, yaml, body } = splitFrontmatter(source, path);
       if (!body.startsWith(`# ${title}\n`) && !body.startsWith(`# ${title}\r\n`))
         throw new Error(`Documentation title differs from its index entry: ${path}`);
       const markdown = body.replace(/^# [^\n]+\r?\n\s*/, '');
       const component = path.startsWith('components/');
-      const firstSection = marked
-        .lexer(markdown)
-        .find((t) => t.type === 'heading' && t.depth === 2);
+      const tokens = marked.lexer(markdown);
+      const firstSection = tokens.find((t) => t.type === 'heading' && t.depth === 2);
       const template = component && firstSection?.text === 'Overview';
+      // A page that uses the template's parts is on the template, whatever its first section.
+      // They are read from the tokens, as the page renders: a fence indented by a few spaces is a
+      // fence, and one shown inside another fence is text.
+      let usesTemplate = false;
+      marked.walkTokens(tokens, (token) => {
+        if (
+          (token.type === 'heading' && token.depth === 2 && token.text === 'Overview') ||
+          (token.type === 'code' && examplePattern.test(token.lang ?? '')) ||
+          (token.type === 'html' && /^<!--\s*specimen:/.test(token.raw.trim()))
+        )
+          usesTemplate = true;
+      });
+      const templateParts =
+        usesTemplate || (frontmatter && ('useWhen' in frontmatter || 'avoidWhen' in frontmatter));
+      if (component && !template && templateParts)
+        throw new Error(
+          `${path} uses the page template, so its first section must be "## Overview", not ${
+            firstSection ? `"## ${firstSection.text}"` : 'missing'
+          }.`,
+        );
       if (component && !frontmatter) throw new Error(`Component page ${path} needs frontmatter.`);
-      if (frontmatter) validateFrontmatter(frontmatter, path, { component, template });
+      if (frontmatter) validateFrontmatter(frontmatter, path, { component, template, versions });
       if (component) {
         if (frontmatter.title !== title)
           throw new Error(`Frontmatter title of ${path} differs from its index entry.`);
@@ -444,6 +598,8 @@ export function readDocumentation(
         );
     }
     document.related = document.frontmatter?.related ?? listed;
+    if (document.related.includes(document.id))
+      throw new Error(`${document.path} lists itself in related.`);
     for (const id of document.related)
       if (!documents.some((entry) => entry.id === id))
         throw new Error(`${document.path} relates to ${id}, which is not an indexed page.`);
@@ -521,7 +677,11 @@ export function renderProps(names, props, headingDepth = 2) {
     for (const prop of entry.props)
       lines.push(
         `| ${codeCell(prop.name)}${prop.required ? ' (required)' : ''} | ${codeCell(prop.type)} | ${
-          prop.default !== undefined ? codeCell(prop.default) : '—'
+          prop.default !== undefined
+            ? codeCell(prop.default)
+            : prop.defaultBuiltIn
+              ? 'built-in'
+              : '—'
         } | ${cell(propDescription(prop))} |`,
       );
     lines.push('');
@@ -568,24 +728,22 @@ export function compileDocument(document, documents, { props, examples = example
     props && document.frontmatter?.components
       ? renderProps(document.frontmatter.components, props)
       : '';
-  if (!document.sections) {
-    if (!propsSection) return `${head}${title}${document.markdown}`;
-    // Pages not yet on the template get the generated props before their related topics.
-    const related = document.markdown.search(/^## Related topics$/m);
-    const at = related === -1 ? document.markdown.length : related;
-    const before = document.markdown.slice(0, at).replace(/\s*$/, '\n\n');
-    return `${head}${title}${before}${propsSection}\n${document.markdown.slice(at)}`.replace(
-      /\n*$/,
-      '\n',
-    );
-  }
+  // A page not yet on the template ships as it is written. Its own "Props & contracts" table says
+  // what each prop is for; the generated tables, without the descriptions its TSDoc does not have
+  // yet, would only repeat it. Their types and defaults ship in generated/props.json, and the
+  // page gets them in place of its table when it moves to the template.
+  if (!document.sections) return `${head}${title}${document.markdown}`;
   const parts = [];
   const write = (section) => {
     let text = '';
     for (const block of section.blocks) {
       if (block.kind === 'markdown') text += block.markdown;
-      else if (block.kind === 'example')
-        text += `\`\`\`tsx example=${block.name}\n${exampleSource(document.id, block.name, examples).replace(/\n*$/, '\n')}\`\`\``;
+      else if (block.kind === 'example') {
+        // The fence outlasts any backticks in the source, and closes on a line of its own.
+        const source = exampleSource(document.id, block.name, examples).replace(/\n*$/, '\n');
+        const fence = fenceFor(source);
+        text += `${fence}tsx example=${block.name}\n${source}${fence}\n`;
+      }
     }
     return text.replace(/\n{3,}/g, '\n\n').replace(/\s*$/, '\n');
   };

@@ -1,3 +1,5 @@
+'use client';
+
 import { type ComponentPropsWithoutRef, type MouseEvent, type ReactNode } from 'react';
 import { Error as ErrorIcon } from '../../icons/Error.js';
 import { DecorativeIcon } from '../../internal/DecorativeIcon.js';

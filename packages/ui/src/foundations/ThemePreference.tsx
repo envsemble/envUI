@@ -6,7 +6,6 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useRef,
   useState,
   type ReactNode,
 } from 'react';
@@ -15,7 +14,12 @@ import { Theme, useTheme, type ThemeContrast, type ThemeScale, type ThemeValue }
 import { IconButton, type IconButtonProps } from '../actions/Button.js';
 import { DarkMode } from '../icons/DarkMode.js';
 import { LightMode } from '../icons/LightMode.js';
-import { defaultThemeStorageKey, type ThemePreference } from './ThemeBootstrap.js';
+import {
+  contrastSourceAttribute,
+  defaultThemeStorageKey,
+  ownContrastSource,
+  type ThemePreference,
+} from './ThemeBootstrap.js';
 
 interface ThemePreferenceValue {
   /** The stored choice. */
@@ -46,8 +50,9 @@ export interface ThemePreferenceProviderProps {
    * Contrast of the Theme boundary around the children, and of the document root with
    * applyToDocument: high, standard, or system to follow `prefers-contrast: more`, as on Theme.
    * Defaults to the contrast of an enclosing Theme, and to system. With system, the provider
-   * removes from the root only a contrast it wrote; pass the same contrast to
-   * createThemeBootstrapScript so the root has it before the first paint.
+   * removes from the root only a contrast that envUI wrote: a provider, this one or one before it,
+   * or the bootstrap script. Pass a contrast that is fixed for the application to
+   * createThemeBootstrapScript too, so the root has it before the first paint.
    */
   contrast?: ThemeContrast;
   /**
@@ -101,8 +106,6 @@ export function ThemePreferenceProvider({
       : readSystemTheme(),
   );
   const theme: ThemeValue = preference === 'system' ? systemTheme : preference;
-  // Whether the root's data-env-contrast is this provider's.
-  const wroteContrast = useRef(false);
 
   useEffect(() => {
     if (preference !== 'system' || !window.matchMedia) return;
@@ -131,14 +134,16 @@ export function ThemePreferenceProvider({
     const root = document.documentElement;
     root.classList.add('env-theme');
     root.dataset.envTheme = theme;
-    // Like a Theme boundary, the root leaves system contrast to prefers-contrast: more. The
-    // provider removes only a contrast it wrote, so one the page set itself stays.
+    // Like a Theme boundary, the root leaves system contrast to prefers-contrast: more. What envUI
+    // writes carries a marker on the root, so a provider removes a contrast that it, a provider
+    // before it (such as one keyed by the user) or the bootstrap script wrote, and one the page
+    // set itself stays.
     if (contrast !== 'system') {
       root.dataset.envContrast = contrast;
-      wroteContrast.current = true;
-    } else if (wroteContrast.current) {
+      root.setAttribute(contrastSourceAttribute, ownContrastSource);
+    } else if (root.getAttribute(contrastSourceAttribute) === ownContrastSource) {
       delete root.dataset.envContrast;
-      wroteContrast.current = false;
+      root.removeAttribute(contrastSourceAttribute);
     }
     root.dataset.envScale = scale;
     root.style.colorScheme = theme;

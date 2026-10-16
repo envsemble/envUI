@@ -4,6 +4,8 @@ import {
   isFunction,
   isIntrinsic,
   jsxName,
+  moduleExportName,
+  pluginSettings,
   readData,
   resolveVariable,
   spreadsProps,
@@ -16,6 +18,25 @@ const rolesByName = new Map(roles.map((entry) => [entry.role, entry]));
 const knownIds = new Set([...roles, ...elements].flatMap((entry) => [entry.id, entry.element]));
 knownIds.delete(undefined);
 knownIds.delete('*');
+
+/**
+ * The envUI components that render a role themselves, so that the role on one refines its own:
+ * the entry's owners and the components it suggests.
+ */
+function ownersOf(entry) {
+  return new Set([...(entry.owners ?? []), ...entry.use.map(({ component }) => component)]);
+}
+
+/**
+ * The envUI entry points that export components. The others export icons, assets and a script, whose
+ * names, such as the `Button` icon, are not components.
+ */
+const componentEntryPoints = new Set([
+  '@envsemble/envui',
+  '@envsemble/envui/content',
+  '@envsemble/envui/diff',
+  '@envsemble/envui/rich-text',
+]);
 
 /** The bindings an entry imports: its own list, or the namespaces of the components it uses. */
 function bindings(entry) {
@@ -98,6 +119,22 @@ function hasLinkComponentProps(fn, visitorKeys) {
   );
 }
 
+/**
+ * An expression without the TypeScript `as`, `satisfies` and `!` around it, and without the chain
+ * that optional chaining wraps around `adapters?.link`.
+ */
+function unwrap(expression) {
+  let node = expression;
+  while (
+    node?.type === 'TSAsExpression' ||
+    node?.type === 'TSSatisfiesExpression' ||
+    node?.type === 'TSNonNullExpression' ||
+    node?.type === 'ChainExpression'
+  )
+    node = node.expression;
+  return node;
+}
+
 /** How the message names what was found, such as `a raw <input type="email">`. */
 function describeElement(entry, element, tag) {
   if (entry.describe) return entry.describe.replace('{tag}', tag);
@@ -147,6 +184,10 @@ export default {
   create(context) {
     const [{ allow, renderProps }] = context.options;
     const { sourceCode } = context;
+    const { reexportModules } = pluginSettings(context);
+    /** Whether names from a module are envUI's: an entry point, or a module that re-exports one. */
+    const isEnvuiSource = (source) =>
+      componentEntryPoints.has(source) || reexportModules.has(source);
     const unknown = allow.filter((id) => !knownIds.has(id));
     if (unknown.length > 0)
       throw new Error(
@@ -184,40 +225,121 @@ export default {
     /** Raw anchors inside functions, decided at the end, once every LinkProvider is known. */
     const anchors = [];
 
-    /** The functions an expression stands for: itself, a wrapped one, or a variable's. */
-    function functionsOf(expression, seen = new Set()) {
-      if (!expression || seen.has(expression)) return [];
-      seen.add(expression);
-      if (isFunction(expression)) return [expression];
-      // memo(forwardRef(function RouterLink(…) {…}))
-      if (expression.type === 'CallExpression')
-        return expression.arguments.flatMap((argument) => functionsOf(argument, seen));
-      if (expression.type !== 'Identifier') return [];
-      const variable = resolveVariable(sourceCode, expression, expression.name);
+    /** The expressions a variable is set to where it is declared, and its function declarations. */
+    function valuesOf(identifier) {
+      const variable = resolveVariable(sourceCode, identifier, identifier.name);
       return (variable?.defs ?? []).flatMap((definition) =>
         definition.type === 'FunctionName'
           ? [definition.node]
-          : definition.type === 'Variable'
-            ? functionsOf(definition.node.init, seen)
+          : definition.type === 'Variable' && definition.node.init
+            ? [definition.node.init]
             : [],
       );
+    }
+
+    /**
+     * The expressions a member such as `adapters.link` or `config.adapters['link']` stands for: the
+     * values of that property in the object literals its object stands for.
+     */
+    function membersOf(member, seen) {
+      const { property } = member;
+      const name = member.computed
+        ? property.type === 'Literal'
+          ? String(property.value)
+          : property.type === 'TemplateLiteral' && property.expressions.length === 0
+            ? property.quasis[0].value.cooked
+            : undefined
+        : property.name;
+      if (name === undefined) return [];
+      return objectsOf(member.object, seen).flatMap((object) =>
+        object.properties
+          .filter(
+            (candidate) =>
+              candidate.type === 'Property' &&
+              (candidate.computed ? candidate.key.type === 'Literal' : true) &&
+              moduleExportName(candidate.key) === name,
+          )
+          .map((candidate) => candidate.value),
+      );
+    }
+
+    /** The object literals an expression stands for, through variables and members. */
+    function objectsOf(expression, seen) {
+      const node = unwrap(expression);
+      if (!node || seen.has(node)) return [];
+      seen.add(node);
+      if (node.type === 'ObjectExpression') return [node];
+      if (node.type === 'Identifier')
+        return valuesOf(node).flatMap((value) => objectsOf(value, seen));
+      if (node.type === 'MemberExpression')
+        return membersOf(node, seen).flatMap((value) => objectsOf(value, seen));
+      return [];
+    }
+
+    /** The functions an expression stands for: itself, a wrapped one, a variable's or a member's. */
+    function functionsOf(expression, seen = new Set()) {
+      const node = unwrap(expression);
+      if (!node || seen.has(node)) return [];
+      seen.add(node);
+      if (isFunction(node)) return [node];
+      // memo(forwardRef(function RouterLink(…) {…}))
+      if (node.type === 'CallExpression')
+        return node.arguments.flatMap((argument) => functionsOf(argument, seen));
+      if (node.type === 'Identifier')
+        return valuesOf(node).flatMap((value) => functionsOf(value, seen));
+      // component={adapters.link}
+      if (node.type === 'MemberExpression')
+        return membersOf(node, seen).flatMap((value) => functionsOf(value, seen));
+      // component={external ? ExternalLink : RouterLink} and component={custom ?? RouterLink}:
+      // either may be rendered, so each is an adapter.
+      if (node.type === 'ConditionalExpression')
+        return [node.consequent, node.alternate].flatMap((branch) => functionsOf(branch, seen));
+      if (node.type === 'LogicalExpression')
+        return [node.left, node.right].flatMap((side) => functionsOf(side, seen));
+      return [];
     }
 
     const isAdapter = (fn) => adapters.has(fn) || hasLinkComponentProps(fn, sourceCode.visitorKeys);
 
     /**
-     * Whether a JSX element is an envUI component: its name, or the object of a member such as
-     * `ui.Popover` or `Menu.CheckboxItem`, is imported from an envUI entry point.
+     * What a JSX element name stands for when its first name is imported: the entry point, and the
+     * name that entry point exports, `Popover` for `<Popover>` or `<P>` imported as
+     * `Popover as P`, `Menu.Submenu` for `<Menu.Submenu>` or `<ui.Menu.Submenu>`. `name` is
+     * undefined for an import that names no export, such as a default import. `{}` for a local,
+     * and undefined for a name that nothing in the file declares.
      */
-    function isEnvuiComponent(name) {
+    function importedComponent(name) {
+      const members = [];
       let root = name;
-      while (root.type === 'JSXMemberExpression') root = root.object;
-      if (root.type !== 'JSXIdentifier') return false;
+      for (; root.type === 'JSXMemberExpression'; root = root.object)
+        members.unshift(root.property.name);
+      if (root.type !== 'JSXIdentifier') return undefined;
       const variable = resolveVariable(sourceCode, root, root.name);
-      return (variable?.defs ?? []).some((definition) => {
-        const source = definition.type === 'ImportBinding' ? definition.parent.source.value : '';
-        return source === '@envsemble/envui' || source.startsWith('@envsemble/envui/');
-      });
+      if (!variable?.defs.length) return undefined;
+      const definition = variable.defs.find((candidate) => candidate.type === 'ImportBinding');
+      if (!definition) return {};
+      const source = definition.parent.source?.value;
+      if (definition.node.type === 'ImportNamespaceSpecifier')
+        return { source, name: members.join('.') };
+      if (definition.node.type === 'ImportSpecifier')
+        return {
+          source,
+          name: [moduleExportName(definition.node.imported), ...members].join('.'),
+        };
+      return { source, name: undefined };
+    }
+
+    /**
+     * Whether a component element renders a role itself, so that a role on it refines its own: an
+     * envUI component of the role's owners, by the name its entry point, or a module listed in
+     * `settings.envui.reexportModules`, exports when it is imported, or by its written name when
+     * nothing in the file declares it, as in `<Menu.Root role="menu">` without its import.
+     */
+    function ownsRole(node, entry) {
+      const owners = ownersOf(entry);
+      const imported = importedComponent(node.name);
+      if (!imported) return owners.has(jsxName(node.name));
+      return isEnvuiSource(imported.source) && owners.has(imported.name);
     }
 
     return {
@@ -239,12 +361,12 @@ export default {
           typeof role === 'string'
             ? rolesByName.get(role.trim().split(/\s+/)[0].toLowerCase())
             : null;
-        // envUI's components set their own roles: a role on one, such as <Popover role="dialog">,
-        // refines it rather than hand-rolling a widget.
-        if (roleEntry && !isIntrinsic(node.name) && isEnvuiComponent(node.name)) return;
+        // An envUI component that renders the role itself, such as <Popover role="dialog">, refines
+        // its own; on any other, such as <Surface role="dialog"> or another library's Dialog, the
+        // role hand-rolls the widget.
+        if (roleEntry && !isIntrinsic(node.name) && ownsRole(node, roleEntry)) return;
         if (roleEntry) {
-          // An element that is one of the suggested components, such as <Menu.Root role="menu">.
-          if (isAllowed(roleEntry) || bindings(roleEntry).includes(name.split('.')[0])) return;
+          if (isAllowed(roleEntry)) return;
           if (insideRenderProp(node)) return;
           report(node, roleEntry, `<${name} role="${role}">`);
           return;

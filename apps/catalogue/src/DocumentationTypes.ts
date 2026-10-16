@@ -11,6 +11,8 @@ export interface PropEntry {
   /** For a prop required in only some forms of a union, what selects those forms. */
   requiredWhen?: string;
   default?: string;
+  /** The prop has a default that can't be shown as a value, such as a built-in toolbar. */
+  defaultBuiltIn?: boolean;
   description: string;
   deprecated?: string | boolean;
   /** Declared by Base UI and passed through to it. */

@@ -10,9 +10,11 @@
   min-width: 0;
   min-height: 3rem;
   /* Toasts float over everything at elevation 2, as menus do: a shadow and a hairline edge, so the
-     dark fill separates from a dark surface too. The edge is the boundary in high contrast and what
-     forced colors paint once the shadow is gone. */
-  border: 1px solid var(--elevation-2-border);
+     fill separates from a surface of its own color. On a light page each variant's edge is its fill
+     a step darker rather than the light popup edge, which would ring it like a halo; in dark it is
+     the popup edge. The edge is the boundary in high contrast and what forced colors paint once
+     the shadow is gone. */
+  border: 1px solid var(--toast-edge, var(--color-border-neutral-strong));
   border-radius: var(--radius-standard);
   box-shadow: var(--elevation-2-shadow);
   font: var(--type-body-small);
@@ -21,24 +23,28 @@
 }
 .env-toast-neutral {
   --toast-fill: var(--color-toast-neutral);
+  --toast-edge: var(--color-border-neutral-strong);
   --toast-fill-hover: var(--color-bg-neutral-strong-hover);
   --toast-fill-pressed: var(--color-bg-neutral-strong-pressed);
   background: var(--toast-fill);
 }
 .env-toast-success {
   --toast-fill: var(--color-toast-success);
+  --toast-edge: var(--color-border-success-strong);
   --toast-fill-hover: var(--color-bg-success-strong-hover);
   --toast-fill-pressed: var(--color-bg-success-strong-pressed);
   background: var(--toast-fill);
 }
 .env-toast-info {
   --toast-fill: var(--color-toast-info);
+  --toast-edge: var(--color-border-info-strong);
   --toast-fill-hover: var(--color-bg-info-strong-hover);
   --toast-fill-pressed: var(--color-bg-info-strong-pressed);
   background: var(--toast-fill);
 }
 .env-toast-error {
   --toast-fill: var(--color-toast-error);
+  --toast-edge: var(--color-border-danger-strong);
   --toast-fill-hover: var(--color-bg-danger-strong-hover);
   --toast-fill-pressed: var(--color-bg-danger-strong-pressed);
   background: var(--toast-fill);

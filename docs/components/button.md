@@ -103,7 +103,7 @@ A ButtonGroup joins its buttons with a 0.125 rem gap; inner corners take the sha
 
 ## States and behaviour
 
-- **Hover, pressed, focus and disabled** follow the shared state rules in [colors and themes](../foundations/colors.md); disabled buttons use the shared disabled opacity.
+- **Hover, pressed, focus and disabled**: hover and pressed take each variant's hover and pressed color tokens, as [colors and themes](../foundations/colors.md) describes; disabled buttons use the shared disabled opacity.
 - **Pending**: while `pending` is true a spinner replaces the content at the same size; the button reports `aria-busy` and `aria-disabled`, and ignores activation, including form submission and navigation.
 - **Links**: with `href` the button is a native link, rendered through the `LinkProvider`'s link component so routing stays with the application. A disabled link has no destination, cannot be focused or followed, and reports `aria-disabled`.
 - **ConfirmButton**: the first press arms it. It turns destructive, shows `confirmLabel` and announces it with "Press again to confirm." A second press runs `onConfirm`; a double click only arms it, since a second press within 400 ms is ignored. <kbd>Esc</kbd>, leaving the button, disabling it, starting its work and `armedDuration` (4 seconds) disarm it. An icon-only ConfirmButton is round at rest and grows when armed to show its icon with the confirm label, keeping focus.
@@ -166,6 +166,7 @@ A ButtonGroup joins its buttons with a 0.125 rem gap; inner corners take the sha
 - `type="submit"` on the button that submits a form.
 - The routing behind `href`, through `LinkProvider`.
 - A way to recover from a ConfirmButton action where possible, such as an undo.
+- Focus for after a confirmed action removes the button, as a row's Remove does: move it to the neighbouring row's button, or to what replaces the button, so it doesn't fall back to the page.
 
 ## Examples
 

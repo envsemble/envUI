@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ContextMenu, IconButton, List, Menu, Surface } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { Delete } from '@envsemble/envui/icons/Delete';
@@ -19,10 +19,24 @@ const initialEntries: Entry[] = [
 
 export default function ContextMenuForRows() {
   const [entries, setEntries] = useState(initialEntries);
+  const list = useRef<HTMLUListElement>(null);
+  // A deleted row takes its More actions button with it, so focus moves to the next row's, or to
+  // the list when it is empty.
+  const focusNext = useRef<(() => void) | null>(null);
+  useEffect(() => {
+    focusNext.current?.();
+    focusNext.current = null;
+  });
   const add = (entry: Omit<Entry, 'id'>) =>
     setEntries((current) => [...current, { ...entry, id: crypto.randomUUID() }]);
-  const remove = (entry: Entry) =>
+  const remove = (entry: Entry) => {
+    const index = entries.findIndex((item) => item.id === entry.id);
+    focusNext.current = () => {
+      const buttons = list.current?.querySelectorAll('button') ?? [];
+      (buttons[Math.min(index, buttons.length - 1)] ?? list.current)?.focus();
+    };
     setEntries((current) => current.filter((item) => item.id !== entry.id));
+  };
 
   // The same actions open from each row's button and from a right click on the row.
   const actionsFor = (entry: Entry) => (
@@ -60,7 +74,7 @@ export default function ContextMenuForRows() {
       }}
     >
       <Surface tone="pane" padding={3} style={{ inlineSize: 'min(100%, 28rem)' }}>
-        <List.Root aria-label="Documents">
+        <List.Root ref={list} aria-label="Documents" tabIndex={-1}>
           {entries.map((entry) => (
             <List.Item
               key={entry.id}

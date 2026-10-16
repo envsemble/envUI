@@ -9,7 +9,8 @@ import { Code } from '../content/Code.js';
 import { CodeBlock } from '../content/CodeBlock.js';
 import { Checkbox } from '../forms/Checkbox.js';
 import { createRichTextExtensions } from './Extensions.js';
-import { ReferenceContent, referenceFromAttributes, safeRichTextUrl } from './Reference.js';
+import { ReferenceContent } from './Reference.js';
+import { referenceFromAttributes, safeRichTextUrl } from './ReferenceAttributes.js';
 import type { RichTextProps } from './Types.js';
 
 /**

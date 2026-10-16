@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  Fragment,
-  useEffect,
-  useRef,
-  useState,
-  type ComponentPropsWithRef,
-  type CSSProperties,
-} from 'react';
+import { Fragment, useEffect, useRef, useState, type ComponentPropsWithRef } from 'react';
 import { IconButton } from '../actions/Button.js';
 import { ContentCopy } from '../icons/ContentCopy.js';
 import { Check } from '../icons/Check.js';
@@ -15,7 +8,7 @@ import { useTheme } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
 import { codeThemeStyle } from './internal/CodeThemes.js';
 import { useCodeHighlighting } from './internal/useCodeHighlighting.js';
-import type { CodeTokenStyle } from './internal/CodeHighlighting.js';
+import { tokenStyle } from './internal/codeTokenStyle.js';
 
 export interface CodeBlockProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /** The source, as one string; it is shown, highlighted and copied as it is. */
@@ -101,7 +94,7 @@ export function CodeBlock({
             ? tokens.map((line, index) => (
                 <Fragment key={index}>
                   {line.map((token, tokenIndex) => (
-                    <span key={tokenIndex} style={tokenStyle(token[theme])}>
+                    <span key={tokenIndex} style={tokenStyle(token[theme], token[`${theme}High`])}>
                       {token.content}
                     </span>
                   ))}
@@ -122,16 +115,4 @@ export function CodeBlock({
       )}
     </div>
   );
-}
-
-function tokenStyle({ color, fontStyle = 0 }: CodeTokenStyle): CSSProperties {
-  return {
-    color,
-    fontStyle: fontStyle & 1 ? 'italic' : undefined,
-    fontWeight: fontStyle & 2 ? 700 : undefined,
-    textDecoration:
-      [fontStyle & 4 ? 'underline' : '', fontStyle & 8 ? 'line-through' : '']
-        .filter(Boolean)
-        .join(' ') || undefined,
-  };
 }

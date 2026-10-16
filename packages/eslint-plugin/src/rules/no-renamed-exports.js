@@ -2,6 +2,7 @@ import {
   documentationUrl,
   findAttribute,
   moduleExportName,
+  pluginSettings,
   readData,
   resolveVariable,
   staticValue,
@@ -9,13 +10,16 @@ import {
 
 const { modules } = readData('renames.json');
 
+/** The entry point that a module listed in `settings.envui.reexportModules` stands for. */
+const mainEntryPoint = '@envsemble/envui';
+
 /**
  * What 1.0 has in place of a name an entry point no longer exports, if it is one: `to`, the
  * replacements, with the `use` hint of a removed name and the `prop` and `values` of a split.
  */
-function renameOf(source, name) {
-  if (!Object.hasOwn(modules, source)) return undefined;
-  return Object.hasOwn(modules[source], name) ? modules[source][name] : undefined;
+function renameOf(entryPoint, name) {
+  if (entryPoint === undefined) return undefined;
+  return Object.hasOwn(modules[entryPoint], name) ? modules[entryPoint][name] : undefined;
 }
 
 /**
@@ -26,6 +30,27 @@ function isNamespace(name, rename) {
   return (
     rename.namespace === true || (rename.to.length === 1 && rename.to[0].startsWith(`${name}.`))
   );
+}
+
+/** An expression without the TypeScript `as`, `satisfies`, `!` and type assertion around it. */
+function unwrap(expression) {
+  let node = expression;
+  while (
+    node?.type === 'TSAsExpression' ||
+    node?.type === 'TSSatisfiesExpression' ||
+    node?.type === 'TSNonNullExpression' ||
+    node?.type === 'TSTypeAssertion'
+  )
+    node = node.expression;
+  return node;
+}
+
+/** The string a literal key holds: `'Input'` or `` `Input` `` without expressions. */
+function literalKey(node) {
+  if (node?.type === 'Literal' && typeof node.value === 'string') return node.value;
+  if (node?.type === 'TemplateLiteral' && node.expressions.length === 0)
+    return node.quasis[0].value.cooked;
+  return undefined;
 }
 
 const isSplit = (rename) => typeof rename.prop === 'string' && Boolean(rename.values);
@@ -99,6 +124,21 @@ export default {
   },
   create(context) {
     const { sourceCode } = context;
+    const { reexportModules } = pluginSettings(context);
+    /**
+     * The envUI entry point whose names a module source stands for: the entry point itself, or the
+     * main one for a module of the application that re-exports envUI. Messages name the source as
+     * written.
+     */
+    const entryPointOf = (source) =>
+      typeof source !== 'string'
+        ? undefined
+        : Object.hasOwn(modules, source)
+          ? source
+          : reexportModules.has(source)
+            ? mainEntryPoint
+            : undefined;
+    const isEntryPoint = (source) => entryPointOf(source) !== undefined;
     /** Variables bound to an envUI entry point's module object, with its source. */
     const namespaceVariables = new Map();
     /** Variables bound to a name that changed (Menu, DirectionLink, Toast), with its entry. */
@@ -112,11 +152,16 @@ export default {
         .getDeclaredVariables(declaration)
         .find((variable) => variable.name === identifier.name);
 
-    /** The envUI entry point a module object identifier stands for where it is used, if any. */
-    const namespaceOf = (node) =>
-      node.type === 'Identifier' || node.type === 'JSXIdentifier'
-        ? namespaceVariables.get(resolve(node, node.name))
+    /**
+     * The envUI entry point a module object identifier stands for where it is used, if any, also
+     * through `as`, `satisfies` and `!`: `(envui as any).Input`.
+     */
+    const namespaceOf = (node) => {
+      const object = unwrap(node);
+      return object?.type === 'Identifier' || object?.type === 'JSXIdentifier'
+        ? namespaceVariables.get(resolve(object, object.name))
         : undefined;
+    };
 
     /** The literal source of `import('…')` or `require('…')`, when it names an envUI entry point. */
     function moduleSource(node) {
@@ -136,7 +181,7 @@ export default {
           : argument?.type === 'TemplateLiteral' && argument.expressions.length === 0
             ? argument.quasis[0].value.cooked
             : undefined;
-      return typeof value === 'string' && Object.hasOwn(modules, value) ? value : undefined;
+      return isEntryPoint(value) ? value : undefined;
     }
 
     function reportName(node, source, name, rename) {
@@ -171,7 +216,7 @@ export default {
      * or a split, whose rendered elements are told their part.
      */
     function bindName(node, source, name, variable) {
-      const rename = renameOf(source, name);
+      const rename = renameOf(entryPointOf(source), name);
       if (rename === undefined) return;
       if (variable && (isNamespace(name, rename) || isSplit(rename)))
         changedVariables.set(variable, { name, rename });
@@ -180,22 +225,31 @@ export default {
 
     /**
      * Binds what a pattern takes from an entry point's module object: the whole object, as in
-     * `const envui = require(…)`, or names, as in `const { Input } = await import(…)`.
+     * `const envui = require(…)`, or names, as in `const { Input } = await import(…)`. A pattern
+     * that declares takes its `declaration`; one that assigns, as in `({ Input } = envui)`, binds
+     * the variables its names resolve to.
      */
     function bindModule(pattern, source, declaration) {
+      const variableOf = (identifier) =>
+        declaration ? declared(declaration, identifier) : resolve(identifier, identifier.name);
       if (pattern?.type === 'Identifier') {
-        const variable = declared(declaration, pattern);
+        const variable = variableOf(pattern);
         if (variable) namespaceVariables.set(variable, source);
         return;
       }
       if (pattern?.type !== 'ObjectPattern') return;
       for (const property of pattern.properties) {
-        if (property.type !== 'Property' || property.computed) continue;
-        const name =
-          property.key.type === 'Identifier' ? property.key.name : String(property.key.value);
+        if (property.type !== 'Property') continue;
+        // `{ Input }`, `{ 'Input': field }` and `{ ['Input']: field }`.
+        const name = property.computed
+          ? literalKey(property.key)
+          : property.key.type === 'Identifier'
+            ? property.key.name
+            : String(property.key.value);
+        if (name === undefined) continue;
         const local =
           property.value.type === 'AssignmentPattern' ? property.value.left : property.value;
-        const variable = local.type === 'Identifier' ? declared(declaration, local) : undefined;
+        const variable = local.type === 'Identifier' ? variableOf(local) : undefined;
         bindName(property.key, source, name, variable);
       }
     }
@@ -243,7 +297,7 @@ export default {
      * `propValue` reads the static props of a rendered name.
      */
     function checkMember(node, source, local, name, propValue) {
-      const rename = renameOf(source, name);
+      const rename = renameOf(entryPointOf(source), name);
       if (rename === undefined) return;
       if (propValue && (isNamespace(name, rename) || isSplit(rename)))
         reportElement(node, `${local}.${name}`, { name, rename }, propValue, `${local}.`);
@@ -260,11 +314,22 @@ export default {
         if (binding) reportElement(node, node.name, binding, propValue);
         return;
       }
-      const isMember =
-        node.type === 'JSXMemberExpression' ||
-        (node.type === 'MemberExpression' && !node.computed && node.property.type === 'Identifier');
-      const source = isMember ? namespaceOf(node.object) : undefined;
-      if (source) checkMember(node, source, node.object.name, node.property.name, propValue);
+      // <envui.Menu>, createElement(envui.Menu) and createElement(envui['Menu']).
+      const name =
+        node.type === 'JSXMemberExpression'
+          ? node.property.name
+          : node.type === 'MemberExpression'
+            ? memberName(node)
+            : undefined;
+      const source = name === undefined ? undefined : namespaceOf(node.object);
+      if (source) checkMember(node, source, unwrap(node.object).name, name, propValue);
+    }
+
+    /** The name a member reads: `Input` in `envui.Input` and `envui['Input']`. */
+    function memberName(node) {
+      if (!node.computed)
+        return node.property.type === 'Identifier' ? node.property.name : undefined;
+      return literalKey(node.property);
     }
 
     return {
@@ -273,7 +338,7 @@ export default {
         for (const node of program.body) {
           if (node.type !== 'ImportDeclaration') continue;
           const source = node.source.value;
-          if (!Object.hasOwn(modules, source)) continue;
+          if (!isEntryPoint(source)) continue;
           for (const specifier of node.specifiers) {
             const variable = declared(specifier, specifier.local);
             if (specifier.type === 'ImportNamespaceSpecifier') {
@@ -282,10 +347,21 @@ export default {
               bindName(specifier, source, moduleExportName(specifier.imported), variable);
           }
         }
+        // import envui = require('@envsemble/envui') in TypeScript binds the module object too.
+        for (const node of program.body) {
+          const declaration = node.type === 'ExportNamedDeclaration' ? node.declaration : node;
+          if (declaration?.type !== 'TSImportEqualsDeclaration') continue;
+          const reference = declaration.moduleReference;
+          const source =
+            reference.type === 'TSExternalModuleReference' ? reference.expression.value : undefined;
+          if (!isEntryPoint(source)) continue;
+          const variable = declared(declaration, declaration.id);
+          if (variable) namespaceVariables.set(variable, source);
+        }
       },
       ExportNamedDeclaration(node) {
         const source = node.source?.value;
-        if (typeof source !== 'string' || !Object.hasOwn(modules, source)) return;
+        if (!isEntryPoint(source)) return;
         for (const specifier of node.specifiers)
           bindName(specifier, source, moduleExportName(specifier.local), undefined);
       },
@@ -295,6 +371,12 @@ export default {
         if (!node.init) return;
         const source = moduleSource(node.init) ?? namespaceOf(node.init);
         if (source) bindModule(node.id, source, node);
+      },
+      AssignmentExpression(node) {
+        // ({ Input } = require('@envsemble/envui')) and envui = await import('…').
+        if (node.operator !== '=') return;
+        const source = moduleSource(node.right) ?? namespaceOf(node.right);
+        if (source) bindModule(node.left, source, undefined);
       },
       CallExpression(node) {
         const { callee } = node;
@@ -327,7 +409,8 @@ export default {
           checkComponent(node.name, propValue);
       },
       MemberExpression(node) {
-        if (node.computed || node.property.type !== 'Identifier') return;
+        const name = memberName(node);
+        if (name === undefined) return;
         // A member that is rendered is checked as a component, above.
         const { parent } = node;
         if (
@@ -336,19 +419,30 @@ export default {
           isElementFactory(parent)
         )
           return;
-        // envui.Input, and require('@envsemble/envui').Input or (await import('…')).Input.
-        const local = node.object.type === 'Identifier' ? node.object.name : undefined;
-        const source = local ? namespaceOf(node.object) : moduleSource(node.object);
-        if (source) checkMember(node, source, local ?? 'envui', node.property.name, undefined);
+        // envui.Input and (envui as any).Input, and require('@envsemble/envui').Input or
+        // (await import('…')).Input.
+        const object = unwrap(node.object);
+        const local = object?.type === 'Identifier' ? object.name : undefined;
+        const source = local ? namespaceOf(object) : moduleSource(node.object);
+        if (source) checkMember(node, source, local ?? 'envui', name, undefined);
       },
       TSQualifiedName(node) {
         const source = node.left.type === 'Identifier' ? namespaceOf(node.left) : undefined;
         if (source) checkMember(node, source, node.left.name, node.right.name, undefined);
       },
+      TSIndexedAccessType(node) {
+        // (typeof envui)['InputProps'] and (typeof envui)['Input'].
+        const { objectType, indexType } = node;
+        if (objectType.type !== 'TSTypeQuery' || objectType.exprName.type !== 'Identifier') return;
+        const source = namespaceOf(objectType.exprName);
+        const name = indexType.type === 'TSLiteralType' ? literalKey(indexType.literal) : undefined;
+        if (source && name !== undefined)
+          checkMember(node, source, objectType.exprName.name, name, undefined);
+      },
       TSImportType(node) {
         // import('@envsemble/envui').InputProps, and typeof import('@envsemble/envui').Menu.
         const source = node.argument?.literal?.value;
-        if (typeof source !== 'string' || !Object.hasOwn(modules, source)) return;
+        if (!isEntryPoint(source)) return;
         let name = node.qualifier;
         while (name?.type === 'TSQualifiedName') name = name.left;
         if (name?.type === 'Identifier') checkMember(name, source, 'envui', name.name, undefined);

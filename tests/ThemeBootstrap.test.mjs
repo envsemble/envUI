@@ -39,6 +39,8 @@ test('the bootstrap script writes a high or standard contrast before the first p
   for (const contrast of ['high', 'standard']) {
     const root = bootstrap(createThemeBootstrapScript({ contrast }));
     assert.equal(root.attributes['data-env-contrast'], contrast, contrast);
+    // Marked as envUI's, so ThemePreferenceProvider replaces or removes it as its own.
+    assert.equal(root.attributes['data-env-contrast-source'], 'envui', contrast);
   }
 });
 
@@ -48,6 +50,7 @@ test('with a system contrast, the bootstrap script leaves the root contrast alon
     assert.doesNotMatch(script, /data-env-contrast/);
     const root = bootstrap(script, { attributes: { 'data-env-contrast': 'standard' } });
     assert.equal(root.attributes['data-env-contrast'], 'standard');
+    assert.equal(root.attributes['data-env-contrast-source'], undefined);
   }
 });
 

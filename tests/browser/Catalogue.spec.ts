@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { catalogueUrl } from './Servers';
-import { resolve } from 'node:path';
+import { extname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import {
   references,
   foundations as foundationReferences,
@@ -14,6 +14,18 @@ import {
 } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
 
 const offline = pathToFileURL(resolve('dist/envUI.html')).href;
+/** The hosted catalogue from `npm run build:site`, served at a made-up address. */
+const site = resolve('dist/site');
+const siteUrl = 'http://envui.site.test';
+const contentTypes: Record<string, string> = {
+  '.html': 'text/html',
+  '.js': 'text/javascript',
+  '.css': 'text/css',
+  '.svg': 'image/svg+xml',
+  '.woff2': 'font/woff2',
+  '.json': 'application/json',
+  '.png': 'image/png',
+};
 const version = JSON.parse(readFileSync('packages/ui/package.json', 'utf8')).version;
 const components = references.map(({ id }) => id);
 const foundations = foundationReferences.map(({ id }) => id);
@@ -154,6 +166,21 @@ test('live examples keep links in place, show their source, and matrices sit in 
   await expect(
     navigationDisclosure.getByRole('region', { name: 'Navigation item interaction states' }),
   ).toBeVisible();
+});
+
+test('the props view links each source file at the revision the catalogue was built from', async ({
+  page,
+}) => {
+  await page.goto(`${offline}#/components/button/props`);
+  const link = page.getByRole('link', { name: 'actions/Button.tsx', exact: true });
+  // The release tag of a release build, or the commit of any other: never a moving branch.
+  const revision = `(?:v${version.replaceAll('.', '\\.')}|[0-9a-f]{40})`;
+  await expect(link).toHaveAttribute(
+    'href',
+    new RegExp(
+      `^https://github\\.com/envsemble/envUI/blob/${revision}/packages/ui/src/actions/Button\\.tsx$`,
+    ),
+  );
 });
 
 test('pagers center pairs and single destinations at every page width', async ({ page }) => {
@@ -357,6 +384,304 @@ test('single previews retain state when the theme changes', async ({ page }) => 
   await expect(disclosure.locator('details')).toHaveAttribute('open', '');
 });
 
+test('old addresses are replaced by the address of the page they open', async ({ page }) => {
+  await page.goto(`${offline}#/components/buttons/usage`);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+  await expect
+    .poll(() => page.evaluate(() => location.hash))
+    .toBe('#/components/button/guidelines');
+  await page.goto(`${offline}#/components/tables/usage?section=keyboard`);
+  await expect
+    .poll(() => page.evaluate(() => location.hash))
+    .toBe('#/components/table/guidelines?section=keyboard');
+});
+
+test('arrowing between views keeps focus on the tabs and adds no history', async ({ page }) => {
+  await page.goto(`${offline}#/components/link/overview`);
+  await page.goto(`${offline}#/components/menu/accessibility?section=keyboard`);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Menu');
+  const before = await page.evaluate(() => history.length);
+  const tabs = page.getByRole('tablist', { name: 'Menu reference views', exact: true });
+  await tabs.getByRole('tab', { name: 'Accessibility', exact: true }).focus();
+  await page.keyboard.press('ArrowLeft');
+  await expect(tabs.getByRole('tab', { name: 'Guidelines', exact: true })).toBeFocused();
+  await page.keyboard.press('ArrowLeft');
+  await expect(tabs.getByRole('tab', { name: 'Overview', exact: true })).toBeFocused();
+  expect(await page.evaluate(() => location.hash)).toBe('#/components/menu/overview');
+  expect(await page.evaluate(() => history.length)).toBe(before);
+  // Back leaves the page rather than stepping through the views passed on the way.
+  await page.goBack();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Link');
+});
+
+test('arrowing between the overview views keeps focus on the tabs and adds no history', async ({
+  page,
+}) => {
+  await page.goto(`${offline}#/components/link/overview`);
+  await page.goto(`${offline}#/overview/components`);
+  const before = await page.evaluate(() => history.length);
+  const tabs = page.getByRole('tablist', { name: 'Overview views', exact: true });
+  await tabs.getByRole('tab', { name: 'Components', exact: true }).focus();
+  await page.keyboard.press('ArrowRight');
+  const started = tabs.getByRole('tab', { name: 'Get started', exact: true });
+  await expect(started).toHaveAttribute('aria-selected', 'true');
+  await expect(started).toBeFocused();
+  expect(await page.evaluate(() => location.hash)).toBe('#/overview/get-started');
+  expect(await page.evaluate(() => history.length)).toBe(before);
+  await page.goBack();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Link');
+});
+
+test('the agent guidance tabs keep focus, and only a chosen tab is a step in the history', async ({
+  page,
+}) => {
+  await page.goto(`${offline}#/overview/get-started`);
+  const before = await page.evaluate(() => history.length);
+  const tabs = page.getByRole('tablist', { name: 'Agent guidance', exact: true });
+  const use = tabs.getByRole('tab', { name: 'Use envUI', exact: true });
+  const migrate = tabs.getByRole('tab', { name: 'Migrate to envUI', exact: true });
+  await use.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(migrate).toHaveAttribute('aria-selected', 'true');
+  await expect(migrate).toBeFocused();
+  await page.keyboard.press('ArrowLeft');
+  await expect(use).toHaveAttribute('aria-selected', 'true');
+  await expect(use).toBeFocused();
+  expect(await page.evaluate(() => location.hash)).toBe(
+    '#/overview/get-started?skill=use&section=local-development',
+  );
+  expect(await page.evaluate(() => history.length)).toBe(before);
+  // A tab pressed is a step in the history, and focus stays on it.
+  await migrate.click();
+  await expect(migrate).toBeFocused();
+  expect(await page.evaluate(() => history.length)).toBe(before + 1);
+});
+
+test('the views of a page stay in sight on a narrow screen', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(`${offline}#/components/menu/overview`);
+  const tabs = page.getByRole('tablist', { name: 'Menu reference views', exact: true });
+  for (const name of ['Overview', 'Guidelines', 'Accessibility', 'Props']) {
+    const box = await tabs.getByRole('tab', { name, exact: true }).boundingBox();
+    expect(box, name).not.toBeNull();
+    expect(box!.x, name).toBeGreaterThanOrEqual(0);
+    expect(box!.x + box!.width, name).toBeLessThanOrEqual(390);
+  }
+});
+
+test('removing a row moves focus to the next row, not the page', async ({ page }) => {
+  await page.goto(`${offline}#/components/button/overview`);
+  const members = page.getByRole('group', { name: 'Confirm in place example', exact: true });
+  await members.getByRole('button', { name: 'Remove', exact: true }).first().click();
+  // A second press counts once the double-press guard has passed.
+  await page.waitForTimeout(450);
+  await members.getByRole('button', { name: 'Remove Alex?', exact: true }).click();
+  await expect(members.getByRole('button', { name: 'Remove', exact: true }).first()).toBeFocused();
+  await expect(members.getByText('Alex Morgan')).toHaveCount(0);
+  await members.getByRole('button', { name: 'Delete draft', exact: true }).click();
+  await page.waitForTimeout(450);
+  await members.getByRole('button', { name: 'Delete draft?', exact: true }).click();
+  await expect(members.getByRole('button', { name: 'Draft deleted. Restore' })).toBeFocused();
+
+  await page.goto(`${offline}#/components/menu/overview`);
+  const documents = page.getByRole('group', { name: 'Context menu example', exact: true });
+  for (const [name, next] of [
+    ['Quarterly report', 'More actions for Meeting notes'],
+    ['Budget', 'More actions for Meeting notes'],
+  ]) {
+    await documents.getByRole('button', { name: `More actions for ${name}`, exact: true }).click();
+    await page.getByRole('menuitem', { name: /^Delete/ }).click();
+    await expect(documents.getByRole('button', { name: next, exact: true })).toBeFocused();
+  }
+  await documents.getByRole('button', { name: 'More actions for Meeting notes' }).click();
+  await page.getByRole('menuitem', { name: /^Delete/ }).click();
+  await expect(documents.getByRole('list', { name: 'Documents', exact: true })).toBeFocused();
+});
+
+test('an example that fails to load says so in place, and loads again on request', async ({
+  page,
+}) => {
+  const example = '**/src/examples/button/CreateProject.tsx*';
+  await page.route(example, (route) => route.abort());
+  await page.goto(`${catalogueUrl}/#/components/button/overview`);
+  const hero = page.getByRole('group', { name: 'Button example', exact: true });
+  await expect(hero.getByText('The example could not load')).toBeVisible();
+  // The rest of the page is still there.
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+  await expect(hero.getByRole('button', { name: 'Reload the page', exact: true })).toBeVisible();
+  await page.unroute(example);
+  await hero.getByRole('button', { name: 'Try again', exact: true }).focus();
+  await page.keyboard.press('Enter');
+  await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
+  await expect(hero.getByText('The example could not load')).toHaveCount(0);
+  // Focus stays where the example is, rather than falling to the page.
+  expect(await hero.evaluate((group) => group.contains(document.activeElement))).toBe(true);
+});
+
+test('in the hosted build, an example that fails to load offers a reload, which loads it', async ({
+  page,
+}) => {
+  // A build's chunk that failed stays failed until the page reloads, in Chromium and WebKit, and in
+  // WebKit even then, unless it is fetched again.
+  test.skip(!existsSync(resolve(site, 'index.html')), 'Needs the hosted build: npm run build:site');
+  let failing = true;
+  await page.route(`${siteUrl}/**`, (route) => {
+    const { pathname } = new URL(route.request().url());
+    // The hosted Worker's answer for a file that is gone.
+    if (failing && /^\/assets\/CreateProject-[\w-]+\.js$/.test(pathname))
+      return route.fulfill({ status: 404, headers: { 'Cache-Control': 'no-store' } });
+    const file = resolve(site, `.${pathname.endsWith('/') ? `${pathname}index.html` : pathname}`);
+    if (!existsSync(file)) return route.fulfill({ status: 404 });
+    return route.fulfill({
+      body: readFileSync(file),
+      contentType: contentTypes[extname(file)] ?? 'application/octet-stream',
+    });
+  });
+  await page.goto(`${siteUrl}/#/components/button/overview`);
+  const hero = page.getByRole('group', { name: 'Button example', exact: true });
+  await expect(hero.getByText('The example could not load')).toBeVisible();
+  await expect(hero.getByText('Reloading the page loads the example again.')).toBeVisible();
+  await expect(hero.getByRole('button', { name: 'Try again' })).toHaveCount(0);
+  failing = false;
+  await hero.getByRole('button', { name: 'Reload the page', exact: true }).click();
+  await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+});
+
+test('code that fails to load is asked for once, not on every render', async ({ page }) => {
+  const source = /\/src\/examples\/button\/CreateProject\.tsx\?raw/;
+  const warnings: string[] = [];
+  page.on('console', (message) => {
+    if (/uncached promise/i.test(message.text())) warnings.push(message.text());
+  });
+  await page.route(source, (route) => route.abort());
+  await page.goto(`${catalogueUrl}/#/components/button/overview`);
+  const entry = page.locator('.docs-live-example-entry').first();
+  await entry.getByText('Code', { exact: true }).click();
+  await expect(entry.getByText('The code could not load')).toBeVisible();
+  // The example beside it is not loaded again.
+  await expect(
+    page.getByRole('group', { name: 'Button example', exact: true }).getByRole('button').first(),
+  ).toBeVisible();
+  expect(warnings).toEqual([]);
+  await page.unroute(source);
+  await entry.getByRole('button', { name: 'Try again', exact: true }).click();
+  await expect(entry.getByText('The code could not load')).toHaveCount(0);
+  await expect(entry.getByText('CreateProject.tsx', { exact: true })).toBeVisible();
+});
+
+test('a retry returns focus once, and later updates leave focus where it is', async ({ page }) => {
+  const example = '**/src/examples/button/CreateProject.tsx*';
+  await page.route(example, (route) => route.abort());
+  await page.goto(`${catalogueUrl}/#/components/button/overview`);
+  const hero = page.getByRole('group', { name: 'Button example', exact: true });
+  await expect(hero.getByText('The example could not load')).toBeVisible();
+  await page.unroute(example);
+  await hero.getByRole('button', { name: 'Try again', exact: true }).focus();
+  await page.keyboard.press('Enter');
+  await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
+  expect(await hero.evaluate((group) => group.contains(document.activeElement))).toBe(true);
+  // Focus leaves for the page; the theme changes with a click that moves no focus.
+  await page.evaluate(() => {
+    (document.activeElement as HTMLElement | null)?.blur();
+    window.scrollTo(0, document.documentElement.scrollHeight);
+  });
+  const scrolled = await page.evaluate(() => window.scrollY);
+  expect(scrolled).toBeGreaterThan(1000);
+  await page.locator('.docs-theme-toggle').evaluate((toggle: HTMLElement) => toggle.click());
+  await expect(page.locator('.docs-app')).toHaveAttribute('data-env-theme', 'dark');
+  expect(await page.evaluate(() => document.activeElement === document.body)).toBe(true);
+  expect(await page.evaluate(() => window.scrollY)).toBe(scrolled);
+});
+
+test('retrying the code after the example returns focus to the code', async ({ page }) => {
+  const files = '**/src/examples/button/CreateProject.tsx*';
+  await page.route(files, (route) => route.abort());
+  await page.goto(`${catalogueUrl}/#/components/button/overview`);
+  const entry = page.locator('.docs-live-example-entry').first();
+  const hero = page.getByRole('group', { name: 'Button example', exact: true });
+  const code = entry.locator('.docs-live-example-code');
+  await entry.getByText('Code', { exact: true }).click();
+  await expect(hero.getByText('The example could not load')).toBeVisible();
+  await expect(code.getByText('The code could not load')).toBeVisible();
+  await page.unroute(files);
+  await hero.getByRole('button', { name: 'Try again', exact: true }).focus();
+  await page.keyboard.press('Enter');
+  await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
+  await code.getByRole('button', { name: 'Try again', exact: true }).focus();
+  await page.keyboard.press('Enter');
+  await expect(code.getByText('CreateProject.tsx', { exact: true })).toBeVisible();
+  expect(await code.evaluate((element) => element.contains(document.activeElement))).toBe(true);
+});
+
+test('an example that fails to render says so in place, and the rest of the page works', async ({
+  page,
+}) => {
+  await page.route('**/src/examples/button/CreateProject.tsx', (route) =>
+    route.fulfill({
+      contentType: 'text/javascript',
+      body: "export default function CreateProject() { throw new Error('Broken example'); }",
+    }),
+  );
+  await page.goto(`${catalogueUrl}/#/components/button/overview`);
+  const hero = page.getByRole('group', { name: 'Button example', exact: true });
+  await expect(hero.getByText('This example failed to render')).toBeVisible();
+  await expect(hero.getByText('Broken example')).toBeVisible();
+  // It is not a failed load, which a retry or a reload could mend.
+  await expect(page.getByText('The example could not load')).toHaveCount(0);
+  await expect(hero.getByRole('button')).toHaveCount(0);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+  // The other examples and the example's code render.
+  const variants = page.getByRole('group', { name: 'Variants example', exact: true });
+  await expect(variants.getByRole('button').first()).toBeVisible();
+  const entry = page.locator('.docs-live-example-entry').first();
+  await entry.getByText('Code', { exact: true }).click();
+  await expect(entry.getByText('CreateProject.tsx', { exact: true })).toBeVisible();
+  // And the navigation still leads elsewhere.
+  await page
+    .getByRole('navigation', { name: 'Documentation' })
+    .first()
+    .getByRole('link', { name: 'Badge', exact: true })
+    .click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Badge');
+});
+
+test('a page that fails to render says so, and the navigation leads to the others', async ({
+  page,
+}) => {
+  await page.route('**/src/pages/Overview.tsx', (route) =>
+    route.fulfill({
+      contentType: 'text/javascript',
+      body: "export function Overview() { throw new Error('Broken page'); }",
+    }),
+  );
+  await page.goto(`${catalogueUrl}/#/overview`);
+  const main = page.getByRole('main');
+  await expect(main.getByText('This page failed to render')).toBeVisible();
+  await expect(main.getByText('Broken page')).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('envUI');
+  const navigation = page.getByRole('navigation', { name: 'Documentation' }).first();
+  await navigation.getByRole('link', { name: 'Button', exact: true }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+  await expect(main.getByText('This page failed to render')).toHaveCount(0);
+  await expect(
+    page
+      .getByRole('group', { name: 'Button example', exact: true })
+      .getByRole('button', { name: 'Create project', exact: true }),
+  ).toBeVisible();
+  // Going back to the page that failed says so again.
+  await page.goBack();
+  await expect(main.getByText('This page failed to render')).toBeVisible();
+});
+
+test('each Markdown table region is named after its heading', async ({ page }) => {
+  await page.goto(`${offline}#/components/menu/accessibility`);
+  const region = page.getByRole('region', { name: 'Keyboard table', exact: true });
+  await expect(region).toBeVisible();
+  await expect(region.getByRole('table')).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Table', exact: true })).toHaveCount(0);
+});
+
 test('offline hashes support direct links and back/forward navigation', async ({ page }) => {
   await page.goto(`${offline}#/components/select/guidelines`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Select');
@@ -543,4 +868,50 @@ test('the code copy action follows the app theme with the code it copies', async
     // Measured once the theme change has settled.
     await expect.poll(contrast, appTheme).toBeGreaterThan(4.5);
   }
+});
+
+test('highlighted code takes its high-contrast colors where the contrast is high', async ({
+  page,
+}) => {
+  await page.goto(`${catalogueUrl}/#/components/code/overview`);
+  const token = page.locator('.docs-live-example .env-code-block code span').first();
+  await expect(token).toBeVisible();
+  const colors = () =>
+    token.evaluate((span) => {
+      const style = getComputedStyle(span);
+      const probe = document.createElement('span');
+      span.parentElement!.append(probe);
+      const resolve = (value: string) => {
+        probe.style.color = value;
+        return getComputedStyle(probe).color;
+      };
+      const result = {
+        color: style.color,
+        standard: resolve(span.style.getPropertyValue('--env-code-token')),
+        high: resolve(span.style.getPropertyValue('--env-code-token-high')),
+      };
+      probe.remove();
+      return result;
+    });
+  const standard = await colors();
+  expect(standard.high).not.toBe(standard.standard);
+  expect(standard.color).toBe(standard.standard);
+  // The system asks for more contrast, and the Theme follows it.
+  // Firefox restyles for the contrast preference only on load.
+  await page.emulateMedia({ contrast: 'more' });
+  await page.reload();
+  await expect(token).toBeVisible();
+  await expect.poll(async () => (await colors()).color).toBe(standard.high);
+  // A Theme that keeps the standard contrast keeps the standard colors, whatever the system asks.
+  await token.evaluate((span) =>
+    span.closest('.env-theme')!.setAttribute('data-env-contrast', 'standard'),
+  );
+  await expect.poll(async () => (await colors()).color).toBe(standard.standard);
+  await page.emulateMedia({ contrast: 'no-preference' });
+  await page.reload();
+  await expect(token).toBeVisible();
+  await token.evaluate((span) =>
+    span.closest('.env-theme')!.setAttribute('data-env-contrast', 'high'),
+  );
+  await expect.poll(async () => (await colors()).color).toBe(standard.high);
 });

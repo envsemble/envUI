@@ -1,6 +1,6 @@
 'use client';
 
-import type { ComponentPropsWithRef } from 'react';
+import type { ComponentPropsWithRef, MouseEvent } from 'react';
 import { useLinkComponent } from '../navigation/LinkProvider.js';
 
 export type ActionElementProps =
@@ -15,8 +15,30 @@ export type ActionElementProps =
       disabled?: boolean;
     });
 
-/** One native action implementation for button links, navigation and interactive cards. */
-export function ActionElement({ disabled = false, ...props }: ActionElementProps) {
+/** Blocks activation while work runs, including form submission and navigation. */
+const preventActivation = (event: MouseEvent<HTMLElement>) => event.preventDefault();
+
+/**
+ * One native action implementation for button links, navigation and interactive cards. `pending`
+ * marks the action busy and blocks its activation; it is handled here, in the client module, so
+ * that Button, a server component, passes only a boolean.
+ */
+export function ActionElement({
+  disabled = false,
+  pending = false,
+  ...rest
+}: ActionElementProps & { pending?: boolean }) {
+  const props = (
+    pending
+      ? {
+          ...rest,
+          'aria-busy': true,
+          'aria-disabled': true,
+          'data-pending': '',
+          onClick: preventActivation,
+        }
+      : rest
+  ) as typeof rest;
   const LinkComponent = useLinkComponent();
   if (props.href !== undefined) {
     const { href, onClick, tabIndex, ...anchorProps } = props as ComponentPropsWithRef<'a'> & {
