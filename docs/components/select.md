@@ -1,7 +1,7 @@
 ---
 title: Select
-summary: One choice from a list that stays collapsed until opened, on a Button-style trigger with a label, hint and error.
-status: beta
+summary: One choice from a list that stays collapsed until opened, on a Button-style trigger with a label, description and error.
+status: stable
 since: 0.1.0
 category: Forms & selection
 aliases:
@@ -45,7 +45,7 @@ components:
 
 ## Overview
 
-A select chooses one value from a list that stays collapsed until people open it. Its trigger is a pill in a Button style that shows the chosen option, with the label above it and a hint and an error below, as on other fields. Select is built on Base UI's select: the list opens below the trigger, takes keyboard focus, chooses with a press or a key and returns focus to the trigger, and a hidden input takes part in native forms.
+A select chooses one value from a list that stays collapsed until people open it. Its trigger is a pill in a Button style that shows the chosen option, with the label above it and a description and an error below, as on other fields. Select is built on Base UI's select: the list opens below the trigger, takes keyboard focus, chooses with a press or a key and returns focus to the trigger, and a hidden input takes part in native forms.
 
 ```tsx example=ProjectVisibility
 
@@ -54,9 +54,9 @@ A select chooses one value from a list that stays collapsed until people open it
 ## Anatomy
 
 1. **Label** (`label`): above the trigger, 0.75 rem from it, in 0.875 rem text. It names the select, and pressing it focuses the trigger.
-2. **Trigger**: a secondary or outlined Button pill as wide as its content, with the chosen option's label or the `placeholder`.
+2. **Trigger**: a secondary or outline Button pill as wide as its content, with the chosen option's label or the `placeholder`.
 3. **Chevron**: points down, and up while the list is open.
-4. **Hint** (optional, `hint`) and **error** (optional, `error`): under the trigger, 0.75 rem below it, as on a [TextField](../components/text-field.md); the error leads with an error icon.
+4. **Description** (optional, `description`) and **error** (optional, `error`): under the trigger, 0.75 rem below it, as on a [TextField](../components/text-field.md); the error leads with an error icon.
 5. **Popup**: the raised popup surface with a hairline border, 0.5 rem below the trigger, at least as wide as the trigger and at most 24 rem.
 6. **Option**: a rounded row with a check-mark slot and the option's label; a check mark and a medium-weight label show the chosen option.
 
@@ -65,7 +65,7 @@ A select chooses one value from a list that stays collapsed until people open it
 | Variant     | Use for                                                                                                       |
 | ----------- | ------------------------------------------------------------------------------------------------------------- |
 | `secondary` | A select on the page, as a filled pill. The default.                                                          |
-| `outlined`  | A select on a pane, a dialog, a row or a toolbar, where a fill would blend with the surface: a bordered pill. |
+| `outline`   | A select on a pane, a dialog, a row or a toolbar, where a fill would blend with the surface: a bordered pill. |
 
 <!-- specimen: States -->
 
@@ -92,14 +92,14 @@ A select chooses one value from a list that stays collapsed until people open it
 - Give options short labels that start with the word that sets them apart, so typing finds them: "Daily", "Weekly", "Never".
 - Order options in their natural order, such as by size or frequency, or alphabetically where there is none.
 - Use a placeholder that says what to do, such as "Choose an owner", only where nothing is chosen yet; it is not the label.
-- Say in a disabled option's label, or in the hint, why it is unavailable: "Public (turned off by your administrator)".
+- Say in a disabled option's label, or in the description, why it is unavailable: "Public (turned off by your administrator)".
 - Write an error that says what to do: "Choose an owner to continue."
 
 ## Do and don't
 
 ### Do
 
-- Use the secondary trigger on the page and the outlined one on panes, dialogs, rows and toolbars.
+- Use the secondary trigger on the page and the outline one on panes, dialogs, rows and toolbars.
 - Choose a sensible default where one option suits most people, and use a placeholder only where people must decide.
 - Give a select the size of the buttons and fields beside it, such as `sm` in a toolbar.
 - Name a select without a visible label with `aria-label`, such as after the row it sits in.
@@ -129,7 +129,7 @@ A select chooses one value from a list that stays collapsed until people open it
 ### envUI provides
 
 - A trigger with the `combobox` role that reports `aria-expanded` and controls a `listbox` of `option`s with `aria-selected`, following the select-only combobox pattern.
-- The label tied to the trigger, and the hint and the error linked to it as its description, with `aria-invalid` while `error` is set.
+- The label tied to the trigger, and the description and the error linked to it as its description, with `aria-invalid` while `error` is set.
 - Focus that moves into the list as it opens, highlights options as the keyboard and pointer move, and returns to the trigger as it closes.
 - `aria-disabled` on disabled options, and the shared focus ring on the trigger and on the option the keyboard highlights.
 - A hidden input for native form submission, required validation and reset.
@@ -146,7 +146,7 @@ A select chooses one value from a list that stays collapsed until people open it
 
 ### Trigger styles
 
-The secondary trigger fills on the page; the outlined one keeps a border on a pane, where a fill would blend in.
+The secondary trigger fills on the page; the outline one keeps a border on a pane, where a fill would blend in.
 
 ```tsx example=TriggerStyles
 
@@ -154,7 +154,7 @@ The secondary trigger fills on the page; the outlined one keeps a border on a pa
 
 ### In a form
 
-The label sits above a trigger that fits its content, beside a full-width text field. The hint says what the roles mean, and `name` submits the chosen role with the form.
+The label sits above a trigger that fits its content, beside a full-width text field. The description says what the roles mean, and `name` submits the chosen role with the form.
 
 ```tsx example=InviteMember
 
@@ -162,7 +162,7 @@ The label sits above a trigger that fits its content, beside a full-width text f
 
 ### In list rows
 
-A row's title names its select with `aria-label`; outlined triggers stay distinct on the row fill.
+A row's title names its select with `aria-label`; outline triggers stay distinct on the row fill.
 
 ```tsx example=SettingRows
 
@@ -170,7 +170,7 @@ A row's title names its select with `aria-label`; outlined triggers stay distinc
 
 ### Small, in a toolbar
 
-A small, outlined select fits a toolbar beside small text icon buttons. Its list has a check mark on the chosen zoom level.
+A small, outline select fits a toolbar beside small text icon buttons. Its list has a check mark on the chosen zoom level.
 
 ```tsx example=SmallToolbar
 
@@ -178,6 +178,7 @@ A small, outlined select fits a toolbar beside small text icon buttons. Its list
 
 ## Changelog
 
+- **1.0.0**: `options` is `items`, and `SelectOption` is `SelectItem`; `hint` is `description`; `variant="outlined"` is `variant="outline"`, which the codemods write. `className` and `style` style the field's root rather than the trigger, which takes `ref`. The trigger is a Button, the popup the shared popup and the options its rows: `env-dropdown-trigger` is `env-select-trigger`, `env-dropdown-options` `env-select-popup`, `env-dropdown-list` `env-select-list`, `env-dropdown-option` `env-select-item` and `env-dropdown-option-check` `env-select-item-indicator`.
 - **1.0.0**: The open list takes the level-2 elevation, with its shadow and border.
 - **0.5.0**: `density="compact"`. The outlined trigger is the outlined Button style, and the open list takes the popup surface corners, with rounded options inset by its padding.
 - **0.4.0**: `variant`, secondary or outlined. The open list is a raised popup in its own color with a hairline border; options show only hover, press and selection, with stronger hover and pressed shades; the trigger settles like a button while pressed.

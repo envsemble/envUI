@@ -25,7 +25,7 @@ export default function OpenOnError() {
         >
           <TextField
             label="Custom domain"
-            hint="Leave empty to use the default address."
+            description="Leave empty to use the default address."
             value={domain}
             error={error}
             onChange={(event) => setDomain(event.target.value)}

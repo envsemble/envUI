@@ -24,7 +24,7 @@ export default function ChooseOwner() {
     <div style={{ inlineSize: 'min(100%, 24rem)' }}>
       <Combobox
         label="Owner"
-        hint="The person who answers questions about the plan."
+        description="The person who answers questions about the plan."
         items={people}
         value={owner}
         onValueChange={setOwner}

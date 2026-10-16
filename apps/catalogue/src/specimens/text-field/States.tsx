@@ -26,7 +26,7 @@ export default function States() {
           </Specimen>
           <Specimen title="Plain, invalid">
             <TextField
-              variant="plain"
+              variant="underline"
               label="Project handle"
               defaultValue="Northwind Launch"
               error="Use only lowercase letters, numbers and hyphens."

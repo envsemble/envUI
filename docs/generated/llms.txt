@@ -47,7 +47,7 @@ Search envUI before writing any UI element; propose an envUI addition instead of
 - [Checkbox](docs/components/checkbox.md): A native checkbox with its label, for a choice people turn on or off on its own, with a mixed state for a group's parent.
 - [Switch](docs/components/switch.md): An on/off setting that takes effect as soon as it changes.
 - [Radio](docs/components/radio.md): One choice from a few options shown together, side by side or as selectable rows. Also: RadioGroup.
-- [Select](docs/components/select.md): One choice from a list that stays collapsed until opened, on a Button-style trigger with a label, hint and error.
+- [Select](docs/components/select.md): One choice from a list that stays collapsed until opened, on a Button-style trigger with a label, description and error.
 - [Combobox](docs/components/combobox.md): A text field that filters a list of options as people type, to choose one option or, as chips, several.
 - [DatePicker](docs/components/date-picker.md): A field that opens a calendar to choose a date, or a date and time, and the calendar on its own. Also: Calendar.
 - [Slider](docs/components/slider.md): A value in a known range, chosen by dragging a thumb, pressing the track or with the keyboard.

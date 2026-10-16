@@ -8,7 +8,7 @@ export default function LayerOpacity() {
     <div style={{ inlineSize: 'min(100%, 24rem)' }}>
       <Slider
         label="Opacity"
-        hint="Applies to the selected layer."
+        description="Applies to the selected layer."
         value={opacity}
         onValueChange={setOpacity}
         formatValue={(value) => `${value}%`}

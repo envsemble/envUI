@@ -6,7 +6,7 @@ export default function ManagedLimit() {
     <div style={{ inlineSize: 'min(100%, 24rem)' }}>
       <Slider
         label="Storage per member"
-        hint="Sam Lee, your administrator, sets this limit for everyone at Northwind."
+        description="Sam Lee, your administrator, sets this limit for everyone at Northwind."
         min={5}
         max={100}
         step={5}

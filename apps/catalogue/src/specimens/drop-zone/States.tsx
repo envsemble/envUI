@@ -13,7 +13,7 @@ export default function States() {
             pending
             label="Uploading the logo"
             description="This takes a moment"
-            onFiles={ignore}
+            onDropAccepted={ignore}
           />
         </Specimen>
         <Specimen title="Error">
@@ -21,14 +21,14 @@ export default function States() {
             label="Drop a cover image"
             accept="image/*"
             error="Choose an image at least 1200 pixels wide."
-            onFiles={ignore}
+            onDropAccepted={ignore}
           />
         </Specimen>
         <Specimen title="Disabled">
-          <DropZone disabled label="Uploads are paused" onFiles={ignore} />
+          <DropZone disabled label="Uploads are paused" onDropAccepted={ignore} />
         </Specimen>
         <Specimen title="Compact, pending">
-          <DropZone size="sm" pending label="Uploading 3 files" onFiles={ignore} />
+          <DropZone size="sm" pending label="Uploading 3 files" onDropAccepted={ignore} />
         </Specimen>
         <Specimen title="Compact, error">
           <DropZone
@@ -36,7 +36,7 @@ export default function States() {
             label="Attach documents"
             description="Any file, several at once"
             error="One file is larger than 25 MB."
-            onFiles={ignore}
+            onDropAccepted={ignore}
           />
         </Specimen>
       </SpecimenGrid>

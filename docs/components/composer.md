@@ -1,7 +1,7 @@
 ---
 title: Composer
 summary: The message field of a conversation, which grows with its text and sends with Enter, with a send button that stops a running reply.
-status: beta
+status: stable
 since: 0.5.0
 category: Forms & selection
 aliases:
@@ -153,4 +153,5 @@ Without `onSubmit`, <kbd>Enter</kbd> and the send button submit the form, which 
 
 ## Changelog
 
+- **1.0.0**: The send and stop labels come from EnvUIProvider's `messages`, unless `sendLabel` and `stopLabel` set them.
 - **0.5.0**: Composer, on the raised popup surface, with `onSubmit` or form submission, `pending`, `running` and `onStop`, `minRows` and `maxRows`, `start` and `footer`.

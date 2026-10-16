@@ -24,7 +24,6 @@ export default function IconAndAction() {
         autoComplete="current-password"
         endAction={
           <IconButton
-            variant="text"
             icon={visible ? <VisibilityOff /> : <Visibility />}
             aria-label="Show password"
             aria-pressed={visible}

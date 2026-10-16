@@ -24,7 +24,7 @@ export default function UploadProgress() {
         label={uploading ? `Uploading ${uploading}` : 'Drop a report here, or browse'}
         description={uploading ? 'This takes a moment' : 'PDF up to 10 MB'}
         accept="application/pdf,.pdf"
-        onFiles={upload}
+        onDropAccepted={upload}
       />
       <Text variant="caption" emphasis="muted" role="status">
         {done}

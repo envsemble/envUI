@@ -1,7 +1,7 @@
 ---
 title: ColorPicker
 summary: A color area, a hue slider and a HEX field for choosing an opaque color, and a color swatch that shows one.
-status: beta
+status: stable
 since: 0.1.0
 category: Forms & selection
 aliases:
@@ -52,7 +52,7 @@ A color picker chooses one opaque color in three ways that stay in step: a color
 1. **Label** (`label`): the color's name above the picker, in supporting text; it names the picker's group and, with "HEX", its field.
 2. **Color area**: saturation across and brightness down for the current hue, with a round 1.75 rem handle; 3:2, between three small control heights and 14 rem tall.
 3. **Hue slider**: the hues as a bar under the area, as tall as a small control, with its own handle.
-4. **HEX field**: the shared text field labelled HEX, with a hint, and an error when the draft isn't a color.
+4. **HEX field**: the shared text field labelled HEX, with a description, and an error when the draft isn't a color.
 5. **Swatch** (ColorSwatch): a round sample with a hairline ring in the strong border color, so white and black samples stay visible on every surface.
 
 ## Variants and sizes
@@ -77,7 +77,7 @@ A color picker chooses one opaque color in three ways that stay in step: a color
 ## Content guidelines
 
 - Name the picker after what the color is for, in sentence case: "Accent color", "Label color".
-- Use the hint for what the color affects, such as "Shown beside the project in lists."; by default it says how to write a HEX value.
+- Use the description for what the color affects, such as "Shown beside the project in lists."; by default it says how to write a HEX value.
 - Write the color beside a swatch, such as its HEX value or a name, since the swatch is decorative.
 
 ## Do and don't
@@ -98,18 +98,22 @@ A color picker chooses one opaque color in three ways that stay in step: a color
 
 ### Keyboard
 
-| Key                                             | Action                                                                   |
-| ----------------------------------------------- | ------------------------------------------------------------------------ |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves focus to the color area, the hue slider and the HEX field in turn. |
-| <kbd>←</kbd>, <kbd>→</kbd> in the color area    | Lowers or raises the saturation by 5%.                                   |
-| <kbd>↑</kbd>, <kbd>↓</kbd> in the color area    | Raises or lowers the brightness by 5%.                                   |
-| <kbd>←</kbd>, <kbd>→</kbd> on the hue slider    | Moves the hue back or forward by 5% of the wheel.                        |
-| Typing in the HEX field                         | Sets the color once the draft is six hexadecimal digits.                 |
+| Key                                                                                         | Action                                                                   |
+| ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>                                             | Moves focus to the color area, the hue slider and the HEX field in turn. |
+| <kbd>←</kbd>, <kbd>→</kbd> in the color area                                                | Lowers or raises the saturation by 1%, 10% with <kbd>Shift</kbd>.        |
+| <kbd>↑</kbd>, <kbd>↓</kbd> in the color area                                                | Raises or lowers the brightness by 1%, 10% with <kbd>Shift</kbd>.        |
+| <kbd>Page Up</kbd>, <kbd>Page Down</kbd> in the color area                                  | Raises or lowers the brightness by 10%.                                  |
+| <kbd>Home</kbd>, <kbd>End</kbd> in the color area                                           | Sets the saturation to none or full.                                     |
+| <kbd>←</kbd>, <kbd>→</kbd> on the hue slider                                                | Moves the hue back or forward by a degree, 18 with <kbd>Shift</kbd>.     |
+| <kbd>Page Up</kbd>, <kbd>Page Down</kbd>, <kbd>Home</kbd>, <kbd>End</kbd> on the hue slider | Moves the hue by 18 degrees, or to its ends.                             |
+| Typing in the HEX field                                                                     | Sets the color once the draft is six hexadecimal digits.                 |
 
 ### envUI provides
 
-- A group named by `label`, around the area and the slider, sliders named "Color" and "Hue" whose values say the saturation and brightness, and the HEX field named after the label, such as "Accent color HEX".
-- The hint and the error linked to the field, `aria-invalid` and the form's validity while a draft is invalid, and a status that announces invalid and discarded drafts.
+- A group named by `label`, around the area and the slider, sliders named "Color" and "Hue" whose values say the saturation and brightness, and the HEX field named after the label, such as "Accent color HEX". Every one of these strings comes from EnvUIProvider's `messages.colorPicker`, and the percentages follow its locale.
+- The colors run left to right in every text direction, as in a picture, and so do the arrow keys.
+- The description and the error linked to the field, `aria-invalid` and the form's validity while a draft is invalid, and a status that announces invalid and discarded drafts.
 - A focus outline on the area and the slider, and the shared field's focus.
 - A swatch hidden from assistive technology.
 
@@ -147,5 +151,6 @@ ColorSwatch shows each label's color before its name, with the value written bes
 
 ## Changelog
 
+- **1.0.0**: The color area and the hue are envUI's own, the hue on Base UI's Slider, so the package no longer depends on react-colorful and its `.react-colorful` classes are gone. Their names and the area's value text, and the HEX field's labels, description and messages, come from EnvUIProvider's `messages`, and the percentages follow its locale. The area moves by 1 % per arrow key, 10 % with Shift. `hint` is `description`, which the `v1-props` codemod writes, and `ref` reaches the HEX field.
 - **0.7.0**: ColorSwatch.
 - **0.1.0**: ColorPicker, with a color area, a hue slider and a HEX field.

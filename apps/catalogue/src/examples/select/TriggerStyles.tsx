@@ -10,10 +10,10 @@ export default function TriggerStyles() {
   return (
     <Stack direction="row" wrap align="center" gap={4}>
       {/* Secondary, the filled pill, on the page. */}
-      <Select label="Sort files" options={sortOptions} defaultValue="recent" />
+      <Select label="Sort files" items={sortOptions} defaultValue="recent" />
       {/* Outlined on a pane, where a fill would blend with the surface. */}
       <Surface padding={4}>
-        <Select variant="outlined" label="Sort members" options={sortOptions} defaultValue="name" />
+        <Select variant="outline" label="Sort members" items={sortOptions} defaultValue="name" />
       </Surface>
     </Stack>
   );

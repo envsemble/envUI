@@ -1,7 +1,7 @@
 ---
 title: Slider
 summary: A value in a known range, chosen by dragging a thumb, pressing the track or with the keyboard.
-status: beta
+status: stable
 since: 0.5.0
 category: Forms & selection
 aliases:
@@ -38,7 +38,7 @@ components:
 
 ## Overview
 
-A slider chooses a value in a range by dragging a thumb along a track, pressing the track or with the keyboard. Its label and the current value sit above the track and a hint below it. Slider is built on Base UI's slider, around a native range input, so the arrow keys, focus, form submission and reset behave as the platform's.
+A slider chooses a value in a range by dragging a thumb along a track, pressing the track or with the keyboard. Its label and the current value sit above the track and a description below it. Slider is built on Base UI's slider, around a native range input, so the arrow keys, focus, form submission and reset behave as the platform's.
 
 ```tsx example=LayerOpacity
 
@@ -51,7 +51,7 @@ A slider chooses a value in a range by dragging a thumb along a track, pressing 
 3. **Track**: a 0.375 rem pill across the slider's width, in the translucent fill.
 4. **Indicator**: the part of the track from the start to the thumb, in the control blue.
 5. **Thumb**: a 1.25 rem circle in the control blue, centred on the value; at the ends it stays inside the slider.
-6. **Hint** (optional, `hint`): guidance under the track, 0.75 rem below it.
+6. **Description** (optional, `description`): guidance under the track, 0.75 rem below it.
 
 The track sits in a pressable row 1.75 rem tall, 0.75 rem below the label. The slider fills the width of its container; set the width on the container. The ref and other `div` props reach the root element; `inputRef` reaches the native range input.
 
@@ -60,7 +60,7 @@ The track sits in a pressable row 1.75 rem tall, 0.75 rem below the label. The s
 - **Hover and dragging**: a halo in the control blue, 0.375 rem wide, rings the thumb while the pointer is on the track's row and while the thumb is dragged.
 - **Focus**: keyboard focus shows the shared focus ring around the thumb.
 - **Pressing the track** moves the thumb there and sets the value; dragging moves it with the pointer, in whole `step`s from `min`.
-- **Changing and committing**: `onValueChange` receives the value each time it changes, as often as the thumb moves; `onValueCommit` receives it once a change is complete: when the thumb is released, the track pressed, or after each key. Run work such as saving from `onValueCommit`.
+- **Changing and committing**: `onValueChange` receives the value each time it changes, as often as the thumb moves; `onValueCommitted` receives it once a change is complete: when the thumb is released, the track pressed, or after each key. Run work such as saving from `onValueCommitted`.
 - **Range and steps**: `min` and `max` set the range, 0 to 100 by default, and `step` the values between them, 1 apart by default. `largeStep`, for <kbd>Page Up</kbd>, <kbd>Page Down</kbd> and <kbd>Shift</kbd> with an arrow key, is a tenth of the range in whole steps by default.
 - **Disabled** (`disabled`): the track and thumb take the shared disabled opacity and the label and value the disabled text color. The slider can't be focused or moved, and forms leave it out.
 - **Controlled or not**: `value` with `onValueChange` controls the slider; otherwise it starts from `defaultValue`, or `min`.
@@ -72,7 +72,7 @@ The track sits in a pressable row 1.75 rem tall, 0.75 rem below the label. The s
 
 - Name the value in the label with a short noun phrase in sentence case, without a colon: "Opacity", "Notification volume", "Sign out after".
 - Format the value with its unit in `formatValue`, as people read it: "40%", "30 min", "20 GB". The same text is announced.
-- Put the range or what the value applies to in the hint where it isn't obvious: "Minutes without activity, from 5 to 120."
+- Put the range or what the value applies to in the description where it isn't obvious: "Minutes without activity, from 5 to 120."
 - Keep the label the same as the value changes; the value beside it shows the change.
 
 ## Do and don't
@@ -81,8 +81,8 @@ The track sits in a pressable row 1.75 rem tall, 0.75 rem below the label. The s
 
 - Show the effect of the value as it changes where people can see it, such as on the selected layer.
 - Choose a `step` that matches the precision people need, such as 5 minutes, and a range that keeps the steps easy to reach.
-- Save from `onValueCommit`, so a drag saves once, not at every step.
-- Say in the hint why a disabled slider can't change, and who can change it.
+- Save from `onValueCommitted`, so a drag saves once, not at every step.
+- Say in the description why a disabled slider can't change, and who can change it.
 
 ### Don't
 
@@ -105,7 +105,7 @@ The track sits in a pressable row 1.75 rem tall, 0.75 rem below the label. The s
 
 ### envUI provides
 
-- A native range input with the `slider` role, named by the label and described by the hint, with `aria-valuenow`, `min` and `max`, and `aria-valuetext` from `formatValue`, so assistive technology announces "40%" rather than 40.
+- A native range input with the `slider` role, named by the label and described by the description, with `aria-valuenow`, `min` and `max`, and `aria-valuetext` from `formatValue`, so assistive technology announces "40%" rather than 40.
 - The value as an `<output>` for the input, which stays quiet while the value moves, so the slider's own announcement isn't repeated.
 - Focus moved to the slider when its label is pressed, and the shared focus ring around the thumb.
 - A thumb and indicator at 3:1 contrast against the page, and a label and value at 4.5:1, in both themes.
@@ -122,7 +122,7 @@ The track sits in a pressable row 1.75 rem tall, 0.75 rem below the label. The s
 
 ### Save once a change is complete
 
-The value follows the thumb as it moves, and `onValueCommit` saves it once, when the thumb is released or after a key. A status line announces the save.
+The value follows the thumb as it moves, and `onValueCommitted` saves it once, when the thumb is released or after a key. A status line announces the save.
 
 ```tsx example=SaveOnRelease
 
@@ -138,7 +138,7 @@ The value follows the thumb as it moves, and `onValueCommit` saves it once, when
 
 ### A value people can't change
 
-A disabled slider keeps its value visible, and the hint says who sets it.
+A disabled slider keeps its value visible, and the description says who sets it.
 
 ```tsx example=ManagedLimit
 
@@ -146,5 +146,6 @@ A disabled slider keeps its value visible, and the hint says who sets it.
 
 ## Changelog
 
+- **1.0.0**: `onValueCommit` is `onValueCommitted`, as Base UI names it, and `hint` is `description`, which the `v1-props` codemod writes. The value is formatted in EnvUIProvider's `locale`, or the one Slider takes.
 - **1.0.0**: Sliders in the dark theme reach 3:1 contrast on every surface.
 - **0.5.0**: Slider, with `formatValue`, `min`, `max`, `step`, `largeStep`, `hint`, `disabled`, `name`, `form` and `onValueCommit`; the thumb grows on touch screens.

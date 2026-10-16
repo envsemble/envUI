@@ -113,6 +113,37 @@ Buttons take a `variant` for their emphasis and a `tone` for their meaning, and 
 
 In style sheets the modifier classes become attributes on the component's root class, which `v1-classes` writes with the specificity they had: `.env-button-important` is `.env-button:where([data-variant='primary'][data-tone='accent'])`, `.env-text-tone-muted` `.env-text:where([data-emphasis='muted'])`, `.env-surface-row` `.env-surface:where([data-background='muted'])` and `.env-skeleton-highlight` `.env-skeleton:where([data-emphasis='default'])`. The icon wrapper `env-symbol` is `env-icon`. A button without a `variant` takes its container's, such as ghost in a Toolbar.
 
+### Fields and choice controls
+
+Fields take a `description` under them and the field variants, and choice controls the words the rest of envUI uses. `v1-props` moves each literal prop and value, `v1-names` the types and `v1-classes` the classes:
+
+| 0.x                                                                                                           | 1.0                                                                                          |
+| ------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `hint` on TextField, SearchField, Textarea, Select, Combobox, DatePicker, ColorPicker, Slider, MarkdownEditor | `description`                                                                                |
+| Field `variant`: `outlined`, `plain`, `quiet` (`floating` stays)                                              | `outline`, `underline`, `ghost`                                                              |
+| Select `variant="outlined"`                                                                                   | `variant="outline"`                                                                          |
+| Select `options`, `SelectOption`                                                                              | `items`, `SelectItem`                                                                        |
+| DatePicker `withTime`                                                                                         | `granularity="minute"`; without it, `"day"`, the default                                     |
+| Slider `onValueCommit`                                                                                        | `onValueCommitted`                                                                           |
+| DropZone `onFiles`, `onReject`                                                                                | `onDropAccepted`, `onDropRejected`                                                           |
+| RadioGroup `variant`: `inline`, `rows`                                                                        | `orientation`: `horizontal`, `vertical`                                                      |
+| Radio `detail`                                                                                                | `description`                                                                                |
+| `env-text-input`, `env-text-field-well`, `env-form-field`, `env-field-hint`                                   | `env-text-field-input`, `env-text-field-control`, `env-field`, `env-field-description`       |
+| `env-dropdown-trigger`, `-options`, `-list`, `-option`, `-option-check` (Select)                              | `env-select-trigger`, `-popup`, `-list`, `-item`, `-item-indicator`                          |
+| `env-dropdown-options`, `env-dropdown-list` inside `env-combobox`                                             | `env-combobox-popup`, `env-combobox-list`                                                    |
+| `env-combobox-well`, `-option`, `-check`                                                                      | `env-combobox-control`, `-item`, `-item-indicator`                                           |
+| `env-date-time-well`                                                                                          | `env-date-picker-control`                                                                    |
+| `env-checkbox-control`, `env-checkbox-mark`, `env-switch-control`                                             | `env-checkbox-input`, `env-checkbox-indicator`, `env-switch-input`                           |
+| `env-radio-options`, `env-radio-control`, `env-radio-detail`                                                  | `env-radio-group`, `env-radio-input`, `env-radio-description`                                |
+| `env-radio-inline`, `env-radio-option`                                                                        | `.env-radio-group[data-orientation='horizontal']`, `.env-radio[data-orientation='vertical']` |
+
+Change by hand what the codemods can't see:
+
+- **`className` and `style` style the root.** On TextField, SearchField, Textarea, Select, Combobox, DatePicker, Checkbox, Switch and Radio they reach the field's or the control's root, the element with `env-field` or the label around a choice, instead of the native control. `ref` and the other native props still reach the input, textarea or trigger, so form libraries keep registering them. A style meant for the input selects it through the root's class, such as `.my-field .env-text-field-input`.
+- **`env-choice-control`** was the root of Checkbox, Switch and an inline Radio alike; it is `env-checkbox`, `env-switch` or `env-radio` now, by the control.
+- **ColorPicker** no longer uses react-colorful: its `.react-colorful` classes are gone, and the area and hue are `env-color-picker-saturation-slider` and `env-color-picker-hue`.
+- **DropZone** is named by its label and its description together, as its visible text is; a test that found it by its label alone matches the start of the name.
+
 ### useTheme returns the theme, its contrast and its scale
 
 `useTheme()` returns `{ theme, contrast, scale }` instead of the color scheme alone. Read the scheme as `const { theme } = useTheme()`. An application's own portal that re-themed with `<Theme theme={useTheme()}>` takes all three with `<Theme {...useTheme()}>`, so it keeps a high contrast or a `standard` opt-out and the compact scale too; `v1-names` makes that change, turns other calls into `useTheme().theme` unless the file already reads them as `{ theme, contrast }`, and reports those whose value is returned or passed to a context. In JavaScript, `theme={useTheme()}` would render `data-env-theme="[object Object]"`, so in development Theme warns about a `theme` that is not `light` or `dark`.
@@ -169,7 +200,7 @@ envUI's style sheet puts every rule in a cascade layer of `env`: `env.reset`, `e
   }
   ```
 
-- **`!important`.** An important declaration in a cascade layer beats every important declaration outside layers. envUI uses `!important` only where ColorPicker replaces the styles of react-colorful, its picker, so an `!important` in the application's style sheets outside layers doesn't override those few properties; one in a layer declared before `env`, or in a `style` attribute, does.
+- **`!important`.** An important declaration in a cascade layer beats every important declaration outside layers. envUI declares nothing `!important`, so an `!important` in the application's style sheets wins over envUI as any of its rules does.
 
 ### Tokens
 

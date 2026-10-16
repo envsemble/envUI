@@ -15,7 +15,7 @@ export default function SaveOnRelease() {
         // The value follows the thumb as it moves…
         onValueChange={setVolume}
         // …and is saved once, when the change is complete.
-        onValueCommit={(value) => {
+        onValueCommitted={(value) => {
           setStatus('Saving…');
           clearTimeout(saving.current);
           // Stands in for a request to save the setting.

@@ -63,7 +63,7 @@ export default function SortWhileStacked() {
             if (column && order)
               setSort({ column: column as Column, direction: order as Direction });
           }}
-          options={orders}
+          items={orders}
         />
       )}
       <Table.Root aria-label="Invoices" narrowLayout="stack" onStackedChange={setStacked}>

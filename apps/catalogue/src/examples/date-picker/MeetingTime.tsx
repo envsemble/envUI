@@ -7,7 +7,7 @@ export default function MeetingTime() {
     <div style={{ inlineSize: 'min(100%, 20rem)' }}>
       <DatePicker
         label="Meeting"
-        withTime
+        granularity="minute"
         defaultTime="09:00"
         value={meeting}
         onValueChange={setMeeting}

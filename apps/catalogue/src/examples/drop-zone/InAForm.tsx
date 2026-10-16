@@ -21,7 +21,7 @@ export default function InAForm() {
           name="attachments"
           label="Attach files"
           description="Sent with the message"
-          onFiles={() => setSent('')}
+          onDropAccepted={() => setSent('')}
         />
         <Stack direction="row" wrap align="center" gap={4}>
           <Button type="submit">Send</Button>

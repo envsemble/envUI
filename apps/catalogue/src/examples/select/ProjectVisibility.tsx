@@ -12,9 +12,9 @@ export default function ProjectVisibility() {
   return (
     <Select
       label="Visibility"
-      hint="Who can open Northwind launch."
+      description="Who can open Northwind launch."
       name="visibility"
-      options={visibilityOptions}
+      items={visibilityOptions}
       value={visibility}
       onValueChange={setVisibility}
     />

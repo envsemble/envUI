@@ -7,7 +7,7 @@ import { Stack, TextField, IconButton } from '@envsemble/envui';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 
 <Stack>
-  <TextField label="Project name" hint="Visible labels stay available while typing." />
+  <TextField label="Project name" description="Visible labels stay available while typing." />
   <IconButton icon={<ChevronRight />} aria-label="Next project" />
 </Stack>;
 ```

@@ -1,7 +1,7 @@
 ---
 title: DatePicker
 summary: A field that opens a calendar to choose a date, or a date and time, and the calendar on its own.
-status: beta
+status: stable
 since: 0.6.0
 category: Forms & selection
 aliases:
@@ -18,7 +18,7 @@ aliases:
   - month view
 useWhen:
   - People choose a day, such as when a report goes out or a task is due.
-  - People choose a day and a time, such as when a meeting starts (`withTime`).
+  - People choose a day and a time, such as when a meeting starts (`granularity="minute"`).
   - A day is chosen within a page or a panel from a month that stays visible, such as in a planning view (Calendar).
 avoidWhen:
   - text: A moment shown relative to now, such as "3 hours ago".
@@ -45,7 +45,7 @@ components:
 
 ## Overview
 
-A date picker is a field that shows a date, or with `withTime` a date and time, in the reader's locale, such as 20 Oct 2026 or Oct 20, 2026, 9:30 AM, and opens a calendar to choose it. Its values are local dates and times without a zone: a day as `YYYY-MM-DD`, or `YYYY-MM-DDTHH:mm` with a time. Converting them to and from a moment in time belongs to the application. The field is the shared text field, and the calendar follows the WAI-ARIA date picker.
+A date picker is a field that shows a date, or with `granularity="minute"` a date and time, in the reader's locale, such as 20 Oct 2026 or Oct 20, 2026, 9:30 AM, and opens a calendar to choose it. Its values are local dates and times without a zone: a day as `YYYY-MM-DD`, or `YYYY-MM-DDTHH:mm` with a time. Converting them to and from a moment in time belongs to the application. The field is the shared text field, and the calendar follows the WAI-ARIA date picker.
 
 **Calendar** is the month of days the field opens, which also stands on its own within a page or a panel.
 
@@ -55,22 +55,22 @@ A date picker is a field that shows a date, or with `withTime` a date and time, 
 
 ## Anatomy
 
-1. **Field**: a button in the shared text field's frame, with the floating `label`, `hint` and `error`, showing the value or the `placeholder`.
+1. **Field**: a button in the shared text field's frame, with the floating `label`, `description` and `error`, showing the value or the `placeholder`.
 2. **Clear button** (`clearable`): a text icon button named `clearLabel` (Clear), while there is a value.
-3. **Calendar icon**: a calendar, or a calendar with a clock with `withTime`, at the end of the field.
+3. **Calendar icon**: a calendar, or a calendar with a clock with the minute granularity, at the end of the field.
 4. **Popup**: the Popover surface below the field, with the calendar and its footer.
 5. **Month heading**: the month and year between the previous and next month buttons (`previousMonthLabel`, `nextMonthLabel`).
 6. **Days**: a grid of six weeks under the weekday names, each day a round mark; today has a ring and the chosen day a solid fill.
-7. **Time field** (`withTime`): a small time field labelled `timeLabel` (Time), below the days.
-8. **Footer**: Today, or Now with `withTime`, at the start; Clear with `clearable`, and Done with `withTime`, at the end.
+7. **Time field** (`granularity="minute"`): a small time field labelled `timeLabel` (Time), below the days.
+8. **Footer**: Today, or Now with the minute granularity, at the start; Clear with `clearable`, and Done with the minute granularity, at the end.
 
 ## Variants and sizes
 
-| Variant              | Use for                                                                                                              |
-| -------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| Date                 | A day. Choosing one closes the calendar. The default.                                                                |
-| `withTime`           | A day and a time: the calendar stays open for the time field, Now and Done.                                          |
-| `variant="floating"` | A long form on a page: the field 3.5 rem tall inside its border, whose label floats above the value, as TextField's. |
+| Variant                | Use for                                                                                                              |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Date                   | A day. Choosing one closes the calendar. The default.                                                                |
+| `granularity="minute"` | A day and a time: the calendar stays open for the time field, Now and Done.                                          |
+| `variant="floating"`   | A long form on a page: the field 3.5 rem tall inside its border, whose label floats above the value, as TextField's. |
 
 <!-- specimen: States -->
 
@@ -82,7 +82,7 @@ A date picker is a field that shows a date, or with `withTime` a date and time, 
 ## States and behaviour
 
 - **Opening and closing**: pressing the field, its label or its icon opens the calendar, as does <kbd>↓</kbd> or <kbd>↑</kbd>; pressing the field or its label again, a press outside and <kbd>Esc</kbd> close it and return focus to the field. As it opens, focus moves to the chosen day, or today. `open`, `defaultOpen` and `onOpenChange` control it.
-- **Choosing**: choosing a day calls `onValueChange` with the new value and closes the calendar of a date field. With `withTime`, a newly chosen day starts at `defaultTime` (00:00), the time field sets the hours and minutes, Now chooses the current date and time, and Done closes it.
+- **Choosing**: choosing a day calls `onValueChange` with the new value and closes the calendar of a date field. With `granularity="minute"`, a newly chosen day starts at `defaultTime` (00:00), the time field sets the hours and minutes, Now chooses the current date and time, and Done closes it.
 - **Clearing**: with `clearable`, the clear button, Clear in the calendar and <kbd>Backspace</kbd> or <kbd>Delete</kbd> on the field remove the value, and `onValueChange` receives null.
 - **Limits**: days outside `min` and `max` are unavailable and faded, the month buttons stop at them, Today or Now is unavailable outside them, and values are kept within them.
 - **Days**: today has a ring and the chosen day a solid fill, blue with white text in the light theme and light blue with dark text in the dark theme, each with at least 3:1 contrast against the surface.
@@ -95,7 +95,7 @@ A date picker is a field that shows a date, or with `withTime` a date and time, 
 ## Content guidelines
 
 - Name the field after the moment, in sentence case: "Publish on", "Meeting", "Last day".
-- Use the hint for the limits or what the date affects: "Any day this quarter."
+- Use the description for the limits or what the date affects: "Any day this quarter."
 - Write an error that says how to correct the value: "Choose a last day on or after the first."
 - Translate `clearLabel`, `todayLabel`, `nowLabel`, `doneLabel`, `timeLabel`, `previousMonthLabel` and `nextMonthLabel` where the interface is not in English.
 
@@ -104,8 +104,8 @@ A date picker is a field that shows a date, or with `withTime` a date and time, 
 ### Do
 
 - Store and send the field's `YYYY-MM-DD` or `YYYY-MM-DDTHH:mm` values, and convert them to moments with the time zone the application knows.
-- Use `min` and `max` for the days that can be chosen, and say so in the hint.
-- Use `withTime` only when the time matters.
+- Use `min` and `max` for the days that can be chosen, and say so in the description.
+- Use `granularity="minute"` only when the time matters.
 - Name a Calendar on its own with `aria-label` or `aria-labelledby`.
 
 ### Don't
@@ -133,7 +133,7 @@ A date picker is a field that shows a date, or with `withTime` a date and time, 
 
 ### envUI provides
 
-- The field as a `combobox` button named by its label, with the hint and error as its description, `aria-invalid`, `aria-required` and `aria-readonly`.
+- The field as a `combobox` button named by its label, with the description and error as its description, `aria-invalid`, `aria-required` and `aria-readonly`.
 - The calendar as a grid of days, each named by its full date, such as "Tuesday, 20 October 2026", with the chosen day selected, today marked as the current date and unavailable days disabled; the active day is the grid's one tab stop.
 - A Calendar named with `aria-label` or `aria-labelledby` as a group around its month, so calendars showing the same month stay apart.
 - Focus that moves into the calendar as it opens and back to the field as it closes, and stays where it was when a key doesn't move the day.
@@ -150,7 +150,7 @@ A date picker is a field that shows a date, or with `withTime` a date and time, 
 
 ### A date and a time
 
-With `withTime`, the calendar stays open for the time field; Now chooses the current date and time, and Done closes it.
+With `granularity="minute"`, the calendar stays open for the time field; Now chooses the current date and time, and Done closes it.
 
 ```tsx example=MeetingTime
 
@@ -190,5 +190,6 @@ Calendar chooses a day within the page, named by `aria-label`; a status says whi
 
 ## Changelog
 
+- **1.0.0**: `withTime` is `granularity`, `"day"` or `"minute"`; `hint` is `description`; `variant="outlined"` is `variant="outline"`, which the `v1-props` codemod writes. `className` and `style` style the field's root rather than the button, which takes `ref`. The calendar opens on the shared popup, its month buttons are ghost icon buttons, and its labels come from EnvUIProvider's `messages`, as its locale does: `env-date-time-well` is `env-date-picker-control`.
 - **1.0.0**: `DateTimeField` is `DatePicker`, with the `env-date-picker-*` classes; the page is `date-picker`.
 - **0.6.0**: DateTimeField, for a day or, with `withTime`, a date and time, and Calendar.

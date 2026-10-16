@@ -1,7 +1,7 @@
 ---
 title: Switch
 summary: An on/off setting that takes effect as soon as it changes.
-status: beta
+status: stable
 since: 0.1.0
 category: Forms & selection
 aliases:
@@ -52,7 +52,7 @@ A switch turns a setting on or off, and the change takes effect at once, as a li
 3. **Label** (`label`): the setting's name, 0.75 rem after the track, in 0.875 rem text. It wraps beside the track when space runs out, and pressing it toggles the switch too.
 4. **Focus ring**: the shared ring, 0.125 rem outside the track, shown for keyboard focus.
 
-A switch is 1.5 rem tall, or as tall as its wrapped label, and at least 2.75 rem on touch screens. The ref and other `input` props, such as `name`, `value` and `aria-describedby`, reach the native input; `className` is set on it too.
+A switch is 1.5 rem tall, or as tall as its wrapped label, and at least 2.75 rem on touch screens. The ref and other `input` props, such as `name`, `value` and `aria-describedby`, reach the native input; `className` and `style` style the root, the label around the track and the text.
 
 ## States and behaviour
 
@@ -142,6 +142,7 @@ Disabled switches keep their state visible. A sentence linked to both with `aria
 
 ## Changelog
 
+- **1.0.0**: `className` and `style` style the root, `env-switch`, rather than the input, which keeps `ref` and the other native props. `env-choice-control` is `env-switch` and `env-switch-control` `env-switch-input`.
 - **1.0.0**: The track of a switch that is off has a 3:1 boundary, and switches in the dark theme reach 3:1 on every surface.
 - **0.4.0**: A switch shrinks slightly while it or its label is pressed. The off track uses the shared fill, so switches on rows stand apart from their surface.
 - **0.1.0**: Switch.

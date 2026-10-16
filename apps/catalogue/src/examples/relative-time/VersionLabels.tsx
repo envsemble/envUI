@@ -16,5 +16,5 @@ export default function VersionLabels() {
     value: version.id,
     label: `Version ${versions.length - index} · saved ${formatRelativeTime(version.savedAt)}`,
   }));
-  return <Select label="Restore a version" options={options} defaultValue="v3" />;
+  return <Select label="Restore a version" items={options} defaultValue="v3" />;
 }

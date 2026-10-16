@@ -20,9 +20,9 @@ export default function SettingRows() {
         action={
           // The row's title shows the name, so the select takes it as its aria-label.
           <Select
-            variant="outlined"
+            variant="outline"
             aria-label="E-mail digest"
-            options={digestOptions}
+            items={digestOptions}
             defaultValue="weekly"
           />
         }
@@ -32,9 +32,9 @@ export default function SettingRows() {
         detail="For tasks assigned to you."
         action={
           <Select
-            variant="outlined"
+            variant="outline"
             aria-label="Due date reminders"
-            options={reminderOptions}
+            items={reminderOptions}
             defaultValue="1d"
           />
         }

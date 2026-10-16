@@ -69,11 +69,11 @@ export default function InviteMember() {
               }}
             />
             <Select
-              variant="outlined"
+              variant="outline"
               label="Role"
               name="role"
-              hint="Admins also manage members and billing."
-              options={roles}
+              description="Admins also manage members and billing."
+              items={roles}
               defaultValue="member"
             />
           </Stack>

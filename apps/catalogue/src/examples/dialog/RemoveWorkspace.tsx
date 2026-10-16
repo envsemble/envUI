@@ -35,7 +35,7 @@ export default function RemoveWorkspace() {
       >
         <TextField
           label="Workspace name"
-          hint={`Type ${workspace} to confirm.`}
+          description={`Type ${workspace} to confirm.`}
           autoComplete="off"
           value={typed}
           onChange={(event) => setTyped(event.target.value)}

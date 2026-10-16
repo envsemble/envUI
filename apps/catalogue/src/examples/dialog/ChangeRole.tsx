@@ -31,9 +31,13 @@ export default function ChangeRole() {
           </Button>
         }
       >
-        <RadioGroup variant="rows" label="Role" value={choice} onValueChange={setChoice}>
-          <Radio value="member" label="Member" detail="Works on the projects they’re added to." />
-          <Radio value="admin" label="Admin" detail="Also manages members and billing." />
+        <RadioGroup orientation="vertical" label="Role" value={choice} onValueChange={setChoice}>
+          <Radio
+            value="member"
+            label="Member"
+            description="Works on the projects they’re added to."
+          />
+          <Radio value="admin" label="Admin" description="Also manages members and billing." />
         </RadioGroup>
       </Dialog>
     </Stack>

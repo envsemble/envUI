@@ -1,7 +1,7 @@
 ---
 title: Combobox
 summary: A text field that filters a list of options as people type, to choose one option or, as chips, several.
-status: beta
+status: stable
 since: 0.6.0
 category: Forms & selection
 aliases:
@@ -56,19 +56,19 @@ A combobox is a text field with a list of options: typing filters the list, the 
 
 ## Anatomy
 
-1. **Field**: the shared text field, with the floating `label`, `hint` and `error` of TextField.
+1. **Field**: the shared text field, with the floating `label`, `description` and `error` of TextField.
 2. **Leading content** (an option's `leading`): such as an Avatar or an icon, before the chosen label in a single field, in chips and in options, at the size of its slot.
 3. **Chips** (`multiple`): one per chosen option at the start of the field, with its leading content, label and a remove button; the field wraps them onto more rows.
-4. **Clear button** (`clearable`): a quiet icon button named `clearLabel` (Clear), while there is a value to clear.
+4. **Clear button** (`clearable`): a ghost icon button named `clearLabel` (Clear), while there is a value to clear.
 5. **Trigger**: a chevron button at the end of the field that opens the list and turns while it is open.
-6. **Popup**: Select's raised popup, at least as wide as the field, with the options, group headings, and a status for loading or no matches.
+6. **Popup**: the shared raised popup, as Select's, at least as wide as the field, with the options, group headings, and a status for loading or no matches.
 7. **Option** (each entry of `items`): a rounded row with a check mark slot, leading content, the `label` and a muted `description` below it.
 
 ## Variants and sizes
 
 | Variant    | Use for                                                                                                                           |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `outlined` | In forms, dialogs and toolbars: the field at the control height of its `size`, as a TextField. The default.                       |
+| `outline`  | In forms, dialogs and toolbars: the field at the control height of its `size`, as a TextField. The default.                       |
 | `floating` | A long form on a page: the field 3.5 rem tall inside its border, whose label floats above the value, as TextField's floating one. |
 
 <!-- specimen: States -->
@@ -133,7 +133,7 @@ A combobox is a text field with a list of options: typing filters the list, the 
 ### envUI provides
 
 - The combobox pattern: the field is a `combobox` with `aria-expanded`, `aria-controls` and the highlighted option as its active descendant, and the list is a `listbox` of `option` rows with `aria-selected`; group headings name their groups.
-- The `label` tied to the field and the trigger, and the hint and error linked to it, with `aria-invalid` while `error` is set.
+- The `label` tied to the field and the trigger, and the description and error linked to it, with `aria-invalid` while `error` is set.
 - An option's description read as its description, not its name, and decorative check marks and leading content hidden from assistive technology.
 - The chosen options of a multiple field in its description, chips in a toolbar named after the field, and remove buttons named after each option, such as "Remove Alex Morgan".
 - A status that announces `loadingLabel` while the options load and `emptyLabel` when nothing matches, with the list marked busy meanwhile.
@@ -182,4 +182,5 @@ A multiple combobox submits one entry for each chosen topic. The application che
 
 ## Changelog
 
+- **1.0.0**: `hint` is `description` and `variant="outlined"` is `variant="outline"`, which the `v1-props` codemod writes. `className` and `style` style the field's root rather than the input, which takes `ref`. Read-only chips no longer carry `aria-readonly`, which the input reports. The popup is the shared popup and the options its rows, and a chip's remove button is a CloseButton: `env-combobox-well` is `env-combobox-control`, `env-combobox-option` `env-combobox-item` and `env-combobox-check` `env-combobox-item-indicator`. The loading, empty, clear and remove labels come from EnvUIProvider's `messages`.
 - **0.6.0**: Combobox, for one option or several, with leading content, descriptions, groups, a server search, compact density and native form support.
