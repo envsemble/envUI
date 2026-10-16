@@ -9,11 +9,9 @@ import {
   Link,
   LinkProvider,
   EnvUILogo,
-  Theme,
+  ThemeToggle,
 } from '@envsemble/envui';
 import { Menu } from '@envsemble/envui/icons/Menu';
-import { DarkMode } from '@envsemble/envui/icons/DarkMode';
-import { LightMode } from '@envsemble/envui/icons/LightMode';
 import { Search } from '@envsemble/envui/icons/Search';
 import {
   findReferencePage,
@@ -31,6 +29,7 @@ import { PageNavigation } from './navigation/PageNavigation';
 import { RouterLink } from './navigation/RouterLink';
 import { homeRoute, routeHref } from './navigation/Address';
 import { reachedFromTabs, useDocumentationRoute } from './navigation/useDocumentationRoute';
+import { DisplaySettingsProvider } from './theme/DisplaySettings';
 import { DocumentationSearch } from './search/DocumentationSearch';
 
 /** Whether a key press asks for search: Ctrl+K, or ⌘K on Apple keyboards. */
@@ -63,19 +62,8 @@ function revealSection(id: string) {
   };
 }
 
-/**
- * The catalogue's scale, comfortable unless the address asks for the compact one with
- * ?scale=compact before its hash, to review every page at the compact scale.
- */
-const scale =
-  typeof location !== 'undefined' && new URLSearchParams(location.search).get('scale') === 'compact'
-    ? 'compact'
-    : 'comfortable';
-
 function Catalogue() {
   const route = useDocumentationRoute();
-  const [appearance, setAppearance] = useState<'light' | 'dark'>('light');
-  const oppositeAppearance = appearance === 'light' ? 'dark' : 'light';
   const [navigationOpen, setNavigationOpen] = useState(false);
   const [focusContentOnClose, setFocusContentOnClose] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -139,7 +127,7 @@ function Catalogue() {
       </Stack>
     );
   return (
-    <Theme theme={appearance} scale={scale} className="docs-app">
+    <>
       <Button
         variant="outlined"
         className="docs-skip"
@@ -151,13 +139,7 @@ function Catalogue() {
       >
         Skip to content
       </Button>
-      <IconButton
-        className="docs-theme-toggle"
-        icon={appearance === 'light' ? <DarkMode /> : <LightMode />}
-        aria-label={`Switch to ${oppositeAppearance} theme`}
-        title={`Switch to ${oppositeAppearance} theme`}
-        onClick={() => setAppearance(oppositeAppearance)}
-      />
+      <ThemeToggle className="docs-theme-toggle" />
       <header className="docs-mobile-header">
         <Link
           href={routeHref(homeRoute)}
@@ -226,18 +208,20 @@ function Catalogue() {
         </main>
       </div>
       <DocumentationSearch open={searchOpen} onOpenChange={setSearchOpen} />
-    </Theme>
+    </>
   );
 }
 
 /**
- * The catalogue. Its links open its pages without loading it again, where routes live in the
- * address's path.
+ * The catalogue, in the reader's stored theme, contrast and scale. Its links open its pages without
+ * loading it again, where routes live in the address's path.
  */
 export default function App() {
   return (
-    <LinkProvider component={RouterLink}>
-      <Catalogue />
-    </LinkProvider>
+    <DisplaySettingsProvider className="docs-app">
+      <LinkProvider component={RouterLink}>
+        <Catalogue />
+      </LinkProvider>
+    </DisplaySettingsProvider>
   );
 }

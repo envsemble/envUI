@@ -14,6 +14,8 @@ import {
 // `--mode site` it makes the hosted catalogue: separate files with content-hashed names that
 // browsers keep cached.
 import { tokensVitePlugin } from '../../scripts/BuildTokens.mjs';
+import { createThemeBootstrapScript } from '../../packages/ui/src/foundations/ThemeBootstrap.ts';
+import { displayStorageKeys } from './src/theme/DisplayStorage.ts';
 
 /**
  * The revision the catalogue's links to source files point at: the release tag when the build is
@@ -46,6 +48,17 @@ export default defineConfig(({ command, mode }) => {
       __ENVUI_PATH_ROUTES__: JSON.stringify(site || command === 'serve'),
     },
     plugins: [
+      {
+        // The stored theme applies before the catalogue loads, so a dark theme does not flash light.
+        name: 'envui-theme-bootstrap',
+        transformIndexHtml: () => [
+          {
+            tag: 'script',
+            children: createThemeBootstrapScript({ storageKey: displayStorageKeys.theme }),
+            injectTo: 'head-prepend',
+          },
+        ],
+      },
       // Rebuilds Tokens.css from packages/ui/tokens on every token edit; Vite hot-reloads it.
       tokensVitePlugin(),
       {

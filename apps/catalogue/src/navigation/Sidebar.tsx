@@ -24,6 +24,7 @@ import {
 } from './DocumentationRoutes';
 import { homeRoute, routeHref } from './Address';
 import { foundationIcons, getComponentIcon } from './TopicIcons';
+import { DisplayMenu } from '../theme/DisplaySettings';
 import { commandKey } from '../search/DocumentationSearch';
 
 /** The button that opens search, with its shortcut. */
@@ -44,7 +45,7 @@ export function SearchButton({ onSearch }: { onSearch: () => void }) {
 
 /**
  * The catalogue's navigation, by section: Get started, Foundations, Components, Patterns,
- * Templates, Contributing and Changelog, with search above.
+ * Templates, Contributing and Changelog, with search above and the display settings below.
  */
 export function Sidebar({
   routePath,
@@ -170,6 +171,7 @@ export function Sidebar({
         {section('Changelog', item(changelogPage.path, 'Release notes', <History />))}
       </nav>
       <Stack gap={3} align="start" className="docs-sidebar-footer">
+        <DisplayMenu />
         <Text variant="caption">
           envUI · {version}
           <br />
