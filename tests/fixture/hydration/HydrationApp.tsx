@@ -189,7 +189,7 @@ export function HydrationApp() {
             <Table.Row>
               <Table.HeaderCell
                 sortDirection={sortDirection}
-                onSort={() =>
+                onSortChange={() =>
                   setSortDirection((current) =>
                     current === 'ascending' ? 'descending' : 'ascending',
                   )

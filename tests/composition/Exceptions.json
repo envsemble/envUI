@@ -9,7 +9,6 @@
   ],
   "interactive": [
     { "module": "actions/AvatarButton.tsx", "element": "button", "count": 1 },
-    { "module": "content/Table.tsx", "element": "button", "count": 1 },
     { "module": "feedback/CommandPalette.tsx", "element": "input", "count": 1 },
     { "module": "feedback/CommandPalette.tsx", "element": "role=\"listbox\"", "count": 1 },
     { "module": "feedback/CommandPalette.tsx", "element": "role=\"option\"", "count": 1 },

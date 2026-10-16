@@ -529,6 +529,15 @@ test('a header named by aria-label lends its name to its sort button and resize 
   ).toBeVisible();
 });
 
+test('a table named by aria-labelledby names its scroll region too, and its strings come from messages', async ({
+  page,
+}) => {
+  const region = page.getByRole('region', { name: 'Quarterly figures light' });
+  await expect(region).toHaveAttribute('tabindex', '0');
+  await expect(region.getByRole('table', { name: 'Quarterly figures light' })).toBeVisible();
+  await expect(region.getByRole('button')).toHaveAccessibleName('Quarter aufsteigend sortieren');
+});
+
 test('content positioned in a cell stays inside the scroll region', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 900 });
   const region = page.getByRole('region', { name: 'Hidden header text light' });

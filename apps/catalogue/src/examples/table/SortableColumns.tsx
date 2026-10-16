@@ -47,24 +47,21 @@ export default function SortableColumns() {
   );
   const direction = (column: Column): Table.SortDirection =>
     sort.column === column ? sort.direction : 'none';
-  const sortBy = (column: Column) => () =>
-    setSort((current) => ({
-      column,
-      direction:
-        current.column === column && current.direction === 'ascending' ? 'descending' : 'ascending',
-    }));
+  // A header asks for the order pressing it gives: descending once sorted ascending.
+  const sortBy = (column: Column) => (next: Sort['direction']) =>
+    setSort({ column, direction: next });
   return (
     <Table.Root aria-label="Files">
       <Table.Head>
         <Table.Row>
-          <Table.HeaderCell sortDirection={direction('name')} onSort={sortBy('name')}>
+          <Table.HeaderCell sortDirection={direction('name')} onSortChange={sortBy('name')}>
             Name
           </Table.HeaderCell>
           <Table.HeaderCell>Owner</Table.HeaderCell>
-          <Table.HeaderCell sortDirection={direction('modified')} onSort={sortBy('modified')}>
+          <Table.HeaderCell sortDirection={direction('modified')} onSortChange={sortBy('modified')}>
             Modified
           </Table.HeaderCell>
-          <Table.HeaderCell numeric sortDirection={direction('size')} onSort={sortBy('size')}>
+          <Table.HeaderCell numeric sortDirection={direction('size')} onSortChange={sortBy('size')}>
             Size (MB)
           </Table.HeaderCell>
         </Table.Row>

@@ -70,13 +70,13 @@ export default function SortWhileStacked() {
         <Table.Head>
           <Table.Row>
             <Table.HeaderCell>Invoice</Table.HeaderCell>
-            <Table.HeaderCell sortDirection={direction('client')} onSort={sortBy('client')}>
+            <Table.HeaderCell sortDirection={direction('client')} onSortChange={sortBy('client')}>
               Client
             </Table.HeaderCell>
-            <Table.HeaderCell sortDirection={direction('due')} onSort={sortBy('due')}>
+            <Table.HeaderCell sortDirection={direction('due')} onSortChange={sortBy('due')}>
               Due
             </Table.HeaderCell>
-            <Table.HeaderCell numeric sortDirection={direction('amount')} onSort={sortBy('amount')}>
+            <Table.HeaderCell numeric sortDirection={direction('amount')} onSortChange={sortBy('amount')}>
               Amount
             </Table.HeaderCell>
           </Table.Row>
