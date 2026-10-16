@@ -1,0 +1,21 @@
+---
+'@envsemble/envui': major
+'@envsemble/envui-codemods': minor
+'@envsemble/eslint-plugin-envui': minor
+---
+
+Menus, navigation and collections take the 1.0 vocabulary, and several of their bugs are fixed.
+
+- Menu: `Menu.Item`'s `trailing` is `end`. An item with `href` closes the menu as it is followed, and a disabled one renders no link, so nothing follows it. Every menu's popup, Menu.Root's, Menu.Submenu's, ContextMenu's and Menubar.Menu's, is the shared popup surface in the theme, scale and text direction of its trigger; Menu.Root takes `side="inline-start"` and `"inline-end"`, and these parts pass `ref`, `style` and data attributes to the popup.
+- OrganizationSwitcher: `organizations`, `currentOrganizationId` and `onSelect` are `items`, `value` and `onValueChange`; `OrganizationSwitcherOrganization` is `OrganizationSwitcherItem`, whose `detail` is `description`. Its rows are Menu.RadioItems, and its strings come from `messages.organizationSwitcher`.
+- NavList.Item: `trailing` is `end`. An icon-only item, or one named by `aria-label`, says its count in its name, such as "Inbox, 12 new", from `messages.navList.itemCount`; the dot alone was hidden from assistive technology. `env-nav-list-item-selected` and `-icon-only` are `[data-selected]` and `[data-icon-only]`.
+- Tabs pass the text direction to their list, so the arrow keys follow it in right-to-left text, while the panels keep the direction around them. `env-tab` and `env-tab-panel` are `env-tabs-tab` and `env-tabs-panel`.
+- DocumentTabs is rebuilt on Base UI Tabs: each tab sits beside its close button instead of around it, a CloseButton out of the tab order and hidden from assistive technology, and announces Delete through `aria-keyshortcuts`. The arrow keys and the wheel follow the text direction; strings come from `messages.documentTabs`; the strip takes `ref` and `style`. `env-document-tab`, `-label` and `-close` are `env-document-tabs-tab`, `-tab-label` and `env-document-tabs-close`, and a new `env-document-tabs-item` holds each tab and its close button.
+- Breadcrumbs: a label cut short shows in full in a tooltip on hover and keyboard focus; the name comes from `messages.breadcrumbs`; the `nav` takes native props. `env-breadcrumb` and `env-breadcrumb-*` are `env-breadcrumbs-item` and `env-breadcrumbs-*`.
+- Pagination formats its range in the locale and takes its strings from `messages.pagination`. Pager takes its labels from `messages.pager`, and its children render between the `previous` and `next` props' links.
+- Tree: `selectedId` and `onOpen` are `value` and `onAction`, `TreeOpenOptions` is `TreeActionOptions`, and a TreeItem's `detail` and `trailing` are `description` and `end`; it takes `ref` and `style`. `env-tree-row`, `-detail` and `-trailing` are `env-tree-item`, `-description` and `-end`.
+- Table: `Table.HeaderCell`'s `onSort` is `onSortChange`, called with the order pressing asks for. A table named by `aria-labelledby` names its scroll region too. The sort and resize words come from `messages.table`.
+- List: `List.Item`'s `title` and `detail` are `label` and `description`. `List.Root`'s `contrast` is gone: a list directly in `<Surface background="muted" padding={3}>` takes the raised row fill.
+- Kbd reads `--env-kbd-size`, `-padding-inline`, `-radius`, `-fg`, `-font-size`, `--env-kbd-separator-padding-inline` and `-font`, which a container sets to show smaller keys.
+
+Migrate with the codemods: `envui-codemods v1-props` renames `trailing`, OrganizationSwitcher's, Tree's, Table.HeaderCell's and List.Item's props; `v1-structure` wraps a `contrast` List.Root in a muted Surface and reports a computed one; `v1-names` renames `OrganizationSwitcherOrganization` and `TreeOpenOptions`; and `v1-classes` renames the classes and turns NavList's modifiers into attributes. By hand: the `detail` and `trailing` fields of Tree and OrganizationSwitcher data, which TypeScript reports, and the count in an icon-only NavList.Item's `aria-label`, which the item now adds itself. The ESLint plugin reports the renamed types.
