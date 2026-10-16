@@ -389,6 +389,18 @@ test('AvatarButton shows a halo on hover and while its menu is open, and names t
   await expect(trigger).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
 });
 
+test.describe('on a coarse pointer', () => {
+  test.use({ hasTouch: true });
+
+  test('AvatarButton grows to the touch height around a small avatar', async ({ page }) => {
+    await page.goto(fixture);
+    expect(await page.evaluate(() => matchMedia('(pointer: coarse)').matches)).toBe(true);
+    const trigger = page.getByRole('button', { name: 'Open account menu' });
+    await expect(trigger).toHaveCSS('width', '44px');
+    await expect(trigger).toHaveCSS('height', '44px');
+  });
+});
+
 test('compact fields can float their label into the outline and keep the button height', async ({
   page,
 }) => {

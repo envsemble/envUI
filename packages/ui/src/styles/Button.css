@@ -293,6 +293,13 @@
   opacity: var(--state-disabled-opacity);
   cursor: default;
 }
+/* Under a coarse pointer the halo around a small avatar grows to the touch height. */
+@media (pointer: coarse) {
+  .env-avatar-button {
+    min-inline-size: var(--control-height-touch);
+    min-block-size: var(--control-height-touch);
+  }
+}
 .env-avatar-button-tooltip {
   display: grid;
 }

@@ -65,7 +65,7 @@ The `Table` namespace has six parts:
 1. **Scroll region** (`Table.Root`): a region named like the table, with a 0.0625 rem border and 1 rem corners; it is a tab stop and scrolls the table sideways when the columns don't fit. `regionClassName` styles it, for example to give it a height.
 2. **Caption** (optional, `caption`): a visible name above the rows, in the 1 rem section heading style.
 3. **Header row** (`Table.Head`, `Table.Row`, `Table.HeaderCell`): 0.875 rem muted labels, weight 500, on one line over the neutral fill. Header cells head their column with `scope="col"` by default.
-4. **Sort button** (with `onSort` on a header cell): fills the header cell, with the label and an arrow for `sortDirection`.
+4. **Sort button** (with `onSort` on a header cell): fills the header cell, with the label and an arrow for `sortDirection`; at least 2.75 rem tall on touch screens.
 5. **Resize handle** (with `resizableColumns` on the root): at the inline end of every header cell but the last, 0.75 rem wide and 1.5 rem on touch screens, with a line on the column boundary.
 6. **Body rows** (`Table.Body`, `Table.Row`): separated by hairlines; the first body row meets the header without one. `interactive` and `selected` change their fill.
 7. **Cells** (`Table.Cell`): body text, aligned with `align` and `numeric` and kept on one line with `nowrap`. A `<Text variant="caption">` after the main text adds a quieter second line, such as a team under a project.

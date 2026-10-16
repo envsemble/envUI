@@ -96,16 +96,19 @@ export default function App() {
   if (fixture === 'theme-contrast-nested') return <ThemeContrastNestedFixture />;
   if (fixture === 'theme-release') return <ThemeReleaseFixture />;
   const Standalone = fixture === null ? undefined : standaloneFixtures[fixture];
+  // ?scale=compact puts the fixture in the compact scale, unless its own Themes set a scale.
+  const scale =
+    new URLSearchParams(location.search).get('scale') === 'compact' ? 'compact' : undefined;
   if (Standalone)
     return (
-      <Theme theme="light">
+      <Theme theme="light" scale={scale}>
         <Standalone />
       </Theme>
     );
   return (
     <>
       <p data-testid="host-marker">Host document marker</p>
-      <Theme theme="light">
+      <Theme theme="light" scale={scale}>
         <main className="fixture-main">
           {includes('forms') && (
             <>

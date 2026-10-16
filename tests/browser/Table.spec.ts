@@ -580,3 +580,24 @@ test('tables fit a narrow viewport: stacking tables stack, others scroll in thei
   await page.keyboard.press('ArrowRight');
   await expect(handle).toHaveAttribute('aria-valuenow', '41');
 });
+
+test.describe('on a coarse pointer', () => {
+  test.use({ hasTouch: true });
+
+  for (const scale of ['comfortable', 'compact'] as const)
+    test(`sortable headers are at least the touch height in the ${scale} scale`, async ({
+      page,
+    }) => {
+      await page.goto(`${tablesFixture}&scale=${scale}`);
+      expect(await page.evaluate(() => matchMedia('(pointer: coarse)').matches)).toBe(true);
+      const buttons = page.getByTestId('tables-light').locator('.env-table-sort-button');
+      await expect(
+        buttons.first().locator('xpath=ancestor::*[contains(@class, "env-theme")][1]'),
+      ).toHaveAttribute('data-env-scale', scale);
+      const heights = await buttons.evaluateAll((elements) =>
+        elements.map((element) => element.getBoundingClientRect().height),
+      );
+      expect(heights.length).toBeGreaterThan(0);
+      expect(heights.filter((height) => height < 44)).toEqual([]);
+    });
+});

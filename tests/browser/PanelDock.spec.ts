@@ -672,11 +672,16 @@ test.describe('PanelDock', () => {
     const minimize = report.getByRole('button', { name: 'Minimize' });
     await expect(minimize).toHaveCSS('height', '44px');
     await expect(minimize).toHaveCSS('width', '44px');
-    await expect(dock.chips.getByRole('listitem')).toHaveCSS('height', '44px');
-    await expect(dock.chips.getByRole('button', { name: 'Close Budget' })).toHaveCSS(
-      'width',
-      '32px',
-    );
+    // A chip holds its buttons at the touch height inside its top hairline.
+    await expect(dock.chips.getByRole('listitem')).toHaveCSS('height', '45px');
+    for (const name of ['Show Budget', 'Close Budget']) {
+      const button = dock.chips.getByRole('button', { name, exact: true });
+      await expect
+        .poll(() => button.evaluate((element) => element.getBoundingClientRect().height))
+        .toBe(44);
+    }
+    const close = dock.chips.getByRole('button', { name: 'Close Budget' });
+    await expect(close).toHaveCSS('width', '44px');
     await context.close();
   });
 
