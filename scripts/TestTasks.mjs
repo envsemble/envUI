@@ -87,6 +87,14 @@ export function runTask(item) {
       );
       if (!ok && !item.stream) console.log(indent(tail(output, 120)));
       else if (ok && item.echo && output.trim()) console.log(indent(output.trim()));
+      // Playwright's counts, so a passing run still shows flaky and skipped tests.
+      if (ok && !item.stream)
+        for (const line of output.split(/\r?\n/))
+          if (
+            /^\s+\d+ (?:passed|flaky|skipped|did not run)\b/.test(line) ||
+            /^Port \d+ serves/.test(line)
+          )
+            console.log(dim(`    ${line.trim()}`));
       done(result);
     });
   });

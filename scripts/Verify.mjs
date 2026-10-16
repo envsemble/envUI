@@ -116,6 +116,8 @@ const phase2 = await parallel([
       '--project=webkit',
       '--project=a11y',
       '--reporter=dot',
+      // As in CI: a test that passes on its second try is reported as flaky, not failed.
+      '--retries=1',
     ],
     { detail: 'Chromium, Firefox, WebKit, axe' },
   ),

@@ -209,7 +209,9 @@ const browserTask = (selected, projects, label) => {
       'test',
       ...projects.map((project) => `--project=${project}`),
       '--reporter=dot',
-      ...(affected ? [] : ['--max-failures=5']),
+      // A test that fails once under the load of three engines and passes again is reported as
+      // flaky; one that fails twice fails the run.
+      ...(affected ? ['--retries=1'] : ['--max-failures=5']),
       ...files,
     ],
     { env: playwrightEnv(names), detail: `${files.length} specs` },

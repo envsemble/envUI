@@ -735,7 +735,8 @@ export function selectScope(paths, index) {
       continue;
     }
     if (path.startsWith('packages/ui/src/')) {
-      scope.generated.add('docs');
+      // Props and the manifest come from the TypeScript sources.
+      if (/\.tsx?$/.test(path)) scope.generated.add('docs');
       scope.build.library = true;
       if (overrides.sharedLibrary.includes(path)) {
         scope.contrast ||= path.endsWith('.css');
