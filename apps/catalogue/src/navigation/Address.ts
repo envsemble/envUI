@@ -87,16 +87,46 @@ export function routeOfLink(href: string): string | undefined {
   return routeOfLocation(url);
 }
 
+/**
+ * Scrolls to the element a route names, such as a prop's row, once it is there: a part of the page
+ * that loads on its own, such as the token reference, renders it later. Returns the cleanup.
+ */
+export function revealSection(id: string) {
+  const reveal = () => {
+    const element = document.getElementById(id);
+    element?.scrollIntoView();
+    return element !== null;
+  };
+  if (reveal()) return;
+  const observer = new MutationObserver(() => {
+    if (reveal()) observer.disconnect();
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+  // A section that never comes, such as one an old address names, stops being looked for.
+  const timeout = setTimeout(() => observer.disconnect(), 15_000);
+  return () => {
+    observer.disconnect();
+    clearTimeout(timeout);
+  };
+}
+
 /** Address changes made by navigate(), which the history API does not announce. */
 const navigationEvent = 'envui:navigate';
 
 /**
- * Shows a route: a step in the history, or in place of the current entry with replace. Nothing
- * happens when the address already names it.
+ * Shows a route: a step in the history, or in place of the current entry with replace. When the
+ * address already names it, the route's section, if it has one, scrolls into view again, and
+ * navigate returns false.
  */
 export function navigate(route: string, { replace = false }: { replace?: boolean } = {}) {
   const href = routeHref(route);
-  if (href === currentHref()) return false;
+  if (href === currentHref()) {
+    // Choosing the place the address names already, such as a prop's row again after scrolling
+    // away, scrolls to it again.
+    const section = splitRoute(route).params.get('section');
+    if (section) revealSection(section);
+    return false;
+  }
   if (pathRoutes) history[replace ? 'replaceState' : 'pushState'](null, '', href);
   else if (replace) history.replaceState(history.state, '', href);
   else {

@@ -11,6 +11,7 @@ import { routeOfDocument } from '../navigation/DocumentationRoutes';
 import { navigate, routeHref } from '../navigation/Address';
 import { canRetryLoad, reloadModule, reloadPage } from '../template/LoadBoundary';
 import type { SearchResult } from './SearchIndex';
+import { commandKey } from './SearchShortcut';
 
 /** The search index's module, by its path in the catalogue app, as module-files.json names it. */
 const indexModule = 'src/search/SearchIndex.ts';
@@ -32,10 +33,6 @@ function loadIndex() {
   });
   return indexLoad;
 }
-
-/** Apple keyboards name the Command key; others use Ctrl for the same shortcut. */
-export const commandKey =
-  typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.userAgent) ? '⌘' : 'Ctrl';
 
 /** The groups results are shown in, by what they find. */
 const groups: Record<SearchResult['kind'], string> = {

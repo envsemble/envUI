@@ -27,40 +27,11 @@ import { Overview } from './pages/Overview';
 import { Sidebar } from './navigation/Sidebar';
 import { PageNavigation } from './navigation/PageNavigation';
 import { RouterLink } from './navigation/RouterLink';
-import { homeRoute, routeHref } from './navigation/Address';
+import { homeRoute, revealSection, routeHref } from './navigation/Address';
+import { isSearchShortcut, searchKeyShortcuts } from './search/SearchShortcut';
 import { reachedFromTabs, useDocumentationRoute } from './navigation/useDocumentationRoute';
 import { DisplaySettingsProvider } from './theme/DisplaySettings';
 import { DocumentationSearch } from './search/DocumentationSearch';
-
-/** Whether a key press asks for search: Ctrl+K, or ⌘K on Apple keyboards. */
-const searchShortcut = (event: KeyboardEvent) =>
-  (event.ctrlKey || event.metaKey) &&
-  !event.altKey &&
-  !event.shiftKey &&
-  event.key.toLowerCase() === 'k';
-
-/**
- * Scrolls to the element a route names, such as a prop's row, once it is there: a part of the page
- * that loads on its own, such as the token reference, renders it later. Returns the cleanup.
- */
-function revealSection(id: string) {
-  const reveal = () => {
-    const element = document.getElementById(id);
-    element?.scrollIntoView();
-    return element !== null;
-  };
-  if (reveal()) return;
-  const observer = new MutationObserver(() => {
-    if (reveal()) observer.disconnect();
-  });
-  observer.observe(document.body, { childList: true, subtree: true });
-  // A section that never comes, such as one an old address names, stops being looked for.
-  const timeout = setTimeout(() => observer.disconnect(), 15_000);
-  return () => {
-    observer.disconnect();
-    clearTimeout(timeout);
-  };
-}
 
 function Catalogue() {
   const route = useDocumentationRoute();
@@ -96,7 +67,7 @@ function Catalogue() {
   useEffect(() => {
     // An editor that handles the keys itself, such as for a link, keeps them.
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.defaultPrevented || !searchShortcut(event)) return;
+      if (event.defaultPrevented || !isSearchShortcut(event)) return;
       event.preventDefault();
       setSearchOpen((open) => !open);
     };
@@ -154,7 +125,7 @@ function Catalogue() {
             variant="secondary"
             icon={<Search />}
             aria-label="Search"
-            aria-keyshortcuts="Control+K Meta+K"
+            aria-keyshortcuts={searchKeyShortcuts}
             title="Search"
             onClick={openSearch}
           />

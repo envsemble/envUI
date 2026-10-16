@@ -25,7 +25,7 @@ import {
 import { homeRoute, routeHref } from './Address';
 import { foundationIcons, getComponentIcon } from './TopicIcons';
 import { DisplayMenu } from '../theme/DisplaySettings';
-import { commandKey } from '../search/DocumentationSearch';
+import { commandKey, searchKeyShortcuts } from '../search/SearchShortcut';
 
 /** The button that opens search, with its shortcut. */
 export function SearchButton({ onSearch }: { onSearch: () => void }) {
@@ -34,7 +34,7 @@ export function SearchButton({ onSearch }: { onSearch: () => void }) {
       variant="secondary"
       className="docs-search-button"
       startIcon={<Search />}
-      aria-keyshortcuts="Control+K Meta+K"
+      aria-keyshortcuts={searchKeyShortcuts}
       onClick={onSearch}
     >
       Search
@@ -163,12 +163,12 @@ export function Sidebar({
           'Patterns',
           pagesOf('Patterns').map(({ path, title }) => item(path, title, <Pattern />)),
         )}
-        {section('Templates', item(templatesPage.path, 'Page templates', <ViewQuilt />))}
+        {section('Templates', item(templatesPage.path, templatesPage.title, <ViewQuilt />))}
         {section(
           'Contributing',
           pagesOf('Contributing').map(({ path, title }) => item(path, title, <Handyman />)),
         )}
-        {section('Changelog', item(changelogPage.path, 'Release notes', <History />))}
+        {section('Changelog', item(changelogPage.path, changelogPage.title, <History />))}
       </nav>
       <Stack gap={3} align="start" className="docs-sidebar-footer">
         <DisplayMenu />

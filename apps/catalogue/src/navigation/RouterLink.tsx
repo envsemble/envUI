@@ -1,5 +1,5 @@
 import type { LinkComponentProps } from '@envsemble/envui';
-import { navigate, pathRoutes, routeOfLink } from './Address';
+import { currentHref, navigate, pathRoutes, routeOfLink } from './Address';
 import { normalizeRoute } from './DocumentationRoutes';
 
 /**
@@ -15,9 +15,18 @@ export function RouterLink({ onClick, ...props }: LinkComponentProps) {
       {...props}
       onClick={(event) => {
         onClick?.(event);
-        if (!pathRoutes || event.defaultPrevented || event.button !== 0) return;
+        if (event.defaultPrevented || event.button !== 0) return;
         if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
         if ((props.target && props.target !== '_self') || props.download !== undefined) return;
+        if (!pathRoutes) {
+          // A hash link to the address it is already at changes nothing for the browser; it
+          // scrolls to its section again.
+          if (props.href.startsWith('#/') && props.href === currentHref()) {
+            event.preventDefault();
+            navigate(normalizeRoute(props.href.slice(2)));
+          }
+          return;
+        }
         const route = routeOfLink(props.href);
         if (route === undefined) return;
         event.preventDefault();
