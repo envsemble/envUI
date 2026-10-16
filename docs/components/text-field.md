@@ -11,6 +11,8 @@ aliases:
   - textbox
   - input field
   - form field
+  - email field
+  - password field
   - search field
   - search box
   - textarea

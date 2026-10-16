@@ -36,24 +36,13 @@ The skills contain routing and workflow instructions. Move conditional component
 
 ## Agent files and skills
 
-The files agents read come from the documentation's sources, as [For agents](agents.md) describes. `npm run docs:manifest` (`scripts/GenerateManifest.mjs`) writes `docs/generated/manifest.json` and `docs/generated/llms.txt` from the index, the pages' frontmatter, the example files, `docs/generated/props.json` and the token list. Commit them with the change: `npm run docs:check` and `npm test` fail while they are stale, so run it after `npm run docs:props` or `npm run tokens:build` too. The library build copies both to the package root, the manifest with the version, and writes `llms-full.txt` beside them.
+The files agents read come from the documentation's sources, as [For agents](agent-tooling.md) describes. `npm run docs:manifest` (`scripts/GenerateManifest.mjs`) writes `docs/generated/manifest.json` and `docs/generated/llms.txt` from the index, the pages' frontmatter, the example files, `docs/generated/props.json` and the token list. Commit them with the change: `npm run docs:check` and `npm test` fail while they are stale, so run it after `npm run docs:props` or `npm run tokens:build` too. The library build copies both to the package root, the manifest with the version, and writes `llms-full.txt` beside them.
 
 The `envui` command is plain JavaScript in `packages/ui/bin`, run as it is from the installed package: `agents.mjs` renders the AGENTS.md index, `mcp.mjs` is the MCP server and `catalog.mjs` the lookups and ranking they share. It uses Node's own modules only, so installing envUI adds no dependency for it. `tests/Agents.test.mjs` holds the index to its 8 KB budget and calls every MCP tool over stdio.
 
 The skills' source is `.agents/skills/`; each folder holds one `SKILL.md`, and the build copies them into the package's `skills/`. Validate them with the available skill validator after editing them.
 
-### Publish the skills as a plugin
-
-The skills and the MCP server also reach agents as one plugin from the private plugin marketplace, for Claude Code and, mirrored, for Codex. Nothing publishes it yet. For each release:
-
-1. In the repository that hosts the marketplace, keep a plugin folder, `envui/`, with:
-   - `skills/`: the three folders of `.agents/skills` at the release's tag;
-   - `.mcp.json`: `{ "mcpServers": { "envui": { "command": "npx", "args": ["--no", "envui", "mcp"] } } }`, so the server comes from the project's own installed envUI;
-   - `.claude-plugin/plugin.json`: `name` `envui`, `version` the envUI version, a `description` and the `author`;
-   - `.codex-plugin/plugin.json`: the same fields, with `"skills": "./skills/"` and `"mcpServers": "./.mcp.json"`.
-2. List the plugin in the marketplace's `.claude-plugin/marketplace.json` (`{ "name": "envui", "source": "./envui" }`) and, for Codex, in `.agents/plugins/marketplace.json` (`{ "name": "envui", "source": { "source": "local", "path": "./envui" } }`).
-3. Raise the plugin's version with every release, so clients update their cached copy, and merge.
-4. People install it once: `claude plugin marketplace add <owner>/<repository>` and `claude plugin install envui@<marketplace>`; in Codex, add the marketplace and `codex plugin add envui@<marketplace>`. `claude plugin update envui@<marketplace>` picks up a release.
+[For agents](agent-tooling.md) describes publishing the skills and the MCP server as a plugin.
 
 ## Record the change
 

@@ -68,10 +68,12 @@ function linkedPages(markdown, documents) {
   return ids;
 }
 
-/** An export as the manifest lists it: where to import it from, its TSDoc and its props. */
-function exportEntry(name, entry) {
+/**
+ * An export as the manifest lists it: where to import it from, its TSDoc, its props or signature,
+ * and the page that documents it.
+ */
+function exportEntry(entry, home) {
   const item = {
-    name,
     kind: entry.kind,
     import: entry.entries[0],
     ...(entry.entries.length > 1 && { alsoFrom: entry.entries.slice(1) }),
@@ -84,6 +86,8 @@ function exportEntry(name, entry) {
     item.props = entry.props;
     item.native = entry.native;
   }
+  item.page = home?.page ?? null;
+  item.doc = home?.doc ?? null;
   return item;
 }
 
@@ -105,7 +109,12 @@ function readTokens(file = tokensFile) {
   for (const token of tokens.tokens) {
     if (token.legacy) {
       const use = token.values[themes[0]]?.aliasOf;
-      legacy.push({ id: token.id, cssVariable: token.cssVariable, ...(use && { use }) });
+      legacy.push({
+        id: token.id,
+        cssVariable: token.cssVariable,
+        type: token.type,
+        ...(use && { use }),
+      });
       continue;
     }
     const item = {
@@ -190,19 +199,14 @@ export function buildManifest({
       useWhen: frontmatter.useWhen ?? [],
       avoidWhen: frontmatter.avoidWhen ?? [],
       related: document.related,
-      exports: names.map((name) => exportEntry(name, props.exports[name])),
+      exports: names,
       examples: exampleItems,
     });
   }
   const exportIndex = Object.fromEntries(
     Object.entries(props.exports).map(([name, entry]) => [
       name,
-      {
-        kind: entry.kind,
-        import: entry.entries[0],
-        page: exportPages.get(name)?.page ?? null,
-        ...(entry.deprecated && { deprecated: entry.deprecated }),
-      },
+      exportEntry(entry, exportPages.get(name)),
     ]),
   );
   return {
@@ -262,7 +266,7 @@ export function renderLlmsText(manifest) {
       manifest.components
         .filter((component) => component.category === category)
         .map((component) => {
-          const names = component.exports.map((item) => item.name).filter((n) => !n.includes('.'));
+          const names = component.exports.filter((name) => !name.includes('.'));
           const others = names.filter((name) => name !== component.name);
           return `- [${component.name}](${component.doc}): ${component.summary}${
             others.length ? ` Also: ${others.join(', ')}.` : ''
@@ -305,8 +309,10 @@ export function renderLlmsFull(
     if (document.summary) head.push(`> ${document.summary}`, '');
     if (component) {
       const byImport = new Map();
-      for (const item of component.exports.filter((entry) => !entry.name.includes('.')))
-        byImport.set(item.import, [...(byImport.get(item.import) ?? []), item.name]);
+      for (const name of component.exports.filter((entry) => !entry.includes('.'))) {
+        const from = manifest.exports[name].import;
+        byImport.set(from, [...(byImport.get(from) ?? []), name]);
+      }
       head.push(
         `Status: ${component.status}. Since: ${component.since}. ${[...byImport]
           .map(([from, names]) => `\`import { ${names.join(', ')} } from '${from}'\``)

@@ -20,9 +20,8 @@ export function loadManifest(root = packageRoot) {
 const stopWords = new Set(
   `a an and are as at be but by can do does for from has have how i if in into is it its me my need
   needs of on or our please should so some such that the their them then there these this those to
-  use uses using want wants we when where which while who will with without would you your`.split(
-    /\s+/,
-  ),
+  use uses using want wants we when where which while who will with without would you your
+  add put let make build give show display allow`.split(/\s+/),
 );
 
 /** A word reduced to a rough stem, so "rows", "toggles" and "sorting" meet "row", "toggle" and "sort". */
@@ -77,6 +76,28 @@ const styleTerms = (text) => terms(text).filter((term) => styleVocabulary.has(te
 /** Field weights: a match on a name counts most, then aliases, then the prose. */
 const weights = { name: 8, alias: 5, summary: 2, use: 1.5, text: 1 };
 
+/** An export by name, or undefined; names such as `constructor` are not exports. */
+export const exportOf = (manifest, name) =>
+  typeof name === 'string' && Object.hasOwn(manifest.exports, name)
+    ? { name, ...manifest.exports[name] }
+    : undefined;
+
+/** A component page's exports, with their import path, props and the rest. */
+export const exportsOf = (manifest, component) =>
+  component.exports.map((name) => exportOf(manifest, name)).filter(Boolean);
+
+/** A page's exports without the parts of its namespaces, which import through the namespace. */
+export const topLevelExports = (manifest, component) =>
+  exportsOf(manifest, component).filter((entry) => !entry.name.includes('.'));
+
+/** Exports that no component page lists, such as Theme or Text; search finds them by name. */
+const pagelessExports = (manifest) => {
+  const onPages = new Set(manifest.components.flatMap((component) => component.exports));
+  return Object.keys(manifest.exports)
+    .filter((name) => !onPages.has(name))
+    .map((name) => exportOf(manifest, name));
+};
+
 function searchDocuments(manifest) {
   const documents = [];
   const avoidFor = new Map();
@@ -84,7 +105,7 @@ function searchDocuments(manifest) {
     for (const avoid of component.avoidWhen)
       if (avoid.use) avoidFor.set(avoid.use, [...(avoidFor.get(avoid.use) ?? []), avoid.text]);
   for (const component of manifest.components) {
-    const names = [component.name, ...component.exports.map((item) => item.name)];
+    const names = [component.name, ...component.exports];
     documents.push({
       kind: 'component',
       item: component,
@@ -99,10 +120,24 @@ function searchDocuments(manifest) {
           // A situation another page sends here, such as "a destination inside running text".
           ...names.flatMap((name) => avoidFor.get(name) ?? []).flatMap(terms),
         ],
-        text: component.exports.flatMap((item) => terms(item.description)),
+        text: exportsOf(manifest, component).flatMap((entry) => terms(entry.description)),
       },
     });
   }
+  for (const entry of pagelessExports(manifest))
+    documents.push({
+      kind: 'export',
+      item: entry,
+      names: [phrase(entry.name)],
+      aliases: [],
+      fields: {
+        name: terms(entry.name),
+        alias: [],
+        summary: terms(entry.description),
+        use: avoidFor.get(entry.name)?.flatMap(terms) ?? [],
+        text: [],
+      },
+    });
   for (const kind of ['pattern', 'template', 'foundation', 'guide']) {
     for (const page of manifest[`${kind}s`] ?? [])
       documents.push({
@@ -128,7 +163,9 @@ function searchDocuments(manifest) {
       aliases: [],
       fields: {
         name: terms(token.id),
-        alias: segments.flatMap((segment) => terms(tokenWords[segment])),
+        alias: segments.flatMap((segment) =>
+          Object.hasOwn(tokenWords, segment) ? terms(tokenWords[segment]) : [],
+        ),
         summary: terms(token.description),
         use: [],
         text: [],
@@ -137,6 +174,9 @@ function searchDocuments(manifest) {
   }
   return documents;
 }
+
+/** The name a document is known by, as written: an export's, a page's or a token's. */
+const exactName = (document) => String(document.item.name ?? document.item.id ?? '').toLowerCase();
 
 const cache = new WeakMap();
 function indexOf(manifest) {
@@ -154,6 +194,7 @@ function indexOf(manifest) {
 /** Tokens rank below components and pages in a mixed search; there are many and they are terse. */
 const kindFactor = {
   component: 1,
+  export: 1,
   pattern: 1,
   template: 1,
   foundation: 0.7,
@@ -200,6 +241,8 @@ function rank(manifest, query, { kinds, limit = 10 } = {}) {
         named = true;
       }
     if (document.names.includes(queryPhrase.trim())) score += 50;
+    // The name exactly as written, so useTheme ranks above Theme, whose words are the same.
+    if (exactName(document) === query.trim().toLowerCase()) score += 60;
     score = Math.round(score * kindFactor[document.kind] * 10) / 10;
     results.push({ document, score, strength, matched, named, of: queryTerms.length });
   }
@@ -210,21 +253,32 @@ function rank(manifest, query, { kinds, limit = 10 } = {}) {
 export function search(manifest, query, options) {
   return rank(manifest, query, options).map(({ document, score, matched }) => ({
     kind: document.kind,
-    ...summarize(document.kind, document.item),
+    ...summarize(manifest, document.kind, document.item),
     score,
     matched,
   }));
 }
 
 /** The short form of an item in lists and search results. */
-export function summarize(kind, item) {
-  if (kind === 'component')
+export function summarize(manifest, kind, item) {
+  if (kind === 'component') {
+    const exported = topLevelExports(manifest, item);
     return {
       name: item.name,
-      exports: topLevelExports(item).map((entry) => entry.name),
-      import: topLevelExports(item)[0]?.import,
+      exports: exported.map((entry) => entry.name),
+      import: exported[0]?.import,
       summary: item.summary,
       status: item.status,
+      doc: item.doc,
+    };
+  }
+  if (kind === 'export')
+    return {
+      name: item.name,
+      exportKind: item.kind,
+      import: item.import,
+      summary: item.description,
+      page: item.page,
       doc: item.doc,
     };
   if (kind === 'token')
@@ -236,10 +290,6 @@ export function summarize(kind, item) {
     };
   return { name: item.name, title: item.title, summary: item.summary, doc: item.doc };
 }
-
-/** A page's exports without the parts of its namespaces, which import through the namespace. */
-export const topLevelExports = (component) =>
-  component.exports.filter((entry) => !entry.name.includes('.'));
 
 const normalize = (name) =>
   String(name ?? '')
@@ -255,9 +305,9 @@ export function findComponent(manifest, name) {
   if (!key) return undefined;
   for (const component of manifest.components) {
     if (normalize(component.name) === key || normalize(component.page) === key)
-      return { component, entry: component.exports.find((item) => item.name === component.name) };
-    const entry = component.exports.find((item) => normalize(item.name) === key);
-    if (entry) return { component, entry };
+      return { component, entry: exportOf(manifest, component.name) };
+    const exported = component.exports.find((item) => normalize(item) === key);
+    if (exported) return { component, entry: exportOf(manifest, exported) };
   }
   for (const component of manifest.components)
     if (component.aliases.some((alias) => normalize(alias) === key)) return { component };
@@ -266,21 +316,36 @@ export function findComponent(manifest, name) {
 
 /** Close names for a miss, so a caller can correct itself. */
 export function suggestions(manifest, name, limit = 5) {
-  return search(manifest, name, { kinds: ['component'], limit }).map((hit) => hit.name);
+  return search(manifest, name, { kinds: ['component', 'export'], limit }).map((hit) => hit.name);
 }
 
 /** Splits a description into the parts it asks for: sentences, list items and "with" clauses. */
 function clauses(description) {
-  return String(description)
-    .split(/[\n.;:!?]+|,\s*|\s+(?:and|with|plus|then|also|including)\s+/i)
-    .map((part) => part.replace(/^(?:and|with|or|plus|then)\s+/i, '').trim())
-    .filter((part) => terms(part).length);
+  return (
+    String(description)
+      // Code, paths and file names, such as `saveSettings` or src/pages/SettingsPage.tsx, name the
+      // application's own code, not what to build.
+      .replace(/`[^`]*`/g, ' ')
+      .replace(/(?:\.{0,2}\/)?(?:[\w.-]+\/)+[\w.-]+\.\w+/g, ' ')
+      .replace(/\b[\w-]+\.(?:[cm]?[jt]sx?|css|json|md|html)\b/g, ' ')
+      .split(/[\n.;:!?()]+|,\s*|\s+(?:and|with|plus|then|also|including)\s+/i)
+      .map((part) => part.replace(/^(?:and|with|or|plus|then)\s+/i, '').trim())
+      .filter((part) => terms(part).length)
+  );
 }
 
+/**
+ * Words that name the structure of a screen rather than an element on it. A part such as "a
+ * sign-in page" leads to templates and patterns; its other words still pick components.
+ */
+const structuralTerms = new Set(['page', 'screen', 'view', 'flow']);
+
 /** The export of a page that a part of a description names, or the page's own. */
-function exportFor(component, part) {
+function exportFor(manifest, component, part) {
   const wanted = new Set(terms(part));
-  const candidates = topLevelExports(component).filter((entry) => entry.kind !== 'function');
+  const candidates = topLevelExports(manifest, component).filter(
+    (entry) => entry.kind !== 'function',
+  );
   let best;
   let bestOverlap = 0;
   for (const entry of candidates) {
@@ -303,58 +368,103 @@ const covers = (hit) =>
 /**
  * A plan for a UI description: the components that cover each part of it, the patterns and
  * templates that fit the whole, tokens it names, and the parts nothing in envUI matched.
+ *
+ * The parts are read in the context of the whole: the strongest matches are chosen first, and a
+ * later part that a chosen component also matches well is credited to it rather than adding
+ * another, so the toggle of "a collapsible sidebar with a toggle" stays the sidebar's.
  */
-export function plan(manifest, description, { limit = 8 } = {}) {
+export function plan(manifest, description, { limit = 12 } = {}) {
   const chosen = new Map();
   const uncovered = [];
-  const choose = (hit, part, score) => {
-    const component = hit.document.item;
-    const entry = chosen.get(component.name) ?? { component, score: 0, for: [], use: new Set() };
-    entry.score += score;
-    if (part) entry.for.push(part);
-    const use = exportFor(component, part ?? '');
-    if (use) entry.use.add(use.name);
-    chosen.set(component.name, entry);
+  const structure = [];
+  const structureOnly = [];
+  const choose = (hit, part) => {
+    const { document } = hit;
+    const key = document.item.name;
+    const entry = chosen.get(key) ?? { document, score: 0, for: [], use: new Set() };
+    entry.score += hit.score;
+    entry.for.push(part);
+    const use =
+      document.kind === 'component'
+        ? exportFor(manifest, document.item, part)?.name
+        : document.item.name;
+    if (use) entry.use.add(use);
+    chosen.set(key, entry);
   };
-  const parts = clauses(description);
-  for (const part of parts) {
-    const hits = rank(manifest, part, { kinds: ['component'], limit: 2 });
-    if (!covers(hits[0])) {
-      uncovered.push(part);
+  const parts = clauses(description).map((part, index) => {
+    const partTerms = terms(part);
+    const query = partTerms.filter((term) => !structuralTerms.has(term)).join(' ');
+    return {
+      part,
+      index,
+      structural: partTerms.some((term) => structuralTerms.has(term)),
+      hits: query ? rank(manifest, query, { kinds: ['component', 'export'], limit: 6 }) : [],
+    };
+  });
+  for (const { part, structural, hits } of [...parts].sort(
+    (a, b) => (b.hits[0]?.score ?? 0) - (a.hits[0]?.score ?? 0) || a.index - b.index,
+  )) {
+    if (structural) structure.push(part);
+    // In a part about structure, such as "a settings page", only a component named outright
+    // counts; the rest of it is for templates and patterns.
+    if (!covers(hits[0]) || (structural && !hits[0].named)) {
+      (structural ? structureOnly : uncovered).push(part);
       continue;
     }
-    choose(hits[0], part, hits[0].score);
-    if (covers(hits[1]) && hits[1].score >= hits[0].score * 0.8)
-      choose(hits[1], part, hits[1].score);
+    const already = hits.find(
+      (hit) =>
+        chosen.has(hit.document.item.name) && covers(hit) && hit.score >= hits[0].score * 0.5,
+    );
+    if (already) {
+      choose(already, part);
+      continue;
+    }
+    choose(hits[0], part);
+    if (covers(hits[1]) && hits[1].score >= hits[0].score * 0.8) choose(hits[1], part);
   }
-  for (const hit of rank(manifest, description, { kinds: ['component'], limit: 3 }))
-    if (!chosen.has(hit.document.item.name) && hit.score >= 40 && hit.strength >= weights.alias)
-      choose(hit, undefined, hit.score);
   const components = [...chosen.values()]
     .sort((a, b) => b.score - a.score)
     .slice(0, limit)
-    .map(({ component, for: covered, use }) => ({
-      name: component.name,
-      use: [...use],
-      import: topLevelExports(component)[0]?.import,
-      summary: component.summary,
-      for: covered,
-      avoidWhen: component.avoidWhen,
-      examples: component.examples.map((example) => example.name),
-      doc: component.doc,
-    }));
+    .map(({ document, for: covered, use }) => {
+      const { item } = document;
+      if (document.kind === 'export')
+        return {
+          name: item.name,
+          use: [item.name],
+          import: item.import,
+          summary: item.description,
+          for: covered,
+          avoidWhen: [],
+          examples: [],
+          doc: item.doc,
+        };
+      return {
+        name: item.name,
+        use: [...use],
+        import: topLevelExports(manifest, item)[0]?.import,
+        summary: item.summary,
+        for: covered,
+        avoidWhen: item.avoidWhen,
+        examples: item.examples.map((example) => example.name),
+        doc: item.doc,
+      };
+    });
   const byImport = new Map();
   for (const component of components)
     for (const name of component.use) {
-      const from = manifest.exports[name]?.import ?? component.import;
+      const from = exportOf(manifest, name)?.import ?? component.import;
       byImport.set(from, new Set([...(byImport.get(from) ?? []), name]));
     }
   const pages = (kind) =>
     search(manifest, description, { kinds: [kind], limit: 3 }).filter((hit) => hit.score >= 12);
+  const templates = pages('template');
+  const patterns = pages('pattern');
+  // A part that names only a structure is covered by a template or pattern, or not at all.
+  if (!templates.length && !patterns.length) uncovered.push(...structureOnly);
   return {
     components,
-    patterns: pages('pattern'),
-    templates: pages('template'),
+    patterns,
+    templates,
     tokens: styleTerms(description).length
       ? search(manifest, styleTerms(description).join(' '), { kinds: ['token'], limit: 12 })
           .filter((hit) => !/\.(?:hover|pressed)$/.test(hit.name))
@@ -367,9 +477,12 @@ export function plan(manifest, description, { limit = 8 } = {}) {
     next: [
       'Check each component with get_component, its props with get_props and the closest example with get_example before writing code.',
       'Read avoidWhen: it names the component to use instead when a situation does not fit.',
+      structure.length && !templates.length
+        ? `No template matches ${structure.map((part) => `"${part}"`).join(', ')}: lay the page out with AppShell, Stack and Surface around the components above.`
+        : undefined,
       uncovered.length
         ? 'For the uncovered parts, search again in other words, then compose envUI components (Stack, Surface, List, Card) and tokens; if something is still missing, propose an envUI addition instead of a local copy.'
         : 'Compose these components; do not hand-roll controls envUI has.',
-    ],
+    ].filter(Boolean),
   };
 }

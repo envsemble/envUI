@@ -16,6 +16,9 @@ import {
   search,
   suggestions,
   summarize,
+  terms,
+  exportOf,
+  exportsOf,
 } from './catalog.mjs';
 
 /** Protocol versions this server speaks, newest first. */
@@ -35,7 +38,7 @@ const object = (properties, required = []) => ({
   additionalProperties: false,
 });
 
-const searchKinds = ['component', 'pattern', 'template', 'foundation', 'guide', 'token'];
+const searchKinds = ['component', 'export', 'pattern', 'template', 'foundation', 'guide', 'token'];
 
 /** The tools, with their JSON Schemas and what each returns. */
 export const tools = [
@@ -158,6 +161,9 @@ export const tools = [
 
 class ToolError extends Error {}
 
+/** A page's Markdown, which a tool returns as a content item of its own rather than inside JSON. */
+const markdownContent = Symbol('markdown');
+
 const requireString = (args, key) => {
   const value = args[key];
   if (typeof value !== 'string' || !value.trim())
@@ -168,8 +174,8 @@ const requireString = (args, key) => {
 function componentOrError(manifest, name) {
   const found = findComponent(manifest, name);
   if (found) return found;
-  const exported = manifest.exports[name];
-  if (exported) return { exported, name };
+  const exported = exportOf(manifest, name);
+  if (exported) return { exported };
   const close = suggestions(manifest, name);
   throw new ToolError(
     `envUI has no component, export or alias "${name}".${close.length ? ` Closest: ${close.join(', ')}.` : ''} Try search.`,
@@ -214,67 +220,48 @@ export function callTool(context, name, args = {}) {
       return {
         categories: manifest.categories,
         components: components.map((component) => ({
-          ...summarize('component', component),
+          ...summarize(manifest, 'component', component),
           category: component.category,
         })),
       };
     }
     case 'get_component': {
       const found = componentOrError(manifest, requireString(args, 'name'));
-      if (found.exported)
-        return {
-          name: found.name,
-          ...found.exported,
-          note: 'This export has no component page of its own; see get_props, and the page it is documented on if any.',
+      const brief = ({ props, native: _native, ...rest }) => ({
+        ...rest,
+        ...(props && { props: props.map((prop) => prop.name) }),
+      });
+      if (found.exported) {
+        const { exported } = found;
+        const result = {
+          ...brief(exported),
+          note: exported.doc
+            ? `This export has no component page; ${exported.doc} documents it. get_props gives its props.`
+            : 'This export has no page; get_props gives its props.',
         };
+        if (args.docs && exported.doc)
+          result[markdownContent] = readPackageFile(root, exported.doc);
+        return result;
+      }
       const { component, entry } = found;
       const result = {
         ...component,
         ...(entry && entry.name !== component.name && { requested: entry.name }),
-        exports: component.exports.map(({ props, native, ...rest }) => ({
-          ...rest,
-          ...(props && { props: props.map((prop) => prop.name) }),
-        })),
+        exports: exportsOf(manifest, component).map(brief),
       };
-      if (args.docs) result.markdown = readPackageFile(root, component.doc);
+      if (args.docs) result[markdownContent] = readPackageFile(root, component.doc);
       return result;
     }
     case 'get_props': {
       const requested = requireString(args, 'name');
       const found = componentOrError(manifest, requested);
-      if (found.exported)
-        return { name: found.name, import: found.exported.import, kind: found.exported.kind };
+      if (found.exported) return { page: found.exported.page, exports: [propsOf(found.exported)] };
       const { component, entry } = found;
       const entries =
         entry && normalizeName(entry.name) === normalizeName(requested)
           ? [entry]
-          : component.exports;
-      return {
-        page: component.name,
-        exports: entries.map(
-          ({
-            name: exportName,
-            kind,
-            import: from,
-            props,
-            native,
-            signature,
-            parts,
-            description,
-          }) => ({
-            name: exportName,
-            kind,
-            import: from,
-            description,
-            ...(props && { props }),
-            ...(native?.length && {
-              native: `Also accepts the native props of ${native.map((tag) => (tag === 'element' ? 'an HTML element' : `<${tag}>`)).join(' or ')}.`,
-            }),
-            ...(signature && { signature }),
-            ...(parts && { parts }),
-          }),
-        ),
-      };
+          : exportsOf(manifest, component);
+      return { page: component.name, exports: entries.map(propsOf) };
     }
     case 'get_example': {
       const { component, exported } = componentOrError(manifest, requireString(args, 'component'));
@@ -302,12 +289,12 @@ export function callTool(context, name, args = {}) {
     }
     case 'list_patterns':
       return {
-        patterns: manifest.patterns.map((page) => summarize('pattern', page)),
+        patterns: manifest.patterns.map((page) => summarize(manifest, 'pattern', page)),
         ...(!manifest.patterns.length && { note: 'This version has no patterns yet.' }),
       };
     case 'list_templates':
       return {
-        templates: manifest.templates.map((page) => summarize('template', page)),
+        templates: manifest.templates.map((page) => summarize(manifest, 'template', page)),
         ...(!manifest.templates.length && {
           note: 'This version has no templates yet. Use plan to choose components for a page.',
         }),
@@ -316,8 +303,13 @@ export function callTool(context, name, args = {}) {
       const { tokens } = manifest;
       const limit = Number.isInteger(args.limit) ? Math.min(Math.max(args.limit, 1), 400) : 60;
       if (args.legacy) {
+        const wanted = typeof args.query === 'string' ? terms(args.query) : [];
         const legacy = tokens.legacy.filter(
-          (token) => !args.prefix || token.id.startsWith(String(args.prefix)),
+          (token) =>
+            (!args.prefix || token.id.startsWith(String(args.prefix))) &&
+            (!args.type || token.type === args.type) &&
+            (!wanted.length ||
+              wanted.some((term) => terms(`${token.id} ${token.use ?? ''}`).includes(term))),
         );
         return { total: legacy.length, legacy: legacy.slice(0, limit) };
       }
@@ -347,6 +339,22 @@ export function callTool(context, name, args = {}) {
 
 const normalizeName = (name) => String(name).toLowerCase();
 
+/** An export's props, signature or parts, as get_props returns them. */
+function propsOf({ name, kind, import: from, description, props, native, signature, parts }) {
+  return {
+    name,
+    kind,
+    import: from,
+    description,
+    ...(props && { props }),
+    ...(native?.length && {
+      native: `Also accepts the native props of ${native.map((tag) => (tag === 'element' ? 'an HTML element' : `<${tag}>`)).join(' or ')}.`,
+    }),
+    ...(signature && { signature }),
+    ...(parts && { parts }),
+  };
+}
+
 /** A JSON-RPC server for one connection: hand it a parsed message, get the response or nothing. */
 export function createServer({
   root = packageRoot,
@@ -365,7 +373,11 @@ export function createServer({
       return undefined; // A response; this server sends no requests.
     if (!valid || typeof message.method !== 'string')
       return error(message?.id ?? null, -32600, 'Invalid request.');
-    const { id, method, params = {} } = message;
+    const { id, method } = message;
+    const params =
+      message.params && typeof message.params === 'object' && !Array.isArray(message.params)
+        ? message.params
+        : {};
     const notification = !('id' in message);
     if (notification) return undefined;
     switch (method) {
@@ -383,7 +395,7 @@ export function createServer({
       case 'tools/list':
         return result(id, { tools });
       case 'tools/call': {
-        const name = params?.name;
+        const { name } = params;
         if (!tools.some((tool) => tool.name === name))
           return error(id, -32602, `Unknown tool: ${name}`);
         const args = params.arguments ?? {};
@@ -391,7 +403,10 @@ export function createServer({
           return error(id, -32602, 'Tool arguments must be an object.');
         try {
           const value = callTool(context, name, args);
-          return result(id, { content: [{ type: 'text', text: JSON.stringify(value) }] });
+          const content = [{ type: 'text', text: JSON.stringify(value) }];
+          if (value?.[markdownContent])
+            content.push({ type: 'text', text: value[markdownContent] });
+          return result(id, { content });
         } catch (caught) {
           if (!(caught instanceof ToolError)) log(caught.stack ?? String(caught));
           return result(id, {
@@ -423,13 +438,24 @@ export function createServer({
       return error(null, -32700, 'Parse error.');
     }
     if (Array.isArray(message)) {
-      const responses = message.map(handle).filter(Boolean);
+      const responses = message.map(safely).filter(Boolean);
       return responses.length ? responses : undefined;
     }
-    return handle(message);
+    return safely(message);
   }
 
-  return { handle, handleLine, version };
+  /** Answers a message, or an internal error for one the server failed on, and keeps serving. */
+  function safely(message) {
+    try {
+      return handle(message);
+    } catch (caught) {
+      log(caught?.stack ?? String(caught));
+      const id = message && typeof message === 'object' && 'id' in message ? message.id : null;
+      return error(id ?? null, -32603, 'Internal error.');
+    }
+  }
+
+  return { handle: safely, handleLine, version };
 }
 
 export function runMcp({ input = process.stdin, output = process.stdout } = {}) {

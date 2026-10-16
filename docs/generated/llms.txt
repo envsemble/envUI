@@ -8,7 +8,7 @@ Search envUI before writing any UI element; propose an envUI addition instead of
 
 - [Install the private package](docs/setup.md): Registry access, styles, themes and public entry points.
 - [Migrate an interface to envUI](docs/migration.md): Replace existing UI while preserving application behavior.
-- [For agents](docs/agents.md): The AGENTS.md index, the MCP server, the manifest, llms.txt and the skills that coding agents use.
+- [For agents](docs/agent-tooling.md): The AGENTS.md index, the MCP server, the manifest, llms.txt and the skills that coding agents use.
 - [Develop envUI locally](docs/local-development.md): Link a checkout while co-developing a consuming application.
 - [Extend the shared library](docs/library-development.md): Public API changes, changesets, catalogue specimens and acceptance checks.
 - [Write a component page](docs/component-pages.md): The page template, frontmatter, generated props and example files, and how to convert a page.

@@ -3,27 +3,54 @@
 // AGENTS.md at the start of every task, so the index puts the rule "search envUI first" and the way
 // to the installed documentation in front of them without a tool call.
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { relative, resolve } from 'node:path';
-import { topLevelExports } from './catalog.mjs';
+import { dirname, join, relative, resolve, sep } from 'node:path';
+import { exportOf, topLevelExports } from './catalog.mjs';
 
 export const beginMarker = '<!-- BEGIN envui -->';
 export const endMarker = '<!-- END envui -->';
 /** The index's budget in bytes, markers included: small enough to read on every task. */
 export const indexBudget = 8 * 1024;
 
-const docsPath = 'node_modules/@envsemble/envui/docs';
+/** Where the package usually is, relative to the project folder. */
+export const defaultPackagePath = 'node_modules/@envsemble/envui';
+
+/**
+ * The installed package's folder relative to the folder of the file that gets the index, found as
+ * Node finds it: in node_modules there or in a folder above, as in a workspace whose dependencies
+ * are hoisted to its root. Without one, the usual path.
+ */
+export function packagePathFor(file) {
+  const from = dirname(resolve(file));
+  for (let folder = from; ; folder = dirname(folder)) {
+    const candidate = join(folder, defaultPackagePath);
+    if (existsSync(join(candidate, 'package.json')))
+      return relative(from, candidate).split(sep).join('/');
+    if (dirname(folder) === folder) return defaultPackagePath;
+  }
+}
+
+/**
+ * An alias written as code, such as `ToastProvider`, `MenuItem` or `Sidebar.Item`: an agent would
+ * import it. Plain words and acronyms, such as "toast" or "CTA", are not.
+ */
+const codeLike = (alias) =>
+  /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)+$/.test(alias) ||
+  /^[A-Z][\w$]*[a-z][\w$]*$/.test(alias) ||
+  /^[a-z]+[A-Z][\w$]*$/.test(alias);
 
 /**
  * A component page as one entry of the index: its file, its exports and, budget allowing, the
- * first few aliases, such as `button.md Button IconButton ConfirmButton (action, CTA)`.
+ * first few aliases, such as `button: Button IconButton ConfirmButton (action, CTA)`. Aliases
+ * written as code that envUI doesn't export, mostly 0.x names, are left out, so the index never
+ * shows a name that doesn't import.
  */
-function pageEntry(component, aliasCount) {
-  const names = topLevelExports(component).map((entry) => entry.name);
+function pageEntry(manifest, component, aliasCount) {
+  const names = topLevelExports(manifest, component).map((entry) => entry.name);
   const known = new Set(names.map((name) => name.toLowerCase()));
   const aliases = component.aliases
     .filter((alias) => {
       const key = alias.toLowerCase();
-      if (known.has(key)) return false;
+      if (known.has(key) || (codeLike(alias) && !exportOf(manifest, alias))) return false;
       known.add(key);
       return true;
     })
@@ -32,15 +59,18 @@ function pageEntry(component, aliasCount) {
 }
 
 /** The index between its markers, with as many aliases per page as the budget allows. */
-export function renderIndex(manifest, { budget = indexBudget } = {}) {
+export function renderIndex(
+  manifest,
+  { budget = indexBudget, packagePath = defaultPackagePath } = {},
+) {
   for (let aliasCount = 6; aliasCount >= 0; aliasCount -= 1) {
-    const block = renderBlock(manifest, aliasCount);
+    const block = renderBlock(manifest, aliasCount, packagePath);
     if (Buffer.byteLength(block) <= budget) return block;
   }
   throw new Error(`The envUI index does not fit in ${budget} bytes even without aliases.`);
 }
 
-function renderBlock(manifest, aliasCount) {
+function renderBlock(manifest, aliasCount, packagePath) {
   const version = manifest.version ? ` ${manifest.version}` : '';
   const lines = [
     beginMarker,
@@ -52,7 +82,7 @@ function renderBlock(manifest, aliasCount) {
     '',
     `- **${manifest.rule}** Never hand-roll a button, field, menu, dialog, table, tabs or layout that envUI has, and never restyle its \`.env-*\` classes. What envUI lacks, compose from its parts for now and propose upstream.`,
     '- Look things up with the `envui` MCP tools when they are available: `plan` for a whole screen, `search`, `get_component`, `get_props`, `get_example`, `get_tokens`. Otherwise read the docs below; use only the exports and props they or the `.d.ts` files list.',
-    `- Docs in \`${docsPath}/\`: \`index.md\`; \`components/<page>.md\` with when to use it and what instead, accessibility, examples and props; \`examples/<page>/<Name>.tsx\`; \`foundations/\`; \`patterns/\`; \`setup.md\`. The same as data in \`node_modules/@envsemble/envui/manifest.json\`, and all pages in one file in \`llms-full.txt\` beside it.`,
+    `- Docs in \`${packagePath}/docs/\`: \`index.md\`; \`components/<page>.md\` with when to use it and what instead, accessibility, examples and props; \`examples/<page>/<Name>.tsx\`; \`foundations/\`; \`patterns/\`; \`setup.md\`. The same as data in \`${packagePath}/manifest.json\`.`,
     `- Imports: ${manifest.imports.entryPoints.map((entry) => `\`${entry}\``).join(', ')}; icons one by one from \`${manifest.imports.icons}\` (names in \`icon-manifest.json\`); \`${manifest.imports.styles}\` once, and the UI inside \`Theme\`.`,
     '- Style with tokens, as CSS custom properties such as `var(--color-fg-muted)` or `var(--space-4)`: no raw colors or pixel sizes.',
     '',
@@ -62,7 +92,7 @@ function renderBlock(manifest, aliasCount) {
   for (const category of manifest.categories) {
     const entries = manifest.components
       .filter((component) => component.category === category)
-      .map((component) => pageEntry(component, aliasCount));
+      .map((component) => pageEntry(manifest, component, aliasCount));
     lines.push(`- ${category}: ${entries.join('; ')}`);
   }
   const pageList = (pages) => pages.map((page) => page.name).join(', ');
@@ -108,7 +138,13 @@ export function withIndex(source, block) {
     const trimmed = source.replace(/(?:\r?\n)*$/, '');
     return `${trimmed}${newline}${newline}${text}`;
   }
-  if (begin === -1 || end === -1 || end < begin || source.indexOf(beginMarker, begin + 1) !== -1)
+  if (
+    begin === -1 ||
+    end === -1 ||
+    end < begin ||
+    source.indexOf(beginMarker, begin + 1) !== -1 ||
+    source.indexOf(endMarker, end + 1) !== -1
+  )
     throw new Error(
       `The file has ${begin === -1 ? `no ${beginMarker}` : end === -1 ? `no ${endMarker}` : 'its envui markers out of order or twice'}; fix the markers by hand, or remove the block, and run again.`,
     );
@@ -122,7 +158,7 @@ export function withIndex(source, block) {
 export function updateAgentsFile(file, manifest, { check = false, label = file } = {}) {
   const exists = existsSync(file);
   const source = exists ? readFileSync(file, 'utf8') : '';
-  const block = renderIndex(manifest);
+  const block = renderIndex(manifest, { packagePath: packagePathFor(file) });
   const next = withIndex(source, block);
   const bytes = Buffer.byteLength(block);
   if (check) {
@@ -153,11 +189,11 @@ Options:
   --print        Print the index instead of writing it.`;
 
 export function runAgents(options, manifest) {
+  const file = resolve(process.cwd(), options.file ?? 'AGENTS.md');
   if (options.print) {
-    process.stdout.write(renderIndex(manifest));
+    process.stdout.write(renderIndex(manifest, { packagePath: packagePathFor(file) }));
     return 0;
   }
-  const file = resolve(process.cwd(), options.file ?? 'AGENTS.md');
   const { code, message } = updateAgentsFile(file, manifest, {
     check: options.check,
     label: relative(process.cwd(), file) || file,

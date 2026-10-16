@@ -9,7 +9,7 @@ import {
   rmSync,
   writeFileSync,
 } from 'node:fs';
-import { join, relative, resolve } from 'node:path';
+import { join, parse, relative, resolve } from 'node:path';
 import { after, before, test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { examplesDirectory, packageDocumentation } from '../scripts/GenerateDocumentation.mjs';
@@ -24,12 +24,13 @@ import {
   beginMarker,
   endMarker,
   indexBudget,
+  packagePathFor,
   renderIndex,
   updateAgentsFile,
   withIndex,
 } from '../packages/ui/bin/agents.mjs';
-import { findComponent, plan, search } from '../packages/ui/bin/catalog.mjs';
-import { protocolVersions } from '../packages/ui/bin/mcp.mjs';
+import { exportOf, findComponent, plan, search } from '../packages/ui/bin/catalog.mjs';
+import { createServer, protocolVersions } from '../packages/ui/bin/mcp.mjs';
 
 const repository = fileURLToPath(new URL('../', import.meta.url));
 const manifest = buildManifest();
@@ -50,7 +51,11 @@ before(() => {
   packageDocumentation(join(packageRoot, 'docs'));
 });
 
+/** Servers a test started; a failed assertion must not leave one running and the run waiting. */
+const servers = new Set();
+
 after(() => {
+  for (const child of servers) child.kill();
   const inside = relative(cacheDirectory, workDirectory ?? '');
   if (workDirectory && inside && !inside.startsWith('..'))
     rmSync(workDirectory, { recursive: true, force: true });
@@ -111,11 +116,14 @@ test('the manifest has every component page, export, example and token', () => {
     'exports',
     'examples',
   ]);
-  assert.deepEqual(
-    button.exports.map((entry) => entry.name),
-    ['Button', 'IconButton', 'ConfirmButton', 'CopyButton', 'ButtonGroup'],
-  );
-  const variant = button.exports[0].props.find((prop) => prop.name === 'variant');
+  assert.deepEqual(button.exports, [
+    'Button',
+    'IconButton',
+    'ConfirmButton',
+    'CopyButton',
+    'ButtonGroup',
+  ]);
+  const variant = manifest.exports.Button.props.find((prop) => prop.name === 'variant');
   assert.equal(variant.default, "'primary'");
   assert.ok(button.avoidWhen.some((avoid) => avoid.use === 'Link'));
   for (const component of manifest.components) {
@@ -124,7 +132,10 @@ test('the manifest has every component page, export, example and token', () => {
     assert.ok(component.summary && component.aliases.length, component.name);
     for (const avoid of component.avoidWhen)
       if (avoid.use) assert.ok(manifest.exports[avoid.use], `${component.name}: ${avoid.use}`);
-    for (const entry of component.exports) assert.ok(props.exports[entry.name], entry.name);
+    for (const name of component.exports) {
+      assert.ok(props.exports[name], name);
+      assert.equal(manifest.exports[name].page, component.page, name);
+    }
     for (const example of component.examples) {
       assert.equal(example.file, `docs/examples/${component.page}/${example.name}.tsx`);
       assert.ok(
@@ -135,6 +146,22 @@ test('the manifest has every component page, export, example and token', () => {
     }
   }
   // A namespace lists its parts, which are exports in their own right.
+  // Every export carries its own data, also one without a component page, such as Theme.
+  for (const [name, entry] of Object.entries(props.exports)) {
+    const exported = manifest.exports[name];
+    assert.equal(exported.import, entry.entries[0], name);
+    if (entry.kind === 'component') assert.deepEqual(exported.props, entry.props, name);
+    if (entry.kind === 'function') assert.equal(exported.signature, entry.signature, name);
+    if (exported.page) assert.ok(existsSync(join(repository, exported.doc)), name);
+  }
+  assert.equal(manifest.exports.Theme.page, 'setup');
+  assert.equal(manifest.exports.Theme.doc, 'docs/setup.md');
+  assert.ok(manifest.exports.Theme.props.length >= 3);
+  for (const name of Object.keys(manifest.exports))
+    assert.ok(manifest.exports[name].page, `${name} has a page that documents it`);
+  // Names that every object inherits are not exports.
+  for (const name of ['constructor', '__proto__', 'toString', 'hasOwnProperty'])
+    assert.equal(exportOf(manifest, name), undefined, name);
   const menu = findComponent(manifest, 'Menu.Item');
   assert.equal(menu.component.name, 'Menu');
   assert.equal(menu.entry.name, 'Menu.Item');
@@ -192,6 +219,29 @@ test('the AGENTS.md index fits in 8 KB and names only what envUI exports', () =>
         .split(' ');
       for (const name of names) assert.ok(manifest.exports[name], `${name} is not an export`);
     }
+  // An alias written as code, inside the parentheses, is always an export: 0.x names such as
+  // ToastProvider, TableHead or GroupedRows would otherwise be imported.
+  const componentLines = block
+    .slice(block.indexOf('### Components'))
+    .split('\n')
+    .filter((line) => line.startsWith('- ') && !line.startsWith('- Other exports'))
+    .join('\n');
+  const aliasLists = [...componentLines.matchAll(/ \(([^)]*)\)(?=;|$)/gm)].map((match) => match[1]);
+  assert.ok(aliasLists.length > 30);
+  for (const alias of aliasLists.flatMap((list) => list.split(', ')))
+    if (/^[A-Za-z_$][\w$]*(?:\.[\w$]+)+$|^[A-Z][\w$]*[a-z][\w$]*$|^[a-z]+[A-Z][\w$]*$/.test(alias))
+      assert.ok(manifest.exports[alias], `The index shows ${alias}, which envUI doesn't export.`);
+  for (const name of [
+    'ToastProvider',
+    'TableHead',
+    'MenuItem',
+    'LoadingBar',
+    'GroupedRows',
+    'DateTimeField',
+  ])
+    assert.doesNotMatch(block, new RegExp(`\\b${name}\\b`), name);
+  // llms-full.txt is too large to read whole, so the index doesn't offer it.
+  assert.doesNotMatch(block, /llms-full/);
   // A library that outgrows the budget loses aliases before anything else, and fails beyond that.
   const crowded = {
     ...manifest,
@@ -219,6 +269,10 @@ test('the index goes between its markers and leaves the rest of the file', () =>
   assert.equal(withIndex(written, block), written);
   assert.throws(() => withIndex(`${beginMarker}\nno end\n`, block), /no <!-- END envui -->/);
   assert.throws(() => withIndex(`${endMarker}\n${beginMarker}\n`, block), /out of order/);
+  assert.throws(
+    () => withIndex(`${beginMarker}\nold\n${endMarker}\nmine\n${endMarker}\n`, block),
+    /out of order or twice/,
+  );
 });
 
 test('envui agents creates, updates and checks AGENTS.md', () => {
@@ -257,6 +311,30 @@ test('envui agents creates, updates and checks AGENTS.md', () => {
   assert.equal(envui('unknown').status, 2);
 });
 
+test('the index points at the package where the project installs it', () => {
+  // A workspace that hoists its dependencies to the root: the index in apps/web/AGENTS.md leads
+  // two folders up.
+  const workspace = join(workDirectory, 'workspace');
+  const app = join(workspace, 'apps/web');
+  const installed = join(workspace, 'node_modules/@envsemble/envui');
+  mkdirSync(app, { recursive: true });
+  mkdirSync(installed, { recursive: true });
+  writeFileSync(join(installed, 'package.json'), '{}');
+  assert.equal(packagePathFor(join(app, 'AGENTS.md')), '../../node_modules/@envsemble/envui');
+  assert.equal(packagePathFor(join(workspace, 'AGENTS.md')), 'node_modules/@envsemble/envui');
+  const file = join(app, 'AGENTS.md');
+  updateAgentsFile(file, manifest);
+  const written = readFileSync(file, 'utf8');
+  assert.ok(written.includes('`../../node_modules/@envsemble/envui/docs/`'));
+  assert.ok(written.includes('`../../node_modules/@envsemble/envui/manifest.json`'));
+  assert.equal(updateAgentsFile(file, manifest, { check: true }).code, 0);
+  // Without an installation, the usual path.
+  assert.equal(
+    packagePathFor(join(parse(workDirectory).root, 'envui-test-no-such-folder', 'AGENTS.md')),
+    'node_modules/@envsemble/envui',
+  );
+});
+
 test('updateAgentsFile reports what it did', () => {
   const file = join(workDirectory, 'Direct.md');
   assert.equal(updateAgentsFile(file, manifest, { check: true }).code, 1);
@@ -269,6 +347,8 @@ function startServer() {
   const child = spawn(process.execPath, [join(packageRoot, 'bin/envui.mjs'), 'mcp'], {
     stdio: ['pipe', 'pipe', 'pipe'],
   });
+  servers.add(child);
+  child.on('exit', () => servers.delete(child));
   const waiting = new Map();
   const lines = [];
   let buffer = '';
@@ -307,9 +387,11 @@ function startServer() {
     async call(name, args) {
       const response = await this.request('tools/call', { name, arguments: args });
       assert.ok(response.result, JSON.stringify(response));
-      const [content] = response.result.content;
+      const [content, ...more] = response.result.content;
       assert.equal(content.type, 'text');
-      return response.result.isError ? { error: content.text } : JSON.parse(content.text);
+      if (response.result.isError) return { error: content.text };
+      const value = JSON.parse(content.text);
+      return more.length ? { value, more: more.map((item) => item.text) } : value;
     },
     lines,
     stop: () =>
@@ -379,11 +461,35 @@ test('envui mcp answers every tool over stdio from the installed files', async (
   assert.equal(iconButton.name, 'Button');
   assert.equal(iconButton.requested, 'IconButton');
   assert.ok(iconButton.exports.find((entry) => entry.name === 'IconButton').props.includes('icon'));
+  // The page comes as a Markdown content item of its own, not escaped inside the JSON.
   const byAlias = await server.call('get_component', { name: 'modal', docs: true });
-  assert.equal(byAlias.name, 'Dialog');
-  assert.match(byAlias.markdown, /^---\ntitle: Dialog\n[\s\S]*\n## Props\n/);
-  assert.equal((await server.call('get_component', { name: 'Theme' })).page, null);
+  assert.equal(byAlias.value.name, 'Dialog');
+  assert.equal(byAlias.value.markdown, undefined);
+  assert.match(byAlias.more[0], /^---\ntitle: Dialog\n[\s\S]*\n## Props\n/);
+  const theme = await server.call('get_component', { name: 'Theme' });
+  assert.equal(theme.page, 'setup');
+  assert.equal(theme.doc, 'docs/setup.md');
+  assert.ok(theme.props.includes('theme'));
   assert.match((await server.call('get_component', { name: 'Fooo' })).error, /no component/);
+  for (const name of ['constructor', '__proto__', 'toString'])
+    assert.match((await server.call('get_component', { name })).error, /no component/, name);
+  assert.match((await server.call('get_props', { name: 'toString' })).error, /no component/);
+  // An export without a component page has its props too.
+  const themeProps = await server.call('get_props', { name: 'Theme' });
+  assert.equal(themeProps.page, 'setup');
+  assert.deepEqual(
+    themeProps.exports[0].props.map((prop) => prop.name),
+    manifest.exports.Theme.props.map((prop) => prop.name),
+  );
+  assert.ok(themeProps.exports[0].props.length >= 3);
+  assert.match(
+    (await server.call('get_props', { name: 'createThemeBootstrapScript' })).exports[0].signature,
+    /^\(/,
+  );
+  assert.equal(
+    (await server.call('search', { query: 'ThemeToggle', limit: 3 })).results[0].name,
+    'ThemeToggle',
+  );
 
   const menuItem = await server.call('get_props', { name: 'Menu.Item' });
   assert.deepEqual(
@@ -429,6 +535,13 @@ test('envui mcp answers every tool over stdio from the installed files', async (
   assert.equal(colors.tokens.length, 3);
   const legacy = await server.call('get_tokens', { legacy: true, prefix: 'color.canvas' });
   assert.ok(legacy.legacy.length >= 1);
+  const legacyChecks = await server.call('get_tokens', { legacy: true, query: 'checkbox' });
+  assert.ok(legacyChecks.total >= 1);
+  assert.ok(legacyChecks.legacy.every((token) => token.id.includes('checkbox')));
+  assert.equal(
+    (await server.call('get_tokens', { legacy: true, type: 'shadow', query: 'checkbox' })).total,
+    0,
+  );
 
   const planned = await server.call('plan', {
     description:
@@ -458,6 +571,12 @@ test('envui mcp follows JSON-RPC for versions, errors, notifications and batches
   });
   assert.equal(newest.result.protocolVersion, protocolVersions[0]);
   assert.equal((await server.request('resources/list', {})).error.code, -32601);
+  // Params that are null or not an object read as none, rather than stopping the server.
+  assert.equal(
+    (await server.request('initialize', null)).result.protocolVersion,
+    protocolVersions[0],
+  );
+  assert.equal((await server.request('tools/call', null)).error.code, -32602);
   assert.equal(
     (await server.request('tools/call', { name: 'nope', arguments: {} })).error.code,
     -32602,
@@ -487,7 +606,43 @@ test('envui mcp follows JSON-RPC for versions, errors, notifications and batches
   const { code } = await server.stop();
   assert.equal(code, 0);
   // Notifications got no answer: one line per request.
-  assert.equal(server.lines.length, 7);
+  assert.equal(server.lines.length, 9);
+});
+
+test('a message the server fails on gets an internal error, and the server goes on', () => {
+  const logged = [];
+  const server = createServer({
+    root: packageRoot,
+    manifest: { ...manifest, version: '1.0.0' },
+    log: (text) => logged.push(text),
+  });
+  const broken = {
+    jsonrpc: '2.0',
+    id: 7,
+    get method() {
+      throw new Error('broken message');
+    },
+  };
+  assert.deepEqual(server.handle(broken), {
+    jsonrpc: '2.0',
+    id: 7,
+    error: { code: -32603, message: 'Internal error.' },
+  });
+  assert.match(logged[0], /broken message/);
+  assert.deepEqual(server.handleLine('{"jsonrpc":"2.0","id":8,"method":"ping"}').result, {});
+});
+
+test('search finds exports without a component page by name', () => {
+  for (const name of ['ThemeToggle', 'Text', 'Theme', 'LinkProvider', 'useTheme']) {
+    const [first] = search(manifest, name, { limit: 3 });
+    assert.equal(first.name, name);
+    assert.equal(first.kind, 'export');
+    assert.ok(first.doc, name);
+  }
+  assert.deepEqual(
+    plan(manifest, 'a dark mode toggle').components.map((component) => component.name),
+    ['ThemeToggle'],
+  );
 });
 
 test('search and plan rank by names, aliases and situations', () => {
@@ -508,6 +663,19 @@ test('search and plan rank by names, aliases and situations', () => {
     assert.match(settings.imports.join('\n'), new RegExp(`\\b${name}\\b`));
   }
   assert.ok(settings.imports.every((line) => line.endsWith("from '@envsemble/envui';")));
+  // Structure words lead to templates and patterns, not to Pager or Pagination.
+  const signIn = plan(manifest, 'a sign-in page');
+  assert.deepEqual(signIn.components, []);
+  assert.deepEqual(signIn.uncovered, ['a sign-in page']);
+  assert.ok(signIn.next.some((step) => /No template matches "a sign-in page"/.test(step)));
+  // A part a chosen component also matches stays with it.
+  assert.deepEqual(
+    plan(manifest, 'add a collapsible sidebar with a toggle').components.map((c) => c.name),
+    ['AppShell'],
+  );
+  const form = plan(manifest, 'a sign-in form with email and password');
+  assert.ok(form.components.some((component) => component.name === 'TextField'));
+  assert.deepEqual(form.uncovered, []);
   const chart = plan(manifest, 'a line chart of weekly sign-ups');
   assert.deepEqual(chart.uncovered, ['a line chart of weekly sign-ups']);
   assert.match(chart.next.at(-1), /propose an envUI addition instead of a local copy/);
@@ -524,4 +692,47 @@ test('the manifest file is what the generator writes', () => {
   assert.equal(packaged.version, '9.8.7-test.1');
   const { version: _version, ...rest } = packaged;
   assert.deepEqual(rest, manifest);
+});
+
+/**
+ * The benchmark's tasks, phrased as a product engineer would ask: the capabilities each plan must
+ * cover, by capability id in bench/tasks.json. A capability is covered when the plan names one of
+ * its envUI exports. The list records today's plans; it may grow, and a capability that drops out
+ * fails the test.
+ */
+const planned = {
+  sidebar: ['collapsible-sidebar', 'nav-links'],
+  'settings-form': ['notifications', 'form-actions'],
+  'projects-table': ['table', 'sortable-headers', 'search', 'empty-state'],
+  'confirm-delete': ['delete-action', 'confirmation'],
+  'save-toast': ['toast', 'name-field', 'save-button'],
+  'page-header': ['breadcrumbs'],
+  'command-palette': ['palette', 'trigger', 'shortcut-hint'],
+  'tabs-counts': ['tabs'],
+  'account-menu': ['avatar', 'menu', 'menu-items'],
+  'file-upload': ['dropzone', 'remove-file', 'upload-progress'],
+  'date-form': ['date-picker', 'submit'],
+  'loading-skeletons': ['placeholders', 'error-message', 'retry'],
+  'inline-notice': ['upgrade-link'],
+};
+
+test('plan covers the capabilities of the benchmark tasks', () => {
+  const tasks = JSON.parse(readFileSync(join(repository, 'bench/tasks.json'), 'utf8'));
+  const list = tasks.tasks ?? tasks;
+  assert.deepEqual(Object.keys(planned).sort(), list.map((task) => task.id).sort());
+  for (const task of list) {
+    const result = plan(manifest, task.prompt);
+    const names = new Set(
+      result.components.flatMap((component) => [component.name, ...component.use]),
+    );
+    for (const id of planned[task.id]) {
+      const capability = task.capabilities.find((item) => item.id === id);
+      assert.ok(
+        capability.envui.some((name) => names.has(name) || names.has(name.split('.')[0])),
+        `${task.id}: ${id} (${capability.envui.join(', ')}) is not in the plan: ${[...names].join(', ')}`,
+      );
+    }
+    // Code and file names in a prompt are the application's, never a part to build.
+    assert.ok(!result.uncovered.some((part) => /\.tsx?\b|`/.test(part)), task.id);
+  }
 });

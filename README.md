@@ -12,7 +12,7 @@
 
 envUI brings consistent themes, composition and interaction to React applications: from a button or a native form to dialogs, notifications and rich text. It ships as a private ESM package with TypeScript declarations, local fonts, icons and tooling for coding agents.
 
-[For agents](docs/agents.md) · [Use envUI](.agents/skills/envui-use/SKILL.md) · [Migrate an app](.agents/skills/envui-migrate/SKILL.md) · [Changelog](packages/ui/CHANGELOG.md) · [CI](https://github.com/envsemble/envUI/actions/workflows/ci.yml)
+[For agents](docs/agent-tooling.md) · [Use envUI](.agents/skills/envui-use/SKILL.md) · [Migrate an app](.agents/skills/envui-migrate/SKILL.md) · [Changelog](packages/ui/CHANGELOG.md) · [CI](https://github.com/envsemble/envUI/actions/workflows/ci.yml)
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/readme/catalogue-dark.png">
@@ -100,7 +100,7 @@ export function ProjectForm() {
 
 ## Working with agents
 
-Coding agents get the same documentation as people, plus what helps them find a component before writing their own. [For agents](docs/agents.md) describes it all:
+Coding agents get the same documentation as people, plus what helps them find a component before writing their own. [For agents](docs/agent-tooling.md) describes it all:
 
 - `npx envui agents` writes an index of envUI, under 8 KB, into the project's `AGENTS.md`, with the rule to search envUI before writing any UI element and to propose an addition instead of a local copy.
 - `npx envui mcp` serves the installed version's components, props, examples, patterns and tokens as an MCP server.
