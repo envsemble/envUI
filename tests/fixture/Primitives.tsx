@@ -4,6 +4,8 @@ import { Menu as BaseMenu } from '@base-ui/react/menu';
 import {
   Button,
   CloseButton,
+  ConfirmButton,
+  CopyButton,
   EnvUIProvider,
   Field,
   IconButton,
@@ -11,6 +13,7 @@ import {
   Text,
   Toolbar,
   useLocale,
+  type ButtonProps,
 } from '@envsemble/envui';
 import { FormatBold } from '@envsemble/envui/icons/FormatBold';
 import { FormatItalic } from '@envsemble/envui/icons/FormatItalic';
@@ -53,6 +56,40 @@ function ToolbarSample() {
         <Toolbar.Link href="#help" icon={<Help />} label="Help" />
       </Toolbar.Root>
       <output data-testid="toolbar-pressed">{pressed.join(',')}</output>
+    </Stack>
+  );
+}
+
+/**
+ * Emphasis: buttons with a tone in a toolbar, whose ghost default they take where it has their
+ * tone; ConfirmButton and CopyButton, which follow it too; and a pair no variant is designed in,
+ * which only code past the types can ask for.
+ */
+function EmphasisSample() {
+  const undesigned = { variant: 'secondary', tone: 'danger' } as unknown as ButtonProps;
+  return (
+    <Stack gap={2} data-testid="emphasis">
+      <Toolbar.Root aria-label="Emphasis">
+        <Button tone="accent" data-testid="toolbar-accent">
+          Publish
+        </Button>
+        <Button tone="danger" data-testid="toolbar-danger">
+          Delete
+        </Button>
+        <ConfirmButton confirmLabel="Remove?" onConfirm={() => {}} data-testid="toolbar-confirm">
+          Remove
+        </ConfirmButton>
+        <CopyButton value="text" aria-label="Copy text" data-testid="toolbar-copy" />
+      </Toolbar.Root>
+      <Stack direction="row" gap={2}>
+        <ConfirmButton confirmLabel="Remove?" onConfirm={() => {}} data-testid="confirm-resting">
+          Remove
+        </ConfirmButton>
+        <CopyButton value="text" aria-label="Copy text" data-testid="copy-resting" />
+        <Button {...undesigned} data-testid="undesigned">
+          Undesigned
+        </Button>
+      </Stack>
     </Stack>
   );
 }
@@ -270,6 +307,7 @@ export function PrimitivesFixture() {
   return (
     <Stack gap={6}>
       <ToolbarSample />
+      <EmphasisSample />
       <FieldSample />
       <CloseButtonSample />
       <ResizeSample dir="ltr" />

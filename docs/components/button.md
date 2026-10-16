@@ -106,7 +106,8 @@ A ButtonGroup joins its buttons with a 0.125 rem gap; inner corners take the sha
 - Primary buttons are blue in both themes: the control blue with white labels in the light theme, and the link's soft blue with dark labels in the dark theme.
 - Secondary buttons use the neutral fill and label color without a border; the fill is a translucent layer of the text color, so they stay visible on rows, panes and dialogs. Outlined buttons keep their border and link color.
 - Ghost buttons take the quiet icon color, darken to the text color over a state layer on hover and press, and show the focus ring, with no fill or border. A ghost label reads at 4.5:1 on the canvas, panes and rows. In the danger tone, outline, ghost and text buttons take the danger color, with the danger state layer on hover and press.
-- A button without a `variant` takes the one its container gives: buttons the application puts in a [Toolbar](../components/toolbar.md) are ghost. Without one, a Button is primary and an IconButton secondary.
+- A button without a `variant` takes the one its container gives, where that variant has the button's tone: buttons the application puts in a [Toolbar](../components/toolbar.md) are ghost, a `tone="danger"` one too, but a `tone="accent"` Button stays primary, since ghost has no accent. Otherwise a Button is primary, an IconButton and a CopyButton secondary, and a ConfirmButton outline at rest, or secondary when icon-only.
+- Only the designed pairs type-check: an IconButton, CopyButton or icon-only ConfirmButton without a `variant` is neutral, so a tone needs a variant that takes it. A pair outside them, which only code past the types can ask for, renders neutral, and a development build reports it in the console.
 
 ## States and behaviour
 

@@ -13,15 +13,15 @@ import {
   Button,
   type ButtonAppearanceProps,
   type ButtonEmphasisProps,
-  type ButtonVariant,
+  type ButtonTone,
 } from './Button.js';
 import { classNames } from '../internal/classNames.js';
+import { useButtonEmphasis } from '../internal/ControlDefaults.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { confirmButton } from '../foundations/messages/confirmButton.js';
 
 type ConfirmButtonBaseProps = Omit<ButtonAppearanceProps, 'variant' | 'tone'> &
-  Omit<ComponentPropsWithRef<'button'>, 'onClick' | 'type'> &
-  ConfirmButtonEmphasisProps & {
+  Omit<ComponentPropsWithRef<'button'>, 'onClick' | 'type'> & {
     /** The label while armed, naming what a second press does, such as “Remove Morgan?”. */
     confirmLabel: ReactNode;
     /** Runs on the second press, while the button is armed. */
@@ -31,24 +31,35 @@ type ConfirmButtonBaseProps = Omit<ButtonAppearanceProps, 'variant' | 'tone'> &
   };
 
 /**
- * The resting emphasis; armed, the button is always a primary danger one. outline by default, and
- * secondary for an icon-only button, like IconButton; ghost for an action in the application's
- * chrome, such as a toolbar; variant="primary" tone="danger" to look armed at rest too.
+ * The resting emphasis, among Button's designed pairs; armed, the button is always a primary danger
+ * one. Without a variant it takes its container's, such as ghost in a toolbar, and else outline, or
+ * secondary for an icon-only button, like IconButton; variant="primary" tone="danger" looks armed at
+ * rest too. `RestingTone` is the tones the variant it falls back to takes.
  */
-type ConfirmButtonEmphasisProps = Omit<ButtonEmphasisProps, 'variant'> & {
-  /**
-   * The resting appearance; armed, the button is always variant="primary" tone="danger". outline
-   * by default, and secondary for an icon-only button, like IconButton; ghost for an action in the
-   * application's chrome, such as a toolbar.
-   * @default 'outline', or 'secondary' with icon
-   */
-  variant?: ButtonVariant;
-};
+type ConfirmButtonEmphasisProps<RestingTone extends ButtonTone> =
+  | {
+      /**
+       * The resting appearance; armed, the button is always variant="primary" tone="danger".
+       * Without it, the container's variant, such as ghost in a toolbar, and else outline, or
+       * secondary for an icon-only button, like IconButton.
+       * @default 'outline', or 'secondary' with icon
+       */
+      variant?: undefined;
+      /**
+       * The resting meaning, as Button's: neutral, or danger on a primary, outline, ghost or text
+       * button.
+       * @default 'neutral'
+       */
+      tone?: RestingTone;
+    }
+  | { variant: 'primary'; tone?: ButtonTone }
+  | { variant: 'outline' | 'ghost' | 'text'; tone?: 'neutral' | 'danger' }
+  | { variant: 'secondary'; tone?: 'neutral' };
 
 export type ConfirmButtonProps = ConfirmButtonBaseProps &
   (
-    | { icon?: undefined }
-    | {
+    | ({ icon?: undefined } & ConfirmButtonEmphasisProps<'neutral' | 'danger'>)
+    | ({
         /**
          * A round icon-only button at rest, named by aria-label. Armed, it shows the icon with the
          * confirm label, so the consequence is still named.
@@ -56,7 +67,7 @@ export type ConfirmButtonProps = ConfirmButtonBaseProps &
         icon: ReactNode;
         'aria-label': string;
         children?: never;
-      }
+      } & ConfirmButtonEmphasisProps<'neutral'>)
   );
 
 /**
@@ -66,7 +77,7 @@ export type ConfirmButtonProps = ConfirmButtonBaseProps &
  */
 export function ConfirmButton({
   icon,
-  variant = icon == null ? 'outline' : 'secondary',
+  variant,
   tone,
   confirmLabel,
   onConfirm,
@@ -83,6 +94,13 @@ export function ConfirmButton({
   ...props
 }: ConfirmButtonProps) {
   const messages = useMessages('confirmButton', confirmButton);
+  // At rest the button follows its container's variant, as Button does, but falls back to outline.
+  // The rule resolves to a designed pair.
+  const resting = useButtonEmphasis({
+    variant,
+    tone,
+    fallbackVariant: icon == null ? 'outline' : 'secondary',
+  }) as ButtonEmphasisProps;
   const [armedAt, setArmedAt] = useState<number | null>(null);
   // Disabling the button or starting its work ends an earlier arming.
   if ((disabled || pending) && armedAt !== null) setArmedAt(null);
@@ -94,9 +112,7 @@ export function ConfirmButton({
   }, [armed, armedDuration]);
   const shared = {
     ...props,
-    ...(armed
-      ? { variant: 'primary' as const, tone: 'danger' as const }
-      : ({ variant, tone } as ButtonEmphasisProps)),
+    ...(armed ? { variant: 'primary' as const, tone: 'danger' as const } : resting),
     disabled,
     pending,
     className: classNames('env-confirm-button', className),

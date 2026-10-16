@@ -649,7 +649,7 @@
           "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
           "required": false,
           "default": "'primary'",
-          "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else primary (secondary for IconButton)."
+          "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives where that variant takes its tone, such as ghost in a toolbar, and else primary."
         },
         {
           "name": "tone",
@@ -1779,20 +1779,6 @@
           "description": ""
         },
         {
-          "name": "tone",
-          "type": "'neutral' | 'accent' | 'danger'",
-          "required": false,
-          "default": "'neutral'",
-          "description": "The meaning: neutral for most actions; accent, on a primary button only, for a rare consequential action, with 0.5 rem corners; danger for an action that deletes or ends something. Secondary buttons are always neutral."
-        },
-        {
-          "name": "variant",
-          "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
-          "required": false,
-          "default": "'outline', or 'secondary' with icon",
-          "description": "The resting appearance; armed, the button is always variant=\"primary\" tone=\"danger\". outline by default, and secondary for an icon-only button, like IconButton; ghost for an action in the application's chrome, such as a toolbar."
-        },
-        {
           "name": "confirmLabel",
           "type": "ReactNode",
           "required": true,
@@ -1816,6 +1802,19 @@
           "type": "ReactNode",
           "required": false,
           "description": "A round icon-only button at rest, named by aria-label. Armed, it shows the icon with the confirm label, so the consequence is still named."
+        },
+        {
+          "name": "variant",
+          "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
+          "required": false,
+          "description": ""
+        },
+        {
+          "name": "tone",
+          "type": "'neutral' | 'accent' | 'danger'",
+          "required": false,
+          "default": "'neutral'",
+          "description": "The resting meaning, as Button's: neutral, or danger on a primary, outline, ghost or text button."
         }
       ],
       "native": [
@@ -1903,19 +1902,6 @@
           "description": "Runs once the text is on the clipboard, with that text."
         },
         {
-          "name": "variant",
-          "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
-          "required": false,
-          "default": "'secondary'",
-          "description": "As Button's, among its designed pairs with tone; secondary by default."
-        },
-        {
-          "name": "tone",
-          "type": "'neutral' | 'danger'",
-          "required": false,
-          "description": "As Button's: neutral by default, or danger."
-        },
-        {
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
@@ -1951,6 +1937,20 @@
           "required": false,
           "requiredWhen": "`children` is not set",
           "description": ""
+        },
+        {
+          "name": "variant",
+          "type": "'secondary' | 'primary' | 'outline' | 'ghost' | 'text'",
+          "required": false,
+          "default": "'secondary'",
+          "description": "The emphasis, as Button's. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else secondary."
+        },
+        {
+          "name": "tone",
+          "type": "'neutral' | 'accent' | 'danger'",
+          "required": false,
+          "default": "'neutral'",
+          "description": "The meaning, as Button's: accent on a primary button only, and danger on a primary, outline, ghost or text one. A secondary button is always neutral."
         },
         {
           "name": "children",
@@ -2364,7 +2364,7 @@
           "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
           "required": false,
           "default": "'primary'",
-          "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else primary (secondary for IconButton)."
+          "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives where that variant takes its tone, such as ghost in a toolbar, and else primary."
         },
         {
           "name": "tone",
@@ -3225,17 +3225,17 @@
       "props": [
         {
           "name": "variant",
-          "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
+          "type": "'secondary' | 'primary' | 'outline' | 'ghost' | 'text'",
           "required": false,
-          "default": "'primary'",
-          "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else primary (secondary for IconButton)."
+          "default": "'secondary'",
+          "description": "The emphasis, as Button's. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else secondary."
         },
         {
           "name": "tone",
           "type": "'neutral' | 'accent' | 'danger'",
           "required": false,
           "default": "'neutral'",
-          "description": "The meaning: neutral for most actions; accent, on a primary button only, for a rare consequential action, with 0.5 rem corners; danger for an action that deletes or ends something. Secondary buttons are always neutral."
+          "description": "The meaning, as Button's: accent on a primary button only, and danger on a primary, outline, ghost or text one. A secondary button is always neutral."
         },
         {
           "name": "icon",
@@ -6690,17 +6690,17 @@
         },
         {
           "name": "variant",
-          "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
+          "type": "'secondary' | 'primary' | 'outline' | 'ghost' | 'text'",
           "required": false,
-          "default": "'primary'",
-          "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else primary (secondary for IconButton)."
+          "default": "'secondary'",
+          "description": "The emphasis, as Button's. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else secondary."
         },
         {
           "name": "tone",
           "type": "'neutral' | 'accent' | 'danger'",
           "required": false,
           "default": "'neutral'",
-          "description": "The meaning: neutral for most actions; accent, on a primary button only, for a rare consequential action, with 0.5 rem corners; danger for an action that deletes or ends something. Secondary buttons are always neutral."
+          "description": "The meaning, as Button's: accent on a primary button only, and danger on a primary, outline, ghost or text one. A secondary button is always neutral."
         },
         {
           "name": "pending",

@@ -67,6 +67,37 @@ test.describe('Toolbar', () => {
   });
 });
 
+test.describe('Button emphasis', () => {
+  test("takes its container's variant where it has the button's tone", async ({ page }) => {
+    await open(page);
+    const emphasis = (testId: string) =>
+      page
+        .getByTestId(testId)
+        .evaluate((element) => [element.dataset.variant, element.dataset.tone]);
+    // Ghost has danger but no accent: an accent button stays the primary accent one.
+    expect(await emphasis('toolbar-accent')).toEqual(['primary', 'accent']);
+    expect(await emphasis('toolbar-danger')).toEqual(['ghost', 'danger']);
+    // ConfirmButton and CopyButton follow the toolbar, and else rest outline and secondary.
+    expect(await emphasis('toolbar-confirm')).toEqual(['ghost', 'neutral']);
+    expect(await emphasis('toolbar-copy')).toEqual(['ghost', 'neutral']);
+    expect(await emphasis('confirm-resting')).toEqual(['outline', 'neutral']);
+    expect(await emphasis('copy-resting')).toEqual(['secondary', 'neutral']);
+  });
+
+  test('renders a pair no variant is designed in as neutral, and reports it', async ({ page }) => {
+    const errors: string[] = [];
+    page.on('console', (message) => {
+      if (message.type() === 'error') errors.push(message.text());
+    });
+    await open(page);
+    await expect(page.getByTestId('undesigned')).toHaveAttribute('data-variant', 'secondary');
+    await expect(page.getByTestId('undesigned')).toHaveAttribute('data-tone', 'neutral');
+    expect(
+      errors.filter((text) => text.includes('a secondary button has no danger tone')),
+    ).toHaveLength(1);
+  });
+});
+
 test.describe('Field', () => {
   test('labels and describes its control, and shows the error while invalid', async ({ page }) => {
     await open(page);

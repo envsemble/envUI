@@ -698,7 +698,11 @@ export function selectScope(paths, index) {
       scope.css.push(path);
     if (exists) scope.format.push(path);
     if (/\.(?:[cm]?js|tsx?|json)$/.test(path) || path.endsWith('.css')) scope.unit = true;
-    if (/^(?:packages\/ui\/src\/|apps\/catalogue\/src\/|tests\/fixture\/).*\.tsx?$/.test(path))
+    if (
+      /^(?:packages\/ui\/src\/|apps\/catalogue\/src\/|tests\/fixture\/|tests\/types\/).*\.tsx?$/.test(
+        path,
+      )
+    )
       scope.typecheck = true;
     if (/(?:^|\/)tsconfig\.json$/.test(path)) scope.typecheck = true;
 
