@@ -9,41 +9,66 @@ export type FieldWellProps = ComponentPropsWithoutRef<'div'> & {
 };
 
 export interface FieldProps {
+  /**
+   * The field's visible name, such as Project name; it also names the control for assistive
+   * technology.
+   */
   label?: ReactNode;
+  /**
+   * Lasting guidance under the field, such as a format or a limit, linked to the control as its
+   * description.
+   */
   hint?: ReactNode;
+  /**
+   * A message under the field that says how to correct the value. While it is set, the control is
+   * invalid (aria-invalid) and the message joins its description, after the hint.
+   */
   error?: ReactNode;
 }
 
 export interface TextFieldAppearanceProps {
   /**
-   * Outlined by default; plain shows an underline on hover or focus without a border or fill; quiet
-   * is only its text (and icon) at rest, takes a soft fill under the pointer and while focused, and
-   * clears its placeholder once focused, for a search at the top of a sidebar.
+   * The field's look: outlined, with a thin border; plain, with no border or fill and an underline
+   * on hover and focus; or quiet, only its text and start icon at rest, with a soft fill under the
+   * pointer and while focused and a placeholder that clears on focus, for a search at the top of a
+   * sidebar or a list.
+   * @default 'outlined'
    */
   variant?: 'outlined' | 'plain' | 'quiet';
 }
 
 export interface TextFieldDecorationProps {
-  /** Decorative icon at the start of the well. */
+  /** A decorative icon at the start of the field, such as Search or Mail. */
   startIcon?: ReactNode;
-  /** A control at the end of the well, such as a clear IconButton. */
+  /**
+   * A control at the end of the field, such as a text IconButton that reveals or copies the value;
+   * name it with aria-label.
+   */
   endAction?: ReactNode;
   /**
-   * Match the shared control height so the field can sit beside buttons. The label is hidden
-   * unless showLabel is set; it stays available to assistive technology either way.
+   * Take the shared control height and a pill shape, to sit beside buttons in a toolbar. The label
+   * is hidden unless showLabel is set; it still names the field for assistive technology, and a
+   * placeholder gives the visible guidance.
    */
   compact?: boolean;
   /**
-   * Show the label inside the field, where it floats into the outline while the field has focus or
-   * a value. Defaults to true, and to false for compact fields, which can use a placeholder instead.
+   * Show the label in the field, where it rests while the field is empty and floats into the
+   * outline while the field has focus or a value. Compact fields hide it unless this is set.
+   * @default true, or false when compact
    */
   showLabel?: boolean;
 }
 
 export interface TextFieldAffixProps {
-  /** Short text in the field before the value, such as the start of an address. Not interactive. */
+  /**
+   * Short, non-interactive text before the value, such as the start of an address. It is not part
+   * of the value; it shows once the field has focus or a value and is read after the label.
+   */
   prefix?: ReactNode;
-  /** Short text in the field after the value, such as a unit. Not interactive. */
+  /**
+   * Short, non-interactive text after the value, such as a unit. It is not part of the value; it
+   * shows once the field has focus or a value and is read after the label.
+   */
   suffix?: ReactNode;
 }
 

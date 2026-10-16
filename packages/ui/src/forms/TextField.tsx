@@ -18,6 +18,11 @@ export interface TextFieldProps
     TextFieldAppearanceProps,
     TextFieldDecorationProps,
     TextFieldAffixProps {}
+
+/**
+ * A labelled single-line text input: a native input with a floating label, a hint and an error, in
+ * an outlined, plain or quiet look, with an optional start icon, end action, prefix and suffix.
+ */
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function TextField(
   {
     label,

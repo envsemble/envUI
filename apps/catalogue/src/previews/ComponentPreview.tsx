@@ -1,5 +1,4 @@
 import {
-  TextFieldsPreview,
   CheckboxPreview,
   SwitchPreview,
   RadioPreview,
@@ -57,8 +56,6 @@ export function ComponentPreview({ id }: { id: string }) {
   switch (id) {
     case 'segmented-control':
       return <SegmentedControlPreview />;
-    case 'text-field':
-      return <TextFieldsPreview />;
     case 'checkbox':
       return <CheckboxPreview />;
     case 'switch':

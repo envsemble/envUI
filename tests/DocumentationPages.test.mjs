@@ -67,7 +67,6 @@ const unconverted = [
   'switch',
   'table',
   'tabs',
-  'text-field',
   'toast',
   'tooltip',
   'tree',

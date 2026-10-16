@@ -207,12 +207,6 @@
   flex-wrap: wrap;
   align-items: center;
 }
-.docs-field-toolbar {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--space-3);
-}
 /* A header bar: the breadcrumb trail takes the room the status and the action leave. */
 .docs-breadcrumb-bar {
   display: grid;

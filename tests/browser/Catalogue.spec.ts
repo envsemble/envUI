@@ -297,16 +297,19 @@ test('offline reference loads every view without network or script errors', asyn
 });
 
 test('single previews retain state when the theme changes', async ({ page }) => {
+  // The 0.x preview of text fields opens the TextField page, whose live examples follow the
+  // documentation's theme.
   await page.goto(`${offline}#/components/input/preview`);
   const preview = page.locator('.docs-preview');
-  const projectName = preview.getByRole('textbox', { name: 'Project name' }).first();
+  const example = page.getByRole('group', { name: 'TextField example', exact: true });
+  const projectName = example.getByRole('textbox', { name: 'Project name', exact: true });
   await projectName.fill('Winter release');
   await page.getByRole('button', { name: 'Switch to dark theme' }).click();
-  await expect(preview).toHaveAttribute('data-env-theme', 'dark');
+  await expect(example).toHaveAttribute('data-env-theme', 'dark');
   await expect(projectName).toHaveValue('Winter release');
   for (const width of [1920, 1440, 960, 390]) {
     await page.setViewportSize({ width, height: 1000 });
-    await expect(preview).toHaveCount(1);
+    await expect(example).toHaveCount(1);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
     );
@@ -420,7 +423,8 @@ test('overview centers its banner and switches between components and setup with
     .locator('#documentation')
     .getByRole('link', { name: 'TextField', exact: true })
     .click();
-  await expect(page).toHaveURL(/#\/components\/text-field\/usage$/);
+  // A link to a page on the template opens its overview.
+  await expect(page).toHaveURL(/#\/components\/text-field\/overview$/);
   await page.goto(`${offline}#/overview/get-started`);
   await expect(page.getByRole('heading', { name: 'Install the private package' })).toBeVisible();
   const overviewNext = page

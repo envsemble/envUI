@@ -8,6 +8,11 @@ import {
 } from './internal/FieldFrame.js';
 
 export interface TextareaProps extends TextareaControlProps, FieldProps, TextFieldAppearanceProps {}
+
+/**
+ * A labelled text area for text over several lines: a native textarea in the text field's frame,
+ * at a fixed height that scrolls and resizes from its bottom edge, or growing with its content.
+ */
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function Textarea(
   {
     label,

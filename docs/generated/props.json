@@ -1260,55 +1260,57 @@
           "type": "ReactNode",
           "required": false,
           "default": "'Enter six hexadecimal digits, with an optional #.'",
-          "description": ""
+          "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
         },
         {
           "name": "compact",
           "type": "boolean",
           "required": false,
-          "description": "Match the shared control height so the field can sit beside buttons. The label is hidden unless showLabel is set; it stays available to assistive technology either way."
+          "description": "Take the shared control height and a pill shape, to sit beside buttons in a toolbar. The label is hidden unless showLabel is set; it still names the field for assistive technology, and a placeholder gives the visible guidance."
         },
         {
           "name": "prefix",
           "type": "ReactNode",
           "required": false,
-          "description": "Short text in the field before the value, such as the start of an address. Not interactive."
+          "description": "Short, non-interactive text before the value, such as the start of an address. It is not part of the value; it shows once the field has focus or a value and is read after the label."
         },
         {
           "name": "variant",
           "type": "'outlined' | 'plain' | 'quiet'",
           "required": false,
-          "description": "Outlined by default; plain shows an underline on hover or focus without a border or fill; quiet is only its text (and icon) at rest, takes a soft fill under the pointer and while focused, and clears its placeholder once focused, for a search at the top of a sidebar."
+          "default": "'outlined'",
+          "description": "The field's look: outlined, with a thin border; plain, with no border or fill and an underline on hover and focus; or quiet, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list."
         },
         {
           "name": "startIcon",
           "type": "ReactNode",
           "required": false,
-          "description": "Decorative icon at the start of the well."
+          "description": "A decorative icon at the start of the field, such as Search or Mail."
         },
         {
           "name": "error",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the hint."
         },
         {
           "name": "endAction",
           "type": "ReactNode",
           "required": false,
-          "description": "A control at the end of the well, such as a clear IconButton."
+          "description": "A control at the end of the field, such as a text IconButton that reveals or copies the value; name it with aria-label."
         },
         {
           "name": "showLabel",
           "type": "boolean",
           "required": false,
-          "description": "Show the label inside the field, where it floats into the outline while the field has focus or a value. Defaults to true, and to false for compact fields, which can use a placeholder instead."
+          "default": "true, or false when compact",
+          "description": "Show the label in the field, where it rests while the field is empty and floats into the outline while the field has focus or a value. Compact fields hide it unless this is set."
         },
         {
           "name": "suffix",
           "type": "ReactNode",
           "required": false,
-          "description": "Short text in the field after the value, such as a unit. Not interactive."
+          "description": "Short, non-interactive text after the value, such as a unit. It is not part of the value; it shows once the field has focus or a value and is read after the label."
         }
       ],
       "native": [
@@ -1442,19 +1444,19 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
         },
         {
           "name": "hint",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
         },
         {
           "name": "error",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the hint."
         },
         {
           "name": "multiple",
@@ -2136,19 +2138,19 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
         },
         {
           "name": "hint",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
         },
         {
           "name": "error",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the hint."
         }
       ],
       "native": [
@@ -3123,32 +3125,40 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
         },
         {
           "name": "hint",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
+        },
+        {
+          "name": "rows",
+          "type": "number",
+          "required": false,
+          "default": "8",
+          "description": "The lines the field shows: with fixed sizing, its height in rows, at least 7.5 rem; with content sizing, the lines it starts at and shrinks back to, also under 7.5 rem. Without rows, both start at 7.5 rem."
         },
         {
           "name": "variant",
           "type": "'outlined' | 'plain' | 'quiet'",
           "required": false,
-          "description": "Outlined by default; plain shows an underline on hover or focus without a border or fill; quiet is only its text (and icon) at rest, takes a soft fill under the pointer and while focused, and clears its placeholder once focused, for a search at the top of a sidebar."
+          "default": "'outlined'",
+          "description": "The field's look: outlined, with a thin border; plain, with no border or fill and an underline on hover and focus; or quiet, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list."
         },
         {
           "name": "error",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the hint."
         },
         {
           "name": "sizing",
           "type": "'fixed' | 'content'",
           "required": false,
           "default": "'fixed'",
-          "description": "Scroll and resize from the bottom edge (default), or grow and shrink with content."
+          "description": "How the height follows the text: fixed keeps its height, scrolls and resizes from the bottom edge, by dragging it or with the arrow keys; content grows and shrinks with the text."
         }
       ],
       "native": [
@@ -4936,26 +4946,26 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
         },
         {
           "name": "hint",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
         },
         {
           "name": "error",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the hint."
         },
         {
           "name": "variant",
           "type": "'outlined' | 'plain' | 'quiet'",
           "required": false,
           "default": "'outlined'",
-          "description": "Outlined by default; plain shows an underline on hover or focus without a border or fill; quiet is only its text (and icon) at rest, takes a soft fill under the pointer and while focused, and clears its placeholder once focused, for a search at the top of a sidebar."
+          "description": "The field's look: outlined, with a thin border; plain, with no border or fill and an underline on hover and focus; or quiet, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list."
         }
       ],
       "native": [
@@ -4968,82 +4978,84 @@
     "SearchField": {
       "kind": "component",
       "source": "packages/ui/src/forms/SearchField.tsx",
-      "description": "A search input with a leading icon and a clear action; compact by default to sit beside buttons.",
+      "description": "A search input with a search icon and, while it has a query, a clear button; Esc also clears. Compact by default, to sit beside buttons.",
       "props": [
         {
           "name": "label",
           "type": "string",
           "required": true,
-          "description": "Accessible name; shown as a floating label when the field is not compact or sets showLabel."
+          "description": "The field's accessible name, such as Search members. It shows as a floating label only when the field is not compact or sets showLabel; otherwise a placeholder gives the visible guidance."
         },
         {
           "name": "value",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The query of a controlled field; update it from onValueChange."
         },
         {
           "name": "defaultValue",
           "type": "string",
           "required": false,
           "default": "''",
-          "description": ""
+          "description": "The query an uncontrolled field starts with."
         },
         {
           "name": "onValueChange",
           "type": "(value: string) => void",
           "required": false,
-          "description": "Receives the next query, including an empty string when cleared."
+          "description": "Receives the next query as people type, and an empty string when the clear button or Esc clears it."
         },
         {
           "name": "clearLabel",
           "type": "string",
           "required": false,
           "default": "'Clear search'",
-          "description": "Accessible name of the clear action; defaults to \"Clear search\"."
+          "description": "The accessible name and tooltip of the clear button, in the application's language."
         },
         {
           "name": "hint",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
         },
         {
           "name": "compact",
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "Match the shared control height so the field can sit beside buttons. The label is hidden unless showLabel is set; it stays available to assistive technology either way."
+          "description": "Take the shared control height and a pill shape, to sit beside buttons in a toolbar. The label is hidden unless showLabel is set; it still names the field for assistive technology, and a placeholder gives the visible guidance."
         },
         {
           "name": "prefix",
           "type": "ReactNode",
           "required": false,
-          "description": "Short text in the field before the value, such as the start of an address. Not interactive."
+          "description": "Short, non-interactive text before the value, such as the start of an address. It is not part of the value; it shows once the field has focus or a value and is read after the label."
         },
         {
           "name": "variant",
           "type": "'outlined' | 'plain' | 'quiet'",
           "required": false,
-          "description": "Outlined by default; plain shows an underline on hover or focus without a border or fill; quiet is only its text (and icon) at rest, takes a soft fill under the pointer and while focused, and clears its placeholder once focused, for a search at the top of a sidebar."
+          "default": "'outlined'",
+          "description": "The field's look: outlined, with a thin border; plain, with no border or fill and an underline on hover and focus; or quiet, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list."
         },
         {
           "name": "error",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the hint."
         },
         {
           "name": "showLabel",
           "type": "boolean",
           "required": false,
-          "description": "Show the label inside the field, where it floats into the outline while the field has focus or a value. Defaults to true, and to false for compact fields, which can use a placeholder instead."
+          "default": "true, or false when compact",
+          "description": "Show the label in the field, where it rests while the field is empty and floats into the outline while the field has focus or a value. Compact fields hide it unless this is set."
         },
         {
           "name": "suffix",
           "type": "ReactNode",
           "required": false,
-          "description": "Short text in the field after the value, such as a unit. Not interactive."
+          "description": "Short, non-interactive text after the value, such as a unit. It is not part of the value; it shows once the field has focus or a value and is read after the label."
         }
       ],
       "native": [
@@ -5186,19 +5198,19 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
         },
         {
           "name": "hint",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
         },
         {
           "name": "error",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the hint."
         }
       ],
       "native": [
@@ -5963,68 +5975,70 @@
     "TextField": {
       "kind": "component",
       "source": "packages/ui/src/forms/TextField.tsx",
-      "description": "",
+      "description": "A labelled single-line text input: a native input with a floating label, a hint and an error, in an outlined, plain or quiet look, with an optional start icon, end action, prefix and suffix.",
       "props": [
         {
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
         },
         {
           "name": "hint",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
         },
         {
           "name": "error",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the hint."
         },
         {
           "name": "variant",
           "type": "'outlined' | 'plain' | 'quiet'",
           "required": false,
-          "description": "Outlined by default; plain shows an underline on hover or focus without a border or fill; quiet is only its text (and icon) at rest, takes a soft fill under the pointer and while focused, and clears its placeholder once focused, for a search at the top of a sidebar."
+          "default": "'outlined'",
+          "description": "The field's look: outlined, with a thin border; plain, with no border or fill and an underline on hover and focus; or quiet, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list."
         },
         {
           "name": "startIcon",
           "type": "ReactNode",
           "required": false,
-          "description": "Decorative icon at the start of the well."
+          "description": "A decorative icon at the start of the field, such as Search or Mail."
         },
         {
           "name": "endAction",
           "type": "ReactNode",
           "required": false,
-          "description": "A control at the end of the well, such as a clear IconButton."
+          "description": "A control at the end of the field, such as a text IconButton that reveals or copies the value; name it with aria-label."
         },
         {
           "name": "compact",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Match the shared control height so the field can sit beside buttons. The label is hidden unless showLabel is set; it stays available to assistive technology either way."
+          "description": "Take the shared control height and a pill shape, to sit beside buttons in a toolbar. The label is hidden unless showLabel is set; it still names the field for assistive technology, and a placeholder gives the visible guidance."
         },
         {
           "name": "showLabel",
           "type": "boolean",
           "required": false,
-          "description": "Show the label inside the field, where it floats into the outline while the field has focus or a value. Defaults to true, and to false for compact fields, which can use a placeholder instead."
+          "default": "true, or false when compact",
+          "description": "Show the label in the field, where it rests while the field is empty and floats into the outline while the field has focus or a value. Compact fields hide it unless this is set."
         },
         {
           "name": "prefix",
           "type": "ReactNode",
           "required": false,
-          "description": "Short text in the field before the value, such as the start of an address. Not interactive."
+          "description": "Short, non-interactive text before the value, such as the start of an address. It is not part of the value; it shows once the field has focus or a value and is read after the label."
         },
         {
           "name": "suffix",
           "type": "ReactNode",
           "required": false,
-          "description": "Short text in the field after the value, such as a unit. Not interactive."
+          "description": "Short, non-interactive text after the value, such as a unit. It is not part of the value; it shows once the field has focus or a value and is read after the label."
         }
       ],
       "native": [
@@ -6037,37 +6051,45 @@
     "Textarea": {
       "kind": "component",
       "source": "packages/ui/src/forms/Textarea.tsx",
-      "description": "",
+      "description": "A labelled text area for text over several lines: a native textarea in the text field's frame, at a fixed height that scrolls and resizes from its bottom edge, or growing with its content.",
       "props": [
         {
           "name": "sizing",
           "type": "'fixed' | 'content'",
           "required": false,
-          "description": "Scroll and resize from the bottom edge (default), or grow and shrink with content."
+          "default": "'fixed'",
+          "description": "How the height follows the text: fixed keeps its height, scrolls and resizes from the bottom edge, by dragging it or with the arrow keys; content grows and shrinks with the text."
+        },
+        {
+          "name": "rows",
+          "type": "number",
+          "required": false,
+          "description": "The lines the field shows: with fixed sizing, its height in rows, at least 7.5 rem; with content sizing, the lines it starts at and shrinks back to, also under 7.5 rem. Without rows, both start at 7.5 rem."
         },
         {
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
         },
         {
           "name": "hint",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
         },
         {
           "name": "error",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the hint."
         },
         {
           "name": "variant",
           "type": "'outlined' | 'plain' | 'quiet'",
           "required": false,
-          "description": "Outlined by default; plain shows an underline on hover or focus without a border or fill; quiet is only its text (and icon) at rest, takes a soft fill under the pointer and while focused, and clears its placeholder once focused, for a search at the top of a sidebar."
+          "default": "'outlined'",
+          "description": "The field's look: outlined, with a thin border; plain, with no border or fill and an underline on hover and focus; or quiet, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list."
         }
       ],
       "native": [
