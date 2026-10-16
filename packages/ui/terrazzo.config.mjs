@@ -446,12 +446,15 @@ function checkCustomProperties(list, handwrittenFile) {
  * - `prefixed`: names that only take the prefix, `--space-4` as `--env-space-4`, each the custom
  *   property of a token or of a part of one (`properties`);
  * - `renamed`: names that changed beyond the prefix, each to a token (`replacement`) or to a
- *   custom property that envUI's style sheets declare or read (`cssVariable`);
+ *   custom property that envUI's style sheets declare or read (`cssVariable`); a name that 1.0's
+ *   development introduced has the prefix already, such as `--env-topbar-height`;
  * - `aliases`: the 0.7 alias tokens, each to the token of its role (`replacement`) or, for a
  *   fixed color no role replaces, its `value`;
- * - `removed`: names with no counterpart, with the token to use instead where there is one.
+ * - `removed`: names with no counterpart, with the token to use instead where there is one, also
+ *   with the prefix.
  *
- * Fails on a name in two sections, a name with the prefix, and a replacement that doesn't exist.
+ * Fails on a name in two sections, a name with the prefix outside `renamed` and `removed` or
+ * that a token still has, and a replacement that doesn't exist.
  * Returns the entries sorted by name.
  */
 export function migrationNames(data, { isToken, properties }) {
@@ -459,8 +462,10 @@ export function migrationNames(data, { isToken, properties }) {
   const add = (name, entry, section) => {
     if (!/^--[a-z0-9]+(?:-[a-z0-9]+)*$/.test(name))
       throw new Error(`removed-tokens.json: ${name} in ${section} is not a custom property.`);
-    if (name.startsWith(`--${prefix}-`))
+    if (name.startsWith(`--${prefix}-`) && !['renamed', 'removed'].includes(section))
       throw new Error(`removed-tokens.json: ${name} in ${section} already has the prefix.`);
+    if (properties.has(name))
+      throw new Error(`removed-tokens.json: ${name} in ${section} is a token's custom property.`);
     if (names[name])
       throw new Error(
         `removed-tokens.json lists ${name} in both ${names[name].kind} and ${section}.`,

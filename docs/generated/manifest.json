@@ -11573,10 +11573,46 @@
     "usage": "Use a token through its CSS custom property, such as var(--env-color-fg-muted), in CSS that styles the application. envUI components already use them; never restyle their classes.",
     "items": [
       {
+        "id": "app-shell.header-height",
+        "cssVariable": "--env-app-shell-header-height",
+        "type": "dimension",
+        "description": "The app frame's header bar, a single row that holds controls of the control height with space around them; sticky content and the sidebar headers line up with it.",
+        "value": "3.25rem",
+        "compact": "2.625rem"
+      },
+      {
         "id": "body.font-weight",
         "cssVariable": "--env-body-font-weight",
         "type": "fontWeight",
         "value": "400"
+      },
+      {
+        "id": "breakpoint.lg",
+        "cssVariable": "--env-breakpoint-lg",
+        "type": "dimension",
+        "description": "64 rem: a tablet held sideways or a laptop.",
+        "value": "64rem"
+      },
+      {
+        "id": "breakpoint.md",
+        "cssVariable": "--env-breakpoint-md",
+        "type": "dimension",
+        "description": "48 rem: a tablet held upright, and the default line between a phone's layout and a wider one.",
+        "value": "48rem"
+      },
+      {
+        "id": "breakpoint.sm",
+        "cssVariable": "--env-breakpoint-sm",
+        "type": "dimension",
+        "description": "40 rem: a large phone held sideways, or a narrow window.",
+        "value": "40rem"
+      },
+      {
+        "id": "breakpoint.xl",
+        "cssVariable": "--env-breakpoint-xl",
+        "type": "dimension",
+        "description": "80 rem: a desktop window.",
+        "value": "80rem"
       },
       {
         "id": "color.avatar.bg",
@@ -13501,13 +13537,6 @@
         "compact": "2rem"
       },
       {
-        "id": "topbar.height",
-        "cssVariable": "--env-topbar-height",
-        "type": "dimension",
-        "value": "3.25rem",
-        "compact": "2.625rem"
-      },
-      {
         "id": "tree.row-padding-block-lg",
         "cssVariable": "--env-tree-row-padding-block-lg",
         "type": "dimension",
@@ -13578,13 +13607,76 @@
           "letter-spacing": "0rem",
           "line-height": "1.4em"
         }
+      },
+      {
+        "id": "z.base",
+        "cssVariable": "--env-z-base",
+        "type": "number",
+        "description": "The flow of a page or a component; a part drawn behind its siblings takes calc(var(--env-z-base) - 1).",
+        "value": "0"
+      },
+      {
+        "id": "z.modal",
+        "cssVariable": "--env-z-modal",
+        "type": "number",
+        "description": "Modal layers over their scrim: dialogs, drawers and the command palette.",
+        "value": "100"
+      },
+      {
+        "id": "z.overlay",
+        "cssVariable": "--env-z-overlay",
+        "type": "number",
+        "description": "The scrim behind a modal layer, which covers the page and the frame.",
+        "value": "90"
+      },
+      {
+        "id": "z.peek",
+        "cssVariable": "--env-z-peek",
+        "type": "number",
+        "description": "A collapsed sidebar that opens over the content without docking, above the frame's sticky parts.",
+        "value": "30"
+      },
+      {
+        "id": "z.popover",
+        "cssVariable": "--env-z-popover",
+        "type": "number",
+        "description": "Popups anchored to a control, also inside a modal layer: menus, popovers, hover cards, the lists of Select and Combobox, and suggestions.",
+        "value": "110"
+      },
+      {
+        "id": "z.raised",
+        "cssVariable": "--env-z-raised",
+        "type": "number",
+        "description": "A part raised over its siblings inside a component or a region: a sticky table header, a resize handle, the hovered avatar of a group.",
+        "value": "1"
+      },
+      {
+        "id": "z.sticky",
+        "cssVariable": "--env-z-sticky",
+        "type": "number",
+        "description": "The frame's sticky and fixed parts that content scrolls under: the app header and the sidebar columns.",
+        "value": "20"
+      },
+      {
+        "id": "z.toast",
+        "cssVariable": "--env-z-toast",
+        "type": "number",
+        "description": "Notifications, above the popups and modal layers they report on.",
+        "value": "120"
+      },
+      {
+        "id": "z.tooltip",
+        "cssVariable": "--env-z-tooltip",
+        "type": "number",
+        "description": "Tooltips, above everything they can describe.",
+        "value": "130"
       }
     ],
     "legacy": [
       {
         "cssVariable": "--app-sticky-top",
-        "use": "--env-app-sticky-top",
-        "note": "The offset sticky content takes below the app shell's top bar, which AppShell sets."
+        "use": "--env-frame-sticky-top",
+        "note": "Where sticky content sticks below the app frame's header or title bar, which the frame sets."
       },
       {
         "cssVariable": "--avatar-group-ring",
@@ -14977,6 +15069,22 @@
         "use": "--env-elevation-3-shadow"
       },
       {
+        "cssVariable": "--env-app-sticky-top",
+        "use": "--env-frame-sticky-top",
+        "note": "Where sticky content sticks below the app frame's header or title bar, which the frame sets."
+      },
+      {
+        "cssVariable": "--env-app-topbar-block-size",
+        "use": "--env-frame-header-block-size",
+        "note": "The height of the app frame's header or title bar, which the frame sets on the document."
+      },
+      {
+        "cssVariable": "--env-topbar-height",
+        "use": "--env-app-shell-header-height",
+        "type": "dimension",
+        "note": "The app frame's header height."
+      },
+      {
         "cssVariable": "--field-floating-height",
         "use": "--env-field-floating-height"
       },
@@ -15372,7 +15480,9 @@
       },
       {
         "cssVariable": "--topbar-height",
-        "use": "--env-topbar-height"
+        "use": "--env-app-shell-header-height",
+        "type": "dimension",
+        "note": "The app frame's header height."
       },
       {
         "cssVariable": "--tree-row-padding-block-lg",

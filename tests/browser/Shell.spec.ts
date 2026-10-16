@@ -176,7 +176,7 @@ test.describe('Resizable AppShell', () => {
       const style = getComputedStyle(shell);
       return [
         style.getPropertyValue('--env-app-sticky-top'),
-        style.getPropertyValue('--env-topbar-height'),
+        style.getPropertyValue('--env-app-shell-header-height'),
       ];
     });
     expect(offsets[0]!.trim()).toBe(offsets[1]!.trim());
@@ -435,7 +435,7 @@ test.describe('Title bar', () => {
     await expect(shell).toHaveAttribute('data-title-bar', '');
     const topbar = page.locator('.env-app-topbar');
     expect((await topbar.boundingBox())!.height).toBe(40);
-    // --env-topbar-height follows the title bar, so the sidebar and the content area line up below it.
+    // --env-app-shell-header-height follows the title bar, so the sidebar and the content area line up below it.
     const offsets = await page.evaluate(() => ({
       content: document.querySelector('.env-app-content')!.getBoundingClientRect().top,
       sidebar: document.querySelector('.env-app-sidebar')!.getBoundingClientRect().top,
@@ -895,7 +895,13 @@ test.describe('Title bar', () => {
       'max(calc(env(titlebar-area-height,0px)+0.0625rem)',
     );
     expect(
-      compact(await declaredValue(page, '.env-app-shell[data-title-bar]', '--env-topbar-height')),
+      compact(
+        await declaredValue(
+          page,
+          '.env-app-shell[data-title-bar]',
+          '--env-app-shell-header-height',
+        ),
+      ),
     ).toContain('max(calc(env(titlebar-area-height,0px)+0.0625rem)');
     await page
       .locator('.env-app-shell')

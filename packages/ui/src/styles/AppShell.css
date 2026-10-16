@@ -18,7 +18,7 @@
      its own controls compact. */
   --env-app-control-height: var(--env-control-height);
   /* Where page content sticks with position: sticky: below the topbar while the document scrolls. */
-  --env-app-sticky-top: var(--env-topbar-height);
+  --env-app-sticky-top: var(--env-app-shell-header-height);
   min-block-size: 100dvh;
   background: var(--env-color-bg-page);
 }
@@ -36,7 +36,7 @@
   position: fixed;
   inset: 0 0 auto 0;
   z-index: calc(var(--env-z-sticky) + 1);
-  block-size: var(--env-topbar-height);
+  block-size: var(--env-app-shell-header-height);
   display: grid;
   grid-template-columns: var(--env-sidebar-width) minmax(0, 1fr);
   /* A fixed row: content squeezed while the sidebar column animates must not grow the row and move
@@ -178,7 +178,7 @@ button.env-app-sidebar-toggle:focus-visible {
 
 .env-app-sidebar {
   position: fixed;
-  inset: var(--env-topbar-height) auto 0 0;
+  inset: var(--env-app-shell-header-height) auto 0 0;
   z-index: var(--env-z-sticky);
   inline-size: var(--env-sidebar-width);
   display: flex;
@@ -273,13 +273,13 @@ button.env-app-sidebar-toggle:focus-visible {
    topbar. Scroll padding as tall as the topbar, and a little more for focus rings, keeps elements
    that take focus and anchor targets below it (WCAG 2.4.11). AppShell measures its topbar into
    --env-app-topbar-block-size on the document element; until it does, as on the first paint of a
-   server-rendered page, --env-topbar-height applies. The rule has zero specificity and sits in a cascade
+   server-rendered page, --env-app-shell-header-height applies. The rule has zero specificity and sits in a cascade
    layer of its own, declared with envUI's style sheet, so scroll padding the application sets wins:
    unlayered, or in its own layers declared after envUI's style sheet. */
 @layer envui-document {
   :where(html:has(.env-app-shell:not([data-title-bar]))) {
     scroll-padding-block-start: calc(
-      var(--env-app-topbar-block-size, var(--env-topbar-height, 3.25rem)) + 0.5rem
+      var(--env-app-topbar-block-size, var(--env-app-shell-header-height, 3.25rem)) + 0.5rem
     );
   }
 }
@@ -288,7 +288,7 @@ button.env-app-sidebar-toggle:focus-visible {
    position: sticky; inset-block-start: var(--env-app-sticky-top). */
 .env-app-content {
   min-inline-size: 0;
-  padding-block-start: var(--env-topbar-height);
+  padding-block-start: var(--env-app-shell-header-height);
   padding-inline-start: var(--env-sidebar-width);
   container-type: inline-size;
   outline: none;
@@ -324,7 +324,7 @@ button.env-app-sidebar-toggle:focus-visible {
 }
 .env-app-sidebar-backdrop {
   position: fixed;
-  inset: var(--env-topbar-height) 0 0 0;
+  inset: var(--env-app-shell-header-height) 0 0 0;
   z-index: calc(var(--env-z-peek) - 1);
   background: var(--env-color-bg-overlay-muted);
 }
@@ -364,7 +364,7 @@ button.env-app-sidebar-toggle:focus-visible {
 }
 
 /* As the window's title bar, the topbar takes the title bar height and its divider below, so the
-   divider runs under the window controls too; --env-topbar-height follows it, so the sidebar and the
+   divider runs under the window controls too; --env-app-shell-header-height follows it, so the sidebar and the
    content line up with it. The window reports a smaller height once the page is zoomed in, so the
    bar keeps at least --env-title-bar-height, which holds its compact controls.
    The shell fills the window and its content area scrolls below the title bar instead of the
@@ -373,7 +373,7 @@ button.env-app-sidebar-toggle:focus-visible {
    to the top of the content area, so --env-app-sticky-top is 0 there. Nothing here contains fixed
    positioning, so a fixed overlay inside the content still covers the window. */
 .env-app-shell[data-title-bar] {
-  --env-topbar-height: max(
+  --env-app-shell-header-height: max(
     calc(env(titlebar-area-height, 0px) + 0.0625rem),
     var(--env-title-bar-height)
   );
@@ -386,7 +386,7 @@ button.env-app-sidebar-toggle:focus-visible {
 }
 .env-app-shell[data-title-bar] .env-app-content {
   position: absolute;
-  inset: var(--env-topbar-height) 0 0 0;
+  inset: var(--env-app-shell-header-height) 0 0 0;
   padding-block-start: 0;
   overflow-y: auto;
   scrollbar-gutter: stable;

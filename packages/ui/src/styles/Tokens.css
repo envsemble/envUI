@@ -6,6 +6,7 @@
    are in TokensHandwritten.css. */
 .env-theme {
   color-scheme: light;
+  --env-app-shell-header-height: 3.25rem;
   --env-body-font-weight: 400;
   --env-breakpoint-lg: 64rem;
   --env-breakpoint-md: 48rem;
@@ -201,7 +202,6 @@
   --env-space-9: 4rem;
   --env-state-disabled-opacity: 0.48;
   --env-title-bar-height: 2.5rem;
-  --env-topbar-height: 3.25rem;
   --env-tree-row-padding-block-lg: var(--env-row-padding-block-lg);
   --env-tree-row-padding-block-md: var(--env-row-padding-block-md);
   --env-tree-row-padding-block-sm: var(--env-row-padding-block-sm);
@@ -817,6 +817,7 @@
 }
 
 .env-theme[data-env-scale='compact'] {
+  --env-app-shell-header-height: 2.625rem;
   --env-control-gap: 0.375rem;
   --env-control-height-lg: 2.375rem;
   --env-control-height-md: 2rem;
@@ -851,7 +852,6 @@
   --env-space-8: 2.375rem;
   --env-space-9: 3.25rem;
   --env-title-bar-height: 2rem;
-  --env-topbar-height: 2.625rem;
   --env-tree-row-padding-block-lg: 0.4375rem;
   --env-tree-row-padding-block-md: 0.3125rem;
   --env-tree-row-padding-block-sm: 0.25rem;

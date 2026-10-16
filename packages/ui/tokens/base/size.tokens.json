@@ -101,9 +101,12 @@
       "$value": "{row.padding-block-lg}"
     }
   },
-  "topbar": {
+  "app-shell": {
     "$type": "dimension",
-    "height": { "$value": { "value": 3.25, "unit": "rem" } }
+    "header-height": {
+      "$description": "The app frame's header bar, a single row that holds controls of the control height with space around them; sticky content and the sidebar headers line up with it.",
+      "$value": { "value": 3.25, "unit": "rem" }
+    }
   },
   "title-bar": {
     "$type": "dimension",

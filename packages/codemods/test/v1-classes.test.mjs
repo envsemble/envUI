@@ -122,6 +122,31 @@ test('v1-classes reports the tokens 1.0 removes and the fixed colors, and leaves
   );
 });
 
+test("v1-classes renames the custom properties of 1.0's development in style sheets and scripts", () => {
+  const css = `.a {
+  inset-block-start: var(--env-app-sticky-top);
+  block-size: var(--env-topbar-height);
+}
+`;
+  assert.equal(
+    runTransform(v1Classes, 'styles.css', css).output,
+    `.a {
+  inset-block-start: var(--env-frame-sticky-top);
+  block-size: var(--env-app-shell-header-height);
+}
+`,
+  );
+  const tsx = `const top = getComputedStyle(root).getPropertyValue('--env-app-topbar-block-size');
+export const a = <div style={{ '--env-topbar-height': '4rem', top: 'var(--env-app-sticky-top)' }} />;
+`;
+  assert.equal(
+    runTransform(v1Classes, 'a.tsx', tsx).output,
+    `const top = getComputedStyle(root).getPropertyValue('--env-frame-header-block-size');
+export const a = <div style={{ '--env-app-shell-header-height': '4rem', top: 'var(--env-frame-sticky-top)' }} />;
+`,
+  );
+});
+
 test('v1-classes renames every token entry, and no class entry renames a 1.0 token', () => {
   const tokens = Object.entries(map.tokens).filter(([from]) => !from.startsWith('$'));
   assert.ok(tokens.length > 300);
