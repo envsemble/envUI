@@ -12,6 +12,7 @@ export interface HoverCardProps {
   children: ReactNode;
   /** bottom (default), top, left or right, or inline-start and inline-end, which follow the text direction. */
   side?: 'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end';
+  /** Lines the card up with the trigger's centre (default), start or end along the side. */
   align?: 'start' | 'center' | 'end';
   /** Milliseconds the pointer rests on the trigger before the card opens (600); focus opens it at once. */
   delay?: number;
@@ -19,9 +20,13 @@ export interface HoverCardProps {
   closeDelay?: number;
   /** standard (default) about 20 rem wide; wide about 28 rem. */
   width?: 'standard' | 'wide';
+  /** Whether the card shows; with `onOpenChange` it controls the card. */
   open?: boolean;
+  /** Whether an uncontrolled card starts open; closed by default. */
   defaultOpen?: boolean;
+  /** Called with the new state when hover, focus or Esc opens or closes the card. */
   onOpenChange?: (open: boolean) => void;
+  /** Classes for the card. */
   className?: string;
 }
 

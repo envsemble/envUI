@@ -22,7 +22,7 @@ import { MenubarPreview, TooltipPreview, MeterPreview, ProgressPreview } from '.
 import { AppShellPreview } from './Shell';
 import { CommandPalettePreview, DocumentTabsPreview, TreePreview } from './Workspace';
 import { PanelDockPreview } from './Dock';
-import { HoverCardPreview, PopoverPreview, SegmentedControlPreview } from './Elements';
+import { PopoverPreview, SegmentedControlPreview } from './Elements';
 
 const RichTextPreview = lazy(() =>
   import('./RichTextContent').then(({ RichTextPreview }) => ({ default: RichTextPreview })),
@@ -93,8 +93,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <ToastsPreview />;
     case 'popover':
       return <PopoverPreview />;
-    case 'hover-card':
-      return <HoverCardPreview />;
     case 'menubar':
       return <MenubarPreview />;
     case 'tooltip':

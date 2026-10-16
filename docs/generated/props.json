@@ -2746,7 +2746,7 @@
           "type": "'start' | 'center' | 'end'",
           "required": false,
           "default": "'center'",
-          "description": ""
+          "description": "Lines the card up with the trigger's centre (default), start or end along the side."
         },
         {
           "name": "delay",
@@ -2773,26 +2773,26 @@
           "name": "open",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "Whether the card shows; with `onOpenChange` it controls the card."
         },
         {
           "name": "defaultOpen",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Whether an uncontrolled card starts open; closed by default."
         },
         {
           "name": "onOpenChange",
           "type": "(open: boolean) => void",
           "required": false,
-          "description": ""
+          "description": "Called with the new state when hover, focus or Esc opens or closes the card."
         },
         {
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Classes for the card."
         }
       ],
       "native": [],

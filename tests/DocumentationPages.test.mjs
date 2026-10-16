@@ -28,7 +28,6 @@ const unconverted = [
   'date-picker',
   'document-tabs',
   'drop-zone',
-  'hover-card',
   'markdown',
   'menubar',
   'message',
