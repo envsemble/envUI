@@ -1,4 +1,4 @@
-import { CheckboxPreview, SelectPreview, SliderPreview, DropZonePreview } from './Forms';
+import { CheckboxPreview, SliderPreview, DropZonePreview } from './Forms';
 import { ComboboxPreview, DatePickerPreview } from './Pickers';
 import { SurfacePreview, LayoutPreview, ListPreview, CardsPreview } from './Layout';
 import {
@@ -41,8 +41,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <SegmentedControlPreview />;
     case 'checkbox':
       return <CheckboxPreview />;
-    case 'select':
-      return <SelectPreview />;
     case 'combobox':
       return <ComboboxPreview />;
     case 'date-picker':

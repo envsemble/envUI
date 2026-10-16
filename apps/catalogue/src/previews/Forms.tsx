@@ -1,20 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  TextField,
   Checkbox,
-  Select,
   Slider,
   Stack,
   Button,
-  IconButton,
-  Surface,
-  List,
   Kbd,
   ActionGroup,
   DropZone,
   Text,
 } from '@envsemble/envui';
-import { ZoomIn } from '@envsemble/envui/icons/ZoomIn';
 
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
@@ -86,165 +80,6 @@ export function CheckboxPreview() {
     </Preview>
   );
 }
-
-export function SelectPreview() {
-  const [selectedOwner, setSelectedOwner] = useState('');
-
-  const [projectAccess, setProjectAccess] = useState('team');
-  return (
-    <Preview>
-      <Example
-        title="Variants"
-        size="collection"
-        caption="Choose the trigger for its surroundings. The open list is a raised popup with a border, so it stands apart from any background."
-      >
-        <SpecimenGrid>
-          <Specimen title="Secondary, on the page">
-            <Select label="Sort by" options={sortOptions} defaultValue="recent" />
-          </Specimen>
-          <Specimen title="Outlined, on a pane">
-            <Surface padding={4}>
-              <Select
-                variant="outlined"
-                label="Sort by"
-                options={sortOptions}
-                defaultValue="recent"
-              />
-            </Surface>
-          </Specimen>
-          <Specimen title="Outlined, in a row">
-            <List.Root aria-label="Notification settings">
-              <List.Item
-                title="E-mail digest"
-                action={
-                  <Select
-                    variant="outlined"
-                    aria-label="E-mail digest"
-                    options={digestOptions}
-                    defaultValue="weekly"
-                  />
-                }
-              />
-            </List.Root>
-          </Specimen>
-          <Specimen title="Outlined, in a form on a pane">
-            <Surface padding={4}>
-              <Stack gap={4}>
-                <TextField label="E-mail address" type="email" />
-                <Select
-                  variant="outlined"
-                  label="Role"
-                  hint="Admins also manage members and billing."
-                  options={roleOptions}
-                  defaultValue="member"
-                />
-              </Stack>
-            </Surface>
-          </Specimen>
-        </SpecimenGrid>
-      </Example>
-      <Example
-        title="Compact"
-        size="collection"
-        caption="For dense desktop interfaces such as toolbars and title bars: the compact control height, and the compact menu's popup, where a check mark shows the selected option."
-      >
-        <SpecimenGrid>
-          <Specimen title="Secondary, on the page">
-            <Select
-              density="compact"
-              aria-label="Sort documents"
-              options={sortOptions}
-              defaultValue="recent"
-            />
-          </Specimen>
-          <Specimen title="Outlined, in a compact toolbar">
-            <Surface
-              tone="pane"
-              padding={1}
-              corners="pill"
-              density="compact"
-              role="group"
-              aria-label="Canvas toolbar"
-              render={<ActionGroup />}
-            >
-              <Select
-                density="compact"
-                variant="outlined"
-                aria-label="Zoom"
-                options={zoomOptions}
-                defaultValue="100"
-              />
-              <IconButton variant="text" icon={<ZoomIn />} aria-label="Zoom in" />
-            </Surface>
-          </Specimen>
-        </SpecimenGrid>
-      </Example>
-      <Example title="Selection, validation & availability" size="collection">
-        <SpecimenGrid>
-          <Specimen title="Interactive">
-            <Select
-              label="Visibility"
-              hint="Choose who can open the project."
-              name="visibility"
-              value={projectAccess}
-              onValueChange={(v) => setProjectAccess(v ?? 'team')}
-              options={[
-                { value: 'team', label: 'Team' },
-                { value: 'private', label: 'Private' },
-                { value: 'public', label: 'Public (unavailable)', disabled: true },
-              ]}
-            />
-          </Specimen>
-          <Specimen title="Required choice">
-            <Select
-              label="Project owner"
-              required
-              name="owner"
-              placeholder="Choose an owner"
-              value={selectedOwner || null}
-              onValueChange={(value) => setSelectedOwner(value ?? '')}
-              error={!selectedOwner ? 'Choose an owner to continue.' : undefined}
-              options={[
-                { value: 'you', label: 'You' },
-                { value: 'team', label: 'Team' },
-              ]}
-            />
-          </Specimen>
-          <Specimen title="Disabled">
-            <Select
-              label="Inherited visibility"
-              value="team"
-              disabled
-              options={[
-                { value: 'team', label: 'Team' },
-                { value: 'private', label: 'Private' },
-              ]}
-            />
-          </Specimen>
-        </SpecimenGrid>
-      </Example>
-    </Preview>
-  );
-}
-
-const sortOptions = [
-  { value: 'recent', label: 'Most recent' },
-  { value: 'name', label: 'Name' },
-  { value: 'size', label: 'Size' },
-];
-const digestOptions = [
-  { value: 'daily', label: 'Daily' },
-  { value: 'weekly', label: 'Weekly' },
-  { value: 'never', label: 'Never' },
-];
-const roleOptions = [
-  { value: 'member', label: 'Member' },
-  { value: 'admin', label: 'Admin' },
-];
-const zoomOptions = ['50', '75', '100', '150', '200'].map((value) => ({
-  value,
-  label: `${value}%`,
-}));
 
 export function SliderPreview() {
   const [opacity, setOpacity] = useState(40);

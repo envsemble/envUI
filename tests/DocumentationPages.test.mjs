@@ -51,7 +51,6 @@ const unconverted = [
   'relative-time',
   'rich-text',
   'segmented-control',
-  'select',
   'skeleton',
   'slider',
   'spinner',

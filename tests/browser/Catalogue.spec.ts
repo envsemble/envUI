@@ -224,15 +224,15 @@ test('pagers center pairs and single destinations at every page width', async ({
   await footer.getByRole('link').last().click();
   await expect.poll(() => page.evaluate(() => location.hash)).toBe(nextDestination);
   await page.evaluate(() => {
-    location.hash = '/components/radio/usage';
+    location.hash = '/components/radio/guidelines';
   });
   await expect(footer.getByRole('link').last()).toHaveAttribute(
     'href',
-    '#/components/select/usage',
+    '#/components/select/guidelines',
   );
   await footer.getByRole('link').last().click();
   await expect(page.locator('.docs-page-header').getByRole('tab', { selected: true })).toHaveText(
-    'Usage',
+    'Guidelines',
   );
   await page.evaluate(() => {
     location.hash = '/overview';
@@ -357,17 +357,17 @@ test('single previews retain state when the theme changes', async ({ page }) => 
 });
 
 test('offline hashes support direct links and back/forward navigation', async ({ page }) => {
-  await page.goto(`${offline}#/components/select/usage`);
+  await page.goto(`${offline}#/components/select/guidelines`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Select');
-  await page.getByRole('tab', { name: 'Preview', exact: true }).click();
-  await page.getByRole('tab', { name: 'Usage', exact: true }).click();
+  await page.getByRole('tab', { name: 'Overview', exact: true }).click();
+  await page.getByRole('tab', { name: 'Guidelines', exact: true }).click();
   await page.goBack();
   await expect(page.locator('.docs-page-header').getByRole('tab', { selected: true })).toHaveText(
-    'Preview',
+    'Overview',
   );
   await page.goForward();
   await expect(page.locator('.docs-page-header').getByRole('tab', { selected: true })).toHaveText(
-    'Usage',
+    'Guidelines',
   );
 });
 
