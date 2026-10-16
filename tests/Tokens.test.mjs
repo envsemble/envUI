@@ -11,7 +11,17 @@ import {
   duplicateTokens,
   overridingCustomProperties,
 } from '../packages/ui/terrazzo.config.mjs';
-import { buildTokens } from '../scripts/BuildTokens.mjs';
+import {
+  buildTokens,
+  codemodsMapFile,
+  formatted,
+  migrationCopies,
+  migrationGuideFile,
+  migrationGuideList,
+  migrationMapSection,
+  withGuideList,
+  withMapSection,
+} from '../scripts/BuildTokens.mjs';
 
 // The token build's guards, on copies of the tokens built into a scratch folder, and the custom
 // properties the library's style sheets read.
@@ -710,4 +720,97 @@ test('the hand-written tokens read only tokens', async () => {
     .map(([, name]) => name)
     .filter((name) => !defined.has(name));
   assert.deepEqual(unknown, []);
+});
+
+/** A migration map of each kind of entry, as the token build writes it. */
+const sampleMigration = {
+  names: {
+    '--color-old-fill': { token: 'color.bg.default', cssVariable: '--color-bg-default' },
+    '--color-old-row': {
+      tokens: { light: 'color.bg.default', dark: 'color.bg.muted' },
+      cssVariables: { light: '--color-bg-default', dark: '--color-bg-muted' },
+      component: 'List rows',
+    },
+    '--color-old-avatar': { primitive: 'palette.blue.20', component: 'Avatars' },
+    '--color-old-gone': {
+      removed: true,
+      replacement: 'color.bg.raised',
+      note: 'Unused.',
+      cssVariable: '--color-bg-raised',
+    },
+    '--state-old-shift': { removed: true, replacement: null, note: 'The rule | is gone.' },
+  },
+};
+
+test("the codemods' rename map takes the token migration map as its tokens section", () => {
+  const section = migrationMapSection(sampleMigration);
+  assert.match(section.$comment, /npm run tokens:build/);
+  assert.deepEqual(Object.fromEntries(Object.entries(section).slice(1)), {
+    '--color-old-fill': { to: '--color-bg-default' },
+    '--color-old-row': {
+      byTheme: { light: '--color-bg-default', dark: '--color-bg-muted' },
+      component: 'List rows',
+    },
+    '--color-old-avatar': { primitive: 'palette.blue.20', component: 'Avatars' },
+    '--color-old-gone': { removed: true, to: '--color-bg-raised', note: 'Unused.' },
+    '--state-old-shift': { removed: true, to: null, note: 'The rule | is gone.' },
+  });
+  // The section is added after the last one, or replaces itself; the other sections stay as written.
+  const map = '{\n  "version": "1.0.0",\n  "docs": {\n    "a": "b"\n  }\n}\n';
+  const added = withMapSection(map, { $comment: 'One.', '--x': { to: '--y' } });
+  assert.equal(
+    added,
+    '{\n  "version": "1.0.0",\n  "docs": {\n    "a": "b"\n  },\n  "tokens": {\n    "$comment": "One.",\n    "--x": {"to":"--y"}\n  }\n}\n',
+  );
+  assert.deepEqual(JSON.parse(withMapSection(added, { '--z': { to: '--w' } })), {
+    version: '1.0.0',
+    docs: { a: 'b' },
+    tokens: { '--z': { to: '--w' } },
+  });
+  const middle = '{\n  "tokens": {\n    "--x": {}\n  },\n  "docs": {\n    "a": "b"\n  }\n}\n';
+  assert.deepEqual(JSON.parse(withMapSection(middle, { '--z': {} })), {
+    tokens: { '--z': {} },
+    docs: { a: 'b' },
+  });
+});
+
+test('the migration guide lists the token migration map between its markers', () => {
+  const list = migrationGuideList(sampleMigration);
+  assert.match(list, /\| `--color-old-gone` \| `--color-bg-raised` \| Unused\. \|/);
+  assert.match(list, /\| `--state-old-shift` \| — \| The rule \\| is gone\. \|/);
+  assert.match(list, /\| `--color-old-fill` \| `--color-bg-default` \| {2}\|/);
+  assert.match(
+    list,
+    /\| Light \| Dark \|\n.*\n\| `--color-old-row` \| List rows \| `--color-bg-default` \| `--color-bg-muted` \|/,
+  );
+  assert.match(list, /\| `--color-old-avatar` \| Avatars \| `palette\.blue\.20` \|/);
+  const guide =
+    'Before.\n\n<!-- token-migration:start: note -->\nold\n<!-- token-migration:end -->\n\nAfter.\n';
+  assert.equal(
+    withGuideList(guide, 'new'),
+    'Before.\n\n<!-- token-migration:start: note -->\n\nnew\n\n<!-- token-migration:end -->\n\nAfter.\n',
+  );
+  assert.throws(() => withGuideList('No markers.\n', 'new'), /needs the markers/);
+});
+
+test("the codemods' rename map and the migration guide carry the token migration map", async () => {
+  const migration = JSON.parse(
+    await readFile(join(library, 'src/generated/token-migration.json'), 'utf8'),
+  );
+  const copies = await migrationCopies(migration);
+  assert.deepEqual(
+    copies.map(({ path }) => relative(repository, path).replaceAll('\\', '/')),
+    ['packages/codemods/src/maps/v1.json', 'docs/migration.md'],
+  );
+  for (const { path, contents } of copies)
+    assert.equal(
+      await readFile(path, 'utf8'),
+      await formatted(path, contents),
+      `${relative(repository, path)} is behind the token migration map: run npm run tokens:build.`,
+    );
+  // Every 0.7 name is in both, the map's entries in the migration map's order.
+  const { tokens } = JSON.parse(await readFile(codemodsMapFile, 'utf8'));
+  assert.deepEqual(Object.keys(tokens).slice(1), Object.keys(migration.names));
+  const guide = await readFile(migrationGuideFile, 'utf8');
+  for (const name of Object.keys(migration.names)) assert.ok(guide.includes(`\`${name}\``), name);
 });

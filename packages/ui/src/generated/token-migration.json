@@ -1,5 +1,5 @@
 {
-  "$comment": "Generated from packages/ui/tokens by `npm run tokens:build`. Do not edit: change the tokens and rebuild. Maps each 0.7 custom property to the token that replaces it: one role, a role per theme for component tokens, or removed with its replacement.",
+  "$comment": "Generated from packages/ui/tokens by `npm run tokens:build`. Do not edit: change the tokens and rebuild. Maps each 0.7 custom property to the token that replaces it, with its custom property (cssVariable, or cssVariables per theme): one role, a role per theme for component tokens, a palette color that no role replaces (primitive), or removed with its replacement. npm run tokens:build copies it into the tokens section of the codemods' rename map and the token list of docs/migration.md.",
   "names": {
     "--color-accent": {
       "token": "color.bg.important.strong",
@@ -23,6 +23,12 @@
         "light-high-contrast": "color.bg.default",
         "dark-high-contrast": "color.bg.muted"
       },
+      "cssVariables": {
+        "light": "--color-bg-default",
+        "dark": "--color-bg-muted",
+        "light-high-contrast": "--color-bg-default",
+        "dark-high-contrast": "--color-bg-muted"
+      },
       "component": "The action strip of a card"
     },
     "--color-avatar": { "primitive": "palette.blue.20", "component": "Avatars" },
@@ -34,7 +40,8 @@
     "--color-border-pressed": {
       "removed": true,
       "replacement": "color.border.muted.pressed",
-      "note": "Unused."
+      "note": "Unused.",
+      "cssVariable": "--color-border-muted-pressed"
     },
     "--color-border-strong": {
       "token": "color.border.muted",
@@ -62,6 +69,12 @@
         "light-high-contrast": "color.bg.brand.emphasis",
         "dark-high-contrast": "color.bg.brand.emphasis"
       },
+      "cssVariables": {
+        "light": "--color-bg-brand-strong",
+        "dark": "--color-bg-brand-strong",
+        "light-high-contrast": "--color-bg-brand-emphasis",
+        "dark-high-contrast": "--color-bg-brand-emphasis"
+      },
       "component": "Checkboxes"
     },
     "--color-checkbox-border": {
@@ -76,6 +89,12 @@
         "light-high-contrast": "color.bg.brand.emphasis.hover",
         "dark-high-contrast": "color.bg.brand.emphasis.hover"
       },
+      "cssVariables": {
+        "light": "--color-bg-brand-strong-hover",
+        "dark": "--color-bg-brand-strong-hover",
+        "light-high-contrast": "--color-bg-brand-emphasis-hover",
+        "dark-high-contrast": "--color-bg-brand-emphasis-hover"
+      },
       "component": "Checkboxes"
     },
     "--color-checkbox-pressed": {
@@ -84,6 +103,12 @@
         "dark": "color.bg.brand.strong.pressed",
         "light-high-contrast": "color.bg.brand.emphasis.pressed",
         "dark-high-contrast": "color.bg.brand.emphasis.pressed"
+      },
+      "cssVariables": {
+        "light": "--color-bg-brand-strong-pressed",
+        "dark": "--color-bg-brand-strong-pressed",
+        "light-high-contrast": "--color-bg-brand-emphasis-pressed",
+        "dark-high-contrast": "--color-bg-brand-emphasis-pressed"
       },
       "component": "Checkboxes"
     },
@@ -119,22 +144,31 @@
         "light-high-contrast": "color.bg.brand.emphasis",
         "dark-high-contrast": "color.bg.brand.emphasis"
       },
+      "cssVariables": {
+        "light": "--color-bg-brand-strong",
+        "dark": "--color-bg-brand-strong",
+        "light-high-contrast": "--color-bg-brand-emphasis",
+        "dark-high-contrast": "--color-bg-brand-emphasis"
+      },
       "component": "Spinners, sliders and meters"
     },
     "--color-control-blue-hover": {
       "removed": true,
       "replacement": "color.bg.brand.strong.hover",
-      "note": "Unused."
+      "note": "Unused.",
+      "cssVariable": "--color-bg-brand-strong-hover"
     },
     "--color-control-blue-pressed": {
       "removed": true,
       "replacement": "color.bg.brand.strong.pressed",
-      "note": "Unused."
+      "note": "Unused.",
+      "cssVariable": "--color-bg-brand-strong-pressed"
     },
     "--color-control-text": {
       "removed": true,
       "replacement": "color.fg.control",
-      "note": "Unused synonym."
+      "note": "Unused synonym.",
+      "cssVariable": "--color-fg-control"
     },
     "--color-destructive-action": {
       "token": "color.bg.danger.strong",
@@ -237,12 +271,14 @@
     "--color-fill-hover": {
       "removed": true,
       "replacement": "color.bg.neutral.muted.hover",
-      "note": "Unused."
+      "note": "Unused.",
+      "cssVariable": "--color-bg-neutral-muted-hover"
     },
     "--color-fill-pressed": {
       "removed": true,
       "replacement": "color.bg.neutral.muted.pressed",
-      "note": "Unused."
+      "note": "Unused.",
+      "cssVariable": "--color-bg-neutral-muted-pressed"
     },
     "--color-focus-ring": { "token": "color.border.focus", "cssVariable": "--color-border-focus" },
     "--color-icon": { "token": "color.fg.muted", "cssVariable": "--color-fg-muted" },
@@ -287,6 +323,12 @@
         "light-high-contrast": "color.bg.default",
         "dark-high-contrast": "color.bg.muted"
       },
+      "cssVariables": {
+        "light": "--color-bg-default",
+        "dark": "--color-bg-muted",
+        "light-high-contrast": "--color-bg-default",
+        "dark-high-contrast": "--color-bg-muted"
+      },
       "component": "Navigation items"
     },
     "--color-navigation-quiet-hover": {
@@ -296,6 +338,12 @@
         "light-high-contrast": "color.bg.default.hover",
         "dark-high-contrast": "color.bg.muted.hover"
       },
+      "cssVariables": {
+        "light": "--color-bg-default-hover",
+        "dark": "--color-bg-muted-hover",
+        "light-high-contrast": "--color-bg-default-hover",
+        "dark-high-contrast": "--color-bg-muted-hover"
+      },
       "component": "Navigation items"
     },
     "--color-navigation-quiet-pressed": {
@@ -304,6 +352,12 @@
         "dark": "color.bg.muted.pressed",
         "light-high-contrast": "color.bg.default.pressed",
         "dark-high-contrast": "color.bg.muted.pressed"
+      },
+      "cssVariables": {
+        "light": "--color-bg-default-pressed",
+        "dark": "--color-bg-muted-pressed",
+        "light-high-contrast": "--color-bg-default-pressed",
+        "dark-high-contrast": "--color-bg-muted-pressed"
       },
       "component": "Navigation items"
     },
@@ -320,7 +374,8 @@
     "--color-neutral-fill": {
       "removed": true,
       "replacement": "color.bg.neutral.strong",
-      "note": "Unused."
+      "note": "Unused.",
+      "cssVariable": "--color-bg-neutral-strong"
     },
     "--color-on-accent": {
       "token": "color.fg.on-strong",
@@ -339,6 +394,12 @@
         "dark": "color.fg.on-strong",
         "light-high-contrast": "color.fg.on-emphasis",
         "dark-high-contrast": "color.fg.on-emphasis"
+      },
+      "cssVariables": {
+        "light": "--color-fg-on-strong",
+        "dark": "--color-fg-on-strong",
+        "light-high-contrast": "--color-fg-on-emphasis",
+        "dark-high-contrast": "--color-fg-on-emphasis"
       },
       "component": "Checkboxes"
     },
@@ -462,6 +523,12 @@
         "light-high-contrast": "color.bg.default",
         "dark-high-contrast": "color.bg.muted"
       },
+      "cssVariables": {
+        "light": "--color-bg-default",
+        "dark": "--color-bg-muted",
+        "light-high-contrast": "--color-bg-default",
+        "dark-high-contrast": "--color-bg-muted"
+      },
       "component": "List rows"
     },
     "--color-row-alternate": {
@@ -481,6 +548,12 @@
         "light-high-contrast": "color.bg.default.hover",
         "dark-high-contrast": "color.bg.muted.hover"
       },
+      "cssVariables": {
+        "light": "--color-bg-default-hover",
+        "dark": "--color-bg-muted-hover",
+        "light-high-contrast": "--color-bg-default-hover",
+        "dark-high-contrast": "--color-bg-muted-hover"
+      },
       "component": "List rows"
     },
     "--color-row-pressed": {
@@ -489,6 +562,12 @@
         "dark": "color.bg.muted.pressed",
         "light-high-contrast": "color.bg.default.pressed",
         "dark-high-contrast": "color.bg.muted.pressed"
+      },
+      "cssVariables": {
+        "light": "--color-bg-default-pressed",
+        "dark": "--color-bg-muted-pressed",
+        "light-high-contrast": "--color-bg-default-pressed",
+        "dark-high-contrast": "--color-bg-muted-pressed"
       },
       "component": "List rows"
     },
@@ -610,13 +689,15 @@
     "--color-surface-base": {
       "removed": true,
       "replacement": "color.bg.raised",
-      "note": "Unused."
+      "note": "Unused.",
+      "cssVariable": "--color-bg-raised"
     },
     "--color-surface-muted": { "token": "color.bg.muted", "cssVariable": "--color-bg-muted" },
     "--color-surface-raised": {
       "removed": true,
       "replacement": "color.bg.raised",
-      "note": "Unused."
+      "note": "Unused.",
+      "cssVariable": "--color-bg-raised"
     },
     "--color-switch-off": {
       "token": "color.bg.neutral.muted",
@@ -640,6 +721,12 @@
         "light-high-contrast": "color.bg.brand.emphasis",
         "dark-high-contrast": "color.bg.brand.emphasis"
       },
+      "cssVariables": {
+        "light": "--color-bg-brand-strong",
+        "dark": "--color-bg-brand-strong",
+        "light-high-contrast": "--color-bg-brand-emphasis",
+        "dark-high-contrast": "--color-bg-brand-emphasis"
+      },
       "component": "Switches"
     },
     "--color-switch-on-hover": {
@@ -649,6 +736,12 @@
         "light-high-contrast": "color.bg.brand.emphasis.hover",
         "dark-high-contrast": "color.bg.brand.emphasis.hover"
       },
+      "cssVariables": {
+        "light": "--color-bg-brand-strong-hover",
+        "dark": "--color-bg-brand-strong-hover",
+        "light-high-contrast": "--color-bg-brand-emphasis-hover",
+        "dark-high-contrast": "--color-bg-brand-emphasis-hover"
+      },
       "component": "Switches"
     },
     "--color-switch-on-pressed": {
@@ -657,6 +750,12 @@
         "dark": "color.bg.brand.strong.pressed",
         "light-high-contrast": "color.bg.brand.emphasis.pressed",
         "dark-high-contrast": "color.bg.brand.emphasis.pressed"
+      },
+      "cssVariables": {
+        "light": "--color-bg-brand-strong-pressed",
+        "dark": "--color-bg-brand-strong-pressed",
+        "light-high-contrast": "--color-bg-brand-emphasis-pressed",
+        "dark-high-contrast": "--color-bg-brand-emphasis-pressed"
       },
       "component": "Switches"
     },
@@ -677,6 +776,12 @@
         "light-high-contrast": "color.fg.on-emphasis",
         "dark-high-contrast": "color.fg.on-emphasis"
       },
+      "cssVariables": {
+        "light": "--color-fg-on-strong",
+        "dark": "--color-fg-on-strong",
+        "light-high-contrast": "--color-fg-on-emphasis",
+        "dark-high-contrast": "--color-fg-on-emphasis"
+      },
       "component": "Switches"
     },
     "--color-text-muted": { "token": "color.fg.muted", "cssVariable": "--color-fg-muted" },
@@ -686,7 +791,8 @@
     "--color-text-subtle": {
       "removed": true,
       "replacement": "color.fg.muted",
-      "note": "Unused synonym."
+      "note": "Unused synonym.",
+      "cssVariable": "--color-fg-muted"
     },
     "--color-toast-error": {
       "token": "color.bg.danger.strong",
@@ -734,12 +840,14 @@
     "--state-fill-hover-opacity": {
       "removed": true,
       "replacement": "color.bg.neutral.muted.hover",
-      "note": "The fill's states are color tokens now."
+      "note": "The fill's states are color tokens now.",
+      "cssVariable": "--color-bg-neutral-muted-hover"
     },
     "--state-fill-pressed-opacity": {
       "removed": true,
       "replacement": "color.bg.neutral.muted.pressed",
-      "note": "The fill's states are color tokens now."
+      "note": "The fill's states are color tokens now.",
+      "cssVariable": "--color-bg-neutral-muted-pressed"
     },
     "--state-hover-lightness": {
       "removed": true,
@@ -754,12 +862,14 @@
     "--state-layer-hover-opacity": {
       "removed": true,
       "replacement": "color.bg.neutral.subtle.hover",
-      "note": "The state layer is a color token now."
+      "note": "The state layer is a color token now.",
+      "cssVariable": "--color-bg-neutral-subtle-hover"
     },
     "--state-layer-pressed-opacity": {
       "removed": true,
       "replacement": "color.bg.neutral.subtle.pressed",
-      "note": "The state layer is a color token now."
+      "note": "The state layer is a color token now.",
+      "cssVariable": "--color-bg-neutral-subtle-pressed"
     },
     "--state-lightness-direction": {
       "removed": true,

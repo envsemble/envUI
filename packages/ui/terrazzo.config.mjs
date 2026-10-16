@@ -408,7 +408,8 @@ function checkCustomProperties(list, handwrittenFile) {
 
 /**
  * envUI's own plugin: the lint rules, and the generated token modules, a typed TypeScript module, a
- * JSON token list for the docs, and the migration map from the 0.7 custom properties to the roles.
+ * JSON token list for the docs, and the migration map from the 0.7 custom properties to the roles,
+ * which scripts/BuildTokens.mjs copies into the codemods' rename map and the migration guide.
  * The modules carry each token's value in every theme, as the browser resolves Tokens.css alone:
  * TokensHandwritten.css can change a few of them under a condition, such as the touch sizes of
  * --control-height and --title-bar-height under a coarse pointer, and those values are not in them.
@@ -521,18 +522,35 @@ function envui({ removedFile, handwrittenFile }) {
             ? { primitive }
             : distinct.length === 1
               ? { token: distinct[0], cssVariable: cssVariable(distinct[0]) }
-              : { tokens: roles }),
+              : {
+                  tokens: roles,
+                  cssVariables: Object.fromEntries(
+                    Object.entries(roles).map(([theme, role]) => [
+                      theme,
+                      role === null ? null : cssVariable(role),
+                    ]),
+                  ),
+                }),
           ...(component && { component }),
         };
       }
       for (const [name, entry] of Object.entries(removed)) {
         if (migration[name]) throw new Error(`${name} is listed as removed but still exists.`);
-        migration[name] = { removed: true, ...entry };
+        const { replacement } = entry;
+        if (replacement && (!tokens[replacement] || internal(replacement)))
+          throw new Error(
+            `removed-tokens.json replaces ${name} with ${replacement}, which is no public token.`,
+          );
+        migration[name] = {
+          removed: true,
+          ...entry,
+          ...(replacement && { cssVariable: cssVariable(replacement) }),
+        };
       }
       outputFile(
         'generated/token-migration.json',
         JSON.stringify({
-          $comment: `${header} Maps each 0.7 custom property to the token that replaces it: one role, a role per theme for component tokens, or removed with its replacement.`,
+          $comment: `${header} Maps each 0.7 custom property to the token that replaces it, with its custom property (cssVariable, or cssVariables per theme): one role, a role per theme for component tokens, a palette color that no role replaces (primitive), or removed with its replacement. npm run tokens:build copies it into the tokens section of the codemods' rename map and the token list of docs/migration.md.`,
           names: Object.fromEntries(
             Object.entries(migration).sort(([a], [b]) => a.localeCompare(b)),
           ),

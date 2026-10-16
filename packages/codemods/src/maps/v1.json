@@ -172,5 +172,507 @@
     "keyboard": "kbd",
     "layout": "stack",
     "loading": "skeleton"
+  },
+  "tokens": {
+    "$comment": "The 0.7 custom properties of the tokens, each with what replaces it in 1.0: `to`, the custom property of the one role that replaces it; `byTheme`, the custom property of the role a component token takes in each theme, which no one name replaces; `primitive`, the palette color of a fixed color, which no role replaces; or `removed`, with `to` its replacement where there is one and a `note`. The 0.7 names remain as aliases of their roles until the CSS-architecture step, which gives every token the --env- prefix. `npm run tokens:build` writes this section from packages/ui/src/generated/token-migration.json; the transforms do not read it yet.",
+    "--color-accent": { "to": "--color-bg-important-strong", "component": "Important buttons" },
+    "--color-accent-hover": {
+      "to": "--color-bg-important-strong-hover",
+      "component": "Important buttons"
+    },
+    "--color-accent-pressed": {
+      "to": "--color-bg-important-strong-pressed",
+      "component": "Important buttons"
+    },
+    "--color-action-strip": {
+      "byTheme": {
+        "light": "--color-bg-default",
+        "dark": "--color-bg-muted",
+        "light-high-contrast": "--color-bg-default",
+        "dark-high-contrast": "--color-bg-muted"
+      },
+      "component": "The action strip of a card"
+    },
+    "--color-avatar": { "primitive": "palette.blue.20", "component": "Avatars" },
+    "--color-avatar-figure": { "primitive": "palette.blue.45", "component": "Avatars" },
+    "--color-border-hover": { "to": "--color-border-muted-hover" },
+    "--color-border-pressed": {
+      "removed": true,
+      "to": "--color-border-muted-pressed",
+      "note": "Unused."
+    },
+    "--color-border-strong": { "to": "--color-border-muted" },
+    "--color-calendar-selected": { "to": "--color-bg-brand-emphasis", "component": "Calendars" },
+    "--color-calendar-today": { "to": "--color-border-accent", "component": "Calendars" },
+    "--color-canvas": { "to": "--color-bg-page" },
+    "--color-canvas-dark": {
+      "primitive": "palette.neutral.92",
+      "component": "Fixed dark page color"
+    },
+    "--color-checkbox": {
+      "byTheme": {
+        "light": "--color-bg-brand-strong",
+        "dark": "--color-bg-brand-strong",
+        "light-high-contrast": "--color-bg-brand-emphasis",
+        "dark-high-contrast": "--color-bg-brand-emphasis"
+      },
+      "component": "Checkboxes"
+    },
+    "--color-checkbox-border": { "to": "--color-fg-muted", "component": "Checkboxes" },
+    "--color-checkbox-hover": {
+      "byTheme": {
+        "light": "--color-bg-brand-strong-hover",
+        "dark": "--color-bg-brand-strong-hover",
+        "light-high-contrast": "--color-bg-brand-emphasis-hover",
+        "dark-high-contrast": "--color-bg-brand-emphasis-hover"
+      },
+      "component": "Checkboxes"
+    },
+    "--color-checkbox-pressed": {
+      "byTheme": {
+        "light": "--color-bg-brand-strong-pressed",
+        "dark": "--color-bg-brand-strong-pressed",
+        "light-high-contrast": "--color-bg-brand-emphasis-pressed",
+        "dark-high-contrast": "--color-bg-brand-emphasis-pressed"
+      },
+      "component": "Checkboxes"
+    },
+    "--color-checkbox-ring-hover": { "to": "--color-fg-muted-hover", "component": "Checkboxes" },
+    "--color-checkbox-ring-pressed": {
+      "to": "--color-fg-muted-pressed",
+      "component": "Checkboxes"
+    },
+    "--color-checkbox-text": { "to": "--color-fg-default", "component": "Checkboxes" },
+    "--color-chip": { "to": "--color-bg-neutral-muted", "component": "Chips" },
+    "--color-chip-text": { "to": "--color-fg-accent", "component": "Chips" },
+    "--color-control-blue": {
+      "byTheme": {
+        "light": "--color-bg-brand-strong",
+        "dark": "--color-bg-brand-strong",
+        "light-high-contrast": "--color-bg-brand-emphasis",
+        "dark-high-contrast": "--color-bg-brand-emphasis"
+      },
+      "component": "Spinners, sliders and meters"
+    },
+    "--color-control-blue-hover": {
+      "removed": true,
+      "to": "--color-bg-brand-strong-hover",
+      "note": "Unused."
+    },
+    "--color-control-blue-pressed": {
+      "removed": true,
+      "to": "--color-bg-brand-strong-pressed",
+      "note": "Unused."
+    },
+    "--color-control-text": {
+      "removed": true,
+      "to": "--color-fg-control",
+      "note": "Unused synonym."
+    },
+    "--color-destructive-action": {
+      "to": "--color-bg-danger-strong",
+      "component": "Destructive buttons"
+    },
+    "--color-destructive-action-hover": {
+      "to": "--color-bg-danger-strong-hover",
+      "component": "Destructive buttons"
+    },
+    "--color-destructive-action-pressed": {
+      "to": "--color-bg-danger-strong-pressed",
+      "component": "Destructive buttons"
+    },
+    "--color-dialog": { "to": "--color-bg-raised" },
+    "--color-dialog-overlay": { "to": "--color-bg-overlay" },
+    "--color-direction-link": { "to": "--color-bg-raised", "component": "Pager links" },
+    "--color-direction-link-border": { "to": "--color-border-muted", "component": "Pager links" },
+    "--color-direction-link-border-hover": {
+      "to": "--color-border-muted-hover",
+      "component": "Pager links"
+    },
+    "--color-direction-link-border-pressed": {
+      "to": "--color-border-muted-pressed",
+      "component": "Pager links"
+    },
+    "--color-direction-link-icon": { "to": "--color-fg-accent", "component": "Pager links" },
+    "--color-direction-link-label": { "to": "--color-fg-muted", "component": "Pager links" },
+    "--color-direction-link-text": { "to": "--color-fg-default", "component": "Pager links" },
+    "--color-disabled-text": { "to": "--color-fg-muted" },
+    "--color-disclosure-text": { "to": "--color-fg-muted", "component": "Disclosure summaries" },
+    "--color-field": { "to": "--color-bg-field" },
+    "--color-field-active": { "to": "--color-border-accent", "component": "Fields" },
+    "--color-field-border": { "to": "--color-border-default", "component": "Fields" },
+    "--color-field-error": { "to": "--color-fg-danger", "component": "Fields" },
+    "--color-field-hint": { "to": "--color-fg-muted", "component": "Fields" },
+    "--color-field-label": { "to": "--color-fg-muted", "component": "Fields" },
+    "--color-field-placeholder": { "to": "--color-fg-muted", "component": "Fields" },
+    "--color-field-text": { "to": "--color-fg-default", "component": "Fields" },
+    "--color-fill": { "to": "--color-bg-neutral-muted" },
+    "--color-fill-hover": {
+      "removed": true,
+      "to": "--color-bg-neutral-muted-hover",
+      "note": "Unused."
+    },
+    "--color-fill-pressed": {
+      "removed": true,
+      "to": "--color-bg-neutral-muted-pressed",
+      "note": "Unused."
+    },
+    "--color-focus-ring": { "to": "--color-border-focus" },
+    "--color-icon": { "to": "--color-fg-muted" },
+    "--color-link": { "to": "--color-fg-link" },
+    "--color-link-hover": { "to": "--color-fg-link-hover" },
+    "--color-link-pressed": { "to": "--color-fg-link-pressed" },
+    "--color-markdown-border": { "to": "--color-border-muted", "component": "Markdown" },
+    "--color-menu-row": { "to": "--color-bg-popup", "component": "Menu rows" },
+    "--color-navigation-hover": {
+      "to": "--color-bg-selected-hover",
+      "component": "Navigation items"
+    },
+    "--color-navigation-icon": { "to": "--color-fg-muted", "component": "Navigation items" },
+    "--color-navigation-pressed": {
+      "to": "--color-bg-selected-pressed",
+      "component": "Navigation items"
+    },
+    "--color-navigation-quiet": {
+      "byTheme": {
+        "light": "--color-bg-default",
+        "dark": "--color-bg-muted",
+        "light-high-contrast": "--color-bg-default",
+        "dark-high-contrast": "--color-bg-muted"
+      },
+      "component": "Navigation items"
+    },
+    "--color-navigation-quiet-hover": {
+      "byTheme": {
+        "light": "--color-bg-default-hover",
+        "dark": "--color-bg-muted-hover",
+        "light-high-contrast": "--color-bg-default-hover",
+        "dark-high-contrast": "--color-bg-muted-hover"
+      },
+      "component": "Navigation items"
+    },
+    "--color-navigation-quiet-pressed": {
+      "byTheme": {
+        "light": "--color-bg-default-pressed",
+        "dark": "--color-bg-muted-pressed",
+        "light-high-contrast": "--color-bg-default-pressed",
+        "dark-high-contrast": "--color-bg-muted-pressed"
+      },
+      "component": "Navigation items"
+    },
+    "--color-navigation-selected": { "to": "--color-bg-selected", "component": "Navigation items" },
+    "--color-navigation-text": { "to": "--color-fg-control", "component": "Navigation items" },
+    "--color-neutral-fill": {
+      "removed": true,
+      "to": "--color-bg-neutral-strong",
+      "note": "Unused."
+    },
+    "--color-on-accent": { "to": "--color-fg-on-strong", "component": "Important buttons" },
+    "--color-on-avatar": { "primitive": "palette.blue.70", "component": "Avatars" },
+    "--color-on-calendar-selected": { "to": "--color-fg-on-emphasis", "component": "Calendars" },
+    "--color-on-checkbox": {
+      "byTheme": {
+        "light": "--color-fg-on-strong",
+        "dark": "--color-fg-on-strong",
+        "light-high-contrast": "--color-fg-on-emphasis",
+        "dark-high-contrast": "--color-fg-on-emphasis"
+      },
+      "component": "Checkboxes"
+    },
+    "--color-on-destructive-action": {
+      "to": "--color-fg-on-strong",
+      "component": "Destructive buttons"
+    },
+    "--color-on-navigation-selected": {
+      "to": "--color-fg-on-selected",
+      "component": "Navigation items"
+    },
+    "--color-on-primary-action": { "to": "--color-fg-on-emphasis", "component": "Primary buttons" },
+    "--color-on-secondary-action": { "to": "--color-fg-control", "component": "Secondary buttons" },
+    "--color-on-select-selected": { "to": "--color-fg-on-selected", "component": "Select options" },
+    "--color-on-subtle-action": { "to": "--color-fg-accent", "component": "Outlined buttons" },
+    "--color-on-toast": { "to": "--color-fg-on-strong", "component": "Toasts and tooltips" },
+    "--color-on-tone": { "to": "--color-fg-on-emphasis" },
+    "--color-outlined-focus": { "to": "--color-border-focus", "component": "Outlined buttons" },
+    "--color-pane": { "to": "--color-bg-default" },
+    "--color-popup": { "to": "--color-bg-popup" },
+    "--color-popup-border": { "to": "--elevation-2-border", "component": "Popups" },
+    "--color-primary-action": { "to": "--color-bg-brand-emphasis", "component": "Primary buttons" },
+    "--color-primary-action-hover": {
+      "to": "--color-bg-brand-emphasis-hover",
+      "component": "Primary buttons"
+    },
+    "--color-primary-action-pressed": {
+      "to": "--color-bg-brand-emphasis-pressed",
+      "component": "Primary buttons"
+    },
+    "--color-quiet-label-hover": {
+      "to": "--color-fg-muted-hover",
+      "component": "Disclosure summaries"
+    },
+    "--color-quiet-label-pressed": {
+      "to": "--color-fg-muted-pressed",
+      "component": "Disclosure summaries"
+    },
+    "--color-radio": { "to": "--color-bg-brand-emphasis", "component": "Radios" },
+    "--color-radio-detail": { "to": "--color-fg-muted", "component": "Radios" },
+    "--color-radio-hover": { "to": "--color-bg-brand-emphasis-hover", "component": "Radios" },
+    "--color-radio-pressed": { "to": "--color-bg-brand-emphasis-pressed", "component": "Radios" },
+    "--color-radio-row": { "to": "--color-bg-muted", "component": "Radio rows" },
+    "--color-radio-row-hover": { "to": "--color-bg-muted-hover", "component": "Radio rows" },
+    "--color-radio-row-pressed": { "to": "--color-bg-muted-pressed", "component": "Radio rows" },
+    "--color-radio-text": { "to": "--color-fg-default", "component": "Radios" },
+    "--color-row": {
+      "byTheme": {
+        "light": "--color-bg-default",
+        "dark": "--color-bg-muted",
+        "light-high-contrast": "--color-bg-default",
+        "dark-high-contrast": "--color-bg-muted"
+      },
+      "component": "List rows"
+    },
+    "--color-row-alternate": {
+      "to": "--color-bg-raised",
+      "component": "List rows on a contrasting surface"
+    },
+    "--color-row-detail": { "to": "--color-fg-muted", "component": "List rows" },
+    "--color-row-hover": {
+      "byTheme": {
+        "light": "--color-bg-default-hover",
+        "dark": "--color-bg-muted-hover",
+        "light-high-contrast": "--color-bg-default-hover",
+        "dark-high-contrast": "--color-bg-muted-hover"
+      },
+      "component": "List rows"
+    },
+    "--color-row-pressed": {
+      "byTheme": {
+        "light": "--color-bg-default-pressed",
+        "dark": "--color-bg-muted-pressed",
+        "light-high-contrast": "--color-bg-default-pressed",
+        "dark-high-contrast": "--color-bg-muted-pressed"
+      },
+      "component": "List rows"
+    },
+    "--color-row-selected-hover": {
+      "to": "--color-bg-selected-hover",
+      "component": "Tree and table rows"
+    },
+    "--color-row-selected-pressed": {
+      "to": "--color-bg-selected-pressed",
+      "component": "Tree and table rows"
+    },
+    "--color-row-text": { "to": "--color-fg-default", "component": "List rows" },
+    "--color-secondary-action": {
+      "to": "--color-bg-neutral-muted",
+      "component": "Secondary buttons"
+    },
+    "--color-secondary-action-hover": {
+      "to": "--color-bg-neutral-muted-hover",
+      "component": "Secondary buttons"
+    },
+    "--color-secondary-action-pressed": {
+      "to": "--color-bg-neutral-muted-pressed",
+      "component": "Secondary buttons"
+    },
+    "--color-select-option": { "to": "--color-bg-popup", "component": "Select options" },
+    "--color-select-option-hover": {
+      "to": "--color-bg-popup-hover",
+      "component": "Select options"
+    },
+    "--color-select-option-pressed": {
+      "to": "--color-bg-popup-pressed",
+      "component": "Select options"
+    },
+    "--color-select-option-text": { "to": "--color-fg-control", "component": "Select options" },
+    "--color-select-selected": { "to": "--color-bg-selected", "component": "Select options" },
+    "--color-select-selected-hover": {
+      "to": "--color-bg-selected-hover",
+      "component": "Select options"
+    },
+    "--color-select-selected-pressed": {
+      "to": "--color-bg-selected-pressed",
+      "component": "Select options"
+    },
+    "--color-skeleton-base": { "to": "--color-bg-neutral-muted", "component": "Skeletons" },
+    "--color-skeleton-highlight": {
+      "to": "--color-bg-neutral-muted-hover",
+      "component": "Skeletons"
+    },
+    "--color-state-layer": { "to": "--color-fg-default" },
+    "--color-state-layer-hover": { "to": "--color-bg-neutral-subtle-hover" },
+    "--color-state-layer-pressed": { "to": "--color-bg-neutral-subtle-pressed" },
+    "--color-subtle-action": { "to": "--color-bg-raised", "component": "Outlined buttons" },
+    "--color-subtle-action-border": {
+      "to": "--color-border-default",
+      "component": "Outlined buttons"
+    },
+    "--color-subtle-action-border-hover": {
+      "to": "--color-border-default-hover",
+      "component": "Outlined buttons"
+    },
+    "--color-subtle-action-border-pressed": {
+      "to": "--color-border-default-pressed",
+      "component": "Outlined buttons"
+    },
+    "--color-subtle-action-hover": {
+      "to": "--color-bg-raised-hover",
+      "component": "Outlined buttons"
+    },
+    "--color-subtle-action-pressed": {
+      "to": "--color-bg-raised-pressed",
+      "component": "Outlined buttons"
+    },
+    "--color-surface": { "to": "--color-bg-raised" },
+    "--color-surface-base": { "removed": true, "to": "--color-bg-raised", "note": "Unused." },
+    "--color-surface-muted": { "to": "--color-bg-muted" },
+    "--color-surface-raised": { "removed": true, "to": "--color-bg-raised", "note": "Unused." },
+    "--color-switch-off": { "to": "--color-bg-neutral-muted", "component": "Switches" },
+    "--color-switch-off-hover": { "to": "--color-bg-neutral-muted-hover", "component": "Switches" },
+    "--color-switch-off-pressed": {
+      "to": "--color-bg-neutral-muted-pressed",
+      "component": "Switches"
+    },
+    "--color-switch-on": {
+      "byTheme": {
+        "light": "--color-bg-brand-strong",
+        "dark": "--color-bg-brand-strong",
+        "light-high-contrast": "--color-bg-brand-emphasis",
+        "dark-high-contrast": "--color-bg-brand-emphasis"
+      },
+      "component": "Switches"
+    },
+    "--color-switch-on-hover": {
+      "byTheme": {
+        "light": "--color-bg-brand-strong-hover",
+        "dark": "--color-bg-brand-strong-hover",
+        "light-high-contrast": "--color-bg-brand-emphasis-hover",
+        "dark-high-contrast": "--color-bg-brand-emphasis-hover"
+      },
+      "component": "Switches"
+    },
+    "--color-switch-on-pressed": {
+      "byTheme": {
+        "light": "--color-bg-brand-strong-pressed",
+        "dark": "--color-bg-brand-strong-pressed",
+        "light-high-contrast": "--color-bg-brand-emphasis-pressed",
+        "dark-high-contrast": "--color-bg-brand-emphasis-pressed"
+      },
+      "component": "Switches"
+    },
+    "--color-switch-text": { "to": "--color-fg-default", "component": "Switches" },
+    "--color-switch-thumb": { "to": "--color-fg-control", "component": "Switches" },
+    "--color-switch-thumb-on": {
+      "byTheme": {
+        "light": "--color-fg-on-strong",
+        "dark": "--color-fg-on-strong",
+        "light-high-contrast": "--color-fg-on-emphasis",
+        "dark-high-contrast": "--color-fg-on-emphasis"
+      },
+      "component": "Switches"
+    },
+    "--color-text-muted": { "to": "--color-fg-muted" },
+    "--color-text-primary": { "to": "--color-fg-default" },
+    "--color-text-quiet": { "to": "--color-fg-muted" },
+    "--color-text-strong": { "to": "--color-fg-control" },
+    "--color-text-subtle": { "removed": true, "to": "--color-fg-muted", "note": "Unused synonym." },
+    "--color-toast-error": { "to": "--color-bg-danger-strong", "component": "Toasts" },
+    "--color-toast-info": { "to": "--color-bg-info-strong", "component": "Toasts" },
+    "--color-toast-neutral": {
+      "to": "--color-bg-neutral-strong",
+      "component": "Toasts and tooltips"
+    },
+    "--color-toast-success": { "to": "--color-bg-success-strong", "component": "Toasts" },
+    "--color-tone-accent": { "to": "--color-fg-accent" },
+    "--color-tone-danger": { "to": "--color-fg-danger" },
+    "--color-tone-done": { "to": "--color-fg-done" },
+    "--color-tone-neutral": { "to": "--color-fg-muted" },
+    "--color-tone-success": { "to": "--color-fg-success" },
+    "--color-tone-warning": { "to": "--color-fg-warning" },
+    "--color-white": { "primitive": "palette.neutral.0", "component": "Fixed white" },
+    "--member-identity-avatar-size": { "removed": true, "to": null, "note": "Unused." },
+    "--member-identity-copy-height": { "removed": true, "to": null, "note": "Unused." },
+    "--member-identity-email-line-height": { "removed": true, "to": null, "note": "Unused." },
+    "--member-identity-email-size": { "removed": true, "to": null, "note": "Unused." },
+    "--member-identity-gap": { "removed": true, "to": null, "note": "Unused." },
+    "--member-identity-name-line-height": { "removed": true, "to": null, "note": "Unused." },
+    "--member-identity-name-size": { "removed": true, "to": null, "note": "Unused." },
+    "--state-card-strip-weight": { "removed": true, "to": null, "note": "Unused." },
+    "--state-fill-hover-opacity": {
+      "removed": true,
+      "to": "--color-bg-neutral-muted-hover",
+      "note": "The fill's states are color tokens now."
+    },
+    "--state-fill-pressed-opacity": {
+      "removed": true,
+      "to": "--color-bg-neutral-muted-pressed",
+      "note": "The fill's states are color tokens now."
+    },
+    "--state-hover-lightness": {
+      "removed": true,
+      "to": null,
+      "note": "The runtime hover rule is gone: use the role's -hover token."
+    },
+    "--state-hover-shift": {
+      "removed": true,
+      "to": null,
+      "note": "The runtime hover rule is gone."
+    },
+    "--state-layer-hover-opacity": {
+      "removed": true,
+      "to": "--color-bg-neutral-subtle-hover",
+      "note": "The state layer is a color token now."
+    },
+    "--state-layer-pressed-opacity": {
+      "removed": true,
+      "to": "--color-bg-neutral-subtle-pressed",
+      "note": "The state layer is a color token now."
+    },
+    "--state-lightness-direction": {
+      "removed": true,
+      "to": null,
+      "note": "The runtime hover rule is gone: every role has hover and pressed tokens."
+    },
+    "--state-lightness-threshold": {
+      "removed": true,
+      "to": null,
+      "note": "The runtime hover rule is gone."
+    },
+    "--state-pressed-lightness": {
+      "removed": true,
+      "to": null,
+      "note": "The runtime hover rule is gone: use the role's -pressed token."
+    },
+    "--state-pressed-shift": {
+      "removed": true,
+      "to": null,
+      "note": "The runtime hover rule is gone."
+    },
+    "--state-selected-base-weight": { "removed": true, "to": null, "note": "Unused." },
+    "--state-surface-hover-lightness": {
+      "removed": true,
+      "to": null,
+      "note": "The runtime hover rule is gone: use the surface's -hover token."
+    },
+    "--state-surface-hover-shift": {
+      "removed": true,
+      "to": null,
+      "note": "The runtime hover rule is gone."
+    },
+    "--state-surface-pressed-lightness": {
+      "removed": true,
+      "to": null,
+      "note": "The runtime hover rule is gone: use the surface's -pressed token."
+    },
+    "--state-surface-pressed-shift": {
+      "removed": true,
+      "to": null,
+      "note": "The runtime hover rule is gone."
+    },
+    "--state-tone-subtle-opacity": {
+      "removed": true,
+      "to": null,
+      "note": "Each tone has its tint as a color token: color.bg.{tone}.muted."
+    }
   }
 }
