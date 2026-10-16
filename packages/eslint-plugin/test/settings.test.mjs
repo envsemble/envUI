@@ -1,7 +1,9 @@
 // settings.envui.reexportModules: where a path entry is read from, and how it matches imports.
 import assert from 'node:assert/strict';
 import { Linter } from 'eslint';
-import { resolve } from 'node:path';
+import { mkdtempSync, rmSync, symlinkSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import rule from '../src/rules/no-renamed-exports.js';
@@ -56,3 +58,34 @@ test('a path entry that names no module is a configuration error', () => {
   // An alias is not a path, and names no file to look for.
   assert.deepEqual(lint(['@/components/ui']), []);
 });
+
+test('a module reached through a link matches its real path', (t) => {
+  const directory = mkdtempSync(join(tmpdir(), 'envui-settings-'));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const link = join(directory, 'app');
+  // A junction needs no privileges on Windows; elsewhere the type is ignored.
+  symlinkSync(fixture, link, 'junction');
+  // A file under the link imports the module the entry names by its real path, and the other way.
+  const linked = { cwd: directory, filename: join(link, 'src/App.js') };
+  assert.deepEqual(lint([resolve(fixture, 'src/ui')], linked), reported);
+  assert.deepEqual(lint([join(link, 'src/ui')]), reported);
+});
+
+test(
+  'Windows paths match whatever the case of the drive letter',
+  { skip: process.platform !== 'win32' },
+  () => {
+    const swap = (path) =>
+      path.replace(/^[a-z]:/i, (drive) =>
+        drive === drive.toUpperCase() ? drive.toLowerCase() : drive.toUpperCase(),
+      );
+    const entry = resolve(fixture, 'src/ui');
+    for (const [entryPath, filename] of [
+      [swap(entry), app],
+      [entry, swap(app)],
+      [swap(entry).toUpperCase(), app],
+    ])
+      assert.deepEqual(lint([entryPath], { filename }), reported, `${entryPath} from ${filename}`);
+    assert.deepEqual(lint(['./src/ui'], { cwd: swap(fixture), filename: app }), reported);
+  },
+);

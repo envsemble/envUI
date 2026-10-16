@@ -1,4 +1,4 @@
-import { readFileSync, statSync } from 'node:fs';
+import { readFileSync, realpathSync, statSync } from 'node:fs';
 import { dirname, isAbsolute, join, resolve } from 'node:path';
 
 /** Reads one of the plugin's data files from src/data. */
@@ -149,12 +149,18 @@ function moduleFile(path) {
 
 /**
  * A module's file without the script extension or the trailing `/index` that resolving it may
- * add: `src/ui`, `src/ui.ts` and `src/ui/index.tsx` are the same module.
+ * add: `src/ui`, `src/ui.ts` and `src/ui/index.tsx` are the same module. On Windows, where paths
+ * ignore case, it is lowercased too, since an editor may write `c:\` where ESLint's cwd is `C:\`.
  */
-const modulePath = (path) =>
-  resolve(path)
+const modulePath = (path) => {
+  const module = resolve(path)
     .replace(/\.[cm]?[jt]sx?$/, '')
     .replace(/[\\/]index$/, '');
+  return process.platform === 'win32' ? module.toLowerCase() : module;
+};
+
+/** The file's real path, through symbolic links and in the file system's own case. */
+const realModulePath = (file) => modulePath(realpathSync.native(file));
 
 /**
  * The plugin's shared settings, from `settings.envui` in the ESLint configuration:
@@ -185,6 +191,8 @@ export function pluginSettings(context) {
       "envui: settings.envui.reexportModules must be an array of module specifiers, such as ['./src/ui', '@/components/ui'].",
     );
   const isPath = (entry) => isRelative(entry) || isAbsolute(entry);
+  // Each module by its path as written and by its real path, so either spelling of an import
+  // matches.
   const files = new Set();
   for (const entry of reexportModules.filter(isPath)) {
     const path = resolve(context.cwd, entry);
@@ -198,6 +206,7 @@ export function pluginSettings(context) {
         }`,
       );
     files.add(modulePath(path));
+    files.add(realModulePath(file));
   }
   const specifiers = new Set(reexportModules.filter((entry) => !isPath(entry)));
   const directory = resolve(context.cwd, dirname(context.filename));
@@ -205,7 +214,11 @@ export function pluginSettings(context) {
     isReexportModule(source) {
       if (typeof source !== 'string') return false;
       if (!isRelative(source)) return specifiers.has(source);
-      return files.has(modulePath(resolve(directory, source)));
+      if (files.size === 0) return false;
+      const path = resolve(directory, source);
+      if (files.has(modulePath(path))) return true;
+      const file = moduleFile(path);
+      return file !== undefined && files.has(realModulePath(file));
     },
   };
 }
