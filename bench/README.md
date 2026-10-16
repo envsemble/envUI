@@ -137,6 +137,10 @@ The scorer looks only at files the agent created or changed (`git diff` against 
 
 Parts never go below zero. A run that changed no source or CSS scores 0. Timeouts and agent errors are scored on whatever they left on disk, and their status is reported. An idiomatic envUI solution scores 100. A hand-rolled solution that type-checks scores about 20–50.
 
+### Type checking
+
+- The app's `tsconfig.json` is parsed with its own path, and the compiler's working directory is the app, so `types` such as `vite/client` and the type roots resolve from the app's `node_modules` wherever the scorer runs. If the agent broke or removed `tsconfig.json`, its version in the base commit is used.
+
 ### What counts as raw HTML
 
 | Raw element                                                                                                                                                                                            |                                                                    Weight |

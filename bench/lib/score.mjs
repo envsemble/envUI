@@ -459,18 +459,36 @@ function envuiExportNames(appDir, { program, checker, options }) {
   return names;
 }
 
-function compilerSetup(appDir, fixtureDir) {
-  const read = (directory) => {
-    const file = join(directory, 'tsconfig.json');
-    if (!existsSync(file)) return null;
-    const config = ts.readConfigFile(file, ts.sys.readFile);
-    if (config.error) return null;
-    const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys, appDir);
-    return parsed.errors.some((error) => error.category === ts.DiagnosticCategory.Error)
-      ? null
-      : parsed;
+const configErrors = (parsed) =>
+  !parsed || parsed.errors.some((error) => error.category === ts.DiagnosticCategory.Error);
+
+/**
+ * The app's tsconfig.json, parsed with its own path, so `types` such as `vite/client` and the type
+ * roots resolve from the app and not from wherever the scorer runs. If the agent broke or removed
+ * the file, its version in the base commit is used for the same app directory.
+ */
+function compilerSetup(appDir, baseCommit) {
+  const configFile = join(appDir, 'tsconfig.json');
+  const host = {
+    useCaseSensitiveFileNames: ts.sys.useCaseSensitiveFileNames,
+    readDirectory: ts.sys.readDirectory,
+    fileExists: ts.sys.fileExists,
+    readFile: ts.sys.readFile,
+    getCurrentDirectory: () => appDir,
+    onUnRecoverableConfigFileDiagnostic: () => {},
   };
-  const parsed = read(appDir) ?? read(fixtureDir);
+  let parsed = existsSync(configFile)
+    ? ts.getParsedCommandLineOfConfigFile(configFile, undefined, host)
+    : undefined;
+  if (configErrors(parsed)) {
+    const text = baseContent(appDir, baseCommit, 'tsconfig.json');
+    const json = text === null ? null : ts.parseConfigFileTextToJson(configFile, text);
+    parsed =
+      json && !json.error
+        ? ts.parseJsonConfigFileContent(json.config, host, appDir, undefined, configFile)
+        : undefined;
+  }
+  if (configErrors(parsed)) throw new Error(`No usable tsconfig.json in ${appDir}.`);
   // The app's own config, kept strict whatever the agent changed.
   return {
     options: { ...parsed.options, strict: true, noEmit: true },
@@ -534,10 +552,13 @@ function classifyDiagnostic(diagnostic, checker) {
   return null;
 }
 
-function typecheck(appDir, fixtureDir, extraRoots) {
-  const { options, fileNames } = compilerSetup(appDir, fixtureDir);
+/** Type-checks the app from its own directory. */
+function typecheck(appDir, baseCommit, extraRoots) {
+  const { options, fileNames } = compilerSetup(appDir, baseCommit);
   const roots = [...new Set([...fileNames, ...extraRoots].map((file) => resolve(file)))];
-  const program = ts.createProgram(roots, options);
+  const host = ts.createCompilerHost(options, true);
+  host.getCurrentDirectory = () => appDir;
+  const program = ts.createProgram(roots, options, host);
   const checker = program.getTypeChecker();
   const diagnostics = ts
     .getPreEmitDiagnostics(program)
@@ -597,7 +618,7 @@ const round = (value) => Math.round(value * 10) / 10;
  * Scores one finished run from its workspace. Only files the agent created or changed count;
  * for a changed file the base version's counts are subtracted.
  */
-export function scoreRun({ appDir, baseCommit, task, fixtureDir }) {
+export function scoreRun({ appDir, baseCommit, task }) {
   const { files, patch } = changedFiles(appDir, baseCommit);
   const present = files.filter((file) => file.status !== 'D');
   const sourceFiles = present.filter(
@@ -607,7 +628,7 @@ export function scoreRun({ appDir, baseCommit, task, fixtureDir }) {
 
   const checked = typecheck(
     appDir,
-    fixtureDir,
+    baseCommit,
     sourceFiles
       .filter((file) => /\.(tsx?|mts|cts)$/.test(file.path))
       .map((file) => join(appDir, file.path)),
