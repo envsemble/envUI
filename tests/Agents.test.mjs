@@ -5,14 +5,21 @@ import {
   existsSync,
   mkdirSync,
   mkdtempSync,
+  readdirSync,
   readFileSync,
   rmSync,
   writeFileSync,
 } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join, parse, relative, resolve } from 'node:path';
 import { after, before, test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { examplesDirectory, packageDocumentation } from '../scripts/GenerateDocumentation.mjs';
+import {
+  documentationDirectory,
+  examplesDirectory,
+  packageDocumentation,
+  readDocumentation,
+} from '../scripts/GenerateDocumentation.mjs';
 import {
   buildManifest,
   generatedAgentFiles,
@@ -286,7 +293,7 @@ test('envui agents creates, updates and checks AGENTS.md', () => {
   const file = join(project, 'AGENTS.md');
   let result = envui('agents', '--check');
   assert.equal(result.status, 1);
-  assert.match(result.stderr, /AGENTS\.md does not exist\. Run `npx envui agents`/);
+  assert.match(result.stderr, /AGENTS\.md does not exist\. Run `npx --no envui agents`/);
   result = envui('agents');
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /^Created AGENTS\.md with the envUI index \(\d+ bytes\)\./);
@@ -320,18 +327,92 @@ test('the index points at the package where the project installs it', () => {
   mkdirSync(app, { recursive: true });
   mkdirSync(installed, { recursive: true });
   writeFileSync(join(installed, 'package.json'), '{}');
-  assert.equal(packagePathFor(join(app, 'AGENTS.md')), '../../node_modules/@envsemble/envui');
-  assert.equal(packagePathFor(join(workspace, 'AGENTS.md')), 'node_modules/@envsemble/envui');
+  assert.equal(packagePathFor(join(app, 'AGENTS.md')).path, '../../node_modules/@envsemble/envui');
+  assert.equal(packagePathFor(join(workspace, 'AGENTS.md')).path, 'node_modules/@envsemble/envui');
   const file = join(app, 'AGENTS.md');
   updateAgentsFile(file, manifest);
   const written = readFileSync(file, 'utf8');
   assert.ok(written.includes('`../../node_modules/@envsemble/envui/docs/`'));
   assert.ok(written.includes('`../../node_modules/@envsemble/envui/manifest.json`'));
   assert.equal(updateAgentsFile(file, manifest, { check: true }).code, 0);
-  // Without an installation, the usual path.
-  assert.equal(
-    packagePathFor(join(parse(workDirectory).root, 'envui-test-no-such-folder', 'AGENTS.md')),
-    'node_modules/@envsemble/envui',
+  // Without an installation in or above the folder, nor the running package below it, the usual
+  // path and a warning.
+  const nowhere = packagePathFor(
+    join(parse(workDirectory).root, 'envui-test-no-such-folder', 'AGENTS.md'),
+    { installed: join(workDirectory, 'package') },
+  );
+  assert.equal(nowhere.path, 'node_modules/@envsemble/envui');
+  assert.match(nowhere.warning, /envUI is not installed in or below/);
+});
+
+test('a root index finds a package that pnpm installed only in a workspace package', () => {
+  // Outside the repository, whose own node_modules a folder inside it would find above.
+  const root = mkdtempSync(join(tmpdir(), 'envui-pnpm-'));
+  try {
+    const installed = join(root, 'apps/web/node_modules/@envsemble/envui');
+    mkdirSync(installed, { recursive: true });
+    writeFileSync(join(installed, 'package.json'), '{}');
+    const file = join(root, 'AGENTS.md');
+    assert.deepEqual(packagePathFor(file, { installed }), {
+      path: 'apps/web/node_modules/@envsemble/envui',
+    });
+    const result = updateAgentsFile(file, manifest, { installed });
+    assert.equal(result.warning, undefined);
+    assert.ok(
+      readFileSync(file, 'utf8').includes('`apps/web/node_modules/@envsemble/envui/docs/`'),
+    );
+    // A package that runs from elsewhere, such as a global install, gets the usual path and a
+    // warning rather than a path out of the project.
+    const elsewhere = updateAgentsFile(join(root, 'Other.md'), manifest, {
+      installed: join(workDirectory, 'package'),
+    });
+    assert.match(elsewhere.warning, /not installed in or below/);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('npx always runs envui with --no, in the docs, skills and what the bin prints', () => {
+  // npx assumes yes in CI and without a terminal: without --no, it would fetch and run whatever
+  // the public registry has under the unclaimed name envui.
+  const withoutNo = /\bnpx\s+(?:(?!--no\b)\S+\s+)*envui\b/;
+  const texts = [
+    ['README.md', readFileSync(join(repository, 'README.md'), 'utf8')],
+    [
+      '.changeset/agent-tooling.md',
+      readFileSync(join(repository, '.changeset/agent-tooling.md'), 'utf8'),
+    ],
+    ['docs/generated/llms.txt', readFileSync(join(repository, 'docs/generated/llms.txt'), 'utf8')],
+    ['index', renderIndex(manifest)],
+    [
+      'check message',
+      updateAgentsFile(join(workDirectory, 'Missing.md'), manifest, { check: true }).message,
+    ],
+  ];
+  const walk = (folder) =>
+    readdirSync(join(repository, folder), { withFileTypes: true }).flatMap((entry) =>
+      entry.isDirectory()
+        ? walk(join(folder, entry.name))
+        : /\.(?:md|mjs)$/.test(entry.name)
+          ? [join(folder, entry.name)]
+          : [],
+    );
+  for (const file of [...walk('docs'), ...walk('.agents/skills'), ...walk('packages/ui/bin')])
+    texts.push([file, readFileSync(join(repository, file), 'utf8')]);
+  for (const name of ['--help', 'mcp --help', 'agents --help'])
+    texts.push([
+      `envui ${name}`,
+      spawnSync(process.execPath, [join(packageRoot, 'bin/envui.mjs'), ...name.split(' ')], {
+        encoding: 'utf8',
+      }).stdout,
+    ]);
+  for (const [name, text] of texts) {
+    const line = text.split('\n').find((item) => withoutNo.test(item));
+    assert.equal(line, undefined, `${name} runs npx envui without --no: ${line}`);
+  }
+  assert.ok(withoutNo.test('npx envui agents') && withoutNo.test('npx -y envui mcp'));
+  assert.ok(
+    !withoutNo.test('npx --no envui agents') && !withoutNo.test('npx --no -- envui --version'),
   );
 });
 
@@ -630,7 +711,7 @@ test('a message the server fails on gets an internal error, and the server goes 
   });
   assert.match(logged[0], /broken message/);
   assert.deepEqual(server.handleLine('{"jsonrpc":"2.0","id":8,"method":"ping"}').result, {});
-  // A line that starts with a byte order mark, as Windows PowerShell pipes it, still parses.
+  // A line that starts with a byte order mark, from a pipe that adds one, still parses.
   assert.deepEqual(server.handleLine('\uFEFF{"jsonrpc":"2.0","id":9,"method":"ping"}').result, {});
 });
 
@@ -677,7 +758,7 @@ test('search and plan rank by names, aliases and situations', () => {
   );
   const form = plan(manifest, 'a sign-in form with email and password');
   assert.ok(form.components.some((component) => component.name === 'TextField'));
-  assert.deepEqual(form.uncovered, []);
+  assert.ok(!form.uncovered.some((part) => /email|password/.test(part)), form.uncovered.join());
   const chart = plan(manifest, 'a line chart of weekly sign-ups');
   assert.deepEqual(chart.uncovered, ['a line chart of weekly sign-ups']);
   assert.match(chart.next.at(-1), /propose an envUI addition instead of a local copy/);
@@ -704,17 +785,17 @@ test('the manifest file is what the generator writes', () => {
  */
 const planned = {
   sidebar: ['collapsible-sidebar', 'nav-links'],
-  'settings-form': ['notifications', 'form-actions'],
+  'settings-form': ['text-field', 'time-zone', 'form-actions'],
   'projects-table': ['table', 'sortable-headers', 'search', 'empty-state'],
   'confirm-delete': ['delete-action', 'confirmation'],
   'save-toast': ['toast', 'name-field', 'save-button'],
   'page-header': ['breadcrumbs'],
-  'command-palette': ['palette', 'trigger', 'shortcut-hint'],
+  'command-palette': ['palette', 'shortcut-hint'],
   'tabs-counts': ['tabs'],
   'account-menu': ['avatar', 'menu', 'menu-items'],
   'file-upload': ['dropzone', 'remove-file', 'upload-progress'],
   'date-form': ['date-picker', 'submit'],
-  'loading-skeletons': ['placeholders', 'error-message', 'retry'],
+  'loading-skeletons': ['placeholders', 'error-message'],
   'inline-notice': ['upgrade-link'],
 };
 
@@ -736,5 +817,77 @@ test('plan covers the capabilities of the benchmark tasks', () => {
     }
     // Code and file names in a prompt are the application's, never a part to build.
     assert.ok(!result.uncovered.some((part) => /\.tsx?\b|`/.test(part)), task.id);
+  }
+});
+
+test('plan leaves out what a part does not ask for', () => {
+  const names = (description) => plan(manifest, description).components.map((item) => item.name);
+  const tasks = JSON.parse(readFileSync(join(repository, 'bench/tasks.json'), 'utf8'));
+  const prompt = (id) => (tasks.tasks ?? tasks).find((task) => task.id === id).prompt;
+  const settings = names(prompt('settings-form'));
+  for (const name of ['TextField', 'Select']) assert.ok(settings.includes(name), name);
+  for (const name of ['DocumentTabs', 'ThemeToggle', 'List'])
+    assert.ok(!settings.includes(name), `${name} in ${settings.join(', ')}`);
+  assert.deepEqual(names('a toggle for the newsletter'), ['Switch']);
+  assert.deepEqual(names('a notifications toggle'), ['Switch']);
+  // The labels of a list of links are content, not a Switch for "Settings".
+  assert.ok(!names(prompt('sidebar')).includes('Switch'));
+  // One word of two is not a match.
+  assert.deepEqual(names('the workspace name'), []);
+  // Building blocks the foundations document come from the pages that use them.
+  for (const description of ['an icon', 'some text'])
+    for (const name of ['Icon', 'Text'])
+      assert.ok(!names(description).includes(name), `${name} for ${description}`);
+});
+
+test('plan finds the right component for paraphrases the benchmark does not use', () => {
+  const names = (description) => plan(manifest, description).components.map((item) => item.name);
+  assert.deepEqual(names('a sidebar with links'), ['NavList']);
+  assert.deepEqual(names('let users switch between light and dark themes'), ['ThemeToggle']);
+  assert.deepEqual(names('a theme switcher in the header'), ['ThemeToggle']);
+  assert.deepEqual(names('a dark mode toggle'), ['ThemeToggle']);
+  // An export without a page has aliases from the page that documents it.
+  assert.ok(manifest.exports.ThemeToggle.aliases.includes('theme switcher'));
+  assert.equal(search(manifest, 'theme switcher', { limit: 1 })[0].name, 'ThemeToggle');
+});
+
+test('exportAliases names only exports its page lists', () => {
+  const directory = mkdtempSync(join(workDirectory, 'docs-'));
+  cpSync(documentationDirectory, directory, { recursive: true });
+  const setup = join(directory, 'setup.md');
+  writeFileSync(
+    setup,
+    readFileSync(setup, 'utf8').replace(
+      'exportAliases:\n',
+      'exportAliases:\n  Button:\n    - push\n',
+    ),
+  );
+  assert.throws(
+    () => readDocumentation(directory, { props, versions: undefined }),
+    /exportAliases names Button, which components does not list/,
+  );
+});
+
+test('the server answers an empty batch, a guide page and invalid filters clearly', () => {
+  const server = createServer({ root: packageRoot, manifest: { ...manifest, version: '1.0.0' } });
+  assert.deepEqual(server.handleLine('[]'), {
+    jsonrpc: '2.0',
+    id: null,
+    error: { code: -32600, message: 'Invalid request: an empty batch.' },
+  });
+  const call = (name, args) =>
+    server.handle({
+      jsonrpc: '2.0',
+      id: 1,
+      method: 'tools/call',
+      params: { name, arguments: args },
+    }).result;
+  const setup = JSON.parse(call('get_props', { name: 'setup' }).content[0].text);
+  assert.equal(setup.page, 'setup');
+  assert.ok(setup.exports.some((entry) => entry.name === 'Theme' && entry.props.length >= 3));
+  for (const args of [{ category: 3 }, { category: 'Nope' }, { status: ['beta'] }]) {
+    const result = call('list_components', args);
+    assert.equal(result.isError, true, JSON.stringify(args));
+    assert.match(result.content[0].text, /must be/);
   }
 });

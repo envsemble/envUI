@@ -17,6 +17,7 @@ aliases:
   - search box
   - textarea
   - multiline text
+  - description field
 useWhen:
   - Someone types a short value on one line, such as a name, an e-mail address or a number.
   - A value has a fixed start or a unit beside it, such as an address after a domain or a size in GB.

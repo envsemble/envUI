@@ -754,7 +754,8 @@
         "search field",
         "search box",
         "textarea",
-        "multiline text"
+        "multiline text",
+        "description field"
       ],
       "useWhen": [
         "Someone types a short value on one line, such as a name, an e-mail address or a number.",
@@ -1033,7 +1034,7 @@
         "toggle switch",
         "on/off switch",
         "on/off toggle",
-        "on/off option",
+        "on/off setting",
         "setting toggle"
       ],
       "useWhen": [
@@ -1199,7 +1200,9 @@
         "select box",
         "listbox",
         "picker",
-        "option picker"
+        "option picker",
+        "pick list",
+        "choose from a list"
       ],
       "useWhen": [
         "People choose one of several known options, such as a role, a sort order or a time zone, and the choice can stay collapsed.",
@@ -7974,6 +7977,10 @@
         }
       ],
       "native": [],
+      "aliases": [
+        "router link",
+        "client-side navigation"
+      ],
       "page": "setup",
       "doc": "docs/setup.md"
     },
@@ -11219,6 +11226,10 @@
         }
       ],
       "native": [],
+      "aliases": [
+        "theme preference",
+        "remember the theme"
+      ],
       "page": "setup",
       "doc": "docs/setup.md"
     },
@@ -11248,6 +11259,12 @@
       ],
       "native": [
         "button"
+      ],
+      "aliases": [
+        "theme switcher",
+        "dark mode toggle",
+        "light and dark switch",
+        "switch between light and dark"
       ],
       "page": "setup",
       "doc": "docs/setup.md"

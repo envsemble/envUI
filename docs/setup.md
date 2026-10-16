@@ -7,6 +7,18 @@ components:
   - ThemeToggle
   - useTheme
   - useThemePreference
+exportAliases:
+  ThemeToggle:
+    - theme switcher
+    - dark mode toggle
+    - light and dark switch
+    - switch between light and dark
+  ThemePreferenceProvider:
+    - theme preference
+    - remember the theme
+  LinkProvider:
+    - router link
+    - client-side navigation
 ---
 
 # Install the private package
@@ -145,7 +157,7 @@ Gzipped, `Table.Cell` alone is 3.7 KB with esbuild and 0.6 KB with Vite.
 
 ## Coding agents
 
-Run `npx envui agents` once to put the envUI index into the project's `AGENTS.md`, and register `node node_modules/@envsemble/envui/bin/envui.mjs mcp` as an MCP server in the project. The three skills ship under `skills/`; copy them into the project, keeping their version aligned with the package. Installing the npm package registers none of these by itself. [For agents](agent-tooling.md) describes them.
+Run `npx --no envui agents` once to put the envUI index into the project's `AGENTS.md`, and register `node node_modules/@envsemble/envui/bin/envui.mjs mcp` as an MCP server in the project. The three skills ship under `skills/`; copy them into the project, keeping their version aligned with the package. Installing the npm package registers none of these by itself. [For agents](agent-tooling.md) describes them.
 
 ## Related workflows
 

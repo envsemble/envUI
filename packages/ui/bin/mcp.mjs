@@ -211,6 +211,16 @@ export function callTool(context, name, args = {}) {
       };
     }
     case 'list_components': {
+      for (const key of ['category', 'status'])
+        if (args[key] !== undefined && typeof args[key] !== 'string')
+          throw new ToolError(`"${key}" must be a string.`);
+      if (
+        args.category !== undefined &&
+        !manifest.categories.some(
+          (category) => category.toLowerCase() === args.category.toLowerCase(),
+        )
+      )
+        throw new ToolError(`"category" must be one of ${manifest.categories.join(', ')}.`);
       const components = manifest.components.filter(
         (component) =>
           (!args.category ||
@@ -254,6 +264,18 @@ export function callTool(context, name, args = {}) {
     }
     case 'get_props': {
       const requested = requireString(args, 'name');
+      // A guide or foundation page, such as setup, gives the props of every export it documents.
+      const page = [...manifest.guides, ...manifest.foundations].find(
+        (item) => item.name === requested.toLowerCase() && !findComponent(manifest, requested),
+      );
+      if (page)
+        return {
+          page: page.name,
+          exports: (page.exports ?? [])
+            .map((name) => exportOf(manifest, name))
+            .filter(Boolean)
+            .map(propsOf),
+        };
       const found = componentOrError(manifest, requested);
       if (found.exported) return { page: found.exported.page, exports: [propsOf(found.exported)] };
       const { component, entry } = found;
@@ -433,12 +455,13 @@ export function createServer({
     if (!line.trim()) return undefined;
     let message;
     try {
-      // A byte order mark, as Windows PowerShell puts before what it pipes, is not part of the JSON.
+      // A byte order mark, from a pipe that adds one, is not part of the JSON.
       message = JSON.parse(line.replace(/^\uFEFF/, ''));
     } catch {
       return error(null, -32700, 'Parse error.');
     }
     if (Array.isArray(message)) {
+      if (!message.length) return error(null, -32600, 'Invalid request: an empty batch.');
       const responses = message.map(safely).filter(Boolean);
       return responses.length ? responses : undefined;
     }

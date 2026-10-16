@@ -3,8 +3,8 @@
 // AGENTS.md at the start of every task, so the index puts the rule "search envUI first" and the way
 // to the installed documentation in front of them without a tool call.
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join, relative, resolve, sep } from 'node:path';
-import { exportOf, topLevelExports } from './catalog.mjs';
+import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
+import { exportOf, packageRoot, topLevelExports } from './catalog.mjs';
 
 export const beginMarker = '<!-- BEGIN envui -->';
 export const endMarker = '<!-- END envui -->';
@@ -17,16 +17,25 @@ export const defaultPackagePath = 'node_modules/@envsemble/envui';
 /**
  * The installed package's folder relative to the folder of the file that gets the index, found as
  * Node finds it: in node_modules there or in a folder above, as in a workspace whose dependencies
- * are hoisted to its root. Without one, the usual path.
+ * are hoisted to its root. Otherwise the package that runs, when it lies inside that folder, as
+ * when pnpm installs it only into apps/web/node_modules and the index goes into the root's
+ * AGENTS.md. Failing both, the usual path, with a warning.
  */
-export function packagePathFor(file) {
+export function packagePathFor(file, { installed = packageRoot } = {}) {
   const from = dirname(resolve(file));
   for (let folder = from; ; folder = dirname(folder)) {
     const candidate = join(folder, defaultPackagePath);
     if (existsSync(join(candidate, 'package.json')))
-      return relative(from, candidate).split(sep).join('/');
-    if (dirname(folder) === folder) return defaultPackagePath;
+      return { path: relative(from, candidate).split(sep).join('/') };
+    if (dirname(folder) === folder) break;
   }
+  const inside = installed ? relative(from, resolve(installed)) : '';
+  if (inside && !inside.startsWith('..') && !isAbsolute(inside))
+    return { path: inside.split(sep).join('/') };
+  return {
+    path: defaultPackagePath,
+    warning: `envUI is not installed in or below ${from}, so the index points at ${defaultPackagePath}; run envui agents from the project that installs it.`,
+  };
 }
 
 /**
@@ -74,7 +83,7 @@ function renderBlock(manifest, aliasCount, packagePath) {
   const version = manifest.version ? ` ${manifest.version}` : '';
   const lines = [
     beginMarker,
-    `<!-- Written by \`npx envui agents\` from ${manifest.package}${version}. Run it again after upgrading; edit outside the markers. -->`,
+    `<!-- Written by \`npx --no envui agents\` from ${manifest.package}${version}. Run it again after upgrading; edit outside the markers. -->`,
     '',
     '## envUI',
     '',
@@ -155,26 +164,36 @@ export function withIndex(source, block) {
 }
 
 /** Writes or checks the index in a file; returns what happened and the exit code. */
-export function updateAgentsFile(file, manifest, { check = false, label = file } = {}) {
+export function updateAgentsFile(
+  file,
+  manifest,
+  { check = false, label = file, installed = packageRoot } = {},
+) {
+  const { path: packagePath, warning } = packagePathFor(file, { installed });
+  const withWarning = (result) => (warning ? { ...result, warning } : result);
   const exists = existsSync(file);
   const source = exists ? readFileSync(file, 'utf8') : '';
-  const block = renderIndex(manifest, { packagePath: packagePathFor(file) });
+  const block = renderIndex(manifest, { packagePath });
   const next = withIndex(source, block);
   const bytes = Buffer.byteLength(block);
   if (check) {
-    if (next === source) return { code: 0, message: `${label} has the current envUI index.` };
-    return {
+    if (next === source)
+      return withWarning({ code: 0, message: `${label} has the current envUI index.` });
+    return withWarning({
       code: 1,
-      message: `${label} ${exists ? 'has an outdated envUI index, or none' : 'does not exist'}. Run \`npx envui agents\` and commit the result.`,
-    };
+      message: `${label} ${exists ? 'has an outdated envUI index, or none' : 'does not exist'}. Run \`npx --no envui agents\` and commit the result.`,
+    });
   }
   if (next === source)
-    return { code: 0, message: `${label} already has the current envUI index (${bytes} bytes).` };
+    return withWarning({
+      code: 0,
+      message: `${label} already has the current envUI index (${bytes} bytes).`,
+    });
   writeFileSync(file, next);
-  return {
+  return withWarning({
     code: 0,
     message: `${exists ? 'Updated' : 'Created'} ${label} with the envUI index (${bytes} bytes).`,
-  };
+  });
 }
 
 export const agentsUsage = `Usage: envui agents [--check] [--file <path>] [--print]
@@ -191,13 +210,16 @@ Options:
 export function runAgents(options, manifest) {
   const file = resolve(process.cwd(), options.file ?? 'AGENTS.md');
   if (options.print) {
-    process.stdout.write(renderIndex(manifest, { packagePath: packagePathFor(file) }));
+    const { path: packagePath, warning } = packagePathFor(file);
+    if (warning) console.error(warning);
+    process.stdout.write(renderIndex(manifest, { packagePath }));
     return 0;
   }
-  const { code, message } = updateAgentsFile(file, manifest, {
+  const { code, message, warning } = updateAgentsFile(file, manifest, {
     check: options.check,
     label: relative(process.cwd(), file) || file,
   });
+  if (warning) console.error(warning);
   (code ? console.error : console.log)(message);
   return code;
 }

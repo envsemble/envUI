@@ -22,14 +22,16 @@ The rule they all carry: **search envUI before writing any UI element; propose a
 ## Add the index to AGENTS.md
 
 ```sh
-npx envui agents
+npx --no envui agents
 ```
+
+`--no`, here and in every command that starts envui through npx, stops it from fetching an unrelated package called `envui` from the public registry when envUI isn't installed in the folder; in CI and without a terminal, npx would otherwise install it without asking.
 
 It writes a compressed index of envUI, under 8 KB, into `AGENTS.md` in the current folder, between `<!-- BEGIN envui -->` and `<!-- END envui -->`. The index carries the rule above, where the docs are, the entry points and every component page with its exports and the names people search for. Agents read `AGENTS.md` at the start of every task, so they see it without a tool call.
 
 - It keeps the rest of the file, replaces an earlier index and creates the file when it is missing. Running it again changes nothing.
 - The paths in it lead from the file's folder to the installed package, also when a workspace installs it in a folder above, such as `../../node_modules/@envsemble/envui/docs/`.
-- `npx envui agents --check` changes nothing and exits with 1 when the index is missing or doesn't match the installed version. Add it to CI, and run `npx envui agents` again after upgrading envUI.
+- `npx --no envui agents --check` changes nothing and exits with 1 when the index is missing or doesn't match the installed version. Add it to CI, and run `npx --no envui agents` again after upgrading envUI.
 - `--file CLAUDE.md` writes the index to another file. Claude Code also reads `AGENTS.md` when `CLAUDE.md` imports it with a line `@AGENTS.md`.
 - `--print` prints the index instead.
 
@@ -77,7 +79,7 @@ The server starts in the folder the client works in. Where a workspace installs 
 - `categories`, the component groups in the order of the index.
 - `components`: one entry per component page, with `name`, `page`, `doc`, `category`, `status`, `since`, `summary`, `aliases`, `useWhen`, `avoidWhen` (each `{ text, use }`, `use` naming the export to use instead), `related` pages, the names of its `exports` and its `examples`, each with `name`, `title`, `description` and `file`, its source in `docs/examples/`.
 - `guides`, `foundations`, `patterns` and `templates`: the other pages, with `name`, `title`, `summary`, `doc`, the exports they document and the pages they link to.
-- `exports`: every runtime export by name, with its `kind` (component, namespace or function), `import`, `description`, the `page` and `doc` that document it, and for a component its `props` and `native`, the elements whose native props it also accepts; a namespace lists its `parts`, which are exports too, such as `Menu.Item`, and a function its `signature`.
+- `exports`: every runtime export by name, with its `kind` (component, namespace or function), `import`, `description`, the `page` and `doc` that document it, the `aliases` its page gives it when it has no component page of its own, and for a component its `props` and `native`, the elements whose native props it also accepts; a namespace lists its `parts`, which are exports too, such as `Menu.Item`, and a function its `signature`.
 - `tokens`: `themes`, `scales`, the current tokens in `items` (`id`, `cssVariable`, `type`, `description`, a `value` or `values` per theme, and the compact value under `compact`) and, in `legacy`, each 0.7 name with its `type` and the token to `use` instead.
 
 ## Skills

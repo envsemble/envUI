@@ -2,7 +2,7 @@
 
 > @envsemble/envui: a React 19 design system of components, tokens and patterns for product interfaces. These files describe the installed version; paths are relative to the package root.
 
-Search envUI before writing any UI element; propose an envUI addition instead of a local copy. Each component page has when to use it and what to use instead, accessibility, examples as source and props generated from the TypeScript declarations. manifest.json holds the same as data, and `npx envui mcp` serves it to agents over MCP.
+Search envUI before writing any UI element; propose an envUI addition instead of a local copy. Each component page has when to use it and what to use instead, accessibility, examples as source and props generated from the TypeScript declarations. manifest.json holds the same as data, and `npx --no envui mcp` serves it to agents over MCP.
 
 ## Setup and workflows
 

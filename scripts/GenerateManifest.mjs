@@ -11,7 +11,7 @@
 // (guides, foundations, patterns and templates); every runtime export; and the tokens. llms.txt is
 // the llmstxt.org index of the documentation. Both are committed, so a change to a source shows up
 // in review, and the package build copies them to the package root beside llms-full.txt, every
-// compiled page in one file. The `npx envui agents` index and the `envui mcp` server read the
+// compiled page in one file. The `npx --no envui agents` index and the `envui mcp` server read the
 // installed manifest, so they always describe the installed version.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
@@ -72,7 +72,7 @@ function linkedPages(markdown, documents) {
  * An export as the manifest lists it: where to import it from, its TSDoc, its props or signature,
  * and the page that documents it.
  */
-function exportEntry(entry, home) {
+function exportEntry(entry, home, aliases) {
   const item = {
     kind: entry.kind,
     import: entry.entries[0],
@@ -86,6 +86,7 @@ function exportEntry(entry, home) {
     item.props = entry.props;
     item.native = entry.native;
   }
+  if (aliases?.length) item.aliases = aliases;
   item.page = home?.page ?? null;
   item.doc = home?.doc ?? null;
   return item;
@@ -149,6 +150,7 @@ export function buildManifest({
   const components = [];
   const pages = { guides: [], foundations: [], patterns: [], templates: [] };
   const exportPages = new Map();
+  const exportAliases = new Map();
   for (const document of documents) {
     if (document.id === 'index') continue;
     const doc = `docs/${document.path}`;
@@ -166,6 +168,8 @@ export function buildManifest({
       });
       for (const name of documentedExports(document.frontmatter?.components ?? [], props))
         if (!exportPages.has(name)) exportPages.set(name, { page: document.id, doc });
+      for (const [name, aliases] of Object.entries(document.frontmatter?.exportAliases ?? {}))
+        exportAliases.set(name, aliases);
       continue;
     }
     const { frontmatter } = document;
@@ -206,7 +210,7 @@ export function buildManifest({
   const exportIndex = Object.fromEntries(
     Object.entries(props.exports).map(([name, entry]) => [
       name,
-      exportEntry(entry, exportPages.get(name)),
+      exportEntry(entry, exportPages.get(name), exportAliases.get(name)),
     ]),
   );
   return {
@@ -248,7 +252,7 @@ export function renderLlmsText(manifest) {
     '',
     `> ${manifest.package}: a React 19 design system of components, tokens and patterns for product interfaces. These files describe the installed version; paths are relative to the package root.`,
     '',
-    `${manifest.rule} Each component page has when to use it and what to use instead, accessibility, examples as source and props generated from the TypeScript declarations. manifest.json holds the same as data, and \`npx envui mcp\` serves it to agents over MCP.`,
+    `${manifest.rule} Each component page has when to use it and what to use instead, accessibility, examples as source and props generated from the TypeScript declarations. manifest.json holds the same as data, and \`npx --no envui mcp\` serves it to agents over MCP.`,
     '',
   ];
   const section = (title, items) => {

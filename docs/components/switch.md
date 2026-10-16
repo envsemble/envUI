@@ -9,7 +9,7 @@ aliases:
   - toggle switch
   - on/off switch
   - on/off toggle
-  - on/off option
+  - on/off setting
   - setting toggle
 useWhen:
   - A setting turns on or off and takes effect at once, such as e-mail notifications or showing completed tasks.

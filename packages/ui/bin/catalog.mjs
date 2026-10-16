@@ -129,10 +129,11 @@ function searchDocuments(manifest) {
       kind: 'export',
       item: entry,
       names: [phrase(entry.name)],
-      aliases: [],
+      aliases: (entry.aliases ?? []).map(phrase),
       fields: {
-        name: terms(entry.name),
-        alias: [],
+        // The words of a name such as ThemeToggle weigh as an alias's: "toggle" alone is Switch.
+        name: [],
+        alias: [...terms(entry.name), ...(entry.aliases ?? []).flatMap(terms)],
         summary: terms(entry.description),
         use: avoidFor.get(entry.name)?.flatMap(terms) ?? [],
         text: [],
@@ -191,6 +192,9 @@ function indexOf(manifest) {
   return cache.get(manifest);
 }
 
+/** How many documents may share a word for it to count as rare. */
+const rareFrequency = 3;
+
 /** Tokens rank below components and pages in a mixed search; there are many and they are terse. */
 const kindFactor = {
   component: 1,
@@ -218,33 +222,52 @@ function rank(manifest, query, { kinds, limit = 10 } = {}) {
     if (kinds && !kinds.includes(document.kind)) continue;
     let score = 0;
     let strength = 0;
+    let rare = false;
     const matched = [];
+    const solid = [];
     for (const term of queryTerms) {
       let best = 0;
       for (const [field, values] of Object.entries(document.fields))
         if (values.includes(term)) best = Math.max(best, weights[field]);
       if (!best) continue;
-      score += best * Math.log(1 + total / (frequency.get(term) ?? 1));
+      const frequencyOfTerm = frequency.get(term) ?? 1;
+      score += best * Math.log(1 + total / frequencyOfTerm);
       strength = Math.max(strength, best);
+      // A word few documents know, matched on a name or an alias, is telling on its own.
+      if (best >= weights.alias && frequencyOfTerm <= rareFrequency) rare = true;
       matched.push(term);
+      if (best >= weights.use) solid.push(term);
     }
     if (!score) continue;
     let named = false;
+    let phrased = false;
     for (const name of document.names)
       if (name && queryPhrase.includes(` ${name} `)) {
         score += name.includes(' ') ? 30 : 20;
         named = true;
+        phrased ||= name.includes(' ');
       }
     for (const alias of document.aliases)
       if (alias && queryPhrase.includes(` ${alias} `)) {
         score += alias.includes(' ') ? 30 : 8;
         named = true;
+        phrased ||= alias.includes(' ');
       }
     if (document.names.includes(queryPhrase.trim())) score += 50;
     // The name exactly as written, so useTheme ranks above Theme, whose words are the same.
     if (exactName(document) === query.trim().toLowerCase()) score += 60;
     score = Math.round(score * kindFactor[document.kind] * 10) / 10;
-    results.push({ document, score, strength, matched, named, of: queryTerms.length });
+    results.push({
+      document,
+      score,
+      strength,
+      matched,
+      solid,
+      named,
+      phrased,
+      rare,
+      of: queryTerms.length,
+    });
   }
   return results.sort((a, b) => b.score - a.score).slice(0, limit);
 }
@@ -319,19 +342,50 @@ export function suggestions(manifest, name, limit = 5) {
   return search(manifest, name, { kinds: ['component', 'export'], limit }).map((hit) => hit.name);
 }
 
-/** Splits a description into the parts it asks for: sentences, list items and "with" clauses. */
-function clauses(description) {
-  return (
-    String(description)
-      // Code, paths and file names, such as `saveSettings` or src/pages/SettingsPage.tsx, name the
-      // application's own code, not what to build.
-      .replace(/`[^`]*`/g, ' ')
-      .replace(/(?:\.{0,2}\/)?(?:[\w.-]+\/)+[\w.-]+\.\w+/g, ' ')
-      .replace(/\b[\w-]+\.(?:[cm]?[jt]sx?|css|json|md|html)\b/g, ' ')
-      .split(/[\n.;:!?()]+|,\s*|\s+(?:and|with|plus|then|also|including)\s+/i)
-      .map((part) => part.replace(/^(?:and|with|or|plus|then)\s+/i, '').trim())
-      .filter((part) => terms(part).length)
-  );
+/**
+ * The names an author may write capitalized for what envUI has: exports, their parts and
+ * capitalized aliases, such as Dialog, Menu.Item or CTA.
+ */
+const knownNames = (manifest) =>
+  new Set([
+    ...Object.keys(manifest.exports).flatMap((name) => [name, ...name.split('.')]),
+    ...manifest.components.flatMap((component) => [component.name, ...component.aliases]),
+  ]);
+
+/**
+ * The sentences of a description, without what names the application's content rather than its
+ * interface: code and file names, such as `saveSettings` or src/pages/SettingsPage.tsx; quoted
+ * labels, such as 'Export'; and capitalized words inside a sentence, such as the Projects, Members
+ * and Settings of a list of links, unless envUI has something by that name.
+ */
+function sentences(manifest, description) {
+  const known = knownNames(manifest);
+  return String(description)
+    .replace(/`[^`]*`/g, ' ')
+    .replace(/(?:\.{0,2}\/)?(?:[\w.-]+\/)+[\w.-]+\.\w+/g, ' ')
+    .replace(/\b[\w-]+\.(?:[cm]?[jt]sx?|css|json|md|html)\b/g, ' ')
+    .replace(
+      /(^|[\s(])(['"\u2018\u201C])[^'"\u2019\u201D]+['"\u2019\u201D](?=[\s,.;:!?)]|$)/g,
+      '$1 ',
+    )
+    .split(/[\n.;:!?()]+/)
+    .map((sentence) => {
+      let first = true;
+      return sentence.replace(/[A-Za-z][\w+-]*/g, (word) => {
+        const keep = first || !/^[A-Z]/.test(word) || known.has(word);
+        first = false;
+        return keep ? word : ' ';
+      });
+    })
+    .filter((sentence) => terms(sentence).length);
+}
+
+/** Splits a sentence into the parts it asks for: list items and "with" clauses. */
+function clauses(sentence) {
+  return sentence
+    .split(/,\s*|\s+(?:and|with|plus|then|also|including)\s+/i)
+    .map((part) => part.replace(/^(?:and|with|or|plus|then)\s+/i, '').trim())
+    .filter((part) => terms(part).length);
 }
 
 /**
@@ -357,13 +411,28 @@ function exportFor(manifest, component, part) {
 
 /**
  * A part counts as covered by a component that matched it on a name, an alias or a summary, and
- * either by a whole name or alias or on at least half of its terms: one shared word is not enough.
+ * either by a whole name or alias of several words, by a one-word name in a part of one or two
+ * words, or on more than half of its words, in its names, aliases, summary or when to use it.
+ * The "list" of "a time zone picked from a short list" names List, but the part asks for Select. One word of two is not enough: the "workspace" of "workspace name"
+ * is a word of DocumentTabs' alias "workspace tabs", but not what the part asks for.
  */
 const covers = (hit) =>
   hit &&
   hit.score >= 10 &&
   hit.strength >= weights.summary &&
-  (hit.named || hit.matched.length * 2 >= hit.of);
+  (hit.phrased || (hit.named && hit.of <= 2) || hit.solid.length * 2 > hit.of);
+
+/**
+ * Whether plan may suggest a hit. An export without a component page, such as ThemeToggle, only
+ * when the part names it or matches it in every word; the building blocks the foundations
+ * document, such as Text and Icon, never: the pages that use them show how.
+ */
+const plannable = (manifest, hit) => {
+  if (hit.document.kind === 'component') return true;
+  const { item } = hit.document;
+  if (manifest.foundations.some((page) => page.name === item.page)) return false;
+  return hit.named || hit.matched.length === hit.of;
+};
 
 /**
  * A plan for a UI description: the components that cover each part of it, the patterns and
@@ -391,36 +460,66 @@ export function plan(manifest, description, { limit = 12 } = {}) {
     if (use) entry.use.add(use);
     chosen.set(key, entry);
   };
-  const parts = clauses(description).map((part, index) => {
-    const partTerms = terms(part);
-    const query = partTerms.filter((term) => !structuralTerms.has(term)).join(' ');
-    return {
-      part,
-      index,
-      structural: partTerms.some((term) => structuralTerms.has(term)),
-      hits: query ? rank(manifest, query, { kinds: ['component', 'export'], limit: 6 }) : [],
-    };
-  });
-  for (const { part, structural, hits } of [...parts].sort(
+  const found = (query, limit = 6) =>
+    rank(manifest, query, { kinds: ['component', 'export'], limit: limit * 2 })
+      .filter((hit) => plannable(manifest, hit))
+      .slice(0, limit);
+  const described = sentences(manifest, description);
+  // A whole phrase that spans the parts, such as "switch between light and dark", names what it
+  // names before the sentence is split.
+  const claims = [];
+  for (const sentence of described)
+    for (const hit of found(sentence, 4))
+      if (hit.phrased && covers(hit)) {
+        choose(hit, sentence);
+        claims.push({ sentence, hit, terms: new Set(hit.matched) });
+      }
+  const parts = described
+    .flatMap((sentence) => clauses(sentence).map((part) => ({ part, sentence })))
+    .map(({ part, sentence }, index) => {
+      const partTerms = terms(part);
+      const query = partTerms.filter((term) => !structuralTerms.has(term)).join(' ');
+      return {
+        part,
+        sentence,
+        index,
+        structural: partTerms.some((term) => structuralTerms.has(term)),
+        hits: query ? found(query) : [],
+      };
+    });
+  for (const { part, sentence, structural, hits } of [...parts].sort(
     (a, b) => (b.hits[0]?.score ?? 0) - (a.hits[0]?.score ?? 0) || a.index - b.index,
   )) {
     if (structural) structure.push(part);
+    // A part whose words are mostly in a phrase its sentence already named belongs to that, as
+    // "links" in "a sidebar with links" belongs to NavList.
+    const partTerms = terms(part).filter((term) => !structuralTerms.has(term));
+    const claim = claims.find(
+      (item) =>
+        item.sentence === sentence &&
+        partTerms.filter((term) => item.terms.has(term)).length * 2 > partTerms.length,
+    );
+    if (claim) {
+      choose(claim.hit, part);
+      continue;
+    }
+    const first = hits.find(covers);
     // In a part about structure, such as "a settings page", only a component named outright
     // counts; the rest of it is for templates and patterns.
-    if (!covers(hits[0]) || (structural && !hits[0].named)) {
+    if (!first || (structural && !first.named)) {
       (structural ? structureOnly : uncovered).push(part);
       continue;
     }
     const already = hits.find(
-      (hit) =>
-        chosen.has(hit.document.item.name) && covers(hit) && hit.score >= hits[0].score * 0.5,
+      (hit) => chosen.has(hit.document.item.name) && covers(hit) && hit.score >= first.score * 0.5,
     );
     if (already) {
       choose(already, part);
       continue;
     }
-    choose(hits[0], part);
-    if (covers(hits[1]) && hits[1].score >= hits[0].score * 0.8) choose(hits[1], part);
+    // One component per part: a second guess, such as Toast for "a notifications toggle", costs
+    // more in wrong imports than it finds.
+    choose(first, part);
   }
   const components = [...chosen.values()]
     .sort((a, b) => b.score - a.score)
