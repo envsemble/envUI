@@ -35,6 +35,31 @@ function readJsonLines(file) {
     });
 }
 
+const packagePath = /@envsemble[\\/]+envui/i;
+const docsPath = /@envsemble[\\/]+envui[\\/]+(docs|skills|README\.md)/i;
+const relativeDocs = /(^|[\s"'/\\])(docs|skills)[\\/]|README\.md/i;
+const typesPath = /\.d\.ts\b/i;
+
+/**
+ * Counts tool calls that looked into the installed envUI package: its Markdown docs or agent
+ * skills, its type declarations, or anything in it. The input is each call's command or arguments.
+ */
+function envuiLookups(inputs) {
+  const lookups = { docs: 0, types: 0, any: 0 };
+  for (const input of inputs) {
+    if (!packagePath.test(input)) continue;
+    lookups.any += 1;
+    // Reading or searching Markdown docs or skills; listing the docs folder does not count.
+    const searchesDocs =
+      docsPath.test(input) && /\b(rg|grep|select-string|findstr)\b|"pattern"/i.test(input);
+    if (/\.md\b/i.test(input) && (docsPath.test(input) || relativeDocs.test(input)))
+      lookups.docs += 1;
+    else if (searchesDocs) lookups.docs += 1;
+    if (typesPath.test(input)) lookups.types += 1;
+  }
+  return lookups;
+}
+
 function resolveCodexScript() {
   if (process.env.CODEX_JS && existsSync(process.env.CODEX_JS)) return process.env.CODEX_JS;
   const globalRoot = run(process.execPath, [npmCli(), 'root', '-g']);
@@ -81,12 +106,20 @@ export const agents = {
       const events = readJsonLines(transcriptFile);
       const result = events.findLast((event) => event.type === 'result');
       const init = events.find((event) => event.type === 'system' && event.subtype === 'init');
-      const toolCalls = events
+      const toolUses = events
         .filter((event) => event.type === 'assistant')
         .flatMap((event) => event.message?.content ?? [])
-        .filter((block) => block.type === 'tool_use').length;
+        .filter((block) => block.type === 'tool_use');
+      const toolCalls = toolUses.length;
+      const lookups = envuiLookups(toolUses.map((block) => JSON.stringify(block.input ?? {})));
       if (!result)
-        return { completed: false, model: init?.model, toolCalls, events: events.length };
+        return {
+          completed: false,
+          model: init?.model,
+          toolCalls,
+          envuiLookups: lookups,
+          events: events.length,
+        };
       const usage = result.usage ?? {};
       const models = Object.values(result.modelUsage ?? {});
       const sum = (key) => models.reduce((total, entry) => total + (entry[key] ?? 0), 0);
@@ -95,6 +128,7 @@ export const agents = {
         model: Object.keys(result.modelUsage ?? {}).join(', ') || init?.model,
         turns: result.num_turns,
         toolCalls,
+        envuiLookups: lookups,
         costUsd: result.total_cost_usd,
         // modelUsage is cumulative per model, including subagents; usage covers the main model.
         tokens: models.length
@@ -188,6 +222,11 @@ export const agents = {
             event.item?.type,
           ),
       ).length;
+      const lookups = envuiLookups(
+        events
+          .filter((event) => event.type === 'item.completed')
+          .map((event) => event.item?.command ?? JSON.stringify(event.item?.changes ?? '')),
+      );
       const errors = events
         .filter((event) => event.type === 'error' || event.type === 'turn.failed')
         .map((event) => String(event.message ?? event.error?.message ?? '').slice(0, 300));
@@ -199,6 +238,7 @@ export const agents = {
         completed: lastTurn?.type === 'turn.completed',
         turns: turns.length,
         toolCalls,
+        envuiLookups: lookups,
         costUsd: undefined,
         tokens,
         errors,

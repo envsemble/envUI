@@ -115,6 +115,8 @@ export function aggregate(runs) {
         total: sum((run) => run.coverage?.capabilities.length),
       },
       newEnvuiExportsMean: round(mean(group.map((run) => run.envui?.newExportCount ?? 0))),
+      readEnvuiDocs: count((run) => run.agentReport?.envuiLookups?.docs > 0),
+      lookedInPackage: count((run) => run.agentReport?.envuiLookups?.any > 0),
       rawHtml: {
         runsWithAny: count((run) => (run.rawHtml?.count ?? 0) > 0),
         weightedTotal: round(sum((run) => run.rawHtml?.weighted)),
@@ -178,32 +180,38 @@ export function renderSummary(results, tasks) {
 
   push('## Aggregates', '');
   push(
-    '| Condition | Agent | Runs | Mean score | Median | Typecheck pass | Capabilities via envUI | Runs with raw HTML | Local duplicates | envUI type errors | Raw style values | UI deps added | Timeouts / errors | Time | Cost | Tokens in / cached / out |',
+    '| Condition | Agent | Runs | Mean score | Median | Read envUI docs | Typecheck pass | Capabilities via envUI | Runs with raw HTML | Local duplicates | envUI type errors | Raw style values | UI deps added | Timeouts / errors | Time | Cost | Tokens in / cached / out |',
   );
-  push('|---|---|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|');
+  push('|---|---|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|');
   for (const group of aggregates)
     push(
-      `| ${group.condition} | ${group.agent} | ${group.runs} | **${group.score.mean}** | ${group.score.median} | ${Math.round(group.typecheckPassRate * 100)}% | ${group.capabilities.covered}/${group.capabilities.total} | ${group.rawHtml.runsWithAny}/${group.runs} | ${group.duplicates.total} | ${group.envuiErrors.total} | ${group.rawStyles.total} | ${group.uiDependencies.length} | ${group.statuses.timeout} / ${group.statuses['agent-error'] + group.statuses['harness-error']} | ${minutes(group.time.totalMs)} | ${group.costUsd === null ? 'n/a' : `$${group.costUsd}`} | ${thousands(group.tokens.input + group.tokens.cachedInput + group.tokens.cacheWrite)} / ${thousands(group.tokens.cachedInput)} / ${thousands(group.tokens.output)} |`,
+      `| ${group.condition} | ${group.agent} | ${group.runs} | **${group.score.mean}** | ${group.score.median} | ${group.readEnvuiDocs}/${group.runs} | ${Math.round(group.typecheckPassRate * 100)}% | ${group.capabilities.covered}/${group.capabilities.total} | ${group.rawHtml.runsWithAny}/${group.runs} | ${group.duplicates.total} | ${group.envuiErrors.total} | ${group.rawStyles.total} | ${group.uiDependencies.length} | ${group.statuses.timeout} / ${group.statuses['agent-error'] + group.statuses['harness-error']} | ${minutes(group.time.totalMs)} | ${group.costUsd === null ? 'n/a' : `$${group.costUsd}`} | ${thousands(group.tokens.input + group.tokens.cachedInput + group.tokens.cacheWrite)} / ${thousands(group.tokens.cachedInput)} / ${thousands(group.tokens.output)} |`,
     );
   push('');
 
   push('## Runs', '');
   push(
-    '| Task | Agent | Score | Typecheck | Capabilities via envUI | Raw HTML (weighted) | Duplicates | envUI errors | Raw styles | Time | Status |',
+    '| Task | Agent | Score | Read envUI docs | Typecheck | Capabilities via envUI | Raw HTML (weighted) | Duplicates | envUI errors | Raw styles | Time | Status |',
   );
-  push('|---|---|--:|---|---|--:|--:|--:|--:|--:|---|');
+  push('|---|---|--:|--:|---|---|--:|--:|--:|--:|--:|---|');
   for (const task of tasks)
     for (const run of runs.filter((candidate) => candidate.task === task.id)) {
       const covered =
         run.coverage?.capabilities.filter((capability) => capability.covered).length ?? 0;
       const total = run.coverage?.capabilities.length ?? task.capabilities.length;
       push(
-        `| ${task.id} | ${run.agent} | **${run.score}** | ${run.typecheck ? (run.typecheck.passed ? 'pass' : `${run.typecheck.errorCount} errors`) : 'n/a'} | ${covered}/${total} | ${run.rawHtml?.weighted ?? 0} | ${run.duplicates?.length ?? 0} | ${run.envuiErrors?.length ?? 0} | ${run.styles?.total ?? 0} | ${minutes(run.durationMs ?? 0)} | ${run.status} |`,
+        `| ${task.id} | ${run.agent} | **${run.score}** | ${run.agentReport?.envuiLookups?.docs ? 'yes' : 'no'} | ${run.typecheck ? (run.typecheck.passed ? 'pass' : `${run.typecheck.errorCount} errors`) : 'n/a'} | ${covered}/${total} | ${run.rawHtml?.weighted ?? 0} | ${run.duplicates?.length ?? 0} | ${run.envuiErrors?.length ?? 0} | ${run.styles?.total ?? 0} | ${minutes(run.durationMs ?? 0)} | ${run.status} |`,
       );
     }
   push('');
 
   push('## Failure modes', '');
+  const weak = runs.filter((run) => run.score < 90);
+  if (weak.length)
+    push(
+      `${weak.length} of ${runs.length} runs scored below 90; ${weak.filter((run) => run.agentReport?.envuiLookups?.docs > 0).length} of those read envUI's Markdown docs or skills, against ${runs.filter((run) => run.score >= 90 && run.agentReport?.envuiLookups?.docs > 0).length} of the ${runs.length - weak.length} others.`,
+      '',
+    );
   push('### Capabilities not built with envUI', '');
   push(`| Task | Capability | envUI provides | ${agentNames.join(' | ')} |`);
   push(`|---|---|---|${agentNames.map(() => '---').join('|')}|`);

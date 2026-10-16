@@ -99,9 +99,11 @@ export function scanStyleSheet(text) {
   };
   const prelude = (segment) => {
     const text = segment.trim();
-    if (/^@(media|container)/i.test(text))
-      totals.px += [...text.matchAll(/(\d*\.?\d+)px\b/g)].length;
-    else totals.privateClasses += (text.match(/\.env-[\w-]+/g) ?? []).length;
+    if (/^@(media|container)/i.test(text)) {
+      const found = [...text.matchAll(/(\d*\.?\d+)px\b/g)].length;
+      totals.px += found;
+      if (found) totals.samples.push(text.slice(0, 120));
+    } else totals.privateClasses += (text.match(/\.env-[\w-]+/g) ?? []).length;
   };
   let buffer = '';
   for (const character of source) {
@@ -283,6 +285,17 @@ export function analyzeSource(fileName, text) {
     if (reference) {
       result.jsxUses[reference] = (result.jsxUses[reference] ?? 0) + 1;
       for (const name of attributes.keys()) result.usedProps.add(`${reference}.${name}`);
+      // A widget role on an envUI element rebuilds another envUI component, as in <Text role="alert">.
+      const role = attributes.get('role')?.value;
+      if (role && rawHtml.roles[role] && !rawHtml.roles[role].includes(reference))
+        addRaw(node, {
+          kind: 'role',
+          key: `role="${role}" on <${reference}>`,
+          tag: reference,
+          role,
+          weight: 1,
+          use: rawHtml.roles[role],
+        });
       return;
     }
     if (!ts.isIdentifier(tagName) || !/^[a-z]/.test(tagName.text)) return;

@@ -129,18 +129,18 @@ The scorer looks only at files the agent created or changed (`git diff` against 
 | No raw style values           |        5 | −0.5 per raw color, raw px length or `.env-*` override in changed CSS or in inline `style` objects.                                                                                                                                               |
 | Third-party UI packages       | −10 each | A dependency added from `scoring/ui-libraries.json`, such as a toast, date-picker, icon or headless-UI package.                                                                                                                                   |
 
-Parts never go below zero. A run that changed no source or CSS scores 0. Timeouts and agent errors are scored on whatever they left on disk, and their status is reported. An idiomatic envUI solution scores 100. A solution with no envUI that type-checks usually scores 20–40.
+Parts never go below zero. A run that changed no source or CSS scores 0. Timeouts and agent errors are scored on whatever they left on disk, and their status is reported. An idiomatic envUI solution scores 100. A hand-rolled solution that type-checks scores about 20–50.
 
 ### What counts as raw HTML
 
-| Raw element                                                                                                   |                                                                    Weight |
-| ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------: |
-| `<button>`, `<select>`, `<textarea>`, `<dialog>`, `<table>`, `<progress>`, `<meter>`, `<details>`             |                                                                         1 |
-| `<input>`                                                                                                     | 1; its `type` names the envUI replacement; `type="hidden"` is not counted |
-| ARIA widget roles on any element (`role="button"`, `"dialog"`, `"tab"`, `"menu"`, `"switch"`, `"alert"`, ...) |                                                                         1 |
-| `<a>` used as a button: `onClick` with no real `href`                                                         |                                                                         1 |
-| Other elements with `onClick`, `onMouseDown` or `onPointerDown`, such as a clickable `<div>`                  |                                                                         1 |
-| `<kbd>`, `<nav>`, `<aside>`, inline `<svg>` icons, and `<a href>` links                                       |                                                                       0.5 |
+| Raw element                                                                                                                                                                                            |                                                                    Weight |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------: |
+| `<button>`, `<select>`, `<textarea>`, `<dialog>`, `<table>`, `<progress>`, `<meter>`, `<details>`                                                                                                      |                                                                         1 |
+| `<input>`                                                                                                                                                                                              | 1; its `type` names the envUI replacement; `type="hidden"` is not counted |
+| ARIA widget roles (`role="button"`, `"dialog"`, `"tab"`, `"menu"`, `"switch"`, `"alert"`, ...) on raw elements, and on envUI elements whose own role differs (`<Text role="alert">` rebuilds `Notice`) |                                                                         1 |
+| `<a>` used as a button: `onClick` with no real `href`                                                                                                                                                  |                                                                         1 |
+| Other elements with `onClick`, `onMouseDown` or `onPointerDown`, such as a clickable `<div>`                                                                                                           |                                                                         1 |
+| `<kbd>`, `<nav>`, `<aside>`, inline `<svg>` icons, and `<a href>` links                                                                                                                                |                                                                       0.5 |
 
 ### Local duplicates
 
@@ -162,9 +162,16 @@ The scanner checks:
 - selectors on envUI's private `.env-*` classes, and `env-*` class names in JSX;
 - in inline `style` objects, the same values and bare numbers on length properties (React adds `px` to those).
 
+### Reported but not scored: docs lookups
+
+The transcript tells whether the agent read envUI's own material. "Read envUI docs" means at least one tool call read or searched Markdown in the installed package: `docs/`, `skills/` or `README.md`. Listing the folder doesn't count. Lookups in the type declarations and anywhere in the package are counted separately in `agentReport.envuiLookups`. An AGENTS.md index or an MCP server should raise these numbers before it raises the score.
+
 ### Limits
 
-The scorer is static. It does not run the app or check behaviour: a capability built with the right component but wired wrongly still counts as covered. Coverage is by export name, so using envUI's `Button` for a toggle covers "toggle button" even if `AppShell` would have provided it. That is why the sidebar task lists only `AppShell` for the toggle. Treat scores as relative: compare conditions under the same agent and settings, and repeat runs before trusting small differences.
+- **Static.** The scorer doesn't run the app or check behaviour. A capability built with the right component but wired wrongly still counts as covered.
+- **Coverage is by export name.** Using envUI's `Button` for a toggle covers "toggle button" even if `AppShell` would have provided it. That is why the sidebar task lists only `AppShell` for the toggle.
+- **Small fixture, little headroom.** The fixture is small, already uses envUI, and envUI is the only UI package installed. Agents that look in `node_modules` find the shipped docs and skills there. In the baseline, Claude Code scored 100 on every task. A condition can't show an improvement there, so judge it on Codex and on the docs-lookup numbers. A harder fixture variant would add headroom: existing hand-rolled components, more code, raw CSS.
+- **One run per task and agent.** Repeat runs before trusting differences of a few points.
 
 ## Adding a condition
 
@@ -208,10 +215,19 @@ If the task needs mocked data or an API call, add it to `fixture/src/api.ts` or 
 
 ## Cost and time
 
-Baseline on 2026-10-16: see `results/2026-10-16-baseline/summary.md` for exact figures.
+Baseline on 2026-10-16 (26 runs, 4 in parallel; exact figures in `results/2026-10-16-baseline/summary.md`):
+
+- The whole run took 11 minutes of wall-clock time.
+- Claude Code:
+  - 21 min of agent time, 0.7–3.4 min per run;
+  - $7.16 at list price;
+  - 8.4M input tokens, mostly cache reads, and 86k output tokens.
+- Codex:
+  - 10.5 min of agent time, 0.4–2.6 min per run;
+  - cost not reported;
+  - 3.3M input tokens, mostly cached, and 38k output tokens.
 
 - Installing the template takes about 40 s, once per tarball. Copying a workspace takes about 15 s per run.
-- With 4 runs in parallel, one condition with both agents and all 13 tasks (26 runs) takes roughly 30–60 minutes.
-- Claude Code reports a list-price cost per run. On a subscription this is an estimate, not a charge.
-- Codex reports tokens only.
+- No run came near the 12-minute timeout.
+- Claude Code reports a list-price cost per run. On a subscription this is an estimate, not a charge. Codex reports tokens only.
 - Every condition repeats the full matrix. Run single tasks (`--tasks sidebar`) while developing a condition.
