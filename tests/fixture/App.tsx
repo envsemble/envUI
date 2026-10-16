@@ -96,9 +96,12 @@ export default function App() {
   if (fixture === 'theme-contrast-nested') return <ThemeContrastNestedFixture />;
   if (fixture === 'theme-release') return <ThemeReleaseFixture />;
   const Standalone = fixture === null ? undefined : standaloneFixtures[fixture];
+  // A standalone fixture takes the compact scale with ?scale=compact.
+  const scale =
+    new URLSearchParams(location.search).get('scale') === 'compact' ? 'compact' : undefined;
   if (Standalone)
     return (
-      <Theme theme="light">
+      <Theme theme="light" scale={scale}>
         <Standalone />
       </Theme>
     );

@@ -296,12 +296,7 @@ test.describe('on a coarse pointer', () => {
   for (const scale of densityScales)
     test(`every control of a row is as tall, and at least the touch height, in the ${scale} scale`, async ({
       page,
-      browserName,
     }) => {
-      test.skip(
-        browserName !== 'chromium',
-        'Only one engine emulates touch with a coarse pointer.',
-      );
       await openSection(page, 'sizes');
       expect(await page.evaluate(() => matchMedia('(pointer: coarse)').matches)).toBe(true);
       for (const size of controlSizes) {
@@ -336,9 +331,7 @@ test.describe('on a coarse pointer', () => {
 
   test('every hit area is at least the touch height, and as wide unless it is inside a field', async ({
     page,
-    browserName,
   }) => {
-    test.skip(browserName !== 'chromium', 'Only one engine emulates touch with a coarse pointer.');
     for (const section of ['sizes', 'toolbar', 'tabs', 'tree', 'table', 'desktop', 'layouts']) {
       await openSection(page, section);
       const areas = await page.evaluate(
@@ -360,8 +353,80 @@ test.describe('on a coarse pointer', () => {
     }
   });
 
-  test("a ButtonGroup's corners stay round at the touch height", async ({ page, browserName }) => {
-    test.skip(browserName !== 'chromium', 'Only one engine emulates touch with a coarse pointer.');
+  // AppShell with a split topbar and with a title bar, whose own controls take the small height.
+  for (const scale of densityScales)
+    for (const [fixture, frame] of [
+      ['shell', 'a split topbar'],
+      ['full-shell', 'a title bar'],
+    ] as const)
+      test(`AppShell's toggle and navigation items share a center line inside the sidebar, with ${frame}, in the ${scale} scale`, async ({
+        page,
+      }) => {
+        await page.goto(`${fixtureUrl}/?fixture=${fixture}&scale=${scale}`);
+        const shell = page.locator('.env-app-shell');
+        await expect(shell).toHaveAttribute('data-ready', '');
+        await expect(
+          shell.locator('xpath=ancestor::*[contains(@class, "env-theme")][1]'),
+        ).toHaveAttribute('data-env-scale', scale);
+        expect(await page.evaluate(() => matchMedia('(pointer: coarse)').matches)).toBe(true);
+        for (const state of ['expanded', 'collapsed'] as const) {
+          if (state === 'collapsed') {
+            await page.getByRole('button', { name: 'Collapse sidebar' }).click();
+            await page.mouse.move(800, 500);
+            await expect(shell).toHaveAttribute('data-compact', '');
+          }
+          await settle(page);
+          const geometry = await page.evaluate(() => {
+            const center = (box: DOMRect) => box.x + box.width / 2;
+            const toggle = document.querySelector('.env-app-sidebar-toggle')!;
+            const sidebar = document.querySelector('.env-app-sidebar')!;
+            const sidebarBox = sidebar.getBoundingClientRect();
+            return {
+              toggle: center(toggle.getBoundingClientRect()),
+              // The inside of the sidebar, within its divider.
+              start: sidebarBox.left + sidebar.clientLeft,
+              end: sidebarBox.left + sidebar.clientLeft + sidebar.clientWidth,
+              items: [...document.querySelectorAll('.env-app-navigation .env-nav-list-item')].map(
+                (item) => {
+                  const box = item.getBoundingClientRect();
+                  return {
+                    left: box.left,
+                    right: box.right,
+                    center: center(box),
+                    icon: center(item.querySelector('.env-symbol')!.getBoundingClientRect()),
+                  };
+                },
+              ),
+            };
+          });
+          for (const item of geometry.items) {
+            expect(item.left, state).toBeGreaterThanOrEqual(geometry.start - 0.01);
+            expect(item.right, state).toBeLessThanOrEqual(geometry.end + 0.01);
+            if (state === 'collapsed') {
+              expect(Math.abs(item.center - geometry.toggle), state).toBeLessThanOrEqual(1);
+              expect(Math.abs(item.icon - geometry.toggle), state).toBeLessThanOrEqual(1);
+            }
+          }
+          // Measured last: measuring scrolls each target into view, also inside the navigation.
+          const areas = await page.evaluate(
+            async ([selector, source]) => {
+              const measure = (0, eval)(source) as MeasureHitAreas;
+              return measure(document.body, selector);
+            },
+            [
+              '.env-app-sidebar-toggle, .env-app-navigation .env-nav-list-item',
+              measureHitAreas,
+            ] as const,
+          );
+          expect(areas, state).toHaveLength(3);
+          expect(
+            areas.filter(({ width, height }) => width < 44 || height < 44),
+            `${state}: ${JSON.stringify(areas)}`,
+          ).toEqual([]);
+        }
+      });
+
+  test("a ButtonGroup's corners stay round at the touch height", async ({ page }) => {
     await openSection(page, 'sizes');
     const corners = await page
       .locator('.env-button-group > .env-button:first-child')
@@ -375,8 +440,7 @@ test.describe('on a coarse pointer', () => {
     for (const { radius, half } of corners) expect(radius).toBe(half);
   });
 
-  test('nothing that holds controls scrolls where it has room', async ({ page, browserName }) => {
-    test.skip(browserName !== 'chromium', 'Only one engine emulates touch with a coarse pointer.');
+  test('nothing that holds controls scrolls where it has room', async ({ page }) => {
     // Table regions, rails, groups and the dock's rows are scroll containers. The fixture gives
     // them room, so none may scroll, also not for an action or a hit area taller than its row.
     for (const section of ['sizes', 'toolbar', 'tabs', 'table', 'desktop', 'layouts']) {
@@ -409,9 +473,7 @@ test.describe('on a coarse pointer', () => {
 
   test("on the catalogue's pages, what scrolls sideways never scrolls for its controls' height", async ({
     page,
-    browserName,
   }) => {
-    test.skip(browserName !== 'chromium', 'Only one engine emulates touch with a coarse pointer.');
     // Each of these scrolls sideways when its content is wider than its room, so its other axis
     // scrolls too: a control or a hit area taller than it would make it scroll up and down.
     const scrollers = [
@@ -456,11 +518,7 @@ test.describe('on a coarse pointer', () => {
     }
   });
 
-  test('a press just inside a control reaches it, never its neighbour', async ({
-    page,
-    browserName,
-  }) => {
-    test.skip(browserName !== 'chromium', 'Only one engine emulates touch with a coarse pointer.');
+  test('a press just inside a control reaches it, never its neighbour', async ({ page }) => {
     // Each section shows both scales. layouts holds small buttons 4 px apart in layouts of the
     // application's own (a column, a wrapping row, a grid, a reversed row, each button in a span in
     // either direction) and a docked panel's header.
