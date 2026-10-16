@@ -47,46 +47,6 @@
   min-inline-size: 0;
   max-inline-size: var(--docs-specimen-width);
 }
-.docs-toast-table-scroll {
-  inline-size: 100%;
-  min-inline-size: 0;
-  overflow-x: auto;
-}
-.docs-toast-table {
-  inline-size: 100%;
-  min-inline-size: 40rem;
-  border-collapse: collapse;
-  text-align: start;
-}
-.docs-toast-table th,
-.docs-toast-table td {
-  padding: var(--space-5) var(--space-4);
-  vertical-align: middle;
-  text-align: start;
-}
-.docs-toast-table tr > :first-child {
-  padding-inline-start: 0;
-}
-.docs-toast-table tr > :last-child {
-  padding-inline-end: 0;
-}
-.docs-toast-table thead th {
-  font: var(--type-body-small);
-  color: var(--color-text-muted);
-  white-space: nowrap;
-}
-.docs-toast-meaning {
-  inline-size: 12rem;
-  overflow-wrap: normal;
-}
-.docs-toast-table td {
-  inline-size: 1%;
-  white-space: nowrap;
-}
-.docs-toast-meaning > strong {
-  display: block;
-  margin-block-end: var(--space-2);
-}
 .docs-example:last-child {
   margin-bottom: 0;
 }

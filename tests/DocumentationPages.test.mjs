@@ -60,7 +60,6 @@ const unconverted = [
   'stat',
   'surface',
   'tabs',
-  'toast',
   'tooltip',
   'tree',
 ];

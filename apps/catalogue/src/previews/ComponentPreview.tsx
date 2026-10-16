@@ -19,7 +19,6 @@ import { MarkdownPreview } from './MarkdownContent';
 import { lazy, Suspense } from 'react';
 import { Text } from '@envsemble/envui';
 import { EmptyStatePreview, SpinnerPreview, SkeletonPreview } from './Feedback';
-import { ToastsPreview } from './Toasts';
 import { ColorPickerPreview } from './ColorPicking';
 import { ComposerPreview, MessagesPreview } from './Conversation';
 import { CalendarHeatmapPreview, StatsPreview } from './Dashboard';
@@ -118,8 +117,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <SpinnerPreview />;
     case 'skeleton':
       return <SkeletonPreview />;
-    case 'toast':
-      return <ToastsPreview />;
     case 'alert':
       return <AlertsPreview />;
     case 'popover':
