@@ -387,7 +387,10 @@
 @media (pointer: coarse) {
   /* Chips are rows of the strip, which grow to the touch height. */
   .env-panel-dock {
-    --env-panel-dock-chip-height: max(var(--control-height-sm), var(--control-height-touch));
+    /* A chip holds its buttons at the touch height inside its top hairline. */
+    --env-panel-dock-chip-height: calc(
+      max(var(--control-height-sm), var(--control-height-touch)) + 0.0625rem
+    );
     /* The header's controls grow to the touch height, as every button does. */
     --env-panel-dock-control: max(var(--control-height-sm), var(--control-height-touch));
   }
@@ -401,8 +404,9 @@
     opacity: 1;
   }
   .env-panel-dock-chip-close {
-    inline-size: 2rem;
-    block-size: 2rem;
+    inline-size: var(--control-height-touch);
+    block-size: var(--control-height-touch);
+    margin-inline: 0;
   }
 }
 @media (prefers-reduced-motion: reduce) {
