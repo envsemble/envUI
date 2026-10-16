@@ -13,6 +13,10 @@ npm run dev
 
 Open the catalogue at [localhost:8770](http://127.0.0.1:8770). It consumes library source directly and updates as you edit.
 
+The catalogue's navigation has the sections Get started, Foundations, Components, Patterns, Templates, Contributing and Changelog. ⌘K or Ctrl+K opens search, in envUI's `CommandPalette`: components by their names and frontmatter `aliases`, their props, the design tokens, and the foundations, patterns and guides; a result opens its page at the prop's or token's row. `scripts/SearchIndex.mjs` builds the MiniSearch index from `docs/`, `docs/generated/props.json` and the token list whenever the documentation is generated, into `apps/catalogue/src/generated/SearchIndex.json`; its `searchDocuments()` gives the same documents to other tools, and `scripts/SearchTerms.mjs` how words are split and matched. The Display menu below the navigation stores the reader's theme, contrast and scale in localStorage.
+
+Routes live in the address's path in development and in the hosted catalogue, such as `/components/button/props#props-Button-variant`, and in its hash in the offline catalogue, `#/components/button/props?section=props-Button-variant`: a file opened from disk, or an archived version under `/v1.2/`, has no server that answers another path with its page. The hosted catalogue opens the hash addresses, and earlier names of pages, at their path addresses.
+
 | Command                    | Purpose                                                       |
 | -------------------------- | ------------------------------------------------------------- |
 | `npm run dev:library`      | Watch compiled exports for a linked external app              |
@@ -74,7 +78,7 @@ The catalogue is also a website for envsemble. It isn't deployed yet: the domain
 
 `dist/envUI.html` stays the release artifact. The site is a Cloudflare Worker, configured in `wrangler.jsonc`, that serves `dist/site/` as static assets:
 
-- A path without a file gets `index.html`, ready for routes in the URL path.
+- A path without a file gets `index.html`, so the catalogue's routes, which live in the URL path, load from a deep link and on a refresh. Links between its pages change the address without loading the catalogue again.
 - `apps/catalogue/site/_headers` sets the security headers, and pages are revalidated on every load.
 - A small Worker script runs first for `/assets/` (`run_worker_first`). It serves the hashed files there with a year-long cache, and answers a missing one with 404, also when a browser opens it as a page, so `index.html` is never cached under a file's name. These requests count as Worker requests; other files and page loads never run the script.
 - `workers_dev` and `preview_urls` are `false`, so the site has no `workers.dev` address or Preview URLs until Cloudflare Access protects them; step 5 below turns them on.
