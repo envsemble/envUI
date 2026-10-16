@@ -2,7 +2,7 @@
 // envUI agent benchmark: runs coding agents on product tasks in a fixture app that uses envUI,
 // then scores how much of each result is built with envUI. See bench/README.md.
 import { existsSync, readFileSync } from 'node:fs';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { basename, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -32,7 +32,7 @@ const usage = `Usage:
   npm run bench -- [--condition baseline] [--agents claude,codex] [--tasks all|id,id]
                    [--fixture basic|hard] [--concurrency 4] [--timeout 12] [--run-id <id>]
                    [--workdir <dir>] [--tarball <file> --envui-commit <sha>] [--audit-path <dir>]
-                   [--build] [--no-save] [--dry-run]
+                   [--build] [--no-save] [--dry-run] [--resume]
   npm run bench -- rescore --run-id <id> [--workdir <dir>] [--no-save]
 
   --condition    one or more conditions, comma-separated (${Object.keys(conditions).join(', ')})
@@ -47,6 +47,7 @@ const usage = `Usage:
   --build        run npm run build:library before packing
   --no-save      do not copy results.json and summary.md into bench/results/<run-id>/
   --dry-run      prepare one workspace per agent and print the commands without running agents
+  --resume       finish a run whose runner stopped: keep finished runs, run the others again
   --model-<agent> / --effort-<agent>  override an agent's model or effort, e.g. --model-codex gpt-6-luna`;
 
 const { values: options, positionals } = parseArgs({
@@ -66,6 +67,7 @@ const { values: options, positionals } = parseArgs({
     build: { type: 'boolean', default: false },
     'no-save': { type: 'boolean', default: false },
     'dry-run': { type: 'boolean', default: false },
+    resume: { type: 'boolean', default: false },
     help: { type: 'boolean', default: false },
     ...Object.fromEntries(
       Object.keys(agents).flatMap((name) => [
@@ -129,6 +131,30 @@ function fullCommit(commit) {
 
 const transcriptFiles = (logDir) =>
   ['transcript.jsonl', 'stderr.log', 'last-message.txt'].map((file) => join(logDir, file));
+const finishedStatuses = ['completed', 'timeout', 'agent-error', 'no-output'];
+
+/**
+ * With --resume: a job that finished in an earlier attempt is rescored from its workspace and
+ * kept. The logs of one that didn't, such as a job running when its runner was killed, are moved
+ * to `_logs/<name>.unfinished` and the job runs again.
+ */
+async function resumeJob({ task, name }, logDir, context) {
+  const metaFile = join(logDir, 'meta.json');
+  const meta = existsSync(metaFile) ? JSON.parse(await readFile(metaFile, 'utf8')) : null;
+  if (meta?.baseCommit && finishedStatuses.includes(meta.status)) {
+    meta.audit = auditRun({ files: transcriptFiles(logDir), audit: context.audit, name });
+    await scoreInto(meta, task);
+    log(`kept  ${name}: ${meta.status}, score ${meta.scoreDetail.score}`);
+    return meta;
+  }
+  if (existsSync(logDir)) {
+    let target = `${logDir}.unfinished`;
+    for (let index = 2; existsSync(target); index += 1) target = `${logDir}.unfinished-${index}`;
+    await rename(logDir, target);
+    log(`again ${name}: the earlier attempt did not finish; its logs are in ${basename(target)}`);
+  }
+  return null;
+}
 
 /** Prepares, runs and scores one task for one agent under one condition. */
 async function runJob(job, context) {
@@ -138,6 +164,10 @@ async function runJob(job, context) {
   // The run's own TEMP and HOME, outside the workspace so they are not part of its diff.
   const tmpDir = join(context.runDir, '_tmp', name);
   const homeDir = join(tmpDir, 'home');
+  if (options.resume) {
+    const kept = await resumeJob(job, logDir, context);
+    if (kept) return kept;
+  }
   await mkdir(logDir, { recursive: true });
   await mkdir(homeDir, { recursive: true });
   const record = {
@@ -298,8 +328,12 @@ async function main() {
   const tasks = selectTasks();
   const runId = options['run-id'] ?? defaultRunId(conditionNames, fixture);
   const runDir = join(workdir, runId);
-  if (existsSync(join(runDir, 'results.json')) && !options['dry-run'])
+  if (existsSync(join(runDir, 'results.json')) && !options['dry-run'] && !options.resume)
     throw new Error(`Run ${runId} already has results; choose another --run-id.`);
+  const earlier =
+    options.resume && existsSync(join(runDir, 'run.json'))
+      ? JSON.parse(await readFile(join(runDir, 'run.json'), 'utf8'))
+      : null;
   // Interleave agents so parallel runs spread across both services.
   const jobs = [];
   for (const condition of selectedConditions)
@@ -346,8 +380,8 @@ async function main() {
     runId,
     runDir,
     templateDir,
-    createdAt: new Date().toISOString(),
-    date: localDate(),
+    createdAt: earlier?.createdAt ?? new Date().toISOString(),
+    date: earlier?.date ?? localDate(),
     conditionNames,
     fixture,
     envui: {

@@ -40,28 +40,31 @@ npm run bench -- --condition baseline --agents claude,codex --tasks all
 
 Options:
 
-| Option                                | Default                   | Meaning                                                                        |
-| ------------------------------------- | ------------------------- | ------------------------------------------------------------------------------ |
-| `--condition`                         | `baseline`                | One or more conditions, comma-separated                                        |
-| `--agents`                            | `claude,codex`            | Agents to run                                                                  |
-| `--tasks`                             | `all`                     | `all`, or task ids such as `sidebar,settings-form`                             |
-| `--fixture`                           | `basic`                   | `basic` or `hard`                                                              |
-| `--concurrency`                       | `4`                       | Runs in parallel                                                               |
-| `--timeout`                           | `12`                      | Minutes per run; the process tree is killed at the limit                       |
-| `--run-id`                            | `<date>-<condition>`      | Name of the run directory and of `results/<run-id>`; `-hard` is added for hard |
-| `--workdir`                           | `%TEMP%/agent-workspaces` | Workspaces, transcripts and caches; must not be near the repository            |
-| `--tarball`, `--envui-commit`         | pack `packages/ui`        | Measure this `@envsemble/envui` tarball instead, built from that commit        |
-| `--audit-path`                        | none                      | More folders, comma-separated, that agents must not touch, such as notes       |
-| `--model-<agent>`, `--effort-<agent>` | see below                 | Override an agent's model or reasoning effort                                  |
-| `--build`                             | off                       | Run `npm run build:library` before packing                                     |
-| `--no-save`                           | off                       | Do not write `bench/results/<run-id>/`                                         |
-| `--dry-run`                           | off                       | Prepare one workspace per agent and print the commands and environment         |
+| Option                                | Default                   | Meaning                                                                         |
+| ------------------------------------- | ------------------------- | ------------------------------------------------------------------------------- |
+| `--condition`                         | `baseline`                | One or more conditions, comma-separated                                         |
+| `--agents`                            | `claude,codex`            | Agents to run                                                                   |
+| `--tasks`                             | `all`                     | `all`, or task ids such as `sidebar,settings-form`                              |
+| `--fixture`                           | `basic`                   | `basic` or `hard`                                                               |
+| `--concurrency`                       | `4`                       | Runs in parallel                                                                |
+| `--timeout`                           | `12`                      | Minutes per run; the process tree is killed at the limit                        |
+| `--run-id`                            | `<date>-<condition>`      | Name of the run directory and of `results/<run-id>`; `-hard` is added for hard  |
+| `--workdir`                           | `%TEMP%/agent-workspaces` | Workspaces, transcripts and caches; must not be near the repository             |
+| `--tarball`, `--envui-commit`         | pack `packages/ui`        | Measure this `@envsemble/envui` tarball instead, built from that commit         |
+| `--audit-path`                        | none                      | More folders, comma-separated, that agents must not touch, such as notes        |
+| `--model-<agent>`, `--effort-<agent>` | see below                 | Override an agent's model or reasoning effort                                   |
+| `--build`                             | off                       | Run `npm run build:library` before packing                                      |
+| `--no-save`                           | off                       | Do not write `bench/results/<run-id>/`                                          |
+| `--dry-run`                           | off                       | Prepare one workspace per agent and print the commands and environment          |
+| `--resume`                            | off                       | Finish a run whose runner stopped: keep the finished runs, run the others again |
 
 After a scorer change, rescore an earlier run from its workspaces without running the agents again. The audit runs again too:
 
 ```sh
 npm run bench -- rescore --run-id 2026-10-16-baseline-v2
 ```
+
+If the runner stops before the end, for example because an agent stopped it, run the same command again with `--resume`. Runs that finished are rescored and kept; the others run again, and the logs of their unfinished attempt move to `_logs/<agent>-<task>.unfinished`.
 
 ### Measuring a released version
 
@@ -122,7 +125,7 @@ A run is **confined by its environment and audited afterwards. It is not sandbox
 - **No sandbox for Claude Code.** `--dangerously-skip-permissions` lets it read and run anything the user can. Nothing stops it from finding the source checkout by searching the disk.
 - **Codex's `workspace-write` sandbox limits writes only.** Codex can write to the workspace, the npm cache and its temp folder, and still read the whole disk.
 - **Logins and user state.** Claude Code still creates a folder per workspace under `~/.claude/projects/` (with `--no-session-persistence`, no session is kept in it).
-- **Processes and ports.** Runs share the machine. An agent can stop any process the user can, and parallel runs can start dev servers on the same port. In the first hard-fixture baseline, a Claude Code run cleaned up with `taskkill /F /IM node.exe`, which stopped every Node process on the machine, the runner included.
+- **Processes and ports.** Runs share the machine. An agent can stop any process the user can, and parallel runs can start dev servers on the same port. In the first hard-fixture baseline, a Claude Code run cleaned up with `taskkill /F /IM node.exe`, which stopped every Node process on the machine, the runner included; `--resume` finished that run.
 
 #### The isolation audit
 
