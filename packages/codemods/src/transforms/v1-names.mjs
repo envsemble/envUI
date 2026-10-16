@@ -871,8 +871,7 @@ export default function transform(file, api, options = {}) {
 
   // useTheme() returns `{ theme, contrast }` in 1.0 rather than the color scheme.
   // `<Theme theme={useTheme()}>`, 0.x's way to re-theme a portal, becomes `<Theme {...useTheme()}>`,
-  // which keeps the contrast too; comparing the call with a scheme, or passing it as another
-  // element's `theme`, is reported.
+  // which keeps the contrast too; every other bare call reads `useTheme().theme`, 0.x's value.
   const library = '@envsemble/envui';
   const localsOf = (name) =>
     specifiers
@@ -918,19 +917,11 @@ export default function transform(file, api, options = {}) {
       container?.node.type === 'JSXExpressionContainer' &&
       attribute?.type === 'JSXAttribute' &&
       attribute.name.type === 'JSXIdentifier' &&
-      attribute.name.name === 'theme'
+      attribute.name.name === 'theme' &&
+      isLibraryTheme(attributePath.parent.node.name, attributePath.parent)
     ) {
-      const openingPath = attributePath.parent;
-      const opening = openingPath.node;
-      if (!isLibraryTheme(opening.name, openingPath)) {
-        warn(
-          attribute,
-          'passes useTheme() as theme, which is { theme, contrast } in 1.0: pass useTheme().theme.',
-        );
-        continue;
-      }
       // Props written before the spread would lose to the contrast it carries, so it goes first.
-      const attributes = opening.attributes;
+      const attributes = attributePath.parent.node.attributes;
       const contrast = attributes.findIndex(
         (other) => other.type === 'JSXAttribute' && other.name.name === 'contrast',
       );
@@ -944,12 +935,7 @@ export default function transform(file, api, options = {}) {
       changed = true;
       continue;
     }
-    const outer = call.parent.node;
-    if (outer.type === 'BinaryExpression' && ['===', '!==', '==', '!='].includes(outer.operator))
-      warn(
-        outer,
-        'compares useTheme(), which is { theme, contrast } in 1.0: compare useTheme().theme.',
-      );
+    if (readThemeOfCall(j, call, references)) changed = true;
   }
 
   if (!changed) {
@@ -1112,4 +1098,72 @@ export default function transform(file, api, options = {}) {
   // The rewrites and the pruned imports can still add reports.
   reporter.flush();
   return keepByteOrderMark(file.source, root.toSource(printOptions(file.source, quote)));
+}
+
+/** Comparisons that hold for 0.x's scheme and 1.0's object alike: with null or undefined. */
+const nullishComparison = (node, operand) => {
+  if (node?.type !== 'BinaryExpression' || !['===', '!==', '==', '!='].includes(node.operator))
+    return false;
+  const other = node.left === operand ? node.right : node.left;
+  return (
+    other.type === 'NullLiteral' ||
+    (other.type === 'Literal' && other.value === null) ||
+    (other.type === 'Identifier' && other.name === 'undefined') ||
+    (other.type === 'UnaryExpression' && other.operator === 'void')
+  );
+};
+
+/**
+ * Whether an expression is read as 1.0's `{ theme, contrast }`: `.theme` or `.contrast` read from
+ * it, spread, or destructured.
+ */
+function readsAsThemeObject(path) {
+  const { node } = path;
+  const parent = path.parent?.node;
+  switch (parent?.type) {
+    case 'MemberExpression':
+    case 'OptionalMemberExpression': {
+      if (parent.object !== node) return false;
+      const key = parent.computed ? parent.property.value : parent.property.name;
+      return key === 'theme' || key === 'contrast';
+    }
+    case 'SpreadElement':
+    case 'JSXSpreadAttribute':
+      return true;
+    case 'VariableDeclarator':
+      return parent.init === node && parent.id.type === 'ObjectPattern';
+    case 'AssignmentExpression':
+      return parent.right === node && parent.left.type === 'ObjectPattern';
+  }
+  return false;
+}
+
+/**
+ * Rewrites a bare `useTheme()` call as `useTheme().theme`, the color scheme 0.x's call returned,
+ * so `useTheme() === 'dark'`, `theme={useTheme()}` on another element and `` `t-${useTheme()}` ``
+ * keep their meaning. A call already read as 1.0's object stays, also through a variable it
+ * initializes, such as `const current = useTheme()` read as `current.contrast`; so does a comparison
+ * with null or undefined. `references` are the file's references by name, which the scope of the
+ * variable's declaration filters. Returns whether it rewrote the call.
+ */
+function readThemeOfCall(j, call, references) {
+  if (readsAsThemeObject(call) || nullishComparison(call.parent?.node, call.node)) return false;
+  const declarator = call.parent?.node;
+  if (
+    declarator?.type === 'VariableDeclarator' &&
+    declarator.init === call.node &&
+    declarator.id.type === 'Identifier'
+  ) {
+    const { name } = declarator.id;
+    const scope = call.parent.scope?.lookup(name);
+    const readAsObject = (references.get(name) ?? []).some(
+      ({ path, kind }) =>
+        (kind === 'value' || kind === 'object') &&
+        path.scope?.lookup(name) === scope &&
+        readsAsThemeObject(path),
+    );
+    if (readAsObject) return false;
+  }
+  call.replace(j.memberExpression(call.node, j.identifier('theme')));
+  return true;
 }

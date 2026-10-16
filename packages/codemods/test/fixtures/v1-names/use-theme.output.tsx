@@ -16,6 +16,6 @@ export function NamespacePortal({ children }: { children: React.ReactNode }) {
 }
 
 export function Other({ children }: { children: React.ReactNode }) {
-  const dark = useTheme() === 'dark';
-  return <ThemeProvider theme={useTheme()} dark={dark}>{children}</ThemeProvider>;
+  const dark = useTheme().theme === 'dark';
+  return <ThemeProvider theme={useTheme().theme} dark={dark}>{children}</ThemeProvider>;
 }

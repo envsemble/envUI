@@ -44,3 +44,18 @@ test('a Theme without a contrast takes a data-env-contrast written on it, and th
   assert.match(prop, /data-env-contrast="standard"/);
   assert.match(prop, /<output>standard<\/output>/);
 });
+
+test('Theme renders where nothing defines process, as in a browser without a bundler', () => {
+  const descriptor = Object.getOwnPropertyDescriptor(globalThis, 'process');
+  delete globalThis.process;
+  let result;
+  try {
+    assert.equal(typeof process, 'undefined');
+    result = render(h(Theme, { theme: { theme: 'dark' } }, 'a'));
+  } finally {
+    Object.defineProperty(globalThis, 'process', descriptor);
+  }
+  assert.match(result.markup, /class="env-theme"/);
+  // Without a development build to report in, the warning stays silent.
+  assert.equal(result.errors.length, 0);
+});

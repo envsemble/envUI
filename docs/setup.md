@@ -54,7 +54,7 @@ import { ThemePreferenceProvider, ThemeToggle } from '@envsemble/envui';
 </ThemePreferenceProvider>;
 ```
 
-Add the bootstrap script to the document head so a saved dark theme does not flash light while the application loads. `createThemeBootstrapScript` from `@envsemble/envui/theme-bootstrap` returns the inline script; use the same storage key, and pass the provider's `contrast` when it is `high` or `standard`, so the root has it from the first paint:
+Add the bootstrap script to the document head so a saved dark theme does not flash light while the application loads. `createThemeBootstrapScript` from `@envsemble/envui/theme-bootstrap` returns the inline script; use the same storage key as the provider:
 
 ```ts
 // vite.config.ts
@@ -65,12 +65,14 @@ const themeBootstrap = {
   transformIndexHtml: () => [
     {
       tag: 'script',
-      children: createThemeBootstrapScript({ storageKey: 'app-theme', contrast: 'high' }),
+      children: createThemeBootstrapScript({ storageKey: 'app-theme' }),
       injectTo: 'head-prepend',
     },
   ],
 };
 ```
+
+When the application's contrast is fixed, such as an application that is always high contrast, pass it to both: `contrast: 'high'` to the bootstrap script as well as `contrast="high"` to the provider, so the root has it from the first paint. The script marks what it writes with `data-env-contrast-source="bootstrap"`, and the provider treats that contrast as its own: once the application starts, the provider's contrast replaces it, and a provider at `system` removes it. So when the contrast is a setting that the application stores, the bootstrap script, built once, cannot know it: leave `contrast` out of the script, and the provider applies the stored setting when the application starts.
 
 ### Router links
 

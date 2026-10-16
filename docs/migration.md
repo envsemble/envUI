@@ -47,7 +47,7 @@ import envui from '@envsemble/eslint-plugin-envui';
 export default defineConfig(envui.configs.recommended);
 ```
 
-- `v1-names` rewrites imports and references from `@envsemble/envui` and `@envsemble/envui/theme-bootstrap`: renamed components and types (`Input` is `TextField`), namespace parts (`MenuItem` is `Menu.Item`, `<Menu>` is `<Menu.Root>`), `DirectionLink` by its literal `direction` (`Pager.Previous` or `Pager.Next`), re-exports, `defaultThemeStorageKey`, which becomes `'env-theme'`, and `<Theme theme={useTheme()}>`, which becomes `<Theme {...useTheme()}>`.
+- `v1-names` rewrites imports and references from `@envsemble/envui` and `@envsemble/envui/theme-bootstrap`: renamed components and types (`Input` is `TextField`), namespace parts (`MenuItem` is `Menu.Item`, `<Menu>` is `<Menu.Root>`), `DirectionLink` by its literal `direction` (`Pager.Previous` or `Pager.Next`), re-exports, `defaultThemeStorageKey`, which becomes `'env-theme'`, and `<Theme theme={useTheme()}>`, which becomes `<Theme {...useTheme()}>`; every other `useTheme()` call becomes `useTheme().theme`, the color scheme it returned in 0.x.
 - `v1-classes` renames `env-*` classes and `--env-*` custom properties in style sheets, class names and selector strings.
 - `envui/no-renamed-exports` reports the 0.x names left in imports and re-exports, and also those it can follow statically through namespace imports, `require()`, `import()`, `import … = require()`, destructuring and `createElement()`, with each one's 1.0 name or what to use instead. A name read through a computed member such as `envui[name]` is not followed; the type check catches those. The recommended config also reports raw elements that envUI provides, envUI's private classes and raw colors; `@envsemble/stylelint-config-envui` does the same for style sheets.
 
@@ -57,14 +57,13 @@ Change by hand what the codemods report, each with its file and line:
 - a `DirectionLink` whose `direction` is computed or spread, or that is used outside JSX;
 - re-exports of namespace parts, and names destructured from a namespace import;
 - a local that shadows a namespace or a new name: the codemod writes a second import under an alias, such as `Menu as EnvMenu`, which you may rename;
-- comments the codemod drops: a `@ts-expect-error` above an import whose names change, which TypeScript would report once the 0.x name it expected an error from is gone; a disable comment of an import that is removed with nothing in its place; and comments on a removed import name that no namespace import takes the place of;
-- `useTheme()` compared with a color scheme or passed as another element's `theme`, which takes `useTheme().theme`.
+- comments the codemod drops: a `@ts-expect-error` above an import whose names change, which TypeScript would report once the 0.x name it expected an error from is gone; a disable comment of an import that is removed with nothing in its place; and comments on a removed import name that no namespace import takes the place of.
 
 The codemods also leave class names built at run time, CSS-in-JS, selectors nested in a Sass or Less rule (a DiffCount label in a nested `.env-diff-count` rule becomes `env-diff-stat-label`), mocks and `declare module` augmentations; search for the old names there. The codemods' rename map, `src/maps/v1.json` in `@envsemble/envui-codemods`, lists every change.
 
 ### useTheme returns the theme and its contrast
 
-`useTheme()` returns `{ theme, contrast }` instead of the color scheme alone. Read the scheme as `const { theme } = useTheme()`. An application's own portal that re-themed with `<Theme theme={useTheme()}>` takes both with `<Theme {...useTheme()}>`, so it keeps a high contrast or a `standard` opt-out too; `v1-names` makes that change. In JavaScript, `theme={useTheme()}` would render `data-env-theme="[object Object]"`, so in development Theme warns about a `theme` that is not `light` or `dark`.
+`useTheme()` returns `{ theme, contrast }` instead of the color scheme alone. Read the scheme as `const { theme } = useTheme()`. An application's own portal that re-themed with `<Theme theme={useTheme()}>` takes both with `<Theme {...useTheme()}>`, so it keeps a high contrast or a `standard` opt-out too; `v1-names` makes that change, and turns every other call into `useTheme().theme`. In JavaScript, `theme={useTheme()}` would render `data-env-theme="[object Object]"`, so in development Theme warns about a `theme` that is not `light` or `dark`.
 
 ### Tokens
 
@@ -246,9 +245,9 @@ Aliases of one role, which replaces them:
 
 Aliases whose value changed, so a style that relied on the 0.7 value needs a look:
 
-| 0.7 custom property      | Role                 | What changed                                                                                                                                                                                                                                                                                    |
-| ------------------------ | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--color-dialog-overlay` | `--color-bg-overlay` | 0.7's was opaque, #1e1f21, and the dialog backdrop made it 55% opaque with --state-dialog-overlay-opacity, which is removed. The role is the scrim itself, 55% opaque: paint it as it is, since a style that applies its own opacity now applies it twice. For the opaque color, write #1e1f21. |
+| 0.7 custom property      | Role                 | What changed                                                                                                                                                                                                                                                                                                                       |
+| ------------------------ | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--color-dialog-overlay` | `--color-bg-overlay` | 0.7's was opaque, #1f1f1f (hsl(0 0% 12.157%) in both themes), and the dialog backdrop made it 55% opaque with --state-dialog-overlay-opacity, which is removed. The role is the scrim itself, 55% opaque: paint it as it is, since a style that applies its own opacity now applies it twice. For the opaque color, write #1f1f1f. |
 
 Component tokens that take another role in some themes, so no one role replaces them; use the role of each theme:
 

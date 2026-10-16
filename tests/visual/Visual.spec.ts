@@ -2,7 +2,8 @@
  * Visual baseline: screenshots of today's identity, so that later changes are deliberate and
  * reviewed as image diffs. Every catalogue page's preview specimens and forced interaction states
  * are captured in both themes, and the pages of highContrastPages (CatalogueThemes.ts) in high
- * contrast as well; so are the density specimens of the test fixture, and a few lists captured open.
+ * contrast as well; so are the density specimens of the test fixture, and a few lists, a tooltip and
+ * the toasts captured open.
  *
  * Fonts and anti-aliasing differ between systems, so the baseline renders only in the Linux
  * Playwright image: `npm run test:visual` checks it, `npm run test:visual:update` rewrites it.
@@ -45,7 +46,10 @@ const stateMatrices: Record<string, string[]> = {
   'nav-list': ['Navigation item'],
 };
 
-/** A list the baseline captures open, beside its trigger, from a catalogue specimen or example. */
+/**
+ * A list or other popup the baseline captures open, beside its trigger, from a catalogue specimen or
+ * example.
+ */
 interface OpenList {
   /** Names the snapshot after its theme: open/<theme>-<name>.png. */
   name: string;
@@ -54,13 +58,22 @@ interface OpenList {
   /** The control that opens the list. */
   trigger: (page: Page) => Locator;
   /** The key that opens the list from the focused trigger. */
-  key: string;
-  /** The open popup: the listbox, menu or dialog. */
+  key?: string;
+  /** Opens the popups otherwise than with `key` from the focused trigger. */
+  open?: (page: Page, trigger: ElementHandle) => Promise<void>;
+  /** The open popup: the listbox, menu or dialog, or every toast shown. */
   popup: (page: Page) => Locator;
-  /** The option or item highlighted as the list opens from the keyboard. */
-  highlighted: string;
+  /** How many popups open: several toasts stack. Defaults to one. */
+  count?: number;
+  /** The option or item highlighted as the list opens from the keyboard; none for a tooltip or toasts. */
+  highlighted?: string;
   /** A modal palette covers the page, so its capture leaves the trigger out. */
   withTrigger: boolean;
+  /**
+   * Stops the page's timers once the popups have opened, so toasts that close after a few seconds
+   * stay for the capture.
+   */
+  pauseTimers?: boolean;
 }
 
 const liveExample = (page: Page, name: string) =>
@@ -72,6 +85,24 @@ const liveExample = (page: Page, name: string) =>
  * highlights its selected option, a menu its first item and the palette its first result. Each
  * capture checks that highlight before it compares.
  */
+/** Toasts of the variants example, shown in order and captured stacked, with their timers stopped. */
+function toasts(name: string, variants: string[]): OpenList {
+  const show = (page: Page, variant: string) =>
+    liveExample(page, 'Variants').getByRole('button', { name: `Show ${variant}`, exact: true });
+  return {
+    name,
+    route: 'components/toast/overview',
+    trigger: (page) => show(page, variants[0]),
+    open: async (page) => {
+      for (const variant of variants) await press(page, show(page, variant));
+    },
+    popup: (page) => page.locator('.env-toast'),
+    count: variants.length,
+    withTrigger: false,
+    pauseTimers: true,
+  };
+}
+
 const openLists: OpenList[] = [
   {
     name: 'select',
@@ -138,6 +169,29 @@ const openLists: OpenList[] = [
     highlighted: 'Roadmap.md',
     withTrigger: false,
   },
+  {
+    // A dark fill on a light page in the light themes: its edge must not read as a halo.
+    name: 'tooltip',
+    route: 'components/tooltip/overview',
+    trigger: (page) =>
+      liveExample(page, 'IconActions').getByRole('button', {
+        name: 'Refresh members',
+        exact: true,
+      }),
+    // Keyboard focus opens a tooltip at once: Shift+Tab and Tab give the trigger keyboard focus,
+    // whatever focus the script gave it.
+    open: async (page, trigger) => {
+      await trigger.focus();
+      await page.keyboard.press('Shift+Tab');
+      await page.keyboard.press('Tab');
+    },
+    popup: (page) => page.locator('.env-tooltip', { hasText: 'Refresh members' }),
+    withTrigger: true,
+  },
+  // The strong fills of toasts, each with its edge. Three show at once, so the error, which stays
+  // until it is dismissed, is captured on its own.
+  toasts('toasts', ['neutral', 'success', 'info']),
+  toasts('toast-error', ['error']),
 ];
 
 test.skip(
@@ -393,7 +447,9 @@ test.describe('open lists', () => {
   for (const list of openLists) {
     for (const theme of allThemes) {
       test(`${list.name} (${theme.name})`, async ({ page }) => {
-        await page.clock.setFixedTime(now);
+        // Timers keep running until the popups are open, so the page and its animations settle.
+        if (list.pauseTimers) await page.clock.install({ time: now });
+        else await page.clock.setFixedTime(now);
         await page.goto(`${catalogueUrl}/#/${list.route}`);
         await page.locator('.docs-reference-tabs').waitFor();
         await setTheme(page, theme);
@@ -406,19 +462,27 @@ test.describe('open lists', () => {
           element.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' }),
         );
         await page.mouse.move(0, 0);
-        await trigger.focus();
-        await page.keyboard.press(list.key);
+        if (list.open) await list.open(page, trigger);
+        else {
+          await trigger.focus();
+          await page.keyboard.press(list.key!);
+        }
         const popup = list.popup(page);
-        await expect(popup).toBeVisible();
+        await expect(popup).toHaveCount(list.count ?? 1);
+        for (const each of await popup.all()) await expect(each).toBeVisible();
         await settlePopups(page);
-        // Options pass data-highlighted on to their parts, such as a radio item's indicator.
-        const highlighted = popup.locator(
-          '[data-highlighted]:not([data-highlighted] [data-highlighted])',
-        );
-        await expect(highlighted).toHaveCount(1);
-        await expect(highlighted).toContainText(list.highlighted);
+        if (list.pauseTimers) await page.clock.pauseAt(await page.evaluate(() => Date.now() + 1));
+        if (list.highlighted) {
+          // Options pass data-highlighted on to their parts, such as a radio item's indicator.
+          const highlighted = popup.locator(
+            '[data-highlighted]:not([data-highlighted] [data-highlighted])',
+          );
+          await expect(highlighted).toHaveCount(1);
+          await expect(highlighted).toContainText(list.highlighted);
+        }
+        const popups = await popup.all();
         await expect(page).toHaveScreenshot(['open', `${theme.name}-${list.name}.png`], {
-          clip: await around(page, list.withTrigger ? [trigger, popup] : [popup]),
+          clip: await around(page, list.withTrigger ? [trigger, ...popups] : popups),
         });
       });
     }

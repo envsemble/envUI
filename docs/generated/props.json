@@ -6257,7 +6257,7 @@
           "name": "contrast",
           "type": "'standard' | 'high' | 'system'",
           "required": false,
-          "description": "Contrast of the Theme boundary around the children, and of the document root with applyToDocument: high, standard, or system to follow `prefers-contrast: more`, as on Theme. Defaults to the contrast of an enclosing Theme, and to system. With system, the provider removes from the root only a contrast it wrote; pass the same contrast to createThemeBootstrapScript so the root has it before the first paint."
+          "description": "Contrast of the Theme boundary around the children, and of the document root with applyToDocument: high, standard, or system to follow `prefers-contrast: more`, as on Theme. Defaults to the contrast of an enclosing Theme, and to system. With system, the provider removes from the root only a contrast it or the bootstrap script wrote. Pass a contrast that is fixed for the application to createThemeBootstrapScript too, so the root has it before the first paint."
         },
         {
           "name": "className",
