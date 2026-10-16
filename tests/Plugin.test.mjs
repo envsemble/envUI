@@ -20,9 +20,10 @@ import {
   syncPlugin,
 } from '../scripts/GeneratePlugin.mjs';
 
-// The repository is the marketplace of the envui plugin for Claude Code and Codex. These checks
-// hold its manifests to the formats both clients read, to each other and to the library's version;
-// `claude plugin validate --strict .` and `claude plugin validate --strict plugin` agree with them.
+// The repository is the marketplace of the envui agent plugin, with a manifest and a marketplace
+// file for each of the two clients that read it (.claude-plugin and .codex-plugin, .claude-plugin
+// and .agents/plugins). These checks hold them to the formats the clients read, to each other and
+// to the library's version; docs/agent-tooling.md names the clients and their validators.
 
 const repository = fileURLToPath(new URL('../', import.meta.url));
 const plugin = resolve(repository, pluginDirectory);
@@ -92,34 +93,39 @@ test('the plugin holds its manifests, the MCP configuration and the skills, noth
 });
 
 test('the plugin manifests name envui, agree with each other and carry the library version', () => {
-  const claude = json(`${pluginDirectory}/.claude-plugin/plugin.json`);
-  const codex = json(`${pluginDirectory}/.codex-plugin/plugin.json`);
+  const manifest = json(`${pluginDirectory}/.claude-plugin/plugin.json`);
+  const mirrored = json(`${pluginDirectory}/.codex-plugin/plugin.json`);
   const version = libraryVersion(repository);
-  for (const [client, manifest] of [
-    ['Claude Code', claude],
-    ['Codex', codex],
+  for (const [client, entry] of [
+    ['.claude-plugin', manifest],
+    ['.codex-plugin', mirrored],
   ]) {
-    assert.equal(manifest.name, 'envui', `${client}: name`);
-    assert.match(manifest.name, kebab, `${client}: the name is kebab-case`);
-    assert.equal(manifest.version, version, `${client}: version`);
-    assert.match(manifest.version, /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/, `${client}: semver`);
-    assert.equal(typeof manifest.description, 'string', `${client}: description`);
-    assert.ok(manifest.description.length > 0, `${client}: description`);
-    assert.equal(typeof manifest.author?.name, 'string', `${client}: author.name`);
+    assert.equal(entry.name, 'envui', `${client}: name`);
+    assert.match(entry.name, kebab, `${client}: the name is kebab-case`);
+    assert.equal(entry.version, version, `${client}: version`);
+    assert.match(entry.version, /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/, `${client}: semver`);
+    assert.equal(typeof entry.description, 'string', `${client}: description`);
+    assert.ok(entry.description.length > 0, `${client}: description`);
+    assert.equal(typeof entry.author?.name, 'string', `${client}: author.name`);
   }
-  // Codex reads the same fields and, in addition, where the skills and the servers are.
+  // The mirrored manifest repeats the fields and also names where the skills and the servers are.
   const shared = Object.fromEntries(
-    Object.entries(codex).filter(([key]) => !['skills', 'mcpServers', 'interface'].includes(key)),
+    Object.entries(mirrored).filter(
+      ([key]) => !['skills', 'mcpServers', 'interface'].includes(key),
+    ),
   );
-  assert.deepEqual(shared, claude, 'the Codex manifest repeats the Claude Code one');
-  assert.equal(codex.skills, './skills/');
-  assert.equal(codex.mcpServers, './.mcp.json');
+  assert.deepEqual(shared, manifest, '.codex-plugin repeats .claude-plugin');
+  assert.equal(mirrored.skills, './skills/');
+  assert.equal(mirrored.mcpServers, './.mcp.json');
   for (const field of ['skills', 'mcpServers'])
-    assert.ok(existsSync(resolve(plugin, codex[field])), `Codex: ${field} exists`);
-  assert.equal(codex.interface.displayName, 'envUI');
+    assert.ok(existsSync(resolve(plugin, mirrored[field])), `.codex-plugin: ${field} exists`);
+  assert.equal(mirrored.interface.displayName, 'envUI');
   for (const field of ['shortDescription', 'developerName', 'category'])
-    assert.equal(typeof codex.interface[field], 'string', `Codex: interface.${field}`);
-  assert.ok(Array.isArray(codex.interface.capabilities), 'Codex: interface.capabilities');
+    assert.equal(typeof mirrored.interface[field], 'string', `.codex-plugin: interface.${field}`);
+  assert.ok(
+    Array.isArray(mirrored.interface.capabilities),
+    '.codex-plugin: interface.capabilities',
+  );
 });
 
 test('the MCP server runs from the envUI the project has installed', () => {
@@ -132,34 +138,37 @@ test('the MCP server runs from the envUI the project has installed', () => {
 });
 
 test('both marketplaces are named envui and list the plugin in plugin/', () => {
-  const claude = json('.claude-plugin/marketplace.json');
-  const codex = json('.agents/plugins/marketplace.json');
-  assert.equal(claude.name, 'envui');
-  assert.equal(codex.name, 'envui');
-  assert.equal(typeof claude.owner?.name, 'string', 'Claude Code: owner.name');
-  assert.equal(codex.interface?.displayName, 'envUI');
+  const marketplace = json('.claude-plugin/marketplace.json');
+  const mirrored = json('.agents/plugins/marketplace.json');
+  assert.equal(marketplace.name, 'envui');
+  assert.equal(mirrored.name, 'envui');
+  assert.equal(typeof marketplace.owner?.name, 'string', 'owner.name');
+  assert.equal(mirrored.interface?.displayName, 'envUI');
   assert.deepEqual(
-    claude.plugins.map((entry) => entry.name),
+    marketplace.plugins.map((entry) => entry.name),
     ['envui'],
   );
   assert.deepEqual(
-    codex.plugins.map((entry) => entry.name),
+    mirrored.plugins.map((entry) => entry.name),
     ['envui'],
   );
-  const [claudeEntry] = claude.plugins;
-  const [codexEntry] = codex.plugins;
-  assert.equal(codexEntry.source.source, 'local');
-  for (const source of [claudeEntry.source, codexEntry.source.path]) {
+  const [entry] = marketplace.plugins;
+  const [mirroredEntry] = mirrored.plugins;
+  assert.equal(mirroredEntry.source.source, 'local');
+  for (const source of [entry.source, mirroredEntry.source.path]) {
     // Relative to the repository root, the folder that holds .claude-plugin/ and .agents/.
     assert.match(source, /^\.\//);
     assert.doesNotMatch(source, /\.\./);
     assert.equal(resolve(repository, source), plugin);
   }
   // The version lives in plugin.json alone; an entry that repeats it can disagree.
-  assert.equal(claudeEntry.version, undefined);
-  assert.equal(codexEntry.version, undefined);
-  assert.deepEqual(codexEntry.policy, { installation: 'AVAILABLE', authentication: 'ON_INSTALL' });
-  assert.equal(typeof codexEntry.category, 'string');
+  assert.equal(entry.version, undefined);
+  assert.equal(mirroredEntry.version, undefined);
+  assert.deepEqual(mirroredEntry.policy, {
+    installation: 'AVAILABLE',
+    authentication: 'ON_INSTALL',
+  });
+  assert.equal(typeof mirroredEntry.category, 'string');
 });
 
 test('each packaged skill is named after its folder and links only inside the skills', () => {
