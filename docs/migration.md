@@ -49,7 +49,7 @@ export default defineConfig(envui.configs.recommended);
 
 - `v1-names` rewrites imports and references from `@envsemble/envui` and `@envsemble/envui/theme-bootstrap`: renamed components and types (`Input` is `TextField`), namespace parts (`MenuItem` is `Menu.Item`, `<Menu>` is `<Menu.Root>`), `DirectionLink` by its literal `direction` (`Pager.Previous` or `Pager.Next`), re-exports, and `defaultThemeStorageKey`, which becomes `'env-theme'`.
 - `v1-classes` renames `env-*` classes and `--env-*` custom properties in style sheets, class names and selector strings.
-- `envui/no-renamed-exports` reports every 0.x name left, also through `require()`, `import()` and `createElement()`, with its 1.0 name or what to use instead. The recommended config also reports raw elements that envUI provides, envUI's private classes and raw colors; `@envsemble/stylelint-config-envui` does the same for style sheets.
+- `envui/no-renamed-exports` reports the 0.x names left in imports and re-exports, and also those it can follow statically through namespace imports, `require()`, `import()`, `import … = require()`, destructuring and `createElement()`, with each one's 1.0 name or what to use instead. A name read through a computed member such as `envui[name]` is not followed; the type check catches those. The recommended config also reports raw elements that envUI provides, envUI's private classes and raw colors; `@envsemble/stylelint-config-envui` does the same for style sheets.
 
 Change by hand what the codemods report, each with its file and line:
 

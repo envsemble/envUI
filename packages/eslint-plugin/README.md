@@ -190,11 +190,11 @@ MenuItem is not exported by envUI 1.0: use Menu.Item instead (import { Menu } fr
 
 It also reports:
 
-- members of a namespace import: `envui.Input`, `<envui.Input>`, and `envui.InputProps` in TypeScript;
-- the module and its names reached without an import declaration: `require('@envsemble/envui')`, `import('@envsemble/envui')`, awaited or through `.then()`, names destructured from any module object, as in `const { Input } = envui`, and type queries such as `import('@envsemble/envui').InputProps`;
+- members of a namespace import: `envui.Input`, `envui['Input']`, `<envui.Input>`, and `envui.InputProps` in TypeScript;
+- the module and its names reached without an import declaration: `require('@envsemble/envui')`, `import('@envsemble/envui')`, awaited or through `.then()`, `import envui = require('@envsemble/envui')` in TypeScript, names destructured from any module object, as in `const { Input } = envui` or the assignment `({ Input } = envui)`, and type queries such as `import('@envsemble/envui').InputProps`;
 - rendering a name that became a namespace of parts, such as `<Menu>` or `<Table>`, which must now be `<Menu.Root>` or `<Table.Root>`, in JSX or through `createElement()`, `React.createElement()` and the JSX runtime's `jsx()`.
 
-Type imports count. A name is checked where it resolves to envUI, so a local `Menu` or a parameter named `envui` that shadows the import passes. Only the entry point that exported a name is checked, so an icon named `Input` from `@envsemble/envui/icons` passes. The rule has no options.
+Type imports count. A name is read statically, so a member with a computed key, such as `envui[name]`, or a module object passed through a function is not followed. A name is checked where it resolves to envUI, so a local `Menu` or a parameter named `envui` that shadows the import passes. Only the entry point that exported a name is checked, so an icon named `Input` from `@envsemble/envui/icons` passes. The rule has no options.
 
 What the codemods' map says to do instead comes with the report:
 

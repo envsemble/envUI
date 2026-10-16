@@ -180,11 +180,15 @@ export default {
 
     /**
      * Binds what a pattern takes from an entry point's module object: the whole object, as in
-     * `const envui = require(…)`, or names, as in `const { Input } = await import(…)`.
+     * `const envui = require(…)`, or names, as in `const { Input } = await import(…)`. A pattern
+     * that declares takes its `declaration`; one that assigns, as in `({ Input } = envui)`, binds
+     * the variables its names resolve to.
      */
     function bindModule(pattern, source, declaration) {
+      const variableOf = (identifier) =>
+        declaration ? declared(declaration, identifier) : resolve(identifier, identifier.name);
       if (pattern?.type === 'Identifier') {
-        const variable = declared(declaration, pattern);
+        const variable = variableOf(pattern);
         if (variable) namespaceVariables.set(variable, source);
         return;
       }
@@ -195,7 +199,7 @@ export default {
           property.key.type === 'Identifier' ? property.key.name : String(property.key.value);
         const local =
           property.value.type === 'AssignmentPattern' ? property.value.left : property.value;
-        const variable = local.type === 'Identifier' ? declared(declaration, local) : undefined;
+        const variable = local.type === 'Identifier' ? variableOf(local) : undefined;
         bindName(property.key, source, name, variable);
       }
     }
@@ -267,6 +271,17 @@ export default {
       if (source) checkMember(node, source, node.object.name, node.property.name, propValue);
     }
 
+    /** The name a member reads: `Input` in `envui.Input` and `envui['Input']`. */
+    function memberName(node) {
+      if (!node.computed)
+        return node.property.type === 'Identifier' ? node.property.name : undefined;
+      const { property } = node;
+      if (property.type === 'Literal' && typeof property.value === 'string') return property.value;
+      if (property.type === 'TemplateLiteral' && property.expressions.length === 0)
+        return property.quasis[0].value.cooked;
+      return undefined;
+    }
+
     return {
       Program(program) {
         // Imports bind before any code runs, so they are read first, wherever they are written.
@@ -282,6 +297,17 @@ export default {
               bindName(specifier, source, moduleExportName(specifier.imported), variable);
           }
         }
+        // import envui = require('@envsemble/envui') in TypeScript binds the module object too.
+        for (const node of program.body) {
+          const declaration = node.type === 'ExportNamedDeclaration' ? node.declaration : node;
+          if (declaration?.type !== 'TSImportEqualsDeclaration') continue;
+          const reference = declaration.moduleReference;
+          const source =
+            reference.type === 'TSExternalModuleReference' ? reference.expression.value : undefined;
+          if (typeof source !== 'string' || !Object.hasOwn(modules, source)) continue;
+          const variable = declared(declaration, declaration.id);
+          if (variable) namespaceVariables.set(variable, source);
+        }
       },
       ExportNamedDeclaration(node) {
         const source = node.source?.value;
@@ -295,6 +321,12 @@ export default {
         if (!node.init) return;
         const source = moduleSource(node.init) ?? namespaceOf(node.init);
         if (source) bindModule(node.id, source, node);
+      },
+      AssignmentExpression(node) {
+        // ({ Input } = require('@envsemble/envui')) and envui = await import('…').
+        if (node.operator !== '=') return;
+        const source = moduleSource(node.right) ?? namespaceOf(node.right);
+        if (source) bindModule(node.left, source, undefined);
       },
       CallExpression(node) {
         const { callee } = node;
@@ -327,7 +359,8 @@ export default {
           checkComponent(node.name, propValue);
       },
       MemberExpression(node) {
-        if (node.computed || node.property.type !== 'Identifier') return;
+        const name = memberName(node);
+        if (name === undefined) return;
         // A member that is rendered is checked as a component, above.
         const { parent } = node;
         if (
@@ -339,7 +372,7 @@ export default {
         // envui.Input, and require('@envsemble/envui').Input or (await import('…')).Input.
         const local = node.object.type === 'Identifier' ? node.object.name : undefined;
         const source = local ? namespaceOf(node.object) : moduleSource(node.object);
-        if (source) checkMember(node, source, local ?? 'envui', node.property.name, undefined);
+        if (source) checkMember(node, source, local ?? 'envui', name, undefined);
       },
       TSQualifiedName(node) {
         const source = node.left.type === 'Identifier' ? namespaceOf(node.left) : undefined;
