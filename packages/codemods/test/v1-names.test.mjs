@@ -15,6 +15,8 @@ const removedFrom = (line, names) =>
 
 const ambiguous = (line, action) =>
   `line ${line}: ${action}, so it stays as it is: useTheme() is { theme, contrast } in 1.0; where it is read as the color scheme, read its .theme.`;
+const unfollowed = (line, how) =>
+  `line ${line}: loads ${library} with ${how}, which the codemod does not follow: change the 0.x names used through it by hand, and read .theme from a useTheme() call read as the color scheme.`;
 
 const expectError = (line, comment) =>
   `line ${line}: dropped // @ts-expect-error -- ${comment}, which expected an error from the 0.x names: TypeScript fails on a @ts-expect-error with no error below it.`;
@@ -94,6 +96,12 @@ const reports = {
     ambiguous(13, 'passes useTheme() as the value of <SchemeContext>'),
     ambiguous(18, 'passes t, which holds useTheme(), as the value of <SchemeContext.Provider>'),
     ambiguous(23, 'returns t, which holds useTheme()'),
+  ],
+  'use-theme-require.ts': [unfollowed(1, 'require()')],
+  'use-theme-unfollowed.tsx': [
+    'line 4: destructures useTheme from ui, whose call is { theme, contrast } in 1.0 rather than the color scheme: read .theme by hand where a call is read as the color scheme.',
+    unfollowed(9, 'require()'),
+    unfollowed(14, 'import()'),
   ],
   'toast-manual.tsx': [
     ...removedFrom(2, ['ToastProps']),

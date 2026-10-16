@@ -21,6 +21,9 @@ const memberKinds = new Set(['object', 'jsx-object', 'qualified', 'typeof-qualif
 /** Reference kinds written as the left side of a qualified name, `Menu.ItemProps`. */
 const qualifiedKinds = new Set(['qualified', 'typeof-qualified']);
 
+/** The entry point of `useTheme`, whose call returns `{ theme, contrast }` in 1.0. */
+const library = '@envsemble/envui';
+
 /**
  * Whether the qualified name a path is the left side of is the name of a `typeof` query, as in
  * `typeof ui.Input` or `typeof Menu.Item.displayName`, whose first name is a value.
@@ -214,8 +217,25 @@ export default function transform(file, api, options = {}) {
     .find(j.ExportNamedDeclaration)
     .filter((path) => Boolean(path.node.source) && entries.has(path.node.source.value))
     .paths();
-  if (importDeclarations.length === 0 && reExports.length === 0 && importEquals.length === 0)
+  // `require('@envsemble/envui')` and `import('@envsemble/envui')`, which are not followed.
+  root.find(j.CallExpression).forEach(({ node }) => {
+    const how =
+      node.callee.type === 'Import'
+        ? 'import()'
+        : node.callee.type === 'Identifier' && node.callee.name === 'require'
+          ? 'require()'
+          : undefined;
+    const source = literalValue(node.arguments[0]);
+    if (how && entries.has(source))
+      warn(
+        node,
+        `loads ${source} with ${how}, which the codemod does not follow: change the 0.x names used through it by hand, and read .theme from a useTheme() call read as the color scheme.`,
+      );
+  });
+  if (importDeclarations.length === 0 && reExports.length === 0 && importEquals.length === 0) {
+    reporter.flush();
     return undefined;
+  }
   /** The specifiers as written, before any is replaced. */
   const originalSpecifiers = new Set(
     [...importDeclarations, ...reExports].flatMap(({ node }) => node.specifiers ?? []),
@@ -714,6 +734,11 @@ export default function transform(file, api, options = {}) {
                   ? `which ${entry.name} no longer exports: ${removed.use}`
                   : undefined;
             if (change) warn(property, `destructures ${key} from ${local}, ${change}`);
+            else if (key === 'useTheme' && entry.name === library)
+              warn(
+                property,
+                `destructures useTheme from ${local}, whose call is { theme, contrast } in 1.0 rather than the color scheme: read .theme by hand where a call is read as the color scheme.`,
+              );
           });
         }
         continue;
@@ -872,7 +897,6 @@ export default function transform(file, api, options = {}) {
   // useTheme() returns `{ theme, contrast }` in 1.0 rather than the color scheme.
   // `<Theme theme={useTheme()}>`, 0.x's way to re-theme a portal, becomes `<Theme {...useTheme()}>`,
   // which keeps the contrast too; every other bare call reads `useTheme().theme`, 0.x's value.
-  const library = '@envsemble/envui';
   const localsOf = (name) =>
     specifiers
       .filter((info) => info.entry.name === library && info.imported === name && !info.isType)

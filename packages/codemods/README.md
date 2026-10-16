@@ -43,7 +43,7 @@ Paths default to the current folder. The CLI runs jscodeshift's runner with the 
 ## Recommended order
 
 1. Commit first: the codemods write files in place.
-2. Run `npx envui-codemods v1-names src`.
+2. Run `npx envui-codemods v1-names src`. The codemods are meant for 0.x code, run once. Some 1.0 code reads as 0.x to them, such as a `useTheme()` call whose result nothing reads as `{ theme, contrast }`, so a run over code already written for 1.0 can change it.
 3. Run `npx envui-codemods v1-classes src` over the scripts and style sheets.
 4. Install `@envsemble/envui` 1.0, run your formatter, then type-check. Fix each reported line; removed exports stay in the code on purpose, so the type checker points at them too.
 
@@ -58,7 +58,7 @@ Rewrites imports from `@envsemble/envui` and `@envsemble/envui/theme-bootstrap`,
 - **DirectionLink.** `<DirectionLink direction="previous">` becomes `<Pager.Previous>` and `direction="next"` becomes `<Pager.Next>`, without the prop.
 - **Re-exports.** `export { Input } from '@envsemble/envui'` becomes `export { TextField } from '@envsemble/envui'`.
 - **defaultThemeStorageKey.** References become the string `'env-theme'` and the import goes.
-- **useTheme.** `useTheme()` returns `{ theme, contrast }` in 1.0. `<Theme theme={useTheme()}>`, which re-themes a portal, becomes `<Theme {...useTheme()}>`, so the portal keeps the contrast too; a `contrast` written on the element still wins. Every other call becomes `useTheme().theme`, the color scheme 0.x's call returned, also through an alias or `ui.useTheme()`: `const theme = useTheme()`, `useTheme() === 'dark'`, `` `t-${useTheme()}` `` and `theme={dark ? 'dark' : useTheme()}`. A call already read as 1.0's object stays as it is: `useTheme().theme`, a spread or destructured call, a variable it initializes that is read as `.theme` or `.contrast`, spread or destructured, and a comparison with `null` or `undefined`.
+- **useTheme.** `useTheme()` returns `{ theme, contrast }` in 1.0. The rewrite covers calls of `useTheme` imported by name, also under an alias, and `ui.useTheme()` through a namespace import or `import ui = require(…)`. `<Theme theme={useTheme()}>`, which re-themes a portal, becomes `<Theme {...useTheme()}>`, so the portal keeps the contrast too; a `contrast` written on the element still wins. Other calls become `useTheme().theme`, the color scheme 0.x's call returned: `const theme = useTheme()`, `useTheme() === 'dark'`, `` `t-${useTheme()}` ``, `theme={dark ? 'dark' : useTheme()}` and `useTheme() as string`. A call already read as 1.0's object stays as it is: `useTheme().theme`, a spread or destructured call, also through a conditional as in `const { theme } = own ? useTheme() : fallback`, a variable it initializes that is read as `.theme` or `.contrast`, spread or destructured, and a comparison with `null` or `undefined`. Parentheses, `as`, `satisfies` and `!` around the call or the variable count as the call itself, and the variable is the one declared in the scope that holds the declaration, as for the renames. A call whose value leaves the file's sight, returned or passed as a value, stays and is reported, as listed below.
 
 It reports instead of changing:
 
@@ -66,7 +66,9 @@ It reports instead of changing:
 - `DirectionLink` with a dynamic, spread or missing `direction`, or used outside JSX; its import stays;
 - re-exports and `export { … }` of namespace parts, `DirectionLink` and removed exports, which cannot keep their old name;
 - a namespace import read with a key computed at run time, such as `ui[name]`;
-- names destructured from a namespace import, such as `const { MenuItem } = ui`, `({ MenuItem } = ui)` or `const { ['MenuItem']: Item } = ui`. `const { Menu, Toast } = ui` names 1.0 namespaces too, and is reported only where `Menu` or `Toast` is then used as the 0.x component rather than through its members, as in `<Menu.Root>`;
+- names destructured from a namespace import, such as `const { MenuItem } = ui`, `({ MenuItem } = ui)`, `const { ['MenuItem']: Item } = ui` or `const { useTheme } = ui`, whose calls stay as they are. `const { Menu, Toast } = ui` names 1.0 namespaces too, and is reported only where `Menu` or `Toast` is then used as the 0.x component rather than through its members, as in `<Menu.Root>`;
+- a `useTheme()` call that is returned, as by a hook that wraps it, also as an arrow function's body, or passed as a component's `value`, as to a context provider such as `<ThemeContext value={useTheme()}>`, directly or through a variable it initializes: whether the code that reads it expects 0.x's scheme or 1.0's object is out of the file's sight, so it stays as it is;
+- each `require()` and dynamic `import()` of an entry point, which the codemod does not follow, also in a file without an `import`;
 - parts destructured from a namespace that was a 0.x component, such as `const { Root, Item } = Menu` or `const { Cell } = ui.Table`, which are 1.0 code and stay as they are rather than becoming `Menu.Root`.
 
 ## v1-classes
@@ -90,6 +92,6 @@ Both transforms keep a file's line endings, CRLF or LF, and its byte order mark;
 - Comments stay with what they describe. A comment on a renamed specifier stays on it, and the comments on a specifier that is removed move to the namespace specifier that takes its place, as `Menu` takes the place of `MenuItem`, or a value import of `Menu` takes that of `import type { Menu }`; an import whose namespace specifier gets a line comment is printed with a name on each line, so the comment stays above the name it describes; where none does, as when `Menu` was already imported, they are dropped and reported with their text. When an import is removed because its names moved into another import, a directive about its line (`@ts-ignore`, `eslint-disable-next-line`, `prettier-ignore` and the like) moves with the names to that import; when nothing replaces the import, as for `defaultThemeStorageKey`, the directive is dropped and reported. Other comments above a removed import, such as a file header, stay in place on the next statement.
 - A `@ts-expect-error` above an import, re-export or specifier whose names change is dropped and reported rather than kept or moved: it expected an error from the 0.x names, and TypeScript fails on a `@ts-expect-error` that has no error below it (TS2578). Where the import also lists names that stay as they are, the error may have been theirs, and the report names them, so the comment can be put back if they still have it.
 - Class names built at run time, class strings kept in variables outside the contexts above, CSS-in-JS templates and HTML files are not changed.
-- `require()` outside `import ui = require(…)`, dynamic `import()`, module mocks and `declare module '@envsemble/envui'` augmentations are not changed.
+- `require()` outside `import ui = require(…)`, dynamic `import()`, module mocks and `declare module '@envsemble/envui'` augmentations are not changed; the run reports each `require()` and `import()` of an entry point.
 - In code that already uses 1.0, a bare use of a namespace that was a 0.x component, such as `Object.keys(Menu)`, would be read as the old component.
 - To run a transform with jscodeshift directly, pass `--no-babel`: the transforms are ES modules, which jscodeshift's Babel register would break.
