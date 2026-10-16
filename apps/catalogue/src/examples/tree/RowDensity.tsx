@@ -15,7 +15,7 @@ const mailboxes: Mailbox[] = [
     depth: 0,
     label: 'Inbox',
     icon: <Inbox />,
-    trailing: <CounterBadge value={12} aria-label="12 unread" />,
+    end: <CounterBadge value={12} aria-label="12 unread" />,
   },
   { id: 'clients', depth: 0, label: 'Clients', icon: <Folder />, expandable: true },
   {
@@ -24,8 +24,8 @@ const mailboxes: Mailbox[] = [
     depth: 1,
     label: 'Northwind',
     icon: <Folder />,
-    detail: 'Shared',
-    trailing: <CounterBadge value={3} aria-label="3 unread" />,
+    description: 'Shared',
+    end: <CounterBadge value={3} aria-label="3 unread" />,
   },
   { id: 'clients/example', parent: 'clients', depth: 1, label: 'Example Inc.', icon: <Folder /> },
   { id: 'sent', depth: 0, label: 'Sent', icon: <Send /> },
@@ -34,7 +34,7 @@ const mailboxes: Mailbox[] = [
     depth: 0,
     label: 'Archive',
     icon: <Archive />,
-    detail: 'Offline',
+    description: 'Offline',
     disabled: true,
   },
 ];
@@ -57,8 +57,8 @@ export default function RowDensity() {
         aria-label="Mailboxes"
         density="md"
         items={rows}
-        selectedId={selected}
-        onOpen={(row) => (row.expandable ? setClientsOpen(!row.expanded) : setSelected(row.id))}
+        value={selected}
+        onAction={(row) => (row.expandable ? setClientsOpen(!row.expanded) : setSelected(row.id))}
         onExpandedChange={(_, open) => setClientsOpen(open)}
       />
     </div>

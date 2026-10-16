@@ -107,7 +107,7 @@ test('tree rows are as tall as their density in each scale, and as a compact men
         Object.fromEntries(
           trees.map((tree) => [
             tree.getAttribute('data-density'),
-            tree.querySelector('.env-tree-row')!.getBoundingClientRect().height,
+            tree.querySelector('.env-tree-item')!.getBoundingClientRect().height,
           ]),
         ),
       );

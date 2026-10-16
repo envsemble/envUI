@@ -32,7 +32,7 @@
   position: relative;
   min-inline-size: 0;
 }
-.env-tree-row {
+.env-tree-item {
   box-sizing: border-box;
   position: absolute;
   inset-block-start: 0;
@@ -49,32 +49,32 @@
   white-space: nowrap;
   transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
-.env-tree-row:hover {
+.env-tree-item:hover {
   background: var(--env-color-bg-neutral-subtle-hover);
 }
-.env-tree-row:active {
+.env-tree-item:active {
   background: var(--env-color-bg-neutral-subtle-pressed);
 }
-.env-tree-row[aria-selected='true'] {
+.env-tree-item[aria-selected='true'] {
   background: var(--env-color-bg-selected);
   color: var(--env-color-fg-on-selected);
 }
-.env-tree-row[aria-selected='true']:hover {
+.env-tree-item[aria-selected='true']:hover {
   background: var(--env-color-bg-selected-hover);
 }
-.env-tree-row[aria-selected='true']:active {
+.env-tree-item[aria-selected='true']:active {
   background: var(--env-color-bg-selected-pressed);
 }
 /* The active row shows the focus ring only while the tree has keyboard focus. */
-.env-tree[data-focus-visible]:focus .env-tree-row[data-active] {
+.env-tree[data-focus-visible]:focus .env-tree-item[data-active] {
   outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: -0.125rem;
 }
-.env-tree-row[aria-disabled='true'] {
+.env-tree-item[aria-disabled='true'] {
   opacity: var(--env-state-disabled-opacity);
   cursor: default;
 }
-.env-tree-row[aria-disabled='true']:is(:hover, :active) {
+.env-tree-item[aria-disabled='true']:is(:hover, :active) {
   background: transparent;
 }
 .env-tree-chevron {
@@ -104,7 +104,7 @@
   block-size: var(--env-tree-icon-size);
   color: var(--env-color-fg-muted);
 }
-.env-tree-row[aria-selected='true'] :is(.env-tree-icon, .env-tree-chevron) {
+.env-tree-item[aria-selected='true'] :is(.env-tree-icon, .env-tree-chevron) {
   color: inherit;
 }
 .env-tree-label {
@@ -114,7 +114,7 @@
   text-overflow: ellipsis;
 }
 /* The detail gives way to the label when space runs out. */
-.env-tree-detail {
+.env-tree-description {
   min-inline-size: 0;
   flex: 0 1000 auto;
   overflow: hidden;
@@ -122,7 +122,7 @@
   color: var(--env-color-fg-muted);
   font: var(--env-type-body-small);
 }
-.env-tree-trailing {
+.env-tree-end {
   flex: 0 0 auto;
   margin-inline-start: auto;
   display: inline-flex;
@@ -139,7 +139,7 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .env-tree-row,
+  .env-tree-item,
   .env-tree-chevron .env-icon {
     transition: none;
   }
@@ -148,15 +148,15 @@
 /* Forced colors: the system paints no fills or shadows, so the selected row takes the system’s
    selection colors. */
 @media (forced-colors: active) {
-  .env-tree-row[aria-selected='true'] {
+  .env-tree-item[aria-selected='true'] {
     forced-color-adjust: none;
     background-color: Highlight;
     color: HighlightText;
   }
-  .env-tree-row[aria-selected='true'] :where(*) {
+  .env-tree-item[aria-selected='true'] :where(*) {
     color: inherit;
   }
-  .env-tree[data-focus-visible]:focus .env-tree-row[aria-selected='true'][data-active] {
+  .env-tree[data-focus-visible]:focus .env-tree-item[aria-selected='true'][data-active] {
     outline-color: HighlightText;
   }
 }

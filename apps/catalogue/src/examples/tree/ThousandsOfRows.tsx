@@ -55,8 +55,8 @@ export default function ThousandsOfRows() {
         <Tree
           aria-label="Build logs"
           items={rows}
-          selectedId={selected}
-          onOpen={(row) =>
+          value={selected}
+          onAction={(row) =>
             row.expandable ? setFolder(row.id, !row.expanded) : setSelected(row.id)
           }
           onExpandedChange={(row, open) => setFolder(row.id, open)}

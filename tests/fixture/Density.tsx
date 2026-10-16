@@ -282,7 +282,7 @@ function treeRows(): TreeItem[] {
       expandable: true,
       expanded: false,
     },
-    { id: 'readme', depth: 0, label: 'README.md', icon: <Description />, detail: 'Modified' },
+    { id: 'readme', depth: 0, label: 'README.md', icon: <Description />, description: 'Modified' },
   ];
 }
 
@@ -301,9 +301,9 @@ function FileTree({
     <Tree
       aria-label={label}
       items={rows}
-      selectedId={selectedId}
+      value={selectedId}
       density={density}
-      onOpen={() => {}}
+      onAction={() => {}}
       onExpandedChange={() => {}}
     />
   );
