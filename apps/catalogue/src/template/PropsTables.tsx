@@ -1,4 +1,4 @@
-import { Stack, Table, Text } from '@envsemble/envui';
+import { Link, Stack, Table, Text } from '@envsemble/envui';
 import { Code } from '@envsemble/envui/content';
 import type { ExportEntry, PropEntry } from '../DocumentationTypes';
 import type { Reference } from '../Reference';
@@ -80,10 +80,20 @@ function ExportProps({ name, entry }: { name: string; entry: ExportEntry }) {
 
 /** The Props view: every component and part the page documents, generated from their types. */
 export function PropsTables({ reference }: { reference: Reference }) {
+  const sources = [...new Set(Object.values(reference.props ?? {}).map(({ source }) => source))];
   return (
     <Stack gap={7}>
       <Text tone="muted">
-        Generated from the TypeScript declarations; the packaged Markdown carries the same tables.
+        Generated from the TypeScript source,{' '}
+        {sources.map((source, index) => (
+          <span key={source}>
+            {index > 0 && ', '}
+            <Link href={`https://github.com/envsemble/envUI/blob/main/${source}`}>
+              {source.replace('packages/ui/src/', '')}
+            </Link>
+          </span>
+        ))}
+        ; the packaged Markdown carries the same tables.
       </Text>
       {Object.entries(reference.props ?? {}).map(([name, entry]) => (
         <ExportProps key={name} name={name} entry={entry} />

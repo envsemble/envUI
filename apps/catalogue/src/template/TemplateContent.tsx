@@ -24,10 +24,9 @@ function pageOf(component: string) {
   return referencePages.find((page) => page.reference.metadata?.components.includes(component));
 }
 
-/** Status, first release and source under the title of a page on the template. */
+/** Status and first release under the title of a page on the template. */
 export function TemplateMeta({ page }: { page: ReferencePage }) {
   const metadata = page.reference.metadata!;
-  const source = Object.values(page.reference.props ?? {})[0]?.source;
   return (
     <div className="docs-page-meta">
       <Badge tone={statusTones[metadata.status]}>
@@ -36,9 +35,6 @@ export function TemplateMeta({ page }: { page: ReferencePage }) {
       <Text as="span" variant="caption">
         Since {metadata.since}
       </Text>
-      {source && (
-        <Link href={`https://github.com/envsemble/envUI/blob/main/${source}`}>Source</Link>
-      )}
     </div>
   );
 }
