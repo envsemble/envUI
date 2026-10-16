@@ -31,6 +31,9 @@
   "engines": {
     "node": ">=24"
   },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
   "dependencies": {
     "jscodeshift": "17.4.0"
   },
