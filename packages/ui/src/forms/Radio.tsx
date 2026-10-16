@@ -1,7 +1,13 @@
 'use client';
 
-import { createContext, forwardRef, useContext, useEffect, useId, useRef, useState } from 'react';
-import type { FieldsetHTMLAttributes, InputHTMLAttributes, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useId, useRef, useState } from 'react';
+import type {
+  CSSProperties,
+  FieldsetHTMLAttributes,
+  InputHTMLAttributes,
+  ReactNode,
+  Ref,
+} from 'react';
 import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/setRef.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
@@ -13,13 +19,15 @@ interface RadioContextValue {
   form: string | undefined;
   required: boolean;
   disabled: boolean;
-  variant: 'inline' | 'rows';
+  orientation: 'horizontal' | 'vertical';
   select: (value: string) => void;
 }
 
 const RadioContext = createContext<RadioContextValue | null>(null);
 
 export interface RadioGroupProps extends FieldsetHTMLAttributes<HTMLFieldSetElement> {
+  /** The group's fieldset. */
+  ref?: Ref<HTMLFieldSetElement>;
   /**
    * The group's visible name, such as Visibility, as the fieldset's legend above the options. It
    * names the group for assistive technology; without it, use aria-label or aria-labelledby.
@@ -42,11 +50,12 @@ export interface RadioGroupProps extends FieldsetHTMLAttributes<HTMLFieldSetElem
   /** Require a choice before the form submits, through native constraint validation. */
   required?: boolean;
   /**
-   * The group's look: inline, radios before their labels side by side that wrap onto more lines;
-   * or rows, connected selectable rows that fill the width, with the label and detail at the start
-   * and the radio at the end, for options that need explaining.
+   * How the options are laid out: horizontal, radios before their labels side by side that wrap
+   * onto more lines; or vertical, connected selectable rows that fill the width, with the label and
+   * description at the start and the radio at the end, for options that need explaining.
+   * @default 'horizontal'
    */
-  variant?: 'inline' | 'rows';
+  orientation?: 'horizontal' | 'vertical';
   /** Disable every option of the group; a disabled group can't be focused or changed. */
   disabled?: boolean;
 }
@@ -55,23 +64,20 @@ export interface RadioGroupProps extends FieldsetHTMLAttributes<HTMLFieldSetElem
  * A set of options to choose exactly one from: a native fieldset whose legend names the group, with
  * Radio options inline or as selectable rows.
  */
-
-export const RadioGroup = forwardRef<HTMLFieldSetElement, RadioGroupProps>(function RadioGroup(
-  {
-    label,
-    value,
-    defaultValue,
-    onValueChange,
-    name: suppliedName,
-    required = false,
-    disabled = false,
-    variant = 'inline',
-    className,
-    children,
-    ...props
-  },
+export function RadioGroup({
   ref,
-) {
+  label,
+  value,
+  defaultValue,
+  onValueChange,
+  name: suppliedName,
+  required = false,
+  disabled = false,
+  orientation = 'horizontal',
+  className,
+  children,
+  ...props
+}: RadioGroupProps) {
   const id = useId();
   const name = suppliedName ?? id;
   const fieldsetRef = useRef<HTMLFieldSetElement>(null);
@@ -105,7 +111,7 @@ export const RadioGroup = forwardRef<HTMLFieldSetElement, RadioGroupProps>(funct
         form: props.form,
         required,
         disabled,
-        variant,
+        orientation,
         select,
       }}
     >
@@ -116,10 +122,10 @@ export const RadioGroup = forwardRef<HTMLFieldSetElement, RadioGroupProps>(funct
           setRef(ref, node);
         }}
         disabled={disabled}
+        data-orientation={orientation}
         className={classNames(
-          'env-radio-options',
-          variant === 'rows' ? 'env-connected-rows' : undefined,
-          variant === 'inline' ? 'env-radio-inline' : undefined,
+          'env-radio-group',
+          orientation === 'vertical' ? 'env-connected-rows' : undefined,
           className,
         )}
       >
@@ -128,13 +134,22 @@ export const RadioGroup = forwardRef<HTMLFieldSetElement, RadioGroupProps>(funct
       </fieldset>
     </RadioContext.Provider>
   );
-});
+}
 
 export interface RadioProps
   extends Omit<
     InputHTMLAttributes<HTMLInputElement>,
     'type' | 'name' | 'checked' | 'defaultChecked' | 'value'
   > {
+  /**
+   * The native radio input, so that a form library can register it and focus it; the other native
+   * props reach it too.
+   */
+  ref?: Ref<HTMLInputElement>;
+  /** The option's class, on its root element, the label around the radio and the text. */
+  className?: string;
+  /** Styles of the root element. */
+  style?: CSSProperties;
   /** The value the group reports and a form submits when this option is chosen. */
   value: string;
   /** The option's visible name, such as Private; pressing it chooses the option. */
@@ -143,15 +158,23 @@ export interface RadioProps
    * A short, muted line under the label that helps people choose, such as Only the people you
    * invite. It is part of the option's label, so it is read with its name.
    */
-  detail?: ReactNode;
+  description?: ReactNode;
 }
 
-/** One option of a RadioGroup: a native radio input with its label, and an optional detail. */
-
-export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
-  { value, label, detail, className, onChange, disabled, required, form, ...props },
+/** One option of a RadioGroup: a native radio input with its label, and an optional description. */
+export function Radio({
   ref,
-) {
+  value,
+  label,
+  description,
+  className,
+  style,
+  onChange,
+  disabled,
+  required,
+  form,
+  ...props
+}: RadioProps) {
   const group = useContext(RadioContext);
   const inputRef = useRef<HTMLInputElement>(null);
   if (!group) throw new Error('Radio must be rendered inside RadioGroup.');
@@ -173,7 +196,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
         setRef(ref, node);
       }}
       type="radio"
-      className={classNames('env-radio-control', className)}
+      className="env-radio-input"
       value={value}
       name={group.name}
       form={form ?? group.form}
@@ -189,18 +212,18 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
   const labelContent = (
     <span>
       {label}
-      {detail != null && <small className="env-radio-detail">{detail}</small>}
+      {description != null && <small className="env-radio-description">{description}</small>}
     </span>
   );
-  return group.variant === 'rows' ? (
-    <label className="env-radio-option env-connected-row">
-      {labelContent}
-      {radioInput}
-    </label>
-  ) : (
-    <label className="env-choice-control">
-      {radioInput}
-      {labelContent}
+  const vertical = group.orientation === 'vertical';
+  return (
+    <label
+      className={classNames('env-radio', vertical ? 'env-connected-row' : undefined, className)}
+      style={style}
+      data-orientation={group.orientation}
+    >
+      {vertical ? labelContent : radioInput}
+      {vertical ? radioInput : labelContent}
     </label>
   );
-});
+}

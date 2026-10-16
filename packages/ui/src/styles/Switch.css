@@ -1,5 +1,33 @@
+/* Switch: a native checkbox with the switch role, drawn as a track and a thumb, inside its label. */
+.env-switch {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--env-space-3);
+  font: var(--env-type-body-small);
+  font-size: var(--env-font-size-body-small);
+  color: var(--env-color-fg-default);
+  cursor: pointer;
+}
+.env-switch > span {
+  min-inline-size: 0;
+}
+.env-switch:has(input:disabled) {
+  cursor: default;
+}
+.env-switch:has(input:disabled) > * {
+  opacity: var(--env-state-disabled-opacity);
+}
+@media (pointer: coarse) {
+  .env-switch {
+    min-height: var(--env-control-height-touch);
+  }
+}
+
 /* Switch track, thumb, and label have independent palette roles. */
-.env-switch-control {
+.env-switch-input {
   appearance: none;
   box-sizing: border-box;
   flex: 0 0 auto;
@@ -15,7 +43,7 @@
   cursor: inherit;
   transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
-.env-switch-control::before {
+.env-switch-input::before {
   content: '';
   display: block;
   width: 1rem;
@@ -24,74 +52,77 @@
   background: var(--env-color-fg-control);
   transition: transform var(--env-motion-duration-fast) var(--env-motion-ease);
 }
-.env-switch-control:checked {
+.env-switch-input:checked {
   background: var(--env-color-bg-brand-emphasis);
   box-shadow: none;
 }
-.env-switch-control:checked::before {
+.env-switch-input:checked::before {
   transform: translateX(1rem);
   background: var(--env-color-fg-on-emphasis);
 }
 /* In right-to-left text the thumb starts at the right, so it travels its own width to the left. */
-.env-switch-control:checked:dir(rtl)::before {
+.env-switch-input:checked:dir(rtl)::before {
   transform: translateX(-100%);
 }
-.env-switch-control:hover:not(:disabled) {
+.env-switch-input:hover:not(:disabled) {
   background: var(--env-color-bg-neutral-muted-hover);
 }
-.env-switch-control:active:not(:disabled) {
+.env-switch-input:active:not(:disabled) {
   background: var(--env-color-bg-neutral-muted-pressed);
 }
-.env-switch-control:checked:hover:not(:disabled) {
+.env-switch-input:checked:hover:not(:disabled) {
   background: var(--env-color-bg-brand-emphasis-hover);
 }
-.env-switch-control:checked:active:not(:disabled) {
+.env-switch-input:checked:active:not(:disabled) {
   background: var(--env-color-bg-brand-emphasis-pressed);
 }
-.env-switch-control:focus-visible {
+.env-switch-input:focus-visible {
   outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.125rem;
 }
 @media (prefers-reduced-motion: reduce) {
-  .env-switch-control,
-  .env-switch-control::before {
+  .env-switch-input,
+  .env-switch-input::before {
     transition: none;
   }
 }
 @media (prefers-reduced-motion: no-preference) {
-  .env-switch-control {
+  .env-switch-input {
     transition-property: background-color, color, border-color, transform;
     transition-duration: var(--env-motion-duration-fast);
     transition-timing-function: var(--env-motion-ease);
   }
+  .env-switch:active:not(:has(input:disabled)) .env-switch-input {
+    transform: scale(0.9);
+  }
 }
 @media (forced-colors: active) {
-  .env-switch-control {
+  .env-switch-input {
     outline: 1px solid CanvasText;
     outline-offset: -1px;
   }
-  .env-switch-control::before {
+  .env-switch-input::before {
     background-color: CanvasText;
   }
-  .env-switch-control:checked {
+  .env-switch-input:checked {
     background-color: Highlight;
     outline-color: Highlight;
   }
-  .env-switch-control:checked::before {
+  .env-switch-input:checked::before {
     background-color: HighlightText;
   }
-  .env-switch-control:disabled {
+  .env-switch-input:disabled {
     outline-color: GrayText;
   }
-  .env-switch-control:disabled::before {
+  .env-switch-input:disabled::before {
     background-color: GrayText;
   }
-  .env-switch-control:checked:disabled {
+  .env-switch-input:checked:disabled {
     background-color: GrayText;
     outline-color: GrayText;
   }
   /* The knob of an unavailable switch that is on stays apart from its gray track. */
-  .env-switch-control:checked:disabled::before {
+  .env-switch-input:checked:disabled::before {
     background-color: Canvas;
   }
 }

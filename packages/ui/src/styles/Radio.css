@@ -1,9 +1,11 @@
+/* RadioGroup: a fieldset of Radio options, side by side (horizontal) or as connected selectable rows
+   (vertical). A Radio is its native input inside its label. */
 @media (pointer: coarse) {
-  .env-radio-option {
+  .env-radio {
     min-height: var(--env-control-height-touch);
   }
 }
-.env-radio-options {
+.env-radio-group {
   overflow-wrap: anywhere;
   display: grid;
   gap: 0.125rem;
@@ -12,12 +14,12 @@
   padding: 0;
   border: 0;
 }
-.env-radio-options legend {
+.env-radio-group legend {
   max-inline-size: 100%;
   margin-bottom: var(--env-space-4);
   padding: 0;
 }
-.env-radio-option {
+.env-radio[data-orientation='vertical'] {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -26,24 +28,25 @@
   padding: var(--env-space-3) var(--env-row-padding-inline);
   background: var(--env-color-bg-muted);
   font: var(--env-type-body-small);
+  font-size: var(--env-font-size-body-small);
   color: var(--env-color-fg-default);
   cursor: pointer;
 }
-.env-radio-option > span {
+.env-radio > span {
   min-inline-size: 0;
 }
-.env-radio-option:has(input:checked),
-.env-radio-option:hover:not(:has(input:disabled)) {
+.env-radio[data-orientation='vertical']:has(input:checked),
+.env-radio[data-orientation='vertical']:hover:not(:has(input:disabled)) {
   background: var(--env-color-bg-muted-hover);
 }
-.env-radio-option:active:not(:has(input:disabled)) {
+.env-radio[data-orientation='vertical']:active:not(:has(input:disabled)) {
   background: var(--env-color-bg-muted-pressed);
 }
-.env-radio-option:has(input:focus-visible) {
+.env-radio[data-orientation='vertical']:has(input:focus-visible) {
   outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: -0.125rem;
 }
-.env-radio-control {
+.env-radio-input {
   width: 1rem;
   height: 1rem;
   flex: 0 0 auto;
@@ -51,30 +54,49 @@
   accent-color: var(--env-color-bg-brand-emphasis);
   cursor: inherit;
 }
-.env-radio-control:hover:not(:disabled) {
+.env-radio-input:hover:not(:disabled) {
   accent-color: var(--env-color-bg-brand-emphasis-hover);
 }
-.env-radio-control:active:not(:disabled) {
+.env-radio-input:active:not(:disabled) {
   accent-color: var(--env-color-bg-brand-emphasis-pressed);
 }
-.env-radio-option:has(input:disabled) {
+/* A radio in its label, side by side with the group's others. */
+.env-radio[data-orientation='horizontal'] {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--env-space-3);
+  font: var(--env-type-body-small);
+  font-size: var(--env-font-size-body-small);
+  color: var(--env-color-fg-default);
+  cursor: pointer;
+}
+/* Keyboard focus rings the radio itself; a row rings the whole row. */
+/* The ring's width and offset are hairlines, which don't scale with the text. */
+.env-radio[data-orientation='horizontal'] > .env-radio-input:focus-visible {
+  outline: 2px solid var(--env-color-border-focus);
+  outline-offset: 2px;
+}
+.env-radio:has(input:disabled) {
   cursor: default;
 }
 /* A disabled control fades with its label, at the opacity of every disabled control. The row of a
    row radio keeps its surface, so the group's shape stays whole. */
-.env-radio-option:has(input:disabled) > * {
+.env-radio:has(input:disabled) > * {
   opacity: var(--env-state-disabled-opacity);
 }
 
-.env-radio-inline {
+.env-radio-group[data-orientation='horizontal'] {
   display: flex;
   flex-wrap: wrap;
   gap: var(--env-space-4) var(--env-space-6);
 }
-.env-radio-inline legend {
+.env-radio-group[data-orientation='horizontal'] legend {
   flex-basis: 100%;
 }
-.env-radio-detail {
+.env-radio-description {
   display: block;
   color: var(--env-color-fg-muted);
   font: var(--env-type-body-small);
@@ -83,22 +105,25 @@
 /* Motion: choice controls settle while they or their label are held, a radio row a little and
    the control more; a check mark settles into size. Only without a reduced-motion preference. */
 @media (prefers-reduced-motion: no-preference) {
-  .env-radio-option,
-  .env-radio-control {
+  .env-radio[data-orientation='vertical'],
+  .env-radio-input {
     transition-property: background-color, color, border-color, transform;
     transition-duration: var(--env-motion-duration-fast);
     transition-timing-function: var(--env-motion-ease);
   }
-  .env-radio-option:active:not(:has(input:disabled)) {
+  .env-radio[data-orientation='vertical']:active:not(:has(input:disabled)) {
     transform: scale(0.99);
+  }
+  .env-radio[data-orientation='horizontal']:active:not(:has(input:disabled)) .env-radio-input {
+    transform: scale(0.9);
   }
 }
 @media (forced-colors: active) {
-  .env-radio-option:has(input:checked) {
+  .env-radio[data-orientation='vertical']:has(input:checked) {
     outline: 2px solid Highlight;
     outline-offset: -2px;
   }
-  .env-radio-option:has(input:focus-visible) {
+  .env-radio[data-orientation='vertical']:has(input:focus-visible) {
     outline: 2px solid CanvasText;
     outline-offset: 2px;
   }
