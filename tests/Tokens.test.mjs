@@ -5,7 +5,11 @@ import { join, relative } from 'node:path';
 import { after, before, test } from 'node:test';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import ts from 'typescript';
-import { overridingCustomProperties } from '../packages/ui/terrazzo.config.mjs';
+import {
+  contextTokens,
+  duplicateTokens,
+  overridingCustomProperties,
+} from '../packages/ui/terrazzo.config.mjs';
 import { buildTokens } from '../scripts/BuildTokens.mjs';
 
 // The token build's guards, on copies of the tokens built into a scratch folder, and the custom
@@ -78,6 +82,39 @@ test('a token whose path does not spell its custom property fails the build', as
     }),
     /space\.huge\+ becomes --space-huge, not --space-huge\+/,
   );
+});
+
+test('a token that two files of the base set declare fails the build', async () => {
+  await assert.rejects(
+    buildChanged('duplicate', {
+      'base/size.tokens.json': (tokens) => {
+        tokens.space = { 4: { $type: 'dimension', $value: { value: 3, unit: 'rem' } } };
+      },
+    }),
+    /space\.4 is declared in both base\/space\.tokens\.json and base\/size\.tokens\.json, which the base set merges/,
+  );
+});
+
+test('a token that two files of one modifier context declare fails the build', async () => {
+  // The dark scheme overrides the base set, which is how themes work, but only once.
+  await assert.rejects(
+    buildChanged('duplicate-context', {
+      'color-scheme/dark.tokens.json': (tokens) => {
+        tokens['contrast-high'] = {
+          color: { bg: { page: { hover: { $type: 'color', $value: '{palette.neutral.90}' } } } },
+        };
+      },
+    }),
+    /contrast-high\.color\.bg\.page\.hover is declared in both color-scheme\/dark\.tokens\.json and color-scheme\/dark-contrast-high\.tokens\.json, which the dark context of colorScheme merges/,
+  );
+});
+
+test('the modifier contexts override tokens of the base set, which is no duplicate', async () => {
+  const list = JSON.parse(await readFile(join(library, 'src/generated/tokens.json'), 'utf8'));
+  const base = new Set(list.tokens.map((token) => token.id));
+  assert.ok(contextTokens('colorScheme', 'dark').some((id) => base.has(id)));
+  assert.ok(contextTokens('contrast', 'high').some((id) => base.has(id)));
+  assert.deepEqual(duplicateTokens(), []);
 });
 
 test('a token that TokensHandwritten.css also declares for every theme fails the build', async () => {

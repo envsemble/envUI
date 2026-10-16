@@ -84,6 +84,45 @@ function declaredTokens(document, path = [], ids = []) {
   return ids;
 }
 
+/**
+ * The tokens that two sources of the same set, or of the same modifier context, declare, as
+ * messages: the resolver merges the sources in order, so the last would silently replace the
+ * first. A context overriding the base set, as the dark scheme and high contrast do, is how themes
+ * work and is not reported.
+ */
+export function duplicateTokens(tokensDirectory = defaultTokensDirectory) {
+  const resolverFile = resolverIn(tokensDirectory);
+  const resolver = JSON.parse(readFileSync(resolverFile, 'utf8'));
+  const groups = [
+    ...Object.entries(resolver.sets ?? {}).map(([name, set]) => [`the ${name} set`, set.sources]),
+    ...Object.entries(resolver.modifiers ?? {}).flatMap(([modifier, { contexts }]) =>
+      Object.entries(contexts).map(([context, sources]) => [
+        `the ${context} context of ${modifier}`,
+        sources,
+      ]),
+    ),
+  ];
+  const messages = [];
+  for (const [where, sources] of groups) {
+    const files = new Map();
+    for (const [index, source] of sources.entries()) {
+      // A source is a file, or tokens written inline; a reference to a set is that set's sources.
+      if (source.$ref?.startsWith('#')) continue;
+      const name = source.$ref?.replace(/^\.\//, '') ?? `inline source ${index + 1}`;
+      const document = source.$ref
+        ? JSON.parse(readFileSync(new URL(source.$ref, resolverFile), 'utf8'))
+        : source;
+      for (const id of declaredTokens(document)) files.set(id, [...(files.get(id) ?? []), name]);
+    }
+    for (const [id, names] of files)
+      if (names.length > 1)
+        messages.push(
+          `${id} is declared in both ${names.join(' and ')}, which ${where} merges: declare it once.`,
+        );
+  }
+  return messages;
+}
+
 /** IDs of the tokens one context of a resolver modifier overrides, read from its sources. */
 export function contextTokens(modifier, context, tokensDirectory = defaultTokensDirectory) {
   const resolverFile = resolverIn(tokensDirectory);
@@ -252,6 +291,17 @@ const uniqueNamesRule = {
 };
 
 /**
+ * `envui/declared-once`: each token is declared in one source file of its set or modifier context,
+ * as duplicateTokens() reads them from the resolver.
+ */
+const declaredOnceRule = {
+  meta: { docs: { description: 'A set or context declares each token in one file.' } },
+  create({ options, report }) {
+    for (const message of options.duplicates) report({ message });
+  },
+};
+
+/**
  * The declarations of a style sheet, each with its property, its value, the preludes of the
  * at-rules around it (outermost first) and the selector of its rule, with whitespace collapsed.
  * Comments are dropped; quoted strings and parentheses are read whole, so a `;` or a brace inside
@@ -367,6 +417,7 @@ function envui({ removedFile, handwrittenFile }) {
   return {
     name: 'envui',
     lint: () => ({
+      'envui/declared-once': declaredOnceRule,
       'envui/color-schemes': colorSchemesRule,
       'envui/high-contrast': highContrastRule,
       'envui/unique-css-names': uniqueNamesRule,
@@ -586,6 +637,7 @@ export function createConfig({
         // The value checks for every DTCG type, as Terrazzo recommends; names must be kebab-case.
         ...RECOMMENDED_CONFIG,
         'core/consistent-naming': ['error', { format: 'kebab-case' }],
+        'envui/declared-once': ['error', { duplicates: duplicateTokens(tokensDirectory) }],
         'envui/color-schemes': ['error', { dark }],
         'envui/high-contrast': [
           'error',
