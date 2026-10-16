@@ -446,6 +446,24 @@
       }
     }
   },
+  "foundations/scale/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 2
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 19
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    }
+  },
   "foundations/spacing/usage": {
     "dark": {
       "color-contrast": {

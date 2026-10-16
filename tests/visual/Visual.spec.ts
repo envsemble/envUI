@@ -84,7 +84,7 @@ const openLists: OpenList[] = [
     withTrigger: true,
   },
   {
-    name: 'select-compact',
+    name: 'select-small',
     route: 'components/select/preview',
     trigger: (page) => page.getByRole('combobox', { name: 'Zoom', exact: true }),
     key: 'Space',
