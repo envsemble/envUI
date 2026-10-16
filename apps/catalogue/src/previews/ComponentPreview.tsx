@@ -5,7 +5,7 @@ import {
   SliderPreview,
   DropZonePreview,
 } from './Forms';
-import { NavListPreview, TabsPreview, PagerPreview, PaginationPreview } from './Navigation';
+import { TabsPreview, PaginationPreview } from './Navigation';
 import { ComboboxPreview, DatePickerPreview } from './Pickers';
 import { SurfacePreview, LayoutPreview, ListPreview, CardsPreview } from './Layout';
 import {
@@ -71,12 +71,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <ColorPickerPreview />;
     case 'composer':
       return <ComposerPreview />;
-    case 'nav-list':
-      return <NavListPreview />;
     case 'tabs':
       return <TabsPreview />;
-    case 'pager':
-      return <PagerPreview />;
     case 'surface':
       return <SurfacePreview />;
     case 'stack':

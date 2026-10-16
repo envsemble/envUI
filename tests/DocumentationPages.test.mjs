@@ -44,8 +44,6 @@ const unconverted = [
   'menubar',
   'message',
   'meter',
-  'nav-list',
-  'pager',
   'pagination',
   'panel-dock',
   'popover',

@@ -151,7 +151,7 @@ test('live examples keep links in place, show their source, and matrices sit in 
   await disclosure.locator('summary').press('Enter');
   await expect(disclosure).toHaveAttribute('open', '');
   await expect(disclosure.getByRole('region', { name: 'Button interaction states' })).toBeVisible();
-  await page.goto(`${offline}#/components/nav-list/preview`);
+  await page.goto(`${offline}#/components/nav-list/guidelines`);
   const navigationDisclosure = page.locator('.docs-preview details.env-disclosure');
   await navigationDisclosure.locator('summary').click();
   await expect(
@@ -160,7 +160,8 @@ test('live examples keep links in place, show their source, and matrices sit in 
 });
 
 test('pagers center pairs and single destinations at every page width', async ({ page }) => {
-  await page.goto(`${offline}#/components/pager/preview`);
+  // The live examples and the page's own pager in its footer.
+  await page.goto(`${offline}#/components/pager/overview`);
   const groups = page.locator('.env-pager');
   await expect(groups).toHaveCount(5);
   for (const width of [1440, 390]) {
@@ -203,7 +204,7 @@ test('pagers center pairs and single destinations at every page width', async ({
       true,
     );
   }
-  const longDestinations = page.getByRole('navigation', { name: 'Long destinations example' });
+  const longDestinations = page.getByRole('navigation', { name: 'Long destinations' });
   const fragmentedWords = await longDestinations.evaluate((nav) => {
     const fragments: string[] = [];
     for (const title of nav.querySelectorAll('.env-pager-link-title')) {

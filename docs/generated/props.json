@@ -35,27 +35,27 @@
     "ActionGroup": {
       "kind": "component",
       "source": "packages/ui/src/foundations/Layout.tsx",
-      "description": "Wrapped actions use a 1 rem gap; stacked actions use 0.5 rem and fill the group.",
+      "description": "A set of actions laid out together, such as a form's Cancel and Save: a row 1 rem apart that wraps when it runs out of room, or a column 0.5 rem apart whose labelled buttons fill it. It adds layout only, no role or keyboard behaviour.",
       "props": [
         {
           "name": "stacked",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Stack the actions in a column, 0.5 rem apart, where each labelled button takes the group's width and icon-only buttons keep their size. Otherwise they sit in a row, 1 rem apart, and wrap onto more rows when they don't fit."
         },
         {
           "name": "align",
           "type": "'start' | 'center' | 'end'",
           "required": false,
           "default": "'start'",
-          "description": ""
+          "description": "Where a row of actions sits: at the start, in the center or at the end, such as at the end of a form. A stacked group fills its width instead."
         },
         {
           "name": "as",
           "type": "Element",
           "required": false,
-          "description": ""
+          "description": "The element to render, for its meaning: div by default, or footer for the actions of a card or a form, or section, article, nav, main, aside or header."
         }
       ],
       "native": [
@@ -983,7 +983,8 @@
           "name": "padding",
           "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9",
           "required": false,
-          "description": "Omit for responsive padding; 0 removes padding."
+          "default": "1.25 rem in narrow windows, growing to 1.5 rem from 50 rem wide",
+          "description": "The inset on every side, as a step of the spacing scale, from 1 (0.25 rem) to 9 (4 rem), such as 5 for 1.5 rem; 0 removes it. Without it, the inset follows the window's width."
         },
         {
           "name": "tone",
@@ -3904,19 +3905,19 @@
     "NavList.Group": {
       "kind": "component",
       "source": "packages/ui/src/navigation/NavList.tsx",
-      "description": "Related items under a small heading, inside NavList.Root.",
+      "description": "Related items under a small heading, as an item of NavList.Root with a list of its own.",
       "props": [
         {
           "name": "label",
           "type": "ReactNode",
           "required": true,
-          "description": "The group's visible heading, which also names its list."
+          "description": "The group's visible heading, such as Settings, in small muted text above its items; it also names the group's list for assistive technology."
         },
         {
           "name": "children",
           "type": "ReactNode",
           "required": true,
-          "description": "The group's NavList.Item elements."
+          "description": "The group's NavList.Item elements, each of which renders its own list item."
         }
       ],
       "native": [
@@ -3929,51 +3930,52 @@
     "NavList.Item": {
       "kind": "component",
       "source": "packages/ui/src/navigation/NavList.tsx",
-      "description": "A navigation destination: a link with href, or a button that changes the view.",
+      "description": "A navigation destination: a native link with href, through the LinkProvider's link component, or a button that changes the view. It shows an optional icon, its label and trailing content, marks the current destination with selected, and shows only its icon with iconOnly or inside a compact AppShell sidebar. Inside NavList.Root or NavList.Group it renders its own list item.",
       "props": [
         {
           "name": "size",
           "type": "'standard' | 'compact'",
           "required": false,
-          "description": ""
+          "default": "'standard'",
+          "description": "The label size: standard, 0.9375 rem, or compact, 0.875 rem, for a dense sidebar. Both keep the 2.5 rem item height and the 1 rem icon."
         },
         {
           "name": "selected",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "The item is the current destination or view: it takes the navigation selection fill and label color, fills its Material Symbol, and reports aria-current=\"page\" unless aria-current is set."
         },
         {
           "name": "disabled",
           "type": "boolean",
           "required": false,
-          "description": "A disabled button cannot be pressed; a disabled link has no destination, cannot be focused or followed, and reports aria-disabled."
+          "description": "The destination is unavailable: dimmed, and left out of the tab order. A disabled button cannot be pressed; a disabled link has no destination and reports aria-disabled. An icon-only item still shows its label on hover."
         },
         {
           "name": "icon",
           "type": "ReactNode",
           "required": false,
           "requiredWhen": "in some forms",
-          "description": "Official Material Symbols automatically follow the selected state."
+          "description": "A decorative icon before the label, such as one of envUI's Material Symbols, which shows filled while the item is selected and outlined otherwise, also inside a wrapper. Required with iconOnly."
         },
         {
           "name": "selectedIcon",
           "type": "ReactNode",
           "required": false,
-          "description": "Optional alternate content for custom icons when selected."
+          "description": "The icon shown while the item is selected, for a custom icon without a filled form; Material Symbols need none."
         },
         {
           "name": "trailing",
           "type": "ReactNode",
           "required": false,
-          "description": "End content, such as a CounterBadge; icon-only items show a small dot instead."
+          "description": "Content at the end of the item, such as a CounterBadge or a Badge; it is part of the item's accessible name. An icon-only item shows a small accent dot instead, hidden from assistive technology, so say what the content says in its aria-label."
         },
         {
           "name": "aria-label",
           "type": "string",
           "required": false,
           "requiredWhen": "in some forms",
-          "description": ""
+          "description": "The destination's name, such as Inbox, for an icon-only item; the tooltip shows it."
         },
         {
           "name": "href",
@@ -3986,7 +3988,7 @@
           "type": "boolean",
           "required": false,
           "requiredWhen": "in some forms",
-          "description": "Hide the visible label, as in a compact sidebar; a tooltip shows it on hover and focus."
+          "description": "Show only the icon, in a circle as tall as the item, as in a collapsed sidebar; a tooltip at the item's inline end shows aria-label on hover and keyboard focus. Inside a compact AppShell sidebar, items with an icon show only it without this prop."
         }
       ],
       "native": [
@@ -4000,7 +4002,7 @@
     "NavList.Root": {
       "kind": "component",
       "source": "packages/ui/src/navigation/NavList.tsx",
-      "description": "A plain list of navigation items and groups, for a sidebar or anywhere else. Name it with aria-label or aria-labelledby when the page has more than one; it adds no landmark of its own.",
+      "description": "A plain list of navigation items and groups, for a sidebar or anywhere else. It adds no landmark of its own: place it in a nav element, or in a region that is one, such as AppShell's sidebar. Name it with aria-label or aria-labelledby when the page has more than one.",
       "props": [],
       "native": [
         "ul"
@@ -4101,25 +4103,32 @@
     "Pager.Next": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Pager.tsx",
-      "description": "The destination after this one, with rel=\"next\".",
+      "description": "The destination after this one: a native link with rel=\"next\", its title under the label Up next, and an optional icon after them. It also stands alone, outside Pager.Root.",
       "props": [
         {
           "name": "href",
           "type": "string",
           "required": true,
-          "description": ""
+          "description": "The destination; the link renders through the LinkProvider's link component."
         },
         {
           "name": "children",
           "type": "ReactNode",
           "required": true,
-          "description": ""
+          "description": "The destination's title, such as the name of the next page. It shows below the direction label, wraps between words, and names the link after the label."
         },
         {
           "name": "icon",
           "type": "ReactNode",
           "required": false,
-          "description": "Optional decorative icon, placed before the previous link and after the next link."
+          "description": "A decorative icon, such as ArrowBack, before the previous destination's text, or such as ArrowForward, after the next one's; none by default."
+        },
+        {
+          "name": "rel",
+          "type": "string",
+          "required": false,
+          "default": "'prev' on Pager.Previous, 'next' on Pager.Next",
+          "description": "The link's relation to this page."
         }
       ],
       "native": [
@@ -4132,25 +4141,32 @@
     "Pager.Previous": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Pager.tsx",
-      "description": "The destination before this one, with rel=\"prev\".",
+      "description": "The destination before this one: a native link with rel=\"prev\", its title under the label Previous, and an optional icon before them. It also stands alone, outside Pager.Root.",
       "props": [
         {
           "name": "href",
           "type": "string",
           "required": true,
-          "description": ""
+          "description": "The destination; the link renders through the LinkProvider's link component."
         },
         {
           "name": "children",
           "type": "ReactNode",
           "required": true,
-          "description": ""
+          "description": "The destination's title, such as the name of the next page. It shows below the direction label, wraps between words, and names the link after the label."
         },
         {
           "name": "icon",
           "type": "ReactNode",
           "required": false,
-          "description": "Optional decorative icon, placed before the previous link and after the next link."
+          "description": "A decorative icon, such as ArrowBack, before the previous destination's text, or such as ArrowForward, after the next one's; none by default."
+        },
+        {
+          "name": "rel",
+          "type": "string",
+          "required": false,
+          "default": "'prev' on Pager.Previous, 'next' on Pager.Next",
+          "description": "The link's relation to this page."
         }
       ],
       "native": [
@@ -4163,19 +4179,32 @@
     "Pager.Root": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Pager.tsx",
-      "description": "A centered pair of previous and next destinations, from the previous and next props or from Pager.Previous and Pager.Next children; either one can be omitted.",
+      "description": "A centered pair of previous and next destinations in a navigation landmark, from the previous and next props or from Pager.Previous and Pager.Next children; either one can be left out, and without any it renders nothing.",
       "props": [
         {
           "name": "previous",
           "type": "PreviousProps | null",
           "required": false,
-          "description": "The previous destination, as the props of Pager.Previous."
+          "description": "The destination before this page, as the props of Pager.Previous; leave it out, or pass null, on the first page of a sequence."
         },
         {
           "name": "next",
           "type": "NextProps | null",
           "required": false,
-          "description": "The next destination, as the props of Pager.Next."
+          "description": "The destination after this page, as the props of Pager.Next; leave it out, or pass null, on the last page of a sequence."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Pager.Previous and Pager.Next, instead of the previous and next props; they render after the links of the props."
+        },
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "default": "'Previous and next content'",
+          "description": "The navigation landmark's name; give each pager its own where a page has several."
         }
       ],
       "native": [
@@ -4604,25 +4633,25 @@
     "Radio": {
       "kind": "component",
       "source": "packages/ui/src/forms/Radio.tsx",
-      "description": "",
+      "description": "One option of a RadioGroup: a native radio input with its label, and an optional detail.",
       "props": [
         {
           "name": "value",
           "type": "string",
           "required": true,
-          "description": ""
+          "description": "The value the group reports and a form submits when this option is chosen."
         },
         {
           "name": "label",
           "type": "ReactNode",
           "required": true,
-          "description": ""
+          "description": "The option's visible name, such as Private; pressing it chooses the option."
         },
         {
           "name": "detail",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A short, muted line under the label that helps people choose, such as Only the people you invite. It is part of the option's label, so it is read with its name."
         }
       ],
       "native": [
@@ -4635,51 +4664,58 @@
     "RadioGroup": {
       "kind": "component",
       "source": "packages/ui/src/forms/Radio.tsx",
-      "description": "",
+      "description": "A set of options to choose exactly one from: a native fieldset whose legend names the group, with Radio options inline or as selectable rows.",
       "props": [
         {
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "The group's visible name, such as Visibility, as the fieldset's legend above the options. It names the group for assistive technology; without it, use aria-label or aria-labelledby."
         },
         {
           "name": "value",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The value of the chosen option in a controlled group; update it from onValueChange."
         },
         {
           "name": "defaultValue",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The value of the option an uncontrolled group starts with; a native form reset returns to it. Without value or defaultValue, no option is chosen until people choose one."
         },
         {
           "name": "onValueChange",
           "type": "(value: string) => void",
           "required": false,
-          "description": ""
+          "description": "Receives the value of the option people choose."
         },
         {
           "name": "name",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The name every radio of the group submits its value under. Set it in a form; without it the group takes a unique generated name, so its radios still work as one group."
         },
         {
           "name": "required",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Require a choice before the form submits, through native constraint validation."
         },
         {
           "name": "variant",
           "type": "'inline' | 'rows'",
           "required": false,
           "default": "'inline'",
-          "description": ""
+          "description": "The group's look: inline, radios before their labels side by side that wrap onto more lines; or rows, connected selectable rows that fill the width, with the label and detail at the start and the radio at the end, for options that need explaining."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Disable every option of the group; a disabled group can't be focused or changed."
         }
       ],
       "native": [
@@ -4692,34 +4728,34 @@
     "Rating": {
       "kind": "component",
       "source": "packages/ui/src/content/Rating.tsx",
-      "description": "A read-only rating: stars filled to the value in half steps, in the warning tone.",
+      "description": "A read-only rating, such as a review score: stars filled to the value in half steps in the warning tone, with an optional number before them, named once for assistive technology as an image, such as \"4.5 out of 5 stars\". It shows a rating; it does not ask for one.",
       "props": [
         {
           "name": "value",
           "type": "number",
           "required": true,
-          "description": "The rating, from 0 to max; it shows in half-star steps."
+          "description": "The rating, from 0 to max, such as 4.5. It shows rounded to the nearest half star, kept within 0 and max; a value that is not a number, such as NaN, shows no stars filled."
         },
         {
           "name": "max",
           "type": "number",
           "required": false,
           "default": "5",
-          "description": "How many stars; 5 by default."
+          "description": "How many stars the scale has, as a whole number, such as 10. A fraction rounds to the nearest whole star; a value below 1 or not a number shows 5 stars."
         },
         {
           "name": "showValue",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the number before the stars, such as 4.5."
+          "description": "Shows the rating as a number before the stars, such as 4.5, in tabular digits. The number is the rounded value the stars show, and it is hidden from assistive technology, since the stars' name already says it."
         },
         {
           "name": "formatLabel",
           "type": "(value: number, max: number) => string",
           "required": false,
-          "default": "defaultLabel",
-          "description": "The accessible name; \"4.5 out of 5 stars\" by default."
+          "default": "'{value} out of {max} stars'",
+          "description": "Writes the accessible name of the stars from the shown value, rounded to a half star, and the number of stars, such as for another language."
         }
       ],
       "native": [
@@ -4738,7 +4774,7 @@
           "name": "value",
           "type": "RelativeTimeValue",
           "required": true,
-          "description": "The moment to describe."
+          "description": "The moment to describe: a Date, milliseconds since 1970 or a date string such as an ISO 8601 timestamp. An invalid moment renders nothing."
         },
         {
           "name": "now",
@@ -4751,26 +4787,28 @@
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "Show the date and time in a tooltip on hover; true by default. Inside an application's own Tooltip, that one describes the time instead."
+          "description": "Show the date and time in a tooltip on hover, such as \"Oct 14, 2026, 9:41 AM\", in the reader's time zone and the locale. Turn it off where the exact moment shows nearby. Inside an application's own Tooltip, that one describes the time instead."
         },
         {
           "name": "locale",
           "type": "string | readonly string[]",
           "required": false,
-          "description": "Language of the text, such as \"en-GB\" or \"de\"; the runtime's default by default."
+          "default": "the runtime's language: the browser's, or the server's while rendering there",
+          "description": "The language of the text, and of the date and time in RelativeTime's tooltip, as a BCP 47 tag such as \"en-GB\" or \"de\", or a list of them in order of preference."
         },
         {
           "name": "format",
           "type": "'long' | 'short' | 'narrow'",
           "required": false,
           "default": "'long'",
-          "description": "long \"3 hours ago\" (default), short \"3 hr. ago\" or narrow \"3h ago\"."
+          "description": "How long the words are, from Intl.RelativeTimeFormat: long \"3 hours ago\", short \"3 hr. ago\" or narrow \"3h ago\", in the locale's own wording."
         },
         {
           "name": "nowLabel",
           "type": "string",
           "required": false,
-          "description": "Text for a moment less than 45 seconds away: \"just now\" for past moments in English, \"now\" for coming ones, and the locale's own word for now in other languages."
+          "default": "'just now' or 'now' in English, the locale's word for now elsewhere",
+          "description": "Text for a moment less than 45 seconds away, past or coming, such as \"moments ago\". English says \"just now\" of a past moment and \"now\" of a coming one; other languages the locale's word."
         }
       ],
       "native": [
@@ -5397,33 +5435,33 @@
     "Stack": {
       "kind": "component",
       "source": "packages/ui/src/foundations/Layout.tsx",
-      "description": "Vertical composition. The parent owns spacing between its direct children.",
+      "description": "A vertical layout: its direct children in a column, a step of the spacing scale apart, so the parent owns the space between them and the children need no margins.",
       "props": [
         {
           "name": "gap",
           "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9",
           "required": false,
           "default": "4",
-          "description": ""
+          "description": "The space between the direct children, as a step of the spacing scale: 1 is 0.25 rem, 2 is 0.5 rem, 3 is 0.75 rem, 4 is 1 rem, 5 is 1.5 rem, 6 is 2 rem, 7 is 2.5 rem, 8 is 3 rem and 9 is 4 rem; 0 removes it."
         },
         {
           "name": "align",
           "type": "'start' | 'center' | 'end' | 'stretch'",
           "required": false,
           "default": "'stretch'",
-          "description": ""
+          "description": "How the children line up across the stack: stretch makes each as wide as the stack, except controls such as buttons, which keep their own width; start, center and end keep every child at its own width, at that side or in the middle."
         },
         {
           "name": "as",
           "type": "Element",
           "required": false,
-          "description": ""
+          "description": "The element to render, for its meaning: div by default, or section, article, nav, main, aside, header or footer. With render, set the element there instead."
         },
         {
           "name": "render",
           "type": "ReactElement",
           "required": false,
-          "description": "Compose layout onto another component without adding a wrapper."
+          "description": "Another element to lay out as the stack, without a wrapper, such as a Surface or a Theme: the stack's class, gap and alignment merge into its props. It must forward native props and refs."
         }
       ],
       "native": [
@@ -5455,13 +5493,14 @@
           "type": "'pane' | 'row' | 'canvas' | 'alternate'",
           "required": false,
           "default": "'pane'",
-          "description": ""
+          "description": "The background: pane, the default background of panes and side regions; row, the muted background of rows; canvas, the page background; or alternate, the raised background, such as a block that stands out on a pane."
         },
         {
           "name": "padding",
           "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9",
           "required": false,
-          "description": "Omit for responsive padding; 0 removes padding."
+          "default": "1.25 rem in narrow windows, growing to 1.5 rem from 50 rem wide",
+          "description": "The inset on every side, as a step of the spacing scale, from 1 (0.25 rem) to 9 (4 rem), such as 5 for 1.5 rem; 0 removes it. Without it, the inset follows the window's width."
         }
       ],
       "native": [
@@ -5511,46 +5550,47 @@
     "Surface": {
       "kind": "component",
       "source": "packages/ui/src/foundations/Surface.tsx",
-      "description": "Shared background geometry. Layout, spacing between children and behavior belong to consumers.",
+      "description": "A container with a background, an inset and corners, but no layout of its own: spacing between its children, alignment and behaviour come from what it holds, such as a Stack. Card and other containers build on it.",
       "props": [
         {
           "name": "tone",
           "type": "'pane' | 'row' | 'canvas' | 'alternate'",
           "required": false,
           "default": "'pane'",
-          "description": ""
+          "description": "The background: pane, the default background of panes and side regions; row, the muted background of rows; canvas, the page background; or alternate, the raised background, such as a block that stands out on a pane."
         },
         {
           "name": "padding",
           "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9",
           "required": false,
-          "description": "Omit for responsive padding; 0 removes padding."
+          "default": "1.25 rem in narrow windows, growing to 1.5 rem from 50 rem wide",
+          "description": "The inset on every side, as a step of the spacing scale, from 1 (0.25 rem) to 9 (4 rem), such as 5 for 1.5 rem; 0 removes it. Without it, the inset follows the window's width."
         },
         {
           "name": "corners",
           "type": "'surface' | 'standard' | 'pill' | 'none'",
           "required": false,
           "default": "'surface'",
-          "description": ""
+          "description": "The corner radius: surface, the large 1.75 rem corners of panes; standard, 0.5 rem for small blocks; pill, fully rounded ends for a toolbar or a bar of filters; or none, square, for a region that meets the edges of its container."
         },
         {
           "name": "density",
           "type": "'standard' | 'compact'",
           "required": false,
           "default": "'standard'",
-          "description": "compact gives the controls inside the compact control height, which still grows for touch."
+          "description": "compact gives the buttons, icon buttons, selects and compact fields inside, also nested ones, the 2 rem compact control height, for toolbars over dense content; touch screens keep the 2.75 rem touch height. standard leaves them at their own height."
         },
         {
           "name": "as",
           "type": "Element",
           "required": false,
-          "description": ""
+          "description": "The element to render, for its meaning: div by default, or section, article, nav, main, aside, header or footer. With render, set the element there instead."
         },
         {
           "name": "render",
           "type": "ReactElement",
           "required": false,
-          "description": "Compose another component onto the same root. It must forward native props and refs."
+          "description": "Another element to render the surface onto, without a wrapper, such as a Stack that lays out its content: the surface's class, style and attributes merge into its props. It must forward native props and refs."
         }
       ],
       "native": [
@@ -6250,27 +6290,27 @@
     "Toast.Provider": {
       "kind": "component",
       "source": "packages/ui/src/feedback/toast/ToastProvider.tsx",
-      "description": "Hosts the managed notifications that useToast shows, in a region per placement.",
+      "description": "Hosts the notifications that useToast shows: brief feedback at the edge of the window, announced and dismissed after a few seconds or by people. Put one near the root of the application; it renders a region for each placement in a portal, in the theme of the place it is rendered.",
       "props": [
         {
           "name": "children",
           "type": "ReactNode",
           "required": true,
-          "description": ""
+          "description": "The application, or the part of it whose components call useToast."
         },
         {
           "name": "defaultPlacement",
           "type": "'bottom-right' | 'top-center'",
           "required": false,
           "default": "'bottom-right'",
-          "description": ""
+          "description": "Where notifications show unless show names a placement: bottom-right, stacking upward from the bottom corner, or top-center, stacking downward from the top."
         },
         {
           "name": "visibleLimit",
           "type": "number",
           "required": false,
           "default": "3",
-          "description": "Maximum visible per placement (default 3). Newest notices stay visible; older ones hide behind a count."
+          "description": "How many notifications each placement shows at once, a positive integer. The newest stay visible; older ones wait behind a count of hidden notifications and come back as newer ones close."
         }
       ],
       "native": [],
@@ -6481,7 +6521,7 @@
     "useToast": {
       "kind": "function",
       "source": "packages/ui/src/feedback/toast/useToast.ts",
-      "description": "Shows and dismisses notifications through the nearest Toast.Provider.",
+      "description": "Shows and dismisses notifications through the nearest Toast.Provider: show, dismiss and clear. Throws outside a provider.",
       "signature": "(): ToastManager",
       "entries": [
         "@envsemble/envui"

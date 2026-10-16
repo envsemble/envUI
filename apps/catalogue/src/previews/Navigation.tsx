@@ -4,11 +4,8 @@ import {
   Button,
   IconButton,
   NavList,
-  Pager,
   Tabs,
   Stack,
-  ActionGroup,
-  Disclosure,
   Kbd,
   Pagination,
   SearchField,
@@ -18,140 +15,8 @@ import { Home } from '@envsemble/envui/icons/Home';
 import { Search } from '@envsemble/envui/icons/Search';
 import { Apps } from '@envsemble/envui/icons/Apps';
 import { Settings } from '@envsemble/envui/icons/Settings';
-import { ArrowBack } from '@envsemble/envui/icons/ArrowBack';
-import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
-import { controlStates } from './InteractionStates';
-
-const navigationSizes = ['standard', 'compact'] as const;
-const navigationForms = [
-  { value: 'label', title: 'Label' },
-  { value: 'icon', title: 'Icon + label' },
-  { value: 'icon-only', title: 'Icon only' },
-] as const;
-const navigationDestinations = [
-  { label: 'Home', icon: Home },
-  { label: 'Projects', icon: Apps },
-] as const;
-
-function NavigationStates() {
-  return (
-    <div
-      className="docs-matrix-scroll"
-      tabIndex={0}
-      role="region"
-      aria-label="Navigation item interaction states"
-    >
-      <table className="docs-matrix">
-        <thead>
-          <tr>
-            <th scope="col">Selection</th>
-            {controlStates.map((state) => (
-              <th scope="col" key={state.title}>
-                {state.title}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {[false, true].map((selected) => (
-            <tr key={String(selected)}>
-              <th scope="row">{selected ? 'Selected' : 'Unselected'}</th>
-              {controlStates.map((state) => (
-                <td key={state.title}>
-                  <NavList.Item
-                    selected={selected}
-                    disabled={state.disabled}
-                    className={state.className}
-                    inert
-                  >
-                    Home
-                  </NavList.Item>
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-export function NavListPreview() {
-  const [selectedDestination, setSelectedDestination] = useState('Home');
-  return (
-    <Preview>
-      <Example
-        title="Variants"
-        size="wide"
-        caption="Selected items fill their Material icon automatically."
-      >
-        <div
-          className="docs-matrix-scroll"
-          tabIndex={0}
-          role="region"
-          aria-label="Navigation item sizes and icons"
-        >
-          <table className="docs-matrix">
-            <thead>
-              <tr>
-                <th scope="col">Size</th>
-                {navigationForms.map((form) => (
-                  <th scope="col" key={form.value}>
-                    {form.title}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {navigationSizes.map((size) => (
-                <tr key={size}>
-                  <th scope="row">{size}</th>
-                  {navigationForms.map((form) => (
-                    <td key={form.value}>
-                      <ActionGroup>
-                        {navigationDestinations.map((destination) => {
-                          const props = {
-                            size,
-                            selected: selectedDestination === destination.label,
-                            onClick: () => setSelectedDestination(destination.label),
-                          };
-                          return form.value === 'icon-only' ? (
-                            <NavList.Item
-                              {...props}
-                              key={destination.label}
-                              iconOnly
-                              icon={<destination.icon />}
-                              aria-label={destination.label}
-                            />
-                          ) : (
-                            <NavList.Item
-                              {...props}
-                              key={destination.label}
-                              icon={form.value === 'icon' ? <destination.icon /> : undefined}
-                            >
-                              {destination.label}
-                            </NavList.Item>
-                          );
-                        })}
-                      </ActionGroup>
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </Example>
-      <Example size="wide">
-        <Disclosure title="Interaction states">
-          <NavigationStates />
-        </Disclosure>
-      </Example>
-    </Preview>
-  );
-}
 
 export function TabsPreview() {
   const [projectView, setProjectView] = useState<string | null>('summary');
@@ -323,50 +188,6 @@ export function TabsPreview() {
           </Specimen>
         </SpecimenGrid>
       </Example>
-    </Preview>
-  );
-}
-
-export function PagerPreview() {
-  const [selectedDestination, setSelectedDestination] = useState('');
-  const destination = (title: string) => ({
-    href: location.href,
-    children: title,
-    onClick: () => setSelectedDestination(title),
-  });
-  return (
-    <Preview>
-      <Example title="Previous & up next">
-        <Pager.Root
-          aria-label="Paired destinations example"
-          previous={{ ...destination('Typography'), icon: <ArrowBack /> }}
-          next={{ ...destination('Spacing & shape'), icon: <ArrowForward /> }}
-        />
-      </Example>
-      <Example title="Next only, without an icon">
-        <Pager.Root aria-label="Next-only example" next={destination('Getting started')} />
-      </Example>
-      <Example title="Previous only">
-        <Pager.Root
-          aria-label="Previous-only example"
-          previous={{ ...destination('Typography'), icon: <ArrowBack /> }}
-        />
-      </Example>
-      <Example title="Long destinations in a narrow container">
-        <div className="docs-narrow-actions">
-          <Pager.Root
-            aria-label="Long destinations example"
-            previous={{ ...destination('Typography & readable content'), icon: <ArrowBack /> }}
-            next={{
-              ...destination('Motion & accessibility across the component library'),
-              icon: <ArrowForward />,
-            }}
-          />
-        </div>
-      </Example>
-      <Text variant="caption" aria-live="polite">
-        {selectedDestination ? `${selectedDestination} link selected.` : ''}
-      </Text>
     </Preview>
   );
 }
