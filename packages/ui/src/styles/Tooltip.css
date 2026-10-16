@@ -1,8 +1,6 @@
-.env-tooltip-theme {
-  display: contents;
-}
+/* Tooltips float above menus and popovers: PopupSurface's positioner takes this layer. */
 .env-tooltip-positioner {
-  z-index: 130;
+  --env-popup-layer: 130;
 }
 .env-tooltip {
   max-inline-size: min(18rem, calc(100vw - 2rem));
@@ -19,6 +17,10 @@
   box-shadow: var(--env-elevation-2-shadow);
   font: var(--env-type-body-small);
   overflow-wrap: anywhere;
+  /* A Kbd in a tooltip, such as a shortcut beside the name, takes key caps for the dark fill. */
+  --env-kbd-fg: var(--env-color-fg-on-strong);
+  --env-kbd-bg: transparent;
+  --env-kbd-border: color-mix(in srgb, var(--env-color-fg-on-strong) 45%, transparent);
   /* Motion: it fades in, below, and grows from the origin its positioner sets. */
   transform-origin: var(--transform-origin, center);
   transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);

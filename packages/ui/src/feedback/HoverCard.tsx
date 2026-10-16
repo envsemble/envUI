@@ -1,33 +1,63 @@
 'use client';
 
 import { PreviewCard as BasePreviewCard } from '@base-ui/react/preview-card';
-import { useRef, useState, type FocusEvent, type ReactElement, type ReactNode } from 'react';
+import {
+  useRef,
+  useState,
+  type ComponentPropsWithRef,
+  type FocusEvent,
+  type ReactElement,
+  type ReactNode,
+} from 'react';
 import { classNames } from '../internal/classNames.js';
-import { Theme, useTheme } from '../foundations/Theme.js';
+import { PopupSurface, type PopupSide } from '../internal/PopupSurface.js';
 
-export interface HoverCardProps {
+const parts = {
+  Portal: BasePreviewCard.Portal,
+  Positioner: BasePreviewCard.Positioner,
+  Popup: BasePreviewCard.Popup,
+};
+
+export interface HoverCardProps
+  extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'defaultValue'> {
   /** The element that opens the card on hover and keyboard focus; it receives the ref. */
   trigger: ReactElement;
   /** The details. Supplementary: never the only place essential information appears. */
   children: ReactNode;
-  /** bottom (default), top, left or right, or inline-start and inline-end, which follow the text direction. */
-  side?: 'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end';
-  /** Lines the card up with the trigger's centre (default), start or end along the side. */
+  /**
+   * bottom, top, left or right, or inline-start and inline-end, which follow the text direction.
+   * @default 'bottom'
+   */
+  side?: PopupSide;
+  /**
+   * Lines the card up with the trigger's centre, start or end along the side.
+   * @default 'center'
+   */
   align?: 'start' | 'center' | 'end';
-  /** Milliseconds the pointer rests on the trigger before the card opens (600); focus opens it at once. */
+  /**
+   * Milliseconds the pointer rests on the trigger before the card opens; focus opens it at once.
+   * @default 600
+   */
   delay?: number;
-  /** Milliseconds before it closes once the pointer leaves the trigger and the card (300). */
+  /**
+   * Milliseconds before it closes once the pointer leaves the trigger and the card.
+   * @default 300
+   */
   closeDelay?: number;
-  /** standard (default) about 20 rem wide; wide about 28 rem. */
-  width?: 'standard' | 'wide';
+  /**
+   * md about 20 rem wide; lg about 28 rem.
+   * @default 'md'
+   */
+  width?: 'md' | 'lg';
   /** Whether the card shows; with `onOpenChange` it controls the card. */
   open?: boolean;
-  /** Whether an uncontrolled card starts open; closed by default. */
+  /**
+   * Whether an uncontrolled card starts open.
+   * @default false
+   */
   defaultOpen?: boolean;
   /** Called with the new state when hover, focus or Esc opens or closes the card. */
   onOpenChange?: (open: boolean) => void;
-  /** Classes for the card. */
-  className?: string;
 }
 
 function isFocusVisible(element: Element) {
@@ -38,7 +68,10 @@ function isFocusVisible(element: Element) {
   }
 }
 
-/** Supplementary details that open beside their trigger on hover and keyboard focus, like a link preview. */
+/**
+ * Supplementary details that open beside their trigger on hover and keyboard focus, like a link
+ * preview. className, style, ref and data attributes go to the card.
+ */
 export function HoverCard({
   trigger,
   children,
@@ -46,13 +79,13 @@ export function HoverCard({
   align = 'center',
   delay = 600,
   closeDelay = 300,
-  width = 'standard',
+  width = 'md',
   open: controlledOpen,
   defaultOpen = false,
   onOpenChange,
   className,
+  ...popupProps
 }: HoverCardProps) {
-  const theme = useTheme();
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
   const open = controlledOpen ?? uncontrolledOpen;
   const openRef = useRef(open);
@@ -75,24 +108,16 @@ export function HoverCard({
         closeDelay={closeDelay}
         onFocus={openOnKeyboardFocus}
       />
-      <BasePreviewCard.Portal>
-        <Theme {...theme} className="env-popover-theme">
-          <BasePreviewCard.Positioner
-            side={side}
-            align={align}
-            sideOffset={8}
-            collisionPadding={8}
-            className="env-popover-positioner"
-          >
-            <BasePreviewCard.Popup
-              className={classNames('env-popover', 'env-hover-card', className)}
-              data-width={width}
-            >
-              {children}
-            </BasePreviewCard.Popup>
-          </BasePreviewCard.Positioner>
-        </Theme>
-      </BasePreviewCard.Portal>
+      <PopupSurface
+        parts={parts}
+        side={side}
+        align={align}
+        width={width}
+        className={classNames('env-hover-card', className)}
+        popupProps={popupProps}
+      >
+        {children}
+      </PopupSurface>
     </BasePreviewCard.Root>
   );
 }
