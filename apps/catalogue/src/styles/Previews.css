@@ -131,56 +131,6 @@
   padding: 1rem 0.75rem;
 }
 
-/* Application shell specimens: a transform contains the shell's fixed topbar and sidebar. */
-.docs-shell-frame {
-  position: relative;
-  block-size: 30rem;
-  overflow: hidden;
-  border: 0.0625rem solid var(--color-border-strong);
-  border-radius: var(--radius-surface);
-  transform: translateZ(0);
-}
-.docs-shell-frame > .env-app-shell:not([data-title-bar]),
-.docs-shell-frame > .env-app-shell-skeleton > .env-app-shell:not([data-title-bar]) {
-  min-block-size: 30rem;
-}
-/* The frame stands in for the window: a document-scrolling shell scrolls its content in the frame. A
-   title-bar shell already fills the frame and scrolls its content area itself. */
-.docs-shell-frame .env-app-shell:not([data-title-bar]) .env-app-content {
-  block-size: 30rem;
-  overflow-y: auto;
-}
-.docs-shell-page {
-  padding: var(--space-6);
-}
-/* A window around a sample menubar and note, and around a title bar used without the shell. */
-/* Stands in for a window: WindowFrame fills it as it would fill the window. */
-.docs-title-bar-frame {
-  position: relative;
-  block-size: 18rem;
-  overflow: hidden;
-  border: 0.0625rem solid var(--color-border-strong);
-  border-radius: var(--radius-surface);
-  background: var(--color-canvas);
-  transform: translateZ(0);
-}
-.docs-title-bar-mark {
-  inline-size: 1.25rem;
-  block-size: 1.25rem;
-  margin-inline-end: var(--space-1);
-}
-/* Stand-ins for the window controls the system draws at the end of an installed app's title bar. */
-.docs-window-controls {
-  align-self: stretch;
-  display: flex;
-  margin-inline-start: var(--space-2);
-  color: var(--color-text-muted);
-}
-.docs-window-control {
-  inline-size: 2.75rem;
-  display: grid;
-  place-items: center;
-}
 /* The organization switcher fills the shell's context area; the specimen gives it the same width. */
 .docs-spinner-row {
   display: flex;

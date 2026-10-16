@@ -203,7 +203,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Whether an uncontrolled sidebar starts collapsed on wide viewports; expanded by default."
         },
         {
           "name": "collapsed",
@@ -215,21 +215,21 @@
           "name": "onCollapsedChange",
           "type": "(collapsed: boolean) => void",
           "required": false,
-          "description": ""
+          "description": "Called with the new preference when the toggle collapses or expands the sidebar."
         },
         {
           "name": "expandLabel",
           "type": "string",
           "required": false,
           "default": "'Expand sidebar'",
-          "description": "Labels for the sidebar toggle."
+          "description": "Accessible name of the toggle while the sidebar is collapsed; Expand sidebar by default."
         },
         {
           "name": "collapseLabel",
           "type": "string",
           "required": false,
           "default": "'Collapse sidebar'",
-          "description": ""
+          "description": "Accessible name of the toggle while the sidebar is expanded; Collapse sidebar by default."
         },
         {
           "name": "sidebarContent",
@@ -324,7 +324,7 @@
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Classes for the shell's root."
         }
       ],
       "native": [],
@@ -362,7 +362,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Match the defaultCollapsed of the AppShell it precedes."
         },
         {
           "name": "resizable",
@@ -375,13 +375,13 @@
           "name": "sidebarMinWidth",
           "type": "number",
           "required": false,
-          "description": ""
+          "description": "Match the AppShell's smallest resizable width in pixels; 12 rem by default."
         },
         {
           "name": "sidebarMaxWidth",
           "type": "number",
           "required": false,
-          "description": ""
+          "description": "Match the AppShell's largest resizable width in pixels; 32 rem by default."
         },
         {
           "name": "children",
@@ -393,7 +393,7 @@
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Classes for the shell's root."
         },
         {
           "name": "brand",

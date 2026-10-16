@@ -9,7 +9,6 @@ import { ToastsPreview } from './Toasts';
 import { MessagesPreview } from './Conversation';
 import { StatsPreview } from './Dashboard';
 import { TooltipPreview, MeterPreview, ProgressPreview } from './Overlays';
-import { AppShellPreview } from './Shell';
 import { TreePreview } from './Workspace';
 import { PanelDockPreview } from './Dock';
 import { PopoverPreview, SegmentedControlPreview } from './Elements';
@@ -73,8 +72,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <MeterPreview />;
     case 'progress':
       return <ProgressPreview />;
-    case 'app-shell':
-      return <AppShellPreview />;
     case 'tree':
       return <TreePreview />;
     case 'panel-dock':
