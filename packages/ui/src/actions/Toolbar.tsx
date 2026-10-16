@@ -1,7 +1,13 @@
 'use client';
 
 import { Toolbar as BaseToolbar } from '@base-ui/react/toolbar';
-import type { ComponentPropsWithRef, ReactElement, ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  type ComponentPropsWithRef,
+  type ReactElement,
+  type ReactNode,
+} from 'react';
 import {
   Button,
   IconButton,
@@ -14,6 +20,7 @@ import { Kbd } from '../content/Kbd.js';
 import { ControlDefaults } from '../internal/ControlDefaults.js';
 import { classNames } from '../internal/classNames.js';
 import { DirectedToolbarRoot } from '../internal/DirectedToolbarRoot.js';
+import { keyShortcuts, shortcutChords } from '../internal/shortcuts.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import type { ControlSize } from '../foundations/Theme.js';
 
@@ -44,6 +51,12 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
 }
 
 /**
+ * Whether the root or a group around a button disables it, which Base UI's parts know but its
+ * tooltip doesn't: a disabled button has no tooltip.
+ */
+const DisabledContext = createContext(false);
+
+/**
  * A row, or a column, of controls for one subject, such as a text editor's formatting: one tab stop,
  * with the arrow keys moving between its controls (the APG toolbar pattern). Buttons the
  * application puts inside take the ghost variant unless they set another.
@@ -67,9 +80,11 @@ function Root({
       className={classNames('env-toolbar', className)}
       data-size={size}
     >
-      <ControlDefaults variant="ghost" size={size}>
-        {children}
-      </ControlDefaults>
+      <DisabledContext value={Boolean(disabled)}>
+        <ControlDefaults variant="ghost" size={size}>
+          {children}
+        </ControlDefaults>
+      </DisabledContext>
     </DirectedToolbarRoot>
   );
 }
@@ -84,8 +99,17 @@ export interface GroupProps extends ComponentPropsWithRef<'div'> {
 }
 
 /** Controls of a toolbar that belong together, such as the text styles. */
-function Group({ className, ...props }: GroupProps) {
-  return <BaseToolbar.Group {...props} className={classNames('env-toolbar-group', className)} />;
+function Group({ className, disabled, children, ...props }: GroupProps) {
+  const inherited = useContext(DisabledContext);
+  return (
+    <BaseToolbar.Group
+      {...props}
+      disabled={disabled}
+      className={classNames('env-toolbar-group', className)}
+    >
+      <DisabledContext value={inherited || Boolean(disabled)}>{children}</DisabledContext>
+    </BaseToolbar.Group>
+  );
 }
 
 export type SeparatorProps = ComponentPropsWithRef<'div'>;
@@ -97,12 +121,15 @@ function Separator({ className, ...props }: SeparatorProps) {
   );
 }
 
-/** What a toolbar button's tooltip shows: its label, and its shortcut as keys. */
-function tooltipContent(label: string, shortcut: string | undefined) {
-  if (!shortcut) return label;
+/** What a toolbar button's tooltip shows: its label, and its shortcut as keys, chord by chord. */
+function tooltipContent(label: string, chords: string[][]) {
+  if (chords.length === 0) return label;
   return (
     <span className="env-toolbar-tooltip">
-      {label} <Kbd keys={shortcut.split('+')} />
+      {label}{' '}
+      {chords.map((keys, index) => (
+        <Kbd key={index} keys={keys} />
+      ))}
     </span>
   );
 }
@@ -123,7 +150,8 @@ export interface ButtonProps
   pressed?: boolean;
   /**
    * The keyboard shortcut that does the same, such as Ctrl+B, with keys joined by +: the tooltip
-   * shows it, and aria-keyshortcuts announces it.
+   * shows it, and aria-keyshortcuts announces it, in ARIA's key names, such as Control+B. A
+   * sequence, such as Ctrl+K Ctrl+B, shows its keys without the attribute, as in Menu.
    */
   shortcut?: string;
   /** As Button's; ghost by default, from the toolbar. */
@@ -146,6 +174,8 @@ function ToolbarButton({
   className,
   ...props
 }: ButtonProps) {
+  const off = useContext(DisabledContext) || Boolean(disabled);
+  const chords = shortcut ? shortcutChords(shortcut) : [];
   const button = (
     <BaseToolbar.Button
       disabled={disabled}
@@ -158,7 +188,7 @@ function ToolbarButton({
             icon,
             'aria-label': label,
             'aria-pressed': pressed,
-            'aria-keyshortcuts': shortcut,
+            'aria-keyshortcuts': keyShortcuts(chords),
             'data-pressed': pressed || undefined,
             className: classNames('env-toolbar-button', className),
           } as IconButtonProps)}
@@ -166,7 +196,7 @@ function ToolbarButton({
       }
     />
   );
-  return disabled ? button : <Tooltip content={tooltipContent(label, shortcut)}>{button}</Tooltip>;
+  return off ? button : <Tooltip content={tooltipContent(label, chords)}>{button}</Tooltip>;
 }
 
 export type LinkProps = Omit<ComponentPropsWithRef<'a'>, 'children' | 'aria-label'> & {

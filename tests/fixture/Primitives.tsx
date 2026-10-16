@@ -32,8 +32,10 @@ import { useCopy } from '../../packages/ui/src/internal/useCopy.js';
 function ToolbarSample() {
   const [bold, setBold] = useState(false);
   const [pressed, setPressed] = useState<string[]>([]);
+  const [busy, setBusy] = useState(false);
   return (
     <Stack gap={2} data-testid="toolbar">
+      <button type="button">Before toolbar</button>
       <Toolbar.Root aria-label="Formatting">
         <Toolbar.Group aria-label="Text style">
           <Toolbar.Button
@@ -55,6 +57,25 @@ function ToolbarSample() {
         <IconButton icon={<Settings />} aria-label="Toolbar settings" data-testid="app-button" />
         <Toolbar.Link href="#help" icon={<Help />} label="Help" />
       </Toolbar.Root>
+      <button type="button">After toolbar</button>
+      <Toolbar.Root aria-label="Disabled toolbar" disabled>
+        <Toolbar.Button icon={<FormatBold />} label="Highlight" shortcut="Ctrl+Shift+B" />
+      </Toolbar.Root>
+      {/* Disabled while busy, as an editor's toolbar is while it saves. */}
+      <Toolbar.Root aria-label="Partly disabled" disabled={busy}>
+        <Toolbar.Button icon={<Undo />} label="Redo" shortcut="Ctrl+K Ctrl+Z" />
+        <Toolbar.Group aria-label="Group" disabled={busy}>
+          <Toolbar.Button icon={<FormatItalic />} label="Clear formatting" />
+        </Toolbar.Group>
+      </Toolbar.Root>
+      <Toolbar.Root aria-label="Group only">
+        <Toolbar.Group aria-label="Busy group" disabled={busy}>
+          <Toolbar.Button icon={<FormatUnderlined />} label="Strike through" />
+        </Toolbar.Group>
+      </Toolbar.Root>
+      <button type="button" onClick={() => setBusy((current) => !current)}>
+        Toggle busy
+      </button>
       <output data-testid="toolbar-pressed">{pressed.join(',')}</output>
     </Stack>
   );

@@ -26,12 +26,69 @@ test.describe('Toolbar', () => {
     await expect(toolbar.getByRole('link', { name: 'Help' })).toBeFocused();
     await page.keyboard.press('ArrowRight');
     await expect(toolbar.getByRole('button', { name: 'Bold' })).toBeFocused();
-    // Tab leaves the toolbar from any control: only one of its controls is in the tab order.
-    const tabStops = await toolbar.evaluate(
-      (element) => element.querySelectorAll('[tabindex="0"]').length,
-    );
-    expect(tabStops).toBe(1);
   });
+
+  test('is one stop in the tab order, besides a button of its own', async ({ page }) => {
+    await open(page);
+    const toolbar = page.getByRole('toolbar', { name: 'Formatting' });
+    await toolbar.getByRole('button', { name: 'Italic' }).focus();
+    await page.keyboard.press('ArrowRight');
+    await expect(toolbar.getByRole('button', { name: 'Undo' })).toBeFocused();
+    await page.getByRole('button', { name: 'Before toolbar' }).focus();
+    // Tab reaches the control that holds the tab stop, then the application's own button, which
+    // keeps a stop of its own, then leaves.
+    const stops: string[] = [];
+    for (let index = 0; index < 3; index += 1) {
+      await page.keyboard.press('Tab');
+      stops.push(
+        await page.evaluate(
+          () =>
+            document.activeElement?.getAttribute('aria-label') ??
+            document.activeElement?.textContent ??
+            '',
+        ),
+      );
+    }
+    expect(stops).toEqual(['Undo', 'Toolbar settings', 'After toolbar']);
+    await page.keyboard.press('Shift+Tab');
+    await page.keyboard.press('Shift+Tab');
+    await expect(toolbar.getByRole('button', { name: 'Undo' })).toBeFocused();
+    await page.keyboard.press('Shift+Tab');
+    await expect(page.getByRole('button', { name: 'Before toolbar' })).toBeFocused();
+  });
+
+  test('announces shortcuts in ARIA key names and shows no tooltip while disabled', async ({
+    page,
+  }) => {
+    await open(page);
+    await expect(page.getByRole('button', { name: 'Highlight' })).toHaveAttribute(
+      'aria-keyshortcuts',
+      'Control+Shift+B',
+    );
+    // A sequence shows its keys, without the attribute.
+    const undo = page.getByRole('button', { name: 'Redo' });
+    await expect(undo).not.toHaveAttribute('aria-keyshortcuts');
+    await undo.focus();
+    const sequence = page.locator('.env-tooltip').filter({ hasText: 'Redo' });
+    await expect(sequence.locator('.env-kbd')).toHaveText(['Ctrl', 'K', 'Ctrl', 'Z']);
+    await expect(page.getByRole('button', { name: 'Highlight' })).toBeDisabled();
+  });
+
+  for (const [name, disabler] of [
+    ['Redo', 'the root'],
+    ['Strike through', 'a group'],
+  ] as const)
+    test(`closes a button's tooltip as ${disabler} disables it`, async ({ page }) => {
+      await open(page);
+      const button = page.getByRole('button', { name, exact: true });
+      await button.hover();
+      const tooltip = page.locator('.env-tooltip').filter({ hasText: name });
+      await expect(tooltip).toBeVisible();
+      // The toolbar turns busy without the pointer moving.
+      await page.getByRole('button', { name: 'Toggle busy' }).dispatchEvent('click');
+      await expect(button).toBeDisabled();
+      await expect(tooltip).toHaveCount(0);
+    });
 
   test('names its buttons by label, shows a tooltip with the shortcut and reports pressed', async ({
     page,
@@ -39,7 +96,7 @@ test.describe('Toolbar', () => {
     await open(page);
     const bold = page.getByRole('button', { name: 'Bold' });
     await expect(bold).toHaveAttribute('aria-pressed', 'false');
-    await expect(bold).toHaveAttribute('aria-keyshortcuts', 'Ctrl+B');
+    await expect(bold).toHaveAttribute('aria-keyshortcuts', 'Control+B');
     await expect(bold).not.toHaveAttribute('title');
     await bold.focus();
     const tooltip = page.locator('.env-tooltip').filter({ hasText: 'Bold' });
@@ -189,6 +246,8 @@ test.describe('ResizeHandle', () => {
   test('follows the pointer and commits as the drag ends', async ({ page }) => {
     await open(page);
     const handle = page.getByTestId('resize-ltr').getByRole('separator');
+    // The mouse moves in the viewport, so the handle must be in it.
+    await handle.scrollIntoViewIfNeeded();
     const box = (await handle.boundingBox())!;
     await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
     await page.mouse.down();
