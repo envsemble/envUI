@@ -9,7 +9,11 @@ import { Marked, type marked } from 'marked';
 import { createReferenceExtension, safeRichTextUrl } from './Reference.js';
 import type { RichTextRenderOptions } from './Types.js';
 
-/** Shared schema for editing, Markdown IO, and static rendering. Custom extensions append. */
+/**
+ * The Tiptap extensions RichTextEditor and RichText share: formatting, lists and task lists,
+ * tables, safe links and images, Markdown with raw HTML kept as text, a placeholder and references.
+ * options.extensions are added after them, for other Tiptap integrations that need the same schema.
+ */
 export function createRichTextExtensions(
   options: RichTextRenderOptions & { placeholder?: string } = {},
 ): AnyExtension[] {

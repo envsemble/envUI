@@ -4,8 +4,6 @@ import { ListPreview, CardsPreview } from './Layout';
 import { AnimatedNumberPreview, ChipsPreview, DisclosurePreview } from './Content';
 import { CodePreview } from './CodeContent';
 import { MarkdownPreview } from './MarkdownContent';
-import { lazy, Suspense } from 'react';
-import { Text } from '@envsemble/envui';
 import { EmptyStatePreview } from './Feedback';
 import { ColorPickerPreview } from './ColorPicking';
 import { ComposerPreview } from './Conversation';
@@ -22,10 +20,6 @@ import {
   AlertsPreview,
   PopoverPreview,
 } from './Elements';
-
-const RichTextPreview = lazy(() =>
-  import('./RichTextContent').then(({ RichTextPreview }) => ({ default: RichTextPreview })),
-);
 
 /** Select a topic; each preview retains its state across theme changes. */
 export function ComponentPreview({ id }: { id: string }) {
@@ -64,12 +58,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <CodePreview />;
     case 'markdown':
       return <MarkdownPreview />;
-    case 'rich-text':
-      return (
-        <Suspense fallback={<Text role="status">Loading rich text…</Text>}>
-          <RichTextPreview />
-        </Suspense>
-      );
     case 'disclosure':
       return <DisclosurePreview />;
     case 'empty-state':

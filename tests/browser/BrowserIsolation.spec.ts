@@ -1,8 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { catalogueUrl, fixtureUrl } from './Servers';
 
-const optionalImplementation =
-  /\/(?:RichTextContent|RichTextEditing)\.tsx|\/rich-text(?:\.ts|\/)|\/@tiptap/;
+const optionalImplementation = /\/RichTextEditing\.tsx|\/rich-text(?:\.ts|\/)|\/@tiptap/;
 const iconCatalogue =
   /\/(?:IconCatalogue|IconUsage)\.tsx|\/icons\/index\.ts|\/@envsemble_envui_icons\.js/;
 
@@ -18,9 +17,9 @@ test('unrelated documentation routes load optional features only when requested'
   ).toEqual([]);
 
   await page.evaluate(() => {
-    location.hash = '/components/rich-text/preview';
+    location.hash = '/components/rich-text/overview';
   });
-  await expect(page.getByRole('textbox', { name: 'Rich text notes', exact: true })).toBeVisible();
+  await expect(page.getByRole('textbox', { name: 'Meeting notes', exact: true })).toBeVisible();
   expect(requests.some((url) => optionalImplementation.test(url))).toBe(true);
 
   await page.evaluate(() => {

@@ -65,7 +65,11 @@ const commandIcons = {
   table: Table,
 };
 
-/** Markdown IO with Tiptap owning document editing, history, and selection. */
+/**
+ * A labelled editor for formatted text that people edit as it looks, built on Tiptap, with a
+ * formatting toolbar, references typed with a trigger such as @, optional slash commands and
+ * attachments; its value is Markdown. ref.editor gives the Tiptap editor for commands.
+ */
 export const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(
   function RichTextEditor(
     {
