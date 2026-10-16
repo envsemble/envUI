@@ -65,7 +65,9 @@ test('Markdown renders a document and edits one, including old editor bookmarks'
 }) => {
   // The 0.x route of the Markdown editor opens the Markdown page on the template.
   await page.goto(`${offline}#/components/markdown-editor/preview`);
-  await expect(page).toHaveURL(/#\/components\/markdown\/overview$/);
+  await expect(page.locator('.docs-page-header').getByRole('tab', { selected: true })).toHaveText(
+    'Overview',
+  );
   await expect(
     page.getByRole('heading', { name: 'Markdown', exact: true, level: 1 }),
   ).toBeVisible();
@@ -82,7 +84,9 @@ test('Markdown renders a document and edits one, including old editor bookmarks'
   await expect(source).toHaveValue(draft);
   // A Usage bookmark opens the guidelines.
   await page.goto(`${offline}#/components/markdown-editor/usage`);
-  await expect(page).toHaveURL(/#\/components\/markdown\/guidelines$/);
+  await expect(page.locator('.docs-page-header').getByRole('tab', { selected: true })).toHaveText(
+    'Guidelines',
+  );
   await expect(page.getByRole('heading', { name: 'Anatomy', exact: true })).toBeVisible();
   expect(references.filter(({ id }) => id === 'markdown')).toHaveLength(1);
   expect(references.some(({ id }) => id === 'markdown-editor')).toBe(false);
