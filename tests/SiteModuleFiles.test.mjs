@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
+import { existsSync } from 'node:fs';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { test } from 'node:test';
-import { moduleFiles } from '../scripts/SiteModuleFiles.mjs';
+import { moduleFiles, moduleFilesName, writeModuleFiles } from '../scripts/SiteModuleFiles.mjs';
 
 test('each lazily loaded catalogue module maps to the files its load fetches', () => {
   const manifest = {
@@ -60,4 +64,25 @@ test('each lazily loaded catalogue module maps to the files its load fetches', (
       'assets/Add-1.js',
     ],
   });
+});
+
+test('the map is written once from the manifest, and a finalised build is left as it is', async (t) => {
+  const site = await mkdtemp(join(tmpdir(), 'envui-site-'));
+  t.after(() => rm(site, { recursive: true, force: true }));
+  // Without Vite's manifest or the map, the site was never built.
+  await assert.rejects(writeModuleFiles(site), /vite build --mode site/);
+  await mkdir(join(site, '.vite'));
+  await writeFile(
+    join(site, '.vite/manifest.json'),
+    JSON.stringify({
+      'src/usage/IconUsage.tsx': { file: 'assets/IconUsage-1.js', isDynamicEntry: true },
+    }),
+  );
+  assert.equal(await writeModuleFiles(site), true);
+  assert.equal(existsSync(join(site, '.vite')), false);
+  const map = await readFile(join(site, moduleFilesName), 'utf8');
+  assert.deepEqual(JSON.parse(map), { 'src/usage/IconUsage.tsx': ['assets/IconUsage-1.js'] });
+  // Run again, as FinalizeSite.mjs on its own after npm run build:site, it keeps the map.
+  assert.equal(await writeModuleFiles(site), false);
+  assert.equal(await readFile(join(site, moduleFilesName), 'utf8'), map);
 });

@@ -26,7 +26,10 @@ await copyFile(
   resolve(repositoryRoot, 'apps/catalogue/site/_headers'),
   resolve(siteDirectory, '_headers'),
 );
-await writeModuleFiles(siteDirectory);
+if (!(await writeModuleFiles(siteDirectory)))
+  console.log(
+    "dist/site is already finalised: module-files.json stays as written from Vite's manifest, which is gone. Run npm run build:site to build the site again.",
+  );
 const version = JSON.parse(
   await readFile(resolve(repositoryRoot, 'packages/ui/package.json'), 'utf8'),
 ).version;
