@@ -76,6 +76,28 @@ test('a whole name ranks first: an export, a prop by its export, a token', () =>
   );
 });
 
+test('a page an alias names ranks above the props of that name', () => {
+  // Many exports have a prop of the alias's name, such as Dialog's modal or a field's hint.
+  assert.deepEqual(best('modal'), ['page:dialog']);
+  assert.deepEqual(best('hint'), ['page:tooltip']);
+  assert.deepEqual(best('shortcut'), ['page:kbd']);
+  assert.deepEqual(best('placeholder'), ['page:skeleton']);
+  assert.deepEqual(best('topbar'), ['page:app-shell']);
+  assert.deepEqual(best('dark mode'), ['page:colors']);
+  // An export's own name counts more than a page's alias of it.
+  assert.deepEqual(best('icon'), ['export:Icon']);
+  assert.ok(best('icon', 3).includes('page:icons'));
+  // A five-letter word with a typo still finds it.
+  assert.deepEqual(best('buton'), ['page:button']);
+});
+
+test('a result names the page it opens', () => {
+  const detail = (id) => records.find((record) => record.id === id).detail;
+  assert.equal(detail('export:useTheme'), 'Colors & themes');
+  assert.equal(detail('export:useThemePreference'), 'Colors & themes');
+  assert.equal(detail('export:ThemeToggle'), 'Install the private package');
+});
+
 test('an export on a page without a Props view leads to the section that shows it', () => {
   const place = (id) => {
     const { page, view, section } = records.find((record) => record.id === id);

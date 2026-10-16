@@ -11,7 +11,8 @@ import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { marked } from 'marked';
 import MiniSearch from 'minisearch';
-import { indexOptions } from './SearchTerms.mjs';
+import { plainText } from './MarkdownHeadings.mjs';
+import { indexOptions, nameKey } from './SearchTerms.mjs';
 import { exportSection, headingSlugger, propSection, tokenSection } from './SearchAnchors.mjs';
 
 export const searchIndexFile = fileURLToPath(
@@ -76,15 +77,6 @@ function documentedExports(names, props) {
 
 const sentence = (text, length = 240) =>
   text.length > length ? `${text.slice(0, length).replace(/\s+\S*$/, '')}…` : text;
-
-/** The text of a heading as the reader sees it, without its Markdown. */
-function plainText(tokens) {
-  return tokens
-    .map((token) =>
-      token.tokens ? plainText(token.tokens) : token.type === 'html' ? '' : (token.text ?? ''),
-    )
-    .join('');
-}
 
 /**
  * The headed sections of a page's Markdown, in order, each with the id its rendered heading takes
@@ -174,14 +166,17 @@ export function searchDocuments({ documents, props, tokens }) {
     const home = homes.get(name) ?? setup;
     // Only a page on the template has a Props view with a place for each export and prop; on
     // another page, both lead to the section that shows the export.
-    const place = home.sections ? undefined : placeRoute(placeOf(name, home, documents));
+    const where = home.sections ? undefined : placeOf(name, home, documents);
+    const place = where && placeRoute(where);
+    // The page a result opens, which its detail names.
+    const destination = where?.document ?? home;
     const own = (section) => place ?? { page: home.id, view: 'props', section };
     if (!(homes.get(name)?.title === name && pages.has(name)))
       results.push({
         id: `export:${name}`,
         kind: 'export',
         title: name,
-        detail: name.includes('.') ? `Part of ${name.split('.')[0]}` : home.title,
+        detail: name.includes('.') ? `Part of ${name.split('.')[0]}` : destination.title,
         aliases: '',
         keywords: home.title,
         owner: '',
@@ -238,8 +233,26 @@ function catalogueDocuments() {
 /** The catalogue's MiniSearch index, serialized, of the documentation and the catalogue's pages. */
 export function buildSearchIndex({ documents, props, tokens = readTokens() }) {
   const index = new MiniSearch(indexOptions);
-  index.addAll([...catalogueDocuments(), ...searchDocuments({ documents, props, tokens })]);
+  index.addAll(
+    [...catalogueDocuments(), ...searchDocuments({ documents, props, tokens })].map(withNames),
+  );
   return JSON.stringify(index);
+}
+
+/**
+ * A search document with the names a query may give it whole, folded as queries are: its title,
+ * its aliases, a prop as its export and name (Button variant), never its name alone, and a token as
+ * its name too (color.fg.muted). A query that is one of them ranks the document first.
+ */
+function withNames(document) {
+  const names = [
+    // A prop's name alone is no whole name of it: many exports share it, such as variant.
+    ...(document.owner ? [] : [document.title]),
+    ...document.aliases.split('\n'),
+    ...(document.owner ? [`${document.owner} ${document.title}`] : []),
+    ...(document.kind === 'token' ? [document.id.replace(/^token:/, '')] : []),
+  ];
+  return { ...document, names: [...new Set(names.map(nameKey).filter(Boolean))] };
 }
 
 export function readTokens() {

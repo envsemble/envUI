@@ -6,7 +6,7 @@
 export const searchFields = ['title', 'owner', 'aliases', 'keywords', 'text'];
 
 /** The fields a result carries, to show and open it without the documents themselves. */
-export const storeFields = ['kind', 'title', 'owner', 'detail', 'page', 'view', 'section'];
+export const storeFields = ['kind', 'title', 'owner', 'names', 'detail', 'page', 'view', 'section'];
 
 /**
  * Splits text into words: at anything but a letter or digit, so `--color-fg-muted` and
@@ -40,7 +40,7 @@ export const indexOptions = {
 /** How much a match counts by what it finds: a page before the exports, props and tokens on it. */
 const kindBoost = { export: 1.5, prop: 1, token: 1 };
 
-/** How much more a result counts whose whole name the query is; a prop's name alone counts a fifth. */
+/** How much more a result counts whose whole name, or alias, the query is; a prop's name alone counts a fifth. */
 const exactBoost = 20;
 
 /**
@@ -69,16 +69,19 @@ export function queryOptionsFor(query) {
   return {
     combineWith: 'AND',
     prefix: true,
-    fuzzy: (term) => (term.length > 5 ? 0.2 : false),
+    fuzzy: (term) => (term.length >= 5 ? 0.2 : false),
     boost: { title: 6, owner: 3, aliases: 4, keywords: 2, text: 1 },
     boostDocument: (_id, _term, stored) => {
       const kind = kindBoost[stored?.kind] ?? 3;
       if (key === '') return kind;
-      if (stored?.owner && nameKey(`${stored.owner} ${stored.title}`) === key)
-        return kind * exactBoost;
-      // Many exports share a prop's name, such as variant, so it counts less on its own.
-      if (nameKey(stored?.title ?? '') === key)
-        return kind * (stored?.owner ? exactBoost / 5 : exactBoost);
+      // The query is the result's own name, such as useToast, which counts more than a page's
+      // alias of the same words, such as the Toast page's useToast.
+      if (!stored?.owner && nameKey(stored?.title ?? '') === key) return kind * exactBoost * 3;
+      // The query is another of the result's whole names: an alias, or Button.variant.
+      if (stored?.names?.includes(key)) return kind * exactBoost;
+      // Many exports share a prop's name, such as variant, so it counts less on its own, and
+      // never as much as a page whose alias the query is, such as modal for Dialog.
+      if (stored?.owner && nameKey(stored.title ?? '') === key) return kind * (exactBoost / 5);
       return kind;
     },
     bm25: { k: 1.2, b: 0.3, d: 0.5 },

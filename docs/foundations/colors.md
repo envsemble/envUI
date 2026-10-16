@@ -1,3 +1,12 @@
+---
+aliases:
+  - dark mode
+  - dark theme
+  - light mode
+  - color scheme
+  - high contrast
+---
+
 # Colors & themes
 
 ## React usage
