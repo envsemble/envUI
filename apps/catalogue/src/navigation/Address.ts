@@ -38,11 +38,20 @@ export function routeHref(route: string): string {
   return `${path === homeRoute ? '/' : `/${encodeURI(path)}`}${query}${fragment}`;
 }
 
+/** Text with its percent escapes decoded, or as it is where they are malformed. */
+function decoded(text: string, decode: (text: string) => string) {
+  try {
+    return decode(text);
+  } catch {
+    return text;
+  }
+}
+
 /** The route of a path address: its path, its query and its fragment as the section. */
 function routeOfLocation({ pathname, search, hash }: Pick<URL, 'pathname' | 'search' | 'hash'>) {
-  const path = decodeURI(pathname).replace(/^\/+|\/+$/g, '');
+  const path = decoded(pathname, decodeURI).replace(/^\/+|\/+$/g, '');
   const params = new URLSearchParams(search);
-  const section = hash.length > 1 ? decodeURIComponent(hash.slice(1)) : '';
+  const section = hash.length > 1 ? decoded(hash.slice(1), decodeURIComponent) : '';
   if (section) params.set('section', section);
   const query = params.size ? `?${params}` : '';
   // The root with a query or a fragment is the overview's.
