@@ -13,7 +13,7 @@ description: When envUI lacks a component, variant, prop or token that an interf
    - its page, `docs/components/<name>.md`, as `docs/component-pages.md` describes: frontmatter with summary, status, since, aliases, `useWhen` and `avoidWhen`, the template sections, and examples as files in `apps/catalogue/src/examples/<page>/`; register it in `docs/index.md`;
    - `npm run docs:props` and `npm run docs:manifest`, then commit `docs/generated/`;
    - a changeset from `npm run changeset`: `minor` for an addition;
-   - `npm run verify`.
+   - `npm run check` after each change and `npm run check:affected` before committing; `npm run verify` before a release or a merge into `dev` or `main`.
 5. **Adopt it.** Co-develop through `docs/local-development.md` if the application needs it before a release. Once it is released, pin that version, replace the interim composition and run `npx --no envui agents`.
 
 For using envUI as it is, see [envui-use](../envui-use/SKILL.md).
