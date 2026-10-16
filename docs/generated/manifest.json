@@ -13582,6 +13582,11 @@
     ],
     "legacy": [
       {
+        "cssVariable": "--app-sticky-top",
+        "use": "--env-app-sticky-top",
+        "note": "The offset sticky content takes below the app shell's top bar, which AppShell sets."
+      },
+      {
         "cssVariable": "--avatar-group-ring",
         "use": "--env-avatar-group-ring",
         "note": "The ring color an application sets for an avatar group on a fill that is not an envUI surface."
