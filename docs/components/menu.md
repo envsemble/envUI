@@ -1,3 +1,31 @@
+---
+title: Menu
+summary: Actions, destinations and the shared organization switcher, opened from a trigger or a right click.
+status: beta
+since: 0.3.0
+category: Feedback & overlays
+aliases:
+  - dropdown menu
+  - context menu
+  - action menu
+  - overflow menu
+  - kebab menu
+  - MenuItem
+  - OrganizationMenu
+  - organization switcher
+  - account menu
+related:
+  - menubar
+  - nav-list
+  - tooltip
+  - avatar
+  - app-shell
+components:
+  - Menu
+  - ContextMenu
+  - OrganizationSwitcher
+---
+
 # Menu
 
 ## React usage

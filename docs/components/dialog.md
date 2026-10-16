@@ -1,3 +1,27 @@
+---
+title: Dialog
+summary: Centered modals and side panels share focus and dismissal behavior.
+status: beta
+since: 0.1.0
+category: Feedback & overlays
+aliases:
+  - modal
+  - popup
+  - side panel
+  - sheet
+  - drawer
+  - confirm dialog
+related:
+  - toast
+  - command-palette
+  - text-field
+  - stack
+  - accessibility
+components:
+  - Dialog
+  - DialogClose
+---
+
 # Dialog
 
 ## React usage

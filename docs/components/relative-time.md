@@ -1,3 +1,24 @@
+---
+title: RelativeTime
+summary: A moment as text relative to now, such as 3 hours ago, kept current, with the date and time
+  in a tooltip.
+status: beta
+since: 0.6.0
+category: Content & guidance
+aliases:
+  - time ago
+  - timeago
+  - timestamp
+  - date
+related:
+  - tooltip
+  - animated-number
+  - table
+components:
+  - RelativeTime
+  - formatRelativeTime
+---
+
 # RelativeTime
 
 ## React usage

@@ -1,3 +1,23 @@
+---
+title: Markdown
+summary: Render Markdown strings with Markdown, or edit them with MarkdownEditor and its shared preview.
+status: beta
+since: 0.1.0
+category: Content & guidance
+aliases:
+  - markdown editor
+  - MD
+  - prose
+related:
+  - code
+  - text-field
+  - typography
+  - accessibility
+components:
+  - Markdown
+  - MarkdownEditor
+---
+
 # Markdown
 
 ## Render content

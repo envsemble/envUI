@@ -1,3 +1,8 @@
+---
+components:
+  - Text
+---
+
 # Typography
 
 ## React usage

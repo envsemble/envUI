@@ -1,3 +1,24 @@
+---
+title: Stat
+summary: Labelled key figures for dashboards, with a trend and detail, grouped in even columns.
+status: beta
+since: 0.5.0
+category: Content & guidance
+aliases:
+  - KPI
+  - metric
+  - statistic
+  - key figure
+  - StatGroup
+related:
+  - animated-number
+  - meter
+  - surface
+  - colors
+components:
+  - Stat
+---
+
 # Stat
 
 ## React usage

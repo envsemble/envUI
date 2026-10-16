@@ -1,3 +1,24 @@
+---
+title: Tree
+summary: A virtualized tree of rows for large hierarchies, such as file trees.
+status: beta
+since: 0.5.0
+category: Navigation
+aliases:
+  - TreeView
+  - tree view
+  - file tree
+  - outline
+  - hierarchy
+related:
+  - app-shell
+  - menu
+  - nav-list
+  - accessibility
+components:
+  - Tree
+---
+
 # Tree
 
 ## React usage

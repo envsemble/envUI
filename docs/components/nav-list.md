@@ -1,3 +1,25 @@
+---
+title: NavList
+summary: Links to another destination; routing stays with the app.
+status: beta
+since: 0.1.0
+category: Navigation
+aliases:
+  - NavigationItem
+  - nav item
+  - sidebar item
+  - navigation
+  - side navigation
+related:
+  - tabs
+  - pager
+  - icons
+  - colors
+  - badge
+components:
+  - NavList
+---
+
 # NavList
 
 ## React usage

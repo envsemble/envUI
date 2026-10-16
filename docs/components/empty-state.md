@@ -1,3 +1,22 @@
+---
+title: EmptyState
+summary: Explain missing content and offer the next action.
+status: beta
+since: 0.1.0
+category: Feedback & overlays
+aliases:
+  - blank slate
+  - zero state
+  - no results
+  - error state
+related:
+  - loading
+  - card
+  - button
+components:
+  - EmptyState
+---
+
 # EmptyState
 
 ## React usage

@@ -1,3 +1,24 @@
+---
+title: Toast
+summary: Managed feedback with configurable duration, placement and stack capacity.
+status: beta
+since: 0.1.0
+category: Feedback & overlays
+aliases:
+  - snackbar
+  - notification
+  - ToastProvider
+  - flash message
+related:
+  - dialog
+  - button
+  - colors
+  - accessibility
+components:
+  - Toast
+  - useToast
+---
+
 # Toast
 
 ## Managed notifications

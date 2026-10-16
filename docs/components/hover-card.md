@@ -1,3 +1,21 @@
+---
+title: HoverCard
+summary: Supplementary details beside a link on hover and keyboard focus, like a link preview.
+status: beta
+since: 0.6.0
+category: Feedback & overlays
+aliases:
+  - PreviewCard
+  - preview card
+  - link preview
+related:
+  - popover
+  - tooltip
+  - accessibility
+components:
+  - HoverCard
+---
+
 # HoverCard
 
 ## React usage

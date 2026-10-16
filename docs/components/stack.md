@@ -1,3 +1,25 @@
+---
+title: Stack
+summary: Use Stack for related content and ActionGroup for buttons.
+status: beta
+since: 0.1.0
+category: Layout & surfaces
+aliases:
+  - layout
+  - vertical stack
+  - horizontal stack
+  - spacing
+  - action group
+  - button set
+related:
+  - spacing
+  - surface
+  - card
+components:
+  - Stack
+  - ActionGroup
+---
+
 # Stack
 
 ## React usage

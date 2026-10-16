@@ -1,3 +1,24 @@
+---
+title: CommandPalette
+summary: 'Quick open: search and choose from a ranked list near the top of the window.'
+status: beta
+since: 0.5.0
+category: Feedback & overlays
+aliases:
+  - quick open
+  - command menu
+  - cmdk
+  - spotlight
+  - command bar
+related:
+  - dialog
+  - menu
+  - text-field
+  - accessibility
+components:
+  - CommandPalette
+---
+
 # CommandPalette
 
 ## React usage

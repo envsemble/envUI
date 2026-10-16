@@ -1,3 +1,24 @@
+---
+title: Disclosure
+summary: Keep optional details collapsed until needed.
+status: beta
+since: 0.1.0
+category: Content & guidance
+aliases:
+  - DisclosureNote
+  - collapsible
+  - details
+  - expander
+  - accordion
+  - show more
+related:
+  - chips
+  - typography
+  - text-field
+components:
+  - Disclosure
+---
+
 # Disclosure
 
 ## React usage

@@ -1,3 +1,26 @@
+---
+title: Combobox
+summary: Choose one option or several from a list that filters as people type.
+status: beta
+since: 0.6.0
+category: Forms & selection
+aliases:
+  - autocomplete
+  - typeahead
+  - multi-select
+  - multiselect
+  - tag input
+  - searchable select
+related:
+  - select
+  - text-field
+  - avatar
+  - menu
+  - accessibility
+components:
+  - Combobox
+---
+
 # Combobox
 
 ## React usage

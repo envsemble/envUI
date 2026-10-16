@@ -1,3 +1,26 @@
+---
+title: Message
+summary: 'Conversation entries in a log: compact bubbles for your own messages, full-width content
+  from others.'
+status: beta
+since: 0.5.0
+category: Content & guidance
+aliases:
+  - chat message
+  - chat bubble
+  - conversation
+  - message list
+  - log
+related:
+  - composer
+  - markdown
+  - loading
+  - accessibility
+components:
+  - Message
+  - MessageList
+---
+
 # Message
 
 ## React usage

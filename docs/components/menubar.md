@@ -1,3 +1,22 @@
+---
+title: Menubar
+summary: An application menubar of compact menus with shortcuts, submenus and access keys.
+status: beta
+since: 0.5.0
+category: Feedback & overlays
+aliases:
+  - menu bar
+  - application menu
+  - MenubarMenu
+related:
+  - menu
+  - app-shell
+  - kbd
+  - accessibility
+components:
+  - Menubar
+---
+
 # Menubar
 
 ## React usage

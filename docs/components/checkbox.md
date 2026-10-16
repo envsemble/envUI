@@ -1,3 +1,21 @@
+---
+title: Checkbox
+summary: Independent choices; partial selection represents a group.
+status: beta
+since: 0.1.0
+category: Forms & selection
+aliases:
+  - check box
+  - tick box
+  - checkmark
+related:
+  - radio
+  - switch
+  - accessibility
+components:
+  - Checkbox
+---
+
 # Checkbox
 
 ## React usage

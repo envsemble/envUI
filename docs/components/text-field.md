@@ -1,3 +1,32 @@
+---
+title: TextField
+summary: Single-line inputs, search fields and multiline textareas share labels, guidance and states.
+status: beta
+since: 0.1.0
+category: Forms & selection
+aliases:
+  - Input
+  - text input
+  - text box
+  - textbox
+  - input field
+  - search field
+  - search box
+  - textarea
+  - multiline text
+related:
+  - markdown
+  - select
+  - combobox
+  - date-picker
+  - stack
+  - accessibility
+components:
+  - TextField
+  - SearchField
+  - Textarea
+---
+
 # TextField
 
 ## TextField

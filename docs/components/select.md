@@ -1,3 +1,26 @@
+---
+title: Select
+summary: Choose one option while keeping alternatives collapsed.
+status: beta
+since: 0.1.0
+category: Forms & selection
+aliases:
+  - dropdown
+  - drop-down
+  - select menu
+  - listbox
+  - picker
+related:
+  - combobox
+  - menu
+  - radio
+  - text-field
+  - list
+  - accessibility
+components:
+  - Select
+---
+
 # Select
 
 ## React usage

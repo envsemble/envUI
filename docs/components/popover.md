@@ -1,3 +1,22 @@
+---
+title: Popover
+summary: A floating panel for details or a small form beside its trigger.
+status: beta
+since: 0.5.0
+category: Feedback & overlays
+aliases:
+  - popup
+  - flyout
+  - overlay
+related:
+  - tooltip
+  - hover-card
+  - menu
+  - dialog
+components:
+  - Popover
+---
+
 # Popover
 
 ## React usage

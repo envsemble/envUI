@@ -1,3 +1,24 @@
+---
+title: Kbd
+summary: Key caps for shortcuts in text, menus and hints.
+status: beta
+since: 0.5.0
+category: Content & guidance
+aliases:
+  - keyboard
+  - keyboard key
+  - key
+  - shortcut
+  - keycap
+  - hotkey
+related:
+  - menu
+  - command-palette
+  - accessibility
+components:
+  - Kbd
+---
+
 # Kbd
 
 ## React usage

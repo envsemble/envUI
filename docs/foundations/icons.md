@@ -1,3 +1,10 @@
+---
+components:
+  - Icon
+  - BrandLogo
+  - EnvUILogo
+---
+
 # Icons & assets
 
 ## React usage

@@ -1,3 +1,24 @@
+---
+title: Table
+summary: 'Semantic data tables on a rounded surface: sorting, resizable columns, selected rows and
+  stacked rows in narrow containers.'
+status: beta
+since: 0.5.0
+category: Content & guidance
+aliases:
+  - data table
+  - grid
+  - data grid
+  - TableRow
+  - TableCell
+related:
+  - list
+  - badge
+  - typography
+components:
+  - Table
+---
+
 # Table
 
 ## React usage

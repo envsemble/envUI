@@ -1,3 +1,22 @@
+---
+title: CalendarHeatmap
+summary: A calendar of daily values in color steps, with a tooltip and keyboard access for every day.
+status: beta
+since: 0.5.0
+category: Content & guidance
+aliases:
+  - Heatmap
+  - contribution graph
+  - activity calendar
+related:
+  - stat
+  - tooltip
+  - colors
+  - accessibility
+components:
+  - CalendarHeatmap
+---
+
 # CalendarHeatmap
 
 ## React usage

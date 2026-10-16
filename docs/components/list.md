@@ -1,3 +1,26 @@
+---
+title: List
+summary: Group related items with shared outer corners.
+status: beta
+since: 0.1.0
+category: Layout & surfaces
+aliases:
+  - GroupedRows
+  - Row
+  - ConnectedRows
+  - grouped list
+  - list item
+  - rows
+related:
+  - surface
+  - card
+  - radio
+  - select
+  - spacing
+components:
+  - List
+---
+
 # List
 
 ## React usage

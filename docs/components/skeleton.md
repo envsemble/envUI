@@ -1,3 +1,24 @@
+---
+title: Skeleton
+summary: Placeholders in the shape of incoming content, announced once per region.
+status: beta
+since: 0.1.0
+category: Feedback & overlays
+aliases:
+  - loading
+  - placeholder
+  - shimmer
+  - loading state
+related:
+  - spinner
+  - empty-state
+  - card
+  - accessibility
+components:
+  - Skeleton
+  - LoadingState
+---
+
 # Skeleton
 
 ## React usage

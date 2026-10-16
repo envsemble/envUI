@@ -1,3 +1,21 @@
+---
+title: Meter
+summary: A known quantity within a range, such as used seats or storage.
+status: beta
+since: 0.2.0
+category: Feedback & overlays
+aliases:
+  - gauge
+  - usage bar
+  - quota
+  - meters
+related:
+  - progress
+  - colors
+components:
+  - Meter
+---
+
 # Meter
 
 ## React usage

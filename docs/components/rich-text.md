@@ -1,3 +1,25 @@
+---
+title: RichText
+summary: Edit formatted content with Tiptap and render the same saved Markdown read-only.
+status: beta
+since: 0.1.0
+category: Content & guidance
+aliases:
+  - rich text editor
+  - WYSIWYG
+  - editor
+  - Tiptap
+related:
+  - markdown
+  - text-field
+  - composition
+  - accessibility
+components:
+  - RichText
+  - RichTextEditor
+  - createRichTextExtensions
+---
+
 # RichText
 
 ## Edit and render the same document

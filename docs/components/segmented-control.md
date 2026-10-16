@@ -1,3 +1,22 @@
+---
+title: SegmentedControl
+summary: One choice among a few options on a pill rail, such as views or filters.
+status: beta
+since: 0.5.0
+category: Actions
+aliases:
+  - segmented button
+  - toggle group
+  - content switcher
+  - view switcher
+related:
+  - tabs
+  - radio
+  - button
+components:
+  - SegmentedControl
+---
+
 # SegmentedControl
 
 ## React usage

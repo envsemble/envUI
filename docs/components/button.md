@@ -1,3 +1,33 @@
+---
+title: Button
+summary: Button, IconButton, ConfirmButton, CopyButton, ButtonGroup.
+status: beta
+since: 0.1.0
+category: Actions
+aliases:
+  - action
+  - call to action
+  - CTA
+  - icon button
+  - confirm button
+  - copy button
+  - button group
+  - link button
+related:
+  - stack
+  - animated-number
+  - colors
+  - icons
+  - accessibility
+components:
+  - Button
+  - IconButton
+  - ConfirmButton
+  - CopyButton
+  - ButtonGroup
+  - Link
+---
+
 # Button
 
 ## Button

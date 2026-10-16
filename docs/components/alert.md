@@ -1,3 +1,24 @@
+---
+title: Alert
+summary: Inline banners for page- or section-level messages in four tones.
+status: beta
+since: 0.5.0
+category: Feedback & overlays
+aliases:
+  - Notice
+  - banner
+  - callout
+  - inline message
+  - inline notification
+related:
+  - toast
+  - empty-state
+  - badge
+  - colors
+components:
+  - Alert
+---
+
 # Alert
 
 ## React usage

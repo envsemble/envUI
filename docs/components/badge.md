@@ -1,3 +1,29 @@
+---
+title: Badge
+summary: Small pills that name a state in its tone, compact counts and the size of a change.
+status: beta
+since: 0.5.0
+category: Content & guidance
+aliases:
+  - InfoChip
+  - Counter
+  - DiffCount
+  - tag
+  - lozenge
+  - label
+  - pill
+  - status
+  - count
+related:
+  - chips
+  - nav-list
+  - colors
+components:
+  - Badge
+  - CounterBadge
+  - DiffStat
+---
+
 # Badge
 
 ## React usage

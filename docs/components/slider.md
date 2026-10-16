@@ -1,3 +1,21 @@
+---
+title: Slider
+summary: Choose a value in a range by dragging a thumb or with the keyboard.
+status: beta
+since: 0.5.0
+category: Forms & selection
+aliases:
+  - range
+  - range slider
+  - range input
+related:
+  - meter
+  - text-field
+  - accessibility
+components:
+  - Slider
+---
+
 # Slider
 
 ## React usage

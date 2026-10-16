@@ -1,3 +1,21 @@
+---
+title: Tooltip
+summary: Short hints on hover and keyboard focus.
+status: beta
+since: 0.2.0
+category: Feedback & overlays
+aliases:
+  - hint
+  - tip
+  - title attribute
+related:
+  - button
+  - menu
+  - accessibility
+components:
+  - Tooltip
+---
+
 # Tooltip
 
 ## React usage

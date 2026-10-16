@@ -1,3 +1,26 @@
+---
+title: Card
+summary: A content surface with automatic spacing and optional actions.
+status: beta
+since: 0.1.0
+category: Layout & surfaces
+aliases:
+  - tile
+  - clickable card
+  - action card
+  - feature card
+related:
+  - surface
+  - stack
+  - list
+  - typography
+components:
+  - Card
+  - ClickableCard
+  - ActionCard
+  - FeatureCard
+---
+
 # Card
 
 ## React usage

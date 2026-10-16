@@ -1,3 +1,22 @@
+---
+title: Tabs
+summary: Switches between content panels in the same view.
+status: beta
+since: 0.1.0
+category: Navigation
+aliases:
+  - tab bar
+  - tab list
+  - tab panel
+related:
+  - nav-list
+  - button
+  - icons
+  - accessibility
+components:
+  - Tabs
+---
+
 # Tabs
 
 ## React usage

@@ -1,3 +1,22 @@
+---
+title: AnimatedNumber
+summary: Counts that roll to their new value, so a change is noticed.
+status: beta
+since: 0.4.0
+category: Content & guidance
+aliases:
+  - counter
+  - number flow
+  - rolling number
+  - ticker
+related:
+  - button
+  - typography
+  - accessibility
+components:
+  - AnimatedNumber
+---
+
 # AnimatedNumber
 
 ## React usage

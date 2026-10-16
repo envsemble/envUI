@@ -1,3 +1,20 @@
+---
+title: Rating
+summary: A read-only rating as stars filled in half steps, named once for assistive technology.
+status: beta
+since: 0.7.0
+category: Content & guidance
+aliases:
+  - stars
+  - star rating
+  - score
+related:
+  - badge
+  - stat
+components:
+  - Rating
+---
+
 # Rating
 
 ## React usage

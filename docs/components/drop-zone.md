@@ -1,3 +1,23 @@
+---
+title: DropZone
+summary: Drop files or choose them in the file picker; the application shows what was chosen.
+status: beta
+since: 0.5.0
+category: Forms & selection
+aliases:
+  - FileDropzone
+  - file upload
+  - file input
+  - dropzone
+  - uploader
+related:
+  - text-field
+  - button
+  - loading
+components:
+  - DropZone
+---
+
 # DropZone
 
 ## React usage

@@ -1,3 +1,23 @@
+---
+title: Spinner
+summary: Work of unknown length in a small area, such as a panel that is updating.
+status: beta
+since: 0.4.0
+category: Feedback & overlays
+aliases:
+  - loading
+  - loader
+  - activity indicator
+  - busy indicator
+related:
+  - skeleton
+  - button
+  - progress
+  - accessibility
+components:
+  - Spinner
+---
+
 # Spinner
 
 ## React usage

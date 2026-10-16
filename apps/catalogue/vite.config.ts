@@ -4,7 +4,9 @@ import { viteSingleFile } from 'vite-plugin-singlefile';
 import { isAbsolute, relative } from 'node:path';
 import {
   documentationDirectory,
+  examplesDirectory,
   generateDocumentation,
+  specimensDirectory,
 } from '../../scripts/GenerateDocumentation.mjs';
 // `vite build` makes the offline catalogue, one HTML file with every asset inlined. With
 // `--mode site` it makes the hosted catalogue: separate files with content-hashed names that
@@ -23,15 +25,15 @@ export default defineConfig(({ mode }) => {
           generateDocumentation();
         },
         configureServer(server) {
-          server.watcher.add(documentationDirectory);
+          // Pages, generated props and the example and specimen files they reference.
+          const sources = [documentationDirectory, examplesDirectory, specimensDirectory];
+          server.watcher.add(sources);
           server.watcher.on('all', (event, path) => {
-            const contained = relative(documentationDirectory, path);
-            if (
-              contained.startsWith('..') ||
-              isAbsolute(contained) ||
-              !['add', 'change', 'unlink'].includes(event)
-            )
-              return;
+            const inside = (directory: string) => {
+              const contained = relative(directory, path);
+              return !contained.startsWith('..') && !isAbsolute(contained);
+            };
+            if (!sources.some(inside) || !['add', 'change', 'unlink'].includes(event)) return;
             try {
               generateDocumentation();
             } catch (error) {

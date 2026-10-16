@@ -1,3 +1,27 @@
+---
+title: DatePicker
+summary: Choose a date, or a date and time, from a calendar, which also stands on its own.
+status: beta
+since: 0.6.0
+category: Forms & selection
+aliases:
+  - DateTimeField
+  - DateField
+  - date input
+  - time picker
+  - datetime
+  - calendar
+related:
+  - text-field
+  - popover
+  - combobox
+  - calendar-heatmap
+  - accessibility
+components:
+  - DatePicker
+  - Calendar
+---
+
 # DatePicker
 
 ## DatePicker

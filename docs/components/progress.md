@@ -1,3 +1,22 @@
+---
+title: Progress
+summary: How much of a task is complete, or that it runs while the amount is unknown.
+status: beta
+since: 0.2.0
+category: Feedback & overlays
+aliases:
+  - progress bar
+  - LoadingBar
+  - loading bar
+  - upload progress
+related:
+  - meter
+  - spinner
+  - colors
+components:
+  - Progress
+---
+
 # Progress
 
 ## React usage

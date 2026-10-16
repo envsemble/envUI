@@ -1,3 +1,21 @@
+---
+title: Switch
+summary: Use for an on/off setting that applies immediately.
+status: beta
+since: 0.1.0
+category: Forms & selection
+aliases:
+  - toggle
+  - toggle switch
+  - on/off
+related:
+  - checkbox
+  - colors
+  - accessibility
+components:
+  - Switch
+---
+
 # Switch
 
 ## React usage
