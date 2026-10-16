@@ -80,7 +80,7 @@
   cursor: default;
 }
 /* A leading icon button reaches into that inset, so its icon, not its round target, lines up. */
-.env-composer-start > .env-icon-button:first-child {
+.env-composer-start > .env-button.env-icon-button:first-child {
   margin-inline-start: calc((var(--control-icon-size) - var(--env-button-height)) / 2);
 }
 /* The action keeps the arrow of other buttons rather than the surface's text cursor. */

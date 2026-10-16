@@ -2829,7 +2829,7 @@ export const tokens = {
     },
     scales: { compact: '1.625rem' },
   },
-  /** The hit area of a control under a coarse pointer, whatever the scale: a control smaller than it keeps its look and gains an invisible overlay this tall and wide. Rows and text fields grow to it instead. */
+  /** The height every control grows to under a coarse pointer, whatever the scale, and the width of a button: its own box is its hit area. Rows grow to it too. */
   'control.height-touch': {
     cssVariable: '--control-height-touch',
     type: 'dimension',
