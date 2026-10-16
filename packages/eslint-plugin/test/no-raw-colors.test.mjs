@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import rule from '../src/rules/no-raw-colors.js';
 import { colorTokenSuggestion } from '../src/tokens.js';
 import { ruleTester, typeScriptRuleTester } from './RuleTester.mjs';
@@ -6,6 +7,22 @@ import { ruleTester, typeScriptRuleTester } from './RuleTester.mjs';
 const raw = (color, property) => ({
   messageId: 'rawColor',
   data: { color, tokens: colorTokenSuggestion(property) },
+});
+
+/** Values with nested fallbacks that the Stylelint config's tests read too. */
+const nestedFallbacks = JSON.parse(
+  readFileSync(new URL('../../../tests/lint/NestedFallbacks.json', import.meta.url), 'utf8'),
+);
+
+// Fallbacks nest: each is var()s whose own fallbacks are var()s, as the Stylelint config reads them.
+ruleTester.run('no-raw-colors with nested fallbacks', rule, {
+  valid: nestedFallbacks.custom.map(
+    (value) => `<div style={{ color: ${JSON.stringify(value)} }} />`,
+  ),
+  invalid: nestedFallbacks.raw.map((value) => ({
+    code: `<div style={{ color: ${JSON.stringify(value)} }} />`,
+    errors: [raw(value, 'color')],
+  })),
 });
 
 ruleTester.run('no-raw-colors', rule, {

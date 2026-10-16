@@ -6,6 +6,10 @@ import config, { hairlineProperties, rawColorFunction, stackingValues } from '..
 import { expectedTokens, libraryTokensUrl, tokensUrl } from '../scripts/SyncTokens.mjs';
 
 const readme = readFileSync(new URL('../README.md', import.meta.url), 'utf8');
+/** Values with nested fallbacks that the ESLint plugin's no-raw-colors tests read too. */
+const nestedFallbacks = JSON.parse(
+  readFileSync(new URL('../../../tests/lint/NestedFallbacks.json', import.meta.url), 'utf8'),
+);
 
 /** The rule and the marked text of each warning for some CSS in source order, with lines on request. */
 async function lint(code, { lines = false } = {}) {
@@ -138,6 +142,12 @@ test('equivalent color forms are treated alike', async () => {
   await passes('.a { color: rgba(var(--rgb), 0.5); background: rgb(var(--rgb) / 50%); }');
   await passes('.a { color: rgba(var(--r), var(--g), var(--b), 0.5); }');
   await passes('.a { color: rgb(var(--brand-rgb)); background: rgb(var(--rgb, var(--other))); }');
+  // Fallbacks nest: each is var()s whose own fallbacks are var()s, as the ESLint rule reads them.
+  for (const value of nestedFallbacks.custom) await passes(`.a { color: ${value}; }`);
+  for (const value of nestedFallbacks.raw)
+    assert.deepEqual(await lint(`.a { color: ${value}; }`), [
+      { rule: 'declaration-property-value-disallowed-list', text: value },
+    ]);
   // A fallback is a color as much as the value, and each channel is a var().
   assert.deepEqual(
     await lint(
