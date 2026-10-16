@@ -23,7 +23,9 @@
  * - A pair that departs from those rules says why in its `rationale`: `contrast: 'high'` measures it
  *   only in the high-contrast themes, and `minimum` lowers its minimum at standard or high contrast. Pairs the gate no
  *   longer measures are listed in `dropped`, and pairs it measures under a new name in `renamed`,
- *   each with the reason, rather than disappearing; DeclaredPairs.json holds the declared names.
+ *   each with the reason, rather than disappearing. DeclaredPairs.json records what each pair is
+ *   held to, and the gate fails on a pair held to less than it records unless `relaxed` lists the
+ *   change with its rationale (Snapshot.ts).
  * - Disabled states are exempt from 1.4.3 and 1.4.11, so none is listed.
  *
  * A pair is named `<fg> on <bg> over <next layer>`, which is also how Exceptions.json refers to it.
@@ -639,6 +641,29 @@ export const renamed: readonly { from: string; to: string; rationale: string }[]
       'The inset ring of a hovered navigation item, on the bg.navigation role; the 0.7 name is its alias.',
   },
 ];
+
+/** What a pair is held to: its kind, and its minimum at each contrast it is measured in. */
+export interface Requirement {
+  kind: ContrastKind;
+  minimum: { standard?: number; high?: number };
+}
+
+/** A deliberate relaxation of a declared pair: what it is held to now, and why. */
+export interface Relaxation extends Requirement {
+  pair: string;
+  rationale: string;
+}
+
+/**
+ * Deliberate relaxations: pairs held to less than DeclaredPairs.json recorded, by a weaker kind
+ * (distinct to difference, text to non-text), a lower minimum, or a contrast they are no longer
+ * measured in. Each entry names the pair, the requirement it is held to now, as the gate's failure
+ * prints it (its kind, and its minimum at each contrast it is measured in, after any `minimum` of
+ * its own), and the rationale. The gate accepts a looser pair only when an entry matches its new
+ * requirement exactly, so loosening it further needs another entry. Entries stay once
+ * `--update-snapshots` has recorded them: they are the history of what was relaxed and why.
+ */
+export const relaxed: readonly Relaxation[] = [];
 
 export function pairName(pair: Pick<ContrastPair, 'fg' | 'bg'>): string {
   return `${pair.fg} on ${pair.bg.join(' over ')}`;
