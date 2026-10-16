@@ -111,7 +111,7 @@ What a server component passes to a client component must be serializable: strin
 
 The content, rich-text and diff entries depend on Shiki, the Pierre code themes, react-markdown, remark-gfm, marked, Tiptap and Diffs. They are optional peer dependencies: applications using only the main entry do not install them. An application importing `@envsemble/envui/content`, `@envsemble/envui/rich-text` or `@envsemble/envui/diff` installs the packages listed under `peerDependencies` in the package manifest, for example `npm install shiki @shikijs/langs @pierre/theme react-markdown remark-gfm`, and `@pierre/diffs` for the diff entry.
 
-Keep optional content/editor imports with their features. Individual icon imports avoid loading the complete catalogue; see [icons](foundations/icons.md) when adding icons.
+Keep optional content/editor imports with their features. Import icons by subpath, one module each, such as `import { Add } from '@envsemble/envui/icons/Add'`, rather than from the `@envsemble/envui/icons` barrel: the barrel re-exports every symbol, so a bundler reads the whole catalogue for one icon, and Vite without `@vitejs/plugin-react` prints a warning about the `'use client'` directive of each of its thousands of modules (2,734 for one icon). See [icons](foundations/icons.md) when adding icons.
 
 ### Bundle size
 
