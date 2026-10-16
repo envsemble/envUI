@@ -10,3 +10,4 @@ output/playwright/
 /packages/ui/skills/
 /packages/ui/docs/
 /apps/catalogue/src/generated/
+.wrangler/

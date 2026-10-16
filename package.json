@@ -15,6 +15,9 @@
     "build": "npm run build:library && npm run build:catalogue",
     "build:library": "node scripts/BuildLibrary.mjs",
     "build:catalogue": "npm run build --workspace @envsemble/envui-catalogue && node scripts/FinalizeCatalogue.mjs",
+    "build:site": "npm run build --workspace @envsemble/envui-catalogue -- --mode site && node scripts/FinalizeSite.mjs",
+    "site:dev": "npm run build:site && wrangler dev",
+    "site:serve": "wrangler dev",
     "typecheck": "node scripts/GenerateDocumentation.mjs && tsc -p packages/ui/tsconfig.json --noEmit && tsc -p apps/catalogue/tsconfig.json --noEmit",
     "test": "node --test tests/*.test.mjs",
     "test:browser": "playwright test --project=chromium --project=firefox --project=webkit --project=live-development",
@@ -58,6 +61,7 @@
     "typescript": "5.9.3",
     "typescript-eslint": "8.71.2",
     "vite": "8.3.1",
-    "vite-plugin-singlefile": "2.3.3"
+    "vite-plugin-singlefile": "2.3.3",
+    "wrangler": "4.151.0"
   }
 }
