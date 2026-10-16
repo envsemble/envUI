@@ -82,15 +82,26 @@ function splitTopLevel(text, separator) {
 }
 
 /**
- * Whether channels all come from custom properties: each one a `var()`, whose fallback, if it has
- * one, is a `var()` too, since a fallback is a color as much as the value.
+ * How many levels of fallbacks are followed, a fallback's fallback being the second. The Stylelint
+ * config's patterns stop at the same depth, so both read a value alike; deeper nesting is raw.
  */
-function fromCustomProperties(channels) {
+const nestingDepth = 8;
+
+/**
+ * Whether channels all come from custom properties: each one a `var()`, whose fallback, if it has
+ * one, is a `var()` too, since a fallback is a color as much as the value. `depth` counts the
+ * fallbacks the channels sit in.
+ */
+function fromCustomProperties(channels, depth = 0) {
   return splitTopLevel(channels, /[\s,]/)
     .filter((token) => token.trim())
     .every((token) => {
       const match = /^var\(\s*--[\w-]+\s*(?:,([\s\S]*))?\)$/i.exec(token.trim());
-      return Boolean(match) && (match[1] === undefined || fromCustomProperties(match[1]));
+      return (
+        Boolean(match) &&
+        (match[1] === undefined ||
+          (depth < nestingDepth && fromCustomProperties(match[1], depth + 1)))
+      );
     });
 }
 
@@ -153,6 +164,34 @@ function propertyName(property) {
   return undefined;
 }
 
+const isStringLiteral = (node) => node.type === 'Literal' && typeof node.value === 'string';
+
+/** A template literal's text, with a stand-in for each expression. */
+const templateText = (node) =>
+  node.quasis.map((quasi) => quasi.value.cooked ?? quasi.value.raw).join(expressionStandIn);
+
+/** The operands of a chain of `+`: `'#' + hex + 'cc'` is `'#'`, `hex` and `'cc'`. */
+const concatenated = (node) =>
+  node.type === 'BinaryExpression' && node.operator === '+'
+    ? [...concatenated(node.left), ...concatenated(node.right)]
+    : [node];
+
+/** Whether a `+` chain joins strings, as one of its operands shows, rather than adding numbers. */
+const isConcatenation = (node) =>
+  node.type === 'BinaryExpression' &&
+  node.operator === '+' &&
+  concatenated(node).some(
+    (operand) => isStringLiteral(operand) || operand.type === 'TemplateLiteral',
+  );
+
+/** An operand's part of a concatenated string, with a stand-in for what an expression computes. */
+const operandText = (operand) =>
+  isStringLiteral(operand)
+    ? operand.value
+    : operand.type === 'TemplateLiteral'
+      ? templateText(operand)
+      : expressionStandIn;
+
 /** @type {import('eslint').Rule.RuleModule} */
 export default {
   meta: {
@@ -180,25 +219,37 @@ export default {
         });
     }
 
-    /** Checks the strings under a style value, each with the property it sets. */
+    /**
+     * Checks the strings under a style value, each with the property it sets. Strings that only
+     * choose or compute a value are not the value: a member's key, as in styles[`#${id}`], and a
+     * call's arguments, as in pick(document.querySelector(`#${id}`)).
+     */
     function visit(node, property) {
       walk(node, visitorKeys, (child) => {
         if (child.type === 'Property' && child !== node) {
           visit(child.value, propertyName(child));
           return false;
         }
+        if (child.type === 'MemberExpression') {
+          visit(child.object, property);
+          return false;
+        }
+        if (child.type === 'CallExpression' || child.type === 'NewExpression') return false;
         if (child.type === 'Literal' && typeof child.value === 'string')
           check(child, child.value, property);
         // A template literal is one value: `rgb(${r} 0 0)` and `url('${a}') #fff` are read whole,
         // and the strings and colors in its expressions on their own.
-        else if (child.type === 'TemplateLiteral')
-          check(
-            child,
-            child.quasis
-              .map((quasi) => quasi.value.cooked ?? quasi.value.raw)
-              .join(expressionStandIn),
-            property,
-          );
+        else if (child.type === 'TemplateLiteral') check(child, templateText(child), property);
+        // So is a concatenation of strings, as in '#' + hex, and its other operands on their own.
+        else if (isConcatenation(child)) {
+          const operands = concatenated(child);
+          check(child, operands.map(operandText).join(''), property);
+          for (const operand of operands)
+            if (operand.type === 'TemplateLiteral')
+              for (const expression of operand.expressions) visit(expression, property);
+            else if (!isStringLiteral(operand)) visit(operand, property);
+          return false;
+        }
         return child.type !== 'TemplateElement';
       });
     }

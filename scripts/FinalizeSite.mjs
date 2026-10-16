@@ -1,5 +1,7 @@
 // Completes the hosted catalogue that `vite build --mode site` leaves in dist/site: the response
-// headers the Worker applies, the third-party notices of what it bundles, and versions.json.
+// headers the Worker applies, the third-party notices of what it bundles, the files each lazily
+// loaded module needs (module-files.json, from Vite's manifest; see SiteModuleFiles.mjs) and
+// versions.json.
 //
 //   node scripts/FinalizeSite.mjs [--with-versions] [--production]
 //
@@ -12,6 +14,7 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { assembleSiteVersions } from './AssembleSiteVersions.mjs';
 import { collectCatalogueNotices } from './DependencyNotices.mjs';
+import { writeModuleFiles } from './SiteModuleFiles.mjs';
 
 const repositoryRoot = fileURLToPath(new URL('../', import.meta.url));
 const siteDirectory = resolve(repositoryRoot, 'dist/site');
@@ -23,6 +26,7 @@ await copyFile(
   resolve(repositoryRoot, 'apps/catalogue/site/_headers'),
   resolve(siteDirectory, '_headers'),
 );
+await writeModuleFiles(siteDirectory);
 const version = JSON.parse(
   await readFile(resolve(repositoryRoot, 'packages/ui/package.json'), 'utf8'),
 ).version;

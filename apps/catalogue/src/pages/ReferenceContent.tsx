@@ -9,23 +9,45 @@ import {
 import { FoundationPreview } from '../previews/FoundationPreview';
 import { ComponentPreview } from '../previews/ComponentPreview';
 import { PageViews } from '../layout/PageViews';
-import { lazy, Suspense } from 'react';
+import { Suspense, useState } from 'react';
 import type { Reference } from '../Reference';
 import { getReferenceIcon } from '../navigation/TopicIcons';
 import { TemplateContent, TemplateMeta } from '../template/TemplateContent';
+import { LoadBoundary, lazyPart } from '../template/LoadBoundary';
 
-const IconUsageDetails = lazy(() =>
-  import('../usage/IconUsage').then(({ IconUsageDetails }) => ({ default: IconUsageDetails })),
+/** How to use the icon a reader chose in the icon list, which loads with the page that shows it. */
+const iconUsage = lazyPart(
+  () => import('../usage/IconUsage'),
+  (module) => module.IconUsageDetails,
+  '../usage/IconUsage.tsx',
+  import.meta.url,
 );
+
+function IconUsage({ name, filled }: { name: string | null; filled: boolean }) {
+  const [, setAttempt] = useState(0);
+  const IconUsageDetails = iconUsage.component;
+  return (
+    <LoadBoundary
+      what="icon usage"
+      modules={['src/usage/IconUsage.tsx']}
+      onRetry={() => {
+        iconUsage.retry();
+        setAttempt((count) => count + 1);
+      }}
+    >
+      <Suspense fallback={<Text role="status">Loading icon usage…</Text>}>
+        <IconUsageDetails name={name} filled={filled} />
+      </Suspense>
+    </LoadBoundary>
+  );
+}
 
 function Usage({ reference, search }: { reference: Reference; search?: string }) {
   const query = new URLSearchParams(search);
   return (
     <>
       {reference.id === 'icons' && (
-        <Suspense fallback={<Text role="status">Loading icon usage…</Text>}>
-          <IconUsageDetails name={query.get('icon')} filled={query.get('filled') === 'true'} />
-        </Suspense>
+        <IconUsage name={query.get('icon')} filled={query.get('filled') === 'true'} />
       )}
       <Documentation document={reference} />
     </>

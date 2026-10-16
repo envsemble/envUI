@@ -93,7 +93,11 @@ export function LiveExample({ page, name, title }: { page: string; name: string;
         onClickCapture={preventNavigation}
         onAuxClickCapture={preventNavigation}
       >
-        <LoadBoundary what="example" onRetry={retry(forgetExample)}>
+        <LoadBoundary
+          what="example"
+          modules={[`src/examples/${page}/${name}.tsx`]}
+          onRetry={retry(forgetExample)}
+        >
           <Suspense fallback={<Text role="status">Loading example…</Text>}>
             {/* The example is looked up among module-level lazy components, not created here. */}
             {/* eslint-disable-next-line react-hooks/static-components */}
@@ -102,7 +106,11 @@ export function LiveExample({ page, name, title }: { page: string; name: string;
         </LoadBoundary>
       </Stack>
       <Disclosure title="Code" className="docs-live-example-code">
-        <LoadBoundary what="code" onRetry={retry(forgetSource)}>
+        <LoadBoundary
+          what="code"
+          modules={[`src/examples/${page}/${name}.tsx?raw`]}
+          onRetry={retry(forgetSource)}
+        >
           <Suspense fallback={<Text role="status">Loading code…</Text>}>
             <Source path={path} name={name} />
           </Suspense>

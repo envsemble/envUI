@@ -3,6 +3,7 @@ import { ruleTester, typeScriptRuleTester } from './RuleTester.mjs';
 import assert from 'node:assert/strict';
 import { Linter } from 'eslint';
 import { existsSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { test } from 'node:test';
 
 /**
@@ -477,22 +478,34 @@ test('an unknown allow entry fails with the known entries', () => {
   );
 });
 
-// An application module that re-exports envUI, listed in the shared settings, stands for envUI.
-const reexports = { envui: { reexportModules: ['./ui', '@/components/ui'] } };
+// An application module that re-exports envUI, listed in the shared settings, stands for envUI. A
+// relative entry names a file from ESLint's working directory, and an import matches it by the file
+// it resolves to.
+const reexports = { envui: { reexportModules: ['./src/ui', '@/components/ui'] } };
+const app = resolve('src/App.jsx');
+const page = resolve('src/pages/Page.jsx');
 
 ruleTester.run('no-html-elements with modules that re-export envUI', rule, {
   valid: [
     {
       code: 'import { Dialog } from \'./ui\'; <Dialog role="alertdialog" title="Delete?" />;',
       settings: reexports,
+      filename: app,
+    },
+    {
+      code: 'import { Dialog } from \'../ui/index.js\'; <Dialog role="alertdialog" title="Delete?" />;',
+      settings: reexports,
+      filename: page,
     },
     {
       code: 'import { Popover as Card, Menu } from \'@/components/ui\'; <><Card role="dialog" /><Menu.Submenu role="menu" /></>;',
       settings: reexports,
+      filename: page,
     },
     {
       code: 'import * as ui from \'./ui\'; <ui.Popover role="dialog" />;',
       settings: reexports,
+      filename: app,
     },
   ],
   invalid: [
@@ -501,21 +514,31 @@ ruleTester.run('no-html-elements with modules that re-export envUI', rule, {
       code: 'import { Dialog } from \'./ui\'; <Dialog role="alertdialog" title="Delete?" />;',
       errors: [uses('Dialog', '<Dialog role="alertdialog">')],
     },
-    // A module is matched as written, and a name counts by what it exports, as from envUI.
+    // Another folder's ./ui is another module, and an alias is matched as written.
     {
-      code: 'import { Dialog } from \'../ui\'; <Dialog role="dialog" />;',
+      code: 'import { Dialog } from \'./ui\'; <Dialog role="dialog" />;',
       settings: reexports,
+      filename: page,
       errors: [uses('Dialog', '<Dialog role="dialog">')],
     },
     {
+      code: 'import { Dialog } from \'@/components/ui/index\'; <Dialog role="dialog" />;',
+      settings: reexports,
+      filename: page,
+      errors: [uses('Dialog', '<Dialog role="dialog">')],
+    },
+    // A name counts by what it exports, as from envUI.
+    {
       code: 'import { Surface as Dialog } from \'./ui\'; <Dialog role="dialog" />;',
       settings: reexports,
+      filename: app,
       errors: [uses('Dialog', '<Dialog role="dialog">')],
     },
     // Raw elements are reported as before.
     {
       code: "import { Dialog } from './ui'; <button />;",
       settings: reexports,
+      filename: app,
       errors: [
         uses('Button', 'a raw <button>', { alternatives: icon, imports: 'Button, IconButton' }),
       ],

@@ -119,6 +119,10 @@ jobs:
           else
             echo "::warning::Couldn't fetch $BASE, which the push moved main from; the contrast gate compares with the checkout's snapshot alone."
           fi
+      # The hosted catalogue's specs need its build, which takes seconds and no network; without
+      # it they fail here rather than skip.
+      - name: Build hosted catalogue
+        run: npm run build:site
       - name: Test browser behavior
         env:
           ENVUI_CONTRAST_BASE: ${{ steps.contrast-base.outputs.sha }}

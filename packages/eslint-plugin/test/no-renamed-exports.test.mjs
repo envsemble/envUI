@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import rule from '../src/rules/no-renamed-exports.js';
 import { ruleTester, typeScriptRuleTester } from './RuleTester.mjs';
 
@@ -9,9 +10,14 @@ const main = '@envsemble/envui';
 const bootstrap = '@envsemble/envui/theme-bootstrap';
 /** The hint the rename map gives for a removed name. */
 const use = (name, source = main) => modules[source][name].use;
+/** What a report says of the codemod, which follows envUI's entry points but not an app's module. */
+const codemod = (source) =>
+  Object.hasOwn(modules, source)
+    ? 'The v1-names codemod in @envsemble/envui-codemods rewrites the old names.'
+    : `The v1-names codemod in @envsemble/envui-codemods rewrites imports from @envsemble/envui only, not through '${source}': update '${source}' first, then rename this import by hand.`;
 const renamed = (name, replacement, imports = replacement.split('.')[0], source = main) => ({
   messageId: 'renamed',
-  data: { name, replacement, imports, source },
+  data: { name, replacement, imports, source, codemod: codemod(source) },
 });
 const internal = (name, source = main) => ({
   messageId: 'internal',
@@ -20,7 +26,14 @@ const internal = (name, source = main) => ({
 const pagerChoices = 'Pager.Previous for direction="previous" or Pager.Next for direction="next"';
 const split = (name = 'DirectionLink') => ({
   messageId: 'split',
-  data: { name, source: main, prop: 'direction', choices: pagerChoices, imports: 'Pager' },
+  data: {
+    name,
+    source: main,
+    prop: 'direction',
+    choices: pagerChoices,
+    imports: 'Pager',
+    codemod: codemod(main),
+  },
 });
 const splitElement = (local, value, part) => ({
   messageId: 'splitElement',
@@ -311,45 +324,91 @@ typeScriptRuleTester.run('no-renamed-exports in TypeScript', rule, {
 });
 
 // An application module that re-exports envUI, listed in the shared settings, stands for its main
-// entry point, and the message names the module as written.
-const reexports = { envui: { reexportModules: ['./ui', '@/components/ui'] } };
+// entry point, and the message names the module as written. A relative entry names a file from
+// ESLint's working directory, and an import matches it by the file it resolves to; an alias matches
+// as written.
+const reexports = { envui: { reexportModules: ['./src/ui', '@/components/ui'] } };
+const app = resolve('src/App.jsx');
+const page = resolve('src/pages/Page.jsx');
+const fromUi = (error, source) => ({
+  ...error,
+  data: { ...error.data, source, codemod: codemod(source) },
+});
 
 ruleTester.run('no-renamed-exports with modules that re-export envUI', rule, {
   valid: [
     // Without the setting, a module of the application is not envUI.
-    "import { Input } from './ui'; <Input />;",
-    { code: "import { TextField, Menu } from './ui'; <Menu.Root />;", settings: reexports },
-    { code: "import { Input } from '../ui';", settings: reexports },
+    { code: "import { Input } from './ui'; <Input />;", filename: app },
+    {
+      code: "import { TextField, Menu } from './ui'; <Menu.Root />;",
+      settings: reexports,
+      filename: app,
+    },
+    // Another folder's ./ui is another module.
+    { code: "import { Input } from './ui';", settings: reexports, filename: page },
+    { code: "import { Input } from '../ui';", settings: reexports, filename: app },
+    // An alias is matched as written.
+    { code: "import { Input } from '@/components/ui/index';", settings: reexports, filename: app },
+    { code: "import { Input } from 'src/ui';", settings: reexports, filename: app },
   ],
   invalid: [
     {
       code: "import { Input } from './ui';",
       settings: reexports,
+      filename: app,
+      errors: [fromUi(renamed('Input', 'TextField'), './ui')],
+    },
+    // The codemod rewrites imports from envUI, not through the application's module.
+    {
+      code: "import { Input } from './ui'; <Input />;",
+      settings: reexports,
+      filename: app,
       errors: [
         {
-          ...renamed('Input', 'TextField'),
-          data: { ...renamed('Input', 'TextField').data, source: './ui' },
+          message:
+            "Input is not exported by envUI 1.0: use TextField instead (import { TextField } from './ui'). The v1-names codemod in @envsemble/envui-codemods rewrites imports from @envsemble/envui only, not through './ui': update './ui' first, then rename this import by hand.",
         },
       ],
+    },
+    // The same module from another folder, and with its extension or index file.
+    {
+      code: "import { Input } from '../ui';",
+      settings: reexports,
+      filename: page,
+      errors: [fromUi(renamed('Input', 'TextField'), '../ui')],
+    },
+    {
+      code: "import { Input } from '../ui/index.ts'; import { Notice } from '../ui.js';",
+      settings: reexports,
+      filename: page,
+      errors: [
+        fromUi(renamed('Input', 'TextField'), '../ui/index.ts'),
+        fromUi(renamed('Notice', 'Alert'), '../ui.js'),
+      ],
+    },
+    // An absolute entry names the file outright.
+    {
+      code: "import { Input } from '../ui';",
+      settings: { envui: { reexportModules: [resolve('src/ui/index.ts')] } },
+      filename: page,
+      errors: [fromUi(renamed('Input', 'TextField'), '../ui')],
     },
     {
       code: "export { Notice } from '@/components/ui';",
       settings: reexports,
-      errors: [
-        {
-          ...renamed('Notice', 'Alert'),
-          data: { ...renamed('Notice', 'Alert').data, source: '@/components/ui' },
-        },
-      ],
+      filename: page,
+      errors: [fromUi(renamed('Notice', 'Alert'), '@/components/ui')],
     },
     {
       code: "import * as ui from './ui'; <ui.Menu />;",
       settings: reexports,
+      filename: app,
       errors: [namespace('Menu', 'ui.Menu', 'ui.Menu.Root')],
     },
     {
       code: "const { LoadingBar } = await import('./ui');",
       settings: reexports,
+      filename: app,
       languageOptions: { sourceType: 'module', ecmaVersion: 2022 },
       errors: [internal('LoadingBar')],
     },

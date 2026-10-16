@@ -66,6 +66,16 @@ function describeSplit(rename, prefix = '') {
 const importsOf = (targets) =>
   [...new Set(targets.map((target) => target.split('.')[0]))].join(', ');
 
+/**
+ * What a report says of the v1-names codemod, which rewrites imports from envUI's entry points but
+ * not from a module of the application that re-exports envUI.
+ */
+function codemodHint(source) {
+  return Object.hasOwn(modules, source)
+    ? 'The v1-names codemod in @envsemble/envui-codemods rewrites the old names.'
+    : `The v1-names codemod in @envsemble/envui-codemods rewrites imports from @envsemble/envui only, not through '${source}': update '${source}' first, then rename this import by hand.`;
+}
+
 const noHint = 'If you need what it did, propose it as public envUI API rather than copying it.';
 
 /** Functions that create an element from a component, as createElement and the JSX runtime do. */
@@ -108,9 +118,9 @@ export default {
     schema: [],
     messages: {
       renamed:
-        "{{name}} is not exported by envUI 1.0: use {{replacement}} instead (import { {{imports}} } from '{{source}}'). The v1-names codemod in @envsemble/envui-codemods rewrites the old names.",
+        "{{name}} is not exported by envUI 1.0: use {{replacement}} instead (import { {{imports}} } from '{{source}}'). {{codemod}}",
       split:
-        "{{name}} is not exported by envUI 1.0: use {{choices}} instead, without the {{prop}} prop (import { {{imports}} } from '{{source}}'). The v1-names codemod in @envsemble/envui-codemods rewrites the old names.",
+        "{{name}} is not exported by envUI 1.0: use {{choices}} instead, without the {{prop}} prop (import { {{imports}} } from '{{source}}'). {{codemod}}",
       splitElement:
         '<{{local}} {{prop}}="{{value}}"> is {{part}} in envUI 1.0: render <{{part}}> without the {{prop}} prop.',
       splitDynamic:
@@ -124,7 +134,7 @@ export default {
   },
   create(context) {
     const { sourceCode } = context;
-    const { reexportModules } = pluginSettings(context);
+    const { isReexportModule } = pluginSettings(context);
     /**
      * The envUI entry point whose names a module source stands for: the entry point itself, or the
      * main one for a module of the application that re-exports envUI. Messages name the source as
@@ -135,7 +145,7 @@ export default {
         ? undefined
         : Object.hasOwn(modules, source)
           ? source
-          : reexportModules.has(source)
+          : isReexportModule(source)
             ? mainEntryPoint
             : undefined;
     const isEntryPoint = (source) => entryPointOf(source) !== undefined;
@@ -199,6 +209,7 @@ export default {
             prop: rename.prop,
             choices: describeSplit(rename),
             imports: importsOf(rename.to),
+            codemod: codemodHint(source),
           },
         });
         return;
@@ -206,7 +217,13 @@ export default {
       context.report({
         node,
         messageId: 'renamed',
-        data: { name, source, replacement: rename.to.join(' or '), imports: importsOf(rename.to) },
+        data: {
+          name,
+          source,
+          replacement: rename.to.join(' or '),
+          imports: importsOf(rename.to),
+          codemod: codemodHint(source),
+        },
       });
     }
 

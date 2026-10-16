@@ -184,10 +184,9 @@ export default {
   create(context) {
     const [{ allow, renderProps }] = context.options;
     const { sourceCode } = context;
-    const { reexportModules } = pluginSettings(context);
+    const { isReexportModule } = pluginSettings(context);
     /** Whether names from a module are envUI's: an entry point, or a module that re-exports one. */
-    const isEnvuiSource = (source) =>
-      componentEntryPoints.has(source) || reexportModules.has(source);
+    const isEnvuiSource = (source) => componentEntryPoints.has(source) || isReexportModule(source);
     const unknown = allow.filter((id) => !knownIds.has(id));
     if (unknown.length > 0)
       throw new Error(
