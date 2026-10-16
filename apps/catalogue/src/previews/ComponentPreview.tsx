@@ -8,7 +8,7 @@ import { Text } from '@envsemble/envui';
 import { SpinnerPreview, SkeletonPreview } from './Feedback';
 import { ToastsPreview } from './Toasts';
 import { MessagesPreview } from './Conversation';
-import { CalendarHeatmapPreview, StatsPreview } from './Dashboard';
+import { StatsPreview } from './Dashboard';
 import { TooltipPreview, MeterPreview, ProgressPreview } from './Overlays';
 import { AppShellPreview } from './Shell';
 import { TreePreview } from './Workspace';
@@ -54,8 +54,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <MessagesPreview />;
     case 'stat':
       return <StatsPreview />;
-    case 'calendar-heatmap':
-      return <CalendarHeatmapPreview />;
     case 'markdown':
       return <MarkdownPreview />;
     case 'rich-text':

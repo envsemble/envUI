@@ -957,14 +957,14 @@
           "type": "string",
           "required": false,
           "requiredWhen": "`aria-labelledby` is not set",
-          "description": ""
+          "description": "Names the grid of days, such as \"Deployments in the last year\"; this or aria-labelledby."
         },
         {
           "name": "aria-labelledby",
           "type": "string",
           "required": false,
           "requiredWhen": "`aria-label` is not set",
-          "description": ""
+          "description": "The id of visible text that names the grid of days, such as a heading; this or aria-label."
         }
       ],
       "native": [

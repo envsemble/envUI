@@ -22,6 +22,7 @@ import type { BadgeTone } from './Badge.js';
 export interface CalendarHeatmapDay {
   /** The day, as YYYY-MM-DD. */
   date: string;
+  /** The day's value, such as a count; it chooses the color step. */
   value: number;
   /** The value in words, such as 4 deployments; replaces formatValue's text for this day. */
   label?: string;
@@ -72,7 +73,12 @@ interface CalendarHeatmapOptions {
 
 /** The grid of days needs a name: aria-label or aria-labelledby. */
 type CalendarHeatmapName =
-  | { 'aria-label': string; 'aria-labelledby'?: string }
+  | {
+      /** Names the grid of days, such as "Deployments in the last year"; this or aria-labelledby. */
+      'aria-label': string;
+      /** The id of visible text that names the grid of days, such as a heading; this or aria-label. */
+      'aria-labelledby'?: string;
+    }
   | { 'aria-label'?: string; 'aria-labelledby': string };
 
 export type CalendarHeatmapProps = CalendarHeatmapOptions &

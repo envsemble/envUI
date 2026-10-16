@@ -18,7 +18,6 @@ import {
  */
 const unconverted = [
   'app-shell',
-  'calendar-heatmap',
   'chips',
   'markdown',
   'message',
