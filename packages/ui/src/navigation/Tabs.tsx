@@ -1,13 +1,23 @@
 'use client';
 
+import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { Tabs as BaseTabs } from '@base-ui/react/tabs';
 import { useRender } from '@base-ui/react/use-render';
-import { cloneElement, type ComponentPropsWithRef, type ReactElement, type ReactNode } from 'react';
+import {
+  cloneElement,
+  useCallback,
+  useRef,
+  type ComponentPropsWithRef,
+  type ReactElement,
+  type ReactNode,
+} from 'react';
 import type { ControlSize } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
 import * as NavList from './NavList.js';
 import { NavigationIconState } from '../MaterialSymbolState.js';
 import { Surface } from '../foundations/Surface.js';
+import { setRef } from '../internal/setRef.js';
+import { useDirection } from '../internal/useDirection.js';
 
 export interface TabsItem {
   /** Unique, stable identifier shared by the tab and its panel. */
@@ -51,8 +61,9 @@ export interface TabsProps
    */
   activation?: 'automatic' | 'manual';
   /**
-   * horizontal puts the tabs in a row, moved through with the left and right arrow keys; vertical
-   * in a column, with the up and down arrow keys. The panels stay below the list either way.
+   * horizontal puts the tabs in a row, moved through with the left and right arrow keys, which
+   * follow the text direction; vertical in a column, with the up and down arrow keys. The panels
+   * stay below the list either way.
    * @default 'horizontal'
    */
   orientation?: 'horizontal' | 'vertical';
@@ -144,8 +155,19 @@ export function Tabs({
   panelClassName,
   fill = false,
   size = 'lg',
+  ref,
   ...props
 }: TabsProps) {
+  // The arrow keys follow the text direction: the EnvUIProvider's, or the one at the tabs.
+  const root = useRef<HTMLDivElement | null>(null);
+  const [direction] = useDirection(root);
+  const setRoot = useCallback(
+    (node: HTMLDivElement | null) => {
+      root.current = node;
+      setRef(ref, node);
+    },
+    [ref],
+  );
   const initialValue =
     defaultValue === undefined
       ? (items.find((item) => !isDisabled(item))?.value ?? null)
@@ -163,7 +185,7 @@ export function Tabs({
           key={item.value}
           value={item.value}
           disabled={isDisabled(item)}
-          className="env-tab"
+          className="env-tabs-tab"
           render={(tabProps, state) => (
             <TabButton
               {...tabProps}
@@ -177,28 +199,31 @@ export function Tabs({
     </BaseTabs.List>
   );
   return (
-    <BaseTabs.Root
-      {...props}
-      className={classNames('env-tabs', className)}
-      data-fill={fill ? '' : undefined}
-      value={value}
-      defaultValue={initialValue}
-      onValueChange={onValueChange}
-      orientation={orientation}
-    >
-      {renderList ? renderList(list) : list}
-      <div className="env-tabs-panels">
-        {items.map((item) => (
-          <BaseTabs.Panel
-            key={item.value}
-            value={item.value}
-            keepMounted={keepMounted}
-            className={classNames('env-tab-panel', panelClassName)}
-          >
-            {item.content}
-          </BaseTabs.Panel>
-        ))}
-      </div>
-    </BaseTabs.Root>
+    <DirectionProvider direction={direction}>
+      <BaseTabs.Root
+        {...props}
+        ref={setRoot}
+        className={classNames('env-tabs', className)}
+        data-fill={fill ? '' : undefined}
+        value={value}
+        defaultValue={initialValue}
+        onValueChange={onValueChange}
+        orientation={orientation}
+      >
+        {renderList ? renderList(list) : list}
+        <div className="env-tabs-panels">
+          {items.map((item) => (
+            <BaseTabs.Panel
+              key={item.value}
+              value={item.value}
+              keepMounted={keepMounted}
+              className={classNames('env-tabs-panel', panelClassName)}
+            >
+              {item.content}
+            </BaseTabs.Panel>
+          ))}
+        </div>
+      </BaseTabs.Root>
+    </DirectionProvider>
   );
 }

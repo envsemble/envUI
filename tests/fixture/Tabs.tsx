@@ -3,6 +3,7 @@ import {
   Button,
   CounterBadge,
   DocumentTabs,
+  EnvUIProvider,
   NavList,
   Surface,
   Tabs,
@@ -220,5 +221,28 @@ export function CompactTabsFixture({ theme }: { theme: ThemeValue }) {
         />
       </Surface>
     </Theme>
+  );
+}
+
+const directionItems = ['One', 'Two', 'Three'].map((label) => ({
+  value: label.toLowerCase(),
+  button: <Button variant="secondary">{label}</Button>,
+  content: <p>{label} panel</p>,
+}));
+
+/**
+ * Tabs in right-to-left text, from a dir attribute and from EnvUIProvider's dir, mounted with
+ * ?fixture=rtl-tabs.
+ */
+export function RtlTabsFixture() {
+  return (
+    <>
+      <div dir="rtl">
+        <Tabs aria-label="Right-to-left tabs" items={directionItems} />
+      </div>
+      <EnvUIProvider dir="rtl">
+        <Tabs aria-label="Provider tabs" items={directionItems} />
+      </EnvUIProvider>
+    </>
   );
 }

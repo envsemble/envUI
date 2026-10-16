@@ -90,3 +90,19 @@ test('compact tabs make the whole rail as tall as a compact control', async ({ p
     ).toBeLessThan(1.5);
   }
 });
+
+test('the arrow keys follow the text direction, from dir or from EnvUIProvider', async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/?fixture=rtl-tabs`);
+  for (const name of ['Right-to-left tabs', 'Provider tabs']) {
+    const list = page.getByRole('tablist', { name });
+    await list.getByRole('tab', { name: 'One' }).focus();
+    // In right-to-left text the next tab is to the left.
+    await page.keyboard.press('ArrowLeft');
+    await expect(list.getByRole('tab', { name: 'Two' })).toBeFocused();
+    await expect(list.getByRole('tab', { name: 'Two' })).toHaveAttribute('aria-selected', 'true');
+    await page.keyboard.press('ArrowRight');
+    await expect(list.getByRole('tab', { name: 'One' })).toBeFocused();
+  }
+});
