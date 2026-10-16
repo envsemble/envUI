@@ -1,0 +1,29 @@
+/* Pages on the documentation template: status in the banner, live examples and their source. */
+.docs-page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+}
+
+/* An example sits on the page background inside a hairline frame, as it would in an application. */
+.docs-live-example {
+  padding: var(--space-6);
+  border: 0.0625rem solid var(--color-border-strong);
+  border-radius: var(--radius-surface);
+  container-type: inline-size;
+  min-inline-size: 0;
+}
+
+/* Specimens inside an article share its gutter instead of adding their own. */
+.docs-article .docs-preview {
+  padding: 0;
+}
+
+.docs-related-list {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding-inline-start: var(--space-6);
+}

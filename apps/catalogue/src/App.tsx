@@ -12,7 +12,7 @@ import {
 import { Menu } from '@envsemble/envui/icons/Menu';
 import { DarkMode } from '@envsemble/envui/icons/DarkMode';
 import { LightMode } from '@envsemble/envui/icons/LightMode';
-import { findReferencePage, referenceViews, overviewViews } from './navigation/DocumentationRoutes';
+import { findReferencePage, overviewViews, viewFor } from './navigation/DocumentationRoutes';
 import { ReferenceContent } from './pages/ReferenceContent';
 import { PageHeader } from './layout/PageHeader';
 import { Overview } from './pages/Overview';
@@ -31,8 +31,7 @@ export default function App() {
   const page = findReferencePage(routePath);
   const reference = page?.reference;
   const root = routeSegments[0];
-  const view =
-    referenceViews.find((view) => view.id === routeSegments[page ? 2 : 1])?.id ?? 'preview';
+  const view = page ? viewFor(page.reference, routeSegments[2]) : 'preview';
   const isOverview = root === 'overview';
   const overviewView =
     overviewViews.find((view) => view.id === routeSegments[1])?.id ?? 'components';

@@ -16,7 +16,6 @@ import { catalogueUrl } from '../browser/Servers';
 import {
   documentationPages,
   overviewViews,
-  referenceViews,
 } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
 
 type Theme = 'light' | 'dark';
@@ -41,13 +40,13 @@ const themes: Theme[] = ['light', 'dark'];
 const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
 
 /** Every destination of the catalogue's own route list, with each of its views. */
-const pages = documentationPages.map(({ path, title }) => ({
+const pages = documentationPages.map(({ path, title, views }) => ({
   path,
   title,
   routes:
     path === 'overview'
       ? overviewViews.map((view) => `overview/${view.id}`)
-      : referenceViews.map((view) => `${path}/${view.id}`),
+      : views.map((view) => `${path}/${view.id}`),
 }));
 const routes = new Set(pages.flatMap((page) => page.routes));
 

@@ -133,7 +133,7 @@ function reconcile(testInfo: TestInfo, directory: string, recorded: string[], ta
 }
 
 test.describe('catalogue', () => {
-  for (const { path, reference } of referencePages) {
+  for (const { path, reference, views } of referencePages) {
     test(`${reference.title} (${path})`, async ({ page }, testInfo) => {
       const directory = join(snapshots, 'catalogue', reference.id);
       const recorded = contents(directory);
@@ -142,52 +142,66 @@ test.describe('catalogue', () => {
         taken.add(file);
         await capture(locator, ['catalogue', reference.id, file]);
       };
+      // A page not on the template shows its specimens in Preview; a page on the template shows
+      // its live examples in Overview and its specimens in whichever view their section is in.
+      const visited = reference.sections ? views.map((view) => view.id) : ['preview'];
       await page.clock.setFixedTime(now);
-      await page.goto(`${catalogueUrl}/#/${path}/preview`);
-      await page.locator('.docs-preview').waitFor();
+      await page.goto(`${catalogueUrl}/#/${path}/${visited[0]}`);
+      await page.locator('.docs-reference-tabs').waitFor();
       for (const theme of themes) {
         await setTheme(page, theme);
-        await settle(page);
         const name = namer();
-        const examples = page.locator(
-          '.docs-preview .docs-example:not(.docs-example .docs-example)',
-        );
         let specimens = 0;
-        for (const example of await examples.all()) {
-          if (!(await example.isVisible())) continue;
-          // Untitled examples are named after their first disclosure or specimen heading.
-          const heading = example
-            .locator(':scope > h2, :scope > .docs-example-heading > h2, summary, h3')
-            .first();
-          const title = (await heading.count()) ? await heading.textContent() : '';
-          await take(example, `${theme}-${name(slug(title ?? ''))}.png`);
-          specimens++;
-        }
-        expect(specimens, `The ${theme} preview shows at least one specimen`).toBeGreaterThan(0);
-        // The forced hover, pressed, focus and disabled states of InteractionStates.ts, which
-        // the catalogue keeps in closed disclosures.
-        const states = page.locator(
-          '.docs-preview [role="region"][aria-label$="interaction states"]',
-        );
         const matrices: string[] = [];
-        for (const matrix of await states.all()) {
-          const label = ((await matrix.getAttribute('aria-label')) ?? '').replace(
-            / interaction states$/,
-            '',
+        for (const view of visited) {
+          await page.evaluate((hash) => (location.hash = hash), `/${path}/${view}`);
+          await page.locator('.docs-page-header').getByRole('tab', { selected: true }).waitFor();
+          await expect(page).toHaveURL(new RegExp(`#/${path}/${view}$`));
+          await settle(page);
+          const examples = page.locator(
+            '.docs-preview .docs-example:not(.docs-example .docs-example)',
           );
-          matrices.push(label);
-          const summary = matrix.locator('xpath=ancestor::details[1]/summary');
-          const closed = (await summary.count()) > 0 && !(await matrix.isVisible());
-          if (closed) await press(page, summary);
-          await take(matrix, `${theme}-states-${name(slug(label))}.png`);
-          if (closed) {
-            await press(page, summary);
-            await expect(matrix).toBeHidden();
+          for (const example of await examples.all()) {
+            if (!(await example.isVisible())) continue;
+            // Untitled examples are named after their first disclosure or specimen heading.
+            const heading = example
+              .locator(':scope > h2, :scope > .docs-example-heading > h2, summary, h3')
+              .first();
+            const title = (await heading.count()) ? await heading.textContent() : '';
+            await take(example, `${theme}-${name(slug(title ?? ''))}.png`);
+            specimens++;
+          }
+          // Example files, rendered live, are named after their file.
+          for (const example of await page.locator('.docs-live-example[data-example]').all()) {
+            const file = (await example.getAttribute('data-example')) ?? '';
+            await take(example, `${theme}-${name(`example-${slug(file)}`)}.png`);
+            specimens++;
+          }
+          // The forced hover, pressed, focus and disabled states of InteractionStates.ts, which
+          // the catalogue keeps in closed disclosures.
+          const states = page.locator(
+            '.docs-preview [role="region"][aria-label$="interaction states"]',
+          );
+          for (const matrix of await states.all()) {
+            const label = ((await matrix.getAttribute('aria-label')) ?? '').replace(
+              / interaction states$/,
+              '',
+            );
+            matrices.push(label);
+            const summary = matrix.locator('xpath=ancestor::details[1]/summary');
+            const closed = (await summary.count()) > 0 && !(await matrix.isVisible());
+            if (closed) await press(page, summary);
+            await take(matrix, `${theme}-states-${name(slug(label))}.png`);
+            if (closed) {
+              await press(page, summary);
+              await expect(matrix).toBeHidden();
+            }
           }
         }
+        expect(specimens, `The ${theme} page shows at least one specimen`).toBeGreaterThan(0);
         expect(
           matrices.sort(),
-          `The ${theme} preview shows the interaction states listed in stateMatrices`,
+          `The ${theme} page shows the interaction states listed in stateMatrices`,
         ).toEqual([...(stateMatrices[reference.id] ?? [])].sort());
       }
       reconcile(testInfo, directory, recorded, taken);

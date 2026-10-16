@@ -1,32 +1,33 @@
 import { Button, Tabs } from '@envsemble/envui';
 import { Code } from '@envsemble/envui/icons/Code';
 import type { ReactElement, ReactNode } from 'react';
-import { referenceViews, type ReferenceView } from '../navigation/DocumentationRoutes';
+import type { ReferenceView, ViewOption } from '../navigation/DocumentationRoutes';
 import { PageHeader } from './PageHeader';
 
-/** Foundation and component pages share Preview and Usage banner views. */
+/** A page's views as tabs in its banner: Preview and Usage, or the template's views. */
 export function PageViews({
   path,
   title,
   breadcrumb,
   description,
+  meta,
   symbol,
   view,
-  preview,
-  usage,
+  views,
+  content,
   renderBanner,
 }: {
   path: string;
   title: string;
   breadcrumb?: string;
   description?: string;
+  meta?: ReactNode;
   symbol?: ReactNode;
   view: ReferenceView;
-  preview: ReactNode;
-  usage: ReactNode;
+  views: readonly ViewOption[];
+  content: Partial<Record<ReferenceView, ReactNode>>;
   renderBanner?: (tabs: ReactElement) => ReactNode;
 }) {
-  const content = { preview, usage };
   return (
     <Tabs
       aria-label={`${title} reference views`}
@@ -45,15 +46,20 @@ export function PageViews({
             title={title}
             breadcrumb={breadcrumb}
             description={description}
+            meta={meta}
             symbol={symbol}
           >
             {tabs}
           </PageHeader>
         ))
       }
-      items={referenceViews.map(({ id, title }) => ({
+      items={views.map(({ id, title }) => ({
         value: id,
-        button: <Button startIcon={id === 'usage' ? <Code /> : undefined}>{title}</Button>,
+        button: (
+          <Button startIcon={id === 'usage' || id === 'props' ? <Code /> : undefined}>
+            {title}
+          </Button>
+        ),
         content: content[id],
       }))}
     />
