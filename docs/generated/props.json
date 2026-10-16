@@ -6251,13 +6251,13 @@
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "Theme the document root as well as this subtree (default). Root theming covers the page background, native controls, portals rendered by other libraries and the content of every theme-color meta tag, which takes the canvas color."
+          "description": "Theme the document root as well as this subtree (default). Root theming covers the page background, native controls, portals rendered by other libraries and the content of every theme-color meta tag, which takes the canvas color. One provider per document applies to it: pass false to any other, nested in it or beside it. In development, envUI reports two providers that both apply."
         },
         {
           "name": "contrast",
           "type": "'standard' | 'high' | 'system'",
           "required": false,
-          "description": "Contrast of the Theme boundary around the children, and of the document root with applyToDocument: high, standard, or system to follow `prefers-contrast: more`, as on Theme. Defaults to the contrast of an enclosing Theme, and to system. With system, the provider removes from the root only a contrast that envUI wrote: a provider, this one or one before it, or the bootstrap script. Pass a contrast that is fixed for the application to createThemeBootstrapScript too, so the root has it before the first paint."
+          "description": "Contrast of the Theme boundary around the children, and of the document root with applyToDocument: high, standard, or system to follow `prefers-contrast: more`, as on Theme. Defaults to the contrast of an enclosing Theme, and to system. With system, the provider removes from the root only a contrast that envUI wrote and the page left unchanged: a provider, this one or one before it, or the bootstrap script. Pass a contrast that is fixed for the application to createThemeBootstrapScript too, so the root has it before the first paint."
         },
         {
           "name": "className",

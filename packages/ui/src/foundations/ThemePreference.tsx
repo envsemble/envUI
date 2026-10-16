@@ -43,16 +43,18 @@ export interface ThemePreferenceProviderProps {
   /**
    * Theme the document root as well as this subtree (default). Root theming covers the page
    * background, native controls, portals rendered by other libraries and the content of every
-   * theme-color meta tag, which takes the canvas color.
+   * theme-color meta tag, which takes the canvas color. One provider per document applies to it:
+   * pass false to any other, nested in it or beside it. In development, envUI reports two providers
+   * that both apply.
    */
   applyToDocument?: boolean;
   /**
    * Contrast of the Theme boundary around the children, and of the document root with
    * applyToDocument: high, standard, or system to follow `prefers-contrast: more`, as on Theme.
    * Defaults to the contrast of an enclosing Theme, and to system. With system, the provider
-   * removes from the root only a contrast that envUI wrote: a provider, this one or one before it,
-   * or the bootstrap script. Pass a contrast that is fixed for the application to
-   * createThemeBootstrapScript too, so the root has it before the first paint.
+   * removes from the root only a contrast that envUI wrote and the page left unchanged: a provider,
+   * this one or one before it, or the bootstrap script. Pass a contrast that is fixed for the
+   * application to createThemeBootstrapScript too, so the root has it before the first paint.
    */
   contrast?: ThemeContrast;
   /** Class name for the Theme boundary around the children. */
@@ -67,6 +69,35 @@ function readStoredPreference(storageKey: string, fallback: ThemePreference): Th
     // Storage can be blocked; the default still applies.
   }
   return fallback;
+}
+
+/** What a provider applying to the document has written on the root. */
+interface DocumentWrites {
+  contrast?: Exclude<ThemeContrast, 'system'>;
+}
+
+/**
+ * The providers applying to the document now, with what each wrote there. Only one should; with
+ * more, a provider at system still leaves a contrast another of them wrote.
+ */
+const documentProviders = new Map<symbol, DocumentWrites>();
+let warnedAboutProviders = false;
+
+/**
+ * Removes the root's contrast when envUI wrote it, the page has not written over it since, and no
+ * mounted provider holds it. A marker the page's own contrast no longer matches goes on its own.
+ */
+function releaseContrast(root: HTMLElement) {
+  const marker = root.getAttribute(contrastSourceAttribute);
+  if (marker === null) return;
+  const contrast = root.dataset.envContrast;
+  if (contrast === undefined || marker !== ownContrastSource(contrast)) {
+    root.removeAttribute(contrastSourceAttribute);
+    return;
+  }
+  for (const writes of documentProviders.values()) if (writes.contrast === contrast) return;
+  delete root.dataset.envContrast;
+  root.removeAttribute(contrastSourceAttribute);
 }
 
 function readSystemTheme(): ThemeValue {
@@ -97,6 +128,7 @@ export function ThemePreferenceProvider({
       : readSystemTheme(),
   );
   const theme: ThemeValue = preference === 'system' ? systemTheme : preference;
+  const [provider] = useState(() => Symbol('ThemePreferenceProvider'));
 
   useEffect(() => {
     if (preference !== 'system' || !window.matchMedia) return;
@@ -120,22 +152,46 @@ export function ThemePreferenceProvider({
     return () => window.removeEventListener('storage', onStorage);
   }, [storageKey, defaultPreference]);
 
+  // One provider applies to the document; a second would write over the first's root theme.
+  useEffect(() => {
+    if (!applyToDocument) return;
+    try {
+      if (
+        process.env.NODE_ENV !== 'production' &&
+        documentProviders.size > 0 &&
+        !warnedAboutProviders
+      ) {
+        warnedAboutProviders = true;
+        // A development-only report, as React reports an invalid prop.
+        // eslint-disable-next-line no-console
+        console.error(
+          'envUI: more than one ThemePreferenceProvider applies to the document. Let one theme the root and pass applyToDocument={false} to the others.',
+        );
+      }
+    } catch {
+      // No bundler defined process.env.NODE_ENV: written as in Theme.
+    }
+    documentProviders.set(provider, {});
+    return () => {
+      documentProviders.delete(provider);
+    };
+  }, [applyToDocument, provider]);
+
   useEffect(() => {
     if (!applyToDocument) return;
     const root = document.documentElement;
     root.classList.add('env-theme');
     root.dataset.envTheme = theme;
     // Like a Theme boundary, the root leaves system contrast to prefers-contrast: more. What envUI
-    // writes carries a marker on the root, so a provider removes a contrast that it, a provider
-    // before it (such as one keyed by the user) or the bootstrap script wrote, and one the page
-    // set itself stays.
-    if (contrast !== 'system') {
-      root.dataset.envContrast = contrast;
-      root.setAttribute(contrastSourceAttribute, ownContrastSource);
-    } else if (root.getAttribute(contrastSourceAttribute) === ownContrastSource) {
-      delete root.dataset.envContrast;
-      root.removeAttribute(contrastSourceAttribute);
-    }
+    // writes carries a marker with the value, so a provider removes a contrast that it, a provider
+    // before it (such as one keyed by the user) or the bootstrap script wrote, and one the page set
+    // itself, or wrote over envUI's, stays.
+    const written = contrast === 'system' ? undefined : contrast;
+    documentProviders.set(provider, { ...documentProviders.get(provider), contrast: written });
+    if (written) {
+      root.dataset.envContrast = written;
+      root.setAttribute(contrastSourceAttribute, ownContrastSource(written));
+    } else releaseContrast(root);
     root.style.colorScheme = theme;
     // The browser's own interface, such as a mobile address bar, takes the canvas color. Every
     // theme-color tag follows, including ones written for a system color scheme with media.
@@ -144,7 +200,7 @@ export function ThemePreferenceProvider({
       'meta[name="theme-color"]',
     ))
       browserTheme.content = canvas;
-  }, [applyToDocument, theme, contrast]);
+  }, [applyToDocument, theme, contrast, provider]);
 
   const setPreference = useCallback(
     (next: ThemePreference) => {

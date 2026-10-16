@@ -15,6 +15,7 @@ import {
   Text,
   Theme,
   ThemePreferenceProvider,
+  ThemeToggle,
   Toast,
   Tooltip,
   useToast,
@@ -202,6 +203,24 @@ export function ThemeContrastRemountFixture() {
       className="fixture-main"
     >
       <Button onClick={() => setUser(users[1])}>Switch to the second user</Button>
+    </ThemePreferenceProvider>
+  );
+}
+
+/**
+ * Two providers that both apply to the document, against the advice to let one: an outer one at
+ * high contrast and an inner one at system. Mounted with ?fixture=theme-contrast-nested.
+ */
+export function ThemeContrastNestedFixture() {
+  return (
+    <ThemePreferenceProvider storageKey="fixture-outer-theme" contrast="high">
+      <ThemePreferenceProvider
+        storageKey="fixture-inner-theme"
+        contrast="system"
+        className="fixture-main"
+      >
+        <ThemeToggle data-testid="inner-theme-toggle" />
+      </ThemePreferenceProvider>
     </ThemePreferenceProvider>
   );
 }
