@@ -231,3 +231,34 @@ test('ThemePreferenceProvider sets the contrast of the document root, its bounda
   expect(await colorsIn(root)).toEqual(gate.dark);
   await expectPopups(page, 'provider', { theme: 'dark', contrast: null, colors: gate.dark });
 });
+
+test('every popup keeps a visible edge under forced colors, where its shadow is gone', async ({
+  page,
+}) => {
+  await page.emulateMedia({ contrast: 'no-preference', forcedColors: 'active' });
+  await page.goto(`${fixtureUrl}/?fixture=theme-contrast`);
+  for (const kind of popupKinds) {
+    const popup = await open(page, kind, 'standard');
+    await expect(popup).toBeVisible();
+    const edge = await popup.evaluate((element) => {
+      const surface = element.closest(
+        '.env-menu, .env-popover, .env-dropdown-options, .env-tooltip, .env-modal-pane',
+      )!;
+      const style = getComputedStyle(surface);
+      return {
+        surface: surface.className,
+        width: parseFloat(style.borderTopWidth),
+        style: style.borderTopStyle,
+        color: style.borderTopColor,
+        background: style.backgroundColor,
+      };
+    });
+    expect(edge.width, `${kind} (${edge.surface}) has an edge`).toBeGreaterThanOrEqual(1);
+    expect(edge.style, `${kind} draws its edge`).toBe('solid');
+    expect(edge.color, `${kind}'s edge is painted`).not.toMatch(/rgba\(0, 0, 0, 0\)|transparent/);
+    expect(edge.color, `${kind}'s edge differs from its fill`).not.toBe(edge.background);
+    if (kind === 'tooltip') await page.mouse.move(0, 0);
+    else await page.keyboard.press('Escape');
+    await expect(popup).toBeHidden();
+  }
+});
