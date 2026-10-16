@@ -283,7 +283,7 @@ export const pairs: readonly ContrastPair[] = [
   ...nonText(
     '--elevation-2-border',
     [popup, surface, page, muted, raised],
-    'The edge of menus, Select and Combobox lists, popovers, hover cards, the date picker, rich text suggestions and docked panels, against the popup and what it floats over',
+    'The edge of menus, Select and Combobox lists, popovers, hover cards, the date picker, rich text suggestions, docked panels, tooltips and toasts, against the popup and what it floats over',
     popupEdge,
   ),
   ...nonText(

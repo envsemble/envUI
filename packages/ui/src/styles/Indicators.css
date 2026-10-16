@@ -57,11 +57,14 @@
 .env-tooltip {
   max-inline-size: min(18rem, calc(100vw - 2rem));
   padding: var(--space-1) var(--space-2);
-  /* The solid fill identifies the tooltip; forced colors paint the transparent edge as its boundary. */
-  border: 1px solid transparent;
+  /* Tooltips float over everything at elevation 2, as menus do: a shadow and a hairline edge, so the
+     dark fill separates from a dark surface too. The edge is the boundary in high contrast and what
+     forced colors paint once the shadow is gone. */
+  border: 1px solid var(--elevation-2-border);
   border-radius: var(--radius-standard);
   background: var(--color-toast-neutral);
   color: var(--color-on-toast);
+  box-shadow: var(--elevation-2-shadow);
   font: var(--type-body-small);
   overflow-wrap: anywhere;
 }
