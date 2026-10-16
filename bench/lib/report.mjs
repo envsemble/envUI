@@ -36,6 +36,7 @@ export function compactRun(run) {
       errors: score.typecheck.errors
         .slice(0, 10)
         .map(({ code, file, line, message }) => ({ code, file, line, message })),
+      suppressions: score.typecheck.suppressions ?? [],
     },
     coverage: score?.coverage,
     envui: score?.envui,
@@ -107,6 +108,7 @@ export function aggregate(runs) {
         max: Math.max(...scores),
       },
       typecheckPassRate: round(count((run) => run.typecheck?.passed) / group.length, 2),
+      suppressions: sum((run) => run.typecheck?.suppressions?.length),
       coverageMean: round(mean(group.map((run) => run.coverage?.ratio ?? 0)), 2),
       capabilities: {
         covered: sum(
@@ -180,12 +182,12 @@ export function renderSummary(results, tasks) {
 
   push('## Aggregates', '');
   push(
-    '| Condition | Agent | Runs | Mean score | Median | Read envUI docs | Typecheck pass | Capabilities via envUI | Runs with raw HTML | Local duplicates | envUI type errors | Raw style values | UI deps added | Timeouts / errors | Time | Cost | Tokens in / cached / out |',
+    '| Condition | Agent | Runs | Mean score | Median | Read envUI docs | Typecheck pass | Capabilities via envUI | Runs with raw HTML | Local duplicates | envUI type errors | Raw style values | UI packages | Suppressions | Timeouts / errors | Time | Cost | Tokens in / cached / out |',
   );
-  push('|---|---|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|');
+  push('|---|---|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|');
   for (const group of aggregates)
     push(
-      `| ${group.condition} | ${group.agent} | ${group.runs} | **${group.score.mean}** | ${group.score.median} | ${group.readEnvuiDocs}/${group.runs} | ${Math.round(group.typecheckPassRate * 100)}% | ${group.capabilities.covered}/${group.capabilities.total} | ${group.rawHtml.runsWithAny}/${group.runs} | ${group.duplicates.total} | ${group.envuiErrors.total} | ${group.rawStyles.total} | ${group.uiDependencies.length} | ${group.statuses.timeout} / ${group.statuses['agent-error'] + group.statuses['harness-error']} | ${minutes(group.time.totalMs)} | ${group.costUsd === null ? 'n/a' : `$${group.costUsd}`} | ${thousands(group.tokens.input + group.tokens.cachedInput + group.tokens.cacheWrite)} / ${thousands(group.tokens.cachedInput)} / ${thousands(group.tokens.output)} |`,
+      `| ${group.condition} | ${group.agent} | ${group.runs} | **${group.score.mean}** | ${group.score.median} | ${group.readEnvuiDocs}/${group.runs} | ${Math.round(group.typecheckPassRate * 100)}% | ${group.capabilities.covered}/${group.capabilities.total} | ${group.rawHtml.runsWithAny}/${group.runs} | ${group.duplicates.total} | ${group.envuiErrors.total} | ${group.rawStyles.total} | ${group.uiDependencies.length} | ${group.suppressions ?? 0} | ${group.statuses.timeout} / ${group.statuses['agent-error'] + group.statuses['harness-error']} | ${minutes(group.time.totalMs)} | ${group.costUsd === null ? 'n/a' : `$${group.costUsd}`} | ${thousands(group.tokens.input + group.tokens.cachedInput + group.tokens.cacheWrite)} / ${thousands(group.tokens.cachedInput)} / ${thousands(group.tokens.output)} |`,
     );
   push('');
 
@@ -274,18 +276,30 @@ export function renderSummary(results, tasks) {
   } else push('None.');
   push('');
 
-  push('### Raw style values and added dependencies', '');
+  push('### Type-checker suppressions', '');
+  const suppressionRows = runs.flatMap((run) =>
+    (run.typecheck?.suppressions ?? []).map((entry) => ({ run, entry })),
+  );
+  if (suppressionRows.length) {
+    push('| Task | Agent | Directive | Where |', '|---|---|---|---|');
+    for (const { run, entry } of suppressionRows)
+      push(`| ${run.task} | ${run.agent} | \`${entry.directive}\` | ${entry.file}:${entry.line} |`);
+  } else push('None.');
+  push('');
+
+  push('### Raw style values, added dependencies and UI packages', '');
   const styleRows = runs.filter(
-    (run) => (run.styles?.total ?? 0) > 0 || run.dependencies?.added.length,
+    (run) =>
+      (run.styles?.total ?? 0) > 0 || run.dependencies?.added.length || run.dependencies?.ui.length,
   );
   if (styleRows.length) {
     push(
-      '| Task | Agent | Raw colors | Raw px | `.env-*` overrides | Added dependencies | Examples |',
-      '|---|---|--:|--:|--:|---|---|',
+      '| Task | Agent | Raw colors | Raw px | `.env-*` overrides | Added dependencies | Third-party UI packages | Examples |',
+      '|---|---|--:|--:|--:|---|---|---|',
     );
     for (const run of styleRows)
       push(
-        `| ${run.task} | ${run.agent} | ${run.styles.cssColors + run.styles.inlineColors} | ${run.styles.cssPx + run.styles.inlinePx} | ${run.styles.cssPrivateClasses + run.styles.privateClassNames} | ${(run.dependencies?.added ?? []).map((name) => `\`${name}\``).join(', ')} | ${cell(run.styles.samples.slice(0, 3).join('; '))} |`,
+        `| ${run.task} | ${run.agent} | ${run.styles.cssColors + run.styles.inlineColors} | ${run.styles.cssPx + run.styles.inlinePx} | ${run.styles.cssPrivateClasses + run.styles.privateClassNames} | ${(run.dependencies?.added ?? []).map((name) => `\`${name}\``).join(', ')} | ${(run.dependencies?.ui ?? []).map((name) => `\`${name}\``).join(', ')} | ${cell(run.styles.samples.slice(0, 3).join('; '))} |`,
       );
   } else push('None.');
   push('');
@@ -302,7 +316,7 @@ export function renderSummary(results, tasks) {
 
   push('## Scoring', '');
   push(
-    `Per run, over the files the agent created or changed (counts in a changed file are relative to its base version): typecheck passes ${scoring.typecheck.max}; task capabilities built with envUI ${scoring.coverage.max} × covered share; raw HTML ${scoring.rawHtml.max} − ${scoring.rawHtml.cost} per weighted element; local duplicates of envUI ${scoring.duplicates.max} − ${scoring.duplicates.cost} each; type errors on envUI ${scoring.envuiErrors.max} − ${scoring.envuiErrors.cost} each; raw colors, px and \`.env-*\` overrides ${scoring.rawStyles.max} − ${scoring.rawStyles.cost} each; −${scoring.uiLibraryPenalty} per third-party UI package added. Parts never go below zero; a run that changed no source scores 0. See bench/README.md.`,
+    `Per run, over the files the agent created or changed (counts in a changed file are relative to its base version): typecheck passes ${scoring.typecheck.max}; task capabilities built with envUI ${scoring.coverage.max} × covered share; raw HTML ${scoring.rawHtml.max} − ${scoring.rawHtml.cost} per weighted element; local duplicates of envUI ${scoring.duplicates.max} − ${scoring.duplicates.cost} each; type errors on envUI ${scoring.envuiErrors.max} − ${scoring.envuiErrors.cost} each; raw colors, px and \`.env-*\` overrides ${scoring.rawStyles.max} − ${scoring.rawStyles.cost} each; −${scoring.uiLibraryPenalty} per third-party UI package added or imported; −${scoring.suppressionPenalty} per \`@ts-nocheck\`, \`@ts-ignore\` or \`@ts-expect-error\` added, with the type check run as if they were not there. Parts never go below zero; a run that changed no source scores 0. See bench/README.md.`,
     '',
   );
   return `${lines.join('\n')}\n`;

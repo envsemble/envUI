@@ -125,21 +125,27 @@ A run ends when the agent's process exits or at the timeout, whichever comes fir
 
 The scorer looks only at files the agent created or changed (`git diff` against the base commit, including untracked files). In a changed file, the base version's counts are subtracted, so only what the agent added counts.
 
-| Part                          |   Points | How                                                                                                                                                                                                                                               |
-| ----------------------------- | -------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Typecheck                     |       20 | The app type-checks with no errors: its own `tsconfig.json` with `strict` forced on, plus every changed TypeScript file as a root.                                                                                                                |
-| Capabilities built with envUI |       35 | × the share of the task's capabilities covered. A capability is covered when one of its envUI exports is used in the changed files. `Component.prop` entries also need that prop, as in `TableHeaderCell.onSort`.                                 |
-| No raw HTML                   |       20 | −4 per weighted occurrence of raw JSX where envUI has a component (`scoring/raw-html.json`).                                                                                                                                                      |
-| No local duplicates           |       10 | −5 per locally declared component that duplicates envUI (`scoring/aliases.json`).                                                                                                                                                                 |
-| No type errors on envUI       |       10 | −5 per TypeScript error attributed to envUI: an invented export, an unknown module such as a wrong icon path, a wrong or missing prop on an envUI element, a wrong member on an envUI value, or a local `declare module '@envsemble/envui'` shim. |
-| No raw style values           |        5 | −0.5 per raw color, raw px length or `.env-*` override in changed CSS or in inline `style` objects.                                                                                                                                               |
-| Third-party UI packages       | −10 each | A dependency added from `scoring/ui-libraries.json`, such as a toast, date-picker, icon or headless-UI package.                                                                                                                                   |
+| Part                          |   Points | How                                                                                                                                                                                                                                                               |
+| ----------------------------- | -------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Typecheck                     |       20 | The app type-checks with no errors: its own `tsconfig.json` with `strict` forced on, plus every changed TypeScript file as a root.                                                                                                                                |
+| Capabilities built with envUI |       35 | × the share of the task's capabilities covered. A capability is covered when one of its envUI exports is used in the changed files. `Component.prop` entries also need that prop, as in `TableHeaderCell.onSort`.                                                 |
+| No raw HTML                   |       20 | −4 per weighted occurrence of raw JSX where envUI has a component (`scoring/raw-html.json`).                                                                                                                                                                      |
+| No local duplicates           |       10 | −5 per locally declared component that duplicates envUI (`scoring/aliases.json`).                                                                                                                                                                                 |
+| No type errors on envUI       |       10 | −5 per TypeScript error attributed to envUI: an invented export, an unknown module such as a wrong icon path, a wrong or missing prop on an envUI element, a wrong member on an envUI value, or a local `declare module '@envsemble/envui'` shim.                 |
+| No raw style values           |        5 | −0.5 per raw color, raw px length or `.env-*` override in changed CSS or in inline `style` objects.                                                                                                                                                               |
+| Third-party UI packages       | −10 each | A package from `scoring/ui-libraries.json`, such as a toast, date-picker, icon or headless-UI package, added to `package.json` or imported in a changed file. Importing counts because envUI's own dependencies, such as `@base-ui/react`, are installed already. |
+| Type-checker suppressions     |  −5 each | A `@ts-nocheck`, `@ts-ignore` or `@ts-expect-error` added in a changed file.                                                                                                                                                                                      |
 
 Parts never go below zero. A run that changed no source or CSS scores 0. Timeouts and agent errors are scored on whatever they left on disk, and their status is reported. An idiomatic envUI solution scores 100. A hand-rolled solution that type-checks scores about 20–50.
 
 ### Type checking
 
 - The app's `tsconfig.json` is parsed with its own path, and the compiler's working directory is the app, so `types` such as `vite/client` and the type roots resolve from the app's `node_modules` wherever the scorer runs. If the agent broke or removed `tsconfig.json`, its version in the base commit is used.
+- In the changed files, suppression directives are neutralized before checking, so the errors they hide still count, in the typecheck and as envUI type errors.
+
+### What counts as envUI
+
+An envUI export is used when a changed file references it: imported from `@envsemble/envui` or one of its entry points, or imported from a local module that re-exports it. Re-exports are resolved with the TypeScript program, so `import { Button } from './ui'` counts when `./ui` has `export { Button } from '@envsemble/envui'`, `export *` from it, or imports and exports `Button` again, under any name.
 
 ### What counts as raw HTML
 
