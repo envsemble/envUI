@@ -14,7 +14,6 @@ import {
   NavList,
   Alert,
   Popover,
-  SegmentedControl,
   Stack,
   Surface,
   Text,
@@ -27,75 +26,8 @@ import { Folder } from '@envsemble/envui/icons/Folder';
 import { Inbox } from '@envsemble/envui/icons/Inbox';
 import { MoreVert } from '@envsemble/envui/icons/MoreVert';
 import { TaskAlt } from '@envsemble/envui/icons/TaskAlt';
-import { ViewList } from '@envsemble/envui/icons/ViewList';
-import { ViewModule } from '@envsemble/envui/icons/ViewModule';
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
-
-export function SegmentedControlPreview() {
-  const [view, setView] = useState('open');
-  const [layout, setLayout] = useState('list');
-  const [assigned, setAssigned] = useState('mine');
-  return (
-    <Preview>
-      <Example
-        title="One choice among a few"
-        size="collection"
-        caption={
-          <>
-            <Kbd>←</Kbd> and <Kbd>→</Kbd> move between options and choose them. Counts follow the
-            label in a smaller, muted number.
-          </>
-        }
-      >
-        <SpecimenGrid>
-          <Specimen title="With counts">
-            <SegmentedControl
-              aria-label="Work items"
-              value={view}
-              onValueChange={setView}
-              options={[
-                { value: 'open', label: 'Open', count: 12 },
-                { value: 'blocked', label: 'Blocked', count: 3 },
-                { value: 'done', label: 'Done', count: 40 },
-              ]}
-            />
-          </Specimen>
-          <Specimen title="Compact with icons">
-            <SegmentedControl
-              aria-label="Layout"
-              size="compact"
-              value={layout}
-              onValueChange={setLayout}
-              options={[
-                { value: 'list', label: 'List', icon: <ViewList /> },
-                { value: 'board', label: 'Board', icon: <ViewModule /> },
-                { value: 'timeline', label: 'Timeline', disabled: true },
-              ]}
-            />
-          </Specimen>
-          <Specimen title="Full width in a narrow sidebar">
-            <div className="docs-narrow-segments">
-              <SegmentedControl
-                fullWidth
-                aria-label="Assignments"
-                value={assigned}
-                onValueChange={setAssigned}
-                options={[
-                  { value: 'mine', label: 'Assigned to me' },
-                  { value: 'team', label: 'Everyone on the team' },
-                ]}
-              />
-            </div>
-          </Specimen>
-        </SpecimenGrid>
-        <Text variant="caption" className="docs-caption" aria-live="polite">
-          Showing {view} items as a {layout}.
-        </Text>
-      </Example>
-    </Preview>
-  );
-}
 
 const badgeTones = ['neutral', 'accent', 'success', 'warning', 'danger', 'done'] as const;
 const badgeLabels: Record<(typeof badgeTones)[number], string> = {

@@ -46,7 +46,6 @@ const unconverted = [
   'panel-dock',
   'popover',
   'rich-text',
-  'segmented-control',
   'stat',
 ];
 

@@ -21,7 +21,6 @@ import {
   KbdPreview,
   AlertsPreview,
   PopoverPreview,
-  SegmentedControlPreview,
 } from './Elements';
 
 const RichTextPreview = lazy(() =>
@@ -31,8 +30,6 @@ const RichTextPreview = lazy(() =>
 /** Select a topic; each preview retains its state across theme changes. */
 export function ComponentPreview({ id }: { id: string }) {
   switch (id) {
-    case 'segmented-control':
-      return <SegmentedControlPreview />;
     case 'checkbox':
       return <CheckboxPreview />;
     case 'combobox':

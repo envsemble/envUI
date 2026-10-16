@@ -222,10 +222,6 @@
   padding: 0 var(--space-5) var(--space-5);
 }
 /* A sidebar's width, which a full-width button group fills. */
-/* As narrow as a sidebar, too narrow for two long labels side by side. */
-.docs-narrow-segments {
-  inline-size: min(100%, 13rem);
-}
 /* A pane's header bar of quiet actions around its title. */
 /* A compact toolbar: a title that takes the room left, then its controls. */
 .docs-compact-toolbar {
