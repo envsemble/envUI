@@ -6837,7 +6837,7 @@
           "name": "shortcut",
           "type": "string",
           "required": false,
-          "description": "The keyboard shortcut that does the same, such as Ctrl+B, with keys joined by +: the tooltip shows it, and aria-keyshortcuts announces it."
+          "description": "The keyboard shortcut that does the same, such as Ctrl+B, with keys joined by +: the tooltip shows it, and aria-keyshortcuts announces it, in ARIA's key names, such as Control+B. A sequence, such as Ctrl+K Ctrl+B, shows its keys without the attribute, as in Menu."
         },
         {
           "name": "variant",
