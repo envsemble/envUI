@@ -29,10 +29,13 @@ export default defineConfig({
       dependencies: ['chromium', 'firefox', 'webkit'],
       use: { ...devices['Desktop Chrome'] },
     },
-    // `npm run test:a11y`: axe over every catalogue page in both themes, Chromium only.
+    // `npm run test:a11y`: axe over every catalogue page in both themes, Chromium only. Its setup
+    // first removes the lock a stopped update can leave on KnownViolations.json.
+    { name: 'a11y-setup', testDir: './tests/accessibility', testMatch: /Lock\.setup\.ts/ },
     {
       name: 'a11y',
       testDir: './tests/accessibility',
+      dependencies: ['a11y-setup'],
       use: { ...devices['Desktop Chrome'], screenshot: 'off' },
     },
     // `npm run test:visual`: the screenshot baseline, rendered in the Linux Playwright image.

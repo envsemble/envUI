@@ -64,7 +64,10 @@ function sortKeys<T>(value: T): T {
   ) as T;
 }
 
-/** Workers rewrite their own pages; a directory lock keeps the read-modify-write atomic. */
+/**
+ * Workers rewrite their own pages; a directory lock keeps the read-modify-write atomic. Lock.setup.ts
+ * removes a lock that a stopped update left behind before the scans start.
+ */
 function updateExceptions(change: (violations: Violations) => void) {
   const lock = `${exceptionsFile}.lock`;
   const wait = new Int32Array(new SharedArrayBuffer(4));
