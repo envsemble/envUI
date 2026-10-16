@@ -257,7 +257,10 @@
   },
   "packages/ui/src/styles/Popover.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 4
+      "count": 5
+    },
+    "declaration-property-value-allowed-list": {
+      "count": 1
     }
   },
   "packages/ui/src/styles/Rating.css": {
