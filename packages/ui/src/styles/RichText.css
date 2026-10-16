@@ -46,14 +46,15 @@
   list-style: none;
   padding-inline-start: 0;
 }
-.env-rich-text :where(li[data-type='taskItem']),
-.env-rich-text-document :where(li[data-type='taskItem']) {
+/* The editor renders task items without data-type, so select them by their list. */
+.env-rich-text :where(ul[data-type='taskList'] > li),
+.env-rich-text-document :where(ul[data-type='taskList'] > li) {
   display: flex;
   align-items: baseline;
   gap: var(--space-2);
 }
-.env-rich-text :where(li[data-type='taskItem'] > div),
-.env-rich-text-document :where(li[data-type='taskItem'] > div) {
+.env-rich-text :where(ul[data-type='taskList'] > li > div),
+.env-rich-text-document :where(ul[data-type='taskList'] > li > div) {
   min-inline-size: 0;
   flex: 1;
 }
