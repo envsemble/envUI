@@ -102,9 +102,6 @@
 .docs-example p {
   max-width: 65ch;
 }
-.docs-selection-children {
-  padding-inline-start: var(--space-6);
-}
 .docs-narrow-actions {
   width: min(100%, 16rem);
 }

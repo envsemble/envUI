@@ -1049,32 +1049,32 @@
     "Checkbox": {
       "kind": "component",
       "source": "packages/ui/src/forms/Checkbox.tsx",
-      "description": "",
+      "description": "A native checkbox inside its label, checked, unchecked or mixed.",
       "props": [
         {
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "The text beside the box, which names the checkbox; pressing it toggles the checkbox."
         },
         {
           "name": "checked",
           "type": "boolean | 'mixed'",
           "required": false,
-          "description": ""
+          "description": "Whether the box is checked, unchecked or \"mixed\", for a parent whose children are partly chosen. With `onCheckedChange` it controls the checkbox."
         },
         {
           "name": "defaultChecked",
           "type": "boolean | 'mixed'",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "How an uncontrolled checkbox starts, and what a form reset restores; unchecked by default."
         },
         {
           "name": "onCheckedChange",
           "type": "(checked: boolean) => void",
           "required": false,
-          "description": ""
+          "description": "Called with the new state when people press the checkbox; a mixed checkbox reports true."
         }
       ],
       "native": [

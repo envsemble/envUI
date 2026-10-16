@@ -6,6 +6,7 @@ export default function FirstProject() {
   return (
     <Card>
       <EmptyState
+        headingLevel={3}
         icon={<FolderOpen />}
         title="No projects yet"
         description="Create a project to bring plans and people together."

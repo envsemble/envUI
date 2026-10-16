@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   TextField,
-  Checkbox,
   Switch,
   RadioGroup,
   Radio,
@@ -21,74 +20,6 @@ import { ZoomIn } from '@envsemble/envui/icons/ZoomIn';
 
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
-
-export function CheckboxPreview() {
-  const [includeArchived, setIncludeArchived] = useState(false);
-  const [selectedChoice, setSelectedChoice] = useState(true);
-  const [selectedProjects, setSelectedProjects] = useState([true, false]);
-  const projectSelection = selectedProjects.every(Boolean)
-    ? true
-    : selectedProjects.some(Boolean)
-      ? 'mixed'
-      : false;
-  return (
-    <Preview>
-      <Example title="Independent selection" size="collection">
-        <SpecimenGrid size="compact">
-          <Specimen title="Interactive choices">
-            <Stack>
-              <Checkbox
-                label="Include archived items"
-                checked={includeArchived}
-                onCheckedChange={setIncludeArchived}
-              />
-              <Checkbox
-                label="Selected choice"
-                checked={selectedChoice}
-                onCheckedChange={setSelectedChoice}
-              />
-            </Stack>
-          </Specimen>
-          <Specimen title="Disabled choices">
-            <Stack>
-              <Checkbox label="Include archived items" disabled />
-              <Checkbox label="Include completed items" checked disabled />
-            </Stack>
-          </Specimen>
-        </SpecimenGrid>
-      </Example>
-      <Example
-        title="Select all"
-        size="compact"
-        caption="Derive the parent's partial selection from the child choices."
-      >
-        <Stack>
-          <Checkbox
-            label="All projects"
-            checked={projectSelection}
-            onCheckedChange={(checked) =>
-              setSelectedProjects((current) => current.map(() => checked))
-            }
-          />
-          <Stack gap={3} className="docs-selection-children">
-            {['Project one', 'Project two'].map((label, index) => (
-              <Checkbox
-                key={label}
-                label={label}
-                checked={selectedProjects[index]}
-                onCheckedChange={(checked) =>
-                  setSelectedProjects((current) =>
-                    current.map((selected, i) => (i === index ? checked : selected)),
-                  )
-                }
-              />
-            ))}
-          </Stack>
-        </Stack>
-      </Example>
-    </Preview>
-  );
-}
 
 export function SwitchPreview() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);

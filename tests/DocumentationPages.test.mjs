@@ -21,7 +21,6 @@ const unconverted = [
   'avatar',
   'calendar-heatmap',
   'card',
-  'checkbox',
   'chips',
   'code',
   'color-picker',

@@ -300,7 +300,6 @@ test('single previews retain state when the theme changes', async ({ page }) => 
   // The 0.x preview of text fields opens the TextField page, whose live examples follow the
   // documentation's theme.
   await page.goto(`${offline}#/components/input/preview`);
-  const preview = page.locator('.docs-preview');
   const example = page.getByRole('group', { name: 'TextField example', exact: true });
   const projectName = example.getByRole('textbox', { name: 'Project name', exact: true });
   await projectName.fill('Winter release');
@@ -339,14 +338,16 @@ test('single previews retain state when the theme changes', async ({ page }) => 
   await page.setViewportSize({ width: 1440, height: 1000 });
   await expect(mobileNavigation).toHaveCount(0);
   await expect(page.locator('.docs-sidebar')).toBeVisible();
+  // The 0.x preview of checkboxes opens the Checkbox page, whose live example keeps its state.
   await page.evaluate(() => {
     location.hash = '/components/checkbox/preview';
   });
-  await preview.getByRole('checkbox', { name: 'Include archived items' }).first().check();
+  const archived = page
+    .getByRole('group', { name: 'Checkbox example', exact: true })
+    .getByRole('checkbox', { name: 'Include archived projects' });
+  await archived.check();
   await page.getByRole('button', { name: 'Switch to light theme' }).click();
-  await expect(
-    preview.getByRole('checkbox', { name: 'Include archived items' }).first(),
-  ).toBeChecked();
+  await expect(archived).toBeChecked();
   // The 0.x route of disclosures opens the Disclosure page, whose live example keeps its state.
   await page.evaluate(() => {
     location.hash = '/components/notes/preview';
@@ -448,15 +449,15 @@ test('offline theme toggle switches the whole page and keeps the canvas full hei
   await page.goto(`${offline}#/components/checkbox/preview`);
   const app = page.locator('.docs-app');
   const panes = page.locator('.docs-preview');
-  await panes.first().getByRole('checkbox', { name: 'Include archived items' }).first().check();
+  // The 0.x preview opens the Checkbox page, whose live example follows the theme with its state.
+  const example = page.getByRole('group', { name: 'Checkbox example', exact: true });
+  const archived = example.getByRole('checkbox', { name: 'Include archived projects' });
+  await archived.check();
   await page.getByRole('button', { name: 'Switch to dark theme' }).click();
   await expect(app).toHaveAttribute('data-env-theme', 'dark');
-  await expect(panes.first()).toHaveAttribute('data-env-theme', 'dark');
-  await expect(panes).toHaveCount(1);
-  for (const pane of await panes.all())
-    await expect(
-      pane.getByRole('checkbox', { name: 'Include archived items' }).first(),
-    ).toBeChecked();
+  await expect(example).toHaveAttribute('data-env-theme', 'dark');
+  await expect(example).toHaveCount(1);
+  await expect(archived).toBeChecked();
   await expect(page.locator('.docs-theme-label')).toHaveCount(0);
 
   for (const width of [1920, 960, 390]) {
