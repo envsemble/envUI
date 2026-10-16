@@ -89,11 +89,53 @@ The codemod reports each use it can't move, such as a value that is an expressio
 
 `useTheme()` returns `{ theme, contrast, scale }` instead of the color scheme alone. Read the scheme as `const { theme } = useTheme()`. An application's own portal that re-themed with `<Theme theme={useTheme()}>` takes all three with `<Theme {...useTheme()}>`, so it keeps a high contrast or a `standard` opt-out and the compact scale too; `v1-names` makes that change, turns other calls into `useTheme().theme` unless the file already reads them as `{ theme, contrast }`, and reports those whose value is returned or passed to a context. In JavaScript, `theme={useTheme()}` would render `data-env-theme="[object Object]"`, so in development Theme warns about a `theme` that is not `light` or `dark`.
 
+### Cascade layers
+
+envUI's style sheet puts every rule in a cascade layer of `env`: `env.reset`, `env.tokens`, `env.base`, `env.components` and `env.utilities`. CSS outside cascade layers now overrides it whatever its specificity, which is what lets an application restyle a component without `!important`. It also means that rules which used to lose to envUI's more specific selectors now win, so check the application's own CSS:
+
+- **Resets and element styles.** A global or element rule outside layers, such as `* { margin: 0 }`, `button { background: none; border: 0 }` or `h2 { font-size: 1.5rem }`, now restyles envUI's components too. So does a preflight that a utility framework adds outside layers. Put resets and element base styles in a layer declared before `env`, and the application's own component styles after it:
+
+  ```css
+  @layer reset, env, app;
+  @layer reset {
+    * {
+      margin: 0;
+    }
+    button {
+      background: none;
+      border: 0;
+    }
+  }
+  ```
+
+  Declare the order before any style sheet that uses the layers, envUI's included, so a library whose layers load first takes its place in that order too.
+
+- **Token overrides.** A token set on `.env-theme` outside layers now wins over every theme's value: a color set there applies in dark and at high contrast as well, and can break the contrast every theme is checked for. Override a token per theme and contrast, with the selectors the themes use, in this order:
+
+  ```css
+  .env-theme {
+    --env-color-fg-link: #0b57d0;
+  }
+  .env-theme[data-env-theme='dark'] {
+    --env-color-fg-link: #a8c7fa;
+  }
+  .env-theme[data-env-contrast='high'] {
+    --env-color-fg-link: #0842a0;
+  }
+  .env-theme[data-env-theme='dark'][data-env-contrast='high'] {
+    --env-color-fg-link: #d3e3fd;
+  }
+  ```
+
+  Under the system's `prefers-contrast: more`, high contrast applies to a boundary without `data-env-contrast` too: repeat the high-contrast value in `@media (prefers-contrast: more) { .env-theme:not([data-env-contrast='standard']) { … } }`.
+
+- **`!important`.** An important declaration in a cascade layer beats every important declaration outside layers. envUI uses `!important` only where ColorPicker replaces the styles of react-colorful, its picker, so an application can't override those few properties, even with `!important`.
+
 ### Tokens
 
 Every token is a custom property with the `--env-` prefix in 1.0, and colors are named by semantic role, `--env-color-{bg|fg|border}-{role}[-{emphasis}][-{state}]` (see [colors](foundations/colors.md)). The 0.7 alias tokens are removed, each for the token that replaces it; a few names change beyond the prefix, such as the Material corner scale, which is the radius scale now; and the unused ones and the state values that the hover and pressed color tokens replace are removed. `v1-classes` rewrites every name below in style sheets and scripts, including a style sheet that themes envUI by setting a token, which then sets the new name. Check a renamed declaration of an application property that happens to share an old token's name, such as `--space-4`. The `tokens` section of the codemods' rename map lists the same entries.
 
-envUI's style sheet now puts every rule in a cascade layer of `env` (`env.reset`, `env.tokens`, `env.base`, `env.components` and `env.utilities`), so an application's CSS outside cascade layers overrides it whatever its specificity: a selector or `!important` that only out-weighed envUI's rules can go. An application's own cascade layers win over envUI's when they are declared after `env`; declare the order first, as `@layer env, app;`, when another library's layers come before envUI's style sheet.
+A style sheet that themes envUI through its tokens needs a look for [cascade layers](#cascade-layers) too.
 
 <!-- token-migration:start: npm run tokens:build writes this list from packages/ui/src/generated/token-migration.json. Change the tokens, not the list. -->
 

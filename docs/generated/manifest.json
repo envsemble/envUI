@@ -4859,11 +4859,11 @@
         "useThemePreference"
       ],
       "related": [
+        "migration",
         "colors",
         "icons",
         "agent-tooling",
         "index",
-        "migration",
         "local-development"
       ]
     },
