@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Popover as BasePopover } from '@base-ui/react/popover';
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import {
@@ -252,28 +252,38 @@ function RovingListSample() {
 }
 
 /** PopupSurface: Popover parts, the theme carried into the portal and the trigger's direction. */
+function DirectedPopup({ dir }: { dir: 'ltr' | 'rtl' }) {
+  const trigger = useRef<HTMLButtonElement>(null);
+  return (
+    <div dir={dir}>
+      <BasePopover.Root>
+        <BasePopover.Trigger
+          ref={trigger}
+          render={<Button variant="secondary">{`Open ${dir}`}</Button>}
+        />
+        <PopupSurface
+          trigger={trigger}
+          parts={{
+            Portal: BasePopover.Portal,
+            Positioner: BasePopover.Positioner,
+            Popup: BasePopover.Popup,
+          }}
+          align="start"
+          width="md"
+          popupProps={{ 'aria-label': `Popup ${dir}`, 'data-testid': `popup-${dir}` }}
+        >
+          <Text>Details</Text>
+        </PopupSurface>
+      </BasePopover.Root>
+    </div>
+  );
+}
+
 function PopupSample() {
   return (
     <Stack direction="row" gap={4} data-testid="popups">
-      {(['ltr', 'rtl'] as const).map((dir) => (
-        <div key={dir} dir={dir}>
-          <BasePopover.Root>
-            <BasePopover.Trigger render={<Button variant="secondary">{`Open ${dir}`}</Button>} />
-            <PopupSurface
-              parts={{
-                Portal: BasePopover.Portal,
-                Positioner: BasePopover.Positioner,
-                Popup: BasePopover.Popup,
-              }}
-              align="start"
-              width="md"
-              popupProps={{ 'aria-label': `Popup ${dir}`, 'data-testid': `popup-${dir}` }}
-            >
-              <Text>Details</Text>
-            </PopupSurface>
-          </BasePopover.Root>
-        </div>
-      ))}
+      <DirectedPopup dir="ltr" />
+      <DirectedPopup dir="rtl" />
     </Stack>
   );
 }

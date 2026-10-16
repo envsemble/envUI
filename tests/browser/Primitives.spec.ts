@@ -322,6 +322,16 @@ test.describe('PopupSurface', () => {
       await expect(popup).toBeHidden();
     }
   });
+
+  test('takes the direction at its trigger while focus is elsewhere', async ({ page }) => {
+    await open(page);
+    // Focus stays in a left-to-right region while code opens the right-to-left popup.
+    await page.getByRole('button', { name: 'Open ltr' }).focus();
+    await page.getByRole('button', { name: 'Open rtl' }).dispatchEvent('click');
+    const popup = page.getByTestId('popup-rtl');
+    await expect(popup).toBeVisible();
+    expect(await popup.evaluate((element) => getComputedStyle(element).direction)).toBe('rtl');
+  });
 });
 
 test('ListRow lays out a menu item with its icon, description and shortcut', async ({ page }) => {
