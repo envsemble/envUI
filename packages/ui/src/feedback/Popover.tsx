@@ -1,7 +1,13 @@
 'use client';
 
 import { Popover as BasePopover } from '@base-ui/react/popover';
-import { useState, type ComponentPropsWithRef, type ReactElement, type ReactNode } from 'react';
+import {
+  useRef,
+  useState,
+  type ComponentPropsWithRef,
+  type ReactElement,
+  type ReactNode,
+} from 'react';
 import { classNames } from '../internal/classNames.js';
 import { PopupSurface, type PopupSide } from '../internal/PopupSurface.js';
 
@@ -84,11 +90,14 @@ export function Popover({
     onOpenChange?.(next);
   }
   const close = () => setOpen(false);
+  // The popup takes the text direction at its trigger.
+  const triggerRef = useRef<HTMLButtonElement>(null);
   return (
     <BasePopover.Root open={open} onOpenChange={(next) => setOpen(next)}>
-      <BasePopover.Trigger render={trigger} />
+      <BasePopover.Trigger ref={triggerRef} render={trigger} />
       <PopupSurface
         parts={parts}
+        trigger={triggerRef}
         side={side}
         align={align}
         width={width}

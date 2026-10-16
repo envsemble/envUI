@@ -47,6 +47,35 @@ test.describe('Tooltip', () => {
     await expect(enabled).not.toHaveClass(/env-tooltip-disabled-target/);
   });
 
+  test('in right-to-left text, inline-end opens tooltips and popovers to the left of the trigger', async ({
+    page,
+  }) => {
+    await page.goto(tooltips);
+    const forward = page.getByRole('button', { name: 'Forward' });
+    await forward.hover();
+    const tooltip = page.getByRole('tooltip');
+    await expect(tooltip).toHaveText('Next step');
+    await expect(tooltip.locator('xpath=ancestor::*[@dir][1]')).toHaveAttribute('dir', 'rtl');
+    await expect
+      .poll(async () => {
+        const [popup, trigger] = [(await tooltip.boundingBox())!, (await forward.boundingBox())!];
+        return popup.x + popup.width <= trigger.x + 1;
+      })
+      .toBe(true);
+    await page.mouse.move(1, 1);
+
+    const details = page.getByRole('button', { name: 'Details rtl' });
+    await details.click();
+    const popover = page.getByRole('dialog', { name: 'Step details' });
+    await expect(popover).toBeVisible();
+    await expect
+      .poll(async () => {
+        const [popup, trigger] = [(await popover.boundingBox())!, (await details.boundingBox())!];
+        return popup.x + popup.width <= trigger.x + 1;
+      })
+      .toBe(true);
+  });
+
   test('a Kbd in a tooltip takes key caps for its dark fill', async ({ page }) => {
     await page.goto(tooltips);
     await page.getByRole('button', { name: 'Save' }).hover();

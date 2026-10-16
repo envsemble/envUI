@@ -89,6 +89,8 @@ export function HoverCard({
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
   const open = controlledOpen ?? uncontrolledOpen;
   const openRef = useRef(open);
+  // The card takes the text direction at its trigger.
+  const triggerRef = useRef<HTMLAnchorElement>(null);
   openRef.current = open;
   function setOpen(next: boolean) {
     if (next === openRef.current) return;
@@ -103,6 +105,7 @@ export function HoverCard({
   return (
     <BasePreviewCard.Root open={open} onOpenChange={(next) => setOpen(next)}>
       <BasePreviewCard.Trigger
+        ref={triggerRef}
         render={trigger}
         delay={delay}
         closeDelay={closeDelay}
@@ -110,6 +113,7 @@ export function HoverCard({
       />
       <PopupSurface
         parts={parts}
+        trigger={triggerRef}
         side={side}
         align={align}
         width={width}

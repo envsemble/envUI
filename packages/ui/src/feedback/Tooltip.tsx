@@ -4,6 +4,7 @@ import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
 import {
   cloneElement,
   useId,
+  useRef,
   useState,
   type ComponentPropsWithRef,
   type ReactElement,
@@ -74,6 +75,8 @@ export function Tooltip({
   const isDisabled = Boolean(trigger.disabled);
   const popupId = `${useId()}-tooltip`;
   const [open, setOpen] = useState(false);
+  // The tooltip takes the text direction at its trigger, the control or its wrapper.
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const name = ownName(trigger);
   const named = name !== undefined || Boolean(trigger['aria-labelledby']);
   // A control named by the same words needs no description that repeats them.
@@ -92,6 +95,7 @@ export function Tooltip({
         onOpenChange={(next) => setOpen(next)}
       >
         <BaseTooltip.Trigger
+          ref={triggerRef}
           delay={delay}
           aria-describedby={describedBy}
           render={
@@ -115,7 +119,12 @@ export function Tooltip({
             ? cloneElement(children, name === undefined ? {} : ({ 'aria-hidden': true } as object))
             : undefined}
         </BaseTooltip.Trigger>
-        <TooltipPopup content={content} side={side} popupProps={{ ...popupProps, id: popupId }} />
+        <TooltipPopup
+          content={content}
+          side={side}
+          trigger={triggerRef}
+          popupProps={{ ...popupProps, id: popupId }}
+        />
       </BaseTooltip.Root>
     </TooltipNestingContext>
   );

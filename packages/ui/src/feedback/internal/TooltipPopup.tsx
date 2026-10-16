@@ -1,7 +1,7 @@
 'use client';
 
 import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
-import { createContext, type ReactNode } from 'react';
+import { createContext, type ReactNode, type RefObject } from 'react';
 import { classNames } from '../../internal/classNames.js';
 import { PopupSurface, type PopupSide } from '../../internal/PopupSurface.js';
 
@@ -23,10 +23,13 @@ const parts = {
 export function TooltipPopup({
   content,
   side,
+  trigger,
   popupProps,
 }: {
   content: ReactNode;
   side: TooltipSide;
+  /** The trigger, whose text direction the tooltip takes as it opens. */
+  trigger?: RefObject<Element | null>;
   /** More props for the popup element: id, ref, className, style and data attributes. */
   popupProps?: Record<string, unknown>;
 }) {
@@ -35,6 +38,7 @@ export function TooltipPopup({
     <PopupSurface
       parts={parts}
       side={side}
+      trigger={trigger}
       sideOffset={6}
       positionerClassName="env-tooltip-positioner"
       className={classNames('env-tooltip', className as string | undefined)}
