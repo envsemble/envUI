@@ -6,12 +6,17 @@ import { Stack } from '../foundations/Layout.js';
 import { Card } from './Card.js';
 
 export interface FeatureCardProps extends Omit<ComponentPropsWithRef<'div'>, 'title'> {
+  /** A decorative icon at the start, 1.5 rem in the muted color; hidden from assistive technology. */
   icon?: ReactNode;
+  /** The feature's name, an `h2` in the page heading type. */
   title: ReactNode;
+  /** A sentence under the title in supporting text. */
   description?: ReactNode;
+  /** One control at the end, such as a Button; it moves below the text and fills the card's width in a card narrower than 38 rem. */
   action?: ReactNode;
 }
 
+/** A card that presents a feature: an icon, a title, a description and one action. */
 export function FeatureCard({
   icon,
   title,

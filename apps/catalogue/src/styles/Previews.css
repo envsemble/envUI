@@ -112,9 +112,6 @@
   border-radius: var(--radius-standard);
   object-fit: cover;
 }
-.docs-compact-feature {
-  inline-size: min(100%, 24rem);
-}
 .docs-matrix-scroll {
   overflow-x: auto;
   max-width: 100%;

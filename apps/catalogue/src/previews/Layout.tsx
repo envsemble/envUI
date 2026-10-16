@@ -2,10 +2,8 @@ import { useState } from 'react';
 import {
   Text,
   Button,
-  Card,
   IconButton,
   Surface,
-  FeatureCard,
   List,
   Link,
   Stack,
@@ -227,106 +225,6 @@ export function ListPreview() {
         <Text variant="caption" aria-live="polite">
           {opened}
         </Text>
-      </Example>
-    </Preview>
-  );
-}
-
-export function CardsPreview() {
-  const [guidanceExpanded, setGuidanceExpanded] = useState(false);
-  const [destinationSelected, setDestinationSelected] = useState(false);
-  return (
-    <Preview>
-      <Example title="Content & actions" size="collection">
-        <SpecimenGrid size="card">
-          <Specimen title="Content card">
-            <Card>
-              <Text as="h3" variant="section-heading">
-                Project overview
-              </Text>
-              <Text tone="muted">Planning and progress for a sample project.</Text>
-              <Text variant="caption">Updated today</Text>
-            </Card>
-          </Specimen>
-          <Specimen title="Action strip">
-            <Card
-              as="article"
-              layout="action"
-              heading="Sample project"
-              meta="Updated today"
-              actions={
-                <>
-                  <Button>Share</Button>
-                  <Button variant="outlined">Open project</Button>
-                </>
-              }
-            >
-              <Text tone="muted">Shared project context.</Text>
-            </Card>
-          </Specimen>
-        </SpecimenGrid>
-      </Example>
-      <Example
-        title="Interactive cards"
-        size="collection"
-        caption="Do not nest buttons or other controls inside a clickable card. Use an action strip instead."
-      >
-        <SpecimenGrid size="card">
-          <Specimen title="Destination">
-            <Card href={location.href} onClick={() => setDestinationSelected(true)}>
-              <Text as="h3" variant="section-heading">
-                Sample project
-              </Text>
-              <Text tone="muted">Open the project details.</Text>
-            </Card>
-            <Text variant="caption" aria-live="polite">
-              {destinationSelected ? 'Project link selected.' : ''}
-            </Text>
-          </Specimen>
-          <Specimen title="Action">
-            <Card
-              as="button"
-              onClick={() => setGuidanceExpanded(!guidanceExpanded)}
-              aria-expanded={guidanceExpanded}
-            >
-              <Text as="span" variant="section-heading">
-                {guidanceExpanded ? 'Hide details' : 'Show details'}
-              </Text>
-              <Text as="span" tone="muted">
-                {guidanceExpanded
-                  ? 'Your team and tools share one workspace.'
-                  : 'Project details are available.'}
-              </Text>
-            </Card>
-          </Specimen>
-          <Specimen title="Disabled">
-            <Card as="button" disabled>
-              <Text as="span">Workspace unavailable</Text>
-            </Card>
-          </Specimen>
-        </SpecimenGrid>
-      </Example>
-      <Example title="Feature cards" size="collection">
-        <SpecimenGrid size="wide">
-          <Specimen title="Regular composition">
-            <FeatureCard
-              icon={<Apps />}
-              title="Connected workspace"
-              description="Bring your team and tools together."
-              action={<Button>Explore</Button>}
-            />
-          </Specimen>
-          <Specimen title="Compact composition">
-            <div className="docs-compact-feature">
-              <FeatureCard
-                icon={<Apps />}
-                title="Connected workspace"
-                description="Bring your team and tools together."
-                action={<Button>Explore</Button>}
-              />
-            </div>
-          </Specimen>
-        </SpecimenGrid>
       </Example>
     </Preview>
   );

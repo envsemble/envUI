@@ -4,25 +4,25 @@
     "ActionCard": {
       "kind": "component",
       "source": "packages/ui/src/content/ActionCard.tsx",
-      "description": "",
+      "description": "An `article` card with an action strip: Card with `layout=\"action\"`, kept for earlier applications.",
       "props": [
         {
           "name": "title",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "The card's title, Card's `heading`: an `h3` in the section heading type."
         },
         {
           "name": "meta",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A short fact at the end of the heading row, such as when the card was updated."
         },
         {
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "Controls in a strip along the bottom of the card, such as Buttons."
         }
       ],
       "native": [
@@ -990,25 +990,25 @@
           "type": "Exclude<SurfaceAppearanceProps['tone'], 'alternate'>",
           "required": false,
           "default": "'row'",
-          "description": ""
+          "description": "The surface's fill: `row`, the standalone card fill; `pane`, a quieter fill that groups content; or `canvas`, the page's own color."
         },
         {
           "name": "heading",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A title in the section heading type, as an `h3`, at the top of a content card."
         },
         {
           "name": "meta",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A short fact at the end of the heading row, such as when the card was updated."
         },
         {
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "Controls in a strip along the bottom of the card, such as Buttons; implies the action layout."
         },
         {
           "name": "layout",
@@ -1021,19 +1021,19 @@
           "name": "as",
           "type": "'div' | 'article' | 'button' | 'a'",
           "required": false,
-          "description": ""
+          "description": "The element: `div` (default) or `article` for a content card, `button` for a card that starts an action. With `href` the card is a link."
         },
         {
           "name": "href",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The destination: the whole card is one native link, through the `LinkProvider`."
         },
         {
           "name": "disabled",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "A disabled button card cannot be pressed; a disabled link card has no destination, cannot be focused and reports `aria-disabled`."
         }
       ],
       "native": [
@@ -1087,19 +1087,19 @@
     "ClickableCard": {
       "kind": "component",
       "source": "packages/ui/src/content/ClickableCard.tsx",
-      "description": "A single interactive surface. Do not nest links or controls inside it.",
+      "description": "A single interactive surface: Card with `href`, or Card `as=\"button\"`, kept for earlier applications. Do not nest links or controls inside it.",
       "props": [
         {
           "name": "disabled",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "A disabled button card cannot be pressed; a disabled link card has no destination, cannot be focused and reports `aria-disabled`."
         },
         {
           "name": "href",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The destination: the whole card is one native link, through the `LinkProvider`."
         }
       ],
       "native": [
@@ -2683,31 +2683,31 @@
     "FeatureCard": {
       "kind": "component",
       "source": "packages/ui/src/content/FeatureCard.tsx",
-      "description": "",
+      "description": "A card that presents a feature: an icon, a title, a description and one action.",
       "props": [
         {
           "name": "icon",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A decorative icon at the start, 1.5 rem in the muted color; hidden from assistive technology."
         },
         {
           "name": "title",
           "type": "ReactNode",
           "required": true,
-          "description": ""
+          "description": "The feature's name, an `h2` in the page heading type."
         },
         {
           "name": "description",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A sentence under the title in supporting text."
         },
         {
           "name": "action",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "One control at the end, such as a Button; it moves below the text and fills the card's width in a card narrower than 38 rem."
         }
       ],
       "native": [

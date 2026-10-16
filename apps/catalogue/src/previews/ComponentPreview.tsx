@@ -7,7 +7,7 @@ import {
 } from './Forms';
 import { NavListPreview, TabsPreview, PagerPreview, PaginationPreview } from './Navigation';
 import { ComboboxPreview, DatePickerPreview } from './Pickers';
-import { SurfacePreview, LayoutPreview, ListPreview, CardsPreview } from './Layout';
+import { SurfacePreview, LayoutPreview, ListPreview } from './Layout';
 import { ChipsPreview, RatingPreview, RelativeTimePreview } from './Content';
 import { CodePreview } from './CodeContent';
 import { MarkdownPreview } from './MarkdownContent';
@@ -69,8 +69,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <LayoutPreview />;
     case 'list':
       return <ListPreview />;
-    case 'card':
-      return <CardsPreview />;
     case 'chips':
       return <ChipsPreview />;
     case 'pagination':
