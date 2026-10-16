@@ -49,7 +49,7 @@ const reports = {
     'line 20: a local Menu shadows the import here: wrote EnvMenu.Item, with Menu also imported as EnvMenu.',
     'line 21: a local TextField shadows the import here: wrote EnvTextField, with TextField also imported as EnvTextField.',
     'line 23: a local Pager shadows the import here: wrote EnvPager.Next, with Pager also imported as EnvPager.',
-    'line 31: a local Menu shadows the import here: wrote EnvMenu.ItemProps, with Menu also imported as EnvMenu.',
+    'line 41: a local Menu shadows the import here: wrote EnvMenu.ItemProps, with Menu also imported as EnvMenu.',
   ],
   'theme-bootstrap-directive.ts': [
     'line 3: dropped // eslint-disable-next-line envui/no-renamed-exports -- until the 1.0 upgrade, which applied to the import that was removed.',

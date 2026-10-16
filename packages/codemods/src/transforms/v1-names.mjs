@@ -9,6 +9,7 @@
 // - `import * as ui` accesses and `export { … } from` re-exports are rewritten the same way.
 // Anything the transform cannot rewrite safely stays as it is and is reported with its line.
 import { loadMap } from '../map.mjs';
+import { createScopes } from '../scope.mjs';
 import { createReporter, keepByteOrderMark, parserFor, printOptions } from '../shared.mjs';
 
 export const parser = 'tsx';
@@ -86,17 +87,14 @@ function classify(path) {
   return 'value';
 }
 
-/** Whether a reference resolves to the module scope, where imports bind, rather than a local. */
-function bindsToModule(path, name, kind) {
-  const { scope } = path;
-  if (!scope) return true;
-  if (typeKinds.has(kind) && typeof scope.lookupType === 'function') {
-    const typeScope = scope.lookupType(name);
-    if (typeScope && !typeScope.isGlobal) return false;
-  }
-  const found = scope.lookup(name);
-  return !found || found.isGlobal;
-}
+/** The space a reference kind looks its name up in; see scope.mjs. */
+const spaceOf = (kind) => (kind === 'type' ? 'type' : kind === 'qualified' ? 'namespace' : 'value');
+/**
+ * The space a namespace written at a reference of a kind is looked up in: `Menu.ItemProps` in a
+ * type finds namespaces, while `<Menu.Item>` and `typeof Menu.Item` find values.
+ */
+const namespaceSpaceOf = (kind) =>
+  kind === 'type' || kind === 'qualified' ? 'namespace' : 'value';
 
 /**
  * Whether a comment is a directive about the line below it, which must stay right above that line:
@@ -189,6 +187,12 @@ export default function transform(file, api, options = {}) {
   const quote = quoteSource.extra?.raw?.startsWith('"') ? 'double' : 'single';
 
   // Every binding and reference by name, and the names already in use anywhere in the file.
+  const scopes = createScopes();
+  /** Whether a reference reaches the imports of the file, or a global, rather than a local. */
+  const bindsToModule = (path, name, kind, space = spaceOf(kind)) => {
+    const found = scopes.lookup(path, name, space);
+    return !found || found.imported;
+  };
   const references = new Map();
   const taken = new Set();
   root.find(j.Identifier).forEach((path) => {
@@ -329,7 +333,7 @@ export default function transform(file, api, options = {}) {
    * `Menu as EnvMenu`. `node` is what the report about the alias points at.
    */
   const namespaceLocalAt = ({ path, kind }, namespace, part, node = path.node) => {
-    if (bindsToModule(path, namespace.local, kind)) return namespace.local;
+    if (bindsToModule(path, namespace.local, kind, namespaceSpaceOf(kind))) return namespace.local;
     if (!namespace.alias) {
       namespace.alias = freeName(namespace.name);
       insertions.push({ namespace, needsValue: false, local: namespace.alias });
