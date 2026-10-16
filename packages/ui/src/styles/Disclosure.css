@@ -48,7 +48,8 @@
   }
 }
 .env-disclosure-panel {
-  margin: var(--space-2) 0 0 var(--space-4);
+  margin-block: var(--space-2) 0;
+  margin-inline: var(--space-4) 0;
   color: inherit;
   font: inherit;
 }
