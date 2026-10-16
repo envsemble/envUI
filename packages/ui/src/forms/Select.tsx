@@ -5,7 +5,7 @@ import { useFieldMetadata } from './internal/useFieldMetadata.js';
 import type { ButtonHTMLAttributes } from 'react';
 import { Select as BaseSelect } from '@base-ui/react/select';
 import { classNames } from '../internal/classNames.js';
-import { Theme, useTheme } from '../foundations/Theme.js';
+import { Theme, useTheme, type ControlSize } from '../foundations/Theme.js';
 import { Surface } from '../foundations/Surface.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
 import { Check } from '../icons/Check.js';
@@ -61,17 +61,17 @@ export interface SelectProps
    */
   variant?: 'secondary' | 'outlined';
   /**
-   * standard, or compact for dense desktop surfaces such as toolbars: a 2 rem trigger, and the
-   * compact menu's popup with short rows, where a check mark shows the chosen option.
-   * @default 'standard'
+   * The trigger's height, as on every control: sm, md or lg in the current scale. Without it, the
+   * trigger takes the control height of its container, md unless the container sets another. The
+   * popup's rows take the row height of the scale.
    */
-  density?: 'standard' | 'compact';
+  size?: ControlSize;
 }
 
 /**
  * One choice from a list that stays collapsed until opened: a Button-style trigger that shows the
- * chosen option and opens a popup list, with a label above it, a hint, an error and native form
- * participation.
+ * chosen option and opens a popup list, where a check mark shows the chosen option, with a label
+ * above it, a hint, an error and native form participation.
  */
 export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select(
   {
@@ -90,7 +90,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
     placeholder,
     autoComplete,
     variant = 'secondary',
-    density = 'standard',
+    size,
     form,
     id: suppliedId,
     className,
@@ -99,7 +99,6 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
   ref,
 ) {
   const metadata = useFieldMetadata(suppliedId, hint, error, describedBy, invalid);
-  const compact = density === 'compact';
   const { id } = metadata;
   const theme = useTheme();
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -157,7 +156,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
             setRef(ref, node);
           }}
           data-variant={variant}
-          data-density={compact ? 'compact' : undefined}
+          data-size={size}
           className={classNames(
             'env-button',
             variant === 'outlined' ? 'env-button-outlined' : 'env-button-secondary',
@@ -179,10 +178,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
               align="start"
               sideOffset={getPopupOffset}
             >
-              <BaseSelect.Popup
-                className="env-dropdown-options"
-                render={<Surface padding={compact ? 1 : 2} density={density} />}
-              >
+              <BaseSelect.Popup className="env-dropdown-options" render={<Surface padding={1} />}>
                 <BaseSelect.List className="env-dropdown-list">
                   {options.map((option) => (
                     <BaseSelect.Item
@@ -192,14 +188,12 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
                       disabled={option.disabled}
                       className="env-dropdown-option"
                     >
-                      {compact && (
-                        // A check mark shows the selected option; the slot keeps labels aligned.
-                        <span className="env-dropdown-option-check" aria-hidden="true">
-                          <BaseSelect.ItemIndicator className="env-symbol">
-                            <Check />
-                          </BaseSelect.ItemIndicator>
-                        </span>
-                      )}
+                      {/* A check mark shows the selected option; the slot keeps labels aligned. */}
+                      <span className="env-dropdown-option-check" aria-hidden="true">
+                        <BaseSelect.ItemIndicator className="env-symbol">
+                          <Check />
+                        </BaseSelect.ItemIndicator>
+                      </span>
                       <BaseSelect.ItemText>{option.label}</BaseSelect.ItemText>
                     </BaseSelect.Item>
                   ))}

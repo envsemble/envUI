@@ -3,6 +3,7 @@
 import { Tabs as BaseTabs } from '@base-ui/react/tabs';
 import { useRender } from '@base-ui/react/use-render';
 import { cloneElement, type ComponentPropsWithRef, type ReactElement, type ReactNode } from 'react';
+import type { ControlSize } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
 import * as NavList from './NavList.js';
 import { NavigationIconState } from '../MaterialSymbolState.js';
@@ -77,11 +78,12 @@ export interface TabsProps
    */
   fill?: boolean;
   /**
-   * standard tabs are as tall as buttons; compact makes the whole rail as tall as a compact
-   * control, 2 rem, for toolbars and bars, as a compact SegmentedControl is.
-   * @default 'standard'
+   * The rail's height, as on every control: sm, md or lg in the current scale. The tabs inside are
+   * a little shorter. lg gives tabs as tall as md buttons; sm suits a toolbar or a bar, beside a
+   * SegmentedControl or buttons of size sm.
+   * @default 'lg'
    */
-  size?: 'standard' | 'compact';
+  size?: ControlSize;
 }
 
 function isDisabled(item: TabsItem) {
@@ -141,7 +143,7 @@ export function Tabs({
   listClassName,
   panelClassName,
   fill = false,
-  size = 'standard',
+  size = 'lg',
   ...props
 }: TabsProps) {
   const initialValue =
@@ -152,7 +154,7 @@ export function Tabs({
     <BaseTabs.List
       render={<Surface tone="row" padding={1} corners="pill" />}
       aria-label={label}
-      data-size={size === 'compact' ? 'compact' : undefined}
+      data-size={size}
       className={classNames('env-tabs-list', listClassName)}
       activateOnFocus={activation === 'automatic'}
     >

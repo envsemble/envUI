@@ -38,12 +38,6 @@ function listItems(children: ReactNode) {
 
 interface ItemSharedProps {
   /**
-   * The label size: standard, 0.9375 rem, or compact, 0.875 rem, for a dense sidebar. Both keep the
-   * 2.5 rem item height and the 1 rem icon.
-   * @default 'standard'
-   */
-  size?: 'standard' | 'compact';
-  /**
    * The item is the current destination or view: it takes the navigation selection fill and label
    * color, fills its Material Symbol, and reports aria-current="page" unless aria-current is set.
    */
@@ -101,7 +95,7 @@ function Item(props: ItemProps) {
   const inList = useContext(ListContext);
   const {
     selected = false,
-    size = 'standard',
+
     disabled = false,
     iconOnly: requestedIconOnly = false,
     icon,
@@ -136,7 +130,7 @@ function Item(props: ItemProps) {
     'env-nav-list-item',
     iconOnly && 'env-nav-list-item-icon-only',
     selected && 'env-nav-list-item-selected',
-    size === 'compact' && 'env-nav-list-item-compact',
+
     className,
   );
 

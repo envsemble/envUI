@@ -74,11 +74,9 @@
 .env-message[data-status='failed'] .env-message-status {
   color: var(--color-tone-danger);
 }
-/* Actions are compact text and icon buttons; on coarse pointers they still take the touch size. */
+/* Actions are small text and icon buttons; on coarse pointers they gain the touch hit area. */
 .env-message-actions {
-  --control-height-small: var(--control-height-compact);
-  --control-height: var(--control-height-compact);
-  --icon-button-size: var(--control-height-compact);
+  --control-height: var(--control-height-sm);
   justify-self: stretch;
   display: flex;
   flex-wrap: wrap;
@@ -92,10 +90,10 @@
 .env-message[data-from='other']
   > .env-message-actions
   > .env-button-text.env-icon-button:first-child {
-  margin-inline-start: calc((var(--control-icon-size) - var(--icon-button-size)) / 2);
+  margin-inline-start: calc((var(--control-icon-size) - var(--control-height)) / 2);
 }
 .env-message[data-from='self']
   > .env-message-actions
   > .env-button-text.env-icon-button:last-child {
-  margin-inline-end: calc((var(--control-icon-size) - var(--icon-button-size)) / 2);
+  margin-inline-end: calc((var(--control-icon-size) - var(--control-height)) / 2);
 }

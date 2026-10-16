@@ -34,8 +34,8 @@
   text-align: center;
 }
 .env-empty-state-center > .env-symbol {
-  width: calc(2.5rem * var(--scale, 1));
-  height: calc(2.5rem * var(--scale, 1));
+  width: 2.5rem;
+  height: 2.5rem;
 }
 .env-empty-state-center:not(.env-empty-state-error) > .env-symbol {
   color: var(--color-icon);

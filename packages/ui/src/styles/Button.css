@@ -1,22 +1,33 @@
-/* Canonical control geometry shared by native buttons and button links. */
+/* Canonical control geometry shared by native buttons and button links. A button takes the control
+   height of its size, or of its container where it sets none. */
 
 .env-button {
   inline-size: fit-content;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: calc(0.4375rem * var(--scale, 1));
-  min-height: calc(var(--control-height-small) * var(--scale, 1));
-  padding: calc(0.25rem * var(--scale, 1)) calc(0.75rem * var(--scale, 1));
+  gap: var(--control-gap);
+  min-height: var(--control-height);
+  padding: var(--space-1) var(--space-3);
   border: 0.0625rem solid transparent;
   border-radius: 100vmax;
-  font: 400 calc(0.875rem * var(--scale, 1)) / 1.4 var(--font-family);
+  font: var(--body-font-weight) var(--font-size-label) / 1.4 var(--font-family);
   white-space: normal;
   overflow-wrap: anywhere;
   text-align: center;
   text-decoration: none;
   max-inline-size: 100%;
   min-inline-size: 0;
+}
+
+.env-button[data-size='sm'] {
+  --control-height: var(--control-height-sm);
+}
+.env-button[data-size='md'] {
+  --control-height: var(--control-height-md);
+}
+.env-button[data-size='lg'] {
+  --control-height: var(--control-height-lg);
 }
 
 .env-button-primary {
@@ -148,13 +159,15 @@
   background: var(--color-destructive-action-pressed);
 }
 
+/* Important buttons are small and square-cornered unless they set a size. */
 .env-button-important {
-  --icon-button-size: var(--control-height-compact);
-  min-height: calc(var(--control-height-compact) * var(--scale, 1));
   background: var(--color-bg-important-strong);
   color: var(--color-fg-on-strong);
   border: 0;
-  border-radius: calc(var(--radius-standard) * var(--scale, 1));
+  border-radius: var(--radius-standard);
+}
+.env-button-important:not([data-size]) {
+  --control-height: var(--control-height-sm);
 }
 
 .env-button-important:hover:not(:disabled):not([aria-disabled='true']) {
@@ -187,12 +200,27 @@
 
 /* An icon-only button keeps its square size, also where its container is squeezed narrower. */
 .env-button.env-icon-button {
-  width: calc(var(--icon-button-size) * var(--scale, 1));
-  height: calc(var(--icon-button-size) * var(--scale, 1));
-  min-height: calc(var(--icon-button-size) * var(--scale, 1));
+  width: var(--control-height);
+  height: var(--control-height);
+  min-height: var(--control-height);
   max-inline-size: none;
   flex-shrink: 0;
   padding: 0;
+}
+
+/* Under a coarse pointer, a button smaller than the touch height keeps its look and gains an
+   invisible hit area of that height and width around it. A link-like text button in running text
+   keeps its own, and so does a button that already covers its row. */
+@media (pointer: coarse) {
+  :where(.env-button:not(.env-link, [data-row-target])) {
+    position: relative;
+  }
+  .env-button:not(.env-link, [data-row-target])::before {
+    content: '';
+    position: absolute;
+    inset-block: min(0%, calc((100% - var(--control-height-touch)) / 2));
+    inset-inline: min(0%, calc((100% - var(--control-height-touch)) / 2));
+  }
 }
 
 /* Pending: the transparent label keeps the button's size and name while a spinner shows the work. */
@@ -237,7 +265,7 @@
   block-size: fit-content;
   display: inline-grid;
   place-items: center;
-  padding: 0.25rem;
+  padding: var(--space-1);
   border: 0;
   border-radius: 50%;
   background: transparent;

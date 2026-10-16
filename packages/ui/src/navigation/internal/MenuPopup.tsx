@@ -1,24 +1,16 @@
-'use client';
-
-import { createContext, type ComponentPropsWithRef } from 'react';
-
-export type MenuPopupDensity = 'standard' | 'compact';
-
-/** The density of the menu a part renders in: a submenu opens in the density of its menu. */
-export const MenuDensityContext = createContext<MenuPopupDensity>('standard');
+import type { ComponentPropsWithRef } from 'react';
 
 /**
- * Renders a menu popup element with its density and, when given, its own name. Base UI names a menu
- * after its trigger; a label replaces that name.
+ * Renders a menu popup element with, when given, its own name. Base UI names a menu after its
+ * trigger; a label replaces that name.
  */
-export function renderMenuPopup(label: string | undefined, density: MenuPopupDensity) {
+export function renderMenuPopup(label: string | undefined) {
   return function renderPopup(props: ComponentPropsWithRef<'div'>) {
     return (
       <div
         {...props}
         aria-labelledby={label === undefined ? props['aria-labelledby'] : undefined}
         aria-label={label}
-        data-density={density === 'compact' ? 'compact' : undefined}
       />
     );
   };

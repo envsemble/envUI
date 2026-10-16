@@ -6,14 +6,11 @@
   --env-surface-color: var(--color-pane);
   --env-surface-padding: clamp(1.25rem, 3vw, 1.5rem);
   --env-surface-radius: var(--radius-surface);
-  /* Controls can opt into their input-aware scale without changing ordinary panes. */
-  --env-surface-scale: 1;
-  --env-surface-inset: calc(var(--env-surface-padding) * var(--env-surface-scale));
   --env-surface-hover: var(--color-bg-default-hover);
   --env-surface-pressed: var(--color-bg-default-pressed);
-  padding: var(--env-surface-inset);
+  padding: var(--env-surface-padding);
   border: 0;
-  border-radius: calc(var(--env-surface-radius) * var(--env-surface-scale));
+  border-radius: var(--env-surface-radius);
   background: var(--env-surface-color);
 }
 .env-surface-row {
@@ -39,10 +36,4 @@
 }
 .env-surface-corners-none {
   --env-surface-radius: 0rem;
-}
-/* Compact controls for toolbars over dense content; the compact height still grows for touch. */
-.env-surface[data-density='compact'] {
-  --control-height-small: var(--control-height-compact);
-  --control-height: var(--control-height-compact);
-  --icon-button-size: var(--control-height-compact);
 }

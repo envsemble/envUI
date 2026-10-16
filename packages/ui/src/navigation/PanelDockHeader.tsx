@@ -48,7 +48,7 @@ export interface PanelDockHeaderProps extends Omit<ComponentPropsWithRef<'header
 /**
  * The header of a docked panel. It sticks to the top of the panel while its content scrolls: the
  * title and its metadata at the start, the application's actions and the window controls at the
- * end, compact like a title bar's.
+ * end, small like a title bar's.
  */
 export function PanelDockHeader({
   title,
@@ -118,7 +118,7 @@ export interface PanelDockControlsProps extends Omit<ComponentPropsWithRef<'div'
 }
 
 /**
- * Minimize, Maximize or Restore, and Close for the panel around it, as compact icon buttons with
+ * Minimize, Maximize or Restore, and Close for the panel around it, as small icon buttons with
  * tooltips. A stacked dock already fills the region, so its panels leave out Maximize.
  */
 export function PanelDockControls({

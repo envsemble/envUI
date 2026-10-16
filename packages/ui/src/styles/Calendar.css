@@ -1,7 +1,7 @@
 /* Calendar: a month of days as round marks in a grid, as wide as seven days. Today has a ring, the
    chosen day a solid fill, and unavailable days are faded. Coarse pointers get touch-sized days. */
 .env-calendar {
-  --env-calendar-day: 2.5rem;
+  --env-calendar-day: var(--control-height-md);
   display: grid;
   gap: var(--space-2);
   inline-size: calc(7 * var(--env-calendar-day));
@@ -23,7 +23,7 @@
   overflow-wrap: anywhere;
 }
 .env-calendar-header .env-icon-button {
-  --icon-button-size: var(--env-calendar-day);
+  --control-height: var(--env-calendar-day);
 }
 .env-calendar-header .env-button-text.env-icon-button {
   color: var(--color-icon);

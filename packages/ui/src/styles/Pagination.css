@@ -12,11 +12,15 @@
   min-inline-size: 0;
   max-inline-size: 100%;
 }
-/* compact gives the buttons the compact control height outside a compact surface too; it still
-   grows for touch. */
-.env-pagination[data-size='compact'] {
-  --control-height-small: var(--control-height-compact);
-  --icon-button-size: var(--control-height-compact);
+/* A size gives the buttons that control height; without one they take the container's. */
+.env-pagination[data-size='sm'] {
+  --control-height: var(--control-height-sm);
+}
+.env-pagination[data-size='md'] {
+  --control-height: var(--control-height-md);
+}
+.env-pagination[data-size='lg'] {
+  --control-height: var(--control-height-lg);
 }
 /* Tabular digits keep the buttons in place as the numbers change. */
 .env-pagination-range {

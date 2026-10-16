@@ -3,7 +3,7 @@
   --env-field-error-color: var(--color-field-error);
   display: grid;
   align-content: start;
-  gap: calc(var(--space-3) * var(--scale, 1));
+  gap: var(--space-3);
   min-width: 0;
   max-inline-size: 100%;
   overflow-wrap: anywhere;
@@ -13,7 +13,7 @@
 .env-field-hint,
 .env-field-error {
   font: var(--type-body-small);
-  font-size: calc(var(--font-size-body-small) * var(--scale, 1));
+  font-size: var(--font-size-body-small);
 }
 .env-field-hint {
   color: var(--color-field-hint);
@@ -21,17 +21,31 @@
 .env-field-error {
   display: flex;
   align-items: flex-start;
-  gap: calc(var(--space-2) * var(--scale, 1));
+  gap: var(--space-2);
   color: var(--env-field-error-color);
 }
 .env-field-error > svg {
   flex-shrink: 0;
-  width: calc(var(--control-icon-size) * var(--scale, 1));
-  height: calc(var(--control-icon-size) * var(--scale, 1));
-  margin-block-start: calc(0.125rem * var(--scale, 1));
+  width: var(--control-icon-size);
+  height: var(--control-icon-size);
+  margin-block-start: 0.125rem;
 }
-.env-text-field:not([data-compact], [data-label-hidden]):has(> .env-text-field-well > label) {
-  padding-block-start: calc(var(--space-2) * var(--scale, 1));
+/* A field takes the control height of its size, or of its container where it sets none. A tall
+   field (the floating variant, plain fields and text areas) keeps room above it for its label. */
+.env-text-field {
+  --env-field-height: var(--control-height);
+}
+.env-text-field[data-size='sm'] {
+  --control-height: var(--control-height-sm);
+}
+.env-text-field[data-size='md'] {
+  --control-height: var(--control-height-md);
+}
+.env-text-field[data-size='lg'] {
+  --control-height: var(--control-height-lg);
+}
+.env-text-field[data-tall]:not([data-label-hidden]):has(> .env-text-field-well > label) {
+  padding-block-start: var(--space-2);
 }
 .env-text-field-well {
   --env-field-border-base: var(--color-field-border);
@@ -41,8 +55,8 @@
   --env-field-border-color: var(--env-field-border-base);
   position: relative;
   min-width: 0;
-  border: calc(0.0625rem * var(--scale, 1)) solid var(--env-field-border-color);
-  border-radius: calc(var(--md-sys-shape-corner-large) * var(--scale, 1));
+  border: 0.0625rem solid var(--env-field-border-color);
+  border-radius: var(--radius-large);
   background: var(--color-field);
   transition: border-color var(--motion-duration-medium) var(--motion-ease);
 }
@@ -71,9 +85,9 @@
   display: block;
   width: 100%;
   min-width: 0;
-  min-height: calc(3.5rem * var(--scale, 1));
+  min-height: var(--field-floating-height);
   margin: 0;
-  padding: calc(var(--space-4) * var(--scale, 1));
+  padding: var(--space-4);
   border: 0;
   border-radius: inherit;
   outline: none;
@@ -81,7 +95,7 @@
   color: var(--color-field-text);
   font: var(--type-body);
   /* The control font size is 1 rem on touch screens, where smaller entered text zooms the page. */
-  font-size: calc(var(--control-font-size) * var(--scale, 1));
+  font-size: var(--control-font-size);
   caret-color: var(--color-field-active);
 }
 .env-text-input::placeholder {
@@ -90,13 +104,13 @@
 }
 .env-text-field-well > label {
   position: absolute;
-  inset-block-start: calc(1.0625rem * var(--scale, 1));
-  inset-inline-start: calc(var(--space-4) * var(--scale, 1));
-  max-width: calc(100% - var(--space-6) * var(--scale, 1));
+  inset-block-start: calc(var(--space-4) + 0.0625rem);
+  inset-inline-start: var(--space-4);
+  max-width: calc(100% - var(--space-6));
   overflow: hidden;
   color: var(--color-field-label);
   font: var(--type-body);
-  font-size: calc(var(--control-font-size) * var(--scale, 1));
+  font-size: var(--control-font-size);
   white-space: nowrap;
   text-overflow: ellipsis;
   cursor: text;
@@ -114,11 +128,11 @@
     [data-label-floating]
   )
   > label {
-  inset-block-start: calc(-0.625rem * var(--scale, 1));
-  padding-inline: calc(var(--space-1) * var(--scale, 1));
-  margin-inline-start: calc(-0.25rem * var(--scale, 1));
+  inset-block-start: -0.625rem;
+  padding-inline: var(--space-1);
+  margin-inline-start: calc(-1 * var(--space-1));
   background: inherit;
-  font-size: calc(var(--font-size-body-small) * var(--scale, 1));
+  font-size: var(--font-size-body-small);
 }
 /* On an outline, the label hides only the line behind it; its upper half shows whatever surface the
    field sits on, such as a dialog pane. */
@@ -127,10 +141,7 @@
     [data-label-floating]
   )
   > label {
-  background: linear-gradient(
-    transparent calc(50% - 0.0625rem * var(--scale, 1)),
-    var(--color-field) 0
-  );
+  background: linear-gradient(transparent calc(50% - 0.0625rem), var(--color-field) 0);
 }
 .env-text-field-well:has(> label) > .env-text-input:not(:focus)::placeholder {
   color: transparent;
@@ -152,7 +163,7 @@
 }
 .env-text-field-well[data-variant='plain']:focus-within {
   border-block-end-color: var(--env-field-border-color);
-  box-shadow: 0 calc(0.0625rem * var(--scale, 1)) 0 var(--env-field-border-color);
+  box-shadow: 0 0.0625rem 0 var(--env-field-border-color);
 }
 /* Quiet fields are only their text and icon at rest: no border, underline or fill. A soft fill
    shows under the pointer and while the field has focus, the icon keeps its quiet color, and the
@@ -192,7 +203,7 @@
   position: absolute;
   inset-inline: 0;
   inset-block-end: 0;
-  block-size: calc(0.125rem * var(--scale, 1));
+  block-size: 0.125rem;
   border-radius: var(--md-sys-shape-corner-full);
   background: var(--env-field-border-color);
   pointer-events: none;
@@ -204,7 +215,7 @@
 }
 /* Invalid plain fields still need a visible change when reached by keyboard. */
 .env-text-field-well[data-variant='plain']:has(> :focus-visible)::after {
-  block-size: calc(0.25rem * var(--scale, 1));
+  block-size: 0.25rem;
 }
 .env-text-field-well:has(> .env-text-input[aria-invalid='true']) > label {
   color: var(--env-field-error-color);
@@ -217,7 +228,7 @@
   cursor: default;
 }
 textarea.env-text-input {
-  min-height: calc(7.5rem * var(--scale, 1));
+  min-height: 7.5rem;
   field-sizing: fixed;
   overflow-y: auto;
   scrollbar-width: thin;
@@ -225,20 +236,17 @@ textarea.env-text-input {
 }
 textarea.env-text-input[data-sizing='content'] {
   field-sizing: content;
-  min-height: max(
-    calc(7.5rem * var(--scale, 1)),
-    calc(var(--env-textarea-rows, 2) * 1lh + var(--space-6) * var(--scale, 1))
-  );
+  min-height: max(7.5rem, calc(var(--env-textarea-rows, 2) * 1lh + var(--space-6)));
 }
 /* Given rows, a growing field starts at that many lines, also when that is less than 7.5 rem. */
 textarea.env-text-input[data-sizing='content'][data-rows] {
-  min-height: calc(var(--env-textarea-rows) * 1lh + var(--space-6) * var(--scale, 1));
+  min-height: calc(var(--env-textarea-rows) * 1lh + var(--space-6));
 }
 .env-textarea-resize-edge {
   position: absolute;
   inset-inline: 0;
-  inset-block-end: calc(-0.0625rem * var(--scale, 1));
-  block-size: calc(var(--space-3) * var(--scale, 1));
+  inset-block-end: -0.0625rem;
+  block-size: var(--space-3);
   padding: 0;
   margin: 0;
   border: 0;
@@ -253,16 +261,16 @@ textarea.env-text-input[data-sizing='content'][data-rows] {
 .env-textarea-resize-edge::after {
   content: '';
   position: absolute;
-  inset-inline: calc(var(--md-sys-shape-corner-large) * var(--scale, 1));
+  inset-inline: var(--radius-large);
   inset-block-end: 0;
-  block-size: calc(0.125rem * var(--scale, 1));
+  block-size: 0.125rem;
   border-radius: var(--md-sys-shape-corner-full);
   background: currentColor;
   pointer-events: none;
 }
 .env-text-field-well[data-variant='plain'] > .env-textarea-resize-edge::after {
   inset-inline: 0;
-  block-size: calc(0.0625rem * var(--scale, 1));
+  block-size: 0.0625rem;
   opacity: 0;
 }
 .env-text-field-well[data-variant='plain']:focus-within > .env-textarea-resize-edge::after,
@@ -280,21 +288,21 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
 }
 @media (pointer: coarse) {
   .env-textarea-resize-edge {
-    block-size: calc(var(--control-height-touch) * var(--scale, 1));
+    block-size: var(--control-height-touch);
   }
   textarea.env-text-input:not(:disabled):has(+ .env-textarea-resize-edge) {
-    padding-block-end: calc(var(--control-height-touch) * var(--scale, 1));
+    padding-block-end: var(--control-height-touch);
   }
   @supports (field-sizing: content) {
     textarea.env-text-input[data-sizing='content']:not(:disabled) {
-      padding-block-end: calc(var(--space-4) * var(--scale, 1));
+      padding-block-end: var(--space-4);
     }
   }
 }
 .env-choice-control,
 .env-radio-option,
 .env-form-field {
-  font-size: calc(var(--font-size-body-small) * var(--scale, 1));
+  font-size: var(--font-size-body-small);
 }
 @media (prefers-reduced-motion: reduce) {
   .env-text-field-well,
@@ -314,28 +322,24 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
   color: var(--color-field-label);
 }
 .env-text-field-start {
-  inset-inline-start: calc(var(--space-4) * var(--scale, 1));
+  inset-inline-start: var(--space-4);
   pointer-events: none;
 }
 .env-text-field-end {
-  inset-inline-end: calc(var(--space-2) * var(--scale, 1));
+  inset-inline-end: var(--space-2);
 }
 .env-text-field-start .env-symbol {
-  width: calc(var(--control-icon-size) * var(--scale, 1));
-  height: calc(var(--control-icon-size) * var(--scale, 1));
+  width: var(--control-icon-size);
+  height: var(--control-icon-size);
 }
 .env-text-field-well[data-start-icon] > .env-text-input {
-  padding-inline-start: calc(
-    (var(--space-4) + var(--control-icon-size) + var(--space-3)) * var(--scale, 1)
-  );
+  padding-inline-start: calc((var(--space-4) + var(--control-icon-size) + var(--space-3)));
 }
 .env-text-field-well[data-start-icon] > label {
-  inset-inline-start: calc(
-    (var(--space-4) + var(--control-icon-size) + var(--space-3)) * var(--scale, 1)
-  );
+  inset-inline-start: calc((var(--space-4) + var(--control-icon-size) + var(--space-3)));
 }
 .env-text-field-well[data-end-action] > .env-text-input {
-  padding-inline-end: calc((var(--control-height) + var(--space-3)) * var(--scale, 1));
+  padding-inline-end: calc((var(--control-height) + var(--space-3)));
 }
 .env-text-field-well:focus-within > .env-text-field-start {
   color: var(--color-field-active);
@@ -353,25 +357,23 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
 .env-text-input[type='search']::-webkit-search-cancel-button {
   appearance: none;
 }
-/* Compact fields share the button height and pill shape so they align in toolbars. */
-.env-text-field[data-compact] .env-text-field-well {
+/* Fields share the button height and pill shape so they line up with buttons in a row. */
+.env-text-field:not([data-tall]) .env-text-field-well {
   box-sizing: border-box;
   display: flex;
-  min-height: calc(var(--control-height) * var(--scale, 1));
+  min-height: var(--env-field-height);
   border-radius: var(--md-sys-shape-corner-full);
 }
-.env-text-field[data-compact] .env-text-input {
+.env-text-field:not([data-tall]) .env-text-input {
   /* The well owns the height, including its border, so it matches the button height exactly. */
   flex: 1 1 auto;
   min-height: 0;
-  padding-block: calc(var(--space-1) * var(--scale, 1));
+  padding-block: var(--space-1);
 }
-/* A compact label rests at the vertical center and floats into the outline like the standard one,
-   without reserving space above the field, so the field still lines up with adjacent buttons. */
-.env-text-field:where([data-compact]) .env-text-field-well > label {
-  inset-block-start: calc(
-    (var(--control-height) * var(--scale, 1) - 1lh) / 2 - 0.0625rem * var(--scale, 1)
-  );
+/* The label rests at the vertical center and floats into the outline like a tall field's, without
+   reserving space above the field, so the field still lines up with adjacent buttons. */
+.env-text-field:where(:not([data-tall])) .env-text-field-well > label {
+  inset-block-start: calc((var(--env-field-height) - 1lh) / 2 - 0.0625rem);
 }
 /* A hidden label stays available to assistive technology; the placeholder gives visible guidance. */
 .env-text-field[data-label-hidden] .env-text-field-well > .env-text-input:not(:focus)::placeholder {
@@ -387,14 +389,12 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
   clip-path: inset(50%);
   white-space: nowrap;
 }
-.env-text-field[data-compact] .env-text-field-end {
-  inset-inline-end: calc(var(--space-1) * var(--scale, 1));
+.env-text-field:not([data-tall]) .env-text-field-end {
+  --control-height: calc(var(--env-field-height) - var(--space-2));
+  inset-inline-end: var(--space-1);
 }
-.env-text-field[data-compact] .env-text-field-end .env-icon-button {
-  --icon-button-size: calc(var(--control-height) - var(--space-2));
-}
-.env-text-field[data-compact] .env-text-field-well[data-end-action] > .env-text-input {
-  padding-inline-end: calc(var(--control-height) * var(--scale, 1));
+.env-text-field:not([data-tall]) .env-text-field-well[data-end-action] > .env-text-input {
+  padding-inline-end: var(--env-field-height);
 }
 /* Prefix and suffix text sit in line with the value, inside the well. A long prefix is cut short
    with an ellipsis, so the control always keeps room for its value. */
@@ -413,37 +413,37 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
   overflow: hidden;
   color: var(--color-field-label);
   font: var(--type-body);
-  font-size: calc(var(--control-font-size) * var(--scale, 1));
+  font-size: var(--control-font-size);
   white-space: nowrap;
   text-overflow: ellipsis;
   cursor: text;
   transition: opacity var(--motion-duration-medium) var(--motion-ease);
 }
 .env-text-field-prefix {
-  padding-inline-start: calc(var(--space-4) * var(--scale, 1));
+  padding-inline-start: var(--space-4);
 }
 .env-text-field-suffix {
-  padding-inline-end: calc(var(--space-4) * var(--scale, 1));
+  padding-inline-end: var(--space-4);
 }
 .env-text-field-well[data-prefix] > .env-text-input {
-  padding-inline-start: calc(0.125rem * var(--scale, 1));
+  padding-inline-start: 0.125rem;
 }
 .env-text-field-well[data-suffix] > .env-text-input {
-  padding-inline-end: calc(0.125rem * var(--scale, 1));
+  padding-inline-end: 0.125rem;
 }
 .env-text-field-well[data-start-icon] > .env-text-field-prefix {
-  padding-inline-start: calc(
-    (var(--space-4) + var(--control-icon-size) + var(--space-3)) * var(--scale, 1)
-  );
+  padding-inline-start: calc((var(--space-4) + var(--control-icon-size) + var(--space-3)));
 }
 .env-text-field-well[data-end-action] > .env-text-field-suffix {
-  padding-inline-end: calc((var(--control-height) + var(--space-3)) * var(--scale, 1));
+  padding-inline-end: calc((var(--control-height) + var(--space-3)));
 }
-.env-text-field[data-compact] .env-text-field-well[data-end-action][data-suffix] > .env-text-input {
-  padding-inline-end: calc(0.125rem * var(--scale, 1));
+.env-text-field:not([data-tall])
+  .env-text-field-well[data-end-action][data-suffix]
+  > .env-text-input {
+  padding-inline-end: 0.125rem;
 }
-.env-text-field[data-compact] .env-text-field-well[data-end-action] > .env-text-field-suffix {
-  padding-inline-end: calc(var(--control-height) * var(--scale, 1));
+.env-text-field:not([data-tall]) .env-text-field-well[data-end-action] > .env-text-field-suffix {
+  padding-inline-end: var(--env-field-height);
 }
 .env-text-field-well[data-variant='plain'] > .env-text-field-prefix {
   padding-inline-start: 0;
@@ -461,5 +461,12 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
   .env-text-field-prefix,
   .env-text-field-suffix {
     transition: none;
+  }
+}
+/* Under a coarse pointer, single-line fields grow to the touch height, whatever the scale, and their
+   text to 1 rem; other controls keep their size and gain a hit area instead. */
+@media (pointer: coarse) {
+  .env-text-field {
+    --env-field-height: max(var(--control-height), var(--control-height-touch));
   }
 }

@@ -1,5 +1,14 @@
 /* A pill rail of segments, like the tab rail: a translucent fill with the chosen segment in the
-   primary button colors. */
+   primary button colors. The rail is as tall as a control of its size, or of its container's. */
+.env-segmented-control[data-size='sm'] {
+  --control-height: var(--control-height-sm);
+}
+.env-segmented-control[data-size='md'] {
+  --control-height: var(--control-height-md);
+}
+.env-segmented-control[data-size='lg'] {
+  --control-height: var(--control-height-lg);
+}
 .env-segmented-control {
   box-sizing: border-box;
   inline-size: fit-content;
@@ -23,20 +32,19 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  padding: var(--space-1) var(--space-4);
+  padding: 0 var(--space-4);
   border: 0;
   border-radius: 100vmax;
   background: transparent;
   color: var(--color-text-muted);
-  font: 400 0.875rem / 1.4 var(--font-family);
+  font: var(--body-font-weight) var(--font-size-label) / 1.4 var(--font-family);
   white-space: nowrap;
   cursor: pointer;
   transition:
     background-color var(--motion-duration-fast) var(--motion-ease),
     color var(--motion-duration-fast) var(--motion-ease);
 }
-.env-segmented-control[data-size='compact'] .env-segment {
-  min-block-size: calc(var(--control-height-compact) - 2 * var(--space-1));
+.env-segmented-control[data-size='sm'] .env-segment {
   padding-inline: var(--space-3);
 }
 .env-segment:hover:not([data-checked]):not([data-disabled]) {
@@ -59,6 +67,18 @@
 .env-segment:focus-visible {
   outline: 0.125rem solid var(--color-focus-ring);
   outline-offset: 0.125rem;
+}
+/* Under a coarse pointer, a segment keeps its look and gains a hit area of the touch height. */
+@media (pointer: coarse) {
+  .env-segment {
+    position: relative;
+  }
+  .env-segment::before {
+    content: '';
+    position: absolute;
+    inset-block: min(0%, calc((100% - var(--control-height-touch)) / 2));
+    inset-inline: 0;
+  }
 }
 .env-segment[data-disabled] {
   opacity: var(--state-disabled-opacity);

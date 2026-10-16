@@ -5,19 +5,17 @@
    window controls leave free; the bar takes its height, and its hairline below, so the hairline
    runs under the window controls too, and leaves room on either side. Outside such a window the
    variables are undefined, and the bar falls back to --title-bar-height across the full width.
-   Empty space drags the window, controls inside stay clickable, and they take the compact control
-   height, as in a compact Surface. */
+   Empty space drags the window, controls inside stay clickable, and they take the small control
+   height. */
 .env-title-bar {
-  --control-height-small: var(--control-height-compact);
-  --control-height: var(--control-height-compact);
-  --icon-button-size: var(--control-height-compact);
+  --control-height: var(--control-height-sm);
   /* Inner padding at the inline start and end; the window controls add to the side they occupy. */
   --env-title-bar-start: var(--space-3);
   --env-title-bar-end: var(--space-3);
   --env-title-bar-left: var(--env-title-bar-start);
   --env-title-bar-right: var(--env-title-bar-end);
   box-sizing: border-box;
-  /* The window reports a smaller height once the page is zoomed in; the compact controls still fit. */
+  /* The window reports a smaller height once the page is zoomed in; the small controls still fit. */
   block-size: max(calc(env(titlebar-area-height, 0px) + 0.0625rem), var(--title-bar-height));
   padding-left: calc(env(titlebar-area-x, 0px) + var(--env-title-bar-left));
   padding-right: calc(

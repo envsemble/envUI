@@ -8,22 +8,26 @@ import {
   FieldFrame,
   isLabelShown,
   type FieldProps,
+  type FieldSizeProps,
   type TextFieldAffixProps,
   type TextFieldAppearanceProps,
   type TextFieldDecorationProps,
 } from './internal/FieldFrame.js';
 
-// The prefix prop replaces the native RDFa attribute of the same name.
+// The prefix prop replaces the native RDFa attribute of the same name, and size the native width in
+// characters: a field's width comes from its layout.
 export interface TextFieldProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix'>,
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix' | 'size'>,
     FieldProps,
     TextFieldAppearanceProps,
     TextFieldDecorationProps,
+    FieldSizeProps,
     TextFieldAffixProps {}
 
 /**
- * A labelled single-line text input: a native input with a floating label, a hint and an error, in
- * an outlined, plain or quiet look, with an optional start icon, end action, prefix and suffix.
+ * A labelled single-line text input: a native input with a floating label, a hint and an error, at
+ * the control height in an outlined or quiet look, or taller as the floating and plain variants,
+ * with an optional start icon, end action, prefix and suffix.
  */
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function TextField(
   {
@@ -33,8 +37,8 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
     variant,
     startIcon,
     endAction,
-    compact = false,
     showLabel,
+    size,
     prefix,
     suffix,
     id: suppliedId,
@@ -59,7 +63,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
       .join(' ') || undefined;
   // A floating label needs a blank placeholder to detect the empty state; hidden labels leave it.
   const fieldPlaceholder =
-    label != null && isLabelShown({ compact, showLabel }) ? placeholder || ' ' : placeholder;
+    label != null && isLabelShown({ showLabel }) ? placeholder || ' ' : placeholder;
   return (
     <FieldFrame
       id={id}
@@ -70,8 +74,8 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
       variant={variant}
       startIcon={startIcon}
       endAction={endAction}
-      compact={compact}
       showLabel={showLabel}
+      size={size}
       prefix={prefix}
       suffix={suffix}
     >

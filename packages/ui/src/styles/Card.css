@@ -1,5 +1,5 @@
 .env-card {
-  --surface-card-padding: var(--env-surface-inset);
+  --surface-card-padding: var(--env-surface-padding);
 }
 
 .env-clickable-card {

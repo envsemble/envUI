@@ -72,11 +72,11 @@
 /* The dismiss button is a small circle in the alert's tone, centered on the first line. */
 .env-alert-dismiss.env-button {
   grid-column: 3;
-  inline-size: var(--control-height-compact);
+  inline-size: var(--control-height-sm);
   max-inline-size: none;
-  block-size: var(--control-height-compact);
-  min-block-size: var(--control-height-compact);
-  margin-block: calc((1.4 * var(--font-size-heading-small) - var(--control-height-compact)) / 2);
+  block-size: var(--control-height-sm);
+  min-block-size: var(--control-height-sm);
+  margin-block: calc((1.4 * var(--font-size-heading-small) - var(--control-height-sm)) / 2);
   margin-inline-end: calc(-1 * var(--space-2));
   border-radius: 50%;
   color: var(--env-alert-tone);

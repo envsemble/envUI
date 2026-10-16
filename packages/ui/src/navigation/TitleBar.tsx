@@ -14,7 +14,7 @@ export interface TitleBarProps extends Omit<ComponentPropsWithRef<'header'>, 'ch
  * A window title bar without the application shell, for a start page or a simple window of an
  * installed web app or desktop shell that draws its own title bar. It looks like AppShell's title
  * bar: empty space drags the window, it leaves room for the window controls the system draws, and
- * controls inside are compact. It is a normal block; WindowFrame puts it above content that
+ * controls inside are small. It is a normal block; WindowFrame puts it above content that
  * scrolls on its own.
  */
 export function TitleBar({ start, end, children, className, ...props }: TitleBarProps) {

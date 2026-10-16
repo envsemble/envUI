@@ -20,8 +20,8 @@ export interface MessageProps extends Omit<ComponentPropsWithRef<'article'>, 'ch
   /** Supporting facts beside the author, in the muted color, such as the time or a RelativeTime. */
   meta?: ReactNode;
   /**
-   * Small actions below the message, such as Copy or Retry, at the 2 rem compact height, or the
-   * touch height on touch screens; at the inline end for your own messages. A text IconButton at
+   * Small actions below the message, such as Copy or Retry, at the small control height, with the
+   * touch hit area on touch screens; at the inline end for your own messages. A text IconButton at
    * the edge lines its icon up with the message. false and null count as absent.
    */
   actions?: ReactNode;

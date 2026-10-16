@@ -87,8 +87,8 @@
   opacity: var(--state-disabled-opacity);
   cursor: default;
 }
-/* A compact zone is one row: the icon, then the label above the description. */
-.env-drop-zone[data-compact] .env-drop-zone-target {
+/* A small zone is one row: the icon, then the label above the description. */
+.env-drop-zone[data-size='sm'] .env-drop-zone-target {
   grid-template-columns: auto minmax(0, 1fr);
   justify-items: start;
   align-items: center;
@@ -97,18 +97,18 @@
   padding: var(--space-2) var(--space-4);
   text-align: start;
 }
-.env-drop-zone[data-compact] .env-drop-zone-text {
+.env-drop-zone[data-size='sm'] .env-drop-zone-text {
   gap: 0;
 }
-.env-drop-zone[data-compact] .env-drop-zone-icon {
+.env-drop-zone[data-size='sm'] .env-drop-zone-icon {
   inline-size: 2rem;
   block-size: 2rem;
 }
-.env-drop-zone[data-compact] .env-drop-zone-icon > .env-symbol {
+.env-drop-zone[data-size='sm'] .env-drop-zone-icon > .env-symbol {
   inline-size: var(--control-icon-size);
   block-size: var(--control-icon-size);
 }
-.env-drop-zone[data-compact] .env-drop-zone-label {
+.env-drop-zone[data-size='sm'] .env-drop-zone-label {
   font: var(--type-body-small);
   font-weight: 500;
 }

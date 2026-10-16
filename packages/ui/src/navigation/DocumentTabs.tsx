@@ -223,7 +223,6 @@ export function DocumentTabs({
   return (
     <ContextMenu
       aria-label={contextMenuLabel}
-      density="compact"
       onOpenChange={(open) => {
         if (open)
           menuOpenedInside.current = Boolean(

@@ -3,6 +3,7 @@ import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { ActionElement, type ActionElementProps } from '../internal/ActionElement.js';
 import { Spinner } from '../feedback/Spinner.js';
+import type { ControlSize } from '../foundations/Theme.js';
 
 export type ButtonVariant =
   | 'primary'
@@ -23,6 +24,13 @@ export interface ButtonAppearanceProps {
   variant?: ButtonVariant;
   /** Show an underline for the text variant; defaults to false. */
   underline?: boolean;
+  /**
+   * The height, as on every control: sm, md or lg in the current scale, such as sm for an action
+   * in a table cell or lg for the main call to action of a page. Without it, the button takes the
+   * control height of its container, md unless the container sets another. A button beside a
+   * field takes the field's size.
+   */
+  size?: ControlSize;
   /** A decorative icon before the label, such as an Add icon. */
   startIcon?: ReactNode;
   /** A decorative icon after the label, such as a ChevronRight for a next step. */
@@ -57,6 +65,7 @@ export type ButtonProps = ButtonAppearanceProps &
 export function Button({
   variant = 'primary',
   underline = false,
+  size,
   iconOnly = false,
   icon,
   startIcon,
@@ -85,6 +94,7 @@ export function Button({
         // Pending blocks activation, including form submission and navigation.
         onClick: (event: MouseEvent<HTMLElement>) => event.preventDefault(),
       })}
+      data-size={size}
       className={classNames(
         'env-button',
         `env-button-${variant}`,
@@ -115,6 +125,8 @@ export interface IconButtonProps
   variant?: ButtonVariant;
   /** As Button's: a spinner replaces the icon while the work runs. */
   pending?: boolean;
+  /** As Button's: the height, and the width, of the square button. */
+  size?: ControlSize;
 }
 
 /** Shorthand for Button's icon-only mode, using the neutral secondary variant by default. */

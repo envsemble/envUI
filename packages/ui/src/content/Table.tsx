@@ -14,6 +14,7 @@ import {
   type RefObject,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
+import type { RowDensity } from '../foundations/Theme.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { cssLength } from '../internal/cssLength.js';
 import { setRef } from '../internal/setRef.js';
@@ -59,10 +60,12 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'table'>, 'aria-la
    */
   caption?: ReactNode;
   /**
-   * standard rows, or compact rows with smaller text and padding for dense data. Buttons, icon
-   * buttons and fields in compact cells take the 2 rem compact control height.
+   * How tightly the rows pack: xs, sm, md or lg changes only the cells' block padding, never the
+   * text. Buttons, icon buttons and fields in the cells take the small control height in every
+   * density, unless they set a size.
+   * @default 'md'
    */
-  density?: 'compact' | 'standard';
+  density?: RowDensity;
   /**
    * The header row stays at the top of the region while the rows scroll beneath it. The region then
    * scrolls vertically too, so give it a height through regionClassName or the surrounding layout.
@@ -160,7 +163,7 @@ function useNarrowerThan(
 function Root({
   'aria-label': label,
   caption,
-  density = 'standard',
+  density = 'md',
   stickyHeader = false,
   regionClassName,
   narrowLayout = 'scroll',

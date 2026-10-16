@@ -4,6 +4,7 @@ import { Radio } from '@base-ui/react/radio';
 import { RadioGroup } from '@base-ui/react/radio-group';
 import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
+import type { ControlSize } from '../foundations/Theme.js';
 import { TooltipPopup } from '../feedback/internal/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
@@ -35,11 +36,11 @@ export interface SegmentedControlProps {
   /** The group's accessible name, such as Work items; the control has no visible label. */
   'aria-label': string;
   /**
-   * The rail's height: standard matches buttons, at 2.5 rem; compact matches compact fields and
-   * toolbars, at 2 rem.
-   * @default 'standard'
+   * The rail's height, as on every control: sm, md or lg in the current scale, so it lines up with
+   * buttons and fields of the same size. Without it, the rail takes the control height of its
+   * container, md unless the container sets another.
    */
-  size?: 'standard' | 'compact';
+  size?: ControlSize;
   /**
    * Fill the available width, split evenly between the options; a label too long for its share is
    * cut short with an ellipsis and shows whole in a tooltip. Without it the control is as wide as
@@ -61,7 +62,7 @@ export function SegmentedControl({
   value,
   onValueChange,
   'aria-label': label,
-  size = 'standard',
+  size,
   fullWidth = false,
   disabled = false,
   className,
