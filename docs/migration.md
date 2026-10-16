@@ -245,9 +245,9 @@ Aliases of one role, which replaces them:
 
 Aliases whose value changed, so a style that relied on the 0.7 value needs a look:
 
-| 0.7 custom property      | Role                 | What changed                                                                                                                                                                                                                                                                                    |
-| ------------------------ | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--color-dialog-overlay` | `--color-bg-overlay` | 0.7's was opaque, #1e1f21, and the dialog backdrop made it 55% opaque with --state-dialog-overlay-opacity, which is removed. The role is the scrim itself, 55% opaque: paint it as it is, since a style that applies its own opacity now applies it twice. For the opaque color, write #1e1f21. |
+| 0.7 custom property      | Role                 | What changed                                                                                                                                                                                                                                                                                                                       |
+| ------------------------ | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--color-dialog-overlay` | `--color-bg-overlay` | 0.7's was opaque, #1f1f1f (hsl(0 0% 12.157%) in both themes), and the dialog backdrop made it 55% opaque with --state-dialog-overlay-opacity, which is removed. The role is the scrim itself, 55% opaque: paint it as it is, since a style that applies its own opacity now applies it twice. For the opaque color, write #1f1f1f. |
 
 Component tokens that take another role in some themes, so no one role replaces them; use the role of each theme:
 
