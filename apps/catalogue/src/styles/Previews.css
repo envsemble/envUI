@@ -239,16 +239,6 @@
   min-block-size: 8rem;
   padding: var(--space-5);
 }
-.docs-tone-sample {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  font: var(--type-body-small);
-}
-.docs-tone-sample > svg {
-  inline-size: 1rem;
-  block-size: 1rem;
-}
 /* Tabs that fill a fixed region, like a diagram canvas below its views. */
 .docs-fill-region {
   display: flex;

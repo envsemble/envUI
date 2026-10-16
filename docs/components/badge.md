@@ -1,22 +1,46 @@
 ---
 title: Badge
-summary: Small pills that name a state in its tone, compact counts and the size of a change.
+summary: Small static pills that name a state in its tone, show a count, or the size of a change.
 status: beta
 since: 0.5.0
 category: Content & guidance
 aliases:
-  - InfoChip
   - Counter
   - DiffCount
+  - status badge
+  - status
   - tag
   - lozenge
   - label
   - pill
-  - status
   - count
+  - counter
+  - notification count
+  - unread count
+  - diff count
+  - change size
+useWhen:
+  - A short state sits beside the content it describes, such as In review, Blocked or Archived.
+  - A short name or category marks an item, such as a team or a folder (`variant="outline"`).
+  - A number belongs to a label, such as unread messages beside a navigation item or comments on a button (CounterBadge).
+  - The size of a change shows beside a file or a version, such as +12 −3 (DiffStat).
+avoidWhen:
+  - text: An action, or a choice people turn on and off, even when it looks like a pill.
+    use: Button
+  - text: Choosing one of a few filters or views.
+    use: SegmentedControl
+  - text: A message about a page or section that needs a sentence.
+    use: Alert
+  - text: How full or complete something is, such as storage used.
+    use: Meter
+  - text: A headline number with its label and trend, such as on a dashboard.
+    use: Stat
 related:
   - chips
   - nav-list
+  - button
+  - stat
+  - code
   - colors
 components:
   - Badge
@@ -26,59 +50,149 @@ components:
 
 # Badge
 
-## React usage
+## Overview
 
-```tsx
-import { Badge, Button, CounterBadge, DiffStat, NavList } from '@envsemble/envui';
-import { Inbox } from '@envsemble/envui/icons/Inbox';
-import { TaskAlt } from '@envsemble/envui/icons/TaskAlt';
+A badge is a small pill that names a state beside the content it describes, such as Blocked beside a project's name. Its tone carries the meaning and its text says it, so the state reads without color. Badges are static: they don't respond to the pointer or the keyboard.
 
-<Badge tone="warning">Blocked</Badge>
-<Badge tone="done" icon={<TaskAlt />}>Completed</Badge>
-<Badge variant="outline">Shared drafts</Badge>
+The family shares the pill:
 
-<NavList.Item
-  href="/inbox"
-  icon={<Inbox />}
-  trailing={<CounterBadge value={unread} aria-label={`${unread} unread`} tone="accent" />}
->
-  Inbox
-</NavList.Item>
+- **CounterBadge** shows a count, such as unread messages beside a navigation item, with a full name for assistive technology.
+- **DiffStat** shows the size of a change in one pill, such as +12 −3, with additions in the success tone and deletions in the danger tone.
 
-<Button variant="secondary">
-  Diffs <DiffStat additions={12} deletions={3} />
-</Button>
+```tsx example=ProjectStatus
+
 ```
 
-### Props & contracts
+## Anatomy
 
-| Name                           | Contract                                                                                         |
-| ------------------------------ | ------------------------------------------------------------------------------------------------ |
-| Badge tone                     | neutral (default), accent, success, warning, danger or done (the purple of completed work)       |
-| Badge variant                  | subtle (default) tints the background, solid fills it with the tone, outline draws a tone border |
-| Badge icon / children          | Optional leading icon and a short label; long labels truncate                                    |
-| CounterBadge value             | A number or short text such as 99+                                                               |
-| CounterBadge aria-label        | Full meaning for assistive technology, such as 12 unread; the value alone otherwise              |
-| CounterBadge tone              | neutral (default) quiet fill, or accent                                                          |
-| DiffStat additions / deletions | The size of a change, shown as +12 in the success tone and −3 in the danger tone                 |
-| DiffStat formatLabel           | Full meaning for assistive technology; 12 added lines and 3 removed lines by default             |
-| NavList.Item trailing          | End content such as a CounterBadge; an icon-only item shows a small dot instead                  |
-| Native props                   | Badge, CounterBadge and DiffStat accept span attributes, including title, className and ref      |
+1. **Pill**: fully rounded, with the tone's tint, fill or border by `variant`.
+2. **Icon** (optional, `icon`): decorative, 0.875 rem, before the label in the tone's color.
+3. **Label** (`children`): 0.75 rem text in medium weight, on one line; it ends with an ellipsis when the badge is wider than its container.
 
-## Guidelines
+CounterBadge is a pill with the count (`value`) in tabular figures, and a visually hidden name (`aria-label`) where one is given. DiffStat is a pill with the additions, the deletions and a visually hidden name (`formatLabel`).
 
-- Use a badge for a short state beside the content it describes: In progress, Blocked, Archived, or a repository name. Use InfoChip for neutral metadata and Button for actions; badges are not interactive.
-- Choose the tone by meaning, not decoration: success for done or healthy, warning for attention, danger for failure, done for completed work, accent for the current or highlighted state, neutral otherwise. Keep the text meaningful without color.
-- Subtle badges suit lists and tables; solid badges draw more attention, so use them sparingly. Outline badges suit names and categories.
-- Tone colors are central tokens (see colors), so status icons and text can share them without copying badge styles.
-- A counter badge is a compact count. Give it an aria-label when the number needs context, and keep the value short.
-- A diff stat shows the size of a change in one counter-sized pill: additions in the success tone, then deletions in the danger tone, such as +12 −3. Assistive technology reads its label instead of the signs, once; formatLabel words it for other units or languages.
-- In a button, such as a tab with a count, a counter badge keeps its own filled pill, neutral or accent, and a diff stat sits on a pill in the canvas color, where its tones keep their contrast. On the solid primary and important fills both take the button's text color as an outlined pill instead, as a badge does in every button, so the count keeps its contrast in both themes.
+## Variants and sizes
 
-TypeScript declarations provide the complete public API.
+| Variant   | Use for                                                                                                   |
+| --------- | --------------------------------------------------------------------------------------------------------- |
+| `subtle`  | Most states, in lists, tables and headings: the tone's light tint with text in the tone. The default.     |
+| `solid`   | A state that must stand out, such as Overdue: the tone's fill with text in the on-tone color. Use rarely. |
+| `outline` | Names and categories, such as a team or a folder: a border in the tone and no fill.                       |
 
-## Related topics
+| Tone      | Use for                                                          |
+| --------- | ---------------------------------------------------------------- |
+| `neutral` | A state without urgency, such as Archived or Draft. The default. |
+| `accent`  | The current or highlighted state, such as In review or New.      |
+| `success` | Done well or healthy, such as Ready or Approved.                 |
+| `warning` | Needs attention soon, such as Blocked or Expiring.               |
+| `danger`  | Failed or at risk, such as Failed or Overdue.                    |
+| `done`    | Completed work, in purple, such as Completed or Merged.          |
 
-- [InfoChip](../components/chips.md)
-- [NavList](../components/nav-list.md)
-- [Colors & themes](../foundations/colors.md)
+CounterBadge is `neutral`, a quiet fill with text in the primary color, or `accent`, the accent fill with text in the on-tone color, for counts that need attention.
+
+<!-- specimen: VariantMatrix -->
+
+- A badge is about 1.3 rem tall, with 0.0625 rem block padding, 0.5 rem inline padding and 0.25 rem between the icon and the label. It is as wide as its content, at most its container's width, and lines up with the middle of the text beside it.
+- A CounterBadge and a DiffStat are 1.25 rem tall, with 0.375 rem inline padding; a CounterBadge is at least as wide as it is tall, so a single digit shows as a circle. DiffStat keeps 0.25 rem between its two numbers.
+- Tone text keeps 4.5:1 contrast on the canvas, panes and rows in both themes, also over the subtle tint.
+
+## States and behaviour
+
+- Badges have no interactive states: they are not focusable and don't respond to the pointer or the keyboard.
+- **In a button**, such as a tab with a count, a badge takes the button's text color as an outlined pill. A CounterBadge keeps its own filled pill, and a DiffStat sits on a pill that leans back toward the canvas so its tones keep their contrast; on the solid fills of primary and important buttons, both take the button's text color as an outlined pill instead.
+- **In navigation**, NavList.Item shows a CounterBadge as its `trailing` content, and a small dot instead while the item is icon-only.
+- **Names**: a CounterBadge with `aria-label` hides its visible value from assistive technology and reads the label instead, such as "12 unread". A DiffStat always reads its label once instead of the signs, "12 added lines and 3 removed lines" by default.
+
+## Content guidelines
+
+- Name a state in one or two words, in sentence case: "In review", "Blocked", "Ready". Use the same word for the same state everywhere.
+- Choose the tone by meaning, not decoration, and keep the word meaningful on its own.
+- Keep counts short: show "99+" beyond two or three digits, with the full meaning in `aria-label`, such as "More than 99 unread".
+- Give a CounterBadge an `aria-label` when the number needs context, such as "12 unread"; a count inside a button whose label says what it counts, such as Comments, can do without.
+- Word `formatLabel` for other units or languages, such as "12 added files and 3 removed files".
+
+## Do and don't
+
+### Do
+
+- Put a badge right beside what it describes, such as after a title or in a table cell.
+- Use subtle badges in lists and tables, and keep solid badges for the one state that must stand out.
+- Use the same tone for the same state across the application.
+
+### Don't
+
+- Don't make a badge look or act like a button or a filter; use [Button](../components/button.md) or [SegmentedControl](../components/segmented-control.md).
+- Don't put a sentence in a badge; use [Alert](../components/alert.md) for a message.
+- Don't use color as the only difference between two states; name them differently.
+- Don't use a CounterBadge for a number that stands on its own, such as a headline figure; use [Stat](../components/stat.md).
+
+## Accessibility
+
+### envUI provides
+
+- Badge labels as text, read in place with the content around them; icons are decorative and hidden from assistive technology.
+- A CounterBadge's `aria-label` as visually hidden text that replaces the hidden value, so it is read on a plain `span` too.
+- A DiffStat named once by `formatLabel`, with the signs and numbers hidden from assistive technology.
+- Tone colors that keep 4.5:1 contrast for text on the canvas, panes and rows in both themes, also inside buttons.
+
+### You provide
+
+- A label that says the state in words, not only in its tone.
+- An `aria-label` on a CounterBadge whose number doesn't explain itself, and a translated `formatLabel` on a DiffStat where the interface is not in English.
+- An announcement when a count changes in a way people need to know about at once, such as in a status region.
+
+## Examples
+
+### Tones
+
+Each tone carries a meaning; the word says it too.
+
+```tsx example=Tones
+
+```
+
+### Emphasis
+
+Subtle badges suit most states; a solid badge stands out for the one state that must, and outline badges mark names and categories.
+
+```tsx example=Emphasis
+
+```
+
+### With an icon
+
+A decorative icon before the label repeats the state at a glance.
+
+```tsx example=WithIcon
+
+```
+
+### Counts in navigation
+
+A CounterBadge as a NavList.Item's `trailing` content, with an `aria-label` that says what it counts; the accent tone marks the count that needs attention.
+
+```tsx example=NavigationCounts
+
+```
+
+### Counts in buttons
+
+In a button, a CounterBadge keeps its own pill and a DiffStat sits on a pill toward the canvas; on a primary button they take the button's text color as an outlined pill.
+
+```tsx example=CountsInButtons
+
+```
+
+### The size of a change
+
+DiffStat beside each changed file, read as "124 added lines and 37 removed lines".
+
+```tsx example=ChangeSize
+
+```
+
+## Changelog
+
+- **1.0.0**: `Counter` is `CounterBadge` and `DiffCount` is `DiffStat`, with their props types and the `env-counter-badge-*` and `env-diff-stat-*` classes; the page is `badge`.
+- **0.7.0**: DiffCount; a counter in a button keeps its own filled pill, except on primary and important fills.
+- **0.5.0**: Badge in six tones and three variants, and Counter; in a button, a badge or counter takes the button's text color as an outlined pill.

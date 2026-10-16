@@ -9,7 +9,12 @@ export interface BadgeProps extends Omit<ComponentPropsWithRef<'span'>, 'childre
   tone?: BadgeTone;
   /** subtle (default) tints the background, solid fills it with the tone, outline draws a border. */
   variant?: 'subtle' | 'solid' | 'outline';
+  /** A decorative icon before the label, such as a check mark; hidden from assistive technology. */
   icon?: ReactNode;
+  /**
+   * The label: a state, a name or a category in a word or two. It stays on one line and ends with
+   * an ellipsis where the badge is wider than its container.
+   */
   children: ReactNode;
 }
 

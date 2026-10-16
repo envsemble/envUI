@@ -36,7 +36,6 @@ import { AppShellPreview } from './Shell';
 import { CommandPalettePreview, DocumentTabsPreview, TreePreview } from './Workspace';
 import { PanelDockPreview } from './Dock';
 import {
-  BadgesPreview,
   BreadcrumbsPreview,
   HoverCardPreview,
   PopoverPreview,
@@ -88,8 +87,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <CardsPreview />;
     case 'chips':
       return <ChipsPreview />;
-    case 'badge':
-      return <BadgesPreview />;
     case 'breadcrumbs':
       return <BreadcrumbsPreview />;
     case 'pagination':

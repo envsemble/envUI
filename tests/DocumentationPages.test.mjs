@@ -20,7 +20,6 @@ const unconverted = [
   'animated-number',
   'app-shell',
   'avatar',
-  'badge',
   'breadcrumbs',
   'calendar-heatmap',
   'card',

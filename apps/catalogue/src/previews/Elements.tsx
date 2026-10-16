@@ -4,28 +4,20 @@ import {
   Badge,
   Breadcrumbs,
   Button,
-  CounterBadge,
-  DiffStat,
   HoverCard,
   IconButton,
   TextField,
   Kbd,
   Link,
-  NavList,
   Popover,
   SegmentedControl,
   Stack,
   Surface,
   Text,
 } from '@envsemble/envui';
-import { CheckCircle } from '@envsemble/envui/icons/CheckCircle';
-import { Description } from '@envsemble/envui/icons/Description';
 import { Edit } from '@envsemble/envui/icons/Edit';
 import { Info } from '@envsemble/envui/icons/Info';
-import { Folder } from '@envsemble/envui/icons/Folder';
-import { Inbox } from '@envsemble/envui/icons/Inbox';
 import { MoreVert } from '@envsemble/envui/icons/MoreVert';
-import { TaskAlt } from '@envsemble/envui/icons/TaskAlt';
 import { ViewList } from '@envsemble/envui/icons/ViewList';
 import { ViewModule } from '@envsemble/envui/icons/ViewModule';
 import { Example, Specimen, SpecimenGrid } from './Example';
@@ -91,116 +83,6 @@ export function SegmentedControlPreview() {
         <Text variant="caption" className="docs-caption" aria-live="polite">
           Showing {view} items as a {layout}.
         </Text>
-      </Example>
-    </Preview>
-  );
-}
-
-const badgeTones = ['neutral', 'accent', 'success', 'warning', 'danger', 'done'] as const;
-const badgeLabels: Record<(typeof badgeTones)[number], string> = {
-  neutral: 'Archived',
-  accent: 'In review',
-  success: 'Ready',
-  warning: 'Blocked',
-  danger: 'Failed',
-  done: 'Completed',
-};
-
-export function BadgesPreview() {
-  const [selected, setSelected] = useState('inbox');
-  return (
-    <Preview>
-      <Example title="Badges" size="collection">
-        <SpecimenGrid size="wide">
-          {(['subtle', 'solid', 'outline'] as const).map((variant) => (
-            <Specimen key={variant} title={variant[0]!.toUpperCase() + variant.slice(1)}>
-              <ActionGroup>
-                {badgeTones.map((tone) => (
-                  <Badge key={tone} tone={tone} variant={variant}>
-                    {badgeLabels[tone]}
-                  </Badge>
-                ))}
-              </ActionGroup>
-            </Specimen>
-          ))}
-          <Specimen title="With an icon">
-            <ActionGroup>
-              <Badge tone="success" icon={<CheckCircle />}>
-                Approved
-              </Badge>
-              <Badge tone="done" icon={<TaskAlt />}>
-                Done
-              </Badge>
-              <Badge icon={<Folder />}>Shared drafts</Badge>
-            </ActionGroup>
-          </Specimen>
-        </SpecimenGrid>
-      </Example>
-      <Example title="Counters" size="collection">
-        <SpecimenGrid>
-          <Specimen title="Neutral and accent">
-            <ActionGroup>
-              <CounterBadge value={3} />
-              <CounterBadge value={128} />
-              <CounterBadge value="99+" tone="accent" aria-label="More than 99 unread" />
-            </ActionGroup>
-          </Specimen>
-          <Specimen title="Diff counts">
-            <ActionGroup>
-              <DiffStat additions={124} deletions={37} />
-              <Button variant="secondary">
-                Diffs <DiffStat additions={12} deletions={3} />
-              </Button>
-            </ActionGroup>
-          </Specimen>
-          <Specimen title="In navigation">
-            <Stack gap={1}>
-              <NavList.Item
-                icon={<Inbox />}
-                selected={selected === 'inbox'}
-                onClick={() => setSelected('inbox')}
-                trailing={<CounterBadge value={12} aria-label="12 unread" tone="accent" />}
-              >
-                Inbox
-              </NavList.Item>
-              <NavList.Item
-                icon={<Description />}
-                selected={selected === 'plans'}
-                onClick={() => setSelected('plans')}
-                trailing={<CounterBadge value={4} />}
-              >
-                Plans
-              </NavList.Item>
-              <NavList.Item
-                icon={<Inbox />}
-                iconOnly
-                aria-label="Inbox, 12 unread"
-                selected={selected === 'compact'}
-                onClick={() => setSelected('compact')}
-                trailing={<CounterBadge value={12} />}
-              >
-                Inbox
-              </NavList.Item>
-            </Stack>
-          </Specimen>
-        </SpecimenGrid>
-      </Example>
-      <Example
-        title="Tone colors"
-        size="collection"
-        caption="Status icons and short text use the tone tokens directly; each keeps 4.5:1 on the canvas and panes in both themes."
-      >
-        <ActionGroup>
-          {badgeTones.map((tone) => (
-            <span
-              key={tone}
-              className="docs-tone-sample"
-              style={{ color: `var(--color-tone-${tone})` }}
-            >
-              <CheckCircle /> {tone}
-            </span>
-          ))}
-        </ActionGroup>
       </Example>
     </Preview>
   );
