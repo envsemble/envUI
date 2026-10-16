@@ -2,17 +2,20 @@
 // neither light nor dark, as JavaScript that passes 0.x's useTheme() to it would.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { build as esbuild } from 'esbuild';
 import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
-import { build as vite } from 'vite';
+import { build as vite, createServer } from 'vite';
 import { Theme, useTheme } from '../packages/ui/dist/index.js';
 
+const repositoryRoot = fileURLToPath(new URL('../', import.meta.url));
 const themeModule = fileURLToPath(
   new URL('../packages/ui/dist/foundations/Theme.js', import.meta.url),
 );
 const warning = 'takes a theme of';
+const require = createRequire(import.meta.url);
 
 /** Renders on the server and returns the markup and what was reported through console.error. */
 function render(element) {
@@ -53,19 +56,100 @@ test('a Theme without a contrast takes a data-env-contrast written on it, and th
   assert.match(prop, /<output>standard<\/output>/);
 });
 
-test('Theme renders where nothing defines process, as in a browser without a bundler', () => {
+/** Runs `run` where nothing defines process, as in a browser. */
+function withoutProcess(run) {
   const descriptor = Object.getOwnPropertyDescriptor(globalThis, 'process');
   delete globalThis.process;
-  let result;
   try {
     assert.equal(typeof process, 'undefined');
-    result = render(h(Theme, { theme: { theme: 'dark' } }, 'a'));
+    return run();
   } finally {
     Object.defineProperty(globalThis, 'process', descriptor);
   }
+}
+
+/**
+ * Bundles Theme as an application's build would, with React left as an import, and returns its
+ * exports. `stdin` replaces the module with code already transformed, such as by Vite's dev server.
+ */
+async function bundleTheme({ define = {}, stdin, plugins = [] }) {
+  const built = await esbuild({
+    ...(stdin ? { stdin: { contents: stdin, loader: 'js' } } : { entryPoints: [themeModule] }),
+    bundle: true,
+    write: false,
+    format: 'cjs',
+    platform: 'neutral',
+    define,
+    external: ['react', 'react/*'],
+    plugins,
+    logLevel: 'silent',
+  });
+  const module = { exports: {} };
+  new Function('require', 'module', 'exports', built.outputFiles[0].text)(
+    require,
+    module,
+    module.exports,
+  );
+  return module.exports;
+}
+
+test('Theme renders where nothing defines process, as in a browser without a bundler', () => {
+  const result = withoutProcess(() => render(h(Theme, { theme: { theme: 'dark' } }, 'a')));
   assert.match(result.markup, /class="env-theme"/);
   // Without a development build to report in, the warning stays silent.
   assert.equal(result.errors.length, 0);
+});
+
+test('a development bundle warns in a browser, where nothing defines process', async () => {
+  // Bundlers replace process.env.NODE_ENV in an application's development build, but leave
+  // `process` itself undefined in the browser.
+  const { Theme: Bundled } = await bundleTheme({
+    define: { 'process.env.NODE_ENV': '"development"' },
+  });
+  const { errors } = withoutProcess(() => render(h(Bundled, { theme: { theme: 'light' } }, 'a')));
+  assert.equal(errors.length, 1, 'esbuild in development stays silent');
+  assert.match(errors[0], new RegExp(warning));
+});
+
+test("Vite's development server keeps the warning for the browser", async () => {
+  // Starting a server sets NODE_ENV for the process; the production build below must not see it.
+  const nodeEnvironment = process.env.NODE_ENV;
+  const server = await createServer({
+    configFile: false,
+    root: repositoryRoot,
+    logLevel: 'silent',
+    appType: 'custom',
+    server: { middlewareMode: true, hmr: false, ws: false },
+    optimizeDeps: { noDiscovery: true, include: [] },
+  });
+  let code;
+  try {
+    code = (await server.transformRequest('/packages/ui/dist/foundations/Theme.js')).code;
+  } finally {
+    await server.close();
+    if (nodeEnvironment === undefined) delete process.env.NODE_ENV;
+    else process.env.NODE_ENV = nodeEnvironment;
+  }
+  assert.doesNotMatch(code, /process\.env\.NODE_ENV/, 'Vite replaced process.env.NODE_ENV');
+  // The served module imports by URL: React stays an import, the rest is the package's own file.
+  const servedImports = {
+    name: 'served-imports',
+    setup(build) {
+      build.onResolve({ filter: /^\// }, ({ path }) => {
+        const file = path.replace(/\?.*$/, '');
+        if (file.startsWith('/node_modules/react/'))
+          return {
+            path: file.includes('jsx-runtime') ? 'react/jsx-runtime' : 'react',
+            external: true,
+          };
+        return { path: fileURLToPath(new URL(`.${file}`, pathToFileURL(repositoryRoot))) };
+      });
+    },
+  };
+  const { Theme: Served } = await bundleTheme({ stdin: code, plugins: [servedImports] });
+  const { errors } = withoutProcess(() => render(h(Served, { theme: 'blue' }, 'a')));
+  assert.equal(errors.length, 1, "Vite's development server stays silent");
+  assert.match(errors[0], new RegExp(warning));
 });
 
 test('a production bundle leaves the development warning out', async () => {
