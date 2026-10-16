@@ -1,12 +1,7 @@
 import { CheckboxPreview, DropZonePreview } from './Forms';
 import { ComboboxPreview, DatePickerPreview } from './Pickers';
 import { SurfacePreview, LayoutPreview, ListPreview, CardsPreview } from './Layout';
-import {
-  AnimatedNumberPreview,
-  ChipsPreview,
-  DisclosurePreview,
-  RelativeTimePreview,
-} from './Content';
+import { AnimatedNumberPreview, ChipsPreview, DisclosurePreview } from './Content';
 import { CodePreview } from './CodeContent';
 import { MarkdownPreview } from './MarkdownContent';
 import { lazy, Suspense } from 'react';
@@ -68,8 +63,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <BreadcrumbsPreview />;
     case 'animated-number':
       return <AnimatedNumberPreview />;
-    case 'relative-time':
-      return <RelativeTimePreview />;
     case 'message':
       return <MessagesPreview />;
     case 'stat':

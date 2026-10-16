@@ -4324,13 +4324,13 @@
           "name": "panels",
           "type": "readonly T[]",
           "required": true,
-          "description": "The panels in order; open panels sit side by side and chips follow in the same order."
+          "description": "The panels in order, each a PanelDockPanel: open panels sit side by side, the newest at the end, and chips follow in the same order. The application owns them."
         },
         {
           "name": "children",
           "type": "(panel: T) => ReactNode",
           "required": true,
-          "description": "Renders a panel's content, such as a PanelDockHeader above the panel's body."
+          "description": "Renders a panel's content from its panel, such as a PanelDockHeader above the panel's body. The content mounts once and stays mounted until the panel closes."
         },
         {
           "name": "onModeChange",
@@ -4381,28 +4381,28 @@
           "type": "string",
           "required": false,
           "default": "'Hidden panels'",
-          "description": "Accessible name of the list of chips, which holds minimized panels and the panels a stacked dock leaves out; Hidden panels by default."
+          "description": "Accessible name of the list of chips, which holds minimized panels and the panels a stacked dock leaves out."
         },
         {
           "name": "showLabel",
           "type": "(label: string) => string",
           "required": false,
-          "default": "defaultShowLabel",
-          "description": "Accessible name of a chip's button that shows its panel, from the chip's text: Show and the text by default. A function, as each chip names its own panel; PanelDockControls takes plain strings."
+          "default": "Show and the text, such as Show Budget",
+          "description": "Accessible name of a chip's button that shows its panel, from the chip's text. A function, as each chip names its own panel; PanelDockControls takes plain strings."
         },
         {
           "name": "closeLabel",
           "type": "(label: string) => string",
           "required": false,
-          "default": "defaultCloseLabel",
-          "description": "Accessible name of a chip's close button, from the chip's text: Close and the text by default."
+          "default": "Close and the text, such as Close Budget",
+          "description": "Accessible name of a chip's close button, from the chip's text."
         },
         {
           "name": "resizeLabel",
           "type": "(title: string) => string",
           "required": false,
-          "default": "defaultResizeLabel",
-          "description": "Accessible name of a panel's resize handle, from its title: Resize and the title by default."
+          "default": "Resize and the title, such as Resize Quarterly report",
+          "description": "Accessible name of a panel's resize handle, from its title."
         }
       ],
       "native": [
@@ -4422,28 +4422,28 @@
           "type": "string",
           "required": false,
           "default": "'Minimize'",
-          "description": "Accessible name and tooltip of the control that minimizes the panel; Minimize by default."
+          "description": "Accessible name and tooltip of the control that minimizes the panel to a chip."
         },
         {
           "name": "maximizeLabel",
           "type": "string",
           "required": false,
           "default": "'Maximize'",
-          "description": "Accessible name and tooltip of the control that maximizes the panel; Maximize by default."
+          "description": "Accessible name and tooltip of the control that maximizes the panel to fill the region."
         },
         {
           "name": "restoreLabel",
           "type": "string",
           "required": false,
           "default": "'Restore'",
-          "description": "The same for a maximized panel, which returns it to the row; Restore by default."
+          "description": "Accessible name and tooltip of the same control on a maximized panel, which returns it."
         },
         {
           "name": "closeLabel",
           "type": "string",
           "required": false,
           "default": "'Close'",
-          "description": "Accessible name and tooltip of the control that closes the panel; Close by default."
+          "description": "Accessible name and tooltip of the control that closes the panel."
         }
       ],
       "native": [
@@ -4462,38 +4462,38 @@
           "name": "title",
           "type": "ReactNode",
           "required": true,
-          "description": "The panel's title, as a heading."
+          "description": "The panel's title, as a heading in 1.125 rem medium-weight text; it wraps between words rather than truncating."
         },
         {
           "name": "meta",
           "type": "ReactNode",
           "required": false,
-          "description": "Supporting text below the title, such as who changed it last."
+          "description": "Supporting text below the title, in 0.875 rem muted text, such as who changed it last."
         },
         {
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "The application's own actions before the window controls, such as Edit and a menu of more."
+          "description": "The application's own actions, before the window controls, such as an Edit IconButton and a Menu of more; icon-only text buttons take the window controls' quiet icon color."
         },
         {
           "name": "controls",
           "type": "ReactNode",
           "required": false,
-          "description": "The window controls; PanelDockControls inside a PanelDock by default, null for none."
+          "description": "The window controls: PanelDockControls inside a PanelDock by default. null leaves them out, and an element replaces them, such as PanelDockControls with translated labels."
         },
         {
           "name": "headingLevel",
           "type": "1 | 2 | 3 | 4 | 5 | 6",
           "required": false,
           "default": "2",
-          "description": "The title's heading level in the page outline; 2 by default. The appearance stays the same."
+          "description": "The title's heading level in the page outline; the look stays the same."
         },
         {
           "name": "children",
           "type": "ReactNode",
           "required": false,
-          "description": "Content below the title row that stays with the header, such as Tabs."
+          "description": "Content below the title row that stays with the sticky header, such as Tabs."
         }
       ],
       "native": [
