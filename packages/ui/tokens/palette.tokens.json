@@ -381,6 +381,173 @@
       },
       "$description": "The brand blue: primary actions, links, selection and focus. Seeded from the light selection tint, the dark theme’s soft blue and the primary blue."
     },
+    "slate": {
+      "2": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.9781, 0.0103, 261.79],
+          "hex": "#f4f8ff"
+        }
+      },
+      "4": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.9575, 0.0205, 254.91],
+          "hex": "#e8f2ff"
+        }
+      },
+      "6": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.9377, 0.0275, 253.24],
+          "hex": "#deecfd"
+        }
+      },
+      "8": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.9173, 0.0271, 255.09],
+          "hex": "#d8e5f6"
+        }
+      },
+      "10": {
+        "$value": { "colorSpace": "oklch", "components": [0.899, 0.0272, 255.1], "hex": "#d2dff0" }
+      },
+      "15": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.8493, 0.0353, 256.35],
+          "hex": "#bfcfe5"
+        }
+      },
+      "20": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.8028, 0.0471, 253.45],
+          "hex": "#aac1dd"
+        }
+      },
+      "25": {
+        "$value": { "colorSpace": "oklch", "components": [0.7591, 0.049, 254.34], "hex": "#9cb3d0" }
+      },
+      "30": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.7175, 0.0497, 254.36],
+          "hex": "#8fa6c3"
+        }
+      },
+      "35": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.6783, 0.0491, 253.52],
+          "hex": "#839ab6"
+        }
+      },
+      "40": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.6396, 0.0492, 254.61],
+          "hex": "#788eaa"
+        }
+      },
+      "45": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.6003, 0.0494, 255.71],
+          "hex": "#6d829e"
+        }
+      },
+      "50": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.5631, 0.0502, 255.73],
+          "hex": "#627793"
+        }
+      },
+      "55": {
+        "$value": { "colorSpace": "oklch", "components": [0.526, 0.0505, 256.84], "hex": "#586c88" }
+      },
+      "60": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.4911, 0.0514, 256.85],
+          "hex": "#4e627e"
+        }
+      },
+      "65": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.4564, 0.0517, 257.95],
+          "hex": "#455874"
+        }
+      },
+      "70": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.4204, 0.0507, 258.31],
+          "hex": "#3c4e69"
+        }
+      },
+      "75": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.3843, 0.0513, 259.44],
+          "hex": "#33445f"
+        }
+      },
+      "80": {
+        "$value": { "colorSpace": "oklch", "components": [0.3467, 0.0525, 259.4], "hex": "#293a55" }
+      },
+      "82": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.3309, 0.0515, 258.66],
+          "hex": "#253650"
+        }
+      },
+      "84": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.3154, 0.0521, 258.65],
+          "hex": "#21324c"
+        }
+      },
+      "86": {
+        "$value": { "colorSpace": "oklch", "components": [0.2992, 0.051, 257.9], "hex": "#1d2e47" }
+      },
+      "88": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.2802, 0.0512, 259.03],
+          "hex": "#192942"
+        }
+      },
+      "90": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.2602, 0.0521, 259.01],
+          "hex": "#14243d"
+        }
+      },
+      "92": {
+        "$value": { "colorSpace": "oklch", "components": [0.2392, 0.0512, 258.3], "hex": "#0f1f37" }
+      },
+      "94": {
+        "$value": { "colorSpace": "oklch", "components": [0.2151, 0.0518, 259.4], "hex": "#0a1931" }
+      },
+      "96": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.1885, 0.0518, 257.36],
+          "hex": "#04132a"
+        }
+      },
+      "98": {
+        "$value": { "colorSpace": "oklch", "components": [0.1502, 0.0507, 259], "hex": "#010a20" }
+      },
+      "$description": "The low-chroma blue-gray of quiet tints: the dark theme’s selection and the light theme’s navigation hover. Seeded from 0.7’s light navigation hover and press and its dark selected option."
+    },
     "steel": {
       "2": {
         "$value": {
@@ -722,6 +889,181 @@
         }
       },
       "$description": "Success."
+    },
+    "teal": {
+      "2": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.9746, 0.0362, 165.86],
+          "hex": "#e1fff1"
+        }
+      },
+      "4": {
+        "$value": { "colorSpace": "oklch", "components": [0.9486, 0.076, 165.57], "hex": "#beffe2" }
+      },
+      "6": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.9281, 0.0854, 164.84],
+          "hex": "#b1fad9"
+        }
+      },
+      "8": {
+        "$value": { "colorSpace": "oklch", "components": [0.9073, 0.085, 165.49], "hex": "#aaf3d3" }
+      },
+      "10": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.8868, 0.0845, 165.11],
+          "hex": "#a4eccc"
+        }
+      },
+      "15": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.8411, 0.0852, 164.89],
+          "hex": "#95ddbd"
+        }
+      },
+      "20": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.7951, 0.0852, 165.39],
+          "hex": "#86ceaf"
+        }
+      },
+      "25": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.7491, 0.0843, 165.59],
+          "hex": "#78bfa1"
+        }
+      },
+      "30": {
+        "$value": { "colorSpace": "oklch", "components": [0.708, 0.0849, 165.28], "hex": "#6bb294" }
+      },
+      "35": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.6672, 0.0839, 165.46],
+          "hex": "#5fa588"
+        }
+      },
+      "40": {
+        "$value": { "colorSpace": "oklch", "components": [0.628, 0.085, 165.31], "hex": "#52997c" }
+      },
+      "45": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.5894, 0.0839, 165.42],
+          "hex": "#478d71"
+        }
+      },
+      "50": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.5526, 0.0847, 165.13],
+          "hex": "#3b8266"
+        }
+      },
+      "55": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.5158, 0.0844, 165.53],
+          "hex": "#2f775c"
+        }
+      },
+      "60": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.4814, 0.0851, 165.14],
+          "hex": "#236d52"
+        }
+      },
+      "65": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.4471, 0.0846, 165.46],
+          "hex": "#166349"
+        }
+      },
+      "70": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.4117, 0.0854, 164.99],
+          "hex": "#03593f"
+        }
+      },
+      "75": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.3757, 0.0785, 165.46],
+          "hex": "#004e37"
+        }
+      },
+      "80": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.3391, 0.0716, 164.65],
+          "hex": "#00432e"
+        }
+      },
+      "82": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.3225, 0.0674, 165.46],
+          "hex": "#003e2b"
+        }
+      },
+      "84": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.3088, 0.0645, 165.46],
+          "hex": "#003a28"
+        }
+      },
+      "86": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.2915, 0.0612, 165.14],
+          "hex": "#003524"
+        }
+      },
+      "88": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.2739, 0.0578, 164.76],
+          "hex": "#003020"
+        }
+      },
+      "90": {
+        "$value": { "colorSpace": "oklch", "components": [0.256, 0.0543, 164.32], "hex": "#002b1c" }
+      },
+      "92": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.2343, 0.0492, 165.04],
+          "hex": "#002518"
+        }
+      },
+      "94": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.2118, 0.0451, 164.03],
+          "hex": "#001f13"
+        }
+      },
+      "96": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.1815, 0.0376, 166.07],
+          "hex": "#00170e"
+        }
+      },
+      "98": {
+        "$value": { "colorSpace": "oklch", "components": [0.1411, 0.029, 166.93], "hex": "#000d07" }
+      },
+      "$description": "The teal green of success toasts, seeded from 0.7’s."
     },
     "amber": {
       "2": {
