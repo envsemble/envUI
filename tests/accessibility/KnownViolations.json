@@ -496,7 +496,7 @@
     },
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 53
+        "article :: div.env-code-block span": 51
       }
     }
   }
