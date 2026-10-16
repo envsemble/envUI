@@ -1,4 +1,4 @@
-/* Menus are a pane of grouped rows: separators split groups, which keep large outer corners. */
+/* Menus are a pane of list rows: separators split groups, which keep large outer corners. */
 .env-menu-theme {
   display: contents;
 }

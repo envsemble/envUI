@@ -6,8 +6,7 @@ import {
   Stack,
   Surface,
   Card,
-  GroupedRows,
-  Row,
+  List,
   Tabs,
   Link,
   DirectionLink,
@@ -65,12 +64,12 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
         <Card tone="canvas" data-testid={`${theme}-color-canvas-card`}>
           Canvas card
         </Card>
-        <GroupedRows>
-          <Row title="Row" data-testid={`${theme}-color-row`} />
-        </GroupedRows>
-        <GroupedRows contrast data-testid={`${theme}-color-contrast-rows`}>
-          <Row title="Contrast row" />
-        </GroupedRows>
+        <List.Root>
+          <List.Item title="Row" data-testid={`${theme}-color-row`} />
+        </List.Root>
+        <List.Root contrast data-testid={`${theme}-color-contrast-rows`}>
+          <List.Item title="Contrast row" />
+        </List.Root>
         <Tabs
           aria-label={`${theme} color isolation tabs`}
           data-testid={`${theme}-color-tabs`}

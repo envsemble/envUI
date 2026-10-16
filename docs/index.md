@@ -25,7 +25,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 - [Stacks & action groups](components/layout.md) — Use Stack for related content and ActionGroup for buttons.
 - [Surface](components/surface.md) — A background pane without automatic spacing between children.
-- [Grouped rows](components/rows.md) — Group related items with shared outer corners.
+- [Lists](components/list.md) — Group related items with shared outer corners.
 - [Cards](components/cards.md) — A content surface with automatic spacing and optional actions.
 
 ## Actions

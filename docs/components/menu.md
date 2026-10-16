@@ -205,7 +205,7 @@ import { AppShell, OrganizationSwitcher } from '@envsemble/envui';
 - A context menu supplements visible controls: offer the same actions elsewhere, for people who cannot right click.
 - Shortcut hints show as Kbd keys and describe keys the application already handles; the menu does not bind them. Write arrows as ←, →, ↑ and ↓, such as Alt+←; aria-keyshortcuts names them ArrowLeft, ArrowRight, ArrowUp and ArrowDown.
 - <kbd>↑</kbd> and <kbd>↓</kbd> move between items, typing jumps to a matching item, <kbd>Enter</kbd> or <kbd>Space</kbd> activates, and <kbd>Esc</kbd> closes and returns focus to the trigger.
-- The menu is a pane of grouped rows. Keep labels short; one icon per item at most.
+- The menu is a pane of list rows. Keep labels short; one icon per item at most.
 - Organizations are radio items: the active one is checked, and choosing it again does nothing.
 - Use an organization's detail for a short fact that matters before switching, such as the person's role there.
 

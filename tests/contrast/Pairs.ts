@@ -72,7 +72,7 @@ const canvas = '--color-canvas'; // the page, the app frame, title bars
 const pane = '--color-pane'; // Surface's default, sidebars, the standard menu
 const rowSurface = '--color-surface-muted'; // Surface tone="row"
 const alternate = '--color-surface'; // Surface tone="alternate", a table's region
-const row = '--color-row'; // GroupedRows
+const row = '--color-row'; // List
 const rowAlternate = '--color-row-alternate'; // rows on a contrasting pane
 const menuRow = '--color-menu-row';
 const popup = '--color-popup'; // popovers, Select lists, compact menus, the composer

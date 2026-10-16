@@ -8,11 +8,10 @@ import {
   ConfirmButton,
   CopyButton,
   Disclosure,
-  GroupedRows,
+  List,
   IconButton,
   TextField,
   Link,
-  Row,
   Stack,
   Surface,
   Text,
@@ -370,9 +369,9 @@ function OutcomeExamples() {
       >
         <SpecimenGrid size="compact">
           <Specimen title="Remove from a row">
-            <GroupedRows aria-label="Members with access">
+            <List.Root aria-label="Members with access">
               {members.map((name) => (
-                <Row
+                <List.Item
                   key={name}
                   title={name}
                   action={
@@ -387,7 +386,7 @@ function OutcomeExamples() {
                   }
                 />
               ))}
-            </GroupedRows>
+            </List.Root>
             {members.length === 0 && (
               <Button
                 variant="text"

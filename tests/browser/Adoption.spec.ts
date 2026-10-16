@@ -939,7 +939,7 @@ test('secondary buttons stay distinct on the canvas, rows and dialog panes in bo
     const row = page.getByTestId('secondary-row');
     // Colors transition after the theme changes; poll until they settle.
     await expect
-      .poll(() => fillContrast(row.getByRole('button', { name: 'Remove' }), '.env-row'))
+      .poll(() => fillContrast(row.getByRole('button', { name: 'Remove' }), '.env-list-item'))
       .toBeGreaterThan(1.08);
     await page.getByRole('button', { name: 'Open pending dialog' }).click();
     const dialog = page.getByRole('dialog', { name: 'Save project' });

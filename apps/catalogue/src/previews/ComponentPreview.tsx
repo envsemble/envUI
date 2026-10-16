@@ -15,7 +15,7 @@ import {
   PaginationPreview,
 } from './Navigation';
 import { ComboboxPreview, DatePickerPreview } from './Pickers';
-import { SurfacePreview, LayoutPreview, RowsPreview, CardsPreview } from './Layout';
+import { SurfacePreview, LayoutPreview, ListPreview, CardsPreview } from './Layout';
 import {
   AnimatedNumberPreview,
   ChipsPreview,
@@ -96,8 +96,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <SurfacePreview />;
     case 'layout':
       return <LayoutPreview />;
-    case 'rows':
-      return <RowsPreview />;
+    case 'list':
+      return <ListPreview />;
     case 'cards':
       return <CardsPreview />;
     case 'chips':

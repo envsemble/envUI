@@ -425,6 +425,25 @@
       }
     }
   },
+  "components/list/preview": {
+    "light": {
+      "color-contrast": {
+        "Rows that open something :: a.env-button.env-button-text.env-link": 2
+      }
+    }
+  },
+  "components/list/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 3
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 44
+      }
+    }
+  },
   "components/loading/usage": {
     "dark": {
       "color-contrast": {
@@ -654,25 +673,6 @@
       },
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
-      }
-    }
-  },
-  "components/rows/preview": {
-    "light": {
-      "color-contrast": {
-        "Rows that open something :: a.env-button.env-button-text.env-link": 2
-      }
-    }
-  },
-  "components/rows/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 3
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 44
       }
     }
   },

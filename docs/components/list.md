@@ -1,22 +1,22 @@
-# Grouped rows
+# Lists
 
 ## React usage
 
 ```tsx
-import { Button, GroupedRows, IconButton, Link, Row } from '@envsemble/envui';
+import { Button, IconButton, Link, List } from '@envsemble/envui';
 import { MoreHoriz } from '@envsemble/envui/icons/MoreHoriz';
 
-<GroupedRows>
-  <Row
+<List.Root>
+  <List.Item
     title="Notifications"
     detail="Delivery preferences"
     action={<Button variant="outlined">Manage</Button>}
   />
-  <Row title="Members" detail="Workspace access" />
-</GroupedRows>;
+  <List.Item title="Members" detail="Workspace access" />
+</List.Root>;
 
-<GroupedRows aria-label="Plans">
-  <Row
+<List.Root aria-label="Plans">
+  <List.Item
     interactive
     title={
       <Link href="/plans/roadmap" underline={false} data-row-target draggable={false}>
@@ -33,7 +33,7 @@ import { MoreHoriz } from '@envsemble/envui/icons/MoreHoriz';
       />
     }
   />
-</GroupedRows>;
+</List.Root>;
 ```
 
 ```css
@@ -45,12 +45,12 @@ import { MoreHoriz } from '@envsemble/envui/icons/MoreHoriz';
 
 ### Props & contracts
 
-| Name                        | Contract                                                                                    |
-| --------------------------- | ------------------------------------------------------------------------------------------- |
-| GroupedRows contrast        | Use alternate fill inside a muted pane                                                      |
-| Row title / detail / action | General React content                                                                       |
-| Row interactive             | Hover, press and keyboard focus feedback; a `data-row-target` link or button covers the row |
-| Native container props      | className and accessible attributes                                                         |
+| Name                              | Contract                                                                                    |
+| --------------------------------- | ------------------------------------------------------------------------------------------- |
+| List.Root contrast                | Use alternate fill inside a muted pane                                                      |
+| List.Item title / detail / action | General React content                                                                       |
+| List.Item interactive             | Hover, press and keyboard focus feedback; a `data-row-target` link or button covers the row |
+| Native container props            | className and accessible attributes                                                         |
 
 ## Guidelines
 

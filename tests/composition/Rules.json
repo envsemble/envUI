@@ -81,8 +81,8 @@
       "env-symbol": "The icon wrapper, which every component sizes and colors through currentColor.",
       "env-text": "The text style helper.",
       "env-surface": "The surface helper, which components render through Surface.",
-      "env-connected-rows": "The shared connected-row corners (ConnectedRows.css) of GroupedRows and row radios.",
-      "env-connected-row": "The shared connected-row corners (ConnectedRows.css) of GroupedRows and row radios."
+      "env-connected-rows": "The shared connected-row corners (ConnectedRows.css) of List and row radios.",
+      "env-connected-row": "The shared connected-row corners (ConnectedRows.css) of List and row radios."
     },
     "components": {
       "Button": { "classes": ["env-icon-button"], "styles": ["Actions.css"] },
@@ -109,7 +109,6 @@
           "content/internal/useCodeHighlighting.ts"
         ]
       },
-      "GroupedRows": { "classes": ["env-row", "env-contrast-row-pane"] },
       "Dialog": { "classes": ["env-modal-pane"] },
       "EmptyState": { "classes": ["env-empty-copy"], "styles": ["FeedbackStates.css"] },
       "LoadingBar": { "styles": ["FeedbackStates.css"] },

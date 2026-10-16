@@ -154,7 +154,7 @@
       "count": 23
     }
   },
-  "packages/ui/src/styles/GroupedRows.css": {
+  "packages/ui/src/styles/List.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 4
     }

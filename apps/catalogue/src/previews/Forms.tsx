@@ -13,8 +13,7 @@ import {
   Button,
   IconButton,
   Surface,
-  GroupedRows,
-  Row,
+  List,
   Kbd,
   ActionGroup,
   DropZone,
@@ -458,8 +457,8 @@ export function SelectPreview() {
             </Surface>
           </Specimen>
           <Specimen title="Outlined, in a row">
-            <GroupedRows aria-label="Notification settings">
-              <Row
+            <List.Root aria-label="Notification settings">
+              <List.Item
                 title="E-mail digest"
                 action={
                   <Select
@@ -470,7 +469,7 @@ export function SelectPreview() {
                   />
                 }
               />
-            </GroupedRows>
+            </List.Root>
           </Specimen>
           <Specimen title="Outlined, in a form on a pane">
             <Surface padding={4}>

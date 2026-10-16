@@ -175,7 +175,7 @@ const descending = sort?.direction === 'descending';
 
 ## Guidelines
 
-- Use a table for data people compare across rows and columns. Use grouped rows or cards for a short list of items with actions.
+- Use a table for data people compare across rows and columns. Use a List or cards for a short list of items with actions.
 - The table sits on a rounded surface with subtle dividers between rows. It is a focusable region that scrolls sideways when the columns do not fit, so keyboard users can scroll it too.
 - Put a muted second line under a cell's main text with `<Text variant="caption">`, for example a folder under a title.
 - Keep actions in the cells as links or buttons; interactive only adds the hover highlight. Badges show states, and numeric columns compare best with numeric. In a compact table, buttons, icon buttons and fields in the cells take the 2 rem compact height, as on a compact Surface, which grows to the touch height on coarse pointers.
@@ -191,6 +191,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Grouped rows](../components/rows.md)
+- [Lists](../components/list.md)
 - [Badges & counters](../components/badges.md)
 - [Typography](../foundations/typography.md)

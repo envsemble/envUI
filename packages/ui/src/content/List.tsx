@@ -1,17 +1,18 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { Surface } from '../foundations/Surface.js';
+import { withDisplayName } from '../internal/withDisplayName.js';
 
-export interface GroupedRowsProps extends ComponentPropsWithRef<'ul'> {
+export interface RootProps extends ComponentPropsWithRef<'ul'> {
   contrast?: boolean;
 }
 
-export function GroupedRows({ contrast = false, className, ...props }: GroupedRowsProps) {
+function Root({ contrast = false, className, ...props }: RootProps) {
   const rows = (
-    <ul {...props} className={classNames('env-grouped-rows', 'env-connected-rows', className)} />
+    <ul {...props} className={classNames('env-list', 'env-connected-rows', className)} />
   );
   return contrast ? (
-    <Surface tone="row" padding={3} className="env-contrast-row-pane">
+    <Surface tone="row" padding={3} className="env-list-surface">
       {rows}
     </Surface>
   ) : (
@@ -19,7 +20,7 @@ export function GroupedRows({ contrast = false, className, ...props }: GroupedRo
   );
 }
 
-export interface RowProps extends Omit<ComponentPropsWithRef<'li'>, 'title'> {
+export interface ItemProps extends Omit<ComponentPropsWithRef<'li'>, 'title'> {
   title: ReactNode;
   detail?: ReactNode;
   action?: ReactNode;
@@ -30,7 +31,7 @@ export interface RowProps extends Omit<ComponentPropsWithRef<'li'>, 'title'> {
   interactive?: boolean;
 }
 
-export function Row({
+function Item({
   title,
   detail,
   action,
@@ -38,11 +39,11 @@ export function Row({
   children,
   className,
   ...props
-}: RowProps) {
+}: ItemProps) {
   return (
     <li
       {...props}
-      className={classNames('env-row', 'env-connected-row', className)}
+      className={classNames('env-list-item', 'env-connected-row', className)}
       data-interactive={interactive ? '' : undefined}
     >
       <div>
@@ -54,3 +55,9 @@ export function Row({
     </li>
   );
 }
+
+// Each part is named for React DevTools by a pure call, so a bundler drops the parts an
+// application leaves unused.
+const RootPart = /* @__PURE__ */ withDisplayName(Root, 'List.Root');
+const ItemPart = /* @__PURE__ */ withDisplayName(Item, 'List.Item');
+export { RootPart as Root, ItemPart as Item };

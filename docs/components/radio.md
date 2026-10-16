@@ -30,4 +30,4 @@ TypeScript declarations provide the complete public API.
 
 - [Selects](../components/select.md)
 - [Checkboxes](../components/checkbox.md)
-- [Grouped rows](../components/rows.md)
+- [Lists](../components/list.md)

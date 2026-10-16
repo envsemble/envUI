@@ -6,9 +6,8 @@ import {
   IconButton,
   Surface,
   FeatureCard,
-  GroupedRows,
+  List,
   Link,
-  Row,
   Stack,
   ActionGroup,
 } from '@envsemble/envui';
@@ -143,7 +142,7 @@ export function LayoutPreview() {
   );
 }
 
-export function RowsPreview() {
+export function ListPreview() {
   const [actionResult, setActionResult] = useState('');
   const [opened, setOpened] = useState('');
   return (
@@ -151,28 +150,28 @@ export function RowsPreview() {
       <Example title="Single and connected rows" size="collection">
         <SpecimenGrid size="card">
           <Specimen title="Single row" caption="Large corners on all sides">
-            <GroupedRows>
-              <Row title="Notifications" detail="Delivery preferences" />
-            </GroupedRows>
+            <List.Root>
+              <List.Item title="Notifications" detail="Delivery preferences" />
+            </List.Root>
           </Specimen>
           <Specimen title="Connected rows" caption="Large outside corners; compact inner joins">
-            <GroupedRows>
-              <Row title="Notifications" detail="Delivery preferences" />
-              <Row title="Workspace access" detail="People and permissions" />
-              <Row title="Appearance" detail="Theme preference" />
-            </GroupedRows>
+            <List.Root>
+              <List.Item title="Notifications" detail="Delivery preferences" />
+              <List.Item title="Workspace access" detail="People and permissions" />
+              <List.Item title="Appearance" detail="Theme preference" />
+            </List.Root>
           </Specimen>
         </SpecimenGrid>
       </Example>
       <Example title="Alternate fill" caption="Use alternate fill when rows sit on a muted pane.">
-        <GroupedRows contrast>
-          <Row title="Notifications" detail="Delivery preferences" />
-          <Row title="Workspace access" detail="People and permissions" />
-        </GroupedRows>
+        <List.Root contrast>
+          <List.Item title="Notifications" detail="Delivery preferences" />
+          <List.Item title="Workspace access" detail="People and permissions" />
+        </List.Root>
       </Example>
       <Example title="Action slot">
-        <GroupedRows>
-          <Row
+        <List.Root>
+          <List.Item
             title="Workspace access"
             detail="People and permissions"
             action={
@@ -184,7 +183,7 @@ export function RowsPreview() {
               </Button>
             }
           />
-        </GroupedRows>
+        </List.Root>
         <Text variant="caption" aria-live="polite">
           {actionResult}
         </Text>
@@ -193,9 +192,9 @@ export function RowsPreview() {
         title="Rows that open something"
         caption="Interactive rows react to hover, presses and focus inside them. Each title link stretches over its row, and the action stays above it."
       >
-        <GroupedRows aria-label="Recent plans">
+        <List.Root aria-label="Recent plans">
           {['Roadmap', 'Decisions'].map((name) => (
-            <Row
+            <List.Item
               key={name}
               interactive
               title={
@@ -224,7 +223,7 @@ export function RowsPreview() {
               }
             />
           ))}
-        </GroupedRows>
+        </List.Root>
         <Text variant="caption" aria-live="polite">
           {opened}
         </Text>

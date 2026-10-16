@@ -2,12 +2,11 @@ import { useState } from 'react';
 import {
   Badge,
   Breadcrumbs,
-  GroupedRows,
+  List,
   IconButton,
   Kbd,
   Link,
   LinkProvider,
-  Row,
   Surface,
   Table,
   Text,
@@ -129,8 +128,8 @@ export function DataDisplayFixture({ theme }: { theme: ThemeValue }) {
           </Table.Body>
         </Table.Root>
       </div>
-      <GroupedRows aria-label={`Rows ${theme}`}>
-        <Row
+      <List.Root aria-label={`Rows ${theme}`}>
+        <List.Item
           interactive
           className="fixture-open-row"
           title={
@@ -161,8 +160,8 @@ export function DataDisplayFixture({ theme }: { theme: ThemeValue }) {
             />
           }
         />
-        <Row title="Archive" detail="Read only" />
-      </GroupedRows>
+        <List.Item title="Archive" detail="Read only" />
+      </List.Root>
       <output data-testid={`row-result-${theme}`}>{rowResult}</output>
       <Table.Root aria-label={`Compact ${theme}`} density="compact">
         <Table.Body>

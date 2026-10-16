@@ -14,7 +14,7 @@ const components = [
   'radio',
   'select',
   'navigation',
-  'rows',
+  'list',
   'cards',
   'chips',
   'disclosure',

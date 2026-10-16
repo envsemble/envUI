@@ -8,9 +8,8 @@ import {
   ConfirmButton,
   Dialog,
   EmptyState,
-  GroupedRows,
+  List,
   TextField,
-  Row,
   LinkProvider,
   LoadingBar,
   Menu,
@@ -181,13 +180,13 @@ export function AdoptionFixture() {
             <Button disabled={seatsFull}>Invite member</Button>
           </Tooltip>
           <Button onClick={() => setSeatsFull((value) => !value)}>Toggle seats</Button>
-          <GroupedRows>
-            <Row
+          <List.Root>
+            <List.Item
               title="Seat"
               data-testid="secondary-row"
               action={<Button variant="secondary">Remove</Button>}
             />
-          </GroupedRows>
+          </List.Root>
           <EmptyState tone="error" title="Products couldn’t load" description="Try again." />
           <EmptyState headingLevel={1} title="Nothing here yet" />
           <Meter label="Seats assigned" value={7} max={5} valueText="5 of 5" />

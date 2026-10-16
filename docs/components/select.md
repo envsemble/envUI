@@ -51,5 +51,5 @@ TypeScript declarations provide the complete public API.
 - [Menus](../components/menu.md)
 - [Radio groups](../components/radio.md)
 - [Text fields](../components/text-field.md)
-- [Grouped rows](../components/rows.md)
+- [Lists](../components/list.md)
 - [Accessibility](../foundations/accessibility.md)
