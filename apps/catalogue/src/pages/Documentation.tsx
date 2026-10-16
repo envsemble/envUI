@@ -1,17 +1,28 @@
 import { Link } from '@envsemble/envui';
 import { Markdown, type MarkdownLinkProps, type MarkdownProps } from '@envsemble/envui/content';
 import { documents, type Documentation as Document } from '../Reference';
-import { pageHref, referencePages, routeOfDocument } from '../navigation/DocumentationRoutes';
+import {
+  findReferencePage,
+  pageHref,
+  referencePages,
+  routeOfDocument,
+  viewOfHeading,
+} from '../navigation/DocumentationRoutes';
 import { routeHref } from '../navigation/Address';
 import { currentRoute } from '../navigation/useDocumentationRoute';
 import { headingSlugger } from '../../../../scripts/SearchAnchors.mjs';
 
-/** The current route scrolled to `section`, keeping its other parameters. */
+/**
+ * The current route scrolled to `section`, keeping its other parameters, in the view that shows
+ * the heading on a page on the template.
+ */
 function sectionOfCurrentRoute(section: string) {
   const [path, query] = currentRoute().split('?');
   const params = new URLSearchParams(query);
   params.set('section', section);
-  return `${path}?${params}`;
+  const page = findReferencePage(path);
+  const view = page && viewOfHeading(page.reference, section);
+  return `${view ? `${page.path}/${view}` : path}?${params}`;
 }
 
 const decodedFragment = (hash: string) => {
@@ -65,9 +76,10 @@ const headingIds: NonNullable<MarkdownProps['rehypePlugins']>[number] = () => (t
     properties?: Record<string, unknown>;
     children?: unknown[];
   }) => {
-    if (node.type === 'element' && /^h[1-6]$/.test(node.tagName ?? ''))
-      node.properties = { ...node.properties, id: slug(textOf(node)) };
-    else for (const child of node.children ?? []) visit(child as typeof node);
+    // A heading that has an id of its own keeps it.
+    if (node.type === 'element' && /^h[1-6]$/.test(node.tagName ?? '')) {
+      if (!node.properties?.id) node.properties = { ...node.properties, id: slug(textOf(node)) };
+    } else for (const child of node.children ?? []) visit(child as typeof node);
   };
   visit(tree as Parameters<typeof visit>[0]);
 };

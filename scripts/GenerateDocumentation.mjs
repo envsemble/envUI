@@ -22,6 +22,7 @@ import { fileURLToPath } from 'node:url';
 import { marked } from 'marked';
 import { parse as parseYaml } from 'yaml';
 import { headingsOf } from './MarkdownHeadings.mjs';
+import { headingSlugger } from './SearchAnchors.mjs';
 import { writeSearchIndex } from './SearchIndex.mjs';
 
 export const documentationDirectory = fileURLToPath(new URL('../docs/', import.meta.url));
@@ -818,10 +819,18 @@ export function generateDocumentation() {
       components: frontmatter.components ?? [],
     };
     if (!sections) return { ...entry, metadata };
+    // The ids of the headings in each section, numbered across the page, so the catalogue opens a
+    // link to a heading in the view that shows it.
+    const slug = headingSlugger();
     return {
       ...entry,
       metadata,
-      sections,
+      sections: sections.map((section) => ({
+        ...section,
+        anchors: section.blocks.flatMap((block) =>
+          block.kind === 'markdown' ? headingsOf(block.markdown, slug).map(({ id }) => id) : [],
+        ),
+      })),
       props: Object.fromEntries(
         documentedExports(frontmatter.components, props).map((name) => [name, props.exports[name]]),
       ),

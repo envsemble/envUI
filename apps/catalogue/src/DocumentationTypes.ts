@@ -58,6 +58,8 @@ export interface DocumentationSection {
   id: TemplateSectionId;
   title: string;
   blocks: DocumentationBlock[];
+  /** The ids of the section's headings, as the catalogue renders them, numbered across the page. */
+  anchors?: string[];
 }
 
 /** A component page's frontmatter beyond its title, summary and category. */

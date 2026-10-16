@@ -195,6 +195,12 @@ export const documentationPages: { path: string; title: string; views: readonly 
   ...pagesOf('Changelog'),
 ];
 
+/** The view of a page on the template that shows the heading of id `anchor`, if it has one. */
+export function viewOfHeading(reference: Reference, anchor: string): ReferenceView | undefined {
+  const section = reference.sections?.find(({ anchors }) => anchors?.includes(anchor));
+  return section && sectionViews[section.id];
+}
+
 /** The address of a page in the view a reader starts with, or the one closest to view. */
 export function pageHref(page: ReferencePage, view?: string) {
   return routeHref(`${page.path}/${viewFor(page.reference, view)}`);
@@ -212,7 +218,9 @@ export function routeOfDocument(
   const reference = referencePages.find((page) => page.reference.id === id);
   if (reference) {
     const start = reference.reference.sections ? 'overview' : 'preview';
-    return `${reference.path}/${viewFor(reference.reference, view ?? start)}${query}`;
+    // A heading of a page on the template opens in the view that shows it.
+    const shown = (section && viewOfHeading(reference.reference, section)) ?? view ?? start;
+    return `${reference.path}/${viewFor(reference.reference, shown)}${query}`;
   }
   // The setup guide and the index are on the overview's Get started view, each in a section of its
   // own, where its headings are.
