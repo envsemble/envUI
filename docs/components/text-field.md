@@ -95,7 +95,7 @@ Textarea comes outlined or plain.
 
 ## States and behaviour
 
-- **Hover, pressed and focus**: an outlined field's single thin border turns blue on hover and focus in both themes, without changing its fill or adding an outline. Hover and pressed shades follow the shared lightness rule in [colors and themes](../foundations/colors.md), also while the field has focus. The label and the start icon take the focus color. Plain fields show an underline on hover and focus; quiet fields take a soft fill and clear their placeholder once focused.
+- **Hover, pressed and focus**: an outlined field's single thin border turns blue on hover and focus in both themes, without changing its fill or adding an outline. Hover and pressed shades are color tokens of their own, as [colors and themes](../foundations/colors.md) describes, also while the field has focus. The label and the start icon take the focus color. Plain fields show an underline on hover and focus; quiet fields take a soft fill and clear their placeholder once focused.
 - **Empty and filled**: the label rests in an empty field and floats into the outline once it has focus or a value. A labelled field shows its placeholder only while focused; a field with a hidden label shows it at rest.
 - **Invalid**: while `error` is set, the control reports `aria-invalid` and the message shows under the field. Outlined and quiet fields turn their border red, and plain fields show a red underline, thicker on keyboard focus; hover and press change its shade, and the label turns red too.
 - **Read only** (`readOnly`): looks like an enabled field. People can focus, select and copy the value but not change it, and forms submit it.

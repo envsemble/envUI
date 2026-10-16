@@ -82,7 +82,7 @@ import { Person } from '@envsemble/envui/icons/Person';
 - Navigation labels, unselected icons and selected labels have independent color roles. Their defaults align with strong text, captions and link blue. Navigation fits its content with a 2.5 rem minimum height.
 - Both label sizes use the shared 1 rem control icon size, matching labeled and icon-only buttons.
 - Use iconOnly for a collapsed sidebar. Supply icon and aria-label; children can remain in place for the expanded label. The circle matches the navigation height and keeps selection, automatic icon fill, focus and disabled behavior. An icon-only item shows its label in a tooltip at its inline end on hover and keyboard focus, and a disabled one on hover, so it needs no Tooltip of its own; an application Tooltip around it replaces the label tooltip, so only one shows.
-- Selection keeps the gray/blue styling. Hover and pressed preserve the base hue and saturation and use the central lightness rule.
+- Selection keeps the gray/blue styling. Hover and pressed take the hover and pressed colors of the item's background, selected or not.
 
 TypeScript declarations provide the complete public API.
 

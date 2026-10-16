@@ -93,7 +93,7 @@ A ButtonGroup joins its buttons with a 0.125 rem gap; inner corners take the sha
 - Buttons are 2.5 rem tall, and important buttons 2 rem; on touch screens both grow to 2.75 rem. Inside a compact surface they take the 2 rem compact height, and CopyButton takes it anywhere with `size="compact"`.
 - Labels are 0.875 rem with 0.25 rem vertical and 0.75 rem horizontal padding. Buttons fit their content; a labelled button can shrink and wrap its label, while an icon-only button keeps its square size, also in a squeezed row.
 - Primary buttons are blue in both themes: the control blue with white labels in the light theme, and the link's soft blue with dark labels in the dark theme.
-- Secondary buttons use the neutral fill and label color without a border; on row fills they stay visible by the control lightness rule. Outlined buttons keep their border and link color.
+- Secondary buttons use the neutral fill and label color without a border; the fill is a translucent layer of the text color, so they stay visible on rows, panes and dialogs. Outlined buttons keep their border and link color.
 - Quiet buttons take the quiet icon color, darken to the text color over a state layer on hover and press, and show the focus ring, with no fill or border. A quiet label reads at 4.5:1 on the canvas, panes and rows.
 
 ## States and behaviour
