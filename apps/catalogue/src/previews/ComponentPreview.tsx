@@ -18,13 +18,7 @@ import { ToastsPreview } from './Toasts';
 import { ColorPickerPreview } from './ColorPicking';
 import { ComposerPreview, MessagesPreview } from './Conversation';
 import { CalendarHeatmapPreview, StatsPreview } from './Dashboard';
-import {
-  MenubarPreview,
-  TooltipPreview,
-  AvatarPreview,
-  MeterPreview,
-  ProgressPreview,
-} from './Overlays';
+import { MenubarPreview, TooltipPreview, MeterPreview, ProgressPreview } from './Overlays';
 import { AppShellPreview } from './Shell';
 import { CommandPalettePreview, DocumentTabsPreview, TreePreview } from './Workspace';
 import { PanelDockPreview } from './Dock';
@@ -105,8 +99,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <MenubarPreview />;
     case 'tooltip':
       return <TooltipPreview />;
-    case 'avatar':
-      return <AvatarPreview />;
     case 'meter':
       return <MeterPreview />;
     case 'progress':

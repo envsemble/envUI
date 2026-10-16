@@ -13,7 +13,7 @@ export interface AvatarProps extends Omit<ComponentPropsWithRef<'span'>, 'childr
   fallback?: 'person' | 'initials';
   /** small 1.5 rem, standard 2 rem (default), large 3 rem, display 5.5 rem. */
   size?: 'small' | 'standard' | 'large' | 'display';
-  /** Announce the name; omit when adjacent text already names the person. */
+  /** Name the avatar as an image by `name`; leave it off when text beside it already names the person. */
   label?: boolean;
 }
 

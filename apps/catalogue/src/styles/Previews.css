@@ -196,12 +196,6 @@
   display: grid;
   place-items: center;
 }
-.docs-inline-row {
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-}
-/* A header bar: the breadcrumb trail takes the room the status and the action leave. */
 /* The organization switcher fills the shell's context area; the specimen gives it the same width. */
 .docs-spinner-row {
   display: flex;

@@ -18,7 +18,6 @@ import {
  */
 const unconverted = [
   'app-shell',
-  'avatar',
   'calendar-heatmap',
   'chips',
   'code',

@@ -1,7 +1,5 @@
 import { useRef, useState } from 'react';
 import {
-  Avatar,
-  AvatarGroup,
   Button,
   IconButton,
   Kbd,
@@ -9,14 +7,12 @@ import {
   Menu,
   Menubar,
   Progress,
-  Stack,
   Surface,
   Text,
   Textarea,
   Tooltip,
 } from '@envsemble/envui';
 import { Refresh } from '@envsemble/envui/icons/Refresh';
-import { Settings } from '@envsemble/envui/icons/Settings';
 import { History } from '@envsemble/envui/icons/History';
 import { NoteAdd } from '@envsemble/envui/icons/NoteAdd';
 import { Save } from '@envsemble/envui/icons/Save';
@@ -220,82 +216,6 @@ export function TooltipPreview() {
           </Specimen>
         </SpecimenGrid>
       </Example>
-    </Preview>
-  );
-}
-
-const groupPeople = [
-  { id: 'alex', name: 'Alex Morgan' },
-  { id: 'sam', name: 'Sam Lee' },
-  { id: 'priya', name: 'Priya Shah' },
-  { id: 'jordan', name: 'Jordan Rivera' },
-  { id: 'taylor', name: 'Taylor Kim' },
-];
-
-function AvatarGroupExample() {
-  const [pressed, setPressed] = useState('');
-  return (
-    <Example
-      title="Avatar groups"
-      size="collection"
-      caption="Hover or focus the count to see who it stands for. A ring in the color of the surface below keeps the avatars apart."
-    >
-      <SpecimenGrid>
-        <Specimen title="The rest counted">
-          <AvatarGroup people={groupPeople} max={3} />
-        </Specimen>
-        <Specimen title="A preview of many" caption="Three names of twelve, in the small size.">
-          <AvatarGroup people={groupPeople.slice(0, 3)} total={12} max={3} size="small" />
-        </Specimen>
-        <Specimen title="Pressable" caption="Each avatar is a button with the name in a tooltip.">
-          <AvatarGroup
-            people={groupPeople}
-            max={4}
-            onPersonClick={(person) => setPressed(`Opened ${person.name}`)}
-          />
-        </Specimen>
-        <Specimen title="In a compact toolbar">
-          <Surface tone="row" padding={2} corners="standard" density="compact">
-            <div className="docs-compact-toolbar">
-              <Text className="docs-compact-toolbar-title">Quarterly report</Text>
-              <AvatarGroup people={groupPeople} max={2} />
-              <IconButton icon={<Settings />} aria-label="Report settings" />
-            </div>
-          </Surface>
-        </Specimen>
-      </SpecimenGrid>
-      <Text variant="caption" className="docs-caption" aria-live="polite">
-        {pressed}
-      </Text>
-    </Example>
-  );
-}
-
-export function AvatarPreview() {
-  return (
-    <Preview>
-      <Example title="Sizes and fallbacks" size="collection">
-        <SpecimenGrid>
-          <Specimen title="Default picture">
-            <Stack gap={3} className="docs-inline-row">
-              <Avatar name="Alex Morgan" size="small" />
-              <Avatar name="Alex Morgan" />
-              <Avatar name="Alex Morgan" size="large" />
-              <Avatar name="Alex Morgan" size="display" label />
-            </Stack>
-          </Specimen>
-          <Specimen title="Failed picture" caption="A missing or broken picture shows the default.">
-            <Avatar name="Sam" src="data:image/png;base64,invalid" size="large" label />
-          </Specimen>
-          <Specimen title="Initials" caption="For organizations and other non-person entities.">
-            <Stack gap={3} className="docs-inline-row">
-              <Avatar name="Northwind Labs" fallback="initials" />
-              <Avatar name="Northwind Labs" fallback="initials" size="large" label />
-            </Stack>
-          </Specimen>
-        </SpecimenGrid>
-      </Example>
-      <AvatarGroupExample />
     </Preview>
   );
 }

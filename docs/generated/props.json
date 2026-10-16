@@ -464,7 +464,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Announce the name; omit when adjacent text already names the person."
+          "description": "Name the avatar as an image by `name`; leave it off when text beside it already names the person."
         }
       ],
       "native": [
@@ -501,7 +501,7 @@
           "name": "fallback",
           "type": "AvatarProps['fallback']",
           "required": false,
-          "description": ""
+          "description": "Shown without a picture: the default person picture (default), or the initials of `name`."
         },
         {
           "name": "size",

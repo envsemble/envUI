@@ -10,6 +10,7 @@ export interface AvatarButtonProps extends Omit<ComponentPropsWithRef<'button'>,
   detail?: string;
   /** Picture URL; the default person picture shows without one. */
   src?: string | null;
+  /** Shown without a picture: the default person picture (default), or the initials of `name`. */
   fallback?: AvatarProps['fallback'];
   /** small 1.5 rem, standard 2 rem (default) or large 3 rem picture, inside a slightly larger hit area. */
   size?: 'small' | 'standard' | 'large';
