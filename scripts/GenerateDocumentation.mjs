@@ -679,17 +679,11 @@ export function compileDocument(document, documents, { props, examples = example
     props && document.frontmatter?.components
       ? renderProps(document.frontmatter.components, props)
       : '';
-  if (!document.sections) {
-    if (!propsSection) return `${head}${title}${document.markdown}`;
-    // Pages not yet on the template get the generated props before their related topics.
-    const related = document.markdown.search(/^## Related topics$/m);
-    const at = related === -1 ? document.markdown.length : related;
-    const before = document.markdown.slice(0, at).replace(/\s*$/, '\n\n');
-    return `${head}${title}${before}${propsSection}\n${document.markdown.slice(at)}`.replace(
-      /\n*$/,
-      '\n',
-    );
-  }
+  // A page not yet on the template ships as it is written. Its own "Props & contracts" table says
+  // what each prop is for; the generated tables, without the descriptions its TSDoc does not have
+  // yet, would only repeat it. Their types and defaults ship in generated/props.json, and the
+  // page gets them in place of its table when it moves to the template.
+  if (!document.sections) return `${head}${title}${document.markdown}`;
   const parts = [];
   const write = (section) => {
     let text = '';

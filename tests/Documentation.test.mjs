@@ -281,6 +281,21 @@ test('the template rejects pages that break its contract', async () => {
   });
 });
 
+test('a page not yet on the template ships its own props table only', async () => {
+  await templateFixture(async ({ page, read, examples }) => {
+    const legacy = switchFrontmatter.replace(/useWhen:[\s\S]*?(?=related:)/, '');
+    await writeFile(
+      page,
+      `${legacy}# Switch\n\n## React usage\n\n### Props & contracts\n\n| Name | Contract |\n| --- | --- |\n| label | The visible label. |\n`,
+    );
+    const documents = read();
+    assert.equal(documents[1].sections, undefined);
+    const compiled = compileDocument(documents[1], documents, { props: switchProps, examples });
+    assert.match(compiled, /### Props & contracts/);
+    assert.doesNotMatch(compiled, /## Props\n/);
+  });
+});
+
 test('a filled-in example keeps its fence closed, with backticks in its source', async () => {
   await templateFixture(async ({ page, read, examples }) => {
     const source = "export default function Basic() {\n  return <Code>{'```'}</Code>;\n}\n";

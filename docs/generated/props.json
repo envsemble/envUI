@@ -144,7 +144,7 @@
           "name": "format",
           "type": "(value: number) => string",
           "required": false,
-          "default": "formatNumber",
+          "default": "(value: number) => value.toLocaleString()",
           "description": "Text for the value; the locale's number format by default."
         }
       ],
@@ -558,14 +558,14 @@
           "name": "formatMore",
           "type": "(count: number) => string",
           "required": false,
-          "default": "formatMorePeople",
+          "default": "(count: number) => `${count} more`",
           "description": "Text for people beyond the list, in the overflow tooltip and the group's name; \"N more\"."
         },
         {
           "name": "formatLabel",
           "type": "(count: number, names: readonly string[]) => string",
           "required": false,
-          "default": "formatGroupLabel",
+          "default": "(count: number, names: readonly string[]) => `${count} ${count === 1 ? 'person' : 'people'}: ${names.join(', ')}`",
           "description": "The group's name from the number of people and their names, which end with formatMore's text for people counted in total but not listed: \"3 people: Alex Morgan, Sam Lee, 1 more\" by default. aria-label replaces it."
         }
       ],
@@ -909,7 +909,7 @@
           "name": "formatValue",
           "type": "(value: number) => string",
           "required": false,
-          "default": "formatEnglishNumber",
+          "default": "(value: number) => new Intl.NumberFormat('en').format(value)",
           "description": "Text for a value; English digit grouping by default."
         },
         {
@@ -928,14 +928,14 @@
           "name": "monthLabels",
           "type": "readonly string[]",
           "required": false,
-          "default": "englishMonths",
+          "default": "['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']",
           "description": "Twelve month names above the weeks, from January; English abbreviations by default."
         },
         {
           "name": "weekdayLabels",
           "type": "readonly string[]",
           "required": false,
-          "default": "englishWeekdays",
+          "default": "['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']",
           "description": "Seven weekday names beside the rows, from Sunday; English abbreviations by default."
         },
         {
@@ -2361,7 +2361,7 @@
           "name": "formatLabel",
           "type": "(additions: number, deletions: number) => string",
           "required": false,
-          "default": "defaultDiffLabel",
+          "default": "(additions: number, deletions: number) => `${additions} added ${additions === 1 ? 'line' : 'lines'} and ${deletions} removed ${deletions === 1 ? 'line' : 'lines'}`",
           "description": "Full meaning for assistive technology; \"12 added lines and 3 removed lines\" by default."
         }
       ],
@@ -2442,7 +2442,7 @@
           "name": "closeLabel",
           "type": "(label: string) => string",
           "required": false,
-          "default": "defaultCloseLabel",
+          "default": "(label: string) => `Close ${label}`",
           "description": "Accessible name of each close button; receives the tab label."
         },
         {
@@ -3100,7 +3100,6 @@
           "name": "toolbar",
           "type": "readonly MarkdownCommand[] | false",
           "required": false,
-          "default": "defaultMarkdownCommands",
           "description": "Formatting actions; false hides the toolbar. Undo/redo accompany a visible toolbar."
         },
         {
@@ -4238,7 +4237,6 @@
           "name": "formatRange",
           "type": "(range: PaginationRange) => ReactNode",
           "required": false,
-          "default": "formatPageRange",
           "description": "Text for the range, such as \"1–60 of 245\", for example in another language."
         },
         {
@@ -4349,21 +4347,21 @@
           "name": "showLabel",
           "type": "(label: string) => string",
           "required": false,
-          "default": "defaultShowLabel",
+          "default": "(label: string) => `Show ${label}`",
           "description": "Accessible name of a chip's button that shows its panel, from the chip's text: Show and the text by default. A function, as each chip names its own panel; PanelDockControls takes plain strings."
         },
         {
           "name": "closeLabel",
           "type": "(label: string) => string",
           "required": false,
-          "default": "defaultCloseLabel",
+          "default": "(label: string) => `Close ${label}`",
           "description": "Accessible name of a chip's close button, from the chip's text: Close and the text by default."
         },
         {
           "name": "resizeLabel",
           "type": "(title: string) => string",
           "required": false,
-          "default": "defaultResizeLabel",
+          "default": "(title: string) => `Resize ${title}`",
           "description": "Accessible name of a panel's resize handle, from its title: Resize and the title by default."
         }
       ],
@@ -4718,7 +4716,7 @@
           "name": "formatLabel",
           "type": "(value: number, max: number) => string",
           "required": false,
-          "default": "defaultLabel",
+          "default": "(value: number, max: number) => `${value} out of ${max} stars`",
           "description": "The accessible name; \"4.5 out of 5 stars\" by default."
         }
       ],
@@ -4883,14 +4881,13 @@
           "name": "toolbar",
           "type": "readonly RichTextCommand[] | false",
           "required": false,
-          "default": "defaultRichTextCommands",
           "description": ""
         },
         {
           "name": "references",
           "type": "readonly RichTextReferenceSource[]",
           "required": false,
-          "default": "emptySources",
+          "default": "[]",
           "description": ""
         },
         {
@@ -4929,7 +4926,7 @@
           "name": "extensions",
           "type": "AnyExtension[]",
           "required": false,
-          "default": "emptyExtensions",
+          "default": "[]",
           "description": "Keep this array stable; extensions must implement Markdown parsing and serialization."
         },
         {
@@ -6151,7 +6148,7 @@
           "name": "storageKey",
           "type": "string",
           "required": false,
-          "default": "defaultThemeStorageKey",
+          "default": "'env-theme'",
           "description": "localStorage key; match the bootstrap script's. Defaults to \"env-theme\"."
         },
         {

@@ -127,6 +127,15 @@ function documentation(declaration) {
 export function extractProps() {
   const project = new Project({ tsConfigFilePath: resolve(libraryDirectory, 'tsconfig.json') });
   const checker = project.getTypeChecker().compilerObject;
+  /** Every name the entry points export, which a default may name as it is. */
+  const publicNames = new Set(
+    entries.flatMap(([file]) => [
+      ...project
+        .getSourceFileOrThrow(resolve(sourceDirectory, file))
+        .getExportedDeclarations()
+        .keys(),
+    ]),
+  );
 
   const isUndefinedOnly = (type) =>
     (type.flags & (ts.TypeFlags.Undefined | ts.TypeFlags.Never)) !== 0 ||
@@ -211,6 +220,103 @@ export function extractProps() {
     return undefined;
   }
 
+  /** The longest default, as text, that a props table shows in place of a private name. */
+  const longestDefault = 200;
+
+  /** The declaration a name refers to, through an import. */
+  const declarationOf = (identifier) => {
+    const symbol = checker.getSymbolAtLocation(identifier);
+    const target =
+      symbol && symbol.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(symbol) : symbol;
+    return target?.valueDeclaration;
+  };
+  /** Whether a declaration is envUI's own, rather than the platform's or a dependency's. */
+  const isLibrary = (declaration) =>
+    !relative(sourceDirectory, declaration.getSourceFile().fileName).startsWith('..');
+
+  /**
+   * The text of an expression with each private name in it replaced by what it holds, or
+   * undefined when one of them cannot be shown that way.
+   */
+  function inlined(expression, seen) {
+    const replacements = [];
+    let unresolved = false;
+    const visit = (node) => {
+      if (unresolved) return;
+      if (ts.isPropertyAccessExpression(node)) {
+        visit(node.expression);
+        return;
+      }
+      if (ts.isIdentifier(node)) {
+        const declaration = declarationOf(node);
+        const inside =
+          declaration &&
+          declaration.pos >= expression.pos &&
+          declaration.end <= expression.end &&
+          declaration.getSourceFile() === expression.getSourceFile();
+        if (
+          !declaration ||
+          inside ||
+          ts.isParameter(declaration) ||
+          // Another prop, as in step = Math.max(1, (max - min) / 10).
+          (ts.isBindingElement(declaration) &&
+            ts.isParameter(ts.walkUpBindingElementsAndPatterns(declaration))) ||
+          !isLibrary(declaration) ||
+          publicNames.has(node.text)
+        )
+          return;
+        const text = privateValue(node, declaration, seen);
+        if (text === undefined) unresolved = true;
+        else replacements.push({ start: node.getStart(), end: node.getEnd(), text });
+        return;
+      }
+      if (ts.isTypeNode(node)) return;
+      ts.forEachChild(node, visit);
+    };
+    visit(expression);
+    if (unresolved) return undefined;
+    let text = expression.getText();
+    const offset = expression.getStart();
+    for (const { start, end, text: value } of replacements.sort((a, b) => b.start - a.start))
+      text = text.slice(0, start - offset) + value + text.slice(end - offset);
+    return collapse(text)
+      .replace(/\s+as const$/, '')
+      .replace(/([[(])\s+/g, '$1')
+      .replace(/,\s*([\])])/g, '$1');
+  }
+
+  /** What a private const or one-expression function holds, as text a reader can use. */
+  function privateValue(identifier, declaration, seen) {
+    if (seen.has(declaration)) return undefined;
+    seen.add(declaration);
+    if (
+      ts.isVariableDeclaration(declaration) &&
+      declaration.initializer &&
+      ts.getCombinedNodeFlags(declaration) & ts.NodeFlags.Const
+    )
+      return inlined(declaration.initializer, seen);
+    if (ts.isFunctionDeclaration(declaration) && declaration.body) {
+      const [statement, ...rest] = declaration.body.statements;
+      if (rest.length || !statement || !ts.isReturnStatement(statement) || !statement.expression)
+        return undefined;
+      const body = inlined(statement.expression, seen);
+      const parameters = declaration.parameters.map((parameter) => parameter.getText()).join(', ');
+      return body === undefined ? undefined : collapse(`(${parameters}) => ${body}`);
+    }
+    return undefined;
+  }
+
+  /**
+   * A default as a reader can use it. A name that envUI does not export reads as the value it holds:
+   * 'env-theme' for defaultThemeStorageKey, or an arrow function for a label function, with the
+   * private names inside resolved too. A default that cannot be shown that way within
+   * longestDefault characters is left out rather than named by a name no reader can import.
+   */
+  function defaultText(initializer) {
+    const text = inlined(initializer, new Set());
+    return text !== undefined && text.length <= longestDefault ? text : undefined;
+  }
+
   /** Defaults of the implementation's destructured props, such as variant = 'primary'. */
   function destructuredDefaults(implementation) {
     const defaults = new Map();
@@ -220,7 +326,8 @@ export function extractProps() {
       if (!element.initializer || element.dotDotDotToken) continue;
       const key = element.propertyName ?? element.name;
       const name = ts.isIdentifier(key) || ts.isStringLiteral(key) ? key.text : key.getText();
-      defaults.set(name, collapse(element.initializer.getText()));
+      const text = defaultText(element.initializer);
+      if (text !== undefined) defaults.set(name, text);
     }
     return defaults;
   }
