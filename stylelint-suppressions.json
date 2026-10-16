@@ -94,7 +94,7 @@
   },
   "packages/ui/src/styles/CommandPalette.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 10
+      "count": 9
     },
     "declaration-property-value-allowed-list": {
       "count": 2
@@ -117,12 +117,9 @@
   },
   "packages/ui/src/styles/Dialog.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 9
+      "count": 6
     },
     "declaration-property-value-allowed-list": {
-      "count": 2
-    },
-    "no-duplicate-selectors": {
       "count": 2
     }
   },
@@ -260,10 +257,7 @@
   },
   "packages/ui/src/styles/Popover.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 5
-    },
-    "declaration-property-value-allowed-list": {
-      "count": 1
+      "count": 4
     }
   },
   "packages/ui/src/styles/Rating.css": {
@@ -345,7 +339,7 @@
   },
   "packages/ui/src/styles/Toast.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 12
+      "count": 10
     },
     "declaration-property-value-allowed-list": {
       "count": 2
@@ -438,7 +432,9 @@
   "packages/ui/src/styles/Tooltip.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 4
-    },
+    }
+  },
+  "packages/ui/src/styles/Drawer.css": {
     "declaration-property-value-allowed-list": {
       "count": 1
     }

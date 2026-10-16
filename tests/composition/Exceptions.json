@@ -10,10 +10,6 @@
   "interactive": [
     { "module": "actions/AvatarButton.tsx", "element": "button", "count": 1 },
     { "module": "content/Table.tsx", "element": "button", "count": 1 },
-    { "module": "feedback/CommandPalette.tsx", "element": "input", "count": 1 },
-    { "module": "feedback/CommandPalette.tsx", "element": "role=\"listbox\"", "count": 1 },
-    { "module": "feedback/CommandPalette.tsx", "element": "role=\"option\"", "count": 1 },
-    { "module": "feedback/toast/Toast.tsx", "element": "button", "count": 1 },
     { "module": "forms/Composer.tsx", "element": "textarea", "count": 1 },
     { "module": "forms/DropZone.tsx", "element": "button", "count": 1 },
     { "module": "navigation/AppShell.tsx", "element": "button", "count": 1 },
@@ -30,10 +26,6 @@
     { "module": "content/CalendarHeatmap.tsx", "class": "env-tooltip", "count": 1 },
     { "module": "content/CalendarHeatmap.tsx", "class": "env-tooltip-positioner", "count": 1 },
     { "module": "content/CalendarHeatmap.tsx", "class": "env-tooltip-theme", "count": 1 },
-    { "module": "feedback/CommandPalette.tsx", "class": "env-dialog-backdrop", "count": 1 },
-    { "module": "feedback/HoverCard.tsx", "class": "env-popover", "count": 1 },
-    { "module": "feedback/HoverCard.tsx", "class": "env-popover-positioner", "count": 1 },
-    { "module": "feedback/HoverCard.tsx", "class": "env-popover-theme", "count": 1 },
     { "module": "forms/Combobox.tsx", "class": "env-button", "count": 2 },
     { "module": "forms/Combobox.tsx", "class": "env-dropdown-list", "count": 1 },
     { "module": "forms/Combobox.tsx", "class": "env-dropdown-options", "count": 1 },
@@ -58,8 +50,6 @@
     { "module": "rich-text/RichTextEditor.tsx", "class": "env-markdown-toolbar", "count": 1 }
   ],
   "cssClasses": [
-    { "stylesheet": "Alert.css", "class": "env-button", "count": 3 },
-    { "stylesheet": "Alert.css", "class": "env-icon-button", "count": 2 },
     { "stylesheet": "AppShell.css", "class": "env-nav-list-item", "count": 1 },
     { "stylesheet": "AppShell.css", "class": "env-nav-list-item-icon-only", "count": 1 },
     { "stylesheet": "AppShell.css", "class": "env-title-bar", "count": 5 },
