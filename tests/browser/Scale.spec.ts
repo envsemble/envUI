@@ -21,9 +21,16 @@ const heights = {
 async function openSection(page: Page, section: string, theme = 'light') {
   await page.goto(`${fixtureUrl}/?fixture=density&section=${section}&theme=${theme}`);
   await expect(page.locator(`[data-density-section="${section}"]`)).toBeVisible();
-  // Controls ease in as they appear, scaled, so a box measured mid-animation is smaller than the
-  // control. The animations' states are polled rather than their finished promises awaited, as the
-  // accessibility gate does; endless ones, such as spinners, are left out.
+  await settle(page);
+}
+
+/**
+ * Waits for the page's animations to end. Controls ease in as they appear, scaled, and panels rise
+ * into place, so a box measured mid-animation is not the control's. The animations' states are
+ * polled rather than their finished promises awaited, as the accessibility gate does; endless ones,
+ * such as spinners, are left out.
+ */
+async function settle(page: Page) {
   await expect
     .poll(() =>
       page.evaluate(
@@ -435,6 +442,7 @@ test.describe('on a coarse pointer', () => {
       await page.goto(`${catalogueUrl}/#/${path}/${views[0]!.id}`);
       await page.locator('#docs-main').waitFor();
       await expect(page.getByText(/^Loading .*…$/)).toHaveCount(0);
+      await settle(page);
       const found = page.locator(`#docs-main :is(${scrollers})`);
       await expect(found.first()).toBeVisible();
       const scrolling = await found.evaluateAll((elements) =>
