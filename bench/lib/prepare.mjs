@@ -20,7 +20,7 @@ export function npmCli() {
 }
 
 /** Environment for npm commands the runner itself starts, without the outer npm run's settings. */
-export function cleanNpmEnv() {
+export function cleanNpmEnv(extra = {}) {
   const env = Object.fromEntries(
     Object.entries(process.env).filter(([name]) => !/^npm_(config|package|lifecycle)_/i.test(name)),
   );
@@ -29,6 +29,7 @@ export function cleanNpmEnv() {
     npm_config_audit: 'false',
     npm_config_fund: 'false',
     npm_config_update_notifier: 'false',
+    ...extra,
   };
 }
 
@@ -87,7 +88,7 @@ async function hashFixture(fixtureDir) {
  * Installs the fixture once per library tarball and fixture version. Runs copy this template, so
  * every agent starts from identical files and the same installed dependencies.
  */
-export async function ensureTemplate({ fixtureDir, cacheDir, pack, log }) {
+export async function ensureTemplate({ fixtureDir, cacheDir, pack, npmCache, log }) {
   const key = createHash('sha256')
     .update(pack.sha256)
     .update(await hashFixture(fixtureDir))
@@ -102,9 +103,10 @@ export async function ensureTemplate({ fixtureDir, cacheDir, pack, log }) {
   await mkdir(join(staging, 'vendor'), { recursive: true });
   await copyFile(pack.tarball, join(staging, vendoredTarball));
   log?.(`Installing the fixture template (${key})...`);
+  // The agents' npm cache, so their own `npm install` finds the fixture's packages in it.
   run(process.execPath, [npmCli(), 'install', '--no-audit', '--no-fund', '--loglevel=error'], {
     cwd: staging,
-    env: cleanNpmEnv(),
+    env: cleanNpmEnv(npmCache ? { npm_config_cache: npmCache } : {}),
   });
   await rm(templateDir, { recursive: true, force: true });
   await rename(staging, templateDir);

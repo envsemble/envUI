@@ -11,14 +11,16 @@ Each later agent aid (the AGENTS.md index, the MCP server, the manifest, the lin
 | `fixture/`          | A minimal Vite + React 19 + TypeScript app. It installs `@envsemble/envui` from a tarball, imports `styles.css` and renders inside `Theme`. Its `AGENTS.md` matches what apps have today: it says the UI uses `@envsemble/envui` and nothing more. It has a mocked `src/api.ts` and neutral sample data. |
 | `tasks.json`        | 13 tasks. Each has a prompt, phrased the way a product engineer would ask without naming envUI components, and the capabilities envUI already offers for it.                                                                                                                                             |
 | `run.mjs`           | The runner and the CLI.                                                                                                                                                                                                                                                                                  |
-| `lib/agents.mjs`    | How each agent CLI is invoked and how its transcript is read.                                                                                                                                                                                                                                            |
+| `lib/agents.mjs`    | How each agent CLI is invoked, the environment it gets, and how its transcript is read.                                                                                                                                                                                                                  |
+| `lib/audit.mjs`     | The isolation audit of each run's transcript.                                                                                                                                                                                                                                                            |
 | `lib/conditions/`   | Conditions. `baseline` changes nothing.                                                                                                                                                                                                                                                                  |
 | `lib/prepare.mjs`   | Packing the library, the installed template, workspaces and git diffs.                                                                                                                                                                                                                                   |
 | `lib/process.mjs`   | Running an agent with a timeout that bounds it, and stopping what it left running.                                                                                                                                                                                                                       |
 | `lib/score.mjs`     | The scorer: static, deterministic, built on the TypeScript compiler API.                                                                                                                                                                                                                                 |
 | `lib/report.mjs`    | Aggregates and the Markdown summary.                                                                                                                                                                                                                                                                     |
+| `lib/paths.mjs`     | Matching paths in any spelling, and redacting them from saved results.                                                                                                                                                                                                                                   |
 | `scoring/*.json`    | Scoring data: raw HTML elements and roles, local-name aliases, and third-party UI packages.                                                                                                                                                                                                              |
-| `test/`             | Unit tests for the runner and the scorer; part of `npm test`.                                                                                                                                                                                                                                            |
+| `test/`             | Unit tests for the runner, the audit and the scorer; part of `npm test`.                                                                                                                                                                                                                                 |
 | `results/<run-id>/` | Saved results: `summary.md` and compact `results.json`. Transcripts are not in git.                                                                                                                                                                                                                      |
 
 ## Running it
@@ -37,24 +39,25 @@ npm run bench -- --condition baseline --agents claude,codex --tasks all
 
 Options:
 
-| Option                                | Default                   | Meaning                                                  |
-| ------------------------------------- | ------------------------- | -------------------------------------------------------- |
-| `--condition`                         | `baseline`                | One or more conditions, comma-separated                  |
-| `--agents`                            | `claude,codex`            | Agents to run                                            |
-| `--tasks`                             | `all`                     | `all`, or task ids such as `sidebar,settings-form`       |
-| `--concurrency`                       | `4`                       | Runs in parallel                                         |
-| `--timeout`                           | `12`                      | Minutes per run; the process tree is killed at the limit |
-| `--run-id`                            | `<date>-<condition>`      | Name of the run directory and of `results/<run-id>`      |
-| `--workdir`                           | `%TEMP%/agent-workspaces` | Workspaces, transcripts and caches                       |
-| `--model-<agent>`, `--effort-<agent>` | see below                 | Override an agent's model or reasoning effort            |
-| `--build`                             | off                       | Run `npm run build:library` before packing               |
-| `--no-save`                           | off                       | Do not write `bench/results/<run-id>/`                   |
-| `--dry-run`                           | off                       | Prepare one workspace per agent and print the commands   |
+| Option                                | Default                   | Meaning                                                                  |
+| ------------------------------------- | ------------------------- | ------------------------------------------------------------------------ |
+| `--condition`                         | `baseline`                | One or more conditions, comma-separated                                  |
+| `--agents`                            | `claude,codex`            | Agents to run                                                            |
+| `--tasks`                             | `all`                     | `all`, or task ids such as `sidebar,settings-form`                       |
+| `--concurrency`                       | `4`                       | Runs in parallel                                                         |
+| `--timeout`                           | `12`                      | Minutes per run; the process tree is killed at the limit                 |
+| `--run-id`                            | `<date>-<condition>`      | Name of the run directory and of `results/<run-id>`                      |
+| `--workdir`                           | `%TEMP%/agent-workspaces` | Workspaces, transcripts and caches; must not be near the repository      |
+| `--audit-path`                        | none                      | More folders, comma-separated, that agents must not touch, such as notes |
+| `--model-<agent>`, `--effort-<agent>` | see below                 | Override an agent's model or reasoning effort                            |
+| `--build`                             | off                       | Run `npm run build:library` before packing                               |
+| `--no-save`                           | off                       | Do not write `bench/results/<run-id>/`                                   |
+| `--dry-run`                           | off                       | Prepare one workspace per agent and print the commands and environment   |
 
-After a scorer change, rescore an earlier run from its workspaces without running the agents again:
+After a scorer change, rescore an earlier run from its workspaces without running the agents again. The audit runs again too:
 
 ```sh
-npm run bench -- rescore --run-id 2026-10-16-baseline
+npm run bench -- rescore --run-id 2026-10-16-baseline-v2
 ```
 
 ### What a run does
@@ -62,10 +65,11 @@ npm run bench -- rescore --run-id 2026-10-16-baseline
 1. Packs `packages/ui` with `npm pack`.
 2. Installs the fixture once per tarball and fixture version, into `_cache/templates/<hash>`. The tarball becomes `vendor/envsemble-envui.tgz` and the dependency is `file:vendor/envsemble-envui.tgz`, so an agent's own `npm install` still resolves it.
 3. For each task, agent and condition:
-   - copies the template, including `node_modules`, to `<workdir>/<run-id>/<agent>-<task>/`. This is outside the repo, so the agent never sees the envUI source.
+   - copies the template, including `node_modules`, to `<workdir>/<run-id>/<agent>-<task>/`. This is outside the repository, so the source isn't next to the workspace.
    - applies the condition's `setup`, then commits everything as the base commit.
-   - starts the agent there with the prompt on stdin and the timeout.
-   - stops any processes left running in the workspace, such as dev servers.
+   - starts the agent there, in its own environment (below), with the prompt on stdin and the timeout.
+   - stops any processes left running from the workspace or the run's temp folder, such as dev servers.
+   - audits the transcript (below).
    - scores the diff against the base commit.
 4. Writes `results.json` and `summary.md` to the run directory and to `bench/results/<run-id>/`.
 
@@ -73,14 +77,47 @@ Workdir layout:
 
 ```
 <workdir>/
-  _cache/packs/*.tgz, _cache/templates/<hash>/
+  _cache/packs/*.tgz, _cache/templates/<hash>/, _cache/npm/   npm cache for the template and the agents
   <run-id>/
     <agent>-<task>/                 the agent's workspace (a git repo)
+    _tmp/<agent>-<task>/            the run's TEMP and TMP; home/ is its HOME on Windows
     _logs/<agent>-<task>/           transcript.jsonl, stderr.log, last-message.txt, diff.patch, score.json, meta.json
     run.json, records.json, results.json, summary.md
 ```
 
 The workspace path is deliberately neutral (`agent-workspaces`, not "envui-bench"). The agent sees its working directory in its system prompt, and a path naming an envUI benchmark could prime it to use envUI.
+
+### What a run can and can't reach
+
+A run is **confined by its environment and audited afterwards. It is not sandboxed.**
+
+- **Environment.** The agent starts from an allow-list, not from the runner's environment, which names the repository: npm puts its `node_modules/.bin` on `PATH` and sets `INIT_CWD`, and an outer agent session adds its own variables and tokens. It gets:
+  - `SystemRoot`, `windir`, `SystemDrive`, `COMSPEC`, `PATHEXT`, `OS`, `NUMBER_OF_PROCESSORS` and `PROCESSOR_ARCHITECTURE`, which Windows programs need to start;
+  - `USERPROFILE`, because both CLIs read their login from the profile (`~/.claude/.credentials.json`, `~/.codex/auth.json`), and `CLAUDE_CONFIG_DIR` or `CODEX_HOME` if set;
+  - a new `PATH` of the Windows system folders, Node and npm, Git's `cmd` folder (both agents use git, and Claude Code finds Git Bash through it) and the CLI's own folder, so no repository or development folders;
+  - `TEMP` and `TMP` in the run's `_tmp` folder, and on Windows `HOME` in `_tmp/<run>/home`, so Git Bash's `~`, `~/bin` and `~/.gitconfig` are not the user's;
+  - `npm_config_cache` in `_cache/npm`;
+  - for Claude Code, `DISABLE_AUTOUPDATER=1`, so the CLI doesn't update itself during a benchmark.
+
+  Both CLIs were tested to start, log in and run shell commands with only these. On macOS and Linux, `HOME` stays the user's, because that is where the logins are.
+
+- **Working directory.** Each agent starts in its workspace. The workdir must be outside the folder that holds the repository; the runner refuses one the audit would flag.
+- **No sandbox for Claude Code.** `--dangerously-skip-permissions` lets it read and run anything the user can. Nothing stops it from finding the source checkout by searching the disk.
+- **Codex's `workspace-write` sandbox limits writes only.** Codex can write to the workspace, the npm cache and its temp folder, and still read the whole disk.
+- **Logins and user state.** Claude Code still creates a folder per workspace under `~/.claude/projects/` (with `--no-session-persistence`, no session is kept in it).
+
+#### The isolation audit
+
+Because the confinement is not a sandbox, every run's `transcript.jsonl`, `stderr.log` and `last-message.txt` are scanned after it ends, in any path spelling (`C:\`, `C:/`, Git Bash's `/c/`, JSON's doubled backslashes, Claude Code's `C--folder-name`). A run is **escaped** when they mention:
+
+- the folder that holds the repository checkout, or the checkout's top-level folder (such as `C:\Dev`) unless that folder also holds the user profile or the temp folder;
+- the folder name of a worktree of the repository;
+- a path given with `--audit-path`;
+- another run: its workspace, its temp folder, or the logs.
+
+The main checkout's name, `envUI`, is also a folder inside the installed package (`assets/envUI`), so it counts only as part of the paths above.
+
+Escaped runs are marked in `results.json` (`isolation.escaped` and the first hits) and in the summary, which says how many escaped in its header. They are failures of isolation, and their scores are not trustworthy. The audit can't see what an agent read without printing a path, such as a directory listing it never followed up on.
 
 ### How the agents are invoked
 
@@ -98,7 +135,6 @@ claude -p --model claude-opus-5-5 --effort high --dangerously-skip-permissions
 - `--strict-mcp-config` with no `--mcp-config` means no MCP servers.
 - The stream-json transcript ends in a `result` event with turns, `total_cost_usd` and per-model token usage.
 - Claude Code 2.1.300 reads `AGENTS.md` natively, so the fixture has no `CLAUDE.md`.
-- Environment variables of an outer Claude Code session (`CLAUDECODE`, `CLAUDE_CODE_*` and the like) are removed, so a run started from inside an agent is not a nested session.
 
 **Codex** (`codex.js` run with Node; the prompt arrives on stdin as `-`):
 
@@ -106,20 +142,20 @@ claude -p --model claude-opus-5-5 --effort high --dangerously-skip-permissions
 codex exec --json --ignore-user-config --ephemeral --sandbox workspace-write
   --model gpt-6-luna -c model_reasoning_effort="high"
   -c sandbox_workspace_write.network_access=true -c windows.sandbox="unelevated"
-  --add-dir <npm cache> --cd <workspace> --output-last-message <file> -
+  --add-dir <npm cache> --add-dir <run temp> --cd <workspace> --output-last-message <file> -
 ```
 
 - `--ignore-user-config` drops `~/.codex/config.toml`: its MCP servers, plugins and model. Auth still comes from `CODEX_HOME`.
 - The `workspace-write` sandbox is the "full auto" mode. It needs the `unelevated` Windows sandbox when headless:
   - Without a Windows sandbox setting, the workspace is treated as read-only.
   - The `elevated` sandbox fails with `helper_unknown_error: setup refresh had errors`.
-- The npm cache is added as a writable root. Without it, `npm install` fails with `EPERM` in the sandbox.
+- The npm cache and the run's temp folder are added as writable roots. Without the cache, `npm install` fails with `EPERM` in the sandbox.
 - Codex reports tokens per turn (`turn.completed`) but no cost.
 - Model: `gpt-6.1-sol`, the model in the local config, is rejected with "not supported when using Codex with a ChatGPT account". `gpt-6-luna` is the CLI's default for this account.
 
 ### The timeout
 
-A run ends when the agent's process exits or at the timeout, whichever comes first. The runner doesn't wait for the agent's output pipes to close: a dev server started in the background, such as `npm run dev &` in Git Bash, holds them open for as long as it runs. At the timeout, the whole process tree is killed (`taskkill /T /F` on Windows, the process group elsewhere). Afterwards, processes whose command line names the workspace are stopped.
+A run ends when the agent's process exits or at the timeout, whichever comes first. The runner doesn't wait for the agent's output pipes to close: a dev server started in the background, such as `npm run dev &` in Git Bash, holds them open for as long as it runs. At the timeout, the whole process tree is killed (`taskkill /T /F` on Windows, the process group elsewhere). Afterwards, processes whose command line names the workspace or the run's temp folder are stopped.
 
 ## Scoring
 
@@ -181,6 +217,10 @@ The scanner checks:
 ### Reported but not scored: docs lookups
 
 The transcript tells whether the agent read envUI's own material. "Read envUI docs" means at least one tool call read or searched Markdown in the installed package: `docs/`, `skills/` or `README.md`. Listing the folder doesn't count. Lookups in the type declarations and anywhere in the package are counted separately in `agentReport.envuiLookups`. An AGENTS.md index or an MCP server should raise these numbers before it raises the score.
+
+### Saved results
+
+`bench/results/<run-id>/` is committed, so it names no local user or folder: paths inside the run directory are stored relative to it, the user profile becomes `~`, and the tarball is stored by file name. An agent's final message is cut to a short excerpt; the full one is in `_logs/<run>/last-message.txt`, with the transcripts, which stay in the workdir.
 
 ### Limits
 

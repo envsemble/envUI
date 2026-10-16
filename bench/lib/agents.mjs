@@ -1,23 +1,82 @@
 import { existsSync, readFileSync } from 'node:fs';
-import { homedir } from 'node:os';
-import { join } from 'node:path';
+import { delimiter, dirname, join } from 'node:path';
 import { npmCli } from './prepare.mjs';
 import { run } from './process.mjs';
 
+const isWindows = process.platform === 'win32';
+
+/** The full path of a command on the runner's PATH, or null. */
+function locate(command) {
+  try {
+    const found = run(isWindows ? 'where.exe' : 'which', [command])
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean);
+    return (isWindows ? found.find((path) => /\.(exe|cmd)$/i.test(path)) : found[0]) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/** Git's folder of commands. Both agents use git, and Claude Code finds Git Bash through it. */
+function gitDir() {
+  const git = locate('git');
+  if (!git) return null;
+  if (!isWindows) return dirname(git);
+  const root = git.replace(/[\\/](cmd|bin|mingw64[\\/]bin)[\\/]git\.exe$/i, '');
+  return existsSync(join(root, 'cmd', 'git.exe')) ? join(root, 'cmd') : dirname(git);
+}
+
 /**
- * Environment for an agent CLI: the caller's environment without the variables of an outer
- * Claude Code or Codex session (so a run started from inside an agent is not treated as a nested
- * session) and without the outer npm run's settings. Auth stays in each CLI's own home.
+ * Variables an agent keeps from the runner's environment: what Windows programs need to start,
+ * and the user profile, where both CLIs keep their login (~/.claude/.credentials.json and
+ * ~/.codex/auth.json). A custom config home is kept for the same reason.
  */
-function agentEnv(extra = {}) {
-  const env = Object.fromEntries(
-    Object.entries(process.env).filter(
-      ([name]) =>
-        !/^(CLAUDECODE|CLAUDE_CODE_|CLAUDE_AGENT_SDK|CLAUDE_PID|CLAUDE_EFFORT|CODEX_(?!HOME)|npm_(config|package|lifecycle)_)/i.test(
-          name,
-        ),
-    ),
-  );
+const inherited = isWindows
+  ? [
+      'SystemRoot',
+      'windir',
+      'SystemDrive',
+      'COMSPEC',
+      'PATHEXT',
+      'OS',
+      'NUMBER_OF_PROCESSORS',
+      'PROCESSOR_ARCHITECTURE',
+      'USERPROFILE',
+      'CLAUDE_CONFIG_DIR',
+      'CODEX_HOME',
+    ]
+  : ['HOME', 'USER', 'LOGNAME', 'SHELL', 'LANG', 'TERM', 'CLAUDE_CONFIG_DIR', 'CODEX_HOME'];
+
+/**
+ * The environment an agent runs in, built from an allow-list rather than the runner's own
+ * environment, which names the repository (npm adds its node_modules/.bin to PATH and sets
+ * INIT_CWD) and carries tokens and outer agent sessions. PATH holds only the system folders, Node
+ * and npm, git and the agent CLI's own folder. TEMP and, on Windows, HOME point into the run's own
+ * temp folder, so Git Bash's ~ is not the user's; npm uses the benchmark's cache.
+ */
+export function agentEnv({ tmpDir, homeDir, npmCache, pathDirs = [], extra = {} }) {
+  const env = {};
+  for (const name of inherited) if (process.env[name] !== undefined) env[name] = process.env[name];
+  const systemRoot = process.env.SystemRoot ?? 'C:\\Windows';
+  const systemDirs = isWindows
+    ? [
+        join(systemRoot, 'System32'),
+        systemRoot,
+        join(systemRoot, 'System32', 'Wbem'),
+        join(systemRoot, 'System32', 'WindowsPowerShell', 'v1.0'),
+      ]
+    : ['/usr/local/bin', '/usr/bin', '/bin'];
+  env.PATH = [...new Set([...systemDirs, dirname(process.execPath), gitDir(), ...pathDirs])]
+    .filter(Boolean)
+    .join(delimiter);
+  if (tmpDir) {
+    env.TEMP = tmpDir;
+    env.TMP = tmpDir;
+    if (!isWindows) env.TMPDIR = tmpDir;
+  }
+  if (homeDir && isWindows) env.HOME = homeDir;
+  if (npmCache) env.npm_config_cache = npmCache;
   return { ...env, ...extra };
 }
 
@@ -69,19 +128,26 @@ function resolveCodexScript() {
   return script;
 }
 
+function resolveClaude() {
+  const found = locate('claude');
+  if (!found) throw new Error('Claude Code CLI not found on PATH.');
+  return found;
+}
+
 export const agents = {
   claude: {
     label: 'Claude Code',
     model: 'claude-opus-5-5',
     effort: 'high',
-    version: () => run('claude', ['--version']),
+    version: () => run(resolveClaude(), ['--version']),
     /**
      * Headless and non-interactive. Permissions are skipped inside the throwaway workspace; user
      * settings, plugins, hooks and MCP servers are not loaded, so the run sees only the project.
      */
-    command({ model, effort, extraArgs = [] }) {
+    command({ model, effort, tmpDir, homeDir, npmCache, extraArgs = [] }) {
+      const file = resolveClaude();
       return {
-        file: 'claude',
+        file,
         args: [
           '-p',
           '--model',
@@ -98,7 +164,14 @@ export const agents = {
           '--strict-mcp-config',
           ...extraArgs,
         ],
-        env: agentEnv(),
+        // No self-update in the middle of a benchmark.
+        env: agentEnv({
+          tmpDir,
+          homeDir,
+          npmCache,
+          pathDirs: [dirname(file)],
+          extra: { DISABLE_AUTOUPDATER: '1' },
+        }),
       };
     },
     /** Reads usage and cost from the stream-json transcript's result event. */
@@ -144,7 +217,7 @@ export const agents = {
               cacheWrite: usage.cache_creation_input_tokens ?? 0,
               output: usage.output_tokens ?? 0,
             },
-        finalMessage: String(result.result ?? '').slice(0, 2000),
+        finalMessage: String(result.result ?? ''),
         events: events.length,
       };
     },
@@ -157,14 +230,10 @@ export const agents = {
     /**
      * `codex exec` with the workspace-write sandbox. User config is ignored (no MCP servers,
      * plugins or model overrides). On Windows the unelevated sandbox is the one that can run
-     * headless; the npm cache is added as a writable root so `npm install` works.
+     * headless. The npm cache and the run's temp folder are added as writable roots, so
+     * `npm install` and temp files work.
      */
-    command({ model, effort, appDir, lastMessageFile, extraArgs = [] }) {
-      const npmCache =
-        process.env.npm_config_cache ??
-        (process.platform === 'win32'
-          ? join(process.env.LOCALAPPDATA ?? join(homedir(), 'AppData/Local'), 'npm-cache')
-          : join(homedir(), '.npm'));
+    command({ model, effort, appDir, lastMessageFile, tmpDir, homeDir, npmCache, extraArgs = [] }) {
       return {
         file: process.execPath,
         args: [
@@ -182,8 +251,7 @@ export const agents = {
           '-c',
           'sandbox_workspace_write.network_access=true',
           ...(process.platform === 'win32' ? ['-c', 'windows.sandbox="unelevated"'] : []),
-          '--add-dir',
-          npmCache,
+          ...[npmCache, tmpDir].filter(Boolean).flatMap((dir) => ['--add-dir', dir]),
           '--cd',
           appDir,
           '--output-last-message',
@@ -191,7 +259,7 @@ export const agents = {
           ...extraArgs,
           '-',
         ],
-        env: agentEnv(),
+        env: agentEnv({ tmpDir, homeDir, npmCache }),
       };
     },
     /** Sums token usage over turn.completed events; Codex reports no cost. */
@@ -231,9 +299,7 @@ export const agents = {
         .filter((event) => event.type === 'error' || event.type === 'turn.failed')
         .map((event) => String(event.message ?? event.error?.message ?? '').slice(0, 300));
       const finalMessage =
-        lastMessageFile && existsSync(lastMessageFile)
-          ? readFileSync(lastMessageFile, 'utf8').slice(0, 2000)
-          : '';
+        lastMessageFile && existsSync(lastMessageFile) ? readFileSync(lastMessageFile, 'utf8') : '';
       return {
         completed: lastTurn?.type === 'turn.completed',
         turns: turns.length,
