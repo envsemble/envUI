@@ -55,8 +55,8 @@ const states: Record<string, [state: string, rest: string]> = {
     '.env-calendar-day:has-text("20")',
   ],
   'the active document tab': [
-    '.env-document-tab:has-text("Active")',
-    '.env-document-tab:has-text("Other")',
+    '.env-document-tabs-item:has-text("Active")',
+    '.env-document-tabs-item:has-text("Other")',
   ],
   'a filled star': ['.env-rating-star >> nth=0', '.env-rating-star >> nth=4'],
   'a checked menu item': ['[role=menuitemcheckbox] >> nth=0', '[role=menuitemcheckbox] >> nth=1'],
@@ -222,7 +222,13 @@ const focusCases: FocusCase[] = [
   { name: 'the selected tab', ring: '[role=tab][aria-selected=true]', over: 'fill' },
   { name: 'the selected navigation item', ring: '[data-testid=nav-selected]', over: 'fill' },
   { name: 'the chosen segment', ring: '.env-segment[data-checked]', over: 'canvas' },
-  { name: 'the active document tab', ring: '.env-document-tab[data-active]', over: 'fill' },
+  {
+    // The ring goes around the tab's item, close button included.
+    name: 'the active document tab',
+    ring: '.env-document-tabs-item[data-active]',
+    over: 'fill',
+    focus: '.env-document-tabs-item[data-active] [role=tab]',
+  },
   {
     name: 'a chosen radio row',
     ring: '.env-radio-option >> nth=0',
@@ -248,15 +254,10 @@ const focusCases: FocusCase[] = [
     over: 'fill',
   },
   {
-    // The trigger of an open menu that has focus, as Base UI marks it.
+    // The trigger of a menu that is open, which Base UI marks, and has focus.
     name: 'the trigger of an open menubar menu',
-    ring: '.env-menubar-trigger >> nth=0',
+    ring: '.env-menubar-trigger[data-popup-open] >> nth=0',
     over: 'fill',
-    prepare: (page) =>
-      page
-        .locator('.env-menubar-trigger')
-        .first()
-        .evaluate((trigger) => trigger.setAttribute('data-popup-open', '')),
   },
   {
     name: 'a highlighted Select option',
