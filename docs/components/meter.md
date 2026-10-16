@@ -1,7 +1,7 @@
 ---
 title: Meter
 summary: A measurement within a known range, such as the seats assigned of a plan or the storage used of a quota, as a labelled bar.
-status: beta
+status: stable
 since: 0.2.0
 category: Feedback & overlays
 aliases:
@@ -98,7 +98,7 @@ The meter fills the width of its container; give the container a width where a f
 ### You provide
 
 - A label that names what is measured.
-- `aria-valuetext` with the value and its unit in words, such as "2 of 5 seats". Without it, a screen reader reads only the number, such as 2.
+- `aria-valuetext` with the value and its unit in words, such as "2 of 5 seats". Without it, a screen reader reads the value as a percentage of the range, in the provider's locale.
 - The value as text in `valueText` where the exact amount matters.
 - Text that says when a limit is reached, since the bar doesn't change color.
 
@@ -122,6 +122,7 @@ Meters of one plan side by side, each with its own range. The text below says wh
 
 ## Changelog
 
+- **1.0.0**: The classes are `env-meter*`; without `aria-valuetext` the formatted value stays; `className`, `style`, `ref` and data attributes reach the root, and numbers follow the provider's locale.
 - **1.0.0**: In the dark theme, meters reach 3:1 on every surface.
 - **0.4.0**: The track uses the translucent neutral fill, so it stays visible on panes, rows and cards.
 - **0.2.0**: Meter.

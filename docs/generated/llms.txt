@@ -89,8 +89,9 @@ Search envUI before writing any UI element; propose an envUI addition instead of
 - [Spinner](docs/components/spinner.md): Work of unknown length in a small area, such as a panel that is updating, as a turning arc.
 - [Skeleton](docs/components/skeleton.md): Placeholders in the shape of content that is loading, in a LoadingState that names the region once. Also: LoadingState.
 - [Toast](docs/components/toast.md): Brief feedback after an action, such as Changes saved, at the edge of the window, announced and dismissed after a few seconds or by people. Also: useToast.
-- [Alert](docs/components/alert.md): An inline message about a page or a section, in an info, success, warning or error tone, with an optional action and dismiss button.
-- [Dialog](docs/components/dialog.md): A focused task over the page, as a centered modal, a modal near the top of the window or a full-height side panel, with shared focus and dismissal. Also: DialogClose.
+- [Alert](docs/components/alert.md): An inline message about a page or a section, in an info, success, warning or danger tone, with an optional action and dismiss button.
+- [Dialog](docs/components/dialog.md): A focused task over the page, as a centered modal or a modal near the top of the window, with shared focus and dismissal. Also: DialogClose.
+- [Drawer](docs/components/drawer.md): A full-height panel that slides in from the start or end edge of the window, for filters, details, an inspector or a phone's navigation.
 - [CommandPalette](docs/components/command-palette.md): A quick-open dialog near the top of the window, with a search field over a list the application filters and ranks.
 - [Menu](docs/components/menu.md): Actions, destinations and the shared organization switcher, opened from a trigger or a right click. Also: ContextMenu, OrganizationSwitcher.
 - [Menubar](docs/components/menubar.md): A desktop-style menubar of menus, such as File, Edit and View, with shortcuts, submenus and access keys.

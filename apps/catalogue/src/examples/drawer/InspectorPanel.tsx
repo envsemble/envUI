@@ -38,7 +38,6 @@ export default function InspectorPanel() {
         ))}
       </List.Root>
       <Drawer
-        side="end"
         open={person !== undefined}
         onOpenChange={(open) => {
           if (!open) setSelected(null);

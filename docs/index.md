@@ -94,6 +94,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Toast](components/toast.md)
 - [Alert](components/alert.md)
 - [Dialog](components/dialog.md)
+- [Drawer](components/drawer.md)
 - [CommandPalette](components/command-palette.md)
 - [Menu](components/menu.md)
 - [Menubar](components/menubar.md)

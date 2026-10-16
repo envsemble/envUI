@@ -1,7 +1,7 @@
 ---
 title: Skeleton
 summary: Placeholders in the shape of content that is loading, in a LoadingState that names the region once.
-status: beta
+status: stable
 since: 0.1.0
 category: Feedback & overlays
 aliases:
@@ -139,6 +139,7 @@ Choosing another project shows placeholders in the card's place until it loads; 
 
 ## Changelog
 
+- **1.0.0**: LoadingState is named Loading in the provider's language (`messages.common.loading`).
 - **1.0.0**: `tone` is `emphasis`: `base` is `muted`, the default, and `highlight` is `default`.
 - **0.4.0**: The base tone uses the translucent neutral fill, so placeholders stay visible on panes, rows and cards.
 - **0.3.0**: Skeletons pulse.

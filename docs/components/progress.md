@@ -105,7 +105,7 @@ The bar fills the width of its container; give the container a width where a ful
 ### You provide
 
 - A label that names the task.
-- `aria-valuetext` where the value isn't a percentage, such as "120 of 480 contacts". Without it, a screen reader reads only the number.
+- `aria-valuetext` where the value isn't a percentage, such as "120 of 480 contacts". Without it, a screen reader reads the value as a percentage, and an indeterminate bar as Loading.
 - The value as the task proceeds, and what happens when it ends or fails, such as a status message, a Toast or an Alert.
 
 ## Examples
@@ -136,6 +136,7 @@ The export starts with an unknown amount, shows the share done once it is known,
 
 ## Changelog
 
+- **1.0.0**: The classes are `env-progress*`; `segments` splits the track into steps; an indeterminate bar is read as Loading, and sweeps toward the end of the line also in right-to-left text; without `aria-valuetext` the formatted value stays; `className`, `style`, `ref` and data attributes reach the root.
 - **1.0.0**: `LoadingBar` is no longer exported: AppShell's `loading` and `loadingLabel` show page progress, and Progress shows a task's.
 - **0.4.0**: The track uses the translucent neutral fill, so it stays visible on panes, rows and cards.
 - **0.2.0**: Progress.

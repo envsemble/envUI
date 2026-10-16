@@ -161,7 +161,6 @@ export function IconCatalogue({
         </Stack>
       )}
       <Drawer
-        side="end"
         id={detailsId}
         className="docs-icon-details"
         title={selectedName ?? 'Icon details'}

@@ -35,14 +35,14 @@
     "Alert": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Alert.tsx",
-      "description": "An inline banner for a page- or section-level message, in its tone.",
+      "description": "An inline banner for a page- or section-level message, in its tone. It stays a server component: its dismiss button is a CloseButton, a client leaf named in the provider's language.",
       "props": [
         {
           "name": "tone",
-          "type": "'info' | 'success' | 'warning' | 'error'",
+          "type": "'info' | 'success' | 'warning' | 'danger'",
           "required": false,
           "default": "'info'",
-          "description": "What the message means: info, success, warning or error. Sets the tint, the border and the icon; info and success alerts are also status messages."
+          "description": "What the message means: info, success, warning or danger, for an error or a failure. Sets the tint, the border and the icon; info and success alerts are also status messages."
         },
         {
           "name": "title",
@@ -78,7 +78,7 @@
           "name": "dismissLabel",
           "type": "string",
           "required": false,
-          "default": "'Dismiss'",
+          "default": "'Dismiss', or EnvUIProvider's messages.alert.dismiss",
           "description": "Accessible name of the dismiss button, also shown as its tooltip."
         },
         {
@@ -86,7 +86,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "The alert appeared because of something that just happened and should interrupt: warning and error alerts take the alert role. Info and success alerts are always polite status messages."
+          "description": "The alert appeared because of something that just happened and should interrupt: warning and danger alerts take the alert role. Info and success alerts are always polite status messages."
         }
       ],
       "native": [
@@ -1530,7 +1530,7 @@
     "CommandPalette": {
       "kind": "component",
       "source": "packages/ui/src/feedback/CommandPalette.tsx",
-      "description": "A quick-open dialog near the top of the window: a search field over a list of options the application filters and ranks. The keyboard moves the highlight while typing continues.",
+      "description": "A quick-open dialog near the top of the window: a search field over a list of options the application filters and ranks, built on Base UI's Autocomplete inside a dialog. The arrow keys move the highlight while typing continues, and the number of results is announced as it changes. className, style, ref and data attributes go to the dialog's surface.",
       "props": [
         {
           "name": "open",
@@ -1551,14 +1551,14 @@
           "description": "Accessible name of the dialog, the search field and the list."
         },
         {
-          "name": "query",
+          "name": "inputValue",
           "type": "string",
           "required": true,
           "description": "The text in the search field."
         },
         {
-          "name": "onQueryChange",
-          "type": "(query: string) => void",
+          "name": "onInputValueChange",
+          "type": "(inputValue: string) => void",
           "required": true,
           "description": "Receives the text as people type."
         },
@@ -1569,17 +1569,17 @@
           "description": "Filtered and ranked by the application, in display order."
         },
         {
-          "name": "onSelect",
-          "type": "(item: CommandPaletteItem, options: CommandPaletteSelectOptions) => void",
+          "name": "onAction",
+          "type": "(item: CommandPaletteItem, options: CommandPaletteActionOptions) => void",
           "required": true,
-          "description": "Enter or click; Ctrl or Cmd sets modifier."
+          "description": "Enter or a press on an option; Ctrl or Cmd sets modifier."
         },
         {
-          "name": "closeOnSelect",
+          "name": "closeOnAction",
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "Close after an item is selected; true by default."
+          "description": "Close after an option is chosen."
         },
         {
           "name": "placeholder",
@@ -1591,8 +1591,8 @@
           "name": "emptyLabel",
           "type": "ReactNode",
           "required": false,
-          "default": "'No results'",
-          "description": "Shown in place of the list when there are no items; No results by default."
+          "default": "'No results', or EnvUIProvider's messages.commandPalette.empty",
+          "description": "Shown in place of the list when there are no items, and announced."
         },
         {
           "name": "hints",
@@ -1605,15 +1605,11 @@
           "type": "ReactNode",
           "required": false,
           "description": "Other content below the list, after the hints."
-        },
-        {
-          "name": "className",
-          "type": "string",
-          "required": false,
-          "description": "Classes for the dialog's surface."
         }
       ],
-      "native": [],
+      "native": [
+        "div"
+      ],
       "entries": [
         "@envsemble/envui"
       ]
@@ -2221,7 +2217,7 @@
     "Dialog": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Dialog.tsx",
-      "description": "A focused task over the page: a centered modal, a modal near the top of the window, or a full-height side panel at the right edge, modal or beside the page. It has a title, an optional description, content and actions that start with a built-in close button. Base UI's dialog owns focus, Escape and outside presses.",
+      "description": "A focused task over the page: a centered modal, or a modal near the top of the window. It has a title, an optional description, content and actions that start with a built-in close button. Base UI's dialog owns focus, Escape and outside presses. className, style, ref and data attributes go to the dialog's surface.",
       "props": [
         {
           "name": "open",
@@ -2238,9 +2234,9 @@
         },
         {
           "name": "onOpenChange",
-          "type": "(open: boolean) => void",
+          "type": "(open: boolean, details: DialogOpenChangeDetails) => void",
           "required": false,
-          "description": "Called with the requested state when the dialog asks to open or close: from the trigger, Escape, an outside press, the close button or a DialogClose. Not called for a dismissal that pending blocks."
+          "description": "Called with the requested state, and why, when the dialog asks to open or close: from the trigger, Escape, an outside press, the close button or a DialogClose. Not called for a dismissal that pending blocks."
         },
         {
           "name": "trigger",
@@ -2276,46 +2272,46 @@
           "name": "closeLabel",
           "type": "string",
           "required": false,
-          "default": "'Close'",
-          "description": "The label of the built-in close button that starts the actions, such as Cancel, or the name of a right panel's close icon button."
+          "default": "'Close', or EnvUIProvider's messages.dialog.close",
+          "description": "The label of the built-in close button that starts the actions, such as Cancel."
         },
         {
           "name": "placement",
-          "type": "'center' | 'top' | 'right'",
+          "type": "'center' | 'top'",
           "required": false,
           "default": "'center'",
-          "description": "center for a modal in the middle of the window; top for a modal near the top of the window for search-like tasks, so results grow downward without moving the field; right for a full-height panel at the right edge, with a close icon button beside its title instead of the close button in the actions, which takes the whole width of a narrow window such as a phone's."
+          "description": "center for a modal in the middle of the window; top for a modal near the top of the window for search-like tasks, so results grow downward without moving the field. For a panel at an edge of the window, use Drawer."
         },
         {
-          "name": "size",
-          "type": "'standard' | 'wide'",
+          "name": "width",
+          "type": "'md' | 'lg'",
           "required": false,
-          "default": "'standard'",
-          "description": "standard, 28 rem wide and 24 rem for a right panel, or wide, 44 rem, for content-heavy dialogs and panels such as tables, comparisons and longer forms. Both narrow to fit the window."
+          "default": "'md'",
+          "description": "md, 28 rem wide, or lg, 44 rem, for content-heavy dialogs such as tables, comparisons and longer forms. Both narrow to fit the window."
         },
         {
           "name": "modal",
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "true traps focus in the dialog over a backdrop, hides the page from assistive technology, blocks presses on it and locks its scroll. false leaves the page usable beside the dialog, for a side panel that inspects it; it then closes when focus or a press goes outside it, unless disablePointerDismissal."
+          "description": "true traps focus in the dialog over a backdrop, hides the page from assistive technology, blocks presses on it and locks its scroll. false leaves the page usable beside the dialog; it then closes when focus or a press goes outside it, unless disablePointerDismissal."
         },
         {
           "name": "disablePointerDismissal",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Keep the dialog open on presses outside it, and a non-modal dialog also when focus moves outside, such as an inspector beside the page it inspects. Escape and the close buttons still close it."
+          "description": "Keep the dialog open on presses outside it, and a non-modal dialog also when focus moves outside. Escape and the close buttons still close it."
         },
         {
           "name": "initialFocus",
-          "type": "RefObject<HTMLElement | null>",
+          "type": "DialogFocusTarget",
           "required": false,
-          "description": "The element to focus when the dialog opens. By default focus moves to the first focusable element inside, such as the first field, or to the dialog itself when opened by touch."
+          "description": "The element to focus when the dialog opens, as a ref or a function of how it was opened. By default focus moves to the first focusable element inside, such as the first field, or to the dialog itself when opened by touch."
         },
         {
           "name": "finalFocus",
-          "type": "RefObject<HTMLElement | null>",
+          "type": "DialogFocusTarget",
           "required": false,
           "description": "The element to focus when the dialog closes, such as the row that opened it. By default focus returns to the trigger, or to the element that had focus when the dialog opened."
         },
@@ -2337,28 +2333,8 @@
     "DialogClose": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Dialog.tsx",
-      "description": "A button inside a Dialog that closes it after its own onClick, for an action other than the built-in close button, such as Don't save or Done. It takes Button's props and is secondary by default.",
+      "description": "A button inside a Dialog or a Drawer that closes it after its own onClick, for an action other than the built-in close button, such as Don't save or Done. It takes Button's props and is secondary by default.",
       "props": [
-        {
-          "name": "aria-label",
-          "type": "string",
-          "required": false,
-          "requiredWhen": "`iconOnly` is `true`",
-          "description": "The action's name, such as Delete draft, for an icon-only button."
-        },
-        {
-          "name": "size",
-          "type": "'sm' | 'md' | 'lg'",
-          "required": false,
-          "description": "The height, as on every control: sm, md or lg in the current scale, such as sm for an action in a table cell or lg for the main call to action of a page. Without it, the button takes the control height of its container, md unless the container sets another. A button beside a field takes the field's size."
-        },
-        {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "requiredWhen": "`iconOnly` is `true`",
-          "description": "The icon of an icon-only button."
-        },
         {
           "name": "variant",
           "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
@@ -2378,6 +2354,12 @@
           "type": "boolean",
           "required": false,
           "description": "Show an underline for the text variant; defaults to false."
+        },
+        {
+          "name": "size",
+          "type": "'sm' | 'md' | 'lg'",
+          "required": false,
+          "description": "The height, as on every control: sm, md or lg in the current scale, such as sm for an action in a table cell or lg for the main call to action of a page. Without it, the button takes the control height of its container, md unless the container sets another. A button beside a field takes the field's size."
         },
         {
           "name": "fullWidth",
@@ -2404,10 +2386,24 @@
           "description": "Work started by this button is running: a spinner replaces the content without changing the button's size, and the button reports busy and ignores activation until pending ends."
         },
         {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "requiredWhen": "`iconOnly` is `true`",
+          "description": "The action's name, such as Delete draft, for an icon-only button."
+        },
+        {
           "name": "iconOnly",
           "type": "boolean",
           "required": false,
           "description": "Show only icon, in a square button that keeps its size; name it with aria-label."
+        },
+        {
+          "name": "icon",
+          "type": "ReactNode",
+          "required": false,
+          "requiredWhen": "`iconOnly` is `true`",
+          "description": "The icon of an icon-only button."
         }
       ],
       "native": [
@@ -2566,6 +2562,135 @@
         "@envsemble/envui"
       ]
     },
+    "Drawer": {
+      "kind": "component",
+      "source": "packages/ui/src/feedback/Drawer.tsx",
+      "description": "A panel that slides in from the start or end edge of the window over the page, for filters, details, an inspector or a phone's navigation: a modal by default, which traps focus and returns it on close, or beside the page with modal false. It takes the whole width of a narrow window, and a swipe toward its edge closes it. className, style, ref and data attributes go to the drawer's surface.",
+      "props": [
+        {
+          "name": "open",
+          "type": "boolean",
+          "required": false,
+          "description": "Whether the drawer is open, for a drawer the application controls with onOpenChange."
+        },
+        {
+          "name": "defaultOpen",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether a drawer the application doesn't control is open on the first render."
+        },
+        {
+          "name": "onOpenChange",
+          "type": "(open: boolean, details: DialogOpenChangeDetails) => void",
+          "required": false,
+          "description": "Called with the requested state, and why, when the drawer asks to open or close: from the trigger, Escape, an outside press, the close button, a swipe toward its edge or a DialogClose. Not called for a dismissal that pending blocks."
+        },
+        {
+          "name": "trigger",
+          "type": "ReactElement",
+          "required": false,
+          "description": "The element that opens the drawer, such as a Button. It reports the drawer it opens, and focus returns to it on close. Omit it for a drawer the application opens with open."
+        },
+        {
+          "name": "side",
+          "type": "'start' | 'end'",
+          "required": false,
+          "default": "'end'",
+          "description": "The edge of the window the drawer slides in from: start, the left in left-to-right text, or end, the right. It follows the text direction, so it is mirrored in right-to-left text."
+        },
+        {
+          "name": "title",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The drawer's heading and accessible name, such as Filters. Without one, name the drawer with aria-label, as a navigation drawer does."
+        },
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "description": "The drawer's accessible name where it has no visible title."
+        },
+        {
+          "name": "description",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Muted text under the title that describes the drawer to assistive technology too."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The content under the heading, such as filters, details or navigation. It scrolls."
+        },
+        {
+          "name": "actions",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Actions at the end of the content, such as Apply, with the primary action last."
+        },
+        {
+          "name": "closeButton",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Whether the drawer shows its close button, a CloseButton at the end of the heading. Leave it out only where the drawer holds a control that closes it, such as a sidebar's own toggle."
+        },
+        {
+          "name": "closeLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Close', or EnvUIProvider's messages.dialog.close",
+          "description": "The close button's name."
+        },
+        {
+          "name": "width",
+          "type": "'md' | 'lg' | (string & {})",
+          "required": false,
+          "default": "'md'",
+          "description": "md, 24 rem, for details and filters; lg, 44 rem, for content-heavy panels such as tables and comparisons; or any CSS length, such as min(20rem, 100vw - 2rem). md and lg take the whole width of a window too narrow to leave the page beside them."
+        },
+        {
+          "name": "modal",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "true traps focus in the drawer over a backdrop, hides the page from assistive technology, blocks presses on it and locks its scroll. false leaves the page usable beside the drawer, for an inspector; it then closes when focus or a press goes outside it, unless disablePointerDismissal."
+        },
+        {
+          "name": "disablePointerDismissal",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Keep the drawer open on presses outside it, and a non-modal drawer also when focus moves outside, such as an inspector beside the page it inspects. Escape and the close buttons still close it."
+        },
+        {
+          "name": "initialFocus",
+          "type": "DialogFocusTarget",
+          "required": false,
+          "description": "The element to focus when the drawer opens, as a ref or a function of how it was opened. By default focus moves to the first focusable element inside, or to the drawer when opened by touch."
+        },
+        {
+          "name": "finalFocus",
+          "type": "DialogFocusTarget",
+          "required": false,
+          "description": "The element to focus when the drawer closes, as a ref or a function of how it closed, such as the main content after a navigation. By default focus returns to the trigger, or to the element that had focus when it opened."
+        },
+        {
+          "name": "pending",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Work started from the drawer is in progress: Escape, outside presses, swipes and the close button cannot dismiss it until pending returns to false, and the drawer reports busy."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
     "DropZone": {
       "kind": "component",
       "source": "packages/ui/src/forms/DropZone.tsx",
@@ -2676,7 +2801,7 @@
     "EmptyState": {
       "kind": "component",
       "source": "packages/ui/src/feedback/EmptyState.tsx",
-      "description": "",
+      "description": "What a region shows when it has nothing to show: no items yet, no matches, or content that failed to load. A title, a description, an optional icon and the action that resolves the state.",
       "props": [
         {
           "name": "title",
@@ -2710,10 +2835,10 @@
         },
         {
           "name": "tone",
-          "type": "'neutral' | 'error'",
+          "type": "'neutral' | 'danger'",
           "required": false,
           "default": "'neutral'",
-          "description": "Error states replace content that failed to load: they show the error icon by default and are announced as an alert. Pair them with a retry action."
+          "description": "neutral for a state with nothing to show yet; danger for content that failed to load, which shows the error icon by default and is announced as an alert. Pair it with a retry action."
         },
         {
           "name": "headingLevel",
@@ -3119,7 +3244,7 @@
     "HoverCard": {
       "kind": "component",
       "source": "packages/ui/src/feedback/HoverCard.tsx",
-      "description": "Supplementary details that open beside their trigger on hover and keyboard focus, like a link preview.",
+      "description": "Supplementary details that open beside their trigger on hover and keyboard focus, like a link preview. className, style, ref and data attributes go to the card.",
       "props": [
         {
           "name": "trigger",
@@ -3138,35 +3263,35 @@
           "type": "'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end'",
           "required": false,
           "default": "'bottom'",
-          "description": "bottom (default), top, left or right, or inline-start and inline-end, which follow the text direction."
+          "description": "bottom, top, left or right, or inline-start and inline-end, which follow the text direction."
         },
         {
           "name": "align",
           "type": "'start' | 'center' | 'end'",
           "required": false,
           "default": "'center'",
-          "description": "Lines the card up with the trigger's centre (default), start or end along the side."
+          "description": "Lines the card up with the trigger's centre, start or end along the side."
         },
         {
           "name": "delay",
           "type": "number",
           "required": false,
           "default": "600",
-          "description": "Milliseconds the pointer rests on the trigger before the card opens (600); focus opens it at once."
+          "description": "Milliseconds the pointer rests on the trigger before the card opens; focus opens it at once."
         },
         {
           "name": "closeDelay",
           "type": "number",
           "required": false,
           "default": "300",
-          "description": "Milliseconds before it closes once the pointer leaves the trigger and the card (300)."
+          "description": "Milliseconds before it closes once the pointer leaves the trigger and the card."
         },
         {
           "name": "width",
-          "type": "'standard' | 'wide'",
+          "type": "'md' | 'lg'",
           "required": false,
-          "default": "'standard'",
-          "description": "standard (default) about 20 rem wide; wide about 28 rem."
+          "default": "'md'",
+          "description": "md about 20 rem wide; lg about 28 rem."
         },
         {
           "name": "open",
@@ -3179,22 +3304,18 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Whether an uncontrolled card starts open; closed by default."
+          "description": "Whether an uncontrolled card starts open."
         },
         {
           "name": "onOpenChange",
           "type": "(open: boolean) => void",
           "required": false,
           "description": "Called with the new state when hover, focus or Esc opens or closes the card."
-        },
-        {
-          "name": "className",
-          "type": "string",
-          "required": false,
-          "description": "Classes for the card."
         }
       ],
-      "native": [],
+      "native": [
+        "div"
+      ],
       "entries": [
         "@envsemble/envui"
       ]
@@ -3447,7 +3568,7 @@
           "name": "label",
           "type": "string",
           "required": false,
-          "default": "'Loading'",
+          "default": "'Loading', or EnvUIProvider's messages.common.loading",
           "description": "What is loading, such as Loading project, which names the region for assistive technology; an aria-label overrides it."
         }
       ],
@@ -4269,16 +4390,16 @@
       "description": "A measurement within a known range, such as the seats assigned of a plan or the storage used of a quota: a label, an optional value and a bar, exposed as a meter. For how much of a task is done, use Progress.",
       "props": [
         {
-          "name": "label",
-          "type": "ReactNode",
-          "required": true,
-          "description": "What the bar shows, such as Seats assigned; it is visible above the bar and names it."
-        },
-        {
           "name": "value",
           "type": "number",
           "required": true,
           "description": "The measurement, between min and max. A value outside the range shows, and is reported, as the nearest end."
+        },
+        {
+          "name": "label",
+          "type": "ReactNode",
+          "required": true,
+          "description": "What the bar shows, such as Seats assigned; it is visible above the bar and names it."
         },
         {
           "name": "min",
@@ -4304,16 +4425,12 @@
           "name": "aria-valuetext",
           "type": "string",
           "required": false,
-          "description": "The value as assistive technology reads it, with its unit in words, such as 2 of 5 seats. Without it, a screen reader reads the bare number, aria-valuenow."
-        },
-        {
-          "name": "className",
-          "type": "string",
-          "required": false,
-          "description": "A class for the root element, such as one that sets its width."
+          "description": "The value as assistive technology reads it, with its unit in words, such as 2 of 5 seats. Without it, a screen reader reads the value as a percentage of the range, in the locale of the nearest EnvUIProvider."
         }
       ],
-      "native": [],
+      "native": [
+        "div"
+      ],
       "entries": [
         "@envsemble/envui"
       ]
@@ -4926,7 +5043,7 @@
     "Popover": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Popover.tsx",
-      "description": "A floating panel beside its trigger, for details or a small form: it opens on press, moves focus into itself, and closes with Esc, a press outside or when focus leaves it.",
+      "description": "A floating panel beside its trigger, for details or a small form: it opens on press, moves focus into itself, and closes with Esc, a press outside or when focus leaves it. className, style, ref and data attributes go to the popover's surface.",
       "props": [
         {
           "name": "trigger",
@@ -4954,10 +5071,10 @@
         },
         {
           "name": "side",
-          "type": "'top' | 'bottom' | 'left' | 'right'",
+          "type": "'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end'",
           "required": false,
           "default": "'bottom'",
-          "description": "The side of the trigger the popover opens on; it flips to the other side without room."
+          "description": "The side of the trigger the popover opens on: top, bottom, left, right, or inline-start and inline-end, which follow the text direction. It flips to the other side without room."
         },
         {
           "name": "align",
@@ -4987,52 +5104,41 @@
         },
         {
           "name": "width",
-          "type": "'standard' | 'wide'",
+          "type": "'md' | 'lg'",
           "required": false,
-          "default": "'standard'",
-          "description": "The popover's width: standard, 20 rem, for details and a field or two; wide, 28 rem, for a longer form. Both narrow to fit the window."
-        },
-        {
-          "name": "className",
-          "type": "string",
-          "required": false,
-          "description": "A class for the popover's surface."
+          "default": "'md'",
+          "description": "The popover's width: md, 20 rem, for details and a field or two; lg, 28 rem, for a longer form. Both narrow to fit the window."
         }
       ],
-      "native": [],
+      "native": [
+        "div"
+      ],
       "entries": [
         "@envsemble/envui"
       ]
     },
     "Progress": {
       "kind": "component",
-      "source": "packages/ui/src/feedback/Meter.tsx",
+      "source": "packages/ui/src/feedback/Progress.tsx",
       "description": "How much of a task is done, such as an upload or an import: a label, an optional value and a bar, exposed as a progress bar. Pass value null while the amount of work is unknown, and the bar sweeps instead.",
       "props": [
+        {
+          "name": "value",
+          "type": "number | null",
+          "required": true,
+          "description": "How much of the task is done, between min and max, such as 40 of 100; null while the amount of work is unknown, which shows an indeterminate bar announced as Loading."
+        },
+        {
+          "name": "segments",
+          "type": "number",
+          "required": false,
+          "description": "Splits the track into this many equal steps, such as 4 for a task of four stages, each filling in turn. Without it, the track is one bar."
+        },
         {
           "name": "label",
           "type": "ReactNode",
           "required": true,
           "description": "What the bar shows, such as Seats assigned; it is visible above the bar and names it."
-        },
-        {
-          "name": "className",
-          "type": "string",
-          "required": false,
-          "description": "A class for the root element, such as one that sets its width."
-        },
-        {
-          "name": "aria-valuetext",
-          "type": "string",
-          "required": false,
-          "description": "The value as assistive technology reads it, with its unit in words, such as 2 of 5 seats. Without it, a screen reader reads the bare number, aria-valuenow."
-        },
-        {
-          "name": "max",
-          "type": "number",
-          "required": false,
-          "default": "100",
-          "description": "The high end of the range."
         },
         {
           "name": "min",
@@ -5042,19 +5148,28 @@
           "description": "The low end of the range."
         },
         {
+          "name": "max",
+          "type": "number",
+          "required": false,
+          "default": "100",
+          "description": "The high end of the range."
+        },
+        {
           "name": "valueText",
           "type": "ReactNode",
           "required": false,
           "description": "The value as text at the end of the label's row, formatted by the application, such as 2 of 5 or 40%. Without it, no value shows."
         },
         {
-          "name": "value",
-          "type": "number | null",
-          "required": true,
-          "description": "How much of the task is done, between min and max, such as 40 of 100; null while the amount of work is unknown, which shows an indeterminate bar."
+          "name": "aria-valuetext",
+          "type": "string",
+          "required": false,
+          "description": "The value as assistive technology reads it, with its unit in words, such as 2 of 5 seats. Without it, a screen reader reads the value as a percentage of the range, in the locale of the nearest EnvUIProvider."
         }
       ],
-      "native": [],
+      "native": [
+        "div"
+      ],
       "entries": [
         "@envsemble/envui"
       ]
@@ -5840,7 +5955,7 @@
     "Spinner": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Spinner.tsx",
-      "description": "Work of unknown length in a small area, such as a panel that is updating: an arc in the control blue that turns, and keeps turning slowly with a reduced-motion preference. With a label it is a progress bar named by it; without one it is hidden from assistive technology.",
+      "description": "Work of unknown length in a small area, such as a panel that is updating: an arc in the control blue that turns, and keeps turning slowly with a reduced-motion preference. With a label it is a progress bar named by it; without one it is hidden from assistive technology. The hook --env-spinner-color recolors it, such as to a button's label color.",
       "props": [
         {
           "name": "label",
@@ -5850,10 +5965,10 @@
         },
         {
           "name": "size",
-          "type": "'small' | 'standard' | 'large'",
+          "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "default": "'standard'",
-          "description": "small, 1 rem, inside controls and beside a line of text; standard, 1.5 rem, beside a heading or in a panel; or large, 3 rem, in the middle of a region whose content is on its way."
+          "default": "'md'",
+          "description": "sm, 1 rem, inside controls and beside a line of text; md, 1.5 rem, beside a heading or in a panel; or lg, 3 rem, in the middle of a region whose content is on its way."
         }
       ],
       "native": [
@@ -6777,17 +6892,17 @@
         },
         {
           "name": "defaultPlacement",
-          "type": "'bottom-right' | 'top-center'",
+          "type": "'bottom-end' | 'top-center'",
           "required": false,
-          "default": "'bottom-right'",
-          "description": "Where notifications show unless show names a placement: bottom-right, stacking upward from the bottom corner, or top-center, stacking downward from the top."
+          "default": "'bottom-end'",
+          "description": "Where notifications show unless show names a placement: bottom-end, stacking upward from the bottom corner at the end of the line, or top-center, stacking downward from the top."
         },
         {
           "name": "visibleLimit",
           "type": "number",
           "required": false,
           "default": "3",
-          "description": "How many notifications each placement shows at once, a positive integer. The newest stay visible; older ones wait behind a count of hidden notifications and come back as newer ones close."
+          "description": "How many notifications each placement shows at once, a positive integer. The newest stay visible; older ones wait behind a count of hidden notifications and come back as newer ones close. Danger notifications always show, and take their places first."
         }
       ],
       "native": [],
@@ -6993,19 +7108,19 @@
     "Tooltip": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Tooltip.tsx",
-      "description": "A short label beside a control, shown while the pointer rests on it or it has keyboard focus, such as an icon-only button's name or why a control is disabled. It closes on Esc and when the control is pressed.",
+      "description": "A short label beside a control, shown while the pointer rests on it or it has keyboard focus, such as an icon-only button's name or why a control is disabled. It closes on Esc and when the control is pressed. className, style, ref and data attributes go to the tooltip's popup.",
       "props": [
         {
           "name": "content",
           "type": "ReactNode",
           "required": true,
-          "description": "What the tooltip shows: a short, supplementary text, such as an icon-only control's name or why a control is disabled. It is visual only and not linked to the control for assistive technology, so the control's name or the page says the same; never the only place essential information appears."
+          "description": "What the tooltip shows: a short, supplementary text, such as an icon-only control's name or why a control is disabled. While it is open, a control with a name of its own is described by it (aria-describedby); never the only place essential information appears."
         },
         {
           "name": "children",
-          "type": "ReactElement<{ disabled?: boolean }>",
+          "type": "ReactElement<TriggerProps>",
           "required": true,
-          "description": "The one control it describes, such as an IconButton, which takes the trigger's props and ref. A disabled control is wrapped in a focusable element, so hovering and keyboard focus still open the tooltip."
+          "description": "The one control it describes, such as an IconButton, which takes the trigger's props and ref. A disabled control is wrapped in a focusable element that carries its name and reports it disabled, so hovering and keyboard focus still open the tooltip."
         },
         {
           "name": "side",
@@ -7022,7 +7137,9 @@
           "description": "Milliseconds the pointer rests on the control before the tooltip opens; keyboard focus opens it at once."
         }
       ],
-      "native": [],
+      "native": [
+        "div"
+      ],
       "entries": [
         "@envsemble/envui"
       ]

@@ -1,7 +1,7 @@
 ---
 title: HoverCard
 summary: A card of supplementary details that opens beside a link on hover and keyboard focus, like a link preview.
-status: beta
+status: stable
 since: 0.6.0
 category: Feedback & overlays
 aliases:
@@ -50,10 +50,10 @@ A hover card shows supplementary details beside its trigger, usually a link, onc
 
 ## Variants and sizes
 
-| Width      | Use for                                                                       |
-| ---------- | ----------------------------------------------------------------------------- |
-| `standard` | A short summary, such as a document's last change. About 20 rem. The default. |
-| `wide`     | Richer details, such as a person with an avatar and a role. About 28 rem.     |
+| Width | Use for                                                                       |
+| ----- | ----------------------------------------------------------------------------- |
+| `md`  | A short summary, such as a document's last change. About 20 rem. The default. |
+| `lg`  | Richer details, such as a person with an avatar and a role. About 28 rem.     |
 
 - The card is at most the window's width less 2 rem, and as tall as the room beside the trigger allows; longer content scrolls.
 - `side` places it below the trigger by default, or above, beside it, or at the inline start or end, which follow the text direction; `align` lines it up with the trigger's centre by default, or its start or end. It flips and shifts to stay 0.5 rem inside the window.
@@ -78,7 +78,7 @@ A hover card shows supplementary details beside its trigger, usually a link, onc
 
 - Use a hover card for a preview of what a link or a name refers to.
 - Keep the details supplementary: the page the link leads to has them too.
-- Use the wide card for content with an avatar or several lines.
+- Use the `lg` card for content with an avatar or several lines.
 
 ### Don't
 
@@ -112,7 +112,7 @@ A hover card shows supplementary details beside its trigger, usually a link, onc
 
 ### A person's details
 
-The wide card has room for an avatar beside the name and a role, and a line about the person.
+The `lg` card has room for an avatar beside the name and a role, and a line about the person.
 
 ```tsx example=PersonDetails
 
@@ -128,4 +128,5 @@ The wide card has room for an avatar beside the name and a role, and a line abou
 
 ## Changelog
 
+- **1.0.0**: `width` is `md` or `lg`; `className`, `style`, `ref` and data attributes reach the card, `env-hover-card`, which renders on PopupSurface in the trigger's text direction.
 - **0.6.0**: HoverCard.

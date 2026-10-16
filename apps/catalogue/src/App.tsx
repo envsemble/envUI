@@ -136,7 +136,6 @@ function Catalogue() {
             onClick={openSearch}
           />
           <Drawer
-            side="end"
             open={navigationOpen}
             onOpenChange={(open) => {
               if (open) setFocusContentOnClose(false);

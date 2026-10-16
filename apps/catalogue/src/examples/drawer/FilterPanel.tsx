@@ -38,7 +38,6 @@ export default function FilterPanel() {
   return (
     <Stack align="start">
       <Drawer
-        side="end"
         trigger={
           <Button variant="secondary" startIcon={<FilterList />}>
             Filters

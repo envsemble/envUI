@@ -1,7 +1,7 @@
 ---
 title: Spinner
 summary: Work of unknown length in a small area, such as a panel that is updating, as a turning arc.
-status: beta
+status: stable
 since: 0.4.0
 category: Feedback & overlays
 aliases:
@@ -16,7 +16,7 @@ aliases:
 useWhen:
   - Work of unknown length in a small area, such as a list that updates after a filter changes.
   - An update to content already shown, beside the content, which stays in place meanwhile.
-  - Content whose shape isn't known while it loads, such as a file's preview (`size="large"`).
+  - Content whose shape isn't known while it loads, such as a file's preview (`size="lg"`).
 avoidWhen:
   - text: The work that follows a press, such as saving; show it on the button that started it with `pending`.
     use: Button
@@ -50,11 +50,11 @@ For the work that follows a press, the button that started it shows a spinner it
 
 ## Variants and sizes
 
-| Size                | Use for                                                                                   |
-| ------------------- | ----------------------------------------------------------------------------------------- |
-| `small`, 1 rem      | Inside controls, and beside a line of text, a heading or the control that changed a list. |
-| `standard`, 1.5 rem | A panel or a card that is updating, beside its content.                                   |
-| `large`, 3 rem      | The middle of a region whose content is on its way, such as a preview.                    |
+| Size          | Use for                                                                                   |
+| ------------- | ----------------------------------------------------------------------------------------- |
+| `sm`, 1 rem   | Inside controls, and beside a line of text, a heading or the control that changed a list. |
+| `md`, 1.5 rem | A panel or a card that is updating, beside its content.                                   |
+| `lg`, 3 rem   | The middle of a region whose content is on its way, such as a preview.                    |
 
 - The spinner is a round-capped arc in the control blue, in a square of its size, that turns once every 1.4 s while it lengthens and shortens.
 - Inside a pending button it is small and takes the button's text color.
@@ -109,7 +109,7 @@ For the work that follows a press, the button that started it shows a spinner it
 
 ### Sizes
 
-Small, standard and large spinners, each with its own label.
+Small, medium and large spinners (`sm`, `md` and `lg`), each with its own label.
 
 ```tsx example=Sizes
 
@@ -133,4 +133,5 @@ A large spinner in the middle of a preview's frame, which keeps its size while t
 
 ## Changelog
 
+- **1.0.0**: `size` is `sm`, `md` or `lg`, as `data-size`; the drawing is hidden from assistive technology also when the spinner has a label.
 - **0.4.0**: Spinner, in small, standard and large sizes; pending buttons show a small one.
