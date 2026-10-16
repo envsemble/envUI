@@ -418,6 +418,10 @@
   },
   "tokens": {
     "$comment": "Every custom property that envUI 0.x or 1.0’s development defined and 1.0 no longer does, with what replaces it: `to`, the 1.0 custom property, which v1-classes writes in its place (every token takes the --env- prefix, and a few names change beyond it); `value`, the color of a 0.7 fixed color that no token replaces, which v1-classes reports; or `removed`, with `to` what to use instead where there is one, which v1-classes also reports. A `note` says what changed beyond the name. `npm run tokens:build` writes this section from packages/ui/src/generated/token-migration.json.",
+    "--app-sticky-top": {
+      "to": "--env-app-sticky-top",
+      "note": "The offset sticky content takes below the app shell's top bar, which AppShell sets."
+    },
     "--avatar-group-ring": {
       "to": "--env-avatar-group-ring",
       "note": "The ring color an application sets for an avatar group on a fill that is not an envUI surface."

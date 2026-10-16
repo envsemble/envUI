@@ -294,7 +294,11 @@
       "note": "The ring color an application sets for an avatar group on a fill that is not an envUI surface."
     },
     "--font-family-code": { "cssVariable": "--env-code-font-family" },
-    "--font-size-code": { "cssVariable": "--env-code-font-size" }
+    "--font-size-code": { "cssVariable": "--env-code-font-size" },
+    "--app-sticky-top": {
+      "cssVariable": "--env-app-sticky-top",
+      "note": "The offset sticky content takes below the app shell's top bar, which AppShell sets."
+    }
   },
   "aliases": {
     "--color-accent": {

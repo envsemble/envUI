@@ -583,7 +583,8 @@ function scopedSelector(selector) {
     .replace(/\s*([>+~])\s*/g, ' $1 ')
     .replace(/\s+/g, ' ')
     .trim();
-  if (normalized === ':where(.env-theme:where(html) > body)') return true;
+  // A themed document root's body takes the body type, from envUI's base layer.
+  if (normalized === 'html.env-theme > body') return true;
   if (
     !/[\s>+~,]/.test(normalized) &&
     /\.env-theme(?![\w-])/.test(normalized) &&
@@ -631,7 +632,7 @@ test('the CSS scope check accepts only selectors that match envUI elements', () 
     '.env-theme:where(:not(html))',
     '.env-theme:where(html)',
     'html.env-theme',
-    ':where(.env-theme:where(html) > body)',
+    'html.env-theme > body',
     ':where(.env-theme) .env-button',
     '.env-markdown > * + *',
     '.env-button + .env-button',

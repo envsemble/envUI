@@ -1,6 +1,11 @@
 {
   "$comment": "Generated from packages/ui/tokens by `npm run tokens:build`. Do not edit: change the tokens and rebuild. Maps every custom property that 1.0 no longer defines to what replaces it, from packages/ui/tokens/removed-tokens.json: the token (token, with its custom property, cssVariable) or the hand-written property (cssVariable alone) that takes its place, a fixed color's value, or nothing for a removed one. kind says why: prefixed (only the --env- prefix is new), renamed, alias (a 0.7 alias, removed for its role), fixed (a 0.7 color no role replaces) or removed; a note says what changed beyond the name. npm run tokens:build copies it into the tokens section of the codemods' rename map and the token list of docs/migration.md.",
   "names": {
+    "--app-sticky-top": {
+      "kind": "renamed",
+      "cssVariable": "--env-app-sticky-top",
+      "note": "The offset sticky content takes below the app shell's top bar, which AppShell sets."
+    },
     "--avatar-group-ring": {
       "kind": "renamed",
       "cssVariable": "--env-avatar-group-ring",

@@ -101,6 +101,7 @@ Renamed beyond the prefix:
 
 | Before 1.0                          | 1.0                                          | Note                                                                                                   |
 | ----------------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `--app-sticky-top`                  | `--env-app-sticky-top`                       | The offset sticky content takes below the app shell's top bar, which AppShell sets.                    |
 | `--avatar-group-ring`               | `--env-avatar-group-ring`                    | The ring color an application sets for an avatar group on a fill that is not an envUI surface.         |
 | `--color-bg-page-muted`             | `--env-color-bg-inset`                       | Named for its role: a background that leans back toward the page inside a fill.                        |
 | `--color-border-accent`             | `--env-color-border-accent-emphasis`         | The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge. |
