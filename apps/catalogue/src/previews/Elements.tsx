@@ -12,7 +12,6 @@ import {
   Kbd,
   Link,
   NavList,
-  Alert,
   Popover,
   SegmentedControl,
   Stack,
@@ -202,40 +201,6 @@ export function BadgesPreview() {
             </span>
           ))}
         </ActionGroup>
-      </Example>
-    </Preview>
-  );
-}
-
-export function AlertsPreview() {
-  const [dismissed, setDismissed] = useState(false);
-  return (
-    <Preview>
-      <Example title="Tones" size="wide">
-        <Stack gap={3}>
-          <Alert title="Sync paused">Changes are saved on this device until you reconnect.</Alert>
-          <Alert tone="success">The plan was published to the team.</Alert>
-          <Alert
-            tone="warning"
-            title="Two decisions are blocked"
-            action={
-              <Button variant="secondary" onClick={() => undefined}>
-                Review blockers
-              </Button>
-            }
-          >
-            The release cannot start until both are resolved.
-          </Alert>
-          {dismissed ? (
-            <Button variant="secondary" onClick={() => setDismissed(false)}>
-              Show the error again
-            </Button>
-          ) : (
-            <Alert tone="error" title="Search is unavailable" onDismiss={() => setDismissed(true)}>
-              The search service did not respond. Your open documents are still here.
-            </Alert>
-          )}
-        </Stack>
       </Example>
     </Preview>
   );

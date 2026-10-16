@@ -75,19 +75,19 @@
           "type": "'info' | 'success' | 'warning' | 'error'",
           "required": false,
           "default": "'info'",
-          "description": "info (default), success, warning or error; each has its tone color and default icon."
+          "description": "What the message means: info, success, warning or error. Sets the tint, the border and the icon; info and success alerts are also status messages."
         },
         {
           "name": "title",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A short heading for the message, such as \"Sync paused\", above the message."
         },
         {
           "name": "children",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "The message: what it means and what people can do."
         },
         {
           "name": "icon",
@@ -112,7 +112,7 @@
           "type": "string",
           "required": false,
           "default": "'Dismiss'",
-          "description": "Accessible name of the dismiss button; Dismiss by default."
+          "description": "Accessible name of the dismiss button, also shown as its tooltip."
         },
         {
           "name": "announce",

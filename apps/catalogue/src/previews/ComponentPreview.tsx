@@ -39,7 +39,6 @@ import {
   BadgesPreview,
   BreadcrumbsPreview,
   HoverCardPreview,
-  AlertsPreview,
   PopoverPreview,
   SegmentedControlPreview,
 } from './Elements';
@@ -127,8 +126,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <SkeletonPreview />;
     case 'toast':
       return <ToastsPreview />;
-    case 'alert':
-      return <AlertsPreview />;
     case 'popover':
       return <PopoverPreview />;
     case 'hover-card':
