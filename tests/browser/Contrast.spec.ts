@@ -593,6 +593,22 @@ test.describe('contrast', { tag: '@contrast' }, () => {
     expect(check([lowered], [], edited)).toEqual([
       expect.stringContaining('is held to less than the base snapshot records'),
     ]);
+    // Nor does deleting the snapshot and recording it afresh, which compares with the base too.
+    const afresh = (relaxed: Relaxation[]) =>
+      checkSnapshot({
+        ...common,
+        pairs: [lowered],
+        relaxed,
+        recorded: undefined,
+        update: true,
+        base,
+      });
+    expect(afresh([])).toEqual({
+      problems: [expect.stringContaining('is held to less than the base snapshot records')],
+      write: undefined,
+    });
+    expect(afresh([relaxation]).problems).toEqual([]);
+    expect(afresh([relaxation]).write?.pairs).toEqual(record([lowered], []).pairs);
     // A relaxation new since the base accepts it, recorded on the branch or not.
     const relaxedOnBranch = record([lowered], [relaxation], onBase);
     expect(check([lowered], [relaxation], relaxedOnBranch)).toEqual([]);

@@ -228,6 +228,12 @@ export function checkSnapshot(input: SnapshotInput): {
       problems.push(
         `${declaredFile} is missing: restore it from the repository, or, for a new registry, record it with npm run test:contrast -- --update-snapshots.`,
       );
+    // A snapshot written afresh holds every pair to what it asks today, so it is compared with the
+    // base first: deleting the file can't record a weakening the base would catch.
+    if (input.base)
+      problems.push(
+        ...compare(current, input.base.recorded, input.renamed, input.base.label, { fresh: false }),
+      );
     return { problems, write: problems.length === 0 ? current : undefined };
   }
 
