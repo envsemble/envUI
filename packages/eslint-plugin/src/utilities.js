@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { dirname, isAbsolute, resolve } from 'node:path';
 
 /** Reads one of the plugin's data files from src/data. */
 export function readData(name) {
@@ -124,11 +125,27 @@ export function isFunction(node) {
 /** The settings the plugin reads from `settings.envui`, shared by its rules. */
 const settingNames = new Set(['reexportModules']);
 
+/** Whether a module specifier is a path relative to where it is written: `./ui` or `../ui`. */
+const isRelative = (specifier) => /^\.\.?(?:\/|$)/.test(specifier);
+
+/**
+ * A module's file without the script extension or the trailing `/index` that resolving it may
+ * add: `src/ui`, `src/ui.ts` and `src/ui/index.tsx` are the same module.
+ */
+const modulePath = (path) =>
+  resolve(path)
+    .replace(/\.[cm]?[jt]sx?$/, '')
+    .replace(/[\\/]index$/, '');
+
 /**
  * The plugin's shared settings, from `settings.envui` in the ESLint configuration:
  * `reexportModules`, the modules of the application that re-export envUI's components under
- * envUI's names, such as `'./ui'` or `'@/components/ui'`. A module is matched by its specifier
- * exactly as an import writes it. Throws on a malformed or unknown setting.
+ * envUI's names, such as `'./src/ui'` or `'@/components/ui'`. `isReexportModule` tells whether an
+ * import's source in the file being linted is one of them. A relative entry names a file from
+ * ESLint's working directory, `context.cwd`, and an absolute entry names it outright; either
+ * matches a relative import that resolves to that file from the importing file, with or without
+ * its extension or `/index`. Any other entry, an alias or a package, matches an import that writes
+ * it exactly. Throws on a malformed or unknown setting.
  */
 export function pluginSettings(context) {
   const settings = context.settings?.envui ?? {};
@@ -145,7 +162,19 @@ export function pluginSettings(context) {
     reexportModules.some((module) => typeof module !== 'string' || module === '')
   )
     throw new Error(
-      "envui: settings.envui.reexportModules must be an array of module specifiers, such as ['./ui', '@/components/ui'].",
+      "envui: settings.envui.reexportModules must be an array of module specifiers, such as ['./src/ui', '@/components/ui'].",
     );
-  return { reexportModules: new Set(reexportModules) };
+  const isPath = (entry) => isRelative(entry) || isAbsolute(entry);
+  const files = new Set(
+    reexportModules.filter(isPath).map((entry) => modulePath(resolve(context.cwd, entry))),
+  );
+  const specifiers = new Set(reexportModules.filter((entry) => !isPath(entry)));
+  const directory = resolve(context.cwd, dirname(context.filename));
+  return {
+    isReexportModule(source) {
+      if (typeof source !== 'string') return false;
+      if (!isRelative(source)) return specifiers.has(source);
+      return files.has(modulePath(resolve(directory, source)));
+    },
+  };
 }

@@ -57,11 +57,12 @@ The rules share their settings under `settings.envui` in the ESLint configuratio
 
 ```js
 export default defineConfig(envui.configs.recommended, {
-  settings: { envui: { reexportModules: ['./ui', '@/components/ui'] } },
+  settings: { envui: { reexportModules: ['./src/ui', '@/components/ui'] } },
 });
 ```
 
-- A module is matched by its specifier exactly as an import writes it, in any file: `'./ui'` matches `import { Dialog } from './ui'`, but not `'../ui'` or `'./ui/index'`. List each spelling the application writes, or import the module through an alias that every file writes the same way, such as `'@/components/ui'`.
+- A relative entry, such as `'./src/ui'`, names the module's file from ESLint's working directory (`cwd`), usually the folder of the configuration where you run ESLint; an absolute path, such as `path.resolve(import.meta.dirname, 'src/ui')` in the configuration, names it outright. A relative import matches when it resolves to that file from the file that writes it, with or without the extension or `/index`: in `src/pages/Home.tsx`, `'../ui'`, `'../ui.ts'` and `'../ui/index'` match `'./src/ui'`, and `'./ui'`, which is `src/pages/ui`, does not.
+- Any other entry, an alias such as `'@/components/ui'` or a package, matches an import that writes it exactly, in any file: `'@/components/ui/index'` is a different spelling. List each spelling the application writes.
 - [no-html-elements](#no-html-elements) counts a name imported from a listed module as the envUI component it is exported as: `<Dialog role="alertdialog">` with `Dialog` from `'./ui'` passes.
 - [no-renamed-exports](#no-renamed-exports) checks the names imported or re-exported from a listed module as names of `@envsemble/envui`, and its message names the module as written: `import { Input } from './ui'` is reported, with `TextField` to import from `'./ui'`.
 - List only modules that keep envUI's names: a component of the application's own exported under an envUI name would count as envUI's.

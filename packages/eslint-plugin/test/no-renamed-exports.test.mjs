@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import rule from '../src/rules/no-renamed-exports.js';
 import { ruleTester, typeScriptRuleTester } from './RuleTester.mjs';
 
@@ -311,45 +312,76 @@ typeScriptRuleTester.run('no-renamed-exports in TypeScript', rule, {
 });
 
 // An application module that re-exports envUI, listed in the shared settings, stands for its main
-// entry point, and the message names the module as written.
-const reexports = { envui: { reexportModules: ['./ui', '@/components/ui'] } };
+// entry point, and the message names the module as written. A relative entry names a file from
+// ESLint's working directory, and an import matches it by the file it resolves to; an alias matches
+// as written.
+const reexports = { envui: { reexportModules: ['./src/ui', '@/components/ui'] } };
+const app = resolve('src/App.jsx');
+const page = resolve('src/pages/Page.jsx');
+const fromUi = (error, source) => ({ ...error, data: { ...error.data, source } });
 
 ruleTester.run('no-renamed-exports with modules that re-export envUI', rule, {
   valid: [
     // Without the setting, a module of the application is not envUI.
-    "import { Input } from './ui'; <Input />;",
-    { code: "import { TextField, Menu } from './ui'; <Menu.Root />;", settings: reexports },
-    { code: "import { Input } from '../ui';", settings: reexports },
+    { code: "import { Input } from './ui'; <Input />;", filename: app },
+    {
+      code: "import { TextField, Menu } from './ui'; <Menu.Root />;",
+      settings: reexports,
+      filename: app,
+    },
+    // Another folder's ./ui is another module.
+    { code: "import { Input } from './ui';", settings: reexports, filename: page },
+    { code: "import { Input } from '../ui';", settings: reexports, filename: app },
+    // An alias is matched as written.
+    { code: "import { Input } from '@/components/ui/index';", settings: reexports, filename: app },
+    { code: "import { Input } from 'src/ui';", settings: reexports, filename: app },
   ],
   invalid: [
     {
       code: "import { Input } from './ui';",
       settings: reexports,
+      filename: app,
+      errors: [fromUi(renamed('Input', 'TextField'), './ui')],
+    },
+    // The same module from another folder, and with its extension or index file.
+    {
+      code: "import { Input } from '../ui';",
+      settings: reexports,
+      filename: page,
+      errors: [fromUi(renamed('Input', 'TextField'), '../ui')],
+    },
+    {
+      code: "import { Input } from '../ui/index.ts'; import { Notice } from '../ui.js';",
+      settings: reexports,
+      filename: page,
       errors: [
-        {
-          ...renamed('Input', 'TextField'),
-          data: { ...renamed('Input', 'TextField').data, source: './ui' },
-        },
+        fromUi(renamed('Input', 'TextField'), '../ui/index.ts'),
+        fromUi(renamed('Notice', 'Alert'), '../ui.js'),
       ],
+    },
+    // An absolute entry names the file outright.
+    {
+      code: "import { Input } from '../ui';",
+      settings: { envui: { reexportModules: [resolve('src/ui/index.ts')] } },
+      filename: page,
+      errors: [fromUi(renamed('Input', 'TextField'), '../ui')],
     },
     {
       code: "export { Notice } from '@/components/ui';",
       settings: reexports,
-      errors: [
-        {
-          ...renamed('Notice', 'Alert'),
-          data: { ...renamed('Notice', 'Alert').data, source: '@/components/ui' },
-        },
-      ],
+      filename: page,
+      errors: [fromUi(renamed('Notice', 'Alert'), '@/components/ui')],
     },
     {
       code: "import * as ui from './ui'; <ui.Menu />;",
       settings: reexports,
+      filename: app,
       errors: [namespace('Menu', 'ui.Menu', 'ui.Menu.Root')],
     },
     {
       code: "const { LoadingBar } = await import('./ui');",
       settings: reexports,
+      filename: app,
       languageOptions: { sourceType: 'module', ecmaVersion: 2022 },
       errors: [internal('LoadingBar')],
     },

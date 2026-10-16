@@ -124,7 +124,7 @@ export default {
   },
   create(context) {
     const { sourceCode } = context;
-    const { reexportModules } = pluginSettings(context);
+    const { isReexportModule } = pluginSettings(context);
     /**
      * The envUI entry point whose names a module source stands for: the entry point itself, or the
      * main one for a module of the application that re-exports envUI. Messages name the source as
@@ -135,7 +135,7 @@ export default {
         ? undefined
         : Object.hasOwn(modules, source)
           ? source
-          : reexportModules.has(source)
+          : isReexportModule(source)
             ? mainEntryPoint
             : undefined;
     const isEntryPoint = (source) => entryPointOf(source) !== undefined;
