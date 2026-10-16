@@ -55,7 +55,7 @@ The application owns the data. It passes the visible rows in order, flattened, e
 1. **Tree**: the scroll container, as tall as its parent, with 0.5 rem inline padding. It is one tab stop.
 2. **Row** (an item of `items`): a full-width row with 0.5 rem corners, indented 0.75 rem per level of `depth`.
 3. **Chevron** (with `expandable`): points to the inline end, and down while `expanded`. Rows without children keep its place, so labels line up.
-4. **Icon** (optional, `icon`): decorative, 1 rem, or 1.125 rem in standard density.
+4. **Icon** (optional, `icon`): decorative, 1 rem.
 5. **Label** (`label`): the row's text on one line, ending with an ellipsis where it doesn't fit; `title` gives the row a native tooltip, such as the full path.
 6. **Detail** (optional, `detail`): muted text after the label, such as a status, which gives way first when the row runs out of room.
 7. **Trailing content** (optional, `trailing`): at the row's end, such as a CounterBadge.
@@ -63,14 +63,16 @@ The application owns the data. It passes the visible rows in order, flattened, e
 
 ## Variants and sizes
 
-| Density    | Use for                                                                                                           |
-| ---------- | ----------------------------------------------------------------------------------------------------------------- |
-| `compact`  | The default, for dense desktop interfaces such as a sidebar of files: 1.75 rem rows, 0.875 rem text, 1 rem icons. |
-| `standard` | Fewer rows with more room, such as mailboxes: 2.25 rem rows, 0.9375 rem text, 1.125 rem icons.                    |
+| Density | Use for                                                                           |
+| ------- | --------------------------------------------------------------------------------- |
+| `xs`    | The densest lists: 1.5 rem rows.                                                  |
+| `sm`    | Dense desktop interfaces, such as a sidebar of files: 1.75 rem rows. The default. |
+| `md`    | Fewer rows with more room, such as mailboxes: 2.25 rem rows.                      |
+| `lg`    | 2.75 rem rows.                                                                    |
 
-- On touch screens rows are 2.75 rem tall in both densities.
+- Density changes only the rows' padding: the text is 0.875 rem and the icons 1 rem at every density. In the compact [scale](../foundations/scale.md) the rows are shorter and the text 0.8125 rem; a `sm` row is 1.625 rem.
+- On touch screens rows are at least 2.75 rem tall at every density.
 - Rows take the navigation text color, with icons and chevrons in the muted navigation icon color. Hover and press show a translucent state layer; the selected row takes the navigation selection colors, its icon and chevron too, with their own hover and pressed tokens.
-- A compact tree opens a compact context menu, and a standard tree a standard one.
 
 ## States and behaviour
 
@@ -152,11 +154,11 @@ Right-click a row, or press <kbd>Shift</kbd>+<kbd>F10</kbd>, for its actions, an
 
 ```
 
-### Standard density
+### Row density
 
-Standard rows have more room, here with counts at the end, a detail and a disabled mailbox.
+`density="md"` gives the rows more room than the default `sm`, here with counts at the end, a detail and a disabled mailbox. Only the padding changes; the text and icons stay the same.
 
-```tsx example=StandardDensity
+```tsx example=RowDensity
 
 ```
 

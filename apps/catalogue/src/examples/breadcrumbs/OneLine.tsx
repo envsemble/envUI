@@ -12,7 +12,7 @@ const bar = {
 
 export default function OneLine() {
   return (
-    <Surface tone="row" padding={2} corners="standard" density="compact" style={bar}>
+    <Surface tone="row" padding={2} corners="standard" style={bar}>
       <Breadcrumbs
         aria-label="Document location"
         wrap={false}

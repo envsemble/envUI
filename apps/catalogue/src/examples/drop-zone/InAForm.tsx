@@ -16,7 +16,7 @@ export default function InAForm() {
       <Stack>
         <TextField label="Subject" name="subject" defaultValue="Quarterly figures" />
         <DropZone
-          compact
+          size="sm"
           multiple
           name="attachments"
           label="Attach files"

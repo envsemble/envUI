@@ -56,7 +56,7 @@ Kbd shows a keyboard key as a key cap: a small, bordered label with a heavier bo
 
 - A key cap is 1.375 rem tall and at least 1.375 rem wide, with 0.3125 rem inline padding and a 0.75 rem label in medium weight; a longer label, such as Shift, widens it. Labels don't wrap.
 - The label sits on the baseline of the surrounding text, so keys line up in a sentence whatever glyphs they show, and a combination lines up the same way.
-- In the shortcut of a compact menu, keys are 1.125 rem tall with 0.6875 rem labels in the muted text color.
+- In the shortcut of a menu item, keys are 1.125 rem tall with 0.6875 rem labels in the muted text color.
 
 ## States and behaviour
 

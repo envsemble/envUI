@@ -52,8 +52,8 @@ A list is a column of connected rows on the shared row fill: the first and last 
 
 ## Anatomy
 
-1. **List** (List.Root): a `ul` of rows 0.125 rem apart. With `contrast`, a muted pane with 0.75 rem padding around the rows.
-2. **Row** (List.Item): at least 3.5 rem tall, with 0.75 rem block and 1.5 rem inline padding, so its text stays clear of the large corners.
+1. **List** (List.Root): a `ul` of rows 0.125 rem apart. With `contrast`, a muted pane with 0.75 rem padding around the rows. `density` sets how tightly the rows pack, from `xs` to `lg`; it changes only their block padding.
+2. **Row** (List.Item): at `md`, the default, at least 3.5 rem tall, with 0.75 rem block and 1.5 rem inline padding, so its text stays clear of the large corners.
 3. **Title** (`title`): the row's main text, 0.875 rem in the row text color.
 4. **Detail** (optional, `detail`): a `small` below the title in the muted row detail color.
 5. **More content** (optional, `children`): after the title and the detail, such as a Badge.

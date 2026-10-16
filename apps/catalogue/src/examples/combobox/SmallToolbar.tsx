@@ -20,19 +20,26 @@ const documents: ComboboxGroup[] = [
   },
 ];
 
-export default function CompactToolbar() {
+export default function SmallToolbar() {
   return (
     <Surface
       tone="pane"
       padding={1}
       corners="pill"
-      density="compact"
       role="group"
       aria-label="Document toolbar"
       render={<ActionGroup />}
     >
-      <Combobox density="compact" aria-label="Document" placeholder="Document" items={documents} />
-      <Button variant="outlined">Open</Button>
+      <Combobox
+        size="sm"
+        showLabel={false}
+        aria-label="Document"
+        placeholder="Document"
+        items={documents}
+      />
+      <Button variant="outlined" size="sm">
+        Open
+      </Button>
     </Surface>
   );
 }

@@ -13,7 +13,7 @@ export default function PrefixAndSuffix() {
       />
       <TextField label="Storage" name="storage" type="number" suffix="GB" defaultValue="20" />
       <TextField
-        compact
+        showLabel={false}
         label="Price"
         name="price"
         inputMode="decimal"

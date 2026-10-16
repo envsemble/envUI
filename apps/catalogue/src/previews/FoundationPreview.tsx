@@ -1,6 +1,7 @@
 import { ColorsPreview } from './foundations/Colors';
 import { TypographyPreview } from './foundations/Typography';
 import { SpacingPreview } from './foundations/Spacing';
+import { ScalePreview } from './foundations/Scale';
 import { lazy, Suspense } from 'react';
 import { Text } from '@envsemble/envui';
 import { AccessibilityPreview } from './foundations/Accessibility';
@@ -24,6 +25,8 @@ function FoundationTopic({ id, onIconUsage }: FoundationPreviewProps) {
       return <TypographyPreview />;
     case 'spacing':
       return <SpacingPreview />;
+    case 'scale':
+      return <ScalePreview />;
     case 'icons':
       return (
         <Suspense fallback={<Text role="status">Loading icons…</Text>}>

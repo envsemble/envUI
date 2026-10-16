@@ -86,23 +86,19 @@ The family shares the parts and their look:
 4. **Item** (Menu.Item): one row with an optional leading `icon`, the label, an optional muted `description` below the label, optional `trailing` content such as a CounterBadge, and an optional `shortcut` hint as keys at the end.
 5. **Check mark** (Menu.RadioItem and Menu.CheckboxItem): a slot before the label that shows a check mark while the item is checked, so labels line up whether checked or not.
 6. **Group heading** (`label` of Menu.Group and Menu.RadioGroup): a small muted heading above related rows, which also names the group.
-7. **Separator** (Menu.Separator): a gap, or a hairline in compact menus, between sets of rows.
+7. **Separator** (Menu.Separator): a hairline between sets of rows.
 8. **Submenu row** (Menu.Submenu): an item with a chevron at its end, which points to the side its submenu opens on.
 
 OrganizationSwitcher composes the same pane: its trigger is a secondary Button with the active organization's name and up and down arrows, and its menu has a header with a groups icon and the Organizations heading, one radio row per organization with a radio dot, the name and a muted `detail`, and the create action as a pill below them.
 
 ## Variants and sizes
 
-| Density    | Use for                                                                                      |
-| ---------- | -------------------------------------------------------------------------------------------- |
-| `standard` | Menus in an application's pages and chrome, such as the account menu: tall rows.             |
-| `compact`  | Dense desktop interfaces, such as a toolbar or a compact Tree: the raised popup, short rows. |
+Menus have one anatomy, which Select's and Combobox's popups share, and follow the app's [scale](../foundations/scale.md).
 
-- **Standard**: the popup is 19 rem wide, at most the window's width less 2 rem, on the pane fill with 0.5 rem padding and 1.75 rem corners. Rows are at least 3 rem tall on the menu row fill, 0.125 rem apart, with 1.5 rem inline padding, 0.9375 rem labels and 1.25 rem icons. Each set of rows keeps 1.75 rem outer corners and 0.5 rem inner ones; a separator is a 0.25 rem gap, and a group heading is 0.875 rem.
-- **Compact**: the popup is as wide as its content, between 12 and 22 rem, on the raised popup fill with a hairline border, 0.25 rem padding and 0.75 rem corners. Rows are 1.75 rem tall with 0.5 rem corners, 0.875 rem labels and 1 rem icons, and fill only while highlighted; descriptions are 0.75 rem and wrap, which grows their row. Shortcuts are small muted keys, separators are hairlines in the popup border color and group headings are 0.75 rem. Labels line up across rows: once a row has a check mark or an icon, the others keep its place.
-- On coarse pointers, rows in both densities are at least 2.75 rem tall.
-- A menu taller than the room beside its trigger scrolls. A submenu takes the density and the theme of its menu.
-- OrganizationSwitcher is a standard menu. A long organization name truncates with an ellipsis in the trigger and wraps in the menu; the trigger is as wide as its name, up to its container's width.
+- The popup is as wide as its content, between 12 and 22 rem, on the raised popup fill with a hairline border, 0.25 rem padding and 0.75 rem corners. Rows are as tall as the scale's row height, 2.25 rem, or 1.75 rem in the compact scale, with 0.5 rem corners, 0.875 rem labels and 1 rem icons, and fill only while highlighted; descriptions are 0.75 rem and wrap, which grows their row. Shortcuts are small muted keys, separators are hairlines in the popup border color and group headings are 0.75 rem. Labels line up across rows: once a row has a check mark or an icon, the others keep its place.
+- On coarse pointers, rows are at least 2.75 rem tall.
+- A menu taller than the room beside its trigger scrolls. A submenu takes the theme and the scale of its menu.
+- OrganizationSwitcher composes the same popup, with a header and radio rows. A long organization name truncates with an ellipsis in the trigger and wraps in the menu; the trigger is as wide as its name, up to its container's width.
 
 ## States and behaviour
 
@@ -133,7 +129,6 @@ OrganizationSwitcher composes the same pane: its trigger is a secondary Button w
 - Put the most frequent actions first, and split long menus into sets with separators or groups.
 - Keep submenus shallow, one level in most menus, for related choices such as recent documents or a theme.
 - Offer the actions of a context menu in a visible control too, such as a row's More actions button, for people who cannot right-click.
-- Use compact density in dense desktop interfaces, and standard everywhere else.
 - Use OrganizationSwitcher for the active organization, and compose the account menu from AvatarButton, Menu.Header and items; build every other menu from the parts.
 
 ### Don't
@@ -224,11 +219,11 @@ A submenu opens beside its row on hover, or with <kbd>→</kbd>, and choosing an
 
 ```
 
-### Compact density
+### A file menu
 
-`density="compact"` is the desktop dropdown for dense surfaces. Labels line up whether a row has an icon, a check mark or neither, and submenus open compact too.
+A desktop file menu with shortcuts, a submenu and a group of choices. Labels line up whether a row has an icon, a check mark or neither.
 
-```tsx example=CompactDensity
+```tsx example=FileMenu
 
 ```
 

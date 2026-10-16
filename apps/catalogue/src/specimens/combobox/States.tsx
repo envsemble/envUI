@@ -36,7 +36,8 @@ export default function States() {
         <Specimen title="Compact with chips">
           <Combobox
             multiple
-            density="compact"
+            size="sm"
+            showLabel={false}
             aria-label="Reviewers"
             placeholder="Reviewers"
             items={people}

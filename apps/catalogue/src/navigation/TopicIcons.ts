@@ -63,6 +63,7 @@ export const foundationIcons: Record<string, typeof Palette> = {
   colors: Palette,
   typography: TextFields,
   spacing: ViewList,
+  scale: ViewList,
   icons: Category,
   composition: ViewList,
   accessibility: TouchApp,
@@ -83,6 +84,7 @@ export function getComponentIcon(group: Reference['group']) {
 const referenceIcons: Record<string, typeof Palette> = {
   typography: FormatSize,
   spacing: FormatLineSpacing,
+  scale: FormatSize,
   composition: Extension,
   icons: Widgets,
   accessibility: AccessibilityNew,

@@ -39,7 +39,7 @@ const mailboxes: Mailbox[] = [
   },
 ];
 
-export default function StandardDensity() {
+export default function RowDensity() {
   const [clientsOpen, setClientsOpen] = useState(true);
   const [selected, setSelected] = useState<string | null>('inbox');
   // A collapsed folder leaves its children out of the visible rows.
@@ -55,7 +55,7 @@ export default function StandardDensity() {
     <div style={{ blockSize: '15rem', inlineSize: 'min(100%, 20rem)' }}>
       <Tree
         aria-label="Mailboxes"
-        density="standard"
+        density="md"
         items={rows}
         selectedId={selected}
         onOpen={(row) => (row.expandable ? setClientsOpen(!row.expanded) : setSelected(row.id))}

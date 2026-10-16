@@ -7,13 +7,12 @@ import { Save } from '@envsemble/envui/icons/Save';
 
 const recentDocuments = ['Quarterly report', 'Meeting notes', 'Budget'];
 
-export default function CompactDensity() {
+export default function FileMenu() {
   const [wordWrap, setWordWrap] = useState(true);
   const [theme, setTheme] = useState('system');
   return (
     <Menu.Root
       aria-label="Document"
-      density="compact"
       align="start"
       trigger={<Button variant="secondary">Document</Button>}
     >

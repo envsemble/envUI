@@ -58,18 +58,18 @@ The tabs are `items`, each a `value`, a `button`, the panel's `content` and whet
 
 ## Variants and sizes
 
-| Option                   | Use for                                                                                                     |
-| ------------------------ | ----------------------------------------------------------------------------------------------------------- |
-| `size="standard"`        | Most tabs: as tall as buttons, 2.5 rem, on a 3 rem rail.                                                    |
-| `size="compact"`         | Toolbars and bars: the whole rail is as tall as a compact control, 2 rem, as a compact SegmentedControl is. |
-| `orientation="vertical"` | A column of sections, such as a settings page's: the tabs fill the rail's width.                            |
-| `fill`                   | Views that fill a region, such as a canvas: the selected panel takes the height left below the rail.        |
+| Option                   | Use for                                                                                                  |
+| ------------------------ | -------------------------------------------------------------------------------------------------------- |
+| `size="lg"`              | Most tabs: as tall as buttons, 2.5 rem, on a 3 rem rail, as tall as a `lg` control. The default.         |
+| `size="sm"` or `"md"`    | Toolbars and bars: the rail is as tall as a `sm` or `md` control, as a SegmentedControl of that size is. |
+| `orientation="vertical"` | A column of sections, such as a settings page's: the tabs fill the rail's width.                         |
+| `fill`                   | Views that fill a region, such as a canvas: the selected panel takes the height left below the rail.     |
 
 <!-- specimen: TabControls -->
 
 - **Tab controls**: a tab is a Button in any variant, an IconButton or a NavList.Item without `href`. Prefer one variant for every tab of a rail; primary is Button's default. An icon-only tab needs an `aria-label`, and a NavList.Item takes its selected look while its tab is selected.
 - **Unselected tabs** are transparent with a muted label at rest, and show a translucent state layer on hover and press; the selected tab keeps its variant's hover and pressed colors. Labels keep 4.5:1 contrast at rest and on hover in both themes.
-- Tabs keep their size: labels wrap only within a tab, and a rail with more tabs than fit scrolls. On touch screens standard tabs grow to the 2.75 rem touch height, and a compact rail does.
+- Tabs keep their size: labels wrap only within a tab, and a rail with more tabs than fit scrolls. The rail follows the app's [scale](../foundations/scale.md). On touch screens tabs gain a 2.75 rem hit area.
 - A vertical rail has the 1.75 rem corners of a surface. Its panels stay below it, as in every Tabs; lay out Tabs as a row to put them beside it.
 
 ## States and behaviour
@@ -143,11 +143,11 @@ With `activation="manual"` the arrow keys move focus and <kbd>Enter</kbd> or <kb
 
 ```
 
-### Compact rail
+### Small rail
 
-`size="compact"` makes the rail as tall as a compact control, for a toolbar or a bar; a CounterBadge fits inside a tab.
+`size="sm"` makes the rail as tall as a small control, for a toolbar or a bar; a CounterBadge fits inside a tab.
 
-```tsx example=CompactSize
+```tsx example=SmallRail
 
 ```
 

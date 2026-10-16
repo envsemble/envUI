@@ -31,7 +31,7 @@ export default function Appearances() {
         </Specimen>
         <Specimen title="Compact">
           <TextField
-            compact
+            showLabel={false}
             label="Invite by e-mail"
             placeholder="name@example.com"
             startIcon={<Mail />}
@@ -39,7 +39,6 @@ export default function Appearances() {
         </Specimen>
         <Specimen title="Compact with a label">
           <TextField
-            compact
             showLabel
             label="Invite address"
             defaultValue="team@example.com"

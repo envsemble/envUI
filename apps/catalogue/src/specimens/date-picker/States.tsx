@@ -16,7 +16,7 @@ export default function States() {
           <DatePicker label="Archived on" defaultValue="2026-08-14" disabled />
         </Specimen>
         <Specimen title="Compact">
-          <DatePicker density="compact" aria-label="Due" placeholder="Due" />
+          <DatePicker size="sm" showLabel={false} aria-label="Due" placeholder="Due" />
         </Specimen>
       </SpecimenGrid>
     </Example>

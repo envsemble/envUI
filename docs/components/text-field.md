@@ -57,7 +57,7 @@ A text field takes a short value on one line, such as a name, an address or a nu
 
 The family shares the field's frame, label, hint, error and states:
 
-- **SearchField** is a TextField for a query, with a search icon and, while it has a query, a clear button; <kbd>Esc</kbd> also clears. It is compact by default, to sit beside buttons.
+- **SearchField** is a TextField for a query, with a search icon and, while it has a query, a clear button; <kbd>Esc</kbd> also clears. Its label is hidden by default, so it sits beside buttons with a placeholder.
 - **Textarea** takes text over several lines, at a fixed height that scrolls and resizes from its bottom edge, or growing with its content.
 
 ```tsx example=ProjectName
@@ -66,8 +66,8 @@ The family shares the field's frame, label, hint, error and states:
 
 ## Anatomy
 
-1. **Well**: the border, fill and corners of the variant, around every part but the hint and the error. Default fields have 1 rem corners; compact fields are pills.
-2. **Label** (`label`): rests in the empty field and floats into the outline while the field has focus or a value, hiding only the outline behind it. Compact fields hide it unless `showLabel` is set.
+1. **Well**: the border, fill and corners of the variant, around every part but the hint and the error. Fields at the control height are pills; floating and plain fields and text areas have 1 rem corners.
+2. **Label** (`label`): rests in the empty field and floats into the outline while the field has focus or a value, hiding only the outline behind it. `showLabel={false}` hides it, as SearchField does by default.
 3. **Start icon** (optional, `startIcon`): decorative, at the control icon size of 1 rem.
 4. **Prefix and suffix** (optional, `prefix`, `suffix`): short text in line with the value, not part of it.
 5. **Value**: the native input or textarea, with its placeholder.
@@ -79,7 +79,8 @@ The family shares the field's frame, label, hint, error and states:
 
 | Variant    | Use for                                                                                                                               |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `outlined` | In forms, dialogs and panes: a thin border that turns blue on hover and focus. The default.                                           |
+| `outlined` | In forms, dialogs, panes and toolbars: a thin border that turns blue on hover and focus, at the control height. The default.          |
+| `floating` | A long form on a page: an outlined field 3.5 rem tall, whose label floats above the value.                                            |
 | `plain`    | A value in a document or a header, such as a title, where a border would compete with the content: an underline on hover and focus.   |
 | `quiet`    | A search at the top of a sidebar or a list: only the text and the start icon at rest, and a soft fill under the pointer and in focus. |
 
@@ -87,10 +88,10 @@ Textarea comes outlined or plain.
 
 <!-- specimen: Appearances -->
 
-- Default fields are 3.5 rem tall inside a 0.0625 rem border, with 1 rem padding. A field with a visible label keeps 0.5 rem above it for the floated label.
-- Compact fields, set with `compact` and SearchField's default, take the 2.5 rem height of a button, 2 rem inside a compact surface and 2.75 rem on touch screens. A compact label rests in the middle and floats into the outline without adding height, so the field stays in line with buttons beside it. An end action in a compact field is 0.5 rem shorter than the field.
+- Outlined and quiet fields take the control height of their `size`, as every control does: `sm`, `md` and `lg` are 2, 2.5 and 3 rem in the comfortable scale, and 1.625, 2 and 2.375 rem in the compact one. Without a size, a field takes its container's control height, `md` by default. The label rests in the middle and floats into the outline without adding height, so the field stays in line with buttons beside it. An end action is 0.5 rem shorter than the field. On touch screens fields grow to 2.75 rem.
+- Floating and plain fields are 3.5 rem tall inside a 0.0625 rem border, 2.75 rem in the compact scale, with 1 rem padding. A field with a visible label keeps 0.5 rem above it for the floated label. See [scale and density](../foundations/scale.md).
 - A Textarea starts at 7.5 rem. With `rows`, a fixed Textarea is that many lines tall, at least 7.5 rem, and a growing one starts at that many lines, also below 7.5 rem.
-- Entered text and a resting label are 0.9375 rem; a floated label, the hint and the error are 0.875 rem. On touch screens, entered text, resting labels, prefixes and suffixes are 1 rem (16 px by default), so focusing a field does not zoom the page.
+- Entered text and a resting label are 0.9375 rem, 0.8125 rem in the compact scale; a floated label, the hint and the error are 0.875 rem. On touch screens, entered text, resting labels, prefixes and suffixes are 1 rem (16 px by default), so focusing a field does not zoom the page.
 - A field fills the width of its container; set the width on the container.
 
 ## States and behaviour
@@ -123,7 +124,7 @@ Textarea comes outlined or plain.
 ### Do
 
 - Use TextField for one line and Textarea for text over several lines.
-- Use the default size in forms, and compact fields in toolbars and beside buttons, where they share the button height.
+- Give a field and the buttons beside it the same size, so they line up; use `variant="floating"` for a long form on a page.
 - Use a text IconButton as `endAction`, so it takes the field's icon color and state layers.
 - Set `type`, `autoComplete` and `inputMode` to match the value, such as `type="email"` with `autoComplete="email"`, so browsers offer the right keyboard and autofill.
 - Use `readOnly` for a value people can see and copy but not change.
@@ -155,7 +156,7 @@ Textarea comes outlined or plain.
 ### envUI provides
 
 - Native `<input>` and `<textarea>` elements, so typing, selection, autofill, native validation, form submission and reset behave as the platform's. SearchField is `type="search"`, a search box.
-- A `<label>` tied to the control, kept for assistive technology when a compact field hides it.
+- A `<label>` tied to the control, kept for assistive technology when `showLabel={false}` hides it.
 - The hint and the error linked to the control as its description, and `aria-invalid` while `error` is set; the error icon is hidden from assistive technology.
 - The prefix and suffix read once, after the label and before the hint.
 - Decorative start icons hidden from assistive technology.
@@ -192,7 +193,7 @@ The hint states the rule and the error says how to correct the value. Here the f
 
 ### Prefix and suffix
 
-Short text in line with the value, such as the start of an address or a unit; forms submit only the value. It appears once the field has focus or a value, and always beside a compact field's placeholder.
+Short text in line with the value, such as the start of an address or a unit; forms submit only the value. It appears once the field has focus or a value, and always beside the placeholder of a field whose label is hidden.
 
 ```tsx example=PrefixAndSuffix
 
@@ -206,11 +207,11 @@ Short text in line with the value, such as the start of an address or a unit; fo
 
 ```
 
-### Compact fields beside buttons
+### Fields beside buttons
 
-Compact fields share the button height. Without a visible label the placeholder guides; with `showLabel` the label rests inside and floats into the outline without changing the height.
+Fields share the button height of their size. Without a visible label the placeholder guides; with its label shown, the label rests inside and floats into the outline without changing the height.
 
-```tsx example=CompactFields
+```tsx example=FieldsBesideButtons
 
 ```
 

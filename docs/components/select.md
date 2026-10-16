@@ -56,7 +56,7 @@ A select chooses one value from a list that stays collapsed until people open it
 3. **Chevron**: points down, and up while the list is open.
 4. **Hint** (optional, `hint`) and **error** (optional, `error`): under the trigger, 0.75 rem below it, as on a [TextField](../components/text-field.md); the error leads with an error icon.
 5. **Popup**: the raised popup surface with a hairline border, 0.5 rem below the trigger, at least as wide as the trigger and at most 24 rem.
-6. **Option**: a rounded row with the option's label; the chosen option takes the selection fill. In a compact select, a check mark before the label shows the chosen option instead.
+6. **Option**: a rounded row with a check-mark slot and the option's label; a check mark and a medium-weight label show the chosen option.
 
 ## Variants and sizes
 
@@ -67,9 +67,9 @@ A select chooses one value from a list that stays collapsed until people open it
 
 <!-- specimen: States -->
 
-- **Standard** density, the default, for forms, dialogs and settings: the trigger takes the 2.5 rem button height with 0.875 rem text and a 1.125 rem chevron. The popup has 1.75 rem corners and 0.5 rem padding; options are at least 2.5 rem tall, 0.125 rem apart, with 0.5 rem block and 1 rem inline padding, 0.875 rem text and corners that follow the popup's, inset by its padding.
-- **Compact** density (`density="compact"`), for dense desktop interfaces such as toolbars and title bars, has the compact menu's popup: the trigger is 2 rem tall with a 1 rem chevron, and the popup sits 0.25 rem below it with 0.75 rem corners, 0.25 rem padding and a 22 rem maximum width. Options are 1.75 rem tall rows that fill only while highlighted, and the chosen option shows a check mark and a medium-weight label.
-- On touch screens, triggers and options are at least 2.75 rem tall.
+- The trigger takes the control height of its `size`, as every control does: `sm`, `md` and `lg` are 2, 2.5 and 3 rem in the comfortable scale and 1.625, 2 and 2.375 rem in the compact one; without a size it takes its container's control height. It has 0.875 rem text and a 1.125 rem chevron, 1 rem at `sm` and in the compact scale.
+- The popup is the menus' raised popup: 0.75 rem corners, 0.25 rem padding and a 22 rem maximum width. Options are rows of the scale's row height, 2.25 rem or 1.75 rem compact, that fill only while highlighted, and the chosen option shows a check mark and a medium-weight label. See [scale and density](../foundations/scale.md).
+- On touch screens, options are at least 2.75 rem tall, and the trigger gains a 2.75 rem hit area.
 - A long option label wraps in the list. The popup scrolls when its options are taller than the room in the window.
 
 ## States and behaviour
@@ -99,7 +99,7 @@ A select chooses one value from a list that stays collapsed until people open it
 
 - Use the secondary trigger on the page and the outlined one on panes, dialogs, rows and toolbars.
 - Choose a sensible default where one option suits most people, and use a placeholder only where people must decide.
-- Use compact density in dense desktop toolbars, beside compact buttons and fields.
+- Give a select the size of the buttons and fields beside it, such as `sm` in a toolbar.
 - Name a select without a visible label with `aria-label`, such as after the row it sits in.
 
 ### Don't
@@ -166,11 +166,11 @@ A row's title names its select with `aria-label`; outlined triggers stay distinc
 
 ```
 
-### Compact in a toolbar
+### Small, in a toolbar
 
-A compact, outlined select fits a compact toolbar beside text icon buttons. Its list is the compact menu's, with a check mark on the chosen zoom level.
+A small, outlined select fits a toolbar beside small text icon buttons. Its list has a check mark on the chosen zoom level.
 
-```tsx example=CompactToolbar
+```tsx example=SmallToolbar
 
 ```
 

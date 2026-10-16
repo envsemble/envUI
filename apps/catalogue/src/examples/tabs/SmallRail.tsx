@@ -1,10 +1,10 @@
 import { Button, CounterBadge, Tabs, Text } from '@envsemble/envui';
 
-export default function CompactSize() {
+export default function SmallRail() {
   return (
     <Tabs
       aria-label="Requests"
-      size="compact"
+      size="sm"
       items={[
         {
           value: 'open',

@@ -9,12 +9,12 @@ const toolbar = {
   gap: '0.75rem',
 } as const;
 
-export default function CompactFields() {
+export default function FieldsBesideButtons() {
   return (
     <Stack style={{ inlineSize: 'min(100%, 28rem)' }}>
       <div style={toolbar}>
         <TextField
-          compact
+          showLabel={false}
           label="Invite by e-mail"
           type="email"
           placeholder="name@example.com"

@@ -76,10 +76,12 @@ While a stacking table stacks its rows, each row is a block titled by its first 
 
 ## Variants and sizes
 
-| Density    | Use for                                                                                   |
-| ---------- | ----------------------------------------------------------------------------------------- |
-| `standard` | Most tables, with 0.75 rem by 1 rem cell padding and 0.9375 rem text.                     |
-| `compact`  | Dense data people scan many rows of, with 0.5 rem by 0.75 rem padding and 0.875 rem text. |
+| Density | Use for                                                  |
+| ------- | -------------------------------------------------------- |
+| `xs`    | The densest data, such as a log: 0.375 rem cell padding. |
+| `sm`    | Data people scan many rows of: 0.5 rem cell padding.     |
+| `md`    | Most tables: 0.75 rem cell padding. The default.         |
+| `lg`    | Rows people read one by one: 1 rem cell padding.         |
 
 | Cell layout   | Use for                                                                 |
 | ------------- | ----------------------------------------------------------------------- |
@@ -88,7 +90,7 @@ While a stacking table stacks its rows, each row is a block titled by its first 
 | `nowrap`      | Short values that read badly when broken, such as names, dates and IDs. |
 | `scope="row"` | A header cell that heads its row, such as Total.                        |
 
-- **Rows**: a row of one line of text is about 2.8 rem tall, and 2.2 rem in a compact table. Buttons, icon buttons and fields in compact cells take the 2 rem compact height, and on touch screens the 2.75 rem touch height, as everywhere else.
+- **Rows**: density changes only the cells' block padding, never the text, which is 0.9375 rem; the cells' inline padding is 1 rem. A `md` row of one line of text is about 2.8 rem tall. Buttons, icon buttons and fields in cells take the small control height, 2 rem, at every density, so an action doesn't make its row taller than it needs; on touch screens they gain a 2.75 rem hit area. In the compact [scale](../foundations/scale.md) the text, padding and controls are smaller.
 - **Numbers**: set `numeric` on the column's header cell as well as on its cells, so the header lines up with the numbers.
 - **Widths**: without widths the browser sizes the columns to their content, and the table fills its region. `columnWidths` or `defaultColumnWidths`, in percent of the table's width adding up to 100, fix the columns instead: long words wrap anywhere and `nowrap` cells end with an ellipsis rather than widening the table. Header labels stay on one line; in a sortable or resizable header a label that doesn't fit ends with an ellipsis.
 - **Sticky header**: `stickyHeader` keeps the header row at the top of the region while the rows scroll beneath it, on an opaque fill that covers them. The region then scrolls vertically too, so give it a height through `regionClassName` or the surrounding layout. A caption scrolls away with the rows. Over a region that has nothing to scroll, or that is scrolled to an end, the wheel scrolls the page.
@@ -199,11 +201,11 @@ A Checkbox in the first cell selects the row; `selected` reports it and takes th
 
 ```
 
-### Compact rows
+### Row density
 
-Compact rows fit more data in the same height, and the buttons in their cells take the compact height.
+`density` changes only the rows' padding, from `xs` to `lg`; the text stays the same. Buttons in the cells take the small control height at every density.
 
-```tsx example=CompactDensity
+```tsx example=RowDensity
 
 ```
 

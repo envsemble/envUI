@@ -5,7 +5,7 @@ import { ViewList } from '@envsemble/envui/icons/ViewList';
 import { ViewModule } from '@envsemble/envui/icons/ViewModule';
 import { ViewTimeline } from '@envsemble/envui/icons/ViewTimeline';
 
-export default function CompactLayout() {
+export default function SmallToolbar() {
   const [layout, setLayout] = useState('list');
   return (
     // The toolbar is as wide as its controls.
@@ -14,14 +14,13 @@ export default function CompactLayout() {
         tone="pane"
         padding={1}
         corners="pill"
-        density="compact"
         role="group"
         aria-label="Projects"
         render={<ActionGroup />}
       >
         <SegmentedControl
           aria-label="Layout"
-          size="compact"
+          size="sm"
           value={layout}
           onValueChange={setLayout}
           options={[
@@ -31,7 +30,7 @@ export default function CompactLayout() {
             { value: 'timeline', label: 'Timeline', icon: <ViewTimeline />, disabled: true },
           ]}
         />
-        <Button variant="secondary" startIcon={<Add />}>
+        <Button variant="secondary" size="sm" startIcon={<Add />}>
           New project
         </Button>
       </Surface>

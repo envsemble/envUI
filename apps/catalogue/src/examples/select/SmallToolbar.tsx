@@ -6,7 +6,7 @@ import { ZoomOut } from '@envsemble/envui/icons/ZoomOut';
 const zoomLevels = ['50', '75', '100', '150', '200'];
 const zoomOptions = zoomLevels.map((value) => ({ value, label: `${value}%` }));
 
-export default function CompactToolbar() {
+export default function SmallToolbar() {
   const [zoom, setZoom] = useState<string | null>('100');
   const step = (direction: number) => {
     const index = zoomLevels.indexOf(zoom ?? '100') + direction;
@@ -19,7 +19,6 @@ export default function CompactToolbar() {
         tone="pane"
         padding={1}
         corners="pill"
-        density="compact"
         role="group"
         aria-label="Diagram"
         render={<ActionGroup />}
@@ -29,19 +28,26 @@ export default function CompactToolbar() {
         </Text>
         <IconButton
           variant="text"
+          size="sm"
           icon={<ZoomOut />}
           aria-label="Zoom out"
           onClick={() => step(-1)}
         />
         <Select
-          density="compact"
+          size="sm"
           variant="outlined"
           aria-label="Zoom"
           options={zoomOptions}
           value={zoom}
           onValueChange={setZoom}
         />
-        <IconButton variant="text" icon={<ZoomIn />} aria-label="Zoom in" onClick={() => step(1)} />
+        <IconButton
+          variant="text"
+          size="sm"
+          icon={<ZoomIn />}
+          aria-label="Zoom in"
+          onClick={() => step(1)}
+        />
       </Surface>
     </Stack>
   );

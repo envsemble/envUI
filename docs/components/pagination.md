@@ -1,6 +1,6 @@
 ---
 title: Pagination
-summary: The range of items shown with previous and next page buttons, compact enough for a toolbar.
+summary: The range of items shown with previous and next page buttons, small enough for a toolbar.
 status: beta
 since: 0.6.0
 category: Navigation
@@ -37,7 +37,7 @@ components:
 
 ## Overview
 
-Pagination shows which items of a long list are on screen, such as 1–60 of 245, and moves a page back or forward. It is compact enough for a toolbar: the range, then a previous and a next icon button with their names in tooltips, in a navigation landmark.
+Pagination shows which items of a long list are on screen, such as 1–60 of 245, and moves a page back or forward. It is small enough for a toolbar: the range, then a previous and a next icon button with their names in tooltips, in a navigation landmark.
 
 The application owns the page, the loading and the scroll position. Pagination reports the page a press asks for through `onPageChange`, shows a spinner on the button pressed while the page loads, announces the new range and keeps focus on the button, so people who page from the keyboard stay in place.
 
@@ -55,13 +55,13 @@ The application owns the page, the loading and the scroll position. Pagination r
 
 ## Variants and sizes
 
-| Option            | Use for                                                                                 |
-| ----------------- | --------------------------------------------------------------------------------------- |
-| `size="standard"` | Most places: 2.5 rem buttons, or the 2 rem compact height inside a compact surface.     |
-| `size="compact"`  | A compact toolbar outside a compact surface: 2 rem buttons anywhere.                    |
-| `variant`         | The buttons' look, as on IconButton: secondary by default, or text for a quiet toolbar. |
+| Option    | Use for                                                                                        |
+| --------- | ---------------------------------------------------------------------------------------------- |
+| `size`    | The buttons' height, as on every control: `sm` in a toolbar beside small fields, `md` or `lg`. |
+| `variant` | The buttons' look, as on IconButton: secondary by default, or text for a quiet toolbar.        |
 
-- On touch screens the buttons grow to 2.75 rem in both sizes.
+- Without a size, the buttons take the control height of their container, `md` by default. See [scale and density](../foundations/scale.md).
+- On touch screens the buttons keep their size and gain a 2.75 rem hit area.
 - In a toolbar the pager keeps its width while a field beside it shrinks; only a container too narrow for the pager itself wraps the buttons below the range.
 - In right-to-left text the pager runs from the right, and the chevrons point the way the pages run.
 
@@ -88,7 +88,7 @@ The application owns the page, the loading and the scroll position. Pagination r
 
 - Keep focus where it is and scroll the list to its top after a page loads, so the reader starts at the first new item.
 - Pass `pending` while a page loads, and `total` as soon as it is known, such as on the last page.
-- Use `size="compact"` or a compact surface in a toolbar beside compact fields.
+- Give the pager the size of the fields beside it, such as `sm` in a toolbar.
 
 ### Don't
 
@@ -130,11 +130,11 @@ A list read in batches shows the items on the page; `hasNextPage` says when the 
 
 ```
 
-### In a compact toolbar
+### In a small toolbar
 
-Inside a compact surface the buttons take the 2 rem compact height, and the field beside the pager shrinks first. The text variant keeps the toolbar quiet.
+`size="sm"` gives the buttons the small control height, as the field beside the pager has, and the field shrinks first. The text variant keeps the toolbar quiet.
 
-```tsx example=CompactToolbar
+```tsx example=SmallToolbar
 
 ```
 

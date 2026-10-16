@@ -1,5 +1,13 @@
 import { useState } from 'react';
-import { ActionGroup, Button, IconButton, SegmentedControl, Stack, Table } from '@envsemble/envui';
+import {
+  ActionGroup,
+  Button,
+  IconButton,
+  SegmentedControl,
+  Stack,
+  Table,
+  type RowDensity as Density,
+} from '@envsemble/envui';
 import { MoreVert } from '@envsemble/envui/icons/MoreVert';
 
 const reports = [
@@ -8,21 +16,19 @@ const reports = [
   { id: 'survey', name: 'Customer survey', owner: 'Alex Morgan', pages: 9 },
   { id: 'roadmap', name: 'Roadmap', owner: 'Jordan Kim', pages: 6 },
 ];
+const densities: readonly Density[] = ['xs', 'sm', 'md', 'lg'];
 
-export default function CompactDensity() {
-  const [density, setDensity] = useState<'standard' | 'compact'>('compact');
+export default function RowDensity() {
+  const [density, setDensity] = useState<Density>('sm');
   return (
     <Stack gap={3}>
       <ActionGroup>
         <SegmentedControl
           aria-label="Row density"
-          size="compact"
+          size="sm"
           value={density}
-          onValueChange={(value) => setDensity(value === 'standard' ? 'standard' : 'compact')}
-          options={[
-            { value: 'standard', label: 'Standard' },
-            { value: 'compact', label: 'Compact' },
-          ]}
+          onValueChange={(value) => setDensity(densities.find((each) => each === value) ?? 'md')}
+          options={densities.map((value) => ({ value, label: value.toUpperCase() }))}
         />
       </ActionGroup>
       <Table.Root aria-label="Reports" density={density}>
@@ -41,7 +47,7 @@ export default function CompactDensity() {
               <Table.Cell nowrap>{report.owner}</Table.Cell>
               <Table.Cell numeric>{report.pages}</Table.Cell>
               <Table.Cell align="end">
-                {/* In a compact table, buttons take the compact height. */}
+                {/* Buttons in the cells take the small control height at every density. */}
                 <ActionGroup align="end">
                   <Button variant="text">Open</Button>
                   <IconButton

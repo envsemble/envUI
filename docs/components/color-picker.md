@@ -50,15 +50,15 @@ A color picker chooses one opaque color in three ways that stay in step: a color
 ## Anatomy
 
 1. **Label** (`label`): the color's name above the picker, in supporting text; it names the picker's group and, with "HEX", its field.
-2. **Color area**: saturation across and brightness down for the current hue, with a round 1.75 rem handle; 3:2, between three compact control heights and 14 rem tall.
-3. **Hue slider**: the hues as a bar under the area, as tall as a compact control, with its own handle.
+2. **Color area**: saturation across and brightness down for the current hue, with a round 1.75 rem handle; 3:2, between three small control heights and 14 rem tall.
+3. **Hue slider**: the hues as a bar under the area, as tall as a small control, with its own handle.
 4. **HEX field**: the shared text field labelled HEX, with a hint, and an error when the draft isn't a color.
 5. **Swatch** (ColorSwatch): a round sample with a hairline ring in the strong border color, so white and black samples stay visible on every surface.
 
 ## Variants and sizes
 
 - The picker fills its container's width; the color area keeps its 3:2 shape within its height limits. Give the picker its width on the container, such as about 20 rem in a Popover.
-- The HEX field takes the field's `variant` and `compact`, as a TextField does.
+- The HEX field takes the field's `variant` and `size`, as a TextField does.
 - On touch screens the hue slider grows to 2.75 rem.
 - A ColorSwatch is 1 rem; as a Button's start icon, or inside another icon slot, it takes that icon's size.
 

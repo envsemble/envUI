@@ -16,7 +16,7 @@ aliases:
   - pill tabs
 useWhen:
   - People switch between two to five views or filters of the same content, such as Open, Blocked and Done items, and the choice applies at once.
-  - A toolbar switches how content is laid out, such as List and Board (`size="compact"`).
+  - A toolbar switches how content is laid out, such as List and Board (`size="sm"`).
   - A narrow container, such as a sidebar, holds a choice between two scopes (`fullWidth`).
 avoidWhen:
   - text: Each option has a panel of its own, such as the sections of a settings page.
@@ -61,14 +61,15 @@ A segmented control switches between a few views or filters of the same content,
 
 ## Variants and sizes
 
-| Size       | Use for                                                                                                        |
-| ---------- | -------------------------------------------------------------------------------------------------------------- |
-| `standard` | A control on the page or above content, beside buttons: the rail is 2.5 rem tall, as a button is. The default. |
-| `compact`  | Toolbars and other dense surfaces, beside compact fields and buttons: the rail is 2 rem tall.                  |
+| Size | Use for                                                                                 |
+| ---- | --------------------------------------------------------------------------------------- |
+| `sm` | Toolbars and other dense surfaces, beside small fields and buttons: a 2 rem rail.       |
+| `md` | A control on the page or above content, beside buttons: a 2.5 rem rail, as a button is. |
+| `lg` | Beside large controls: a 3 rem rail.                                                    |
 
 <!-- specimen: Sizes -->
 
-- Segments have 0.25 rem block and 1 rem inline padding, and 0.75 rem inline padding in a compact control. On touch screens both sizes are 2.75 rem tall.
+- The rail is as tall as every control of its size in the app's [scale](../foundations/scale.md); without a size it takes its container's control height, `md` by default. Segments fill it inside a 0.25 rem padding, with 1 rem inline padding, 0.75 rem at `sm`. On touch screens segments gain a 2.75 rem hit area.
 - Without `fullWidth` the rail is as wide as its options, up to the width of its container; options that don't fit scroll sideways inside the rail.
 - With `fullWidth` the rail fills its container and splits it evenly between the options. A label too long for its share ends with an ellipsis and shows whole in a tooltip; on touch screens, where tooltips don't show, it wraps onto more lines instead and the rail grows to hold it. The option's accessible name stays whole either way.
 
@@ -94,7 +95,7 @@ A segmented control switches between a few views or filters of the same content,
 
 - Use two to five options that all fit on one line, and show the content of the chosen one right away.
 - Put the most used option first, and start on it.
-- Use compact size in toolbars, beside compact buttons and fields.
+- Give the control the size of the buttons and fields beside it, such as `sm` in a toolbar.
 - Use `fullWidth` in a narrow container, such as a sidebar, so the options share it evenly.
 
 ### Don't
@@ -131,11 +132,11 @@ A segmented control switches between a few views or filters of the same content,
 
 ## Examples
 
-### Compact in a toolbar
+### Small, in a toolbar
 
-A compact control with icons fits a compact toolbar. Timeline is disabled, and the arrow keys skip it.
+`size="sm"` makes the rail as tall as the small button beside it. Timeline is disabled, and the arrow keys skip it.
 
-```tsx example=CompactLayout
+```tsx example=SmallToolbar
 
 ```
 
