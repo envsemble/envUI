@@ -27,7 +27,8 @@ test.describe('Drawer', () => {
     const tab = browserName === 'webkit' ? 'Alt+Tab' : 'Tab';
     for (const key of [tab, tab, tab, tab, `Shift+${tab}`, `Shift+${tab}`, `Shift+${tab}`]) {
       await page.keyboard.press(key);
-      expect(await holdsFocus(page, 'Filters')).toBe(true);
+      // Focus passes through the trap's guards on its way round, so it settles first.
+      await expect.poll(() => holdsFocus(page, 'Filters')).toBe(true);
     }
     await page.keyboard.press('Escape');
     await expect(drawer).toBeHidden();
