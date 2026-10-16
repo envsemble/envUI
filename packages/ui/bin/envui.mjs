@@ -24,7 +24,7 @@ Options:
   -h, --help     Show this help, or a command's.
   -v, --version  Show the installed envUI version.
 
-Docs: node_modules/@envsemble/envui/docs/agents.md`;
+Docs: node_modules/@envsemble/envui/docs/agent-tooling.md`;
 
 function main(argv) {
   const [command, ...rest] = argv;
@@ -60,9 +60,13 @@ function main(argv) {
     if (values.help) {
       console.log(`Usage: envui mcp
 
-Serves envUI to coding agents as an MCP server over stdio. Register it in the project, for example:
-  claude mcp add envui -- npx --no envui mcp
-  codex mcp add envui -- npx --no envui mcp
+Serves envUI to coding agents as an MCP server over stdio, from the installed version. Register
+it in the project, run from the project folder, on any platform:
+  claude mcp add --scope project envui -- node node_modules/@envsemble/envui/bin/envui.mjs mcp
+  codex mcp add envui -- node node_modules/@envsemble/envui/bin/envui.mjs mcp
+Where envUI is installed in a folder above, as in a workspace, use the path to it, or
+npx --no envui mcp (cmd /c npx --no envui mcp on Windows).
+Docs: node_modules/@envsemble/envui/docs/agent-tooling.md
 Tools: search, list_components, get_component, get_props, get_example, list_patterns,
 list_templates, get_tokens and plan.`);
       return 0;
