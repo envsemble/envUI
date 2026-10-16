@@ -19,17 +19,29 @@ import { OpenInFull } from '../icons/OpenInFull.js';
 import { PanelDockPanelContext } from './internal/PanelDockContext.js';
 
 export interface PanelDockHeaderProps extends Omit<ComponentPropsWithRef<'header'>, 'title'> {
-  /** The panel's title, as a heading. */
+  /**
+   * The panel's title, as a heading in 1.125 rem medium-weight text; it wraps between words rather
+   * than truncating.
+   */
   title: ReactNode;
-  /** Supporting text below the title, such as who changed it last. */
+  /** Supporting text below the title, in 0.875 rem muted text, such as who changed it last. */
   meta?: ReactNode;
-  /** The application's own actions before the window controls, such as Edit and a menu of more. */
+  /**
+   * The application's own actions, before the window controls, such as an Edit IconButton and a
+   * Menu of more; icon-only text buttons take the window controls' quiet icon color.
+   */
   actions?: ReactNode;
-  /** The window controls; PanelDockControls inside a PanelDock by default, null for none. */
+  /**
+   * The window controls: PanelDockControls inside a PanelDock by default. null leaves them out, and
+   * an element replaces them, such as PanelDockControls with translated labels.
+   */
   controls?: ReactNode;
-  /** The title's heading level in the page outline; 2 by default. The appearance stays the same. */
+  /**
+   * The title's heading level in the page outline; the look stays the same.
+   * @default 2
+   */
   headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
-  /** Content below the title row that stays with the header, such as Tabs. */
+  /** Content below the title row that stays with the sticky header, such as Tabs. */
   children?: ReactNode;
 }
 
@@ -95,13 +107,13 @@ export function PanelDockHeader({
 }
 
 export interface PanelDockControlsProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
-  /** Accessible name and tooltip of the control that minimizes the panel; Minimize by default. */
+  /** Accessible name and tooltip of the control that minimizes the panel to a chip. */
   minimizeLabel?: string;
-  /** Accessible name and tooltip of the control that maximizes the panel; Maximize by default. */
+  /** Accessible name and tooltip of the control that maximizes the panel to fill the region. */
   maximizeLabel?: string;
-  /** The same for a maximized panel, which returns it to the row; Restore by default. */
+  /** Accessible name and tooltip of the same control on a maximized panel, which returns it. */
   restoreLabel?: string;
-  /** Accessible name and tooltip of the control that closes the panel; Close by default. */
+  /** Accessible name and tooltip of the control that closes the panel. */
   closeLabel?: string;
 }
 

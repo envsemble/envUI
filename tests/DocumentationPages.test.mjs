@@ -42,7 +42,6 @@ const unconverted = [
   'list',
   'markdown',
   'menubar',
-  'panel-dock',
   'popover',
 ];
 
