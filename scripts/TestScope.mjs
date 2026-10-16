@@ -72,6 +72,8 @@ export const overrides = {
     'packages/ui/src/foundations/Theme.tsx',
     'packages/ui/src/index.ts',
   ],
+  /** Run for any library style sheet: every rule sits in a cascade layer and keeps its states under forced colors. */
+  stylesheetSpecs: ['CascadeLayers.spec.ts', 'ForcedColors.spec.ts'],
   /** Run for a shared change: quick specs that touch theming, fields, popups and the catalogue. */
   smokeSpecs: [
     'Colors.spec.ts',
@@ -438,7 +440,7 @@ export function buildIndex(root = repositoryRoot) {
     const directFixtureFiles = new Set(
       fixtures.flatMap((fixture) => fixtureByName.get(fixture) ?? []),
     );
-    for (const match of source.matchAll(/(?<![\w/])([\w-]+)\.html\b/g))
+    for (const match of source.matchAll(/(?<![\w])([\w-]+)\.html\b/g))
       for (const extension of ['.tsx', '.ts'])
         if (fixtureKnown.has(`tests/fixture/${match[1]}${extension}`))
           directFixtureFiles.add(`tests/fixture/${match[1]}${extension}`);
@@ -738,6 +740,9 @@ export function selectScope(paths, index) {
       // Props and the manifest come from the TypeScript sources.
       if (/\.tsx?$/.test(path)) scope.generated.add('docs');
       scope.build.library = true;
+      if (path.endsWith('.css'))
+        for (const spec of overrides.stylesheetSpecs)
+          want(scope.fastSpecs, spec, 'a library style sheet changed');
       if (overrides.sharedLibrary.includes(path)) {
         scope.contrast ||= path.endsWith('.css');
         scope.density = true;

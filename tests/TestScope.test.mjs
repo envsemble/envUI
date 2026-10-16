@@ -132,6 +132,7 @@ test('the overrides name specs, pages and names that exist', () => {
     ...Object.keys(overrides.specSubjects),
     ...overrides.smokeSpecs,
     ...overrides.catalogueSpecs,
+    ...overrides.stylesheetSpecs,
   ])
     assert.ok(index.specs.has(name), `${name} is a spec in tests/browser`);
   for (const page of overrides.smokePages) assert.ok(index.pages.has(page), `${page} is a page`);
@@ -154,6 +155,8 @@ test('a component stylesheet runs the specs about that component', () => {
   const scope = select('packages/ui/src/styles/Menu.css');
   assert.ok(fast(scope).includes('Menu.spec.ts'));
   assert.ok(fast(scope).includes('Menubar.spec.ts'));
+  // Any style sheet: the cascade layers and the forced-colors states.
+  for (const spec of overrides.stylesheetSpecs) assert.ok(fast(scope).includes(spec));
   assert.ok(!fast(scope).includes('Toast.spec.ts'));
   assert.deepEqual(scope.css, ['packages/ui/src/styles/Menu.css']);
   assert.equal(scope.contrast, false);
