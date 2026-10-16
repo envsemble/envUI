@@ -600,6 +600,65 @@ for (const failure of ['missing', 'aborted'] as const) {
   });
 }
 
+/**
+ * Opens the overview of the hosted build, then the Button page with every file under /assets/ that
+ * the overview had not loaded failing, chosen by when it is asked for rather than by
+ * module-files.json, so a file the map leaves out fails too. Returns the hero example, and a
+ * setter: `assets` makes every file under /assets/ fail, as when only the map arrives, and `up`
+ * serves every file.
+ */
+async function openFailingButtonPage(page: Page) {
+  const loaded = new Set<string>();
+  let state: 'opening' | 'failing' | 'assets' | 'up' = 'opening';
+  await serveSite(
+    page,
+    (pathname) => {
+      if (!pathname.startsWith('/assets/')) return false;
+      if (state === 'opening') loaded.add(pathname);
+      return state === 'assets' || (state === 'failing' && !loaded.has(pathname));
+    },
+    'aborted',
+  );
+  await page.goto(`${siteUrl}/#/overview`);
+  await expect(page.getByRole('heading', { level: 1, name: 'envUI' })).toBeVisible();
+  await expect(page.getByText(/^Loading .*…$/)).toHaveCount(0);
+  state = 'failing';
+  await page.evaluate(() => (window.location.hash = '#/components/button/overview'));
+  const hero = page.getByRole('group', { name: 'Button example', exact: true });
+  await expect(hero.getByText('The example could not load')).toBeVisible();
+  return { hero, set: (next: 'assets' | 'up') => (state = next) };
+}
+
+test('in the hosted build, a reload loads an example again whatever files failed as it opened', async ({
+  page,
+}) => {
+  // WebKit keeps every failed file failed across reloads unless the reload fetches it first.
+  requireSite();
+  const { hero, set } = await openFailingButtonPage(page);
+  set('up');
+  await hero.getByRole('button', { name: 'Reload the page', exact: true }).click();
+  await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+});
+
+test("in the hosted build, a reload whose files can't be fetched keeps the page and says so", async ({
+  page,
+}) => {
+  requireSite();
+  const { hero, set } = await openFailingButtonPage(page);
+  // module-files.json arrives, but none of the files it lists.
+  set('assets');
+  await page.evaluate(() => Object.assign(window, { stillHere: true }));
+  await hero.getByRole('button', { name: 'Reload the page', exact: true }).click();
+  await expect(hero.getByRole('status')).toHaveText(
+    'The connection seems to be down. Reload the page once it is back.',
+  );
+  expect(await page.evaluate(() => 'stillHere' in window)).toBe(true);
+  set('up');
+  await hero.getByRole('button', { name: 'Reload the page', exact: true }).click();
+  await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
+});
+
 for (const down of ['offline', 'unreachable'] as const) {
   test(`in the hosted build, a reload with the connection ${down} keeps the page and says so`, async ({
     page,
