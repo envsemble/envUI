@@ -19,6 +19,11 @@ const reports = {
     'line 3: exports Menu, which is the Menu namespace in 1.0; the old component is Menu.Root.',
     'line 3: exports MenuItem, which is Menu.Item in 1.0 and cannot be exported by its old name: export the Menu namespace or a constant instead.',
   ],
+  'namespace-destructuring.tsx': [
+    'line 5: destructures Root and Item from Menu, which is the Menu namespace in 1.0, and stays as it is; the 0.x component is Menu.Root.',
+    'line 6: destructures Cell from ui.Table, which is the Table namespace in 1.0, and stays as it is; the 0.x component is ui.Table.Root.',
+    'line 8: destructures Head from Table, which is the Table namespace in 1.0, and stays as it is; the 0.x component is Table.Root.',
+  ],
   'namespace-import.tsx': [
     'line 8: destructures DirectionLinks from ui, which is Pager.Root in 1.0: rename it by hand.',
     'line 19: ui.DirectionLink has a dynamic, spread or missing direction and stays as it is: use ui.Pager.Previous or ui.Pager.Next, which take no direction prop.',

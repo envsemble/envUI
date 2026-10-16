@@ -127,6 +127,32 @@ function literalValue(value) {
   return undefined;
 }
 
+/**
+ * The names an object pattern takes from a node, as in `const { Root, Item } = Menu` or
+ * `({ Root } = Menu)`, or undefined when the node is not destructured.
+ */
+function destructuredNames(path) {
+  const parent = path.parent?.node;
+  const pattern =
+    parent?.type === 'VariableDeclarator' && parent.init === path.node
+      ? parent.id
+      : parent?.type === 'AssignmentExpression' && parent.right === path.node
+        ? parent.left
+        : undefined;
+  if (pattern?.type !== 'ObjectPattern') return undefined;
+  return pattern.properties.map((property) =>
+    property.type === 'RestElement'
+      ? `...${property.argument.name}`
+      : property.computed
+        ? '[…]'
+        : (property.key.name ?? String(property.key.value)),
+  );
+}
+
+/** A list of names for a report: `Root`, `Root and Item`, `Root, Item and Group`. */
+const listOf = (names) =>
+  names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names.at(-1)}` : names[0];
+
 /** Whether a member-like node is itself the object of a further member access. */
 function isAccessedFurther(path) {
   const outer = path.parent?.node;
@@ -423,6 +449,15 @@ export default function transform(file, api, options = {}) {
       let kept = false;
       for (const reference of referencesTo(local)) {
         if (self && memberKinds.has(reference.kind)) continue;
+        // Parts destructured from the namespace are 1.0 code: the namespace stays.
+        const names = self ? destructuredNames(reference.path) : undefined;
+        if (names) {
+          warn(
+            reference.path.node,
+            `destructures ${listOf(names)} from ${local}, which is the ${rename.namespace} namespace in 1.0, and stays as it is; the 0.x component is ${local}${rename.to.slice(rename.namespace.length)}.`,
+          );
+          continue;
+        }
         if (reference.kind === 'export') {
           warn(
             reference.path.node,
@@ -577,6 +612,14 @@ export default function transform(file, api, options = {}) {
       }
       if (rename) {
         if (name === rename.namespace && isAccessedFurther(accessPath)) continue;
+        const names = name === rename.namespace ? destructuredNames(accessPath) : undefined;
+        if (names) {
+          warn(
+            access,
+            `destructures ${listOf(names)} from ${local}.${name}, which is the ${name} namespace in 1.0, and stays as it is; the 0.x component is ${local}.${rename.to}.`,
+          );
+          continue;
+        }
         changed = true;
         edits.push(() => accessPath.replace(build(flavor, [local, rename.namespace, rename.part])));
         continue;
