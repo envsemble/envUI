@@ -48,7 +48,6 @@ const unconverted = [
   'panel-dock',
   'popover',
   'progress',
-  'radio',
   'rating',
   'relative-time',
   'rich-text',

@@ -2,8 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import {
   TextField,
   Checkbox,
-  RadioGroup,
-  Radio,
   Select,
   Slider,
   Stack,
@@ -84,50 +82,6 @@ export function CheckboxPreview() {
             ))}
           </Stack>
         </Stack>
-      </Example>
-    </Preview>
-  );
-}
-
-export function RadioPreview() {
-  const [projectAccess, setProjectAccess] = useState('team');
-  return (
-    <Preview>
-      <Example title="Inline choices" size="field">
-        <RadioGroup
-          label="Access"
-          name="access-inline"
-          value={projectAccess}
-          onValueChange={setProjectAccess}
-        >
-          <Radio value="team" label="Team" />
-          <Radio value="private" label="Private" />
-          <Radio value="unavailable" label="Unavailable" disabled />
-        </RadioGroup>
-      </Example>
-      <Example title="Selectable rows">
-        <RadioGroup
-          label="Project visibility"
-          name="access-rows"
-          value={projectAccess}
-          onValueChange={setProjectAccess}
-          variant="rows"
-        >
-          <Radio value="team" label="Team" detail="Everyone in your workspace" />
-          <Radio value="private" label="Private" detail="Only invited people" />
-          <Radio
-            value="unavailable"
-            label="Public"
-            detail="Unavailable for this workspace"
-            disabled
-          />
-        </RadioGroup>
-      </Example>
-      <Example title="Disabled group" size="field">
-        <RadioGroup label="Inherited access" name="access-disabled" value="team" disabled>
-          <Radio value="team" label="Team" />
-          <Radio value="private" label="Private" />
-        </RadioGroup>
       </Example>
     </Preview>
   );
