@@ -458,6 +458,14 @@ test('an example that fails to load says so in place, and loads again on request
   await expect(hero.getByRole('button').first()).toBeVisible();
 });
 
+test('each Markdown table region is named after its heading', async ({ page }) => {
+  await page.goto(`${offline}#/components/menu/accessibility`);
+  const region = page.getByRole('region', { name: 'Keyboard table', exact: true });
+  await expect(region).toBeVisible();
+  await expect(region.getByRole('table')).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Table', exact: true })).toHaveCount(0);
+});
+
 test('offline hashes support direct links and back/forward navigation', async ({ page }) => {
   await page.goto(`${offline}#/components/select/usage`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Select');
