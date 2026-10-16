@@ -79,6 +79,22 @@ test('a provider leaves a contrast the application wrote over its own', async ({
   await expect(root).not.toHaveAttribute('data-env-contrast-source');
 });
 
+test('a provider keeps the same contrast the application wrote once it removed the marker', async ({
+  page,
+}) => {
+  // The same value over envUI's can't be told apart from it while the marker matches, as
+  // docs/setup.md says; without the marker, the contrast is the application's.
+  await page.goto(`${fixtureUrl}/?fixture=theme-contrast-provider`);
+  const root = page.locator('html');
+  await expect(root).toHaveAttribute('data-env-contrast', 'high');
+  await root.evaluate((element) => {
+    element.setAttribute('data-env-contrast', 'high');
+    element.removeAttribute('data-env-contrast-source');
+  });
+  await page.getByRole('button', { name: 'Follow the system contrast' }).click();
+  await expect(root).toHaveAttribute('data-env-contrast', 'high');
+});
+
 test('a provider at system leaves the contrast another mounted provider wrote', async ({
   page,
 }) => {
