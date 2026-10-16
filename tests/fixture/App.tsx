@@ -60,6 +60,7 @@ import { QuietButtonsFixture } from './QuietButtons.js';
 import { EmptyStatesFixture } from './EmptyStates.js';
 import { RatingsFixture } from './Ratings.js';
 import { DensityFixture } from './Density.js';
+import { StackingFixture } from './Stacking.js';
 import {
   ThemeContrastFixture,
   ThemeContrastNestedFixture,
@@ -79,6 +80,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'scroll-keys': ScrollKeysFixture,
   'framed-shell': FramedShellFixture,
   density: DensityFixture,
+  stacking: StackingFixture,
 };
 
 export default function App() {

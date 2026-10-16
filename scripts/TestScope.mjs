@@ -73,7 +73,7 @@ export const overrides = {
     'packages/ui/src/index.ts',
   ],
   /** Run for any library style sheet: every rule sits in a cascade layer and keeps its states under forced colors. */
-  stylesheetSpecs: ['CascadeLayers.spec.ts', 'ForcedColors.spec.ts'],
+  stylesheetSpecs: ['CascadeLayers.spec.ts', 'ForcedColors.spec.ts', 'Stacking.spec.ts'],
   /** Run for a shared change: quick specs that touch theming, fields, popups and the catalogue. */
   smokeSpecs: [
     'Colors.spec.ts',
