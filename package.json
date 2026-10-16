@@ -4,6 +4,8 @@
   "type": "module",
   "workspaces": [
     "packages/ui",
+    "packages/eslint-plugin",
+    "packages/stylelint-config",
     "apps/catalogue"
   ],
   "engines": {
@@ -19,7 +21,7 @@
     "site:dev": "npm run build:site && wrangler dev",
     "site:serve": "wrangler dev",
     "typecheck": "node scripts/BuildTokens.mjs && node scripts/GenerateDocumentation.mjs && tsc -p packages/ui/tsconfig.json --noEmit && tsc -p apps/catalogue/tsconfig.json --noEmit",
-    "test": "node --test tests/*.test.mjs",
+    "test": "node --test tests/*.test.mjs packages/*/test/*.test.mjs",
     "test:browser": "playwright test --project=chromium --project=firefox --project=webkit --project=live-development",
     "test:contrast": "playwright test tests/browser/Contrast.spec.ts --project=chromium",
     "test:a11y": "node scripts/GenerateDocumentation.mjs && playwright test --project=a11y",

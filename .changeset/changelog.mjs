@@ -1,5 +1,5 @@
-// Writes each changeset as one entry in packages/ui/CHANGELOG.md, without commit hashes, in the
-// style of the earlier, hand-written entries. Changesets groups the entries under Major, Minor and
+// Writes each changeset as one entry in the CHANGELOG.md of each package it names, such as
+// packages/ui/CHANGELOG.md, without commit hashes, in the style of the earlier, hand-written entries. Changesets groups the entries under Major, Minor and
 // Patch Changes.
 
 /** @type {import('@changesets/types').ChangelogFunctions} */
@@ -8,6 +8,7 @@ export default {
     const [first, ...rest] = changeset.summary.trim().split('\n');
     return [`- ${first}`, ...rest.map((line) => (line ? `  ${line}` : line))].join('\n');
   },
-  // envUI is the only published package, so no entry reports updated internal dependencies.
+  // The published packages do not depend on one another, so no entry reports updated internal
+  // dependencies.
   getDependencyReleaseLine: () => '',
 };

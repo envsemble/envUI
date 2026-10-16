@@ -10,6 +10,14 @@ if (tag !== `v${libraryPackage.version}`)
   throw new Error(`Tag ${tag} must match @envsemble/envui v${libraryPackage.version}.`);
 if (cataloguePackage.dependencies['@envsemble/envui'] !== libraryPackage.version)
   throw new Error('Catalogue dependency must match the release version.');
+// The lint packages are published with the library at its version (a fixed group in Changesets).
+for (const directory of ['eslint-plugin', 'stylelint-config']) {
+  const { name, version } = JSON.parse(
+    await readFile(new URL(`../packages/${directory}/package.json`, import.meta.url), 'utf8'),
+  );
+  if (version !== libraryPackage.version)
+    throw new Error(`${name} ${version} must have the release version ${libraryPackage.version}.`);
+}
 if (!/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(libraryPackage.version))
   throw new Error('Invalid version.');
 const prerelease = libraryPackage.version.includes('-');
