@@ -1,6 +1,8 @@
 import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
 import {
+  Children,
   createContext,
+  isValidElement,
   useContext,
   useId,
   type ComponentPropsWithRef,
@@ -14,8 +16,23 @@ import { ActionElement, type ActionElementProps } from '../internal/ActionElemen
 import { useSidebarCompact } from './internal/SidebarCompact.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 
-/** Inside NavList.Root or NavList.Group, an item renders as a list item. */
+/**
+ * Whether an item is one of a list's own items, which renders as its list item: true for the items
+ * of NavList.Root and NavList.Group, also through the application's components, and false inside an
+ * item and inside an element the application writes in the list, such as its own <li>.
+ */
 const ListContext = createContext(false);
+
+/** A list's children, each element the application writes in it ending the list's items. */
+function listItems(children: ReactNode) {
+  return Children.map(children, (child) =>
+    isValidElement(child) && typeof child.type === 'string' ? (
+      <ListContext value={false}>{child}</ListContext>
+    ) : (
+      child
+    ),
+  );
+}
 
 interface ItemSharedProps {
   size?: 'standard' | 'compact';
@@ -116,7 +133,14 @@ function Item(props: ItemProps) {
       {tooltip !== undefined && <TooltipPopup content={tooltip} side="inline-end" />}
     </BaseTooltip.Root>
   );
-  return inList ? <li>{control}</li> : control;
+  // An item inside this one, as in its trailing content, is no item of the list.
+  return inList ? (
+    <li>
+      <ListContext value={false}>{control}</ListContext>
+    </li>
+  ) : (
+    control
+  );
 }
 
 export type RootProps = ComponentPropsWithRef<'ul'>;
@@ -128,7 +152,7 @@ export type RootProps = ComponentPropsWithRef<'ul'>;
 function Root({ className, children, ...props }: RootProps) {
   return (
     <ul {...props} className={classNames('env-nav-list', className)}>
-      <ListContext value>{children}</ListContext>
+      <ListContext value>{listItems(children)}</ListContext>
     </ul>
   );
 }
@@ -149,7 +173,7 @@ function Group({ label, children, className, ...props }: GroupProps) {
         {label}
       </span>
       <ul className="env-nav-list-group-list" aria-labelledby={labelId}>
-        <ListContext value>{children}</ListContext>
+        <ListContext value>{listItems(children)}</ListContext>
       </ul>
     </li>
   );

@@ -109,7 +109,9 @@
   padding: 0;
   list-style: none;
 }
-.env-nav-list li:not(.env-nav-list-group) {
+/* The lists' own items only: an <li> the application writes inside an item keeps its styles. */
+.env-nav-list > li:not(.env-nav-list-group),
+.env-nav-list-group-list > li {
   display: flex;
   min-inline-size: 0;
   max-inline-size: 100%;
@@ -122,7 +124,7 @@
   max-inline-size: 100%;
 }
 .env-nav-list-group + .env-nav-list-group,
-.env-nav-list li:not(.env-nav-list-group) + .env-nav-list-group {
+.env-nav-list > li:not(.env-nav-list-group) + .env-nav-list-group {
   margin-block-start: var(--space-3);
 }
 .env-nav-list-group-label {
