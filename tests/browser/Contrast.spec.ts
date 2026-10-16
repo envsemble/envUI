@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 
 import { test, expect, type Page } from '@playwright/test';
 import { fixtureUrl } from './Servers';
@@ -18,7 +18,9 @@ import {
   declaredFile,
   formatSnapshot,
   minimumOf,
+  parseSnapshot,
   readBaseSnapshot,
+  readSnapshot,
   type DeclaredPairs,
 } from '../contrast/Snapshot';
 import { themes, type ContrastTheme } from '../contrast/Themes';
@@ -230,23 +232,25 @@ test.describe('contrast', { tag: '@contrast' }, () => {
       console.log(note);
       testInfo.annotations.push({ type: 'note', description: note });
     }
-    const snapshot = checkSnapshot({
-      pairs,
-      dropped,
-      renamed,
-      relaxed,
-      themes,
-      pairName,
-      recorded: existsSync(declaredFile)
-        ? (JSON.parse(readFileSync(declaredFile, 'utf8')) as DeclaredPairs)
-        : undefined,
-      update: ['all', 'changed'].includes(testInfo.config.updateSnapshots),
-      ci: Boolean(process.env.CI),
-      base,
-    });
-    problems.push(...snapshot.problems);
-    if (problems.length === 0 && snapshot.write)
-      writeFileSync(declaredFile, formatSnapshot(snapshot.write));
+    const working = readSnapshot();
+    if (working.problem !== undefined) problems.push(working.problem);
+    else {
+      const snapshot = checkSnapshot({
+        pairs,
+        dropped,
+        renamed,
+        relaxed,
+        themes,
+        pairName,
+        recorded: working.recorded,
+        update: ['all', 'changed'].includes(testInfo.config.updateSnapshots),
+        ci: Boolean(process.env.CI),
+        base,
+      });
+      problems.push(...snapshot.problems);
+      if (problems.length === 0 && snapshot.write)
+        writeFileSync(declaredFile, formatSnapshot(snapshot.write));
+    }
     const themeNames = new Set(themes.map((theme) => theme.name));
     const listed = new Set<string>();
     for (const exception of exceptions) {
@@ -622,6 +626,37 @@ test.describe('contrast', { tag: '@contrast' }, () => {
     expect(check([a], [], record([a], []))).toEqual([]);
     // Tightened back on the branch, a spent relaxation may stay as history.
     expect(check([a], [relaxation], record([a], [relaxation], relaxedOnBranch))).toEqual([]);
+  });
+
+  test('a snapshot from before dropped, renamed and relaxed were recorded still reads', () => {
+    const a: ContrastPair = { fg: '--a', bg: ['--b'], kind: 'text' };
+    const common = { dropped: [], renamed: [], relaxed: [], themes, pairName, ci: false };
+    const pairsOnly = { pairs: { '--a on --b': { kind: 'text', minimum: { standard: 4.5 } } } };
+    const older = parseSnapshot(JSON.stringify(pairsOnly), 'an older snapshot');
+    expect(older).toEqual({ recorded: { ...pairsOnly, dropped: [], renamed: [], relaxed: [] } });
+    // Compared as the base, it holds its pairs to what it recorded.
+    const weaker = { ...a, kind: 'non-text' as const };
+    const recorded = checkSnapshot({
+      ...common,
+      pairs: [weaker],
+      recorded: undefined,
+      update: true,
+    }).write!;
+    expect(
+      checkSnapshot({
+        ...common,
+        pairs: [weaker],
+        recorded,
+        update: false,
+        base: { label: 'an older snapshot', recorded: older.recorded! },
+      }).problems,
+    ).toEqual([expect.stringContaining('is held to less than an older snapshot records')]);
+    // What isn't a snapshot at all says so, rather than failing to iterate.
+    expect(parseSnapshot('[]', 'x').problem).toContain("isn't a snapshot the contrast gate reads");
+    expect(parseSnapshot('{"pairs": {}, "relaxed": {}}', 'x').problem).toContain(
+      "relaxed that isn't a list",
+    );
+    expect(parseSnapshot('{', 'x').problem).toContain("isn't valid JSON");
   });
 
   // Playwright requires the fixtures object as the first parameter, even when no fixture is used.

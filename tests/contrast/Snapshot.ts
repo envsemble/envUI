@@ -13,6 +13,7 @@
  * (readBaseSnapshot), which a branch can't edit along with Pairs.ts.
  */
 import { execFileSync } from 'node:child_process';
+import { existsSync, readFileSync } from 'node:fs';
 import type { ContrastKind, ContrastPair, Relaxation, Requirement } from './Pairs';
 import type { ContrastTheme } from './Themes';
 import { isDistance } from './Contrast';
@@ -342,6 +343,47 @@ function stripComment({ pairs, dropped, renamed, relaxed }: DeclaredPairs): Decl
   return { pairs, dropped, renamed, relaxed };
 }
 
+const isObject = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+/**
+ * Reads a snapshot's text, from `source`. A snapshot from before `dropped`, `renamed` or `relaxed`
+ * were recorded lists none; anything else that isn't a snapshot is a problem.
+ */
+export function parseSnapshot(
+  text: string,
+  source: string,
+): { recorded: DeclaredPairs; problem?: undefined } | { recorded?: undefined; problem: string } {
+  let data: unknown;
+  try {
+    data = JSON.parse(text);
+  } catch (error) {
+    return { problem: `${source} isn't valid JSON: ${(error as Error).message}` };
+  }
+  if (!isObject(data) || !isObject(data.pairs))
+    return {
+      problem: `${source} has no pairs object, so it isn't a snapshot the contrast gate reads.`,
+    };
+  const lists = {
+    dropped: data.dropped ?? [],
+    renamed: data.renamed ?? [],
+    relaxed: data.relaxed ?? [],
+  };
+  for (const [key, list] of Object.entries(lists))
+    if (!Array.isArray(list))
+      return {
+        problem: `${source} has a ${key} that isn't a list, so it isn't a snapshot the contrast gate reads.`,
+      };
+  return { recorded: { ...data, pairs: data.pairs, ...lists } as DeclaredPairs };
+}
+
+/** The working tree's snapshot: undefined when the file is missing. */
+export function readSnapshot(file = declaredFile) {
+  return existsSync(file)
+    ? parseSnapshot(readFileSync(file, 'utf8'), file)
+    : { recorded: undefined };
+}
+
 /**
  * The snapshot on the base branch: at ENVUI_CONTRAST_BASE, any revision git knows, or else at the
  * merge-base with origin/dev. It reads only what the clone already has, never fetching. Without git,
@@ -380,7 +422,10 @@ export function readBaseSnapshot(requested = process.env.ENVUI_CONTRAST_BASE): {
       note: `${declaredFile} doesn't exist at the base, ${commit.slice(0, 8)}: nothing to compare with.`,
     };
   }
-  return { base: { label, recorded: JSON.parse(text) as DeclaredPairs } };
+  const parsed = parseSnapshot(text, label);
+  return parsed.problem !== undefined
+    ? { problem: parsed.problem }
+    : { base: { label, recorded: parsed.recorded } };
 }
 
 /** The file's text for a snapshot. */
