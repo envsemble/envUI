@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import stylelint from 'stylelint';
-import config, { hairlineProperties } from '../index.js';
+import config, { hairlineProperties, rawColorFunction, stackingValues } from '../index.js';
 import { expectedTokens, libraryTokensUrl, tokensUrl } from '../scripts/SyncTokens.mjs';
 
 const readme = readFileSync(new URL('../README.md', import.meta.url), 'utf8');
@@ -238,4 +238,36 @@ test("envUI's own style sheets take px from the list this config ships", async (
   assert.ok(pxLists.length >= 2, 'the repository sets px for components and for tokens');
   for (const list of pxLists) assert.equal(list, hairlineProperties);
   assert.equal(config.rules['unit-disallowed-list'][1].ignoreProperties.px, hairlineProperties);
+  // The raw color functions and the z-index values, too.
+  assert.deepEqual(repository.rules['declaration-property-value-disallowed-list'], {
+    '/.*/': [rawColorFunction],
+  });
+  assert.equal(
+    repository.rules['declaration-property-value-allowed-list']['z-index'],
+    stackingValues,
+  );
+});
+
+test('keywords, data URLs, backdrop filters and stroke widths pass', async () => {
+  await passes('.a { z-index: inherit; } .b { z-index: initial; } .c { z-index: unset; }');
+  await passes(
+    `.a { background: url("data:image/svg+xml,%3Csvg fill='rgb(0 0 0)' stroke='hsl(0 0% 50%)'/%3E"); }`,
+  );
+  await passes(`.a { mask: url('data:image/svg+xml;utf8,<svg fill="rgb(1 2 3)"/>'); }`);
+  await passes('.a { backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }');
+  await passes('.a { stroke-width: 1px; }');
+  // A color after a url() is still the style's own.
+  assert.deepEqual(await lint('.a { background: url("a.svg") no-repeat, rgb(1 1 1); }'), [
+    {
+      rule: 'declaration-property-value-disallowed-list',
+      text: 'url("a.svg") no-repeat, rgb(1 1 1)',
+    },
+  ]);
+  assert.match(
+    (await message('.a { background: url("data:,rgb(0 0 0)"), rgb(1 1 1); }')).text,
+    /^Raw color rgb\(1 1 1\) in background/,
+  );
+  assert.deepEqual(await lint('.a { z-index: 2; }'), [
+    { rule: 'declaration-property-value-allowed-list', text: '2' },
+  ]);
 });

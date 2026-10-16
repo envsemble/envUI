@@ -7,9 +7,31 @@ import { colorTokenSuggestion, stackingAdvice } from './tokens.js';
 const documentation =
   'https://github.com/envsemble/envUI/blob/main/packages/stylelint-config/README.md';
 
-/** Color functions with literal channels; relative colors derived from a token (`hsl(from …)`) pass. */
-const rawColorFunction =
-  '/(?<![\\w-])(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\\((?!\\s*from\\b)/i';
+/** Not inside `url(…)`, where a data URL can spell colors of its own image. */
+const outsideUrl = String.raw`(?<!\burl\(\s*(?:"[^"]*|'[^']*|[^"')]*))`;
+/** The start of a color function call. */
+const colorFunctionStart = String.raw`(?<![\w-])(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(`;
+
+/**
+ * Color functions with literal channels, as a Stylelint regular expression; relative colors derived
+ * from a token (`hsl(from …)`) and colors inside `url()` pass. envUI's own style sheets use it too.
+ */
+export const rawColorFunction = `/${outsideUrl}${colorFunctionStart}(?!\\s*from\\b)/i`;
+
+/**
+ * The z-index values that pass: `auto`, the global keywords, and a custom property, also inside
+ * calc(). envUI's own style sheets use the same list.
+ */
+export const stackingValues = [
+  'auto',
+  'inherit',
+  'initial',
+  'unset',
+  'revert',
+  'revert-layer',
+  '/^var\\(--/',
+  '/^calc\\(.*var\\(--/',
+];
 
 /**
  * Where px may appear: hairlines and offsets that must not scale with the text, such as border and
@@ -25,15 +47,19 @@ export const hairlineProperties = [
   'box-shadow',
   'text-shadow',
   'filter',
+  '/^(?:-webkit-)?backdrop-filter$/',
+  'stroke-width',
   'text-decoration-thickness',
   'text-underline-offset',
   '/^--[\\w-]*(?:border|outline|ring|divider|rule|stroke)-(?:width|offset)$/',
   '/^--[\\w-]*(?:shadow|hairline)$/',
 ];
 
-/** A whole color function call, for the message. */
-const colorCall =
-  /(?<![\w-])(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\([^()]*(?:\([^()]*\)[^()]*)*\)?/i;
+/** A whole color function call outside url(), for the message. */
+const colorCall = new RegExp(
+  String.raw`${outsideUrl}${colorFunctionStart}[^()]*(?:\([^()]*\)[^()]*)*\)?`,
+  'i',
+);
 
 /** What to use instead of a raw color, with the envUI tokens for the property it is in. */
 const useColorToken = (property) =>
@@ -70,7 +96,7 @@ export default {
       },
     ],
     'declaration-property-value-allowed-list': [
-      { 'z-index': ['auto', '/^var\\(--/', '/^calc\\(.*var\\(--/'] },
+      { 'z-index': stackingValues },
       {
         message: (property, value) => `Literal ${property} ${value}: ${stackingAdvice()}`,
         url: `${documentation}#stacking-order`,

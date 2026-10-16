@@ -60,7 +60,7 @@ Colors come from envUI's semantic color tokens, so they follow the theme and kee
 
 - `color-no-hex` reports hex colors.
 - `color-named` reports named colors such as `red`.
-- `declaration-property-value-disallowed-list` reports color functions with literal channels: `rgb()`, `hsl()`, `hwb()`, `lab()`, `lch()`, `oklab()`, `oklch()` and `color()`. A relative color derived from a token, `hsl(from var(--color-fg-link) h s calc(l - 10))`, passes, as does `color-mix()` of tokens. This rule takes one list of options.
+- `declaration-property-value-disallowed-list` reports color functions with literal channels: `rgb()`, `hsl()`, `hwb()`, `lab()`, `lch()`, `oklab()`, `oklch()` and `color()`. A relative color derived from a token, `hsl(from var(--color-fg-link) h s calc(l - 10))`, passes, as does `color-mix()` of tokens. Colors inside `url()`, such as those a data URL's image spells, pass too. This rule takes one list of options. Its pattern is exported as `rawColorFunction`.
 
 Custom properties are checked too, including inline overrides of envUI's own tokens.
 
@@ -68,14 +68,15 @@ The token names in the messages come from [`data/tokens.json`](data/tokens.json)
 
 ### Stacking order
 
-`declaration-property-value-allowed-list` allows `z-index` only as `auto` or a custom property (`var(--…)`, also inside `calc()`). envUI has no stacking tokens yet, so until it has, keep an application's few z-index values in documented custom properties of its own, such as `var(--app-z-header)`, and the order of its layers stays in one place. Once a release has stacking tokens, the message names them. This rule takes one list of options.
+`declaration-property-value-allowed-list` allows `z-index` only as `auto`, a global keyword such as `inherit`, or a custom property (`var(--…)`, also inside `calc()`); the list is exported as `stackingValues`. envUI has no stacking tokens yet, so until it has, keep an application's few z-index values in documented custom properties of its own, such as `var(--app-z-header)`, and the order of its layers stays in one place. Once a release has stacking tokens, the message names them. This rule takes one list of options.
 
 ### Units
 
 `unit-disallowed-list` reports `px` outside hairlines, mirroring envUI's own style sheets. Type, spacing, control and row heights, icon sizes, radii and media queries use `rem`, so they follow the reader's font size. `px` stays for what must not scale:
 
 - border, outline and column-rule widths and the outline offset, but not radii or `border-spacing`;
-- `box-shadow`, `text-shadow` and `filter` offsets;
+- `box-shadow`, `text-shadow`, `filter` and `backdrop-filter` offsets and blurs;
+- SVG `stroke-width`;
 - `text-decoration-thickness` and `text-underline-offset`;
 - custom properties whose name ends in one of them: `--…-border-width`, `--…-ring-offset`, `--…-shadow` or `--…-hairline`, such as `--card-border-width` or `--focus-ring-offset`. A `--card-border-radius` takes rem.
 
