@@ -27,6 +27,40 @@ For co-development with an authorized local envUI checkout, follow [local develo
 
 Connect Theme to the current preference and first-render initialization. Scope old/new styles deliberately during coexistence. Check inherited tokens/cascade on migrated controls and vendor widgets. Retain vendor theme providers and portal styling where required.
 
+## Upgrade from envUI 0.x to 1.0
+
+envUI 1.0 renames components, compound parts, classes and documentation pages, and makes a few helpers internal; nothing is exported under a 0.x name. The codemods and the lint packages, released with envUI at the same version, do most of the work. Commit first, as the codemods write files in place:
+
+```sh
+npx @envsemble/envui-codemods@<version> v1-names src --dry   # the files that would change, and the reports
+npx @envsemble/envui-codemods@<version> v1-names src
+npx @envsemble/envui-codemods@<version> v1-classes src
+```
+
+Then install envUI 1.0, format, type-check and lint with the ESLint plugin:
+
+```js
+// eslint.config.js
+import { defineConfig } from 'eslint/config';
+import envui from '@envsemble/eslint-plugin-envui';
+
+export default defineConfig(envui.configs.recommended);
+```
+
+- `v1-names` rewrites imports and references from `@envsemble/envui` and `@envsemble/envui/theme-bootstrap`: renamed components and types (`Input` is `TextField`), namespace parts (`MenuItem` is `Menu.Item`, `<Menu>` is `<Menu.Root>`), `DirectionLink` by its literal `direction` (`Pager.Previous` or `Pager.Next`), re-exports, and `defaultThemeStorageKey`, which becomes `'env-theme'`.
+- `v1-classes` renames `env-*` classes and `--env-*` custom properties in style sheets, class names and selector strings.
+- `envui/no-renamed-exports` reports every 0.x name left, also through `require()`, `import()` and `createElement()`, with its 1.0 name or what to use instead. The recommended config also reports raw elements that envUI provides, envUI's private classes and raw colors; `@envsemble/stylelint-config-envui` does the same for style sheets.
+
+Change by hand what the codemods report, each with its file and line:
+
+- removed exports: `LoadingBar` (AppShell's `loading` prop, or Progress), the manual `Toast` (`useToast()` inside `Toast.Provider`), `ToastProps` (`ToastNotification`), `getInitials`, `useLinkComponent` and `useSidebarCompact`;
+- a `DirectionLink` whose `direction` is computed or spread, or that is used outside JSX;
+- re-exports of namespace parts, and names destructured from a namespace import;
+- a local that shadows a namespace or a new name: the codemod writes a second import under an alias, such as `Menu as EnvMenu`, which you may rename;
+- a removed import's `@ts-expect-error` or disable comment, which the codemod drops with the line it applied to.
+
+The codemods also leave class names built at run time, CSS-in-JS, selectors nested in a Sass or Less rule (a DiffCount label in a nested `.env-diff-count` rule becomes `env-diff-stat-label`), mocks and `declare module` augmentations; search for the old names there. The codemods' rename map, `src/maps/v1.json` in `@envsemble/envui-codemods`, lists every change.
+
 ## Migrate by responsibility
 
 Prefer a small complete slice with shared controls and representative interactions, then expand through callers. The first slice should expose routing, forms or overlays rather than only a static button. Choose an order that fits the application; shared wrappers can reduce repetition when their contract still fits.
