@@ -53,5 +53,5 @@ test('overview cards are single named links, including their padding', async ({ 
     );
   }
   await card.click({ position: { x: (await card.boundingBox())!.width / 2, y: 8 } });
-  await expect(page).toHaveURL(/#\/components\/card\/overview$/);
+  await expect(page).toHaveURL(/\/components\/card\/overview$/);
 });

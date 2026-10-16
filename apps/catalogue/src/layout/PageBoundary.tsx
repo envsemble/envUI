@@ -2,6 +2,7 @@ import { Component, createRef, type ReactNode } from 'react';
 import { Alert, Button, Link, Stack } from '@envsemble/envui';
 import { errorMessage, focusDropped, focusedElement, reloadPage } from '../template/LoadBoundary';
 import { PageHeader } from './PageHeader';
+import { homeRoute, routeHref } from '../navigation/Address';
 
 interface PageBoundaryProps {
   /** The page's title, kept as its heading when the page fails. */
@@ -67,7 +68,7 @@ export class PageBoundary extends Component<PageBoundaryProps, PageBoundaryState
                 Reload the page
               </Button>
             ) : (
-              <Link href="#/overview">Return to overview</Link>
+              <Link href={routeHref(homeRoute)}>Return to overview</Link>
             )
           }
         >

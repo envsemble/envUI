@@ -1,5 +1,12 @@
-import { foundations, references, type Reference } from '../Reference';
+import {
+  documents,
+  foundations,
+  references,
+  type Documentation,
+  type Reference,
+} from '../Reference';
 import type { TemplateSectionId } from '../DocumentationTypes';
+import { homeRoute, routeHref } from './Address';
 
 /** The views of a page not yet on the template: live specimens and the Markdown guidance. */
 export const referenceViews = [
@@ -82,20 +89,149 @@ export const referencePages = [
 ];
 export type ReferencePage = (typeof referencePages)[number];
 
-/** The reading order follows topics; reference tabs do not create extra destinations. */
+/** The sections of the catalogue's navigation, in order. */
+export const siteSections = [
+  'Get started',
+  'Foundations',
+  'Components',
+  'Patterns',
+  'Templates',
+  'Contributing',
+  'Changelog',
+] as const;
+export type SiteSection = (typeof siteSections)[number];
+
+/** Pages of docs/ for people who change envUI itself, rather than use it. */
+const contributingDocuments = new Set(['library-development', 'component-pages']);
+
+/**
+ * A page with one view: a guide or pattern of docs/, such as the migration guide, or a page of the
+ * catalogue's own, such as the token reference. `document` is the page of docs/ it shows.
+ */
+export interface StandalonePage {
+  path: string;
+  title: string;
+  section: SiteSection;
+  summary?: string;
+  document?: Documentation;
+}
+
+/**
+ * The guides and patterns of docs/, each at a path of its section. The setup guide and the index
+ * stay on the overview's Get started view.
+ */
+export const guidePages: StandalonePage[] = documents.flatMap((document): StandalonePage[] => {
+  if (document.group === 'Patterns')
+    return [
+      {
+        path: `patterns/${document.id}`,
+        title: document.title,
+        section: 'Patterns',
+        summary: document.summary,
+        document,
+      },
+    ];
+  if (document.group !== 'Setup and workflows' || ['index', 'setup'].includes(document.id))
+    return [];
+  const section = contributingDocuments.has(document.id) ? 'Contributing' : 'Get started';
+  const path = `${section === 'Contributing' ? 'contributing' : 'get-started'}/${document.id}`;
+  return [{ path, title: document.title, section, summary: document.summary, document }];
+});
+
+/** The catalogue's own pages: the token reference, templates and the changelog. */
+export const tokensPage: StandalonePage = {
+  path: 'foundations/tokens',
+  title: 'Design tokens',
+  section: 'Foundations',
+  summary:
+    'Every token as a CSS custom property, with its value in each theme and scale, generated from the token source.',
+};
+export const templatesPage: StandalonePage = {
+  path: 'templates',
+  title: 'Templates',
+  section: 'Templates',
+  summary: 'Whole pages composed from envUI, to start an application from.',
+};
+export const changelogPage: StandalonePage = {
+  path: 'changelog',
+  title: 'Changelog',
+  section: 'Changelog',
+  summary: 'What changed in each release of @envsemble/envui.',
+};
+export const standalonePages: StandalonePage[] = [
+  ...guidePages,
+  tokensPage,
+  templatesPage,
+  changelogPage,
+];
+
+export function findStandalonePage(path: string) {
+  return standalonePages.find((page) => page.path === path);
+}
+
+/** The single-view pages of a section, in the order of the navigation. */
+export const pagesOf = (section: SiteSection) =>
+  standalonePages
+    .filter((page) => page.section === section)
+    .map(({ path, title }) => ({ path, title, views: [] as readonly ViewOption[] }));
+
+/**
+ * The reading order, which the pager at the end of each page follows. Reference tabs do not create
+ * extra destinations, and pages with one view have none.
+ */
 export const documentationPages: { path: string; title: string; views: readonly ViewOption[] }[] = [
   { path: 'overview', title: 'Overview', views: [] },
+  ...pagesOf('Get started'),
   ...referencePages
     .filter((page) => page.section === 'Foundations')
     .map((page) => ({ path: page.path, title: page.reference.title, views: page.views })),
+  ...pagesOf('Foundations'),
   ...referencePages
     .filter((page) => page.section === 'Components')
     .map((page) => ({ path: page.path, title: page.reference.title, views: page.views })),
+  ...pagesOf('Patterns'),
+  ...pagesOf('Templates'),
+  ...pagesOf('Contributing'),
+  ...pagesOf('Changelog'),
 ];
+
+/** The view of a page on the template that shows the heading of id `anchor`, if it has one. */
+export function viewOfHeading(reference: Reference, anchor: string): ReferenceView | undefined {
+  const section = reference.sections?.find(({ anchors }) => anchors?.includes(anchor));
+  return section && sectionViews[section.id];
+}
 
 /** The address of a page in the view a reader starts with, or the one closest to view. */
 export function pageHref(page: ReferencePage, view?: string) {
-  return `#/${page.path}/${viewFor(page.reference, view)}`;
+  return routeHref(`${page.path}/${viewFor(page.reference, view)}`);
+}
+
+/**
+ * The route of a page by its document id, such as `button`, or by a catalogue page's, such as
+ * `tokens`, in `view` where the page has it, scrolled to the element `section`.
+ */
+export function routeOfDocument(
+  id: string,
+  { view, section }: { view?: string; section?: string } = {},
+): string | undefined {
+  const query = section ? `?${new URLSearchParams({ section })}` : '';
+  const reference = referencePages.find((page) => page.reference.id === id);
+  if (reference) {
+    const start = reference.reference.sections ? 'overview' : 'preview';
+    // A heading of a page on the template opens in the view that shows it.
+    const shown = (section && viewOfHeading(reference.reference, section)) ?? view ?? start;
+    return `${reference.path}/${viewFor(reference.reference, shown)}${query}`;
+  }
+  // The setup guide and the index are on the overview's Get started view, each in a section of its
+  // own, where its headings are.
+  if (id === 'setup' || id === 'index')
+    return `overview/get-started?${new URLSearchParams({ section: section ?? (id === 'setup' ? 'setup' : 'documentation') })}`;
+  if (id === 'overview') return homeRoute;
+  if (id === 'tokens') return `${tokensPage.path}${query}`;
+  if (id === 'templates') return templatesPage.path;
+  if (id === 'changelog') return changelogPage.path;
+  const guide = guidePages.find((page) => page.document?.id === id);
+  return guide && `${guide.path}${query}`;
 }
 
 export function findReferencePage(path: string) {
@@ -110,6 +246,26 @@ export function normalizeRoute(route: string): string {
     search.set('section', 'overview-components');
     return `overview/components?${search}`;
   }
+  // Guides and patterns were shown on the Get started view, by their document's id.
+  const shown = search.get('document');
+  if (originalPath === 'overview/get-started' && shown) {
+    const guide = guidePages.find((page) => page.document?.id === shown);
+    search.delete('document');
+    if (guide) {
+      search.delete('section');
+      return `${guide.path}${search.size ? `?${search}` : ''}`;
+    }
+  }
+  // A section's own address opens its first page.
+  const rest = search.size ? `?${search}` : '';
+  if (originalPath === 'get-started') return `overview/get-started${rest}`;
+  const first = {
+    foundations: referencePages[0].path,
+    patterns: pagesOf('Patterns')[0]?.path,
+    contributing: pagesOf('Contributing')[0]?.path,
+  }[originalPath];
+  if (first) return normalizeRoute(`${first}${rest}`);
+  if (findStandalonePage(originalPath)) return `${originalPath}${rest}`;
   if (/^getting-started(?:\/|$)/.test(originalPath)) {
     return `overview/get-started${search.size ? `?${search}` : ''}`;
   }
@@ -151,6 +307,10 @@ export function normalizeRoute(route: string): string {
   const requested = path.split('/')[2];
   // Before the template, Guidelines was the name of what is now a page's Preview.
   const view = requested === 'guidelines' && !page?.reference.sections ? 'preview' : requested;
-  const destination = page ? `${page.path}/${viewFor(page.reference, view)}` : path;
+  // A heading of a page on the template opens in the view that shows it, also from an old link
+  // such as components/button#keyboard.
+  const section = search.get('section');
+  const opened = (page && section && viewOfHeading(page.reference, section)) || view;
+  const destination = page ? `${page.path}/${viewFor(page.reference, opened)}` : path;
   return `${destination}${search.size ? `?${search}` : ''}`;
 }

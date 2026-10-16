@@ -53,14 +53,16 @@ const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-prac
  */
 const highContrastRules = { 'color-contrast-enhanced': { enabled: true } };
 
-/** Every destination of the catalogue's own route list, with each of its views. */
+/** Every destination of the catalogue's own route list, with each of its views, if it has any. */
 const pages = documentationPages.map(({ path, title, views }) => ({
   path,
   title,
   routes:
     path === 'overview'
       ? overviewViews.map((view) => `overview/${view.id}`)
-      : views.map((view) => `${path}/${view.id}`),
+      : views.length
+        ? views.map((view) => `${path}/${view.id}`)
+        : [path],
 }));
 const routes = new Set(pages.flatMap((page) => page.routes));
 

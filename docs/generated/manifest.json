@@ -4936,6 +4936,14 @@
       "group": "Foundations",
       "summary": "Semantic colors that carry the same purpose across light and dark themes.",
       "doc": "docs/foundations/colors.md",
+      "aliases": [
+        "dark mode",
+        "dark theme",
+        "light mode",
+        "color scheme",
+        "high contrast",
+        "contrast"
+      ],
       "related": [
         "scale",
         "surface",
@@ -5016,6 +5024,12 @@
         "Icon",
         "BrandLogo",
         "EnvUILogo"
+      ],
+      "aliases": [
+        "icon",
+        "Material Symbols",
+        "symbol",
+        "logo"
       ],
       "related": [
         "button",

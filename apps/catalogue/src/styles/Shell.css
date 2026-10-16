@@ -53,17 +53,20 @@ body {
   display: block;
   color: var(--env-color-fg-default);
 }
-.docs-sidebar-navigation {
-  gap: 0.125rem;
+/* Search opens from a field-like button at the top of the navigation, its shortcut at the end. */
+.docs-search-button {
+  inline-size: 100%;
+  margin-block-end: var(--env-space-2);
+}
+.docs-search-shortcut {
+  margin-inline-start: auto;
 }
 .docs-nav-heading {
-  margin: 1.5rem 0.75rem 0.5rem;
-}
-.docs-nav-subheading {
-  margin: var(--env-space-4) var(--env-space-3) var(--env-space-1);
+  display: block;
+  margin: var(--env-space-6) var(--env-space-3) var(--env-space-2);
 }
 .docs-sidebar-footer {
-  margin: 2rem 0.75rem 0;
+  margin: var(--env-space-7) 0 0;
 }
 .docs-main {
   display: flex;
@@ -160,4 +163,18 @@ body {
 .docs-page-navigation {
   padding: var(--env-space-6) var(--docs-gutter) var(--env-space-8);
   margin-top: auto;
+}
+/* A page that has nothing to show yet, such as the templates. */
+.docs-placeholder {
+  display: grid;
+  min-block-size: 22rem;
+}
+.docs-token-color {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--env-space-2);
+}
+/* A section that a route scrolls to, such as a prop's row, stays clear of the window's top edge. */
+.docs-main [id] {
+  scroll-margin-block-start: var(--env-space-6);
 }
