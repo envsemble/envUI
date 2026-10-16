@@ -93,7 +93,35 @@ jobs:
         with:
           name: envui-reference
           path: dist
+      # The contrast gate also compares tests/contrast/DeclaredPairs.json with the base's copy
+      # (tests/contrast/Snapshot.ts). The checkout holds one commit, so fetch the base commit alone:
+      # the pull request's base, or the commit a push to main moved it from. A push that creates the
+      # branch has none (all zeros), and the gate then compares with the checkout's snapshot alone.
+      # The checkout keeps no credentials, so the token is passed to this fetch only.
+      - name: Fetch the contrast gate's base commit
+        id: contrast-base
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          TOKEN: ${{ github.token }}
+        run: |
+          if [ -z "${BASE//0/}" ]; then
+            echo "No base commit to compare the contrast snapshot with."
+            exit 0
+          fi
+          auth=$(printf 'x-access-token:%s' "$TOKEN" | base64 -w0)
+          echo "::add-mask::$auth"
+          if git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $auth" \
+            fetch --no-tags --depth=1 origin "$BASE"; then
+            echo "sha=$BASE" >> "$GITHUB_OUTPUT"
+          elif [ "$GITHUB_EVENT_NAME" = pull_request ]; then
+            echo "::error::Couldn't fetch the pull request's base, $BASE."
+            exit 1
+          else
+            echo "::warning::Couldn't fetch $BASE, which the push moved main from; the contrast gate compares with the checkout's snapshot alone."
+          fi
       - name: Test browser behavior
+        env:
+          ENVUI_CONTRAST_BASE: ${{ steps.contrast-base.outputs.sha }}
         run: npx playwright test --project=chromium
       - name: Save browser results and failure diagnostics
         if: ${{ !cancelled() }}
