@@ -70,7 +70,7 @@ One rule reads one mapping table, [`src/data/elements.json`](src/data/elements.j
 
 How an element is matched:
 
-1. A static `role` is checked first, on any JSX element: `<ul role="menu">`, and also `<Surface role="dialog">`. With several roles, the first counts. An element that is the component the role names, such as `<Menu.Root role="menu">`, passes.
+1. A static `role` is checked first, on HTML elements and on components that are not envUI's: `<ul role="menu">`, and also a `<Box role="dialog">` of the application's own or of another library. envUI's components, imported from an envUI entry point, set their own roles, so a role on one refines it and passes: `<Popover role="dialog">`, `<Menu.CheckboxItem role="checkbox">`. With several roles, the first counts. An element that is the component the role names, such as `<Menu.Root role="menu">`, passes.
 2. Otherwise HTML elements are checked in the order of the table, and the first entry whose element and attributes match decides. An `<input>` is matched by its `type`.
 3. Nothing is reported for:
    - what a part renders in place of its own element, through the `render` prop: `<Menu.Item render={<a href="/settings" />}>`;

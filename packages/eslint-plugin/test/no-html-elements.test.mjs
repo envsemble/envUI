@@ -54,6 +54,9 @@ ruleTester.run('no-html-elements', rule, {
     '<Menu.Root role="menu" />',
     '<Dialog role="alertdialog" title="Delete?" />',
     '<Tabs role="tablist" items={items} />',
+    // envUI's own components set their roles; a role on one refines it.
+    'import { Popover, Menu, Surface } from \'@envsemble/envui\'; <><Popover role="dialog" /><Menu.CheckboxItem role="checkbox" /><Surface role="dialog" /></>;',
+    'import * as ui from \'@envsemble/envui\'; <ui.Text role="alert">Saved</ui.Text>;',
     // Roles envUI has no component for, and roles that only make sense inside a container.
     '<div role="region" aria-label="Summary" />',
     '<li role="menuitem">Rename</li>',
@@ -227,10 +230,18 @@ ruleTester.run('no-html-elements', rule, {
       errors: [uses('Switch', '<button role="switch">')],
     },
     {
-      code: '<Surface role="dialog" aria-modal="true" />',
-      errors: [uses('Dialog', '<Surface role="dialog">')],
+      // A component of the application's own, or of another library, is checked like an element.
+      code: '<Box role="dialog" aria-modal="true" />',
+      errors: [uses('Dialog', '<Box role="dialog">')],
     },
-    { code: '<Text role="alert">Saved</Text>', errors: [uses('Alert', '<Text role="alert">')] },
+    {
+      code: 'import { Text } from \'some-library\'; <Text role="alert">Saved</Text>;',
+      errors: [uses('Alert', '<Text role="alert">')],
+    },
+    {
+      code: 'function Local() { const Popover = Box; return <Popover role="dialog" />; }',
+      errors: [uses('Dialog', '<Popover role="dialog">')],
+    },
     { code: '<div role="tablist" />', errors: [uses('Tabs', '<div role="tablist">')] },
     { code: '<div role="tree" />', errors: [uses('Tree', '<div role="tree">')] },
     { code: '<div role="tooltip" />', errors: [uses('Tooltip', '<div role="tooltip">')] },
