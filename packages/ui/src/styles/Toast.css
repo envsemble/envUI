@@ -14,7 +14,7 @@
      a step darker rather than the light popup edge, which would ring it like a halo; in dark it is
      the popup edge. The edge is the boundary in high contrast and what forced colors paint once
      the shadow is gone. */
-  border: 1px solid var(--toast-edge);
+  border: 1px solid var(--toast-edge, var(--color-border-neutral-strong));
   border-radius: var(--radius-standard);
   box-shadow: var(--elevation-2-shadow);
   font: var(--type-body-small);
