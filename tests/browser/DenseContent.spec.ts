@@ -76,11 +76,13 @@ test('inline code and code blocks take the Pierre code theme of the app theme', 
 });
 
 test('filling tabs give the selected panel the height left below the list', async ({ page }) => {
-  await page.goto(`${catalogueUrl}/#/components/tabs/preview`);
-  const canvas = page.getByTestId('fill-canvas');
+  await page.goto(`${catalogueUrl}/#/components/tabs/overview`);
+  const example = page.locator('.docs-live-example[data-example="FillARegion"]');
+  const canvas = example.getByRole('tabpanel', { name: 'Canvas' }).locator(':scope > *').first();
   await expect(canvas).toBeVisible();
-  const region = await page.locator('.docs-fill-region').boundingBox();
-  const list = await page.getByRole('tablist', { name: 'Diagram views' }).boundingBox();
+  // The example's region, which has a height of its own.
+  const region = await example.locator(':scope > div').first().boundingBox();
+  const list = await example.getByRole('tablist', { name: 'Diagram views' }).boundingBox();
   const box = await canvas.boundingBox();
   // The canvas reaches the bottom of the region and starts below the list.
   expect(Math.abs(box!.y + box!.height - (region!.y + region!.height))).toBeLessThanOrEqual(2);

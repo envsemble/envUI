@@ -210,22 +210,6 @@
   block-size: 1rem;
 }
 /* Tabs that fill a fixed region, like a diagram canvas below its views. */
-.docs-fill-region {
-  display: flex;
-  flex-direction: column;
-  block-size: 16rem;
-}
-.docs-fill-tabs {
-  flex: 1;
-}
-.docs-fill-canvas {
-  flex: 1;
-  display: grid;
-  place-items: center;
-  border-radius: var(--radius-standard);
-  background: var(--color-surface-muted);
-  color: var(--color-text-muted);
-}
 /* An interactive row's title link covers the row; its action stays above the link. */
 .docs-row-action {
   position: relative;
