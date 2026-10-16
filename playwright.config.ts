@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import { defineConfig, devices } from '@playwright/test';
 import { catalogueUrl, cataloguePort, fixtureUrl, fixturePort } from './tests/browser/Servers';
 
@@ -17,6 +18,7 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     viewport: { width: 1440, height: 1000 },
   },
+  // `npm run test:browser` runs the behavior projects; the gates below have their own scripts.
   projects: [
     { name: 'chromium', testIgnore: /LiveDevelopment/, use: { ...devices['Desktop Chrome'] } },
     { name: 'firefox', testIgnore: /LiveDevelopment/, use: { ...devices['Desktop Firefox'] } },
@@ -26,6 +28,40 @@ export default defineConfig({
       testMatch: /LiveDevelopment/,
       dependencies: ['chromium', 'firefox', 'webkit'],
       use: { ...devices['Desktop Chrome'] },
+    },
+    // `npm run test:a11y`: axe over every catalogue page in both themes, Chromium only.
+    {
+      name: 'a11y',
+      testDir: './tests/accessibility',
+      use: { ...devices['Desktop Chrome'], screenshot: 'off' },
+    },
+    // `npm run test:visual`: the screenshot baseline, rendered in the Linux Playwright image.
+    {
+      name: 'visual',
+      testDir: './tests/visual',
+      snapshotPathTemplate: '{testDir}/snapshots/{arg}{ext}',
+      timeout: 180_000,
+      expect: {
+        timeout: 15_000,
+        toHaveScreenshot: {
+          animations: 'disabled',
+          caret: 'hide',
+          scale: 'css',
+          // Chromium's software raster varies anti-aliased edge pixels by ±1 per channel between
+          // runs. 0.01 absorbs that rounding (a YIQ distance of about 2.6 levels) while a colour
+          // change of about 1% lightness or more still fails; the default, 0.2, would miss most.
+          threshold: 0.01,
+          stylePath: fileURLToPath(new URL('./tests/visual/Screenshot.css', import.meta.url)),
+        },
+      },
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1280, height: 800 },
+        deviceScaleFactor: 1,
+        locale: 'en-US',
+        timezoneId: 'UTC',
+        colorScheme: 'light',
+      },
     },
   ],
   webServer: [
