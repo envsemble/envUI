@@ -18,5 +18,13 @@ test.describe('in a right-to-left region', () => {
       await grid.getByRole('gridcell', { name: '1', exact: true }).focus();
       await page.keyboard.press('ArrowLeft');
       await expect(grid.getByRole('gridcell', { name: '2', exact: true })).toBeFocused();
+      // Base UI's toolbar knows only its own direction provider: Toolbar.Root tells it. In LTR,
+      // ArrowLeft from the first button would loop to the last.
+      const toolbar = region.getByRole('toolbar', { name: 'Formatting' });
+      await toolbar.getByRole('button', { name: 'Bold' }).focus();
+      await page.keyboard.press('ArrowLeft');
+      await expect(toolbar.getByRole('button', { name: 'Italic' })).toBeFocused();
+      await page.keyboard.press('ArrowRight');
+      await expect(toolbar.getByRole('button', { name: 'Bold' })).toBeFocused();
     });
 });

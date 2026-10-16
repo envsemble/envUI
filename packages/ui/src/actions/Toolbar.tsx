@@ -13,6 +13,7 @@ import { Tooltip } from '../feedback/Tooltip.js';
 import { Kbd } from '../content/Kbd.js';
 import { ControlDefaults } from '../internal/ControlDefaults.js';
 import { classNames } from '../internal/classNames.js';
+import { DirectedToolbarRoot } from '../internal/DirectedToolbarRoot.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import type { ControlSize } from '../foundations/Theme.js';
 
@@ -56,8 +57,9 @@ function Root({
   children,
   ...props
 }: RootProps) {
+  // A horizontal toolbar's arrow keys follow the text direction: the root reads it.
   return (
-    <BaseToolbar.Root
+    <DirectedToolbarRoot
       {...props}
       orientation={orientation}
       disabled={disabled}
@@ -68,7 +70,7 @@ function Root({
       <ControlDefaults variant="ghost" size={size}>
         {children}
       </ControlDefaults>
-    </BaseToolbar.Root>
+    </DirectedToolbarRoot>
   );
 }
 

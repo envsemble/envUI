@@ -1,12 +1,15 @@
 import { useState } from 'react';
-import { EnvUIProvider } from '@envsemble/envui';
+import { EnvUIProvider, Toolbar } from '@envsemble/envui';
+import { FormatBold } from '@envsemble/envui/icons/FormatBold';
+import { FormatItalic } from '@envsemble/envui/icons/FormatItalic';
+import { FormatUnderlined } from '@envsemble/envui/icons/FormatUnderlined';
 // Internal primitives, which envUI's own components build on: the fixture mounts them directly.
 import { ResizeHandle } from '../../packages/ui/src/internal/ResizeHandle.js';
 import { useRovingFocus } from '../../packages/ui/src/internal/useRovingFocus.js';
 
 const cells = Array.from({ length: 7 }, (_, index) => `${index + 1}`);
 
-/** A resize handle and a roving grid that read the direction themselves. */
+/** A resize handle, a roving grid and a toolbar, which read the direction themselves. */
 function DirectedControls() {
   const [width, setWidth] = useState(200);
   const [active, setActive] = useState<string | null>(null);
@@ -35,6 +38,11 @@ function DirectedControls() {
           </div>
         ))}
       </div>
+      <Toolbar.Root aria-label="Formatting">
+        <Toolbar.Button icon={<FormatBold />} label="Bold" />
+        <Toolbar.Button icon={<FormatItalic />} label="Italic" />
+        <Toolbar.Button icon={<FormatUnderlined />} label="Underline" />
+      </Toolbar.Root>
     </>
   );
 }
