@@ -28,6 +28,9 @@ const reports = {
     `line 5: Surface's density: ${report('Surface', 'density', 'compact')}`,
     `line 10: Table.Root's density has a value the codemod can't move: ${report('Table.Root', 'density')}`,
   ],
+  'form-vocabulary.tsx': [
+    `line 19: TextField's variant has a value the codemod can't move: ${report('TextField', 'variant')}`,
+  ],
   'fields.tsx': [
     `line 7: TextField's compact: ${report('TextField', 'compact', 'true')}`,
     `line 8: TextField's compact: ${report('TextField', 'compact', 'true')}`,

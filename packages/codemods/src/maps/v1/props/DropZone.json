@@ -11,6 +11,14 @@
           },
           "false": {}
         }
+      },
+      "onFiles": {
+        "to": "onDropAccepted",
+        "report": "DropZone's onFiles is onDropAccepted in 1.0."
+      },
+      "onReject": {
+        "to": "onDropRejected",
+        "report": "DropZone's onReject is onDropRejected in 1.0."
       }
     }
   }

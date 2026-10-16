@@ -13,6 +13,25 @@
             "report": "the popup now has the menus' anatomy, with a check mark on the chosen option."
           }
         }
+      },
+      "options": {
+        "to": "items",
+        "report": "Select's options are items in 1.0."
+      },
+      "hint": {
+        "to": "description",
+        "report": "Select's hint is description in 1.0."
+      },
+      "variant": {
+        "current": ["secondary", "outline"],
+        "report": "Select's variant is secondary or outline in 1.0: outlined is outline.",
+        "values": {
+          "outlined": {
+            "props": {
+              "variant": "outline"
+            }
+          }
+        }
       }
     }
   }

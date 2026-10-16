@@ -17,6 +17,21 @@
             "report": "the standard density was the tall floating field, which is variant=\"floating\" now."
           }
         }
+      },
+      "hint": {
+        "to": "description",
+        "report": "Combobox's hint is description in 1.0."
+      },
+      "variant": {
+        "current": ["outline", "floating"],
+        "report": "Combobox's variant is outline or floating in 1.0: outlined is outline.",
+        "values": {
+          "outlined": {
+            "props": {
+              "variant": "outline"
+            }
+          }
+        }
       }
     }
   }

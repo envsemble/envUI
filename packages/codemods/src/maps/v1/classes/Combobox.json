@@ -1,0 +1,8 @@
+{
+  "env-combobox-well": "env-combobox-control",
+  "env-combobox-option": "env-combobox-item",
+  "env-combobox-check": "env-combobox-item-indicator",
+  "env-combobox-option-text": "env-list-row-text",
+  "env-combobox-option-label": "env-list-row-label",
+  "env-combobox-option-description": "env-list-row-description"
+}

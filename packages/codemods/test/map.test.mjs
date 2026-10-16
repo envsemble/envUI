@@ -125,6 +125,8 @@ test('a class inside an ancestor takes its own name in the ancestor selector', (
   const { classesWithin } = loadMap();
   assert.deepEqual(classesWithin, [
     { ancestor: 'env-diff-count', from: 'env-counter-label', to: 'env-diff-stat-label' },
+    { ancestor: 'env-combobox', from: 'env-dropdown-options', to: 'env-combobox-popup' },
+    { ancestor: 'env-combobox', from: 'env-dropdown-list', to: 'env-combobox-list' },
   ]);
 });
 

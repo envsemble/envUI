@@ -3,7 +3,7 @@ import { Select, Table, Tree, Tabs, Surface, Menu, Button } from '@envsemble/env
 export function Toolbar({ options, items, density }) {
   return (
     <Surface background="page">
-      <Select label="Sort" options={options} size="sm" />
+      <Select label="Sort" items={options} size="sm" />
       <Tabs size="sm" items={[]} aria-label="Views" />
       <Tree aria-label="Files" items={items} density="md" />
       <Tree aria-label="Files" items={items} />

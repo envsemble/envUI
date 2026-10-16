@@ -1,0 +1,14 @@
+{
+  "@envsemble/envui": {
+    "Slider": {
+      "hint": {
+        "to": "description",
+        "report": "Slider's hint is description in 1.0."
+      },
+      "onValueCommit": {
+        "to": "onValueCommitted",
+        "report": "Slider's onValueCommit is onValueCommitted in 1.0, as Base UI names it."
+      }
+    }
+  }
+}

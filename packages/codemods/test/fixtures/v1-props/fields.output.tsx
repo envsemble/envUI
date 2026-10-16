@@ -10,7 +10,7 @@ export function Fields({ props }) {
       <Search label="Search" />
       <DateTimeField label="Due" size="sm" showLabel={false} />
       <ui.Combobox label="Owner" items={[]} variant="floating" />
-      <ui.FileDropzone label="Files" size="sm" onFiles={() => {}} />
+      <ui.FileDropzone label="Files" size="sm" onDropAccepted={() => {}} />
     </>
   );
 }

@@ -17,6 +17,31 @@
             "report": "compact={false} was the tall floating field, which is variant=\"floating\" now."
           }
         }
+      },
+      "hint": {
+        "to": "description",
+        "report": "TextField's hint is description in 1.0."
+      },
+      "variant": {
+        "current": ["outline", "floating", "underline", "ghost"],
+        "report": "TextField's variant is outline, floating, underline or ghost in 1.0: outlined is outline, plain is underline, quiet is ghost.",
+        "values": {
+          "outlined": {
+            "props": {
+              "variant": "outline"
+            }
+          },
+          "plain": {
+            "props": {
+              "variant": "underline"
+            }
+          },
+          "quiet": {
+            "props": {
+              "variant": "ghost"
+            }
+          }
+        }
       }
     },
     "SearchField": {
@@ -30,6 +55,87 @@
               "variant": "floating"
             },
             "report": "compact={false} was the tall floating field, which is variant=\"floating\" now."
+          }
+        }
+      },
+      "hint": {
+        "to": "description",
+        "report": "SearchField's hint is description in 1.0."
+      },
+      "variant": {
+        "current": ["outline", "floating", "underline", "ghost"],
+        "report": "SearchField's variant is outline, floating, underline or ghost in 1.0: outlined is outline, plain is underline, quiet is ghost.",
+        "values": {
+          "outlined": {
+            "props": {
+              "variant": "outline"
+            }
+          },
+          "plain": {
+            "props": {
+              "variant": "underline"
+            }
+          },
+          "quiet": {
+            "props": {
+              "variant": "ghost"
+            }
+          }
+        }
+      }
+    },
+    "Textarea": {
+      "hint": {
+        "to": "description",
+        "report": "Textarea's hint is description in 1.0."
+      },
+      "variant": {
+        "current": ["outline", "underline", "ghost"],
+        "report": "Textarea's variant is outline, underline or ghost in 1.0: outlined is outline, plain is underline, quiet is ghost.",
+        "values": {
+          "outlined": {
+            "props": {
+              "variant": "outline"
+            }
+          },
+          "plain": {
+            "props": {
+              "variant": "underline"
+            }
+          },
+          "quiet": {
+            "props": {
+              "variant": "ghost"
+            }
+          }
+        }
+      }
+    }
+  },
+  "@envsemble/envui/content": {
+    "MarkdownEditor": {
+      "hint": {
+        "to": "description",
+        "report": "MarkdownEditor's hint is description in 1.0."
+      },
+      "variant": {
+        "current": ["outline", "underline", "ghost"],
+        "report": "MarkdownEditor's variant is outline, underline or ghost in 1.0: outlined is outline, plain is underline, quiet is ghost.",
+        "values": {
+          "outlined": {
+            "props": {
+              "variant": "outline"
+            }
+          },
+          "plain": {
+            "props": {
+              "variant": "underline"
+            }
+          },
+          "quiet": {
+            "props": {
+              "variant": "ghost"
+            }
           }
         }
       }

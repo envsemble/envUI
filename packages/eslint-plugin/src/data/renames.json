@@ -82,6 +82,7 @@
       "OrganizationMenuProps": { "to": ["OrganizationSwitcherProps"] },
       "Row": { "to": ["List.Item"] },
       "RowProps": { "to": ["List.ItemProps"] },
+      "SelectOption": { "to": ["SelectItem"] },
       "StackElement": {
         "to": [],
         "use": "Stack, Surface and Text render another element through render, such as render={<section />}; they no longer take as."

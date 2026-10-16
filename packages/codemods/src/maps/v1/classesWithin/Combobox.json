@@ -1,0 +1,6 @@
+{
+  "env-combobox": {
+    "env-dropdown-options": "env-combobox-popup",
+    "env-dropdown-list": "env-combobox-list"
+  }
+}
