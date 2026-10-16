@@ -6,6 +6,7 @@
     "directories": {
       "internal/": "internal",
       "foundations/": "foundations",
+      "foundations/messages/": "internal",
       "icons/": "foundations",
       "generated/": "foundations",
       "actions/": "base",

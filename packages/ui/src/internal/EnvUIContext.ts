@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useMemo } from 'react';
+import type { EnvUIMessages } from '../foundations/messages/defaultMessages.js';
 
 /** A text direction. */
 export type Direction = 'ltr' | 'rtl';
@@ -26,17 +27,18 @@ export function useEnvUI(): EnvUIContextValue {
 /**
  * A component's strings: its namespace's English defaults with the nearest EnvUIProvider's
  * overrides of that namespace on top. An explicit prop, such as closeLabel, still wins over both;
- * the component applies it.
+ * the component applies it. The namespace is one of envUI's, and the defaults are its module's
+ * English strings, which the component imports, so the strings it doesn't use stay out of a bundle.
  *
  *   const messages = useMessages('common', common);
  */
-export function useMessages<Messages extends object>(
-  namespace: string,
-  defaults: Messages,
-): Messages {
+export function useMessages<Namespace extends keyof EnvUIMessages>(
+  namespace: Namespace,
+  defaults: EnvUIMessages[Namespace],
+): EnvUIMessages[Namespace] {
   const overrides = useContext(EnvUIContext).messages[namespace];
   return useMemo(
-    () => (overrides ? ({ ...defaults, ...overrides } as Messages) : defaults),
+    () => (overrides ? ({ ...defaults, ...overrides } as EnvUIMessages[Namespace]) : defaults),
     [defaults, overrides],
   );
 }
