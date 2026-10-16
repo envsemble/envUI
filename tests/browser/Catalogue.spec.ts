@@ -388,7 +388,7 @@ test('old addresses are replaced by the address of the page they open', async ({
   await page.goto(`${offline}#/components/tables/usage?section=keyboard`);
   await expect
     .poll(() => page.evaluate(() => location.hash))
-    .toBe('#/components/table/guidelines?section=keyboard');
+    .toBe('#/components/table/accessibility?section=keyboard');
 });
 
 test('arrowing between views keeps focus on the tabs and adds no history', async ({ page }) => {

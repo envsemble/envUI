@@ -87,6 +87,17 @@ export function routeOfLink(href: string): string | undefined {
   return routeOfLocation(url);
 }
 
+/** Whether focus is where a route change leaves it: the page, its content or the search palette. */
+function focusIsUnclaimed() {
+  const focused = document.activeElement;
+  return (
+    !focused ||
+    focused === document.body ||
+    focused.id === 'docs-main' ||
+    focused.closest('.env-command-palette') !== null
+  );
+}
+
 /** Moves focus to an element, which takes it from script alone when it takes none otherwise. */
 function focusOn(element: HTMLElement) {
   if (element.tabIndex < 0 && !element.hasAttribute('tabindex')) element.tabIndex = -1;
@@ -99,16 +110,18 @@ function focusOn(element: HTMLElement) {
  * its own, such as the token reference, renders it later. Returns the cleanup.
  */
 export function revealSection(id: string) {
-  const reveal = () => {
+  const reveal = (late: boolean) => {
     const element = document.getElementById(id);
     if (!element) return false;
     element.scrollIntoView();
-    focusOn(element);
+    // A section that renders later takes focus only from where the route left it, the page's
+    // content or search closing, not from wherever the reader has moved since.
+    if (!late || focusIsUnclaimed()) focusOn(element);
     return true;
   };
-  if (reveal()) return;
+  if (reveal(false)) return;
   const observer = new MutationObserver(() => {
-    if (reveal()) observer.disconnect();
+    if (reveal(true)) observer.disconnect();
   });
   observer.observe(document.body, { childList: true, subtree: true });
   // A section that never comes, such as one an old address names, stops being looked for.

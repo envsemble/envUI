@@ -175,6 +175,9 @@ test.describe('search', () => {
     // The Keyboard heading is in Button's Accessibility view, not its first.
     const route = routeOfDocument('button', { section: 'keyboard' });
     expect(route).toBe('components/button/accessibility?section=keyboard');
+    // An old link to the page, without a view, opens the same view.
+    expect(normalizeRoute('components/button?section=keyboard')).toBe(route);
+    expect(normalizeRoute('components/button/overview?section=keyboard')).toBe(route);
     await openCatalogue(page, `${catalogueUrl}/components/button/accessibility#keyboard`);
     const heading = page.getByRole('heading', { name: 'Keyboard', exact: true });
     await expect(heading).toBeInViewport();
@@ -410,7 +413,8 @@ test.describe('hosted build', () => {
     requireSite();
     await serveSite(page, () => false, 'missing');
     await page.goto(`${siteUrl}/#/components/tables/usage?section=keyboard`);
-    await expect(page).toHaveURL(`${siteUrl}/components/table/guidelines#keyboard`);
+    // The Keyboard heading is in the Accessibility view, which opens.
+    await expect(page).toHaveURL(`${siteUrl}/components/table/accessibility#keyboard`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Table');
     await page.goto(`${siteUrl}/#/overview/get-started?document=migration&section=documentation`);
     await expect(page).toHaveURL(`${siteUrl}/get-started/migration`);

@@ -307,6 +307,10 @@ export function normalizeRoute(route: string): string {
   const requested = path.split('/')[2];
   // Before the template, Guidelines was the name of what is now a page's Preview.
   const view = requested === 'guidelines' && !page?.reference.sections ? 'preview' : requested;
-  const destination = page ? `${page.path}/${viewFor(page.reference, view)}` : path;
+  // A heading of a page on the template opens in the view that shows it, also from an old link
+  // such as components/button#keyboard.
+  const section = search.get('section');
+  const shown = (page && section && viewOfHeading(page.reference, section)) || view;
+  const destination = page ? `${page.path}/${viewFor(page.reference, shown)}` : path;
   return `${destination}${search.size ? `?${search}` : ''}`;
 }

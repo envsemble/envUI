@@ -57,7 +57,7 @@ export default defineConfig(({ command, mode }) => {
         transformIndexHtml: {
           order: 'pre',
           handler: (html) => {
-            const meta = /<meta charset="UTF-8" \/>/;
+            const meta = /<meta charset="utf-8"\s*\/?>/i;
             if (!meta.test(html)) throw new Error('index.html needs <meta charset="UTF-8" />.');
             return html.replace(
               meta,
