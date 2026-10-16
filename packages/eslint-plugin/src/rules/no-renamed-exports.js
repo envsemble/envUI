@@ -28,6 +28,27 @@ function isNamespace(name, rename) {
   );
 }
 
+/** An expression without the TypeScript `as`, `satisfies`, `!` and type assertion around it. */
+function unwrap(expression) {
+  let node = expression;
+  while (
+    node?.type === 'TSAsExpression' ||
+    node?.type === 'TSSatisfiesExpression' ||
+    node?.type === 'TSNonNullExpression' ||
+    node?.type === 'TSTypeAssertion'
+  )
+    node = node.expression;
+  return node;
+}
+
+/** The string a literal key holds: `'Input'` or `` `Input` `` without expressions. */
+function literalKey(node) {
+  if (node?.type === 'Literal' && typeof node.value === 'string') return node.value;
+  if (node?.type === 'TemplateLiteral' && node.expressions.length === 0)
+    return node.quasis[0].value.cooked;
+  return undefined;
+}
+
 const isSplit = (rename) => typeof rename.prop === 'string' && Boolean(rename.values);
 
 /** The parts of a split and the values that choose them: `Pager.Previous for direction="previous"`. */
@@ -112,11 +133,16 @@ export default {
         .getDeclaredVariables(declaration)
         .find((variable) => variable.name === identifier.name);
 
-    /** The envUI entry point a module object identifier stands for where it is used, if any. */
-    const namespaceOf = (node) =>
-      node.type === 'Identifier' || node.type === 'JSXIdentifier'
-        ? namespaceVariables.get(resolve(node, node.name))
+    /**
+     * The envUI entry point a module object identifier stands for where it is used, if any, also
+     * through `as`, `satisfies` and `!`: `(envui as any).Input`.
+     */
+    const namespaceOf = (node) => {
+      const object = unwrap(node);
+      return object?.type === 'Identifier' || object?.type === 'JSXIdentifier'
+        ? namespaceVariables.get(resolve(object, object.name))
         : undefined;
+    };
 
     /** The literal source of `import('…')` or `require('…')`, when it names an envUI entry point. */
     function moduleSource(node) {
@@ -194,9 +220,14 @@ export default {
       }
       if (pattern?.type !== 'ObjectPattern') return;
       for (const property of pattern.properties) {
-        if (property.type !== 'Property' || property.computed) continue;
-        const name =
-          property.key.type === 'Identifier' ? property.key.name : String(property.key.value);
+        if (property.type !== 'Property') continue;
+        // `{ Input }`, `{ 'Input': field }` and `{ ['Input']: field }`.
+        const name = property.computed
+          ? literalKey(property.key)
+          : property.key.type === 'Identifier'
+            ? property.key.name
+            : String(property.key.value);
+        if (name === undefined) continue;
         const local =
           property.value.type === 'AssignmentPattern' ? property.value.left : property.value;
         const variable = local.type === 'Identifier' ? variableOf(local) : undefined;
@@ -264,22 +295,22 @@ export default {
         if (binding) reportElement(node, node.name, binding, propValue);
         return;
       }
-      const isMember =
-        node.type === 'JSXMemberExpression' ||
-        (node.type === 'MemberExpression' && !node.computed && node.property.type === 'Identifier');
-      const source = isMember ? namespaceOf(node.object) : undefined;
-      if (source) checkMember(node, source, node.object.name, node.property.name, propValue);
+      // <envui.Menu>, createElement(envui.Menu) and createElement(envui['Menu']).
+      const name =
+        node.type === 'JSXMemberExpression'
+          ? node.property.name
+          : node.type === 'MemberExpression'
+            ? memberName(node)
+            : undefined;
+      const source = name === undefined ? undefined : namespaceOf(node.object);
+      if (source) checkMember(node, source, unwrap(node.object).name, name, propValue);
     }
 
     /** The name a member reads: `Input` in `envui.Input` and `envui['Input']`. */
     function memberName(node) {
       if (!node.computed)
         return node.property.type === 'Identifier' ? node.property.name : undefined;
-      const { property } = node;
-      if (property.type === 'Literal' && typeof property.value === 'string') return property.value;
-      if (property.type === 'TemplateLiteral' && property.expressions.length === 0)
-        return property.quasis[0].value.cooked;
-      return undefined;
+      return literalKey(node.property);
     }
 
     return {
@@ -369,14 +400,25 @@ export default {
           isElementFactory(parent)
         )
           return;
-        // envui.Input, and require('@envsemble/envui').Input or (await import('…')).Input.
-        const local = node.object.type === 'Identifier' ? node.object.name : undefined;
-        const source = local ? namespaceOf(node.object) : moduleSource(node.object);
+        // envui.Input and (envui as any).Input, and require('@envsemble/envui').Input or
+        // (await import('…')).Input.
+        const object = unwrap(node.object);
+        const local = object?.type === 'Identifier' ? object.name : undefined;
+        const source = local ? namespaceOf(object) : moduleSource(node.object);
         if (source) checkMember(node, source, local ?? 'envui', name, undefined);
       },
       TSQualifiedName(node) {
         const source = node.left.type === 'Identifier' ? namespaceOf(node.left) : undefined;
         if (source) checkMember(node, source, node.left.name, node.right.name, undefined);
+      },
+      TSIndexedAccessType(node) {
+        // (typeof envui)['InputProps'] and (typeof envui)['Input'].
+        const { objectType, indexType } = node;
+        if (objectType.type !== 'TSTypeQuery' || objectType.exprName.type !== 'Identifier') return;
+        const source = namespaceOf(objectType.exprName);
+        const name = indexType.type === 'TSLiteralType' ? literalKey(indexType.literal) : undefined;
+        if (source && name !== undefined)
+          checkMember(node, source, objectType.exprName.name, name, undefined);
       },
       TSImportType(node) {
         // import('@envsemble/envui').InputProps, and typeof import('@envsemble/envui').Menu.

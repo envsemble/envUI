@@ -236,6 +236,15 @@ ruleTester.run('no-renamed-exports', rule, {
       code: "import * as envui from '@envsemble/envui'; createElement(envui.Table, { rows });",
       errors: [namespace('Table', 'envui.Table', 'envui.Table.Root')],
     },
+    // Literal keys, when rendered and when destructured.
+    {
+      code: "import * as envui from '@envsemble/envui'; createElement(envui['Input']); jsx(envui['Menu'], {});",
+      errors: [renamed('Input', 'TextField'), namespace('Menu', 'envui.Menu', 'envui.Menu.Root')],
+    },
+    {
+      code: "import * as envui from '@envsemble/envui'; const { ['Input']: Field, [`Notice`]: Callout } = envui;",
+      errors: [renamed('Input', 'TextField'), renamed('Notice', 'Alert')],
+    },
   ],
 });
 
@@ -288,6 +297,15 @@ typeScriptRuleTester.run('no-renamed-exports in TypeScript', rule, {
     {
       code: "export import envui = require('@envsemble/envui'); envui.Notice;",
       errors: [renamed('Notice', 'Alert')],
+    },
+    // Through a type assertion, and as an indexed access type of the module object.
+    {
+      code: "import * as envui from '@envsemble/envui'; (envui as any).Input; envui!.Notice; type T = (typeof envui)['Input'];",
+      errors: [
+        renamed('Input', 'TextField'),
+        renamed('Notice', 'Alert'),
+        renamed('Input', 'TextField'),
+      ],
     },
   ],
 });

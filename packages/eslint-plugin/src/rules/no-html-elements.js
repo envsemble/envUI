@@ -118,13 +118,17 @@ function hasLinkComponentProps(fn, visitorKeys) {
   );
 }
 
-/** An expression without the TypeScript `as`, `satisfies` and `!` around it. */
+/**
+ * An expression without the TypeScript `as`, `satisfies` and `!` around it, and without the chain
+ * that optional chaining wraps around `adapters?.link`.
+ */
 function unwrap(expression) {
   let node = expression;
   while (
     node?.type === 'TSAsExpression' ||
     node?.type === 'TSSatisfiesExpression' ||
-    node?.type === 'TSNonNullExpression'
+    node?.type === 'TSNonNullExpression' ||
+    node?.type === 'ChainExpression'
   )
     node = node.expression;
   return node;
@@ -237,7 +241,9 @@ export default {
       const name = member.computed
         ? property.type === 'Literal'
           ? String(property.value)
-          : undefined
+          : property.type === 'TemplateLiteral' && property.expressions.length === 0
+            ? property.quasis[0].value.cooked
+            : undefined
         : property.name;
       if (name === undefined) return [];
       return objectsOf(member.object, seen).flatMap((object) =>
@@ -279,6 +285,12 @@ export default {
       // component={adapters.link}
       if (node.type === 'MemberExpression')
         return membersOf(node, seen).flatMap((value) => functionsOf(value, seen));
+      // component={external ? ExternalLink : RouterLink} and component={custom ?? RouterLink}:
+      // either may be rendered, so each is an adapter.
+      if (node.type === 'ConditionalExpression')
+        return [node.consequent, node.alternate].flatMap((branch) => functionsOf(branch, seen));
+      if (node.type === 'LogicalExpression')
+        return [node.left, node.right].flatMap((side) => functionsOf(side, seen));
       return [];
     }
 

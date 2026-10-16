@@ -407,6 +407,11 @@ ruleTester.run('no-html-elements in link adapters', rule, {
     'const adapters = { link: (props) => <a href={props.href} {...props} /> };\n<LinkProvider component={adapters.link} />;',
     "const config = { adapters: { link(props) { return <a href={props.href} />; } } };\n<LinkProvider component={config.adapters['link']} />;",
     'function RouterLink(props) { return <a href={props.href} />; }\nconst adapters = { link: RouterLink };\n<LinkProvider component={adapters.link} />;',
+    // Optional chaining, a template key, and a choice between adapters.
+    'const adapters = { link: (props) => <a href={props.href} /> };\n<LinkProvider component={adapters?.link} />;',
+    'const adapters = { link: (props) => <a href={props.href} /> };\n<LinkProvider component={adapters[`link`]} />;',
+    'const A = (props) => <a href={props.href} />;\nconst B = (props) => <a href={props.href} />;\n<LinkProvider component={external ? A : B} />;',
+    'const X = (props) => <a href={props.href} />;\nconst L = (props) => <a href={props.href} />;\n<LinkProvider component={X ?? L} />;',
   ],
   invalid: [
     // An anchor elsewhere, and other raw elements inside an adapter, are still reported.

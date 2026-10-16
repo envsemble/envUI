@@ -76,7 +76,7 @@ How an element is matched:
    - what a part renders in place of its own element, through the `render` prop: `<Menu.Item render={<a href="/settings" />}>`;
    - an element hidden from assistive technology and out of the tab order (`aria-hidden` with `tabIndex={-1}`);
    - `<input type="hidden">`;
-   - the `<a href>` of a link adapter, the component that `LinkProvider` renders for envUI's destinations, as the [setup guide](../../docs/setup.md#router-links) writes it: a function whose props are typed `LinkComponentProps`, or one that a `LinkProvider` in the same file takes as its `component`, directly, through a variable or as a member of an object literal (`component={adapters.link}`). It draws the anchor itself, because envUI's `Link` would render the adapter again;
+   - the `<a href>` of a link adapter, the component that `LinkProvider` renders for envUI's destinations, as the [setup guide](../../docs/setup.md#router-links) writes it: a function whose props are typed `LinkComponentProps`, or one that a `LinkProvider` in the same file takes as its `component`, directly, through a variable, as a member of an object literal (`component={adapters.link}`, also `adapters?.link`), or as either side of a choice (`component={external ? ExternalLink : RouterLink}`, `component={custom ?? RouterLink}`). It draws the anchor itself, because envUI's `Link` would render the adapter again;
    - entries named in `allow`.
 
 Options:
@@ -190,8 +190,8 @@ MenuItem is not exported by envUI 1.0: use Menu.Item instead (import { Menu } fr
 
 It also reports:
 
-- members of a namespace import: `envui.Input`, `envui['Input']`, `<envui.Input>`, and `envui.InputProps` in TypeScript;
-- the module and its names reached without an import declaration: `require('@envsemble/envui')`, `import('@envsemble/envui')`, awaited or through `.then()`, `import envui = require('@envsemble/envui')` in TypeScript, names destructured from any module object, as in `const { Input } = envui` or the assignment `({ Input } = envui)`, and type queries such as `import('@envsemble/envui').InputProps`;
+- members of a namespace import: `envui.Input`, `envui['Input']`, `<envui.Input>`, `createElement(envui['Input'])`, and in TypeScript `envui.InputProps`, `(typeof envui)['Input']` and members through an assertion, such as `(envui as any).Input`;
+- the module and its names reached without an import declaration: `require('@envsemble/envui')`, `import('@envsemble/envui')`, awaited or through `.then()`, `import envui = require('@envsemble/envui')` in TypeScript, names destructured from any module object, as in `const { Input } = envui`, `const { ['Input']: Field } = envui` or the assignment `({ Input } = envui)`, and type queries such as `import('@envsemble/envui').InputProps`;
 - rendering a name that became a namespace of parts, such as `<Menu>` or `<Table>`, which must now be `<Menu.Root>` or `<Table.Root>`, in JSX or through `createElement()`, `React.createElement()` and the JSX runtime's `jsx()`.
 
 Type imports count. A name is read statically, so a member with a computed key, such as `envui[name]`, or a module object passed through a function is not followed. A name is checked where it resolves to envUI, so a local `Menu` or a parameter named `envui` that shadows the import passes. Only the entry point that exported a name is checked, so an icon named `Input` from `@envsemble/envui/icons` passes. The rule has no options.
