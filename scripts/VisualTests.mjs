@@ -2,11 +2,15 @@
 // screenshots are identical on every machine. The checkout is mounted at /work; node_modules come
 // from named volumes holding a Linux install, refreshed only when package-lock.json changes.
 //
-//   node scripts/VisualTests.mjs [--update] [--if-docker] [Playwright arguments]
+//   node scripts/VisualTests.mjs [--update] [--skip] [--preflight] [Playwright arguments]
 //
 // --update rewrites changed and missing snapshots; without further arguments it regenerates the
-// whole folder, which also drops images no test takes any more. --if-docker skips with a warning
-// when Docker is not running (local `npm run verify`); in CI a missing Docker still fails.
+// whole folder, which also drops images no test takes any more.
+//
+// Docker is required, so a run without it fails; --preflight only checks that, so `npm run verify`
+// fails before its other checks rather than after them. To skip the baseline knowingly, set
+// ENVUI_SKIP_VISUAL=1 or pass --skip (`npm run verify:no-visual` does); either prints a warning that
+// the screenshots were not compared.
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
@@ -21,7 +25,8 @@ const flag = (name) => {
   return index !== -1;
 };
 const update = flag('--update');
-const ifDocker = flag('--if-docker');
+const skip = flag('--skip') || process.env.ENVUI_SKIP_VISUAL === '1';
+const preflight = flag('--preflight');
 
 const manifest = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
 const version = manifest.devDependencies['@playwright/test'];
@@ -31,17 +36,34 @@ if (!/^\d+\.\d+\.\d+$/.test(version))
   );
 const image = `mcr.microsoft.com/playwright:v${version}-noble`;
 
+if (skip && preflight) process.exit(0);
+if (skip) {
+  const rule = '!'.repeat(78);
+  console.warn(
+    [
+      '',
+      rule,
+      '!! SKIPPED THE VISUAL BASELINE: no screenshot was compared.',
+      `!! ${process.env.ENVUI_SKIP_VISUAL === '1' ? 'ENVUI_SKIP_VISUAL=1 is set' : '--skip was passed'}, so this run is not a full \`npm run verify\`.`,
+      '!! Start Docker and run `npm run test:visual` before pushing or releasing.',
+      rule,
+      '',
+    ].join('\n'),
+  );
+  process.exit(0);
+}
+
 if (spawnSync('docker', ['info'], { stdio: 'ignore' }).status !== 0) {
-  const message = `Docker is not running, so the visual baseline (${image}) cannot render.`;
-  if (ifDocker && !process.env.CI) {
-    console.warn(
-      `\nSkipped the visual baseline: ${message}\nStart Docker and run \`npm run test:visual\` before a release.\n`,
-    );
-    process.exit(0);
-  }
-  console.error(`${message} Start Docker Desktop or the Docker daemon and try again.`);
+  console.error(
+    [
+      `Docker is not running, so the visual baseline cannot render in ${image}.`,
+      'Start Docker Desktop or the Docker daemon and try again. To skip the baseline knowingly, set',
+      'ENVUI_SKIP_VISUAL=1 or run `npm run verify:no-visual`; the run then does not count as verified.',
+    ].join('\n'),
+  );
   process.exit(1);
 }
+if (preflight) process.exit(0);
 
 // One set of volumes per checkout, so worktrees with different lockfiles do not reinstall each other.
 const checkout = createHash('sha256').update(root).digest('hex').slice(0, 10);

@@ -117,22 +117,23 @@ npm run dev
 
 Open the catalogue at [localhost:8770](http://127.0.0.1:8770). It consumes library source directly and updates as you edit.
 
-| Command                | Purpose                                                           |
-| ---------------------- | ----------------------------------------------------------------- |
-| `npm run dev:library`  | Watch compiled exports for a linked external app                  |
-| `npm run lint`         | Lint components, the catalogue, tests and scripts with ESLint     |
-| `npm run lint:css`     | Lint styles with Stylelint                                        |
-| `npm run format`       | Format with Prettier; `npm run format:check` only checks          |
-| `npm run typecheck`    | Check the library and catalogue                                   |
-| `npm run build`        | Build the package and offline catalogue                           |
-| `npm run build:site`   | Build the hosted catalogue, described under Hosting below         |
-| `npm run site:dev`     | Build the hosted catalogue and serve it locally                   |
-| `npm test`             | Test package consumers, SSR and hydration                         |
-| `npm run test:browser` | Check interactions in Chromium, Firefox and WebKit                |
-| `npm run test:a11y`    | Scan every catalogue page with axe in both themes                 |
-| `npm run test:visual`  | Compare screenshots with the visual baseline, in Docker           |
-| `npm run verify`       | Run every check; the visual baseline only while Docker is running |
-| `npm run changeset`    | Record a change for the changelog                                 |
+| Command                    | Purpose                                                       |
+| -------------------------- | ------------------------------------------------------------- |
+| `npm run dev:library`      | Watch compiled exports for a linked external app              |
+| `npm run lint`             | Lint components, the catalogue, tests and scripts with ESLint |
+| `npm run lint:css`         | Lint styles with Stylelint                                    |
+| `npm run format`           | Format with Prettier; `npm run format:check` only checks      |
+| `npm run typecheck`        | Check the library and catalogue                               |
+| `npm run build`            | Build the package and offline catalogue                       |
+| `npm run build:site`       | Build the hosted catalogue, described under Hosting below     |
+| `npm run site:dev`         | Build the hosted catalogue and serve it locally               |
+| `npm test`                 | Test package consumers, SSR and hydration                     |
+| `npm run test:browser`     | Check interactions in Chromium, Firefox and WebKit            |
+| `npm run test:a11y`        | Scan every catalogue page with axe in both themes             |
+| `npm run test:visual`      | Compare screenshots with the visual baseline, in Docker       |
+| `npm run verify`           | Run every check, including the visual baseline; needs Docker  |
+| `npm run verify:no-visual` | Every check but the visual baseline, ending with a warning    |
+| `npm run changeset`        | Record a change for the changelog                             |
 
 Install browser engines before running the full checks:
 
