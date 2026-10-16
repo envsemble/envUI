@@ -87,15 +87,24 @@ export function routeOfLink(href: string): string | undefined {
   return routeOfLocation(url);
 }
 
+/** Moves focus to an element, which takes it from script alone when it takes none otherwise. */
+function focusOn(element: HTMLElement) {
+  if (element.tabIndex < 0 && !element.hasAttribute('tabindex')) element.tabIndex = -1;
+  element.focus({ preventScroll: true });
+}
+
 /**
- * Scrolls to the element a route names, such as a prop's row, once it is there: a part of the page
- * that loads on its own, such as the token reference, renders it later. Returns the cleanup.
+ * Scrolls to the element a route names, such as a heading or a prop's row, and moves focus to it,
+ * so reading and the keyboard go on from there, once it is there: a part of the page that loads on
+ * its own, such as the token reference, renders it later. Returns the cleanup.
  */
 export function revealSection(id: string) {
   const reveal = () => {
     const element = document.getElementById(id);
-    element?.scrollIntoView();
-    return element !== null;
+    if (!element) return false;
+    element.scrollIntoView();
+    focusOn(element);
+    return true;
   };
   if (reveal()) return;
   const observer = new MutationObserver(() => {
@@ -110,21 +119,36 @@ export function revealSection(id: string) {
   };
 }
 
+/**
+ * Shows the place a route names on the page that shows it already, as a fresh navigation to it
+ * would: its section, scrolled to and focused, or else the top of the page, with focus on its
+ * content.
+ */
+export function revealRoute(route: string) {
+  const section = splitRoute(route).params.get('section');
+  if (section) {
+    revealSection(section);
+    return;
+  }
+  window.scrollTo({ top: 0 });
+  const main = document.getElementById('docs-main');
+  if (main) focusOn(main);
+}
+
 /** Address changes made by navigate(), which the history API does not announce. */
 const navigationEvent = 'envui:navigate';
 
 /**
  * Shows a route: a step in the history, or in place of the current entry with replace. When the
- * address already names it, the route's section, if it has one, scrolls into view again, and
- * navigate returns false.
+ * address already names it, its place shows again, as revealRoute shows it, and navigate returns
+ * false.
  */
 export function navigate(route: string, { replace = false }: { replace?: boolean } = {}) {
   const href = routeHref(route);
   if (href === currentHref()) {
     // Choosing the place the address names already, such as a prop's row again after scrolling
-    // away, scrolls to it again.
-    const section = splitRoute(route).params.get('section');
-    if (section) revealSection(section);
+    // away, shows it again.
+    revealRoute(route);
     return false;
   }
   if (pathRoutes) history[replace ? 'replaceState' : 'pushState'](null, '', href);

@@ -169,6 +169,8 @@ export function DocumentationSearch({
           result && routeOfDocument(result.page, { view: result.view, section: result.section });
         if (!route) return;
         if (modifier) window.open(new URL(routeHref(route), location.href).href, '_blank');
+        // A route the address names already shows its place again and focuses it, as a fresh
+        // navigation does; the palette, which then no longer holds focus, leaves it there.
         else navigate(route);
       }}
     />
