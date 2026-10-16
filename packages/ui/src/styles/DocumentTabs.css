@@ -1,5 +1,9 @@
 /* Editor tabs for open documents. Inactive tabs are quiet, with state layers on hover; the active tab
-   carries the translucent fill and a selection-blue indicator along its bottom edge. */
+   carries the translucent fill and a selection-blue indicator along its bottom edge. Each item lays
+   out its tab, a Base UI tab, beside its close button, which isn't nested in the tab. */
+.env-document-tabs-root {
+  display: contents;
+}
 .env-document-tabs {
   box-sizing: border-box;
   display: flex;
@@ -22,7 +26,7 @@
 .env-document-tabs::-webkit-scrollbar {
   display: none;
 }
-.env-document-tab {
+.env-document-tabs-item {
   box-sizing: border-box;
   position: relative;
   flex: 0 0 auto;
@@ -30,8 +34,7 @@
   max-inline-size: 14rem;
   display: inline-flex;
   align-items: center;
-  gap: var(--env-space-2);
-  padding-inline: var(--env-space-3) var(--env-space-1);
+  padding-inline-end: var(--env-space-1);
   border-start-start-radius: var(--env-radius-sm);
   border-start-end-radius: var(--env-radius-sm);
   color: var(--env-color-fg-muted);
@@ -39,23 +42,22 @@
   white-space: nowrap;
   cursor: pointer;
   user-select: none;
-  outline: none;
   transition:
     background-color var(--env-motion-duration-fast) var(--env-motion-ease),
     color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
-.env-document-tab:hover {
+.env-document-tabs-item:hover {
   background: var(--env-color-bg-neutral-subtle-hover);
   color: var(--env-color-fg-default);
 }
-.env-document-tab:active {
+.env-document-tabs-item:active {
   background: var(--env-color-bg-neutral-subtle-pressed);
 }
-.env-document-tab[data-active] {
+.env-document-tabs-item[data-active] {
   background: var(--env-color-bg-neutral-muted);
   color: var(--env-color-fg-default);
 }
-.env-document-tab[data-active]::after {
+.env-document-tabs-item[data-active]::after {
   content: '';
   position: absolute;
   inset: auto 0 0;
@@ -63,61 +65,60 @@
   border-radius: 0.125rem 0.125rem 0 0;
   background: var(--env-color-fg-on-selected);
 }
-.env-document-tab:focus-visible {
+/* The ring of a focused tab goes around its whole item, close button included. */
+.env-document-tabs-item:has(> .env-document-tabs-tab:focus-visible) {
   outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: -0.125rem;
 }
-.env-document-tab .env-icon {
+/* The tab covers its item up to the close button, so a press anywhere on the label selects it. */
+.env-document-tabs-tab {
+  box-sizing: border-box;
+  align-self: stretch;
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--env-space-2);
+  margin: 0;
+  padding-block: 0;
+  padding-inline: var(--env-space-3) var(--env-space-2);
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  white-space: nowrap;
+  cursor: inherit;
+  user-select: none;
+  outline: none;
+}
+.env-document-tabs-tab .env-icon {
   inline-size: var(--env-control-icon-size);
   block-size: var(--env-control-icon-size);
   color: var(--env-color-fg-muted);
 }
-.env-document-tab-label {
+.env-document-tabs-tab-label {
   min-inline-size: 0;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 /* A preview tab is replaced by the next previewed document until it is pinned. The bundled Inter has
    no italic face, so the slant is synthesized. */
-.env-document-tab[data-preview='true'] .env-document-tab-label {
+.env-document-tabs-tab[data-preview='true'] .env-document-tabs-tab-label {
   font-style: italic;
   font-synthesis: style;
   padding-inline-end: 0.125em;
 }
-/* The close button keeps its space so tabs do not change width; it shows on the active tab, on hover
-   and with keyboard focus. */
-.env-document-tab-close {
-  inline-size: 1.5rem;
-  block-size: 1.5rem;
-  flex: 0 0 auto;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--env-color-fg-muted);
-  cursor: pointer;
+/* The close button, a CloseButton, is a small circle that keeps its space so tabs do not change
+   width; it shows on the active tab, on hover and with keyboard focus. The strip sets its size
+   through the control size it reads, also inside a container that gives controls a size. */
+.env-document-tabs-item .env-document-tabs-close {
+  --env-control-height: 1.5rem;
+  --env-control-icon-size: 1rem;
   visibility: hidden;
 }
-.env-document-tab-close .env-icon {
-  inline-size: 1rem;
-  block-size: 1rem;
-}
-.env-document-tab:is([data-active], :hover, :focus-visible) .env-document-tab-close,
-.env-document-tab-close:focus-visible {
+.env-document-tabs-item:is([data-active], :hover, :has(:focus-visible)) .env-document-tabs-close {
   visibility: visible;
-}
-.env-document-tab-close:hover {
-  background: var(--env-color-bg-neutral-subtle-hover);
-  color: var(--env-color-fg-default);
-}
-.env-document-tab-close:active {
-  background: var(--env-color-bg-neutral-subtle-pressed);
-}
-.env-document-tab-close:focus-visible {
-  outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: -0.125rem;
 }
 /* Under a coarse pointer the tabs are the touch height above the strip's hairline, and each close
    button always shows, as tall and wide as its tab. */
@@ -125,14 +126,12 @@
   .env-document-tabs {
     block-size: calc(var(--env-control-height-touch) + var(--env-control-border-width));
   }
-  .env-document-tab-close {
-    inline-size: var(--env-control-height-touch);
-    block-size: var(--env-control-height-touch);
+  .env-document-tabs-close {
     visibility: visible;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .env-document-tab {
+  .env-document-tabs-item {
     transition: none;
   }
 }
@@ -140,19 +139,18 @@
 /* Forced colors: the system paints no fills or shadows, so the active tab takes the system’s
    selection colors. */
 @media (forced-colors: active) {
-  .env-document-tab[data-active] {
+  .env-document-tabs-item[data-active] {
     forced-color-adjust: none;
     background-color: Highlight;
     color: HighlightText;
   }
-  .env-document-tab[data-active] :where(*) {
+  .env-document-tabs-item[data-active] :where(*) {
     color: inherit;
   }
-  .env-document-tab[data-active]::after {
+  .env-document-tabs-item[data-active]::after {
     background-color: HighlightText;
   }
-  .env-document-tab[data-active]:focus-visible,
-  .env-document-tab[data-active] :focus-visible {
+  .env-document-tabs-item[data-active]:has(> .env-document-tabs-tab:focus-visible) {
     outline-color: HighlightText;
   }
 }

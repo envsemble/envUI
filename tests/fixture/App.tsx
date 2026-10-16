@@ -28,6 +28,7 @@ import {
   CompactTabsFixture,
   DocumentTabsFixture,
   FillTabsFixture,
+  RtlDocumentTabsFixture,
   RtlTabsFixture,
   TabStatesFixture,
 } from './Tabs.js';
@@ -91,6 +92,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'message-strings': MessageStringsFixture,
   direction: DirectionFixture,
   'rtl-tabs': RtlTabsFixture,
+  'rtl-document-tabs': RtlDocumentTabsFixture,
 };
 
 export default function App() {

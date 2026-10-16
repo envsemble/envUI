@@ -246,3 +246,19 @@ export function RtlTabsFixture() {
     </>
   );
 }
+
+/** An overflowing DocumentTabs strip in right-to-left text, mounted with ?fixture=rtl-document-tabs. */
+export function RtlDocumentTabsFixture() {
+  const [value, setValue] = useState<string | null>(initialTabs[0]!.id);
+  return (
+    <div dir="rtl" style={{ inlineSize: '30rem' }}>
+      <DocumentTabs
+        aria-label="Right-to-left documents"
+        items={initialTabs}
+        value={value}
+        onValueChange={setValue}
+        onClose={() => undefined}
+      />
+    </div>
+  );
+}

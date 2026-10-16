@@ -57,18 +57,6 @@
       }
     }
   },
-  "components/document-tabs/overview": {
-    "dark": {
-      "nested-interactive": {
-        "article :: div.env-document-tab": 2
-      }
-    },
-    "light": {
-      "nested-interactive": {
-        "article :: div.env-document-tab": 2
-      }
-    }
-  },
   "components/drop-zone/guidelines": {
     "dark": {
       "label-content-name-mismatch": {

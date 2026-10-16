@@ -299,9 +299,7 @@
       "Breadcrumbs": {
         "classes": ["env-breadcrumb"]
       },
-      "DocumentTabs": {
-        "classes": ["env-document-tab"]
-      },
+      "DocumentTabs": {},
       "NavList": {},
       "Menu": {
         "modules": ["navigation/ContextMenu.tsx", "navigation/internal/MenuPopup.tsx"]
@@ -312,9 +310,7 @@
       "PanelDock": {
         "modules": ["navigation/PanelDockHeader.tsx", "navigation/internal/PanelDockContext.ts"]
       },
-      "Tabs": {
-        "classes": ["env-tab"]
-      },
+      "Tabs": {},
       "WindowFrame": {
         "styles": ["TitleBar.css"]
       },
