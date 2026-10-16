@@ -750,7 +750,9 @@
         "input field",
         "form field",
         "email field",
+        "email",
         "password field",
+        "password",
         "search field",
         "search box",
         "textarea",
@@ -1557,6 +1559,7 @@
         "file uploader",
         "uploader",
         "file input",
+        "drag and drop",
         "file picker",
         "attachment",
         "drag and drop upload"
@@ -11228,7 +11231,7 @@
       "native": [],
       "aliases": [
         "theme preference",
-        "remember the theme"
+        "persisted theme"
       ],
       "page": "setup",
       "doc": "docs/setup.md"
@@ -11263,6 +11266,7 @@
       "aliases": [
         "theme switcher",
         "dark mode toggle",
+        "dark mode switch",
         "light and dark switch",
         "switch between light and dark"
       ],

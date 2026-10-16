@@ -12,7 +12,9 @@ aliases:
   - input field
   - form field
   - email field
+  - email
   - password field
+  - password
   - search field
   - search box
   - textarea

@@ -11,11 +11,12 @@ exportAliases:
   ThemeToggle:
     - theme switcher
     - dark mode toggle
+    - dark mode switch
     - light and dark switch
     - switch between light and dark
   ThemePreferenceProvider:
     - theme preference
-    - remember the theme
+    - persisted theme
   LinkProvider:
     - router link
     - client-side navigation

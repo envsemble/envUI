@@ -59,7 +59,7 @@ The server starts in the folder the client works in. Where a workspace installs 
 
 | Tool              | What it answers                                                                                                                                                 |
 | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `plan`            | A description of a screen or feature → the components for each part, matching patterns and templates, tokens, imports and gaps.                                 |
+| `plan`            | A description of a screen or feature → candidates for each part with the words that matched, patterns, templates, tokens, gaps and ignored words.               |
 | `search`          | Components, exports without a page of their own, patterns, templates, foundations, guides and tokens by what they do or what people call them, ranked.          |
 | `list_components` | Every component page with its exports, import path, status and summary, optionally by category or status.                                                       |
 | `get_component`   | A component or export by name, part or alias: when to use it, what to use instead, exports, examples, related pages and, with `docs`, its page.                 |
@@ -69,7 +69,7 @@ The server starts in the folder the client works in. Where a workspace installs 
 | `list_templates`  | The templates.                                                                                                                                                  |
 | `get_tokens`      | Tokens by words, name prefix or type, with their custom property and values per theme and scale; with `legacy`, the 0.7 names and the tokens that replace them. |
 
-`plan` and `search` rank by plain term matching over names, aliases, summaries and when-to-use text; no model is involved. `plan` reads each part of a description in the context of the whole: a part that a component already chosen also matches, such as the toggle of "a collapsible sidebar with a toggle", stays with it. Words such as page, screen, view and flow name structure, which templates and patterns answer. A part that nothing matches comes back under `uncovered`.
+`plan` and `search` rank by plain term matching over names, aliases, summaries and when-to-use text; no model is involved. So `plan` proposes candidates, not an answer: each comes with the words that matched and the part it answers, to confirm with `get_component` and `get_props`, and it gives no list of imports to paste. Words it reads as content, such as quoted labels, code or capitalized names envUI has no component for, come back under `ignored`. `plan` reads each part of a description in the context of the whole: a part that a component already chosen also matches, such as the toggle of "a collapsible sidebar with a toggle", stays with it. Words such as page, screen, view and flow name structure, which templates and patterns answer. A part that nothing matches comes back under `uncovered`.
 
 ## The manifest
 

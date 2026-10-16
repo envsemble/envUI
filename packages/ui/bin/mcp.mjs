@@ -145,9 +145,9 @@ export const tools = [
   },
   {
     name: 'plan',
-    title: 'Plan a UI with envUI',
+    title: 'Find envUI candidates for a UI',
     description:
-      'Turn a description of a screen or feature into the envUI components that cover each part, matching patterns and templates, relevant tokens, the imports, and the parts envUI has nothing for. Start here for anything bigger than one control.',
+      'Candidates for a description of a screen or feature: for each part, the envUI component whose names, aliases or description match it, with the words that matched; matching patterns and templates; tokens it names; the parts nothing matched; and words left out as content. The candidates come from matching words, not understanding: confirm each with get_component and get_props, and search for the uncovered parts. Not an import list.',
     inputSchema: object(
       {
         description: string(
@@ -385,7 +385,7 @@ export function createServer({
 } = {}) {
   const version = manifest.version ?? JSON.parse(readPackageFile(root, 'package.json')).version;
   const context = { manifest, root };
-  const instructions = `envUI ${version} (${manifest.package}). ${manifest.rule} Use plan for a screen or feature, search to find a component, get_component and get_props before using one, and get_example for code to start from. Import only what these tools list.`;
+  const instructions = `envUI ${version} (${manifest.package}). ${manifest.rule} Use plan for candidates for a screen or feature and search to find a component, then get_component and get_props to confirm one before using it, and get_example for code to start from. Use only exports these tools confirm exist.`;
   const result = (id, value) => ({ jsonrpc: '2.0', id, result: value });
   const error = (id, code, message) => ({ jsonrpc: '2.0', id, error: { code, message } });
 

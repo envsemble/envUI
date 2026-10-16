@@ -13,6 +13,7 @@ aliases:
   - file uploader
   - uploader
   - file input
+  - drag and drop
   - file picker
   - attachment
   - drag and drop upload

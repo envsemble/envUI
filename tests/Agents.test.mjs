@@ -8,10 +8,11 @@ import {
   readdirSync,
   readFileSync,
   rmSync,
+  symlinkSync,
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join, parse, relative, resolve } from 'node:path';
+import { dirname, join, parse, relative, resolve } from 'node:path';
 import { after, before, test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import {
@@ -345,6 +346,31 @@ test('the index points at the package where the project installs it', () => {
   assert.match(nowhere.warning, /envUI is not installed in or below/);
 });
 
+test('a root index names the link pnpm makes, not the folder it points to', () => {
+  const root = mkdtempSync(join(tmpdir(), 'envui-pnpm-link-'));
+  try {
+    const store = join(
+      root,
+      'node_modules/.pnpm/@envsemble+envui@1.0.0/node_modules/@envsemble/envui',
+    );
+    mkdirSync(store, { recursive: true });
+    writeFileSync(join(store, 'package.json'), '{}');
+    const link = join(root, 'apps/web/node_modules/@envsemble/envui');
+    mkdirSync(dirname(link), { recursive: true });
+    symlinkSync(store, link, 'junction');
+    // The running package is the store folder, as Node resolves the bin's link.
+    assert.deepEqual(packagePathFor(join(root, 'AGENTS.md'), { installed: store }), {
+      path: 'apps/web/node_modules/@envsemble/envui',
+    });
+    // From the workspace package itself, the link is found above as usual.
+    assert.deepEqual(packagePathFor(join(root, 'apps/web/AGENTS.md'), { installed: store }), {
+      path: 'node_modules/@envsemble/envui',
+    });
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test('a root index finds a package that pnpm installed only in a workspace package', () => {
   // Outside the repository, whose own node_modules a folder inside it would find above.
   const root = mkdtempSync(join(tmpdir(), 'envui-pnpm-'));
@@ -397,7 +423,12 @@ test('npx always runs envui with --no, in the docs, skills and what the bin prin
           ? [join(folder, entry.name)]
           : [],
     );
-  for (const file of [...walk('docs'), ...walk('.agents/skills'), ...walk('packages/ui/bin')])
+  for (const file of [
+    ...walk('docs'),
+    ...walk('.agents/skills'),
+    ...walk('packages/ui/bin'),
+    ...walk('bench').filter((file) => !/[\\/](?:results|fixtures)[\\/]/.test(file)),
+  ])
     texts.push([file, readFileSync(join(repository, file), 'utf8')]);
   for (const name of ['--help', 'mcp --help', 'agents --help'])
     texts.push([
@@ -628,14 +659,15 @@ test('envui mcp answers every tool over stdio from the installed files', async (
     description:
       'A members page: a filterable table with an empty state, pagination and a confirm-delete dialog',
   });
-  const names = planned.components.map((component) => component.name);
+  const names = planned.candidates.map((item) => item.component);
   for (const name of ['Table', 'EmptyState', 'Pagination', 'Dialog'])
     assert.ok(names.includes(name), name);
-  assert.ok(
-    planned.imports.some((line) =>
-      /import \{[^}]*\bTable\b[^}]*\} from '@envsemble\/envui';/.test(line),
-    ),
-  );
+  // Candidates to confirm, each with the words that matched, never a list of imports to paste.
+  assert.equal(planned.imports, undefined);
+  const table = planned.candidates.find((item) => item.component === 'Table');
+  assert.equal(table.import, '@envsemble/envui');
+  assert.ok(table.matched.includes('table'));
+  assert.match(planned.next[0], /candidates matched on words, not an import list/);
   assert.match((await server.call('plan', {})).error, /"description" must be a non-empty string/);
 
   const { code, stderr } = await server.stop();
@@ -723,7 +755,7 @@ test('search finds exports without a component page by name', () => {
     assert.ok(first.doc, name);
   }
   assert.deepEqual(
-    plan(manifest, 'a dark mode toggle').components.map((component) => component.name),
+    plan(manifest, 'a dark mode toggle').candidates.map((item) => item.component),
     ['ThemeToggle'],
   );
 });
@@ -740,28 +772,33 @@ test('search and plan rank by names, aliases and situations', () => {
     manifest,
     'a settings form with a name field, a notifications switch and a save button',
   );
-  const planned = settings.components.map((component) => component.name);
-  for (const name of ['Button', 'Switch', 'TextField']) {
-    assert.ok(planned.includes(name), name);
-    assert.match(settings.imports.join('\n'), new RegExp(`\\b${name}\\b`));
+  const planned = settings.candidates.map((item) => item.component);
+  for (const name of ['Button', 'Switch', 'TextField']) assert.ok(planned.includes(name), name);
+  for (const candidate of settings.candidates) {
+    assert.equal(candidate.import, '@envsemble/envui');
+    assert.ok(candidate.matched.length && candidate.parts.length, candidate.component);
+    assert.equal(new Set(candidate.parts).size, candidate.parts.length, 'parts once each');
   }
-  assert.ok(settings.imports.every((line) => line.endsWith("from '@envsemble/envui';")));
   // Structure words lead to templates and patterns, not to Pager or Pagination.
   const signIn = plan(manifest, 'a sign-in page');
-  assert.deepEqual(signIn.components, []);
+  assert.deepEqual(signIn.candidates, []);
   assert.deepEqual(signIn.uncovered, ['a sign-in page']);
   assert.ok(signIn.next.some((step) => /No template matches "a sign-in page"/.test(step)));
   // A part a chosen component also matches stays with it.
   assert.deepEqual(
-    plan(manifest, 'add a collapsible sidebar with a toggle').components.map((c) => c.name),
+    plan(manifest, 'add a collapsible sidebar with a toggle').candidates.map(
+      (item) => item.component,
+    ),
     ['AppShell'],
   );
   const form = plan(manifest, 'a sign-in form with email and password');
-  assert.ok(form.components.some((component) => component.name === 'TextField'));
+  assert.ok(form.candidates.some((item) => item.component === 'TextField'));
   assert.ok(!form.uncovered.some((part) => /email|password/.test(part)), form.uncovered.join());
   const chart = plan(manifest, 'a line chart of weekly sign-ups');
   assert.deepEqual(chart.uncovered, ['a line chart of weekly sign-ups']);
-  assert.match(chart.next.at(-1), /propose an envUI addition instead of a local copy/);
+  assert.ok(
+    chart.next.some((step) => /propose an envUI addition instead of a local copy/.test(step)),
+  );
   assert.ok(
     plan(manifest, 'an error message in danger color').tokens.some((token) =>
       token.name.includes('danger'),
@@ -789,25 +826,25 @@ const planned = {
   'projects-table': ['table', 'sortable-headers', 'search', 'empty-state'],
   'confirm-delete': ['delete-action', 'confirmation'],
   'save-toast': ['toast', 'name-field', 'save-button'],
-  'page-header': ['breadcrumbs'],
-  'command-palette': ['palette', 'shortcut-hint'],
+  'page-header': ['breadcrumbs', 'actions'],
+  'command-palette': ['palette'],
   'tabs-counts': ['tabs'],
   'account-menu': ['avatar', 'menu', 'menu-items'],
   'file-upload': ['dropzone', 'remove-file', 'upload-progress'],
   'date-form': ['date-picker', 'submit'],
-  'loading-skeletons': ['placeholders', 'error-message'],
+  'loading-skeletons': ['placeholders', 'error-message', 'retry'],
   'inline-notice': ['upgrade-link'],
 };
 
-test('plan covers the capabilities of the benchmark tasks', () => {
+test('plan covers the capabilities of the benchmark tasks, and suggests few others', () => {
   const tasks = JSON.parse(readFileSync(join(repository, 'bench/tasks.json'), 'utf8'));
   const list = tasks.tasks ?? tasks;
   assert.deepEqual(Object.keys(planned).sort(), list.map((task) => task.id).sort());
+  let suggested = 0;
+  let relevant = 0;
   for (const task of list) {
     const result = plan(manifest, task.prompt);
-    const names = new Set(
-      result.components.flatMap((component) => [component.name, ...component.use]),
-    );
+    const names = new Set(result.candidates.flatMap((item) => [item.component, ...item.use]));
     for (const id of planned[task.id]) {
       const capability = task.capabilities.find((item) => item.id === id);
       assert.ok(
@@ -815,13 +852,28 @@ test('plan covers the capabilities of the benchmark tasks', () => {
         `${task.id}: ${id} (${capability.envui.join(', ')}) is not in the plan: ${[...names].join(', ')}`,
       );
     }
+    for (const candidate of result.candidates) {
+      suggested += 1;
+      const allowed = task.capabilities.flatMap((item) =>
+        item.envui.map((name) => name.split('.')[0]),
+      );
+      if ([candidate.component, ...candidate.use].some((name) => allowed.includes(name)))
+        relevant += 1;
+    }
     // Code and file names in a prompt are the application's, never a part to build.
     assert.ok(!result.uncovered.some((part) => /\.tsx?\b|`/.test(part)), task.id);
   }
+  // Recall is the list above: 30 of the 43 capabilities. Precision is the share of candidates the
+  // tasks list as a way to build them: 26 of 46 when this was written, a floor of one half. Stack,
+  // Badge and the like count against it although they fit, so it understates.
+  const recall = Object.values(planned).flat().length;
+  assert.ok(recall >= 30, `benchmark recall ${recall} of 43`);
+  assert.ok(relevant / suggested >= 0.5, `benchmark precision ${relevant} of ${suggested}`);
 });
 
 test('plan leaves out what a part does not ask for', () => {
-  const names = (description) => plan(manifest, description).components.map((item) => item.name);
+  const names = (description) =>
+    plan(manifest, description).candidates.map((item) => item.component);
   const tasks = JSON.parse(readFileSync(join(repository, 'bench/tasks.json'), 'utf8'));
   const prompt = (id) => (tasks.tasks ?? tasks).find((task) => task.id === id).prompt;
   const settings = names(prompt('settings-form'));
@@ -841,7 +893,8 @@ test('plan leaves out what a part does not ask for', () => {
 });
 
 test('plan finds the right component for paraphrases the benchmark does not use', () => {
-  const names = (description) => plan(manifest, description).components.map((item) => item.name);
+  const names = (description) =>
+    plan(manifest, description).candidates.map((item) => item.component);
   assert.deepEqual(names('a sidebar with links'), ['NavList']);
   assert.deepEqual(names('let users switch between light and dark themes'), ['ThemeToggle']);
   assert.deepEqual(names('a theme switcher in the header'), ['ThemeToggle']);
@@ -890,4 +943,83 @@ test('the server answers an empty batch, a guide page and invalid filters clearl
     assert.equal(result.isError, true, JSON.stringify(args));
     assert.match(result.content[0].text, /must be/);
   }
+});
+
+/**
+ * Descriptions that are not the benchmark's, with the components plan must suggest, the ones it
+ * may suggest, and the ones it must not: the wrong picks reviews found.
+ */
+const corpus = [
+  ['Open a Modal to edit the user', ['Dialog'], [], ['Avatar']],
+  [
+    'Add a Date Picker and a Search Box to the filters',
+    ['DatePicker', 'TextField'],
+    [],
+    ['SegmentedControl'],
+  ],
+  ['a Dark Mode switch in the header', ['ThemeToggle'], ['AppShell'], ['Switch']],
+  ['a form with a postal code field', [], ['TextField', 'Stack'], ['Code']],
+  ['A top bar with the product name', [], ['AppShell'], ['Menubar']],
+  ['pick a date range for the report', [], ['DatePicker'], ['Slider']],
+  ['a remember me checkbox on the sign-in form', ['Checkbox'], [], ['ThemePreferenceProvider']],
+  ['A header with the page title', [], ['AppShell'], ['PanelDock']],
+  ['Add a "Delete" button and a confirm dialog', ['Button', 'Dialog'], [], []],
+  ['show the account details', [], [], ['Disclosure']],
+  ['a toggle for the newsletter', ['Switch'], [], ['ThemeToggle']],
+  ['a list of team members with their avatars', ['Avatar'], ['List'], []],
+  ['a dropdown to choose the language', ['Select'], ['Menu'], []],
+  ['a tooltip on the info icon', ['Tooltip'], ['IconButton'], ['Icon']],
+  ['a progress bar while the file uploads', ['Progress'], ['DropZone'], []],
+  ['tabs for Overview, Activity and Settings', ['Tabs'], [], ['Switch']],
+  ['a snackbar after saving', ['Toast'], [], []],
+  ['a confirmation before removing a member', [], ['ConfirmButton', 'Dialog'], ['Avatar']],
+  ['some text and an icon', [], [], ['Text', 'Icon']],
+  ['the workspace name', [], ['TextField'], ['DocumentTabs']],
+];
+
+test('plan suggests the right candidates for descriptions it was not tuned on', () => {
+  let expected = 0;
+  let found = 0;
+  let suggested = 0;
+  let right = 0;
+  const wrong = [];
+  for (const [description, must, may, mustNot] of corpus) {
+    const names = plan(manifest, description).candidates.map((item) => item.component);
+    expected += must.length;
+    found += must.filter((name) => names.includes(name)).length;
+    suggested += names.length;
+    right += names.filter((name) => must.includes(name) || may.includes(name)).length;
+    for (const name of names)
+      if (mustNot.includes(name)) wrong.push(`${name} for "${description}"`);
+    for (const name of must)
+      assert.ok(names.includes(name), `${name} for "${description}": ${names}`);
+  }
+  assert.deepEqual(wrong, []);
+  // Recall: every component the corpus requires (14 of 14 when this was written). Precision: the
+  // share of candidates the corpus requires or allows (16 of 18), a floor of 0.85.
+  assert.equal(found, expected, `corpus recall ${found} of ${expected}`);
+  assert.ok(right / suggested >= 0.85, `corpus precision ${right} of ${suggested}`);
+});
+
+test('plan never drops words silently', () => {
+  // Capitalized words envUI knows stay: a whole name or alias, or part of one for a run of several.
+  const modal = plan(manifest, 'Open a Modal to edit the user');
+  assert.deepEqual(
+    modal.candidates.map((item) => item.component),
+    ['Dialog'],
+  );
+  assert.deepEqual(modal.ignored, []);
+  const picker = plan(manifest, 'Add a Date Picker to the filters');
+  assert.ok(picker.candidates.some((item) => item.component === 'DatePicker'));
+  // Labels, quoted text and code are content: they are left out, and listed as ignored.
+  const sidebar = plan(
+    manifest,
+    'A sidebar with links to Projects, Members and Settings. Call `openProject`.',
+  );
+  for (const word of ['Projects', 'Members', 'Settings', '`openProject`'])
+    assert.ok(sidebar.ignored.includes(word), `${word} in ${sidebar.ignored}`);
+  assert.ok(plan(manifest, 'Add a "Delete" button').ignored.includes('"Delete"'));
+  // A part reads as written, without the gaps the left-out words leave.
+  for (const candidate of sidebar.candidates)
+    for (const part of candidate.parts) assert.doesNotMatch(part, /\s{2,}|^\s|\s$/, part);
 });
