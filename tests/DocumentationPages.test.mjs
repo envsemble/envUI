@@ -63,7 +63,6 @@ const unconverted = [
   'stat',
   'surface',
   'switch',
-  'table',
   'tabs',
   'toast',
   'tooltip',

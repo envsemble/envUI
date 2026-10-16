@@ -43,7 +43,6 @@ import {
   AlertsPreview,
   PopoverPreview,
   SegmentedControlPreview,
-  TablesPreview,
 } from './Elements';
 
 const RichTextPreview = lazy(() =>
@@ -93,8 +92,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <ChipsPreview />;
     case 'badge':
       return <BadgesPreview />;
-    case 'table':
-      return <TablesPreview />;
     case 'kbd':
       return <KbdPreview />;
     case 'breadcrumbs':

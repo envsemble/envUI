@@ -5617,7 +5617,7 @@
     "Table.Body": {
       "kind": "component",
       "source": "packages/ui/src/content/Table.tsx",
-      "description": "",
+      "description": "The data rows of a table, a native tbody, separated by hairlines.",
       "props": [],
       "native": [
         "tbody"
@@ -5629,7 +5629,7 @@
     "Table.Cell": {
       "kind": "component",
       "source": "packages/ui/src/content/Table.tsx",
-      "description": "",
+      "description": "A data cell, a native td, with a label that names its value while rows stack.",
       "props": [
         {
           "name": "label",
@@ -5641,19 +5641,22 @@
           "name": "align",
           "type": "'start' | 'end'",
           "required": false,
-          "description": "start (default) or end alignment."
+          "default": "'start', or 'end' with numeric",
+          "description": "Aligns the content with the start or the end of the cell."
         },
         {
           "name": "numeric",
           "type": "boolean",
           "required": false,
-          "description": "Tabular figures aligned to the end, for numbers that compare down a column."
+          "default": "false",
+          "description": "Tabular figures aligned to the end, for numbers that compare down a column. In a sortable header the arrow comes before the label, so the label lines up with the numbers."
         },
         {
           "name": "nowrap",
           "type": "boolean",
           "required": false,
-          "description": "Keep the content on one line."
+          "default": "false",
+          "description": "Keeps the content on one line. In a table with set column widths, content that doesn't fit ends with an ellipsis."
         }
       ],
       "native": [
@@ -5666,7 +5669,7 @@
     "Table.Head": {
       "kind": "component",
       "source": "packages/ui/src/content/Table.tsx",
-      "description": "",
+      "description": "The header rows of a table, a native thead, which hold the column headers.",
       "props": [],
       "native": [
         "thead"
@@ -5678,49 +5681,55 @@
     "Table.HeaderCell": {
       "kind": "component",
       "source": "packages/ui/src/content/Table.tsx",
-      "description": "",
+      "description": "A header cell, a native th that heads its column, or its row with scope=\"row\". With onSort it sorts its column; in a table with resizable columns it holds the column's resize handle.",
       "props": [
         {
           "name": "sortDirection",
           "type": "'ascending' | 'descending' | 'none'",
           "required": false,
-          "description": "The column's sort order, announced on the header. Use it with onSort."
+          "default": "'none' with onSort",
+          "description": "The column's sort order: aria-sort on the header and the arrow in its sort button. Use it with onSort; without onSort it only sets aria-sort."
         },
         {
           "name": "onSort",
           "type": "() => void",
           "required": false,
-          "description": "The header becomes a button that asks the application to sort the rows by this column."
+          "description": "The header becomes a button across the cell that asks the application to sort the rows by this column. The application sorts the rows and sets sortDirection."
         },
         {
           "name": "sortLabel",
           "type": "string",
           "required": false,
-          "description": "Accessible name of the sort button, which says what pressing it does: the header followed by \"sort ascending\" by default, or by \"sort descending\" while the column is sorted ascending."
+          "default": "'{header} sort {next order}'",
+          "description": "Accessible name of the sort button, which says what pressing it does: the header's name followed by \"sort ascending\", or by \"sort descending\" while the column is sorted ascending."
         },
         {
           "name": "resizeLabel",
           "type": "string",
           "required": false,
-          "description": "Accessible name of the column's resize handle; \"Resize\" followed by the header by default."
+          "default": "'Resize {header}'",
+          "description": "Accessible name of the column's resize handle, \"Resize\" followed by the header's name."
         },
         {
           "name": "align",
           "type": "'start' | 'end'",
           "required": false,
-          "description": "start (default) or end alignment."
+          "default": "'start', or 'end' with numeric",
+          "description": "Aligns the content with the start or the end of the cell."
         },
         {
           "name": "numeric",
           "type": "boolean",
           "required": false,
-          "description": "Tabular figures aligned to the end, for numbers that compare down a column."
+          "default": "false",
+          "description": "Tabular figures aligned to the end, for numbers that compare down a column. In a sortable header the arrow comes before the label, so the label lines up with the numbers."
         },
         {
           "name": "nowrap",
           "type": "boolean",
           "required": false,
-          "description": "Keep the content on one line."
+          "default": "false",
+          "description": "Keeps the content on one line. In a table with set column widths, content that doesn't fit ends with an ellipsis."
         }
       ],
       "native": [
@@ -5733,33 +5742,33 @@
     "Table.Root": {
       "kind": "component",
       "source": "packages/ui/src/content/Table.tsx",
-      "description": "A semantic data table on a rounded surface that scrolls sideways when columns do not fit.",
+      "description": "A semantic data table on a rounded surface, in a focusable region that scrolls sideways when the columns do not fit.",
       "props": [
         {
           "name": "aria-label",
           "type": "string",
           "required": false,
-          "description": "Accessible name of the table and its scroll region when there is no caption."
+          "description": "Accessible name of the table and its scroll region when there is no caption. A table needs a caption or an aria-label."
         },
         {
           "name": "caption",
           "type": "ReactNode",
           "required": false,
-          "description": "A visible caption that names the table."
+          "description": "A visible caption above the rows that names the table and its scroll region, in place of aria-label. Under a sticky header it scrolls away with the rows."
         },
         {
           "name": "density",
           "type": "'compact' | 'standard'",
           "required": false,
           "default": "'standard'",
-          "description": "standard (default) rows, or compact rows for dense data."
+          "description": "standard rows, or compact rows with smaller text and padding for dense data. Buttons, icon buttons and fields in compact cells take the 2 rem compact control height."
         },
         {
           "name": "stickyHeader",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "The header row stays visible while the table scrolls within its own region; give it a height."
+          "description": "The header row stays at the top of the region while the rows scroll beneath it. The region then scrolls vertically too, so give it a height through regionClassName or the surrounding layout."
         },
         {
           "name": "regionClassName",
@@ -5772,14 +5781,14 @@
           "type": "'scroll' | 'stack'",
           "required": false,
           "default": "'scroll'",
-          "description": "When the table's region is narrower than stackBelow: scroll (default) keeps the columns and scrolls sideways; stack shows each body row as a block that starts with its first cell, followed by the other cells with their labels. The header row is then visually hidden."
+          "description": "What the table does when its region is narrower than stackBelow: scroll keeps the columns and scrolls sideways; stack shows each body row as a block that starts with its first cell, followed by the other cells with their labels. The header row is then visually hidden."
         },
         {
           "name": "stackBelow",
           "type": "string | number",
           "required": false,
           "default": "'36rem'",
-          "description": "The region width below which a table with narrowLayout=\"stack\" stacks its rows: a CSS length such as 60rem or 480px, or a number of pixels, such as 600 or \"600\"; 36rem by default. Wide tables, such as seven sortable columns, need more."
+          "description": "The region width below which a table with narrowLayout=\"stack\" stacks its rows: a CSS length such as 60rem or 480px, or a number of pixels, such as 600 or \"600\". Wide tables, such as seven sortable columns, need more."
         },
         {
           "name": "onStackedChange",
@@ -5791,13 +5800,13 @@
           "name": "columnWidths",
           "type": "readonly number[]",
           "required": false,
-          "description": "Column widths in percent of the table width, in column order and adding up to 100."
+          "description": "Column widths in percent of the table width, in column order and adding up to 100, for widths the application controls with onColumnWidthsChange. Set widths fix the columns: long words wrap and nowrap cells end with an ellipsis."
         },
         {
           "name": "defaultColumnWidths",
           "type": "readonly number[]",
           "required": false,
-          "description": "Starting column widths when the table owns them. Double-clicking a resize handle restores them, or else the widths a controlled table started with."
+          "description": "Starting column widths, in percent, when the table owns them; other defaults start them over. Double-clicking a resize handle restores them, or else the widths a controlled table started with."
         },
         {
           "name": "onColumnWidthsChange",
@@ -5809,14 +5818,15 @@
           "name": "minColumnWidths",
           "type": "number | readonly number[]",
           "required": false,
-          "description": "Smallest width of each column in percent, or one value for every column; 5 by default."
+          "default": "5",
+          "description": "Smallest width of each column in percent, in column order, or one value for every column."
         },
         {
           "name": "resizableColumns",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "People can resize the columns with a handle at the end of each header cell but the last. Needs columnWidths or defaultColumnWidths."
+          "description": "People can resize the columns with a handle at the end of each header cell but the last, which moves the boundary to the next column and keeps the table's width. Needs columnWidths or defaultColumnWidths."
         }
       ],
       "native": [
@@ -5829,20 +5839,20 @@
     "Table.Row": {
       "kind": "component",
       "source": "packages/ui/src/content/Table.tsx",
-      "description": "",
+      "description": "A row of a table, a native tr, which can highlight on hover or be selected.",
       "props": [
         {
           "name": "interactive",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "The row reacts to hover, for rows that open something through a link or button inside."
+          "description": "The row highlights on hover and while focus is inside it, for rows that open something through a link or button in a cell. It adds no behavior of its own."
         },
         {
           "name": "selected",
           "type": "boolean",
           "required": false,
-          "description": "The row is selected: it reports aria-selected and takes the selection colors. Pass false to the other rows of a table whose rows can be selected."
+          "description": "The row is selected: it reports aria-selected and takes the selection colors, with a bar at its start. Pass false to the other rows of a table whose rows can be selected; unset, a row reports no selection state."
         }
       ],
       "native": [

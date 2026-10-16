@@ -46,26 +46,38 @@ const TableColumnsContext = createContext<TableColumns | null>(null);
 const TableSectionContext = createContext<'head' | 'body' | null>(null);
 
 export interface RootProps extends Omit<ComponentPropsWithRef<'table'>, 'aria-label'> {
-  /** Accessible name of the table and its scroll region when there is no caption. */
+  /**
+   * Accessible name of the table and its scroll region when there is no caption. A table needs a
+   * caption or an aria-label.
+   */
   'aria-label'?: string;
-  /** A visible caption that names the table. */
+  /**
+   * A visible caption above the rows that names the table and its scroll region, in place of
+   * aria-label. Under a sticky header it scrolls away with the rows.
+   */
   caption?: ReactNode;
-  /** standard (default) rows, or compact rows for dense data. */
+  /**
+   * standard rows, or compact rows with smaller text and padding for dense data. Buttons, icon
+   * buttons and fields in compact cells take the 2 rem compact control height.
+   */
   density?: 'compact' | 'standard';
-  /** The header row stays visible while the table scrolls within its own region; give it a height. */
+  /**
+   * The header row stays at the top of the region while the rows scroll beneath it. The region then
+   * scrolls vertically too, so give it a height through regionClassName or the surrounding layout.
+   */
   stickyHeader?: boolean;
   /** Class of the scroll region around the table, for example to limit its height. */
   regionClassName?: string;
   /**
-   * When the table's region is narrower than stackBelow: scroll (default) keeps the columns and
+   * What the table does when its region is narrower than stackBelow: scroll keeps the columns and
    * scrolls sideways; stack shows each body row as a block that starts with its first cell,
    * followed by the other cells with their labels. The header row is then visually hidden.
    */
   narrowLayout?: 'scroll' | 'stack';
   /**
    * The region width below which a table with narrowLayout="stack" stacks its rows: a CSS length
-   * such as 60rem or 480px, or a number of pixels, such as 600 or "600"; 36rem by default. Wide
-   * tables, such as seven sortable columns, need more.
+   * such as 60rem or 480px, or a number of pixels, such as 600 or "600". Wide tables, such as
+   * seven sortable columns, need more.
    */
   stackBelow?: string | number;
   /**
@@ -75,20 +87,29 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'table'>, 'aria-la
    * while the rows stack.
    */
   onStackedChange?: (stacked: boolean) => void;
-  /** Column widths in percent of the table width, in column order and adding up to 100. */
+  /**
+   * Column widths in percent of the table width, in column order and adding up to 100, for widths
+   * the application controls with onColumnWidthsChange. Set widths fix the columns: long words
+   * wrap and nowrap cells end with an ellipsis.
+   */
   columnWidths?: readonly number[];
   /**
-   * Starting column widths when the table owns them. Double-clicking a resize handle restores them,
-   * or else the widths a controlled table started with.
+   * Starting column widths, in percent, when the table owns them; other defaults start them over.
+   * Double-clicking a resize handle restores them, or else the widths a controlled table started
+   * with.
    */
   defaultColumnWidths?: readonly number[];
   /** Called with every column's width when people resize a column. */
   onColumnWidthsChange?: (widths: number[]) => void;
-  /** Smallest width of each column in percent, or one value for every column; 5 by default. */
+  /**
+   * Smallest width of each column in percent, in column order, or one value for every column.
+   * @default 5
+   */
   minColumnWidths?: number | readonly number[];
   /**
-   * People can resize the columns with a handle at the end of each header cell but the last. Needs
-   * columnWidths or defaultColumnWidths.
+   * People can resize the columns with a handle at the end of each header cell but the last, which
+   * moves the boundary to the next column and keeps the table's width. Needs columnWidths or
+   * defaultColumnWidths.
    */
   resizableColumns?: boolean;
 }
@@ -130,7 +151,10 @@ function useNarrowerThan(
   return enabled && narrower;
 }
 
-/** A semantic data table on a rounded surface that scrolls sideways when columns do not fit. */
+/**
+ * A semantic data table on a rounded surface, in a focusable region that scrolls sideways when the
+ * columns do not fit.
+ */
 function Root({
   'aria-label': label,
   caption,
@@ -237,6 +261,7 @@ function Root({
 
 export type HeadProps = ComponentPropsWithRef<'thead'>;
 
+/** The header rows of a table, a native thead, which hold the column headers. */
 function Head({ className, ...props }: HeadProps) {
   const stack = useContext(TableStackContext);
   return (
@@ -252,6 +277,7 @@ function Head({ className, ...props }: HeadProps) {
 
 export type BodyProps = ComponentPropsWithRef<'tbody'>;
 
+/** The data rows of a table, a native tbody, separated by hairlines. */
 function Body({ className, ...props }: BodyProps) {
   const stack = useContext(TableStackContext);
   return (
@@ -266,15 +292,20 @@ function Body({ className, ...props }: BodyProps) {
 }
 
 export interface RowProps extends ComponentPropsWithRef<'tr'> {
-  /** The row reacts to hover, for rows that open something through a link or button inside. */
+  /**
+   * The row highlights on hover and while focus is inside it, for rows that open something through
+   * a link or button in a cell. It adds no behavior of its own.
+   */
   interactive?: boolean;
   /**
-   * The row is selected: it reports aria-selected and takes the selection colors. Pass false to the
-   * other rows of a table whose rows can be selected.
+   * The row is selected: it reports aria-selected and takes the selection colors, with a bar at its
+   * start. Pass false to the other rows of a table whose rows can be selected; unset, a row reports
+   * no selection state.
    */
   selected?: boolean;
 }
 
+/** A row of a table, a native tr, which can highlight on hover or be selected. */
 function Row({ interactive = false, selected, className, ...props }: RowProps) {
   const stack = useContext(TableStackContext);
   return (
@@ -289,11 +320,22 @@ function Row({ interactive = false, selected, className, ...props }: RowProps) {
 }
 
 interface TableCellLayout {
-  /** start (default) or end alignment. */
+  /**
+   * Aligns the content with the start or the end of the cell.
+   * @default 'start', or 'end' with numeric
+   */
   align?: 'start' | 'end';
-  /** Tabular figures aligned to the end, for numbers that compare down a column. */
+  /**
+   * Tabular figures aligned to the end, for numbers that compare down a column. In a sortable
+   * header the arrow comes before the label, so the label lines up with the numbers.
+   * @default false
+   */
   numeric?: boolean;
-  /** Keep the content on one line. */
+  /**
+   * Keeps the content on one line. In a table with set column widths, content that doesn't fit ends
+   * with an ellipsis.
+   * @default false
+   */
   nowrap?: boolean;
 }
 
@@ -310,16 +352,27 @@ export type SortDirection = 'ascending' | 'descending' | 'none';
 export interface HeaderCellProps
   extends Omit<ComponentPropsWithRef<'th'>, 'align'>,
     TableCellLayout {
-  /** The column's sort order, announced on the header. Use it with onSort. */
+  /**
+   * The column's sort order: aria-sort on the header and the arrow in its sort button. Use it with
+   * onSort; without onSort it only sets aria-sort.
+   * @default 'none' with onSort
+   */
   sortDirection?: SortDirection;
-  /** The header becomes a button that asks the application to sort the rows by this column. */
+  /**
+   * The header becomes a button across the cell that asks the application to sort the rows by this
+   * column. The application sorts the rows and sets sortDirection.
+   */
   onSort?: () => void;
   /**
-   * Accessible name of the sort button, which says what pressing it does: the header followed by
-   * "sort ascending" by default, or by "sort descending" while the column is sorted ascending.
+   * Accessible name of the sort button, which says what pressing it does: the header's name
+   * followed by "sort ascending", or by "sort descending" while the column is sorted ascending.
+   * @default '{header} sort {next order}'
    */
   sortLabel?: string;
-  /** Accessible name of the column's resize handle; "Resize" followed by the header by default. */
+  /**
+   * Accessible name of the column's resize handle, "Resize" followed by the header's name.
+   * @default 'Resize {header}'
+   */
   resizeLabel?: string;
 }
 
@@ -349,6 +402,10 @@ const sortIcons = {
   none: <UnfoldMore />,
 };
 
+/**
+ * A header cell, a native th that heads its column, or its row with scope="row". With onSort it
+ * sorts its column; in a table with resizable columns it holds the column's resize handle.
+ */
 function HeaderCell({
   align,
   numeric,
@@ -556,6 +613,7 @@ export interface CellProps extends Omit<ComponentPropsWithRef<'td'>, 'align'>, T
   label?: ReactNode;
 }
 
+/** A data cell, a native td, with a label that names its value while rows stack. */
 function Cell({ align, numeric, nowrap, label, className, children, ...props }: CellProps) {
   const stack = useContext(TableStackContext);
   const labelled = stack && label != null;
