@@ -42,6 +42,7 @@ export interface DropZoneProps
   onFiles: (files: File[]) => void;
   /** Receives the files that do not match accept, and those after the first without multiple. */
   onReject?: (files: File[]) => void;
+  /** The zone can't be pressed or focused and takes no files; it still keeps the browser from opening dropped files. */
   disabled?: boolean;
   /**
    * The application is working on the files: a spinner replaces the icon, the zone reports that it

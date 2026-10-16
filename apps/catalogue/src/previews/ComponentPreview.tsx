@@ -1,10 +1,4 @@
-import {
-  SwitchPreview,
-  RadioPreview,
-  SelectPreview,
-  SliderPreview,
-  DropZonePreview,
-} from './Forms';
+import { SwitchPreview, RadioPreview, SelectPreview, SliderPreview } from './Forms';
 import { NavListPreview, TabsPreview, PagerPreview, PaginationPreview } from './Navigation';
 import { SurfacePreview, LayoutPreview } from './Layout';
 import { ChipsPreview, RatingPreview, RelativeTimePreview } from './Content';
@@ -38,8 +32,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <SelectPreview />;
     case 'slider':
       return <SliderPreview />;
-    case 'drop-zone':
-      return <DropZonePreview />;
     case 'composer':
       return <ComposerPreview />;
     case 'nav-list':

@@ -23,7 +23,6 @@ const unconverted = [
   'command-palette',
   'composer',
   'document-tabs',
-  'drop-zone',
   'markdown',
   'menubar',
   'message',
