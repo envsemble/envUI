@@ -13,11 +13,13 @@
  *   its background before it is measured.
  * - `kind`: text (WCAG 1.4.3); non-text (1.4.11: icons, borders that are a control's only boundary,
  *   state indicators); focus (2.4.13: the ring against what it is drawn on, which is the surface
- *   behind an offset ring and the element's own fill behind an inset one); difference (two state
- *   fills, or two labels, that must be told apart, such as a selected row and a hovered one,
- *   measured as their OKLab distance ΔEOK rather than a ratio). Themes.ts sets the minimum of each
- *   kind: 4.5, 3 and 3 at standard contrast and 7, 4.5 and 4.5 at high contrast for the ratios, and
- *   ΔEOK 0.02 for a difference in every theme.
+ *   behind an offset ring and the element's own fill behind an inset one); and two kinds measured
+ *   as their OKLab distance, ΔEOK, rather than a ratio: difference (a state fill against its own
+ *   rest or the surface it borders, such as a hovered row against its table) and distinct (two
+ *   states of different items that mean different things, such as the selection and another item
+ *   under the pointer, or two labels). Themes.ts sets the minimum of each kind and says why: 4.5, 3
+ *   and 3 at standard contrast and 7, 4.5 and 4.5 at high contrast for the ratios, ΔEOK 0.02 for a
+ *   difference, and ΔEOK 0.03, 0.04 at high contrast, for a distinct pair.
  * - A pair that departs from those rules says why in its `rationale`: `contrast: 'high'` measures it
  *   only in the high-contrast themes, and `minimum` lowers its minimum at standard or high contrast. Pairs the gate no
  *   longer measures are listed in `dropped`, each with the reason, rather than disappearing.
@@ -26,7 +28,10 @@
  * A pair is named `<fg> on <bg> over <next layer>`, which is also how Exceptions.json refers to it.
  */
 
-export type ContrastKind = 'text' | 'non-text' | 'focus' | 'difference';
+export type ContrastKind = 'text' | 'non-text' | 'focus' | 'difference' | 'distinct';
+
+/** The kinds measured as a ΔEOK distance rather than a contrast ratio. */
+export const isDistance = (kind: ContrastKind) => kind === 'difference' || kind === 'distinct';
 
 export interface ContrastPair {
   fg: string;
@@ -100,9 +105,12 @@ const nonText = (
 ) => on('non-text', fg, backgrounds, note, extra);
 const focus = (fg: string, backgrounds: readonly Background[], note?: string) =>
   on('focus', fg, backgrounds, note);
-/** `fill` must look different from each background: a state from its rest, or from another state. */
+/** `fill` must look different from each background: a state from its own rest or its surface. */
 const different = (fill: string, backgrounds: readonly Background[], note?: string) =>
   on('difference', fill, backgrounds, note);
+/** `fill` must not be mistaken for each background: states of different items, or two labels. */
+const distinct = (fill: string, backgrounds: readonly Background[], note?: string) =>
+  on('distinct', fill, backgrounds, note);
 
 /**
  * The hairline edge of an elevated surface at standard contrast: below 3:1 by design. WCAG 1.4.11
@@ -385,14 +393,20 @@ export const pairs: readonly ContrastPair[] = [
   ),
   ...nonText('--color-fg-on-selected', [[fill, page]], 'The bar of the active document tab'),
 
-  // Selection must look selected next to the states around it: a selected row next to a hovered one,
-  // a hovered selected row next to the selection, a hovered row next to its surface.
-  ...different(
+  // Selection must not be mistaken for the other items around it, at rest or under the pointer, and
+  // must stay selected while it is under the pointer itself: a selected row next to a hovered one,
+  // a hovered selected row against a hovered unselected one. Every state also differs from its rest.
+  ...distinct(
     selected,
     [popup, popupHover, surface, page, raised, [layerHover, surface], [layerHover, raised]],
-    'The selection against the surfaces it sits on and their hover fills: Select options, tree and table rows',
+    'The selection against the other items, at rest and under the pointer: Select options, tree and table rows',
   ),
-  ...different(selected, [navigationHover], 'A selected navigation item next to a hovered one'),
+  ...distinct(selected, [navigationHover], 'A selected navigation item next to a hovered one'),
+  ...distinct(
+    selectedHover,
+    [navigationHover, popupHover, [layerHover, surface], [layerHover, raised]],
+    'A selected item under the pointer against an unselected one under the pointer: navigation items, Select options, tree and table rows',
+  ),
   ...different(selectedHover, [selected], 'A selected item under the pointer'),
   ...different(popupHover, [popup], 'A highlighted option or menu item'),
   ...different(
@@ -401,7 +415,7 @@ export const pairs: readonly ContrastPair[] = [
     'A navigation item under the pointer, on a sidebar and on the page',
   ),
   ...different(layerHover, [surface, page, raised], 'A tree or table row under the pointer'),
-  ...different(
+  ...distinct(
     '--color-fg-on-selected',
     ['--color-fg-control', '--color-fg-default'],
     'The label of a selected item against the labels of the others',
@@ -477,7 +491,7 @@ export const pairs: readonly ContrastPair[] = [
     [page, surface, muted, raised, [fill, page], [fill, surface]],
     'Spinners, slider thumbs and indicators, and meter indicators on their track',
   ),
-  ...different(
+  ...distinct(
     'heatmap-accent-lowest',
     [[fill, page]],
     'The lightest step of a calendar heatmap against an empty day',

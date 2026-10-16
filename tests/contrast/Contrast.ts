@@ -1,5 +1,5 @@
 import { blend, clampRgb, converter, differenceEuclidean, parse, wcagContrast } from 'culori';
-import type { ContrastKind } from './Pairs';
+import { isDistance, type ContrastKind } from './Pairs';
 
 export interface Rgb {
   mode: 'rgb';
@@ -78,9 +78,9 @@ export interface ContrastRow {
 
 export const formatRatio = (ratio: number) => (Math.floor(ratio * 100) / 100).toFixed(2);
 
-/** A measured value as the table shows it: a ratio to 2 decimals, a ΔEOK difference to 4. */
+/** A measured value as the table shows it: a ratio to 2 decimals, a ΔEOK distance to 4. */
 export const formatValue = (kind: ContrastKind, value: number) =>
-  kind === 'difference' ? (Math.floor(value * 10000) / 10000).toFixed(4) : formatRatio(value);
+  isDistance(kind) ? (Math.floor(value * 10000) / 10000).toFixed(4) : formatRatio(value);
 
 /** A plain-text table of rows, one per line, with a detail line under each row that has one. */
 export function formatTable(rows: readonly ContrastRow[]): string {
@@ -90,7 +90,7 @@ export function formatTable(rows: readonly ContrastRow[]): string {
     row.theme,
     row.kind,
     row.ratio === null ? '-' : formatValue(row.kind, row.ratio),
-    row.kind === 'difference' ? row.min.toFixed(4) : row.min.toFixed(2),
+    isDistance(row.kind) ? row.min.toFixed(4) : row.min.toFixed(2),
     row.apca === null ? '-' : row.apca.toFixed(1),
     row.status,
   ]);

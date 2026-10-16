@@ -100,12 +100,12 @@
       },
       "selected": {
         "$root": {
-          "$description": "Selected navigation items, tree and table rows, Select options and drop targets; paired with fg.on-selected. A blue tint in light and a blue-gray in dark, at least one just-noticeable difference (ΔEOK 0.02) from the surfaces it sits on and from their hover fills.",
-          "$value": "{palette.blue.6}"
+          "$description": "Selected navigation items, tree and table rows, Select options and drop targets; paired with fg.on-selected. A blue tint in light and a blue-gray in dark, distinct from the other items around it, at rest and under the pointer: ΔEOK 0.03 or more, 0.04 at high contrast.",
+          "$value": "{palette.blue.7}"
         },
         "hover": {
-          "$description": "A selected item under the pointer, as distinct from the selection as the selection is from its surface.",
-          "$value": "{palette.blue.8}"
+          "$description": "A selected item under the pointer: visibly deeper than the selection, and distinct from an unselected item under the pointer.",
+          "$value": "{palette.blue.9}"
         },
         "pressed": {
           "$description": "A selected item while pressed. Muted text and an inset focus ring keep their minimums on it.",
@@ -114,12 +114,12 @@
       },
       "navigation": {
         "hover": {
-          "$description": "A navigation item that isn’t selected, under the pointer: a blue-gray tint in light; in dark, the muted surface’s hover, since a blue tint there would read as the selection.",
-          "$value": "{palette.slate.8}"
+          "$description": "A navigation item that isn’t selected, under the pointer: a blue-gray tint in light, deeper than the selection so it doesn’t read as selected; in dark and at high contrast, a gray, since a blue tint there would read as the selection.",
+          "$value": "{palette.slate.12}"
         },
         "pressed": {
-          "$description": "A navigation item that isn’t selected, while pressed. Its label and an inset focus ring keep their minimums on it.",
-          "$value": "{palette.slate.10}"
+          "$description": "A navigation item that isn’t selected, while pressed. Its label and an inset focus ring keep their minimums on it, which puts it one grade deeper than the hover in light.",
+          "$value": "{palette.slate.13}"
         }
       },
       "neutral": {

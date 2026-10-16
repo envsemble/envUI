@@ -6,13 +6,13 @@
     "color": {
       "bg": {
         "selected": {
-          "$root": { "$value": "{palette.blue.6}" },
-          "hover": { "$value": "{palette.blue.8}" },
-          "pressed": { "$value": "{palette.blue.10}" }
+          "$root": { "$value": "{palette.blue.11}" },
+          "hover": { "$value": "{palette.blue.13}" },
+          "pressed": { "$value": "{palette.blue.14}" }
         },
         "navigation": {
-          "hover": { "$value": "{palette.slate.8}" },
-          "pressed": { "$value": "{palette.slate.10}" }
+          "hover": { "$value": "{palette.neutral.13}" },
+          "pressed": { "$value": "{palette.neutral.15}" }
         },
         "page": {
           "hover": { "$value": "{palette.neutral.4}" },

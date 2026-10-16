@@ -458,25 +458,25 @@ export const tokens = {
       'dark-high-contrast': '#424447',
     },
   },
-  /** A navigation item that isn’t selected, under the pointer: a blue-gray tint in light; in dark, the muted surface’s hover, since a blue tint there would read as the selection. */
+  /** A navigation item that isn’t selected, under the pointer: a blue-gray tint in light, deeper than the selection so it doesn’t read as selected; in dark and at high contrast, a gray, since a blue tint there would read as the selection. */
   'color.bg.navigation.hover': {
     cssVariable: '--color-bg-navigation-hover',
     type: 'color',
     values: {
-      light: '#d8e5f6',
+      light: '#cbd8ea',
       dark: '#424447',
-      'light-high-contrast': '#d8e5f6',
+      'light-high-contrast': '#d2d4d8',
       'dark-high-contrast': '#383a3d',
     },
   },
-  /** A navigation item that isn’t selected, while pressed. Its label and an inset focus ring keep their minimums on it. */
+  /** A navigation item that isn’t selected, while pressed. Its label and an inset focus ring keep their minimums on it, which puts it one grade deeper than the hover in light. */
   'color.bg.navigation.pressed': {
     cssVariable: '--color-bg-navigation-pressed',
     type: 'color',
     values: {
-      light: '#d2dff0',
+      light: '#c7d5e8',
       dark: '#4b4d51',
-      'light-high-contrast': '#d2dff0',
+      'light-high-contrast': '#ccced2',
       'dark-high-contrast': '#424447',
     },
   },
@@ -722,25 +722,25 @@ export const tokens = {
       'dark-high-contrast': '#383a3d',
     },
   },
-  /** Selected navigation items, tree and table rows, Select options and drop targets; paired with fg.on-selected. A blue tint in light and a blue-gray in dark, at least one just-noticeable difference (ΔEOK 0.02) from the surfaces it sits on and from their hover fills. */
+  /** Selected navigation items, tree and table rows, Select options and drop targets; paired with fg.on-selected. A blue tint in light and a blue-gray in dark, distinct from the other items around it, at rest and under the pointer: ΔEOK 0.03 or more, 0.04 at high contrast. */
   'color.bg.selected': {
     cssVariable: '--color-bg-selected',
     type: 'color',
     values: {
-      light: '#e0ebfd',
+      light: '#dbe8fd',
       dark: '#293a55',
-      'light-high-contrast': '#e0ebfd',
+      'light-high-contrast': '#c8dbfc',
       'dark-high-contrast': '#1d2e47',
     },
   },
-  /** A selected item under the pointer, as distinct from the selection as the selection is from its surface. */
+  /** A selected item under the pointer: visibly deeper than the selection, and distinct from an unselected item under the pointer. */
   'color.bg.selected.hover': {
     cssVariable: '--color-bg-selected-hover',
     type: 'color',
     values: {
-      light: '#d7e5fd',
+      light: '#d2e1fc',
       dark: '#33445f',
-      'light-high-contrast': '#d7e5fd',
+      'light-high-contrast': '#bfd5fb',
       'dark-high-contrast': '#253650',
     },
   },
@@ -751,7 +751,7 @@ export const tokens = {
     values: {
       light: '#cddefc',
       dark: '#3c4e69',
-      'light-high-contrast': '#cddefc',
+      'light-high-contrast': '#bad2fb',
       'dark-high-contrast': '#293a55',
     },
   },
@@ -1782,9 +1782,9 @@ export const tokens = {
     cssVariable: '--color-navigation-hover',
     type: 'color',
     values: {
-      light: '#d7e5fd',
+      light: '#d2e1fc',
       dark: '#33445f',
-      'light-high-contrast': '#d7e5fd',
+      'light-high-contrast': '#bfd5fb',
       'dark-high-contrast': '#253650',
     },
   },
@@ -1804,7 +1804,7 @@ export const tokens = {
     values: {
       light: '#cddefc',
       dark: '#3c4e69',
-      'light-high-contrast': '#cddefc',
+      'light-high-contrast': '#bad2fb',
       'dark-high-contrast': '#293a55',
     },
   },
@@ -1822,9 +1822,9 @@ export const tokens = {
     cssVariable: '--color-navigation-quiet-hover',
     type: 'color',
     values: {
-      light: '#d8e5f6',
+      light: '#cbd8ea',
       dark: '#424447',
-      'light-high-contrast': '#d8e5f6',
+      'light-high-contrast': '#d2d4d8',
       'dark-high-contrast': '#383a3d',
     },
   },
@@ -1832,9 +1832,9 @@ export const tokens = {
     cssVariable: '--color-navigation-quiet-pressed',
     type: 'color',
     values: {
-      light: '#d2dff0',
+      light: '#c7d5e8',
       dark: '#4b4d51',
-      'light-high-contrast': '#d2dff0',
+      'light-high-contrast': '#ccced2',
       'dark-high-contrast': '#424447',
     },
   },
@@ -1842,9 +1842,9 @@ export const tokens = {
     cssVariable: '--color-navigation-selected',
     type: 'color',
     values: {
-      light: '#e0ebfd',
+      light: '#dbe8fd',
       dark: '#293a55',
-      'light-high-contrast': '#e0ebfd',
+      'light-high-contrast': '#c8dbfc',
       'dark-high-contrast': '#1d2e47',
     },
   },
@@ -2203,9 +2203,9 @@ export const tokens = {
     cssVariable: '--color-row-selected-hover',
     type: 'color',
     values: {
-      light: '#d7e5fd',
+      light: '#d2e1fc',
       dark: '#33445f',
-      'light-high-contrast': '#d7e5fd',
+      'light-high-contrast': '#bfd5fb',
       'dark-high-contrast': '#253650',
     },
   },
@@ -2215,7 +2215,7 @@ export const tokens = {
     values: {
       light: '#cddefc',
       dark: '#3c4e69',
-      'light-high-contrast': '#cddefc',
+      'light-high-contrast': '#bad2fb',
       'dark-high-contrast': '#293a55',
     },
   },
@@ -2303,9 +2303,9 @@ export const tokens = {
     cssVariable: '--color-select-selected',
     type: 'color',
     values: {
-      light: '#e0ebfd',
+      light: '#dbe8fd',
       dark: '#293a55',
-      'light-high-contrast': '#e0ebfd',
+      'light-high-contrast': '#c8dbfc',
       'dark-high-contrast': '#1d2e47',
     },
   },
@@ -2313,9 +2313,9 @@ export const tokens = {
     cssVariable: '--color-select-selected-hover',
     type: 'color',
     values: {
-      light: '#d7e5fd',
+      light: '#d2e1fc',
       dark: '#33445f',
-      'light-high-contrast': '#d7e5fd',
+      'light-high-contrast': '#bfd5fb',
       'dark-high-contrast': '#253650',
     },
   },
@@ -2325,7 +2325,7 @@ export const tokens = {
     values: {
       light: '#cddefc',
       dark: '#3c4e69',
-      'light-high-contrast': '#cddefc',
+      'light-high-contrast': '#bad2fb',
       'dark-high-contrast': '#293a55',
     },
   },

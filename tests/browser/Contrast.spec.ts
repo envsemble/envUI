@@ -2,7 +2,14 @@ import { readFileSync } from 'node:fs';
 
 import { test, expect, type Page } from '@playwright/test';
 import { fixtureUrl } from './Servers';
-import { cssColor, dropped, pairName, pairs, type ContrastPair } from '../contrast/Pairs';
+import {
+  cssColor,
+  dropped,
+  isDistance,
+  pairName,
+  pairs,
+  type ContrastPair,
+} from '../contrast/Pairs';
 import { themes, type ContrastTheme } from '../contrast/Themes';
 import {
   apcaContrast,
@@ -19,8 +26,8 @@ import {
 /**
  * The contrast gate. Every pair in tests/contrast/Pairs.ts is resolved in every theme of
  * tests/contrast/Themes.ts by the browser, so var(), relative colors, color-mix() and light-dark()
- * resolve as shipped, and is measured with WCAG 2.x, or as a ΔEOK distance for the difference
- * pairs, which must be told apart rather than read against each other. Pairs that fail today are listed in
+ * resolve as shipped, and is measured with WCAG 2.x, or as a ΔEOK distance for the difference and
+ * distinct pairs, which must be told apart rather than read against each other. Pairs that fail today are listed in
  * tests/contrast/Exceptions.json; the gate fails on a new failure, on a listed failure that got
  * worse, and on a listed failure that now passes, so the list only shrinks.
  *
@@ -120,14 +127,14 @@ function measure(
     canvas,
   );
   const foreground = flatten([parseColor(resolved[pair.fg]!)], background);
-  const difference = pair.kind === 'difference';
-  const ratio = difference
+  const distance = isDistance(pair.kind);
+  const ratio = distance
     ? colorDifference(foreground, background)
     : contrastRatio(foreground, background);
   const measured = {
     ...row,
     ratio,
-    apca: difference ? null : apcaContrast(foreground, background),
+    apca: distance ? null : apcaContrast(foreground, background),
   };
   const exception = exceptionFor(name, theme.name);
   if (ratio >= min)
