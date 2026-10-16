@@ -66,7 +66,7 @@ test('every highlighted token is readable on its code background, in code blocks
   const targets = { standard: 4.5, high: 7 };
   const samples = {
     tsx: "import { Button } from '@envsemble/envui';\n// Saves the draft.\nexport const Save = ({ count = 2 }) => <Button onClick={() => save(String(count))}>Save {true}</Button>;",
-    css: '.card:hover { color: var(--color-fg-default); margin: 0 1rem !important; }',
+    css: '.card:hover { color: var(--env-color-fg-default); margin: 0 1rem !important; }',
     json: '{ "name": "envui", "private": true, "count": 3, "items": [null] }',
     shellscript: 'npm install --save-exact "@envsemble/envui" # pinned\nexport PORT=8080',
     yaml: 'title: Button # the page\nstatus: beta\ncount: 3',

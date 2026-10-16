@@ -36,19 +36,19 @@ export function AccessibilityPreview() {
           <Text variant="supporting">
             Fast transitions{' '}
             <code>
-              <TokenValue token="--motion-duration-fast" />
+              <TokenValue token="--env-motion-duration-fast" />
             </code>
           </Text>
           <Text variant="supporting">
             Medium transitions{' '}
             <code>
-              <TokenValue token="--motion-duration-medium" />
+              <TokenValue token="--env-motion-duration-medium" />
             </code>
           </Text>
           <Text variant="supporting">
             Shared easing{' '}
             <code>
-              <TokenValue token="--motion-ease" />
+              <TokenValue token="--env-motion-ease" />
             </code>
           </Text>
         </Stack>

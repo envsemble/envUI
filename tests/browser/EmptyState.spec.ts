@@ -43,7 +43,7 @@ test('a centred empty state sits in the middle of the room its region gives it',
       await expect(error).toHaveAttribute('role', 'alert');
       const [errorIconColor, errorFieldColor] = await error.evaluate((element) => {
         const probe = document.createElement('span');
-        probe.style.color = 'var(--color-field-error)';
+        probe.style.color = 'var(--env-color-fg-danger)';
         element.append(probe);
         const colors = [
           getComputedStyle(element.querySelector(':scope > .env-symbol')!).color,

@@ -7,7 +7,7 @@ export const exportSection = (name) => `props-${name}`;
 /** The element id of a prop's row in its export's table: props-Button-variant. */
 export const propSection = (name, prop) => `props-${name}-${prop}`;
 
-/** The element id of a token's row in the token reference: --color-fg-muted is token-color-fg-muted. */
+/** The element id of a token's row in the token reference: --env-color-fg-muted is token-env-color-fg-muted. */
 export const tokenSection = (cssVariable) => `token-${cssVariable.replace(/^--/, '')}`;
 
 /**

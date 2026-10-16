@@ -51,22 +51,22 @@ body {
   width: 100%;
   height: auto;
   display: block;
-  color: var(--color-text-primary);
+  color: var(--env-color-fg-default);
 }
 /* Search opens from a field-like button at the top of the navigation, its shortcut at the end. */
 .docs-search-button {
   inline-size: 100%;
-  margin-block-end: var(--space-2);
+  margin-block-end: var(--env-space-2);
 }
 .docs-search-shortcut {
   margin-inline-start: auto;
 }
 .docs-nav-heading {
   display: block;
-  margin: var(--space-6) var(--space-3) var(--space-2);
+  margin: var(--env-space-6) var(--env-space-3) var(--env-space-2);
 }
 .docs-sidebar-footer {
-  margin: var(--space-7) 0 0;
+  margin: var(--env-space-7) 0 0;
 }
 .docs-main {
   display: flex;
@@ -84,19 +84,19 @@ body {
   margin-inline: auto;
 }
 .docs-page-header {
-  padding: var(--space-5) var(--docs-gutter) var(--space-4);
-  margin-block-end: var(--space-8);
+  padding: var(--env-space-5) var(--docs-gutter) var(--env-space-4);
+  margin-block-end: var(--env-space-8);
 }
 .docs-page-banner,
 .docs-overview-hero {
-  padding-block: var(--space-9);
+  padding-block: var(--env-space-9);
 }
 .docs-page-banner-heading {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: var(--space-4);
+  gap: var(--env-space-4);
   max-inline-size: 100%;
 }
 .docs-page-banner {
@@ -131,7 +131,7 @@ body {
   inline-size: clamp(10rem, 28cqi, 18rem);
   aspect-ratio: 1;
   transform: translateY(-50%) rotate(-12deg);
-  color: var(--color-text-muted);
+  color: var(--env-color-fg-muted);
   opacity: 0.1;
   pointer-events: none;
 }
@@ -146,7 +146,7 @@ body {
   .docs-reference-tabs .env-tabs-list {
     flex-wrap: wrap;
     justify-content: center;
-    --env-surface-radius: var(--radius-surface);
+    --env-surface-radius: var(--env-radius-surface);
   }
 }
 .docs-page-controls {
@@ -156,12 +156,12 @@ body {
 }
 .docs-theme-toggle {
   position: fixed;
-  top: max(var(--space-4), env(safe-area-inset-top));
-  right: max(var(--space-4), env(safe-area-inset-right));
+  top: max(var(--env-space-4), env(safe-area-inset-top));
+  right: max(var(--env-space-4), env(safe-area-inset-right));
   z-index: 90;
 }
 .docs-page-navigation {
-  padding: var(--space-6) var(--docs-gutter) var(--space-8);
+  padding: var(--env-space-6) var(--docs-gutter) var(--env-space-8);
   margin-top: auto;
 }
 /* A page that has nothing to show yet, such as the templates. */
@@ -172,9 +172,9 @@ body {
 .docs-token-color {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--env-space-2);
 }
 /* A section that a route scrolls to, such as a prop's row, stays clear of the window's top edge. */
 .docs-main [id] {
-  scroll-margin-block-start: var(--space-6);
+  scroll-margin-block-start: var(--env-space-6);
 }

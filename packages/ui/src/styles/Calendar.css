@@ -1,36 +1,36 @@
 /* Calendar: a month of days as round marks in a grid, as wide as seven days. Today has a ring, the
    chosen day a solid fill, and unavailable days are faded. Coarse pointers get touch-sized days. */
 .env-calendar {
-  --env-calendar-day: var(--control-height-md);
+  --env-calendar-day: var(--env-control-height-md);
   display: grid;
-  gap: var(--space-2);
+  gap: var(--env-space-2);
   inline-size: calc(7 * var(--env-calendar-day));
   max-inline-size: 100%;
   min-inline-size: 0;
-  color: var(--color-text-primary);
-  font: var(--type-body-small);
+  color: var(--env-color-fg-default);
+  font: var(--env-type-body-small);
 }
 .env-calendar-header {
   display: flex;
   align-items: center;
-  gap: var(--space-1);
+  gap: var(--env-space-1);
 }
 .env-calendar-heading {
   flex: 1 1 auto;
   min-inline-size: 0;
   text-align: center;
-  font: var(--type-h2);
+  font: var(--env-type-h2);
   overflow-wrap: anywhere;
 }
 .env-calendar-header .env-icon-button {
-  --control-height: var(--env-calendar-day);
+  --env-control-height: var(--env-calendar-day);
 }
 .env-calendar-header .env-button-text.env-icon-button {
-  color: var(--color-icon);
+  color: var(--env-color-fg-muted);
 }
 .env-calendar-header
   .env-button-text.env-icon-button:is(:hover, :active):not(:disabled):not([aria-disabled='true']) {
-  color: var(--color-text-primary);
+  color: var(--env-color-fg-default);
 }
 /* The month buttons point back and forward in the reading direction. */
 .env-calendar-header .env-symbol:dir(rtl) {
@@ -43,10 +43,10 @@
   border-spacing: 0;
 }
 .env-calendar-grid th {
-  padding: 0 0 var(--space-1);
+  padding: 0 0 var(--env-space-1);
   overflow: hidden;
-  color: var(--color-text-muted);
-  font: 500 0.75rem / 1.4 var(--font-family);
+  color: var(--env-color-fg-muted);
+  font: 500 0.75rem / 1.4 var(--env-font-family);
   text-align: center;
   white-space: nowrap;
 }
@@ -72,44 +72,64 @@
   border-radius: 50%;
   font-variant-numeric: tabular-nums;
   transition:
-    background-color var(--motion-duration-fast) var(--motion-ease),
-    color var(--motion-duration-fast) var(--motion-ease);
+    background-color var(--env-motion-duration-fast) var(--env-motion-ease),
+    color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 .env-calendar-day:hover:not([aria-disabled='true'], [aria-selected='true'])
   > .env-calendar-day-mark {
-  background: var(--color-state-layer-hover);
+  background: var(--env-color-bg-neutral-subtle-hover);
 }
 .env-calendar-day:active:not([aria-disabled='true'], [aria-selected='true'])
   > .env-calendar-day-mark {
-  background: var(--color-state-layer-pressed);
+  background: var(--env-color-bg-neutral-subtle-pressed);
 }
 .env-calendar-day[aria-current='date'] > .env-calendar-day-mark {
-  box-shadow: inset 0 0 0 0.0625rem var(--color-calendar-today);
+  box-shadow: inset 0 0 0 0.0625rem var(--env-color-border-accent-emphasis);
   font-weight: 600;
 }
 .env-calendar-day[aria-selected='true'] > .env-calendar-day-mark {
-  background: var(--color-calendar-selected);
+  background: var(--env-color-bg-brand-emphasis);
   box-shadow: none;
-  color: var(--color-on-calendar-selected);
+  color: var(--env-color-fg-on-emphasis);
   font-weight: 600;
 }
 .env-calendar-day:focus-visible > .env-calendar-day-mark {
-  outline: 0.125rem solid var(--color-focus-ring);
+  outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.0625rem;
 }
 .env-calendar-day[aria-disabled='true'] {
   cursor: default;
 }
 .env-calendar-day[aria-disabled='true'] > .env-calendar-day-mark {
-  opacity: var(--state-disabled-opacity);
+  opacity: var(--env-state-disabled-opacity);
 }
 @media (pointer: coarse) {
   .env-calendar {
-    --env-calendar-day: var(--control-height-touch);
+    --env-calendar-day: var(--env-control-height-touch);
   }
 }
 @media (prefers-reduced-motion: reduce) {
   .env-calendar-day-mark {
     transition: none;
+  }
+}
+
+/* Forced colors: the system paints no fills or shadows, so the chosen day takes the system’s
+   selection colors, today is outlined, and unavailable days take the disabled color. */
+@media (forced-colors: active) {
+  .env-calendar-day[aria-current='date'] > .env-calendar-day-mark {
+    outline: 1px solid CanvasText;
+    outline-offset: -1px;
+  }
+  .env-calendar-day[aria-selected='true'] > .env-calendar-day-mark {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+  .env-calendar-day[aria-selected='true'] > .env-calendar-day-mark :where(*) {
+    color: inherit;
+  }
+  .env-calendar-day[aria-disabled='true'] {
+    color: GrayText;
   }
 }

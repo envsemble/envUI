@@ -4,9 +4,9 @@
  * tests/browser/Contrast.spec.ts resolves each pair in every theme of Themes.ts, in a real browser,
  * and fails on any pair below the theme's minimum for its kind that Exceptions.json doesn't list.
  *
- * - `fg` and each `bg` layer name a custom property: a semantic role (`--color-{bg|fg|border}-…`),
- *   or a component token where the component takes a different role per theme (`--color-row`,
- *   `--color-checkbox`…). The few colors a component still composes where it paints, because they
+ * - `fg` and each `bg` layer name a custom property: a semantic role (`--env-color-{bg|fg|border}-…`),
+ *   or a component token where the component takes a different role per theme (`--env-color-list-item-bg`,
+ *   `--env-color-bg-brand-emphasis`…). The few colors a component still composes where it paints, because they
  *   depend on something no token can name, are listed in `derived` below and measured like tokens.
  * - `bg` lists what the foreground sits on, nearest first. A translucent layer is composited over
  *   the next one, and the last over the theme's page. A translucent foreground is composited over
@@ -51,31 +51,30 @@ const alertTones = ['accent', 'success', 'warning', 'danger'] as const;
 
 /** The text color of each status tone; the neutral tone is muted text. */
 const toneText = (tone: (typeof tones)[number]) =>
-  tone === 'neutral' ? '--color-fg-muted' : `--color-fg-${tone}`;
+  tone === 'neutral' ? '--env-color-fg-muted' : `--env-color-fg-${tone}`;
 
 // Surfaces, by role.
-const page = '--color-bg-page'; // the app frame, title bars, Surface background="page"
-const surface = '--color-bg-default'; // Surface's default, sidebars, standard menus
-const muted = '--color-bg-muted'; // Surface background="muted", cards, radio rows
-const raised = '--color-bg-raised'; // Surface background="raised", dialogs, tables, rows on a contrasting surface
-const popup = '--color-bg-popup'; // Select lists, popovers, compact menus, menu rows, the composer
-const field = '--color-bg-field';
-const overlay = '--color-bg-overlay'; // the scrim behind dialogs
-const selected = '--color-bg-selected';
-const selectedHover = '--color-bg-selected-hover';
-const selectedPressed = '--color-bg-selected-pressed';
-const popupHover = '--color-bg-popup-hover';
-const popupPressed = '--color-bg-popup-pressed';
-const fill = '--color-bg-neutral-muted'; // the translucent fill of tab rails, chips, secondary buttons
-const layerHover = '--color-bg-neutral-subtle-hover';
-const layerPressed = '--color-bg-neutral-subtle-pressed';
-const navigationHover = '--color-bg-navigation-hover';
-const navigationPressed = '--color-bg-navigation-pressed';
+const page = '--env-color-bg-page'; // the app frame, title bars, Surface background="page"
+const surface = '--env-color-bg-default'; // Surface's default, sidebars, standard menus
+const muted = '--env-color-bg-muted'; // Surface background="muted", cards, radio rows
+const raised = '--env-color-bg-raised'; // Surface background="raised", dialogs, tables, rows on a contrasting surface
+const popup = '--env-color-bg-popup'; // Select lists, popovers, compact menus, menu rows, the composer
+const field = '--env-color-bg-field';
+const overlay = '--env-color-bg-overlay'; // the scrim behind dialogs
+const selected = '--env-color-bg-selected';
+const selectedHover = '--env-color-bg-selected-hover';
+const selectedPressed = '--env-color-bg-selected-pressed';
+const popupHover = '--env-color-bg-popup-hover';
+const popupPressed = '--env-color-bg-popup-pressed';
+const fill = '--env-color-bg-neutral-muted'; // the translucent fill of tab rails, chips, secondary buttons
+const layerHover = '--env-color-bg-neutral-subtle-hover';
+const layerPressed = '--env-color-bg-neutral-subtle-pressed';
+const navigationHover = '--env-color-bg-navigation-hover';
+const navigationPressed = '--env-color-bg-navigation-pressed';
 // Component tokens that take a different role per theme.
-const row = '--color-row'; // List rows: the default surface in light, the muted one in dark
-const rowHover = '--color-row-hover';
-const rowPressed = '--color-row-pressed';
-const actionStrip = '--color-action-strip';
+const row = '--env-color-list-item-bg'; // List rows: the default surface in light, the muted one in dark
+const rowHover = '--env-color-list-item-bg-hover';
+const rowPressed = '--env-color-list-item-bg-pressed';
 
 type Background = string | readonly string[];
 
@@ -149,93 +148,122 @@ const alertEdge = {
     'Decorative: the tint, the icon and the text identify the alert, which takes no input, and WCAG 1.4.11 asks nothing of the edge. Held to 1.2:1, as a popup’s edge is, and 1.5:1 in high contrast, so it stays visible.',
 } as const;
 
-export const pairs: readonly ContrastPair[] = [
+/**
+ * The pairs, with a pair that several components paint listed once: its notes joined. Components
+ * that share a role, such as checked controls, spinners and chosen radios on the brand's emphasis
+ * fill, declare the same pair; they must hold it to the same requirement.
+ */
+function merged(list: readonly ContrastPair[]): ContrastPair[] {
+  const byName = new Map<string, ContrastPair>();
+  for (const pair of list) {
+    const name = pairName(pair);
+    const earlier = byName.get(name);
+    if (!earlier) {
+      byName.set(name, pair);
+      continue;
+    }
+    const requirement = ({ kind, contrast, minimum }: ContrastPair) =>
+      JSON.stringify({ kind, contrast, minimum });
+    if (requirement(earlier) !== requirement(pair))
+      throw new Error(`${name} is declared twice with different requirements.`);
+    const notes = [earlier.note, pair.note].filter(Boolean);
+    byName.set(name, { ...earlier, ...(notes.length > 0 && { note: notes.join('; ') }) });
+  }
+  return [...byName.values()];
+}
+
+export const pairs: readonly ContrastPair[] = merged([
   // Text on every surface role.
-  ...text('--color-fg-default', [page, surface, muted, raised, popup]),
+  ...text('--env-color-fg-default', [page, surface, muted, raised, popup]),
   ...text(
-    '--color-fg-muted',
+    '--env-color-fg-muted',
     [page, surface, muted, raised, popup],
     'Supporting text, icons, field descriptions, unchecked checkbox rings',
   ),
   ...text(
-    '--color-fg-control',
+    '--env-color-fg-control',
     [page, surface],
     'Navigation labels, meter and slider values, the thumb of a switch that is off',
   ),
-  ...text('--color-fg-default', [row, rowHover, rowPressed], 'List rows'),
-  ...text('--color-fg-muted', [row, rowHover, rowPressed], 'List row details'),
+  ...text('--env-color-fg-default', [row, rowHover, rowPressed], 'List rows'),
+  ...text('--env-color-fg-muted', [row, rowHover, rowPressed], 'List row details'),
   ...text(
-    '--color-fg-default',
+    '--env-color-fg-default',
     [popupHover, popupPressed],
     'Menu items and Select and Combobox options, highlighted and pressed',
   ),
-  ...text('--color-fg-muted', [popupHover], 'Menu item descriptions'),
+  ...text('--env-color-fg-muted', [popupHover], 'Menu item descriptions'),
 
   // Links and text buttons on every surface, and in their states.
-  ...text('--color-fg-link', [page, surface, muted, raised, popup, row, actionStrip]),
-  ...text('--color-fg-link-hover', [page, surface, muted]),
-  ...text('--color-fg-link-pressed', [page, surface, muted]),
   ...text(
-    '--color-fg-muted-hover',
+    '--env-color-fg-link',
+    [page, surface, muted, raised, popup, row],
+    'Links and text buttons, also on the action strip of a card, which is the default surface',
+  ),
+  ...text('--env-color-fg-link-hover', [page, surface, muted]),
+  ...text('--env-color-fg-link-pressed', [page, surface, muted]),
+  ...text(
+    '--env-color-fg-muted-hover',
     [page, surface],
     'Disclosure summaries and checkbox rings on hover',
   ),
-  ...text('--color-fg-muted-pressed', [page, surface], 'Disclosure summaries on press'),
+  ...text('--env-color-fg-muted-pressed', [page, surface], 'Disclosure summaries on press'),
 
-  // Actions: labels on their fills, at rest, hovered and pressed.
+  // Actions: labels on their fills, at rest, hovered and pressed. The marks of checked controls on
+  // the same fill are held to the text minimum too, 4.5:1 and 7:1 at high contrast, though WCAG
+  // asks 3:1 of them: a check reads as a symbol, as a glyph does.
   ...text(
-    '--color-fg-on-emphasis',
+    '--env-color-fg-on-emphasis',
     [
-      '--color-bg-brand-emphasis',
-      '--color-bg-brand-emphasis-hover',
-      '--color-bg-brand-emphasis-pressed',
+      '--env-color-bg-brand-emphasis',
+      '--env-color-bg-brand-emphasis-hover',
+      '--env-color-bg-brand-emphasis-pressed',
     ],
-    'Primary buttons and the chosen calendar day',
+    'Primary buttons, the chosen calendar day, the check of a checked checkbox and the thumb of a switch that is on',
   ),
   ...text(
-    '--color-fg-control',
+    '--env-color-fg-control',
     [
       [fill, page],
-      ['--color-bg-neutral-muted-hover', page],
-      ['--color-bg-neutral-muted-pressed', page],
+      ['--env-color-bg-neutral-muted-hover', page],
+      ['--env-color-bg-neutral-muted-pressed', page],
       [fill, surface],
-      ['--color-bg-neutral-muted-hover', surface],
-      ['--color-bg-neutral-muted-pressed', surface],
+      ['--env-color-bg-neutral-muted-hover', surface],
+      ['--env-color-bg-neutral-muted-pressed', surface],
       [fill, muted],
-      ['--color-bg-neutral-muted-hover', muted],
-      ['--color-bg-neutral-muted-pressed', muted],
+      ['--env-color-bg-neutral-muted-hover', muted],
+      ['--env-color-bg-neutral-muted-pressed', muted],
       [fill, raised],
-      ['--color-bg-neutral-muted-hover', raised],
-      ['--color-bg-neutral-muted-pressed', raised],
-      [fill, actionStrip],
+      ['--env-color-bg-neutral-muted-hover', raised],
+      ['--env-color-bg-neutral-muted-pressed', raised],
     ],
     'Secondary buttons, and the thumb of a switch that is off on its track: the fill is translucent, so it is measured on each surface it sits on',
   ),
   ...text(
-    '--color-fg-accent',
-    [raised, '--color-bg-raised-hover', '--color-bg-raised-pressed'],
+    '--env-color-fg-accent',
+    [raised, '--env-color-bg-raised-hover', '--env-color-bg-raised-pressed'],
     'Outlined buttons and the icon of a pager link',
   ),
   ...text(
-    '--color-fg-on-strong',
+    '--env-color-fg-on-strong',
     [
-      '--color-bg-danger-strong',
-      '--color-bg-danger-strong-hover',
-      '--color-bg-danger-strong-pressed',
+      '--env-color-bg-danger-strong',
+      '--env-color-bg-danger-strong-hover',
+      '--env-color-bg-danger-strong-pressed',
     ],
     'Destructive buttons and error toasts',
   ),
   ...text(
-    '--color-fg-on-strong',
+    '--env-color-fg-on-strong',
     [
-      '--color-bg-important-strong',
-      '--color-bg-important-strong-hover',
-      '--color-bg-important-strong-pressed',
+      '--env-color-bg-important-strong',
+      '--env-color-bg-important-strong-hover',
+      '--env-color-bg-important-strong-pressed',
     ],
     'Button variant="important"',
   ),
   ...text(
-    '--color-fg-default',
+    '--env-color-fg-default',
     [
       [layerHover, page],
       [layerPressed, page],
@@ -247,21 +275,21 @@ export const pairs: readonly ContrastPair[] = [
   ),
 
   // Fields.
-  ...text('--color-fg-default', [field]),
+  ...text('--env-color-fg-default', [field]),
   ...text(
-    '--color-fg-muted',
+    '--env-color-fg-muted',
     [field],
     'Labels, prefixes, suffixes, placeholders and icons in the field',
   ),
-  ...text('--color-border-accent', [field], 'The label of a focused field'),
-  ...text('--color-fg-danger', [field], 'The label and message of an invalid field'),
+  ...text('--env-color-border-accent-emphasis', [field], 'The label of a focused field'),
+  ...text('--env-color-fg-danger', [field], 'The label and message of an invalid field'),
   ...text(
-    '--color-fg-danger',
+    '--env-color-fg-danger',
     [muted],
     'The message of an invalid field on a muted surface; the tone pairs below measure the others',
   ),
   ...text(
-    '--color-fg-default',
+    '--env-color-fg-default',
     [
       [fill, page],
       [fill, surface],
@@ -270,7 +298,7 @@ export const pairs: readonly ContrastPair[] = [
     'Quiet fields while focused, the command palette search, active document tabs, keyboard keys, counters and own messages',
   ),
   ...text(
-    '--color-fg-muted',
+    '--env-color-fg-muted',
     [
       [fill, page],
       [fill, surface],
@@ -281,18 +309,22 @@ export const pairs: readonly ContrastPair[] = [
     'Unselected tabs and segments on their rail, keyboard keys in compact menus, table header cells and the command palette placeholder',
   ),
   ...nonText(
-    '--color-border-default',
+    '--env-color-border-default',
     [field, page, surface, muted, raised, popup],
     'The only boundary of outlined fields, the composer, outlined buttons, Select triggers and the track of a switch that is off; DropZone and the empty stars of a Rating take it too',
   ),
   ...nonText(
-    '--color-border-accent',
+    '--env-color-border-accent-emphasis',
     [page, surface, popup],
     'The border of a focused field and of the composer, and today’s ring in a calendar',
   ),
-  ...nonText('--color-border-danger', [field, page, surface], 'The border of an invalid field'),
   ...nonText(
-    '--color-border-muted',
+    '--env-color-border-danger-emphasis',
+    [field, page, surface],
+    'The border of an invalid field',
+  ),
+  ...nonText(
+    '--env-color-border-muted',
     [page, surface, muted],
     'Dividers: table lines, title bars, Markdown rules, menu separators',
     {
@@ -304,7 +336,7 @@ export const pairs: readonly ContrastPair[] = [
 
   // Elevated surfaces: the edge of every popup, at standard and at high contrast.
   ...nonText(
-    '--elevation-2-border',
+    '--env-elevation-2-border',
     [popup, surface, page, muted, raised],
     'The edge of menus, Select and Combobox lists, popovers, hover cards, the date picker, rich text suggestions and docked panels, against the popup and what it floats over',
     popupEdge,
@@ -322,19 +354,19 @@ export const pairs: readonly ContrastPair[] = [
     ] as const
   ).flatMap(([tone, owners]) => [
     ...nonText(
-      `--color-border-${tone}-strong`,
+      `--env-color-border-${tone}-strong`,
       [page, surface, muted, raised, popup],
       `The edge of ${owners.toLowerCase()}, against what they float over`,
       popupEdge,
     ),
     ...different(
-      `--color-border-${tone}-strong`,
-      [`--color-bg-${tone}-strong`],
+      `--env-color-border-${tone}-strong`,
+      [`--env-color-bg-${tone}-strong`],
       `${owners}: the edge against the fill, so it sets the fill apart from a surface of its color`,
     ),
   ]),
   ...nonText(
-    '--elevation-3-border',
+    '--env-elevation-3-border',
     [raised, [overlay, page]],
     'The edge of dialogs and the command palette, against the dialog and the scrim',
     popupEdge,
@@ -342,77 +374,61 @@ export const pairs: readonly ContrastPair[] = [
 
   // Choice controls.
   ...text(
-    '--color-fg-default',
-    ['--color-bg-muted-hover', '--color-bg-muted-pressed'],
+    '--env-color-fg-default',
+    ['--env-color-bg-muted-hover', '--env-color-bg-muted-pressed'],
     'Radio rows',
   ),
-  ...text('--color-fg-muted', ['--color-bg-muted-hover'], 'Radio row details'),
+  ...text('--env-color-fg-muted', ['--env-color-bg-muted-hover'], 'Radio row details'),
   ...nonText(
-    '--color-bg-brand-emphasis',
+    '--env-color-bg-brand-emphasis',
     [
       page,
       surface,
       muted,
-      '--color-bg-muted-hover',
+      '--env-color-bg-muted-hover',
       popup,
       popupHover,
       selected,
       selectedHover,
       selectedPressed,
+      raised,
+      row,
     ],
-    'A chosen radio, also in a chosen row; check marks in menus and options, also on a selected option under the pointer; the chosen calendar day',
+    'A chosen radio, also in a chosen row; a checked checkbox and the track of a switch that is on, also in a list item and a selected table row; check marks in menus and options, also on a selected option under the pointer; the chosen calendar day',
   ),
   ...nonText(
-    '--color-checkbox',
-    [page, surface, muted, raised, row, selected, selectedHover],
-    'A checked checkbox, also in a list row and a selected table row',
-  ),
-  // The marks of checked controls are held to the text minimum, 4.5:1 and 7:1 at high contrast,
-  // though WCAG asks 3:1 of them: a check reads as a symbol, as a glyph does.
-  ...text(
-    '--color-on-checkbox',
-    ['--color-checkbox', '--color-checkbox-hover', '--color-checkbox-pressed'],
-    'The check of a checked checkbox',
-  ),
-  ...nonText(
-    '--color-switch-on',
-    [page, surface, muted, raised, row, selected],
-    'The track of a switch that is on',
-  ),
-  ...text(
-    '--color-switch-thumb-on',
-    ['--color-switch-on', '--color-switch-on-hover', '--color-switch-on-pressed'],
-    'The thumb of a switch that is on',
-  ),
-  ...nonText(
-    '--color-fg-on-strong',
-    ['--color-bg-brand-strong', '--color-bg-brand-strong-hover', '--color-bg-brand-strong-pressed'],
-    'White marks on the brand’s strong fill, which light checkboxes and switches take; dark and high contrast move them to the emphasis fill with dark marks. Not text: in dark the fill keeps 3:1 against the surfaces, which puts white text below 4.5:1',
+    '--env-color-fg-on-strong',
+    [
+      '--env-color-bg-brand-strong',
+      '--env-color-bg-brand-strong-hover',
+      '--env-color-bg-brand-strong-pressed',
+    ],
+    'White marks on the brand’s strong fill, for applications: envUI’s checked controls take the emphasis fill, which has the same color in light. Not text: in dark the fill keeps 3:1 against the surfaces, which puts white text below 4.5:1',
   ),
 
   // Selection: menus, Select, tabs, navigation, trees, tables.
   ...text(
-    '--color-fg-control',
+    '--env-color-fg-control',
     [popup, popupHover, popupPressed, raised],
     'Select options; the command palette lists them on a dialog',
   ),
   ...text(
-    '--color-fg-on-selected',
+    '--env-color-fg-on-selected',
     [selected, selectedHover, selectedPressed],
     'Selected navigation items, tabs, tree rows and Select options, and the bar at the start of a selected table row',
   ),
   ...text(
-    '--color-fg-default',
+    '--env-color-fg-default',
     [selected, selectedHover, selectedPressed],
     'Selected table and tree rows',
   ),
   ...text(
-    '--color-fg-muted',
+    '--env-color-fg-muted',
     [selected, selectedHover, selectedPressed],
     'Details of selected tree rows and captions in selected table rows',
   ),
   ...text(
-    '--color-fg-muted',
+    '--env-color-fg-muted',
     [
       [layerHover, fill, page],
       [layerPressed, fill, page],
@@ -420,25 +436,25 @@ export const pairs: readonly ContrastPair[] = [
     'Unselected tabs on hover and press',
   ),
   ...text(
-    '--color-fg-control',
+    '--env-color-fg-control',
     [
       [fill, fill, page],
-      ['--color-bg-neutral-muted-hover', fill, page],
+      ['--env-color-bg-neutral-muted-hover', fill, page],
       [fill, fill, surface],
     ],
     'The active tab of a secondary tab rail',
   ),
   ...text(
-    '--color-fg-control',
+    '--env-color-fg-control',
     [navigationHover, navigationPressed, [layerHover, page], [layerHover, surface]],
     'Navigation labels on hover and press',
   ),
   ...nonText(
-    '--color-fg-muted',
+    '--env-color-fg-muted',
     [navigationHover, navigationPressed],
     'Navigation icons on hover and press',
   ),
-  ...nonText('--color-fg-on-selected', [[fill, page]], 'The bar of the active document tab'),
+  ...nonText('--env-color-fg-on-selected', [[fill, page]], 'The bar of the active document tab'),
 
   // Selection must not be mistaken for the other items around it, at rest or under the pointer, and
   // must stay selected while it is under the pointer itself: a selected row next to a hovered one,
@@ -464,12 +480,12 @@ export const pairs: readonly ContrastPair[] = [
   ),
   ...different(layerHover, [surface, page, raised], 'A tree or table row under the pointer'),
   ...distinct(
-    '--color-fg-on-selected',
-    ['--color-fg-control', '--color-fg-default'],
+    '--env-color-fg-on-selected',
+    ['--env-color-fg-control', '--env-color-fg-default'],
     'The label of a selected item against the labels of the others',
   ),
   ...different(
-    actionStrip,
+    surface,
     [muted],
     'The action strip of a card against the card, on its default muted surface',
   ),
@@ -483,25 +499,33 @@ export const pairs: readonly ContrastPair[] = [
           page,
           surface,
           row,
-          [`--color-bg-${tone}-muted`, page],
-          [`--color-bg-${tone}-muted`, surface],
+          [`--env-color-bg-${tone}-muted`, page],
+          [`--env-color-bg-${tone}-muted`, surface],
         ])),
-    ...text('--color-fg-on-emphasis', [`--color-bg-${tone}-emphasis`], 'Solid badges and counters'),
+    ...text(
+      '--env-color-fg-on-emphasis',
+      [`--env-color-bg-${tone}-emphasis`],
+      'Solid badges and counters',
+    ),
   ]),
   ...alertTones.flatMap((tone) => [
-    ...text('--color-fg-default', [[`--color-bg-${tone}-muted`, page]], `Alert tone="${tone}"`),
+    ...text(
+      '--env-color-fg-default',
+      [[`--env-color-bg-${tone}-muted`, page]],
+      `Alert tone="${tone}"`,
+    ),
     ...nonText(
       toneText(tone),
       [
-        [`--color-bg-${tone}-subtle-hover`, `--color-bg-${tone}-muted`, page],
-        [`--color-bg-${tone}-subtle-pressed`, `--color-bg-${tone}-muted`, page],
+        [`--env-color-bg-${tone}-subtle-hover`, `--env-color-bg-${tone}-muted`, page],
+        [`--env-color-bg-${tone}-subtle-pressed`, `--env-color-bg-${tone}-muted`, page],
       ],
       'The dismiss icon of an alert on hover and press',
     ),
   ]),
   ...tones.flatMap((tone) =>
     nonText(
-      `--color-border-${tone}-emphasis`,
+      `--env-color-border-${tone}`,
       [page, surface, row],
       'The edge of an outlined badge',
       toneOutline,
@@ -509,14 +533,14 @@ export const pairs: readonly ContrastPair[] = [
   ),
   ...alertTones.flatMap((tone) =>
     nonText(
-      `--color-border-${tone}-muted`,
+      `--env-color-border-${tone}-muted`,
       [page, surface],
       `The edge of an alert, tone="${tone === 'danger' ? 'error' : tone}"`,
       alertEdge,
     ),
   ),
   ...nonText(
-    '--color-border-danger-emphasis',
+    '--env-color-border-danger',
     [
       [fill, page],
       [fill, surface],
@@ -525,42 +549,46 @@ export const pairs: readonly ContrastPair[] = [
     toneOutline,
   ),
   ...text(
-    '--color-fg-on-strong',
-    ['--color-bg-neutral-strong', '--color-bg-success-strong', '--color-bg-info-strong'],
+    '--env-color-fg-on-strong',
+    [
+      '--env-color-bg-neutral-strong',
+      '--env-color-bg-success-strong',
+      '--env-color-bg-info-strong',
+    ],
     'Toasts and tooltips, and the focus ring of a toast’s dismiss button',
   ),
   ...nonText(
-    '--color-fg-on-strong',
+    '--env-color-fg-on-strong',
     [
-      '--color-bg-neutral-strong-hover',
-      '--color-bg-neutral-strong-pressed',
-      '--color-bg-success-strong-hover',
-      '--color-bg-success-strong-pressed',
-      '--color-bg-info-strong-hover',
-      '--color-bg-info-strong-pressed',
+      '--env-color-bg-neutral-strong-hover',
+      '--env-color-bg-neutral-strong-pressed',
+      '--env-color-bg-success-strong-hover',
+      '--env-color-bg-success-strong-pressed',
+      '--env-color-bg-info-strong-hover',
+      '--env-color-bg-info-strong-pressed',
     ],
     'A toast’s dismiss icon on hover and press; the error toast’s states are the destructive button’s, measured as text above',
   ),
 
   // Content.
   ...text(
-    '--color-fg-accent',
+    '--env-color-fg-accent',
     [
       [fill, page],
       [fill, surface],
     ],
     'Chips',
   ),
-  ...text('--color-fg-default', [[fill, field]], 'Combobox chips'),
-  ...text('--color-on-avatar', ['--color-avatar'], 'Avatar initials'),
+  ...text('--env-color-fg-default', [[fill, field]], 'Combobox chips'),
+  ...text('--env-color-avatar-fg', ['--env-color-avatar-bg'], 'Avatar initials'),
   ...text(
-    '--color-fg-default',
-    ['--color-bg-raised-hover', '--color-bg-raised-pressed'],
+    '--env-color-fg-default',
+    ['--env-color-bg-raised-hover', '--env-color-bg-raised-pressed'],
     'Pager links and rows on a contrasting surface, hovered and pressed',
   ),
-  ...text('--color-fg-muted', ['--color-bg-raised-hover'], 'Pager link captions on hover'),
+  ...text('--env-color-fg-muted', ['--env-color-bg-raised-hover'], 'Pager link captions on hover'),
   ...nonText(
-    '--color-control-blue',
+    '--env-color-bg-brand-emphasis',
     [page, surface, muted, raised, [fill, page], [fill, surface]],
     'Spinners, slider thumbs and indicators, and meter indicators on their track',
   ),
@@ -571,7 +599,7 @@ export const pairs: readonly ContrastPair[] = [
   ),
   ...nonText(
     'badge-outline-primary',
-    ['--color-bg-brand-emphasis'],
+    ['--env-color-bg-brand-emphasis'],
     'The outline of a badge or counter on a primary button',
     {
       minimum: { standard: 1.5, high: 3 },
@@ -581,7 +609,7 @@ export const pairs: readonly ContrastPair[] = [
   ),
   ...nonText(
     'badge-outline-important',
-    ['--color-bg-important-strong'],
+    ['--env-color-bg-important-strong'],
     'The outline of a badge or counter on an important button',
     {
       minimum: { standard: 1.5, high: 3 },
@@ -592,12 +620,12 @@ export const pairs: readonly ContrastPair[] = [
 
   // Focus rings, against what they are drawn on.
   ...focus(
-    '--color-border-focus',
+    '--env-color-border-focus',
     [page, surface, muted, raised, row, popup, field],
     'Offset rings sit on the surface around the control',
   ),
   ...focus(
-    '--color-border-focus',
+    '--env-color-border-focus',
     [
       popupHover,
       selected,
@@ -608,7 +636,7 @@ export const pairs: readonly ContrastPair[] = [
       rowPressed,
       [layerHover, surface],
       [layerPressed, surface],
-      '--color-bg-muted-hover',
+      '--env-color-bg-muted-hover',
       [fill, raised],
       [fill, fill, page],
     ],
@@ -616,7 +644,7 @@ export const pairs: readonly ContrastPair[] = [
   ),
   // An inset ring on a solid fill of its own blue adds an inner ring in the label's color, which
   // the label pairs of the primary, important and destructive fills measure, as text.
-];
+]);
 
 /**
  * Pairs the gate measured once and no longer does, with the reason. A pair that leaves `pairs`
@@ -643,6 +671,1122 @@ export const dropped: readonly { pair: string; rationale: string }[] = [
 ];
 
 /**
+ * The pairs renamed when every token took the --env- prefix, in the CSS-architecture step of 1.0,
+ * from the name DeclaredPairs.json recorded to the name the gate measures now. Each keeps what its
+ * old name was held to.
+ */
+/** Pairs whose tokens only took the prefix. */
+const prefixedPairs: readonly (readonly [from: string, to: string])[] = [
+  [
+    '--color-bg-brand-emphasis on --color-bg-default',
+    '--env-color-bg-brand-emphasis on --env-color-bg-default',
+  ],
+  [
+    '--color-bg-brand-emphasis on --color-bg-muted',
+    '--env-color-bg-brand-emphasis on --env-color-bg-muted',
+  ],
+  [
+    '--color-bg-brand-emphasis on --color-bg-muted-hover',
+    '--env-color-bg-brand-emphasis on --env-color-bg-muted-hover',
+  ],
+  [
+    '--color-bg-brand-emphasis on --color-bg-page',
+    '--env-color-bg-brand-emphasis on --env-color-bg-page',
+  ],
+  [
+    '--color-bg-brand-emphasis on --color-bg-popup',
+    '--env-color-bg-brand-emphasis on --env-color-bg-popup',
+  ],
+  [
+    '--color-bg-brand-emphasis on --color-bg-popup-hover',
+    '--env-color-bg-brand-emphasis on --env-color-bg-popup-hover',
+  ],
+  [
+    '--color-bg-brand-emphasis on --color-bg-selected',
+    '--env-color-bg-brand-emphasis on --env-color-bg-selected',
+  ],
+  [
+    '--color-bg-brand-emphasis on --color-bg-selected-hover',
+    '--env-color-bg-brand-emphasis on --env-color-bg-selected-hover',
+  ],
+  [
+    '--color-bg-brand-emphasis on --color-bg-selected-pressed',
+    '--env-color-bg-brand-emphasis on --env-color-bg-selected-pressed',
+  ],
+  [
+    '--color-bg-navigation-hover on --color-bg-default',
+    '--env-color-bg-navigation-hover on --env-color-bg-default',
+  ],
+  [
+    '--color-bg-navigation-hover on --color-bg-page',
+    '--env-color-bg-navigation-hover on --env-color-bg-page',
+  ],
+  [
+    '--color-bg-neutral-subtle-hover on --color-bg-default',
+    '--env-color-bg-neutral-subtle-hover on --env-color-bg-default',
+  ],
+  [
+    '--color-bg-neutral-subtle-hover on --color-bg-page',
+    '--env-color-bg-neutral-subtle-hover on --env-color-bg-page',
+  ],
+  [
+    '--color-bg-neutral-subtle-hover on --color-bg-raised',
+    '--env-color-bg-neutral-subtle-hover on --env-color-bg-raised',
+  ],
+  [
+    '--color-bg-popup-hover on --color-bg-popup',
+    '--env-color-bg-popup-hover on --env-color-bg-popup',
+  ],
+  [
+    '--color-bg-selected on --color-bg-default',
+    '--env-color-bg-selected on --env-color-bg-default',
+  ],
+  [
+    '--color-bg-selected on --color-bg-navigation-hover',
+    '--env-color-bg-selected on --env-color-bg-navigation-hover',
+  ],
+  [
+    '--color-bg-selected on --color-bg-navigation-pressed',
+    '--env-color-bg-selected on --env-color-bg-navigation-pressed',
+  ],
+  [
+    '--color-bg-selected on --color-bg-neutral-subtle-hover over --color-bg-default',
+    '--env-color-bg-selected on --env-color-bg-neutral-subtle-hover over --env-color-bg-default',
+  ],
+  [
+    '--color-bg-selected on --color-bg-neutral-subtle-hover over --color-bg-raised',
+    '--env-color-bg-selected on --env-color-bg-neutral-subtle-hover over --env-color-bg-raised',
+  ],
+  ['--color-bg-selected on --color-bg-page', '--env-color-bg-selected on --env-color-bg-page'],
+  ['--color-bg-selected on --color-bg-popup', '--env-color-bg-selected on --env-color-bg-popup'],
+  [
+    '--color-bg-selected on --color-bg-popup-hover',
+    '--env-color-bg-selected on --env-color-bg-popup-hover',
+  ],
+  ['--color-bg-selected on --color-bg-raised', '--env-color-bg-selected on --env-color-bg-raised'],
+  [
+    '--color-bg-selected-hover on --color-bg-navigation-hover',
+    '--env-color-bg-selected-hover on --env-color-bg-navigation-hover',
+  ],
+  [
+    '--color-bg-selected-hover on --color-bg-neutral-subtle-hover over --color-bg-default',
+    '--env-color-bg-selected-hover on --env-color-bg-neutral-subtle-hover over --env-color-bg-default',
+  ],
+  [
+    '--color-bg-selected-hover on --color-bg-neutral-subtle-hover over --color-bg-raised',
+    '--env-color-bg-selected-hover on --env-color-bg-neutral-subtle-hover over --env-color-bg-raised',
+  ],
+  [
+    '--color-bg-selected-hover on --color-bg-popup-hover',
+    '--env-color-bg-selected-hover on --env-color-bg-popup-hover',
+  ],
+  [
+    '--color-bg-selected-hover on --color-bg-selected',
+    '--env-color-bg-selected-hover on --env-color-bg-selected',
+  ],
+  [
+    '--color-border-accent-muted on --color-bg-default',
+    '--env-color-border-accent-muted on --env-color-bg-default',
+  ],
+  [
+    '--color-border-accent-muted on --color-bg-page',
+    '--env-color-border-accent-muted on --env-color-bg-page',
+  ],
+  [
+    '--color-border-danger-muted on --color-bg-default',
+    '--env-color-border-danger-muted on --env-color-bg-default',
+  ],
+  [
+    '--color-border-danger-muted on --color-bg-page',
+    '--env-color-border-danger-muted on --env-color-bg-page',
+  ],
+  [
+    '--color-border-danger-strong on --color-bg-danger-strong',
+    '--env-color-border-danger-strong on --env-color-bg-danger-strong',
+  ],
+  [
+    '--color-border-danger-strong on --color-bg-default',
+    '--env-color-border-danger-strong on --env-color-bg-default',
+  ],
+  [
+    '--color-border-danger-strong on --color-bg-muted',
+    '--env-color-border-danger-strong on --env-color-bg-muted',
+  ],
+  [
+    '--color-border-danger-strong on --color-bg-page',
+    '--env-color-border-danger-strong on --env-color-bg-page',
+  ],
+  [
+    '--color-border-danger-strong on --color-bg-popup',
+    '--env-color-border-danger-strong on --env-color-bg-popup',
+  ],
+  [
+    '--color-border-danger-strong on --color-bg-raised',
+    '--env-color-border-danger-strong on --env-color-bg-raised',
+  ],
+  [
+    '--color-border-default on --color-bg-default',
+    '--env-color-border-default on --env-color-bg-default',
+  ],
+  [
+    '--color-border-default on --color-bg-field',
+    '--env-color-border-default on --env-color-bg-field',
+  ],
+  [
+    '--color-border-default on --color-bg-muted',
+    '--env-color-border-default on --env-color-bg-muted',
+  ],
+  [
+    '--color-border-default on --color-bg-page',
+    '--env-color-border-default on --env-color-bg-page',
+  ],
+  [
+    '--color-border-default on --color-bg-popup',
+    '--env-color-border-default on --env-color-bg-popup',
+  ],
+  [
+    '--color-border-default on --color-bg-raised',
+    '--env-color-border-default on --env-color-bg-raised',
+  ],
+  [
+    '--color-border-focus on --color-bg-default',
+    '--env-color-border-focus on --env-color-bg-default',
+  ],
+  ['--color-border-focus on --color-bg-field', '--env-color-border-focus on --env-color-bg-field'],
+  ['--color-border-focus on --color-bg-muted', '--env-color-border-focus on --env-color-bg-muted'],
+  [
+    '--color-border-focus on --color-bg-muted-hover',
+    '--env-color-border-focus on --env-color-bg-muted-hover',
+  ],
+  [
+    '--color-border-focus on --color-bg-navigation-hover',
+    '--env-color-border-focus on --env-color-bg-navigation-hover',
+  ],
+  [
+    '--color-border-focus on --color-bg-navigation-pressed',
+    '--env-color-border-focus on --env-color-bg-navigation-pressed',
+  ],
+  [
+    '--color-border-focus on --color-bg-neutral-muted over --color-bg-neutral-muted over --color-bg-page',
+    '--env-color-border-focus on --env-color-bg-neutral-muted over --env-color-bg-neutral-muted over --env-color-bg-page',
+  ],
+  [
+    '--color-border-focus on --color-bg-neutral-muted over --color-bg-raised',
+    '--env-color-border-focus on --env-color-bg-neutral-muted over --env-color-bg-raised',
+  ],
+  [
+    '--color-border-focus on --color-bg-neutral-subtle-hover over --color-bg-default',
+    '--env-color-border-focus on --env-color-bg-neutral-subtle-hover over --env-color-bg-default',
+  ],
+  [
+    '--color-border-focus on --color-bg-neutral-subtle-pressed over --color-bg-default',
+    '--env-color-border-focus on --env-color-bg-neutral-subtle-pressed over --env-color-bg-default',
+  ],
+  ['--color-border-focus on --color-bg-page', '--env-color-border-focus on --env-color-bg-page'],
+  ['--color-border-focus on --color-bg-popup', '--env-color-border-focus on --env-color-bg-popup'],
+  [
+    '--color-border-focus on --color-bg-popup-hover',
+    '--env-color-border-focus on --env-color-bg-popup-hover',
+  ],
+  [
+    '--color-border-focus on --color-bg-raised',
+    '--env-color-border-focus on --env-color-bg-raised',
+  ],
+  [
+    '--color-border-focus on --color-bg-selected',
+    '--env-color-border-focus on --env-color-bg-selected',
+  ],
+  [
+    '--color-border-focus on --color-bg-selected-hover',
+    '--env-color-border-focus on --env-color-bg-selected-hover',
+  ],
+  [
+    '--color-border-focus on --color-bg-selected-pressed',
+    '--env-color-border-focus on --env-color-bg-selected-pressed',
+  ],
+  [
+    '--color-border-info-strong on --color-bg-default',
+    '--env-color-border-info-strong on --env-color-bg-default',
+  ],
+  [
+    '--color-border-info-strong on --color-bg-info-strong',
+    '--env-color-border-info-strong on --env-color-bg-info-strong',
+  ],
+  [
+    '--color-border-info-strong on --color-bg-muted',
+    '--env-color-border-info-strong on --env-color-bg-muted',
+  ],
+  [
+    '--color-border-info-strong on --color-bg-page',
+    '--env-color-border-info-strong on --env-color-bg-page',
+  ],
+  [
+    '--color-border-info-strong on --color-bg-popup',
+    '--env-color-border-info-strong on --env-color-bg-popup',
+  ],
+  [
+    '--color-border-info-strong on --color-bg-raised',
+    '--env-color-border-info-strong on --env-color-bg-raised',
+  ],
+  [
+    '--color-border-muted on --color-bg-default',
+    '--env-color-border-muted on --env-color-bg-default',
+  ],
+  ['--color-border-muted on --color-bg-muted', '--env-color-border-muted on --env-color-bg-muted'],
+  ['--color-border-muted on --color-bg-page', '--env-color-border-muted on --env-color-bg-page'],
+  [
+    '--color-border-neutral-strong on --color-bg-default',
+    '--env-color-border-neutral-strong on --env-color-bg-default',
+  ],
+  [
+    '--color-border-neutral-strong on --color-bg-muted',
+    '--env-color-border-neutral-strong on --env-color-bg-muted',
+  ],
+  [
+    '--color-border-neutral-strong on --color-bg-neutral-strong',
+    '--env-color-border-neutral-strong on --env-color-bg-neutral-strong',
+  ],
+  [
+    '--color-border-neutral-strong on --color-bg-page',
+    '--env-color-border-neutral-strong on --env-color-bg-page',
+  ],
+  [
+    '--color-border-neutral-strong on --color-bg-popup',
+    '--env-color-border-neutral-strong on --env-color-bg-popup',
+  ],
+  [
+    '--color-border-neutral-strong on --color-bg-raised',
+    '--env-color-border-neutral-strong on --env-color-bg-raised',
+  ],
+  [
+    '--color-border-success-muted on --color-bg-default',
+    '--env-color-border-success-muted on --env-color-bg-default',
+  ],
+  [
+    '--color-border-success-muted on --color-bg-page',
+    '--env-color-border-success-muted on --env-color-bg-page',
+  ],
+  [
+    '--color-border-success-strong on --color-bg-default',
+    '--env-color-border-success-strong on --env-color-bg-default',
+  ],
+  [
+    '--color-border-success-strong on --color-bg-muted',
+    '--env-color-border-success-strong on --env-color-bg-muted',
+  ],
+  [
+    '--color-border-success-strong on --color-bg-page',
+    '--env-color-border-success-strong on --env-color-bg-page',
+  ],
+  [
+    '--color-border-success-strong on --color-bg-popup',
+    '--env-color-border-success-strong on --env-color-bg-popup',
+  ],
+  [
+    '--color-border-success-strong on --color-bg-raised',
+    '--env-color-border-success-strong on --env-color-bg-raised',
+  ],
+  [
+    '--color-border-success-strong on --color-bg-success-strong',
+    '--env-color-border-success-strong on --env-color-bg-success-strong',
+  ],
+  [
+    '--color-border-warning-muted on --color-bg-default',
+    '--env-color-border-warning-muted on --env-color-bg-default',
+  ],
+  [
+    '--color-border-warning-muted on --color-bg-page',
+    '--env-color-border-warning-muted on --env-color-bg-page',
+  ],
+  [
+    '--color-fg-accent on --color-bg-accent-muted over --color-bg-default',
+    '--env-color-fg-accent on --env-color-bg-accent-muted over --env-color-bg-default',
+  ],
+  [
+    '--color-fg-accent on --color-bg-accent-muted over --color-bg-page',
+    '--env-color-fg-accent on --env-color-bg-accent-muted over --env-color-bg-page',
+  ],
+  [
+    '--color-fg-accent on --color-bg-accent-subtle-hover over --color-bg-accent-muted over --color-bg-page',
+    '--env-color-fg-accent on --env-color-bg-accent-subtle-hover over --env-color-bg-accent-muted over --env-color-bg-page',
+  ],
+  [
+    '--color-fg-accent on --color-bg-accent-subtle-pressed over --color-bg-accent-muted over --color-bg-page',
+    '--env-color-fg-accent on --env-color-bg-accent-subtle-pressed over --env-color-bg-accent-muted over --env-color-bg-page',
+  ],
+  ['--color-fg-accent on --color-bg-default', '--env-color-fg-accent on --env-color-bg-default'],
+  [
+    '--color-fg-accent on --color-bg-neutral-muted over --color-bg-default',
+    '--env-color-fg-accent on --env-color-bg-neutral-muted over --env-color-bg-default',
+  ],
+  [
+    '--color-fg-accent on --color-bg-neutral-muted over --color-bg-page',
+    '--env-color-fg-accent on --env-color-bg-neutral-muted over --env-color-bg-page',
+  ],
+  ['--color-fg-accent on --color-bg-page', '--env-color-fg-accent on --env-color-bg-page'],
+  ['--color-fg-accent on --color-bg-raised', '--env-color-fg-accent on --env-color-bg-raised'],
+  [
+    '--color-fg-accent on --color-bg-raised-hover',
+    '--env-color-fg-accent on --env-color-bg-raised-hover',
+  ],
+  [
+    '--color-fg-accent on --color-bg-raised-pressed',
+    '--env-color-fg-accent on --env-color-bg-raised-pressed',
+  ],
+  ['--color-fg-control on --color-bg-default', '--env-color-fg-control on --env-color-bg-default'],
+  [
+    '--color-fg-control on --color-bg-navigation-hover',
+    '--env-color-fg-control on --env-color-bg-navigation-hover',
+  ],
+  [
+    '--color-fg-control on --color-bg-navigation-pressed',
+    '--env-color-fg-control on --env-color-bg-navigation-pressed',
+  ],
+  [
+    '--color-fg-control on --color-bg-neutral-muted over --color-bg-default',
+    '--env-color-fg-control on --env-color-bg-neutral-muted over --env-color-bg-default',
+  ],
+  [
+    '--color-fg-control on --color-bg-neutral-muted over --color-bg-muted',
+    '--env-color-fg-control on --env-color-bg-neutral-muted over --env-color-bg-muted',
+  ],
+  [
+    '--color-fg-control on --color-bg-neutral-muted over --color-bg-neutral-muted over --color-bg-default',
+    '--env-color-fg-control on --env-color-bg-neutral-muted over --env-color-bg-neutral-muted over --env-color-bg-default',
+  ],
+  [
+    '--color-fg-control on --color-bg-neutral-muted over --color-bg-neutral-muted over --color-bg-page',
+    '--env-color-fg-control on --env-color-bg-neutral-muted over --env-color-bg-neutral-muted over --env-color-bg-page',
+  ],
+  [
+    '--color-fg-control on --color-bg-neutral-muted over --color-bg-page',
+    '--env-color-fg-control on --env-color-bg-neutral-muted over --env-color-bg-page',
+  ],
+  [
+    '--color-fg-control on --color-bg-neutral-muted over --color-bg-raised',
+    '--env-color-fg-control on --env-color-bg-neutral-muted over --env-color-bg-raised',
+  ],
+  [
+    '--color-fg-control on --color-bg-neutral-muted-hover over --color-bg-default',
+    '--env-color-fg-control on --env-color-bg-neutral-muted-hover over --env-color-bg-default',
+  ],
+  [
+    '--color-fg-control on --color-bg-neutral-muted-hover over --color-bg-muted',
+    '--env-color-fg-control on --env-color-bg-neutral-muted-hover over --env-color-bg-muted',
+  ],
+  [
+    '--color-fg-control on --color-bg-neutral-muted-hover over --color-bg-neutral-muted over --color-bg-page',
+    '--env-color-fg-control on --env-color-bg-neutral-muted-hover over --env-color-bg-neutral-muted over --env-color-bg-page',
+  ],
+  [
+    '--color-fg-control on --color-bg-neutral-muted-hover over --color-bg-page',
+    '--env-color-fg-control on --env-color-bg-neutral-muted-hover over --env-color-bg-page',
+  ],
+  [
+    '--color-fg-control on --color-bg-neutral-muted-hover over --color-bg-raised',
+    '--env-color-fg-control on --env-color-bg-neutral-muted-hover over --env-color-bg-raised',
+  ],
+  [
+    '--color-fg-control on --color-bg-neutral-muted-pressed over --color-bg-default',
+    '--env-color-fg-control on --env-color-bg-neutral-muted-pressed over --env-color-bg-default',
+  ],
+  [
+    '--color-fg-control on --color-bg-neutral-muted-pressed over --color-bg-muted',
+    '--env-color-fg-control on --env-color-bg-neutral-muted-pressed over --env-color-bg-muted',
+  ],
+  [
+    '--color-fg-control on --color-bg-neutral-muted-pressed over --color-bg-page',
+    '--env-color-fg-control on --env-color-bg-neutral-muted-pressed over --env-color-bg-page',
+  ],
+  [
+    '--color-fg-control on --color-bg-neutral-muted-pressed over --color-bg-raised',
+    '--env-color-fg-control on --env-color-bg-neutral-muted-pressed over --env-color-bg-raised',
+  ],
+  [
+    '--color-fg-control on --color-bg-neutral-subtle-hover over --color-bg-default',
+    '--env-color-fg-control on --env-color-bg-neutral-subtle-hover over --env-color-bg-default',
+  ],
+  [
+    '--color-fg-control on --color-bg-neutral-subtle-hover over --color-bg-page',
+    '--env-color-fg-control on --env-color-bg-neutral-subtle-hover over --env-color-bg-page',
+  ],
+  ['--color-fg-control on --color-bg-page', '--env-color-fg-control on --env-color-bg-page'],
+  ['--color-fg-control on --color-bg-popup', '--env-color-fg-control on --env-color-bg-popup'],
+  [
+    '--color-fg-control on --color-bg-popup-hover',
+    '--env-color-fg-control on --env-color-bg-popup-hover',
+  ],
+  [
+    '--color-fg-control on --color-bg-popup-pressed',
+    '--env-color-fg-control on --env-color-bg-popup-pressed',
+  ],
+  ['--color-fg-control on --color-bg-raised', '--env-color-fg-control on --env-color-bg-raised'],
+  [
+    '--color-fg-danger on --color-bg-danger-muted over --color-bg-default',
+    '--env-color-fg-danger on --env-color-bg-danger-muted over --env-color-bg-default',
+  ],
+  [
+    '--color-fg-danger on --color-bg-danger-muted over --color-bg-page',
+    '--env-color-fg-danger on --env-color-bg-danger-muted over --env-color-bg-page',
+  ],
+  [
+    '--color-fg-danger on --color-bg-danger-subtle-hover over --color-bg-danger-muted over --color-bg-page',
+    '--env-color-fg-danger on --env-color-bg-danger-subtle-hover over --env-color-bg-danger-muted over --env-color-bg-page',
+  ],
+  [
+    '--color-fg-danger on --color-bg-danger-subtle-pressed over --color-bg-danger-muted over --color-bg-page',
+    '--env-color-fg-danger on --env-color-bg-danger-subtle-pressed over --env-color-bg-danger-muted over --env-color-bg-page',
+  ],
+  ['--color-fg-danger on --color-bg-default', '--env-color-fg-danger on --env-color-bg-default'],
+  ['--color-fg-danger on --color-bg-field', '--env-color-fg-danger on --env-color-bg-field'],
+  ['--color-fg-danger on --color-bg-muted', '--env-color-fg-danger on --env-color-bg-muted'],
+  ['--color-fg-danger on --color-bg-page', '--env-color-fg-danger on --env-color-bg-page'],
+  [
+    '--color-fg-default on --color-bg-accent-muted over --color-bg-page',
+    '--env-color-fg-default on --env-color-bg-accent-muted over --env-color-bg-page',
+  ],
+  [
+    '--color-fg-default on --color-bg-danger-muted over --color-bg-page',
+    '--env-color-fg-default on --env-color-bg-danger-muted over --env-color-bg-page',
+  ],
+  ['--color-fg-default on --color-bg-default', '--env-color-fg-default on --env-color-bg-default'],
+  ['--color-fg-default on --color-bg-field', '--env-color-fg-default on --env-color-bg-field'],
+  ['--color-fg-default on --color-bg-muted', '--env-color-fg-default on --env-color-bg-muted'],
+  [
+    '--color-fg-default on --color-bg-muted-hover',
+    '--env-color-fg-default on --env-color-bg-muted-hover',
+  ],
+  [
+    '--color-fg-default on --color-bg-muted-pressed',
+    '--env-color-fg-default on --env-color-bg-muted-pressed',
+  ],
+  [
+    '--color-fg-default on --color-bg-neutral-muted over --color-bg-default',
+    '--env-color-fg-default on --env-color-bg-neutral-muted over --env-color-bg-default',
+  ],
+  [
+    '--color-fg-default on --color-bg-neutral-muted over --color-bg-field',
+    '--env-color-fg-default on --env-color-bg-neutral-muted over --env-color-bg-field',
+  ],
+  [
+    '--color-fg-default on --color-bg-neutral-muted over --color-bg-page',
+    '--env-color-fg-default on --env-color-bg-neutral-muted over --env-color-bg-page',
+  ],
+  [
+    '--color-fg-default on --color-bg-neutral-muted over --color-bg-raised',
+    '--env-color-fg-default on --env-color-bg-neutral-muted over --env-color-bg-raised',
+  ],
+  [
+    '--color-fg-default on --color-bg-neutral-subtle-hover over --color-bg-default',
+    '--env-color-fg-default on --env-color-bg-neutral-subtle-hover over --env-color-bg-default',
+  ],
+  [
+    '--color-fg-default on --color-bg-neutral-subtle-hover over --color-bg-neutral-muted over --color-bg-page',
+    '--env-color-fg-default on --env-color-bg-neutral-subtle-hover over --env-color-bg-neutral-muted over --env-color-bg-page',
+  ],
+  [
+    '--color-fg-default on --color-bg-neutral-subtle-hover over --color-bg-page',
+    '--env-color-fg-default on --env-color-bg-neutral-subtle-hover over --env-color-bg-page',
+  ],
+  [
+    '--color-fg-default on --color-bg-neutral-subtle-pressed over --color-bg-default',
+    '--env-color-fg-default on --env-color-bg-neutral-subtle-pressed over --env-color-bg-default',
+  ],
+  [
+    '--color-fg-default on --color-bg-neutral-subtle-pressed over --color-bg-page',
+    '--env-color-fg-default on --env-color-bg-neutral-subtle-pressed over --env-color-bg-page',
+  ],
+  ['--color-fg-default on --color-bg-page', '--env-color-fg-default on --env-color-bg-page'],
+  ['--color-fg-default on --color-bg-popup', '--env-color-fg-default on --env-color-bg-popup'],
+  [
+    '--color-fg-default on --color-bg-popup-hover',
+    '--env-color-fg-default on --env-color-bg-popup-hover',
+  ],
+  [
+    '--color-fg-default on --color-bg-popup-pressed',
+    '--env-color-fg-default on --env-color-bg-popup-pressed',
+  ],
+  ['--color-fg-default on --color-bg-raised', '--env-color-fg-default on --env-color-bg-raised'],
+  [
+    '--color-fg-default on --color-bg-raised-hover',
+    '--env-color-fg-default on --env-color-bg-raised-hover',
+  ],
+  [
+    '--color-fg-default on --color-bg-raised-pressed',
+    '--env-color-fg-default on --env-color-bg-raised-pressed',
+  ],
+  [
+    '--color-fg-default on --color-bg-selected',
+    '--env-color-fg-default on --env-color-bg-selected',
+  ],
+  [
+    '--color-fg-default on --color-bg-selected-hover',
+    '--env-color-fg-default on --env-color-bg-selected-hover',
+  ],
+  [
+    '--color-fg-default on --color-bg-selected-pressed',
+    '--env-color-fg-default on --env-color-bg-selected-pressed',
+  ],
+  [
+    '--color-fg-default on --color-bg-success-muted over --color-bg-page',
+    '--env-color-fg-default on --env-color-bg-success-muted over --env-color-bg-page',
+  ],
+  [
+    '--color-fg-default on --color-bg-warning-muted over --color-bg-page',
+    '--env-color-fg-default on --env-color-bg-warning-muted over --env-color-bg-page',
+  ],
+  ['--color-fg-done on --color-bg-default', '--env-color-fg-done on --env-color-bg-default'],
+  [
+    '--color-fg-done on --color-bg-done-muted over --color-bg-default',
+    '--env-color-fg-done on --env-color-bg-done-muted over --env-color-bg-default',
+  ],
+  [
+    '--color-fg-done on --color-bg-done-muted over --color-bg-page',
+    '--env-color-fg-done on --env-color-bg-done-muted over --env-color-bg-page',
+  ],
+  ['--color-fg-done on --color-bg-page', '--env-color-fg-done on --env-color-bg-page'],
+  ['--color-fg-link on --color-bg-default', '--env-color-fg-link on --env-color-bg-default'],
+  ['--color-fg-link on --color-bg-muted', '--env-color-fg-link on --env-color-bg-muted'],
+  ['--color-fg-link on --color-bg-page', '--env-color-fg-link on --env-color-bg-page'],
+  ['--color-fg-link on --color-bg-popup', '--env-color-fg-link on --env-color-bg-popup'],
+  ['--color-fg-link on --color-bg-raised', '--env-color-fg-link on --env-color-bg-raised'],
+  [
+    '--color-fg-link-hover on --color-bg-default',
+    '--env-color-fg-link-hover on --env-color-bg-default',
+  ],
+  [
+    '--color-fg-link-hover on --color-bg-muted',
+    '--env-color-fg-link-hover on --env-color-bg-muted',
+  ],
+  ['--color-fg-link-hover on --color-bg-page', '--env-color-fg-link-hover on --env-color-bg-page'],
+  [
+    '--color-fg-link-pressed on --color-bg-default',
+    '--env-color-fg-link-pressed on --env-color-bg-default',
+  ],
+  [
+    '--color-fg-link-pressed on --color-bg-muted',
+    '--env-color-fg-link-pressed on --env-color-bg-muted',
+  ],
+  [
+    '--color-fg-link-pressed on --color-bg-page',
+    '--env-color-fg-link-pressed on --env-color-bg-page',
+  ],
+  ['--color-fg-muted on --color-bg-default', '--env-color-fg-muted on --env-color-bg-default'],
+  ['--color-fg-muted on --color-bg-field', '--env-color-fg-muted on --env-color-bg-field'],
+  ['--color-fg-muted on --color-bg-muted', '--env-color-fg-muted on --env-color-bg-muted'],
+  [
+    '--color-fg-muted on --color-bg-muted-hover',
+    '--env-color-fg-muted on --env-color-bg-muted-hover',
+  ],
+  [
+    '--color-fg-muted on --color-bg-navigation-hover',
+    '--env-color-fg-muted on --env-color-bg-navigation-hover',
+  ],
+  [
+    '--color-fg-muted on --color-bg-navigation-pressed',
+    '--env-color-fg-muted on --env-color-bg-navigation-pressed',
+  ],
+  [
+    '--color-fg-muted on --color-bg-neutral-muted over --color-bg-default',
+    '--env-color-fg-muted on --env-color-bg-neutral-muted over --env-color-bg-default',
+  ],
+  [
+    '--color-fg-muted on --color-bg-neutral-muted over --color-bg-muted',
+    '--env-color-fg-muted on --env-color-bg-neutral-muted over --env-color-bg-muted',
+  ],
+  [
+    '--color-fg-muted on --color-bg-neutral-muted over --color-bg-page',
+    '--env-color-fg-muted on --env-color-bg-neutral-muted over --env-color-bg-page',
+  ],
+  [
+    '--color-fg-muted on --color-bg-neutral-muted over --color-bg-popup',
+    '--env-color-fg-muted on --env-color-bg-neutral-muted over --env-color-bg-popup',
+  ],
+  [
+    '--color-fg-muted on --color-bg-neutral-muted over --color-bg-raised',
+    '--env-color-fg-muted on --env-color-bg-neutral-muted over --env-color-bg-raised',
+  ],
+  [
+    '--color-fg-muted on --color-bg-neutral-subtle-hover over --color-bg-neutral-muted over --color-bg-page',
+    '--env-color-fg-muted on --env-color-bg-neutral-subtle-hover over --env-color-bg-neutral-muted over --env-color-bg-page',
+  ],
+  [
+    '--color-fg-muted on --color-bg-neutral-subtle-pressed over --color-bg-neutral-muted over --color-bg-page',
+    '--env-color-fg-muted on --env-color-bg-neutral-subtle-pressed over --env-color-bg-neutral-muted over --env-color-bg-page',
+  ],
+  ['--color-fg-muted on --color-bg-page', '--env-color-fg-muted on --env-color-bg-page'],
+  ['--color-fg-muted on --color-bg-popup', '--env-color-fg-muted on --env-color-bg-popup'],
+  [
+    '--color-fg-muted on --color-bg-popup-hover',
+    '--env-color-fg-muted on --env-color-bg-popup-hover',
+  ],
+  ['--color-fg-muted on --color-bg-raised', '--env-color-fg-muted on --env-color-bg-raised'],
+  [
+    '--color-fg-muted on --color-bg-raised-hover',
+    '--env-color-fg-muted on --env-color-bg-raised-hover',
+  ],
+  ['--color-fg-muted on --color-bg-selected', '--env-color-fg-muted on --env-color-bg-selected'],
+  [
+    '--color-fg-muted on --color-bg-selected-hover',
+    '--env-color-fg-muted on --env-color-bg-selected-hover',
+  ],
+  [
+    '--color-fg-muted on --color-bg-selected-pressed',
+    '--env-color-fg-muted on --env-color-bg-selected-pressed',
+  ],
+  [
+    '--color-fg-muted-hover on --color-bg-default',
+    '--env-color-fg-muted-hover on --env-color-bg-default',
+  ],
+  [
+    '--color-fg-muted-hover on --color-bg-page',
+    '--env-color-fg-muted-hover on --env-color-bg-page',
+  ],
+  [
+    '--color-fg-muted-pressed on --color-bg-default',
+    '--env-color-fg-muted-pressed on --env-color-bg-default',
+  ],
+  [
+    '--color-fg-muted-pressed on --color-bg-page',
+    '--env-color-fg-muted-pressed on --env-color-bg-page',
+  ],
+  [
+    '--color-fg-on-emphasis on --color-bg-accent-emphasis',
+    '--env-color-fg-on-emphasis on --env-color-bg-accent-emphasis',
+  ],
+  [
+    '--color-fg-on-emphasis on --color-bg-brand-emphasis',
+    '--env-color-fg-on-emphasis on --env-color-bg-brand-emphasis',
+  ],
+  [
+    '--color-fg-on-emphasis on --color-bg-brand-emphasis-hover',
+    '--env-color-fg-on-emphasis on --env-color-bg-brand-emphasis-hover',
+  ],
+  [
+    '--color-fg-on-emphasis on --color-bg-brand-emphasis-pressed',
+    '--env-color-fg-on-emphasis on --env-color-bg-brand-emphasis-pressed',
+  ],
+  [
+    '--color-fg-on-emphasis on --color-bg-danger-emphasis',
+    '--env-color-fg-on-emphasis on --env-color-bg-danger-emphasis',
+  ],
+  [
+    '--color-fg-on-emphasis on --color-bg-done-emphasis',
+    '--env-color-fg-on-emphasis on --env-color-bg-done-emphasis',
+  ],
+  [
+    '--color-fg-on-emphasis on --color-bg-neutral-emphasis',
+    '--env-color-fg-on-emphasis on --env-color-bg-neutral-emphasis',
+  ],
+  [
+    '--color-fg-on-emphasis on --color-bg-success-emphasis',
+    '--env-color-fg-on-emphasis on --env-color-bg-success-emphasis',
+  ],
+  [
+    '--color-fg-on-emphasis on --color-bg-warning-emphasis',
+    '--env-color-fg-on-emphasis on --env-color-bg-warning-emphasis',
+  ],
+  [
+    '--color-fg-on-selected on --color-bg-neutral-muted over --color-bg-page',
+    '--env-color-fg-on-selected on --env-color-bg-neutral-muted over --env-color-bg-page',
+  ],
+  [
+    '--color-fg-on-selected on --color-bg-selected',
+    '--env-color-fg-on-selected on --env-color-bg-selected',
+  ],
+  [
+    '--color-fg-on-selected on --color-bg-selected-hover',
+    '--env-color-fg-on-selected on --env-color-bg-selected-hover',
+  ],
+  [
+    '--color-fg-on-selected on --color-bg-selected-pressed',
+    '--env-color-fg-on-selected on --env-color-bg-selected-pressed',
+  ],
+  [
+    '--color-fg-on-selected on --color-fg-control',
+    '--env-color-fg-on-selected on --env-color-fg-control',
+  ],
+  [
+    '--color-fg-on-selected on --color-fg-default',
+    '--env-color-fg-on-selected on --env-color-fg-default',
+  ],
+  [
+    '--color-fg-on-strong on --color-bg-brand-strong',
+    '--env-color-fg-on-strong on --env-color-bg-brand-strong',
+  ],
+  [
+    '--color-fg-on-strong on --color-bg-brand-strong-hover',
+    '--env-color-fg-on-strong on --env-color-bg-brand-strong-hover',
+  ],
+  [
+    '--color-fg-on-strong on --color-bg-brand-strong-pressed',
+    '--env-color-fg-on-strong on --env-color-bg-brand-strong-pressed',
+  ],
+  [
+    '--color-fg-on-strong on --color-bg-danger-strong',
+    '--env-color-fg-on-strong on --env-color-bg-danger-strong',
+  ],
+  [
+    '--color-fg-on-strong on --color-bg-danger-strong-hover',
+    '--env-color-fg-on-strong on --env-color-bg-danger-strong-hover',
+  ],
+  [
+    '--color-fg-on-strong on --color-bg-danger-strong-pressed',
+    '--env-color-fg-on-strong on --env-color-bg-danger-strong-pressed',
+  ],
+  [
+    '--color-fg-on-strong on --color-bg-important-strong',
+    '--env-color-fg-on-strong on --env-color-bg-important-strong',
+  ],
+  [
+    '--color-fg-on-strong on --color-bg-important-strong-hover',
+    '--env-color-fg-on-strong on --env-color-bg-important-strong-hover',
+  ],
+  [
+    '--color-fg-on-strong on --color-bg-important-strong-pressed',
+    '--env-color-fg-on-strong on --env-color-bg-important-strong-pressed',
+  ],
+  [
+    '--color-fg-on-strong on --color-bg-info-strong',
+    '--env-color-fg-on-strong on --env-color-bg-info-strong',
+  ],
+  [
+    '--color-fg-on-strong on --color-bg-info-strong-hover',
+    '--env-color-fg-on-strong on --env-color-bg-info-strong-hover',
+  ],
+  [
+    '--color-fg-on-strong on --color-bg-info-strong-pressed',
+    '--env-color-fg-on-strong on --env-color-bg-info-strong-pressed',
+  ],
+  [
+    '--color-fg-on-strong on --color-bg-neutral-strong',
+    '--env-color-fg-on-strong on --env-color-bg-neutral-strong',
+  ],
+  [
+    '--color-fg-on-strong on --color-bg-neutral-strong-hover',
+    '--env-color-fg-on-strong on --env-color-bg-neutral-strong-hover',
+  ],
+  [
+    '--color-fg-on-strong on --color-bg-neutral-strong-pressed',
+    '--env-color-fg-on-strong on --env-color-bg-neutral-strong-pressed',
+  ],
+  [
+    '--color-fg-on-strong on --color-bg-success-strong',
+    '--env-color-fg-on-strong on --env-color-bg-success-strong',
+  ],
+  [
+    '--color-fg-on-strong on --color-bg-success-strong-hover',
+    '--env-color-fg-on-strong on --env-color-bg-success-strong-hover',
+  ],
+  [
+    '--color-fg-on-strong on --color-bg-success-strong-pressed',
+    '--env-color-fg-on-strong on --env-color-bg-success-strong-pressed',
+  ],
+  ['--color-fg-success on --color-bg-default', '--env-color-fg-success on --env-color-bg-default'],
+  ['--color-fg-success on --color-bg-page', '--env-color-fg-success on --env-color-bg-page'],
+  [
+    '--color-fg-success on --color-bg-success-muted over --color-bg-default',
+    '--env-color-fg-success on --env-color-bg-success-muted over --env-color-bg-default',
+  ],
+  [
+    '--color-fg-success on --color-bg-success-muted over --color-bg-page',
+    '--env-color-fg-success on --env-color-bg-success-muted over --env-color-bg-page',
+  ],
+  [
+    '--color-fg-success on --color-bg-success-subtle-hover over --color-bg-success-muted over --color-bg-page',
+    '--env-color-fg-success on --env-color-bg-success-subtle-hover over --env-color-bg-success-muted over --env-color-bg-page',
+  ],
+  [
+    '--color-fg-success on --color-bg-success-subtle-pressed over --color-bg-success-muted over --color-bg-page',
+    '--env-color-fg-success on --env-color-bg-success-subtle-pressed over --env-color-bg-success-muted over --env-color-bg-page',
+  ],
+  ['--color-fg-warning on --color-bg-default', '--env-color-fg-warning on --env-color-bg-default'],
+  ['--color-fg-warning on --color-bg-page', '--env-color-fg-warning on --env-color-bg-page'],
+  [
+    '--color-fg-warning on --color-bg-warning-muted over --color-bg-default',
+    '--env-color-fg-warning on --env-color-bg-warning-muted over --env-color-bg-default',
+  ],
+  [
+    '--color-fg-warning on --color-bg-warning-muted over --color-bg-page',
+    '--env-color-fg-warning on --env-color-bg-warning-muted over --env-color-bg-page',
+  ],
+  [
+    '--color-fg-warning on --color-bg-warning-subtle-hover over --color-bg-warning-muted over --color-bg-page',
+    '--env-color-fg-warning on --env-color-bg-warning-subtle-hover over --env-color-bg-warning-muted over --env-color-bg-page',
+  ],
+  [
+    '--color-fg-warning on --color-bg-warning-subtle-pressed over --color-bg-warning-muted over --color-bg-page',
+    '--env-color-fg-warning on --env-color-bg-warning-subtle-pressed over --env-color-bg-warning-muted over --env-color-bg-page',
+  ],
+  [
+    '--elevation-2-border on --color-bg-default',
+    '--env-elevation-2-border on --env-color-bg-default',
+  ],
+  ['--elevation-2-border on --color-bg-muted', '--env-elevation-2-border on --env-color-bg-muted'],
+  ['--elevation-2-border on --color-bg-page', '--env-elevation-2-border on --env-color-bg-page'],
+  ['--elevation-2-border on --color-bg-popup', '--env-elevation-2-border on --env-color-bg-popup'],
+  [
+    '--elevation-2-border on --color-bg-raised',
+    '--env-elevation-2-border on --env-color-bg-raised',
+  ],
+  [
+    '--elevation-3-border on --color-bg-overlay over --color-bg-page',
+    '--env-elevation-3-border on --env-color-bg-overlay over --env-color-bg-page',
+  ],
+  [
+    '--elevation-3-border on --color-bg-raised',
+    '--env-elevation-3-border on --env-color-bg-raised',
+  ],
+  [
+    'badge-outline-important on --color-bg-important-strong',
+    'badge-outline-important on --env-color-bg-important-strong',
+  ],
+  [
+    'badge-outline-primary on --color-bg-brand-emphasis',
+    'badge-outline-primary on --env-color-bg-brand-emphasis',
+  ],
+  [
+    'heatmap-accent-lowest on --color-bg-neutral-muted over --color-bg-page',
+    'heatmap-accent-lowest on --env-color-bg-neutral-muted over --env-color-bg-page',
+  ],
+];
+/** Pairs that named a 0.7 alias, measured on the token that replaces it: a checked checkbox, a switch that is on and a spinner on the brand’s emphasis fill, which light checkboxes and switches also took as the strong fill of the same color; a list row on the list item’s component token; an avatar on its own; the action strip of a card on the default surface. */
+const aliasPairs: readonly (readonly [from: string, to: string])[] = [
+  ['--color-action-strip on --color-bg-muted', '--env-color-bg-default on --env-color-bg-muted'],
+  [
+    '--color-border-accent-emphasis on --color-row',
+    '--env-color-border-accent on --env-color-list-item-bg',
+  ],
+  [
+    '--color-border-danger-emphasis on --color-row',
+    '--env-color-border-danger on --env-color-list-item-bg',
+  ],
+  [
+    '--color-border-done-emphasis on --color-row',
+    '--env-color-border-done on --env-color-list-item-bg',
+  ],
+  ['--color-border-focus on --color-row', '--env-color-border-focus on --env-color-list-item-bg'],
+  [
+    '--color-border-focus on --color-row-pressed',
+    '--env-color-border-focus on --env-color-list-item-bg-pressed',
+  ],
+  [
+    '--color-border-neutral-emphasis on --color-row',
+    '--env-color-border-neutral on --env-color-list-item-bg',
+  ],
+  [
+    '--color-border-success-emphasis on --color-row',
+    '--env-color-border-success on --env-color-list-item-bg',
+  ],
+  [
+    '--color-border-warning-emphasis on --color-row',
+    '--env-color-border-warning on --env-color-list-item-bg',
+  ],
+  [
+    '--color-checkbox on --color-bg-default',
+    '--env-color-bg-brand-emphasis on --env-color-bg-default',
+  ],
+  ['--color-checkbox on --color-bg-muted', '--env-color-bg-brand-emphasis on --env-color-bg-muted'],
+  ['--color-checkbox on --color-bg-page', '--env-color-bg-brand-emphasis on --env-color-bg-page'],
+  [
+    '--color-checkbox on --color-bg-raised',
+    '--env-color-bg-brand-emphasis on --env-color-bg-raised',
+  ],
+  [
+    '--color-checkbox on --color-bg-selected',
+    '--env-color-bg-brand-emphasis on --env-color-bg-selected',
+  ],
+  [
+    '--color-checkbox on --color-bg-selected-hover',
+    '--env-color-bg-brand-emphasis on --env-color-bg-selected-hover',
+  ],
+  ['--color-checkbox on --color-row', '--env-color-bg-brand-emphasis on --env-color-list-item-bg'],
+  [
+    '--color-control-blue on --color-bg-default',
+    '--env-color-bg-brand-emphasis on --env-color-bg-default',
+  ],
+  [
+    '--color-control-blue on --color-bg-muted',
+    '--env-color-bg-brand-emphasis on --env-color-bg-muted',
+  ],
+  [
+    '--color-control-blue on --color-bg-neutral-muted over --color-bg-default',
+    '--env-color-bg-brand-emphasis on --env-color-bg-neutral-muted over --env-color-bg-default',
+  ],
+  [
+    '--color-control-blue on --color-bg-neutral-muted over --color-bg-page',
+    '--env-color-bg-brand-emphasis on --env-color-bg-neutral-muted over --env-color-bg-page',
+  ],
+  [
+    '--color-control-blue on --color-bg-page',
+    '--env-color-bg-brand-emphasis on --env-color-bg-page',
+  ],
+  [
+    '--color-control-blue on --color-bg-raised',
+    '--env-color-bg-brand-emphasis on --env-color-bg-raised',
+  ],
+  ['--color-fg-accent on --color-row', '--env-color-fg-accent on --env-color-list-item-bg'],
+  [
+    '--color-fg-control on --color-bg-neutral-muted over --color-action-strip',
+    '--env-color-fg-control on --env-color-bg-neutral-muted over --env-color-bg-default',
+  ],
+  ['--color-fg-danger on --color-row', '--env-color-fg-danger on --env-color-list-item-bg'],
+  ['--color-fg-default on --color-row', '--env-color-fg-default on --env-color-list-item-bg'],
+  [
+    '--color-fg-default on --color-row-hover',
+    '--env-color-fg-default on --env-color-list-item-bg-hover',
+  ],
+  [
+    '--color-fg-default on --color-row-pressed',
+    '--env-color-fg-default on --env-color-list-item-bg-pressed',
+  ],
+  ['--color-fg-done on --color-row', '--env-color-fg-done on --env-color-list-item-bg'],
+  ['--color-fg-link on --color-action-strip', '--env-color-fg-link on --env-color-bg-default'],
+  ['--color-fg-link on --color-row', '--env-color-fg-link on --env-color-list-item-bg'],
+  ['--color-fg-muted on --color-row', '--env-color-fg-muted on --env-color-list-item-bg'],
+  [
+    '--color-fg-muted on --color-row-hover',
+    '--env-color-fg-muted on --env-color-list-item-bg-hover',
+  ],
+  [
+    '--color-fg-muted on --color-row-pressed',
+    '--env-color-fg-muted on --env-color-list-item-bg-pressed',
+  ],
+  ['--color-fg-success on --color-row', '--env-color-fg-success on --env-color-list-item-bg'],
+  ['--color-fg-warning on --color-row', '--env-color-fg-warning on --env-color-list-item-bg'],
+  ['--color-on-avatar on --color-avatar', '--env-color-avatar-fg on --env-color-avatar-bg'],
+  [
+    '--color-on-checkbox on --color-checkbox',
+    '--env-color-fg-on-emphasis on --env-color-bg-brand-emphasis',
+  ],
+  [
+    '--color-on-checkbox on --color-checkbox-hover',
+    '--env-color-fg-on-emphasis on --env-color-bg-brand-emphasis-hover',
+  ],
+  [
+    '--color-on-checkbox on --color-checkbox-pressed',
+    '--env-color-fg-on-emphasis on --env-color-bg-brand-emphasis-pressed',
+  ],
+  [
+    '--color-switch-on on --color-bg-default',
+    '--env-color-bg-brand-emphasis on --env-color-bg-default',
+  ],
+  [
+    '--color-switch-on on --color-bg-muted',
+    '--env-color-bg-brand-emphasis on --env-color-bg-muted',
+  ],
+  ['--color-switch-on on --color-bg-page', '--env-color-bg-brand-emphasis on --env-color-bg-page'],
+  [
+    '--color-switch-on on --color-bg-raised',
+    '--env-color-bg-brand-emphasis on --env-color-bg-raised',
+  ],
+  [
+    '--color-switch-on on --color-bg-selected',
+    '--env-color-bg-brand-emphasis on --env-color-bg-selected',
+  ],
+  ['--color-switch-on on --color-row', '--env-color-bg-brand-emphasis on --env-color-list-item-bg'],
+  [
+    '--color-switch-thumb-on on --color-switch-on',
+    '--env-color-fg-on-emphasis on --env-color-bg-brand-emphasis',
+  ],
+  [
+    '--color-switch-thumb-on on --color-switch-on-hover',
+    '--env-color-fg-on-emphasis on --env-color-bg-brand-emphasis-hover',
+  ],
+  [
+    '--color-switch-thumb-on on --color-switch-on-pressed',
+    '--env-color-fg-on-emphasis on --env-color-bg-brand-emphasis-pressed',
+  ],
+];
+/** Pairs of tokens that changed beyond the prefix: border.{accent|danger} is the solid edge border.{accent|danger}.emphasis, and border.{tone}.emphasis the translucent edge border.{tone}. */
+const renamedTokenPairs: readonly (readonly [from: string, to: string])[] = [
+  [
+    '--color-border-accent on --color-bg-default',
+    '--env-color-border-accent-emphasis on --env-color-bg-default',
+  ],
+  [
+    '--color-border-accent on --color-bg-field',
+    '--env-color-border-accent-emphasis on --env-color-bg-field',
+  ],
+  [
+    '--color-border-accent on --color-bg-page',
+    '--env-color-border-accent-emphasis on --env-color-bg-page',
+  ],
+  [
+    '--color-border-accent on --color-bg-popup',
+    '--env-color-border-accent-emphasis on --env-color-bg-popup',
+  ],
+  [
+    '--color-border-accent-emphasis on --color-bg-default',
+    '--env-color-border-accent on --env-color-bg-default',
+  ],
+  [
+    '--color-border-accent-emphasis on --color-bg-page',
+    '--env-color-border-accent on --env-color-bg-page',
+  ],
+  [
+    '--color-border-danger on --color-bg-default',
+    '--env-color-border-danger-emphasis on --env-color-bg-default',
+  ],
+  [
+    '--color-border-danger on --color-bg-field',
+    '--env-color-border-danger-emphasis on --env-color-bg-field',
+  ],
+  [
+    '--color-border-danger on --color-bg-page',
+    '--env-color-border-danger-emphasis on --env-color-bg-page',
+  ],
+  [
+    '--color-border-danger-emphasis on --color-bg-default',
+    '--env-color-border-danger on --env-color-bg-default',
+  ],
+  [
+    '--color-border-danger-emphasis on --color-bg-neutral-muted over --color-bg-default',
+    '--env-color-border-danger on --env-color-bg-neutral-muted over --env-color-bg-default',
+  ],
+  [
+    '--color-border-danger-emphasis on --color-bg-neutral-muted over --color-bg-page',
+    '--env-color-border-danger on --env-color-bg-neutral-muted over --env-color-bg-page',
+  ],
+  [
+    '--color-border-danger-emphasis on --color-bg-page',
+    '--env-color-border-danger on --env-color-bg-page',
+  ],
+  [
+    '--color-border-done-emphasis on --color-bg-default',
+    '--env-color-border-done on --env-color-bg-default',
+  ],
+  [
+    '--color-border-done-emphasis on --color-bg-page',
+    '--env-color-border-done on --env-color-bg-page',
+  ],
+  [
+    '--color-border-neutral-emphasis on --color-bg-default',
+    '--env-color-border-neutral on --env-color-bg-default',
+  ],
+  [
+    '--color-border-neutral-emphasis on --color-bg-page',
+    '--env-color-border-neutral on --env-color-bg-page',
+  ],
+  [
+    '--color-border-success-emphasis on --color-bg-default',
+    '--env-color-border-success on --env-color-bg-default',
+  ],
+  [
+    '--color-border-success-emphasis on --color-bg-page',
+    '--env-color-border-success on --env-color-bg-page',
+  ],
+  [
+    '--color-border-warning-emphasis on --color-bg-default',
+    '--env-color-border-warning on --env-color-bg-default',
+  ],
+  [
+    '--color-border-warning-emphasis on --color-bg-page',
+    '--env-color-border-warning on --env-color-bg-page',
+  ],
+];
+
+/**
  * Pairs the gate still measures under another name, from the old name to the new, with the reason.
  * tests/browser/Contrast.spec.ts checks that each old name is not declared, and that each new one
  * is, or has since been dropped or renamed onward in turn.
@@ -666,6 +1810,23 @@ export const renamed: readonly { from: string; to: string; rationale: string }[]
     rationale:
       'The inset ring of a hovered navigation item, on the bg.navigation role; the 0.7 name is its alias.',
   },
+  ...prefixedPairs.map(([from, to]) => ({
+    from,
+    to,
+    rationale: 'Every token takes the --env- prefix.',
+  })),
+  ...aliasPairs.map(([from, to]) => ({
+    from,
+    to,
+    rationale:
+      'The 0.7 aliases are gone with the --env- prefix: the pair is measured on the token that replaces the alias, of the same color in every theme.',
+  })),
+  ...renamedTokenPairs.map(([from, to]) => ({
+    from,
+    to,
+    rationale:
+      'Every token takes the --env- prefix, and the tone borders are named by emphasis: the solid edge is border.{tone}.emphasis, the translucent one border.{tone}.',
+  })),
 ];
 
 /** What a pair is held to: its kind, and its minimum at each contrast it is measured in. */
@@ -710,9 +1871,10 @@ export function pairName(pair: Pick<ContrastPair, 'fg' | 'bg'>): string {
  *   lightest step of the default accent tone is measured.
  */
 export const derived: Readonly<Record<string, string>> = {
-  'badge-outline-primary': 'color-mix(in srgb, var(--color-fg-on-emphasis) 55%, transparent)',
-  'badge-outline-important': 'color-mix(in srgb, var(--color-fg-on-strong) 55%, transparent)',
-  'heatmap-accent-lowest': 'color-mix(in srgb, var(--color-fg-accent) 30%, var(--color-bg-page))',
+  'badge-outline-primary': 'color-mix(in srgb, var(--env-color-fg-on-emphasis) 55%, transparent)',
+  'badge-outline-important': 'color-mix(in srgb, var(--env-color-fg-on-strong) 55%, transparent)',
+  'heatmap-accent-lowest':
+    'color-mix(in srgb, var(--env-color-fg-accent) 30%, var(--env-color-bg-page))',
 };
 
 /** The CSS color a name in a pair stands for. */

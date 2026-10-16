@@ -86,7 +86,7 @@ test('the zone is a button named by its label that opens the file picker', async
   await page.keyboard.press('Tab');
   await expect(zone).toBeFocused();
   await expect(zone).toHaveCSS('outline-style', 'solid');
-  await expect(zone).toHaveCSS('outline-color', await tokenColor(zone, '--color-focus-ring'));
+  await expect(zone).toHaveCSS('outline-color', await tokenColor(zone, '--env-color-border-focus'));
   const input = scope.locator('input[type="file"]').first();
   await expect(input).toBeHidden();
   await expect(input).toHaveAttribute('accept', 'image/png,image/jpeg,.webp');
@@ -131,7 +131,10 @@ test('dropped files show the drag-over state and are filtered by accept', async 
   await zone.dispatchEvent('dragenter', { dataTransfer: transfer });
   await expect(root).toHaveAttribute('data-dragging', '');
   await expect(zone).toHaveCSS('border-top-style', 'solid');
-  await expect(zone).toHaveCSS('border-top-color', await tokenColor(zone, '--color-field-active'));
+  await expect(zone).toHaveCSS(
+    'border-top-color',
+    await tokenColor(zone, '--env-color-border-accent-emphasis'),
+  );
   // Moving over the label inside keeps the state until the files leave the zone.
   const label = zone.locator('.env-drop-zone-label');
   await label.dispatchEvent('dragenter', { dataTransfer: transfer });
@@ -184,7 +187,7 @@ test('an error is linked to the zone and colors its outline in both themes', asy
     await expect(cover).toHaveAccessibleDescription('Choose an image at least 1200 pixels wide.');
     await expect(cover).toHaveCSS(
       'border-top-color',
-      await tokenColor(cover, '--color-field-error'),
+      await tokenColor(cover, '--env-color-fg-danger'),
     );
     await expect(cover).toHaveCSS('border-top-style', 'dashed');
     const texts = scope.locator(

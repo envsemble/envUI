@@ -3,23 +3,23 @@
 
 .env-button {
   /* The height the button draws at: the control height, or more under a coarse pointer. */
-  --env-button-height: var(--control-height);
+  --env-button-height: var(--env-control-height);
   inline-size: fit-content;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--control-gap);
+  gap: var(--env-control-gap);
   min-height: var(--env-button-height);
   /* The block padding gives way where a line of the label and the padding would outgrow the
      control height, as in a small control of the compact scale. */
   padding: min(
-      var(--space-1),
-      calc((var(--env-button-height) - 2 * var(--control-border-width) - 1lh) / 2)
+      var(--env-space-1),
+      calc((var(--env-button-height) - 2 * var(--env-control-border-width) - 1lh) / 2)
     )
-    var(--space-3);
-  border: var(--control-border-width) solid transparent;
+    var(--env-space-3);
+  border: var(--env-control-border-width) solid transparent;
   border-radius: 100vmax;
-  font: var(--body-font-weight) var(--font-size-label) / 1.4 var(--font-family);
+  font: var(--env-body-font-weight) var(--env-font-size-label) / 1.4 var(--env-font-family);
   white-space: normal;
   overflow-wrap: anywhere;
   text-align: center;
@@ -29,65 +29,65 @@
 }
 
 .env-button[data-size='sm'] {
-  --control-height: var(--control-height-sm);
+  --env-control-height: var(--env-control-height-sm);
 }
 .env-button[data-size='md'] {
-  --control-height: var(--control-height-md);
+  --env-control-height: var(--env-control-height-md);
 }
 .env-button[data-size='lg'] {
-  --control-height: var(--control-height-lg);
+  --env-control-height: var(--env-control-height-lg);
 }
 
 .env-button-primary {
-  background: var(--color-primary-action);
-  color: var(--color-on-primary-action);
+  background: var(--env-color-bg-brand-emphasis);
+  color: var(--env-color-fg-on-emphasis);
   border: 0;
 }
 
 .env-button-primary:hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--color-primary-action-hover);
+  background: var(--env-color-bg-brand-emphasis-hover);
 }
 
 .env-button-primary:active:not(:disabled):not([aria-disabled='true']) {
-  background: var(--color-primary-action-pressed);
+  background: var(--env-color-bg-brand-emphasis-pressed);
 }
 
 /* The secondary fill is a translucent layer, so it stays visible on rows, panes and dialogs. */
 .env-button-secondary {
-  background: var(--color-secondary-action);
-  color: var(--color-on-secondary-action);
+  background: var(--env-color-bg-neutral-muted);
+  color: var(--env-color-fg-control);
   border: 0;
 }
 
 .env-button-secondary:hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--color-secondary-action-hover);
+  background: var(--env-color-bg-neutral-muted-hover);
 }
 
 .env-button-secondary:active:not(:disabled):not([aria-disabled='true']) {
-  background: var(--color-secondary-action-pressed);
+  background: var(--env-color-bg-neutral-muted-pressed);
 }
 
 .env-button-outlined {
-  background: var(--color-subtle-action);
-  color: var(--color-on-subtle-action);
-  border-color: var(--color-subtle-action-border);
+  background: var(--env-color-bg-raised);
+  color: var(--env-color-fg-accent);
+  border-color: var(--env-color-border-default);
 }
 
 .env-button-outlined:hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--color-subtle-action-hover);
-  border-color: var(--color-subtle-action-border-hover);
+  background: var(--env-color-bg-raised-hover);
+  border-color: var(--env-color-border-default-hover);
 }
 
 .env-button-outlined:active:not(:disabled):not([aria-disabled='true']) {
-  background: var(--color-subtle-action-pressed);
-  border-color: var(--color-subtle-action-border-pressed);
+  background: var(--env-color-bg-raised-pressed);
+  border-color: var(--env-color-border-default-pressed);
 }
 
 .env-button-text {
   padding-inline: 0;
   border: 0;
   background: transparent;
-  color: var(--color-link);
+  color: var(--env-color-fg-link);
   cursor: pointer;
 }
 
@@ -97,27 +97,27 @@
 }
 
 .env-button-text:hover:not(:disabled):not([aria-disabled='true']) {
-  color: var(--color-link-hover);
+  color: var(--env-color-fg-link-hover);
 }
 
 .env-button-text:active:not(:disabled):not([aria-disabled='true']) {
-  color: var(--color-link-pressed);
+  color: var(--env-color-fg-link-pressed);
 }
 
 /* Without a label, a color change alone is too faint; icon-only text buttons such as a field's clear
    action also show a translucent state layer on hover and press. */
 .env-button-text.env-icon-button {
   transition-property: background-color, color;
-  transition-duration: var(--motion-duration-fast);
-  transition-timing-function: var(--motion-ease);
+  transition-duration: var(--env-motion-duration-fast);
+  transition-timing-function: var(--env-motion-ease);
 }
 
 .env-button-text.env-icon-button:hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--color-state-layer-hover);
+  background: var(--env-color-bg-neutral-subtle-hover);
 }
 
 .env-button-text.env-icon-button:active:not(:disabled):not([aria-disabled='true']) {
-  background: var(--color-state-layer-pressed);
+  background: var(--env-color-bg-neutral-subtle-pressed);
 }
 
 /* Quiet: an action in the application's chrome, such as a sidebar toggle or the actions of a toolbar
@@ -127,64 +127,64 @@
 .env-button-quiet {
   border: 0;
   background: transparent;
-  color: var(--color-icon);
+  color: var(--env-color-fg-muted);
   cursor: pointer;
   transition-property: background-color, color;
-  transition-duration: var(--motion-duration-fast);
-  transition-timing-function: var(--motion-ease);
+  transition-duration: var(--env-motion-duration-fast);
+  transition-timing-function: var(--env-motion-ease);
 }
 
 .env-button-quiet:hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--color-state-layer-hover);
-  color: var(--color-text-primary);
+  background: var(--env-color-bg-neutral-subtle-hover);
+  color: var(--env-color-fg-default);
 }
 
 .env-button-quiet:active:not(:disabled):not([aria-disabled='true']) {
-  background: var(--color-state-layer-pressed);
-  color: var(--color-text-primary);
+  background: var(--env-color-bg-neutral-subtle-pressed);
+  color: var(--env-color-fg-default);
 }
 
 .env-link {
   display: inline;
   min-height: 0;
   padding: 0;
-  border-radius: var(--radius-standard);
+  border-radius: var(--env-radius-sm);
   font: inherit;
   text-align: inherit;
 }
 
 .env-button-destructive {
-  background: var(--color-destructive-action);
-  color: var(--color-on-destructive-action);
+  background: var(--env-color-bg-danger-strong);
+  color: var(--env-color-fg-on-strong);
   border: 0;
 }
 
 .env-button-destructive:hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--color-destructive-action-hover);
+  background: var(--env-color-bg-danger-strong-hover);
 }
 
 .env-button-destructive:active:not(:disabled):not([aria-disabled='true']) {
-  background: var(--color-destructive-action-pressed);
+  background: var(--env-color-bg-danger-strong-pressed);
 }
 
 /* Important buttons have square corners; like every button they take the row's control height. */
 .env-button-important {
-  background: var(--color-bg-important-strong);
-  color: var(--color-fg-on-strong);
+  background: var(--env-color-bg-important-strong);
+  color: var(--env-color-fg-on-strong);
   border: 0;
-  border-radius: var(--radius-standard);
+  border-radius: var(--env-radius-sm);
 }
 
 .env-button-important:hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--color-bg-important-strong-hover);
+  background: var(--env-color-bg-important-strong-hover);
 }
 
 .env-button-important:active:not(:disabled):not([aria-disabled='true']) {
-  background: var(--color-bg-important-strong-pressed);
+  background: var(--env-color-bg-important-strong-pressed);
 }
 
 .env-button:focus-visible {
-  outline: 0.125rem solid var(--color-focus-ring);
+  outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.125rem;
 }
 /* A container that draws the ring inset (ButtonGroup, an active tab) sets --env-button-focus-inner-ring;
@@ -194,12 +194,12 @@
 }
 
 .env-button-outlined:focus-visible {
-  outline-color: var(--color-outlined-focus);
+  outline-color: var(--env-color-border-focus);
   outline-offset: 0.0625rem;
 }
 
 .env-button:is(:disabled, [aria-disabled='true']) {
-  opacity: var(--state-disabled-opacity);
+  opacity: var(--env-state-disabled-opacity);
   cursor: default;
 }
 
@@ -222,8 +222,8 @@
 @media (pointer: coarse) {
   .env-button:not(.env-link, [data-row-target]) {
     --env-button-height: max(
-      var(--control-height),
-      var(--env-touch-height, var(--control-height-touch))
+      var(--env-control-height),
+      var(--env-touch-height, var(--env-control-height-touch))
     );
     min-inline-size: var(--env-button-height);
   }
@@ -271,33 +271,33 @@
   block-size: fit-content;
   display: inline-grid;
   place-items: center;
-  padding: var(--space-1);
+  padding: var(--env-space-1);
   border: 0;
   border-radius: 50%;
   background: transparent;
   cursor: pointer;
-  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 .env-avatar-button:hover:not(:disabled) {
-  background: var(--color-state-layer-hover);
+  background: var(--env-color-bg-neutral-subtle-hover);
 }
 /* The halo stays while the button's menu is open. */
 .env-avatar-button:is(:active, [aria-expanded='true']):not(:disabled) {
-  background: var(--color-state-layer-pressed);
+  background: var(--env-color-bg-neutral-subtle-pressed);
 }
 .env-avatar-button:focus-visible {
-  outline: 0.125rem solid var(--color-focus-ring);
+  outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.125rem;
 }
 .env-avatar-button:disabled {
-  opacity: var(--state-disabled-opacity);
+  opacity: var(--env-state-disabled-opacity);
   cursor: default;
 }
 /* Under a coarse pointer the halo around a small avatar grows to the touch height. */
 @media (pointer: coarse) {
   .env-avatar-button {
-    min-inline-size: var(--control-height-touch);
-    min-block-size: var(--control-height-touch);
+    min-inline-size: var(--env-control-height-touch);
+    min-block-size: var(--env-control-height-touch);
   }
 }
 .env-avatar-button-tooltip {
@@ -305,4 +305,27 @@
 }
 .env-avatar-button-tooltip > :last-child {
   opacity: 0.8;
+}
+
+/* Motion: a button settles slightly while it is held. Only without a reduced-motion preference. */
+@media (prefers-reduced-motion: no-preference) {
+  .env-button,
+  .env-avatar-button {
+    transition-property: background-color, color, border-color, transform;
+    transition-duration: var(--env-motion-duration-fast);
+    transition-timing-function: var(--env-motion-ease);
+  }
+  .env-button:active:not(:disabled):not([aria-disabled='true']),
+  .env-avatar-button:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+}
+
+/* Forced colors: the system paints no fills or shadows, so a button that is unavailable takes
+   the disabled color. */
+@media (forced-colors: active) {
+  .env-button[aria-disabled='true'] {
+    border-color: GrayText;
+    color: GrayText;
+  }
 }

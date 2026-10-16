@@ -8,7 +8,7 @@
 // and, where it is part of a page, the page's view and the element id of its place there.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { marked } from 'marked';
 import MiniSearch from 'minisearch';
 import { plainText } from './MarkdownHeadings.mjs';
@@ -203,11 +203,15 @@ export function searchDocuments({ documents, props, tokens }) {
       id: `token:${token.id}`,
       kind: 'token',
       title: token.cssVariable,
-      detail: token.legacy && aliasOf ? `0.7 name of ${aliasOf}` : `${token.type} token`,
+      detail: `${token.type} token`,
       aliases: '',
       keywords: [token.id, token.type, aliasOf].filter(Boolean).join(' '),
       owner: '',
-      text: sentence(token.description ?? ''),
+      // Its names before 1.0, such as the 0.7 alias --color-text-muted, find it too.
+      text: [
+        sentence(token.description ?? ''),
+        ...(tokens.formerNames?.[token.cssVariable] ?? []).map((name) => `Before 1.0: ${name}.`),
+      ].join(' '),
       page: 'tokens',
       section: tokenSection(token.cssVariable),
     });
@@ -260,8 +264,21 @@ function withNames(document) {
   return { ...document, names: [...new Set(names.map(nameKey).filter(Boolean))] };
 }
 
+/**
+ * The token list, with each token's names before 1.0 (formerNames, by its custom property) from the
+ * token migration map beside it.
+ */
 export function readTokens() {
-  return JSON.parse(readFileSync(tokensFile, 'utf8'));
+  const list = JSON.parse(readFileSync(tokensFile, 'utf8'));
+  const migrationFile = fileURLToPath(new URL('token-migration.json', pathToFileURL(tokensFile)));
+  const formerNames = {};
+  if (existsSync(migrationFile))
+    for (const [name, entry] of Object.entries(
+      JSON.parse(readFileSync(migrationFile, 'utf8')).names,
+    ))
+      if (entry.cssVariable && (entry.kind === 'alias' || entry.kind === 'renamed'))
+        (formerNames[entry.cssVariable] ??= []).push(name);
+  return { ...list, formerNames };
 }
 
 /** Writes the catalogue's index when it changed. */

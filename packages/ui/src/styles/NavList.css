@@ -1,6 +1,6 @@
 .env-nav-list-item {
   /* The height the item draws at: the control height, or more under a coarse pointer. */
-  --env-nav-list-item-height: var(--control-height);
+  --env-nav-list-item-height: var(--env-control-height);
   inline-size: fit-content;
   min-inline-size: 0;
   max-inline-size: 100%;
@@ -9,20 +9,20 @@
   text-align: start;
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-1) var(--space-3);
+  gap: var(--env-space-2);
+  padding: var(--env-space-1) var(--env-space-3);
   min-height: var(--env-nav-list-item-height);
   border: 0;
   border-radius: 100vmax;
   background: transparent;
-  color: var(--color-navigation-text);
-  font: var(--body-font-weight) var(--font-size-body) / 1.4 var(--font-family);
+  color: var(--env-color-fg-control);
+  font: var(--env-body-font-weight) var(--env-font-size-body) / 1.4 var(--env-font-family);
   text-decoration: none;
 }
 
 .env-nav-list-item-selected {
-  color: var(--color-on-navigation-selected);
-  background: var(--color-navigation-selected);
+  color: var(--env-color-fg-on-selected);
+  background: var(--env-color-bg-selected);
 }
 
 .env-nav-list-item-icon-only {
@@ -36,7 +36,7 @@
 
 .env-nav-list-item:not(.env-nav-list-item-selected):not(:disabled):not([aria-disabled='true'])
   .env-symbol {
-  color: var(--color-navigation-icon);
+  color: var(--env-color-fg-muted);
 }
 
 .env-nav-list-item-selected .env-symbol {
@@ -44,28 +44,28 @@
 }
 
 .env-nav-list-item:hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--color-navigation-quiet-hover);
+  background: var(--env-color-bg-navigation-hover);
 }
 
 .env-nav-list-item:active:not(:disabled):not([aria-disabled='true']) {
-  background: var(--color-navigation-quiet-pressed);
+  background: var(--env-color-bg-navigation-pressed);
 }
 
 .env-nav-list-item-selected:hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--color-navigation-hover);
+  background: var(--env-color-bg-selected-hover);
 }
 
 .env-nav-list-item-selected:active:not(:disabled):not([aria-disabled='true']) {
-  background: var(--color-navigation-pressed);
+  background: var(--env-color-bg-selected-pressed);
 }
 
 .env-nav-list-item:focus-visible {
-  outline: 0.125rem solid var(--color-focus-ring);
+  outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: -0.125rem;
 }
 
 .env-nav-list-item:is(:disabled, [aria-disabled='true']) {
-  opacity: var(--state-disabled-opacity);
+  opacity: var(--env-state-disabled-opacity);
   cursor: default;
 }
 
@@ -77,7 +77,7 @@
 .env-nav-list-item-trailing {
   flex: 0 0 auto;
   margin-inline-start: auto;
-  padding-inline-start: var(--space-1);
+  padding-inline-start: var(--env-space-1);
   display: inline-flex;
   align-items: center;
 }
@@ -91,8 +91,8 @@
   inline-size: 0.4375rem;
   block-size: 0.4375rem;
   border-radius: 50%;
-  background: var(--color-tone-accent);
-  box-shadow: 0 0 0 0.125rem var(--color-canvas);
+  background: var(--env-color-fg-accent);
+  box-shadow: 0 0 0 0.125rem var(--env-color-bg-page);
 }
 
 /* NavList.Root and NavList.Group: plain lists of items, spaced and aligned like the shell's sidebar
@@ -101,7 +101,7 @@
 .env-nav-list-group-list {
   display: grid;
   justify-items: start;
-  gap: var(--space-1);
+  gap: var(--env-space-1);
   min-inline-size: 0;
   margin: 0;
   padding: 0;
@@ -117,18 +117,18 @@
 .env-nav-list-group {
   display: grid;
   justify-items: start;
-  gap: var(--space-1);
+  gap: var(--env-space-1);
   min-inline-size: 0;
   max-inline-size: 100%;
 }
 .env-nav-list-group + .env-nav-list-group,
 .env-nav-list > li:not(.env-nav-list-group) + .env-nav-list-group {
-  margin-block-start: var(--space-3);
+  margin-block-start: var(--env-space-3);
 }
 .env-nav-list-group-label {
-  padding-inline: var(--space-3);
-  color: var(--color-text-muted);
-  font: var(--type-body-small);
+  padding-inline: var(--env-space-3);
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
   overflow-wrap: anywhere;
 }
 /* Under a coarse pointer, items grow to the touch height in every scale, as buttons and rows do,
@@ -136,8 +136,37 @@
 @media (pointer: coarse) {
   .env-nav-list-item {
     --env-nav-list-item-height: max(
-      var(--control-height),
-      var(--env-touch-height, var(--control-height-touch))
+      var(--env-control-height),
+      var(--env-touch-height, var(--env-control-height-touch))
     );
+  }
+}
+
+/* Motion: a navigation item settles slightly while it is held. Only without a reduced-motion
+   preference. */
+@media (prefers-reduced-motion: no-preference) {
+  .env-nav-list-item {
+    transition-property: background-color, color, border-color, transform;
+    transition-duration: var(--env-motion-duration-fast);
+    transition-timing-function: var(--env-motion-ease);
+  }
+  .env-nav-list-item:active:not(:disabled):not([aria-disabled='true']) {
+    transform: scale(0.97);
+  }
+}
+
+/* Forced colors: the system paints no fills or shadows, so the selected item takes the system’s
+   selection colors. */
+@media (forced-colors: active) {
+  .env-nav-list-item-selected {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+  .env-nav-list-item-selected :where(*) {
+    color: inherit;
+  }
+  .env-nav-list-item:is(:disabled, [aria-disabled='true']) {
+    color: GrayText;
   }
 }

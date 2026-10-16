@@ -1,17 +1,17 @@
 .env-card {
-  --surface-card-padding: var(--env-surface-padding);
+  --env-card-padding: var(--env-surface-padding);
 }
 
 .env-clickable-card {
   inline-size: 100%;
   margin: 0;
-  color: var(--color-text-primary);
+  color: var(--env-color-fg-default);
   font: inherit;
   text-align: start;
   text-decoration: none;
   overflow-wrap: anywhere;
   cursor: pointer;
-  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 .env-clickable-card:hover:not(:disabled):not([aria-disabled='true']) {
   background: var(--env-surface-hover);
@@ -20,11 +20,11 @@
   background: var(--env-surface-pressed);
 }
 .env-clickable-card:focus-visible {
-  outline: 0.125rem solid var(--color-focus-ring);
+  outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.125rem;
 }
 .env-clickable-card:is(:disabled, [aria-disabled='true']) {
-  opacity: var(--state-disabled-opacity);
+  opacity: var(--env-state-disabled-opacity);
   cursor: default;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -38,13 +38,13 @@
   overflow: hidden;
 }
 .env-action-card-body {
-  padding: var(--surface-card-padding);
+  padding: var(--env-card-padding);
 }
 .env-action-card-heading {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--space-3);
+  gap: var(--env-space-3);
 }
 /* The meta goes to the end of the heading row; the heading's child selector outweighs the text
    margin reset that Text applies to every variant. */
@@ -54,14 +54,14 @@
 .env-action-card-body > :where(p:not(.env-text)) {
   margin: 0;
   max-width: 32ch;
-  font: var(--type-body);
-  color: var(--color-text-muted);
+  font: var(--env-type-body);
+  color: var(--env-color-fg-muted);
   overflow-wrap: anywhere;
 }
 .env-action-card > .env-action-card-actions {
   margin-top: auto;
-  padding: var(--space-3) var(--surface-card-padding);
-  background: var(--color-action-strip);
+  padding: var(--env-space-3) var(--env-card-padding);
+  background: var(--env-color-bg-default);
 }
 
 .env-feature-card {
@@ -71,7 +71,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--env-space-4);
 }
 .env-feature-card-layout:has(> .env-feature-card-icon) {
   grid-template-columns: auto minmax(0, 1fr) auto;
@@ -81,7 +81,7 @@
   height: 2.75rem;
   display: grid;
   place-items: center;
-  color: var(--color-text-muted);
+  color: var(--env-color-fg-muted);
 }
 .env-feature-card-icon .env-symbol {
   width: 1.5rem;
@@ -109,5 +109,18 @@
   }
   .env-feature-card-action > :is(a, button) {
     width: 100%;
+  }
+}
+
+/* Motion: a clickable card settles a little while it is held, less than a compact control. Only
+   without a reduced-motion preference. */
+@media (prefers-reduced-motion: no-preference) {
+  .env-clickable-card {
+    transition-property: background-color, color, border-color, transform;
+    transition-duration: var(--env-motion-duration-fast);
+    transition-timing-function: var(--env-motion-ease);
+  }
+  .env-clickable-card:active:not(:disabled):not([aria-disabled='true']) {
+    transform: scale(0.99);
   }
 }

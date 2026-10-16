@@ -4,7 +4,7 @@
   flex-wrap: wrap;
   justify-content: center;
   align-items: stretch;
-  gap: var(--space-4);
+  gap: var(--env-space-4);
   inline-size: 100%;
   min-inline-size: 0;
 }
@@ -15,57 +15,70 @@
   box-sizing: border-box;
   display: inline-flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--env-space-4);
   inline-size: fit-content;
   min-inline-size: 0;
   max-inline-size: 100%;
-  min-block-size: var(--control-height-touch);
+  min-block-size: var(--env-control-height-touch);
   margin: 0;
-  padding: var(--space-3) var(--space-4);
-  border: 0.0625rem solid var(--color-direction-link-border);
-  border-radius: var(--radius-standard);
-  background: var(--color-direction-link);
-  color: var(--color-direction-link-text);
-  font: var(--type-body);
+  padding: var(--env-space-3) var(--env-space-4);
+  border: 0.0625rem solid var(--env-color-border-muted);
+  border-radius: var(--env-radius-sm);
+  background: var(--env-color-bg-raised);
+  color: var(--env-color-fg-default);
+  font: var(--env-type-body);
   text-align: start;
   text-decoration: none;
   transition:
-    background-color var(--motion-duration-fast) var(--motion-ease),
-    border-color var(--motion-duration-fast) var(--motion-ease);
+    background-color var(--env-motion-duration-fast) var(--env-motion-ease),
+    border-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 .env-pager-link-copy {
   display: grid;
-  gap: var(--space-1);
+  gap: var(--env-space-1);
   min-inline-size: 0;
   flex: 1 1 auto;
   overflow-wrap: anywhere;
 }
 .env-pager-link-label {
-  color: var(--color-direction-link-label);
-  font: var(--type-body-small);
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
 }
 .env-pager-link-title {
-  font: var(--type-h2);
+  font: var(--env-type-h2);
 }
 .env-pager-link .env-symbol {
   inline-size: 1.25rem;
   block-size: 1.25rem;
-  color: var(--color-direction-link-icon);
+  color: var(--env-color-fg-accent);
 }
 .env-pager-link:hover {
-  background: var(--color-bg-raised-hover);
-  border-color: var(--color-direction-link-border-hover);
+  background: var(--env-color-bg-raised-hover);
+  border-color: var(--env-color-border-muted-hover);
 }
 .env-pager-link:active {
-  background: var(--color-bg-raised-pressed);
-  border-color: var(--color-direction-link-border-pressed);
+  background: var(--env-color-bg-raised-pressed);
+  border-color: var(--env-color-border-muted-pressed);
 }
 .env-pager-link:focus-visible {
-  outline: 0.125rem solid var(--color-focus-ring);
+  outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.125rem;
 }
 @media (prefers-reduced-motion: reduce) {
   .env-pager-link {
     transition: none;
+  }
+}
+
+/* Motion: a pager link settles a little while it is held, less than a compact control. Only
+   without a reduced-motion preference. */
+@media (prefers-reduced-motion: no-preference) {
+  .env-pager-link {
+    transition-property: background-color, color, border-color, transform;
+    transition-duration: var(--env-motion-duration-fast);
+    transition-timing-function: var(--env-motion-ease);
+  }
+  .env-pager-link:active:not([aria-disabled='true']) {
+    transform: scale(0.99);
   }
 }

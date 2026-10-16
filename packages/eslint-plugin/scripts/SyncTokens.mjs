@@ -13,13 +13,13 @@ export const libraryTokensUrl = new URL('../../ui/src/generated/tokens.json', im
 export const tokensUrl = new URL('../src/data/tokens.json', import.meta.url);
 
 const comment =
-  "The custom properties of envUI's public tokens, by DTCG type, that the rules' messages suggest. The 0.7 names that remain as aliases are left out. scripts/SyncTokens.mjs rewrites this file from the library's generated token list (packages/ui/src/generated/tokens.json) whenever it exists, before every pack; source says where the names came from.";
+  "The custom properties of envUI's public tokens, by DTCG type, that the rules' messages suggest. scripts/SyncTokens.mjs rewrites this file from the library's generated token list (packages/ui/src/generated/tokens.json) whenever it exists, before every pack; source says where the names came from.";
 
-/** The custom properties of a token list's public tokens by type, without the 0.7 aliases. */
+/** The custom properties of a token list's public tokens by type, without deprecated ones. */
 export function summarizeTokens(list) {
   const types = {};
   for (const token of list.tokens) {
-    if (token.legacy || token.deprecated) continue;
+    if (token.deprecated) continue;
     (types[token.type] ??= []).push(token.cssVariable);
   }
   return Object.fromEntries(

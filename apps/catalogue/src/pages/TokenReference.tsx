@@ -7,30 +7,33 @@ import { tokenSection } from '../../../../scripts/SearchAnchors.mjs';
 type Token = (typeof tokenList.tokens)[number];
 type TokenValue = Token['values']['light'];
 
-/** The groups of the reference, by the first part of the tokens' names, in order. */
-const tokenGroups: { title: string; prefixes: string[]; legacy?: boolean }[] = [
+/**
+ * The groups of the reference, by the first part of the tokens' names, in order. The color roles
+ * are color.bg, color.fg and color.border; the other colors are component tokens.
+ */
+const tokenGroups: { title: string; prefixes: string[]; component?: boolean }[] = [
   { title: 'Color roles', prefixes: ['color'] },
+  { title: 'Component colors', prefixes: ['color'], component: true },
   { title: 'Elevation', prefixes: ['elevation'] },
   { title: 'Typography', prefixes: ['font', 'type', 'body'] },
   { title: 'Spacing', prefixes: ['space'] },
-  { title: 'Corners', prefixes: ['radius', 'md'] },
+  { title: 'Corners', prefixes: ['radius'] },
   {
     title: 'Sizes',
     prefixes: ['control', 'field', 'row', 'tree', 'icon', 'title-bar', 'topbar'],
   },
   { title: 'Motion', prefixes: ['motion'] },
   { title: 'States', prefixes: ['state'] },
-  { title: '0.7 color names', prefixes: ['color'], legacy: true },
   // Tokens of a family the groups above don't name yet, so every token has a row.
   { title: 'Other tokens', prefixes: [] },
 ];
 
 function groupOf(token: Token) {
   const prefix = token.id.split('.')[0];
-  const legacy = 'legacy' in token && token.legacy === true;
+  const component = prefix === 'color' && !/^color.(?:bg|fg|border)./.test(token.id);
   return (
     tokenGroups.find(
-      (group) => group.prefixes.includes(prefix) && Boolean(group.legacy) === legacy,
+      (group) => group.prefixes.includes(prefix) && Boolean(group.component) === component,
     ) ?? tokenGroups.at(-1)
   );
 }
@@ -57,11 +60,6 @@ function Value({ token, value }: { token: Token; value: TokenValue | undefined }
     </span>
   );
 }
-
-const aliasOf = (token: Token) => {
-  const light = token.values.light as TokenValue & { aliasOf?: string };
-  return light.aliasOf;
-};
 
 function TokenTable({ title, tokens }: { title: string; tokens: Token[] }) {
   const colors = tokens[0]?.type === 'color';
@@ -92,7 +90,6 @@ function TokenTable({ title, tokens }: { title: string; tokens: Token[] }) {
         </Table.Head>
         <Table.Body>
           {tokens.map((token) => {
-            const legacy = 'legacy' in token && token.legacy === true;
             const description = 'description' in token ? token.description : undefined;
             const compact = 'scales' in token ? token.scales?.compact : undefined;
             return (
@@ -100,11 +97,6 @@ function TokenTable({ title, tokens }: { title: string; tokens: Token[] }) {
                 <Table.Cell label="Token">
                   <Stack gap={1} align="start">
                     <Code className="docs-prop-code">{token.cssVariable}</Code>
-                    {legacy && aliasOf(token) && (
-                      <Text variant="caption">
-                        Use <Code>{`--${aliasOf(token)!.replaceAll('.', '-')}`}</Code>
-                      </Text>
-                    )}
                     {description && <Text variant="caption">{description}</Text>}
                   </Stack>
                 </Table.Cell>
@@ -142,8 +134,9 @@ export function TokenReference() {
     <>
       <Text>
         Each token is a CSS custom property on every envUI theme boundary. Use the semantic names in
-        application styles; the values change with the theme, the contrast and the scale. The 0.7
-        color names stay as aliases until components move to the semantic names.
+        application styles; the values change with the theme, the contrast and the scale. Names
+        before 1.0, such as the 0.7 aliases, are listed in the migration guide with what replaces
+        them.
       </Text>
       {tokenGroups.map((group) => {
         const tokens = tokenList.tokens.filter((token) => groupOf(token) === group);

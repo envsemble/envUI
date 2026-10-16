@@ -2,6 +2,7 @@
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
   "$description": "High contrast: points each role that changes at its high-contrast value in the current scheme, and moves checked controls to the emphasis fill.",
   "color": {
+    "$type": "color",
     "bg": {
       "selected": {
         "$root": { "$value": "{contrast-high.color.bg.selected}" },
@@ -157,57 +158,45 @@
       },
       "accent": {
         "$root": { "$value": "{contrast-high.color.border.accent}" },
-        "hover": { "$value": "{contrast-high.color.border.accent.hover}" },
-        "pressed": { "$value": "{contrast-high.color.border.accent.pressed}" },
-        "emphasis": { "$value": "{contrast-high.color.border.accent.emphasis}" },
-        "muted": { "$value": "{contrast-high.color.border.accent.muted}" }
+        "muted": { "$value": "{contrast-high.color.border.accent.muted}" },
+        "emphasis": {
+          "$root": { "$value": "{contrast-high.color.border.accent.emphasis}" },
+          "hover": { "$value": "{contrast-high.color.border.accent.emphasis.hover}" },
+          "pressed": { "$value": "{contrast-high.color.border.accent.emphasis.pressed}" }
+        }
       },
       "danger": {
         "$root": { "$value": "{contrast-high.color.border.danger}" },
-        "hover": { "$value": "{contrast-high.color.border.danger.hover}" },
-        "pressed": { "$value": "{contrast-high.color.border.danger.pressed}" },
-        "emphasis": { "$value": "{contrast-high.color.border.danger.emphasis}" },
         "muted": { "$value": "{contrast-high.color.border.danger.muted}" },
-        "strong": { "$value": "{contrast-high.color.border.danger.strong}" }
+        "strong": { "$value": "{contrast-high.color.border.danger.strong}" },
+        "emphasis": {
+          "$root": { "$value": "{contrast-high.color.border.danger.emphasis}" },
+          "hover": { "$value": "{contrast-high.color.border.danger.emphasis.hover}" },
+          "pressed": { "$value": "{contrast-high.color.border.danger.emphasis.pressed}" }
+        }
       },
       "neutral": {
-        "emphasis": { "$value": "{contrast-high.color.border.neutral.emphasis}" },
+        "$root": { "$value": "{contrast-high.color.border.neutral}" },
         "strong": { "$value": "{contrast-high.color.border.neutral.strong}" }
       },
       "success": {
-        "emphasis": { "$value": "{contrast-high.color.border.success.emphasis}" },
+        "$root": { "$value": "{contrast-high.color.border.success}" },
         "muted": { "$value": "{contrast-high.color.border.success.muted}" },
         "strong": { "$value": "{contrast-high.color.border.success.strong}" }
       },
       "warning": {
-        "emphasis": { "$value": "{contrast-high.color.border.warning.emphasis}" },
+        "$root": { "$value": "{contrast-high.color.border.warning}" },
         "muted": { "$value": "{contrast-high.color.border.warning.muted}" }
       },
-      "done": {
-        "emphasis": { "$value": "{contrast-high.color.border.done.emphasis}" }
-      },
       "focus": { "$value": "{contrast-high.color.border.focus}" },
-      "info": { "strong": { "$value": "{contrast-high.color.border.info.strong}" } }
+      "info": { "strong": { "$value": "{contrast-high.color.border.info.strong}" } },
+      "done": { "$value": "{contrast-high.color.border.done}" }
     },
-    "checkbox": { "$value": "{color.bg.brand.emphasis}" },
-    "checkbox-hover": { "$value": "{color.bg.brand.emphasis.hover}" },
-    "checkbox-pressed": { "$value": "{color.bg.brand.emphasis.pressed}" },
-    "on-checkbox": { "$value": "{color.fg.on-emphasis}" },
-    "switch-on": { "$value": "{color.bg.brand.emphasis}" },
-    "switch-on-hover": { "$value": "{color.bg.brand.emphasis.hover}" },
-    "switch-on-pressed": { "$value": "{color.bg.brand.emphasis.pressed}" },
-    "switch-thumb-on": { "$value": "{color.fg.on-emphasis}" },
-    "control-blue": { "$value": "{color.bg.brand.emphasis}" },
-    "on-avatar": { "$value": "{palette.blue.92}" },
-    "$type": "color"
+    "avatar": { "fg": { "$value": "{palette.blue.92}" } }
   },
   "elevation": {
-    "1": {
-      "border": { "$type": "color", "$value": "{color.border.default}" }
-    },
-    "2": {
-      "border": { "$type": "color", "$value": "{color.border.default}" }
-    },
+    "1": { "border": { "$type": "color", "$value": "{color.border.default}" } },
+    "2": { "border": { "$type": "color", "$value": "{color.border.default}" } },
     "3": {
       "border": {
         "$type": "color",

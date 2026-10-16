@@ -1,6 +1,6 @@
 /* Tables sit on a rounded surface with subtle row dividers and scroll sideways within their region. */
 .env-table-region {
-  --env-table-surface: var(--color-surface);
+  --env-table-surface: var(--env-color-bg-raised);
   /* Absolutely positioned content, such as visually hidden text in a cell, stays in the region and
      scrolls with it instead of widening the page. */
   position: relative;
@@ -8,13 +8,13 @@
   min-inline-size: 0;
   max-inline-size: 100%;
   overflow-x: auto;
-  border: 0.0625rem solid var(--color-border-muted);
-  border-radius: var(--radius-large);
+  border: 0.0625rem solid var(--env-color-border-muted);
+  border-radius: var(--env-radius-lg);
   background: var(--env-table-surface);
   scrollbar-width: thin;
 }
 .env-table-region:focus-visible {
-  outline: 0.125rem solid var(--color-focus-ring);
+  outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.125rem;
 }
 /* A sticky header needs the region to scroll vertically too; the application gives it a height.
@@ -25,30 +25,31 @@
 /* Cells pad their content by the row density, and the actions in them, such as an IconButton, take
    the small control height, so a row stays close to the height of its text. */
 .env-table {
-  --env-table-row-padding: var(--row-padding-block-md);
-  --env-table-cell-padding: calc(var(--env-table-row-padding) + var(--space-1)) var(--space-4);
-  --control-height: var(--control-height-sm);
+  --env-table-row-padding: var(--env-row-padding-block-md);
+  --env-table-cell-padding: calc(var(--env-table-row-padding) + var(--env-space-1))
+    var(--env-space-4);
+  --env-control-height: var(--env-control-height-sm);
   inline-size: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  color: var(--color-text-primary);
-  font: var(--type-body);
+  color: var(--env-color-fg-default);
+  font: var(--env-type-body);
   text-align: start;
 }
 .env-table[data-density='xs'] {
-  --env-table-row-padding: var(--row-padding-block-xs);
+  --env-table-row-padding: var(--env-row-padding-block-xs);
 }
 .env-table[data-density='sm'] {
-  --env-table-row-padding: var(--row-padding-block-sm);
+  --env-table-row-padding: var(--env-row-padding-block-sm);
 }
 .env-table[data-density='lg'] {
-  --env-table-row-padding: var(--row-padding-block-lg);
+  --env-table-row-padding: var(--env-row-padding-block-lg);
 }
 .env-table-caption {
-  padding: var(--space-3) var(--space-4) var(--space-1);
+  padding: var(--env-space-3) var(--env-space-4) var(--env-space-1);
   caption-side: top;
-  color: var(--color-text-primary);
-  font: var(--type-h2);
+  color: var(--env-color-fg-default);
+  font: var(--env-type-h2);
   text-align: start;
 }
 .env-table-header-cell,
@@ -59,9 +60,11 @@
 }
 .env-table-header-cell {
   /* The fill over the surface keeps the header opaque, so a sticky header covers scrolled rows. */
-  background: linear-gradient(var(--color-fill), var(--color-fill)), var(--env-table-surface);
-  color: var(--color-text-muted);
-  font: var(--type-body-small);
+  background:
+    linear-gradient(var(--env-color-bg-neutral-muted), var(--env-color-bg-neutral-muted)),
+    var(--env-table-surface);
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
   font-weight: 500;
   white-space: nowrap;
 }
@@ -72,11 +75,11 @@
 }
 /* Rows are separated by hairlines; the first body row meets the header without one. */
 .env-table-body > .env-table-row + .env-table-row > :is(.env-table-cell, .env-table-header-cell) {
-  border-block-start: 0.0625rem solid var(--color-border-muted);
+  border-block-start: 0.0625rem solid var(--env-color-border-muted);
 }
 .env-table-body .env-table-header-cell {
   background: transparent;
-  color: var(--color-text-primary);
+  color: var(--env-color-fg-default);
   font: inherit;
   font-weight: 500;
   white-space: normal;
@@ -96,23 +99,23 @@
   margin-block-start: 0.125rem;
 }
 .env-table-row[data-interactive] {
-  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 .env-table-row[data-interactive]:is(:hover, :focus-within) {
-  background: var(--color-state-layer-hover);
+  background: var(--env-color-bg-neutral-subtle-hover);
 }
 /* Selected rows take the navigation selection, with a bar at the start of the row. */
 .env-table-row[aria-selected='true'] {
-  background: var(--color-navigation-selected);
+  background: var(--env-color-bg-selected);
 }
 .env-table-row[aria-selected='true'][data-interactive]:is(:hover, :focus-within) {
-  background: var(--color-row-selected-hover);
+  background: var(--env-color-bg-selected-hover);
 }
 .env-table-row[aria-selected='true'] > :first-child {
-  box-shadow: inset 0.1875rem 0 0 var(--color-on-navigation-selected);
+  box-shadow: inset 0.1875rem 0 0 var(--env-color-fg-on-selected);
 }
 .env-table-row[aria-selected='true'] > :first-child:dir(rtl) {
-  box-shadow: inset -0.1875rem 0 0 var(--color-on-navigation-selected);
+  box-shadow: inset -0.1875rem 0 0 var(--env-color-fg-on-selected);
 }
 
 /* A sortable header is a button that fills its cell: the label and an arrow for the sort order. */
@@ -123,7 +126,7 @@
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  gap: var(--space-1);
+  gap: var(--env-space-1);
   inline-size: 100%;
   margin: 0;
   padding: var(--env-table-cell-padding);
@@ -134,34 +137,34 @@
   font: inherit;
   text-align: inherit;
   cursor: pointer;
-  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 /* At the end of a numeric column the arrow comes first, so the label lines up with the numbers. */
 .env-table-header-cell[data-align='end'] .env-table-sort-button {
   flex-direction: row-reverse;
 }
 .env-table-sort-button:hover {
-  background: var(--color-state-layer-hover);
+  background: var(--env-color-bg-neutral-subtle-hover);
 }
 .env-table-sort-button:active {
-  background: var(--color-state-layer-pressed);
+  background: var(--env-color-bg-neutral-subtle-pressed);
 }
 .env-table-sort-button:focus-visible {
-  outline: 0.125rem solid var(--color-focus-ring);
+  outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: -0.125rem;
 }
 /* The focus ring follows the surface's outer corners in the first and last header cells. */
 .env-table-head .env-table-row:first-child > :first-child .env-table-sort-button {
-  border-start-start-radius: calc(var(--radius-large) - 0.0625rem);
+  border-start-start-radius: calc(var(--env-radius-lg) - 0.0625rem);
 }
 .env-table-head .env-table-row:first-child > :last-child .env-table-sort-button {
-  border-start-end-radius: calc(var(--radius-large) - 0.0625rem);
+  border-start-end-radius: calc(var(--env-radius-lg) - 0.0625rem);
 }
 .env-table-sort-button .env-symbol {
-  color: var(--color-icon);
+  color: var(--env-color-fg-muted);
 }
 .env-table-header-cell:is([aria-sort='ascending'], [aria-sort='descending']) {
-  color: var(--color-text-primary);
+  color: var(--env-color-fg-default);
 }
 .env-table-header-cell:is([aria-sort='ascending'], [aria-sort='descending'])
   .env-table-sort-button
@@ -197,7 +200,7 @@
   inset-block: 0;
   inset-inline-end: 0;
   z-index: 1;
-  inline-size: var(--space-3);
+  inline-size: var(--env-space-3);
   cursor: col-resize;
   touch-action: none;
   outline: none;
@@ -205,23 +208,23 @@
 .env-table-column-resize::after {
   content: '';
   position: absolute;
-  inset-block: var(--space-2);
+  inset-block: var(--env-space-2);
   inset-inline-end: 0;
   inline-size: 0.125rem;
-  border-radius: var(--md-sys-shape-corner-full);
+  border-radius: var(--env-radius-full);
   background: transparent;
-  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 .env-table-head .env-table-row:hover .env-table-column-resize::after {
-  background: var(--color-border-muted);
+  background: var(--env-color-border-muted);
 }
 .env-table-column-resize:hover::after {
-  background: var(--color-border-muted-hover);
+  background: var(--env-color-border-muted-hover);
 }
 .env-table-column-resize:is(:focus-visible, [data-resizing])::after {
   inset-block: 0;
   inline-size: 0.1875rem;
-  background: var(--color-focus-ring);
+  background: var(--env-color-border-focus);
 }
 /* While a column is resized, the pointer keeps the resize cursor and no text is selected. */
 .env-table[data-resizing] {
@@ -231,11 +234,11 @@
 }
 @media (pointer: coarse) {
   .env-table-column-resize {
-    inline-size: var(--space-5);
+    inline-size: var(--env-space-5);
   }
   /* A sortable header is a button, at least the touch height in every scale and row density. */
   .env-table-sort-button {
-    min-block-size: var(--control-height-touch);
+    min-block-size: var(--env-control-height-touch);
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -303,11 +306,11 @@
 .env-table-region[data-stacked] .env-table-body > .env-table-row {
   display: grid;
   grid-template-columns: fit-content(10rem) minmax(0, 1fr);
-  gap: var(--space-1) var(--space-3);
+  gap: var(--env-space-1) var(--env-space-3);
   padding: var(--env-table-cell-padding);
 }
 .env-table-region[data-stacked] .env-table-body > .env-table-row + .env-table-row {
-  border-block-start: 0.0625rem solid var(--color-border-muted);
+  border-block-start: 0.0625rem solid var(--env-color-border-muted);
 }
 .env-table-region[data-stacked]
   .env-table-body
@@ -322,8 +325,8 @@
   overflow-wrap: anywhere;
 }
 .env-table-region[data-stacked] .env-table-body > .env-table-row > :first-child {
-  margin-block-end: var(--space-1);
-  color: var(--color-text-primary);
+  margin-block-end: var(--env-space-1);
+  color: var(--env-color-fg-default);
   font-weight: 500;
 }
 .env-table-region[data-stacked] .env-table-cell[data-labelled] {
@@ -337,16 +340,25 @@
 .env-table-region[data-stacked] .env-table-cell-label {
   display: block;
   min-inline-size: 0;
-  color: var(--color-text-muted);
-  font: var(--type-body-small);
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
   overflow-wrap: anywhere;
 }
 .env-table-region[data-stacked] .env-table-row[aria-selected='true'] {
-  box-shadow: inset 0.1875rem 0 0 var(--color-on-navigation-selected);
+  box-shadow: inset 0.1875rem 0 0 var(--env-color-fg-on-selected);
 }
 .env-table-region[data-stacked] .env-table-row[aria-selected='true']:dir(rtl) {
-  box-shadow: inset -0.1875rem 0 0 var(--color-on-navigation-selected);
+  box-shadow: inset -0.1875rem 0 0 var(--env-color-fg-on-selected);
 }
 .env-table-region[data-stacked] .env-table-row[aria-selected='true'] > :first-child {
   box-shadow: none;
+}
+
+/* Forced colors: the system paints no fills or shadows, so a selected row is outlined in the
+   selection color, which keeps the controls in it legible. */
+@media (forced-colors: active) {
+  .env-table-row[aria-selected='true'] {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
 }

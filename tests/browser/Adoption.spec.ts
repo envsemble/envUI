@@ -175,7 +175,7 @@ test('an application body rule styles the body, while envUI keeps its type insid
   // envUI's font tokens change its typeface wherever it applies.
   await page.evaluate(() => {
     const style = document.createElement('style');
-    style.textContent = '.env-theme { --font-family: "Fixture Serif", serif; }';
+    style.textContent = '.env-theme { --env-font-family: "Fixture Serif", serif; }';
     document.head.append(style);
   });
   await expect(page.getByTestId('adoption-paragraph')).toHaveCSS('font-family', /^"?Fixture Serif/);
@@ -191,10 +191,10 @@ test('an application body rule styles the body, while envUI keeps its type insid
   expect(
     Number.parseFloat(await large.evaluate((element) => getComputedStyle(element).lineHeight)),
   ).toBeCloseTo(44.8, 1);
-  // --line-height-body sets the boundary's line height.
+  // --env-line-height-body sets the boundary's line height.
   await page.evaluate(() => {
     const style = document.createElement('style');
-    style.textContent = '.env-theme { --line-height-body: 2; }';
+    style.textContent = '.env-theme { --env-line-height-body: 2; }';
     document.head.append(style);
   });
   await expect(page.getByTestId('adoption-plain-text')).toHaveCSS('line-height', '30px');
@@ -253,7 +253,7 @@ test('SearchField clears with its button and with Escape inside a dialog', async
   await expect(clear).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
   const fieldIconColor = await clear.evaluate((element) => {
     const probe = document.createElement('span');
-    probe.style.color = 'var(--color-field-label)';
+    probe.style.color = 'var(--env-color-fg-muted)';
     element.append(probe);
     const color = getComputedStyle(probe).color;
     probe.remove();
@@ -712,7 +712,7 @@ test.describe('AppShell', () => {
     await toggle.hover();
     await expect(toggle).toHaveCSS(
       'background-color',
-      await token('--color-secondary-action-hover'),
+      await token('--env-color-bg-neutral-muted-hover'),
     );
   });
 
@@ -850,7 +850,7 @@ test.describe('AppShell', () => {
     await expect(html).toHaveCSS('scroll-padding-top', '60px');
     await page.evaluate(() => {
       const style = document.createElement('style');
-      style.textContent = '.env-theme { --topbar-height: 5rem; }';
+      style.textContent = '.env-theme { --env-topbar-height: 5rem; }';
       document.head.append(style);
     });
     await expect.poll(async () => (await topbar.boundingBox())!.height).toBeCloseTo(80, 0);

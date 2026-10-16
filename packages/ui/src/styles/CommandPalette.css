@@ -9,8 +9,8 @@
   grid-template-columns: minmax(0, 1fr);
   justify-items: center;
   align-items: start;
-  padding: max(var(--viewport-gutter), min(12vh, 6rem)) var(--viewport-gutter)
-    var(--viewport-gutter);
+  padding: max(var(--env-viewport-gutter), min(12vh, 6rem)) var(--env-viewport-gutter)
+    var(--env-viewport-gutter);
   pointer-events: none;
 }
 .env-command-palette {
@@ -19,48 +19,50 @@
   max-block-size: 100%;
   display: flex;
   flex-direction: column;
-  padding: var(--space-2);
-  border: 0.0625rem solid var(--elevation-3-border);
-  border-radius: var(--radius-surface);
-  background: var(--color-dialog);
-  box-shadow: var(--elevation-3-shadow);
-  color: var(--color-text-primary);
-  font: var(--type-body);
+  padding: var(--env-space-2);
+  border: 0.0625rem solid var(--env-elevation-3-border);
+  border-radius: var(--env-radius-surface);
+  background: var(--env-color-bg-raised);
+  box-shadow: var(--env-elevation-3-shadow);
+  color: var(--env-color-fg-default);
+  font: var(--env-type-body);
   overflow: hidden;
   outline: none;
   pointer-events: auto;
-  transform-origin: top center;
+  /* Motion: it fades in, below; it has no positioner, so it scales from the center. */
+  transform-origin: var(--transform-origin, center);
+  transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
 }
 .env-command-palette-search {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  min-block-size: var(--control-height);
-  padding-inline: var(--space-4);
+  gap: var(--env-space-3);
+  min-block-size: var(--env-control-height);
+  padding-inline: var(--env-space-4);
   border-radius: 100vmax;
-  background: var(--color-fill);
+  background: var(--env-color-bg-neutral-muted);
 }
 .env-command-palette-search > .env-symbol {
-  color: var(--color-icon);
+  color: var(--env-color-fg-muted);
 }
 .env-command-palette-input {
   flex: 1 1 auto;
   min-inline-size: 0;
-  block-size: var(--control-height);
+  block-size: var(--env-control-height);
   padding: 0;
   border: 0;
   background: transparent;
-  color: var(--color-field-text);
-  font: var(--type-body);
-  font-size: var(--control-font-size);
+  color: var(--env-color-fg-default);
+  font: var(--env-type-body);
+  font-size: var(--env-control-font-size);
   outline: none;
 }
 .env-command-palette-input::placeholder {
-  color: var(--color-field-placeholder);
+  color: var(--env-color-fg-muted);
 }
 .env-command-palette-search:has(.env-command-palette-input:focus-visible) {
-  outline: 0.125rem solid var(--color-focus-ring);
+  outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: -0.125rem;
 }
 .env-command-palette-list {
@@ -69,7 +71,7 @@
   flex: 0 1 auto;
   min-block-size: 0;
   max-block-size: 60vh;
-  margin-block-start: var(--space-2);
+  margin-block-start: var(--env-space-2);
   display: grid;
   align-content: start;
   gap: 0.125rem;
@@ -86,12 +88,12 @@
 }
 .env-command-palette-group + .env-command-palette-group,
 .env-command-palette-option + .env-command-palette-group {
-  margin-block-start: var(--space-2);
+  margin-block-start: var(--env-space-2);
 }
 .env-command-palette-heading {
-  padding: var(--space-2) var(--space-4) var(--space-1);
-  color: var(--color-text-muted);
-  font: var(--type-body-small);
+  padding: var(--env-space-2) var(--env-space-4) var(--env-space-1);
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
   font-weight: 500;
 }
 .env-command-palette-option {
@@ -100,23 +102,23 @@
   min-block-size: 2.5rem;
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-1) var(--space-4);
+  gap: var(--env-space-3);
+  padding: var(--env-space-1) var(--env-space-4);
   /* Concentric with the palette's corners through its padding, like the search field above. */
-  border-radius: calc(var(--radius-surface) - var(--space-2));
-  color: var(--color-select-option-text);
+  border-radius: calc(var(--env-radius-surface) - var(--env-space-2));
+  color: var(--env-color-fg-control);
   cursor: pointer;
   user-select: none;
   white-space: nowrap;
 }
 .env-command-palette-option[data-highlighted] {
-  background: var(--color-select-option-hover);
+  background: var(--env-color-bg-popup-hover);
 }
 .env-command-palette-option:active {
-  background: var(--color-select-option-pressed);
+  background: var(--env-color-bg-popup-pressed);
 }
 .env-command-palette-option .env-symbol {
-  color: var(--color-icon);
+  color: var(--env-color-fg-muted);
 }
 .env-command-palette-option[data-highlighted] .env-symbol {
   color: inherit;
@@ -132,34 +134,34 @@
   flex: 0 1000 auto;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: var(--color-text-muted);
-  font: var(--type-body-small);
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
 }
 .env-command-palette-trailing {
   flex: 0 0 auto;
   margin-inline-start: auto;
   display: inline-flex;
   align-items: center;
-  gap: var(--space-1);
-  color: var(--color-text-muted);
-  font: var(--type-body-small);
+  gap: var(--env-space-1);
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
 }
 .env-command-palette-empty {
-  padding: var(--space-5) var(--space-4);
-  color: var(--color-text-muted);
+  padding: var(--env-space-5) var(--env-space-4);
+  color: var(--env-color-fg-muted);
   text-align: center;
 }
 .env-command-palette-footer {
   flex: 0 0 auto;
-  margin-block-start: var(--space-2);
-  padding: var(--space-2) var(--space-4) var(--space-1);
-  border-block-start: 0.0625rem solid var(--color-border-muted);
+  margin-block-start: var(--env-space-2);
+  padding: var(--env-space-2) var(--env-space-4) var(--env-space-1);
+  border-block-start: 0.0625rem solid var(--env-color-border-muted);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-1) var(--space-4);
-  color: var(--color-text-muted);
-  font: var(--type-body-small);
+  gap: var(--env-space-1) var(--env-space-4);
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
 }
 /* The application's own footer content flows as text after the hints. */
 .env-command-palette-footer-content {
@@ -169,10 +171,49 @@
 .env-command-palette-hint {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--env-space-2);
 }
 @media (pointer: coarse) {
   .env-command-palette-option {
-    min-block-size: var(--control-height-touch);
+    min-block-size: var(--env-control-height-touch);
+  }
+}
+
+/* Motion: the command palette fades in and drops into place. Movement only without a
+   reduced-motion preference. Base UI's positioner sets the origin. */
+.env-command-palette[data-starting-style],
+.env-command-palette[data-ending-style] {
+  opacity: 0;
+}
+.env-command-palette[data-ending-style] {
+  transition-duration: var(--env-motion-duration-fast);
+  transition-timing-function: var(--env-motion-ease-exit);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .env-command-palette {
+    transition:
+      opacity var(--env-motion-duration-medium) var(--env-motion-ease),
+      transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+  }
+  .env-command-palette[data-starting-style],
+  .env-command-palette[data-ending-style] {
+    transform: translateY(-0.5rem) scale(0.98);
+  }
+  .env-command-palette[data-ending-style] {
+    transition-duration: var(--env-motion-duration-fast);
+    transition-timing-function: var(--env-motion-ease-exit);
+  }
+}
+
+/* Forced colors: the system paints no fills or shadows, so the highlighted command takes the
+   system’s selection colors. */
+@media (forced-colors: active) {
+  .env-command-palette-option[data-highlighted] {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+  .env-command-palette-option[data-highlighted] :where(*) {
+    color: inherit;
   }
 }

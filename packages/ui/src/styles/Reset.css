@@ -1,0 +1,8 @@
+/* Keep component geometry independent of a consuming application's reset. Cascade layer env.reset,
+   so every other layer of envUI, and an application's own styles, override it. */
+.env-theme,
+.env-theme *,
+.env-theme ::before,
+.env-theme ::after {
+  box-sizing: border-box;
+}

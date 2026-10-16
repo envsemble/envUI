@@ -71,7 +71,7 @@ A rating shows a score people gave as stars, such as 4.5 out of 5, filled to the
 
 - **Rounding**: the stars and the number show the value rounded to the nearest half star, so 4.3 shows as 4.5 and 4.2 as 4. The accessible name gets the same rounded value, so what people see and hear agrees.
 - **Kept within the scale**: a value below 0 shows no stars filled and a value above `max` shows every star filled; a value that is not a number, such as `NaN`, shows 0.
-- **Colors**: filled stars take the warning tone, `--color-tone-warning`; empty stars take `--color-border-default`, at least 3:1 against every surface in both themes, so the scale reads also where the filled stars are few.
+- **Colors**: filled stars take the warning tone, `--env-color-fg-warning`; empty stars take `--env-color-border-default`, at least 3:1 against every surface in both themes, so the scale reads also where the filled stars are few.
 - **Right-to-left text**: the stars run from the right, and a half star fills its right half, the start of the line.
 - **No interaction**: a rating has no hover, focus, pressed or disabled state. It never takes focus.
 

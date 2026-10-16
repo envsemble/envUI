@@ -3,7 +3,7 @@
 .env-rating {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--env-space-2);
 }
 .env-rating-value {
   min-inline-size: 3ch;
@@ -12,7 +12,7 @@
 .env-rating-stars {
   display: inline-flex;
   gap: 0.125rem;
-  color: var(--color-border-default);
+  color: var(--env-color-border-default);
 }
 .env-rating-star {
   position: relative;
@@ -27,7 +27,7 @@
   fill: currentColor;
 }
 .env-rating-star[data-fill='full'] {
-  color: var(--color-tone-warning);
+  color: var(--env-color-fg-warning);
 }
 .env-rating-star-half {
   position: absolute;
@@ -35,9 +35,18 @@
   inset-inline-start: 0;
   inline-size: 50%;
   overflow: hidden;
-  color: var(--color-tone-warning);
+  color: var(--env-color-fg-warning);
 }
 .env-rating-star-half svg {
   inline-size: 1.125rem;
   max-inline-size: none;
+}
+
+/* Forced colors: the system paints no fills or shadows, so the filled stars take the selection
+   color. */
+@media (forced-colors: active) {
+  .env-rating-star[data-fill='full'],
+  .env-rating-star-half {
+    color: Highlight;
+  }
 }

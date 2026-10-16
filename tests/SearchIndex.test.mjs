@@ -24,7 +24,7 @@ const best = (query, count = 1) =>
 
 test('words split at punctuation and at camel-case humps, which stay whole too', () => {
   assert.deepEqual(tokenize('startIcon'), ['startIcon', 'start', 'Icon']);
-  assert.deepEqual(tokenize('--color-fg-muted'), ['color', 'fg', 'muted']);
+  assert.deepEqual(tokenize('--env-color-fg-muted'), ['env', 'color', 'fg', 'muted']);
   assert.deepEqual(tokenize('Menu.RadioItem'), ['Menu', 'RadioItem', 'Radio', 'Item']);
 });
 
@@ -52,8 +52,10 @@ test('search finds components by alias, props and tokens by name, and pages befo
   assert.deepEqual(best('hamburger'), ['page:app-shell']);
   assert.ok(best('startIcon', 5).includes('prop:Button.startIcon'));
   assert.ok(best('start icon', 5).includes('prop:Button.startIcon'));
-  assert.deepEqual(best('--color-fg-muted'), ['token:color.fg.muted']);
+  assert.deepEqual(best('--env-color-fg-muted'), ['token:color.fg.muted']);
   assert.deepEqual(best('fg muted'), ['token:color.fg.muted']);
+  // A 0.7 name finds the token that replaces it.
+  assert.ok(best('--color-text-muted', 3).includes('token:color.fg.muted'));
   assert.deepEqual(best('button'), ['page:button']);
   assert.ok(best('loading', 3).includes('page:loading'));
   // A typo in a longer word still finds it.
@@ -144,9 +146,9 @@ test('a result carries where it is: its page, view and element', () => {
   assert.equal(prop.page, 'button');
   assert.equal(prop.view, 'props');
   assert.equal(prop.section, 'props-Button-startIcon');
-  const token = index.search('--color-fg-muted', queryOptionsFor('--color-fg-muted'))[0];
+  const token = index.search('--env-color-fg-muted', queryOptionsFor('--env-color-fg-muted'))[0];
   assert.equal(token.page, 'tokens');
-  assert.equal(token.section, 'token-color-fg-muted');
+  assert.equal(token.section, 'token-env-color-fg-muted');
 });
 
 test('the index stays small enough to load with the offline catalogue', () => {

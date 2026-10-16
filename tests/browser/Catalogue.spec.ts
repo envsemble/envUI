@@ -106,7 +106,9 @@ test('palette editing uses public controls and remains temporary and independent
   await page.goto(`${offline}#/foundations/colors/preview`);
   const app = page.locator('.docs-app');
   const canvasValue = () =>
-    app.evaluate((element) => getComputedStyle(element).getPropertyValue('--color-canvas').trim());
+    app.evaluate((element) =>
+      getComputedStyle(element).getPropertyValue('--env-color-bg-page').trim(),
+    );
   const initialLight = await canvasValue();
   const swatch = page.getByRole('button', { name: 'Pick page background color', exact: true });
   await expect(swatch).toHaveClass(/env-button/);

@@ -71,7 +71,7 @@ test('selectors of envUI classes are reported', async () => {
 });
 
 test("the theme boundary, the theme attribute and the application's own classes pass", async () => {
-  await passes('.env-theme { --font-size-body: 1.0625rem; }');
+  await passes('.env-theme { --env-font-size-body: 1.0625rem; }');
   await passes("[data-env-theme='dark'] .card { margin: 0; }");
   await passes('.my-env-banner, .environment { margin: 0; }');
   await passes('@scope (.card) { p { margin: 0; } }');
@@ -100,22 +100,22 @@ test('raw colors are reported, and colors from tokens pass', async () => {
   );
   assert.equal(
     (await message('.a { box-shadow: 0 1px 2px rgb(0 0 0 / 20%); }')).text,
-    'Raw color rgb(0 0 0 / 20%) in box-shadow: use an envUI color token instead, one of the var(--color-fg-…), var(--color-bg-…) or var(--color-border-…) roles, so the color follows the theme and keeps its contrast. (declaration-property-value-disallowed-list)',
+    'Raw color rgb(0 0 0 / 20%) in box-shadow: use an envUI color token instead, one of the var(--env-color-fg-…), var(--env-color-bg-…) or var(--env-color-border-…) roles, so the color follows the theme and keeps its contrast. (declaration-property-value-disallowed-list)',
   );
   assert.equal(
     (await message('.a { color: #fff; }')).text,
-    'Raw color #fff: use an envUI color token instead, one of the var(--color-fg-…), var(--color-bg-…) or var(--color-border-…) roles, so the color follows the theme and keeps its contrast. (color-no-hex)',
+    'Raw color #fff: use an envUI color token instead, one of the var(--env-color-fg-…), var(--env-color-bg-…) or var(--env-color-border-…) roles, so the color follows the theme and keeps its contrast. (color-no-hex)',
   );
   assert.equal(
     (await message('.a { background: oklch(0.6 0.15 250); }')).text,
-    'Raw color oklch(0.6 0.15 250) in background: use an envUI color token instead, such as var(--color-bg-default) or another var(--color-bg-…) role, so the color follows the theme and keeps its contrast. (declaration-property-value-disallowed-list)',
+    'Raw color oklch(0.6 0.15 250) in background: use an envUI color token instead, such as var(--env-color-bg-default) or another var(--env-color-bg-…) role, so the color follows the theme and keeps its contrast. (declaration-property-value-disallowed-list)',
   );
   assert.match(
     (await message('.a { border-color: rgb(0 0 0); }')).text,
-    /such as var\(--color-border-default\) or another var\(--color-border-…\) role/,
+    /such as var\(--env-color-border-default\) or another var\(--env-color-border-…\) role/,
   );
-  await passes('.a { color: var(--color-fg-default); background: transparent; }');
-  await passes('.a { color: hsl(from var(--color-fg-link) h s calc(l - 10)); }');
+  await passes('.a { color: var(--env-color-fg-default); background: transparent; }');
+  await passes('.a { color: hsl(from var(--env-color-fg-link) h s calc(l - 10)); }');
   // Channels that all come from custom properties, and colors inside a CSS string.
   await passes(
     '.a { color: oklch(var(--l) var(--c) var(--h)); background: rgb(var(--rgb) / 50%); }',
@@ -133,7 +133,9 @@ test('raw colors are reported, and colors from tokens pass', async () => {
     (await message('.a { background: rgb(var(--x)), url("rgb(0 0 0)"), hsl(0 0% 0%); }')).text,
     /^Raw color hsl\(0 0% 0%\) in background/,
   );
-  await passes('.a { background: color-mix(in srgb, var(--color-bg-default) 80%, transparent); }');
+  await passes(
+    '.a { background: color-mix(in srgb, var(--env-color-bg-default) 80%, transparent); }',
+  );
   await passes('.a { fill: currentColor; }');
 });
 
@@ -218,7 +220,7 @@ test('px is reported outside hairlines and offsets', async () => {
   );
   await passes(
     [
-      '.a { border: 1px solid var(--color-border-default); outline: 2px solid; outline-offset: 2px; }',
+      '.a { border: 1px solid var(--env-color-border-default); outline: 2px solid; outline-offset: 2px; }',
       '.b { box-shadow: 0 1px 2px var(--shadow); text-underline-offset: 3px; border-inline-start-width: 1px; }',
       '.c { --card-border-width: 1px; --focus-ring-offset: 2px; }',
       '.d { padding: 1rem; margin: var(--space, 8px); inset-block-start: env(safe-area-inset-top, 20px); }',
@@ -274,7 +276,7 @@ test('every token the messages and the README name exists in the library', () =>
   ];
   const named = [...messages, readme].flatMap((text) => [
     ...text.matchAll(/var\((--[\w-]+)(…)?/g),
-    // Bare names of envUI's color and stacking tokens, such as `--color-fg-default`.
+    // Bare names of envUI's color and stacking tokens, such as `--env-color-fg-default`.
     ...text.matchAll(/(?<![\w-])(--(?:env-)?(?:color|z)-[\w-]*)(…)?/g),
   ]);
   assert.ok(named.length > 0, 'the messages name tokens');

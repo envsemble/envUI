@@ -328,16 +328,16 @@ test('the calendar is the Popover surface with its day colors in both themes, an
         element.querySelector('[aria-current="date"] .env-calendar-day-mark')!,
       );
       return {
-        popup: resolve('var(--color-popup)'),
+        popup: resolve('var(--env-color-bg-popup)'),
         background: style.backgroundColor,
         border: Number.parseFloat(style.borderTopWidth),
         radius: Number.parseFloat(style.borderTopLeftRadius),
         selectedFill: selected.backgroundColor,
         selectedText: selected.color,
-        selectedRole: resolve('var(--color-calendar-selected)'),
-        onSelectedRole: resolve('var(--color-on-calendar-selected)'),
+        selectedRole: resolve('var(--env-color-bg-brand-emphasis)'),
+        onSelectedRole: resolve('var(--env-color-fg-on-emphasis)'),
         todayRing: current.boxShadow,
-        todayRole: resolve('var(--color-calendar-today)'),
+        todayRole: resolve('var(--env-color-border-accent-emphasis)'),
       };
     });
     expect(colors.background).toBe(colors.popup);
@@ -632,7 +632,7 @@ test('a field named by other text, and one without a label that shows its placeh
   expect(
     await placeholder.evaluate((element) => {
       const probe = document.createElement('span');
-      probe.style.color = 'var(--color-field-placeholder)';
+      probe.style.color = 'var(--env-color-fg-muted)';
       element.append(probe);
       const expected = getComputedStyle(probe).color;
       probe.remove();

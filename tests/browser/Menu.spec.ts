@@ -80,7 +80,10 @@ test.describe('Menus', () => {
       await expect(menu).toBeVisible();
       await settled(menu);
       // The popup takes the raised popup surface, like Popover and Select, with small corners.
-      const [popup, border] = await tokenColors(menu, ['--color-popup', '--color-popup-border']);
+      const [popup, border] = await tokenColors(menu, [
+        '--env-color-bg-popup',
+        '--env-elevation-2-border',
+      ]);
       const surface = await popupSurface(menu);
       expect(surface.background).toBe(popup);
       expect(surface.borderColor).toBe(border);
@@ -112,7 +115,7 @@ test.describe('Menus', () => {
         for (const key of await row.locator('kbd.env-kbd').all())
           expect((await key.boundingBox())!.height).toBeLessThanOrEqual(19);
       }
-      const [muted] = await tokenColors(menu, ['--color-text-muted']);
+      const [muted] = await tokenColors(menu, ['--env-color-fg-muted']);
       expect(
         await rows[0]!
           .locator('kbd.env-kbd')
@@ -174,7 +177,7 @@ test.describe('Menus', () => {
     const menu = page.getByRole('menu', { name: 'View options' });
     await expect(menu).toBeVisible();
     await settled(menu);
-    const [popup] = await tokenColors(menu, ['--color-popup']);
+    const [popup] = await tokenColors(menu, ['--env-color-bg-popup']);
     expect((await popupSurface(menu)).background).toBe(popup);
     const row = (await menu.getByRole('menuitemradio', { name: 'Name' }).boundingBox())!;
     expect(row.height).toBeCloseTo(36, 0);
@@ -227,7 +230,7 @@ test.describe('Submenus', () => {
     expect(Math.abs(firstBox!.y - rowBox!.y)).toBeLessThanOrEqual(1.5);
     expect(firstBox!.height).toBeCloseTo(36, 0);
     // The submenu row stays highlighted while its submenu is open.
-    const [popup] = await tokenColors(menu, ['--color-popup']);
+    const [popup] = await tokenColors(menu, ['--env-color-bg-popup']);
     expect(await recent.evaluate((element) => getComputedStyle(element).backgroundColor)).not.toBe(
       popup,
     );

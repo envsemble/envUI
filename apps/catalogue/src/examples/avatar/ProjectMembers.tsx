@@ -9,7 +9,7 @@ const members = [
 ];
 
 /** The groups sit on rows, so their rings take the row's fill instead of the page's. */
-const onRow = { '--avatar-group-ring': 'var(--color-row)' } as CSSProperties;
+const onRow = { '--env-avatar-group-ring': 'var(--env-color-list-item-bg)' } as CSSProperties;
 
 export default function ProjectMembers() {
   return (

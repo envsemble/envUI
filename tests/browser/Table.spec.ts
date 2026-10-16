@@ -83,7 +83,7 @@ test('sortable headers are buttons that say what pressing does and report the or
   await expect(sortReport).toHaveAccessibleName('Report sort descending');
   await expect(page.getByTestId('order-light')).toHaveText('audit tokens quarterly roadmap');
   // The sorted header shows its order in the primary text color.
-  await expect(report).toHaveCSS('color', await tokenColor(report, '--color-text-primary'));
+  await expect(report).toHaveCSS('color', await tokenColor(report, '--env-color-fg-default'));
 
   await sortReport.focus();
   await page.keyboard.press('Enter');
@@ -111,7 +111,7 @@ test('sortable headers are buttons that say what pressing does and report the or
   expect(label.x + label.width).toBeCloseTo(numberBox.x + numberBox.width - padding, 0);
   await expect(reviews.getByRole('button')).toHaveCSS(
     'outline-color',
-    await tokenColor(reviews, '--color-focus-ring'),
+    await tokenColor(reviews, '--env-color-border-focus'),
   );
 });
 
@@ -142,7 +142,7 @@ test('columns resize from the keyboard and the pointer without changing the tabl
   // Keyboard focus shows the boundary line in the focus ring color.
   await expect
     .poll(() => handle.evaluate((element) => getComputedStyle(element, '::after').backgroundColor))
-    .toBe(await tokenColor(handle, '--color-focus-ring'));
+    .toBe(await tokenColor(handle, '--env-color-border-focus'));
   await page.keyboard.press('ArrowRight');
   await expect(widths).toHaveText('41.0 29.0 15.0 15.0');
   await page.keyboard.press('Shift+ArrowRight');
@@ -242,7 +242,7 @@ test('selected rows report aria-selected and take the selection colors in both t
     await expect(other).toHaveAttribute('aria-selected', 'false');
     const selection = await selected.evaluate((row) => {
       const probe = document.createElement('span');
-      probe.style.backgroundColor = 'var(--color-navigation-selected)';
+      probe.style.backgroundColor = 'var(--env-color-bg-selected)';
       row.closest('.env-theme')!.append(probe);
       const color = getComputedStyle(probe).backgroundColor;
       probe.remove();
@@ -253,7 +253,7 @@ test('selected rows report aria-selected and take the selection colors in both t
     // A bar in the selection text color marks the start of the row.
     await expect(selected.getByRole('cell').first()).toHaveCSS(
       'box-shadow',
-      `${await tokenColor(selected, '--color-on-navigation-selected')} 3px 0px 0px 0px inset`,
+      `${await tokenColor(selected, '--env-color-fg-on-selected')} 3px 0px 0px 0px inset`,
     );
     expect(
       await paintedContrast(selected.getByRole('cell', { name: 'Mira Okafor' })),
@@ -263,7 +263,7 @@ test('selected rows report aria-selected and take the selection colors in both t
     await other.hover();
     const hovered = await selected.evaluate((row) => {
       const probe = document.createElement('span');
-      probe.style.backgroundColor = 'var(--color-row-selected-hover)';
+      probe.style.backgroundColor = 'var(--env-color-bg-selected-hover)';
       row.closest('.env-theme')!.append(probe);
       const color = getComputedStyle(probe).backgroundColor;
       probe.remove();
@@ -312,7 +312,7 @@ test('a stacking table lists its rows as blocks in a narrow container and keeps 
     // The selected row keeps its colors as a block.
     await expect(table.getByRole('row', { name: /design-system\/tokens/ })).toHaveCSS(
       'box-shadow',
-      `${await tokenColor(table, '--color-on-navigation-selected')} 3px 0px 0px 0px inset`,
+      `${await tokenColor(table, '--env-color-fg-on-selected')} 3px 0px 0px 0px inset`,
     );
 
     // The header row is visually hidden until a sort button in it has keyboard focus.

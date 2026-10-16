@@ -3,36 +3,36 @@
   box-sizing: border-box;
   min-inline-size: 0;
   max-inline-size: 100%;
-  --env-surface-color: var(--color-pane);
+  --env-surface-color: var(--env-color-bg-default);
   --env-surface-padding: clamp(1.25rem, 3vw, 1.5rem);
-  --env-surface-radius: var(--radius-surface);
-  --env-surface-hover: var(--color-bg-default-hover);
-  --env-surface-pressed: var(--color-bg-default-pressed);
+  --env-surface-radius: var(--env-radius-surface);
+  --env-surface-hover: var(--env-color-bg-default-hover);
+  --env-surface-pressed: var(--env-color-bg-default-pressed);
   padding: var(--env-surface-padding);
   border: 0;
   border-radius: var(--env-surface-radius);
   background: var(--env-surface-color);
 }
 .env-surface-row {
-  --env-surface-color: var(--color-surface-muted);
-  --env-surface-hover: var(--color-bg-muted-hover);
-  --env-surface-pressed: var(--color-bg-muted-pressed);
+  --env-surface-color: var(--env-color-bg-muted);
+  --env-surface-hover: var(--env-color-bg-muted-hover);
+  --env-surface-pressed: var(--env-color-bg-muted-pressed);
 }
 .env-surface-canvas {
-  --env-surface-color: var(--color-canvas);
-  --env-surface-hover: var(--color-bg-page-hover);
-  --env-surface-pressed: var(--color-bg-page-pressed);
+  --env-surface-color: var(--env-color-bg-page);
+  --env-surface-hover: var(--env-color-bg-page-hover);
+  --env-surface-pressed: var(--env-color-bg-page-pressed);
 }
 .env-surface-alternate {
-  --env-surface-color: var(--color-surface);
-  --env-surface-hover: var(--color-bg-raised-hover);
-  --env-surface-pressed: var(--color-bg-raised-pressed);
+  --env-surface-color: var(--env-color-bg-raised);
+  --env-surface-hover: var(--env-color-bg-raised-hover);
+  --env-surface-pressed: var(--env-color-bg-raised-pressed);
 }
 .env-surface-corners-standard {
-  --env-surface-radius: var(--radius-standard);
+  --env-surface-radius: var(--env-radius-sm);
 }
 .env-surface-corners-pill {
-  --env-surface-radius: var(--md-sys-shape-corner-full);
+  --env-surface-radius: var(--env-radius-full);
 }
 .env-surface-corners-none {
   --env-surface-radius: 0rem;

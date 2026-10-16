@@ -92,7 +92,7 @@ The family builds on it:
 - **AvatarGroup without actions**: the avatars are decorative, and the group is named with the count and every name, such as "4 people: Alex Morgan, Sam Lee, Priya Shah, Jordan Ellis".
 - **Pressable avatars**: with `onPersonClick` each avatar is a button, and a person with `href` is a link through the `LinkProvider`; each is named after the person, with the name in a tooltip on hover and keyboard focus. The avatar under the pointer or focus comes to the front with a state layer over its picture, and shrinks slightly while pressed without a reduced-motion preference.
 - **Overflow**: `max` sets how many avatars show; the chip counts the rest of `people` and of `total`, when `people` is only a preview of more. Its tooltip lists the hidden names, then "N more" (`formatMore`) for people counted in `total` without a name. A `max` or `total` that is not a count, such as NaN, shows and counts everyone passed.
-- **Ring**: the ring takes the fill of the envUI surface the group sits on, such as a Card, a Surface or a Dialog, and the page's color elsewhere; set `--avatar-group-ring` for any other fill, such as `var(--color-row)` on a List row.
+- **Ring**: the ring takes the fill of the envUI surface the group sits on, such as a Card, a Surface or a Dialog, and the page's color elsewhere; set `--env-avatar-group-ring` for any other fill, such as `var(--env-color-list-item-bg)` on a List row.
 - **Right-to-left**: avatars run from the right, and the chip still reads +2.
 
 ## Content guidelines
@@ -140,7 +140,7 @@ The family builds on it:
 - The person's name beside a decorative avatar, or `label`.
 - An `aria-label` on an AvatarButton that says what it opens, and the menu or action behind it.
 - `formatLabel` and `formatMore` in the application's language, or an `aria-label` for the group.
-- `--avatar-group-ring` where a group sits on a fill that is not an envUI surface.
+- `--env-avatar-group-ring` where a group sits on a fill that is not an envUI surface.
 
 ## Examples
 

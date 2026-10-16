@@ -204,7 +204,7 @@
         "modules": ["foundations/ThemeBootstrap.ts"],
         "styles": ["Tokens.css", "TokensHandwritten.css"]
       },
-      "ThemePreference": { "classes": ["env-theme-toggle"] },
+      "ThemePreference": { "classes": ["env-theme-toggle"], "styles": ["ThemeToggle.css"] },
       "AppShell": { "classes": ["env-app"] },
       "Breadcrumbs": { "classes": ["env-breadcrumb"] },
       "DocumentTabs": { "classes": ["env-document-tab"] },
@@ -232,7 +232,8 @@
     "stylesheetsWithoutComponent": {
       "index.css": "Imports every stylesheet.",
       "ConnectedRows.css": "Shared connected-row corners.",
-      "Motion.css": "Motion rules of about 30 components, which move into each component's own stylesheet."
+      "Motion.css": "The keyframes several components share.",
+      "Reset.css": "The box-sizing reset inside every theme boundary."
     },
     "childRules": {
       "$comment": "A container may lay out a child that belongs to another component: place, size and space it, never restyle it. Each rule lets one stylesheet's selectors name a child's classes, as long as they declare only layoutProperties and the rule's own properties.",

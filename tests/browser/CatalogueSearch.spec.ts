@@ -186,14 +186,14 @@ test.describe('search', () => {
 
   test('finds a token and opens the token reference at its row', async ({ page }) => {
     await openCatalogue(page, `${catalogueUrl}/`);
-    await search(page, '--color-fg-muted');
+    await search(page, '--env-color-fg-muted');
     await expect.poll(() => highlighted(page)).toBe('token:color.fg.muted');
     await page.keyboard.press('Enter');
-    await expect(page).toHaveURL(`${catalogueUrl}/foundations/tokens#token-color-fg-muted`);
+    await expect(page).toHaveURL(`${catalogueUrl}/foundations/tokens#token-env-color-fg-muted`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Design tokens');
     // The reference loads on its own, and the route scrolls to the row once it is there.
-    await expect(page.locator('#token-color-fg-muted')).toBeInViewport();
-    await expect(page.locator('#token-color-fg-muted')).toContainText('#5d6166');
+    await expect(page.locator('#token-env-color-fg-muted')).toBeInViewport();
+    await expect(page.locator('#token-env-color-fg-muted')).toContainText('#5d6166');
   });
 
   test('finds every export, also one on a page without a Props view, at the section that shows it', async ({
@@ -462,8 +462,8 @@ test('search works in the offline catalogue, whose routes stay in the hash', asy
   await search(page, 'fg muted');
   await expect.poll(() => highlighted(page)).toBe('token:color.fg.muted');
   await page.keyboard.press('Enter');
-  await expect(page).toHaveURL(`${offline}#/foundations/tokens?section=token-color-fg-muted`);
-  await expect(page.locator('#token-color-fg-muted')).toBeInViewport();
+  await expect(page).toHaveURL(`${offline}#/foundations/tokens?section=token-env-color-fg-muted`);
+  await expect(page.locator('#token-env-color-fg-muted')).toBeInViewport();
   await page
     .getByRole('navigation', { name: 'Documentation' })
     .getByRole('link', { name: 'Loading', exact: true })

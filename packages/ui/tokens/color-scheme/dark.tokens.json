@@ -7,14 +7,7 @@
       "page": {
         "$root": { "$value": "{palette.neutral.92}" },
         "hover": { "$value": "{palette.neutral.86}" },
-        "pressed": { "$value": "{palette.neutral.80}" },
-        "muted": {
-          "$value": {
-            "colorSpace": "oklch",
-            "components": { "$ref": "#/palette/neutral/92/$value/components" },
-            "alpha": 0.5
-          }
-        }
+        "pressed": { "$value": "{palette.neutral.80}" }
       },
       "default": {
         "$root": { "$value": "{palette.neutral.88}" },
@@ -139,6 +132,7 @@
           }
         },
         "subtle": {
+          "$root": { "$value": { "colorSpace": "srgb", "components": [0, 0, 0], "alpha": 0 } },
           "hover": {
             "$value": {
               "colorSpace": "oklch",
@@ -165,6 +159,7 @@
           }
         },
         "subtle": {
+          "$root": { "$value": { "colorSpace": "srgb", "components": [0, 0, 0], "alpha": 0 } },
           "hover": {
             "$value": {
               "colorSpace": "oklch",
@@ -196,6 +191,7 @@
           }
         },
         "subtle": {
+          "$root": { "$value": { "colorSpace": "srgb", "components": [0, 0, 0], "alpha": 0 } },
           "hover": {
             "$value": {
               "colorSpace": "oklch",
@@ -222,6 +218,7 @@
           }
         },
         "subtle": {
+          "$root": { "$value": { "colorSpace": "srgb", "components": [0, 0, 0], "alpha": 0 } },
           "hover": {
             "$value": {
               "colorSpace": "oklch",
@@ -266,6 +263,13 @@
           "hover": { "$value": "{palette.purple.65}" },
           "pressed": { "$value": "{palette.purple.75}" }
         }
+      },
+      "inset": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": { "$ref": "#/palette/neutral/92/$value/components" },
+          "alpha": 0.5
+        }
       }
     },
     "fg": {
@@ -302,10 +306,7 @@
         "pressed": { "$value": "{palette.neutral.35}" }
       },
       "accent": {
-        "$root": { "$value": "{palette.blue.20}" },
-        "hover": { "$value": "{palette.blue.30}" },
-        "pressed": { "$value": "{palette.blue.40}" },
-        "emphasis": {
+        "$root": {
           "$value": {
             "colorSpace": "oklch",
             "components": { "$ref": "#/palette/blue/20/$value/components" },
@@ -318,13 +319,15 @@
             "components": { "$ref": "#/palette/blue/20/$value/components" },
             "alpha": 0.28
           }
+        },
+        "emphasis": {
+          "$root": { "$value": "{palette.blue.20}" },
+          "hover": { "$value": "{palette.blue.30}" },
+          "pressed": { "$value": "{palette.blue.40}" }
         }
       },
       "danger": {
-        "$root": { "$value": "{palette.red.20}" },
-        "hover": { "$value": "{palette.red.30}" },
-        "pressed": { "$value": "{palette.red.40}" },
-        "emphasis": {
+        "$root": {
           "$value": {
             "colorSpace": "oklch",
             "components": { "$ref": "#/palette/red/20/$value/components" },
@@ -338,10 +341,15 @@
             "alpha": 0.28
           }
         },
-        "strong": { "$value": "{color.border.muted}" }
+        "strong": { "$value": "{color.border.muted}" },
+        "emphasis": {
+          "$root": { "$value": "{palette.red.20}" },
+          "hover": { "$value": "{palette.red.30}" },
+          "pressed": { "$value": "{palette.red.40}" }
+        }
       },
       "neutral": {
-        "emphasis": {
+        "$root": {
           "$value": {
             "colorSpace": "oklch",
             "components": { "$ref": "#/palette/neutral/20/$value/components" },
@@ -351,7 +359,7 @@
         "strong": { "$value": "{color.border.muted}" }
       },
       "success": {
-        "emphasis": {
+        "$root": {
           "$value": {
             "colorSpace": "oklch",
             "components": { "$ref": "#/palette/green/20/$value/components" },
@@ -368,7 +376,7 @@
         "strong": { "$value": "{color.border.muted}" }
       },
       "warning": {
-        "emphasis": {
+        "$root": {
           "$value": {
             "colorSpace": "oklch",
             "components": { "$ref": "#/palette/amber/20/$value/components" },
@@ -383,38 +391,30 @@
           }
         }
       },
+      "focus": { "$value": "{palette.blue.20}" },
+      "info": { "strong": { "$value": "{color.border.muted}" } },
       "done": {
-        "emphasis": {
-          "$value": {
-            "colorSpace": "oklch",
-            "components": { "$ref": "#/palette/violet/20/$value/components" },
-            "alpha": 0.55
-          }
+        "$value": {
+          "colorSpace": "oklch",
+          "components": { "$ref": "#/palette/violet/20/$value/components" },
+          "alpha": 0.55
         }
       },
-      "translucent": {
+      "media": {
         "$value": {
           "colorSpace": "oklch",
           "components": { "$ref": "#/palette/neutral/100/$value/components" },
           "alpha": 0.05
         }
-      },
-      "focus": { "$value": "{palette.blue.20}" },
-      "info": { "strong": { "$value": "{color.border.muted}" } }
+      }
     },
-    "row": { "$value": "{color.bg.muted}" },
-    "row-hover": { "$value": "{color.bg.muted.hover}" },
-    "row-pressed": { "$value": "{color.bg.muted.pressed}" },
-    "navigation-quiet": { "$value": "{color.bg.muted}" },
-    "checkbox": { "$value": "{color.bg.brand.emphasis}" },
-    "checkbox-hover": { "$value": "{color.bg.brand.emphasis.hover}" },
-    "checkbox-pressed": { "$value": "{color.bg.brand.emphasis.pressed}" },
-    "on-checkbox": { "$value": "{color.fg.on-emphasis}" },
-    "switch-on": { "$value": "{color.bg.brand.emphasis}" },
-    "switch-on-hover": { "$value": "{color.bg.brand.emphasis.hover}" },
-    "switch-on-pressed": { "$value": "{color.bg.brand.emphasis.pressed}" },
-    "switch-thumb-on": { "$value": "{color.fg.on-emphasis}" },
-    "control-blue": { "$value": "{color.bg.brand.emphasis}" }
+    "list-item": {
+      "bg": {
+        "$root": { "$value": "{color.bg.muted}" },
+        "hover": { "$value": "{color.bg.muted.hover}" },
+        "pressed": { "$value": "{color.bg.muted.pressed}" }
+      }
+    }
   },
   "elevation": {
     "1": {

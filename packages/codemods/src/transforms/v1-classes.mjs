@@ -1,18 +1,20 @@
 // v1-classes: renames envUI 0.x class names and custom properties to their 1.0 names, as the
-// `classes` section of the rename map lists them.
+// `classes` and `tokens` sections of the rename map list them.
 //
 // - Style sheets (.css, .scss, .sass, .less, .pcss): `.env-*` class selectors, `--env-*` custom
-//   properties and `[class…='env-*']` attribute selectors.
+//   properties, the tokens' custom properties before 1.0 (`--color-text-muted` becomes
+//   `--env-color-fg-muted`) and `[class…='env-*']` attribute selectors. A token that 1.0 removes,
+//   or a fixed color no token replaces, stays and is reported.
 // - Scripts: class tokens in string and template literals inside JSX `className` and `class`
 //   attributes, `className` properties and assignments, selector strings passed to
 //   querySelector, querySelectorAll, closest and matches, classList methods,
-//   getElementsByClassName; `--env-*` custom properties in `style` attributes, string property
-//   keys and style.setProperty, getPropertyValue and removeProperty; and `var(--env-*)` in any
-//   string.
+//   getElementsByClassName; `--env-*` custom properties and the tokens' names before 1.0 in
+//   `style` attributes, string property keys and style.setProperty, getPropertyValue and
+//   removeProperty; and `var(--env-*)` and `var()` of a token's name before 1.0 in any string.
 // Scripts are edited in place, literal by literal, so everything else keeps its formatting.
 import { extname } from 'node:path';
 import { loadMap, renameClass } from '../map.mjs';
-import { parserFor } from '../shared.mjs';
+import { createReporter, parserFor } from '../shared.mjs';
 
 export const parser = 'tsx';
 
@@ -23,6 +25,30 @@ const propertyMethods = new Set(['setProperty', 'getPropertyValue', 'removePrope
 
 /** A `.env-*` class selector or a `--env-*` custom property in style sheet text. */
 const styleToken = /(\.|(?<![A-Za-z0-9_-])--)(env-[a-z0-9][a-z0-9_-]*)(?![A-Za-z0-9_-])/g;
+/**
+ * A custom property without the --env- prefix, which the tokens section may list. A name followed
+ * by a hyphen, as in a template literal's `--space-${size}`, is not one.
+ */
+const tokenProperty =
+  /(?<![A-Za-z0-9_-])(--)((?!env-)[a-z][a-z0-9]*(?:-[a-z0-9]+)*)(?![A-Za-z0-9_-])/g;
+/** A `var()` of a custom property without the --env- prefix. */
+const tokenVariable = /(var\(\s*--)((?!env-)[a-z][a-z0-9]*(?:-[a-z0-9]+)*)(?![A-Za-z0-9_-])/g;
+
+/**
+ * Renames the tokens' custom properties before 1.0 in `text`, as the map's tokens section lists
+ * them, and calls `report` with the offset and message of each that 1.0 removes. `pattern` finds
+ * the names: every custom property, or only those in `var()`.
+ */
+function renameTokens(text, tokens, report, pattern = tokenProperty) {
+  return text.replace(pattern, (match, prefix, name, offset) => {
+    const entry = tokens.get(name);
+    if (!entry) return match;
+    if (entry.to) return prefix + entry.to;
+    report?.(offset, entry.report);
+    return match;
+  });
+}
+
 /** A `--env-*` custom property. */
 const customProperty = /(?<![A-Za-z0-9_-])--(env-[a-z0-9][a-z0-9_-]*)(?![A-Za-z0-9_-])/g;
 /** An attribute selector on `class`: `[class~='env-row']`, `[class*="env-notice-"]`. */
@@ -45,22 +71,49 @@ function renameWithin(text, classesWithin) {
   return output;
 }
 
-/** Renames class selectors, attribute selectors and custom properties in style sheet text. */
-export function renameInStyles(text, classes, classesWithin = []) {
-  return renameWithin(text, classesWithin)
+/**
+ * Renames class selectors, attribute selectors and custom properties in style sheet text. A
+ * custom property that a 1.0 token has, such as --env-row-height, is no class's: the class renames
+ * leave it alone. `report` receives the offset and message of each token that 1.0 removes.
+ */
+export function renameInStyles(
+  text,
+  classes,
+  classesWithin = [],
+  tokens = new Map(),
+  tokenNames = new Set(),
+  report = undefined,
+) {
+  const renamed = renameWithin(text, classesWithin)
     .replace(classAttribute, (selector) =>
       selector.replace(attributeName, (name) => renameClass(name, classes)),
     )
-    .replace(styleToken, (match, prefix, name) => prefix + renameClass(name, classes));
+    .replace(styleToken, (match, prefix, name) =>
+      prefix === '--' && tokenNames.has(name) ? match : prefix + renameClass(name, classes),
+    );
+  return renameTokens(renamed, tokens, report);
 }
 
-const renameCustomProperties = (text, classes) =>
-  text.replace(customProperty, (match, name) => `--${renameClass(name, classes)}`);
+const renameCustomProperties = (text, classes, tokens, tokenNames, report) =>
+  renameTokens(
+    text.replace(customProperty, (match, name) =>
+      tokenNames.has(name) ? match : `--${renameClass(name, classes)}`,
+    ),
+    tokens,
+    report,
+  );
 
 /** A `var(--env-*)` reference. */
 const variable = /(var\(\s*--)(env-[a-z0-9][a-z0-9_-]*)(?![A-Za-z0-9_-])/g;
-const renameVariables = (text, classes) =>
-  text.replace(variable, (match, prefix, name) => prefix + renameClass(name, classes));
+const renameVariables = (text, classes, tokens, tokenNames, report) =>
+  renameTokens(
+    text.replace(variable, (match, prefix, name) =>
+      tokenNames.has(name) ? match : prefix + renameClass(name, classes),
+    ),
+    tokens,
+    report,
+    tokenVariable,
+  );
 
 /**
  * Renames whole class tokens. `atStart` is false for a template quasi that follows an expression,
@@ -84,10 +137,25 @@ function lineStarts(source) {
 }
 
 export default function transform(file, api, options = {}) {
-  const { classes, classesWithin } = loadMap(options.map);
-  if (!file.source.includes('env-')) return undefined;
+  const { classes, classesWithin, tokens, tokenNames } = loadMap(options.map);
+  if (!file.source.includes('env-') && !file.source.includes('--')) return undefined;
+  const reporter = createReporter(api);
+  /** Reports at the line of `offset` in `text`, which starts on line `first`. */
+  const reportAt = (text, first) => (offset, message) =>
+    reporter.warn(
+      { loc: { start: { line: first + (text.slice(0, offset).match(/\r\n?|\n/g)?.length ?? 0) } } },
+      message,
+    );
   if (styleSheets.has(extname(file.path).toLowerCase())) {
-    const output = renameInStyles(file.source, classes, classesWithin);
+    const output = renameInStyles(
+      file.source,
+      classes,
+      classesWithin,
+      tokens,
+      tokenNames,
+      reportAt(file.source, 1),
+    );
+    reporter.flush();
     return output === file.source ? file.source : output;
   }
 
@@ -136,7 +204,7 @@ export default function transform(file, api, options = {}) {
   root.find(j.ObjectProperty).forEach((path) => {
     const key = keyName(path.node);
     if (key === 'className') markWithin(path.get('value'), 'class');
-    else if (key?.startsWith('--env-') && path.node.key.type === 'StringLiteral')
+    else if (key?.startsWith('--') && path.node.key.type === 'StringLiteral')
       mark(path.node.key, 'property');
   });
   root.find(j.AssignmentExpression).forEach((path) => {
@@ -178,13 +246,13 @@ export default function transform(file, api, options = {}) {
   root.find(j.StringLiteral).forEach((path) => mark(path.node, 'var'));
   root.find(j.TemplateLiteral).forEach((path) => mark(path.node, 'var'));
 
-  const rewrite = (text, mode, atStart) =>
+  const rewrite = (text, mode, atStart, report) =>
     mode === 'selector'
-      ? renameInStyles(text, classes, classesWithin)
+      ? renameInStyles(text, classes, classesWithin, tokens, tokenNames, report)
       : mode === 'property'
-        ? renameCustomProperties(text, classes)
+        ? renameCustomProperties(text, classes, tokens, tokenNames, report)
         : mode === 'var'
-          ? renameVariables(text, classes)
+          ? renameVariables(text, classes, tokens, tokenNames, report)
           : renameClassTokens(text, classes, atStart);
 
   // Babel gives a template's raw text with its line breaks as \n, whatever the file's are.
@@ -199,7 +267,7 @@ export default function transform(file, api, options = {}) {
       const raw = file.source.slice(start - 1, end + 1);
       if (!sameText(raw, node.extra.raw)) continue;
       const text = file.source.slice(start, end);
-      const next = rewrite(text, mode, true);
+      const next = rewrite(text, mode, true, reportAt(text, node.loc.start.line));
       if (next !== text) edits.push({ start, end, text: next });
       continue;
     }
@@ -209,10 +277,11 @@ export default function transform(file, api, options = {}) {
       const end = offset(quasi.loc.end);
       const text = file.source.slice(start, end);
       if (!sameText(text, quasi.value.raw)) return;
-      const next = rewrite(text, mode, index === 0);
+      const next = rewrite(text, mode, index === 0, reportAt(text, quasi.loc.start.line));
       if (next !== text) edits.push({ start, end, text: next });
     });
   }
+  reporter.flush();
   if (edits.length === 0) return file.source;
 
   let output = file.source;

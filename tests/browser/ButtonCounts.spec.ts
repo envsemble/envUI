@@ -114,8 +114,8 @@ test('a diff stat is one pill with additions in green and deletions in red, name
       return [
         getComputedStyle(element.querySelector('.env-diff-stat-additions')!).color,
         getComputedStyle(element.querySelector('.env-diff-stat-deletions')!).color,
-        probe('var(--color-tone-success)'),
-        probe('var(--color-tone-danger)'),
+        probe('var(--env-color-fg-success)'),
+        probe('var(--env-color-fg-danger)'),
       ];
     });
     expect(additions).toBe(success);

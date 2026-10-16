@@ -133,7 +133,8 @@ export const tools = [
       type: string('A token type, such as color, dimension, shadow or typography.'),
       legacy: {
         type: 'boolean',
-        description: 'List the 0.7 names and the tokens that replace them instead.',
+        description:
+          'List the names before 1.0, of 0.x and without the --env- prefix, and what replaces each instead.',
       },
       limit: {
         type: 'integer',
@@ -326,12 +327,18 @@ export function callTool(context, name, args = {}) {
       const limit = Number.isInteger(args.limit) ? Math.min(Math.max(args.limit, 1), 400) : 60;
       if (args.legacy) {
         const wanted = typeof args.query === 'string' ? terms(args.query) : [];
+        // A name before 1.0, such as --color-canvas, also matches the prefix color.canvas.
+        const prefix = args.prefix
+          ? `--${String(args.prefix).replace(/^--/, '').replaceAll('.', '-')}`
+          : '';
         const legacy = tokens.legacy.filter(
           (token) =>
-            (!args.prefix || token.id.startsWith(String(args.prefix))) &&
+            (!prefix || token.cssVariable.startsWith(prefix)) &&
             (!args.type || token.type === args.type) &&
             (!wanted.length ||
-              wanted.some((term) => terms(`${token.id} ${token.use ?? ''}`).includes(term))),
+              wanted.some((term) =>
+                terms(`${token.cssVariable} ${token.use ?? ''}`).includes(term),
+              )),
         );
         return { total: legacy.length, legacy: legacy.slice(0, limit) };
       }

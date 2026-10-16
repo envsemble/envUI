@@ -50,7 +50,7 @@ export default defineConfig(envui.configs.recommended);
 
 - `v1-names` rewrites imports and references from `@envsemble/envui` and `@envsemble/envui/theme-bootstrap`: renamed components and types (`Input` is `TextField`), namespace parts (`MenuItem` is `Menu.Item`, `<Menu>` is `<Menu.Root>`), `DirectionLink` by its literal `direction` (`Pager.Previous` or `Pager.Next`), re-exports, `defaultThemeStorageKey`, which becomes `'env-theme'`, and `<Theme theme={useTheme()}>`, which becomes `<Theme {...useTheme()}>`. Other `useTheme()` calls, imported by name or through a namespace import, become `useTheme().theme`, the color scheme they returned in 0.x, unless the file already reads them as `{ theme, contrast }`.
 - `v1-props` moves the props that 1.0 removed or changed, as [scale and density](#scale-and-density) lists them.
-- `v1-classes` renames `env-*` classes and `--env-*` custom properties in style sheets, class names and selector strings.
+- `v1-classes` renames `env-*` classes and `--env-*` custom properties in style sheets, class names and selector strings, and the tokens' custom properties: `--color-text-muted` becomes `--env-color-fg-muted` and `--space-4` becomes `--env-space-4`, as [tokens](#tokens) lists them. It reports a token that 1.0 removes, and a 0.7 fixed color no token replaces, with what to use instead.
 - `envui/no-renamed-exports` reports the 0.x names left in imports and re-exports, and also those it can follow statically through namespace imports, `require()`, `import()`, `import … = require()`, destructuring and `createElement()`, with each one's 1.0 name or what to use instead. A name read through a computed member such as `envui[name]` is not followed; the type check catches those. The recommended config also reports raw elements that envUI provides, envUI's private classes and raw colors; `@envsemble/stylelint-config-envui` does the same for style sheets.
 
 Change by hand what the codemods report, each with its file and line:
@@ -83,7 +83,7 @@ The codemods also leave class names built at run time, CSS-in-JS, selectors nest
 | `density` on Surface, Menu.Root, ContextMenu, Menubar.Menu         | Removed: give controls `size="sm"`, or set `scale="compact"` on a Theme |
 | `size` on NavList.Item                                             | Removed: items follow the scale                                         |
 
-The codemod reports each use it can't move, such as a value that is an expression. Fields now take the control height by default, menus and the popups of Select and Combobox have one anatomy at the scale's row height, and controls in table cells take the small height; check screens that relied on the 3.5 rem field. In style sheets, `--control-height-small` and `--icon-button-size` become `--control-height`, `--control-height-compact` becomes `--control-height-sm`, and `--scale` is gone.
+The codemod reports each use it can't move, such as a value that is an expression. Fields now take the control height by default, menus and the popups of Select and Combobox have one anatomy at the scale's row height, and controls in table cells take the small height; check screens that relied on the 3.5 rem field. In style sheets, `--control-height-small` and `--icon-button-size` become `--env-control-height`, `--control-height-compact` becomes `--env-control-height-sm`, and `--scale` is gone.
 
 ### useTheme returns the theme, its contrast and its scale
 
@@ -91,219 +91,268 @@ The codemod reports each use it can't move, such as a value that is an expressio
 
 ### Tokens
 
-envUI 1.0 names its colors by semantic role, `--color-{bg|fg|border}-{role}-{emphasis}[-{state}]` (see [colors](foundations/colors.md)). A few 0.7 custom properties are removed: unused ones, and the state values that the hover and pressed color tokens replace. The other 0.7 names remain for now as aliases of their roles, so style sheets that read them keep working; they are removed in the CSS-architecture step of 1.0, together with the move of every token to the `--env-` prefix. Move to the roles before then. The codemods do not rename tokens yet; the `tokens` section of their rename map lists the same replacements as below.
+Every token is a custom property with the `--env-` prefix in 1.0, and colors are named by semantic role, `--env-color-{bg|fg|border}-{role}[-{emphasis}][-{state}]` (see [colors](foundations/colors.md)). The 0.7 alias tokens are removed, each for the token that replaces it; a few names change beyond the prefix, such as the Material corner scale, which is the radius scale now; and the unused ones and the state values that the hover and pressed color tokens replace are removed. `v1-classes` rewrites every name below in style sheets and scripts, including a style sheet that themes envUI by setting a token, which then sets the new name. Check a renamed declaration of an application property that happens to share an old token's name, such as `--space-4`. The `tokens` section of the codemods' rename map lists the same entries.
+
+envUI's style sheet now puts every rule in a cascade layer of `env` (`env.reset`, `env.tokens`, `env.base`, `env.components` and `env.utilities`), so an application's CSS outside cascade layers overrides it whatever its specificity: a selector or `!important` that only out-weighed envUI's rules can go. An application's own cascade layers win over envUI's when they are declared after `env`; declare the order first, as `@layer env, app;`, when another library's layers come before envUI's style sheet.
 
 <!-- token-migration:start: npm run tokens:build writes this list from packages/ui/src/generated/token-migration.json. Change the tokens, not the list. -->
 
+Renamed beyond the prefix:
+
+| Before 1.0                          | 1.0                                          | Note                                                                                                   |
+| ----------------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `--app-sticky-top`                  | `--env-app-sticky-top`                       | The offset sticky content takes below the app shell's top bar, which AppShell sets.                    |
+| `--avatar-group-ring`               | `--env-avatar-group-ring`                    | The ring color an application sets for an avatar group on a fill that is not an envUI surface.         |
+| `--color-bg-page-muted`             | `--env-color-bg-inset`                       | Named for its role: a background that leans back toward the page inside a fill.                        |
+| `--color-border-accent`             | `--env-color-border-accent-emphasis`         | The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge. |
+| `--color-border-accent-emphasis`    | `--env-color-border-accent`                  | The translucent edge is the tone’s plain border now, between its muted edge and its solid emphasis.    |
+| `--color-border-accent-hover`       | `--env-color-border-accent-emphasis-hover`   | The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge. |
+| `--color-border-accent-pressed`     | `--env-color-border-accent-emphasis-pressed` | The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge. |
+| `--color-border-danger`             | `--env-color-border-danger-emphasis`         | The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge. |
+| `--color-border-danger-emphasis`    | `--env-color-border-danger`                  | The translucent edge is the tone’s plain border now, between its muted edge and its solid emphasis.    |
+| `--color-border-danger-hover`       | `--env-color-border-danger-emphasis-hover`   | The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge. |
+| `--color-border-danger-pressed`     | `--env-color-border-danger-emphasis-pressed` | The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge. |
+| `--color-border-done-emphasis`      | `--env-color-border-done`                    | The translucent edge is the tone’s plain border now, between its muted edge and its solid emphasis.    |
+| `--color-border-neutral-emphasis`   | `--env-color-border-neutral`                 | The translucent edge is the tone’s plain border now, between its muted edge and its solid emphasis.    |
+| `--color-border-success-emphasis`   | `--env-color-border-success`                 | The translucent edge is the tone’s plain border now, between its muted edge and its solid emphasis.    |
+| `--color-border-translucent`        | `--env-color-border-media`                   | Named for its role: the inner edge of content of any color, such as images and color areas.            |
+| `--color-border-warning-emphasis`   | `--env-color-border-warning`                 | The translucent edge is the tone’s plain border now, between its muted edge and its solid emphasis.    |
+| `--font-family-code`                | `--env-code-font-family`                     |                                                                                                        |
+| `--font-size-code`                  | `--env-code-font-size`                       |                                                                                                        |
+| `--line-height-body`                | `--env-line-height-body`                     | The body line height an application may set; envUI reads it with a fallback of 1.4.                    |
+| `--md-sys-shape-corner-extra-large` | `--env-radius-xl`                            | The Material corner scale is the radius scale now.                                                     |
+| `--md-sys-shape-corner-extra-small` | `--env-radius-xs`                            | The Material corner scale is the radius scale now.                                                     |
+| `--md-sys-shape-corner-full`        | `--env-radius-full`                          | The Material corner scale is the radius scale now.                                                     |
+| `--md-sys-shape-corner-large`       | `--env-radius-lg`                            | The Material corner scale is the radius scale now.                                                     |
+| `--md-sys-shape-corner-medium`      | `--env-radius-md`                            | The Material corner scale is the radius scale now.                                                     |
+| `--md-sys-shape-corner-none`        | `--env-radius-none`                          | The Material corner scale is the radius scale now.                                                     |
+| `--md-sys-shape-corner-small`       | `--env-radius-sm`                            | The Material corner scale is the radius scale now.                                                     |
+| `--radius-large`                    | `--env-radius-lg`                            | One radius scale: the large corner is its lg step.                                                     |
+| `--radius-standard`                 | `--env-radius-sm`                            | One radius scale: the standard corner is its sm step.                                                  |
+| `--viewport-gutter`                 | `--env-viewport-gutter`                      |                                                                                                        |
+
+The 0.7 aliases, removed, each with the token that replaces it:
+
+| 0.7 custom property                     | 1.0                                       | Used for                           |
+| --------------------------------------- | ----------------------------------------- | ---------------------------------- |
+| `--color-accent`                        | `--env-color-bg-important-strong`         | Important buttons                  |
+| `--color-accent-hover`                  | `--env-color-bg-important-strong-hover`   | Important buttons                  |
+| `--color-accent-pressed`                | `--env-color-bg-important-strong-pressed` | Important buttons                  |
+| `--color-action-strip`                  | `--env-color-bg-default`                  | The action strip of a card         |
+| `--color-avatar`                        | `--env-color-avatar-bg`                   | Avatars                            |
+| `--color-avatar-figure`                 | `--env-color-avatar-figure`               | Avatars                            |
+| `--color-border-hover`                  | `--env-color-border-muted-hover`          |                                    |
+| `--color-border-strong`                 | `--env-color-border-muted`                |                                    |
+| `--color-calendar-selected`             | `--env-color-bg-brand-emphasis`           | Calendars                          |
+| `--color-calendar-today`                | `--env-color-border-accent-emphasis`      | Calendars                          |
+| `--color-canvas`                        | `--env-color-bg-page`                     |                                    |
+| `--color-checkbox`                      | `--env-color-bg-brand-emphasis`           | Checkboxes                         |
+| `--color-checkbox-border`               | `--env-color-fg-muted`                    | Checkboxes                         |
+| `--color-checkbox-hover`                | `--env-color-bg-brand-emphasis-hover`     | Checkboxes                         |
+| `--color-checkbox-pressed`              | `--env-color-bg-brand-emphasis-pressed`   | Checkboxes                         |
+| `--color-checkbox-ring-hover`           | `--env-color-fg-muted-hover`              | Checkboxes                         |
+| `--color-checkbox-ring-pressed`         | `--env-color-fg-muted-pressed`            | Checkboxes                         |
+| `--color-checkbox-text`                 | `--env-color-fg-default`                  | Checkboxes                         |
+| `--color-chip`                          | `--env-color-bg-neutral-muted`            | Chips                              |
+| `--color-chip-text`                     | `--env-color-fg-accent`                   | Chips                              |
+| `--color-control-blue`                  | `--env-color-bg-brand-emphasis`           | Spinners, sliders and meters       |
+| `--color-destructive-action`            | `--env-color-bg-danger-strong`            | Destructive buttons                |
+| `--color-destructive-action-hover`      | `--env-color-bg-danger-strong-hover`      | Destructive buttons                |
+| `--color-destructive-action-pressed`    | `--env-color-bg-danger-strong-pressed`    | Destructive buttons                |
+| `--color-dialog`                        | `--env-color-bg-raised`                   |                                    |
+| `--color-dialog-overlay`                | `--env-color-bg-overlay`                  |                                    |
+| `--color-direction-link`                | `--env-color-bg-raised`                   | Pager links                        |
+| `--color-direction-link-border`         | `--env-color-border-muted`                | Pager links                        |
+| `--color-direction-link-border-hover`   | `--env-color-border-muted-hover`          | Pager links                        |
+| `--color-direction-link-border-pressed` | `--env-color-border-muted-pressed`        | Pager links                        |
+| `--color-direction-link-icon`           | `--env-color-fg-accent`                   | Pager links                        |
+| `--color-direction-link-label`          | `--env-color-fg-muted`                    | Pager links                        |
+| `--color-direction-link-text`           | `--env-color-fg-default`                  | Pager links                        |
+| `--color-disabled-text`                 | `--env-color-fg-muted`                    |                                    |
+| `--color-disclosure-text`               | `--env-color-fg-muted`                    | Disclosure summaries               |
+| `--color-field`                         | `--env-color-bg-field`                    |                                    |
+| `--color-field-active`                  | `--env-color-border-accent-emphasis`      | Fields                             |
+| `--color-field-border`                  | `--env-color-border-default`              | Fields                             |
+| `--color-field-error`                   | `--env-color-fg-danger`                   | Fields                             |
+| `--color-field-hint`                    | `--env-color-fg-muted`                    | Fields                             |
+| `--color-field-label`                   | `--env-color-fg-muted`                    | Fields                             |
+| `--color-field-placeholder`             | `--env-color-fg-muted`                    | Fields                             |
+| `--color-field-text`                    | `--env-color-fg-default`                  | Fields                             |
+| `--color-fill`                          | `--env-color-bg-neutral-muted`            |                                    |
+| `--color-focus-ring`                    | `--env-color-border-focus`                |                                    |
+| `--color-icon`                          | `--env-color-fg-muted`                    |                                    |
+| `--color-link`                          | `--env-color-fg-link`                     |                                    |
+| `--color-link-hover`                    | `--env-color-fg-link-hover`               |                                    |
+| `--color-link-pressed`                  | `--env-color-fg-link-pressed`             |                                    |
+| `--color-markdown-border`               | `--env-color-border-muted`                | Markdown                           |
+| `--color-menu-row`                      | `--env-color-bg-popup`                    | Menu rows                          |
+| `--color-navigation-hover`              | `--env-color-bg-selected-hover`           | Navigation items                   |
+| `--color-navigation-icon`               | `--env-color-fg-muted`                    | Navigation items                   |
+| `--color-navigation-pressed`            | `--env-color-bg-selected-pressed`         | Navigation items                   |
+| `--color-navigation-quiet`              | `--env-color-list-item-bg`                | Navigation items                   |
+| `--color-navigation-quiet-hover`        | `--env-color-bg-navigation-hover`         | Navigation items                   |
+| `--color-navigation-quiet-pressed`      | `--env-color-bg-navigation-pressed`       | Navigation items                   |
+| `--color-navigation-selected`           | `--env-color-bg-selected`                 | Navigation items                   |
+| `--color-navigation-text`               | `--env-color-fg-control`                  | Navigation items                   |
+| `--color-on-accent`                     | `--env-color-fg-on-strong`                | Important buttons                  |
+| `--color-on-avatar`                     | `--env-color-avatar-fg`                   | Avatars                            |
+| `--color-on-calendar-selected`          | `--env-color-fg-on-emphasis`              | Calendars                          |
+| `--color-on-checkbox`                   | `--env-color-fg-on-emphasis`              | Checkboxes                         |
+| `--color-on-destructive-action`         | `--env-color-fg-on-strong`                | Destructive buttons                |
+| `--color-on-navigation-selected`        | `--env-color-fg-on-selected`              | Navigation items                   |
+| `--color-on-primary-action`             | `--env-color-fg-on-emphasis`              | Primary buttons                    |
+| `--color-on-secondary-action`           | `--env-color-fg-control`                  | Secondary buttons                  |
+| `--color-on-select-selected`            | `--env-color-fg-on-selected`              | Select options                     |
+| `--color-on-subtle-action`              | `--env-color-fg-accent`                   | Outlined buttons                   |
+| `--color-on-toast`                      | `--env-color-fg-on-strong`                | Toasts and tooltips                |
+| `--color-on-tone`                       | `--env-color-fg-on-emphasis`              |                                    |
+| `--color-outlined-focus`                | `--env-color-border-focus`                | Outlined buttons                   |
+| `--color-pane`                          | `--env-color-bg-default`                  |                                    |
+| `--color-popup`                         | `--env-color-bg-popup`                    |                                    |
+| `--color-popup-border`                  | `--env-elevation-2-border`                | Popups                             |
+| `--color-primary-action`                | `--env-color-bg-brand-emphasis`           | Primary buttons                    |
+| `--color-primary-action-hover`          | `--env-color-bg-brand-emphasis-hover`     | Primary buttons                    |
+| `--color-primary-action-pressed`        | `--env-color-bg-brand-emphasis-pressed`   | Primary buttons                    |
+| `--color-quiet-label-hover`             | `--env-color-fg-muted-hover`              | Disclosure summaries               |
+| `--color-quiet-label-pressed`           | `--env-color-fg-muted-pressed`            | Disclosure summaries               |
+| `--color-radio`                         | `--env-color-bg-brand-emphasis`           | Radios                             |
+| `--color-radio-detail`                  | `--env-color-fg-muted`                    | Radios                             |
+| `--color-radio-hover`                   | `--env-color-bg-brand-emphasis-hover`     | Radios                             |
+| `--color-radio-pressed`                 | `--env-color-bg-brand-emphasis-pressed`   | Radios                             |
+| `--color-radio-row`                     | `--env-color-bg-muted`                    | Radio rows                         |
+| `--color-radio-row-hover`               | `--env-color-bg-muted-hover`              | Radio rows                         |
+| `--color-radio-row-pressed`             | `--env-color-bg-muted-pressed`            | Radio rows                         |
+| `--color-radio-text`                    | `--env-color-fg-default`                  | Radios                             |
+| `--color-row`                           | `--env-color-list-item-bg`                | List rows                          |
+| `--color-row-alternate`                 | `--env-color-bg-raised`                   | List rows on a contrasting surface |
+| `--color-row-detail`                    | `--env-color-fg-muted`                    | List rows                          |
+| `--color-row-hover`                     | `--env-color-list-item-bg-hover`          | List rows                          |
+| `--color-row-pressed`                   | `--env-color-list-item-bg-pressed`        | List rows                          |
+| `--color-row-selected-hover`            | `--env-color-bg-selected-hover`           | Tree and table rows                |
+| `--color-row-selected-pressed`          | `--env-color-bg-selected-pressed`         | Tree and table rows                |
+| `--color-row-text`                      | `--env-color-fg-default`                  | List rows                          |
+| `--color-secondary-action`              | `--env-color-bg-neutral-muted`            | Secondary buttons                  |
+| `--color-secondary-action-hover`        | `--env-color-bg-neutral-muted-hover`      | Secondary buttons                  |
+| `--color-secondary-action-pressed`      | `--env-color-bg-neutral-muted-pressed`    | Secondary buttons                  |
+| `--color-select-option`                 | `--env-color-bg-popup`                    | Select options                     |
+| `--color-select-option-hover`           | `--env-color-bg-popup-hover`              | Select options                     |
+| `--color-select-option-pressed`         | `--env-color-bg-popup-pressed`            | Select options                     |
+| `--color-select-option-text`            | `--env-color-fg-control`                  | Select options                     |
+| `--color-select-selected`               | `--env-color-bg-selected`                 | Select options                     |
+| `--color-select-selected-hover`         | `--env-color-bg-selected-hover`           | Select options                     |
+| `--color-select-selected-pressed`       | `--env-color-bg-selected-pressed`         | Select options                     |
+| `--color-skeleton-base`                 | `--env-color-bg-neutral-muted`            | Skeletons                          |
+| `--color-skeleton-highlight`            | `--env-color-bg-neutral-muted-hover`      | Skeletons                          |
+| `--color-state-layer`                   | `--env-color-fg-default`                  |                                    |
+| `--color-state-layer-hover`             | `--env-color-bg-neutral-subtle-hover`     |                                    |
+| `--color-state-layer-pressed`           | `--env-color-bg-neutral-subtle-pressed`   |                                    |
+| `--color-subtle-action`                 | `--env-color-bg-raised`                   | Outlined buttons                   |
+| `--color-subtle-action-border`          | `--env-color-border-default`              | Outlined buttons                   |
+| `--color-subtle-action-border-hover`    | `--env-color-border-default-hover`        | Outlined buttons                   |
+| `--color-subtle-action-border-pressed`  | `--env-color-border-default-pressed`      | Outlined buttons                   |
+| `--color-subtle-action-hover`           | `--env-color-bg-raised-hover`             | Outlined buttons                   |
+| `--color-subtle-action-pressed`         | `--env-color-bg-raised-pressed`           | Outlined buttons                   |
+| `--color-surface`                       | `--env-color-bg-raised`                   |                                    |
+| `--color-surface-muted`                 | `--env-color-bg-muted`                    |                                    |
+| `--color-switch-off`                    | `--env-color-bg-neutral-muted`            | Switches                           |
+| `--color-switch-off-hover`              | `--env-color-bg-neutral-muted-hover`      | Switches                           |
+| `--color-switch-off-pressed`            | `--env-color-bg-neutral-muted-pressed`    | Switches                           |
+| `--color-switch-on`                     | `--env-color-bg-brand-emphasis`           | Switches                           |
+| `--color-switch-on-hover`               | `--env-color-bg-brand-emphasis-hover`     | Switches                           |
+| `--color-switch-on-pressed`             | `--env-color-bg-brand-emphasis-pressed`   | Switches                           |
+| `--color-switch-text`                   | `--env-color-fg-default`                  | Switches                           |
+| `--color-switch-thumb`                  | `--env-color-fg-control`                  | Switches                           |
+| `--color-switch-thumb-on`               | `--env-color-fg-on-emphasis`              | Switches                           |
+| `--color-text-muted`                    | `--env-color-fg-muted`                    |                                    |
+| `--color-text-primary`                  | `--env-color-fg-default`                  |                                    |
+| `--color-text-quiet`                    | `--env-color-fg-muted`                    |                                    |
+| `--color-text-strong`                   | `--env-color-fg-control`                  |                                    |
+| `--color-toast-error`                   | `--env-color-bg-danger-strong`            | Toasts                             |
+| `--color-toast-info`                    | `--env-color-bg-info-strong`              | Toasts                             |
+| `--color-toast-neutral`                 | `--env-color-bg-neutral-strong`           | Toasts and tooltips                |
+| `--color-toast-success`                 | `--env-color-bg-success-strong`           | Toasts                             |
+| `--color-tone-accent`                   | `--env-color-fg-accent`                   |                                    |
+| `--color-tone-danger`                   | `--env-color-fg-danger`                   |                                    |
+| `--color-tone-done`                     | `--env-color-fg-done`                     |                                    |
+| `--color-tone-neutral`                  | `--env-color-fg-muted`                    |                                    |
+| `--color-tone-success`                  | `--env-color-fg-success`                  |                                    |
+| `--color-tone-warning`                  | `--env-color-fg-warning`                  |                                    |
+
+Aliases whose replacement is not the 0.7 role, or whose value changed, so a style that relied on them needs a look:
+
+| 0.7 custom property         | 1.0                                     | What changed                                                                                                                                                                                                                                                                                                                       |
+| --------------------------- | --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--color-avatar`            | `--env-color-avatar-bg`                 | A component token now.                                                                                                                                                                                                                                                                                                             |
+| `--color-avatar-figure`     | `--env-color-avatar-figure`             | A component token now.                                                                                                                                                                                                                                                                                                             |
+| `--color-checkbox`          | `--env-color-bg-brand-emphasis`         | Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now.                                                                                                                                                                                                                        |
+| `--color-checkbox-hover`    | `--env-color-bg-brand-emphasis-hover`   | Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now.                                                                                                                                                                                                                        |
+| `--color-checkbox-pressed`  | `--env-color-bg-brand-emphasis-pressed` | Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now.                                                                                                                                                                                                                        |
+| `--color-control-blue`      | `--env-color-bg-brand-emphasis`         | Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now.                                                                                                                                                                                                                        |
+| `--color-dialog-overlay`    | `--env-color-bg-overlay`                | 0.7's was opaque, #1f1f1f (hsl(0 0% 12.157%) in both themes), and the dialog backdrop made it 55% opaque with --state-dialog-overlay-opacity, which is removed. The role is the scrim itself, 55% opaque: paint it as it is, since a style that applies its own opacity now applies it twice. For the opaque color, write #1f1f1f. |
+| `--color-navigation-quiet`  | `--env-color-list-item-bg`              | The quiet navigation item’s rest, which envUI no longer reads; list items have the same fill.                                                                                                                                                                                                                                      |
+| `--color-on-avatar`         | `--env-color-avatar-fg`                 | A component token now.                                                                                                                                                                                                                                                                                                             |
+| `--color-on-checkbox`       | `--env-color-fg-on-emphasis`            | Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now.                                                                                                                                                                                                                        |
+| `--color-row`               | `--env-color-list-item-bg`              | A component token: the default surface in light, the muted one in dark.                                                                                                                                                                                                                                                            |
+| `--color-row-hover`         | `--env-color-list-item-bg-hover`        | A component token: the default surface in light, the muted one in dark.                                                                                                                                                                                                                                                            |
+| `--color-row-pressed`       | `--env-color-list-item-bg-pressed`      | A component token: the default surface in light, the muted one in dark.                                                                                                                                                                                                                                                            |
+| `--color-switch-on`         | `--env-color-bg-brand-emphasis`         | Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now.                                                                                                                                                                                                                        |
+| `--color-switch-on-hover`   | `--env-color-bg-brand-emphasis-hover`   | Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now.                                                                                                                                                                                                                        |
+| `--color-switch-on-pressed` | `--env-color-bg-brand-emphasis-pressed` | Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now.                                                                                                                                                                                                                        |
+| `--color-switch-thumb-on`   | `--env-color-fg-on-emphasis`            | Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now.                                                                                                                                                                                                                        |
+
+Fixed colors, which no token replaces: write the value, or a custom property of your own that holds it.
+
+| 0.7 custom property   | Used for              | Value     |
+| --------------------- | --------------------- | --------- |
+| `--color-canvas-dark` | Fixed dark page color | `#1e1f21` |
+| `--color-white`       | Fixed white           | `#ffffff` |
+
 Removed, with what to use instead:
 
-| 0.7 custom property                   | Use instead                         | Note                                                                                                        |
-| ------------------------------------- | ----------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `--color-border-pressed`              | `--color-border-muted-pressed`      | Unused.                                                                                                     |
-| `--color-control-blue-hover`          | `--color-bg-brand-strong-hover`     | Unused.                                                                                                     |
-| `--color-control-blue-pressed`        | `--color-bg-brand-strong-pressed`   | Unused.                                                                                                     |
-| `--color-control-text`                | `--color-fg-control`                | Unused synonym.                                                                                             |
-| `--color-fill-hover`                  | `--color-bg-neutral-muted-hover`    | Unused.                                                                                                     |
-| `--color-fill-pressed`                | `--color-bg-neutral-muted-pressed`  | Unused.                                                                                                     |
-| `--color-neutral-fill`                | `--color-bg-neutral-strong`         | Unused.                                                                                                     |
-| `--color-surface-base`                | `--color-bg-raised`                 | Unused.                                                                                                     |
-| `--color-surface-raised`              | `--color-bg-raised`                 | Unused.                                                                                                     |
-| `--color-text-subtle`                 | `--color-fg-muted`                  | Unused synonym.                                                                                             |
-| `--control-height-compact`            | `--control-height-sm`               | The small control height. For a compact app or region, set scale="compact" on its Theme instead.            |
-| `--control-height-small`              | `--control-height`                  | It always equalled --control-height, which every control reads now.                                         |
-| `--icon-button-size`                  | `--control-height`                  | An icon button is as tall as the other controls of its size.                                                |
-| `--member-identity-avatar-size`       | —                                   | Unused.                                                                                                     |
-| `--member-identity-copy-height`       | —                                   | Unused.                                                                                                     |
-| `--member-identity-email-line-height` | —                                   | Unused.                                                                                                     |
-| `--member-identity-email-size`        | —                                   | Unused.                                                                                                     |
-| `--member-identity-gap`               | —                                   | Unused.                                                                                                     |
-| `--member-identity-name-line-height`  | —                                   | Unused.                                                                                                     |
-| `--member-identity-name-size`         | —                                   | Unused.                                                                                                     |
-| `--scale`                             | —                                   | The multiplier is gone: components read sized tokens. Set scale="compact" on a Theme for the compact scale. |
-| `--state-card-strip-weight`           | —                                   | Unused.                                                                                                     |
-| `--state-dialog-overlay-opacity`      | `--color-bg-overlay`                | The scrim is a translucent color token now.                                                                 |
-| `--state-fill-hover-opacity`          | `--color-bg-neutral-muted-hover`    | The fill's states are color tokens now.                                                                     |
-| `--state-fill-opacity`                | `--color-bg-neutral-muted`          | The neutral fill is a translucent color token; layer it over a surface rather than mixing.                  |
-| `--state-fill-pressed-opacity`        | `--color-bg-neutral-muted-pressed`  | The fill's states are color tokens now.                                                                     |
-| `--state-hover-lightness`             | —                                   | The runtime hover rule is gone: use the role's -hover token.                                                |
-| `--state-hover-shift`                 | —                                   | The runtime hover rule is gone.                                                                             |
-| `--state-layer-hover-opacity`         | `--color-bg-neutral-subtle-hover`   | The state layer is a color token now.                                                                       |
-| `--state-layer-pressed-opacity`       | `--color-bg-neutral-subtle-pressed` | The state layer is a color token now.                                                                       |
-| `--state-lightness-direction`         | —                                   | The runtime hover rule is gone: every role has hover and pressed tokens.                                    |
-| `--state-lightness-threshold`         | —                                   | The runtime hover rule is gone.                                                                             |
-| `--state-pressed-lightness`           | —                                   | The runtime hover rule is gone: use the role's -pressed token.                                              |
-| `--state-pressed-shift`               | —                                   | The runtime hover rule is gone.                                                                             |
-| `--state-selected-base-weight`        | —                                   | Unused.                                                                                                     |
-| `--state-surface-hover-lightness`     | —                                   | The runtime hover rule is gone: use the surface's -hover token.                                             |
-| `--state-surface-hover-shift`         | —                                   | The runtime hover rule is gone.                                                                             |
-| `--state-surface-pressed-lightness`   | —                                   | The runtime hover rule is gone: use the surface's -pressed token.                                           |
-| `--state-surface-pressed-shift`       | —                                   | The runtime hover rule is gone.                                                                             |
-| `--state-tone-subtle-opacity`         | —                                   | Each tone has its tint as a color token: color.bg.{tone}.muted.                                             |
+| 0.7 custom property                   | Use instead                             | Note                                                                                                        |
+| ------------------------------------- | --------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `--color-border-pressed`              | `--env-color-border-muted-pressed`      | Unused.                                                                                                     |
+| `--color-control-blue-hover`          | `--env-color-bg-brand-strong-hover`     | Unused.                                                                                                     |
+| `--color-control-blue-pressed`        | `--env-color-bg-brand-strong-pressed`   | Unused.                                                                                                     |
+| `--color-control-text`                | `--env-color-fg-control`                | Unused synonym.                                                                                             |
+| `--color-fill-hover`                  | `--env-color-bg-neutral-muted-hover`    | Unused.                                                                                                     |
+| `--color-fill-pressed`                | `--env-color-bg-neutral-muted-pressed`  | Unused.                                                                                                     |
+| `--color-neutral-fill`                | `--env-color-bg-neutral-strong`         | Unused.                                                                                                     |
+| `--color-surface-base`                | `--env-color-bg-raised`                 | Unused.                                                                                                     |
+| `--color-surface-raised`              | `--env-color-bg-raised`                 | Unused.                                                                                                     |
+| `--color-text-subtle`                 | `--env-color-fg-muted`                  | Unused synonym.                                                                                             |
+| `--control-height-compact`            | `--env-control-height-sm`               | The small control height. For a compact app or region, set scale="compact" on its Theme instead.            |
+| `--control-height-small`              | `--env-control-height`                  | It always equalled --control-height, which every control reads now.                                         |
+| `--icon-button-size`                  | `--env-control-height`                  | An icon button is as tall as the other controls of its size.                                                |
+| `--member-identity-avatar-size`       | —                                       | Unused.                                                                                                     |
+| `--member-identity-copy-height`       | —                                       | Unused.                                                                                                     |
+| `--member-identity-email-line-height` | —                                       | Unused.                                                                                                     |
+| `--member-identity-email-size`        | —                                       | Unused.                                                                                                     |
+| `--member-identity-gap`               | —                                       | Unused.                                                                                                     |
+| `--member-identity-name-line-height`  | —                                       | Unused.                                                                                                     |
+| `--member-identity-name-size`         | —                                       | Unused.                                                                                                     |
+| `--scale`                             | —                                       | The multiplier is gone: components read sized tokens. Set scale="compact" on a Theme for the compact scale. |
+| `--state-card-strip-weight`           | —                                       | Unused.                                                                                                     |
+| `--state-dialog-overlay-opacity`      | `--env-color-bg-overlay`                | The scrim is a translucent color token now.                                                                 |
+| `--state-fill-hover-opacity`          | `--env-color-bg-neutral-muted-hover`    | The fill's states are color tokens now.                                                                     |
+| `--state-fill-opacity`                | `--env-color-bg-neutral-muted`          | The neutral fill is a translucent color token; layer it over a surface rather than mixing.                  |
+| `--state-fill-pressed-opacity`        | `--env-color-bg-neutral-muted-pressed`  | The fill's states are color tokens now.                                                                     |
+| `--state-hover-lightness`             | —                                       | The runtime hover rule is gone: use the role's -hover token.                                                |
+| `--state-hover-shift`                 | —                                       | The runtime hover rule is gone.                                                                             |
+| `--state-layer-hover-opacity`         | `--env-color-bg-neutral-subtle-hover`   | The state layer is a color token now.                                                                       |
+| `--state-layer-pressed-opacity`       | `--env-color-bg-neutral-subtle-pressed` | The state layer is a color token now.                                                                       |
+| `--state-lightness-direction`         | —                                       | The runtime hover rule is gone: every role has hover and pressed tokens.                                    |
+| `--state-lightness-threshold`         | —                                       | The runtime hover rule is gone.                                                                             |
+| `--state-pressed-lightness`           | —                                       | The runtime hover rule is gone: use the role's -pressed token.                                              |
+| `--state-pressed-shift`               | —                                       | The runtime hover rule is gone.                                                                             |
+| `--state-selected-base-weight`        | —                                       | Unused.                                                                                                     |
+| `--state-surface-hover-lightness`     | —                                       | The runtime hover rule is gone: use the surface's -hover token.                                             |
+| `--state-surface-hover-shift`         | —                                       | The runtime hover rule is gone.                                                                             |
+| `--state-surface-pressed-lightness`   | —                                       | The runtime hover rule is gone: use the surface's -pressed token.                                           |
+| `--state-surface-pressed-shift`       | —                                       | The runtime hover rule is gone.                                                                             |
+| `--state-tone-subtle-opacity`         | —                                       | Each tone has its tint as a color token: color.bg.{tone}.muted.                                             |
 
-Aliases of one role, which replaces them:
-
-| 0.7 custom property                     | Role                                  | Used for                           |
-| --------------------------------------- | ------------------------------------- | ---------------------------------- |
-| `--color-accent`                        | `--color-bg-important-strong`         | Important buttons                  |
-| `--color-accent-hover`                  | `--color-bg-important-strong-hover`   | Important buttons                  |
-| `--color-accent-pressed`                | `--color-bg-important-strong-pressed` | Important buttons                  |
-| `--color-action-strip`                  | `--color-bg-default`                  | The action strip of a card         |
-| `--color-border-hover`                  | `--color-border-muted-hover`          |                                    |
-| `--color-border-strong`                 | `--color-border-muted`                |                                    |
-| `--color-calendar-selected`             | `--color-bg-brand-emphasis`           | Calendars                          |
-| `--color-calendar-today`                | `--color-border-accent`               | Calendars                          |
-| `--color-canvas`                        | `--color-bg-page`                     |                                    |
-| `--color-checkbox-border`               | `--color-fg-muted`                    | Checkboxes                         |
-| `--color-checkbox-ring-hover`           | `--color-fg-muted-hover`              | Checkboxes                         |
-| `--color-checkbox-ring-pressed`         | `--color-fg-muted-pressed`            | Checkboxes                         |
-| `--color-checkbox-text`                 | `--color-fg-default`                  | Checkboxes                         |
-| `--color-chip`                          | `--color-bg-neutral-muted`            | Chips                              |
-| `--color-chip-text`                     | `--color-fg-accent`                   | Chips                              |
-| `--color-destructive-action`            | `--color-bg-danger-strong`            | Destructive buttons                |
-| `--color-destructive-action-hover`      | `--color-bg-danger-strong-hover`      | Destructive buttons                |
-| `--color-destructive-action-pressed`    | `--color-bg-danger-strong-pressed`    | Destructive buttons                |
-| `--color-dialog`                        | `--color-bg-raised`                   |                                    |
-| `--color-dialog-overlay`                | `--color-bg-overlay`                  |                                    |
-| `--color-direction-link`                | `--color-bg-raised`                   | Pager links                        |
-| `--color-direction-link-border`         | `--color-border-muted`                | Pager links                        |
-| `--color-direction-link-border-hover`   | `--color-border-muted-hover`          | Pager links                        |
-| `--color-direction-link-border-pressed` | `--color-border-muted-pressed`        | Pager links                        |
-| `--color-direction-link-icon`           | `--color-fg-accent`                   | Pager links                        |
-| `--color-direction-link-label`          | `--color-fg-muted`                    | Pager links                        |
-| `--color-direction-link-text`           | `--color-fg-default`                  | Pager links                        |
-| `--color-disabled-text`                 | `--color-fg-muted`                    |                                    |
-| `--color-disclosure-text`               | `--color-fg-muted`                    | Disclosure summaries               |
-| `--color-field`                         | `--color-bg-field`                    |                                    |
-| `--color-field-active`                  | `--color-border-accent`               | Fields                             |
-| `--color-field-border`                  | `--color-border-default`              | Fields                             |
-| `--color-field-error`                   | `--color-fg-danger`                   | Fields                             |
-| `--color-field-hint`                    | `--color-fg-muted`                    | Fields                             |
-| `--color-field-label`                   | `--color-fg-muted`                    | Fields                             |
-| `--color-field-placeholder`             | `--color-fg-muted`                    | Fields                             |
-| `--color-field-text`                    | `--color-fg-default`                  | Fields                             |
-| `--color-fill`                          | `--color-bg-neutral-muted`            |                                    |
-| `--color-focus-ring`                    | `--color-border-focus`                |                                    |
-| `--color-icon`                          | `--color-fg-muted`                    |                                    |
-| `--color-link`                          | `--color-fg-link`                     |                                    |
-| `--color-link-hover`                    | `--color-fg-link-hover`               |                                    |
-| `--color-link-pressed`                  | `--color-fg-link-pressed`             |                                    |
-| `--color-markdown-border`               | `--color-border-muted`                | Markdown                           |
-| `--color-menu-row`                      | `--color-bg-popup`                    | Menu rows                          |
-| `--color-navigation-hover`              | `--color-bg-selected-hover`           | Navigation items                   |
-| `--color-navigation-icon`               | `--color-fg-muted`                    | Navigation items                   |
-| `--color-navigation-pressed`            | `--color-bg-selected-pressed`         | Navigation items                   |
-| `--color-navigation-quiet-hover`        | `--color-bg-navigation-hover`         | Navigation items                   |
-| `--color-navigation-quiet-pressed`      | `--color-bg-navigation-pressed`       | Navigation items                   |
-| `--color-navigation-selected`           | `--color-bg-selected`                 | Navigation items                   |
-| `--color-navigation-text`               | `--color-fg-control`                  | Navigation items                   |
-| `--color-on-accent`                     | `--color-fg-on-strong`                | Important buttons                  |
-| `--color-on-calendar-selected`          | `--color-fg-on-emphasis`              | Calendars                          |
-| `--color-on-destructive-action`         | `--color-fg-on-strong`                | Destructive buttons                |
-| `--color-on-navigation-selected`        | `--color-fg-on-selected`              | Navigation items                   |
-| `--color-on-primary-action`             | `--color-fg-on-emphasis`              | Primary buttons                    |
-| `--color-on-secondary-action`           | `--color-fg-control`                  | Secondary buttons                  |
-| `--color-on-select-selected`            | `--color-fg-on-selected`              | Select options                     |
-| `--color-on-subtle-action`              | `--color-fg-accent`                   | Outlined buttons                   |
-| `--color-on-toast`                      | `--color-fg-on-strong`                | Toasts and tooltips                |
-| `--color-on-tone`                       | `--color-fg-on-emphasis`              |                                    |
-| `--color-outlined-focus`                | `--color-border-focus`                | Outlined buttons                   |
-| `--color-pane`                          | `--color-bg-default`                  |                                    |
-| `--color-popup`                         | `--color-bg-popup`                    |                                    |
-| `--color-popup-border`                  | `--elevation-2-border`                | Popups                             |
-| `--color-primary-action`                | `--color-bg-brand-emphasis`           | Primary buttons                    |
-| `--color-primary-action-hover`          | `--color-bg-brand-emphasis-hover`     | Primary buttons                    |
-| `--color-primary-action-pressed`        | `--color-bg-brand-emphasis-pressed`   | Primary buttons                    |
-| `--color-quiet-label-hover`             | `--color-fg-muted-hover`              | Disclosure summaries               |
-| `--color-quiet-label-pressed`           | `--color-fg-muted-pressed`            | Disclosure summaries               |
-| `--color-radio`                         | `--color-bg-brand-emphasis`           | Radios                             |
-| `--color-radio-detail`                  | `--color-fg-muted`                    | Radios                             |
-| `--color-radio-hover`                   | `--color-bg-brand-emphasis-hover`     | Radios                             |
-| `--color-radio-pressed`                 | `--color-bg-brand-emphasis-pressed`   | Radios                             |
-| `--color-radio-row`                     | `--color-bg-muted`                    | Radio rows                         |
-| `--color-radio-row-hover`               | `--color-bg-muted-hover`              | Radio rows                         |
-| `--color-radio-row-pressed`             | `--color-bg-muted-pressed`            | Radio rows                         |
-| `--color-radio-text`                    | `--color-fg-default`                  | Radios                             |
-| `--color-row-alternate`                 | `--color-bg-raised`                   | List rows on a contrasting surface |
-| `--color-row-detail`                    | `--color-fg-muted`                    | List rows                          |
-| `--color-row-selected-hover`            | `--color-bg-selected-hover`           | Tree and table rows                |
-| `--color-row-selected-pressed`          | `--color-bg-selected-pressed`         | Tree and table rows                |
-| `--color-row-text`                      | `--color-fg-default`                  | List rows                          |
-| `--color-secondary-action`              | `--color-bg-neutral-muted`            | Secondary buttons                  |
-| `--color-secondary-action-hover`        | `--color-bg-neutral-muted-hover`      | Secondary buttons                  |
-| `--color-secondary-action-pressed`      | `--color-bg-neutral-muted-pressed`    | Secondary buttons                  |
-| `--color-select-option`                 | `--color-bg-popup`                    | Select options                     |
-| `--color-select-option-hover`           | `--color-bg-popup-hover`              | Select options                     |
-| `--color-select-option-pressed`         | `--color-bg-popup-pressed`            | Select options                     |
-| `--color-select-option-text`            | `--color-fg-control`                  | Select options                     |
-| `--color-select-selected`               | `--color-bg-selected`                 | Select options                     |
-| `--color-select-selected-hover`         | `--color-bg-selected-hover`           | Select options                     |
-| `--color-select-selected-pressed`       | `--color-bg-selected-pressed`         | Select options                     |
-| `--color-skeleton-base`                 | `--color-bg-neutral-muted`            | Skeletons                          |
-| `--color-skeleton-highlight`            | `--color-bg-neutral-muted-hover`      | Skeletons                          |
-| `--color-state-layer`                   | `--color-fg-default`                  |                                    |
-| `--color-state-layer-hover`             | `--color-bg-neutral-subtle-hover`     |                                    |
-| `--color-state-layer-pressed`           | `--color-bg-neutral-subtle-pressed`   |                                    |
-| `--color-subtle-action`                 | `--color-bg-raised`                   | Outlined buttons                   |
-| `--color-subtle-action-border`          | `--color-border-default`              | Outlined buttons                   |
-| `--color-subtle-action-border-hover`    | `--color-border-default-hover`        | Outlined buttons                   |
-| `--color-subtle-action-border-pressed`  | `--color-border-default-pressed`      | Outlined buttons                   |
-| `--color-subtle-action-hover`           | `--color-bg-raised-hover`             | Outlined buttons                   |
-| `--color-subtle-action-pressed`         | `--color-bg-raised-pressed`           | Outlined buttons                   |
-| `--color-surface`                       | `--color-bg-raised`                   |                                    |
-| `--color-surface-muted`                 | `--color-bg-muted`                    |                                    |
-| `--color-switch-off`                    | `--color-bg-neutral-muted`            | Switches                           |
-| `--color-switch-off-hover`              | `--color-bg-neutral-muted-hover`      | Switches                           |
-| `--color-switch-off-pressed`            | `--color-bg-neutral-muted-pressed`    | Switches                           |
-| `--color-switch-text`                   | `--color-fg-default`                  | Switches                           |
-| `--color-switch-thumb`                  | `--color-fg-control`                  | Switches                           |
-| `--color-text-muted`                    | `--color-fg-muted`                    |                                    |
-| `--color-text-primary`                  | `--color-fg-default`                  |                                    |
-| `--color-text-quiet`                    | `--color-fg-muted`                    |                                    |
-| `--color-text-strong`                   | `--color-fg-control`                  |                                    |
-| `--color-toast-error`                   | `--color-bg-danger-strong`            | Toasts                             |
-| `--color-toast-info`                    | `--color-bg-info-strong`              | Toasts                             |
-| `--color-toast-neutral`                 | `--color-bg-neutral-strong`           | Toasts and tooltips                |
-| `--color-toast-success`                 | `--color-bg-success-strong`           | Toasts                             |
-| `--color-tone-accent`                   | `--color-fg-accent`                   |                                    |
-| `--color-tone-danger`                   | `--color-fg-danger`                   |                                    |
-| `--color-tone-done`                     | `--color-fg-done`                     |                                    |
-| `--color-tone-neutral`                  | `--color-fg-muted`                    |                                    |
-| `--color-tone-success`                  | `--color-fg-success`                  |                                    |
-| `--color-tone-warning`                  | `--color-fg-warning`                  |                                    |
-
-Aliases whose value changed, so a style that relied on the 0.7 value needs a look:
-
-| 0.7 custom property      | Role                 | What changed                                                                                                                                                                                                                                                                                                                       |
-| ------------------------ | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--color-dialog-overlay` | `--color-bg-overlay` | 0.7's was opaque, #1f1f1f (hsl(0 0% 12.157%) in both themes), and the dialog backdrop made it 55% opaque with --state-dialog-overlay-opacity, which is removed. The role is the scrim itself, 55% opaque: paint it as it is, since a style that applies its own opacity now applies it twice. For the opaque color, write #1f1f1f. |
-
-Component tokens that take another role in some themes, so no one role replaces them; use the role of each theme:
-
-| 0.7 custom property         | Used for                     | Light                             | Dark                                | Light, high contrast                | Dark, high contrast                 |
-| --------------------------- | ---------------------------- | --------------------------------- | ----------------------------------- | ----------------------------------- | ----------------------------------- |
-| `--color-checkbox`          | Checkboxes                   | `--color-bg-brand-strong`         | `--color-bg-brand-emphasis`         | `--color-bg-brand-emphasis`         | `--color-bg-brand-emphasis`         |
-| `--color-checkbox-hover`    | Checkboxes                   | `--color-bg-brand-strong-hover`   | `--color-bg-brand-emphasis-hover`   | `--color-bg-brand-emphasis-hover`   | `--color-bg-brand-emphasis-hover`   |
-| `--color-checkbox-pressed`  | Checkboxes                   | `--color-bg-brand-strong-pressed` | `--color-bg-brand-emphasis-pressed` | `--color-bg-brand-emphasis-pressed` | `--color-bg-brand-emphasis-pressed` |
-| `--color-control-blue`      | Spinners, sliders and meters | `--color-bg-brand-strong`         | `--color-bg-brand-emphasis`         | `--color-bg-brand-emphasis`         | `--color-bg-brand-emphasis`         |
-| `--color-navigation-quiet`  | Navigation items             | `--color-bg-default`              | `--color-bg-muted`                  | `--color-bg-default`                | `--color-bg-muted`                  |
-| `--color-on-checkbox`       | Checkboxes                   | `--color-fg-on-strong`            | `--color-fg-on-emphasis`            | `--color-fg-on-emphasis`            | `--color-fg-on-emphasis`            |
-| `--color-row`               | List rows                    | `--color-bg-default`              | `--color-bg-muted`                  | `--color-bg-default`                | `--color-bg-muted`                  |
-| `--color-row-hover`         | List rows                    | `--color-bg-default-hover`        | `--color-bg-muted-hover`            | `--color-bg-default-hover`          | `--color-bg-muted-hover`            |
-| `--color-row-pressed`       | List rows                    | `--color-bg-default-pressed`      | `--color-bg-muted-pressed`          | `--color-bg-default-pressed`        | `--color-bg-muted-pressed`          |
-| `--color-switch-on`         | Switches                     | `--color-bg-brand-strong`         | `--color-bg-brand-emphasis`         | `--color-bg-brand-emphasis`         | `--color-bg-brand-emphasis`         |
-| `--color-switch-on-hover`   | Switches                     | `--color-bg-brand-strong-hover`   | `--color-bg-brand-emphasis-hover`   | `--color-bg-brand-emphasis-hover`   | `--color-bg-brand-emphasis-hover`   |
-| `--color-switch-on-pressed` | Switches                     | `--color-bg-brand-strong-pressed` | `--color-bg-brand-emphasis-pressed` | `--color-bg-brand-emphasis-pressed` | `--color-bg-brand-emphasis-pressed` |
-| `--color-switch-thumb-on`   | Switches                     | `--color-fg-on-strong`            | `--color-fg-on-emphasis`            | `--color-fg-on-emphasis`            | `--color-fg-on-emphasis`            |
-
-Fixed colors, which no role replaces: write the value, or a custom property of your own that holds it.
-
-| 0.7 custom property     | Used for              | Value                                                                          |
-| ----------------------- | --------------------- | ------------------------------------------------------------------------------ |
-| `--color-avatar`        | Avatars               | `#9fc1f8`                                                                      |
-| `--color-avatar-figure` | Avatars               | `#347eea`                                                                      |
-| `--color-canvas-dark`   | Fixed dark page color | `#1e1f21`                                                                      |
-| `--color-on-avatar`     | Avatars               | `#004aa2` (light; dark), `#001d49` (light, high contrast; dark, high contrast) |
-| `--color-white`         | Fixed white           | `#ffffff`                                                                      |
+Every other name only takes the prefix, `--body-font-weight` as `--env-body-font-weight`: `--body-font-weight`, `--color-bg-accent-emphasis`, `--color-bg-accent-muted`, `--color-bg-accent-subtle-hover`, `--color-bg-accent-subtle-pressed`, `--color-bg-brand-emphasis`, `--color-bg-brand-emphasis-hover`, `--color-bg-brand-emphasis-pressed`, `--color-bg-brand-muted`, `--color-bg-brand-strong`, `--color-bg-brand-strong-hover`, `--color-bg-brand-strong-pressed`, `--color-bg-danger-emphasis`, `--color-bg-danger-muted`, `--color-bg-danger-strong`, `--color-bg-danger-strong-hover`, `--color-bg-danger-strong-pressed`, `--color-bg-danger-subtle-hover`, `--color-bg-danger-subtle-pressed`, `--color-bg-default`, `--color-bg-default-hover`, `--color-bg-default-pressed`, `--color-bg-done-emphasis`, `--color-bg-done-muted`, `--color-bg-field`, `--color-bg-important-strong`, `--color-bg-important-strong-hover`, `--color-bg-important-strong-pressed`, `--color-bg-info-strong`, `--color-bg-info-strong-hover`, `--color-bg-info-strong-pressed`, `--color-bg-muted`, `--color-bg-muted-hover`, `--color-bg-muted-pressed`, `--color-bg-navigation-hover`, `--color-bg-navigation-pressed`, `--color-bg-neutral-emphasis`, `--color-bg-neutral-muted`, `--color-bg-neutral-muted-hover`, `--color-bg-neutral-muted-pressed`, `--color-bg-neutral-strong`, `--color-bg-neutral-strong-hover`, `--color-bg-neutral-strong-pressed`, `--color-bg-neutral-subtle`, `--color-bg-neutral-subtle-hover`, `--color-bg-neutral-subtle-pressed`, `--color-bg-overlay`, `--color-bg-overlay-muted`, `--color-bg-page`, `--color-bg-page-hover`, `--color-bg-page-pressed`, `--color-bg-popup`, `--color-bg-popup-hover`, `--color-bg-popup-pressed`, `--color-bg-raised`, `--color-bg-raised-hover`, `--color-bg-raised-pressed`, `--color-bg-selected`, `--color-bg-selected-hover`, `--color-bg-selected-pressed`, `--color-bg-success-emphasis`, `--color-bg-success-muted`, `--color-bg-success-strong`, `--color-bg-success-strong-hover`, `--color-bg-success-strong-pressed`, `--color-bg-success-subtle-hover`, `--color-bg-success-subtle-pressed`, `--color-bg-warning-emphasis`, `--color-bg-warning-muted`, `--color-bg-warning-subtle-hover`, `--color-bg-warning-subtle-pressed`, `--color-border-accent-muted`, `--color-border-danger-muted`, `--color-border-danger-strong`, `--color-border-default`, `--color-border-default-hover`, `--color-border-default-pressed`, `--color-border-focus`, `--color-border-info-strong`, `--color-border-muted`, `--color-border-muted-hover`, `--color-border-muted-pressed`, `--color-border-neutral-strong`, `--color-border-success-muted`, `--color-border-success-strong`, `--color-border-warning-muted`, `--color-fg-accent`, `--color-fg-control`, `--color-fg-danger`, `--color-fg-default`, `--color-fg-done`, `--color-fg-link`, `--color-fg-link-hover`, `--color-fg-link-pressed`, `--color-fg-muted`, `--color-fg-muted-hover`, `--color-fg-muted-pressed`, `--color-fg-on-emphasis`, `--color-fg-on-selected`, `--color-fg-on-strong`, `--color-fg-success`, `--color-fg-warning`, `--control-border-width`, `--control-font-size`, `--control-gap`, `--control-height`, `--control-height-lg`, `--control-height-md`, `--control-height-sm`, `--control-height-touch`, `--control-icon-size`, `--control-target-min`, `--elevation-0-border`, `--elevation-0-shadow`, `--elevation-1-border`, `--elevation-1-shadow`, `--elevation-2-border`, `--elevation-2-shadow`, `--elevation-3-border`, `--elevation-3-shadow`, `--field-floating-height`, `--font-family`, `--font-size-body`, `--font-size-body-small`, `--font-size-caption`, `--font-size-heading`, `--font-size-heading-small`, `--font-size-label`, `--font-size-label-small`, `--icon-size-lg`, `--icon-size-md`, `--icon-size-sm`, `--motion-duration-fast`, `--motion-duration-medium`, `--motion-duration-slow`, `--motion-ease`, `--motion-ease-enter`, `--motion-ease-exit`, `--motion-ease-standard`, `--radius-row-inner`, `--radius-row-outer`, `--radius-row-single`, `--radius-surface`, `--row-content-height`, `--row-height`, `--row-padding-block-lg`, `--row-padding-block-md`, `--row-padding-block-sm`, `--row-padding-block-xs`, `--row-padding-inline`, `--space-1`, `--space-2`, `--space-3`, `--space-4`, `--space-5`, `--space-6`, `--space-7`, `--space-8`, `--space-9`, `--state-disabled-opacity`, `--title-bar-height`, `--topbar-height`, `--tree-row-padding-block-lg`, `--tree-row-padding-block-md`, `--tree-row-padding-block-sm`, `--type-body`, `--type-body-font-family`, `--type-body-font-size`, `--type-body-font-weight`, `--type-body-letter-spacing`, `--type-body-line-height`, `--type-body-small`, `--type-body-small-font-family`, `--type-body-small-font-size`, `--type-body-small-font-weight`, `--type-body-small-letter-spacing`, `--type-body-small-line-height`, `--type-h1`, `--type-h1-font-family`, `--type-h1-font-size`, `--type-h1-font-weight`, `--type-h1-letter-spacing`, `--type-h1-line-height`, `--type-h2`, `--type-h2-font-family`, `--type-h2-font-size`, `--type-h2-font-weight`, `--type-h2-letter-spacing`, `--type-h2-line-height`.
 
 <!-- token-migration:end -->
 

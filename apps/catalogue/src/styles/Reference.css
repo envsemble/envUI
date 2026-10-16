@@ -5,10 +5,10 @@
   max-width: 75ch;
 }
 .docs-overview {
-  padding: 0 var(--docs-gutter) var(--space-8);
+  padding: 0 var(--docs-gutter) var(--env-space-8);
 }
 .docs-overview {
-  padding-block-start: var(--space-5);
+  padding-block-start: var(--env-space-5);
   text-align: center;
 }
 .docs-overview-hero {
@@ -21,7 +21,7 @@
   display: block;
   width: 100%;
   height: auto;
-  color: var(--color-text-strong);
+  color: var(--env-color-fg-control);
 }
 .docs-catalogue-content {
   height: 100%;
@@ -29,11 +29,11 @@
 }
 .docs-catalogue-content > svg {
   flex-shrink: 0;
-  color: var(--color-icon);
+  color: var(--env-color-fg-muted);
 }
 .docs-catalogue-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
-  gap: var(--space-5);
+  gap: var(--env-space-5);
   container-type: inline-size;
 }

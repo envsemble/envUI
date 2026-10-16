@@ -41,14 +41,14 @@
 
 .env-button-group[data-orientation='horizontal']
   > .env-button:not(:nth-child(1 of .env-button:not([hidden]))) {
-  border-start-start-radius: var(--radius-row-inner);
-  border-end-start-radius: var(--radius-row-inner);
+  border-start-start-radius: var(--env-radius-row-inner);
+  border-end-start-radius: var(--env-radius-row-inner);
 }
 
 .env-button-group[data-orientation='horizontal']
   > .env-button:not(:nth-last-child(1 of .env-button:not([hidden]))) {
-  border-start-end-radius: var(--radius-row-inner);
-  border-end-end-radius: var(--radius-row-inner);
+  border-start-end-radius: var(--env-radius-row-inner);
+  border-end-end-radius: var(--env-radius-row-inner);
 }
 
 .env-button-group[data-orientation='vertical'] {
@@ -81,12 +81,12 @@
 
 .env-button-group[data-orientation='vertical']
   > .env-button:not(:nth-child(1 of .env-button:not([hidden]))) {
-  border-start-start-radius: var(--radius-row-inner);
-  border-start-end-radius: var(--radius-row-inner);
+  border-start-start-radius: var(--env-radius-row-inner);
+  border-start-end-radius: var(--env-radius-row-inner);
 }
 
 .env-button-group[data-orientation='vertical']
   > .env-button:not(:nth-last-child(1 of .env-button:not([hidden]))) {
-  border-end-start-radius: var(--radius-row-inner);
-  border-end-end-radius: var(--radius-row-inner);
+  border-end-start-radius: var(--env-radius-row-inner);
+  border-end-end-radius: var(--env-radius-row-inner);
 }

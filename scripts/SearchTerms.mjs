@@ -9,7 +9,7 @@ export const searchFields = ['title', 'owner', 'aliases', 'keywords', 'text'];
 export const storeFields = ['kind', 'title', 'owner', 'names', 'detail', 'page', 'view', 'section'];
 
 /**
- * Splits text into words: at anything but a letter or digit, so `--color-fg-muted` and
+ * Splits text into words: at anything but a letter or digit, so `--env-color-fg-muted` and
  * `Menu.Item` split, and also at the humps of a camel-case word, which stays whole as well, so
  * `startIcon` is found by "startIcon", "start icon" and "icon".
  */
@@ -45,7 +45,7 @@ const exactBoost = 20;
 
 /**
  * A name as a query compares with it: its words folded and joined by single spaces, so Button.variant,
- * "Button variant" and "button  variant" read alike, and --color-fg-muted is "color fg muted".
+ * "Button variant" and "button  variant" read alike, and --env-color-fg-muted is "env color fg muted".
  */
 export function nameKey(text) {
   return text

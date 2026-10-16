@@ -4946,6 +4946,7 @@
       ],
       "related": [
         "scale",
+        "migration",
         "surface",
         "button",
         "nav-list",
@@ -11569,17 +11570,43 @@
       "comfortable",
       "compact"
     ],
-    "usage": "Use a token through its CSS custom property, such as var(--color-fg-muted), in CSS that styles the application. envUI components already use them; never restyle their classes.",
+    "usage": "Use a token through its CSS custom property, such as var(--env-color-fg-muted), in CSS that styles the application. envUI components already use them; never restyle their classes.",
     "items": [
       {
         "id": "body.font-weight",
-        "cssVariable": "--body-font-weight",
+        "cssVariable": "--env-body-font-weight",
         "type": "fontWeight",
         "value": "400"
       },
       {
+        "id": "color.avatar.bg",
+        "cssVariable": "--env-color-avatar-bg",
+        "type": "color",
+        "description": "The fill of an avatar that shows initials or the default figure.",
+        "value": "#9fc1f8"
+      },
+      {
+        "id": "color.avatar.fg",
+        "cssVariable": "--env-color-avatar-fg",
+        "type": "color",
+        "description": "The initials of an avatar, at least 4.5:1 on its fill, and 7:1 at high contrast.",
+        "values": {
+          "light": "#004aa2",
+          "dark": "#004aa2",
+          "light-high-contrast": "#001d49",
+          "dark-high-contrast": "#001d49"
+        }
+      },
+      {
+        "id": "color.avatar.figure",
+        "cssVariable": "--env-color-avatar-figure",
+        "type": "color",
+        "description": "The default figure of an avatar without a name or an image.",
+        "value": "#347eea"
+      },
+      {
         "id": "color.bg.accent.emphasis",
-        "cssVariable": "--color-bg-accent-emphasis",
+        "cssVariable": "--env-color-bg-accent-emphasis",
         "type": "color",
         "description": "A solid accent fill, such as a solid accent badge; paired with fg.on-emphasis.",
         "values": {
@@ -11591,7 +11618,7 @@
       },
       {
         "id": "color.bg.accent.muted",
-        "cssVariable": "--color-bg-accent-muted",
+        "cssVariable": "--env-color-bg-accent-muted",
         "type": "color",
         "description": "The translucent accent tint of badges and info alerts.",
         "values": {
@@ -11602,8 +11629,15 @@
         }
       },
       {
+        "id": "color.bg.accent.subtle",
+        "cssVariable": "--env-color-bg-accent-subtle",
+        "type": "color",
+        "description": "Controls in the accent tone without a fill at rest, such as an alert’s dismiss button: transparent, as color.bg.neutral.subtle is.",
+        "value": "transparent"
+      },
+      {
         "id": "color.bg.accent.subtle.hover",
-        "cssVariable": "--color-bg-accent-subtle-hover",
+        "cssVariable": "--env-color-bg-accent-subtle-hover",
         "type": "color",
         "description": "The state layer of a control without a fill in the accent tone, such as an info alert’s dismiss button, under the pointer: the accent text color at 14%, in every theme and at high contrast.",
         "values": {
@@ -11615,7 +11649,7 @@
       },
       {
         "id": "color.bg.accent.subtle.pressed",
-        "cssVariable": "--color-bg-accent-subtle-pressed",
+        "cssVariable": "--env-color-bg-accent-subtle-pressed",
         "type": "color",
         "description": "The accent state layer while pressed: the accent text color at 22%.",
         "values": {
@@ -11627,7 +11661,7 @@
       },
       {
         "id": "color.bg.brand.emphasis",
-        "cssVariable": "--color-bg-brand-emphasis",
+        "cssVariable": "--env-color-bg-brand-emphasis",
         "type": "color",
         "description": "The brand fill of primary actions, chosen radios and the chosen calendar day; paired with fg.on-emphasis. In dark and at high contrast, checked checkboxes, switches that are on, sliders, meters and spinners take it too: a soft blue with dark marks at 4.5:1.",
         "values": {
@@ -11639,7 +11673,7 @@
       },
       {
         "id": "color.bg.brand.emphasis.hover",
-        "cssVariable": "--color-bg-brand-emphasis-hover",
+        "cssVariable": "--env-color-bg-brand-emphasis-hover",
         "type": "color",
         "description": "A primary action under the pointer.",
         "values": {
@@ -11651,7 +11685,7 @@
       },
       {
         "id": "color.bg.brand.emphasis.pressed",
-        "cssVariable": "--color-bg-brand-emphasis-pressed",
+        "cssVariable": "--env-color-bg-brand-emphasis-pressed",
         "type": "color",
         "description": "A primary action while pressed.",
         "values": {
@@ -11663,7 +11697,7 @@
       },
       {
         "id": "color.bg.brand.muted",
-        "cssVariable": "--color-bg-brand-muted",
+        "cssVariable": "--env-color-bg-brand-muted",
         "type": "color",
         "description": "The translucent halo of a slider thumb that is dragged: the blue of the thumb at 16%, in every theme and at high contrast.",
         "values": {
@@ -11675,7 +11709,7 @@
       },
       {
         "id": "color.bg.brand.strong",
-        "cssVariable": "--color-bg-brand-strong",
+        "cssVariable": "--env-color-bg-brand-strong",
         "type": "color",
         "description": "The saturated brand fill of checked checkboxes, switches that are on, sliders, meters and spinners in the light theme at standard contrast, with white marks, the check and the thumb, at 3:1. The dark theme and high contrast put those controls on the emphasis fill instead; in dark this fill, which keeps 3:1 against the surfaces, would put white text below 4.5:1.",
         "values": {
@@ -11687,7 +11721,7 @@
       },
       {
         "id": "color.bg.brand.strong.hover",
-        "cssVariable": "--color-bg-brand-strong-hover",
+        "cssVariable": "--env-color-bg-brand-strong-hover",
         "type": "color",
         "description": "A checked control under the pointer.",
         "values": {
@@ -11699,7 +11733,7 @@
       },
       {
         "id": "color.bg.brand.strong.pressed",
-        "cssVariable": "--color-bg-brand-strong-pressed",
+        "cssVariable": "--env-color-bg-brand-strong-pressed",
         "type": "color",
         "description": "A checked control while pressed.",
         "values": {
@@ -11711,7 +11745,7 @@
       },
       {
         "id": "color.bg.danger.emphasis",
-        "cssVariable": "--color-bg-danger-emphasis",
+        "cssVariable": "--env-color-bg-danger-emphasis",
         "type": "color",
         "description": "A solid danger fill; paired with fg.on-emphasis.",
         "values": {
@@ -11723,7 +11757,7 @@
       },
       {
         "id": "color.bg.danger.muted",
-        "cssVariable": "--color-bg-danger-muted",
+        "cssVariable": "--env-color-bg-danger-muted",
         "type": "color",
         "description": "The translucent danger tint of badges and alerts.",
         "values": {
@@ -11735,7 +11769,7 @@
       },
       {
         "id": "color.bg.danger.strong",
-        "cssVariable": "--color-bg-danger-strong",
+        "cssVariable": "--env-color-bg-danger-strong",
         "type": "color",
         "description": "The danger fill of destructive actions and error toasts in both themes; paired with fg.on-strong.",
         "values": {
@@ -11747,7 +11781,7 @@
       },
       {
         "id": "color.bg.danger.strong.hover",
-        "cssVariable": "--color-bg-danger-strong-hover",
+        "cssVariable": "--env-color-bg-danger-strong-hover",
         "type": "color",
         "description": "A destructive action under the pointer: lighter, as in 0.7, at the lightest grade that keeps white labels at 4.5:1.",
         "values": {
@@ -11759,7 +11793,7 @@
       },
       {
         "id": "color.bg.danger.strong.pressed",
-        "cssVariable": "--color-bg-danger-strong-pressed",
+        "cssVariable": "--env-color-bg-danger-strong-pressed",
         "type": "color",
         "description": "A destructive action while pressed. It can’t lighten further without its white label falling below 4.5:1, so it settles halfway back.",
         "values": {
@@ -11770,8 +11804,15 @@
         }
       },
       {
+        "id": "color.bg.danger.subtle",
+        "cssVariable": "--env-color-bg-danger-subtle",
+        "type": "color",
+        "description": "Controls in the danger tone without a fill at rest, such as an alert’s dismiss button: transparent, as color.bg.neutral.subtle is.",
+        "value": "transparent"
+      },
+      {
         "id": "color.bg.danger.subtle.hover",
-        "cssVariable": "--color-bg-danger-subtle-hover",
+        "cssVariable": "--env-color-bg-danger-subtle-hover",
         "type": "color",
         "description": "The state layer of a control without a fill in the danger tone, such as an error alert’s dismiss button, under the pointer: the danger text color at 14%, in every theme and at high contrast.",
         "values": {
@@ -11783,7 +11824,7 @@
       },
       {
         "id": "color.bg.danger.subtle.pressed",
-        "cssVariable": "--color-bg-danger-subtle-pressed",
+        "cssVariable": "--env-color-bg-danger-subtle-pressed",
         "type": "color",
         "description": "The danger state layer while pressed: the danger text color at 22%.",
         "values": {
@@ -11795,7 +11836,7 @@
       },
       {
         "id": "color.bg.default",
-        "cssVariable": "--color-bg-default",
+        "cssVariable": "--env-color-bg-default",
         "type": "color",
         "description": "The default surface: Surface, sidebars, standard menus.",
         "values": {
@@ -11807,7 +11848,7 @@
       },
       {
         "id": "color.bg.default.hover",
-        "cssVariable": "--color-bg-default-hover",
+        "cssVariable": "--env-color-bg-default-hover",
         "type": "color",
         "description": "An interactive default surface, such as a card or a list row, under the pointer.",
         "values": {
@@ -11819,7 +11860,7 @@
       },
       {
         "id": "color.bg.default.pressed",
-        "cssVariable": "--color-bg-default-pressed",
+        "cssVariable": "--env-color-bg-default-pressed",
         "type": "color",
         "description": "An interactive default surface while pressed. Muted text and an inset focus ring keep their minimums on it.",
         "values": {
@@ -11831,7 +11872,7 @@
       },
       {
         "id": "color.bg.done.emphasis",
-        "cssVariable": "--color-bg-done-emphasis",
+        "cssVariable": "--env-color-bg-done-emphasis",
         "type": "color",
         "description": "A solid done fill; paired with fg.on-emphasis.",
         "values": {
@@ -11843,7 +11884,7 @@
       },
       {
         "id": "color.bg.done.muted",
-        "cssVariable": "--color-bg-done-muted",
+        "cssVariable": "--env-color-bg-done-muted",
         "type": "color",
         "description": "The translucent done tint of badges.",
         "values": {
@@ -11855,7 +11896,7 @@
       },
       {
         "id": "color.bg.field",
-        "cssVariable": "--color-bg-field",
+        "cssVariable": "--env-color-bg-field",
         "type": "color",
         "description": "Text fields and other inputs.",
         "values": {
@@ -11867,7 +11908,7 @@
       },
       {
         "id": "color.bg.important.strong",
-        "cssVariable": "--color-bg-important-strong",
+        "cssVariable": "--env-color-bg-important-strong",
         "type": "color",
         "description": "The accent purple of important actions in both themes; paired with fg.on-strong.",
         "values": {
@@ -11879,7 +11920,7 @@
       },
       {
         "id": "color.bg.important.strong.hover",
-        "cssVariable": "--color-bg-important-strong-hover",
+        "cssVariable": "--env-color-bg-important-strong-hover",
         "type": "color",
         "description": "An important action under the pointer.",
         "values": {
@@ -11891,7 +11932,7 @@
       },
       {
         "id": "color.bg.important.strong.pressed",
-        "cssVariable": "--color-bg-important-strong-pressed",
+        "cssVariable": "--env-color-bg-important-strong-pressed",
         "type": "color",
         "description": "An important action while pressed.",
         "values": {
@@ -11903,7 +11944,7 @@
       },
       {
         "id": "color.bg.info.strong",
-        "cssVariable": "--color-bg-info-strong",
+        "cssVariable": "--env-color-bg-info-strong",
         "type": "color",
         "description": "The information fill of toasts in both themes; paired with fg.on-strong.",
         "values": {
@@ -11915,7 +11956,7 @@
       },
       {
         "id": "color.bg.info.strong.hover",
-        "cssVariable": "--color-bg-info-strong-hover",
+        "cssVariable": "--env-color-bg-info-strong-hover",
         "type": "color",
         "description": "A control on the information toast under the pointer.",
         "values": {
@@ -11927,7 +11968,7 @@
       },
       {
         "id": "color.bg.info.strong.pressed",
-        "cssVariable": "--color-bg-info-strong-pressed",
+        "cssVariable": "--env-color-bg-info-strong-pressed",
         "type": "color",
         "description": "A control on the information toast while pressed.",
         "values": {
@@ -11938,8 +11979,20 @@
         }
       },
       {
+        "id": "color.bg.inset",
+        "cssVariable": "--env-color-bg-inset",
+        "type": "color",
+        "description": "The page color at half strength, which leans a pill on a button’s fill back toward the page instead of adding another fill, as a diff stat in a tab does.",
+        "values": {
+          "light": "rgb(255 255 255 / 0.5)",
+          "dark": "rgb(30 31 33 / 0.5)",
+          "light-high-contrast": "rgb(255 255 255 / 0.5)",
+          "dark-high-contrast": "rgb(30 31 33 / 0.5)"
+        }
+      },
+      {
         "id": "color.bg.muted",
-        "cssVariable": "--color-bg-muted",
+        "cssVariable": "--env-color-bg-muted",
         "type": "color",
         "description": "The muted surface: Surface background=\"muted\", radio rows. Lighter than the default surface in both themes.",
         "values": {
@@ -11951,7 +12004,7 @@
       },
       {
         "id": "color.bg.muted.hover",
-        "cssVariable": "--color-bg-muted-hover",
+        "cssVariable": "--env-color-bg-muted-hover",
         "type": "color",
         "description": "An interactive muted surface under the pointer.",
         "values": {
@@ -11963,7 +12016,7 @@
       },
       {
         "id": "color.bg.muted.pressed",
-        "cssVariable": "--color-bg-muted-pressed",
+        "cssVariable": "--env-color-bg-muted-pressed",
         "type": "color",
         "description": "An interactive muted surface while pressed.",
         "values": {
@@ -11975,7 +12028,7 @@
       },
       {
         "id": "color.bg.navigation.hover",
-        "cssVariable": "--color-bg-navigation-hover",
+        "cssVariable": "--env-color-bg-navigation-hover",
         "type": "color",
         "description": "A navigation item that isn’t selected, under the pointer: a blue-gray tint in light, deeper than the selection so it doesn’t read as selected; in dark and at high contrast, a gray, since a blue tint there would read as the selection.",
         "values": {
@@ -11987,7 +12040,7 @@
       },
       {
         "id": "color.bg.navigation.pressed",
-        "cssVariable": "--color-bg-navigation-pressed",
+        "cssVariable": "--env-color-bg-navigation-pressed",
         "type": "color",
         "description": "A navigation item that isn’t selected, while pressed. Its label and an inset focus ring keep their minimums on it, which puts it one grade deeper than the hover in light.",
         "values": {
@@ -11999,7 +12052,7 @@
       },
       {
         "id": "color.bg.neutral.emphasis",
-        "cssVariable": "--color-bg-neutral-emphasis",
+        "cssVariable": "--env-color-bg-neutral-emphasis",
         "type": "color",
         "description": "A solid neutral fill, such as a solid neutral badge; paired with fg.on-emphasis.",
         "values": {
@@ -12011,7 +12064,7 @@
       },
       {
         "id": "color.bg.neutral.muted",
-        "cssVariable": "--color-bg-neutral-muted",
+        "cssVariable": "--env-color-bg-neutral-muted",
         "type": "color",
         "description": "The translucent neutral fill of secondary buttons, tab rails, chips, switch tracks, meter tracks and skeletons: a layer of the text color, so it keeps its tone on every surface.",
         "values": {
@@ -12023,7 +12076,7 @@
       },
       {
         "id": "color.bg.neutral.muted.hover",
-        "cssVariable": "--color-bg-neutral-muted-hover",
+        "cssVariable": "--env-color-bg-neutral-muted-hover",
         "type": "color",
         "description": "The neutral fill under the pointer.",
         "values": {
@@ -12035,7 +12088,7 @@
       },
       {
         "id": "color.bg.neutral.muted.pressed",
-        "cssVariable": "--color-bg-neutral-muted-pressed",
+        "cssVariable": "--env-color-bg-neutral-muted-pressed",
         "type": "color",
         "description": "The neutral fill while pressed.",
         "values": {
@@ -12047,14 +12100,14 @@
       },
       {
         "id": "color.bg.neutral.strong",
-        "cssVariable": "--color-bg-neutral-strong",
+        "cssVariable": "--env-color-bg-neutral-strong",
         "type": "color",
         "description": "The dark neutral fill of tooltips and neutral toasts in both themes; paired with fg.on-strong.",
         "value": "#424447"
       },
       {
         "id": "color.bg.neutral.strong.hover",
-        "cssVariable": "--color-bg-neutral-strong-hover",
+        "cssVariable": "--env-color-bg-neutral-strong-hover",
         "type": "color",
         "description": "A control on the strong neutral fill under the pointer.",
         "values": {
@@ -12066,7 +12119,7 @@
       },
       {
         "id": "color.bg.neutral.strong.pressed",
-        "cssVariable": "--color-bg-neutral-strong-pressed",
+        "cssVariable": "--env-color-bg-neutral-strong-pressed",
         "type": "color",
         "description": "A control on the strong neutral fill while pressed.",
         "values": {
@@ -12078,14 +12131,14 @@
       },
       {
         "id": "color.bg.neutral.subtle",
-        "cssVariable": "--color-bg-neutral-subtle",
+        "cssVariable": "--env-color-bg-neutral-subtle",
         "type": "color",
         "description": "Controls without a fill at rest, such as quiet buttons, inactive tabs and menubar triggers.",
         "value": "transparent"
       },
       {
         "id": "color.bg.neutral.subtle.hover",
-        "cssVariable": "--color-bg-neutral-subtle-hover",
+        "cssVariable": "--env-color-bg-neutral-subtle-hover",
         "type": "color",
         "description": "The state layer over a control without a fill, under the pointer.",
         "values": {
@@ -12097,7 +12150,7 @@
       },
       {
         "id": "color.bg.neutral.subtle.pressed",
-        "cssVariable": "--color-bg-neutral-subtle-pressed",
+        "cssVariable": "--env-color-bg-neutral-subtle-pressed",
         "type": "color",
         "description": "The state layer over a control without a fill, while pressed.",
         "values": {
@@ -12109,21 +12162,21 @@
       },
       {
         "id": "color.bg.overlay",
-        "cssVariable": "--color-bg-overlay",
+        "cssVariable": "--env-color-bg-overlay",
         "type": "color",
         "description": "The scrim behind dialogs and the command palette: the dark page color at 55%.",
         "value": "rgb(30 31 33 / 0.55)"
       },
       {
         "id": "color.bg.overlay.muted",
-        "cssVariable": "--color-bg-overlay-muted",
+        "cssVariable": "--env-color-bg-overlay-muted",
         "type": "color",
         "description": "The lighter scrim behind a drawer, such as the app shell’s sidebar over a narrow window: the dark page color at 30%.",
         "value": "rgb(30 31 33 / 0.3)"
       },
       {
         "id": "color.bg.page",
-        "cssVariable": "--color-bg-page",
+        "cssVariable": "--env-color-bg-page",
         "type": "color",
         "description": "The page behind all content: the app frame, title bars and Surface background=\"page\".",
         "values": {
@@ -12135,7 +12188,7 @@
       },
       {
         "id": "color.bg.page.hover",
-        "cssVariable": "--color-bg-page-hover",
+        "cssVariable": "--env-color-bg-page-hover",
         "type": "color",
         "description": "An interactive page-colored surface under the pointer.",
         "values": {
@@ -12146,20 +12199,8 @@
         }
       },
       {
-        "id": "color.bg.page.muted",
-        "cssVariable": "--color-bg-page-muted",
-        "type": "color",
-        "description": "The page color at half strength, which leans a pill on a button’s fill back toward the page instead of adding another fill, as a diff stat in a tab does.",
-        "values": {
-          "light": "rgb(255 255 255 / 0.5)",
-          "dark": "rgb(30 31 33 / 0.5)",
-          "light-high-contrast": "rgb(255 255 255 / 0.5)",
-          "dark-high-contrast": "rgb(30 31 33 / 0.5)"
-        }
-      },
-      {
         "id": "color.bg.page.pressed",
-        "cssVariable": "--color-bg-page-pressed",
+        "cssVariable": "--env-color-bg-page-pressed",
         "type": "color",
         "description": "An interactive page-colored surface while pressed.",
         "values": {
@@ -12171,7 +12212,7 @@
       },
       {
         "id": "color.bg.popup",
-        "cssVariable": "--color-bg-popup",
+        "cssVariable": "--env-color-bg-popup",
         "type": "color",
         "description": "Popups over the page: menus, Select lists, popovers, the composer. They take elevation 2.",
         "values": {
@@ -12183,7 +12224,7 @@
       },
       {
         "id": "color.bg.popup.hover",
-        "cssVariable": "--color-bg-popup-hover",
+        "cssVariable": "--env-color-bg-popup-hover",
         "type": "color",
         "description": "A highlighted row in a popup.",
         "values": {
@@ -12195,7 +12236,7 @@
       },
       {
         "id": "color.bg.popup.pressed",
-        "cssVariable": "--color-bg-popup-pressed",
+        "cssVariable": "--env-color-bg-popup-pressed",
         "type": "color",
         "description": "A pressed row in a popup.",
         "values": {
@@ -12207,7 +12248,7 @@
       },
       {
         "id": "color.bg.raised",
-        "cssVariable": "--color-bg-raised",
+        "cssVariable": "--env-color-bg-raised",
         "type": "color",
         "description": "A raised surface: Surface background=\"raised\", dialogs, rows on a contrasting surface, outlined buttons.",
         "values": {
@@ -12219,7 +12260,7 @@
       },
       {
         "id": "color.bg.raised.hover",
-        "cssVariable": "--color-bg-raised-hover",
+        "cssVariable": "--env-color-bg-raised-hover",
         "type": "color",
         "description": "An interactive raised surface under the pointer.",
         "values": {
@@ -12231,7 +12272,7 @@
       },
       {
         "id": "color.bg.raised.pressed",
-        "cssVariable": "--color-bg-raised-pressed",
+        "cssVariable": "--env-color-bg-raised-pressed",
         "type": "color",
         "description": "An interactive raised surface while pressed.",
         "values": {
@@ -12243,7 +12284,7 @@
       },
       {
         "id": "color.bg.selected",
-        "cssVariable": "--color-bg-selected",
+        "cssVariable": "--env-color-bg-selected",
         "type": "color",
         "description": "Selected navigation items, tree and table rows, Select options and drop targets; paired with fg.on-selected. A blue tint in light and a blue-gray in dark, distinct from the other items around it, at rest and under the pointer: ΔEOK 0.03 or more, 0.04 at high contrast.",
         "values": {
@@ -12255,7 +12296,7 @@
       },
       {
         "id": "color.bg.selected.hover",
-        "cssVariable": "--color-bg-selected-hover",
+        "cssVariable": "--env-color-bg-selected-hover",
         "type": "color",
         "description": "A selected item under the pointer: visibly deeper than the selection, and distinct from an unselected item under the pointer.",
         "values": {
@@ -12267,7 +12308,7 @@
       },
       {
         "id": "color.bg.selected.pressed",
-        "cssVariable": "--color-bg-selected-pressed",
+        "cssVariable": "--env-color-bg-selected-pressed",
         "type": "color",
         "description": "A selected item while pressed. Muted text and an inset focus ring keep their minimums on it.",
         "values": {
@@ -12279,7 +12320,7 @@
       },
       {
         "id": "color.bg.success.emphasis",
-        "cssVariable": "--color-bg-success-emphasis",
+        "cssVariable": "--env-color-bg-success-emphasis",
         "type": "color",
         "description": "A solid success fill; paired with fg.on-emphasis.",
         "values": {
@@ -12291,7 +12332,7 @@
       },
       {
         "id": "color.bg.success.muted",
-        "cssVariable": "--color-bg-success-muted",
+        "cssVariable": "--env-color-bg-success-muted",
         "type": "color",
         "description": "The translucent success tint of badges and alerts.",
         "values": {
@@ -12303,7 +12344,7 @@
       },
       {
         "id": "color.bg.success.strong",
-        "cssVariable": "--color-bg-success-strong",
+        "cssVariable": "--env-color-bg-success-strong",
         "type": "color",
         "description": "The teal success fill of toasts in both themes; paired with fg.on-strong.",
         "values": {
@@ -12315,7 +12356,7 @@
       },
       {
         "id": "color.bg.success.strong.hover",
-        "cssVariable": "--color-bg-success-strong-hover",
+        "cssVariable": "--env-color-bg-success-strong-hover",
         "type": "color",
         "description": "A control on the success toast, its dismiss button, under the pointer.",
         "values": {
@@ -12327,7 +12368,7 @@
       },
       {
         "id": "color.bg.success.strong.pressed",
-        "cssVariable": "--color-bg-success-strong-pressed",
+        "cssVariable": "--env-color-bg-success-strong-pressed",
         "type": "color",
         "description": "A control on the success toast while pressed. Its white icon keeps 3:1.",
         "values": {
@@ -12338,8 +12379,15 @@
         }
       },
       {
+        "id": "color.bg.success.subtle",
+        "cssVariable": "--env-color-bg-success-subtle",
+        "type": "color",
+        "description": "Controls in the success tone without a fill at rest, such as an alert’s dismiss button: transparent, as color.bg.neutral.subtle is.",
+        "value": "transparent"
+      },
+      {
         "id": "color.bg.success.subtle.hover",
-        "cssVariable": "--color-bg-success-subtle-hover",
+        "cssVariable": "--env-color-bg-success-subtle-hover",
         "type": "color",
         "description": "The state layer of a control without a fill in the success tone, such as a success alert’s dismiss button, under the pointer: the success text color at 14%, in every theme and at high contrast.",
         "values": {
@@ -12351,7 +12399,7 @@
       },
       {
         "id": "color.bg.success.subtle.pressed",
-        "cssVariable": "--color-bg-success-subtle-pressed",
+        "cssVariable": "--env-color-bg-success-subtle-pressed",
         "type": "color",
         "description": "The success state layer while pressed: the success text color at 22%.",
         "values": {
@@ -12363,7 +12411,7 @@
       },
       {
         "id": "color.bg.warning.emphasis",
-        "cssVariable": "--color-bg-warning-emphasis",
+        "cssVariable": "--env-color-bg-warning-emphasis",
         "type": "color",
         "description": "A solid warning fill; paired with fg.on-emphasis.",
         "values": {
@@ -12375,7 +12423,7 @@
       },
       {
         "id": "color.bg.warning.muted",
-        "cssVariable": "--color-bg-warning-muted",
+        "cssVariable": "--env-color-bg-warning-muted",
         "type": "color",
         "description": "The translucent warning tint of badges and alerts.",
         "values": {
@@ -12386,8 +12434,15 @@
         }
       },
       {
+        "id": "color.bg.warning.subtle",
+        "cssVariable": "--env-color-bg-warning-subtle",
+        "type": "color",
+        "description": "Controls in the warning tone without a fill at rest, such as an alert’s dismiss button: transparent, as color.bg.neutral.subtle is.",
+        "value": "transparent"
+      },
+      {
         "id": "color.bg.warning.subtle.hover",
-        "cssVariable": "--color-bg-warning-subtle-hover",
+        "cssVariable": "--env-color-bg-warning-subtle-hover",
         "type": "color",
         "description": "The state layer of a control without a fill in the warning tone, such as a warning alert’s dismiss button, under the pointer: the warning text color at 14%, in every theme and at high contrast.",
         "values": {
@@ -12399,7 +12454,7 @@
       },
       {
         "id": "color.bg.warning.subtle.pressed",
-        "cssVariable": "--color-bg-warning-subtle-pressed",
+        "cssVariable": "--env-color-bg-warning-subtle-pressed",
         "type": "color",
         "description": "The warning state layer while pressed: the warning text color at 22%.",
         "values": {
@@ -12411,19 +12466,7 @@
       },
       {
         "id": "color.border.accent",
-        "cssVariable": "--color-border-accent",
-        "type": "color",
-        "description": "The active border and label of a focused field, and today’s ring in a calendar.",
-        "values": {
-          "light": "#1872e7",
-          "dark": "#9fc1f8",
-          "light-high-contrast": "#00408f",
-          "dark-high-contrast": "#b5cffb"
-        }
-      },
-      {
-        "id": "color.border.accent.emphasis",
-        "cssVariable": "--color-border-accent-emphasis",
+        "cssVariable": "--env-color-border-accent",
         "type": "color",
         "description": "A decorative edge in the accent tone, around an outlined badge: the accent text color at 55%, in every theme and at high contrast.",
         "values": {
@@ -12434,8 +12477,20 @@
         }
       },
       {
-        "id": "color.border.accent.hover",
-        "cssVariable": "--color-border-accent-hover",
+        "id": "color.border.accent.emphasis",
+        "cssVariable": "--env-color-border-accent-emphasis",
+        "type": "color",
+        "description": "The active border and label of a focused field, and today’s ring in a calendar.",
+        "values": {
+          "light": "#1872e7",
+          "dark": "#9fc1f8",
+          "light-high-contrast": "#00408f",
+          "dark-high-contrast": "#b5cffb"
+        }
+      },
+      {
+        "id": "color.border.accent.emphasis.hover",
+        "cssVariable": "--env-color-border-accent-emphasis-hover",
         "type": "color",
         "description": "An active field border under the pointer.",
         "values": {
@@ -12446,20 +12501,8 @@
         }
       },
       {
-        "id": "color.border.accent.muted",
-        "cssVariable": "--color-border-accent-muted",
-        "type": "color",
-        "description": "The faint edge of an info alert: the accent text color at 28%, in every theme and at high contrast.",
-        "values": {
-          "light": "rgb(0 92 200 / 0.28)",
-          "dark": "rgb(159 193 248 / 0.28)",
-          "light-high-contrast": "rgb(0 55 124 / 0.28)",
-          "dark-high-contrast": "rgb(224 235 253 / 0.28)"
-        }
-      },
-      {
-        "id": "color.border.accent.pressed",
-        "cssVariable": "--color-border-accent-pressed",
+        "id": "color.border.accent.emphasis.pressed",
+        "cssVariable": "--env-color-border-accent-emphasis-pressed",
         "type": "color",
         "description": "An active field border while pressed.",
         "values": {
@@ -12470,20 +12513,20 @@
         }
       },
       {
-        "id": "color.border.danger",
-        "cssVariable": "--color-border-danger",
+        "id": "color.border.accent.muted",
+        "cssVariable": "--env-color-border-accent-muted",
         "type": "color",
-        "description": "The border of an invalid field.",
+        "description": "The faint edge of an info alert: the accent text color at 28%, in every theme and at high contrast.",
         "values": {
-          "light": "#b72b20",
-          "dark": "#f8aca6",
-          "light-high-contrast": "#7a0200",
-          "dark-high-contrast": "#ffe4e2"
+          "light": "rgb(0 92 200 / 0.28)",
+          "dark": "rgb(159 193 248 / 0.28)",
+          "light-high-contrast": "rgb(0 55 124 / 0.28)",
+          "dark-high-contrast": "rgb(224 235 253 / 0.28)"
         }
       },
       {
-        "id": "color.border.danger.emphasis",
-        "cssVariable": "--color-border-danger-emphasis",
+        "id": "color.border.danger",
+        "cssVariable": "--env-color-border-danger",
         "type": "color",
         "description": "A decorative edge in the danger tone, around an outlined badge and a message that failed to send: the danger text color at 55%, in every theme and at high contrast.",
         "values": {
@@ -12494,8 +12537,20 @@
         }
       },
       {
-        "id": "color.border.danger.hover",
-        "cssVariable": "--color-border-danger-hover",
+        "id": "color.border.danger.emphasis",
+        "cssVariable": "--env-color-border-danger-emphasis",
+        "type": "color",
+        "description": "The border of an invalid field.",
+        "values": {
+          "light": "#b72b20",
+          "dark": "#f8aca6",
+          "light-high-contrast": "#7a0200",
+          "dark-high-contrast": "#ffe4e2"
+        }
+      },
+      {
+        "id": "color.border.danger.emphasis.hover",
+        "cssVariable": "--env-color-border-danger-emphasis-hover",
         "type": "color",
         "description": "An invalid field border under the pointer.",
         "values": {
@@ -12506,20 +12561,8 @@
         }
       },
       {
-        "id": "color.border.danger.muted",
-        "cssVariable": "--color-border-danger-muted",
-        "type": "color",
-        "description": "The faint edge of an error alert: the danger text color at 28%, in every theme and at high contrast.",
-        "values": {
-          "light": "rgb(183 43 32 / 0.28)",
-          "dark": "rgb(248 172 166 / 0.28)",
-          "light-high-contrast": "rgb(122 2 0 / 0.28)",
-          "dark-high-contrast": "rgb(255 228 226 / 0.28)"
-        }
-      },
-      {
-        "id": "color.border.danger.pressed",
-        "cssVariable": "--color-border-danger-pressed",
+        "id": "color.border.danger.emphasis.pressed",
+        "cssVariable": "--env-color-border-danger-emphasis-pressed",
         "type": "color",
         "description": "An invalid field border while pressed.",
         "values": {
@@ -12530,8 +12573,20 @@
         }
       },
       {
+        "id": "color.border.danger.muted",
+        "cssVariable": "--env-color-border-danger-muted",
+        "type": "color",
+        "description": "The faint edge of an error alert: the danger text color at 28%, in every theme and at high contrast.",
+        "values": {
+          "light": "rgb(183 43 32 / 0.28)",
+          "dark": "rgb(248 172 166 / 0.28)",
+          "light-high-contrast": "rgb(122 2 0 / 0.28)",
+          "dark-high-contrast": "rgb(255 228 226 / 0.28)"
+        }
+      },
+      {
         "id": "color.border.danger.strong",
-        "cssVariable": "--color-border-danger-strong",
+        "cssVariable": "--env-color-border-danger-strong",
         "type": "color",
         "description": "The edge of the strong danger fill where it floats, on error toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted.",
         "values": {
@@ -12543,7 +12598,7 @@
       },
       {
         "id": "color.border.default",
-        "cssVariable": "--color-border-default",
+        "cssVariable": "--env-color-border-default",
         "type": "color",
         "description": "The boundary of a control that has no other edge: outlined fields and buttons, the track of a switch that is off. At least 3:1 on every surface.",
         "values": {
@@ -12555,7 +12610,7 @@
       },
       {
         "id": "color.border.default.hover",
-        "cssVariable": "--color-border-default-hover",
+        "cssVariable": "--env-color-border-default-hover",
         "type": "color",
         "description": "A control boundary under the pointer.",
         "values": {
@@ -12567,7 +12622,7 @@
       },
       {
         "id": "color.border.default.pressed",
-        "cssVariable": "--color-border-default-pressed",
+        "cssVariable": "--env-color-border-default-pressed",
         "type": "color",
         "description": "A control boundary while pressed.",
         "values": {
@@ -12578,8 +12633,8 @@
         }
       },
       {
-        "id": "color.border.done.emphasis",
-        "cssVariable": "--color-border-done-emphasis",
+        "id": "color.border.done",
+        "cssVariable": "--env-color-border-done",
         "type": "color",
         "description": "A decorative edge in the done tone, around an outlined badge: the done text color at 55%, in every theme and at high contrast.",
         "values": {
@@ -12591,7 +12646,7 @@
       },
       {
         "id": "color.border.focus",
-        "cssVariable": "--color-border-focus",
+        "cssVariable": "--env-color-border-focus",
         "type": "color",
         "description": "Focus rings: at least 3:1 against what they are drawn on.",
         "values": {
@@ -12603,7 +12658,7 @@
       },
       {
         "id": "color.border.info.strong",
-        "cssVariable": "--color-border-info-strong",
+        "cssVariable": "--env-color-border-info-strong",
         "type": "color",
         "description": "The edge of the strong information fill where it floats, on information toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted.",
         "values": {
@@ -12614,8 +12669,15 @@
         }
       },
       {
+        "id": "color.border.media",
+        "cssVariable": "--env-color-border-media",
+        "type": "color",
+        "description": "A neutral inner edge that defines content of any color, such as the color picker’s area: black at 5% in both themes.",
+        "value": "rgb(0 0 0 / 0.05)"
+      },
+      {
         "id": "color.border.muted",
-        "cssVariable": "--color-border-muted",
+        "cssVariable": "--env-color-border-muted",
         "type": "color",
         "description": "Decorative dividers and outlines that are not a control’s only boundary: table lines, title bars, Markdown rules, keyboard keys, and the hairline edge of every elevated popup, which the elevation shadow and the content already identify.",
         "values": {
@@ -12627,7 +12689,7 @@
       },
       {
         "id": "color.border.muted.hover",
-        "cssVariable": "--color-border-muted-hover",
+        "cssVariable": "--env-color-border-muted-hover",
         "type": "color",
         "description": "A decorative outline under the pointer, such as a resize handle or a pager link.",
         "values": {
@@ -12639,7 +12701,7 @@
       },
       {
         "id": "color.border.muted.pressed",
-        "cssVariable": "--color-border-muted-pressed",
+        "cssVariable": "--env-color-border-muted-pressed",
         "type": "color",
         "description": "A decorative outline while pressed.",
         "values": {
@@ -12650,8 +12712,8 @@
         }
       },
       {
-        "id": "color.border.neutral.emphasis",
-        "cssVariable": "--color-border-neutral-emphasis",
+        "id": "color.border.neutral",
+        "cssVariable": "--env-color-border-neutral",
         "type": "color",
         "description": "A decorative edge in the neutral tone, around an outlined badge: the muted text color at 55%, in every theme and at high contrast.",
         "values": {
@@ -12663,7 +12725,7 @@
       },
       {
         "id": "color.border.neutral.strong",
-        "cssVariable": "--color-border-neutral-strong",
+        "cssVariable": "--env-color-border-neutral-strong",
         "type": "color",
         "description": "The edge of the strong neutral fill where it floats, on tooltips and neutral toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted.",
         "values": {
@@ -12674,8 +12736,8 @@
         }
       },
       {
-        "id": "color.border.success.emphasis",
-        "cssVariable": "--color-border-success-emphasis",
+        "id": "color.border.success",
+        "cssVariable": "--env-color-border-success",
         "type": "color",
         "description": "A decorative edge in the success tone, around an outlined badge: the success text color at 55%, in every theme and at high contrast.",
         "values": {
@@ -12687,7 +12749,7 @@
       },
       {
         "id": "color.border.success.muted",
-        "cssVariable": "--color-border-success-muted",
+        "cssVariable": "--env-color-border-success-muted",
         "type": "color",
         "description": "The faint edge of a success alert: the success text color at 28%, in every theme and at high contrast.",
         "values": {
@@ -12699,7 +12761,7 @@
       },
       {
         "id": "color.border.success.strong",
-        "cssVariable": "--color-border-success-strong",
+        "cssVariable": "--env-color-border-success-strong",
         "type": "color",
         "description": "The edge of the strong success fill where it floats, on success toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted.",
         "values": {
@@ -12710,15 +12772,8 @@
         }
       },
       {
-        "id": "color.border.translucent",
-        "cssVariable": "--color-border-translucent",
-        "type": "color",
-        "description": "A neutral inner edge that defines content of any color, such as the color picker’s area: black at 5% in both themes.",
-        "value": "rgb(0 0 0 / 0.05)"
-      },
-      {
-        "id": "color.border.warning.emphasis",
-        "cssVariable": "--color-border-warning-emphasis",
+        "id": "color.border.warning",
+        "cssVariable": "--env-color-border-warning",
         "type": "color",
         "description": "A decorative edge in the warning tone, around an outlined badge: the warning text color at 55%, in every theme and at high contrast.",
         "values": {
@@ -12730,7 +12785,7 @@
       },
       {
         "id": "color.border.warning.muted",
-        "cssVariable": "--color-border-warning-muted",
+        "cssVariable": "--env-color-border-warning-muted",
         "type": "color",
         "description": "The faint edge of a warning alert: the warning text color at 28%, in every theme and at high contrast.",
         "values": {
@@ -12742,7 +12797,7 @@
       },
       {
         "id": "color.fg.accent",
-        "cssVariable": "--color-fg-accent",
+        "cssVariable": "--env-color-fg-accent",
         "type": "color",
         "description": "Accent text and icons: the accent tone, outlined button labels, chips, the icon of a pager link.",
         "values": {
@@ -12754,7 +12809,7 @@
       },
       {
         "id": "color.fg.control",
-        "cssVariable": "--color-fg-control",
+        "cssVariable": "--env-color-fg-control",
         "type": "color",
         "description": "The labels of navigation items, secondary buttons and Select options, the values of meters and sliders, and the thumb of a switch that is off.",
         "values": {
@@ -12766,7 +12821,7 @@
       },
       {
         "id": "color.fg.danger",
-        "cssVariable": "--color-fg-danger",
+        "cssVariable": "--env-color-fg-danger",
         "type": "color",
         "description": "Danger text and icons, and field errors.",
         "values": {
@@ -12778,7 +12833,7 @@
       },
       {
         "id": "color.fg.default",
-        "cssVariable": "--color-fg-default",
+        "cssVariable": "--env-color-fg-default",
         "type": "color",
         "description": "Body text and the labels of rows, fields and choice controls.",
         "values": {
@@ -12790,7 +12845,7 @@
       },
       {
         "id": "color.fg.done",
-        "cssVariable": "--color-fg-done",
+        "cssVariable": "--env-color-fg-done",
         "type": "color",
         "description": "Done text and icons.",
         "values": {
@@ -12802,7 +12857,7 @@
       },
       {
         "id": "color.fg.link",
-        "cssVariable": "--color-fg-link",
+        "cssVariable": "--env-color-fg-link",
         "type": "color",
         "description": "Links and text buttons: at least 4.5:1 on every surface and row.",
         "values": {
@@ -12814,7 +12869,7 @@
       },
       {
         "id": "color.fg.link.hover",
-        "cssVariable": "--color-fg-link-hover",
+        "cssVariable": "--env-color-fg-link-hover",
         "type": "color",
         "description": "A link under the pointer.",
         "values": {
@@ -12826,7 +12881,7 @@
       },
       {
         "id": "color.fg.link.pressed",
-        "cssVariable": "--color-fg-link-pressed",
+        "cssVariable": "--env-color-fg-link-pressed",
         "type": "color",
         "description": "A link while pressed.",
         "values": {
@@ -12838,7 +12893,7 @@
       },
       {
         "id": "color.fg.muted",
-        "cssVariable": "--color-fg-muted",
+        "cssVariable": "--env-color-fg-muted",
         "type": "color",
         "description": "Supporting text, icons, field labels, descriptions and placeholders, row details, unchecked checkbox rings: every former synonym (muted, quiet, icon, field label, hint, placeholder, row detail).",
         "values": {
@@ -12850,7 +12905,7 @@
       },
       {
         "id": "color.fg.muted.hover",
-        "cssVariable": "--color-fg-muted-hover",
+        "cssVariable": "--env-color-fg-muted-hover",
         "type": "color",
         "description": "Muted text that responds to the pointer, such as a Disclosure summary, gains contrast.",
         "values": {
@@ -12862,7 +12917,7 @@
       },
       {
         "id": "color.fg.muted.pressed",
-        "cssVariable": "--color-fg-muted-pressed",
+        "cssVariable": "--env-color-fg-muted-pressed",
         "type": "color",
         "description": "Muted text while pressed.",
         "values": {
@@ -12874,7 +12929,7 @@
       },
       {
         "id": "color.fg.on-emphasis",
-        "cssVariable": "--color-fg-on-emphasis",
+        "cssVariable": "--env-color-fg-on-emphasis",
         "type": "color",
         "description": "Text and icons on the emphasis fills: white in light, dark in dark.",
         "values": {
@@ -12886,7 +12941,7 @@
       },
       {
         "id": "color.fg.on-selected",
-        "cssVariable": "--color-fg-on-selected",
+        "cssVariable": "--env-color-fg-on-selected",
         "type": "color",
         "description": "Text and indicators on bg.selected and its states.",
         "values": {
@@ -12898,14 +12953,14 @@
       },
       {
         "id": "color.fg.on-strong",
-        "cssVariable": "--color-fg-on-strong",
+        "cssVariable": "--env-color-fg-on-strong",
         "type": "color",
         "description": "White in both themes, on the strong fills: labels at 4.5:1 on the danger, important, neutral, success and information fills at rest; icons and marks at 3:1 on their hover and pressed fills and on the brand’s strong fill.",
         "value": "#ffffff"
       },
       {
         "id": "color.fg.success",
-        "cssVariable": "--color-fg-success",
+        "cssVariable": "--env-color-fg-success",
         "type": "color",
         "description": "Success text and icons.",
         "values": {
@@ -12917,7 +12972,7 @@
       },
       {
         "id": "color.fg.warning",
-        "cssVariable": "--color-fg-warning",
+        "cssVariable": "--env-color-fg-warning",
         "type": "color",
         "description": "Warning text and icons.",
         "values": {
@@ -12928,21 +12983,57 @@
         }
       },
       {
+        "id": "color.list-item.bg",
+        "cssVariable": "--env-color-list-item-bg",
+        "type": "color",
+        "description": "The fill of a list item: the default surface in light, the muted one in dark, so items stand apart from the page and from a surface in both.",
+        "values": {
+          "light": "#eff1f5",
+          "dark": "#343638",
+          "light-high-contrast": "#eff1f5",
+          "dark-high-contrast": "#343638"
+        }
+      },
+      {
+        "id": "color.list-item.bg.hover",
+        "cssVariable": "--env-color-list-item-bg-hover",
+        "type": "color",
+        "description": "A list item under the pointer.",
+        "values": {
+          "light": "#e2e4e8",
+          "dark": "#424447",
+          "light-high-contrast": "#e2e4e8",
+          "dark-high-contrast": "#383a3d"
+        }
+      },
+      {
+        "id": "color.list-item.bg.pressed",
+        "cssVariable": "--env-color-list-item-bg-pressed",
+        "type": "color",
+        "description": "A list item while pressed.",
+        "values": {
+          "light": "#dbdde1",
+          "dark": "#4b4d51",
+          "light-high-contrast": "#dbdde1",
+          "dark-high-contrast": "#424447"
+        }
+      },
+      {
         "id": "control.border-width",
-        "cssVariable": "--control-border-width",
+        "cssVariable": "--env-control-border-width",
         "type": "dimension",
         "description": "The hairline border of controls and fields, which stays 1 px in both scales.",
         "value": "1px"
       },
       {
         "id": "control.font-size",
-        "cssVariable": "--control-font-size",
+        "cssVariable": "--env-control-font-size",
         "type": "dimension",
         "value": "0.9375rem"
       },
       {
         "id": "control.gap",
-        "cssVariable": "--control-gap",
+        "cssVariable": "--env-control-gap",
         "type": "dimension",
         "description": "The space between a control's icon and its label.",
         "value": "0.4375rem",
@@ -12950,14 +13041,14 @@
       },
       {
         "id": "control.height",
-        "cssVariable": "--control-height",
+        "cssVariable": "--env-control-height",
         "type": "dimension",
         "description": "The height a control takes when it sets no size: md, unless a container sets it to another control height for what it holds, as a table cell does with sm.",
         "value": "2.5rem"
       },
       {
         "id": "control.height-lg",
-        "cssVariable": "--control-height-lg",
+        "cssVariable": "--env-control-height-lg",
         "type": "dimension",
         "description": "The large control height, for a control of size lg, such as a prominent call to action.",
         "value": "3rem",
@@ -12965,7 +13056,7 @@
       },
       {
         "id": "control.height-md",
-        "cssVariable": "--control-height-md",
+        "cssVariable": "--env-control-height-md",
         "type": "dimension",
         "description": "The medium control height, every control's default size.",
         "value": "2.5rem",
@@ -12973,7 +13064,7 @@
       },
       {
         "id": "control.height-sm",
-        "cssVariable": "--control-height-sm",
+        "cssVariable": "--env-control-height-sm",
         "type": "dimension",
         "description": "The small control height: a control of size sm, the actions in a table cell, a title bar or a panel header.",
         "value": "2rem",
@@ -12981,40 +13072,40 @@
       },
       {
         "id": "control.height-touch",
-        "cssVariable": "--control-height-touch",
+        "cssVariable": "--env-control-height-touch",
         "type": "dimension",
         "description": "The height every control grows to under a coarse pointer, whatever the scale, and the width of a button: its own box is its hit area. Rows grow to it too.",
         "value": "2.75rem"
       },
       {
         "id": "control.icon-size",
-        "cssVariable": "--control-icon-size",
+        "cssVariable": "--env-control-icon-size",
         "type": "dimension",
         "description": "The icon in a control. 1 rem in both scales: icons never get smaller than this.",
         "value": "1rem"
       },
       {
         "id": "control.target-min",
-        "cssVariable": "--control-target-min",
+        "cssVariable": "--env-control-target-min",
         "type": "dimension",
         "description": "The smallest a pressable target may be in either dimension, in both scales: WCAG 2.2's 24 px minimum. A control smaller than its size, such as a segment inside a small rail or an action inside a small field, keeps at least this.",
         "value": "1.5rem"
       },
       {
         "id": "elevation.0.border",
-        "cssVariable": "--elevation-0-border",
+        "cssVariable": "--env-elevation-0-border",
         "type": "color",
         "value": "transparent"
       },
       {
         "id": "elevation.0.shadow",
-        "cssVariable": "--elevation-0-shadow",
+        "cssVariable": "--env-elevation-0-shadow",
         "type": "shadow",
         "value": "0 0 0 0 transparent"
       },
       {
         "id": "elevation.1.border",
-        "cssVariable": "--elevation-1-border",
+        "cssVariable": "--env-elevation-1-border",
         "type": "color",
         "values": {
           "light": "#dbdde1",
@@ -13025,7 +13116,7 @@
       },
       {
         "id": "elevation.1.shadow",
-        "cssVariable": "--elevation-1-shadow",
+        "cssVariable": "--env-elevation-1-shadow",
         "type": "shadow",
         "values": {
           "light": "0 1px 2px 0 rgb(66 68 71 / 0.3), 0 1px 3px 1px rgb(66 68 71 / 0.15)",
@@ -13036,7 +13127,7 @@
       },
       {
         "id": "elevation.2.border",
-        "cssVariable": "--elevation-2-border",
+        "cssVariable": "--env-elevation-2-border",
         "type": "color",
         "values": {
           "light": "#dbdde1",
@@ -13047,7 +13138,7 @@
       },
       {
         "id": "elevation.2.shadow",
-        "cssVariable": "--elevation-2-shadow",
+        "cssVariable": "--env-elevation-2-shadow",
         "type": "shadow",
         "values": {
           "light": "0 1px 2px 0 rgb(66 68 71 / 0.3), 0 2px 6px 2px rgb(66 68 71 / 0.15)",
@@ -13058,7 +13149,7 @@
       },
       {
         "id": "elevation.3.border",
-        "cssVariable": "--elevation-3-border",
+        "cssVariable": "--env-elevation-3-border",
         "type": "color",
         "values": {
           "light": "#dbdde1",
@@ -13069,7 +13160,7 @@
       },
       {
         "id": "elevation.3.shadow",
-        "cssVariable": "--elevation-3-shadow",
+        "cssVariable": "--env-elevation-3-shadow",
         "type": "shadow",
         "values": {
           "light": "0 1px 3px 0 rgb(66 68 71 / 0.3), 0 4px 8px 3px rgb(66 68 71 / 0.15)",
@@ -13080,7 +13171,7 @@
       },
       {
         "id": "field.floating-height",
-        "cssVariable": "--field-floating-height",
+        "cssVariable": "--env-field-floating-height",
         "type": "dimension",
         "description": "The height of a text field's floating variant, whose label rests inside the field and floats into its outline. Other fields take the control height.",
         "value": "3.5rem",
@@ -13088,27 +13179,27 @@
       },
       {
         "id": "font.family",
-        "cssVariable": "--font-family",
+        "cssVariable": "--env-font-family",
         "type": "fontFamily",
         "value": "'envUI Inter', sans-serif"
       },
       {
         "id": "font.size.body",
-        "cssVariable": "--font-size-body",
+        "cssVariable": "--env-font-size-body",
         "type": "dimension",
         "value": "0.9375rem",
         "compact": "0.8125rem"
       },
       {
         "id": "font.size.body-small",
-        "cssVariable": "--font-size-body-small",
+        "cssVariable": "--env-font-size-body-small",
         "type": "dimension",
         "value": "0.875rem",
         "compact": "0.75rem"
       },
       {
         "id": "font.size.caption",
-        "cssVariable": "--font-size-caption",
+        "cssVariable": "--env-font-size-caption",
         "type": "dimension",
         "description": "Captions, a menu's group labels and other small secondary text.",
         "value": "0.75rem",
@@ -13116,21 +13207,21 @@
       },
       {
         "id": "font.size.heading",
-        "cssVariable": "--font-size-heading",
+        "cssVariable": "--env-font-size-heading",
         "type": "dimension",
         "value": "1.125rem",
         "compact": "1rem"
       },
       {
         "id": "font.size.heading-small",
-        "cssVariable": "--font-size-heading-small",
+        "cssVariable": "--env-font-size-heading-small",
         "type": "dimension",
         "value": "1rem",
         "compact": "0.875rem"
       },
       {
         "id": "font.size.label",
-        "cssVariable": "--font-size-label",
+        "cssVariable": "--env-font-size-label",
         "type": "dimension",
         "description": "The label of a control, and the text of menu, tree and option rows.",
         "value": "0.875rem",
@@ -13138,7 +13229,7 @@
       },
       {
         "id": "font.size.label-small",
-        "cssVariable": "--font-size-label-small",
+        "cssVariable": "--env-font-size-label-small",
         "type": "dimension",
         "description": "A label inside a field at the control height, such as a combobox chip's.",
         "value": "0.8125rem",
@@ -13146,7 +13237,7 @@
       },
       {
         "id": "icon.size-lg",
-        "cssVariable": "--icon-size-lg",
+        "cssVariable": "--env-icon-size-lg",
         "type": "dimension",
         "description": "A leading icon in a large row, such as a list item's.",
         "value": "1.25rem",
@@ -13154,7 +13245,7 @@
       },
       {
         "id": "icon.size-md",
-        "cssVariable": "--icon-size-md",
+        "cssVariable": "--env-icon-size-md",
         "type": "dimension",
         "description": "An icon beside body text, such as in a tree or a select trigger.",
         "value": "1.125rem",
@@ -13162,146 +13253,132 @@
       },
       {
         "id": "icon.size-sm",
-        "cssVariable": "--icon-size-sm",
+        "cssVariable": "--env-icon-size-sm",
         "type": "dimension",
         "value": "1rem"
       },
       {
-        "id": "md.sys.shape.corner.extra-large",
-        "cssVariable": "--md-sys-shape-corner-extra-large",
-        "type": "dimension",
-        "value": "1.75rem",
-        "compact": "1.375rem"
-      },
-      {
-        "id": "md.sys.shape.corner.extra-small",
-        "cssVariable": "--md-sys-shape-corner-extra-small",
-        "type": "dimension",
-        "value": "0.25rem",
-        "compact": "0.1875rem"
-      },
-      {
-        "id": "md.sys.shape.corner.large",
-        "cssVariable": "--md-sys-shape-corner-large",
-        "type": "dimension",
-        "value": "1rem",
-        "compact": "0.75rem"
-      },
-      {
-        "id": "md.sys.shape.corner.medium",
-        "cssVariable": "--md-sys-shape-corner-medium",
-        "type": "dimension",
-        "value": "0.75rem",
-        "compact": "0.625rem"
-      },
-      {
-        "id": "md.sys.shape.corner.none",
-        "cssVariable": "--md-sys-shape-corner-none",
-        "type": "dimension",
-        "value": "0"
-      },
-      {
-        "id": "md.sys.shape.corner.small",
-        "cssVariable": "--md-sys-shape-corner-small",
-        "type": "dimension",
-        "value": "0.5rem",
-        "compact": "0.375rem"
-      },
-      {
         "id": "motion.duration.fast",
-        "cssVariable": "--motion-duration-fast",
+        "cssVariable": "--env-motion-duration-fast",
         "type": "duration",
         "value": "0.12s"
       },
       {
         "id": "motion.duration.medium",
-        "cssVariable": "--motion-duration-medium",
+        "cssVariable": "--env-motion-duration-medium",
         "type": "duration",
         "value": "0.16s"
       },
       {
         "id": "motion.duration.slow",
-        "cssVariable": "--motion-duration-slow",
+        "cssVariable": "--env-motion-duration-slow",
         "type": "duration",
         "value": "0.24s"
       },
       {
         "id": "motion.ease",
-        "cssVariable": "--motion-ease",
+        "cssVariable": "--env-motion-ease",
         "type": "cubicBezier",
         "value": "cubic-bezier(0.45, 0, 0.2, 1)"
       },
       {
         "id": "motion.ease-enter",
-        "cssVariable": "--motion-ease-enter",
+        "cssVariable": "--env-motion-ease-enter",
         "type": "cubicBezier",
         "description": "Elements entering decelerate into place.",
         "value": "cubic-bezier(0.05, 0.7, 0.1, 1)"
       },
       {
         "id": "motion.ease-exit",
-        "cssVariable": "--motion-ease-exit",
+        "cssVariable": "--env-motion-ease-exit",
         "type": "cubicBezier",
         "description": "Leaving elements accelerate away.",
         "value": "cubic-bezier(0.3, 0, 0.8, 0.15)"
       },
       {
         "id": "motion.ease-standard",
-        "cssVariable": "--motion-ease-standard",
+        "cssVariable": "--env-motion-ease-standard",
         "type": "cubicBezier",
         "value": "cubic-bezier(0.45, 0, 0.2, 1)"
       },
       {
-        "id": "radius.large",
-        "cssVariable": "--radius-large",
+        "id": "radius.lg",
+        "cssVariable": "--env-radius-lg",
         "type": "dimension",
-        "description": "Fields, tables and other blocks with medium corners.",
+        "description": "Medium corners: fields, tables, alerts and other blocks.",
         "value": "1rem",
         "compact": "0.75rem"
       },
       {
-        "id": "radius.row-inner",
-        "cssVariable": "--radius-row-inner",
+        "id": "radius.md",
+        "cssVariable": "--env-radius-md",
         "type": "dimension",
-        "value": "0.5rem",
-        "compact": "0.375rem"
+        "value": "0.75rem",
+        "compact": "0.625rem"
+      },
+      {
+        "id": "radius.none",
+        "cssVariable": "--env-radius-none",
+        "type": "dimension",
+        "value": "0"
+      },
+      {
+        "id": "radius.row-inner",
+        "cssVariable": "--env-radius-row-inner",
+        "type": "dimension",
+        "value": "0.5rem"
       },
       {
         "id": "radius.row-outer",
-        "cssVariable": "--radius-row-outer",
+        "cssVariable": "--env-radius-row-outer",
         "type": "dimension",
         "value": "1.75rem"
       },
       {
         "id": "radius.row-single",
-        "cssVariable": "--radius-row-single",
+        "cssVariable": "--env-radius-row-single",
         "type": "dimension",
         "value": "1.75rem"
       },
       {
-        "id": "radius.standard",
-        "cssVariable": "--radius-standard",
+        "id": "radius.sm",
+        "cssVariable": "--env-radius-sm",
         "type": "dimension",
+        "description": "Small corners: buttons in a group, chips, menu rows, list rows inside a surface.",
         "value": "0.5rem",
         "compact": "0.375rem"
       },
       {
         "id": "radius.surface",
-        "cssVariable": "--radius-surface",
+        "cssVariable": "--env-radius-surface",
+        "type": "dimension",
+        "description": "The rounded corners of surfaces, dialogs and popups.",
+        "value": "1.75rem"
+      },
+      {
+        "id": "radius.xl",
+        "cssVariable": "--env-radius-xl",
         "type": "dimension",
         "value": "1.75rem",
         "compact": "1.375rem"
       },
       {
+        "id": "radius.xs",
+        "cssVariable": "--env-radius-xs",
+        "type": "dimension",
+        "value": "0.25rem",
+        "compact": "0.1875rem"
+      },
+      {
         "id": "row.content-height",
-        "cssVariable": "--row-content-height",
+        "cssVariable": "--env-row-content-height",
         "type": "dimension",
         "description": "The line a tree row reserves for its label and icon, 20 px in both scales; the row's density adds its block padding around it.",
         "value": "1.25rem"
       },
       {
         "id": "row.height",
-        "cssVariable": "--row-height",
+        "cssVariable": "--env-row-height",
         "type": "dimension",
         "description": "The row of a menu and of a select's or combobox's popup.",
         "value": "2.25rem",
@@ -13309,7 +13386,7 @@
       },
       {
         "id": "row.padding-block-lg",
-        "cssVariable": "--row-padding-block-lg",
+        "cssVariable": "--env-row-padding-block-lg",
         "type": "dimension",
         "description": "Row density lg.",
         "value": "0.75rem",
@@ -13317,7 +13394,7 @@
       },
       {
         "id": "row.padding-block-md",
-        "cssVariable": "--row-padding-block-md",
+        "cssVariable": "--env-row-padding-block-md",
         "type": "dimension",
         "description": "Row density md: the default of tables and lists.",
         "value": "0.5rem",
@@ -13325,7 +13402,7 @@
       },
       {
         "id": "row.padding-block-sm",
-        "cssVariable": "--row-padding-block-sm",
+        "cssVariable": "--env-row-padding-block-sm",
         "type": "dimension",
         "description": "Row density sm: a tree's default.",
         "value": "0.25rem",
@@ -13333,7 +13410,7 @@
       },
       {
         "id": "row.padding-block-xs",
-        "cssVariable": "--row-padding-block-xs",
+        "cssVariable": "--env-row-padding-block-xs",
         "type": "dimension",
         "description": "Row density xs: the block padding of each row of a data component, such as a table, a tree or a list.",
         "value": "0.125rem",
@@ -13341,7 +13418,7 @@
       },
       {
         "id": "row.padding-inline",
-        "cssVariable": "--row-padding-inline",
+        "cssVariable": "--env-row-padding-inline",
         "type": "dimension",
         "description": "Text in rows keeps clear of the large outer corners, whether a row stands alone or is connected.",
         "value": "1.5rem",
@@ -13349,75 +13426,75 @@
       },
       {
         "id": "space.1",
-        "cssVariable": "--space-1",
+        "cssVariable": "--env-space-1",
         "type": "dimension",
         "value": "0.25rem"
       },
       {
         "id": "space.2",
-        "cssVariable": "--space-2",
+        "cssVariable": "--env-space-2",
         "type": "dimension",
         "value": "0.5rem",
         "compact": "0.375rem"
       },
       {
         "id": "space.3",
-        "cssVariable": "--space-3",
+        "cssVariable": "--env-space-3",
         "type": "dimension",
         "value": "0.75rem",
         "compact": "0.625rem"
       },
       {
         "id": "space.4",
-        "cssVariable": "--space-4",
+        "cssVariable": "--env-space-4",
         "type": "dimension",
         "value": "1rem",
         "compact": "0.75rem"
       },
       {
         "id": "space.5",
-        "cssVariable": "--space-5",
+        "cssVariable": "--env-space-5",
         "type": "dimension",
         "value": "1.5rem",
         "compact": "1.25rem"
       },
       {
         "id": "space.6",
-        "cssVariable": "--space-6",
+        "cssVariable": "--env-space-6",
         "type": "dimension",
         "value": "2rem",
         "compact": "1.625rem"
       },
       {
         "id": "space.7",
-        "cssVariable": "--space-7",
+        "cssVariable": "--env-space-7",
         "type": "dimension",
         "value": "2.5rem",
         "compact": "2rem"
       },
       {
         "id": "space.8",
-        "cssVariable": "--space-8",
+        "cssVariable": "--env-space-8",
         "type": "dimension",
         "value": "3rem",
         "compact": "2.375rem"
       },
       {
         "id": "space.9",
-        "cssVariable": "--space-9",
+        "cssVariable": "--env-space-9",
         "type": "dimension",
         "value": "4rem",
         "compact": "3.25rem"
       },
       {
         "id": "state.disabled-opacity",
-        "cssVariable": "--state-disabled-opacity",
+        "cssVariable": "--env-state-disabled-opacity",
         "type": "number",
         "value": "0.48"
       },
       {
         "id": "title-bar.height",
-        "cssVariable": "--title-bar-height",
+        "cssVariable": "--env-title-bar-height",
         "type": "dimension",
         "description": "A window title bar drawn by the application, which holds controls of size sm.",
         "value": "2.5rem",
@@ -13425,14 +13502,14 @@
       },
       {
         "id": "topbar.height",
-        "cssVariable": "--topbar-height",
+        "cssVariable": "--env-topbar-height",
         "type": "dimension",
         "value": "3.25rem",
         "compact": "2.625rem"
       },
       {
         "id": "tree.row-padding-block-lg",
-        "cssVariable": "--tree-row-padding-block-lg",
+        "cssVariable": "--env-tree-row-padding-block-lg",
         "type": "dimension",
         "description": "A tree row's block padding at density lg: the row density's in the comfortable scale.",
         "value": "0.75rem",
@@ -13440,7 +13517,7 @@
       },
       {
         "id": "tree.row-padding-block-md",
-        "cssVariable": "--tree-row-padding-block-md",
+        "cssVariable": "--env-tree-row-padding-block-md",
         "type": "dimension",
         "description": "A tree row's block padding at density md: the row density's in the comfortable scale.",
         "value": "0.5rem",
@@ -13448,7 +13525,7 @@
       },
       {
         "id": "tree.row-padding-block-sm",
-        "cssVariable": "--tree-row-padding-block-sm",
+        "cssVariable": "--env-tree-row-padding-block-sm",
         "type": "dimension",
         "description": "A tree row's block padding at density sm, its default, so that a row is as tall as a menu row in either scale: the row density's in the comfortable scale.",
         "value": "0.25rem",
@@ -13456,7 +13533,7 @@
       },
       {
         "id": "type.body",
-        "cssVariable": "--type-body",
+        "cssVariable": "--env-type-body",
         "type": "typography",
         "value": {
           "font-family": "'envUI Inter', sans-serif",
@@ -13468,7 +13545,7 @@
       },
       {
         "id": "type.body-small",
-        "cssVariable": "--type-body-small",
+        "cssVariable": "--env-type-body-small",
         "type": "typography",
         "value": {
           "font-family": "'envUI Inter', sans-serif",
@@ -13480,7 +13557,7 @@
       },
       {
         "id": "type.h1",
-        "cssVariable": "--type-h1",
+        "cssVariable": "--env-type-h1",
         "type": "typography",
         "value": {
           "font-family": "'envUI Inter', sans-serif",
@@ -13492,7 +13569,7 @@
       },
       {
         "id": "type.h2",
-        "cssVariable": "--type-h2",
+        "cssVariable": "--env-type-h2",
         "type": "typography",
         "value": {
           "font-family": "'envUI Inter', sans-serif",
@@ -13505,863 +13582,1899 @@
     ],
     "legacy": [
       {
-        "id": "color.accent",
+        "cssVariable": "--app-sticky-top",
+        "use": "--env-app-sticky-top",
+        "note": "The offset sticky content takes below the app shell's top bar, which AppShell sets."
+      },
+      {
+        "cssVariable": "--avatar-group-ring",
+        "use": "--env-avatar-group-ring",
+        "note": "The ring color an application sets for an avatar group on a fill that is not an envUI surface."
+      },
+      {
+        "cssVariable": "--body-font-weight",
+        "use": "--env-body-font-weight"
+      },
+      {
         "cssVariable": "--color-accent",
-        "type": "color",
-        "use": "color.bg.important.strong"
+        "use": "--env-color-bg-important-strong",
+        "type": "color"
       },
       {
-        "id": "color.accent-hover",
         "cssVariable": "--color-accent-hover",
-        "type": "color",
-        "use": "color.bg.important.strong.hover"
+        "use": "--env-color-bg-important-strong-hover",
+        "type": "color"
       },
       {
-        "id": "color.accent-pressed",
         "cssVariable": "--color-accent-pressed",
-        "type": "color",
-        "use": "color.bg.important.strong.pressed"
+        "use": "--env-color-bg-important-strong-pressed",
+        "type": "color"
       },
       {
-        "id": "color.action-strip",
         "cssVariable": "--color-action-strip",
-        "type": "color",
-        "use": "color.bg.default"
+        "use": "--env-color-bg-default",
+        "type": "color"
       },
       {
-        "id": "color.avatar",
         "cssVariable": "--color-avatar",
-        "type": "color"
+        "use": "--env-color-avatar-bg",
+        "type": "color",
+        "note": "A component token now."
       },
       {
-        "id": "color.avatar-figure",
         "cssVariable": "--color-avatar-figure",
-        "type": "color"
+        "use": "--env-color-avatar-figure",
+        "type": "color",
+        "note": "A component token now."
       },
       {
-        "id": "color.border-hover",
+        "cssVariable": "--color-bg-accent-emphasis",
+        "use": "--env-color-bg-accent-emphasis"
+      },
+      {
+        "cssVariable": "--color-bg-accent-muted",
+        "use": "--env-color-bg-accent-muted"
+      },
+      {
+        "cssVariable": "--color-bg-accent-subtle-hover",
+        "use": "--env-color-bg-accent-subtle-hover"
+      },
+      {
+        "cssVariable": "--color-bg-accent-subtle-pressed",
+        "use": "--env-color-bg-accent-subtle-pressed"
+      },
+      {
+        "cssVariable": "--color-bg-brand-emphasis",
+        "use": "--env-color-bg-brand-emphasis"
+      },
+      {
+        "cssVariable": "--color-bg-brand-emphasis-hover",
+        "use": "--env-color-bg-brand-emphasis-hover"
+      },
+      {
+        "cssVariable": "--color-bg-brand-emphasis-pressed",
+        "use": "--env-color-bg-brand-emphasis-pressed"
+      },
+      {
+        "cssVariable": "--color-bg-brand-muted",
+        "use": "--env-color-bg-brand-muted"
+      },
+      {
+        "cssVariable": "--color-bg-brand-strong",
+        "use": "--env-color-bg-brand-strong"
+      },
+      {
+        "cssVariable": "--color-bg-brand-strong-hover",
+        "use": "--env-color-bg-brand-strong-hover"
+      },
+      {
+        "cssVariable": "--color-bg-brand-strong-pressed",
+        "use": "--env-color-bg-brand-strong-pressed"
+      },
+      {
+        "cssVariable": "--color-bg-danger-emphasis",
+        "use": "--env-color-bg-danger-emphasis"
+      },
+      {
+        "cssVariable": "--color-bg-danger-muted",
+        "use": "--env-color-bg-danger-muted"
+      },
+      {
+        "cssVariable": "--color-bg-danger-strong",
+        "use": "--env-color-bg-danger-strong"
+      },
+      {
+        "cssVariable": "--color-bg-danger-strong-hover",
+        "use": "--env-color-bg-danger-strong-hover"
+      },
+      {
+        "cssVariable": "--color-bg-danger-strong-pressed",
+        "use": "--env-color-bg-danger-strong-pressed"
+      },
+      {
+        "cssVariable": "--color-bg-danger-subtle-hover",
+        "use": "--env-color-bg-danger-subtle-hover"
+      },
+      {
+        "cssVariable": "--color-bg-danger-subtle-pressed",
+        "use": "--env-color-bg-danger-subtle-pressed"
+      },
+      {
+        "cssVariable": "--color-bg-default",
+        "use": "--env-color-bg-default"
+      },
+      {
+        "cssVariable": "--color-bg-default-hover",
+        "use": "--env-color-bg-default-hover"
+      },
+      {
+        "cssVariable": "--color-bg-default-pressed",
+        "use": "--env-color-bg-default-pressed"
+      },
+      {
+        "cssVariable": "--color-bg-done-emphasis",
+        "use": "--env-color-bg-done-emphasis"
+      },
+      {
+        "cssVariable": "--color-bg-done-muted",
+        "use": "--env-color-bg-done-muted"
+      },
+      {
+        "cssVariable": "--color-bg-field",
+        "use": "--env-color-bg-field"
+      },
+      {
+        "cssVariable": "--color-bg-important-strong",
+        "use": "--env-color-bg-important-strong"
+      },
+      {
+        "cssVariable": "--color-bg-important-strong-hover",
+        "use": "--env-color-bg-important-strong-hover"
+      },
+      {
+        "cssVariable": "--color-bg-important-strong-pressed",
+        "use": "--env-color-bg-important-strong-pressed"
+      },
+      {
+        "cssVariable": "--color-bg-info-strong",
+        "use": "--env-color-bg-info-strong"
+      },
+      {
+        "cssVariable": "--color-bg-info-strong-hover",
+        "use": "--env-color-bg-info-strong-hover"
+      },
+      {
+        "cssVariable": "--color-bg-info-strong-pressed",
+        "use": "--env-color-bg-info-strong-pressed"
+      },
+      {
+        "cssVariable": "--color-bg-muted",
+        "use": "--env-color-bg-muted"
+      },
+      {
+        "cssVariable": "--color-bg-muted-hover",
+        "use": "--env-color-bg-muted-hover"
+      },
+      {
+        "cssVariable": "--color-bg-muted-pressed",
+        "use": "--env-color-bg-muted-pressed"
+      },
+      {
+        "cssVariable": "--color-bg-navigation-hover",
+        "use": "--env-color-bg-navigation-hover"
+      },
+      {
+        "cssVariable": "--color-bg-navigation-pressed",
+        "use": "--env-color-bg-navigation-pressed"
+      },
+      {
+        "cssVariable": "--color-bg-neutral-emphasis",
+        "use": "--env-color-bg-neutral-emphasis"
+      },
+      {
+        "cssVariable": "--color-bg-neutral-muted",
+        "use": "--env-color-bg-neutral-muted"
+      },
+      {
+        "cssVariable": "--color-bg-neutral-muted-hover",
+        "use": "--env-color-bg-neutral-muted-hover"
+      },
+      {
+        "cssVariable": "--color-bg-neutral-muted-pressed",
+        "use": "--env-color-bg-neutral-muted-pressed"
+      },
+      {
+        "cssVariable": "--color-bg-neutral-strong",
+        "use": "--env-color-bg-neutral-strong"
+      },
+      {
+        "cssVariable": "--color-bg-neutral-strong-hover",
+        "use": "--env-color-bg-neutral-strong-hover"
+      },
+      {
+        "cssVariable": "--color-bg-neutral-strong-pressed",
+        "use": "--env-color-bg-neutral-strong-pressed"
+      },
+      {
+        "cssVariable": "--color-bg-neutral-subtle",
+        "use": "--env-color-bg-neutral-subtle"
+      },
+      {
+        "cssVariable": "--color-bg-neutral-subtle-hover",
+        "use": "--env-color-bg-neutral-subtle-hover"
+      },
+      {
+        "cssVariable": "--color-bg-neutral-subtle-pressed",
+        "use": "--env-color-bg-neutral-subtle-pressed"
+      },
+      {
+        "cssVariable": "--color-bg-overlay",
+        "use": "--env-color-bg-overlay"
+      },
+      {
+        "cssVariable": "--color-bg-overlay-muted",
+        "use": "--env-color-bg-overlay-muted"
+      },
+      {
+        "cssVariable": "--color-bg-page",
+        "use": "--env-color-bg-page"
+      },
+      {
+        "cssVariable": "--color-bg-page-hover",
+        "use": "--env-color-bg-page-hover"
+      },
+      {
+        "cssVariable": "--color-bg-page-muted",
+        "use": "--env-color-bg-inset",
+        "type": "color",
+        "note": "Named for its role: a background that leans back toward the page inside a fill."
+      },
+      {
+        "cssVariable": "--color-bg-page-pressed",
+        "use": "--env-color-bg-page-pressed"
+      },
+      {
+        "cssVariable": "--color-bg-popup",
+        "use": "--env-color-bg-popup"
+      },
+      {
+        "cssVariable": "--color-bg-popup-hover",
+        "use": "--env-color-bg-popup-hover"
+      },
+      {
+        "cssVariable": "--color-bg-popup-pressed",
+        "use": "--env-color-bg-popup-pressed"
+      },
+      {
+        "cssVariable": "--color-bg-raised",
+        "use": "--env-color-bg-raised"
+      },
+      {
+        "cssVariable": "--color-bg-raised-hover",
+        "use": "--env-color-bg-raised-hover"
+      },
+      {
+        "cssVariable": "--color-bg-raised-pressed",
+        "use": "--env-color-bg-raised-pressed"
+      },
+      {
+        "cssVariable": "--color-bg-selected",
+        "use": "--env-color-bg-selected"
+      },
+      {
+        "cssVariable": "--color-bg-selected-hover",
+        "use": "--env-color-bg-selected-hover"
+      },
+      {
+        "cssVariable": "--color-bg-selected-pressed",
+        "use": "--env-color-bg-selected-pressed"
+      },
+      {
+        "cssVariable": "--color-bg-success-emphasis",
+        "use": "--env-color-bg-success-emphasis"
+      },
+      {
+        "cssVariable": "--color-bg-success-muted",
+        "use": "--env-color-bg-success-muted"
+      },
+      {
+        "cssVariable": "--color-bg-success-strong",
+        "use": "--env-color-bg-success-strong"
+      },
+      {
+        "cssVariable": "--color-bg-success-strong-hover",
+        "use": "--env-color-bg-success-strong-hover"
+      },
+      {
+        "cssVariable": "--color-bg-success-strong-pressed",
+        "use": "--env-color-bg-success-strong-pressed"
+      },
+      {
+        "cssVariable": "--color-bg-success-subtle-hover",
+        "use": "--env-color-bg-success-subtle-hover"
+      },
+      {
+        "cssVariable": "--color-bg-success-subtle-pressed",
+        "use": "--env-color-bg-success-subtle-pressed"
+      },
+      {
+        "cssVariable": "--color-bg-warning-emphasis",
+        "use": "--env-color-bg-warning-emphasis"
+      },
+      {
+        "cssVariable": "--color-bg-warning-muted",
+        "use": "--env-color-bg-warning-muted"
+      },
+      {
+        "cssVariable": "--color-bg-warning-subtle-hover",
+        "use": "--env-color-bg-warning-subtle-hover"
+      },
+      {
+        "cssVariable": "--color-bg-warning-subtle-pressed",
+        "use": "--env-color-bg-warning-subtle-pressed"
+      },
+      {
+        "cssVariable": "--color-border-accent",
+        "use": "--env-color-border-accent-emphasis",
+        "type": "color",
+        "note": "The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge."
+      },
+      {
+        "cssVariable": "--color-border-accent-emphasis",
+        "use": "--env-color-border-accent",
+        "type": "color",
+        "note": "The translucent edge is the tone’s plain border now, between its muted edge and its solid emphasis."
+      },
+      {
+        "cssVariable": "--color-border-accent-hover",
+        "use": "--env-color-border-accent-emphasis-hover",
+        "type": "color",
+        "note": "The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge."
+      },
+      {
+        "cssVariable": "--color-border-accent-muted",
+        "use": "--env-color-border-accent-muted"
+      },
+      {
+        "cssVariable": "--color-border-accent-pressed",
+        "use": "--env-color-border-accent-emphasis-pressed",
+        "type": "color",
+        "note": "The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge."
+      },
+      {
+        "cssVariable": "--color-border-danger",
+        "use": "--env-color-border-danger-emphasis",
+        "type": "color",
+        "note": "The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge."
+      },
+      {
+        "cssVariable": "--color-border-danger-emphasis",
+        "use": "--env-color-border-danger",
+        "type": "color",
+        "note": "The translucent edge is the tone’s plain border now, between its muted edge and its solid emphasis."
+      },
+      {
+        "cssVariable": "--color-border-danger-hover",
+        "use": "--env-color-border-danger-emphasis-hover",
+        "type": "color",
+        "note": "The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge."
+      },
+      {
+        "cssVariable": "--color-border-danger-muted",
+        "use": "--env-color-border-danger-muted"
+      },
+      {
+        "cssVariable": "--color-border-danger-pressed",
+        "use": "--env-color-border-danger-emphasis-pressed",
+        "type": "color",
+        "note": "The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge."
+      },
+      {
+        "cssVariable": "--color-border-danger-strong",
+        "use": "--env-color-border-danger-strong"
+      },
+      {
+        "cssVariable": "--color-border-default",
+        "use": "--env-color-border-default"
+      },
+      {
+        "cssVariable": "--color-border-default-hover",
+        "use": "--env-color-border-default-hover"
+      },
+      {
+        "cssVariable": "--color-border-default-pressed",
+        "use": "--env-color-border-default-pressed"
+      },
+      {
+        "cssVariable": "--color-border-done-emphasis",
+        "use": "--env-color-border-done",
+        "type": "color",
+        "note": "The translucent edge is the tone’s plain border now, between its muted edge and its solid emphasis."
+      },
+      {
+        "cssVariable": "--color-border-focus",
+        "use": "--env-color-border-focus"
+      },
+      {
         "cssVariable": "--color-border-hover",
-        "type": "color",
-        "use": "color.border.muted.hover"
+        "use": "--env-color-border-muted-hover",
+        "type": "color"
       },
       {
-        "id": "color.border-strong",
+        "cssVariable": "--color-border-info-strong",
+        "use": "--env-color-border-info-strong"
+      },
+      {
+        "cssVariable": "--color-border-muted",
+        "use": "--env-color-border-muted"
+      },
+      {
+        "cssVariable": "--color-border-muted-hover",
+        "use": "--env-color-border-muted-hover"
+      },
+      {
+        "cssVariable": "--color-border-muted-pressed",
+        "use": "--env-color-border-muted-pressed"
+      },
+      {
+        "cssVariable": "--color-border-neutral-emphasis",
+        "use": "--env-color-border-neutral",
+        "type": "color",
+        "note": "The translucent edge is the tone’s plain border now, between its muted edge and its solid emphasis."
+      },
+      {
+        "cssVariable": "--color-border-neutral-strong",
+        "use": "--env-color-border-neutral-strong"
+      },
+      {
+        "cssVariable": "--color-border-pressed",
+        "use": "--env-color-border-muted-pressed",
+        "removed": true,
+        "type": "color",
+        "note": "Unused."
+      },
+      {
         "cssVariable": "--color-border-strong",
-        "type": "color",
-        "use": "color.border.muted"
+        "use": "--env-color-border-muted",
+        "type": "color"
       },
       {
-        "id": "color.calendar-selected",
+        "cssVariable": "--color-border-success-emphasis",
+        "use": "--env-color-border-success",
+        "type": "color",
+        "note": "The translucent edge is the tone’s plain border now, between its muted edge and its solid emphasis."
+      },
+      {
+        "cssVariable": "--color-border-success-muted",
+        "use": "--env-color-border-success-muted"
+      },
+      {
+        "cssVariable": "--color-border-success-strong",
+        "use": "--env-color-border-success-strong"
+      },
+      {
+        "cssVariable": "--color-border-translucent",
+        "use": "--env-color-border-media",
+        "type": "color",
+        "note": "Named for its role: the inner edge of content of any color, such as images and color areas."
+      },
+      {
+        "cssVariable": "--color-border-warning-emphasis",
+        "use": "--env-color-border-warning",
+        "type": "color",
+        "note": "The translucent edge is the tone’s plain border now, between its muted edge and its solid emphasis."
+      },
+      {
+        "cssVariable": "--color-border-warning-muted",
+        "use": "--env-color-border-warning-muted"
+      },
+      {
         "cssVariable": "--color-calendar-selected",
-        "type": "color",
-        "use": "color.bg.brand.emphasis"
+        "use": "--env-color-bg-brand-emphasis",
+        "type": "color"
       },
       {
-        "id": "color.calendar-today",
         "cssVariable": "--color-calendar-today",
-        "type": "color",
-        "use": "color.border.accent"
+        "use": "--env-color-border-accent-emphasis",
+        "type": "color"
       },
       {
-        "id": "color.canvas",
         "cssVariable": "--color-canvas",
-        "type": "color",
-        "use": "color.bg.page"
+        "use": "--env-color-bg-page",
+        "type": "color"
       },
       {
-        "id": "color.canvas-dark",
         "cssVariable": "--color-canvas-dark",
+        "value": "#1e1f21",
         "type": "color"
       },
       {
-        "id": "color.checkbox",
         "cssVariable": "--color-checkbox",
+        "use": "--env-color-bg-brand-emphasis",
         "type": "color",
-        "use": "color.bg.brand.strong"
+        "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
       },
       {
-        "id": "color.checkbox-border",
         "cssVariable": "--color-checkbox-border",
-        "type": "color",
-        "use": "color.fg.muted"
+        "use": "--env-color-fg-muted",
+        "type": "color"
       },
       {
-        "id": "color.checkbox-hover",
         "cssVariable": "--color-checkbox-hover",
+        "use": "--env-color-bg-brand-emphasis-hover",
         "type": "color",
-        "use": "color.bg.brand.strong.hover"
+        "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
       },
       {
-        "id": "color.checkbox-pressed",
         "cssVariable": "--color-checkbox-pressed",
+        "use": "--env-color-bg-brand-emphasis-pressed",
         "type": "color",
-        "use": "color.bg.brand.strong.pressed"
+        "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
       },
       {
-        "id": "color.checkbox-ring-hover",
         "cssVariable": "--color-checkbox-ring-hover",
-        "type": "color",
-        "use": "color.fg.muted.hover"
+        "use": "--env-color-fg-muted-hover",
+        "type": "color"
       },
       {
-        "id": "color.checkbox-ring-pressed",
         "cssVariable": "--color-checkbox-ring-pressed",
-        "type": "color",
-        "use": "color.fg.muted.pressed"
+        "use": "--env-color-fg-muted-pressed",
+        "type": "color"
       },
       {
-        "id": "color.checkbox-text",
         "cssVariable": "--color-checkbox-text",
-        "type": "color",
-        "use": "color.fg.default"
+        "use": "--env-color-fg-default",
+        "type": "color"
       },
       {
-        "id": "color.chip",
         "cssVariable": "--color-chip",
-        "type": "color",
-        "use": "color.bg.neutral.muted"
+        "use": "--env-color-bg-neutral-muted",
+        "type": "color"
       },
       {
-        "id": "color.chip-text",
         "cssVariable": "--color-chip-text",
-        "type": "color",
-        "use": "color.fg.accent"
+        "use": "--env-color-fg-accent",
+        "type": "color"
       },
       {
-        "id": "color.control-blue",
         "cssVariable": "--color-control-blue",
+        "use": "--env-color-bg-brand-emphasis",
         "type": "color",
-        "use": "color.bg.brand.strong"
+        "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
       },
       {
-        "id": "color.destructive-action",
+        "cssVariable": "--color-control-blue-hover",
+        "use": "--env-color-bg-brand-strong-hover",
+        "removed": true,
+        "type": "color",
+        "note": "Unused."
+      },
+      {
+        "cssVariable": "--color-control-blue-pressed",
+        "use": "--env-color-bg-brand-strong-pressed",
+        "removed": true,
+        "type": "color",
+        "note": "Unused."
+      },
+      {
+        "cssVariable": "--color-control-text",
+        "use": "--env-color-fg-control",
+        "removed": true,
+        "type": "color",
+        "note": "Unused synonym."
+      },
+      {
         "cssVariable": "--color-destructive-action",
-        "type": "color",
-        "use": "color.bg.danger.strong"
+        "use": "--env-color-bg-danger-strong",
+        "type": "color"
       },
       {
-        "id": "color.destructive-action-hover",
         "cssVariable": "--color-destructive-action-hover",
-        "type": "color",
-        "use": "color.bg.danger.strong.hover"
+        "use": "--env-color-bg-danger-strong-hover",
+        "type": "color"
       },
       {
-        "id": "color.destructive-action-pressed",
         "cssVariable": "--color-destructive-action-pressed",
-        "type": "color",
-        "use": "color.bg.danger.strong.pressed"
+        "use": "--env-color-bg-danger-strong-pressed",
+        "type": "color"
       },
       {
-        "id": "color.dialog",
         "cssVariable": "--color-dialog",
-        "type": "color",
-        "use": "color.bg.raised"
+        "use": "--env-color-bg-raised",
+        "type": "color"
       },
       {
-        "id": "color.dialog-overlay",
         "cssVariable": "--color-dialog-overlay",
+        "use": "--env-color-bg-overlay",
         "type": "color",
-        "use": "color.bg.overlay"
+        "note": "0.7's was opaque, #1f1f1f (hsl(0 0% 12.157%) in both themes), and the dialog backdrop made it 55% opaque with --state-dialog-overlay-opacity, which is removed. The role is the scrim itself, 55% opaque: paint it as it is, since a style that applies its own opacity now applies it twice. For the opaque color, write #1f1f1f."
       },
       {
-        "id": "color.direction-link",
         "cssVariable": "--color-direction-link",
-        "type": "color",
-        "use": "color.bg.raised"
+        "use": "--env-color-bg-raised",
+        "type": "color"
       },
       {
-        "id": "color.direction-link-border",
         "cssVariable": "--color-direction-link-border",
-        "type": "color",
-        "use": "color.border.muted"
+        "use": "--env-color-border-muted",
+        "type": "color"
       },
       {
-        "id": "color.direction-link-border-hover",
         "cssVariable": "--color-direction-link-border-hover",
-        "type": "color",
-        "use": "color.border.muted.hover"
+        "use": "--env-color-border-muted-hover",
+        "type": "color"
       },
       {
-        "id": "color.direction-link-border-pressed",
         "cssVariable": "--color-direction-link-border-pressed",
-        "type": "color",
-        "use": "color.border.muted.pressed"
+        "use": "--env-color-border-muted-pressed",
+        "type": "color"
       },
       {
-        "id": "color.direction-link-icon",
         "cssVariable": "--color-direction-link-icon",
-        "type": "color",
-        "use": "color.fg.accent"
+        "use": "--env-color-fg-accent",
+        "type": "color"
       },
       {
-        "id": "color.direction-link-label",
         "cssVariable": "--color-direction-link-label",
-        "type": "color",
-        "use": "color.fg.muted"
+        "use": "--env-color-fg-muted",
+        "type": "color"
       },
       {
-        "id": "color.direction-link-text",
         "cssVariable": "--color-direction-link-text",
-        "type": "color",
-        "use": "color.fg.default"
+        "use": "--env-color-fg-default",
+        "type": "color"
       },
       {
-        "id": "color.disabled-text",
         "cssVariable": "--color-disabled-text",
-        "type": "color",
-        "use": "color.fg.muted"
+        "use": "--env-color-fg-muted",
+        "type": "color"
       },
       {
-        "id": "color.disclosure-text",
         "cssVariable": "--color-disclosure-text",
-        "type": "color",
-        "use": "color.fg.muted"
+        "use": "--env-color-fg-muted",
+        "type": "color"
       },
       {
-        "id": "color.field",
+        "cssVariable": "--color-fg-accent",
+        "use": "--env-color-fg-accent"
+      },
+      {
+        "cssVariable": "--color-fg-control",
+        "use": "--env-color-fg-control"
+      },
+      {
+        "cssVariable": "--color-fg-danger",
+        "use": "--env-color-fg-danger"
+      },
+      {
+        "cssVariable": "--color-fg-default",
+        "use": "--env-color-fg-default"
+      },
+      {
+        "cssVariable": "--color-fg-done",
+        "use": "--env-color-fg-done"
+      },
+      {
+        "cssVariable": "--color-fg-link",
+        "use": "--env-color-fg-link"
+      },
+      {
+        "cssVariable": "--color-fg-link-hover",
+        "use": "--env-color-fg-link-hover"
+      },
+      {
+        "cssVariable": "--color-fg-link-pressed",
+        "use": "--env-color-fg-link-pressed"
+      },
+      {
+        "cssVariable": "--color-fg-muted",
+        "use": "--env-color-fg-muted"
+      },
+      {
+        "cssVariable": "--color-fg-muted-hover",
+        "use": "--env-color-fg-muted-hover"
+      },
+      {
+        "cssVariable": "--color-fg-muted-pressed",
+        "use": "--env-color-fg-muted-pressed"
+      },
+      {
+        "cssVariable": "--color-fg-on-emphasis",
+        "use": "--env-color-fg-on-emphasis"
+      },
+      {
+        "cssVariable": "--color-fg-on-selected",
+        "use": "--env-color-fg-on-selected"
+      },
+      {
+        "cssVariable": "--color-fg-on-strong",
+        "use": "--env-color-fg-on-strong"
+      },
+      {
+        "cssVariable": "--color-fg-success",
+        "use": "--env-color-fg-success"
+      },
+      {
+        "cssVariable": "--color-fg-warning",
+        "use": "--env-color-fg-warning"
+      },
+      {
         "cssVariable": "--color-field",
-        "type": "color",
-        "use": "color.bg.field"
+        "use": "--env-color-bg-field",
+        "type": "color"
       },
       {
-        "id": "color.field-active",
         "cssVariable": "--color-field-active",
-        "type": "color",
-        "use": "color.border.accent"
+        "use": "--env-color-border-accent-emphasis",
+        "type": "color"
       },
       {
-        "id": "color.field-border",
         "cssVariable": "--color-field-border",
-        "type": "color",
-        "use": "color.border.default"
+        "use": "--env-color-border-default",
+        "type": "color"
       },
       {
-        "id": "color.field-error",
         "cssVariable": "--color-field-error",
-        "type": "color",
-        "use": "color.fg.danger"
+        "use": "--env-color-fg-danger",
+        "type": "color"
       },
       {
-        "id": "color.field-hint",
         "cssVariable": "--color-field-hint",
-        "type": "color",
-        "use": "color.fg.muted"
+        "use": "--env-color-fg-muted",
+        "type": "color"
       },
       {
-        "id": "color.field-label",
         "cssVariable": "--color-field-label",
-        "type": "color",
-        "use": "color.fg.muted"
+        "use": "--env-color-fg-muted",
+        "type": "color"
       },
       {
-        "id": "color.field-placeholder",
         "cssVariable": "--color-field-placeholder",
-        "type": "color",
-        "use": "color.fg.muted"
+        "use": "--env-color-fg-muted",
+        "type": "color"
       },
       {
-        "id": "color.field-text",
         "cssVariable": "--color-field-text",
-        "type": "color",
-        "use": "color.fg.default"
+        "use": "--env-color-fg-default",
+        "type": "color"
       },
       {
-        "id": "color.fill",
         "cssVariable": "--color-fill",
-        "type": "color",
-        "use": "color.bg.neutral.muted"
+        "use": "--env-color-bg-neutral-muted",
+        "type": "color"
       },
       {
-        "id": "color.focus-ring",
+        "cssVariable": "--color-fill-hover",
+        "use": "--env-color-bg-neutral-muted-hover",
+        "removed": true,
+        "type": "color",
+        "note": "Unused."
+      },
+      {
+        "cssVariable": "--color-fill-pressed",
+        "use": "--env-color-bg-neutral-muted-pressed",
+        "removed": true,
+        "type": "color",
+        "note": "Unused."
+      },
+      {
         "cssVariable": "--color-focus-ring",
-        "type": "color",
-        "use": "color.border.focus"
+        "use": "--env-color-border-focus",
+        "type": "color"
       },
       {
-        "id": "color.icon",
         "cssVariable": "--color-icon",
-        "type": "color",
-        "use": "color.fg.muted"
+        "use": "--env-color-fg-muted",
+        "type": "color"
       },
       {
-        "id": "color.link",
         "cssVariable": "--color-link",
-        "type": "color",
-        "use": "color.fg.link"
+        "use": "--env-color-fg-link",
+        "type": "color"
       },
       {
-        "id": "color.link-hover",
         "cssVariable": "--color-link-hover",
-        "type": "color",
-        "use": "color.fg.link.hover"
+        "use": "--env-color-fg-link-hover",
+        "type": "color"
       },
       {
-        "id": "color.link-pressed",
         "cssVariable": "--color-link-pressed",
-        "type": "color",
-        "use": "color.fg.link.pressed"
+        "use": "--env-color-fg-link-pressed",
+        "type": "color"
       },
       {
-        "id": "color.markdown-border",
         "cssVariable": "--color-markdown-border",
-        "type": "color",
-        "use": "color.border.muted"
+        "use": "--env-color-border-muted",
+        "type": "color"
       },
       {
-        "id": "color.menu-row",
         "cssVariable": "--color-menu-row",
-        "type": "color",
-        "use": "color.bg.popup"
+        "use": "--env-color-bg-popup",
+        "type": "color"
       },
       {
-        "id": "color.navigation-hover",
         "cssVariable": "--color-navigation-hover",
-        "type": "color",
-        "use": "color.bg.selected.hover"
+        "use": "--env-color-bg-selected-hover",
+        "type": "color"
       },
       {
-        "id": "color.navigation-icon",
         "cssVariable": "--color-navigation-icon",
-        "type": "color",
-        "use": "color.fg.muted"
+        "use": "--env-color-fg-muted",
+        "type": "color"
       },
       {
-        "id": "color.navigation-pressed",
         "cssVariable": "--color-navigation-pressed",
-        "type": "color",
-        "use": "color.bg.selected.pressed"
+        "use": "--env-color-bg-selected-pressed",
+        "type": "color"
       },
       {
-        "id": "color.navigation-quiet",
         "cssVariable": "--color-navigation-quiet",
+        "use": "--env-color-list-item-bg",
         "type": "color",
-        "use": "color.bg.default"
+        "note": "The quiet navigation item’s rest, which envUI no longer reads; list items have the same fill."
       },
       {
-        "id": "color.navigation-quiet-hover",
         "cssVariable": "--color-navigation-quiet-hover",
-        "type": "color",
-        "use": "color.bg.navigation.hover"
+        "use": "--env-color-bg-navigation-hover",
+        "type": "color"
       },
       {
-        "id": "color.navigation-quiet-pressed",
         "cssVariable": "--color-navigation-quiet-pressed",
-        "type": "color",
-        "use": "color.bg.navigation.pressed"
+        "use": "--env-color-bg-navigation-pressed",
+        "type": "color"
       },
       {
-        "id": "color.navigation-selected",
         "cssVariable": "--color-navigation-selected",
-        "type": "color",
-        "use": "color.bg.selected"
+        "use": "--env-color-bg-selected",
+        "type": "color"
       },
       {
-        "id": "color.navigation-text",
         "cssVariable": "--color-navigation-text",
-        "type": "color",
-        "use": "color.fg.control"
+        "use": "--env-color-fg-control",
+        "type": "color"
       },
       {
-        "id": "color.on-accent",
+        "cssVariable": "--color-neutral-fill",
+        "use": "--env-color-bg-neutral-strong",
+        "removed": true,
+        "type": "color",
+        "note": "Unused."
+      },
+      {
         "cssVariable": "--color-on-accent",
-        "type": "color",
-        "use": "color.fg.on-strong"
+        "use": "--env-color-fg-on-strong",
+        "type": "color"
       },
       {
-        "id": "color.on-avatar",
         "cssVariable": "--color-on-avatar",
-        "type": "color"
+        "use": "--env-color-avatar-fg",
+        "type": "color",
+        "note": "A component token now."
       },
       {
-        "id": "color.on-calendar-selected",
         "cssVariable": "--color-on-calendar-selected",
-        "type": "color",
-        "use": "color.fg.on-emphasis"
-      },
-      {
-        "id": "color.on-checkbox",
-        "cssVariable": "--color-on-checkbox",
-        "type": "color",
-        "use": "color.fg.on-strong"
-      },
-      {
-        "id": "color.on-destructive-action",
-        "cssVariable": "--color-on-destructive-action",
-        "type": "color",
-        "use": "color.fg.on-strong"
-      },
-      {
-        "id": "color.on-navigation-selected",
-        "cssVariable": "--color-on-navigation-selected",
-        "type": "color",
-        "use": "color.fg.on-selected"
-      },
-      {
-        "id": "color.on-primary-action",
-        "cssVariable": "--color-on-primary-action",
-        "type": "color",
-        "use": "color.fg.on-emphasis"
-      },
-      {
-        "id": "color.on-secondary-action",
-        "cssVariable": "--color-on-secondary-action",
-        "type": "color",
-        "use": "color.fg.control"
-      },
-      {
-        "id": "color.on-select-selected",
-        "cssVariable": "--color-on-select-selected",
-        "type": "color",
-        "use": "color.fg.on-selected"
-      },
-      {
-        "id": "color.on-subtle-action",
-        "cssVariable": "--color-on-subtle-action",
-        "type": "color",
-        "use": "color.fg.accent"
-      },
-      {
-        "id": "color.on-toast",
-        "cssVariable": "--color-on-toast",
-        "type": "color",
-        "use": "color.fg.on-strong"
-      },
-      {
-        "id": "color.on-tone",
-        "cssVariable": "--color-on-tone",
-        "type": "color",
-        "use": "color.fg.on-emphasis"
-      },
-      {
-        "id": "color.outlined-focus",
-        "cssVariable": "--color-outlined-focus",
-        "type": "color",
-        "use": "color.border.focus"
-      },
-      {
-        "id": "color.pane",
-        "cssVariable": "--color-pane",
-        "type": "color",
-        "use": "color.bg.default"
-      },
-      {
-        "id": "color.popup",
-        "cssVariable": "--color-popup",
-        "type": "color",
-        "use": "color.bg.popup"
-      },
-      {
-        "id": "color.popup-border",
-        "cssVariable": "--color-popup-border",
-        "type": "color",
-        "use": "elevation.2.border"
-      },
-      {
-        "id": "color.primary-action",
-        "cssVariable": "--color-primary-action",
-        "type": "color",
-        "use": "color.bg.brand.emphasis"
-      },
-      {
-        "id": "color.primary-action-hover",
-        "cssVariable": "--color-primary-action-hover",
-        "type": "color",
-        "use": "color.bg.brand.emphasis.hover"
-      },
-      {
-        "id": "color.primary-action-pressed",
-        "cssVariable": "--color-primary-action-pressed",
-        "type": "color",
-        "use": "color.bg.brand.emphasis.pressed"
-      },
-      {
-        "id": "color.quiet-label-hover",
-        "cssVariable": "--color-quiet-label-hover",
-        "type": "color",
-        "use": "color.fg.muted.hover"
-      },
-      {
-        "id": "color.quiet-label-pressed",
-        "cssVariable": "--color-quiet-label-pressed",
-        "type": "color",
-        "use": "color.fg.muted.pressed"
-      },
-      {
-        "id": "color.radio",
-        "cssVariable": "--color-radio",
-        "type": "color",
-        "use": "color.bg.brand.emphasis"
-      },
-      {
-        "id": "color.radio-detail",
-        "cssVariable": "--color-radio-detail",
-        "type": "color",
-        "use": "color.fg.muted"
-      },
-      {
-        "id": "color.radio-hover",
-        "cssVariable": "--color-radio-hover",
-        "type": "color",
-        "use": "color.bg.brand.emphasis.hover"
-      },
-      {
-        "id": "color.radio-pressed",
-        "cssVariable": "--color-radio-pressed",
-        "type": "color",
-        "use": "color.bg.brand.emphasis.pressed"
-      },
-      {
-        "id": "color.radio-row",
-        "cssVariable": "--color-radio-row",
-        "type": "color",
-        "use": "color.bg.muted"
-      },
-      {
-        "id": "color.radio-row-hover",
-        "cssVariable": "--color-radio-row-hover",
-        "type": "color",
-        "use": "color.bg.muted.hover"
-      },
-      {
-        "id": "color.radio-row-pressed",
-        "cssVariable": "--color-radio-row-pressed",
-        "type": "color",
-        "use": "color.bg.muted.pressed"
-      },
-      {
-        "id": "color.radio-text",
-        "cssVariable": "--color-radio-text",
-        "type": "color",
-        "use": "color.fg.default"
-      },
-      {
-        "id": "color.row",
-        "cssVariable": "--color-row",
-        "type": "color",
-        "use": "color.bg.default"
-      },
-      {
-        "id": "color.row-alternate",
-        "cssVariable": "--color-row-alternate",
-        "type": "color",
-        "use": "color.bg.raised"
-      },
-      {
-        "id": "color.row-detail",
-        "cssVariable": "--color-row-detail",
-        "type": "color",
-        "use": "color.fg.muted"
-      },
-      {
-        "id": "color.row-hover",
-        "cssVariable": "--color-row-hover",
-        "type": "color",
-        "use": "color.bg.default.hover"
-      },
-      {
-        "id": "color.row-pressed",
-        "cssVariable": "--color-row-pressed",
-        "type": "color",
-        "use": "color.bg.default.pressed"
-      },
-      {
-        "id": "color.row-selected-hover",
-        "cssVariable": "--color-row-selected-hover",
-        "type": "color",
-        "use": "color.bg.selected.hover"
-      },
-      {
-        "id": "color.row-selected-pressed",
-        "cssVariable": "--color-row-selected-pressed",
-        "type": "color",
-        "use": "color.bg.selected.pressed"
-      },
-      {
-        "id": "color.row-text",
-        "cssVariable": "--color-row-text",
-        "type": "color",
-        "use": "color.fg.default"
-      },
-      {
-        "id": "color.secondary-action",
-        "cssVariable": "--color-secondary-action",
-        "type": "color",
-        "use": "color.bg.neutral.muted"
-      },
-      {
-        "id": "color.secondary-action-hover",
-        "cssVariable": "--color-secondary-action-hover",
-        "type": "color",
-        "use": "color.bg.neutral.muted.hover"
-      },
-      {
-        "id": "color.secondary-action-pressed",
-        "cssVariable": "--color-secondary-action-pressed",
-        "type": "color",
-        "use": "color.bg.neutral.muted.pressed"
-      },
-      {
-        "id": "color.select-option",
-        "cssVariable": "--color-select-option",
-        "type": "color",
-        "use": "color.bg.popup"
-      },
-      {
-        "id": "color.select-option-hover",
-        "cssVariable": "--color-select-option-hover",
-        "type": "color",
-        "use": "color.bg.popup.hover"
-      },
-      {
-        "id": "color.select-option-pressed",
-        "cssVariable": "--color-select-option-pressed",
-        "type": "color",
-        "use": "color.bg.popup.pressed"
-      },
-      {
-        "id": "color.select-option-text",
-        "cssVariable": "--color-select-option-text",
-        "type": "color",
-        "use": "color.fg.control"
-      },
-      {
-        "id": "color.select-selected",
-        "cssVariable": "--color-select-selected",
-        "type": "color",
-        "use": "color.bg.selected"
-      },
-      {
-        "id": "color.select-selected-hover",
-        "cssVariable": "--color-select-selected-hover",
-        "type": "color",
-        "use": "color.bg.selected.hover"
-      },
-      {
-        "id": "color.select-selected-pressed",
-        "cssVariable": "--color-select-selected-pressed",
-        "type": "color",
-        "use": "color.bg.selected.pressed"
-      },
-      {
-        "id": "color.skeleton-base",
-        "cssVariable": "--color-skeleton-base",
-        "type": "color",
-        "use": "color.bg.neutral.muted"
-      },
-      {
-        "id": "color.skeleton-highlight",
-        "cssVariable": "--color-skeleton-highlight",
-        "type": "color",
-        "use": "color.bg.neutral.muted.hover"
-      },
-      {
-        "id": "color.state-layer",
-        "cssVariable": "--color-state-layer",
-        "type": "color",
-        "use": "color.fg.default"
-      },
-      {
-        "id": "color.state-layer-hover",
-        "cssVariable": "--color-state-layer-hover",
-        "type": "color",
-        "use": "color.bg.neutral.subtle.hover"
-      },
-      {
-        "id": "color.state-layer-pressed",
-        "cssVariable": "--color-state-layer-pressed",
-        "type": "color",
-        "use": "color.bg.neutral.subtle.pressed"
-      },
-      {
-        "id": "color.subtle-action",
-        "cssVariable": "--color-subtle-action",
-        "type": "color",
-        "use": "color.bg.raised"
-      },
-      {
-        "id": "color.subtle-action-border",
-        "cssVariable": "--color-subtle-action-border",
-        "type": "color",
-        "use": "color.border.default"
-      },
-      {
-        "id": "color.subtle-action-border-hover",
-        "cssVariable": "--color-subtle-action-border-hover",
-        "type": "color",
-        "use": "color.border.default.hover"
-      },
-      {
-        "id": "color.subtle-action-border-pressed",
-        "cssVariable": "--color-subtle-action-border-pressed",
-        "type": "color",
-        "use": "color.border.default.pressed"
-      },
-      {
-        "id": "color.subtle-action-hover",
-        "cssVariable": "--color-subtle-action-hover",
-        "type": "color",
-        "use": "color.bg.raised.hover"
-      },
-      {
-        "id": "color.subtle-action-pressed",
-        "cssVariable": "--color-subtle-action-pressed",
-        "type": "color",
-        "use": "color.bg.raised.pressed"
-      },
-      {
-        "id": "color.surface",
-        "cssVariable": "--color-surface",
-        "type": "color",
-        "use": "color.bg.raised"
-      },
-      {
-        "id": "color.surface-muted",
-        "cssVariable": "--color-surface-muted",
-        "type": "color",
-        "use": "color.bg.muted"
-      },
-      {
-        "id": "color.switch-off",
-        "cssVariable": "--color-switch-off",
-        "type": "color",
-        "use": "color.bg.neutral.muted"
-      },
-      {
-        "id": "color.switch-off-hover",
-        "cssVariable": "--color-switch-off-hover",
-        "type": "color",
-        "use": "color.bg.neutral.muted.hover"
-      },
-      {
-        "id": "color.switch-off-pressed",
-        "cssVariable": "--color-switch-off-pressed",
-        "type": "color",
-        "use": "color.bg.neutral.muted.pressed"
-      },
-      {
-        "id": "color.switch-on",
-        "cssVariable": "--color-switch-on",
-        "type": "color",
-        "use": "color.bg.brand.strong"
-      },
-      {
-        "id": "color.switch-on-hover",
-        "cssVariable": "--color-switch-on-hover",
-        "type": "color",
-        "use": "color.bg.brand.strong.hover"
-      },
-      {
-        "id": "color.switch-on-pressed",
-        "cssVariable": "--color-switch-on-pressed",
-        "type": "color",
-        "use": "color.bg.brand.strong.pressed"
-      },
-      {
-        "id": "color.switch-text",
-        "cssVariable": "--color-switch-text",
-        "type": "color",
-        "use": "color.fg.default"
-      },
-      {
-        "id": "color.switch-thumb",
-        "cssVariable": "--color-switch-thumb",
-        "type": "color",
-        "use": "color.fg.control"
-      },
-      {
-        "id": "color.switch-thumb-on",
-        "cssVariable": "--color-switch-thumb-on",
-        "type": "color",
-        "use": "color.fg.on-strong"
-      },
-      {
-        "id": "color.text-muted",
-        "cssVariable": "--color-text-muted",
-        "type": "color",
-        "use": "color.fg.muted"
-      },
-      {
-        "id": "color.text-primary",
-        "cssVariable": "--color-text-primary",
-        "type": "color",
-        "use": "color.fg.default"
-      },
-      {
-        "id": "color.text-quiet",
-        "cssVariable": "--color-text-quiet",
-        "type": "color",
-        "use": "color.fg.muted"
-      },
-      {
-        "id": "color.text-strong",
-        "cssVariable": "--color-text-strong",
-        "type": "color",
-        "use": "color.fg.control"
-      },
-      {
-        "id": "color.toast-error",
-        "cssVariable": "--color-toast-error",
-        "type": "color",
-        "use": "color.bg.danger.strong"
-      },
-      {
-        "id": "color.toast-info",
-        "cssVariable": "--color-toast-info",
-        "type": "color",
-        "use": "color.bg.info.strong"
-      },
-      {
-        "id": "color.toast-neutral",
-        "cssVariable": "--color-toast-neutral",
-        "type": "color",
-        "use": "color.bg.neutral.strong"
-      },
-      {
-        "id": "color.toast-success",
-        "cssVariable": "--color-toast-success",
-        "type": "color",
-        "use": "color.bg.success.strong"
-      },
-      {
-        "id": "color.tone.accent",
-        "cssVariable": "--color-tone-accent",
-        "type": "color",
-        "use": "color.fg.accent"
-      },
-      {
-        "id": "color.tone.danger",
-        "cssVariable": "--color-tone-danger",
-        "type": "color",
-        "use": "color.fg.danger"
-      },
-      {
-        "id": "color.tone.done",
-        "cssVariable": "--color-tone-done",
-        "type": "color",
-        "use": "color.fg.done"
-      },
-      {
-        "id": "color.tone.neutral",
-        "cssVariable": "--color-tone-neutral",
-        "type": "color",
-        "use": "color.fg.muted"
-      },
-      {
-        "id": "color.tone.success",
-        "cssVariable": "--color-tone-success",
-        "type": "color",
-        "use": "color.fg.success"
-      },
-      {
-        "id": "color.tone.warning",
-        "cssVariable": "--color-tone-warning",
-        "type": "color",
-        "use": "color.fg.warning"
-      },
-      {
-        "id": "color.white",
-        "cssVariable": "--color-white",
+        "use": "--env-color-fg-on-emphasis",
         "type": "color"
+      },
+      {
+        "cssVariable": "--color-on-checkbox",
+        "use": "--env-color-fg-on-emphasis",
+        "type": "color",
+        "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
+      },
+      {
+        "cssVariable": "--color-on-destructive-action",
+        "use": "--env-color-fg-on-strong",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-on-navigation-selected",
+        "use": "--env-color-fg-on-selected",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-on-primary-action",
+        "use": "--env-color-fg-on-emphasis",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-on-secondary-action",
+        "use": "--env-color-fg-control",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-on-select-selected",
+        "use": "--env-color-fg-on-selected",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-on-subtle-action",
+        "use": "--env-color-fg-accent",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-on-toast",
+        "use": "--env-color-fg-on-strong",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-on-tone",
+        "use": "--env-color-fg-on-emphasis",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-outlined-focus",
+        "use": "--env-color-border-focus",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-pane",
+        "use": "--env-color-bg-default",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-popup",
+        "use": "--env-color-bg-popup",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-popup-border",
+        "use": "--env-elevation-2-border",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-primary-action",
+        "use": "--env-color-bg-brand-emphasis",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-primary-action-hover",
+        "use": "--env-color-bg-brand-emphasis-hover",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-primary-action-pressed",
+        "use": "--env-color-bg-brand-emphasis-pressed",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-quiet-label-hover",
+        "use": "--env-color-fg-muted-hover",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-quiet-label-pressed",
+        "use": "--env-color-fg-muted-pressed",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-radio",
+        "use": "--env-color-bg-brand-emphasis",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-radio-detail",
+        "use": "--env-color-fg-muted",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-radio-hover",
+        "use": "--env-color-bg-brand-emphasis-hover",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-radio-pressed",
+        "use": "--env-color-bg-brand-emphasis-pressed",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-radio-row",
+        "use": "--env-color-bg-muted",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-radio-row-hover",
+        "use": "--env-color-bg-muted-hover",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-radio-row-pressed",
+        "use": "--env-color-bg-muted-pressed",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-radio-text",
+        "use": "--env-color-fg-default",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-row",
+        "use": "--env-color-list-item-bg",
+        "type": "color",
+        "note": "A component token: the default surface in light, the muted one in dark."
+      },
+      {
+        "cssVariable": "--color-row-alternate",
+        "use": "--env-color-bg-raised",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-row-detail",
+        "use": "--env-color-fg-muted",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-row-hover",
+        "use": "--env-color-list-item-bg-hover",
+        "type": "color",
+        "note": "A component token: the default surface in light, the muted one in dark."
+      },
+      {
+        "cssVariable": "--color-row-pressed",
+        "use": "--env-color-list-item-bg-pressed",
+        "type": "color",
+        "note": "A component token: the default surface in light, the muted one in dark."
+      },
+      {
+        "cssVariable": "--color-row-selected-hover",
+        "use": "--env-color-bg-selected-hover",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-row-selected-pressed",
+        "use": "--env-color-bg-selected-pressed",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-row-text",
+        "use": "--env-color-fg-default",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-secondary-action",
+        "use": "--env-color-bg-neutral-muted",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-secondary-action-hover",
+        "use": "--env-color-bg-neutral-muted-hover",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-secondary-action-pressed",
+        "use": "--env-color-bg-neutral-muted-pressed",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-select-option",
+        "use": "--env-color-bg-popup",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-select-option-hover",
+        "use": "--env-color-bg-popup-hover",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-select-option-pressed",
+        "use": "--env-color-bg-popup-pressed",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-select-option-text",
+        "use": "--env-color-fg-control",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-select-selected",
+        "use": "--env-color-bg-selected",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-select-selected-hover",
+        "use": "--env-color-bg-selected-hover",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-select-selected-pressed",
+        "use": "--env-color-bg-selected-pressed",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-skeleton-base",
+        "use": "--env-color-bg-neutral-muted",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-skeleton-highlight",
+        "use": "--env-color-bg-neutral-muted-hover",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-state-layer",
+        "use": "--env-color-fg-default",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-state-layer-hover",
+        "use": "--env-color-bg-neutral-subtle-hover",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-state-layer-pressed",
+        "use": "--env-color-bg-neutral-subtle-pressed",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-subtle-action",
+        "use": "--env-color-bg-raised",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-subtle-action-border",
+        "use": "--env-color-border-default",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-subtle-action-border-hover",
+        "use": "--env-color-border-default-hover",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-subtle-action-border-pressed",
+        "use": "--env-color-border-default-pressed",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-subtle-action-hover",
+        "use": "--env-color-bg-raised-hover",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-subtle-action-pressed",
+        "use": "--env-color-bg-raised-pressed",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-surface",
+        "use": "--env-color-bg-raised",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-surface-base",
+        "use": "--env-color-bg-raised",
+        "removed": true,
+        "type": "color",
+        "note": "Unused."
+      },
+      {
+        "cssVariable": "--color-surface-muted",
+        "use": "--env-color-bg-muted",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-surface-raised",
+        "use": "--env-color-bg-raised",
+        "removed": true,
+        "type": "color",
+        "note": "Unused."
+      },
+      {
+        "cssVariable": "--color-switch-off",
+        "use": "--env-color-bg-neutral-muted",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-switch-off-hover",
+        "use": "--env-color-bg-neutral-muted-hover",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-switch-off-pressed",
+        "use": "--env-color-bg-neutral-muted-pressed",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-switch-on",
+        "use": "--env-color-bg-brand-emphasis",
+        "type": "color",
+        "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
+      },
+      {
+        "cssVariable": "--color-switch-on-hover",
+        "use": "--env-color-bg-brand-emphasis-hover",
+        "type": "color",
+        "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
+      },
+      {
+        "cssVariable": "--color-switch-on-pressed",
+        "use": "--env-color-bg-brand-emphasis-pressed",
+        "type": "color",
+        "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
+      },
+      {
+        "cssVariable": "--color-switch-text",
+        "use": "--env-color-fg-default",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-switch-thumb",
+        "use": "--env-color-fg-control",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-switch-thumb-on",
+        "use": "--env-color-fg-on-emphasis",
+        "type": "color",
+        "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
+      },
+      {
+        "cssVariable": "--color-text-muted",
+        "use": "--env-color-fg-muted",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-text-primary",
+        "use": "--env-color-fg-default",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-text-quiet",
+        "use": "--env-color-fg-muted",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-text-strong",
+        "use": "--env-color-fg-control",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-text-subtle",
+        "use": "--env-color-fg-muted",
+        "removed": true,
+        "type": "color",
+        "note": "Unused synonym."
+      },
+      {
+        "cssVariable": "--color-toast-error",
+        "use": "--env-color-bg-danger-strong",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-toast-info",
+        "use": "--env-color-bg-info-strong",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-toast-neutral",
+        "use": "--env-color-bg-neutral-strong",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-toast-success",
+        "use": "--env-color-bg-success-strong",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-tone-accent",
+        "use": "--env-color-fg-accent",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-tone-danger",
+        "use": "--env-color-fg-danger",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-tone-done",
+        "use": "--env-color-fg-done",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-tone-neutral",
+        "use": "--env-color-fg-muted",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-tone-success",
+        "use": "--env-color-fg-success",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-tone-warning",
+        "use": "--env-color-fg-warning",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--color-white",
+        "value": "#ffffff",
+        "type": "color"
+      },
+      {
+        "cssVariable": "--control-border-width",
+        "use": "--env-control-border-width"
+      },
+      {
+        "cssVariable": "--control-font-size",
+        "use": "--env-control-font-size"
+      },
+      {
+        "cssVariable": "--control-gap",
+        "use": "--env-control-gap"
+      },
+      {
+        "cssVariable": "--control-height",
+        "use": "--env-control-height"
+      },
+      {
+        "cssVariable": "--control-height-compact",
+        "use": "--env-control-height-sm",
+        "removed": true,
+        "type": "dimension",
+        "note": "The small control height. For a compact app or region, set scale=\"compact\" on its Theme instead."
+      },
+      {
+        "cssVariable": "--control-height-lg",
+        "use": "--env-control-height-lg"
+      },
+      {
+        "cssVariable": "--control-height-md",
+        "use": "--env-control-height-md"
+      },
+      {
+        "cssVariable": "--control-height-sm",
+        "use": "--env-control-height-sm"
+      },
+      {
+        "cssVariable": "--control-height-small",
+        "use": "--env-control-height",
+        "removed": true,
+        "type": "dimension",
+        "note": "It always equalled --control-height, which every control reads now."
+      },
+      {
+        "cssVariable": "--control-height-touch",
+        "use": "--env-control-height-touch"
+      },
+      {
+        "cssVariable": "--control-icon-size",
+        "use": "--env-control-icon-size"
+      },
+      {
+        "cssVariable": "--control-target-min",
+        "use": "--env-control-target-min"
+      },
+      {
+        "cssVariable": "--elevation-0-border",
+        "use": "--env-elevation-0-border"
+      },
+      {
+        "cssVariable": "--elevation-0-shadow",
+        "use": "--env-elevation-0-shadow"
+      },
+      {
+        "cssVariable": "--elevation-1-border",
+        "use": "--env-elevation-1-border"
+      },
+      {
+        "cssVariable": "--elevation-1-shadow",
+        "use": "--env-elevation-1-shadow"
+      },
+      {
+        "cssVariable": "--elevation-2-border",
+        "use": "--env-elevation-2-border"
+      },
+      {
+        "cssVariable": "--elevation-2-shadow",
+        "use": "--env-elevation-2-shadow"
+      },
+      {
+        "cssVariable": "--elevation-3-border",
+        "use": "--env-elevation-3-border"
+      },
+      {
+        "cssVariable": "--elevation-3-shadow",
+        "use": "--env-elevation-3-shadow"
+      },
+      {
+        "cssVariable": "--field-floating-height",
+        "use": "--env-field-floating-height"
+      },
+      {
+        "cssVariable": "--font-family",
+        "use": "--env-font-family"
+      },
+      {
+        "cssVariable": "--font-family-code",
+        "use": "--env-code-font-family"
+      },
+      {
+        "cssVariable": "--font-size-body",
+        "use": "--env-font-size-body"
+      },
+      {
+        "cssVariable": "--font-size-body-small",
+        "use": "--env-font-size-body-small"
+      },
+      {
+        "cssVariable": "--font-size-caption",
+        "use": "--env-font-size-caption"
+      },
+      {
+        "cssVariable": "--font-size-code",
+        "use": "--env-code-font-size"
+      },
+      {
+        "cssVariable": "--font-size-heading",
+        "use": "--env-font-size-heading"
+      },
+      {
+        "cssVariable": "--font-size-heading-small",
+        "use": "--env-font-size-heading-small"
+      },
+      {
+        "cssVariable": "--font-size-label",
+        "use": "--env-font-size-label"
+      },
+      {
+        "cssVariable": "--font-size-label-small",
+        "use": "--env-font-size-label-small"
+      },
+      {
+        "cssVariable": "--icon-button-size",
+        "use": "--env-control-height",
+        "removed": true,
+        "type": "dimension",
+        "note": "An icon button is as tall as the other controls of its size."
+      },
+      {
+        "cssVariable": "--icon-size-lg",
+        "use": "--env-icon-size-lg"
+      },
+      {
+        "cssVariable": "--icon-size-md",
+        "use": "--env-icon-size-md"
+      },
+      {
+        "cssVariable": "--icon-size-sm",
+        "use": "--env-icon-size-sm"
+      },
+      {
+        "cssVariable": "--line-height-body",
+        "use": "--env-line-height-body",
+        "note": "The body line height an application may set; envUI reads it with a fallback of 1.4."
+      },
+      {
+        "cssVariable": "--md-sys-shape-corner-extra-large",
+        "use": "--env-radius-xl",
+        "type": "dimension",
+        "note": "The Material corner scale is the radius scale now."
+      },
+      {
+        "cssVariable": "--md-sys-shape-corner-extra-small",
+        "use": "--env-radius-xs",
+        "type": "dimension",
+        "note": "The Material corner scale is the radius scale now."
+      },
+      {
+        "cssVariable": "--md-sys-shape-corner-full",
+        "use": "--env-radius-full",
+        "note": "The Material corner scale is the radius scale now."
+      },
+      {
+        "cssVariable": "--md-sys-shape-corner-large",
+        "use": "--env-radius-lg",
+        "type": "dimension",
+        "note": "The Material corner scale is the radius scale now."
+      },
+      {
+        "cssVariable": "--md-sys-shape-corner-medium",
+        "use": "--env-radius-md",
+        "type": "dimension",
+        "note": "The Material corner scale is the radius scale now."
+      },
+      {
+        "cssVariable": "--md-sys-shape-corner-none",
+        "use": "--env-radius-none",
+        "type": "dimension",
+        "note": "The Material corner scale is the radius scale now."
+      },
+      {
+        "cssVariable": "--md-sys-shape-corner-small",
+        "use": "--env-radius-sm",
+        "type": "dimension",
+        "note": "The Material corner scale is the radius scale now."
+      },
+      {
+        "cssVariable": "--member-identity-avatar-size",
+        "removed": true,
+        "note": "Unused."
+      },
+      {
+        "cssVariable": "--member-identity-copy-height",
+        "removed": true,
+        "note": "Unused."
+      },
+      {
+        "cssVariable": "--member-identity-email-line-height",
+        "removed": true,
+        "note": "Unused."
+      },
+      {
+        "cssVariable": "--member-identity-email-size",
+        "removed": true,
+        "note": "Unused."
+      },
+      {
+        "cssVariable": "--member-identity-gap",
+        "removed": true,
+        "note": "Unused."
+      },
+      {
+        "cssVariable": "--member-identity-name-line-height",
+        "removed": true,
+        "note": "Unused."
+      },
+      {
+        "cssVariable": "--member-identity-name-size",
+        "removed": true,
+        "note": "Unused."
+      },
+      {
+        "cssVariable": "--motion-duration-fast",
+        "use": "--env-motion-duration-fast"
+      },
+      {
+        "cssVariable": "--motion-duration-medium",
+        "use": "--env-motion-duration-medium"
+      },
+      {
+        "cssVariable": "--motion-duration-slow",
+        "use": "--env-motion-duration-slow"
+      },
+      {
+        "cssVariable": "--motion-ease",
+        "use": "--env-motion-ease"
+      },
+      {
+        "cssVariable": "--motion-ease-enter",
+        "use": "--env-motion-ease-enter"
+      },
+      {
+        "cssVariable": "--motion-ease-exit",
+        "use": "--env-motion-ease-exit"
+      },
+      {
+        "cssVariable": "--motion-ease-standard",
+        "use": "--env-motion-ease-standard"
+      },
+      {
+        "cssVariable": "--radius-large",
+        "use": "--env-radius-lg",
+        "type": "dimension",
+        "note": "One radius scale: the large corner is its lg step."
+      },
+      {
+        "cssVariable": "--radius-row-inner",
+        "use": "--env-radius-row-inner"
+      },
+      {
+        "cssVariable": "--radius-row-outer",
+        "use": "--env-radius-row-outer"
+      },
+      {
+        "cssVariable": "--radius-row-single",
+        "use": "--env-radius-row-single"
+      },
+      {
+        "cssVariable": "--radius-standard",
+        "use": "--env-radius-sm",
+        "type": "dimension",
+        "note": "One radius scale: the standard corner is its sm step."
+      },
+      {
+        "cssVariable": "--radius-surface",
+        "use": "--env-radius-surface"
+      },
+      {
+        "cssVariable": "--row-content-height",
+        "use": "--env-row-content-height"
+      },
+      {
+        "cssVariable": "--row-height",
+        "use": "--env-row-height"
+      },
+      {
+        "cssVariable": "--row-padding-block-lg",
+        "use": "--env-row-padding-block-lg"
+      },
+      {
+        "cssVariable": "--row-padding-block-md",
+        "use": "--env-row-padding-block-md"
+      },
+      {
+        "cssVariable": "--row-padding-block-sm",
+        "use": "--env-row-padding-block-sm"
+      },
+      {
+        "cssVariable": "--row-padding-block-xs",
+        "use": "--env-row-padding-block-xs"
+      },
+      {
+        "cssVariable": "--row-padding-inline",
+        "use": "--env-row-padding-inline"
+      },
+      {
+        "cssVariable": "--scale",
+        "removed": true,
+        "note": "The multiplier is gone: components read sized tokens. Set scale=\"compact\" on a Theme for the compact scale."
+      },
+      {
+        "cssVariable": "--space-1",
+        "use": "--env-space-1"
+      },
+      {
+        "cssVariable": "--space-2",
+        "use": "--env-space-2"
+      },
+      {
+        "cssVariable": "--space-3",
+        "use": "--env-space-3"
+      },
+      {
+        "cssVariable": "--space-4",
+        "use": "--env-space-4"
+      },
+      {
+        "cssVariable": "--space-5",
+        "use": "--env-space-5"
+      },
+      {
+        "cssVariable": "--space-6",
+        "use": "--env-space-6"
+      },
+      {
+        "cssVariable": "--space-7",
+        "use": "--env-space-7"
+      },
+      {
+        "cssVariable": "--space-8",
+        "use": "--env-space-8"
+      },
+      {
+        "cssVariable": "--space-9",
+        "use": "--env-space-9"
+      },
+      {
+        "cssVariable": "--state-card-strip-weight",
+        "removed": true,
+        "note": "Unused."
+      },
+      {
+        "cssVariable": "--state-dialog-overlay-opacity",
+        "use": "--env-color-bg-overlay",
+        "removed": true,
+        "type": "color",
+        "note": "The scrim is a translucent color token now."
+      },
+      {
+        "cssVariable": "--state-disabled-opacity",
+        "use": "--env-state-disabled-opacity"
+      },
+      {
+        "cssVariable": "--state-fill-hover-opacity",
+        "use": "--env-color-bg-neutral-muted-hover",
+        "removed": true,
+        "type": "color",
+        "note": "The fill's states are color tokens now."
+      },
+      {
+        "cssVariable": "--state-fill-opacity",
+        "use": "--env-color-bg-neutral-muted",
+        "removed": true,
+        "type": "color",
+        "note": "The neutral fill is a translucent color token; layer it over a surface rather than mixing."
+      },
+      {
+        "cssVariable": "--state-fill-pressed-opacity",
+        "use": "--env-color-bg-neutral-muted-pressed",
+        "removed": true,
+        "type": "color",
+        "note": "The fill's states are color tokens now."
+      },
+      {
+        "cssVariable": "--state-hover-lightness",
+        "removed": true,
+        "note": "The runtime hover rule is gone: use the role's -hover token."
+      },
+      {
+        "cssVariable": "--state-hover-shift",
+        "removed": true,
+        "note": "The runtime hover rule is gone."
+      },
+      {
+        "cssVariable": "--state-layer-hover-opacity",
+        "use": "--env-color-bg-neutral-subtle-hover",
+        "removed": true,
+        "type": "color",
+        "note": "The state layer is a color token now."
+      },
+      {
+        "cssVariable": "--state-layer-pressed-opacity",
+        "use": "--env-color-bg-neutral-subtle-pressed",
+        "removed": true,
+        "type": "color",
+        "note": "The state layer is a color token now."
+      },
+      {
+        "cssVariable": "--state-lightness-direction",
+        "removed": true,
+        "note": "The runtime hover rule is gone: every role has hover and pressed tokens."
+      },
+      {
+        "cssVariable": "--state-lightness-threshold",
+        "removed": true,
+        "note": "The runtime hover rule is gone."
+      },
+      {
+        "cssVariable": "--state-pressed-lightness",
+        "removed": true,
+        "note": "The runtime hover rule is gone: use the role's -pressed token."
+      },
+      {
+        "cssVariable": "--state-pressed-shift",
+        "removed": true,
+        "note": "The runtime hover rule is gone."
+      },
+      {
+        "cssVariable": "--state-selected-base-weight",
+        "removed": true,
+        "note": "Unused."
+      },
+      {
+        "cssVariable": "--state-surface-hover-lightness",
+        "removed": true,
+        "note": "The runtime hover rule is gone: use the surface's -hover token."
+      },
+      {
+        "cssVariable": "--state-surface-hover-shift",
+        "removed": true,
+        "note": "The runtime hover rule is gone."
+      },
+      {
+        "cssVariable": "--state-surface-pressed-lightness",
+        "removed": true,
+        "note": "The runtime hover rule is gone: use the surface's -pressed token."
+      },
+      {
+        "cssVariable": "--state-surface-pressed-shift",
+        "removed": true,
+        "note": "The runtime hover rule is gone."
+      },
+      {
+        "cssVariable": "--state-tone-subtle-opacity",
+        "removed": true,
+        "note": "Each tone has its tint as a color token: color.bg.{tone}.muted."
+      },
+      {
+        "cssVariable": "--title-bar-height",
+        "use": "--env-title-bar-height"
+      },
+      {
+        "cssVariable": "--topbar-height",
+        "use": "--env-topbar-height"
+      },
+      {
+        "cssVariable": "--tree-row-padding-block-lg",
+        "use": "--env-tree-row-padding-block-lg"
+      },
+      {
+        "cssVariable": "--tree-row-padding-block-md",
+        "use": "--env-tree-row-padding-block-md"
+      },
+      {
+        "cssVariable": "--tree-row-padding-block-sm",
+        "use": "--env-tree-row-padding-block-sm"
+      },
+      {
+        "cssVariable": "--type-body",
+        "use": "--env-type-body"
+      },
+      {
+        "cssVariable": "--type-body-font-family",
+        "use": "--env-type-body-font-family"
+      },
+      {
+        "cssVariable": "--type-body-font-size",
+        "use": "--env-type-body-font-size"
+      },
+      {
+        "cssVariable": "--type-body-font-weight",
+        "use": "--env-type-body-font-weight"
+      },
+      {
+        "cssVariable": "--type-body-letter-spacing",
+        "use": "--env-type-body-letter-spacing"
+      },
+      {
+        "cssVariable": "--type-body-line-height",
+        "use": "--env-type-body-line-height"
+      },
+      {
+        "cssVariable": "--type-body-small",
+        "use": "--env-type-body-small"
+      },
+      {
+        "cssVariable": "--type-body-small-font-family",
+        "use": "--env-type-body-small-font-family"
+      },
+      {
+        "cssVariable": "--type-body-small-font-size",
+        "use": "--env-type-body-small-font-size"
+      },
+      {
+        "cssVariable": "--type-body-small-font-weight",
+        "use": "--env-type-body-small-font-weight"
+      },
+      {
+        "cssVariable": "--type-body-small-letter-spacing",
+        "use": "--env-type-body-small-letter-spacing"
+      },
+      {
+        "cssVariable": "--type-body-small-line-height",
+        "use": "--env-type-body-small-line-height"
+      },
+      {
+        "cssVariable": "--type-h1",
+        "use": "--env-type-h1"
+      },
+      {
+        "cssVariable": "--type-h1-font-family",
+        "use": "--env-type-h1-font-family"
+      },
+      {
+        "cssVariable": "--type-h1-font-size",
+        "use": "--env-type-h1-font-size"
+      },
+      {
+        "cssVariable": "--type-h1-font-weight",
+        "use": "--env-type-h1-font-weight"
+      },
+      {
+        "cssVariable": "--type-h1-letter-spacing",
+        "use": "--env-type-h1-letter-spacing"
+      },
+      {
+        "cssVariable": "--type-h1-line-height",
+        "use": "--env-type-h1-line-height"
+      },
+      {
+        "cssVariable": "--type-h2",
+        "use": "--env-type-h2"
+      },
+      {
+        "cssVariable": "--type-h2-font-family",
+        "use": "--env-type-h2-font-family"
+      },
+      {
+        "cssVariable": "--type-h2-font-size",
+        "use": "--env-type-h2-font-size"
+      },
+      {
+        "cssVariable": "--type-h2-font-weight",
+        "use": "--env-type-h2-font-weight"
+      },
+      {
+        "cssVariable": "--type-h2-letter-spacing",
+        "use": "--env-type-h2-letter-spacing"
+      },
+      {
+        "cssVariable": "--type-h2-line-height",
+        "use": "--env-type-h2-line-height"
+      },
+      {
+        "cssVariable": "--viewport-gutter",
+        "use": "--env-viewport-gutter"
       }
     ]
   }

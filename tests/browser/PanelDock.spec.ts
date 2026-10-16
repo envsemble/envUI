@@ -569,13 +569,13 @@ test.describe('PanelDock', () => {
           return getComputedStyle(probe).color;
         };
         const result = {
-          dialog: resolve('var(--color-dialog)'),
-          border: resolve('var(--color-popup-border)'),
-          popup: resolve('var(--color-popup)'),
-          text: resolve('var(--color-text-primary)'),
-          muted: resolve('var(--color-text-muted)'),
-          icon: resolve('var(--color-icon)'),
-          canvas: resolve('var(--color-canvas)'),
+          dialog: resolve('var(--env-color-bg-raised)'),
+          border: resolve('var(--env-elevation-2-border)'),
+          popup: resolve('var(--env-color-bg-popup)'),
+          text: resolve('var(--env-color-fg-default)'),
+          muted: resolve('var(--env-color-fg-muted)'),
+          icon: resolve('var(--env-color-fg-muted)'),
+          canvas: resolve('var(--env-color-bg-page)'),
         };
         probe.remove();
         return result;
@@ -1334,7 +1334,7 @@ test('a hairline sets the header apart once the content scrolls beneath it, in b
     const header = panel.locator('.env-panel-dock-header');
     const border = await panel.evaluate((element) => {
       const probe = document.createElement('span');
-      probe.style.color = 'var(--color-popup-border)';
+      probe.style.color = 'var(--env-elevation-2-border)';
       element.append(probe);
       const color = getComputedStyle(probe).color;
       probe.remove();

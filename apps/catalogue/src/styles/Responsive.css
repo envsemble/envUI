@@ -15,10 +15,10 @@
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: var(--space-3);
-    padding: var(--space-4) calc(var(--control-height) + 2 * var(--space-4)) var(--space-4)
-      var(--docs-gutter);
-    padding-block-start: max(var(--space-4), env(safe-area-inset-top));
+    gap: var(--env-space-3);
+    padding: var(--env-space-4) calc(var(--env-control-height) + 2 * var(--env-space-4))
+      var(--env-space-4) var(--docs-gutter);
+    padding-block-start: max(var(--env-space-4), env(safe-area-inset-top));
   }
 }
 @container (width < 24rem) {
@@ -29,7 +29,7 @@
     padding-inline-end: 0;
   }
   .docs-swatch {
-    min-block-size: var(--control-height-touch);
+    min-block-size: var(--env-control-height-touch);
   }
   .docs-measure {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);

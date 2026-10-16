@@ -5,7 +5,7 @@
 .docs-example {
   --docs-example-width: 42rem;
   inline-size: 100%;
-  margin: 0 0 var(--space-9);
+  margin: 0 0 var(--env-space-9);
   min-width: 0;
 }
 /* Sections share the frame; only their actual specimens need a size limit. */
@@ -27,7 +27,7 @@
   --docs-specimen-width: 24rem;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--docs-specimen-min)), 1fr));
-  gap: var(--space-7) var(--space-6);
+  gap: var(--env-space-7) var(--env-space-6);
   align-items: start;
   min-inline-size: 0;
 }
@@ -55,9 +55,9 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--space-4);
+  gap: var(--env-space-4);
   inline-size: fit-content;
-  min-block-size: var(--control-height);
+  min-block-size: var(--env-control-height);
 }
 .docs-example p {
   max-width: 65ch;
@@ -65,7 +65,7 @@
 .docs-matrix-scroll {
   overflow-x: auto;
   max-width: 100%;
-  border-radius: var(--radius-standard);
+  border-radius: var(--env-radius-sm);
 }
 .docs-matrix {
   width: 100%;
@@ -74,8 +74,8 @@
   text-align: left;
 }
 .docs-matrix th {
-  font: var(--type-body-small);
-  color: var(--color-text-muted);
+  font: var(--env-type-body-small);
+  color: var(--env-color-fg-muted);
   font-weight: 400;
   padding: 0.5rem 0.75rem 1rem;
   white-space: nowrap;

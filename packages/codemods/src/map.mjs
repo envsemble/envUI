@@ -50,6 +50,7 @@ export function validateMap(map) {
     'classes',
     'classesWithin',
     'docs',
+    'tokens',
   ]) {
     if (map[section] !== undefined && !isObject(map[section]))
       problems.push(`"${section}" must be an object.`);
@@ -156,6 +157,37 @@ export function validateMap(map) {
     else if (to === from) problems.push(`docs: ${from} maps to itself.`);
   }
   problems.push(...validateProps(map.props));
+  problems.push(...validateTokens(map.tokens));
+  return problems;
+}
+
+const oldProperty = /^--(?!env-)[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const newProperty = /^--env-[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+/**
+ * Problems with the `tokens` section: each old custom property, without the --env- prefix, maps
+ * to the --env- property that replaces it (`to`), to a fixed color's `value`, or is `removed`,
+ * with `to` what to use instead or null.
+ */
+function validateTokens(tokens) {
+  const problems = [];
+  for (const [from, entry] of entriesOf(tokens)) {
+    const where = `tokens.${from}`;
+    if (!oldProperty.test(from))
+      problems.push(`${where}: ${from} is not a custom property before 1.0.`);
+    if (!isObject(entry)) {
+      problems.push(`${where} must be an object.`);
+      continue;
+    }
+    if (entry.removed === true) {
+      if (entry.to !== null && !newProperty.test(entry.to ?? ''))
+        problems.push(`${where}: "to" must be an --env- custom property or null.`);
+    } else if (entry.value !== undefined) {
+      if (typeof entry.value !== 'string' && !isObject(entry.value))
+        problems.push(`${where}: "value" must be a color or a color per theme.`);
+    } else if (typeof entry.to !== 'string' || !newProperty.test(entry.to))
+      problems.push(`${where} needs "to", an --env- custom property, "value" or "removed".`);
+  }
   return problems;
 }
 
@@ -224,7 +256,10 @@ const sortClasses = (classes) =>
  *   `namespaces` (the namespace exports that the entry has in 1.0);
  * - `classes`: class renames, longest old name first;
  * - `classesWithin`: class renames that apply inside an ancestor's selector, as
- *   `{ ancestor, from, to }`.
+ *   `{ ancestor, from, to }`;
+ * - `tokens`: each custom property before 1.0, without its `--`, to its entry: `to` the 1.0
+ *   name (without `--`) that replaces it, or a `report` for a fixed color or a removed name;
+ * - `tokenNames`: the 1.0 names the tokens become, without `--`, which class renames leave alone.
  */
 export function normalizeMap(map) {
   const entries = new Map();
@@ -285,7 +320,30 @@ export function normalizeMap(map) {
   const classesWithin = entriesOf(map.classesWithin).flatMap(([ancestor, names]) =>
     entriesOf(names).map(([from, to]) => ({ ancestor, from, to })),
   );
-  return { entries, classes, classesWithin };
+  const tokens = new Map();
+  const tokenNames = new Set();
+  for (const [from, entry] of entriesOf(map.tokens)) {
+    const name = from.slice(2);
+    if (entry.removed)
+      tokens.set(name, {
+        report: `${from} is removed in 1.0${entry.to ? `; use ${entry.to}` : ''}${entry.note ? `: ${entry.note}` : '.'}`,
+      });
+    else if (entry.value !== undefined)
+      tokens.set(name, {
+        report: `${from} is removed in 1.0 and no token replaces it: write its color, ${
+          typeof entry.value === 'string'
+            ? entry.value
+            : Object.entries(entry.value)
+                .map(([theme, value]) => `${value} in ${theme}`)
+                .join(', ')
+        }, or a custom property of your own.`,
+      });
+    else {
+      tokens.set(name, { to: entry.to.slice(2) });
+      tokenNames.add(entry.to.slice(2));
+    }
+  }
+  return { entries, classes, classesWithin, tokens, tokenNames };
 }
 
 const cache = new Map();

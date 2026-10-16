@@ -1,0 +1,48 @@
+/* An application's own style sheet, written against envUI 0.7's tokens. */
+.members-page {
+  background: var(--color-canvas);
+  color: var(--color-text-primary);
+  padding: var(--space-4) var(--space-6);
+  border-radius: var(--md-sys-shape-corner-large);
+  font: var(--type-body);
+  line-height: var(--line-height-body, 1.4);
+}
+
+/* 0.7 aliases go straight to the role that replaces them, and component colors to their tokens. */
+.members-page .env-row:hover {
+  background: var(--color-row-hover);
+  color: var(--color-field-label);
+  box-shadow: 0 0 0 1px var(--color-border-strong);
+}
+.members-page .member-avatar {
+  background: var(--color-avatar);
+  color: var(--color-on-avatar);
+}
+
+/* Names that changed beyond the prefix during 1.0. */
+.members-page .member-badge {
+  border: 1px solid var(--color-border-accent-emphasis);
+  outline-color: var(--color-border-accent);
+  border-radius: var(--radius-standard) var(--md-sys-shape-corner-full);
+}
+
+/* An application that themes envUI sets the tokens, which keep their meaning. */
+.env-theme[data-env-theme='dark'] {
+  --color-link: rgb(159 193 248);
+  --avatar-group-ring: var(--color-surface-muted);
+}
+
+/* Look-alikes and the application's own properties stay as they are. */
+.members-page {
+  --space-4x: 1rem;
+  --brand-space-4: 1rem;
+  --members-gap: calc(var(--space-2) * 2);
+  margin: var(--members-gap);
+}
+
+/* Names that 1.0 already has, such as the row height, are not the 0.x row class's. */
+.members-page .env-list-item {
+  min-block-size: var(--env-row-height);
+  padding-inline: var(--env-row-padding-inline);
+  color: var(--env-color-fg-default);
+}

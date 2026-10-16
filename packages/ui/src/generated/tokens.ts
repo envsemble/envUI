@@ -29,7 +29,7 @@ export interface TokenDefinition {
 /** Every token, by its DTCG path. */
 export const tokens = {
   'body.font-weight': {
-    cssVariable: '--body-font-weight',
+    cssVariable: '--env-body-font-weight',
     type: 'fontWeight',
     values: {
       light: '400',
@@ -38,51 +38,9 @@ export const tokens = {
       'dark-high-contrast': '400',
     },
   },
-  /** Misleading 0.7 name: the purple of important actions, bg.important.strong, not the accent blue of fg.accent. Components use bg.important.strong; the alias goes in the CSS-architecture step. */
-  'color.accent': {
-    cssVariable: '--color-accent',
-    type: 'color',
-    values: {
-      light: '#9948b6',
-      dark: '#9948b6',
-      'light-high-contrast': '#6d1888',
-      'dark-high-contrast': '#6d1888',
-    },
-  },
-  /** Misleading 0.7 name of bg.important.strong.hover; see --color-accent. */
-  'color.accent-hover': {
-    cssVariable: '--color-accent-hover',
-    type: 'color',
-    values: {
-      light: '#83319f',
-      dark: '#83319f',
-      'light-high-contrast': '#63047d',
-      'dark-high-contrast': '#63047d',
-    },
-  },
-  /** Misleading 0.7 name of bg.important.strong.pressed; see --color-accent. */
-  'color.accent-pressed': {
-    cssVariable: '--color-accent-pressed',
-    type: 'color',
-    values: {
-      light: '#6d1888',
-      dark: '#6d1888',
-      'light-high-contrast': '#57006e',
-      'dark-high-contrast': '#57006e',
-    },
-  },
-  'color.action-strip': {
-    cssVariable: '--color-action-strip',
-    type: 'color',
-    values: {
-      light: '#eff1f5',
-      dark: '#28292b',
-      'light-high-contrast': '#eff1f5',
-      'dark-high-contrast': '#28292b',
-    },
-  },
-  'color.avatar': {
-    cssVariable: '--color-avatar',
+  /** The fill of an avatar that shows initials or the default figure. */
+  'color.avatar.bg': {
+    cssVariable: '--env-color-avatar-bg',
     type: 'color',
     values: {
       light: '#9fc1f8',
@@ -91,8 +49,20 @@ export const tokens = {
       'dark-high-contrast': '#9fc1f8',
     },
   },
-  'color.avatar-figure': {
-    cssVariable: '--color-avatar-figure',
+  /** The initials of an avatar, at least 4.5:1 on its fill, and 7:1 at high contrast. */
+  'color.avatar.fg': {
+    cssVariable: '--env-color-avatar-fg',
+    type: 'color',
+    values: {
+      light: '#004aa2',
+      dark: '#004aa2',
+      'light-high-contrast': '#001d49',
+      'dark-high-contrast': '#001d49',
+    },
+  },
+  /** The default figure of an avatar without a name or an image. */
+  'color.avatar.figure': {
+    cssVariable: '--env-color-avatar-figure',
     type: 'color',
     values: {
       light: '#347eea',
@@ -103,7 +73,7 @@ export const tokens = {
   },
   /** A solid accent fill, such as a solid accent badge; paired with fg.on-emphasis. */
   'color.bg.accent.emphasis': {
-    cssVariable: '--color-bg-accent-emphasis',
+    cssVariable: '--env-color-bg-accent-emphasis',
     type: 'color',
     values: {
       light: '#005cc8',
@@ -114,7 +84,7 @@ export const tokens = {
   },
   /** The translucent accent tint of badges and info alerts. */
   'color.bg.accent.muted': {
-    cssVariable: '--color-bg-accent-muted',
+    cssVariable: '--env-color-bg-accent-muted',
     type: 'color',
     values: {
       light: 'rgb(0 92 200 / 0.12)',
@@ -123,9 +93,20 @@ export const tokens = {
       'dark-high-contrast': 'rgb(205 222 252 / 0.1)',
     },
   },
+  /** Controls in the accent tone without a fill at rest, such as an alert’s dismiss button: transparent, as color.bg.neutral.subtle is. */
+  'color.bg.accent.subtle': {
+    cssVariable: '--env-color-bg-accent-subtle',
+    type: 'color',
+    values: {
+      light: 'transparent',
+      dark: 'transparent',
+      'light-high-contrast': 'transparent',
+      'dark-high-contrast': 'transparent',
+    },
+  },
   /** The state layer of a control without a fill in the accent tone, such as an info alert’s dismiss button, under the pointer: the accent text color at 14%, in every theme and at high contrast. */
   'color.bg.accent.subtle.hover': {
-    cssVariable: '--color-bg-accent-subtle-hover',
+    cssVariable: '--env-color-bg-accent-subtle-hover',
     type: 'color',
     values: {
       light: 'rgb(0 92 200 / 0.14)',
@@ -136,7 +117,7 @@ export const tokens = {
   },
   /** The accent state layer while pressed: the accent text color at 22%. */
   'color.bg.accent.subtle.pressed': {
-    cssVariable: '--color-bg-accent-subtle-pressed',
+    cssVariable: '--env-color-bg-accent-subtle-pressed',
     type: 'color',
     values: {
       light: 'rgb(0 92 200 / 0.22)',
@@ -147,7 +128,7 @@ export const tokens = {
   },
   /** The brand fill of primary actions, chosen radios and the chosen calendar day; paired with fg.on-emphasis. In dark and at high contrast, checked checkboxes, switches that are on, sliders, meters and spinners take it too: a soft blue with dark marks at 4.5:1. */
   'color.bg.brand.emphasis': {
-    cssVariable: '--color-bg-brand-emphasis',
+    cssVariable: '--env-color-bg-brand-emphasis',
     type: 'color',
     values: {
       light: '#1872e7',
@@ -158,7 +139,7 @@ export const tokens = {
   },
   /** A primary action under the pointer. */
   'color.bg.brand.emphasis.hover': {
-    cssVariable: '--color-bg-brand-emphasis-hover',
+    cssVariable: '--env-color-bg-brand-emphasis-hover',
     type: 'color',
     values: {
       light: '#005cc8',
@@ -169,7 +150,7 @@ export const tokens = {
   },
   /** A primary action while pressed. */
   'color.bg.brand.emphasis.pressed': {
-    cssVariable: '--color-bg-brand-emphasis-pressed',
+    cssVariable: '--env-color-bg-brand-emphasis-pressed',
     type: 'color',
     values: {
       light: '#00408f',
@@ -180,7 +161,7 @@ export const tokens = {
   },
   /** The translucent halo of a slider thumb that is dragged: the blue of the thumb at 16%, in every theme and at high contrast. */
   'color.bg.brand.muted': {
-    cssVariable: '--color-bg-brand-muted',
+    cssVariable: '--env-color-bg-brand-muted',
     type: 'color',
     values: {
       light: 'rgb(24 114 231 / 0.16)',
@@ -191,7 +172,7 @@ export const tokens = {
   },
   /** The saturated brand fill of checked checkboxes, switches that are on, sliders, meters and spinners in the light theme at standard contrast, with white marks, the check and the thumb, at 3:1. The dark theme and high contrast put those controls on the emphasis fill instead; in dark this fill, which keeps 3:1 against the surfaces, would put white text below 4.5:1. */
   'color.bg.brand.strong': {
-    cssVariable: '--color-bg-brand-strong',
+    cssVariable: '--env-color-bg-brand-strong',
     type: 'color',
     values: {
       light: '#1872e7',
@@ -202,7 +183,7 @@ export const tokens = {
   },
   /** A checked control under the pointer. */
   'color.bg.brand.strong.hover': {
-    cssVariable: '--color-bg-brand-strong-hover',
+    cssVariable: '--env-color-bg-brand-strong-hover',
     type: 'color',
     values: {
       light: '#005cc8',
@@ -213,7 +194,7 @@ export const tokens = {
   },
   /** A checked control while pressed. */
   'color.bg.brand.strong.pressed': {
-    cssVariable: '--color-bg-brand-strong-pressed',
+    cssVariable: '--env-color-bg-brand-strong-pressed',
     type: 'color',
     values: {
       light: '#00408f',
@@ -224,7 +205,7 @@ export const tokens = {
   },
   /** A solid danger fill; paired with fg.on-emphasis. */
   'color.bg.danger.emphasis': {
-    cssVariable: '--color-bg-danger-emphasis',
+    cssVariable: '--env-color-bg-danger-emphasis',
     type: 'color',
     values: {
       light: '#b72b20',
@@ -235,7 +216,7 @@ export const tokens = {
   },
   /** The translucent danger tint of badges and alerts. */
   'color.bg.danger.muted': {
-    cssVariable: '--color-bg-danger-muted',
+    cssVariable: '--env-color-bg-danger-muted',
     type: 'color',
     values: {
       light: 'rgb(183 43 32 / 0.12)',
@@ -246,7 +227,7 @@ export const tokens = {
   },
   /** The danger fill of destructive actions and error toasts in both themes; paired with fg.on-strong. */
   'color.bg.danger.strong': {
-    cssVariable: '--color-bg-danger-strong',
+    cssVariable: '--env-color-bg-danger-strong',
     type: 'color',
     values: {
       light: '#b72b20',
@@ -257,7 +238,7 @@ export const tokens = {
   },
   /** A destructive action under the pointer: lighter, as in 0.7, at the lightest grade that keeps white labels at 4.5:1. */
   'color.bg.danger.strong.hover': {
-    cssVariable: '--color-bg-danger-strong-hover',
+    cssVariable: '--env-color-bg-danger-strong-hover',
     type: 'color',
     values: {
       light: '#c64e43',
@@ -268,7 +249,7 @@ export const tokens = {
   },
   /** A destructive action while pressed. It can’t lighten further without its white label falling below 4.5:1, so it settles halfway back. */
   'color.bg.danger.strong.pressed': {
-    cssVariable: '--color-bg-danger-strong-pressed',
+    cssVariable: '--env-color-bg-danger-strong-pressed',
     type: 'color',
     values: {
       light: '#bf3e33',
@@ -277,9 +258,20 @@ export const tokens = {
       'dark-high-contrast': '#6b0100',
     },
   },
+  /** Controls in the danger tone without a fill at rest, such as an alert’s dismiss button: transparent, as color.bg.neutral.subtle is. */
+  'color.bg.danger.subtle': {
+    cssVariable: '--env-color-bg-danger-subtle',
+    type: 'color',
+    values: {
+      light: 'transparent',
+      dark: 'transparent',
+      'light-high-contrast': 'transparent',
+      'dark-high-contrast': 'transparent',
+    },
+  },
   /** The state layer of a control without a fill in the danger tone, such as an error alert’s dismiss button, under the pointer: the danger text color at 14%, in every theme and at high contrast. */
   'color.bg.danger.subtle.hover': {
-    cssVariable: '--color-bg-danger-subtle-hover',
+    cssVariable: '--env-color-bg-danger-subtle-hover',
     type: 'color',
     values: {
       light: 'rgb(183 43 32 / 0.14)',
@@ -290,7 +282,7 @@ export const tokens = {
   },
   /** The danger state layer while pressed: the danger text color at 22%. */
   'color.bg.danger.subtle.pressed': {
-    cssVariable: '--color-bg-danger-subtle-pressed',
+    cssVariable: '--env-color-bg-danger-subtle-pressed',
     type: 'color',
     values: {
       light: 'rgb(183 43 32 / 0.22)',
@@ -301,7 +293,7 @@ export const tokens = {
   },
   /** The default surface: Surface, sidebars, standard menus. */
   'color.bg.default': {
-    cssVariable: '--color-bg-default',
+    cssVariable: '--env-color-bg-default',
     type: 'color',
     values: {
       light: '#eff1f5',
@@ -312,7 +304,7 @@ export const tokens = {
   },
   /** An interactive default surface, such as a card or a list row, under the pointer. */
   'color.bg.default.hover': {
-    cssVariable: '--color-bg-default-hover',
+    cssVariable: '--env-color-bg-default-hover',
     type: 'color',
     values: {
       light: '#e2e4e8',
@@ -323,7 +315,7 @@ export const tokens = {
   },
   /** An interactive default surface while pressed. Muted text and an inset focus ring keep their minimums on it. */
   'color.bg.default.pressed': {
-    cssVariable: '--color-bg-default-pressed',
+    cssVariable: '--env-color-bg-default-pressed',
     type: 'color',
     values: {
       light: '#dbdde1',
@@ -334,7 +326,7 @@ export const tokens = {
   },
   /** A solid done fill; paired with fg.on-emphasis. */
   'color.bg.done.emphasis': {
-    cssVariable: '--color-bg-done-emphasis',
+    cssVariable: '--env-color-bg-done-emphasis',
     type: 'color',
     values: {
       light: '#7a3fc8',
@@ -345,7 +337,7 @@ export const tokens = {
   },
   /** The translucent done tint of badges. */
   'color.bg.done.muted': {
-    cssVariable: '--color-bg-done-muted',
+    cssVariable: '--env-color-bg-done-muted',
     type: 'color',
     values: {
       light: 'rgb(122 63 200 / 0.12)',
@@ -356,7 +348,7 @@ export const tokens = {
   },
   /** Text fields and other inputs. */
   'color.bg.field': {
-    cssVariable: '--color-bg-field',
+    cssVariable: '--env-color-bg-field',
     type: 'color',
     values: {
       light: '#ffffff',
@@ -367,7 +359,7 @@ export const tokens = {
   },
   /** The accent purple of important actions in both themes; paired with fg.on-strong. */
   'color.bg.important.strong': {
-    cssVariable: '--color-bg-important-strong',
+    cssVariable: '--env-color-bg-important-strong',
     type: 'color',
     values: {
       light: '#9948b6',
@@ -378,7 +370,7 @@ export const tokens = {
   },
   /** An important action under the pointer. */
   'color.bg.important.strong.hover': {
-    cssVariable: '--color-bg-important-strong-hover',
+    cssVariable: '--env-color-bg-important-strong-hover',
     type: 'color',
     values: {
       light: '#83319f',
@@ -389,7 +381,7 @@ export const tokens = {
   },
   /** An important action while pressed. */
   'color.bg.important.strong.pressed': {
-    cssVariable: '--color-bg-important-strong-pressed',
+    cssVariable: '--env-color-bg-important-strong-pressed',
     type: 'color',
     values: {
       light: '#6d1888',
@@ -400,7 +392,7 @@ export const tokens = {
   },
   /** The information fill of toasts in both themes; paired with fg.on-strong. */
   'color.bg.info.strong': {
-    cssVariable: '--color-bg-info-strong',
+    cssVariable: '--env-color-bg-info-strong',
     type: 'color',
     values: {
       light: '#2c61a6',
@@ -411,7 +403,7 @@ export const tokens = {
   },
   /** A control on the information toast under the pointer. */
   'color.bg.info.strong.hover': {
-    cssVariable: '--color-bg-info-strong-hover',
+    cssVariable: '--env-color-bg-info-strong-hover',
     type: 'color',
     values: {
       light: '#4177be',
@@ -422,7 +414,7 @@ export const tokens = {
   },
   /** A control on the information toast while pressed. */
   'color.bg.info.strong.pressed': {
-    cssVariable: '--color-bg-info-strong-pressed',
+    cssVariable: '--env-color-bg-info-strong-pressed',
     type: 'color',
     values: {
       light: '#578dd6',
@@ -431,9 +423,20 @@ export const tokens = {
       'dark-high-contrast': '#003068',
     },
   },
+  /** The page color at half strength, which leans a pill on a button’s fill back toward the page instead of adding another fill, as a diff stat in a tab does. */
+  'color.bg.inset': {
+    cssVariable: '--env-color-bg-inset',
+    type: 'color',
+    values: {
+      light: 'rgb(255 255 255 / 0.5)',
+      dark: 'rgb(30 31 33 / 0.5)',
+      'light-high-contrast': 'rgb(255 255 255 / 0.5)',
+      'dark-high-contrast': 'rgb(30 31 33 / 0.5)',
+    },
+  },
   /** The muted surface: Surface background="muted", radio rows. Lighter than the default surface in both themes. */
   'color.bg.muted': {
-    cssVariable: '--color-bg-muted',
+    cssVariable: '--env-color-bg-muted',
     type: 'color',
     values: {
       light: '#f6f8fc',
@@ -444,7 +447,7 @@ export const tokens = {
   },
   /** An interactive muted surface under the pointer. */
   'color.bg.muted.hover': {
-    cssVariable: '--color-bg-muted-hover',
+    cssVariable: '--env-color-bg-muted-hover',
     type: 'color',
     values: {
       light: '#e8eaee',
@@ -455,7 +458,7 @@ export const tokens = {
   },
   /** An interactive muted surface while pressed. */
   'color.bg.muted.pressed': {
-    cssVariable: '--color-bg-muted-pressed',
+    cssVariable: '--env-color-bg-muted-pressed',
     type: 'color',
     values: {
       light: '#dbdde1',
@@ -466,7 +469,7 @@ export const tokens = {
   },
   /** A navigation item that isn’t selected, under the pointer: a blue-gray tint in light, deeper than the selection so it doesn’t read as selected; in dark and at high contrast, a gray, since a blue tint there would read as the selection. */
   'color.bg.navigation.hover': {
-    cssVariable: '--color-bg-navigation-hover',
+    cssVariable: '--env-color-bg-navigation-hover',
     type: 'color',
     values: {
       light: '#cbd8ea',
@@ -477,7 +480,7 @@ export const tokens = {
   },
   /** A navigation item that isn’t selected, while pressed. Its label and an inset focus ring keep their minimums on it, which puts it one grade deeper than the hover in light. */
   'color.bg.navigation.pressed': {
-    cssVariable: '--color-bg-navigation-pressed',
+    cssVariable: '--env-color-bg-navigation-pressed',
     type: 'color',
     values: {
       light: '#c7d5e8',
@@ -488,7 +491,7 @@ export const tokens = {
   },
   /** A solid neutral fill, such as a solid neutral badge; paired with fg.on-emphasis. */
   'color.bg.neutral.emphasis': {
-    cssVariable: '--color-bg-neutral-emphasis',
+    cssVariable: '--env-color-bg-neutral-emphasis',
     type: 'color',
     values: {
       light: '#5d6166',
@@ -499,7 +502,7 @@ export const tokens = {
   },
   /** The translucent neutral fill of secondary buttons, tab rails, chips, switch tracks, meter tracks and skeletons: a layer of the text color, so it keeps its tone on every surface. */
   'color.bg.neutral.muted': {
-    cssVariable: '--color-bg-neutral-muted',
+    cssVariable: '--env-color-bg-neutral-muted',
     type: 'color',
     values: {
       light: 'rgb(30 31 33 / 0.06)',
@@ -510,7 +513,7 @@ export const tokens = {
   },
   /** The neutral fill under the pointer. */
   'color.bg.neutral.muted.hover': {
-    cssVariable: '--color-bg-neutral-muted-hover',
+    cssVariable: '--env-color-bg-neutral-muted-hover',
     type: 'color',
     values: {
       light: 'rgb(30 31 33 / 0.17)',
@@ -521,7 +524,7 @@ export const tokens = {
   },
   /** The neutral fill while pressed. */
   'color.bg.neutral.muted.pressed': {
-    cssVariable: '--color-bg-neutral-muted-pressed',
+    cssVariable: '--env-color-bg-neutral-muted-pressed',
     type: 'color',
     values: {
       light: 'rgb(30 31 33 / 0.29)',
@@ -532,7 +535,7 @@ export const tokens = {
   },
   /** The dark neutral fill of tooltips and neutral toasts in both themes; paired with fg.on-strong. */
   'color.bg.neutral.strong': {
-    cssVariable: '--color-bg-neutral-strong',
+    cssVariable: '--env-color-bg-neutral-strong',
     type: 'color',
     values: {
       light: '#424447',
@@ -543,7 +546,7 @@ export const tokens = {
   },
   /** A control on the strong neutral fill under the pointer. */
   'color.bg.neutral.strong.hover': {
-    cssVariable: '--color-bg-neutral-strong-hover',
+    cssVariable: '--env-color-bg-neutral-strong-hover',
     type: 'color',
     values: {
       light: '#5d6166',
@@ -554,7 +557,7 @@ export const tokens = {
   },
   /** A control on the strong neutral fill while pressed. */
   'color.bg.neutral.strong.pressed': {
-    cssVariable: '--color-bg-neutral-strong-pressed',
+    cssVariable: '--env-color-bg-neutral-strong-pressed',
     type: 'color',
     values: {
       light: '#72767b',
@@ -565,7 +568,7 @@ export const tokens = {
   },
   /** Controls without a fill at rest, such as quiet buttons, inactive tabs and menubar triggers. */
   'color.bg.neutral.subtle': {
-    cssVariable: '--color-bg-neutral-subtle',
+    cssVariable: '--env-color-bg-neutral-subtle',
     type: 'color',
     values: {
       light: 'transparent',
@@ -576,7 +579,7 @@ export const tokens = {
   },
   /** The state layer over a control without a fill, under the pointer. */
   'color.bg.neutral.subtle.hover': {
-    cssVariable: '--color-bg-neutral-subtle-hover',
+    cssVariable: '--env-color-bg-neutral-subtle-hover',
     type: 'color',
     values: {
       light: 'rgb(30 31 33 / 0.08)',
@@ -587,7 +590,7 @@ export const tokens = {
   },
   /** The state layer over a control without a fill, while pressed. */
   'color.bg.neutral.subtle.pressed': {
-    cssVariable: '--color-bg-neutral-subtle-pressed',
+    cssVariable: '--env-color-bg-neutral-subtle-pressed',
     type: 'color',
     values: {
       light: 'rgb(30 31 33 / 0.1)',
@@ -598,7 +601,7 @@ export const tokens = {
   },
   /** The scrim behind dialogs and the command palette: the dark page color at 55%. */
   'color.bg.overlay': {
-    cssVariable: '--color-bg-overlay',
+    cssVariable: '--env-color-bg-overlay',
     type: 'color',
     values: {
       light: 'rgb(30 31 33 / 0.55)',
@@ -609,7 +612,7 @@ export const tokens = {
   },
   /** The lighter scrim behind a drawer, such as the app shell’s sidebar over a narrow window: the dark page color at 30%. */
   'color.bg.overlay.muted': {
-    cssVariable: '--color-bg-overlay-muted',
+    cssVariable: '--env-color-bg-overlay-muted',
     type: 'color',
     values: {
       light: 'rgb(30 31 33 / 0.3)',
@@ -620,7 +623,7 @@ export const tokens = {
   },
   /** The page behind all content: the app frame, title bars and Surface background="page". */
   'color.bg.page': {
-    cssVariable: '--color-bg-page',
+    cssVariable: '--env-color-bg-page',
     type: 'color',
     values: {
       light: '#ffffff',
@@ -631,7 +634,7 @@ export const tokens = {
   },
   /** An interactive page-colored surface under the pointer. */
   'color.bg.page.hover': {
-    cssVariable: '--color-bg-page-hover',
+    cssVariable: '--env-color-bg-page-hover',
     type: 'color',
     values: {
       light: '#eff1f5',
@@ -640,20 +643,9 @@ export const tokens = {
       'dark-high-contrast': '#28292b',
     },
   },
-  /** The page color at half strength, which leans a pill on a button’s fill back toward the page instead of adding another fill, as a diff stat in a tab does. */
-  'color.bg.page.muted': {
-    cssVariable: '--color-bg-page-muted',
-    type: 'color',
-    values: {
-      light: 'rgb(255 255 255 / 0.5)',
-      dark: 'rgb(30 31 33 / 0.5)',
-      'light-high-contrast': 'rgb(255 255 255 / 0.5)',
-      'dark-high-contrast': 'rgb(30 31 33 / 0.5)',
-    },
-  },
   /** An interactive page-colored surface while pressed. */
   'color.bg.page.pressed': {
-    cssVariable: '--color-bg-page-pressed',
+    cssVariable: '--env-color-bg-page-pressed',
     type: 'color',
     values: {
       light: '#e2e4e8',
@@ -664,7 +656,7 @@ export const tokens = {
   },
   /** Popups over the page: menus, Select lists, popovers, the composer. They take elevation 2. */
   'color.bg.popup': {
-    cssVariable: '--color-bg-popup',
+    cssVariable: '--env-color-bg-popup',
     type: 'color',
     values: {
       light: '#ffffff',
@@ -675,7 +667,7 @@ export const tokens = {
   },
   /** A highlighted row in a popup. */
   'color.bg.popup.hover': {
-    cssVariable: '--color-bg-popup-hover',
+    cssVariable: '--env-color-bg-popup-hover',
     type: 'color',
     values: {
       light: '#eff1f5',
@@ -686,7 +678,7 @@ export const tokens = {
   },
   /** A pressed row in a popup. */
   'color.bg.popup.pressed': {
-    cssVariable: '--color-bg-popup-pressed',
+    cssVariable: '--env-color-bg-popup-pressed',
     type: 'color',
     values: {
       light: '#e2e4e8',
@@ -697,7 +689,7 @@ export const tokens = {
   },
   /** A raised surface: Surface background="raised", dialogs, rows on a contrasting surface, outlined buttons. */
   'color.bg.raised': {
-    cssVariable: '--color-bg-raised',
+    cssVariable: '--env-color-bg-raised',
     type: 'color',
     values: {
       light: '#ffffff',
@@ -708,7 +700,7 @@ export const tokens = {
   },
   /** An interactive raised surface under the pointer. */
   'color.bg.raised.hover': {
-    cssVariable: '--color-bg-raised-hover',
+    cssVariable: '--env-color-bg-raised-hover',
     type: 'color',
     values: {
       light: '#e8eaee',
@@ -719,7 +711,7 @@ export const tokens = {
   },
   /** An interactive raised surface while pressed. */
   'color.bg.raised.pressed': {
-    cssVariable: '--color-bg-raised-pressed',
+    cssVariable: '--env-color-bg-raised-pressed',
     type: 'color',
     values: {
       light: '#dbdde1',
@@ -730,7 +722,7 @@ export const tokens = {
   },
   /** Selected navigation items, tree and table rows, Select options and drop targets; paired with fg.on-selected. A blue tint in light and a blue-gray in dark, distinct from the other items around it, at rest and under the pointer: ΔEOK 0.03 or more, 0.04 at high contrast. */
   'color.bg.selected': {
-    cssVariable: '--color-bg-selected',
+    cssVariable: '--env-color-bg-selected',
     type: 'color',
     values: {
       light: '#dbe8fd',
@@ -741,7 +733,7 @@ export const tokens = {
   },
   /** A selected item under the pointer: visibly deeper than the selection, and distinct from an unselected item under the pointer. */
   'color.bg.selected.hover': {
-    cssVariable: '--color-bg-selected-hover',
+    cssVariable: '--env-color-bg-selected-hover',
     type: 'color',
     values: {
       light: '#d2e1fc',
@@ -752,7 +744,7 @@ export const tokens = {
   },
   /** A selected item while pressed. Muted text and an inset focus ring keep their minimums on it. */
   'color.bg.selected.pressed': {
-    cssVariable: '--color-bg-selected-pressed',
+    cssVariable: '--env-color-bg-selected-pressed',
     type: 'color',
     values: {
       light: '#cddefc',
@@ -763,7 +755,7 @@ export const tokens = {
   },
   /** A solid success fill; paired with fg.on-emphasis. */
   'color.bg.success.emphasis': {
-    cssVariable: '--color-bg-success-emphasis',
+    cssVariable: '--env-color-bg-success-emphasis',
     type: 'color',
     values: {
       light: '#176f35',
@@ -774,7 +766,7 @@ export const tokens = {
   },
   /** The translucent success tint of badges and alerts. */
   'color.bg.success.muted': {
-    cssVariable: '--color-bg-success-muted',
+    cssVariable: '--env-color-bg-success-muted',
     type: 'color',
     values: {
       light: 'rgb(23 111 53 / 0.12)',
@@ -785,7 +777,7 @@ export const tokens = {
   },
   /** The teal success fill of toasts in both themes; paired with fg.on-strong. */
   'color.bg.success.strong': {
-    cssVariable: '--color-bg-success-strong',
+    cssVariable: '--env-color-bg-success-strong',
     type: 'color',
     values: {
       light: '#236d52',
@@ -796,7 +788,7 @@ export const tokens = {
   },
   /** A control on the success toast, its dismiss button, under the pointer. */
   'color.bg.success.strong.hover': {
-    cssVariable: '--color-bg-success-strong-hover',
+    cssVariable: '--env-color-bg-success-strong-hover',
     type: 'color',
     values: {
       light: '#3b8266',
@@ -807,7 +799,7 @@ export const tokens = {
   },
   /** A control on the success toast while pressed. Its white icon keeps 3:1. */
   'color.bg.success.strong.pressed': {
-    cssVariable: '--color-bg-success-strong-pressed',
+    cssVariable: '--env-color-bg-success-strong-pressed',
     type: 'color',
     values: {
       light: '#478d71',
@@ -816,9 +808,20 @@ export const tokens = {
       'dark-high-contrast': '#003a28',
     },
   },
+  /** Controls in the success tone without a fill at rest, such as an alert’s dismiss button: transparent, as color.bg.neutral.subtle is. */
+  'color.bg.success.subtle': {
+    cssVariable: '--env-color-bg-success-subtle',
+    type: 'color',
+    values: {
+      light: 'transparent',
+      dark: 'transparent',
+      'light-high-contrast': 'transparent',
+      'dark-high-contrast': 'transparent',
+    },
+  },
   /** The state layer of a control without a fill in the success tone, such as a success alert’s dismiss button, under the pointer: the success text color at 14%, in every theme and at high contrast. */
   'color.bg.success.subtle.hover': {
-    cssVariable: '--color-bg-success-subtle-hover',
+    cssVariable: '--env-color-bg-success-subtle-hover',
     type: 'color',
     values: {
       light: 'rgb(23 111 53 / 0.14)',
@@ -829,7 +832,7 @@ export const tokens = {
   },
   /** The success state layer while pressed: the success text color at 22%. */
   'color.bg.success.subtle.pressed': {
-    cssVariable: '--color-bg-success-subtle-pressed',
+    cssVariable: '--env-color-bg-success-subtle-pressed',
     type: 'color',
     values: {
       light: 'rgb(23 111 53 / 0.22)',
@@ -840,7 +843,7 @@ export const tokens = {
   },
   /** A solid warning fill; paired with fg.on-emphasis. */
   'color.bg.warning.emphasis': {
-    cssVariable: '--color-bg-warning-emphasis',
+    cssVariable: '--env-color-bg-warning-emphasis',
     type: 'color',
     values: {
       light: '#8a5504',
@@ -851,7 +854,7 @@ export const tokens = {
   },
   /** The translucent warning tint of badges and alerts. */
   'color.bg.warning.muted': {
-    cssVariable: '--color-bg-warning-muted',
+    cssVariable: '--env-color-bg-warning-muted',
     type: 'color',
     values: {
       light: 'rgb(138 85 4 / 0.12)',
@@ -860,9 +863,20 @@ export const tokens = {
       'dark-high-contrast': 'rgb(255 216 144 / 0.1)',
     },
   },
+  /** Controls in the warning tone without a fill at rest, such as an alert’s dismiss button: transparent, as color.bg.neutral.subtle is. */
+  'color.bg.warning.subtle': {
+    cssVariable: '--env-color-bg-warning-subtle',
+    type: 'color',
+    values: {
+      light: 'transparent',
+      dark: 'transparent',
+      'light-high-contrast': 'transparent',
+      'dark-high-contrast': 'transparent',
+    },
+  },
   /** The state layer of a control without a fill in the warning tone, such as a warning alert’s dismiss button, under the pointer: the warning text color at 14%, in every theme and at high contrast. */
   'color.bg.warning.subtle.hover': {
-    cssVariable: '--color-bg-warning-subtle-hover',
+    cssVariable: '--env-color-bg-warning-subtle-hover',
     type: 'color',
     values: {
       light: 'rgb(138 85 4 / 0.14)',
@@ -873,7 +887,7 @@ export const tokens = {
   },
   /** The warning state layer while pressed: the warning text color at 22%. */
   'color.bg.warning.subtle.pressed': {
-    cssVariable: '--color-bg-warning-subtle-pressed',
+    cssVariable: '--env-color-bg-warning-subtle-pressed',
     type: 'color',
     values: {
       light: 'rgb(138 85 4 / 0.22)',
@@ -882,42 +896,9 @@ export const tokens = {
       'dark-high-contrast': 'rgb(255 232 190 / 0.22)',
     },
   },
-  /** 0.7 name of border.muted.hover, the divider color under the pointer. Components use border.muted.hover; the alias goes in the CSS-architecture step. */
-  'color.border-hover': {
-    cssVariable: '--color-border-hover',
-    type: 'color',
-    values: {
-      light: '#bdbfc3',
-      dark: '#7d8185',
-      'light-high-contrast': '#5d6166',
-      'dark-high-contrast': '#afb1b6',
-    },
-  },
-  /** Misleading 0.7 name: it is the divider color, border.muted, light, not a stronger border, and unlike the dark edges of the strong fills, border.{neutral|success|info|danger}.strong. Components use border.muted; the alias goes in the CSS-architecture step, which also revisits these names. */
-  'color.border-strong': {
-    cssVariable: '--color-border-strong',
-    type: 'color',
-    values: {
-      light: '#dbdde1',
-      dark: '#5d6166',
-      'light-high-contrast': '#686b70',
-      'dark-high-contrast': '#a1a4a9',
-    },
-  },
-  /** The active border and label of a focused field, and today’s ring in a calendar. */
-  'color.border.accent': {
-    cssVariable: '--color-border-accent',
-    type: 'color',
-    values: {
-      light: '#1872e7',
-      dark: '#9fc1f8',
-      'light-high-contrast': '#00408f',
-      'dark-high-contrast': '#b5cffb',
-    },
-  },
   /** A decorative edge in the accent tone, around an outlined badge: the accent text color at 55%, in every theme and at high contrast. */
-  'color.border.accent.emphasis': {
-    cssVariable: '--color-border-accent-emphasis',
+  'color.border.accent': {
+    cssVariable: '--env-color-border-accent',
     type: 'color',
     values: {
       light: 'rgb(0 92 200 / 0.55)',
@@ -926,9 +907,20 @@ export const tokens = {
       'dark-high-contrast': 'rgb(224 235 253 / 0.55)',
     },
   },
+  /** The active border and label of a focused field, and today’s ring in a calendar. */
+  'color.border.accent.emphasis': {
+    cssVariable: '--env-color-border-accent-emphasis',
+    type: 'color',
+    values: {
+      light: '#1872e7',
+      dark: '#9fc1f8',
+      'light-high-contrast': '#00408f',
+      'dark-high-contrast': '#b5cffb',
+    },
+  },
   /** An active field border under the pointer. */
-  'color.border.accent.hover': {
-    cssVariable: '--color-border-accent-hover',
+  'color.border.accent.emphasis.hover': {
+    cssVariable: '--env-color-border-accent-emphasis-hover',
     type: 'color',
     values: {
       light: '#005cc8',
@@ -937,20 +929,9 @@ export const tokens = {
       'dark-high-contrast': '#cddefc',
     },
   },
-  /** The faint edge of an info alert: the accent text color at 28%, in every theme and at high contrast. */
-  'color.border.accent.muted': {
-    cssVariable: '--color-border-accent-muted',
-    type: 'color',
-    values: {
-      light: 'rgb(0 92 200 / 0.28)',
-      dark: 'rgb(159 193 248 / 0.28)',
-      'light-high-contrast': 'rgb(0 55 124 / 0.28)',
-      'dark-high-contrast': 'rgb(224 235 253 / 0.28)',
-    },
-  },
   /** An active field border while pressed. */
-  'color.border.accent.pressed': {
-    cssVariable: '--color-border-accent-pressed',
+  'color.border.accent.emphasis.pressed': {
+    cssVariable: '--env-color-border-accent-emphasis-pressed',
     type: 'color',
     values: {
       light: '#00408f',
@@ -959,20 +940,20 @@ export const tokens = {
       'dark-high-contrast': '#e0ebfd',
     },
   },
-  /** The border of an invalid field. */
-  'color.border.danger': {
-    cssVariable: '--color-border-danger',
+  /** The faint edge of an info alert: the accent text color at 28%, in every theme and at high contrast. */
+  'color.border.accent.muted': {
+    cssVariable: '--env-color-border-accent-muted',
     type: 'color',
     values: {
-      light: '#b72b20',
-      dark: '#f8aca6',
-      'light-high-contrast': '#7a0200',
-      'dark-high-contrast': '#ffe4e2',
+      light: 'rgb(0 92 200 / 0.28)',
+      dark: 'rgb(159 193 248 / 0.28)',
+      'light-high-contrast': 'rgb(0 55 124 / 0.28)',
+      'dark-high-contrast': 'rgb(224 235 253 / 0.28)',
     },
   },
   /** A decorative edge in the danger tone, around an outlined badge and a message that failed to send: the danger text color at 55%, in every theme and at high contrast. */
-  'color.border.danger.emphasis': {
-    cssVariable: '--color-border-danger-emphasis',
+  'color.border.danger': {
+    cssVariable: '--env-color-border-danger',
     type: 'color',
     values: {
       light: 'rgb(183 43 32 / 0.55)',
@@ -981,9 +962,20 @@ export const tokens = {
       'dark-high-contrast': 'rgb(255 228 226 / 0.55)',
     },
   },
+  /** The border of an invalid field. */
+  'color.border.danger.emphasis': {
+    cssVariable: '--env-color-border-danger-emphasis',
+    type: 'color',
+    values: {
+      light: '#b72b20',
+      dark: '#f8aca6',
+      'light-high-contrast': '#7a0200',
+      'dark-high-contrast': '#ffe4e2',
+    },
+  },
   /** An invalid field border under the pointer. */
-  'color.border.danger.hover': {
-    cssVariable: '--color-border-danger-hover',
+  'color.border.danger.emphasis.hover': {
+    cssVariable: '--env-color-border-danger-emphasis-hover',
     type: 'color',
     values: {
       light: '#c64e43',
@@ -992,20 +984,9 @@ export const tokens = {
       'dark-high-contrast': '#ffedeb',
     },
   },
-  /** The faint edge of an error alert: the danger text color at 28%, in every theme and at high contrast. */
-  'color.border.danger.muted': {
-    cssVariable: '--color-border-danger-muted',
-    type: 'color',
-    values: {
-      light: 'rgb(183 43 32 / 0.28)',
-      dark: 'rgb(248 172 166 / 0.28)',
-      'light-high-contrast': 'rgb(122 2 0 / 0.28)',
-      'dark-high-contrast': 'rgb(255 228 226 / 0.28)',
-    },
-  },
   /** An invalid field border while pressed. */
-  'color.border.danger.pressed': {
-    cssVariable: '--color-border-danger-pressed',
+  'color.border.danger.emphasis.pressed': {
+    cssVariable: '--env-color-border-danger-emphasis-pressed',
     type: 'color',
     values: {
       light: '#d66d63',
@@ -1014,9 +995,20 @@ export const tokens = {
       'dark-high-contrast': '#fff6f5',
     },
   },
+  /** The faint edge of an error alert: the danger text color at 28%, in every theme and at high contrast. */
+  'color.border.danger.muted': {
+    cssVariable: '--env-color-border-danger-muted',
+    type: 'color',
+    values: {
+      light: 'rgb(183 43 32 / 0.28)',
+      dark: 'rgb(248 172 166 / 0.28)',
+      'light-high-contrast': 'rgb(122 2 0 / 0.28)',
+      'dark-high-contrast': 'rgb(255 228 226 / 0.28)',
+    },
+  },
   /** The edge of the strong danger fill where it floats, on error toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
   'color.border.danger.strong': {
-    cssVariable: '--color-border-danger-strong',
+    cssVariable: '--env-color-border-danger-strong',
     type: 'color',
     values: {
       light: '#9f0300',
@@ -1027,7 +1019,7 @@ export const tokens = {
   },
   /** The boundary of a control that has no other edge: outlined fields and buttons, the track of a switch that is off. At least 3:1 on every surface. */
   'color.border.default': {
-    cssVariable: '--color-border-default',
+    cssVariable: '--env-color-border-default',
     type: 'color',
     values: {
       light: '#7d8185',
@@ -1038,7 +1030,7 @@ export const tokens = {
   },
   /** A control boundary under the pointer. */
   'color.border.default.hover': {
-    cssVariable: '--color-border-default-hover',
+    cssVariable: '--env-color-border-default-hover',
     type: 'color',
     values: {
       light: '#72767b',
@@ -1049,7 +1041,7 @@ export const tokens = {
   },
   /** A control boundary while pressed. */
   'color.border.default.pressed': {
-    cssVariable: '--color-border-default-pressed',
+    cssVariable: '--env-color-border-default-pressed',
     type: 'color',
     values: {
       light: '#686b70',
@@ -1059,8 +1051,8 @@ export const tokens = {
     },
   },
   /** A decorative edge in the done tone, around an outlined badge: the done text color at 55%, in every theme and at high contrast. */
-  'color.border.done.emphasis': {
-    cssVariable: '--color-border-done-emphasis',
+  'color.border.done': {
+    cssVariable: '--env-color-border-done',
     type: 'color',
     values: {
       light: 'rgb(122 63 200 / 0.55)',
@@ -1071,7 +1063,7 @@ export const tokens = {
   },
   /** Focus rings: at least 3:1 against what they are drawn on. */
   'color.border.focus': {
-    cssVariable: '--color-border-focus',
+    cssVariable: '--env-color-border-focus',
     type: 'color',
     values: {
       light: '#1872e7',
@@ -1082,7 +1074,7 @@ export const tokens = {
   },
   /** The edge of the strong information fill where it floats, on information toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
   'color.border.info.strong': {
-    cssVariable: '--color-border-info-strong',
+    cssVariable: '--env-color-border-info-strong',
     type: 'color',
     values: {
       light: '#174d90',
@@ -1091,9 +1083,20 @@ export const tokens = {
       'dark-high-contrast': '#a1a4a9',
     },
   },
+  /** A neutral inner edge that defines content of any color, such as the color picker’s area: black at 5% in both themes. */
+  'color.border.media': {
+    cssVariable: '--env-color-border-media',
+    type: 'color',
+    values: {
+      light: 'rgb(0 0 0 / 0.05)',
+      dark: 'rgb(0 0 0 / 0.05)',
+      'light-high-contrast': 'rgb(0 0 0 / 0.05)',
+      'dark-high-contrast': 'rgb(0 0 0 / 0.05)',
+    },
+  },
   /** Decorative dividers and outlines that are not a control’s only boundary: table lines, title bars, Markdown rules, keyboard keys, and the hairline edge of every elevated popup, which the elevation shadow and the content already identify. */
   'color.border.muted': {
-    cssVariable: '--color-border-muted',
+    cssVariable: '--env-color-border-muted',
     type: 'color',
     values: {
       light: '#dbdde1',
@@ -1104,7 +1107,7 @@ export const tokens = {
   },
   /** A decorative outline under the pointer, such as a resize handle or a pager link. */
   'color.border.muted.hover': {
-    cssVariable: '--color-border-muted-hover',
+    cssVariable: '--env-color-border-muted-hover',
     type: 'color',
     values: {
       light: '#bdbfc3',
@@ -1115,7 +1118,7 @@ export const tokens = {
   },
   /** A decorative outline while pressed. */
   'color.border.muted.pressed': {
-    cssVariable: '--color-border-muted-pressed',
+    cssVariable: '--env-color-border-muted-pressed',
     type: 'color',
     values: {
       light: '#a1a4a9',
@@ -1125,8 +1128,8 @@ export const tokens = {
     },
   },
   /** A decorative edge in the neutral tone, around an outlined badge: the muted text color at 55%, in every theme and at high contrast. */
-  'color.border.neutral.emphasis': {
-    cssVariable: '--color-border-neutral-emphasis',
+  'color.border.neutral': {
+    cssVariable: '--env-color-border-neutral',
     type: 'color',
     values: {
       light: 'rgb(93 97 102 / 0.55)',
@@ -1137,7 +1140,7 @@ export const tokens = {
   },
   /** The edge of the strong neutral fill where it floats, on tooltips and neutral toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
   'color.border.neutral.strong': {
-    cssVariable: '--color-border-neutral-strong',
+    cssVariable: '--env-color-border-neutral-strong',
     type: 'color',
     values: {
       light: '#303234',
@@ -1147,8 +1150,8 @@ export const tokens = {
     },
   },
   /** A decorative edge in the success tone, around an outlined badge: the success text color at 55%, in every theme and at high contrast. */
-  'color.border.success.emphasis': {
-    cssVariable: '--color-border-success-emphasis',
+  'color.border.success': {
+    cssVariable: '--env-color-border-success',
     type: 'color',
     values: {
       light: 'rgb(23 111 53 / 0.55)',
@@ -1159,7 +1162,7 @@ export const tokens = {
   },
   /** The faint edge of a success alert: the success text color at 28%, in every theme and at high contrast. */
   'color.border.success.muted': {
-    cssVariable: '--color-border-success-muted',
+    cssVariable: '--env-color-border-success-muted',
     type: 'color',
     values: {
       light: 'rgb(23 111 53 / 0.28)',
@@ -1170,7 +1173,7 @@ export const tokens = {
   },
   /** The edge of the strong success fill where it floats, on success toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
   'color.border.success.strong': {
-    cssVariable: '--color-border-success-strong',
+    cssVariable: '--env-color-border-success-strong',
     type: 'color',
     values: {
       light: '#03593f',
@@ -1179,20 +1182,9 @@ export const tokens = {
       'dark-high-contrast': '#a1a4a9',
     },
   },
-  /** A neutral inner edge that defines content of any color, such as the color picker’s area: black at 5% in both themes. */
-  'color.border.translucent': {
-    cssVariable: '--color-border-translucent',
-    type: 'color',
-    values: {
-      light: 'rgb(0 0 0 / 0.05)',
-      dark: 'rgb(0 0 0 / 0.05)',
-      'light-high-contrast': 'rgb(0 0 0 / 0.05)',
-      'dark-high-contrast': 'rgb(0 0 0 / 0.05)',
-    },
-  },
   /** A decorative edge in the warning tone, around an outlined badge: the warning text color at 55%, in every theme and at high contrast. */
-  'color.border.warning.emphasis': {
-    cssVariable: '--color-border-warning-emphasis',
+  'color.border.warning': {
+    cssVariable: '--env-color-border-warning',
     type: 'color',
     values: {
       light: 'rgb(138 85 4 / 0.55)',
@@ -1203,7 +1195,7 @@ export const tokens = {
   },
   /** The faint edge of a warning alert: the warning text color at 28%, in every theme and at high contrast. */
   'color.border.warning.muted': {
-    cssVariable: '--color-border-warning-muted',
+    cssVariable: '--env-color-border-warning-muted',
     type: 'color',
     values: {
       light: 'rgb(138 85 4 / 0.28)',
@@ -1212,289 +1204,9 @@ export const tokens = {
       'dark-high-contrast': 'rgb(255 232 190 / 0.28)',
     },
   },
-  'color.calendar-selected': {
-    cssVariable: '--color-calendar-selected',
-    type: 'color',
-    values: {
-      light: '#1872e7',
-      dark: '#9fc1f8',
-      'light-high-contrast': '#00408f',
-      'dark-high-contrast': '#b5cffb',
-    },
-  },
-  'color.calendar-today': {
-    cssVariable: '--color-calendar-today',
-    type: 'color',
-    values: {
-      light: '#1872e7',
-      dark: '#9fc1f8',
-      'light-high-contrast': '#00408f',
-      'dark-high-contrast': '#b5cffb',
-    },
-  },
-  'color.canvas': {
-    cssVariable: '--color-canvas',
-    type: 'color',
-    values: {
-      light: '#ffffff',
-      dark: '#1e1f21',
-      'light-high-contrast': '#ffffff',
-      'dark-high-contrast': '#1e1f21',
-    },
-  },
-  'color.canvas-dark': {
-    cssVariable: '--color-canvas-dark',
-    type: 'color',
-    values: {
-      light: '#1e1f21',
-      dark: '#1e1f21',
-      'light-high-contrast': '#1e1f21',
-      'dark-high-contrast': '#1e1f21',
-    },
-  },
-  'color.checkbox': {
-    cssVariable: '--color-checkbox',
-    type: 'color',
-    values: {
-      light: '#1872e7',
-      dark: '#9fc1f8',
-      'light-high-contrast': '#00408f',
-      'dark-high-contrast': '#b5cffb',
-    },
-  },
-  'color.checkbox-border': {
-    cssVariable: '--color-checkbox-border',
-    type: 'color',
-    values: {
-      light: '#5d6166',
-      dark: '#bdbfc3',
-      'light-high-contrast': '#303234',
-      'dark-high-contrast': '#e8eaee',
-    },
-  },
-  'color.checkbox-hover': {
-    cssVariable: '--color-checkbox-hover',
-    type: 'color',
-    values: {
-      light: '#005cc8',
-      dark: '#75a5f2',
-      'light-high-contrast': '#00377c',
-      'dark-high-contrast': '#cddefc',
-    },
-  },
-  'color.checkbox-pressed': {
-    cssVariable: '--color-checkbox-pressed',
-    type: 'color',
-    values: {
-      light: '#00408f',
-      dark: '#4b8bec',
-      'light-high-contrast': '#002f6d',
-      'dark-high-contrast': '#e0ebfd',
-    },
-  },
-  'color.checkbox-ring-hover': {
-    cssVariable: '--color-checkbox-ring-hover',
-    type: 'color',
-    values: {
-      light: '#54575c',
-      dark: '#ccced2',
-      'light-high-contrast': '#28292b',
-      'dark-high-contrast': '#eff1f5',
-    },
-  },
-  'color.checkbox-ring-pressed': {
-    cssVariable: '--color-checkbox-ring-pressed',
-    type: 'color',
-    values: {
-      light: '#4b4d51',
-      dark: '#dbdde1',
-      'light-high-contrast': '#1e1f21',
-      'dark-high-contrast': '#f6f8fc',
-    },
-  },
-  'color.checkbox-text': {
-    cssVariable: '--color-checkbox-text',
-    type: 'color',
-    values: {
-      light: '#1e1f21',
-      dark: '#e8eaee',
-      'light-high-contrast': '#121315',
-      'dark-high-contrast': '#f6f8fc',
-    },
-  },
-  'color.chip': {
-    cssVariable: '--color-chip',
-    type: 'color',
-    values: {
-      light: 'rgb(30 31 33 / 0.06)',
-      dark: 'rgb(232 234 238 / 0.125)',
-      'light-high-contrast': 'rgb(30 31 33 / 0.06)',
-      'dark-high-contrast': 'rgb(232 234 238 / 0.08)',
-    },
-  },
-  'color.chip-text': {
-    cssVariable: '--color-chip-text',
-    type: 'color',
-    values: {
-      light: '#005cc8',
-      dark: '#9fc1f8',
-      'light-high-contrast': '#00377c',
-      'dark-high-contrast': '#e0ebfd',
-    },
-  },
-  'color.control-blue': {
-    cssVariable: '--color-control-blue',
-    type: 'color',
-    values: {
-      light: '#1872e7',
-      dark: '#9fc1f8',
-      'light-high-contrast': '#00408f',
-      'dark-high-contrast': '#b5cffb',
-    },
-  },
-  'color.destructive-action': {
-    cssVariable: '--color-destructive-action',
-    type: 'color',
-    values: {
-      light: '#b72b20',
-      dark: '#b72b20',
-      'light-high-contrast': '#8d0200',
-      'dark-high-contrast': '#8d0200',
-    },
-  },
-  'color.destructive-action-hover': {
-    cssVariable: '--color-destructive-action-hover',
-    type: 'color',
-    values: {
-      light: '#c64e43',
-      dark: '#c64e43',
-      'light-high-contrast': '#7a0200',
-      'dark-high-contrast': '#7a0200',
-    },
-  },
-  'color.destructive-action-pressed': {
-    cssVariable: '--color-destructive-action-pressed',
-    type: 'color',
-    values: {
-      light: '#bf3e33',
-      dark: '#bf3e33',
-      'light-high-contrast': '#6b0100',
-      'dark-high-contrast': '#6b0100',
-    },
-  },
-  'color.dialog': {
-    cssVariable: '--color-dialog',
-    type: 'color',
-    values: {
-      light: '#ffffff',
-      dark: '#28292b',
-      'light-high-contrast': '#ffffff',
-      'dark-high-contrast': '#28292b',
-    },
-  },
-  'color.dialog-overlay': {
-    cssVariable: '--color-dialog-overlay',
-    type: 'color',
-    values: {
-      light: 'rgb(30 31 33 / 0.55)',
-      dark: 'rgb(30 31 33 / 0.55)',
-      'light-high-contrast': 'rgb(30 31 33 / 0.55)',
-      'dark-high-contrast': 'rgb(30 31 33 / 0.55)',
-    },
-  },
-  'color.direction-link': {
-    cssVariable: '--color-direction-link',
-    type: 'color',
-    values: {
-      light: '#ffffff',
-      dark: '#28292b',
-      'light-high-contrast': '#ffffff',
-      'dark-high-contrast': '#28292b',
-    },
-  },
-  'color.direction-link-border': {
-    cssVariable: '--color-direction-link-border',
-    type: 'color',
-    values: {
-      light: '#dbdde1',
-      dark: '#5d6166',
-      'light-high-contrast': '#686b70',
-      'dark-high-contrast': '#a1a4a9',
-    },
-  },
-  'color.direction-link-border-hover': {
-    cssVariable: '--color-direction-link-border-hover',
-    type: 'color',
-    values: {
-      light: '#bdbfc3',
-      dark: '#7d8185',
-      'light-high-contrast': '#5d6166',
-      'dark-high-contrast': '#afb1b6',
-    },
-  },
-  'color.direction-link-border-pressed': {
-    cssVariable: '--color-direction-link-border-pressed',
-    type: 'color',
-    values: {
-      light: '#a1a4a9',
-      dark: '#95989c',
-      'light-high-contrast': '#54575c',
-      'dark-high-contrast': '#bdbfc3',
-    },
-  },
-  'color.direction-link-icon': {
-    cssVariable: '--color-direction-link-icon',
-    type: 'color',
-    values: {
-      light: '#005cc8',
-      dark: '#9fc1f8',
-      'light-high-contrast': '#00377c',
-      'dark-high-contrast': '#e0ebfd',
-    },
-  },
-  'color.direction-link-label': {
-    cssVariable: '--color-direction-link-label',
-    type: 'color',
-    values: {
-      light: '#5d6166',
-      dark: '#bdbfc3',
-      'light-high-contrast': '#303234',
-      'dark-high-contrast': '#e8eaee',
-    },
-  },
-  'color.direction-link-text': {
-    cssVariable: '--color-direction-link-text',
-    type: 'color',
-    values: {
-      light: '#1e1f21',
-      dark: '#e8eaee',
-      'light-high-contrast': '#121315',
-      'dark-high-contrast': '#f6f8fc',
-    },
-  },
-  'color.disabled-text': {
-    cssVariable: '--color-disabled-text',
-    type: 'color',
-    values: {
-      light: '#5d6166',
-      dark: '#bdbfc3',
-      'light-high-contrast': '#303234',
-      'dark-high-contrast': '#e8eaee',
-    },
-  },
-  'color.disclosure-text': {
-    cssVariable: '--color-disclosure-text',
-    type: 'color',
-    values: {
-      light: '#5d6166',
-      dark: '#bdbfc3',
-      'light-high-contrast': '#303234',
-      'dark-high-contrast': '#e8eaee',
-    },
-  },
   /** Accent text and icons: the accent tone, outlined button labels, chips, the icon of a pager link. */
   'color.fg.accent': {
-    cssVariable: '--color-fg-accent',
+    cssVariable: '--env-color-fg-accent',
     type: 'color',
     values: {
       light: '#005cc8',
@@ -1505,7 +1217,7 @@ export const tokens = {
   },
   /** The labels of navigation items, secondary buttons and Select options, the values of meters and sliders, and the thumb of a switch that is off. */
   'color.fg.control': {
-    cssVariable: '--color-fg-control',
+    cssVariable: '--env-color-fg-control',
     type: 'color',
     values: {
       light: '#424447',
@@ -1516,7 +1228,7 @@ export const tokens = {
   },
   /** Danger text and icons, and field errors. */
   'color.fg.danger': {
-    cssVariable: '--color-fg-danger',
+    cssVariable: '--env-color-fg-danger',
     type: 'color',
     values: {
       light: '#b72b20',
@@ -1527,7 +1239,7 @@ export const tokens = {
   },
   /** Body text and the labels of rows, fields and choice controls. */
   'color.fg.default': {
-    cssVariable: '--color-fg-default',
+    cssVariable: '--env-color-fg-default',
     type: 'color',
     values: {
       light: '#1e1f21',
@@ -1538,7 +1250,7 @@ export const tokens = {
   },
   /** Done text and icons. */
   'color.fg.done': {
-    cssVariable: '--color-fg-done',
+    cssVariable: '--env-color-fg-done',
     type: 'color',
     values: {
       light: '#7a3fc8',
@@ -1549,7 +1261,7 @@ export const tokens = {
   },
   /** Links and text buttons: at least 4.5:1 on every surface and row. */
   'color.fg.link': {
-    cssVariable: '--color-fg-link',
+    cssVariable: '--env-color-fg-link',
     type: 'color',
     values: {
       light: '#0366da',
@@ -1560,7 +1272,7 @@ export const tokens = {
   },
   /** A link under the pointer. */
   'color.fg.link.hover': {
-    cssVariable: '--color-fg-link-hover',
+    cssVariable: '--env-color-fg-link-hover',
     type: 'color',
     values: {
       light: '#005cc8',
@@ -1571,7 +1283,7 @@ export const tokens = {
   },
   /** A link while pressed. */
   'color.fg.link.pressed': {
-    cssVariable: '--color-fg-link-pressed',
+    cssVariable: '--env-color-fg-link-pressed',
     type: 'color',
     values: {
       light: '#0053b5',
@@ -1582,7 +1294,7 @@ export const tokens = {
   },
   /** Supporting text, icons, field labels, descriptions and placeholders, row details, unchecked checkbox rings: every former synonym (muted, quiet, icon, field label, hint, placeholder, row detail). */
   'color.fg.muted': {
-    cssVariable: '--color-fg-muted',
+    cssVariable: '--env-color-fg-muted',
     type: 'color',
     values: {
       light: '#5d6166',
@@ -1593,7 +1305,7 @@ export const tokens = {
   },
   /** Muted text that responds to the pointer, such as a Disclosure summary, gains contrast. */
   'color.fg.muted.hover': {
-    cssVariable: '--color-fg-muted-hover',
+    cssVariable: '--env-color-fg-muted-hover',
     type: 'color',
     values: {
       light: '#54575c',
@@ -1604,7 +1316,7 @@ export const tokens = {
   },
   /** Muted text while pressed. */
   'color.fg.muted.pressed': {
-    cssVariable: '--color-fg-muted-pressed',
+    cssVariable: '--env-color-fg-muted-pressed',
     type: 'color',
     values: {
       light: '#4b4d51',
@@ -1615,7 +1327,7 @@ export const tokens = {
   },
   /** Text and icons on the emphasis fills: white in light, dark in dark. */
   'color.fg.on-emphasis': {
-    cssVariable: '--color-fg-on-emphasis',
+    cssVariable: '--env-color-fg-on-emphasis',
     type: 'color',
     values: {
       light: '#ffffff',
@@ -1626,7 +1338,7 @@ export const tokens = {
   },
   /** Text and indicators on bg.selected and its states. */
   'color.fg.on-selected': {
-    cssVariable: '--color-fg-on-selected',
+    cssVariable: '--env-color-fg-on-selected',
     type: 'color',
     values: {
       light: '#0053b5',
@@ -1637,7 +1349,7 @@ export const tokens = {
   },
   /** White in both themes, on the strong fills: labels at 4.5:1 on the danger, important, neutral, success and information fills at rest; icons and marks at 3:1 on their hover and pressed fills and on the brand’s strong fill. */
   'color.fg.on-strong': {
-    cssVariable: '--color-fg-on-strong',
+    cssVariable: '--env-color-fg-on-strong',
     type: 'color',
     values: {
       light: '#ffffff',
@@ -1648,7 +1360,7 @@ export const tokens = {
   },
   /** Success text and icons. */
   'color.fg.success': {
-    cssVariable: '--color-fg-success',
+    cssVariable: '--env-color-fg-success',
     type: 'color',
     values: {
       light: '#176f35',
@@ -1659,7 +1371,7 @@ export const tokens = {
   },
   /** Warning text and icons. */
   'color.fg.warning': {
-    cssVariable: '--color-fg-warning',
+    cssVariable: '--env-color-fg-warning',
     type: 'color',
     values: {
       light: '#8a5504',
@@ -1668,198 +1380,9 @@ export const tokens = {
       'dark-high-contrast': '#ffe8be',
     },
   },
-  'color.field': {
-    cssVariable: '--color-field',
-    type: 'color',
-    values: {
-      light: '#ffffff',
-      dark: '#1e1f21',
-      'light-high-contrast': '#ffffff',
-      'dark-high-contrast': '#1e1f21',
-    },
-  },
-  'color.field-active': {
-    cssVariable: '--color-field-active',
-    type: 'color',
-    values: {
-      light: '#1872e7',
-      dark: '#9fc1f8',
-      'light-high-contrast': '#00408f',
-      'dark-high-contrast': '#b5cffb',
-    },
-  },
-  'color.field-border': {
-    cssVariable: '--color-field-border',
-    type: 'color',
-    values: {
-      light: '#7d8185',
-      dark: '#898c91',
-      'light-high-contrast': '#686b70',
-      'dark-high-contrast': '#a1a4a9',
-    },
-  },
-  'color.field-error': {
-    cssVariable: '--color-field-error',
-    type: 'color',
-    values: {
-      light: '#b72b20',
-      dark: '#f8aca6',
-      'light-high-contrast': '#7a0200',
-      'dark-high-contrast': '#ffe4e2',
-    },
-  },
-  'color.field-hint': {
-    cssVariable: '--color-field-hint',
-    type: 'color',
-    values: {
-      light: '#5d6166',
-      dark: '#bdbfc3',
-      'light-high-contrast': '#303234',
-      'dark-high-contrast': '#e8eaee',
-    },
-  },
-  'color.field-label': {
-    cssVariable: '--color-field-label',
-    type: 'color',
-    values: {
-      light: '#5d6166',
-      dark: '#bdbfc3',
-      'light-high-contrast': '#303234',
-      'dark-high-contrast': '#e8eaee',
-    },
-  },
-  'color.field-placeholder': {
-    cssVariable: '--color-field-placeholder',
-    type: 'color',
-    values: {
-      light: '#5d6166',
-      dark: '#bdbfc3',
-      'light-high-contrast': '#303234',
-      'dark-high-contrast': '#e8eaee',
-    },
-  },
-  'color.field-text': {
-    cssVariable: '--color-field-text',
-    type: 'color',
-    values: {
-      light: '#1e1f21',
-      dark: '#e8eaee',
-      'light-high-contrast': '#121315',
-      'dark-high-contrast': '#f6f8fc',
-    },
-  },
-  'color.fill': {
-    cssVariable: '--color-fill',
-    type: 'color',
-    values: {
-      light: 'rgb(30 31 33 / 0.06)',
-      dark: 'rgb(232 234 238 / 0.125)',
-      'light-high-contrast': 'rgb(30 31 33 / 0.06)',
-      'dark-high-contrast': 'rgb(232 234 238 / 0.08)',
-    },
-  },
-  'color.focus-ring': {
-    cssVariable: '--color-focus-ring',
-    type: 'color',
-    values: {
-      light: '#1872e7',
-      dark: '#9fc1f8',
-      'light-high-contrast': '#0053b5',
-      'dark-high-contrast': '#b5cffb',
-    },
-  },
-  'color.icon': {
-    cssVariable: '--color-icon',
-    type: 'color',
-    values: {
-      light: '#5d6166',
-      dark: '#bdbfc3',
-      'light-high-contrast': '#303234',
-      'dark-high-contrast': '#e8eaee',
-    },
-  },
-  'color.link': {
-    cssVariable: '--color-link',
-    type: 'color',
-    values: {
-      light: '#0366da',
-      dark: '#9fc1f8',
-      'light-high-contrast': '#00377c',
-      'dark-high-contrast': '#e0ebfd',
-    },
-  },
-  'color.link-hover': {
-    cssVariable: '--color-link-hover',
-    type: 'color',
-    values: {
-      light: '#005cc8',
-      dark: '#8ab3f5',
-      'light-high-contrast': '#002f6d',
-      'dark-high-contrast': '#eaf2ff',
-    },
-  },
-  'color.link-pressed': {
-    cssVariable: '--color-link-pressed',
-    type: 'color',
-    values: {
-      light: '#0053b5',
-      dark: '#75a5f2',
-      'light-high-contrast': '#00275c',
-      'dark-high-contrast': '#f4f8ff',
-    },
-  },
-  'color.markdown-border': {
-    cssVariable: '--color-markdown-border',
-    type: 'color',
-    values: {
-      light: '#dbdde1',
-      dark: '#5d6166',
-      'light-high-contrast': '#686b70',
-      'dark-high-contrast': '#a1a4a9',
-    },
-  },
-  'color.menu-row': {
-    cssVariable: '--color-menu-row',
-    type: 'color',
-    values: {
-      light: '#ffffff',
-      dark: '#343638',
-      'light-high-contrast': '#ffffff',
-      'dark-high-contrast': '#303234',
-    },
-  },
-  'color.navigation-hover': {
-    cssVariable: '--color-navigation-hover',
-    type: 'color',
-    values: {
-      light: '#d2e1fc',
-      dark: '#33445f',
-      'light-high-contrast': '#bfd5fb',
-      'dark-high-contrast': '#253650',
-    },
-  },
-  'color.navigation-icon': {
-    cssVariable: '--color-navigation-icon',
-    type: 'color',
-    values: {
-      light: '#5d6166',
-      dark: '#bdbfc3',
-      'light-high-contrast': '#303234',
-      'dark-high-contrast': '#e8eaee',
-    },
-  },
-  'color.navigation-pressed': {
-    cssVariable: '--color-navigation-pressed',
-    type: 'color',
-    values: {
-      light: '#cddefc',
-      dark: '#3c4e69',
-      'light-high-contrast': '#bad2fb',
-      'dark-high-contrast': '#293a55',
-    },
-  },
-  'color.navigation-quiet': {
-    cssVariable: '--color-navigation-quiet',
+  /** The fill of a list item: the default surface in light, the muted one in dark, so items stand apart from the page and from a surface in both. */
+  'color.list-item.bg': {
+    cssVariable: '--env-color-list-item-bg',
     type: 'color',
     values: {
       light: '#eff1f5',
@@ -1868,369 +1391,9 @@ export const tokens = {
       'dark-high-contrast': '#343638',
     },
   },
-  'color.navigation-quiet-hover': {
-    cssVariable: '--color-navigation-quiet-hover',
-    type: 'color',
-    values: {
-      light: '#cbd8ea',
-      dark: '#424447',
-      'light-high-contrast': '#d2d4d8',
-      'dark-high-contrast': '#383a3d',
-    },
-  },
-  'color.navigation-quiet-pressed': {
-    cssVariable: '--color-navigation-quiet-pressed',
-    type: 'color',
-    values: {
-      light: '#c7d5e8',
-      dark: '#4b4d51',
-      'light-high-contrast': '#ccced2',
-      'dark-high-contrast': '#424447',
-    },
-  },
-  'color.navigation-selected': {
-    cssVariable: '--color-navigation-selected',
-    type: 'color',
-    values: {
-      light: '#dbe8fd',
-      dark: '#293a55',
-      'light-high-contrast': '#c8dbfc',
-      'dark-high-contrast': '#1d2e47',
-    },
-  },
-  'color.navigation-text': {
-    cssVariable: '--color-navigation-text',
-    type: 'color',
-    values: {
-      light: '#424447',
-      dark: '#e8eaee',
-      'light-high-contrast': '#28292b',
-      'dark-high-contrast': '#eff1f5',
-    },
-  },
-  /** Misleading 0.7 name of fg.on-strong on the important purple; see --color-accent. */
-  'color.on-accent': {
-    cssVariable: '--color-on-accent',
-    type: 'color',
-    values: {
-      light: '#ffffff',
-      dark: '#ffffff',
-      'light-high-contrast': '#ffffff',
-      'dark-high-contrast': '#ffffff',
-    },
-  },
-  'color.on-avatar': {
-    cssVariable: '--color-on-avatar',
-    type: 'color',
-    values: {
-      light: '#004aa2',
-      dark: '#004aa2',
-      'light-high-contrast': '#001d49',
-      'dark-high-contrast': '#001d49',
-    },
-  },
-  'color.on-calendar-selected': {
-    cssVariable: '--color-on-calendar-selected',
-    type: 'color',
-    values: {
-      light: '#ffffff',
-      dark: '#1e1f21',
-      'light-high-contrast': '#ffffff',
-      'dark-high-contrast': '#121315',
-    },
-  },
-  'color.on-checkbox': {
-    cssVariable: '--color-on-checkbox',
-    type: 'color',
-    values: {
-      light: '#ffffff',
-      dark: '#1e1f21',
-      'light-high-contrast': '#ffffff',
-      'dark-high-contrast': '#121315',
-    },
-  },
-  'color.on-destructive-action': {
-    cssVariable: '--color-on-destructive-action',
-    type: 'color',
-    values: {
-      light: '#ffffff',
-      dark: '#ffffff',
-      'light-high-contrast': '#ffffff',
-      'dark-high-contrast': '#ffffff',
-    },
-  },
-  'color.on-navigation-selected': {
-    cssVariable: '--color-on-navigation-selected',
-    type: 'color',
-    values: {
-      light: '#0053b5',
-      dark: '#b5cffb',
-      'light-high-contrast': '#002f6d',
-      'dark-high-contrast': '#cddefc',
-    },
-  },
-  'color.on-primary-action': {
-    cssVariable: '--color-on-primary-action',
-    type: 'color',
-    values: {
-      light: '#ffffff',
-      dark: '#1e1f21',
-      'light-high-contrast': '#ffffff',
-      'dark-high-contrast': '#121315',
-    },
-  },
-  'color.on-secondary-action': {
-    cssVariable: '--color-on-secondary-action',
-    type: 'color',
-    values: {
-      light: '#424447',
-      dark: '#e8eaee',
-      'light-high-contrast': '#28292b',
-      'dark-high-contrast': '#eff1f5',
-    },
-  },
-  'color.on-select-selected': {
-    cssVariable: '--color-on-select-selected',
-    type: 'color',
-    values: {
-      light: '#0053b5',
-      dark: '#b5cffb',
-      'light-high-contrast': '#002f6d',
-      'dark-high-contrast': '#cddefc',
-    },
-  },
-  'color.on-subtle-action': {
-    cssVariable: '--color-on-subtle-action',
-    type: 'color',
-    values: {
-      light: '#005cc8',
-      dark: '#9fc1f8',
-      'light-high-contrast': '#00377c',
-      'dark-high-contrast': '#e0ebfd',
-    },
-  },
-  'color.on-toast': {
-    cssVariable: '--color-on-toast',
-    type: 'color',
-    values: {
-      light: '#ffffff',
-      dark: '#ffffff',
-      'light-high-contrast': '#ffffff',
-      'dark-high-contrast': '#ffffff',
-    },
-  },
-  'color.on-tone': {
-    cssVariable: '--color-on-tone',
-    type: 'color',
-    values: {
-      light: '#ffffff',
-      dark: '#1e1f21',
-      'light-high-contrast': '#ffffff',
-      'dark-high-contrast': '#121315',
-    },
-  },
-  'color.outlined-focus': {
-    cssVariable: '--color-outlined-focus',
-    type: 'color',
-    values: {
-      light: '#1872e7',
-      dark: '#9fc1f8',
-      'light-high-contrast': '#0053b5',
-      'dark-high-contrast': '#b5cffb',
-    },
-  },
-  'color.pane': {
-    cssVariable: '--color-pane',
-    type: 'color',
-    values: {
-      light: '#eff1f5',
-      dark: '#28292b',
-      'light-high-contrast': '#eff1f5',
-      'dark-high-contrast': '#28292b',
-    },
-  },
-  'color.popup': {
-    cssVariable: '--color-popup',
-    type: 'color',
-    values: {
-      light: '#ffffff',
-      dark: '#343638',
-      'light-high-contrast': '#ffffff',
-      'dark-high-contrast': '#303234',
-    },
-  },
-  'color.popup-border': {
-    cssVariable: '--color-popup-border',
-    type: 'color',
-    values: {
-      light: '#dbdde1',
-      dark: '#5d6166',
-      'light-high-contrast': '#686b70',
-      'dark-high-contrast': '#a1a4a9',
-    },
-  },
-  'color.primary-action': {
-    cssVariable: '--color-primary-action',
-    type: 'color',
-    values: {
-      light: '#1872e7',
-      dark: '#9fc1f8',
-      'light-high-contrast': '#00408f',
-      'dark-high-contrast': '#b5cffb',
-    },
-  },
-  'color.primary-action-hover': {
-    cssVariable: '--color-primary-action-hover',
-    type: 'color',
-    values: {
-      light: '#005cc8',
-      dark: '#75a5f2',
-      'light-high-contrast': '#00377c',
-      'dark-high-contrast': '#cddefc',
-    },
-  },
-  'color.primary-action-pressed': {
-    cssVariable: '--color-primary-action-pressed',
-    type: 'color',
-    values: {
-      light: '#00408f',
-      dark: '#4b8bec',
-      'light-high-contrast': '#002f6d',
-      'dark-high-contrast': '#e0ebfd',
-    },
-  },
-  'color.quiet-label-hover': {
-    cssVariable: '--color-quiet-label-hover',
-    type: 'color',
-    values: {
-      light: '#54575c',
-      dark: '#ccced2',
-      'light-high-contrast': '#28292b',
-      'dark-high-contrast': '#eff1f5',
-    },
-  },
-  'color.quiet-label-pressed': {
-    cssVariable: '--color-quiet-label-pressed',
-    type: 'color',
-    values: {
-      light: '#4b4d51',
-      dark: '#dbdde1',
-      'light-high-contrast': '#1e1f21',
-      'dark-high-contrast': '#f6f8fc',
-    },
-  },
-  'color.radio': {
-    cssVariable: '--color-radio',
-    type: 'color',
-    values: {
-      light: '#1872e7',
-      dark: '#9fc1f8',
-      'light-high-contrast': '#00408f',
-      'dark-high-contrast': '#b5cffb',
-    },
-  },
-  'color.radio-detail': {
-    cssVariable: '--color-radio-detail',
-    type: 'color',
-    values: {
-      light: '#5d6166',
-      dark: '#bdbfc3',
-      'light-high-contrast': '#303234',
-      'dark-high-contrast': '#e8eaee',
-    },
-  },
-  'color.radio-hover': {
-    cssVariable: '--color-radio-hover',
-    type: 'color',
-    values: {
-      light: '#005cc8',
-      dark: '#75a5f2',
-      'light-high-contrast': '#00377c',
-      'dark-high-contrast': '#cddefc',
-    },
-  },
-  'color.radio-pressed': {
-    cssVariable: '--color-radio-pressed',
-    type: 'color',
-    values: {
-      light: '#00408f',
-      dark: '#4b8bec',
-      'light-high-contrast': '#002f6d',
-      'dark-high-contrast': '#e0ebfd',
-    },
-  },
-  'color.radio-row': {
-    cssVariable: '--color-radio-row',
-    type: 'color',
-    values: {
-      light: '#f6f8fc',
-      dark: '#343638',
-      'light-high-contrast': '#f6f8fc',
-      'dark-high-contrast': '#343638',
-    },
-  },
-  'color.radio-row-hover': {
-    cssVariable: '--color-radio-row-hover',
-    type: 'color',
-    values: {
-      light: '#e8eaee',
-      dark: '#424447',
-      'light-high-contrast': '#e8eaee',
-      'dark-high-contrast': '#383a3d',
-    },
-  },
-  'color.radio-row-pressed': {
-    cssVariable: '--color-radio-row-pressed',
-    type: 'color',
-    values: {
-      light: '#dbdde1',
-      dark: '#4b4d51',
-      'light-high-contrast': '#e2e4e8',
-      'dark-high-contrast': '#424447',
-    },
-  },
-  'color.radio-text': {
-    cssVariable: '--color-radio-text',
-    type: 'color',
-    values: {
-      light: '#1e1f21',
-      dark: '#e8eaee',
-      'light-high-contrast': '#121315',
-      'dark-high-contrast': '#f6f8fc',
-    },
-  },
-  'color.row': {
-    cssVariable: '--color-row',
-    type: 'color',
-    values: {
-      light: '#eff1f5',
-      dark: '#343638',
-      'light-high-contrast': '#eff1f5',
-      'dark-high-contrast': '#343638',
-    },
-  },
-  'color.row-alternate': {
-    cssVariable: '--color-row-alternate',
-    type: 'color',
-    values: {
-      light: '#ffffff',
-      dark: '#28292b',
-      'light-high-contrast': '#ffffff',
-      'dark-high-contrast': '#28292b',
-    },
-  },
-  'color.row-detail': {
-    cssVariable: '--color-row-detail',
-    type: 'color',
-    values: {
-      light: '#5d6166',
-      dark: '#bdbfc3',
-      'light-high-contrast': '#303234',
-      'dark-high-contrast': '#e8eaee',
-    },
-  },
-  'color.row-hover': {
-    cssVariable: '--color-row-hover',
+  /** A list item under the pointer. */
+  'color.list-item.bg.hover': {
+    cssVariable: '--env-color-list-item-bg-hover',
     type: 'color',
     values: {
       light: '#e2e4e8',
@@ -2239,8 +1402,9 @@ export const tokens = {
       'dark-high-contrast': '#383a3d',
     },
   },
-  'color.row-pressed': {
-    cssVariable: '--color-row-pressed',
+  /** A list item while pressed. */
+  'color.list-item.bg.pressed': {
+    cssVariable: '--env-color-list-item-bg-pressed',
     type: 'color',
     values: {
       light: '#dbdde1',
@@ -2249,509 +1413,9 @@ export const tokens = {
       'dark-high-contrast': '#424447',
     },
   },
-  'color.row-selected-hover': {
-    cssVariable: '--color-row-selected-hover',
-    type: 'color',
-    values: {
-      light: '#d2e1fc',
-      dark: '#33445f',
-      'light-high-contrast': '#bfd5fb',
-      'dark-high-contrast': '#253650',
-    },
-  },
-  'color.row-selected-pressed': {
-    cssVariable: '--color-row-selected-pressed',
-    type: 'color',
-    values: {
-      light: '#cddefc',
-      dark: '#3c4e69',
-      'light-high-contrast': '#bad2fb',
-      'dark-high-contrast': '#293a55',
-    },
-  },
-  'color.row-text': {
-    cssVariable: '--color-row-text',
-    type: 'color',
-    values: {
-      light: '#1e1f21',
-      dark: '#e8eaee',
-      'light-high-contrast': '#121315',
-      'dark-high-contrast': '#f6f8fc',
-    },
-  },
-  'color.secondary-action': {
-    cssVariable: '--color-secondary-action',
-    type: 'color',
-    values: {
-      light: 'rgb(30 31 33 / 0.06)',
-      dark: 'rgb(232 234 238 / 0.125)',
-      'light-high-contrast': 'rgb(30 31 33 / 0.06)',
-      'dark-high-contrast': 'rgb(232 234 238 / 0.08)',
-    },
-  },
-  'color.secondary-action-hover': {
-    cssVariable: '--color-secondary-action-hover',
-    type: 'color',
-    values: {
-      light: 'rgb(30 31 33 / 0.17)',
-      dark: 'rgb(232 234 238 / 0.2)',
-      'light-high-contrast': 'rgb(30 31 33 / 0.12)',
-      'dark-high-contrast': 'rgb(232 234 238 / 0.12)',
-    },
-  },
-  'color.secondary-action-pressed': {
-    cssVariable: '--color-secondary-action-pressed',
-    type: 'color',
-    values: {
-      light: 'rgb(30 31 33 / 0.29)',
-      dark: 'rgb(232 234 238 / 0.28)',
-      'light-high-contrast': 'rgb(30 31 33 / 0.18)',
-      'dark-high-contrast': 'rgb(232 234 238 / 0.15)',
-    },
-  },
-  'color.select-option': {
-    cssVariable: '--color-select-option',
-    type: 'color',
-    values: {
-      light: '#ffffff',
-      dark: '#343638',
-      'light-high-contrast': '#ffffff',
-      'dark-high-contrast': '#303234',
-    },
-  },
-  'color.select-option-hover': {
-    cssVariable: '--color-select-option-hover',
-    type: 'color',
-    values: {
-      light: '#eff1f5',
-      dark: '#424447',
-      'light-high-contrast': '#eff1f5',
-      'dark-high-contrast': '#383a3d',
-    },
-  },
-  'color.select-option-pressed': {
-    cssVariable: '--color-select-option-pressed',
-    type: 'color',
-    values: {
-      light: '#e2e4e8',
-      dark: '#4b4d51',
-      'light-high-contrast': '#e2e4e8',
-      'dark-high-contrast': '#424447',
-    },
-  },
-  'color.select-option-text': {
-    cssVariable: '--color-select-option-text',
-    type: 'color',
-    values: {
-      light: '#424447',
-      dark: '#e8eaee',
-      'light-high-contrast': '#28292b',
-      'dark-high-contrast': '#eff1f5',
-    },
-  },
-  'color.select-selected': {
-    cssVariable: '--color-select-selected',
-    type: 'color',
-    values: {
-      light: '#dbe8fd',
-      dark: '#293a55',
-      'light-high-contrast': '#c8dbfc',
-      'dark-high-contrast': '#1d2e47',
-    },
-  },
-  'color.select-selected-hover': {
-    cssVariable: '--color-select-selected-hover',
-    type: 'color',
-    values: {
-      light: '#d2e1fc',
-      dark: '#33445f',
-      'light-high-contrast': '#bfd5fb',
-      'dark-high-contrast': '#253650',
-    },
-  },
-  'color.select-selected-pressed': {
-    cssVariable: '--color-select-selected-pressed',
-    type: 'color',
-    values: {
-      light: '#cddefc',
-      dark: '#3c4e69',
-      'light-high-contrast': '#bad2fb',
-      'dark-high-contrast': '#293a55',
-    },
-  },
-  'color.skeleton-base': {
-    cssVariable: '--color-skeleton-base',
-    type: 'color',
-    values: {
-      light: 'rgb(30 31 33 / 0.06)',
-      dark: 'rgb(232 234 238 / 0.125)',
-      'light-high-contrast': 'rgb(30 31 33 / 0.06)',
-      'dark-high-contrast': 'rgb(232 234 238 / 0.08)',
-    },
-  },
-  'color.skeleton-highlight': {
-    cssVariable: '--color-skeleton-highlight',
-    type: 'color',
-    values: {
-      light: 'rgb(30 31 33 / 0.17)',
-      dark: 'rgb(232 234 238 / 0.2)',
-      'light-high-contrast': 'rgb(30 31 33 / 0.12)',
-      'dark-high-contrast': 'rgb(232 234 238 / 0.12)',
-    },
-  },
-  'color.state-layer': {
-    cssVariable: '--color-state-layer',
-    type: 'color',
-    values: {
-      light: '#1e1f21',
-      dark: '#e8eaee',
-      'light-high-contrast': '#121315',
-      'dark-high-contrast': '#f6f8fc',
-    },
-  },
-  'color.state-layer-hover': {
-    cssVariable: '--color-state-layer-hover',
-    type: 'color',
-    values: {
-      light: 'rgb(30 31 33 / 0.08)',
-      dark: 'rgb(232 234 238 / 0.08)',
-      'light-high-contrast': 'rgb(30 31 33 / 0.06)',
-      'dark-high-contrast': 'rgb(232 234 238 / 0.06)',
-    },
-  },
-  'color.state-layer-pressed': {
-    cssVariable: '--color-state-layer-pressed',
-    type: 'color',
-    values: {
-      light: 'rgb(30 31 33 / 0.1)',
-      dark: 'rgb(232 234 238 / 0.1)',
-      'light-high-contrast': 'rgb(30 31 33 / 0.08)',
-      'dark-high-contrast': 'rgb(232 234 238 / 0.08)',
-    },
-  },
-  'color.subtle-action': {
-    cssVariable: '--color-subtle-action',
-    type: 'color',
-    values: {
-      light: '#ffffff',
-      dark: '#28292b',
-      'light-high-contrast': '#ffffff',
-      'dark-high-contrast': '#28292b',
-    },
-  },
-  'color.subtle-action-border': {
-    cssVariable: '--color-subtle-action-border',
-    type: 'color',
-    values: {
-      light: '#7d8185',
-      dark: '#898c91',
-      'light-high-contrast': '#686b70',
-      'dark-high-contrast': '#a1a4a9',
-    },
-  },
-  'color.subtle-action-border-hover': {
-    cssVariable: '--color-subtle-action-border-hover',
-    type: 'color',
-    values: {
-      light: '#72767b',
-      dark: '#95989c',
-      'light-high-contrast': '#5d6166',
-      'dark-high-contrast': '#afb1b6',
-    },
-  },
-  'color.subtle-action-border-pressed': {
-    cssVariable: '--color-subtle-action-border-pressed',
-    type: 'color',
-    values: {
-      light: '#686b70',
-      dark: '#a1a4a9',
-      'light-high-contrast': '#54575c',
-      'dark-high-contrast': '#bdbfc3',
-    },
-  },
-  'color.subtle-action-hover': {
-    cssVariable: '--color-subtle-action-hover',
-    type: 'color',
-    values: {
-      light: '#e8eaee',
-      dark: '#383a3d',
-      'light-high-contrast': '#eff1f5',
-      'dark-high-contrast': '#303234',
-    },
-  },
-  'color.subtle-action-pressed': {
-    cssVariable: '--color-subtle-action-pressed',
-    type: 'color',
-    values: {
-      light: '#dbdde1',
-      dark: '#424447',
-      'light-high-contrast': '#e2e4e8',
-      'dark-high-contrast': '#383a3d',
-    },
-  },
-  'color.surface': {
-    cssVariable: '--color-surface',
-    type: 'color',
-    values: {
-      light: '#ffffff',
-      dark: '#28292b',
-      'light-high-contrast': '#ffffff',
-      'dark-high-contrast': '#28292b',
-    },
-  },
-  'color.surface-muted': {
-    cssVariable: '--color-surface-muted',
-    type: 'color',
-    values: {
-      light: '#f6f8fc',
-      dark: '#343638',
-      'light-high-contrast': '#f6f8fc',
-      'dark-high-contrast': '#343638',
-    },
-  },
-  'color.switch-off': {
-    cssVariable: '--color-switch-off',
-    type: 'color',
-    values: {
-      light: 'rgb(30 31 33 / 0.06)',
-      dark: 'rgb(232 234 238 / 0.125)',
-      'light-high-contrast': 'rgb(30 31 33 / 0.06)',
-      'dark-high-contrast': 'rgb(232 234 238 / 0.08)',
-    },
-  },
-  'color.switch-off-hover': {
-    cssVariable: '--color-switch-off-hover',
-    type: 'color',
-    values: {
-      light: 'rgb(30 31 33 / 0.17)',
-      dark: 'rgb(232 234 238 / 0.2)',
-      'light-high-contrast': 'rgb(30 31 33 / 0.12)',
-      'dark-high-contrast': 'rgb(232 234 238 / 0.12)',
-    },
-  },
-  'color.switch-off-pressed': {
-    cssVariable: '--color-switch-off-pressed',
-    type: 'color',
-    values: {
-      light: 'rgb(30 31 33 / 0.29)',
-      dark: 'rgb(232 234 238 / 0.28)',
-      'light-high-contrast': 'rgb(30 31 33 / 0.18)',
-      'dark-high-contrast': 'rgb(232 234 238 / 0.15)',
-    },
-  },
-  'color.switch-on': {
-    cssVariable: '--color-switch-on',
-    type: 'color',
-    values: {
-      light: '#1872e7',
-      dark: '#9fc1f8',
-      'light-high-contrast': '#00408f',
-      'dark-high-contrast': '#b5cffb',
-    },
-  },
-  'color.switch-on-hover': {
-    cssVariable: '--color-switch-on-hover',
-    type: 'color',
-    values: {
-      light: '#005cc8',
-      dark: '#75a5f2',
-      'light-high-contrast': '#00377c',
-      'dark-high-contrast': '#cddefc',
-    },
-  },
-  'color.switch-on-pressed': {
-    cssVariable: '--color-switch-on-pressed',
-    type: 'color',
-    values: {
-      light: '#00408f',
-      dark: '#4b8bec',
-      'light-high-contrast': '#002f6d',
-      'dark-high-contrast': '#e0ebfd',
-    },
-  },
-  'color.switch-text': {
-    cssVariable: '--color-switch-text',
-    type: 'color',
-    values: {
-      light: '#1e1f21',
-      dark: '#e8eaee',
-      'light-high-contrast': '#121315',
-      'dark-high-contrast': '#f6f8fc',
-    },
-  },
-  'color.switch-thumb': {
-    cssVariable: '--color-switch-thumb',
-    type: 'color',
-    values: {
-      light: '#424447',
-      dark: '#e8eaee',
-      'light-high-contrast': '#28292b',
-      'dark-high-contrast': '#eff1f5',
-    },
-  },
-  'color.switch-thumb-on': {
-    cssVariable: '--color-switch-thumb-on',
-    type: 'color',
-    values: {
-      light: '#ffffff',
-      dark: '#1e1f21',
-      'light-high-contrast': '#ffffff',
-      'dark-high-contrast': '#121315',
-    },
-  },
-  'color.text-muted': {
-    cssVariable: '--color-text-muted',
-    type: 'color',
-    values: {
-      light: '#5d6166',
-      dark: '#bdbfc3',
-      'light-high-contrast': '#303234',
-      'dark-high-contrast': '#e8eaee',
-    },
-  },
-  'color.text-primary': {
-    cssVariable: '--color-text-primary',
-    type: 'color',
-    values: {
-      light: '#1e1f21',
-      dark: '#e8eaee',
-      'light-high-contrast': '#121315',
-      'dark-high-contrast': '#f6f8fc',
-    },
-  },
-  'color.text-quiet': {
-    cssVariable: '--color-text-quiet',
-    type: 'color',
-    values: {
-      light: '#5d6166',
-      dark: '#bdbfc3',
-      'light-high-contrast': '#303234',
-      'dark-high-contrast': '#e8eaee',
-    },
-  },
-  'color.text-strong': {
-    cssVariable: '--color-text-strong',
-    type: 'color',
-    values: {
-      light: '#424447',
-      dark: '#e8eaee',
-      'light-high-contrast': '#28292b',
-      'dark-high-contrast': '#eff1f5',
-    },
-  },
-  'color.toast-error': {
-    cssVariable: '--color-toast-error',
-    type: 'color',
-    values: {
-      light: '#b72b20',
-      dark: '#b72b20',
-      'light-high-contrast': '#8d0200',
-      'dark-high-contrast': '#8d0200',
-    },
-  },
-  'color.toast-info': {
-    cssVariable: '--color-toast-info',
-    type: 'color',
-    values: {
-      light: '#2c61a6',
-      dark: '#2c61a6',
-      'light-high-contrast': '#094285',
-      'dark-high-contrast': '#094285',
-    },
-  },
-  'color.toast-neutral': {
-    cssVariable: '--color-toast-neutral',
-    type: 'color',
-    values: {
-      light: '#424447',
-      dark: '#424447',
-      'light-high-contrast': '#424447',
-      'dark-high-contrast': '#424447',
-    },
-  },
-  'color.toast-success': {
-    cssVariable: '--color-toast-success',
-    type: 'color',
-    values: {
-      light: '#236d52',
-      dark: '#236d52',
-      'light-high-contrast': '#004e37',
-      'dark-high-contrast': '#004e37',
-    },
-  },
-  'color.tone.accent': {
-    cssVariable: '--color-tone-accent',
-    type: 'color',
-    values: {
-      light: '#005cc8',
-      dark: '#9fc1f8',
-      'light-high-contrast': '#00377c',
-      'dark-high-contrast': '#e0ebfd',
-    },
-  },
-  'color.tone.danger': {
-    cssVariable: '--color-tone-danger',
-    type: 'color',
-    values: {
-      light: '#b72b20',
-      dark: '#f8aca6',
-      'light-high-contrast': '#7a0200',
-      'dark-high-contrast': '#ffe4e2',
-    },
-  },
-  'color.tone.done': {
-    cssVariable: '--color-tone-done',
-    type: 'color',
-    values: {
-      light: '#7a3fc8',
-      dark: '#d2b2f7',
-      'light-high-contrast': '#53009a',
-      'dark-high-contrast': '#f1e6ff',
-    },
-  },
-  'color.tone.neutral': {
-    cssVariable: '--color-tone-neutral',
-    type: 'color',
-    values: {
-      light: '#5d6166',
-      dark: '#bdbfc3',
-      'light-high-contrast': '#303234',
-      'dark-high-contrast': '#e8eaee',
-    },
-  },
-  'color.tone.success': {
-    cssVariable: '--color-tone-success',
-    type: 'color',
-    values: {
-      light: '#176f35',
-      dark: '#7ad197',
-      'light-high-contrast': '#00441a',
-      'dark-high-contrast': '#a5fdc1',
-    },
-  },
-  'color.tone.warning': {
-    cssVariable: '--color-tone-warning',
-    type: 'color',
-    values: {
-      light: '#8a5504',
-      dark: '#ebb750',
-      'light-high-contrast': '#553200',
-      'dark-high-contrast': '#ffe8be',
-    },
-  },
-  'color.white': {
-    cssVariable: '--color-white',
-    type: 'color',
-    values: {
-      light: '#ffffff',
-      dark: '#ffffff',
-      'light-high-contrast': '#ffffff',
-      'dark-high-contrast': '#ffffff',
-    },
-  },
   /** The hairline border of controls and fields, which stays 1 px in both scales. */
   'control.border-width': {
-    cssVariable: '--control-border-width',
+    cssVariable: '--env-control-border-width',
     type: 'dimension',
     values: {
       light: '1px',
@@ -2761,7 +1425,7 @@ export const tokens = {
     },
   },
   'control.font-size': {
-    cssVariable: '--control-font-size',
+    cssVariable: '--env-control-font-size',
     type: 'dimension',
     values: {
       light: '0.9375rem',
@@ -2772,7 +1436,7 @@ export const tokens = {
   },
   /** The space between a control's icon and its label. */
   'control.gap': {
-    cssVariable: '--control-gap',
+    cssVariable: '--env-control-gap',
     type: 'dimension',
     values: {
       light: '0.4375rem',
@@ -2784,7 +1448,7 @@ export const tokens = {
   },
   /** The height a control takes when it sets no size: md, unless a container sets it to another control height for what it holds, as a table cell does with sm. */
   'control.height': {
-    cssVariable: '--control-height',
+    cssVariable: '--env-control-height',
     type: 'dimension',
     values: {
       light: '2.5rem',
@@ -2795,7 +1459,7 @@ export const tokens = {
   },
   /** The large control height, for a control of size lg, such as a prominent call to action. */
   'control.height-lg': {
-    cssVariable: '--control-height-lg',
+    cssVariable: '--env-control-height-lg',
     type: 'dimension',
     values: {
       light: '3rem',
@@ -2807,7 +1471,7 @@ export const tokens = {
   },
   /** The medium control height, every control's default size. */
   'control.height-md': {
-    cssVariable: '--control-height-md',
+    cssVariable: '--env-control-height-md',
     type: 'dimension',
     values: {
       light: '2.5rem',
@@ -2819,7 +1483,7 @@ export const tokens = {
   },
   /** The small control height: a control of size sm, the actions in a table cell, a title bar or a panel header. */
   'control.height-sm': {
-    cssVariable: '--control-height-sm',
+    cssVariable: '--env-control-height-sm',
     type: 'dimension',
     values: {
       light: '2rem',
@@ -2831,7 +1495,7 @@ export const tokens = {
   },
   /** The height every control grows to under a coarse pointer, whatever the scale, and the width of a button: its own box is its hit area. Rows grow to it too. */
   'control.height-touch': {
-    cssVariable: '--control-height-touch',
+    cssVariable: '--env-control-height-touch',
     type: 'dimension',
     values: {
       light: '2.75rem',
@@ -2842,7 +1506,7 @@ export const tokens = {
   },
   /** The icon in a control. 1 rem in both scales: icons never get smaller than this. */
   'control.icon-size': {
-    cssVariable: '--control-icon-size',
+    cssVariable: '--env-control-icon-size',
     type: 'dimension',
     values: {
       light: '1rem',
@@ -2853,7 +1517,7 @@ export const tokens = {
   },
   /** The smallest a pressable target may be in either dimension, in both scales: WCAG 2.2's 24 px minimum. A control smaller than its size, such as a segment inside a small rail or an action inside a small field, keeps at least this. */
   'control.target-min': {
-    cssVariable: '--control-target-min',
+    cssVariable: '--env-control-target-min',
     type: 'dimension',
     values: {
       light: '1.5rem',
@@ -2863,7 +1527,7 @@ export const tokens = {
     },
   },
   'elevation.0.border': {
-    cssVariable: '--elevation-0-border',
+    cssVariable: '--env-elevation-0-border',
     type: 'color',
     values: {
       light: 'transparent',
@@ -2873,7 +1537,7 @@ export const tokens = {
     },
   },
   'elevation.0.shadow': {
-    cssVariable: '--elevation-0-shadow',
+    cssVariable: '--env-elevation-0-shadow',
     type: 'shadow',
     values: {
       light: '0 0 0 0 transparent',
@@ -2883,7 +1547,7 @@ export const tokens = {
     },
   },
   'elevation.1.border': {
-    cssVariable: '--elevation-1-border',
+    cssVariable: '--env-elevation-1-border',
     type: 'color',
     values: {
       light: '#dbdde1',
@@ -2893,7 +1557,7 @@ export const tokens = {
     },
   },
   'elevation.1.shadow': {
-    cssVariable: '--elevation-1-shadow',
+    cssVariable: '--env-elevation-1-shadow',
     type: 'shadow',
     values: {
       light: '0 1px 2px 0 rgb(66 68 71 / 0.3), 0 1px 3px 1px rgb(66 68 71 / 0.15)',
@@ -2903,7 +1567,7 @@ export const tokens = {
     },
   },
   'elevation.2.border': {
-    cssVariable: '--elevation-2-border',
+    cssVariable: '--env-elevation-2-border',
     type: 'color',
     values: {
       light: '#dbdde1',
@@ -2913,7 +1577,7 @@ export const tokens = {
     },
   },
   'elevation.2.shadow': {
-    cssVariable: '--elevation-2-shadow',
+    cssVariable: '--env-elevation-2-shadow',
     type: 'shadow',
     values: {
       light: '0 1px 2px 0 rgb(66 68 71 / 0.3), 0 2px 6px 2px rgb(66 68 71 / 0.15)',
@@ -2923,7 +1587,7 @@ export const tokens = {
     },
   },
   'elevation.3.border': {
-    cssVariable: '--elevation-3-border',
+    cssVariable: '--env-elevation-3-border',
     type: 'color',
     values: {
       light: '#dbdde1',
@@ -2933,7 +1597,7 @@ export const tokens = {
     },
   },
   'elevation.3.shadow': {
-    cssVariable: '--elevation-3-shadow',
+    cssVariable: '--env-elevation-3-shadow',
     type: 'shadow',
     values: {
       light: '0 1px 3px 0 rgb(66 68 71 / 0.3), 0 4px 8px 3px rgb(66 68 71 / 0.15)',
@@ -2944,7 +1608,7 @@ export const tokens = {
   },
   /** The height of a text field's floating variant, whose label rests inside the field and floats into its outline. Other fields take the control height. */
   'field.floating-height': {
-    cssVariable: '--field-floating-height',
+    cssVariable: '--env-field-floating-height',
     type: 'dimension',
     values: {
       light: '3.5rem',
@@ -2955,7 +1619,7 @@ export const tokens = {
     scales: { compact: '2.75rem' },
   },
   'font.family': {
-    cssVariable: '--font-family',
+    cssVariable: '--env-font-family',
     type: 'fontFamily',
     values: {
       light: "'envUI Inter', sans-serif",
@@ -2965,7 +1629,7 @@ export const tokens = {
     },
   },
   'font.size.body': {
-    cssVariable: '--font-size-body',
+    cssVariable: '--env-font-size-body',
     type: 'dimension',
     values: {
       light: '0.9375rem',
@@ -2976,7 +1640,7 @@ export const tokens = {
     scales: { compact: '0.8125rem' },
   },
   'font.size.body-small': {
-    cssVariable: '--font-size-body-small',
+    cssVariable: '--env-font-size-body-small',
     type: 'dimension',
     values: {
       light: '0.875rem',
@@ -2988,7 +1652,7 @@ export const tokens = {
   },
   /** Captions, a menu's group labels and other small secondary text. */
   'font.size.caption': {
-    cssVariable: '--font-size-caption',
+    cssVariable: '--env-font-size-caption',
     type: 'dimension',
     values: {
       light: '0.75rem',
@@ -2999,7 +1663,7 @@ export const tokens = {
     scales: { compact: '0.6875rem' },
   },
   'font.size.heading': {
-    cssVariable: '--font-size-heading',
+    cssVariable: '--env-font-size-heading',
     type: 'dimension',
     values: {
       light: '1.125rem',
@@ -3010,7 +1674,7 @@ export const tokens = {
     scales: { compact: '1rem' },
   },
   'font.size.heading-small': {
-    cssVariable: '--font-size-heading-small',
+    cssVariable: '--env-font-size-heading-small',
     type: 'dimension',
     values: {
       light: '1rem',
@@ -3022,7 +1686,7 @@ export const tokens = {
   },
   /** The label of a control, and the text of menu, tree and option rows. */
   'font.size.label': {
-    cssVariable: '--font-size-label',
+    cssVariable: '--env-font-size-label',
     type: 'dimension',
     values: {
       light: '0.875rem',
@@ -3034,7 +1698,7 @@ export const tokens = {
   },
   /** A label inside a field at the control height, such as a combobox chip's. */
   'font.size.label-small': {
-    cssVariable: '--font-size-label-small',
+    cssVariable: '--env-font-size-label-small',
     type: 'dimension',
     values: {
       light: '0.8125rem',
@@ -3046,7 +1710,7 @@ export const tokens = {
   },
   /** A leading icon in a large row, such as a list item's. */
   'icon.size-lg': {
-    cssVariable: '--icon-size-lg',
+    cssVariable: '--env-icon-size-lg',
     type: 'dimension',
     values: {
       light: '1.25rem',
@@ -3058,7 +1722,7 @@ export const tokens = {
   },
   /** An icon beside body text, such as in a tree or a select trigger. */
   'icon.size-md': {
-    cssVariable: '--icon-size-md',
+    cssVariable: '--env-icon-size-md',
     type: 'dimension',
     values: {
       light: '1.125rem',
@@ -3069,7 +1733,7 @@ export const tokens = {
     scales: { compact: '1rem' },
   },
   'icon.size-sm': {
-    cssVariable: '--icon-size-sm',
+    cssVariable: '--env-icon-size-sm',
     type: 'dimension',
     values: {
       light: '1rem',
@@ -3077,69 +1741,9 @@ export const tokens = {
       'light-high-contrast': '1rem',
       'dark-high-contrast': '1rem',
     },
-  },
-  'md.sys.shape.corner.extra-large': {
-    cssVariable: '--md-sys-shape-corner-extra-large',
-    type: 'dimension',
-    values: {
-      light: '1.75rem',
-      dark: '1.75rem',
-      'light-high-contrast': '1.75rem',
-      'dark-high-contrast': '1.75rem',
-    },
-    scales: { compact: '1.375rem' },
-  },
-  'md.sys.shape.corner.extra-small': {
-    cssVariable: '--md-sys-shape-corner-extra-small',
-    type: 'dimension',
-    values: {
-      light: '0.25rem',
-      dark: '0.25rem',
-      'light-high-contrast': '0.25rem',
-      'dark-high-contrast': '0.25rem',
-    },
-    scales: { compact: '0.1875rem' },
-  },
-  'md.sys.shape.corner.large': {
-    cssVariable: '--md-sys-shape-corner-large',
-    type: 'dimension',
-    values: {
-      light: '1rem',
-      dark: '1rem',
-      'light-high-contrast': '1rem',
-      'dark-high-contrast': '1rem',
-    },
-    scales: { compact: '0.75rem' },
-  },
-  'md.sys.shape.corner.medium': {
-    cssVariable: '--md-sys-shape-corner-medium',
-    type: 'dimension',
-    values: {
-      light: '0.75rem',
-      dark: '0.75rem',
-      'light-high-contrast': '0.75rem',
-      'dark-high-contrast': '0.75rem',
-    },
-    scales: { compact: '0.625rem' },
-  },
-  'md.sys.shape.corner.none': {
-    cssVariable: '--md-sys-shape-corner-none',
-    type: 'dimension',
-    values: { light: '0', dark: '0', 'light-high-contrast': '0', 'dark-high-contrast': '0' },
-  },
-  'md.sys.shape.corner.small': {
-    cssVariable: '--md-sys-shape-corner-small',
-    type: 'dimension',
-    values: {
-      light: '0.5rem',
-      dark: '0.5rem',
-      'light-high-contrast': '0.5rem',
-      'dark-high-contrast': '0.5rem',
-    },
-    scales: { compact: '0.375rem' },
   },
   'motion.duration.fast': {
-    cssVariable: '--motion-duration-fast',
+    cssVariable: '--env-motion-duration-fast',
     type: 'duration',
     values: {
       light: '0.12s',
@@ -3149,7 +1753,7 @@ export const tokens = {
     },
   },
   'motion.duration.medium': {
-    cssVariable: '--motion-duration-medium',
+    cssVariable: '--env-motion-duration-medium',
     type: 'duration',
     values: {
       light: '0.16s',
@@ -3159,7 +1763,7 @@ export const tokens = {
     },
   },
   'motion.duration.slow': {
-    cssVariable: '--motion-duration-slow',
+    cssVariable: '--env-motion-duration-slow',
     type: 'duration',
     values: {
       light: '0.24s',
@@ -3169,7 +1773,7 @@ export const tokens = {
     },
   },
   'motion.ease': {
-    cssVariable: '--motion-ease',
+    cssVariable: '--env-motion-ease',
     type: 'cubicBezier',
     values: {
       light: 'cubic-bezier(0.45, 0, 0.2, 1)',
@@ -3180,7 +1784,7 @@ export const tokens = {
   },
   /** Elements entering decelerate into place. */
   'motion.ease-enter': {
-    cssVariable: '--motion-ease-enter',
+    cssVariable: '--env-motion-ease-enter',
     type: 'cubicBezier',
     values: {
       light: 'cubic-bezier(0.05, 0.7, 0.1, 1)',
@@ -3191,7 +1795,7 @@ export const tokens = {
   },
   /** Leaving elements accelerate away. */
   'motion.ease-exit': {
-    cssVariable: '--motion-ease-exit',
+    cssVariable: '--env-motion-ease-exit',
     type: 'cubicBezier',
     values: {
       light: 'cubic-bezier(0.3, 0, 0.8, 0.15)',
@@ -3201,7 +1805,7 @@ export const tokens = {
     },
   },
   'motion.ease-standard': {
-    cssVariable: '--motion-ease-standard',
+    cssVariable: '--env-motion-ease-standard',
     type: 'cubicBezier',
     values: {
       light: 'cubic-bezier(0.45, 0, 0.2, 1)',
@@ -3210,9 +1814,9 @@ export const tokens = {
       'dark-high-contrast': 'cubic-bezier(0.45, 0, 0.2, 1)',
     },
   },
-  /** Fields, tables and other blocks with medium corners. */
-  'radius.large': {
-    cssVariable: '--radius-large',
+  /** Medium corners: fields, tables, alerts and other blocks. */
+  'radius.lg': {
+    cssVariable: '--env-radius-lg',
     type: 'dimension',
     values: {
       light: '1rem',
@@ -3222,8 +1826,24 @@ export const tokens = {
     },
     scales: { compact: '0.75rem' },
   },
+  'radius.md': {
+    cssVariable: '--env-radius-md',
+    type: 'dimension',
+    values: {
+      light: '0.75rem',
+      dark: '0.75rem',
+      'light-high-contrast': '0.75rem',
+      'dark-high-contrast': '0.75rem',
+    },
+    scales: { compact: '0.625rem' },
+  },
+  'radius.none': {
+    cssVariable: '--env-radius-none',
+    type: 'dimension',
+    values: { light: '0', dark: '0', 'light-high-contrast': '0', 'dark-high-contrast': '0' },
+  },
   'radius.row-inner': {
-    cssVariable: '--radius-row-inner',
+    cssVariable: '--env-radius-row-inner',
     type: 'dimension',
     values: {
       light: '0.5rem',
@@ -3231,10 +1851,9 @@ export const tokens = {
       'light-high-contrast': '0.5rem',
       'dark-high-contrast': '0.5rem',
     },
-    scales: { compact: '0.375rem' },
   },
   'radius.row-outer': {
-    cssVariable: '--radius-row-outer',
+    cssVariable: '--env-radius-row-outer',
     type: 'dimension',
     values: {
       light: '1.75rem',
@@ -3244,7 +1863,7 @@ export const tokens = {
     },
   },
   'radius.row-single': {
-    cssVariable: '--radius-row-single',
+    cssVariable: '--env-radius-row-single',
     type: 'dimension',
     values: {
       light: '1.75rem',
@@ -3253,8 +1872,9 @@ export const tokens = {
       'dark-high-contrast': '1.75rem',
     },
   },
-  'radius.standard': {
-    cssVariable: '--radius-standard',
+  /** Small corners: buttons in a group, chips, menu rows, list rows inside a surface. */
+  'radius.sm': {
+    cssVariable: '--env-radius-sm',
     type: 'dimension',
     values: {
       light: '0.5rem',
@@ -3264,8 +1884,19 @@ export const tokens = {
     },
     scales: { compact: '0.375rem' },
   },
+  /** The rounded corners of surfaces, dialogs and popups. */
   'radius.surface': {
-    cssVariable: '--radius-surface',
+    cssVariable: '--env-radius-surface',
+    type: 'dimension',
+    values: {
+      light: '1.75rem',
+      dark: '1.75rem',
+      'light-high-contrast': '1.75rem',
+      'dark-high-contrast': '1.75rem',
+    },
+  },
+  'radius.xl': {
+    cssVariable: '--env-radius-xl',
     type: 'dimension',
     values: {
       light: '1.75rem',
@@ -3275,9 +1906,20 @@ export const tokens = {
     },
     scales: { compact: '1.375rem' },
   },
+  'radius.xs': {
+    cssVariable: '--env-radius-xs',
+    type: 'dimension',
+    values: {
+      light: '0.25rem',
+      dark: '0.25rem',
+      'light-high-contrast': '0.25rem',
+      'dark-high-contrast': '0.25rem',
+    },
+    scales: { compact: '0.1875rem' },
+  },
   /** The line a tree row reserves for its label and icon, 20 px in both scales; the row's density adds its block padding around it. */
   'row.content-height': {
-    cssVariable: '--row-content-height',
+    cssVariable: '--env-row-content-height',
     type: 'dimension',
     values: {
       light: '1.25rem',
@@ -3288,7 +1930,7 @@ export const tokens = {
   },
   /** The row of a menu and of a select's or combobox's popup. */
   'row.height': {
-    cssVariable: '--row-height',
+    cssVariable: '--env-row-height',
     type: 'dimension',
     values: {
       light: '2.25rem',
@@ -3300,7 +1942,7 @@ export const tokens = {
   },
   /** Row density lg. */
   'row.padding-block-lg': {
-    cssVariable: '--row-padding-block-lg',
+    cssVariable: '--env-row-padding-block-lg',
     type: 'dimension',
     values: {
       light: '0.75rem',
@@ -3312,7 +1954,7 @@ export const tokens = {
   },
   /** Row density md: the default of tables and lists. */
   'row.padding-block-md': {
-    cssVariable: '--row-padding-block-md',
+    cssVariable: '--env-row-padding-block-md',
     type: 'dimension',
     values: {
       light: '0.5rem',
@@ -3324,7 +1966,7 @@ export const tokens = {
   },
   /** Row density sm: a tree's default. */
   'row.padding-block-sm': {
-    cssVariable: '--row-padding-block-sm',
+    cssVariable: '--env-row-padding-block-sm',
     type: 'dimension',
     values: {
       light: '0.25rem',
@@ -3336,7 +1978,7 @@ export const tokens = {
   },
   /** Row density xs: the block padding of each row of a data component, such as a table, a tree or a list. */
   'row.padding-block-xs': {
-    cssVariable: '--row-padding-block-xs',
+    cssVariable: '--env-row-padding-block-xs',
     type: 'dimension',
     values: {
       light: '0.125rem',
@@ -3348,7 +1990,7 @@ export const tokens = {
   },
   /** Text in rows keeps clear of the large outer corners, whether a row stands alone or is connected. */
   'row.padding-inline': {
-    cssVariable: '--row-padding-inline',
+    cssVariable: '--env-row-padding-inline',
     type: 'dimension',
     values: {
       light: '1.5rem',
@@ -3359,7 +2001,7 @@ export const tokens = {
     scales: { compact: '1.25rem' },
   },
   'space.1': {
-    cssVariable: '--space-1',
+    cssVariable: '--env-space-1',
     type: 'dimension',
     values: {
       light: '0.25rem',
@@ -3369,7 +2011,7 @@ export const tokens = {
     },
   },
   'space.2': {
-    cssVariable: '--space-2',
+    cssVariable: '--env-space-2',
     type: 'dimension',
     values: {
       light: '0.5rem',
@@ -3380,7 +2022,7 @@ export const tokens = {
     scales: { compact: '0.375rem' },
   },
   'space.3': {
-    cssVariable: '--space-3',
+    cssVariable: '--env-space-3',
     type: 'dimension',
     values: {
       light: '0.75rem',
@@ -3391,7 +2033,7 @@ export const tokens = {
     scales: { compact: '0.625rem' },
   },
   'space.4': {
-    cssVariable: '--space-4',
+    cssVariable: '--env-space-4',
     type: 'dimension',
     values: {
       light: '1rem',
@@ -3402,7 +2044,7 @@ export const tokens = {
     scales: { compact: '0.75rem' },
   },
   'space.5': {
-    cssVariable: '--space-5',
+    cssVariable: '--env-space-5',
     type: 'dimension',
     values: {
       light: '1.5rem',
@@ -3413,7 +2055,7 @@ export const tokens = {
     scales: { compact: '1.25rem' },
   },
   'space.6': {
-    cssVariable: '--space-6',
+    cssVariable: '--env-space-6',
     type: 'dimension',
     values: {
       light: '2rem',
@@ -3424,7 +2066,7 @@ export const tokens = {
     scales: { compact: '1.625rem' },
   },
   'space.7': {
-    cssVariable: '--space-7',
+    cssVariable: '--env-space-7',
     type: 'dimension',
     values: {
       light: '2.5rem',
@@ -3435,7 +2077,7 @@ export const tokens = {
     scales: { compact: '2rem' },
   },
   'space.8': {
-    cssVariable: '--space-8',
+    cssVariable: '--env-space-8',
     type: 'dimension',
     values: {
       light: '3rem',
@@ -3446,7 +2088,7 @@ export const tokens = {
     scales: { compact: '2.375rem' },
   },
   'space.9': {
-    cssVariable: '--space-9',
+    cssVariable: '--env-space-9',
     type: 'dimension',
     values: {
       light: '4rem',
@@ -3457,7 +2099,7 @@ export const tokens = {
     scales: { compact: '3.25rem' },
   },
   'state.disabled-opacity': {
-    cssVariable: '--state-disabled-opacity',
+    cssVariable: '--env-state-disabled-opacity',
     type: 'number',
     values: {
       light: '0.48',
@@ -3468,7 +2110,7 @@ export const tokens = {
   },
   /** A window title bar drawn by the application, which holds controls of size sm. */
   'title-bar.height': {
-    cssVariable: '--title-bar-height',
+    cssVariable: '--env-title-bar-height',
     type: 'dimension',
     values: {
       light: '2.5rem',
@@ -3479,7 +2121,7 @@ export const tokens = {
     scales: { compact: '2rem' },
   },
   'topbar.height': {
-    cssVariable: '--topbar-height',
+    cssVariable: '--env-topbar-height',
     type: 'dimension',
     values: {
       light: '3.25rem',
@@ -3491,7 +2133,7 @@ export const tokens = {
   },
   /** A tree row's block padding at density lg: the row density's in the comfortable scale. */
   'tree.row-padding-block-lg': {
-    cssVariable: '--tree-row-padding-block-lg',
+    cssVariable: '--env-tree-row-padding-block-lg',
     type: 'dimension',
     values: {
       light: '0.75rem',
@@ -3503,7 +2145,7 @@ export const tokens = {
   },
   /** A tree row's block padding at density md: the row density's in the comfortable scale. */
   'tree.row-padding-block-md': {
-    cssVariable: '--tree-row-padding-block-md',
+    cssVariable: '--env-tree-row-padding-block-md',
     type: 'dimension',
     values: {
       light: '0.5rem',
@@ -3515,7 +2157,7 @@ export const tokens = {
   },
   /** A tree row's block padding at density sm, its default, so that a row is as tall as a menu row in either scale: the row density's in the comfortable scale. */
   'tree.row-padding-block-sm': {
-    cssVariable: '--tree-row-padding-block-sm',
+    cssVariable: '--env-tree-row-padding-block-sm',
     type: 'dimension',
     values: {
       light: '0.25rem',
@@ -3526,7 +2168,7 @@ export const tokens = {
     scales: { compact: '0.25rem' },
   },
   'type.body': {
-    cssVariable: '--type-body',
+    cssVariable: '--env-type-body',
     type: 'typography',
     values: {
       light: {
@@ -3560,7 +2202,7 @@ export const tokens = {
     },
   },
   'type.body-small': {
-    cssVariable: '--type-body-small',
+    cssVariable: '--env-type-body-small',
     type: 'typography',
     values: {
       light: {
@@ -3594,7 +2236,7 @@ export const tokens = {
     },
   },
   'type.h1': {
-    cssVariable: '--type-h1',
+    cssVariable: '--env-type-h1',
     type: 'typography',
     values: {
       light: {
@@ -3628,7 +2270,7 @@ export const tokens = {
     },
   },
   'type.h2': {
-    cssVariable: '--type-h2',
+    cssVariable: '--env-type-h2',
     type: 'typography',
     values: {
       light: {

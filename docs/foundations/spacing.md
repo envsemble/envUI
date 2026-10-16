@@ -28,16 +28,16 @@ import { Surface, Stack, Text } from '@envsemble/envui';
 
 Inside a `Theme`, or a document root themed by `ThemePreferenceProvider`, these custom properties arrange the application's own frames with the components, for example an image thumbnail beside a file drop zone. They follow the theme, its [scale](../foundations/scale.md) and the reader's text size; the values here are the comfortable scale's.
 
-| Name                                                                      | Contract                                                                                  |
-| ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `--space-1` … `--space-9`                                                 | The spacing scale: 0.25, 0.5, 0.75, 1, 1.5, 2, 2.5, 3 and 4 rem                           |
-| `--radius-standard`                                                       | 0.5 rem: inner rows, important actions, toasts, chips and small frames such as thumbnails |
-| `--radius-surface`                                                        | 1.75 rem: panes, cards and the outside of a row group                                     |
-| `--md-sys-shape-corner-large`                                             | 1 rem: text fields, tables and file drop zones                                            |
-| `--md-sys-shape-corner-full`                                              | Fully rounded: pills such as buttons, navigation items, badges and counters               |
-| `--md-sys-shape-corner-extra-small` … `--md-sys-shape-corner-extra-large` | The rest of the corner scale: 0.25, 0.5, 0.75 and 1.75 rem                                |
-| `--control-height`, `--control-height-sm` / `-md` / `-lg`                 | The height of a control without a size, and of each size, to line up with                 |
-| `--control-icon-size`                                                     | 1 rem: the icon size inside controls                                                      |
+| Name                                                              | Contract                                                                                  |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `--env-space-1` … `--env-space-9`                                 | The spacing scale: 0.25, 0.5, 0.75, 1, 1.5, 2, 2.5, 3 and 4 rem                           |
+| `--env-radius-sm`                                                 | 0.5 rem: inner rows, important actions, toasts, chips and small frames such as thumbnails |
+| `--env-radius-surface`                                            | 1.75 rem: panes, cards and the outside of a row group                                     |
+| `--env-radius-lg`                                                 | 1 rem: text fields, tables and file drop zones                                            |
+| `--env-radius-full`                                               | Fully rounded: pills such as buttons, navigation items, badges and counters               |
+| `--env-radius-xs` … `--env-radius-xl`                             | The rest of the corner scale: 0.25, 0.5, 0.75 and 1.75 rem                                |
+| `--env-control-height`, `--env-control-height-sm` / `-md` / `-lg` | The height of a control without a size, and of each size, to line up with                 |
+| `--env-control-icon-size`                                         | 1 rem: the icon size inside controls                                                      |
 
 ## Guidelines
 

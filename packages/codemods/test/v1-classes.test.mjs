@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 import { loadMap, renameClass } from '../src/map.mjs';
 import * as v1Classes from '../src/transforms/v1-classes.mjs';
+import { renameInStyles } from '../src/transforms/v1-classes.mjs';
 import { applyTransform, encodings, fixtures, map, runTransform } from './helpers.mjs';
 
 const { classes } = loadMap();
@@ -99,4 +100,41 @@ test('v1-classes reads another map through the map option', () => {
   } finally {
     rmSync(directory, { recursive: true, force: true });
   }
+});
+
+test('v1-classes reports the tokens 1.0 removes and the fixed colors, and leaves them', () => {
+  const css = '.a {\n  color: var(--color-white);\n  inline-size: calc(var(--scale) * 2rem);\n}\n';
+  const result = runTransform(v1Classes, 'styles.css', css);
+  assert.equal(result.output, css);
+  assert.equal(result.reports.length, 2);
+  assert.match(
+    result.reports[0],
+    /^line 2: --color-white is removed in 1\.0 and no token replaces it: write its color, #ffffff/,
+  );
+  assert.match(result.reports[1], /^line 3: --scale is removed in 1\.0: The multiplier is gone/);
+  const tsx =
+    "export const a = (\n  <div\n    style={{ width: 'calc(var(--scale) * 1rem)' }}\n  />\n);\n";
+  const script = runTransform(v1Classes, 'a.tsx', tsx);
+  assert.equal(script.output, tsx);
+  assert.deepEqual(
+    script.reports.map((report) => report.split(':')[0]),
+    ['line 3'],
+  );
+});
+
+test('v1-classes renames every token entry, and no class entry renames a 1.0 token', () => {
+  const tokens = Object.entries(map.tokens).filter(([from]) => !from.startsWith('$'));
+  assert.ok(tokens.length > 300);
+  for (const [from, entry] of tokens) {
+    if (!entry.to || entry.removed) continue;
+    const css = `.a { ${from}: 1; margin: var(${from}); }\n`;
+    assert.equal(
+      runTransform(v1Classes, 'styles.css', css).output,
+      `.a { ${entry.to}: 1; margin: var(${entry.to}); }\n`,
+      from,
+    );
+  }
+  const { tokenNames } = loadMap();
+  for (const name of tokenNames)
+    assert.equal(renameInStyles(`--${name}`, classes, [], new Map(), tokenNames), `--${name}`);
 });

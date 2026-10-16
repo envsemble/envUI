@@ -40,51 +40,51 @@ Within a scale, a control's **size** (`sm`, `md` or `lg`) chooses one of three h
 
 At the default 16 px root. Every value is a token, in rem, so it follows the reader's text size.
 
-| Token                                                           | Comfortable           | Compact               |
-| --------------------------------------------------------------- | --------------------- | --------------------- |
-| `--control-height-sm` / `-md` / `-lg`                           | 32 / 40 / 48          | 26 / 32 / 38          |
-| `--control-target-min`                                          | 24                    | 24                    |
-| `--row-height` (menu, Select and Combobox rows)                 | 36                    | 28                    |
-| `--row-content-height` (tree rows)                              | 20                    | 20                    |
-| `--row-padding-block-xs` / `-sm` / `-md` / `-lg`                | 2 / 4 / 8 / 12        | 2 / 3 / 4 / 6         |
-| `--tree-row-padding-block-sm` / `-md` / `-lg`                   | 4 / 8 / 12            | 4 / 5 / 7             |
-| `--space-1` … `--space-9`                                       | 4, 8, 12, 16, 24 … 64 | 4, 6, 10, 12, 20 … 52 |
-| `--control-gap`                                                 | 7                     | 6                     |
-| `--font-size-caption` / `-body-small` / `-label`                | 12 / 14 / 14          | 11 / 12 / 13          |
-| `--font-size-label-small` (combobox chips)                      | 13                    | 12                    |
-| `--font-size-body` / `-heading-small` / `-heading`              | 15 / 16 / 18          | 13 / 14 / 16          |
-| `--icon-size-sm` / `-md` / `-lg`                                | 16 / 18 / 20          | 16 / 16 / 18          |
-| `--radius-standard` / `--radius-large` / `--radius-surface`     | 8 / 16 / 28           | 6 / 12 / 22           |
-| `--field-floating-height` (inside the 1 px border)              | 56                    | 44                    |
-| `--topbar-height` / `--title-bar-height`                        | 52 / 40               | 42 / 32               |
-| `--control-border-width`, focus rings, `--control-height-touch` | 1, 2, 44              | 1, 2, 44              |
+| Token                                                                   | Comfortable           | Compact               |
+| ----------------------------------------------------------------------- | --------------------- | --------------------- |
+| `--env-control-height-sm` / `-md` / `-lg`                               | 32 / 40 / 48          | 26 / 32 / 38          |
+| `--env-control-target-min`                                              | 24                    | 24                    |
+| `--env-row-height` (menu, Select and Combobox rows)                     | 36                    | 28                    |
+| `--env-row-content-height` (tree rows)                                  | 20                    | 20                    |
+| `--env-row-padding-block-xs` / `-sm` / `-md` / `-lg`                    | 2 / 4 / 8 / 12        | 2 / 3 / 4 / 6         |
+| `--env-tree-row-padding-block-sm` / `-md` / `-lg`                       | 4 / 8 / 12            | 4 / 5 / 7             |
+| `--env-space-1` … `--env-space-9`                                       | 4, 8, 12, 16, 24 … 64 | 4, 6, 10, 12, 20 … 52 |
+| `--env-control-gap`                                                     | 7                     | 6                     |
+| `--env-font-size-caption` / `-body-small` / `-label`                    | 12 / 14 / 14          | 11 / 12 / 13          |
+| `--env-font-size-label-small` (combobox chips)                          | 13                    | 12                    |
+| `--env-font-size-body` / `-heading-small` / `-heading`                  | 15 / 16 / 18          | 13 / 14 / 16          |
+| `--env-icon-size-sm` / `-md` / `-lg`                                    | 16 / 18 / 20          | 16 / 16 / 18          |
+| `--env-radius-sm` / `--env-radius-lg` / `--env-radius-surface`          | 8 / 16 / 28           | 6 / 12 / 22           |
+| `--env-field-floating-height` (inside the 1 px border)                  | 56                    | 44                    |
+| `--env-topbar-height` / `--env-title-bar-height`                        | 52 / 40               | 42 / 32               |
+| `--env-control-border-width`, focus rings, `--env-control-height-touch` | 1, 2, 44              | 1, 2, 44              |
 
 - A tree row is its content line plus its density's padding on both sides: 24, 28, 36 and 44 from `xs` to `lg` in the comfortable scale, and 24, 28, 30 and 34 in the compact one, whose tree paddings are a pixel more than the row densities' so that no compact row is taller than a comfortable one and a `sm` row, the default, is as tall as a compact menu row. A table cell adds 4 px to its row padding, so a `md` table row of one line is 45 px tall, and a list row is at least as tall as a small control with its padding, 56 px at `md`.
 - Controls in table cells take the small control height, so a row with an action stays close to the height of its text.
-- `--control-height` is the height of a control that sets no size: md, unless its container sets it to another control height. Set it in an application's own toolbar the same way: `--control-height: var(--control-height-sm)`.
+- `--env-control-height` is the height of a control that sets no size: md, unless its container sets it to another control height. Set it in an application's own toolbar the same way: `--env-control-height: var(--env-control-height-sm)`.
 
 ## Fields
 
 - A field takes the control height of its size and is a pill, so it lines up with buttons. Its label rests inside while the field is empty and floats into the outline, without changing the height; `showLabel={false}` hides it and leaves the placeholder as the visible guidance.
 - `variant="floating"` on TextField, Combobox and DatePicker is the tall field, whose label floats above the value, for a long form on a page: 58 px with its border in the comfortable scale and 46 px in the compact one. Plain fields and text areas are tall too.
-- Menus and the popups of Select and Combobox share one anatomy: a raised popup with small corners and rows of `--row-height`, where a check mark shows the chosen option.
+- Menus and the popups of Select and Combobox share one anatomy: a raised popup with small corners and rows of `--env-row-height`, where a check mark shows the chosen option.
 
 ## Touch
 
-- Under a coarse pointer, controls grow to at least 44 px (`--control-height-touch`), in either scale: buttons, icon buttons, the fields, Select, the rails of SegmentedControl and Tabs, a ButtonGroup and its buttons, Pagination, menubar triggers, AppShell's sidebar toggle, a toast's dismiss button, AvatarButton, sortable table headers, and the close buttons of a PanelDock chip and of DocumentTabs. Their `sm` and `md` heights become 44 px, and `lg` stays 48 px in the comfortable scale and becomes 44 px in the compact one, so the controls of a row still match. A button and a menubar trigger are at least as wide, and so are segments and tabs. The few that stay smaller are listed below.
+- Under a coarse pointer, controls grow to at least 44 px (`--env-control-height-touch`), in either scale: buttons, icon buttons, the fields, Select, the rails of SegmentedControl and Tabs, a ButtonGroup and its buttons, Pagination, menubar triggers, AppShell's sidebar toggle, a toast's dismiss button, AvatarButton, sortable table headers, and the close buttons of a PanelDock chip and of DocumentTabs. Their `sm` and `md` heights become 44 px, and `lg` stays 48 px in the comfortable scale and becomes 44 px in the compact one, so the controls of a row still match. A button and a menubar trigger are at least as wide, and so are segments and tabs. The few that stay smaller are listed below.
 - envUI follows the primary pointer, `@media (pointer: coarse)`, not `any-pointer`: a touchscreen laptop used with a mouse or a trackpad keeps the desktop density, and a phone or a tablet grows. The control tokens themselves keep their values, because the token resolver has no pointer modifier; each component applies the touch height under the media query.
 - A control's own box is its hit area, so a press always reaches the control it lands on, whatever the layout around it: an application's own column, grid or wrapping row needs nothing more. Hit areas drawn beyond a part's box stay inside its control: a segment's or a tab's covers the rail's padding above and below it, so it is as tall as the rail, and an action inside a field reaches the touch height above and below it, within the field, but keeps its width, so it never reaches over the next action or the text.
 - Rows grow to 44 px too, such as menu items, tree rows, navigation items and table rows with an action, and the top bar and the title bar to 52 px, which holds a control with 4 px around it. Entered text becomes 1 rem, so touch browsers don't zoom into a focused field.
 - Growing, rather than keeping each control's look and adding an invisible hit area around it, is what keeps a row's controls the same height when a field beside a button must be 44 px for its text, and keeps one control's hit area from taking presses on another, which only the layout around them could prevent.
-- Keep your own targets the same way. Use envUI's Button or IconButton, which grow on their own, or grow your own control under the same query, since `--control-height` keeps its value under a coarse pointer:
+- Keep your own targets the same way. Use envUI's Button or IconButton, which grow on their own, or grow your own control under the same query, since `--env-control-height` keeps its value under a coarse pointer:
 
   ```css
   .my-target {
-    block-size: var(--control-height);
+    block-size: var(--env-control-height);
   }
   @media (pointer: coarse) {
     .my-target {
-      block-size: max(var(--control-height), var(--control-height-touch));
+      block-size: max(var(--env-control-height), var(--env-control-height-touch));
     }
   }
   ```
@@ -101,7 +101,7 @@ At the default 16 px root. Every value is a token, in rem, so it follows the rea
 - **Rows match.** A button next to an input takes the input's size, a table toolbar follows its rows, and menu items match their trigger. Give the controls of a row the same size, or none.
 - Use `size` for a deliberate difference in one place, not to make a region denser: a denser region is a scale or a row density.
 - Choose a data component's row density for how people read it: `sm` or `xs` for scanning many rows, `md` or `lg` for rows people read one by one.
-- In application CSS, read the tokens rather than fixed lengths, so an application's own frames follow the scale: `block-size: var(--control-height-sm)`.
+- In application CSS, read the tokens rather than fixed lengths, so an application's own frames follow the scale: `block-size: var(--env-control-height-sm)`.
 
 TypeScript declarations provide the complete public API.
 

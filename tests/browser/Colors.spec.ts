@@ -9,55 +9,59 @@ test.beforeEach(async ({ page }) => {
 /** The token each control paints at rest; its hover and pressed tokens carry `-hover`, `-pressed`. */
 const sources: Record<string, readonly [rest: string, hover: string, pressed: string]> = {
   'button-primary': [
-    '--color-primary-action',
-    '--color-primary-action-hover',
-    '--color-primary-action-pressed',
+    '--env-color-bg-brand-emphasis',
+    '--env-color-bg-brand-emphasis-hover',
+    '--env-color-bg-brand-emphasis-pressed',
   ],
-  'button-important': ['--color-accent', '--color-accent-hover', '--color-accent-pressed'],
+  'button-important': [
+    '--env-color-bg-important-strong',
+    '--env-color-bg-important-strong-hover',
+    '--env-color-bg-important-strong-pressed',
+  ],
   'button-secondary': [
-    '--color-secondary-action',
-    '--color-secondary-action-hover',
-    '--color-secondary-action-pressed',
+    '--env-color-bg-neutral-muted',
+    '--env-color-bg-neutral-muted-hover',
+    '--env-color-bg-neutral-muted-pressed',
   ],
   'button-outlined': [
-    '--color-subtle-action',
-    '--color-subtle-action-hover',
-    '--color-subtle-action-pressed',
+    '--env-color-bg-raised',
+    '--env-color-bg-raised-hover',
+    '--env-color-bg-raised-pressed',
   ],
   'button-destructive': [
-    '--color-destructive-action',
-    '--color-destructive-action-hover',
-    '--color-destructive-action-pressed',
+    '--env-color-bg-danger-strong',
+    '--env-color-bg-danger-strong-hover',
+    '--env-color-bg-danger-strong-pressed',
   ],
   'icon-button': [
-    '--color-secondary-action',
-    '--color-secondary-action-hover',
-    '--color-secondary-action-pressed',
+    '--env-color-bg-neutral-muted',
+    '--env-color-bg-neutral-muted-hover',
+    '--env-color-bg-neutral-muted-pressed',
   ],
   navigation: [
-    '--color-navigation-quiet',
-    '--color-navigation-quiet-hover',
-    '--color-navigation-quiet-pressed',
+    '--env-color-list-item-bg',
+    '--env-color-bg-navigation-hover',
+    '--env-color-bg-navigation-pressed',
   ],
   'navigation-selected': [
-    '--color-navigation-selected',
-    '--color-navigation-hover',
-    '--color-navigation-pressed',
+    '--env-color-bg-selected',
+    '--env-color-bg-selected-hover',
+    '--env-color-bg-selected-pressed',
   ],
   'tab-primary': [
-    '--color-primary-action',
-    '--color-primary-action-hover',
-    '--color-primary-action-pressed',
+    '--env-color-bg-brand-emphasis',
+    '--env-color-bg-brand-emphasis-hover',
+    '--env-color-bg-brand-emphasis-pressed',
   ],
   'tab-secondary': [
-    '--color-secondary-action',
-    '--color-secondary-action-hover',
-    '--color-secondary-action-pressed',
+    '--env-color-bg-neutral-muted',
+    '--env-color-bg-neutral-muted-hover',
+    '--env-color-bg-neutral-muted-pressed',
   ],
   'tab-navigation': [
-    '--color-navigation-selected',
-    '--color-navigation-hover',
-    '--color-navigation-pressed',
+    '--env-color-bg-selected',
+    '--env-color-bg-selected-hover',
+    '--env-color-bg-selected-pressed',
   ],
 };
 
@@ -225,40 +229,36 @@ test('compositions reuse primitive colors while unrelated roles stay independent
         { probes: selectors, token },
       );
     }
+    // Each role, and every part that paints it: a component shares the role of what it means.
     const cases = [
-      ['--color-canvas', ['canvas', 'canvasCard']],
-      ['--color-pane', ['pane', 'paneCard']],
-      ['--color-surface-muted', ['surface', 'card', 'contrastPane']],
-      ['--color-row', ['row']],
-      ['--color-secondary-action', ['secondary', 'icon', 'select', 'selectError']],
-      ['--color-on-secondary-action', ['secondary', 'icon', 'select', 'selectError']],
-      ['--color-link', ['link', 'textButton']],
-      ['--color-primary-action', ['primary', 'tab']],
-      ['--color-on-primary-action', ['primary', 'tab']],
-      ['--color-navigation-selected', ['navigation']],
-      ['--color-navigation-icon', ['navigationIcon', 'tabIcon']],
-      ['--color-direction-link', ['direction']],
-      ['--color-field', ['fieldWell', 'fieldError']],
-      ['--color-field-active', ['fieldWell']],
-      ['--color-field-error', ['fieldError', 'selectError']],
-      ['--color-field-text', ['field', 'fieldWell', 'fieldError', 'selectLabel']],
-      ['--color-field-hint', ['selectHint']],
-      ['--color-destructive-action', ['destructive']],
-      ['--color-radio-row', ['radioRow']],
-      ['--color-radio', ['radio']],
-      ['--color-checkbox', ['checkbox']],
-      ['--color-switch-on', ['switch']],
-      ['--color-chip', ['chip']],
-      // The neutral fill: the 0.7 names of its uses (secondary actions, chips, skeletons, the tab
-      // rail) all alias the one semantic token.
+      ['--env-color-bg-page', ['canvas', 'canvasCard']],
+      // A list item's component token is the default surface in light and the muted one in dark.
+      ['--env-color-bg-default', ['pane', 'paneCard', ...(theme === 'light' ? ['row'] : [])]],
       [
-        '--color-bg-neutral-muted',
+        '--env-color-bg-muted',
+        ['surface', 'card', 'contrastPane', 'radioRow', ...(theme === 'dark' ? ['row'] : [])],
+      ],
+      ['--env-color-list-item-bg', ['row']],
+      [
+        '--env-color-bg-neutral-muted',
         ['secondary', 'icon', 'select', 'selectError', 'tabRail', 'chip', 'skeleton'],
       ],
-      ['--color-skeleton-base', ['skeleton']],
+      ['--env-color-fg-control', ['secondary', 'icon', 'select', 'selectError']],
+      ['--env-color-fg-link', ['link', 'textButton']],
+      ['--env-color-bg-brand-emphasis', ['primary', 'tab', 'radio', 'checkbox', 'switch']],
+      ['--env-color-fg-on-emphasis', ['primary', 'tab']],
+      ['--env-color-bg-selected', ['navigation']],
+      ['--env-color-fg-muted', ['navigationIcon', 'tabIcon', 'selectHint']],
+      ['--env-color-bg-raised', ['direction']],
+      ['--env-color-bg-field', ['fieldWell', 'fieldError']],
+      ['--env-color-border-accent-emphasis', ['fieldWell']],
+      ['--env-color-fg-danger', ['fieldError', 'selectError']],
+      // The default text color is every part's that sets no other, so it has no case of its own.
+      ['--env-color-bg-danger-strong', ['destructive']],
     ] as const;
     for (const [token, targets] of cases) {
-      if (token === '--color-field-active') await page.getByTestId(`${theme}-color-field`).focus();
+      if (token === '--env-color-border-accent-emphasis')
+        await page.getByTestId(`${theme}-color-field`).focus();
       const { before, after } = await compareToken(token);
       for (const name of Object.keys(selectors)) {
         if ((targets as readonly string[]).includes(name))
@@ -266,15 +266,15 @@ test('compositions reuse primitive colors while unrelated roles stay independent
         else
           expect(after[name], `${theme}/${token} must leave ${name} alone`).toEqual(before[name]);
       }
-      if (token === '--color-field-active')
+      if (token === '--env-color-border-accent-emphasis')
         await page
           .getByTestId(`${theme}-color-field`)
           .evaluate((input) => (input as HTMLElement).blur());
     }
     for (const [label, primitiveId, color] of [
-      ['First tab', `${theme}-button-primary`, '--color-primary-action'],
-      ['Second tab', `${theme}-button-secondary`, '--color-secondary-action'],
-      ['Third tab', `${theme}-navigation-selected`, '--color-navigation-selected'],
+      ['First tab', `${theme}-button-primary`, '--env-color-bg-brand-emphasis'],
+      ['Second tab', `${theme}-button-secondary`, '--env-color-bg-neutral-muted'],
+      ['Third tab', `${theme}-navigation-selected`, '--env-color-bg-selected'],
     ]) {
       const tab = boundary.getByRole('tab', { name: label });
       await tab.press('Enter');

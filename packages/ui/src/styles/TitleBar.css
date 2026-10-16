@@ -4,19 +4,19 @@
    The title bar area environment variables describe the part of the window's top edge that the
    window controls leave free; the bar takes its height, and its hairline below, so the hairline
    runs under the window controls too, and leaves room on either side. Outside such a window the
-   variables are undefined, and the bar falls back to --title-bar-height across the full width.
+   variables are undefined, and the bar falls back to --env-title-bar-height across the full width.
    Empty space drags the window, controls inside stay clickable, and they take the small control
    height. */
 .env-title-bar {
-  --control-height: var(--control-height-sm);
+  --env-control-height: var(--env-control-height-sm);
   /* Inner padding at the inline start and end; the window controls add to the side they occupy. */
-  --env-title-bar-start: var(--space-3);
-  --env-title-bar-end: var(--space-3);
+  --env-title-bar-start: var(--env-space-3);
+  --env-title-bar-end: var(--env-space-3);
   --env-title-bar-left: var(--env-title-bar-start);
   --env-title-bar-right: var(--env-title-bar-end);
   box-sizing: border-box;
   /* The window reports a smaller height once the page is zoomed in; the small controls still fit. */
-  block-size: max(calc(env(titlebar-area-height, 0px) + 0.0625rem), var(--title-bar-height));
+  block-size: max(calc(env(titlebar-area-height, 0px) + 0.0625rem), var(--env-title-bar-height));
   padding-left: calc(env(titlebar-area-x, 0px) + var(--env-title-bar-left));
   padding-right: calc(
     100vw - env(titlebar-area-x, 0px) - env(titlebar-area-width, 100vw) + var(--env-title-bar-right)
@@ -67,11 +67,11 @@
 /* Icon-only text buttons take the quiet icon color, like the window controls beside them, rather
    than the link blue of text buttons, and darken to the text color on hover and press. */
 .env-title-bar .env-button-text.env-icon-button {
-  color: var(--color-icon);
+  color: var(--env-color-fg-muted);
 }
 .env-title-bar
   .env-button-text.env-icon-button:is(:hover, :active):not(:disabled):not([aria-disabled='true']) {
-  color: var(--color-text-primary);
+  color: var(--env-color-fg-default);
 }
 
 /* TitleBar: start, center and end sections on the canvas, with a hairline below like the shell's top
@@ -80,18 +80,18 @@
   display: grid;
   grid-template-columns: minmax(max-content, 1fr) minmax(0, auto) minmax(max-content, 1fr);
   align-items: center;
-  column-gap: var(--space-3);
-  border-block-end: 0.0625rem solid var(--color-border-muted);
-  background: var(--color-canvas);
-  color: var(--color-text-primary);
-  font: var(--type-body-small);
+  column-gap: var(--env-space-3);
+  border-block-end: 0.0625rem solid var(--env-color-border-muted);
+  background: var(--env-color-bg-page);
+  color: var(--env-color-fg-default);
+  font: var(--env-type-body-small);
 }
 .env-title-bar-start,
 .env-title-bar-end {
   min-inline-size: 0;
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--env-space-2);
 }
 .env-title-bar-end {
   justify-content: flex-end;
@@ -113,8 +113,8 @@
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   overflow: hidden;
-  background: var(--color-canvas);
-  color: var(--color-text-primary);
+  background: var(--env-color-bg-page);
+  color: var(--env-color-fg-default);
 }
 .env-window-frame-content {
   min-block-size: 0;

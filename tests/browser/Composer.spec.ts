@@ -373,7 +373,7 @@ test('the raised surface keeps its colors, focus and contrast in both themes', a
       .toBe(
         await surface.evaluate((element) => {
           const probe = document.createElement('span');
-          probe.style.color = 'var(--color-field-active)';
+          probe.style.color = 'var(--env-color-border-accent-emphasis)';
           element.append(probe);
           const color = getComputedStyle(probe).color;
           probe.remove();
@@ -392,9 +392,9 @@ test('the raised surface keeps its colors, focus and contrast in both themes', a
       const style = getComputedStyle(element);
       return {
         background: style.backgroundColor,
-        popup: resolve('background-color', 'var(--color-popup)'),
+        popup: resolve('background-color', 'var(--env-color-bg-popup)'),
         border: style.borderTopColor,
-        active: resolve('color', 'var(--color-field-active)'),
+        active: resolve('color', 'var(--env-color-border-accent-emphasis)'),
         radius: style.borderTopLeftRadius,
         ring: style.boxShadow,
       };

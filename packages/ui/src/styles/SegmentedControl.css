@@ -1,13 +1,13 @@
 /* A pill rail of segments, like the tab rail: a translucent fill with the chosen segment in the
    primary button colors. The rail is as tall as a control of its size, or of its container's. */
 .env-segmented-control[data-size='sm'] {
-  --control-height: var(--control-height-sm);
+  --env-control-height: var(--env-control-height-sm);
 }
 .env-segmented-control[data-size='md'] {
-  --control-height: var(--control-height-md);
+  --env-control-height: var(--env-control-height-md);
 }
 .env-segmented-control[data-size='lg'] {
-  --control-height: var(--control-height-lg);
+  --env-control-height: var(--env-control-height-lg);
 }
 .env-segmented-control {
   box-sizing: border-box;
@@ -16,19 +16,19 @@
   min-inline-size: 0;
   display: inline-flex;
   align-items: stretch;
-  gap: var(--space-1);
+  gap: var(--env-space-1);
   /* The height the rail draws at: the control height, or the touch height under a coarse pointer. */
-  --env-segmented-control-height: var(--control-height);
+  --env-segmented-control-height: var(--env-control-height);
   /* The padding gives way where a segment would be shorter than the smallest target, as in a
      small rail of the compact scale. */
   --env-segmented-control-inset: min(
-    var(--space-1),
-    calc((var(--env-segmented-control-height) - var(--control-target-min)) / 2)
+    var(--env-space-1),
+    calc((var(--env-segmented-control-height) - var(--env-control-target-min)) / 2)
   );
   padding: var(--env-segmented-control-inset);
   min-block-size: var(--env-segmented-control-height);
   border-radius: 100vmax;
-  background: var(--color-fill);
+  background: var(--env-color-bg-neutral-muted);
   /* Long labels stay reachable in narrow containers. */
   overflow-x: auto;
   scrollbar-width: none;
@@ -42,46 +42,46 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2);
+  gap: var(--env-space-2);
   /* The block padding gives way where a line and the padding would outgrow the segment. */
   padding: min(
-      var(--space-1),
+      var(--env-space-1),
       calc((var(--env-segmented-control-height) - 2 * var(--env-segmented-control-inset) - 1lh) / 2)
     )
-    var(--space-4);
+    var(--env-space-4);
   border: 0;
   border-radius: 100vmax;
   background: transparent;
-  color: var(--color-text-muted);
-  font: var(--body-font-weight) var(--font-size-label) / 1.4 var(--font-family);
+  color: var(--env-color-fg-muted);
+  font: var(--env-body-font-weight) var(--env-font-size-label) / 1.4 var(--env-font-family);
   white-space: nowrap;
   cursor: pointer;
   transition:
-    background-color var(--motion-duration-fast) var(--motion-ease),
-    color var(--motion-duration-fast) var(--motion-ease);
+    background-color var(--env-motion-duration-fast) var(--env-motion-ease),
+    color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 .env-segmented-control[data-size='sm'] .env-segment {
-  padding-inline: var(--space-3);
+  padding-inline: var(--env-space-3);
 }
 .env-segment:hover:not([data-checked]):not([data-disabled]) {
-  background: var(--color-state-layer-hover);
-  color: var(--color-text-primary);
+  background: var(--env-color-bg-neutral-subtle-hover);
+  color: var(--env-color-fg-default);
 }
 .env-segment:active:not([data-checked]):not([data-disabled]) {
-  background: var(--color-state-layer-pressed);
+  background: var(--env-color-bg-neutral-subtle-pressed);
 }
 .env-segment[data-checked] {
-  background: var(--color-primary-action);
-  color: var(--color-on-primary-action);
+  background: var(--env-color-bg-brand-emphasis);
+  color: var(--env-color-fg-on-emphasis);
 }
 .env-segment[data-checked]:hover:not([data-disabled]) {
-  background: var(--color-primary-action-hover);
+  background: var(--env-color-bg-brand-emphasis-hover);
 }
 .env-segment[data-checked]:active:not([data-disabled]) {
-  background: var(--color-primary-action-pressed);
+  background: var(--env-color-bg-brand-emphasis-pressed);
 }
 .env-segment:focus-visible {
-  outline: 0.125rem solid var(--color-focus-ring);
+  outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.125rem;
 }
 /* Under a coarse pointer the rail grows to the touch height, like every control of its row, and
@@ -90,11 +90,11 @@
    the rail shares out a full width. */
 @media (pointer: coarse) {
   .env-segmented-control {
-    --env-segmented-control-height: max(var(--control-height), var(--control-height-touch));
+    --env-segmented-control-height: max(var(--env-control-height), var(--env-control-height-touch));
   }
   .env-segment {
     position: relative;
-    min-inline-size: var(--control-height-touch);
+    min-inline-size: var(--env-control-height-touch);
   }
   .env-segment::before {
     content: '';
@@ -104,12 +104,12 @@
   }
 }
 .env-segment[data-disabled] {
-  opacity: var(--state-disabled-opacity);
+  opacity: var(--env-state-disabled-opacity);
   cursor: default;
 }
 .env-segment .env-symbol {
-  inline-size: var(--control-icon-size);
-  block-size: var(--control-icon-size);
+  inline-size: var(--env-control-icon-size);
+  block-size: var(--env-control-icon-size);
 }
 .env-segment-count {
   font-size: 0.8125em;
@@ -149,5 +149,33 @@
 @media (prefers-reduced-motion: reduce) {
   .env-segment {
     transition: none;
+  }
+}
+
+/* Motion: a segment settles slightly while it is held. Only without a reduced-motion preference. */
+@media (prefers-reduced-motion: no-preference) {
+  .env-segment {
+    transition-property: background-color, color, border-color, transform;
+    transition-duration: var(--env-motion-duration-fast);
+    transition-timing-function: var(--env-motion-ease);
+  }
+  .env-segment:active:not([data-disabled]) {
+    transform: scale(0.97);
+  }
+}
+
+/* Forced colors: the system paints no fills or shadows, so the chosen segment takes the system’s
+   selection colors. */
+@media (forced-colors: active) {
+  .env-segment[data-checked] {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+  .env-segment[data-checked] :where(*) {
+    color: inherit;
+  }
+  .env-segment[data-disabled] {
+    color: GrayText;
   }
 }

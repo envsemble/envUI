@@ -4,12 +4,12 @@ import { TokenValue } from './TokenValue';
 import { Example } from '../Example';
 
 const textVariants = [
-  ['Display', 'display', '--color-text-primary', '1.75–2.75 rem · 500'],
-  ['Page heading', 'page-heading', '--color-text-primary', '1.125 rem · 500'],
-  ['Section heading', 'section-heading', '--color-text-primary', '1 rem · 500'],
-  ['Body text', 'body', '--color-text-primary', '0.9375 rem · 400'],
-  ['Supporting text', 'supporting', '--color-text-muted', '0.875 rem · 400'],
-  ['Caption', 'caption', '--color-text-quiet', '0.875 rem · 400'],
+  ['Display', 'display', '--env-color-fg-default', '1.75–2.75 rem · 500'],
+  ['Page heading', 'page-heading', '--env-color-fg-default', '1.125 rem · 500'],
+  ['Section heading', 'section-heading', '--env-color-fg-default', '1 rem · 500'],
+  ['Body text', 'body', '--env-color-fg-default', '0.9375 rem · 400'],
+  ['Supporting text', 'supporting', '--env-color-fg-muted', '0.875 rem · 400'],
+  ['Caption', 'caption', '--env-color-fg-muted', '0.875 rem · 400'],
 ] as const;
 
 function TextSpecimen({ sample, children }: { sample: ReactNode; children: ReactNode }) {
