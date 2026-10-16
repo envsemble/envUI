@@ -1,4 +1,25 @@
-# Alerts
+---
+title: Alert
+summary: Inline banners for page- or section-level messages in four tones.
+status: beta
+since: 0.5.0
+category: Feedback & overlays
+aliases:
+  - Notice
+  - banner
+  - callout
+  - inline message
+  - inline notification
+related:
+  - toast
+  - empty-state
+  - badge
+  - colors
+components:
+  - Alert
+---
+
+# Alert
 
 ## React usage
 
@@ -51,7 +72,7 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Toasts](../components/toasts.md)
-- [Empty states](../components/empty-state.md)
-- [Badges & counters](../components/badges.md)
+- [Toast](../components/toast.md)
+- [EmptyState](../components/empty-state.md)
+- [Badge](../components/badge.md)
 - [Colors & themes](../foundations/colors.md)

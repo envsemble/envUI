@@ -8,7 +8,9 @@ import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import * as Menu from './Menu.js';
 
 export interface OrganizationSwitcherOrganization {
+  /** Identifies the organization; onSelect receives it. */
   id: string;
+  /** The organization's name, on the trigger while it is active and in the menu. */
   name: string;
   /** A short muted note after the name, such as the person's role in the organization. */
   detail?: string;
@@ -19,7 +21,10 @@ export interface OrganizationSwitcherProps {
   organizations: readonly OrganizationSwitcherOrganization[];
   /** The active organization, or null before one is chosen. */
   currentOrganizationId: string | null;
-  /** Called with the chosen organization; the application switches and reports progress. */
+  /**
+   * Called with the id of the organization chosen, unless it is the active one; the application
+   * switches and reports progress.
+   */
   onSelect: (organizationId: string) => void;
   /** Offers creating an organization at the end of the menu, or as the only action without organizations. */
   onCreate?: () => void;
@@ -29,10 +34,14 @@ export interface OrganizationSwitcherProps {
   createLabel?: string;
   /** Trigger text while no organization is active. */
   placeholder?: string;
-  /** Prevents opening, for example while a switch is in progress. */
+  /**
+   * Prevents opening, for example while a switch is in progress.
+   * @default false
+   */
   disabled?: boolean;
   /** Accessible name of the menu. */
   'aria-label'?: string;
+  /** Class of the trigger button, or of the create button without organizations. */
   className?: string;
 }
 

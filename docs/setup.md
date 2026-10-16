@@ -1,3 +1,9 @@
+---
+components:
+  - LinkProvider
+  - createThemeBootstrapScript
+---
+
 # Install the private package
 
 Requires React and React DOM 19. Select the intended envUI release and use the documentation shipped with that version.

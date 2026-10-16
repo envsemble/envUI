@@ -6,7 +6,7 @@ import { readFile, writeFile, mkdir, mkdtemp, rm, lstat, readdir } from 'node:fs
 import { dirname, join, resolve, relative, isAbsolute, delimiter } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
-import { readDocumentation } from '../scripts/GenerateDocumentation.mjs';
+import { compileDocumentation } from '../scripts/GenerateDocumentation.mjs';
 
 const repository = fileURLToPath(new URL('../', import.meta.url));
 const cacheDirectory = join(repository, '.cache');
@@ -819,17 +819,27 @@ test('packed skills locate separate versioned documentation and match the releas
       );
     }
   }
-  const packagedDocumentation = readDocumentation(join(installedDirectory, 'docs'));
-  assert.deepEqual(packagedDocumentation, readDocumentation());
-  assert.ok(packagedDocumentation.some((document) => document.path === 'components/dialogs.md'));
-  assert.ok(packagedDocumentation.some((document) => document.path === 'components/rich-text.md'));
-  for (const { path } of packagedDocumentation) {
+  // The package ships the compiled pages: examples and generated props filled in, the example
+  // sources beside them, and the props of every export as JSON.
+  const compiled = compileDocumentation();
+  assert.ok(compiled.has('components/dialog.md'));
+  assert.ok(compiled.has('components/rich-text.md'));
+  assert.ok([...compiled.keys()].some((path) => path.startsWith('examples/')));
+  for (const [path, contents] of compiled) {
     assert.equal(
       await readFile(join(installedDirectory, 'docs', path), 'utf8'),
-      await readFile(join(repository, 'docs', path), 'utf8'),
+      contents,
       `Packaged documentation differs from its release source: ${path}`,
     );
   }
+  const button = await readFile(join(installedDirectory, 'docs/components/button.md'), 'utf8');
+  assert.match(button, /^---\ntitle: Button\n/);
+  assert.match(button, /\n## Props\n\n### Button\n/);
+  assert.match(button, /```tsx example=\w+\nimport /);
+  assert.deepEqual(
+    JSON.parse(await readFile(join(installedDirectory, 'docs/generated/props.json'), 'utf8')),
+    JSON.parse(await readFile(join(repository, 'docs/generated/props.json'), 'utf8')),
+  );
 });
 
 test('a small independent bundle excludes unused icons and Base UI', async function () {

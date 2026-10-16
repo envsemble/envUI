@@ -37,6 +37,8 @@ jobs:
         run: npm run icons:check
       - name: Check generated tokens
         run: npm run tokens:check
+      - name: Check generated props
+        run: npm run docs:check
       - name: Lint scripts and components
         run: npm run lint
       - name: Lint styles

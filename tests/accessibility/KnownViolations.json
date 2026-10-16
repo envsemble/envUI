@@ -91,7 +91,7 @@
       }
     }
   },
-  "components/badges/usage": {
+  "components/badge/usage": {
     "dark": {
       "color-contrast": {
         "article :: div.env-code-block span": 5
@@ -115,24 +115,6 @@
       }
     }
   },
-  "components/buttons/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 14
-      },
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 116
-      },
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
-      }
-    }
-  },
   "components/calendar-heatmap/usage": {
     "light": {
       "color-contrast": {
@@ -140,7 +122,7 @@
       }
     }
   },
-  "components/cards/usage": {
+  "components/card/usage": {
     "dark": {
       "color-contrast": {
         "article :: div.env-code-block span": 6
@@ -279,15 +261,15 @@
       }
     }
   },
-  "components/dialogs/usage": {
+  "components/dialog/guidelines": {
     "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 4
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
       }
     },
     "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 23
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
       }
     }
   },
@@ -389,7 +371,7 @@
       }
     }
   },
-  "components/keyboard/usage": {
+  "components/kbd/usage": {
     "dark": {
       "color-contrast": {
         "article :: div.env-code-block span": 4
@@ -398,18 +380,6 @@
     "light": {
       "color-contrast": {
         "article :: div.env-code-block span": 6
-      }
-    }
-  },
-  "components/layout/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 7
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 17
       }
     }
   },
@@ -425,18 +395,6 @@
       }
     }
   },
-  "components/loading/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 4
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 33
-      }
-    }
-  },
   "components/markdown/usage": {
     "dark": {
       "color-contrast": {
@@ -449,24 +407,6 @@
     "light": {
       "color-contrast": {
         "article :: div.env-code-block span": 100
-      },
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
-      }
-    }
-  },
-  "components/menu/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 17
-      },
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 144
       },
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
@@ -497,7 +437,7 @@
       }
     }
   },
-  "components/messages/usage": {
+  "components/message/usage": {
     "dark": {
       "color-contrast": {
         "article :: div.env-code-block span": 1
@@ -509,10 +449,10 @@
       }
     }
   },
-  "components/meters/usage": {
+  "components/meter/usage": {
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 19
+        "article :: div.env-code-block span": 8
       }
     }
   },
@@ -599,6 +539,13 @@
       }
     }
   },
+  "components/progress/usage": {
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 12
+      }
+    }
+  },
   "components/radio/usage": {
     "light": {
       "color-contrast": {
@@ -676,6 +623,18 @@
       }
     }
   },
+  "components/skeleton/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 18
+      }
+    }
+  },
   "components/slider/usage": {
     "dark": {
       "color-contrast": {
@@ -688,7 +647,31 @@
       }
     }
   },
-  "components/stats/usage": {
+  "components/spinner/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 3
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 11
+      }
+    }
+  },
+  "components/stack/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 7
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 17
+      }
+    }
+  },
+  "components/stat/usage": {
     "light": {
       "color-contrast": {
         "article :: div.env-code-block span": 34
@@ -714,15 +697,15 @@
       }
     }
   },
-  "components/tables/usage": {
+  "components/table/guidelines": {
     "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 12
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
       }
     },
     "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 187
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
       }
     }
   },
@@ -738,36 +721,33 @@
       }
     }
   },
-  "components/text-field/preview": {
+  "components/text-field/guidelines": {
     "dark": {
       "target-size": {
-        "States & validation :: button.env-textarea-resize-edge": 3,
-        "Textarea appearance & sizing :: button.env-textarea-resize-edge": 1
+        "Appearances :: button.env-textarea-resize-edge": 1,
+        "Textarea states :: button.env-textarea-resize-edge": 3
       }
     },
     "light": {
       "target-size": {
-        "States & validation :: button.env-textarea-resize-edge": 3,
-        "Textarea appearance & sizing :: button.env-textarea-resize-edge": 1
+        "Appearances :: button.env-textarea-resize-edge": 1,
+        "Textarea states :: button.env-textarea-resize-edge": 3
       }
     }
   },
-  "components/text-field/usage": {
+  "components/text-field/overview": {
     "dark": {
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
+      "target-size": {
+        "article :: button.env-textarea-resize-edge": 1
       }
     },
     "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 79
-      },
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
+      "target-size": {
+        "article :: button.env-textarea-resize-edge": 1
       }
     }
   },
-  "components/toasts/usage": {
+  "components/toast/usage": {
     "dark": {
       "color-contrast": {
         "article :: div.env-code-block span": 2
@@ -922,12 +902,12 @@
   "overview/components": {
     "dark": {
       "label-content-name-mismatch": {
-        "main :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 53
+        "main :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 56
       }
     },
     "light": {
       "label-content-name-mismatch": {
-        "main :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 53
+        "main :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 56
       }
     }
   },

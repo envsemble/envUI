@@ -3,7 +3,7 @@ import { Text, EnvUILogo, NavList, Stack, Link } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Category } from '@envsemble/envui/icons/Category';
 import { references, foundations, componentGroups } from '../Reference';
-import type { ReferencePage } from './DocumentationRoutes';
+import { pageHref, referencePages, type ReferencePage } from './DocumentationRoutes';
 import { foundationIcons, getComponentIcon } from './TopicIcons';
 
 export function Sidebar({
@@ -78,7 +78,7 @@ export function Sidebar({
                   <NavList.Item
                     key={item.id}
                     size="compact"
-                    href={`#/components/${item.id}/preview`}
+                    href={pageHref(referencePages.find((entry) => entry.reference === item)!)}
                     selected={reference?.id === item.id}
                     icon={<Icon />}
                   >

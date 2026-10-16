@@ -1,7 +1,12 @@
 import { Pager } from '@envsemble/envui';
 import { ArrowBack } from '@envsemble/envui/icons/ArrowBack';
 import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
-import { documentationPages, type ReferenceView } from './DocumentationRoutes';
+import {
+  documentationPages,
+  findReferencePage,
+  viewFor,
+  type ReferenceView,
+} from './DocumentationRoutes';
 
 export function PageNavigation({ path, view }: { path: string; view: ReferenceView }) {
   const index = documentationPages.findIndex((page) => page.path === path);
@@ -10,8 +15,8 @@ export function PageNavigation({ path, view }: { path: string; view: ReferenceVi
   const next = documentationPages[index + 1];
   const destination = (path: string) =>
     path === 'overview'
-      ? `overview/${view === 'usage' ? 'get-started' : 'components'}`
-      : `${path}/${view}`;
+      ? `overview/${view === 'usage' || view === 'guidelines' ? 'get-started' : 'components'}`
+      : `${path}/${viewFor(findReferencePage(path)!.reference, view)}`;
   return (
     <Pager.Root
       className="docs-page-navigation"

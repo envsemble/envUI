@@ -1,4 +1,24 @@
-# Drop zones
+---
+title: DropZone
+summary: Drop files or choose them in the file picker; the application shows what was chosen.
+status: beta
+since: 0.5.0
+category: Forms & selection
+aliases:
+  - FileDropzone
+  - file upload
+  - file input
+  - dropzone
+  - uploader
+related:
+  - text-field
+  - button
+  - loading
+components:
+  - DropZone
+---
+
+# DropZone
 
 ## React usage
 
@@ -93,6 +113,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Text fields](../components/text-field.md)
-- [Buttons](../components/buttons.md)
-- [Loading](../components/loading.md)
+- [TextField](../components/text-field.md)
+- [Button](../components/button.md)
+- [Loading](../patterns/loading.md)

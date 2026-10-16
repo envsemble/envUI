@@ -1,4 +1,22 @@
-# Tooltips
+---
+title: Tooltip
+summary: Short hints on hover and keyboard focus.
+status: beta
+since: 0.2.0
+category: Feedback & overlays
+aliases:
+  - hint
+  - tip
+  - title attribute
+related:
+  - button
+  - menu
+  - accessibility
+components:
+  - Tooltip
+---
+
+# Tooltip
 
 ## React usage
 
@@ -35,6 +53,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Buttons](../components/buttons.md)
-- [Menus](../components/menu.md)
+- [Button](../components/button.md)
+- [Menu](../components/menu.md)
 - [Accessibility](../foundations/accessibility.md)

@@ -1,4 +1,25 @@
-# Color picker
+---
+title: ColorPicker
+summary: A color area, hue slider and HEX field for opaque colors, and a color swatch for the button
+  that opens it.
+status: beta
+since: 0.1.0
+category: Forms & selection
+aliases:
+  - colour picker
+  - color input
+  - color swatch
+  - hex color
+related:
+  - text-field
+  - colors
+  - accessibility
+components:
+  - ColorPicker
+  - ColorSwatch
+---
+
+# ColorPicker
 
 ## React usage
 
@@ -60,6 +81,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Text fields](../components/text-field.md)
+- [TextField](../components/text-field.md)
 - [Colors & themes](../foundations/colors.md)
 - [Accessibility](../foundations/accessibility.md)

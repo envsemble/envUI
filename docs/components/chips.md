@@ -1,4 +1,24 @@
-# Info chips
+---
+title: InfoChip
+summary: Read-only metadata beside related content.
+status: beta
+since: 0.1.0
+category: Content & guidance
+aliases:
+  - info chip
+  - chip
+  - tag
+  - metadata
+related:
+  - card
+  - typography
+  - disclosure
+  - badge
+components:
+  - InfoChip
+---
+
+# InfoChip
 
 ## React usage
 
@@ -26,7 +46,7 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Cards](../components/cards.md)
+- [Card](../components/card.md)
 - [Typography](../foundations/typography.md)
-- [Disclosures](../components/disclosure.md)
-- [Badges & counters](../components/badges.md)
+- [Disclosure](../components/disclosure.md)
+- [Badge](../components/badge.md)

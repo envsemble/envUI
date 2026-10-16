@@ -1,4 +1,22 @@
-# Hover cards
+---
+title: HoverCard
+summary: Supplementary details beside a link on hover and keyboard focus, like a link preview.
+status: beta
+since: 0.6.0
+category: Feedback & overlays
+aliases:
+  - PreviewCard
+  - preview card
+  - link preview
+related:
+  - popover
+  - tooltip
+  - accessibility
+components:
+  - HoverCard
+---
+
+# HoverCard
 
 ## React usage
 
@@ -39,6 +57,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Popovers](../components/popover.md)
-- [Tooltips](../components/tooltip.md)
+- [Popover](../components/popover.md)
+- [Tooltip](../components/tooltip.md)
 - [Accessibility](../foundations/accessibility.md)

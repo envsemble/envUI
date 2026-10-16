@@ -1,4 +1,24 @@
-# Document tabs
+---
+title: DocumentTabs
+summary: Closable editor-style tabs for open documents.
+status: beta
+since: 0.5.0
+category: Navigation
+aliases:
+  - editor tabs
+  - closable tabs
+  - tab strip
+  - open files
+related:
+  - tabs
+  - tree
+  - app-shell
+  - accessibility
+components:
+  - DocumentTabs
+---
+
+# DocumentTabs
 
 ## React usage
 
@@ -60,5 +80,5 @@ TypeScript declarations provide the complete public API.
 
 - [Tabs](../components/tabs.md)
 - [Tree](../components/tree.md)
-- [Application shell](../components/app-shell.md)
+- [AppShell](../components/app-shell.md)
 - [Accessibility](../foundations/accessibility.md)

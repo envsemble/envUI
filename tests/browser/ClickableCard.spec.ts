@@ -40,7 +40,7 @@ test('cards provide native keyboard activation, focus and disabled behavior in b
 test('overview cards are single named links, including their padding', async ({ page }) => {
   await page.goto(`${catalogueUrl}/#/overview`);
   const catalogue = page.locator('.docs-catalogue-grid');
-  const card = catalogue.getByRole('link', { name: 'Cards', exact: true });
+  const card = catalogue.getByRole('link', { name: 'Card', exact: true });
   await expect(card).toHaveAccessibleDescription(
     'A content surface with automatic spacing and optional actions.',
   );
@@ -53,5 +53,5 @@ test('overview cards are single named links, including their padding', async ({ 
     );
   }
   await card.click({ position: { x: (await card.boundingBox())!.width / 2, y: 8 } });
-  await expect(page).toHaveURL(/#\/components\/cards\/preview$/);
+  await expect(page).toHaveURL(/#\/components\/card\/preview$/);
 });

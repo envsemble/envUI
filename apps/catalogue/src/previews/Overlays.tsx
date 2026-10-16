@@ -1,16 +1,13 @@
 import { useRef, useState } from 'react';
 import {
   Avatar,
-  AvatarButton,
   AvatarGroup,
   Button,
-  ContextMenu,
   IconButton,
   Kbd,
   Meter,
   Menu,
   Menubar,
-  OrganizationSwitcher,
   Progress,
   Stack,
   Surface,
@@ -19,17 +16,10 @@ import {
   Tooltip,
 } from '@envsemble/envui';
 import { Refresh } from '@envsemble/envui/icons/Refresh';
-import { ManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
-import { Logout } from '@envsemble/envui/icons/Logout';
 import { Settings } from '@envsemble/envui/icons/Settings';
-import { Add } from '@envsemble/envui/icons/Add';
-import { Delete } from '@envsemble/envui/icons/Delete';
-import { Edit } from '@envsemble/envui/icons/Edit';
-import { OpenInNew } from '@envsemble/envui/icons/OpenInNew';
 import { History } from '@envsemble/envui/icons/History';
 import { NoteAdd } from '@envsemble/envui/icons/NoteAdd';
 import { Save } from '@envsemble/envui/icons/Save';
-import { DriveFileMove } from '@envsemble/envui/icons/DriveFileMove';
 import { ContentCut } from '@envsemble/envui/icons/ContentCut';
 import { ContentCopy } from '@envsemble/envui/icons/ContentCopy';
 import { ContentPaste } from '@envsemble/envui/icons/ContentPaste';
@@ -40,298 +30,9 @@ import { ZoomOut } from '@envsemble/envui/icons/ZoomOut';
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
 
-const sampleOrganizations = [
-  { id: 'northwind', name: 'Northwind Labs', detail: 'Admin' },
-  { id: 'contoso', name: 'Contoso', detail: 'Member' },
-  { id: 'fabrikam', name: 'Fabrikam Research and Development', detail: 'Member' },
-];
-
-export function MenuPreview() {
-  const [lastAction, setLastAction] = useState('');
-  const [organizationId, setOrganizationId] = useState('northwind');
-  return (
-    <Preview>
-      <Example
-        title="Organization switcher"
-        size="collection"
-        caption="Sits in the shell's context area. Choosing an organization calls onSelect; the application switches and reports progress."
-      >
-        <SpecimenGrid>
-          <Specimen title="Active organization">
-            <div className="docs-organization-slot">
-              <OrganizationSwitcher
-                organizations={sampleOrganizations}
-                currentOrganizationId={organizationId}
-                onSelect={(id) => {
-                  setOrganizationId(id);
-                  setLastAction(
-                    `Switched to ${sampleOrganizations.find((item) => item.id === id)?.name}`,
-                  );
-                }}
-                onCreate={() => setLastAction('Create organization opened')}
-              />
-            </div>
-          </Specimen>
-          <Specimen title="No organization yet">
-            <div className="docs-organization-slot">
-              <OrganizationSwitcher
-                organizations={[]}
-                currentOrganizationId={null}
-                onSelect={() => undefined}
-                onCreate={() => setLastAction('Create organization opened')}
-              />
-            </div>
-          </Specimen>
-        </SpecimenGrid>
-      </Example>
-      <Example
-        title="Account menu"
-        size="collection"
-        caption="Opens from the avatar at the end of the topbar: who is signed in, account destinations and signing out. Compact density suits dense desktop applications."
-      >
-        <SpecimenGrid>
-          <Specimen title="Standard">
-            <AccountMenu label="Account" onAction={setLastAction} />
-          </Specimen>
-          <Specimen title="Compact">
-            <AccountMenu label="Compact account" density="compact" onAction={setLastAction} />
-          </Specimen>
-        </SpecimenGrid>
-        <Text variant="caption" className="docs-caption" aria-live="polite">
-          {lastAction}
-        </Text>
-      </Example>
-      <MenuPartsExample />
-      <CompactMenusExample />
-    </Preview>
-  );
-}
-
-function AccountMenu({
-  label,
-  density,
-  onAction,
-}: {
-  label: string;
-  density?: 'compact';
-  onAction: (action: string) => void;
-}) {
-  return (
-    <Menu.Root
-      aria-label={label}
-      density={density}
-      trigger={
-        <AvatarButton
-          name="Alex Morgan"
-          detail="alex@example.com"
-          aria-label={`Open ${label.toLowerCase()} menu`}
-        />
-      }
-      align="start"
-    >
-      <Menu.Header>
-        <Stack gap={1} align="center">
-          <Avatar name="Alex Morgan" size={density ? 'standard' : 'large'} />
-          <Text>Alex Morgan</Text>
-          <Text variant="supporting">alex@example.com</Text>
-        </Stack>
-      </Menu.Header>
-      <Menu.Item href="#/account" icon={<ManageAccounts />}>
-        Account settings
-      </Menu.Item>
-      <Menu.Item icon={<Settings />} onClick={() => onAction('Preferences opened')}>
-        Preferences
-      </Menu.Item>
-      <Menu.Separator />
-      <Menu.Item icon={<Logout />} onClick={() => onAction('Signed out')}>
-        Sign out
-      </Menu.Item>
-    </Menu.Root>
-  );
-}
-
-const sampleItems = ['Quarterly report', 'Meeting notes', 'Budget'];
-
-/** Other menus are the application's: the parts, from a button or at the pointer. */
-function MenuPartsExample() {
-  const [lastAction, setLastAction] = useState('');
-  const [sort, setSort] = useState('name');
-  const [hidden, setHidden] = useState(false);
-  return (
-    <Example
-      title="Building blocks"
-      size="collection"
-      caption={
-        <>
-          Every other menu is the application&rsquo;s own, built from these parts in either density.
-          Radio items check one choice; checkbox items toggle and keep the menu open. Shortcuts show
-          as keys the application already handles. Right-click an item, or focus it and press{' '}
-          <Kbd keys={['Shift', 'F10']} />, to open a menu at the pointer.
-        </>
-      }
-    >
-      <SpecimenGrid>
-        <Specimen title="Groups and choices, from a button">
-          <Menu.Root
-            aria-label="Sample options"
-            trigger={<Button variant="secondary">Options</Button>}
-            align="start"
-          >
-            <Menu.RadioGroup label="Sort by" value={sort} onValueChange={setSort}>
-              <Menu.RadioItem value="name">Name</Menu.RadioItem>
-              <Menu.RadioItem value="date" description="Most recently changed first">
-                Date changed
-              </Menu.RadioItem>
-            </Menu.RadioGroup>
-            <Menu.Group label="Display">
-              <Menu.CheckboxItem checked={hidden} onCheckedChange={setHidden}>
-                Show hidden items
-              </Menu.CheckboxItem>
-              <Menu.Item
-                icon={<Refresh />}
-                shortcut="F5"
-                onClick={() => setLastAction('Refreshed')}
-              >
-                Refresh
-              </Menu.Item>
-            </Menu.Group>
-          </Menu.Root>
-        </Specimen>
-        <Specimen title="Compact, at the pointer">
-          <ContextMenu
-            aria-label="Sample item actions"
-            density="compact"
-            content={(target) => {
-              const name = target?.closest<HTMLElement>('[data-item]')?.dataset.item;
-              return name ? (
-                <>
-                  <Menu.Item icon={<OpenInNew />} onClick={() => setLastAction(`Opened ${name}`)}>
-                    Open
-                  </Menu.Item>
-                  <Menu.Item
-                    icon={<Edit />}
-                    shortcut="F2"
-                    onClick={() => setLastAction(`Rename ${name}`)}
-                  >
-                    Rename
-                  </Menu.Item>
-                  <Menu.Submenu label="Move to" icon={<DriveFileMove />}>
-                    {['Archive', 'Drafts', 'Shared'].map((folder) => (
-                      <Menu.Item
-                        key={folder}
-                        onClick={() => setLastAction(`Moved ${name} to ${folder}`)}
-                      >
-                        {folder}
-                      </Menu.Item>
-                    ))}
-                  </Menu.Submenu>
-                  <Menu.Separator />
-                  <Menu.Item icon={<Delete />} onClick={() => setLastAction(`Deleted ${name}`)}>
-                    Delete
-                  </Menu.Item>
-                </>
-              ) : (
-                <Menu.Item icon={<Add />} onClick={() => setLastAction('New item started')}>
-                  New item
-                </Menu.Item>
-              );
-            }}
-          >
-            <Surface tone="row" padding={4} className="docs-context-area">
-              {sampleItems.map((name) => (
-                <Button key={name} variant="text" data-item={name}>
-                  {name}
-                </Button>
-              ))}
-            </Surface>
-          </ContextMenu>
-        </Specimen>
-      </SpecimenGrid>
-      <Text variant="caption" className="docs-caption" aria-live="polite">
-        {lastAction}
-      </Text>
-    </Example>
-  );
-}
-
 const recentDocuments = ['Quarterly report', 'Meeting notes', 'Budget'];
 
 /** Compact menus for dense desktop surfaces, with shortcuts, choices and submenus. */
-function CompactMenusExample() {
-  const [lastAction, setLastAction] = useState('');
-  const [wordWrap, setWordWrap] = useState(true);
-  const [theme, setTheme] = useState('system');
-  const [recentLoads, setRecentLoads] = useState(0);
-  return (
-    <Example
-      title="Compact menus and submenus"
-      size="collection"
-      caption={
-        <>
-          The desktop dropdown for dense surfaces: labels line up, shortcuts show as small keys, and
-          a submenu opens beside its row on hover or with <Kbd>→</Kbd>. Here Open recent counts how
-          often it loads its items as it opens: {recentLoads}.
-        </>
-      }
-    >
-      <SpecimenGrid>
-        <Specimen title="From a button">
-          <Menu.Root
-            aria-label="Document"
-            density="compact"
-            align="start"
-            trigger={<Button variant="secondary">Document</Button>}
-          >
-            <Menu.Item
-              icon={<NoteAdd />}
-              shortcut="Ctrl+N"
-              onClick={() => setLastAction('New document')}
-            >
-              New document
-            </Menu.Item>
-            <Menu.Submenu
-              label="Open recent"
-              icon={<History />}
-              onOpenChange={(open) => {
-                if (open) setRecentLoads((count) => count + 1);
-              }}
-            >
-              {recentDocuments.map((name) => (
-                <Menu.Item key={name} onClick={() => setLastAction(`Opened ${name}`)}>
-                  {name}
-                </Menu.Item>
-              ))}
-              <Menu.Separator />
-              <Menu.Item onClick={() => setLastAction('Cleared recent documents')}>
-                Clear recent
-              </Menu.Item>
-            </Menu.Submenu>
-            <Menu.Item icon={<Save />} shortcut="Ctrl+S" onClick={() => setLastAction('Saved')}>
-              Save
-            </Menu.Item>
-            <Menu.Separator />
-            <Menu.Group label="View">
-              <Menu.CheckboxItem checked={wordWrap} onCheckedChange={setWordWrap} shortcut="Alt+Z">
-                Word wrap
-              </Menu.CheckboxItem>
-              <Menu.Submenu label="Theme">
-                <Menu.RadioGroup value={theme} onValueChange={setTheme}>
-                  <Menu.RadioItem value="light">Light</Menu.RadioItem>
-                  <Menu.RadioItem value="dark">Dark</Menu.RadioItem>
-                  <Menu.RadioItem value="system">System</Menu.RadioItem>
-                </Menu.RadioGroup>
-              </Menu.Submenu>
-            </Menu.Group>
-          </Menu.Root>
-        </Specimen>
-      </SpecimenGrid>
-      <Text variant="caption" className="docs-caption" aria-live="polite">
-        {lastAction}
-      </Text>
-    </Example>
-  );
-}
-
 const sampleNote =
   'Quarterly report\n\nRevenue grew in every region. Select some text, then use Edit to cut, copy or select all of it.';
 
@@ -599,15 +300,26 @@ export function AvatarPreview() {
   );
 }
 
-export function MetersPreview() {
+export function MeterPreview() {
   return (
     <Preview>
-      <Example title="Meters & progress" size="collection">
+      <Example title="Meter" size="collection">
         <SpecimenGrid>
-          <Specimen title="Meter">
+          <Specimen title="A quantity in a range">
             <Meter label="Seats assigned" value={2} max={5} valueText="2 of 5" />
           </Specimen>
-          <Specimen title="Progress">
+        </SpecimenGrid>
+      </Example>
+    </Preview>
+  );
+}
+
+export function ProgressPreview() {
+  return (
+    <Preview>
+      <Example title="Progress" size="collection">
+        <SpecimenGrid>
+          <Specimen title="Known amount">
             <Progress label="Uploading" value={40} valueText="40%" />
           </Specimen>
           <Specimen title="Indeterminate">

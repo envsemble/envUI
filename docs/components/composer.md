@@ -1,3 +1,24 @@
+---
+title: Composer
+summary: The message field of a conversation, with a send button that stops a running reply.
+status: beta
+since: 0.5.0
+category: Forms & selection
+aliases:
+  - ChatInput
+  - PromptInput
+  - chat input
+  - prompt input
+  - message input
+related:
+  - message
+  - text-field
+  - button
+  - accessibility
+components:
+  - Composer
+---
+
 # Composer
 
 ## React usage
@@ -55,7 +76,7 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Messages](../components/messages.md)
-- [Text fields](../components/text-field.md)
-- [Buttons](../components/buttons.md)
+- [Message](../components/message.md)
+- [TextField](../components/text-field.md)
+- [Button](../components/button.md)
 - [Accessibility](../foundations/accessibility.md)

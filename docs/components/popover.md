@@ -1,4 +1,23 @@
-# Popovers
+---
+title: Popover
+summary: A floating panel for details or a small form beside its trigger.
+status: beta
+since: 0.5.0
+category: Feedback & overlays
+aliases:
+  - popup
+  - flyout
+  - overlay
+related:
+  - tooltip
+  - hover-card
+  - menu
+  - dialog
+components:
+  - Popover
+---
+
+# Popover
 
 ## React usage
 
@@ -45,7 +64,7 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Tooltips](../components/tooltip.md)
-- [Hover cards](../components/hover-card.md)
-- [Menus](../components/menu.md)
-- [Dialogs](../components/dialogs.md)
+- [Tooltip](../components/tooltip.md)
+- [HoverCard](../components/hover-card.md)
+- [Menu](../components/menu.md)
+- [Dialog](../components/dialog.md)

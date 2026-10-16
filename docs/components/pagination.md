@@ -1,3 +1,22 @@
+---
+title: Pagination
+summary: The range of items shown with previous and next page buttons, compact enough for a toolbar.
+status: beta
+since: 0.6.0
+category: Navigation
+aliases:
+  - paging
+  - page navigation
+  - next page
+  - page range
+related:
+  - table
+  - button
+  - loading
+components:
+  - Pagination
+---
+
 # Pagination
 
 ## React usage
@@ -54,6 +73,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Tables](../components/tables.md)
-- [Buttons](../components/buttons.md)
-- [Loading](../components/loading.md)
+- [Table](../components/table.md)
+- [Button](../components/button.md)
+- [Loading](../patterns/loading.md)

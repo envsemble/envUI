@@ -1,3 +1,8 @@
+---
+components:
+  - Text
+---
+
 # Typography
 
 ## React usage
@@ -43,5 +48,5 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Colors & themes](../foundations/colors.md)
-- [Stacks & action groups](../components/layout.md)
-- [Cards](../components/cards.md)
+- [Stack](../components/stack.md)
+- [Card](../components/card.md)

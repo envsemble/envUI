@@ -1,4 +1,27 @@
-# Lists
+---
+title: List
+summary: Group related items with shared outer corners.
+status: beta
+since: 0.1.0
+category: Layout & surfaces
+aliases:
+  - GroupedRows
+  - Row
+  - ConnectedRows
+  - grouped list
+  - list item
+  - rows
+related:
+  - surface
+  - card
+  - radio
+  - select
+  - spacing
+components:
+  - List
+---
+
+# List
 
 ## React usage
 
@@ -65,7 +88,7 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Surface](../components/surface.md)
-- [Cards](../components/cards.md)
-- [Radio groups](../components/radio.md)
-- [Selects](../components/select.md)
+- [Card](../components/card.md)
+- [Radio](../components/radio.md)
+- [Select](../components/select.md)
 - [Spacing & shape](../foundations/spacing.md)

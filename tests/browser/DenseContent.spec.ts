@@ -16,30 +16,42 @@ function panelDisplays(page: Page, list: string) {
 
 test('a compact menu has shorter rows on a raised popup than a standard menu', async ({ page }) => {
   await page.goto(`${catalogueUrl}/#/components/menu/preview`);
-  await page.getByRole('button', { name: 'Open account menu' }).click();
+  // The account menu of the overview is standard; the compact density example is compact.
+  await page
+    .getByRole('group', { name: 'Menu example' })
+    .getByRole('button', { name: 'Open account menu' })
+    .click();
   const standard = page.getByRole('menu', { name: 'Account', exact: true });
-  const standardRow = await standard.getByRole('menuitem', { name: 'Preferences' }).boundingBox();
+  await expect(standard).not.toHaveAttribute('data-density');
+  await expect(standard).not.toHaveAttribute('data-starting-style');
+  // Rows reach their size once the popup has grown in.
+  const standardRow = standard.getByRole('menuitem', { name: 'Preferences' });
+  await expect
+    .poll(async () => Math.round((await standardRow.boundingBox())!.height))
+    .toBeGreaterThanOrEqual(48);
+  const standardHeight = (await standardRow.boundingBox())!.height;
   await page.keyboard.press('Escape');
-  await page.getByRole('button', { name: 'Open compact account menu' }).click();
-  const compact = page.getByRole('menu', { name: 'Compact account' });
+  await expect(standard).toBeHidden();
+  await page
+    .getByRole('group', { name: 'Compact density example' })
+    .getByRole('button', { name: 'Document', exact: true })
+    .click();
+  const compact = page.getByRole('menu', { name: 'Document', exact: true });
   await expect(compact).toHaveAttribute('data-density', 'compact');
   await expect(compact).not.toHaveAttribute('data-starting-style');
-  // Rows reach their size once the popup has grown in.
   await expect
     .poll(async () =>
-      Math.round(
-        (await compact.getByRole('menuitem', { name: 'Preferences' }).boundingBox())!.height,
-      ),
+      Math.round((await compact.getByRole('menuitem', { name: 'Save' }).boundingBox())!.height),
     )
     .toBe(28);
-  expect(28).toBeLessThan(standardRow!.height);
+  expect(28).toBeLessThan(standardHeight);
   expect(
     await compact.evaluate((element) =>
       Number.parseFloat(getComputedStyle(element).borderTopWidth),
     ),
   ).toBeGreaterThan(0);
   await expect(compact.getByRole('separator')).toHaveCount(1);
-  await compact.getByRole('menuitem', { name: 'Preferences' }).click();
+  await compact.getByRole('menuitem', { name: 'Save' }).click();
   await expect(compact).toBeHidden();
 });
 

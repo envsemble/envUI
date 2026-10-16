@@ -186,7 +186,7 @@ test('narrow groups wrap labels and scale their shared corners with text size', 
 });
 
 test('documentation demonstrates connected buttons through the public API', async ({ page }) => {
-  await page.goto(`${catalogueUrl}/#/components/buttons/preview`);
+  await page.goto(`${catalogueUrl}/#/components/button/preview`);
   await expect(page.getByRole('group', { name: 'Project actions' })).toBeVisible();
   await expect(page.getByRole('group', { name: 'Item actions' })).toBeVisible();
   await expect(page.getByRole('group', { name: 'Quick actions' })).toBeVisible();

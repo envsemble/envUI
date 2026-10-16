@@ -1,3 +1,26 @@
+---
+title: Code
+summary: Render inline code, highlighted code blocks and code diffs.
+status: beta
+since: 0.1.0
+category: Content & guidance
+aliases:
+  - code block
+  - syntax highlighting
+  - diff
+  - code diff
+  - snippet
+related:
+  - markdown
+  - typography
+  - accessibility
+components:
+  - Code
+  - CodeBlock
+  - CodeDiff
+  - countDiffLines
+---
+
 # Code
 
 ## React usage

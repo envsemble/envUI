@@ -1,3 +1,23 @@
+---
+title: Pager
+summary: Centered previous and next destinations, together or individually.
+status: beta
+since: 0.1.0
+category: Navigation
+aliases:
+  - DirectionLink
+  - DirectionLinks
+  - previous and next
+  - prev/next
+  - paginator
+related:
+  - nav-list
+  - stack
+  - typography
+components:
+  - Pager
+---
+
 # Pager
 
 ## React usage
@@ -53,6 +73,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Navigation lists](../components/nav-list.md)
-- [Stacks & action groups](../components/layout.md)
+- [NavList](../components/nav-list.md)
+- [Stack](../components/stack.md)
 - [Typography](../foundations/typography.md)

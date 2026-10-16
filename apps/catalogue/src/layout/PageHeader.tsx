@@ -6,6 +6,7 @@ export function PageHeader({
   title,
   breadcrumb,
   description,
+  meta,
   symbol,
   children,
   actions,
@@ -13,6 +14,8 @@ export function PageHeader({
   title: string;
   breadcrumb?: string;
   description?: string;
+  /** Facts about the page under its description, such as a component's status. */
+  meta?: ReactNode;
   symbol?: ReactNode;
   children?: ReactNode;
   actions?: ReactNode;
@@ -37,6 +40,7 @@ export function PageHeader({
                   {description}
                 </Text>
               )}
+              {meta}
             </Stack>
             {actions}
           </div>

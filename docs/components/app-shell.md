@@ -1,4 +1,34 @@
-# Application shell
+---
+title: AppShell
+summary: Topbar, window title bar and collapsible navigation sidebar for a whole application.
+status: beta
+since: 0.3.0
+category: Navigation
+aliases:
+  - AppFrame
+  - frame
+  - sidebar
+  - topbar
+  - header
+  - app bar
+  - shell
+  - window frame
+  - title bar
+related:
+  - nav-list
+  - menu
+  - menubar
+  - colors
+  - setup
+components:
+  - AppShell
+  - AppShellSkeleton
+  - useAppShell
+  - TitleBar
+  - WindowFrame
+---
+
+# AppShell
 
 ## React usage
 
@@ -157,8 +187,8 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Navigation lists](../components/nav-list.md)
-- [Menus](../components/menu.md)
+- [NavList](../components/nav-list.md)
+- [Menu](../components/menu.md)
 - [Menubar](../components/menubar.md)
 - [Colors & themes](../foundations/colors.md)
 - [Install the private package](../setup.md)

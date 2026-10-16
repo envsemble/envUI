@@ -1,3 +1,24 @@
+---
+title: Tree
+summary: A virtualized tree of rows for large hierarchies, such as file trees.
+status: beta
+since: 0.5.0
+category: Navigation
+aliases:
+  - TreeView
+  - tree view
+  - file tree
+  - outline
+  - hierarchy
+related:
+  - app-shell
+  - menu
+  - nav-list
+  - accessibility
+components:
+  - Tree
+---
+
 # Tree
 
 ## React usage
@@ -68,7 +89,7 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Application shell](../components/app-shell.md)
-- [Menus](../components/menu.md)
-- [Navigation lists](../components/nav-list.md)
+- [AppShell](../components/app-shell.md)
+- [Menu](../components/menu.md)
+- [NavList](../components/nav-list.md)
 - [Accessibility](../foundations/accessibility.md)

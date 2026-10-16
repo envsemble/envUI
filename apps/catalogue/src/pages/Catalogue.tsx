@@ -1,6 +1,7 @@
 import { Text, Card, Stack } from '@envsemble/envui';
 import { references, componentGroups } from '../Reference';
 import { getComponentIcon } from '../navigation/TopicIcons';
+import { pageHref, referencePages } from '../navigation/DocumentationRoutes';
 
 export function Catalogue() {
   return (
@@ -18,7 +19,7 @@ export function Catalogue() {
                 return (
                   <Card
                     key={ref.id}
-                    href={`#/components/${ref.id}/preview`}
+                    href={pageHref(referencePages.find((page) => page.reference === ref)!)}
                     aria-labelledby={`catalogue-${ref.id}-title`}
                     aria-describedby={ref.summary ? `catalogue-${ref.id}-description` : undefined}
                   >

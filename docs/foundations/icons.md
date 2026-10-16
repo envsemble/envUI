@@ -1,3 +1,10 @@
+---
+components:
+  - Icon
+  - BrandLogo
+  - EnvUILogo
+---
+
 # Icons & assets
 
 ## React usage
@@ -43,7 +50,7 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Buttons](../components/buttons.md)
-- [Navigation lists](../components/nav-list.md)
+- [Button](../components/button.md)
+- [NavList](../components/nav-list.md)
 - [Tabs](../components/tabs.md)
 - [Accessibility](../foundations/accessibility.md)

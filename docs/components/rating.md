@@ -1,3 +1,20 @@
+---
+title: Rating
+summary: A read-only rating as stars filled in half steps, named once for assistive technology.
+status: beta
+since: 0.7.0
+category: Content & guidance
+aliases:
+  - stars
+  - star rating
+  - score
+related:
+  - badge
+  - stat
+components:
+  - Rating
+---
+
 # Rating
 
 ## React usage
@@ -30,5 +47,5 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Badges & counters](../components/badges.md)
-- [Stats](../components/stats.md)
+- [Badge](../components/badge.md)
+- [Stat](../components/stat.md)

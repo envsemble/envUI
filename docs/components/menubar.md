@@ -1,3 +1,22 @@
+---
+title: Menubar
+summary: An application menubar of compact menus with shortcuts, submenus and access keys.
+status: beta
+since: 0.5.0
+category: Feedback & overlays
+aliases:
+  - menu bar
+  - application menu
+  - MenubarMenu
+related:
+  - menu
+  - app-shell
+  - kbd
+  - accessibility
+components:
+  - Menubar
+---
+
 # Menubar
 
 ## React usage
@@ -77,7 +96,7 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Menus](../components/menu.md)
-- [Application shell](../components/app-shell.md)
-- [Keyboard keys](../components/keyboard.md)
+- [Menu](../components/menu.md)
+- [AppShell](../components/app-shell.md)
+- [Kbd](../components/kbd.md)
 - [Accessibility](../foundations/accessibility.md)

@@ -10,17 +10,28 @@ export interface SearchFieldProps
     TextFieldProps,
     'type' | 'startIcon' | 'endAction' | 'label' | 'value' | 'defaultValue'
   > {
-  /** Accessible name; shown as a floating label when the field is not compact or sets showLabel. */
+  /**
+   * The field's accessible name, such as Search members. It shows as a floating label only when
+   * the field is not compact or sets showLabel; otherwise a placeholder gives the visible guidance.
+   */
   label: string;
+  /** The query of a controlled field; update it from onValueChange. */
   value?: string;
+  /** The query an uncontrolled field starts with. */
   defaultValue?: string;
-  /** Receives the next query, including an empty string when cleared. */
+  /**
+   * Receives the next query as people type, and an empty string when the clear button or Esc
+   * clears it.
+   */
   onValueChange?: (value: string) => void;
-  /** Accessible name of the clear action; defaults to "Clear search". */
+  /** The accessible name and tooltip of the clear button, in the application's language. */
   clearLabel?: string;
 }
 
-/** A search input with a leading icon and a clear action; compact by default to sit beside buttons. */
+/**
+ * A search input with a search icon and, while it has a query, a clear button; Esc also clears.
+ * Compact by default, to sit beside buttons.
+ */
 export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(function SearchField(
   {
     label,

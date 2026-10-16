@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { generateBrandAssets } from './GenerateBrandAssets.mjs';
 import { collectDependencyNotices } from './DependencyNotices.mjs';
-import { generateDocumentation } from './GenerateDocumentation.mjs';
+import { generateDocumentation, packageDocumentation } from './GenerateDocumentation.mjs';
 import { buildTokens } from './BuildTokens.mjs';
 const repositoryRoot = fileURLToPath(new URL('../', import.meta.url));
 const libraryDirectory = resolve(repositoryRoot, 'packages/ui');
@@ -88,8 +88,9 @@ await cp(resolve(repositoryRoot, '.agents/skills'), skillsOutputDirectory, { rec
 const documentationOutputDirectory = resolve(libraryDirectory, 'docs');
 if (relative(libraryDirectory, documentationOutputDirectory) !== 'docs')
   throw new Error('Packaged documentation must remain within packages/ui/docs.');
-await rm(documentationOutputDirectory, { recursive: true, force: true });
-await cp(resolve(repositoryRoot, 'docs'), documentationOutputDirectory, { recursive: true });
+// The packaged pages are compiled: example files and generated props tables are filled in, and
+// the examples ship beside them in docs/examples.
+packageDocumentation(documentationOutputDirectory);
 const readme = await readFile(resolve(repositoryRoot, 'README.md'), 'utf8');
 await writeFile(
   resolve(libraryDirectory, 'README.md'),

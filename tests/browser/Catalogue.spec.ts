@@ -7,7 +7,11 @@ import {
   references,
   foundations as foundationReferences,
 } from '../../apps/catalogue/src/Reference';
-import { normalizeRoute } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
+import {
+  normalizeRoute,
+  referencePages,
+  viewFor,
+} from '../../apps/catalogue/src/navigation/DocumentationRoutes';
 
 const offline = pathToFileURL(resolve('dist/envUI.html')).href;
 const version = JSON.parse(readFileSync('packages/ui/package.json', 'utf8')).version;
@@ -19,8 +23,12 @@ test('the 0.x routes of renamed pages open the pages under their new names', () 
   for (const [from, to] of Object.entries<string>(docs).filter(([key]) => !key.startsWith('$'))) {
     expect(components).toContain(to);
     expect(components).not.toContain(from);
+    const reference = references.find(({ id }) => id === to)!;
+    // A page on the template opens Overview for a Preview link and Guidelines for a Usage link.
     for (const view of ['preview', 'usage'])
-      expect(normalizeRoute(`components/${from}/${view}`)).toBe(`components/${to}/${view}`);
+      expect(normalizeRoute(`components/${from}/${view}`)).toBe(
+        `components/${to}/${viewFor(reference, view)}`,
+      );
   }
 });
 
@@ -116,23 +124,29 @@ test('palette editing uses public controls and remains temporary and independent
   await expect.poll(canvasValue).toBe(initialLight);
 });
 
-test('button link specimens and optional interaction matrices consume public controls', async ({
+test('live examples keep links in place, show their source, and matrices sit in the guidelines', async ({
   page,
 }) => {
-  await page.goto(`${offline}#/components/buttons/preview`);
+  await page.goto(`${offline}#/components/button/overview`);
   const hash = await page.evaluate(() => location.hash);
-  const preview = page.locator('.docs-preview');
-  // Confirm buttons on the page keep their own status regions.
-  const destination = preview.getByRole('status').filter({ hasText: 'Selected destination' });
-  await preview.getByRole('link', { name: 'Read guide', exact: true }).press('Enter');
-  await expect(destination).toHaveText('Selected destination: Guide');
+  // Links in an example keep their semantics without leaving the documentation.
+  const destinations = page.getByRole('group', { name: 'Destinations example', exact: true });
+  await destinations.getByRole('link', { name: 'Read the guide', exact: true }).press('Enter');
   expect(await page.evaluate(() => location.hash)).toBe(hash);
-  await preview
-    .getByRole('link', { name: 'project guide', exact: true })
+  await destinations
+    .getByRole('link', { name: 'Read help', exact: true })
     .click({ modifiers: ['Control'] });
-  await expect(destination).toHaveText('Selected destination: Project guide');
   expect(await page.evaluate(() => location.hash)).toBe(hash);
-  const disclosure = preview.locator('details.env-disclosure');
+  // Every example shows the source of its file, ready to copy.
+  const code = destinations.locator('xpath=following-sibling::details[1]');
+  await code.locator('summary').click();
+  await expect(code.locator('.env-code-block')).toContainText(
+    "import { ActionGroup, Button } from '@envsemble/envui';",
+  );
+  await expect(code.getByRole('button', { name: 'Copy code', exact: true })).toBeVisible();
+  // Catalogue-only specimens, such as the forced interaction states, are in the guidelines.
+  await page.getByRole('tab', { name: 'Guidelines', exact: true }).click();
+  const disclosure = page.locator('.docs-preview details.env-disclosure');
   await disclosure.locator('summary').focus();
   await disclosure.locator('summary').press('Enter');
   await expect(disclosure).toHaveAttribute('open', '');
@@ -258,28 +272,19 @@ test('offline reference loads every view without network or script errors', asyn
   await page.goto(`${offline}#/overview`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI');
   await expect(page.locator('.docs-sidebar-footer')).toContainText(`envUI · ${version}`);
-  for (const id of components) {
-    for (const view of ['preview', 'usage']) {
+  // Every view of every page: Preview and Usage, or the views of a page on the template.
+  for (const { path, views } of referencePages) {
+    for (const view of views) {
       await page.evaluate((hash) => {
         location.hash = hash;
-      }, `/components/${id}/${view}`);
+      }, `/${path}/${view.id}`);
       await expect(
         page.locator('.docs-page-header').getByRole('tab', { selected: true }),
-      ).toHaveText(view[0].toUpperCase() + view.slice(1));
-      if (view === 'preview') await expect(page.locator('.docs-preview')).toHaveCount(1);
+      ).toHaveText(view.title);
+      if (view.id === 'preview') await expect(page.locator('.docs-preview')).toHaveCount(1);
     }
   }
-  for (const id of foundations) {
-    for (const view of ['preview', 'usage']) {
-      await page.evaluate((hash) => {
-        location.hash = hash;
-      }, `/foundations/${id}/${view}`);
-      await expect(
-        page.locator('.docs-page-header').getByRole('tab', { selected: true }),
-      ).toHaveText(view[0].toUpperCase() + view.slice(1));
-      if (view === 'preview') await expect(page.locator('.docs-preview')).toHaveCount(1);
-    }
-  }
+  expect(referencePages.length).toBe(components.length + foundations.length);
   await page.evaluate(() => {
     location.hash = '/getting-started/usage';
   });
@@ -292,16 +297,19 @@ test('offline reference loads every view without network or script errors', asyn
 });
 
 test('single previews retain state when the theme changes', async ({ page }) => {
+  // The 0.x preview of text fields opens the TextField page, whose live examples follow the
+  // documentation's theme.
   await page.goto(`${offline}#/components/input/preview`);
   const preview = page.locator('.docs-preview');
-  const projectName = preview.getByRole('textbox', { name: 'Project name' }).first();
+  const example = page.getByRole('group', { name: 'TextField example', exact: true });
+  const projectName = example.getByRole('textbox', { name: 'Project name', exact: true });
   await projectName.fill('Winter release');
   await page.getByRole('button', { name: 'Switch to dark theme' }).click();
-  await expect(preview).toHaveAttribute('data-env-theme', 'dark');
+  await expect(example).toHaveAttribute('data-env-theme', 'dark');
   await expect(projectName).toHaveValue('Winter release');
   for (const width of [1920, 1440, 960, 390]) {
     await page.setViewportSize({ width, height: 1000 });
-    await expect(preview).toHaveCount(1);
+    await expect(example).toHaveCount(1);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
     );
@@ -319,7 +327,7 @@ test('single previews retain state when the theme changes', async ({ page }) => 
   await expect(mobileNavigation).toHaveCount(0);
   await expect(navigationTrigger).toBeFocused();
   await navigationTrigger.click();
-  await mobileNavigation.getByRole('link', { name: 'Text fields', exact: true }).click();
+  await mobileNavigation.getByRole('link', { name: 'TextField', exact: true }).click();
   await expect(mobileNavigation).toHaveCount(0);
   await expect
     .poll(() =>
@@ -349,7 +357,7 @@ test('single previews retain state when the theme changes', async ({ page }) => 
 
 test('offline hashes support direct links and back/forward navigation', async ({ page }) => {
   await page.goto(`${offline}#/components/select/usage`);
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Selects');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Select');
   await page.getByRole('tab', { name: 'Preview', exact: true }).click();
   await page.getByRole('tab', { name: 'Usage', exact: true }).click();
   await page.goBack();
@@ -413,9 +421,10 @@ test('overview centers its banner and switches between components and setup with
   await expect(page.getByRole('tab', { name: 'Use envUI', selected: true })).toBeVisible();
   await page
     .locator('#documentation')
-    .getByRole('link', { name: 'Text fields', exact: true })
+    .getByRole('link', { name: 'TextField', exact: true })
     .click();
-  await expect(page).toHaveURL(/#\/components\/text-field\/usage$/);
+  // A link to a page on the template opens its overview.
+  await expect(page).toHaveURL(/#\/components\/text-field\/overview$/);
   await page.goto(`${offline}#/overview/get-started`);
   await expect(page.getByRole('heading', { name: 'Install the private package' })).toBeVisible();
   const overviewNext = page

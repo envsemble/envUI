@@ -1,4 +1,25 @@
-# Command palette
+---
+title: CommandPalette
+summary: 'Quick open: search and choose from a ranked list near the top of the window.'
+status: beta
+since: 0.5.0
+category: Feedback & overlays
+aliases:
+  - quick open
+  - command menu
+  - cmdk
+  - spotlight
+  - command bar
+related:
+  - dialog
+  - menu
+  - text-field
+  - accessibility
+components:
+  - CommandPalette
+---
+
+# CommandPalette
 
 ## React usage
 
@@ -64,7 +85,7 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Dialogs](../components/dialogs.md)
-- [Menus](../components/menu.md)
-- [Text fields](../components/text-field.md)
+- [Dialog](../components/dialog.md)
+- [Menu](../components/menu.md)
+- [TextField](../components/text-field.md)
 - [Accessibility](../foundations/accessibility.md)

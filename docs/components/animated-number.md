@@ -1,4 +1,23 @@
-# Animated numbers
+---
+title: AnimatedNumber
+summary: Counts that roll to their new value, so a change is noticed.
+status: beta
+since: 0.4.0
+category: Content & guidance
+aliases:
+  - counter
+  - number flow
+  - rolling number
+  - ticker
+related:
+  - button
+  - typography
+  - accessibility
+components:
+  - AnimatedNumber
+---
+
+# AnimatedNumber
 
 ## React usage
 
@@ -28,6 +47,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Buttons](../components/buttons.md)
+- [Button](../components/button.md)
 - [Typography](../foundations/typography.md)
 - [Accessibility](../foundations/accessibility.md)

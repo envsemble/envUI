@@ -1,4 +1,23 @@
-# Radio groups
+---
+title: Radio
+summary: Choose one option from a visible set.
+status: beta
+since: 0.1.0
+category: Forms & selection
+aliases:
+  - radio button
+  - radio group
+  - option button
+related:
+  - select
+  - checkbox
+  - list
+components:
+  - Radio
+  - RadioGroup
+---
+
+# Radio
 
 ## React usage
 
@@ -28,6 +47,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Selects](../components/select.md)
-- [Checkboxes](../components/checkbox.md)
-- [Lists](../components/list.md)
+- [Select](../components/select.md)
+- [Checkbox](../components/checkbox.md)
+- [List](../components/list.md)

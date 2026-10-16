@@ -1,4 +1,28 @@
-# Date pickers
+---
+title: DatePicker
+summary: Choose a date, or a date and time, from a calendar, which also stands on its own.
+status: beta
+since: 0.6.0
+category: Forms & selection
+aliases:
+  - DateTimeField
+  - DateField
+  - date input
+  - time picker
+  - datetime
+  - calendar
+related:
+  - text-field
+  - popover
+  - combobox
+  - calendar-heatmap
+  - accessibility
+components:
+  - DatePicker
+  - Calendar
+---
+
+# DatePicker
 
 ## DatePicker
 
@@ -94,8 +118,8 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Text fields](../components/text-field.md)
-- [Popovers](../components/popover.md)
-- [Comboboxes](../components/combobox.md)
-- [Calendar heatmap](../components/calendar-heatmap.md)
+- [TextField](../components/text-field.md)
+- [Popover](../components/popover.md)
+- [Combobox](../components/combobox.md)
+- [CalendarHeatmap](../components/calendar-heatmap.md)
 - [Accessibility](../foundations/accessibility.md)

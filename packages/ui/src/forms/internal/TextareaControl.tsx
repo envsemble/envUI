@@ -10,8 +10,18 @@ import { setRef } from '../../internal/setRef.js';
 import { TextareaResizeEdge } from './TextareaResizeEdge.js';
 
 export interface TextareaControlProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
-  /** Scroll and resize from the bottom edge (default), or grow and shrink with content. */
+  /**
+   * How the height follows the text: fixed keeps its height, scrolls and resizes from the bottom
+   * edge, by dragging it or with the arrow keys; content grows and shrinks with the text.
+   * @default 'fixed'
+   */
   sizing?: 'fixed' | 'content';
+  /**
+   * The lines the field shows: with fixed sizing, its height in rows, at least 7.5 rem; with
+   * content sizing, the lines it starts at and shrinks back to, also under 7.5 rem. Without rows,
+   * both start at 7.5 rem.
+   */
+  rows?: number;
 }
 
 /** Shared native control; field composition stays with Textarea and MarkdownEditor. */

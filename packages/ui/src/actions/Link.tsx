@@ -1,11 +1,16 @@
 import { classNames } from '../internal/classNames.js';
 import type { ActionElementProps } from '../internal/ActionElement.js';
-import { Button, type ButtonAppearanceProps } from './Button.js';
+import { Button } from './Button.js';
 
-export type LinkProps = Extract<ActionElementProps, { href: string }> &
-  Pick<ButtonAppearanceProps, 'underline'>;
+export type LinkProps = Extract<ActionElementProps, { href: string }> & {
+  /** Underline the link; true by default, so it stands out from the text around it. */
+  underline?: boolean;
+};
 
-/** Inline navigation reuses text-button colors, geometry and behavior. */
+/**
+ * A destination inside running text, underlined by default. It is a native link, through the
+ * LinkProvider's link component, in the text button's colors.
+ */
 export function Link({ underline = true, className, ...props }: LinkProps) {
   return (
     <Button

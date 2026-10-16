@@ -1,3 +1,21 @@
+---
+title: Breadcrumbs
+summary: The path from the top level to the current page.
+status: beta
+since: 0.5.0
+category: Navigation
+aliases:
+  - breadcrumb
+  - path
+  - trail
+related:
+  - nav-list
+  - tree
+  - setup
+components:
+  - Breadcrumbs
+---
+
 # Breadcrumbs
 
 ## React usage
@@ -38,6 +56,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Navigation lists](../components/nav-list.md)
+- [NavList](../components/nav-list.md)
 - [Tree](../components/tree.md)
 - [Install the private package](../setup.md)

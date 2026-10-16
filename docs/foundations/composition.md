@@ -67,7 +67,7 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Surface](../components/surface.md)
-- [Stacks & action groups](../components/layout.md)
-- [Cards](../components/cards.md)
+- [Stack](../components/stack.md)
+- [Card](../components/card.md)
 - [Spacing & shape](../foundations/spacing.md)
 - [Colors & themes](../foundations/colors.md)

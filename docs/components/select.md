@@ -1,4 +1,27 @@
-# Selects
+---
+title: Select
+summary: Choose one option while keeping alternatives collapsed.
+status: beta
+since: 0.1.0
+category: Forms & selection
+aliases:
+  - dropdown
+  - drop-down
+  - select menu
+  - listbox
+  - picker
+related:
+  - combobox
+  - menu
+  - radio
+  - text-field
+  - list
+  - accessibility
+components:
+  - Select
+---
+
+# Select
 
 ## React usage
 
@@ -47,9 +70,9 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Comboboxes](../components/combobox.md)
-- [Menus](../components/menu.md)
-- [Radio groups](../components/radio.md)
-- [Text fields](../components/text-field.md)
-- [Lists](../components/list.md)
+- [Combobox](../components/combobox.md)
+- [Menu](../components/menu.md)
+- [Radio](../components/radio.md)
+- [TextField](../components/text-field.md)
+- [List](../components/list.md)
 - [Accessibility](../foundations/accessibility.md)

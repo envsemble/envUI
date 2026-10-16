@@ -1,3 +1,24 @@
+---
+title: Surface
+summary: A background pane without automatic spacing between children.
+status: beta
+since: 0.1.0
+category: Layout & surfaces
+aliases:
+  - box
+  - panel
+  - pane
+  - container
+  - background
+related:
+  - spacing
+  - stack
+  - card
+  - colors
+components:
+  - Surface
+---
+
 # Surface
 
 ## React usage
@@ -38,6 +59,6 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Spacing & shape](../foundations/spacing.md)
-- [Stacks & action groups](../components/layout.md)
-- [Cards](../components/cards.md)
+- [Stack](../components/stack.md)
+- [Card](../components/card.md)
 - [Colors & themes](../foundations/colors.md)

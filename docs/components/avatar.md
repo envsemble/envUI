@@ -1,4 +1,27 @@
-# Avatars
+---
+title: Avatar
+summary: A picture of a person or organization with a default picture or initials as fallback, the
+  avatar button and overlapping avatar groups.
+status: beta
+since: 0.2.0
+category: Content & guidance
+aliases:
+  - profile picture
+  - user image
+  - initials
+  - avatar group
+  - avatar stack
+  - account button
+related:
+  - menu
+  - list
+components:
+  - Avatar
+  - AvatarButton
+  - AvatarGroup
+---
+
+# Avatar
 
 ## React usage
 
@@ -107,5 +130,5 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Menus](../components/menu.md)
-- [Lists](../components/list.md)
+- [Menu](../components/menu.md)
+- [List](../components/list.md)

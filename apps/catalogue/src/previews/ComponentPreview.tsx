@@ -1,6 +1,4 @@
-import { ButtonsPreview } from './Actions';
 import {
-  TextFieldsPreview,
   CheckboxPreview,
   SwitchPreview,
   RadioPreview,
@@ -22,17 +20,17 @@ import { CodePreview } from './CodeContent';
 import { MarkdownPreview } from './MarkdownContent';
 import { lazy, Suspense } from 'react';
 import { Text } from '@envsemble/envui';
-import { EmptyStatePreview, LoadingPreview, DialogsPreview } from './Feedback';
+import { EmptyStatePreview, SpinnerPreview, SkeletonPreview } from './Feedback';
 import { ToastsPreview } from './Toasts';
 import { ColorPickerPreview } from './ColorPicking';
 import { ComposerPreview, MessagesPreview } from './Conversation';
 import { CalendarHeatmapPreview, StatsPreview } from './Dashboard';
 import {
-  MenuPreview,
   MenubarPreview,
   TooltipPreview,
   AvatarPreview,
-  MetersPreview,
+  MeterPreview,
+  ProgressPreview,
 } from './Overlays';
 import { AppShellPreview } from './Shell';
 import { CommandPalettePreview, DocumentTabsPreview, TreePreview } from './Workspace';
@@ -45,7 +43,6 @@ import {
   AlertsPreview,
   PopoverPreview,
   SegmentedControlPreview,
-  TablesPreview,
 } from './Elements';
 
 const RichTextPreview = lazy(() =>
@@ -55,12 +52,8 @@ const RichTextPreview = lazy(() =>
 /** Select a topic; each preview retains its state across theme changes. */
 export function ComponentPreview({ id }: { id: string }) {
   switch (id) {
-    case 'buttons':
-      return <ButtonsPreview />;
     case 'segmented-control':
       return <SegmentedControlPreview />;
-    case 'text-field':
-      return <TextFieldsPreview />;
     case 'checkbox':
       return <CheckboxPreview />;
     case 'switch':
@@ -89,19 +82,17 @@ export function ComponentPreview({ id }: { id: string }) {
       return <PagerPreview />;
     case 'surface':
       return <SurfacePreview />;
-    case 'layout':
+    case 'stack':
       return <LayoutPreview />;
     case 'list':
       return <ListPreview />;
-    case 'cards':
+    case 'card':
       return <CardsPreview />;
     case 'chips':
       return <ChipsPreview />;
-    case 'badges':
+    case 'badge':
       return <BadgesPreview />;
-    case 'tables':
-      return <TablesPreview />;
-    case 'keyboard':
+    case 'kbd':
       return <KbdPreview />;
     case 'breadcrumbs':
       return <BreadcrumbsPreview />;
@@ -113,9 +104,9 @@ export function ComponentPreview({ id }: { id: string }) {
       return <RatingPreview />;
     case 'relative-time':
       return <RelativeTimePreview />;
-    case 'messages':
+    case 'message':
       return <MessagesPreview />;
-    case 'stats':
+    case 'stat':
       return <StatsPreview />;
     case 'calendar-heatmap':
       return <CalendarHeatmapPreview />;
@@ -133,9 +124,11 @@ export function ComponentPreview({ id }: { id: string }) {
       return <DisclosurePreview />;
     case 'empty-state':
       return <EmptyStatePreview />;
-    case 'loading':
-      return <LoadingPreview />;
-    case 'toasts':
+    case 'spinner':
+      return <SpinnerPreview />;
+    case 'skeleton':
+      return <SkeletonPreview />;
+    case 'toast':
       return <ToastsPreview />;
     case 'alert':
       return <AlertsPreview />;
@@ -143,18 +136,16 @@ export function ComponentPreview({ id }: { id: string }) {
       return <PopoverPreview />;
     case 'hover-card':
       return <HoverCardPreview />;
-    case 'dialogs':
-      return <DialogsPreview />;
-    case 'menu':
-      return <MenuPreview />;
     case 'menubar':
       return <MenubarPreview />;
     case 'tooltip':
       return <TooltipPreview />;
     case 'avatar':
       return <AvatarPreview />;
-    case 'meters':
-      return <MetersPreview />;
+    case 'meter':
+      return <MeterPreview />;
+    case 'progress':
+      return <ProgressPreview />;
     case 'app-shell':
       return <AppShellPreview />;
     case 'tree':

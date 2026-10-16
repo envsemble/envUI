@@ -3,7 +3,15 @@ import { useLinkComponent } from '../navigation/LinkProvider.js';
 
 export type ActionElementProps =
   | (ComponentPropsWithRef<'button'> & { href?: undefined })
-  | (ComponentPropsWithRef<'a'> & { href: string; disabled?: boolean });
+  | (ComponentPropsWithRef<'a'> & {
+      /** The destination: the element is a native link, through the LinkProvider's link component. */
+      href: string;
+      /**
+       * A disabled button cannot be pressed; a disabled link has no destination, cannot be focused
+       * or followed, and reports aria-disabled.
+       */
+      disabled?: boolean;
+    });
 
 /** One native action implementation for button links, navigation and interactive cards. */
 export function ActionElement({ disabled = false, ...props }: ActionElementProps) {

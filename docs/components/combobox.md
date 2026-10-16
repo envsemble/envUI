@@ -1,4 +1,27 @@
-# Comboboxes
+---
+title: Combobox
+summary: Choose one option or several from a list that filters as people type.
+status: beta
+since: 0.6.0
+category: Forms & selection
+aliases:
+  - autocomplete
+  - typeahead
+  - multi-select
+  - multiselect
+  - tag input
+  - searchable select
+related:
+  - select
+  - text-field
+  - avatar
+  - menu
+  - accessibility
+components:
+  - Combobox
+---
+
+# Combobox
 
 ## React usage
 
@@ -104,8 +127,8 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Selects](../components/select.md)
-- [Text fields](../components/text-field.md)
-- [Avatars](../components/avatar.md)
-- [Menus](../components/menu.md)
+- [Select](../components/select.md)
+- [TextField](../components/text-field.md)
+- [Avatar](../components/avatar.md)
+- [Menu](../components/menu.md)
 - [Accessibility](../foundations/accessibility.md)

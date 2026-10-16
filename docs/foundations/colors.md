@@ -91,8 +91,8 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Surface](../components/surface.md)
-- [Buttons](../components/buttons.md)
-- [Navigation lists](../components/nav-list.md)
-- [Color picker](../components/color-picker.md)
+- [Button](../components/button.md)
+- [NavList](../components/nav-list.md)
+- [ColorPicker](../components/color-picker.md)
 - [Accessibility](../foundations/accessibility.md)
-- [Badges & counters](../components/badges.md)
+- [Badge](../components/badge.md)

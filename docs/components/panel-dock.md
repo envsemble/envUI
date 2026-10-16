@@ -1,4 +1,28 @@
-# Panel dock
+---
+title: PanelDock
+summary: Windows docked side by side at the bottom of a region that minimize to chips and maximize,
+  keeping their content mounted.
+status: beta
+since: 0.6.0
+category: Navigation
+aliases:
+  - dock
+  - docked panels
+  - floating panels
+  - chat windows
+related:
+  - app-shell
+  - document-tabs
+  - dialog
+  - tooltip
+  - accessibility
+components:
+  - PanelDock
+  - PanelDockHeader
+  - PanelDockControls
+---
+
+# PanelDock
 
 ## React usage
 
@@ -170,8 +194,8 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Application shell](../components/app-shell.md)
-- [Document tabs](../components/document-tabs.md)
-- [Dialogs](../components/dialogs.md)
-- [Tooltips](../components/tooltip.md)
+- [AppShell](../components/app-shell.md)
+- [DocumentTabs](../components/document-tabs.md)
+- [Dialog](../components/dialog.md)
+- [Tooltip](../components/tooltip.md)
 - [Accessibility](../foundations/accessibility.md)

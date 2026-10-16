@@ -1,4 +1,23 @@
-# Empty states
+---
+title: EmptyState
+summary: Explain missing content and offer the next action.
+status: beta
+since: 0.1.0
+category: Feedback & overlays
+aliases:
+  - blank slate
+  - zero state
+  - no results
+  - error state
+related:
+  - loading
+  - card
+  - button
+components:
+  - EmptyState
+---
+
+# EmptyState
 
 ## React usage
 
@@ -40,6 +59,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Loading](../components/loading.md)
-- [Cards](../components/cards.md)
-- [Buttons](../components/buttons.md)
+- [Loading](../patterns/loading.md)
+- [Card](../components/card.md)
+- [Button](../components/button.md)

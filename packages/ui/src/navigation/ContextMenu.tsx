@@ -14,12 +14,14 @@ import { MenuDensityContext, renderMenuPopup } from './internal/MenuPopup.js';
 import type { Density } from './Menu.js';
 
 export interface ContextMenuPoint {
+  /** Distance from the viewport's left edge in pixels, such as a pointer event's clientX. */
   x: number;
+  /** Distance from the viewport's top edge in pixels, such as a pointer event's clientY. */
   y: number;
 }
 
 export interface ContextMenuProps {
-  /** Accessible name of the menu. */
+  /** Accessible name of the menu, such as Document actions. */
   'aria-label': string;
   /**
    * Menu content: Menu.Item, Menu.Group, Menu.Separator and the other menu parts. A function receives
@@ -33,11 +35,13 @@ export interface ContextMenuProps {
   disabled?: boolean;
   /** Controlled visibility, for example to open the menu from another control. */
   open?: boolean;
+  /** Called with the new visibility as the menu opens or closes. */
   onOpenChange?: (open: boolean) => void;
   /** Viewport point to open at while controlled; otherwise the menu opens at the pointer. */
   anchorPoint?: ContextMenuPoint;
   /** compact suits dense surfaces such as a compact Tree; see Menu.Root. */
   density?: Density;
+  /** Class of the menu popup. */
   className?: string;
 }
 

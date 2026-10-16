@@ -1,0 +1,76 @@
+import { lazy, Suspense, use, type ComponentType, type MouseEvent } from 'react';
+import { Disclosure, Stack, Text, Theme, useTheme } from '@envsemble/envui';
+import { CodeBlock } from '@envsemble/envui/content';
+
+/**
+ * Every example file, rendered live, and its source as text, each loaded with the page that shows
+ * it. An example is apps/catalogue/src/examples/<page>/<Name>.tsx with a default-exported
+ * component; the page's Markdown names it in an empty ```tsx example=Name``` fence.
+ */
+const loaders = import.meta.glob<{ default: ComponentType }>('../examples/*/*.tsx');
+const sourceLoaders = import.meta.glob<string>('../examples/*/*.tsx', {
+  query: '?raw',
+  import: 'default',
+});
+const examples = new Map(Object.entries(loaders).map(([path, load]) => [path, lazy(load)]));
+const sources = new Map<string, Promise<string>>();
+
+export const examplePath = (page: string, name: string) => `../examples/${page}/${name}.tsx`;
+
+/** The source of an example, loaded once and kept for every later render. */
+function sourceOf(path: string) {
+  let source = sources.get(path);
+  if (!source) {
+    source = sourceLoaders[path]();
+    sources.set(path, source);
+  }
+  return source;
+}
+
+/** Links in an example keep their semantics without navigating away from the documentation. */
+function preventNavigation(event: MouseEvent<HTMLDivElement>) {
+  if (event.target instanceof Element && event.target.closest('a[href]')) event.preventDefault();
+}
+
+function Source({ path, name }: { path: string; name: string }) {
+  const source = use(sourceOf(path));
+  return (
+    <CodeBlock language="tsx" label={`${name}.tsx`} copyable>
+      {source.replace(/\n$/, '')}
+    </CodeBlock>
+  );
+}
+
+/** An example rendered live in the documentation's theme, with its source and a copy button. */
+export function LiveExample({ page, name, title }: { page: string; name: string; title: string }) {
+  const theme = useTheme();
+  const path = examplePath(page, name);
+  const Example = examples.get(path);
+  if (!Example || !sourceLoaders[path])
+    throw new Error(`No example file apps/catalogue/src/examples/${page}/${name}.tsx`);
+  return (
+    <Stack gap={3} className="docs-live-example-entry">
+      <Stack
+        render={<Theme theme={theme} />}
+        gap={0}
+        role="group"
+        aria-label={`${title} example`}
+        className="docs-live-example"
+        data-example={name}
+        onClickCapture={preventNavigation}
+        onAuxClickCapture={preventNavigation}
+      >
+        <Suspense fallback={<Text role="status">Loading example…</Text>}>
+          {/* The example is looked up among module-level lazy components, not created here. */}
+          {/* eslint-disable-next-line react-hooks/static-components */}
+          <Example />
+        </Suspense>
+      </Stack>
+      <Disclosure title="Code" className="docs-live-example-code">
+        <Suspense fallback={<Text role="status">Loading code…</Text>}>
+          <Source path={path} name={name} />
+        </Suspense>
+      </Disclosure>
+    </Stack>
+  );
+}

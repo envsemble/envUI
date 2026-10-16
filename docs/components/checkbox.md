@@ -1,4 +1,22 @@
-# Checkboxes
+---
+title: Checkbox
+summary: Independent choices; partial selection represents a group.
+status: beta
+since: 0.1.0
+category: Forms & selection
+aliases:
+  - check box
+  - tick box
+  - checkmark
+related:
+  - radio
+  - switch
+  - accessibility
+components:
+  - Checkbox
+---
+
+# Checkbox
 
 ## React usage
 
@@ -31,6 +49,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Radio groups](../components/radio.md)
-- [Switches](../components/switch.md)
+- [Radio](../components/radio.md)
+- [Switch](../components/switch.md)
 - [Accessibility](../foundations/accessibility.md)

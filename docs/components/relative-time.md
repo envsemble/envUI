@@ -1,4 +1,25 @@
-# Relative time
+---
+title: RelativeTime
+summary: A moment as text relative to now, such as 3 hours ago, kept current, with the date and time
+  in a tooltip.
+status: beta
+since: 0.6.0
+category: Content & guidance
+aliases:
+  - time ago
+  - timeago
+  - timestamp
+  - date
+related:
+  - tooltip
+  - animated-number
+  - table
+components:
+  - RelativeTime
+  - formatRelativeTime
+---
+
+# RelativeTime
 
 ## React usage
 
@@ -39,6 +60,6 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Tooltips](../components/tooltip.md)
-- [Animated numbers](../components/animated-number.md)
-- [Tables](../components/tables.md)
+- [Tooltip](../components/tooltip.md)
+- [AnimatedNumber](../components/animated-number.md)
+- [Table](../components/table.md)
