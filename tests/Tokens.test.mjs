@@ -1,11 +1,27 @@
 import assert from 'node:assert/strict';
 import { cp, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join, relative } from 'node:path';
+import { join, posix, relative } from 'node:path';
 import { after, before, test } from 'node:test';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import ts from 'typescript';
-import { buildTokens } from '../scripts/BuildTokens.mjs';
+import {
+  contextTokens,
+  cssDeclarations,
+  duplicateTokens,
+  overridingCustomProperties,
+} from '../packages/ui/terrazzo.config.mjs';
+import {
+  buildTokens,
+  codemodsMapFile,
+  formatted,
+  migrationCopies,
+  migrationGuideFile,
+  migrationGuideList,
+  migrationMapSection,
+  withGuideList,
+  withMapSection,
+} from '../scripts/BuildTokens.mjs';
 
 // The token build's guards, on copies of the tokens built into a scratch folder, and the custom
 // properties the library's style sheets read.
@@ -23,16 +39,15 @@ after(async () => {
 
 /**
  * Builds a copy of the tokens after `change` edits the parsed files it names, into a scratch
- * folder that has the library's TokensHandwritten.css, and returns the folder.
+ * folder that has the library's TokensHandwritten.css, with `handwritten` appended to it, and
+ * returns the folder.
  */
-async function buildChanged(name, change) {
+async function buildChanged(name, change, { handwritten = '' } = {}) {
   const directory = join(scratch, name);
   await cp(join(library, 'tokens'), join(directory, 'tokens'), { recursive: true });
   await mkdir(join(directory, 'src/styles'), { recursive: true });
-  await cp(
-    join(library, 'src/styles/TokensHandwritten.css'),
-    join(directory, 'src/styles/TokensHandwritten.css'),
-  );
+  const css = await readFile(join(library, 'src/styles/TokensHandwritten.css'), 'utf8');
+  await writeFile(join(directory, 'src/styles/TokensHandwritten.css'), css + handwritten);
   for (const [file, edit] of Object.entries(change)) {
     const path = join(directory, 'tokens', file);
     const tokens = JSON.parse(await readFile(path, 'utf8'));
@@ -57,6 +72,62 @@ test('two tokens that become one custom property fail the build', async () => {
   );
 });
 
+test('two tokens that the CSS output names alike fail the build', async () => {
+  // plugin-css writes a name only with letters, digits and hyphens: space.4+ would be --space-4.
+  await assert.rejects(
+    buildChanged('collision-written', {
+      'base/space.tokens.json': (tokens) => {
+        tokens.space['4+'] = { $value: { value: 1.25, unit: 'rem' } };
+      },
+    }),
+    /space\.4\+ and space\.4 both become --space-4|space\.4 and space\.4\+ both become --space-4/,
+  );
+});
+
+test('a token whose path does not spell its custom property fails the build', async () => {
+  await assert.rejects(
+    buildChanged('unspelled', {
+      'base/space.tokens.json': (tokens) => {
+        tokens.space['huge+'] = { $value: { value: 8, unit: 'rem' } };
+      },
+    }),
+    /space\.huge\+ becomes --space-huge, not --space-huge\+/,
+  );
+});
+
+test('a token that two files of the base set declare fails the build', async () => {
+  await assert.rejects(
+    buildChanged('duplicate', {
+      'base/size.tokens.json': (tokens) => {
+        tokens.space = { 4: { $type: 'dimension', $value: { value: 3, unit: 'rem' } } };
+      },
+    }),
+    /space\.4 is declared in both base\/space\.tokens\.json and base\/size\.tokens\.json, which the base set merges/,
+  );
+});
+
+test('a token that two files of one modifier context declare fails the build', async () => {
+  // The dark scheme overrides the base set, which is how themes work, but only once.
+  await assert.rejects(
+    buildChanged('duplicate-context', {
+      'color-scheme/dark.tokens.json': (tokens) => {
+        tokens['contrast-high'] = {
+          color: { bg: { page: { hover: { $type: 'color', $value: '{palette.neutral.90}' } } } },
+        };
+      },
+    }),
+    /contrast-high\.color\.bg\.page\.hover is declared in both color-scheme\/dark\.tokens\.json and color-scheme\/dark-contrast-high\.tokens\.json, which the dark context of colorScheme merges/,
+  );
+});
+
+test('the modifier contexts override tokens of the base set, which is no duplicate', async () => {
+  const list = JSON.parse(await readFile(join(library, 'src/generated/tokens.json'), 'utf8'));
+  const base = new Set(list.tokens.map((token) => token.id));
+  assert.ok(contextTokens('colorScheme', 'dark').some((id) => base.has(id)));
+  assert.ok(contextTokens('contrast', 'high').some((id) => base.has(id)));
+  assert.deepEqual(duplicateTokens(), []);
+});
+
 test('a token that TokensHandwritten.css also declares for every theme fails the build', async () => {
   await assert.rejects(
     buildChanged('handwritten', {
@@ -68,6 +139,54 @@ test('a token that TokensHandwritten.css also declares for every theme fails the
       },
     }),
     /TokensHandwritten\.css declares --viewport-gutter, which the token viewport\.gutter becomes/,
+  );
+});
+
+test('only a coarse pointer lets TokensHandwritten.css change a token', () => {
+  const declared = (css) => [...overridingCustomProperties(css)];
+  // The touch sizes change a token only under a coarse pointer, also inside another at-rule.
+  assert.deepEqual(declared('@media (pointer: coarse) { .env-theme { --a: 1; } }'), []);
+  assert.deepEqual(declared('@media (pointer:coarse){@layer x{.env-theme{--a:1}}}'), []);
+  assert.deepEqual(declared('@layer x { @media (pointer: coarse) { .env-theme { --a: 1 } } }'), []);
+  // Any other at-rule can apply in every theme, and a contrast belongs in the tokens.
+  for (const wrapper of [
+    '@layer env.tokens',
+    '@supports (color: oklch(0 0 0))',
+    '@media (prefers-contrast: more)',
+    '@media (min-width: 40rem)',
+    '@media (pointer: coarse), (prefers-contrast: more)',
+    '@media not (pointer: coarse)',
+    '@container (min-width: 1px)',
+  ])
+    assert.deepEqual(declared(`${wrapper} { .env-theme { --a: 1; } }`), ['--a'], wrapper);
+  // In any rule, whatever the selector; strings and parentheses end no declaration.
+  assert.deepEqual(
+    declared(".env-theme[data-env-theme='dark'] { content: ';}'; --b: url(a;b); --c: 1 }"),
+    ['--b', '--c'],
+  );
+});
+
+test('a token that TokensHandwritten.css declares under another at-rule fails the build', async () => {
+  await assert.rejects(
+    buildChanged(
+      'handwritten-layer',
+      {},
+      {
+        handwritten: '\n@layer env.tokens {\n  .env-theme {\n    --control-height: 3rem;\n  }\n}\n',
+      },
+    ),
+    /TokensHandwritten\.css declares --control-height, which the token control\.height becomes/,
+  );
+  await assert.rejects(
+    buildChanged(
+      'handwritten-contrast',
+      {},
+      {
+        handwritten:
+          '\n@media (prefers-contrast: more) {\n  .env-theme { --control-height: 3rem; }\n}\n',
+      },
+    ),
+    /TokensHandwritten\.css declares --control-height/,
   );
 });
 
@@ -115,9 +234,63 @@ test('a typography token builds, with a custom property for each part', async ()
   assert.deepEqual(problems, []);
 });
 
+/** A typography token for text.label, with the parts in `extra` besides the five DTCG requires. */
+const textLabel = (extra = {}) => ({
+  $type: 'typography',
+  $value: {
+    fontFamily: '{font.family}',
+    fontSize: '{font.size.body-small}',
+    fontWeight: '{body.font-weight}',
+    lineHeight: 1.4,
+    letterSpacing: { value: 0, unit: 'rem' },
+    ...extra,
+  },
+});
+
+test('a part that only one theme gives a composite token cannot clash either', async () => {
+  // The dark scheme adds a part, --text-label-font-style, which another token already becomes.
+  await assert.rejects(
+    buildChanged('typography-theme-part', {
+      'base/typography.tokens.json': (tokens) => {
+        tokens.text = {
+          label: textLabel(),
+          'label-font-style': { $type: 'number', $value: 1 },
+        };
+      },
+      'color-scheme/dark.tokens.json': (tokens) => {
+        tokens.text = { label: textLabel({ fontStyle: 'italic' }) };
+      },
+    }),
+    /text\.label and text\.label-font-style both become --text-label-font-style/,
+  );
+});
+
+test('a typography token that aliases another reads the parts the other declares', async () => {
+  const directory = await buildChanged('typography-alias', {
+    'base/typography.tokens.json': (tokens) => {
+      tokens.text = {
+        label: textLabel(),
+        caption: { $type: 'typography', $value: '{text.label}' },
+      };
+    },
+  });
+  const css = await readFile(join(directory, 'src/styles/Tokens.css'), 'utf8');
+  assert.match(css, /--text-caption-font-size: var\(--text-label-font-size\);/);
+  const declared = new Set([...css.matchAll(/(--[\w-]+)\s*:/g)].map(([, name]) => name));
+  const undeclared = [...css.matchAll(/var\((--[\w-]+)\)/g)]
+    .map(([, name]) => name)
+    .filter((name) => !declared.has(name));
+  assert.deepEqual(undeclared, []);
+  const list = JSON.parse(await readFile(join(directory, 'src/generated/tokens.json'), 'utf8'));
+  const resolved = (id) => list.tokens.find((token) => token.id === id).values.dark.resolved;
+  assert.equal(resolved('text.caption')['font-size'], '0.875rem');
+  assert.deepEqual(resolved('text.caption'), resolved('text.label'));
+});
+
 /**
- * Custom properties that Base UI's positioners and popups set on the elements envUI styles; they
- * are documented in Base UI's API reference for each part, not declared in a style sheet.
+ * Custom properties that Base UI's positioners set, for the popup inside, as documented in Base
+ * UI's API reference for each positioner part. They count as set inline by a module that renders
+ * a positioner (`<BaseMenu.Positioner>`): a dialog or a toast list has none.
  */
 const baseUiProperties = [
   '--anchor-height',
@@ -133,37 +306,407 @@ const baseUiProperties = [
  */
 const applicationHooks = [];
 
-async function files(directory, extensions) {
-  const entries = await readdir(directory, { recursive: true, withFileTypes: true });
-  return entries
-    .filter(
-      (entry) => entry.isFile() && extensions.some((extension) => entry.name.endsWith(extension)),
-    )
-    .map((entry) => join(entry.parentPath, entry.name));
+/**
+ * Classes that an element always carries with another component's, so a rule for the first also
+ * sees what is declared for the second: Card renders its root as a Surface (`<Surface
+ * render={…}>`), which adds env-surface beside env-card, and env-clickable-card when it acts.
+ */
+const impliedClasses = {
+  'env-card': ['env-surface'],
+  'env-clickable-card': ['env-surface'],
+};
+
+/** The token build's style sheets: what they declare is defined only through `.env-theme`. */
+const tokenStyleSheets = new Set(['Tokens.css', 'TokensHandwritten.css']);
+
+/**
+ * The pieces of `text` between its top-level characters that `separates` accepts, outside quotes,
+ * brackets and parentheses, with each separator as a piece of its own.
+ */
+function splitOutside(text, separates) {
+  const pieces = [];
+  let current = '';
+  let depth = 0;
+  let quote = null;
+  for (const character of text) {
+    if (quote) {
+      if (character === quote) quote = null;
+    } else if (character === '"' || character === "'") quote = character;
+    else if (character === '(' || character === '[') depth += 1;
+    else if (character === ')' || character === ']') depth -= 1;
+    else if (depth === 0 && separates(character)) {
+      pieces.push(current, character);
+      current = '';
+      continue;
+    }
+    current += character;
+  }
+  return [...pieces, current];
 }
 
-test("every custom property the library's style sheets read is defined", async () => {
-  const styles = await files(join(library, 'src/styles'), ['.css']);
-  const declared = new Set();
-  const reads = new Map();
-  for (const file of styles) {
-    const css = (await readFile(file, 'utf8')).replace(/\/\*[\s\S]*?\*\//g, '');
-    for (const [, name] of css.matchAll(/(--[\w-]+)\s*:/g)) declared.add(name);
-    // A var() without a fallback, which is invalid wherever its property is not set.
-    for (const [, name] of css.matchAll(/var\(\s*(--[\w-]+)\s*\)/g))
-      reads.set(name, [...(reads.get(name) ?? []), relative(library, file).replaceAll('\\', '/')]);
+/** The complex selectors of a selector list. */
+const selectorList = (selector) =>
+  splitOutside(selector, (character) => character === ',')
+    .filter((piece) => piece !== ',')
+    .map((piece) => piece.trim());
+
+/**
+ * The compounds of a complex selector that match its subject or an ancestor of it: the last one,
+ * and each that a descendant or child combinator follows. The one before `+` or `~` is a sibling.
+ */
+function subjectAndAncestors(complex) {
+  const compounds = [];
+  for (const piece of splitOutside(complex, (character) => ' >+~'.includes(character))) {
+    if (' >+~'.includes(piece) && piece.length === 1) {
+      if (compounds.length > 0 && piece !== ' ') compounds.at(-1).combinator = piece;
+      continue;
+    }
+    if (piece) compounds.push({ compound: piece, combinator: ' ' });
   }
-  // Properties that components set inline, such as a cell's '--env-calendar-heatmap-mix'.
-  for (const file of await files(join(library, 'src'), ['.ts', '.tsx']))
-    for (const [, name] of (await readFile(file, 'utf8')).matchAll(/['"](--[\w-]+)['"]\s*:/g))
-      declared.add(name);
-  const undefinedReads = [...reads]
-    .filter(
-      ([name]) =>
-        !declared.has(name) && !baseUiProperties.includes(name) && !applicationHooks.includes(name),
+  return compounds
+    .filter(({ combinator }, index) => index === compounds.length - 1 || '> '.includes(combinator))
+    .map(({ compound }) => compound);
+}
+
+/** Whether a complex selector is one compound, with no combinator. */
+const isCompound = (selector) =>
+  splitOutside(selector, (character) => ' >+~'.includes(character)).filter((piece) => piece.trim())
+    .length === 1;
+
+/** The simple selectors of a compound: `.a`, `#b`, `[c='d']`, `:e(f)`, `::g` and a type. */
+function simpleSelectors(compound) {
+  const parts = [];
+  let current = '';
+  let depth = 0;
+  let quote = null;
+  for (const [index, character] of [...compound].entries()) {
+    if (quote) {
+      if (character === quote) quote = null;
+    } else if (character === '"' || character === "'") quote = character;
+    else if (
+      depth === 0 &&
+      ('.#['.includes(character) || (character === ':' && compound[index - 1] !== ':'))
+    ) {
+      if (current) parts.push(current);
+      current = '';
+    }
+    if (!quote && (character === '(' || character === '[')) depth += 1;
+    else if (!quote && (character === ')' || character === ']')) depth -= 1;
+    current += character;
+  }
+  return current ? [...parts, current] : parts;
+}
+
+/** The simple selectors of a compound, with the classes that impliedClasses adds to it. */
+function withImplied(compound, implied) {
+  const parts = simpleSelectors(compound);
+  const classes = parts.filter((part) => part.startsWith('.')).map((part) => part.slice(1));
+  return new Set([
+    ...parts,
+    ...classes.flatMap((name) => implied[name] ?? []).map((name) => `.${name}`),
+  ]);
+}
+
+/** The at-rules that limit where a declaration applies: all but @layer. */
+const conditions = (atRules) =>
+  atRules
+    .filter((prelude) => !/^@layer\b/.test(prelude))
+    .map((prelude) => prelude.replace(/\s+/g, ''));
+
+/** The theme boundary's conditions in a selector: data-env-theme and data-env-contrast. */
+const themeConditions = (selector) =>
+  new Set(selector.match(/(?::not\()?\[data-env-(?:theme|contrast)[^\]]*\]/g) ?? []);
+
+const subset = (small, large) => [...small].every((item) => large.has(item));
+
+/**
+ * The var() reads without a fallback in `styleSheets` (file name to CSS) that are not defined for
+ * every element that reads them, as `--name in File.css: selector`. A read is defined when, under
+ * the at-rules of the read (a declaration under `@media (pointer: coarse)` defines a read under
+ * that media query only; @layer limits nothing), and for each complex selector of its rule:
+ *
+ * - a rule declares it for the same element or an ancestor, in any style sheet: one compound
+ *   selector, every part of which the read's subject, or a compound the read names as its
+ *   ancestor, also has, with `.env-theme` an ancestor of every element and the classes
+ *   impliedClasses adds. The base token set (Tokens.css's `.env-theme`) and TokensHandwritten.css
+ *   define a property this way, but not their dark, high-contrast or coarse-pointer rules;
+ * - or the read's own style sheet declares it, for an element of the component that the sheet
+ *   knows, in a rule that conditions on no theme (data-env-theme, data-env-contrast) the read
+ *   doesn't; the token style sheets don't count here;
+ * - or a module of `modules` (path to source) sets it inline (`'--name':`, `style['--name'] =`
+ *   or `setProperty('--name'`), or renders a Base UI positioner, which sets those of
+ *   `positioned`, and that module, or one that imports it, names a class of the read's selector:
+ *   the component renders the element, or its ancestor, with the property;
+ * - or `external` lists it: the application sets it.
+ */
+function undefinedReads({
+  styleSheets,
+  modules = {},
+  positioned = [],
+  external = [],
+  implied = impliedClasses,
+}) {
+  const declarations = Object.entries(styleSheets).flatMap(([file, css]) =>
+    cssDeclarations(css).map((declaration) => ({ ...declaration, file })),
+  );
+  const declaring = new Map();
+  for (const declaration of declarations)
+    if (declaration.property.startsWith('--') && declaration.selector)
+      declaring.set(declaration.property, [
+        ...(declaring.get(declaration.property) ?? []),
+        { ...declaration, conditions: new Set(conditions(declaration.atRules)) },
+      ]);
+
+  const withoutExtension = (path) => path.replace(/\.(?:[cm]?js|tsx?)$/, '');
+  const moduleIds = new Map(Object.keys(modules).map((path) => [withoutExtension(path), path]));
+  const importers = new Map();
+  for (const [path, source] of Object.entries(modules))
+    for (const [, specifier] of source.matchAll(
+      /(?:\bfrom\s*|\bimport\s*\(?\s*)['"](\.{1,2}\/[^'"]+)['"]/g,
+    )) {
+      const target = moduleIds.get(withoutExtension(posix.join(posix.dirname(path), specifier)));
+      if (target) importers.set(target, [...(importers.get(target) ?? []), path]);
+    }
+  const classesNamed = new Map(
+    Object.entries(modules).map(([path, source]) => [
+      path,
+      new Set(source.match(/(?<![\w-])env-[a-z0-9]+(?:-[a-z0-9]+)*/g) ?? []),
+    ]),
+  );
+  const inline = new Map();
+  const setInline = (name, path) => inline.set(name, [...(inline.get(name) ?? []), path]);
+  for (const [path, source] of Object.entries(modules)) {
+    for (const match of source.matchAll(
+      /['"](--[\w-]+)['"]\s*:|\[\s*['"](--[\w-]+)['"]\s*\]\s*=(?!=)|setProperty\(\s*['"](--[\w-]+)['"]/g,
+    ))
+      setInline(match[1] ?? match[2] ?? match[3], path);
+    if (/<\w+\.Positioner\b/.test(source)) for (const name of positioned) setInline(name, path);
+  }
+
+  const defines = (name, complex, file, readConditions) => {
+    if (external.includes(name)) return true;
+    const compounds = [...subjectAndAncestors(complex), '.env-theme'].map((compound) =>
+      withImplied(compound, implied),
+    );
+    const readThemes = themeConditions(complex);
+    const sameElementOrAncestor = (declared) =>
+      selectorList(declared.selector).some(
+        (selector) =>
+          isCompound(selector) &&
+          compounds.some((parts) =>
+            simpleSelectors(selector).every((part) => part === '*' || parts.has(part)),
+          ),
+      );
+    const ownSheet = (declared) =>
+      declared.file === file &&
+      !tokenStyleSheets.has(file) &&
+      selectorList(declared.selector).some((selector) =>
+        subset(themeConditions(selector), readThemes),
+      );
+    if (
+      (declaring.get(name) ?? []).some(
+        (declared) =>
+          subset(declared.conditions, readConditions) &&
+          (sameElementOrAncestor(declared) || ownSheet(declared)),
+      )
     )
-    .map(([name, where]) => `${name} in ${[...new Set(where)].join(', ')}`);
-  assert.deepEqual(undefinedReads, [], 'Define each property, or document it as a hook.');
+      return true;
+    const classes = new Set(
+      [...compounds].flatMap((parts) =>
+        [...parts].filter((part) => part.startsWith('.')).map((part) => part.slice(1)),
+      ),
+    );
+    classes.delete('env-theme');
+    return (inline.get(name) ?? []).some((path) =>
+      [path, ...(importers.get(path) ?? [])].some((renderer) =>
+        [...classes].some((className) => classesNamed.get(renderer).has(className)),
+      ),
+    );
+  };
+
+  const problems = new Set();
+  for (const { file, selector, value, atRules } of declarations) {
+    if (!selector) continue;
+    const readConditions = new Set(conditions(atRules));
+    for (const [, name] of value.matchAll(/var\(\s*(--[\w-]+)\s*\)/g))
+      for (const complex of selectorList(selector))
+        if (!defines(name, complex, file, readConditions))
+          problems.add(`${name} in ${file}: ${complex}`);
+  }
+  return [...problems];
+}
+
+/** The reads of a style sheet `Foo.css` among `styleSheets`, with the token sheets of the tests. */
+function undefinedReadsOf(css, { styleSheets = {}, modules = {}, implied = {} } = {}) {
+  return undefinedReads({
+    styleSheets: {
+      'Tokens.css': `.env-theme { --base: 1rem; --alias: var(--base); }
+        .env-theme[data-env-theme='dark'] { --dark: 1rem; }
+        .env-theme[data-env-contrast='high'] { --high: 1rem; }
+        @media (prefers-contrast: more) { .env-theme:not([data-env-contrast='standard']) { --contrast: 1rem; } }`,
+      'TokensHandwritten.css': `.env-theme { --handwritten: 1rem; }
+        @media (pointer: coarse) { .env-theme { --coarse: 1rem; } }`,
+      ...styleSheets,
+      'Foo.css': css,
+    },
+    modules,
+    implied,
+  });
+}
+
+test('a property is defined by the base tokens, the hand-written tokens and the theme', () => {
+  assert.deepEqual(undefinedReadsOf('.env-foo { margin: var(--base) var(--handwritten); }'), []);
+  // The token sheets' own reads are checked too, and so are fallbacks that read a property.
+  assert.deepEqual(undefinedReadsOf('.env-foo { margin: var(--missing, 1rem); }'), []);
+  assert.deepEqual(undefinedReadsOf('.env-foo { margin: var(--other, var(--missing)); }'), [
+    '--missing in Foo.css: .env-foo',
+  ]);
+  // Any style sheet may declare a property on the theme boundary for every element.
+  assert.deepEqual(
+    undefinedReadsOf('.env-foo { font: var(--font-code); }', {
+      styleSheets: { 'Code.css': '.env-theme { --font-code: monospace; }' },
+    }),
+    [],
+  );
+});
+
+test('a property only the dark, high-contrast or coarse-pointer tokens declare is not defined', () => {
+  for (const name of ['--dark', '--high', '--contrast', '--coarse'])
+    assert.deepEqual(undefinedReadsOf(`.env-foo { margin: var(${name}); }`), [
+      `${name} in Foo.css: .env-foo`,
+    ]);
+  // A read under the same condition, or for the same theme, sees it.
+  assert.deepEqual(
+    undefinedReadsOf('@media (pointer: coarse) { .env-foo { margin: var(--coarse); } }'),
+    [],
+  );
+  assert.deepEqual(
+    undefinedReadsOf(".env-theme[data-env-theme='dark'] .env-foo { margin: var(--dark); }"),
+    [],
+  );
+});
+
+test("a property another component's style sheet declares is defined only for its elements", () => {
+  const styleSheets = { 'Other.css': '.env-other { --other: 1rem; }' };
+  assert.deepEqual(undefinedReadsOf('.env-foo { margin: var(--other); }', { styleSheets }), [
+    '--other in Foo.css: .env-foo',
+  ]);
+  // The same element, an ancestor the selector names, or a class the element always carries.
+  for (const css of [
+    '.env-other.env-foo:hover { margin: var(--other); }',
+    '.env-other > .env-bar .env-foo { margin: var(--other); }',
+  ])
+    assert.deepEqual(undefinedReadsOf(css, { styleSheets }), [], css);
+  assert.deepEqual(
+    undefinedReadsOf('.env-foo { margin: var(--other); }', {
+      styleSheets,
+      implied: { 'env-foo': ['env-other'] },
+    }),
+    [],
+  );
+  // A sibling is no ancestor, and each selector of a list must see it.
+  assert.deepEqual(
+    undefinedReadsOf('.env-other + .env-foo, .env-other .env-bar { margin: var(--other); }', {
+      styleSheets,
+    }),
+    ['--other in Foo.css: .env-other + .env-foo'],
+  );
+});
+
+test('a property its own style sheet declares only under a condition is not defined', () => {
+  assert.deepEqual(
+    undefinedReadsOf('.env-foo-root { --own: 1rem; } .env-foo-part { margin: var(--own); }'),
+    [],
+  );
+  assert.deepEqual(
+    undefinedReadsOf(
+      '@media (hover: hover) { .env-foo:hover { --own: 1rem; } } .env-foo { margin: var(--own); }',
+    ),
+    ['--own in Foo.css: .env-foo'],
+  );
+  assert.deepEqual(
+    undefinedReadsOf(
+      ".env-theme[data-env-theme='dark'] .env-foo { --own: 1rem; } .env-foo { margin: var(--own); }",
+    ),
+    ['--own in Foo.css: .env-foo'],
+  );
+  // @layer limits nothing.
+  assert.deepEqual(
+    undefinedReadsOf('@layer env { .env-foo { --own: 1rem; } } .env-foo { margin: var(--own); }'),
+    [],
+  );
+});
+
+test('a property set inline is defined only by the component that renders the element', () => {
+  const css = '.env-foo-cell { margin: var(--env-foo-mix); }';
+  const sets = "export const style = { '--env-foo-mix': '1rem' };";
+  // Any module that sets it is not enough: the module must render the reading rule's class.
+  assert.deepEqual(undefinedReadsOf(css, { modules: { 'Other.tsx': sets } }), [
+    '--env-foo-mix in Foo.css: .env-foo-cell',
+  ]);
+  for (const modules of [
+    { 'content/Foo.tsx': `${sets}\nexport const Cell = () => <td className="env-foo-cell" />;` },
+    {
+      'content/internal/FooStyle.ts': sets,
+      'content/Foo.tsx':
+        "import { style } from './internal/FooStyle.js';\n<td className='env-foo-cell' />",
+    },
+    { 'Foo.tsx': "element.style.setProperty('--env-foo-mix', '1rem'); 'env-foo-cell';" },
+    { 'Foo.tsx': "style['--env-foo-mix'] = '1rem'; 'env-foo-cell';" },
+  ])
+    assert.deepEqual(undefinedReadsOf(css, { modules }), [], Object.keys(modules).join());
+});
+
+test("Base UI's positioner properties are defined only inside a positioner", () => {
+  const css = '.env-foo-popup, .env-foo-dialog { transform-origin: var(--transform-origin); }';
+  const modules = {
+    'Popup.tsx':
+      "<BasePopover.Positioner><BasePopover.Popup className='env-foo-popup' /></BasePopover.Positioner>",
+    'Dialog.tsx': "<BaseDialog.Popup className='env-foo-dialog' />",
+  };
+  assert.deepEqual(
+    undefinedReads({
+      styleSheets: { 'Foo.css': css },
+      modules,
+      positioned: ['--transform-origin'],
+      implied: {},
+    }),
+    ['--transform-origin in Foo.css: .env-foo-dialog'],
+  );
+});
+
+test("every custom property the library's style sheets read is defined", async () => {
+  const sources = async (directory, extensions) =>
+    Object.fromEntries(
+      await Promise.all(
+        (await readdir(directory, { recursive: true, withFileTypes: true }))
+          .filter(
+            (entry) =>
+              entry.isFile() && extensions.some((extension) => entry.name.endsWith(extension)),
+          )
+          .map(async (entry) => [
+            relative(directory, join(entry.parentPath, entry.name)).replaceAll('\\', '/'),
+            await readFile(join(entry.parentPath, entry.name), 'utf8'),
+          ]),
+      ),
+    );
+  const styleSheets = await sources(join(library, 'src/styles'), ['.css']);
+  const problems = undefinedReads({
+    styleSheets,
+    modules: await sources(join(library, 'src'), ['.ts', '.tsx']),
+    positioned: baseUiProperties,
+    external: applicationHooks,
+  });
+  assert.deepEqual(
+    problems,
+    [],
+    'Define each property for every element that reads it, or document it as a hook.',
+  );
+  const reads = new Set(
+    Object.values(styleSheets).flatMap((css) =>
+      [...css.matchAll(/var\(\s*(--[\w-]+)\s*\)/g)].map(([, name]) => name),
+    ),
+  );
   assert.ok(reads.size > 100, 'the style sheets read the tokens');
 });
 
@@ -177,4 +720,97 @@ test('the hand-written tokens read only tokens', async () => {
     .map(([, name]) => name)
     .filter((name) => !defined.has(name));
   assert.deepEqual(unknown, []);
+});
+
+/** A migration map of each kind of entry, as the token build writes it. */
+const sampleMigration = {
+  names: {
+    '--color-old-fill': { token: 'color.bg.default', cssVariable: '--color-bg-default' },
+    '--color-old-row': {
+      tokens: { light: 'color.bg.default', dark: 'color.bg.muted' },
+      cssVariables: { light: '--color-bg-default', dark: '--color-bg-muted' },
+      component: 'List rows',
+    },
+    '--color-old-avatar': { primitive: 'palette.blue.20', component: 'Avatars' },
+    '--color-old-gone': {
+      removed: true,
+      replacement: 'color.bg.raised',
+      note: 'Unused.',
+      cssVariable: '--color-bg-raised',
+    },
+    '--state-old-shift': { removed: true, replacement: null, note: 'The rule | is gone.' },
+  },
+};
+
+test("the codemods' rename map takes the token migration map as its tokens section", () => {
+  const section = migrationMapSection(sampleMigration);
+  assert.match(section.$comment, /npm run tokens:build/);
+  assert.deepEqual(Object.fromEntries(Object.entries(section).slice(1)), {
+    '--color-old-fill': { to: '--color-bg-default' },
+    '--color-old-row': {
+      byTheme: { light: '--color-bg-default', dark: '--color-bg-muted' },
+      component: 'List rows',
+    },
+    '--color-old-avatar': { primitive: 'palette.blue.20', component: 'Avatars' },
+    '--color-old-gone': { removed: true, to: '--color-bg-raised', note: 'Unused.' },
+    '--state-old-shift': { removed: true, to: null, note: 'The rule | is gone.' },
+  });
+  // The section is added after the last one, or replaces itself; the other sections stay as written.
+  const map = '{\n  "version": "1.0.0",\n  "docs": {\n    "a": "b"\n  }\n}\n';
+  const added = withMapSection(map, { $comment: 'One.', '--x': { to: '--y' } });
+  assert.equal(
+    added,
+    '{\n  "version": "1.0.0",\n  "docs": {\n    "a": "b"\n  },\n  "tokens": {\n    "$comment": "One.",\n    "--x": {"to":"--y"}\n  }\n}\n',
+  );
+  assert.deepEqual(JSON.parse(withMapSection(added, { '--z': { to: '--w' } })), {
+    version: '1.0.0',
+    docs: { a: 'b' },
+    tokens: { '--z': { to: '--w' } },
+  });
+  const middle = '{\n  "tokens": {\n    "--x": {}\n  },\n  "docs": {\n    "a": "b"\n  }\n}\n';
+  assert.deepEqual(JSON.parse(withMapSection(middle, { '--z': {} })), {
+    tokens: { '--z': {} },
+    docs: { a: 'b' },
+  });
+});
+
+test('the migration guide lists the token migration map between its markers', () => {
+  const list = migrationGuideList(sampleMigration);
+  assert.match(list, /\| `--color-old-gone` \| `--color-bg-raised` \| Unused\. \|/);
+  assert.match(list, /\| `--state-old-shift` \| — \| The rule \\| is gone\. \|/);
+  assert.match(list, /\| `--color-old-fill` \| `--color-bg-default` \| {2}\|/);
+  assert.match(
+    list,
+    /\| Light \| Dark \|\n.*\n\| `--color-old-row` \| List rows \| `--color-bg-default` \| `--color-bg-muted` \|/,
+  );
+  assert.match(list, /\| `--color-old-avatar` \| Avatars \| `palette\.blue\.20` \|/);
+  const guide =
+    'Before.\n\n<!-- token-migration:start: note -->\nold\n<!-- token-migration:end -->\n\nAfter.\n';
+  assert.equal(
+    withGuideList(guide, 'new'),
+    'Before.\n\n<!-- token-migration:start: note -->\n\nnew\n\n<!-- token-migration:end -->\n\nAfter.\n',
+  );
+  assert.throws(() => withGuideList('No markers.\n', 'new'), /needs the markers/);
+});
+
+test("the codemods' rename map and the migration guide carry the token migration map", async () => {
+  const migration = JSON.parse(
+    await readFile(join(library, 'src/generated/token-migration.json'), 'utf8'),
+  );
+  const copies = await migrationCopies(migration);
+  assert.deepEqual(
+    copies.map(({ path }) => relative(repository, path).replaceAll('\\', '/')),
+    ['packages/codemods/src/maps/v1.json', 'docs/migration.md'],
+  );
+  for (const { path, contents } of copies)
+    assert.equal(
+      await readFile(path, 'utf8'),
+      await formatted(path, contents),
+      `${relative(repository, path)} is behind the token migration map: run npm run tokens:build.`,
+    );
+  // Every 0.7 name is in both, the map's entries in the migration map's order.
+  const { tokens } = JSON.parse(await readFile(codemodsMapFile, 'utf8'));
+  assert.deepEqual(Object.keys(tokens).slice(1), Object.keys(migration.names));
+  const guide = await readFile(migrationGuideFile, 'utf8');
+  for (const name of Object.keys(migration.names)) assert.ok(guide.includes(`\`${name}\``), name);
 });

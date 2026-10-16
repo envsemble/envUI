@@ -65,6 +65,214 @@ The codemods also leave class names built at run time, CSS-in-JS, selectors nest
 
 `useTheme()` returns `{ theme, contrast }` instead of the color scheme alone. Read the scheme as `const { theme } = useTheme()`. An application's own portal that re-themed with `<Theme theme={useTheme()}>` takes both with `<Theme {...useTheme()}>`, so it keeps a high contrast or a `standard` opt-out too.
 
+### Tokens
+
+envUI 1.0 names its colors by semantic role, `--color-{bg|fg|border}-{role}-{emphasis}[-{state}]` (see [colors](foundations/colors.md)). A few 0.7 custom properties are removed: unused ones, and the state values that the hover and pressed color tokens replace. The other 0.7 names remain for now as aliases of their roles, so style sheets that read them keep working; they are removed in the CSS-architecture step of 1.0, together with the move of every token to the `--env-` prefix. Move to the roles before then. The codemods do not rename tokens yet; the `tokens` section of their rename map lists the same replacements as below.
+
+<!-- token-migration:start: npm run tokens:build writes this list from packages/ui/src/generated/token-migration.json. Change the tokens, not the list. -->
+
+Removed, with what to use instead:
+
+| 0.7 custom property                   | Use instead                         | Note                                                                                       |
+| ------------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------ |
+| `--color-border-pressed`              | `--color-border-muted-pressed`      | Unused.                                                                                    |
+| `--color-control-blue-hover`          | `--color-bg-brand-strong-hover`     | Unused.                                                                                    |
+| `--color-control-blue-pressed`        | `--color-bg-brand-strong-pressed`   | Unused.                                                                                    |
+| `--color-control-text`                | `--color-fg-control`                | Unused synonym.                                                                            |
+| `--color-fill-hover`                  | `--color-bg-neutral-muted-hover`    | Unused.                                                                                    |
+| `--color-fill-pressed`                | `--color-bg-neutral-muted-pressed`  | Unused.                                                                                    |
+| `--color-neutral-fill`                | `--color-bg-neutral-strong`         | Unused.                                                                                    |
+| `--color-surface-base`                | `--color-bg-raised`                 | Unused.                                                                                    |
+| `--color-surface-raised`              | `--color-bg-raised`                 | Unused.                                                                                    |
+| `--color-text-subtle`                 | `--color-fg-muted`                  | Unused synonym.                                                                            |
+| `--member-identity-avatar-size`       | —                                   | Unused.                                                                                    |
+| `--member-identity-copy-height`       | —                                   | Unused.                                                                                    |
+| `--member-identity-email-line-height` | —                                   | Unused.                                                                                    |
+| `--member-identity-email-size`        | —                                   | Unused.                                                                                    |
+| `--member-identity-gap`               | —                                   | Unused.                                                                                    |
+| `--member-identity-name-line-height`  | —                                   | Unused.                                                                                    |
+| `--member-identity-name-size`         | —                                   | Unused.                                                                                    |
+| `--state-card-strip-weight`           | —                                   | Unused.                                                                                    |
+| `--state-dialog-overlay-opacity`      | `--color-bg-overlay`                | The scrim is a translucent color token now.                                                |
+| `--state-fill-hover-opacity`          | `--color-bg-neutral-muted-hover`    | The fill's states are color tokens now.                                                    |
+| `--state-fill-opacity`                | `--color-bg-neutral-muted`          | The neutral fill is a translucent color token; layer it over a surface rather than mixing. |
+| `--state-fill-pressed-opacity`        | `--color-bg-neutral-muted-pressed`  | The fill's states are color tokens now.                                                    |
+| `--state-hover-lightness`             | —                                   | The runtime hover rule is gone: use the role's -hover token.                               |
+| `--state-hover-shift`                 | —                                   | The runtime hover rule is gone.                                                            |
+| `--state-layer-hover-opacity`         | `--color-bg-neutral-subtle-hover`   | The state layer is a color token now.                                                      |
+| `--state-layer-pressed-opacity`       | `--color-bg-neutral-subtle-pressed` | The state layer is a color token now.                                                      |
+| `--state-lightness-direction`         | —                                   | The runtime hover rule is gone: every role has hover and pressed tokens.                   |
+| `--state-lightness-threshold`         | —                                   | The runtime hover rule is gone.                                                            |
+| `--state-pressed-lightness`           | —                                   | The runtime hover rule is gone: use the role's -pressed token.                             |
+| `--state-pressed-shift`               | —                                   | The runtime hover rule is gone.                                                            |
+| `--state-selected-base-weight`        | —                                   | Unused.                                                                                    |
+| `--state-surface-hover-lightness`     | —                                   | The runtime hover rule is gone: use the surface's -hover token.                            |
+| `--state-surface-hover-shift`         | —                                   | The runtime hover rule is gone.                                                            |
+| `--state-surface-pressed-lightness`   | —                                   | The runtime hover rule is gone: use the surface's -pressed token.                          |
+| `--state-surface-pressed-shift`       | —                                   | The runtime hover rule is gone.                                                            |
+| `--state-tone-subtle-opacity`         | —                                   | Each tone has its tint as a color token: color.bg.{tone}.muted.                            |
+
+Aliases of one role, which replaces them:
+
+| 0.7 custom property                     | Role                                  | Used for                           |
+| --------------------------------------- | ------------------------------------- | ---------------------------------- |
+| `--color-accent`                        | `--color-bg-important-strong`         | Important buttons                  |
+| `--color-accent-hover`                  | `--color-bg-important-strong-hover`   | Important buttons                  |
+| `--color-accent-pressed`                | `--color-bg-important-strong-pressed` | Important buttons                  |
+| `--color-action-strip`                  | `--color-bg-default`                  | The action strip of a card         |
+| `--color-border-hover`                  | `--color-border-muted-hover`          |                                    |
+| `--color-border-strong`                 | `--color-border-muted`                |                                    |
+| `--color-calendar-selected`             | `--color-bg-brand-emphasis`           | Calendars                          |
+| `--color-calendar-today`                | `--color-border-accent`               | Calendars                          |
+| `--color-canvas`                        | `--color-bg-page`                     |                                    |
+| `--color-checkbox-border`               | `--color-fg-muted`                    | Checkboxes                         |
+| `--color-checkbox-ring-hover`           | `--color-fg-muted-hover`              | Checkboxes                         |
+| `--color-checkbox-ring-pressed`         | `--color-fg-muted-pressed`            | Checkboxes                         |
+| `--color-checkbox-text`                 | `--color-fg-default`                  | Checkboxes                         |
+| `--color-chip`                          | `--color-bg-neutral-muted`            | Chips                              |
+| `--color-chip-text`                     | `--color-fg-accent`                   | Chips                              |
+| `--color-destructive-action`            | `--color-bg-danger-strong`            | Destructive buttons                |
+| `--color-destructive-action-hover`      | `--color-bg-danger-strong-hover`      | Destructive buttons                |
+| `--color-destructive-action-pressed`    | `--color-bg-danger-strong-pressed`    | Destructive buttons                |
+| `--color-dialog`                        | `--color-bg-raised`                   |                                    |
+| `--color-dialog-overlay`                | `--color-bg-overlay`                  |                                    |
+| `--color-direction-link`                | `--color-bg-raised`                   | Pager links                        |
+| `--color-direction-link-border`         | `--color-border-muted`                | Pager links                        |
+| `--color-direction-link-border-hover`   | `--color-border-muted-hover`          | Pager links                        |
+| `--color-direction-link-border-pressed` | `--color-border-muted-pressed`        | Pager links                        |
+| `--color-direction-link-icon`           | `--color-fg-accent`                   | Pager links                        |
+| `--color-direction-link-label`          | `--color-fg-muted`                    | Pager links                        |
+| `--color-direction-link-text`           | `--color-fg-default`                  | Pager links                        |
+| `--color-disabled-text`                 | `--color-fg-muted`                    |                                    |
+| `--color-disclosure-text`               | `--color-fg-muted`                    | Disclosure summaries               |
+| `--color-field`                         | `--color-bg-field`                    |                                    |
+| `--color-field-active`                  | `--color-border-accent`               | Fields                             |
+| `--color-field-border`                  | `--color-border-default`              | Fields                             |
+| `--color-field-error`                   | `--color-fg-danger`                   | Fields                             |
+| `--color-field-hint`                    | `--color-fg-muted`                    | Fields                             |
+| `--color-field-label`                   | `--color-fg-muted`                    | Fields                             |
+| `--color-field-placeholder`             | `--color-fg-muted`                    | Fields                             |
+| `--color-field-text`                    | `--color-fg-default`                  | Fields                             |
+| `--color-fill`                          | `--color-bg-neutral-muted`            |                                    |
+| `--color-focus-ring`                    | `--color-border-focus`                |                                    |
+| `--color-icon`                          | `--color-fg-muted`                    |                                    |
+| `--color-link`                          | `--color-fg-link`                     |                                    |
+| `--color-link-hover`                    | `--color-fg-link-hover`               |                                    |
+| `--color-link-pressed`                  | `--color-fg-link-pressed`             |                                    |
+| `--color-markdown-border`               | `--color-border-muted`                | Markdown                           |
+| `--color-menu-row`                      | `--color-bg-popup`                    | Menu rows                          |
+| `--color-navigation-hover`              | `--color-bg-selected-hover`           | Navigation items                   |
+| `--color-navigation-icon`               | `--color-fg-muted`                    | Navigation items                   |
+| `--color-navigation-pressed`            | `--color-bg-selected-pressed`         | Navigation items                   |
+| `--color-navigation-quiet-hover`        | `--color-bg-navigation-hover`         | Navigation items                   |
+| `--color-navigation-quiet-pressed`      | `--color-bg-navigation-pressed`       | Navigation items                   |
+| `--color-navigation-selected`           | `--color-bg-selected`                 | Navigation items                   |
+| `--color-navigation-text`               | `--color-fg-control`                  | Navigation items                   |
+| `--color-on-accent`                     | `--color-fg-on-strong`                | Important buttons                  |
+| `--color-on-calendar-selected`          | `--color-fg-on-emphasis`              | Calendars                          |
+| `--color-on-destructive-action`         | `--color-fg-on-strong`                | Destructive buttons                |
+| `--color-on-navigation-selected`        | `--color-fg-on-selected`              | Navigation items                   |
+| `--color-on-primary-action`             | `--color-fg-on-emphasis`              | Primary buttons                    |
+| `--color-on-secondary-action`           | `--color-fg-control`                  | Secondary buttons                  |
+| `--color-on-select-selected`            | `--color-fg-on-selected`              | Select options                     |
+| `--color-on-subtle-action`              | `--color-fg-accent`                   | Outlined buttons                   |
+| `--color-on-toast`                      | `--color-fg-on-strong`                | Toasts and tooltips                |
+| `--color-on-tone`                       | `--color-fg-on-emphasis`              |                                    |
+| `--color-outlined-focus`                | `--color-border-focus`                | Outlined buttons                   |
+| `--color-pane`                          | `--color-bg-default`                  |                                    |
+| `--color-popup`                         | `--color-bg-popup`                    |                                    |
+| `--color-popup-border`                  | `--elevation-2-border`                | Popups                             |
+| `--color-primary-action`                | `--color-bg-brand-emphasis`           | Primary buttons                    |
+| `--color-primary-action-hover`          | `--color-bg-brand-emphasis-hover`     | Primary buttons                    |
+| `--color-primary-action-pressed`        | `--color-bg-brand-emphasis-pressed`   | Primary buttons                    |
+| `--color-quiet-label-hover`             | `--color-fg-muted-hover`              | Disclosure summaries               |
+| `--color-quiet-label-pressed`           | `--color-fg-muted-pressed`            | Disclosure summaries               |
+| `--color-radio`                         | `--color-bg-brand-emphasis`           | Radios                             |
+| `--color-radio-detail`                  | `--color-fg-muted`                    | Radios                             |
+| `--color-radio-hover`                   | `--color-bg-brand-emphasis-hover`     | Radios                             |
+| `--color-radio-pressed`                 | `--color-bg-brand-emphasis-pressed`   | Radios                             |
+| `--color-radio-row`                     | `--color-bg-muted`                    | Radio rows                         |
+| `--color-radio-row-hover`               | `--color-bg-muted-hover`              | Radio rows                         |
+| `--color-radio-row-pressed`             | `--color-bg-muted-pressed`            | Radio rows                         |
+| `--color-radio-text`                    | `--color-fg-default`                  | Radios                             |
+| `--color-row-alternate`                 | `--color-bg-raised`                   | List rows on a contrasting surface |
+| `--color-row-detail`                    | `--color-fg-muted`                    | List rows                          |
+| `--color-row-selected-hover`            | `--color-bg-selected-hover`           | Tree and table rows                |
+| `--color-row-selected-pressed`          | `--color-bg-selected-pressed`         | Tree and table rows                |
+| `--color-row-text`                      | `--color-fg-default`                  | List rows                          |
+| `--color-secondary-action`              | `--color-bg-neutral-muted`            | Secondary buttons                  |
+| `--color-secondary-action-hover`        | `--color-bg-neutral-muted-hover`      | Secondary buttons                  |
+| `--color-secondary-action-pressed`      | `--color-bg-neutral-muted-pressed`    | Secondary buttons                  |
+| `--color-select-option`                 | `--color-bg-popup`                    | Select options                     |
+| `--color-select-option-hover`           | `--color-bg-popup-hover`              | Select options                     |
+| `--color-select-option-pressed`         | `--color-bg-popup-pressed`            | Select options                     |
+| `--color-select-option-text`            | `--color-fg-control`                  | Select options                     |
+| `--color-select-selected`               | `--color-bg-selected`                 | Select options                     |
+| `--color-select-selected-hover`         | `--color-bg-selected-hover`           | Select options                     |
+| `--color-select-selected-pressed`       | `--color-bg-selected-pressed`         | Select options                     |
+| `--color-skeleton-base`                 | `--color-bg-neutral-muted`            | Skeletons                          |
+| `--color-skeleton-highlight`            | `--color-bg-neutral-muted-hover`      | Skeletons                          |
+| `--color-state-layer`                   | `--color-fg-default`                  |                                    |
+| `--color-state-layer-hover`             | `--color-bg-neutral-subtle-hover`     |                                    |
+| `--color-state-layer-pressed`           | `--color-bg-neutral-subtle-pressed`   |                                    |
+| `--color-subtle-action`                 | `--color-bg-raised`                   | Outlined buttons                   |
+| `--color-subtle-action-border`          | `--color-border-default`              | Outlined buttons                   |
+| `--color-subtle-action-border-hover`    | `--color-border-default-hover`        | Outlined buttons                   |
+| `--color-subtle-action-border-pressed`  | `--color-border-default-pressed`      | Outlined buttons                   |
+| `--color-subtle-action-hover`           | `--color-bg-raised-hover`             | Outlined buttons                   |
+| `--color-subtle-action-pressed`         | `--color-bg-raised-pressed`           | Outlined buttons                   |
+| `--color-surface`                       | `--color-bg-raised`                   |                                    |
+| `--color-surface-muted`                 | `--color-bg-muted`                    |                                    |
+| `--color-switch-off`                    | `--color-bg-neutral-muted`            | Switches                           |
+| `--color-switch-off-hover`              | `--color-bg-neutral-muted-hover`      | Switches                           |
+| `--color-switch-off-pressed`            | `--color-bg-neutral-muted-pressed`    | Switches                           |
+| `--color-switch-text`                   | `--color-fg-default`                  | Switches                           |
+| `--color-switch-thumb`                  | `--color-fg-control`                  | Switches                           |
+| `--color-text-muted`                    | `--color-fg-muted`                    |                                    |
+| `--color-text-primary`                  | `--color-fg-default`                  |                                    |
+| `--color-text-quiet`                    | `--color-fg-muted`                    |                                    |
+| `--color-text-strong`                   | `--color-fg-control`                  |                                    |
+| `--color-toast-error`                   | `--color-bg-danger-strong`            | Toasts                             |
+| `--color-toast-info`                    | `--color-bg-info-strong`              | Toasts                             |
+| `--color-toast-neutral`                 | `--color-bg-neutral-strong`           | Toasts and tooltips                |
+| `--color-toast-success`                 | `--color-bg-success-strong`           | Toasts                             |
+| `--color-tone-accent`                   | `--color-fg-accent`                   |                                    |
+| `--color-tone-danger`                   | `--color-fg-danger`                   |                                    |
+| `--color-tone-done`                     | `--color-fg-done`                     |                                    |
+| `--color-tone-neutral`                  | `--color-fg-muted`                    |                                    |
+| `--color-tone-success`                  | `--color-fg-success`                  |                                    |
+| `--color-tone-warning`                  | `--color-fg-warning`                  |                                    |
+
+Component tokens that take another role in some themes, so no one role replaces them; use the role of each theme:
+
+| 0.7 custom property         | Used for                     | Light                             | Dark                                | Light, high contrast                | Dark, high contrast                 |
+| --------------------------- | ---------------------------- | --------------------------------- | ----------------------------------- | ----------------------------------- | ----------------------------------- |
+| `--color-checkbox`          | Checkboxes                   | `--color-bg-brand-strong`         | `--color-bg-brand-emphasis`         | `--color-bg-brand-emphasis`         | `--color-bg-brand-emphasis`         |
+| `--color-checkbox-hover`    | Checkboxes                   | `--color-bg-brand-strong-hover`   | `--color-bg-brand-emphasis-hover`   | `--color-bg-brand-emphasis-hover`   | `--color-bg-brand-emphasis-hover`   |
+| `--color-checkbox-pressed`  | Checkboxes                   | `--color-bg-brand-strong-pressed` | `--color-bg-brand-emphasis-pressed` | `--color-bg-brand-emphasis-pressed` | `--color-bg-brand-emphasis-pressed` |
+| `--color-control-blue`      | Spinners, sliders and meters | `--color-bg-brand-strong`         | `--color-bg-brand-emphasis`         | `--color-bg-brand-emphasis`         | `--color-bg-brand-emphasis`         |
+| `--color-navigation-quiet`  | Navigation items             | `--color-bg-default`              | `--color-bg-muted`                  | `--color-bg-default`                | `--color-bg-muted`                  |
+| `--color-on-checkbox`       | Checkboxes                   | `--color-fg-on-strong`            | `--color-fg-on-emphasis`            | `--color-fg-on-emphasis`            | `--color-fg-on-emphasis`            |
+| `--color-row`               | List rows                    | `--color-bg-default`              | `--color-bg-muted`                  | `--color-bg-default`                | `--color-bg-muted`                  |
+| `--color-row-hover`         | List rows                    | `--color-bg-default-hover`        | `--color-bg-muted-hover`            | `--color-bg-default-hover`          | `--color-bg-muted-hover`            |
+| `--color-row-pressed`       | List rows                    | `--color-bg-default-pressed`      | `--color-bg-muted-pressed`          | `--color-bg-default-pressed`        | `--color-bg-muted-pressed`          |
+| `--color-switch-on`         | Switches                     | `--color-bg-brand-strong`         | `--color-bg-brand-emphasis`         | `--color-bg-brand-emphasis`         | `--color-bg-brand-emphasis`         |
+| `--color-switch-on-hover`   | Switches                     | `--color-bg-brand-strong-hover`   | `--color-bg-brand-emphasis-hover`   | `--color-bg-brand-emphasis-hover`   | `--color-bg-brand-emphasis-hover`   |
+| `--color-switch-on-pressed` | Switches                     | `--color-bg-brand-strong-pressed` | `--color-bg-brand-emphasis-pressed` | `--color-bg-brand-emphasis-pressed` | `--color-bg-brand-emphasis-pressed` |
+| `--color-switch-thumb-on`   | Switches                     | `--color-fg-on-strong`            | `--color-fg-on-emphasis`            | `--color-fg-on-emphasis`            | `--color-fg-on-emphasis`            |
+
+Fixed colors, one palette color in every theme, which no role replaces:
+
+| 0.7 custom property     | Used for              | Palette color        |
+| ----------------------- | --------------------- | -------------------- |
+| `--color-avatar`        | Avatars               | `palette.blue.20`    |
+| `--color-avatar-figure` | Avatars               | `palette.blue.45`    |
+| `--color-canvas-dark`   | Fixed dark page color | `palette.neutral.92` |
+| `--color-on-avatar`     | Avatars               | `palette.blue.70`    |
+| `--color-white`         | Fixed white           | `palette.neutral.0`  |
+
+<!-- token-migration:end -->
+
 ## Migrate by responsibility
 
 Prefer a small complete slice with shared controls and representative interactions, then expand through callers. The first slice should expose routing, forms or overlays rather than only a static button. Choose an order that fits the application; shared wrappers can reduce repetition when their contract still fits.
