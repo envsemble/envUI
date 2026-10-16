@@ -45,7 +45,6 @@ const unconverted = [
   'message',
   'panel-dock',
   'popover',
-  'rating',
   'relative-time',
   'rich-text',
   'segmented-control',

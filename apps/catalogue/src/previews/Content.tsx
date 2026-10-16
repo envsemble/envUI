@@ -7,7 +7,6 @@ import {
   AnimatedNumber,
   IconButton,
   Button,
-  Rating,
   RelativeTime,
   Stack,
 } from '@envsemble/envui';
@@ -85,26 +84,6 @@ export function AnimatedNumberPreview() {
 const minute = 60_000;
 const hour = 60 * minute;
 const day = 24 * hour;
-
-export function RatingPreview() {
-  return (
-    <Preview>
-      <Example title="Ratings" size="collection">
-        <SpecimenGrid size="compact">
-          <Specimen title="Whole stars">
-            <Rating value={4} showValue />
-          </Specimen>
-          <Specimen title="Half a star">
-            <Rating value={3.5} showValue />
-          </Specimen>
-          <Specimen title="Ten stars">
-            <Rating value={7} max={10} />
-          </Specimen>
-        </SpecimenGrid>
-      </Example>
-    </Preview>
-  );
-}
 
 export function RelativeTimePreview() {
   // The moments are fixed when the page opens, so the texts move on with the clock.

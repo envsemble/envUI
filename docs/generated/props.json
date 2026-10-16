@@ -5125,38 +5125,38 @@
     "SegmentedControl": {
       "kind": "component",
       "source": "packages/ui/src/actions/SegmentedControl.tsx",
-      "description": "One choice among a few options on a pill rail; the chosen segment takes the primary colors.",
+      "description": "One choice among a few options on a pill rail, such as views or filters of the same content; the chosen segment takes the primary colors. A radio group, with one tab stop and arrow keys.",
       "props": [
         {
           "name": "options",
           "type": "readonly SegmentedControlOption[]",
           "required": true,
-          "description": "Two to five options."
+          "description": "The options, two to five, in the order they show."
         },
         {
           "name": "value",
           "type": "string",
           "required": true,
-          "description": ""
+          "description": "The chosen option's value. The control is always controlled: update it from onValueChange."
         },
         {
           "name": "onValueChange",
           "type": "(value: string) => void",
           "required": true,
-          "description": ""
+          "description": "Receives the value of the option people choose, by pressing it or with the arrow keys."
         },
         {
           "name": "aria-label",
           "type": "string",
           "required": true,
-          "description": "Accessible name of the group."
+          "description": "The group's accessible name, such as Work items; the control has no visible label."
         },
         {
           "name": "size",
           "type": "'standard' | 'compact'",
           "required": false,
           "default": "'standard'",
-          "description": "standard (default) matches buttons; compact matches compact fields and toolbars."
+          "description": "The rail's height: standard matches buttons, at 2.5 rem; compact matches compact fields and toolbars, at 2 rem."
         },
         {
           "name": "fullWidth",
@@ -5170,13 +5170,13 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Disable every option; the control can't be focused or changed."
         },
         {
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "A class for the rail, such as for its placement in a layout."
         }
       ],
       "native": [],

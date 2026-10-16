@@ -5,7 +5,6 @@ import {
   AnimatedNumberPreview,
   ChipsPreview,
   DisclosurePreview,
-  RatingPreview,
   RelativeTimePreview,
 } from './Content';
 import { CodePreview } from './CodeContent';
@@ -69,8 +68,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <BreadcrumbsPreview />;
     case 'animated-number':
       return <AnimatedNumberPreview />;
-    case 'rating':
-      return <RatingPreview />;
     case 'relative-time':
       return <RelativeTimePreview />;
     case 'message':
