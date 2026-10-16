@@ -16,7 +16,7 @@ import { EmptyStatePreview, SpinnerPreview, SkeletonPreview } from './Feedback';
 import { ColorPickerPreview } from './ColorPicking';
 import { ComposerPreview, MessagesPreview } from './Conversation';
 import { CalendarHeatmapPreview, StatsPreview } from './Dashboard';
-import { MenubarPreview, AvatarPreview, MeterPreview, ProgressPreview } from './Overlays';
+import { MenubarPreview, AvatarPreview } from './Overlays';
 import { AppShellPreview } from './Shell';
 import { CommandPalettePreview, DocumentTabsPreview, TreePreview } from './Workspace';
 import { PanelDockPreview } from './Dock';
@@ -109,10 +109,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <MenubarPreview />;
     case 'avatar':
       return <AvatarPreview />;
-    case 'meter':
-      return <MeterPreview />;
-    case 'progress':
-      return <ProgressPreview />;
     case 'app-shell':
       return <AppShellPreview />;
     case 'tree':

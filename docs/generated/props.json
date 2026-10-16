@@ -3838,51 +3838,51 @@
     "Meter": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Meter.tsx",
-      "description": "A known quantity within a range, such as used seats or storage.",
+      "description": "A measurement within a known range, such as the seats assigned of a plan or the storage used of a quota: a label, an optional value and a bar, exposed as a meter. For how much of a task is done, use Progress.",
       "props": [
         {
           "name": "label",
           "type": "ReactNode",
           "required": true,
-          "description": "Visible label and accessible name."
+          "description": "What the bar shows, such as Seats assigned; it is visible above the bar and names it."
         },
         {
           "name": "value",
           "type": "number",
           "required": true,
-          "description": ""
+          "description": "The measurement, between min and max. A value outside the range shows, and is reported, as the nearest end."
         },
         {
           "name": "min",
           "type": "number",
           "required": false,
           "default": "0",
-          "description": ""
+          "description": "The low end of the range."
         },
         {
           "name": "max",
           "type": "number",
           "required": false,
           "default": "100",
-          "description": ""
+          "description": "The high end of the range."
         },
         {
           "name": "valueText",
           "type": "ReactNode",
           "required": false,
-          "description": "Visible formatted value, such as \"2 of 5\"; omit to show nothing."
+          "description": "The value as text at the end of the label's row, formatted by the application, such as 2 of 5 or 40%. Without it, no value shows."
         },
         {
           "name": "aria-valuetext",
           "type": "string",
           "required": false,
-          "description": "Text read by assistive technology instead of the raw number."
+          "description": "The value as assistive technology reads it, with its unit in words, such as 2 of 5 seats. Without it, a screen reader reads the bare number, aria-valuenow."
         },
         {
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "A class for the root element, such as one that sets its width."
         }
       ],
       "native": [],
@@ -4587,51 +4587,51 @@
     "Progress": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Meter.tsx",
-      "description": "Completion of a task; pass value null while the amount of work is unknown.",
+      "description": "How much of a task is done, such as an upload or an import: a label, an optional value and a bar, exposed as a progress bar. Pass value null while the amount of work is unknown, and the bar sweeps instead.",
       "props": [
         {
           "name": "label",
           "type": "ReactNode",
           "required": true,
-          "description": "Visible label and accessible name."
+          "description": "What the bar shows, such as Seats assigned; it is visible above the bar and names it."
         },
         {
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "A class for the root element, such as one that sets its width."
         },
         {
           "name": "aria-valuetext",
           "type": "string",
           "required": false,
-          "description": "Text read by assistive technology instead of the raw number."
+          "description": "The value as assistive technology reads it, with its unit in words, such as 2 of 5 seats. Without it, a screen reader reads the bare number, aria-valuenow."
         },
         {
           "name": "max",
           "type": "number",
           "required": false,
           "default": "100",
-          "description": ""
+          "description": "The high end of the range."
         },
         {
           "name": "min",
           "type": "number",
           "required": false,
           "default": "0",
-          "description": ""
+          "description": "The low end of the range."
         },
         {
           "name": "valueText",
           "type": "ReactNode",
           "required": false,
-          "description": "Visible formatted value, such as \"2 of 5\"; omit to show nothing."
+          "description": "The value as text at the end of the label's row, formatted by the application, such as 2 of 5 or 40%. Without it, no value shows."
         },
         {
           "name": "value",
           "type": "number | null",
           "required": true,
-          "description": ""
+          "description": "How much of the task is done, between min and max, such as 40 of 100; null while the amount of work is unknown, which shows an indeterminate bar."
         }
       ],
       "native": [],
@@ -5312,84 +5312,85 @@
     "Slider": {
       "kind": "component",
       "source": "packages/ui/src/forms/Slider.tsx",
-      "description": "A value in a range, chosen by dragging a thumb along a track or with the keyboard.",
+      "description": "A value in a range, chosen by dragging a thumb along a track, pressing the track or with the keyboard, with its label and current value above the track and an optional hint below.",
       "props": [
         {
           "name": "label",
           "type": "ReactNode",
           "required": true,
-          "description": "Visible label and the slider's accessible name."
+          "description": "The value's name above the track, such as Opacity. It names the slider, and pressing it moves focus to the slider."
         },
         {
           "name": "hint",
           "type": "ReactNode",
           "required": false,
-          "description": "Guidance below the slider, linked to it."
+          "description": "Lasting guidance under the track, such as what the value applies to, linked to the slider as its description."
         },
         {
           "name": "value",
           "type": "number",
           "required": false,
-          "description": ""
+          "description": "The value of a controlled slider; update it from onValueChange."
         },
         {
           "name": "defaultValue",
           "type": "number",
           "required": false,
-          "description": "Starting value when the slider owns it; min by default."
+          "default": "min",
+          "description": "The value an uncontrolled slider starts with; a native form reset returns to it."
         },
         {
           "name": "onValueChange",
           "type": "(value: number) => void",
           "required": false,
-          "description": "Receives the value while it changes, by dragging, pressing the track or with the keyboard."
+          "description": "Receives the value while it changes, by dragging, pressing the track or with the keyboard, as often as the thumb moves."
         },
         {
           "name": "onValueCommit",
           "type": "(value: number) => void",
           "required": false,
-          "description": "Receives the value once a change is complete, such as when the thumb is released."
+          "description": "Receives the value once a change is complete: when the thumb is released or the track pressed, and after each key. Use it for work that runs once per change, such as saving."
         },
         {
           "name": "min",
           "type": "number",
           "required": false,
           "default": "0",
-          "description": "0 by default."
+          "description": "The lowest value, at the start of the track."
         },
         {
           "name": "max",
           "type": "number",
           "required": false,
           "default": "100",
-          "description": "100 by default."
+          "description": "The highest value, at the end of the track."
         },
         {
           "name": "step",
           "type": "number",
           "required": false,
           "default": "1",
-          "description": "The values between min and max that the slider can take; 1 by default."
+          "description": "The distance between the values the slider can take, counted from min; an arrow key moves by it."
         },
         {
           "name": "largeStep",
           "type": "number",
           "required": false,
-          "default": "Math.max(step, Math.round((max - min) / 10 / step) * step)",
-          "description": "The change of Page Up, Page Down and arrow keys with Shift; a tenth of the range by default."
+          "default": "a tenth of the range in whole steps, at least one step",
+          "description": "The change of Page Up, Page Down and an arrow key with Shift."
         },
         {
           "name": "formatValue",
           "type": "(value: number) => string",
           "required": false,
-          "description": "The value as people read and hear it, such as (value) => `${value}%`."
+          "description": "The value as people read it above the track and assistive technology announces it, such as (value) => `${value}%`. Without it, the number shows as it is."
         },
         {
           "name": "disabled",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Dim the slider; it can't be focused or moved, and forms leave it out."
         },
         {
           "name": "name",
@@ -5401,7 +5402,7 @@
           "name": "form",
           "type": "string",
           "required": false,
-          "description": "The id of a form the slider belongs to when it is outside of it."
+          "description": "The id of a form the slider belongs to when it sits outside of it."
         },
         {
           "name": "inputRef",
@@ -6370,64 +6371,64 @@
     "Tree": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Tree.tsx",
-      "description": "A virtualized tree of rows for large hierarchies such as file trees. The application passes the visible rows and owns expansion; the tree owns focus, keyboard navigation and scrolling.",
+      "description": "A virtualized tree of rows for large hierarchies such as file trees. The application passes the visible rows and owns expansion and selection; the tree owns focus, keyboard navigation and scrolling. It fills its parent's height, scrolls itself and renders only the rows in view.",
       "props": [
         {
           "name": "items",
           "type": "readonly T[]",
           "required": true,
-          "description": "The visible rows in order, flattened; the application owns expansion."
+          "description": "The visible rows in order, flattened: an expanded row is followed by its visible descendants. The application owns expansion; collapsing a row removes its descendants from items."
         },
         {
           "name": "aria-label",
           "type": "string",
           "required": true,
-          "description": "Accessible name of the tree."
+          "description": "The tree's accessible name, such as Files."
         },
         {
           "name": "selectedId",
           "type": "string | null",
           "required": false,
           "default": "null",
-          "description": "The selected row; it scrolls into view when it changes."
+          "description": "The selected row's id: it takes the navigation selection colors and scrolls into view when it changes. The application sets it, usually from onOpen."
         },
         {
           "name": "onOpen",
           "type": "(item: T, options: TreeOpenOptions) => void",
           "required": true,
-          "description": "Click and Space call it with preview true; double click and Enter with preview false."
+          "description": "Called when people open a row: with preview true on a single click and Space, and false on a double click and Enter. Expandable rows call it too, and disabled rows don't."
         },
         {
           "name": "onExpandedChange",
           "type": "(item: T, expanded: boolean) => void",
           "required": true,
-          "description": "Chevron clicks, ArrowRight on a collapsed row and ArrowLeft on an expanded row."
+          "description": "Called with the row and its new state from a press on its chevron, the right arrow key on a collapsed row and the left arrow key on an expanded one, mirrored in right-to-left text. The application updates items."
         },
         {
           "name": "contextMenu",
           "type": "(item: T | null) => ReactNode",
           "required": false,
-          "description": "Menu items for a row, or for the tree's empty area when the item is null."
+          "description": "Menu items for the row people right-click, or press Shift+F10 or the Menu key on, or for the tree's empty area when the item is null. Without it, the browser's own context menu stays."
         },
         {
           "name": "contextMenuLabel",
           "type": "string",
           "required": false,
           "default": "'Actions'",
-          "description": "Accessible name of the context menu."
+          "description": "The context menu's accessible name, in the application's language."
         },
         {
           "name": "density",
           "type": "'compact' | 'standard'",
           "required": false,
           "default": "'compact'",
-          "description": "compact (default) rows are about 1.75 rem tall, with a compact context menu; standard rows about 2.25 rem."
+          "description": "compact rows are 1.75 rem tall, with 0.875 rem text and a compact context menu; standard rows are 2.25 rem tall, with 0.9375 rem text. On touch screens both are 2.75 rem."
         },
         {
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "A class for the tree, the element that scrolls."
         }
       ],
       "native": [],
