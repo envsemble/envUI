@@ -54,7 +54,6 @@
       "MenuHeaderProps": "Menu.HeaderProps",
       "MenuSubmenu": "Menu.Submenu",
       "MenuSubmenuProps": "Menu.SubmenuProps",
-      "MenuDensity": "Menu.Density",
       "Menubar": "Menubar.Root",
       "MenubarProps": "Menubar.RootProps",
       "MenubarMenu": "Menubar.Menu",
@@ -95,6 +94,12 @@
   "removed": {
     "$comment": "Exports that became internal in 1.0, with what to use instead. A `value` is the constant's literal, which a codemod can inline.",
     "@envsemble/envui": {
+      "MenuDensity": {
+        "use": "Menus have one anatomy in 1.0, and density is gone: the app's scale sizes them, so use ThemeScale for a scale and drop the density."
+      },
+      "SurfaceDensity": {
+        "use": "Surface's density is gone in 1.0: give the controls inside a ControlSize with their size prop, or set a ThemeScale with scale on a Theme around the region."
+      },
       "LoadingBar": {
         "use": "AppShell's loading and loadingLabel props show page progress along the bottom of its topbar; Progress shows the progress of a task."
       },

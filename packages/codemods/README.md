@@ -63,7 +63,7 @@ Rewrites imports from `@envsemble/envui` and `@envsemble/envui/theme-bootstrap`,
 
 It reports instead of changing:
 
-- removed exports, with what to use instead: `LoadingBar`, `LoadingBarProps`, the manual `Toast` (only its bare uses; `Toast.Provider` is the 1.0 API), `ToastProps`, `getInitials`, `useLinkComponent` and `useSidebarCompact`;
+- removed exports, with what to use instead: `LoadingBar`, `LoadingBarProps`, the manual `Toast` (only its bare uses; `Toast.Provider` is the 1.0 API), `ToastProps`, `getInitials`, `useLinkComponent`, `useSidebarCompact`, and the `MenuDensity` and `SurfaceDensity` types;
 - `DirectionLink` with a dynamic, spread or missing `direction`, or used outside JSX; its import stays;
 - re-exports and `export { … }` of namespace parts, `DirectionLink` and removed exports, which cannot keep their old name;
 - a namespace import read with a key computed at run time, such as `ui[name]`;

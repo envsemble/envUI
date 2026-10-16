@@ -1,7 +1,6 @@
 import { Button, Menu } from '@envsemble/envui';
 
 export interface ProjectMenuProps extends Omit<Menu.RootProps, 'children'> {
-  density?: Menu.Density;
   item?: Menu.ItemProps;
   group?: Menu.GroupProps;
   header?: Menu.HeaderProps;

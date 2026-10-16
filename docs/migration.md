@@ -55,7 +55,7 @@ export default defineConfig(envui.configs.recommended);
 
 Change by hand what the codemods report, each with its file and line:
 
-- removed exports: `LoadingBar` (AppShell's `loading` prop, or Progress), the manual `Toast` (`useToast()` inside `Toast.Provider`), `ToastProps` (`ToastNotification`), `getInitials`, `useLinkComponent` and `useSidebarCompact`;
+- removed exports: `LoadingBar` (AppShell's `loading` prop, or Progress), the manual `Toast` (`useToast()` inside `Toast.Provider`), `ToastProps` (`ToastNotification`), `getInitials`, `useLinkComponent`, `useSidebarCompact`, and the `MenuDensity` and `SurfaceDensity` types (menus have one anatomy; give controls a `size` or a Theme a `scale`);
 - a `DirectionLink` whose `direction` is computed or spread, or that is used outside JSX;
 - re-exports of namespace parts, and names destructured from a namespace import, `useTheme` among them;
 - a `useTheme()` call that is returned, as by a hook that wraps it, or passed as a component's `value`, as to a context provider, directly or through a variable: whether its readers expect the scheme or the object is out of the file's sight;
