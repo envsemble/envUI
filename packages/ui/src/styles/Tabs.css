@@ -155,3 +155,15 @@
     transform: none;
   }
 }
+
+/* Forced colors: the system paints no fills or shadows, so the selected tab takes the system’s selection colors. */
+@media (forced-colors: active) {
+  .env-tabs-list > .env-tab[data-active] {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+  .env-tabs-list > .env-tab[data-active] :where(*) {
+    color: inherit;
+  }
+}

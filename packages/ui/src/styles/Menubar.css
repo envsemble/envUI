@@ -54,3 +54,15 @@
   text-decoration-thickness: 0.0625rem;
   text-underline-offset: 0.15em;
 }
+
+/* Forced colors: the system paints no fills or shadows, so the trigger of the open menu takes the system’s selection colors. */
+@media (forced-colors: active) {
+  .env-menubar-trigger[data-popup-open] {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+  .env-menubar-trigger[data-popup-open] :where(*) {
+    color: inherit;
+  }
+}

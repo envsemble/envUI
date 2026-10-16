@@ -154,3 +154,18 @@
     transform: scale(0.97);
   }
 }
+
+/* Forced colors: the system paints no fills or shadows, so the selected item takes the system’s selection colors. */
+@media (forced-colors: active) {
+  .env-nav-list-item-selected {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+  .env-nav-list-item-selected :where(*) {
+    color: inherit;
+  }
+  .env-nav-list-item:is(:disabled, [aria-disabled='true']) {
+    color: GrayText;
+  }
+}

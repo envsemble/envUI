@@ -320,3 +320,11 @@
     transform: scale(0.97);
   }
 }
+
+/* Forced colors: the system paints no fills or shadows, so a button that is unavailable takes the disabled color. */
+@media (forced-colors: active) {
+  .env-button[aria-disabled='true'] {
+    border-color: GrayText;
+    color: GrayText;
+  }
+}

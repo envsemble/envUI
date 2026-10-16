@@ -204,3 +204,15 @@
     transition-timing-function: var(--env-motion-ease-exit);
   }
 }
+
+/* Forced colors: the system paints no fills or shadows, so the highlighted command takes the system’s selection colors. */
+@media (forced-colors: active) {
+  .env-command-palette-option[data-highlighted] {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+  .env-command-palette-option[data-highlighted] :where(*) {
+    color: inherit;
+  }
+}

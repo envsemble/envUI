@@ -263,3 +263,42 @@
     animation: env-motion-pop-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
 }
+
+/* Forced colors: the system paints no fills or shadows, so checked boxes and switches take the system’s selection colors, a switch draws its track and
+   thumb in system colors, and a chosen radio row is outlined; the radio itself is the system’s. */
+@media (forced-colors: active) {
+  .env-checkbox-control:is(:checked, :indeterminate) {
+    border-color: Highlight;
+    background-color: Highlight;
+  }
+  .env-checkbox-control:is(:checked, :indeterminate) + .env-checkbox-mark {
+    color: HighlightText;
+  }
+  .env-checkbox-control:disabled {
+    border-color: GrayText;
+  }
+  .env-switch-control {
+    outline: 1px solid CanvasText;
+    outline-offset: -1px;
+  }
+  .env-switch-control::before {
+    background-color: CanvasText;
+  }
+  .env-switch-control:checked {
+    background-color: Highlight;
+    outline-color: Highlight;
+  }
+  .env-switch-control:checked::before {
+    background-color: HighlightText;
+  }
+  .env-switch-control:disabled {
+    outline-color: GrayText;
+  }
+  .env-switch-control:disabled::before {
+    background-color: GrayText;
+  }
+  .env-radio-option:has(input:checked) {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+}

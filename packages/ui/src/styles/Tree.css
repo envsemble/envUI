@@ -144,3 +144,15 @@
     transition: none;
   }
 }
+
+/* Forced colors: the system paints no fills or shadows, so the selected row takes the system’s selection colors. */
+@media (forced-colors: active) {
+  .env-tree-row[aria-selected='true'] {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+  .env-tree-row[aria-selected='true'] :where(*) {
+    color: inherit;
+  }
+}

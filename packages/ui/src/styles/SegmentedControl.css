@@ -163,3 +163,18 @@
     transform: scale(0.97);
   }
 }
+
+/* Forced colors: the system paints no fills or shadows, so the chosen segment takes the system’s selection colors. */
+@media (forced-colors: active) {
+  .env-segment[data-checked] {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+  .env-segment[data-checked] :where(*) {
+    color: inherit;
+  }
+  .env-segment[data-disabled] {
+    color: GrayText;
+  }
+}

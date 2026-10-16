@@ -11,3 +11,10 @@
   inline-size: 100%;
   block-size: 100%;
 }
+
+/* Forced colors: a swatch shows a color as content, as an image does, so the system keeps it. */
+@media (forced-colors: active) {
+  .env-color-swatch {
+    forced-color-adjust: none;
+  }
+}

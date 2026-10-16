@@ -163,3 +163,14 @@
     transition-timing-function: var(--env-motion-ease-exit);
   }
 }
+
+/* Forced colors: the system paints no fills or shadows, so a bar’s track is outlined and its indicator takes the selection color. */
+@media (forced-colors: active) {
+  .env-bar-track {
+    outline: 1px solid CanvasText;
+    outline-offset: -1px;
+  }
+  .env-bar-indicator {
+    background-color: Highlight;
+  }
+}

@@ -136,3 +136,18 @@
     transition: none;
   }
 }
+
+/* Forced colors: the system paints no fills or shadows, so the active tab takes the system’s selection colors. */
+@media (forced-colors: active) {
+  .env-document-tab[data-active] {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+  .env-document-tab[data-active] :where(*) {
+    color: inherit;
+  }
+  .env-document-tab[data-active]::after {
+    background-color: HighlightText;
+  }
+}

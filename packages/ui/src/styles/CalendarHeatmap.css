@@ -126,3 +126,10 @@
 .env-calendar-heatmap-tooltip-positioner:is([data-focus-opened], [data-closed]) {
   pointer-events: none;
 }
+
+/* Forced colors: a day's shade is its data, as an image's colors are, so the system keeps it. */
+@media (forced-colors: active) {
+  .env-calendar-heatmap-day {
+    forced-color-adjust: none;
+  }
+}

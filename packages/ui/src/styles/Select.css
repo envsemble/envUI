@@ -173,3 +173,19 @@
     transition-timing-function: var(--env-motion-ease-exit);
   }
 }
+
+/* Forced colors: the system paints no fills or shadows, so the highlighted option takes the system’s selection colors, and a disabled one the disabled
+   color. */
+@media (forced-colors: active) {
+  .env-dropdown-option[data-highlighted] {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+  .env-dropdown-option[data-highlighted] :where(*) {
+    color: inherit;
+  }
+  .env-dropdown-option[data-disabled] {
+    color: GrayText;
+  }
+}

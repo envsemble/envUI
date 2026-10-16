@@ -113,3 +113,23 @@
     transition: none;
   }
 }
+
+/* Forced colors: the system paints no fills or shadows, so the chosen day takes the system’s selection colors, today is outlined, and unavailable days
+   take the disabled color. */
+@media (forced-colors: active) {
+  .env-calendar-day[aria-current='date'] > .env-calendar-day-mark {
+    outline: 1px solid CanvasText;
+    outline-offset: -1px;
+  }
+  .env-calendar-day[aria-selected='true'] > .env-calendar-day-mark {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+  .env-calendar-day[aria-selected='true'] > .env-calendar-day-mark :where(*) {
+    color: inherit;
+  }
+  .env-calendar-day[aria-disabled='true'] {
+    color: GrayText;
+  }
+}

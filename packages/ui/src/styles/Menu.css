@@ -322,3 +322,25 @@
     animation: env-motion-pop-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
 }
+
+/* Forced colors: the system paints no fills or shadows, so the highlighted item takes the system’s selection colors, a disabled one the disabled color,
+   and the chosen organization’s radio is drawn in the text color. */
+@media (forced-colors: active) {
+  .env-menu-item:is([data-highlighted], [data-popup-open]) {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+  .env-menu-item:is([data-highlighted], [data-popup-open]) :where(*) {
+    color: inherit;
+  }
+  .env-menu-item[data-disabled] {
+    color: GrayText;
+  }
+  .env-organization-switcher-option[data-checked] .env-organization-switcher-radio {
+    border-color: currentColor;
+  }
+  .env-organization-switcher-radio-dot {
+    background-color: currentColor;
+  }
+}

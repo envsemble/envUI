@@ -287,3 +287,19 @@
     transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);
   }
 }
+
+/* Forced colors: the system paints no fills or shadows, so the highlighted option takes the system’s selection colors, and a disabled one the disabled
+   color. */
+@media (forced-colors: active) {
+  .env-combobox-option[data-highlighted] {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+  .env-combobox-option[data-highlighted] :where(*) {
+    color: inherit;
+  }
+  .env-combobox-option[data-disabled] {
+    color: GrayText;
+  }
+}

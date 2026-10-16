@@ -509,3 +509,23 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
     animation: env-motion-pop-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
 }
+
+/* Forced colors: the system paints no fills or shadows, so a focused field is outlined in the selection color, an invalid one has a dashed border, and a
+   disabled one takes the disabled color. */
+@media (forced-colors: active) {
+  .env-text-field-well:focus-within {
+    outline: 2px solid Highlight;
+    outline-offset: 1px;
+  }
+  .env-text-field-well:has(> .env-text-input[aria-invalid='true']),
+  .env-dropdown-trigger[aria-invalid='true'] {
+    border-style: dashed;
+  }
+  .env-text-field-well[data-variant='plain']:has(> .env-text-input[aria-invalid='true'])::after {
+    background-color: CanvasText;
+  }
+  .env-text-field-well:has(> .env-text-input:disabled) {
+    border-color: GrayText;
+    color: GrayText;
+  }
+}
