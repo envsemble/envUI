@@ -76,7 +76,7 @@ How an element is matched:
    - what a part renders in place of its own element, through the `render` prop: `<Menu.Item render={<a href="/settings" />}>`;
    - an element hidden from assistive technology and out of the tab order (`aria-hidden` with `tabIndex={-1}`);
    - `<input type="hidden">`;
-   - the `<a href>` of a link adapter, the component that `LinkProvider` renders for envUI's destinations, as the [setup guide](../../docs/setup.md#router-links) writes it: a function whose props are typed `LinkComponentProps`, or one that a `LinkProvider` in the same file takes as its `component`. It draws the anchor itself, because envUI's `Link` would render the adapter again;
+   - the `<a href>` of a link adapter, the component that `LinkProvider` renders for envUI's destinations, as the [setup guide](../../docs/setup.md#router-links) writes it: a function whose props are typed `LinkComponentProps`, or one that a `LinkProvider` in the same file takes as its `component`, directly, through a variable or as a member of an object literal (`component={adapters.link}`). It draws the anchor itself, because envUI's `Link` would render the adapter again;
    - entries named in `allow`.
 
 Options:

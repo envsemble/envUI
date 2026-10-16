@@ -342,6 +342,10 @@ ruleTester.run('no-html-elements in link adapters', rule, {
     'function RouterLink(props) { return <a href={props.href} {...props} />; }\n<LinkProvider component={RouterLink}>{app}</LinkProvider>;',
     '<LinkProvider component={(props) => <a href={props.href} {...props} />}>{app}</LinkProvider>;',
     'const RouterLink = memo(forwardRef((props, ref) => <a ref={ref} href={props.href} />));\n<ui.LinkProvider component={RouterLink} />;',
+    // An adapter kept in an object and passed as its member.
+    'const adapters = { link: (props) => <a href={props.href} {...props} /> };\n<LinkProvider component={adapters.link} />;',
+    "const config = { adapters: { link(props) { return <a href={props.href} />; } } };\n<LinkProvider component={config.adapters['link']} />;",
+    'function RouterLink(props) { return <a href={props.href} />; }\nconst adapters = { link: RouterLink };\n<LinkProvider component={adapters.link} />;',
   ],
   invalid: [
     // An anchor elsewhere, and other raw elements inside an adapter, are still reported.
@@ -356,6 +360,11 @@ ruleTester.run('no-html-elements in link adapters', rule, {
       ],
     },
     { code: '<a href="/settings">Settings</a>', errors: [anchor] },
+    // Another member of the object is not the adapter.
+    {
+      code: 'const parts = { link: (props) => <a href={props.href} />, card: () => <a href="/card">Card</a> };\n<LinkProvider component={parts.link} />;',
+      errors: [anchor],
+    },
   ],
 });
 

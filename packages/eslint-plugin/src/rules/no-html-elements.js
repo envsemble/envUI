@@ -107,6 +107,18 @@ function hasLinkComponentProps(fn, visitorKeys) {
   );
 }
 
+/** An expression without the TypeScript `as`, `satisfies` and `!` around it. */
+function unwrap(expression) {
+  let node = expression;
+  while (
+    node?.type === 'TSAsExpression' ||
+    node?.type === 'TSSatisfiesExpression' ||
+    node?.type === 'TSNonNullExpression'
+  )
+    node = node.expression;
+  return node;
+}
+
 /** How the message names what was found, such as `a raw <input type="email">`. */
 function describeElement(entry, element, tag) {
   if (entry.describe) return entry.describe.replace('{tag}', tag);
@@ -193,23 +205,70 @@ export default {
     /** Raw anchors inside functions, decided at the end, once every LinkProvider is known. */
     const anchors = [];
 
-    /** The functions an expression stands for: itself, a wrapped one, or a variable's. */
-    function functionsOf(expression, seen = new Set()) {
-      if (!expression || seen.has(expression)) return [];
-      seen.add(expression);
-      if (isFunction(expression)) return [expression];
-      // memo(forwardRef(function RouterLink(…) {…}))
-      if (expression.type === 'CallExpression')
-        return expression.arguments.flatMap((argument) => functionsOf(argument, seen));
-      if (expression.type !== 'Identifier') return [];
-      const variable = resolveVariable(sourceCode, expression, expression.name);
+    /** The expressions a variable is set to where it is declared, and its function declarations. */
+    function valuesOf(identifier) {
+      const variable = resolveVariable(sourceCode, identifier, identifier.name);
       return (variable?.defs ?? []).flatMap((definition) =>
         definition.type === 'FunctionName'
           ? [definition.node]
-          : definition.type === 'Variable'
-            ? functionsOf(definition.node.init, seen)
+          : definition.type === 'Variable' && definition.node.init
+            ? [definition.node.init]
             : [],
       );
+    }
+
+    /**
+     * The expressions a member such as `adapters.link` or `config.adapters['link']` stands for: the
+     * values of that property in the object literals its object stands for.
+     */
+    function membersOf(member, seen) {
+      const { property } = member;
+      const name = member.computed
+        ? property.type === 'Literal'
+          ? String(property.value)
+          : undefined
+        : property.name;
+      if (name === undefined) return [];
+      return objectsOf(member.object, seen).flatMap((object) =>
+        object.properties
+          .filter(
+            (candidate) =>
+              candidate.type === 'Property' &&
+              (candidate.computed ? candidate.key.type === 'Literal' : true) &&
+              moduleExportName(candidate.key) === name,
+          )
+          .map((candidate) => candidate.value),
+      );
+    }
+
+    /** The object literals an expression stands for, through variables and members. */
+    function objectsOf(expression, seen) {
+      const node = unwrap(expression);
+      if (!node || seen.has(node)) return [];
+      seen.add(node);
+      if (node.type === 'ObjectExpression') return [node];
+      if (node.type === 'Identifier')
+        return valuesOf(node).flatMap((value) => objectsOf(value, seen));
+      if (node.type === 'MemberExpression')
+        return membersOf(node, seen).flatMap((value) => objectsOf(value, seen));
+      return [];
+    }
+
+    /** The functions an expression stands for: itself, a wrapped one, a variable's or a member's. */
+    function functionsOf(expression, seen = new Set()) {
+      const node = unwrap(expression);
+      if (!node || seen.has(node)) return [];
+      seen.add(node);
+      if (isFunction(node)) return [node];
+      // memo(forwardRef(function RouterLink(…) {…}))
+      if (node.type === 'CallExpression')
+        return node.arguments.flatMap((argument) => functionsOf(argument, seen));
+      if (node.type === 'Identifier')
+        return valuesOf(node).flatMap((value) => functionsOf(value, seen));
+      // component={adapters.link}
+      if (node.type === 'MemberExpression')
+        return membersOf(node, seen).flatMap((value) => functionsOf(value, seen));
+      return [];
     }
 
     const isAdapter = (fn) => adapters.has(fn) || hasLinkComponentProps(fn, sourceCode.visitorKeys);
