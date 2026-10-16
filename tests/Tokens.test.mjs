@@ -1,12 +1,13 @@
 import assert from 'node:assert/strict';
 import { cp, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join, relative } from 'node:path';
+import { join, posix, relative } from 'node:path';
 import { after, before, test } from 'node:test';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import ts from 'typescript';
 import {
   contextTokens,
+  cssDeclarations,
   duplicateTokens,
   overridingCustomProperties,
 } from '../packages/ui/terrazzo.config.mjs';
@@ -277,8 +278,9 @@ test('a typography token that aliases another reads the parts the other declares
 });
 
 /**
- * Custom properties that Base UI's positioners and popups set on the elements envUI styles; they
- * are documented in Base UI's API reference for each part, not declared in a style sheet.
+ * Custom properties that Base UI's positioners set, for the popup inside, as documented in Base
+ * UI's API reference for each positioner part. They count as set inline by a module that renders
+ * a positioner (`<BaseMenu.Positioner>`): a dialog or a toast list has none.
  */
 const baseUiProperties = [
   '--anchor-height',
@@ -294,37 +296,407 @@ const baseUiProperties = [
  */
 const applicationHooks = [];
 
-async function files(directory, extensions) {
-  const entries = await readdir(directory, { recursive: true, withFileTypes: true });
-  return entries
-    .filter(
-      (entry) => entry.isFile() && extensions.some((extension) => entry.name.endsWith(extension)),
-    )
-    .map((entry) => join(entry.parentPath, entry.name));
+/**
+ * Classes that an element always carries with another component's, so a rule for the first also
+ * sees what is declared for the second: Card renders its root as a Surface (`<Surface
+ * render={…}>`), which adds env-surface beside env-card, and env-clickable-card when it acts.
+ */
+const impliedClasses = {
+  'env-card': ['env-surface'],
+  'env-clickable-card': ['env-surface'],
+};
+
+/** The token build's style sheets: what they declare is defined only through `.env-theme`. */
+const tokenStyleSheets = new Set(['Tokens.css', 'TokensHandwritten.css']);
+
+/**
+ * The pieces of `text` between its top-level characters that `separates` accepts, outside quotes,
+ * brackets and parentheses, with each separator as a piece of its own.
+ */
+function splitOutside(text, separates) {
+  const pieces = [];
+  let current = '';
+  let depth = 0;
+  let quote = null;
+  for (const character of text) {
+    if (quote) {
+      if (character === quote) quote = null;
+    } else if (character === '"' || character === "'") quote = character;
+    else if (character === '(' || character === '[') depth += 1;
+    else if (character === ')' || character === ']') depth -= 1;
+    else if (depth === 0 && separates(character)) {
+      pieces.push(current, character);
+      current = '';
+      continue;
+    }
+    current += character;
+  }
+  return [...pieces, current];
 }
 
-test("every custom property the library's style sheets read is defined", async () => {
-  const styles = await files(join(library, 'src/styles'), ['.css']);
-  const declared = new Set();
-  const reads = new Map();
-  for (const file of styles) {
-    const css = (await readFile(file, 'utf8')).replace(/\/\*[\s\S]*?\*\//g, '');
-    for (const [, name] of css.matchAll(/(--[\w-]+)\s*:/g)) declared.add(name);
-    // A var() without a fallback, which is invalid wherever its property is not set.
-    for (const [, name] of css.matchAll(/var\(\s*(--[\w-]+)\s*\)/g))
-      reads.set(name, [...(reads.get(name) ?? []), relative(library, file).replaceAll('\\', '/')]);
+/** The complex selectors of a selector list. */
+const selectorList = (selector) =>
+  splitOutside(selector, (character) => character === ',')
+    .filter((piece) => piece !== ',')
+    .map((piece) => piece.trim());
+
+/**
+ * The compounds of a complex selector that match its subject or an ancestor of it: the last one,
+ * and each that a descendant or child combinator follows. The one before `+` or `~` is a sibling.
+ */
+function subjectAndAncestors(complex) {
+  const compounds = [];
+  for (const piece of splitOutside(complex, (character) => ' >+~'.includes(character))) {
+    if (' >+~'.includes(piece) && piece.length === 1) {
+      if (compounds.length > 0 && piece !== ' ') compounds.at(-1).combinator = piece;
+      continue;
+    }
+    if (piece) compounds.push({ compound: piece, combinator: ' ' });
   }
-  // Properties that components set inline, such as a cell's '--env-calendar-heatmap-mix'.
-  for (const file of await files(join(library, 'src'), ['.ts', '.tsx']))
-    for (const [, name] of (await readFile(file, 'utf8')).matchAll(/['"](--[\w-]+)['"]\s*:/g))
-      declared.add(name);
-  const undefinedReads = [...reads]
-    .filter(
-      ([name]) =>
-        !declared.has(name) && !baseUiProperties.includes(name) && !applicationHooks.includes(name),
+  return compounds
+    .filter(({ combinator }, index) => index === compounds.length - 1 || '> '.includes(combinator))
+    .map(({ compound }) => compound);
+}
+
+/** Whether a complex selector is one compound, with no combinator. */
+const isCompound = (selector) =>
+  splitOutside(selector, (character) => ' >+~'.includes(character)).filter((piece) => piece.trim())
+    .length === 1;
+
+/** The simple selectors of a compound: `.a`, `#b`, `[c='d']`, `:e(f)`, `::g` and a type. */
+function simpleSelectors(compound) {
+  const parts = [];
+  let current = '';
+  let depth = 0;
+  let quote = null;
+  for (const [index, character] of [...compound].entries()) {
+    if (quote) {
+      if (character === quote) quote = null;
+    } else if (character === '"' || character === "'") quote = character;
+    else if (
+      depth === 0 &&
+      ('.#['.includes(character) || (character === ':' && compound[index - 1] !== ':'))
+    ) {
+      if (current) parts.push(current);
+      current = '';
+    }
+    if (!quote && (character === '(' || character === '[')) depth += 1;
+    else if (!quote && (character === ')' || character === ']')) depth -= 1;
+    current += character;
+  }
+  return current ? [...parts, current] : parts;
+}
+
+/** The simple selectors of a compound, with the classes that impliedClasses adds to it. */
+function withImplied(compound, implied) {
+  const parts = simpleSelectors(compound);
+  const classes = parts.filter((part) => part.startsWith('.')).map((part) => part.slice(1));
+  return new Set([
+    ...parts,
+    ...classes.flatMap((name) => implied[name] ?? []).map((name) => `.${name}`),
+  ]);
+}
+
+/** The at-rules that limit where a declaration applies: all but @layer. */
+const conditions = (atRules) =>
+  atRules
+    .filter((prelude) => !/^@layer\b/.test(prelude))
+    .map((prelude) => prelude.replace(/\s+/g, ''));
+
+/** The theme boundary's conditions in a selector: data-env-theme and data-env-contrast. */
+const themeConditions = (selector) =>
+  new Set(selector.match(/(?::not\()?\[data-env-(?:theme|contrast)[^\]]*\]/g) ?? []);
+
+const subset = (small, large) => [...small].every((item) => large.has(item));
+
+/**
+ * The var() reads without a fallback in `styleSheets` (file name to CSS) that are not defined for
+ * every element that reads them, as `--name in File.css: selector`. A read is defined when, under
+ * the at-rules of the read (a declaration under `@media (pointer: coarse)` defines a read under
+ * that media query only; @layer limits nothing), and for each complex selector of its rule:
+ *
+ * - a rule declares it for the same element or an ancestor, in any style sheet: one compound
+ *   selector, every part of which the read's subject, or a compound the read names as its
+ *   ancestor, also has, with `.env-theme` an ancestor of every element and the classes
+ *   impliedClasses adds. The base token set (Tokens.css's `.env-theme`) and TokensHandwritten.css
+ *   define a property this way, but not their dark, high-contrast or coarse-pointer rules;
+ * - or the read's own style sheet declares it, for an element of the component that the sheet
+ *   knows, in a rule that conditions on no theme (data-env-theme, data-env-contrast) the read
+ *   doesn't; the token style sheets don't count here;
+ * - or a module of `modules` (path to source) sets it inline (`'--name':`, `style['--name'] =`
+ *   or `setProperty('--name'`), or renders a Base UI positioner, which sets those of
+ *   `positioned`, and that module, or one that imports it, names a class of the read's selector:
+ *   the component renders the element, or its ancestor, with the property;
+ * - or `external` lists it: the application sets it.
+ */
+function undefinedReads({
+  styleSheets,
+  modules = {},
+  positioned = [],
+  external = [],
+  implied = impliedClasses,
+}) {
+  const declarations = Object.entries(styleSheets).flatMap(([file, css]) =>
+    cssDeclarations(css).map((declaration) => ({ ...declaration, file })),
+  );
+  const declaring = new Map();
+  for (const declaration of declarations)
+    if (declaration.property.startsWith('--') && declaration.selector)
+      declaring.set(declaration.property, [
+        ...(declaring.get(declaration.property) ?? []),
+        { ...declaration, conditions: new Set(conditions(declaration.atRules)) },
+      ]);
+
+  const withoutExtension = (path) => path.replace(/\.(?:[cm]?js|tsx?)$/, '');
+  const moduleIds = new Map(Object.keys(modules).map((path) => [withoutExtension(path), path]));
+  const importers = new Map();
+  for (const [path, source] of Object.entries(modules))
+    for (const [, specifier] of source.matchAll(
+      /(?:\bfrom\s*|\bimport\s*\(?\s*)['"](\.{1,2}\/[^'"]+)['"]/g,
+    )) {
+      const target = moduleIds.get(withoutExtension(posix.join(posix.dirname(path), specifier)));
+      if (target) importers.set(target, [...(importers.get(target) ?? []), path]);
+    }
+  const classesNamed = new Map(
+    Object.entries(modules).map(([path, source]) => [
+      path,
+      new Set(source.match(/(?<![\w-])env-[a-z0-9]+(?:-[a-z0-9]+)*/g) ?? []),
+    ]),
+  );
+  const inline = new Map();
+  const setInline = (name, path) => inline.set(name, [...(inline.get(name) ?? []), path]);
+  for (const [path, source] of Object.entries(modules)) {
+    for (const match of source.matchAll(
+      /['"](--[\w-]+)['"]\s*:|\[\s*['"](--[\w-]+)['"]\s*\]\s*=(?!=)|setProperty\(\s*['"](--[\w-]+)['"]/g,
+    ))
+      setInline(match[1] ?? match[2] ?? match[3], path);
+    if (/<\w+\.Positioner\b/.test(source)) for (const name of positioned) setInline(name, path);
+  }
+
+  const defines = (name, complex, file, readConditions) => {
+    if (external.includes(name)) return true;
+    const compounds = [...subjectAndAncestors(complex), '.env-theme'].map((compound) =>
+      withImplied(compound, implied),
+    );
+    const readThemes = themeConditions(complex);
+    const sameElementOrAncestor = (declared) =>
+      selectorList(declared.selector).some(
+        (selector) =>
+          isCompound(selector) &&
+          compounds.some((parts) =>
+            simpleSelectors(selector).every((part) => part === '*' || parts.has(part)),
+          ),
+      );
+    const ownSheet = (declared) =>
+      declared.file === file &&
+      !tokenStyleSheets.has(file) &&
+      selectorList(declared.selector).some((selector) =>
+        subset(themeConditions(selector), readThemes),
+      );
+    if (
+      (declaring.get(name) ?? []).some(
+        (declared) =>
+          subset(declared.conditions, readConditions) &&
+          (sameElementOrAncestor(declared) || ownSheet(declared)),
+      )
     )
-    .map(([name, where]) => `${name} in ${[...new Set(where)].join(', ')}`);
-  assert.deepEqual(undefinedReads, [], 'Define each property, or document it as a hook.');
+      return true;
+    const classes = new Set(
+      [...compounds].flatMap((parts) =>
+        [...parts].filter((part) => part.startsWith('.')).map((part) => part.slice(1)),
+      ),
+    );
+    classes.delete('env-theme');
+    return (inline.get(name) ?? []).some((path) =>
+      [path, ...(importers.get(path) ?? [])].some((renderer) =>
+        [...classes].some((className) => classesNamed.get(renderer).has(className)),
+      ),
+    );
+  };
+
+  const problems = new Set();
+  for (const { file, selector, value, atRules } of declarations) {
+    if (!selector) continue;
+    const readConditions = new Set(conditions(atRules));
+    for (const [, name] of value.matchAll(/var\(\s*(--[\w-]+)\s*\)/g))
+      for (const complex of selectorList(selector))
+        if (!defines(name, complex, file, readConditions))
+          problems.add(`${name} in ${file}: ${complex}`);
+  }
+  return [...problems];
+}
+
+/** The reads of a style sheet `Foo.css` among `styleSheets`, with the token sheets of the tests. */
+function undefinedReadsOf(css, { styleSheets = {}, modules = {}, implied = {} } = {}) {
+  return undefinedReads({
+    styleSheets: {
+      'Tokens.css': `.env-theme { --base: 1rem; --alias: var(--base); }
+        .env-theme[data-env-theme='dark'] { --dark: 1rem; }
+        .env-theme[data-env-contrast='high'] { --high: 1rem; }
+        @media (prefers-contrast: more) { .env-theme:not([data-env-contrast='standard']) { --contrast: 1rem; } }`,
+      'TokensHandwritten.css': `.env-theme { --handwritten: 1rem; }
+        @media (pointer: coarse) { .env-theme { --coarse: 1rem; } }`,
+      ...styleSheets,
+      'Foo.css': css,
+    },
+    modules,
+    implied,
+  });
+}
+
+test('a property is defined by the base tokens, the hand-written tokens and the theme', () => {
+  assert.deepEqual(undefinedReadsOf('.env-foo { margin: var(--base) var(--handwritten); }'), []);
+  // The token sheets' own reads are checked too, and so are fallbacks that read a property.
+  assert.deepEqual(undefinedReadsOf('.env-foo { margin: var(--missing, 1rem); }'), []);
+  assert.deepEqual(undefinedReadsOf('.env-foo { margin: var(--other, var(--missing)); }'), [
+    '--missing in Foo.css: .env-foo',
+  ]);
+  // Any style sheet may declare a property on the theme boundary for every element.
+  assert.deepEqual(
+    undefinedReadsOf('.env-foo { font: var(--font-code); }', {
+      styleSheets: { 'Code.css': '.env-theme { --font-code: monospace; }' },
+    }),
+    [],
+  );
+});
+
+test('a property only the dark, high-contrast or coarse-pointer tokens declare is not defined', () => {
+  for (const name of ['--dark', '--high', '--contrast', '--coarse'])
+    assert.deepEqual(undefinedReadsOf(`.env-foo { margin: var(${name}); }`), [
+      `${name} in Foo.css: .env-foo`,
+    ]);
+  // A read under the same condition, or for the same theme, sees it.
+  assert.deepEqual(
+    undefinedReadsOf('@media (pointer: coarse) { .env-foo { margin: var(--coarse); } }'),
+    [],
+  );
+  assert.deepEqual(
+    undefinedReadsOf(".env-theme[data-env-theme='dark'] .env-foo { margin: var(--dark); }"),
+    [],
+  );
+});
+
+test("a property another component's style sheet declares is defined only for its elements", () => {
+  const styleSheets = { 'Other.css': '.env-other { --other: 1rem; }' };
+  assert.deepEqual(undefinedReadsOf('.env-foo { margin: var(--other); }', { styleSheets }), [
+    '--other in Foo.css: .env-foo',
+  ]);
+  // The same element, an ancestor the selector names, or a class the element always carries.
+  for (const css of [
+    '.env-other.env-foo:hover { margin: var(--other); }',
+    '.env-other > .env-bar .env-foo { margin: var(--other); }',
+  ])
+    assert.deepEqual(undefinedReadsOf(css, { styleSheets }), [], css);
+  assert.deepEqual(
+    undefinedReadsOf('.env-foo { margin: var(--other); }', {
+      styleSheets,
+      implied: { 'env-foo': ['env-other'] },
+    }),
+    [],
+  );
+  // A sibling is no ancestor, and each selector of a list must see it.
+  assert.deepEqual(
+    undefinedReadsOf('.env-other + .env-foo, .env-other .env-bar { margin: var(--other); }', {
+      styleSheets,
+    }),
+    ['--other in Foo.css: .env-other + .env-foo'],
+  );
+});
+
+test('a property its own style sheet declares only under a condition is not defined', () => {
+  assert.deepEqual(
+    undefinedReadsOf('.env-foo-root { --own: 1rem; } .env-foo-part { margin: var(--own); }'),
+    [],
+  );
+  assert.deepEqual(
+    undefinedReadsOf(
+      '@media (hover: hover) { .env-foo:hover { --own: 1rem; } } .env-foo { margin: var(--own); }',
+    ),
+    ['--own in Foo.css: .env-foo'],
+  );
+  assert.deepEqual(
+    undefinedReadsOf(
+      ".env-theme[data-env-theme='dark'] .env-foo { --own: 1rem; } .env-foo { margin: var(--own); }",
+    ),
+    ['--own in Foo.css: .env-foo'],
+  );
+  // @layer limits nothing.
+  assert.deepEqual(
+    undefinedReadsOf('@layer env { .env-foo { --own: 1rem; } } .env-foo { margin: var(--own); }'),
+    [],
+  );
+});
+
+test('a property set inline is defined only by the component that renders the element', () => {
+  const css = '.env-foo-cell { margin: var(--env-foo-mix); }';
+  const sets = "export const style = { '--env-foo-mix': '1rem' };";
+  // Any module that sets it is not enough: the module must render the reading rule's class.
+  assert.deepEqual(undefinedReadsOf(css, { modules: { 'Other.tsx': sets } }), [
+    '--env-foo-mix in Foo.css: .env-foo-cell',
+  ]);
+  for (const modules of [
+    { 'content/Foo.tsx': `${sets}\nexport const Cell = () => <td className="env-foo-cell" />;` },
+    {
+      'content/internal/FooStyle.ts': sets,
+      'content/Foo.tsx':
+        "import { style } from './internal/FooStyle.js';\n<td className='env-foo-cell' />",
+    },
+    { 'Foo.tsx': "element.style.setProperty('--env-foo-mix', '1rem'); 'env-foo-cell';" },
+    { 'Foo.tsx': "style['--env-foo-mix'] = '1rem'; 'env-foo-cell';" },
+  ])
+    assert.deepEqual(undefinedReadsOf(css, { modules }), [], Object.keys(modules).join());
+});
+
+test("Base UI's positioner properties are defined only inside a positioner", () => {
+  const css = '.env-foo-popup, .env-foo-dialog { transform-origin: var(--transform-origin); }';
+  const modules = {
+    'Popup.tsx':
+      "<BasePopover.Positioner><BasePopover.Popup className='env-foo-popup' /></BasePopover.Positioner>",
+    'Dialog.tsx': "<BaseDialog.Popup className='env-foo-dialog' />",
+  };
+  assert.deepEqual(
+    undefinedReads({
+      styleSheets: { 'Foo.css': css },
+      modules,
+      positioned: ['--transform-origin'],
+      implied: {},
+    }),
+    ['--transform-origin in Foo.css: .env-foo-dialog'],
+  );
+});
+
+test("every custom property the library's style sheets read is defined", async () => {
+  const sources = async (directory, extensions) =>
+    Object.fromEntries(
+      await Promise.all(
+        (await readdir(directory, { recursive: true, withFileTypes: true }))
+          .filter(
+            (entry) =>
+              entry.isFile() && extensions.some((extension) => entry.name.endsWith(extension)),
+          )
+          .map(async (entry) => [
+            relative(directory, join(entry.parentPath, entry.name)).replaceAll('\\', '/'),
+            await readFile(join(entry.parentPath, entry.name), 'utf8'),
+          ]),
+      ),
+    );
+  const styleSheets = await sources(join(library, 'src/styles'), ['.css']);
+  const problems = undefinedReads({
+    styleSheets,
+    modules: await sources(join(library, 'src'), ['.ts', '.tsx']),
+    positioned: baseUiProperties,
+    external: applicationHooks,
+  });
+  assert.deepEqual(
+    problems,
+    [],
+    'Define each property for every element that reads it, or document it as a hook.',
+  );
+  const reads = new Set(
+    Object.values(styleSheets).flatMap((css) =>
+      [...css.matchAll(/var\(\s*(--[\w-]+)\s*\)/g)].map(([, name]) => name),
+    ),
+  );
   assert.ok(reads.size > 100, 'the style sheets read the tokens');
 });
 
