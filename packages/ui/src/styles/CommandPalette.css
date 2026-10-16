@@ -96,9 +96,12 @@
   font: var(--env-type-body-small);
   font-weight: 500;
 }
-/* Options are ListRows; the palette gives them its taller rows and its concentric corners. */
+/* Options are ListRows; the palette gives them its taller rows, body text, wider gaps and its
+   concentric corners. */
 .env-command-palette-item {
   min-block-size: var(--env-control-height-md);
+  gap: var(--env-space-3);
+  font: var(--env-type-body);
   padding: var(--env-space-1) var(--env-space-4);
   /* Concentric with the palette's corners through its padding, like the search field above. */
   border-radius: calc(var(--env-radius-surface) - var(--env-space-2));
