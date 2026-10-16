@@ -3,89 +3,70 @@
 ## React usage
 
 ```tsx
-import {
-  Badge,
-  Link,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeaderCell,
-  TableRow,
-  Text,
-} from '@envsemble/envui';
+import { Badge, Link, Table, Text } from '@envsemble/envui';
 
-<Table aria-label="Plans">
-  <TableHead>
-    <TableRow>
-      <TableHeaderCell>Plan</TableHeaderCell>
-      <TableHeaderCell>Owner</TableHeaderCell>
-      <TableHeaderCell numeric>Decisions</TableHeaderCell>
-      <TableHeaderCell>Status</TableHeaderCell>
-    </TableRow>
-  </TableHead>
-  <TableBody>
+<Table.Root aria-label="Plans">
+  <Table.Head>
+    <Table.Row>
+      <Table.HeaderCell>Plan</Table.HeaderCell>
+      <Table.HeaderCell>Owner</Table.HeaderCell>
+      <Table.HeaderCell numeric>Decisions</Table.HeaderCell>
+      <Table.HeaderCell>Status</Table.HeaderCell>
+    </Table.Row>
+  </Table.Head>
+  <Table.Body>
     {plans.map((plan) => (
-      <TableRow key={plan.id} interactive>
-        <TableCell>
+      <Table.Row key={plan.id} interactive>
+        <Table.Cell>
           <Link href={plan.url} underline={false}>
             {plan.title}
           </Link>
           <Text variant="caption">{plan.folder}</Text>
-        </TableCell>
-        <TableCell nowrap>{plan.owner}</TableCell>
-        <TableCell numeric>{plan.decisions}</TableCell>
-        <TableCell>
+        </Table.Cell>
+        <Table.Cell nowrap>{plan.owner}</Table.Cell>
+        <Table.Cell numeric>{plan.decisions}</Table.Cell>
+        <Table.Cell>
           <Badge tone={plan.blocked ? 'warning' : 'accent'}>{plan.status}</Badge>
-        </TableCell>
-      </TableRow>
+        </Table.Cell>
+      </Table.Row>
     ))}
-  </TableBody>
-</Table>;
+  </Table.Body>
+</Table.Root>;
 ```
 
 ### Props & contracts
 
-| Name                                     | Contract                                                                                                                                                            |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Table aria-label / caption               | Name the table: a visible caption, or aria-label without one; the scroll region shares the name                                                                     |
-| Table density                            | standard (default) or compact rows; in compact tables, controls in the cells take the compact control height                                                        |
-| Table stickyHeader                       | The header row stays visible while the table scrolls inside its region; give it a height                                                                            |
-| Table regionClassName                    | Class of the scroll region, for example to limit its height                                                                                                         |
-| Table narrowLayout                       | scroll (default) keeps the columns and scrolls sideways; stack lists each body row as a block when the region is narrower than stackBelow                           |
-| Table stackBelow                         | The region width below which a stack table stacks its rows: a CSS length such as 60rem or 480px, or a number of pixels, such as 600 or "600"; 36rem by default      |
-| Table onStackedChange                    | Called with true when the rows stack and false when the columns return, also when a table leaves while its rows stack; the region has data-stacked while they stack |
-| Table columnWidths / defaultColumnWidths | Column widths in percent of the table width, adding up to 100: controlled, or owned by the table from these defaults                                                |
-| Table onColumnWidthsChange               | Receives every column's width when a column is resized                                                                                                              |
-| Table resizableColumns                   | A handle at the end of each header cell but the last resizes the columns; needs columnWidths or defaultColumnWidths                                                 |
-| Table minColumnWidths                    | Smallest width in percent, one per column or one for all; 5 by default                                                                                              |
-| TableHead / TableBody                    | Native thead and tbody                                                                                                                                              |
-| TableRow interactive                     | Hover and focus-within highlight for rows that open something through a link or button inside                                                                       |
-| TableRow selected                        | aria-selected and the selection colors; pass false to the other rows when rows can be selected                                                                      |
-| TableHeaderCell / TableCell              | align start (default) or end; numeric aligns to the end with tabular figures; nowrap keeps one line                                                                 |
-| TableHeaderCell scope                    | col by default; use row for a header cell at the start of a body row                                                                                                |
-| TableHeaderCell sortDirection / onSort   | onSort makes the header a sort button; sortDirection (ascending, descending or none) sets its arrow and aria-sort                                                   |
-| TableHeaderCell sortLabel / resizeLabel  | Accessible names of the sort button and the resize handle, for example in another language                                                                          |
-| TableCell label                          | The column's name before the value while a stack table stacks its rows                                                                                              |
-| Native props                             | Every part accepts the native element's props, className and ref                                                                                                    |
+| Name                                          | Contract                                                                                                                                                            |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Table.Root aria-label / caption               | Name the table: a visible caption, or aria-label without one; the scroll region shares the name                                                                     |
+| Table.Root density                            | standard (default) or compact rows; in compact tables, controls in the cells take the compact control height                                                        |
+| Table.Root stickyHeader                       | The header row stays visible while the table scrolls inside its region; give it a height                                                                            |
+| Table.Root regionClassName                    | Class of the scroll region, for example to limit its height                                                                                                         |
+| Table.Root narrowLayout                       | scroll (default) keeps the columns and scrolls sideways; stack lists each body row as a block when the region is narrower than stackBelow                           |
+| Table.Root stackBelow                         | The region width below which a stack table stacks its rows: a CSS length such as 60rem or 480px, or a number of pixels, such as 600 or "600"; 36rem by default      |
+| Table.Root onStackedChange                    | Called with true when the rows stack and false when the columns return, also when a table leaves while its rows stack; the region has data-stacked while they stack |
+| Table.Root columnWidths / defaultColumnWidths | Column widths in percent of the table width, adding up to 100: controlled, or owned by the table from these defaults                                                |
+| Table.Root onColumnWidthsChange               | Receives every column's width when a column is resized                                                                                                              |
+| Table.Root resizableColumns                   | A handle at the end of each header cell but the last resizes the columns; needs columnWidths or defaultColumnWidths                                                 |
+| Table.Root minColumnWidths                    | Smallest width in percent, one per column or one for all; 5 by default                                                                                              |
+| Table.Head / Table.Body                       | Native thead and tbody                                                                                                                                              |
+| Table.Row interactive                         | Hover and focus-within highlight for rows that open something through a link or button inside                                                                       |
+| Table.Row selected                            | aria-selected and the selection colors; pass false to the other rows when rows can be selected                                                                      |
+| Table.HeaderCell / Table.Cell                 | align start (default) or end; numeric aligns to the end with tabular figures; nowrap keeps one line                                                                 |
+| Table.HeaderCell scope                        | col by default; use row for a header cell at the start of a body row                                                                                                |
+| Table.HeaderCell sortDirection / onSort       | onSort makes the header a sort button; sortDirection (ascending, descending or none) sets its arrow and aria-sort                                                   |
+| Table.HeaderCell sortLabel / resizeLabel      | Accessible names of the sort button and the resize handle, for example in another language                                                                          |
+| Table.Cell label                              | The column's name before the value while a stack table stacks its rows                                                                                              |
+| Native props                                  | Every part accepts the native element's props, className and ref                                                                                                    |
 
 ### Sorting, resizing and selection
 
 ```tsx
-import {
-  Checkbox,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeaderCell,
-  TableRow,
-  type TableSortDirection,
-} from '@envsemble/envui';
+import { Checkbox, Table } from '@envsemble/envui';
 
 const [sort, setSort] = useState<{ column: string; direction: 'ascending' | 'descending' }>();
 const [widths, setWidths] = useState([45, 25, 15, 15]);
-const direction = (column: string): TableSortDirection =>
+const direction = (column: string): Table.SortDirection =>
   sort?.column === column ? sort.direction : 'none';
 const sortBy = (column: string) =>
   setSort((current) => ({
@@ -94,40 +75,45 @@ const sortBy = (column: string) =>
       current?.column === column && current.direction === 'ascending' ? 'descending' : 'ascending',
   }));
 
-<Table aria-label="Reports" resizableColumns columnWidths={widths} onColumnWidthsChange={setWidths}>
-  <TableHead>
-    <TableRow>
-      <TableHeaderCell sortDirection={direction('title')} onSort={() => sortBy('title')}>
+<Table.Root
+  aria-label="Reports"
+  resizableColumns
+  columnWidths={widths}
+  onColumnWidthsChange={setWidths}
+>
+  <Table.Head>
+    <Table.Row>
+      <Table.HeaderCell sortDirection={direction('title')} onSort={() => sortBy('title')}>
         Report
-      </TableHeaderCell>
-      <TableHeaderCell>Owner</TableHeaderCell>
-      <TableHeaderCell
+      </Table.HeaderCell>
+      <Table.HeaderCell>Owner</Table.HeaderCell>
+      <Table.HeaderCell
         numeric
         sortDirection={direction('reviews')}
         onSort={() => sortBy('reviews')}
       >
         Reviews
-      </TableHeaderCell>
-      <TableHeaderCell>Status</TableHeaderCell>
-    </TableRow>
-  </TableHead>
-  <TableBody>
+      </Table.HeaderCell>
+      <Table.HeaderCell>Status</Table.HeaderCell>
+    </Table.Row>
+  </Table.Head>
+  <Table.Body>
     {sortedReports.map((report) => (
-      <TableRow key={report.id} selected={selection.has(report.id)}>
-        <TableCell>
+      <Table.Row key={report.id} selected={selection.has(report.id)}>
+        <Table.Cell>
           <Checkbox
             label={report.title}
             checked={selection.has(report.id)}
             onCheckedChange={(checked) => select(report.id, checked)}
           />
-        </TableCell>
-        <TableCell nowrap>{report.owner}</TableCell>
-        <TableCell numeric>{report.reviews}</TableCell>
-        <TableCell>{report.status}</TableCell>
-      </TableRow>
+        </Table.Cell>
+        <Table.Cell nowrap>{report.owner}</Table.Cell>
+        <Table.Cell numeric>{report.reviews}</Table.Cell>
+        <Table.Cell>{report.status}</Table.Cell>
+      </Table.Row>
     ))}
-  </TableBody>
-</Table>;
+  </Table.Body>
+</Table.Root>;
 ```
 
 ### Stacked rows in narrow containers
@@ -164,26 +150,26 @@ const descending = sort?.direction === 'descending';
       />
     </ActionGroup>
   )}
-  <Table aria-label="Reports" narrowLayout="stack" onStackedChange={setStacked}>
-    <TableHead>
-      <TableRow>
-        <TableHeaderCell>Report</TableHeaderCell>
-        <TableHeaderCell>Owner</TableHeaderCell>
-        <TableHeaderCell numeric>Reviews</TableHeaderCell>
-      </TableRow>
-    </TableHead>
-    <TableBody>
+  <Table.Root aria-label="Reports" narrowLayout="stack" onStackedChange={setStacked}>
+    <Table.Head>
+      <Table.Row>
+        <Table.HeaderCell>Report</Table.HeaderCell>
+        <Table.HeaderCell>Owner</Table.HeaderCell>
+        <Table.HeaderCell numeric>Reviews</Table.HeaderCell>
+      </Table.Row>
+    </Table.Head>
+    <Table.Body>
       {reports.map((report) => (
-        <TableRow key={report.id}>
-          <TableCell>{report.title}</TableCell>
-          <TableCell label="Owner">{report.owner}</TableCell>
-          <TableCell label="Reviews" numeric>
+        <Table.Row key={report.id}>
+          <Table.Cell>{report.title}</Table.Cell>
+          <Table.Cell label="Owner">{report.owner}</Table.Cell>
+          <Table.Cell label="Reviews" numeric>
             {report.reviews}
-          </TableCell>
-        </TableRow>
+          </Table.Cell>
+        </Table.Row>
       ))}
-    </TableBody>
-  </Table>
+    </Table.Body>
+  </Table.Root>
 </>;
 ```
 

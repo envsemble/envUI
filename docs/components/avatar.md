@@ -34,9 +34,9 @@ import { Avatar, Stack } from '@envsemble/envui';
 ## AvatarButton
 
 ```tsx
-import { AvatarButton, Menu, MenuItem } from '@envsemble/envui';
+import { AvatarButton, Menu } from '@envsemble/envui';
 
-<Menu
+<Menu.Root
   aria-label="Account"
   trigger={
     <AvatarButton
@@ -47,8 +47,8 @@ import { AvatarButton, Menu, MenuItem } from '@envsemble/envui';
     />
   }
 >
-  <MenuItem onClick={signOut}>Sign out</MenuItem>
-</Menu>;
+  <Menu.Item onClick={signOut}>Sign out</Menu.Item>
+</Menu.Root>;
 ```
 
 | Name                  | Contract                                                                          |

@@ -11,7 +11,6 @@ import {
 import {
   IconButton,
   Menu,
-  MenuItem,
   PanelDock,
   PanelDockHeader,
   Text,
@@ -585,7 +584,7 @@ function DocumentWindow({
               icon={<Edit />}
               aria-label={`Edit ${panel.title} ${theme}`}
             />
-            <Menu
+            <Menu.Root
               aria-label={`${panel.title} actions ${theme}`}
               density="compact"
               trigger={
@@ -596,8 +595,8 @@ function DocumentWindow({
                 />
               }
             >
-              <MenuItem>Share</MenuItem>
-            </Menu>
+              <Menu.Item>Share</Menu.Item>
+            </Menu.Root>
           </>
         }
       />

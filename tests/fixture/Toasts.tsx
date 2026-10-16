@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, Toast, ToastProvider, useToast } from '@envsemble/envui';
+import { Button, Toast, useToast } from '@envsemble/envui';
 
 export function ToastTriggers() {
   const toast = useToast();
@@ -105,29 +105,6 @@ export function ToastTriggers() {
   );
 }
 
-export function ManualToastFixture() {
-  const [visible, setVisible] = useState(true);
-  const [actions, setActions] = useState(0);
-  return (
-    <section className="fixture-section" data-testid="manual-toast-section">
-      <h2>Independent manual notification</h2>
-      {visible && (
-        <Toast
-          data-testid="manual-toast"
-          message="Manual independent notice"
-          dismissLabel="Dismiss manual notice"
-          onDismiss={() => setVisible(false)}
-          action={{ label: 'Manual action', onClick: () => setActions((count) => count + 1) }}
-        />
-      )}
-      <output data-testid="manual-action-count">{actions}</output>
-      <Button variant="secondary" onClick={() => setVisible(true)}>
-        Restore manual notice
-      </Button>
-    </section>
-  );
-}
-
 function MountNotice() {
   const toast = useToast();
   useEffect(() => {
@@ -151,9 +128,9 @@ export function StrictToastFixture() {
     <>
       <Button onClick={() => setStress(true)}>Mount strict toast provider</Button>
       {stress && (
-        <ToastProvider>
+        <Toast.Provider>
           <MountNotice />
-        </ToastProvider>
+        </Toast.Provider>
       )}
     </>
   );

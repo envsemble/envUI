@@ -7,11 +7,7 @@ import {
   IconButton,
   Kbd,
   Menu,
-  MenuItem,
-  MenuSeparator,
-  MenuSubmenu,
   Menubar,
-  MenubarMenu,
   NavigationItem,
   OrganizationSwitcher,
   Select,
@@ -85,7 +81,7 @@ export function AppShellPreview() {
             }
             title={current.label}
             actions={
-              <Menu
+              <Menu.Root
                 aria-label="Account"
                 trigger={
                   <AvatarButton
@@ -95,9 +91,9 @@ export function AppShellPreview() {
                   />
                 }
               >
-                <MenuItem icon={<ManageAccounts />}>Account settings</MenuItem>
-                <MenuItem icon={<Logout />}>Sign out</MenuItem>
-              </Menu>
+                <Menu.Item icon={<ManageAccounts />}>Account settings</Menu.Item>
+                <Menu.Item icon={<Logout />}>Sign out</Menu.Item>
+              </Menu.Root>
             }
             navigationLabel="Sample navigation"
             navigation={pages.map((candidate) => (
@@ -178,31 +174,31 @@ function WindowControls() {
 
 function SampleMenubar({ label }: { label: string }) {
   return (
-    <Menubar aria-label={label}>
-      <MenubarMenu label="File">
-        <MenuItem shortcut="Ctrl+N">New document</MenuItem>
-        <MenuSubmenu label="Open recent" icon={<History />}>
-          <MenuItem>Quarterly report</MenuItem>
-          <MenuItem>Meeting notes</MenuItem>
-          <MenuItem>Budget</MenuItem>
-        </MenuSubmenu>
-        <MenuSeparator />
-        <MenuItem shortcut="Ctrl+S">Save</MenuItem>
-      </MenubarMenu>
-      <MenubarMenu label="Edit">
-        <MenuItem shortcut="Ctrl+Z">Undo</MenuItem>
-        <MenuSeparator />
-        <MenuItem shortcut="Ctrl+C">Copy</MenuItem>
-        <MenuItem shortcut="Ctrl+V">Paste</MenuItem>
-      </MenubarMenu>
-      <MenubarMenu label="View">
-        <MenuItem shortcut="Ctrl++">Zoom in</MenuItem>
-        <MenuItem shortcut="Ctrl+-">Zoom out</MenuItem>
-      </MenubarMenu>
-      <MenubarMenu label="Help">
-        <MenuItem>Keyboard shortcuts</MenuItem>
-      </MenubarMenu>
-    </Menubar>
+    <Menubar.Root aria-label={label}>
+      <Menubar.Menu label="File">
+        <Menu.Item shortcut="Ctrl+N">New document</Menu.Item>
+        <Menu.Submenu label="Open recent" icon={<History />}>
+          <Menu.Item>Quarterly report</Menu.Item>
+          <Menu.Item>Meeting notes</Menu.Item>
+          <Menu.Item>Budget</Menu.Item>
+        </Menu.Submenu>
+        <Menu.Separator />
+        <Menu.Item shortcut="Ctrl+S">Save</Menu.Item>
+      </Menubar.Menu>
+      <Menubar.Menu label="Edit">
+        <Menu.Item shortcut="Ctrl+Z">Undo</Menu.Item>
+        <Menu.Separator />
+        <Menu.Item shortcut="Ctrl+C">Copy</Menu.Item>
+        <Menu.Item shortcut="Ctrl+V">Paste</Menu.Item>
+      </Menubar.Menu>
+      <Menubar.Menu label="View">
+        <Menu.Item shortcut="Ctrl++">Zoom in</Menu.Item>
+        <Menu.Item shortcut="Ctrl+-">Zoom out</Menu.Item>
+      </Menubar.Menu>
+      <Menubar.Menu label="Help">
+        <Menu.Item>Keyboard shortcuts</Menu.Item>
+      </Menubar.Menu>
+    </Menubar.Root>
   );
 }
 
@@ -249,7 +245,7 @@ function TitleBarExamples() {
             actions={
               <>
                 <IconButton icon={<Search />} aria-label="Search" />
-                <Menu
+                <Menu.Root
                   aria-label="Title bar account"
                   density="compact"
                   trigger={
@@ -261,9 +257,9 @@ function TitleBarExamples() {
                     />
                   }
                 >
-                  <MenuItem icon={<ManageAccounts />}>Account settings</MenuItem>
-                  <MenuItem icon={<Logout />}>Sign out</MenuItem>
-                </Menu>
+                  <Menu.Item icon={<ManageAccounts />}>Account settings</Menu.Item>
+                  <Menu.Item icon={<Logout />}>Sign out</Menu.Item>
+                </Menu.Root>
                 <WindowControls />
               </>
             }

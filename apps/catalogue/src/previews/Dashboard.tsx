@@ -6,7 +6,6 @@ import {
   Kbd,
   Stack,
   Stat,
-  StatGroup,
   Surface,
   Text,
   type CalendarHeatmapDay,
@@ -33,30 +32,30 @@ export function StatsPreview() {
         }
         caption="Stats share one pane in as many even columns as fit and wrap as space runs out. A trend shows an icon and text in its tone."
       >
-        <StatGroup aria-label="Project health">
-          <Stat
+        <Stat.Group aria-label="Project health">
+          <Stat.Root
             label="Active projects"
             value={<AnimatedNumber value={projects} />}
             trend={{ direction: 'up', label: '+12% from last month' }}
             detail="Last 30 days"
           />
-          <Stat
+          <Stat.Root
             label="Open risks"
             value="3"
             trend={{ direction: 'down', label: '2 fewer than last week', tone: 'success' }}
           />
-          <Stat
+          <Stat.Root
             label="Error rate"
             value="0.4%"
             trend={{ direction: 'up', label: '+0.1 points', tone: 'danger' }}
           />
-          <Stat
+          <Stat.Root
             label="Lead time"
             value="2.5 days"
             trend={{ direction: 'flat', label: 'No change' }}
             detail="Median"
           />
-        </StatGroup>
+        </Stat.Group>
       </Example>
       <Example
         title="On a pane"
@@ -66,10 +65,10 @@ export function StatsPreview() {
           <Text as="h3" variant="section-heading">
             Design review
           </Text>
-          <StatGroup tone="row" padding={4}>
-            <Stat label="Comments" value="24" detail="From 6 people" />
-            <Stat label="Resolved" value="18" trend={{ direction: 'up', label: '+5 today' }} />
-          </StatGroup>
+          <Stat.Group tone="row" padding={4}>
+            <Stat.Root label="Comments" value="24" detail="From 6 people" />
+            <Stat.Root label="Resolved" value="18" trend={{ direction: 'up', label: '+5 today' }} />
+          </Stat.Group>
         </Surface>
       </Example>
     </Preview>

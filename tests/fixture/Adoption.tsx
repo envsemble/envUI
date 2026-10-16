@@ -14,9 +14,6 @@ import {
   LinkProvider,
   LoadingBar,
   Menu,
-  MenuHeader,
-  MenuItem,
-  MenuSeparator,
   Meter,
   NavigationItem,
   OrganizationSwitcher,
@@ -98,7 +95,7 @@ export function AdoptionFixture() {
           >
             <SearchField label="Search inside dialog" defaultValue="draft" />
           </Dialog>
-          <Menu
+          <Menu.Root
             aria-label="Account"
             trigger={
               <AvatarButton
@@ -108,13 +105,13 @@ export function AdoptionFixture() {
               />
             }
           >
-            <MenuHeader>Alex Morgan</MenuHeader>
-            <MenuItem href="/account">Account settings</MenuItem>
-            <MenuSeparator />
-            <MenuItem icon={<Logout />} onClick={() => setAction('Signed out')}>
+            <Menu.Header>Alex Morgan</Menu.Header>
+            <Menu.Item href="/account">Account settings</Menu.Item>
+            <Menu.Separator />
+            <Menu.Item icon={<Logout />} onClick={() => setAction('Signed out')}>
               Sign out
-            </MenuItem>
-          </Menu>
+            </Menu.Item>
+          </Menu.Root>
           <output data-testid="menu-action">{action}</output>
           <OrganizationSwitcher
             organizations={[

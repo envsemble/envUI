@@ -40,14 +40,7 @@ test('newest notices stay visible and older notices return independently per pla
   await expect(page.locator('.env-toast-viewport .env-toast')).toHaveCount(0);
 });
 
-test('manual rendering works without a provider and errors/actions persist', async ({ page }) => {
-  await page.getByTestId('manual-toast').getByRole('button', { name: 'Manual action' }).click();
-  await expect(page.getByTestId('manual-action-count')).toHaveText('1');
-  await page
-    .getByTestId('manual-toast')
-    .getByRole('button', { name: 'Dismiss manual notice' })
-    .click();
-  await expect(page.getByTestId('manual-toast')).toHaveCount(0);
+test('errors and notices with actions persist', async ({ page }) => {
   await page.getByTestId('toast-error').click();
   await page.getByTestId('toast-action').click();
   await page.clock.fastForward(6_000);

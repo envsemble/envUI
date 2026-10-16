@@ -64,7 +64,7 @@ import { Category } from '@envsemble/envui/icons/Category';
 ### A full-width topbar as the window title bar
 
 ```tsx
-import { AppShell, Menubar, MenubarMenu, MenuItem, Select } from '@envsemble/envui';
+import { AppShell, Menubar, Menu, Select } from '@envsemble/envui';
 
 <AppShell
   topbar="full"
@@ -72,13 +72,13 @@ import { AppShell, Menubar, MenubarMenu, MenuItem, Select } from '@envsemble/env
   brand={<img src={markUrl} alt="" />}
   context={
     <>
-      <Menubar aria-label="Application menu" accessKeys>
-        <MenubarMenu label="File" accessKey="F">
-          <MenuItem shortcut="Ctrl+N" onClick={createDocument}>
+      <Menubar.Root aria-label="Application menu" accessKeys>
+        <Menubar.Menu label="File" accessKey="F">
+          <Menu.Item shortcut="Ctrl+N" onClick={createDocument}>
             New document
-          </MenuItem>
-        </MenubarMenu>
-      </Menubar>
+          </Menu.Item>
+        </Menubar.Menu>
+      </Menubar.Root>
       <Select
         aria-label="Workspace"
         density="compact"
@@ -109,7 +109,7 @@ import { Button, Menubar, TitleBar, WindowFrame } from '@envsemble/envui';
       start={
         <>
           <img src={markUrl} alt="" />
-          <Menubar aria-label="Application menu">{menus}</Menubar>
+          <Menubar.Root aria-label="Application menu">{menus}</Menubar.Root>
         </>
       }
       end={<Button variant="secondary">Share</Button>}

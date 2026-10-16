@@ -1,14 +1,9 @@
-import { ContextMenu as BaseContextMenu } from '@base-ui/react/context-menu';
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import {
   useContext,
   useId,
   useRef,
-  useState,
   type ComponentPropsWithRef,
-  type KeyboardEvent,
-  type MouseEvent,
-  type PointerEvent,
   type ReactElement,
   type ReactNode,
 } from 'react';
@@ -25,14 +20,15 @@ import {
   menuPopupInset,
   renderMenuPopup,
 } from './internal/MenuPopup.js';
+import { withDisplayName } from '../internal/withDisplayName.js';
 
-export interface MenuProps {
+export interface RootProps {
   /** The control that opens the menu; it receives the menu button semantics and ref. */
   trigger: ReactElement;
   /** Accessible name of the menu. */
   'aria-label': string;
   /**
-   * MenuHeader, MenuItem, MenuGroup, MenuRadioGroup, MenuCheckboxItem, MenuSubmenu and MenuSeparator
+   * Menu.Header, Menu.Item, Menu.Group, Menu.RadioGroup, Menu.CheckboxItem, Menu.Submenu and Menu.Separator
    * elements.
    */
   children: ReactNode;
@@ -45,14 +41,14 @@ export interface MenuProps {
    * compact is the desktop dropdown for dense surfaces: a raised popup with 1.75 rem rows, hairline
    * separators and small keys for shortcuts. Submenus open in the same density.
    */
-  density?: MenuDensity;
+  density?: Density;
   className?: string;
 }
 
-export type MenuDensity = 'standard' | 'compact';
+export type Density = 'standard' | 'compact';
 
 /** A list of actions and destinations that opens from a trigger; keyboard and focus follow the menu pattern. */
-export function Menu({
+function Root({
   trigger,
   'aria-label': label,
   children,
@@ -63,7 +59,7 @@ export function Menu({
   onOpenChange,
   density = 'standard',
   className,
-}: MenuProps) {
+}: RootProps) {
   const theme = useTheme();
   return (
     <BaseMenu.Root
@@ -94,167 +90,18 @@ export function Menu({
   );
 }
 
-export interface ContextMenuPoint {
-  x: number;
-  y: number;
-}
-
-export interface ContextMenuProps {
-  /** Accessible name of the menu. */
-  'aria-label': string;
-  /**
-   * Menu content: MenuItem, MenuGroup, MenuSeparator and the other menu parts. A function receives
-   * the element the menu was opened on: the deepest element under the pointer, or the focused
-   * element (its active descendant, when it has one) for the keyboard.
-   */
-  content: ReactNode | ((target: Element | null) => ReactNode);
-  /** One element that becomes the region; it must accept native props and a ref. */
-  children: ReactElement;
-  /** The region keeps the browser's own context menu. */
-  disabled?: boolean;
-  /** Controlled visibility, for example to open the menu from another control. */
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  /** Viewport point to open at while controlled; otherwise the menu opens at the pointer. */
-  anchorPoint?: ContextMenuPoint;
-  /** compact suits dense surfaces such as a compact Tree; see Menu. */
-  density?: MenuDensity;
-  className?: string;
-}
-
-/** A browser context-menu key event: the ContextMenu key or Shift+F10. */
-function isContextMenuKey(event: KeyboardEvent) {
-  return event.key === 'ContextMenu' || (event.shiftKey && event.key === 'F10');
-}
-
-function pointAnchor(point: ContextMenuPoint) {
-  return {
-    getBoundingClientRect: () => DOMRect.fromRect({ x: point.x, y: point.y, width: 0, height: 0 }),
-  };
-}
-
-/** The keyboard opens the menu below the start of the target, which stays the anchor while it moves. */
-function elementAnchor(element: Element) {
-  return {
-    getBoundingClientRect: () => {
-      const rect = element.getBoundingClientRect();
-      const rtl = getComputedStyle(element).direction === 'rtl';
-      const inset = Math.min(rect.width / 2, 24);
-      return DOMRect.fromRect({
-        x: rtl ? rect.right - inset : rect.left + inset,
-        y: rect.bottom,
-        width: 0,
-        height: 0,
-      });
-    },
-    contextElement: element,
-  };
-}
-
-/** Actions for an area, opened by right click, long press, the ContextMenu key or Shift+F10. */
-export function ContextMenu({
-  'aria-label': label,
-  content,
-  children,
-  disabled = false,
-  open: controlledOpen,
-  onOpenChange,
-  anchorPoint,
-  density = 'standard',
-  className,
-}: ContextMenuProps) {
-  const theme = useTheme();
-  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
-  const open = controlledOpen ?? uncontrolledOpen;
-  const [target, setTarget] = useState<Element | null>(null);
-  const [keyboardAnchor, setKeyboardAnchor] = useState<ReturnType<typeof elementAnchor> | null>(
-    null,
-  );
-  // Browsers may follow a context-menu key with their own contextmenu event; it must not reopen
-  // the menu at the pointer.
-  const keyboardOpenedAt = useRef(Number.NEGATIVE_INFINITY);
-
-  function setOpen(next: boolean) {
-    if (!next) keyboardOpenedAt.current = Number.NEGATIVE_INFINITY;
-    if (controlledOpen === undefined) setUncontrolledOpen(next);
-    onOpenChange?.(next);
-  }
-
-  function openAtPointer(event: MouseEvent<Element> & { preventBaseUIHandler?: () => void }) {
-    if (disabled) return;
-    if (performance.now() - keyboardOpenedAt.current < 500) {
-      event.preventDefault();
-      event.preventBaseUIHandler?.();
-      return;
-    }
-    setTarget(event.target instanceof Element ? event.target : null);
-    setKeyboardAnchor(null);
-  }
-
-  // A touch long press can open the menu through Base UI without a contextmenu event, so the
-  // pressed element is taken as the press starts.
-  function notePress(event: PointerEvent<Element>) {
-    if (disabled || event.pointerType === 'mouse') return;
-    setTarget(event.target instanceof Element ? event.target : null);
-    setKeyboardAnchor(null);
-  }
-
-  function openFromKeyboard(event: KeyboardEvent<Element>) {
-    if (disabled || !isContextMenuKey(event)) return;
-    event.preventDefault();
-    const focused = event.target instanceof Element ? event.target : event.currentTarget;
-    const descendantId = focused.getAttribute('aria-activedescendant');
-    const descendant = descendantId ? focused.ownerDocument.getElementById(descendantId) : null;
-    const element = descendant ?? focused;
-    keyboardOpenedAt.current = performance.now();
-    setTarget(element);
-    setKeyboardAnchor(elementAnchor(element));
-    setOpen(true);
-  }
-
-  const anchor =
-    controlledOpen !== undefined && anchorPoint ? pointAnchor(anchorPoint) : keyboardAnchor;
-  return (
-    <BaseContextMenu.Root open={open} onOpenChange={(next) => setOpen(next)} disabled={disabled}>
-      <BaseContextMenu.Trigger
-        render={children}
-        onContextMenu={openAtPointer}
-        onPointerDown={notePress}
-        onKeyDown={openFromKeyboard}
-      />
-      <BaseContextMenu.Portal>
-        <Theme theme={theme} className="env-menu-theme">
-          <BaseContextMenu.Positioner
-            className="env-menu-positioner"
-            {...(anchor && { anchor, side: 'bottom', align: 'start', sideOffset: 4 })}
-          >
-            <BaseContextMenu.Popup
-              className={classNames('env-menu', className)}
-              render={renderMenuPopup(label, density)}
-            >
-              <MenuDensityContext value={density}>
-                {typeof content === 'function' ? content(target) : content}
-              </MenuDensityContext>
-            </BaseContextMenu.Popup>
-          </BaseContextMenu.Positioner>
-        </Theme>
-      </BaseContextMenu.Portal>
-    </BaseContextMenu.Root>
-  );
-}
-
-export interface MenuHeaderProps extends ComponentPropsWithRef<'div'> {
+export interface HeaderProps extends ComponentPropsWithRef<'div'> {
   children: ReactNode;
 }
 
 /** Non-interactive context at the top of a menu, such as the signed-in account. */
-export function MenuHeader({ className, ...props }: MenuHeaderProps) {
+function Header({ className, ...props }: HeaderProps) {
   return (
     <div role="presentation" {...props} className={classNames('env-menu-header', className)} />
   );
 }
 
-interface MenuItemContentProps {
+interface ItemContentProps {
   /** Optional leading icon. */
   icon?: ReactNode;
   children: ReactNode;
@@ -326,7 +173,7 @@ function keyShortcuts(chords: string[][]) {
 
 /** Shared item layout: indicator, icon, label with optional description, trailing content, shortcut. */
 function useMenuItemContent(
-  { icon, children, description, shortcut, trailing }: MenuItemContentProps,
+  { icon, children, description, shortcut, trailing }: ItemContentProps,
   indicator?: ReactNode,
 ) {
   const descriptionId = useId();
@@ -364,19 +211,19 @@ function useMenuItemContent(
   };
 }
 
-interface MenuItemSharedProps extends MenuItemContentProps {
+interface ItemSharedProps extends ItemContentProps {
   disabled?: boolean;
   className?: string;
 }
 
-export type MenuItemProps = MenuItemSharedProps &
+export type ItemProps = ItemSharedProps &
   (
     | { href: string; onClick?: never; target?: string; rel?: string }
     | { href?: undefined; onClick?: () => void; target?: never; rel?: never }
   );
 
 /** One action (onClick) or destination (href) in a Menu. Destinations use the LinkProvider's link. */
-export function MenuItem({
+function Item({
   icon,
   children,
   description,
@@ -385,7 +232,7 @@ export function MenuItem({
   disabled,
   className,
   ...props
-}: MenuItemProps) {
+}: ItemProps) {
   const LinkComponent = useLinkComponent();
   const { content, accessibility } = useMenuItemContent({
     icon,
@@ -422,15 +269,14 @@ export function MenuItem({
 }
 
 /** Separates groups of menu items. */
-export function MenuSeparator() {
+function Separator() {
   return <BaseMenu.Separator className="env-menu-separator" />;
 }
 
-export interface MenuSubmenuProps
-  extends Omit<MenuItemContentProps, 'children' | 'shortcut' | 'trailing'> {
+export interface SubmenuProps extends Omit<ItemContentProps, 'children' | 'shortcut' | 'trailing'> {
   /** The row that opens the submenu. */
   label: ReactNode;
-  /** The submenu's items: MenuItem, MenuGroup, MenuSeparator and the other parts, nested submenus too. */
+  /** The submenu's items: Menu.Item, Menu.Group, Menu.Separator and the other parts, nested submenus too. */
   children: ReactNode;
   /** Accessible name of the submenu; by default the label, when it is a string. */
   'aria-label'?: string;
@@ -452,7 +298,7 @@ const submenuReturnReasons = new Set(['escape-key', 'list-navigation']);
  * A row that opens a nested menu beside it, on hover or with the keyboard. The submenu opens in the
  * density and theme of its menu, and lines its first row up with the row that opened it.
  */
-export function MenuSubmenu({
+function Submenu({
   label,
   icon,
   description,
@@ -463,7 +309,7 @@ export function MenuSubmenu({
   defaultOpen,
   onOpenChange,
   className,
-}: MenuSubmenuProps) {
+}: SubmenuProps) {
   const theme = useTheme();
   const density = useContext(MenuDensityContext);
   const trigger = useRef<HTMLDivElement>(null);
@@ -526,7 +372,7 @@ export function MenuSubmenu({
   );
 }
 
-export interface MenuGroupProps {
+export interface GroupProps {
   /** Small heading that names the group for assistive technology too. */
   label: ReactNode;
   /** Items of the group. */
@@ -535,7 +381,7 @@ export interface MenuGroupProps {
 }
 
 /** A labelled group of related items, with a small heading above its rows. */
-export function MenuGroup({ label, children, className }: MenuGroupProps) {
+function Group({ label, children, className }: GroupProps) {
   return (
     <BaseMenu.Group className={classNames('env-menu-group', className)}>
       <BaseMenu.GroupLabel className="env-menu-group-label">{label}</BaseMenu.GroupLabel>
@@ -544,26 +390,20 @@ export function MenuGroup({ label, children, className }: MenuGroupProps) {
   );
 }
 
-export interface MenuRadioGroupProps {
+export interface RadioGroupProps {
   /** Value of the checked item, or null for none. */
   value: string | null;
   /** Called with the chosen item's value. */
   onValueChange: (value: string) => void;
-  /** MenuRadioItem elements. */
+  /** Menu.RadioItem elements. */
   children: ReactNode;
-  /** Optional heading; the group is then labelled like MenuGroup. */
+  /** Optional heading; the group is then labelled like Menu.Group. */
   label?: ReactNode;
   className?: string;
 }
 
 /** One choice among several items; the checked item shows a check mark. */
-export function MenuRadioGroup({
-  value,
-  onValueChange,
-  children,
-  label,
-  className,
-}: MenuRadioGroupProps) {
+function RadioGroup({ value, onValueChange, children, label, className }: RadioGroupProps) {
   return (
     <BaseMenu.RadioGroup
       className={classNames('env-menu-group', className)}
@@ -590,7 +430,7 @@ function CheckIndicator({ kind }: { kind: 'radio' | 'checkbox' }) {
   );
 }
 
-export interface MenuRadioItemProps extends Omit<MenuItemContentProps, 'shortcut' | 'trailing'> {
+export interface RadioItemProps extends Omit<ItemContentProps, 'shortcut' | 'trailing'> {
   value: string;
   disabled?: boolean;
   /** Close the menu after choosing; true by default. */
@@ -598,14 +438,14 @@ export interface MenuRadioItemProps extends Omit<MenuItemContentProps, 'shortcut
   className?: string;
 }
 
-/** One option of a MenuRadioGroup. */
-export function MenuRadioItem({
+/** One option of a Menu.RadioGroup. */
+function RadioItem({
   value,
   disabled,
   closeOnClick = true,
   className,
   ...contentProps
-}: MenuRadioItemProps) {
+}: RadioItemProps) {
   const { content, accessibility } = useMenuItemContent(
     contentProps,
     <CheckIndicator kind="radio" />,
@@ -623,7 +463,7 @@ export function MenuRadioItem({
   );
 }
 
-export interface MenuCheckboxItemProps extends Omit<MenuItemContentProps, 'trailing'> {
+export interface CheckboxItemProps extends Omit<ItemContentProps, 'trailing'> {
   checked: boolean;
   onCheckedChange: (checked: boolean) => void;
   disabled?: boolean;
@@ -633,14 +473,14 @@ export interface MenuCheckboxItemProps extends Omit<MenuItemContentProps, 'trail
 }
 
 /** An independent on/off option; a check mark shows while it is on. */
-export function MenuCheckboxItem({
+function CheckboxItem({
   checked,
   onCheckedChange,
   disabled,
   closeOnClick = false,
   className,
   ...contentProps
-}: MenuCheckboxItemProps) {
+}: CheckboxItemProps) {
   const { content, accessibility } = useMenuItemContent(
     contentProps,
     <CheckIndicator kind="checkbox" />,
@@ -658,3 +498,26 @@ export function MenuCheckboxItem({
     </BaseMenu.CheckboxItem>
   );
 }
+
+// Each part is named for React DevTools by a pure call, so a bundler drops the parts an
+// application leaves unused.
+const RootPart = /* @__PURE__ */ withDisplayName(Root, 'Menu.Root');
+const HeaderPart = /* @__PURE__ */ withDisplayName(Header, 'Menu.Header');
+const ItemPart = /* @__PURE__ */ withDisplayName(Item, 'Menu.Item');
+const SeparatorPart = /* @__PURE__ */ withDisplayName(Separator, 'Menu.Separator');
+const SubmenuPart = /* @__PURE__ */ withDisplayName(Submenu, 'Menu.Submenu');
+const GroupPart = /* @__PURE__ */ withDisplayName(Group, 'Menu.Group');
+const RadioGroupPart = /* @__PURE__ */ withDisplayName(RadioGroup, 'Menu.RadioGroup');
+const RadioItemPart = /* @__PURE__ */ withDisplayName(RadioItem, 'Menu.RadioItem');
+const CheckboxItemPart = /* @__PURE__ */ withDisplayName(CheckboxItem, 'Menu.CheckboxItem');
+export {
+  RootPart as Root,
+  HeaderPart as Header,
+  ItemPart as Item,
+  SeparatorPart as Separator,
+  SubmenuPart as Submenu,
+  GroupPart as Group,
+  RadioGroupPart as RadioGroup,
+  RadioItemPart as RadioItem,
+  CheckboxItemPart as CheckboxItem,
+};

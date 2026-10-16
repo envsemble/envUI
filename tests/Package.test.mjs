@@ -160,12 +160,13 @@ before(
       h(ui.DatePicker, { name: 'due', label: 'Due', defaultValue: '2026-10-14T09:30', withTime: true, locale: 'en-GB' }),
       h(ui.Calendar, { 'aria-label': 'Planning', defaultValue: '2026-03-09', locale: 'en-GB', weekStart: 1 }),
       h(ui.Dialog, { title: 'Example', open: false, trigger: h(ui.Button, null, 'Open') }),
-      h(ui.ToastProvider, null, h(ui.Toast, { message: 'Saved', variant: 'success' })),
+      h(ui.Toast.Provider, null, 'Managed notifications'),
       h(ui.BrandLogo),
       h(ui.LoadingState, null, h(ui.Skeleton, { width: '38%' }))
     ));
     console.log(JSON.stringify({
       exports: Object.keys(ui), html,
+      partNames: [ui.Menu.Root, ui.Menu.Item, ui.Menubar.Menu, ui.Table.HeaderCell, ui.Stat.Group, ui.Toast.Provider].map((part) => part.displayName),
       emptyDirectionLinks: renderToString(h(ui.DirectionLinks, { previous: null, next: null })),
       pairedDirectionLinks: renderToString(h(ui.DirectionLinks, {
         'aria-label': 'Guide sequence',
@@ -206,6 +207,17 @@ test('direction link groups omit empty navigation and preserve destination attri
   assert.match(ssr.pairedDirectionLinks, /href="\/before" target="_blank" rel="noopener"/);
   assert.match(ssr.pairedDirectionLinks, /href="\/after" rel="next"/);
   assert.ok(ssr.pairedDirectionLinks.indexOf('Before') < ssr.pairedDirectionLinks.indexOf('After'));
+});
+
+test('compound parts are namespace members named after their part', () => {
+  assert.deepEqual(ssr.partNames, [
+    'Menu.Root',
+    'Menu.Item',
+    'Menubar.Menu',
+    'Table.HeaderCell',
+    'Stat.Group',
+    'Toast.Provider',
+  ]);
 });
 
 test('a packed consumer resolves compiled public exports and its own React installation', async function () {
@@ -251,7 +263,6 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'Dialog',
     'DialogClose',
     'Toast',
-    'ToastProvider',
     'useToast',
     'Icon',
     'BrandLogo',
@@ -288,7 +299,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     `
     import { createRef } from 'react';
     import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, NavigationItem, DirectionLink, Icon, BrandLogo, TextField, ColorPicker, Textarea, Checkbox, Switch, Stack, ActionGroup,
-      RadioGroup, Radio, Select, Combobox, DatePicker, Calendar, Dialog, DialogClose, Toast, ToastProvider, useToast,
+      RadioGroup, Radio, Select, Combobox, DatePicker, Calendar, Dialog, DialogClose, Toast, useToast,
       type ThemeValue, type ButtonProps, type ButtonGroupProps, type DirectionLinkProps, type SelectOption, type ComboboxItem, type ToastManager } from '@envsemble/envui';
     import { Home } from '@envsemble/envui/icons/Home';
     import { Home as BarrelHome } from '@envsemble/envui/icons';
@@ -326,7 +337,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       <DatePicker label="Due" withTime clearable onValueChange={value => { const typed: string | null = value; void typed; }} ref={createRef<HTMLButtonElement>()} />
       <Calendar value="2026-10-14" weekStart={1} onValueChange={value => { const typed: string = value; void typed; }} />
       <Dialog title="Confirm" trigger={<Button>Open</Button>} actions={<DialogClose>Done</DialogClose>} />
-      <ToastProvider><NotificationAction /><Toast message="Saved" /></ToastProvider>
+      <Toast.Provider><NotificationAction /></Toast.Provider>
     </Theme>;
     // @ts-expect-error Icon-only actions require an accessible name.
     const unnamedIconButton = <IconButton icon={<Home />} />;

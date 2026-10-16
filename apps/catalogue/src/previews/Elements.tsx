@@ -19,13 +19,7 @@ import {
   Stack,
   Surface,
   Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeaderCell,
-  TableRow,
   Text,
-  type TableSortDirection,
 } from '@envsemble/envui';
 import { CheckCircle } from '@envsemble/envui/icons/CheckCircle';
 import { Description } from '@envsemble/envui/icons/Description';
@@ -407,7 +401,7 @@ export function TablesPreview() {
           : comparePlans(sort.column)(second, first),
       )
     : samplePlans;
-  const direction = (column: PlanColumn): TableSortDirection =>
+  const direction = (column: PlanColumn): Table.SortDirection =>
     sort?.column === column ? sort.direction : 'none';
   const sortBy = (column: PlanColumn) => () =>
     setSort((current) => ({
@@ -442,67 +436,67 @@ export function TablesPreview() {
           </>
         }
       >
-        <Table
+        <Table.Root
           aria-label="Plans"
           density={density === 'compact' ? 'compact' : 'standard'}
           resizableColumns
           defaultColumnWidths={[40, 22, 16, 22]}
           minColumnWidths={12}
         >
-          <TableHead>
-            <TableRow>
-              <TableHeaderCell sortDirection={direction('title')} onSort={sortBy('title')}>
+          <Table.Head>
+            <Table.Row>
+              <Table.HeaderCell sortDirection={direction('title')} onSort={sortBy('title')}>
                 Plan
-              </TableHeaderCell>
-              <TableHeaderCell sortDirection={direction('owner')} onSort={sortBy('owner')}>
+              </Table.HeaderCell>
+              <Table.HeaderCell sortDirection={direction('owner')} onSort={sortBy('owner')}>
                 Owner
-              </TableHeaderCell>
-              <TableHeaderCell
+              </Table.HeaderCell>
+              <Table.HeaderCell
                 numeric
                 sortDirection={direction('decisions')}
                 onSort={sortBy('decisions')}
               >
                 Decisions
-              </TableHeaderCell>
-              <TableHeaderCell>Status</TableHeaderCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
+              </Table.HeaderCell>
+              <Table.HeaderCell>Status</Table.HeaderCell>
+            </Table.Row>
+          </Table.Head>
+          <Table.Body>
             {plans.map((plan) => (
-              <TableRow key={plan.title} interactive>
-                <TableCell>
+              <Table.Row key={plan.title} interactive>
+                <Table.Cell>
                   <Link href={`#/${plan.folder}`} underline={false}>
                     {plan.title}
                   </Link>
                   <Text variant="caption">{plan.folder}</Text>
-                </TableCell>
-                <TableCell nowrap>{plan.owner}</TableCell>
-                <TableCell numeric>{plan.decisions}</TableCell>
-                <TableCell>
+                </Table.Cell>
+                <Table.Cell nowrap>{plan.owner}</Table.Cell>
+                <Table.Cell numeric>{plan.decisions}</Table.Cell>
+                <Table.Cell>
                   <Badge tone={statusTones[plan.status]}>{plan.status}</Badge>
-                </TableCell>
-              </TableRow>
+                </Table.Cell>
+              </Table.Row>
             ))}
-          </TableBody>
-        </Table>
+          </Table.Body>
+        </Table.Root>
       </Example>
       <Example
         title="Selected rows"
         size="wide"
         caption={`${selected.length} of ${samplePlans.length} plans selected. Selected rows take the navigation selection color.`}
       >
-        <Table aria-label="Plans to archive">
-          <TableHead>
-            <TableRow>
-              <TableHeaderCell>Plan</TableHeaderCell>
-              <TableHeaderCell>Owner</TableHeaderCell>
-              <TableHeaderCell>Status</TableHeaderCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
+        <Table.Root aria-label="Plans to archive">
+          <Table.Head>
+            <Table.Row>
+              <Table.HeaderCell>Plan</Table.HeaderCell>
+              <Table.HeaderCell>Owner</Table.HeaderCell>
+              <Table.HeaderCell>Status</Table.HeaderCell>
+            </Table.Row>
+          </Table.Head>
+          <Table.Body>
             {samplePlans.map((plan) => (
-              <TableRow key={plan.title} selected={selected.includes(plan.title)}>
-                <TableCell>
+              <Table.Row key={plan.title} selected={selected.includes(plan.title)}>
+                <Table.Cell>
                   <Checkbox
                     label={plan.title}
                     checked={selected.includes(plan.title)}
@@ -514,15 +508,15 @@ export function TablesPreview() {
                       )
                     }
                   />
-                </TableCell>
-                <TableCell nowrap>{plan.owner}</TableCell>
-                <TableCell>
+                </Table.Cell>
+                <Table.Cell nowrap>{plan.owner}</Table.Cell>
+                <Table.Cell>
                   <Badge tone={statusTones[plan.status]}>{plan.status}</Badge>
-                </TableCell>
-              </TableRow>
+                </Table.Cell>
+              </Table.Row>
             ))}
-          </TableBody>
-        </Table>
+          </Table.Body>
+        </Table.Root>
       </Example>
       <Example
         title="Stacked rows"
@@ -541,35 +535,35 @@ export function TablesPreview() {
         }
         caption="Below 36 rem of available width, each row becomes a block: the first cell is its title, the other cells show their labels. Assistive technology still reads a table."
       >
-        <Table aria-label="Plans by owner" narrowLayout="stack">
-          <TableHead>
-            <TableRow>
-              <TableHeaderCell>Plan</TableHeaderCell>
-              <TableHeaderCell>Owner</TableHeaderCell>
-              <TableHeaderCell numeric>Decisions</TableHeaderCell>
-              <TableHeaderCell>Status</TableHeaderCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
+        <Table.Root aria-label="Plans by owner" narrowLayout="stack">
+          <Table.Head>
+            <Table.Row>
+              <Table.HeaderCell>Plan</Table.HeaderCell>
+              <Table.HeaderCell>Owner</Table.HeaderCell>
+              <Table.HeaderCell numeric>Decisions</Table.HeaderCell>
+              <Table.HeaderCell>Status</Table.HeaderCell>
+            </Table.Row>
+          </Table.Head>
+          <Table.Body>
             {samplePlans.map((plan) => (
-              <TableRow key={plan.title}>
-                <TableCell>
+              <Table.Row key={plan.title}>
+                <Table.Cell>
                   {plan.title}
                   <Text variant="caption">{plan.folder}</Text>
-                </TableCell>
-                <TableCell label="Owner" nowrap>
+                </Table.Cell>
+                <Table.Cell label="Owner" nowrap>
                   {plan.owner}
-                </TableCell>
-                <TableCell label="Decisions" numeric>
+                </Table.Cell>
+                <Table.Cell label="Decisions" numeric>
                   {plan.decisions}
-                </TableCell>
-                <TableCell label="Status">
+                </Table.Cell>
+                <Table.Cell label="Status">
                   <Badge tone={statusTones[plan.status]}>{plan.status}</Badge>
-                </TableCell>
-              </TableRow>
+                </Table.Cell>
+              </Table.Row>
             ))}
-          </TableBody>
-        </Table>
+          </Table.Body>
+        </Table.Root>
       </Example>
     </Preview>
   );

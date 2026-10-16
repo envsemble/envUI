@@ -134,8 +134,6 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       switch: `[data-testid="${theme}-color-switch"]`,
       chip: `[data-testid="${theme}-color-chip"]`,
       skeleton: `[data-testid="${theme}-color-skeleton"]`,
-      errorToast: `[data-testid="${theme}-color-error-toast"]`,
-      toastAction: `[data-testid="${theme}-color-error-toast"] .env-toast-action`,
     };
     async function compareToken(token: string) {
       return boundary.evaluate(
@@ -176,8 +174,8 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       ['--color-secondary-action', ['secondary', 'icon', 'select', 'selectError']],
       ['--color-on-secondary-action', ['secondary', 'icon', 'select', 'selectError']],
       ['--color-link', ['link', 'textButton']],
-      ['--color-primary-action', ['primary', 'tab', 'toastAction']],
-      ['--color-on-primary-action', ['primary', 'tab', 'toastAction']],
+      ['--color-primary-action', ['primary', 'tab']],
+      ['--color-on-primary-action', ['primary', 'tab']],
       ['--color-navigation-selected', ['navigation']],
       ['--color-navigation-icon', ['navigationIcon', 'tabIcon']],
       ['--color-direction-link', ['direction']],
@@ -187,7 +185,6 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       ['--color-field-text', ['field', 'fieldWell', 'fieldError', 'selectLabel']],
       ['--color-field-hint', ['selectHint']],
       ['--color-destructive-action', ['destructive']],
-      ['--color-toast-error', ['errorToast']],
       ['--color-radio-row', ['radioRow']],
       ['--color-radio', ['radio']],
       ['--color-checkbox', ['checkbox']],

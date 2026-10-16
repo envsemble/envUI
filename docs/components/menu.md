@@ -3,11 +3,11 @@
 ## React usage
 
 ```tsx
-import { AvatarButton, Menu, MenuHeader, MenuItem, MenuSeparator, Text } from '@envsemble/envui';
+import { AvatarButton, Menu, Text } from '@envsemble/envui';
 import { ManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
 import { Logout } from '@envsemble/envui/icons/Logout';
 
-<Menu
+<Menu.Root
   aria-label="Account"
   trigger={
     <AvatarButton
@@ -18,100 +18,84 @@ import { Logout } from '@envsemble/envui/icons/Logout';
     />
   }
 >
-  <MenuHeader>
+  <Menu.Header>
     <Text>Alex Morgan</Text>
-  </MenuHeader>
-  <MenuItem href="/account" icon={<ManageAccounts />}>
+  </Menu.Header>
+  <Menu.Item href="/account" icon={<ManageAccounts />}>
     Account settings
-  </MenuItem>
-  <MenuSeparator />
-  <MenuItem icon={<Logout />} onClick={signOut}>
+  </Menu.Item>
+  <Menu.Separator />
+  <Menu.Item icon={<Logout />} onClick={signOut}>
     Sign out
-  </MenuItem>
-</Menu>;
+  </Menu.Item>
+</Menu.Root>;
 ```
 
 ### Props & contracts
 
-| Name                     | Contract                                                           |
-| ------------------------ | ------------------------------------------------------------------ |
-| trigger                  | The opening control; it receives the menu button semantics and ref |
-| aria-label               | Required accessible name of the menu                               |
-| side / align             | Placement relative to the trigger; bottom and end by default       |
-| open / onOpenChange      | Optional controlled visibility                                     |
-| MenuHeader               | Non-interactive context, such as the signed-in account             |
-| MenuItem href            | A destination, rendered through the LinkProvider link              |
-| MenuItem onClick         | An action; the menu closes after it runs                           |
-| MenuItem icon / disabled | Optional leading icon and unavailable state                        |
-| MenuSeparator            | Splits items into groups; each group keeps large outer corners     |
-| density                  | compact: the desktop dropdown for dense surfaces; see below        |
+| Name                      | Contract                                                           |
+| ------------------------- | ------------------------------------------------------------------ |
+| trigger                   | The opening control; it receives the menu button semantics and ref |
+| aria-label                | Required accessible name of the menu                               |
+| side / align              | Placement relative to the trigger; bottom and end by default       |
+| open / onOpenChange       | Optional controlled visibility                                     |
+| Menu.Header               | Non-interactive context, such as the signed-in account             |
+| Menu.Item href            | A destination, rendered through the LinkProvider link              |
+| Menu.Item onClick         | An action; the menu closes after it runs                           |
+| Menu.Item icon / disabled | Optional leading icon and unavailable state                        |
+| Menu.Separator            | Splits items into groups; each group keeps large outer corners     |
+| density                   | compact: the desktop dropdown for dense surfaces; see below        |
 
 ### Groups, choices and shortcuts
 
 ```tsx
-import {
-  Button,
-  Menu,
-  MenuCheckboxItem,
-  MenuGroup,
-  MenuItem,
-  MenuRadioGroup,
-  MenuRadioItem,
-} from '@envsemble/envui';
+import { Button, Menu } from '@envsemble/envui';
 import { Search } from '@envsemble/envui/icons/Search';
 
-<Menu aria-label="View options" trigger={<Button variant="secondary">View options</Button>}>
-  <MenuRadioGroup label="Sort by" value={sort} onValueChange={setSort}>
-    <MenuRadioItem value="name">Name</MenuRadioItem>
-    <MenuRadioItem value="date" description="Most recently changed first">
+<Menu.Root aria-label="View options" trigger={<Button variant="secondary">View options</Button>}>
+  <Menu.RadioGroup label="Sort by" value={sort} onValueChange={setSort}>
+    <Menu.RadioItem value="name">Name</Menu.RadioItem>
+    <Menu.RadioItem value="date" description="Most recently changed first">
       Date changed
-    </MenuRadioItem>
-  </MenuRadioGroup>
-  <MenuGroup label="Display">
-    <MenuCheckboxItem checked={showArchived} onCheckedChange={setShowArchived}>
+    </Menu.RadioItem>
+  </Menu.RadioGroup>
+  <Menu.Group label="Display">
+    <Menu.CheckboxItem checked={showArchived} onCheckedChange={setShowArchived}>
       Show archived plans
-    </MenuCheckboxItem>
-    <MenuItem icon={<Search />} shortcut="Ctrl+P" onClick={openQuickOpen}>
+    </Menu.CheckboxItem>
+    <Menu.Item icon={<Search />} shortcut="Ctrl+P" onClick={openQuickOpen}>
       Quick open
-    </MenuItem>
-  </MenuGroup>
-</Menu>;
+    </Menu.Item>
+  </Menu.Group>
+</Menu.Root>;
 ```
 
-| Name                                       | Contract                                                                                                       |
-| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
-| MenuItem description                       | A second, muted line; announced as the item’s description                                                      |
-| MenuItem shortcut                          | Key hint at the end, such as <kbd>Ctrl</kbd>+<kbd>P</kbd>, also exposed as aria-keyshortcuts; the app binds it |
-| MenuItem trailing                          | End content such as a Badge or CounterBadge                                                                    |
-| MenuGroup label                            | A labelled group with a small heading; its rows keep large outer corners                                       |
-| MenuRadioGroup value / onValueChange       | One checked choice among its MenuRadioItems; optional label like MenuGroup                                     |
-| MenuRadioItem value / description / icon   | A choice with a check mark while checked; closeOnClick is true by default                                      |
-| MenuCheckboxItem checked / onCheckedChange | An on/off option with a check mark; the menu stays open unless closeOnClick is set                             |
+| Name                                        | Contract                                                                                                       |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Menu.Item description                       | A second, muted line; announced as the item’s description                                                      |
+| Menu.Item shortcut                          | Key hint at the end, such as <kbd>Ctrl</kbd>+<kbd>P</kbd>, also exposed as aria-keyshortcuts; the app binds it |
+| Menu.Item trailing                          | End content such as a Badge or CounterBadge                                                                    |
+| Menu.Group label                            | A labelled group with a small heading; its rows keep large outer corners                                       |
+| Menu.RadioGroup value / onValueChange       | One checked choice among its Menu.RadioItems; optional label like Menu.Group                                   |
+| Menu.RadioItem value / description / icon   | A choice with a check mark while checked; closeOnClick is true by default                                      |
+| Menu.CheckboxItem checked / onCheckedChange | An on/off option with a check mark; the menu stays open unless closeOnClick is set                             |
 
 ### Compact menus and submenus
 
 ```tsx
-import {
-  Button,
-  Menu,
-  MenuItem,
-  MenuRadioGroup,
-  MenuRadioItem,
-  MenuSeparator,
-  MenuSubmenu,
-} from '@envsemble/envui';
+import { Button, Menu } from '@envsemble/envui';
 import { History } from '@envsemble/envui/icons/History';
 
-<Menu
+<Menu.Root
   aria-label="Document"
   density="compact"
   align="start"
   trigger={<Button variant="secondary">Document</Button>}
 >
-  <MenuItem shortcut="Ctrl+N" onClick={createDocument}>
+  <Menu.Item shortcut="Ctrl+N" onClick={createDocument}>
     New document
-  </MenuItem>
-  <MenuSubmenu
+  </Menu.Item>
+  <Menu.Submenu
     label="Open recent"
     icon={<History />}
     onOpenChange={(open) => {
@@ -119,37 +103,37 @@ import { History } from '@envsemble/envui/icons/History';
     }}
   >
     {recentDocuments.map((document) => (
-      <MenuItem key={document.id} onClick={() => openDocument(document.id)}>
+      <Menu.Item key={document.id} onClick={() => openDocument(document.id)}>
         {document.name}
-      </MenuItem>
+      </Menu.Item>
     ))}
-    <MenuSeparator />
-    <MenuItem onClick={clearRecentDocuments}>Clear recent</MenuItem>
-  </MenuSubmenu>
-  <MenuSeparator />
-  <MenuSubmenu label="Theme">
-    <MenuRadioGroup value={theme} onValueChange={setTheme}>
-      <MenuRadioItem value="light">Light</MenuRadioItem>
-      <MenuRadioItem value="dark">Dark</MenuRadioItem>
-      <MenuRadioItem value="system">System</MenuRadioItem>
-    </MenuRadioGroup>
-  </MenuSubmenu>
-</Menu>;
+    <Menu.Separator />
+    <Menu.Item onClick={clearRecentDocuments}>Clear recent</Menu.Item>
+  </Menu.Submenu>
+  <Menu.Separator />
+  <Menu.Submenu label="Theme">
+    <Menu.RadioGroup value={theme} onValueChange={setTheme}>
+      <Menu.RadioItem value="light">Light</Menu.RadioItem>
+      <Menu.RadioItem value="dark">Dark</Menu.RadioItem>
+      <Menu.RadioItem value="system">System</Menu.RadioItem>
+    </Menu.RadioGroup>
+  </Menu.Submenu>
+</Menu.Root>;
 ```
 
-| Name                                          | Contract                                                                                                                                  |
-| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| density="compact"                             | The desktop dropdown: the raised popup of Popover and Select with 1.75 rem rows, 16 px icons, shortcuts as small muted keys and hairlines |
-| MenuSubmenu label / icon / description        | The row that opens the submenu, with a chevron at its end                                                                                 |
-| MenuSubmenu children                          | The submenu's items: any menu part, including further submenus                                                                            |
-| MenuSubmenu disabled                          | The row stays in place but cannot open its submenu                                                                                        |
-| MenuSubmenu open / defaultOpen / onOpenChange | Optional control; onOpenChange can load the items as the submenu opens                                                                    |
-| MenuSubmenu aria-label / className            | Name of the submenu, the label by default when it is text, and the class of its popup                                                     |
+| Name                                           | Contract                                                                                                                                  |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| density="compact"                              | The desktop dropdown: the raised popup of Popover and Select with 1.75 rem rows, 16 px icons, shortcuts as small muted keys and hairlines |
+| Menu.Submenu label / icon / description        | The row that opens the submenu, with a chevron at its end                                                                                 |
+| Menu.Submenu children                          | The submenu's items: any menu part, including further submenus                                                                            |
+| Menu.Submenu disabled                          | The row stays in place but cannot open its submenu                                                                                        |
+| Menu.Submenu open / defaultOpen / onOpenChange | Optional control; onOpenChange can load the items as the submenu opens                                                                    |
+| Menu.Submenu aria-label / className            | Name of the submenu, the label by default when it is text, and the class of its popup                                                     |
 
 ### Context menu
 
 ```tsx
-import { ContextMenu, MenuItem, MenuSeparator } from '@envsemble/envui';
+import { ContextMenu, Menu } from '@envsemble/envui';
 
 <ContextMenu
   aria-label="Document actions"
@@ -157,14 +141,14 @@ import { ContextMenu, MenuItem, MenuSeparator } from '@envsemble/envui';
     const id = target?.closest<HTMLElement>('[data-document-id]')?.dataset.documentId;
     return id ? (
       <>
-        <MenuItem shortcut="F2" onClick={() => rename(id)}>
+        <Menu.Item shortcut="F2" onClick={() => rename(id)}>
           Rename
-        </MenuItem>
-        <MenuSeparator />
-        <MenuItem onClick={() => remove(id)}>Delete</MenuItem>
+        </Menu.Item>
+        <Menu.Separator />
+        <Menu.Item onClick={() => remove(id)}>Delete</Menu.Item>
       </>
     ) : (
-      <MenuItem onClick={createDocument}>New document</MenuItem>
+      <Menu.Item onClick={createDocument}>New document</Menu.Item>
     );
   }}
 >
@@ -213,7 +197,7 @@ import { AppShell, OrganizationSwitcher } from '@envsemble/envui';
 ## Guidelines
 
 - Use a menu for a short list of actions or destinations behind one trigger. Use Select to choose a value and Tabs to switch views.
-- envUI provides two menus: OrganizationSwitcher, and the account menu composed from AvatarButton, MenuHeader and items. Every other menu is the application's own, built from MenuItem, MenuGroup, MenuRadioGroup, MenuCheckboxItem, MenuSubmenu and MenuSeparator, in standard or compact density.
+- envUI provides two menus: OrganizationSwitcher, and the account menu composed from AvatarButton, Menu.Header and items. Every other menu is the application's own, built from Menu.Item, Menu.Group, Menu.RadioGroup, Menu.CheckboxItem, Menu.Submenu and Menu.Separator, in standard or compact density.
 - Use compact density in dense desktop interfaces, such as a menubar, a compact tree's context menu or a toolbar. The popup is as wide as its content, between 12 and 22 rem, and descriptions wrap. Labels line up across rows: once a row has a check mark or an icon, the others keep its place. On coarse pointers, rows keep the touch height.
 - A submenu opens beside its row on hover, after a short delay, and with <kbd>→</kbd>, <kbd>Enter</kbd> or <kbd>Space</kbd>, with focus on its first item; <kbd>←</kbd> and <kbd>Esc</kbd> close it and return to the row. It opens at the inline end, lines its first row up with the row that opened it and flips to the other side near the edge of the window. It takes the density and theme of its menu, and the row stays highlighted while it is open.
 - Keep submenus shallow, one level in most menus, for groups of related choices such as recent documents or a theme. Frequent commands belong in the menu itself.

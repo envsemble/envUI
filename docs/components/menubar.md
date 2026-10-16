@@ -3,72 +3,65 @@
 ## React usage
 
 ```tsx
-import {
-  MenuCheckboxItem,
-  MenuItem,
-  MenuSeparator,
-  MenuSubmenu,
-  Menubar,
-  MenubarMenu,
-} from '@envsemble/envui';
+import { Menu, Menubar } from '@envsemble/envui';
 
-<Menubar aria-label="Application menu" accessKeys>
-  <MenubarMenu label="File" accessKey="F">
-    <MenuItem shortcut="Ctrl+N" onClick={createNote}>
+<Menubar.Root aria-label="Application menu" accessKeys>
+  <Menubar.Menu label="File" accessKey="F">
+    <Menu.Item shortcut="Ctrl+N" onClick={createNote}>
       New note
-    </MenuItem>
-    <MenuSubmenu label="Open recent">
+    </Menu.Item>
+    <Menu.Submenu label="Open recent">
       {recentNotes.map((note) => (
-        <MenuItem key={note.id} onClick={() => openNote(note.id)}>
+        <Menu.Item key={note.id} onClick={() => openNote(note.id)}>
           {note.title}
-        </MenuItem>
+        </Menu.Item>
       ))}
-    </MenuSubmenu>
-    <MenuSeparator />
-    <MenuItem shortcut="Ctrl+W" onClick={closeWindow}>
+    </Menu.Submenu>
+    <Menu.Separator />
+    <Menu.Item shortcut="Ctrl+W" onClick={closeWindow}>
       Close window
-    </MenuItem>
-  </MenubarMenu>
-  <MenubarMenu
+    </Menu.Item>
+  </Menubar.Menu>
+  <Menubar.Menu
     label="Edit"
     accessKey="E"
     onOpenChange={(open, { previousFocus }) => {
       if (open) editTarget.current = previousFocus;
     }}
   >
-    <MenuItem shortcut="Ctrl+C" onClick={() => copyFrom(editTarget.current)}>
+    <Menu.Item shortcut="Ctrl+C" onClick={() => copyFrom(editTarget.current)}>
       Copy
-    </MenuItem>
-    <MenuItem shortcut="Ctrl+V" onClick={() => pasteInto(editTarget.current)}>
+    </Menu.Item>
+    <Menu.Item shortcut="Ctrl+V" onClick={() => pasteInto(editTarget.current)}>
       Paste
-    </MenuItem>
-  </MenubarMenu>
-  <MenubarMenu label="View" accessKey="V">
-    <MenuCheckboxItem checked={wordWrap} onCheckedChange={setWordWrap}>
+    </Menu.Item>
+  </Menubar.Menu>
+  <Menubar.Menu label="View" accessKey="V">
+    <Menu.CheckboxItem checked={wordWrap} onCheckedChange={setWordWrap}>
       Word wrap
-    </MenuCheckboxItem>
-  </MenubarMenu>
-  <MenubarMenu label="Help" accessKey="H">
-    <MenuItem onClick={openShortcuts}>Keyboard shortcuts</MenuItem>
-  </MenubarMenu>
-</Menubar>;
+    </Menu.CheckboxItem>
+  </Menubar.Menu>
+  <Menubar.Menu label="Help" accessKey="H">
+    <Menu.Item onClick={openShortcuts}>Keyboard shortcuts</Menu.Item>
+  </Menubar.Menu>
+</Menubar.Root>;
 ```
 
 ### Props & contracts
 
-| Name                                          | Contract                                                                                                    |
-| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| Menubar aria-label                            | Required accessible name, such as Application menu                                                          |
-| Menubar accessKeys                            | Desktop access keys, off by default; see the guidelines                                                     |
-| Menubar disabled                              | Disables every menu                                                                                         |
-| Menubar native props                          | className, id, style, ref and other div attributes                                                          |
-| MenubarMenu label                             | The trigger's text, such as File                                                                            |
-| MenubarMenu accessKey                         | A letter of the label that opens the menu with <kbd>Alt</kbd> when accessKeys is on, such as F for File     |
-| MenubarMenu children                          | The menu's parts: MenuItem, MenuSubmenu, MenuGroup, MenuRadioGroup, MenuCheckboxItem and MenuSeparator      |
-| MenubarMenu density                           | compact by default; standard for the larger rows of other menus                                             |
-| MenubarMenu disabled                          | The trigger stays in place but cannot open its menu                                                         |
-| MenubarMenu open / defaultOpen / onOpenChange | Optional control; onOpenChange(open, { previousFocus }) also reports the element focused before the menubar |
-| MenubarMenu aria-label / className            | Name of the menu, the label by default when it is text, and the class of its popup                          |
+| Name                                           | Contract                                                                                                     |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Menubar.Root aria-label                        | Required accessible name, such as Application menu                                                           |
+| Menubar.Root accessKeys                        | Desktop access keys, off by default; see the guidelines                                                      |
+| Menubar.Root disabled                          | Disables every menu                                                                                          |
+| Menubar.Root native props                      | className, id, style, ref and other div attributes                                                           |
+| Menubar.Menu label                             | The trigger's text, such as File                                                                             |
+| Menubar.Menu accessKey                         | A letter of the label that opens the menu with <kbd>Alt</kbd> when accessKeys is on, such as F for File      |
+| Menubar.Menu children                          | The menu's parts: Menu.Item, Menu.Submenu, Menu.Group, Menu.RadioGroup, Menu.CheckboxItem and Menu.Separator |
+| Menubar.Menu density                           | compact by default; standard for the larger rows of other menus                                              |
+| Menubar.Menu disabled                          | The trigger stays in place but cannot open its menu                                                          |
+| Menubar.Menu open / defaultOpen / onOpenChange | Optional control; onOpenChange(open, { previousFocus }) also reports the element focused before the menubar  |
+| Menubar.Menu aria-label / className            | Name of the menu, the label by default when it is text, and the class of its popup                           |
 
 ## Guidelines
 

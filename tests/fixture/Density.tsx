@@ -6,10 +6,7 @@ import {
   IconButton,
   TextField,
   Menu,
-  MenuItem,
-  MenuSeparator,
   Menubar,
-  MenubarMenu,
   NavigationItem,
   Pagination,
   SearchField,
@@ -18,11 +15,6 @@ import {
   Surface,
   Switch,
   Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeaderCell,
-  TableRow,
   Tabs,
   Text,
   Theme,
@@ -195,32 +187,32 @@ function ToolbarSection() {
 function MenuSection() {
   const items = (
     <>
-      <MenuItem icon={<Edit />} shortcut="F2">
+      <Menu.Item icon={<Edit />} shortcut="F2">
         Rename
-      </MenuItem>
-      <MenuItem icon={<ContentCopy />} shortcut="Ctrl+D" description="Copy beside the original">
+      </Menu.Item>
+      <Menu.Item icon={<ContentCopy />} shortcut="Ctrl+D" description="Copy beside the original">
         Duplicate
-      </MenuItem>
-      <MenuItem icon={<Folder />}>Move to folder</MenuItem>
-      <MenuSeparator />
-      <MenuItem icon={<Delete />}>Delete</MenuItem>
+      </Menu.Item>
+      <Menu.Item icon={<Folder />}>Move to folder</Menu.Item>
+      <Menu.Separator />
+      <Menu.Item icon={<Delete />}>Delete</Menu.Item>
     </>
   );
   return (
     <div className="density-menus">
       <div className="density-menu-anchor" style={{ insetInlineStart: '1.5rem' }}>
-        <Menu
+        <Menu.Root
           aria-label="Standard menu"
           open
           trigger={<Button variant="secondary">Menu (standard)</Button>}
           align="start"
         >
           {items}
-        </Menu>
+        </Menu.Root>
       </div>
       <div className="density-menu-anchor" style={{ insetInlineStart: '26.25rem' }}>
         <Surface density="compact" tone="canvas" padding={0}>
-          <Menu
+          <Menu.Root
             aria-label="Compact menu"
             open
             density="compact"
@@ -228,7 +220,7 @@ function MenuSection() {
             align="start"
           >
             {items}
-          </Menu>
+          </Menu.Root>
         </Surface>
       </div>
     </div>
@@ -313,34 +305,34 @@ const tones = { Ready: 'success', Blocked: 'warning' } as const;
 
 function ReportTable({ density }: { density: 'standard' | 'compact' }) {
   return (
-    <Table aria-label={`${density} table`} density={density}>
-      <TableHead>
-        <TableRow>
-          <TableHeaderCell>Report</TableHeaderCell>
-          <TableHeaderCell>Owner</TableHeaderCell>
-          <TableHeaderCell>Reviews</TableHeaderCell>
-          <TableHeaderCell>Status</TableHeaderCell>
-          <TableHeaderCell>
+    <Table.Root aria-label={`${density} table`} density={density}>
+      <Table.Head>
+        <Table.Row>
+          <Table.HeaderCell>Report</Table.HeaderCell>
+          <Table.HeaderCell>Owner</Table.HeaderCell>
+          <Table.HeaderCell>Reviews</Table.HeaderCell>
+          <Table.HeaderCell>Status</Table.HeaderCell>
+          <Table.HeaderCell>
             <span className="density-visually-hidden">Actions</span>
-          </TableHeaderCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
+          </Table.HeaderCell>
+        </Table.Row>
+      </Table.Head>
+      <Table.Body>
         {reports.map((report) => (
-          <TableRow key={report.title}>
-            <TableCell>{report.title}</TableCell>
-            <TableCell nowrap>{report.owner}</TableCell>
-            <TableCell numeric>{report.reviews}</TableCell>
-            <TableCell>
+          <Table.Row key={report.title}>
+            <Table.Cell>{report.title}</Table.Cell>
+            <Table.Cell nowrap>{report.owner}</Table.Cell>
+            <Table.Cell numeric>{report.reviews}</Table.Cell>
+            <Table.Cell>
               <Badge tone={tones[report.status]}>{report.status}</Badge>
-            </TableCell>
-            <TableCell>
+            </Table.Cell>
+            <Table.Cell>
               <IconButton icon={<MoreVert />} aria-label="More" variant="quiet" />
-            </TableCell>
-          </TableRow>
+            </Table.Cell>
+          </Table.Row>
         ))}
-      </TableBody>
-    </Table>
+      </Table.Body>
+    </Table.Root>
   );
 }
 
@@ -429,17 +421,17 @@ function DesktopSection() {
   return (
     <div className="density-app">
       <div className="density-app-menubar">
-        <Menubar aria-label="Application">
-          <MenubarMenu label="File">
-            <MenuItem>New</MenuItem>
-          </MenubarMenu>
-          <MenubarMenu label="Edit">
-            <MenuItem>Undo</MenuItem>
-          </MenubarMenu>
-          <MenubarMenu label="View">
-            <MenuItem>Zoom</MenuItem>
-          </MenubarMenu>
-        </Menubar>
+        <Menubar.Root aria-label="Application">
+          <Menubar.Menu label="File">
+            <Menu.Item>New</Menu.Item>
+          </Menubar.Menu>
+          <Menubar.Menu label="Edit">
+            <Menu.Item>Undo</Menu.Item>
+          </Menubar.Menu>
+          <Menubar.Menu label="View">
+            <Menu.Item>Zoom</Menu.Item>
+          </Menubar.Menu>
+        </Menubar.Root>
       </div>
       <div className="density-app-body">
         <aside className="density-app-side">

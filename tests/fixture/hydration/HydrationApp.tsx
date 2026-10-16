@@ -7,7 +7,7 @@ import {
   Select,
   Dialog,
   Button,
-  ToastProvider,
+  Toast,
   useToast,
   Badge,
   Breadcrumbs,
@@ -19,20 +19,12 @@ import {
   Tree,
   TitleBar,
   Menubar,
-  MenubarMenu,
-  MenuItem,
-  MenuSubmenu,
+  Menu,
   Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeaderCell,
-  TableRow,
   Composer,
   Message,
   MessageList,
   Stat,
-  StatGroup,
   CalendarHeatmap,
   Combobox,
   PanelDock,
@@ -75,17 +67,17 @@ export function HydrationApp() {
   const [page, setPage] = useState(1);
   return (
     <Theme theme="dark">
-      <ToastProvider>
+      <Toast.Provider>
         <TitleBar
           start={
-            <Menubar aria-label="Hydrated menubar" accessKeys>
-              <MenubarMenu label="File" accessKey="F">
-                <MenuItem shortcut="Ctrl+N">Hydrated new</MenuItem>
-                <MenuSubmenu label="Hydrated recent">
-                  <MenuItem>Hydrated report</MenuItem>
-                </MenuSubmenu>
-              </MenubarMenu>
-            </Menubar>
+            <Menubar.Root aria-label="Hydrated menubar" accessKeys>
+              <Menubar.Menu label="File" accessKey="F">
+                <Menu.Item shortcut="Ctrl+N">Hydrated new</Menu.Item>
+                <Menu.Submenu label="Hydrated recent">
+                  <Menu.Item>Hydrated report</Menu.Item>
+                </Menu.Submenu>
+              </Menubar.Menu>
+            </Menubar.Root>
           }
         >
           Hydrated title
@@ -187,15 +179,15 @@ export function HydrationApp() {
             onExpandedChange={() => undefined}
           />
         </div>
-        <Table
+        <Table.Root
           aria-label="Hydrated table"
           narrowLayout="stack"
           resizableColumns
           defaultColumnWidths={[60, 40]}
         >
-          <TableHead>
-            <TableRow>
-              <TableHeaderCell
+          <Table.Head>
+            <Table.Row>
+              <Table.HeaderCell
                 sortDirection={sortDirection}
                 onSort={() =>
                   setSortDirection((current) =>
@@ -204,17 +196,17 @@ export function HydrationApp() {
                 }
               >
                 Hydrated name
-              </TableHeaderCell>
-              <TableHeaderCell>Hydrated owner</TableHeaderCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableRow selected>
-              <TableCell>Quarterly report</TableCell>
-              <TableCell label="Owner">Aurora</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+              </Table.HeaderCell>
+              <Table.HeaderCell>Hydrated owner</Table.HeaderCell>
+            </Table.Row>
+          </Table.Head>
+          <Table.Body>
+            <Table.Row selected>
+              <Table.Cell>Quarterly report</Table.Cell>
+              <Table.Cell label="Owner">Aurora</Table.Cell>
+            </Table.Row>
+          </Table.Body>
+        </Table.Root>
         <MessageList aria-label="Hydrated conversation">
           <Message from="other" author="Aurora" meta="09:41">
             Hydrated answer
@@ -253,14 +245,14 @@ export function HydrationApp() {
             )}
           </PanelDock>
         </div>
-        <StatGroup aria-label="Hydrated stats">
-          <Stat
+        <Stat.Group aria-label="Hydrated stats">
+          <Stat.Root
             label="Hydrated stat"
             value="128"
             trend={{ direction: 'up', label: '+12%' }}
             detail="Last 30 days"
           />
-        </StatGroup>
+        </Stat.Group>
         <DropZone
           compact
           label="Hydrated files"
@@ -303,7 +295,7 @@ export function HydrationApp() {
           onPageChange={setPage}
         />
         <output>{name}</output>
-      </ToastProvider>
+      </Toast.Provider>
     </Theme>
   );
 }

@@ -19,7 +19,6 @@ import {
   Switch,
   InfoChip,
   Skeleton,
-  Toast,
   type ThemeValue,
   type ButtonVariant,
 } from '@envsemble/envui';
@@ -155,13 +154,6 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
         />
         <InfoChip data-testid={`${theme}-color-chip`}>Info</InfoChip>
         <Skeleton data-testid={`${theme}-color-skeleton`} />
-        <Toast
-          variant="error"
-          message="Error preview"
-          action={{ label: 'Toast action', onClick: () => {} }}
-          announce={false}
-          data-testid={`${theme}-color-error-toast`}
-        />
       </Stack>
     </Theme>
   );

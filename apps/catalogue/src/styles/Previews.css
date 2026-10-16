@@ -79,7 +79,7 @@
   inline-size: 12rem;
   overflow-wrap: normal;
 }
-.docs-toast-table td:not(:nth-child(2)) {
+.docs-toast-table td {
   inline-size: 1%;
   white-space: nowrap;
 }

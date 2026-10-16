@@ -5,7 +5,6 @@ import {
   IconButton,
   Kbd,
   Menu,
-  MenuItem,
   PanelDock,
   PanelDockHeader,
   Stack,
@@ -155,14 +154,14 @@ function DocumentWindow({
         title={document.title}
         meta={`Edited by ${document.editor} · ${document.edited}`}
         actions={
-          <Menu
+          <Menu.Root
             aria-label={`${document.title} actions`}
             density="compact"
             trigger={<IconButton variant="text" icon={<MoreVert />} aria-label="More actions" />}
           >
-            <MenuItem icon={<Share />}>Share</MenuItem>
-            <MenuItem icon={<ContentCopy />}>Make a copy</MenuItem>
-          </Menu>
+            <Menu.Item icon={<Share />}>Share</Menu.Item>
+            <Menu.Item icon={<ContentCopy />}>Make a copy</Menu.Item>
+          </Menu.Root>
         }
       />
       <Stack gap={4} className="docs-dock-body">

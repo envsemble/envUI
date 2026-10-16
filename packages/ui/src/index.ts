@@ -23,7 +23,7 @@ export * from './content/InfoChip.js';
 export * from './content/Badge.js';
 export * from './content/CounterBadge.js';
 export * from './content/DiffStat.js';
-export * from './content/Table.js';
+export * as Table from './content/Table.js';
 export * from './content/Kbd.js';
 export * from './forms/TextField.js';
 export * from './forms/ColorPicker.js';
@@ -48,16 +48,14 @@ export * from './feedback/Skeleton.js';
 export * from './feedback/LoadingState.js';
 export * from './feedback/LoadingBar.js';
 export * from './feedback/Spinner.js';
-export * from './feedback/toast/Toast.js';
-export * from './feedback/toast/ToastProvider.js';
+export * as Toast from './feedback/toast/ToastProvider.js';
+export { useToast } from './feedback/toast/useToast.js';
 export type {
   ToastVariant,
   ToastPlacement,
   ToastAction,
-  ToastProps,
   ToastNotification,
   ToastManager,
-  ToastProviderProps,
 } from './feedback/toast/ToastTypes.js';
 export * from './Icon.js';
 export * from './BrandLogo.js';
@@ -73,11 +71,12 @@ export * from './content/RelativeTime.js';
 export * from './content/Rating.js';
 export * from './content/ColorSwatch.js';
 export * from './content/Message.js';
-export * from './content/Stat.js';
+export * as Stat from './content/Stat.js';
 export * from './content/CalendarHeatmap.js';
 export * from './foundations/ThemePreference.js';
-export * from './navigation/Menu.js';
-export * from './navigation/Menubar.js';
+export * as Menu from './navigation/Menu.js';
+export * from './navigation/ContextMenu.js';
+export * as Menubar from './navigation/Menubar.js';
 export * from './navigation/OrganizationSwitcher.js';
 export * from './navigation/AppShell.js';
 export * from './navigation/TitleBar.js';

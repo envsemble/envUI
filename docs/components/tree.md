@@ -3,7 +3,7 @@
 ## React usage
 
 ```tsx
-import { MenuItem, Tree, type TreeItem } from '@envsemble/envui';
+import { Menu, Tree, type TreeItem } from '@envsemble/envui';
 import { Description } from '@envsemble/envui/icons/Description';
 import { Folder } from '@envsemble/envui/icons/Folder';
 
@@ -32,9 +32,9 @@ const rows: FileRow[] = visibleFiles.map((file) => ({
   onExpandedChange={(row, expanded) => setFolderExpanded(row.path, expanded)}
   contextMenu={(row) =>
     row ? (
-      <MenuItem onClick={() => rename(row.path)}>Rename</MenuItem>
+      <Menu.Item onClick={() => rename(row.path)}>Rename</Menu.Item>
     ) : (
-      <MenuItem onClick={createDocument}>New document</MenuItem>
+      <Menu.Item onClick={createDocument}>New document</Menu.Item>
     )
   }
 />;

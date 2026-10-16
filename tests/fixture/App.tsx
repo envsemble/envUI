@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react';
-import { Theme, ToastProvider } from '@envsemble/envui';
+import { Theme, Toast } from '@envsemble/envui';
 import '@envsemble/envui/styles.css';
 import './Fixture.css';
 import { FormsFixture } from './Forms.js';
 import { DialogFixture } from './Dialog.js';
-import { ToastTriggers, ManualToastFixture, StrictToastFixture } from './Toasts.js';
+import { ToastTriggers, StrictToastFixture } from './Toasts.js';
 import { ColorControls } from './Colors.js';
 import { NavigationFixture } from './Navigation.js';
 import { ButtonGroupsFixture } from './ButtonGroups.js';
@@ -102,10 +102,9 @@ export default function App() {
           )}
           {includes('toast') && (
             <>
-              <ToastProvider>
+              <Toast.Provider>
                 <ToastTriggers />
-              </ToastProvider>
-              <ManualToastFixture />
+              </Toast.Provider>
               <StrictToastFixture />
             </>
           )}

@@ -1,4 +1,4 @@
-import { Button, Text, Toast, ToastProvider, useToast } from '@envsemble/envui';
+import { Button, Text, Toast, useToast } from '@envsemble/envui';
 import { Example } from './Example';
 import { Preview } from './Preview';
 
@@ -50,7 +50,6 @@ function NotificationExamples() {
             <thead>
               <tr>
                 <th scope="col">Meaning</th>
-                <th scope="col">Toast</th>
                 {previewPlacements.map(({ placement, label }) => (
                   <th key={placement} scope="col">
                     {label}
@@ -67,9 +66,6 @@ function NotificationExamples() {
                     </Text>
                     <Text variant="supporting">{meaning}</Text>
                   </th>
-                  <td>
-                    <Toast announce={false} variant={variant} message={message} />
-                  </td>
                   {previewPlacements.map(({ placement, label }) => (
                     <td key={placement}>
                       <Button
@@ -100,8 +96,8 @@ function NotificationExamples() {
 
 export function ToastsPreview() {
   return (
-    <ToastProvider visibleLimit={2}>
+    <Toast.Provider visibleLimit={2}>
       <NotificationExamples />
-    </ToastProvider>
+    </Toast.Provider>
   );
 }

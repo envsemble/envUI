@@ -13,7 +13,7 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
-import { ContextMenu } from './Menu.js';
+import { ContextMenu } from './ContextMenu.js';
 
 export interface TreeItem {
   /** Stable, unique identifier; rows carry it as data-id. */

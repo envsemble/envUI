@@ -129,6 +129,7 @@
           "feedback/toast/ToastProvider.tsx",
           "feedback/toast/ToastRegion.tsx",
           "feedback/toast/ToastTypes.ts",
+          "feedback/toast/useToast.ts",
           "feedback/toast/useToastController.ts"
         ]
       },
@@ -180,6 +181,7 @@
       "DirectionLink": { "modules": ["navigation/DirectionLinks.tsx"] },
       "DocumentTabs": { "classes": ["env-document-tab"] },
       "NavigationItem": { "classes": ["env-navigation"], "styles": ["Actions.css"] },
+      "Menu": { "modules": ["navigation/ContextMenu.tsx"] },
       "OrganizationSwitcher": { "styles": ["Menu.css"] },
       "PanelDock": {
         "modules": ["navigation/PanelDockHeader.tsx", "navigation/internal/PanelDockContext.ts"]

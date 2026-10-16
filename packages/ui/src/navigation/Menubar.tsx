@@ -15,7 +15,8 @@ import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/setRef.js';
 import { Theme, useTheme } from '../foundations/Theme.js';
 import { MenuDensityContext, renderMenuPopup } from './internal/MenuPopup.js';
-import type { MenuDensity } from './Menu.js';
+import type { Density } from './Menu.js';
+import { withDisplayName } from '../internal/withDisplayName.js';
 
 interface MenubarContextValue {
   /** Access keys are on, so triggers name theirs in aria-keyshortcuts. */
@@ -49,10 +50,10 @@ function normalizeAccessKey(accessKey: string | undefined) {
   return character?.toLowerCase();
 }
 
-export interface MenubarProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
+export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /** Accessible name of the menubar, such as Application menu. */
   'aria-label': string;
-  /** MenubarMenu elements. */
+  /** Menubar.Menu elements. */
   children: ReactNode;
   /**
    * Desktop access keys, off by default: holding Alt underlines each menu's accessKey, Alt with that
@@ -69,7 +70,7 @@ export interface MenubarProps extends Omit<ComponentPropsWithRef<'div'>, 'childr
  * View and Help. Once a menu is open, hovering another trigger or pressing ← and → switches to its
  * menu. Opening a menu neither locks scrolling nor shifts the page.
  */
-export function Menubar({
+function Root({
   'aria-label': label,
   children,
   accessKeys = false,
@@ -77,7 +78,7 @@ export function Menubar({
   className,
   ref,
   ...props
-}: MenubarProps) {
+}: RootProps) {
   const root = useRef<HTMLDivElement>(null);
   // The last element outside the menubar and its menus that had focus, such as a text field.
   const lastFocus = useRef<Element | null>(null);
@@ -268,7 +269,7 @@ export function Menubar({
   );
 }
 
-export interface MenubarMenuOpenChangeDetails {
+export interface MenuOpenChangeDetails {
   /**
    * The element that had focus before the menubar took it, such as a text field, or null. Commands
    * such as Copy act on it.
@@ -276,15 +277,15 @@ export interface MenubarMenuOpenChangeDetails {
   previousFocus: Element | null;
 }
 
-export interface MenubarMenuProps {
+export interface MenuProps {
   /** The trigger's text, such as File. */
   label: ReactNode;
   /**
-   * A letter of the label, such as F for File. With the Menubar's accessKeys, holding Alt underlines
+   * A letter of the label, such as F for File. With Menubar.Root's accessKeys, holding Alt underlines
    * it and Alt with the letter opens the menu.
    */
   accessKey?: string;
-  /** The menu's items: MenuItem, MenuSubmenu, MenuSeparator and the other menu parts. */
+  /** The menu's items: Menu.Item, Menu.Submenu, Menu.Separator and the other menu parts. */
   children: ReactNode;
   /** Accessible name of the menu; by default the label, when it is a string. */
   'aria-label'?: string;
@@ -295,9 +296,9 @@ export interface MenubarMenuProps {
   /**
    * Called when the menu opens or closes, with the element that had focus before the menubar took it.
    */
-  onOpenChange?: (open: boolean, details: MenubarMenuOpenChangeDetails) => void;
+  onOpenChange?: (open: boolean, details: MenuOpenChangeDetails) => void;
   /** compact by default, like the menus of a desktop menubar. */
-  density?: MenuDensity;
+  density?: Density;
   /** Class of the menu popup. */
   className?: string;
 }
@@ -326,10 +327,10 @@ function AccessKeyLabel({ label, accessKey }: { label: ReactNode; accessKey: str
 const switchingReasons = new Set(['sibling-open', 'list-navigation']);
 
 /**
- * One menu of a Menubar: a compact text trigger and the menu that opens below it. After a command,
+ * One menu of a Menubar.Root: a compact text trigger and the menu that opens below it. After a command,
  * focus returns to where it was before the menubar took it, as in a desktop application.
  */
-export function MenubarMenu({
+function Menu({
   label,
   accessKey,
   children,
@@ -340,10 +341,10 @@ export function MenubarMenu({
   onOpenChange,
   density = 'compact',
   className,
-}: MenubarMenuProps) {
+}: MenuProps) {
   const theme = useTheme();
   const menubar = useContext(MenubarContext);
-  if (!menubar) throw new Error('MenubarMenu must be used inside Menubar.');
+  if (!menubar) throw new Error('Menubar.Menu must be used inside Menubar.Root.');
   const { registerClose } = menubar;
   const trigger = useRef<HTMLButtonElement>(null);
   const popup = useRef<HTMLDivElement>(null);
@@ -444,3 +445,9 @@ export function MenubarMenu({
     </BaseMenu.Root>
   );
 }
+
+// Each part is named for React DevTools by a pure call, so a bundler drops the parts an
+// application leaves unused.
+const RootPart = /* @__PURE__ */ withDisplayName(Root, 'Menubar.Root');
+const MenuPart = /* @__PURE__ */ withDisplayName(Menu, 'Menubar.Menu');
+export { RootPart as Root, MenuPart as Menu };

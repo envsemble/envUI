@@ -5,9 +5,8 @@ import {
   AppShellSkeleton,
   Button,
   IconButton,
-  MenuItem,
+  Menu,
   Menubar,
-  MenubarMenu,
   NavigationItem,
   TitleBar,
   WindowFrame,
@@ -20,20 +19,20 @@ import { Settings } from '@envsemble/envui/icons/Settings';
 
 function NotesMenubar() {
   return (
-    <Menubar aria-label="Application menu">
-      <MenubarMenu label="File">
-        <MenuItem shortcut="Ctrl+N">New note</MenuItem>
-      </MenubarMenu>
-      <MenubarMenu label="Edit">
-        <MenuItem shortcut="Ctrl+C">Copy</MenuItem>
-      </MenubarMenu>
-      <MenubarMenu label="View">
-        <MenuItem>Zoom in</MenuItem>
-      </MenubarMenu>
-      <MenubarMenu label="Help">
-        <MenuItem>About</MenuItem>
-      </MenubarMenu>
-    </Menubar>
+    <Menubar.Root aria-label="Application menu">
+      <Menubar.Menu label="File">
+        <Menu.Item shortcut="Ctrl+N">New note</Menu.Item>
+      </Menubar.Menu>
+      <Menubar.Menu label="Edit">
+        <Menu.Item shortcut="Ctrl+C">Copy</Menu.Item>
+      </Menubar.Menu>
+      <Menubar.Menu label="View">
+        <Menu.Item>Zoom in</Menu.Item>
+      </Menubar.Menu>
+      <Menubar.Menu label="Help">
+        <Menu.Item>About</Menu.Item>
+      </Menubar.Menu>
+    </Menubar.Root>
   );
 }
 

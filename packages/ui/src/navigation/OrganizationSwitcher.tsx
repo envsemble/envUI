@@ -5,7 +5,7 @@ import { Groups3 } from '../icons/Groups3.js';
 import { UnfoldMore } from '../icons/UnfoldMore.js';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
-import { Menu } from './Menu.js';
+import * as Menu from './Menu.js';
 
 export interface OrganizationSwitcherOrganization {
   id: string;
@@ -65,7 +65,7 @@ export function OrganizationSwitcher({
 
   const current = organizations.find((organization) => organization.id === currentOrganizationId);
   return (
-    <Menu
+    <Menu.Root
       aria-label={label}
       align="start"
       className="env-organization-switcher"
@@ -124,6 +124,6 @@ export function OrganizationSwitcher({
           {createLabel}
         </BaseMenu.Item>
       )}
-    </Menu>
+    </Menu.Root>
   );
 }

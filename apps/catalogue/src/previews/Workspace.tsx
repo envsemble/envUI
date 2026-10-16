@@ -3,8 +3,7 @@ import {
   Button,
   CommandPalette,
   DocumentTabs,
-  MenuItem,
-  MenuSeparator,
+  Menu,
   Surface,
   Text,
   Tree,
@@ -134,22 +133,22 @@ export function TreePreview() {
             contextMenu={(item) =>
               item ? (
                 <>
-                  <MenuItem
+                  <Menu.Item
                     icon={<Edit />}
                     shortcut="F2"
                     onClick={() => setLastAction(`Rename ${item.name}`)}
                   >
                     Rename
-                  </MenuItem>
-                  <MenuSeparator />
-                  <MenuItem icon={<Delete />} onClick={() => setLastAction(`Delete ${item.name}`)}>
+                  </Menu.Item>
+                  <Menu.Separator />
+                  <Menu.Item icon={<Delete />} onClick={() => setLastAction(`Delete ${item.name}`)}>
                     Delete
-                  </MenuItem>
+                  </Menu.Item>
                 </>
               ) : (
-                <MenuItem icon={<Add />} onClick={() => setLastAction('New document')}>
+                <Menu.Item icon={<Add />} onClick={() => setLastAction('New document')}>
                   New document
-                </MenuItem>
+                </Menu.Item>
               )
             }
           />

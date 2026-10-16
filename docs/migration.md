@@ -40,7 +40,7 @@ Consult the relevant [component documentation](index.md) before adopting these c
 | Side navigation and selected destinations        | NavigationItem with router-owned selection                |
 | Content/action/clickable cards                   | Appropriate public Card composition                       |
 | Fields and choices                               | TextField, Textarea, Select, Checkbox, RadioGroup, Switch |
-| Modal/inspector shells, notifications            | Dialog, ToastProvider/useToast                            |
+| Modal/inspector shells, notifications            | Dialog, Toast.Provider/useToast                           |
 | Loading and empty results                        | LoadingState, Skeleton, EmptyState                        |
 | Source, Markdown, formatted editing              | Optional content or rich-text entry                       |
 
