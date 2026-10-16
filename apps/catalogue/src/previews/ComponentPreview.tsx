@@ -39,7 +39,6 @@ import {
   BadgesPreview,
   BreadcrumbsPreview,
   HoverCardPreview,
-  KbdPreview,
   AlertsPreview,
   PopoverPreview,
   SegmentedControlPreview,
@@ -92,8 +91,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <ChipsPreview />;
     case 'badge':
       return <BadgesPreview />;
-    case 'kbd':
-      return <KbdPreview />;
     case 'breadcrumbs':
       return <BreadcrumbsPreview />;
     case 'pagination':

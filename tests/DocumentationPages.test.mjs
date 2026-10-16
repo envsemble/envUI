@@ -38,7 +38,6 @@ const unconverted = [
   'drop-zone',
   'empty-state',
   'hover-card',
-  'kbd',
   'list',
   'markdown',
   'menubar',

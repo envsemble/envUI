@@ -393,21 +393,3 @@ export function BreadcrumbsPreview() {
     </Preview>
   );
 }
-
-export function KbdPreview() {
-  return (
-    <Preview>
-      <Example title="Keys and shortcuts" size="collection">
-        <Stack gap={3}>
-          <Text>
-            Press <Kbd keys={['Ctrl', 'P']} /> to open a document, or <Kbd>F2</Kbd> to rename it.
-          </Text>
-          <Text>
-            Close the current tab with <Kbd keys={['Ctrl', 'W']} />, or every tab with{' '}
-            <Kbd keys={['Ctrl', 'K', 'W']} />.
-          </Text>
-        </Stack>
-      </Example>
-    </Preview>
-  );
-}

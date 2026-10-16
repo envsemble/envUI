@@ -2860,7 +2860,7 @@
           "name": "keys",
           "type": "readonly string[]",
           "required": false,
-          "description": "A key combination, such as ['Ctrl', 'P']; rendered as keys joined by +."
+          "description": "Keys pressed together, such as ['Ctrl', 'P']: one key cap each, joined by +, inside an outer `<kbd>`. Without it, the children are one key."
         }
       ],
       "native": [
