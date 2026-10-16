@@ -42,7 +42,15 @@ export function renameClass(name, classes) {
 export function validateMap(map) {
   const problems = [];
   if (!isObject(map)) return ['The map must be a JSON object.'];
-  for (const section of ['exports', 'split', 'removed', 'classes', 'classesWithin', 'docs']) {
+  for (const section of [
+    'exports',
+    'split',
+    'removed',
+    'props',
+    'classes',
+    'classesWithin',
+    'docs',
+  ]) {
     if (map[section] !== undefined && !isObject(map[section]))
       problems.push(`"${section}" must be an object.`);
   }
@@ -147,6 +155,53 @@ export function validateMap(map) {
       problems.push(`docs: ${from} must map one page slug to another.`);
     else if (to === from) problems.push(`docs: ${from} maps to itself.`);
   }
+  problems.push(...validateProps(map.props));
+  return problems;
+}
+
+const propName = /^[A-Za-z_$][A-Za-z0-9_$-]*$/;
+const propValue = (value) => ['string', 'number', 'boolean'].includes(typeof value);
+
+/** Problems with the `props` section: per entry point, component and prop, its literal values. */
+function validateProps(props) {
+  const problems = [];
+  for (const [entry, components] of entriesOf(props)) {
+    if (!isObject(components)) {
+      problems.push(`props.${entry} must be an object.`);
+      continue;
+    }
+    for (const [component, names] of entriesOf(components)) {
+      if (!(identifier.test(component) || part.test(component)))
+        problems.push(`props.${entry}: ${component} is not a component or Namespace.Part name.`);
+      if (!isObject(names)) {
+        problems.push(`props.${entry}.${component} must be an object.`);
+        continue;
+      }
+      for (const [name, rule] of entriesOf(names)) {
+        const where = `props.${entry}.${component}.${name}`;
+        if (!propName.test(name)) problems.push(`${where}: ${name} is not a prop name.`);
+        if (!isObject(rule) || typeof rule.report !== 'string' || rule.report.trim() === '') {
+          problems.push(`${where} needs a "report" that says what replaces the prop.`);
+          continue;
+        }
+        if (!isObject(rule.values) || entriesOf(rule.values).length === 0) {
+          problems.push(`${where} needs "values" mapping its literal values to new props.`);
+          continue;
+        }
+        for (const [value, replacement] of entriesOf(rule.values)) {
+          if (!isObject(replacement)) {
+            problems.push(`${where}.values.${value} must be an object.`);
+            continue;
+          }
+          for (const [newName, newValue] of Object.entries(replacement.props ?? {}))
+            if (!propName.test(newName) || !propValue(newValue))
+              problems.push(`${where}.values.${value}: ${newName} must be a prop with a literal.`);
+          if (replacement.report !== undefined && typeof replacement.report !== 'string')
+            problems.push(`${where}.values.${value}: "report" must be a string.`);
+        }
+      }
+    }
+  }
   return problems;
 }
 
@@ -156,8 +211,9 @@ const sortClasses = (classes) =>
 /**
  * The lookups for a parsed map:
  * - `entries`: per entry point, `renames` (old name to target), `splits` (old name to its prop and
- *   the target for each value), `removed` (old name to its hint and literal) and `namespaces` (the
- *   namespace exports that the entry has in 1.0);
+ *   the target for each value), `removed` (old name to its hint and literal), `props` (each
+ *   component's changed props, by its 1.0 name, with the replacement of each literal value) and
+ *   `namespaces` (the namespace exports that the entry has in 1.0);
  * - `classes`: class renames, longest old name first;
  * - `classesWithin`: class renames that apply inside an ancestor's selector, as
  *   `{ ancestor, from, to }`.
@@ -171,6 +227,7 @@ export function normalizeMap(map) {
         renames: new Map(),
         splits: new Map(),
         removed: new Map(),
+        props: new Map(),
         namespaces: new Set(),
       });
     return entries.get(name);
@@ -198,6 +255,19 @@ export function normalizeMap(map) {
   for (const [name, names] of entriesOf(map.removed)) {
     const entry = entryFor(name);
     for (const [from, rule] of entriesOf(names)) entry.removed.set(from, rule);
+  }
+  for (const [name, components] of entriesOf(map.props)) {
+    const entry = entryFor(name);
+    for (const [component, names] of entriesOf(components))
+      entry.props.set(
+        component,
+        new Map(
+          entriesOf(names).map(([prop, rule]) => [
+            prop,
+            { report: rule.report, values: Object.fromEntries(entriesOf(rule.values)) },
+          ]),
+        ),
+      );
   }
   const classes = sortClasses(entriesOf(map.classes).map(([from, to]) => ({ from, to })));
   const classesWithin = entriesOf(map.classesWithin).flatMap(([ancestor, names]) =>

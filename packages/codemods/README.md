@@ -44,8 +44,9 @@ Paths default to the current folder. The CLI runs jscodeshift's runner with the 
 
 1. Commit first: the codemods write files in place.
 2. Run `npx envui-codemods v1-names src`.
-3. Run `npx envui-codemods v1-classes src` over the scripts and style sheets.
-4. Install `@envsemble/envui` 1.0, run your formatter, then type-check. Fix each reported line; removed exports stay in the code on purpose, so the type checker points at them too.
+3. Run `npx envui-codemods v1-props src`.
+4. Run `npx envui-codemods v1-classes src` over the scripts and style sheets.
+5. Install `@envsemble/envui` 1.0, run your formatter, then type-check. Fix each reported line; removed exports stay in the code on purpose, so the type checker points at them too.
 
 ## v1-names
 
@@ -68,6 +69,19 @@ It reports instead of changing:
 - names destructured from a namespace import, such as `const { MenuItem } = ui`;
 - `useTheme()` compared with a color scheme, as in `useTheme() === 'dark'`, or passed as another element's `theme`, which take `useTheme().theme` in 1.0;
 - parts destructured from a namespace that was a 0.x component, such as `const { Root, Item } = Menu` or `const { Cell } = ui.Table`, which are 1.0 code and stay as they are rather than becoming `Menu.Root`.
+
+## v1-props
+
+Moves the props that 1.0 removed or changed, as the `props` section of the rename map lists them, on elements imported from `@envsemble/envui` under their 0.x or 1.0 names, also as namespace parts (`<Menu.Root>`) and through a namespace import (`<ui.Table.Root>`). Each literal value of a prop becomes the props it maps to, in the prop's place, so spreads keep their order around it; a replacement the element already sets is kept as the element sets it.
+
+- `density`, `compact` and size-as-density become sizes: `<Select density="compact">` becomes `size="sm"`, as do `size="compact"` on Tabs, SegmentedControl, Pagination and CopyButton, and `compact` on DropZone.
+- Row densities: `<Table.Root density="compact">` becomes `density="sm"`, and `<Tree density="standard">` `density="md"`; their other values are the defaults and are dropped.
+- Fields take the control height: `<TextField compact>` becomes `showLabel={false}`, which keeps its label hidden; `compact={false}`, and the `standard` density of Combobox and DatePicker, become `variant="floating"`, the tall field.
+
+It reports, with the prop's replacement:
+
+- props that 1.0 removed without a replacement, which it drops: `density` on Surface, Menu.Root, ContextMenu and Menubar.Menu, and `size` on NavList.Item; for a compact app or region, set `scale="compact"` on its Theme;
+- a value it can't read, such as `density={density}`, which stays as it is, so the type checker points at it too.
 
 ## v1-classes
 
