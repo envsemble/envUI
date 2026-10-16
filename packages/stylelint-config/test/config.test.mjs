@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import stylelint from 'stylelint';
-import config from '../index.js';
+import config, { hairlineProperties } from '../index.js';
 import { expectedTokens, libraryTokensUrl, tokensUrl } from '../scripts/SyncTokens.mjs';
 
 const readme = readFileSync(new URL('../README.md', import.meta.url), 'utf8');
@@ -140,11 +140,15 @@ test('px is reported outside hairlines and offsets', async () => {
         '.c { width: calc(100% - 24px); }',
         '@media (min-width: 600px) { .d { margin: 0; } }',
         '.e { font-size: 14px; }',
+        // Radii and table spacing scale, also in custom properties named for a border.
+        '.f { --card-border-radius: 4px; }',
+        '.g { border-spacing: 2px; }',
+        '.h { --divider-color: 1px; }',
       ].join('\n'),
       { lines: true },
     ),
     // The rule marks the unit, once on each line.
-    [1, 2, 3, 4, 5].map((line) => ({ rule: 'unit-disallowed-list', line, text: 'px' })),
+    [1, 2, 3, 4, 5, 6, 7, 8].map((line) => ({ rule: 'unit-disallowed-list', line, text: 'px' })),
   );
   assert.match(
     (await message('.a { gap: 8px; }')).text,
@@ -222,4 +226,16 @@ test('every token the messages and the README name exists in the library', () =>
       );
     else assert.ok(library.includes(name), `${name} is not an envUI token`);
   }
+});
+
+test("envUI's own style sheets take px from the list this config ships", async () => {
+  const repositoryConfig = new URL('../../../stylelint.config.mjs', import.meta.url);
+  if (!existsSync(repositoryConfig)) return;
+  const { default: repository } = await import(repositoryConfig);
+  const pxLists = [repository, ...repository.overrides]
+    .map(({ rules }) => rules['unit-disallowed-list']?.[1]?.ignoreProperties?.px)
+    .filter(Boolean);
+  assert.ok(pxLists.length >= 2, 'the repository sets px for components and for tokens');
+  for (const list of pxLists) assert.equal(list, hairlineProperties);
+  assert.equal(config.rules['unit-disallowed-list'][1].ignoreProperties.px, hairlineProperties);
 });

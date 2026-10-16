@@ -74,12 +74,12 @@ The token names in the messages come from [`data/tokens.json`](data/tokens.json)
 
 `unit-disallowed-list` reports `px` outside hairlines, mirroring envUI's own style sheets. Type, spacing, control and row heights, icon sizes, radii and media queries use `rem`, so they follow the reader's font size. `px` stays for what must not scale:
 
-- border, outline and column-rule widths, but not radii;
+- border, outline and column-rule widths and the outline offset, but not radii or `border-spacing`;
 - `box-shadow`, `text-shadow` and `filter` offsets;
 - `text-decoration-thickness` and `text-underline-offset`;
-- custom properties named for them, such as `--card-border-width` or `--focus-ring-offset`.
+- custom properties whose name ends in one of them: `--…-border-width`, `--…-ring-offset`, `--…-shadow` or `--…-hairline`, such as `--card-border-width` or `--focus-ring-offset`. A `--card-border-radius` takes rem.
 
-Values inside `env()` and custom property fallbacks in `var()` are in CSS pixels and pass. This rule takes one list of options. The root font size is the reader's: don't set it on `html`.
+Values inside `env()` and custom property fallbacks in `var()` are in CSS pixels and pass. This rule takes one list of options. The list of properties where px passes is exported as `hairlineProperties`, for a config that sets `unit-disallowed-list` itself; envUI's own style sheets are linted with the same list. The root font size is the reader's: don't set it on `html`.
 
 ## Development
 

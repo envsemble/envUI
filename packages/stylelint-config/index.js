@@ -13,19 +13,22 @@ const rawColorFunction =
 
 /**
  * Where px may appear: hairlines and offsets that must not scale with the text, such as border and
- * outline widths, focus-ring offsets and shadow offsets, also in custom properties named for them.
- * Radii scale, so they take rem.
+ * outline widths, focus-ring offsets and shadow offsets. Custom properties take px only when their
+ * name ends in one of those: `--…-border-width`, `--…-ring-offset`, `--…-shadow`, `--…-hairline`.
+ * Radii and table spacing scale, so they take rem. envUI's own style sheets use this list too, so
+ * the two cannot drift apart.
  */
 export const hairlineProperties = [
-  '/^border(?!.*radius)/',
-  '/^outline/',
-  '/^column-rule/',
+  '/^border(?:-(?:top|right|bottom|left|block|inline)(?:-(?:start|end))?)?(?:-width)?$/',
+  '/^outline(?:-width|-offset)?$/',
+  '/^column-rule(?:-width)?$/',
   'box-shadow',
   'text-shadow',
   'filter',
   'text-decoration-thickness',
   'text-underline-offset',
-  '/^--.*(?:border|outline|ring|shadow|divider|hairline|stroke)/',
+  '/^--[\\w-]*(?:border|outline|ring|divider|rule|stroke)-(?:width|offset)$/',
+  '/^--[\\w-]*(?:shadow|hairline)$/',
 ];
 
 /** A whole color function call, for the message. */
