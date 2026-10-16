@@ -40,6 +40,32 @@ test('Theme warns once in development about a theme that is not light or dark', 
   assert.equal(render(h(Theme, { theme: 'dark' }, 'c')).errors.length, 0);
 });
 
+test('Theme shows any theme in its warning, and lets an error from console.error through', () => {
+  const circular = { theme: 'dark' };
+  circular.self = circular;
+  const { errors } = render(
+    h('div', null, h(Theme, { theme: circular }, 'a'), h(Theme, { theme: { size: 1n } }, 'b')),
+  );
+  assert.equal(errors.length, 2);
+  assert.match(errors[0], /not \{"theme":"dark","self":"\[Circular\]"\}/);
+  assert.match(errors[1], /not \{"size":"1n"\}/);
+
+  // A console.error that throws, as some test setups make it, fails the render rather than going
+  // unnoticed, and the theme is reported again on the next one.
+  const original = console.error;
+  console.error = () => {
+    throw new Error('console.error was called');
+  };
+  try {
+    assert.throws(() => renderToString(h(Theme, { theme: 'sepia' }, 'c')), /console\.error/);
+  } finally {
+    console.error = original;
+  }
+  const again = render(h(Theme, { theme: 'sepia' }, 'c')).errors;
+  assert.equal(again.length, 1);
+  assert.match(again[0], /not sepia\./);
+});
+
 test('a Theme without a contrast takes a data-env-contrast written on it, and the prop wins', () => {
   function Inner() {
     return h('output', null, useTheme().contrast);
