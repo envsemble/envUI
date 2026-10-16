@@ -734,7 +734,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Show only icon, in a square button that keeps its size; name it with aria-label."
         },
         {
           "name": "icon",
@@ -1116,7 +1116,7 @@
       "description": "Inline source in the code theme of the app theme; use CodeBlock for multiline source.",
       "props": [],
       "native": [
-        "element"
+        "code"
       ],
       "entries": [
         "@envsemble/envui/content"
@@ -1460,7 +1460,7 @@
           "name": "multiple",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "Several options can be chosen; they show as chips in the field."
         },
         {
           "name": "value",
@@ -2327,7 +2327,7 @@
           "name": "iconOnly",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "Show only icon, in a square button that keeps its size; name it with aria-label."
         }
       ],
       "native": [
@@ -2861,7 +2861,7 @@
         }
       ],
       "native": [
-        "element"
+        "kbd"
       ],
       "entries": [
         "@envsemble/envui"
@@ -3790,7 +3790,7 @@
         }
       ],
       "native": [
-        "element"
+        "article"
       ],
       "entries": [
         "@envsemble/envui"
@@ -3930,7 +3930,7 @@
           "name": "disabled",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "A disabled button cannot be pressed; a disabled link has no destination, cannot be focused or followed, and reports aria-disabled."
         },
         {
           "name": "icon",
@@ -3969,7 +3969,7 @@
           "type": "boolean",
           "required": false,
           "requiredWhen": "in some forms",
-          "description": ""
+          "description": "Hide the visible label, as in a compact sidebar; a tooltip shows it on hover and focus."
         }
       ],
       "native": [
@@ -4161,7 +4161,7 @@
         }
       ],
       "native": [
-        "element"
+        "nav"
       ],
       "entries": [
         "@envsemble/envui"
@@ -4253,7 +4253,7 @@
         }
       ],
       "native": [
-        "element"
+        "nav"
       ],
       "entries": [
         "@envsemble/envui"
@@ -4441,7 +4441,7 @@
         }
       ],
       "native": [
-        "element"
+        "header"
       ],
       "entries": [
         "@envsemble/envui"
@@ -4959,7 +4959,7 @@
         }
       ],
       "native": [
-        "element"
+        "div"
       ],
       "entries": [
         "@envsemble/envui/rich-text"
@@ -5649,7 +5649,7 @@
       "description": "",
       "props": [],
       "native": [
-        "tbody"
+        "thead"
       ],
       "entries": [
         "@envsemble/envui"
@@ -6190,7 +6190,7 @@
         }
       ],
       "native": [
-        "element"
+        "header"
       ],
       "entries": [
         "@envsemble/envui"

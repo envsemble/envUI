@@ -225,6 +225,31 @@ export function extractProps() {
     return defaults;
   }
 
+  /** Intrinsic elements that receive the implementation's rest props, such as <thead {...props}>. */
+  function spreadElements(implementation) {
+    const pattern = implementation?.parameters[0]?.name;
+    const rest =
+      pattern && ts.isObjectBindingPattern(pattern)
+        ? pattern.elements.find((element) => element.dotDotDotToken)?.name
+        : undefined;
+    if (!rest || !ts.isIdentifier(rest) || !implementation.body) return [];
+    const elements = new Set();
+    let component = false;
+    const visit = (node) => {
+      if (ts.isJsxSpreadAttribute(node) && ts.isIdentifier(node.expression)) {
+        if (node.expression.text === rest.text) {
+          const tag = node.parent.parent.tagName.getText();
+          if (/^[a-z]/.test(tag)) elements.add(tag);
+          else component = true;
+        }
+      }
+      ts.forEachChild(node, visit);
+    };
+    visit(implementation.body);
+    // Props that reach another component, such as Button, keep the elements of the props type.
+    return component ? [] : [...elements];
+  }
+
   /** The element whose native props a form of the props accepts, such as button. */
   function nativeElement(properties) {
     const elements = new Set();
@@ -276,7 +301,12 @@ export function extractProps() {
       }),
     );
     const defaults = destructuredDefaults(implementation);
-    const native = [...new Set(formProperties.flatMap((properties) => nativeElement(properties)))];
+    // The element the implementation spreads its other props on, such as <thead>, where it is a
+    // plain element; otherwise the elements the props type names.
+    const spread = spreadElements(implementation);
+    const native = spread.length
+      ? spread
+      : [...new Set(formProperties.flatMap((properties) => nativeElement(properties)))];
     const props = [];
     for (const [name, occurrences] of byName) {
       const present = occurrences.filter((occurrence) => !occurrence.absent);
@@ -290,8 +320,13 @@ export function extractProps() {
           occurrence.declarations.some((d) => originOf(d) === 'base-ui'),
         );
       if (!listed) continue;
+      // The documented declaration of any form, such as iconOnly: true, rather than an
+      // undocumented one, such as iconOnly?: false.
+      const declarations = present.flatMap((occurrence) =>
+        occurrence.declarations.filter((d) => originOf(d) !== 'native'),
+      );
       const declaration =
-        listed.declarations.find((d) => originOf(d) !== 'native' && documentation(d).description) ??
+        declarations.find((d) => documentation(d).description) ??
         listed.declarations.find((d) => originOf(d) !== 'native');
       const origin = originOf(declaration);
       const { required, requiredWhen } = requirement(name, formProperties);

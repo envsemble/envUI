@@ -101,7 +101,10 @@ test('all documentation views retain explicit content gaps and a single preview'
     'overview/get-started',
     'components',
     ...foundations.map((id) => `foundations/${id}`),
-    ...components.flatMap((id) => ['preview', 'usage'].map((view) => `components/${id}/${view}`)),
+    // Every view of each page: Preview and Usage, or the views of a page on the template.
+    ...components.flatMap((id) =>
+      findReferencePage(`components/${id}`)!.views.map((view) => `components/${id}/${view.id}`),
+    ),
   ];
   await page.goto(`${catalogueUrl}/#/overview`);
   for (const width of [1920, 960]) {
@@ -113,9 +116,7 @@ test('all documentation views retain explicit content gaps and a single preview'
       const destination = normalizeRoute(route);
       const reference = findReferencePage(destination);
       const view = reference
-        ? destination.endsWith('/usage')
-          ? 'Usage'
-          : 'Preview'
+        ? reference.views.find((item) => item.id === destination.split('/')[2])!.title
         : destination.startsWith('overview/get-started')
           ? 'Get started'
           : 'Components';
@@ -157,7 +158,10 @@ test('all documentation views retain explicit content gaps and a single preview'
             )
               faults.push(`${parent.className}: missing standard gap`);
           });
-        const panes = [...document.querySelectorAll('.docs-preview')];
+        // Specimens inside an article bring their own frame; a page has one preview pane.
+        const panes = [
+          ...document.querySelectorAll('.docs-preview:not(.docs-article .docs-preview)'),
+        ];
         if (panes.length > 1) faults.push('Duplicate preview');
         return faults;
       });

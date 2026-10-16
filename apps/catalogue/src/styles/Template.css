@@ -27,3 +27,13 @@
   margin: 0;
   padding-inline-start: var(--space-6);
 }
+
+/* Props tables wrap code between words, so a column is never narrower than its longest word. */
+.docs-prop-code {
+  overflow-wrap: break-word;
+}
+
+/* The same for code in the guidance tables of a page on the template. */
+.docs-template .env-markdown-table code {
+  overflow-wrap: break-word;
+}

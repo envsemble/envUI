@@ -54,14 +54,18 @@ function ExportProps({ name, entry }: { name: string; entry: ExportEntry }) {
             {entry.props.map((prop) => (
               <Table.Row key={prop.name}>
                 <Table.Cell label="Prop" nowrap>
-                  <Code>{prop.name}</Code>
+                  <Code className="docs-prop-code">{prop.name}</Code>
                   {prop.required && <Text variant="caption"> required</Text>}
                 </Table.Cell>
                 <Table.Cell label="Type">
-                  <Code>{prop.type}</Code>
+                  <Code className="docs-prop-code">{prop.type}</Code>
                 </Table.Cell>
                 <Table.Cell label="Default" nowrap>
-                  {prop.default !== undefined ? <Code>{prop.default}</Code> : '—'}
+                  {prop.default !== undefined ? (
+                    <Code className="docs-prop-code">{prop.default}</Code>
+                  ) : (
+                    '—'
+                  )}
                 </Table.Cell>
                 <Table.Cell label="Description">{description(prop)}</Table.Cell>
               </Table.Row>
