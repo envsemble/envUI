@@ -24,7 +24,8 @@
   .env-theme {
     --control-font-size: 1rem;
   }
-  :is(.env-theme, .env-theme[data-env-scale='compact']) {
+  .env-theme,
+  .env-theme[data-env-scale='compact'] {
     --topbar-height: calc(var(--control-height-touch) + 2 * var(--space-1));
     --title-bar-height: calc(var(--control-height-touch) + 2 * var(--space-1));
   }

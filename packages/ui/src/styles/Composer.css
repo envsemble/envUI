@@ -66,6 +66,8 @@
   opacity: 1;
 }
 .env-composer-start {
+  /* The height its buttons draw at, which a coarse pointer raises to the touch height. */
+  --env-composer-start-height: var(--control-height);
   grid-area: start;
   display: flex;
   flex-wrap: wrap;
@@ -80,8 +82,13 @@
   cursor: default;
 }
 /* A leading icon button reaches into that inset, so its icon, not its round target, lines up. */
-.env-composer-start > .env-button.env-icon-button:first-child {
-  margin-inline-start: calc((var(--control-icon-size) - var(--env-button-height)) / 2);
+.env-composer-start > .env-icon-button:first-child {
+  margin-inline-start: calc((var(--control-icon-size) - var(--env-composer-start-height)) / 2);
+}
+@media (pointer: coarse) {
+  .env-composer-start {
+    --env-composer-start-height: max(var(--control-height), var(--control-height-touch));
+  }
 }
 /* The action keeps the arrow of other buttons rather than the surface's text cursor. */
 .env-composer-action {

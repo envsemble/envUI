@@ -478,10 +478,10 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
   .env-text-field-end {
     --env-touch-height: 0rem;
   }
-  .env-text-field-end .env-button {
+  .env-text-field-end .env-icon-button {
     position: relative;
   }
-  .env-text-field-end .env-button::before {
+  .env-text-field-end .env-icon-button::before {
     content: '';
     position: absolute;
     inset-block: min(0%, calc((100% - var(--control-height-touch)) / 2));
