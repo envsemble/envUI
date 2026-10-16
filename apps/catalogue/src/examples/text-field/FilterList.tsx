@@ -41,7 +41,7 @@ export default function FilterList() {
       {matches.length > 0 && (
         <List.Root aria-label="Members">
           {matches.map(({ name, email }) => (
-            <List.Item key={email} title={name} detail={email} />
+            <List.Item key={email} label={name} description={email} />
           ))}
         </List.Root>
       )}

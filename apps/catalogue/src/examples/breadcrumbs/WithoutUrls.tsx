@@ -37,7 +37,7 @@ export default function WithoutUrls() {
           {folders[folder].map((name) => (
             <List.Item
               key={name}
-              title={name}
+              label={name}
               action={
                 <Button
                   variant="text"

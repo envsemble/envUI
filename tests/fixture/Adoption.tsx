@@ -181,7 +181,7 @@ export function AdoptionFixture() {
           <Button onClick={() => setSeatsFull((value) => !value)}>Toggle seats</Button>
           <List.Root>
             <List.Item
-              title="Seat"
+              label="Seat"
               data-testid="secondary-row"
               action={<Button variant="secondary">Remove</Button>}
             />

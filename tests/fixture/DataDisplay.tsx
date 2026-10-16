@@ -143,7 +143,7 @@ export function DataDisplayFixture({ theme }: { theme: ThemeValue }) {
         <List.Item
           interactive
           className="fixture-open-row"
-          title={
+          label={
             <span className="fixture-row-title">
               <Description />
               <Link
@@ -160,7 +160,7 @@ export function DataDisplayFixture({ theme }: { theme: ThemeValue }) {
               </Link>
             </span>
           }
-          detail="Updated today"
+          description="Updated today"
           action={
             <IconButton
               variant="text"
@@ -171,7 +171,7 @@ export function DataDisplayFixture({ theme }: { theme: ThemeValue }) {
             />
           }
         />
-        <List.Item title="Archive" detail="Read only" />
+        <List.Item label="Archive" description="Read only" />
       </List.Root>
       <output data-testid={`row-result-${theme}`}>{rowResult}</output>
       <Table.Root aria-label={`Compact ${theme}`} density="sm">

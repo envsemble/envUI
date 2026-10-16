@@ -20,7 +20,7 @@ export default function InspectorPanel() {
           <List.Item
             key={candidate.name}
             interactive
-            title={
+            label={
               <Button
                 variant="text"
                 data-row-target
@@ -33,7 +33,7 @@ export default function InspectorPanel() {
                 {candidate.name}
               </Button>
             }
-            detail={candidate.role}
+            description={candidate.role}
           />
         ))}
       </List.Root>

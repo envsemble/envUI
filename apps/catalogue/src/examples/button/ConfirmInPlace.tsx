@@ -44,7 +44,7 @@ export default function ConfirmInPlace() {
         {members.map((name) => (
           <List.Item
             key={name}
-            title={name}
+            label={name}
             action={
               <ConfirmButton
                 confirmLabel={`Remove ${name.split(' ')[0]}?`}

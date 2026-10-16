@@ -30,7 +30,7 @@ export default function NoResults() {
       {matches.length > 0 ? (
         <List.Root aria-label="Projects">
           {matches.map((name) => (
-            <List.Item key={name} title={name} />
+            <List.Item key={name} label={name} />
           ))}
         </List.Root>
       ) : (

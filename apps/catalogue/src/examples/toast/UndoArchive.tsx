@@ -28,7 +28,7 @@ function Projects() {
       {projects.map((project) => (
         <List.Item
           key={project}
-          title={project}
+          label={project}
           action={
             <Button
               variant="secondary"

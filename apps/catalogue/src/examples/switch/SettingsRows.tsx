@@ -23,8 +23,8 @@ export default function SettingsRows() {
       {settings.map((setting) => (
         <List.Item
           key={setting.id}
-          title={<span id={`${id}-${setting.id}-title`}>{setting.title}</span>}
-          detail={<span id={`${id}-${setting.id}-detail`}>{setting.detail}</span>}
+          label={<span id={`${id}-${setting.id}-title`}>{setting.title}</span>}
+          description={<span id={`${id}-${setting.id}-detail`}>{setting.detail}</span>}
           action={
             // The row's title names the switch, and its detail describes it.
             <Switch

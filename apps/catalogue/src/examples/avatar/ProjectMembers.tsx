@@ -15,13 +15,13 @@ export default function ProjectMembers() {
   return (
     <List.Root aria-label="Projects">
       <List.Item
-        title="Northwind launch"
-        detail="4 members"
+        label="Northwind launch"
+        description="4 members"
         action={<AvatarGroup people={members} max={3} style={onRow} />}
       />
       <List.Item
-        title="Pricing research"
-        detail="12 members"
+        label="Pricing research"
+        description="12 members"
         action={<AvatarGroup people={members.slice(0, 2)} total={12} max={2} style={onRow} />}
       />
     </List.Root>
