@@ -44,4 +44,18 @@ test('no English default is left under a provider that sets every message', asyn
   expect(found).toContain('⟦common.close⟧');
   expect(found).toContain('⟦dialog.close⟧');
   expect(found).toContain('⟦themeToggle.toDark⟧');
+  for (const marked of [
+    '⟦alert.dismiss⟧',
+    '⟦common.loading⟧',
+    '⟦toast.dismiss⟧',
+    '⟦toast.hidden⟧',
+    '⟦toast.regionBottomEnd⟧',
+    '⟦toast.regionTopCenter⟧',
+  ])
+    expect(found).toContain(marked);
+  // CommandPalette says that nothing matches through its status.
+  await root.getByRole('button', { name: 'Open palette' }).click();
+  await expect(page.getByRole('dialog', { name: 'Go to' }).getByRole('status')).toHaveText(
+    '⟦commandPalette.empty⟧',
+  );
 });
