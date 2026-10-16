@@ -116,6 +116,10 @@
   transform: translateX(calc(1rem * var(--scale, 1)));
   background: var(--color-switch-thumb-on);
 }
+/* In right-to-left text the thumb starts at the right, so it travels its own width to the left. */
+.env-switch-control:checked:dir(rtl)::before {
+  transform: translateX(-100%);
+}
 .env-switch-control:hover:not(:disabled) {
   background: var(--color-switch-off-hover);
 }
