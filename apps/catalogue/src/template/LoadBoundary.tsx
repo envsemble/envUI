@@ -116,6 +116,24 @@ export async function reloadPage(modules: readonly string[] = []): Promise<boole
   return true;
 }
 
+/**
+ * Where focus was when content failed, while its elements were still in place. When they are gone
+ * once the failure shows and focus fell to the page, the failure is new to the person who was using
+ * the content, and its message takes the focus.
+ */
+export function focusedElement() {
+  return typeof document === 'undefined' ? null : document.activeElement;
+}
+
+/** Whether focus that was on `focused` fell to the page when the content failed. */
+export function focusDropped(focused: Element | null) {
+  return (
+    focused !== null &&
+    !focused.isConnected &&
+    (document.activeElement === document.body || document.activeElement === null)
+  );
+}
+
 /** What went wrong, as a message for people: the error's own message when it has one. */
 export function errorMessage(error: unknown) {
   if (error instanceof Error && error.message) return error.message;
@@ -136,8 +154,8 @@ interface LoadBoundaryProps {
 }
 
 interface LoadBoundaryState {
-  /** What the content threw, if it did. */
-  failure: { error: unknown } | null;
+  /** What the content threw, if it did, and what had focus then. */
+  failure: { error: unknown; focused: Element | null } | null;
   /** Whether people asked to load it again, which keeps a focusable wrapper around it. */
   wrapped: boolean;
   /** Whether a reload found the connection down, and left the page as it was. */
@@ -149,6 +167,7 @@ interface LoadBoundaryState {
  * its file fails to load, as after a new deploy that removed the old file, it says so in place,
  * with a retry in development and a reload of the page, which fetches the current files. Any other
  * error, such as a bug in an example, is shown in place as a failure to render, with its message.
+ * A failure that takes away the element people were using takes the focus.
  */
 export class LoadBoundary extends Component<LoadBoundaryProps, LoadBoundaryState> {
   state: LoadBoundaryState = { failure: null, wrapped: false, offline: false };
@@ -156,14 +175,20 @@ export class LoadBoundary extends Component<LoadBoundaryProps, LoadBoundaryState
   /** What focus goes to once Try again, which had it, is gone. */
   private wrapper = createRef<HTMLDivElement>();
 
+  /** The failure's message, which takes the focus that the content dropped. */
+  private alert = createRef<HTMLDivElement>();
+
   /** Whether focus, which was on Try again, still has to return to the wrapper. */
   private focusPending = false;
 
   static getDerivedStateFromError(error: unknown): Partial<LoadBoundaryState> {
-    return { failure: { error }, offline: false };
+    return { failure: { error, focused: focusedElement() }, offline: false };
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(_: LoadBoundaryProps, previous: LoadBoundaryState) {
+    const { failure } = this.state;
+    if (failure && failure !== previous.failure && focusDropped(failure.focused))
+      this.alert.current?.focus();
     // The first update after a retry replaces Try again. The focus it dropped returns here,
     // whether the content loads or fails again, and only then: later updates leave focus alone.
     if (!this.focusPending) return;
@@ -190,13 +215,15 @@ export class LoadBoundary extends Component<LoadBoundaryProps, LoadBoundaryState
     if (!failure) content = this.props.children;
     else if (!(failure.error instanceof ModuleLoadError))
       content = (
-        <Alert tone="error" title={`This ${what} failed to render`}>
+        <Alert ref={this.alert} tabIndex={-1} tone="error" title={`This ${what} failed to render`}>
           {errorMessage(failure.error)}
         </Alert>
       );
     else
       content = (
         <Alert
+          ref={this.alert}
+          tabIndex={-1}
           tone="warning"
           title={`The ${what} could not load`}
           action={

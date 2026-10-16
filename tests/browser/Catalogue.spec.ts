@@ -805,6 +805,11 @@ test('a page that fails to render says so, and the navigation leads to the other
   await expect(main.getByText('This page failed to render')).toBeVisible();
   await expect(main.getByText('Broken page')).toBeVisible();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('envUI');
+  // A link to the overview would lead here again; the overview offers a reload instead.
+  await expect(main.getByRole('link', { name: 'Return to overview' })).toHaveCount(0);
+  await expect(main.getByRole('button', { name: 'Reload the page', exact: true })).toBeVisible();
+  // The page failed as it opened, so focus stays where the route put it.
+  await expect(main).toBeFocused();
   const navigation = page.getByRole('navigation', { name: 'Documentation' }).first();
   await navigation.getByRole('link', { name: 'Button', exact: true }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
@@ -817,6 +822,62 @@ test('a page that fails to render says so, and the navigation leads to the other
   // Going back to the page that failed says so again.
   await page.goBack();
   await expect(main.getByText('This page failed to render')).toBeVisible();
+});
+
+/**
+ * Serves `file` with its export `name` replaced by a button that breaks it: once pressed, the
+ * component throws as it renders again. It uses the React that Vite serves the catalogue.
+ */
+async function breakOnPress(page: Page, file: string, name: string) {
+  await page.route(file, async (route) => {
+    const original = await (await route.fetch()).text();
+    const version = /\/node_modules\/\.vite\/deps\/[\w-]+\.js\?v=(\w+)/.exec(original)?.[1];
+    expect(version, `${file} imports Vite's prebundled dependencies`).toBeTruthy();
+    await route.fulfill({
+      contentType: 'text/javascript',
+      // Vite serves React, a CommonJS package, as a default export.
+      body: `import React from '/node_modules/.vite/deps/react.js?v=${version}';
+        const { createElement, useState } = React;
+        function Broken() {
+          const [broken, setBroken] = useState(false);
+          if (broken) throw new Error('Broken after a press');
+          return createElement('button', { type: 'button', onClick: () => setBroken(true) }, 'Break');
+        }
+        export { Broken as ${name} };`,
+    });
+  });
+}
+
+test('an example that fails after a press takes the focus it dropped', async ({ page }) => {
+  await breakOnPress(page, '**/src/examples/button/CreateProject.tsx', 'default');
+  await page.goto(`${catalogueUrl}/#/components/button/overview`);
+  const hero = page.getByRole('group', { name: 'Button example', exact: true });
+  await hero.getByRole('button', { name: 'Break', exact: true }).focus();
+  await page.keyboard.press('Enter');
+  const alert = hero.locator('.env-alert');
+  await expect(alert).toContainText('This example failed to render');
+  await expect(alert).toBeFocused();
+});
+
+test('a page that fails after a press takes the focus it dropped, and leads to the overview', async ({
+  page,
+}) => {
+  await breakOnPress(page, '**/src/pages/ReferenceContent.tsx', 'ReferenceContent');
+  await page.goto(`${catalogueUrl}/#/components/button/overview`);
+  const main = page.getByRole('main');
+  const press = main.getByRole('button', { name: 'Break', exact: true });
+  // The page renders with its button, and focus moves to the content once the route has opened.
+  await expect(async () => {
+    await press.focus();
+    await expect(press).toBeFocused({ timeout: 500 });
+  }).toPass();
+  await page.keyboard.press('Enter');
+  const alert = main.locator('.env-alert');
+  await expect(alert).toContainText('This page failed to render');
+  await expect(alert).toBeFocused();
+  await main.getByRole('link', { name: 'Return to overview', exact: true }).click();
+  await expect(page.getByRole('heading', { level: 1, name: 'envUI' })).toBeVisible();
+  await expect(alert).toHaveCount(0);
 });
 
 test('each Markdown table region is named after its heading', async ({ page }) => {
