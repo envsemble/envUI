@@ -39,6 +39,8 @@ describe('isolation audit', () => {
         `{"command":"cat ${json(join(runDir, 'claude-sidebar', 'node_modules', '@envsemble', 'envui', 'docs', 'index.md'))}"}`,
         `{"output":"Session cwd remains ${json(join(runDir, 'claude-sidebar'))}; directory changes"}`,
         `{"output":"Note: your current working directory is ${json(join(runDir, 'claude-sidebar'))}."}`,
+        // A scratch folder made next to its own temp folder, for a browser check.
+        `{"command":"mkdir -p ${json(join(runDir, '_tmp', 'pw-driver'))} && npm i playwright-core"}`,
         `{"output":"${json(join(runDir, '_tmp', 'claude-sidebar', 'claude', 'task.out'))}"}`,
         '{"output":"assets/envUI/envUI-favicon.ico and https://github.com/envsemble/envUI/issues"}',
         '{"command":"cat ../src/App.tsx"}',
@@ -78,6 +80,8 @@ describe('isolation audit', () => {
       `{"command":"cat ${json(join(runDir, '_logs', 'codex-sidebar', 'transcript.jsonl'))}"}`,
       `{"command":"ls ${json(join(runDir, 'codex-sidebar', 'src'))}"}`,
       `{"command":"ls ${json(join(runDir, '_tmp', 'codex-sidebar'))}"}`,
+      `{"command":"ls ${json(join(runDir, '_tmp'))}"}`,
+      `{"command":"cat ${json(join(runDir, 'records.json'))}"}`,
       '{"command":"cat ../codex-sidebar/src/App.tsx"}',
       '{"command":"ls ../_logs"}',
     ])

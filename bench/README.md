@@ -130,7 +130,7 @@ Because the confinement is not a sandbox, every run's `transcript.jsonl`, `stder
 - the folder that holds the repository checkout, or the checkout's top-level folder (such as `C:\Dev`) unless that folder also holds the user profile or the temp folder;
 - the folder name of a worktree of the repository;
 - a path given with `--audit-path`;
-- another run: its workspace, its temp folder, or the logs.
+- another run: its workspace, its temp folder, the logs, the list of temp folders or the run's own files such as `records.json`. A scratch folder an agent makes next to its own temp folder, say for a browser check, is not another run's.
 
 The main checkout's name, `envUI`, is also a folder inside the installed package (`assets/envUI`), so it counts only as part of the paths above.
 

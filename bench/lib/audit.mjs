@@ -65,17 +65,22 @@ export function auditMarkers({ repoDir, runDir, jobNames = [], extraPaths = [] }
 export function auditRun({ files, audit, name }) {
   const hits = [];
   const ownName = name.toLowerCase();
-  // This run's workspace or temp folder. A name at the end of a sentence, or cut off by a wrapped
-  // line, still counts as its own.
-  const own = (match, text) => {
+  const others = new Set(
+    audit.jobNames.filter((job) => job !== name).map((job) => job.toLowerCase()),
+  );
+  const plain = (segment) => segment.toLowerCase().replace(/\.+$/, '');
+  // This run's workspace or temp folder, or a scratch folder it made next to its temp folder, but
+  // not another run's. A name at the end of a sentence, or cut off by a wrapped line, still counts.
+  const allowed = (match, text) => {
     const [, first, second] = match;
     const end = match.index + match[0].length;
-    const isOwn = (segment) => {
-      if (segment === undefined) return false;
-      const plain = segment.toLowerCase().replace(/\.+$/, '');
-      return plain === ownName || (wrapsAt(text, end) && ownName.startsWith(plain));
-    };
-    return isOwn(first) || (first === '_tmp' && isOwn(second));
+    const isOwn = (segment) =>
+      segment !== undefined &&
+      (plain(segment) === ownName || (wrapsAt(text, end) && ownName.startsWith(plain(segment))));
+    if (isOwn(first)) return true;
+    return (
+      first === '_tmp' && second !== undefined && (isOwn(second) || !others.has(plain(second)))
+    );
   };
   const seen = new Set();
   const add = (marker, file, text, index) => {
@@ -85,7 +90,6 @@ export function auditRun({ files, audit, name }) {
     const snippet = text.slice(Math.max(0, index - 80), index + 120).replace(/\s+/g, ' ');
     hits.push({ marker, file: basename(file), excerpt: redactPaths(snippet, {}) });
   };
-  const others = audit.jobNames.filter((job) => job !== name);
   for (const file of files) {
     if (!existsSync(file)) continue;
     const text = readFileSync(file, 'utf8');
@@ -93,14 +97,15 @@ export function auditRun({ files, audit, name }) {
       const match = regex.exec(text);
       if (match) add(label, file, text, match.index);
     }
-    // Other runs: an absolute path into the run directory that is not this run's workspace or
-    // temp folder, or a relative path to another run's workspace, to the logs or to the temp folders.
+    // Other runs: an absolute path to anything else in the run directory (other workspaces, the
+    // logs, the list of temp folders, records.json), or a relative path to another run's workspace,
+    // the logs or the temp folders.
     if (audit.runDir) {
       const absolute = new RegExp(
         `${pathPattern(audit.runDir)}[\\\\/]+${pathSegment}(?:[\\\\/]+${pathSegment})?`,
         'gi',
       );
-      const match = [...text.matchAll(absolute)].find((found) => !own(found, text));
+      const match = [...text.matchAll(absolute)].find((found) => !allowed(found, text));
       if (match) add('another run', file, text, match.index);
     }
     const upward = new RegExp(
@@ -109,8 +114,8 @@ export function auditRun({ files, audit, name }) {
     );
     const match = [...text.matchAll(upward)].find(
       (found) =>
-        !own(found, text) &&
-        (found[1] === '_logs' || found[1] === '_tmp' || others.includes(found[1])),
+        !allowed(found, text) &&
+        (found[1] === '_logs' || found[1] === '_tmp' || others.has(plain(found[1]))),
     );
     if (match) add('another run', file, text, match.index);
   }
