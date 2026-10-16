@@ -1,5 +1,4 @@
 // Settings menu.
-// @ts-expect-error -- the 0.x types lack the item's hint.
 import { Menu, Button } from '@envsemble/envui';
 import {
   // eslint-disable-next-line envui/no-renamed-exports -- moving in the next pull request

@@ -106,6 +106,13 @@ function isLineDirective(comment) {
 const lineDirective =
   /^[\s*]*(?:@ts-(?:expect-error|ignore)|eslint-disable-(?:next-)?line|prettier-ignore|biome-ignore|oxlint-disable-next-line|deno-lint-ignore|(?:istanbul|c8|v8) ignore next)(?![\w-])/;
 
+/**
+ * Whether a comment is `@ts-expect-error`. Above names the transform changes it expected an error
+ * from the 0.x names, and once that error is gone TypeScript fails on it (TS2578), so it is
+ * dropped there and reported rather than kept or moved.
+ */
+const isExpectError = (comment) => /^[\s*]*@ts-expect-error(?![\w-])/.test(comment.value);
+
 /** A comment as it is written, for a report. */
 function commentText(comment) {
   const block = comment.type === 'CommentBlock' || comment.type === 'Block';
@@ -206,6 +213,20 @@ export default function transform(file, api, options = {}) {
   const referencesTo = (name) =>
     (references.get(name) ?? []).filter(({ path, kind }) => bindsToModule(path, name, kind));
 
+  /**
+   * Whether the binding a pattern declares or assigns at `bindingPath` is used other than through
+   * its members (`Menu.Root`), which is how a 1.0 namespace of the same name is used.
+   */
+  const usedAsComponent = (bindingPath, name) => {
+    const declaring = scopes.lookup(bindingPath, name, 'value')?.node;
+    return (references.get(name) ?? []).some(
+      ({ path, kind }) =>
+        !memberKinds.has(kind) &&
+        !(kind === 'jsx' && path.parent.node.type === 'JSXClosingElement') &&
+        scopes.lookup(path, name, spaceOf(kind))?.node === declaring,
+    );
+  };
+
   const claimed = new Set();
   const isFree = (name) => !taken.has(name) && !claimed.has(name);
   /** The namespace name, or `Env<Name>`, `Env<Name>2`, … when the file already uses it. */
@@ -290,20 +311,35 @@ export default function transform(file, api, options = {}) {
   };
   /** Removed import specifiers, with the declaration that has their names now, if any. */
   const movedTo = new Map();
+  /** Import declarations whose names change, where a @ts-expect-error above them goes stale. */
+  const rewritten = new Set();
   const remove = (info, replacement = () => undefined) => {
     removals.add(info.specifier);
     movedTo.set(info.specifier, replacement);
+    rewritten.add(info.declaration);
     changed = true;
   };
+  /** Comments to keep where names changed: all but a leading @ts-expect-error, reported at `node`. */
+  const withoutExpectError = (comments, node) =>
+    comments?.filter((comment) => {
+      if (!comment.leading || !isExpectError(comment)) return true;
+      warn(
+        node,
+        `dropped ${commentText(comment)}, which expected an error from the 0.x names: TypeScript fails on a @ts-expect-error with no error below it.`,
+      );
+      return false;
+    });
   // Specifiers are replaced whole: in `{ Input }` the imported and local names share one source
   // range, and recast would reprint a changed `imported` over both.
   const replaceImport = (info, imported, local) => {
     const replacement = j.importSpecifier(j.identifier(imported), j.identifier(local));
     if (info.specifier.importKind) replacement.importKind = info.specifier.importKind;
     // Comments on the specifier, such as a disable directive, stay with it.
-    if (info.specifier.comments) replacement.comments = info.specifier.comments;
+    if (info.specifier.comments)
+      replacement.comments = withoutExpectError(info.specifier.comments, info.specifier);
     const list = info.declaration.specifiers;
     list[list.indexOf(info.specifier)] = replacement;
+    rewritten.add(info.declaration);
     info.specifier = replacement;
   };
   const replaceExport = (list, specifier, local, exported) => {
@@ -573,13 +609,29 @@ export default function transform(file, api, options = {}) {
     const handled = new Set();
     for (const { path, kind } of referencesTo(local)) {
       if (kind === 'value') {
-        const declarator = path.parent.node;
-        if (declarator.type === 'VariableDeclarator' && declarator.id.type === 'ObjectPattern') {
-          for (const property of declarator.id.properties) {
+        // `const { Input } = ui` and `({ Input } = ui)`.
+        const parent = path.parent;
+        const field =
+          parent.node.type === 'VariableDeclarator' && parent.node.init === path.node
+            ? 'id'
+            : parent.node.type === 'AssignmentExpression' && parent.node.right === path.node
+              ? 'left'
+              : undefined;
+        const patternPath = field && parent.get(field);
+        if (patternPath?.node.type === 'ObjectPattern') {
+          patternPath.node.properties.forEach((property, index) => {
             const key = property.computed ? undefined : property.key?.name;
             const rename = entry.renames.get(key);
             const split = entry.splits.get(key);
             const removed = entry.removed.get(key);
+            // `Menu` and `Toast` name 1.0 namespaces too: used through their members, as in
+            // `<Menu.Root>`, they are 1.0 code.
+            if (entry.namespaces.has(key)) {
+              let binding = patternPath.get('properties', index, 'value');
+              if (binding.value?.type === 'AssignmentPattern') binding = binding.get('left');
+              if (binding.value?.type !== 'Identifier') return;
+              if (!usedAsComponent(binding, binding.value.name)) return;
+            }
             const change = rename
               ? `which is ${rename.to} in 1.0: rename it by hand.`
               : split
@@ -588,7 +640,7 @@ export default function transform(file, api, options = {}) {
                   ? `which ${entry.name} no longer exports: ${removed.use}`
                   : undefined;
             if (change) warn(property, `destructures ${key} from ${local}, ${change}`);
-          }
+          });
         }
         continue;
       }
@@ -756,6 +808,8 @@ export default function transform(file, api, options = {}) {
 
   for (const edit of edits) edit();
 
+  /** Removed specifiers whose place a namespace specifier takes, which gets their comments. */
+  const heirs = new Map();
   for (const { namespace, needsValue, local = namespace.local } of insertions) {
     const contributors = namespace.contributors.map(({ info }) => info);
     const anchor = needsValue ? contributors.find((info) => !info.isType) : contributors[0];
@@ -764,6 +818,7 @@ export default function transform(file, api, options = {}) {
       if (!needsValue && anchor.declaration.importKind !== 'type') specifier.importKind = 'type';
       const list = anchor.declaration.specifiers;
       list.splice(list.indexOf(anchor.specifier), 0, specifier);
+      if (removals.has(anchor.specifier)) heirs.set(anchor.specifier, specifier);
       namespace.declaration ??= anchor.declaration;
       continue;
     }
@@ -789,6 +844,27 @@ export default function transform(file, api, options = {}) {
     const before = declaration.specifiers.length;
     const removedHere = declaration.specifiers.filter((specifier) => removals.has(specifier));
     declaration.specifiers = declaration.specifiers.filter((specifier) => !removals.has(specifier));
+    // Comments on a removed specifier go to the namespace specifier in its place, if there is one;
+    // otherwise they are reported, since nothing they describe is left.
+    for (const specifier of removedHere) {
+      if (!specifier.comments?.length) continue;
+      const heir = heirs.get(specifier);
+      if (heir) {
+        heir.comments = [
+          ...(heir.comments ?? []),
+          ...withoutExpectError(specifier.comments, specifier),
+        ];
+        continue;
+      }
+      const { imported, local } = specifier;
+      const name =
+        local && local.name !== imported.name ? `${imported.name} as ${local.name}` : imported.name;
+      for (const comment of specifier.comments)
+        warn(
+          specifier,
+          `dropped ${commentText(comment)}, which was on ${name}, removed from this import.`,
+        );
+    }
     if (before > 0 && declaration.specifiers.length === 0) {
       const leading = (declaration.comments ?? []).filter((comment) => comment.leading);
       const directives = leading.filter(isLineDirective);
@@ -799,7 +875,7 @@ export default function transform(file, api, options = {}) {
         const comments = target.comments ?? [];
         target.comments = [
           ...comments.filter((comment) => comment.leading),
-          ...directives,
+          ...withoutExpectError(directives, declaration),
           ...comments.filter((comment) => !comment.leading),
         ];
       } else
@@ -814,7 +890,8 @@ export default function transform(file, api, options = {}) {
       const next = body[body.indexOf(declaration) + 1];
       if (others.length && next) next.comments = [...others, ...(next.comments ?? [])];
       declarationPath.prune();
-    }
+    } else if (rewritten.has(declaration) && declaration.comments)
+      declaration.comments = withoutExpectError(declaration.comments, declaration);
   }
 
   // The rewrites and the pruned imports can still add reports.

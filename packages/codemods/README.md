@@ -64,7 +64,7 @@ It reports instead of changing:
 - removed exports, with what to use instead: `LoadingBar`, `LoadingBarProps`, the manual `Toast` (only its bare uses; `Toast.Provider` is the 1.0 API), `ToastProps`, `getInitials`, `useLinkComponent` and `useSidebarCompact`;
 - `DirectionLink` with a dynamic, spread or missing `direction`, or used outside JSX; its import stays;
 - re-exports and `export { … }` of namespace parts, `DirectionLink` and removed exports, which cannot keep their old name;
-- names destructured from a namespace import, such as `const { MenuItem } = ui`;
+- names destructured from a namespace import, such as `const { MenuItem } = ui` or `({ MenuItem } = ui)`. `const { Menu, Toast } = ui` names 1.0 namespaces too, and is reported only where `Menu` or `Toast` is then used as the 0.x component rather than through its members, as in `<Menu.Root>`;
 - parts destructured from a namespace that was a 0.x component, such as `const { Root, Item } = Menu` or `const { Cell } = ui.Table`, which are 1.0 code and stay as they are rather than becoming `Menu.Root`.
 
 ## v1-classes
@@ -85,7 +85,8 @@ Both transforms keep a file's line endings, CRLF or LF, and its byte order mark;
 ## Limitations
 
 - Changed import declarations are printed again and can lose their line breaks; run your formatter afterwards.
-- Comments stay with what they describe. A comment on a renamed specifier stays on it. When an import is removed because its names moved into another import, a directive about its line (`@ts-expect-error`, `@ts-ignore`, `eslint-disable-next-line`, `prettier-ignore` and the like) moves with the names to that import; when nothing replaces the import, as for `defaultThemeStorageKey`, the directive is dropped and reported. Other comments above a removed import, such as a file header, stay in place on the next statement.
+- Comments stay with what they describe. A comment on a renamed specifier stays on it, and the comments on a specifier that is removed move to the namespace specifier that takes its place, as `Menu` takes the place of `MenuItem`; where none does, as when `Menu` was already imported, they are dropped and reported with their text. When an import is removed because its names moved into another import, a directive about its line (`@ts-ignore`, `eslint-disable-next-line`, `prettier-ignore` and the like) moves with the names to that import; when nothing replaces the import, as for `defaultThemeStorageKey`, the directive is dropped and reported. Other comments above a removed import, such as a file header, stay in place on the next statement.
+- A `@ts-expect-error` above an import or specifier whose names change is dropped and reported rather than kept or moved: it expected an error from the 0.x names, and TypeScript fails on a `@ts-expect-error` that has no error below it (TS2578).
 - Class names built at run time, class strings kept in variables outside the contexts above, CSS-in-JS templates and HTML files are not changed.
 - `require()`, dynamic `import()`, module mocks and `declare module '@envsemble/envui'` augmentations are not changed.
 - In code that already uses 1.0, a bare use of a namespace that was a 0.x component, such as `Object.keys(Menu)`, would be read as the old component.

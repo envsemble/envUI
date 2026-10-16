@@ -13,8 +13,12 @@ const pager = 'use Pager.Previous or Pager.Next, which take no direction prop.';
 const removedFrom = (line, names) =>
   names.map((name) => `line ${line}: ${name} is no longer exported by ${library}: ${use(name)}`);
 
+const expectError = (line, comment) =>
+  `line ${line}: dropped // @ts-expect-error -- ${comment}, which expected an error from the 0.x names: TypeScript fails on a @ts-expect-error with no error below it.`;
+
 /** What each fixture reports, in line order; a fixture that is not listed reports nothing. */
 const reports = {
+  'comments.tsx': [expectError(4, "the 0.x types lack the item's hint.")],
   'local-exports.tsx': [
     'line 3: exports Menu, which is the Menu namespace in 1.0; the old component is Menu.Root.',
     'line 3: exports MenuItem, which is Menu.Item in 1.0 and cannot be exported by its old name: export the Menu namespace or a constant instead.',
@@ -23,6 +27,11 @@ const reports = {
     'line 5: destructures Root and Item from Menu, which is the Menu namespace in 1.0, and stays as it is; the 0.x component is Menu.Root.',
     'line 6: destructures Cell from ui.Table, which is the Table namespace in 1.0, and stays as it is; the 0.x component is ui.Table.Root.',
     'line 8: destructures Head from Table, which is the Table namespace in 1.0, and stays as it is; the 0.x component is Table.Root.',
+  ],
+  'namespace-import-destructuring.tsx': [
+    'line 15: destructures Menu from ui, which is Menu.Root in 1.0: rename it by hand.',
+    `line 15: destructures Toast from ui, which ${library} no longer exports: ${use('Toast')}`,
+    'line 25: destructures Input from ui, which is TextField in 1.0: rename it by hand.',
   ],
   'namespace-import.tsx': [
     'line 8: destructures DirectionLinks from ui, which is Pager.Root in 1.0: rename it by hand.',
@@ -50,6 +59,12 @@ const reports = {
     'line 21: a local TextField shadows the import here: wrote EnvTextField, with TextField also imported as EnvTextField.',
     'line 23: a local Pager shadows the import here: wrote EnvPager.Next, with Pager also imported as EnvPager.',
     'line 41: a local Menu shadows the import here: wrote EnvMenu.ItemProps, with Menu also imported as EnvMenu.',
+  ],
+  'specifier-comments.tsx': [
+    'line 7: dropped /* The body of the members table. */, which was on TableBody, removed from this import.',
+    'line 8: dropped /* The old name. */, which was on Input, removed from this import.',
+    expectError(10, 'not exported by the installed 1.0'),
+    expectError(13, 'not exported by the installed 1.0'),
   ],
   'theme-bootstrap-directive.ts': [
     'line 3: dropped // eslint-disable-next-line envui/no-renamed-exports -- until the 1.0 upgrade, which applied to the import that was removed.',
