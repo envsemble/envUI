@@ -309,3 +309,49 @@ typeScriptRuleTester.run('no-renamed-exports in TypeScript', rule, {
     },
   ],
 });
+
+// An application module that re-exports envUI, listed in the shared settings, stands for its main
+// entry point, and the message names the module as written.
+const reexports = { envui: { reexportModules: ['./ui', '@/components/ui'] } };
+
+ruleTester.run('no-renamed-exports with modules that re-export envUI', rule, {
+  valid: [
+    // Without the setting, a module of the application is not envUI.
+    "import { Input } from './ui'; <Input />;",
+    { code: "import { TextField, Menu } from './ui'; <Menu.Root />;", settings: reexports },
+    { code: "import { Input } from '../ui';", settings: reexports },
+  ],
+  invalid: [
+    {
+      code: "import { Input } from './ui';",
+      settings: reexports,
+      errors: [
+        {
+          ...renamed('Input', 'TextField'),
+          data: { ...renamed('Input', 'TextField').data, source: './ui' },
+        },
+      ],
+    },
+    {
+      code: "export { Notice } from '@/components/ui';",
+      settings: reexports,
+      errors: [
+        {
+          ...renamed('Notice', 'Alert'),
+          data: { ...renamed('Notice', 'Alert').data, source: '@/components/ui' },
+        },
+      ],
+    },
+    {
+      code: "import * as ui from './ui'; <ui.Menu />;",
+      settings: reexports,
+      errors: [namespace('Menu', 'ui.Menu', 'ui.Menu.Root')],
+    },
+    {
+      code: "const { LoadingBar } = await import('./ui');",
+      settings: reexports,
+      languageOptions: { sourceType: 'module', ecmaVersion: 2022 },
+      errors: [internal('LoadingBar')],
+    },
+  ],
+});

@@ -80,7 +80,7 @@ A few classes depend on where they are. 0.7 gave DiffCount's label the counter's
 - **Style sheets** (`.css`, `.scss`, `.sass`, `.less`, `.pcss`): `.env-*` class selectors, including those inside `:is()` and `:not()`; `--env-*` custom property declarations and `var()` uses; and `[class~='env-*']`, `[class*='env-*']` and similar attribute selectors.
 - **Scripts:** whole class tokens in strings and template literals inside JSX `className` and `class` attributes, including `classNames()`, `clsx()` and conditional expressions; `className` properties and assignments; selectors passed to `querySelector`, `querySelectorAll`, `closest` and `matches`; `classList` methods and `getElementsByClassName`; and `--env-*` custom properties in `style` attributes, string property keys, `style.setProperty()` and `var()` references in any string. Only the literals change, so the rest of the file keeps its formatting.
 
-Both transforms keep a file's line endings, CRLF or LF, and its byte order mark; class names in template literals that span lines are renamed in CRLF files too.
+Both transforms keep a file's line endings, CRLF or LF, and its byte order mark; class names in template literals that span lines are renamed in CRLF files too. What `v1-names` prints anew, such as an import whose names it lays out one per line, is indented with tabs in a file that indents with tabs.
 
 ## The rename map
 

@@ -2,6 +2,7 @@ import {
   documentationUrl,
   findAttribute,
   moduleExportName,
+  pluginSettings,
   readData,
   resolveVariable,
   staticValue,
@@ -9,13 +10,16 @@ import {
 
 const { modules } = readData('renames.json');
 
+/** The entry point that a module listed in `settings.envui.reexportModules` stands for. */
+const mainEntryPoint = '@envsemble/envui';
+
 /**
  * What 1.0 has in place of a name an entry point no longer exports, if it is one: `to`, the
  * replacements, with the `use` hint of a removed name and the `prop` and `values` of a split.
  */
-function renameOf(source, name) {
-  if (!Object.hasOwn(modules, source)) return undefined;
-  return Object.hasOwn(modules[source], name) ? modules[source][name] : undefined;
+function renameOf(entryPoint, name) {
+  if (entryPoint === undefined) return undefined;
+  return Object.hasOwn(modules[entryPoint], name) ? modules[entryPoint][name] : undefined;
 }
 
 /**
@@ -120,6 +124,21 @@ export default {
   },
   create(context) {
     const { sourceCode } = context;
+    const { reexportModules } = pluginSettings(context);
+    /**
+     * The envUI entry point whose names a module source stands for: the entry point itself, or the
+     * main one for a module of the application that re-exports envUI. Messages name the source as
+     * written.
+     */
+    const entryPointOf = (source) =>
+      typeof source !== 'string'
+        ? undefined
+        : Object.hasOwn(modules, source)
+          ? source
+          : reexportModules.has(source)
+            ? mainEntryPoint
+            : undefined;
+    const isEntryPoint = (source) => entryPointOf(source) !== undefined;
     /** Variables bound to an envUI entry point's module object, with its source. */
     const namespaceVariables = new Map();
     /** Variables bound to a name that changed (Menu, DirectionLink, Toast), with its entry. */
@@ -162,7 +181,7 @@ export default {
           : argument?.type === 'TemplateLiteral' && argument.expressions.length === 0
             ? argument.quasis[0].value.cooked
             : undefined;
-      return typeof value === 'string' && Object.hasOwn(modules, value) ? value : undefined;
+      return isEntryPoint(value) ? value : undefined;
     }
 
     function reportName(node, source, name, rename) {
@@ -197,7 +216,7 @@ export default {
      * or a split, whose rendered elements are told their part.
      */
     function bindName(node, source, name, variable) {
-      const rename = renameOf(source, name);
+      const rename = renameOf(entryPointOf(source), name);
       if (rename === undefined) return;
       if (variable && (isNamespace(name, rename) || isSplit(rename)))
         changedVariables.set(variable, { name, rename });
@@ -278,7 +297,7 @@ export default {
      * `propValue` reads the static props of a rendered name.
      */
     function checkMember(node, source, local, name, propValue) {
-      const rename = renameOf(source, name);
+      const rename = renameOf(entryPointOf(source), name);
       if (rename === undefined) return;
       if (propValue && (isNamespace(name, rename) || isSplit(rename)))
         reportElement(node, `${local}.${name}`, { name, rename }, propValue, `${local}.`);
@@ -319,7 +338,7 @@ export default {
         for (const node of program.body) {
           if (node.type !== 'ImportDeclaration') continue;
           const source = node.source.value;
-          if (!Object.hasOwn(modules, source)) continue;
+          if (!isEntryPoint(source)) continue;
           for (const specifier of node.specifiers) {
             const variable = declared(specifier, specifier.local);
             if (specifier.type === 'ImportNamespaceSpecifier') {
@@ -335,14 +354,14 @@ export default {
           const reference = declaration.moduleReference;
           const source =
             reference.type === 'TSExternalModuleReference' ? reference.expression.value : undefined;
-          if (typeof source !== 'string' || !Object.hasOwn(modules, source)) continue;
+          if (!isEntryPoint(source)) continue;
           const variable = declared(declaration, declaration.id);
           if (variable) namespaceVariables.set(variable, source);
         }
       },
       ExportNamedDeclaration(node) {
         const source = node.source?.value;
-        if (typeof source !== 'string' || !Object.hasOwn(modules, source)) return;
+        if (!isEntryPoint(source)) return;
         for (const specifier of node.specifiers)
           bindName(specifier, source, moduleExportName(specifier.local), undefined);
       },
@@ -423,7 +442,7 @@ export default {
       TSImportType(node) {
         // import('@envsemble/envui').InputProps, and typeof import('@envsemble/envui').Menu.
         const source = node.argument?.literal?.value;
-        if (typeof source !== 'string' || !Object.hasOwn(modules, source)) return;
+        if (!isEntryPoint(source)) return;
         let name = node.qualifier;
         while (name?.type === 'TSQualifiedName') name = name.left;
         if (name?.type === 'Identifier') checkMember(name, source, 'envui', name.name, undefined);

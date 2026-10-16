@@ -6,7 +6,9 @@ The first release: ESLint rules for applications built with envUI, for ESLint 10
 
 - `no-html-elements`: raw `<button>`, `<input>` by type, `<select>`, `<textarea>`, `<dialog>`, `<table>`, `<details>`, `<progress>`, `<meter>` and `<kbd>`, anchors used as buttons, raw links, focusable elements that handle clicks, and widget roles such as `role="menu"`, each with the envUI component that replaces it. What a part renders through `render`, hidden inputs and entries named in `allow` pass.
 - `no-private-classes`: envUI's `env-` classes in `className`, class-name helpers, `classList`, DOM and browser-test selectors and style sheets written in JavaScript. `env-theme` is allowed.
-- `no-raw-colors`: literal colors in inline styles, with the envUI color tokens to use instead.
+- `no-raw-colors`: literal colors in inline styles, also hex colors built in a template literal such as `` `#${hex}` ``, with the envUI color tokens to use instead.
 - `no-renamed-exports`: names that envUI 0.7 exported and 1.0 renamed or made internal, with the 1.0 name, and names that became namespaces, such as `Menu`, rendered as components.
+
+An application that re-exports envUI from a module of its own, such as `./ui`, lists it in `settings.envui.reexportModules`: `no-html-elements` and `no-renamed-exports` then count the names imported from it as envUI's.
 
 The plugin is released with `@envsemble/envui` at the same version; install the version that matches envUI.

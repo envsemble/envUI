@@ -1110,12 +1110,17 @@ export default function transform(file, api, options = {}) {
   root.find(j.ImportDeclaration).forEach((declarationPath) => {
     const { specifiers = [] } = declarationPath.node;
     if (!specifiers.some((specifier, index) => index > 0 && commented.has(specifier))) return;
+    const options = printOptions(file.source, quote);
+    const tabWidth = root.get().node.loc?.lines?.guessTabWidth?.() ?? 2;
     // A copy, without the original it would otherwise be patched into.
-    const printed = j({ ...declarationPath.node }).toSource({
-      ...printOptions(file.source, quote),
-      wrapColumn: 0,
-      tabWidth: root.get().node.loc?.lines?.guessTabWidth?.() ?? 2,
-    });
+    let printed = j({ ...declarationPath.node }).toSource({ ...options, wrapColumn: 0, tabWidth });
+    // Recast indents a name it keeps from the source with spaces, even when told to use tabs.
+    if (options.useTabs)
+      printed = printed.replace(
+        /^ +/gm,
+        (spaces) =>
+          '	'.repeat(Math.floor(spaces.length / tabWidth)) + ' '.repeat(spaces.length % tabWidth),
+      );
     declarationPath.replace(j(printed).find(j.ImportDeclaration).nodes()[0]);
   });
 

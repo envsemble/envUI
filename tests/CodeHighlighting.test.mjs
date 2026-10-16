@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { highlightCode } from '../packages/ui/dist/content/internal/CodeHighlighting.js';
+import { tokenStyle } from '../packages/ui/dist/content/internal/codeTokenStyle.js';
 
 test('concurrent cold highlighting consumers share one token matrix', async (context) => {
   const source = Array.from({ length: 40 }, (_, index) => `const value${index} = ${index};`).join(
@@ -21,6 +22,28 @@ test('concurrent cold highlighting consumers share one token matrix', async (con
   );
   assert.ok(requests[0].flat().some((token) => token.light.color && token.dark.color));
   assert.equal(await highlightCode(source, 'javascript'), requests[0]);
+});
+
+test('a token without high-contrast styles takes its standard color at high contrast', () => {
+  assert.deepEqual(tokenStyle({ color: '#123456', fontStyle: 1 }, undefined), {
+    '--env-code-token': '#123456',
+    '--env-code-token-high': '#123456',
+    fontStyle: 'italic',
+    fontWeight: undefined,
+    textDecoration: undefined,
+  });
+  assert.equal(tokenStyle({ color: '#123456' }, {})['--env-code-token-high'], '#123456');
+  assert.equal(
+    tokenStyle({ color: '#123456' }, { color: '#000000' })['--env-code-token-high'],
+    '#000000',
+  );
+  assert.deepEqual(tokenStyle({ fontStyle: 2 | 4 | 8 }), {
+    '--env-code-token': undefined,
+    '--env-code-token-high': undefined,
+    fontStyle: undefined,
+    fontWeight: 700,
+    textDecoration: 'underline line-through',
+  });
 });
 
 test('every highlighted token is readable on its code background, in code blocks and diffs', async () => {

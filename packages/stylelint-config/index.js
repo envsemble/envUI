@@ -13,13 +13,29 @@ const outsideUrl = String.raw`(?<!\burl\(\s*(?:"[^"]*|'[^']*|[^"')]*))`;
 const outsideString = String.raw`(?<!^(?:[^"'\\]|\\.|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')*(?:"(?:[^"\\]|\\.)*|'(?:[^'\\]|\\.)*))`;
 /** The start of a color function call. */
 const colorFunctionStart = String.raw`(?<![\w-])(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(`;
-/** A custom property without a fallback. */
-const plainVar = String.raw`var\(\s*--[\w-]+\s*\)`;
-/** A custom property whose fallback, if it has one, is custom properties too. */
-const customProperty = String.raw`var\(\s*--[\w-]+\s*(?:,\s*(?:${plainVar}(?:\s+${plainVar})*)?\s*)?\)`;
+/**
+ * How deeply the patterns below follow nested parentheses, such as a fallback's fallback. A
+ * regular expression can't recurse, so the patterns are built to this depth, which no real value
+ * reaches; deeper nesting counts as raw.
+ */
+const nestingDepth = 8;
+/** Builds a pattern `nestingDepth` levels deep, each level wrapping the one inside it. */
+const nested = (innermost, wrap) =>
+  Array.from({ length: nestingDepth }).reduce((inner) => wrap(inner), innermost);
+/**
+ * A custom property whose fallback, if it has one, is custom properties too, separated by spaces
+ * or commas, each with a fallback of custom properties in turn: `var(--a, var(--b, var(--c)))`.
+ * The ESLint plugin's no-raw-colors reads fallbacks the same way.
+ */
+const customProperty = nested(
+  String.raw`var\(\s*--[\w-]+\s*\)`,
+  (inner) => String.raw`var\(\s*--[\w-]+\s*(?:,[\s,]*(?:${inner}(?=[\s,)])[\s,]*)*)?\)`,
+);
+/** Text whose parentheses balance. */
+const balanced = nested('[^()]*', (inner) => String.raw`(?:[^()]|\(${inner}\))*`);
 /** The rest of a call's arguments, and the rest of one comma-separated argument. */
-const restOfCall = String.raw`(?:[^()]|\((?:[^()]|\([^()]*\))*\))*`;
-const restOfArgument = String.raw`(?:[^(),]|\((?:[^()]|\([^()]*\))*\))*`;
+const restOfCall = balanced;
+const restOfArgument = String.raw`(?:[^(),]|\(${balanced}\))*`;
 /**
  * Arguments that make no raw color: a relative color derived from a token (`hsl(from …)`), or
  * channels that all come from custom properties, each a `var()` whose fallback, if any, is a
@@ -77,7 +93,7 @@ export const hairlineProperties = [
 
 /** A whole raw color function call outside url() and strings, for the message. */
 const colorCall = new RegExp(
-  String.raw`${outsideString}${outsideUrl}${colorFunctionStart}(?!${customChannels})[^()]*(?:\((?:[^()]|\([^()]*\))*\)[^()]*)*\)?`,
+  String.raw`${outsideString}${outsideUrl}${colorFunctionStart}(?!${customChannels})${balanced}\)?`,
   'i',
 );
 

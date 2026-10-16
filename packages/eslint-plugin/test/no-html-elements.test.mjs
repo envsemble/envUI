@@ -476,3 +476,73 @@ test('an unknown allow entry fails with the known entries', () => {
     /unknown allow entry "buton". Known entries: \[role=button\]/,
   );
 });
+
+// An application module that re-exports envUI, listed in the shared settings, stands for envUI.
+const reexports = { envui: { reexportModules: ['./ui', '@/components/ui'] } };
+
+ruleTester.run('no-html-elements with modules that re-export envUI', rule, {
+  valid: [
+    {
+      code: 'import { Dialog } from \'./ui\'; <Dialog role="alertdialog" title="Delete?" />;',
+      settings: reexports,
+    },
+    {
+      code: 'import { Popover as Card, Menu } from \'@/components/ui\'; <><Card role="dialog" /><Menu.Submenu role="menu" /></>;',
+      settings: reexports,
+    },
+    {
+      code: 'import * as ui from \'./ui\'; <ui.Popover role="dialog" />;',
+      settings: reexports,
+    },
+  ],
+  invalid: [
+    // Without the setting, a module of the application is not envUI.
+    {
+      code: 'import { Dialog } from \'./ui\'; <Dialog role="alertdialog" title="Delete?" />;',
+      errors: [uses('Dialog', '<Dialog role="alertdialog">')],
+    },
+    // A module is matched as written, and a name counts by what it exports, as from envUI.
+    {
+      code: 'import { Dialog } from \'../ui\'; <Dialog role="dialog" />;',
+      settings: reexports,
+      errors: [uses('Dialog', '<Dialog role="dialog">')],
+    },
+    {
+      code: 'import { Surface as Dialog } from \'./ui\'; <Dialog role="dialog" />;',
+      settings: reexports,
+      errors: [uses('Dialog', '<Dialog role="dialog">')],
+    },
+    // Raw elements are reported as before.
+    {
+      code: "import { Dialog } from './ui'; <button />;",
+      settings: reexports,
+      errors: [
+        uses('Button', 'a raw <button>', { alternatives: icon, imports: 'Button, IconButton' }),
+      ],
+    },
+  ],
+});
+
+test('settings.envui.reexportModules must list module specifiers', () => {
+  const linter = new Linter();
+  const verify = (settings) =>
+    linter.verify(
+      '<div />',
+      {
+        plugins: { envui: { rules: { 'no-html-elements': rule } } },
+        languageOptions: { parserOptions: { ecmaFeatures: { jsx: true } } },
+        settings,
+        rules: { 'envui/no-html-elements': 'error' },
+      },
+      'file.js',
+    );
+  assert.throws(
+    () => verify({ envui: { reexportModules: './ui' } }),
+    /settings\.envui\.reexportModules must be an array of module specifiers/,
+  );
+  assert.throws(
+    () => verify({ envui: { reexportModule: ['./ui'] } }),
+    /unknown setting settings\.envui\.reexportModule/,
+  );
+  assert.deepEqual(verify({ envui: { reexportModules: ['./ui'] } }), []);
+});

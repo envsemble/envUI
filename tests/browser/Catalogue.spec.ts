@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { catalogueUrl } from './Servers';
-import { resolve } from 'node:path';
+import { extname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import {
   references,
   foundations as foundationReferences,
@@ -14,6 +14,18 @@ import {
 } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
 
 const offline = pathToFileURL(resolve('dist/envUI.html')).href;
+/** The hosted catalogue from `npm run build:site`, served at a made-up address. */
+const site = resolve('dist/site');
+const siteUrl = 'http://envui.site.test';
+const contentTypes: Record<string, string> = {
+  '.html': 'text/html',
+  '.js': 'text/javascript',
+  '.css': 'text/css',
+  '.svg': 'image/svg+xml',
+  '.woff2': 'font/woff2',
+  '.json': 'application/json',
+  '.png': 'image/png',
+};
 const version = JSON.parse(readFileSync('packages/ui/package.json', 'utf8')).version;
 const components = references.map(({ id }) => id);
 const foundations = foundationReferences.map(({ id }) => id);
@@ -506,6 +518,36 @@ test('an example that fails to load says so in place, and loads again on request
   expect(await hero.evaluate((group) => group.contains(document.activeElement))).toBe(true);
 });
 
+test('in the hosted build, an example that fails to load offers a reload, which loads it', async ({
+  page,
+}) => {
+  // A build's chunk that failed stays failed until the page reloads, in Chromium and WebKit, and in
+  // WebKit even then, unless it is fetched again.
+  test.skip(!existsSync(resolve(site, 'index.html')), 'Needs the hosted build: npm run build:site');
+  let failing = true;
+  await page.route(`${siteUrl}/**`, (route) => {
+    const { pathname } = new URL(route.request().url());
+    // The hosted Worker's answer for a file that is gone.
+    if (failing && /^\/assets\/CreateProject-[\w-]+\.js$/.test(pathname))
+      return route.fulfill({ status: 404, headers: { 'Cache-Control': 'no-store' } });
+    const file = resolve(site, `.${pathname.endsWith('/') ? `${pathname}index.html` : pathname}`);
+    if (!existsSync(file)) return route.fulfill({ status: 404 });
+    return route.fulfill({
+      body: readFileSync(file),
+      contentType: contentTypes[extname(file)] ?? 'application/octet-stream',
+    });
+  });
+  await page.goto(`${siteUrl}/#/components/button/overview`);
+  const hero = page.getByRole('group', { name: 'Button example', exact: true });
+  await expect(hero.getByText('The example could not load')).toBeVisible();
+  await expect(hero.getByText('Reloading the page loads the example again.')).toBeVisible();
+  await expect(hero.getByRole('button', { name: 'Try again' })).toHaveCount(0);
+  failing = false;
+  await hero.getByRole('button', { name: 'Reload the page', exact: true }).click();
+  await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+});
+
 test('code that fails to load is asked for once, not on every render', async ({ page }) => {
   const source = /\/src\/examples\/button\/CreateProject\.tsx\?raw/;
   const warnings: string[] = [];
@@ -528,9 +570,53 @@ test('code that fails to load is asked for once, not on every render', async ({ 
   await expect(entry.getByText('CreateProject.tsx', { exact: true })).toBeVisible();
 });
 
-test('an example that fails to render is not reported as failing to load', async ({ page }) => {
-  const errors: string[] = [];
-  page.on('pageerror', (error) => errors.push(error.message));
+test('a retry returns focus once, and later updates leave focus where it is', async ({ page }) => {
+  const example = '**/src/examples/button/CreateProject.tsx*';
+  await page.route(example, (route) => route.abort());
+  await page.goto(`${catalogueUrl}/#/components/button/overview`);
+  const hero = page.getByRole('group', { name: 'Button example', exact: true });
+  await expect(hero.getByText('The example could not load')).toBeVisible();
+  await page.unroute(example);
+  await hero.getByRole('button', { name: 'Try again', exact: true }).focus();
+  await page.keyboard.press('Enter');
+  await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
+  expect(await hero.evaluate((group) => group.contains(document.activeElement))).toBe(true);
+  // Focus leaves for the page; the theme changes with a click that moves no focus.
+  await page.evaluate(() => {
+    (document.activeElement as HTMLElement | null)?.blur();
+    window.scrollTo(0, document.documentElement.scrollHeight);
+  });
+  const scrolled = await page.evaluate(() => window.scrollY);
+  expect(scrolled).toBeGreaterThan(1000);
+  await page.locator('.docs-theme-toggle').evaluate((toggle: HTMLElement) => toggle.click());
+  await expect(page.locator('.docs-app')).toHaveAttribute('data-env-theme', 'dark');
+  expect(await page.evaluate(() => document.activeElement === document.body)).toBe(true);
+  expect(await page.evaluate(() => window.scrollY)).toBe(scrolled);
+});
+
+test('retrying the code after the example returns focus to the code', async ({ page }) => {
+  const files = '**/src/examples/button/CreateProject.tsx*';
+  await page.route(files, (route) => route.abort());
+  await page.goto(`${catalogueUrl}/#/components/button/overview`);
+  const entry = page.locator('.docs-live-example-entry').first();
+  const hero = page.getByRole('group', { name: 'Button example', exact: true });
+  const code = entry.locator('.docs-live-example-code');
+  await entry.getByText('Code', { exact: true }).click();
+  await expect(hero.getByText('The example could not load')).toBeVisible();
+  await expect(code.getByText('The code could not load')).toBeVisible();
+  await page.unroute(files);
+  await hero.getByRole('button', { name: 'Try again', exact: true }).focus();
+  await page.keyboard.press('Enter');
+  await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
+  await code.getByRole('button', { name: 'Try again', exact: true }).focus();
+  await page.keyboard.press('Enter');
+  await expect(code.getByText('CreateProject.tsx', { exact: true })).toBeVisible();
+  expect(await code.evaluate((element) => element.contains(document.activeElement))).toBe(true);
+});
+
+test('an example that fails to render says so in place, and the rest of the page works', async ({
+  page,
+}) => {
   await page.route('**/src/examples/button/CreateProject.tsx', (route) =>
     route.fulfill({
       contentType: 'text/javascript',
@@ -538,8 +624,54 @@ test('an example that fails to render is not reported as failing to load', async
     }),
   );
   await page.goto(`${catalogueUrl}/#/components/button/overview`);
-  await expect.poll(() => errors.join('\n')).toContain('Broken example');
+  const hero = page.getByRole('group', { name: 'Button example', exact: true });
+  await expect(hero.getByText('This example failed to render')).toBeVisible();
+  await expect(hero.getByText('Broken example')).toBeVisible();
+  // It is not a failed load, which a retry or a reload could mend.
   await expect(page.getByText('The example could not load')).toHaveCount(0);
+  await expect(hero.getByRole('button')).toHaveCount(0);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+  // The other examples and the example's code render.
+  const variants = page.getByRole('group', { name: 'Variants example', exact: true });
+  await expect(variants.getByRole('button').first()).toBeVisible();
+  const entry = page.locator('.docs-live-example-entry').first();
+  await entry.getByText('Code', { exact: true }).click();
+  await expect(entry.getByText('CreateProject.tsx', { exact: true })).toBeVisible();
+  // And the navigation still leads elsewhere.
+  await page
+    .getByRole('navigation', { name: 'Documentation' })
+    .first()
+    .getByRole('link', { name: 'Badge', exact: true })
+    .click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Badge');
+});
+
+test('a page that fails to render says so, and the navigation leads to the others', async ({
+  page,
+}) => {
+  await page.route('**/src/pages/Overview.tsx', (route) =>
+    route.fulfill({
+      contentType: 'text/javascript',
+      body: "export function Overview() { throw new Error('Broken page'); }",
+    }),
+  );
+  await page.goto(`${catalogueUrl}/#/overview`);
+  const main = page.getByRole('main');
+  await expect(main.getByText('This page failed to render')).toBeVisible();
+  await expect(main.getByText('Broken page')).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('envUI');
+  const navigation = page.getByRole('navigation', { name: 'Documentation' }).first();
+  await navigation.getByRole('link', { name: 'Button', exact: true }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+  await expect(main.getByText('This page failed to render')).toHaveCount(0);
+  await expect(
+    page
+      .getByRole('group', { name: 'Button example', exact: true })
+      .getByRole('button', { name: 'Create project', exact: true }),
+  ).toBeVisible();
+  // Going back to the page that failed says so again.
+  await page.goBack();
+  await expect(main.getByText('This page failed to render')).toBeVisible();
 });
 
 test('each Markdown table region is named after its heading', async ({ page }) => {

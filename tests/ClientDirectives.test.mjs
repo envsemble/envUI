@@ -90,6 +90,20 @@ test('the check sees what makes a module a client module, also by name and throu
       'export function J({ onClick }: { onClick?: () => void }) { return <button {...{ onClick }} />; }',
       [],
     ],
+    // Also when the prop is destructured in the body, and through a variable that holds the props.
+    [
+      'export function J2(props: { onClick?: () => void }) { const { onClick } = props; return <div {...{ onClick }} />; }',
+      [],
+    ],
+    [
+      'export function J3(props: { handlers: { onClick?: () => void } }) { const { handlers } = props; const { onClick } = handlers; return <div {...{ onClick }} />; }',
+      [],
+    ],
+    // A shorthand for a function the module makes, destructured from its own object, still counts.
+    [
+      'export function J4() { const { onClick } = { onClick: () => {} }; return <div {...{ onClick }} />; }',
+      ['spreads a function into div'],
+    ],
     // A class component of either base, and the marker only in a comment, not a string.
     [
       "import { PureComponent } from 'react';\nexport class K extends PureComponent { render() { return null; } }",

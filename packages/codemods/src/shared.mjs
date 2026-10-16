@@ -9,9 +9,30 @@ const typeScriptOnly = new Set(['.ts', '.mts', '.cts']);
  */
 export const parserFor = (path) => (typeScriptOnly.has(extname(path).toLowerCase()) ? 'ts' : 'tsx');
 
-/** Print options that keep the file's line endings and the quote style of its imports. */
+/**
+ * Whether a file indents with tabs: more of its lines start with a tab than with two or more
+ * spaces. A single space, as before the `*` of a block comment's lines, is not indentation.
+ */
+export function indentsWithTabs(source) {
+  let tabs = 0;
+  let spaces = 0;
+  for (const line of source.split('\n')) {
+    if (line.startsWith('\t')) tabs += 1;
+    else if (/^ {2,}\S/.test(line)) spaces += 1;
+  }
+  return tabs > spaces;
+}
+
+/**
+ * Print options that keep the file's line endings, its indentation with tabs or spaces, and the
+ * quote style of its imports. Recast indents what it reprints with these; the rest keeps its text.
+ */
 export function printOptions(source, quote) {
-  return { quote: quote ?? 'single', lineTerminator: source.includes('\r\n') ? '\r\n' : '\n' };
+  return {
+    quote: quote ?? 'single',
+    lineTerminator: source.includes('\r\n') ? '\r\n' : '\n',
+    useTabs: indentsWithTabs(source),
+  };
 }
 
 /** A printed file with the byte order mark of its source, which recast leaves out when it prints. */

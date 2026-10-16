@@ -5,6 +5,7 @@ import {
   isIntrinsic,
   jsxName,
   moduleExportName,
+  pluginSettings,
   readData,
   resolveVariable,
   spreadsProps,
@@ -183,6 +184,10 @@ export default {
   create(context) {
     const [{ allow, renderProps }] = context.options;
     const { sourceCode } = context;
+    const { reexportModules } = pluginSettings(context);
+    /** Whether names from a module are envUI's: an entry point, or a module that re-exports one. */
+    const isEnvuiSource = (source) =>
+      componentEntryPoints.has(source) || reexportModules.has(source);
     const unknown = allow.filter((id) => !knownIds.has(id));
     if (unknown.length > 0)
       throw new Error(
@@ -326,15 +331,15 @@ export default {
 
     /**
      * Whether a component element renders a role itself, so that a role on it refines its own: an
-     * envUI component of the role's owners, by the name its entry point exports when it is
-     * imported, or by its written name when nothing in the file declares it, as in
-     * `<Menu.Root role="menu">` without its import.
+     * envUI component of the role's owners, by the name its entry point, or a module listed in
+     * `settings.envui.reexportModules`, exports when it is imported, or by its written name when
+     * nothing in the file declares it, as in `<Menu.Root role="menu">` without its import.
      */
     function ownsRole(node, entry) {
       const owners = ownersOf(entry);
       const imported = importedComponent(node.name);
       if (!imported) return owners.has(jsxName(node.name));
-      return componentEntryPoints.has(imported.source) && owners.has(imported.name);
+      return isEnvuiSource(imported.source) && owners.has(imported.name);
     }
 
     return {
