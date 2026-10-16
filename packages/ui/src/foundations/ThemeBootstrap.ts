@@ -20,7 +20,9 @@ export interface ThemeBootstrapOptions {
   /**
    * The application's scale, as ThemePreferenceProvider's `scale`: `compact` is written to the root
    * as `data-env-scale` before the first paint, so a compact app does not load at the comfortable
-   * size. `comfortable`, the default, writes nothing.
+   * size. `comfortable`, the default, writes nothing. The script marks what it writes with
+   * `data-env-scale-source="envui"`, as it marks the contrast, so a ThemePreferenceProvider replaces
+   * or removes it as its own.
    */
   scale?: ThemeScale;
 }
@@ -35,6 +37,8 @@ export const defaultThemeStorageKey = 'env-theme';
  */
 export const contrastSourceAttribute = 'data-env-contrast-source';
 export const ownContrastSource = 'envui';
+/** Marks a root `data-env-scale` that envUI wrote, as contrastSourceAttribute marks a contrast. */
+export const scaleSourceAttribute = 'data-env-scale-source';
 
 /**
  * Inline script for the document head. It themes the root element before the first paint, so a
@@ -51,6 +55,9 @@ export function createThemeBootstrapScript({
     contrast === 'high' || contrast === 'standard'
       ? `r.setAttribute("data-env-contrast",${JSON.stringify(contrast)});r.setAttribute(${JSON.stringify(contrastSourceAttribute)},${JSON.stringify(ownContrastSource)});`
       : '';
-  const writeScale = scale === 'compact' ? `r.setAttribute("data-env-scale","compact");` : '';
+  const writeScale =
+    scale === 'compact'
+      ? `r.setAttribute("data-env-scale","compact");r.setAttribute(${JSON.stringify(scaleSourceAttribute)},${JSON.stringify(ownContrastSource)});`
+      : '';
   return `(function(){var r=document.documentElement,t="light";try{var p=localStorage.getItem(${JSON.stringify(storageKey)});if(p!=="light"&&p!=="dark"&&p!=="system")p=${JSON.stringify(defaultPreference)};t=p==="system"?(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):p}catch(e){}r.classList.add("env-theme");r.setAttribute("data-env-theme",t);${writeContrast}${writeScale}r.style.colorScheme=t})();`;
 }

@@ -61,6 +61,7 @@ test('an unknown contrast writes nothing, as system does', () => {
 test('the bootstrap script writes a compact scale before the first paint, and nothing else', () => {
   const root = bootstrap(createThemeBootstrapScript({ scale: 'compact' }));
   assert.equal(root.attributes['data-env-scale'], 'compact');
+  assert.equal(root.attributes['data-env-scale-source'], 'envui');
   for (const options of [{}, { scale: 'comfortable' }])
     assert.doesNotMatch(createThemeBootstrapScript(options), /data-env-scale/);
 });

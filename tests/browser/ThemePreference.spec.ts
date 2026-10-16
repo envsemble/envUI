@@ -68,6 +68,38 @@ test('a provider mounted again removes the contrast its predecessor wrote', asyn
   await expect(root).not.toHaveAttribute('data-env-contrast-source');
 });
 
+test('a provider without a scale leaves the scale the page set on the root', async ({ page }) => {
+  await page.route(`${fixtureUrl}/?fixture=adoption`, async (route) => {
+    const response = await route.fetch();
+    const body = (await response.text()).replace('<html', '<html data-env-scale="compact"');
+    await route.fulfill({ response, body });
+  });
+  await page.goto(`${fixtureUrl}/?fixture=adoption`);
+  const root = page.locator('html');
+  await expect(page.getByTestId('theme-toggle')).toBeVisible();
+  await page.getByTestId('theme-toggle').click();
+  await expect(root).toHaveAttribute('data-env-scale', 'compact');
+  await expect(root).not.toHaveAttribute('data-env-scale-source');
+});
+
+test('a provider without a scale removes the scale the bootstrap script wrote', async ({
+  page,
+}) => {
+  await page.route(`${fixtureUrl}/?fixture=adoption`, async (route) => {
+    const response = await route.fetch();
+    const body = (await response.text()).replace(
+      '<html',
+      '<html data-env-scale="compact" data-env-scale-source="envui"',
+    );
+    await route.fulfill({ response, body });
+  });
+  await page.goto(`${fixtureUrl}/?fixture=adoption`);
+  const root = page.locator('html');
+  await expect(page.getByTestId('theme-toggle')).toBeVisible();
+  await expect(root).not.toHaveAttribute('data-env-scale');
+  await expect(root).not.toHaveAttribute('data-env-scale-source');
+});
+
 test('a theme chosen in one window applies in the other windows of the same origin', async ({
   context,
 }) => {

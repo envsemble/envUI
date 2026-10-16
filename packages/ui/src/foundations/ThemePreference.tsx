@@ -16,6 +16,7 @@ import { DarkMode } from '../icons/DarkMode.js';
 import { LightMode } from '../icons/LightMode.js';
 import {
   contrastSourceAttribute,
+  scaleSourceAttribute,
   defaultThemeStorageKey,
   ownContrastSource,
   type ThemePreference,
@@ -56,10 +57,11 @@ export interface ThemePreferenceProviderProps {
    */
   contrast?: ThemeContrast;
   /**
-   * The app scale of the Theme boundary around the children, and of the document root with
-   * applyToDocument: comfortable, or compact for a desktop productivity app, as on Theme. Defaults
-   * to the scale of an enclosing Theme, and to comfortable. Pass the same scale to
-   * createThemeBootstrapScript so the root has it before the first paint.
+   * The app scale, comfortable or compact for a desktop productivity app, as on Theme: of the Theme
+   * boundary around the children, and, marked as envUI's own, of the document root with
+   * applyToDocument. Without it, the boundary takes the scale of an enclosing Theme, or
+   * comfortable, and the root keeps a scale the page set but drops one that envUI wrote. Pass the
+   * same scale to createThemeBootstrapScript so the root has it before the first paint.
    */
   scale?: ThemeScale;
   /** Class name for the Theme boundary around the children. */
@@ -145,7 +147,15 @@ export function ThemePreferenceProvider({
       delete root.dataset.envContrast;
       root.removeAttribute(contrastSourceAttribute);
     }
-    root.dataset.envScale = scale;
+    // The root takes a scale the provider is given; without one it keeps a scale the page set, and
+    // drops one that envUI wrote, the bootstrap script or a provider before it.
+    if (ownScale) {
+      root.dataset.envScale = ownScale;
+      root.setAttribute(scaleSourceAttribute, ownContrastSource);
+    } else if (root.getAttribute(scaleSourceAttribute) === ownContrastSource) {
+      delete root.dataset.envScale;
+      root.removeAttribute(scaleSourceAttribute);
+    }
     root.style.colorScheme = theme;
     // The browser's own interface, such as a mobile address bar, takes the canvas color. Every
     // theme-color tag follows, including ones written for a system color scheme with media.
@@ -154,7 +164,7 @@ export function ThemePreferenceProvider({
       'meta[name="theme-color"]',
     ))
       browserTheme.content = canvas;
-  }, [applyToDocument, theme, contrast, scale]);
+  }, [applyToDocument, theme, contrast, ownScale]);
 
   const setPreference = useCallback(
     (next: ThemePreference) => {
