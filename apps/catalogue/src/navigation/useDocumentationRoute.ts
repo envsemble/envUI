@@ -6,6 +6,9 @@ function readRoute() {
   return normalizeRoute(writtenRoute() || 'overview');
 }
 
+/** The route the address names now, such as components/button/props?section=props-Button-variant. */
+export const currentRoute = readRoute;
+
 /** The query of the current route, such as a page's `section`. */
 export function currentRouteQuery() {
   return new URLSearchParams(readRoute().split('?')[1] ?? '');
