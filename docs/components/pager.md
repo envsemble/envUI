@@ -82,8 +82,8 @@ Pager.Previous and Pager.Next also stand alone, where the application places a s
 - **Focus**: keyboard focus shows the shared ring outside the link.
 - **Links**: each link is a native link, rendered through the `LinkProvider`'s link component so routing stays with the application. `rel` is `prev` or `next` unless set; `target`, `onClick` and the other link props work as on any link.
 - **Missing destinations**: a `previous` or `next` left out, or `null`, renders no link; a pager without either, and without children, renders nothing.
-- **Order**: the previous link comes before the next one, in reading and keyboard order. Children render after the links of the props, so give a pager either the props or the parts.
-- **Labels**: the direction labels are Previous and Up next, in English; the pager has no prop to change them. The landmark's name, Previous and next content, changes with `aria-label`.
+- **Order**: the previous link comes before the next one, in reading and keyboard order. Children render between the `previous` prop's link and the `next` prop's, so a pager can take one link as a prop and the other as a part.
+- **Labels**: the direction labels are Previous and Up next, and the landmark's name Previous and next content; EnvUIProvider's `messages.pager` sets them in another language, and `aria-label` names one pager.
 
 ## Content guidelines
 
@@ -156,7 +156,7 @@ Where the pair doesn't fit side by side, each link takes a row of its own, and t
 
 ## Changelog
 
-- **1.0.0**: `DirectionLinks` is `Pager.Root`, and `DirectionLink` is `Pager.Previous` or `Pager.Next`, which no longer take `direction`. Pager.Root also accepts the two parts as children. `DirectionLinkProps` and `DirectionLinksDestination` are `Pager.LinkProps`, the classes are `env-pager` and `env-pager-link-*`, and the page is `pager`.
+- **1.0.0**: `DirectionLinks` is `Pager.Root`, and `DirectionLink` is `Pager.Previous` or `Pager.Next`, which no longer take `direction`. Pager.Root also accepts the two parts as children. `DirectionLinkProps` and `DirectionLinksDestination` are `Pager.LinkProps`, the classes are `env-pager` and `env-pager-link-*`, and the page is `pager`. The direction labels and the landmark's name come from `messages.pager`, and children render between the `previous` and `next` props' links instead of after both.
 - **0.4.0**: Links settle slightly while pressed.
 - **0.2.0**: Destinations render through the `LinkProvider`'s link component.
 - **0.1.0**: DirectionLink and DirectionLinks: previous and next destinations that wrap on narrow screens.

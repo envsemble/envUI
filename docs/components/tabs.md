@@ -1,7 +1,7 @@
 ---
 title: Tabs
 summary: Switches between panels of related content in one place, from a rail of buttons.
-status: beta
+status: stable
 since: 0.1.0
 category: Navigation
 aliases:
@@ -177,6 +177,7 @@ A vertical rail of NavList.Item tabs, with ↑ and ↓; the Tabs is laid out as 
 
 ## Changelog
 
+- **1.0.0**: The arrow keys follow the text direction, from EnvUIProvider's `dir` or the direction at the tabs; only the tab list takes it, so a panel keeps the direction around it. The tab and panel classes are `env-tabs-tab` and `env-tabs-panel` (were `env-tab` and `env-tab-panel`).
 - **0.7.0**: `size="compact"`: the whole rail as tall as a compact control, for bars and toolbars.
 - **0.5.0**: `fill`, for panels that fill a region. Labels in a selected tab keep 4.5:1 contrast on hover.
 - **0.4.0**: Unselected tabs show translucent hover and press layers, and the rail's fill stays visible on panes.

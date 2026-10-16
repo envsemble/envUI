@@ -1,7 +1,7 @@
 ---
 title: Menubar
 summary: A desktop-style menubar of menus, such as File, Edit and View, with shortcuts, submenus and access keys.
-status: beta
+status: stable
 since: 0.5.0
 category: Feedback & overlays
 aliases:
@@ -134,5 +134,5 @@ A window that draws its own title bar holds the menubar at the start of TitleBar
 
 ## Changelog
 
-- **1.0.0**: The parts are members of the `Menubar` namespace: `Menubar` is `Menubar.Root`, `MenubarMenu` is `Menubar.Menu`, and `MenubarMenuOpenChangeDetails` is `Menubar.MenuOpenChangeDetails`.
+- **1.0.0**: The parts are members of the `Menubar` namespace: `Menubar` is `Menubar.Root`, `MenubarMenu` is `Menubar.Menu`, and `MenubarMenuOpenChangeDetails` is `Menubar.MenuOpenChangeDetails`. Menubar.Menu's popup is the shared popup surface and takes `ref` and `style`; the arrow keys between menus follow the text direction.
 - **0.5.0**: Menubar and MenubarMenu, with compact menus, switching on hover and with the arrow keys, focus returning to where it was with `previousFocus`, and `accessKeys`.

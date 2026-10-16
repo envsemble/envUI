@@ -100,7 +100,7 @@ CounterBadge is `neutral`, a quiet fill with text in the primary color, or `acce
 
 - Badges have no interactive states: they are not focusable and don't respond to the pointer or the keyboard.
 - **In a button**, such as a tab with a count, a badge takes the button's text color as an outlined pill. A CounterBadge keeps its own filled pill, and a DiffStat sits on a pill that leans back toward the canvas so its tones keep their contrast; on the solid fills of primary and important buttons, both take the button's text color as an outlined pill instead.
-- **In navigation**, NavList.Item shows a CounterBadge as its `trailing` content, and a small dot instead while the item is icon-only.
+- **In navigation**, NavList.Item shows a CounterBadge as its `end` content, and a small dot instead while the item is icon-only, whose name then says the count.
 - **Names**: a CounterBadge with `aria-label` hides its visible value from assistive technology and reads the label instead, such as "12 unread". A DiffStat always reads its label once instead of the signs, "12 added lines and 3 removed lines" by default.
 
 ## Content guidelines
@@ -169,7 +169,7 @@ A decorative icon before the label repeats the state at a glance.
 
 ### Counts in navigation
 
-A CounterBadge as a NavList.Item's `trailing` content, with an `aria-label` that says what it counts; the accent tone marks the count that needs attention.
+A CounterBadge as a NavList.Item's `end` content, with an `aria-label` that says what it counts; the accent tone marks the count that needs attention.
 
 ```tsx example=NavigationCounts
 

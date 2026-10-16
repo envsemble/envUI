@@ -2,7 +2,7 @@
 title: Table
 summary: 'Semantic data tables on a rounded surface: sorting, resizable columns, selected rows and
   stacked rows in narrow containers.'
-status: beta
+status: stable
 since: 0.5.0
 category: Content & guidance
 aliases:
@@ -65,7 +65,7 @@ The `Table` namespace has six parts:
 1. **Scroll region** (`Table.Root`): a region named like the table, with a 0.0625 rem border and 1 rem corners; it is a tab stop and scrolls the table sideways when the columns don't fit. `regionClassName` styles it, for example to give it a height.
 2. **Caption** (optional, `caption`): a visible name above the rows, in the 1 rem section heading style.
 3. **Header row** (`Table.Head`, `Table.Row`, `Table.HeaderCell`): 0.875 rem muted labels, weight 500, on one line over the neutral fill. Header cells head their column with `scope="col"` by default.
-4. **Sort button** (with `onSort` on a header cell): fills the header cell, with the label and an arrow for `sortDirection`; at least 2.75 rem tall on touch screens.
+4. **Sort button** (with `onSortChange` on a header cell): fills the header cell, with the label and an arrow for `sortDirection`; at least 2.75 rem tall on touch screens.
 5. **Resize handle** (with `resizableColumns` on the root): at the inline end of every header cell but the last, 0.75 rem wide and 1.5 rem on touch screens, with a line on the column boundary.
 6. **Body rows** (`Table.Body`, `Table.Row`): separated by hairlines; the first body row meets the header without one. `interactive` and `selected` change their fill.
 7. **Cells** (`Table.Cell`): body text, aligned with `align` and `numeric` and kept on one line with `nowrap`. A `<Text variant="caption">` after the main text adds a quieter second line, such as a team under a project.
@@ -98,8 +98,8 @@ While a stacking table stacks its rows, each row is a block titled by its first 
 ## States and behaviour
 
 - **Scroll region**: the region is a tab stop with the table's name and the shared focus ring, so keyboard users can focus it and scroll a table that doesn't fit. Content positioned inside cells, such as visually hidden text, stays inside the region and scrolls with it, so it never widens the page.
-- **Sorting**: a header cell with `onSort` is a button across the whole cell, with its label and then an arrow for `sortDirection`: up for ascending, down for descending, and a neutral double arrow while the column isn't sorted. In a `numeric` or end-aligned column the arrow comes first, so the label lines up with the numbers. Hover and press show the state layer, and a sorted header takes the primary text color. The header reports `aria-sort`, `none` while unsorted, and the button's name says what pressing it does: "Name sort ascending", or "Name sort descending" while the column is sorted ascending; `sortLabel` replaces it. A header named with `aria-label` or `aria-labelledby`, such as one that shows only an icon, lends that name to its sort button and resize handle.
-- **The application sorts**: pressing a sort button calls `onSort` and nothing else. The application sorts the rows and passes each sortable header its new `sortDirection`. Without `onSort`, `sortDirection` only sets `aria-sort`.
+- **Sorting**: a header cell with `onSortChange` is a button across the whole cell, with its label and then an arrow for `sortDirection`: up for ascending, down for descending, and a neutral double arrow while the column isn't sorted. In a `numeric` or end-aligned column the arrow comes first, so the label lines up with the numbers. Hover and press show the state layer, and a sorted header takes the primary text color. The header reports `aria-sort`, `none` while unsorted, and the button's name says what pressing it does: "Name sort ascending", or "Name sort descending" while the column is sorted ascending; `sortLabel` replaces it. A header named with `aria-label` or `aria-labelledby`, such as one that shows only an icon, lends that name to its sort button and resize handle.
+- **The application sorts**: pressing a sort button calls `onSortChange` with the order it asks for, descending while the column is sorted ascending and ascending otherwise, and nothing else. The application sorts the rows and passes each sortable header its new `sortDirection`. Without `onSortChange`, `sortDirection` only sets `aria-sort`.
 - **Interactive rows**: `interactive` highlights a row on hover and while focus is inside it, for rows that open something through a link or button in a cell. It adds no behavior: the link or button does the work.
 - **Selected rows**: `selected` reports `aria-selected` and takes the navigation selection color, with a bar at the start of the row; an interactive selected row takes the selected hover color. Pass `selected={false}` to the other rows of a table whose rows can be selected, so every row exposes its state. Screen readers announce row selection unevenly in tables, so pair it with a control people select with, such as a Checkbox in the first cell, whose state they always hear.
 - **Resizable columns**: with `resizableColumns` and `columnWidths` or `defaultColumnWidths`, each header cell but the last has a resize handle. Dragging it, or the arrow keys on it, move the boundary between its column and the next one, so the other columns and the table's width stay as they are. The arrow keys move it by 1 percent and by 5 with <kbd>Shift</kbd>; <kbd>Home</kbd> and <kbd>End</kbd> go to the column's smallest and largest width, which keep both columns at least `minColumnWidths`, 5 percent by default. Double-clicking a handle restores the starting widths: `defaultColumnWidths`, or the widths a controlled table started with.
@@ -168,8 +168,8 @@ While a stacking table stacks its rows, each row is a block titled by its first 
 ### You provide
 
 - A `caption` or an `aria-label` for every table.
-- The sorting: `onSort` sorts the rows and sets each sortable header's `sortDirection`.
-- An `aria-label` or `aria-labelledby` on a header that shows only an icon, and `sortLabel` and `resizeLabel` in the page's language.
+- The sorting: `onSortChange` sorts the rows and sets each sortable header's `sortDirection`.
+- An `aria-label` or `aria-labelledby` on a header that shows only an icon, and the sort and resize words in the page's language, through EnvUIProvider's `messages.table`, or `sortLabel` and `resizeLabel` for one header.
 - A control that selects a row, such as a Checkbox labelled with the row's name, beside `selected`.
 - Links and buttons for row actions, named for the row they act on, such as "More for Roadmap".
 - `scope="row"` on a header cell at the start of a body row.
@@ -187,7 +187,7 @@ While a stacking table stacks its rows, each row is a block titled by its first 
 
 ### Sort by a column
 
-A header with `onSort` becomes a sort button. The application keeps the order, sorts the rows and gives each sortable header its `sortDirection`.
+A header with `onSortChange` becomes a sort button. The application keeps the order, sorts the rows and gives each sortable header its `sortDirection`.
 
 ```tsx example=SortableColumns
 
@@ -243,6 +243,6 @@ The header row is hidden while rows stack, so `onStackedChange` shows a Select f
 
 ## Changelog
 
-- **1.0.0**: The parts are members of the `Table` namespace: `Table` is `Table.Root`, and `TableHead`, `TableBody`, `TableRow`, `TableHeaderCell` and `TableCell` are `Table.Head`, `Table.Body`, `Table.Row`, `Table.HeaderCell` and `Table.Cell`; `TableSortDirection` is `Table.SortDirection`. The page is `table`, after the component.
+- **1.0.0**: The parts are members of the `Table` namespace: `Table` is `Table.Root`, and `TableHead`, `TableBody`, `TableRow`, `TableHeaderCell` and `TableCell` are `Table.Head`, `Table.Body`, `Table.Row`, `Table.HeaderCell` and `Table.Cell`; `TableSortDirection` is `Table.SortDirection`. The page is `table`, after the component. Table.HeaderCell's `onSort` is `onSortChange`, called with the order pressing asks for. A table named by `aria-labelledby` names its scroll region too, which was left unnamed. The sort and resize words come from `messages.table`.
 - **0.6.0**: A table with `stickyHeader` no longer swallows the wheel: over a region without a height of its own, or scrolled to an end, the wheel scrolls the page.
 - **0.5.0**: Table and its parts, with density, sticky headers, numeric cells and a focusable scroll region; sortable headers with `sortDirection` and `onSort`; resizable columns; selected rows; and stacked rows with `narrowLayout="stack"`, `stackBelow` and `onStackedChange`.

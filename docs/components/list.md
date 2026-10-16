@@ -1,7 +1,7 @@
 ---
 title: List
 summary: A vertical list of connected rows, each with a title, a detail and an action, that can open what it names.
-status: beta
+status: stable
 since: 0.1.0
 category: Layout & surfaces
 aliases:
@@ -52,19 +52,19 @@ A list is a column of connected rows on the shared row fill: the first and last 
 
 ## Anatomy
 
-1. **List** (List.Root): a `ul` of rows 0.125 rem apart. With `contrast`, a muted pane with 0.75 rem padding around the rows. `density` sets how tightly the rows pack, from `xs` to `lg`; it changes only their block padding.
+1. **List** (List.Root): a `ul` of rows 0.125 rem apart. Directly in a muted Surface, such as `<Surface background="muted" padding={3}>`, the rows take the raised fill. `density` sets how tightly the rows pack, from `xs` to `lg`; it changes only their block padding.
 2. **Row** (List.Item): at `md`, the default, at least 3.5 rem tall, with 0.75 rem block and 1.5 rem inline padding, so its text stays clear of the large corners.
-3. **Title** (`title`): the row's main text, 0.875 rem in the row text color.
-4. **Detail** (optional, `detail`): a `small` below the title in the muted row detail color.
+3. **Label** (`label`): the row's main text, 0.875 rem in the row text color.
+4. **Description** (optional, `description`): a `small` below the label in the muted row detail color.
 5. **More content** (optional, `children`): after the title and the detail, such as a Badge.
 6. **Action** (optional, `action`): a control at the end of the row, 0.75 rem from the text.
 
 ## Variants and sizes
 
-| Variant    | Use for                                                                                                 |
-| ---------- | ------------------------------------------------------------------------------------------------------- |
-| Default    | Rows on the page or in a dialog, on the shared row fill.                                                |
-| `contrast` | Rows that sit on a muted pane of their own, in the alternate row fill, so they stand out from the pane. |
+| Variant            | Use for                                                                                                   |
+| ------------------ | --------------------------------------------------------------------------------------------------------- |
+| Default            | Rows on the page or in a dialog, on the shared row fill.                                                  |
+| On a muted Surface | Rows directly in `<Surface background="muted">`, in the raised row fill, so they stand out from the pane. |
 
 <!-- specimen: Corners -->
 
@@ -92,7 +92,7 @@ A list is a column of connected rows on the shared row fill: the first and last 
 
 - Name a list with `aria-label` where its heading doesn't, such as "Recent plans".
 - Make a row interactive when it opens what it names, and mark its title link `data-row-target`.
-- Use `contrast` when the rows sit on a muted pane.
+- Put the list directly in a muted Surface when the rows sit on a pane of their own.
 
 ### Don't
 
@@ -133,7 +133,7 @@ Each title link covers its row, so a press anywhere on the row opens the plan; t
 
 ### Rows on a pane
 
-`contrast` puts the rows on a muted pane of their own, in the alternate row fill.
+A list directly in a muted Surface puts the rows on a pane of their own, in the raised row fill.
 
 ```tsx example=OnAPane
 
@@ -149,6 +149,6 @@ Children follow the title and the detail, such as a Badge with the item's status
 
 ## Changelog
 
-- **1.0.0**: `GroupedRows` is `List.Root` and `Row` is `List.Item`, with the `env-list` and `env-list-item` classes; the page is `list`.
+- **1.0.0**: `GroupedRows` is `List.Root` and `Row` is `List.Item`, with the `env-list` and `env-list-item` classes; the page is `list`. List.Item's `title` is `label` and its `detail` is `description`. List.Root's `contrast` is gone: put the list directly in `<Surface background="muted" padding={3}>`, where its rows take the raised fill.
 - **0.5.0**: `interactive` rows, which react to hover, focus inside them and presses, and open from anywhere through a `data-row-target`.
 - **0.1.0**: GroupedRows and Row, with connected corners.
