@@ -105,22 +105,42 @@ function fromCustomProperties(channels, depth = 0) {
     });
 }
 
+/** A literal number or percentage, such as `0.5`, `.5` or `50%`. */
+const literalAlpha = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?%?$/i;
+
+/**
+ * Whether a color's alpha keeps it from custom properties: a literal number or percentage, or one
+ * `var()` whose fallbacks are `var()`s, as a channel's are. The Stylelint config reads it alike.
+ * A template's expression stands for a literal number here, as in `rgb(var(--rgb) / ${alpha})`.
+ */
+function isTokenAlpha(alpha) {
+  const text = alpha.trim();
+  return (
+    literalAlpha.test(text.replaceAll(expressionStandIn, '1')) ||
+    (splitTopLevel(text, /[\s,]/).filter((token) => token.trim()).length === 1 &&
+      fromCustomProperties(text))
+  );
+}
+
 /**
  * Whether a color function's arguments make a raw color: any channel that is not a custom
  * property. A relative color derived from a token (`hsl(from …)`) passes, and so does one whose
- * channels are custom properties with a literal alpha, after the `/` or as the last of two or four
- * comma-separated arguments: `rgb(var(--rgb) / 50%)` and `rgba(var(--rgb), 0.5)` alike.
+ * channels are custom properties with an alpha that is a literal or a custom property, after the
+ * `/` or as the last of two or four comma-separated arguments: `rgb(var(--rgb) / 50%)` and
+ * `rgba(var(--rgb), var(--alpha))` alike.
  */
 function isRawColorFunction(name, args) {
   if (/^\s*from\b/i.test(args)) return false;
   let channels = name.toLowerCase() === 'color' ? args.replace(/^\s*[a-z][\w-]*\s/i, ' ') : args;
+  let alpha;
   const slash = splitTopLevel(channels, /\//);
-  if (slash.length > 1) channels = slash[0];
+  if (slash.length > 1) [channels, alpha] = [slash[0], slash.slice(1).join('/')];
   else {
     const commas = splitTopLevel(channels, /,/);
-    if (commas.length === 2 || commas.length === 4) channels = commas.slice(0, -1).join(',');
+    if (commas.length === 2 || commas.length === 4)
+      [channels, alpha] = [commas.slice(0, -1).join(','), commas.at(-1)];
   }
-  return !fromCustomProperties(channels);
+  return !fromCustomProperties(channels) || (alpha !== undefined && !isTokenAlpha(alpha));
 }
 
 /** The color function calls in a value whose channels are not all custom properties. */
@@ -192,6 +212,23 @@ const operandText = (operand) =>
       ? templateText(operand)
       : expressionStandIn;
 
+/** The DOM methods whose string arguments are selectors or ids, such as `#main`, not colors. */
+const selectorMethods = new Set([
+  'querySelector',
+  'querySelectorAll',
+  'closest',
+  'matches',
+  'getElementById',
+]);
+
+/** Whether a node calls a DOM lookup by selector, as in `document.querySelector('#fff')`. */
+const isSelectorCall = (node) =>
+  (node.type === 'CallExpression' || node.type === 'NewExpression') &&
+  node.callee.type === 'MemberExpression' &&
+  !node.callee.computed &&
+  node.callee.property.type === 'Identifier' &&
+  selectorMethods.has(node.callee.property.name);
+
 /** @type {import('eslint').Rule.RuleModule} */
 export default {
   meta: {
@@ -220,9 +257,10 @@ export default {
     }
 
     /**
-     * Checks the strings under a style value, each with the property it sets. Strings that only
-     * choose or compute a value are not the value: a member's key, as in styles[`#${id}`], and a
-     * call's arguments, as in pick(document.querySelector(`#${id}`)).
+     * Checks the strings under a style value, each with the property it sets, through calls too:
+     * darken('#123', 0.1) and mergeStyles(base, { color: 'red' }) are read. Strings that only
+     * choose a value are not the value: a member's key, as in styles[`#${id}`], and the selector a
+     * DOM lookup is given, as in pick(document.querySelector(`#${id}`)).
      */
     function visit(node, property) {
       walk(node, visitorKeys, (child) => {
@@ -234,7 +272,10 @@ export default {
           visit(child.object, property);
           return false;
         }
-        if (child.type === 'CallExpression' || child.type === 'NewExpression') return false;
+        if (isSelectorCall(child)) {
+          visit(child.callee, property);
+          return false;
+        }
         if (child.type === 'Literal' && typeof child.value === 'string')
           check(child, child.value, property);
         // A template literal is one value: `rgb(${r} 0 0)` and `url('${a}') #fff` are read whole,

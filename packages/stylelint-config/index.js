@@ -34,18 +34,21 @@ const customProperty = nested(
 );
 /** Text whose parentheses balance. */
 const balanced = nested('[^()]*', (inner) => String.raw`(?:[^()]|\(${inner}\))*`);
-/** The rest of a call's arguments, and the rest of one comma-separated argument. */
-const restOfCall = balanced;
-const restOfArgument = String.raw`(?:[^(),]|\(${balanced}\))*`;
+/**
+ * An alpha that keeps a color from custom properties: a literal number or percentage, such as
+ * `0.5` or `50%`, or one custom property whose fallbacks are custom properties, as a channel's are.
+ * The ESLint plugin's no-raw-colors reads it alike.
+ */
+const alpha = String.raw`\s*(?:[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?%?|${customProperty})\s*`;
 /**
  * Arguments that make no raw color: a relative color derived from a token (`hsl(from …)`), or
  * channels that all come from custom properties, each a `var()` whose fallback, if any, is a
- * `var()` too, as in `oklch(var(--l) var(--c) var(--h))` or `rgb(var(--brand-rgb))`, with any
- * alpha after the `/` or as the last of two or four comma-separated arguments:
- * `rgb(var(--rgb) / 50%)` and `rgba(var(--rgb), 0.5)` alike. `color()` names its color space
- * first.
+ * `var()` too, as in `oklch(var(--l) var(--c) var(--h))` or `rgb(var(--brand-rgb))`, with an
+ * alpha that is a literal or a custom property, after the `/` or as the last of two or four
+ * comma-separated arguments: `rgb(var(--rgb) / 50%)` and `rgba(var(--rgb), var(--alpha))` alike.
+ * `color()` names its color space first.
  */
-const customChannels = String.raw`(?:\s*from\b|(?:(?<=color\()\s*[a-z][\w-]*\s+)?\s*${customProperty}(?:\s+${customProperty})*\s*(?:\/${restOfCall})?\)|\s*${customProperty}\s*(?:,\s*${customProperty}\s*,\s*${customProperty}\s*)?(?:,${restOfArgument})?\))`;
+const customChannels = String.raw`(?:\s*from\b|(?:(?<=color\()\s*[a-z][\w-]*\s+)?\s*${customProperty}(?:\s+${customProperty})*\s*(?:\/${alpha})?\)|\s*${customProperty}\s*(?:,\s*${customProperty}\s*,\s*${customProperty}\s*)?(?:,${alpha})?\))`;
 
 /**
  * Color functions with a channel that is not a custom property, as a Stylelint regular expression:

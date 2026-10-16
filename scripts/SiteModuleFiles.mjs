@@ -5,6 +5,7 @@
 //
 // `vite build --mode site` writes Vite's manifest into dist/site/.vite/; FinalizeSite.mjs turns it
 // into dist/site/module-files.json with writeModuleFiles and removes the manifest.
+import { existsSync } from 'node:fs';
 import { readFile, rm, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
@@ -44,10 +45,22 @@ export function moduleFiles(manifest) {
   return map;
 }
 
-/** Writes the map of the build in `siteDirectory` and removes Vite's manifest, which isn't served. */
+/**
+ * Writes the map of the build in `siteDirectory` and removes Vite's manifest, which isn't served.
+ * Resolves to true once written, and to false for a build that is already finalised, whose map
+ * stays as it is: its manifest is gone, as after `npm run build:site`.
+ */
 export async function writeModuleFiles(siteDirectory) {
   const manifestDirectory = resolve(siteDirectory, '.vite');
-  const manifest = JSON.parse(await readFile(resolve(manifestDirectory, 'manifest.json'), 'utf8'));
+  const manifestFile = resolve(manifestDirectory, 'manifest.json');
+  if (!existsSync(manifestFile)) {
+    if (existsSync(resolve(siteDirectory, moduleFilesName))) return false;
+    throw new Error(
+      `${siteDirectory} has neither Vite's manifest nor ${moduleFilesName}: build it with vite build --mode site, as npm run build:site does, first.`,
+    );
+  }
+  const manifest = JSON.parse(await readFile(manifestFile, 'utf8'));
   await writeFile(resolve(siteDirectory, moduleFilesName), JSON.stringify(moduleFiles(manifest)));
   await rm(manifestDirectory, { recursive: true });
+  return true;
 }

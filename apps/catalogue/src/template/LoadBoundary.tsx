@@ -45,22 +45,25 @@ export function reloadModule<T>(
 }
 
 /**
- * A component that loads on its own, for LoadBoundary to show: `component` is the lazy component to
- * render. A lazy component that failed to load stays failed, so `retry` replaces it with one that
- * asks for the module again, as reloadModule does with `path` relative to `base`.
+ * A component that loads on its own, for LoadBoundary to show. `module` is the path in the
+ * catalogue app of the module `load` imports, such as `src/usage/IconUsage.tsx`, and `modules`
+ * passes it on to LoadBoundary. `component` is the lazy component to render. A lazy component
+ * that failed to load stays failed, so `retry` replaces it with one that asks for the module again,
+ * as reloadModule does, at that path from the app's root, where Vite serves it in development.
  */
 export function lazyPart<M, P extends object>(
   load: () => Promise<M>,
   pick: (module: M) => ComponentType<P>,
-  path: string,
-  base: string,
+  module: string,
 ) {
   const make = (from: () => Promise<M>) =>
-    lazy(loadModule(() => from().then((module) => ({ default: pick(module) }))));
+    lazy(loadModule(() => from().then((loaded) => ({ default: pick(loaded) }))));
   const part = {
     component: make(load),
+    modules: [module] as const,
     retry() {
-      part.component = make(reloadModule(load, path, base));
+      const root = new URL(import.meta.env.BASE_URL, window.location.href).href;
+      part.component = make(reloadModule(load, module, root));
     },
   };
   return part;
@@ -71,7 +74,8 @@ const hostedBuild = import.meta.env.MODE === 'site';
 
 /**
  * The files of the hosted catalogue behind each part that loads on its own, from the
- * module-files.json that scripts/SiteModuleFiles.mjs writes; null when the connection seems down.
+ * module-files.json that scripts/SiteModuleFiles.mjs writes; null when the connection seems down:
+ * the map is small, so one that hasn't arrived in 15 seconds counts as down.
  */
 async function moduleFiles(): Promise<Record<string, string[]> | null> {
   try {
@@ -93,21 +97,22 @@ async function moduleFiles(): Promise<Record<string, string[]> | null> {
  * with a link, as failed for the whole tab, across reloads, until its file is fetched again; so in
  * the hosted build, the files of `modules` are fetched anew first. Each is a module's path in the
  * catalogue app, such as `src/examples/button/CreateProject.tsx`. The connection seems down when
- * the browser says it is offline, or when none of those files can be fetched; a file that answers,
- * even as not found after a new deploy, shows that it is up.
+ * module-files.json can't be fetched, or none of those files can; a file that answers, even as not
+ * found after a new deploy, shows that it is up. Elsewhere it always reloads: the offline catalogue
+ * reloads from its own file, which needs no connection whatever the browser says of it.
  */
 export async function reloadPage(modules: readonly string[] = []): Promise<boolean> {
-  if (!navigator.onLine) return false;
   if (hostedBuild) {
     const map = await moduleFiles();
     if (!map) return false;
     const files = [...new Set(modules.flatMap((module) => map[module] ?? []))];
+    // The map, a small file, has shown the connection is up, so the files take as long as they
+    // need: a large one, such as the icons, may take a while on a slow link.
     const fetched = await Promise.allSettled(
       files.map((file) =>
-        fetch(`${import.meta.env.BASE_URL}${file}`, {
-          cache: 'reload',
-          signal: AbortSignal.timeout(15_000),
-        }).then((response) => response.blob()),
+        fetch(`${import.meta.env.BASE_URL}${file}`, { cache: 'reload' }).then((response) =>
+          response.blob(),
+        ),
       ),
     );
     if (fetched.length && fetched.every(({ status }) => status === 'rejected')) return false;

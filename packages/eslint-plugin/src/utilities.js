@@ -1,5 +1,5 @@
-import { readFileSync } from 'node:fs';
-import { dirname, isAbsolute, resolve } from 'node:path';
+import { readFileSync, realpathSync, statSync } from 'node:fs';
+import { dirname, isAbsolute, join, resolve } from 'node:path';
 
 /** Reads one of the plugin's data files from src/data. */
 export function readData(name) {
@@ -128,24 +128,50 @@ const settingNames = new Set(['reexportModules']);
 /** Whether a module specifier is a path relative to where it is written: `./ui` or `../ui`. */
 const isRelative = (specifier) => /^\.\.?(?:\/|$)/.test(specifier);
 
+/** The extensions a module's file may have when an import or a setting leaves it out. */
+const scriptExtensions = ['.ts', '.tsx', '.mts', '.cts', '.js', '.jsx', '.mjs', '.cjs'];
+
+/** Whether a path is a file. */
+const isFile = (path) => statSync(path, { throwIfNoEntry: false })?.isFile() ?? false;
+
+/**
+ * The file a module path names, as resolving an import finds it: the path itself, with a script
+ * extension, or its `/index` with one. Undefined when there is none.
+ */
+function moduleFile(path) {
+  const candidates = [
+    path,
+    ...scriptExtensions.map((extension) => `${path}${extension}`),
+    ...scriptExtensions.map((extension) => join(path, `index${extension}`)),
+  ];
+  return candidates.find(isFile);
+}
+
 /**
  * A module's file without the script extension or the trailing `/index` that resolving it may
- * add: `src/ui`, `src/ui.ts` and `src/ui/index.tsx` are the same module.
+ * add: `src/ui`, `src/ui.ts` and `src/ui/index.tsx` are the same module. On Windows, where paths
+ * ignore case, it is lowercased too, since an editor may write `c:\` where ESLint's cwd is `C:\`.
  */
-const modulePath = (path) =>
-  resolve(path)
+const modulePath = (path) => {
+  const module = resolve(path)
     .replace(/\.[cm]?[jt]sx?$/, '')
     .replace(/[\\/]index$/, '');
+  return process.platform === 'win32' ? module.toLowerCase() : module;
+};
+
+/** The file's real path, through symbolic links and in the file system's own case. */
+const realModulePath = (file) => modulePath(realpathSync.native(file));
 
 /**
  * The plugin's shared settings, from `settings.envui` in the ESLint configuration:
  * `reexportModules`, the modules of the application that re-export envUI's components under
- * envUI's names, such as `'./src/ui'` or `'@/components/ui'`. `isReexportModule` tells whether an
- * import's source in the file being linted is one of them. A relative entry names a file from
- * ESLint's working directory, `context.cwd`, and an absolute entry names it outright; either
- * matches a relative import that resolves to that file from the importing file, with or without
- * its extension or `/index`. Any other entry, an alias or a package, matches an import that writes
- * it exactly. Throws on a malformed or unknown setting.
+ * envUI's names, such as `path.resolve(import.meta.dirname, 'src/ui')` or `'@/components/ui'`.
+ * `isReexportModule` tells whether an import's source in the file being linted is one of them. An
+ * absolute entry names a module's file outright, and a relative entry names it from ESLint's
+ * working directory, `context.cwd`; either must name an existing module, with or without its
+ * extension or `/index`, and matches a relative import that resolves to that module from the
+ * importing file. Any other entry, an alias or a package, matches an import that writes it exactly.
+ * Throws on a malformed or unknown setting, and on a path entry that names no module.
  */
 export function pluginSettings(context) {
   const settings = context.settings?.envui ?? {};
@@ -165,16 +191,34 @@ export function pluginSettings(context) {
       "envui: settings.envui.reexportModules must be an array of module specifiers, such as ['./src/ui', '@/components/ui'].",
     );
   const isPath = (entry) => isRelative(entry) || isAbsolute(entry);
-  const files = new Set(
-    reexportModules.filter(isPath).map((entry) => modulePath(resolve(context.cwd, entry))),
-  );
+  // Each module by its path as written and by its real path, so either spelling of an import
+  // matches.
+  const files = new Set();
+  for (const entry of reexportModules.filter(isPath)) {
+    const path = resolve(context.cwd, entry);
+    const file = moduleFile(path);
+    if (!file)
+      throw new Error(
+        `envui: settings.envui.reexportModules entry '${entry}' names no module: there is no file at ${path}, with a script extension or as its /index. ${
+          isRelative(entry)
+            ? `A relative entry is read from ESLint's working directory, ${context.cwd}, which changes with where ESLint runs; name the module outright with path.resolve(import.meta.dirname, '${entry}') in the configuration.`
+            : 'Check the path, or remove the entry.'
+        }`,
+      );
+    files.add(modulePath(path));
+    files.add(realModulePath(file));
+  }
   const specifiers = new Set(reexportModules.filter((entry) => !isPath(entry)));
   const directory = resolve(context.cwd, dirname(context.filename));
   return {
     isReexportModule(source) {
       if (typeof source !== 'string') return false;
       if (!isRelative(source)) return specifiers.has(source);
-      return files.has(modulePath(resolve(directory, source)));
+      if (files.size === 0) return false;
+      const path = resolve(directory, source);
+      if (files.has(modulePath(path))) return true;
+      const file = moduleFile(path);
+      return file !== undefined && files.has(realModulePath(file));
     },
   };
 }

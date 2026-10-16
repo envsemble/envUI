@@ -1,8 +1,9 @@
 import { test, expect, type Page } from '@playwright/test';
 import { catalogueUrl } from './Servers';
-import { extname, resolve } from 'node:path';
+import { dirname, extname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import worker from '../../apps/catalogue/site/Worker.mjs';
 import {
   references,
   foundations as foundationReferences,
@@ -518,17 +519,6 @@ test('an example that fails to load says so in place, and loads again on request
   expect(await hero.evaluate((group) => group.contains(document.activeElement))).toBe(true);
 });
 
-/** The hosted Worker's answer for a file under /assets/ that is gone. */
-const notFound = {
-  status: 404,
-  body: 'Not found\n',
-  headers: {
-    'Cache-Control': 'no-store',
-    'Content-Type': 'text/plain; charset=utf-8',
-    'X-Content-Type-Options': 'nosniff',
-  },
-};
-
 /**
  * Requires the hosted build. `npm run verify` builds it first, and so does CI, where a missing build
  * fails rather than skips; a local run without one skips.
@@ -549,23 +539,44 @@ function moduleFiles(module: string) {
 }
 
 /**
- * Serves the hosted build at siteUrl as the Worker does, except that the files `failing` returns
- * true for fail as `failure` says: gone after a deploy, or with the connection dropped.
+ * Serves the hosted build at siteUrl through the hosted Worker script, with an asset server that
+ * answers as Cloudflare's does from dist/site: a path without a file gets index.html. The files
+ * `failing` returns true for fail as `failure` says: gone after a deploy, which the Worker answers
+ * as not found, or with the connection dropped. `script` rewrites the scripts it serves.
  */
 async function serveSite(
   page: Page,
   failing: (pathname: string) => boolean,
   failure: 'missing' | 'aborted',
+  script: (text: string) => string = (text) => text,
 ) {
-  await page.route(`${siteUrl}/**`, (route) => {
-    const { pathname } = new URL(route.request().url());
-    if (failing(pathname))
-      return failure === 'aborted' ? route.abort('internetdisconnected') : route.fulfill(notFound);
-    const file = resolve(site, `.${pathname.endsWith('/') ? `${pathname}index.html` : pathname}`);
-    if (!existsSync(file)) return route.fulfill(notFound);
+  await page.route(`${siteUrl}/**`, async (route) => {
+    const request = route.request();
+    const gone = failing(new URL(request.url()).pathname);
+    if (gone && failure === 'aborted') return route.abort('internetdisconnected');
+    const assets = {
+      async fetch(assetRequest: Request) {
+        const { pathname } = new URL(assetRequest.url);
+        const path = resolve(
+          site,
+          `.${pathname.endsWith('/') ? `${pathname}index.html` : pathname}`,
+        );
+        const file = !gone && existsSync(path) ? path : resolve(site, 'index.html');
+        const body =
+          extname(file) === '.js' ? script(readFileSync(file, 'utf8')) : readFileSync(file);
+        return new Response(body, {
+          headers: { 'Content-Type': contentTypes[extname(file)] ?? 'application/octet-stream' },
+        });
+      },
+    };
+    const response: Response = await worker.fetch(
+      new Request(request.url(), { method: request.method() }),
+      { ASSETS: assets },
+    );
     return route.fulfill({
-      body: readFileSync(file),
-      contentType: contentTypes[extname(file)] ?? 'application/octet-stream',
+      status: response.status,
+      headers: Object.fromEntries(response.headers),
+      body: Buffer.from(await response.arrayBuffer()),
     });
   });
 }
@@ -592,31 +603,123 @@ for (const failure of ['missing', 'aborted'] as const) {
   });
 }
 
-test('in the hosted build, a reload after many pages still loads an example that failed', async ({
-  page,
-}) => {
-  // Resource Timing keeps 250 entries, so by then the failed file is not among them.
-  test.slow();
-  requireSite();
-  const files = moduleFiles('src/examples/button/CreateProject.tsx');
-  let failing = true;
-  await serveSite(page, (pathname) => failing && files.includes(pathname), 'aborted');
+/**
+ * Opens the overview of the hosted build, then the Button page with every file under /assets/ that
+ * the overview had not loaded failing, chosen by when it is asked for rather than by
+ * module-files.json, so a file the map leaves out fails too. Returns the hero example, and a
+ * setter: `assets` makes every file under /assets/ fail, as when only the map arrives, and `up`
+ * serves every file.
+ */
+async function openFailingButtonPage(page: Page) {
+  const loaded = new Set<string>();
+  let state: 'opening' | 'failing' | 'assets' | 'up' = 'opening';
+  await serveSite(
+    page,
+    (pathname) => {
+      if (!pathname.startsWith('/assets/')) return false;
+      if (state === 'opening') loaded.add(pathname);
+      return state === 'assets' || (state === 'failing' && !loaded.has(pathname));
+    },
+    'aborted',
+  );
   await page.goto(`${siteUrl}/#/overview`);
-  const resources = () => page.evaluate(() => performance.getEntriesByType('resource').length);
-  for (const { path, reference } of referencePages) {
-    if ((await resources()) >= 250) break;
-    if (path === 'components/button') continue;
-    await page.evaluate((hash) => (window.location.hash = hash), `#/${path}`);
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText(reference.title);
-    await expect(page.getByText(/^Loading .*…$/)).toHaveCount(0);
-  }
-  expect(await resources()).toBe(250);
+  await expect(page.getByRole('heading', { level: 1, name: 'envUI' })).toBeVisible();
+  await expect(page.getByText(/^Loading .*…$/)).toHaveCount(0);
+  state = 'failing';
   await page.evaluate(() => (window.location.hash = '#/components/button/overview'));
   const hero = page.getByRole('group', { name: 'Button example', exact: true });
   await expect(hero.getByText('The example could not load')).toBeVisible();
-  failing = false;
+  return { hero, set: (next: 'assets' | 'up') => (state = next) };
+}
+
+test('in the hosted build, a reload loads an example again whatever files failed as it opened', async ({
+  page,
+}) => {
+  // WebKit keeps every failed file failed across reloads unless the reload fetches it first.
+  requireSite();
+  const { hero, set } = await openFailingButtonPage(page);
+  set('up');
   await hero.getByRole('button', { name: 'Reload the page', exact: true }).click();
   await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+});
+
+test("in the hosted build, a reload whose files can't be fetched keeps the page and says so", async ({
+  page,
+}) => {
+  requireSite();
+  const { hero, set } = await openFailingButtonPage(page);
+  // module-files.json arrives, but none of the files it lists.
+  set('assets');
+  await page.evaluate(() => Object.assign(window, { stillHere: true }));
+  await hero.getByRole('button', { name: 'Reload the page', exact: true }).click();
+  await expect(hero.getByRole('status')).toHaveText(
+    'The connection seems to be down. Reload the page once it is back.',
+  );
+  expect(await page.evaluate(() => 'stillHere' in window)).toBe(true);
+  set('up');
+  await hero.getByRole('button', { name: 'Reload the page', exact: true }).click();
+  await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
+});
+
+/** A build's script with the overview made to throw as it renders, where it is in the script. */
+const breakOverview = (script: string) =>
+  script.replace(/(["'`])Overview views\1/, '(() => { throw new Error("Broken page"); })()');
+
+test('the offline catalogue reloads from an overview that failed, also without a connection', async ({
+  page,
+}, testInfo) => {
+  // A file opened from disk reloads from disk, whatever the browser says of the connection. The
+  // browser says it is offline here; WebKit's emulated offline mode would block the file too.
+  await page.addInitScript(() =>
+    Object.defineProperty(Navigator.prototype, 'onLine', { get: () => false }),
+  );
+  const html = readFileSync(resolve('dist/envUI.html'), 'utf8');
+  const broken = breakOverview(html);
+  expect(broken, 'the overview in dist/envUI.html').not.toBe(html);
+  const file = testInfo.outputPath('envUI.html');
+  mkdirSync(dirname(file), { recursive: true });
+  writeFileSync(file, broken);
+  await page.goto(`${pathToFileURL(file).href}#/overview`);
+  const main = page.getByRole('main');
+  await expect(main.getByText('Broken page')).toBeVisible();
+  expect(await page.evaluate(() => navigator.onLine)).toBe(false);
+  await page.evaluate(() => Object.assign(window, { stillHere: true }));
+  await Promise.all([
+    page.waitForEvent('load', { timeout: 10_000 }),
+    main.getByRole('button', { name: 'Reload the page', exact: true }).click(),
+  ]);
+  expect(await page.evaluate(() => 'stillHere' in window)).toBe(false);
+  await expect(main.getByText('Broken page')).toBeVisible();
+});
+
+test('in the hosted build, a reload from an overview that failed keeps the page while the connection is down', async ({
+  page,
+  context,
+}) => {
+  requireSite();
+  let down = false;
+  await serveSite(page, () => down, 'aborted', breakOverview);
+  await page.goto(`${siteUrl}/#/overview`);
+  const main = page.getByRole('main');
+  const alert = main.locator('.env-alert');
+  await expect(alert.getByText('Broken page')).toBeVisible();
+  await page.evaluate(() => Object.assign(window, { stillHere: true }));
+  await context.setOffline(true);
+  down = true;
+  await alert.getByRole('button', { name: 'Reload the page', exact: true }).click();
+  await expect(alert.getByRole('status')).toHaveText(
+    'The connection seems to be down. Reload the page once it is back.',
+  );
+  expect(await page.evaluate(() => 'stillHere' in window)).toBe(true);
+  await context.setOffline(false);
+  down = false;
+  await Promise.all([
+    page.waitForEvent('load'),
+    alert.getByRole('button', { name: 'Reload the page', exact: true }).click(),
+  ]);
+  expect(await page.evaluate(() => 'stillHere' in window)).toBe(false);
+  await expect(alert.getByText('Broken page')).toBeVisible();
 });
 
 for (const down of ['offline', 'unreachable'] as const) {

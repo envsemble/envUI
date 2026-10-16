@@ -13,8 +13,7 @@ import { LoadBoundary, lazyPart } from '../template/LoadBoundary';
 const iconList = lazyPart(
   () => import('./foundations/Icons'),
   (module) => module.IconsPreview,
-  './foundations/Icons.tsx',
-  import.meta.url,
+  'src/previews/foundations/Icons.tsx',
 );
 
 interface FoundationPreviewProps {
@@ -28,7 +27,7 @@ function IconList({ onIconUsage }: Pick<FoundationPreviewProps, 'onIconUsage'>) 
   return (
     <LoadBoundary
       what="icon list"
-      modules={['src/previews/foundations/Icons.tsx']}
+      modules={iconList.modules}
       onRetry={() => {
         iconList.retry();
         setAttempt((count) => count + 1);

@@ -1,15 +1,24 @@
 {
-  "$comment": "Color values with nested var() fallbacks, shared by the tests of the ESLint plugin's no-raw-colors and the Stylelint config, so that both read them alike. custom: every channel comes from custom properties, each a var() whose fallback, if any, is var()s too, up to eight levels of fallbacks deep. raw: a fallback deep inside holds a literal channel, or the fallbacks nest nine levels deep, past what both follow.",
+  "$comment": "Color values with nested var() fallbacks, shared by the tests of the ESLint plugin's no-raw-colors and the Stylelint config, so that both read them alike. custom: every channel comes from custom properties, each a var() whose fallback, if any, is var()s too, up to eight levels of fallbacks deep, and so does an alpha that is not a literal number or percentage. raw: a fallback deep inside holds a literal channel or alpha, an alpha is neither a literal nor a var(), or the fallbacks nest nine levels deep, past what both follow.",
   "custom": [
     "rgb(var(--a, var(--b, var(--c))))",
     "rgb(var(--a, var(--b), var(--c, var(--d))) / var(--e, var(--f, var(--g))))",
     "oklch(var(--l, var(--l2, var(--l3))) var(--c) var(--h, var(--h2)))",
     "rgba(var(--a, var(--b, var(--c, var(--d, var(--e, var(--f)))))), 0.5)",
-    "rgb(var(--v1, var(--v2, var(--v3, var(--v4, var(--v5, var(--v6, var(--v7, var(--v8, var(--v9))))))))))"
+    "rgb(var(--v1, var(--v2, var(--v3, var(--v4, var(--v5, var(--v6, var(--v7, var(--v8, var(--v9))))))))))",
+    "rgb(var(--rgb) / var(--a1, var(--a2, var(--a3, var(--a4, var(--a5, var(--a6, var(--a7, var(--a8, var(--a9))))))))))",
+    "rgba(var(--rgb), var(--a1, var(--a2, var(--a3, var(--a4, var(--a5, var(--a6, var(--a7, var(--a8, var(--a9))))))))))",
+    "rgb(var(--rgb) / .5)",
+    "rgba(var(--rgb), 1e-1)"
   ],
   "raw": [
     "rgb(var(--a, var(--b, var(--c, 255 0 0))))",
     "hsl(var(--h) var(--s, var(--s2, 50%)) var(--l))",
-    "rgb(var(--v1, var(--v2, var(--v3, var(--v4, var(--v5, var(--v6, var(--v7, var(--v8, var(--v9, var(--v10)))))))))))"
+    "rgb(var(--v1, var(--v2, var(--v3, var(--v4, var(--v5, var(--v6, var(--v7, var(--v8, var(--v9, var(--v10)))))))))))",
+    "rgb(var(--rgb) / var(--a1, var(--a2, var(--a3, var(--a4, var(--a5, var(--a6, var(--a7, var(--a8, var(--a9, var(--a10)))))))))))",
+    "rgba(var(--rgb), var(--a1, var(--a2, var(--a3, var(--a4, var(--a5, var(--a6, var(--a7, var(--a8, var(--a9, var(--a10)))))))))))",
+    "rgb(var(--rgb) / var(--a, var(--b, 50%)))",
+    "rgb(var(--rgb) / calc(1 - var(--a)))",
+    "rgba(var(--r), var(--g), var(--b), none)"
   ]
 }

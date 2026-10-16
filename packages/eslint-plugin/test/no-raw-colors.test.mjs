@@ -53,12 +53,14 @@ ruleTester.run('no-raw-colors', rule, {
     "const theme = { primary: '#0b57d0' };",
     '<div title="#fff" />',
     '<div style={styles} />',
-    // Strings that choose or compute a style are not its value: a member's key and a call's
-    // arguments.
+    // Strings that choose a style are not its value: a member's key, and the selector given to a
+    // DOM lookup.
     `<div style={styles[\`#\${id}\`]} />`,
     `<div style={{ color: theme[\`#\${id}\`], background: theme['#fff'] }} />`,
     `<div style={pick(document.querySelector(\`#\${id} .x\`))} />`,
-    `<div style={{ color: lighten('#fff', 0.2), background: new Color('#000').css }} />`,
+    `<div style={pick(root.querySelectorAll('#fff, .red'))} />`,
+    `<div style={{ color: read(element.closest('#fff')), background: read(node?.matches('#000')) }} />`,
+    `<div style={read(document.getElementById('fff'), document.getElementById(\`#\${id}\`))} />`,
     // Adding numbers, and concatenated strings without a color.
     `<div style={{ width: base + 4, color: 'var(--color-fg-' + tone + ')' }} />`,
   ],
@@ -210,6 +212,37 @@ ruleTester.run('no-raw-colors', rule, {
     {
       code: '<div style={{ color: "var(--accent, #0b57d0)" }} />',
       errors: [raw('#0b57d0', 'color')],
+    },
+    // A call's callee and arguments are part of the value: a color passed to a helper, a style
+    // object built by one, and a string whose method is called.
+    {
+      code: `<div style={{ color: darken('#123456', 0.1), background: alpha('#000', .5) }} />`,
+      errors: [raw('#123456', 'color'), raw('#000', 'background')],
+    },
+    {
+      code: `<div style={{ color: lighten('#fff', 0.2), background: new Color('#000').css }} />`,
+      errors: [raw('#fff', 'color'), raw('#000', 'background')],
+    },
+    {
+      code: `<div style={useMemo(() => ({ color: '#fff' }), [])} />`,
+      errors: [raw('#fff', 'color')],
+    },
+    {
+      code: `<div style={mergeStyles(base, { color: 'red' })} />`,
+      errors: [raw('red', 'color')],
+    },
+    {
+      code: `<div style={Object.assign({}, a, { color: '#fff' })} />`,
+      errors: [raw('#fff', 'color')],
+    },
+    {
+      code: `<div style={{ color: '#fff'.toUpperCase() }} />`,
+      errors: [raw('#fff', 'color')],
+    },
+    {
+      // A lookup's selector passes, but the rest of the call around it does not.
+      code: `<div style={{ color: pick(document.querySelector('#fff'), '#000') }} />`,
+      errors: [raw('#000', 'color')],
     },
     // Channels are custom properties, each one a var(); anything else is a color of its own.
     {
