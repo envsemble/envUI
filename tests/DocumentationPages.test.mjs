@@ -30,7 +30,6 @@ const unconverted = [
   'document-tabs',
   'drop-zone',
   'hover-card',
-  'list',
   'markdown',
   'menubar',
   'message',

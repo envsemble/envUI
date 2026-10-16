@@ -2958,25 +2958,31 @@
     "List.Item": {
       "kind": "component",
       "source": "packages/ui/src/content/List.tsx",
-      "description": "",
+      "description": "One `li` row with a title, a detail and an action.",
       "props": [
         {
           "name": "title",
           "type": "ReactNode",
           "required": true,
-          "description": ""
+          "description": "The row's main text, such as an item's name; a link marked `data-row-target` in an interactive row."
         },
         {
           "name": "detail",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A short fact in muted text below the title, such as who changed the item and when."
         },
         {
           "name": "action",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A control at the end of the row, such as a Button; it moves below the text when it doesn't fit."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "More content after the title and the detail, such as a Badge."
         },
         {
           "name": "interactive",
@@ -2996,14 +3002,14 @@
     "List.Root": {
       "kind": "component",
       "source": "packages/ui/src/content/List.tsx",
-      "description": "",
+      "description": "A `ul` of connected rows with shared outer corners.",
       "props": [
         {
           "name": "contrast",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Sets the rows on a muted pane of their own, 0.75 rem around them, in the alternate row fill, so they stand out from the pane."
         }
       ],
       "native": [
