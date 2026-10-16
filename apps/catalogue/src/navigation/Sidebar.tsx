@@ -1,6 +1,6 @@
 import { Fragment, useId, type ReactNode } from 'react';
 import { version } from '@envsemble/envui/package.json';
-import { EnvUILogo, Link, NavList, Stack, Text } from '@envsemble/envui';
+import { Button, EnvUILogo, Kbd, Link, NavList, Stack, Text } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Category } from '@envsemble/envui/icons/Category';
 import { RocketLaunch } from '@envsemble/envui/icons/RocketLaunch';
@@ -10,6 +10,7 @@ import { Pattern } from '@envsemble/envui/icons/Pattern';
 import { ViewQuilt } from '@envsemble/envui/icons/ViewQuilt';
 import { Handyman } from '@envsemble/envui/icons/Handyman';
 import { History } from '@envsemble/envui/icons/History';
+import { Search } from '@envsemble/envui/icons/Search';
 import { references, foundations, componentGroups } from '../Reference';
 import {
   changelogPage,
@@ -23,21 +24,40 @@ import {
 } from './DocumentationRoutes';
 import { homeRoute, routeHref } from './Address';
 import { foundationIcons, getComponentIcon } from './TopicIcons';
+import { commandKey } from '../search/DocumentationSearch';
+
+/** The button that opens search, with its shortcut. */
+export function SearchButton({ onSearch }: { onSearch: () => void }) {
+  return (
+    <Button
+      variant="secondary"
+      className="docs-search-button"
+      startIcon={<Search />}
+      aria-keyshortcuts="Control+K Meta+K"
+      onClick={onSearch}
+    >
+      Search
+      <Kbd keys={[commandKey, 'K']} className="docs-search-shortcut" aria-hidden="true" />
+    </Button>
+  );
+}
 
 /**
  * The catalogue's navigation, by section: Get started, Foundations, Components, Patterns,
- * Templates, Contributing and Changelog.
+ * Templates, Contributing and Changelog, with search above.
  */
 export function Sidebar({
   routePath,
   page,
   panel = false,
   onNavigate,
+  onSearch,
 }: {
   routePath: string;
   page?: ReferencePage;
   panel?: boolean;
   onNavigate?: () => void;
+  onSearch: () => void;
 }) {
   const reference = page?.reference;
   const headingId = useId();
@@ -73,6 +93,7 @@ export function Sidebar({
       >
         <EnvUILogo />
       </Link>
+      <SearchButton onSearch={onSearch} />
       <nav aria-label="Documentation" className="docs-sidebar-navigation">
         {section(
           'Get started',

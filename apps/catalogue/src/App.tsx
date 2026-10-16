@@ -14,6 +14,7 @@ import {
 import { Menu } from '@envsemble/envui/icons/Menu';
 import { DarkMode } from '@envsemble/envui/icons/DarkMode';
 import { LightMode } from '@envsemble/envui/icons/LightMode';
+import { Search } from '@envsemble/envui/icons/Search';
 import {
   findReferencePage,
   findStandalonePage,
@@ -30,6 +31,14 @@ import { PageNavigation } from './navigation/PageNavigation';
 import { RouterLink } from './navigation/RouterLink';
 import { homeRoute, routeHref } from './navigation/Address';
 import { reachedFromTabs, useDocumentationRoute } from './navigation/useDocumentationRoute';
+import { DocumentationSearch } from './search/DocumentationSearch';
+
+/** Whether a key press asks for search: Ctrl+K, or ⌘K on Apple keyboards. */
+const searchShortcut = (event: KeyboardEvent) =>
+  (event.ctrlKey || event.metaKey) &&
+  !event.altKey &&
+  !event.shiftKey &&
+  event.key.toLowerCase() === 'k';
 
 /**
  * Scrolls to the element a route names, such as a prop's row, once it is there: a part of the page
@@ -69,6 +78,7 @@ function Catalogue() {
   const oppositeAppearance = appearance === 'light' ? 'dark' : 'light';
   const [navigationOpen, setNavigationOpen] = useState(false);
   const [focusContentOnClose, setFocusContentOnClose] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const mainElement = useRef<HTMLElement>(null);
   const routePath = route.split('?')[0];
   const routeSegments = routePath.split('/');
@@ -96,6 +106,16 @@ function Catalogue() {
     return () => desktop.removeEventListener('change', closeOnDesktop);
   }, []);
   useEffect(() => {
+    // An editor that handles the keys itself, such as for a link, keeps them.
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.defaultPrevented || !searchShortcut(event)) return;
+      event.preventDefault();
+      setSearchOpen((open) => !open);
+    };
+    addEventListener('keydown', onKeyDown);
+    return () => removeEventListener('keydown', onKeyDown);
+  }, []);
+  useEffect(() => {
     document.title = title === 'envUI' ? 'envUI' : `${title} · envUI`;
     // Moving between a page's views keeps focus on its tabs, where the reader is.
     if (reachedFromTabs()) return;
@@ -104,6 +124,10 @@ function Catalogue() {
     if (section) return revealSection(section);
     window.scrollTo({ top: 0 });
   }, [contentRoute, title]);
+  const openSearch = () => {
+    setNavigationOpen(false);
+    setSearchOpen(true);
+  };
   let content: ReactNode;
   if (page) content = <ReferenceContent key={page.path} page={page} view={view} search={search} />;
   else if (standalone) content = <StandalonePageContent key={standalone.path} page={standalone} />;
@@ -144,6 +168,14 @@ function Catalogue() {
           <EnvUILogo />
         </Link>
         <ActionGroup align="end" className="docs-mobile-actions">
+          <IconButton
+            variant="secondary"
+            icon={<Search />}
+            aria-label="Search"
+            aria-keyshortcuts="Control+K Meta+K"
+            title="Search"
+            onClick={openSearch}
+          />
           <Dialog
             open={navigationOpen}
             onOpenChange={(open) => {
@@ -163,6 +195,7 @@ function Catalogue() {
               routePath={routePath}
               page={page}
               panel
+              onSearch={openSearch}
               onNavigate={() => {
                 setFocusContentOnClose(true);
                 setNavigationOpen(false);
@@ -172,7 +205,7 @@ function Catalogue() {
         </ActionGroup>
       </header>
       <div className="docs-shell">
-        <Sidebar routePath={routePath} page={page} />
+        <Sidebar routePath={routePath} page={page} onSearch={openSearch} />
         <main id="docs-main" ref={mainElement} tabIndex={-1} className="docs-main">
           <PageBoundary title={title} route={route}>
             {!isOverview && !page && !standalone && <PageHeader title={title} breadcrumb="envUI" />}
@@ -192,6 +225,7 @@ function Catalogue() {
           />
         </main>
       </div>
+      <DocumentationSearch open={searchOpen} onOpenChange={setSearchOpen} />
     </Theme>
   );
 }
