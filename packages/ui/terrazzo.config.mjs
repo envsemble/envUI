@@ -236,36 +236,83 @@ const uniqueNamesRule = {
 };
 
 /**
- * The custom properties a style sheet declares for every element it styles, outside at-rules such
- * as the coarse-pointer overrides, which change a token's value only where they apply.
+ * The declarations of a style sheet, each with its property, its value, the preludes of the
+ * at-rules around it (outermost first) and the selector of its rule, with whitespace collapsed.
+ * Comments are dropped; quoted strings and parentheses are read whole, so a `;` or a brace inside
+ * them ends nothing. Nested style rules are not read apart: a declaration takes the innermost
+ * selector.
  */
-export function unconditionalCustomProperties(css) {
-  const names = new Set();
+export function cssDeclarations(css) {
+  const declarations = [];
   const blocks = [];
-  let prelude = '';
-  const declaration = () => {
-    const name = prelude.match(/^\s*(--[\w-]+)\s*:/)?.[1];
-    if (name && !blocks.includes('at-rule')) names.add(name);
-    prelude = '';
+  let text = '';
+  let quote = null;
+  let depth = 0;
+  const end = () => {
+    const match = text.match(/^\s*(--[\w-]+|-?[A-Za-z][\w-]*)\s*:([\s\S]*)$/);
+    if (match && blocks.length > 0)
+      declarations.push({
+        property: match[1],
+        value: match[2].trim(),
+        atRules: blocks.filter((block) => block.atRule).map((block) => block.prelude),
+        selector: blocks.findLast((block) => !block.atRule)?.prelude,
+      });
+    text = '';
   };
   for (const character of css.replace(/\/\*[\s\S]*?\*\//g, '')) {
-    if (character === '{') {
-      blocks.push(prelude.trim().startsWith('@') ? 'at-rule' : 'rule');
-      prelude = '';
+    if (quote) {
+      if (character === quote) quote = null;
+      text += character;
+    } else if (character === '"' || character === "'") {
+      quote = character;
+      text += character;
+    } else if (character === '(' || (character === ')' && depth > 0) || depth > 0) {
+      depth += character === '(' ? 1 : character === ')' ? -1 : 0;
+      text += character;
+    } else if (character === '{') {
+      const prelude = text.trim().replace(/\s+/g, ' ');
+      blocks.push({ prelude, atRule: prelude.startsWith('@') });
+      text = '';
     } else if (character === '}') {
-      declaration();
+      end();
       blocks.pop();
-    } else if (character === ';') declaration();
-    else prelude += character;
+    } else if (character === ';') end();
+    else text += character;
   }
-  return names;
+  return declarations;
+}
+
+/**
+ * The media queries under which TokensHandwritten.css may change a token's value: the touch sizes
+ * under a coarse pointer, which the resolver has no modifier for. Only these: a token's value in
+ * another condition, such as `prefers-contrast: more`, belongs in the tokens, where the generated
+ * modules see it, and a declaration under any other at-rule (`@layer`, `@supports`, `@container`,
+ * another media query or a list of them) can apply in every theme, so it replaces the token.
+ */
+export const conditionalMediaQueries = ['(pointer: coarse)'];
+
+const compact = (text) => text.replace(/\s+/g, '').toLowerCase();
+const conditional = new Set(conditionalMediaQueries.map((query) => compact(`@media ${query}`)));
+
+/**
+ * The custom properties a style sheet declares that replace a token wherever they apply: every
+ * declaration, in any rule, except under a media query of conditionalMediaQueries.
+ */
+export function overridingCustomProperties(css) {
+  return new Set(
+    cssDeclarations(css)
+      .filter(({ property }) => property.startsWith('--'))
+      .filter(({ atRules }) => !atRules.some((prelude) => conditional.has(compact(prelude))))
+      .map(({ property }) => property),
+  );
 }
 
 /**
  * Fails the build when two tokens would declare one custom property, or when TokensHandwritten.css
- * declares one of the tokens' for every theme: Tokens.css would keep only the last declaration,
- * and TokensHandwritten.css, which loads after it, would silently replace the token. A composite
- * token, such as typography, also declares a property per part, `--type-body-font-size`.
+ * declares one of the tokens' outside conditionalMediaQueries: Tokens.css would keep only the last
+ * declaration, and TokensHandwritten.css, which loads after it, would silently replace the token.
+ * A composite token, such as typography, also declares a property per part,
+ * `--type-body-font-size`.
  */
 function checkCustomProperties(list, handwrittenFile) {
   const owners = new Map();
@@ -286,7 +333,7 @@ function checkCustomProperties(list, handwrittenFile) {
     }
   }
   if (!existsSync(handwrittenFile)) return;
-  for (const name of unconditionalCustomProperties(readFileSync(handwrittenFile, 'utf8')))
+  for (const name of overridingCustomProperties(readFileSync(handwrittenFile, 'utf8')))
     if (owners.has(name))
       throw new Error(
         `TokensHandwritten.css declares ${name}, which the token ${owners.get(name)} becomes: move the hand-written value into the token, or give one of them another name.`,

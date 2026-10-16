@@ -5,6 +5,7 @@ import { join, relative } from 'node:path';
 import { after, before, test } from 'node:test';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import ts from 'typescript';
+import { overridingCustomProperties } from '../packages/ui/terrazzo.config.mjs';
 import { buildTokens } from '../scripts/BuildTokens.mjs';
 
 // The token build's guards, on copies of the tokens built into a scratch folder, and the custom
@@ -23,16 +24,15 @@ after(async () => {
 
 /**
  * Builds a copy of the tokens after `change` edits the parsed files it names, into a scratch
- * folder that has the library's TokensHandwritten.css, and returns the folder.
+ * folder that has the library's TokensHandwritten.css, with `handwritten` appended to it, and
+ * returns the folder.
  */
-async function buildChanged(name, change) {
+async function buildChanged(name, change, { handwritten = '' } = {}) {
   const directory = join(scratch, name);
   await cp(join(library, 'tokens'), join(directory, 'tokens'), { recursive: true });
   await mkdir(join(directory, 'src/styles'), { recursive: true });
-  await cp(
-    join(library, 'src/styles/TokensHandwritten.css'),
-    join(directory, 'src/styles/TokensHandwritten.css'),
-  );
+  const css = await readFile(join(library, 'src/styles/TokensHandwritten.css'), 'utf8');
+  await writeFile(join(directory, 'src/styles/TokensHandwritten.css'), css + handwritten);
   for (const [file, edit] of Object.entries(change)) {
     const path = join(directory, 'tokens', file);
     const tokens = JSON.parse(await readFile(path, 'utf8'));
@@ -68,6 +68,54 @@ test('a token that TokensHandwritten.css also declares for every theme fails the
       },
     }),
     /TokensHandwritten\.css declares --viewport-gutter, which the token viewport\.gutter becomes/,
+  );
+});
+
+test('only a coarse pointer lets TokensHandwritten.css change a token', () => {
+  const declared = (css) => [...overridingCustomProperties(css)];
+  // The touch sizes change a token only under a coarse pointer, also inside another at-rule.
+  assert.deepEqual(declared('@media (pointer: coarse) { .env-theme { --a: 1; } }'), []);
+  assert.deepEqual(declared('@media (pointer:coarse){@layer x{.env-theme{--a:1}}}'), []);
+  assert.deepEqual(declared('@layer x { @media (pointer: coarse) { .env-theme { --a: 1 } } }'), []);
+  // Any other at-rule can apply in every theme, and a contrast belongs in the tokens.
+  for (const wrapper of [
+    '@layer env.tokens',
+    '@supports (color: oklch(0 0 0))',
+    '@media (prefers-contrast: more)',
+    '@media (min-width: 40rem)',
+    '@media (pointer: coarse), (prefers-contrast: more)',
+    '@media not (pointer: coarse)',
+    '@container (min-width: 1px)',
+  ])
+    assert.deepEqual(declared(`${wrapper} { .env-theme { --a: 1; } }`), ['--a'], wrapper);
+  // In any rule, whatever the selector; strings and parentheses end no declaration.
+  assert.deepEqual(
+    declared(".env-theme[data-env-theme='dark'] { content: ';}'; --b: url(a;b); --c: 1 }"),
+    ['--b', '--c'],
+  );
+});
+
+test('a token that TokensHandwritten.css declares under another at-rule fails the build', async () => {
+  await assert.rejects(
+    buildChanged(
+      'handwritten-layer',
+      {},
+      {
+        handwritten: '\n@layer env.tokens {\n  .env-theme {\n    --control-height: 3rem;\n  }\n}\n',
+      },
+    ),
+    /TokensHandwritten\.css declares --control-height, which the token control\.height becomes/,
+  );
+  await assert.rejects(
+    buildChanged(
+      'handwritten-contrast',
+      {},
+      {
+        handwritten:
+          '\n@media (prefers-contrast: more) {\n  .env-theme { --control-height: 3rem; }\n}\n',
+      },
+    ),
+    /TokensHandwritten\.css declares --control-height/,
   );
 });
 
