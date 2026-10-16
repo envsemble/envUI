@@ -74,7 +74,7 @@ Semantic tokens are named `--color-{bg|fg|border}-{role}-{emphasis}[-{state}]`. 
 - **Text:** `fg-default`; `fg-muted` for supporting text, icons, field labels, descriptions and placeholders; `fg-control` for navigation labels, secondary buttons and option labels; `fg-link`; `fg-accent`; `fg-on-selected`; and one per tone.
 - **Borders:** `border-default` is the boundary of a control that has no other edge, such as an outlined field or the composer, at least 3:1 on every surface. `border-muted` is for dividers and other decorative edges. `border-accent`, `border-danger` and `border-focus` mark focused, invalid and keyboard-focused controls. `border-translucent` defines content of any color, such as the color picker's area.
 
-The 0.7 names, such as `--color-text-muted`, are aliases of these roles until the CSS-architecture step removes them with the `--env-` prefix; component tokens such as `--color-checkbox` alias the role a component takes in each theme. Two of them read as something else: `--color-border-strong` is the divider color, `border-muted`, and `--color-accent` is the important purple, `bg-important-strong`, not `fg-accent`'s blue.
+The 0.7 names, such as `--color-text-muted`, are aliases of these roles until the CSS-architecture step removes them with the `--env-` prefix; component tokens such as `--color-checkbox` alias the role a component takes in each theme. Two of them read as something else: `--color-border-strong` is the divider color, `border-muted`, which is light, while the tone edges `--color-border-{neutral|success|info|danger}-strong` are the dark edges of strong fills, and `--color-accent` is the important purple, `bg-important-strong`, not `fg-accent`'s blue.
 
 ## States, contrast and elevation
 

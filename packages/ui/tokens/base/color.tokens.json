@@ -572,7 +572,7 @@
           }
         },
         "strong": {
-          "$description": "The edge of the strong danger fill where it floats, on error toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast.",
+          "$description": "The edge of the strong danger fill where it floats, on error toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted.",
           "$value": "{palette.red.70}"
         }
       },
@@ -586,7 +586,7 @@
           }
         },
         "strong": {
-          "$description": "The edge of the strong neutral fill where it floats, on tooltips and neutral toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast.",
+          "$description": "The edge of the strong neutral fill where it floats, on tooltips and neutral toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted.",
           "$value": "{palette.neutral.84}"
         }
       },
@@ -608,7 +608,7 @@
           }
         },
         "strong": {
-          "$description": "The edge of the strong success fill where it floats, on success toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast.",
+          "$description": "The edge of the strong success fill where it floats, on success toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted.",
           "$value": "{palette.teal.70}"
         }
       },
@@ -654,7 +654,7 @@
       },
       "info": {
         "strong": {
-          "$description": "The edge of the strong information fill where it floats, on information toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast.",
+          "$description": "The edge of the strong information fill where it floats, on information toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted.",
           "$value": "{palette.steel.70}"
         }
       }
@@ -1089,7 +1089,7 @@
       "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Pager links" } }
     },
     "border-strong": {
-      "$description": "Misleading 0.7 name: it is the divider color, border.muted, not a stronger border. Components use border.muted; the alias goes in the CSS-architecture step.",
+      "$description": "Misleading 0.7 name: it is the divider color, border.muted, light, not a stronger border, and unlike the dark edges of the strong fills, border.{neutral|success|info|danger}.strong. Components use border.muted; the alias goes in the CSS-architecture step, which also revisits these names.",
       "$value": "{color.border.muted}",
       "$extensions": { "com.envsemble.envui": { "legacy": true } }
     },
