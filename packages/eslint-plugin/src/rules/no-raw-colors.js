@@ -82,15 +82,26 @@ function splitTopLevel(text, separator) {
 }
 
 /**
- * Whether channels all come from custom properties: each one a `var()`, whose fallback, if it has
- * one, is a `var()` too, since a fallback is a color as much as the value.
+ * How many levels of fallbacks are followed, a fallback's fallback being the second. The Stylelint
+ * config's patterns stop at the same depth, so both read a value alike; deeper nesting is raw.
  */
-function fromCustomProperties(channels) {
+const nestingDepth = 8;
+
+/**
+ * Whether channels all come from custom properties: each one a `var()`, whose fallback, if it has
+ * one, is a `var()` too, since a fallback is a color as much as the value. `depth` counts the
+ * fallbacks the channels sit in.
+ */
+function fromCustomProperties(channels, depth = 0) {
   return splitTopLevel(channels, /[\s,]/)
     .filter((token) => token.trim())
     .every((token) => {
       const match = /^var\(\s*--[\w-]+\s*(?:,([\s\S]*))?\)$/i.exec(token.trim());
-      return Boolean(match) && (match[1] === undefined || fromCustomProperties(match[1]));
+      return (
+        Boolean(match) &&
+        (match[1] === undefined ||
+          (depth < nestingDepth && fromCustomProperties(match[1], depth + 1)))
+      );
     });
 }
 

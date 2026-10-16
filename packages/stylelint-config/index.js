@@ -16,7 +16,8 @@ const colorFunctionStart = String.raw`(?<![\w-])(?:rgba?|hsla?|hwb|lab|lch|oklab
 /**
  * How deeply the patterns below follow nested parentheses, such as a fallback's fallback. A
  * regular expression can't recurse, so the patterns are built to this depth, which no real value
- * reaches; deeper nesting counts as raw.
+ * reaches; deeper nesting counts as raw. The ESLint plugin's no-raw-colors follows fallbacks to the
+ * same depth.
  */
 const nestingDepth = 8;
 /** Builds a pattern `nestingDepth` levels deep, each level wrapping the one inside it. */
