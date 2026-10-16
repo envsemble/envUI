@@ -87,7 +87,7 @@
   gap: 0.125rem;
 }
 .env-command-palette-group + .env-command-palette-group,
-.env-command-palette-option + .env-command-palette-group {
+.env-command-palette-item + .env-command-palette-group {
   margin-block-start: var(--env-space-2);
 }
 .env-command-palette-heading {
@@ -96,57 +96,25 @@
   font: var(--env-type-body-small);
   font-weight: 500;
 }
-.env-command-palette-option {
-  box-sizing: border-box;
-  min-inline-size: 0;
-  min-block-size: 2.5rem;
-  display: flex;
-  align-items: center;
-  gap: var(--env-space-3);
+/* Options are ListRows; the palette gives them its taller rows and its concentric corners. */
+.env-command-palette-item {
+  min-block-size: var(--env-control-height-md);
   padding: var(--env-space-1) var(--env-space-4);
   /* Concentric with the palette's corners through its padding, like the search field above. */
   border-radius: calc(var(--env-radius-surface) - var(--env-space-2));
   color: var(--env-color-fg-control);
-  cursor: pointer;
-  user-select: none;
-  white-space: nowrap;
 }
-.env-command-palette-option[data-highlighted] {
-  background: var(--env-color-bg-popup-hover);
-}
-.env-command-palette-option:active {
+.env-command-palette-item:active {
   background: var(--env-color-bg-popup-pressed);
 }
-.env-command-palette-option .env-icon {
-  color: var(--env-color-fg-muted);
+/* The status announces the number of results; it shows only when it says that nothing matches. */
+.env-command-palette-status:not([data-empty]) {
+  /* Out of the layout and clipped away whole; the palette's own overflow holds it. */
+  position: absolute;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
-.env-command-palette-option[data-highlighted] .env-icon {
-  color: inherit;
-}
-.env-command-palette-label {
-  min-inline-size: 0;
-  flex: 0 1 auto;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.env-command-palette-detail {
-  min-inline-size: 0;
-  flex: 0 1000 auto;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  color: var(--env-color-fg-muted);
-  font: var(--env-type-body-small);
-}
-.env-command-palette-trailing {
-  flex: 0 0 auto;
-  margin-inline-start: auto;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--env-space-1);
-  color: var(--env-color-fg-muted);
-  font: var(--env-type-body-small);
-}
-.env-command-palette-empty {
+.env-command-palette-status[data-empty] {
   padding: var(--env-space-5) var(--env-space-4);
   color: var(--env-color-fg-muted);
   text-align: center;
@@ -174,7 +142,7 @@
   gap: var(--env-space-2);
 }
 @media (pointer: coarse) {
-  .env-command-palette-option {
+  .env-command-palette-item {
     min-block-size: var(--env-control-height-touch);
   }
 }
@@ -202,18 +170,5 @@
   .env-command-palette[data-ending-style] {
     transition-duration: var(--env-motion-duration-fast);
     transition-timing-function: var(--env-motion-ease-exit);
-  }
-}
-
-/* Forced colors: the system paints no fills or shadows, so the highlighted command takes the
-   system’s selection colors. */
-@media (forced-colors: active) {
-  .env-command-palette-option[data-highlighted] {
-    forced-color-adjust: none;
-    background-color: Highlight;
-    color: HighlightText;
-  }
-  .env-command-palette-option[data-highlighted] :where(*) {
-    color: inherit;
   }
 }
