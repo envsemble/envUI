@@ -16,8 +16,8 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--env-space-3);
-    padding: var(--env-space-4) calc(var(--env-control-height) + 2 * var(--env-space-4)) var(--env-space-4)
-      var(--docs-gutter);
+    padding: var(--env-space-4) calc(var(--env-control-height) + 2 * var(--env-space-4))
+      var(--env-space-4) var(--docs-gutter);
     padding-block-start: max(var(--env-space-4), env(safe-area-inset-top));
   }
 }

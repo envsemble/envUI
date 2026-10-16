@@ -133,7 +133,9 @@ test('raw colors are reported, and colors from tokens pass', async () => {
     (await message('.a { background: rgb(var(--x)), url("rgb(0 0 0)"), hsl(0 0% 0%); }')).text,
     /^Raw color hsl\(0 0% 0%\) in background/,
   );
-  await passes('.a { background: color-mix(in srgb, var(--env-color-bg-default) 80%, transparent); }');
+  await passes(
+    '.a { background: color-mix(in srgb, var(--env-color-bg-default) 80%, transparent); }',
+  );
   await passes('.a { fill: currentColor; }');
 });
 

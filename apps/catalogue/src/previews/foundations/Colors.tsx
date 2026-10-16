@@ -35,8 +35,7 @@ function ColorSwatch({
           title="Choose a color"
           style={{
             background: `var(${colorVariable(token)})`,
-            color:
-              (value?.lightness ?? 50) > 55 ? 'var(--docs-ink-dark)' : 'var(--docs-ink-light)',
+            color: (value?.lightness ?? 50) > 55 ? 'var(--docs-ink-dark)' : 'var(--docs-ink-light)',
           }}
         >
           <code>{value?.css ?? ''}</code>

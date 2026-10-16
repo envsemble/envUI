@@ -13,7 +13,11 @@ const sources: Record<string, readonly [rest: string, hover: string, pressed: st
     '--env-color-bg-brand-emphasis-hover',
     '--env-color-bg-brand-emphasis-pressed',
   ],
-  'button-important': ['--env-color-bg-important-strong', '--env-color-bg-important-strong-hover', '--env-color-bg-important-strong-pressed'],
+  'button-important': [
+    '--env-color-bg-important-strong',
+    '--env-color-bg-important-strong-hover',
+    '--env-color-bg-important-strong-pressed',
+  ],
   'button-secondary': [
     '--env-color-bg-neutral-muted',
     '--env-color-bg-neutral-muted-hover',
@@ -258,7 +262,8 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       ['--env-color-bg-neutral-muted', ['skeleton']],
     ] as const;
     for (const [token, targets] of cases) {
-      if (token === '--env-color-border-accent-emphasis') await page.getByTestId(`${theme}-color-field`).focus();
+      if (token === '--env-color-border-accent-emphasis')
+        await page.getByTestId(`${theme}-color-field`).focus();
       const { before, after } = await compareToken(token);
       for (const name of Object.keys(selectors)) {
         if ((targets as readonly string[]).includes(name))

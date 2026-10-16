@@ -80,7 +80,10 @@ test.describe('Menus', () => {
       await expect(menu).toBeVisible();
       await settled(menu);
       // The popup takes the raised popup surface, like Popover and Select, with small corners.
-      const [popup, border] = await tokenColors(menu, ['--env-color-bg-popup', '--env-elevation-2-border']);
+      const [popup, border] = await tokenColors(menu, [
+        '--env-color-bg-popup',
+        '--env-elevation-2-border',
+      ]);
       const surface = await popupSurface(menu);
       expect(surface.background).toBe(popup);
       expect(surface.borderColor).toBe(border);

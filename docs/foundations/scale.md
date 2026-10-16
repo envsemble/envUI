@@ -40,22 +40,22 @@ Within a scale, a control's **size** (`sm`, `md` or `lg`) chooses one of three h
 
 At the default 16 px root. Every value is a token, in rem, so it follows the reader's text size.
 
-| Token                                                           | Comfortable           | Compact               |
-| --------------------------------------------------------------- | --------------------- | --------------------- |
-| `--env-control-height-sm` / `-md` / `-lg`                           | 32 / 40 / 48          | 26 / 32 / 38          |
-| `--env-control-target-min`                                          | 24                    | 24                    |
-| `--env-row-height` (menu, Select and Combobox rows)                 | 36                    | 28                    |
-| `--env-row-content-height` (tree rows)                              | 20                    | 20                    |
-| `--env-row-padding-block-xs` / `-sm` / `-md` / `-lg`                | 2 / 4 / 8 / 12        | 2 / 3 / 4 / 6         |
-| `--env-tree-row-padding-block-sm` / `-md` / `-lg`                   | 4 / 8 / 12            | 4 / 5 / 7             |
+| Token                                                                   | Comfortable           | Compact               |
+| ----------------------------------------------------------------------- | --------------------- | --------------------- |
+| `--env-control-height-sm` / `-md` / `-lg`                               | 32 / 40 / 48          | 26 / 32 / 38          |
+| `--env-control-target-min`                                              | 24                    | 24                    |
+| `--env-row-height` (menu, Select and Combobox rows)                     | 36                    | 28                    |
+| `--env-row-content-height` (tree rows)                                  | 20                    | 20                    |
+| `--env-row-padding-block-xs` / `-sm` / `-md` / `-lg`                    | 2 / 4 / 8 / 12        | 2 / 3 / 4 / 6         |
+| `--env-tree-row-padding-block-sm` / `-md` / `-lg`                       | 4 / 8 / 12            | 4 / 5 / 7             |
 | `--env-space-1` … `--env-space-9`                                       | 4, 8, 12, 16, 24 … 64 | 4, 6, 10, 12, 20 … 52 |
-| `--env-control-gap`                                                 | 7                     | 6                     |
-| `--env-font-size-caption` / `-body-small` / `-label`                | 12 / 14 / 14          | 11 / 12 / 13          |
-| `--env-font-size-label-small` (combobox chips)                      | 13                    | 12                    |
-| `--env-font-size-body` / `-heading-small` / `-heading`              | 15 / 16 / 18          | 13 / 14 / 16          |
-| `--env-icon-size-sm` / `-md` / `-lg`                                | 16 / 18 / 20          | 16 / 16 / 18          |
-| `--env-radius-sm` / `--env-radius-lg` / `--env-radius-surface`     | 8 / 16 / 28           | 6 / 12 / 22           |
-| `--env-field-floating-height` (inside the 1 px border)              | 56                    | 44                    |
+| `--env-control-gap`                                                     | 7                     | 6                     |
+| `--env-font-size-caption` / `-body-small` / `-label`                    | 12 / 14 / 14          | 11 / 12 / 13          |
+| `--env-font-size-label-small` (combobox chips)                          | 13                    | 12                    |
+| `--env-font-size-body` / `-heading-small` / `-heading`                  | 15 / 16 / 18          | 13 / 14 / 16          |
+| `--env-icon-size-sm` / `-md` / `-lg`                                    | 16 / 18 / 20          | 16 / 16 / 18          |
+| `--env-radius-sm` / `--env-radius-lg` / `--env-radius-surface`          | 8 / 16 / 28           | 6 / 12 / 22           |
+| `--env-field-floating-height` (inside the 1 px border)                  | 56                    | 44                    |
 | `--env-topbar-height` / `--env-title-bar-height`                        | 52 / 40               | 42 / 32               |
 | `--env-control-border-width`, focus rings, `--env-control-height-touch` | 1, 2, 44              | 1, 2, 44              |
 

@@ -131,7 +131,10 @@ test('dropped files show the drag-over state and are filtered by accept', async 
   await zone.dispatchEvent('dragenter', { dataTransfer: transfer });
   await expect(root).toHaveAttribute('data-dragging', '');
   await expect(zone).toHaveCSS('border-top-style', 'solid');
-  await expect(zone).toHaveCSS('border-top-color', await tokenColor(zone, '--env-color-border-accent-emphasis'));
+  await expect(zone).toHaveCSS(
+    'border-top-color',
+    await tokenColor(zone, '--env-color-border-accent-emphasis'),
+  );
   // Moving over the label inside keeps the state until the files leave the zone.
   const label = zone.locator('.env-drop-zone-label');
   await label.dispatchEvent('dragenter', { dataTransfer: transfer });
