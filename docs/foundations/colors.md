@@ -5,6 +5,7 @@ aliases:
   - light mode
   - color scheme
   - high contrast
+  - contrast
 ---
 
 # Colors & themes

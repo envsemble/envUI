@@ -241,13 +241,18 @@ export function buildSearchIndex({ documents, props, tokens = readTokens() }) {
 
 /**
  * A search document with the names a query may give it whole, folded as queries are: its title,
- * its aliases, a prop as its export and name (Button variant), never its name alone, and a token as
+ * each topic of a page's title, an export's name written out in words, its aliases, a prop as its export and name (Button variant), never its name alone, and a token as
  * its name too (color.fg.muted). A query that is one of them ranks the document first.
  */
 function withNames(document) {
+  const parted = !['export', 'prop', 'token'].includes(document.kind);
   const names = [
     // A prop's name alone is no whole name of it: many exports share it, such as variant.
     ...(document.owner ? [] : [document.title]),
+    // Each topic a page's title names, such as spacing and shape for Spacing & shape.
+    ...(parted ? document.title.split(/\s*(?:&|,|\band\b)\s*/) : []),
+    // An export's name written out, such as copy button for CopyButton.
+    ...(document.kind === 'export' ? [document.title.replace(/(\p{Ll})(\p{Lu})/gu, '$1 $2')] : []),
     ...document.aliases.split('\n'),
     ...(document.owner ? [`${document.owner} ${document.title}`] : []),
     ...(document.kind === 'token' ? [document.id.replace(/^token:/, '')] : []),

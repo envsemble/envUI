@@ -55,6 +55,9 @@ export function nameKey(text) {
     .join(' ');
 }
 
+/** A title folded, as it is and written out at its humps: CopyButton is copybutton and copy button. */
+const ownNames = (title) => [nameKey(title), nameKey(title.replace(/(\p{Ll})(\p{Lu})/gu, '$1 $2'))];
+
 /**
  * How a query matches: every word must match, as the start of a word as people type, and longer
  * words also with a typo. Names count most, then the export a prop belongs to, aliases and other
@@ -74,9 +77,11 @@ export function queryOptionsFor(query) {
     boostDocument: (_id, _term, stored) => {
       const kind = kindBoost[stored?.kind] ?? 3;
       if (key === '') return kind;
-      // The query is the result's own name, such as useToast, which counts more than a page's
-      // alias of the same words, such as the Toast page's useToast.
-      if (!stored?.owner && nameKey(stored?.title ?? '') === key) return kind * exactBoost * 3;
+      // The query is the result's own name, such as useToast, or that name written out, copy
+      // button for CopyButton, which counts more than a page's alias of the same words, such as
+      // the Toast page's useToast or the Button page's copy button.
+      if (!stored?.owner && ownNames(stored?.title ?? '').includes(key))
+        return kind * exactBoost * 3;
       // The query is another of the result's whole names: an alias, or Button.variant.
       if (stored?.names?.includes(key)) return kind * exactBoost;
       // Many exports share a prop's name, such as variant, so it counts less on its own, and
