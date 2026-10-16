@@ -159,6 +159,21 @@ test('live examples keep links in place, show their source, and matrices sit in 
   ).toBeVisible();
 });
 
+test('the props view links each source file at the revision the catalogue was built from', async ({
+  page,
+}) => {
+  await page.goto(`${offline}#/components/button/props`);
+  const link = page.getByRole('link', { name: 'actions/Button.tsx', exact: true });
+  // The release tag of a release build, or the commit of any other: never a moving branch.
+  const revision = `(?:v${version.replaceAll('.', '\\.')}|[0-9a-f]{40})`;
+  await expect(link).toHaveAttribute(
+    'href',
+    new RegExp(
+      `^https://github\\.com/envsemble/envUI/blob/${revision}/packages/ui/src/actions/Button\\.tsx$`,
+    ),
+  );
+});
+
 test('pagers center pairs and single destinations at every page width', async ({ page }) => {
   await page.goto(`${offline}#/components/pager/preview`);
   const groups = page.locator('.env-pager');

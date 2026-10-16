@@ -1,6 +1,8 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { viteSingleFile } from 'vite-plugin-singlefile';
+import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import { isAbsolute, relative } from 'node:path';
 import {
   documentationDirectory,
@@ -13,9 +15,29 @@ import {
 // browsers keep cached.
 import { tokensVitePlugin } from '../../scripts/BuildTokens.mjs';
 
+/**
+ * The revision the catalogue's links to source files point at: the release tag when the build is
+ * of a release's commit, and otherwise the commit itself, as for archived and next builds, so a
+ * link shows the source the page was generated from. Without Git, the package version's tag.
+ */
+function sourceRevision() {
+  const manifest = new URL('../../packages/ui/package.json', import.meta.url);
+  const tag = `v${JSON.parse(readFileSync(manifest, 'utf8')).version}`;
+  const git = (...args: string[]) =>
+    execFileSync('git', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+  try {
+    return git('tag', '--points-at', 'HEAD').split(/\s+/).includes(tag)
+      ? tag
+      : git('rev-parse', 'HEAD');
+  } catch {
+    return tag;
+  }
+}
+
 export default defineConfig(({ mode }) => {
   const site = mode === 'site';
   return {
+    define: { __ENVUI_SOURCE_REVISION__: JSON.stringify(sourceRevision()) },
     plugins: [
       // Rebuilds Tokens.css from packages/ui/tokens on every token edit; Vite hot-reloads it.
       tokensVitePlugin(),
