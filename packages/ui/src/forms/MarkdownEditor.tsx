@@ -29,13 +29,17 @@ export interface MarkdownLinkRequest {
 }
 export interface MarkdownEditorProps
   extends Omit<TextareaProps, 'children' | 'value' | 'defaultValue' | 'onChange'> {
+  /** The Markdown source of a controlled editor; replacing it clears the undo history. */
   value?: string;
+  /** The source an uncontrolled editor starts with, and that a form reset restores. */
   defaultValue?: string;
+  /** Receives the whole source after typing, formatting, undo or redo. */
   onValueChange?: (value: string) => void;
   /** Formatting actions; false hides the toolbar. Undo/redo accompany a visible toolbar. */
   toolbar?: readonly MarkdownCommand[] | false;
   /** Show Write/Preview tabs. Preview uses the same public Markdown renderer. */
   preview?: boolean;
+  /** Options of the Markdown that renders the preview: headingOffset, renderLink and codeCopyable. */
   previewProps?: Pick<
     import('../content/Markdown.js').MarkdownProps,
     'headingOffset' | 'renderLink' | 'codeCopyable'

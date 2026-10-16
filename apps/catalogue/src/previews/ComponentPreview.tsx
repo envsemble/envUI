@@ -2,7 +2,6 @@ import { SwitchPreview, RadioPreview, SelectPreview, SliderPreview } from './For
 import { NavListPreview, TabsPreview, PagerPreview, PaginationPreview } from './Navigation';
 import { SurfacePreview, LayoutPreview } from './Layout';
 import { ChipsPreview, RatingPreview, RelativeTimePreview } from './Content';
-import { MarkdownPreview } from './MarkdownContent';
 import { lazy, Suspense } from 'react';
 import { Text } from '@envsemble/envui';
 import { SpinnerPreview, SkeletonPreview } from './Feedback';
@@ -54,8 +53,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <MessagesPreview />;
     case 'stat':
       return <StatsPreview />;
-    case 'markdown':
-      return <MarkdownPreview />;
     case 'rich-text':
       return (
         <Suspense fallback={<Text role="status">Loading rich text…</Text>}>

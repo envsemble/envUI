@@ -19,7 +19,6 @@ import {
 const unconverted = [
   'app-shell',
   'chips',
-  'markdown',
   'message',
   'meter',
   'nav-list',

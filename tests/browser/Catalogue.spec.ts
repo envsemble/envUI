@@ -60,38 +60,30 @@ test('offline usage renders shared Markdown guidance and follows relative topic 
   await expect(page.locator('#documentation')).toContainText('npm run dev:library');
 });
 
-test('Markdown combines rendering and one editor demo, including old editor bookmarks', async ({
+test('Markdown renders a document and edits one, including old editor bookmarks', async ({
   page,
 }) => {
+  // The 0.x route of the Markdown editor opens the Markdown page on the template.
   await page.goto(`${offline}#/components/markdown-editor/preview`);
+  await expect(page).toHaveURL(/#\/components\/markdown\/overview$/);
   await expect(
     page.getByRole('heading', { name: 'Markdown', exact: true, level: 1 }),
   ).toBeVisible();
-  const preview = page.locator('.docs-preview');
-  await expect(
-    preview.getByRole('heading', { name: 'Rendered markdown', exact: true }),
-  ).toBeVisible();
-  await expect(
-    preview.getByRole('heading', { name: 'Markdown editor demo', exact: true }),
-  ).toBeVisible();
-  await expect(preview.getByText(/This demo is not saved/)).toBeVisible();
-  await expect(preview.locator('.env-markdown-editor')).toHaveCount(1);
-  const source = preview.getByRole('textbox', { name: 'Markdown input' });
-  await source.fill('## Edited demo\n\nA **new** draft.');
-  const editor = preview.locator('.env-card').last();
-  await editor.getByRole('tab', { name: 'Output', exact: true }).click();
-  await expect(editor.getByRole('heading', { name: 'Edited demo' })).toBeVisible();
-  await editor.getByRole('tab', { name: 'Input', exact: true }).click();
-  await expect(source).toHaveValue('## Edited demo\n\nA **new** draft.');
-  await expect(preview.getByText('Demo markdown source', { exact: true })).toHaveCount(0);
-  const renderer = preview.locator('.env-card').first();
-  await renderer.getByRole('tab', { name: 'Input', exact: true }).click();
-  await expect(renderer.locator('code')).toContainText('## Project checklist');
-  await renderer.getByRole('tab', { name: 'Output', exact: true }).click();
-  await expect(renderer.getByRole('heading', { name: 'Project checklist' })).toBeVisible();
+  const rendered = page.getByRole('group', { name: 'Markdown example', exact: true });
+  await expect(rendered.getByRole('heading', { name: 'Launch checklist' })).toBeVisible();
+  await expect(rendered.locator('kbd.env-kbd')).toHaveText(['Ctrl', 'S']);
+  const editor = page.getByRole('group', { name: 'Write and preview example', exact: true });
+  const source = editor.getByRole('textbox', { name: 'Description' });
+  const draft = '## Edited draft\n\nA **new** paragraph.';
+  await source.fill(draft);
+  await editor.getByRole('tab', { name: 'Preview', exact: true }).click();
+  await expect(editor.getByRole('heading', { name: 'Edited draft' })).toBeVisible();
+  await editor.getByRole('tab', { name: 'Write', exact: true }).click();
+  await expect(source).toHaveValue(draft);
+  // A Usage bookmark opens the guidelines.
   await page.goto(`${offline}#/components/markdown-editor/usage`);
-  await expect(page.getByRole('heading', { name: 'Render content', exact: true })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Edit and preview', exact: true })).toBeVisible();
+  await expect(page).toHaveURL(/#\/components\/markdown\/guidelines$/);
+  await expect(page.getByRole('heading', { name: 'Anatomy', exact: true })).toBeVisible();
   expect(references.filter(({ id }) => id === 'markdown')).toHaveLength(1);
   expect(references.some(({ id }) => id === 'markdown-editor')).toBe(false);
 });

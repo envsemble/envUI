@@ -3048,7 +3048,7 @@
           "name": "children",
           "type": "string",
           "required": true,
-          "description": ""
+          "description": "The Markdown string to render."
         },
         {
           "name": "headingOffset",
@@ -3068,7 +3068,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Gives each code block a copy button; false by default."
         },
         {
           "name": "components",
@@ -3105,20 +3105,20 @@
           "name": "value",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The Markdown source of a controlled editor; replacing it clears the undo history."
         },
         {
           "name": "defaultValue",
           "type": "string",
           "required": false,
           "default": "''",
-          "description": ""
+          "description": "The source an uncontrolled editor starts with, and that a form reset restores."
         },
         {
           "name": "onValueChange",
           "type": "(value: string) => void",
           "required": false,
-          "description": ""
+          "description": "Receives the whole source after typing, formatting, undo or redo."
         },
         {
           "name": "toolbar",
@@ -3138,7 +3138,7 @@
           "name": "previewProps",
           "type": "Pick<MarkdownProps, 'headingOffset' | 'renderLink' | 'codeCopyable'>",
           "required": false,
-          "description": ""
+          "description": "Options of the Markdown that renders the preview: headingOffset, renderLink and codeCopyable."
         },
         {
           "name": "onRequestLink",
