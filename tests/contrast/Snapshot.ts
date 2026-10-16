@@ -120,6 +120,34 @@ export function loosening(current: Requirement, recorded: Requirement): string[]
   return ways;
 }
 
+/**
+ * Where each renamed pair went: its new name must be declared, or be dropped or renamed onward in
+ * turn, so a pair that was once a rename's target can leave the registry too.
+ */
+export function checkRenameTargets(
+  renamed: readonly { from: string; to: string }[],
+  declared: ReadonlySet<string>,
+  dropped: readonly { pair: string }[],
+): string[] {
+  const problems: string[] = [];
+  for (const entry of renamed) {
+    const seen = new Set([entry.from]);
+    let target = entry.to;
+    while (!declared.has(target) && !dropped.some((other) => other.pair === target)) {
+      const onward = renamed.find((other) => other.from === target);
+      if (!onward || seen.has(target)) {
+        problems.push(
+          `${entry.from} is listed as renamed to ${entry.to}, which tests/contrast/Pairs.ts doesn't declare, drop, or rename onward to a declared or dropped pair.`,
+        );
+        break;
+      }
+      seen.add(target);
+      target = onward.to;
+    }
+  }
+  return problems;
+}
+
 export interface SnapshotInput {
   pairs: readonly ContrastPair[];
   dropped: readonly { pair: string }[];

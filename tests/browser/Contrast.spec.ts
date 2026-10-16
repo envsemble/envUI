@@ -13,6 +13,7 @@ import {
   type Relaxation,
 } from '../contrast/Pairs';
 import {
+  checkRenameTargets,
   checkSnapshot,
   declaredFile,
   formatSnapshot,
@@ -216,13 +217,10 @@ test.describe('contrast', { tag: '@contrast' }, () => {
         problems.push(
           `${entry.from} is listed as renamed in tests/contrast/Pairs.ts but is still declared.`,
         );
-      if (!declared.has(entry.to))
-        problems.push(
-          `${entry.from} is listed as renamed to ${entry.to}, which tests/contrast/Pairs.ts doesn't declare.`,
-        );
       if (!entry.rationale.trim())
         problems.push(`The renamed pair ${entry.from} needs a rationale.`);
     }
+    problems.push(...checkRenameTargets(renamed, declared, dropped));
     // What each pair is held to, against DeclaredPairs.json: see tests/contrast/Snapshot.ts.
     const snapshot = checkSnapshot({
       pairs,
@@ -435,6 +433,24 @@ test.describe('contrast', { tag: '@contrast' }, () => {
     expect(
       checkSnapshot({ ...base, pairs: [{ ...b, kind: 'text' }], renamed, recorded }).problems,
     ).toEqual([expect.stringContaining('out of date')]);
+  });
+
+  test('a former rename target can be dropped or renamed onward', () => {
+    const renamed = [{ from: '--a on --b', to: '--a2 on --b' }];
+    const declared = new Set(['--a2 on --b']);
+    expect(checkRenameTargets(renamed, declared, [])).toEqual([]);
+    // The new name is dropped later…
+    expect(checkRenameTargets(renamed, new Set(), [{ pair: '--a2 on --b' }])).toEqual([]);
+    // …or renamed onward, to a name that is declared.
+    const onward = [...renamed, { from: '--a2 on --b', to: '--a3 on --b' }];
+    expect(checkRenameTargets(onward, new Set(['--a3 on --b']), [])).toEqual([]);
+    // A target that is gone, or a chain that ends nowhere or comes back on itself, still fails.
+    expect(checkRenameTargets(renamed, new Set(), [])).toEqual([
+      expect.stringContaining('--a on --b is listed as renamed to --a2 on --b'),
+    ]);
+    expect(checkRenameTargets(onward, new Set(), [])).toHaveLength(2);
+    const cycle = [...renamed, { from: '--a2 on --b', to: '--a on --b' }];
+    expect(checkRenameTargets(cycle, new Set(), [])).toHaveLength(2);
   });
 
   test('the snapshot treats a switch between a distance and a ratio as a loosening', () => {
