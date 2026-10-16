@@ -8827,7 +8827,7 @@
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "Small actions below the message, such as Copy or Retry, at the small control height, with the touch hit area on touch screens; at the inline end for your own messages. A text IconButton at the edge lines its icon up with the message. false and null count as absent."
+          "description": "Small actions below the message, such as Copy or Retry, at the small control height, with the touch height on touch screens; at the inline end for your own messages. A text IconButton at the edge lines its icon up with the message. false and null count as absent."
         },
         {
           "name": "status",
@@ -11213,13 +11213,13 @@
           "name": "contrast",
           "type": "'standard' | 'high' | 'system'",
           "required": false,
-          "description": "Contrast of the Theme boundary around the children, and of the document root with applyToDocument: high, standard, or system to follow `prefers-contrast: more`, as on Theme. Defaults to the contrast of an enclosing Theme, and to system. With system, the provider removes from the root only a contrast that envUI wrote and the page left unchanged: a provider, this one or one before it, or the bootstrap script. Pass a contrast that is fixed for the application to createThemeBootstrapScript too, so the root has it before the first paint."
+          "description": "Contrast of the Theme boundary around the children, and of the document root with applyToDocument: high, standard, or system to follow `prefers-contrast: more`, as on Theme. Defaults to the contrast of an enclosing Theme; outside any, a provider applying to the document gives its boundary a contrast the page set on the root, and otherwise system. With system, the provider removes from the root only a contrast that envUI wrote and the page left unchanged: a provider, this one or one before it, or the bootstrap script. Pass a contrast that is fixed for the application to createThemeBootstrapScript too, so the root has it before the first paint."
         },
         {
           "name": "scale",
           "type": "'comfortable' | 'compact'",
           "required": false,
-          "description": "The app scale, comfortable or compact for a desktop productivity app, as on Theme: of the Theme boundary around the children, and, marked as envUI's own, of the document root with applyToDocument. Without it, the boundary takes the scale of an enclosing Theme, or comfortable, and the root keeps a scale the page set but drops one that envUI wrote and the page left unchanged. Pass the same scale to createThemeBootstrapScript so the root has it before the first paint."
+          "description": "The app scale, comfortable or compact for a desktop productivity app, as on Theme: of the Theme boundary around the children, and, marked as envUI's own, of the document root with applyToDocument. Without it, the boundary takes the scale of an enclosing Theme; outside any, a provider applying to the document gives its boundary a scale the page set on the root, so the application, the page and its portals share it, and otherwise comfortable. The root keeps a scale the page set but drops one that envUI wrote and the page left unchanged. Pass the same scale to createThemeBootstrapScript so the root has it before the first paint."
         },
         {
           "name": "className",
@@ -12969,7 +12969,7 @@
         "id": "control.height-touch",
         "cssVariable": "--control-height-touch",
         "type": "dimension",
-        "description": "The hit area of a control under a coarse pointer, whatever the scale: a control smaller than it keeps its look and gains an invisible overlay this tall and wide. Rows and text fields grow to it instead.",
+        "description": "The height every control grows to under a coarse pointer, whatever the scale, and the width of a button: its own box is its hit area. Rows grow to it too.",
         "value": "2.75rem"
       },
       {
@@ -13282,9 +13282,8 @@
         "id": "row.content-height",
         "cssVariable": "--row-content-height",
         "type": "dimension",
-        "description": "The line a row of a tree or list reserves for its label and icon; the row's density adds its block padding around it.",
-        "value": "1.25rem",
-        "compact": "1.375rem"
+        "description": "The line a tree row reserves for its label and icon, 20 px in both scales; the row's density adds its block padding around it.",
+        "value": "1.25rem"
       },
       {
         "id": "row.height",
@@ -13416,6 +13415,30 @@
         "type": "dimension",
         "value": "3.25rem",
         "compact": "2.625rem"
+      },
+      {
+        "id": "tree.row-padding-block-lg",
+        "cssVariable": "--tree-row-padding-block-lg",
+        "type": "dimension",
+        "description": "A tree row's block padding at density lg: the row density's in the comfortable scale.",
+        "value": "0.75rem",
+        "compact": "0.4375rem"
+      },
+      {
+        "id": "tree.row-padding-block-md",
+        "cssVariable": "--tree-row-padding-block-md",
+        "type": "dimension",
+        "description": "A tree row's block padding at density md: the row density's in the comfortable scale.",
+        "value": "0.5rem",
+        "compact": "0.3125rem"
+      },
+      {
+        "id": "tree.row-padding-block-sm",
+        "cssVariable": "--tree-row-padding-block-sm",
+        "type": "dimension",
+        "description": "A tree row's block padding at density sm, its default, so that a row is as tall as a menu row in either scale: the row density's in the comfortable scale.",
+        "value": "0.25rem",
+        "compact": "0.25rem"
       },
       {
         "id": "type.body",
