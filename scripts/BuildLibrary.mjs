@@ -7,6 +7,7 @@ import { generateBrandAssets } from './GenerateBrandAssets.mjs';
 import { collectDependencyNotices } from './DependencyNotices.mjs';
 import { generateDocumentation, packageDocumentation } from './GenerateDocumentation.mjs';
 import { buildTokens } from './BuildTokens.mjs';
+import { writeAgentFiles } from './GenerateManifest.mjs';
 const repositoryRoot = fileURLToPath(new URL('../', import.meta.url));
 const libraryDirectory = resolve(repositoryRoot, 'packages/ui');
 const sourceDirectory = resolve(libraryDirectory, 'src');
@@ -93,6 +94,12 @@ if (relative(libraryDirectory, documentationOutputDirectory) !== 'docs')
 // The packaged pages are compiled: example files and generated props tables are filled in, and
 // the examples ship beside them in docs/examples.
 packageDocumentation(documentationOutputDirectory);
+// The agent files live at the package root, where `npx envui` and llms.txt readers look for them,
+// so the packaged docs/ leaves out the committed copies of the manifest and llms.txt.
+for (const name of ['manifest.json', 'llms.txt'])
+  await rm(resolve(documentationOutputDirectory, 'generated', name), { force: true });
+const { version } = JSON.parse(await readFile(resolve(libraryDirectory, 'package.json'), 'utf8'));
+writeAgentFiles(libraryDirectory, { version });
 const readme = await readFile(resolve(repositoryRoot, 'README.md'), 'utf8');
 await writeFile(
   resolve(libraryDirectory, 'README.md'),
@@ -112,5 +119,5 @@ await writeFile(
     .replaceAll('packages/ui/licenses/', 'licenses/'),
 );
 console.log(
-  `Built @envsemble/envui: ${sourceEntryPoints.length} ESM modules, types, CSS, assets, Markdown documentation and two agent skills.`,
+  `Built @envsemble/envui: ${sourceEntryPoints.length} ESM modules, types, CSS, assets, Markdown documentation, the agent manifest and llms.txt, and three agent skills.`,
 );
