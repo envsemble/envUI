@@ -652,6 +652,47 @@ for (const down of ['offline', 'unreachable'] as const) {
   });
 }
 
+test('in the hosted build, an icon list that fails to load offers a reload, which loads it', async ({
+  page,
+}) => {
+  requireSite();
+  const files = moduleFiles('src/previews/foundations/Icons.tsx');
+  let failing = true;
+  await serveSite(page, (pathname) => failing && files.includes(pathname), 'missing');
+  await page.goto(`${siteUrl}/#/foundations/icons/preview`);
+  const main = page.getByRole('main');
+  await expect(main.getByText('The icon list could not load')).toBeVisible();
+  await expect(main.getByText('This page failed to render')).toHaveCount(0);
+  failing = false;
+  await main.getByRole('button', { name: 'Reload the page', exact: true }).click();
+  await expect(main.getByRole('searchbox').first()).toBeVisible();
+  await expect(main.getByText('The icon list could not load')).toHaveCount(0);
+});
+
+for (const [what, module, address] of [
+  ['icon list', 'src/previews/foundations/Icons.tsx', '#/foundations/icons/preview'],
+  ['icon usage', 'src/usage/IconUsage.tsx', '#/foundations/icons/usage?icon=Add'],
+] as const) {
+  test(`an ${what} that fails to load says so in place, and loads again on request`, async ({
+    page,
+  }) => {
+    const file = `**/${module}*`;
+    await page.route(file, (route) => route.abort());
+    await page.goto(`${catalogueUrl}/${address}`);
+    const main = page.getByRole('main');
+    await expect(main.getByText(`The ${what} could not load`)).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Icons & assets');
+    await page.unroute(file);
+    await main.getByRole('button', { name: 'Try again', exact: true }).click();
+    await expect(main.getByText(`The ${what} could not load`)).toHaveCount(0);
+    // A visit elsewhere and back keeps it loaded.
+    await page.goto(`${catalogueUrl}/#/components/badge/overview`);
+    await page.goto(`${catalogueUrl}/${address}`);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Icons & assets');
+    await expect(main.getByText(`The ${what} could not load`)).toHaveCount(0);
+  });
+}
+
 test('code that fails to load is asked for once, not on every render', async ({ page }) => {
   const source = /\/src\/examples\/button\/CreateProject\.tsx\?raw/;
   const warnings: string[] = [];

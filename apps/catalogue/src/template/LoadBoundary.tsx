@@ -1,4 +1,4 @@
-import { Component, createRef, type ReactNode } from 'react';
+import { Component, createRef, lazy, type ComponentType, type ReactNode } from 'react';
 import { ActionGroup, Alert, Button } from '@envsemble/envui';
 
 /** A file that a part of a page loads on its own and that failed to arrive. */
@@ -42,6 +42,28 @@ export function reloadModule<T>(
     import(/* @vite-ignore */ `${pathname}?${query ? `${query}&` : ''}retry=${Date.now()}`).then(
       pick,
     );
+}
+
+/**
+ * A component that loads on its own, for LoadBoundary to show: `component` is the lazy component to
+ * render. A lazy component that failed to load stays failed, so `retry` replaces it with one that
+ * asks for the module again, as reloadModule does with `path` relative to `base`.
+ */
+export function lazyPart<M, P extends object>(
+  load: () => Promise<M>,
+  pick: (module: M) => ComponentType<P>,
+  path: string,
+  base: string,
+) {
+  const make = (from: () => Promise<M>) =>
+    lazy(loadModule(() => from().then((module) => ({ default: pick(module) }))));
+  const part = {
+    component: make(load),
+    retry() {
+      part.component = make(reloadModule(load, path, base));
+    },
+  };
+  return part;
 }
 
 /** Whether this is the hosted catalogue, whose parts load from files of their own. */
