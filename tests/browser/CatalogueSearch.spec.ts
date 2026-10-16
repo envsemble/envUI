@@ -139,7 +139,8 @@ test.describe('search', () => {
     await expect(page).toHaveURL(`${catalogueUrl}/components/button/props#props-Button-startIcon`);
     await expect(page.getByRole('tab', { name: 'Props', selected: true })).toBeVisible();
     await expect(page.locator('[id="props-Button-startIcon"]')).toBeInViewport();
-    await expect(page.locator('#docs-main')).toBeFocused();
+    // Focus goes to the row, so reading and the keyboard go on from it.
+    await expect(page.locator('[id="props-Button-startIcon"]')).toBeFocused();
   });
 
   test('choosing the place the address is at already scrolls to it again', async ({ page }) => {
@@ -154,6 +155,30 @@ test.describe('search', () => {
     await expect(dialog(page)).toBeHidden();
     await expect(page).toHaveURL(`${catalogueUrl}/components/button/props#props-Button-variant`);
     await expect(row).toBeInViewport();
+    // As after a navigation, focus goes to the place, not back to the search button.
+    await expect(row).toBeFocused();
+
+    // A page chosen again while scrolled down shows its top, with focus on its content.
+    await openCatalogue(page, `${catalogueUrl}/components/badge/overview`);
+    await expect(page.getByRole('group', { name: 'Badge example', exact: true })).toBeVisible();
+    await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight }));
+    await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(0);
+    await search(page, 'Badge');
+    await expect.poll(() => highlighted(page)).toBe('page:badge');
+    await page.keyboard.press('Enter');
+    await expect(dialog(page)).toBeHidden();
+    await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
+    await expect(page.locator('#docs-main')).toBeFocused();
+  });
+
+  test('a link to a heading opens the view that shows it', async ({ page }) => {
+    // The Keyboard heading is in Button's Accessibility view, not its first.
+    const route = routeOfDocument('button', { section: 'keyboard' });
+    expect(route).toBe('components/button/accessibility?section=keyboard');
+    await openCatalogue(page, `${catalogueUrl}/components/button/accessibility#keyboard`);
+    const heading = page.getByRole('heading', { name: 'Keyboard', exact: true });
+    await expect(heading).toBeInViewport();
+    await expect(heading).toBeFocused();
   });
 
   test('finds a token and opens the token reference at its row', async ({ page }) => {
@@ -179,6 +204,10 @@ test.describe('search', () => {
     await expect(
       page.getByRole('heading', { name: 'Theme preference', exact: true }),
     ).toBeInViewport();
+    await expect(
+      page.getByRole('heading', { name: 'Theme preference', exact: true }),
+    ).toBeFocused();
+    await expect(option(page, 'export:ThemePreferenceProvider')).toHaveCount(0);
     await search(page, 'useTheme');
     await expect.poll(() => highlighted(page)).toBe('export:useTheme');
     await page.keyboard.press('Enter');
@@ -300,8 +329,19 @@ test.describe('hosted build', () => {
       status: 200,
       cache: 'private, max-age=31536000, immutable',
     });
-    // The stored theme applies before the catalogue loads.
-    expect(readFileSync(resolve(site, 'index.html'), 'utf8')).toContain('envui-catalogue-theme');
+    // The stored theme applies before the catalogue loads, from a script right after the
+    // character set, which stays within the first 1024 bytes the browser looks in.
+    for (const file of [resolve(site, 'index.html'), resolve('dist/envUI.html')]) {
+      const html = readFileSync(file, 'utf8');
+      const charset = html.indexOf('<meta charset="UTF-8" />');
+      const script = html.indexOf('envui-catalogue-theme');
+      expect(charset, file).toBeGreaterThan(-1);
+      expect(charset + 24, file).toBeLessThan(1024);
+      expect(script, file).toBeGreaterThan(charset);
+      expect(script, file).toBeLessThan(
+        html.search(/<style|<link rel="stylesheet"|<script type="module"/),
+      );
+    }
   });
 
   test('the stored theme, contrast and scale apply before the catalogue loads', async ({
@@ -452,10 +492,13 @@ for (const where of ['offline', 'hosted'] as const) {
       'Migrate an interface to envUI',
     );
     await expect(heading).toBeInViewport();
+    // Focus goes to the heading, where reading goes on.
+    await expect(heading).toBeFocused();
     await page.evaluate(() => window.scrollTo({ top: 0 }));
     await expect(heading).not.toBeInViewport();
     await link.click();
     await expect(heading).toBeInViewport();
+    await expect(heading).toBeFocused();
   });
 }
 
