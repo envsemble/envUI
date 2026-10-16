@@ -1,35 +1,94 @@
-/* react-colorful adds a style sheet of its own, outside cascade layers, which wins over every rule
-   in envUI's layers. The declarations that replace its own are important, so they still win from
-   envUI's layer; the picker's internals are no application's to restyle. */
-.env-color-picker-area .react-colorful {
-  inline-size: 100% !important;
-  block-size: auto !important;
+/* ColorPicker: a saturation and brightness area over the hue, a hue slider under it, both with a
+   round pointer in the chosen color, and the HEX field. The area's and the hue's colors are
+   content, so they are literal. */
+/* stylelint-disable color-named -- The black, white and hues of a color picker are its content. */
+.env-color-picker {
+  --env-color-picker-pointer-size: 1.75rem;
+  /* The pointers rise over the hue bar, which the lowest brightness's pointer reaches into. */
+  --env-color-picker-thumb-layer: 1;
+}
+.env-color-picker-plane {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  inline-size: 100%;
   aspect-ratio: 3 / 2;
   min-block-size: calc(var(--env-control-height-sm) * 3);
   max-block-size: 14rem;
+  user-select: none;
+  cursor: default;
 }
-.env-color-picker-area .react-colorful__interactive:focus-visible {
-  outline: 0.125rem solid var(--env-color-border-focus) !important;
+.env-color-picker-saturation {
+  position: relative;
+  flex-grow: 1;
+  /* A strip of black under the area, the darkest brightness, where the pointer of the lowest
+     brightness stays clear of the hue. */
+  border-block-end: var(--env-space-3) solid black;
+  border-radius: var(--env-radius-sm) var(--env-radius-sm) 0 0;
+  background-color: var(--env-color-picker-hue);
+  background-image:
+    linear-gradient(0deg, black, transparent), linear-gradient(90deg, white, transparent);
+  /* A neutral inner edge over every hue. */
+  box-shadow: inset 0 0 0 0.0625rem var(--env-color-border-media);
+}
+.env-color-picker-saturation-slider {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  outline: none;
+  touch-action: none;
+}
+.env-color-picker-saturation-slider:focus-visible,
+.env-color-picker-hue:has(:focus-visible) {
+  outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.125rem;
 }
-.env-color-picker-area .react-colorful__hue {
-  block-size: var(--env-control-height-sm) !important;
+.env-color-picker-saturation-thumb,
+.env-color-picker-hue-thumb {
+  box-sizing: border-box;
+  inline-size: var(--env-color-picker-pointer-size);
+  block-size: var(--env-color-picker-pointer-size);
+  border: 0.125rem solid white;
+  border-radius: 50%;
+  box-shadow: var(--env-elevation-1-shadow);
+  pointer-events: none;
+}
+.env-color-picker-saturation-thumb {
+  position: absolute;
+  z-index: var(--env-color-picker-thumb-layer);
+  transform: translate(-50%, -50%);
+}
+.env-color-picker-saturation-slider:focus .env-color-picker-saturation-thumb {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+.env-color-picker-hue {
+  position: relative;
   flex-shrink: 0;
+  block-size: var(--env-control-height-sm);
+  border-radius: 0 0 var(--env-radius-sm) var(--env-radius-sm);
+  background: linear-gradient(
+    90deg,
+    red 0,
+    yellow 17%,
+    lime 33%,
+    cyan 50%,
+    blue 67%,
+    magenta 83%,
+    red
+  );
+  touch-action: none;
 }
-.env-color-picker-area .react-colorful__saturation {
-  border-block-end-width: var(--env-space-3) !important;
-  border-radius: var(--env-radius-sm) var(--env-radius-sm) 0 0 !important;
-  /* A neutral inner edge over every hue. */
-  box-shadow: inset 0 0 0 0.0625rem var(--env-color-border-media) !important;
+.env-color-picker-hue-control,
+.env-color-picker-hue-track {
+  block-size: 100%;
+  border-radius: inherit;
 }
-.env-color-picker-area .react-colorful__last-control {
-  border-radius: 0 0 var(--env-radius-sm) var(--env-radius-sm) !important;
+.env-color-picker-hue-thumb {
+  background-color: var(--env-color-picker-hue);
 }
-.env-color-picker-area .react-colorful__pointer {
-  inline-size: 1.75rem !important;
-  block-size: 1.75rem !important;
-  border-width: 0.125rem !important;
-  box-shadow: var(--env-elevation-1-shadow) !important;
+/* stylelint-enable color-named */
+.env-color-picker-hue:has(:focus) .env-color-picker-hue-thumb {
+  scale: 1.1;
 }
 .env-color-picker[data-disabled] > .env-text,
 .env-color-picker[data-disabled] > .env-color-picker-area {
@@ -45,15 +104,15 @@
   white-space: nowrap;
 }
 @media (pointer: coarse) {
-  .env-color-picker-area .react-colorful__hue {
-    block-size: var(--env-control-height-touch) !important;
+  .env-color-picker-hue {
+    block-size: var(--env-control-height-touch);
   }
 }
 
-/* Forced colors: the picker's area and the swatches show colors as content, as an image does, so
+/* Forced colors: the area, the hue and the pointers show colors as content, as an image does, so
    the system keeps them. */
 @media (forced-colors: active) {
-  .env-color-picker-area .react-colorful {
+  .env-color-picker-plane {
     forced-color-adjust: none;
   }
 }
