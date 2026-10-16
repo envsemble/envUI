@@ -1,4 +1,3 @@
-import { ButtonsPreview } from './Actions';
 import {
   TextFieldsPreview,
   CheckboxPreview,
@@ -56,8 +55,6 @@ const RichTextPreview = lazy(() =>
 /** Select a topic; each preview retains its state across theme changes. */
 export function ComponentPreview({ id }: { id: string }) {
   switch (id) {
-    case 'button':
-      return <ButtonsPreview />;
     case 'segmented-control':
       return <SegmentedControlPreview />;
     case 'text-field':

@@ -23,7 +23,6 @@ const unconverted = [
   'avatar',
   'badge',
   'breadcrumbs',
-  'button',
   'calendar-heatmap',
   'card',
   'checkbox',

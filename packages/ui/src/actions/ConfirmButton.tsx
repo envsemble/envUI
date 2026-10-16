@@ -17,6 +17,7 @@ interface ConfirmButtonBaseProps
    * The resting appearance; armed, the button is always destructive. outlined by default, and
    * secondary for an icon-only button, like IconButton; quiet for an action in the application's
    * chrome, such as a toolbar.
+   * @default 'outlined', or 'secondary' with icon
    */
   variant?: 'outlined' | 'secondary' | 'destructive' | 'text' | 'quiet';
   /** The label while armed, naming what a second press does, such as “Remove Morgan?”. */

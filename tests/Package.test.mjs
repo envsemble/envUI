@@ -815,6 +815,7 @@ test('packed skills locate separate versioned documentation and match the releas
   const compiled = compileDocumentation();
   assert.ok(compiled.has('components/dialog.md'));
   assert.ok(compiled.has('components/rich-text.md'));
+  assert.ok([...compiled.keys()].some((path) => path.startsWith('examples/')));
   for (const [path, contents] of compiled) {
     assert.equal(
       await readFile(join(installedDirectory, 'docs', path), 'utf8'),
@@ -825,6 +826,7 @@ test('packed skills locate separate versioned documentation and match the releas
   const button = await readFile(join(installedDirectory, 'docs/components/button.md'), 'utf8');
   assert.match(button, /^---\ntitle: Button\n/);
   assert.match(button, /\n## Props\n\n### Button\n/);
+  assert.match(button, /```tsx example=\w+\nimport /);
   assert.deepEqual(
     JSON.parse(await readFile(join(installedDirectory, 'docs/generated/props.json'), 'utf8')),
     JSON.parse(await readFile(join(repository, 'docs/generated/props.json'), 'utf8')),

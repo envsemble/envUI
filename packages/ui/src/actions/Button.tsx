@@ -15,10 +15,17 @@ export type ButtonVariant =
   | 'quiet';
 
 export interface ButtonAppearanceProps {
+  /**
+   * The emphasis: primary for the main action of a view, important for a rare consequential one,
+   * secondary and outlined for the rest, destructive for an action that deletes or ends something,
+   * text for a link-like action and quiet for an application's chrome, such as a toolbar.
+   */
   variant?: ButtonVariant;
   /** Show an underline for the text variant; defaults to false. */
   underline?: boolean;
+  /** A decorative icon before the label, such as an Add icon. */
   startIcon?: ReactNode;
+  /** A decorative icon after the label, such as a ChevronRight for a next step. */
   endIcon?: ReactNode;
   /**
    * Work started by this button is running: a spinner replaces the content without changing the
@@ -31,8 +38,11 @@ export type ButtonProps = ButtonAppearanceProps &
   (
     | { iconOnly?: false; icon?: never }
     | {
+        /** Show only icon, in a square button that keeps its size; name it with aria-label. */
         iconOnly: true;
+        /** The icon of an icon-only button. */
         icon: ReactNode;
+        /** The action's name, such as Delete draft, for an icon-only button. */
         'aria-label': string;
         children?: never;
         startIcon?: never;
@@ -40,6 +50,10 @@ export type ButtonProps = ButtonAppearanceProps &
       }
   );
 
+/**
+ * Starts an action, or goes to a destination with href, in one of seven emphases, with optional
+ * icons; icon-only with iconOnly. It renders a native button or link.
+ */
 export function Button({
   variant = 'primary',
   underline = false,
@@ -93,9 +107,13 @@ export function Button({
 
 export interface IconButtonProps
   extends Omit<ComponentPropsWithRef<'button'>, 'children' | 'aria-label'> {
+  /** The icon, such as Settings. */
   icon: ReactNode;
+  /** The action's name, which assistive technology announces, such as Open settings. */
   'aria-label': string;
+  /** As Button's; secondary by default. */
   variant?: ButtonVariant;
+  /** As Button's: a spinner replaces the icon while the work runs. */
   pending?: boolean;
 }
 

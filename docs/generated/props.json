@@ -675,14 +675,14 @@
     "Button": {
       "kind": "component",
       "source": "packages/ui/src/actions/Button.tsx",
-      "description": "",
+      "description": "Starts an action, or goes to a destination with href, in one of seven emphases, with optional icons; icon-only with iconOnly. It renders a native button or link.",
       "props": [
         {
           "name": "variant",
           "type": "'primary' | 'important' | 'secondary' | 'outlined' | 'destructive' | 'text' | 'quiet'",
           "required": false,
           "default": "'primary'",
-          "description": ""
+          "description": "The emphasis: primary for the main action of a view, important for a rare consequential one, secondary and outlined for the rest, destructive for an action that deletes or ends something, text for a link-like action and quiet for an application's chrome, such as a toolbar."
         },
         {
           "name": "underline",
@@ -695,13 +695,13 @@
           "name": "startIcon",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A decorative icon before the label, such as an Add icon."
         },
         {
           "name": "endIcon",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A decorative icon after the label, such as a ChevronRight for a next step."
         },
         {
           "name": "pending",
@@ -714,20 +714,20 @@
           "name": "disabled",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "A disabled button cannot be pressed; a disabled link has no destination, cannot be focused or followed, and reports aria-disabled."
         },
         {
           "name": "aria-label",
           "type": "string",
           "required": false,
           "requiredWhen": "`iconOnly` is `true`",
-          "description": ""
+          "description": "The action's name, such as Delete draft, for an icon-only button."
         },
         {
           "name": "href",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The destination: the element is a native link, through the LinkProvider's link component."
         },
         {
           "name": "iconOnly",
@@ -741,7 +741,7 @@
           "type": "ReactNode",
           "required": false,
           "requiredWhen": "`iconOnly` is `true`",
-          "description": ""
+          "description": "The icon of an icon-only button."
         }
       ],
       "native": [
@@ -762,7 +762,7 @@
           "type": "'horizontal' | 'vertical'",
           "required": false,
           "default": "'horizontal'",
-          "description": ""
+          "description": "A row of buttons, or a column in which every button is as wide as the group."
         },
         {
           "name": "fullWidth",
@@ -1700,7 +1700,7 @@
           "name": "variant",
           "type": "'outlined' | 'secondary' | 'destructive' | 'text' | 'quiet'",
           "required": false,
-          "default": "icon == null ? 'outlined' : 'secondary'",
+          "default": "'outlined', or 'secondary' with icon",
           "description": "The resting appearance; armed, the button is always destructive. outlined by default, and secondary for an icon-only button, like IconButton; quiet for an action in the application's chrome, such as a toolbar."
         },
         {
@@ -1732,13 +1732,13 @@
           "name": "startIcon",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A decorative icon before the label, such as an Add icon."
         },
         {
           "name": "endIcon",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A decorative icon after the label, such as a ChevronRight for a next step."
         },
         {
           "name": "pending",
@@ -2283,21 +2283,21 @@
           "type": "string",
           "required": false,
           "requiredWhen": "`iconOnly` is `true`",
-          "description": ""
+          "description": "The action's name, such as Delete draft, for an icon-only button."
         },
         {
           "name": "icon",
           "type": "ReactNode",
           "required": false,
           "requiredWhen": "`iconOnly` is `true`",
-          "description": ""
+          "description": "The icon of an icon-only button."
         },
         {
           "name": "variant",
           "type": "'primary' | 'important' | 'secondary' | 'outlined' | 'destructive' | 'text' | 'quiet'",
           "required": false,
           "default": "'secondary'",
-          "description": ""
+          "description": "The emphasis: primary for the main action of a view, important for a rare consequential one, secondary and outlined for the rest, destructive for an action that deletes or ends something, text for a link-like action and quiet for an application's chrome, such as a toolbar."
         },
         {
           "name": "underline",
@@ -2309,13 +2309,13 @@
           "name": "startIcon",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A decorative icon before the label, such as an Add icon."
         },
         {
           "name": "endIcon",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A decorative icon after the label, such as a ChevronRight for a next step."
         },
         {
           "name": "pending",
@@ -2807,26 +2807,26 @@
           "name": "icon",
           "type": "ReactNode",
           "required": true,
-          "description": ""
+          "description": "The icon, such as Settings."
         },
         {
           "name": "aria-label",
           "type": "string",
           "required": true,
-          "description": ""
+          "description": "The action's name, which assistive technology announces, such as Open settings."
         },
         {
           "name": "variant",
           "type": "'primary' | 'important' | 'secondary' | 'outlined' | 'destructive' | 'text' | 'quiet'",
           "required": false,
           "default": "'secondary'",
-          "description": ""
+          "description": "As Button's; secondary by default."
         },
         {
           "name": "pending",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "As Button's: a spinner replaces the icon while the work runs."
         }
       ],
       "native": [
@@ -2870,26 +2870,26 @@
     "Link": {
       "kind": "component",
       "source": "packages/ui/src/actions/Link.tsx",
-      "description": "Inline navigation reuses text-button colors, geometry and behavior.",
+      "description": "A destination inside running text, underlined by default. It is a native link, through the LinkProvider's link component, in the text button's colors.",
       "props": [
         {
           "name": "href",
           "type": "string",
           "required": true,
-          "description": ""
+          "description": "The destination: the element is a native link, through the LinkProvider's link component."
         },
         {
           "name": "disabled",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "A disabled button cannot be pressed; a disabled link has no destination, cannot be focused or followed, and reports aria-disabled."
         },
         {
           "name": "underline",
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "Show an underline for the text variant; defaults to false."
+          "description": "Underline the link; true by default, so it stands out from the text around it."
         }
       ],
       "native": [
@@ -3962,7 +3962,7 @@
           "name": "href",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The destination: the element is a native link, through the LinkProvider's link component."
         },
         {
           "name": "iconOnly",
@@ -6149,13 +6149,13 @@
           "name": "variant",
           "type": "'primary' | 'important' | 'secondary' | 'outlined' | 'destructive' | 'text' | 'quiet'",
           "required": false,
-          "description": ""
+          "description": "As Button's; secondary by default."
         },
         {
           "name": "pending",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "As Button's: a spinner replaces the icon while the work runs."
         }
       ],
       "native": [

@@ -31,6 +31,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 ## Actions
 
 - [Button](components/button.md)
+- [Link](components/link.md)
 - [SegmentedControl](components/segmented-control.md)
 
 ## Forms & selection

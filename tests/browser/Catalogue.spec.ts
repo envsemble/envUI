@@ -124,23 +124,29 @@ test('palette editing uses public controls and remains temporary and independent
   await expect.poll(canvasValue).toBe(initialLight);
 });
 
-test('button link specimens and optional interaction matrices consume public controls', async ({
+test('live examples keep links in place, show their source, and matrices sit in the guidelines', async ({
   page,
 }) => {
-  await page.goto(`${offline}#/components/button/preview`);
+  await page.goto(`${offline}#/components/button/overview`);
   const hash = await page.evaluate(() => location.hash);
-  const preview = page.locator('.docs-preview');
-  // Confirm buttons on the page keep their own status regions.
-  const destination = preview.getByRole('status').filter({ hasText: 'Selected destination' });
-  await preview.getByRole('link', { name: 'Read guide', exact: true }).press('Enter');
-  await expect(destination).toHaveText('Selected destination: Guide');
+  // Links in an example keep their semantics without leaving the documentation.
+  const destinations = page.getByRole('group', { name: 'Destinations example', exact: true });
+  await destinations.getByRole('link', { name: 'Read the guide', exact: true }).press('Enter');
   expect(await page.evaluate(() => location.hash)).toBe(hash);
-  await preview
-    .getByRole('link', { name: 'project guide', exact: true })
+  await destinations
+    .getByRole('link', { name: 'Read help', exact: true })
     .click({ modifiers: ['Control'] });
-  await expect(destination).toHaveText('Selected destination: Project guide');
   expect(await page.evaluate(() => location.hash)).toBe(hash);
-  const disclosure = preview.locator('details.env-disclosure');
+  // Every example shows the source of its file, ready to copy.
+  const code = destinations.locator('xpath=following-sibling::details[1]');
+  await code.locator('summary').click();
+  await expect(code.locator('.env-code-block')).toContainText(
+    "import { ActionGroup, Button } from '@envsemble/envui';",
+  );
+  await expect(code.getByRole('button', { name: 'Copy code', exact: true })).toBeVisible();
+  // Catalogue-only specimens, such as the forced interaction states, are in the guidelines.
+  await page.getByRole('tab', { name: 'Guidelines', exact: true }).click();
+  const disclosure = page.locator('.docs-preview details.env-disclosure');
   await disclosure.locator('summary').focus();
   await disclosure.locator('summary').press('Enter');
   await expect(disclosure).toHaveAttribute('open', '');
