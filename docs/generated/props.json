@@ -2163,109 +2163,110 @@
     "Dialog": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Dialog.tsx",
-      "description": "Dialog and inspector shell; Base UI owns dismissal and modal-aware focus behavior.",
+      "description": "A focused task over the page: a centered modal, a modal near the top of the window, or a full-height side panel at the right edge, modal or beside the page. It has a title, an optional description, content and actions that start with a built-in close button. Base UI's dialog owns focus, Escape and outside presses.",
       "props": [
         {
           "name": "open",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "Whether the dialog is open, for a dialog the application controls with onOpenChange."
         },
         {
           "name": "defaultOpen",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "default": "false",
+          "description": "Whether a dialog the application doesn't control is open on the first render."
         },
         {
           "name": "onOpenChange",
           "type": "(open: boolean) => void",
           "required": false,
-          "description": ""
+          "description": "Called with the requested state when the dialog asks to open or close: from the trigger, Escape, an outside press, the close button or a DialogClose. Not called for a dismissal that pending blocks."
         },
         {
           "name": "trigger",
           "type": "ReactElement",
           "required": false,
-          "description": ""
+          "description": "The element that opens the dialog, such as a Button. It reports the dialog it opens, and focus returns to it on close. Omit it for a dialog the application opens with open."
         },
         {
           "name": "title",
           "type": "ReactNode",
           "required": true,
-          "description": ""
+          "description": "The dialog's heading and accessible name, such as “Delete project?”."
         },
         {
           "name": "description",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "Muted text under the title that describes the dialog to assistive technology too, such as what its action changes."
         },
         {
           "name": "children",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "The content between the heading and the actions, such as text, fields or a list."
         },
         {
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "The dialog's own actions, after the built-in close button, with the primary action last. They close the dialog only where they are DialogClose or set open to false."
         },
         {
           "name": "closeLabel",
           "type": "string",
           "required": false,
           "default": "'Close'",
-          "description": ""
+          "description": "The label of the built-in close button that starts the actions, such as Cancel, or the name of a right panel's close icon button."
         },
         {
           "name": "placement",
           "type": "'center' | 'top' | 'right'",
           "required": false,
           "default": "'center'",
-          "description": "Centered modal, a modal near the top of the window for search-like tasks, or a full-height panel at the right edge, which takes the whole width of a narrow window such as a phone's."
+          "description": "center for a modal in the middle of the window; top for a modal near the top of the window for search-like tasks, so results grow downward without moving the field; right for a full-height panel at the right edge, with a close icon button beside its title instead of the close button in the actions, which takes the whole width of a narrow window such as a phone's."
         },
         {
           "name": "size",
           "type": "'standard' | 'wide'",
           "required": false,
           "default": "'standard'",
-          "description": "standard (default, about 28 rem, 24 rem for a panel) or wide (about 44 rem) for content-heavy dialogs and panels."
+          "description": "standard, 28 rem wide and 24 rem for a right panel, or wide, 44 rem, for content-heavy dialogs and panels such as tables, comparisons and longer forms. Both narrow to fit the window."
         },
         {
           "name": "modal",
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "Non-modal panels allow interaction with the surrounding page."
+          "description": "true traps focus in the dialog over a backdrop, hides the page from assistive technology, blocks presses on it and locks its scroll. false leaves the page usable beside the dialog, for a side panel that inspects it; it then closes when focus or a press goes outside it, unless disablePointerDismissal."
         },
         {
           "name": "disablePointerDismissal",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Keep a non-modal inspector open while interacting with its source content."
+          "description": "Keep the dialog open on presses outside it, and a non-modal dialog also when focus moves outside, such as an inspector beside the page it inspects. Escape and the close buttons still close it."
         },
         {
           "name": "initialFocus",
           "type": "RefObject<HTMLElement | null>",
           "required": false,
-          "description": ""
+          "description": "The element to focus when the dialog opens. By default focus moves to the first focusable element inside, such as the first field, or to the dialog itself when opened by touch."
         },
         {
           "name": "finalFocus",
           "type": "RefObject<HTMLElement | null>",
           "required": false,
-          "description": ""
+          "description": "The element to focus when the dialog closes, such as the row that opened it. By default focus returns to the trigger, or to the element that had focus when the dialog opened."
         },
         {
           "name": "pending",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Work started from the dialog is in progress. Escape, outside presses and the built-in close button cannot dismiss it until pending returns to false."
+          "description": "Work started from the dialog is in progress. Escape, outside presses and the close buttons cannot dismiss it until pending returns to false. The built-in close button is disabled and the dialog reports busy; a DialogClose stays enabled and runs its onClick, so disable it too. Set pending on the action that started the work as well."
         }
       ],
       "native": [
@@ -2278,7 +2279,7 @@
     "DialogClose": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Dialog.tsx",
-      "description": "Use within Dialog when additional actions should dismiss it.",
+      "description": "A button inside a Dialog that closes it after its own onClick, for an action other than the built-in close button, such as Don't save or Done. It takes Button's props and is secondary by default.",
       "props": [
         {
           "name": "aria-label",

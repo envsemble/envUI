@@ -1,17 +1,40 @@
 ---
 title: Dialog
-summary: Centered modals and side panels share focus and dismissal behavior.
+summary: A focused task over the page, as a centered modal, a modal near the top of the window or a full-height side panel, with shared focus and dismissal.
 status: beta
 since: 0.1.0
 category: Feedback & overlays
 aliases:
   - modal
+  - modal dialog
   - popup
   - side panel
+  - inspector
   - sheet
   - drawer
   - confirm dialog
+useWhen:
+  - People decide on a consequence before it happens, such as deleting a project, or type a name to confirm it.
+  - A short task needs people's attention before they go on, such as inviting a member or renaming a project.
+  - Content needs more room than a popup, such as a table, a comparison or a longer form (`size="wide"`).
+  - A search-like task shows results that grow below its field (`placement="top"`).
+  - An item's details or settings open in a panel at the edge of the window, with the page usable beside it if needed (`placement="right"`).
+avoidWhen:
+  - text: Confirming one action in place that cannot be undone, such as removing a member from a list.
+    use: ConfirmButton
+  - text: Details or a few fields beside the control that opens them.
+    use: Popover
+  - text: Feedback after an action, such as Saved or Invitation sent.
+    use: Toast
+  - text: A message about the page or a section that stays in place, such as a warning.
+    use: Alert
+  - text: Quick open of a document or a command by name.
+    use: CommandPalette
+  - text: Items people keep open and work on beside the page, such as drafts.
+    use: PanelDock
 related:
+  - button
+  - popover
   - toast
   - command-palette
   - text-field
@@ -24,56 +47,213 @@ components:
 
 # Dialog
 
-## React usage
+## Overview
 
-```tsx
-import { Dialog, Button, Text } from '@envsemble/envui';
+A dialog holds one task over the page: a decision, a short form, or details people look at before they go on. It has a title, an optional description, its content and a row of actions that starts with a close button. Dialog is built on Base UI's dialog, which moves focus into it, keeps focus inside a modal dialog, returns focus when it closes and closes it on <kbd>Esc</kbd> and outside presses.
 
-<Dialog trigger={<Button variant="secondary">View project</Button>}
-  title="Sample project" description="Project details" closeLabel="Close">
-  <Text>Shared plans, milestones and responsibilities for the project.</Text>
-</Dialog>
+One component opens in three places:
 
-<Dialog trigger={<Button variant="secondary">Inspect project</Button>}
-  title="Project details" placement="right" modal={false} disablePointerDismissal>
-  <Text>Shared plans and people for the sample project.</Text>
-</Dialog>
+- **Centered** (the default): a modal in the middle of the window, for confirmations and short forms.
+- **Near the top** (`placement="top"`): a modal whose content grows downward without moving its field, for search-like tasks.
+- **Side panel** (`placement="right"`): a full-height panel at the right edge, for an item's details or settings. With `modal={false}` the page stays usable beside it.
+
+**DialogClose** is a button inside a dialog that closes it, for actions other than the built-in close button, such as Don't save or Done.
+
+```tsx example=ProjectDetails
+
 ```
 
-### Props & contracts
+## Anatomy
 
-| Name                              | Contract                                                                                                                           |
-| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| trigger / title / description     | Launch control and accessible modal labeling                                                                                       |
-| children / actions                | General content and shared controls                                                                                                |
-| closeLabel                        | Built-in dismissal label; defaults to Close                                                                                        |
-| placement                         | center (default), top or right; top opens near the top of the window, right is a full-height side panel with a header close button |
-| size                              | standard (default, about 28 rem; 24 rem for a right panel) or wide (about 44 rem) for content-heavy dialogs and panels             |
-| modal                             | true (default) traps focus, blocks outside interaction and locks page scroll; false permits interaction with the page              |
-| disablePointerDismissal           | false by default; true keeps an inspector open on outside presses or focus changes                                                 |
-| open / defaultOpen / onOpenChange | Controlled or uncontrolled visibility                                                                                              |
-| DialogClose                       | Additional dismissal action; shared button props                                                                                   |
-| initialFocus / finalFocus         | Optional focus refs                                                                                                                |
-| pending                           | Work is in progress: <kbd>Esc</kbd>, outside presses and the built-in close button cannot dismiss the dialog                       |
+1. **Backdrop** (modal dialogs): a translucent overlay over the page. A press on it closes the dialog.
+2. **Surface**: the dialog color with a hairline border, 1.75 rem corners and 1.5 rem padding, the raised surface Popover and CommandPalette share. In the dark theme it keeps the pane color, so rows and fields inside keep their contrast. A side panel has square corners and a border only at its start, which it drops across the whole width of a narrow window. The ref and other `div` props, such as `id` and `className`, reach the surface.
+3. **Title** (`title`): an `h2` in the page heading type, 1.125 rem, which names the dialog.
+4. **Description** (optional, `description`): muted small text 0.5 rem under the title, which describes the dialog.
+5. **Content** (`children`): 1.5 rem below the title and description, and 1.5 rem above the actions.
+6. **Actions**: a row aligned to the end. It starts with the built-in close button, a secondary button labelled `closeLabel` (Close), and `actions` follow it, with the primary action last. A side panel has no close button here and shows the row only with `actions`.
+7. **Close icon button** (side panels): beside the title, named by `closeLabel`.
 
-## Guidelines
+A dialog taller than the window scrolls inside its surface, with its title and actions, and doesn't scroll the page behind it.
 
-- Use a centered modal for a focused confirmation or short form. Use a right panel to inspect content; set modal=false when its source page should remain interactive.
-- Use placement top for search-like dialogs, so results can grow downward without moving the field, and size wide for tables, comparisons and longer forms. For quick open, use CommandPalette.
-- Centered dialogs include a footer dismissal; right panels include a header close button. <kbd>Esc</kbd> closes either placement and focus returns to the trigger or finalFocus ref.
-- A right panel takes the whole width of a window that would otherwise show only a sliver of the page beside it, such as a phone's: below 28 rem for a standard panel and 48 rem for a wide one. Its content then keeps clear of the safe areas on both sides, such as a phone's rounded corners in landscape.
-- Every dialog has the same surface as Popover and CommandPalette: the raised popup color, a hairline border and the surface corners. In the dark theme, dialogs keep the pane color, so rows and fields inside keep their contrast. The title and its description sit together above the content, and the actions close the dialog at the end.
-- Modal dialogs trap focus; non-modal panels do not. Portals preserve the originating theme.
-- The application owns validation, saving, async work and whether completion closes the dialog.
-- While async work is pending, set pending so the dialog cannot be dismissed, and set pending on the action that started it. Restore focus to the intended trigger or finalFocus target.
-- Compose forms in a dialog from envUI's fields: floating-label inputs with their validation messages, Select with its label above, and RadioGroup rows for a choice. The catalogue's dialogs page shows a form, a choice and a typed confirmation.
+## Variants and sizes
 
-TypeScript declarations provide the complete public API.
+| Placement | Use for                                                                         |
+| --------- | ------------------------------------------------------------------------------- |
+| `center`  | Confirmations, short forms and content people read before they go on.           |
+| `top`     | Search-like tasks, whose results grow downward without moving the field.        |
+| `right`   | An item's details or settings in a full-height panel, modal or beside the page. |
 
-## Related topics
+| Size       | Width                               | Use for                                 |
+| ---------- | ----------------------------------- | --------------------------------------- |
+| `standard` | 28 rem, and 24 rem for a side panel | Confirmations, short forms and details. |
+| `wide`     | 44 rem in every placement           | Tables, comparisons and longer forms.   |
 
-- [Toast](../components/toast.md)
-- [CommandPalette](../components/command-palette.md)
-- [TextField](../components/text-field.md)
-- [Stack](../components/stack.md)
-- [Accessibility](../foundations/accessibility.md)
+| `modal`          | Use for                                                             |
+| ---------------- | ------------------------------------------------------------------- |
+| `true` (default) | A task people finish or cancel before they go back to the page.     |
+| `false`          | A side panel beside a page that stays usable, such as an inspector. |
+
+- A modal dialog opens over a backdrop. Focus stays inside it, and the page behind it takes no presses, doesn't scroll and is hidden from assistive technology. A non-modal dialog has no backdrop, and focus moves freely between it and the page; an inspector usually adds `disablePointerDismissal`.
+- Centered and top dialogs narrow to fit the window, keeping a gutter of 0.75 to 1 rem and clear of the safe areas, such as a phone's notch. A top dialog starts 12% of the window's height from its top, at most 6 rem.
+- A side panel fills the window's height at its right edge. It takes the whole width of a window that would otherwise leave only a sliver of the page beside it, such as a phone's: below 28 rem for a standard panel and 48 rem for a wide one. Its content then keeps clear of the safe areas on both sides, such as a phone's rounded corners in landscape.
+
+## States and behaviour
+
+- **Opening**: `trigger` opens the dialog and reports it with `aria-haspopup`, `aria-expanded` and `aria-controls`; `defaultOpen` opens it on the first render. To control it, pass `open` and `onOpenChange`, which receives the requested state each time the dialog asks to open or close. A controlled dialog needs no trigger, such as one opened from a row or a menu.
+- **Closing**: <kbd>Esc</kbd>, a press outside, the built-in close button, a side panel's close icon button and a DialogClose close the dialog. `actions` don't close it by themselves: set `open` to false in their handler, or use DialogClose. <kbd>Esc</kbd> and outside presses close only the topmost dialog, and <kbd>Esc</kbd> first closes or clears what is open inside it, such as a Select's list or a SearchField's text.
+- **Outside presses**: a press on a modal dialog's backdrop closes it. A non-modal dialog closes on a press outside it and when focus moves outside it. `disablePointerDismissal` keeps either open, so only <kbd>Esc</kbd> and the close buttons close it, as an inspector needs while people use the page beside it.
+- **Pending**: while `pending` is true, <kbd>Esc</kbd>, outside presses, the close buttons and a DialogClose can't close the dialog. The built-in close button and the side panel's close icon button are disabled, and the dialog reports `aria-busy`. A DialogClose stays enabled and still runs its `onClick`, so disable it too. Set `pending` on the action that started the work as well, and when the work ends, close the dialog or show what went wrong.
+- **Focus on open**: focus moves to `initialFocus`, or else to the first focusable element inside: the first field of a form, the built-in close button of a confirmation, so <kbd>Enter</kbd> doesn't confirm by accident, or a side panel's close icon button. Opened by touch, the dialog itself takes focus, so no on-screen keyboard opens.
+- **Focus on close**: focus returns to `finalFocus`, or else to the trigger, or to the element that had focus when the dialog opened.
+- **Theme**: the dialog renders in a portal at the end of the document, in the theme of the place it opens from, also inside a nested `Theme`.
+- **Motion**: centered dialogs rise into place, top dialogs settle down into place and side panels slide in from the right, over a backdrop that fades in. With a reduced-motion preference they only fade.
+- The application owns validation, saving and other work, and decides whether finishing an action closes the dialog.
+
+## Content guidelines
+
+- Name the task or ask the question the dialog decides, in sentence case: "Invite member", "Delete project?". Don't use "Are you sure?" or "Warning".
+- Say in the description what will happen and to what: "This deletes Northwind launch and its files for everyone in the workspace." Say so when it can't be undone.
+- Name the primary action after what it does, with the title's verb: "Delete project" for "Delete project?", "Send invitation", "Save role". Avoid "OK", "Yes" and "Submit".
+- Set `closeLabel` to "Cancel" where the dialog asks for a decision or collects input, so it's clear that closing changes nothing. Keep "Close" for a dialog that only shows content.
+- Name a side panel's close icon button after what it closes where the page has several panels, such as "Close details" or "Close filters".
+- For a typed confirmation, say what to type in the field's hint: "Type Northwind to confirm."
+
+## Do and don't
+
+### Do
+
+- Keep one task in a dialog, with one primary action at the end of its actions.
+- Give every dialog a title, also a side panel, and a description where the consequence needs saying.
+- Set `pending` on the dialog and on the action that started its work, so people can't close it halfway through.
+- Compose forms in a dialog from envUI's fields, as on a page: TextField with its floating label and its error, Select with its label above, and RadioGroup rows for a choice.
+- Submit a form in a dialog from its primary action with `type="submit"` and the form's `form` id, so <kbd>Enter</kbd> in a field submits it too.
+- Use a non-modal side panel with `disablePointerDismissal` for an inspector, and `finalFocus` to return focus to the row it shows.
+
+### Don't
+
+- Don't open a dialog for a message people needn't act on; use [Toast](../components/toast.md) or [Alert](../components/alert.md).
+- Don't confirm everyday or reversible actions; let them happen and offer an undo, or confirm one irreversible action in place with ConfirmButton.
+- Don't add a Cancel button to `actions`; `closeLabel` names the built-in one.
+- Don't open a dialog from another dialog; make the second step part of the first, or replace it.
+- Don't use a top dialog for quick open; use [CommandPalette](../components/command-palette.md).
+
+## Accessibility
+
+### Keyboard
+
+| Key                                                                   | Action                                                                                                                                                                       |
+| --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| <kbd>Enter</kbd> or <kbd>Space</kbd> on the trigger                   | Opens the dialog and moves focus into it.                                                                                                                                    |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>                       | Moves focus to the next or previous element in the dialog. A modal dialog keeps focus inside, from its last element to its first; a non-modal one lets it go on to the page. |
+| <kbd>Esc</kbd>                                                        | Closes the dialog, or first closes or clears what is open inside it, such as a Select's list. Does nothing while `pending`.                                                  |
+| <kbd>Enter</kbd> or <kbd>Space</kbd> on a close button or DialogClose | Closes the dialog; focus returns to the trigger or `finalFocus`.                                                                                                             |
+
+### envUI provides
+
+- `role="dialog"`, named by the title with `aria-labelledby` and described by the description with `aria-describedby`.
+- `aria-haspopup="dialog"`, `aria-expanded` and `aria-controls` on the trigger.
+- Focus moved into the dialog on open, kept inside a modal dialog and returned on close.
+- In a modal dialog, the rest of the page hidden from assistive technology with `aria-hidden`, closed to presses and locked from scrolling.
+- A close button in every dialog, also for touch screen reader users, who can't press <kbd>Esc</kbd>: the built-in close button, or a side panel's close icon button named by `closeLabel`.
+- `aria-busy` and disabled close buttons while `pending`.
+- The originating theme in the portal.
+
+### You provide
+
+- A `title` that names the dialog, and a `description` where the consequence needs saying.
+- A `closeLabel` in the page's language, such as Cancel.
+- Labels for the fields in the dialog, and their errors through `error`.
+- Validation, saving and errors, `pending` while work runs, and closing the dialog when an action finishes.
+- `finalFocus` when the trigger is gone after the action, or when something other than `trigger` opened the dialog, such as a row.
+- An accessible name on an icon-only trigger.
+
+## Examples
+
+### Confirm a destructive action
+
+The built-in close button reads Cancel, and the destructive action repeats the title's verb. Focus starts on Cancel.
+
+```tsx example=ConfirmDelete
+
+```
+
+### Pending work
+
+While the name saves, the dialog stays open: Cancel is disabled, and <kbd>Esc</kbd> and outside presses wait. The action submits the form, so <kbd>Enter</kbd> in the field saves too.
+
+```tsx example=RenameProject
+
+```
+
+### A form with validation
+
+Fields keep their floating labels and errors inside the dialog. An invalid address shows its error on the field and takes focus back to it; the invitation sends while the dialog is pending.
+
+```tsx example=InviteMember
+
+```
+
+### A choice
+
+RadioGroup rows hold a choice, which takes effect when people save it.
+
+```tsx example=ChangeRole
+
+```
+
+### Typed confirmation
+
+For a consequence that is hard to recover from, people type the name of what they remove before the action becomes available.
+
+```tsx example=RemoveWorkspace
+
+```
+
+### More actions that close
+
+DialogClose closes the dialog after its own `onClick`, without the dialog's open state in the application.
+
+```tsx example=UnsavedChanges
+
+```
+
+### Wide content
+
+`size="wide"` gives a table or a comparison 44 rem.
+
+```tsx example=ReviewChanges
+
+```
+
+### Near the top
+
+`placement="top"` opens the dialog near the top of the window, so its results grow downward while the field stays in place. Choosing a result closes it.
+
+```tsx example=FindPlan
+
+```
+
+### Side panel
+
+`placement="right"` opens a full-height panel at the right edge, with a close icon button beside its title. A DialogClose applies the filters and closes it.
+
+```tsx example=FilterPanel
+
+```
+
+### Inspector beside the page
+
+A non-modal panel with `disablePointerDismissal` stays open while people choose another row, and shows that row. `finalFocus` returns focus to the row the panel showed last.
+
+```tsx example=InspectorPanel
+
+```
+
+## Changelog
+
+- **1.0.0**: The page is `dialog`, after the component.
+- **0.5.0**: `size="wide"`, also for side panels, and `placement="top"`. Dialogs share Popover's raised surface with a hairline border; in the dark theme they keep the pane color through `--color-dialog`. The title and description sit together above the content. A side panel takes the whole width of a narrow window, with its content clear of the safe areas.
+- **0.4.0**: Secondary buttons in dialogs and side panels, such as the close button, stay distinct on their surface.
+- **0.3.0**: Dialogs rise into place and side panels slide in, over a backdrop that fades in.
+- **0.2.0**: `pending`.
+- **0.1.0**: Dialog and DialogClose.

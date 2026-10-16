@@ -33,7 +33,6 @@ const unconverted = [
   'command-palette',
   'composer',
   'date-picker',
-  'dialog',
   'disclosure',
   'document-tabs',
   'drop-zone',

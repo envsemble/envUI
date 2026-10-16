@@ -20,7 +20,7 @@ import { CodePreview } from './CodeContent';
 import { MarkdownPreview } from './MarkdownContent';
 import { lazy, Suspense } from 'react';
 import { Text } from '@envsemble/envui';
-import { EmptyStatePreview, SpinnerPreview, SkeletonPreview, DialogsPreview } from './Feedback';
+import { EmptyStatePreview, SpinnerPreview, SkeletonPreview } from './Feedback';
 import { ToastsPreview } from './Toasts';
 import { ColorPickerPreview } from './ColorPicking';
 import { ComposerPreview, MessagesPreview } from './Conversation';
@@ -139,8 +139,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <PopoverPreview />;
     case 'hover-card':
       return <HoverCardPreview />;
-    case 'dialog':
-      return <DialogsPreview />;
     case 'menubar':
       return <MenubarPreview />;
     case 'tooltip':
