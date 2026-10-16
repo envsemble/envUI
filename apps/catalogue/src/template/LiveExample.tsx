@@ -1,7 +1,7 @@
 import { lazy, Suspense, use, useState, type ComponentType, type MouseEvent } from 'react';
 import { Disclosure, Stack, Text, Theme, useTheme } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/content';
-import { LoadBoundary } from './LoadBoundary';
+import { LoadBoundary, loadModule, reloadModule } from './LoadBoundary';
 
 /**
  * Every example file, rendered live, and its source as text, each loaded with the page that shows
@@ -13,22 +13,24 @@ const sourceLoaders = import.meta.glob<string>('../examples/*/*.tsx', {
   query: '?raw',
   import: 'default',
 });
-const examples = new Map(Object.entries(loaders).map(([path, load]) => [path, lazy(load)]));
+const examples = new Map(
+  Object.entries(loaders).map(([path, load]) => [path, lazy(loadModule(load))]),
+);
 const sources = new Map<string, Promise<string>>();
+/** How each source loads: from its loader, or once it failed, from reloadModule. */
+const sourceLoads = new Map<string, () => Promise<string>>();
 
 export const examplePath = (page: string, name: string) => `../examples/${page}/${name}.tsx`;
 
 /**
- * The source of an example, loaded once and kept for every later render; a load that fails is not
- * kept, so the next render tries again.
+ * The source of an example, loaded once and kept for every later render. A load that fails is kept
+ * too, so renders until a retry read the same rejected promise rather than a new one each time,
+ * which React would take for a promise it was never given; forgetSource drops it.
  */
 function sourceOf(path: string) {
   let source = sources.get(path);
   if (!source) {
-    source = sourceLoaders[path]().catch((error: unknown) => {
-      sources.delete(path);
-      throw error;
-    });
+    source = loadModule(sourceLoads.get(path) ?? sourceLoaders[path])();
     sources.set(path, source);
   }
   return source;
@@ -36,8 +38,19 @@ function sourceOf(path: string) {
 
 /** Drops an example whose file failed to load, so that its next render loads it again. */
 function forgetExample(path: string) {
-  examples.set(path, lazy(loaders[path]));
+  examples.set(path, lazy(loadModule(reloadModule(loaders[path], path, import.meta.url))));
+}
+
+/** Drops the source of an example that failed to load, so that its next render loads it again. */
+function forgetSource(path: string) {
   sources.delete(path);
+  sourceLoads.set(
+    path,
+    reloadModule(sourceLoaders[path], path, import.meta.url, {
+      query: 'raw',
+      pick: (module) => (module as { default: string }).default,
+    }),
+  );
 }
 
 /** Links in an example keep their semantics without navigating away from the documentation. */
@@ -57,11 +70,12 @@ function Source({ path, name }: { path: string; name: string }) {
 /** An example rendered live in the documentation's theme, with its source and a copy button. */
 export function LiveExample({ page, name, title }: { page: string; name: string; title: string }) {
   const theme = useTheme();
-  // Each retry renders the example and its code afresh, from the files loaded again.
-  const [attempt, setAttempt] = useState(0);
+  // A retry renders the example, or its code, afresh from its file loaded again, and leaves the
+  // other as it is.
+  const [, setAttempt] = useState(0);
   const path = examplePath(page, name);
-  const retry = () => {
-    forgetExample(path);
+  const retry = (forget: (path: string) => void) => () => {
+    forget(path);
     setAttempt((count) => count + 1);
   };
   const Example = examples.get(path);
@@ -79,7 +93,7 @@ export function LiveExample({ page, name, title }: { page: string; name: string;
         onClickCapture={preventNavigation}
         onAuxClickCapture={preventNavigation}
       >
-        <LoadBoundary key={attempt} what="example" onRetry={retry}>
+        <LoadBoundary what="example" onRetry={retry(forgetExample)}>
           <Suspense fallback={<Text role="status">Loading example…</Text>}>
             {/* The example is looked up among module-level lazy components, not created here. */}
             {/* eslint-disable-next-line react-hooks/static-components */}
@@ -88,7 +102,7 @@ export function LiveExample({ page, name, title }: { page: string; name: string;
         </LoadBoundary>
       </Stack>
       <Disclosure title="Code" className="docs-live-example-code">
-        <LoadBoundary key={attempt} what="code" onRetry={retry}>
+        <LoadBoundary what="code" onRetry={retry(forgetSource)}>
           <Suspense fallback={<Text role="status">Loading code…</Text>}>
             <Source path={path} name={name} />
           </Suspense>

@@ -498,9 +498,48 @@ test('an example that fails to load says so in place, and loads again on request
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
   await expect(hero.getByRole('button', { name: 'Reload the page', exact: true })).toBeVisible();
   await page.unroute(example);
-  await hero.getByRole('button', { name: 'Try again', exact: true }).click();
+  await hero.getByRole('button', { name: 'Try again', exact: true }).focus();
+  await page.keyboard.press('Enter');
+  await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
   await expect(hero.getByText('The example could not load')).toHaveCount(0);
-  await expect(hero.getByRole('button').first()).toBeVisible();
+  // Focus stays where the example is, rather than falling to the page.
+  expect(await hero.evaluate((group) => group.contains(document.activeElement))).toBe(true);
+});
+
+test('code that fails to load is asked for once, not on every render', async ({ page }) => {
+  const source = /\/src\/examples\/button\/CreateProject\.tsx\?raw/;
+  const warnings: string[] = [];
+  page.on('console', (message) => {
+    if (/uncached promise/i.test(message.text())) warnings.push(message.text());
+  });
+  await page.route(source, (route) => route.abort());
+  await page.goto(`${catalogueUrl}/#/components/button/overview`);
+  const entry = page.locator('.docs-live-example-entry').first();
+  await entry.getByText('Code', { exact: true }).click();
+  await expect(entry.getByText('The code could not load')).toBeVisible();
+  // The example beside it is not loaded again.
+  await expect(
+    page.getByRole('group', { name: 'Button example', exact: true }).getByRole('button').first(),
+  ).toBeVisible();
+  expect(warnings).toEqual([]);
+  await page.unroute(source);
+  await entry.getByRole('button', { name: 'Try again', exact: true }).click();
+  await expect(entry.getByText('The code could not load')).toHaveCount(0);
+  await expect(entry.getByText('CreateProject.tsx', { exact: true })).toBeVisible();
+});
+
+test('an example that fails to render is not reported as failing to load', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.route('**/src/examples/button/CreateProject.tsx', (route) =>
+    route.fulfill({
+      contentType: 'text/javascript',
+      body: "export default function CreateProject() { throw new Error('Broken example'); }",
+    }),
+  );
+  await page.goto(`${catalogueUrl}/#/components/button/overview`);
+  await expect.poll(() => errors.join('\n')).toContain('Broken example');
+  await expect(page.getByText('The example could not load')).toHaveCount(0);
 });
 
 test('each Markdown table region is named after its heading', async ({ page }) => {
