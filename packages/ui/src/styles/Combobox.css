@@ -306,4 +306,12 @@
   .env-combobox-option[data-disabled] {
     color: GrayText;
   }
+  .env-combobox-option[data-highlighted]:focus-visible,
+  .env-combobox-option[data-highlighted] :focus-visible {
+    outline-color: HighlightText;
+  }
+  .env-combobox-option[data-disabled][data-highlighted] {
+    color: HighlightText;
+    opacity: var(--env-state-disabled-opacity);
+  }
 }

@@ -524,4 +524,7 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
     border-color: GrayText;
     color: GrayText;
   }
+  .env-text-field-well:has(> .env-text-input:disabled) > .env-text-input {
+    color: GrayText;
+  }
 }

@@ -6,7 +6,7 @@ import { fixtureUrl } from './Servers';
  * state shown by a fill alone would vanish. Each stateful component sets system colors for its
  * states instead (tests/fixture/forced-colors.tsx shows them side by side). This spec compares what
  * is painted for a state and for its rest, from computed styles: the colors, borders, outlines,
- * opacity, weight and decoration of the element, its descendants and their ::before and ::after,
+ * opacity and decoration of the element, its descendants and their ::before and ::after,
  * with a background in the canvas color counting as none, as it paints nothing on the canvas.
  *
  * Chromium and Firefox apply forced colors when emulated; WebKit only matches the media query and
@@ -90,7 +90,6 @@ function painted(element: Element) {
       );
     if (style.textDecorationLine !== 'none') parts.push(`decoration ${style.textDecorationLine}`);
     if (style.opacity !== '1') parts.push(`opacity ${style.opacity}`);
-    if (style.fontWeight !== '400') parts.push(`weight ${style.fontWeight}`);
     if (node instanceof SVGElement) parts.push(`fill ${color(style.fill)}`);
     // A native radio draws its own state in system colors.
     if (node instanceof HTMLInputElement && style.appearance !== 'none' && node.checked)
@@ -163,4 +162,147 @@ test('selection and checked states take the system colors', async ({ page, brows
   // Where the system forces colors, an unselected item paints no fill of its own.
   if (browserName !== 'webkit')
     expect(await background('[data-testid=nav]')).not.toBe(system.highlight);
+});
+
+/** The system colors a forced-colors rule may use, resolved in the page. */
+function systemColors(page: Page) {
+  return page.evaluate(() => {
+    const probe = document.createElement('span');
+    document.body.append(probe);
+    const read = (value: string) => {
+      probe.style.color = value;
+      return getComputedStyle(probe).color;
+    };
+    const names = ['Canvas', 'CanvasText', 'Highlight', 'HighlightText', 'ButtonText', 'LinkText'];
+    const colors = Object.fromEntries(names.map((name) => [name, read(name)]));
+    probe.remove();
+    return colors;
+  });
+}
+
+/** WCAG contrast of two `rgb()` colors. */
+function contrast(a: string, b: string) {
+  const luminance = (value: string) => {
+    const [r, g, b] = (value.match(/[\d.]+/g) ?? []).slice(0, 3).map((channel) => {
+      const c = Number(channel) / 255;
+      return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  const [light, dark] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (light + 0.05) / (dark + 0.05);
+}
+
+/**
+ * Focused items that sit in a selection, each with the element that draws the ring, what that
+ * ring is drawn on (its own fill when inset, the canvas when outside) and how to focus it.
+ */
+const focusedSelections: [name: string, ring: string, over: 'fill' | 'canvas', focus?: string][] = [
+  ['the selected tab', '[role=tab][aria-selected=true]', 'fill'],
+  ['the selected navigation item', '[data-testid=nav-selected]', 'fill'],
+  ['the chosen segment', '.env-segment[data-checked]', 'canvas'],
+  ['the active document tab', '.env-document-tab[data-active]', 'fill'],
+  [
+    'a chosen radio row',
+    '.env-radio-option >> nth=0',
+    'canvas',
+    'fieldset:has-text("Role") input >> nth=0',
+  ],
+];
+
+test('a focused selection keeps a ring in a system color that shows on what it is drawn on', async ({
+  page,
+  browserName,
+}) => {
+  test.skip(browserName === 'webkit', 'WebKit keeps the page’s colors under forced colors.');
+  await open(page);
+  const system = await systemColors(page);
+  for (const [name, ring, over, focus] of focusedSelections) {
+    const ringElement = page.locator(ring).first();
+    const rest = await ringElement.evaluate(painted);
+    const target = focus ? page.locator(focus).first() : ringElement;
+    await target.focus();
+    expect(await target.evaluate((element) => element.matches(':focus-visible')), name).toBe(true);
+    expect(await ringElement.evaluate(painted), `${name} shows its focus`).not.toBe(rest);
+    const { outline, style, fill } = await ringElement.evaluate((element) => {
+      const computed = getComputedStyle(element);
+      return {
+        outline: computed.outlineColor,
+        style: computed.outlineStyle,
+        fill: computed.backgroundColor,
+      };
+    });
+    expect(style, name).not.toBe('none');
+    expect(Object.values(system), `${name}: the ring is a system color`).toContain(outline);
+    const behind = over === 'fill' ? fill : system.Canvas;
+    // At least 3:1, or as much as the system's own selection pair has, where the ring is in it.
+    const least = Math.min(3, contrast(system.HighlightText, system.Highlight));
+    expect(contrast(outline, behind), `${name}: the ring on ${behind}`).toBeGreaterThanOrEqual(
+      least,
+    );
+  }
+});
+
+test('every button variant keeps a visible edge under forced colors', async ({ page }) => {
+  await open(page);
+  const system = await systemColors(page);
+  const buttons = page.locator('[data-testid^=variant-]');
+  expect(await buttons.count()).toBeGreaterThan(7);
+  for (const button of await buttons.all()) {
+    const edge = await button.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return {
+        id: element.getAttribute('data-testid'),
+        width: parseFloat(style.borderTopWidth),
+        style: style.borderTopStyle,
+        color: style.borderTopColor,
+      };
+    });
+    expect(edge.width, edge.id!).toBeGreaterThan(0);
+    expect(edge.style, edge.id!).toBe('solid');
+    expect(contrast(edge.color, system.Canvas), edge.id!).toBeGreaterThanOrEqual(3);
+  }
+});
+
+/**
+ * States that a fill or a shadow carries, which only the forced-colors rules keep visible, each with
+ * what those rules paint: the selection color, an outline or a dashed border. Font weight, opacity
+ * and structure don't count, so removing the rules fails this test.
+ */
+const fillStates: Record<string, 'highlight' | 'outline' | 'dashed'> = {
+  'the chosen segment': 'highlight',
+  'the selected tab': 'highlight',
+  'the selected navigation item': 'highlight',
+  'a switch that is on': 'highlight',
+  'a selected table row': 'highlight',
+  'the selected tree row': 'highlight',
+  'the chosen calendar day': 'highlight',
+  'the active document tab': 'highlight',
+  'a filled star': 'highlight',
+  "today's calendar day": 'outline',
+  'an invalid field': 'dashed',
+};
+
+test('the states a fill carries show in what the forced-colors rules paint', async ({ page }) => {
+  await open(page);
+  const { Highlight } = await systemColors(page);
+  const marks = (element: Element, highlight: string) =>
+    [element, ...element.querySelectorAll('*')].flatMap((node) => {
+      const style = getComputedStyle(node);
+      return [
+        ...[style.backgroundColor, style.color, style.outlineColor, style.fill]
+          .filter((color) => color === highlight)
+          .map(() => 'highlight'),
+        ...(style.outlineStyle !== 'none' && parseFloat(style.outlineWidth) > 0 ? ['outline'] : []),
+        ...(style.borderTopStyle === 'dashed' ? ['dashed'] : []),
+      ];
+    });
+  const missing: string[] = [];
+  for (const [name, mark] of Object.entries(fillStates)) {
+    const [state, rest] = states[name];
+    const stateMarks = await page.locator(state).first().evaluate(marks, Highlight);
+    const restMarks = await page.locator(rest).first().evaluate(marks, Highlight);
+    if (!stateMarks.includes(mark) || restMarks.includes(mark)) missing.push(`${name}: ${mark}`);
+  }
+  expect(missing, 'States the forced-colors rules don’t mark').toEqual([]);
 });

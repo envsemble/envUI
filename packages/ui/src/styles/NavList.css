@@ -169,4 +169,8 @@
   .env-nav-list-item:is(:disabled, [aria-disabled='true']) {
     color: GrayText;
   }
+  .env-nav-list-item-selected:focus-visible,
+  .env-nav-list-item-selected :focus-visible {
+    outline-color: HighlightText;
+  }
 }

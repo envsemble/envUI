@@ -66,4 +66,8 @@
   .env-menubar-trigger[data-popup-open] :where(*) {
     color: inherit;
   }
+  .env-menubar-trigger[data-popup-open]:focus-visible,
+  .env-menubar-trigger[data-popup-open] :focus-visible {
+    outline-color: HighlightText;
+  }
 }

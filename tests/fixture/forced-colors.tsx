@@ -5,6 +5,7 @@ import {
   Button,
   Calendar,
   Checkbox,
+  IconButton,
   DocumentTabs,
   Menu,
   NavList,
@@ -19,10 +20,23 @@ import {
   TextField,
   Theme,
   Tree,
+  type ButtonVariant,
 } from '@envsemble/envui';
+import { Close } from '@envsemble/envui/icons/Close';
 import '@envsemble/envui/styles.css';
 
 const noop = () => {};
+
+/** Every button variant, each of which must keep a visible edge under forced colors. */
+const variants: ButtonVariant[] = [
+  'primary',
+  'important',
+  'secondary',
+  'outlined',
+  'destructive',
+  'text',
+  'quiet',
+];
 
 function Page() {
   return (
@@ -33,6 +47,20 @@ function Page() {
           Save
         </Button>
         <Button data-testid="button-focus">Focus me</Button>
+      </div>
+      <div style={{ display: 'flex', gap: '0.5rem' }}>
+        {variants.map((variant) => (
+          <Button key={variant} variant={variant} data-testid={`variant-${variant}`}>
+            {variant}
+          </Button>
+        ))}
+        <IconButton icon={<Close />} aria-label="Close" data-testid="variant-icon" />
+        <IconButton
+          icon={<Close />}
+          aria-label="Close"
+          variant="text"
+          data-testid="variant-icon-text"
+        />
       </div>
       <SegmentedControl
         aria-label="View"

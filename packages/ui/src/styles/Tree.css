@@ -156,4 +156,7 @@
   .env-tree-row[aria-selected='true'] :where(*) {
     color: inherit;
   }
+  .env-tree[data-focus-visible]:focus .env-tree-row[aria-selected='true'][data-active] {
+    outline-color: HighlightText;
+  }
 }

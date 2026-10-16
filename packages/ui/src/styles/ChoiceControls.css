@@ -302,4 +302,16 @@
     outline: 2px solid Highlight;
     outline-offset: -2px;
   }
+  .env-radio-option:has(input:focus-visible) {
+    outline: 2px solid CanvasText;
+    outline-offset: 2px;
+  }
+  .env-checkbox-control:is(:checked, :indeterminate):disabled {
+    border-color: GrayText;
+    background-color: GrayText;
+  }
+  .env-switch-control:checked:disabled {
+    background-color: GrayText;
+    outline-color: GrayText;
+  }
 }

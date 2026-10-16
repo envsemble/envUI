@@ -344,4 +344,12 @@
   .env-organization-switcher-radio-dot {
     background-color: currentColor;
   }
+  .env-menu-item:is([data-highlighted], [data-popup-open]):focus-visible,
+  .env-menu-item:is([data-highlighted], [data-popup-open]) :focus-visible {
+    outline-color: HighlightText;
+  }
+  .env-menu-item[data-disabled]:is([data-highlighted], [data-popup-open]) {
+    color: HighlightText;
+    opacity: var(--env-state-disabled-opacity);
+  }
 }
