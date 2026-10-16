@@ -5,6 +5,8 @@ import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { classNames } from '../internal/classNames.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { useLinkComponent } from '../internal/LinkContext.js';
+import { useMessages } from '../internal/EnvUIContext.js';
+import { pager } from '../foundations/messages/pager.js';
 
 export interface LinkProps extends Omit<ComponentPropsWithRef<'a'>, 'children'> {
   /** The destination; the link renders through the LinkProvider's link component. */
@@ -40,6 +42,7 @@ function PagerLink({
   ...props
 }: LinkProps & { direction: 'previous' | 'next' }) {
   const LinkComponent = useLinkComponent();
+  const messages = useMessages('pager', pager);
   const isPrevious = direction === 'previous';
   const symbol = icon != null ? <DecorativeIcon>{icon}</DecorativeIcon> : null;
 
@@ -53,7 +56,9 @@ function PagerLink({
     >
       {isPrevious && symbol}
       <span className="env-pager-link-copy">
-        <span className="env-pager-link-label">{isPrevious ? 'Previous' : 'Up next'}</span>
+        <span className="env-pager-link-label">
+          {isPrevious ? messages.previous : messages.next}
+        </span>
         <span className="env-pager-link-title">{children}</span>
       </span>
       {!isPrevious && symbol}
@@ -63,7 +68,8 @@ function PagerLink({
 
 /**
  * The destination before this one: a native link with rel="prev", its title under the label
- * Previous, and an optional icon before them. It also stands alone, outside Pager.Root.
+ * Previous (EnvUIProvider's messages.pager.previous), and an optional icon before them. It also
+ * stands alone, outside Pager.Root.
  */
 function Previous(props: PreviousProps) {
   return <PagerLink {...props} direction="previous" />;
@@ -71,7 +77,8 @@ function Previous(props: PreviousProps) {
 
 /**
  * The destination after this one: a native link with rel="next", its title under the label Up
- * next, and an optional icon after them. It also stands alone, outside Pager.Root.
+ * next (EnvUIProvider's messages.pager.next), and an optional icon after them. It also stands
+ * alone, outside Pager.Root.
  */
 function Next(props: NextProps) {
   return <PagerLink {...props} direction="next" />;
@@ -89,13 +96,14 @@ export interface RootProps extends ComponentPropsWithRef<'nav'> {
    */
   next?: NextProps | null;
   /**
-   * Pager.Previous and Pager.Next, instead of the previous and next props; they render after the
-   * links of the props.
+   * Pager.Previous and Pager.Next, instead of the previous and next props or beside one of them:
+   * they render between the previous prop's link and the next prop's, so the links keep their
+   * order.
    */
   children?: ReactNode;
   /**
    * The navigation landmark's name; give each pager its own where a page has several.
-   * @default 'Previous and next content'
+   * @default 'Previous and next content', or EnvUIProvider's messages.pager.label
    */
   'aria-label'?: string;
 }
@@ -110,16 +118,21 @@ function Root({
   next,
   children,
   className,
-  'aria-label': ariaLabel = 'Previous and next content',
+  'aria-label': ariaLabel,
   ...props
 }: RootProps) {
+  const messages = useMessages('pager', pager);
   if (!previous && !next && children == null) return null;
 
   return (
-    <nav {...props} aria-label={ariaLabel} className={classNames('env-pager', className)}>
+    <nav
+      {...props}
+      aria-label={ariaLabel ?? messages.label}
+      className={classNames('env-pager', className)}
+    >
       {previous && <Previous {...previous} />}
-      {next && <Next {...next} />}
       {children}
+      {next && <Next {...next} />}
     </nav>
   );
 }
