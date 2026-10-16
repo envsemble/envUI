@@ -1499,13 +1499,13 @@
           "name": "open",
           "type": "boolean",
           "required": true,
-          "description": ""
+          "description": "Whether the palette is open; the application opens it, such as from a shortcut."
         },
         {
           "name": "onOpenChange",
           "type": "(open: boolean) => void",
           "required": true,
-          "description": ""
+          "description": "Called with false when Esc, a press on the backdrop or a choice closes the palette."
         },
         {
           "name": "aria-label",
@@ -1517,13 +1517,13 @@
           "name": "query",
           "type": "string",
           "required": true,
-          "description": ""
+          "description": "The text in the search field."
         },
         {
           "name": "onQueryChange",
           "type": "(query: string) => void",
           "required": true,
-          "description": ""
+          "description": "Receives the text as people type."
         },
         {
           "name": "items",
@@ -1548,14 +1548,14 @@
           "name": "placeholder",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Shown in the empty search field, such as \"Search documents by name or folder\"."
         },
         {
           "name": "emptyLabel",
           "type": "ReactNode",
           "required": false,
           "default": "'No results'",
-          "description": "Shown when there are no items."
+          "description": "Shown in place of the list when there are no items; No results by default."
         },
         {
           "name": "hints",
@@ -1573,7 +1573,7 @@
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Classes for the dialog's surface."
         }
       ],
       "native": [],

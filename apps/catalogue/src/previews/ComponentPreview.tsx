@@ -11,7 +11,7 @@ import { MessagesPreview } from './Conversation';
 import { CalendarHeatmapPreview, StatsPreview } from './Dashboard';
 import { MenubarPreview, TooltipPreview, MeterPreview, ProgressPreview } from './Overlays';
 import { AppShellPreview } from './Shell';
-import { CommandPalettePreview, DocumentTabsPreview, TreePreview } from './Workspace';
+import { DocumentTabsPreview, TreePreview } from './Workspace';
 import { PanelDockPreview } from './Dock';
 import { PopoverPreview, SegmentedControlPreview } from './Elements';
 
@@ -88,8 +88,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <DocumentTabsPreview />;
     case 'panel-dock':
       return <PanelDockPreview />;
-    case 'command-palette':
-      return <CommandPalettePreview />;
     default:
       return null;
   }
