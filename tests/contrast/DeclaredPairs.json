@@ -344,6 +344,48 @@
         "high": 1.5
       }
     },
+    "--color-border-danger-strong on --color-bg-danger-strong": {
+      "kind": "difference",
+      "minimum": {
+        "standard": 0.02,
+        "high": 0.02
+      }
+    },
+    "--color-border-danger-strong on --color-bg-default": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.2,
+        "high": 4.5
+      }
+    },
+    "--color-border-danger-strong on --color-bg-muted": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.2,
+        "high": 4.5
+      }
+    },
+    "--color-border-danger-strong on --color-bg-page": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.2,
+        "high": 4.5
+      }
+    },
+    "--color-border-danger-strong on --color-bg-popup": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.2,
+        "high": 4.5
+      }
+    },
+    "--color-border-danger-strong on --color-bg-raised": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.2,
+        "high": 4.5
+      }
+    },
     "--color-border-default on --color-bg-default": {
       "kind": "non-text",
       "minimum": {
@@ -540,6 +582,48 @@
         "high": 4.5
       }
     },
+    "--color-border-info-strong on --color-bg-default": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.2,
+        "high": 4.5
+      }
+    },
+    "--color-border-info-strong on --color-bg-info-strong": {
+      "kind": "difference",
+      "minimum": {
+        "standard": 0.02,
+        "high": 0.02
+      }
+    },
+    "--color-border-info-strong on --color-bg-muted": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.2,
+        "high": 4.5
+      }
+    },
+    "--color-border-info-strong on --color-bg-page": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.2,
+        "high": 4.5
+      }
+    },
+    "--color-border-info-strong on --color-bg-popup": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.2,
+        "high": 4.5
+      }
+    },
+    "--color-border-info-strong on --color-bg-raised": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.2,
+        "high": 4.5
+      }
+    },
     "--color-border-muted on --color-bg-default": {
       "kind": "non-text",
       "minimum": {
@@ -579,6 +663,48 @@
         "high": 3
       }
     },
+    "--color-border-neutral-strong on --color-bg-default": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.2,
+        "high": 4.5
+      }
+    },
+    "--color-border-neutral-strong on --color-bg-muted": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.2,
+        "high": 4.5
+      }
+    },
+    "--color-border-neutral-strong on --color-bg-neutral-strong": {
+      "kind": "difference",
+      "minimum": {
+        "standard": 0.02,
+        "high": 0.02
+      }
+    },
+    "--color-border-neutral-strong on --color-bg-page": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.2,
+        "high": 4.5
+      }
+    },
+    "--color-border-neutral-strong on --color-bg-popup": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.2,
+        "high": 4.5
+      }
+    },
+    "--color-border-neutral-strong on --color-bg-raised": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.2,
+        "high": 4.5
+      }
+    },
     "--color-border-success-emphasis on --color-bg-default": {
       "kind": "non-text",
       "minimum": {
@@ -612,6 +738,48 @@
       "minimum": {
         "standard": 1.2,
         "high": 1.5
+      }
+    },
+    "--color-border-success-strong on --color-bg-default": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.2,
+        "high": 4.5
+      }
+    },
+    "--color-border-success-strong on --color-bg-muted": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.2,
+        "high": 4.5
+      }
+    },
+    "--color-border-success-strong on --color-bg-page": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.2,
+        "high": 4.5
+      }
+    },
+    "--color-border-success-strong on --color-bg-popup": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.2,
+        "high": 4.5
+      }
+    },
+    "--color-border-success-strong on --color-bg-raised": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.2,
+        "high": 4.5
+      }
+    },
+    "--color-border-success-strong on --color-bg-success-strong": {
+      "kind": "difference",
+      "minimum": {
+        "standard": 0.02,
+        "high": 0.02
       }
     },
     "--color-border-warning-emphasis on --color-bg-default": {

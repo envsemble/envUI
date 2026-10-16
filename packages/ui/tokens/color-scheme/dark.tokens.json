@@ -337,7 +337,8 @@
             "components": { "$ref": "#/palette/red/20/$value/components" },
             "alpha": 0.28
           }
-        }
+        },
+        "strong": { "$value": "{color.border.muted}" }
       },
       "neutral": {
         "emphasis": {
@@ -346,7 +347,8 @@
             "components": { "$ref": "#/palette/neutral/20/$value/components" },
             "alpha": 0.55
           }
-        }
+        },
+        "strong": { "$value": "{color.border.muted}" }
       },
       "success": {
         "emphasis": {
@@ -362,7 +364,8 @@
             "components": { "$ref": "#/palette/green/20/$value/components" },
             "alpha": 0.28
           }
-        }
+        },
+        "strong": { "$value": "{color.border.muted}" }
       },
       "warning": {
         "emphasis": {
@@ -396,7 +399,8 @@
           "alpha": 0.05
         }
       },
-      "focus": { "$value": "{palette.blue.20}" }
+      "focus": { "$value": "{palette.blue.20}" },
+      "info": { "strong": { "$value": "{color.border.muted}" } }
     },
     "row": { "$value": "{color.bg.muted}" },
     "row-hover": { "$value": "{color.bg.muted.hover}" },

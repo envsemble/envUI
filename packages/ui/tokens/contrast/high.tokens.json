@@ -167,14 +167,17 @@
         "hover": { "$value": "{contrast-high.color.border.danger.hover}" },
         "pressed": { "$value": "{contrast-high.color.border.danger.pressed}" },
         "emphasis": { "$value": "{contrast-high.color.border.danger.emphasis}" },
-        "muted": { "$value": "{contrast-high.color.border.danger.muted}" }
+        "muted": { "$value": "{contrast-high.color.border.danger.muted}" },
+        "strong": { "$value": "{contrast-high.color.border.danger.strong}" }
       },
       "neutral": {
-        "emphasis": { "$value": "{contrast-high.color.border.neutral.emphasis}" }
+        "emphasis": { "$value": "{contrast-high.color.border.neutral.emphasis}" },
+        "strong": { "$value": "{contrast-high.color.border.neutral.strong}" }
       },
       "success": {
         "emphasis": { "$value": "{contrast-high.color.border.success.emphasis}" },
-        "muted": { "$value": "{contrast-high.color.border.success.muted}" }
+        "muted": { "$value": "{contrast-high.color.border.success.muted}" },
+        "strong": { "$value": "{contrast-high.color.border.success.strong}" }
       },
       "warning": {
         "emphasis": { "$value": "{contrast-high.color.border.warning.emphasis}" },
@@ -183,7 +186,8 @@
       "done": {
         "emphasis": { "$value": "{contrast-high.color.border.done.emphasis}" }
       },
-      "focus": { "$value": "{contrast-high.color.border.focus}" }
+      "focus": { "$value": "{contrast-high.color.border.focus}" },
+      "info": { "strong": { "$value": "{contrast-high.color.border.info.strong}" } }
     },
     "checkbox": { "$value": "{color.bg.brand.emphasis}" },
     "checkbox-hover": { "$value": "{color.bg.brand.emphasis.hover}" },

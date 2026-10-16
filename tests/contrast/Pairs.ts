@@ -306,9 +306,33 @@ export const pairs: readonly ContrastPair[] = [
   ...nonText(
     '--elevation-2-border',
     [popup, surface, page, muted, raised],
-    'The edge of menus, Select and Combobox lists, popovers, hover cards, the date picker, rich text suggestions, docked panels, tooltips and toasts, against the popup and what it floats over',
+    'The edge of menus, Select and Combobox lists, popovers, hover cards, the date picker, rich text suggestions and docked panels, against the popup and what it floats over',
     popupEdge,
   ),
+  // Tooltips and toasts are strong fills. Their edge is the fill a step darker in light, so it doesn't
+  // ring a dark fill on a light page like a halo, and the popup edge in dark: held, as every popup
+  // edge, against what the popup floats over, and against its own fill, which it must set apart
+  // from a surface of that color.
+  ...(
+    [
+      ['neutral', 'Tooltips and neutral toasts'],
+      ['success', 'Success toasts'],
+      ['info', 'Information toasts'],
+      ['danger', 'Error toasts'],
+    ] as const
+  ).flatMap(([tone, owners]) => [
+    ...nonText(
+      `--color-border-${tone}-strong`,
+      [page, surface, muted, raised, popup],
+      `The edge of ${owners.toLowerCase()}, against what they float over`,
+      popupEdge,
+    ),
+    ...different(
+      `--color-border-${tone}-strong`,
+      [`--color-bg-${tone}-strong`],
+      `${owners}: the edge against the fill, so it sets the fill apart from a surface of its color`,
+    ),
+  ]),
   ...nonText(
     '--elevation-3-border',
     [raised, [overlay, page]],
