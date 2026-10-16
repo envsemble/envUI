@@ -6528,6 +6528,15 @@
         "@envsemble/envui"
       ]
     },
+    "breakpointQuery": {
+      "kind": "function",
+      "source": "packages/ui/src/foundations/breakpoints.ts",
+      "description": "The media query for a viewport at least as wide as a breakpoint (`up`, the default), or narrower than it (`down`), so that `up` and `down` of one breakpoint never both match nor both miss: `breakpointQuery('md')` is `(width >= 48rem)`.",
+      "signature": "(breakpoint: Breakpoint, direction?: \"up\" | \"down\"): string",
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
     "countDiffLines": {
       "kind": "function",
       "source": "packages/ui/src/diff/countDiffLines.ts",
@@ -6570,6 +6579,24 @@
       "source": "packages/ui/src/navigation/AppShell.tsx",
       "description": "Shell controls for content rendered inside AppShell.",
       "signature": "(): AppShellContextValue",
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "useBreakpoint": {
+      "kind": "function",
+      "source": "packages/ui/src/foundations/useMediaQuery.ts",
+      "description": "Whether the viewport is at least as wide as a breakpoint: `useBreakpoint('md')` is true from 48 rem up. As useMediaQuery, it returns `defaultValue` on the server and while hydrating.",
+      "signature": "(breakpoint: Breakpoint, options?: MediaQueryOptions): boolean",
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "useMediaQuery": {
+      "kind": "function",
+      "source": "packages/ui/src/foundations/useMediaQuery.ts",
+      "description": "Whether the viewport matches a media query, such as `(prefers-reduced-motion: reduce)`, kept up to date as it changes. It returns `defaultValue` on the server and while hydrating, then the browser's answer; a page rendered only in the browser gets the answer in its first render. Prefer CSS (`@media`, or `@container` for a component's own width) where the difference is only in styles.",
+      "signature": "(query: string, options?: MediaQueryOptions): boolean",
       "entries": [
         "@envsemble/envui"
       ]

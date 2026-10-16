@@ -4978,6 +4978,7 @@
       "doc": "docs/foundations/spacing.md",
       "related": [
         "scale",
+        "responsive",
         "stack",
         "surface",
         "card",
@@ -4999,6 +5000,37 @@
         "text-field",
         "table",
         "tree"
+      ]
+    },
+    {
+      "name": "responsive",
+      "title": "Responsive layout & stacking",
+      "group": "Foundations",
+      "summary": "Viewport breakpoints, container queries, the media query hooks and the stacking order of frames and popups.",
+      "doc": "docs/foundations/responsive.md",
+      "exports": [
+        "useMediaQuery",
+        "useBreakpoint",
+        "breakpointQuery"
+      ],
+      "aliases": [
+        "breakpoint",
+        "breakpoints",
+        "media query",
+        "responsive",
+        "mobile layout",
+        "container query",
+        "z-index",
+        "stacking order",
+        "layers"
+      ],
+      "related": [
+        "spacing",
+        "scale",
+        "dialog",
+        "menu",
+        "tooltip",
+        "toast"
       ]
     },
     {
@@ -11491,6 +11523,14 @@
       "page": "app-shell",
       "doc": "docs/components/app-shell.md"
     },
+    "breakpointQuery": {
+      "kind": "function",
+      "import": "@envsemble/envui",
+      "description": "The media query for a viewport at least as wide as a breakpoint (`up`, the default), or narrower than it (`down`), so that `up` and `down` of one breakpoint never both match nor both miss: `breakpointQuery('md')` is `(width >= 48rem)`.",
+      "signature": "(breakpoint: Breakpoint, direction?: \"up\" | \"down\"): string",
+      "page": "responsive",
+      "doc": "docs/foundations/responsive.md"
+    },
     "countDiffLines": {
       "kind": "function",
       "import": "@envsemble/envui/diff",
@@ -11533,6 +11573,22 @@
       "signature": "(): AppShellContextValue",
       "page": "app-shell",
       "doc": "docs/components/app-shell.md"
+    },
+    "useBreakpoint": {
+      "kind": "function",
+      "import": "@envsemble/envui",
+      "description": "Whether the viewport is at least as wide as a breakpoint: `useBreakpoint('md')` is true from 48 rem up. As useMediaQuery, it returns `defaultValue` on the server and while hydrating.",
+      "signature": "(breakpoint: Breakpoint, options?: MediaQueryOptions): boolean",
+      "page": "responsive",
+      "doc": "docs/foundations/responsive.md"
+    },
+    "useMediaQuery": {
+      "kind": "function",
+      "import": "@envsemble/envui",
+      "description": "Whether the viewport matches a media query, such as `(prefers-reduced-motion: reduce)`, kept up to date as it changes. It returns `defaultValue` on the server and while hydrating, then the browser's answer; a page rendered only in the browser gets the answer in its first render. Prefer CSS (`@media`, or `@container` for a component's own width) where the difference is only in styles.",
+      "signature": "(query: string, options?: MediaQueryOptions): boolean",
+      "page": "responsive",
+      "doc": "docs/foundations/responsive.md"
     },
     "useTheme": {
       "kind": "function",
