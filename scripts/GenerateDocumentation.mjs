@@ -620,13 +620,22 @@ export function readDocumentation(
         if (!linked) throw new Error(`Documentation link is missing from the index: ${token.href}`);
       }
       // A link to a heading names one the page has, by the id the catalogue gives it.
-      if (fragment && !headingsOf(linked.markdown).some(({ id }) => id === fragment))
+      if (fragment && !headingsOf(linked.markdown).some(({ id }) => id === decoded(fragment)))
         throw new Error(
           `Broken documentation link in ${document.path}: ${token.href} names no heading of ${linked.path}.`,
         );
     });
   }
   return documents;
+}
+
+/** A link's fragment with its percent escapes decoded, or as it is where they are malformed. */
+function decoded(fragment) {
+  try {
+    return decodeURIComponent(fragment);
+  } catch {
+    return fragment;
+  }
 }
 
 /** Every runtime export a page documents, with namespaces expanded to their parts. */
