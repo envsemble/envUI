@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 // The envui command of @envsemble/envui: tools for coding agents, from the installed package.
 //
-//   npx envui agents   write the envUI index into the project's AGENTS.md
-//   npx envui mcp      serve the installed manifest and docs as an MCP server over stdio
+//   npx --no envui agents   write the envUI index into the project's AGENTS.md
+//   npx --no envui mcp      serve the installed manifest and docs as an MCP server over stdio
 import { readFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import { agentsUsage, runAgents } from './agents.mjs';

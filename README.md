@@ -102,8 +102,8 @@ export function ProjectForm() {
 
 Coding agents get the same documentation as people, plus what helps them find a component before writing their own. [For agents](docs/agent-tooling.md) describes it all:
 
-- `npx envui agents` writes an index of envUI, under 8 KB, into the project's `AGENTS.md`, with the rule to search envUI before writing any UI element and to propose an addition instead of a local copy.
-- `npx envui mcp` serves the installed version's components, props, examples, patterns and tokens as an MCP server.
+- `npx --no envui agents` writes an index of envUI, under 8 KB, into the project's `AGENTS.md`, with the rule to search envUI before writing any UI element and to propose an addition instead of a local copy.
+- `npx --no envui mcp` serves the installed version's components, props, examples, patterns and tokens as an MCP server.
 - `manifest.json`, `llms.txt` and `llms-full.txt` hold the library as data and as text, generated from the same pages.
 
 | Skill                                                        | Responsibility                                                                          |

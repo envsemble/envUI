@@ -94,7 +94,7 @@ if (relative(libraryDirectory, documentationOutputDirectory) !== 'docs')
 // The packaged pages are compiled: example files and generated props tables are filled in, and
 // the examples ship beside them in docs/examples.
 packageDocumentation(documentationOutputDirectory);
-// The agent files live at the package root, where `npx envui` and llms.txt readers look for them,
+// The agent files live at the package root, where the envui command and llms.txt readers look for them,
 // so the packaged docs/ leaves out the committed copies of the manifest and llms.txt.
 for (const name of ['manifest.json', 'llms.txt'])
   await rm(resolve(documentationOutputDirectory, 'generated', name), { force: true });
