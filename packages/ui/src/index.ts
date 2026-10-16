@@ -38,7 +38,7 @@ export * from './forms/Slider.js';
 export * from './forms/DropZone.js';
 export * from './feedback/Dialog.js';
 export * from './feedback/CommandPalette.js';
-export * from './feedback/Notice.js';
+export * from './feedback/Alert.js';
 export * from './feedback/Popover.js';
 export * from './feedback/HoverCard.js';
 export * from './feedback/EmptyState.js';

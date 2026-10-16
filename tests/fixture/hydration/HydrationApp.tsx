@@ -12,7 +12,7 @@ import {
   Badge,
   Breadcrumbs,
   DocumentTabs,
-  Notice,
+  Alert,
   SegmentedControl,
   Slider,
   DropZone,
@@ -156,7 +156,7 @@ export function HydrationApp() {
         </Dialog>
         <NotificationTrigger />
         <Breadcrumbs items={[{ label: 'Workspace', href: '/' }, { label: 'Hydrated page' }]} />
-        <Notice title="Hydrated notice banner">Server-rendered notice</Notice>
+        <Alert title="Hydrated alert banner">Server-rendered alert</Alert>
         <Badge tone="done">Hydrated badge</Badge>
         <SegmentedControl
           aria-label="Hydrated view"

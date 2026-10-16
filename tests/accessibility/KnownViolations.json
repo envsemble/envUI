@@ -1,4 +1,16 @@
 {
+  "components/alert/usage": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 3
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 20
+      }
+    }
+  },
   "components/animated-number/usage": {
     "dark": {
       "color-contrast": {
@@ -527,18 +539,6 @@
     "light": {
       "color-contrast": {
         "article :: div.env-code-block span": 22
-      }
-    }
-  },
-  "components/notices/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 3
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 20
       }
     }
   },

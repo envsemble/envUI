@@ -8,29 +8,29 @@ import { Error as ErrorIcon } from '../icons/Error.js';
 import { Info } from '../icons/Info.js';
 import { Warning } from '../icons/Warning.js';
 
-export type NoticeTone = 'info' | 'success' | 'warning' | 'error';
+export type AlertTone = 'info' | 'success' | 'warning' | 'error';
 
-export interface NoticeProps extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children'> {
+export interface AlertProps extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children'> {
   /** info (default), success, warning or error; each has its tone color and default icon. */
-  tone?: NoticeTone;
+  tone?: AlertTone;
   title?: ReactNode;
   children?: ReactNode;
   /** Replaces the tone's icon; false shows none. */
   icon?: ReactNode | false;
   /** An action below the message, such as a Button or Link. */
   action?: ReactNode;
-  /** Shows a dismiss button that calls it; the application removes the notice. */
+  /** Shows a dismiss button that calls it; the application removes the alert. */
   onDismiss?: () => void;
   /** Accessible name of the dismiss button; Dismiss by default. */
   dismissLabel?: string;
   /**
-   * The notice appeared because of something that just happened and should interrupt: warning and
-   * error notices become alerts. Info and success notices are always polite status messages.
+   * The alert appeared because of something that just happened and should interrupt: warning and
+   * error alerts take the alert role. Info and success alerts are always polite status messages.
    */
   announce?: boolean;
 }
 
-const toneIcons: Record<NoticeTone, ReactNode> = {
+const toneIcons: Record<AlertTone, ReactNode> = {
   info: <Info />,
   success: <CheckCircle />,
   warning: <Warning />,
@@ -38,7 +38,7 @@ const toneIcons: Record<NoticeTone, ReactNode> = {
 };
 
 /** An inline banner for a page- or section-level message, in its tone. */
-export function Notice({
+export function Alert({
   tone = 'info',
   title,
   children,
@@ -49,20 +49,20 @@ export function Notice({
   announce = false,
   className,
   ...props
-}: NoticeProps) {
+}: AlertProps) {
   const role = tone === 'info' || tone === 'success' ? 'status' : announce ? 'alert' : undefined;
   const symbol = icon === undefined ? toneIcons[tone] : icon;
   return (
-    <div {...props} role={role} className={classNames('env-notice', className)} data-tone={tone}>
+    <div {...props} role={role} className={classNames('env-alert', className)} data-tone={tone}>
       {symbol !== false && symbol != null && (
-        <span className="env-notice-icon">
+        <span className="env-alert-icon">
           <DecorativeIcon>{symbol}</DecorativeIcon>
         </span>
       )}
-      <div className="env-notice-content">
-        {title != null && <div className="env-notice-title">{title}</div>}
-        {children != null && <div className="env-notice-message">{children}</div>}
-        {action != null && <div className="env-notice-action">{action}</div>}
+      <div className="env-alert-content">
+        {title != null && <div className="env-alert-title">{title}</div>}
+        {children != null && <div className="env-alert-message">{children}</div>}
+        {action != null && <div className="env-alert-action">{action}</div>}
       </div>
       {onDismiss && (
         <IconButton
@@ -70,7 +70,7 @@ export function Notice({
           icon={<Close />}
           aria-label={dismissLabel}
           title={dismissLabel}
-          className="env-notice-dismiss"
+          className="env-alert-dismiss"
           onClick={onDismiss}
         />
       )}

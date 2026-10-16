@@ -130,7 +130,7 @@ const referenceIcons: Record<string, typeof Palette> = {
   'command-palette': KeyboardCommandKey,
   'segmented-control': ViewWeek,
   badges: Sell,
-  notices: Campaign,
+  alert: Campaign,
   popover: Chat,
   'hover-card': Preview,
   tables: TableChart,

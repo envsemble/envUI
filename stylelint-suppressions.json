@@ -234,7 +234,7 @@
       "count": 10
     }
   },
-  "packages/ui/src/styles/Notice.css": {
+  "packages/ui/src/styles/Alert.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 3
     }

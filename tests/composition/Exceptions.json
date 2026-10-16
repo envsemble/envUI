@@ -66,6 +66,8 @@
     { "module": "rich-text/RichTextEditor.tsx", "class": "env-markdown-toolbar", "count": 1 }
   ],
   "cssClasses": [
+    { "stylesheet": "Alert.css", "class": "env-button", "count": 3 },
+    { "stylesheet": "Alert.css", "class": "env-icon-button", "count": 2 },
     { "stylesheet": "AppShell.css", "class": "env-navigation-icon-only", "count": 1 },
     { "stylesheet": "AppShell.css", "class": "env-navigation-item", "count": 1 },
     { "stylesheet": "AppShell.css", "class": "env-title-bar", "count": 5 },
@@ -138,8 +140,6 @@
     { "stylesheet": "Motion.css", "class": "env-toast-viewport-bottom-right", "count": 2 },
     { "stylesheet": "Motion.css", "class": "env-toast-viewport-top-center", "count": 2 },
     { "stylesheet": "Motion.css", "class": "env-tooltip", "count": 8 },
-    { "stylesheet": "Notice.css", "class": "env-button", "count": 3 },
-    { "stylesheet": "Notice.css", "class": "env-icon-button", "count": 2 },
     { "stylesheet": "PanelDock.css", "class": "env-button-text", "count": 2 },
     { "stylesheet": "PanelDock.css", "class": "env-icon-button", "count": 2 },
     { "stylesheet": "RichText.css", "class": "env-button", "count": 1 },

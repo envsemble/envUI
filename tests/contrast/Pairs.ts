@@ -51,7 +51,7 @@ export const derived: Readonly<Record<string, string>> = {
   'direction-link-hover': 'hsl(from var(--color-direction-link) h s var(--state-hover-lightness))',
   'direction-link-pressed':
     'hsl(from var(--color-direction-link) h s var(--state-pressed-lightness))',
-  // Badge.css and Notice.css: the subtle fill of each tone.
+  // Badge.css and Alert.css: the subtle fill of each tone.
   ...Object.fromEntries(
     tones.map((tone) => [
       `tone-${tone}-subtle`,
@@ -368,7 +368,7 @@ export const pairs: readonly ContrastPair[] = [
     text(
       '--color-text-primary',
       [[`tone-${tone}-subtle`, canvas]],
-      `Notice tone="${tone === 'danger' ? 'error' : tone === 'accent' ? 'info' : tone}"`,
+      `Alert tone="${tone === 'danger' ? 'error' : tone === 'accent' ? 'info' : tone}"`,
     ),
   ),
   ...nonText(

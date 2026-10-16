@@ -82,7 +82,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Empty states](components/empty-state.md) — Explain missing content and offer the next action.
 - [Loading](components/loading.md) — Page progress, spinners, pending buttons and placeholders for incoming content.
 - [Toasts](components/toasts.md) — Managed feedback with configurable duration, placement and stack capacity.
-- [Notices](components/notices.md) — Inline banners for page- or section-level messages in four tones.
+- [Alerts](components/alert.md) — Inline banners for page- or section-level messages in four tones.
 - [Dialogs](components/dialogs.md) — Centered modals and side panels share focus and dismissal behavior.
 - [Command palette](components/command-palette.md) — Quick open: search and choose from a ranked list near the top of the window.
 - [Menus](components/menu.md) — Actions, destinations and the shared organization menu, opened from a trigger or a right click.

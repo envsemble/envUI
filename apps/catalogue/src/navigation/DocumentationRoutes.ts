@@ -68,6 +68,7 @@ export function normalizeRoute(route: string): string {
     .replace(/^components\/date-time-field(?=\/|$)/, 'components/date-picker')
     .replace(/^components\/file-dropzone(?=\/|$)/, 'components/drop-zone')
     .replace(/^components\/disclosures(?=\/|$)/, 'components/disclosure')
+    .replace(/^components\/notices(?=\/|$)/, 'components/alert')
     .replace(/^foundations\/responsive(?=\/|$)/, 'foundations/spacing')
     .replace(/^foundations\/motion(?=\/|$)/, 'foundations/accessibility');
   const page = findReferencePage(path);

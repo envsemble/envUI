@@ -13,7 +13,7 @@ import {
   Kbd,
   Link,
   NavigationItem,
-  Notice,
+  Alert,
   Popover,
   SegmentedControl,
   Stack,
@@ -215,15 +215,15 @@ export function BadgesPreview() {
   );
 }
 
-export function NoticesPreview() {
+export function AlertsPreview() {
   const [dismissed, setDismissed] = useState(false);
   return (
     <Preview>
       <Example title="Tones" size="wide">
         <Stack gap={3}>
-          <Notice title="Sync paused">Changes are saved on this device until you reconnect.</Notice>
-          <Notice tone="success">The plan was published to the team.</Notice>
-          <Notice
+          <Alert title="Sync paused">Changes are saved on this device until you reconnect.</Alert>
+          <Alert tone="success">The plan was published to the team.</Alert>
+          <Alert
             tone="warning"
             title="Two decisions are blocked"
             action={
@@ -233,15 +233,15 @@ export function NoticesPreview() {
             }
           >
             The release cannot start until both are resolved.
-          </Notice>
+          </Alert>
           {dismissed ? (
             <Button variant="secondary" onClick={() => setDismissed(false)}>
               Show the error again
             </Button>
           ) : (
-            <Notice tone="error" title="Search is unavailable" onDismiss={() => setDismissed(true)}>
+            <Alert tone="error" title="Search is unavailable" onDismiss={() => setDismissed(true)}>
               The search service did not respond. Your open documents are still here.
-            </Notice>
+            </Alert>
           )}
         </Stack>
       </Example>

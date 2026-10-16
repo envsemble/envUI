@@ -36,7 +36,7 @@ import { BadgesFixture } from './Badges.js';
 import {
   DialogVariantsFixture,
   HoverCardFixture,
-  NoticesFixture,
+  AlertsFixture,
   PopoverFixture,
 } from './Overlays.js';
 import { DataDisplayFixture } from './DataDisplay.js';
@@ -179,10 +179,10 @@ export default function App() {
               <BadgesFixture theme="dark" />
             </>
           )}
-          {includes('notices') && (
+          {includes('alerts') && (
             <>
-              <NoticesFixture theme="light" />
-              <NoticesFixture theme="dark" />
+              <AlertsFixture theme="light" />
+              <AlertsFixture theme="dark" />
             </>
           )}
           {includes('dialog-variants') && <DialogVariantsFixture />}

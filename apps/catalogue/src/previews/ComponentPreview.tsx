@@ -47,7 +47,7 @@ import {
   BreadcrumbsPreview,
   HoverCardPreview,
   KbdPreview,
-  NoticesPreview,
+  AlertsPreview,
   PopoverPreview,
   SegmentedControlPreview,
   TablesPreview,
@@ -142,8 +142,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <LoadingPreview />;
     case 'toasts':
       return <ToastsPreview />;
-    case 'notices':
-      return <NoticesPreview />;
+    case 'alert':
+      return <AlertsPreview />;
     case 'popover':
       return <PopoverPreview />;
     case 'hover-card':
