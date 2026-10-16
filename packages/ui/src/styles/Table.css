@@ -8,7 +8,7 @@
   min-inline-size: 0;
   max-inline-size: 100%;
   overflow-x: auto;
-  border: 0.0625rem solid var(--color-border-strong);
+  border: 0.0625rem solid var(--color-border-muted);
   border-radius: var(--md-sys-shape-corner-large);
   background: var(--env-table-surface);
   scrollbar-width: thin;
@@ -67,7 +67,7 @@
 }
 /* Rows are separated by hairlines; the first body row meets the header without one. */
 .env-table-body > .env-table-row + .env-table-row > :is(.env-table-cell, .env-table-header-cell) {
-  border-block-start: 0.0625rem solid var(--color-border-strong);
+  border-block-start: 0.0625rem solid var(--color-border-muted);
 }
 .env-table-body .env-table-header-cell {
   background: transparent;
@@ -208,10 +208,10 @@
   transition: background-color var(--motion-duration-fast) var(--motion-ease);
 }
 .env-table-head .env-table-row:hover .env-table-column-resize::after {
-  background: var(--color-border-strong);
+  background: var(--color-border-muted);
 }
 .env-table-column-resize:hover::after {
-  background: var(--color-border-hover);
+  background: var(--color-border-muted-hover);
 }
 .env-table-column-resize:is(:focus-visible, [data-resizing])::after {
   inset-block: 0;
@@ -298,7 +298,7 @@
   padding: var(--env-table-cell-padding);
 }
 .env-table-region[data-stacked] .env-table-body > .env-table-row + .env-table-row {
-  border-block-start: 0.0625rem solid var(--color-border-strong);
+  border-block-start: 0.0625rem solid var(--color-border-muted);
 }
 .env-table-region[data-stacked]
   .env-table-body

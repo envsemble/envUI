@@ -1,8 +1,11 @@
-/* Badges: small pills that name a state in its tone. The tone tokens keep 4.5:1 text contrast on the
-   canvas, panes and rows, including over the subtle fill. */
+/* Badges: small pills that name a state in its tone. The tone's text color keeps 4.5:1 on the page,
+   panes and rows, also over its tint; a solid badge puts fg-on-emphasis on the tone's emphasis fill,
+   and an outlined one draws the tone's edge. */
 .env-badge {
-  --env-badge-tone: var(--color-tone-neutral);
+  --env-badge-tone: var(--color-fg-muted);
   --env-badge-tint: var(--color-bg-neutral-muted);
+  --env-badge-fill: var(--color-bg-neutral-emphasis);
+  --env-badge-edge: var(--color-border-neutral-emphasis);
   box-sizing: border-box;
   inline-size: fit-content;
   max-inline-size: 100%;
@@ -20,31 +23,41 @@
   vertical-align: middle;
 }
 .env-badge[data-tone='accent'] {
-  --env-badge-tone: var(--color-tone-accent);
+  --env-badge-tone: var(--color-fg-accent);
   --env-badge-tint: var(--color-bg-accent-muted);
+  --env-badge-fill: var(--color-bg-accent-emphasis);
+  --env-badge-edge: var(--color-border-accent-emphasis);
 }
 .env-badge[data-tone='success'] {
-  --env-badge-tone: var(--color-tone-success);
+  --env-badge-tone: var(--color-fg-success);
   --env-badge-tint: var(--color-bg-success-muted);
+  --env-badge-fill: var(--color-bg-success-emphasis);
+  --env-badge-edge: var(--color-border-success-emphasis);
 }
 .env-badge[data-tone='warning'] {
-  --env-badge-tone: var(--color-tone-warning);
+  --env-badge-tone: var(--color-fg-warning);
   --env-badge-tint: var(--color-bg-warning-muted);
+  --env-badge-fill: var(--color-bg-warning-emphasis);
+  --env-badge-edge: var(--color-border-warning-emphasis);
 }
 .env-badge[data-tone='danger'] {
-  --env-badge-tone: var(--color-tone-danger);
+  --env-badge-tone: var(--color-fg-danger);
   --env-badge-tint: var(--color-bg-danger-muted);
+  --env-badge-fill: var(--color-bg-danger-emphasis);
+  --env-badge-edge: var(--color-border-danger-emphasis);
 }
 .env-badge[data-tone='done'] {
-  --env-badge-tone: var(--color-tone-done);
+  --env-badge-tone: var(--color-fg-done);
   --env-badge-tint: var(--color-bg-done-muted);
+  --env-badge-fill: var(--color-bg-done-emphasis);
+  --env-badge-edge: var(--color-border-done-emphasis);
 }
 .env-badge[data-variant='solid'] {
-  background: var(--env-badge-tone);
-  color: var(--color-on-tone);
+  background: var(--env-badge-fill);
+  color: var(--color-fg-on-emphasis);
 }
 .env-badge[data-variant='outline'] {
-  border-color: color-mix(in srgb, var(--env-badge-tone) 55%, transparent);
+  border-color: var(--env-badge-edge);
   background: transparent;
 }
 .env-badge .env-symbol {
@@ -77,8 +90,8 @@
   vertical-align: middle;
 }
 .env-counter-badge[data-tone='accent'] {
-  background: var(--color-tone-accent);
-  color: var(--color-on-tone);
+  background: var(--color-bg-accent-emphasis);
+  color: var(--color-fg-on-emphasis);
 }
 /* A change as one counter-sized pill: additions in the success tone, deletions in the danger tone. */
 .env-diff-stat {
@@ -98,10 +111,10 @@
   vertical-align: middle;
 }
 .env-diff-stat-additions {
-  color: var(--color-tone-success);
+  color: var(--color-fg-success);
 }
 .env-diff-stat-deletions {
-  color: var(--color-tone-danger);
+  color: var(--color-fg-danger);
 }
 .env-counter-badge-label,
 .env-diff-stat-label {
@@ -116,7 +129,9 @@
 
 /* In a button, such as a tab, a counter badge or diff stat keeps its own filled pill. On the solid primary and
    important fills, where that pill can't keep its contrast, it takes the button's text color as an
-   outlined pill instead, as a badge does in every button, in both themes. */
+   outlined pill instead, as a badge does in every button, in both themes. The outline is the label
+   color at 55%, which only the button knows, so it is mixed here; the contrast gate measures it on
+   each fill as a derived color (tests/contrast/Pairs.ts). */
 .env-button .env-badge[data-tone],
 .env-button:is(.env-button-primary, .env-button-important) .env-counter-badge[data-tone],
 .env-button:is(.env-button-primary, .env-button-important) .env-diff-stat {
@@ -131,5 +146,5 @@
    back toward the canvas instead of adding another fill. It looks about as it does on the canvas,
    and its tones keep their 4.5:1 contrast in both themes. */
 .env-button:not(.env-button-primary, .env-button-important) .env-diff-stat {
-  background: color-mix(in srgb, var(--color-canvas) 50%, transparent);
+  background: var(--color-bg-page-muted);
 }

@@ -52,7 +52,7 @@
    panes, rows and dialogs alike. */
 .env-surface.env-dropdown-options {
   --env-surface-scale: var(--scale, 1);
-  border: calc(0.0625rem * var(--scale, 1)) solid var(--color-popup-border);
+  border: calc(0.0625rem * var(--scale, 1)) solid var(--elevation-2-border);
   background: var(--color-popup);
   box-shadow: var(--elevation-2-shadow);
   display: grid;

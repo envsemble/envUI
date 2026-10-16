@@ -53,7 +53,7 @@
   white-space: pre-wrap;
 }
 .env-message[data-from='self'][data-status='failed'] > .env-message-content {
-  box-shadow: inset 0 0 0 0.0625rem color-mix(in srgb, var(--color-tone-danger) 55%, transparent);
+  box-shadow: inset 0 0 0 0.0625rem var(--color-border-danger-emphasis);
 }
 .env-message-content > :first-child {
   margin-block-start: 0;
