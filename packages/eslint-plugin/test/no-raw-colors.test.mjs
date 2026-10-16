@@ -21,7 +21,7 @@ ruleTester.run('no-raw-colors', rule, {
     '<div style={{ color: "rgba(var(--rgb), 0.5)", background: "rgba(var(--r), var(--g), var(--b), 50%)" }} />',
     '<div style={{ color: "rgb(var(--brand-rgb))", background: "rgb(var(--rgb, var(--fallback-rgb)))" }} />',
     // A template whose expressions sit outside any color.
-    '<div style={{ color: `var(--color-fg-${tone})`, background: `rgb(var(--rgb) / ${alpha})` }} />',
+    `<div style={{ color: \`var(--color-fg-\${tone})\`, background: \`rgb(var(--rgb) / \${alpha})\` }} />`,
     `<div style={{ content: '"rgb(1 2 3) #fff"', quotes: "'red' 'blue'" }} />`,
     '<div style={{ color: "currentColor", borderColor: "transparent", fill: "inherit" }} />',
     // Words that are not colors, and named colors where a property does not take one.
@@ -128,25 +128,25 @@ ruleTester.run('no-raw-colors', rule, {
     { code: '<Card style={{ ["borderColor"]: "#ccc" }} />', errors: [raw('#ccc', 'borderColor')] },
     // A template literal is read whole, its expressions standing for literal channels.
     {
-      code: '<div style={{ color: `rgb(${r} 0 0)` }} />',
-      errors: [{ ...raw('rgb(${…} 0 0)', 'color'), column: 22, endColumn: 37 }],
+      code: `<div style={{ color: \`rgb(\${r} 0 0)\` }} />`,
+      errors: [{ ...raw(`rgb(\${…} 0 0)`, 'color'), column: 22, endColumn: 37 }],
     },
     {
-      code: '<div style={{ color: `rgba(${r}, ${g}, ${b}, 0.5)` }} />',
-      errors: [raw('rgba(${…}, ${…}, ${…}, 0.5)', 'color')],
+      code: `<div style={{ color: \`rgba(\${r}, \${g}, \${b}, 0.5)\` }} />`,
+      errors: [raw(`rgba(\${…}, \${…}, \${…}, 0.5)`, 'color')],
     },
     // Strings and url() spanning expressions don't hide a color between them.
     {
-      code: "<div style={{ background: `url('${a}') #fff url('${b}')` }} />",
+      code: `<div style={{ background: \`url('\${a}') #fff url('\${b}')\` }} />`,
       errors: [raw('#fff', 'background')],
     },
     {
-      code: "<div style={{ fontFamily: `'${a}' #fff '${b}'` }} />",
+      code: `<div style={{ fontFamily: \`'\${a}' #fff '\${b}'\` }} />`,
       errors: [raw('#fff', 'fontFamily')],
     },
     // Colors in an expression of a template are checked too.
     {
-      code: '<div style={{ border: `1px solid ${on ? "#000" : "var(--color-border-default)"}` }} />',
+      code: `<div style={{ border: \`1px solid \${on ? "#000" : "var(--color-border-default)"}\` }} />`,
       errors: [raw('#000', 'border')],
     },
     // A fallback is a color as much as the value.

@@ -29,7 +29,7 @@ test('a default that names a private value shows the value, or nothing', () => {
   const publicNames = new Set(Object.keys(exports));
   // A private const and a private label function read as what they hold.
   assert.equal(props('ThemePreferenceProvider').storageKey.default, "'env-theme'");
-  assert.equal(props('DocumentTabs').closeLabel.default, '(label: string) => `Close ${label}`');
+  assert.equal(props('DocumentTabs').closeLabel.default, `(label: string) => \`Close \${label}\``);
   // A TSDoc @default says it in words instead.
   assert.equal(props('Rating').formatLabel.default, "'{value} out of {max} stars'");
   // Private names inside a value are resolved too.

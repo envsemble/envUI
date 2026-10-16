@@ -133,7 +133,7 @@ function rawColors(text, property) {
   )
     for (const [word] of value.matchAll(/(?<![\w-])[a-z]+(?![\w(-])/gi))
       if (namedColors.has(word.toLowerCase())) found.push(word);
-  return found.map((color) => color.replaceAll(expressionStandIn, '${…}'));
+  return found.map((color) => color.replaceAll(expressionStandIn, `\${…}`));
 }
 
 /** The name a style object's property sets: `color`, `backgroundColor` or `--accent`. */
