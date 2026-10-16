@@ -48,7 +48,7 @@ components:
 
 ## Overview
 
-Code shows source in the code theme of the app theme: the Pierre themes that Diffs uses, Pierre Light on its own light grey in the light app theme, so code stands out on the white page, and Pierre Dark in the dark one. Every token color reaches 4.5:1 on code's background: where a Pierre color falls short, envUI uses the closest readable color of the same hue instead, so in the light theme the oranges, yellows, greens and cyans are darker and in the dark theme comments are lighter. envUI chooses the code theme; applications don't set it. The source is selectable text and never runs.
+Code shows source in the code theme of the app theme: the Pierre themes that Diffs uses, Pierre Light on its own light grey in the light app theme, so code stands out on the white page, and Pierre Dark in the dark one. Every token color reaches 4.5:1 on code's background, and 7:1 under high contrast: where a Pierre color falls short, envUI uses the closest color of the same hue that reaches it, keeping as much of its chroma as the color space allows, so in the light theme the oranges, yellows, greens and cyans are darker and in the dark theme comments are lighter. Tokens that had different colors keep different colors. envUI computes these colors when code first loads, from the Pierre themes installed. envUI chooses the code theme; applications don't set it. The source is selectable text and never runs.
 
 - **Code** is inline code inside a sentence, from `@envsemble/envui/content`.
 - **CodeBlock** shows source of several lines, highlighted for its `language`, with an optional label and copy button, from `@envsemble/envui/content`.
@@ -81,7 +81,7 @@ Code shows source in the code theme of the app theme: the Pierre themes that Dif
 
 ## States and behaviour
 
-- **Highlighting**: a block renders its plain source first, also on a server, and colors it once the shared highlighter has loaded; the tokens carry both code themes, so switching the app theme recolors code without highlighting it again. In a diff, tokens also reach 4.5:1 on the lines tinted for additions and deletions, and the change counts on code's background. Blocks above 50,000 characters, or with a line above 2,000 characters, stay plain text.
+- **Highlighting**: a block renders its plain source first, also on a server, and colors it once the shared highlighter has loaded; the tokens carry both code themes, so switching the app theme recolors code without highlighting it again. In a diff, tokens also reach 4.5:1, or 7:1 under high contrast, on the lines tinted for additions and deletions, and so do the change counts on code's background. High contrast follows the nearest Theme's `contrast`, or `prefers-contrast: more` where it is `system`. Blocks above 50,000 characters, or with a line above 2,000 characters, stay plain text.
 - **Copying**: the copy button writes the original source, with its line breaks, to the clipboard, turns into a check named "Code copied" and announces "Copied." for 3 seconds. Without clipboard access it selects the source for people to copy, and announces how.
 - **Focus**: the source takes keyboard focus, with a focus outline, so a block that scrolls can be scrolled from the keyboard.
 - **Diff loading**: while Diffs' highlighter loads the file's language, CodeDiff shows skeleton lines and reports `aria-busy`; if it fails, an error state with Retry replaces them.
@@ -123,7 +123,7 @@ Code shows source in the code theme of the app theme: the Pierre themes that Dif
 - Native `code` and `pre` elements, so assistive technology reads the source as text.
 - A focusable source named by `label` or the language, such as "tsx code", with a focus outline.
 - A copy button named "Copy code", then "Code copied", and a status that announces the result.
-- Code colors from the Pierre themes on their own background in both app themes, each token at 4.5:1 or more, also on a diff's tinted lines.
+- Code colors from the Pierre themes on their own background in both app themes, each token at 4.5:1 or more, and 7:1 or more under high contrast, also on a diff's tinted lines.
 - A busy diff while it loads, and an error state with a Retry button if it fails.
 
 ### You provide
@@ -167,6 +167,6 @@ CodeDiff shows what a draft changes in a file, and countDiffLines counts its lin
 
 ## Changelog
 
-- **1.0.0**: The `DiffCount` that `countDiffLines` feeds is `DiffStat`. Highlighted tokens reach 4.5:1 in both app themes, in code blocks and code diffs.
+- **1.0.0**: The `DiffCount` that `countDiffLines` feeds is `DiffStat`. Highlighted tokens reach 4.5:1 in both app themes, and 7:1 under high contrast, in code blocks and code diffs.
 - **0.7.0**: Code uses the Pierre code themes that Diffs uses, and follows the app theme; `Code`'s `appearance`, `Markdown`'s `inlineCode` and `CodeBlock`'s `theme` are removed. CodeDiff and countDiffLines, in `@envsemble/envui/diff`. The copy button is a quiet icon button.
 - **0.1.0**: Code and CodeBlock.

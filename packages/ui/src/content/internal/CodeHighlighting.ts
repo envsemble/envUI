@@ -13,17 +13,28 @@ import shell from '@shikijs/langs/shellscript';
 import yaml from '@shikijs/langs/yaml';
 import markdown from '@shikijs/langs/markdown';
 import ini from '@shikijs/langs/ini';
-import { codeThemes } from './CodeThemes.js';
+import { codeTheme } from './CodeThemes.js';
 
 export interface CodeTokenStyle {
   color?: string;
   fontStyle?: number;
 }
+/** A token with its style in each code theme: standard, and `High` for high contrast. */
 export interface CodeToken {
   content: string;
   light: CodeTokenStyle;
   dark: CodeTokenStyle;
+  lightHigh: CodeTokenStyle;
+  darkHigh: CodeTokenStyle;
 }
+
+/** The code themes every token carries, by the key of its style. */
+const themes = {
+  light: () => codeTheme('light'),
+  dark: () => codeTheme('dark'),
+  lightHigh: () => codeTheme('light', 'high'),
+  darkHigh: () => codeTheme('dark', 'high'),
+};
 
 let highlighter: ReturnType<typeof createHighlighterCore> | undefined;
 const cache = new Map<string, CodeToken[][]>();
@@ -36,7 +47,7 @@ export async function highlightCode(source: string, language: string): Promise<C
   if (existing) return existing;
   highlighter ??= createHighlighterCore({
     engine: createJavaScriptRegexEngine(),
-    themes: [codeThemes.light, codeThemes.dark],
+    themes: Object.values(themes).map((theme) => theme()),
     langs: [
       javascript,
       jsx,
@@ -60,13 +71,17 @@ export async function highlightCode(source: string, language: string): Promise<C
   const tokens = runtime
     .codeToTokensWithThemes(source, {
       lang: language,
-      themes: { light: codeThemes.light.name, dark: codeThemes.dark.name },
+      themes: Object.fromEntries(
+        Object.entries(themes).map(([key, theme]) => [key, theme().name!]),
+      ),
     })
     .map((line) =>
       line.map((token) => ({
         content: token.content,
-        light: token.variants.light,
-        dark: token.variants.dark,
+        light: token.variants.light!,
+        dark: token.variants.dark!,
+        lightHigh: token.variants.lightHigh!,
+        darkHigh: token.variants.darkHigh!,
       })),
     );
   cache.set(key, tokens);

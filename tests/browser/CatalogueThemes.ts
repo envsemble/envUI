@@ -52,6 +52,8 @@ export const highContrastPages: ReadonlySet<string> = new Set([
   'components/badge',
   'components/toast',
   'components/card',
+  // Highlighted code and code diffs take high-contrast token colors of their own.
+  'components/code',
 ]);
 
 const unknownPages = [...highContrastPages].filter(

@@ -737,3 +737,49 @@ test('the code copy action follows the app theme with the code it copies', async
     await expect.poll(contrast, appTheme).toBeGreaterThan(4.5);
   }
 });
+
+test('highlighted code takes its high-contrast colors where the contrast is high', async ({
+  page,
+}) => {
+  await page.goto(`${catalogueUrl}/#/components/code/overview`);
+  const token = page.locator('.docs-live-example .env-code-block code span').first();
+  await expect(token).toBeVisible();
+  const colors = () =>
+    token.evaluate((span) => {
+      const style = getComputedStyle(span);
+      const probe = document.createElement('span');
+      span.parentElement!.append(probe);
+      const resolve = (value: string) => {
+        probe.style.color = value;
+        return getComputedStyle(probe).color;
+      };
+      const result = {
+        color: style.color,
+        standard: resolve(span.style.getPropertyValue('--env-code-token')),
+        high: resolve(span.style.getPropertyValue('--env-code-token-high')),
+      };
+      probe.remove();
+      return result;
+    });
+  const standard = await colors();
+  expect(standard.high).not.toBe(standard.standard);
+  expect(standard.color).toBe(standard.standard);
+  // The system asks for more contrast, and the Theme follows it.
+  // Firefox restyles for the contrast preference only on load.
+  await page.emulateMedia({ contrast: 'more' });
+  await page.reload();
+  await expect(token).toBeVisible();
+  await expect.poll(async () => (await colors()).color).toBe(standard.high);
+  // A Theme that keeps the standard contrast keeps the standard colors, whatever the system asks.
+  await token.evaluate((span) =>
+    span.closest('.env-theme')!.setAttribute('data-env-contrast', 'standard'),
+  );
+  await expect.poll(async () => (await colors()).color).toBe(standard.standard);
+  await page.emulateMedia({ contrast: 'no-preference' });
+  await page.reload();
+  await expect(token).toBeVisible();
+  await token.evaluate((span) =>
+    span.closest('.env-theme')!.setAttribute('data-env-contrast', 'high'),
+  );
+  await expect.poll(async () => (await colors()).color).toBe(standard.high);
+});

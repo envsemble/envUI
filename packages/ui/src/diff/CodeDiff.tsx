@@ -2,9 +2,21 @@
 
 import { parseDiffFromFile, preloadHighlighter, registerCustomTheme } from '@pierre/diffs';
 import { File, FileDiff } from '@pierre/diffs/react';
-import { useEffect, useMemo, useRef, useState, type ComponentPropsWithRef } from 'react';
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ComponentPropsWithRef,
+  type RefObject,
+} from 'react';
 import { Button } from '../actions/Button.js';
-import { codeBackground, codeThemeStyle, diffThemes } from '../content/internal/CodeThemes.js';
+import {
+  codeBackground,
+  codeThemeStyle,
+  diffTheme,
+  type CodeContrast,
+} from '../content/internal/CodeThemes.js';
 import { EmptyState } from '../feedback/EmptyState.js';
 import { useTheme } from '../foundations/Theme.js';
 import { LoadingState } from '../feedback/LoadingState.js';
@@ -38,14 +50,55 @@ const DIFF_BACKGROUND_CSS = `:host { --diffs-light-bg: ${codeBackground('light')
 /** Side by side from this many rem of the diff's own width. */
 const SPLIT_FROM_REM = 56;
 
-/** The readable Pierre themes of code diffs, registered with Diffs once, under their names. */
-const diffThemeNames = { light: diffThemes.light.name!, dark: diffThemes.dark.name! };
+/** The names of the readable Pierre themes of code diffs for a contrast, light and dark. */
+const diffThemeNames = (contrast: CodeContrast) => ({
+  light: diffTheme('light', contrast).name!,
+  dark: diffTheme('dark', contrast).name!,
+});
 let themesRegistered = false;
+/** Registers the diff themes with Diffs once, under their names; each is built when Diffs asks. */
 function registerThemes() {
   if (themesRegistered) return;
   themesRegistered = true;
-  registerCustomTheme(diffThemeNames.light, async () => diffThemes.light as never);
-  registerCustomTheme(diffThemeNames.dark, async () => diffThemes.dark as never);
+  for (const contrast of ['standard', 'high'] as const)
+    for (const scheme of ['light', 'dark'] as const)
+      registerCustomTheme(
+        `envui-pierre-diff-${scheme}${contrast === 'high' ? '-high' : ''}`,
+        async () => diffTheme(scheme, contrast) as never,
+      );
+}
+
+/**
+ * The contrast of the nearest Theme around an element, as the style sheet reads it: high where it
+ * says so, standard where it says so, and otherwise high while the system asks for more contrast.
+ * Diffs takes its colors as themes rather than from the style sheet, so it follows this.
+ */
+function useCodeContrast(ref: RefObject<HTMLElement | null>): CodeContrast {
+  const { contrast: themeContrast } = useTheme();
+  const [contrast, setContrast] = useState<CodeContrast>(
+    themeContrast === 'high' ? 'high' : 'standard',
+  );
+  useEffect(() => {
+    const element = ref.current;
+    const theme = element?.closest('.env-theme');
+    const media = window.matchMedia?.('(prefers-contrast: more)');
+    const update = () => {
+      const attribute = theme?.getAttribute('data-env-contrast');
+      setContrast(
+        attribute === 'high' || (attribute !== 'standard' && media?.matches) ? 'high' : 'standard',
+      );
+    };
+    update();
+    media?.addEventListener('change', update);
+    const observer = new MutationObserver(update);
+    if (theme)
+      observer.observe(theme, { attributes: true, attributeFilter: ['data-env-contrast'] });
+    return () => {
+      media?.removeEventListener('change', update);
+      observer.disconnect();
+    };
+  }, [ref, themeContrast]);
+  return contrast;
 }
 
 let highlighterReady: Promise<void> | undefined;
@@ -57,7 +110,10 @@ function prepareHighlighter(language: string) {
   registerThemes();
   highlighterReady = preloadHighlighter({
     langs: [...loadedLanguages, language] as never,
-    themes: [diffThemeNames.dark, diffThemeNames.light],
+    themes: [
+      ...Object.values(diffThemeNames('standard')),
+      ...Object.values(diffThemeNames('high')),
+    ],
   }).then(
     () => {
       loadedLanguages.add(language);
@@ -92,6 +148,7 @@ export function CodeDiff({
   const [failed, setFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const rootRef = useRef<HTMLDivElement>(null);
+  const contrast = useCodeContrast(rootRef);
   const [wide, setWide] = useState(false);
 
   useEffect(() => {
@@ -176,7 +233,7 @@ export function CodeDiff({
           disableWorkerPool
           options={{
             overflow: 'wrap',
-            theme: diffThemeNames,
+            theme: diffThemeNames(contrast),
             themeType: theme,
             disableFileHeader: !header,
             unsafeCSS: DIFF_BACKGROUND_CSS,
@@ -189,7 +246,7 @@ export function CodeDiff({
           options={{
             diffStyle: wide ? 'split' : 'unified',
             overflow: 'wrap',
-            theme: diffThemeNames,
+            theme: diffThemeNames(contrast),
             themeType: theme,
             disableFileHeader: !header,
             expandUnchanged,

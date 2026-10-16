@@ -1,6 +1,20 @@
 .env-theme {
   --font-family-code: ui-monospace, 'Cascadia Code', Consolas, monospace;
   --font-size-code: 0.8125rem;
+  /*
+   * A switch for the high-contrast colors of highlighted code, set by each Theme as the tokens'
+   * contrast is: empty under high contrast, and invalid otherwise, so that a token's
+   * --env-code-token-now, which starts with it, holds its high-contrast color or nothing.
+   */
+  --env-code-high-contrast: initial;
+}
+.env-theme[data-env-contrast='high'] {
+  --env-code-high-contrast: ;
+}
+@media (prefers-contrast: more) {
+  .env-theme:not([data-env-contrast='standard']) {
+    --env-code-high-contrast: ;
+  }
 }
 .env-code {
   padding: 0.125em 0.375em;
@@ -30,6 +44,12 @@
 }
 .env-code-block code {
   font: inherit;
+}
+/* Each highlighted token has its standard color and its high-contrast one; see .env-theme. */
+.env-code-block code span {
+  --env-code-token-now: var(--env-code-high-contrast) var(--env-code-token-high);
+
+  color: var(--env-code-token-now, var(--env-code-token));
 }
 .env-code-block pre:focus-visible {
   outline: 0.125rem solid var(--color-focus-ring);

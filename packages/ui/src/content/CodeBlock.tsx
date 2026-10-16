@@ -101,7 +101,7 @@ export function CodeBlock({
             ? tokens.map((line, index) => (
                 <Fragment key={index}>
                   {line.map((token, tokenIndex) => (
-                    <span key={tokenIndex} style={tokenStyle(token[theme])}>
+                    <span key={tokenIndex} style={tokenStyle(token[theme], token[`${theme}High`])}>
                       {token.content}
                     </span>
                   ))}
@@ -124,14 +124,19 @@ export function CodeBlock({
   );
 }
 
-function tokenStyle({ color, fontStyle = 0 }: CodeTokenStyle): CSSProperties {
+/**
+ * A token's style: its colors as custom properties, the standard one and the high-contrast one,
+ * between which the style sheet chooses by the contrast of the nearest Theme.
+ */
+function tokenStyle({ color, fontStyle = 0 }: CodeTokenStyle, high: CodeTokenStyle): CSSProperties {
   return {
-    color,
+    '--env-code-token': color,
+    '--env-code-token-high': high.color ?? color,
     fontStyle: fontStyle & 1 ? 'italic' : undefined,
     fontWeight: fontStyle & 2 ? 700 : undefined,
     textDecoration:
       [fontStyle & 4 ? 'underline' : '', fontStyle & 8 ? 'line-through' : '']
         .filter(Boolean)
         .join(' ') || undefined,
-  };
+  } as CSSProperties;
 }

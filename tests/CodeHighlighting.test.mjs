@@ -24,19 +24,23 @@ test('concurrent cold highlighting consumers share one token matrix', async (con
 });
 
 test('every highlighted token is readable on its code background, in code blocks and diffs', async () => {
-  const { wcagContrast } = await import('culori');
-  const { codeBackground, codeThemes, diffThemes } = await import(
+  const { wcagContrast, interpolate, formatHex, rgb, differenceEuclidean } = await import('culori');
+  const { codeBackground, codeTheme, diffTheme } = await import(
     '../packages/ui/dist/content/internal/CodeThemes.js'
   );
-  const { contrastFile, codeThemesSource, targetContrast } = await import(
-    '../scripts/GenerateCodeThemes.mjs'
-  );
+  const { diffTints } = await import('../packages/ui/dist/content/internal/CodeDiffTints.js');
+  const { tintsFile, tintsSource } = await import('../scripts/GenerateCodeThemes.mjs');
   assert.equal(
-    readFileSync(contrastFile, 'utf8'),
-    await codeThemesSource(),
-    'Run node scripts/GenerateCodeThemes.mjs and commit CodeThemeContrast.ts.',
+    readFileSync(tintsFile, 'utf8'),
+    await tintsSource(),
+    'Run node scripts/GenerateCodeThemes.mjs and commit CodeDiffTints.ts.',
   );
-  assert.ok(targetContrast >= 4.5);
+  const pierre = {
+    light: (await import('@pierre/theme/pierre-light')).default,
+    dark: (await import('@pierre/theme/pierre-dark')).default,
+  };
+  // AA for text in the standard themes, AAA under high contrast.
+  const targets = { standard: 4.5, high: 7 };
   const samples = {
     tsx: "import { Button } from '@envsemble/envui';\n// Saves the draft.\nexport const Save = ({ count = 2 }) => <Button onClick={() => save(String(count))}>Save {true}</Button>;",
     css: '.card:hover { color: var(--color-fg-default); margin: 0 1rem !important; }',
@@ -45,25 +49,89 @@ test('every highlighted token is readable on its code background, in code blocks
     yaml: 'title: Button # the page\nstatus: beta\ncount: 3',
     markdown: '# Title\n\nSome **bold** text with `code` and a [link](https://example.com).',
   };
+  const variants = {
+    light: ['light', 'standard'],
+    dark: ['dark', 'standard'],
+    lightHigh: ['light', 'high'],
+    darkHigh: ['dark', 'high'],
+  };
   for (const [language, source] of Object.entries(samples))
     for (const line of await highlightCode(source, language))
       for (const token of line)
-        for (const theme of ['light', 'dark']) {
-          const color = token[theme].color;
+        for (const [key, [scheme, contrast]] of Object.entries(variants)) {
+          const color = token[key].color;
           if (!color || !token.content.trim()) continue;
-          const contrast = wcagContrast(color, codeBackground(theme));
+          const ratio = wcagContrast(color, codeBackground(scheme));
           assert.ok(
-            contrast >= 4.5,
-            `${language} ${theme} "${token.content}" ${color}: ${contrast}`,
+            ratio >= targets[contrast],
+            `${language} ${key} "${token.content}" ${color}: ${ratio}`,
           );
         }
-  // Every token color of each theme reaches 4.5:1: on code's background in code blocks, and on the
-  // lines Diffs tints in diffs, which the generator checks against their strongest tint.
-  for (const theme of ['light', 'dark'])
-    for (const rule of codeThemes[theme].tokenColors ?? []) {
-      const color = rule.settings?.foreground;
-      if (color) assert.ok(wcagContrast(color, codeBackground(theme)) >= 4.5, `${theme} ${color}`);
+
+  /** The text colors of a theme, from its token rules and foreground. */
+  const textColors = (theme) => [
+    theme.colors['editor.foreground'],
+    ...(theme.tokenColors ?? []).map((rule) => rule.settings?.foreground).filter(Boolean),
+  ];
+  /**
+   * Each original token color of a Pierre theme, with what a readable theme made of it, matched by
+   * the rules' scopes, since the highlighter may add a rule of its own to a theme it loads.
+   */
+  const pairs = (original, readable) => {
+    const byScope = (theme) =>
+      new Map(
+        (theme.tokenColors ?? [])
+          .filter((rule) => rule.scope && rule.settings?.foreground)
+          .map((rule) => [JSON.stringify(rule.scope), rule.settings.foreground.toLowerCase()]),
+      );
+    const after = byScope(readable);
+    return new Map([...byScope(original)].map(([scope, color]) => [color, after.get(scope)]));
+  };
+  for (const scheme of ['light', 'dark'])
+    for (const contrast of ['standard', 'high']) {
+      const background = codeBackground(scheme);
+      const target = targets[contrast];
+      const theme = codeTheme(scheme, contrast);
+      for (const color of textColors(theme))
+        assert.ok(wcagContrast(color, background) >= target, `${scheme} ${contrast} ${color}`);
+      // Tokens that were distinct stay apart: by 0.02 in OKLab, or as far as they were.
+      const distance = differenceEuclidean('oklab');
+      const mapped = [...pairs(pierre[scheme], theme)];
+      for (const [a, aAfter] of mapped)
+        for (const [b, bAfter] of mapped)
+          if (a < b)
+            assert.ok(
+              distance(aAfter, bAfter) >= Math.min(0.02, distance(a, b)) - 1e-3,
+              `${scheme} ${contrast}: ${a} and ${b} became ${aAfter} and ${bAfter}`,
+            );
+
+      // Diffs: the change colors read on code's background, and the tokens on every line and word
+      // Diffs tints with them, mixed as its style sheet mixes them.
+      const diff = diffTheme(scheme, contrast);
+      assert.notEqual(diff.name, theme.name);
+      const backgrounds = [background];
+      for (const [kind, key] of [
+        ['addition', 'gitDecoration.addedResourceForeground'],
+        ['deletion', 'gitDecoration.deletedResourceForeground'],
+      ]) {
+        const change = diff.colors[key];
+        assert.ok(wcagContrast(change, background) >= target, `${scheme} ${contrast} ${kind}`);
+        const { mix, alpha } = diffTints[kind][scheme];
+        const line = formatHex(interpolate([background, change], 'lab')(mix));
+        const [top, bottom] = [rgb(change), rgb(line)];
+        const word = formatHex({
+          mode: 'rgb',
+          r: top.r * alpha + bottom.r * (1 - alpha),
+          g: top.g * alpha + bottom.g * (1 - alpha),
+          b: top.b * alpha + bottom.b * (1 - alpha),
+        });
+        backgrounds.push(line, word);
+      }
+      for (const color of textColors(diff))
+        for (const tint of backgrounds)
+          assert.ok(
+            wcagContrast(color, tint) >= target,
+            `diff ${scheme} ${contrast} ${color} on ${tint}: ${wcagContrast(color, tint)}`,
+          );
     }
-  for (const theme of ['light', 'dark'])
-    assert.notEqual(diffThemes[theme].name, codeThemes[theme].name);
 });
