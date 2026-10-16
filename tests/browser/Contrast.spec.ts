@@ -2,14 +2,7 @@ import { readFileSync } from 'node:fs';
 
 import { test, expect, type Page } from '@playwright/test';
 import { fixtureUrl } from './Servers';
-import {
-  cssColor,
-  dropped,
-  isDistance,
-  pairName,
-  pairs,
-  type ContrastPair,
-} from '../contrast/Pairs';
+import { cssColor, dropped, pairName, pairs, type ContrastPair } from '../contrast/Pairs';
 import { themes, type ContrastTheme } from '../contrast/Themes';
 import {
   apcaContrast,
@@ -18,6 +11,7 @@ import {
   flatten,
   formatTable,
   formatValue,
+  isDistance,
   parseColor,
   type ContrastRow,
   type Rgb,

@@ -1,5 +1,8 @@
 import { blend, clampRgb, converter, differenceEuclidean, parse, wcagContrast } from 'culori';
-import { isDistance, type ContrastKind } from './Pairs';
+import type { ContrastKind } from './Pairs';
+
+/** The kinds measured as a ΔEOK distance rather than a contrast ratio. */
+export const isDistance = (kind: ContrastKind) => kind === 'difference' || kind === 'distinct';
 
 export interface Rgb {
   mode: 'rgb';

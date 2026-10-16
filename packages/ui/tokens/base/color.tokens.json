@@ -206,7 +206,7 @@
           }
         },
         "muted": {
-          "$description": "The translucent halo of a slider thumb that is dragged, in the blue of the thumb.",
+          "$description": "The translucent halo of a slider thumb that is dragged: the blue of the thumb at 16%, in every theme and at high contrast.",
           "$value": {
             "colorSpace": "oklch",
             "components": { "$ref": "#/palette/blue/50/$value/components" },
@@ -243,7 +243,7 @@
         },
         "subtle": {
           "hover": {
-            "$description": "The state layer of a control without a fill in the accent tone, such as an info alert’s dismiss button, under the pointer.",
+            "$description": "The state layer of a control without a fill in the accent tone, such as an info alert’s dismiss button, under the pointer: the accent text color at 14%, in every theme and at high contrast.",
             "$value": {
               "colorSpace": "oklch",
               "components": { "$ref": "#/palette/blue/60/$value/components" },
@@ -251,7 +251,7 @@
             }
           },
           "pressed": {
-            "$description": "The accent state layer while pressed.",
+            "$description": "The accent state layer while pressed: the accent text color at 22%.",
             "$value": {
               "colorSpace": "oklch",
               "components": { "$ref": "#/palette/blue/60/$value/components" },
@@ -275,7 +275,7 @@
         },
         "subtle": {
           "hover": {
-            "$description": "The state layer of a control without a fill in the success tone, such as a success alert’s dismiss button, under the pointer.",
+            "$description": "The state layer of a control without a fill in the success tone, such as a success alert’s dismiss button, under the pointer: the success text color at 14%, in every theme and at high contrast.",
             "$value": {
               "colorSpace": "oklch",
               "components": { "$ref": "#/palette/green/60/$value/components" },
@@ -283,7 +283,7 @@
             }
           },
           "pressed": {
-            "$description": "The success state layer while pressed.",
+            "$description": "The success state layer while pressed: the success text color at 22%.",
             "$value": {
               "colorSpace": "oklch",
               "components": { "$ref": "#/palette/green/60/$value/components" },
@@ -321,7 +321,7 @@
         },
         "subtle": {
           "hover": {
-            "$description": "The state layer of a control without a fill in the warning tone, such as a warning alert’s dismiss button, under the pointer.",
+            "$description": "The state layer of a control without a fill in the warning tone, such as a warning alert’s dismiss button, under the pointer: the warning text color at 14%, in every theme and at high contrast.",
             "$value": {
               "colorSpace": "oklch",
               "components": { "$ref": "#/palette/amber/60/$value/components" },
@@ -329,7 +329,7 @@
             }
           },
           "pressed": {
-            "$description": "The warning state layer while pressed.",
+            "$description": "The warning state layer while pressed: the warning text color at 22%.",
             "$value": {
               "colorSpace": "oklch",
               "components": { "$ref": "#/palette/amber/60/$value/components" },
@@ -353,7 +353,7 @@
         },
         "subtle": {
           "hover": {
-            "$description": "The state layer of a control without a fill in the danger tone, such as an error alert’s dismiss button, under the pointer.",
+            "$description": "The state layer of a control without a fill in the danger tone, such as an error alert’s dismiss button, under the pointer: the danger text color at 14%, in every theme and at high contrast.",
             "$value": {
               "colorSpace": "oklch",
               "components": { "$ref": "#/palette/red/60/$value/components" },
@@ -361,7 +361,7 @@
             }
           },
           "pressed": {
-            "$description": "The danger state layer while pressed.",
+            "$description": "The danger state layer while pressed: the danger text color at 22%.",
             "$value": {
               "colorSpace": "oklch",
               "components": { "$ref": "#/palette/red/60/$value/components" },
@@ -526,7 +526,7 @@
           "$value": "{palette.blue.75}"
         },
         "emphasis": {
-          "$description": "A decorative edge in the accent tone: the accent text color at 55%, around an outlined badge.",
+          "$description": "A decorative edge in the accent tone, around an outlined badge: the accent text color at 55%, in every theme and at high contrast.",
           "$value": {
             "colorSpace": "oklch",
             "components": { "$ref": "#/palette/blue/60/$value/components" },
@@ -534,7 +534,7 @@
           }
         },
         "muted": {
-          "$description": "The faint edge of an info alert: the accent text color at 28%.",
+          "$description": "The faint edge of an info alert: the accent text color at 28%, in every theme and at high contrast.",
           "$value": {
             "colorSpace": "oklch",
             "components": { "$ref": "#/palette/blue/60/$value/components" },
@@ -556,7 +556,7 @@
           "$value": "{palette.red.40}"
         },
         "emphasis": {
-          "$description": "A decorative edge in the danger tone: the danger text color at 55%, around an outlined badge and a message that failed to send.",
+          "$description": "A decorative edge in the danger tone, around an outlined badge and a message that failed to send: the danger text color at 55%, in every theme and at high contrast.",
           "$value": {
             "colorSpace": "oklch",
             "components": { "$ref": "#/palette/red/60/$value/components" },
@@ -564,7 +564,7 @@
           }
         },
         "muted": {
-          "$description": "The faint edge of an error alert: the danger text color at 28%.",
+          "$description": "The faint edge of an error alert: the danger text color at 28%, in every theme and at high contrast.",
           "$value": {
             "colorSpace": "oklch",
             "components": { "$ref": "#/palette/red/60/$value/components" },
@@ -574,7 +574,7 @@
       },
       "neutral": {
         "emphasis": {
-          "$description": "A decorative edge in the neutral tone: the muted text color at 55%, around an outlined badge.",
+          "$description": "A decorative edge in the neutral tone, around an outlined badge: the muted text color at 55%, in every theme and at high contrast.",
           "$value": {
             "colorSpace": "oklch",
             "components": { "$ref": "#/palette/neutral/60/$value/components" },
@@ -584,7 +584,7 @@
       },
       "success": {
         "emphasis": {
-          "$description": "A decorative edge in the success tone: the success text color at 55%, around an outlined badge.",
+          "$description": "A decorative edge in the success tone, around an outlined badge: the success text color at 55%, in every theme and at high contrast.",
           "$value": {
             "colorSpace": "oklch",
             "components": { "$ref": "#/palette/green/60/$value/components" },
@@ -592,7 +592,7 @@
           }
         },
         "muted": {
-          "$description": "The faint edge of a success alert: the success text color at 28%.",
+          "$description": "The faint edge of a success alert: the success text color at 28%, in every theme and at high contrast.",
           "$value": {
             "colorSpace": "oklch",
             "components": { "$ref": "#/palette/green/60/$value/components" },
@@ -602,7 +602,7 @@
       },
       "warning": {
         "emphasis": {
-          "$description": "A decorative edge in the warning tone: the warning text color at 55%, around an outlined badge.",
+          "$description": "A decorative edge in the warning tone, around an outlined badge: the warning text color at 55%, in every theme and at high contrast.",
           "$value": {
             "colorSpace": "oklch",
             "components": { "$ref": "#/palette/amber/60/$value/components" },
@@ -610,7 +610,7 @@
           }
         },
         "muted": {
-          "$description": "The faint edge of a warning alert: the warning text color at 28%.",
+          "$description": "The faint edge of a warning alert: the warning text color at 28%, in every theme and at high contrast.",
           "$value": {
             "colorSpace": "oklch",
             "components": { "$ref": "#/palette/amber/60/$value/components" },
@@ -620,7 +620,7 @@
       },
       "done": {
         "emphasis": {
-          "$description": "A decorative edge in the done tone: the done text color at 55%, around an outlined badge.",
+          "$description": "A decorative edge in the done tone, around an outlined badge: the done text color at 55%, in every theme and at high contrast.",
           "$value": {
             "colorSpace": "oklch",
             "components": { "$ref": "#/palette/violet/60/$value/components" },

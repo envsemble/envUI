@@ -30,9 +30,6 @@
 
 export type ContrastKind = 'text' | 'non-text' | 'focus' | 'difference' | 'distinct';
 
-/** The kinds measured as a ΔEOK distance rather than a contrast ratio. */
-export const isDistance = (kind: ContrastKind) => kind === 'difference' || kind === 'distinct';
-
 export interface ContrastPair {
   fg: string;
   bg: readonly string[];
@@ -124,6 +121,29 @@ const popupEdge = {
   minimum: { standard: 1.2 },
   rationale:
     'Decorative at standard contrast: the elevation shadow and the content identify the popup, as WCAG 1.4.11 allows, and a 3:1 edge would outline every popup in mid gray. Held to 1.2:1 so it stays visible; the boundary in high contrast and under forced colors.',
+} as const;
+
+/**
+ * The edge of an outlined badge, or the ring of a message that failed to send, in a tone: its text
+ * color at 55%, in every theme and contrast. Decorative: the badge's text in the tone, measured at
+ * 4.5:1 above, and the message's status identify them. Held to 1.5:1, and 3:1 in high contrast, as
+ * the outline of a badge on a button is.
+ */
+const toneOutline = {
+  minimum: { standard: 1.5, high: 3 },
+  rationale:
+    'Decorative: the badge’s text in its tone, measured at 4.5:1, and the failed message’s status identify them; the edge only groups. Held to 1.5:1, and 3:1 in high contrast, as a badge outline on a button is.',
+} as const;
+
+/**
+ * The faint edge of an alert, its tone's text color at 28%. Decorative: the tint, the icon and the
+ * text identify the alert, which takes no input. Held to 1.2:1, as a popup's edge is, and 1.5:1 in
+ * high contrast, so it stays visible.
+ */
+const alertEdge = {
+  minimum: { standard: 1.2, high: 1.5 },
+  rationale:
+    'Decorative: the tint, the icon and the text identify the alert, which takes no input, and WCAG 1.4.11 asks nothing of the edge. Held to 1.2:1, as a popup’s edge is, and 1.5:1 in high contrast, so it stays visible.',
 } as const;
 
 export const pairs: readonly ContrastPair[] = [
@@ -451,6 +471,31 @@ export const pairs: readonly ContrastPair[] = [
       'The dismiss icon of an alert on hover and press',
     ),
   ]),
+  ...tones.flatMap((tone) =>
+    nonText(
+      `--color-border-${tone}-emphasis`,
+      [page, surface, row],
+      'The edge of an outlined badge',
+      toneOutline,
+    ),
+  ),
+  ...alertTones.flatMap((tone) =>
+    nonText(
+      `--color-border-${tone}-muted`,
+      [page, surface],
+      `The edge of an alert, tone="${tone === 'danger' ? 'error' : tone}"`,
+      alertEdge,
+    ),
+  ),
+  ...nonText(
+    '--color-border-danger-emphasis',
+    [
+      [fill, page],
+      [fill, surface],
+    ],
+    'The ring of an own message that failed to send, on its bubble',
+    toneOutline,
+  ),
   ...text(
     '--color-fg-on-strong',
     ['--color-bg-neutral-strong', '--color-bg-success-strong', '--color-bg-info-strong'],

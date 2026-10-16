@@ -91,6 +91,13 @@
             "$root": { "$value": "{palette.blue.75}" },
             "hover": { "$value": "{palette.blue.80}" },
             "pressed": { "$value": "{palette.blue.84}" }
+          },
+          "muted": {
+            "$value": {
+              "colorSpace": "oklch",
+              "components": { "$ref": "#/palette/blue/15/$value/components" },
+              "alpha": 0.16
+            }
           }
         },
         "accent": {
@@ -101,6 +108,22 @@
               "components": { "$ref": "#/palette/blue/10/$value/components" },
               "alpha": 0.1
             }
+          },
+          "subtle": {
+            "hover": {
+              "$value": {
+                "colorSpace": "oklch",
+                "components": { "$ref": "#/palette/blue/6/$value/components" },
+                "alpha": 0.14
+              }
+            },
+            "pressed": {
+              "$value": {
+                "colorSpace": "oklch",
+                "components": { "$ref": "#/palette/blue/6/$value/components" },
+                "alpha": 0.22
+              }
+            }
           }
         },
         "success": {
@@ -110,6 +133,22 @@
               "colorSpace": "oklch",
               "components": { "$ref": "#/palette/green/10/$value/components" },
               "alpha": 0.1
+            }
+          },
+          "subtle": {
+            "hover": {
+              "$value": {
+                "colorSpace": "oklch",
+                "components": { "$ref": "#/palette/green/6/$value/components" },
+                "alpha": 0.14
+              }
+            },
+            "pressed": {
+              "$value": {
+                "colorSpace": "oklch",
+                "components": { "$ref": "#/palette/green/6/$value/components" },
+                "alpha": 0.22
+              }
             }
           },
           "strong": {
@@ -126,6 +165,22 @@
               "components": { "$ref": "#/palette/amber/10/$value/components" },
               "alpha": 0.1
             }
+          },
+          "subtle": {
+            "hover": {
+              "$value": {
+                "colorSpace": "oklch",
+                "components": { "$ref": "#/palette/amber/6/$value/components" },
+                "alpha": 0.14
+              }
+            },
+            "pressed": {
+              "$value": {
+                "colorSpace": "oklch",
+                "components": { "$ref": "#/palette/amber/6/$value/components" },
+                "alpha": 0.22
+              }
+            }
           }
         },
         "danger": {
@@ -135,6 +190,22 @@
               "colorSpace": "oklch",
               "components": { "$ref": "#/palette/red/10/$value/components" },
               "alpha": 0.1
+            }
+          },
+          "subtle": {
+            "hover": {
+              "$value": {
+                "colorSpace": "oklch",
+                "components": { "$ref": "#/palette/red/6/$value/components" },
+                "alpha": 0.14
+              }
+            },
+            "pressed": {
+              "$value": {
+                "colorSpace": "oklch",
+                "components": { "$ref": "#/palette/red/6/$value/components" },
+                "alpha": 0.22
+              }
             }
           },
           "strong": {
@@ -203,12 +274,90 @@
         "accent": {
           "$root": { "$value": "{palette.blue.15}" },
           "hover": { "$value": "{palette.blue.10}" },
-          "pressed": { "$value": "{palette.blue.6}" }
+          "pressed": { "$value": "{palette.blue.6}" },
+          "emphasis": {
+            "$value": {
+              "colorSpace": "oklch",
+              "components": { "$ref": "#/palette/blue/6/$value/components" },
+              "alpha": 0.55
+            }
+          },
+          "muted": {
+            "$value": {
+              "colorSpace": "oklch",
+              "components": { "$ref": "#/palette/blue/6/$value/components" },
+              "alpha": 0.28
+            }
+          }
         },
         "danger": {
           "$root": { "$value": "{palette.red.6}" },
           "hover": { "$value": "{palette.red.4}" },
-          "pressed": { "$value": "{palette.red.2}" }
+          "pressed": { "$value": "{palette.red.2}" },
+          "emphasis": {
+            "$value": {
+              "colorSpace": "oklch",
+              "components": { "$ref": "#/palette/red/6/$value/components" },
+              "alpha": 0.55
+            }
+          },
+          "muted": {
+            "$value": {
+              "colorSpace": "oklch",
+              "components": { "$ref": "#/palette/red/6/$value/components" },
+              "alpha": 0.28
+            }
+          }
+        },
+        "neutral": {
+          "emphasis": {
+            "$value": {
+              "colorSpace": "oklch",
+              "components": { "$ref": "#/palette/neutral/6/$value/components" },
+              "alpha": 0.55
+            }
+          }
+        },
+        "success": {
+          "emphasis": {
+            "$value": {
+              "colorSpace": "oklch",
+              "components": { "$ref": "#/palette/green/6/$value/components" },
+              "alpha": 0.55
+            }
+          },
+          "muted": {
+            "$value": {
+              "colorSpace": "oklch",
+              "components": { "$ref": "#/palette/green/6/$value/components" },
+              "alpha": 0.28
+            }
+          }
+        },
+        "warning": {
+          "emphasis": {
+            "$value": {
+              "colorSpace": "oklch",
+              "components": { "$ref": "#/palette/amber/6/$value/components" },
+              "alpha": 0.55
+            }
+          },
+          "muted": {
+            "$value": {
+              "colorSpace": "oklch",
+              "components": { "$ref": "#/palette/amber/6/$value/components" },
+              "alpha": 0.28
+            }
+          }
+        },
+        "done": {
+          "emphasis": {
+            "$value": {
+              "colorSpace": "oklch",
+              "components": { "$ref": "#/palette/violet/6/$value/components" },
+              "alpha": 0.55
+            }
+          }
         },
         "focus": { "$value": "{palette.blue.15}" },
         "scrim": { "$value": "{palette.neutral.30}" }
