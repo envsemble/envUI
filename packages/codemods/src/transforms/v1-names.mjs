@@ -9,7 +9,7 @@
 // - `import * as ui` accesses and `export { … } from` re-exports are rewritten the same way.
 // Anything the transform cannot rewrite safely stays as it is and is reported with its line.
 import { loadMap } from '../map.mjs';
-import { createReporter, parserFor, printOptions } from '../shared.mjs';
+import { createReporter, keepByteOrderMark, parserFor, printOptions } from '../shared.mjs';
 
 export const parser = 'tsx';
 
@@ -666,5 +666,5 @@ export default function transform(file, api, options = {}) {
     }
   }
 
-  return root.toSource(printOptions(file.source, quote));
+  return keepByteOrderMark(file.source, root.toSource(printOptions(file.source, quote)));
 }

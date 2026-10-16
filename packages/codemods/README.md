@@ -72,6 +72,8 @@ Renames 0.x `env-*` class names and custom properties. An entry also renames eve
 - **Style sheets** (`.css`, `.scss`, `.sass`, `.less`, `.pcss`): `.env-*` class selectors, including those inside `:is()` and `:not()`; `--env-*` custom property declarations and `var()` uses; and `[class~='env-*']`, `[class*='env-*']` and similar attribute selectors.
 - **Scripts:** whole class tokens in strings and template literals inside JSX `className` and `class` attributes, including `classNames()`, `clsx()` and conditional expressions; `className` properties and assignments; selectors passed to `querySelector`, `querySelectorAll`, `closest` and `matches`; `classList` methods and `getElementsByClassName`; and `--env-*` custom properties in `style` attributes, string property keys, `style.setProperty()` and `var()` references in any string. Only the literals change, so the rest of the file keeps its formatting.
 
+Both transforms keep a file's line endings, CRLF or LF, and its byte order mark; class names in template literals that span lines are renamed in CRLF files too.
+
 ## The rename map
 
 `src/maps/v1.json` is the single source of the renames: `exports` (old export name to new name per entry point; a dot names a namespace part), `split` (components that became several parts, chosen by a prop value), `removed` (exports that became internal, with what to use instead), `classes` and `docs` (documentation page slugs). The transforms hardcode no names. Pass `--map` to run them with a map of the same shape; the map is checked before anything runs.

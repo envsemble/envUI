@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import * as v1Names from '../src/transforms/v1-names.mjs';
-import { applyTransform, fixtures, map, runTransform } from './helpers.mjs';
+import { applyTransform, encodings, fixtures, map, runTransform } from './helpers.mjs';
 
 const library = '@envsemble/envui';
 const bootstrap = '@envsemble/envui/theme-bootstrap';
@@ -74,6 +74,13 @@ for (const fixture of cases) {
     const output = applyTransform(v1Names, {}, { path: fixture.path, source: fixture.input });
     assert.equal(output || fixture.input.trim(), fixture.output.trim());
   });
+
+  // Files saved on Windows: CRLF line endings, a byte order mark, or both.
+  for (const [variant, encode] of encodings)
+    test(`v1-names with ${variant}: ${fixture.name}`, () => {
+      const result = runTransform(v1Names, fixture.path, encode(fixture.input));
+      assert.equal(result.output, encode(fixture.output));
+    });
 }
 
 test('v1-names renames every export in the map', () => {
@@ -96,12 +103,6 @@ test('v1-names turns each value of a split prop into its part', () => {
       assert.equal(runTransform(v1Names, 'file.tsx', input).output, expected, value);
     }
   }
-});
-
-test('v1-names keeps Windows line endings', () => {
-  const [menu] = cases.filter(({ name }) => name === 'menu.tsx');
-  const crlf = (text) => text.replaceAll('\n', '\r\n');
-  assert.equal(runTransform(v1Names, menu.path, crlf(menu.input)).output, crlf(menu.output));
 });
 
 test('v1-names skips files that import nothing it renames', () => {

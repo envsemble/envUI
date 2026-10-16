@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 import { loadMap, renameClass } from '../src/map.mjs';
 import * as v1Classes from '../src/transforms/v1-classes.mjs';
-import { applyTransform, fixtures, map, runTransform } from './helpers.mjs';
+import { applyTransform, encodings, fixtures, map, runTransform } from './helpers.mjs';
 
 const { classes } = loadMap();
 const entries = Object.entries(map.classes).filter(([from]) => !from.startsWith('$'));
@@ -25,6 +25,13 @@ for (const fixture of fixtures('v1-classes')) {
     const output = applyTransform(v1Classes, {}, { path: fixture.path, source: fixture.input });
     assert.equal(output || fixture.input.trim(), fixture.output.trim());
   });
+
+  // Files saved on Windows: CRLF line endings, a byte order mark, or both.
+  for (const [variant, encode] of encodings)
+    test(`v1-classes with ${variant}: ${fixture.name}`, () => {
+      const result = runTransform(v1Classes, fixture.path, encode(fixture.input));
+      assert.equal(result.output, encode(fixture.output));
+    });
 }
 
 test('renameClass renames an entry and the names that continue it with a hyphen', () => {
