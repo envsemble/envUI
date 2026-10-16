@@ -26,8 +26,8 @@ export type ButtonEmphasisProps =
       /**
        * The emphasis: primary for the main action of a view, secondary and outline for the rest,
        * ghost for an application's chrome, such as a toolbar, and text for a link-like action.
-       * Without it, the button takes the variant its container gives, such as ghost in a toolbar,
-       * and else primary (secondary for IconButton).
+       * Without it, the button takes the variant its container gives where that variant takes its
+       * tone, such as ghost in a toolbar, and else primary.
        * @default 'primary'
        */
       variant?: 'primary';
@@ -41,6 +41,28 @@ export type ButtonEmphasisProps =
     }
   | { variant: 'outline' | 'ghost' | 'text'; tone?: 'neutral' | 'danger' }
   | { variant: 'secondary'; tone?: 'neutral' };
+
+/**
+ * IconButton's designed pairs: as Button's, but without a variant it is a neutral secondary button,
+ * so a tone other than neutral needs a variant that takes it.
+ */
+export type IconButtonEmphasisProps =
+  | {
+      /**
+       * The emphasis, as Button's. Without it, the button takes the variant its container gives,
+       * such as ghost in a toolbar, and else secondary.
+       * @default 'secondary'
+       */
+      variant?: 'secondary';
+      /**
+       * The meaning, as Button's: accent on a primary button only, and danger on a primary,
+       * outline, ghost or text one. A secondary button is always neutral.
+       * @default 'neutral'
+       */
+      tone?: 'neutral';
+    }
+  | { variant: 'primary'; tone?: ButtonTone }
+  | { variant: 'outline' | 'ghost' | 'text'; tone?: 'neutral' | 'danger' };
 
 export type ButtonAppearanceProps = ButtonEmphasisProps & {
   /** Show an underline for the text variant; defaults to false. */
@@ -147,7 +169,7 @@ function renderButton(
 }
 
 export type IconButtonProps = Omit<ComponentPropsWithRef<'button'>, 'children' | 'aria-label'> &
-  ButtonEmphasisProps & {
+  IconButtonEmphasisProps & {
     /** The icon, such as Settings. */
     icon: ReactNode;
     /** The action's name, which assistive technology announces, such as Open settings. */

@@ -185,12 +185,14 @@ test('a literal z-index is reported, and stacking tokens pass', async () => {
     { rule: 'declaration-property-value-allowed-list', text: '10' },
     { rule: 'declaration-property-value-allowed-list', text: '-1' },
   ]);
-  // envUI has no stacking tokens yet, and the message says so rather than naming one.
+  // The message names envUI's stacking tokens.
   assert.equal(
     (await message('.a { z-index: 999; }')).text,
-    'Literal z-index 999: envUI has no stacking tokens yet. Avoid a literal z-index, or set it through a documented custom property of your own, such as var(--app-z-header), so the order of layers lives in one place. (declaration-property-value-allowed-list)',
+    "Literal z-index 999: use an envUI stacking token (--env-z-…) instead, such as var(--env-z-sticky) for a sticky header or var(--env-z-modal) for a modal layer, with calc() for a step between two, so the application's layers keep one order with envUI's popups and dialogs. (declaration-property-value-allowed-list)",
   );
   await passes('.a { z-index: auto; }');
+  await passes('.a { z-index: var(--env-z-popover); }');
+  await passes('.a { z-index: calc(var(--env-z-sticky) + 1); }');
   await passes('.a { z-index: var(--app-z-modal); }');
   await passes('.a { z-index: calc(var(--app-z-modal) + 1); }');
 });

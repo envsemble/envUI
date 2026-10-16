@@ -50,8 +50,16 @@ export const stackingTokens = Object.values(tokens)
 /** What to do instead of a literal z-index, depending on whether envUI has stacking tokens. */
 export function stackingAdvice() {
   if (stackingTokens.length > 0) {
-    const example = stackingTokens.find((name) => /modal|dialog/.test(name)) ?? stackingTokens[0];
-    return `use a stacking token from envUI instead, such as var(${example}), so layers keep one order with envUI's popups and dialogs.`;
+    const named = (pattern) => stackingTokens.find((name) => pattern.test(name));
+    const examples = [
+      [named(/-sticky$/), 'a sticky header'],
+      [named(/-modal$/), 'a modal layer'],
+    ].filter(([name]) => name);
+    const such = examples.length
+      ? examples.map(([name, use]) => `var(${name}) for ${use}`).join(' or ')
+      : `var(${stackingTokens[0]})`;
+    const family = stackingTokens[0].slice(0, stackingTokens[0].lastIndexOf('-') + 1);
+    return `use an envUI stacking token (${family}…) instead, such as ${such}, with calc() for a step between two, so the application's layers keep one order with envUI's popups and dialogs.`;
   }
   return 'envUI has no stacking tokens yet. Avoid a literal z-index, or set it through a documented custom property of your own, such as var(--app-z-header), so the order of layers lives in one place.';
 }

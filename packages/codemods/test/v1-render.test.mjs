@@ -9,6 +9,9 @@ const reports = {
     "line 11: Text's as is gone in 1.0: pass the element to render instead, such as render={<h2 />}.",
     "line 12: Text's as is gone in 1.0, and the element already sets render: remove it.",
   ],
+  'spread.tsx': [
+    'line 5: Text\'s as="h2" is render={<h2 />} now, and the element spreads props too: check they set neither as nor render.',
+  ],
 };
 
 for (const fixture of fixtures('v1-render')) {
@@ -19,7 +22,10 @@ for (const fixture of fixtures('v1-render')) {
     // A second run changes nothing more, and reports again what it could not move.
     const again = runTransform(v1Render, fixture.path, result.output);
     assert.equal(again.output, result.output);
-    assert.deepEqual(again.reports, result.reports);
+    assert.deepEqual(
+      again.reports,
+      result.reports.filter((report) => !report.includes(' now, ')),
+    );
   });
 }
 

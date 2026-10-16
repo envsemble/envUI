@@ -859,7 +859,19 @@ test('the migration map takes each name once, from the sections of removed-token
     failing({ aliases: { '--color-x': { replacement: 'color.bg.gone' } } }),
     /which is no public token/,
   );
-  assert.throws(failing({ removed: { '--env-old': { note: 'x' } } }), /already has the prefix/);
+  assert.throws(failing({ aliases: { '--env-old': { value: '#fff' } } }), /already has the prefix/);
+  // A name of 1.0's development has the prefix, unless a token still has it.
+  assert.deepEqual(
+    migrationNames(
+      { renamed: { '--env-old-space': { replacement: 'space.1' } } },
+      { isToken, properties },
+    ),
+    { '--env-old-space': { kind: 'renamed', token: 'space.1', cssVariable: '--env-space-1' } },
+  );
+  assert.throws(
+    failing({ removed: { '--env-space-1': { note: 'x' } } }),
+    /--env-space-1 in removed is a token's custom property/,
+  );
   assert.throws(
     failing({ renamed: { '--hook': { cssVariable: '--hook-2' } } }),
     /needs a replacement token or an --env- cssVariable/,

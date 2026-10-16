@@ -236,7 +236,7 @@ export function TwoShellsFixture() {
       {second !== 'gone' && (
         <div
           hidden={second === 'hidden'}
-          style={{ '--env-topbar-height': '5rem' } as CSSProperties}
+          style={{ '--env-app-shell-header-height': '5rem' } as CSSProperties}
         >
           <AppShell
             brand={<span>B</span>}

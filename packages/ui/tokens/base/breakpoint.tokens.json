@@ -1,0 +1,23 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "breakpoint": {
+    "$type": "dimension",
+    "$description": "The viewport widths where a page's layout may change, for media queries and for the breakpoints constant and hooks in JavaScript. CSS can't read a custom property inside @media, so style sheets write the value itself; components respond to their container's width rather than the viewport's.",
+    "sm": {
+      "$description": "40 rem: a large phone held sideways, or a narrow window.",
+      "$value": { "value": 40, "unit": "rem" }
+    },
+    "md": {
+      "$description": "48 rem: a tablet held upright, and the default line between a phone's layout and a wider one.",
+      "$value": { "value": 48, "unit": "rem" }
+    },
+    "lg": {
+      "$description": "64 rem: a tablet held sideways or a laptop.",
+      "$value": { "value": 64, "unit": "rem" }
+    },
+    "xl": {
+      "$description": "80 rem: a desktop window.",
+      "$value": { "value": 80, "unit": "rem" }
+    }
+  }
+}

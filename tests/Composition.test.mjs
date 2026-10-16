@@ -106,7 +106,7 @@ test("stylesheets select only their own components' classes", () => {
           ? `, and declares ${[...disallowed].join(', ')}, which a container may not set on another component's element`
           : ''),
       fix: ({ owner }) =>
-        `Style your own element, or use ${owner}'s props or variants (such as variant="quiet" on a button) or a custom property ${owner} reads, set on your own element. A container that only places, sizes or spaces the child can be documented under classes.childRules in ${rulesFile}.`,
+        `Style your own element, or use ${owner}'s props or variants (such as variant="ghost" on a button) or a custom property ${owner} reads, set on your own element. A container that only places, sizes or spaces the child can be documented under classes.childRules in ${rulesFile}.`,
     }),
   );
 });

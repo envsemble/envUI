@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Popover as BasePopover } from '@base-ui/react/popover';
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import {
   Button,
   CloseButton,
+  ConfirmButton,
+  CopyButton,
   EnvUIProvider,
   Field,
   IconButton,
@@ -11,6 +13,7 @@ import {
   Text,
   Toolbar,
   useLocale,
+  type ButtonProps,
 } from '@envsemble/envui';
 import { FormatBold } from '@envsemble/envui/icons/FormatBold';
 import { FormatItalic } from '@envsemble/envui/icons/FormatItalic';
@@ -29,8 +32,10 @@ import { useCopy } from '../../packages/ui/src/internal/useCopy.js';
 function ToolbarSample() {
   const [bold, setBold] = useState(false);
   const [pressed, setPressed] = useState<string[]>([]);
+  const [busy, setBusy] = useState(false);
   return (
     <Stack gap={2} data-testid="toolbar">
+      <button type="button">Before toolbar</button>
       <Toolbar.Root aria-label="Formatting">
         <Toolbar.Group aria-label="Text style">
           <Toolbar.Button
@@ -52,7 +57,60 @@ function ToolbarSample() {
         <IconButton icon={<Settings />} aria-label="Toolbar settings" data-testid="app-button" />
         <Toolbar.Link href="#help" icon={<Help />} label="Help" />
       </Toolbar.Root>
+      <button type="button">After toolbar</button>
+      <Toolbar.Root aria-label="Disabled toolbar" disabled>
+        <Toolbar.Button icon={<FormatBold />} label="Highlight" shortcut="Ctrl+Shift+B" />
+      </Toolbar.Root>
+      {/* Disabled while busy, as an editor's toolbar is while it saves. */}
+      <Toolbar.Root aria-label="Partly disabled" disabled={busy}>
+        <Toolbar.Button icon={<Undo />} label="Redo" shortcut="Ctrl+K Ctrl+Z" />
+        <Toolbar.Group aria-label="Group" disabled={busy}>
+          <Toolbar.Button icon={<FormatItalic />} label="Clear formatting" />
+        </Toolbar.Group>
+      </Toolbar.Root>
+      <Toolbar.Root aria-label="Group only">
+        <Toolbar.Group aria-label="Busy group" disabled={busy}>
+          <Toolbar.Button icon={<FormatUnderlined />} label="Strike through" />
+        </Toolbar.Group>
+      </Toolbar.Root>
+      <button type="button" onClick={() => setBusy((current) => !current)}>
+        Toggle busy
+      </button>
       <output data-testid="toolbar-pressed">{pressed.join(',')}</output>
+    </Stack>
+  );
+}
+
+/**
+ * Emphasis: buttons with a tone in a toolbar, whose ghost default they take where it has their
+ * tone; ConfirmButton and CopyButton, which follow it too; and a pair no variant is designed in,
+ * which only code past the types can ask for.
+ */
+function EmphasisSample() {
+  const undesigned = { variant: 'secondary', tone: 'danger' } as unknown as ButtonProps;
+  return (
+    <Stack gap={2} data-testid="emphasis">
+      <Toolbar.Root aria-label="Emphasis">
+        <Button tone="accent" data-testid="toolbar-accent">
+          Publish
+        </Button>
+        <Button tone="danger" data-testid="toolbar-danger">
+          Delete
+        </Button>
+        <ConfirmButton confirmLabel="Remove?" onConfirm={() => {}} data-testid="toolbar-confirm">
+          Remove
+        </ConfirmButton>
+        <CopyButton value="text" aria-label="Copy text" data-testid="toolbar-copy" />
+      </Toolbar.Root>
+      <Stack direction="row" gap={2}>
+        <ConfirmButton confirmLabel="Remove?" onConfirm={() => {}} data-testid="confirm-resting">
+          Remove
+        </ConfirmButton>
+        <CopyButton value="text" aria-label="Copy text" data-testid="copy-resting" />
+        <Button {...undesigned} data-testid="undesigned">
+          Undesigned
+        </Button>
+      </Stack>
     </Stack>
   );
 }
@@ -194,28 +252,38 @@ function RovingListSample() {
 }
 
 /** PopupSurface: Popover parts, the theme carried into the portal and the trigger's direction. */
+function DirectedPopup({ dir }: { dir: 'ltr' | 'rtl' }) {
+  const trigger = useRef<HTMLButtonElement>(null);
+  return (
+    <div dir={dir}>
+      <BasePopover.Root>
+        <BasePopover.Trigger
+          ref={trigger}
+          render={<Button variant="secondary">{`Open ${dir}`}</Button>}
+        />
+        <PopupSurface
+          trigger={trigger}
+          parts={{
+            Portal: BasePopover.Portal,
+            Positioner: BasePopover.Positioner,
+            Popup: BasePopover.Popup,
+          }}
+          align="start"
+          width="md"
+          popupProps={{ 'aria-label': `Popup ${dir}`, 'data-testid': `popup-${dir}` }}
+        >
+          <Text>Details</Text>
+        </PopupSurface>
+      </BasePopover.Root>
+    </div>
+  );
+}
+
 function PopupSample() {
   return (
     <Stack direction="row" gap={4} data-testid="popups">
-      {(['ltr', 'rtl'] as const).map((dir) => (
-        <div key={dir} dir={dir}>
-          <BasePopover.Root>
-            <BasePopover.Trigger render={<Button variant="secondary">{`Open ${dir}`}</Button>} />
-            <PopupSurface
-              parts={{
-                Portal: BasePopover.Portal,
-                Positioner: BasePopover.Positioner,
-                Popup: BasePopover.Popup,
-              }}
-              align="start"
-              width="md"
-              popupProps={{ 'aria-label': `Popup ${dir}`, 'data-testid': `popup-${dir}` }}
-            >
-              <Text>Details</Text>
-            </PopupSurface>
-          </BasePopover.Root>
-        </div>
-      ))}
+      <DirectedPopup dir="ltr" />
+      <DirectedPopup dir="rtl" />
     </Stack>
   );
 }
@@ -270,6 +338,7 @@ export function PrimitivesFixture() {
   return (
     <Stack gap={6}>
       <ToolbarSample />
+      <EmphasisSample />
       <FieldSample />
       <CloseButtonSample />
       <ResizeSample dir="ltr" />

@@ -3,9 +3,6 @@
     "declaration-property-unit-disallowed-list": {
       "count": 19
     },
-    "declaration-property-value-allowed-list": {
-      "count": 5
-    },
     "unit-disallowed-list": {
       "count": 1
     }
@@ -13,9 +10,6 @@
   "packages/ui/src/styles/AvatarGroup.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 2
-    },
-    "declaration-property-value-allowed-list": {
-      "count": 1
     },
     "envui/font-weight-from-token": {
       "count": 1
@@ -97,7 +91,7 @@
       "count": 9
     },
     "declaration-property-value-allowed-list": {
-      "count": 2
+      "count": 1
     }
   },
   "packages/ui/src/styles/Composer.css": {
@@ -118,9 +112,6 @@
   "packages/ui/src/styles/Dialog.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 6
-    },
-    "declaration-property-value-allowed-list": {
-      "count": 2
     }
   },
   "packages/ui/src/styles/Pager.css": {
@@ -209,7 +200,7 @@
       "count": 26
     },
     "declaration-property-value-allowed-list": {
-      "count": 3
+      "count": 2
     },
     "envui/font-weight-from-token": {
       "count": 1
@@ -245,9 +236,6 @@
     "declaration-property-unit-disallowed-list": {
       "count": 33
     },
-    "declaration-property-value-allowed-list": {
-      "count": 8
-    },
     "no-duplicate-selectors": {
       "count": 1
     },
@@ -258,9 +246,6 @@
   "packages/ui/src/styles/Popover.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 5
-    },
-    "declaration-property-value-allowed-list": {
-      "count": 1
     }
   },
   "packages/ui/src/styles/Rating.css": {
@@ -271,9 +256,6 @@
   "packages/ui/src/styles/RichText.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 15
-    },
-    "declaration-property-value-allowed-list": {
-      "count": 1
     }
   },
   "packages/ui/src/styles/SegmentedControl.css": {
@@ -286,7 +268,7 @@
       "count": 4
     },
     "declaration-property-value-allowed-list": {
-      "count": 2
+      "count": 1
     },
     "no-duplicate-selectors": {
       "count": 1
@@ -316,7 +298,7 @@
       "count": 20
     },
     "declaration-property-value-allowed-list": {
-      "count": 5
+      "count": 3
     }
   },
   "packages/ui/src/styles/Tabs.css": {
@@ -344,9 +326,6 @@
     "declaration-property-unit-disallowed-list": {
       "count": 10
     },
-    "declaration-property-value-allowed-list": {
-      "count": 2
-    },
     "no-duplicate-selectors": {
       "count": 1
     }
@@ -354,11 +333,6 @@
   "packages/ui/src/styles/Tree.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 2
-    }
-  },
-  "apps/catalogue/src/styles/Accessibility.css": {
-    "declaration-property-value-allowed-list": {
-      "count": 1
     }
   },
   "apps/catalogue/src/styles/Previews.css": {
@@ -373,7 +347,7 @@
   },
   "apps/catalogue/src/styles/Shell.css": {
     "declaration-property-value-allowed-list": {
-      "count": 3
+      "count": 1
     }
   },
   "packages/ui/src/styles/Avatar.css": {
@@ -399,9 +373,6 @@
   "packages/ui/src/styles/LoadingBar.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 1
-    },
-    "declaration-property-value-allowed-list": {
-      "count": 2
     }
   },
   "packages/ui/src/styles/Meter.css": {
@@ -435,11 +406,6 @@
   "packages/ui/src/styles/Tooltip.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 4
-    }
-  },
-  "packages/ui/src/styles/Drawer.css": {
-    "declaration-property-value-allowed-list": {
-      "count": 1
     }
   }
 }

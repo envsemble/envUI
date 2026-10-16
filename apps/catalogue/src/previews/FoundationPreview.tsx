@@ -2,6 +2,7 @@ import { ColorsPreview } from './foundations/Colors';
 import { TypographyPreview } from './foundations/Typography';
 import { SpacingPreview } from './foundations/Spacing';
 import { ScalePreview } from './foundations/Scale';
+import { ResponsivePreview } from './foundations/Responsive';
 import { Suspense, useState } from 'react';
 import { Text } from '@envsemble/envui';
 import { AccessibilityPreview } from './foundations/Accessibility';
@@ -50,6 +51,8 @@ function FoundationTopic({ id, onIconUsage }: FoundationPreviewProps) {
       return <SpacingPreview />;
     case 'scale':
       return <ScalePreview />;
+    case 'responsive':
+      return <ResponsivePreview />;
     case 'icons':
       return <IconList onIconUsage={onIconUsage} />;
     case 'composition':

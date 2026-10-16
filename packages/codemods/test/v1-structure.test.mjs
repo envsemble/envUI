@@ -17,6 +17,10 @@ const reports = {
     `line 19: ActionGroup: ${actionGroup.cases[0].children['*'].report}`,
     `line 21: ActionGroup: ${actionGroup.report}`,
   ],
+  'spread.tsx': [
+    `line 6: ActionGroup: its spread props may set what decides its 1.0 form, so it stays. ${actionGroup.report}`,
+    "line 10: ActionGroup: this child's spread props may set iconOnly or fullWidth, so it doesn't get fullWidth: add it if it should.",
+  ],
 };
 
 for (const fixture of fixtures('v1-structure')) {

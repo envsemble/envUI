@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import {
   Alert,
   Button,
@@ -20,6 +20,9 @@ import {
   type EnvUIMessagesInput,
 } from '@envsemble/envui';
 import { defaultMessages } from '@envsemble/envui/messages';
+// Internal: the hook envUI's components read their strings with.
+import { useMessages } from '../../packages/ui/src/internal/EnvUIContext.js';
+import { common } from '../../packages/ui/src/foundations/messages/common.js';
 
 /**
  * Every message replaced by ⟦namespace.key⟧, functions too, so a test can tell an overridable
@@ -73,6 +76,39 @@ function FeedbackStrings() {
   );
 }
 
+/** A reader of the common messages that counts its renders in data-renders, after each one. */
+const MessagesProbe = memo(function MessagesProbe() {
+  const messages = useMessages('common', common);
+  const ref = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    const element = ref.current;
+    if (element) element.dataset.renders = String(Number(element.dataset.renders ?? 0) + 1);
+  });
+  return (
+    <span ref={ref} data-testid="inline-probe">
+      {messages.close}
+    </span>
+  );
+});
+
+/**
+ * A provider whose messages are written inline, which re-renders with its parent: the reader inside
+ * must not, while the messages stay the same.
+ */
+function InlineMessages() {
+  const [renders, setRenders] = useState(0);
+  return (
+    <>
+      <button type="button" onClick={() => setRenders((current) => current + 1)}>
+        ⟦rerender⟧ {renders}
+      </button>
+      <EnvUIProvider messages={{ common: { close: '⟦inline.close⟧' } }}>
+        <MessagesProbe />
+      </EnvUIProvider>
+    </>
+  );
+}
+
 /**
  * The components whose strings come from EnvUIProvider's messages, under the pseudo-locale,
  * mounted with ?fixture=message-strings. Each batch that moves a family's strings adds its components
@@ -96,6 +132,7 @@ export function MessageStringsFixture() {
           <Toast.Provider>
             <FeedbackStrings />
           </Toast.Provider>
+          <InlineMessages />
         </Stack>
       </EnvUIProvider>
     </ThemePreferenceProvider>

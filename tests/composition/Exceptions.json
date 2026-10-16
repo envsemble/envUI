@@ -71,6 +71,8 @@
     { "stylesheet": "Markdown.css", "class": "env-choice-control", "count": 1 },
     { "stylesheet": "Menu.css", "class": "env-kbd", "count": 1 },
     { "stylesheet": "Menu.css", "class": "env-kbd-separator", "count": 1 },
+    { "stylesheet": "Message.css", "class": "env-button", "count": 2 },
+    { "stylesheet": "Message.css", "class": "env-icon-button", "count": 2 },
     { "stylesheet": "Message.css", "class": "env-spinner", "count": 1 },
     { "stylesheet": "RichText.css", "class": "env-button", "count": 1 },
     { "stylesheet": "RichText.css", "class": "env-form-field", "count": 1 },

@@ -1,6 +1,6 @@
 /* Tooltips float above menus and popovers: PopupSurface's positioner takes this layer. */
 .env-tooltip-positioner {
-  --env-popup-layer: 130;
+  --env-popup-layer: var(--env-z-tooltip);
 }
 .env-tooltip {
   max-inline-size: min(18rem, calc(100vw - 2rem));
