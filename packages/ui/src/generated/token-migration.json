@@ -17,12 +17,8 @@
       "component": "Important buttons"
     },
     "--color-action-strip": {
-      "tokens": {
-        "light": "color.bg.default",
-        "dark": "color.bg.muted",
-        "light-high-contrast": "color.bg.default",
-        "dark-high-contrast": "color.bg.muted"
-      },
+      "token": "color.bg.default",
+      "cssVariable": "--color-bg-default",
       "component": "The action strip of a card"
     },
     "--color-avatar": { "primitive": "palette.blue.20", "component": "Avatars" },
@@ -58,7 +54,7 @@
     "--color-checkbox": {
       "tokens": {
         "light": "color.bg.brand.strong",
-        "dark": "color.bg.brand.strong",
+        "dark": "color.bg.brand.emphasis",
         "light-high-contrast": "color.bg.brand.emphasis",
         "dark-high-contrast": "color.bg.brand.emphasis"
       },
@@ -72,7 +68,7 @@
     "--color-checkbox-hover": {
       "tokens": {
         "light": "color.bg.brand.strong.hover",
-        "dark": "color.bg.brand.strong.hover",
+        "dark": "color.bg.brand.emphasis.hover",
         "light-high-contrast": "color.bg.brand.emphasis.hover",
         "dark-high-contrast": "color.bg.brand.emphasis.hover"
       },
@@ -81,7 +77,7 @@
     "--color-checkbox-pressed": {
       "tokens": {
         "light": "color.bg.brand.strong.pressed",
-        "dark": "color.bg.brand.strong.pressed",
+        "dark": "color.bg.brand.emphasis.pressed",
         "light-high-contrast": "color.bg.brand.emphasis.pressed",
         "dark-high-contrast": "color.bg.brand.emphasis.pressed"
       },
@@ -115,7 +111,7 @@
     "--color-control-blue": {
       "tokens": {
         "light": "color.bg.brand.strong",
-        "dark": "color.bg.brand.strong",
+        "dark": "color.bg.brand.emphasis",
         "light-high-contrast": "color.bg.brand.emphasis",
         "dark-high-contrast": "color.bg.brand.emphasis"
       },
@@ -290,21 +286,13 @@
       "component": "Navigation items"
     },
     "--color-navigation-quiet-hover": {
-      "tokens": {
-        "light": "color.bg.default.hover",
-        "dark": "color.bg.muted.hover",
-        "light-high-contrast": "color.bg.default.hover",
-        "dark-high-contrast": "color.bg.muted.hover"
-      },
+      "token": "color.bg.navigation.hover",
+      "cssVariable": "--color-bg-navigation-hover",
       "component": "Navigation items"
     },
     "--color-navigation-quiet-pressed": {
-      "tokens": {
-        "light": "color.bg.default.pressed",
-        "dark": "color.bg.muted.pressed",
-        "light-high-contrast": "color.bg.default.pressed",
-        "dark-high-contrast": "color.bg.muted.pressed"
-      },
+      "token": "color.bg.navigation.pressed",
+      "cssVariable": "--color-bg-navigation-pressed",
       "component": "Navigation items"
     },
     "--color-navigation-selected": {
@@ -336,7 +324,7 @@
     "--color-on-checkbox": {
       "tokens": {
         "light": "color.fg.on-strong",
-        "dark": "color.fg.on-strong",
+        "dark": "color.fg.on-emphasis",
         "light-high-contrast": "color.fg.on-emphasis",
         "dark-high-contrast": "color.fg.on-emphasis"
       },
@@ -636,7 +624,7 @@
     "--color-switch-on": {
       "tokens": {
         "light": "color.bg.brand.strong",
-        "dark": "color.bg.brand.strong",
+        "dark": "color.bg.brand.emphasis",
         "light-high-contrast": "color.bg.brand.emphasis",
         "dark-high-contrast": "color.bg.brand.emphasis"
       },
@@ -645,7 +633,7 @@
     "--color-switch-on-hover": {
       "tokens": {
         "light": "color.bg.brand.strong.hover",
-        "dark": "color.bg.brand.strong.hover",
+        "dark": "color.bg.brand.emphasis.hover",
         "light-high-contrast": "color.bg.brand.emphasis.hover",
         "dark-high-contrast": "color.bg.brand.emphasis.hover"
       },
@@ -654,7 +642,7 @@
     "--color-switch-on-pressed": {
       "tokens": {
         "light": "color.bg.brand.strong.pressed",
-        "dark": "color.bg.brand.strong.pressed",
+        "dark": "color.bg.brand.emphasis.pressed",
         "light-high-contrast": "color.bg.brand.emphasis.pressed",
         "dark-high-contrast": "color.bg.brand.emphasis.pressed"
       },
@@ -673,7 +661,7 @@
     "--color-switch-thumb-on": {
       "tokens": {
         "light": "color.fg.on-strong",
-        "dark": "color.fg.on-strong",
+        "dark": "color.fg.on-emphasis",
         "light-high-contrast": "color.fg.on-emphasis",
         "dark-high-contrast": "color.fg.on-emphasis"
       },
@@ -731,10 +719,20 @@
     },
     "--member-identity-name-size": { "removed": true, "replacement": null, "note": "Unused." },
     "--state-card-strip-weight": { "removed": true, "replacement": null, "note": "Unused." },
+    "--state-dialog-overlay-opacity": {
+      "removed": true,
+      "replacement": "color.bg.overlay",
+      "note": "The scrim is a translucent color token now."
+    },
     "--state-fill-hover-opacity": {
       "removed": true,
       "replacement": "color.bg.neutral.muted.hover",
       "note": "The fill's states are color tokens now."
+    },
+    "--state-fill-opacity": {
+      "removed": true,
+      "replacement": "color.bg.neutral.muted",
+      "note": "The neutral fill is a translucent color token; layer it over a surface rather than mixing."
     },
     "--state-fill-pressed-opacity": {
       "removed": true,

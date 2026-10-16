@@ -71,6 +71,14 @@
       "replacement": null,
       "note": "Each tone has its tint as a color token: color.bg.{tone}.muted."
     },
+    "--state-dialog-overlay-opacity": {
+      "replacement": "color.bg.overlay",
+      "note": "The scrim is a translucent color token now."
+    },
+    "--state-fill-opacity": {
+      "replacement": "color.bg.neutral.muted",
+      "note": "The neutral fill is a translucent color token; layer it over a surface rather than mixing."
+    },
     "--state-card-strip-weight": { "replacement": null, "note": "Unused." },
     "--state-selected-base-weight": { "replacement": null, "note": "Unused." },
     "--member-identity-avatar-size": { "replacement": null, "note": "Unused." },
