@@ -130,7 +130,8 @@
           "diff/CodeDiff.tsx",
           "diff/countDiffLines.ts",
           "content/internal/CodeThemes.ts",
-          "content/internal/CodeThemeContrast.ts",
+          "content/internal/CodeDiffTints.ts",
+          "content/internal/ReadableColors.ts",
           "content/internal/CodeHighlighting.ts",
           "content/internal/useCodeHighlighting.ts"
         ]
