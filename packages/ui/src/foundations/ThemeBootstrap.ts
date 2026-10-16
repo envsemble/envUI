@@ -1,4 +1,4 @@
-import type { ThemeContrast } from './Theme.js';
+import type { ThemeContrast, ThemeScale } from './Theme.js';
 
 /** Preference stored by ThemePreferenceProvider: an explicit theme or the operating system's. */
 export type ThemePreference = 'light' | 'dark' | 'system';
@@ -14,6 +14,12 @@ export interface ThemeBootstrapOptions {
    * writes nothing and leaves the choice to `prefers-contrast: more`.
    */
   contrast?: ThemeContrast;
+  /**
+   * The application's scale, as ThemePreferenceProvider's `scale`: `compact` is written to the root
+   * as `data-env-scale` before the first paint, so a compact app does not load at the comfortable
+   * size. `comfortable`, the default, writes nothing.
+   */
+  scale?: ThemeScale;
 }
 
 export const defaultThemeStorageKey = 'env-theme';
@@ -27,10 +33,12 @@ export function createThemeBootstrapScript({
   storageKey = defaultThemeStorageKey,
   defaultPreference = 'system',
   contrast = 'system',
+  scale = 'comfortable',
 }: ThemeBootstrapOptions = {}) {
   const writeContrast =
     contrast === 'high' || contrast === 'standard'
       ? `r.setAttribute("data-env-contrast",${JSON.stringify(contrast)});`
       : '';
-  return `(function(){var r=document.documentElement,t="light";try{var p=localStorage.getItem(${JSON.stringify(storageKey)});if(p!=="light"&&p!=="dark"&&p!=="system")p=${JSON.stringify(defaultPreference)};t=p==="system"?(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):p}catch(e){}r.classList.add("env-theme");r.setAttribute("data-env-theme",t);${writeContrast}r.style.colorScheme=t})();`;
+  const writeScale = scale === 'compact' ? `r.setAttribute("data-env-scale","compact");` : '';
+  return `(function(){var r=document.documentElement,t="light";try{var p=localStorage.getItem(${JSON.stringify(storageKey)});if(p!=="light"&&p!=="dark"&&p!=="system")p=${JSON.stringify(defaultPreference)};t=p==="system"?(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):p}catch(e){}r.classList.add("env-theme");r.setAttribute("data-env-theme",t);${writeContrast}${writeScale}r.style.colorScheme=t})();`;
 }

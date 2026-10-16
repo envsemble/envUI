@@ -54,3 +54,10 @@ test('with a system contrast, the bootstrap script leaves the root contrast alon
 test('an unknown contrast writes nothing, as system does', () => {
   assert.doesNotMatch(createThemeBootstrapScript({ contrast: 'more' }), /data-env-contrast/);
 });
+
+test('the bootstrap script writes a compact scale before the first paint, and nothing else', () => {
+  const root = bootstrap(createThemeBootstrapScript({ scale: 'compact' }));
+  assert.equal(root.attributes['data-env-scale'], 'compact');
+  for (const options of [{}, { scale: 'comfortable' }])
+    assert.doesNotMatch(createThemeBootstrapScript(options), /data-env-scale/);
+});

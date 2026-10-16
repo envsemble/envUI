@@ -12,10 +12,30 @@ export type ThemeValue = 'light' | 'dark';
  */
 export type ThemeContrast = 'standard' | 'high' | 'system';
 
+/**
+ * The app scale of a Theme: comfortable, the sizes of web and touch apps, or compact, about 0.8 of
+ * them with type one step smaller, for desktop productivity apps.
+ */
+export type ThemeScale = 'comfortable' | 'compact';
+
+/**
+ * A control's size: its height in the current scale. Every control of one size has the same height
+ * in a scale, so a button, a field and a select of the same size line up.
+ */
+export type ControlSize = 'sm' | 'md' | 'lg';
+
+/**
+ * How tightly a data component, such as a Table, Tree or List, packs its rows: only the rows' block
+ * padding changes, never their type, icons or corners. md is the default of tables and lists, sm of
+ * trees.
+ */
+export type RowDensity = 'xs' | 'sm' | 'md' | 'lg';
+
 /** The theme of the nearest Theme boundary, as useTheme returns it. */
 export interface ThemeContextValue {
   theme: ThemeValue;
   contrast: ThemeContrast;
+  scale: ThemeScale;
 }
 
 export interface ThemeProps extends ComponentPropsWithRef<'div'> {
@@ -29,9 +49,20 @@ export interface ThemeProps extends ComponentPropsWithRef<'div'> {
    * the boundary, its nested Themes and its popups alike.
    */
   contrast?: ThemeContrast;
+  /**
+   * The app scale of everything inside: comfortable, or compact for a desktop productivity app.
+   * Use one scale per app or window, and another only on a Theme around a whole region, such as a
+   * docked inspector. Defaults to the scale of the enclosing Theme, and to comfortable outside any.
+   * It wins over a `data-env-scale` attribute passed to the Theme.
+   */
+  scale?: ThemeScale;
 }
 
-const ThemeContext = createContext<ThemeContextValue>({ theme: 'light', contrast: 'system' });
+const ThemeContext = createContext<ThemeContextValue>({
+  theme: 'light',
+  contrast: 'system',
+  scale: 'comfortable',
+});
 
 /** Invalid themes already warned about, so each is reported once. */
 const warnedThemes = new Set<string>();
@@ -56,18 +87,35 @@ function warnAboutTheme(theme: unknown) {
 }
 
 /**
- * An explicit, scoped theme: a color scheme and a contrast, which nested Themes and envUI's popups
- * keep. Theme preference and persistence belong to the app.
+ * An explicit, scoped theme: a color scheme, a contrast and a scale, which nested Themes and envUI's
+ * popups keep. Theme preference and persistence belong to the app.
  */
-export function Theme({ theme, contrast: ownContrast, className, children, ...props }: ThemeProps) {
+export function Theme({
+  theme,
+  contrast: ownContrast,
+  scale: ownScale,
+  className,
+  children,
+  ...props
+}: ThemeProps) {
   if (process.env.NODE_ENV !== 'production') warnAboutTheme(theme);
-  const inherited = useContext(ThemeContext).contrast;
-  // The prop wins; without it, a data-env-contrast written on the Theme counts, so that the
-  // context its nested Themes and popups read agrees with the attribute.
-  const attribute = (props as Record<string, unknown>)['data-env-contrast'];
+  const inherited = useContext(ThemeContext);
+  // The prop wins; without it, a data-env-contrast or data-env-scale written on the Theme counts,
+  // so that the context its nested Themes and popups read agrees with the attribute.
+  const attributes = props as Record<string, unknown>;
+  const contrastAttribute = attributes['data-env-contrast'];
   const contrast =
-    ownContrast ?? (attribute === 'high' || attribute === 'standard' ? attribute : inherited);
-  const value = useMemo(() => ({ theme, contrast }), [theme, contrast]);
+    ownContrast ??
+    (contrastAttribute === 'high' || contrastAttribute === 'standard'
+      ? contrastAttribute
+      : inherited.contrast);
+  const scaleAttribute = attributes['data-env-scale'];
+  const scale =
+    ownScale ??
+    (scaleAttribute === 'comfortable' || scaleAttribute === 'compact'
+      ? scaleAttribute
+      : inherited.scale);
+  const value = useMemo(() => ({ theme, contrast, scale }), [theme, contrast, scale]);
   return (
     <ThemeContext value={value}>
       <div
@@ -75,6 +123,7 @@ export function Theme({ theme, contrast: ownContrast, className, children, ...pr
         className={classNames('env-theme', className)}
         data-env-theme={theme}
         data-env-contrast={contrast === 'system' ? undefined : contrast}
+        data-env-scale={scale}
       >
         {children}
       </div>
@@ -83,9 +132,9 @@ export function Theme({ theme, contrast: ownContrast, className, children, ...pr
 }
 
 /**
- * The theme of the nearest Theme, including across React portals. A portal of the application's
- * own takes it with `<Theme {...useTheme()}>`. A contrast of `system` leaves the choice to the
- * stylesheet, which reads `prefers-contrast: more`.
+ * The theme of the nearest Theme, including across React portals: its color scheme, contrast and
+ * scale. A portal of the application's own takes it with `<Theme {...useTheme()}>`. A contrast of
+ * `system` leaves the choice to the stylesheet, which reads `prefers-contrast: more`.
  */
 export function useTheme(): ThemeContextValue {
   return useContext(ThemeContext);
