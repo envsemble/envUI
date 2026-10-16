@@ -104,6 +104,24 @@ test('the check sees what makes a module a client module, also by name and throu
       'export function J4() { const { onClick } = { onClick: () => {} }; return <div {...{ onClick }} />; }',
       ['spreads a function into div'],
     ],
+    // So does a default that makes a function, which a server parent that passes none gets.
+    [
+      'export function J5(props: { onClick?: () => void }) { const { onClick = () => {} } = props; return <div {...{ onClick }} />; }',
+      ['spreads a function into div'],
+    ],
+    [
+      'function noop() {}\nexport function J6(props: { handlers: { onClick?: () => void } }) { const { handlers: { onClick = noop } } = props; return <div {...{ onClick }} />; }',
+      ['spreads a function into div'],
+    ],
+    [
+      'export function J7({ onClick = () => {} }: { onClick?: () => void }) { return <button onClick={onClick} />; }',
+      ['passes a function to onClick'],
+    ],
+    // A default that is not a function keeps the prop passed on.
+    [
+      'export function J8(props: { onClick?: () => void }) { const { onClick = undefined } = props; return <div {...{ onClick }} />; }',
+      [],
+    ],
     // A class component of either base, and the marker only in a comment, not a string.
     [
       "import { PureComponent } from 'react';\nexport class K extends PureComponent { render() { return null; } }",

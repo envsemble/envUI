@@ -86,13 +86,6 @@ function skipOuter(node) {
   return current;
 }
 
-/** Whether a declaration is a parameter, or a name destructured from one. */
-function isParameter(declaration) {
-  let node = declaration;
-  while (ts.isBindingElement(node)) node = node.parent.parent;
-  return ts.isParameter(node);
-}
-
 /**
  * Reads one module's reasons with a type checker, or by syntax alone without one, in which case a
  * handler is only seen when it is written inline.
@@ -122,14 +115,20 @@ function createReader(checker) {
 
   /**
    * Whether a variable only holds what a parameter of a function holds: the parameter, a name
-   * destructured from it, or a variable set to, or destructured from, such a value.
+   * destructured from it, or a variable set to, or destructured from, such a value. A default along
+   * the way that makes a function, as in `const { onClick = () => {} } = props`, makes the value
+   * the module's own, which it holds when a server parent passes none.
    */
   const holdsPassedOn = (declaration, seen = new Set()) => {
     if (!declaration || seen.has(declaration)) return false;
     seen.add(declaration);
-    if (isParameter(declaration)) return true;
+    const makesDefault = (node) => Boolean(node.initializer && createsFunction(node.initializer));
     let variable = declaration;
-    while (ts.isBindingElement(variable)) variable = variable.parent.parent;
+    while (ts.isBindingElement(variable)) {
+      if (makesDefault(variable)) return false;
+      variable = variable.parent.parent;
+    }
+    if (ts.isParameter(variable)) return !makesDefault(variable);
     return Boolean(
       ts.isVariableDeclaration(variable) &&
         variable.initializer &&
