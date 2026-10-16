@@ -264,8 +264,47 @@ export default function transform(file, api, options = {}) {
     list[list.indexOf(specifier)] = replacement;
   };
 
-  const rewriteAsPart = ({ path, kind }, namespace, part) => {
-    const replacement = build(flavorOf(kind), [namespace.local, part]);
+  /** Elements and references already told that a local shadows the name written for them. */
+  const shadowReported = new Set();
+  const reportShadow = (node, local, written, alias, imported) => {
+    if (shadowReported.has(node)) return;
+    shadowReported.add(node);
+    warn(
+      node,
+      `a local ${local} shadows the import here: wrote ${written}, with ${imported} also imported as ${alias}.`,
+    );
+  };
+
+  /**
+   * The name a namespace is written with at a reference: its import's local name, or, where a local
+   * of that name shadows the import, a second import of the namespace under a free alias such as
+   * `Menu as EnvMenu`. `node` is what the report about the alias points at.
+   */
+  const namespaceLocalAt = ({ path, kind }, namespace, part, node = path.node) => {
+    if (bindsToModule(path, namespace.local, kind)) return namespace.local;
+    if (!namespace.alias) {
+      namespace.alias = freeName(namespace.name);
+      insertions.push({ namespace, needsValue: false, local: namespace.alias });
+    }
+    if (!typeKinds.has(kind))
+      insertions.find(({ local }) => local === namespace.alias).needsValue = true;
+    reportShadow(
+      node,
+      namespace.local,
+      `${namespace.alias}.${part}`,
+      namespace.alias,
+      namespace.name,
+    );
+    return namespace.alias;
+  };
+
+  const rewriteAsPart = (reference, namespace, part) => {
+    const { path, kind } = reference;
+    const owner = kind === 'jsx' ? path.parent.parent.node : path.node;
+    const replacement = build(flavorOf(kind), [
+      namespaceLocalAt(reference, namespace, part, owner),
+      part,
+    ]);
     if (kind === 'shorthand') path.parent.node.shorthand = false;
     path.replace(replacement);
   };
@@ -312,9 +351,16 @@ export default function transform(file, api, options = {}) {
           other.entry === entry && other.imported === rename.to && (!other.isType || info.isType),
       );
       let target;
+      let alias;
+      const references = referencesTo(local);
+      const shadowed = (path, kind) => !bindsToModule(path, sibling.local, kind);
       if (sibling) {
         target = sibling.local;
-        remove(info);
+        // Where a local of the new name shadows the sibling import, keep this import, aliased.
+        if (references.some(({ path, kind }) => kind !== 'export' && shadowed(path, kind))) {
+          alias = freeName(rename.to);
+          edits.push(() => replaceImport(info, rename.to, alias));
+        } else remove(info);
       } else if (!isFree(rename.to)) {
         // The new name is taken in this file: keep the old local name as an alias.
         edits.push(() => replaceImport(info, rename.to, local));
@@ -324,11 +370,16 @@ export default function transform(file, api, options = {}) {
         claimed.add(target);
         edits.push(() => replaceImport(info, target, target));
       }
-      for (const { path, kind } of referencesTo(local)) {
+      for (const { path, kind } of references) {
+        const name = alias && kind !== 'export' && shadowed(path, kind) ? alias : target;
+        if (name === alias) {
+          const owner = kind === 'jsx' ? path.parent.parent.node : path.node;
+          reportShadow(owner, target, alias, alias, rename.to);
+        }
         edits.push(() => {
           if (kind === 'shorthand') {
             path.parent.node.shorthand = false;
-            path.replace(j.identifier(target));
+            path.replace(j.identifier(name));
           } else if (kind === 'export') {
             const exportSpecifier = path.parent.node;
             const exported = exportSpecifier.exported.name;
@@ -338,7 +389,7 @@ export default function transform(file, api, options = {}) {
               target,
               exported === local ? target : exported,
             );
-          } else path.node.name = target;
+          } else path.node.name = name;
         });
       }
       continue;
@@ -388,7 +439,13 @@ export default function transform(file, api, options = {}) {
             namespace.used = true;
             contributed.add(namespace);
             changed = true;
-            edits.push(planned.rename(() => [namespace.local, planned.target.part]));
+            const { part } = planned.target;
+            edits.push(
+              planned.rename(() => [
+                namespaceLocalAt({ path, kind }, namespace, part, element),
+                part,
+              ]),
+            );
             continue;
           }
           warn(
@@ -591,8 +648,10 @@ export default function transform(file, api, options = {}) {
     }
   }
 
-  reporter.flush();
-  if (!changed) return file.source;
+  if (!changed) {
+    reporter.flush();
+    return file.source;
+  }
 
   // Pick the local name of each namespace the rewrites use, and plan its import specifier.
   const insertions = [];
@@ -624,13 +683,13 @@ export default function transform(file, api, options = {}) {
 
   for (const edit of edits) edit();
 
-  for (const { namespace, needsValue } of insertions) {
+  // The rewrites can still add reports, about locals that shadow a namespace.
+  reporter.flush();
+
+  for (const { namespace, needsValue, local = namespace.local } of insertions) {
     const contributors = namespace.contributors.map(({ info }) => info);
     const anchor = needsValue ? contributors.find((info) => !info.isType) : contributors[0];
-    const specifier = j.importSpecifier(
-      j.identifier(namespace.name),
-      j.identifier(namespace.local),
-    );
+    const specifier = j.importSpecifier(j.identifier(namespace.name), j.identifier(local));
     if (anchor) {
       if (!needsValue && anchor.declaration.importKind !== 'type') specifier.importKind = 'type';
       const list = anchor.declaration.specifiers;

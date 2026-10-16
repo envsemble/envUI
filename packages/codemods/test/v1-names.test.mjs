@@ -40,6 +40,12 @@ const reports = {
     ...removedFrom(1, ['getInitials', 'LoadingBar', 'useLinkComponent', 'useSidebarCompact']),
     ...removedFrom(2, ['LoadingBarProps', 'ToastProps']),
   ],
+  'shadowing-namespace.tsx': [
+    'line 20: a local Menu shadows the import here: wrote EnvMenu.Item, with Menu also imported as EnvMenu.',
+    'line 21: a local TextField shadows the import here: wrote EnvTextField, with TextField also imported as EnvTextField.',
+    'line 23: a local Pager shadows the import here: wrote EnvPager.Next, with Pager also imported as EnvPager.',
+    'line 31: a local Menu shadows the import here: wrote EnvMenu.ItemProps, with Menu also imported as EnvMenu.',
+  ],
   'theme-bootstrap-export.ts': [
     `line 7: defaultThemeStorageKey is no longer exported by ${bootstrap}: ${use('defaultThemeStorageKey', bootstrap)}`,
     `line 8: re-exports defaultThemeStorageKey, which ${bootstrap} no longer exports: ${use('defaultThemeStorageKey', bootstrap)}`,
