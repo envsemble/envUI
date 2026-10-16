@@ -4,6 +4,7 @@ import { Text, EnvUILogo, Surface, Stack, Button, Tabs } from '@envsemble/envui'
 import { Catalogue } from './Catalogue';
 import { GettingStarted } from './GettingStarted';
 import { overviewViews, type OverviewView } from '../navigation/DocumentationRoutes';
+import { useViewTabs } from '../navigation/useDocumentationRoute';
 
 function OverviewBanner({ tabs }: { tabs: ReactElement }) {
   return (
@@ -24,6 +25,7 @@ function OverviewBanner({ tabs }: { tabs: ReactElement }) {
 }
 
 export function Overview({ view }: { view: OverviewView }) {
+  const viewTabs = useViewTabs((next) => `overview/${next}`);
   const content = {
     components: (
       <Stack as="section" gap={5} className="docs-overview" aria-labelledby="overview-components">
@@ -40,9 +42,7 @@ export function Overview({ view }: { view: OverviewView }) {
       aria-label="Overview views"
       className="docs-reference-tabs"
       value={view}
-      onValueChange={(next) => {
-        if (next) location.hash = `/overview/${next}`;
-      }}
+      {...viewTabs}
       renderList={(tabs) => <OverviewBanner tabs={tabs} />}
       items={overviewViews.map(({ id, title }) => ({
         value: id,

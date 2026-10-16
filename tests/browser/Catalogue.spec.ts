@@ -402,6 +402,49 @@ test('arrowing between views keeps focus on the tabs and adds no history', async
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Link');
 });
 
+test('arrowing between the overview views keeps focus on the tabs and adds no history', async ({
+  page,
+}) => {
+  await page.goto(`${offline}#/components/link/overview`);
+  await page.goto(`${offline}#/overview/components`);
+  const before = await page.evaluate(() => history.length);
+  const tabs = page.getByRole('tablist', { name: 'Overview views', exact: true });
+  await tabs.getByRole('tab', { name: 'Components', exact: true }).focus();
+  await page.keyboard.press('ArrowRight');
+  const started = tabs.getByRole('tab', { name: 'Get started', exact: true });
+  await expect(started).toHaveAttribute('aria-selected', 'true');
+  await expect(started).toBeFocused();
+  expect(await page.evaluate(() => location.hash)).toBe('#/overview/get-started');
+  expect(await page.evaluate(() => history.length)).toBe(before);
+  await page.goBack();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Link');
+});
+
+test('the agent guidance tabs keep focus, and only a chosen tab is a step in the history', async ({
+  page,
+}) => {
+  await page.goto(`${offline}#/overview/get-started`);
+  const before = await page.evaluate(() => history.length);
+  const tabs = page.getByRole('tablist', { name: 'Agent guidance', exact: true });
+  const use = tabs.getByRole('tab', { name: 'Use envUI', exact: true });
+  const migrate = tabs.getByRole('tab', { name: 'Migrate to envUI', exact: true });
+  await use.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(migrate).toHaveAttribute('aria-selected', 'true');
+  await expect(migrate).toBeFocused();
+  await page.keyboard.press('ArrowLeft');
+  await expect(use).toHaveAttribute('aria-selected', 'true');
+  await expect(use).toBeFocused();
+  expect(await page.evaluate(() => location.hash)).toBe(
+    '#/overview/get-started?skill=use&section=local-development',
+  );
+  expect(await page.evaluate(() => history.length)).toBe(before);
+  // A tab pressed is a step in the history, and focus stays on it.
+  await migrate.click();
+  await expect(migrate).toBeFocused();
+  expect(await page.evaluate(() => history.length)).toBe(before + 1);
+});
+
 test('the views of a page stay in sight on a narrow screen', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`${offline}#/components/menu/overview`);

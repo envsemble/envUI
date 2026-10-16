@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { normalizeRoute } from './DocumentationRoutes';
 
 /** The route the address names, written as it is. */
@@ -32,6 +32,8 @@ export const reachedFromTabs = () => lastChangeFromTabs;
  * stepping through every view on the way.
  */
 export function showView(route: string, { replace }: { replace: boolean }) {
+  // The address already names the view: nothing changes, so no change is pending.
+  if (location.hash === `#/${route}`) return;
   viewChangePending = true;
   if (!replace) {
     location.hash = `/${route}`;
@@ -39,6 +41,36 @@ export function showView(route: string, { replace }: { replace: boolean }) {
   }
   history.replaceState(history.state, '', `#/${route}`);
   dispatchEvent(new HashChangeEvent('hashchange'));
+}
+
+/** Keys that move between tabs, which select as they move. */
+const movingKeys = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End']);
+
+/**
+ * The props of Tabs whose views are routes, for a page's views and the overview's: a view is shown
+ * with showView, so focus stays on the tabs, and one reached with the arrow keys replaces the
+ * history entry rather than adding one. `routeOf` gives the route of a tab's value.
+ */
+export function useViewTabs(routeOf: (value: string) => string) {
+  // Whether the view changes because the arrow keys moved through this tab list, not a press.
+  const moving = useRef(false);
+  return {
+    onKeyDownCapture(event: KeyboardEvent<HTMLElement>) {
+      // Only keys in this Tabs' own list move between its tabs; a panel's keys, or a nested
+      // Tabs' list, don't.
+      const list = (event.target as Element).closest('[role="tablist"]');
+      moving.current =
+        movingKeys.has(event.key) &&
+        list !== null &&
+        list.closest('.env-tabs') === event.currentTarget;
+    },
+    onPointerDownCapture() {
+      moving.current = false;
+    },
+    onValueChange(next: string | null) {
+      if (next) showView(routeOf(next), { replace: moving.current });
+    },
+  };
 }
 
 /** Hash routes also work in the downloaded reference without a server. */
