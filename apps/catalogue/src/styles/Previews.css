@@ -180,14 +180,6 @@
   align-items: center;
   gap: var(--space-5);
 }
-.docs-tree-frame {
-  block-size: 24rem;
-  inline-size: min(100%, 22rem);
-  padding-block: var(--space-2);
-  border: 0.0625rem solid var(--color-border-strong);
-  border-radius: var(--radius-surface);
-  overflow: hidden;
-}
 .docs-document-tabs {
   padding-block-start: var(--space-2);
   overflow: hidden;

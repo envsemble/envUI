@@ -2999,14 +2999,14 @@
     "LoadingState": {
       "kind": "component",
       "source": "packages/ui/src/feedback/LoadingState.tsx",
-      "description": "",
+      "description": "A region of placeholders for content that is loading, such as Skeletons in the shape of a card: a status named by label and marked busy, which stacks its children 0.5 rem apart.",
       "props": [
         {
           "name": "label",
           "type": "string",
           "required": false,
           "default": "'Loading'",
-          "description": ""
+          "description": "What is loading, such as Loading project, which names the region for assistive technology; an aria-label overrides it."
         }
       ],
       "native": [
@@ -5280,26 +5280,27 @@
     "Skeleton": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Skeleton.tsx",
-      "description": "",
+      "description": "A placeholder in the shape of content that is loading, such as a line of text or a row: a block with rounded corners on the neutral fill, which pulses unless people prefer reduced motion. It is hidden from assistive technology; put placeholders in a LoadingState, which names the region.",
       "props": [
         {
           "name": "width",
           "type": "CSSProperties['width']",
           "required": false,
-          "description": ""
+          "description": "The placeholder's width, as a CSS length, such as 38% or 12rem, for the content it stands for. Without it, the placeholder fills the width of its container."
         },
         {
           "name": "height",
           "type": "CSSProperties['height']",
           "required": false,
-          "description": ""
+          "default": "0.8rem",
+          "description": "The placeholder's height, as a CSS length, such as 1.25rem for a heading or 3.5rem for a row."
         },
         {
           "name": "tone",
           "type": "'base' | 'highlight'",
           "required": false,
           "default": "'base'",
-          "description": ""
+          "description": "The fill: base, the neutral fill, or highlight, one step stronger, for a placeholder that stands out among the others, such as a title."
         }
       ],
       "native": [
@@ -5421,20 +5422,20 @@
     "Spinner": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Spinner.tsx",
-      "description": "Ongoing work of unknown length in a small area, such as a button or a panel that is updating.",
+      "description": "Work of unknown length in a small area, such as a panel that is updating: an arc in the control blue that turns, and keeps turning slowly with a reduced-motion preference. With a label it is a progress bar named by it; without one it is hidden from assistive technology.",
       "props": [
         {
           "name": "label",
           "type": "string",
           "required": false,
-          "description": "Accessible name. Omit it when a busy control or region already announces the work."
+          "description": "The work it stands for, such as Refreshing members, which names the spinner as a progress bar for assistive technology. Leave it out where a busy control or region already says so; the spinner is then hidden from assistive technology."
         },
         {
           "name": "size",
           "type": "'small' | 'standard' | 'large'",
           "required": false,
           "default": "'standard'",
-          "description": "small 1 rem (inside controls), standard 1.5 rem (default) or large 3 rem."
+          "description": "small, 1 rem, inside controls and beside a line of text; standard, 1.5 rem, beside a heading or in a panel; or large, 3 rem, in the middle of a region whose content is on its way."
         }
       ],
       "native": [

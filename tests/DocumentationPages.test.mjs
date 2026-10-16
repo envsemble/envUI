@@ -54,7 +54,6 @@ const unconverted = [
   'stack',
   'stat',
   'surface',
-  'tree',
 ];
 
 /**

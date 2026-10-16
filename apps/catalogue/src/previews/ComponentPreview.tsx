@@ -18,7 +18,7 @@ import { ComposerPreview, MessagesPreview } from './Conversation';
 import { CalendarHeatmapPreview, StatsPreview } from './Dashboard';
 import { MenubarPreview, AvatarPreview } from './Overlays';
 import { AppShellPreview } from './Shell';
-import { CommandPalettePreview, DocumentTabsPreview, TreePreview } from './Workspace';
+import { CommandPalettePreview, DocumentTabsPreview } from './Workspace';
 import { PanelDockPreview } from './Dock';
 import {
   BadgesPreview,
@@ -109,8 +109,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <AvatarPreview />;
     case 'app-shell':
       return <AppShellPreview />;
-    case 'tree':
-      return <TreePreview />;
     case 'document-tabs':
       return <DocumentTabsPreview />;
     case 'panel-dock':
