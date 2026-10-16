@@ -630,6 +630,8 @@ test('a message the server fails on gets an internal error, and the server goes 
   });
   assert.match(logged[0], /broken message/);
   assert.deepEqual(server.handleLine('{"jsonrpc":"2.0","id":8,"method":"ping"}').result, {});
+  // A line that starts with a byte order mark, as Windows PowerShell pipes it, still parses.
+  assert.deepEqual(server.handleLine('\uFEFF{"jsonrpc":"2.0","id":9,"method":"ping"}').result, {});
 });
 
 test('search finds exports without a component page by name', () => {

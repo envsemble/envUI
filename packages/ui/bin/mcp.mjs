@@ -433,7 +433,8 @@ export function createServer({
     if (!line.trim()) return undefined;
     let message;
     try {
-      message = JSON.parse(line);
+      // A byte order mark, as Windows PowerShell puts before what it pipes, is not part of the JSON.
+      message = JSON.parse(line.replace(/^\uFEFF/, ''));
     } catch {
       return error(null, -32700, 'Parse error.');
     }
