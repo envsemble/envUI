@@ -6416,7 +6416,7 @@
     },
     "countDiffLines": {
       "kind": "function",
-      "source": "packages/ui/src/diff/CodeDiff.tsx",
+      "source": "packages/ui/src/diff/countDiffLines.ts",
       "description": "How many lines a change adds and removes, as a DiffStat shows them.",
       "signature": "(before: string, after: string, filename?: string): { additions: number; deletions: number; }",
       "entries": [

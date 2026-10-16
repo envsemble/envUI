@@ -59,22 +59,6 @@ function prepareHighlighter(language: string) {
   return highlighterReady;
 }
 
-/** How many lines a change adds and removes, as a DiffStat shows them. */
-export function countDiffLines(before: string, after: string, filename = 'file') {
-  if (before === after) return { additions: 0, deletions: 0 };
-  const diff = parseDiffFromFile(
-    { name: filename, contents: before },
-    { name: filename, contents: after },
-  );
-  return diff.hunks.reduce(
-    (totals, hunk) => ({
-      additions: totals.additions + hunk.additionLines,
-      deletions: totals.deletions + hunk.deletionLines,
-    }),
-    { additions: 0, deletions: 0 },
-  );
-}
-
 /**
  * The changes between two versions of a file, rendered by Diffs (diffs.com) in its own Pierre theme
  * for the app theme, as code blocks are; the whole file when nothing changed.

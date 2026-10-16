@@ -6,7 +6,8 @@ import { TableKit } from '@tiptap/extension-table';
 import Image from '@tiptap/extension-image';
 import Placeholder from '@tiptap/extension-placeholder';
 import { Marked, type marked } from 'marked';
-import { createReferenceExtension, safeRichTextUrl } from './Reference.js';
+import { safeRichTextUrl } from './ReferenceAttributes.js';
+import { createReferenceExtension } from './ReferenceExtension.js';
 import type { RichTextRenderOptions } from './Types.js';
 
 /** Shared schema for editing, Markdown IO, and static rendering. Custom extensions append. */

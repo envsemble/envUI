@@ -45,7 +45,8 @@ import {
   richTextCommandLabels,
   runRichTextCommand,
 } from './Commands.js';
-import { RichTextRenderingContext, safeRichTextUrl } from './Reference.js';
+import { RichTextRenderingContext } from './Reference.js';
+import { safeRichTextUrl } from './ReferenceAttributes.js';
 import type { RichTextEditorHandle, RichTextEditorProps, RichTextSlashCommand } from './Types.js';
 
 const emptySources: NonNullable<RichTextEditorProps['references']> = [];
