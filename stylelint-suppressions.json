@@ -200,10 +200,10 @@
   },
   "packages/ui/src/styles/Menu.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 26
+      "count": 19
     },
     "declaration-property-value-allowed-list": {
-      "count": 2
+      "count": 1
     },
     "envui/font-weight-from-token": {
       "count": 1

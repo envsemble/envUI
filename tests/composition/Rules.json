@@ -304,7 +304,7 @@
       },
       "NavList": {},
       "Menu": {
-        "modules": ["navigation/ContextMenu.tsx"]
+        "modules": ["navigation/ContextMenu.tsx", "navigation/internal/MenuPopup.tsx"]
       },
       "OrganizationSwitcher": {
         "styles": ["Menu.css"]

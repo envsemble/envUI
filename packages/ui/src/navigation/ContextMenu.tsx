@@ -4,15 +4,22 @@ import { ContextMenu as BaseContextMenu } from '@base-ui/react/context-menu';
 import {
   useRef,
   useState,
+  type CSSProperties,
   type KeyboardEvent,
   type MouseEvent,
   type PointerEvent,
   type ReactElement,
   type ReactNode,
+  type Ref,
 } from 'react';
-import { classNames } from '../internal/classNames.js';
-import { Theme, useTheme } from '../foundations/Theme.js';
-import { renderMenuPopup } from './internal/MenuPopup.js';
+import { MenuPopup } from './internal/MenuPopup.js';
+
+/** The Base UI parts of a context menu's popup. */
+const contextMenuParts = {
+  Portal: BaseContextMenu.Portal,
+  Positioner: BaseContextMenu.Positioner,
+  Popup: BaseContextMenu.Popup,
+};
 
 export interface ContextMenuPoint {
   /** Distance from the viewport's left edge in pixels, such as a pointer event's clientX. */
@@ -42,6 +49,10 @@ export interface ContextMenuProps {
   anchorPoint?: ContextMenuPoint;
   /** Class of the menu popup. */
   className?: string;
+  /** The menu popup's ref; the region is the element you pass as children. */
+  ref?: Ref<HTMLDivElement>;
+  /** The menu popup's inline style. */
+  style?: CSSProperties;
 }
 
 /** A browser context-menu key event: the ContextMenu key or Shift+F10. */
@@ -82,10 +93,10 @@ export function ContextMenu({
   open: controlledOpen,
   onOpenChange,
   anchorPoint,
-
   className,
+  ref,
+  style,
 }: ContextMenuProps) {
-  const theme = useTheme();
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
   const open = controlledOpen ?? uncontrolledOpen;
   const [target, setTarget] = useState<Element | null>(null);
@@ -144,21 +155,20 @@ export function ContextMenu({
         onPointerDown={notePress}
         onKeyDown={openFromKeyboard}
       />
-      <BaseContextMenu.Portal>
-        <Theme {...theme} className="env-menu-theme">
-          <BaseContextMenu.Positioner
-            className="env-menu-positioner"
-            {...(anchor && { anchor, side: 'bottom', align: 'start', sideOffset: 4 })}
-          >
-            <BaseContextMenu.Popup
-              className={classNames('env-menu', className)}
-              render={renderMenuPopup(label)}
-            >
-              {typeof content === 'function' ? content(target) : content}
-            </BaseContextMenu.Popup>
-          </BaseContextMenu.Positioner>
-        </Theme>
-      </BaseContextMenu.Portal>
+      <MenuPopup
+        parts={contextMenuParts}
+        label={label}
+        // At a point or an element the menu opens below its start; at the pointer, Base UI's own
+        // placement puts its first row under the pointer.
+        {...(anchor
+          ? { anchor, side: 'bottom', align: 'start', sideOffset: 4 }
+          : { sideOffset: -5, alignOffset: 2 })}
+        className={className}
+        popupRef={ref}
+        popupProps={{ style }}
+      >
+        {typeof content === 'function' ? content(target) : content}
+      </MenuPopup>
     </BaseContextMenu.Root>
   );
 }

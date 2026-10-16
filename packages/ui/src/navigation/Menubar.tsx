@@ -2,6 +2,7 @@
 
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { Menubar as BaseMenubar } from '@base-ui/react/menubar';
+import { DirectionProvider } from '@base-ui/react/direction-provider';
 import {
   createContext,
   useCallback,
@@ -11,12 +12,21 @@ import {
   useRef,
   useState,
   type ComponentPropsWithRef,
+  type CSSProperties,
   type ReactNode,
+  type Ref,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/setRef.js';
-import { Theme, useTheme } from '../foundations/Theme.js';
-import { renderMenuPopup } from './internal/MenuPopup.js';
+import { MenuPopup } from './internal/MenuPopup.js';
+import { useDirection } from '../internal/useDirection.js';
+
+/** The Base UI parts of a menubar menu's popup. */
+const menuParts = {
+  Portal: BaseMenu.Portal,
+  Positioner: BaseMenu.Positioner,
+  Popup: BaseMenu.Popup,
+};
 import { withDisplayName } from '../internal/withDisplayName.js';
 
 interface MenubarContextValue {
@@ -81,6 +91,8 @@ function Root({
   ...props
 }: RootProps) {
   const root = useRef<HTMLDivElement>(null);
+  // ← and → follow the text direction: the EnvUIProvider's, or the one at the menubar.
+  const [direction] = useDirection(root);
   // The last element outside the menubar and its menus that had focus, such as a text field.
   const lastFocus = useRef<Element | null>(null);
   const closers = useRef(new Set<() => void>());
@@ -254,18 +266,20 @@ function Root({
   );
   return (
     <MenubarContext value={context}>
-      <BaseMenubar
-        {...props}
-        ref={setRoot}
-        aria-label={label}
-        // Opening a menu leaves the page scrollable and the layout in place.
-        modal={false}
-        disabled={disabled}
-        className={classNames('env-menubar', className)}
-        data-access-keys-shown={accessKeys && (altHeld || activated) ? '' : undefined}
-      >
-        {children}
-      </BaseMenubar>
+      <DirectionProvider direction={direction}>
+        <BaseMenubar
+          {...props}
+          ref={setRoot}
+          aria-label={label}
+          // Opening a menu leaves the page scrollable and the layout in place.
+          modal={false}
+          disabled={disabled}
+          className={classNames('env-menubar', className)}
+          data-access-keys-shown={accessKeys && (altHeld || activated) ? '' : undefined}
+        >
+          {children}
+        </BaseMenubar>
+      </DirectionProvider>
     </MenubarContext>
   );
 }
@@ -302,6 +316,10 @@ export interface MenuProps {
   onOpenChange?: (open: boolean, details: MenuOpenChangeDetails) => void;
   /** Class of the menu popup. */
   className?: string;
+  /** The menu popup's ref; the trigger is the menubar's own. */
+  ref?: Ref<HTMLDivElement>;
+  /** The menu popup's inline style. */
+  style?: CSSProperties;
 }
 
 /**
@@ -340,15 +358,15 @@ function Menu({
   open,
   defaultOpen,
   onOpenChange,
-
   className,
+  ref,
+  style,
 }: MenuProps) {
-  const theme = useTheme();
   const menubar = useContext(MenubarContext);
   if (!menubar) throw new Error('Menubar.Menu must be used inside Menubar.Root.');
   const { registerClose } = menubar;
   const trigger = useRef<HTMLButtonElement>(null);
-  const popup = useRef<HTMLDivElement>(null);
+  const popup = useRef<HTMLDivElement | null>(null);
   const actions = useRef<BaseMenu.Root.Actions>(null);
   const previousFocus = useRef<Element | null>(null);
   const closeReason = useRef<string | null>(null);
@@ -424,25 +442,22 @@ function Menu({
       >
         <AccessKeyLabel label={label} accessKey={key} />
       </BaseMenu.Trigger>
-      <BaseMenu.Portal>
-        <Theme {...theme} className="env-menu-theme">
-          <BaseMenu.Positioner
-            className="env-menu-positioner"
-            side="bottom"
-            align="start"
-            sideOffset={4}
-          >
-            <BaseMenu.Popup
-              ref={popup}
-              className={classNames('env-menu', className)}
-              render={renderMenuPopup(ariaLabel ?? textLabel)}
-              finalFocus={finalFocus}
-            >
-              {children}
-            </BaseMenu.Popup>
-          </BaseMenu.Positioner>
-        </Theme>
-      </BaseMenu.Portal>
+      <MenuPopup
+        parts={menuParts}
+        label={ariaLabel ?? textLabel}
+        side="bottom"
+        align="start"
+        sideOffset={4}
+        finalFocus={finalFocus}
+        className={className}
+        popupRef={(node: HTMLDivElement | null) => {
+          popup.current = node;
+          setRef(ref, node);
+        }}
+        popupProps={{ style }}
+      >
+        {children}
+      </MenuPopup>
     </BaseMenu.Root>
   );
 }

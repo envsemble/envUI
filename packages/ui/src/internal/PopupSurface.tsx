@@ -53,6 +53,8 @@ export interface PopupSurfaceProps {
   align?: PopupAlign;
   /** The gap to the anchor in px, or a function of the placement; 8 by default. */
   sideOffset?: number | ((data: OffsetData) => number);
+  /** The shift along the side from where align puts it, in px, or a function of the placement; none by default. */
+  alignOffset?: number | ((data: OffsetData) => number);
   /** The room it keeps from the window's edges, in px; 8 by default. */
   collisionPadding?: number;
   /** What it opens beside, where that isn't its trigger. */
@@ -127,6 +129,7 @@ export function PopupSurface({
   side,
   align,
   sideOffset = 8,
+  alignOffset,
   collisionPadding = 8,
   anchor,
   initialFocus,
@@ -149,6 +152,7 @@ export function PopupSurface({
               side={side}
               align={align}
               sideOffset={sideOffset}
+              {...(alignOffset !== undefined && { alignOffset })}
               collisionPadding={collisionPadding}
               {...(anchor !== undefined && { anchor })}
               className={classNames('env-popup-positioner', positionerClassName)}
