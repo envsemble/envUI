@@ -454,13 +454,6 @@
       }
     }
   },
-  "components/markdown/preview": {
-    "light": {
-      "color-contrast": {
-        "Rendered markdown :: a.env-button.env-button-text.env-button-underlined.env-link": 1
-      }
-    }
-  },
   "components/markdown/usage": {
     "dark": {
       "color-contrast": {
@@ -476,13 +469,6 @@
       },
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
-      }
-    }
-  },
-  "components/menu/preview": {
-    "light": {
-      "color-contrast": {
-        "Building blocks :: button.env-button.env-button-text": 3
       }
     }
   },
@@ -686,13 +672,6 @@
       }
     }
   },
-  "components/rows/preview": {
-    "light": {
-      "color-contrast": {
-        "Rows that open something :: a.env-button.env-button-text.env-link": 2
-      }
-    }
-  },
   "components/rows/usage": {
     "dark": {
       "color-contrast": {
@@ -839,16 +818,13 @@
   },
   "foundations/colors/preview": {
     "dark": {
-      "color-contrast": {
-        "preview :: button.env-button.env-button-secondary.docs-swatch code": 4
-      },
       "label-content-name-mismatch": {
         "preview :: button.env-button.env-button-secondary.docs-swatch": 73
       }
     },
     "light": {
       "color-contrast": {
-        "preview :: button.env-button.env-button-secondary.docs-swatch code": 4
+        "preview :: button.env-button.env-button-secondary.docs-swatch code": 2
       },
       "label-content-name-mismatch": {
         "preview :: button.env-button.env-button-secondary.docs-swatch": 73

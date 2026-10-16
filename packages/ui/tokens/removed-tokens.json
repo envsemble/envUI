@@ -1,0 +1,84 @@
+{
+  "$comment": "Custom properties of envUI 0.7 that the palette step removed, with the token that replaces each where one does. The token build merges this list into src/generated/token-migration.json, the map from every 0.7 name to its 1.0 replacement that the codemods and the migration guide read.",
+  "removed": {
+    "--color-surface-base": { "replacement": "color.bg.raised", "note": "Unused." },
+    "--color-surface-raised": { "replacement": "color.bg.raised", "note": "Unused." },
+    "--color-text-subtle": { "replacement": "color.fg.muted", "note": "Unused synonym." },
+    "--color-control-text": { "replacement": "color.fg.control", "note": "Unused synonym." },
+    "--color-neutral-fill": { "replacement": "color.bg.neutral.strong", "note": "Unused." },
+    "--color-border-pressed": { "replacement": "color.border.muted.pressed", "note": "Unused." },
+    "--color-control-blue-hover": {
+      "replacement": "color.bg.brand.strong.hover",
+      "note": "Unused."
+    },
+    "--color-control-blue-pressed": {
+      "replacement": "color.bg.brand.strong.pressed",
+      "note": "Unused."
+    },
+    "--color-fill-hover": { "replacement": "color.bg.neutral.muted.hover", "note": "Unused." },
+    "--color-fill-pressed": { "replacement": "color.bg.neutral.muted.pressed", "note": "Unused." },
+    "--state-lightness-direction": {
+      "replacement": null,
+      "note": "The runtime hover rule is gone: every role has hover and pressed tokens."
+    },
+    "--state-hover-lightness": {
+      "replacement": null,
+      "note": "The runtime hover rule is gone: use the role's -hover token."
+    },
+    "--state-pressed-lightness": {
+      "replacement": null,
+      "note": "The runtime hover rule is gone: use the role's -pressed token."
+    },
+    "--state-surface-hover-lightness": {
+      "replacement": null,
+      "note": "The runtime hover rule is gone: use the surface's -hover token."
+    },
+    "--state-surface-pressed-lightness": {
+      "replacement": null,
+      "note": "The runtime hover rule is gone: use the surface's -pressed token."
+    },
+    "--state-lightness-threshold": {
+      "replacement": null,
+      "note": "The runtime hover rule is gone."
+    },
+    "--state-hover-shift": { "replacement": null, "note": "The runtime hover rule is gone." },
+    "--state-pressed-shift": { "replacement": null, "note": "The runtime hover rule is gone." },
+    "--state-surface-hover-shift": {
+      "replacement": null,
+      "note": "The runtime hover rule is gone."
+    },
+    "--state-surface-pressed-shift": {
+      "replacement": null,
+      "note": "The runtime hover rule is gone."
+    },
+    "--state-layer-hover-opacity": {
+      "replacement": "color.bg.neutral.subtle.hover",
+      "note": "The state layer is a color token now."
+    },
+    "--state-layer-pressed-opacity": {
+      "replacement": "color.bg.neutral.subtle.pressed",
+      "note": "The state layer is a color token now."
+    },
+    "--state-fill-hover-opacity": {
+      "replacement": "color.bg.neutral.muted.hover",
+      "note": "The fill's states are color tokens now."
+    },
+    "--state-fill-pressed-opacity": {
+      "replacement": "color.bg.neutral.muted.pressed",
+      "note": "The fill's states are color tokens now."
+    },
+    "--state-tone-subtle-opacity": {
+      "replacement": null,
+      "note": "Each tone has its tint as a color token: color.bg.{tone}.muted."
+    },
+    "--state-card-strip-weight": { "replacement": null, "note": "Unused." },
+    "--state-selected-base-weight": { "replacement": null, "note": "Unused." },
+    "--member-identity-avatar-size": { "replacement": null, "note": "Unused." },
+    "--member-identity-copy-height": { "replacement": null, "note": "Unused." },
+    "--member-identity-email-line-height": { "replacement": null, "note": "Unused." },
+    "--member-identity-email-size": { "replacement": null, "note": "Unused." },
+    "--member-identity-gap": { "replacement": null, "note": "Unused." },
+    "--member-identity-name-line-height": { "replacement": null, "note": "Unused." },
+    "--member-identity-name-size": { "replacement": null, "note": "Unused." }
+  }
+}

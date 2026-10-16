@@ -1,5 +1,5 @@
-/* A read-only rating: the number, then the stars, empty in the strong border color and filled in the
-   warning tone; a half star fills its inline-start half, the right one in right-to-left text. */
+/* A read-only rating: the number, then the stars, empty in the control boundary color (3:1 on any
+   surface) and filled in the warning tone; a half star fills its inline-start half, the right one in right-to-left text. */
 .env-rating {
   display: inline-flex;
   align-items: center;
@@ -12,7 +12,7 @@
 .env-rating-stars {
   display: inline-flex;
   gap: 0.125rem;
-  color: var(--color-border-strong);
+  color: var(--color-border-default);
 }
 .env-rating-star {
   position: relative;

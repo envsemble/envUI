@@ -460,7 +460,7 @@ test('offline theme toggle switches the whole page and keeps the canvas full hei
   });
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Colors & themes');
   await expect(panes.first()).toHaveAttribute('data-env-theme', 'dark');
-  await expect(panes.first().locator('.docs-swatch code').first()).toContainText('hsl(');
+  await expect(panes.first().locator('.docs-swatch code').first()).toHaveText(/^#[0-9a-f]{6}$/);
   const swatches = await panes.evaluateAll((columns) =>
     columns.map((column) => {
       const label = column.querySelector('.docs-palette-label')!.getBoundingClientRect();

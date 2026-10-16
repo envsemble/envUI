@@ -6,8 +6,10 @@
 import { readFileSync } from 'node:fs';
 import { RECOMMENDED_CONFIG } from '@terrazzo/parser';
 import css from '@terrazzo/plugin-css';
+import { converter, formatHex } from 'culori';
 
 const resolverFile = new URL('./tokens/envui.resolver.json', import.meta.url);
+const removedFile = new URL('./tokens/removed-tokens.json', import.meta.url);
 
 /** The vendor key of envUI's `$extensions`. */
 const extension = 'com.envsemble.envui';
@@ -16,33 +18,58 @@ const extension = 'com.envsemble.envui';
 export const cssVariable = (id) => `--${id.split('.').join('-')}`;
 
 /**
- * Colors without a dark value, which therefore look the same in both color schemes today. Each is
- * either meant to stay fixed (toasts, the avatar, the white of labels on solid fills) or has not
- * been designed for dark yet; the palette step gives every one a dark value and empties this list.
+ * Token groups that are build input only: the primitive palette, and the high-contrast values of
+ * each scheme that contrast/high.tokens.json points the roles at. Neither becomes CSS; tokens that
+ * alias them carry the resolved value instead.
  */
-export const singleSchemeColors = [
-  'color.accent',
-  'color.avatar',
-  'color.avatar-figure',
-  'color.canvas-dark',
-  'color.destructive-action',
-  'color.neutral-fill',
-  'color.on-accent',
-  'color.on-avatar',
-  'color.on-destructive-action',
-  'color.on-toast',
-  'color.toast-error',
-  'color.toast-info',
-  'color.toast-neutral',
-  'color.toast-success',
-  'color.white',
+export const internalGroups = ['palette', 'contrast-high'];
+const internal = (id) => internalGroups.includes(id.split('.')[0]);
+
+/** The semantic color roles: every one is designed for both schemes and both contrasts. */
+const semantic = (id) => /^color\.(bg|fg|border)\./.test(id);
+
+/**
+ * The themes the tokens build into, each a resolver input, with the CSS rules that apply it. The
+ * high-contrast themes also apply under `prefers-contrast: more` unless the boundary opts out with
+ * data-env-contrast='standard'.
+ */
+export const themes = [
+  {
+    name: 'light',
+    input: { colorScheme: 'light', contrast: 'standard' },
+    selectors: ['.env-theme'],
+  },
+  {
+    name: 'dark',
+    input: { colorScheme: 'dark', contrast: 'standard' },
+    selectors: [".env-theme[data-env-theme='dark']"],
+  },
+  {
+    name: 'light-high-contrast',
+    input: { colorScheme: 'light', contrast: 'high' },
+    selectors: [".env-theme[data-env-contrast='high']"],
+    media: {
+      query: '(prefers-contrast: more)',
+      selector: ".env-theme:not([data-env-contrast='standard'])",
+    },
+  },
+  {
+    name: 'dark-high-contrast',
+    input: { colorScheme: 'dark', contrast: 'high' },
+    selectors: [".env-theme[data-env-theme='dark'][data-env-contrast='high']"],
+    media: {
+      query: '(prefers-contrast: more)',
+      selector: ".env-theme[data-env-theme='dark']:not([data-env-contrast='standard'])",
+    },
+  },
 ];
 
 /** IDs of the tokens a source document declares. */
 function declaredTokens(document, path = [], ids = []) {
   for (const [key, value] of Object.entries(document)) {
-    if (key.startsWith('$') || !value || typeof value !== 'object') continue;
-    if ('$value' in value) ids.push([...path, key].join('.'));
+    if (key.startsWith('$') && key !== '$root') continue;
+    if (!value || typeof value !== 'object') continue;
+    if ('$value' in value) ids.push([...path, key].filter((part) => part !== '$root').join('.'));
     else declaredTokens(value, [...path, key], ids);
   }
   return ids;
@@ -57,19 +84,58 @@ export function contextTokens(modifier, context) {
   );
 }
 
+const toRgb = converter('rgb');
+const channel = (value) => Math.round(Math.min(1, Math.max(0, value)) * 255);
+const round = (value, digits) => Number(value.toFixed(digits));
+
 /**
- * CSS values that keep today's text exactly: HSL colors with their authored channels (Terrazzo's
- * own serializer rounds them to five digits), a zero length as `0`, font names in single quotes,
- * and numbers marked with a CSS unit (the percentages of color-mix() weights and opacities).
- * Everything else, aliases included, takes plugin-css's default, which writes an alias as var().
+ * A DTCG color as CSS: opaque colors as their sRGB hex, translucent ones as rgb() with the exact
+ * alpha, so the browser, the contrast gate and the generated modules all see the same 8-bit values.
+ */
+export function cssColor(color) {
+  const alpha = color.alpha ?? 1;
+  if (alpha === 0) return 'transparent';
+  const space = { oklch: 'oklch', srgb: 'rgb', hsl: 'hsl' }[color.colorSpace];
+  if (!space) throw new Error(`Unsupported color space ${color.colorSpace}.`);
+  const [a, b, c] = color.components;
+  const parsed =
+    space === 'oklch'
+      ? { mode: 'oklch', l: a, c: b, h: c }
+      : space === 'hsl'
+        ? { mode: 'hsl', h: a, s: b / 100, l: c / 100 }
+        : { mode: 'rgb', r: a, g: b, b: c };
+  const rgb = toRgb(parsed);
+  if (alpha === 1) return color.hex ?? formatHex(rgb);
+  return `rgb(${channel(rgb.r)} ${channel(rgb.g)} ${channel(rgb.b)} / ${round(alpha, 4)})`;
+}
+
+const length = ({ value, unit }) => (value === 0 ? '0' : `${value}${unit}`);
+
+/**
+ * CSS values: colors as cssColor() writes them, shadows with those colors, a zero length as `0`,
+ * font names in single quotes, and numbers marked with a CSS unit (percentages). A token that
+ * aliases another public token is written as var(), plugin-css's default; one that aliases the
+ * palette or a high-contrast value carries the resolved value, because those never become CSS.
  */
 function transform(token) {
-  if (token.aliasOf) return undefined;
+  if (token.aliasChain?.length && !internal(token.aliasChain[0])) return undefined;
   const value = token.$value;
   switch (token.$type) {
     case 'color':
-      if (value.colorSpace !== 'hsl' || (value.alpha ?? 1) !== 1) return undefined;
-      return `hsl(${value.components[0]} ${value.components[1]}% ${value.components[2]}%)`;
+      return cssColor(value);
+    case 'shadow':
+      return (Array.isArray(value) ? value : [value])
+        .map((layer) =>
+          [
+            ...(layer.inset ? ['inset'] : []),
+            length(layer.offsetX),
+            length(layer.offsetY),
+            length(layer.blur),
+            length(layer.spread),
+            cssColor(layer.color),
+          ].join(' '),
+        )
+        .join(', ');
     case 'dimension':
       return value.value === 0 ? '0' : undefined;
     case 'fontFamily':
@@ -108,41 +174,77 @@ function withoutDescriptions(plugin) {
 }
 
 /**
- * `envui/color-schemes`: every color has a dark value, or is listed in singleSchemeColors. It is
- * core/required-modes for a resolver: that rule reads only the legacy `$extensions.mode`, so with a
- * resolver it sees no modes on any token. An alias needs no dark value of its own, because it
- * follows its target into the dark scheme.
+ * `envui/color-schemes`: every semantic color is declared in the dark scheme, so dark is designed
+ * rather than inherited, and every other color outside the palette is an alias, which follows its
+ * target into each scheme. (core/required-modes reads only the legacy `$extensions.mode`, so with a
+ * resolver it sees no modes on any token.)
  */
 const colorSchemesRule = {
-  meta: { docs: { description: 'Every color has a dark value, or is listed as single-scheme.' } },
+  meta: { docs: { description: 'Every semantic color has a dark value; other colors alias.' } },
   create({ tokens, options, report }) {
     const dark = new Set(options.dark);
-    const allowed = new Set(options.allow);
-    for (const id of allowed) {
-      if (tokens[id]?.$type !== 'color')
-        report({ message: `${id} is listed in singleSchemeColors but is no color token.` });
-      else if (dark.has(id))
-        report({ message: `${id} has a dark value now: remove it from singleSchemeColors.` });
-    }
     for (const token of Object.values(tokens)) {
-      if (token.$type !== 'color' || token.aliasOf || dark.has(token.id) || allowed.has(token.id))
-        continue;
-      report({
-        message: `${token.id} has no dark value: add one to color-scheme/dark.tokens.json.`,
-      });
+      if (token.$type !== 'color' || internal(token.id)) continue;
+      if (semantic(token.id) && !dark.has(token.id))
+        report({
+          message: `${token.id} has no dark value: add one to color-scheme/dark.tokens.json.`,
+        });
+      else if (!semantic(token.id) && !token.aliasOf && token.id.startsWith('color.'))
+        report({ message: `${token.id} is a color outside the roles: alias a semantic role.` });
     }
   },
 };
 
 /**
- * envUI's own plugin: the color-scheme lint rule, and the generated token modules, a typed
- * TypeScript module and a JSON token list for the docs. Both carry each token's value in every color
- * scheme, as the browser resolves Tokens.css.
+ * `envui/high-contrast`: contrast/high.tokens.json points roles at `contrast-high.*`, which both
+ * schemes must define, and the two schemes define the same high-contrast values.
+ */
+const highContrastRule = {
+  meta: { docs: { description: 'Both schemes define every high-contrast value.' } },
+  create({ options, report }) {
+    const light = new Set(options.light);
+    const dark = new Set(options.dark);
+    for (const id of light)
+      if (!dark.has(id))
+        report({
+          message: `${id} has no dark value: add it to color-scheme/dark-contrast-high.tokens.json.`,
+        });
+    for (const id of dark)
+      if (!light.has(id))
+        report({ message: `${id} has no light value: add it to base/contrast-high.tokens.json.` });
+    for (const [id, target] of Object.entries(options.pointers))
+      if (target.startsWith('contrast-high.') && !light.has(target))
+        report({ message: `${id} points at ${target}, which no scheme defines.` });
+  },
+};
+
+/** `envui/unique-css-names`: no two tokens become the same custom property. */
+const uniqueNamesRule = {
+  meta: { docs: { description: 'Every token has its own CSS custom property.' } },
+  create({ tokens, report }) {
+    const seen = new Map();
+    for (const id of Object.keys(tokens)) {
+      if (internal(id)) continue;
+      const name = cssVariable(id);
+      if (seen.has(name)) report({ message: `${id} and ${seen.get(name)} both become ${name}.` });
+      seen.set(name, id);
+    }
+  },
+};
+
+/**
+ * envUI's own plugin: the lint rules, and the generated token modules, a typed TypeScript module, a
+ * JSON token list for the docs, and the migration map from the 0.7 custom properties to the roles.
+ * The modules carry each token's value in every theme, as the browser resolves Tokens.css.
  */
 function envui() {
   return {
     name: 'envui',
-    lint: () => ({ 'envui/color-schemes': colorSchemesRule }),
+    lint: () => ({
+      'envui/color-schemes': colorSchemesRule,
+      'envui/high-contrast': highContrastRule,
+      'envui/unique-css-names': uniqueNamesRule,
+    }),
     build({ getTransforms, outputFile, resolver, tokens }) {
       const modifiers = resolver.source.resolutionOrder
         .filter((item) => item.type === 'modifier')
@@ -152,38 +254,46 @@ function envui() {
           contexts: Object.keys(item.contexts),
           default: item.default,
         }));
-      const schemes = modifiers.find((modifier) => modifier.name === 'colorScheme').contexts;
-      // Tokens.css declares the base set, then each scheme's overrides; var() resolves in the
-      // element's own scheme, as in the browser.
+      // Tokens.css declares the base set, then each theme's overrides on top of its scheme's; var()
+      // resolves in the element's own theme, as in the browser.
       const declared = Object.fromEntries(
-        schemes.map((scheme) => [
-          scheme,
+        themes.map((theme) => [
+          theme.name,
           new Map(
-            getTransforms({ format: 'css', input: { colorScheme: scheme } }).map((entry) => [
+            getTransforms({ format: 'css', input: theme.input }).map((entry) => [
               entry.localID,
               entry.value,
             ]),
           ),
         ]),
       );
-      const [baseScheme] = schemes;
-      const cssValue = (scheme, name) =>
-        declared[scheme].get(name) ?? declared[baseScheme].get(name);
-      const resolve = (scheme, name) => {
-        const value = cssValue(scheme, name);
+      const fallback = { dark: ['light'], 'light-high-contrast': ['light'] };
+      fallback['dark-high-contrast'] = ['dark', 'light'];
+      const cssValue = (theme, name) =>
+        [theme, ...(fallback[theme] ?? [])]
+          .map((layer) => declared[layer].get(name))
+          .find((value) => value !== undefined);
+      const resolve = (theme, name) => {
+        const value = cssValue(theme, name);
         const alias = value?.match(/^var\((--[\w-]+)\)$/);
-        return alias ? resolve(scheme, alias[1]) : value;
+        return alias ? resolve(theme, alias[1]) : value;
       };
-      const ids = Object.keys(tokens).sort((a, b) => a.localeCompare(b, 'en', { numeric: true }));
+      const ids = Object.keys(tokens)
+        .filter((id) => !internal(id))
+        .sort((a, b) => a.localeCompare(b, 'en', { numeric: true }));
+      const applied = Object.fromEntries(
+        themes.map((theme) => [theme.name, resolver.apply(theme.input)]),
+      );
       const list = ids.map((id) => {
         const name = cssVariable(id);
         const values = {};
-        for (const scheme of schemes) {
-          const token = resolver.apply({ colorScheme: scheme })[id];
-          values[scheme] = {
-            css: cssValue(scheme, name),
-            resolved: resolve(scheme, name),
-            ...(token.aliasChain?.[0] && { aliasOf: token.aliasChain[0] }),
+        for (const theme of themes) {
+          const token = applied[theme.name][id];
+          const aliasOf = token.aliasChain?.find((target) => !internal(target));
+          values[theme.name] = {
+            css: cssValue(theme.name, name),
+            resolved: resolve(theme.name, name),
+            ...(aliasOf && { aliasOf }),
             ...(token.$description &&
               token.$description !== tokens[id].$description && {
                 description: token.$description,
@@ -196,6 +306,7 @@ function envui() {
           type: tokens[id].$type,
           ...(tokens[id].$description && { description: tokens[id].$description }),
           ...(tokens[id].$deprecated && { deprecated: tokens[id].$deprecated }),
+          ...(tokens[id].$extensions?.[extension]?.legacy && { legacy: true }),
           values,
         };
       });
@@ -203,19 +314,54 @@ function envui() {
         'Generated from packages/ui/tokens by `npm run tokens:build`. Do not edit: change the tokens and rebuild.';
       outputFile(
         'generated/tokens.json',
-        JSON.stringify({ $comment: header, modifiers, tokens: list }),
+        JSON.stringify({ $comment: header, modifiers, themes, tokens: list }),
       );
+
+      // The 0.7 names: each legacy token's role per theme, and the removed ones.
+      const removed = JSON.parse(readFileSync(removedFile, 'utf8')).removed;
+      const migration = {};
+      for (const token of list.filter((entry) => entry.legacy)) {
+        const roles = Object.fromEntries(
+          themes.map((theme) => [theme.name, token.values[theme.name].aliasOf ?? null]),
+        );
+        const distinct = [...new Set(Object.values(roles))];
+        const component = tokens[token.id].$extensions?.[extension]?.component;
+        // A fixed color, such as the avatar's, aliases the palette itself: no role replaces it.
+        const primitive = distinct[0] === null && tokens[token.id].aliasOf;
+        migration[token.cssVariable] = {
+          ...(primitive
+            ? { primitive }
+            : distinct.length === 1
+              ? { token: distinct[0], cssVariable: cssVariable(distinct[0]) }
+              : { tokens: roles }),
+          ...(component && { component }),
+        };
+      }
+      for (const [name, entry] of Object.entries(removed)) {
+        if (migration[name]) throw new Error(`${name} is listed as removed but still exists.`);
+        migration[name] = { removed: true, ...entry };
+      }
+      outputFile(
+        'generated/token-migration.json',
+        JSON.stringify({
+          $comment: `${header} Maps each 0.7 custom property to the token that replaces it: one role, a role per theme for component tokens, or removed with its replacement.`,
+          names: Object.fromEntries(
+            Object.entries(migration).sort(([a], [b]) => a.localeCompare(b)),
+          ),
+        }),
+      );
+
       let module = `// ${header}\n// Internal for now: the package does not export it yet.\n\n`;
-      module += `/** The contexts of the colorScheme modifier; the first is the default. */\n`;
-      module += `export const colorSchemes = ${JSON.stringify(schemes)} as const;\n`;
-      module += `export type ColorScheme = (typeof colorSchemes)[number];\n\n`;
-      module += `export interface TokenDefinition {\n  /** The CSS custom property that carries the token. */\n  cssVariable: \`--\${string}\`;\n  /** The DTCG type. */\n  type: string;\n  /** The CSS value in each color scheme, with aliases resolved. */\n  values: Readonly<Record<ColorScheme, string>>;\n}\n\n`;
+      module += `/** The themes Tokens.css builds: each color scheme at standard and high contrast. */\n`;
+      module += `export const themes = ${JSON.stringify(themes.map((theme) => theme.name))} as const;\n`;
+      module += `export type ThemeName = (typeof themes)[number];\n\n`;
+      module += `export interface TokenDefinition {\n  /** The CSS custom property that carries the token. */\n  cssVariable: \`--\${string}\`;\n  /** The DTCG type. */\n  type: string;\n  /** The CSS value in each theme, with aliases resolved. */\n  values: Readonly<Record<ThemeName, string>>;\n}\n\n`;
       module += `/** Every token, by its DTCG path. */\n`;
       module += `export const tokens = {\n`;
       for (const token of list) {
         if (token.description) module += `  /** ${token.description.replaceAll('*/', '*\\/')} */\n`;
         const values = Object.fromEntries(
-          schemes.map((scheme) => [scheme, token.values[scheme].resolved]),
+          themes.map((theme) => [theme.name, token.values[theme.name].resolved]),
         );
         module += `  ${JSON.stringify(token.id)}: { cssVariable: ${JSON.stringify(token.cssVariable)}, type: ${JSON.stringify(token.type)}, values: ${JSON.stringify(values)} },\n`;
       }
@@ -230,8 +376,24 @@ function envui() {
 /** A fresh config, so a long-running build (the catalogue's dev server) reads the tokens anew. */
 export function createConfig() {
   const dark = contextTokens('colorScheme', 'dark');
+  const high = contextTokens('contrast', 'high');
+  const highSource = JSON.parse(
+    readFileSync(new URL('./tokens/contrast/high.tokens.json', import.meta.url), 'utf8'),
+  );
+  const pointers = {};
+  (function collect(node, path) {
+    for (const [key, value] of Object.entries(node)) {
+      if (key.startsWith('$') && key !== '$root') continue;
+      if (!value || typeof value !== 'object') continue;
+      const next = key === '$root' ? path : [...path, key];
+      if ('$value' in value) {
+        if (typeof value.$value === 'string') pointers[next.join('.')] = value.$value.slice(1, -1);
+      } else collect(value, next);
+    }
+  })(highSource, []);
   const header =
     "/* Built from packages/ui/tokens by `npm run tokens:build`. The values DTCG can't express yet\n   are in TokensHandwritten.css. */\n";
+  const block = (selector, contents) => `${selector} {\n  ${contents}\n}`;
   return {
     tokens: [resolverFile],
     outDir: new URL('./src/', import.meta.url),
@@ -240,10 +402,11 @@ export function createConfig() {
         css({
           filename: 'styles/Tokens.css',
           variableName: (token) => cssVariable(token.id),
+          exclude: internalGroups.map((group) => `${group}.**`),
           transform,
           permutations: [
             {
-              // The base set: every token, in the light scheme.
+              // The base set: every token, in the light scheme at standard contrast.
               input: {},
               prepare: (contents) =>
                 `${header}.env-theme {\n  color-scheme: light;\n  ${contents}\n}`,
@@ -255,6 +418,16 @@ export function createConfig() {
               prepare: (contents) =>
                 `.env-theme[data-env-theme='dark'] {\n  color-scheme: dark;\n  ${contents}\n}`,
             },
+            ...themes
+              .filter((theme) => theme.media)
+              .map((theme) => ({
+                // Every token high contrast changes, in both schemes, so the dark high-contrast rule
+                // also replaces the light one's values.
+                input: theme.input,
+                include: high,
+                prepare: (contents) =>
+                  `${block(theme.selectors.join(', '), contents)}\n@media ${theme.media.query} {\n  ${block(theme.media.selector, contents)}\n}`,
+              })),
           ],
         }),
       ),
@@ -266,7 +439,30 @@ export function createConfig() {
         // The value checks for every DTCG type, as Terrazzo recommends; names must be kebab-case.
         ...RECOMMENDED_CONFIG,
         'core/consistent-naming': ['error', { format: 'kebab-case' }],
-        'envui/color-schemes': ['error', { dark, allow: singleSchemeColors }],
+        'envui/color-schemes': ['error', { dark }],
+        'envui/high-contrast': [
+          'error',
+          {
+            light: declaredTokens(
+              JSON.parse(
+                readFileSync(
+                  new URL('./tokens/base/contrast-high.tokens.json', import.meta.url),
+                  'utf8',
+                ),
+              ),
+            ),
+            dark: declaredTokens(
+              JSON.parse(
+                readFileSync(
+                  new URL('./tokens/color-scheme/dark-contrast-high.tokens.json', import.meta.url),
+                  'utf8',
+                ),
+              ),
+            ),
+            pointers,
+          },
+        ],
+        'envui/unique-css-names': ['error', {}],
       },
     },
   };

@@ -2,6 +2,7 @@
    canvas, panes and rows, including over the subtle fill. */
 .env-badge {
   --env-badge-tone: var(--color-tone-neutral);
+  --env-badge-tint: var(--color-bg-neutral-muted);
   box-sizing: border-box;
   inline-size: fit-content;
   max-inline-size: 100%;
@@ -12,11 +13,7 @@
   padding: 0.0625rem var(--space-2);
   border: 0.0625rem solid transparent;
   border-radius: 100vmax;
-  background: color-mix(
-    in srgb,
-    var(--env-badge-tone) var(--state-tone-subtle-opacity),
-    transparent
-  );
+  background: var(--env-badge-tint);
   color: var(--env-badge-tone);
   font: 500 0.75rem / 1.4 var(--font-family);
   white-space: nowrap;
@@ -24,18 +21,23 @@
 }
 .env-badge[data-tone='accent'] {
   --env-badge-tone: var(--color-tone-accent);
+  --env-badge-tint: var(--color-bg-accent-muted);
 }
 .env-badge[data-tone='success'] {
   --env-badge-tone: var(--color-tone-success);
+  --env-badge-tint: var(--color-bg-success-muted);
 }
 .env-badge[data-tone='warning'] {
   --env-badge-tone: var(--color-tone-warning);
+  --env-badge-tint: var(--color-bg-warning-muted);
 }
 .env-badge[data-tone='danger'] {
   --env-badge-tone: var(--color-tone-danger);
+  --env-badge-tint: var(--color-bg-danger-muted);
 }
 .env-badge[data-tone='done'] {
   --env-badge-tone: var(--color-tone-done);
+  --env-badge-tint: var(--color-bg-done-muted);
 }
 .env-badge[data-variant='solid'] {
   background: var(--env-badge-tone);

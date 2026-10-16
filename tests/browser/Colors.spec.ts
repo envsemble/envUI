@@ -6,18 +6,59 @@ test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
 });
 
-const sources: Record<string, string> = {
-  'button-primary': '--color-primary-action',
-  'button-important': '--color-accent',
-  'button-secondary': '--color-secondary-action',
-  'button-outlined': '--color-subtle-action',
-  'button-destructive': '--color-destructive-action',
-  'icon-button': '--color-secondary-action',
-  navigation: '--color-navigation-quiet',
-  'navigation-selected': '--color-navigation-selected',
-  'tab-primary': '--color-primary-action',
-  'tab-secondary': '--color-secondary-action',
-  'tab-navigation': '--color-navigation-selected',
+/** The token each control paints at rest; its hover and pressed tokens carry `-hover`, `-pressed`. */
+const sources: Record<string, readonly [rest: string, hover: string, pressed: string]> = {
+  'button-primary': [
+    '--color-primary-action',
+    '--color-primary-action-hover',
+    '--color-primary-action-pressed',
+  ],
+  'button-important': ['--color-accent', '--color-accent-hover', '--color-accent-pressed'],
+  'button-secondary': [
+    '--color-secondary-action',
+    '--color-secondary-action-hover',
+    '--color-secondary-action-pressed',
+  ],
+  'button-outlined': [
+    '--color-subtle-action',
+    '--color-subtle-action-hover',
+    '--color-subtle-action-pressed',
+  ],
+  'button-destructive': [
+    '--color-destructive-action',
+    '--color-destructive-action-hover',
+    '--color-destructive-action-pressed',
+  ],
+  'icon-button': [
+    '--color-secondary-action',
+    '--color-secondary-action-hover',
+    '--color-secondary-action-pressed',
+  ],
+  navigation: [
+    '--color-navigation-quiet',
+    '--color-navigation-quiet-hover',
+    '--color-navigation-quiet-pressed',
+  ],
+  'navigation-selected': [
+    '--color-navigation-selected',
+    '--color-navigation-hover',
+    '--color-navigation-pressed',
+  ],
+  'tab-primary': [
+    '--color-primary-action',
+    '--color-primary-action-hover',
+    '--color-primary-action-pressed',
+  ],
+  'tab-secondary': [
+    '--color-secondary-action',
+    '--color-secondary-action-hover',
+    '--color-secondary-action-pressed',
+  ],
+  'tab-navigation': [
+    '--color-navigation-selected',
+    '--color-navigation-hover',
+    '--color-navigation-pressed',
+  ],
 };
 
 /**
@@ -57,42 +98,60 @@ async function lightness(
   );
 }
 
-test('all action and navigation fills derive hover/pressed from their base color', async ({
+/** The computed color a custom property resolves to inside an element. */
+async function tokenColor(control: import('@playwright/test').Locator, token: string) {
+  return control.evaluate((element, name) => {
+    const probe = document.createElement('span');
+    probe.style.backgroundColor = `var(${name})`;
+    element.append(probe);
+    const color = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    return color;
+  }, token);
+}
+
+test('action and navigation fills paint their precomputed hover and pressed tokens', async ({
   page,
 }) => {
   for (const theme of ['light', 'dark']) {
-    for (const [name, token] of Object.entries(sources)) {
+    for (const [name, [rest, hover, pressed]] of Object.entries(sources)) {
       const control = page.getByTestId(`${theme}-${name}`);
       if (name.startsWith('tab-')) await control.press('Enter');
-      const base = await lightness(control, token);
-      const direction = base < 50 ? 1 : -1;
+      const colors = {
+        rest: await tokenColor(control, rest),
+        hover: await tokenColor(control, hover),
+        pressed: await tokenColor(control, pressed),
+      };
+      // Each state is visibly its own color, not a copy of the rest color.
+      expect(colors.hover, `${theme}/${name} hover differs from rest`).not.toBe(colors.rest);
+      expect(colors.pressed, `${theme}/${name} pressed differs from hover`).not.toBe(colors.hover);
       await control.hover();
-      expect(await lightness(control), `${theme}/${name} hover`).toBeCloseTo(
-        Math.min(100, Math.max(0, base + direction * 10)),
-        0,
-      );
+      await expect(control, `${theme}/${name} hover`).toHaveCSS('background-color', colors.hover);
       await page.mouse.down();
-      expect(await lightness(control), `${theme}/${name} pressed`).toBeCloseTo(
-        Math.min(100, Math.max(0, base + direction * 20)),
-        0,
+      await expect(control, `${theme}/${name} pressed`).toHaveCSS(
+        'background-color',
+        colors.pressed,
       );
       await page.mouse.up();
+      await page.mouse.move(0, 0);
     }
   }
 });
 
-test('the central threshold uses subtraction at 50 and clamps the extremes', async ({ page }) => {
-  const control = page.getByTestId('light-button-primary');
-  for (const base of [0, 49, 50, 100]) {
-    await page.getByTestId('color-controls-light').evaluate((element, value) => {
-      (element as HTMLElement).style.setProperty('--color-primary-action', `hsl(0 0% ${value}%)`);
-    }, base);
-    await control.hover();
-    expect(await lightness(control)).toBeCloseTo(base + (base < 50 ? 10 : -10), 0);
-    await page.mouse.down();
-    expect(await lightness(control)).toBeCloseTo(base + (base < 50 ? 20 : -20), 0);
-    await page.mouse.up();
-  }
+test('no hover or pressed color is computed at runtime', async ({ page }) => {
+  // Every state color is a token the contrast gate measures; the old relative-color rule is gone.
+  const sheets = await page.evaluate(() =>
+    [...document.styleSheets].flatMap((sheet) => {
+      try {
+        return [...sheet.cssRules].map((rule) => rule.cssText);
+      } catch {
+        return [];
+      }
+    }),
+  );
+  const css = sheets.join('\n');
+  expect(css).not.toMatch(/--state-[a-z-]*lightness/);
+  expect(css).not.toMatch(/hsl\(from var\([^)]*\) h s var\(/);
 });
 
 test('compositions reuse primitive colors while unrelated roles stay independent', async ({
@@ -193,8 +252,10 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       ['--color-checkbox', ['checkbox']],
       ['--color-switch-on', ['switch']],
       ['--color-chip', ['chip']],
+      // The neutral fill: the 0.7 names of its uses (secondary actions, chips, skeletons, the tab
+      // rail) all alias the one semantic token.
       [
-        '--color-fill',
+        '--color-bg-neutral-muted',
         ['secondary', 'icon', 'select', 'selectError', 'tabRail', 'chip', 'skeleton'],
       ],
       ['--color-skeleton-base', ['skeleton']],

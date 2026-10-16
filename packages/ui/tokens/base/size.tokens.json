@@ -1,15 +1,5 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
-  "member-identity": {
-    "$type": "dimension",
-    "avatar-size": { "$value": { "value": 2, "unit": "rem" } },
-    "gap": { "$value": "{space.3}" },
-    "copy-height": { "$value": { "value": 2.5, "unit": "rem" } },
-    "name-size": { "$value": "{font.size.body}" },
-    "name-line-height": { "$value": { "value": 1.25, "unit": "rem" } },
-    "email-size": { "$value": "{font.size.body-small}" },
-    "email-line-height": { "$value": { "value": 1.25, "unit": "rem" } }
-  },
   "control": {
     "$type": "dimension",
     "height-small": { "$value": "{control.height}" },

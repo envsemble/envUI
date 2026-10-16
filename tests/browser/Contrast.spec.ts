@@ -46,7 +46,11 @@ function exceptionFor(pair: string, theme: string) {
 }
 
 /** Resolves each named color inside a theme boundary, or null where it doesn't resolve. */
-async function resolveColors(page: Page, theme: ContrastTheme, names: readonly string[]) {
+async function resolveColors(
+  page: Page,
+  attributes: ContrastTheme['attributes'],
+  names: readonly string[],
+) {
   const colors = Object.fromEntries(names.map((name) => [name, cssColor(name)]));
   return page.evaluate(
     ({ attributes, colors }) => {
@@ -76,18 +80,19 @@ async function resolveColors(page: Page, theme: ContrastTheme, names: readonly s
       boundary.remove();
       return { resolved, canvas };
     },
-    { attributes: theme.attributes, colors },
+    { attributes, colors },
   );
 }
 
 function measure(
   pair: ContrastPair,
-  theme: string,
+  theme: ContrastTheme,
   resolved: Readonly<Record<string, string | null>>,
   canvas: Rgb,
 ): ContrastRow {
   const name = pairName(pair);
-  const row = { pair: name, theme, kind: pair.kind, min: pair.min };
+  const min = theme.minimums[pair.kind];
+  const row = { pair: name, theme: theme.name, kind: pair.kind, min };
   const unresolved = [pair.fg, ...pair.bg].filter((color) => resolved[color] === null);
   if (unresolved.length > 0)
     return {
@@ -104,20 +109,20 @@ function measure(
   const foreground = flatten([parseColor(resolved[pair.fg]!)], background);
   const ratio = contrastRatio(foreground, background);
   const measured = { ...row, ratio, apca: apcaContrast(foreground, background) };
-  const exception = exceptionFor(name, theme);
-  if (ratio >= pair.min)
+  const exception = exceptionFor(name, theme.name);
+  if (ratio >= min)
     return exception
       ? {
           ...measured,
           status: 'FAIL: exception now passes',
-          detail: `It measures ${formatRatio(ratio)} against ${pair.min}: remove its entry from ${exceptionsFile}.`,
+          detail: `It measures ${formatRatio(ratio)} against ${min}: remove its entry from ${exceptionsFile}.`,
         }
       : { ...measured, status: 'pass' };
   if (!exception)
     return {
       ...measured,
       status: 'FAIL: below minimum',
-      detail: `${pair.note ? `${pair.note}. ` : ''}Fix the colors. Only if the failure is accepted for now, list it in ${exceptionsFile}: ${JSON.stringify({ pair: name, theme, ratio: Number(formatRatio(ratio)), note: '…' })}`,
+      detail: `${pair.note ? `${pair.note}. ` : ''}Fix the colors. Only if the failure is accepted for now, list it in ${exceptionsFile}: ${JSON.stringify({ pair: name, theme: theme.name, ratio: Number(formatRatio(ratio)), note: '…' })}`,
     };
   if (ratio < exception.ratio - tolerance)
     return {
@@ -179,9 +184,10 @@ test.describe('contrast', { tag: '@contrast' }, () => {
       if (theme.media) await page.emulateMedia(theme.media);
       await page.goto(`${fixtureUrl}/contrast.html`);
       await page.waitForSelector('body[data-styles-ready]', { state: 'attached' });
-      const names = [...new Set(pairs.flatMap((pair) => [pair.fg, ...pair.bg]))];
-      const { resolved, canvas } = await resolveColors(page, theme, names);
-      const rows = pairs.map((pair) => measure(pair, theme.name, resolved, parseColor(canvas)));
+      const measured = pairs.filter((pair) => !pair.contrast || pair.contrast === theme.contrast);
+      const names = [...new Set(measured.flatMap((pair) => [pair.fg, ...pair.bg]))];
+      const { resolved, canvas } = await resolveColors(page, theme.attributes, names);
+      const rows = measured.map((pair) => measure(pair, theme, resolved, parseColor(canvas)));
 
       const report = formatTable(rows);
       await testInfo.attach(`contrast-${theme.name}.txt`, {
@@ -203,4 +209,25 @@ test.describe('contrast', { tag: '@contrast' }, () => {
       ).toBe(0);
     });
   }
+
+  test('prefers-contrast: more applies the high-contrast themes unless a boundary opts out', async ({
+    page,
+  }) => {
+    await page.goto(`${fixtureUrl}/contrast.html`);
+    await page.waitForSelector('body[data-styles-ready]', { state: 'attached' });
+    const names = [...new Set(pairs.flatMap((pair) => [pair.fg, ...pair.bg]))];
+    for (const scheme of ['light', 'dark']) {
+      const read = async (attributes: Record<string, string>) =>
+        (await resolveColors(page, { 'data-env-theme': scheme, ...attributes }, names)).resolved;
+      await page.emulateMedia({ contrast: 'no-preference' });
+      const standard = await read({});
+      const high = await read({ 'data-env-contrast': 'high' });
+      expect(high, `${scheme}: high contrast changes colors`).not.toEqual(standard);
+      await page.emulateMedia({ contrast: 'more' });
+      expect(await read({}), `${scheme}: prefers-contrast: more`).toEqual(high);
+      expect(await read({ 'data-env-contrast': 'standard' }), `${scheme}: opted out`).toEqual(
+        standard,
+      );
+    }
+  });
 });
