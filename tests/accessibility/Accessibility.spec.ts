@@ -10,7 +10,7 @@
  * specimen's heading, sidebar, header…) and the element's tag with its env-/docs- classes, counted.
  * React ids and child positions are left out so unrelated edits do not move the keys.
  */
-import { test, type Page, type TestInfo } from '@playwright/test';
+import { expect, test, type Page, type TestInfo } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { mkdirSync, readFileSync, rmdirSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -107,16 +107,24 @@ async function settle(page: Page) {
     .getByText(/^Loading .*…$/)
     .first()
     .waitFor({ state: 'detached' });
-  await page.evaluate(async () => {
-    await document.fonts.ready;
-    // Theme changes transition colors; contrast measured mid-transition is neither theme's.
-    const finite = document
-      .getAnimations()
-      .filter((animation) =>
-        Number.isFinite(Number(animation.effect?.getComputedTiming().endTime)),
-      );
-    await Promise.all(finite.map((animation) => animation.finished.catch(() => undefined)));
-  });
+  await page.evaluate(() => document.fonts.ready);
+  // Theme changes transition colors; contrast measured mid-transition is neither theme's. The
+  // animations' states are polled rather than their finished promises awaited: Chromium does not
+  // resolve that promise for a transition inside a closed disclosure, though the transition ends.
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          document
+            .getAnimations()
+            .filter(
+              (animation) =>
+                animation.playState === 'running' &&
+                Number.isFinite(Number(animation.effect?.getComputedTiming().endTime)),
+            ).length,
+      ),
+    )
+    .toBe(0);
 }
 
 /** Switches the catalogue to the theme's scheme with its button, under the theme's contrast. */
@@ -236,7 +244,8 @@ function compare(scan: Scan, known: RuleCounts = {}) {
 
 for (const { path, title, routes: pageRoutes } of pages) {
   test(`${title} (${path}) has no new accessibility violations`, async ({ page }, testInfo) => {
-    test.setTimeout(120_000);
+    // Pages scanned in high contrast as well take twice as long.
+    test.setTimeout(240_000);
     const scans: Scan[] = [];
     for (const route of pageRoutes) {
       await page.goto(`${catalogueUrl}/#/${route}`);

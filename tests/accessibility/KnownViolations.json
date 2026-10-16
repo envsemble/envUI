@@ -5,7 +5,17 @@
         "article :: div.env-code-block span": 3
       }
     },
+    "dark-hc": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 3
+      }
+    },
     "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 20
+      }
+    },
+    "light-hc": {
       "color-contrast": {
         "article :: div.env-code-block span": 20
       }
@@ -97,7 +107,17 @@
         "article :: div.env-code-block span": 5
       }
     },
+    "dark-hc": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 5
+      }
+    },
     "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 33
+      }
+    },
+    "light-hc": {
       "color-contrast": {
         "article :: div.env-code-block span": 33
       }
@@ -128,7 +148,17 @@
         "article :: div.env-code-block span": 6
       }
     },
+    "dark-hc": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 6
+      }
+    },
     "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 38
+      }
+    },
+    "light-hc": {
       "color-contrast": {
         "article :: div.env-code-block span": 38
       }
@@ -136,6 +166,11 @@
   },
   "components/checkbox/usage": {
     "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 10
+      }
+    },
+    "light-hc": {
       "color-contrast": {
         "article :: div.env-code-block span": 10
       }
@@ -389,7 +424,17 @@
         "article :: div.env-code-block span": 3
       }
     },
+    "dark-hc": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 3
+      }
+    },
     "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 43
+      }
+    },
+    "light-hc": {
       "color-contrast": {
         "article :: div.env-code-block span": 43
       }
@@ -462,7 +507,17 @@
         "article :: div.env-code-block span": 8
       }
     },
+    "dark-hc": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 8
+      }
+    },
     "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 49
+      }
+    },
+    "light-hc": {
       "color-contrast": {
         "article :: div.env-code-block span": 49
       }
@@ -551,6 +606,11 @@
       "color-contrast": {
         "article :: div.env-code-block span": 25
       }
+    },
+    "light-hc": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 25
+      }
     }
   },
   "components/rating/usage": {
@@ -621,6 +681,11 @@
       "color-contrast": {
         "article :: div.env-code-block span": 27
       }
+    },
+    "light-hc": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 27
+      }
     }
   },
   "components/skeleton/usage": {
@@ -632,6 +697,20 @@
     "light": {
       "color-contrast": {
         "article :: div.env-code-block span": 18
+      }
+    }
+  },
+  "components/slider/preview": {
+    "dark": {
+      "color-contrast": {
+        "Choose a value in a range :: div.env-slider-label": 1,
+        "Choose a value in a range :: output.env-slider-value": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "Choose a value in a range :: div.env-slider-label": 1,
+        "Choose a value in a range :: output.env-slider-value": 1
       }
     }
   },
@@ -703,7 +782,17 @@
         "article :: div.env-markdown-table": 1
       }
     },
+    "dark-hc": {
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
     "light": {
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "light-hc": {
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
       }
@@ -715,7 +804,17 @@
         "article :: div.env-code-block span": 12
       }
     },
+    "dark-hc": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 12
+      }
+    },
     "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 22
+      }
+    },
+    "light-hc": {
       "color-contrast": {
         "article :: div.env-code-block span": 22
       }
@@ -728,7 +827,19 @@
         "Textarea states :: button.env-textarea-resize-edge": 3
       }
     },
+    "dark-hc": {
+      "target-size": {
+        "Appearances :: button.env-textarea-resize-edge": 1,
+        "Textarea states :: button.env-textarea-resize-edge": 3
+      }
+    },
     "light": {
+      "target-size": {
+        "Appearances :: button.env-textarea-resize-edge": 1,
+        "Textarea states :: button.env-textarea-resize-edge": 3
+      }
+    },
+    "light-hc": {
       "target-size": {
         "Appearances :: button.env-textarea-resize-edge": 1,
         "Textarea states :: button.env-textarea-resize-edge": 3
@@ -741,7 +852,17 @@
         "article :: button.env-textarea-resize-edge": 1
       }
     },
+    "dark-hc": {
+      "target-size": {
+        "article :: button.env-textarea-resize-edge": 1
+      }
+    },
     "light": {
+      "target-size": {
+        "article :: button.env-textarea-resize-edge": 1
+      }
+    },
+    "light-hc": {
       "target-size": {
         "article :: button.env-textarea-resize-edge": 1
       }
@@ -753,7 +874,17 @@
         "article :: div.env-code-block span": 2
       }
     },
+    "dark-hc": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 2
+      }
+    },
     "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 30
+      }
+    },
+    "light-hc": {
       "color-contrast": {
         "article :: div.env-code-block span": 30
       }
@@ -809,10 +940,50 @@
         "Text fields :: button.env-button.env-button-secondary.docs-swatch": 8
       }
     },
+    "dark-hc": {
+      "label-content-name-mismatch": {
+        "Buttons :: button.env-button.env-button-secondary.docs-swatch": 11,
+        "Cards :: button.env-button.env-button-secondary.docs-swatch": 1,
+        "Checkboxes :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Content & loading :: button.env-button.env-button-secondary.docs-swatch": 2,
+        "Direction links :: button.env-button.env-button-secondary.docs-swatch": 5,
+        "Feedback :: button.env-button.env-button-secondary.docs-swatch": 9,
+        "Navigation :: button.env-button.env-button-secondary.docs-swatch": 5,
+        "Page & surfaces :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Radio :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Rows :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Select options :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Switches :: button.env-button.env-button-secondary.docs-swatch": 5,
+        "Text & focus :: button.env-button.env-button-secondary.docs-swatch": 7,
+        "Text fields :: button.env-button.env-button-secondary.docs-swatch": 8
+      }
+    },
     "light": {
       "color-contrast": {
         "Buttons :: button.env-button.env-button-secondary.docs-swatch code": 1,
+        "Feedback :: button.env-button.env-button-secondary.docs-swatch code": 1,
         "Text fields :: button.env-button.env-button-secondary.docs-swatch code": 1
+      },
+      "label-content-name-mismatch": {
+        "Buttons :: button.env-button.env-button-secondary.docs-swatch": 11,
+        "Cards :: button.env-button.env-button-secondary.docs-swatch": 1,
+        "Checkboxes :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Content & loading :: button.env-button.env-button-secondary.docs-swatch": 2,
+        "Direction links :: button.env-button.env-button-secondary.docs-swatch": 5,
+        "Feedback :: button.env-button.env-button-secondary.docs-swatch": 9,
+        "Navigation :: button.env-button.env-button-secondary.docs-swatch": 5,
+        "Page & surfaces :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Radio :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Rows :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Select options :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Switches :: button.env-button.env-button-secondary.docs-swatch": 5,
+        "Text & focus :: button.env-button.env-button-secondary.docs-swatch": 7,
+        "Text fields :: button.env-button.env-button-secondary.docs-swatch": 8
+      }
+    },
+    "light-hc": {
+      "color-contrast": {
+        "Feedback :: button.env-button.env-button-secondary.docs-swatch code": 1
       },
       "label-content-name-mismatch": {
         "Buttons :: button.env-button.env-button-secondary.docs-swatch": 11,
@@ -835,7 +1006,15 @@
   "foundations/colors/usage": {
     "dark": {
       "color-contrast": {
-        "article :: div.env-code-block span": 1
+        "article :: div.env-code-block span": 2
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "dark-hc": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 2
       },
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
@@ -843,7 +1022,15 @@
     },
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 14
+        "article :: div.env-code-block span": 18
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "light-hc": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 18
       },
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
