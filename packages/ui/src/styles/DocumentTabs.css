@@ -123,7 +123,7 @@
    button always shows, as tall and wide as its tab. */
 @media (pointer: coarse) {
   .env-document-tabs {
-    block-size: calc(var(--control-height-touch) + 0.0625rem);
+    block-size: calc(var(--control-height-touch) + var(--control-border-width));
   }
   .env-document-tab-close {
     inline-size: var(--control-height-touch);

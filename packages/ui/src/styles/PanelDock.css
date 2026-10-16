@@ -389,7 +389,7 @@
   .env-panel-dock {
     /* A chip holds its buttons at the touch height inside its top hairline. */
     --env-panel-dock-chip-height: calc(
-      max(var(--control-height-sm), var(--control-height-touch)) + 0.0625rem
+      max(var(--control-height-sm), var(--control-height-touch)) + var(--control-border-width)
     );
     /* The header's controls grow to the touch height, as every button does. */
     --env-panel-dock-control: max(var(--control-height-sm), var(--control-height-touch));
