@@ -1119,7 +1119,7 @@ export default function transform(file, api, options = {}) {
       printed = printed.replace(
         /^ +/gm,
         (spaces) =>
-          '	'.repeat(Math.floor(spaces.length / tabWidth)) + ' '.repeat(spaces.length % tabWidth),
+          '\t'.repeat(Math.floor(spaces.length / tabWidth)) + ' '.repeat(spaces.length % tabWidth),
       );
     declarationPath.replace(j(printed).find(j.ImportDeclaration).nodes()[0]);
   });
