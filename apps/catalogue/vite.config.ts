@@ -15,7 +15,7 @@ import {
 // browsers keep cached.
 import { tokensVitePlugin } from '../../scripts/BuildTokens.mjs';
 import { createThemeBootstrapScript } from '../../packages/ui/src/foundations/ThemeBootstrap.ts';
-import { displayStorageKeys } from './src/theme/DisplayStorage.ts';
+import { createDisplayBootstrapScript, displayStorageKeys } from './src/theme/DisplayStorage.ts';
 
 /**
  * The revision the catalogue's links to source files point at: the release tag when the build is
@@ -49,12 +49,15 @@ export default defineConfig(({ command, mode }) => {
     },
     plugins: [
       {
-        // The stored theme applies before the catalogue loads, so a dark theme does not flash light.
+        // The stored theme, contrast and scale apply before the catalogue loads, so a dark theme
+        // does not flash light and a compact page does not start at the comfortable size.
         name: 'envui-theme-bootstrap',
         transformIndexHtml: () => [
           {
             tag: 'script',
-            children: createThemeBootstrapScript({ storageKey: displayStorageKeys.theme }),
+            children:
+              createThemeBootstrapScript({ storageKey: displayStorageKeys.theme }) +
+              createDisplayBootstrapScript(),
             injectTo: 'head-prepend',
           },
         ],
