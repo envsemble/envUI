@@ -71,7 +71,8 @@ const hostedBuild = import.meta.env.MODE === 'site';
 
 /**
  * The files of the hosted catalogue behind each part that loads on its own, from the
- * module-files.json that scripts/SiteModuleFiles.mjs writes; null when the connection seems down.
+ * module-files.json that scripts/SiteModuleFiles.mjs writes; null when the connection seems down:
+ * the map is small, so one that hasn't arrived in 15 seconds counts as down.
  */
 async function moduleFiles(): Promise<Record<string, string[]> | null> {
   try {
@@ -102,12 +103,13 @@ export async function reloadPage(modules: readonly string[] = []): Promise<boole
     const map = await moduleFiles();
     if (!map) return false;
     const files = [...new Set(modules.flatMap((module) => map[module] ?? []))];
+    // The map, a small file, has shown the connection is up, so the files take as long as they
+    // need: a large one, such as the icons, may take a while on a slow link.
     const fetched = await Promise.allSettled(
       files.map((file) =>
-        fetch(`${import.meta.env.BASE_URL}${file}`, {
-          cache: 'reload',
-          signal: AbortSignal.timeout(15_000),
-        }).then((response) => response.blob()),
+        fetch(`${import.meta.env.BASE_URL}${file}`, { cache: 'reload' }).then((response) =>
+          response.blob(),
+        ),
       ),
     );
     if (fetched.length && fetched.every(({ status }) => status === 'rejected')) return false;
