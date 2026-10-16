@@ -79,12 +79,6 @@ interface OpenList {
 const liveExample = (page: Page, name: string) =>
   page.locator(`.docs-live-example[data-example="${name}"]`);
 
-/**
- * Each list opens from the keyboard with its trigger focused and the pointer parked, so no hover
- * paints into the shot and the component alone picks the highlighted option: a select or combobox
- * highlights its selected option, a menu its first item and the palette its first result. Each
- * capture checks that highlight before it compares.
- */
 /** Toasts of the variants example, shown in order and captured stacked, with their timers stopped. */
 function toasts(name: string, variants: string[]): OpenList {
   const show = (page: Page, variant: string) =>
@@ -103,6 +97,12 @@ function toasts(name: string, variants: string[]): OpenList {
   };
 }
 
+/**
+ * Each list opens from the keyboard with its trigger focused and the pointer parked, so no hover
+ * paints into the shot and the component alone picks the highlighted option: a select or combobox
+ * highlights its selected option, a menu its first item and the palette its first result. Each
+ * capture checks that highlight before it compares.
+ */
 const openLists: OpenList[] = [
   {
     name: 'select',
