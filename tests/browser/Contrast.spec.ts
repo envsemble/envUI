@@ -18,6 +18,7 @@ import {
   declaredFile,
   formatSnapshot,
   minimumOf,
+  readBaseSnapshot,
   type DeclaredPairs,
 } from '../contrast/Snapshot';
 import { themes, type ContrastTheme } from '../contrast/Themes';
@@ -221,7 +222,14 @@ test.describe('contrast', { tag: '@contrast' }, () => {
         problems.push(`The renamed pair ${entry.from} needs a rationale.`);
     }
     problems.push(...checkRenameTargets(renamed, declared, dropped));
-    // What each pair is held to, against DeclaredPairs.json: see tests/contrast/Snapshot.ts.
+    // What each pair is held to, against DeclaredPairs.json and the base branch's copy of it: see
+    // tests/contrast/Snapshot.ts.
+    const { base, note, problem } = readBaseSnapshot();
+    if (problem) problems.push(problem);
+    if (note) {
+      console.log(note);
+      testInfo.annotations.push({ type: 'note', description: note });
+    }
     const snapshot = checkSnapshot({
       pairs,
       dropped,
@@ -234,6 +242,7 @@ test.describe('contrast', { tag: '@contrast' }, () => {
         : undefined,
       update: ['all', 'changed'].includes(testInfo.config.updateSnapshots),
       ci: Boolean(process.env.CI),
+      base,
     });
     problems.push(...snapshot.problems);
     if (problems.length === 0 && snapshot.write)
@@ -551,6 +560,68 @@ test.describe('contrast', { tag: '@contrast' }, () => {
     expect(run([a], [relaxation, again], tightened.write)).toEqual({
       problems: [expect.stringContaining('relaxes nothing')],
     });
+  });
+
+  test("the base branch's snapshot catches a snapshot edited along with the pairs", () => {
+    const a: ContrastPair = { fg: '--a', bg: ['--b'], kind: 'distinct' };
+    const lowered: ContrastPair = { ...a, minimum: { standard: 0.02 }, rationale: 'Lowered.' };
+    const relaxation: Relaxation = {
+      pair: '--a on --b',
+      kind: 'distinct',
+      minimum: { standard: 0.02, high: 0.04 },
+      rationale: 'Accepted for a reason.',
+    };
+    const common = { dropped: [], renamed: [], themes, pairName, ci: false };
+    const record = (pairs: ContrastPair[], relaxed: Relaxation[], recorded?: DeclaredPairs) =>
+      checkSnapshot({ ...common, pairs, relaxed, recorded, update: true }).write!;
+    const onBase = record([a], []);
+    const base = { label: 'the base snapshot', recorded: onBase };
+    const check = (pairs: ContrastPair[], relaxed: Relaxation[], recorded: DeclaredPairs) =>
+      checkSnapshot({ ...common, pairs, relaxed, recorded, update: false, base }).problems;
+
+    // The snapshot written by hand to match the lowered pair passes against itself alone…
+    const edited = record([lowered], []);
+    expect(
+      checkSnapshot({ ...common, pairs: [lowered], relaxed: [], recorded: edited, update: false })
+        .problems,
+    ).toEqual([]);
+    // …but not against the base.
+    expect(check([lowered], [], edited)).toEqual([
+      expect.stringContaining('is held to less than the base snapshot records'),
+    ]);
+    // A relaxation new since the base accepts it, recorded on the branch or not.
+    const relaxedOnBranch = record([lowered], [relaxation], onBase);
+    expect(check([lowered], [relaxation], relaxedOnBranch)).toEqual([]);
+    // One the base has recorded is spent there, so it can't approve another loosening.
+    const tightenedOnBase = record([a], [relaxation], record([lowered], [relaxation], onBase));
+    const laterBase = { label: 'the base snapshot', recorded: tightenedOnBase };
+    const editedLater = { ...tightenedOnBase, pairs: record([lowered], []).pairs };
+    expect(
+      checkSnapshot({
+        ...common,
+        pairs: [lowered],
+        relaxed: [relaxation],
+        recorded: editedLater,
+        update: false,
+        base: laterBase,
+      }).problems,
+    ).toEqual([expect.stringContaining('is held to less than the base snapshot records')]);
+    // A relaxation recorded on the base can't be deleted from Pairs.ts and the snapshot together.
+    const withoutIt = { ...tightenedOnBase, relaxed: [] };
+    expect(
+      checkSnapshot({
+        ...common,
+        pairs: [a],
+        relaxed: [],
+        recorded: withoutIt,
+        update: false,
+        base: laterBase,
+      }).problems,
+    ).toEqual([expect.stringContaining('is recorded (the base snapshot) but no longer listed')]);
+    // One recorded only on the branch can, along with the loosening it approved.
+    expect(check([a], [], record([a], []))).toEqual([]);
+    // Tightened back on the branch, a spent relaxation may stay as history.
+    expect(check([a], [relaxation], record([a], [relaxation], relaxedOnBranch))).toEqual([]);
   });
 
   // Playwright requires the fixtures object as the first parameter, even when no fixture is used.
