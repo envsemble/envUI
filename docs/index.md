@@ -12,6 +12,8 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 - [Extend the shared library](library-development.md) — Public API changes, changesets, catalogue specimens and acceptance checks.
 
+- [Write a component page](component-pages.md) — The page template, frontmatter, generated props and example files, and how to convert a page.
+
 ## Foundations
 
 - [Colors & themes](foundations/colors.md) — Semantic colors that carry the same purpose across light and dark themes.

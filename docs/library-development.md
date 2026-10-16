@@ -18,9 +18,9 @@ The tokens are data: `packages/ui/tokens` holds them as DTCG 2025.10 `.tokens.js
 
 ## One documentation source
 
-Edit the relevant Markdown page under `docs/`; add a focused page when a new topic needs one. Register it in [the index](index.md) beneath its existing family. Each entry has a title, relative path and one-line purpose. The index defines catalogue grouping and reading order. Page titles must match their index entries.
+Edit the relevant Markdown page under `docs/`; add a focused page when a new topic needs one. Register it in [the index](index.md) beneath its existing family. The index defines catalogue grouping and reading order, and page titles must match their entries. A component page carries its summary and metadata in frontmatter and follows the page template, with examples as files and props generated from the TypeScript declarations: [write a component page](component-pages.md) describes it, and how to convert a page that predates it. Other entries have a title, relative path and one-line purpose.
 
-Update the public-API specimen under `apps/catalogue/src/previews` together with its documentation. Keep examples, behavior and contracts in the Markdown page. The build generates the catalogue's internal TypeScript data from these files and copies documentation into the package; edit the maintained Markdown, not generated files.
+Keep examples, behavior and contracts in the Markdown page and its example files. The build generates the catalogue's internal TypeScript data from these files, and compiles the packaged documentation with the examples and props tables filled in; edit the maintained Markdown, examples and TSDoc, not generated files.
 
 The two skills contain routing and workflow instructions. Move conditional component details into their owning documentation page. Improve that page when integration reveals a gap rather than adding another guide.
 
