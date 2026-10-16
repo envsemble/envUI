@@ -34,10 +34,11 @@
   min-inline-size: var(--control-height);
 }
 
-/* Mixed rows share the regular control size; wrapped labels may increase their height. */
+/* Mixed rows share the regular control size, important buttons too; wrapped labels may increase
+   their height. */
 .env-button-group:where(:has(> .env-button:not(.env-button-important):not([hidden])))
-  > .env-button.env-icon-button {
-  inline-size: var(--control-height);
+  > .env-button-important:not([data-size]) {
+  --control-height: inherit;
 }
 
 .env-button-group > .env-button[hidden] {

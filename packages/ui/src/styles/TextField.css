@@ -365,10 +365,12 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
   border-radius: var(--md-sys-shape-corner-full);
 }
 .env-text-field:not([data-tall]) .env-text-input {
-  /* The well owns the height, including its border, so it matches the button height exactly. */
+  /* The well owns the height, including its border, so it matches the button height exactly; the
+     block padding gives way where a line and the padding would outgrow it. */
   flex: 1 1 auto;
   min-height: 0;
-  padding-block: var(--space-1);
+  /* stylelint-disable-next-line declaration-property-unit-disallowed-list -- the border's two hairlines */
+  padding-block: min(var(--space-1), calc((var(--env-field-height) - 0.125rem - 1lh) / 2));
 }
 /* The label rests at the vertical center and floats into the outline like a tall field's, without
    reserving space above the field, so the field still lines up with adjacent buttons. */

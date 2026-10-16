@@ -383,6 +383,10 @@
 }
 
 @media (pointer: coarse) {
+  /* Chips are rows of the strip, which grow to the touch height. */
+  .env-panel-dock {
+    --env-panel-dock-chip-height: max(var(--control-height-sm), var(--control-height-touch));
+  }
   /* A finger reaches the top edge across a larger band, and the bar always shows. */
   .env-panel-dock-resize {
     inset-block-start: -0.75rem;
