@@ -66,7 +66,7 @@
     },
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 96
+        "article :: div.env-code-block span": 95
       },
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
@@ -84,7 +84,7 @@
     },
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 66
+        "article :: div.env-code-block span": 65
       },
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
@@ -428,7 +428,7 @@
     },
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 44
+        "article :: div.env-code-block span": 43
       }
     }
   },
@@ -440,7 +440,7 @@
     },
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 36
+        "article :: div.env-code-block span": 33
       }
     }
   },
@@ -487,7 +487,7 @@
     },
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 158
+        "article :: div.env-code-block span": 144
       },
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
@@ -514,7 +514,7 @@
     },
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 66
+        "article :: div.env-code-block span": 62
       }
     }
   },
@@ -540,24 +540,24 @@
   "components/nav-list/usage": {
     "dark": {
       "color-contrast": {
-        "article :: div.env-code-block span": 4
+        "article :: div.env-code-block span": 8
       }
     },
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 22
+        "article :: div.env-code-block span": 49
       }
     }
   },
   "components/pager/usage": {
     "dark": {
       "color-contrast": {
-        "article :: div.env-code-block span": 8
+        "article :: div.env-code-block span": 10
       }
     },
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 36
+        "article :: div.env-code-block span": 37
       }
     }
   },
@@ -601,7 +601,7 @@
     },
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 142
+        "article :: div.env-code-block span": 141
       },
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
@@ -712,7 +712,7 @@
   "components/stats/usage": {
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 35
+        "article :: div.env-code-block span": 34
       }
     }
   },
@@ -743,7 +743,7 @@
     },
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 197
+        "article :: div.env-code-block span": 187
       }
     }
   },
@@ -791,18 +791,12 @@
   "components/toasts/usage": {
     "dark": {
       "color-contrast": {
-        "article :: div.env-code-block span": 3
-      },
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
+        "article :: div.env-code-block span": 2
       }
     },
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 49
-      },
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
+        "article :: div.env-code-block span": 30
       }
     }
   },
