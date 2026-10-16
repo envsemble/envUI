@@ -45,7 +45,7 @@
     "tokens:build": "node scripts/BuildTokens.mjs",
     "tokens:check": "node scripts/GeneratePalette.mjs --check && node scripts/BuildTokens.mjs --check",
     "docs:props": "node scripts/ExtractProps.mjs",
-    "docs:check": "node scripts/ExtractProps.mjs --check",
+    "docs:check": "node scripts/ExtractProps.mjs --check && node scripts/GenerateDocumentation.mjs --check",
     "changeset": "changeset",
     "changeset:version": "changeset version && npm install --package-lock-only --ignore-scripts"
   },

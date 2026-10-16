@@ -21,6 +21,7 @@ import { basename, dirname, isAbsolute, posix, relative, resolve } from 'node:pa
 import { fileURLToPath } from 'node:url';
 import { marked } from 'marked';
 import { parse as parseYaml } from 'yaml';
+import { headingsOf } from './MarkdownHeadings.mjs';
 import { writeSearchIndex } from './SearchIndex.mjs';
 
 export const documentationDirectory = fileURLToPath(new URL('../docs/', import.meta.url));
@@ -605,15 +606,23 @@ export function readDocumentation(
       if (!documents.some((entry) => entry.id === id))
         throw new Error(`${document.path} relates to ${id}, which is not an indexed page.`);
     marked.walkTokens(marked.lexer(document.markdown), (token) => {
-      if (token.type !== 'link' || /^(?:[a-z][a-z\d+.-]*:|#)/i.test(token.href)) return;
-      const path = token.href.split('#')[0];
-      const target = resolve(directory, dirname(document.path), path);
-      if (!contained(directory, target) || !existsSync(target))
-        throw new Error(`Broken documentation link in ${document.path}: ${token.href}`);
-      if (
-        !documents.some((entry) => entry.path === relative(directory, target).replaceAll('\\', '/'))
-      )
-        throw new Error(`Documentation link is missing from the index: ${token.href}`);
+      if (token.type !== 'link' || /^[a-z][a-z\d+.-]*:/i.test(token.href)) return;
+      const [path, fragment] = token.href.split('#');
+      let linked = document;
+      if (path) {
+        const target = resolve(directory, dirname(document.path), path);
+        if (!contained(directory, target) || !existsSync(target))
+          throw new Error(`Broken documentation link in ${document.path}: ${token.href}`);
+        linked = documents.find(
+          (entry) => entry.path === relative(directory, target).replaceAll('\\', '/'),
+        );
+        if (!linked) throw new Error(`Documentation link is missing from the index: ${token.href}`);
+      }
+      // A link to a heading names one the page has, by the id the catalogue gives it.
+      if (fragment && !headingsOf(linked.markdown).some(({ id }) => id === fragment))
+        throw new Error(
+          `Broken documentation link in ${document.path}: ${token.href} names no heading of ${linked.path}.`,
+        );
     });
   }
   return documents;
@@ -828,7 +837,13 @@ export function generateDocumentation() {
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  console.log(
-    `Prepared ${generateDocumentation().length} indexed Markdown documents for the catalogue.`,
-  );
+  // --check reads and validates the documentation, its links and headings, and writes nothing.
+  if (process.argv.includes('--check'))
+    console.log(
+      `The ${readDocumentation().length} indexed Markdown documents and their links hold.`,
+    );
+  else
+    console.log(
+      `Prepared ${generateDocumentation().length} indexed Markdown documents for the catalogue.`,
+    );
 }

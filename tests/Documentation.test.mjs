@@ -26,6 +26,17 @@ test('focused Markdown discovery preserves examples and rejects broken documenta
 
     await writeFile(join(fixture, 'button.md'), example + '\n[Missing component](missing.md)\n');
     assert.throws(() => readDocumentation(fixture), /Broken documentation link/);
+    // A link to a heading must name one the page has, as the catalogue gives it its id.
+    await writeFile(join(fixture, 'button.md'), example + '\n[The example](#example)\n');
+    assert.equal(readDocumentation(fixture).length, 2);
+    await writeFile(join(fixture, 'button.md'), example + '\n[An example](#examples)\n');
+    assert.throws(() => readDocumentation(fixture), /names no heading of button\.md/);
+    await writeFile(join(fixture, 'index.md'), index + '\nSee [its example](button.md#example).\n');
+    await writeFile(join(fixture, 'button.md'), example);
+    assert.equal(readDocumentation(fixture).length, 2);
+    await writeFile(join(fixture, 'index.md'), index + '\nSee [its example](button.md#usage).\n');
+    assert.throws(() => readDocumentation(fixture), /names no heading of button\.md/);
+    await writeFile(join(fixture, 'index.md'), index);
     await writeFile(join(fixture, 'button.md'), '# Different title\n');
     assert.throws(() => readDocumentation(fixture), /title differs/);
     await writeFile(join(fixture, 'index.md'), index.replace('button.md', '../outside.md'));
