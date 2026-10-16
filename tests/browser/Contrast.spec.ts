@@ -215,6 +215,8 @@ test.describe('contrast', { tag: '@contrast' }, () => {
     expect(problems.length, problems.join('\n')).toBe(0);
   });
 
+  // Playwright requires the fixtures object as the first parameter, even when no fixture is used.
+  // eslint-disable-next-line no-empty-pattern
   test('every pair measured below the WCAG minimum, or not at all, says why', async ({}, testInfo) => {
     const lines = [
       ...pairs
