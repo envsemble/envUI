@@ -3,7 +3,7 @@
 // so parallel tasks don't interleave. A summary with each task's time closes the run.
 import { spawn } from 'node:child_process';
 import { availableParallelism } from 'node:os';
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
 import { repositoryRoot } from './TestScope.mjs';
 
 export const cores = availableParallelism();
@@ -33,7 +33,17 @@ export const bin = {
   tsc: [node, resolve(repositoryRoot, 'node_modules/typescript/bin/tsc')],
   playwright: [node, resolve(repositoryRoot, 'node_modules/@playwright/test/cli.js')],
   node: [node],
-  npm: process.platform === 'win32' ? ['npm.cmd'] : ['npm'],
+  // npm's own script, so no shell runs in between: the one running this script, or Node's.
+  npm: [
+    node,
+    process.env.npm_execpath?.endsWith('.js')
+      ? process.env.npm_execpath
+      : resolve(
+          dirname(node),
+          process.platform === 'win32' ? '' : '../lib',
+          'node_modules/npm/bin/npm-cli.js',
+        ),
+  ],
 };
 
 /**
@@ -55,7 +65,6 @@ export function runTask(item) {
       cwd: repositoryRoot,
       env: { ...process.env, FORCE_COLOR: color ? '1' : '0', ...item.env },
       stdio: ['ignore', 'pipe', 'pipe'],
-      shell: process.platform === 'win32' && command.endsWith('.cmd'),
     });
     let output = '';
     const collect = (chunk) => {
