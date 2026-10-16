@@ -122,6 +122,7 @@ A run is **confined by its environment and audited afterwards. It is not sandbox
 - **No sandbox for Claude Code.** `--dangerously-skip-permissions` lets it read and run anything the user can. Nothing stops it from finding the source checkout by searching the disk.
 - **Codex's `workspace-write` sandbox limits writes only.** Codex can write to the workspace, the npm cache and its temp folder, and still read the whole disk.
 - **Logins and user state.** Claude Code still creates a folder per workspace under `~/.claude/projects/` (with `--no-session-persistence`, no session is kept in it).
+- **Processes and ports.** Runs share the machine. An agent can stop any process the user can, and parallel runs can start dev servers on the same port. In the first hard-fixture baseline, a Claude Code run cleaned up with `taskkill /F /IM node.exe`, which stopped every Node process on the machine, the runner included.
 
 #### The isolation audit
 
@@ -131,6 +132,7 @@ Because the confinement is not a sandbox, every run's `transcript.jsonl`, `stder
 - the folder name of a worktree of the repository;
 - a path given with `--audit-path`;
 - another run: its workspace, its temp folder, the logs, the list of temp folders or the run's own files such as `records.json`. A scratch folder an agent makes next to its own temp folder, say for a browser check, is not another run's.
+- a command that stops processes by name across the machine, such as `taskkill /F /IM node.exe` or `Stop-Process -Name node`. Stopping a process by its id or port doesn't count.
 
 The main checkout's name, `envUI`, is also a folder inside the installed package (`assets/envUI`), so it counts only as part of the paths above.
 

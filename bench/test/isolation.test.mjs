@@ -88,6 +88,23 @@ describe('isolation audit', () => {
       assert.equal(scan(text).escaped, true, text);
   });
 
+  it('flags stopping processes by name across the machine, not by id or port', () => {
+    for (const command of [
+      'taskkill //F //IM node.exe >/dev/null 2>&1',
+      'taskkill /F /IM node.exe',
+      'Stop-Process -Name node -Force',
+      'Get-Process node | Stop-Process -Force',
+    ])
+      assert.equal(scan(`{"command":"${command}"}`).escaped, true, command);
+    for (const command of [
+      'taskkill /PID 4242 /T /F',
+      'Get-NetTCPConnection -LocalPort 5180 -State Listen | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }',
+      'Get-Process -Id 4242 | Stop-Process',
+      'kill %1',
+    ])
+      assert.equal(scan(`{"command":"${command}"}`).escaped, false, command);
+  });
+
   it('keeps a wrapped line in its own workspace path', () => {
     const own = join(runDir, 'codex-inline-notice');
     const wrapped = `${json(own).slice(0, -4)}\\r\\n${json(own).slice(-4)}\\\\node_modules`;

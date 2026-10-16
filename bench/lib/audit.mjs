@@ -29,12 +29,28 @@ function checkoutNames(repoDir) {
 }
 
 /**
+ * Commands that stop processes by name across the whole machine, such as
+ * `taskkill /F /IM node.exe`: they kill the runner, the other runs and their dev servers. Stopping
+ * a process by its id or port is not counted. Git Bash on Windows has no pkill or killall.
+ */
+const machineWideKills = [
+  /\btaskkill(?:\.exe)?\b[^\n"]{0,60}?(?:^|\s)[/-]{1,2}IM\b/im,
+  /\bStop-Process\b[^\n"|;]{0,80}?-(?:Process)?Name\b/i,
+  /\b(?:Get-Process|gps|ps)\s+(?!-Id\b)[\w.*-]+[^\n"|;]{0,40}\|\s*(?:Stop-Process|kill|spps)\b/i,
+  ...(process.platform === 'win32' ? [] : [/\b(?:pkill|killall)\s/]),
+];
+
+/**
  * What an agent's transcript must not mention: the source checkout and the folder it sits in,
- * the checkouts' folder names, extra paths such as the user's notes, and the other runs of the
- * same benchmark (their workspaces, temp folders and logs).
+ * the checkouts' folder names, extra paths such as the user's notes, the other runs of the same
+ * benchmark (their workspaces, temp folders and logs), and commands that stop processes by name
+ * across the machine.
  */
 export function auditMarkers({ repoDir, runDir, jobNames = [], extraPaths = [] }) {
-  const markers = [];
+  const markers = machineWideKills.map((regex) => ({
+    label: 'stops processes by name across the machine',
+    regex,
+  }));
   const roots = new Set([dirname(resolve(repoDir))]);
   // The checkout's top-level folder, such as C:\Dev, unless it also holds the user profile or the
   // temp folder: C:\Users would match every workspace.
