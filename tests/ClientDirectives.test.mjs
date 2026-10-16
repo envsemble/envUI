@@ -5,7 +5,7 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { libraryModules } from '../scripts/ClientModules.mjs';
+import { clientReasonsOf, libraryModules } from '../scripts/ClientModules.mjs';
 
 // envUI and React Server Components: each module that uses client-only React APIs starts with
 // 'use client', the entry points carry no directive, the build keeps the directives where they
@@ -36,6 +36,53 @@ test("every module that uses client-only APIs, and only such a module, says 'use
   }
   // Menu.Item is a part of a client module; the Menu namespace is an `export * as` in the entry.
   assert.ok(modules.find(({ file }) => file === 'navigation/Menu.tsx').client);
+});
+
+test('the check sees what makes a module a client module, also by name and through types', () => {
+  const cases = [
+    // Handlers the module makes, passed by name, through a spread or to createElement.
+    [
+      'export function A() { const focus = () => {}; return <span onMouseDown={focus} />; }',
+      ['passes a function to onMouseDown'],
+    ],
+    [
+      'function focus() {}\nexport function A() { return <span onMouseDown={focus} />; }',
+      ['passes a function to onMouseDown'],
+    ],
+    [
+      "import { createElement } from 'react';\nexport const B = () => createElement('button', { onClick: () => {} });",
+      ['passes a function to createElement'],
+    ],
+    [
+      'export function C() { const handlers = { onClick() {} }; return <button {...handlers} />; }',
+      ['spreads a function into button'],
+    ],
+    // Client-only calls, also under another name.
+    [
+      "import { createPortal } from 'react-dom';\nexport const D = ({ c }: { c: any }) => createPortal(c, document.body);",
+      ['calls createPortal'],
+    ],
+    [
+      "import { useState as state } from 'react';\nexport function E() { const [value] = state(0); return <i>{value}</i>; }",
+      ['calls useState as state'],
+    ],
+    // A comment gives a reason the reading cannot see.
+    [
+      '// @client-module The editor reads the DOM when it loads.\nexport const value = 1;',
+      ['is marked @client-module: The editor reads the DOM when it loads.'],
+    ],
+    // What a server parent may pass on, and functions made only when it passed one, are not.
+    [
+      'export function F({ onClick, ...props }: { onClick?: () => void }) { return <button onClick={onClick} {...props} />; }',
+      [],
+    ],
+    [
+      'export function G({ onPick }: { onPick?: (id: number) => void }) { const pick = onPick && (() => onPick(1)); return <button onClick={pick} />; }',
+      [],
+    ],
+    ['export const H = ({ label }: { label: string }) => <b title={label}>{label}</b>;', []],
+  ];
+  for (const [source, reasons] of cases) assert.deepEqual(clientReasonsOf(source), reasons, source);
 });
 
 test('the build keeps each directive at the top of its module, and adds none', async () => {
@@ -69,11 +116,18 @@ test('a server component imports envUI and renders it on the server', () => {
   assert.equal(result.themeBootstrapScript, 'string');
   assert.equal(result.bootstrapEntryScript, 'string');
   assert.equal(result.relativeTime, '3 hours ago');
+  assert.deepEqual(result.diffLines, { result: { additions: 2, deletions: 1 } });
+  assert.ok(
+    result.richTextExtensions.result?.includes('envReference'),
+    result.richTextExtensions.error,
+  );
   for (const [entry, survey] of Object.entries(result.surveys)) {
     assert.deepEqual(survey.failed, [], `${entry}: every server component renders on the server`);
     assert.ok(survey.client.length > 0, `${entry} has client components`);
   }
   const main = result.surveys['@envsemble/envui'];
+  // Each server component renders with its documented variants too: pending, href, icon-only…
+  assert.ok(main.renders > main.server.length * 2, `${main.renders} renders`);
   for (const name of ['Badge', 'Card', 'Text', 'Button', 'Alert', 'List.Item', 'Stat.Root'])
     assert.ok(main.server.includes(name), `${name} renders on the server`);
   for (const name of ['Menu.Item', 'Theme', 'Dialog', 'Table.Root', 'useToast'])
@@ -82,5 +136,10 @@ test('a server component imports envUI and renders it on the server', () => {
   const page = JSON.stringify(result.page);
   assert.match(page, /"client":"navigation\/Menu\.js#Item"/);
   assert.match(page, /"client":"icons\/Home\.js#Home"/);
+  // A pending Button hands ActionElement a boolean, not a click handler.
+  assert.match(
+    page,
+    /"client":"internal\/ActionElement\.js#ActionElement","props":\{"pending":true/,
+  );
   assert.match(page, /"element":"div","props":\{"role":"status","className":"env-alert"/);
 });
