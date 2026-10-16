@@ -91,7 +91,7 @@ export function CodeDiff({
   style,
   ...props
 }: CodeDiffProps) {
-  const theme = useTheme();
+  const { theme } = useTheme();
   const lang = language ?? languageOf(filename);
   const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);

@@ -1,7 +1,8 @@
 /**
  * Visual baseline: screenshots of today's identity, so that later changes are deliberate and
  * reviewed as image diffs. Every catalogue page's preview specimens and forced interaction states
- * are captured in both themes, and so are the density specimens of the test fixture.
+ * are captured in both themes, and the pages of highContrastPages (CatalogueThemes.ts) in high
+ * contrast as well; so are the density specimens of the test fixture, and a few lists captured open.
  *
  * Fonts and anti-aliasing differ between systems, so the baseline renders only in the Linux
  * Playwright image: `npm run test:visual` checks it, `npm run test:visual:update` rewrites it.
@@ -12,13 +13,26 @@
 import { existsSync, readdirSync, rmSync, type Dirent } from 'node:fs';
 import { join, posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { test, expect, type Locator, type Page, type TestInfo } from '@playwright/test';
+import {
+  test,
+  expect,
+  type ElementHandle,
+  type Locator,
+  type Page,
+  type TestInfo,
+} from '@playwright/test';
 import { catalogueUrl, fixtureUrl } from '../browser/Servers';
+import {
+  allThemes,
+  emulateContrast,
+  themesFor,
+  type CatalogueTheme,
+} from '../browser/CatalogueThemes';
 import { densitySectionNames } from '../fixture/DensitySections';
 import { referencePages } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
 
-type Theme = 'light' | 'dark';
-const themes: Theme[] = ['light', 'dark'];
+/** The density fixture's themes, which its boundaries take from the address. */
+const densityThemes = ['light', 'dark'] as const;
 /** Relative times, calendars and generated activity are drawn against this moment. */
 const now = new Date('2026-03-04T10:00:00Z');
 const snapshots = fileURLToPath(new URL('./snapshots/', import.meta.url));
@@ -30,6 +44,101 @@ const stateMatrices: Record<string, string[]> = {
   button: ['Button'],
   'nav-list': ['Navigation item'],
 };
+
+/** A list the baseline captures open, beside its trigger, from a catalogue specimen or example. */
+interface OpenList {
+  /** Names the snapshot after its theme: open/<theme>-<name>.png. */
+  name: string;
+  /** The catalogue page and view that show the list. */
+  route: string;
+  /** The control that opens the list. */
+  trigger: (page: Page) => Locator;
+  /** The key that opens the list from the focused trigger. */
+  key: string;
+  /** The open popup: the listbox, menu or dialog. */
+  popup: (page: Page) => Locator;
+  /** The option or item highlighted as the list opens from the keyboard. */
+  highlighted: string;
+  /** A modal palette covers the page, so its capture leaves the trigger out. */
+  withTrigger: boolean;
+}
+
+const specimen = (page: Page, title: string) =>
+  page.locator('.docs-specimen', {
+    has: page.getByRole('heading', { name: title, exact: true, level: 3 }),
+  });
+const liveExample = (page: Page, name: string) =>
+  page.locator(`.docs-live-example[data-example="${name}"]`);
+
+/**
+ * Each list opens from the keyboard with its trigger focused and the pointer parked, so no hover
+ * paints into the shot and the component alone picks the highlighted option: a select or combobox
+ * highlights its selected option, a menu its first item and the palette its first result. Each
+ * capture checks that highlight before it compares.
+ */
+const openLists: OpenList[] = [
+  {
+    name: 'select',
+    route: 'components/select/preview',
+    trigger: (page) => page.getByRole('combobox', { name: 'Visibility', exact: true }),
+    key: 'Space',
+    popup: (page) => page.getByRole('listbox'),
+    // Team is selected; Public is a disabled option below it.
+    highlighted: 'Team',
+    withTrigger: true,
+  },
+  {
+    name: 'select-compact',
+    route: 'components/select/preview',
+    trigger: (page) => page.getByRole('combobox', { name: 'Zoom', exact: true }),
+    key: 'Space',
+    popup: (page) => page.getByRole('listbox'),
+    highlighted: '100%',
+    withTrigger: true,
+  },
+  {
+    name: 'combobox',
+    route: 'components/combobox/preview',
+    trigger: (page) =>
+      specimen(page, 'One person').getByRole('combobox', { name: 'Owner', exact: true }),
+    key: 'ArrowDown',
+    popup: (page) => page.getByRole('listbox'),
+    highlighted: 'Alex Morgan',
+    withTrigger: true,
+  },
+  {
+    name: 'menu',
+    route: 'components/menu/overview',
+    trigger: (page) =>
+      liveExample(page, 'IconsAndShortcuts').getByRole('button', {
+        name: 'More actions',
+        exact: true,
+      }),
+    key: 'ArrowDown',
+    popup: (page) => page.getByRole('menu', { name: 'Report actions', exact: true }),
+    highlighted: 'Rename',
+    withTrigger: true,
+  },
+  {
+    name: 'menu-choices',
+    route: 'components/menu/overview',
+    trigger: (page) =>
+      liveExample(page, 'Choices').getByRole('button', { name: 'View', exact: true }),
+    key: 'ArrowDown',
+    popup: (page) => page.getByRole('menu', { name: 'View options', exact: true }),
+    highlighted: 'Name',
+    withTrigger: true,
+  },
+  {
+    name: 'command-palette',
+    route: 'components/command-palette/preview',
+    trigger: (page) => page.getByRole('button', { name: 'Go to document', exact: true }),
+    key: 'Enter',
+    popup: (page) => page.getByRole('dialog', { name: 'Go to document', exact: true }),
+    highlighted: 'Billing decisions.md',
+    withTrigger: false,
+  },
+];
 
 test.skip(
   process.env.ENVUI_VISUAL !== 'docker',
@@ -46,21 +155,36 @@ function slug(text: string) {
   );
 }
 
+/**
+ * Waits until no finite animation is running. It polls each animation's state rather than awaiting
+ * its finished promise: Chromium does not resolve that promise for a transition inside a closed
+ * disclosure, such as a theme change's under the interaction states, though the transition ends.
+ */
+async function finishAnimations(page: Page) {
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          document
+            .getAnimations()
+            .filter(
+              (animation) =>
+                animation.playState === 'running' &&
+                Number.isFinite(Number(animation.effect?.getComputedTiming().endTime)),
+            ).length,
+      ),
+    )
+    .toBe(0);
+}
+
 /** Wait until fonts, lazy content and finite animations have finished. */
 async function settle(page: Page) {
   await page
     .getByText(/^Loading .*…$/)
     .first()
     .waitFor({ state: 'detached' });
-  await page.evaluate(async () => {
-    await document.fonts.ready;
-    const finite = document
-      .getAnimations()
-      .filter((animation) =>
-        Number.isFinite(Number(animation.effect?.getComputedTiming().endTime)),
-      );
-    await Promise.all(finite.map((animation) => animation.finished.catch(() => undefined)));
-  });
+  await page.evaluate(() => document.fonts.ready);
+  await finishAnimations(page);
   // envUI ships its own Inter; a fallback face would make every text specimen drift.
   expect(
     await page.evaluate(() =>
@@ -79,10 +203,13 @@ async function press(page: Page, control: Locator) {
   await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
 }
 
-async function setTheme(page: Page, theme: Theme) {
-  if ((await page.locator('.docs-app').getAttribute('data-env-theme')) !== theme)
-    await press(page, page.getByRole('button', { name: `Switch to ${theme} theme`, exact: true }));
-  await page.locator(`.docs-app[data-env-theme="${theme}"]`).waitFor();
+/** Switches the catalogue to the theme's scheme with its button, under the theme's contrast. */
+async function setTheme(page: Page, theme: CatalogueTheme) {
+  await emulateContrast(page, theme);
+  const { scheme } = theme;
+  if ((await page.locator('.docs-app').getAttribute('data-env-theme')) !== scheme)
+    await press(page, page.getByRole('button', { name: `Switch to ${scheme} theme`, exact: true }));
+  await page.locator(`.docs-app[data-env-theme="${scheme}"]`).waitFor();
 }
 
 /** Names unique within a page: repeated titles get a counter. */
@@ -102,6 +229,40 @@ function namer() {
 async function capture(locator: Locator, path: string[]) {
   await locator.page().evaluate(() => window.scrollTo(0, 0));
   await expect.soft(locator).toHaveScreenshot(path);
+}
+
+/** Waits until open popups have finished growing in, so their boxes have their final size. */
+async function settlePopups(page: Page) {
+  await expect(page.locator('[data-starting-style]')).toHaveCount(0);
+  // The transition starts in the frame after the starting style is removed.
+  await page.evaluate(
+    () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+  );
+  await finishAnimations(page);
+}
+
+/** The viewport area around the elements, with room for their shadows. */
+async function around(page: Page, elements: (Locator | ElementHandle)[]) {
+  const boxes = await Promise.all(
+    elements.map(async (element) => {
+      const box = await element.boundingBox();
+      if (!box) throw new Error(`${element} has no box`);
+      return box;
+    }),
+  );
+  const margin = 24;
+  const viewport = page.viewportSize()!;
+  const left = Math.max(0, Math.floor(Math.min(...boxes.map((box) => box.x)) - margin));
+  const top = Math.max(0, Math.floor(Math.min(...boxes.map((box) => box.y)) - margin));
+  const right = Math.min(
+    viewport.width,
+    Math.ceil(Math.max(...boxes.map((box) => box.x + box.width)) + margin),
+  );
+  const bottom = Math.min(
+    viewport.height,
+    Math.ceil(Math.max(...boxes.map((box) => box.y + box.height)) + margin),
+  );
+  return { x: left, y: top, width: right - left, height: bottom - top };
 }
 
 function updating(testInfo: TestInfo) {
@@ -148,7 +309,7 @@ test.describe('catalogue', () => {
       await page.clock.setFixedTime(now);
       await page.goto(`${catalogueUrl}/#/${path}/${visited[0]}`);
       await page.locator('.docs-reference-tabs').waitFor();
-      for (const theme of themes) {
+      for (const theme of themesFor(path)) {
         await setTheme(page, theme);
         const name = namer();
         let specimens = 0;
@@ -168,13 +329,13 @@ test.describe('catalogue', () => {
               .locator(':scope > h2, :scope > .docs-example-heading > h2, summary, h3')
               .first();
             const title = (await heading.count()) ? await heading.textContent() : '';
-            await take(example, `${theme}-${name(slug(title ?? ''))}.png`);
+            await take(example, `${theme.name}-${name(slug(title ?? ''))}.png`);
             specimens++;
           }
           // Example files, rendered live, are named after their file.
           for (const example of await page.locator('.docs-live-example[data-example]').all()) {
             const file = (await example.getAttribute('data-example')) ?? '';
-            await take(example, `${theme}-${name(`example-${slug(file)}`)}.png`);
+            await take(example, `${theme.name}-${name(`example-${slug(file)}`)}.png`);
             specimens++;
           }
           // The forced hover, pressed, focus and disabled states of InteractionStates.ts, which
@@ -191,17 +352,17 @@ test.describe('catalogue', () => {
             const summary = matrix.locator('xpath=ancestor::details[1]/summary');
             const closed = (await summary.count()) > 0 && !(await matrix.isVisible());
             if (closed) await press(page, summary);
-            await take(matrix, `${theme}-states-${name(slug(label))}.png`);
+            await take(matrix, `${theme.name}-states-${name(slug(label))}.png`);
             if (closed) {
               await press(page, summary);
               await expect(matrix).toBeHidden();
             }
           }
         }
-        expect(specimens, `The ${theme} page shows at least one specimen`).toBeGreaterThan(0);
+        expect(specimens, `The ${theme.name} page shows at least one specimen`).toBeGreaterThan(0);
         expect(
           matrices.sort(),
-          `The ${theme} page shows the interaction states listed in stateMatrices`,
+          `The ${theme.name} page shows the interaction states listed in stateMatrices`,
         ).toEqual([...(stateMatrices[reference.id] ?? [])].sort());
       }
       reconcile(testInfo, directory, recorded, taken);
@@ -213,7 +374,7 @@ test.describe('density', () => {
   // The mixed desktop view is 80 rem wide; the evidence it reproduces used the same viewport.
   test.use({ viewport: { width: 1440, height: 1000 } });
   for (const section of densitySectionNames) {
-    for (const theme of themes) {
+    for (const theme of densityThemes) {
       test(`${section} (${theme})`, async ({ page }) => {
         await page.clock.setFixedTime(now);
         await page.goto(`${fixtureUrl}/?fixture=density&section=${section}&theme=${theme}`);
@@ -228,21 +389,69 @@ test.describe('density', () => {
   }
 });
 
+test.describe('open lists', () => {
+  for (const list of openLists) {
+    for (const theme of allThemes) {
+      test(`${list.name} (${theme.name})`, async ({ page }) => {
+        await page.clock.setFixedTime(now);
+        await page.goto(`${catalogueUrl}/#/${list.route}`);
+        await page.locator('.docs-reference-tabs').waitFor();
+        await setTheme(page, theme);
+        await settle(page);
+        // A modal popup hides the rest of the page from role queries, so the trigger is held as
+        // an element to measure once the list is open.
+        const trigger = await list.trigger(page).elementHandle();
+        if (!trigger) throw new Error(`No trigger for the ${list.name} list`);
+        await trigger.evaluate((element) =>
+          element.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' }),
+        );
+        await page.mouse.move(0, 0);
+        await trigger.focus();
+        await page.keyboard.press(list.key);
+        const popup = list.popup(page);
+        await expect(popup).toBeVisible();
+        await settlePopups(page);
+        // Options pass data-highlighted on to their parts, such as a radio item's indicator.
+        const highlighted = popup.locator(
+          '[data-highlighted]:not([data-highlighted] [data-highlighted])',
+        );
+        await expect(highlighted).toHaveCount(1);
+        await expect(highlighted).toContainText(list.highlighted);
+        await expect(page).toHaveScreenshot(['open', `${theme.name}-${list.name}.png`], {
+          clip: await around(page, list.withTrigger ? [trigger, popup] : [popup]),
+        });
+      });
+    }
+  }
+});
+
 // Playwright requires the fixtures object as the first parameter, even when no fixture is used.
 // eslint-disable-next-line no-empty-pattern
-test('every snapshot folder belongs to a catalogue page or a density section', async ({}, testInfo) => {
+test('every snapshot folder belongs to a catalogue page, a density section or an open list', async ({}, testInfo) => {
   const pages = new Set(referencePages.map(({ reference }) => reference.id));
   const density = new Set(
-    densitySectionNames.flatMap((section) => themes.map((theme) => `${theme}-${section}.png`)),
+    densitySectionNames.flatMap((section) =>
+      densityThemes.map((theme) => `${theme}-${section}.png`),
+    ),
   );
+  const open = new Set(
+    openLists.flatMap((list) => allThemes.map((theme) => `${theme.name}-${list.name}.png`)),
+  );
+  // A folder no capture has written yet holds nothing stale.
   const stale = (folder: string, belongs: (entry: Dirent) => boolean) =>
-    readdirSync(join(snapshots, folder), { withFileTypes: true })
-      .filter((entry) => !belongs(entry))
-      .map((entry) => posix.join(folder, entry.name));
+    existsSync(join(snapshots, folder))
+      ? readdirSync(join(snapshots, folder), { withFileTypes: true })
+          .filter((entry) => !belongs(entry))
+          .map((entry) => posix.join(folder, entry.name))
+      : [];
   const unused = [
-    ...stale('', (entry) => entry.isDirectory() && ['catalogue', 'density'].includes(entry.name)),
+    ...stale(
+      '',
+      (entry) => entry.isDirectory() && ['catalogue', 'density', 'open'].includes(entry.name),
+    ),
     ...stale('catalogue', (entry) => entry.isDirectory() && pages.has(entry.name)),
     ...stale('density', (entry) => entry.isFile() && density.has(entry.name)),
+    ...stale('open', (entry) => entry.isFile() && open.has(entry.name)),
   ];
   if (updating(testInfo)) {
     for (const path of unused) rmSync(join(snapshots, path), { recursive: true });

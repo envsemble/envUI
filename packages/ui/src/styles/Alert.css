@@ -1,7 +1,10 @@
 /* Alerts: an inline banner tinted with its tone. Text stays primary; the icon carries the tone. */
 .env-alert {
-  --env-alert-tone: var(--color-tone-accent);
+  --env-alert-tone: var(--color-fg-accent);
   --env-alert-tint: var(--color-bg-accent-muted);
+  --env-alert-edge: var(--color-border-accent-muted);
+  --env-alert-hover: var(--color-bg-accent-subtle-hover);
+  --env-alert-pressed: var(--color-bg-accent-subtle-pressed);
   box-sizing: border-box;
   min-inline-size: 0;
   display: grid;
@@ -9,7 +12,7 @@
   align-items: start;
   gap: var(--space-3);
   padding: var(--space-4);
-  border: 0.0625rem solid color-mix(in srgb, var(--env-alert-tone) 28%, transparent);
+  border: 0.0625rem solid var(--env-alert-edge);
   border-radius: var(--md-sys-shape-corner-large);
   background: var(--env-alert-tint);
   color: var(--color-text-primary);
@@ -17,16 +20,25 @@
   overflow-wrap: anywhere;
 }
 .env-alert[data-tone='success'] {
-  --env-alert-tone: var(--color-tone-success);
+  --env-alert-tone: var(--color-fg-success);
   --env-alert-tint: var(--color-bg-success-muted);
+  --env-alert-edge: var(--color-border-success-muted);
+  --env-alert-hover: var(--color-bg-success-subtle-hover);
+  --env-alert-pressed: var(--color-bg-success-subtle-pressed);
 }
 .env-alert[data-tone='warning'] {
-  --env-alert-tone: var(--color-tone-warning);
+  --env-alert-tone: var(--color-fg-warning);
   --env-alert-tint: var(--color-bg-warning-muted);
+  --env-alert-edge: var(--color-border-warning-muted);
+  --env-alert-hover: var(--color-bg-warning-subtle-hover);
+  --env-alert-pressed: var(--color-bg-warning-subtle-pressed);
 }
 .env-alert[data-tone='error'] {
-  --env-alert-tone: var(--color-tone-danger);
+  --env-alert-tone: var(--color-fg-danger);
   --env-alert-tint: var(--color-bg-danger-muted);
+  --env-alert-edge: var(--color-border-danger-muted);
+  --env-alert-hover: var(--color-bg-danger-subtle-hover);
+  --env-alert-pressed: var(--color-bg-danger-subtle-pressed);
 }
 .env-alert-icon {
   grid-column: 1;
@@ -71,10 +83,10 @@
 }
 /* Hover and press tint the circle with the tone instead of the text button's link colors. */
 .env-alert-dismiss.env-button.env-icon-button:hover:not(:disabled):not([aria-disabled='true']) {
-  background: color-mix(in srgb, var(--env-alert-tone) 14%, transparent);
+  background: var(--env-alert-hover);
   color: var(--env-alert-tone);
 }
 .env-alert-dismiss.env-button.env-icon-button:active:not(:disabled):not([aria-disabled='true']) {
-  background: color-mix(in srgb, var(--env-alert-tone) 22%, transparent);
+  background: var(--env-alert-pressed);
   color: var(--env-alert-tone);
 }

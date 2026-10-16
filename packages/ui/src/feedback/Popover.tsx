@@ -72,7 +72,7 @@ export function Popover({
     <BasePopover.Root open={open} onOpenChange={(next) => setOpen(next)}>
       <BasePopover.Trigger render={trigger} />
       <BasePopover.Portal>
-        <Theme theme={theme} className="env-popover-theme">
+        <Theme {...theme} className="env-popover-theme">
           <BasePopover.Positioner
             side={side}
             align={align}

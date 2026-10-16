@@ -71,7 +71,7 @@ export function HoverCard({
         onFocus={openOnKeyboardFocus}
       />
       <BasePreviewCard.Portal>
-        <Theme theme={theme} className="env-popover-theme">
+        <Theme {...theme} className="env-popover-theme">
           <BasePreviewCard.Positioner
             side={side}
             align={align}

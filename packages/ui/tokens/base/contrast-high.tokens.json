@@ -6,9 +6,13 @@
     "color": {
       "bg": {
         "selected": {
-          "$root": { "$value": "{palette.blue.4}" },
+          "$root": { "$value": "{palette.blue.6}" },
           "hover": { "$value": "{palette.blue.8}" },
           "pressed": { "$value": "{palette.blue.10}" }
+        },
+        "navigation": {
+          "hover": { "$value": "{palette.slate.8}" },
+          "pressed": { "$value": "{palette.slate.10}" }
         },
         "page": {
           "hover": { "$value": "{palette.neutral.4}" },
@@ -27,6 +31,7 @@
           "pressed": { "$value": "{palette.neutral.8}" }
         },
         "popup": {
+          "$root": { "$value": "{palette.neutral.0}" },
           "hover": { "$value": "{palette.neutral.4}" },
           "pressed": { "$value": "{palette.neutral.8}" }
         },
@@ -108,9 +113,9 @@
             }
           },
           "strong": {
-            "$root": { "$value": "{palette.green.75}" },
-            "hover": { "$value": "{palette.green.80}" },
-            "pressed": { "$value": "{palette.green.84}" }
+            "$root": { "$value": "{palette.teal.75}" },
+            "hover": { "$value": "{palette.teal.80}" },
+            "pressed": { "$value": "{palette.teal.84}" }
           }
         },
         "warning": {
@@ -205,7 +210,11 @@
           "hover": { "$value": "{palette.red.84}" },
           "pressed": { "$value": "{palette.red.88}" }
         },
-        "focus": { "$value": "{palette.blue.65}" }
+        "focus": { "$value": "{palette.blue.65}" },
+        "scrim": {
+          "$description": "The edge of a dialog against the scrim: 4.5:1 against the gray of the page under the scrim, which only near-black reaches in light.",
+          "$value": "{palette.neutral.96}"
+        }
       }
     }
   }

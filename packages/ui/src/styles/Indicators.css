@@ -57,6 +57,8 @@
 .env-tooltip {
   max-inline-size: min(18rem, calc(100vw - 2rem));
   padding: var(--space-1) var(--space-2);
+  /* The solid fill identifies the tooltip; forced colors paint the transparent edge as its boundary. */
+  border: 1px solid transparent;
   border-radius: var(--radius-standard);
   background: var(--color-toast-neutral);
   color: var(--color-on-toast);

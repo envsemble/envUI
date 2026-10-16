@@ -80,11 +80,9 @@
   block-size: var(--env-avatar-group-size);
   padding-inline: calc(var(--env-avatar-group-size) / 6);
   border-radius: 100vmax;
-  background: color-mix(
-    in srgb,
-    var(--color-state-layer) var(--state-fill-opacity),
-    var(--env-avatar-group-ring)
-  );
+  /* The neutral fill over the ring color: opaque, since the count overlaps the avatars. */
+  background: linear-gradient(var(--color-bg-neutral-muted), var(--color-bg-neutral-muted))
+    var(--env-avatar-group-ring);
   color: var(--color-text-primary);
   font: 500 max(0.6875rem, calc(var(--env-avatar-group-size) * 0.4)) / 1 var(--font-family);
   font-variant-numeric: tabular-nums;

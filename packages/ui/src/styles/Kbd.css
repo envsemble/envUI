@@ -8,7 +8,7 @@
   align-items: center;
   justify-content: center;
   padding-inline: 0.3125rem;
-  border: 0.0625rem solid var(--color-border-strong);
+  border: 0.0625rem solid var(--color-border-muted);
   border-block-end-width: 0.125rem;
   border-radius: 0.3125rem;
   background: var(--color-fill);

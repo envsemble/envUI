@@ -60,6 +60,7 @@ import { QuietButtonsFixture } from './QuietButtons.js';
 import { EmptyStatesFixture } from './EmptyStates.js';
 import { RatingsFixture } from './Ratings.js';
 import { DensityFixture } from './Density.js';
+import { ThemeContrastFixture, ThemeContrastProviderFixture } from './ThemeContrasts.js';
 
 /** Fixtures that fill the viewport, or need it to themselves, are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
@@ -82,6 +83,9 @@ export default function App() {
   // Root theming changes the host document, so adoption mounts on its own, at the top of the page
   // like an application's provider.
   if (fixture === 'adoption') return <AdoptionFixture />;
+  // The contrast boundaries test the default outside any Theme, and the provider themes the root.
+  if (fixture === 'theme-contrast') return <ThemeContrastFixture />;
+  if (fixture === 'theme-contrast-provider') return <ThemeContrastProviderFixture />;
   const Standalone = fixture === null ? undefined : standaloneFixtures[fixture];
   if (Standalone)
     return (

@@ -148,7 +148,7 @@ export function ContextMenu({
         onKeyDown={openFromKeyboard}
       />
       <BaseContextMenu.Portal>
-        <Theme theme={theme} className="env-menu-theme">
+        <Theme {...theme} className="env-menu-theme">
           <BaseContextMenu.Positioner
             className="env-menu-positioner"
             {...(anchor && { anchor, side: 'bottom', align: 'start', sideOffset: 4 })}

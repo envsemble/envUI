@@ -6175,13 +6175,19 @@
     "Theme": {
       "kind": "component",
       "source": "packages/ui/src/foundations/Theme.tsx",
-      "description": "An explicit, scoped theme. Theme preference and persistence belong to the app.",
+      "description": "An explicit, scoped theme: a color scheme and a contrast, which nested Themes and envUI's popups keep. Theme preference and persistence belong to the app.",
       "props": [
         {
           "name": "theme",
           "type": "'light' | 'dark'",
           "required": true,
-          "description": ""
+          "description": "The color scheme."
+        },
+        {
+          "name": "contrast",
+          "type": "'standard' | 'high' | 'system'",
+          "required": false,
+          "description": "`high` for the high-contrast colors; `standard` keeps the standard ones even while the system asks for more contrast; `system` follows `prefers-contrast: more`. Defaults to the contrast of the enclosing Theme, and to `system` outside any."
         }
       ],
       "native": [
@@ -6222,6 +6228,12 @@
           "required": false,
           "default": "true",
           "description": "Theme the document root as well as this subtree (default). Root theming covers the page background, native controls, portals rendered by other libraries and the content of every theme-color meta tag, which takes the canvas color."
+        },
+        {
+          "name": "contrast",
+          "type": "'standard' | 'high' | 'system'",
+          "required": false,
+          "description": "Contrast of the Theme boundary around the children, and of the document root with applyToDocument: high, standard, or system to follow `prefers-contrast: more`, as on Theme. Defaults to the contrast of an enclosing Theme, and to system."
         },
         {
           "name": "className",
@@ -6518,8 +6530,8 @@
     "useTheme": {
       "kind": "function",
       "source": "packages/ui/src/foundations/Theme.tsx",
-      "description": "Returns the originating theme, including across React portals.",
-      "signature": "(): ThemeValue",
+      "description": "The theme of the nearest Theme, including across React portals. A portal of the application's own takes it with `<Theme {...useTheme()}>`. A contrast of `system` leaves the choice to the stylesheet, which reads `prefers-contrast: more`.",
+      "signature": "(): ThemeContextValue",
       "entries": [
         "@envsemble/envui"
       ]
