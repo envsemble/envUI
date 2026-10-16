@@ -87,7 +87,6 @@ export function MenusFixture({ theme }: { theme: ThemeValue }) {
       </Menu.Root>
       <Menu.Root
         aria-label="Compact options"
-        density="compact"
         align="start"
         trigger={<Button variant="secondary">Compact options</Button>}
       >
@@ -136,35 +135,39 @@ export function MenusFixture({ theme }: { theme: ThemeValue }) {
           Open to the side
         </Menu.Item>
       </Menu.Root>
-      <ContextMenu
-        aria-label="Programmatic actions"
-        open={programmatic !== null}
-        onOpenChange={(open) => {
-          if (!open) setProgrammatic(null);
-        }}
-        anchorPoint={programmatic ?? undefined}
-        density="compact"
-        content={
-          <>
-            <Menu.Item onClick={() => setLog('Programmatic action')}>Programmatic action</Menu.Item>
-            <Menu.Submenu label="Share">
-              <Menu.Item onClick={() => setLog('Copy link')}>Copy link</Menu.Item>
-            </Menu.Submenu>
-          </>
-        }
-      >
-        <div className="fixture-context-area">
-          <Button
-            variant="secondary"
-            onClick={(event) => {
-              const rect = event.currentTarget.getBoundingClientRect();
-              setProgrammatic({ x: rect.left, y: rect.bottom + 4 });
-            }}
-          >
-            Open at the button
-          </Button>
-        </div>
-      </ContextMenu>
+      {/* A compact region: its context menu and submenus open at the compact scale. */}
+      <Theme theme={theme} scale="compact" data-testid={`compact-region-${theme}`}>
+        <ContextMenu
+          aria-label="Programmatic actions"
+          open={programmatic !== null}
+          onOpenChange={(open) => {
+            if (!open) setProgrammatic(null);
+          }}
+          anchorPoint={programmatic ?? undefined}
+          content={
+            <>
+              <Menu.Item onClick={() => setLog('Programmatic action')}>
+                Programmatic action
+              </Menu.Item>
+              <Menu.Submenu label="Share">
+                <Menu.Item onClick={() => setLog('Copy link')}>Copy link</Menu.Item>
+              </Menu.Submenu>
+            </>
+          }
+        >
+          <div className="fixture-context-area">
+            <Button
+              variant="secondary"
+              onClick={(event) => {
+                const rect = event.currentTarget.getBoundingClientRect();
+                setProgrammatic({ x: rect.left, y: rect.bottom + 4 });
+              }}
+            >
+              Open at the button
+            </Button>
+          </div>
+        </ContextMenu>
+      </Theme>
       <output data-testid={`menu-log-${theme}`}>{log}</output>
       <output data-testid={`menu-state-${theme}`}>
         {sort} {hidden ? 'hidden shown' : 'hidden concealed'}

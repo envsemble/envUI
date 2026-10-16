@@ -364,7 +364,8 @@ test('the popup is the raised popup with rounded options inset by its padding, i
     });
     expect(surface.background).toBe(surface.popupColor);
     expect(surface.border).toBeGreaterThanOrEqual(1);
-    expect(surface.radius).toBeGreaterThanOrEqual(24);
+    // The menus' popup: 0.75 rem corners, concentric with its rows'.
+    expect(surface.radius).toBeCloseTo(12, 0);
     expect(Math.abs(surface.optionRadius - (surface.radius - surface.padding))).toBeLessThan(1);
     // A long list scrolls within at most 20 rem.
     expect(surface.scrolls).toBe(true);
@@ -405,7 +406,7 @@ test('near the bottom of the window the popup flips above the field', async ({ p
   }).toPass();
 });
 
-test('compact fields line up with compact buttons and open the compact popup', async ({ page }) => {
+test('small fields line up with small buttons and open the one popup', async ({ page }) => {
   for (const theme of ['light', 'dark'] as const) {
     const toolbar = page.getByTestId(`combobox-compact-${theme}`);
     const owner = field(page, `Compact owner ${theme}`);
@@ -424,7 +425,6 @@ test('compact fields line up with compact buttons and open the compact popup', a
     await owner.click();
     // A closing popup can still fade out while the next one opens.
     const popup = page.locator('.env-combobox-popup[data-open]');
-    await expect(popup).toHaveAttribute('data-density', 'compact');
     const geometry = await popup.evaluate(async (element) => {
       // The popup grows in; its rows have their final size once the transition has run.
       await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
@@ -438,8 +438,8 @@ test('compact fields line up with compact buttons and open the compact popup', a
     });
     expect(geometry.radius).toBeCloseTo(12, 0);
     expect(geometry.padding).toBeCloseTo(4, 0);
-    // Options with a description take two lines; the row is at least the compact 1.75 rem.
-    expect(geometry.option).toBeGreaterThanOrEqual(28);
+    // Options with a description take two lines; the row is at least the row height, 2.25 rem.
+    expect(geometry.option).toBeGreaterThanOrEqual(36);
     await page.keyboard.press('Escape');
     await labels.click();
     const option = page.getByRole('option', { name: 'Accessibility', exact: true });
@@ -450,7 +450,7 @@ test('compact fields line up with compact buttons and open the compact popup', a
       await Promise.allSettled(element.getAnimations().map(({ finished }) => finished));
       return element.querySelector('[aria-selected="true"]')!.getBoundingClientRect().height;
     });
-    expect(height).toBeCloseTo(28, 0);
+    expect(height).toBeCloseTo(36, 0);
     await page.keyboard.press('Escape');
   }
 });

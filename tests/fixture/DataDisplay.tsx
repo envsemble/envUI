@@ -70,12 +70,11 @@ export function DataDisplayFixture({ theme }: { theme: ThemeValue }) {
         <div className="fixture-breadcrumb-frame" dir="rtl">
           <Breadcrumbs aria-label="Right-to-left trail" wrap={false} items={narrowTrail} />
         </div>
-        {/* A compact header bar as wide as a phone: the trail beside a status and an action. */}
+        {/* A small header bar as wide as a phone: the trail beside a status and an action. */}
         <Surface
           tone="row"
           padding={2}
           corners="standard"
-          density="compact"
           className="fixture-breadcrumb-bar"
           data-testid={`breadcrumb-bar-${theme}`}
         >
@@ -88,7 +87,7 @@ export function DataDisplayFixture({ theme }: { theme: ThemeValue }) {
             ]}
           />
           <Badge tone="success">Published</Badge>
-          <IconButton icon={<MoreVert />} aria-label="More actions" />
+          <IconButton size="sm" icon={<MoreVert />} aria-label="More actions" />
         </Surface>
       </LinkProvider>
       <output data-testid={`breadcrumb-result-${theme}`}>{crumb}</output>
@@ -163,7 +162,7 @@ export function DataDisplayFixture({ theme }: { theme: ThemeValue }) {
         <List.Item title="Archive" detail="Read only" />
       </List.Root>
       <output data-testid={`row-result-${theme}`}>{rowResult}</output>
-      <Table.Root aria-label={`Compact ${theme}`} density="compact">
+      <Table.Root aria-label={`Compact ${theme}`} density="sm">
         <Table.Body>
           <Table.Row>
             <Table.HeaderCell scope="row">Total</Table.HeaderCell>

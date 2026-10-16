@@ -106,7 +106,7 @@ export function HydrationApp() {
         />
         <Select
           label="Hydrated compact select"
-          density="compact"
+          size="sm"
           defaultValue="one"
           options={[
             { value: 'one', label: 'One' },
@@ -254,7 +254,7 @@ export function HydrationApp() {
           />
         </Stat.Group>
         <DropZone
-          compact
+          size="sm"
           label="Hydrated files"
           description="Any file"
           onFiles={(chosen) => setFiles(chosen.map((file) => file.name).join(' '))}

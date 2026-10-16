@@ -180,7 +180,7 @@ test('the buttons show their names in tooltips in both themes', async ({ page })
   }
 });
 
-test('the pager fits compact toolbars, wraps only when it must and mirrors right to left', async ({
+test('the pager fits small toolbars, wraps only when it must and mirrors right to left', async ({
   page,
 }) => {
   await page.goto(fixture);

@@ -184,15 +184,21 @@ test('messages stay readable in a narrow viewport', async ({ page }) => {
 test.describe('on a coarse pointer', () => {
   test.use({ hasTouch: true });
 
-  test('message actions take the touch size', async ({ page }) => {
+  test('message actions keep their size and gain a touch-sized hit area', async ({ page }) => {
     await page.goto(messagesFixture);
     const copy = page.getByTestId('messages-light').getByRole('button', { name: 'Copy answer' });
-    await expect(copy).toHaveCSS('width', '44px');
-    await expect(copy).toHaveCSS('height', '44px');
+    await expect(copy).toHaveCSS('width', '32px');
+    await expect(copy).toHaveCSS('height', '32px');
+    // An invisible overlay 2.75 rem tall and wide centres on the action.
+    const overlay = await copy.evaluate((element) => {
+      const style = getComputedStyle(element, '::before');
+      return { top: parseFloat(style.top), left: parseFloat(style.left) };
+    });
+    expect(overlay).toEqual({ top: -6, left: -6 });
   });
 });
 
-test('message actions are compact on a fine pointer', async ({ page }) => {
+test('message actions are small on a fine pointer', async ({ page }) => {
   await page.goto(messagesFixture);
   const copy = page.getByTestId('messages-light').getByRole('button', { name: 'Copy answer' });
   await expect(copy).toHaveCSS('width', '32px');

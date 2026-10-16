@@ -647,7 +647,7 @@ test.describe('PanelDock', () => {
     await expect(handle).toHaveAttribute('aria-valuenow', String(height - 16));
   });
 
-  test('coarse pointers get a taller resize band and touch-sized controls', async ({
+  test('coarse pointers get a taller resize band, touch-sized chips and hit areas', async ({
     browser,
     browserName,
   }) => {
@@ -667,7 +667,12 @@ test.describe('PanelDock', () => {
     expect(await handle.evaluate((element) => getComputedStyle(element, '::after').opacity)).toBe(
       '1',
     );
-    await expect(report.getByRole('button', { name: 'Minimize' })).toHaveCSS('height', '44px');
+    // The header's small controls keep their size and gain a touch-sized hit area.
+    const minimize = report.getByRole('button', { name: 'Minimize' });
+    await expect(minimize).toHaveCSS('height', '32px');
+    expect(
+      await minimize.evaluate((element) => parseFloat(getComputedStyle(element, '::before').top)),
+    ).toBe(-6);
     await expect(dock.chips.getByRole('listitem')).toHaveCSS('height', '44px');
     await expect(dock.chips.getByRole('button', { name: 'Close Budget' })).toHaveCSS(
       'width',

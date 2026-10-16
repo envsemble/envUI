@@ -543,10 +543,12 @@ test('content positioned in a cell stays inside the scroll region', async ({ pag
   ).toBeAttached();
 });
 
-test('a compact table gives the controls in its cells the compact height', async ({ page }) => {
+test('tables give the controls in their cells the small height at every density', async ({
+  page,
+}) => {
   for (const theme of themes) {
     const table = page.getByRole('table', { name: `Owned widths ${theme}` });
-    await expect(table).toHaveAttribute('data-density', 'compact');
+    await expect(table).toHaveAttribute('data-density', 'sm');
     const button = table.getByRole('button', { name: 'Open' });
     const icon = table.getByRole('button', { name: `More for the report ${theme}` });
     expect((await button.boundingBox())!.height).toBeCloseTo(32, 0);
@@ -554,9 +556,10 @@ test('a compact table gives the controls in its cells the compact height', async
     expect(iconBox.width).toBeCloseTo(32, 0);
     expect(iconBox.height).toBeCloseTo(32, 0);
   }
-  // Standard tables keep the standard control height.
+  // Tables at the default density do too.
   const standard = page.getByRole('table', { name: 'Hidden header text light' });
-  await expect(standard.getByRole('button', { name: 'Edit' })).toHaveCSS('min-height', '40px');
+  await expect(standard).toHaveAttribute('data-density', 'md');
+  await expect(standard.getByRole('button', { name: 'Edit' })).toHaveCSS('min-height', '32px');
 });
 
 test('tables fit a narrow viewport: stacking tables stack, others scroll in their region', async ({

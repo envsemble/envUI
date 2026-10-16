@@ -129,17 +129,16 @@ export function PaginationsFixture({ theme }: { theme: ThemeValue }) {
         onPageChange={ignore}
       />
       <Pagination page={1} pageSize={10} total={30} onPageChange={ignore} />
-      {/* A compact toolbar: a search field that shrinks, and the pager on one line beside it. */}
+      {/* A small toolbar: a search field that shrinks, and the pager on one line beside it. */}
       <Surface
         tone="row"
         padding={2}
         corners="standard"
-        density="compact"
         className="fixture-toolbar fixture-pager-toolbar"
         data-testid="toolbar"
       >
         <span className="fixture-shrink-label">
-          <SearchField label="Search reports" />
+          <SearchField size="sm" label="Search reports" />
         </span>
         <Pagination
           aria-label="Toolbar pages"
@@ -147,6 +146,7 @@ export function PaginationsFixture({ theme }: { theme: ThemeValue }) {
           pageSize={25}
           total={112}
           variant="text"
+          size="sm"
           onPageChange={ignore}
         />
       </Surface>
@@ -160,7 +160,7 @@ export function PaginationsFixture({ theme }: { theme: ThemeValue }) {
         />
         <Pagination
           aria-label="Compact pages"
-          size="compact"
+          size="sm"
           page={2}
           pageSize={10}
           total={30}

@@ -137,14 +137,14 @@ export function FormsFixture() {
         }}
       >
         <Select
-          density="compact"
+          size="sm"
           label="Compact plan"
           name="compactPlan"
           options={planOptions}
           defaultValue="starter"
         />
         <Select
-          density="compact"
+          size="sm"
           variant="outlined"
           label="Compact outlined plan"
           options={planOptions}

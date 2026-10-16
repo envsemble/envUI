@@ -216,7 +216,7 @@ test('the overflow count keeps 4.5:1 contrast in both themes', async ({ page }) 
   expect(failures).toEqual([]);
 });
 
-test('avatars overlap by a quarter, line up with compact controls and keep their size', async ({
+test('avatars overlap by a quarter, line up with small controls and keep their size', async ({
   page,
 }) => {
   await page.goto(fixture);
@@ -245,7 +245,7 @@ test('avatars overlap by a quarter, line up with compact controls and keep their
   ]);
   await expect(scope.getByTestId('rtl').locator('.env-avatar-group-overflow')).toHaveText('+2');
 
-  // In a compact toolbar a standard group is as tall as the 2 rem controls, and a small group
+  // In a small toolbar a standard group is as tall as the 2 rem controls, and a small group
   // sits on the same center line.
   const toolbar = scope.getByTestId('toolbar');
   const button = (await toolbar.getByRole('button', { name: 'Report settings' }).boundingBox())!;

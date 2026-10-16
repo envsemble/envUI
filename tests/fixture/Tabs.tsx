@@ -150,24 +150,18 @@ export function FillTabsFixture({ theme }: { theme: ThemeValue }) {
 const tabStateVariants = ['primary', 'secondary', 'outlined', 'important', 'navigation'] as const;
 
 /**
- * Tabs built from each kind of button used as a tab, at both densities on the canvas: the first tab
- * is selected and the second is not.
+ * Tabs built from each kind of button used as a tab, in both scales on the canvas: the first tab is
+ * selected and the second is not.
  */
 export function TabStatesFixture({ theme }: { theme: ThemeValue }) {
   return (
     <Theme theme={theme} data-testid={`tab-states-${theme}`} className="fixture-section">
-      {(['standard', 'compact'] as const).map((density) => (
-        <Surface
-          key={density}
-          tone="canvas"
-          density={density}
-          padding={0}
-          className="fixture-tab-states"
-        >
+      {(['comfortable', 'compact'] as const).map((scale) => (
+        <Theme key={scale} theme={theme} scale={scale} className="fixture-tab-states">
           {tabStateVariants.map((variant) => (
             <Tabs
               key={variant}
-              aria-label={`${variant} tabs, ${density} ${theme}`}
+              aria-label={`${variant} tabs, ${scale} ${theme}`}
               items={['Summary', 'Details'].map((label) => ({
                 value: label.toLowerCase(),
                 button:
@@ -180,7 +174,7 @@ export function TabStatesFixture({ theme }: { theme: ThemeValue }) {
               }))}
             />
           ))}
-        </Surface>
+        </Theme>
       ))}
     </Theme>
   );
@@ -192,14 +186,15 @@ export function CompactTabsFixture({ theme }: { theme: ThemeValue }) {
     <Theme theme={theme} data-testid={`compact-tabs-${theme}`} className="fixture-section">
       <Surface
         tone="canvas"
-        density="compact"
         padding={0}
         className="fixture-actions"
         style={{ alignItems: 'center' }}
       >
-        <Button data-testid={`compact-control-${theme}`}>Compact control</Button>
+        <Button size="sm" data-testid={`compact-control-${theme}`}>
+          Compact control
+        </Button>
         <Tabs
-          size="compact"
+          size="sm"
           aria-label={`Form sections ${theme}`}
           items={[
             {

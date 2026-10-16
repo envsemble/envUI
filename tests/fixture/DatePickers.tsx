@@ -86,14 +86,10 @@ export function DatePickerFixture({ theme }: { theme: ThemeValue }) {
         clearable
       />
       <output data-testid={`date-picker-due-${theme}`}>{JSON.stringify({ due, changes })}</output>
-      <Surface
-        padding={2}
-        density="compact"
-        className="fixture-actions"
-        data-testid={`date-picker-compact-${theme}`}
-      >
+      <Surface padding={2} className="fixture-actions" data-testid={`date-picker-compact-${theme}`}>
         <DatePicker
-          density="compact"
+          size="sm"
+          showLabel={false}
           aria-label={`Compact start ${theme}`}
           placeholder="Start"
           locale="en-GB"
@@ -101,7 +97,9 @@ export function DatePickerFixture({ theme }: { theme: ThemeValue }) {
           min="2026-10-14T08:00"
           max="2026-10-31T18:00"
         />
-        <Button variant="secondary">Compact neighbour {theme}</Button>
+        <Button variant="secondary" size="sm">
+          Compact neighbour {theme}
+        </Button>
       </Surface>
       <div className="fixture-actions">
         <DatePicker

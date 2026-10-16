@@ -44,10 +44,9 @@ test('menubar menus open below their trigger and switch on hover and with the ar
   await file.click();
   const fileMenu = page.getByRole('menu', { name: 'File' });
   await expect(fileMenu).toBeVisible();
-  await expect(fileMenu).toHaveAttribute('data-density', 'compact');
   await expect(file).toHaveAttribute('aria-expanded', 'true');
   await expect(file).toHaveAttribute('data-popup-open', '');
-  // Compact text triggers sit tightly in a row.
+  // Small text triggers sit tightly in a row.
   expect(before.height).toBeCloseTo(32, 0);
   const edit = trigger(page, 'Edit');
   const editBox = (await edit.boundingBox())!;

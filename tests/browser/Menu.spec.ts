@@ -64,9 +64,9 @@ async function popupSurface(menu: Locator) {
   });
 }
 
-test.describe('Compact menus', () => {
+test.describe('Menus', () => {
   for (const theme of ['light', 'dark']) {
-    test(`a compact menu is a raised popup with 28 px rows in the ${theme} theme`, async ({
+    test(`a menu is a raised popup with 36 px rows in the ${theme} theme`, async ({
       page,
       browserName,
     }) => {
@@ -78,7 +78,6 @@ test.describe('Compact menus', () => {
         .click();
       const menu = page.getByRole('menu', { name: 'Compact options' });
       await expect(menu).toBeVisible();
-      await expect(menu).toHaveAttribute('data-density', 'compact');
       await settled(menu);
       // The popup takes the raised popup surface, like Popover and Select, with small corners.
       const [popup, border] = await tokenColors(menu, ['--color-popup', '--color-popup-border']);
@@ -93,8 +92,8 @@ test.describe('Compact menus', () => {
       rows.push(menu.getByRole('menuitemcheckbox', { name: 'Word wrap' }));
       for (const row of rows) {
         const box = (await row.boundingBox())!;
-        expect(box.height).toBeGreaterThanOrEqual(27.5);
-        expect(box.height).toBeLessThanOrEqual(28.5);
+        expect(box.height).toBeGreaterThanOrEqual(35.5);
+        expect(box.height).toBeLessThanOrEqual(36.5);
         expect(await row.evaluate((element) => getComputedStyle(element).borderTopLeftRadius)).toBe(
           '8px',
         );
@@ -134,7 +133,7 @@ test.describe('Compact menus', () => {
       // A description wraps below the label and grows its row.
       const described = menu.getByRole('menuitem', { name: 'Open to the side' });
       await expect(described).toHaveAccessibleDescription('Opens beside the current document');
-      expect((await described.boundingBox())!.height).toBeGreaterThan(28.5);
+      expect((await described.boundingBox())!.height).toBeGreaterThan(36.5);
 
       // Hover and keyboard highlight fill the row. In one engine Base UI ignores pointer moves
       // without movement, which is all its automated pointer reports; there the keyboard is checked.
@@ -167,17 +166,32 @@ test.describe('Compact menus', () => {
     });
   }
 
-  test('a standard menu keeps its pane and tall rows', async ({ page }) => {
+  test('every menu has the same anatomy, and a compact region gives it 28 px rows', async ({
+    page,
+  }) => {
     await page.goto(menusFixture);
     await page.getByTestId('menus-light').getByRole('button', { name: 'View options' }).click();
     const menu = page.getByRole('menu', { name: 'View options' });
     await expect(menu).toBeVisible();
-    await expect(menu).not.toHaveAttribute('data-density');
     await settled(menu);
-    const [pane] = await tokenColors(menu, ['--color-pane']);
-    expect((await popupSurface(menu)).background).toBe(pane);
+    const [popup] = await tokenColors(menu, ['--color-popup']);
+    expect((await popupSurface(menu)).background).toBe(popup);
     const row = (await menu.getByRole('menuitemradio', { name: 'Name' }).boundingBox())!;
-    expect(row.height).toBeGreaterThanOrEqual(47);
+    expect(row.height).toBeCloseTo(36, 0);
+    await page.keyboard.press('Escape');
+    await page
+      .getByTestId('menus-light')
+      .getByRole('button', { name: 'Open at the button' })
+      .click();
+    const actions = page.getByRole('menu', { name: 'Programmatic actions' });
+    await expect(actions).toBeVisible();
+    await settled(actions);
+    const surface = await popupSurface(actions);
+    expect(surface.radius).toBeCloseTo(10, 0);
+    const action = (await actions
+      .getByRole('menuitem', { name: 'Programmatic action' })
+      .boundingBox())!;
+    expect(action.height).toBeCloseTo(28, 0);
   });
 });
 
@@ -191,7 +205,7 @@ test.describe('Submenus', () => {
     return menu;
   }
 
-  test('a submenu opens beside its row on hover, in the density of its menu', async ({ page }) => {
+  test('a submenu opens beside its row on hover, with the rows of its menu', async ({ page }) => {
     const errors = collectErrors(page);
     const menu = await openCompactOptions(page);
     const recent = menu.getByRole('menuitem', { name: 'Open recent' });
@@ -199,7 +213,6 @@ test.describe('Submenus', () => {
     await recent.hover();
     const submenu = page.getByRole('menu', { name: 'Open recent' });
     await expect(submenu).toBeVisible();
-    await expect(submenu).toHaveAttribute('data-density', 'compact');
     await expect(recent).toHaveAttribute('data-popup-open', '');
     await settled(submenu);
     // It opens at the inline end, just clear of the menu, with its first row beside the trigger row.
@@ -212,7 +225,7 @@ test.describe('Submenus', () => {
     expect(submenuBox!.x).toBeGreaterThanOrEqual(menuBox!.x + menuBox!.width);
     expect(submenuBox!.x).toBeLessThanOrEqual(menuBox!.x + menuBox!.width + 4);
     expect(Math.abs(firstBox!.y - rowBox!.y)).toBeLessThanOrEqual(1.5);
-    expect(firstBox!.height).toBeCloseTo(28, 0);
+    expect(firstBox!.height).toBeCloseTo(36, 0);
     // The submenu row stays highlighted while its submenu is open.
     const [popup] = await tokenColors(menu, ['--color-popup']);
     expect(await recent.evaluate((element) => getComputedStyle(element).backgroundColor)).not.toBe(
@@ -223,7 +236,6 @@ test.describe('Submenus', () => {
     await submenu.getByRole('menuitem', { name: 'More documents' }).hover();
     const nested = page.getByRole('menu', { name: 'More documents' });
     await expect(nested).toBeVisible();
-    await expect(nested).toHaveAttribute('data-density', 'compact');
     await settled(nested);
     const nestedBox = (await nested.boundingBox())!;
     const submenuEdge = (await submenu.boundingBox())!;
@@ -315,9 +327,9 @@ test.describe('Submenus', () => {
     expect(submenuBox.x).toBeGreaterThanOrEqual(0);
   });
 
-  test('submenus follow the density and theme of their menu', async ({ page }) => {
+  test('submenus follow the scale and theme of their menu', async ({ page }) => {
     await page.goto(menusFixture);
-    // A standard menu opens a standard submenu.
+    // A dark menu opens a dark submenu.
     await page.getByTestId('menus-dark').getByRole('button', { name: 'View options' }).click();
     const menu = page.getByRole('menu', { name: 'View options' });
     await expect(menu).toBeVisible();
@@ -325,7 +337,6 @@ test.describe('Submenus', () => {
     await page.keyboard.press('ArrowRight');
     const submenu = page.getByRole('menu', { name: 'More views' });
     await expect(submenu).toBeVisible();
-    await expect(submenu).not.toHaveAttribute('data-density');
     await expect(submenu.locator('xpath=ancestor::*[@data-env-theme][1]')).toHaveAttribute(
       'data-env-theme',
       'dark',
@@ -335,17 +346,23 @@ test.describe('Submenus', () => {
     await expect(menu).toBeHidden();
     await expect(page.getByTestId('menu-log-dark')).toHaveText('Split right');
 
-    // A compact context menu opens compact submenus.
+    // A context menu in a compact region opens compact submenus.
     await page
       .getByTestId('menus-light')
       .getByRole('button', { name: 'Open at the button' })
       .click();
     const actions = page.getByRole('menu', { name: 'Programmatic actions' });
-    await expect(actions).toHaveAttribute('data-density', 'compact');
+    await expect(actions.locator('xpath=ancestor::*[@data-env-scale][1]')).toHaveAttribute(
+      'data-env-scale',
+      'compact',
+    );
     await focusItem(actions, actions.getByRole('menuitem', { name: 'Share' }));
     await page.keyboard.press('ArrowRight');
     const share = page.getByRole('menu', { name: 'Share' });
-    await expect(share).toHaveAttribute('data-density', 'compact');
+    await expect(share.locator('xpath=ancestor::*[@data-env-scale][1]')).toHaveAttribute(
+      'data-env-scale',
+      'compact',
+    );
     await share.getByRole('menuitem', { name: 'Copy link' }).click();
     await expect(actions).toBeHidden();
     await expect(page.getByTestId('menu-log-light')).toHaveText('Copy link');

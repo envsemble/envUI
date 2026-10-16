@@ -586,7 +586,6 @@ function DocumentWindow({
             />
             <Menu.Root
               aria-label={`${panel.title} actions ${theme}`}
-              density="compact"
               trigger={
                 <IconButton
                   variant="text"

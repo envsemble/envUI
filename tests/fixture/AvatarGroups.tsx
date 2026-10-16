@@ -103,12 +103,11 @@ export function AvatarGroupsFixture({ theme }: { theme: ThemeValue }) {
       <div className="fixture-avatar-surface" data-surface="custom">
         <AvatarGroup data-testid="on-custom" people={people} max={3} />
       </div>
-      {/* A compact toolbar: 2 rem controls beside a standard and a small group. */}
+      {/* A small toolbar: 2 rem controls beside a standard and a small group. */}
       <Surface
         tone="row"
         padding={2}
         corners="standard"
-        density="compact"
         className="fixture-toolbar"
         data-testid="toolbar"
       >
@@ -120,7 +119,7 @@ export function AvatarGroupsFixture({ theme }: { theme: ThemeValue }) {
           onPersonClick={() => undefined}
         />
         <AvatarGroup data-testid="toolbar-small" people={people} max={2} size="small" />
-        <IconButton icon={<Settings />} aria-label="Report settings" />
+        <IconButton size="sm" icon={<Settings />} aria-label="Report settings" />
       </Surface>
       <div className="fixture-shrink-row" data-testid="narrow">
         <span className="fixture-shrink-label">A long title that needs more room</span>

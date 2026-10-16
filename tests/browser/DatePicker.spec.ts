@@ -297,7 +297,7 @@ test('native forms submit the values, require a value and reset to the defaults'
   ).toHaveValue('');
 });
 
-test('the calendar is the Popover surface with its day colors in both themes, and compact fields line up', async ({
+test('the calendar is the Popover surface with its day colors in both themes, and small fields line up', async ({
   page,
 }) => {
   for (const theme of ['light', 'dark'] as const) {

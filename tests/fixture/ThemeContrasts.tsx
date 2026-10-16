@@ -60,7 +60,6 @@ function PopupTriggers({ name }: { name: string }) {
       </Menu.Root>
       <Menu.Root
         aria-label={`Compact actions ${name}`}
-        density="compact"
         trigger={<Button variant="secondary">Compact menu {name}</Button>}
       >
         <Menu.Item>Rename</Menu.Item>
@@ -73,12 +72,7 @@ function PopupTriggers({ name }: { name: string }) {
           <Menu.Item>New</Menu.Item>
         </Menubar.Menu>
       </Menubar.Root>
-      <Select
-        label={`Sort ${name}`}
-        density="compact"
-        options={statusOptions}
-        defaultValue="open"
-      />
+      <Select label={`Sort ${name}`} size="sm" options={statusOptions} defaultValue="open" />
       <Combobox label={`Person ${name}`} items={people} />
       <DatePicker label={`Due ${name}`} defaultValue="2026-10-20" locale="en-GB" />
       <HoverCard trigger={<Link href="#card">Card {name}</Link>}>
