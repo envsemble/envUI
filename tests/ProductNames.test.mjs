@@ -6,27 +6,24 @@ import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
 
 // envUI is product agnostic: what it ships and documents names no application that uses it and no
-// third-party product it is styled after. Names match as case-sensitive whole words, so the English
-// words in `console.log`, `navigator.platform` or "forms" do not count.
+// third-party product it is styled after. Names match as whole words. Distinctive names match in any
+// case; names that are also English words or code match only as written, so `console.log`,
+// `navigator.platform`, "forms" or an application's "chrome" do not count.
 
 const repository = fileURLToPath(new URL('../', import.meta.url));
 
-/** Applications built on envUI and third-party products. Extend the list as products appear. */
+/** Applications built on envUI and third-party products. Extend the lists as products appear. */
 const productNames = [
-  'Atlas',
-  'Chrome',
-  'Console',
-  'Coord',
-  'Electron',
-  'Figma',
-  'Forms',
-  'GitHub',
-  'Google',
-  'Jira',
-  'Linear',
-  'Notion',
-  'Platform',
-  'Slack',
+  // In any case: `atlas` or `COORD` name the product as surely as the capitalized name.
+  ...['Atlas', 'Coord', 'Electron', 'Figma', 'Google', 'Jira', 'Slack'].map((name) => ({
+    name,
+    flags: 'gi',
+  })),
+  // Only as written: lowercase, they are English words, CSS keywords or host names in URLs.
+  ...['Chrome', 'Console', 'Forms', 'GitHub', 'Linear', 'Notion', 'Platform'].map((name) => ({
+    name,
+    flags: 'g',
+  })),
 ];
 
 /**
@@ -61,8 +58,20 @@ const sources = [
   { directory: '.agents/skills', extensions: ['.md'], read: 'whole' },
   { directory: 'packages/ui/src', extensions: ['.css'], read: 'whole' },
   { directory: 'packages/ui/src', extensions: ['.ts', '.tsx'], read: 'code' },
-  // The catalogue's sample data and copy.
+  // The catalogue's sample data, copy and styles, and the hosted catalogue's Worker and headers.
   { directory: 'apps/catalogue/src', extensions: ['.ts', '.tsx'], read: 'code' },
+  { directory: 'apps/catalogue/src', extensions: ['.css'], read: 'whole' },
+  { directory: 'apps/catalogue/site', extensions: ['.mjs'], read: 'code' },
+  { path: 'apps/catalogue/site/_headers', read: 'whole' },
+  // The test fixtures' sample data and copy.
+  { directory: 'tests/fixture', extensions: ['.ts', '.tsx'], read: 'code' },
+  { directory: 'tests/fixture', extensions: ['.css', '.html'], read: 'whole' },
+  // The agent benchmark: its tasks, the app the agents work in, and its runner.
+  { path: 'bench/README.md', read: 'whole' },
+  { path: 'bench/tasks.json', read: 'whole' },
+  { directory: 'bench/fixture', extensions: ['.md', '.css', '.html', '.json'], read: 'whole' },
+  { directory: 'bench/fixture', extensions: ['.ts', '.tsx'], read: 'code' },
+  { directory: 'bench', extensions: ['.mjs'], read: 'code' },
 ];
 
 /** Generated from pinned inputs: Material Symbols names its own icons, such as ChromeMaximize. */
@@ -70,6 +79,9 @@ const generated = [
   'packages/ui/src/icons/',
   'packages/ui/src/EnvUILogo.tsx',
   'apps/catalogue/src/generated/',
+  // Results of benchmark runs, and the lists of third-party packages its scorer recognizes.
+  'bench/results/',
+  'bench/scoring/',
 ];
 
 test('shipped text, documentation and sample data name no products', async () => {
@@ -93,6 +105,11 @@ test('the check finds a product name and lets its allowed uses pass', () => {
     'README.md:1: GitHub in "- Attach it to the GitHub release."',
   ]);
   assert.deepEqual(productMentions('CONTRIBUTING.md', release, { start: 0, text: release }), []);
+  const cases = '- Plans live in ~/.atlas; ask in slack.\n- The window chrome, linear easing.\n';
+  assert.deepEqual(productMentions('example.md', cases, { start: 0, text: cases }), [
+    'example.md:1: Atlas in "- Plans live in ~/.atlas; ask in slack."',
+    'example.md:1: Slack in "- Plans live in ~/.atlas; ask in slack."',
+  ]);
   const code = "// Unlike Slack.\nconsole.log('Coord');\nimport { Forms } from './Forms';\n";
   const segments = codeText('example.ts', code);
   assert.deepEqual(
@@ -111,6 +128,8 @@ async function sourceFiles() {
     for (const path of await listFiles(source.directory)) {
       if (!source.extensions.some((extension) => path.endsWith(extension))) continue;
       if (generated.some((prefix) => path.startsWith(prefix))) continue;
+      // Installed packages and builds, such as the benchmark app's.
+      if (/(?:^|\/)(?:node_modules|dist)\//.test(path)) continue;
       files.push({ path, read: source.read });
     }
   }
@@ -133,7 +152,11 @@ async function listFiles(directory) {
 
 /** Comments, string and template literals and JSX text; module specifiers are file names. */
 function codeText(path, text) {
-  const kind = path.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
+  const kind = path.endsWith('.tsx')
+    ? ts.ScriptKind.TSX
+    : /\.[cm]?js$/.test(path)
+      ? ts.ScriptKind.JS
+      : ts.ScriptKind.TS;
   const sourceFile = ts.createSourceFile(path, text, ts.ScriptTarget.Latest, true, kind);
   const segments = [];
   const commentStarts = new Set();
@@ -177,8 +200,8 @@ function productMentions(path, fileText, segment) {
   const mentions = [];
   const firstLine = fileText.slice(0, segment.start).split('\n').length;
   segment.text.split('\n').forEach((line, index) => {
-    for (const name of productNames) {
-      for (const hit of line.matchAll(new RegExp(`\\b${name}\\b`, 'g'))) {
+    for (const { name, flags } of productNames) {
+      for (const hit of line.matchAll(new RegExp(`\\b${name}\\b`, flags))) {
         const patterns = [...(allowed[name] ?? []), ...(allowedIn[path]?.[name] ?? [])];
         const covered = patterns.some((pattern) =>
           [...line.matchAll(pattern)].some(
