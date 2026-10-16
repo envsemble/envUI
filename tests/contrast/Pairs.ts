@@ -654,19 +654,19 @@ export const pairs: readonly ContrastPair[] = merged([
  */
 export const dropped: readonly { pair: string; rationale: string }[] = [
   {
-    pair: '--env-color-border-focus on --env-color-bg-brand-emphasis',
+    pair: '--color-focus-ring on --color-primary-action',
     rationale:
       'The ring is the brand blue, so on a primary fill it measured 1:1. An inset ring on a solid fill draws an inner ring in the label color instead, which the label pairs on the primary, important and destructive fills measure as text, above the focus minimum.',
   },
   {
-    pair: '--env-color-border-muted on --env-color-bg-default',
+    pair: '--color-border-strong on --color-pane',
     rationale:
-      'As --env-color-border-muted on --env-color-bg-page: the empty stars of a Rating take --env-color-border-default.',
+      'As --color-border-strong on --color-canvas: the empty stars of a Rating take --color-border-default.',
   },
   {
-    pair: '--env-color-border-muted on --env-color-bg-page',
+    pair: '--color-border-strong on --color-canvas',
     rationale:
-      'The empty stars of a Rating, which this pair measured on the page and on panes, take the control boundary now, --env-color-border-default, measured at 3:1 on every surface. The 0.7 name only paints dividers, measured as --env-color-border-muted in high contrast.',
+      'The empty stars of a Rating, which this pair measured on the page and on panes, take the control boundary now, --color-border-default, measured at 3:1 on every surface. The 0.7 name only paints dividers, measured as --color-border-muted in high contrast.',
   },
 ];
 
@@ -1793,20 +1793,20 @@ const renamedTokenPairs: readonly (readonly [from: string, to: string])[] = [
  */
 export const renamed: readonly { from: string; to: string; rationale: string }[] = [
   {
-    from: '--env-color-fg-control on --env-color-bg-navigation-hover',
-    to: '--env-color-fg-control on --env-color-bg-navigation-hover',
+    from: '--color-fg-control on --color-navigation-quiet-hover',
+    to: '--color-fg-control on --color-bg-navigation-hover',
     rationale:
       'Navigation items hover on a role of their own, bg.navigation; the 0.7 name is its alias.',
   },
   {
-    from: '--env-color-fg-control on --env-color-bg-navigation-pressed',
-    to: '--env-color-fg-control on --env-color-bg-navigation-pressed',
+    from: '--color-fg-control on --color-navigation-quiet-pressed',
+    to: '--color-fg-control on --color-bg-navigation-pressed',
     rationale:
       'Navigation items press on a role of their own, bg.navigation; the 0.7 name is its alias.',
   },
   {
-    from: '--env-color-border-focus on --env-color-bg-navigation-hover',
-    to: '--env-color-border-focus on --env-color-bg-navigation-hover',
+    from: '--color-border-focus on --color-navigation-quiet-hover',
+    to: '--color-border-focus on --color-bg-navigation-hover',
     rationale:
       'The inset ring of a hovered navigation item, on the bg.navigation role; the 0.7 name is its alias.',
   },
