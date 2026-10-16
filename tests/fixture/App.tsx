@@ -43,6 +43,7 @@ import {
 } from './Overlays.js';
 import { DataDisplayFixture } from './DataDisplay.js';
 import { TablesFixture } from './Tables.js';
+import { PagersFixture } from './Pagers.js';
 import { AffixesFixture } from './Affixes.js';
 import { SlidersFixture } from './Sliders.js';
 import { ComposerFixture } from './Composer.js';
@@ -93,6 +94,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   direction: DirectionFixture,
   'rtl-tabs': RtlTabsFixture,
   'rtl-document-tabs': RtlDocumentTabsFixture,
+  pagers: PagersFixture,
 };
 
 export default function App() {
