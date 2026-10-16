@@ -50,7 +50,6 @@ const unconverted = [
   'rich-text',
   'segmented-control',
   'skeleton',
-  'slider',
   'spinner',
   'stack',
   'stat',

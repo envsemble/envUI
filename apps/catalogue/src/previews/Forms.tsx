@@ -1,14 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import {
-  Checkbox,
-  Slider,
-  Stack,
-  Button,
-  Kbd,
-  ActionGroup,
-  DropZone,
-  Text,
-} from '@envsemble/envui';
+import { Checkbox, Stack, Button, Kbd, ActionGroup, DropZone, Text } from '@envsemble/envui';
 
 import { Example, Specimen, SpecimenGrid } from './Example';
 import { Preview } from './Preview';
@@ -76,48 +67,6 @@ export function CheckboxPreview() {
             ))}
           </Stack>
         </Stack>
-      </Example>
-    </Preview>
-  );
-}
-
-export function SliderPreview() {
-  const [opacity, setOpacity] = useState(40);
-  const [saved, setSaved] = useState(40);
-  return (
-    <Preview>
-      <Example
-        title="Choose a value in a range"
-        size="collection"
-        caption={
-          <>
-            Drag the thumb or press the track. <Kbd>←</Kbd> and <Kbd>→</Kbd> move by one step,{' '}
-            <Kbd>Page Up</Kbd> and <Kbd>Page Down</Kbd> by a tenth of the range, <Kbd>Home</Kbd> and{' '}
-            <Kbd>End</Kbd> to its ends.
-          </>
-        }
-      >
-        <SpecimenGrid>
-          <Specimen
-            title="Formatted value"
-            caption={`Saved at ${saved}% when the thumb is released.`}
-          >
-            <Slider
-              label="Opacity"
-              value={opacity}
-              onValueChange={setOpacity}
-              onValueCommit={setSaved}
-              formatValue={(value) => `${value}%`}
-              hint="Applies to the selected layer."
-            />
-          </Specimen>
-          <Specimen title="Steps">
-            <Slider label="Volume" name="volume" defaultValue={30} step={5} />
-          </Specimen>
-          <Specimen title="Disabled">
-            <Slider label="Balance" defaultValue={50} disabled />
-          </Specimen>
-        </SpecimenGrid>
       </Example>
     </Preview>
   );
