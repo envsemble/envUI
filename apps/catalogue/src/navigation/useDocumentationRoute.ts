@@ -18,11 +18,25 @@ function correctAddress() {
   if (written && route !== written) history.replaceState(history.state, '', `#/${route}`);
 }
 
+/** Whether the next route change comes from a page's tabs, until it happens. */
+let viewChangePending = false;
+/** Whether the last route change came from a page's tabs, which keep focus. */
+let lastChangeFromTabs = false;
+
+/** Whether the current route was reached by moving between a page's views on its tabs. */
+export const reachedFromTabs = () => lastChangeFromTabs;
+
 /**
- * Shows another route without a new history entry, as moving between a page's views with the arrow
- * keys does: Back then leaves the page rather than stepping through every view passed on the way.
+ * Shows another view of the page from its tabs. A view chosen is a step in the history; views
+ * passed with the arrow keys replace the entry instead, so Back leaves the page rather than
+ * stepping through every view on the way.
  */
-export function replaceRoute(route: string) {
+export function showView(route: string, { replace }: { replace: boolean }) {
+  viewChangePending = true;
+  if (!replace) {
+    location.hash = `/${route}`;
+    return;
+  }
   history.replaceState(history.state, '', `#/${route}`);
   dispatchEvent(new HashChangeEvent('hashchange'));
 }
@@ -33,6 +47,8 @@ export function useDocumentationRoute() {
   useEffect(() => {
     correctAddress();
     const onHashChange = () => {
+      lastChangeFromTabs = viewChangePending;
+      viewChangePending = false;
       correctAddress();
       setRoute(readRoute());
     };

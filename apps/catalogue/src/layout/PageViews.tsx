@@ -2,7 +2,7 @@ import { Button, Tabs } from '@envsemble/envui';
 import { Code } from '@envsemble/envui/icons/Code';
 import { useRef, type ReactElement, type ReactNode } from 'react';
 import type { ReferenceView, ViewOption } from '../navigation/DocumentationRoutes';
-import { replaceRoute } from '../navigation/useDocumentationRoute';
+import { showView } from '../navigation/useDocumentationRoute';
 import { PageHeader } from './PageHeader';
 
 /** Keys that move between tabs, which select as they move. */
@@ -49,10 +49,7 @@ export function PageViews({
         if (!next) return;
         const query = new URLSearchParams(location.hash.split('?')[1]);
         query.delete('section');
-        const route = `${path}/${next}${query.size ? `?${query}` : ''}`;
-        // A view chosen is a step in the history; views passed on the way with the arrows are not.
-        if (moving.current) replaceRoute(route);
-        else location.hash = `/${route}`;
+        showView(`${path}/${next}${query.size ? `?${query}` : ''}`, { replace: moving.current });
       }}
       renderList={
         renderBanner ??

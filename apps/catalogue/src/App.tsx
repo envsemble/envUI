@@ -18,7 +18,7 @@ import { PageHeader } from './layout/PageHeader';
 import { Overview } from './pages/Overview';
 import { Sidebar } from './navigation/Sidebar';
 import { PageNavigation } from './navigation/PageNavigation';
-import { useDocumentationRoute } from './navigation/useDocumentationRoute';
+import { reachedFromTabs, useDocumentationRoute } from './navigation/useDocumentationRoute';
 
 export default function App() {
   const route = useDocumentationRoute();
@@ -54,7 +54,7 @@ export default function App() {
   useEffect(() => {
     document.title = title === 'envUI' ? 'envUI' : `${title} · envUI`;
     // Moving between a page's views keeps focus on its tabs, where the reader is.
-    if (document.activeElement?.closest('[role="tablist"]')) return;
+    if (reachedFromTabs()) return;
     mainElement.current?.focus({ preventScroll: true });
     const section = new URLSearchParams(contentRoute.split('?')[1]).get('section');
     if (section) document.getElementById(section)?.scrollIntoView();
