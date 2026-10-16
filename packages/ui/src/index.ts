@@ -74,7 +74,7 @@ export * from './content/Rating.js';
 export * from './content/ColorSwatch.js';
 export * from './content/Message.js';
 export * from './content/Stat.js';
-export * from './content/Heatmap.js';
+export * from './content/CalendarHeatmap.js';
 export * from './foundations/ThemePreference.js';
 export * from './navigation/Menu.js';
 export * from './navigation/Menubar.js';

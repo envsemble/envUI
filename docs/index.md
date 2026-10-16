@@ -75,7 +75,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Avatars](components/avatar.md) — A picture of a person or organization with a default picture or initials as fallback, the avatar button and overlapping avatar groups.
 - [Messages](components/messages.md) — Conversation entries in a log: compact bubbles for your own messages, full-width content from others.
 - [Stats](components/stats.md) — Labelled key figures for dashboards, with a trend and detail, grouped in even columns.
-- [Heatmap](components/heatmap.md) — A calendar of daily values in color steps, with a tooltip and keyboard access for every day.
+- [Calendar heatmap](components/calendar-heatmap.md) — A calendar of daily values in color steps, with a tooltip and keyboard access for every day.
 
 ## Feedback & overlays
 

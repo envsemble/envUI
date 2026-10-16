@@ -159,7 +159,7 @@
       "count": 4
     }
   },
-  "packages/ui/src/styles/Heatmap.css": {
+  "packages/ui/src/styles/CalendarHeatmap.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 6
     },

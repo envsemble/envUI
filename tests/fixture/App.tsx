@@ -48,7 +48,7 @@ import { MessagesFixture } from './Messages.js';
 import { StatsFixture } from './Stats.js';
 import { DropZonesFixture } from './DropZones.js';
 import { ButtonCountsFixture } from './ButtonCounts.js';
-import { HeatmapFixture } from './Heatmaps.js';
+import { CalendarHeatmapFixture } from './CalendarHeatmaps.js';
 import { ComboboxFixture } from './Comboboxes.js';
 import { PanelDockFixture } from './PanelDocks.js';
 import { AvatarGroupsFixture } from './AvatarGroups.js';
@@ -246,10 +246,10 @@ export default function App() {
               <DropZonesFixture theme="dark" />
             </>
           )}
-          {includes('heatmap') && (
+          {includes('calendar-heatmap') && (
             <>
-              <HeatmapFixture theme="light" />
-              <HeatmapFixture theme="dark" />
+              <CalendarHeatmapFixture theme="light" />
+              <CalendarHeatmapFixture theme="dark" />
             </>
           )}
           {includes('panel-dock') && (

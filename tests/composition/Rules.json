@@ -34,7 +34,7 @@
       "actions/CopyButton.tsx": "composites",
       "content/AvatarGroup.tsx": "composites",
       "content/CodeBlock.tsx": "composites",
-      "content/Heatmap.tsx": "composites",
+      "content/CalendarHeatmap.tsx": "composites",
       "content/Markdown.tsx": "composites",
       "content/RelativeTime.tsx": "composites",
       "feedback/CommandPalette.tsx": "composites",

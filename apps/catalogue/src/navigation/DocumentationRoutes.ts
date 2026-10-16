@@ -69,6 +69,7 @@ export function normalizeRoute(route: string): string {
     .replace(/^components\/file-dropzone(?=\/|$)/, 'components/drop-zone')
     .replace(/^components\/disclosures(?=\/|$)/, 'components/disclosure')
     .replace(/^components\/notices(?=\/|$)/, 'components/alert')
+    .replace(/^components\/heatmap(?=\/|$)/, 'components/calendar-heatmap')
     .replace(/^foundations\/responsive(?=\/|$)/, 'foundations/spacing')
     .replace(/^foundations\/motion(?=\/|$)/, 'foundations/accessibility');
   const page = findReferencePage(path);

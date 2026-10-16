@@ -103,7 +103,7 @@ const referenceIcons: Record<string, typeof Palette> = {
   composer: Send,
   messages: Forum,
   stats: Monitoring,
-  heatmap: CalendarViewMonth,
+  'calendar-heatmap': CalendarViewMonth,
   rating: Star,
   'relative-time': Schedule,
   navigation: Explore,

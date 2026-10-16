@@ -56,7 +56,7 @@
 @import './Composer.css';
 @import './Message.css';
 @import './Stat.css';
-@import './Heatmap.css';
+@import './CalendarHeatmap.css';
 @import './Motion.css';
 @font-face {
   font-family: 'envUI Inter';

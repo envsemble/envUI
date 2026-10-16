@@ -31,7 +31,7 @@ import { EmptyStatePreview, LoadingPreview, DialogsPreview } from './Feedback';
 import { ToastsPreview } from './Toasts';
 import { ColorPickerPreview } from './ColorPicking';
 import { ComposerPreview, MessagesPreview } from './Conversation';
-import { HeatmapPreview, StatsPreview } from './Dashboard';
+import { CalendarHeatmapPreview, StatsPreview } from './Dashboard';
 import {
   MenuPreview,
   MenubarPreview,
@@ -122,8 +122,8 @@ export function ComponentPreview({ id }: { id: string }) {
       return <MessagesPreview />;
     case 'stats':
       return <StatsPreview />;
-    case 'heatmap':
-      return <HeatmapPreview />;
+    case 'calendar-heatmap':
+      return <CalendarHeatmapPreview />;
     case 'code':
       return <CodePreview />;
     case 'markdown':

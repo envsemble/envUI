@@ -2,15 +2,15 @@ import { useState } from 'react';
 import {
   Button,
   Dialog,
-  Heatmap,
+  CalendarHeatmap,
   Surface,
   Theme,
-  type HeatmapDay,
+  type CalendarHeatmapDay,
   type ThemeValue,
 } from '@envsemble/envui';
 
 /** A deterministic year of activity, so the fixture renders the same days everywhere. */
-function activity(end: string, days: number, seed: number): HeatmapDay[] {
+function activity(end: string, days: number, seed: number): CalendarHeatmapDay[] {
   const last = Date.parse(`${end}T00:00:00Z`);
   return Array.from({ length: days }, (_, index) => {
     const date = new Date(last - (days - 1 - index) * 86_400_000).toISOString().slice(0, 10);
@@ -21,11 +21,15 @@ function activity(end: string, days: number, seed: number): HeatmapDay[] {
 
 const year = activity('2026-10-10', 365, 3);
 
-export function HeatmapFixture({ theme }: { theme: ThemeValue }) {
+export function CalendarHeatmapFixture({ theme }: { theme: ThemeValue }) {
   const [data, setData] = useState(year);
   return (
-    <Theme theme={theme} data-testid={`heatmap-${theme}`} className="fixture-section">
-      <Heatmap aria-label={`Activity ${theme}`} data={data} data-testid={`heatmap-year-${theme}`} />
+    <Theme theme={theme} data-testid={`calendar-heatmap-${theme}`} className="fixture-section">
+      <CalendarHeatmap
+        aria-label={`Activity ${theme}`}
+        data={data}
+        data-testid={`calendar-heatmap-year-${theme}`}
+      />
       <Button
         variant="secondary"
         onClick={() =>
@@ -37,7 +41,7 @@ export function HeatmapFixture({ theme }: { theme: ThemeValue }) {
         Update {theme}
       </Button>
       <Surface tone="pane" padding={4} data-surface="pane" className="fixture-heatmap-narrow">
-        <Heatmap
+        <CalendarHeatmap
           aria-label={`Deployments ${theme}`}
           data={[
             { date: '2026-03-02', value: 1 },
@@ -72,14 +76,14 @@ export function HeatmapFixture({ theme }: { theme: ThemeValue }) {
         />
       </Surface>
       <Dialog title={`Activity details ${theme}`} trigger={<Button>Open activity {theme}</Button>}>
-        <Heatmap
+        <CalendarHeatmap
           aria-label={`Activity in a dialog ${theme}`}
           data={year.slice(-60)}
           startDate="2026-08-12"
           endDate="2026-10-10"
         />
       </Dialog>
-      <Heatmap
+      <CalendarHeatmap
         aria-label={`Ranked ${theme}`}
         data={[
           { date: '2026-05-04', value: 5 },
@@ -92,7 +96,7 @@ export function HeatmapFixture({ theme }: { theme: ThemeValue }) {
         endDate="2026-05-16"
         thresholds={[40, 1, 20, 10]}
       />
-      <Heatmap
+      <CalendarHeatmap
         aria-label={`From zero ${theme}`}
         data={[
           { date: '2026-05-04', value: 0 },
@@ -103,7 +107,7 @@ export function HeatmapFixture({ theme }: { theme: ThemeValue }) {
         endDate="2026-05-09"
         thresholds={[0, 10]}
       />
-      <Heatmap
+      <CalendarHeatmap
         aria-label={`Two steps ${theme}`}
         data={[
           { date: '2026-05-04', value: 3 },

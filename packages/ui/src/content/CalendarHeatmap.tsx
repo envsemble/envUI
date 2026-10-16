@@ -17,7 +17,7 @@ import { Theme, useTheme } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
 import type { BadgeTone } from './Badge.js';
 
-export interface HeatmapDay {
+export interface CalendarHeatmapDay {
   /** The day, as YYYY-MM-DD. */
   date: string;
   value: number;
@@ -26,14 +26,14 @@ export interface HeatmapDay {
 }
 
 /** A day as shown: days without data have the value 0. */
-export interface HeatmapCell extends HeatmapDay {
+export interface CalendarHeatmapCell extends CalendarHeatmapDay {
   /** The color step, from 0 for an empty day to levels - 1. */
   level: number;
 }
 
-interface HeatmapOptions {
+interface CalendarHeatmapOptions {
   /** Values by day; days without an entry count as 0. */
-  data: readonly HeatmapDay[];
+  data: readonly CalendarHeatmapDay[];
   /** The first day shown, as YYYY-MM-DD; the earliest day in data by default. */
   startDate?: string;
   /** The last day shown, as YYYY-MM-DD; the latest day in data by default. */
@@ -57,7 +57,7 @@ interface HeatmapOptions {
   /** Text for a day's date, in its accessible name and the default tooltip. */
   formatDate?: (date: string) => string;
   /** Tooltip content for a day; the date and value by default. */
-  formatTooltip?: (day: HeatmapCell) => ReactNode;
+  formatTooltip?: (day: CalendarHeatmapCell) => ReactNode;
   /** Twelve month names above the weeks, from January; English abbreviations by default. */
   monthLabels?: readonly string[];
   /** Seven weekday names beside the rows, from Sunday; English abbreviations by default. */
@@ -69,15 +69,15 @@ interface HeatmapOptions {
 }
 
 /** The grid of days needs a name: aria-label or aria-labelledby. */
-type HeatmapName =
+type CalendarHeatmapName =
   | { 'aria-label': string; 'aria-labelledby'?: string }
   | { 'aria-label'?: string; 'aria-labelledby': string };
 
-export type HeatmapProps = HeatmapOptions &
-  HeatmapName &
+export type CalendarHeatmapProps = CalendarHeatmapOptions &
+  CalendarHeatmapName &
   Omit<
     ComponentPropsWithRef<'div'>,
-    keyof HeatmapOptions | 'children' | 'aria-label' | 'aria-labelledby'
+    keyof CalendarHeatmapOptions | 'children' | 'aria-label' | 'aria-labelledby'
   >;
 
 const englishMonths = [
@@ -126,12 +126,12 @@ function dayKey(day: number) {
   return `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
 }
 
-interface DayModel extends HeatmapCell {
+interface DayModel extends CalendarHeatmapCell {
   day: number;
   name: string;
 }
 
-interface HeatmapModel {
+interface CalendarHeatmapModel {
   start: number;
   end: number;
   /** The first day of the first week column. */
@@ -156,7 +156,7 @@ function levelMix(level: number, levelCount: number) {
  * Each day names its date and value, shows them in a tooltip on hover and focus, and the grid is
  * one tab stop that the arrow keys move through.
  */
-export function Heatmap({
+export function CalendarHeatmap({
   data,
   startDate,
   endDate,
@@ -177,11 +177,11 @@ export function Heatmap({
   className,
   style,
   ...props
-}: HeatmapProps) {
+}: CalendarHeatmapProps) {
   const theme = useTheme();
   // Thresholds compare by value, so a new array with the same steps keeps the model.
   const thresholdsKey = thresholds?.join(' ');
-  const model = useMemo<HeatmapModel>(() => {
+  const model = useMemo<CalendarHeatmapModel>(() => {
     const steps = thresholdsKey
       ?.split(' ')
       .filter(Boolean)
@@ -189,7 +189,7 @@ export function Heatmap({
       .filter(Number.isFinite)
       .sort((first, second) => first - second)
       .slice(0, 9);
-    const values = new Map<number, HeatmapDay>();
+    const values = new Map<number, CalendarHeatmapDay>();
     for (const entry of data) {
       const day = parseDay(entry.date);
       if (day !== undefined) values.set(day, entry);
@@ -449,9 +449,14 @@ export function Heatmap({
   const shown = tip ? model.days.get(tip.day) : undefined;
   const legendLevels = Array.from({ length: model.levelCount }, (_, level) => level);
   return (
-    <div {...props} className={classNames('env-heatmap', className)} style={style} data-tone={tone}>
+    <div
+      {...props}
+      className={classNames('env-calendar-heatmap', className)}
+      style={style}
+      data-tone={tone}
+    >
       <div
-        className="env-heatmap-scroll"
+        className="env-calendar-heatmap-scroll"
         ref={scroller}
         onPointerDown={unpin}
         onWheel={unpin}
@@ -463,7 +468,7 @@ export function Heatmap({
           aria-label={label}
           aria-labelledby={labelledBy}
           aria-readonly="true"
-          className="env-heatmap-grid"
+          className="env-calendar-heatmap-grid"
           onPointerOver={handlePointerOver}
           onPointerDown={(event) => {
             mousePress.current = event.pointerType === 'mouse';
@@ -475,7 +480,7 @@ export function Heatmap({
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
         >
-          <HeatmapDays
+          <CalendarHeatmapDays
             model={model}
             active={active}
             weekStart={weekStart}
@@ -483,16 +488,18 @@ export function Heatmap({
           />
         </table>
       </div>
-      <div className="env-heatmap-legend" aria-hidden="true">
+      <div className="env-calendar-heatmap-legend" aria-hidden="true">
         <span>{lessLabel}</span>
         {legendLevels.map((level) => (
           <span
             key={level}
-            className="env-heatmap-swatch"
+            className="env-calendar-heatmap-swatch"
             data-level={level}
             style={
               level > 0
-                ? ({ '--env-heatmap-mix': levelMix(level, model.levelCount) } as CSSProperties)
+                ? ({
+                    '--env-calendar-heatmap-mix': levelMix(level, model.levelCount),
+                  } as CSSProperties)
                 : undefined
             }
           />
@@ -520,12 +527,12 @@ export function Heatmap({
               anchor={tip?.anchor}
               side="top"
               sideOffset={tip?.offset ?? 0}
-              className="env-tooltip-positioner env-heatmap-tooltip-positioner"
+              className="env-tooltip-positioner env-calendar-heatmap-tooltip-positioner"
               data-focus-opened={tip?.focused ? '' : undefined}
             >
               <BaseTooltip.Popup
                 ref={popup}
-                className="env-tooltip env-heatmap-tooltip"
+                className="env-tooltip env-calendar-heatmap-tooltip"
                 onPointerLeave={(event) => {
                   // Back on the days, the day under the pointer takes the tooltip.
                   if (!grid.current?.contains(event.relatedTarget as Node | null)) hide();
@@ -550,13 +557,13 @@ export function Heatmap({
 }
 
 /** The month row and the seven weekday rows; hovering and the tooltip do not render them again. */
-const HeatmapDays = memo(function HeatmapDays({
+const CalendarHeatmapDays = memo(function CalendarHeatmapDays({
   model,
   active,
   weekStart,
   weekdayLabels,
 }: {
-  model: HeatmapModel;
+  model: CalendarHeatmapModel;
   active: number;
   weekStart: 0 | 1;
   weekdayLabels: readonly string[];
@@ -566,9 +573,9 @@ const HeatmapDays = memo(function HeatmapDays({
     <>
       <thead aria-hidden="true">
         <tr>
-          <th className="env-heatmap-corner" />
+          <th className="env-calendar-heatmap-corner" />
           {model.months.map(({ column, span, label }) => (
-            <th key={column} colSpan={span} className="env-heatmap-month">
+            <th key={column} colSpan={span} className="env-calendar-heatmap-month">
               {/* A month shorter than two weeks leaves its name out, so names never overlap. */}
               {span >= 2 && <span>{label}</span>}
             </th>
@@ -580,28 +587,29 @@ const HeatmapDays = memo(function HeatmapDays({
           const weekday = (weekStart + row) % 7;
           return (
             <tr key={row}>
-              <th className="env-heatmap-weekday" aria-hidden="true">
+              <th className="env-calendar-heatmap-weekday" aria-hidden="true">
                 {weekday % 2 === 1 && <span>{weekdayLabels[weekday]}</span>}
               </th>
               {weeks.map((week) => {
                 const day = model.first + week * 7 + row;
                 const entry = model.days.get(day);
                 // Keyed by day, so the tooltip's anchor stays with its day when the range changes.
-                if (!entry) return <td key={day} className="env-heatmap-pad" aria-hidden="true" />;
+                if (!entry)
+                  return <td key={day} className="env-calendar-heatmap-pad" aria-hidden="true" />;
                 return (
                   <td
                     key={day}
                     role="gridcell"
                     tabIndex={day === active ? 0 : -1}
                     aria-label={entry.name}
-                    className="env-heatmap-day"
+                    className="env-calendar-heatmap-day"
                     data-day={day}
                     data-date={entry.date}
                     data-level={entry.level}
                     style={
                       entry.level > 0
                         ? ({
-                            '--env-heatmap-mix': levelMix(entry.level, model.levelCount),
+                            '--env-calendar-heatmap-mix': levelMix(entry.level, model.levelCount),
                           } as CSSProperties)
                         : undefined
                     }

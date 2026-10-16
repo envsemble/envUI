@@ -2,14 +2,14 @@ import { useMemo, useState } from 'react';
 import {
   AnimatedNumber,
   Button,
-  Heatmap,
+  CalendarHeatmap,
   Kbd,
   Stack,
   Stat,
   StatGroup,
   Surface,
   Text,
-  type HeatmapDay,
+  type CalendarHeatmapDay,
 } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { Example } from './Example';
@@ -77,7 +77,7 @@ export function StatsPreview() {
 }
 
 /** A repeatable year of activity ending today: busier midweek, with quiet stretches. */
-function activityYear(days: number, seed: number): HeatmapDay[] {
+function activityYear(days: number, seed: number): CalendarHeatmapDay[] {
   const today = new Date();
   const end = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
   return Array.from({ length: days }, (_, index) => {
@@ -92,7 +92,7 @@ function activityYear(days: number, seed: number): HeatmapDay[] {
   });
 }
 
-export function HeatmapPreview() {
+export function CalendarHeatmapPreview() {
   const activity = useMemo(() => activityYear(371, 4), []);
   const deployments = useMemo(
     () =>
@@ -115,13 +115,13 @@ export function HeatmapPreview() {
           </>
         }
       >
-        <Heatmap aria-label="Activity in the last year" data={activity} />
+        <CalendarHeatmap aria-label="Activity in the last year" data={activity} />
       </Example>
       <Example
         title="A tone and weeks from Monday"
         caption="Each step mixes the tone into the canvas; labels can name the unit of each day."
       >
-        <Heatmap
+        <CalendarHeatmap
           aria-label="Deployments in the last twenty weeks"
           data={deployments}
           tone="success"

@@ -97,5 +97,5 @@ TypeScript declarations provide the complete public API.
 - [Text fields](../components/text-field.md)
 - [Popovers](../components/popover.md)
 - [Comboboxes](../components/combobox.md)
-- [Heatmap](../components/heatmap.md)
+- [Calendar heatmap](../components/calendar-heatmap.md)
 - [Accessibility](../foundations/accessibility.md)

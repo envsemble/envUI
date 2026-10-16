@@ -133,6 +133,13 @@
       }
     }
   },
+  "components/calendar-heatmap/usage": {
+    "light": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 61
+      }
+    }
+  },
   "components/cards/usage": {
     "dark": {
       "color-contrast": {
@@ -379,13 +386,6 @@
     "light": {
       "color-contrast": {
         "article :: div.env-code-block span": 15
-      }
-    }
-  },
-  "components/heatmap/usage": {
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 61
       }
     }
   },

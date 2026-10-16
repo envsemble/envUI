@@ -1,7 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 import { fixtureUrl } from './Servers';
 
-const heatmapFixture = `${fixtureUrl}/?fixture=heatmap`;
+const heatmapFixture = `${fixtureUrl}/?fixture=calendar-heatmap`;
 
 function collectErrors(page: Page) {
   const errors: string[] = [];
@@ -21,7 +21,7 @@ const nextFrames = (page: Page) =>
 /** Moves the pointer straight up from a day onto its tooltip. */
 async function moveOntoTooltip(page: Page, day: import('@playwright/test').Locator) {
   const from = (await day.boundingBox())!;
-  const to = (await page.locator('.env-heatmap-tooltip').boundingBox())!;
+  const to = (await page.locator('.env-calendar-heatmap-tooltip').boundingBox())!;
   await page.mouse.move(from.x + from.width / 2, to.y + to.height / 2, { steps: 12 });
   await nextFrames(page);
 }
@@ -49,12 +49,18 @@ test('a year of days is one grid with named cells and a single tab stop', async 
   );
   // Month and weekday names are visual; each day names its own date.
   await expect(grid.locator('thead')).toHaveAttribute('aria-hidden', 'true');
-  await expect(grid.locator('.env-heatmap-month span').first()).toHaveText('Oct');
-  await expect(grid.locator('.env-heatmap-weekday span')).toHaveText(['Mon', 'Wed', 'Fri']);
-  const legend = page.getByTestId('heatmap-year-light').locator('.env-heatmap-legend');
+  await expect(grid.locator('.env-calendar-heatmap-month span').first()).toHaveText('Oct');
+  await expect(grid.locator('.env-calendar-heatmap-weekday span')).toHaveText([
+    'Mon',
+    'Wed',
+    'Fri',
+  ]);
+  const legend = page
+    .getByTestId('calendar-heatmap-year-light')
+    .locator('.env-calendar-heatmap-legend');
   await expect(legend).toHaveAttribute('aria-hidden', 'true');
   await expect(legend).toHaveText('LessMore');
-  await expect(legend.locator('.env-heatmap-swatch')).toHaveCount(5);
+  await expect(legend.locator('.env-calendar-heatmap-swatch')).toHaveCount(5);
   // No tooltip is in the document at rest.
   await expect(page.locator('.env-tooltip-positioner')).toHaveCount(0);
   expect(errors).toEqual([]);
@@ -65,7 +71,7 @@ test('arrow keys move by day and week, Home and End along the weekday, Escape hi
 }) => {
   await page.goto(heatmapFixture);
   const grid = page.getByRole('grid', { name: 'Activity light' });
-  const tooltip = page.locator('.env-heatmap-tooltip');
+  const tooltip = page.locator('.env-calendar-heatmap-tooltip');
   await page.getByRole('button', { name: 'Update light' }).focus();
   await page.keyboard.press('Shift+Tab');
   expect(await focusedName(page)).toBe('Sat 10 Oct 2026: 0');
@@ -136,7 +142,7 @@ test('Page Up and Page Down reach the ends of the week, Ctrl+Home and Ctrl+End t
 test('one tooltip follows the pointer across days and leaves with it', async ({ page }) => {
   await page.goto(heatmapFixture);
   const grid = page.getByRole('grid', { name: 'Activity light' });
-  const tooltip = page.locator('.env-heatmap-tooltip');
+  const tooltip = page.locator('.env-calendar-heatmap-tooltip');
   const first = grid.locator('td[data-date="2026-06-01"]');
   const second = grid.locator('td[data-date="2026-06-08"]');
   await first.hover();
@@ -158,7 +164,7 @@ test('people can move the pointer onto the tooltip of a hovered day to read it',
 }) => {
   await page.goto(heatmapFixture);
   const grid = page.getByRole('grid', { name: 'Activity light' });
-  const tooltip = page.locator('.env-heatmap-tooltip');
+  const tooltip = page.locator('.env-calendar-heatmap-tooltip');
   const positioner = page.locator('.env-tooltip-positioner');
   // A day in the middle of its week, with days above it, and a Sunday in the top row.
   for (const date of ['2026-06-03', '2026-06-07']) {
@@ -182,7 +188,7 @@ test('people can move the pointer onto the tooltip of a hovered day to read it',
 test('a day clicked with the mouse shows a tooltip the pointer can move onto', async ({ page }) => {
   await page.goto(heatmapFixture);
   const grid = page.getByRole('grid', { name: 'Activity light' });
-  const tooltip = page.locator('.env-heatmap-tooltip');
+  const tooltip = page.locator('.env-calendar-heatmap-tooltip');
   const day = grid.locator('td[data-date="2026-06-03"]');
   const name = (await day.getAttribute('aria-label'))!;
   await day.hover();
@@ -224,7 +230,7 @@ test('Escape with a modifier passes a hovered tooltip by', async ({ page }) => {
     .getByRole('grid', { name: 'Activity light' })
     .locator('td[data-date="2026-06-03"]');
   await day.hover();
-  await expect(page.locator('.env-heatmap-tooltip')).toHaveText(
+  await expect(page.locator('.env-calendar-heatmap-tooltip')).toHaveText(
     (await day.getAttribute('aria-label'))!,
   );
   // A listener at the end of the event's path records each Escape that reaches it.
@@ -253,7 +259,7 @@ test('Escape with a modifier over a hovered tooltip closes an enclosing dialog',
     .getByRole('grid', { name: 'Activity in a dialog light' })
     .locator('td[data-date="2026-10-07"]');
   await day.hover();
-  await expect(page.locator('.env-heatmap-tooltip')).toHaveText(
+  await expect(page.locator('.env-calendar-heatmap-tooltip')).toHaveText(
     (await day.getAttribute('aria-label'))!,
   );
   await page.keyboard.press('Control+Escape');
@@ -263,7 +269,7 @@ test('Escape with a modifier over a hovered tooltip closes an enclosing dialog',
 test('a tooltip the pointer rests on stays when focus leaves the days', async ({ page }) => {
   await page.goto(heatmapFixture);
   const grid = page.getByRole('grid', { name: 'Activity light' });
-  const tooltip = page.locator('.env-heatmap-tooltip');
+  const tooltip = page.locator('.env-calendar-heatmap-tooltip');
   await page.getByRole('button', { name: 'Update light' }).focus();
   await page.keyboard.press('Shift+Tab');
   await expect(tooltip).toHaveText('Sat 10 Oct 2026: 0');
@@ -283,8 +289,8 @@ test('custom labels, weeks from Monday, levels and a tone', async ({ page }) => 
   await page.goto(heatmapFixture);
   const grid = page.getByRole('grid', { name: 'Deployments light' });
   await expect(grid.getByRole('gridcell')).toHaveCount(35);
-  await expect(grid.locator('.env-heatmap-weekday span')).toHaveText(['Mo', 'Mi', 'Fr']);
-  await expect(grid.locator('.env-heatmap-month span')).toHaveText(['Mär']);
+  await expect(grid.locator('.env-calendar-heatmap-weekday span')).toHaveText(['Mo', 'Mi', 'Fr']);
+  await expect(grid.locator('.env-calendar-heatmap-month span')).toHaveText(['Mär']);
   // The first week starts on Monday 23 February; only Sunday 1 March is in range.
   const firstColumn = await grid
     .locator('tbody tr')
@@ -295,8 +301,10 @@ test('custom labels, weeks from Monday, levels and a tone', async ({ page }) => 
   await expect(named).toHaveAttribute('data-level', '1');
   await expect(grid.locator('td[data-date="2026-03-24"]')).toHaveAttribute('data-level', '2');
   await named.focus();
-  await expect(page.locator('.env-heatmap-tooltip')).toHaveText('4 deployments on 2026-03-03');
-  const scope = page.getByTestId('heatmap-light');
+  await expect(page.locator('.env-calendar-heatmap-tooltip')).toHaveText(
+    '4 deployments on 2026-03-03',
+  );
+  const scope = page.getByTestId('calendar-heatmap-light');
   await expect(scope.getByText('Weniger')).toBeVisible();
   await expect(scope.getByText('Mehr')).toBeVisible();
   // The strongest step is the tone itself, as painted.
@@ -312,7 +320,7 @@ test('custom labels, weeks from Monday, levels and a tone', async ({ page }) => 
     };
     const probe = document.createElement('span');
     probe.style.color = 'var(--color-tone-success)';
-    element.closest('.env-heatmap')!.append(probe);
+    element.closest('.env-calendar-heatmap')!.append(probe);
     const tone = paint(getComputedStyle(probe).color);
     probe.remove();
     return { cell: paint(getComputedStyle(element).backgroundColor), tone };
@@ -323,7 +331,7 @@ test('custom labels, weeks from Monday, levels and a tone', async ({ page }) => 
 test('the ramp rises from the empty fill to the tone in both themes', async ({ page }) => {
   await page.goto(heatmapFixture);
   for (const theme of ['light', 'dark']) {
-    const result = await page.getByTestId(`heatmap-year-${theme}`).evaluate((element) => {
+    const result = await page.getByTestId(`calendar-heatmap-year-${theme}`).evaluate((element) => {
       const canvas = document.createElement('canvas');
       canvas.width = canvas.height = 1;
       const context = canvas.getContext('2d', { willReadFrequently: true })!;
@@ -347,9 +355,9 @@ test('the ramp rises from the empty fill to the tone in both themes', async ({ p
         );
         return (lighter! + 0.05) / (darker! + 0.05);
       };
-      const swatches = [...element.querySelectorAll<HTMLElement>('.env-heatmap-swatch')].map(
-        (swatch) => getComputedStyle(swatch).backgroundColor,
-      );
+      const swatches = [
+        ...element.querySelectorAll<HTMLElement>('.env-calendar-heatmap-swatch'),
+      ].map((swatch) => getComputedStyle(swatch).backgroundColor);
       // Every day uses the swatch of its level.
       const mismatched = [...element.querySelectorAll<HTMLElement>('td[data-level]')].filter(
         (cell) => getComputedStyle(cell).backgroundColor !== swatches[Number(cell.dataset.level)],
@@ -384,7 +392,7 @@ test('the ramp rises from the empty fill to the tone in both themes', async ({ p
     };
     const results: string[] = [];
     for (const text of document.querySelectorAll<HTMLElement>(
-      '.env-heatmap-month span, .env-heatmap-weekday span, .env-heatmap-legend > span:not(.env-heatmap-swatch)',
+      '.env-calendar-heatmap-month span, .env-calendar-heatmap-weekday span, .env-calendar-heatmap-legend > span:not(.env-calendar-heatmap-swatch)',
     )) {
       const layers: string[] = [];
       for (let element: HTMLElement | null = text; element; element = element.parentElement) {
@@ -420,7 +428,7 @@ test('a year renders updates and focus moves within a frame', async ({ page }) =
   await page.goto(heatmapFixture);
   await expect(page.getByRole('grid', { name: 'Activity light' })).toBeVisible();
   const timings = await page.evaluate(async () => {
-    const scope = document.querySelector('[data-testid="heatmap-light"]')!;
+    const scope = document.querySelector('[data-testid="calendar-heatmap-light"]')!;
     const cell = scope.querySelector('td[data-date="2026-10-10"]')!;
     const button = [...scope.querySelectorAll('button')].find(
       (element) => element.textContent === 'Update light',
@@ -449,8 +457,8 @@ test('a year renders updates and focus moves within a frame', async ({ page }) =
 test('a narrow container scrolls the weeks, starting at the most recent', async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 900 });
   await page.goto(heatmapFixture);
-  const heatmap = page.getByTestId('heatmap-year-light');
-  const scroller = heatmap.locator('.env-heatmap-scroll');
+  const heatmap = page.getByTestId('calendar-heatmap-year-light');
+  const scroller = heatmap.locator('.env-calendar-heatmap-scroll');
   // It stays at the end while the weeks settle, such as when the web font loads.
   await expect
     .poll(() =>
@@ -475,7 +483,7 @@ test('right-to-left heatmaps run the weeks from the right and turn the arrow key
   page,
 }) => {
   await page.goto(heatmapFixture);
-  const heatmap = page.getByTestId('heatmap-year-light');
+  const heatmap = page.getByTestId('calendar-heatmap-year-light');
   await heatmap.evaluate((element) => element.setAttribute('dir', 'rtl'));
   const early = (await heatmap.locator('td[data-date="2026-06-01"]').boundingBox())!;
   const later = (await heatmap.locator('td[data-date="2026-06-08"]').boundingBox())!;
@@ -508,7 +516,7 @@ test.describe('on a coarse pointer', () => {
     expect(pitch.across).toBeGreaterThan(23.99);
     await cell.scrollIntoViewIfNeeded();
     await cell.tap();
-    await expect(page.locator('.env-heatmap-tooltip')).toHaveText(
+    await expect(page.locator('.env-calendar-heatmap-tooltip')).toHaveText(
       (await cell.getAttribute('aria-label'))!,
     );
     await page.getByRole('button', { name: 'Update light' }).tap();
@@ -530,8 +538,11 @@ test('thresholds set the color steps, for example to color days by rank', async 
   // Below the first threshold a day shows as empty, like a day without data.
   expect(await level('2026-05-08')).toBe('0');
   expect(await level('2026-05-09')).toBe('0');
-  const legend = page.locator('.env-heatmap').filter({ has: grid }).locator('.env-heatmap-legend');
-  await expect(legend.locator('.env-heatmap-swatch')).toHaveCount(5);
+  const legend = page
+    .locator('.env-calendar-heatmap')
+    .filter({ has: grid })
+    .locator('.env-calendar-heatmap-legend');
+  await expect(legend.locator('.env-calendar-heatmap-swatch')).toHaveCount(5);
 });
 
 test('explicit thresholds color days of 0, and two levels color their only step in the tone', async ({
@@ -564,7 +575,7 @@ test('explicit thresholds color days of 0, and two levels color their only step 
     };
     const probe = document.createElement('span');
     probe.style.color = 'var(--color-tone-accent)';
-    element.closest('.env-heatmap')!.append(probe);
+    element.closest('.env-calendar-heatmap')!.append(probe);
     const tone = paint(getComputedStyle(probe).color);
     probe.remove();
     return { cell: paint(getComputedStyle(element).backgroundColor), tone };
@@ -577,7 +588,7 @@ test('a tooltip opened by focus leaves with the pointer and never blocks a press
 }) => {
   await page.goto(heatmapFixture);
   const grid = page.getByRole('grid', { name: 'Activity light' });
-  const tooltip = page.locator('.env-heatmap-tooltip');
+  const tooltip = page.locator('.env-calendar-heatmap-tooltip');
   const positioner = page.locator('.env-tooltip-positioner');
   const update = page.getByRole('button', { name: 'Update light' });
   await update.focus();
@@ -617,9 +628,9 @@ test('Escape hides the tooltip of a heatmap in a dialog and keeps the dialog ope
   await expect(dialog).toBeVisible();
   const grid = dialog.getByRole('grid', { name: 'Activity in a dialog light' });
   await grid.locator('td[tabindex="0"]').focus();
-  await expect(page.locator('.env-heatmap-tooltip')).toBeVisible();
+  await expect(page.locator('.env-calendar-heatmap-tooltip')).toBeVisible();
   await page.keyboard.press('Escape');
-  await expect(page.locator('.env-heatmap-tooltip')).toHaveCount(0);
+  await expect(page.locator('.env-calendar-heatmap-tooltip')).toHaveCount(0);
   await expect(dialog).toBeVisible();
   // With no tooltip to hide, Escape closes the dialog as usual.
   await page.keyboard.press('Escape');
@@ -638,7 +649,7 @@ test('Escape hides a hovered tooltip in a dialog while focus is elsewhere in it'
     .getByRole('grid', { name: 'Activity in a dialog light' })
     .locator('td[data-date="2026-10-07"]');
   await day.hover();
-  await expect(page.locator('.env-heatmap-tooltip')).toHaveText(
+  await expect(page.locator('.env-calendar-heatmap-tooltip')).toHaveText(
     (await day.getAttribute('aria-label'))!,
   );
   await moveOntoTooltip(page, day);

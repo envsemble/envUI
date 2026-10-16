@@ -1,11 +1,11 @@
-# Heatmap
+# Calendar heatmap
 
 ## React usage
 
 ```tsx
-import { Heatmap } from '@envsemble/envui';
+import { CalendarHeatmap } from '@envsemble/envui';
 
-<Heatmap
+<CalendarHeatmap
   aria-label="Deployments in the last year"
   data={deployments.map(({ day, count }) => ({
     date: day,
@@ -17,7 +17,7 @@ import { Heatmap } from '@envsemble/envui';
   tone="success"
 />;
 
-<Heatmap
+<CalendarHeatmap
   aria-labelledby="activity-heading"
   data={activity}
   weekStart={1}
@@ -41,7 +41,7 @@ const active = activity
   .sort((first, second) => first - second);
 const quantile = (share: number) => active[Math.floor(share * (active.length - 1))] ?? 1;
 
-<Heatmap
+<CalendarHeatmap
   aria-label="Activity by rank"
   data={activity}
   thresholds={[quantile(0), quantile(0.25), quantile(0.5), quantile(0.75)]}

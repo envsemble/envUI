@@ -33,7 +33,7 @@ import {
   MessageList,
   Stat,
   StatGroup,
-  Heatmap,
+  CalendarHeatmap,
   Combobox,
   PanelDock,
   PanelDockHeader,
@@ -268,7 +268,7 @@ export function HydrationApp() {
           onFiles={(chosen) => setFiles(chosen.map((file) => file.name).join(' '))}
         />
         <p>{files}</p>
-        <Heatmap
+        <CalendarHeatmap
           aria-label="Hydrated activity"
           data={[
             { date: '2026-03-02', value: 3 },
