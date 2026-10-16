@@ -13,6 +13,9 @@ const pager = 'use Pager.Previous or Pager.Next, which take no direction prop.';
 const removedFrom = (line, names) =>
   names.map((name) => `line ${line}: ${name} is no longer exported by ${library}: ${use(name)}`);
 
+const ambiguous = (line, action) =>
+  `line ${line}: ${action}, so it stays as it is: useTheme() is { theme, contrast } in 1.0; where it is read as the color scheme, read its .theme.`;
+
 const expectError = (line, comment) =>
   `line ${line}: dropped // @ts-expect-error -- ${comment}, which expected an error from the 0.x names: TypeScript fails on a @ts-expect-error with no error below it.`;
 
@@ -84,6 +87,13 @@ const reports = {
   'theme-bootstrap-export.ts': [
     `line 7: defaultThemeStorageKey is no longer exported by ${bootstrap}: ${use('defaultThemeStorageKey', bootstrap)}`,
     `line 8: re-exports defaultThemeStorageKey, which ${bootstrap} no longer exports: ${use('defaultThemeStorageKey', bootstrap)}`,
+  ],
+  'use-theme-ambiguous.tsx': [
+    ambiguous(7, 'returns useTheme()'),
+    ambiguous(10, 'returns useTheme()'),
+    ambiguous(13, 'passes useTheme() as the value of <SchemeContext>'),
+    ambiguous(18, 'passes t, which holds useTheme(), as the value of <SchemeContext.Provider>'),
+    ambiguous(23, 'returns t, which holds useTheme()'),
   ],
   'toast-manual.tsx': [
     ...removedFrom(2, ['ToastProps']),

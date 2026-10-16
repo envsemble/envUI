@@ -935,7 +935,7 @@ export default function transform(file, api, options = {}) {
       changed = true;
       continue;
     }
-    if (readThemeOfCall(j, call, references)) changed = true;
+    if (readThemeOfCall(j, call, { references, scopes, warn })) changed = true;
   }
 
   if (!changed) {
@@ -1113,11 +1113,41 @@ const nullishComparison = (node, operand) => {
   );
 };
 
+/** Expressions whose value is their operand's: parentheses and TypeScript's assertions. */
+const transparentTypes = new Set([
+  'ParenthesizedExpression',
+  'TSAsExpression',
+  'TSSatisfiesExpression',
+  'TSNonNullExpression',
+  'TSTypeAssertion',
+]);
+
+/**
+ * The outermost expression whose value can be the one at `path`: through parentheses, `as`,
+ * `satisfies`, `!` and `<T>`, the branches of a conditional, and the operands of `??`, `||` and
+ * the right of `&&`. `const { theme } = own ? useTheme() : fallback` destructures the call.
+ */
+function valueOf(path) {
+  let current = path;
+  for (;;) {
+    const parent = current.parent;
+    const node = parent?.node;
+    const passes =
+      (transparentTypes.has(node?.type) && node.expression === current.node) ||
+      (node?.type === 'ConditionalExpression' && node.test !== current.node) ||
+      (node?.type === 'LogicalExpression' &&
+        (node.operator !== '&&' || node.right === current.node));
+    if (!passes) return current;
+    current = parent;
+  }
+}
+
 /**
  * Whether an expression is read as 1.0's `{ theme, contrast }`: `.theme` or `.contrast` read from
- * it, spread, or destructured.
+ * it, spread, or destructured, also through parentheses, type assertions and conditionals.
  */
-function readsAsThemeObject(path) {
+function readsAsThemeObject(expression) {
+  const path = valueOf(expression);
   const { node } = path;
   const parent = path.parent?.node;
   switch (parent?.type) {
@@ -1138,31 +1168,95 @@ function readsAsThemeObject(path) {
   return false;
 }
 
+/** The name of a JSX element as written: `Context` or `Context.Provider`. */
+const jsxName = (name) =>
+  name.type === 'JSXMemberExpression'
+    ? `${jsxName(name.object)}.${name.property.name}`
+    : name.type === 'JSXNamespacedName'
+      ? `${name.namespace.name}:${name.name.name}`
+      : name.name;
+
+/**
+ * Where a value leaves for code the transform can't see, so it can't tell 0.x code from 1.0: a
+ * value returned, also as an arrow function's body, or given to a component's `value` prop, as a
+ * context provider takes it. Returns `{ provider }` for a `value` prop, `{}` for a return, and
+ * undefined elsewhere.
+ */
+function leaves(expression) {
+  const path = valueOf(expression);
+  const parent = path.parent?.node;
+  if (
+    parent?.type === 'ReturnStatement' ||
+    (parent?.type === 'ArrowFunctionExpression' && parent.body === path.node)
+  )
+    return {};
+  const attribute = path.parent?.parent?.node;
+  if (
+    parent?.type === 'JSXExpressionContainer' &&
+    attribute?.type === 'JSXAttribute' &&
+    attribute.name.type === 'JSXIdentifier' &&
+    attribute.name.name === 'value'
+  ) {
+    const provider = jsxName(path.parent.parent.parent.node.name);
+    // `<input value={…}>` is a DOM element, where 0.x's scheme was a string.
+    if (!/^[a-z]/.test(provider)) return { provider };
+  }
+  return undefined;
+}
+
+/** What a report says a value that leaves does: `returns …` or `passes … as the value of <…>`. */
+const leaving = (where, call, variable) => {
+  const held = variable ? `${variable}, which holds ${call}` : call;
+  return where.provider
+    ? `passes ${held}${variable ? ',' : ''} as the value of <${where.provider}>`
+    : `returns ${held}`;
+};
+
 /**
  * Rewrites a bare `useTheme()` call as `useTheme().theme`, the color scheme 0.x's call returned,
  * so `useTheme() === 'dark'`, `theme={useTheme()}` on another element and `` `t-${useTheme()}` ``
- * keep their meaning. A call already read as 1.0's object stays, also through a variable it
- * initializes, such as `const current = useTheme()` read as `current.contrast`; so does a comparison
- * with null or undefined. `references` are the file's references by name, which the scope of the
- * variable's declaration filters. Returns whether it rewrote the call.
+ * keep their meaning. The transform is meant for 0.x code, but a call already read as 1.0's object
+ * stays, also through a variable it initializes, such as `const current = useTheme()` read as
+ * `current.contrast`, and through parentheses, type assertions and conditionals; so does a
+ * comparison with null or undefined. A call whose value leaves for code the transform can't see,
+ * returned or given to a context as its value, also directly or through a variable, stays and is
+ * reported. `references` are the file's references by name, which `scopes` narrows to the
+ * variable's declaration. Returns whether it rewrote the call.
  */
-function readThemeOfCall(j, call, references) {
-  if (readsAsThemeObject(call) || nullishComparison(call.parent?.node, call.node)) return false;
-  const declarator = call.parent?.node;
+function readThemeOfCall(j, call, { references, scopes, warn }) {
+  const outer = valueOf(call);
+  if (readsAsThemeObject(call) || nullishComparison(outer.parent?.node, outer.node)) return false;
+  const callee = call.node.callee;
+  const shown = `${callee.type === 'MemberExpression' ? `${callee.object.name}.${callee.property.name}` : callee.name}()`;
+  const report = (node, action) =>
+    warn(
+      node,
+      `${action}, so it stays as it is: useTheme() is { theme, contrast } in 1.0; where it is read as the color scheme, read its .theme.`,
+    );
+  const where = leaves(call);
+  if (where) {
+    report(call.node, leaving(where, shown));
+    return false;
+  }
+  const declarator = outer.parent?.node;
   if (
     declarator?.type === 'VariableDeclarator' &&
-    declarator.init === call.node &&
+    declarator.init === outer.node &&
     declarator.id.type === 'Identifier'
   ) {
     const { name } = declarator.id;
-    const scope = call.parent.scope?.lookup(name);
-    const readAsObject = (references.get(name) ?? []).some(
+    const declaring = scopes.lookup(outer.parent.get('id'), name, 'value')?.node;
+    const uses = (references.get(name) ?? []).filter(
       ({ path, kind }) =>
         (kind === 'value' || kind === 'object') &&
-        path.scope?.lookup(name) === scope &&
-        readsAsThemeObject(path),
+        scopes.lookup(path, name, 'value')?.node === declaring,
     );
-    if (readAsObject) return false;
+    if (uses.some(({ path }) => readsAsThemeObject(path))) return false;
+    const left = uses.map(({ path }) => [path, leaves(path)]).filter(([, found]) => found);
+    if (left.length > 0) {
+      for (const [path, found] of left) report(path.node, leaving(found, shown, name));
+      return false;
+    }
   }
   call.replace(j.memberExpression(call.node, j.identifier('theme')));
   return true;
