@@ -4,7 +4,7 @@ import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { classNames } from '../internal/classNames.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
-import { useLinkComponent } from './LinkProvider.js';
+import { useLinkComponent } from '../internal/LinkContext.js';
 
 export interface LinkProps extends Omit<ComponentPropsWithRef<'a'>, 'children'> {
   /** The destination; the link renders through the LinkProvider's link component. */

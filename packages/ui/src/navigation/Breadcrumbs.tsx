@@ -3,7 +3,7 @@
 import type { MouseEvent, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
-import { useLinkComponent } from './LinkProvider.js';
+import { useLinkComponent } from '../internal/LinkContext.js';
 
 export interface BreadcrumbItem {
   /** The level's name, such as a folder's title; it ends with an ellipsis beyond 20 rem. */
@@ -77,7 +77,7 @@ export function Breadcrumbs({
             <li key={index} className="env-breadcrumb">
               {crumb}
               {!current && (
-                <span className="env-symbol env-breadcrumb-separator" aria-hidden="true">
+                <span className="env-icon env-breadcrumb-separator" aria-hidden="true">
                   <ChevronRight />
                 </span>
               )}

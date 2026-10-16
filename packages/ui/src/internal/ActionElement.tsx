@@ -1,7 +1,22 @@
 'use client';
 
 import type { ComponentPropsWithRef, MouseEvent } from 'react';
-import { useLinkComponent } from '../navigation/LinkProvider.js';
+import { useLinkComponent } from './LinkContext.js';
+import { useControlDefaults, type ControlVariant } from './ControlDefaults.js';
+import type { ControlSize } from './controlTypes.js';
+
+/**
+ * A button's emphasis as Button gives it: its own variant, tone and size, which win, and the
+ * variant it falls back to where neither it nor the nearest ControlDefaults sets one. It is read
+ * here, in the client module, so that Button stays a server component.
+ */
+export interface ActionEmphasis {
+  variant?: ControlVariant;
+  fallbackVariant: ControlVariant;
+  tone?: 'neutral' | 'accent' | 'danger';
+  size?: ControlSize;
+  underline?: boolean;
+}
 
 export type ActionElementProps =
   | (ComponentPropsWithRef<'button'> & { href?: undefined })
@@ -26,8 +41,21 @@ const preventActivation = (event: MouseEvent<HTMLElement>) => event.preventDefau
 export function ActionElement({
   disabled = false,
   pending = false,
-  ...rest
-}: ActionElementProps & { pending?: boolean }) {
+  emphasis,
+  ...given
+}: ActionElementProps & { pending?: boolean; emphasis?: ActionEmphasis }) {
+  const defaults = useControlDefaults();
+  let rest = given;
+  if (emphasis) {
+    const variant = emphasis.variant ?? defaults.variant ?? emphasis.fallbackVariant;
+    rest = {
+      ...given,
+      'data-variant': variant,
+      'data-tone': emphasis.tone ?? 'neutral',
+      'data-size': emphasis.size ?? defaults.size,
+      'data-underline': (variant === 'text' && emphasis.underline) || undefined,
+    } as unknown as typeof given;
+  }
   const props = (
     pending
       ? {

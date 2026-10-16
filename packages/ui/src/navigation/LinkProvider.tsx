@@ -1,17 +1,11 @@
 'use client';
 
-import {
-  createContext,
-  useContext,
-  type ComponentPropsWithRef,
-  type ComponentType,
-  type ReactNode,
-} from 'react';
+// @client-module It provides the link context, which React reads only in client modules.
 
-/** Props envUI passes to the application's link: native anchor attributes with a string href. */
-export type LinkComponentProps = ComponentPropsWithRef<'a'> & { href: string };
+import type { ComponentType, ReactNode } from 'react';
+import { LinkComponentContext, type LinkComponentProps } from '../internal/LinkContext.js';
 
-const LinkComponentContext = createContext<ComponentType<LinkComponentProps> | 'a'>('a');
+export type { LinkComponentProps };
 
 export interface LinkProviderProps {
   /**
@@ -26,9 +20,4 @@ export interface LinkProviderProps {
 /** Connects envUI links to the application's router without a router dependency in envUI. */
 export function LinkProvider({ component, children }: LinkProviderProps) {
   return <LinkComponentContext value={component}>{children}</LinkComponentContext>;
-}
-
-/** The anchor component for envUI destinations: the provider's link or a native anchor. */
-export function useLinkComponent() {
-  return useContext(LinkComponentContext);
 }
