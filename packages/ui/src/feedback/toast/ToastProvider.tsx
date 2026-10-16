@@ -10,7 +10,11 @@ import { ToastManagerContext } from './useToast.js';
 
 export type { ToastProviderProps as ProviderProps } from './ToastTypes.js';
 
-/** Hosts the managed notifications that useToast shows, in a region per placement. */
+/**
+ * Hosts the notifications that useToast shows: brief feedback at the edge of the window, announced
+ * and dismissed after a few seconds or by people. Put one near the root of the application; it
+ * renders a region for each placement in a portal, in the theme of the place it is rendered.
+ */
 function Provider({
   children,
   defaultPlacement = 'bottom-right',

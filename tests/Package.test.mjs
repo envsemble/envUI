@@ -137,7 +137,7 @@ before(
     import { Home } from '@envsemble/envui/icons/Home';
     import { Home as BarrelHome } from '@envsemble/envui/icons';
     if (typeof document !== 'undefined' || typeof window !== 'undefined') throw new Error('DOM globals must be absent');
-    function ThemeProbe() { return h('span', { 'data-originating-theme': ui.useTheme() }); }
+    function ThemeProbe() { return h('span', { 'data-originating-theme': ui.useTheme().theme }); }
     const custom = h(ui.Icon, { label: 'Custom star', viewBox: '0 0 8 8' }, h('path', { d: 'M0 0L8 8' }));
     const html = renderToString(h(ui.Theme, { theme: 'dark' },
       h(ThemeProbe),

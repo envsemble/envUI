@@ -41,7 +41,17 @@
         "article :: div.env-markdown-table": 1
       }
     },
+    "dark-hc": {
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
     "light": {
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "light-hc": {
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
       }
@@ -53,7 +63,17 @@
         "article :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 3
       }
     },
+    "dark-hc": {
+      "label-content-name-mismatch": {
+        "article :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 3
+      }
+    },
     "light": {
+      "label-content-name-mismatch": {
+        "article :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 3
+      }
+    },
+    "light-hc": {
       "label-content-name-mismatch": {
         "article :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 3
       }
@@ -163,263 +183,48 @@
       }
     }
   },
-  "components/message/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 1
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 67
-      }
-    }
-  },
-  "components/meter/usage": {
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 8
-      }
-    }
-  },
-  "components/nav-list/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 8
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 49
-      }
-    }
-  },
-  "components/pager/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 10
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 37
-      }
-    }
-  },
-  "components/pagination/usage": {
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 25
-      }
-    }
-  },
-  "components/panel-dock/preview": {
-    "dark": {
-      "landmark-unique": {
-        "Docked panels :: section.env-panel-dock-panel": 2
-      },
-      "target-size": {
-        "Docked panels :: button.env-textarea-resize-edge": 2,
-        "Maximized panel :: button.env-textarea-resize-edge": 2,
-        "Minimize what does not fit :: button.env-textarea-resize-edge": 2
-      }
-    },
-    "light": {
-      "landmark-unique": {
-        "Docked panels :: section.env-panel-dock-panel": 2
-      },
-      "target-size": {
-        "Docked panels :: button.env-textarea-resize-edge": 2,
-        "Maximized panel :: button.env-textarea-resize-edge": 2,
-        "Minimize what does not fit :: button.env-textarea-resize-edge": 2
-      }
-    }
-  },
-  "components/panel-dock/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 6
-      },
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 141
-      },
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
-      }
-    }
-  },
-  "components/popover/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 5
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 35
-      }
-    }
-  },
-  "components/progress/usage": {
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 12
-      }
-    }
-  },
-  "components/radio/usage": {
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 25
-      }
-    }
-  },
-  "components/rating/usage": {
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 13
-      }
-    }
-  },
-  "components/relative-time/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 1
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 13
-      }
-    }
-  },
-  "components/rich-text/preview": {
+  "components/panel-dock/overview": {
     "dark": {
       "target-size": {
-        "Formatted editing and saved content :: div.env-markdown.env-rich-text-document input": 2
+        "article :: button.env-textarea-resize-edge": 2
       }
     },
     "light": {
       "target-size": {
-        "Formatted editing and saved content :: div.env-markdown.env-rich-text-document input": 2
+        "article :: button.env-textarea-resize-edge": 2
       }
     }
   },
-  "components/rich-text/usage": {
+  "components/rich-text/overview": {
+    "dark": {
+      "target-size": {
+        "article :: div.env-markdown.env-rich-text-document input": 2
+      }
+    },
+    "light": {
+      "target-size": {
+        "article :: div.env-markdown.env-rich-text-document input": 2
+      }
+    }
+  },
+  "components/segmented-control/guidelines": {
+    "light": {
+      "color-contrast": {
+        "Sizes and states :: span.env-segment-count": 3
+      }
+    }
+  },
+  "components/slider/overview": {
     "dark": {
       "color-contrast": {
-        "article :: div.env-code-block span": 5
-      },
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
+        "article :: div.env-slider-label": 1,
+        "article :: output.env-slider-value": 1
       }
     },
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 116
-      },
-      "landmark-unique": {
-        "article :: div.env-markdown-table": 1
-      }
-    }
-  },
-  "components/segmented-control/preview": {
-    "light": {
-      "color-contrast": {
-        "One choice among a few :: span.env-segment-count": 2
-      }
-    }
-  },
-  "components/segmented-control/usage": {
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 25
-      }
-    }
-  },
-  "components/select/usage": {
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 27
-      }
-    }
-  },
-  "components/skeleton/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 1
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 18
-      }
-    }
-  },
-  "components/slider/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 1
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 20
-      }
-    }
-  },
-  "components/spinner/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 3
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 11
-      }
-    }
-  },
-  "components/stack/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 7
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 17
-      }
-    }
-  },
-  "components/stat/usage": {
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 34
-      }
-    }
-  },
-  "components/surface/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 2
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 17
-      }
-    }
-  },
-  "components/switch/usage": {
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 10
+        "article :: div.env-slider-label": 1,
+        "article :: output.env-slider-value": 1
       }
     }
   },
@@ -429,21 +234,19 @@
         "article :: div.env-markdown-table": 1
       }
     },
+    "dark-hc": {
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
     "light": {
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
       }
-    }
-  },
-  "components/tabs/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 12
-      }
     },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 22
+    "light-hc": {
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
       }
     }
   },
@@ -454,7 +257,19 @@
         "Textarea states :: button.env-textarea-resize-edge": 3
       }
     },
+    "dark-hc": {
+      "target-size": {
+        "Appearances :: button.env-textarea-resize-edge": 1,
+        "Textarea states :: button.env-textarea-resize-edge": 3
+      }
+    },
     "light": {
+      "target-size": {
+        "Appearances :: button.env-textarea-resize-edge": 1,
+        "Textarea states :: button.env-textarea-resize-edge": 3
+      }
+    },
+    "light-hc": {
       "target-size": {
         "Appearances :: button.env-textarea-resize-edge": 1,
         "Textarea states :: button.env-textarea-resize-edge": 3
@@ -467,45 +282,19 @@
         "article :: button.env-textarea-resize-edge": 1
       }
     },
+    "dark-hc": {
+      "target-size": {
+        "article :: button.env-textarea-resize-edge": 1
+      }
+    },
     "light": {
       "target-size": {
         "article :: button.env-textarea-resize-edge": 1
       }
-    }
-  },
-  "components/toast/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 2
-      }
     },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 30
-      }
-    }
-  },
-  "components/tooltip/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 1
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 16
-      }
-    }
-  },
-  "components/tree/usage": {
-    "dark": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 5
-      }
-    },
-    "light": {
-      "color-contrast": {
-        "article :: div.env-code-block span": 61
+    "light-hc": {
+      "target-size": {
+        "article :: button.env-textarea-resize-edge": 1
       }
     }
   },
@@ -535,10 +324,50 @@
         "Text fields :: button.env-button.env-button-secondary.docs-swatch": 8
       }
     },
+    "dark-hc": {
+      "label-content-name-mismatch": {
+        "Buttons :: button.env-button.env-button-secondary.docs-swatch": 11,
+        "Cards :: button.env-button.env-button-secondary.docs-swatch": 1,
+        "Checkboxes :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Content & loading :: button.env-button.env-button-secondary.docs-swatch": 2,
+        "Direction links :: button.env-button.env-button-secondary.docs-swatch": 5,
+        "Feedback :: button.env-button.env-button-secondary.docs-swatch": 9,
+        "Navigation :: button.env-button.env-button-secondary.docs-swatch": 5,
+        "Page & surfaces :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Radio :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Rows :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Select options :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Switches :: button.env-button.env-button-secondary.docs-swatch": 5,
+        "Text & focus :: button.env-button.env-button-secondary.docs-swatch": 7,
+        "Text fields :: button.env-button.env-button-secondary.docs-swatch": 8
+      }
+    },
     "light": {
       "color-contrast": {
         "Buttons :: button.env-button.env-button-secondary.docs-swatch code": 1,
+        "Feedback :: button.env-button.env-button-secondary.docs-swatch code": 1,
         "Text fields :: button.env-button.env-button-secondary.docs-swatch code": 1
+      },
+      "label-content-name-mismatch": {
+        "Buttons :: button.env-button.env-button-secondary.docs-swatch": 11,
+        "Cards :: button.env-button.env-button-secondary.docs-swatch": 1,
+        "Checkboxes :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Content & loading :: button.env-button.env-button-secondary.docs-swatch": 2,
+        "Direction links :: button.env-button.env-button-secondary.docs-swatch": 5,
+        "Feedback :: button.env-button.env-button-secondary.docs-swatch": 9,
+        "Navigation :: button.env-button.env-button-secondary.docs-swatch": 5,
+        "Page & surfaces :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Radio :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Rows :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Select options :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Switches :: button.env-button.env-button-secondary.docs-swatch": 5,
+        "Text & focus :: button.env-button.env-button-secondary.docs-swatch": 7,
+        "Text fields :: button.env-button.env-button-secondary.docs-swatch": 8
+      }
+    },
+    "light-hc": {
+      "color-contrast": {
+        "Feedback :: button.env-button.env-button-secondary.docs-swatch code": 1
       },
       "label-content-name-mismatch": {
         "Buttons :: button.env-button.env-button-secondary.docs-swatch": 11,
@@ -561,7 +390,15 @@
   "foundations/colors/usage": {
     "dark": {
       "color-contrast": {
-        "article :: div.env-code-block span": 1
+        "article :: div.env-code-block span": 2
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "dark-hc": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 2
       },
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
@@ -569,7 +406,15 @@
     },
     "light": {
       "color-contrast": {
-        "article :: div.env-code-block span": 14
+        "article :: div.env-code-block span": 18
+      },
+      "landmark-unique": {
+        "article :: div.env-markdown-table": 1
+      }
+    },
+    "light-hc": {
+      "color-contrast": {
+        "article :: div.env-code-block span": 18
       },
       "landmark-unique": {
         "article :: div.env-markdown-table": 1

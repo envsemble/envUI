@@ -1,126 +1,103 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 const offline = pathToFileURL(resolve('dist/envUI.html')).href;
 
-test('rich text documentation composes generic reference editing and matching saved output', async ({
+/** A live example of the rich text page, by its file name. */
+function example(page: Page, name: string) {
+  return page.locator(`.docs-live-example[data-example="${name}"]`);
+}
+
+test('rich text documentation inserts references and opens them from saved content', async ({
   page,
 }) => {
-  await page.goto(`${offline}#/components/rich-text/preview`);
+  await page.goto(`${offline}#/components/rich-text/overview`);
   await expect(
     page.getByRole('heading', { name: 'RichText', exact: true, level: 1 }),
   ).toBeVisible();
-  const example = page.getByRole('tabpanel', { name: 'Editor', exact: true });
-  const editor = page.getByRole('textbox', { name: 'Rich text notes', exact: true });
+  const editor = example(page, 'References').getByRole('textbox', {
+    name: 'Comment',
+    exact: true,
+  });
   await editor.fill('Ask @');
-  const contacts = page.getByRole('listbox', { name: 'Contacts', exact: true });
-  await expect(contacts.getByRole('option', { name: 'Ada Lin' })).toBeVisible();
+  const people = page.getByRole('listbox', { name: 'People', exact: true });
+  await expect(people.getByRole('option', { name: 'Alex Morgan' })).toBeVisible();
   await editor.press('ArrowDown');
   await editor.press('Enter');
-  await expect(editor).toContainText('@Sam Rivera');
-  await expect(contacts).toHaveCount(0);
-  await editor.press('End');
-  await editor.press('Space');
-  await editor.press('Slash');
-  const files = page.getByRole('listbox', { name: 'Files', exact: true });
-  await expect(files.getByRole('option', { name: 'Outline.pdf' })).toBeVisible();
+  await expect(editor).toContainText('@Sam Lee');
+  await expect(people).toHaveCount(0);
+  await editor.pressSequentially('about #sup');
+  const topics = page.getByRole('listbox', { name: 'Topics', exact: true });
+  await expect(topics.getByRole('option', { name: 'Support', exact: true })).toBeVisible();
   await editor.press('Enter');
-  await expect(editor).toContainText('/Outline.pdf');
+  await expect(editor).toContainText('#Support');
+  await expect(topics).toHaveCount(0);
 
-  const tabs = page.getByRole('tablist', { name: 'Rich text example', exact: true });
-  await tabs.getByRole('tab', { name: 'Markdown source', exact: true }).click();
-  const source = page.getByRole('tabpanel', { name: 'Markdown source', exact: true });
-  await expect(source).toContainText('id="contact%3Asam"');
-  await expect(source).toContainText('id="file%3Aoutline"');
-  await tabs.getByRole('tab', { name: 'Read-only', exact: true }).click();
-  const viewer = page.getByRole('tabpanel', { name: 'Read-only', exact: true });
-  await expect(viewer.getByRole('link', { name: '@Sam Rivera', exact: true })).toBeVisible();
-  await viewer.getByRole('link', { name: '/Outline.pdf', exact: true }).click();
-  await expect(page.getByRole('status').filter({ hasText: 'Selected reference:' })).toHaveText(
-    'Selected reference: Outline.pdf',
-  );
-  await tabs.getByRole('tab', { name: 'Editor', exact: true }).click();
-  await expect(example.getByRole('textbox')).toContainText('@Sam Rivera');
+  const saved = example(page, 'SavedContent');
+  await saved.getByRole('link', { name: '@Priya Shah', exact: true }).click();
+  await expect(saved.getByRole('status')).toHaveText('Opened Priya Shah');
+  await saved.getByRole('link', { name: 'launch plan', exact: true }).click();
+  await expect(saved.getByRole('status')).toHaveText('Opened /docs/launch-plan');
 });
 
-test('rich text documentation demonstrates controlled updates, uploads and theme retention', async ({
+test('rich text documentation previews Markdown, uploads through the application and keeps documents across themes', async ({
   page,
 }) => {
-  await page.goto(`${offline}#/components/rich-text/preview`);
-  await page.getByRole('button', { name: 'Load another draft', exact: true }).click();
-  const editor = page.getByRole('textbox', { name: 'Rich text notes', exact: true });
-  await expect(editor).toContainText('Another draft');
-  await expect(editor).toContainText('#Accessibility');
+  await page.goto(`${offline}#/components/rich-text/overview`);
+  const notes = example(page, 'EditAndPreview');
+  const editor = notes.getByRole('textbox', { name: 'Meeting notes', exact: true });
+  await expect(editor).toContainText('Launch review');
   await editor.focus();
-  await editor.evaluate(async (element) => {
-    // Let the editor process focus before moving its native selection.
-    await new Promise(requestAnimationFrame);
-    const range = document.createRange();
-    range.selectNodeContents(element);
-    range.collapse(false);
-    const selection = window.getSelection();
-    selection?.removeAllRanges();
-    selection?.addRange(range);
-    await new Promise(requestAnimationFrame);
-  });
+  await editor.press('ControlOrMeta+End');
   await editor.press('Enter');
-  await editor.press('Shift+Digit3');
-  const topics = page.getByRole('listbox', { name: 'Topics', exact: true });
-  await expect(topics.getByRole('option', { name: 'Research', exact: true })).toBeVisible();
-  await editor.press('ArrowDown');
-  await editor.press('Enter');
-  await expect(editor).toContainText('#Research');
+  await editor.pressSequentially('Next review on Friday');
+  await expect(notes.locator('.env-rich-text')).toContainText('Next review on Friday');
 
-  const editorPanel = page.getByRole('tabpanel', { name: 'Editor', exact: true });
-  await editorPanel.locator('input[type="file"]').setInputFiles({
+  const brief = example(page, 'UploadsAndLinks');
+  await brief.locator('input[type="file"]').setInputFiles({
     name: 'Meeting.txt',
     mimeType: 'text/plain',
     buffer: Buffer.from('Sample attachment'),
   });
-  await expect(editor).toContainText('Meeting.txt');
+  const attached = brief.getByRole('textbox', { name: 'Project brief', exact: true });
+  await expect(attached.getByRole('link', { name: 'Meeting.txt', exact: true })).toBeVisible();
+
   await page.getByRole('button', { name: 'Switch to dark theme', exact: true }).click();
-  await expect(editor).toContainText('#Research');
-  await expect(page.locator('.docs-preview')).toHaveAttribute('data-env-theme', 'dark');
-  const tabs = page.getByRole('tablist', { name: 'Rich text example', exact: true });
-  await tabs.getByRole('tab', { name: 'Read-only', exact: true }).click();
-  const viewer = page.getByRole('tabpanel', { name: 'Read-only', exact: true });
-  await expect(viewer.getByRole('heading', { name: 'Another draft', exact: true })).toBeVisible();
-  await expect(viewer.getByRole('link', { name: 'Meeting.txt', exact: true })).toBeVisible();
+  await expect(brief).toHaveAttribute('data-env-theme', 'dark');
+  await expect(attached).toContainText('Meeting.txt');
+  await expect(editor).toContainText('Next review on Friday');
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: 1000 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
     );
   }
-  await tabs.getByRole('tab', { name: 'Markdown source', exact: true }).click();
-  await expect(page.getByRole('tabpanel', { name: 'Markdown source', exact: true })).toContainText(
-    'id="file%3AMeeting.txt"',
-  );
 });
 
-test('rich text documentation exposes optional slash commands and public usage contracts', async ({
+test('rich text documentation runs slash commands and documents the editor in every view', async ({
   page,
 }) => {
-  await page.goto(`${offline}#/components/rich-text/preview`);
-  const editor = page.getByRole('textbox', { name: 'Slash command notes', exact: true });
+  await page.goto(`${offline}#/components/rich-text/overview`);
+  const editor = example(page, 'SlashCommands').getByRole('textbox', {
+    name: 'Weekly notes',
+    exact: true,
+  });
   await editor.fill('/');
-  const commands = page.getByRole('listbox');
+  const commands = page.getByRole('listbox', { name: 'Commands', exact: true });
   await expect(commands.getByRole('option', { name: 'Heading', exact: true })).toBeVisible();
+  await expect(commands.getByRole('option', { name: 'Meeting agenda', exact: true })).toBeVisible();
   await editor.press('Enter');
   await editor.pressSequentially('A new heading');
   await expect(editor.locator('h2')).toHaveText('A new heading');
-  await page.locator('.docs-page-header').getByRole('tab', { name: 'Usage', exact: true }).click();
-  await expect(
-    page.getByRole('heading', { name: 'Edit and render the same document', exact: true }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole('heading', { name: 'Application reference lookup', exact: true }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole('heading', { name: 'Application attachments and links', exact: true }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole('heading', { name: 'Tiptap commands and extension points', exact: true }),
-  ).toBeVisible();
+
+  const tabs = page.locator('.docs-page-header');
+  for (const [view, heading] of [
+    ['Guidelines', 'States and behaviour'],
+    ['Accessibility', 'Keyboard'],
+    ['Props', 'RichTextEditor'],
+  ]) {
+    await tabs.getByRole('tab', { name: view, exact: true }).click();
+    await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible();
+  }
 });

@@ -9,7 +9,7 @@ export type CodeProps = ComponentPropsWithRef<'code'>;
 
 /** Inline source in the code theme of the app theme; use CodeBlock for multiline source. */
 export function Code({ className, style, ...props }: CodeProps) {
-  const theme = useTheme();
+  const { theme } = useTheme();
   return (
     <code
       {...props}

@@ -43,8 +43,9 @@ test('offline usage renders shared Markdown guidance and follows relative topic 
     page.getByText('Surface supplies fill, padding and corners.', { exact: false }),
   ).toBeVisible();
   await page.locator('.docs-article').getByRole('link', { name: 'Surface', exact: true }).click();
-  await expect(page).toHaveURL(/#\/components\/surface\/usage$/);
-  await expect(page.getByRole('heading', { name: 'Guidelines', exact: true })).toBeVisible();
+  // Surface is on the template, so a link to its page opens Overview.
+  await expect(page).toHaveURL(/#\/components\/surface\/overview$/);
+  await expect(page.getByRole('heading', { name: 'Overview', exact: true })).toBeVisible();
 
   await page.goto(`${offline}#/overview/get-started`);
   await page
@@ -147,7 +148,7 @@ test('live examples keep links in place, show their source, and matrices sit in 
   await disclosure.locator('summary').press('Enter');
   await expect(disclosure).toHaveAttribute('open', '');
   await expect(disclosure.getByRole('region', { name: 'Button interaction states' })).toBeVisible();
-  await page.goto(`${offline}#/components/nav-list/preview`);
+  await page.goto(`${offline}#/components/nav-list/guidelines`);
   const navigationDisclosure = page.locator('.docs-preview details.env-disclosure');
   await navigationDisclosure.locator('summary').click();
   await expect(
@@ -156,7 +157,8 @@ test('live examples keep links in place, show their source, and matrices sit in 
 });
 
 test('pagers center pairs and single destinations at every page width', async ({ page }) => {
-  await page.goto(`${offline}#/components/pager/preview`);
+  // The live examples and the page's own pager in its footer.
+  await page.goto(`${offline}#/components/pager/overview`);
   const groups = page.locator('.env-pager');
   await expect(groups).toHaveCount(5);
   for (const width of [1440, 390]) {
@@ -199,7 +201,7 @@ test('pagers center pairs and single destinations at every page width', async ({
       true,
     );
   }
-  const longDestinations = page.getByRole('navigation', { name: 'Long destinations example' });
+  const longDestinations = page.getByRole('navigation', { name: 'Long destinations' });
   const fragmentedWords = await longDestinations.evaluate((nav) => {
     const fragments: string[] = [];
     for (const title of nav.querySelectorAll('.env-pager-link-title')) {
@@ -219,15 +221,15 @@ test('pagers center pairs and single destinations at every page width', async ({
   await footer.getByRole('link').last().click();
   await expect.poll(() => page.evaluate(() => location.hash)).toBe(nextDestination);
   await page.evaluate(() => {
-    location.hash = '/components/radio/usage';
+    location.hash = '/components/radio/guidelines';
   });
   await expect(footer.getByRole('link').last()).toHaveAttribute(
     'href',
-    '#/components/select/usage',
+    '#/components/select/guidelines',
   );
   await footer.getByRole('link').last().click();
   await expect(page.locator('.docs-page-header').getByRole('tab', { selected: true })).toHaveText(
-    'Usage',
+    'Guidelines',
   );
   await page.evaluate(() => {
     location.hash = '/overview';
@@ -356,17 +358,17 @@ test('single previews retain state when the theme changes', async ({ page }) => 
 });
 
 test('offline hashes support direct links and back/forward navigation', async ({ page }) => {
-  await page.goto(`${offline}#/components/select/usage`);
+  await page.goto(`${offline}#/components/select/guidelines`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Select');
-  await page.getByRole('tab', { name: 'Preview', exact: true }).click();
-  await page.getByRole('tab', { name: 'Usage', exact: true }).click();
+  await page.getByRole('tab', { name: 'Overview', exact: true }).click();
+  await page.getByRole('tab', { name: 'Guidelines', exact: true }).click();
   await page.goBack();
   await expect(page.locator('.docs-page-header').getByRole('tab', { selected: true })).toHaveText(
-    'Preview',
+    'Overview',
   );
   await page.goForward();
   await expect(page.locator('.docs-page-header').getByRole('tab', { selected: true })).toHaveText(
-    'Usage',
+    'Guidelines',
   );
 });
 

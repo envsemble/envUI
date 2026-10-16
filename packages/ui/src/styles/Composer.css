@@ -9,7 +9,7 @@
   max-inline-size: 100%;
 }
 .env-composer-surface {
-  --env-composer-border: var(--color-popup-border);
+  --env-composer-border: var(--color-field-border);
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   grid-template-areas: 'input action';

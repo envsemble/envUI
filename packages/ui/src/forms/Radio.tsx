@@ -20,14 +20,41 @@ interface RadioContextValue {
 const RadioContext = createContext<RadioContextValue | null>(null);
 
 export interface RadioGroupProps extends FieldsetHTMLAttributes<HTMLFieldSetElement> {
+  /**
+   * The group's visible name, such as Visibility, as the fieldset's legend above the options. It
+   * names the group for assistive technology; without it, use aria-label or aria-labelledby.
+   */
   label?: ReactNode;
+  /** The value of the chosen option in a controlled group; update it from onValueChange. */
   value?: string;
+  /**
+   * The value of the option an uncontrolled group starts with; a native form reset returns to it.
+   * Without value or defaultValue, no option is chosen until people choose one.
+   */
   defaultValue?: string;
+  /** Receives the value of the option people choose. */
   onValueChange?: (value: string) => void;
+  /**
+   * The name every radio of the group submits its value under. Set it in a form; without it the
+   * group takes a unique generated name, so its radios still work as one group.
+   */
   name?: string;
+  /** Require a choice before the form submits, through native constraint validation. */
   required?: boolean;
+  /**
+   * The group's look: inline, radios before their labels side by side that wrap onto more lines;
+   * or rows, connected selectable rows that fill the width, with the label and detail at the start
+   * and the radio at the end, for options that need explaining.
+   */
   variant?: 'inline' | 'rows';
+  /** Disable every option of the group; a disabled group can't be focused or changed. */
+  disabled?: boolean;
 }
+
+/**
+ * A set of options to choose exactly one from: a native fieldset whose legend names the group, with
+ * Radio options inline or as selectable rows.
+ */
 
 export const RadioGroup = forwardRef<HTMLFieldSetElement, RadioGroupProps>(function RadioGroup(
   {
@@ -108,10 +135,18 @@ export interface RadioProps
     InputHTMLAttributes<HTMLInputElement>,
     'type' | 'name' | 'checked' | 'defaultChecked' | 'value'
   > {
+  /** The value the group reports and a form submits when this option is chosen. */
   value: string;
+  /** The option's visible name, such as Private; pressing it chooses the option. */
   label: ReactNode;
+  /**
+   * A short, muted line under the label that helps people choose, such as Only the people you
+   * invite. It is part of the option's label, so it is read with its name.
+   */
   detail?: ReactNode;
 }
+
+/** One option of a RadioGroup: a native radio input with its label, and an optional detail. */
 
 export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
   { value, label, detail, className, onChange, disabled, required, form, ...props },

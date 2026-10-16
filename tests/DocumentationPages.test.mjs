@@ -16,34 +16,7 @@ import {
  * catalogue preview in apps/catalogue/src/previews (the switch in ComponentPreview.tsx). Convert a
  * page as docs/component-pages.md describes, then remove it here; the list only shrinks.
  */
-const unconverted = [
-  'chips',
-  'message',
-  'meter',
-  'nav-list',
-  'pager',
-  'pagination',
-  'panel-dock',
-  'popover',
-  'progress',
-  'radio',
-  'rating',
-  'relative-time',
-  'rich-text',
-  'segmented-control',
-  'select',
-  'skeleton',
-  'slider',
-  'spinner',
-  'stack',
-  'stat',
-  'surface',
-  'switch',
-  'tabs',
-  'toast',
-  'tooltip',
-  'tree',
-];
+const unconverted = ['chips'];
 
 /**
  * Exports documented on foundations/colors.md, which the palette step is rewriting; they get its

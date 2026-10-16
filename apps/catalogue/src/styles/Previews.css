@@ -47,46 +47,6 @@
   min-inline-size: 0;
   max-inline-size: var(--docs-specimen-width);
 }
-.docs-toast-table-scroll {
-  inline-size: 100%;
-  min-inline-size: 0;
-  overflow-x: auto;
-}
-.docs-toast-table {
-  inline-size: 100%;
-  min-inline-size: 40rem;
-  border-collapse: collapse;
-  text-align: start;
-}
-.docs-toast-table th,
-.docs-toast-table td {
-  padding: var(--space-5) var(--space-4);
-  vertical-align: middle;
-  text-align: start;
-}
-.docs-toast-table tr > :first-child {
-  padding-inline-start: 0;
-}
-.docs-toast-table tr > :last-child {
-  padding-inline-end: 0;
-}
-.docs-toast-table thead th {
-  font: var(--type-body-small);
-  color: var(--color-text-muted);
-  white-space: nowrap;
-}
-.docs-toast-meaning {
-  inline-size: 12rem;
-  overflow-wrap: normal;
-}
-.docs-toast-table td {
-  inline-size: 1%;
-  white-space: nowrap;
-}
-.docs-toast-meaning > strong {
-  display: block;
-  margin-block-end: var(--space-2);
-}
 .docs-example:last-child {
   margin-bottom: 0;
 }
@@ -101,9 +61,6 @@
 }
 .docs-example p {
   max-width: 65ch;
-}
-.docs-narrow-actions {
-  width: min(100%, 16rem);
 }
 .docs-matrix-scroll {
   overflow-x: auto;
@@ -129,74 +86,4 @@
 }
 .docs-matrix td {
   padding: 1rem 0.75rem;
-}
-
-/* The organization switcher fills the shell's context area; the specimen gives it the same width. */
-.docs-spinner-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-5);
-}
-.docs-tree-frame {
-  block-size: 24rem;
-  inline-size: min(100%, 22rem);
-  padding-block: var(--space-2);
-  border: 0.0625rem solid var(--color-border-strong);
-  border-radius: var(--radius-surface);
-  overflow: hidden;
-}
-/* Tabs that fill a fixed region, like a diagram canvas below its views. */
-.docs-fill-region {
-  display: flex;
-  flex-direction: column;
-  block-size: 16rem;
-}
-.docs-fill-tabs {
-  flex: 1;
-}
-.docs-fill-canvas {
-  flex: 1;
-  display: grid;
-  place-items: center;
-  border-radius: var(--radius-standard);
-  background: var(--color-surface-muted);
-  color: var(--color-text-muted);
-}
-/* Docked panel specimens: a region with its page beneath the panels; a narrow one stacks them. */
-.docs-dock-frame {
-  position: relative;
-  block-size: 34rem;
-  overflow: hidden;
-  border: 0.0625rem solid var(--color-border-strong);
-  border-radius: var(--radius-surface);
-  background: var(--color-canvas);
-}
-.docs-dock-frame[data-narrow] {
-  inline-size: min(100%, 24rem);
-}
-.docs-dock-frame[data-medium] {
-  inline-size: min(100%, 52rem);
-}
-.docs-dock-page {
-  padding: var(--space-6);
-}
-.docs-dock-body {
-  padding: 0 var(--space-5) var(--space-5);
-}
-/* A sidebar's width, which a full-width button group fills. */
-/* As narrow as a sidebar, too narrow for two long labels side by side. */
-.docs-narrow-segments {
-  inline-size: min(100%, 13rem);
-}
-/* A pane's header bar of quiet actions around its title. */
-/* A compact toolbar: a title that takes the room left, then its controls. */
-.docs-compact-toolbar {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  min-inline-size: 0;
-}
-.docs-compact-toolbar-title {
-  flex: 1 1 auto;
-  min-inline-size: 0;
 }

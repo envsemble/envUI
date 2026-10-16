@@ -83,7 +83,7 @@
   grid-template-columns: minmax(max-content, 1fr) minmax(0, auto) minmax(max-content, 1fr);
   align-items: center;
   column-gap: var(--space-3);
-  border-block-end: 0.0625rem solid var(--color-border-strong);
+  border-block-end: 0.0625rem solid var(--color-border-muted);
   background: var(--color-canvas);
   color: var(--color-text-primary);
   font: var(--type-body-small);

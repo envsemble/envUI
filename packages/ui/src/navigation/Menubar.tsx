@@ -428,7 +428,7 @@ function Menu({
         <AccessKeyLabel label={label} accessKey={key} />
       </BaseMenu.Trigger>
       <BaseMenu.Portal>
-        <Theme theme={theme} className="env-menu-theme">
+        <Theme {...theme} className="env-menu-theme">
           <BaseMenu.Positioner
             className="env-menu-positioner"
             side="bottom"

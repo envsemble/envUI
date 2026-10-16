@@ -2,7 +2,7 @@
    indicator and thumb take the control blue; the rest of the track is the translucent fill. */
 .env-slider {
   --env-slider-thumb-size: 1.25rem;
-  --env-slider-halo: color-mix(in srgb, var(--color-control-blue) 16%, transparent);
+  --env-slider-halo: var(--color-bg-brand-muted);
   min-inline-size: 0;
 }
 .env-slider-heading {
@@ -59,11 +59,11 @@
   outline: 0.125rem solid var(--color-focus-ring);
   outline-offset: 0.125rem;
 }
-.env-slider[data-disabled] :is(.env-slider-heading, .env-slider-value) {
-  color: var(--color-disabled-text);
+/* The heading fades with the track, at the opacity of every disabled control. */
+.env-slider[data-disabled] :is(.env-slider-heading, .env-slider-control) {
+  opacity: var(--state-disabled-opacity);
 }
 .env-slider[data-disabled] .env-slider-control {
-  opacity: var(--state-disabled-opacity);
   cursor: default;
 }
 .env-slider[data-disabled] .env-slider-thumb {

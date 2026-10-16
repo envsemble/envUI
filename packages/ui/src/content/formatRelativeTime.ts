@@ -5,15 +5,27 @@
 export type RelativeTimeValue = Date | number | string;
 
 export interface RelativeTimeOptions {
-  /** The moment to compare with; the current time by default, also in place of an invalid one. */
+  /**
+   * The moment to compare with, as a Date or milliseconds since 1970; the current time by default,
+   * also in place of an invalid one.
+   */
   now?: Date | number;
-  /** Language of the text, such as "en-GB" or "de"; the runtime's default by default. */
+  /**
+   * The language of the text, and of the date and time in RelativeTime's tooltip, as a BCP 47
+   * tag such as "en-GB" or "de", or a list of them in order of preference.
+   * @default the runtime's language: the browser's, or the server's while rendering there
+   */
   locale?: string | readonly string[];
-  /** long "3 hours ago" (default), short "3 hr. ago" or narrow "3h ago". */
+  /**
+   * How long the words are, from Intl.RelativeTimeFormat: long "3 hours ago", short "3 hr. ago" or
+   * narrow "3h ago", in the locale's own wording.
+   * @default 'long'
+   */
   format?: 'long' | 'short' | 'narrow';
   /**
-   * Text for a moment less than 45 seconds away: "just now" for past moments in English, "now"
-   * for coming ones, and the locale's own word for now in other languages.
+   * Text for a moment less than 45 seconds away, past or coming, such as "moments ago". English
+   * says "just now" of a past moment and "now" of a coming one; other languages the locale's word.
+   * @default 'just now' or 'now' in English, the locale's word for now elsewhere
    */
   nowLabel?: string;
 }

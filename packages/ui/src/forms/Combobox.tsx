@@ -518,7 +518,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
           </span>
         )}
         <BaseCombobox.Portal>
-          <Theme theme={theme}>
+          <Theme {...theme}>
             <BaseCombobox.Positioner
               className="env-select-positioner"
               side="bottom"

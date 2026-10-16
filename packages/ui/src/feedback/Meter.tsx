@@ -6,19 +6,36 @@ import type { ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 
 interface BarProps {
-  /** Visible label and accessible name. */
+  /** What the bar shows, such as Seats assigned; it is visible above the bar and names it. */
   label: ReactNode;
+  /**
+   * The measurement, between min and max. A value outside the range shows, and is reported, as the
+   * nearest end.
+   */
   value: number;
+  /** The low end of the range. */
   min?: number;
+  /** The high end of the range. */
   max?: number;
-  /** Visible formatted value, such as "2 of 5"; omit to show nothing. */
+  /**
+   * The value as text at the end of the label's row, formatted by the application, such as 2 of 5
+   * or 40%. Without it, no value shows.
+   */
   valueText?: ReactNode;
-  /** Text read by assistive technology instead of the raw number. */
+  /**
+   * The value as assistive technology reads it, with its unit in words, such as 2 of 5 seats.
+   * Without it, a screen reader reads the bare number, aria-valuenow.
+   */
   'aria-valuetext'?: string;
+  /** A class for the root element, such as one that sets its width. */
   className?: string;
 }
 
-/** A known quantity within a range, such as used seats or storage. */
+/**
+ * A measurement within a known range, such as the seats assigned of a plan or the storage used of a
+ * quota: a label, an optional value and a bar, exposed as a meter. For how much of a task is done,
+ * use Progress.
+ */
 export function Meter({
   label,
   value,
@@ -47,7 +64,11 @@ export function Meter({
   );
 }
 
-/** Completion of a task; pass value null while the amount of work is unknown. */
+/**
+ * How much of a task is done, such as an upload or an import: a label, an optional value and a
+ * bar, exposed as a progress bar. Pass value null while the amount of work is unknown, and the bar
+ * sweeps instead.
+ */
 export function Progress({
   label,
   value,
@@ -56,7 +77,13 @@ export function Progress({
   valueText,
   className,
   ...props
-}: Omit<BarProps, 'value'> & { value: number | null }) {
+}: Omit<BarProps, 'value'> & {
+  /**
+   * How much of the task is done, between min and max, such as 40 of 100; null while the amount of
+   * work is unknown, which shows an indeterminate bar.
+   */
+  value: number | null;
+}) {
   return (
     <BaseProgress.Root
       value={value}

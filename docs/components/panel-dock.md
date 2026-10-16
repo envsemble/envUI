@@ -1,7 +1,6 @@
 ---
 title: PanelDock
-summary: Windows docked side by side at the bottom of a region that minimize to chips and maximize,
-  keeping their content mounted.
+summary: Panels docked side by side at the bottom of a region, for work beside the page, that minimize to chips and maximize while their content stays mounted.
 status: beta
 since: 0.6.0
 category: Navigation
@@ -9,11 +8,30 @@ aliases:
   - dock
   - docked panels
   - floating panels
+  - floating windows
+  - window manager
   - chat windows
+  - compose windows
+  - minimized panels
+  - PanelDockHeader
+  - PanelDockControls
+  - PanelDockPanel
+useWhen:
+  - Items people work on beside the page and switch between, such as drafts, conversations or documents.
+  - Work that must survive being set aside, such as an unsaved draft in a panel people minimize.
+  - Several windows open at once in a workspace, which people minimize, maximize, resize and close.
+avoidWhen:
+  - text: A task that needs an answer before people go on, or one panel beside the page that inspects it.
+    use: Dialog
+  - text: Switching between open documents in one place, as in an editor.
+    use: DocumentTabs
+  - text: A short message about something that happened.
+    use: Toast
 related:
-  - app-shell
-  - document-tabs
   - dialog
+  - document-tabs
+  - app-shell
+  - menu
   - tooltip
   - accessibility
 components:
@@ -24,178 +42,144 @@ components:
 
 # PanelDock
 
-## React usage
+## Overview
 
-```tsx
-import { useState } from 'react';
-import {
-  IconButton,
-  PanelDock,
-  PanelDockHeader,
-  Textarea,
-  type PanelDockMode,
-  type PanelDockPanel,
-} from '@envsemble/envui';
-import { Edit } from '@envsemble/envui/icons/Edit';
+A panel dock holds panels people work in beside the page, such as drafts and conversations. Open panels stand side by side on the bottom inline-end edge of a region, a maximized panel fills the region, and minimized panels wait as chips along the bottom. A panel's content mounts once and stays mounted through every change of mode and order, so a draft in its own state survives being minimized.
 
-function Workspace() {
-  const [panels, setPanels] = useState<PanelDockPanel[]>([
-    { id: 'report', title: 'Quarterly report', mode: 'open', active: true },
-    { id: 'budget', title: 'Budget', mode: 'minimized', attention: 'Unsaved changes' },
-  ]);
-  const update = (id: string, change: Partial<PanelDockPanel>) =>
-    setPanels((current) =>
-      current.map((panel) => (panel.id === id ? { ...panel, ...change } : panel)),
-    );
-  // At most one panel is maximized: maximizing another returns the earlier one to the row.
-  const changeMode = (id: string, mode: PanelDockMode) =>
-    setPanels((current) =>
-      current.map((panel) =>
-        panel.id === id
-          ? { ...panel, mode }
-          : mode === 'maximized' && panel.mode === 'maximized'
-            ? { ...panel, mode: 'open' }
-            : panel,
-      ),
-    );
-  return (
-    // The dock fills the positioned container and lies over the page beside it.
-    <div style={{ position: 'relative', blockSize: '100%' }}>
-      <WorkspacePage />
-      <PanelDock
-        panels={panels}
-        onModeChange={changeMode}
-        onClose={(id) => setPanels((current) => current.filter((panel) => panel.id !== id))}
-        onActivate={(id) =>
-          setPanels((current) => current.map((panel) => ({ ...panel, active: panel.id === id })))
-        }
-        onHeightChange={(id, height) => update(id, { height })}
-      >
-        {(panel) => <DocumentWindow title={panel.title} />}
-      </PanelDock>
-    </div>
-  );
-}
+The application owns the panels: which exist, their order and mode, which one is active and any height it keeps. The dock asks for changes through its callbacks and shows what it is given. Three exports work together:
 
-function DocumentWindow({ title }: { title: string }) {
-  // Kept while the panel is minimized, maximized or moved; lost only when it closes.
-  const [draft, setDraft] = useState('');
-  return (
-    <>
-      <PanelDockHeader
-        title={title}
-        meta="Edited by Alex Morgan"
-        actions={<IconButton variant="text" icon={<Edit />} aria-label="Edit" />}
-      />
-      <div style={{ padding: '0 var(--space-5) var(--space-5)' }}>
-        <Textarea label="Draft" value={draft} onChange={(event) => setDraft(event.target.value)} />
-      </div>
-    </>
-  );
-}
+- **PanelDock** lays out the panels and their chips and renders each panel's content from `children`.
+- **PanelDockHeader** is a panel's sticky header: the title and metadata, the application's actions and the window controls.
+- **PanelDockControls** are the window controls, Minimize, Maximize or Restore, and Close, which PanelDockHeader shows by default.
+
+```tsx example=DocumentDrafts
+
 ```
 
-### Props & contracts
+## Anatomy
 
-| Name                    | Contract                                                                                                                                                                                        |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| panels                  | The panels in order, each a PanelDockPanel (below); open panels sit side by side and chips follow the same order                                                                                |
-| children                | Renders a panel's content from its panel, such as a PanelDockHeader above the panel's body                                                                                                      |
-| onModeChange            | Called with a panel's id and the mode its window controls or its chip ask for, or the dock with overflow="minimize": open, minimized or maximized                                               |
-| onClose                 | Called from a panel's Close control and its chip's close button                                                                                                                                 |
-| onActivate              | Called when people press or focus inside a panel that is not active, and when its chip brings it back                                                                                           |
-| onHeightChange          | Called with a panel's new height in pixels when a drag on its top edge ends, and on each key press there                                                                                        |
-| stackBelow              | A width, 40rem by default, or a number of pixels, such as 600 or "600"; while the dock itself is narrower, one panel at a time fills it and the others wait as chips; the dock has data-stacked |
-| onStackedChange         | Receives true when the dock stacks and false when its panels sit side by side again, also when a dock leaves while stacked                                                                      |
-| overflow                | When open panels cannot all fit at their minimum widths: scroll (default) scrolls the row; minimize asks to minimize the least recently active one, never the active or newest one              |
-| minimizedLabel          | Accessible name of the list of chips, which holds minimized panels and those a stacked dock leaves out; Hidden panels by default                                                                |
-| showLabel / closeLabel  | Functions that name a chip's buttons from its label, as each chip names its panel; Show and Close followed by the label by default                                                              |
-| resizeLabel             | Accessible name of a panel's resize handle from its title; Resize followed by the title by default                                                                                              |
-| Native div props        | className, style, ref and accessible attributes on the dock                                                                                                                                     |
-| Panel and chip elements | Each panel is a region named by its title with data-panel-id, data-mode and data-active; each chip is a list item with data-panel-id                                                            |
+1. **Dock**: fills its positioned container and lies over it; around its panels and chips, presses reach the content beneath. It keeps a 1.5 rem gutter for the panels' shadows.
+2. **Row**: the open panels, 0.5 rem apart at the bottom inline-end edge, the newest at the end.
+3. **Panel** (each item of `panels`): a labelled region on the dialog surface, with a hairline border and a shadow, its top corners 1.75 rem. The active panel is in front, with a deeper shadow.
+4. **Resize handle**: the panel's top edge, a 0.75 rem band between its rounded corners; a 2.5 rem bar shows on hover, in the focus color with the keyboard and while dragging.
+5. **Header** (PanelDockHeader): sticks to the top of the content, with 0.75 rem block and 1.5 rem start padding. The **title** is a heading in 1.125 rem medium text and the **meta** below it 0.875 rem muted text; the **actions** and the **window controls** (PanelDockControls) are 2 rem compact icon buttons at the end; `children`, such as Tabs, go below the title row.
+6. **Content**: the panel's body from `children`, which scrolls within the panel below the header.
+7. **Strip of chips**: minimized panels at the bottom inline-end, in panel order. Each **chip** is 2 rem tall and at most 14 rem wide, on the popup surface with 0.5 rem top corners: an optional icon, the label, an attention dot and a close button.
+8. **Maximized panel**: fills the region above the chips, behind the open panels, without border or corners.
 
-### Panels
+## Variants and sizes
 
-| Name                                 | Contract                                                                                                                                             |
-| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| id                                   | Stable, unique identifier                                                                                                                            |
-| title                                | The panel's name: the accessible name of its region and the text of its chip                                                                         |
-| mode                                 | open, minimized or maximized                                                                                                                         |
-| height                               | The open panel's height in pixels; without it, the panel starts at 85% of the room above the chips, up to 40 rem, and keeps the height people choose |
-| preferredWidth / minWidth / maxWidth | Widths in pixels: the width where the row has room, 32 rem by default; the narrowest the row shrinks it to, 20 rem; the widest it gets, 48 rem       |
-| minHeight / maxHeight                | Resize bounds in pixels; 15 rem and the room above the chips by default                                                                              |
-| active                               | The panel people work in: in front of the other open panels, and the one a stacked dock shows                                                        |
-| label                                | The chip's text where a shorter one helps; the title by default                                                                                      |
-| icon                                 | A leading icon on the chip                                                                                                                           |
-| attention                            | Text describing a dot on the chip, such as Unsaved changes                                                                                           |
-| tooltip                              | Tooltip content of the chip, such as the full title with a detail                                                                                    |
+| Mode        | Use for                                                                                          |
+| ----------- | ------------------------------------------------------------------------------------------------ |
+| `open`      | Working beside the page: side by side with the other open panels, at a height people can change. |
+| `minimized` | Setting a panel aside as a chip, with its content kept.                                          |
+| `maximized` | Giving one panel the whole region, behind the open panels.                                       |
 
-### Header and window controls
+- **Overflow**: once the open panels can't all fit at their minimum widths, the row scrolls sideways, `overflow="scroll"`, the default; with `overflow="minimize"` the dock keeps every panel in view by asking to minimize the least recently active one instead.
+- **Widths**: each open panel takes `preferredWidth`, 32 rem by default, while the row has room; then the panels shrink in proportion down to `minWidth`, 20 rem, and the row scrolls or makes room. `maxWidth`, 48 rem, caps a panel.
+- **Heights**: without `height` a panel starts at 85% of the room above the chips, up to 40 rem, and keeps the height people choose. Resizing stays between `minHeight`, 15 rem, and `maxHeight`, the room above the chips; a shorter region holds the panel lower without changing its height.
+- **Narrow regions**: below `stackBelow`, 40 rem of the dock's own width by default, one panel at a time fills the region like a sheet, and the others wait as chips.
+- **Header**: the title keeps about 10 rem beside the actions and window controls; in a narrower panel they take a row of their own above it, at the inline end, and the title wraps between words.
 
-```tsx
-import { IconButton, Menu, PanelDockHeader } from '@envsemble/envui';
-import { Edit } from '@envsemble/envui/icons/Edit';
-import { MoreVert } from '@envsemble/envui/icons/MoreVert';
+## States and behaviour
 
-<PanelDockHeader
-  title="Quarterly report"
-  meta="Edited by Alex Morgan · 5 minutes ago"
-  actions={
-    <>
-      <IconButton variant="text" icon={<Edit />} aria-label="Edit" onClick={startEditing} />
-      <Menu.Root
-        aria-label="Report actions"
-        density="compact"
-        trigger={<IconButton variant="text" icon={<MoreVert />} aria-label="More actions" />}
-      >
-        <Menu.Item onClick={share}>Share</Menu.Item>
-      </Menu.Root>
-    </>
-  }
-/>;
+- **Content stays mounted**: a panel's content mounts when the panel first appears and stays until it closes. Minimizing, maximizing and restoring it, a stacked dock showing another panel, resizing and reordering never mount it again: its state, effects and subscriptions stay, and so do focus and the scroll positions inside it. A minimized panel stays in the document, inert and out of sight, so a frame or a video in it carries on. A reorder moves the panel's element; the dock keeps focus and scroll positions where they were, also in content that scrolls itself meanwhile, though a frame inside reloads, as browsers do with moved frames.
+- **Asking for changes**: the window controls and the chips call `onModeChange` and `onClose`; pressing or focusing inside a panel that is not active, and bringing it back from its chip, call `onActivate`. The application answers by rendering the dock with the change. Keep at most one panel maximized, and activate a panel when it opens.
+- **The row**: free room gathers before the panels, so they sit at the inline end. A panel that joins the row scrolls into view, so the newest stays visible, also as the region narrows; touch, a sideways wheel and moving focus scroll an overflowing row, and its scrollbar works.
+- **Making room**: with `overflow="minimize"` the dock asks `onModeChange` to minimize the least recently active open panel until the rest fit. It never asks for the active panel, the newest one, such as one just brought back from its chip, or the one that holds focus, as where people type, and so never for a panel alone in the row; where those can't fit by themselves, the row scrolls instead. It asks for one change at a time and waits for the answer, also one that comes in a transition or after an asynchronous step. A panel the application keeps open for 5 seconds, or opens again itself, stays until the region changes size, and the dock asks for the next one. Once the region widens and a panel it minimized fits again at its width while open, the dock asks to open it, the most recently active first. Room people free brings no panel back, and panels people minimize stay chips.
+- **Resizing**: dragging the top edge of an open panel changes its height, and `onHeightChange` receives it in pixels once the drag ends; the arrow keys change it by 16 px, 64 px with <kbd>Shift</kbd>, and <kbd>Home</kbd> and <kbd>End</kbd> reach its bounds, reported on each key press. The edge reads the height as its share of the room above the chips, such as 85%. A cancelled drag keeps the height it began with, and a drag ends without a change when the edge goes, as when the panel is maximized meanwhile.
+- **Maximized**: a maximized panel fills the region above the chips, behind the open panels, which keep their modes and leave the first row of its header in view. Restore returns it to the row.
+- **Chips**: pressing a chip brings its panel back and activates it; its close button closes the panel. A label truncates beyond about 14 rem, so pass the full title as `tooltip`; `attention` shows a dot and describes the chip, such as Unsaved changes. A vertical wheel scrolls an overflowing strip sideways.
+- **Stacked**: `stackBelow` follows the dock's own width, not the window's. Below it the active panel, or else the newest, fills the region, without its resize handle and Maximize, and the others wait as chips. A chip shows its panel instead, also where the application doesn't activate it, until another panel becomes active or the dock widens; a panel that opens meanwhile shows in its place. The dock has `data-stacked`, and `onStackedChange` reports each change. A hidden dock keeps its layout until it shows again.
+- **Covering the page**: while a panel fills the region, maximized or alone in a stacked dock, the dock covers the content beneath, also around the chips.
+- **Focus follows the panels**: minimizing the focused panel moves focus to its chip, also from a popup the panel opened, such as a menu. Bringing it back returns focus to the element in its content that had it last, scrolled into view where the panel hid it entirely, also inside a list that scrolls on its own, or else to the panel. Closing the focused panel moves focus to the active panel in view, else to the last open panel in the row, else to the panel that fills the region, or else to the last chip; closing a chip moves focus to the chip that takes its place. The page scrolls only where the element would otherwise lie entirely outside the window, and focus outside the dock stays there.
+- **Popups**: pressing a window control closes a menu or popover open in the panel, as any press outside it does. When the application hides a panel itself while one is open, as from a keyboard shortcut, the popup stays until the next press or <kbd>Esc</kbd>.
+- **The sticky header**: the content's scroll padding follows the header's height, so a control that takes focus beneath it comes out below it. Once the content scrolls beneath the header, a hairline in the panel's border color sets it apart, also where the header sits in a form that holds the content; it fades in over 0.12 s, at once with reduced motion. Icon-only text buttons in the header take the window controls' quiet icon color.
+- **Motion**: panels rise 1.5 rem into the row, a maximized or stacked panel grows into the region, and chips rise into their strip; with reduced motion they only fade in. A reorder moves them without their entrance, and panels rendered on a server are in place without one.
+- **Right to left**: the dock gathers at the left, its inline end, and the newest panel stays at the left edge of an overflowing row.
+
+## Content guidelines
+
+- Title a panel after what it holds, such as "Quarterly report" or a person's name for a conversation, and keep it short; put detail in `meta`, such as who changed it last.
+- Give a long title a shorter chip `label`, such as "Budget", and the full title as `tooltip`.
+- Describe a chip's dot with what it means in a few words, such as "Unsaved changes" or "New message".
+- Put the application's actions for the panel in `actions`, such as Edit and a Menu of more, and leave the window controls last.
+
+## Do and don't
+
+### Do
+
+- Put the dock in a positioned container with a height, such as the area below a topbar, beside page content that scrolls on its own.
+- Keep each panel's work, such as a draft, in the panel's own state; the dock keeps it mounted.
+- Make the content beneath inert while a panel fills the region: while a panel is maximized, or while the dock stacks and a panel is not minimized.
+- Activate a panel when it opens, and keep at most one panel maximized.
+
+### Don't
+
+- Don't use a panel for a task that must be finished before people go on; use a [Dialog](../components/dialog.md).
+- Don't use the dock for documents people switch between in one place; use [DocumentTabs](../components/document-tabs.md).
+- Don't trap focus in a panel or make it modal; panels are regions beside the page.
+- Don't hide a panel from a shortcut while a popup it opened is open; close the popup first.
+
+## Accessibility
+
+### Keyboard
+
+| Key                                                           | Action                                                                                                                                                                                 |
+| ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>               | Moves through each panel in order, its resize handle, its header's actions and window controls, then its content, and then through the chips, each a Show button and its close button. |
+| <kbd>↑</kbd>, <kbd>↓</kbd> on a resize handle                 | Makes the panel 16 px taller or shorter, 64 px with <kbd>Shift</kbd>.                                                                                                                  |
+| <kbd>Home</kbd>, <kbd>End</kbd> on a resize handle            | Makes the panel its lowest or greatest height.                                                                                                                                         |
+| <kbd>Enter</kbd> or <kbd>Space</kbd> on Minimize              | Minimizes the panel and moves focus to its chip.                                                                                                                                       |
+| <kbd>Enter</kbd> or <kbd>Space</kbd> on Maximize or Restore   | Fills the region with the panel, or returns it to the row.                                                                                                                             |
+| <kbd>Enter</kbd> or <kbd>Space</kbd> on Close                 | Closes the panel and moves focus to the panel that remains, or to the last chip.                                                                                                       |
+| <kbd>Enter</kbd> or <kbd>Space</kbd> on a chip                | Brings its panel back, with focus where it was in the panel's content.                                                                                                                 |
+| <kbd>Enter</kbd> or <kbd>Space</kbd> on a chip's close button | Closes the panel and moves focus to the chip in its place.                                                                                                                             |
+
+### envUI provides
+
+- Each panel as a region named by its title, never a dialog: panels don't trap focus, and the page stays usable around them.
+- A focusable resize handle with the `separator` role, named Resize and the title, with its height in `aria-valuenow`, `aria-valuemin` and `aria-valuemax` and its share of the room in `aria-valuetext`.
+- Window controls as icon buttons with their names in tooltips, and the title as a heading at `headingLevel`.
+- Chips in a list named Hidden panels, each a Show button, described by its `attention` text, and a close button; decorative icons and the dot hidden from assistive technology.
+- Hidden panels inert and out of sight, and focus that follows panels as they hide, come back and close.
+- Scroll padding that keeps a focused control from hiding beneath the sticky header.
+- A taller resize band with its bar always shown, and 2 rem chip close buttons, on coarse pointers.
+
+### You provide
+
+- A positioned container with a height, and `inert` on the content beneath while a panel fills the region.
+- The panels: their order, modes, the active one and their heights, through the callbacks.
+- A PanelDockHeader with a title in each panel, which names it for people who see it.
+- `attention` text for a chip's dot, and a `tooltip` with the full title where labels truncate.
+- `minimizedLabel`, `showLabel`, `closeLabel`, `resizeLabel` and PanelDockControls' labels in the page's language.
+
+## Examples
+
+### Maximized panel
+
+A maximized panel fills the region behind the open panels, which keep their modes; Restore returns it to the row.
+
+```tsx example=MaximizedPanel
+
 ```
 
-| Name                                                      | Contract                                                                                                |
-| --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| PanelDockHeader title / meta                              | The title as a heading, and supporting text below it, such as who changed it last                       |
-| PanelDockHeader headingLevel                              | The title's level in the page outline, 2 by default; the appearance stays the same                      |
-| PanelDockHeader actions                                   | The application's own actions before the window controls, such as Edit and a menu of more               |
-| PanelDockHeader controls                                  | The window controls: PanelDockControls inside a dock by default; null leaves them out                   |
-| PanelDockHeader children                                  | Content below the title row that stays with the header, such as Tabs                                    |
-| PanelDockHeader native props                              | className, style, ref and other header attributes                                                       |
-| PanelDockControls                                         | Minimize, Maximize or Restore, and Close for the panel around it, as compact icon buttons with tooltips |
-| minimizeLabel / maximizeLabel / restoreLabel / closeLabel | Accessible names and tooltips of the controls; Minimize, Maximize, Restore and Close by default         |
+### Minimize what does not fit
 
-## Content stays mounted
+With `overflow="minimize"` three panels that can't sit side by side at 20 rem make room: the one active longest ago waits as a chip. It comes back once the region widens.
 
-A panel's content mounts when the panel first appears and stays mounted until it closes. Minimizing, maximizing and restoring it, a stacked dock showing another panel, resizing, and panels reordering never mount it again: its React state, effects and subscriptions stay as they are, and so do focus and the scroll positions inside it. That is why an application can keep an unsaved draft in a panel's own state, or a data subscription in its component, without lifting them out of the panel.
+```tsx example=MinimizeWhatDoesNotFit
 
-- Changes of mode only restyle the panel: a minimized panel stays in the document, inert and out of sight, so a frame or video inside it carries on. A reorder moves the panel's element; the dock keeps focus and the scroll positions where they were, though a frame inside reloads, as browsers do with moved frames.
-- Minimizing a panel that holds focus moves focus to its chip, also from a popup the panel opened, such as a menu. Bringing it back from the chip returns focus to the element in its content that last had it, scrolled into view where the panel hid it entirely, also inside a list that scrolls on its own or beside the view, or else to the panel. As focus moves to a chip or back into a panel, the panel's own scrolling elements scroll as little as shows the element, and the page only where the element would otherwise lie entirely outside the window. Closing the focused panel moves focus to the active panel in view, else to the last open panel in the row, else to the panel that fills the region, or else to the last chip; closing a chip moves focus to the chip that takes its place.
-- Pressing a window control closes a menu or popover open in the panel, as any press outside it does. When the application hides a panel itself while one is open, as from a keyboard shortcut, the popup stays until the next press or <kbd>Esc</kbd>; close it first where that matters.
+```
 
-## Guidelines
+### Narrow region
 
-- Put the dock in a positioned container with a height, such as the area below a topbar, beside the page content, which scrolls on its own. The dock fills the container and lies over it; around its panels and chips, presses reach the content beneath.
-- The application owns the panels: which exist, their order and mode, which one is active and any height it keeps. The dock asks for changes through its callbacks and shows what it is given. Keep at most one panel maximized; activate a panel when it opens.
-- Open panels stand side by side on the bottom inline-end edge, 0.5 rem apart, the newest at the end. Each takes its preferred width while the row has room; then they shrink in proportion, down to their minimum widths, and finally the row scrolls sideways. With overflow="minimize" the dock asks to minimize a panel instead: the least recently active open panel, until the rest fit, so every panel shows in the row or as a chip. It never asks for the active panel, the newest, such as one just brought back from its chip, or the one that holds focus, as where people type, and so never for a panel alone in the row; where those cannot fit by themselves, minimizing the others would only hide them, and the row scrolls instead. It asks for one change at a time and waits for the answer, also one the application gives in a transition or after an asynchronous step: a panel the application keeps open, still open after 5 seconds, or opens again itself after the dock minimized it, stays, and the dock does not ask for it again until the region changes size; it asks for the next one where that still lets the rest fit. Once the region is wider than when the dock minimized a panel, and the panel fits again at its width while open, the dock asks to open it again, the most recently active first. Room that people free, by closing or minimizing panels, brings no panel back, and panels people minimize stay chips. A panel that joins the row scrolls into view, so the newest stays visible, also as the region narrows. Touch, a sideways wheel and moving focus scroll the row, and its scrollbar works while it overflows.
-- Panels take the dialog surface with a hairline border and a shadow, rounded at the top. The active panel is in front, with a deeper shadow; pressing or focusing inside a panel calls onActivate. Content that does not fill the panel scrolls within it, below a PanelDockHeader that sticks to the top, also inside an element that holds the rest of the content with it, such as a form; the content's scroll padding follows the header's height, so a control that takes focus beneath the header comes out below it. Once the content scrolls beneath it, a hairline in the panel's border color sets the header apart, fading in briefly, or at once with reduced motion.
-- Drag an open panel's top edge to change its height, or focus the edge and press <kbd>↑</kbd> or <kbd>↓</kbd> for 16 px, 64 px with <kbd>Shift</kbd>; <kbd>Home</kbd> and <kbd>End</kbd> reach minHeight and maxHeight. The edge reports the height in pixels, read as its share of the room above the chips, such as 85%. A short bar shows on the edge on hover, in the focus color with the keyboard and while dragging. The panel stays within the room above the chips: a shorter region holds it lower without changing its height. A cancelled drag keeps the height it began with.
-- A maximized panel fills the region above the chips, behind the open panels, which keep their modes and leave the first row of its header in view. Its Restore control returns it to the row.
-- Minimized panels wait as chips along the bottom, at the inline end and in panel order: an icon, a label that truncates beyond about 14 rem, an attention dot and a close button. Pressing a chip brings its panel back and activates it. A vertical wheel scrolls an overflowing strip sideways. Pass the full title as tooltip where labels may truncate.
-- stackBelow responds to the dock's own width, not the window's. Below it, the active panel, or else the newest, fills the region like a sheet, without its resize handle and Maximize control, and the other panels wait as chips; pressing a chip shows its panel instead, also where the application does not activate it, until another panel becomes active or the dock widens; a panel that opens meanwhile shows in its place. A phone gets one panel at a time this way. A hidden dock keeps its layout until it shows again.
-- While a panel fills the region, maximized or alone in a stacked dock, the dock covers the content beneath it, also around the chips. Make that content inert while it is covered, so the keyboard and assistive technology stay with the panels: that is while a panel is maximized, or while the dock stacks, as onStackedChange reports, and a panel is not minimized.
-- Panels are labelled regions, not dialogs: they never trap focus, and the page stays usable around them. In the keyboard order, each panel's resize handle comes before its content, the header's actions before its window controls, and the chips follow the panels; every chip is two buttons in a list.
-- PanelDockHeader makes its controls compact, like a title bar's, and gives icon-only text buttons the quiet icon color of the window controls. Put the application's actions in actions, such as Edit and a Menu, beside the window controls. A long title wraps between words rather than truncating: keep it short and put detail in meta. The title keeps about 10 rem beside the actions and window controls; in a narrower panel they take a row of their own above it, at the inline end.
-- In right-to-left text the dock gathers at the left, its inline end, and the newest panel stays at the left edge of an overflowing row.
-- Panels rise into the row from the bottom edge, a maximized or stacked panel grows into the region, and chips rise into their strip, briefly. With reduced motion, they only fade in. A reorder moves them without their entrance, and panels rendered on a server are in place without one.
+Below `stackBelow` one panel at a time fills the region, here the active conversation, and its chip shows the other.
 
-TypeScript declarations provide the complete public API.
+```tsx example=NarrowRegion
 
-## Related topics
+```
 
-- [AppShell](../components/app-shell.md)
-- [DocumentTabs](../components/document-tabs.md)
-- [Dialog](../components/dialog.md)
-- [Tooltip](../components/tooltip.md)
-- [Accessibility](../foundations/accessibility.md)
+## Changelog
+
+- **0.6.0**: PanelDock, PanelDockHeader and PanelDockControls: open panels side by side on the bottom inline-end edge, a maximized panel filling the region and minimized panels as chips, with content that stays mounted, resizing from the top edge, `overflow="minimize"`, stacking below `stackBelow`, focus that follows the panels, and labels that localize the dock.

@@ -1,81 +1,10 @@
-import { SwitchPreview, RadioPreview, SelectPreview, SliderPreview } from './Forms';
-import { NavListPreview, TabsPreview, PagerPreview, PaginationPreview } from './Navigation';
-import { SurfacePreview, LayoutPreview } from './Layout';
-import { ChipsPreview, RatingPreview, RelativeTimePreview } from './Content';
-import { lazy, Suspense } from 'react';
-import { Text } from '@envsemble/envui';
-import { SpinnerPreview, SkeletonPreview } from './Feedback';
-import { ToastsPreview } from './Toasts';
-import { MessagesPreview } from './Conversation';
-import { StatsPreview } from './Dashboard';
-import { TooltipPreview, MeterPreview, ProgressPreview } from './Overlays';
-import { TreePreview } from './Workspace';
-import { PanelDockPreview } from './Dock';
-import { PopoverPreview, SegmentedControlPreview } from './Elements';
-
-const RichTextPreview = lazy(() =>
-  import('./RichTextContent').then(({ RichTextPreview }) => ({ default: RichTextPreview })),
-);
+import { ChipsPreview } from './Content';
 
 /** Select a topic; each preview retains its state across theme changes. */
 export function ComponentPreview({ id }: { id: string }) {
   switch (id) {
-    case 'segmented-control':
-      return <SegmentedControlPreview />;
-    case 'switch':
-      return <SwitchPreview />;
-    case 'radio':
-      return <RadioPreview />;
-    case 'select':
-      return <SelectPreview />;
-    case 'slider':
-      return <SliderPreview />;
-    case 'nav-list':
-      return <NavListPreview />;
-    case 'tabs':
-      return <TabsPreview />;
-    case 'pager':
-      return <PagerPreview />;
-    case 'surface':
-      return <SurfacePreview />;
-    case 'stack':
-      return <LayoutPreview />;
     case 'chips':
       return <ChipsPreview />;
-    case 'pagination':
-      return <PaginationPreview />;
-    case 'rating':
-      return <RatingPreview />;
-    case 'relative-time':
-      return <RelativeTimePreview />;
-    case 'message':
-      return <MessagesPreview />;
-    case 'stat':
-      return <StatsPreview />;
-    case 'rich-text':
-      return (
-        <Suspense fallback={<Text role="status">Loading rich text…</Text>}>
-          <RichTextPreview />
-        </Suspense>
-      );
-    case 'spinner':
-      return <SpinnerPreview />;
-    case 'skeleton':
-      return <SkeletonPreview />;
-    case 'toast':
-      return <ToastsPreview />;
-    case 'popover':
-      return <PopoverPreview />;
-    case 'tooltip':
-      return <TooltipPreview />;
-    case 'meter':
-      return <MeterPreview />;
-    case 'progress':
-      return <ProgressPreview />;
-    case 'tree':
-      return <TreePreview />;
-    case 'panel-dock':
-      return <PanelDockPreview />;
     default:
       return null;
   }

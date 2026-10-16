@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { Theme, type ThemeValue } from './Theme.js';
+import { Theme, useTheme, type ThemeContrast, type ThemeValue } from './Theme.js';
 import { IconButton, type IconButtonProps } from '../actions/Button.js';
 import { DarkMode } from '../icons/DarkMode.js';
 import { LightMode } from '../icons/LightMode.js';
@@ -41,6 +41,12 @@ export interface ThemePreferenceProviderProps {
    * theme-color meta tag, which takes the canvas color.
    */
   applyToDocument?: boolean;
+  /**
+   * Contrast of the Theme boundary around the children, and of the document root with
+   * applyToDocument: high, standard, or system to follow `prefers-contrast: more`, as on Theme.
+   * Defaults to the contrast of an enclosing Theme, and to system.
+   */
+  contrast?: ThemeContrast;
   /** Class name for the Theme boundary around the children. */
   className?: string;
 }
@@ -67,8 +73,11 @@ export function ThemePreferenceProvider({
   storageKey = defaultThemeStorageKey,
   defaultPreference = 'system',
   applyToDocument = true,
+  contrast: ownContrast,
   className,
 }: ThemePreferenceProviderProps) {
+  const inheritedContrast = useTheme().contrast;
+  const contrast = ownContrast ?? inheritedContrast;
   const [preference, setPreferenceState] = useState<ThemePreference>(() =>
     typeof window === 'undefined'
       ? defaultPreference
@@ -108,6 +117,9 @@ export function ThemePreferenceProvider({
     const root = document.documentElement;
     root.classList.add('env-theme');
     root.dataset.envTheme = theme;
+    // Like a Theme boundary, the root leaves system contrast to prefers-contrast: more.
+    if (contrast === 'system') delete root.dataset.envContrast;
+    else root.dataset.envContrast = contrast;
     root.style.colorScheme = theme;
     // The browser's own interface, such as a mobile address bar, takes the canvas color. Every
     // theme-color tag follows, including ones written for a system color scheme with media.
@@ -116,7 +128,7 @@ export function ThemePreferenceProvider({
       'meta[name="theme-color"]',
     ))
       browserTheme.content = canvas;
-  }, [applyToDocument, theme]);
+  }, [applyToDocument, theme, contrast]);
 
   const setPreference = useCallback(
     (next: ThemePreference) => {
@@ -141,7 +153,7 @@ export function ThemePreferenceProvider({
 
   return (
     <ThemePreferenceContext value={value}>
-      <Theme theme={theme} className={className}>
+      <Theme theme={theme} contrast={contrast} className={className}>
         {children}
       </Theme>
     </ThemePreferenceContext>

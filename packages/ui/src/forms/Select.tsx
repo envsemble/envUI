@@ -13,9 +13,13 @@ import { FieldFrame, type FieldProps } from './internal/FieldFrame.js';
 import { setRef } from '../internal/setRef.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
 
+/** One option of a Select. */
 export interface SelectOption {
+  /** The value the select reports and a form submits when this option is chosen. */
   value: string;
+  /** The option's name in the list and, once chosen, on the trigger; typing it jumps to the option. */
   label: string;
+  /** Show the option but don't let people choose it; the keyboard can still highlight it. */
   disabled?: boolean;
 }
 export interface SelectProps
@@ -24,27 +28,51 @@ export interface SelectProps
       'value' | 'defaultValue' | 'onChange' | 'children' | 'name' | 'type'
     >,
     FieldProps {
+  /** The options of the list, in order, each with a value, a label and whether it is disabled. */
   options: readonly SelectOption[];
+  /**
+   * The chosen option's value in a controlled select, or null for none, which shows the
+   * placeholder; update it from onValueChange.
+   */
   value?: string | null;
+  /**
+   * The chosen option's value an uncontrolled select starts with; a native form reset returns to it.
+   * Without it, nothing is chosen and the trigger shows the placeholder.
+   */
   defaultValue?: string | null;
+  /** Receives the value of the option people choose. */
   onValueChange?: (value: string | null) => void;
+  /** Submits the chosen option's value with a form under this name, through a hidden input. */
   name?: string;
+  /**
+   * Require a choice before the form submits: the browser refuses the form and moves focus to the
+   * trigger while nothing is chosen.
+   */
   required?: boolean;
+  /** What the trigger shows while nothing is chosen, such as Choose an owner. */
   placeholder?: string;
+  /** A hint for the browser's autofill, such as country, set on the hidden input. */
   autoComplete?: string;
   /**
-   * The trigger's Button style, to suit its surroundings: secondary (default) for the page canvas,
-   * outlined for panes, dialogs, rows and toolbars.
+   * The trigger's Button style, to suit its surroundings: secondary, a filled pill, for the page;
+   * or outlined, a bordered pill, for panes, dialogs, rows and toolbars, where a fill would blend
+   * with the surface.
+   * @default 'secondary'
    */
   variant?: 'secondary' | 'outlined';
   /**
-   * compact suits dense desktop surfaces: a compact trigger and the compact menu's popup, where a
-   * check mark shows the selected option.
+   * standard, or compact for dense desktop surfaces such as toolbars: a 2 rem trigger, and the
+   * compact menu's popup with short rows, where a check mark shows the chosen option.
+   * @default 'standard'
    */
   density?: 'standard' | 'compact';
 }
 
-/** A single selection with native form participation and a themed popup. */
+/**
+ * One choice from a list that stays collapsed until opened: a Button-style trigger that shows the
+ * chosen option and opens a popup list, with a label above it, a hint, an error and native form
+ * participation.
+ */
 export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select(
   {
     options,
@@ -143,7 +171,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
           </BaseSelect.Icon>
         </BaseSelect.Trigger>
         <BaseSelect.Portal>
-          <Theme theme={theme}>
+          <Theme {...theme}>
             <BaseSelect.Positioner
               className="env-select-positioner"
               alignItemWithTrigger={false}

@@ -6,25 +6,47 @@ import { classNames } from '../internal/classNames.js';
 import { Theme, useTheme } from '../foundations/Theme.js';
 
 export interface PopoverProps {
-  /** The control that opens the popover; it receives the expanded state and ref. */
+  /**
+   * The control that opens and closes the popover, such as a Button or an IconButton. It must take
+   * a ref and props: it receives the press handler, aria-haspopup and aria-expanded.
+   */
   trigger: ReactElement;
-  /** A heading that also names the popover. */
+  /** A heading at the top, such as the name of what the popover describes; it names the popover. */
   title?: ReactNode;
-  /** Content, or a function that receives close for actions inside the popover. */
+  /**
+   * The popover's content, or a function that receives close, for an action inside it that should
+   * close the popover once it is done, such as a form's submit.
+   */
   children: ReactNode | ((close: () => void) => ReactNode);
-  /** Accessible name when there is no title. */
+  /** The popover's accessible name when it has no title, such as Rename document. */
   'aria-label'?: string;
+  /** The side of the trigger the popover opens on; it flips to the other side without room. */
   side?: 'top' | 'bottom' | 'left' | 'right';
+  /** How the popover lines up with the trigger along that side: its start, center or end. */
   align?: 'start' | 'center' | 'end';
+  /** Whether a controlled popover is open; update it from onOpenChange. */
   open?: boolean;
+  /** Whether an uncontrolled popover starts open. */
   defaultOpen?: boolean;
+  /**
+   * Receives the requested state each time the popover asks to open or close: from the trigger,
+   * Esc, a press outside, focus leaving it or close.
+   */
   onOpenChange?: (open: boolean) => void;
-  /** standard (default) about 20 rem wide; wide about 28 rem. */
+  /**
+   * The popover's width: standard, 20 rem, for details and a field or two; wide, 28 rem, for a
+   * longer form. Both narrow to fit the window.
+   * @default 'standard'
+   */
   width?: 'standard' | 'wide';
+  /** A class for the popover's surface. */
   className?: string;
 }
 
-/** A floating panel opened from a trigger, for details or a small form beside the control. */
+/**
+ * A floating panel beside its trigger, for details or a small form: it opens on press, moves focus
+ * into itself, and closes with Esc, a press outside or when focus leaves it.
+ */
 export function Popover({
   trigger,
   title,
@@ -50,7 +72,7 @@ export function Popover({
     <BasePopover.Root open={open} onOpenChange={(next) => setOpen(next)}>
       <BasePopover.Trigger render={trigger} />
       <BasePopover.Portal>
-        <Theme theme={theme} className="env-popover-theme">
+        <Theme {...theme} className="env-popover-theme">
           <BasePopover.Positioner
             side={side}
             align={align}

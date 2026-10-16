@@ -8,6 +8,10 @@
         "hover": { "$value": "{contrast-high.color.bg.selected.hover}" },
         "pressed": { "$value": "{contrast-high.color.bg.selected.pressed}" }
       },
+      "navigation": {
+        "hover": { "$value": "{contrast-high.color.bg.navigation.hover}" },
+        "pressed": { "$value": "{contrast-high.color.bg.navigation.pressed}" }
+      },
       "page": {
         "hover": { "$value": "{contrast-high.color.bg.page.hover}" },
         "pressed": { "$value": "{contrast-high.color.bg.page.pressed}" }
@@ -25,6 +29,7 @@
         "pressed": { "$value": "{contrast-high.color.bg.raised.pressed}" }
       },
       "popup": {
+        "$root": { "$value": "{contrast-high.color.bg.popup}" },
         "hover": { "$value": "{contrast-high.color.bg.popup.hover}" },
         "pressed": { "$value": "{contrast-high.color.bg.popup.pressed}" }
       },
@@ -165,7 +170,11 @@
       "border": { "$type": "color", "$value": "{color.border.default}" }
     },
     "3": {
-      "border": { "$type": "color", "$value": "{color.border.default}" }
+      "border": {
+        "$type": "color",
+        "$description": "Dialogs float over the scrim, so their edge keeps 4.5:1 against the scrim over the page.",
+        "$value": "{contrast-high.color.border.scrim}"
+      }
     }
   }
 }

@@ -72,9 +72,15 @@ export interface PanelDockPanel {
 
 export interface PanelDockProps<T extends PanelDockPanel>
   extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
-  /** The panels in order; open panels sit side by side and chips follow in the same order. */
+  /**
+   * The panels in order, each a PanelDockPanel: open panels sit side by side, the newest at the
+   * end, and chips follow in the same order. The application owns them.
+   */
   panels: readonly T[];
-  /** Renders a panel's content, such as a PanelDockHeader above the panel's body. */
+  /**
+   * Renders a panel's content from its panel, such as a PanelDockHeader above the panel's body.
+   * The content mounts once and stays mounted until the panel closes.
+   */
   children: (panel: T) => ReactNode;
   /**
    * Called with the mode a panel asks for, from its window controls and its chip, and from the dock
@@ -112,17 +118,25 @@ export interface PanelDockProps<T extends PanelDockPanel>
   overflow?: 'scroll' | 'minimize';
   /**
    * Accessible name of the list of chips, which holds minimized panels and the panels a stacked dock
-   * leaves out; Hidden panels by default.
+   * leaves out.
+   * @default 'Hidden panels'
    */
   minimizedLabel?: string;
   /**
-   * Accessible name of a chip's button that shows its panel, from the chip's text: Show and the text
-   * by default. A function, as each chip names its own panel; PanelDockControls takes plain strings.
+   * Accessible name of a chip's button that shows its panel, from the chip's text. A function, as
+   * each chip names its own panel; PanelDockControls takes plain strings.
+   * @default Show and the text, such as Show Budget
    */
   showLabel?: (label: string) => string;
-  /** Accessible name of a chip's close button, from the chip's text: Close and the text by default. */
+  /**
+   * Accessible name of a chip's close button, from the chip's text.
+   * @default Close and the text, such as Close Budget
+   */
   closeLabel?: (label: string) => string;
-  /** Accessible name of a panel's resize handle, from its title: Resize and the title by default. */
+  /**
+   * Accessible name of a panel's resize handle, from its title.
+   * @default Resize and the title, such as Resize Quarterly report
+   */
   resizeLabel?: (title: string) => string;
 }
 

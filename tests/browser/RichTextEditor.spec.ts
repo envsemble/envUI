@@ -148,6 +148,30 @@ test('theme and renderer changes preserve uncontrolled content, history and keyb
   await expect(scope.getByTestId('rich-text-keyboard-clicks')).toHaveText('2');
 });
 
+test('a task item keeps its checkbox beside its text in the editor and in the view', async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}?fixture=form`);
+  const editor = page
+    .getByTestId('rich-text-form')
+    .getByRole('textbox', { name: 'Rich source', exact: true });
+  await replace(editor, '[ ] Review the outline');
+  await expect(page.getByTestId('rich-text-source')).toHaveText('- [ ] Review the outline');
+  for (const item of [
+    editor.locator('ul[data-type="taskList"] > li'),
+    page.getByTestId('rich-text-preview').locator('ul[data-type="taskList"] > li'),
+  ]) {
+    const [checkbox, text] = await Promise.all([
+      item.getByRole('checkbox').boundingBox(),
+      item.getByText('Review the outline', { exact: true }).boundingBox(),
+    ]);
+    expect(text!.x).toBeGreaterThan(checkbox!.x + checkbox!.width);
+    expect(
+      Math.abs(text!.y + text!.height / 2 - (checkbox!.y + checkbox!.height / 2)),
+    ).toBeLessThan(8);
+  }
+});
+
 test('formatting, native history, form submission and reset use Markdown values', async ({
   page,
 }) => {

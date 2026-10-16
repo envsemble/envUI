@@ -17,7 +17,10 @@ import {
 export interface RelativeTimeProps
   extends Omit<ComponentPropsWithRef<'time'>, 'children' | 'dateTime'>,
     Omit<RelativeTimeOptions, 'now'> {
-  /** The moment to describe. */
+  /**
+   * The moment to describe: a Date, milliseconds since 1970 or a date string such as an ISO 8601
+   * timestamp. An invalid moment renders nothing.
+   */
   value: RelativeTimeValue;
   /**
    * A fixed moment to compare with, for tests and server rendering; the text then stays as it is.
@@ -25,8 +28,9 @@ export interface RelativeTimeProps
    */
   now?: Date | number;
   /**
-   * Show the date and time in a tooltip on hover; true by default. Inside an application's own
-   * Tooltip, that one describes the time instead.
+   * Show the date and time in a tooltip on hover, such as "Oct 14, 2026, 9:41 AM", in the
+   * reader's time zone and the locale. Turn it off where the exact moment shows nearby. Inside an
+   * application's own Tooltip, that one describes the time instead.
    */
   tooltip?: boolean;
 }

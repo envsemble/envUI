@@ -3,19 +3,37 @@ import { classNames } from '../internal/classNames.js';
 import { Star } from '../icons/Star.js';
 
 export interface RatingProps extends Omit<ComponentPropsWithRef<'span'>, 'children'> {
-  /** The rating, from 0 to max; it shows in half-star steps. */
+  /**
+   * The rating, from 0 to max, such as 4.5. It shows rounded to the nearest half star, kept
+   * within 0 and max; a value that is not a number, such as NaN, shows no stars filled.
+   */
   value: number;
-  /** How many stars; 5 by default. */
+  /**
+   * How many stars the scale has, as a whole number, such as 10. A fraction rounds to the
+   * nearest whole star; a value below 1 or not a number shows 5 stars.
+   */
   max?: number;
-  /** Shows the number before the stars, such as 4.5. */
+  /**
+   * Shows the rating as a number before the stars, such as 4.5, in tabular digits. The number is
+   * the rounded value the stars show, and it is hidden from assistive technology, since the stars'
+   * name already says it.
+   */
   showValue?: boolean;
-  /** The accessible name; "4.5 out of 5 stars" by default. */
+  /**
+   * Writes the accessible name of the stars from the shown value, rounded to a half star, and the
+   * number of stars, such as for another language.
+   * @default '{value} out of {max} stars'
+   */
   formatLabel?: (value: number, max: number) => string;
 }
 
 const defaultLabel = (value: number, max: number) => `${value} out of ${max} stars`;
 
-/** A read-only rating: stars filled to the value in half steps, in the warning tone. */
+/**
+ * A read-only rating, such as a review score: stars filled to the value in half steps in the
+ * warning tone, with an optional number before them, named once for assistive technology as an
+ * image, such as "4.5 out of 5 stars". It shows a rating; it does not ask for one.
+ */
 export function Rating({
   value,
   max = 5,

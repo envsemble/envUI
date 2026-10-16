@@ -9,7 +9,8 @@
   padding: var(--space-2) var(--space-3);
   min-width: 0;
   min-height: 3rem;
-  border: 0;
+  /* The solid fill identifies the toast; forced colors paint the transparent edge as its boundary. */
+  border: 1px solid transparent;
   border-radius: var(--radius-standard);
   font: var(--type-body-small);
   color: var(--color-on-toast);
