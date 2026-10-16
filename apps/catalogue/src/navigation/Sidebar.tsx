@@ -1,23 +1,84 @@
+import { Fragment, useId, type ReactNode } from 'react';
 import { version } from '@envsemble/envui/package.json';
-import { Text, EnvUILogo, NavList, Stack, Link } from '@envsemble/envui';
+import { Button, EnvUILogo, Kbd, Link, NavList, Stack, Text } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Category } from '@envsemble/envui/icons/Category';
+import { RocketLaunch } from '@envsemble/envui/icons/RocketLaunch';
+import { Article } from '@envsemble/envui/icons/Article';
+import { Token } from '@envsemble/envui/icons/Token';
+import { Pattern } from '@envsemble/envui/icons/Pattern';
+import { ViewQuilt } from '@envsemble/envui/icons/ViewQuilt';
+import { Handyman } from '@envsemble/envui/icons/Handyman';
+import { History } from '@envsemble/envui/icons/History';
+import { Search } from '@envsemble/envui/icons/Search';
 import { references, foundations, componentGroups } from '../Reference';
-import { pageHref, referencePages, type ReferencePage } from './DocumentationRoutes';
+import {
+  changelogPage,
+  pageHref,
+  pagesOf,
+  referencePages,
+  templatesPage,
+  tokensPage,
+  type ReferencePage,
+  type SiteSection,
+} from './DocumentationRoutes';
+import { homeRoute, routeHref } from './Address';
 import { foundationIcons, getComponentIcon } from './TopicIcons';
+import { DisplayMenu } from '../theme/DisplaySettings';
+import { commandKey, searchKeyShortcuts } from '../search/SearchShortcut';
 
+/** The button that opens search, with its shortcut. */
+export function SearchButton({ onSearch }: { onSearch: () => void }) {
+  return (
+    <Button
+      variant="secondary"
+      className="docs-search-button"
+      startIcon={<Search />}
+      aria-keyshortcuts={searchKeyShortcuts}
+      onClick={onSearch}
+    >
+      Search
+      <Kbd keys={[commandKey, 'K']} className="docs-search-shortcut" aria-hidden="true" />
+    </Button>
+  );
+}
+
+/**
+ * The catalogue's navigation, by section: Get started, Foundations, Components, Patterns,
+ * Templates, Contributing and Changelog, with search above and the display settings below.
+ */
 export function Sidebar({
   routePath,
   page,
   panel = false,
   onNavigate,
+  onSearch,
 }: {
   routePath: string;
   page?: ReferencePage;
   panel?: boolean;
   onNavigate?: () => void;
+  onSearch: () => void;
 }) {
   const reference = page?.reference;
+  const headingId = useId();
+  const item = (path: string, title: string, icon: ReactNode) => (
+    <NavList.Item key={path} href={routeHref(path)} selected={routePath === path} icon={icon}>
+      {title}
+    </NavList.Item>
+  );
+  /** A section of the navigation: its heading, and a list of its pages named by it. */
+  const section = (title: SiteSection, children: ReactNode) => {
+    const id = `${headingId}-${title.toLowerCase().replace(/\s+/g, '-')}`;
+    return (
+      <Fragment key={title}>
+        <Text variant="section-heading" id={id} className="docs-nav-heading">
+          {title}
+        </Text>
+        <NavList.Root aria-labelledby={id}>{children}</NavList.Root>
+      </Fragment>
+    );
+  };
   return (
     <aside
       className={panel ? 'docs-navigation-panel' : 'docs-sidebar'}
@@ -26,71 +87,97 @@ export function Sidebar({
       }}
     >
       <Link
-        href="#/overview"
+        href={routeHref(homeRoute)}
         underline={false}
         className="docs-brand-link"
         aria-label="envUI overview"
       >
         <EnvUILogo />
       </Link>
-      <Stack
-        as="nav"
-        gap={0}
-        align="start"
-        className="docs-sidebar-navigation"
-        aria-label="Documentation"
-      >
-        <NavList.Item
-          href="#/overview"
-          selected={routePath.split('/')[0] === 'overview'}
-          icon={<Home />}
-        >
-          Overview
-        </NavList.Item>
-        <Text variant="caption" className="docs-nav-heading">
-          Foundations
-        </Text>
-        {foundations.map((item) => {
-          const Icon = foundationIcons[item.id] ?? Category;
-          return (
+      <SearchButton onSearch={onSearch} />
+      <nav aria-label="Documentation" className="docs-sidebar-navigation">
+        {section(
+          'Get started',
+          <>
             <NavList.Item
-              key={item.id}
-              href={`#/foundations/${item.id}`}
-              selected={page?.section === 'Foundations' && reference?.id === item.id}
-              icon={<Icon />}
+              href={routeHref(homeRoute)}
+              selected={routePath === 'overview/components'}
+              icon={<Home />}
             >
-              {item.title}
+              Overview
             </NavList.Item>
-          );
-        })}
-        {componentGroups.map((group) => (
-          <Stack key={group} gap={0} align="start" className="docs-sidebar-navigation">
-            <Text variant="caption" className="docs-nav-subheading">
-              {group}
-            </Text>
-            {references
-              .filter((item) => item.group === group)
-              .map((item) => {
-                const Icon = getComponentIcon(item.group);
-                return (
-                  <NavList.Item
-                    key={item.id}
-                    href={pageHref(referencePages.find((entry) => entry.reference === item)!)}
-                    selected={reference?.id === item.id}
-                    icon={<Icon />}
-                  >
-                    {item.title}
-                  </NavList.Item>
-                );
-              })}
-          </Stack>
-        ))}
+            <NavList.Item
+              href={routeHref('overview/get-started')}
+              selected={routePath === 'overview/get-started'}
+              icon={<RocketLaunch />}
+            >
+              Install and set up
+            </NavList.Item>
+            {pagesOf('Get started').map(({ path, title }) => item(path, title, <Article />))}
+          </>,
+        )}
+        {section(
+          'Foundations',
+          <>
+            {foundations.map((foundation) => {
+              const Icon = foundationIcons[foundation.id] ?? Category;
+              return (
+                <NavList.Item
+                  key={foundation.id}
+                  href={pageHref(referencePages.find((entry) => entry.reference === foundation)!)}
+                  selected={page?.section === 'Foundations' && reference?.id === foundation.id}
+                  icon={<Icon />}
+                >
+                  {foundation.title}
+                </NavList.Item>
+              );
+            })}
+            {item(tokensPage.path, tokensPage.title, <Token />)}
+          </>,
+        )}
+        {section(
+          'Components',
+          componentGroups.map((group) => (
+            <NavList.Group key={group} label={group}>
+              {references
+                .filter((component) => component.group === group)
+                .map((component) => {
+                  const Icon = getComponentIcon(component.group);
+                  return (
+                    <NavList.Item
+                      key={component.id}
+                      href={pageHref(
+                        referencePages.find((entry) => entry.reference === component)!,
+                      )}
+                      selected={reference?.id === component.id}
+                      icon={<Icon />}
+                    >
+                      {component.title}
+                    </NavList.Item>
+                  );
+                })}
+            </NavList.Group>
+          )),
+        )}
+        {section(
+          'Patterns',
+          pagesOf('Patterns').map(({ path, title }) => item(path, title, <Pattern />)),
+        )}
+        {section('Templates', item(templatesPage.path, templatesPage.title, <ViewQuilt />))}
+        {section(
+          'Contributing',
+          pagesOf('Contributing').map(({ path, title }) => item(path, title, <Handyman />)),
+        )}
+        {section('Changelog', item(changelogPage.path, changelogPage.title, <History />))}
+      </nav>
+      <Stack gap={3} align="start" className="docs-sidebar-footer">
+        <DisplayMenu />
+        <Text variant="caption">
+          envUI · {version}
+          <br />
+          Internal reference
+        </Text>
       </Stack>
-      <Text variant="caption" className="docs-sidebar-footer">
-        envUI · {version}
-        <br />
-        Internal offline reference
-      </Text>
     </aside>
   );
 }

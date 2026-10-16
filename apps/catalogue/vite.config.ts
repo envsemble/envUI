@@ -14,6 +14,8 @@ import {
 // `--mode site` it makes the hosted catalogue: separate files with content-hashed names that
 // browsers keep cached.
 import { tokensVitePlugin } from '../../scripts/BuildTokens.mjs';
+import { createThemeBootstrapScript } from '../../packages/ui/src/foundations/ThemeBootstrap.ts';
+import { createDisplayBootstrapScript, displayStorageKeys } from './src/theme/DisplayStorage.ts';
 import { checkoutMarker } from '../../scripts/CheckoutMarker.mjs';
 
 /**
@@ -35,13 +37,42 @@ function sourceRevision() {
   }
 }
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ command, mode }) => {
   const site = mode === 'site';
   return {
-    define: { __ENVUI_SOURCE_REVISION__: JSON.stringify(sourceRevision()) },
+    define: {
+      __ENVUI_SOURCE_REVISION__: JSON.stringify(sourceRevision()),
+      // The hosted catalogue, and the development server, keep routes in the address's path, such
+      // as /components/button/props, which the server answers with index.html. The offline
+      // catalogue keeps them in its hash, #/components/button/props: opened from a file, or from
+      // an archived version's folder of the hosted site, no server answers another path with it.
+      __ENVUI_PATH_ROUTES__: JSON.stringify(site || command === 'serve'),
+    },
     plugins: [
       // Tells the browser tests which checkout this server serves.
       checkoutMarker(),
+      {
+        // The stored theme, contrast and scale apply before the catalogue loads, so a dark theme
+        // does not flash light and a compact page does not start at the comfortable size.
+        name: 'envui-theme-bootstrap',
+        // The script goes right after <meta charset>, which has to stay within the first 1024
+        // bytes, and before the styles, so it runs before the first paint.
+        transformIndexHtml: {
+          order: 'pre',
+          handler: (html) => {
+            const meta = /<meta charset="utf-8"\s*\/?>/i;
+            if (!meta.test(html)) throw new Error('index.html needs <meta charset="UTF-8" />.');
+            return html.replace(
+              meta,
+              (tag) =>
+                `${tag}\n    <script>${
+                  createThemeBootstrapScript({ storageKey: displayStorageKeys.theme }) +
+                  createDisplayBootstrapScript()
+                }</script>`,
+            );
+          },
+        },
+      },
       // Rebuilds Tokens.css from packages/ui/tokens on every token edit; Vite hot-reloads it.
       tokensVitePlugin(),
       {

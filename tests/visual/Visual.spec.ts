@@ -389,7 +389,8 @@ test.describe('catalogue', () => {
         for (const view of visited) {
           await page.evaluate((hash) => (location.hash = hash), `/${path}/${view}`);
           await page.locator('.docs-page-header').getByRole('tab', { selected: true }).waitFor();
-          await expect(page).toHaveURL(new RegExp(`#/${path}/${view}$`));
+          // The development server keeps routes in the path, and opens a hash route there.
+          await expect(page).toHaveURL(new RegExp(`/${path}/${view}$`));
           await settle(page);
           const examples = page.locator(
             '.docs-preview .docs-example:not(.docs-example .docs-example)',

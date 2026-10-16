@@ -21,6 +21,9 @@ import { basename, dirname, isAbsolute, posix, relative, resolve } from 'node:pa
 import { fileURLToPath } from 'node:url';
 import { marked } from 'marked';
 import { parse as parseYaml } from 'yaml';
+import { headingsOf } from './MarkdownHeadings.mjs';
+import { headingSlugger } from './SearchAnchors.mjs';
+import { writeSearchIndex } from './SearchIndex.mjs';
 
 export const documentationDirectory = fileURLToPath(new URL('../docs/', import.meta.url));
 export const examplesDirectory = fileURLToPath(
@@ -625,18 +628,35 @@ export function readDocumentation(
       if (!documents.some((entry) => entry.id === id))
         throw new Error(`${document.path} relates to ${id}, which is not an indexed page.`);
     marked.walkTokens(marked.lexer(document.markdown), (token) => {
-      if (token.type !== 'link' || /^(?:[a-z][a-z\d+.-]*:|#)/i.test(token.href)) return;
-      const path = token.href.split('#')[0];
-      const target = resolve(directory, dirname(document.path), path);
-      if (!contained(directory, target) || !existsSync(target))
-        throw new Error(`Broken documentation link in ${document.path}: ${token.href}`);
-      if (
-        !documents.some((entry) => entry.path === relative(directory, target).replaceAll('\\', '/'))
-      )
-        throw new Error(`Documentation link is missing from the index: ${token.href}`);
+      if (token.type !== 'link' || /^[a-z][a-z\d+.-]*:/i.test(token.href)) return;
+      const [path, fragment] = token.href.split('#');
+      let linked = document;
+      if (path) {
+        const target = resolve(directory, dirname(document.path), path);
+        if (!contained(directory, target) || !existsSync(target))
+          throw new Error(`Broken documentation link in ${document.path}: ${token.href}`);
+        linked = documents.find(
+          (entry) => entry.path === relative(directory, target).replaceAll('\\', '/'),
+        );
+        if (!linked) throw new Error(`Documentation link is missing from the index: ${token.href}`);
+      }
+      // A link to a heading names one the page has, by the id the catalogue gives it.
+      if (fragment && !headingsOf(linked.markdown).some(({ id }) => id === decoded(fragment)))
+        throw new Error(
+          `Broken documentation link in ${document.path}: ${token.href} names no heading of ${linked.path}.`,
+        );
     });
   }
   return documents;
+}
+
+/** A link's fragment with its percent escapes decoded, or as it is where they are malformed. */
+function decoded(fragment) {
+  try {
+    return decodeURIComponent(fragment);
+  } catch {
+    return fragment;
+  }
 }
 
 /** Every runtime export a page documents, with namespaces expanded to their parts. */
@@ -829,10 +849,18 @@ export function generateDocumentation() {
       components: frontmatter.components ?? [],
     };
     if (!sections) return { ...entry, metadata };
+    // The ids of the headings in each section, numbered across the page, so the catalogue opens a
+    // link to a heading in the view that shows it.
+    const slug = headingSlugger();
     return {
       ...entry,
       metadata,
-      sections,
+      sections: sections.map((section) => ({
+        ...section,
+        anchors: section.blocks.flatMap((block) =>
+          block.kind === 'markdown' ? headingsOf(block.markdown, slug).map(({ id }) => id) : [],
+        ),
+      })),
       props: Object.fromEntries(
         documentedExports(frontmatter.components, props).map((name) => [name, props.exports[name]]),
       ),
@@ -842,11 +870,19 @@ export function generateDocumentation() {
   mkdirSync(dirname(generatedFile), { recursive: true });
   if (!existsSync(generatedFile) || readFileSync(generatedFile, 'utf8') !== source)
     writeFileSync(generatedFile, source);
+  // The catalogue's search index, of the same pages, props and the token list.
+  writeSearchIndex({ documents, props });
   return documents;
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  console.log(
-    `Prepared ${generateDocumentation().length} indexed Markdown documents for the catalogue.`,
-  );
+  // --check reads and validates the documentation, its links and headings, and writes nothing.
+  if (process.argv.includes('--check'))
+    console.log(
+      `The ${readDocumentation().length} indexed Markdown documents and their links hold.`,
+    );
+  else
+    console.log(
+      `Prepared ${generateDocumentation().length} indexed Markdown documents for the catalogue.`,
+    );
 }

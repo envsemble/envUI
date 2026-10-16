@@ -1,7 +1,8 @@
 import { Button, Link, Stack, Tabs, Text } from '@envsemble/envui';
 import { Markdown, type MarkdownLinkProps } from '@envsemble/envui/content';
 import { documents } from '../Reference';
-import { useViewTabs } from '../navigation/useDocumentationRoute';
+import { currentRouteQuery, useViewTabs } from '../navigation/useDocumentationRoute';
+import { routeHref } from '../navigation/Address';
 import { Documentation } from './Documentation';
 import usageSkill from '../../../../.agents/skills/envui-use/SKILL.md?raw';
 import migrationSkill from '../../../../.agents/skills/envui-migrate/SKILL.md?raw';
@@ -22,13 +23,16 @@ function renderSkillLink({ href, ...props }: MarkdownLinkProps) {
   const folder = href?.match(/^\.\.\/([^/]+)\/SKILL\.md$/)?.[1] ?? '';
   const skill = skillTabsByFolder[folder] ?? 'use';
   return (
-    <Link {...props} href={`#/overview/get-started?skill=${skill}&section=local-development`} />
+    <Link
+      {...props}
+      href={routeHref(`overview/get-started?skill=${skill}&section=local-development`)}
+    />
   );
 }
 
 /** Skills stay small; setup and references are rendered from the same Markdown agents read. */
 export function GettingStarted() {
-  const query = new URLSearchParams(location.hash.split('?')[1] ?? '');
+  const query = currentRouteQuery();
   const selectedSkill =
     query.get('skill') ?? (query.get('section') === 'local-development' ? 'migrate' : 'use');
   // The guidance tabs keep focus as the page's views do, rather than moving it to the page.

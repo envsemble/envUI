@@ -3,6 +3,11 @@ components:
   - Icon
   - BrandLogo
   - EnvUILogo
+aliases:
+  - icon
+  - Material Symbols
+  - symbol
+  - logo
 ---
 
 # Icons & assets

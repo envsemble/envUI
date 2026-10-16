@@ -1,10 +1,9 @@
 import { test, expect, type Page } from '@playwright/test';
 import { catalogueUrl } from './Servers';
-import { contentTypes, site, siteBuilt, siteUrl } from './HostedSite';
-import { dirname, extname, resolve } from 'node:path';
+import { moduleFiles, requireSite, serveSite, siteUrl } from './HostedSite';
+import { dirname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import worker from '../../apps/catalogue/site/Worker.mjs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import {
   references,
   foundations as foundationReferences,
@@ -49,18 +48,24 @@ test('offline usage renders shared Markdown guidance and follows relative topic 
   await expect(page).toHaveURL(/#\/components\/surface\/overview$/);
   await expect(page.getByRole('heading', { name: 'Overview', exact: true })).toBeVisible();
 
+  // A guide in the index opens on a page of its own, in its section of the navigation.
   await page.goto(`${offline}#/overview/get-started`);
   await page
     .locator('#documentation')
     .getByRole('link', { name: 'Develop envUI locally', exact: true })
     .click();
-  await expect(page).toHaveURL(/document=local-development/);
+  await expect(page).toHaveURL(/#\/get-started\/local-development$/);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Develop envUI locally');
+  await expect(page.locator('.docs-article')).toContainText('npm run dev:library');
   await expect(
     page
-      .locator('#documentation')
-      .getByRole('heading', { name: 'Develop envUI locally', exact: true }),
-  ).toBeVisible();
-  await expect(page.locator('#documentation')).toContainText('npm run dev:library');
+      .getByRole('navigation', { name: 'Documentation' })
+      .getByRole('link', { name: 'Develop envUI locally', exact: true }),
+  ).toHaveAttribute('aria-current', 'page');
+  // The address it had on the Get started view leads to the same page.
+  await page.goto(`${offline}#/overview/get-started?document=migration&section=documentation`);
+  await expect(page).toHaveURL(/#\/get-started\/migration$/);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Migrate an interface to envUI');
 });
 
 test('Markdown renders a document and edits one, including old editor bookmarks', async ({
@@ -383,7 +388,7 @@ test('old addresses are replaced by the address of the page they open', async ({
   await page.goto(`${offline}#/components/tables/usage?section=keyboard`);
   await expect
     .poll(() => page.evaluate(() => location.hash))
-    .toBe('#/components/table/guidelines?section=keyboard');
+    .toBe('#/components/table/accessibility?section=keyboard');
 });
 
 test('arrowing between views keeps focus on the tabs and adds no history', async ({ page }) => {
@@ -508,68 +513,6 @@ test('an example that fails to load says so in place, and loads again on request
   expect(await hero.evaluate((group) => group.contains(document.activeElement))).toBe(true);
 });
 
-/**
- * Requires the hosted build. `npm run verify` builds it first, and so does CI, where a missing build
- * fails rather than skips; a local run without one skips.
- */
-function requireSite() {
-  const built = siteBuilt();
-  if (!built && process.env.CI)
-    throw new Error('The hosted build is missing: run npm run build:site first');
-  test.skip(!built, 'Needs the hosted build: npm run build:site');
-}
-
-/** The files of the hosted build that a module, by its path in the catalogue app, loads. */
-function moduleFiles(module: string) {
-  const files: string[] =
-    JSON.parse(readFileSync(resolve(site, 'module-files.json'), 'utf8'))[module] ?? [];
-  expect(files.length, `${module} in module-files.json`).toBeGreaterThan(0);
-  return files.map((file) => `/${file}`);
-}
-
-/**
- * Serves the hosted build at siteUrl through the hosted Worker script, with an asset server that
- * answers as Cloudflare's does from dist/site: a path without a file gets index.html. The files
- * `failing` returns true for fail as `failure` says: gone after a deploy, which the Worker answers
- * as not found, or with the connection dropped. `script` rewrites the scripts it serves.
- */
-async function serveSite(
-  page: Page,
-  failing: (pathname: string) => boolean,
-  failure: 'missing' | 'aborted',
-  script: (text: string) => string = (text) => text,
-) {
-  await page.route(`${siteUrl}/**`, async (route) => {
-    const request = route.request();
-    const gone = failing(new URL(request.url()).pathname);
-    if (gone && failure === 'aborted') return route.abort('internetdisconnected');
-    const assets = {
-      async fetch(assetRequest: Request) {
-        const { pathname } = new URL(assetRequest.url);
-        const path = resolve(
-          site,
-          `.${pathname.endsWith('/') ? `${pathname}index.html` : pathname}`,
-        );
-        const file = !gone && existsSync(path) ? path : resolve(site, 'index.html');
-        const body =
-          extname(file) === '.js' ? script(readFileSync(file, 'utf8')) : readFileSync(file);
-        return new Response(body, {
-          headers: { 'Content-Type': contentTypes[extname(file)] ?? 'application/octet-stream' },
-        });
-      },
-    };
-    const response: Response = await worker.fetch(
-      new Request(request.url(), { method: request.method() }),
-      { ASSETS: assets },
-    );
-    return route.fulfill({
-      status: response.status,
-      headers: Object.fromEntries(response.headers),
-      body: Buffer.from(await response.arrayBuffer()),
-    });
-  });
-}
-
 for (const failure of ['missing', 'aborted'] as const) {
   test(`in the hosted build, an example whose file is ${failure} offers a reload, which loads it`, async ({
     page,
@@ -579,7 +522,7 @@ for (const failure of ['missing', 'aborted'] as const) {
     requireSite();
     const files = moduleFiles('src/examples/button/CreateProject.tsx');
     let failing = true;
-    await serveSite(page, (pathname) => failing && files.includes(pathname), failure);
+    await serveSite(page, { failing: (pathname) => failing && files.includes(pathname), failure });
     await page.goto(`${siteUrl}/#/components/button/overview`);
     const hero = page.getByRole('group', { name: 'Button example', exact: true });
     await expect(hero.getByText('The example could not load')).toBeVisible();
@@ -602,15 +545,14 @@ for (const failure of ['missing', 'aborted'] as const) {
 async function openFailingButtonPage(page: Page) {
   const loaded = new Set<string>();
   let state: 'opening' | 'failing' | 'assets' | 'up' = 'opening';
-  await serveSite(
-    page,
-    (pathname) => {
+  await serveSite(page, {
+    failing: (pathname) => {
       if (!pathname.startsWith('/assets/')) return false;
       if (state === 'opening') loaded.add(pathname);
       return state === 'assets' || (state === 'failing' && !loaded.has(pathname));
     },
-    'aborted',
-  );
+    failure: 'aborted',
+  });
   await page.goto(`${siteUrl}/#/overview`);
   await expect(page.getByRole('heading', { level: 1, name: 'envUI' })).toBeVisible();
   await expect(page.getByText(/^Loading .*…$/)).toHaveCount(0);
@@ -688,7 +630,7 @@ test('in the hosted build, a reload from an overview that failed keeps the page 
 }) => {
   requireSite();
   let down = false;
-  await serveSite(page, () => down, 'aborted', breakOverview);
+  await serveSite(page, { failing: () => down, failure: 'aborted', script: breakOverview });
   await page.goto(`${siteUrl}/#/overview`);
   const main = page.getByRole('main');
   const alert = main.locator('.env-alert');
@@ -719,11 +661,11 @@ for (const down of ['offline', 'unreachable'] as const) {
     requireSite();
     const files = moduleFiles('src/examples/button/CreateProject.tsx');
     let connection: 'failing' | 'down' | 'up' = 'failing';
-    await serveSite(
-      page,
-      (pathname) => connection === 'down' || (connection === 'failing' && files.includes(pathname)),
-      'aborted',
-    );
+    await serveSite(page, {
+      failing: (pathname) =>
+        connection === 'down' || (connection === 'failing' && files.includes(pathname)),
+      failure: 'aborted',
+    });
     await page.goto(`${siteUrl}/#/components/button/overview`);
     const hero = page.getByRole('group', { name: 'Button example', exact: true });
     await expect(hero.getByText('The example could not load')).toBeVisible();
@@ -750,7 +692,10 @@ test('in the hosted build, an icon list that fails to load offers a reload, whic
   requireSite();
   const files = moduleFiles('src/previews/foundations/Icons.tsx');
   let failing = true;
-  await serveSite(page, (pathname) => failing && files.includes(pathname), 'missing');
+  await serveSite(page, {
+    failing: (pathname) => failing && files.includes(pathname),
+    failure: 'missing',
+  });
   await page.goto(`${siteUrl}/#/foundations/icons/preview`);
   const main = page.getByRole('main');
   await expect(main.getByText('The icon list could not load')).toBeVisible();
@@ -1052,15 +997,23 @@ test('overview centers its banner and switches between components and setup with
   await expect(page).toHaveURL(/#\/components\/text-field\/overview$/);
   await page.goto(`${offline}#/overview/get-started`);
   await expect(page.getByRole('heading', { name: 'Install the private package' })).toBeVisible();
+  // The pager follows the navigation: the guides of Get started, then the foundations.
   const overviewNext = page
     .locator('.docs-page-navigation')
-    .getByRole('link', { name: 'Up next Colors & themes' });
-  await expect(overviewNext).toHaveAttribute('href', '#/foundations/colors/usage');
+    .getByRole('link', { name: 'Up next Migrate an interface to envUI' });
+  await expect(overviewNext).toHaveAttribute('href', '#/get-started/migration');
   await overviewNext.click();
-  await expect(page.getByRole('tab', { name: 'Usage', selected: true })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Migrate an interface to envUI');
   await expect(
     page.locator('.docs-page-navigation').getByRole('link', { name: 'Previous Overview' }),
   ).toHaveAttribute('href', '#/overview/get-started');
+  await page.goto(`${offline}#/get-started/local-development`);
+  const foundationsNext = page
+    .locator('.docs-page-navigation')
+    .getByRole('link', { name: 'Up next Colors & themes' });
+  await expect(foundationsNext).toHaveAttribute('href', '#/foundations/colors/usage');
+  await foundationsNext.click();
+  await expect(page.getByRole('tab', { name: 'Usage', selected: true })).toBeVisible();
 });
 
 test('offline theme toggle switches the whole page and keeps the canvas full height', async ({
