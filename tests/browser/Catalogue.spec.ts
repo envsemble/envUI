@@ -347,12 +347,15 @@ test('single previews retain state when the theme changes', async ({ page }) => 
   await expect(
     preview.getByRole('checkbox', { name: 'Include archived items' }).first(),
   ).toBeChecked();
+  // The 0.x route of disclosures opens the Disclosure page, whose live example keeps its state.
   await page.evaluate(() => {
     location.hash = '/components/notes/preview';
   });
-  await preview.locator('summary').click();
+  const disclosure = page.getByRole('group', { name: 'Disclosure example', exact: true });
+  await disclosure.locator('summary').click();
   await page.getByRole('button', { name: 'Switch to dark theme' }).click();
-  await expect(preview.locator('details')).toHaveAttribute('open', '');
+  await expect(disclosure).toHaveAttribute('data-env-theme', 'dark');
+  await expect(disclosure.locator('details')).toHaveAttribute('open', '');
 });
 
 test('offline hashes support direct links and back/forward navigation', async ({ page }) => {

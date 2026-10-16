@@ -2,7 +2,6 @@ import { useState } from 'react';
 import {
   Text,
   InfoChip,
-  Disclosure,
   ActionGroup,
   AnimatedNumber,
   IconButton,
@@ -25,29 +24,6 @@ export function ChipsPreview() {
           <InfoChip>Read only</InfoChip>
           <InfoChip>3 members</InfoChip>
         </ActionGroup>
-      </Example>
-    </Preview>
-  );
-}
-
-export function DisclosurePreview() {
-  const [guidanceExpanded, setGuidanceExpanded] = useState(false);
-  return (
-    <Preview>
-      <Example
-        title="Optional guidance"
-        caption="Keep required information and validation errors visible."
-      >
-        <Disclosure
-          title="How visibility works"
-          open={guidanceExpanded}
-          onToggle={(e) => setGuidanceExpanded(e.currentTarget.open)}
-        >
-          <Text>
-            Team projects are available to every workspace member. Private projects are visible only
-            to invited people.
-          </Text>
-        </Disclosure>
       </Example>
     </Preview>
   );

@@ -30,7 +30,6 @@ const unconverted = [
   'command-palette',
   'composer',
   'date-picker',
-  'disclosure',
   'document-tabs',
   'drop-zone',
   'hover-card',

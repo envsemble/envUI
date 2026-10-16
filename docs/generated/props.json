@@ -2375,13 +2375,25 @@
     "Disclosure": {
       "kind": "component",
       "source": "packages/ui/src/content/Disclosure.tsx",
-      "description": "",
+      "description": "A summary that shows and hides the details below it, on the native details element.",
       "props": [
         {
           "name": "title",
           "type": "ReactNode",
           "required": true,
-          "description": ""
+          "description": "The summary: one line that says what the details hold and opens or closes them."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The details, shown below the summary while the disclosure is open."
+        },
+        {
+          "name": "open",
+          "type": "boolean",
+          "required": false,
+          "description": "Whether the details show; with `onToggle` it controls the disclosure. Closed by default."
         }
       ],
       "native": [
