@@ -56,10 +56,10 @@
 .docs-preview .docs-force-pressed.env-nav-list-item {
   background: var(--env-color-bg-navigation-pressed);
 }
-.docs-preview .docs-force-hover.env-nav-list-item-selected {
+.docs-preview .docs-force-hover.env-nav-list-item[data-selected] {
   background: var(--env-color-bg-selected-hover);
 }
-.docs-preview .docs-force-pressed.env-nav-list-item-selected {
+.docs-preview .docs-force-pressed.env-nav-list-item[data-selected] {
   background: var(--env-color-bg-selected-pressed);
 }
 .docs-preview .docs-force-focus {

@@ -56,7 +56,6 @@
     { "stylesheet": "Alert.css", "class": "env-button", "count": 3 },
     { "stylesheet": "Alert.css", "class": "env-icon-button", "count": 2 },
     { "stylesheet": "AppShell.css", "class": "env-nav-list-item", "count": 1 },
-    { "stylesheet": "AppShell.css", "class": "env-nav-list-item-icon-only", "count": 1 },
     { "stylesheet": "AppShell.css", "class": "env-title-bar", "count": 5 },
     { "stylesheet": "AvatarGroup.css", "class": "env-avatar", "count": 1 },
     { "stylesheet": "Badge.css", "class": "env-button", "count": 5 },

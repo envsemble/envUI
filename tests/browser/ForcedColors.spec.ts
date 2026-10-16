@@ -154,7 +154,7 @@ test('selection and checked states take the system colors', async ({ page, brows
       .evaluate((element) => getComputedStyle(element).backgroundColor);
   for (const selector of [
     '.env-segment[data-checked]',
-    '.env-nav-list-item-selected',
+    '.env-nav-list-item[data-selected]',
     "[role=treeitem][aria-selected='true']",
     '.env-calendar-day[aria-selected=true] > .env-calendar-day-mark',
     '.env-choice-control:has-text("Checked") >> nth=0 >> .env-checkbox-control',

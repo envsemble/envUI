@@ -35,9 +35,9 @@ export default function CollapsedSidebar() {
               onClick={() => setCurrent(folder.href)}
               iconOnly={collapsed}
               icon={<folder.icon />}
-              // The dot an icon-only item shows is hidden, so its name says what the count says.
-              aria-label={folder.unread ? `${folder.label}, ${folder.unread} unread` : folder.label}
-              trailing={folder.unread ? <CounterBadge value={folder.unread} /> : undefined}
+              // The item adds the count to its name, such as Inbox, 3 new.
+              aria-label={folder.label}
+              end={folder.unread ? <CounterBadge value={folder.unread} /> : undefined}
             >
               {folder.label}
             </NavList.Item>

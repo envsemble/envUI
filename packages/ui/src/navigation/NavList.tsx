@@ -17,6 +17,8 @@ import { NavigationIconState } from '../MaterialSymbolState.js';
 import { ActionElement, type ActionElementProps } from '../internal/ActionElement.js';
 import { useSidebarCompact } from './internal/SidebarCompact.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
+import { useMessages } from '../internal/EnvUIContext.js';
+import { navList } from '../foundations/messages/navList.js';
 
 /**
  * Whether an item is one of a list's own items, which renders as its list item: true for the items
@@ -61,10 +63,25 @@ interface ItemSharedProps {
   selectedIcon?: ReactNode;
   /**
    * Content at the end of the item, such as a CounterBadge or a Badge; it is part of the item's
-   * accessible name. An icon-only item shows a small accent dot instead, hidden from assistive
-   * technology, so say what the content says in its aria-label.
+   * accessible name. An icon-only item shows a small accent dot instead. Where the name comes from
+   * aria-label, or from the label of an icon-only item, it adds the count, such as Inbox, 3 new,
+   * from EnvUIProvider's messages.navList.itemCount: the content's text, or a CounterBadge's value.
    */
-  trailing?: ReactNode;
+  end?: ReactNode;
+}
+
+/** The text of end content for an icon-only item's name: its text, or a CounterBadge's value. */
+function endText(node: ReactNode): string {
+  if (node == null || typeof node === 'boolean') return '';
+  if (typeof node === 'string' || typeof node === 'number') return String(node);
+  if (Array.isArray(node)) return node.map(endText).filter(Boolean).join(' ');
+  if (isValidElement(node)) {
+    const props = node.props as { value?: unknown; children?: ReactNode };
+    if (typeof props.value === 'string' || typeof props.value === 'number')
+      return String(props.value);
+    return endText(props.children);
+  }
+  return '';
 }
 
 export type ItemProps = ItemSharedProps &
@@ -79,28 +96,31 @@ export type ItemProps = ItemSharedProps &
          */
         iconOnly: boolean;
         icon: ReactNode;
-        /** The destination's name, such as Inbox, for an icon-only item; the tooltip shows it. */
+        /**
+         * The destination's name, such as Inbox, for an icon-only item; the tooltip shows it. The
+         * item's name adds the count of its end content.
+         */
         'aria-label': string;
       }
   );
 
 /**
  * A navigation destination: a native link with href, through the LinkProvider's link component,
- * or a button that changes the view. It shows an optional icon, its label and trailing content,
+ * or a button that changes the view. It shows an optional icon, its label and end content,
  * marks the current destination with selected, and shows only its icon with iconOnly or inside a
  * compact AppShell sidebar. Inside NavList.Root or NavList.Group it renders its own list item.
  */
 function Item(props: ItemProps) {
   const sidebarCompact = useSidebarCompact();
   const inList = useContext(ListContext);
+  const messages = useMessages('navList', navList);
   const {
     selected = false,
-
     disabled = false,
     iconOnly: requestedIconOnly = false,
     icon,
     selectedIcon,
-    trailing,
+    end,
     className,
     children,
     ...nativeProps
@@ -109,6 +129,13 @@ function Item(props: ItemProps) {
   const iconOnly = requestedIconOnly || (sidebarCompact && icon != null);
   const accessibleLabel =
     props['aria-label'] ?? (iconOnly && typeof children === 'string' ? children : undefined);
+  // An icon-only item shows its end content as a dot, so a name it takes from its label, which
+  // leaves the end content out, says the count; so does a labelled item named by aria-label.
+  const count = accessibleLabel !== undefined && end != null ? endText(end) : '';
+  const itemName =
+    accessibleLabel !== undefined && count !== ''
+      ? messages.itemCount({ label: accessibleLabel, count })
+      : accessibleLabel;
   const iconContent = selected && selectedIcon != null ? selectedIcon : icon;
   const content = (
     <>
@@ -118,20 +145,13 @@ function Item(props: ItemProps) {
         </NavigationIconState>
       )}
       {!iconOnly && children}
-      {trailing != null &&
+      {end != null &&
         (iconOnly ? (
           <span className="env-nav-list-item-dot" aria-hidden="true" />
         ) : (
-          <span className="env-nav-list-item-trailing">{trailing}</span>
+          <span className="env-nav-list-item-end">{end}</span>
         ))}
     </>
-  );
-  const navigationClassName = classNames(
-    'env-nav-list-item',
-    iconOnly && 'env-nav-list-item-icon-only',
-    selected && 'env-nav-list-item-selected',
-
-    className,
   );
 
   // An icon-only item shows its label in a tooltip at its inline end, unless the application
@@ -146,8 +166,10 @@ function Item(props: ItemProps) {
     <ActionElement
       {...nativeProps}
       disabled={disabled}
-      className={navigationClassName}
-      aria-label={accessibleLabel}
+      className={classNames('env-nav-list-item', className)}
+      data-icon-only={iconOnly ? '' : undefined}
+      data-selected={selected ? '' : undefined}
+      aria-label={itemName}
       aria-current={props['aria-current'] ?? (selected ? 'page' : undefined)}
     >
       {content}
@@ -164,7 +186,7 @@ function Item(props: ItemProps) {
       {tooltip !== undefined && <TooltipPopup content={tooltip} side="inline-end" />}
     </BaseTooltip.Root>
   );
-  // An item inside this one, as in its trailing content, is no item of the list.
+  // An item inside this one, as in its end content, is no item of the list.
   return inList ? (
     <li>
       <ListContext value={false}>{control}</ListContext>
