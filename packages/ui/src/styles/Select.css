@@ -2,33 +2,33 @@
   position: relative;
   display: inline-flex;
   max-width: 100%;
-  color: var(--color-text-primary);
+  color: var(--env-color-fg-default);
 }
 /* The trigger is a Button: secondary or outlined, with the same colors and states. */
 .env-button.env-dropdown-trigger {
   position: relative;
-  gap: var(--space-2);
+  gap: var(--env-space-2);
 }
 /* A transparent border lets an invalid secondary trigger show the error color without resizing. */
 .env-button-secondary.env-dropdown-trigger {
-  border: var(--control-border-width) solid var(--env-field-border-base, transparent);
+  border: var(--env-control-border-width) solid var(--env-field-border-base, transparent);
 }
 .env-button-secondary.env-dropdown-trigger[aria-expanded='true']:not(:disabled, :active) {
-  background: var(--color-secondary-action-hover);
+  background: var(--env-color-bg-neutral-muted-hover);
 }
 .env-button-outlined.env-dropdown-trigger[aria-expanded='true']:not(:disabled, :active) {
-  background: var(--color-subtle-action-hover);
-  border-color: var(--color-subtle-action-border-hover);
+  background: var(--env-color-bg-raised-hover);
+  border-color: var(--env-color-border-default-hover);
 }
 /* Invalid triggers recolor their border and keep their fill. */
 .env-button.env-dropdown-trigger[aria-invalid='true']:not(:disabled) {
   border-color: var(--env-field-border-base);
 }
 .env-button-secondary.env-dropdown-trigger[aria-invalid='true']:is(:hover, :active):not(:disabled) {
-  background: var(--color-secondary-action);
+  background: var(--env-color-bg-neutral-muted);
 }
 .env-button-outlined.env-dropdown-trigger[aria-invalid='true']:is(:hover, :active):not(:disabled) {
-  background: var(--color-subtle-action);
+  background: var(--env-color-bg-raised);
 }
 @media (hover: hover) {
   .env-button.env-dropdown-trigger[aria-invalid='true']:hover:not(:disabled) {
@@ -40,8 +40,8 @@
 }
 
 .env-dropdown-trigger .env-symbol {
-  width: var(--icon-size-md);
-  height: var(--icon-size-md);
+  width: var(--env-icon-size-md);
+  height: var(--env-icon-size-md);
   transform: rotate(90deg);
 }
 .env-dropdown-trigger[aria-expanded='true'] .env-symbol {
@@ -51,10 +51,10 @@
    rows of the row height that highlight on hover and keyboard focus, where a check mark and a
    heavier label show the chosen option. It stands apart from the page, panes, rows and dialogs. */
 .env-surface.env-dropdown-options {
-  --env-surface-radius: calc(var(--radius-standard) + var(--space-1));
-  border: 0.0625rem solid var(--elevation-2-border);
-  background: var(--color-popup);
-  box-shadow: var(--elevation-2-shadow);
+  --env-surface-radius: calc(var(--env-radius-sm) + var(--env-space-1));
+  border: 0.0625rem solid var(--env-elevation-2-border);
+  background: var(--env-color-bg-popup);
+  box-shadow: var(--env-elevation-2-shadow);
   display: grid;
   width: max-content;
   min-width: min(var(--anchor-width), var(--available-width));
@@ -66,41 +66,41 @@
   display: none;
 }
 .env-dropdown-option {
-  border-radius: var(--radius-standard);
+  border-radius: var(--env-radius-sm);
   min-inline-size: 0;
   white-space: normal;
   overflow-wrap: anywhere;
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--env-space-2);
   margin: 0;
-  min-height: var(--row-height);
-  padding: var(--space-1) var(--space-2);
+  min-height: var(--env-row-height);
+  padding: var(--env-space-1) var(--env-space-2);
   border: 0;
   outline: none;
   background: transparent;
-  color: var(--color-text-primary);
+  color: var(--env-color-fg-default);
   text-align: start;
-  font: var(--body-font-weight) var(--font-size-label) / 1.4 var(--font-family);
+  font: var(--env-body-font-weight) var(--env-font-size-label) / 1.4 var(--env-font-family);
   cursor: pointer;
 }
 .env-dropdown-option[data-highlighted] {
-  background: var(--color-select-option-hover);
+  background: var(--env-color-bg-popup-hover);
 }
 .env-dropdown-option:active:not([data-disabled]) {
-  background: var(--color-select-option-pressed);
+  background: var(--env-color-bg-popup-pressed);
 }
 .env-dropdown-option[data-selected] {
   font-weight: 500;
 }
 /* Highlight includes pointer interaction; only keyboard focus needs a ring. */
 .env-dropdown-option:focus-visible {
-  outline: 0.125rem solid var(--color-focus-ring);
+  outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: -0.125rem;
 }
 .env-dropdown-option[data-disabled] {
-  opacity: var(--state-disabled-opacity);
+  opacity: var(--env-state-disabled-opacity);
   cursor: default;
 }
 
@@ -117,7 +117,7 @@
   align-content: start;
   min-height: 0;
   min-inline-size: 0;
-  max-height: calc(var(--available-height) - var(--space-2));
+  max-height: calc(var(--available-height) - var(--env-space-2));
   overflow-y: auto;
   overscroll-behavior: contain;
 }
@@ -126,20 +126,20 @@
 }
 /* Small triggers keep the chevron at the control icon size. */
 .env-dropdown-trigger[data-size='sm'] .env-symbol {
-  width: var(--control-icon-size);
-  height: var(--control-icon-size);
+  width: var(--env-control-icon-size);
+  height: var(--env-control-icon-size);
 }
 .env-dropdown-option-check {
-  inline-size: var(--control-icon-size);
-  block-size: var(--control-icon-size);
+  inline-size: var(--env-control-icon-size);
+  block-size: var(--env-control-icon-size);
   flex: 0 0 auto;
   display: grid;
   place-items: center;
-  color: var(--color-radio);
+  color: var(--env-color-bg-brand-emphasis);
 }
 /* Under a coarse pointer, options grow to the touch height in every scale. */
 @media (pointer: coarse) {
   .env-dropdown-option {
-    min-height: var(--control-height-touch);
+    min-height: var(--env-control-height-touch);
   }
 }

@@ -51,7 +51,7 @@ body {
   width: 100%;
   height: auto;
   display: block;
-  color: var(--color-text-primary);
+  color: var(--env-color-fg-default);
 }
 .docs-sidebar-navigation {
   gap: 0.125rem;
@@ -60,7 +60,7 @@ body {
   margin: 1.5rem 0.75rem 0.5rem;
 }
 .docs-nav-subheading {
-  margin: var(--space-4) var(--space-3) var(--space-1);
+  margin: var(--env-space-4) var(--env-space-3) var(--env-space-1);
 }
 .docs-sidebar-footer {
   margin: 2rem 0.75rem 0;
@@ -81,19 +81,19 @@ body {
   margin-inline: auto;
 }
 .docs-page-header {
-  padding: var(--space-5) var(--docs-gutter) var(--space-4);
-  margin-block-end: var(--space-8);
+  padding: var(--env-space-5) var(--docs-gutter) var(--env-space-4);
+  margin-block-end: var(--env-space-8);
 }
 .docs-page-banner,
 .docs-overview-hero {
-  padding-block: var(--space-9);
+  padding-block: var(--env-space-9);
 }
 .docs-page-banner-heading {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: var(--space-4);
+  gap: var(--env-space-4);
   max-inline-size: 100%;
 }
 .docs-page-banner {
@@ -128,7 +128,7 @@ body {
   inline-size: clamp(10rem, 28cqi, 18rem);
   aspect-ratio: 1;
   transform: translateY(-50%) rotate(-12deg);
-  color: var(--color-text-muted);
+  color: var(--env-color-fg-muted);
   opacity: 0.1;
   pointer-events: none;
 }
@@ -143,7 +143,7 @@ body {
   .docs-reference-tabs .env-tabs-list {
     flex-wrap: wrap;
     justify-content: center;
-    --env-surface-radius: var(--radius-surface);
+    --env-surface-radius: var(--env-radius-surface);
   }
 }
 .docs-page-controls {
@@ -153,11 +153,11 @@ body {
 }
 .docs-theme-toggle {
   position: fixed;
-  top: max(var(--space-4), env(safe-area-inset-top));
-  right: max(var(--space-4), env(safe-area-inset-right));
+  top: max(var(--env-space-4), env(safe-area-inset-top));
+  right: max(var(--env-space-4), env(safe-area-inset-right));
   z-index: 90;
 }
 .docs-page-navigation {
-  padding: var(--space-6) var(--docs-gutter) var(--space-8);
+  padding: var(--env-space-6) var(--docs-gutter) var(--env-space-8);
   margin-top: auto;
 }

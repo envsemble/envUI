@@ -252,7 +252,7 @@ A non-modal panel with `disablePointerDismissal` stays open while people choose 
 ## Changelog
 
 - **1.0.0**: The page is `dialog`, after the component.
-- **0.5.0**: `size="wide"`, also for side panels, and `placement="top"`. Dialogs share Popover's raised surface with a hairline border; in the dark theme they keep the pane color through `--color-dialog`. The title and description sit together above the content. A side panel takes the whole width of a narrow window, with its content clear of the safe areas.
+- **0.5.0**: `size="wide"`, also for side panels, and `placement="top"`. Dialogs share Popover's raised surface with a hairline border; in the dark theme they keep the pane color through `--env-color-bg-raised`. The title and description sit together above the content. A side panel takes the whole width of a narrow window, with its content clear of the safe areas.
 - **0.4.0**: Secondary buttons in dialogs and side panels, such as the close button, stay distinct on their surface.
 - **0.3.0**: Dialogs rise into place and side panels slide in, over a backdrop that fades in.
 - **0.2.0**: `pending`.

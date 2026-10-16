@@ -32,7 +32,7 @@ test('a token edit rebuilds Tokens.css and updates the open catalogue in place',
   const originalOutputs = await Promise.all(generated.map((path) => readFile(path, 'utf8')));
   const space9 = () =>
     page.evaluate(() =>
-      getComputedStyle(document.querySelector('.env-theme')!).getPropertyValue('--space-9'),
+      getComputedStyle(document.querySelector('.env-theme')!).getPropertyValue('--env-space-9'),
     );
   try {
     await page.goto(`${catalogueUrl}/#/components/fields/preview`);

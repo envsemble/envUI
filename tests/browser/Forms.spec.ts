@@ -380,7 +380,7 @@ test('a small Select has a small trigger, and its popup has the menus anatomy wi
     await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     await Promise.allSettled(element.getAnimations().map(({ finished }) => finished));
     const probe = document.createElement('div');
-    probe.style.backgroundColor = 'var(--color-popup)';
+    probe.style.backgroundColor = 'var(--env-color-bg-popup)';
     element.append(probe);
     const popupColor = getComputedStyle(probe).backgroundColor;
     probe.remove();

@@ -3,7 +3,7 @@
 
 /* Fades: dialogs, popups and toasts appear and leave gradually. */
 .env-dialog-backdrop {
-  transition: opacity var(--motion-duration-slow) var(--motion-ease-enter);
+  transition: opacity var(--env-motion-duration-slow) var(--env-motion-ease-enter);
 }
 .env-dialog-backdrop[data-starting-style],
 .env-dialog-backdrop[data-ending-style],
@@ -31,7 +31,7 @@
   /* Base UI's positioners set the origin; dialogs and the toast list have none, so they scale from
      the center. */
   transform-origin: var(--transform-origin, center);
-  transition: opacity var(--motion-duration-medium) var(--motion-ease);
+  transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
 }
 .env-dialog-backdrop[data-ending-style],
 .env-modal-pane[data-ending-style],
@@ -41,8 +41,8 @@
 .env-dropdown-options[data-ending-style],
 .env-tooltip[data-ending-style],
 .env-toast-viewport > .env-toast[data-ending-style] {
-  transition-duration: var(--motion-duration-fast);
-  transition-timing-function: var(--motion-ease-exit);
+  transition-duration: var(--env-motion-duration-fast);
+  transition-timing-function: var(--env-motion-ease-exit);
 }
 /* Moving between the menus of a menubar swaps them at once, without fading one out and in. */
 .env-menu[data-instant='group'] {
@@ -50,7 +50,7 @@
 }
 .env-disclosure[open] > .env-disclosure-panel,
 .env-avatar-image {
-  animation: env-motion-fade-in var(--motion-duration-slow) var(--motion-ease-enter);
+  animation: env-motion-fade-in var(--env-motion-duration-slow) var(--env-motion-ease-enter);
 }
 @keyframes env-motion-fade-in {
   from {
@@ -60,7 +60,7 @@
 
 /* A changed number fades in; without a reduced-motion preference it also rolls (below). */
 .env-animated-number-value[data-direction] {
-  animation: env-motion-fade-in var(--motion-duration-medium) var(--motion-ease);
+  animation: env-motion-fade-in var(--env-motion-duration-medium) var(--env-motion-ease);
 }
 
 /* Docked panels and their chips fade in where they show; a panel that comes to fill the region
@@ -69,10 +69,10 @@
    elements, does not play it again. */
 .env-panel-dock-panel[data-entering][data-placement='row'],
 .env-panel-dock-chip[data-entering] {
-  animation: env-motion-fade-in var(--motion-duration-medium) var(--motion-ease-enter);
+  animation: env-motion-fade-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
 }
 .env-panel-dock-panel[data-entering][data-placement='fill'] {
-  animation: env-panel-dock-fade-in var(--motion-duration-medium) var(--motion-ease-enter);
+  animation: env-panel-dock-fade-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
 }
 @keyframes env-panel-dock-fade-in {
   from {
@@ -96,8 +96,8 @@
   .env-radio-control,
   .env-switch-control {
     transition-property: background-color, color, border-color, transform;
-    transition-duration: var(--motion-duration-fast);
-    transition-timing-function: var(--motion-ease);
+    transition-duration: var(--env-motion-duration-fast);
+    transition-timing-function: var(--env-motion-ease);
   }
   .env-button:active:not(:disabled):not([aria-disabled='true']),
   .env-segment:active:not([data-disabled]),
@@ -127,8 +127,8 @@
   .env-tooltip,
   .env-toast-viewport > .env-toast {
     transition:
-      opacity var(--motion-duration-medium) var(--motion-ease),
-      transform var(--motion-duration-slow) var(--motion-ease-enter);
+      opacity var(--env-motion-duration-medium) var(--env-motion-ease),
+      transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
   }
   .env-modal-pane[data-starting-style],
   .env-modal-pane[data-ending-style] {
@@ -173,25 +173,25 @@
   .env-dropdown-options[data-ending-style],
   .env-tooltip[data-ending-style],
   .env-toast-viewport > .env-toast[data-ending-style] {
-    transition-duration: var(--motion-duration-fast);
-    transition-timing-function: var(--motion-ease-exit);
+    transition-duration: var(--env-motion-duration-fast);
+    transition-timing-function: var(--env-motion-ease-exit);
   }
 
   /* Docked panels rise from the bottom edge into the row, a panel grows into the region it fills,
      and chips rise into their strip. */
   .env-panel-dock-panel[data-entering][data-placement='row'] {
-    animation: env-panel-dock-rise var(--motion-duration-slow) var(--motion-ease-enter);
+    animation: env-panel-dock-rise var(--env-motion-duration-slow) var(--env-motion-ease-enter);
   }
   .env-panel-dock-panel[data-entering][data-placement='fill'] {
-    animation: env-panel-dock-grow var(--motion-duration-slow) var(--motion-ease-enter);
+    animation: env-panel-dock-grow var(--env-motion-duration-slow) var(--env-motion-ease-enter);
   }
   .env-panel-dock-chip[data-entering] {
-    animation: env-panel-dock-chip-rise var(--motion-duration-medium) var(--motion-ease-enter);
+    animation: env-panel-dock-chip-rise var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
 
   /* A changed number rolls in from below when it grows and from above when it shrinks. */
   .env-animated-number-value[data-direction] {
-    animation: var(--motion-duration-slow) var(--motion-ease-enter) both;
+    animation: var(--env-motion-duration-slow) var(--env-motion-ease-enter) both;
   }
   .env-animated-number-value[data-direction='up'] {
     animation-name: env-motion-roll-up;
@@ -205,13 +205,13 @@
   .env-dropdown-trigger .env-symbol,
   .env-combobox-trigger .env-symbol,
   .env-disclosure > summary::before {
-    transition: transform var(--motion-duration-medium) var(--motion-ease);
+    transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);
   }
   .env-checkbox-control:is(:checked, :indeterminate) + .env-checkbox-mark,
   .env-organization-switcher-radio-dot,
   .env-text-field-end > :not(.env-combobox-trigger, .env-date-picker-icon),
   .env-theme-toggle .env-symbol > svg {
-    animation: env-motion-pop-in var(--motion-duration-medium) var(--motion-ease-enter);
+    animation: env-motion-pop-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
   .env-skeleton {
     animation: env-motion-pulse 1.6s ease-in-out infinite alternate;

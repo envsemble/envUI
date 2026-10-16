@@ -69,7 +69,7 @@ export function Stack<Element extends StackElement = 'div'>({
       className: classNames('env-stack', className),
       'data-align': align,
       style: {
-        '--env-stack-gap': gap === 0 ? '0' : `var(--space-${gap})`,
+        '--env-stack-gap': gap === 0 ? '0' : `var(--env-space-${gap})`,
         ...style,
       } as CSSProperties,
     },

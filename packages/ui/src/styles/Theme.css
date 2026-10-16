@@ -10,10 +10,10 @@
    Theme around content, and the one around each popup. */
 .env-theme:where(:not(html)),
 :where(.env-theme:where(html) > body) {
-  font: var(--type-body);
+  font: var(--env-type-body);
   /* A unitless line height, so content in another font size keeps lines in proportion to it; set
-     --line-height-body to change it. */
-  line-height: var(--line-height-body, 1.4);
+     --env-line-height-body to change it. */
+  line-height: var(--env-line-height-body, 1.4);
 }
 /* Keep component geometry independent of a consuming application's reset. */
 .env-theme,
@@ -24,15 +24,15 @@
 }
 .env-theme :where(h1) {
   margin: 0;
-  font: var(--type-h1);
+  font: var(--env-type-h1);
 }
 .env-theme :where(h2, h3, h4, h5, h6) {
   margin: 0;
-  font: var(--type-h2);
+  font: var(--env-type-h2);
 }
 .env-theme :where(p) {
   margin: 0;
-  font: var(--type-body);
+  font: var(--env-type-body);
 }
 .env-theme :where(a) {
   color: inherit;

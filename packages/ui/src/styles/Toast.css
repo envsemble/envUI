@@ -5,8 +5,8 @@
   /* Long messages wrap within a readable measure instead of stretching across the viewport. */
   max-width: min(100%, 28rem);
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
+  gap: var(--env-space-2);
+  padding: var(--env-space-2) var(--env-space-3);
   min-width: 0;
   min-height: 3rem;
   /* Toasts float over everything at elevation 2, as menus do: a shadow and a hairline edge, so the
@@ -14,40 +14,40 @@
      a step darker rather than the light popup edge, which would ring it like a halo; in dark it is
      the popup edge. The edge is the boundary in high contrast and what forced colors paint once
      the shadow is gone. */
-  border: 1px solid var(--toast-edge, var(--color-border-neutral-strong));
-  border-radius: var(--radius-standard);
-  box-shadow: var(--elevation-2-shadow);
-  font: var(--type-body-small);
-  color: var(--color-on-toast);
+  border: 1px solid var(--env-toast-edge, var(--env-color-border-neutral-strong));
+  border-radius: var(--env-radius-sm);
+  box-shadow: var(--env-elevation-2-shadow);
+  font: var(--env-type-body-small);
+  color: var(--env-color-fg-on-strong);
   flex-wrap: nowrap;
 }
 .env-toast-neutral {
-  --toast-fill: var(--color-toast-neutral);
-  --toast-edge: var(--color-border-neutral-strong);
-  --toast-fill-hover: var(--color-bg-neutral-strong-hover);
-  --toast-fill-pressed: var(--color-bg-neutral-strong-pressed);
-  background: var(--toast-fill);
+  --env-toast-fill: var(--env-color-bg-neutral-strong);
+  --env-toast-edge: var(--env-color-border-neutral-strong);
+  --env-toast-fill-hover: var(--env-color-bg-neutral-strong-hover);
+  --env-toast-fill-pressed: var(--env-color-bg-neutral-strong-pressed);
+  background: var(--env-toast-fill);
 }
 .env-toast-success {
-  --toast-fill: var(--color-toast-success);
-  --toast-edge: var(--color-border-success-strong);
-  --toast-fill-hover: var(--color-bg-success-strong-hover);
-  --toast-fill-pressed: var(--color-bg-success-strong-pressed);
-  background: var(--toast-fill);
+  --env-toast-fill: var(--env-color-bg-success-strong);
+  --env-toast-edge: var(--env-color-border-success-strong);
+  --env-toast-fill-hover: var(--env-color-bg-success-strong-hover);
+  --env-toast-fill-pressed: var(--env-color-bg-success-strong-pressed);
+  background: var(--env-toast-fill);
 }
 .env-toast-info {
-  --toast-fill: var(--color-toast-info);
-  --toast-edge: var(--color-border-info-strong);
-  --toast-fill-hover: var(--color-bg-info-strong-hover);
-  --toast-fill-pressed: var(--color-bg-info-strong-pressed);
-  background: var(--toast-fill);
+  --env-toast-fill: var(--env-color-bg-info-strong);
+  --env-toast-edge: var(--env-color-border-info-strong);
+  --env-toast-fill-hover: var(--env-color-bg-info-strong-hover);
+  --env-toast-fill-pressed: var(--env-color-bg-info-strong-pressed);
+  background: var(--env-toast-fill);
 }
 .env-toast-error {
-  --toast-fill: var(--color-toast-error);
-  --toast-edge: var(--color-border-danger-strong);
-  --toast-fill-hover: var(--color-bg-danger-strong-hover);
-  --toast-fill-pressed: var(--color-bg-danger-strong-pressed);
-  background: var(--toast-fill);
+  --env-toast-fill: var(--env-color-bg-danger-strong);
+  --env-toast-edge: var(--env-color-border-danger-strong);
+  --env-toast-fill-hover: var(--env-color-bg-danger-strong-hover);
+  --env-toast-fill-pressed: var(--env-color-bg-danger-strong-pressed);
+  background: var(--env-toast-fill);
 }
 .env-toast-message {
   flex: 0 1 auto;
@@ -55,7 +55,7 @@
   /* A fixed measure also bounds the toast's intrinsic width, which percentages cannot do in auto-sized
      layouts such as tables. */
   max-inline-size: 24rem;
-  padding-block: var(--space-1);
+  padding-block: var(--env-space-1);
   /* Up to three lines; the full message remains in the title and the announcement. */
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -80,9 +80,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  flex: 0 0 var(--control-height);
-  width: var(--control-height);
-  height: var(--control-height);
+  flex: 0 0 var(--env-control-height);
+  width: var(--env-control-height);
+  height: var(--env-control-height);
   padding: 0;
   border: 0;
   border-radius: 100vmax;
@@ -97,19 +97,19 @@
 /* Under a coarse pointer the dismiss button grows to the touch height, as icon buttons do. */
 @media (pointer: coarse) {
   .env-toast-dismiss {
-    flex-basis: max(var(--control-height), var(--control-height-touch));
-    width: max(var(--control-height), var(--control-height-touch));
-    height: max(var(--control-height), var(--control-height-touch));
+    flex-basis: max(var(--env-control-height), var(--env-control-height-touch));
+    width: max(var(--env-control-height), var(--env-control-height-touch));
+    height: max(var(--env-control-height), var(--env-control-height-touch));
   }
 }
 .env-toast-dismiss:hover {
-  background: var(--toast-fill-hover);
+  background: var(--env-toast-fill-hover);
 }
 .env-toast-dismiss:active {
-  background: var(--toast-fill-pressed);
+  background: var(--env-toast-fill-pressed);
 }
 .env-toast-dismiss:focus-visible {
-  outline: 0.125rem solid var(--color-on-toast);
+  outline: 0.125rem solid var(--env-color-fg-on-strong);
   outline-offset: 0.125rem;
 }
 .env-toast-portal-theme {
@@ -119,15 +119,15 @@
   position: fixed;
   z-index: 120;
   display: flex;
-  gap: var(--space-2);
+  gap: var(--env-space-2);
   width: max-content;
   max-width: calc(
-    100% - max(var(--space-4), env(safe-area-inset-left)) -
-      max(var(--space-4), env(safe-area-inset-right))
+    100% - max(var(--env-space-4), env(safe-area-inset-left)) -
+      max(var(--env-space-4), env(safe-area-inset-right))
   );
   max-block-size: calc(
-    100dvh - max(var(--space-4), env(safe-area-inset-top)) -
-      max(var(--space-4), env(safe-area-inset-bottom))
+    100dvh - max(var(--env-space-4), env(safe-area-inset-top)) -
+      max(var(--env-space-4), env(safe-area-inset-bottom))
   );
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -163,19 +163,19 @@
    so it reads over any page. */
 .env-toast-viewport > .env-toast-queued-count {
   order: 1;
-  background: var(--color-toast-neutral);
-  color: var(--color-on-toast);
+  background: var(--env-color-bg-neutral-strong);
+  color: var(--env-color-fg-on-strong);
 }
 .env-toast-viewport-bottom-right {
-  inset-inline-end: max(var(--space-4), env(safe-area-inset-right));
-  inset-block-end: max(var(--space-4), env(safe-area-inset-bottom));
+  inset-inline-end: max(var(--env-space-4), env(safe-area-inset-right));
+  inset-block-end: max(var(--env-space-4), env(safe-area-inset-bottom));
   flex-direction: column-reverse;
   align-items: flex-end;
 }
 .env-toast-viewport-top-center {
   inset-inline-start: 50%;
   transform: translateX(-50%);
-  inset-block-start: max(var(--space-4), env(safe-area-inset-top));
+  inset-block-start: max(var(--env-space-4), env(safe-area-inset-top));
   flex-direction: column;
   align-items: center;
 }
@@ -184,7 +184,7 @@
   opacity: 0;
 }
 .env-toast {
-  transition: opacity var(--motion-duration-medium) var(--motion-ease);
+  transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
 }
 @media (prefers-reduced-motion: reduce) {
   .env-toast {

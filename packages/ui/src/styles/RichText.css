@@ -2,40 +2,40 @@
   min-inline-size: 0;
 }
 .env-rich-text-editor > .env-form-field {
-  gap: var(--space-3);
+  gap: var(--env-space-3);
 }
 .env-rich-text-document {
   min-inline-size: 0;
   max-inline-size: 100%;
   min-block-size: 10rem;
-  padding: var(--space-4);
-  border: 0.0625rem solid var(--color-markdown-border);
+  padding: var(--env-space-4);
+  border: 0.0625rem solid var(--env-color-border-muted);
   border-radius: 0.25rem;
-  background: var(--color-field);
+  background: var(--env-color-bg-field);
   /* The editing host takes the control font size: 1 rem on touch screens, where a smaller size on
      the focused element zooms the page. */
-  font-size: var(--control-font-size);
+  font-size: var(--env-control-font-size);
 }
 /* Paragraphs set their own type, so they take the size too. */
 .env-rich-text-document p {
-  font-size: var(--control-font-size);
+  font-size: var(--env-control-font-size);
 }
 .env-rich-text-editor[data-variant='plain'] .env-rich-text-document {
   border-color: transparent;
   background: transparent;
 }
 .env-rich-text-document:focus-visible {
-  outline: 0.125rem solid var(--color-focus-ring);
+  outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.125rem;
 }
 .env-rich-text-document[aria-invalid='true'] {
-  border-color: var(--color-field-error);
+  border-color: var(--env-color-fg-danger);
 }
 .env-rich-text-editor[data-disabled] {
   opacity: 0.55;
 }
 .env-rich-text-document p.is-editor-empty:first-child::before {
-  color: var(--color-text-muted);
+  color: var(--env-color-fg-muted);
   content: attr(data-placeholder);
   float: left;
   height: 0;
@@ -51,7 +51,7 @@
 .env-rich-text-document :where(ul[data-type='taskList'] > li) {
   display: flex;
   align-items: baseline;
-  gap: var(--space-2);
+  gap: var(--env-space-2);
 }
 .env-rich-text :where(ul[data-type='taskList'] > li > div),
 .env-rich-text-document :where(ul[data-type='taskList'] > li > div) {
@@ -59,8 +59,8 @@
   flex: 1;
 }
 .env-rich-text-document pre {
-  padding: var(--space-4);
-  background: var(--color-field);
+  padding: var(--env-space-4);
+  background: var(--env-color-bg-field);
   overflow: auto;
   white-space: pre;
 }
@@ -73,42 +73,42 @@
   position: relative;
 }
 .env-rich-text-document .selectedCell {
-  background: var(--color-field);
+  background: var(--env-color-bg-field);
 }
 .env-rich-text-reference {
   display: inline;
-  padding: 0 var(--space-1);
+  padding: 0 var(--env-space-1);
   border-radius: 0.25rem;
-  background: var(--color-field);
-  color: var(--color-text-primary);
+  background: var(--env-color-bg-field);
+  color: var(--env-color-fg-default);
   text-decoration: none;
   box-decoration-break: clone;
 }
 .env-rich-text-reference:focus-visible {
-  outline: 0.125rem solid var(--color-focus-ring);
+  outline: 0.125rem solid var(--env-color-border-focus);
 }
 .env-rich-text-suggestions {
   box-sizing: border-box;
   display: grid;
   grid-auto-rows: minmax(min-content, auto);
   align-content: start;
-  gap: var(--space-1);
-  min-inline-size: min(12rem, calc(100dvw - 2 * var(--viewport-gutter)));
-  max-inline-size: min(24rem, calc(100dvw - 2 * var(--viewport-gutter)));
-  max-block-size: min(18rem, calc(100dvh - 2 * var(--viewport-gutter)));
+  gap: var(--env-space-1);
+  min-inline-size: min(12rem, calc(100dvw - 2 * var(--env-viewport-gutter)));
+  max-inline-size: min(24rem, calc(100dvw - 2 * var(--env-viewport-gutter)));
+  max-block-size: min(18rem, calc(100dvh - 2 * var(--env-viewport-gutter)));
   overflow: auto;
-  padding: var(--space-2);
-  border: 0.0625rem solid var(--elevation-2-border);
+  padding: var(--env-space-2);
+  border: 0.0625rem solid var(--env-elevation-2-border);
   border-radius: 0.25rem;
-  background: var(--color-field);
-  color: var(--color-text-primary);
-  box-shadow: var(--elevation-2-shadow);
+  background: var(--env-color-bg-field);
+  color: var(--env-color-fg-default);
+  box-shadow: var(--env-elevation-2-shadow);
   z-index: 100;
 }
 .env-rich-text-suggestions .env-button {
   justify-content: start;
 }
 .env-rich-text-suggestions [aria-selected='true'] {
-  outline: 0.125rem solid var(--color-focus-ring);
+  outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: -0.125rem;
 }

@@ -17,14 +17,17 @@ const resolverIn = (directory) => new URL('envui.resolver.json', directory);
 /** The vendor key of envUI's `$extensions`. */
 const extension = 'com.envsemble.envui';
 
+/** The prefix of every custom property envUI defines: its tokens and its components' own. */
+export const prefix = 'env';
+
 /**
  * The CSS custom property of a token, as plugin-css writes it in Tokens.css, in a var() that
- * aliases it, and for each part of a composite token (`--text-label-font-size`): makeCSSVar()
- * keeps letters and digits, joins the words with hyphens and lowercases them. The lint rule
- * envui/unique-css-names makes it the token's path joined with hyphens, `color.fg.muted` as
- * `--color-fg-muted`.
+ * aliases it, and for each part of a composite token (`--env-type-body-font-size`): makeCSSVar()
+ * keeps letters and digits, joins the words with hyphens, lowercases them and puts the `env`
+ * prefix first. The lint rule envui/unique-css-names makes it the token's path joined with
+ * hyphens after the prefix, `color.fg.muted` as `--env-color-fg-muted`.
  */
-export const cssVariable = (id) => makeCSSVar(id);
+export const cssVariable = (id) => makeCSSVar(id, { prefix });
 
 /**
  * Token groups that are build input only: the primitive palette, and the high-contrast values of
@@ -299,8 +302,8 @@ const highContrastRule = {
 
 /**
  * `envui/unique-css-names`: no two tokens become the same custom property, compared as Tokens.css
- * writes them, and a token's path spells its property: `space.4+` would be written `--space-4`,
- * where space.4 already is.
+ * writes them, and a token's path spells its property after the prefix: `space.4+` would be
+ * written `--env-space-4`, where space.4 already is.
  */
 const uniqueNamesRule = {
   meta: { docs: { description: 'Every token has its own CSS custom property, its path.' } },
@@ -309,7 +312,7 @@ const uniqueNamesRule = {
     for (const id of Object.keys(tokens)) {
       if (internal(id)) continue;
       const name = cssVariable(id);
-      const spelled = `--${id.split('.').join('-')}`;
+      const spelled = `--${prefix}-${id.split('.').join('-')}`;
       if (name !== spelled)
         report({
           message: `${id} becomes ${name}, not ${spelled}: name tokens with lowercase letters, digits and hyphens.`,
@@ -437,6 +440,88 @@ function checkCustomProperties(list, handwrittenFile) {
 }
 
 /**
+ * The migration map: every custom property that envUI 0.x or 1.0's development defined and 1.0
+ * no longer does, with what replaces it, from the sections of removed-tokens.json:
+ *
+ * - `prefixed`: names that only take the prefix, `--space-4` as `--env-space-4`, each the custom
+ *   property of a token or of a part of one (`properties`);
+ * - `renamed`: names that changed beyond the prefix, each to a token (`replacement`) or to a
+ *   custom property that envUI's style sheets declare or read (`cssVariable`);
+ * - `aliases`: the 0.7 alias tokens, each to the token of its role (`replacement`) or, for a
+ *   fixed color no role replaces, its `value`;
+ * - `removed`: names with no counterpart, with the token to use instead where there is one.
+ *
+ * Fails on a name in two sections, a name with the prefix, and a replacement that doesn't exist.
+ * Returns the entries sorted by name.
+ */
+export function migrationNames(data, { isToken, properties }) {
+  const names = {};
+  const add = (name, entry, section) => {
+    if (!/^--[a-z0-9]+(?:-[a-z0-9]+)*$/.test(name))
+      throw new Error(`removed-tokens.json: ${name} in ${section} is not a custom property.`);
+    if (name.startsWith(`--${prefix}-`))
+      throw new Error(`removed-tokens.json: ${name} in ${section} already has the prefix.`);
+    if (names[name])
+      throw new Error(
+        `removed-tokens.json lists ${name} in both ${names[name].kind} and ${section}.`,
+      );
+    names[name] = entry;
+  };
+  const token = (name, id, section) => {
+    if (!isToken(id))
+      throw new Error(
+        `removed-tokens.json: ${section} replaces ${name} with ${id}, which is no public token.`,
+      );
+    return { token: id, cssVariable: cssVariable(id) };
+  };
+  const extras = ({ component, note }) => ({
+    ...(component && { component }),
+    ...(note && { note }),
+  });
+  for (const name of data.prefixed ?? []) {
+    const target = `--${prefix}-${name.slice(2)}`;
+    if (!properties.has(target))
+      throw new Error(
+        `removed-tokens.json: prefixed lists ${name}, but no token becomes ${target}.`,
+      );
+    add(name, { kind: 'prefixed', cssVariable: target }, 'prefixed');
+  }
+  for (const [name, entry] of Object.entries(data.renamed ?? {})) {
+    if (entry.replacement)
+      add(
+        name,
+        { kind: 'renamed', ...token(name, entry.replacement, 'renamed'), ...extras(entry) },
+        'renamed',
+      );
+    else if (entry.cssVariable?.startsWith(`--${prefix}-`))
+      add(name, { kind: 'renamed', cssVariable: entry.cssVariable, ...extras(entry) }, 'renamed');
+    else
+      throw new Error(
+        `removed-tokens.json: renamed needs a replacement token or an --${prefix}- cssVariable for ${name}.`,
+      );
+  }
+  for (const [name, entry] of Object.entries(data.aliases ?? {}))
+    add(
+      name,
+      entry.replacement
+        ? { kind: 'alias', ...token(name, entry.replacement, 'aliases'), ...extras(entry) }
+        : { kind: 'fixed', value: entry.value, ...extras(entry) },
+      'aliases',
+    );
+  for (const [name, entry] of Object.entries(data.removed ?? {}))
+    add(
+      name,
+      {
+        kind: 'removed',
+        ...(entry.replacement && token(name, entry.replacement, 'removed')),
+        ...extras(entry),
+      },
+      'removed',
+    );
+  return Object.fromEntries(Object.entries(names).sort(([a], [b]) => a.localeCompare(b)));
+}
+
+/**
  * envUI's own plugin: the lint rules, and the generated token modules, a typed TypeScript module, a
  * JSON token list for the docs, and the migration map from the 0.7 custom properties to the roles,
  * which scripts/BuildTokens.mjs copies into the codemods' rename map and the migration guide.
@@ -549,7 +634,9 @@ function envui({ removedFile, handwrittenFile }) {
           type: tokens[id].$type,
           ...(tokens[id].$description && { description: tokens[id].$description }),
           ...(tokens[id].$deprecated && { deprecated: tokens[id].$deprecated }),
-          ...(tokens[id].$extensions?.[extension]?.legacy && { legacy: true }),
+          ...(tokens[id].$extensions?.[extension]?.component && {
+            component: tokens[id].$extensions[extension].component,
+          }),
           values,
           ...(Object.keys(scaled).length > 0 && { scales: scaled }),
         };
@@ -568,63 +655,26 @@ function envui({ removedFile, handwrittenFile }) {
         }),
       );
 
-      // The 0.7 names: each legacy token's role per theme, and the removed ones.
-      const removed = JSON.parse(readFileSync(removedFile, 'utf8')).removed;
-      const migration = {};
-      for (const token of list.filter((entry) => entry.legacy)) {
-        const roles = Object.fromEntries(
-          themes.map((theme) => [theme.name, token.values[theme.name].aliasOf ?? null]),
-        );
-        const distinct = [...new Set(Object.values(roles))];
-        const { component, note } = tokens[token.id].$extensions?.[extension] ?? {};
-        // A fixed color, such as the avatar's, aliases the palette itself: no role replaces it, and
-        // its value is what an application writes instead, one value or one per theme.
-        const primitive = distinct[0] === null && tokens[token.id].aliasOf;
-        const fixedValues = Object.fromEntries(
-          themes.map((theme) => [theme.name, token.values[theme.name].resolved]),
-        );
-        const value =
-          new Set(Object.values(fixedValues)).size === 1
-            ? Object.values(fixedValues)[0]
-            : fixedValues;
-        migration[token.cssVariable] = {
-          ...(primitive
-            ? { primitive, value }
-            : distinct.length === 1
-              ? { token: distinct[0], cssVariable: cssVariable(distinct[0]) }
-              : {
-                  tokens: roles,
-                  cssVariables: Object.fromEntries(
-                    Object.entries(roles).map(([theme, role]) => [
-                      theme,
-                      role === null ? null : cssVariable(role),
-                    ]),
-                  ),
-                }),
-          ...(component && { component }),
-          ...(note && { note }),
-        };
-      }
-      for (const [name, entry] of Object.entries(removed)) {
-        if (migration[name]) throw new Error(`${name} is listed as removed but still exists.`);
-        const { replacement } = entry;
-        if (replacement && (!tokens[replacement] || internal(replacement)))
-          throw new Error(
-            `removed-tokens.json replaces ${name} with ${replacement}, which is no public token.`,
-          );
-        migration[name] = {
-          removed: true,
-          ...entry,
-          ...(replacement && { cssVariable: cssVariable(replacement) }),
-        };
-      }
+      // Every custom property of 0.x and of 1.0's development that 1.0 no longer defines.
+      const properties = new Set(
+        list.flatMap((token) => [
+          token.cssVariable,
+          ...Object.values(token.values).flatMap(({ css }) =>
+            css && typeof css === 'object'
+              ? Object.keys(css).map((part) => `${token.cssVariable}-${part}`)
+              : [],
+          ),
+        ]),
+      );
+      const migration = migrationNames(JSON.parse(readFileSync(removedFile, 'utf8')), {
+        isToken: (id) => Boolean(tokens[id]) && !internal(id),
+        properties,
+      });
       outputFile(
         'generated/token-migration.json',
         JSON.stringify({
-          $comment: `${header} Maps each 0.7 custom property to the token that replaces it, with its custom property (cssVariable, or cssVariables per theme): one role, a role per theme for component tokens, a palette color that no role replaces (primitive), with its value, or removed with its replacement; a note says what changed beyond the name. npm run tokens:build copies it into the tokens section of the codemods' rename map and the token list of docs/migration.md.`,
-          names: Object.fromEntries(
-            Object.entries(migration).sort(([a], [b]) => a.localeCompare(b)),
-          ),
+          $comment: `${header} Maps every custom property that 1.0 no longer defines to what replaces it, from packages/ui/tokens/removed-tokens.json: the token (token, with its custom property, cssVariable) or the hand-written property (cssVariable alone) that takes its place, a fixed color's value, or nothing for a removed one. kind says why: prefixed (only the --env- prefix is new), renamed, alias (a 0.7 alias, removed for its role), fixed (a 0.7 color no role replaces) or removed; a note says what changed beyond the name. npm run tokens:build copies it into the tokens section of the codemods' rename map and the token list of docs/migration.md.`,
+          names: migration,
         }),
       );
 
@@ -693,10 +743,10 @@ export function createConfig({
       withoutDescriptions(
         css({
           filename: 'styles/Tokens.css',
-          // No variableName: plugin-css names every property itself, cssVariable() as it does. A
-          // custom one would also name the parts that an alias of a composite token reads, as
-          // `text.label-fontSize`, which plugin-css passes it before writing them as
-          // `--text-label-font-size`.
+          // Every property takes the prefix. plugin-css also passes this the parts that an alias of
+          // a composite token reads, as `type.label-fontSize`, which makeCSSVar() writes as
+          // `--env-type-label-font-size`, the part's own property.
+          variableName: (token) => cssVariable(token.id),
           exclude: internalGroups.map((group) => `${group}.**`),
           transform,
           permutations: [

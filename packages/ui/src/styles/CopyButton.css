@@ -21,6 +21,6 @@
 }
 @media (prefers-reduced-motion: no-preference) {
   .env-copy-button[data-copied] .env-symbol > svg {
-    animation: env-motion-pop-in var(--motion-duration-medium) var(--motion-ease-enter);
+    animation: env-motion-pop-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
 }

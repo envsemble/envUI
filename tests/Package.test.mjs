@@ -701,7 +701,7 @@ test('the package includes scoped CSS, local fonts, branding and license notices
     'Map prefers-contrast: more onto the high-contrast themes.',
   );
   assert.ok(
-    /--color-bg-brand-emphasis-hover:\s*#[0-9a-f]{3,8}\b/i.test(css),
+    /--env-color-bg-brand-emphasis-hover:\s*#[0-9a-f]{3,8}\b/i.test(css),
     'Hover and pressed colors are precomputed tokens.',
   );
   assert.ok(

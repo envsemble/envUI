@@ -319,7 +319,7 @@ test('custom labels, weeks from Monday, levels and a tone', async ({ page }) => 
       return [...context.getImageData(0, 0, 1, 1).data.slice(0, 3)];
     };
     const probe = document.createElement('span');
-    probe.style.color = 'var(--color-tone-success)';
+    probe.style.color = 'var(--env-color-fg-success)';
     element.closest('.env-calendar-heatmap')!.append(probe);
     const tone = paint(getComputedStyle(probe).color);
     probe.remove();
@@ -574,7 +574,7 @@ test('explicit thresholds color days of 0, and two levels color their only step 
       return [...context.getImageData(0, 0, 1, 1).data.slice(0, 3)];
     };
     const probe = document.createElement('span');
-    probe.style.color = 'var(--color-tone-accent)';
+    probe.style.color = 'var(--env-color-fg-accent)';
     element.closest('.env-calendar-heatmap')!.append(probe);
     const tone = paint(getComputedStyle(probe).color);
     probe.remove();

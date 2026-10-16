@@ -34,9 +34,9 @@ function ColorSwatch({
           aria-label={`Pick ${label.toLowerCase()} color`}
           title="Choose a color"
           style={{
-            background: `var(--color-${token})`,
+            background: `var(${colorVariable(token)})`,
             color:
-              (value?.lightness ?? 50) > 55 ? 'var(--color-canvas-dark)' : 'var(--color-white)',
+              (value?.lightness ?? 50) > 55 ? 'var(--docs-ink-dark)' : 'var(--docs-ink-light)',
           }}
         >
           <code>{value?.css ?? ''}</code>
@@ -67,18 +67,18 @@ function ColorPalette() {
     colorGroups.forEach(([, tokens]) =>
       tokens.forEach(([token]) => {
         const probe = document.createElement('span');
-        probe.style.color = `var(--color-${token})`;
+        probe.style.color = `var(${colorVariable(token)})`;
         probe.hidden = true;
         paletteElement.current!.append(probe);
         // Translucent colors, such as the neutral fill, are measured as painted on the page.
-        context.fillStyle = computedStyle.getPropertyValue('--color-canvas');
+        context.fillStyle = computedStyle.getPropertyValue('--env-color-bg-page');
         context.fillRect(0, 0, 1, 1);
         context.fillStyle = getComputedStyle(probe).color;
         context.fillRect(0, 0, 1, 1);
         const rgb = [...context.getImageData(0, 0, 1, 1).data].slice(0, 3);
         probe.remove();
         measuredColors[token] = {
-          css: computedStyle.getPropertyValue(`--color-${token}`).trim(),
+          css: computedStyle.getPropertyValue(colorVariable(token)).trim(),
           hex: '#' + rgb.map((channel) => channel.toString(16).padStart(2, '0')).join(''),
           lightness: ((Math.max(...rgb) + Math.min(...rgb)) / 255) * 50,
         };
@@ -93,12 +93,12 @@ function ColorPalette() {
         <Example key={group} title={group} size="collection">
           <Stack gap={0}>
             {tokens.map(([token, label]) => (
-              <div className="docs-palette-row" key={token}>
+              <div className="docs-palette-row" key={label}>
                 <div className="docs-palette-label">
                   <Text as="span" variant="supporting">
                     {label}
                   </Text>
-                  <code>--color-{token}</code>
+                  <code>{colorVariable(token)}</code>
                 </div>
                 <ColorSwatch token={token} label={label} value={colorValues[token]} />
               </div>
@@ -112,10 +112,10 @@ function ColorPalette() {
 
 function InteractionColors() {
   const states = [
-    { label: 'Default', token: '--color-primary-action' },
-    { label: 'Hover', token: '--color-primary-action-hover' },
-    { label: 'Pressed', token: '--color-primary-action-pressed' },
-    { label: 'Disabled', token: '--color-primary-action' },
+    { label: 'Default', token: '--env-color-bg-brand-emphasis' },
+    { label: 'Hover', token: '--env-color-bg-brand-emphasis-hover' },
+    { label: 'Pressed', token: '--env-color-bg-brand-emphasis-pressed' },
+    { label: 'Disabled', token: '--env-color-bg-brand-emphasis' },
   ];
 
   return (
@@ -132,13 +132,13 @@ function InteractionColors() {
               aria-hidden="true"
               style={{
                 background: `var(${token})`,
-                opacity: label === 'Disabled' ? 'var(--state-disabled-opacity)' : undefined,
+                opacity: label === 'Disabled' ? 'var(--env-state-disabled-opacity)' : undefined,
               }}
             />
             <Text variant="caption">
               {label === 'Disabled' ? (
                 <>
-                  <TokenValue token="--state-disabled-opacity" /> opacity
+                  <TokenValue token="--env-state-disabled-opacity" /> opacity
                 </>
               ) : (
                 <code>{token}</code>

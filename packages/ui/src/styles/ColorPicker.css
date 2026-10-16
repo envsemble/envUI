@@ -2,35 +2,35 @@
   inline-size: 100%;
   block-size: auto;
   aspect-ratio: 3 / 2;
-  min-block-size: calc(var(--control-height-sm) * 3);
+  min-block-size: calc(var(--env-control-height-sm) * 3);
   max-block-size: 14rem;
 }
 .env-color-picker-area .react-colorful__interactive:focus-visible {
-  outline: 0.125rem solid var(--color-focus-ring);
+  outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.125rem;
 }
 .env-color-picker-area .react-colorful__hue {
-  block-size: var(--control-height-sm);
+  block-size: var(--env-control-height-sm);
   flex-shrink: 0;
 }
 .env-color-picker-area .react-colorful__saturation {
-  border-block-end-width: var(--space-3);
-  border-radius: var(--radius-standard) var(--radius-standard) 0 0;
+  border-block-end-width: var(--env-space-3);
+  border-radius: var(--env-radius-sm) var(--env-radius-sm) 0 0;
   /* A neutral inner edge over every hue. */
-  box-shadow: inset 0 0 0 0.0625rem var(--color-border-translucent);
+  box-shadow: inset 0 0 0 0.0625rem var(--env-color-border-media);
 }
 .env-color-picker-area .react-colorful__last-control {
-  border-radius: 0 0 var(--radius-standard) var(--radius-standard);
+  border-radius: 0 0 var(--env-radius-sm) var(--env-radius-sm);
 }
 .env-color-picker-area .react-colorful__pointer {
   inline-size: 1.75rem;
   block-size: 1.75rem;
   border-width: 0.125rem;
-  box-shadow: var(--elevation-1-shadow);
+  box-shadow: var(--env-elevation-1-shadow);
 }
 .env-color-picker[data-disabled] > .env-text,
 .env-color-picker[data-disabled] > .env-color-picker-area {
-  opacity: var(--state-disabled-opacity);
+  opacity: var(--env-state-disabled-opacity);
 }
 .env-color-picker-status {
   position: absolute;
@@ -43,6 +43,6 @@
 }
 @media (pointer: coarse) {
   .env-color-picker-area .react-colorful__hue {
-    block-size: var(--control-height-touch);
+    block-size: var(--env-control-height-touch);
   }
 }

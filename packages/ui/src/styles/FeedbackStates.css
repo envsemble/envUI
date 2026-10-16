@@ -3,26 +3,26 @@
   justify-items: start;
   align-content: start;
   min-width: 0;
-  padding: var(--space-5);
-  gap: var(--space-4);
+  padding: var(--env-space-5);
+  gap: var(--env-space-4);
 }
 .env-loading-state {
   min-inline-size: 0;
   display: grid;
-  gap: var(--space-2);
+  gap: var(--env-space-2);
 }
 .env-skeleton {
   max-inline-size: 100%;
   display: block;
   height: 0.8rem;
-  border-radius: var(--radius-standard);
-  background: var(--color-skeleton-base);
+  border-radius: var(--env-radius-sm);
+  background: var(--env-color-bg-neutral-muted);
 }
 .env-skeleton-highlight {
-  background: var(--color-skeleton-highlight);
+  background: var(--env-color-bg-neutral-muted-hover);
 }
 .env-empty-state-error > .env-symbol {
-  color: var(--color-field-error);
+  color: var(--env-color-fg-danger);
 }
 
 /* Centred: the state takes the place of a page's or region's content, in the middle of the room the
@@ -30,7 +30,7 @@
 .env-empty-state-center {
   justify-items: center;
   align-content: center;
-  padding-block: var(--space-8);
+  padding-block: var(--env-space-8);
   text-align: center;
 }
 .env-empty-state-center > .env-symbol {
@@ -38,7 +38,7 @@
   height: 2.5rem;
 }
 .env-empty-state-center:not(.env-empty-state-error) > .env-symbol {
-  color: var(--color-icon);
+  color: var(--env-color-fg-muted);
 }
 .env-empty-state-center > .env-empty-copy {
   max-inline-size: 30rem;
@@ -50,7 +50,7 @@
   flex: 0 0 auto;
   inline-size: 1.5rem;
   block-size: 1.5rem;
-  color: var(--color-control-blue);
+  color: var(--env-color-bg-brand-emphasis);
 }
 .env-spinner-small {
   inline-size: 1rem;
@@ -110,7 +110,7 @@
 }
 .env-loading-bar-indicator {
   block-size: 100%;
-  background: var(--color-control-blue);
+  background: var(--env-color-bg-brand-emphasis);
   transform-origin: left center;
   transform: scaleX(0.9);
   transition: transform 10s cubic-bezier(0.1, 0.7, 0.15, 1);
@@ -128,8 +128,8 @@
   transform: scaleX(1);
   opacity: 0;
   transition:
-    transform 0.2s var(--motion-ease-enter),
-    opacity 0.2s var(--motion-ease) 0.2s;
+    transform 0.2s var(--env-motion-ease-enter),
+    opacity 0.2s var(--env-motion-ease) 0.2s;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -145,7 +145,7 @@
   .env-loading-bar-indicator,
   .env-loading-bar[data-state='finishing'] .env-loading-bar-indicator {
     transform: none;
-    transition: opacity 0.2s var(--motion-ease);
+    transition: opacity 0.2s var(--env-motion-ease);
   }
   @starting-style {
     .env-loading-bar-indicator {

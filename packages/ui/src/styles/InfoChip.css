@@ -6,12 +6,12 @@
   align-items: center;
   justify-content: center;
   padding: 0.2rem 0.45rem;
-  font: 400 0.7rem/1.4 var(--font-family);
+  font: 400 0.7rem/1.4 var(--env-font-family);
   white-space: normal;
   overflow-wrap: anywhere;
   text-align: center;
-  color: var(--color-chip-text);
-  background: var(--color-chip);
+  color: var(--env-color-fg-accent);
+  background: var(--env-color-bg-neutral-muted);
   border: 0;
-  border-radius: var(--radius-standard);
+  border-radius: var(--env-radius-sm);
 }

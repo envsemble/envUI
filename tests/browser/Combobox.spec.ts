@@ -338,7 +338,7 @@ test('the popup is the raised popup with rounded options inset by its padding, i
       await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
       await Promise.allSettled(element.getAnimations().map(({ finished }) => finished));
       const probe = document.createElement('div');
-      probe.style.backgroundColor = 'var(--color-popup)';
+      probe.style.backgroundColor = 'var(--env-color-bg-popup)';
       element.append(probe);
       const popupColor = getComputedStyle(probe).backgroundColor;
       probe.remove();

@@ -17,7 +17,7 @@ test('segmented controls choose one option with the pointer and arrow keys', asy
     // The chosen segment takes the primary action colors.
     const fill = await open.evaluate((element) => {
       const probe = document.createElement('span');
-      probe.style.backgroundColor = 'var(--color-primary-action)';
+      probe.style.backgroundColor = 'var(--env-color-bg-brand-emphasis)';
       element.append(probe);
       const color = getComputedStyle(probe).backgroundColor;
       probe.remove();

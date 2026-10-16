@@ -6,8 +6,8 @@
   padding: 0;
   border: 0;
   background: none;
-  color: var(--color-disclosure-text);
-  font: var(--type-body-small);
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
 }
 .env-disclosure > summary {
   display: flex;
@@ -32,24 +32,24 @@
   transform: rotate(90deg);
 }
 .env-disclosure > summary:focus-visible {
-  outline: 0.125rem solid var(--color-focus-ring);
+  outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.25rem;
 }
 .env-disclosure > summary:hover {
-  color: var(--color-quiet-label-hover);
+  color: var(--env-color-fg-muted-hover);
 }
 .env-disclosure > summary:active {
-  color: var(--color-quiet-label-pressed);
+  color: var(--env-color-fg-muted-pressed);
 }
 @media (pointer: coarse) {
   .env-disclosure > summary {
-    min-block-size: var(--control-height-touch);
+    min-block-size: var(--env-control-height-touch);
     align-items: center;
   }
 }
 .env-disclosure-panel {
-  margin-block: var(--space-2) 0;
-  margin-inline: var(--space-4) 0;
+  margin-block: var(--env-space-2) 0;
+  margin-inline: var(--env-space-4) 0;
   color: inherit;
   font: inherit;
 }
@@ -58,5 +58,5 @@
   font: inherit;
 }
 .env-disclosure-panel > :is(ul, ol) {
-  padding-inline-start: var(--space-5);
+  padding-inline-start: var(--env-space-5);
 }

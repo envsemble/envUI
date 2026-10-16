@@ -272,10 +272,7 @@
           "pressed": { "$value": "{palette.neutral.65}" }
         },
         "accent": {
-          "$root": { "$value": "{palette.blue.75}" },
-          "hover": { "$value": "{palette.blue.80}" },
-          "pressed": { "$value": "{palette.blue.84}" },
-          "emphasis": {
+          "$root": {
             "$value": {
               "colorSpace": "oklch",
               "components": { "$ref": "#/palette/blue/80/$value/components" },
@@ -288,13 +285,15 @@
               "components": { "$ref": "#/palette/blue/80/$value/components" },
               "alpha": 0.28
             }
+          },
+          "emphasis": {
+            "$root": { "$value": "{palette.blue.75}" },
+            "hover": { "$value": "{palette.blue.80}" },
+            "pressed": { "$value": "{palette.blue.84}" }
           }
         },
         "danger": {
-          "$root": { "$value": "{palette.red.80}" },
-          "hover": { "$value": "{palette.red.84}" },
-          "pressed": { "$value": "{palette.red.88}" },
-          "emphasis": {
+          "$root": {
             "$value": {
               "colorSpace": "oklch",
               "components": { "$ref": "#/palette/red/80/$value/components" },
@@ -308,10 +307,15 @@
               "alpha": 0.28
             }
           },
-          "strong": { "$value": "{palette.red.84}" }
+          "strong": { "$value": "{palette.red.84}" },
+          "emphasis": {
+            "$root": { "$value": "{palette.red.80}" },
+            "hover": { "$value": "{palette.red.84}" },
+            "pressed": { "$value": "{palette.red.88}" }
+          }
         },
         "neutral": {
-          "emphasis": {
+          "$root": {
             "$value": {
               "colorSpace": "oklch",
               "components": { "$ref": "#/palette/neutral/84/$value/components" },
@@ -321,7 +325,7 @@
           "strong": { "$value": "{palette.neutral.84}" }
         },
         "success": {
-          "emphasis": {
+          "$root": {
             "$value": {
               "colorSpace": "oklch",
               "components": { "$ref": "#/palette/green/80/$value/components" },
@@ -338,7 +342,7 @@
           "strong": { "$value": "{palette.teal.84}" }
         },
         "warning": {
-          "emphasis": {
+          "$root": {
             "$value": {
               "colorSpace": "oklch",
               "components": { "$ref": "#/palette/amber/80/$value/components" },
@@ -353,21 +357,19 @@
             }
           }
         },
-        "done": {
-          "emphasis": {
-            "$value": {
-              "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/violet/80/$value/components" },
-              "alpha": 0.55
-            }
-          }
-        },
         "focus": { "$value": "{palette.blue.65}" },
         "scrim": {
           "$description": "The edge of a dialog against the scrim: 4.5:1 against the gray of the page under the scrim, which only near-black reaches in light.",
           "$value": "{palette.neutral.96}"
         },
-        "info": { "strong": { "$value": "{palette.steel.84}" } }
+        "info": { "strong": { "$value": "{palette.steel.84}" } },
+        "done": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": { "$ref": "#/palette/violet/80/$value/components" },
+            "alpha": 0.55
+          }
+        }
       }
     }
   }

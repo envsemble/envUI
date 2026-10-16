@@ -16,14 +16,6 @@
         "pressed": {
           "$description": "An interactive page-colored surface while pressed.",
           "$value": "{palette.neutral.8}"
-        },
-        "muted": {
-          "$description": "The page color at half strength, which leans a pill on a button’s fill back toward the page instead of adding another fill, as a diff stat in a tab does.",
-          "$value": {
-            "colorSpace": "oklch",
-            "components": { "$ref": "#/palette/neutral/0/$value/components" },
-            "alpha": 0.5
-          }
         }
       },
       "default": {
@@ -242,6 +234,10 @@
           }
         },
         "subtle": {
+          "$root": {
+            "$description": "Controls in the accent tone without a fill at rest, such as an alert’s dismiss button: transparent, as color.bg.neutral.subtle is.",
+            "$value": { "colorSpace": "srgb", "components": [0, 0, 0], "alpha": 0 }
+          },
           "hover": {
             "$description": "The state layer of a control without a fill in the accent tone, such as an info alert’s dismiss button, under the pointer: the accent text color at 14%, in every theme and at high contrast.",
             "$value": {
@@ -274,6 +270,10 @@
           }
         },
         "subtle": {
+          "$root": {
+            "$description": "Controls in the success tone without a fill at rest, such as an alert’s dismiss button: transparent, as color.bg.neutral.subtle is.",
+            "$value": { "colorSpace": "srgb", "components": [0, 0, 0], "alpha": 0 }
+          },
           "hover": {
             "$description": "The state layer of a control without a fill in the success tone, such as a success alert’s dismiss button, under the pointer: the success text color at 14%, in every theme and at high contrast.",
             "$value": {
@@ -320,6 +320,10 @@
           }
         },
         "subtle": {
+          "$root": {
+            "$description": "Controls in the warning tone without a fill at rest, such as an alert’s dismiss button: transparent, as color.bg.neutral.subtle is.",
+            "$value": { "colorSpace": "srgb", "components": [0, 0, 0], "alpha": 0 }
+          },
           "hover": {
             "$description": "The state layer of a control without a fill in the warning tone, such as a warning alert’s dismiss button, under the pointer: the warning text color at 14%, in every theme and at high contrast.",
             "$value": {
@@ -352,6 +356,10 @@
           }
         },
         "subtle": {
+          "$root": {
+            "$description": "Controls in the danger tone without a fill at rest, such as an alert’s dismiss button: transparent, as color.bg.neutral.subtle is.",
+            "$value": { "colorSpace": "srgb", "components": [0, 0, 0], "alpha": 0 }
+          },
           "hover": {
             "$description": "The state layer of a control without a fill in the danger tone, such as an error alert’s dismiss button, under the pointer: the danger text color at 14%, in every theme and at high contrast.",
             "$value": {
@@ -429,6 +437,14 @@
             "$value": "{palette.purple.75}"
           }
         }
+      },
+      "inset": {
+        "$description": "The page color at half strength, which leans a pill on a button’s fill back toward the page instead of adding another fill, as a diff stat in a tab does.",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": { "$ref": "#/palette/neutral/0/$value/components" },
+          "alpha": 0.5
+        }
       }
     },
     "fg": {
@@ -445,7 +461,10 @@
           "$description": "Muted text that responds to the pointer, such as a Disclosure summary, gains contrast.",
           "$value": "{palette.neutral.65}"
         },
-        "pressed": { "$description": "Muted text while pressed.", "$value": "{palette.neutral.70}" }
+        "pressed": {
+          "$description": "Muted text while pressed.",
+          "$value": "{palette.neutral.70}"
+        }
       },
       "control": {
         "$description": "The labels of navigation items, secondary buttons and Select options, the values of meters and sliders, and the thumb of a switch that is off.",
@@ -514,18 +533,6 @@
       },
       "accent": {
         "$root": {
-          "$description": "The active border and label of a focused field, and today’s ring in a calendar.",
-          "$value": "{palette.blue.50}"
-        },
-        "hover": {
-          "$description": "An active field border under the pointer.",
-          "$value": "{palette.blue.60}"
-        },
-        "pressed": {
-          "$description": "An active field border while pressed.",
-          "$value": "{palette.blue.75}"
-        },
-        "emphasis": {
           "$description": "A decorative edge in the accent tone, around an outlined badge: the accent text color at 55%, in every theme and at high contrast.",
           "$value": {
             "colorSpace": "oklch",
@@ -540,22 +547,24 @@
             "components": { "$ref": "#/palette/blue/60/$value/components" },
             "alpha": 0.28
           }
+        },
+        "emphasis": {
+          "$root": {
+            "$description": "The active border and label of a focused field, and today’s ring in a calendar.",
+            "$value": "{palette.blue.50}"
+          },
+          "hover": {
+            "$description": "An active field border under the pointer.",
+            "$value": "{palette.blue.60}"
+          },
+          "pressed": {
+            "$description": "An active field border while pressed.",
+            "$value": "{palette.blue.75}"
+          }
         }
       },
       "danger": {
         "$root": {
-          "$description": "The border of an invalid field.",
-          "$value": "{palette.red.60}"
-        },
-        "hover": {
-          "$description": "An invalid field border under the pointer.",
-          "$value": "{palette.red.50}"
-        },
-        "pressed": {
-          "$description": "An invalid field border while pressed.",
-          "$value": "{palette.red.40}"
-        },
-        "emphasis": {
           "$description": "A decorative edge in the danger tone, around an outlined badge and a message that failed to send: the danger text color at 55%, in every theme and at high contrast.",
           "$value": {
             "colorSpace": "oklch",
@@ -574,10 +583,24 @@
         "strong": {
           "$description": "The edge of the strong danger fill where it floats, on error toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted.",
           "$value": "{palette.red.70}"
+        },
+        "emphasis": {
+          "$root": {
+            "$description": "The border of an invalid field.",
+            "$value": "{palette.red.60}"
+          },
+          "hover": {
+            "$description": "An invalid field border under the pointer.",
+            "$value": "{palette.red.50}"
+          },
+          "pressed": {
+            "$description": "An invalid field border while pressed.",
+            "$value": "{palette.red.40}"
+          }
         }
       },
       "neutral": {
-        "emphasis": {
+        "$root": {
           "$description": "A decorative edge in the neutral tone, around an outlined badge: the muted text color at 55%, in every theme and at high contrast.",
           "$value": {
             "colorSpace": "oklch",
@@ -591,7 +614,7 @@
         }
       },
       "success": {
-        "emphasis": {
+        "$root": {
           "$description": "A decorative edge in the success tone, around an outlined badge: the success text color at 55%, in every theme and at high contrast.",
           "$value": {
             "colorSpace": "oklch",
@@ -613,7 +636,7 @@
         }
       },
       "warning": {
-        "emphasis": {
+        "$root": {
           "$description": "A decorative edge in the warning tone, around an outlined badge: the warning text color at 55%, in every theme and at high contrast.",
           "$value": {
             "colorSpace": "oklch",
@@ -630,24 +653,6 @@
           }
         }
       },
-      "done": {
-        "emphasis": {
-          "$description": "A decorative edge in the done tone, around an outlined badge: the done text color at 55%, in every theme and at high contrast.",
-          "$value": {
-            "colorSpace": "oklch",
-            "components": { "$ref": "#/palette/violet/60/$value/components" },
-            "alpha": 0.55
-          }
-        }
-      },
-      "translucent": {
-        "$description": "A neutral inner edge that defines content of any color, such as the color picker’s area: black at 5% in both themes.",
-        "$value": {
-          "colorSpace": "oklch",
-          "components": { "$ref": "#/palette/neutral/100/$value/components" },
-          "alpha": 0.05
-        }
-      },
       "focus": {
         "$description": "Focus rings: at least 3:1 against what they are drawn on.",
         "$value": "{palette.blue.50}"
@@ -657,625 +662,60 @@
           "$description": "The edge of the strong information fill where it floats, on information toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted.",
           "$value": "{palette.steel.70}"
         }
-      }
-    },
-    "canvas": {
-      "$value": "{color.bg.page}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true } }
-    },
-    "pane": {
-      "$value": "{color.bg.default}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true } }
-    },
-    "surface-muted": {
-      "$value": "{color.bg.muted}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true } }
-    },
-    "surface": {
-      "$value": "{color.bg.raised}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true } }
-    },
-    "popup": {
-      "$value": "{color.bg.popup}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true } }
-    },
-    "dialog": {
-      "$value": "{color.bg.raised}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true } }
-    },
-    "field": {
-      "$value": "{color.bg.field}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true } }
-    },
-    "dialog-overlay": {
-      "$value": "{color.bg.overlay}",
-      "$extensions": {
-        "com.envsemble.envui": {
-          "legacy": true,
-          "note": "0.7's was opaque, #1f1f1f (hsl(0 0% 12.157%) in both themes), and the dialog backdrop made it 55% opaque with --state-dialog-overlay-opacity, which is removed. The role is the scrim itself, 55% opaque: paint it as it is, since a style that applies its own opacity now applies it twice. For the opaque color, write #1f1f1f."
+      },
+      "done": {
+        "$description": "A decorative edge in the done tone, around an outlined badge: the done text color at 55%, in every theme and at high contrast.",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": { "$ref": "#/palette/violet/60/$value/components" },
+          "alpha": 0.55
+        }
+      },
+      "media": {
+        "$description": "A neutral inner edge that defines content of any color, such as the color picker’s area: black at 5% in both themes.",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": { "$ref": "#/palette/neutral/100/$value/components" },
+          "alpha": 0.05
         }
       }
     },
-    "menu-row": {
-      "$value": "{color.bg.popup}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Menu rows" } }
-    },
-    "row": {
-      "$value": "{color.bg.default}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "List rows" } }
-    },
-    "row-hover": {
-      "$value": "{color.bg.default.hover}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "List rows" } }
-    },
-    "row-pressed": {
-      "$value": "{color.bg.default.pressed}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "List rows" } }
-    },
-    "row-alternate": {
-      "$value": "{color.bg.raised}",
-      "$extensions": {
-        "com.envsemble.envui": { "legacy": true, "component": "List rows on a contrasting surface" }
-      }
-    },
-    "action-strip": {
-      "$value": "{color.bg.default}",
-      "$extensions": {
-        "com.envsemble.envui": { "legacy": true, "component": "The action strip of a card" }
-      }
-    },
-    "select-option": {
-      "$value": "{color.bg.popup}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Select options" } }
-    },
-    "select-option-hover": {
-      "$value": "{color.bg.popup.hover}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Select options" } }
-    },
-    "select-option-pressed": {
-      "$value": "{color.bg.popup.pressed}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Select options" } }
-    },
-    "select-selected": {
-      "$value": "{color.bg.selected}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Select options" } }
-    },
-    "select-selected-hover": {
-      "$value": "{color.bg.selected.hover}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Select options" } }
-    },
-    "select-selected-pressed": {
-      "$value": "{color.bg.selected.pressed}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Select options" } }
-    },
-    "navigation-selected": {
-      "$value": "{color.bg.selected}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Navigation items" } }
-    },
-    "navigation-hover": {
-      "$value": "{color.bg.selected.hover}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Navigation items" } }
-    },
-    "navigation-pressed": {
-      "$value": "{color.bg.selected.pressed}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Navigation items" } }
-    },
-    "row-selected-hover": {
-      "$value": "{color.bg.selected.hover}",
-      "$extensions": {
-        "com.envsemble.envui": { "legacy": true, "component": "Tree and table rows" }
-      }
-    },
-    "row-selected-pressed": {
-      "$value": "{color.bg.selected.pressed}",
-      "$extensions": {
-        "com.envsemble.envui": { "legacy": true, "component": "Tree and table rows" }
-      }
-    },
-    "navigation-quiet": {
-      "$value": "{color.bg.default}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Navigation items" } }
-    },
-    "navigation-quiet-hover": {
-      "$value": "{color.bg.navigation.hover}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Navigation items" } }
-    },
-    "navigation-quiet-pressed": {
-      "$value": "{color.bg.navigation.pressed}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Navigation items" } }
-    },
-    "direction-link": {
-      "$value": "{color.bg.raised}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Pager links" } }
-    },
-    "radio-row": {
-      "$value": "{color.bg.muted}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Radio rows" } }
-    },
-    "radio-row-hover": {
-      "$value": "{color.bg.muted.hover}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Radio rows" } }
-    },
-    "radio-row-pressed": {
-      "$value": "{color.bg.muted.pressed}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Radio rows" } }
-    },
-    "fill": {
-      "$value": "{color.bg.neutral.muted}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true } }
-    },
-    "state-layer": {
-      "$value": "{color.fg.default}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true } }
-    },
-    "state-layer-hover": {
-      "$value": "{color.bg.neutral.subtle.hover}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true } }
-    },
-    "state-layer-pressed": {
-      "$value": "{color.bg.neutral.subtle.pressed}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true } }
-    },
-    "secondary-action": {
-      "$value": "{color.bg.neutral.muted}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Secondary buttons" } }
-    },
-    "secondary-action-hover": {
-      "$value": "{color.bg.neutral.muted.hover}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Secondary buttons" } }
-    },
-    "secondary-action-pressed": {
-      "$value": "{color.bg.neutral.muted.pressed}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Secondary buttons" } }
-    },
-    "on-secondary-action": {
-      "$value": "{color.fg.control}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Secondary buttons" } }
-    },
-    "switch-off": {
-      "$value": "{color.bg.neutral.muted}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Switches" } }
-    },
-    "switch-off-hover": {
-      "$value": "{color.bg.neutral.muted.hover}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Switches" } }
-    },
-    "switch-off-pressed": {
-      "$value": "{color.bg.neutral.muted.pressed}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Switches" } }
-    },
-    "chip": {
-      "$value": "{color.bg.neutral.muted}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Chips" } }
-    },
-    "skeleton-base": {
-      "$value": "{color.bg.neutral.muted}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Skeletons" } }
-    },
-    "skeleton-highlight": {
-      "$value": "{color.bg.neutral.muted.hover}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Skeletons" } }
-    },
-    "primary-action": {
-      "$value": "{color.bg.brand.emphasis}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Primary buttons" } }
-    },
-    "primary-action-hover": {
-      "$value": "{color.bg.brand.emphasis.hover}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Primary buttons" } }
-    },
-    "primary-action-pressed": {
-      "$value": "{color.bg.brand.emphasis.pressed}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Primary buttons" } }
-    },
-    "on-primary-action": {
-      "$value": "{color.fg.on-emphasis}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Primary buttons" } }
-    },
-    "subtle-action": {
-      "$value": "{color.bg.raised}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Outlined buttons" } }
-    },
-    "subtle-action-hover": {
-      "$value": "{color.bg.raised.hover}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Outlined buttons" } }
-    },
-    "subtle-action-pressed": {
-      "$value": "{color.bg.raised.pressed}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Outlined buttons" } }
-    },
-    "on-subtle-action": {
-      "$value": "{color.fg.accent}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Outlined buttons" } }
-    },
-    "subtle-action-border": {
-      "$value": "{color.border.default}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Outlined buttons" } }
-    },
-    "subtle-action-border-hover": {
-      "$value": "{color.border.default.hover}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Outlined buttons" } }
-    },
-    "subtle-action-border-pressed": {
-      "$value": "{color.border.default.pressed}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Outlined buttons" } }
-    },
-    "accent": {
-      "$description": "Misleading 0.7 name: the purple of important actions, bg.important.strong, not the accent blue of fg.accent. Components use bg.important.strong; the alias goes in the CSS-architecture step.",
-      "$value": "{color.bg.important.strong}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Important buttons" } }
-    },
-    "accent-hover": {
-      "$description": "Misleading 0.7 name of bg.important.strong.hover; see --color-accent.",
-      "$value": "{color.bg.important.strong.hover}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Important buttons" } }
-    },
-    "accent-pressed": {
-      "$description": "Misleading 0.7 name of bg.important.strong.pressed; see --color-accent.",
-      "$value": "{color.bg.important.strong.pressed}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Important buttons" } }
-    },
-    "on-accent": {
-      "$description": "Misleading 0.7 name of fg.on-strong on the important purple; see --color-accent.",
-      "$value": "{color.fg.on-strong}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Important buttons" } }
-    },
-    "destructive-action": {
-      "$value": "{color.bg.danger.strong}",
-      "$extensions": {
-        "com.envsemble.envui": { "legacy": true, "component": "Destructive buttons" }
-      }
-    },
-    "destructive-action-hover": {
-      "$value": "{color.bg.danger.strong.hover}",
-      "$extensions": {
-        "com.envsemble.envui": { "legacy": true, "component": "Destructive buttons" }
-      }
-    },
-    "destructive-action-pressed": {
-      "$value": "{color.bg.danger.strong.pressed}",
-      "$extensions": {
-        "com.envsemble.envui": { "legacy": true, "component": "Destructive buttons" }
-      }
-    },
-    "on-destructive-action": {
-      "$value": "{color.fg.on-strong}",
-      "$extensions": {
-        "com.envsemble.envui": { "legacy": true, "component": "Destructive buttons" }
-      }
-    },
-    "control-blue": {
-      "$value": "{color.bg.brand.strong}",
-      "$extensions": {
-        "com.envsemble.envui": { "legacy": true, "component": "Spinners, sliders and meters" }
-      }
-    },
-    "text-primary": {
-      "$value": "{color.fg.default}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true } }
-    },
-    "text-muted": {
-      "$value": "{color.fg.muted}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true } }
-    },
-    "text-quiet": {
-      "$value": "{color.fg.muted}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true } }
-    },
-    "text-strong": {
-      "$value": "{color.fg.control}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true } }
-    },
-    "disabled-text": {
-      "$value": "{color.fg.muted}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true } }
-    },
-    "icon": {
-      "$value": "{color.fg.muted}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true } }
-    },
-    "link": {
-      "$value": "{color.fg.link}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true } }
-    },
-    "link-hover": {
-      "$value": "{color.fg.link.hover}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true } }
-    },
-    "link-pressed": {
-      "$value": "{color.fg.link.pressed}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true } }
-    },
-    "disclosure-text": {
-      "$value": "{color.fg.muted}",
-      "$extensions": {
-        "com.envsemble.envui": { "legacy": true, "component": "Disclosure summaries" }
-      }
-    },
-    "quiet-label-hover": {
-      "$value": "{color.fg.muted.hover}",
-      "$extensions": {
-        "com.envsemble.envui": { "legacy": true, "component": "Disclosure summaries" }
-      }
-    },
-    "quiet-label-pressed": {
-      "$value": "{color.fg.muted.pressed}",
-      "$extensions": {
-        "com.envsemble.envui": { "legacy": true, "component": "Disclosure summaries" }
-      }
-    },
-    "row-text": {
-      "$value": "{color.fg.default}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "List rows" } }
-    },
-    "row-detail": {
-      "$value": "{color.fg.muted}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "List rows" } }
-    },
-    "navigation-text": {
-      "$value": "{color.fg.control}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Navigation items" } }
-    },
-    "navigation-icon": {
-      "$value": "{color.fg.muted}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Navigation items" } }
-    },
-    "on-navigation-selected": {
-      "$value": "{color.fg.on-selected}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Navigation items" } }
-    },
-    "select-option-text": {
-      "$value": "{color.fg.control}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Select options" } }
-    },
-    "on-select-selected": {
-      "$value": "{color.fg.on-selected}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Select options" } }
-    },
-    "chip-text": {
-      "$value": "{color.fg.accent}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Chips" } }
-    },
-    "field-text": {
-      "$value": "{color.fg.default}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Fields" } }
-    },
-    "field-label": {
-      "$value": "{color.fg.muted}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Fields" } }
-    },
-    "field-hint": {
-      "$value": "{color.fg.muted}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Fields" } }
-    },
-    "field-placeholder": {
-      "$value": "{color.fg.muted}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Fields" } }
-    },
-    "field-error": {
-      "$value": "{color.fg.danger}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Fields" } }
-    },
-    "field-border": {
-      "$value": "{color.border.default}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Fields" } }
-    },
-    "field-active": {
-      "$value": "{color.border.accent}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Fields" } }
-    },
-    "direction-link-text": {
-      "$value": "{color.fg.default}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Pager links" } }
-    },
-    "direction-link-label": {
-      "$value": "{color.fg.muted}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Pager links" } }
-    },
-    "direction-link-icon": {
-      "$value": "{color.fg.accent}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Pager links" } }
-    },
-    "direction-link-border": {
-      "$value": "{color.border.muted}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Pager links" } }
-    },
-    "direction-link-border-hover": {
-      "$value": "{color.border.muted.hover}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Pager links" } }
-    },
-    "direction-link-border-pressed": {
-      "$value": "{color.border.muted.pressed}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Pager links" } }
-    },
-    "border-strong": {
-      "$description": "Misleading 0.7 name: it is the divider color, border.muted, light, not a stronger border, and unlike the dark edges of the strong fills, border.{neutral|success|info|danger}.strong. Components use border.muted; the alias goes in the CSS-architecture step, which also revisits these names.",
-      "$value": "{color.border.muted}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true } }
-    },
-    "border-hover": {
-      "$description": "0.7 name of border.muted.hover, the divider color under the pointer. Components use border.muted.hover; the alias goes in the CSS-architecture step.",
-      "$value": "{color.border.muted.hover}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true } }
-    },
-    "markdown-border": {
-      "$value": "{color.border.muted}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Markdown" } }
-    },
-    "popup-border": {
-      "$value": "{elevation.2.border}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Popups" } }
-    },
-    "focus-ring": {
-      "$value": "{color.border.focus}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true } }
-    },
-    "outlined-focus": {
-      "$value": "{color.border.focus}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Outlined buttons" } }
-    },
-    "radio": {
-      "$value": "{color.bg.brand.emphasis}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Radios" } }
-    },
-    "radio-hover": {
-      "$value": "{color.bg.brand.emphasis.hover}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Radios" } }
-    },
-    "radio-pressed": {
-      "$value": "{color.bg.brand.emphasis.pressed}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Radios" } }
-    },
-    "radio-text": {
-      "$value": "{color.fg.default}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Radios" } }
-    },
-    "radio-detail": {
-      "$value": "{color.fg.muted}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Radios" } }
-    },
-    "checkbox": {
-      "$value": "{color.bg.brand.strong}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Checkboxes" } }
-    },
-    "checkbox-hover": {
-      "$value": "{color.bg.brand.strong.hover}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Checkboxes" } }
-    },
-    "checkbox-pressed": {
-      "$value": "{color.bg.brand.strong.pressed}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Checkboxes" } }
-    },
-    "on-checkbox": {
-      "$value": "{color.fg.on-strong}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Checkboxes" } }
-    },
-    "checkbox-border": {
-      "$value": "{color.fg.muted}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Checkboxes" } }
-    },
-    "checkbox-ring-hover": {
-      "$value": "{color.fg.muted.hover}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Checkboxes" } }
-    },
-    "checkbox-ring-pressed": {
-      "$value": "{color.fg.muted.pressed}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Checkboxes" } }
-    },
-    "checkbox-text": {
-      "$value": "{color.fg.default}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Checkboxes" } }
-    },
-    "switch-on": {
-      "$value": "{color.bg.brand.strong}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Switches" } }
-    },
-    "switch-on-hover": {
-      "$value": "{color.bg.brand.strong.hover}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Switches" } }
-    },
-    "switch-on-pressed": {
-      "$value": "{color.bg.brand.strong.pressed}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Switches" } }
-    },
-    "switch-thumb": {
-      "$value": "{color.fg.control}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Switches" } }
-    },
-    "switch-thumb-on": {
-      "$value": "{color.fg.on-strong}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Switches" } }
-    },
-    "switch-text": {
-      "$value": "{color.fg.default}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Switches" } }
-    },
-    "calendar-selected": {
-      "$value": "{color.bg.brand.emphasis}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Calendars" } }
-    },
-    "on-calendar-selected": {
-      "$value": "{color.fg.on-emphasis}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Calendars" } }
-    },
-    "calendar-today": {
-      "$value": "{color.border.accent}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Calendars" } }
-    },
-    "on-tone": {
-      "$value": "{color.fg.on-emphasis}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true } }
-    },
-    "toast-neutral": {
-      "$value": "{color.bg.neutral.strong}",
-      "$extensions": {
-        "com.envsemble.envui": { "legacy": true, "component": "Toasts and tooltips" }
-      }
-    },
-    "toast-success": {
-      "$value": "{color.bg.success.strong}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Toasts" } }
-    },
-    "toast-info": {
-      "$value": "{color.bg.info.strong}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Toasts" } }
-    },
-    "toast-error": {
-      "$value": "{color.bg.danger.strong}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Toasts" } }
-    },
-    "on-toast": {
-      "$value": "{color.fg.on-strong}",
-      "$extensions": {
-        "com.envsemble.envui": { "legacy": true, "component": "Toasts and tooltips" }
-      }
-    },
-    "white": {
-      "$value": "{palette.neutral.0}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Fixed white" } }
-    },
-    "canvas-dark": {
-      "$value": "{palette.neutral.92}",
-      "$extensions": {
-        "com.envsemble.envui": { "legacy": true, "component": "Fixed dark page color" }
+    "list-item": {
+      "$description": "Component tokens of list items: they take another role in each scheme, which no one role names.",
+      "bg": {
+        "$root": {
+          "$description": "The fill of a list item: the default surface in light, the muted one in dark, so items stand apart from the page and from a surface in both.",
+          "$value": "{color.bg.default}",
+          "$extensions": { "com.envsemble.envui": { "component": "List items" } }
+        },
+        "hover": {
+          "$description": "A list item under the pointer.",
+          "$value": "{color.bg.default.hover}",
+          "$extensions": { "com.envsemble.envui": { "component": "List items" } }
+        },
+        "pressed": {
+          "$description": "A list item while pressed.",
+          "$value": "{color.bg.default.pressed}",
+          "$extensions": { "com.envsemble.envui": { "component": "List items" } }
+        }
       }
     },
     "avatar": {
-      "$value": "{palette.blue.20}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Avatars" } }
-    },
-    "avatar-figure": {
-      "$value": "{palette.blue.45}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Avatars" } }
-    },
-    "on-avatar": {
-      "$value": "{palette.blue.70}",
-      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Avatars" } }
-    },
-    "tone": {
-      "neutral": {
-        "$value": "{color.fg.muted}",
-        "$extensions": { "com.envsemble.envui": { "legacy": true } }
+      "$description": "Component tokens of avatars without an image: fixed blues of the palette, which no role names.",
+      "bg": {
+        "$description": "The fill of an avatar that shows initials or the default figure.",
+        "$value": "{palette.blue.20}",
+        "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
       },
-      "accent": {
-        "$value": "{color.fg.accent}",
-        "$extensions": { "com.envsemble.envui": { "legacy": true } }
+      "figure": {
+        "$description": "The default figure of an avatar without a name or an image.",
+        "$value": "{palette.blue.45}",
+        "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
       },
-      "success": {
-        "$value": "{color.fg.success}",
-        "$extensions": { "com.envsemble.envui": { "legacy": true } }
-      },
-      "warning": {
-        "$value": "{color.fg.warning}",
-        "$extensions": { "com.envsemble.envui": { "legacy": true } }
-      },
-      "danger": {
-        "$value": "{color.fg.danger}",
-        "$extensions": { "com.envsemble.envui": { "legacy": true } }
-      },
-      "done": {
-        "$value": "{color.fg.done}",
-        "$extensions": { "com.envsemble.envui": { "legacy": true } }
+      "fg": {
+        "$description": "The initials of an avatar, at least 4.5:1 on its fill, and 7:1 at high contrast.",
+        "$value": "{palette.blue.70}",
+        "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
       }
     }
   }

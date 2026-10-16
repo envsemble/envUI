@@ -39,21 +39,21 @@ Status icons, short status text and badges share these tokens. Each keeps at lea
 
 | Token                          | 0.7 name             | Meaning                                             |
 | ------------------------------ | -------------------- | --------------------------------------------------- |
-| --color-fg-muted               | --color-tone-neutral | No particular state, such as archived               |
-| --color-fg-accent              | --color-tone-accent  | The current or highlighted state, such as in review |
-| --color-fg-success             | --color-tone-success | Healthy or ready                                    |
-| --color-fg-warning             | --color-tone-warning | Needs attention, such as blocked                    |
-| --color-fg-danger              | --color-tone-danger  | Failed or destructive                               |
-| --color-fg-done                | --color-tone-done    | Completed work, in purple                           |
+| --env-color-fg-muted               | --env-color-fg-muted | No particular state, such as archived               |
+| --env-color-fg-accent              | --env-color-fg-accent  | The current or highlighted state, such as in review |
+| --env-color-fg-success             | --env-color-fg-success | Healthy or ready                                    |
+| --env-color-fg-warning             | --env-color-fg-warning | Needs attention, such as blocked                    |
+| --env-color-fg-danger              | --env-color-fg-danger  | Failed or destructive                               |
+| --env-color-fg-done                | --env-color-fg-done    | Completed work, in purple                           |
 | --color-bg-{tone}-muted        | (computed)           | The tone's translucent tint behind badges or alerts |
 | --color-border-{tone}-muted    | (computed)           | The faint edge of an alert in the tone              |
 | --color-border-{tone}-emphasis | (computed)           | The edge of an outlined badge in the tone           |
 | --color-bg-{tone}-emphasis     | --color-tone-{tone}  | A solid fill in the tone, as on solid badges        |
-| --color-fg-on-emphasis         | --color-on-tone      | Text and icons on a solid tone fill                 |
+| --env-color-fg-on-emphasis         | --env-color-fg-on-emphasis      | Text and icons on a solid tone fill                 |
 
 ```css
 .work-status[data-status='blocked'] {
-  color: var(--color-fg-warning);
+  color: var(--env-color-fg-warning);
 }
 ```
 
@@ -75,11 +75,11 @@ Semantic tokens are named `--color-{bg|fg|border}-{role}-{emphasis}[-{state}]`. 
 - **Text:** `fg-default`; `fg-muted` for supporting text, icons, field labels, descriptions and placeholders; `fg-control` for navigation labels, secondary buttons and option labels; `fg-link`; `fg-accent`; `fg-on-selected`; and one per tone.
 - **Borders:** `border-default` is the boundary of a control that has no other edge, such as an outlined field or the composer, at least 3:1 on every surface. `border-muted` is for dividers and other decorative edges. `border-accent`, `border-danger` and `border-focus` mark focused, invalid and keyboard-focused controls. `border-translucent` defines content of any color, such as the color picker's area.
 
-The 0.7 names, such as `--color-text-muted`, are aliases of these roles until the CSS-architecture step removes them with the `--env-` prefix; component tokens such as `--color-checkbox` alias the role a component takes in each theme. Two of them read as something else: `--color-border-strong` is the divider color, `border-muted`, which is light, while the tone edges `--color-border-{neutral|success|info|danger}-strong` are the dark edges of strong fills, and `--color-accent` is the important purple, `bg-important-strong`, not `fg-accent`'s blue.
+The 0.7 names, such as `--env-color-fg-muted`, are aliases of these roles until the CSS-architecture step removes them with the `--env-` prefix; component tokens such as `--env-color-bg-brand-emphasis` alias the role a component takes in each theme. Two of them read as something else: `--env-color-border-muted` is the divider color, `border-muted`, which is light, while the tone edges `--color-border-{neutral|success|info|danger}-strong` are the dark edges of strong fills, and `--env-color-bg-important-strong` is the important purple, `bg-important-strong`, not `fg-accent`'s blue.
 
 ## States, contrast and elevation
 
-- **Hover and pressed** are tokens of their own (`--color-bg-brand-emphasis-hover`), other grades of the same hue chosen when the tokens are built, so labels keep their contrast on every state. Text and outlines gain contrast on hover; fills follow the direction they always had, as far as their labels allow: a destructive button lightens on hover and settles back halfway when pressed, since white labels need a darker red.
+- **Hover and pressed** are tokens of their own (`--env-color-bg-brand-emphasis-hover`), other grades of the same hue chosen when the tokens are built, so labels keep their contrast on every state. Text and outlines gain contrast on hover; fills follow the direction they always had, as far as their labels allow: a destructive button lightens on hover and settles back halfway when pressed, since white labels need a darker red.
 - **Selection** must not be mistaken for another item, at rest or under the pointer: the selection, and a selected item under the pointer, keep a distance of at least ΔEOK 0.03 from the other items and their hover fills, 0.04 at high contrast, and the label of a selected item differs as much from the others. Every hover and pressed fill differs from its own rest by at least one just-noticeable difference, ΔEOK 0.02. The contrast gate measures those distances too, beside the ratios. In light, a navigation item under the pointer takes a blue-gray deeper than the selection; at high contrast and in dark it takes a gray. A selection also carries a second cue: its label color, a check mark or a bar.
 - **High contrast:** `contrast="high"` on a Theme moves text to 7:1 and every boundary, indicator and focus ring to 4.5:1, and so does the system's `prefers-contrast: more` while the contrast is `system`, the default. Dividers and popup edges become boundaries, fills get lighter layers, and checked controls take the emphasis fill. `contrast="standard"` keeps the standard colors even when the system asks for more contrast. A nested Theme and envUI's popups, such as menus, Select lists, tooltips and dialogs, take the contrast of the boundary they open from, as they take its color scheme: `<Theme theme="dark">` inside a high-contrast boundary is dark and high contrast. Theme writes `data-env-contrast`, `high` or `standard`, on its element, and none for `system`; style sheets can select it.
 - **Elevation** 0–3 (`--elevation-{level}-shadow`, `--elevation-{level}-border`) is a shadow and an edge color, after Material 3's levels. Every popup takes both: menus, Select and Combobox lists, popovers, hover cards, the date picker, docked panels, tooltips and toasts at level 2, so they separate from a page or surface of their own color, as a dark tooltip does on a dark surface, and dialogs and the command palette at level 3. At standard contrast the edge is a subtle hairline, at least 1.2:1, since the shadow and the content identify the popup; in high contrast it is the 4.5:1 boundary, and under forced colors, where shadows are dropped, the boundary the system paints.

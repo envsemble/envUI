@@ -8,8 +8,8 @@
   min-inline-size: 0;
   max-inline-size: 100%;
   block-size: 2.5rem;
-  padding-inline: var(--space-1);
-  border-block-end: 0.0625rem solid var(--color-border-muted);
+  padding-inline: var(--env-space-1);
+  border-block-end: 0.0625rem solid var(--env-color-border-muted);
   /* The strip takes the width it is given; its tabs never widen a grid or flex parent. */
   contain: inline-size;
   overflow-x: auto;
@@ -30,30 +30,30 @@
   max-inline-size: 14rem;
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
-  padding-inline: var(--space-3) var(--space-1);
-  border-start-start-radius: var(--radius-standard);
-  border-start-end-radius: var(--radius-standard);
-  color: var(--color-text-muted);
-  font: var(--type-body-small);
+  gap: var(--env-space-2);
+  padding-inline: var(--env-space-3) var(--env-space-1);
+  border-start-start-radius: var(--env-radius-sm);
+  border-start-end-radius: var(--env-radius-sm);
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
   white-space: nowrap;
   cursor: pointer;
   user-select: none;
   outline: none;
   transition:
-    background-color var(--motion-duration-fast) var(--motion-ease),
-    color var(--motion-duration-fast) var(--motion-ease);
+    background-color var(--env-motion-duration-fast) var(--env-motion-ease),
+    color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 .env-document-tab:hover {
-  background: var(--color-state-layer-hover);
-  color: var(--color-text-primary);
+  background: var(--env-color-bg-neutral-subtle-hover);
+  color: var(--env-color-fg-default);
 }
 .env-document-tab:active {
-  background: var(--color-state-layer-pressed);
+  background: var(--env-color-bg-neutral-subtle-pressed);
 }
 .env-document-tab[data-active] {
-  background: var(--color-fill);
-  color: var(--color-text-primary);
+  background: var(--env-color-bg-neutral-muted);
+  color: var(--env-color-fg-default);
 }
 .env-document-tab[data-active]::after {
   content: '';
@@ -61,16 +61,16 @@
   inset: auto 0 0;
   block-size: 0.125rem;
   border-radius: 0.125rem 0.125rem 0 0;
-  background: var(--color-on-navigation-selected);
+  background: var(--env-color-fg-on-selected);
 }
 .env-document-tab:focus-visible {
-  outline: 0.125rem solid var(--color-focus-ring);
+  outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: -0.125rem;
 }
 .env-document-tab .env-symbol {
-  inline-size: var(--control-icon-size);
-  block-size: var(--control-icon-size);
-  color: var(--color-icon);
+  inline-size: var(--env-control-icon-size);
+  block-size: var(--env-control-icon-size);
+  color: var(--env-color-fg-muted);
 }
 .env-document-tab-label {
   min-inline-size: 0;
@@ -96,7 +96,7 @@
   border: 0;
   border-radius: 50%;
   background: transparent;
-  color: var(--color-icon);
+  color: var(--env-color-fg-muted);
   cursor: pointer;
   visibility: hidden;
 }
@@ -109,25 +109,25 @@
   visibility: visible;
 }
 .env-document-tab-close:hover {
-  background: var(--color-state-layer-hover);
-  color: var(--color-text-primary);
+  background: var(--env-color-bg-neutral-subtle-hover);
+  color: var(--env-color-fg-default);
 }
 .env-document-tab-close:active {
-  background: var(--color-state-layer-pressed);
+  background: var(--env-color-bg-neutral-subtle-pressed);
 }
 .env-document-tab-close:focus-visible {
-  outline: 0.125rem solid var(--color-focus-ring);
+  outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: -0.125rem;
 }
 /* Under a coarse pointer the tabs are the touch height above the strip's hairline, and each close
    button always shows, as tall and wide as its tab. */
 @media (pointer: coarse) {
   .env-document-tabs {
-    block-size: calc(var(--control-height-touch) + var(--control-border-width));
+    block-size: calc(var(--env-control-height-touch) + var(--env-control-border-width));
   }
   .env-document-tab-close {
-    inline-size: var(--control-height-touch);
-    block-size: var(--control-height-touch);
+    inline-size: var(--env-control-height-touch);
+    block-size: var(--env-control-height-touch);
     visibility: visible;
   }
 }

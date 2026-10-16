@@ -1,31 +1,26 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
-  "md": {
-    "$type": "dimension",
-    "sys": {
-      "shape": {
-        "corner": {
-          "$description": "Components share the Material 3 corner scale inside each theme boundary. The full corner, 100vmax, is no DTCG dimension and stays in TokensHandwritten.css.",
-          "none": { "$value": { "value": 0, "unit": "rem" } },
-          "extra-small": { "$value": { "value": 0.25, "unit": "rem" } },
-          "small": { "$value": { "value": 0.5, "unit": "rem" } },
-          "medium": { "$value": { "value": 0.75, "unit": "rem" } },
-          "large": { "$value": { "value": 1, "unit": "rem" } },
-          "extra-large": { "$value": { "value": 1.75, "unit": "rem" } }
-        }
-      }
-    }
-  },
   "radius": {
     "$type": "dimension",
-    "standard": { "$value": { "value": 0.5, "unit": "rem" } },
-    "large": {
-      "$description": "Fields, tables and other blocks with medium corners.",
+    "$description": "One corner scale for every component inside a theme boundary, from none to xl, and the roles that name a step of it. The full corner, 100vmax, is no DTCG dimension and stays in TokensHandwritten.css as --env-radius-full.",
+    "none": { "$value": { "value": 0, "unit": "rem" } },
+    "xs": { "$value": { "value": 0.25, "unit": "rem" } },
+    "sm": {
+      "$description": "Small corners: buttons in a group, chips, menu rows, list rows inside a surface.",
+      "$value": { "value": 0.5, "unit": "rem" }
+    },
+    "md": { "$value": { "value": 0.75, "unit": "rem" } },
+    "lg": {
+      "$description": "Medium corners: fields, tables, alerts and other blocks.",
       "$value": { "value": 1, "unit": "rem" }
     },
-    "surface": { "$value": { "value": 1.75, "unit": "rem" } },
+    "xl": { "$value": { "value": 1.75, "unit": "rem" } },
+    "surface": {
+      "$description": "The rounded corners of surfaces, dialogs and popups.",
+      "$value": "{radius.xl}"
+    },
     "row-outer": { "$value": "{radius.surface}" },
-    "row-inner": { "$value": { "value": 0.5, "unit": "rem" } },
+    "row-inner": { "$value": "{radius.sm}" },
     "row-single": { "$value": "{radius.row-outer}" }
   }
 }

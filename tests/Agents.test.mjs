@@ -177,7 +177,7 @@ test('the manifest has every component page, export, example and token', () => {
   assert.deepEqual(manifest.templates, []);
   // Tokens: current names with values, and the 0.7 names with their successors.
   const muted = manifest.tokens.items.find((token) => token.id === 'color.fg.muted');
-  assert.equal(muted.cssVariable, '--color-fg-muted');
+  assert.equal(muted.cssVariable, '--env-color-fg-muted');
   assert.deepEqual(Object.keys(muted.values), manifest.tokens.themes);
   assert.ok(
     manifest.tokens.items.some((token) => token.compact),
@@ -185,10 +185,17 @@ test('the manifest has every component page, export, example and token', () => {
   );
   assert.ok(
     manifest.tokens.legacy.every(
-      (token) => !manifest.tokens.items.some((item) => item.id === token.id),
+      (token) => !manifest.tokens.items.some((item) => item.cssVariable === token.cssVariable),
     ),
   );
-  assert.ok(manifest.tokens.legacy.some((token) => token.use));
+  assert.equal(
+    manifest.tokens.legacy.find((token) => token.cssVariable === '--color-text-muted').use,
+    '--env-color-fg-muted',
+  );
+  assert.equal(
+    manifest.tokens.legacy.find((token) => token.cssVariable === '--space-4').use,
+    '--env-space-4',
+  );
 });
 
 test('llms.txt links to pages that exist and llms-full.txt holds every page', () => {
@@ -649,7 +656,7 @@ test('envui mcp answers every tool over stdio from the installed files', async (
   assert.ok(legacy.legacy.length >= 1);
   const legacyChecks = await server.call('get_tokens', { legacy: true, query: 'checkbox' });
   assert.ok(legacyChecks.total >= 1);
-  assert.ok(legacyChecks.legacy.every((token) => token.id.includes('checkbox')));
+  assert.ok(legacyChecks.legacy.every((token) => token.cssVariable.includes('checkbox')));
   assert.equal(
     (await server.call('get_tokens', { legacy: true, type: 'shadow', query: 'checkbox' })).total,
     0,

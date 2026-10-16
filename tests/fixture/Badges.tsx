@@ -37,7 +37,7 @@ export function BadgesFixture({ theme }: { theme: ThemeValue }) {
                 <span
                   key={tone}
                   data-testid="tone-text"
-                  style={{ color: `var(--color-tone-${tone})` }}
+                  style={{ color: `var(--env-color-fg-${tone === 'neutral' ? 'muted' : tone})` }}
                 >
                   {tone}
                 </span>

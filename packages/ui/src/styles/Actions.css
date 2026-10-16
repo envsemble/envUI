@@ -7,9 +7,9 @@
 .env-button,
 .env-nav-list-item {
   transition:
-    background-color var(--motion-duration-fast) var(--motion-ease),
-    color var(--motion-duration-fast) var(--motion-ease),
-    border-color var(--motion-duration-fast) var(--motion-ease);
+    background-color var(--env-motion-duration-fast) var(--env-motion-ease),
+    color var(--env-motion-duration-fast) var(--env-motion-ease),
+    border-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 
 @media (prefers-reduced-motion: reduce) {

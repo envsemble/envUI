@@ -69,7 +69,7 @@ A surface gives a region a background, an inset on every side and rounded corner
 
 - **Corners**: `surface`, the default, gives panes and other large regions 1.75 rem corners; `standard` gives small blocks, such as a summary inside a pane, 0.5 rem corners; `pill` gives a toolbar or a bar of filters fully rounded ends; and `none` leaves square corners for a region that meets the edges of its container, such as a full-width band.
 - **Inset**: without `padding`, the inset follows the window: 1.25 rem in narrow windows, growing to 1.5 rem from 50 rem wide. `padding` takes a step of the spacing scale instead, from 1 (0.25 rem) to 9 (4 rem), and 0 removes it.
-- **Backgrounds**: `pane` is `--color-bg-default`, `row` is `--color-bg-muted`, `canvas` is `--color-bg-page` and `alternate` is `--color-bg-raised`, the background roles of [colors and themes](../foundations/colors.md). In the light theme `alternate` is white, like the page; in the dark theme it matches `pane`.
+- **Backgrounds**: `pane` is `--env-color-bg-default`, `row` is `--env-color-bg-muted`, `canvas` is `--env-color-bg-page` and `alternate` is `--env-color-bg-raised`, the background roles of [colors and themes](../foundations/colors.md). In the light theme `alternate` is white, like the page; in the dark theme it matches `pane`.
 - **Width**: a surface is as wide as its container allows and never wider; set a width on it, or on its container, to make it narrower.
 - **Scale**: a surface keeps the scale of its Theme: its corners and inset spacing are a little smaller in the compact scale. For smaller controls in a toolbar, give them `size="sm"`; for a compact region, wrap it in a Theme with `scale="compact"`. See [scale and density](../foundations/scale.md).
 
@@ -135,7 +135,7 @@ A pill surface holds a toolbar over dense content, with controls of size `sm`. `
 
 ## Changelog
 
-- **1.0.0**: The backgrounds take the semantic background colors: `pane` is `--color-bg-default`, `row` `--color-bg-muted`, `canvas` `--color-bg-page` and `alternate` `--color-bg-raised`.
+- **1.0.0**: The backgrounds take the semantic background colors: `pane` is `--env-color-bg-default`, `row` `--env-color-bg-muted`, `canvas` `--env-color-bg-page` and `alternate` `--env-color-bg-raised`.
 - **0.5.0**: `density="compact"`, which gives the controls inside the compact height.
 - **0.4.0**: The inset is at least 1.25 rem.
 - **0.1.0**: Surface, with backgrounds, padding and corners.

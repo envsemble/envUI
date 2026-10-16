@@ -171,12 +171,12 @@ test.describe('Resizable AppShell', () => {
     await page.goto(resizableShell);
     const header = page.getByTestId('sticky-header');
     const topbar = (await page.locator('.env-app-topbar').boundingBox())!;
-    // Content sticks at --app-sticky-top, the topbar height while the document scrolls.
+    // Content sticks at --env-app-sticky-top, the topbar height while the document scrolls.
     const offsets = await page.locator('.env-app-shell').evaluate((shell) => {
       const style = getComputedStyle(shell);
       return [
-        style.getPropertyValue('--app-sticky-top'),
-        style.getPropertyValue('--topbar-height'),
+        style.getPropertyValue('--env-app-sticky-top'),
+        style.getPropertyValue('--env-topbar-height'),
       ];
     });
     expect(offsets[0]!.trim()).toBe(offsets[1]!.trim());
@@ -435,7 +435,7 @@ test.describe('Title bar', () => {
     await expect(shell).toHaveAttribute('data-title-bar', '');
     const topbar = page.locator('.env-app-topbar');
     expect((await topbar.boundingBox())!.height).toBe(40);
-    // --topbar-height follows the title bar, so the sidebar and the content area line up below it.
+    // --env-topbar-height follows the title bar, so the sidebar and the content area line up below it.
     const offsets = await page.evaluate(() => ({
       content: document.querySelector('.env-app-content')!.getBoundingClientRect().top,
       sidebar: document.querySelector('.env-app-sidebar')!.getBoundingClientRect().top,
@@ -524,7 +524,7 @@ test.describe('Title bar', () => {
         gutter: style.getPropertyValue('scrollbar-gutter'),
         documentOverflow: root.scrollHeight - root.clientHeight,
         overflows: element.scrollHeight > element.clientHeight,
-        stickyTop: style.getPropertyValue('--app-sticky-top').trim(),
+        stickyTop: style.getPropertyValue('--env-app-sticky-top').trim(),
         gutterSupported: CSS.supports('scrollbar-gutter', 'stable'),
       };
     });
@@ -883,7 +883,7 @@ test.describe('Title bar', () => {
       expect(await scroller.evaluate((element) => element.scrollTop)).toBe(0);
   });
 
-  test('a title bar keeps at least --title-bar-height, which an application can set', async ({
+  test('a title bar keeps at least --env-title-bar-height, which an application can set', async ({
     page,
   }) => {
     await page.goto(fullShell);
@@ -893,11 +893,11 @@ test.describe('Title bar', () => {
       'max(calc(env(titlebar-area-height, 0px) + 0.0625rem)',
     );
     expect(
-      await declaredValue(page, '.env-app-shell[data-title-bar]', '--topbar-height'),
+      await declaredValue(page, '.env-app-shell[data-title-bar]', '--env-topbar-height'),
     ).toContain('max(calc(env(titlebar-area-height, 0px) + 0.0625rem)');
     await page
       .locator('.env-app-shell')
-      .evaluate((shell: HTMLElement) => shell.style.setProperty('--title-bar-height', '48px'));
+      .evaluate((shell: HTMLElement) => shell.style.setProperty('--env-title-bar-height', '48px'));
     expect((await page.locator('.env-app-topbar').boundingBox())!.height).toBe(48);
     expect(
       await page
@@ -907,7 +907,7 @@ test.describe('Title bar', () => {
     await page.goto(`${fixtureUrl}/?fixture=title-bar`);
     await page
       .getByTestId('title-bar')
-      .evaluate((bar: HTMLElement) => bar.style.setProperty('--title-bar-height', '48px'));
+      .evaluate((bar: HTMLElement) => bar.style.setProperty('--env-title-bar-height', '48px'));
     expect((await page.getByTestId('title-bar').boundingBox())!.height).toBe(48);
   });
 
@@ -974,10 +974,10 @@ test.describe('Title bar', () => {
       }, token);
     const back = page.getByRole('button', { name: 'Back' });
     // Like the window controls beside them, not the link blue; they darken while hovered.
-    await expect(back).toHaveCSS('color', await color('--color-icon'));
-    expect(await color('--color-icon')).not.toBe(await color('--color-link'));
+    await expect(back).toHaveCSS('color', await color('--env-color-fg-muted'));
+    expect(await color('--env-color-fg-muted')).not.toBe(await color('--env-color-fg-link'));
     await back.hover();
-    await expect(back).toHaveCSS('color', await color('--color-text-primary'));
+    await expect(back).toHaveCSS('color', await color('--env-color-fg-default'));
   });
 
   test('AppShellSkeleton mirrors the full title bar frame', async ({ page }) => {

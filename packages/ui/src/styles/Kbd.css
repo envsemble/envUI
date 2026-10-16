@@ -8,12 +8,12 @@
   align-items: center;
   justify-content: center;
   padding-inline: 0.3125rem;
-  border: 0.0625rem solid var(--color-border-muted);
+  border: 0.0625rem solid var(--env-color-border-muted);
   border-block-end-width: 0.125rem;
   border-radius: 0.3125rem;
-  background: var(--color-fill);
-  color: var(--color-text-primary);
-  font: 500 0.75rem / 1 var(--font-family);
+  background: var(--env-color-bg-neutral-muted);
+  color: var(--env-color-fg-default);
+  font: 500 0.75rem / 1 var(--env-font-family);
   white-space: nowrap;
   vertical-align: baseline;
 }
@@ -30,6 +30,6 @@
 }
 .env-kbd-separator {
   padding-inline: 0.1875rem;
-  color: var(--color-text-muted);
-  font: var(--type-body-small);
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
 }

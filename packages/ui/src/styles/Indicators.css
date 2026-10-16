@@ -9,9 +9,9 @@
   block-size: var(--env-avatar-size);
   overflow: hidden;
   border-radius: 50%;
-  background: var(--color-avatar);
-  color: var(--color-on-avatar);
-  font: 500 calc(var(--env-avatar-size) * 0.4) / 1 var(--font-family);
+  background: var(--env-color-avatar-bg);
+  color: var(--env-color-avatar-fg);
+  font: 500 calc(var(--env-avatar-size) * 0.4) / 1 var(--env-font-family);
   user-select: none;
 }
 .env-avatar-small {
@@ -35,10 +35,10 @@
   block-size: 100%;
 }
 .env-avatar-person-background {
-  fill: var(--color-avatar);
+  fill: var(--env-color-avatar-bg);
 }
 .env-avatar-person-figure {
-  fill: var(--color-avatar-figure);
+  fill: var(--env-color-avatar-figure);
 }
 .env-avatar-image {
   position: absolute;
@@ -56,18 +56,18 @@
 }
 .env-tooltip {
   max-inline-size: min(18rem, calc(100vw - 2rem));
-  padding: var(--space-1) var(--space-2);
+  padding: var(--env-space-1) var(--env-space-2);
   /* Tooltips float over everything at elevation 2, as menus do: a shadow and a hairline edge, so the
      fill separates from a surface of its own color. On a light page the edge is the dark fill a step
      darker rather than the light popup edge, which would ring it like a halo; in dark it is the
      popup edge. The edge is the boundary in high contrast and what forced colors paint once the
      shadow is gone. */
-  border: 1px solid var(--color-border-neutral-strong);
-  border-radius: var(--radius-standard);
-  background: var(--color-toast-neutral);
-  color: var(--color-on-toast);
-  box-shadow: var(--elevation-2-shadow);
-  font: var(--type-body-small);
+  border: 1px solid var(--env-color-border-neutral-strong);
+  border-radius: var(--env-radius-sm);
+  background: var(--env-color-bg-neutral-strong);
+  color: var(--env-color-fg-on-strong);
+  box-shadow: var(--env-elevation-2-shadow);
+  font: var(--env-type-body-small);
   overflow-wrap: anywhere;
 }
 .env-tooltip-disabled-target {
@@ -76,13 +76,13 @@
   border-radius: 100vmax;
 }
 .env-tooltip-disabled-target:focus-visible {
-  outline: 0.125rem solid var(--color-focus-ring);
+  outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.125rem;
 }
 
 .env-bar {
   display: grid;
-  gap: var(--space-2);
+  gap: var(--env-space-2);
   min-inline-size: 0;
 }
 .env-bar-heading {
@@ -90,31 +90,31 @@
   flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: var(--space-3);
-  font: var(--type-body-small);
+  gap: var(--env-space-3);
+  font: var(--env-type-body-small);
 }
 .env-bar-label {
-  color: var(--color-text-muted);
+  color: var(--env-color-fg-muted);
 }
 .env-bar-value {
-  color: var(--color-text-strong);
+  color: var(--env-color-fg-control);
   font-weight: 500;
 }
 .env-bar-track {
   block-size: 0.625rem;
   overflow: hidden;
-  border-radius: var(--md-sys-shape-corner-full);
-  background: var(--color-fill);
+  border-radius: var(--env-radius-full);
+  background: var(--env-color-bg-neutral-muted);
 }
 .env-bar-indicator {
   block-size: 100%;
   border-radius: inherit;
-  background: var(--color-control-blue);
-  transition: inline-size var(--motion-duration-medium) var(--motion-ease);
+  background: var(--env-color-bg-brand-emphasis);
+  transition: inline-size var(--env-motion-duration-medium) var(--env-motion-ease);
 }
 .env-bar[data-indeterminate] .env-bar-indicator {
   inline-size: 40%;
-  animation: env-bar-indeterminate 1.2s var(--motion-ease) infinite;
+  animation: env-bar-indeterminate 1.2s var(--env-motion-ease) infinite;
 }
 @keyframes env-bar-indeterminate {
   from {

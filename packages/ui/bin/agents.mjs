@@ -126,7 +126,7 @@ function renderBlock(manifest, aliasCount, packagePath) {
     '- Look things up with the `envui` MCP tools when they are available: `plan` for candidates for a whole screen, `search`, `get_component`, `get_props`, `get_example`, `get_tokens`. Otherwise read the docs below; use only the exports and props they or the `.d.ts` files list.',
     `- Docs in \`${packagePath}/docs/\`: \`index.md\`; \`components/<page>.md\` with when to use it and what instead, accessibility, examples and props; \`examples/<page>/<Name>.tsx\`; \`foundations/\`; \`patterns/\`; \`setup.md\`. The same as data in \`${packagePath}/manifest.json\`.`,
     `- Imports: ${manifest.imports.entryPoints.map((entry) => `\`${entry}\``).join(', ')}; icons one by one from \`${manifest.imports.icons}\` (names in \`icon-manifest.json\`); \`${manifest.imports.styles}\` once, and the UI inside \`Theme\`.`,
-    '- Style with tokens, as CSS custom properties such as `var(--color-fg-muted)` or `var(--space-4)`: no raw colors or pixel sizes.',
+    '- Style with tokens, as CSS custom properties such as `var(--env-color-fg-muted)` or `var(--env-space-4)`: no raw colors or pixel sizes.',
     '',
     `### Components: \`components/<page>.md\`: exports (also known as)`,
     '',

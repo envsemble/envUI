@@ -1,10 +1,10 @@
 /* Centered dialogs and edge panels share one surface: the popover's look at elevation 3, a shadow
    and a hairline edge, with the surface corners, plus text and action geometry. */
 .env-modal-pane {
-  border: 0.0625rem solid var(--elevation-3-border);
-  box-shadow: var(--elevation-3-shadow);
-  color: var(--color-text-primary);
-  font: var(--type-body);
+  border: 0.0625rem solid var(--env-elevation-3-border);
+  box-shadow: var(--env-elevation-3-shadow);
+  color: var(--env-color-fg-default);
+  font: var(--env-type-body);
   width: min(28rem, 100%);
   max-height: 100%;
   overflow-y: auto;
@@ -13,7 +13,7 @@
   pointer-events: auto;
 }
 .env-surface.env-modal-pane {
-  --env-surface-color: var(--color-dialog);
+  --env-surface-color: var(--env-color-bg-raised);
 }
 .env-dialog-title,
 .env-dialog-description {
@@ -22,13 +22,13 @@
 /* The description belongs to the title, so they sit closer together than the dialog's sections. */
 .env-dialog-header {
   display: grid;
-  gap: var(--space-2);
+  gap: var(--env-space-2);
 }
 .env-dialog-heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-4);
+  gap: var(--env-space-4);
 }
 .env-dialog-title {
   min-inline-size: 0;
@@ -62,17 +62,17 @@
   }
 }
 .env-dialog-title {
-  font: var(--type-h1);
+  font: var(--env-type-h1);
 }
 .env-dialog-description {
-  font: var(--type-body-small);
-  color: var(--color-text-muted);
+  font: var(--env-type-body-small);
+  color: var(--env-color-fg-muted);
 }
 .env-dialog-backdrop {
   position: fixed;
   inset: 0;
   z-index: 100;
-  background: var(--color-bg-overlay);
+  background: var(--env-color-bg-overlay);
 }
 .env-dialog-positioner {
   box-sizing: border-box;
@@ -84,35 +84,35 @@
   z-index: 101;
   display: grid;
   place-items: center;
-  padding: max(var(--viewport-gutter), env(safe-area-inset-top))
-    max(var(--viewport-gutter), env(safe-area-inset-right))
-    max(var(--viewport-gutter), env(safe-area-inset-bottom))
-    max(var(--viewport-gutter), env(safe-area-inset-left));
+  padding: max(var(--env-viewport-gutter), env(safe-area-inset-top))
+    max(var(--env-viewport-gutter), env(safe-area-inset-right))
+    max(var(--env-viewport-gutter), env(safe-area-inset-bottom))
+    max(var(--env-viewport-gutter), env(safe-area-inset-left));
   pointer-events: none;
 }
 /* Search-like dialogs open near the top, so results can grow downward without moving the field. */
 .env-dialog-positioner[data-placement='top'] {
   place-items: start center;
-  padding-block-start: max(var(--viewport-gutter), min(12vh, 6rem), env(safe-area-inset-top));
+  padding-block-start: max(var(--env-viewport-gutter), min(12vh, 6rem), env(safe-area-inset-top));
 }
 .env-dialog-positioner[data-placement='right'] {
   place-items: stretch end;
   padding: 0;
 }
 .env-modal-pane[data-placement='right'] {
-  padding-block-start: max(var(--space-5), env(safe-area-inset-top));
-  padding-block-end: max(var(--space-5), env(safe-area-inset-bottom));
-  padding-inline-end: max(var(--space-5), env(safe-area-inset-right));
+  padding-block-start: max(var(--env-space-5), env(safe-area-inset-top));
+  padding-block-end: max(var(--env-space-5), env(safe-area-inset-bottom));
+  padding-inline-end: max(var(--env-space-5), env(safe-area-inset-right));
 }
 /* A panel across the whole width keeps clear of the safe areas on both sides, such as a phone's
    rounded corners in landscape. */
 @media (max-width: 28rem) {
   .env-modal-pane[data-placement='right'] {
-    padding-inline: max(var(--space-5), env(safe-area-inset-left), env(safe-area-inset-right));
+    padding-inline: max(var(--env-space-5), env(safe-area-inset-left), env(safe-area-inset-right));
   }
 }
 @media (max-width: 48rem) {
   .env-modal-pane[data-placement='right'][data-size='wide'] {
-    padding-inline: max(var(--space-5), env(safe-area-inset-left), env(safe-area-inset-right));
+    padding-inline: max(var(--env-space-5), env(safe-area-inset-left), env(safe-area-inset-right));
   }
 }

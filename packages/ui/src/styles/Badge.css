@@ -2,59 +2,59 @@
    panes and rows, also over its tint; a solid badge puts fg-on-emphasis on the tone's emphasis fill,
    and an outlined one draws the tone's edge. */
 .env-badge {
-  --env-badge-tone: var(--color-fg-muted);
-  --env-badge-tint: var(--color-bg-neutral-muted);
-  --env-badge-fill: var(--color-bg-neutral-emphasis);
-  --env-badge-edge: var(--color-border-neutral-emphasis);
+  --env-badge-tone: var(--env-color-fg-muted);
+  --env-badge-tint: var(--env-color-bg-neutral-muted);
+  --env-badge-fill: var(--env-color-bg-neutral-emphasis);
+  --env-badge-edge: var(--env-color-border-neutral);
   box-sizing: border-box;
   inline-size: fit-content;
   max-inline-size: 100%;
   min-inline-size: 0;
   display: inline-flex;
   align-items: center;
-  gap: var(--space-1);
-  padding: 0.0625rem var(--space-2);
+  gap: var(--env-space-1);
+  padding: 0.0625rem var(--env-space-2);
   border: 0.0625rem solid transparent;
   border-radius: 100vmax;
   background: var(--env-badge-tint);
   color: var(--env-badge-tone);
-  font: 500 0.75rem / 1.4 var(--font-family);
+  font: 500 0.75rem / 1.4 var(--env-font-family);
   white-space: nowrap;
   vertical-align: middle;
 }
 .env-badge[data-tone='accent'] {
-  --env-badge-tone: var(--color-fg-accent);
-  --env-badge-tint: var(--color-bg-accent-muted);
-  --env-badge-fill: var(--color-bg-accent-emphasis);
-  --env-badge-edge: var(--color-border-accent-emphasis);
+  --env-badge-tone: var(--env-color-fg-accent);
+  --env-badge-tint: var(--env-color-bg-accent-muted);
+  --env-badge-fill: var(--env-color-bg-accent-emphasis);
+  --env-badge-edge: var(--env-color-border-accent);
 }
 .env-badge[data-tone='success'] {
-  --env-badge-tone: var(--color-fg-success);
-  --env-badge-tint: var(--color-bg-success-muted);
-  --env-badge-fill: var(--color-bg-success-emphasis);
-  --env-badge-edge: var(--color-border-success-emphasis);
+  --env-badge-tone: var(--env-color-fg-success);
+  --env-badge-tint: var(--env-color-bg-success-muted);
+  --env-badge-fill: var(--env-color-bg-success-emphasis);
+  --env-badge-edge: var(--env-color-border-success);
 }
 .env-badge[data-tone='warning'] {
-  --env-badge-tone: var(--color-fg-warning);
-  --env-badge-tint: var(--color-bg-warning-muted);
-  --env-badge-fill: var(--color-bg-warning-emphasis);
-  --env-badge-edge: var(--color-border-warning-emphasis);
+  --env-badge-tone: var(--env-color-fg-warning);
+  --env-badge-tint: var(--env-color-bg-warning-muted);
+  --env-badge-fill: var(--env-color-bg-warning-emphasis);
+  --env-badge-edge: var(--env-color-border-warning);
 }
 .env-badge[data-tone='danger'] {
-  --env-badge-tone: var(--color-fg-danger);
-  --env-badge-tint: var(--color-bg-danger-muted);
-  --env-badge-fill: var(--color-bg-danger-emphasis);
-  --env-badge-edge: var(--color-border-danger-emphasis);
+  --env-badge-tone: var(--env-color-fg-danger);
+  --env-badge-tint: var(--env-color-bg-danger-muted);
+  --env-badge-fill: var(--env-color-bg-danger-emphasis);
+  --env-badge-edge: var(--env-color-border-danger);
 }
 .env-badge[data-tone='done'] {
-  --env-badge-tone: var(--color-fg-done);
-  --env-badge-tint: var(--color-bg-done-muted);
-  --env-badge-fill: var(--color-bg-done-emphasis);
-  --env-badge-edge: var(--color-border-done-emphasis);
+  --env-badge-tone: var(--env-color-fg-done);
+  --env-badge-tint: var(--env-color-bg-done-muted);
+  --env-badge-fill: var(--env-color-bg-done-emphasis);
+  --env-badge-edge: var(--env-color-border-done);
 }
 .env-badge[data-variant='solid'] {
   background: var(--env-badge-fill);
-  color: var(--color-fg-on-emphasis);
+  color: var(--env-color-fg-on-emphasis);
 }
 .env-badge[data-variant='outline'] {
   border-color: var(--env-badge-edge);
@@ -82,16 +82,16 @@
   justify-content: center;
   padding-inline: 0.375rem;
   border-radius: 100vmax;
-  background: var(--color-fill);
-  color: var(--color-text-primary);
-  font: 500 0.75rem / 1 var(--font-family);
+  background: var(--env-color-bg-neutral-muted);
+  color: var(--env-color-fg-default);
+  font: 500 0.75rem / 1 var(--env-font-family);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   vertical-align: middle;
 }
 .env-counter-badge[data-tone='accent'] {
-  background: var(--color-bg-accent-emphasis);
-  color: var(--color-fg-on-emphasis);
+  background: var(--env-color-bg-accent-emphasis);
+  color: var(--env-color-fg-on-emphasis);
 }
 /* A change as one counter-sized pill: additions in the success tone, deletions in the danger tone. */
 .env-diff-stat {
@@ -104,17 +104,17 @@
   gap: 0.25rem;
   padding-inline: 0.375rem;
   border-radius: 100vmax;
-  background: var(--color-fill);
-  font: 500 0.75rem / 1 var(--font-family);
+  background: var(--env-color-bg-neutral-muted);
+  font: 500 0.75rem / 1 var(--env-font-family);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   vertical-align: middle;
 }
 .env-diff-stat-additions {
-  color: var(--color-fg-success);
+  color: var(--env-color-fg-success);
 }
 .env-diff-stat-deletions {
-  color: var(--color-fg-danger);
+  color: var(--env-color-fg-danger);
 }
 .env-counter-badge-label,
 .env-diff-stat-label {
@@ -146,5 +146,5 @@
    back toward the canvas instead of adding another fill. It looks about as it does on the canvas,
    and its tones keep their 4.5:1 contrast in both themes. */
 .env-button:not(.env-button-primary, .env-button-important) .env-diff-stat {
-  background: var(--color-bg-page-muted);
+  background: var(--env-color-bg-inset);
 }

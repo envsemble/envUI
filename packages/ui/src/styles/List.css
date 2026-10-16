@@ -1,7 +1,7 @@
 /* List geometry is shared with selectable rows and select options. */
 .env-list {
   /* The density sets the rows' block padding; a row is at least as tall as a small control with it. */
-  --env-list-row-padding: calc(var(--row-padding-block-md) + var(--space-1));
+  --env-list-row-padding: calc(var(--env-row-padding-block-md) + var(--env-space-1));
   min-inline-size: 0;
   overflow-wrap: anywhere;
   display: grid;
@@ -11,29 +11,29 @@
   list-style: none;
 }
 .env-list > .env-list-item {
-  --env-list-item-fill: var(--color-row);
-  --env-list-item-fill-hover: var(--color-row-hover);
-  --env-list-item-fill-pressed: var(--color-row-pressed);
+  --env-list-item-fill: var(--env-color-list-item-bg);
+  --env-list-item-fill-hover: var(--env-color-list-item-bg-hover);
+  --env-list-item-fill-pressed: var(--env-color-list-item-bg-pressed);
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: var(--space-3);
-  min-height: calc(var(--control-height-sm) + 2 * var(--env-list-row-padding));
-  padding: var(--env-list-row-padding) var(--row-padding-inline);
-  font: var(--type-body-small);
+  gap: var(--env-space-3);
+  min-height: calc(var(--env-control-height-sm) + 2 * var(--env-list-row-padding));
+  padding: var(--env-list-row-padding) var(--env-row-padding-inline);
+  font: var(--env-type-body-small);
   background: var(--env-list-item-fill);
-  color: var(--color-row-text);
+  color: var(--env-color-fg-default);
 }
 .env-list[data-density='xs'] {
-  --env-list-row-padding: calc(var(--row-padding-block-xs) + var(--space-1));
+  --env-list-row-padding: calc(var(--env-row-padding-block-xs) + var(--env-space-1));
 }
 .env-list[data-density='sm'] {
-  --env-list-row-padding: calc(var(--row-padding-block-sm) + var(--space-1));
+  --env-list-row-padding: calc(var(--env-row-padding-block-sm) + var(--env-space-1));
 }
 .env-list[data-density='lg'] {
-  --env-list-row-padding: calc(var(--row-padding-block-lg) + var(--space-1));
+  --env-list-row-padding: calc(var(--env-row-padding-block-lg) + var(--env-space-1));
 }
 .env-list > .env-list-item > * {
   min-inline-size: 0;
@@ -41,13 +41,13 @@
 }
 .env-list small {
   display: block;
-  color: var(--color-row-detail);
-  font: var(--type-body-small);
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
 }
 .env-list-surface .env-list > .env-list-item {
-  --env-list-item-fill: var(--color-row-alternate);
-  --env-list-item-fill-hover: var(--color-bg-raised-hover);
-  --env-list-item-fill-pressed: var(--color-bg-raised-pressed);
+  --env-list-item-fill: var(--env-color-bg-raised);
+  --env-list-item-fill-hover: var(--env-color-bg-raised-hover);
+  --env-list-item-fill-pressed: var(--env-color-bg-raised-pressed);
 }
 /* A row that opens something through a link or button inside reacts like a clickable card: to
    hover, to keyboard focus inside it and to presses. The link or button marked data-row-target
@@ -56,7 +56,7 @@
    row's other controls. */
 .env-list > .env-list-item[data-interactive] {
   position: relative;
-  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 .env-list > .env-list-item[data-interactive] [data-row-target] {
   -webkit-user-drag: none;
@@ -87,5 +87,5 @@
   }
 }
 .env-list-surface .env-list + .env-list {
-  margin-top: var(--space-3);
+  margin-top: var(--env-space-3);
 }

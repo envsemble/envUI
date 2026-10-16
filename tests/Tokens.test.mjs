@@ -9,6 +9,7 @@ import {
   contextTokens,
   cssDeclarations,
   duplicateTokens,
+  migrationNames,
   overridingCustomProperties,
 } from '../packages/ui/terrazzo.config.mjs';
 import {
@@ -68,19 +69,19 @@ test('two tokens that become one custom property fail the build', async () => {
         tokens['row-padding-inline'] = { $type: 'dimension', $value: { value: 2, unit: 'rem' } };
       },
     }),
-    /(?:row\.padding-inline and row-padding-inline|row-padding-inline and row\.padding-inline) both become --row-padding-inline/,
+    /(?:row\.padding-inline and row-padding-inline|row-padding-inline and row\.padding-inline) both become --env-row-padding-inline/,
   );
 });
 
 test('two tokens that the CSS output names alike fail the build', async () => {
-  // plugin-css writes a name only with letters, digits and hyphens: space.4+ would be --space-4.
+  // plugin-css writes a name only with letters, digits and hyphens: space.4+ would be --env-space-4.
   await assert.rejects(
     buildChanged('collision-written', {
       'base/space.tokens.json': (tokens) => {
         tokens.space['4+'] = { $value: { value: 1.25, unit: 'rem' } };
       },
     }),
-    /space\.4\+ and space\.4 both become --space-4|space\.4 and space\.4\+ both become --space-4/,
+    /space\.4\+ and space\.4 both become --env-space-4|space\.4 and space\.4\+ both become --env-space-4/,
   );
 });
 
@@ -91,7 +92,7 @@ test('a token whose path does not spell its custom property fails the build', as
         tokens.space['huge+'] = { $value: { value: 8, unit: 'rem' } };
       },
     }),
-    /space\.huge\+ becomes --space-huge, not --space-huge\+/,
+    /space\.huge\+ becomes --env-space-huge, not --env-space-huge\+/,
   );
 });
 
@@ -138,7 +139,7 @@ test('a token that TokensHandwritten.css also declares for every theme fails the
         };
       },
     }),
-    /TokensHandwritten\.css declares --viewport-gutter, which the token viewport\.gutter becomes/,
+    /TokensHandwritten\.css declares --env-viewport-gutter, which the token viewport\.gutter becomes/,
   );
 });
 
@@ -172,10 +173,11 @@ test('a token that TokensHandwritten.css declares under another at-rule fails th
       'handwritten-layer',
       {},
       {
-        handwritten: '\n@layer env.tokens {\n  .env-theme {\n    --control-height: 3rem;\n  }\n}\n',
+        handwritten:
+          '\n@layer env.tokens {\n  .env-theme {\n    --env-control-height: 3rem;\n  }\n}\n',
       },
     ),
-    /TokensHandwritten\.css declares --control-height, which the token control\.height becomes/,
+    /TokensHandwritten\.css declares --env-control-height, which the token control\.height becomes/,
   );
   await assert.rejects(
     buildChanged(
@@ -183,10 +185,10 @@ test('a token that TokensHandwritten.css declares under another at-rule fails th
       {},
       {
         handwritten:
-          '\n@media (prefers-contrast: more) {\n  .env-theme { --control-height: 3rem; }\n}\n',
+          '\n@media (prefers-contrast: more) {\n  .env-theme { --env-control-height: 3rem; }\n}\n',
       },
     ),
-    /TokensHandwritten\.css declares --control-height/,
+    /TokensHandwritten\.css declares --env-control-height/,
   );
 });
 
@@ -208,8 +210,8 @@ test('a typography token builds, with a custom property for each part', async ()
     },
   });
   const css = await readFile(join(directory, 'src/styles/Tokens.css'), 'utf8');
-  assert.match(css, /--text-label-font-size: var\(--font-size-body-small\);/);
-  assert.match(css, /--text-label: var\(--text-label-font-weight\)/);
+  assert.match(css, /--env-text-label-font-size: var\(--env-font-size-body-small\);/);
+  assert.match(css, /--env-text-label: var\(--env-text-label-font-weight\)/);
   const list = JSON.parse(await readFile(join(directory, 'src/generated/tokens.json'), 'utf8'));
   const label = list.tokens.find((token) => token.id === 'text.label');
   assert.deepEqual(label.values.dark.resolved, {
@@ -248,7 +250,7 @@ const textLabel = (extra = {}) => ({
 });
 
 test('a part that only one theme gives a composite token cannot clash either', async () => {
-  // The dark scheme adds a part, --text-label-font-style, which another token already becomes.
+  // The dark scheme adds a part, --env-text-label-font-style, which another token already becomes.
   await assert.rejects(
     buildChanged('typography-theme-part', {
       'base/typography.tokens.json': (tokens) => {
@@ -261,7 +263,7 @@ test('a part that only one theme gives a composite token cannot clash either', a
         tokens.text = { label: textLabel({ fontStyle: 'italic' }) };
       },
     }),
-    /text\.label and text\.label-font-style both become --text-label-font-style/,
+    /text\.label and text\.label-font-style both become --env-text-label-font-style/,
   );
 });
 
@@ -275,7 +277,7 @@ test('a typography token that aliases another reads the parts the other declares
     },
   });
   const css = await readFile(join(directory, 'src/styles/Tokens.css'), 'utf8');
-  assert.match(css, /--text-caption-font-size: var\(--text-label-font-size\);/);
+  assert.match(css, /--env-text-caption-font-size: var\(--env-text-label-font-size\);/);
   const declared = new Set([...css.matchAll(/(--[\w-]+)\s*:/g)].map(([, name]) => name));
   const undeclared = [...css.matchAll(/var\((--[\w-]+)\)/g)]
     .map(([, name]) => name)
@@ -725,30 +727,39 @@ test('the hand-written tokens read only tokens', async () => {
 /** A migration map of each kind of entry, as the token build writes it. */
 const sampleMigration = {
   names: {
-    '--color-old-fill': { token: 'color.bg.default', cssVariable: '--color-bg-default' },
+    '--color-old-fill': {
+      kind: 'alias',
+      token: 'color.bg.default',
+      cssVariable: '--env-color-bg-default',
+    },
     '--color-old-scrim': {
+      kind: 'alias',
       token: 'color.bg.overlay',
-      cssVariable: '--color-bg-overlay',
+      cssVariable: '--env-color-bg-overlay',
       note: 'Translucent now.',
     },
-    '--color-old-row': {
-      tokens: { light: 'color.bg.default', dark: 'color.bg.muted' },
-      cssVariables: { light: '--color-bg-default', dark: '--color-bg-muted' },
-      component: 'List rows',
-    },
-    '--color-old-avatar': { primitive: 'palette.blue.20', value: '#9fc1f8', component: 'Avatars' },
+    '--color-old-avatar': { kind: 'fixed', value: '#9fc1f8', component: 'Avatars' },
     '--color-old-initials': {
-      primitive: 'palette.blue.70',
+      kind: 'fixed',
       value: { light: '#004aa2', 'light-high-contrast': '#001d49' },
       component: 'Avatars',
     },
     '--color-old-gone': {
-      removed: true,
-      replacement: 'color.bg.raised',
+      kind: 'removed',
+      token: 'color.bg.raised',
+      cssVariable: '--env-color-bg-raised',
       note: 'Unused.',
-      cssVariable: '--color-bg-raised',
     },
-    '--state-old-shift': { removed: true, replacement: null, note: 'The rule | is gone.' },
+    '--state-old-shift': { kind: 'removed', note: 'The rule | is gone.' },
+    '--radius-old': {
+      kind: 'renamed',
+      token: 'radius.sm',
+      cssVariable: '--env-radius-sm',
+      note: 'One scale.',
+    },
+    '--old-hook': { kind: 'renamed', cssVariable: '--env-old-hook' },
+    '--space-1': { kind: 'prefixed', cssVariable: '--env-space-1' },
+    '--space-2': { kind: 'prefixed', cssVariable: '--env-space-2' },
   },
 };
 
@@ -756,19 +767,19 @@ test("the codemods' rename map takes the token migration map as its tokens secti
   const section = migrationMapSection(sampleMigration);
   assert.match(section.$comment, /npm run tokens:build/);
   assert.deepEqual(Object.fromEntries(Object.entries(section).slice(1)), {
-    '--color-old-fill': { to: '--color-bg-default' },
-    '--color-old-scrim': { to: '--color-bg-overlay', note: 'Translucent now.' },
-    '--color-old-row': {
-      byTheme: { light: '--color-bg-default', dark: '--color-bg-muted' },
-      component: 'List rows',
-    },
+    '--color-old-fill': { to: '--env-color-bg-default' },
+    '--color-old-scrim': { to: '--env-color-bg-overlay', note: 'Translucent now.' },
     '--color-old-avatar': { value: '#9fc1f8', component: 'Avatars' },
     '--color-old-initials': {
       value: { light: '#004aa2', 'light-high-contrast': '#001d49' },
       component: 'Avatars',
     },
-    '--color-old-gone': { removed: true, to: '--color-bg-raised', note: 'Unused.' },
+    '--color-old-gone': { removed: true, to: '--env-color-bg-raised', note: 'Unused.' },
     '--state-old-shift': { removed: true, to: null, note: 'The rule | is gone.' },
+    '--radius-old': { to: '--env-radius-sm', note: 'One scale.' },
+    '--old-hook': { to: '--env-old-hook' },
+    '--space-1': { to: '--env-space-1' },
+    '--space-2': { to: '--env-space-2' },
   });
   // The section is added after the last one, or replaces itself; the other sections stay as written.
   const map = '{\n  "version": "1.0.0",\n  "docs": {\n    "a": "b"\n  }\n}\n';
@@ -791,19 +802,21 @@ test("the codemods' rename map takes the token migration map as its tokens secti
 
 test('the migration guide lists the token migration map between its markers', () => {
   const list = migrationGuideList(sampleMigration);
-  assert.match(list, /\| `--color-old-gone` \| `--color-bg-raised` \| Unused\. \|/);
+  assert.match(list, /\| `--color-old-gone` \| `--env-color-bg-raised` \| Unused\. \|/);
   assert.match(list, /\| `--state-old-shift` \| — \| The rule \\| is gone\. \|/);
-  assert.match(list, /\| `--color-old-fill` \| `--color-bg-default` \| {2}\|/);
-  assert.match(
-    list,
-    /\| Light \| Dark \|\n.*\n\| `--color-old-row` \| List rows \| `--color-bg-default` \| `--color-bg-muted` \|/,
-  );
+  assert.match(list, /\| `--color-old-fill` \| `--env-color-bg-default` \| {2}\|/);
   assert.match(list, /\| `--color-old-avatar` \| Avatars \| `#9fc1f8` \|/);
   assert.match(
     list,
     /\| `--color-old-initials` \| Avatars \| `#004aa2` \(light\), `#001d49` \(light, high contrast\) \|/,
   );
-  assert.match(list, /\| `--color-old-scrim` \| `--color-bg-overlay` \| Translucent now\. \|/);
+  assert.match(list, /\| `--color-old-scrim` \| `--env-color-bg-overlay` \| Translucent now\. \|/);
+  assert.match(list, /\| `--radius-old` \| `--env-radius-sm` \| One scale\. \|/);
+  assert.match(list, /\| `--old-hook` \| `--env-old-hook` \| {2}\|/);
+  assert.match(
+    list,
+    /Every other name only takes the prefix, `--space-1` as `--env-space-1`: `--space-1`, `--space-2`\./,
+  );
   const guide =
     'Before.\n\n<!-- token-migration:start: note -->\nold\n<!-- token-migration:end -->\n\nAfter.\n';
   assert.equal(
@@ -811,6 +824,59 @@ test('the migration guide lists the token migration map between its markers', ()
     'Before.\n\n<!-- token-migration:start: note -->\n\nnew\n\n<!-- token-migration:end -->\n\nAfter.\n',
   );
   assert.throws(() => withGuideList('No markers.\n', 'new'), /needs the markers/);
+});
+
+test('the migration map takes each name once, from the sections of removed-tokens.json', () => {
+  const isToken = (id) => ['color.bg.default', 'radius.sm', 'space.1'].includes(id);
+  const properties = new Set(['--env-color-bg-default', '--env-radius-sm', '--env-space-1']);
+  const names = migrationNames(
+    {
+      prefixed: ['--space-1'],
+      renamed: {
+        '--radius-standard': { replacement: 'radius.sm', note: 'One scale.' },
+        '--line-height-body': { cssVariable: '--env-line-height-body' },
+      },
+      aliases: {
+        '--color-pane': { replacement: 'color.bg.default', component: 'Panes' },
+        '--color-white': { value: '#ffffff' },
+      },
+      removed: { '--scale': { replacement: null, note: 'Gone.' } },
+    },
+    { isToken, properties },
+  );
+  assert.deepEqual(names, {
+    '--color-pane': {
+      kind: 'alias',
+      token: 'color.bg.default',
+      cssVariable: '--env-color-bg-default',
+      component: 'Panes',
+    },
+    '--color-white': { kind: 'fixed', value: '#ffffff' },
+    '--line-height-body': { kind: 'renamed', cssVariable: '--env-line-height-body' },
+    '--radius-standard': {
+      kind: 'renamed',
+      token: 'radius.sm',
+      cssVariable: '--env-radius-sm',
+      note: 'One scale.',
+    },
+    '--scale': { kind: 'removed', note: 'Gone.' },
+    '--space-1': { kind: 'prefixed', cssVariable: '--env-space-1' },
+  });
+  const failing = (data) => () => migrationNames(data, { isToken, properties });
+  assert.throws(failing({ prefixed: ['--space-9'] }), /no token becomes --env-space-9/);
+  assert.throws(
+    failing({ prefixed: ['--space-1'], removed: { '--space-1': { note: 'x' } } }),
+    /lists --space-1 in both prefixed and removed/,
+  );
+  assert.throws(
+    failing({ aliases: { '--color-x': { replacement: 'color.bg.gone' } } }),
+    /which is no public token/,
+  );
+  assert.throws(failing({ removed: { '--env-old': { note: 'x' } } }), /already has the prefix/);
+  assert.throws(
+    failing({ renamed: { '--hook': { cssVariable: '--hook-2' } } }),
+    /needs a replacement token or an --env- cssVariable/,
+  );
 });
 
 test("the codemods' rename map and the migration guide carry the token migration map", async () => {

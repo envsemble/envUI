@@ -27,10 +27,10 @@ ruleTester.run('no-raw-colors with nested fallbacks', rule, {
 
 ruleTester.run('no-raw-colors', rule, {
   valid: [
-    '<div style={{ color: "var(--color-fg-muted)" }} />',
-    '<div style={{ background: "color-mix(in srgb, var(--color-bg-default) 80%, transparent)" }} />',
+    '<div style={{ color: "var(--env-color-fg-muted)" }} />',
+    '<div style={{ background: "color-mix(in srgb, var(--env-color-bg-default) 80%, transparent)" }} />',
     // A relative color derived from a token keeps following it.
-    '<div style={{ color: "hsl(from var(--color-fg-link) h s calc(l - 10))" }} />',
+    '<div style={{ color: "hsl(from var(--env-color-fg-link) h s calc(l - 10))" }} />',
     // Channels that all come from custom properties, and colors inside a CSS string.
     '<div style={{ color: "oklch(var(--l) var(--c) var(--h))", background: "rgb(var(--rgb) / 50%)" }} />',
     '<div style={{ color: "color(display-p3 var(--r) var(--g) var(--b))" }} />',
@@ -70,7 +70,7 @@ ruleTester.run('no-raw-colors', rule, {
       errors: [
         {
           message:
-            'Raw color #fff in an inline style: use an envUI color token instead, such as var(--color-fg-default) or another var(--color-fg-…) role, so the color follows the theme and keeps its contrast.',
+            'Raw color #fff in an inline style: use an envUI color token instead, such as var(--env-color-fg-default) or another var(--color-fg-…) role, so the color follows the theme and keeps its contrast.',
           line: 1,
           column: 22,
         },
@@ -114,7 +114,7 @@ ruleTester.run('no-raw-colors', rule, {
       errors: [
         {
           message:
-            'Raw color red in an inline style: use an envUI color token instead, such as var(--color-border-default) or another var(--color-border-…) role, so the color follows the theme and keeps its contrast.',
+            'Raw color red in an inline style: use an envUI color token instead, such as var(--env-color-border-default) or another var(--color-border-…) role, so the color follows the theme and keeps its contrast.',
         },
       ],
     },
@@ -138,12 +138,12 @@ ruleTester.run('no-raw-colors', rule, {
     },
     // Custom properties set inline, including envUI's own tokens.
     {
-      code: '<div style={{ "--color-bg-default": "#101010" }} />',
-      errors: [raw('#101010', '--color-bg-default')],
+      code: '<div style={{ "--env-color-bg-default": "#101010" }} />',
+      errors: [raw('#101010', '--env-color-bg-default')],
     },
     // Values that depend on state, and spread style objects.
     {
-      code: '<div style={{ color: danger ? "#b3261e" : "var(--color-fg-default)" }} />',
+      code: '<div style={{ color: danger ? "#b3261e" : "var(--env-color-fg-default)" }} />',
       errors: [raw('#b3261e', 'color')],
     },
     {
@@ -201,7 +201,7 @@ ruleTester.run('no-raw-colors', rule, {
     },
     // Colors in an expression of a template are checked too.
     {
-      code: `<div style={{ border: \`1px solid \${on ? "#000" : "var(--color-border-default)"}\` }} />`,
+      code: `<div style={{ border: \`1px solid \${on ? "#000" : "var(--env-color-border-default)"}\` }} />`,
       errors: [raw('#000', 'border')],
     },
     // A fallback is a color as much as the value.

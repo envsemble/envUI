@@ -12,15 +12,15 @@
   max-block-size: var(--available-height, 80vh);
   display: grid;
   align-content: start;
-  gap: var(--space-3);
-  padding: var(--space-5);
+  gap: var(--env-space-3);
+  padding: var(--env-space-5);
   overflow-y: auto;
-  border: 0.0625rem solid var(--elevation-2-border);
-  border-radius: var(--radius-surface);
-  background: var(--color-popup);
-  box-shadow: var(--elevation-2-shadow);
-  color: var(--color-text-primary);
-  font: var(--type-body);
+  border: 0.0625rem solid var(--env-elevation-2-border);
+  border-radius: var(--env-radius-surface);
+  background: var(--env-color-bg-popup);
+  box-shadow: var(--env-elevation-2-shadow);
+  color: var(--env-color-fg-default);
+  font: var(--env-type-body);
   overflow-wrap: anywhere;
   outline: none;
   transform-origin: var(--transform-origin);
@@ -30,5 +30,5 @@
 }
 .env-popover-title {
   margin: 0;
-  font: var(--type-h2);
+  font: var(--env-type-h2);
 }

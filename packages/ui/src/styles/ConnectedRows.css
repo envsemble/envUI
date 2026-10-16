@@ -1,16 +1,16 @@
 /* Private connected-row geometry shared across list, radio and select semantics. */
 .env-connected-rows > .env-connected-row {
-  border-radius: var(--radius-row-inner);
+  border-radius: var(--env-radius-row-inner);
 }
 .env-connected-rows > .env-connected-row:nth-child(1 of .env-connected-row) {
-  border-start-start-radius: var(--radius-row-outer);
-  border-start-end-radius: var(--radius-row-outer);
+  border-start-start-radius: var(--env-radius-row-outer);
+  border-start-end-radius: var(--env-radius-row-outer);
 }
 .env-connected-rows > .env-connected-row:nth-last-child(1 of .env-connected-row) {
-  border-end-start-radius: var(--radius-row-outer);
-  border-end-end-radius: var(--radius-row-outer);
+  border-end-start-radius: var(--env-radius-row-outer);
+  border-end-end-radius: var(--env-radius-row-outer);
 }
 .env-connected-rows
   > .env-connected-row:nth-child(1 of .env-connected-row):nth-last-child(1 of .env-connected-row) {
-  border-radius: var(--radius-row-single);
+  border-radius: var(--env-radius-row-single);
 }

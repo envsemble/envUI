@@ -7,26 +7,26 @@
   flex: 0 0 auto;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-1);
+  gap: var(--env-space-1);
   inline-size: fit-content;
   min-inline-size: 0;
   max-inline-size: 100%;
 }
 /* A size gives the buttons that control height; without one they take the container's. */
 .env-pagination[data-size='sm'] {
-  --control-height: var(--control-height-sm);
+  --env-control-height: var(--env-control-height-sm);
 }
 .env-pagination[data-size='md'] {
-  --control-height: var(--control-height-md);
+  --env-control-height: var(--env-control-height-md);
 }
 .env-pagination[data-size='lg'] {
-  --control-height: var(--control-height-lg);
+  --env-control-height: var(--env-control-height-lg);
 }
 /* Tabular digits keep the buttons in place as the numbers change. */
 .env-pagination-range {
-  margin-inline-end: var(--space-2);
-  color: var(--color-text-muted);
-  font: var(--type-body-small);
+  margin-inline-end: var(--env-space-2);
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }

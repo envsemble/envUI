@@ -73,7 +73,7 @@ export function Surface<Element extends StackElement = 'div'>({
       ),
       style: {
         ...(padding !== undefined
-          ? { '--env-surface-padding': padding === 0 ? '0rem' : `var(--space-${padding})` }
+          ? { '--env-surface-padding': padding === 0 ? '0rem' : `var(--env-space-${padding})` }
           : {}),
         ...style,
       } as CSSProperties,

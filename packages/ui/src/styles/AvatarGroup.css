@@ -1,11 +1,11 @@
 /* Avatar groups: overlapping avatars, later ones over earlier ones, each ringed in the color of the
    surface below so neighbours stay apart. The ring follows the envUI surface the group sits on, or
-   the canvas; --avatar-group-ring sets it for any other surface, such as a row. */
+   the canvas; --env-avatar-group-ring sets it for any other surface, such as a row. */
 .env-avatar-group {
   --env-avatar-group-size: 2rem;
   --env-avatar-group-overlap: calc(var(--env-avatar-group-size) / 4);
   --env-avatar-group-ring-width: max(0.125rem, calc(var(--env-avatar-group-size) / 16));
-  --env-avatar-group-ring: var(--avatar-group-ring, var(--env-surface-color, var(--color-canvas)));
+  --env-avatar-group-ring-color: var(--env-avatar-group-ring, var(--env-surface-color, var(--env-color-bg-page)));
   box-sizing: border-box;
   display: inline-flex;
   flex: 0 0 auto;
@@ -30,7 +30,7 @@
 }
 .env-avatar-group .env-avatar,
 .env-avatar-group-overflow {
-  box-shadow: 0 0 0 var(--env-avatar-group-ring-width) var(--env-avatar-group-ring);
+  box-shadow: 0 0 0 var(--env-avatar-group-ring-width) var(--env-avatar-group-ring-color);
 }
 
 /* A pressable avatar: a button or link the size of the picture, with a state layer over it. */
@@ -51,13 +51,13 @@
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 .env-avatar-group-item:hover::after {
-  background: var(--color-state-layer-hover);
+  background: var(--env-color-bg-neutral-subtle-hover);
 }
 .env-avatar-group-item:active::after {
-  background: var(--color-state-layer-pressed);
+  background: var(--env-color-bg-neutral-subtle-pressed);
 }
 /* The avatar under the pointer or keyboard focus comes in front of its neighbours. */
 .env-avatar-group
@@ -66,7 +66,7 @@
 }
 .env-avatar-group-item:focus-visible,
 .env-avatar-group-overflow:focus-visible {
-  outline: 0.125rem solid var(--color-focus-ring);
+  outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: var(--env-avatar-group-ring-width);
 }
 
@@ -81,10 +81,10 @@
   padding-inline: calc(var(--env-avatar-group-size) / 6);
   border-radius: 100vmax;
   /* The neutral fill over the ring color: opaque, since the count overlaps the avatars. */
-  background: linear-gradient(var(--color-bg-neutral-muted), var(--color-bg-neutral-muted))
-    var(--env-avatar-group-ring);
-  color: var(--color-text-primary);
-  font: 500 max(0.6875rem, calc(var(--env-avatar-group-size) * 0.4)) / 1 var(--font-family);
+  background: linear-gradient(var(--env-color-bg-neutral-muted), var(--env-color-bg-neutral-muted))
+    var(--env-avatar-group-ring-color);
+  color: var(--env-color-fg-default);
+  font: 500 max(0.6875rem, calc(var(--env-avatar-group-size) * 0.4)) / 1 var(--env-font-family);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   cursor: default;
@@ -107,7 +107,7 @@
 }
 @media (prefers-reduced-motion: no-preference) {
   .env-avatar-group-item {
-    transition: transform var(--motion-duration-fast) var(--motion-ease);
+    transition: transform var(--env-motion-duration-fast) var(--env-motion-ease);
   }
   .env-avatar-group-item:active {
     transform: scale(0.97);

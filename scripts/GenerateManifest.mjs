@@ -101,23 +101,16 @@ function tokenValues(token, themes) {
     : { values: Object.fromEntries(themes.map((theme, index) => [theme, resolved[index]])) };
 }
 
-/** The tokens: current names with their values per theme and scale, and the 0.7 names' successors. */
+/**
+ * The tokens: current names with their values per theme and scale, and every name before 1.0 (the
+ * 0.x names and the unprefixed ones of 1.0's development) with what replaces it, from the token
+ * migration map beside the token list.
+ */
 function readTokens(file = tokensFile) {
   const tokens = JSON.parse(readFileSync(file, 'utf8'));
   const themes = tokens.themes.map((theme) => theme.name);
   const items = [];
-  const legacy = [];
   for (const token of tokens.tokens) {
-    if (token.legacy) {
-      const use = token.values[themes[0]]?.aliasOf;
-      legacy.push({
-        id: token.id,
-        cssVariable: token.cssVariable,
-        type: token.type,
-        ...(use && { use }),
-      });
-      continue;
-    }
     const item = {
       id: token.id,
       cssVariable: token.cssVariable,
@@ -129,11 +122,26 @@ function readTokens(file = tokensFile) {
     if (token.deprecated) item.deprecated = token.deprecated;
     items.push(item);
   }
+  const migrationFile = resolve(file, '../token-migration.json');
+  const migration = existsSync(migrationFile)
+    ? JSON.parse(readFileSync(migrationFile, 'utf8')).names
+    : {};
+  const typeOf = new Map(tokens.tokens.map((token) => [token.id, token.type]));
+  const legacy = Object.entries(migration).map(([name, entry]) => ({
+    cssVariable: name,
+    ...(entry.cssVariable && { use: entry.cssVariable }),
+    ...(entry.value && { value: entry.value }),
+    ...(entry.kind === 'removed' && { removed: true }),
+    ...((entry.token || entry.kind === 'fixed') && {
+      type: entry.token ? typeOf.get(entry.token) : 'color',
+    }),
+    ...(entry.note && { note: entry.note }),
+  }));
   return {
     themes,
     scales: tokens.scales.map((scale) => scale.name),
     usage:
-      'Use a token through its CSS custom property, such as var(--color-fg-muted), in CSS that styles the application. envUI components already use them; never restyle their classes.',
+      'Use a token through its CSS custom property, such as var(--env-color-fg-muted), in CSS that styles the application. envUI components already use them; never restyle their classes.',
     items,
     legacy,
   };

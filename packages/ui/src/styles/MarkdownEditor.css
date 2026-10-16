@@ -3,7 +3,7 @@
 }
 .env-markdown-editor-write {
   display: grid;
-  gap: var(--space-3);
+  gap: var(--env-space-3);
   min-inline-size: 0;
 }
 .env-markdown-toolbar {
@@ -11,14 +11,14 @@
   overflow-x: auto;
   scrollbar-width: thin;
   /* Let focus rings stay visible while keeping the buttons aligned with the field. */
-  padding: var(--space-2);
-  margin: calc(-1 * var(--space-2));
+  padding: var(--env-space-2);
+  margin: calc(-1 * var(--env-space-2));
 }
 .env-markdown-toolbar > .env-button-group {
   max-inline-size: none;
 }
 .env-markdown-source {
-  caret-color: light-dark(var(--color-field-text), var(--color-white));
+  caret-color: var(--env-color-fg-default);
   tab-size: 2;
 }
 .env-markdown-editor-status:empty {

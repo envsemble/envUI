@@ -15,6 +15,6 @@
 
 .env-button .env-symbol,
 .env-nav-list-item .env-symbol {
-  width: var(--control-icon-size);
-  height: var(--control-icon-size);
+  width: var(--env-control-icon-size);
+  height: var(--env-control-icon-size);
 }
