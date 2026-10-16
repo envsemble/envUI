@@ -18,7 +18,7 @@ export default function CopyValue() {
         <TextField label="Share link" value={shareLink} readOnly />
         <CopyButton value={shareLink} aria-label="Copy link" />
       </div>
-      <CopyButton value="RPT-2041" variant="outlined">
+      <CopyButton value="RPT-2041" variant="outline">
         Copy ID
       </CopyButton>
     </Stack>

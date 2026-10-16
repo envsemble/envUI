@@ -29,7 +29,7 @@ export default function Corners() {
             <List.Item
               title="A long title that names a document from a shared workspace in full"
               detail="https://example.com/workspaces/northwind/documents/quarterly-planning-review"
-              action={<Button variant="outlined">Open</Button>}
+              action={<Button variant="outline">Open</Button>}
             />
           </List.Root>
         </Specimen>

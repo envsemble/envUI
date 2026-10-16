@@ -17,7 +17,7 @@ export default function RailOfIcons() {
       {tools.map(({ label, icon }) => (
         // inline-end opens beside the rail, toward the content, in either text direction.
         <Tooltip key={label} content={label} side="inline-end">
-          <IconButton icon={icon} aria-label={label} variant="quiet" />
+          <IconButton icon={icon} aria-label={label} variant="ghost" />
         </Tooltip>
       ))}
     </Stack>

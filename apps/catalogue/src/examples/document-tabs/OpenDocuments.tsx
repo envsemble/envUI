@@ -26,7 +26,7 @@ export default function OpenDocuments() {
   };
 
   return (
-    <Surface tone="pane" padding={0}>
+    <Surface background="default" padding={0}>
       <DocumentTabs
         aria-label="Open documents"
         items={tabs}
@@ -46,7 +46,7 @@ export default function OpenDocuments() {
       />
       <div id="open-document" role="tabpanel" aria-label={active?.label} style={panel}>
         {active ? (
-          <Text tone="muted">{active.title}</Text>
+          <Text emphasis="muted">{active.title}</Text>
         ) : (
           <Button
             variant="secondary"

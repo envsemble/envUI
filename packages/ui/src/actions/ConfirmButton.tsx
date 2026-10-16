@@ -9,26 +9,41 @@ import {
   type MouseEvent,
   type ReactNode,
 } from 'react';
-import { Button, type ButtonAppearanceProps } from './Button.js';
+import {
+  Button,
+  type ButtonAppearanceProps,
+  type ButtonEmphasisProps,
+  type ButtonVariant,
+} from './Button.js';
 import { classNames } from '../internal/classNames.js';
+import { useMessages } from '../internal/EnvUIContext.js';
+import { confirmButton } from '../foundations/messages/confirmButton.js';
 
-interface ConfirmButtonBaseProps
-  extends Omit<ButtonAppearanceProps, 'variant'>,
-    Omit<ComponentPropsWithRef<'button'>, 'onClick' | 'type'> {
+type ConfirmButtonBaseProps = Omit<ButtonAppearanceProps, 'variant' | 'tone'> &
+  Omit<ComponentPropsWithRef<'button'>, 'onClick' | 'type'> &
+  ConfirmButtonEmphasisProps & {
+    /** The label while armed, naming what a second press does, such as “Remove Morgan?”. */
+    confirmLabel: ReactNode;
+    /** Runs on the second press, while the button is armed. */
+    onConfirm: () => void;
+    /** How long the button stays armed without a second press, in milliseconds. */
+    armedDuration?: number;
+  };
+
+/**
+ * The resting emphasis; armed, the button is always a primary danger one. outline by default, and
+ * secondary for an icon-only button, like IconButton; ghost for an action in the application's
+ * chrome, such as a toolbar; variant="primary" tone="danger" to look armed at rest too.
+ */
+type ConfirmButtonEmphasisProps = Omit<ButtonEmphasisProps, 'variant'> & {
   /**
-   * The resting appearance; armed, the button is always destructive. outlined by default, and
-   * secondary for an icon-only button, like IconButton; quiet for an action in the application's
-   * chrome, such as a toolbar.
-   * @default 'outlined', or 'secondary' with icon
+   * The resting appearance; armed, the button is always variant="primary" tone="danger". outline
+   * by default, and secondary for an icon-only button, like IconButton; ghost for an action in the
+   * application's chrome, such as a toolbar.
+   * @default 'outline', or 'secondary' with icon
    */
-  variant?: 'outlined' | 'secondary' | 'destructive' | 'text' | 'quiet';
-  /** The label while armed, naming what a second press does, such as “Remove Morgan?”. */
-  confirmLabel: ReactNode;
-  /** Runs on the second press, while the button is armed. */
-  onConfirm: () => void;
-  /** How long the button stays armed without a second press, in milliseconds. */
-  armedDuration?: number;
-}
+  variant?: ButtonVariant;
+};
 
 export type ConfirmButtonProps = ConfirmButtonBaseProps &
   (
@@ -51,7 +66,8 @@ export type ConfirmButtonProps = ConfirmButtonBaseProps &
  */
 export function ConfirmButton({
   icon,
-  variant = icon == null ? 'outlined' : 'secondary',
+  variant = icon == null ? 'outline' : 'secondary',
+  tone,
   confirmLabel,
   onConfirm,
   armedDuration = 4000,
@@ -66,6 +82,7 @@ export function ConfirmButton({
   'aria-label': label,
   ...props
 }: ConfirmButtonProps) {
+  const messages = useMessages('confirmButton', confirmButton);
   const [armedAt, setArmedAt] = useState<number | null>(null);
   // Disabling the button or starting its work ends an earlier arming.
   if ((disabled || pending) && armedAt !== null) setArmedAt(null);
@@ -77,7 +94,9 @@ export function ConfirmButton({
   }, [armed, armedDuration]);
   const shared = {
     ...props,
-    variant: armed ? ('destructive' as const) : variant,
+    ...(armed
+      ? { variant: 'primary' as const, tone: 'danger' as const }
+      : ({ variant, tone } as ButtonEmphasisProps)),
     disabled,
     pending,
     className: classNames('env-confirm-button', className),
@@ -123,7 +142,11 @@ export function ConfirmButton({
       )}
       {/* A label change on a focused button is not reliably announced, so the armed state is. */}
       <span className="env-confirm-button-status" role="status">
-        {armed && <>{confirmLabel} Press again to confirm.</>}
+        {armed && (
+          <>
+            {confirmLabel} {messages.armed}
+          </>
+        )}
       </span>
     </>
   );

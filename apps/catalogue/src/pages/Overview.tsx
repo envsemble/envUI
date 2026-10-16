@@ -10,12 +10,12 @@ function OverviewBanner({ tabs }: { tabs: ReactElement }) {
   return (
     <header className="docs-page-header">
       <Surface
-        tone="pane"
+        background="default"
         padding={6}
         render={<Stack gap={7} align="center" />}
         className="docs-overview-hero"
       >
-        <Text as="h1" aria-label="envUI" className="docs-overview-title">
+        <Text render={<h1 />} aria-label="envUI" className="docs-overview-title">
           <EnvUILogo className="docs-overview-logo" />
         </Text>
         {tabs}
@@ -28,8 +28,13 @@ export function Overview({ view }: { view: OverviewView }) {
   const viewTabs = useViewTabs((next) => `overview/${next}`);
   const content = {
     components: (
-      <Stack as="section" gap={5} className="docs-overview" aria-labelledby="overview-components">
-        <Text as="h2" variant="page-heading" id="overview-components">
+      <Stack
+        render={<section />}
+        gap={5}
+        className="docs-overview"
+        aria-labelledby="overview-components"
+      >
+        <Text render={<h2 />} variant="headline" id="overview-components">
           Components
         </Text>
         <Catalogue />

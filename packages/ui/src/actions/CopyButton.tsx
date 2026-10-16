@@ -10,11 +10,14 @@ import {
   type MouseEvent,
   type ReactNode,
 } from 'react';
-import { Button, type ButtonVariant } from './Button.js';
+import { Button, type ButtonProps, type ButtonVariant } from './Button.js';
 import { TooltipNestingContext, TooltipPopup } from '../feedback/internal/TooltipPopup.js';
 import { Check } from '../icons/Check.js';
 import { ContentCopy } from '../icons/ContentCopy.js';
 import { classNames } from '../internal/classNames.js';
+import { writeToClipboard } from '../internal/useCopy.js';
+import { useMessages } from '../internal/EnvUIContext.js';
+import { copy as copyMessages } from '../foundations/messages/copy.js';
 import type { ControlSize } from '../foundations/Theme.js';
 
 interface CopyButtonBaseProps
@@ -23,8 +26,10 @@ interface CopyButtonBaseProps
   value: string | (() => string | Promise<string>);
   /** Runs once the text is on the clipboard, with that text. */
   onCopy?: (text: string) => void;
-  /** As Button; secondary by default. */
+  /** As Button's, among its designed pairs with tone; secondary by default. */
   variant?: ButtonVariant;
+  /** As Button's: neutral by default, or danger. */
+  tone?: 'neutral' | 'danger';
   /** As Button's: sm, md or lg; without it, the control height of the container. */
   size?: ControlSize;
   /** The icon at rest, ContentCopy by default; a check replaces it once the text is copied. */
@@ -74,15 +79,20 @@ export function CopyButton({
   variant = 'secondary',
   size,
   icon,
-  copiedLabel = 'Copied',
-  failedLabel = 'Couldn’t copy',
-  copyLabel = 'Copy',
+  copiedLabel: ownCopiedLabel,
+  failedLabel: ownFailedLabel,
+  copyLabel: ownCopyLabel,
   children,
   className,
   onClick,
   'aria-label': label,
   ...props
 }: CopyButtonProps) {
+  // A label prop wins over the provider's messages, which win over the English defaults.
+  const messages = useMessages('copy', copyMessages);
+  const copiedLabel = ownCopiedLabel ?? messages.copied;
+  const failedLabel = ownFailedLabel ?? messages.failed;
+  const copyLabel = ownCopyLabel ?? messages.copy;
   // Inside an application's own Tooltip, that tooltip describes the button.
   const nested = useContext(TooltipNestingContext);
   const [result, setResult] = useState<{ copied: boolean; count: number } | null>(null);
@@ -104,7 +114,10 @@ export function CopyButton({
     let copied = true;
     let text = '';
     try {
-      text = await writeToClipboard(value, event.currentTarget, () => setWaiting(true));
+      text = await writeToClipboard(value, event.currentTarget, {
+        onWait: () => setWaiting(true),
+        fieldClassName: 'env-copy-button-field',
+      });
     } catch {
       copied = false;
     }
@@ -139,11 +152,18 @@ export function CopyButton({
     'data-failed': result && !result.copied ? '' : undefined,
   };
   const button = iconOnly ? (
-    <Button {...shared} iconOnly icon={symbol} aria-label={name ?? ''} />
+    <Button
+      {...({ ...shared, iconOnly: true, icon: symbol, 'aria-label': name ?? '' } as ButtonProps)}
+    />
   ) : (
-    <Button {...shared} startIcon={symbol} aria-label={name}>
-      {children as CopyButtonLabel}
-    </Button>
+    <Button
+      {...({
+        ...shared,
+        startIcon: symbol,
+        'aria-label': name,
+        children: children as CopyButtonLabel,
+      } as ButtonProps)}
+    />
   );
   const hoverTarget = iconOnly && disabled;
   return (
@@ -192,77 +212,4 @@ function hasWords(label: ReactNode): boolean {
   if (typeof label === 'string') return label.trim() !== '';
   if (typeof label === 'object' && Symbol.iterator in label) return [...label].some(hasWords);
   return true;
-}
-
-/** Writes the text with the asynchronous Clipboard API, or by copying a selection where it fails. */
-async function writeToClipboard(
-  value: CopyButtonProps['value'],
-  anchor: HTMLElement,
-  onWait: () => void,
-) {
-  const resolved = typeof value === 'function' ? value() : value;
-  if (typeof resolved === 'string') {
-    await writeText(resolved, anchor);
-    return resolved;
-  }
-  onWait();
-  const clipboard = typeof navigator === 'undefined' ? undefined : navigator.clipboard;
-  if (typeof ClipboardItem !== 'undefined' && clipboard?.write) {
-    // Some browsers allow writing only while handling the press: hand over an item at once and
-    // let its text follow.
-    try {
-      const blob = resolved.then((text) => new Blob([text], { type: 'text/plain' }));
-      // A clipboard that refuses at once leaves the item behind; a text that then fails is
-      // reported once, below, not again as an unhandled rejection of the item's blob.
-      blob.catch(() => undefined);
-      await clipboard.write([new ClipboardItem({ 'text/plain': blob })]);
-      return await resolved;
-    } catch {
-      // Write the text itself once it is ready.
-    }
-  }
-  const text = await resolved;
-  await writeText(text, anchor);
-  return text;
-}
-
-async function writeText(text: string, anchor: HTMLElement) {
-  try {
-    await navigator.clipboard.writeText(text);
-  } catch {
-    if (!copyWithSelection(text, anchor)) throw new Error('The clipboard is unavailable.');
-  }
-}
-
-/** The fallback for pages without clipboard access: select the text in a hidden field and copy it. */
-function copyWithSelection(text: string, anchor: HTMLElement) {
-  const document = anchor.ownerDocument;
-  const field = document.createElement('textarea');
-  field.value = text;
-  field.readOnly = true;
-  field.tabIndex = -1;
-  field.setAttribute('aria-hidden', 'true');
-  field.className = 'env-copy-button-field';
-  // Beside the button, so a dialog that keeps focus inside itself lets the field take it.
-  (anchor.parentElement ?? document.body).append(field);
-  const focused = document.activeElement;
-  const selection = document.getSelection();
-  const ranges = selection
-    ? Array.from({ length: selection.rangeCount }, (_, index) => selection.getRangeAt(index))
-    : [];
-  field.focus({ preventScroll: true });
-  field.select();
-  let copied: boolean;
-  try {
-    copied = document.execCommand('copy');
-  } catch {
-    copied = false;
-  }
-  field.remove();
-  (focused as HTMLElement | null)?.focus({ preventScroll: true });
-  if (selection) {
-    selection.removeAllRanges();
-    for (const range of ranges) selection.addRange(range);
-  }
-  return copied;
 }

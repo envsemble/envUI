@@ -23,7 +23,7 @@ export default function SaveOnRelease() {
         }}
         formatValue={(value) => `${value}%`}
       />
-      <Text variant="supporting" role="status">
+      <Text variant="body-sm" role="status">
         {status}
       </Text>
     </Stack>

@@ -6,7 +6,7 @@ export default function PlanningCalendar() {
   return (
     <Stack gap={3} align="start">
       <Calendar aria-label="Planning" value={day} onValueChange={setDay} />
-      <Text variant="caption" tone="muted" role="status">
+      <Text variant="caption" emphasis="muted" role="status">
         {day ? `Planning ${day}.` : 'No day chosen yet.'}
       </Text>
     </Stack>

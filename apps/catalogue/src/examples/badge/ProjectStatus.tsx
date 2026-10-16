@@ -7,12 +7,12 @@ export default function ProjectStatus() {
   return (
     <Stack gap={1}>
       <div style={heading}>
-        <Text as="h3" variant="section-heading">
+        <Text render={<h3 />} variant="title">
           Northwind launch
         </Text>
         <Badge tone="warning">Blocked</Badge>
       </div>
-      <Text tone="muted">Waiting on two decisions from the design review.</Text>
+      <Text emphasis="muted">Waiting on two decisions from the design review.</Text>
     </Stack>
   );
 }

@@ -5,23 +5,43 @@ import { ActionElement, type ActionElementProps } from '../internal/ActionElemen
 import { Spinner } from '../feedback/Spinner.js';
 import type { ControlSize } from '../foundations/Theme.js';
 
-export type ButtonVariant =
-  | 'primary'
-  | 'important'
-  | 'secondary'
-  | 'outlined'
-  | 'destructive'
-  | 'text'
-  /** For the application's chrome: the icon color, with a state layer on hover and press. */
-  | 'quiet';
+/**
+ * A button's emphasis: primary for the main action of a view, secondary and outline for the rest,
+ * ghost for an application's chrome, such as a toolbar, and text for a link-like action.
+ */
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'text';
 
-export interface ButtonAppearanceProps {
-  /**
-   * The emphasis: primary for the main action of a view, important for a rare consequential one,
-   * secondary and outlined for the rest, destructive for an action that deletes or ends something,
-   * text for a link-like action and quiet for an application's chrome, such as a toolbar.
-   */
-  variant?: ButtonVariant;
+/**
+ * A button's meaning: neutral for most actions, accent for a rare consequential one that must stand
+ * out, and danger for an action that deletes or ends something.
+ */
+export type ButtonTone = 'neutral' | 'accent' | 'danger';
+
+/**
+ * The designed pairs of variant and tone: a primary button takes any tone; outline, ghost and text
+ * buttons take neutral or danger; a secondary button is neutral.
+ */
+export type ButtonEmphasisProps =
+  | {
+      /**
+       * The emphasis: primary for the main action of a view, secondary and outline for the rest,
+       * ghost for an application's chrome, such as a toolbar, and text for a link-like action.
+       * Without it, the button takes the variant its container gives, such as ghost in a toolbar,
+       * and else primary (secondary for IconButton).
+       */
+      variant?: 'primary';
+      /**
+       * The meaning: neutral for most actions; accent, on a primary button only, for a rare
+       * consequential action, with 0.5 rem corners; danger for an action that deletes or ends
+       * something. Secondary buttons are always neutral.
+       * @default 'neutral'
+       */
+      tone?: ButtonTone;
+    }
+  | { variant: 'outline' | 'ghost' | 'text'; tone?: 'neutral' | 'danger' }
+  | { variant: 'secondary'; tone?: 'neutral' };
+
+export type ButtonAppearanceProps = ButtonEmphasisProps & {
   /** Show an underline for the text variant; defaults to false. */
   underline?: boolean;
   /**
@@ -31,6 +51,11 @@ export interface ButtonAppearanceProps {
    * field takes the field's size.
    */
   size?: ControlSize;
+  /**
+   * Fill the width of the container, such as the actions of a narrow form stacked in a column.
+   * An icon-only button keeps its square size.
+   */
+  fullWidth?: boolean;
   /** A decorative icon before the label, such as an Add icon. */
   startIcon?: ReactNode;
   /** A decorative icon after the label, such as a ChevronRight for a next step. */
@@ -40,7 +65,7 @@ export interface ButtonAppearanceProps {
    * button's size, and the button reports busy and ignores activation until pending ends.
    */
   pending?: boolean;
-}
+};
 export type ButtonProps = ButtonAppearanceProps &
   ActionElementProps &
   (
@@ -59,22 +84,32 @@ export type ButtonProps = ButtonAppearanceProps &
   );
 
 /**
- * Starts an action, or goes to a destination with href, in one of seven emphases, with optional
- * icons; icon-only with iconOnly. It renders a native button or link.
+ * Starts an action, or goes to a destination with href, in one of five variants and three tones,
+ * with optional icons; icon-only with iconOnly. It renders a native button or link.
  */
-export function Button({
-  variant = 'primary',
-  underline = false,
-  size,
-  iconOnly = false,
-  icon,
-  startIcon,
-  endIcon,
-  pending = false,
-  className,
-  children,
-  ...props
-}: ButtonProps) {
+export function Button(props: ButtonProps) {
+  return renderButton(props, 'primary');
+}
+
+/** Button with the variant it takes where neither it nor its container sets one. */
+function renderButton(
+  {
+    variant,
+    tone,
+    underline = false,
+    size,
+    fullWidth = false,
+    iconOnly = false,
+    icon,
+    startIcon,
+    endIcon,
+    pending = false,
+    className,
+    children,
+    ...props
+  }: ButtonProps,
+  fallbackVariant: ButtonVariant,
+) {
   const content = iconOnly ? (
     <DecorativeIcon>{icon}</DecorativeIcon>
   ) : (
@@ -88,14 +123,15 @@ export function Button({
     <ActionElement
       {...props}
       pending={pending}
-      data-size={size}
-      className={classNames(
-        'env-button',
-        `env-button-${variant}`,
-        variant === 'text' && underline && 'env-button-underlined',
-        iconOnly && 'env-icon-button',
-        className,
-      )}
+      emphasis={{
+        variant,
+        fallbackVariant,
+        tone,
+        size,
+        underline,
+      }}
+      data-full-width={fullWidth || undefined}
+      className={classNames('env-button', iconOnly && 'env-icon-button', className)}
     >
       {pending ? (
         <>
@@ -109,21 +145,22 @@ export function Button({
   );
 }
 
-export interface IconButtonProps
-  extends Omit<ComponentPropsWithRef<'button'>, 'children' | 'aria-label'> {
-  /** The icon, such as Settings. */
-  icon: ReactNode;
-  /** The action's name, which assistive technology announces, such as Open settings. */
-  'aria-label': string;
-  /** As Button's; secondary by default. */
-  variant?: ButtonVariant;
-  /** As Button's: a spinner replaces the icon while the work runs. */
-  pending?: boolean;
-  /** As Button's: the height, and the width, of the square button. */
-  size?: ControlSize;
-}
+export type IconButtonProps = Omit<ComponentPropsWithRef<'button'>, 'children' | 'aria-label'> &
+  ButtonEmphasisProps & {
+    /** The icon, such as Settings. */
+    icon: ReactNode;
+    /** The action's name, which assistive technology announces, such as Open settings. */
+    'aria-label': string;
+    /** As Button's: a spinner replaces the icon while the work runs. */
+    pending?: boolean;
+    /** As Button's: the height, and the width, of the square button. */
+    size?: ControlSize;
+  };
 
-/** Shorthand for Button's icon-only mode, using the neutral secondary variant by default. */
-export function IconButton({ variant = 'secondary', ...props }: IconButtonProps) {
-  return <Button {...props} variant={variant} iconOnly />;
+/**
+ * Shorthand for Button's icon-only mode. Without a variant it takes its container's, and else the
+ * neutral secondary one.
+ */
+export function IconButton(props: IconButtonProps) {
+  return renderButton({ ...props, iconOnly: true } as ButtonProps, 'secondary');
 }

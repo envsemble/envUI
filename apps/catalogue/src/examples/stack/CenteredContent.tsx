@@ -3,7 +3,7 @@ import { Button, Stack, Text } from '@envsemble/envui';
 export default function CenteredContent() {
   return (
     <Stack gap={3} align="center">
-      <Text as="h3" variant="section-heading">
+      <Text render={<h3 />} variant="title">
         Invitation sent
       </Text>
       <Text>Priya Shah can join the workspace once she accepts.</Text>

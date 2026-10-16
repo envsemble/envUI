@@ -118,7 +118,7 @@ export const ColorPicker = forwardRef<HTMLInputElement, ColorPickerProps>(functi
       style={style}
       data-disabled={disabled || undefined}
     >
-      <Text as="span" variant="supporting" id={`${id}-label`}>
+      <Text render={<span />} variant="body-sm" id={`${id}-label`}>
         {label}
       </Text>
       <div

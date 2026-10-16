@@ -436,7 +436,7 @@ export function DatePicker({
                 }}
               />
             )}
-            <span className="env-symbol env-date-picker-icon" aria-hidden="true">
+            <span className="env-icon env-date-picker-icon" aria-hidden="true">
               {withTime ? <CalendarClock /> : <CalendarMonth />}
             </span>
           </span>

@@ -466,10 +466,17 @@ export function extractProps() {
         texts.delete('false');
         texts.add('boolean');
       }
+      // Forms that share members, such as tone?: ButtonTone and tone?: 'neutral' | 'danger', list
+      // each member once; a member with brackets of its own, such as a function, stays whole.
+      const members = [
+        ...new Set(
+          [...texts].flatMap((text) => (/[(<{[]/.test(text) ? [text] : text.split(' | '))),
+        ),
+      ];
       const docs = documentation(declaration);
       const entry = {
         name,
-        type: texts.size > 1 ? [...texts].map(unionMember).join(' | ') : [...texts][0],
+        type: members.length > 1 ? members.map(unionMember).join(' | ') : members[0],
         required,
         ...(requiredWhen && { requiredWhen }),
         ...((docs.default ?? defaults.get(name)) !== undefined && {

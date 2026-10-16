@@ -7,32 +7,32 @@
   color: var(--env-color-fg-default);
 }
 /* Display text introduces a page or hero; it scales with the viewport and keeps a tight measure. */
-.env-text-display {
+.env-text:where([data-variant='display']) {
   font: 500 clamp(1.75rem, 1.25rem + 2.5vw, 2.75rem) / 1.1 var(--env-font-family);
   letter-spacing: -0.03em;
   text-wrap: balance;
 }
-.env-text-page-heading {
+.env-text:where([data-variant='headline']) {
   font: var(--env-type-h1);
 }
-.env-text-section-heading {
+.env-text:where([data-variant='title']) {
   font: var(--env-type-h2);
 }
-.env-text-supporting {
+.env-text:where([data-variant='body-sm']) {
   font: var(--env-type-body-small);
   color: var(--env-color-fg-muted);
 }
-.env-text-caption {
+.env-text:where([data-variant='caption']) {
   font: var(--env-type-body-small);
   color: var(--env-color-fg-muted);
 }
-.env-text-tone-primary {
+.env-text:where([data-emphasis='default']) {
   color: var(--env-color-fg-default);
 }
-.env-text-tone-muted {
+.env-text:where([data-emphasis='muted']) {
   color: var(--env-color-fg-muted);
 }
-.env-text-tone-quiet {
+.env-text:where([data-emphasis='subtle']) {
   color: var(--env-color-fg-muted);
 }
 

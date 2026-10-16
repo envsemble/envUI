@@ -72,9 +72,9 @@ export function DataDisplayFixture({ theme }: { theme: ThemeValue }) {
         </div>
         {/* A small header bar as wide as a phone: the trail beside a status and an action. */}
         <Surface
-          tone="row"
+          background="muted"
           padding={2}
-          corners="standard"
+          radius="sm"
           className="fixture-breadcrumb-bar"
           data-testid={`breadcrumb-bar-${theme}`}
         >

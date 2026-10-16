@@ -4,8 +4,8 @@ import { Stack, Stat, Surface, Text } from '@envsemble/envui';
 export default function OnAPane() {
   const headingId = useId();
   return (
-    <Surface tone="pane" padding={5} render={<Stack gap={4} />}>
-      <Text as="h3" variant="section-heading" id={headingId}>
+    <Surface background="default" padding={5} render={<Stack gap={4} />}>
+      <Text render={<h3 />} variant="title" id={headingId}>
         Design review
       </Text>
       {/* On a pane, the row tone sets the group apart; the heading names it. */}

@@ -33,8 +33,8 @@ function description(prop: PropEntry) {
 function ExportProps({ name, entry }: { name: string; entry: ExportEntry }) {
   if (entry.kind === 'namespace') return null;
   return (
-    <Stack as="section" gap={4} aria-labelledby={exportSection(name)}>
-      <Text as="h2" variant="section-heading" id={exportSection(name)}>
+    <Stack render={<section />} gap={4} aria-labelledby={exportSection(name)}>
+      <Text render={<h2 />} variant="title" id={exportSection(name)}>
         <Code>{name}</Code>
       </Text>
       {entry.description && <Text>{entry.description}</Text>}
@@ -81,7 +81,7 @@ function ExportProps({ name, entry }: { name: string; entry: ExportEntry }) {
         <Text>{entry.native.length ? 'No props of its own.' : 'Takes no props.'}</Text>
       )}
       {entry.kind === 'component' && nativeSentence(entry.native) && (
-        <Text tone="muted">{nativeSentence(entry.native)}</Text>
+        <Text emphasis="muted">{nativeSentence(entry.native)}</Text>
       )}
     </Stack>
   );
@@ -92,7 +92,7 @@ export function PropsTables({ reference }: { reference: Reference }) {
   const sources = [...new Set(Object.values(reference.props ?? {}).map(({ source }) => source))];
   return (
     <Stack gap={7}>
-      <Text tone="muted">
+      <Text emphasis="muted">
         Generated from the TypeScript source,{' '}
         {sources.map((source, index) => (
           <span key={source}>

@@ -40,7 +40,12 @@ export function CalendarHeatmapFixture({ theme }: { theme: ThemeValue }) {
       >
         Update {theme}
       </Button>
-      <Surface tone="pane" padding={4} data-surface="pane" className="fixture-heatmap-narrow">
+      <Surface
+        background="default"
+        padding={4}
+        data-surface="pane"
+        className="fixture-heatmap-narrow"
+      >
         <CalendarHeatmap
           aria-label={`Deployments ${theme}`}
           data={[

@@ -45,14 +45,14 @@ export function GettingStarted() {
     documents.find((document) => document.id === 'index')!;
   return (
     <Stack gap={7} className="docs-article">
-      <Stack as="section" id="setup">
-        <Text as="h2" variant="page-heading">
+      <Stack render={<section />} id="setup">
+        <Text render={<h2 />} variant="headline">
           {setup.title}
         </Text>
         <Documentation document={setup} />
       </Stack>
-      <Stack as="section" id="local-development">
-        <Text as="h2" variant="page-heading">
+      <Stack render={<section />} id="local-development">
+        <Text render={<h2 />} variant="headline">
           Agent guidance
         </Text>
         <Tabs
@@ -90,8 +90,8 @@ export function GettingStarted() {
           ]}
         />
       </Stack>
-      <Stack as="section" id="documentation">
-        <Text as="h2" variant="page-heading">
+      <Stack render={<section />} id="documentation">
+        <Text render={<h2 />} variant="headline">
           {selectedDocument.title}
         </Text>
         <Documentation document={selectedDocument} />

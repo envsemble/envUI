@@ -53,13 +53,13 @@ export default function InspectorPanel() {
         {person && (
           <Stack gap={4}>
             <Stack gap={1}>
-              <Text variant="caption" tone="muted">
+              <Text variant="caption" emphasis="muted">
                 Email
               </Text>
               <Text>{person.email}</Text>
             </Stack>
             <Stack gap={1}>
-              <Text variant="caption" tone="muted">
+              <Text variant="caption" emphasis="muted">
                 Team
               </Text>
               <Text>{person.team}</Text>

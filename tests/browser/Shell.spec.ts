@@ -458,7 +458,7 @@ test.describe('Title bar', () => {
     await expect(shell).toHaveAttribute('data-compact', '');
     const icon = (await page
       .getByRole('navigation', { name: 'Notes navigation' })
-      .locator('.env-symbol')
+      .locator('.env-icon')
       .first()
       .boundingBox())!;
     expect(icon.x + icon.width / 2).toBeCloseTo(toggleBox.x + toggleBox.width / 2, 0);

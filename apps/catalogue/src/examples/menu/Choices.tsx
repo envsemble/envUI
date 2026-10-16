@@ -39,7 +39,7 @@ export default function Choices() {
           </Menu.CheckboxItem>
         </Menu.Group>
       </Menu.Root>
-      <Text variant="supporting">
+      <Text variant="body-sm">
         Sorted by {sortLabels[sort]}; hidden files {hiddenFiles ? 'shown' : 'hidden'}; extensions{' '}
         {extensions ? 'shown' : 'hidden'}.
       </Text>

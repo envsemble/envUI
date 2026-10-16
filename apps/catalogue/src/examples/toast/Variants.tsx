@@ -1,4 +1,4 @@
-import { ActionGroup, Button, Toast, useToast, type ToastNotification } from '@envsemble/envui';
+import { Button, Toast, useToast, type ToastNotification, Stack } from '@envsemble/envui';
 
 const notifications: ToastNotification[] = [
   { variant: 'neutral', message: 'Files archived.' },
@@ -14,7 +14,7 @@ const notifications: ToastNotification[] = [
 function VariantButtons() {
   const toast = useToast();
   return (
-    <ActionGroup>
+    <Stack direction="row" wrap align="center" gap={4}>
       {notifications.map((notification) => (
         <Button
           key={notification.variant}
@@ -24,7 +24,7 @@ function VariantButtons() {
           Show {notification.variant}
         </Button>
       ))}
-    </ActionGroup>
+    </Stack>
   );
 }
 

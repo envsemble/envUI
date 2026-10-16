@@ -27,12 +27,16 @@ export default function TabControls() {
               },
               {
                 value: 'outlined',
-                button: <Button variant="outlined">Outlined</Button>,
+                button: <Button variant="outline">Outlined</Button>,
                 content: <Text>Outlined button fill, label and border.</Text>,
               },
               {
                 value: 'important',
-                button: <Button variant="important">Important</Button>,
+                button: (
+                  <Button variant="primary" tone="accent">
+                    Important
+                  </Button>
+                ),
                 content: <Text>Important button color and standard corners.</Text>,
               },
               {

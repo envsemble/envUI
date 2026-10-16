@@ -43,7 +43,7 @@
   border-radius: 100vmax;
   background: var(--env-color-bg-neutral-muted);
 }
-.env-command-palette-search > .env-symbol {
+.env-command-palette-search > .env-icon {
   color: var(--env-color-fg-muted);
 }
 .env-command-palette-input {
@@ -117,10 +117,10 @@
 .env-command-palette-option:active {
   background: var(--env-color-bg-popup-pressed);
 }
-.env-command-palette-option .env-symbol {
+.env-command-palette-option .env-icon {
   color: var(--env-color-fg-muted);
 }
-.env-command-palette-option[data-highlighted] .env-symbol {
+.env-command-palette-option[data-highlighted] .env-icon {
   color: inherit;
 }
 .env-command-palette-label {

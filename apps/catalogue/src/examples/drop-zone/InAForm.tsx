@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { ActionGroup, Button, DropZone, Stack, Text, TextField } from '@envsemble/envui';
+import { Button, DropZone, Stack, Text, TextField } from '@envsemble/envui';
 
 export default function InAForm() {
   const [sent, setSent] = useState('');
@@ -23,13 +23,13 @@ export default function InAForm() {
           description="Sent with the message"
           onFiles={() => setSent('')}
         />
-        <ActionGroup>
+        <Stack direction="row" wrap align="center" gap={4}>
           <Button type="submit">Send</Button>
           <Button type="reset" variant="secondary">
             Reset
           </Button>
-        </ActionGroup>
-        <Text variant="caption" tone="muted" role="status">
+        </Stack>
+        <Text variant="caption" emphasis="muted" role="status">
           {sent}
         </Text>
       </Stack>

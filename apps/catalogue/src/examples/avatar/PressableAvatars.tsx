@@ -19,7 +19,7 @@ export default function PressableAvatars() {
         max={4}
         onPersonClick={(person) => setOpened(`Opened the profile of ${person.name}`)}
       />
-      <Text variant="caption" tone="muted" role="status">
+      <Text variant="caption" emphasis="muted" role="status">
         {opened}
       </Text>
     </Stack>

@@ -43,7 +43,7 @@ export default function OpenFromRow() {
           />
         ))}
       </List.Root>
-      <Text variant="caption" tone="muted" role="status">
+      <Text variant="caption" emphasis="muted" role="status">
         {result}
       </Text>
     </Stack>

@@ -39,7 +39,7 @@ export default function Submenus() {
           ))}
         </Menu.Submenu>
       </Menu.Root>
-      <Text variant="supporting" role="status">
+      <Text variant="body-sm" role="status">
         {lastAction}
       </Text>
     </Stack>

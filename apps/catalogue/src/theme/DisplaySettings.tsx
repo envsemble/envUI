@@ -126,7 +126,7 @@ export function DisplayMenu() {
       side="top"
       align="start"
       trigger={
-        <Button variant="quiet" startIcon={<Tune />} className="docs-display-trigger">
+        <Button variant="ghost" startIcon={<Tune />} className="docs-display-trigger">
           Display
         </Button>
       }

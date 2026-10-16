@@ -18,8 +18,8 @@ export default function ReviewList() {
   return (
     <Stack gap={5}>
       {reviews.map((review) => (
-        <Stack as="article" gap={1} key={review.author}>
-          <Text as="h3" variant="supporting">
+        <Stack render={<article />} gap={1} key={review.author}>
+          <Text render={<h3 />} variant="body-sm">
             {review.author}
           </Text>
           <Rating value={review.rating} />

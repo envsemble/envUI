@@ -76,10 +76,10 @@ export default function ProductShell() {
         resizable
       >
         <Stack gap={3} style={{ padding: '2rem' }}>
-          <Text as="h3" variant="page-heading">
+          <Text render={<h3 />} variant="headline">
             {current.label}
           </Text>
-          <Text tone="muted">
+          <Text emphasis="muted">
             Collapse the sidebar with the mark, or drag its edge to resize it.
           </Text>
         </Stack>

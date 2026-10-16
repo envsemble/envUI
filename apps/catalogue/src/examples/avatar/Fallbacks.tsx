@@ -1,4 +1,4 @@
-import { ActionGroup, Avatar } from '@envsemble/envui';
+import { Avatar, Stack } from '@envsemble/envui';
 
 /** Stands in for the URL of a profile picture from the application's account data. */
 const picture =
@@ -9,11 +9,11 @@ const picture =
 
 export default function Fallbacks() {
   return (
-    <ActionGroup>
+    <Stack direction="row" wrap align="center" gap={4}>
       <Avatar name="Priya Shah" src={picture} size="large" label />
       {/* A picture that fails to load shows the default person picture, without an error. */}
       <Avatar name="Jordan Ellis" src="data:image/png;base64,missing" size="large" label />
       <Avatar name="Northwind Labs" fallback="initials" size="large" label />
-    </ActionGroup>
+    </Stack>
   );
 }

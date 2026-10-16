@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ActionGroup, AnimatedNumber, IconButton, Stack, Text } from '@envsemble/envui';
+import { AnimatedNumber, IconButton, Stack, Text } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { Remove } from '@envsemble/envui/icons/Remove';
 
@@ -10,7 +10,7 @@ export default function SeatsLeft() {
   const left = seatsInPlan - invited;
   return (
     <Stack gap={3} align="start">
-      <ActionGroup>
+      <Stack direction="row" wrap align="center" gap={4}>
         <IconButton
           icon={<Remove />}
           aria-label="Invite one person fewer"
@@ -23,7 +23,7 @@ export default function SeatsLeft() {
           disabled={left === 0}
           onClick={() => setInvited((count) => count + 1)}
         />
-      </ActionGroup>
+      </Stack>
       <Text role="status">
         <AnimatedNumber value={left} /> {left === 1 ? 'seat' : 'seats'} left in the plan
       </Text>

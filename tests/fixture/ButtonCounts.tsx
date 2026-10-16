@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import {
-  ActionGroup,
   Badge,
   Button,
   CounterBadge,
@@ -8,11 +7,20 @@ import {
   Tabs,
   Text,
   Theme,
-  type ButtonVariant,
   type ThemeValue,
+  Stack,
 } from '@envsemble/envui';
 
-const variants: ButtonVariant[] = ['primary', 'secondary', 'outlined', 'text', 'important'];
+/** The 1.0 emphasis of each 0.7 variant, which the samples are still named by. */
+const emphasis = {
+  primary: { variant: 'primary' },
+  secondary: { variant: 'secondary' },
+  outlined: { variant: 'outline' },
+  destructive: { variant: 'primary', tone: 'danger' },
+  important: { variant: 'primary', tone: 'accent' },
+  text: { variant: 'text' },
+} as const;
+const variants = ['primary', 'secondary', 'outlined', 'text', 'important'] as const;
 
 /** Counts and badges inside buttons and tabs, mounted with ?fixture=button-counts. */
 export function ButtonCountsFixture({ theme }: { theme: ThemeValue }) {
@@ -66,14 +74,14 @@ export function ButtonCountsFixture({ theme }: { theme: ThemeValue }) {
           },
         ]}
       />
-      <ActionGroup>
+      <Stack direction="row" wrap align="center" gap={4}>
         {variants.map((variant) => (
-          <Button key={variant} variant={variant}>
+          <Button key={variant} {...emphasis[variant]}>
             {variant} <CounterBadge value={7} /> <Badge tone="success">New</Badge>{' '}
             <DiffStat additions={3} deletions={1} />
           </Button>
         ))}
-      </ActionGroup>
+      </Stack>
       <DiffStat additions={12} deletions={3} data-testid={`diff-stat-${theme}`} />
     </Theme>
   );

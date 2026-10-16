@@ -13,10 +13,11 @@ export interface SkeletonProps extends Omit<ComponentPropsWithRef<'span'>, 'chil
    */
   height?: CSSProperties['height'];
   /**
-   * The fill: base, the neutral fill, or highlight, one step stronger, for a placeholder that stands
-   * out among the others, such as a title.
+   * How strong the fill is: muted, the neutral fill, or default, one step stronger, for a
+   * placeholder that stands out among the others, such as a title.
+   * @default 'muted'
    */
-  tone?: 'base' | 'highlight';
+  emphasis?: 'muted' | 'default';
 }
 
 /**
@@ -27,7 +28,7 @@ export interface SkeletonProps extends Omit<ComponentPropsWithRef<'span'>, 'chil
 export function Skeleton({
   width,
   height,
-  tone = 'base',
+  emphasis = 'muted',
   style,
   className,
   ...props
@@ -36,11 +37,8 @@ export function Skeleton({
     <span
       {...props}
       aria-hidden="true"
-      className={classNames(
-        'env-skeleton',
-        tone === 'highlight' && 'env-skeleton-highlight',
-        className,
-      )}
+      className={classNames('env-skeleton', className)}
+      data-emphasis={emphasis}
       style={{ width, height, ...style }}
     />
   );

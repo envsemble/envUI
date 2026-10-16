@@ -60,7 +60,7 @@
   border-color: var(--env-badge-edge);
   background: transparent;
 }
-.env-badge .env-symbol {
+.env-badge .env-icon {
   inline-size: 0.875rem;
   block-size: 0.875rem;
 }
@@ -127,24 +127,25 @@
   white-space: nowrap;
 }
 
-/* In a button, such as a tab, a counter badge or diff stat keeps its own filled pill. On the solid primary and
-   important fills, where that pill can't keep its contrast, it takes the button's text color as an
+/* In a button, such as a tab, a counter badge or diff stat keeps its own filled pill. On the solid primary fills, neutral
+   and accent, where that pill can't keep its contrast, it takes the button's text color as an
    outlined pill instead, as a badge does in every button, in both themes. The outline is the label
    color at 55%, which only the button knows, so it is mixed here; the contrast gate measures it on
    each fill as a derived color (tests/contrast/Pairs.ts). */
 .env-button .env-badge[data-tone],
-.env-button:is(.env-button-primary, .env-button-important) .env-counter-badge[data-tone],
-.env-button:is(.env-button-primary, .env-button-important) .env-diff-stat {
+.env-button:is([data-variant='primary']:where(:not([data-tone='danger'])))
+  .env-counter-badge[data-tone],
+.env-button:is([data-variant='primary']:where(:not([data-tone='danger']))) .env-diff-stat {
   border: 0.0625rem solid color-mix(in srgb, currentColor 55%, transparent);
   background: transparent;
   color: inherit;
 }
-.env-button:is(.env-button-primary, .env-button-important) .env-diff-stat > * {
+.env-button:is([data-variant='primary']:where(:not([data-tone='danger']))) .env-diff-stat > * {
   color: inherit;
 }
 /* On a button's own fill, which already adds up with a tab rail's, a diff stat's pill leans halfway
    back toward the canvas instead of adding another fill. It looks about as it does on the canvas,
    and its tones keep their 4.5:1 contrast in both themes. */
-.env-button:not(.env-button-primary, .env-button-important) .env-diff-stat {
+.env-button:not([data-variant='primary']:where(:not([data-tone='danger']))) .env-diff-stat {
   background: var(--env-color-bg-inset);
 }

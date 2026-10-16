@@ -585,7 +585,7 @@ test('an icon-only ConfirmButton is round at rest and names the consequence when
   await expect(button).toHaveClass(/env-button-destructive/);
   await expect(button).not.toHaveClass(/env-icon-button/);
   await expect(button).toBeFocused();
-  await expect(button.locator('.env-symbol')).toHaveCount(1);
+  await expect(button.locator('.env-icon')).toHaveCount(1);
   expect((await button.boundingBox())!.width).toBeGreaterThan(rest.width + 40);
   await expect(page.locator('.env-confirm-button-status').nth(1)).toHaveText(
     'Remove Morgan? Press again to confirm.',

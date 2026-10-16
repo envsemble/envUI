@@ -83,7 +83,7 @@
   place-items: center;
   color: var(--env-color-fg-muted);
 }
-.env-feature-card-icon .env-symbol {
+.env-feature-card-icon .env-icon {
   width: 1.5rem;
   height: 1.5rem;
   font-size: 1.5rem;

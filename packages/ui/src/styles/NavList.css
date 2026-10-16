@@ -1,6 +1,14 @@
 .env-nav-list-item {
+  margin: 0;
+  box-sizing: border-box;
+  transition:
+    background-color var(--env-motion-duration-fast) var(--env-motion-ease),
+    color var(--env-motion-duration-fast) var(--env-motion-ease),
+    border-color var(--env-motion-duration-fast) var(--env-motion-ease);
   /* The height the item draws at: the control height, or more under a coarse pointer. */
   --env-nav-list-item-height: var(--env-control-height);
+  /* Its icons take the control icon size. */
+  --env-icon-size: var(--env-control-icon-size);
   inline-size: fit-content;
   min-inline-size: 0;
   max-inline-size: 100%;
@@ -19,6 +27,11 @@
   font: var(--env-body-font-weight) var(--env-font-size-body) / 1.4 var(--env-font-family);
   text-decoration: none;
 }
+@media (prefers-reduced-motion: reduce) {
+  .env-nav-list-item {
+    transition: none;
+  }
+}
 
 .env-nav-list-item-selected {
   color: var(--env-color-fg-on-selected);
@@ -35,11 +48,11 @@
 }
 
 .env-nav-list-item:not(.env-nav-list-item-selected):not(:disabled):not([aria-disabled='true'])
-  .env-symbol {
+  .env-icon {
   color: var(--env-color-fg-muted);
 }
 
-.env-nav-list-item-selected .env-symbol {
+.env-nav-list-item-selected .env-icon {
   color: inherit;
 }
 
@@ -69,7 +82,7 @@
   cursor: default;
 }
 
-.env-nav-list-item:is(:disabled, [aria-disabled='true']) .env-symbol {
+.env-nav-list-item:is(:disabled, [aria-disabled='true']) .env-icon {
   color: inherit;
 }
 

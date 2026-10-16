@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ActionGroup, AnimatedNumber, Button, Stack, Stat } from '@envsemble/envui';
+import { AnimatedNumber, Button, Stack, Stat } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 
 export default function ProjectHealth() {
@@ -25,7 +25,7 @@ export default function ProjectHealth() {
           detail="Median"
         />
       </Stat.Group>
-      <ActionGroup>
+      <Stack direction="row" wrap align="center" gap={4}>
         <Button
           variant="secondary"
           startIcon={<Add />}
@@ -33,7 +33,7 @@ export default function ProjectHealth() {
         >
           Add a project
         </Button>
-      </ActionGroup>
+      </Stack>
     </Stack>
   );
 }

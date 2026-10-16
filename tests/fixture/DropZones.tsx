@@ -39,7 +39,7 @@ function AvatarPicker({ theme }: { theme: ThemeValue }) {
       {avatar && (
         <div className="fixture-actions fixture-file-preview">
           <img src={preview} alt="" width={48} height={48} />
-          <Text as="span">{avatar.name}</Text>
+          <Text render={<span />}>{avatar.name}</Text>
           <Button variant="secondary" onClick={() => picker.current?.click()}>
             Replace
           </Button>

@@ -25,7 +25,7 @@ export default function PendingSend() {
         onSubmit={send}
         footer={sending ? 'Sending…' : 'Replies go to the whole thread.'}
       />
-      <Text variant="caption" tone="muted" role="status">
+      <Text variant="caption" emphasis="muted" role="status">
         {log.length > 0 && `${log.length} ${log.length === 1 ? 'reply' : 'replies'} sent.`}
       </Text>
     </Stack>

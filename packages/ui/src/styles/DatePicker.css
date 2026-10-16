@@ -69,7 +69,7 @@
 .env-date-picker[data-tall] .env-text-field-end {
   --env-control-height: var(--env-control-height-sm);
 }
-.env-date-picker-end > .env-symbol.env-date-picker-icon {
+.env-date-picker-end > .env-icon.env-date-picker-icon {
   display: grid;
   place-items: center;
   inline-size: var(--env-date-picker-action);

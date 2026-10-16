@@ -16,7 +16,7 @@ export default function SelectRows() {
     );
   return (
     <Stack gap={3}>
-      <Text tone="muted">
+      <Text emphasis="muted">
         {selected.length} of {members.length} selected
       </Text>
       <Table.Root aria-label="Members">

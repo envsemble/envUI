@@ -94,8 +94,8 @@
   white-space: nowrap;
 }
 /* A secondary line, such as <Text variant="caption">, sits under the cell's main text. */
-.env-table-cell > .env-text-caption,
-.env-table-cell-content > .env-text-caption {
+.env-table-cell > .env-text:where([data-variant='caption']),
+.env-table-cell-content > .env-text:where([data-variant='caption']) {
   margin-block-start: 0.125rem;
 }
 .env-table-row[data-interactive] {
@@ -160,7 +160,7 @@
 .env-table-head .env-table-row:first-child > :last-child .env-table-sort-button {
   border-start-end-radius: calc(var(--env-radius-lg) - 0.0625rem);
 }
-.env-table-sort-button .env-symbol {
+.env-table-sort-button .env-icon {
   color: var(--env-color-fg-muted);
 }
 .env-table-header-cell:is([aria-sort='ascending'], [aria-sort='descending']) {
@@ -168,7 +168,7 @@
 }
 .env-table-header-cell:is([aria-sort='ascending'], [aria-sort='descending'])
   .env-table-sort-button
-  .env-symbol {
+  .env-icon {
   color: inherit;
 }
 .env-table-header-label {

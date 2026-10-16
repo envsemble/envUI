@@ -3,19 +3,27 @@
 import type { ComponentPropsWithRef, CSSProperties, ReactElement } from 'react';
 import { useRender } from '@base-ui/react/use-render';
 import { classNames } from '../internal/classNames.js';
-import type { SpaceStep, StackElement } from './Layout.js';
+import type { SpaceStep } from './Layout.js';
 
-export type SurfaceTone = 'pane' | 'row' | 'canvas' | 'alternate';
-export type SurfaceCorners = 'surface' | 'standard' | 'pill' | 'none';
+/**
+ * A surface's fill: default, the background of panes and side regions; muted, the background of
+ * rows; page, the page behind everything; raised, a block that stands out on a pane.
+ */
+export type SurfaceBackground = 'default' | 'muted' | 'page' | 'raised';
+
+/**
+ * A surface's corner radius, named after the radius tokens: xl, the 1.75 rem corners of panes; sm,
+ * 0.5 rem for small blocks; full, fully rounded ends; none, square.
+ */
+export type SurfaceRadius = 'xl' | 'sm' | 'full' | 'none';
 
 export interface SurfaceAppearanceProps {
   /**
-   * The background: pane, the default background of panes and side regions; row, the muted
-   * background of rows; canvas, the page background; or alternate, the raised background, such as
-   * a block that stands out on a pane.
-   * @default 'pane'
+   * The fill: default, the background of panes and side regions; muted, the background of rows;
+   * page, the page background; or raised, a block that stands out on a pane.
+   * @default 'default'
    */
-  tone?: SurfaceTone;
+  background?: SurfaceBackground;
   /**
    * The inset on every side, as a step of the spacing scale, from 1 (0.25 rem) to 9 (4 rem), such
    * as 5 for 1.5 rem; 0 removes it. Without it, the inset follows the window's width.
@@ -23,54 +31,46 @@ export interface SurfaceAppearanceProps {
    */
   padding?: SpaceStep;
   /**
-   * The corner radius: surface, the large 1.75 rem corners of panes; standard, 0.5 rem for small
-   * blocks; pill, fully rounded ends for a toolbar or a bar of filters; or none, square, for a
-   * region that meets the edges of its container.
-   * @default 'surface'
+   * The corner radius: xl, the large 1.75 rem corners of panes; sm, 0.5 rem for small blocks;
+   * full, fully rounded ends for a toolbar or a bar of filters; or none, square, for a region that
+   * meets the edges of its container.
+   * @default 'xl'
    */
-  corners?: SurfaceCorners;
+  radius?: SurfaceRadius;
 }
 
-export type SurfaceProps<Element extends StackElement = 'div'> = SurfaceAppearanceProps & {
+export type SurfaceProps = SurfaceAppearanceProps & {
   /**
-   * The element to render, for its meaning: div by default, or section, article, nav, main, aside,
-   * header or footer. With render, set the element there instead.
-   */
-  as?: Element;
-  /**
-   * Another element to render the surface onto, without a wrapper, such as a Stack that lays out
-   * its content: the surface's class, style and attributes merge into its props. It must forward
-   * native props and refs.
+   * The element to render the surface as, for its meaning, such as render={<section />}, or
+   * another component to render it onto without a wrapper, such as a Stack that lays out its
+   * content: the surface's class, style and attributes merge into its props. It must forward
+   * native props and refs. A div by default.
    */
   render?: ReactElement;
-} & Omit<ComponentPropsWithRef<Element>, keyof SurfaceAppearanceProps | 'as' | 'render'>;
+} & Omit<ComponentPropsWithRef<'div'>, keyof SurfaceAppearanceProps>;
 
 /**
  * A container with a background, an inset and corners, but no layout of its own: spacing between
  * its children, alignment and behaviour come from what it holds, such as a Stack. Card and other
  * containers build on it.
  */
-export function Surface<Element extends StackElement = 'div'>({
-  as,
+export function Surface({
   render,
-  tone = 'pane',
+  background = 'default',
   padding,
-  corners = 'surface',
+  radius = 'xl',
   className,
   style,
   ...props
-}: SurfaceProps<Element>) {
+}: SurfaceProps) {
   return useRender({
-    defaultTagName: as ?? 'div',
+    defaultTagName: 'div',
     render,
     props: {
       ...props,
-      className: classNames(
-        'env-surface',
-        `env-surface-${tone}`,
-        `env-surface-corners-${corners}`,
-        className,
-      ),
+      className: classNames('env-surface', className),
+      'data-background': background,
+      'data-radius': radius,
       style: {
         ...(padding !== undefined
           ? { '--env-surface-padding': padding === 0 ? '0rem' : `var(--env-space-${padding})` }

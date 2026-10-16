@@ -248,7 +248,7 @@ export function ToastRegion({
                         aria-hidden={false}
                         aria-label="Dismiss notification"
                       >
-                        <span className="env-symbol">
+                        <span className="env-icon">
                           <Close />
                         </span>
                       </BaseToast.Close>

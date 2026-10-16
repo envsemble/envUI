@@ -36,11 +36,11 @@ export function FeatureCard({
         )}
         <Stack className="env-feature-card-copy">
           <Stack gap={1}>
-            <Text as="h2" variant="page-heading">
+            <Text render={<h2 />} variant="headline">
               {title}
             </Text>
             {description != null && (
-              <Text variant="supporting" className="env-feature-card-description">
+              <Text variant="body-sm" className="env-feature-card-description">
                 {description}
               </Text>
             )}

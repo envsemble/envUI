@@ -24,10 +24,10 @@ export default function Destinations() {
           aria-labelledby={`${id}-name`}
           aria-describedby={`${id}-summary`}
         >
-          <Text as="span" variant="section-heading" id={`${id}-name`}>
+          <Text render={<span />} variant="title" id={`${id}-name`}>
             {name}
           </Text>
-          <Text as="span" tone="muted" id={`${id}-summary`}>
+          <Text render={<span />} emphasis="muted" id={`${id}-summary`}>
             {summary}
           </Text>
         </Card>

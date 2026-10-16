@@ -8,7 +8,7 @@ function StatusIcon({ variant }: { variant: ToastVariant }) {
   if (variant === 'neutral') return null;
   const StatusSymbol = variant === 'success' ? CheckCircle : variant === 'info' ? Info : Warning;
   return (
-    <span className="env-symbol env-toast-status-icon">
+    <span className="env-icon env-toast-status-icon">
       <StatusSymbol />
     </span>
   );

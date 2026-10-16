@@ -15,7 +15,7 @@ export default function InheritedAccess() {
         <Radio value="team" label="Team" />
         <Radio value="private" label="Private" />
       </RadioGroup>
-      <Text id={reason} variant="supporting">
+      <Text id={reason} variant="body-sm">
         This folder takes its access from Northwind launch. Change it there.
       </Text>
     </Stack>

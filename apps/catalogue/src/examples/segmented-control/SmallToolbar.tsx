@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ActionGroup, Button, SegmentedControl, Stack, Surface } from '@envsemble/envui';
+import { Button, SegmentedControl, Stack, Surface } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { ViewList } from '@envsemble/envui/icons/ViewList';
 import { ViewModule } from '@envsemble/envui/icons/ViewModule';
@@ -11,12 +11,12 @@ export default function SmallToolbar() {
     // The toolbar is as wide as its controls.
     <Stack align="start">
       <Surface
-        tone="pane"
+        background="default"
         padding={1}
-        corners="pill"
+        radius="full"
         role="group"
         aria-label="Projects"
-        render={<ActionGroup />}
+        render={<Stack direction="row" wrap align="center" gap={4} />}
       >
         <SegmentedControl
           aria-label="Layout"

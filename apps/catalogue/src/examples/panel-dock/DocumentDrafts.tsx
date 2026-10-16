@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import {
-  ActionGroup,
   Button,
   IconButton,
   Menu,
@@ -109,7 +108,7 @@ function DocumentWindow({
       />
       {/* The body's inset lines up with the header's title. */}
       <Stack gap={4} style={{ padding: '0 1.5rem 1.5rem' }}>
-        <Text tone="muted">{document.summary}</Text>
+        <Text emphasis="muted">{document.summary}</Text>
         <Textarea
           label="Draft"
           rows={4}
@@ -154,16 +153,16 @@ export default function DocumentDrafts() {
   return (
     // The dock fills a positioned region with a height, such as the area below a topbar.
     <Surface
-      tone="row"
+      background="muted"
       padding={0}
       style={{ position: 'relative', blockSize: '34rem', overflow: 'hidden' }}
     >
       <Stack gap={4} inert={covered} style={{ padding: '2rem' }}>
-        <Text as="h3" variant="section-heading">
+        <Text render={<h3 />} variant="title">
           Documents
         </Text>
-        <Text tone="muted">Open documents to work on them beside the page.</Text>
-        <ActionGroup>
+        <Text emphasis="muted">Open documents to work on them beside the page.</Text>
+        <Stack direction="row" wrap align="center" gap={4}>
           {documents.map((document) => (
             <Button
               key={document.id}
@@ -174,7 +173,7 @@ export default function DocumentDrafts() {
               {document.label ?? document.title}
             </Button>
           ))}
-        </ActionGroup>
+        </Stack>
       </Stack>
       <PanelDock
         panels={panels}

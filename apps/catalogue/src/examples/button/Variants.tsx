@@ -1,15 +1,19 @@
-import { ActionGroup, Button } from '@envsemble/envui';
+import { Button, Stack } from '@envsemble/envui';
 
 export default function Variants() {
   return (
-    <ActionGroup>
+    <Stack direction="row" wrap align="center" gap={4}>
       <Button>Continue</Button>
-      <Button variant="important">Confirm</Button>
+      <Button variant="primary" tone="accent">
+        Confirm
+      </Button>
       <Button variant="secondary">Cancel</Button>
-      <Button variant="outlined">Manage</Button>
-      <Button variant="destructive">Delete</Button>
+      <Button variant="outline">Manage</Button>
+      <Button variant="primary" tone="danger">
+        Delete
+      </Button>
       <Button variant="text">Learn more</Button>
-      <Button variant="quiet">Settings</Button>
-    </ActionGroup>
+      <Button variant="ghost">Settings</Button>
+    </Stack>
   );
 }

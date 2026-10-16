@@ -52,17 +52,17 @@ Put a region's skeletons in a **LoadingState**. It names the region once, such a
 ## Anatomy
 
 1. **LoadingState** (`label`): a region that stacks its children 0.5 rem apart, named by `label` (Loading by default) for assistive technology.
-2. **Skeleton** (`width`, `height`, `tone`): a block with 0.5 rem corners on the neutral fill. It is 0.8 rem tall and as wide as its container unless `width` and `height` say otherwise.
+2. **Skeleton** (`width`, `height`, `emphasis`): a block with 0.5 rem corners on the neutral fill. It is 0.8 rem tall and as wide as its container unless `width` and `height` say otherwise.
 
 ## Variants and sizes
 
-| Tone             | Use for                                                                |
-| ---------------- | ---------------------------------------------------------------------- |
-| `base` (default) | Most placeholders, such as lines of text and rows.                     |
-| `highlight`      | A placeholder that stands out among the others, such as a row's title. |
+| Emphasis          | Use for                                                                |
+| ----------------- | ---------------------------------------------------------------------- |
+| `muted` (default) | Most placeholders, such as lines of text and rows.                     |
+| `default`         | A placeholder that stands out among the others, such as a row's title. |
 
 - `width` and `height` take any CSS length. Match the content that replaces the placeholder: a heading's line height, about 0.8 rem for a line of body text, a row's height.
-- The base tone is the neutral fill, a translucent layer of the text color, so placeholders stay visible on the canvas, panes, rows and cards. The highlight tone is one step stronger.
+- The muted emphasis is the neutral fill, a translucent layer of the text color, so placeholders stay visible on the canvas, panes, rows and cards. The default emphasis is one step stronger.
 - For a round placeholder, such as an avatar's, give a square skeleton a 50% `borderRadius` in `style`.
 
 ## States and behaviour
@@ -115,7 +115,7 @@ Put a region's skeletons in a **LoadingState**. It names the region once, such a
 
 ### Rows of a list
 
-An avatar and two lines per row. The round avatar is a square skeleton with a 50% radius, and each row's name takes the highlight tone.
+An avatar and two lines per row. The round avatar is a square skeleton with a 50% radius, and each row's name takes the default emphasis.
 
 ```tsx example=MemberRows
 
@@ -139,6 +139,7 @@ Choosing another project shows placeholders in the card's place until it loads; 
 
 ## Changelog
 
+- **1.0.0**: `tone` is `emphasis`: `base` is `muted`, the default, and `highlight` is `default`.
 - **0.4.0**: The base tone uses the translucent neutral fill, so placeholders stay visible on panes, rows and cards.
 - **0.3.0**: Skeletons pulse.
 - **0.1.0**: Skeleton and LoadingState.

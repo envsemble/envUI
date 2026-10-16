@@ -35,7 +35,7 @@ export function ComposerFixture({ theme }: { theme: ThemeValue }) {
       </div>
       <output data-testid={`composer-sent-${theme}`}>{sent.join(' | ')}</output>
       <output data-testid={`composer-stops-${theme}`}>{stops}</output>
-      <Surface tone="pane" padding={4} data-surface="pane">
+      <Surface background="default" padding={4} data-surface="pane">
         <Composer
           aria-label={`Note ${theme}`}
           defaultValue="Draft note"

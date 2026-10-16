@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { ActionGroup, Button, Combobox, Stack, Text, type ComboboxItem } from '@envsemble/envui';
+import { Button, Combobox, Stack, Text, type ComboboxItem } from '@envsemble/envui';
 
 const topics: ComboboxItem[] = [
   'Accessibility',
@@ -42,13 +42,13 @@ export default function RequiredInForm() {
           error={error}
           clearable
         />
-        <ActionGroup>
+        <Stack direction="row" wrap align="center" gap={4}>
           <Button type="submit">File request</Button>
           <Button type="reset" variant="secondary">
             Reset
           </Button>
-        </ActionGroup>
-        <Text variant="caption" tone="muted" role="status">
+        </Stack>
+        <Text variant="caption" emphasis="muted" role="status">
           {sent}
         </Text>
       </Stack>

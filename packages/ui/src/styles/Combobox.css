@@ -66,10 +66,10 @@
 .env-combobox[data-tall] .env-text-field-end {
   --env-control-height: var(--env-control-height-sm);
 }
-.env-combobox-trigger .env-symbol {
+.env-combobox-trigger .env-icon {
   transform: rotate(90deg);
 }
-.env-combobox-trigger[data-popup-open] .env-symbol {
+.env-combobox-trigger[data-popup-open] .env-icon {
   transform: rotate(-90deg);
 }
 .env-text-field-end .env-combobox-trigger,
@@ -94,7 +94,7 @@
   --env-avatar-size: var(--env-combobox-leading-size);
 }
 .env-combobox-leading > svg,
-.env-combobox-leading > .env-symbol {
+.env-combobox-leading > .env-icon {
   inline-size: min(var(--env-control-icon-size), var(--env-combobox-leading-size));
   block-size: min(var(--env-control-icon-size), var(--env-combobox-leading-size));
 }
@@ -230,7 +230,7 @@
   block-size: var(--env-control-icon-size);
   color: var(--env-color-bg-brand-emphasis);
 }
-.env-combobox-check .env-symbol {
+.env-combobox-check .env-icon {
   inline-size: var(--env-control-icon-size);
   block-size: var(--env-control-icon-size);
 }
@@ -287,7 +287,7 @@
   animation: none;
 }
 @media (prefers-reduced-motion: no-preference) {
-  .env-combobox-trigger .env-symbol {
+  .env-combobox-trigger .env-icon {
     transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);
   }
 }

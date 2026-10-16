@@ -19,14 +19,23 @@ import {
   InfoChip,
   Skeleton,
   type ThemeValue,
-  type ButtonVariant,
 } from '@envsemble/envui';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 import { Home } from '@envsemble/envui/icons/Home';
 import { planOptions } from './SelectOptions.js';
 
+/** The 1.0 emphasis of each 0.7 variant, which the samples are still named by. */
+const emphasis = {
+  primary: { variant: 'primary' },
+  secondary: { variant: 'secondary' },
+  outlined: { variant: 'outline' },
+  destructive: { variant: 'primary', tone: 'danger' },
+  important: { variant: 'primary', tone: 'accent' },
+  text: { variant: 'text' },
+} as const;
+
 export function ColorControls({ theme }: { theme: ThemeValue }) {
-  const variants: readonly ButtonVariant[] = [
+  const variants: readonly (keyof typeof emphasis)[] = [
     'primary',
     'secondary',
     'outlined',
@@ -37,7 +46,7 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
     <Theme theme={theme} data-testid={`color-controls-${theme}`} className="fixture-section">
       <h2>{theme} interactive colors</h2>
       {variants.map((variant) => (
-        <Button key={variant} variant={variant} data-testid={`${theme}-button-${variant}`}>
+        <Button key={variant} {...emphasis[variant]} data-testid={`${theme}-button-${variant}`}>
           {theme} {variant}
         </Button>
       ))}
@@ -53,7 +62,7 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
         {theme} selected navigation
       </NavList.Item>
       <Stack gap={3}>
-        <Surface tone="row" data-testid={`${theme}-color-surface`}>
+        <Surface background="muted" data-testid={`${theme}-color-surface`}>
           Surface
         </Surface>
         <Surface data-testid={`${theme}-color-pane`}>Pane</Surface>

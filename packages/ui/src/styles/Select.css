@@ -10,13 +10,13 @@
   gap: var(--env-space-2);
 }
 /* A transparent border lets an invalid secondary trigger show the error color without resizing. */
-.env-button-secondary.env-dropdown-trigger {
+.env-dropdown-trigger[data-variant='secondary'] {
   border: var(--env-control-border-width) solid var(--env-field-border-base, transparent);
 }
-.env-button-secondary.env-dropdown-trigger[aria-expanded='true']:not(:disabled, :active) {
+.env-dropdown-trigger[data-variant='secondary'][aria-expanded='true']:not(:disabled, :active) {
   background: var(--env-color-bg-neutral-muted-hover);
 }
-.env-button-outlined.env-dropdown-trigger[aria-expanded='true']:not(:disabled, :active) {
+.env-dropdown-trigger[data-variant='outline'][aria-expanded='true']:not(:disabled, :active) {
   background: var(--env-color-bg-raised-hover);
   border-color: var(--env-color-border-default-hover);
 }
@@ -24,10 +24,14 @@
 .env-button.env-dropdown-trigger[aria-invalid='true']:not(:disabled) {
   border-color: var(--env-field-border-base);
 }
-.env-button-secondary.env-dropdown-trigger[aria-invalid='true']:is(:hover, :active):not(:disabled) {
+.env-dropdown-trigger[data-variant='secondary'][aria-invalid='true']:is(:hover, :active):not(
+    :disabled
+  ) {
   background: var(--env-color-bg-neutral-muted);
 }
-.env-button-outlined.env-dropdown-trigger[aria-invalid='true']:is(:hover, :active):not(:disabled) {
+.env-dropdown-trigger[data-variant='outline'][aria-invalid='true']:is(:hover, :active):not(
+    :disabled
+  ) {
   background: var(--env-color-bg-raised);
 }
 @media (hover: hover) {
@@ -39,12 +43,12 @@
   border-color: var(--env-field-interaction-pressed);
 }
 
-.env-dropdown-trigger .env-symbol {
+.env-dropdown-trigger .env-icon {
   width: var(--env-icon-size-md);
   height: var(--env-icon-size-md);
   transform: rotate(90deg);
 }
-.env-dropdown-trigger[aria-expanded='true'] .env-symbol {
+.env-dropdown-trigger[aria-expanded='true'] .env-icon {
   transform: rotate(-90deg);
 }
 /* The open list is the menus' raised popup: its own color, a hairline border, small corners and
@@ -125,7 +129,7 @@
   pointer-events: none;
 }
 /* Small triggers keep the chevron at the control icon size. */
-.env-dropdown-trigger[data-size='sm'] .env-symbol {
+.env-dropdown-trigger[data-size='sm'] .env-icon {
   width: var(--env-control-icon-size);
   height: var(--env-control-icon-size);
 }
@@ -159,7 +163,7 @@
   transition-timing-function: var(--env-motion-ease-exit);
 }
 @media (prefers-reduced-motion: no-preference) {
-  .env-dropdown-trigger .env-symbol {
+  .env-dropdown-trigger .env-icon {
     transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);
   }
   .env-dropdown-options {

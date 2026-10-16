@@ -32,11 +32,11 @@ export function PageHeader({
           <div className="docs-page-banner-heading">
             <Stack gap={3} align="center">
               {breadcrumb && <Text variant="caption">{breadcrumb}</Text>}
-              <Text as="h1" variant="page-heading" className="docs-page-banner-title">
+              <Text render={<h1 />} variant="headline" className="docs-page-banner-title">
                 {title}
               </Text>
               {description && (
-                <Text tone="muted" className="docs-page-banner-description">
+                <Text emphasis="muted" className="docs-page-banner-description">
                   {description}
                 </Text>
               )}

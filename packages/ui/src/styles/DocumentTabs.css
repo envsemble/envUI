@@ -67,7 +67,7 @@
   outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: -0.125rem;
 }
-.env-document-tab .env-symbol {
+.env-document-tab .env-icon {
   inline-size: var(--env-control-icon-size);
   block-size: var(--env-control-icon-size);
   color: var(--env-color-fg-muted);
@@ -100,7 +100,7 @@
   cursor: pointer;
   visibility: hidden;
 }
-.env-document-tab-close .env-symbol {
+.env-document-tab-close .env-icon {
   inline-size: 1rem;
   block-size: 1rem;
 }

@@ -1,8 +1,8 @@
-import { ActionGroup, Badge } from '@envsemble/envui';
+import { Badge, Stack } from '@envsemble/envui';
 
 export default function Emphasis() {
   return (
-    <ActionGroup>
+    <Stack direction="row" wrap align="center" gap={4}>
       <Badge tone="success">Ready</Badge>
       <Badge tone="danger" variant="solid">
         Overdue
@@ -11,6 +11,6 @@ export default function Emphasis() {
         Design
       </Badge>
       <Badge variant="outline">Shared drafts</Badge>
-    </ActionGroup>
+    </Stack>
   );
 }

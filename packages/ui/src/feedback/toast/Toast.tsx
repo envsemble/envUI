@@ -43,7 +43,7 @@ export function Toast({
               aria-label={dismissLabel}
               onClick={onDismiss}
             >
-              <span className="env-symbol">
+              <span className="env-icon">
                 <Close />
               </span>
             </button>

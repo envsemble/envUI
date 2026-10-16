@@ -17,7 +17,7 @@ export default function SidebarSearch() {
   );
   return (
     // As wide as a sidebar.
-    <Surface tone="pane" padding={3} style={{ inlineSize: 'min(100%, 16rem)' }}>
+    <Surface background="default" padding={3} style={{ inlineSize: 'min(100%, 16rem)' }}>
       <Stack gap={2}>
         <SearchField
           variant="quiet"
@@ -39,7 +39,7 @@ export default function SidebarSearch() {
             ))}
           </NavList.Root>
         ) : (
-          <Text variant="caption" tone="muted">
+          <Text variant="caption" emphasis="muted">
             No projects match.
           </Text>
         )}

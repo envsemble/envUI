@@ -1,14 +1,5 @@
 import { useId, useMemo, useRef, useState } from 'react';
-import {
-  ActionGroup,
-  Button,
-  Card,
-  Dialog,
-  SearchField,
-  Stack,
-  Switch,
-  Text,
-} from '@envsemble/envui';
+import { Button, Card, Dialog, SearchField, Stack, Switch, Text } from '@envsemble/envui';
 // This offline browser consumes the full public catalogue. Products use per-icon imports.
 import * as symbols from '@envsemble/envui/icons';
 import { Example } from '../Example';
@@ -142,7 +133,7 @@ export function IconCatalogue({
                 }}
               >
                 <Symbol filled={filled} width="2rem" height="2rem" />
-                <Text as="span" variant="caption" tone="primary">
+                <Text render={<span />} variant="caption" emphasis="default">
                   {label}
                 </Text>
               </Card>
@@ -153,7 +144,7 @@ export function IconCatalogue({
         <Text>No matching icons. Try another name.</Text>
       )}
       {pageCount > 1 && (
-        <ActionGroup>
+        <Stack direction="row" wrap align="center" gap={4}>
           <Button variant="secondary" disabled={page === 0} onClick={() => setPage(page - 1)}>
             Previous
           </Button>
@@ -167,7 +158,7 @@ export function IconCatalogue({
           >
             Next
           </Button>
-        </ActionGroup>
+        </Stack>
       )}
       <Dialog
         id={detailsId}

@@ -68,7 +68,7 @@ export default function RunCommand() {
         emptyLabel="No matching commands"
         footer="Shortcuts work anywhere in the workspace."
       />
-      <Text variant="caption" tone="muted" role="status">
+      <Text variant="caption" emphasis="muted" role="status">
         {ran}
       </Text>
     </Stack>

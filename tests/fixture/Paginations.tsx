@@ -131,9 +131,9 @@ export function PaginationsFixture({ theme }: { theme: ThemeValue }) {
       <Pagination page={1} pageSize={10} total={30} onPageChange={ignore} />
       {/* A small toolbar: a search field that shrinks, and the pager on one line beside it. */}
       <Surface
-        tone="row"
+        background="muted"
         padding={2}
-        corners="standard"
+        radius="sm"
         className="fixture-toolbar fixture-pager-toolbar"
         data-testid="toolbar"
       >

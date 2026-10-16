@@ -17,9 +17,9 @@ export default function CustomFormat() {
           { value: 'yearly', label: 'Yearly' },
         ]}
       />
-      <Text variant="page-heading">
+      <Text variant="headline">
         <AnimatedNumber value={prices[billing]} format={(value) => euros.format(value)} />{' '}
-        <Text as="span" tone="muted">
+        <Text render={<span />} emphasis="muted">
           per seat, {billing === 'monthly' ? 'each month' : 'each year'}
         </Text>
       </Text>

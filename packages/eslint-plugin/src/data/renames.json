@@ -3,6 +3,14 @@
   "source": "packages/codemods/src/maps/v1",
   "modules": {
     "@envsemble/envui": {
+      "ActionGroup": {
+        "to": [],
+        "use": "Lay actions out with Stack: <Stack direction=\"row\" wrap align=\"center\" gap={4}> for a row, with justify=\"end\" for the end of a form, and <Stack gap={2}> with fullWidth on each labelled Button for a stacked group. v1-structure rewrites each use."
+      },
+      "ActionGroupProps": {
+        "to": [],
+        "use": "StackProps, with direction, wrap, align, justify and gap."
+      },
       "Counter": { "to": ["CounterBadge"] },
       "CounterProps": { "to": ["CounterBadgeProps"] },
       "DateTimeField": { "to": ["DatePicker"] },
@@ -74,16 +82,22 @@
       "OrganizationMenuProps": { "to": ["OrganizationSwitcherProps"] },
       "Row": { "to": ["List.Item"] },
       "RowProps": { "to": ["List.ItemProps"] },
+      "StackElement": {
+        "to": [],
+        "use": "Stack, Surface and Text render another element through render, such as render={<section />}; they no longer take as."
+      },
       "Stat": { "to": ["Stat.Root"] },
       "StatGroup": { "to": ["Stat.Group"] },
       "StatGroupProps": { "to": ["Stat.GroupProps"] },
       "StatProps": { "to": ["Stat.RootProps"] },
       "StatTrend": { "to": ["Stat.Trend"] },
       "StatTrendTone": { "to": ["Stat.TrendTone"] },
+      "SurfaceCorners": { "to": ["SurfaceRadius"] },
       "SurfaceDensity": {
         "to": [],
         "use": "Surface's density is gone in 1.0: give the controls inside a ControlSize with their size prop, or set a ThemeScale with scale on a Theme around the region."
       },
+      "SurfaceTone": { "to": ["SurfaceBackground"] },
       "Table": { "to": ["Table.Root"] },
       "TableBody": { "to": ["Table.Body"] },
       "TableBodyProps": { "to": ["Table.BodyProps"] },
@@ -97,6 +111,11 @@
       "TableRow": { "to": ["Table.Row"] },
       "TableRowProps": { "to": ["Table.RowProps"] },
       "TableSortDirection": { "to": ["Table.SortDirection"] },
+      "TextElement": {
+        "to": [],
+        "use": "Text renders another element through render, such as render={<h2 />}."
+      },
+      "TextTone": { "to": ["TextEmphasis"] },
       "Toast": {
         "to": [],
         "use": "Show notifications through useToast() inside Toast.Provider. The manual Toast is internal; the `Toast` export is now the namespace of Toast.Provider.",

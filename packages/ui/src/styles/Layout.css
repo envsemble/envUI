@@ -5,6 +5,12 @@
   min-inline-size: 0;
   align-items: stretch;
 }
+.env-stack[data-direction='row'] {
+  flex-direction: row;
+}
+.env-stack[data-wrap] {
+  flex-wrap: wrap;
+}
 .env-stack[data-align='start'] {
   align-items: flex-start;
 }
@@ -14,36 +20,21 @@
 .env-stack[data-align='end'] {
   align-items: flex-end;
 }
+.env-stack[data-justify='center'] {
+  justify-content: center;
+}
+.env-stack[data-justify='end'] {
+  justify-content: flex-end;
+}
+.env-stack[data-justify='between'] {
+  justify-content: space-between;
+}
 .env-stack > * {
   margin-block: 0;
   min-inline-size: 0;
   max-inline-size: 100%;
 }
-.env-action-group {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-start;
-  gap: var(--env-space-4);
-  min-inline-size: 0;
-}
-.env-action-group[data-align='center'] {
-  justify-content: center;
-}
-.env-action-group[data-align='end'] {
-  justify-content: flex-end;
-}
-.env-action-group > * {
-  margin: 0;
-  min-inline-size: 0;
-  max-inline-size: 100%;
-}
-.env-action-group[data-stacked] {
-  flex-direction: column;
-  flex-wrap: nowrap;
-  align-items: stretch;
-  gap: var(--env-space-2);
-}
-.env-action-group[data-stacked] > .env-button:not(.env-icon-button) {
-  inline-size: 100%;
+/* In a row, the children's inline margins go too, so the gap alone spaces them. */
+.env-stack[data-direction='row'] > * {
+  margin-inline: 0;
 }

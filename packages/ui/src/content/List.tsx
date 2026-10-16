@@ -27,7 +27,7 @@ function Root({ contrast = false, density = 'md', className, ...props }: RootPro
     />
   );
   return contrast ? (
-    <Surface tone="row" padding={3} className="env-list-surface">
+    <Surface background="muted" padding={3} className="env-list-surface">
       {rows}
     </Surface>
   ) : (

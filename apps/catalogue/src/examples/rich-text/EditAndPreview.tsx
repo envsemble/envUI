@@ -15,8 +15,8 @@ export default function EditAndPreview() {
   return (
     <Stack gap={5}>
       <RichTextEditor label="Meeting notes" value={notes} onValueChange={setNotes} />
-      <Surface tone="row" padding={4} render={<Stack gap={2} />}>
-        <Text variant="supporting">Preview</Text>
+      <Surface background="muted" padding={4} render={<Stack gap={2} />}>
+        <Text variant="body-sm">Preview</Text>
         <RichText>{notes}</RichText>
       </Surface>
     </Stack>

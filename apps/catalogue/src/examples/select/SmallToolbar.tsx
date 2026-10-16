@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ActionGroup, IconButton, Select, Stack, Surface, Text } from '@envsemble/envui';
+import { IconButton, Select, Stack, Surface, Text } from '@envsemble/envui';
 import { ZoomIn } from '@envsemble/envui/icons/ZoomIn';
 import { ZoomOut } from '@envsemble/envui/icons/ZoomOut';
 
@@ -16,14 +16,14 @@ export default function SmallToolbar() {
     // The toolbar is as wide as its controls.
     <Stack align="start">
       <Surface
-        tone="pane"
+        background="default"
         padding={1}
-        corners="pill"
+        radius="full"
         role="group"
         aria-label="Diagram"
-        render={<ActionGroup />}
+        render={<Stack direction="row" wrap align="center" gap={4} />}
       >
-        <Text as="span" variant="supporting">
+        <Text render={<span />} variant="body-sm">
           Northwind launch plan
         </Text>
         <IconButton

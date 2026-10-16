@@ -502,7 +502,9 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
           <span className="env-text-field-end env-combobox-end">
             {showClear && (
               <BaseCombobox.Clear
-                className="env-button env-button-text env-icon-button env-combobox-clear"
+                className="env-button env-icon-button env-combobox-clear"
+                data-variant="text"
+                data-tone="neutral"
                 aria-label={clearLabel}
                 title={clearLabel}
               >
@@ -512,7 +514,9 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
               </BaseCombobox.Clear>
             )}
             <BaseCombobox.Trigger
-              className="env-button env-button-text env-icon-button env-combobox-trigger"
+              className="env-button env-icon-button env-combobox-trigger"
+              data-variant="text"
+              data-tone="neutral"
               {...(label != null ? { 'aria-labelledby': labelId } : { 'aria-label': ariaLabel })}
             >
               <DecorativeIcon>
@@ -608,7 +612,7 @@ function ComboboxOption<Item extends ComboboxItem>({
       aria-describedby={item.description ? descriptionId : undefined}
     >
       <span className="env-combobox-check" aria-hidden="true">
-        <BaseCombobox.ItemIndicator className="env-symbol">
+        <BaseCombobox.ItemIndicator className="env-icon">
           <Check />
         </BaseCombobox.ItemIndicator>
       </span>

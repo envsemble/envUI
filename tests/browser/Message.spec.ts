@@ -89,7 +89,7 @@ test('own messages are bubbles at the inline end; others fill the width', async 
     await expect(answer).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
     // Own icon actions line their icons up with the edge of the message.
     const copy = log.getByRole('button', { name: 'Copy answer' });
-    const icon = (await copy.locator('.env-symbol').boundingBox())!;
+    const icon = (await copy.locator('.env-icon').boundingBox())!;
     expect(icon.x).toBeCloseTo(answerBox.x, 0);
   }
 

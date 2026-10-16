@@ -23,7 +23,7 @@ export default function SettingsDiff() {
   return (
     <Stack gap={3}>
       <div style={heading}>
-        <Text as="h3" variant="section-heading">
+        <Text render={<h3 />} variant="title">
           Unsaved changes
         </Text>
         <DiffStat additions={additions} deletions={deletions} />

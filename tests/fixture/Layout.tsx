@@ -2,7 +2,6 @@ import { useState } from 'react';
 import {
   Theme,
   Card,
-  ActionGroup,
   Button,
   InfoChip,
   Disclosure,
@@ -30,10 +29,10 @@ export function LayoutFixture() {
           <Card data-testid="layout-card" style={{ maxInlineSize: '24rem' }}>
             <h3>Related content</h3>
             <p>A description with enough content to wrap on a narrow screen.</p>
-            <ActionGroup>
+            <Stack direction="row" wrap align="center" gap={4}>
               <Button variant="secondary">Cancel</Button>
               <Button>Save changes</Button>
-            </ActionGroup>
+            </Stack>
             <InfoChip>Updated today</InfoChip>
             <Disclosure title={`Card guidance ${theme}`} open>
               <p>First detail</p>
@@ -57,11 +56,13 @@ export function LayoutFixture() {
               <IconButton icon={<ChevronRight />} aria-label={`Squeezed next ${theme}`} />
             </span>
           </div>
-          <ActionGroup stacked data-testid="stacked-actions" style={{ maxInlineSize: '20rem' }}>
-            <Button>Continue</Button>
-            <Button variant="secondary">Cancel</Button>
+          <Stack gap={2} data-testid="stacked-actions" style={{ maxInlineSize: '20rem' }}>
+            <Button fullWidth>Continue</Button>
+            <Button variant="secondary" fullWidth>
+              Cancel
+            </Button>
             <IconButton icon={<ChevronRight />} aria-label={`Stacked next ${theme}`} />
-          </ActionGroup>
+          </Stack>
           <ActionCard
             title="Shared action card"
             data-testid="flush-action-card"

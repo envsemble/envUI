@@ -101,7 +101,7 @@ export function FormsFixture() {
           <Button type="reset" variant="secondary">
             Reset form
           </Button>
-          <Button variant="outlined" onClick={() => setControlled('mixed')}>
+          <Button variant="outline" onClick={() => setControlled('mixed')}>
             Restore controlled mixed
           </Button>
         </div>

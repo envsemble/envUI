@@ -28,7 +28,7 @@ export default function MinimizeWhatDoesNotFit() {
   return (
     // A region too narrow for three panels at their minimum width of 20 rem.
     <Surface
-      tone="row"
+      background="muted"
       padding={0}
       style={{
         position: 'relative',
@@ -51,7 +51,7 @@ export default function MinimizeWhatDoesNotFit() {
           <>
             <PanelDockHeader title={panel.title} />
             {/* The body's inset lines up with the header's title. */}
-            <Text tone="muted" style={{ padding: '0 1.5rem 1.5rem' }}>
+            <Text emphasis="muted" style={{ padding: '0 1.5rem 1.5rem' }}>
               Shared with the team.
             </Text>
           </>

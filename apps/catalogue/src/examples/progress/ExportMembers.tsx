@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ActionGroup, Button, Progress, Stack, Text } from '@envsemble/envui';
+import { Button, Progress, Stack, Text } from '@envsemble/envui';
 import { Download } from '@envsemble/envui/icons/Download';
 
 type Export = { phase: 'idle' | 'preparing' | 'exporting' | 'done'; percent: number };
@@ -28,7 +28,7 @@ export default function ExportMembers() {
   const running = state.phase === 'preparing' || state.phase === 'exporting';
   return (
     <Stack gap={4} align="start">
-      <ActionGroup>
+      <Stack direction="row" wrap align="center" gap={4}>
         <Button
           variant="secondary"
           startIcon={<Download />}
@@ -37,7 +37,7 @@ export default function ExportMembers() {
         >
           Export members
         </Button>
-      </ActionGroup>
+      </Stack>
       {running && (
         // A set width, so the bar keeps its size from preparing to a known amount.
         <div style={{ inlineSize: 'min(100%, 24rem)' }}>
@@ -48,7 +48,7 @@ export default function ExportMembers() {
           />
         </div>
       )}
-      <Text role="status" variant="supporting">
+      <Text role="status" variant="body-sm">
         {state.phase === 'done' ? 'Export ready: members.csv is in Downloads.' : ''}
       </Text>
     </Stack>

@@ -34,7 +34,7 @@ export default function OpenInPanel() {
       >
         {text}
       </Markdown>
-      <Text variant="caption" tone="muted" role="status">
+      <Text variant="caption" emphasis="muted" role="status">
         {opened}
       </Text>
     </Stack>

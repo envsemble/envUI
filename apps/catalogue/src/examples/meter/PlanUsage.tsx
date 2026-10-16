@@ -25,7 +25,7 @@ export default function PlanUsage() {
           );
         })}
         {/* The meter has no warning color; the page says when a limit is reached. */}
-        <Text variant="supporting">All seats are assigned. Remove a member to invite another.</Text>
+        <Text variant="body-sm">All seats are assigned. Remove a member to invite another.</Text>
       </Stack>
     </Card>
   );

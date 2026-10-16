@@ -21,7 +21,7 @@ export function IconsPreview({
             <Text variant="caption">envsemble</Text>
           </Stack>
         </SpecimenGrid>
-        <Text tone="muted">
+        <Text emphasis="muted">
           React lockups inherit the theme's text color. Raw SVGs and favicons use fixed colors.
         </Text>
       </Example>

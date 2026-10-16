@@ -12,13 +12,13 @@ export default function PersonDetails() {
           <div style={person}>
             <Avatar name="Priya Shah" size="large" />
             <div>
-              <Text as="strong" variant="section-heading">
+              <Text render={<strong />} variant="title">
                 Priya Shah
               </Text>
-              <Text variant="supporting">Research lead · Northwind</Text>
+              <Text variant="body-sm">Research lead · Northwind</Text>
             </div>
           </div>
-          <Text tone="muted">Owns 4 plans. Usually replies within a day.</Text>
+          <Text emphasis="muted">Owns 4 plans. Usually replies within a day.</Text>
         </Stack>
       </HoverCard>
       , due Friday.

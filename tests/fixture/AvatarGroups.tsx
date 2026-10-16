@@ -96,7 +96,12 @@ export function AvatarGroupsFixture({ theme }: { theme: ThemeValue }) {
         />
       </LinkProvider>
       {(['pane', 'row'] as const).map((tone) => (
-        <Surface key={tone} tone={tone} padding={4} data-surface={tone}>
+        <Surface
+          key={tone}
+          background={tone === 'row' ? 'muted' : 'default'}
+          padding={4}
+          data-surface={tone}
+        >
           <AvatarGroup data-testid={`on-${tone}`} people={people} max={3} />
         </Surface>
       ))}
@@ -105,9 +110,9 @@ export function AvatarGroupsFixture({ theme }: { theme: ThemeValue }) {
       </div>
       {/* A small toolbar: 2 rem controls beside a standard and a small group. */}
       <Surface
-        tone="row"
+        background="muted"
         padding={2}
-        corners="standard"
+        radius="sm"
         className="fixture-toolbar"
         data-testid="toolbar"
       >

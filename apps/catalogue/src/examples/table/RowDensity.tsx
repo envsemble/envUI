@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import {
-  ActionGroup,
   Button,
   IconButton,
   SegmentedControl,
@@ -22,7 +21,7 @@ export default function RowDensity() {
   const [density, setDensity] = useState<Density>('sm');
   return (
     <Stack gap={3}>
-      <ActionGroup>
+      <Stack direction="row" wrap align="center" gap={4}>
         <SegmentedControl
           aria-label="Row density"
           size="sm"
@@ -30,7 +29,7 @@ export default function RowDensity() {
           onValueChange={(value) => setDensity(densities.find((each) => each === value) ?? 'md')}
           options={densities.map((value) => ({ value, label: value.toUpperCase() }))}
         />
-      </ActionGroup>
+      </Stack>
       <Table.Root aria-label="Reports" density={density}>
         <Table.Head>
           <Table.Row>
@@ -48,14 +47,14 @@ export default function RowDensity() {
               <Table.Cell numeric>{report.pages}</Table.Cell>
               <Table.Cell align="end">
                 {/* Buttons in the cells take the small control height at every density. */}
-                <ActionGroup align="end">
+                <Stack direction="row" wrap align="center" gap={4} justify="end">
                   <Button variant="text">Open</Button>
                   <IconButton
-                    variant="quiet"
+                    variant="ghost"
                     icon={<MoreVert />}
                     aria-label={`More for ${report.name}`}
                   />
-                </ActionGroup>
+                </Stack>
               </Table.Cell>
             </Table.Row>
           ))}

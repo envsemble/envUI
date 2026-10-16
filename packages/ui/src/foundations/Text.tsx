@@ -1,48 +1,44 @@
-import { createElement, type ComponentPropsWithRef } from 'react';
+import type { ComponentPropsWithRef, ReactElement } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { renderElement } from '../internal/renderElement.js';
 
-export type TextElement =
-  | 'p'
-  | 'span'
-  | 'small'
-  | 'strong'
-  | 'h1'
-  | 'h2'
-  | 'h3'
-  | 'h4'
-  | 'h5'
-  | 'h6';
-export type TextVariant =
-  | 'display'
-  | 'body'
-  | 'page-heading'
-  | 'section-heading'
-  | 'supporting'
-  | 'caption';
+/**
+ * A text style from the type scale: display for a page's introduction, body for running text,
+ * headline for a page's heading, title for a section's, body-sm for supporting text and caption
+ * for the smallest notes.
+ */
+export type TextVariant = 'display' | 'body' | 'headline' | 'title' | 'body-sm' | 'caption';
 
-export type TextTone = 'primary' | 'muted' | 'quiet';
+/** How strong text is: default, muted or subtle. */
+export type TextEmphasis = 'default' | 'muted' | 'subtle';
 
-export type TextProps<Element extends TextElement = 'p'> = {
-  as?: Element;
+export type TextProps = Omit<ComponentPropsWithRef<'p'>, 'color'> & {
+  /**
+   * The text style: display for a page's introduction, body for running text, headline for a
+   * page's heading, title for a section's, body-sm for supporting text and caption for the
+   * smallest notes. body-sm and caption are muted unless emphasis says otherwise.
+   * @default 'body'
+   */
   variant?: TextVariant;
-  tone?: TextTone;
-} & Omit<ComponentPropsWithRef<Element>, 'as' | 'variant' | 'tone'>;
+  /**
+   * How strong the text is: default, the text color; muted, for supporting text; subtle, the
+   * weakest, for text that should recede, such as a hint beside a value.
+   */
+  emphasis?: TextEmphasis;
+  /**
+   * The element to render, for its meaning, such as render={<h2 />} for a heading or
+   * render={<span />} inside a line; a p by default. The text's class and attributes merge into its
+   * props.
+   */
+  render?: ReactElement;
+};
 
 /** Semantic native text with typography and color from the shared token scale. */
-export function Text<Element extends TextElement = 'p'>({
-  as,
-  variant = 'body',
-  tone,
-  className,
-  ...props
-}: TextProps<Element>) {
-  return createElement(as ?? 'p', {
+export function Text({ variant = 'body', emphasis, render, className, ...props }: TextProps) {
+  return renderElement('p', render, {
     ...props,
-    className: classNames(
-      'env-text',
-      `env-text-${variant}`,
-      tone && `env-text-tone-${tone}`,
-      className,
-    ),
+    className: classNames('env-text', className),
+    'data-variant': variant,
+    'data-emphasis': emphasis,
   });
 }

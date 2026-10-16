@@ -37,14 +37,18 @@ export default function Matrix() {
       <SpecimenGrid size="card">
         {states.map(({ title, tone, state }) => (
           <Specimen key={`start-${tone}`} title={`${title}, start`}>
-            <Surface tone="row">
+            <Surface background="muted">
               <EmptyState tone={tone} {...state} />
             </Surface>
           </Specimen>
         ))}
         {states.map(({ title, tone, state }) => (
           <Specimen key={`center-${tone}`} title={`${title}, centred`}>
-            <Surface tone="pane" padding={0} style={{ display: 'grid', minBlockSize: '20rem' }}>
+            <Surface
+              background="default"
+              padding={0}
+              style={{ display: 'grid', minBlockSize: '20rem' }}
+            >
               <EmptyState tone={tone} align="center" {...state} />
             </Surface>
           </Specimen>

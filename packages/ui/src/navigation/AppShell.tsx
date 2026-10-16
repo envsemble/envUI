@@ -610,7 +610,7 @@ export function AppShell({
               <span className="env-app-brand" aria-hidden="true">
                 {brand}
               </span>
-              <span className="env-app-toggle-icon env-symbol" aria-hidden="true">
+              <span className="env-app-toggle-icon env-icon" aria-hidden="true">
                 <DockToRight />
               </span>
             </button>

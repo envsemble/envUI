@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ActionGroup, Button, Stack, Text, Tree, type TreeItem } from '@envsemble/envui';
+import { Button, Stack, Text, Tree, type TreeItem } from '@envsemble/envui';
 import { Description } from '@envsemble/envui/icons/Description';
 import { Folder } from '@envsemble/envui/icons/Folder';
 
@@ -42,14 +42,14 @@ export default function ThousandsOfRows() {
     });
   return (
     <Stack gap={3} style={{ inlineSize: 'min(100%, 22rem)' }}>
-      <ActionGroup>
+      <Stack direction="row" wrap align="center" gap={4}>
         <Button variant="secondary" onClick={() => setExpanded(new Set(folders))}>
           Expand all
         </Button>
         <Button variant="secondary" onClick={() => setExpanded(new Set())}>
           Collapse all
         </Button>
-      </ActionGroup>
+      </Stack>
       {/* The tree fills its parent's height and scrolls itself. */}
       <div style={{ blockSize: '16rem' }}>
         <Tree

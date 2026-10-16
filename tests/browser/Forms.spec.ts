@@ -358,7 +358,7 @@ test('a small Select has a small trigger, and its popup has the menus anatomy wi
   expect(compactBox!.height).toBeCloseTo(32, 0);
   expect(compactBox!.height).toBeLessThan(standardBox!.height);
   const chevron = (locator: typeof compact) =>
-    locator.locator('.env-symbol').evaluate((icon) => icon.getBoundingClientRect().width);
+    locator.locator('.env-icon').evaluate((icon) => icon.getBoundingClientRect().width);
   expect(await chevron(compact)).toBeLessThan(await chevron(standard));
   // The outlined variant keeps its Button style at the small height.
   const outlined = page.getByRole('combobox', { name: 'Compact outlined plan', exact: true });

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ActionGroup, Button, Checkbox, Popover, Stack, Text } from '@envsemble/envui';
+import { Button, Checkbox, Popover, Stack, Text } from '@envsemble/envui';
 import { FilterList } from '@envsemble/envui/icons/FilterList';
 
 const people = ['Alex Morgan', 'Sam Lee', 'Priya Shah'];
@@ -39,7 +39,7 @@ export default function FilterTasks() {
             />
           ))}
         </Stack>
-        <ActionGroup align="end">
+        <Stack direction="row" wrap align="center" gap={4} justify="end">
           <Button variant="secondary" onClick={() => setDraft([])}>
             Clear
           </Button>
@@ -51,9 +51,9 @@ export default function FilterTasks() {
           >
             Apply
           </Button>
-        </ActionGroup>
+        </Stack>
       </Popover>
-      <Text variant="supporting">
+      <Text variant="body-sm">
         {applied.length ? `Showing tasks for ${applied.join(', ')}.` : 'Showing every task.'}
       </Text>
     </Stack>

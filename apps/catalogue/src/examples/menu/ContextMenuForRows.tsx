@@ -73,7 +73,7 @@ export default function ContextMenuForRows() {
         );
       }}
     >
-      <Surface tone="pane" padding={3} style={{ inlineSize: 'min(100%, 28rem)' }}>
+      <Surface background="default" padding={3} style={{ inlineSize: 'min(100%, 28rem)' }}>
         <List.Root ref={list} aria-label="Documents" tabIndex={-1}>
           {entries.map((entry) => (
             <List.Item
@@ -86,7 +86,7 @@ export default function ContextMenuForRows() {
                   aria-label={`Actions for ${entry.name}`}
                   trigger={
                     <IconButton
-                      variant="quiet"
+                      variant="ghost"
                       icon={<MoreVert />}
                       aria-label={`More actions for ${entry.name}`}
                     />

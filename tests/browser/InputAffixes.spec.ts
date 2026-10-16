@@ -133,7 +133,7 @@ test('compact fields hold a prefix and suffix between the icon and the end actio
   await expect(price).toHaveAccessibleDescription('€ per month');
   const well = price.locator('xpath=..');
   await expect(well).toHaveCSS('height', '40px');
-  const icon = (await well.locator('.env-text-field-start .env-symbol').boundingBox())!;
+  const icon = (await well.locator('.env-text-field-start .env-icon').boundingBox())!;
   const prefix = (await affix(price, 'prefix').boundingBox())!;
   const prefixText = await textBox(affix(price, 'prefix'));
   const input = (await price.boundingBox())!;

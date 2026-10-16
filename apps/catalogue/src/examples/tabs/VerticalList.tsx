@@ -21,7 +21,7 @@ export default function VerticalList() {
         button: <NavList.Item icon={<section.icon />}>{section.label}</NavList.Item>,
         content: (
           <Stack gap={2}>
-            <Text as="h3" variant="section-heading">
+            <Text render={<h3 />} variant="title">
               {section.label}
             </Text>
             <Text>{section.text}</Text>

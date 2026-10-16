@@ -12,8 +12,8 @@ export default function DocumentDetails() {
           </Button>
         }
       >
-        <Text tone="muted">Changed today by Alex Morgan. 3 open decisions, 1 blocked.</Text>
-        <Text tone="muted">Shared with everyone at Northwind.</Text>
+        <Text emphasis="muted">Changed today by Alex Morgan. 3 open decisions, 1 blocked.</Text>
+        <Text emphasis="muted">Shared with everyone at Northwind.</Text>
       </Popover>
     </Stack>
   );

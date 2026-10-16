@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import {
-  ActionGroup,
   NavList,
   IconButton,
   Button,
@@ -100,7 +99,7 @@ function Catalogue() {
   return (
     <>
       <Button
-        variant="outlined"
+        variant="outline"
         className="docs-skip"
         href="#docs-main"
         onClick={(e) => {
@@ -120,7 +119,14 @@ function Catalogue() {
         >
           <EnvUILogo />
         </Link>
-        <ActionGroup align="end" className="docs-mobile-actions">
+        <Stack
+          direction="row"
+          wrap
+          align="center"
+          gap={4}
+          justify="end"
+          className="docs-mobile-actions"
+        >
           <IconButton
             variant="secondary"
             icon={<Search />}
@@ -155,7 +161,7 @@ function Catalogue() {
               }}
             />
           </Dialog>
-        </ActionGroup>
+        </Stack>
       </header>
       <div className="docs-shell">
         <Sidebar routePath={routePath} page={page} onSearch={openSearch} />

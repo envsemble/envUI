@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ActionGroup, Button, IconButton } from '@envsemble/envui';
+import { Button, IconButton, Stack } from '@envsemble/envui';
 import { Refresh } from '@envsemble/envui/icons/Refresh';
 
 /** Work that takes a moment, such as saving; a timer stands in for it here. */
@@ -16,11 +16,11 @@ export default function PendingAction() {
   const [saving, save] = useWork();
   const [refreshing, refresh] = useWork();
   return (
-    <ActionGroup>
+    <Stack direction="row" wrap align="center" gap={4}>
       <Button pending={saving} onClick={save}>
         Save changes
       </Button>
       <IconButton icon={<Refresh />} aria-label="Refresh" pending={refreshing} onClick={refresh} />
-    </ActionGroup>
+    </Stack>
   );
 }

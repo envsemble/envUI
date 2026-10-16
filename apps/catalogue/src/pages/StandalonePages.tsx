@@ -39,7 +39,7 @@ function LoadedPart({ part, what }: { part: typeof tokenReference; what: string 
 
 function Templates() {
   return (
-    <Surface tone="pane" padding={0} className="docs-placeholder">
+    <Surface background="default" padding={0} className="docs-placeholder">
       <EmptyState
         align="center"
         headingLevel={2}

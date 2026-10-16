@@ -53,10 +53,10 @@ export default function TitleBarShell() {
         ))}
       >
         <Stack gap={3} style={{ padding: '2rem' }}>
-          <Text as="h3" variant="page-heading">
+          <Text render={<h3 />} variant="headline">
             {current.label}
           </Text>
-          <Text tone="muted">The content scrolls below the title bar.</Text>
+          <Text emphasis="muted">The content scrolls below the title bar.</Text>
         </Stack>
       </AppShell>
     </div>

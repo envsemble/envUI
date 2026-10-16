@@ -43,7 +43,7 @@ components:
 
 ## Overview
 
-A surface gives a region a background, an inset on every side and rounded corners, and nothing else: it has no border, no gaps between its children and no behaviour. Lay out what it holds with a [Stack](../components/stack.md) or an ActionGroup, through `render` on the same element or inside it. Card and other containers build on Surface.
+A surface gives a region a background, an inset on every side and rounded corners, and nothing else: it has no border, no gaps between its children and no behaviour. Lay out what it holds with a [Stack](../components/stack.md), through `render` on the same element or inside it. Card and other containers build on Surface.
 
 ```tsx example=DetailPane
 
@@ -51,32 +51,32 @@ A surface gives a region a background, an inset on every side and rounded corner
 
 ## Anatomy
 
-1. **Background** (`tone`): the fill, with no border.
+1. **Background** (`background`): the fill, with no border.
 2. **Inset** (`padding`): the space between the edge and the content, the same on every side.
-3. **Corners** (`corners`): the radius of all four corners.
+3. **Corners** (`radius`): the radius of all four corners.
 4. **Content**: the surface's children, laid out by what they are rendered with, such as a Stack.
 
 ## Variants and sizes
 
-| Background  | Use for                                                                                  |
-| ----------- | ---------------------------------------------------------------------------------------- |
-| `pane`      | Panes and side regions on the page, in the default background. The default.              |
-| `row`       | Blocks in the muted background of rows, such as a group of settings.                     |
-| `canvas`    | A region in the page background, such as a well inside a pane that returns to the page.  |
-| `alternate` | A block in the raised background that stands out on a pane, such as a summary inside it. |
+| Background | Use for                                                                                  |
+| ---------- | ---------------------------------------------------------------------------------------- |
+| `default`  | Panes and side regions on the page, in the default background. The default.              |
+| `muted`    | Blocks in the muted background of rows, such as a group of settings.                     |
+| `page`     | A region in the page background, such as a well inside a pane that returns to the page.  |
+| `raised`   | A block in the raised background that stands out on a pane, such as a summary inside it. |
 
 <!-- specimen: TonesAndCorners -->
 
-- **Corners**: `surface`, the default, gives panes and other large regions 1.75 rem corners; `standard` gives small blocks, such as a summary inside a pane, 0.5 rem corners; `pill` gives a toolbar or a bar of filters fully rounded ends; and `none` leaves square corners for a region that meets the edges of its container, such as a full-width band.
+- **Corners** (`radius`, named after the radius tokens): `xl`, the default, gives panes and other large regions 1.75 rem corners; `sm` gives small blocks, such as a summary inside a pane, 0.5 rem corners; `full` gives a toolbar or a bar of filters fully rounded ends; and `none` leaves square corners for a region that meets the edges of its container, such as a full-width band.
 - **Inset**: without `padding`, the inset follows the window: 1.25 rem in narrow windows, growing to 1.5 rem from 50 rem wide. `padding` takes a step of the spacing scale instead, from 1 (0.25 rem) to 9 (4 rem), and 0 removes it.
-- **Backgrounds**: `pane` is `--env-color-bg-default`, `row` is `--env-color-bg-muted`, `canvas` is `--env-color-bg-page` and `alternate` is `--env-color-bg-raised`, the background roles of [colors and themes](../foundations/colors.md). In the light theme `alternate` is white, like the page; in the dark theme it matches `pane`.
+- **Backgrounds**: each is the background role of its name in [colors and themes](../foundations/colors.md): `--env-color-bg-default`, `--env-color-bg-muted`, `--env-color-bg-page` and `--env-color-bg-raised`. In the light theme `raised` is white, like the page; in the dark theme it matches `default`.
 - **Width**: a surface is as wide as its container allows and never wider; set a width on it, or on its container, to make it narrower.
 - **Scale**: a surface keeps the scale of its Theme: its corners and inset spacing are a little smaller in the compact scale. For smaller controls in a toolbar, give them `size="sm"`; for a compact region, wrap it in a Theme with `scale="compact"`. See [scale and density](../foundations/scale.md).
 
 ## States and behaviour
 
 - A surface has no hover, pressed, focus or disabled state, and does nothing on its own. Interactive containers, such as a Card with `href`, add their own states.
-- `as` renders another element for its meaning, such as `section` or `aside`; `render` draws the surface onto another element, such as a Stack, without a wrapper. Set the element on that one instead of `as`.
+- `render` renders another element for its meaning, such as `render={<section />}` or `render={<aside />}`, or draws the surface onto another component, such as a Stack, without a wrapper.
 
 ## Content guidelines
 
@@ -88,8 +88,8 @@ A surface gives a region a background, an inset on every side and rounded corner
 ### Do
 
 - Lay out a surface's content with a Stack through `render`, so the surface and its layout are one element.
-- Use `pill` corners and controls of size `sm` for a toolbar that floats over dense content.
-- Use the background roles for what they mean: `pane` for panes, `alternate` for a block that stands out on a pane.
+- Use `full` corners and controls of size `sm` for a toolbar that floats over dense content.
+- Use the background roles for what they mean: `default` for panes, `raised` for a block that stands out on a pane.
 
 ### Don't
 
@@ -108,18 +108,18 @@ A surface gives a region a background, an inset on every side and rounded corner
 
 ### envUI provides
 
-- A plain element with no role of its own, so it adds nothing to what assistive technology reads; `as` renders a section, an article, a navigation, a main or an aside region, a header or a footer instead.
+- A plain element with no role of its own, so it adds nothing to what assistive technology reads; `render` renders a section, an article, a navigation, a main or an aside region, a header or a footer instead.
 
 ### You provide
 
-- A role and a name where the surface is a region or a group, such as `as="section"` with `aria-labelledby` pointing at its heading, or `role="group"` with an `aria-label` on a toolbar.
+- A role and a name where the surface is a region or a group, such as `render={<section />}` with `aria-labelledby` pointing at its heading, or `role="group"` with an `aria-label` on a group of controls.
 - Headings or labels that set regions apart, rather than the background alone.
 
 ## Examples
 
 ### A raised block on a pane
 
-`tone="alternate"` sets a block apart on a pane; standard corners suit its smaller size.
+`background="raised"` sets a block apart on a pane; `sm` corners suit its smaller size.
 
 ```tsx example=RaisedOnPane
 
@@ -127,7 +127,7 @@ A surface gives a region a background, an inset on every side and rounded corner
 
 ### Toolbar
 
-A pill surface holds a toolbar over dense content, with controls of size `sm`. `render` lays its controls out as an ActionGroup, and `role="group"` with a label names them together.
+A pill surface holds controls over dense content, with controls of size `sm`. `render` lays them out as a row, and `role="group"` with a label names them together. For a toolbar the arrow keys move through, render the surface as a [Toolbar](../components/toolbar.md).
 
 ```tsx example=Toolbar
 
@@ -135,7 +135,7 @@ A pill surface holds a toolbar over dense content, with controls of size `sm`. `
 
 ## Changelog
 
-- **1.0.0**: The backgrounds take the semantic background colors: `pane` is `--env-color-bg-default`, `row` `--env-color-bg-muted`, `canvas` `--env-color-bg-page` and `alternate` `--env-color-bg-raised`.
+- **1.0.0**: `tone` is `background`, with the names of the background roles: `pane` is `default`, `row` `muted`, `canvas` `page` and `alternate` `raised`; `corners` is `radius`: `surface` is `xl`, `standard` `sm` and `pill` `full`; `render` replaces `as`. The backgrounds take the semantic background colors.
 - **0.5.0**: `density="compact"`, which gives the controls inside the compact height.
 - **0.4.0**: The inset is at least 1.25 rem.
 - **0.1.0**: Surface, with backgrounds, padding and corners.

@@ -26,7 +26,7 @@ export default function UploadProgress() {
         accept="application/pdf,.pdf"
         onFiles={upload}
       />
-      <Text variant="caption" tone="muted" role="status">
+      <Text variant="caption" emphasis="muted" role="status">
         {done}
       </Text>
     </Stack>

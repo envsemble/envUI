@@ -1,10 +1,10 @@
-import { ActionGroup, IconButton, Popover, Text } from '@envsemble/envui';
+import { IconButton, Popover, Text, Stack } from '@envsemble/envui';
 import { Help } from '@envsemble/envui/icons/Help';
 
 export default function FieldHelp() {
   return (
-    <ActionGroup>
-      <Text as="span">Billing period: monthly</Text>
+    <Stack direction="row" wrap align="center" gap={4}>
+      <Text render={<span />}>Billing period: monthly</Text>
       <Popover
         title="Billing periods"
         side="right"
@@ -16,6 +16,6 @@ export default function FieldHelp() {
           Members added later are billed from the next period.
         </Text>
       </Popover>
-    </ActionGroup>
+    </Stack>
   );
 }

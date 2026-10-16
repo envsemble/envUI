@@ -21,10 +21,10 @@ export default function GapScale() {
         {steps.map(({ step, rem }) => (
           <Specimen key={step} title={`gap={${step}}`} caption={rem}>
             <Stack gap={step}>
-              <Surface tone="row" corners="standard" padding={2}>
+              <Surface background="muted" radius="sm" padding={2}>
                 <Text>First</Text>
               </Surface>
-              <Surface tone="row" corners="standard" padding={2}>
+              <Surface background="muted" radius="sm" padding={2}>
                 <Text>Second</Text>
               </Surface>
             </Stack>

@@ -60,6 +60,9 @@ import { QuietButtonsFixture } from './QuietButtons.js';
 import { EmptyStatesFixture } from './EmptyStates.js';
 import { RatingsFixture } from './Ratings.js';
 import { DensityFixture } from './Density.js';
+import { PrimitivesFixture } from './Primitives.js';
+import { MessageStringsFixture } from './MessageStrings.js';
+import { DirectionFixture } from './Direction.js';
 import {
   ThemeContrastFixture,
   ThemeContrastNestedFixture,
@@ -79,6 +82,9 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'scroll-keys': ScrollKeysFixture,
   'framed-shell': FramedShellFixture,
   density: DensityFixture,
+  primitives: PrimitivesFixture,
+  'message-strings': MessageStringsFixture,
+  direction: DirectionFixture,
 };
 
 export default function App() {
