@@ -46,6 +46,9 @@ const reports = {
     'line 23: a local Pager shadows the import here: wrote EnvPager.Next, with Pager also imported as EnvPager.',
     'line 31: a local Menu shadows the import here: wrote EnvMenu.ItemProps, with Menu also imported as EnvMenu.',
   ],
+  'theme-bootstrap-directive.ts': [
+    'line 3: dropped // eslint-disable-next-line envui/no-renamed-exports -- until the 1.0 upgrade, which applied to the import that was removed.',
+  ],
   'theme-bootstrap-export.ts': [
     `line 7: defaultThemeStorageKey is no longer exported by ${bootstrap}: ${use('defaultThemeStorageKey', bootstrap)}`,
     `line 8: re-exports defaultThemeStorageKey, which ${bootstrap} no longer exports: ${use('defaultThemeStorageKey', bootstrap)}`,

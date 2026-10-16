@@ -98,6 +98,22 @@ function bindsToModule(path, name, kind) {
   return !found || found.isGlobal;
 }
 
+/**
+ * Whether a comment is a directive about the line below it, which must stay right above that line:
+ * `@ts-expect-error`, `@ts-ignore`, `eslint-disable-next-line`, `prettier-ignore` and the like.
+ */
+function isLineDirective(comment) {
+  return lineDirective.test(comment.value);
+}
+const lineDirective =
+  /^[\s*]*(?:@ts-(?:expect-error|ignore)|eslint-disable-(?:next-)?line|prettier-ignore|biome-ignore|oxlint-disable-next-line|deno-lint-ignore|(?:istanbul|c8|v8) ignore next)(?![\w-])/;
+
+/** A comment as it is written, for a report. */
+function commentText(comment) {
+  const block = comment.type === 'CommentBlock' || comment.type === 'Block';
+  return block ? `/*${comment.value}*/` : `//${comment.value}`;
+}
+
 /** The value of a literal prop: `prop="next"`, `prop={'next'}` or `prop={`next`}`. */
 function literalValue(value) {
   const node = value?.type === 'JSXExpressionContainer' ? value.expression : value;
@@ -242,8 +258,11 @@ export default function transform(file, api, options = {}) {
       });
     return namespaces.get(key);
   };
-  const remove = (info) => {
+  /** Removed import specifiers, with the declaration that has their names now, if any. */
+  const movedTo = new Map();
+  const remove = (info, replacement = () => undefined) => {
     removals.add(info.specifier);
+    movedTo.set(info.specifier, replacement);
     changed = true;
   };
   // Specifiers are replaced whole: in `{ Input }` the imported and local names share one source
@@ -251,6 +270,8 @@ export default function transform(file, api, options = {}) {
   const replaceImport = (info, imported, local) => {
     const replacement = j.importSpecifier(j.identifier(imported), j.identifier(local));
     if (info.specifier.importKind) replacement.importKind = info.specifier.importKind;
+    // Comments on the specifier, such as a disable directive, stay with it.
+    if (info.specifier.comments) replacement.comments = info.specifier.comments;
     const list = info.declaration.specifiers;
     list[list.indexOf(info.specifier)] = replacement;
     info.specifier = replacement;
@@ -261,6 +282,7 @@ export default function transform(file, api, options = {}) {
       exported: j.identifier(exported),
     });
     if (specifier.exportKind) replacement.exportKind = specifier.exportKind;
+    if (specifier.comments) replacement.comments = specifier.comments;
     list[list.indexOf(specifier)] = replacement;
   };
 
@@ -360,7 +382,7 @@ export default function transform(file, api, options = {}) {
         if (references.some(({ path, kind }) => kind !== 'export' && shadowed(path, kind))) {
           alias = freeName(rename.to);
           edits.push(() => replaceImport(info, rename.to, alias));
-        } else remove(info);
+        } else remove(info, () => sibling.declaration);
       } else if (!isFree(rename.to)) {
         // The new name is taken in this file: keep the old local name as an alias.
         edits.push(() => replaceImport(info, rename.to, local));
@@ -417,7 +439,7 @@ export default function transform(file, api, options = {}) {
       }
       if (!self) {
         namespace.contributors.push({ info, kept });
-        if (!kept) remove(info);
+        if (!kept) remove(info, () => namespace.declaration);
       }
       continue;
     }
@@ -462,7 +484,7 @@ export default function transform(file, api, options = {}) {
         kept = true;
       }
       if (!kept) {
-        remove(info);
+        remove(info, () => [...contributed][0]?.declaration);
         if (contributed.size === 0)
           for (const { namespace } of split.values.values())
             contributed.add(namespaceFor(entry, namespace));
@@ -663,10 +685,12 @@ export default function transform(file, api, options = {}) {
     const type = namespace.existing.find((info) => info.isType);
     if (value) {
       namespace.local = value.local;
+      namespace.declaration = value.declaration;
       continue;
     }
     if (type) {
       namespace.local = type.local;
+      namespace.declaration = type.declaration;
       if (!needsValue) continue;
       if (type.specifier.importKind === 'type') {
         edits.push(() => {
@@ -675,6 +699,8 @@ export default function transform(file, api, options = {}) {
         continue;
       }
       removals.add(type.specifier);
+      movedTo.set(type.specifier, () => namespace.declaration);
+      namespace.declaration = undefined;
     } else {
       namespace.local = freeName(namespace.name);
     }
@@ -682,9 +708,6 @@ export default function transform(file, api, options = {}) {
   }
 
   for (const edit of edits) edit();
-
-  // The rewrites can still add reports, about locals that shadow a namespace.
-  reporter.flush();
 
   for (const { namespace, needsValue, local = namespace.local } of insertions) {
     const contributors = namespace.contributors.map(({ info }) => info);
@@ -694,36 +717,60 @@ export default function transform(file, api, options = {}) {
       if (!needsValue && anchor.declaration.importKind !== 'type') specifier.importKind = 'type';
       const list = anchor.declaration.specifiers;
       list.splice(list.indexOf(anchor.specifier), 0, specifier);
+      namespace.declaration ??= anchor.declaration;
       continue;
     }
     const host = importDeclarations.find(
       (path) =>
         entries.get(path.node.source.value) === namespace.entry && path.node.importKind !== 'type',
     );
-    if (host) host.node.specifiers.push(specifier);
-    else {
+    if (host) {
+      host.node.specifiers.push(specifier);
+      namespace.declaration ??= host.node;
+    } else {
       const last = importDeclarations.filter(
         (path) => entries.get(path.node.source.value) === namespace.entry,
       );
-      last
-        .at(-1)
-        .insertAfter(j.importDeclaration([specifier], j.stringLiteral(namespace.entry.name)));
+      const declaration = j.importDeclaration([specifier], j.stringLiteral(namespace.entry.name));
+      last.at(-1).insertAfter(declaration);
+      namespace.declaration ??= declaration;
     }
   }
 
   for (const declarationPath of importDeclarations) {
     const declaration = declarationPath.node;
     const before = declaration.specifiers.length;
+    const removedHere = declaration.specifiers.filter((specifier) => removals.has(specifier));
     declaration.specifiers = declaration.specifiers.filter((specifier) => !removals.has(specifier));
     if (before > 0 && declaration.specifiers.length === 0) {
-      // Keep comments above a removed import, such as a file header, on the next statement.
-      const comments = (declaration.comments ?? []).filter((comment) => comment.leading);
+      const leading = (declaration.comments ?? []).filter((comment) => comment.leading);
+      const directives = leading.filter(isLineDirective);
+      // A directive about the import's own line, such as @ts-expect-error, goes with its names to
+      // the import that has them now; with no such import, the line is gone, and so is it.
+      const target = removedHere.map((specifier) => movedTo.get(specifier)?.()).find(Boolean);
+      if (target && directives.length > 0) {
+        const comments = target.comments ?? [];
+        target.comments = [
+          ...comments.filter((comment) => comment.leading),
+          ...directives,
+          ...comments.filter((comment) => !comment.leading),
+        ];
+      } else
+        for (const comment of directives)
+          warn(
+            declaration,
+            `dropped ${commentText(comment)}, which applied to the import that was removed.`,
+          );
+      // Other comments above a removed import, such as a file header, stay on the next statement.
+      const others = leading.filter((comment) => !directives.includes(comment));
       const body = declarationPath.parent.node.body ?? [];
       const next = body[body.indexOf(declaration) + 1];
-      if (comments.length && next) next.comments = [...comments, ...(next.comments ?? [])];
+      if (others.length && next) next.comments = [...others, ...(next.comments ?? [])];
       declarationPath.prune();
     }
   }
 
+  // The rewrites and the pruned imports can still add reports.
+  reporter.flush();
   return keepByteOrderMark(file.source, root.toSource(printOptions(file.source, quote)));
 }

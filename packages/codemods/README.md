@@ -82,6 +82,7 @@ Both transforms keep a file's line endings, CRLF or LF, and its byte order mark;
 ## Limitations
 
 - Changed import declarations are printed again and can lose their line breaks; run your formatter afterwards.
+- Comments stay with what they describe. A comment on a renamed specifier stays on it. When an import is removed because its names moved into another import, a directive about its line (`@ts-expect-error`, `@ts-ignore`, `eslint-disable-next-line`, `prettier-ignore` and the like) moves with the names to that import; when nothing replaces the import, as for `defaultThemeStorageKey`, the directive is dropped and reported. Other comments above a removed import, such as a file header, stay in place on the next statement.
 - Class names built at run time, class strings kept in variables outside the contexts above, CSS-in-JS templates and HTML files are not changed.
 - `require()`, dynamic `import()`, module mocks and `declare module '@envsemble/envui'` augmentations are not changed.
 - In code that already uses 1.0, a bare use of a namespace that was a 0.x component, such as `Object.keys(Menu)`, would be read as the old component.
