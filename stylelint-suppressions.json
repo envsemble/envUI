@@ -337,11 +337,6 @@
       "count": 1
     }
   },
-  "packages/ui/src/styles/Tokens.css": {
-    "no-duplicate-selectors": {
-      "count": 1
-    }
-  },
   "packages/ui/src/styles/Tree.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 2

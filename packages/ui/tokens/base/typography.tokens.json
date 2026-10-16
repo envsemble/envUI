@@ -1,0 +1,17 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "font": {
+    "family": { "$type": "fontFamily", "$value": ["envUI Inter", "sans-serif"] },
+    "size": {
+      "$type": "dimension",
+      "body-small": { "$value": { "value": 0.875, "unit": "rem" } },
+      "body": { "$value": { "value": 0.9375, "unit": "rem" } },
+      "heading-small": { "$value": { "value": 1, "unit": "rem" } },
+      "heading": { "$value": { "value": 1.125, "unit": "rem" } }
+    }
+  },
+  "body": {
+    "$type": "fontWeight",
+    "font-weight": { "$value": 400 }
+  }
+}

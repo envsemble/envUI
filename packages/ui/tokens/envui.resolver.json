@@ -1,0 +1,52 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/resolver.json",
+  "name": "envUI",
+  "version": "2025.10",
+  "description": "envUI's design tokens. The base set holds every token with its light, standard-contrast, comfortable value; each modifier context overrides only the tokens it changes. npm run tokens:build turns them into packages/ui/src/styles/Tokens.css and the generated token modules.",
+  "sets": {
+    "base": {
+      "description": "Every token, as the light color scheme at standard contrast and comfortable scale shows it.",
+      "sources": [
+        { "$ref": "./base/color.tokens.json" },
+        { "$ref": "./base/typography.tokens.json" },
+        { "$ref": "./base/space.tokens.json" },
+        { "$ref": "./base/radius.tokens.json" },
+        { "$ref": "./base/size.tokens.json" },
+        { "$ref": "./base/motion.tokens.json" },
+        { "$ref": "./base/state.tokens.json" }
+      ]
+    }
+  },
+  "modifiers": {
+    "colorScheme": {
+      "description": "Light is the base set; dark overrides the colors and state layers it changes. Theme writes the scheme to data-env-theme.",
+      "contexts": {
+        "light": [],
+        "dark": [{ "$ref": "./color-scheme/dark.tokens.json" }]
+      },
+      "default": "light"
+    },
+    "contrast": {
+      "description": "Reserved for the high-contrast themes. Neither context overrides anything yet, so high equals standard and no CSS is built for it.",
+      "contexts": {
+        "standard": [],
+        "high": []
+      },
+      "default": "standard"
+    },
+    "scale": {
+      "description": "Reserved for the app scale. Neither context overrides anything yet, so compact equals comfortable and no CSS is built for it.",
+      "contexts": {
+        "comfortable": [],
+        "compact": []
+      },
+      "default": "comfortable"
+    }
+  },
+  "resolutionOrder": [
+    { "$ref": "#/sets/base" },
+    { "$ref": "#/modifiers/colorScheme" },
+    { "$ref": "#/modifiers/contrast" },
+    { "$ref": "#/modifiers/scale" }
+  ]
+}

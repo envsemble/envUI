@@ -7,6 +7,7 @@
       "internal/": "internal",
       "foundations/": "foundations",
       "icons/": "foundations",
+      "generated/": "foundations",
       "actions/": "base",
       "content/": "base",
       "feedback/": "base",
@@ -175,7 +176,10 @@
         "classes": ["env-markdown-source"]
       },
       "Layout": { "classes": ["env-stack", "env-action-group"] },
-      "Theme": { "modules": ["foundations/ThemeBootstrap.ts"], "styles": ["Tokens.css"] },
+      "Theme": {
+        "modules": ["foundations/ThemeBootstrap.ts"],
+        "styles": ["Tokens.css", "TokensHandwritten.css"]
+      },
       "ThemePreference": { "classes": ["env-theme-toggle"] },
       "AppShell": { "classes": ["env-app"] },
       "Breadcrumbs": { "classes": ["env-breadcrumb"] },

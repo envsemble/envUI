@@ -1,0 +1,202 @@
+/* The token rules DTCG 2025.10 can't express yet, written by hand. Every other token is data in
+   packages/ui/tokens, which `npm run tokens:build` turns into Tokens.css; that file comes first, so
+   the overrides at the end of this one win. Each group says when it moves into the tokens. */
+.env-theme {
+  /* The theme boundary's own type and colors: styles, not tokens. */
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  background: var(--color-canvas);
+  color: var(--color-text-primary);
+
+  /* Font shorthands. A DTCG typography token's line height is a plain number, not 1.4em, and it
+     would add a custom property for each part. Moves into tokens in the scale step, with the line
+     heights per type role. */
+  --type-h1: 500 var(--font-size-heading) / 1.4em var(--font-family);
+  --type-h2: 500 var(--font-size-heading-small) / 1.4em var(--font-family);
+  --type-body: var(--body-font-weight) var(--font-size-body) / 1.4em var(--font-family);
+  --type-body-small: var(--body-font-weight) var(--font-size-body-small) / 1.4em var(--font-family);
+
+  /* Lengths a DTCG dimension (px or rem) can't hold: a viewport clamp and the pill corner. Move into
+     tokens in the scale step. */
+  --viewport-gutter: clamp(0.75rem, 2vw, 1rem);
+  --md-sys-shape-corner-full: 100vmax;
+
+  /* Color-based interaction rule, identical in both themes.
+       Below 50% lightness: +shift; at/above 50%: -shift.
+       The direction expression uses the source color channel l inside relative HSL.
+     The shifts and the threshold are tokens; these expressions, and the hover and pressed colors
+     derived with them below, become precomputed tokens in the palette step, so the contrast test
+     can see them. */
+  --state-lightness-direction: calc(
+    1 - 2 * clamp(0, calc(sign(l - var(--state-lightness-threshold)) + 1), 1)
+  );
+  --state-hover-lightness: clamp(
+    0,
+    calc(l + var(--state-hover-shift) * var(--state-lightness-direction)),
+    100
+  );
+  --state-pressed-lightness: clamp(
+    0,
+    calc(l + var(--state-pressed-shift) * var(--state-lightness-direction)),
+    100
+  );
+  --state-surface-hover-lightness: clamp(
+    0,
+    calc(l + var(--state-surface-hover-shift) * var(--state-lightness-direction)),
+    100
+  );
+  --state-surface-pressed-lightness: clamp(
+    0,
+    calc(l + var(--state-surface-pressed-shift) * var(--state-lightness-direction)),
+    100
+  );
+
+  /* Fills (secondary actions, tab rails, chips, switch tracks and skeletons) and state layers are
+     translucent layers of the content color. They keep their tone on the canvas and stay distinct
+     on every other surface they sit on: panes, rows, cards and dialogs. The layer color and the
+     opacities are tokens; the color-mix() results, and the roles that take them, move into tokens
+     in the palette step. */
+  --color-state-layer-hover: color-mix(
+    in srgb,
+    var(--color-state-layer) var(--state-layer-hover-opacity),
+    transparent
+  );
+  --color-state-layer-pressed: color-mix(
+    in srgb,
+    var(--color-state-layer) var(--state-layer-pressed-opacity),
+    transparent
+  );
+  --color-fill: color-mix(in srgb, var(--color-state-layer) var(--state-fill-opacity), transparent);
+  --color-fill-hover: color-mix(
+    in srgb,
+    var(--color-state-layer) var(--state-fill-hover-opacity),
+    transparent
+  );
+  --color-fill-pressed: color-mix(
+    in srgb,
+    var(--color-state-layer) var(--state-fill-pressed-opacity),
+    transparent
+  );
+  --color-skeleton-base: var(--color-fill);
+  --color-skeleton-highlight: var(--color-fill-hover);
+  --color-secondary-action: var(--color-fill);
+  --color-secondary-action-hover: var(--color-fill-hover);
+  --color-secondary-action-pressed: var(--color-fill-pressed);
+  --color-switch-off: var(--color-fill);
+  --color-switch-off-hover: var(--color-fill-hover);
+  --color-switch-off-pressed: var(--color-fill-pressed);
+  --color-chip: var(--color-fill);
+
+  /* Derived values: no independent state colors may be authored here. */
+  --color-subtle-action-border-hover: hsl(
+    from var(--color-subtle-action-border) h s var(--state-hover-lightness)
+  );
+  --color-subtle-action-border-pressed: hsl(
+    from var(--color-subtle-action-border) h s var(--state-pressed-lightness)
+  );
+  --color-radio-hover: hsl(from var(--color-radio) h s var(--state-hover-lightness));
+  --color-radio-pressed: hsl(from var(--color-radio) h s var(--state-pressed-lightness));
+  --color-radio-row-hover: hsl(
+    from var(--color-radio-row) h s var(--state-surface-hover-lightness)
+  );
+  --color-radio-row-pressed: hsl(
+    from var(--color-radio-row) h s var(--state-surface-pressed-lightness)
+  );
+  --color-switch-on-hover: hsl(from var(--color-switch-on) h s var(--state-hover-lightness));
+  --color-switch-on-pressed: hsl(from var(--color-switch-on) h s var(--state-pressed-lightness));
+  --color-checkbox-hover: hsl(from var(--color-checkbox) h s var(--state-hover-lightness));
+  --color-checkbox-pressed: hsl(from var(--color-checkbox) h s var(--state-pressed-lightness));
+  --color-select-option-hover: hsl(
+    from var(--color-select-option) h s var(--state-surface-hover-lightness)
+  );
+  --color-select-option-pressed: hsl(
+    from var(--color-select-option) h s var(--state-surface-pressed-lightness)
+  );
+  --color-select-selected-hover: hsl(
+    from var(--color-select-selected) h s var(--state-surface-hover-lightness)
+  );
+  --color-select-selected-pressed: hsl(
+    from var(--color-select-selected) h s var(--state-surface-pressed-lightness)
+  );
+  --color-direction-link-border-hover: hsl(
+    from var(--color-direction-link-border) h s var(--state-hover-lightness)
+  );
+  --color-direction-link-border-pressed: hsl(
+    from var(--color-direction-link-border) h s var(--state-pressed-lightness)
+  );
+  --color-checkbox-ring-hover: hsl(
+    from var(--color-checkbox-border) h s var(--state-hover-lightness)
+  );
+  --color-checkbox-ring-pressed: hsl(
+    from var(--color-checkbox-border) h s var(--state-pressed-lightness)
+  );
+  --color-control-blue-hover: hsl(from var(--color-control-blue) h s var(--state-hover-lightness));
+  --color-control-blue-pressed: hsl(
+    from var(--color-control-blue) h s var(--state-pressed-lightness)
+  );
+  --color-primary-action-hover: hsl(
+    from var(--color-primary-action) h s var(--state-hover-lightness)
+  );
+  --color-primary-action-pressed: hsl(
+    from var(--color-primary-action) h s var(--state-pressed-lightness)
+  );
+  --color-row-hover: hsl(from var(--color-row) h s var(--state-surface-hover-lightness));
+  --color-row-pressed: hsl(from var(--color-row) h s var(--state-surface-pressed-lightness));
+  --color-subtle-action-hover: hsl(
+    from var(--color-subtle-action) h s var(--state-hover-lightness)
+  );
+  --color-subtle-action-pressed: hsl(
+    from var(--color-subtle-action) h s var(--state-pressed-lightness)
+  );
+  --color-link-hover: hsl(from var(--color-link) h s var(--state-hover-lightness));
+  --color-link-pressed: hsl(from var(--color-link) h s var(--state-pressed-lightness));
+  --color-border-hover: hsl(from var(--color-border-strong) h s var(--state-hover-lightness));
+  --color-border-pressed: hsl(from var(--color-border-strong) h s var(--state-pressed-lightness));
+  --color-accent-hover: hsl(from var(--color-accent) h s var(--state-hover-lightness));
+  --color-accent-pressed: hsl(from var(--color-accent) h s var(--state-pressed-lightness));
+  --color-destructive-action-hover: hsl(
+    from var(--color-destructive-action) h s var(--state-hover-lightness)
+  );
+  --color-destructive-action-pressed: hsl(
+    from var(--color-destructive-action) h s var(--state-pressed-lightness)
+  );
+  --color-quiet-label-hover: hsl(
+    from var(--color-disclosure-text) h s var(--state-hover-lightness)
+  );
+  --color-quiet-label-pressed: hsl(
+    from var(--color-disclosure-text) h s var(--state-pressed-lightness)
+  );
+  --color-row-selected-hover: hsl(
+    from var(--color-navigation-selected) h s var(--state-surface-hover-lightness)
+  );
+  --color-row-selected-pressed: hsl(
+    from var(--color-navigation-selected) h s var(--state-surface-pressed-lightness)
+  );
+  --color-navigation-hover: hsl(
+    from var(--color-navigation-selected) h s var(--state-hover-lightness)
+  );
+  --color-navigation-pressed: hsl(
+    from var(--color-navigation-selected) h s var(--state-pressed-lightness)
+  );
+  --color-navigation-quiet-hover: hsl(
+    from var(--color-navigation-quiet) h s var(--state-hover-lightness)
+  );
+  --color-navigation-quiet-pressed: hsl(
+    from var(--color-navigation-quiet) h s var(--state-pressed-lightness)
+  );
+}
+
+/* Touch-sized controls under a coarse pointer, whatever the scale. The title bar's calc() is no
+   DTCG value, and the resolver has no pointer modifier. Moves into tokens in the scale step. */
+@media (pointer: coarse) {
+  .env-theme {
+    --control-height-compact: var(--control-height-touch);
+    --control-height: var(--control-height-touch);
+    --control-font-size: 1rem;
+    /* The title bar holds compact controls, which take the touch height here. */
+    --title-bar-height: calc(var(--control-height-touch) + var(--space-1));
+  }
+}

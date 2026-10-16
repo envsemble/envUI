@@ -1,0 +1,27 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "md": {
+    "$type": "dimension",
+    "sys": {
+      "shape": {
+        "corner": {
+          "$description": "Components share the Material 3 corner scale inside each theme boundary. The full corner, 100vmax, is no DTCG dimension and stays in TokensHandwritten.css.",
+          "none": { "$value": { "value": 0, "unit": "rem" } },
+          "extra-small": { "$value": { "value": 0.25, "unit": "rem" } },
+          "small": { "$value": { "value": 0.5, "unit": "rem" } },
+          "medium": { "$value": { "value": 0.75, "unit": "rem" } },
+          "large": { "$value": { "value": 1, "unit": "rem" } },
+          "extra-large": { "$value": { "value": 1.75, "unit": "rem" } }
+        }
+      }
+    }
+  },
+  "radius": {
+    "$type": "dimension",
+    "standard": { "$value": { "value": 0.5, "unit": "rem" } },
+    "surface": { "$value": { "value": 1.75, "unit": "rem" } },
+    "row-outer": { "$value": "{radius.surface}" },
+    "row-inner": { "$value": { "value": 0.5, "unit": "rem" } },
+    "row-single": { "$value": "{radius.row-outer}" }
+  }
+}

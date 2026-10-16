@@ -6,3 +6,5 @@ packages/ui/src/icons/* linguist-generated=true
 packages/ui/icon-manifest.json linguist-generated=true
 packages/ui/src/EnvUILogo.tsx linguist-generated=true
 packages/ui/licenses/Runtime-Dependencies-LICENSE.txt linguist-generated=true
+packages/ui/src/styles/Tokens.css linguist-generated=true
+packages/ui/src/generated/* linguist-generated=true

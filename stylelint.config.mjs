@@ -56,8 +56,9 @@ export default {
       rules: { 'declaration-property-unit-disallowed-list': { '/^(?!--)/': ['rem'] } },
     },
     {
-      // The token definitions: literal values belong here, in custom properties.
-      files: ['packages/ui/src/styles/Tokens.css'],
+      // The token definitions, generated and hand-written: literal values belong here, in custom
+      // properties.
+      files: ['packages/ui/src/styles/Tokens.css', 'packages/ui/src/styles/TokensHandwritten.css'],
       rules: {
         'color-no-hex': null,
         'color-named': null,

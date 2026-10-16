@@ -1,0 +1,148 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "color": {
+    "$type": "color",
+    "$description": "The dark scheme. Keep dark defaults independent of changes to the light palette.",
+    "control-blue": { "$value": { "colorSpace": "hsl", "components": [212.087, 100, 45.098] } },
+    "focus-ring": { "$value": { "colorSpace": "hsl", "components": [217.317, 89.13, 81.961] } },
+    "subtle-action": { "$value": { "colorSpace": "hsl", "components": [220, 3.614, 16.275] } },
+    "primary-action": {
+      "$description": "The primary action takes the same soft blue as links, with dark text, so the dark theme carries the same blue emphasis as the light one without a saturated fill. It is its own value, so the two roles stay independent.",
+      "$value": { "colorSpace": "hsl", "components": [217.317, 89.13, 81.961] }
+    },
+    "on-primary-action": { "$value": { "colorSpace": "hsl", "components": [0, 0, 12.157] } },
+    "link": { "$value": { "colorSpace": "hsl", "components": [217.317, 89.13, 81.961] } },
+    "text-primary": { "$value": { "colorSpace": "hsl", "components": [216, 12.195, 91.961] } },
+    "text-muted": { "$value": { "colorSpace": "hsl", "components": [213.333, 7.317, 75.882] } },
+    "border-strong": { "$value": { "colorSpace": "hsl", "components": [213.333, 4.523, 39.02] } },
+    "canvas": { "$value": { "colorSpace": "hsl", "components": [0, 0, 12.157] } },
+    "surface-base": { "$value": { "colorSpace": "hsl", "components": [220, 3.614, 16.275] } },
+    "pane": { "$value": { "colorSpace": "hsl", "components": [220, 3.614, 16.275] } },
+    "surface-raised": { "$value": { "colorSpace": "hsl", "components": [220, 3.614, 16.275] } },
+    "surface-muted": { "$value": { "colorSpace": "hsl", "components": [216, 4.425, 22.157] } },
+    "text-strong": { "$value": { "colorSpace": "hsl", "components": [216, 9.091, 89.216] } },
+    "control-text": { "$value": { "colorSpace": "hsl", "components": [213.333, 10.843, 83.725] } },
+    "icon": { "$value": { "colorSpace": "hsl", "components": [212.308, 11.712, 78.235] } },
+    "text-quiet": { "$value": { "colorSpace": "hsl", "components": [212.308, 8.725, 70.784] } },
+    "surface": { "$value": { "colorSpace": "hsl", "components": [220, 3.614, 16.275] } },
+    "action-strip": {
+      "$value": { "colorSpace": "hsl", "components": [218.107956, 3.957044, 18.3337] }
+    },
+    "navigation-selected": {
+      "$value": { "colorSpace": "hsl", "components": [217.84467, 10.485441, 24.81418] }
+    },
+    "disabled-text": { "$value": { "colorSpace": "hsl", "components": [212.308, 8.725, 70.784] } },
+    "row": { "$value": { "colorSpace": "hsl", "components": [216, 4.425, 22.157] } },
+    "row-alternate": { "$value": { "colorSpace": "hsl", "components": [220, 3.614, 16.275] } },
+    "menu-row": { "$value": "{color.row}" },
+    "row-text": { "$value": { "colorSpace": "hsl", "components": [216, 12.195, 91.961] } },
+    "row-detail": { "$value": { "colorSpace": "hsl", "components": [213.333, 7.317, 75.882] } },
+    "on-secondary-action": {
+      "$description": "As bright as primary text: a selected secondary tab's hover fill sits on the rail's fill.",
+      "$value": { "colorSpace": "hsl", "components": [216, 12.195, 91.961] }
+    },
+    "on-subtle-action": {
+      "$value": { "colorSpace": "hsl", "components": [217.317, 89.13, 81.961] }
+    },
+    "subtle-action-border": {
+      "$value": { "colorSpace": "hsl", "components": [213.333, 4.523, 39.02] }
+    },
+    "navigation-text": { "$value": { "colorSpace": "hsl", "components": [216, 9.091, 89.216] } },
+    "navigation-icon": {
+      "$value": { "colorSpace": "hsl", "components": [212.308, 8.725, 70.784] }
+    },
+    "navigation-quiet": { "$value": { "colorSpace": "hsl", "components": [216, 4.425, 22.157] } },
+    "on-navigation-selected": {
+      "$value": { "colorSpace": "hsl", "components": [217.317, 89.13, 85] }
+    },
+    "direction-link": { "$value": { "colorSpace": "hsl", "components": [220, 3.614, 16.275] } },
+    "direction-link-text": {
+      "$value": { "colorSpace": "hsl", "components": [216, 12.195, 91.961] }
+    },
+    "direction-link-label": {
+      "$value": { "colorSpace": "hsl", "components": [213.333, 7.317, 75.882] }
+    },
+    "direction-link-icon": {
+      "$value": { "colorSpace": "hsl", "components": [217.317, 89.13, 81.961] }
+    },
+    "direction-link-border": {
+      "$value": { "colorSpace": "hsl", "components": [213.333, 4.523, 39.02] }
+    },
+    "field": { "$value": { "colorSpace": "hsl", "components": [0, 0, 12.157] } },
+    "field-text": { "$value": { "colorSpace": "hsl", "components": [216, 12.195, 91.961] } },
+    "field-label": { "$value": { "colorSpace": "hsl", "components": [213.333, 7.317, 75.882] } },
+    "field-hint": { "$value": { "colorSpace": "hsl", "components": [213.333, 7.317, 75.882] } },
+    "field-placeholder": {
+      "$value": { "colorSpace": "hsl", "components": [212.308, 8.725, 70.784] }
+    },
+    "field-border": { "$value": { "colorSpace": "hsl", "components": [213.333, 4.523, 39.02] } },
+    "field-active": { "$value": { "colorSpace": "hsl", "components": [217.317, 89.13, 81.961] } },
+    "field-error": { "$value": { "colorSpace": "hsl", "components": [4.231, 76.471, 75] } },
+    "popup": { "$value": { "colorSpace": "hsl", "components": [216, 4.425, 22.157] } },
+    "popup-border": { "$value": { "colorSpace": "hsl", "components": [216, 4.425, 30] } },
+    "dialog": { "$value": "{color.pane}" },
+    "select-option": { "$value": "{color.popup}" },
+    "select-option-text": {
+      "$value": { "colorSpace": "hsl", "components": [213.333, 10.843, 83.725] }
+    },
+    "select-selected": { "$value": { "colorSpace": "hsl", "components": [216, 30, 30] } },
+    "on-select-selected": {
+      "$value": { "colorSpace": "hsl", "components": [217.317, 89.13, 81.961] }
+    },
+    "radio": { "$value": { "colorSpace": "hsl", "components": [217.317, 89.13, 81.961] } },
+    "radio-row": { "$value": { "colorSpace": "hsl", "components": [216, 4.425, 22.157] } },
+    "radio-text": { "$value": { "colorSpace": "hsl", "components": [216, 12.195, 91.961] } },
+    "radio-detail": { "$value": { "colorSpace": "hsl", "components": [213.333, 7.317, 75.882] } },
+    "checkbox": { "$value": { "colorSpace": "hsl", "components": [212.087, 100, 45.098] } },
+    "on-checkbox": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
+    "checkbox-border": {
+      "$value": { "colorSpace": "hsl", "components": [212.308, 11.712, 78.235] }
+    },
+    "checkbox-text": { "$value": { "colorSpace": "hsl", "components": [216, 12.195, 91.961] } },
+    "calendar-selected": {
+      "$description": "The chosen day is the light blue of a chosen radio, with dark text, so the circle stands out from dark popups and panes (3:1); today keeps the ring in the same blue.",
+      "$value": { "colorSpace": "hsl", "components": [217.317, 89.13, 81.961] }
+    },
+    "on-calendar-selected": { "$value": { "colorSpace": "hsl", "components": [0, 0, 12.157] } },
+    "calendar-today": { "$value": { "colorSpace": "hsl", "components": [217.317, 89.13, 81.961] } },
+    "switch-on": { "$value": { "colorSpace": "hsl", "components": [212.087, 100, 45.098] } },
+    "switch-thumb": { "$value": { "colorSpace": "hsl", "components": [213.333, 10.843, 83.725] } },
+    "switch-thumb-on": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
+    "switch-text": { "$value": { "colorSpace": "hsl", "components": [216, 12.195, 91.961] } },
+    "chip-text": { "$value": { "colorSpace": "hsl", "components": [217.317, 89.13, 81.961] } },
+    "disclosure-text": {
+      "$value": { "colorSpace": "hsl", "components": [213.333, 7.317, 75.882] }
+    },
+    "dialog-overlay": { "$value": { "colorSpace": "hsl", "components": [0, 0, 12.157] } },
+    "markdown-border": { "$value": { "colorSpace": "hsl", "components": [213.333, 4.523, 39.02] } },
+    "tone": {
+      "neutral": { "$value": { "colorSpace": "hsl", "components": [213.333, 7.317, 75.882] } },
+      "accent": { "$value": { "colorSpace": "hsl", "components": [217.317, 89.13, 81.961] } },
+      "success": { "$value": { "colorSpace": "hsl", "components": [140, 50, 66] } },
+      "warning": { "$value": { "colorSpace": "hsl", "components": [40, 85, 64] } },
+      "danger": { "$value": { "colorSpace": "hsl", "components": [4.231, 80, 80] } },
+      "done": { "$value": { "colorSpace": "hsl", "components": [268, 80, 83] } }
+    },
+    "on-tone": { "$value": { "colorSpace": "hsl", "components": [0, 0, 12.157] } }
+  },
+  "state": {
+    "$type": "number",
+    "$description": "Dark surfaces need larger steps for the same visible difference.",
+    "fill-opacity": {
+      "$value": 12.5,
+      "$extensions": { "com.envsemble.envui": { "cssUnit": "%" } }
+    },
+    "fill-hover-opacity": {
+      "$value": 25,
+      "$extensions": { "com.envsemble.envui": { "cssUnit": "%" } }
+    },
+    "fill-pressed-opacity": {
+      "$value": 37.5,
+      "$extensions": { "com.envsemble.envui": { "cssUnit": "%" } }
+    },
+    "tone-subtle-opacity": {
+      "$value": 14,
+      "$extensions": { "com.envsemble.envui": { "cssUnit": "%" } }
+    }
+  }
+}
