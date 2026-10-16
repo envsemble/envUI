@@ -216,8 +216,4 @@
   .env-command-palette-option[data-highlighted] :where(*) {
     color: inherit;
   }
-  .env-command-palette-option[data-highlighted]:focus-visible,
-  .env-command-palette-option[data-highlighted] :focus-visible {
-    outline-color: HighlightText;
-  }
 }

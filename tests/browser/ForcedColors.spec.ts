@@ -180,59 +180,127 @@ function systemColors(page: Page) {
   });
 }
 
-/** WCAG contrast of two `rgb()` colors. */
-function contrast(a: string, b: string) {
+/**
+ * WCAG contrast of two `rgb()` or `rgba()` colors; a translucent one is composited over
+ * `under`, the canvas, first.
+ */
+function contrast(a: string, b: string, under = 'rgb(255, 255, 255)') {
+  const channels = (value: string) => (value.match(/[\d.]+/g) ?? []).map(Number);
+  const [ur, ug, ub] = channels(under);
   const luminance = (value: string) => {
-    const [r, g, b] = (value.match(/[\d.]+/g) ?? []).slice(0, 3).map((channel) => {
-      const c = Number(channel) / 255;
+    const [r, g, b, alpha = 1] = channels(value);
+    const [cr, cg, cb] = [
+      r * alpha + ur * (1 - alpha),
+      g * alpha + ug * (1 - alpha),
+      b * alpha + ub * (1 - alpha),
+    ].map((channel) => {
+      const c = channel / 255;
       return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
     });
-    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    return 0.2126 * cr + 0.7152 * cg + 0.0722 * cb;
   };
   const [light, dark] = [luminance(a), luminance(b)].sort((x, y) => y - x);
   return (light + 0.05) / (dark + 0.05);
 }
 
 /**
- * Focused items that sit in a selection, each with the element that draws the ring, what that
- * ring is drawn on (its own fill when inset, the canvas when outside) and how to focus it.
+ * Focused items that sit in a selection or carry a forced-colors mark of their own, each with the
+ * element that draws the ring, what that ring is drawn on (its own fill when inset, the canvas when
+ * outside), what to focus and how to reach the state first.
  */
-const focusedSelections: [name: string, ring: string, over: 'fill' | 'canvas', focus?: string][] = [
-  ['the selected tab', '[role=tab][aria-selected=true]', 'fill'],
-  ['the selected navigation item', '[data-testid=nav-selected]', 'fill'],
-  ['the chosen segment', '.env-segment[data-checked]', 'canvas'],
-  ['the active document tab', '.env-document-tab[data-active]', 'fill'],
-  [
-    'a chosen radio row',
-    '.env-radio-option >> nth=0',
-    'canvas',
-    'fieldset:has-text("Role") input >> nth=0',
-  ],
+interface FocusCase {
+  name: string;
+  ring: string;
+  over: 'fill' | 'canvas';
+  focus?: string;
+  prepare?: (page: Page) => Promise<void>;
+}
+
+const focusCases: FocusCase[] = [
+  { name: 'the selected tab', ring: '[role=tab][aria-selected=true]', over: 'fill' },
+  { name: 'the selected navigation item', ring: '[data-testid=nav-selected]', over: 'fill' },
+  { name: 'the chosen segment', ring: '.env-segment[data-checked]', over: 'canvas' },
+  { name: 'the active document tab', ring: '.env-document-tab[data-active]', over: 'fill' },
+  {
+    name: 'a chosen radio row',
+    ring: '.env-radio-option >> nth=0',
+    over: 'canvas',
+    focus: 'fieldset:has-text("Role") input >> nth=0',
+  },
+  {
+    // A calendar opens with focus on today, whose own outline must give way to the ring.
+    name: "today's calendar day",
+    ring: '.env-calendar-day[aria-current=date] > .env-calendar-day-mark',
+    over: 'canvas',
+    focus: '.env-calendar-day[aria-current=date]',
+  },
+  {
+    name: 'the selected tree row',
+    ring: "[role=treeitem][aria-selected='true']",
+    over: 'fill',
+    focus: '[role=tree]',
+  },
+  {
+    name: 'a highlighted menu item',
+    ring: '[role=menuitemcheckbox] >> nth=0',
+    over: 'fill',
+  },
+  {
+    // The trigger of an open menu that has focus, as Base UI marks it.
+    name: 'the trigger of an open menubar menu',
+    ring: '.env-menubar-trigger >> nth=0',
+    over: 'fill',
+    prepare: (page) =>
+      page
+        .locator('.env-menubar-trigger')
+        .first()
+        .evaluate((trigger) => trigger.setAttribute('data-popup-open', '')),
+  },
+  {
+    name: 'a highlighted Select option',
+    ring: '[role=option][data-highlighted]',
+    over: 'fill',
+    prepare: async (page) => {
+      await page.getByRole('combobox', { name: 'Plan type' }).focus();
+      await page.keyboard.press('ArrowDown');
+      await expect(page.locator('[role=option][data-highlighted]')).toHaveCount(1);
+    },
+  },
 ];
 
-test('a focused selection keeps a ring in a system color that shows on what it is drawn on', async ({
+test('a focused item keeps a ring in a system color that shows on what it is drawn on', async ({
   page,
   browserName,
 }) => {
   test.skip(browserName === 'webkit', 'WebKit keeps the page’s colors under forced colors.');
   await open(page);
   const system = await systemColors(page);
-  for (const [name, ring, over, focus] of focusedSelections) {
+  for (const { name, ring, over, focus, prepare } of focusCases) {
+    await prepare?.(page);
     const ringElement = page.locator(ring).first();
-    const rest = await ringElement.evaluate(painted);
     const target = focus ? page.locator(focus).first() : ringElement;
+    // The ring is measured against the item at rest, before it takes focus.
+    const alreadyFocused = await target.evaluate((element) => element === document.activeElement);
+    const rest = alreadyFocused ? undefined : await ringElement.evaluate(painted);
     await target.focus();
     expect(await target.evaluate((element) => element.matches(':focus-visible')), name).toBe(true);
-    expect(await ringElement.evaluate(painted), `${name} shows its focus`).not.toBe(rest);
-    const { outline, style, fill } = await ringElement.evaluate((element) => {
+    // The fill may still be fading in; measure it settled.
+    await ringElement.evaluate((element) =>
+      Promise.all(element.getAnimations().map((animation) => animation.finished)),
+    );
+    if (rest !== undefined)
+      expect(await ringElement.evaluate(painted), `${name} shows its focus`).not.toBe(rest);
+    const { outline, style, width, fill } = await ringElement.evaluate((element) => {
       const computed = getComputedStyle(element);
       return {
         outline: computed.outlineColor,
         style: computed.outlineStyle,
+        width: parseFloat(computed.outlineWidth),
         fill: computed.backgroundColor,
       };
     });
     expect(style, name).not.toBe('none');
+    expect(width, `${name}: the focus ring, not a thinner mark`).toBeGreaterThanOrEqual(2);
     expect(Object.values(system), `${name}: the ring is a system color`).toContain(outline);
     const behind = over === 'fill' ? fill : system.Canvas;
     // At least 3:1, or as much as the system's own selection pair has, where the ring is in it.

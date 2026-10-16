@@ -321,15 +321,20 @@
   }
 }
 
-/* Forced colors: the system paints no fills or shadows, so every button but an underlined text
-   button, which reads as a link, takes the system's button edge, and an unavailable one the
-   disabled color. */
+/* Forced colors: the system paints no fills or shadows, so every button takes the system's button
+   edge, and an unavailable one the disabled color. Links keep the look of links: Link, with or
+   without its underline, a text button that is a link, and an underlined text button. */
 @media (forced-colors: active) {
-  .env-button:not(.env-button-underlined) {
+  .env-button:not(.env-button-underlined, .env-link, .env-button-text[href]) {
     border: var(--env-control-border-width) solid ButtonText;
   }
   .env-button:is(:disabled, [aria-disabled='true']) {
-    border-color: GrayText;
     color: GrayText;
+  }
+  .env-button:not(.env-button-underlined, .env-link, .env-button-text[href]):is(
+      :disabled,
+      [aria-disabled='true']
+    ) {
+    border-color: GrayText;
   }
 }

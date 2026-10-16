@@ -117,7 +117,9 @@
 /* Forced colors: the system paints no fills or shadows, so the chosen day takes the system’s
    selection colors, today is outlined, and unavailable days take the disabled color. */
 @media (forced-colors: active) {
-  .env-calendar-day[aria-current='date'] > .env-calendar-day-mark {
+  /* Today's outline gives way to the focus ring when the day has focus, as it does when a
+     calendar opens on today. */
+  .env-calendar-day[aria-current='date']:not(:focus-visible) > .env-calendar-day-mark {
     outline: 1px solid CanvasText;
     outline-offset: -1px;
   }
