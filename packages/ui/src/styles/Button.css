@@ -181,7 +181,7 @@
 }
 
 /* Danger: a primary button takes the strong danger fill; outline, ghost and text buttons take the
-   danger color, outline and ghost over the danger state layers on hover and press. */
+   danger color, which stays on hover and press, over the variant's own fill or state layer. */
 .env-button:where([data-variant='primary'][data-tone='danger']) {
   background: var(--env-color-bg-danger-strong);
   color: var(--env-color-fg-on-strong);
@@ -202,21 +202,19 @@
 
 .env-button:where([data-variant='outline'][data-tone='danger']) {
   color: var(--env-color-fg-danger);
-  border-color: var(--env-color-border-danger);
+  border-color: var(--env-color-border-danger-emphasis);
 }
 
 .env-button:where([data-variant='outline'][data-tone='danger']):hover:not(:disabled):not(
     [aria-disabled='true']
   ) {
-  background: var(--env-color-bg-danger-subtle-hover);
-  border-color: var(--env-color-border-danger-emphasis);
+  border-color: var(--env-color-border-danger-emphasis-hover);
 }
 
 .env-button:where([data-variant='outline'][data-tone='danger']):active:not(:disabled):not(
     [aria-disabled='true']
   ) {
-  background: var(--env-color-bg-danger-subtle-pressed);
-  border-color: var(--env-color-border-danger-emphasis);
+  border-color: var(--env-color-border-danger-emphasis-pressed);
 }
 
 .env-button:where([data-tone='danger']):where([data-variant='ghost'], [data-variant='text']),
@@ -230,18 +228,6 @@
     :active
   ):not(:disabled):not([aria-disabled='true']) {
   color: var(--env-color-fg-danger);
-}
-
-.env-button:where([data-variant='ghost'], [data-variant='text'].env-icon-button):where(
-    [data-tone='danger']
-  ):hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-color-bg-danger-subtle-hover);
-}
-
-.env-button:where([data-variant='ghost'], [data-variant='text'].env-icon-button):where(
-    [data-tone='danger']
-  ):active:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-color-bg-danger-subtle-pressed);
 }
 
 /* Accent: a primary button for a rare, consequential action, with square corners; like every

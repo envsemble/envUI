@@ -61,7 +61,8 @@ function Page() {
         {variants.map(([name, emphasis]) => (
           <Button
             key={name}
-            {...({ ...emphasis, children: name, 'data-testid': `variant-${name}` } as ButtonProps)}
+            {...({ ...emphasis, children: name } as ButtonProps)}
+            data-testid={`variant-${name}`}
           />
         ))}
         <CloseButton data-testid="variant-close" />

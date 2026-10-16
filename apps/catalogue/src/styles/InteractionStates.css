@@ -39,12 +39,10 @@
 }
 /* The danger pairs of outline and text buttons. */
 .docs-preview .docs-force-hover.env-button:where([data-variant='outline'][data-tone='danger']) {
-  background: var(--env-color-bg-danger-subtle-hover);
-  border-color: var(--env-color-border-danger-emphasis);
+  border-color: var(--env-color-border-danger-emphasis-hover);
 }
 .docs-preview .docs-force-pressed.env-button:where([data-variant='outline'][data-tone='danger']) {
-  background: var(--env-color-bg-danger-subtle-pressed);
-  border-color: var(--env-color-border-danger-emphasis);
+  border-color: var(--env-color-border-danger-emphasis-pressed);
 }
 .docs-preview
   :is(.docs-force-hover, .docs-force-pressed).env-button:where(
