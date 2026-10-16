@@ -26,7 +26,9 @@
   opacity: var(--env-state-disabled-opacity);
   cursor: default;
 }
-/* The indicator keeps its slot whether or not the row is chosen, so the labels align. */
+/* The indicator keeps its slot whether or not the row is chosen, so the labels align. The icon's
+   slot takes the hook --env-list-row-icon-size, which an owner whose rows lead with larger content,
+   such as avatars, sets on its own element. */
 .env-list-row-indicator,
 .env-list-row-icon {
   flex: 0 0 auto;
@@ -40,6 +42,9 @@
   color: var(--env-color-bg-brand-emphasis);
 }
 .env-list-row-icon {
+  inline-size: var(--env-list-row-icon-size, var(--env-control-icon-size));
+  block-size: var(--env-list-row-icon-size, var(--env-control-icon-size));
+  --env-icon-size: var(--env-list-row-icon-size, var(--env-control-icon-size));
   color: var(--env-color-fg-muted);
 }
 .env-list-row-text {
