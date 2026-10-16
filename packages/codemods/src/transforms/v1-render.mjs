@@ -12,7 +12,7 @@
 // Elements are matched by their import from @envsemble/envui, as v1-props matches them.
 import { loadMap } from '../map.mjs';
 import { componentResolver, envuiImports, literalKey } from '../elements.mjs';
-import { createReporter, parserFor } from '../shared.mjs';
+import { createReporter, parserFor, sourceRanges } from '../shared.mjs';
 
 export const parser = 'tsx';
 
@@ -33,11 +33,8 @@ export default function transform(file, api, options = {}) {
   // Each rewrite replaces one attribute's text: printing a changed element again, as recast does,
   // can move the text of a parenthesized element's children.
   const edits = [];
-  // The parser's positions are lines and columns; the source's line starts turn them into offsets.
-  const lineStarts = [0];
-  for (const match of file.source.matchAll(/\r\n|\r|\n/g))
-    lineStarts.push(match.index + match[0].length);
-  const offsetOf = ({ line, column }) => lineStarts[line - 1] + column;
+  // Where each attribute's text is: recast's lines and columns aren't offsets in the text.
+  const rangeOf = sourceRanges(file, j, root, 'JSXAttribute');
   root.find(j.JSXOpeningElement).forEach((path) => {
     const component = componentOf(path);
     const rule = component && component.entry.render.get(component.name);
@@ -68,11 +65,12 @@ export default function transform(file, api, options = {}) {
       );
       return;
     }
-    edits.push({
-      start: offsetOf(node.loc.start),
-      end: offsetOf(node.loc.end),
-      text: `render={<${value} />}`,
-    });
+    const range = rangeOf(node);
+    if (!range) {
+      reporter.warn(node, `${where} is gone in 1.0: change it to render={<${value} />} by hand.`);
+      return;
+    }
+    edits.push({ ...range, text: `render={<${value} />}` });
     if (attributes.some((each) => each.type === 'JSXSpreadAttribute'))
       reporter.warn(
         node,
